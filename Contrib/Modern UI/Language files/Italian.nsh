@@ -1,9 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com>
-;Review and update from v1.65 to v1.66 by Alessandro Staltari < staltari (a) geocities.com >
+;Review and update from v1.65 to v1.67 by Alessandro Staltari < staltari (a) geocities.com >
 
 ;--------------------------------
 
@@ -52,9 +52,12 @@
   !define MUI_INNERTEXT_STARTMENU_TOP "Scegliere la cartella del menù Start in cui verranno crati i collegamenti del programma. É possibile inserire un nome per creare una nuova cartella."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Non creare i collegamenti al programma."
 
-  !define MUI_TEXT_ABORTWARNING "Se sicuro di voler terminare l'installazione di $(^Name) ?"
+  !define MUI_TEXT_ABORTWARNING "Sei sicuro di voler interrompere l'installazione di $(^Name) ?"
 
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvenuti nella procedura guidata di disintallazion di $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Questa procedura vi guiderà nella disinstallazione di $(^Name).\r\n\r\nPrima di iniziare la disinstallazione, assicuratevi che $(^Name) non sia in esecuzione.\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Disintalla $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Rimuove $(^Name) dal computer."
   
@@ -78,5 +81,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Disinstallazione interrotta"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La disintallazione non e' stata completata correttamente."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Completamento della disinstallazione di $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) é stato disinstallato dal computer.\r\n\r\nSelezionare Fine per terminare questa procedura."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Sei sicuro di voler interrompere la disinstallazione di $(^Name)?"  
   
 !insertmacro MUI_LANGUAGEFILE_END
