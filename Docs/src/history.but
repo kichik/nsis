@@ -2,6 +2,10 @@
 
 \e{v2.0b1}
 
+\b Include dirs
+
+\b Language strings can be used in the script before the LangString command
+
 \b New version of the Modern User Interface with bugfixes and some small new features
 
 \b InstallOptions 2.0 with support for custom font and DPI settings
