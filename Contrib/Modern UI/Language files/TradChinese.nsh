@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_TRADCHINESE} "安裝程式將在下列資料夾，安裝 ${NAME} 。$\r$\n$\r$\n要安裝到這個資料夾，按一下 [安裝(I)] 。要安裝在不同資料夾，按一下 [瀏覽(B)...] 並選擇其他資料夾。" " "
+    DirText /LANG=${LANG_TRADCHINESE} "安裝程式將在下列資料夾，安裝 ${NAME} 。$\r$\n$\r$\n要安裝到這個資料夾，按一下 [安裝(I)] 。要安裝在不同資料夾，按一下 [瀏覽(B)...] 並選擇其他資料夾。"
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_TRADCHINESE} "選取安裝位置" 
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_TRADCHINESE} "選取 ${NAME} 要安裝的資料夾位置。"
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_TRADCHINESE} "目的資料夾"

@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_DUTCH} "Setup zal ${NAME} in de volgende map installeren.$\r$\n$\r$\nOm in een deze map te intalleren, klik Installeren. Om in een andere map te installeren, klik Bladeren en selecteer een andere map." " "
+    DirText /LANG=${LANG_DUTCH} "Setup zal ${NAME} in de volgende map installeren.$\r$\n$\r$\nOm in een deze map te intalleren, klik Installeren. Om in een andere map te installeren, klik Bladeren en selecteer een andere map."
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_DUTCH} "Kies Installatie Locatie"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_DUTCH} "Kies de map waarin u ${NAME} in wilt installeren."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_DUTCH} "Installatie Map"

@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_POLISH} "Instalator zainstaluje ${NAME} do nastêpuj¹cego folderu.$\r$\n$\r$\nAby zainstalowaæ w tym folderze kliknij Instaluj. Aby zainstalowaæ w innym folderze kliknij Przegl¹daj i wybierz inny folder." " "
+    DirText /LANG=${LANG_POLISH} "Instalator zainstaluje ${NAME} do nastêpuj¹cego folderu.$\r$\n$\r$\nAby zainstalowaæ w tym folderze kliknij Instaluj. Aby zainstalowaæ w innym folderze kliknij Przegl¹daj i wybierz inny folder."
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_POLISH} "Wybór miejsca instalacji"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_POLISH} "Wybierz folder, w którym ma byæ zainstalowany ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_POLISH} "Folder docelowy"

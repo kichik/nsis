@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_JAPANESE} "${NAME} を以下のフォルダにインストールします。$\r$\n$\r$\nこのフォルダにインストールするには、[インストール]を押してください。$\r$\n異なったフォルダにインストールするには、[参照]を押して、別のフォルダを選択してください。" " "
+    DirText /LANG=${LANG_JAPANESE} "${NAME} を以下のフォルダにインストールします。$\r$\n$\r$\nこのフォルダにインストールするには、[インストール]を押してください。$\r$\n異なったフォルダにインストールするには、[参照]を押して、別のフォルダを選択してください。"
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_JAPANESE} "インストール先を選んでください。"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_JAPANESE} "${NAME} をインストールするフォルダを選んでください。"
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_JAPANESE} "インストール先 フォルダ"
