@@ -91,7 +91,9 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "NSIS Home",                   IDM_NSISHOME
+        MENUITEM "NSIS Homepage",               IDM_NSISHOME
+        MENUITEM "NSIS Developer Site",         IDM_NSISDEV
+        MENUITEM SEPARATOR
         MENUITEM "Documentation\tF1",           IDM_DOCS
         MENUITEM SEPARATOR
         MENUITEM "&About MakeNSISW",            IDM_ABOUT
