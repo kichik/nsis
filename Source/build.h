@@ -116,6 +116,7 @@ class CEXEBuild {
     int section_add_install_type(int inst_type);
     int add_label(const char *name);
     int add_entry(const entry *ent);
+    int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
     int add_string(const char *string); // returns offset (in string table)
     int add_string_main(const char *string, int process=1); // returns offset (in string table)
