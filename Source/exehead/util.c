@@ -286,40 +286,6 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 }
 #endif
 
-void NSISCALL recursive_create_directory(char *directory)
-{
-  char *tp;
-	char *p;
-  p=directory;
-  while (*p == ' ') p=CharNext(p);
-  if (!*p) return;
-  tp=CharNext(p);
-  if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
-  else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
-  {
-    int x;
-    for (x = 0; x < 2; x ++)
-    {
-      while (*p != '\\' && *p) p=CharNext(p); // skip host then share
-      if (*p) p=CharNext(p);
-    }
-
-  }
-  else return;
-  while (*p)
-  {
-    while (*p != '\\' && *p) p=CharNext(p);
-    if (!*p) CreateDirectory(directory,NULL);
-    else
-    {
-      *p=0;
-  	  CreateDirectory(directory,NULL);
-      *p++ = '\\';
-    }
-  }
-}
-
-
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
 {
 	HKEY hKey;
@@ -590,48 +556,3 @@ void NSISCALL log_write(int close)
 
 
 #endif
-
-#ifdef NSIS_SUPPORT_CREATESHORTCUT
-/*int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey)
-{
-  HRESULT hres;
-  int rv=1;
-  IShellLink* psl;
-  hres=OleInitialize(NULL);
-  if (hres != S_FALSE && hres != S_OK) return rv;
-
-  hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
-                            &IID_IShellLink, (void **) &psl);
-  if (SUCCEEDED(hres))
-  {
-    IPersistFile* ppf;
-
-    hres = psl->lpVtbl->QueryInterface(psl,&IID_IPersistFile, (void **) &ppf);
-    if (SUCCEEDED(hres))
-    {
-
-       hres = psl->lpVtbl->SetPath(psl,pszExe);
-       psl->lpVtbl->SetWorkingDirectory(psl,workingdir);
-       if (showmode) psl->lpVtbl->SetShowCmd(psl,showmode);
-       if (hotkey) psl->lpVtbl->SetHotkey(psl,(unsigned short)hotkey);
-       if (pszIconFile) psl->lpVtbl->SetIconLocation(psl,pszIconFile,iconindex);
-       if (pszArg)
-       {
-         psl->lpVtbl->SetArguments(psl,pszArg);
-       }
-
-       if (SUCCEEDED(hres))
-       {
-          WCHAR wsz[1024];
-          MultiByteToWideChar(CP_ACP, 0, pszShortcutFile, -1, wsz, 1024);
-		      hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
-          if (SUCCEEDED(hres)) rv=0;
-       }
-      ppf->lpVtbl->Release(ppf);
-    }
-    psl->lpVtbl->Release(psl);
-  }
-  OleUninitialize();
-  return rv;
-}*/
-#endif//NSIS_SUPPORT_CREATESHORTCUT

@@ -237,7 +237,38 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         mystrcpy(state_output_directory,buf1);
       }
       else update_status_text_from_lang(LANGID_CREATEDIR,buf1);
-      recursive_create_directory(buf1);
+      {
+        char *tp;
+        char *p;
+        p=buf1;
+        while (*p == ' ') p=CharNext(p);
+        if (*p) {
+          tp=CharNext(p);
+          if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
+          else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
+          {
+            int x;
+            for (x = 0; x < 2; x ++)
+            {
+              while (*p != '\\' && *p) p=CharNext(p); // skip host then share
+              if (*p) p=CharNext(p);
+            }
+
+          }
+          else return 0;
+          while (*p)
+          {
+            while (*p != '\\' && *p) p=CharNext(p);
+            if (!*p) CreateDirectory(buf1,NULL);
+            else
+            {
+              *p=0;
+              CreateDirectory(buf1,NULL);
+              *p++ = '\\';
+            }
+          }
+        }
+      }
     }
     return 0;
     case EW_IFFILEEXISTS: {
