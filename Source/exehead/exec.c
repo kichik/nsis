@@ -133,10 +133,19 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
   return retval;
 }
 
+static HKEY NSISCALL GetRegRootKey(int hRootKey)
+{
+  if (hRootKey)
+    return (HKEY) hRootKey;
+
+  // HKEY_LOCAL_MACHINE - HKEY_CURRENT_USER == 1
+  return (HKEY) ((int) HKEY_CURRENT_USER + g_exec_flags.all_user_var);
+}
+
 static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
 {
   HKEY hKey;
-  if (RegOpenKeyEx((HKEY) parms[1], GetStringFromParm(0x22), 0, samDesired, &hKey) == ERROR_SUCCESS)
+  if (RegOpenKeyEx(GetRegRootKey(parms[1]), GetStringFromParm(0x22), 0, samDesired, &hKey) == ERROR_SUCCESS)
   {
     return hKey;
   }
@@ -1129,7 +1138,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           char *buf2=GetStringFromParm(0x22);
           log_printf3("DeleteRegKey: %d\\%s",parm1,buf2);
-          res = myRegDeleteKeyEx((HKEY)parm1,buf2,parm4&2);
+          res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4&2);
         }
         if (res != ERROR_SUCCESS)
           exec_error++;
@@ -1138,13 +1147,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_WRITEREG: // write registry value
       {
         HKEY hKey;
-        int rootkey=parm0;
+        HKEY rootkey=GetRegRootKey(parm0);
         int type=parm4;
         int rtype=parm5;
         char *buf0=GetStringFromParm(0x02);
         char *buf1=GetStringFromParm(0x11);
         exec_error++;
-        if (RegCreateKeyEx((HKEY)rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
+        if (RegCreateKeyEx(rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
         {
           LPBYTE data = (LPBYTE) buf2;
           DWORD size = 0;
