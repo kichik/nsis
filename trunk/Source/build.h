@@ -122,6 +122,7 @@ class CEXEBuild {
     void del_date_time_predefines();
 #endif
     int parseScript();
+    int includeScript(char *f);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else
