@@ -1,5 +1,55 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.05} 2.05
+
+Released on February 4th, 2005
+
+\S1{v2.05-rn} Release Notes
+
+\b A lot of changes were made to the behavior of sections/components and related instructions. The changes were thoroughly tested, but may still cause minor incompatibilities with old scripts. Please let us know if your script no longer functions as expected with these changes.
+
+\S1{v2.05-cl} Changelog
+
+\S2{} New/Changed Commands
+
+\b Renamed SubSection and SubSectionEnd to \R{ssectiongroup}{SectionGroup} and \R{ssectiongroupend}{SectionGroupEnd}
+
+\b \R{sectionsetflags}{SectionSetFlags}, when used on a section group, toggles its children too
+
+\b \R{sectionsettext}{SectionSetText} works better with variables (parses immediately and treats an empty variable is an empty string)
+
+\b \R{ssetcurinsttype}{SetCurInstType} works without the components page
+
+\S2{} Minor Changes
+
+\b Added Breton translation
+
+\b \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}: Fixed double delay time in some cases
+
+\b Documentation fixes and enhancements (including \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1098454&group_id=22049&atid=373087}{patch #1098454})
+
+\b Fixed case insensitive name comparison with \R{file}{File} /x, when not using wildcards
+
+\b Fixed extraction status ending prior to 100%
+
+\b Fixed negative values of available space in the directory page (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1114876&group_id=22049&atid=373085}{bug #1114876})
+
+\b Fixed system.nsi example crash (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1102255&group_id=22049&atid=373085}{bug #1102255})
+
+\b Fixed unused label warnings with \R{library}{Library macros}
+
+\b Improved some error messages
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.42}: Added an image displaying example, added TRANSPARENT flag for BITMAP fields (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1079715}{RFE #1079715} - funded by Chris Morgan)
+
+\b Invisible sections weren't always affected by a change of the installation type (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1045722&group_id=22049&atid=373085}{bug #1045722})
+
+\b Language file fixes
+
+\b Made pages refresh after an aborted leave function
+
+\b Partially selected section groups can now be toggled
+
 \H{v2.04} 2.04
 
 Released on January 7th, 2005
