@@ -28,6 +28,10 @@ Combines value1 and (depending on OP) value2 into the user variable $x. OP is de
 
 \b \e{^} BINARY XORs value1 and value2
 
+\b \e{>>} RIGHT SHIFTs value1 by value2
+
+\b \e{<<} LEFT SHIFTs value1 by value2
+
 \b \e{~} BITWISE NEGATEs value1 (i.e. 7 becomes 4294917288)
 
 \b \e{!} LOGICALLY NEGATEs value1 (i.e. 7 becomes 0)
