@@ -73,6 +73,10 @@ static int num_sections;
 
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
+void NSISCALL notify(char num) {
+  SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0);
+}
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
@@ -611,7 +615,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
     if (id == IDOK && m_curwnd)
     {
-      SendMessage(hwndDlg,WM_NOTIFY_OUTER_NEXT,1,0);
+      notify(1);
     }
     if (
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -620,7 +624,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       (id == IDC_BACK && m_curwnd && m_page>0))
     {
       EnableWindow(GetDlgItem(hwndDlg, IDOK), TRUE);
-      SendMessage(hwndDlg,WM_NOTIFY_OUTER_NEXT,-1,0);
+      notify(-1);
     }
     if (id == IDCANCEL)
     {
@@ -684,9 +688,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     //End Xge
   }
   else if (uMsg == WM_NOTIFY) {
-    ENLINK *enlink=(ENLINK *)lParam;
-    MSGFILTER* msgfilter=(MSGFILTER *)lParam;
-    if (enlink->nmhdr.code==EN_LINK) {
+    #define nmhdr ((NMHDR *)lParam)
+    #define enlink ((ENLINK *)lParam)
+    #define msgfilter ((MSGFILTER *)lParam)
+    if (nmhdr->code==EN_LINK) {
       if (enlink->msg==WM_LBUTTONDOWN) {
         char *szUrl;
         long min=enlink->chrg.cpMin, max=enlink->chrg.cpMax;
@@ -710,12 +715,12 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     //push button. When the user presses return ask the outer dialog to move
     //the installer onto the next page. MSDN docs say return non-zero if the
     //rich edit control should NOT process this message, hence the return 1.
-    else if (msgfilter->nmhdr.code==EN_MSGFILTER)
+    else if (nmhdr->code==EN_MSGFILTER)
     {
       if (msgfilter->msg==WM_KEYDOWN &&
           msgfilter->wParam==VK_RETURN)
       {
-        SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,1,0);
+        notify(1);
         return 1;
       }
     }
@@ -1435,7 +1440,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       }
       else
       {
-        SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,1,0);
+        notify(1);
       }
     }
     else
