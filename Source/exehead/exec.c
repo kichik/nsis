@@ -1116,7 +1116,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           key=process_string_fromparm_tobuf(0x11);
         }
-        if (parm2)
+        if (parm4)
         {
           str=process_string_fromparm_tobuf(0x22);
         }
