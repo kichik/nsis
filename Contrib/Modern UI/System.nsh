@@ -220,11 +220,15 @@
 !macro MUI_PAGECOMMANDS
  
   !verbose 3
+  
+  !ifndef MUI_CUSTOMPAGECOMMANDS
 
-  !insertmacro MUI_PAGECOMMAND_LICENSE
-  !insertmacro MUI_PAGECOMMAND_COMPONENTS
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  !insertmacro MUI_PAGECOMMAND_INSTFILES
+    !insertmacro MUI_PAGECOMMAND_LICENSE
+    !insertmacro MUI_PAGECOMMAND_COMPONENTS
+    !insertmacro MUI_PAGECOMMAND_DIRECTORY
+    !insertmacro MUI_PAGECOMMAND_INSTFILES
+  
+  !endif
   
   !verbose 4
   
@@ -279,9 +283,13 @@
 !macro MUI_UNPAGECOMMANDS
  
   !verbose 3
+  
+  !ifndef MUI_UNCUSTOMPAGECOMMANDS
 
-  !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-  !insertmacro MUI_UNPAGECOMMAND_INSTFILES
+    !insertmacro MUI_UNPAGECOMMAND_CONFIRM
+    !insertmacro MUI_UNPAGECOMMAND_INSTFILES
+    
+  !endif
   
   !verbose 4
   
@@ -579,34 +587,11 @@
 
 !macroend
 
-!macro MUI_FUNCTIONS_CUSTOMPAGE_BASIC
-
-  !verbose 3
- 
-  !insertmacro MUI_FUNCTIONS_PAGES
-  !insertmacro MUI_FUNCTIONS_GUIINIT
-  !insertmacro MUI_FUNCTIONS_ABORTWARNING
-  
-  !verbose 4
-
-!macroend
-
 !macro MUI_UNFUNCTIONS_BASIC
 
   !verbose 3
 
   !insertmacro MUI_UNPAGECOMMANDS
-  !insertmacro MUI_UNFUNCTIONS_PAGES
-  !insertmacro MUI_UNFUNCTIONS_GUIINIT
-
-  !verbose 4
-
-!macroend
-
-!macro MUI_UNFUNCTIONS_CUSTOMPAGE_BASIC
-
-  !verbose 3
-
   !insertmacro MUI_UNFUNCTIONS_PAGES
   !insertmacro MUI_UNFUNCTIONS_GUIINIT
 
