@@ -6,7 +6,7 @@ Most software packages you download or buy come with an installer. The installer
 
 NSIS is a tool for developers to create such installers. NSIS allows you to create everything from basic installers that just copy files to very complex installers that handle a lot of advanced tasks such as writing registry keys, settings environment variables, downloading the latest files from the internet, customizing the configuration file and more. NSIS is very flexible and its scripting language is easy to learn.
 
-NSIS compiles all of the files and the installation script into one executable file, so your application will be easy to distribute. NSIS adds only about 34KB of code of its own (for the default configuration) to the data. NSIS has the smallest overhead available and still have a lot of options thanks to its powerful scripting language and support of external plug-ins. 
+NSIS compiles all of the files and the installation script into one executable file, so your application will be easy to distribute. NSIS adds only about 34KB of code of its own (for the default configuration) to the data. NSIS has the smallest overhead available and still have a lot of options thanks to its powerful scripting language and support of external plug-ins.
 
 \H{tutscriptfiles} Script Files
 
@@ -31,7 +31,7 @@ A NSIS script can contain Installer Attributes and Sections/Functions. You can a
 
 \S1{installerattributes} Installer Attributes
 
-Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can define what pages are shown in which order, texts that will show during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
+Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can define what pages are shown in which order, texts that will shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
 
 The most basic attributes are Name (\k{aname}), InstallDir (\k{ainstalldir}) and DirText (\k{adirtext}).
 
@@ -61,7 +61,7 @@ Functions, just like sections, can contain code. The difference between sections
 
 User functions are called by the user from within sections or other functions using the Call instruction (\k{call}). User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
 
-Callback functions are called by the installer upon certain defined events such as when the installer starts. Callback are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recongnize this function as a callback function by the name and will call it when the installer starts.
+Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recongnize this function as a callback function by the name and will call it when the installer starts.
 
 \c Function .onInit
 \c   MessageBox MB_YESNO "This will install My Program. Do you wish to continue?" IDYES gogogo

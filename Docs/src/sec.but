@@ -25,3 +25,19 @@ Sets the description for the section section_index. To set a subsection, you mus
 \c section_index user_var(output)
 
 Stores the text description of the section section_index into the output. If the section is hidden, stores an empty string. The error flag will be set if an out of range section is specified.
+
+\S2{SectionSetInstTypes} SectionSetInstTypes
+
+\c section_index inst_types
+
+Sets the Install Types of the section specified by section_index. Note that the Section Index starts with Zero. Inst_types is a byte. Every bit of it is a flag that tells if the section is in that Install Type or not. For Example you have 3 Install Types and you want that the first section to be included in the Insttypes 1 and 3. Than the command looks like this:
+
+\c SectionSetInstTypes 0 5
+
+because the binary value for 5 is "00000101". The error flag will be set if an out of range section is specified.
+
+\S2{SectionGetInstTypes} SectionGetInstTypes
+
+\c section_index user_variable
+
+Retrieves the Install Types of a section. See above for a description of how to deal with the output. The error flag will be set if an out of range section is specified.
