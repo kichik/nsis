@@ -416,8 +416,9 @@
 \c  ;
 \c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL which cannot be registered
 \c  ;
-\c  ; Note that this macro sets overwrite to TRY. Change it back to whatever you want after
-\c  ; you insert the macro.
+\c  ; Note that this macro sets overwrite to ON (the default) when it has been inserted.
+\c  ; If you are using another setting, set it again after inserting the macro.
+\c
 \c
 \c  !macro UpgradeDLL LOCALFILE DESTFILE
 \c
@@ -513,6 +514,12 @@
 \c      Return
 \c
 \c    "end_${LOCALFILE}:"
+\c
+\c   ;------------------------
+\c   ;Set overwrite to default
+\c   ;(was set to TRY above)
+\c
+\c   SetOverwrite on
 \c
 \c  !macroend
 
