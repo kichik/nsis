@@ -13,7 +13,11 @@
 #ifdef NSIS_COMPRESS_USE_BZIP2
 #include "../bzip2/bzlib.h"
 static int bz2_needreinit;
-void NSISCALL genrtable();
+// void NSISCALL genrtable(); // using this method reduces data by 336, but adds ~60 to code.
+// currently it makes sense to spend the money on data and reduce code size, but that may change.
+#define genrtable()
+
+
 #define z_stream bz_stream
 #define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return _LANG_INVALIDCRC; }
 #define inflate(x) BZ2_bzDecompress(x)
