@@ -125,7 +125,7 @@ static int NSISCALL process_string_fromparm_toint(int id_)
 static char * NSISCALL process_string_fromparm_tobuf(int id_)
 {
   int id = id_ < 0 ? -id_ : id_;
-  char *result = process_string_fromtab(bufs[id_ >> 4], parms[id_ & 0xF]);
+  char *result = process_string_fromtab(bufs[id >> 4], parms[id & 0xF]);
   if (id_ < 0) validate_filename(result);
   return result;
 }
