@@ -1013,7 +1013,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     // Added by Amir Szekely 7th July 2002
-	  case TOK_XPSTYLE:
+    case TOK_XPSTYLE:
       try {
         int k=line.gettoken_enum(1,"on\0off\0");
         if (k == -1) PRINTHELP()
@@ -1034,9 +1034,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     // Added by Amir Szekely 28th July 2002
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-	  case TOK_CHANGEUI:
-	    try {
-        int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0");
+    case TOK_CHANGEUI:
+      try {
+        int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0");
         if (k<0) PRINTHELP();
 
         HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
@@ -1130,6 +1130,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
+        if (k == 0 || k == 7) {
+          dlg = get_dlg(hUIFile, IDD_VERIFY, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_STR);
+          re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
         free(header_data_new);
         header_data_new = re.Save((DWORD&)exeheader_size_new);
 
@@ -1154,7 +1162,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         return PS_ERROR;
       }
       switch (k) {
-      	case 0:
+        case 0:
           build_header.common.intro_text_id=build_uninst.common.intro_text_id=id;
           break;
         case 1:
@@ -1187,8 +1195,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
     // Added by Amir Szekely 21st July 2002
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-	  case TOK_ADDBRANDINGIMAGE:
-	  try {
+    case TOK_ADDBRANDINGIMAGE:
+    try {
         int k=line.gettoken_enum(1,"top\0left\0");
         int wh=line.gettoken_int(2);
         if (k == -1) PRINTHELP()
@@ -1254,7 +1262,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-	  case TOK_SETFONT:
+    case TOK_SETFONT:
       SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
       try {
         build_compressor_set=true;
@@ -1310,7 +1318,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         int k=line.gettoken_enum(1,"zlib\0bzip2\0");
         switch (k) {
-        	case 0:
+          case 0:
             // Default is zlib...
             break;
           case 1:
@@ -1343,7 +1351,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     {
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
       try {
-      	NLF *newNLF = new NLF(line.gettoken_str(1));
+        NLF *newNLF = new NLF(line.gettoken_str(1));
         int i;
         for (i = 0; i < build_nlfs.size(); i++)
           if (build_nlfs[i]->GetLang() == newNLF->GetLang()) {
@@ -1568,13 +1576,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     ///////////////////////////////////////////////////////////////////////////////
 
     case TOK_SECTION:
-	{
-	  int a=1,ex = 0;
-	  if (!strcmp(line.gettoken_str(1),"/e"))
+    {
+      int a=1,ex = 0;
+      if (!strcmp(line.gettoken_str(1),"/e"))
       {
-		ex = 1;
-		a++;
-	  }
+        ex = 1;
+        a++;
+      }
       SCRIPT_MSG("Section: \"%s\"",line.gettoken_str(a));
       if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(" ->(%s)",line.gettoken_str(a+1));
       SCRIPT_MSG("\n");
@@ -1588,7 +1596,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
     if (line.gettoken_str(a)[0]=='-') return add_section("",curfilename,linecnt,line.gettoken_str(a+1),ex);
     return add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(2),ex);
-	}
+    }
     case TOK_SECTIONEND:
       SCRIPT_MSG("SectionEnd\n");
     return section_end();
@@ -1631,12 +1639,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SUBSECTION:
     {
       char buf[1024];
-	  int a=1,ex = 0;
-	  if (!strcmp(line.gettoken_str(1),"/e"))
+    int a=1,ex = 0;
+    if (!strcmp(line.gettoken_str(1),"/e"))
       {
-		ex = 1;
-		a++;
-	  }
+    ex = 1;
+    a++;
+    }
       wsprintf(buf,"-%s",line.gettoken_str(a));
       if (which_token == TOK_SUBSECTION && !line.gettoken_str(a)[0]) PRINTHELP()
 
@@ -3475,7 +3483,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           ent.offsets[0]=add_string(cur_out_path);
           ent.offsets[1]=1;
           a=add_entry(&ent);
-    		  if (a != PS_OK)
+          if (a != PS_OK)
           {
             FindClose(h);
             return a;
