@@ -159,6 +159,8 @@ Section "Language files" SecContribLang
   File ..\Bin\MakeLangID.exe
 SectionEnd
 
+SubSection "Plugins" SecContribPlugins
+
 Section "Language DLL" SecContribLangDLL
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
@@ -189,13 +191,6 @@ Section "UberSplash w/transparency" SecContribSplashT
   File ..\Contrib\UberSplash\*.txt
 SectionEnd
 
-Section "Zip2Exe" SecContribZ2E
-  SectionIn 1 2
-  SetOutPath $INSTDIR\Bin
-  File ..\Bin\zip2exe.exe
-  SetDetailsPrint both
-SectionEnd
-
 Section "InstallOptions" SecContribIO
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
@@ -215,6 +210,15 @@ Section "NSIS-DL" SecContribNSISDL
   File ..\contrib\NSISdl\ReadMe.txt
 
 SectionEnd
+SubSectionEnd
+
+Section "Zip2Exe" SecContribZ2E
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\zip2exe.exe
+  SetDetailsPrint both
+SectionEnd
+
 SubSectionEnd
 
 
@@ -271,6 +275,7 @@ Section "MakeNSISW Source" SecSrcMNW
 
 SectionEnd
 
+SubSection "Plugins" SecContribPluginsS
 
 Section "Language DLL Source" SecContribLangDLLS
   SectionIn 1
@@ -307,23 +312,6 @@ Section "UberSplash Source" SecContribSplashTS
   File ..\Contrib\UberSplash\*.txt
 SectionEnd
 
-Section "Zip2Exe Source" SecContribZ2ES
-  SectionIn 1
-  DetailPrint "Extracting zip2exe source"
-  SetDetailsPrint textonly
-  RMDir /r $INSTDIR\Source\Zip2Exe
-  SetOutPath $INSTDIR\Contrib\zip2exe
-  File ..\Contrib\zip2exe\*.cpp
-  File ..\Contrib\zip2exe\*.ico
-  File ..\Contrib\zip2exe\*.h
-  File ..\Contrib\zip2exe\*.rc
-  File ..\Contrib\zip2exe\*.dsw
-  File ..\Contrib\zip2exe\*.dsp
-  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
-  File ..\Contrib\zip2exe\zlib\*.*
-  SetDetailsPrint both
-SectionEnd
-
 Section "InstallOptions Source" SecContribIOS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\InstallOptions
@@ -347,6 +335,25 @@ Section "NSIS-DL Source" SecContribNSISDLS
   File ..\contrib\NSISdl\*.h
   File ..\contrib\NSISdl\*.rc
   File ..\contrib\NSISdl\ReadMe.txt
+SectionEnd
+
+SubSectionEnd ; plugins
+
+Section "Zip2Exe Source" SecContribZ2ES
+  SectionIn 1
+  DetailPrint "Extracting zip2exe source"
+  SetDetailsPrint textonly
+  RMDir /r $INSTDIR\Source\Zip2Exe
+  SetOutPath $INSTDIR\Contrib\zip2exe
+  File ..\Contrib\zip2exe\*.cpp
+  File ..\Contrib\zip2exe\*.ico
+  File ..\Contrib\zip2exe\*.h
+  File ..\Contrib\zip2exe\*.rc
+  File ..\Contrib\zip2exe\*.dsw
+  File ..\Contrib\zip2exe\*.dsp
+  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
+  File ..\Contrib\zip2exe\zlib\*.*
+  SetDetailsPrint both
 SectionEnd
 
 SubSectionEnd
@@ -533,6 +540,8 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIcons} "Icon files contributed by other NSIS developers"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
+	!insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
+	!insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPluginsS} "Source code for plugins"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output"
