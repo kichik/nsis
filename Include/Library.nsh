@@ -224,6 +224,8 @@ Example:
 
   !ifdef INSTALLLIB_INSTALL_REBOOT_PROTECTED | INSTALLLIB_INSTALL_NOREBOOT_PROTECTED
 
+    !define LIBRARY_DEFINE_DONE_LABEL
+
     System::Call "sfc::SfcIsFileProtected(i 0, w R4) i.R0"
 
       StrCmp $R0 "error" installlib.notprotected_${INSTALLLIB_UNIQUE}
@@ -253,6 +255,7 @@ Example:
   !ifndef LIBRARY_VERSION_NONE
 
     !define LIBRARY_DEFINE_UPGRADE_LABEL
+    !define LIBRARY_DEFINE_REGISTER_LABEL
 
     StrCpy $R0 ${LIBRARY_VERSION_HIGH}
     StrCpy $R1 ${LIBRARY_VERSION_LOW}
@@ -316,6 +319,12 @@ Example:
 
       !endif
 
+      !ifndef LIBRARY_DEFINE_REGISTER_LABEL
+
+        !define LIBRARY_DEFINE_REGISTER_LABEL
+
+      !endif
+
       StrCpy $R0 ${LIBRARY_VERSION_HIGH}
       StrCpy $R1 ${LIBRARY_VERSION_LOW}
 
@@ -360,6 +369,18 @@ Example:
     Call :installlib.file_${INSTALLLIB_UNIQUE}
 
   !else
+
+    !ifndef LIBRARY_DEFINE_REGISTER_LABEL
+
+      !define LIBRARY_DEFINE_REGISTER_LABEL
+
+    !endif
+
+    !ifndef LIBRARY_DEFINE_DONE_LABEL
+
+      !define LIBRARY_DEFINE_DONE_LABEL
+
+    !endif
 
     ClearErrors
 
@@ -422,7 +443,13 @@ Example:
   ;------------------------
   ;Register
 
-  installlib.register_${INSTALLLIB_UNIQUE}:
+  !ifdef LIBRARY_DEFINE_REGISTER_LABEL
+
+    !undef LIBRARY_DEFINE_REGISTER_LABEL
+
+    installlib.register_${INSTALLLIB_UNIQUE}:
+
+  !endif
 
   !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_REGDLLTLB
 
@@ -451,7 +478,13 @@ Example:
   ;------------------------
   ;Done
 
-  installlib.done_${INSTALLLIB_UNIQUE}:
+  !ifdef LIBRARY_DEFINE_DONE_LABEL
+
+    !undef LIBRARY_DEFINE_DONE_LABEL
+
+    installlib.done_${INSTALLLIB_UNIQUE}:
+
+  !endif
 
   Pop $R5
   Pop $R4
