@@ -101,7 +101,10 @@ table
                 <p class="text">Have a look at the example script, Example.nsi. 
                   This is an example of how the use this interface for your NSIS 
                   installer. The macro system also has multilanguage support, 
-                  see Multilanguage.nsi for a multilanguage example.</p>
+                  see Multilanguage.nsi for a multilanguage example. And if you
+                  want to use Install Options (for extra pages in your installer,
+                  like Start Menu folder selection etc.) have a look at InstallOptions.nsi,
+                  which is an example of the new Install Options macro system.</p>
                 <p class="text">If you have an installer with a lot of subsections 
                   or long section names, use the modern2.exe UI, which has a larger 
                   treeview for the component selection. To use modern2.exe, change 
@@ -123,11 +126,15 @@ table
                   file and recompile NSIS.</p>
                 <p class="header">Version history</p>
                 <ul>
-                <li class="text">Working on the following things
+                <li class="text">1.20 - September 22, 2002
                   <ul>
+                    <li>Lots of macro system updates & fixes
                     <li>InstallOptions support in macro system
-                    <li>Added Modern UI + InstallOptions example
-                    <li>Macro system updates & fixes
+                    <li>Added Modern UI + InstallOptions example (InstallOptions.nsi)
+                    <li>MUI_NEXTPAGE_OUTER integrated in MUI_NEXTPAGE
+                    <li>No hard-coded function names anymore (you should give MUI_PREVPAGE a parameter
+                    with the set page function name (for example, MUI_PREVPAGE SetPage)
+                    <li>Examples use ReserveFile for faster startup
                   </ul>
                 <li class="text">1.19 - Semtember 19, 2002
                   <ul>
@@ -144,12 +151,13 @@ table
                   </ul>
                 <li class="text">1.16 - Semtember 6, 2002
                   <ul>
-                    <li>Change text 'Scroll down' on license page to 'Press Page Down', because the RichEdit control has
-                    focus by default now
+                    <li>Change text 'Scroll down' on license page to 'Press Page Down',
+                    because the RichEdit control has focus by default now
                   </ul>
                 <li class="text">1.15 - Semtember 4, 2002
                   <ul>
-                    <li>Multilanguage example: changed LangDialog to LangDLL::LangDialog (using the DLL name is now required)
+                    <li>Multilanguage example: changed LangDialog to LangDLL::LangDialog
+                    (using the DLL name is now required)
                   </ul>
                 <li class="text">1.14 - Semtember 3, 2002
                   <ul>
