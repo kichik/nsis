@@ -338,7 +338,6 @@
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
   SetStaticBkColor ${MUI_TEMP1} -1
   GetWindowText ${MUI_TEMP2} ${MUI_TEMP1}
-  #ShowWindow ${MUI_TEMP1} ${SW_HIDE}
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
   SetStaticBkColor ${MUI_TEMP1} -1
   SendMessage ${MUI_TEMP1} ${WM_SETTEXT} ${NSIS_MAX_STRLEN} "STR:${MUI_TEMP2}"
@@ -941,6 +940,9 @@
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
 
+	  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+      ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
       
@@ -964,6 +966,9 @@
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+
+	  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
 
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
