@@ -71,7 +71,7 @@ Fertig
 # ^LicenseText
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^LicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren sie das Kästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. $_CLICK
 # ^LicenseTextRB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^UnLicenseText
