@@ -21,8 +21,7 @@
 #define Z_OK BZ_OK
 #define Z_STREAM_END BZ_STREAM_END
 #endif//NSIS_COMPRESS_USE_BZIP2
-
-#endif
+#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
 #include "ui.h"
 
@@ -128,14 +127,14 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
         g_filehdrsize = m_pos;
 
-#if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-        cl_flags |= h.flags & FH_FLAGS_SILENT;
-#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
+#if defined(NSIS_CONFIG_CRC_SUPPORT) || (defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT))
+        cl_flags |= h.flags;
+#endif
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-        if ((h.flags & FH_FLAGS_FORCE_CRC) == 0)
+        if ((cl_flags & FH_FLAGS_FORCE_CRC) == 0)
         {
-          if ((cl_flags & FH_FLAGS_NO_CRC) | (h.flags & FH_FLAGS_NO_CRC))
+          if (cl_flags & FH_FLAGS_NO_CRC)
             break;
         }
 
@@ -194,7 +193,8 @@ const char * NSISCALL loadHeaders(int cl_flags)
   if (hwnd) DestroyWindow(hwnd);
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-  if (!g_filehdrsize) return _LANG_INVALIDCRC;
+  if (!g_filehdrsize)
+    return _LANG_INVALIDCRC;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   if (do_crc)
@@ -223,7 +223,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   SetSelfFilePointer(g_filehdrsize + sizeof(firstheader), FILE_BEGIN);
 #endif
 
-  if ((crc = GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header)) != h.length_of_header)
+  if (GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header) != h.length_of_header)
   {
     GlobalFree((HGLOBAL)data);
     return _LANG_INVALIDCRC;
