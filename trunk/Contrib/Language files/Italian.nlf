@@ -70,17 +70,17 @@ Nome
 # ^Completed
 Completata
 # ^LicenseText
-Prego leggere la licenza prima di installare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare Accetto.
+Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto.
 # ^LicenseTextCB
-Prego leggere la licenza prima di installare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
 # ^LicesnseTextRB
-Prego leggere la licenza prima di installare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Prego leggere la licenza prima di installare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
 # ^UnLicenseText
-Prego leggere la licenza prima di disinstallare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare Accetto. $_CLICK
+Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare Accetto. $_CLICK
 # ^UnLicenseTextCB
-Prego leggere la licenza prima di disinstallare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
+Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la casella sottostante. $_CLICK
 # ^UnLicesnseTextRB
-Prego leggere la licenza prima di disinstallare $(^Name). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
+Prego leggere la licenza prima di disinstallare $(^NameDA). Se si accettano pienamente le condizioni di licenza, selezionare la prima delle opzioni sottoindicate. $_CLICK
 # ^Custom
 Personalizzata
 # ^ComponentsText
@@ -100,23 +100,23 @@ Seleziona i componenti da disinstallare:
 # ^UnComponentsSubText2
 Oppure, seleziona i componenti opzionali che vuoi disinstallare :
 # ^DirText
-Questa procedura installerà $(^Name) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
+Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
 # ^DirSubText
 Cartella di destinazione
 # ^DirBrowseText
-Seleziona la cartella dove installare $(^Name):
+Seleziona la cartella dove installare $(^NameDA):
 # ^UnDirText
-Questa procedura disinstallerà $(^Name) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
+Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Seleziona la cartella dalla quale disinstallare $(^Name):
+Seleziona la cartella dalla quale disinstallare $(^NameDA):
 # ^SpaceAvailable
 "Spazio disponibile: "
 # ^SpaceRequired
 "Spazio richiesto: "
 # ^UninstallingText
-$(^Name) verrà disinstallato dalla cartella seguente. $_CLICK
+$(^NameDA) verrà disinstallato dalla cartella seguente. $_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError

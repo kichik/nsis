@@ -92,7 +92,6 @@ BEGIN
     EDITTEXT        IDC_DIR,8,49,187,12,ES_AUTOHSCROLL
     PUSHBUTTON      "",IDC_BROWSE,202,48,55,14
     ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
-
     CONTROL         "",IDC_SPACEAVAILABLE,"Static",SS_LEFTNOWORDWRAP,0,122,
                     265,8
     CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
@@ -158,7 +157,8 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,24,10,241,
                     11
-    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP,24,0,241,8
+    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_NOPREFIX,24,0,241,8
     CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 
                     LVS_NOCOLUMNHEADER | NOT WS_VISIBLE | WS_BORDER | 
                     WS_TABSTOP,0,25,265,104

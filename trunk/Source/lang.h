@@ -213,6 +213,7 @@ enum {
   NLF_CLICK_INSTALL,
   NLF_CLICK_UNINSTALL,
   NLF_NAME,
+  NLF_NAME_DA, // name with doubled ampersands - virtual
   NLF_COMPLETED,
   NLF_LICENSE_TEXT,
   NLF_LICENSE_TEXT_FSCB,

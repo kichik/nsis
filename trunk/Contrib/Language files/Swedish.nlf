@@ -69,17 +69,17 @@ Namn
 # ^Completed
 Slutförd
 # ^LicenseText
-Please review the license agreement before installing $(^Name). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
+Please review the license agreement before installing $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
 # ^LicenseTextCB
-Var vänlig läs igenom licensvillkoren innan du installerar $(^Name). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
+Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
 # ^LicenseTextRB
-Var vänlig läs igenom licensvillkoren innan du installerar $(^Name). Om du accepterar villkoren i avtalet, välj det första alternativet nedan. $_CLICK
+Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA). Om du accepterar villkoren i avtalet, välj det första alternativet nedan. $_CLICK
 # ^UnLicenseText
-Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^Name). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
+Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka Jag Godkänner.
 # ^UnLicenseTextCB
-Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^Name). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
+Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^NameDA). Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. $_CLICK
 # ^UnLicenseTextRB
-Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^Name). Om du accepterar villkoren i avtalet, välj det första alternativet nedan. $_CLICK
+Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^NameDA). Om du accepterar villkoren i avtalet, välj det första alternativet nedan. $_CLICK
 # ^Custom
 Valfri
 # ^ComponentsText
@@ -99,23 +99,23 @@ Välj komponenter att avinstallera:
 # ^UnComponentsSubText2
 Eller, välj de alternativa komponenter du önskar avinstallera:
 # ^DirText
-Guiden kommer att installera $(^Name) i följande katalog. För att installera i en annan katalog, klicka Bläddra och välj en alternativ katalog. $_CLICK
+Guiden kommer att installera $(^NameDA) i följande katalog. För att installera i en annan katalog, klicka Bläddra och välj en alternativ katalog. $_CLICK
 # ^DirSubText
 Målkatalog
 # ^DirBrowseText
-Välj katalog att installera $(^Name) i:
+Välj katalog att installera $(^NameDA) i:
 # ^UnDirText
-Installationsguiden kommer att avinstallera $(^Name) från följande katalog. För att avinstallera från en annan katalog, klicka Bläddra och välj en annan katalog. $_CLICK
+Installationsguiden kommer att avinstallera $(^NameDA) från följande katalog. För att avinstallera från en annan katalog, klicka Bläddra och välj en annan katalog. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Välj katalog att avinstallera $(^Name) från:
+Välj katalog att avinstallera $(^NameDA) från:
 # ^SpaceAvailable
 "Utrymme tillgängligt: "
 # ^SpaceRequired
 "Utrymme som behövs: "
 # ^UninstallingText
-$(^Name) kommer att avinstalleras från följande katalog. $_CLICK
+$(^NameDA) kommer att avinstalleras från följande katalog. $_CLICK
 # ^UninstallingSubText
 Avinstallerar från:
 # ^FileError

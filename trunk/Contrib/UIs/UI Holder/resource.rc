@@ -116,7 +116,8 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,24,10,241,
                     11
-    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP,24,0,241,8
+    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP | SS_NOPREFIX,
+                    24,0,241,8
     CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 
                     LVS_NOCOLUMNHEADER | NOT WS_VISIBLE | WS_BORDER | 
                     WS_TABSTOP,0,25,265,104

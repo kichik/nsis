@@ -69,17 +69,17 @@ Název
 # ^Completed
 Dokonèeno
 # ^LicenseText
-Pøed instalací $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
+Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
 # ^LicenseTextCB
-Pøed instalací $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
+Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
 # ^LicenseTextRB
-Pøed instalací $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte níže první možnost. $_CLICK
+Pøed instalací $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte níže první možnost. $_CLICK
 # ^UnLicenseText
-Pøed odinstalování $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
+Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, kliknìte 'Souhlasím'.
 # ^UnLicenseTextCB
-Pøed odinstalování $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
+Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte políèko dole. $_CLICK
 # ^UnLicenseTextRB
-Pøed odinstalování $(^Name) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte níže první možnost. $_CLICK
+Pøed odinstalování $(^NameDA) si prosím pøeètìte licenèní ujednání. Jestliže souhlasíte se všema podmínkama ujednání, zaškrtnìte níže první možnost. $_CLICK
 # ^Custom
 Vlastní
 # ^ComponentsText
@@ -99,23 +99,23 @@ Zvolte souèásti pro odinstalaci:
 # ^UnComponentsSubText2
 Nebo zvolte jednotlivé souèásti, které chcete odinstalovat:
 # ^DirText
-Setup nyní nainstaluje program $(^Name) do následující složky. Pro instalaci do jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
+Setup nyní nainstaluje program $(^NameDA) do následující složky. Pro instalaci do jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
 # ^DirSubText
 Cílová složka
 # ^DirBrowseText
-Zvolte složku kam instalovat program $(^Name):
+Zvolte složku kam instalovat program $(^NameDA):
 # ^UnDirText
-Setup nyní odinstaluje program $(^Name) z následující složky. Pro odinstalaci z jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
+Setup nyní odinstaluje program $(^NameDA) z následující složky. Pro odinstalaci z jiné složky zvolte 'Procházet' a vyberte jinou složku. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Zvolte adresáø pro odinstalaci $(^Name) z:
+Zvolte adresáø pro odinstalaci $(^NameDA) z:
 # ^SpaceAvailable
 "Volné místo: "
 # ^SpaceRequired
 "Potøebné místo: "
 # ^UninstallingText
-Tento prùvodce z Vašeho poèítaèe odinstaluje $(^Name). $_CLICK
+Tento prùvodce z Vašeho poèítaèe odinstaluje $(^NameDA). $_CLICK
 # ^UninstallingSubText
 Odinstalovat z:
 # ^FileError

@@ -221,9 +221,13 @@ Replaces the default text strings for the four buttons (< Back, Next >, Cancel a
 
 \S2{aname} Name
 
-\c name
+\c name [name_doubled_ampersands]
 
-Sets the name of the installer. The name is usually simply the product name such as 'MyApp' or 'CrapSoft MyApp'.
+Sets the name of the installer. The name is usually simply the product name such as 'MyApp' or 'CrapSoft MyApp'. If you have one or more ampersands (&) in the name, set the second parameter to the same name, only with doubled ampersands. For example, if your product's name is "Foo & Bar", use:
+
+\c  Name "Foo & Bar" "Foo && Bar"
+
+If you have ampersands in the name and use a \R{langstring}{LangString} for the name, you will have to create another one with doubled ampersands to use as the second parameter.
 
 \S2{aoutfile} OutFile
 

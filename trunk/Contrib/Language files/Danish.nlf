@@ -36,7 +36,7 @@ Tilpasset
 Vælg hvilken type du vil installere:
 Vælg komponenter du vil installere:
 Eller, Vælg de udvalgte komponenter som du vil installere:
-Vælg mappe du vil installere $(^Name) i:
+Vælg mappe du vil installere $(^NameDA) i:
 Plads til rådighed: 
 Krævet plads: 
 Afinstallerer fra:

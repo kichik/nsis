@@ -70,17 +70,17 @@ Name
 # ^Completed
 Completed
 # ^LicenseText
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.
+Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, click I Agree.
 # ^LicenseTextCB
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
+Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, click the check box below. $_CLICK
 # ^LicenseTextRB
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
+Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, select the first option below. $_CLICK
 # ^UnLicenseText
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.
+Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, click I Agree.
 # ^UnLicenseTextCB
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
+Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, click the check box below. $_CLICK
 # ^UnLicenseTextRB
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
+Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, select the first option below. $_CLICK
 # ^Custom
 Custom
 # ^ComponentsText
@@ -100,23 +100,23 @@ Select components to uninstall:
 # ^UnComponentsSubText2
 Or, select the optional components you wish to uninstall:
 # ^DirText
-Setup will install $(^Name) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK
+Setup will install $(^NameDA) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK
 # ^DirSubText
 Destination Folder
 # ^DirBrowseText
-Select the folder to install $(^Name) in:
+Select the folder to install $(^NameDA) in:
 # ^UnDirText
-Setup will uninstall $(^Name) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK
+Setup will uninstall $(^NameDA) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Select the folder to uninstall $(^Name) from:
+Select the folder to uninstall $(^NameDA) from:
 # ^SpaceAvailable
 "Space available: "
 # ^SpaceRequired
 "Space required: "
 # ^UninstallingText
-$(^Name) will be uninstalled from the following folder. $_CLICK
+$(^NameDA) will be uninstalled from the following folder. $_CLICK
 # ^UninstallingSubText
 Uninstalling from:
 # ^FileError

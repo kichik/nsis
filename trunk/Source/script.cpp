@@ -1361,7 +1361,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (SetInnerString(NLF_NAME,line.gettoken_str(1)) == PS_WARNING)
           warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
-        SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(1));
+        SetInnerString(NLF_NAME_DA,line.gettoken_str(2));
+        SCRIPT_MSG("Name: \"%s\"",line.gettoken_str(1));
+        if (*line.gettoken_str(2))
+          SCRIPT_MSG(" \"%s\"",line.gettoken_str(2));
+        SCRIPT_MSG("\n");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_CAPTION:

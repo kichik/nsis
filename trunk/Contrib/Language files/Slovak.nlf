@@ -69,17 +69,17 @@ Názov
 # ^Completed
 Dokonèené
 # ^LicenseText
-Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, kliknite Súhlasím.
+Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, kliknite Súhlasím.
 # ^LicenseTextCB
-Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, zaškrtnite nasledujúce políèko. $_CLICK
+Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, zaškrtnite nasledujúce políèko. $_CLICK
 # ^LicenseTextRB
-Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, oznaète prvú z nasledujúcich moností. $_CLICK
+Prosím preèítajte si licenènú zmluvu pred inštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, oznaète prvú z nasledujúcich moností. $_CLICK
 # ^UnLicenseText
-Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, kliknite Súhlasím.
+Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, kliknite Súhlasím.
 # ^UnLicenseTextCB
-Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, zaškrtnite nasledujúce políèko. $_CLICK
+Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, zaškrtnite nasledujúce políèko. $_CLICK
 # ^UnLicenseTextRB
-Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^Name). Ak súhlasíte so všetkımi podmienkami zmluvy, oznaète prvú z nasledujúcich moností. $_CLICK
+Prosím preèítajte si licenènú zmluvu pred odinštaláciou $(^NameDA). Ak súhlasíte so všetkımi podmienkami zmluvy, oznaète prvú z nasledujúcich moností. $_CLICK
 # ^Custom
 Vlastná
 # ^ComponentsText
@@ -99,23 +99,23 @@ Vyberte komponenty, ktoré sa majú odinštalova:
 # ^UnComponentsSubText2
 Alebo, oznaète volite¾né komponenty, ktoré sa majú odinštalova:
 # ^DirText
-$(^Name) bude nainštalovanı do nasledujúceho adresára: Pre inštalovanie do iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
+$(^NameDA) bude nainštalovanı do nasledujúceho adresára: Pre inštalovanie do iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
 # ^DirSubText
 Cie¾ovı adresár
 # ^DirBrowseText
-Zvo¾te adresár, do ktorého bude $(^Name) nainštalovanı:
+Zvo¾te adresár, do ktorého bude $(^NameDA) nainštalovanı:
 # ^UnDirText
-Inštalátor odinštaluje $(^Name) z nasledujúceho adresára: Pre odinštalovanie z iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
+Inštalátor odinštaluje $(^NameDA) z nasledujúceho adresára: Pre odinštalovanie z iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Zvo¾te adresár, z ktorého bude $(^Name) odinštalovanı:
+Zvo¾te adresár, z ktorého bude $(^NameDA) odinštalovanı:
 # ^SpaceAvailable
 "Vo¾nı priestor: "
 # ^SpaceRequired
 "Potrebnı priestor: "
 # ^UninstallingText
-$(^Name) bude odinštalovanı z nasledujúceho adresára. $_CLICK
+$(^NameDA) bude odinštalovanı z nasledujúceho adresára. $_CLICK
 # ^UninstallingSubText
 Prebieha odinštalovanie z:
 # ^FileError
