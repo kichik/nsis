@@ -123,22 +123,23 @@ with a custom user interface.</p>
   scripts, but you   can also modify an existing script.<br><br>
   There are 7 things you need to insert in an existing script to use the
   Modern UI (in order).<br><br>
-  <p class="text"><span class="subheader">1. Insert the header files</span><br><br>
-  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre></p>
-  <p class="text"><span class="subheader">2. Define the name and version of your software</span><br><br>
+  <p class="text"><span class="subheader">1. Insert the header files</span></p>
+  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
+  <p class="text"><span class="subheader">2. Define the name and version of your software</span></p>
 <pre class="margin">!define NAME "Test Software" ;Define your own software name here
-!define VERSION "1.0" ;Define your own software version here</pre></p>
-  <p class="text"><span class="subheader">3. Define which elements you are using</span></br><br>
-  The Modern UI should know which things it should insert. Use the following defines:<br><br>
+!define VERSION "1.0" ;Define your own software version here</pre>
+  <p class="text"><span class="subheader">3. Define which elements you are using</span><br><br>
+  The Modern UI should know which things it should insert. Use the following defines:</p>
 <pre class="margin">!define MUI_LICENSEPAGE ;License page
 !define MUI_COMPONENTSPAGE ;Component-selection page
 !define MUI_DIRECTORYPAGE ;Directory-selection page
 !define MUI_LICENSEPAGE ;License page
 !define MUI_UNINSTALL ;Uninstaller
-!define MUI_ABORTWARNING ;Abort warning messabox</pre></p>
+!define MUI_ABORTWARNING ;Abort warning messabox
+!define MUI_INSTALLOPTIONS ;Using Install Options</pre>
   <p class="text"><span class="subheader">4. Insert language files</span><br><br>
-  Insert the Modern UI language files for the languages you are using:<br>
-  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre></p>
+  Insert the Modern UI language files for the languages you are using:</p>
+  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre>
   <p class="text"><span class="subheader">5. Interface settings (optional)</span><br><br>
   You can change the settings of the interface by usings defines:<br>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre></p>
@@ -160,9 +161,9 @@ with a custom user interface.</p>
   <span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i>
    - The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or ""
   for a old-school windows look)</p>
-  <p class="text"><span class="subheader">6. Insert the MUI_SYSTEM macro</span><br><br>
-  <pre class="margin">!insertmacro MUI_SYSTEM</pre></p>
-  <p class="text"><span class="subheader">7. Set the descriptions for the sections</span><br><br>
+  <p class="text"><span class="subheader">6. Insert the MUI_SYSTEM macro</span></p>
+  <pre class="margin">!insertmacro MUI_SYSTEM</pre>
+  <p class="text"><span class="subheader">7. Set the descriptions for the sections</span></p>
 <pre class="margin">
 LangString DESC_SectionName1 ${LANG_ENGLISH} "Description of section 1."
 LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
@@ -171,8 +172,8 @@ LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionName1} $(DESC_SectionName1)
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionName2} $(DESC_SectionName2)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
-</pre></p>
-<p class="text">Note: Always set a name for a section:<br><br>
+</pre>
+<p class="text">Note: Always set a name for a section:</p>
 <pre class="margin">
 Section "Section Name 1" SectionName1
  ...
@@ -181,19 +182,20 @@ SectionEnd
 Section "Section Name 2" SectionName2
  ...
 SectionEnd
-</pre></p>
-<p class="text"><span class="subheader">Custom pages</span><br><br>
-  If you want add custom pages to your installer using Install Options,
-  you can customize the page commands:<br><br>
+</pre>
+<p class="header">Custom pages</p>
+<p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
+Install Options documentation</a> for info about creating Install Options INI Files.</p>
+<p class="text">If you want add custom pages to your installer using Install Options,
+you should insert you own page commands to set the order of the pages and the names
+of the page functions:</p>
 <pre class="margin">
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
 
 !insertmacro MUI_PAGECOMMAND_LICENSE
-Page custom [function name]
-Page custom [function name]
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
 !insertmacro MUI_PAGECOMMAND_DIRECTORY
-Page custom [function name]
+Page custom [function name] ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 </pre>
 <p class="text">You can call Install Options in [function name]:</p>
@@ -203,14 +205,29 @@ LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
 
 Function [function name]
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
-  !insertmacro MUI_INSTALLOPTIONS_SHOW "iniFile.ini"
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
 FunctionEnd
 </pre>
-<p class="text"><a name="examples"><span class="subheader">Examples</span></a><br><br>
-  Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
+<p class="text">If you have defined MUI_INSTALLOPTIONS, there is a LangString for
+the setup caption available which you can use to write the caption in the current
+language to an Install Options INI File:</p>
+<pre class="margin">
+LangString TEXT_IO_PAGETITLE ${LANG_ENGLISH} "Page Title"
+
+!insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" \
+"Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): $(TEXT_IO_PAGETITLE)"
+</pre>
+<p class="text">If you are using abort warnings, you should also write the abort
+warning in the current language to an Install Options INI File:</p>
+<pre class="margin">
+!insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" \
+"Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
+</pre>
+<p class="header"><a name="examples">Examples</a></p>
+<p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
   Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br>
-  Cutom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">
-  InstallOptions.nsi</a><br>
+  Cutom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">InstallOptions.nsi</a><br>
+  </p>
 <p class="header">The interface</p>
 <p class="text"><span class="subheader">Modern.exe and modern2.exe</span><br><br>
   There are two different versions of the interface.
