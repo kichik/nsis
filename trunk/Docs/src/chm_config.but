@@ -6,7 +6,7 @@
 
 \cfg{xhtml-contents-depth-0}{5}
 
-\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><script language="JScript" src="chmlink.js"></script>}
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><script language="JavaScript" type="text/javascript" src="chmlink.js"></script>}
 
 \cfg{xhtml-rlink-prefix}{#" onclick="parser('}
 
