@@ -3296,71 +3296,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
     case TOK__PLUGINCOMMAND:
     {
-      static int zero_offset;
-      if (!zero_offset) zero_offset=add_string("$0");
       int ret;
 
       char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0));
       if (dllPath)
       {
-        if (!plugin_used) {
-          // If no plugin was called up until now init the plugin stuff
-          // Push $0
-          ent.which=EW_PUSHPOP;
-          ent.offsets[0]=zero_offset;
-          ent.offsets[1]=0;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // Get temp file name
-          ent.which=EW_GETTEMPFILENAME;
-          ent.offsets[0]=0; // $0
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // Delete the temp file created
-          ent.which=EW_DELETEFILE;
-          ent.offsets[0]=zero_offset;
-          ent.offsets[1]=0;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // Craete a dir instead of that temp file
-          ent.which=EW_CREATEDIR;
-          ent.offsets[0]=zero_offset;
-          ent.offsets[1]=0;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // Copy $0 to $PLUGINSDIR
-          ent.which=EW_PLUGINCOMMANDPREP;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // Pop $0
-          ent.which=EW_PUSHPOP;
-          ent.offsets[0]=0; // $0
-          ent.offsets[1]=1;
-          ent.offsets[2]=0;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
-          // We need to do all of this only once
-          plugin_used = true;
-        }
+        plugin_used = true;
+
+        ent.which=EW_CALL;
+        ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
+        ret=add_entry(&ent);
+        if (ret != PS_OK) return ret;
 
         // DLL name on the user machine
         char tempDLL[NSIS_MAX_STRLEN];
         wsprintf(tempDLL, "$PLUGINSDIR%s", strrchr(dllPath,'\\'));
         int tempDLLtab = add_string(tempDLL);
 
-        // Add the DLL if not already added
-        if (!m_plugins.IsDLLStored(strrchr(dllPath,'\\')+1))
-        {
-          int error;
-          int files_added;
-          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&files_added,tempDLL)))
-          {
-            ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
-            return error;
-          }
-
-          m_plugins.DLLStored(strrchr(dllPath,'\\')+1);
-        }
+        // Store the DLL
+        if (uninstall_mode) m_plugins.StoreUninstDLL(dllPath);
+        else m_plugins.StoreInstDLL(dllPath);
 
         // Finally call the DLL
         char* command = strstr(line.gettoken_str(0),"::");

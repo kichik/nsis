@@ -113,9 +113,9 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
               char *name = (char*)exports + names[j] - ExportDirVA;
               wsprintf(signature, "%s::%s", dllName, name);
               m_commands.add(signature, pathToDll);
-              DLL newDll = {new char[lstrlen(dllName)], false};
-              lstrcpy(newDll.name, dllName);
-              m_storedDLLs.push_back(newDll);
+              char *dll = new char[lstrlen(dllName)];
+              lstrcpy(dll, dllName);
+              m_storedDLLs.push_back(dll);
               if (displayInfo)
                 fprintf(g_output, " - %s\n", signature);
             }
@@ -156,22 +156,32 @@ char* Plugins::GetPluginDll(char* command)
   return 0;
 }
 
-void Plugins::DLLStored(char* dllName)
+void Plugins::StoreInstDLL(char* dllName)
 {
-  for (int i = 0; i < m_storedDLLs.size(); i++) {
-    if (!strcmp(m_storedDLLs[i].name, dllName)) {
-      m_storedDLLs[i].stored = true;
+  for (int i = 0; i < m_installDLLs.size(); i++)
+    if (!strcmp(m_installDLLs[i], dllName))
       return;
-    }
-  }
+  m_installDLLs.push_back(strdup(dllName));
 }
 
-bool Plugins::IsDLLStored(char* dllName)
+void Plugins::StoreUninstDLL(char* dllName)
 {
-  for (int i = 0; i < m_storedDLLs.size(); i++)
-    if (!strcmp(m_storedDLLs[i].name, dllName))
-      return m_storedDLLs[i].stored;
-  return false;
+  for (int i = 0; i < m_uninstallDLLs.size(); i++)
+    if (!strcmp(m_uninstallDLLs[i], dllName))
+      return;
+  m_uninstallDLLs.push_back(strdup(dllName));
+}
+
+char* Plugins::GetInstDLL(int i)
+{
+  if (i >= 0 && i < m_installDLLs.size()) return m_installDLLs[i];
+  else return 0;
+}
+
+char* Plugins::GetUninstDLL(int i)
+{
+  if (i >= 0 && i < m_uninstallDLLs.size()) return m_uninstallDLLs[i];
+  else return 0;
 }
 
 #endif

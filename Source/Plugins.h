@@ -9,23 +9,22 @@
 #include "strlist.h"
 #include <vector>
 
-struct DLL {
-  char *name;
-  bool stored;
-};
-
 class Plugins
 {
   public:
     void  FindCommands(char*,bool);
     bool  IsPluginCommand(char*);
     char* GetPluginDll(char*);
-    void  DLLStored(char*);
-    bool  IsDLLStored(char*);
+    void  StoreInstDLL(char*);
+    void  StoreUninstDLL(char*);
+    char* GetInstDLL(int);
+    char* GetUninstDLL(int);
 
   protected:
-    DefineList       m_commands;
-    std::vector<DLL> m_storedDLLs;
+    DefineList         m_commands;
+    std::vector<char*> m_storedDLLs;
+    std::vector<char*> m_installDLLs;
+    std::vector<char*> m_uninstallDLLs;
 
     void GetExports(char*,bool);
 };

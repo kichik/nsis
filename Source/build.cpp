@@ -1054,6 +1054,12 @@ int CEXEBuild::write_output(void)
       return PS_ERROR;
     }
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  // Added by Amir Szekely 9th August 2002
+  int err=add_plugin_initializer();
+  if (err != PS_OK) return err;
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+
   // Added by Amir Szekely 3rd August 2002
   if (WriteStringTables() == PS_ERROR) return PS_ERROR;
 
@@ -1848,5 +1854,100 @@ void CEXEBuild::build_plugin_table(void)
       delete[] searchPath;
     }
   }
+}
+
+int CEXEBuild::add_plugin_initializer(void)
+{
+  if (!plugin_used) return PS_OK;
+
+  SCRIPT_MSG("Adding plug-ins initializing function...\n");
+
+  bool uninstall = false;
+
+  int ret, i;
+  entry ent;
+  int zero_offset;
+
+  ret=add_function("Initialize_____Plugins");
+  if (ret != PS_OK) return ret;
+again:
+  zero_offset=add_string("$0");
+  // StrCmp $PLUGINSDIR ""
+  ent.which=EW_STRCMP;
+  ent.offsets[0]=add_string("$PLUGINSDIR");
+  ent.offsets[1]=add_string("");
+  ent.offsets[2]=0;
+  ent.offsets[3]=ns_label.add("Initialize_____Plugins_done",0);
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Push $0
+  ent.which=EW_PUSHPOP;
+  ent.offsets[0]=zero_offset;
+  ent.offsets[1]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Get temp file name
+  ent.which=EW_GETTEMPFILENAME;
+  ent.offsets[0]=0; // $0
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Delete the temp file created
+  ent.which=EW_DELETEFILE;
+  ent.offsets[0]=zero_offset;
+  ent.offsets[1]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Craete a dir instead of that temp file
+  ent.which=EW_CREATEDIR;
+  ent.offsets[0]=zero_offset;
+  ent.offsets[1]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Copy $0 to $PLUGINSDIR
+  ent.which=EW_PLUGINCOMMANDPREP;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // Pop $0
+  ent.which=EW_PUSHPOP;
+  ent.offsets[0]=0; // $0
+  ent.offsets[1]=1;
+  ent.offsets[2]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+
+  int files_added;
+  if (uninstall) {
+    char* dll;
+    for (i = 0; dll = m_plugins.GetUninstDLL(i); i++) {
+      char tempPath[NSIS_MAX_STRLEN];
+      wsprintf(tempPath,"$PLUGINSDIR%s",strrchr(dll,'\\'));
+      ret=do_add_file(dll,0,0,0,&files_added,tempPath);
+      if (ret != PS_OK) return ret;
+    }
+  }
+  else {
+    char* dll;
+    for (i = 0; dll = m_plugins.GetInstDLL(i); i++) {
+      char tempPath[NSIS_MAX_STRLEN];
+      wsprintf(tempPath,"$PLUGINSDIR%s",strrchr(dll,'\\'));
+      ret=do_add_file(dll,0,0,0,&files_added,tempPath);
+      if (ret != PS_OK) return ret;
+    }
+  }
+
+  if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
+
+  ret=function_end();
+  if (ret != PS_OK) return ret;
+
+  if (uninstaller_writes_used && !uninstall) {
+    add_function("un.Initialize_____Plugins");
+    uninstall = true;
+    goto again;
+  }
+
+  SCRIPT_MSG("Done!\n");
+
+  return PS_OK;
 }
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
