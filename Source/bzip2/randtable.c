@@ -1,5 +1,5 @@
 #include "../exehead/config.h"
-#ifdef NSIS_COMPRESS_USE_BZIP2
+#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 
 /*-------------------------------------------------------------*/
 /*--- Table for randomising repetitive blocks               ---*/
