@@ -1,22 +1,22 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.6
 
-;Language: "Chinese (Simplified)" (2052)
+;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Simplified)" ;以语言本身的方式，写下语言名称 Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Simplified)" ;(以语言本身的方式，写下语言名称) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "单击 [下一步(N)] 继续。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "单击 [安装(I)] 开始安装过程。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "欢迎使用 ${MUI_PRODUCT} 安装向导"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "这将在你的计算机安装 ${MUI_PRODUCT} 。\r\n\r\n在开始安装之前，建议您先关闭其他所有应用程序。这将允许安装程序更新特定的系统文件，而不需要重新启动你的系统。\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用 ${MUI_PRODUCT} 安装向导"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "这将在你的计算机安装 ${MUI_PRODUCT} 。\r\n\r\n在开始安装之前，建议您先关闭其他所有应用程序。这将允许安装程序更新特定的系统文件，而不需要重新启动你的系统。\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授权合约"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安装 ${MUI_PRODUCT} 之前，请检阅授权条款。"
@@ -68,4 +68,4 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "已完成"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "解除安装程序已成功地运行完成。"
   
-!insertmacro MUI_LANGUAGEFILE_ENDW
+!insertmacro MUI_LANGUAGEFILE_END
