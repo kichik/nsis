@@ -87,8 +87,8 @@ Section "Dummy Section" SecDummy
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\$MUI_STARTMENU_FOLDER"
-    CreateShortCut "$SMPROGRAMS\$MUI_STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\$MUI_TEMP"
+    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -122,12 +122,12 @@ Section "Uninstall"
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  
   startMenuDeleteLoop:
-    RMDir ${TEMP}
+    RMDir $MUI_TEMP
     GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
     
     IfErrors startMenuDeleteLoopDone
   
-    StrCmp ${TEMP} $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
+    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
