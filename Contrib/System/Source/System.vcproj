@@ -83,7 +83,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib user32.lib vc7ldvrm.obj vc7lmul.obj vc7lshl.obj vc7lshr.obj "
+				AdditionalDependencies="kernel32.lib user32.lib vc7ldvrm.obj vc7lmul.obj vc7lshl.obj vc7lshr.obj  chkstk.obj"
 				OutputFile="$(OutDir)/System.dll"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="TRUE"
