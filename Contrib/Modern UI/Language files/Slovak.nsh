@@ -1,8 +1,8 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.65
+;Compatible with Modern UI 1.66
 
 ;Language: Slovak (1051)
-;By Kypec (peter.kysucky@mahe.sk)
+;By Kypec (peter.dzugas@mahe.sk)
 
 ;--------------------------------
 
@@ -11,10 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Slovensky" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Kliknite na œalej pre pokraËovanie."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Kliknite na Inötalovaù pre spustenie inötal·cie."
-  
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi inötal·cie programu ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chyst·te sa nainötalovaù ${MUI_PRODUCT} na svoj poËÌtaË.\r\n\r\nPred zaËiatkom inötal·cie je odpor˙ËanÈ zavrieù vöetky ostatnÈ aplik·cie. T˝mto umoûnÌte inötal·toru aktualizovaù prÌpadnÈ systÈmovÈ s˙bory bez nutnosti reötartovaù systÈm.\r\n\r\n"
   
@@ -27,21 +24,22 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Voæba komponentov"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Zvoæte komponenty programu ${MUI_PRODUCT}, ktorÈ chcete nainötalovaù."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Zaökrtnite tie komponenty, ktorÈ chcete nainötalovaù a odökrtnite tie, ktorÈ nechcete nainötalovaù."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pri pohybe myöou nad komponentom programu sa tu zobrazÌ jeho popis."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Voæba umiestnenia inötal·cie"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Zvoæte adres·r, do ktorÈho chcete nainötalovaù program ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT} bude nainötalovan˝ do nasleduj˙ceho adres·ra.$\r$\n$\r$\nKliknite na Prehliadaù, pokiaæ chcete tento adres·r zmeniù."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Cieæov˝ adres·r"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Inötal·cia"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "PoËkajte, prosÌm, na dokonËenie inötal·cie programu ${MUI_PRODUCT}."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "DokonËenie inötal·cie"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Inötal·cia prebehla v poriadku."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&DokonËiù"
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Inötal·cia bola preruöen·"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Inötal·cia nebola ˙speöne dokonËen·."
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_BUTTONTEXT_FINISH "&DokonËiù"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "DokonËenie sprievodcu inötal·cie programu ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "Pr·ve ste nainötalovali program ${MUI_PRODUCT} do svojho systÈmu.\r\nKliknite na DokonËiù pre uzavretie tohto sprievodcu."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Pre ˙plnÈ dokonËenie inötal·cie programu ${MUI_PRODUCT} je nutnÈ vykonaù reötart V·öho systÈmu. Chcete reötartovaù ihneÔ?"
@@ -60,14 +58,19 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Kliknite na Odinötalovaù pre spustenie odinötal·cie."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Odinötalovanie programu ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Odstr·nenie programu ${MUI_PRODUCT} z V·öho systÈmu."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "T˝mto odinötalujete program ${MUI_PRODUCT} z V·öho systÈmu."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_TITLE "Odinötalovanie programu ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_SUBTITLE "Odstr·nenie programu ${MUI_PRODUCT} z V·öho systÈmu."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_TITLE "Voæba komponentov"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_SUBTITLE "Zvoæte komponenty programu ${MUI_PRODUCT}, ktorÈ chcete odinötalovaù."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Odinötalovanie"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "PoËkajte, prosÌm, na dokonËenie odinötalovania programu ${MUI_PRODUCT}."
     
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "DokonËenÈ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Odinötalovanie prebehlo v poriadku."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Odinötal·cia bola preruöen·"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Odinötal·cia nebola ˙speöne dokonËen·."
   
 !insertmacro MUI_LANGUAGEFILE_END
