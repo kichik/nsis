@@ -279,7 +279,7 @@ CEXEBuild::CEXEBuild()
   m_inst_fileused=0;
   m_uninst_fileused=0;
 
-  branding_image_found=false; // Added by Amir Szekely 22nd July 2002
+  branding_image_found=false;
 
   no_space_texts=false;
 
@@ -303,6 +303,11 @@ CEXEBuild::CEXEBuild()
   ubuild_last_page_define[0]=0;
   enable_last_page_cancel=0;
   uenable_last_page_cancel=0;
+
+  next_used=false;
+  install_used=false;
+  comppage_used=false;
+  license_force_radio_used=false;
 
   notify_hwnd=0;
 }
@@ -1394,8 +1399,12 @@ int CEXEBuild::write_output(void)
           install_used = true;
         }
         #ifdef NSIS_CONFIG_LICENSEPAGE
-        if (p->id==NSIS_PAGE_LICENSE)
-          p->next=LANG_BTN_LICENSE;
+        if (p->id==NSIS_PAGE_LICENSE) {
+          if (build_header.common.flags&CH_FLAGS_LICENSE_FORCE_SELECTION)
+            p->button_states|=16;
+          else
+            p->next=LANG_BTN_LICENSE;
+        }
         #endif
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
           p->button_states&=~6;

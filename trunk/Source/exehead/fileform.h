@@ -310,6 +310,9 @@ typedef struct
   #define CH_FLAGS_COMP_ONLY_ON_CUSTOM 256
   #define CH_FLAGS_NO_CUSTOM 512
 #endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  #define CH_FLAGS_LICENSE_FORCE_SELECTION 1024
+#endif
 
 // Settings common to both installers and uninstallers
 typedef struct
@@ -361,6 +364,8 @@ typedef struct
   int licensetext; // license page text
   int licensedata; // license text
   int licensebutton; // license button text
+  int licensebuttonagree; // agree check box/radio button
+  int licensebuttondisagree; // disagree check box/radio button
 #endif//NSIS_CONFIG_LICENSEPAGE
 #else
   int foo;

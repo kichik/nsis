@@ -7,7 +7,7 @@
 
 extern const char *NSIS_VERSION;
 
-extern char *english_strings[] = {
+char *english_strings[] = {
   "Nullsoft Install System %s",
   "%s Setup",
   "%s Uninstall",
@@ -22,6 +22,8 @@ extern char *english_strings[] = {
   "< &Back",
   "&Next >",
   "I &Agree",
+  "I &accept the terms in the License Agreement",
+  "I &do not accept the terms in the License Agreement",
   "&Install",
   "&Uninstall",
   "Cancel",
@@ -125,32 +127,31 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_C(NLF_BTN_CANCEL, common.cancelbutton);
     HANDLE_STRING_C(NLF_BTN_CLOSE, common.closebutton);
     HANDLE_STRING_C(NLF_BTN_DETAILS, common.showdetailsbutton);
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-#ifdef NSIS_SUPPORT_FILE
-    HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
-#endif
-
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     HANDLE_STRING_I(NLF_CAPTION, common.caption);
     HANDLE_STRING_I(NLF_SUBCAPTION_LICENSE, common.subcaptions[0]);
     HANDLE_STRING_I(NLF_SUBCAPTION_OPTIONS, common.subcaptions[1]);
     HANDLE_STRING_I(NLF_SUBCAPTION_DIR, common.subcaptions[2]);
     HANDLE_STRING_I(NLF_SUBCAPTION_INSTFILES, common.subcaptions[3]);
     HANDLE_STRING_I(NLF_SUBCAPTION_COMPLETED, common.subcaptions[4]);
-    HANDLE_STRING_I(NLF_BTN_LICENSE, installer.licensebutton);
-#endif
     HANDLE_STRING_I(NLF_BTN_INSTALL, installer.installbutton);
     HANDLE_STRING_I(NLF_BTN_BROWSE, installer.browse);
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     HANDLE_STRING_I(NLF_COMP_SUBTEXT1, installer.componentsubtext[0]);
     HANDLE_STRING_I(NLF_COMP_SUBTEXT2, installer.componentsubtext[1]);
+    HANDLE_STRING_I(SLANG_COMP_TEXT, installer.componenttext);
 #endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+    HANDLE_STRING_I(NLF_BTN_LICENSE, installer.licensebutton);
+    HANDLE_STRING_I(NLF_BTN_LICENSE_AGREE, installer.licensebuttonagree);
+    HANDLE_STRING_I(NLF_BTN_LICENSE_DISAGREE, installer.licensebuttondisagree);
+    HANDLE_STRING_I(SLANG_LICENSE_TEXT, installer.licensetext);
+    HANDLE_STRING_I(SLANG_LICENSE_DATA, installer.licensedata);
+#endif
+    HANDLE_STRING_I(SLANG_DIR_TEXT, installer.text);
     HANDLE_STRING_I(NLF_COMP_CUSTOM, installer.custom);
     HANDLE_STRING_I(NLF_DIR_SUBTEXT, installer.dirsubtext);
     HANDLE_STRING_I(NLF_SPACE_AVAIL, installer.spaceavailable);
     HANDLE_STRING_I(NLF_SPACE_REQ, installer.spacerequired);
-
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     HANDLE_STRING_U(NLF_UCAPTION, ucommon.caption);
     HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[0]);
@@ -158,27 +159,15 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[2]);
     HANDLE_STRING_U(NLF_BTN_UNINSTALL, uninstall.uninstbutton);
     HANDLE_STRING_U(NLF_UNINST_SUBTEXT, uninstall.uninstalltext2);
+    HANDLE_STRING_U(SLANG_UNINST_TEXT, uninstall.uninstalltext);
 #endif
 
-#endif
+#endif //NSIS_CONFIG_VISIBLE_SUPPORT
 
     HANDLE_STRING_C(SLANG_NAME, common.name);
 
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-    HANDLE_STRING_I(SLANG_COMP_TEXT, installer.componenttext);
-#endif
-
-#ifdef NSIS_CONFIG_LICENSEPAGE
-    HANDLE_STRING_I(SLANG_LICENSE_TEXT, installer.licensetext);
-    HANDLE_STRING_I(SLANG_LICENSE_DATA, installer.licensedata);
-#endif
-
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-    HANDLE_STRING_I(SLANG_DIR_TEXT, installer.text);
-#endif
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    HANDLE_STRING_U(SLANG_UNINST_TEXT, uninstall.uninstalltext);
+#ifdef NSIS_SUPPORT_FILE
+    HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
 #endif
 
     default:
@@ -400,6 +389,8 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   {
     table->installer.licensedata=0;
     table->installer.licensetext=0;
+    table->installer.licensebuttonagree=0;
+    table->installer.licensebuttondisagree=0;
   }
 
   if (table->installer.licensedata)
@@ -408,6 +399,12 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       table->common.subcaptions[0]=add_string_main(str(NLF_SUBCAPTION_LICENSE));
     if (!table->installer.licensebutton)
       table->installer.licensebutton=add_string_main(str(NLF_BTN_LICENSE),0);
+    if (build_header.common.flags&CH_FLAGS_LICENSE_FORCE_SELECTION) {
+      if (!table->installer.licensebuttonagree)
+        table->installer.licensebuttonagree=add_string_main(str(NLF_BTN_LICENSE_AGREE),0);
+      if (!table->installer.licensebuttondisagree && license_force_radio_used)
+        table->installer.licensebuttondisagree=add_string_main(str(NLF_BTN_LICENSE_DISAGREE),0);
+    }
   }
 #endif //NSIS_CONFIG_LICENSEPAGE
 
