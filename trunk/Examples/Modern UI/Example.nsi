@@ -99,7 +99,7 @@ FunctionEnd
 
 Function .onPrevPage
 
-  !insertmacro MUI_PREVPAGE
+  !insertmacro MUI_PREVPAGE SetPage
 
 FunctionEnd
 
