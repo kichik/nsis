@@ -1166,7 +1166,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf0=GetStringFromParm(0x02);
         char *buf1=GetStringFromParm(0x11);
         exec_error++;
-        if (RegCreateKey((HKEY)rootkey,buf1,&hKey) == ERROR_SUCCESS)
+        if (RegCreateKeyEx((HKEY)rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
         {
           LPBYTE data = (LPBYTE) buf2;
           DWORD size = 0;
