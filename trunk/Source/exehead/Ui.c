@@ -645,7 +645,7 @@ skipPage:
 #ifdef NSIS_CONFIG_LICENSEPAGE
 
 #define _RICHEDIT_VER 0x0200
-#include <RichEdit.h>
+#include <richedit.h>
 #undef _RICHEDIT_VER
 static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
