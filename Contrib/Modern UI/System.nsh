@@ -550,7 +550,7 @@ Var MUI_TEMP2
       !else ifdef MUI_LICENSEPAGE_CHECKBOX
         LicenseText "$(MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX)"
       !else
-        LicenseText "$(MUI_INNERTEXT_LICENSE_RADIOBUTTONS)"
+        LicenseText "$(MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS)"
       !endif
     !else
       LicenseText ${MUI_LICENSEPAGE_TEXT}
@@ -834,7 +834,7 @@ Var MUI_TEMP2
       !else ifdef MUI_LICENSEPAGE_CHECKBOX
         LicenseText "$(MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX)"
       !else
-        LicenseText "$(MUI_UNINNERTEXT_LICENSE_RADIOBUTTONS)"
+        LicenseText "$(MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS)"
       !endif
     !else
       LicenseText ${MUI_LICENSEPAGE_TEXT}
