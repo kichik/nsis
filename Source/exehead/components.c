@@ -55,6 +55,7 @@ static unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int first_cal
 
     if (flags & SF_SECGRP) {
       ni = _RefreshSectionGroups(i, 0);
+      flags = sections[i].flags;
     }
 
     if (flags & SF_SECGRPEND) {
