@@ -24,7 +24,7 @@ typedef struct _stack_t {
 static stack_t *g_st;
 #endif
 
-union flags g_flags;
+union installer_flags g_flags;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 char plugins_temp_dir[NSIS_MAX_STRLEN]="";
@@ -208,6 +208,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETFLAG:
       g_flags.flags[parm0]=parm1;
     break;
+    case EW_IFFLAG:
+    {
+      int f=entry_->offsets[!g_flags.flags[parm2]];
+      g_flags.flags[parm2]&=parm3;
+      return f;
+    }
     case EW_CHDETAILSVIEW:
       if (insthwndbutton) ShowWindow(insthwndbutton,parm1);
       if (insthwnd) ShowWindow(insthwnd,parm0);
@@ -274,12 +280,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       log_printf3("IfFileExists: file \"%s\" does not exist, jumping %d",buf0,parm2);
     }
     return parm2;
-    case EW_IFERRORS:
-    {
-      int f=entry_->offsets[!g_flags.exec_error];
-      g_flags.exec_error=0;
-      return f;
-    }
 #ifdef NSIS_SUPPORT_RENAME
     case EW_RENAME:
       {
@@ -1110,7 +1110,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         FreeLibrary(h);
       }
     break;
-    case EW_IFREBOOTFLAG: return entry_->offsets[!g_flags.exec_reboot];
 #endif//NSIS_SUPPORT_REBOOT
 #ifdef NSIS_SUPPORT_INIFILES
     case EW_WRITEINI:

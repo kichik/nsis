@@ -356,6 +356,8 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   return 0;
 }
 
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(installer_flags, flag)/sizeof(int))
+
 int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int *lineptr)
 {
   int linecnt = *lineptr;
@@ -2470,7 +2472,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SETSHELLVARCONTEXT:
       ent.which=EW_SETFLAG;
-      ent.offsets[0]=1;
+      ent.offsets[0]=FLAG_OFFSET(all_user_var);
       ent.offsets[1]=line.gettoken_enum(1,"current\0all\0");
       if (ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SetShellVarContext: %s\n",line.gettoken_str(1));
@@ -3248,26 +3250,35 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
       ent.which=EW_SETFLAG;
-      ent.offsets[0]=0;
+      ent.offsets[0]=FLAG_OFFSET(autoclose);
       ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
       if (ent.offsets[1] < 0) PRINTHELP()
       SCRIPT_MSG("SetAutoClose: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_IFERRORS:
-      ent.which=EW_IFERRORS;
+      ent.which=EW_IFFLAG;
       if (process_jump(line,1,&ent.offsets[0]) ||
           process_jump(line,2,&ent.offsets[1])) PRINTHELP()
+      ent.offsets[2]=FLAG_OFFSET(exec_error);
+      ent.offsets[3]=0;//new value mask - clean error
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    case TOK_IFABORT:
+      ent.which=EW_IFFLAG;
+      if (process_jump(line,1,&ent.offsets[0]) ||
+          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
+      ent.offsets[2]=FLAG_OFFSET(abort);
+      ent.offsets[3]=(int)~0;//new value mask - keep flag
+      SCRIPT_MSG("IfAbort ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_CLEARERRORS:
       ent.which=EW_SETFLAG;
-      ent.offsets[0]=2;
+      ent.offsets[0]=FLAG_OFFSET(exec_error);
       ent.offsets[1]=0;
       SCRIPT_MSG("ClearErrors\n");
     return add_entry(&ent);
     case TOK_SETERRORS:
       ent.which=EW_SETFLAG;
-      ent.offsets[0]=2;
+      ent.offsets[0]=FLAG_OFFSET(exec_error);
       ent.offsets[1]=1;
       SCRIPT_MSG("SetErrors\n");
     return add_entry(&ent);
@@ -3997,14 +4008,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("Reboot! (WOW)\n");
     return add_entry(&ent);
     case TOK_IFREBOOTFLAG:
-      ent.which=EW_IFREBOOTFLAG;
+      ent.which=EW_IFFLAG;
       if (process_jump(line,1,&ent.offsets[0]) ||
           process_jump(line,2,&ent.offsets[1])) PRINTHELP()
+      ent.offsets[2]=FLAG_OFFSET(exec_reboot);
+      ent.offsets[3]=(int)~0;//new value mask - keep flag
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETREBOOTFLAG:
       ent.which=EW_SETFLAG;
-      ent.offsets[0]=3;
+      ent.offsets[0]=FLAG_OFFSET(exec_reboot);
       ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
       if (ent.offsets[1] < 0) PRINTHELP()
     return add_entry(&ent);

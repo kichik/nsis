@@ -45,8 +45,8 @@ enum
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
   EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
   EW_IFFILEEXISTS,      // IfFileExists: 3, [file name, jump amount if exists, jump amount if not exists]
-  EW_IFERRORS,          // IfErrors: 2 [jump if error, jump if not error]
   EW_SETFLAG,           // Sets a flag: 2 [id, data]
+  EW_IFFLAG,            // If a flag: 4 [on, off, id, new value mask]
 #ifdef NSIS_SUPPORT_RENAME
   EW_RENAME,            // Rename: 3 [old, new, rebootok]
 #endif
@@ -513,5 +513,17 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
   #define VAR_CODES_START (256 - 36)
 #endif
 
+union installer_flags {
+  struct {
+    int autoclose;
+    int all_user_var;
+    int exec_error;
+    int abort;
+#ifdef NSIS_SUPPORT_REBOOT
+    int exec_reboot;
+#endif
+  };
+  int flags[1];
+};
 
 #endif //_FILEFORM_H_

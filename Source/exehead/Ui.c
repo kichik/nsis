@@ -79,7 +79,7 @@ int num_sections;
 
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
-static int m_page=-1,m_abort,m_retcode,m_delta=1;
+static int m_page=-1,m_retcode,m_delta=1;
 
 #define NOTIFY_BYE_BYE 'x'
 
@@ -631,7 +631,7 @@ nextPage:
     }
     if (id == IDCANCEL)
     {
-      if (m_abort)
+      if (g_flags.abort)
       {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
@@ -1332,20 +1332,20 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    if (ExecuteCodeSegment(g_inst_uninstheader->code,g_progresswnd)) m_abort++;
+    if (ExecuteCodeSegment(g_inst_uninstheader->code,g_progresswnd)) g_flags.abort++;
   }
   else
   {
 #endif
     int m_inst_sec=0;
-    while (m_inst_sec<num_sections && !m_abort)
+    while (m_inst_sec<num_sections && !g_flags.abort)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       if (g_inst_section[m_inst_sec].flags&SF_SELECTED)
 #endif
       {
         log_printf2("Section: \"%s\"",GetStringFromStringTab(g_inst_section[m_inst_sec].name_ptr));
-        if (ExecuteCodeSegment(g_inst_section[m_inst_sec].code,g_progresswnd)) m_abort++;
+        if (ExecuteCodeSegment(g_inst_section[m_inst_sec].code,g_progresswnd)) g_flags.abort++;
       }
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       else
@@ -1358,8 +1358,8 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   }
 #endif
-  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,m_abort,0);
-  return m_abort;
+  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,g_flags.abort,0);
+  return g_flags.abort;
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
