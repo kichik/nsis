@@ -77,6 +77,7 @@ void DisableItems(HWND hwnd) {
 	EnableMenuItem(m,IDM_SAVE,MF_GRAYED);
 	EnableMenuItem(m,IDM_TEST,MF_GRAYED);
 	EnableMenuItem(m,IDM_EXIT,MF_GRAYED);
+	EnableMenuItem(m,IDM_LOADSCRIPT,MF_GRAYED);
 	EnableMenuItem(m,IDM_RECOMPILE,MF_GRAYED);
 	EnableMenuItem(m,IDM_COPY,MF_GRAYED);
 	EnableMenuItem(m,IDM_COPYSELECTED,MF_GRAYED);
@@ -84,48 +85,48 @@ void DisableItems(HWND hwnd) {
 }
 
 void EnableItems(HWND hwnd) {
-  #define MSG(a) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,0,0)
-  #define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
-  #define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
+	#define MSG(a) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,0,0)
+	#define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
+	#define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
 
-  if (g_input_script) {
-    GlobalFree(g_input_script);
-    g_input_script = 0;
-  }
-  if (g_output_exe) {
-    GlobalFree(g_output_exe);
-    g_output_exe = 0;
-  }
+	if (g_input_script) {
+		GlobalFree(g_input_script);
+		g_input_script = 0;
+	}
+	if (g_output_exe) {
+		GlobalFree(g_output_exe);
+		g_output_exe = 0;
+	}
 
-  TEXTRANGE tr;
-  FINDTEXT ft;
+	TEXTRANGE tr;
+	FINDTEXT ft;
 
-  // find input script
-  ft.chrg.cpMin = 0;
-  ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
-  ft.lpstrText = "Processing script file: \"";
-  ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
-  ft.lpstrText = "\"";
-  tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  tr.lpstrText = g_input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
-  MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
+	// find input script
+	ft.chrg.cpMin = 0;
+	ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
+	ft.lpstrText = "Processing script file: \"";
+	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
+	ft.lpstrText = "\"";
+	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+	tr.lpstrText = g_input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
-  // find output exe
-  ft.chrg.cpMin = 0;
-  ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
-  ft.lpstrText = "Output: \"";
-  ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
-  ft.lpstrText = "\"";
-  tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  tr.lpstrText = g_output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
-  MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
+	// find output exe
+	ft.chrg.cpMin = 0;
+	ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
+	ft.lpstrText = "Output: \"";
+	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
+	ft.lpstrText = "\"";
+	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+	tr.lpstrText = g_output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
-  g_warnings = FALSE;
+	g_warnings = FALSE;
 
-  ft.lpstrText = "warning:";
-  if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
-  ft.lpstrText = "warnings:";
-  if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+	ft.lpstrText = "warning:";
+	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+	ft.lpstrText = "warnings:";
+	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
 
 	HMENU m = GetMenu(hwnd);
 	if (g_output_exe && !g_retcode) {
@@ -135,6 +136,7 @@ void EnableItems(HWND hwnd) {
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
 	EnableMenuItem(m,IDM_SAVE,MF_ENABLED);
 	EnableMenuItem(m,IDM_EXIT,MF_ENABLED);
+	EnableMenuItem(m,IDM_LOADSCRIPT,MF_ENABLED);
 	EnableMenuItem(m,IDM_RECOMPILE,MF_ENABLED);
 	EnableMenuItem(m,IDM_COPY,MF_ENABLED);
 	EnableMenuItem(m,IDM_COPYSELECTED,MF_ENABLED);
