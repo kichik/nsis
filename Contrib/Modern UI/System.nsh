@@ -1861,9 +1861,9 @@ Var MUI_TEMP2
   Function .onUserAbort
     !ifdef MUI_ABORTWARNING
       !insertmacro MUI_ABORTWARNING
-      !ifdef MUI_CUSTOMFUNCTION_ABORT
-        Call "${MUI_CUSTOMFUNCTION_ABORT}"
-      !endif
+    !endif
+    !ifdef MUI_CUSTOMFUNCTION_ABORT
+      Call "${MUI_CUSTOMFUNCTION_ABORT}"
     !endif
   FunctionEnd
 
@@ -1874,9 +1874,9 @@ Var MUI_TEMP2
   Function un.onUserAbort
     !ifdef MUI_UNABORTWARNING
       !insertmacro MUI_UNABORTWARNING
-      !ifdef MUI_CUSTOMFUNCTION_UNABORT
-        Call "${MUI_CUSTOMFUNCTION_UNABORT}"
-      !endif
+    !endif
+    !ifdef MUI_CUSTOMFUNCTION_UNABORT
+      Call "${MUI_CUSTOMFUNCTION_UNABORT}"
     !endif
   FunctionEnd
 
