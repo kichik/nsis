@@ -33,11 +33,19 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 !include "MUI.nsh"
 
 ;--------------------------------
-;Modern UI Configuration
+;Configuration
 
 ;Names
 Name "NSIS"
 Caption "NSIS ${VER_DISPLAY} Setup"
+
+;Interface Settings
+!define MUI_ABORTWARNING
+
+!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nullsoft.bmp"
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System), the Windows installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n$_CLICK"
@@ -58,14 +66,6 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
-
-;Settings
-!define MUI_ABORTWARNING
-
-!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
-!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nullsoft.bmp"
-
-!define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;--------------------------------
 ;Languages
