@@ -16,3 +16,12 @@ a:hover {
 	color: #FFFFFF;
 	text-decoration: none;
 }
+.btitle {
+	color: #000000;
+	text-decoration: underline;
+}
+.btitle:hover {
+	background-color: #F4F4F4;
+	color: #000000;
+	text-decoration: underline;
+}
