@@ -419,7 +419,8 @@ CEXEBuild::CEXEBuild()
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 
-int CEXEBuild::add_string(const char *string, int process/*=1*/) // returns offset in stringblock
+// returns offset in stringblock
+int CEXEBuild::add_string(const char *string, int process/*=1*/, WORD codepage/*=CP_ACP*/)
 {
   if (!string || !*string) return 0;
 
@@ -442,11 +443,7 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/) // returns offs
   if (!process) return cur_strlist->add(string,2);
 
   char buf[4096];
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  preprocess_string(buf,string,false);
-#else
-  preprocess_string(buf,string);
-#endif
+  preprocess_string(buf,string,codepage);
   return cur_strlist->add(buf,2);
 }
 
@@ -458,11 +455,7 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 }
 
 // based on Dave Laundon's code
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-int CEXEBuild::preprocess_string(char *out, const char *in, bool bUninstall)
-#else
-int CEXEBuild::preprocess_string(char *out, const char *in)
-#endif
+int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_ACP*/)
 {
 #ifndef NSIS_SUPPORT_NAMED_USERVARS
   static const char VarNames[] =
@@ -510,7 +503,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   const char *p=in;
   while (*p)
   {
-    const char *np=CharNext(p);
+    const char *np=CharNextExA(codepage, p, 0);
     
     if (np-p > 1) // multibyte char
     {
@@ -602,29 +595,14 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
             if (pos) 
             {
               *pos = 0;
-              if ( !bUninstall )
+              idx = DefineLangString(cp);
+              if ( idx < 0 )
               {
-                idx = DefineLangString(cp);
-                if ( idx < 0 )
-                {
-                  *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                  *(WORD*)out=(WORD)idx;
-                  out += sizeof(WORD);
-                  p += strlen(cp)+2;
-                  bProceced = true;
-                }
-              }
-              else
-              {                
-                idx = DefineLangString(cp);
-                if ( idx < 0 )
-                {
-                  *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                  *(WORD*)out=(WORD)idx;
-                  out += sizeof(WORD);
-                  p += strlen(cp)+2;
-                  bProceced = true;
-                }
+                *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                *(WORD*)out=(WORD)idx;
+                out += sizeof(WORD);
+                p += strlen(cp)+2;
+                bProceced = true;
               }
             }
             free(cp);              

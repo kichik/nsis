@@ -175,14 +175,10 @@ class CEXEBuild {
     int add_db_data(IMMap *map); // returns offset
     int add_db_data(const char *data, int length); // returns offset
     int add_data(const char *data, int length, IGrowBuf *dblock); // returns offset
-    int add_string(const char *string, int process=1); // returns offset (in string table)
+    int add_string(const char *string, int process=1, WORD codepage=CP_ACP); // returns offset (in string table)
     int add_intstring(const int i); // returns offset in stringblock
 
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-    int preprocess_string(char *out, const char *in, bool bUninstall);
-#else
-    int preprocess_string(char *out, const char *in);
-#endif
+    int preprocess_string(char *out, const char *in, WORD codepage=CP_ACP);
 
     int make_sure_not_in_secorfunc(const char *str, int page_ok=0);
 
