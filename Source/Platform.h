@@ -368,7 +368,7 @@ typedef WORD LANGID;
 #  define VS_VERSION_INFO 1
 #endif
 #ifndef VS_FFI_SIGNATURE
-#  define VS_FFI_SIGNATURE 0xFEEFO4BD
+#  define VS_FFI_SIGNATURE 0xFEEF04BD
 #endif
 
 // message box

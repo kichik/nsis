@@ -4421,7 +4421,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           if (ver)
           {
-            if (versize > sizeof(WORD) * 3)
+            if ((size_t) versize > sizeof(WORD) * 3)
             {
               // get VS_FIXEDFILEINFO from VS_VERSIONINFO
               WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
