@@ -489,7 +489,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     // if the last page was a custom page, wait for it to finish by itself.
     // if it doesn't, it's a bad plugin.
     // plugins should react to WM_NOTIFY_OUTER_NEXT.
-    if (this_page->id<0) return 0;
+    if (m_delta&&this_page->id<0) return 0;
 
 nextPage:
 
