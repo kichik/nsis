@@ -133,24 +133,15 @@ char *NSISCALL addtrailingslash(char *str)
 
 void NSISCALL trimslashtoend(char *buf)
 {
-  char *p=scanendslash(buf);
-  if (p<buf) p=buf;
-  *p=0;
-}
-
-
-char * NSISCALL scanendslash(const char *str)
-{
-  char *s=CharPrev(str,str+mystrlen(str));
-  if (!*str) return (char*)str-1;
-  for (;;)
+  char *p = CharPrev(buf, buf + mystrlen(buf));
+  do
   {
-    char *t;
-    if ('\\' == *s) return s;
-    t=CharPrev(str,s);
-    if (t==s) return (char*)str-1;
-    s=t;
-  }
+    if (*p == '\\')
+      break;
+    p = CharPrev(buf, p);
+  } while (p > buf);
+  
+  *p = 0;
 }
 
 int NSISCALL validpathspec(char *ubuf)
@@ -158,34 +149,48 @@ int NSISCALL validpathspec(char *ubuf)
   return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (ubuf[0] && *CharNext(ubuf)==':'));
 }
 
-int NSISCALL is_valid_instpath(char *s)
+char * NSISCALL skip_root(char *path)
 {
-  int ivp=0;
-  // if CH_FLAGS_NO_ROOT_DIR is set, req is 0, which means rootdirs are not allowed.
-  int req=!(g_flags&CH_FLAGS_NO_ROOT_DIR);
-  if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
+  char *p = CharNext(path);
+  char *p2 = CharNext(p);
+
+  if (*path && *(WORD*)p == CHAR2_TO_WORD(':', '\\'))
   {
-    if (lastchar(s)!='\\') ivp++;
-    while (*s)
+    return CharNext(p2);
+  }
+  else if (*(WORD*)path == CHAR2_TO_WORD('\\','\\'))
+  {
+    // skip host and share name
+    int x = 2;
+    while (x--)
     {
-      if (*s == '\\') ivp++;
-      s=CharNext(s);
+      while (*p2 != '\\')
+      {
+        if (!*p2)
+          return NULL;
+        p2 = CharNext(p2);
+      }
+      p2 = CharNext(p2);
     }
-    ivp/=5-req;
+
+    return p2;
   }
   else
+    return NULL;
+}
+
+int NSISCALL is_valid_instpath(char *s)
+{
+  int ret = 0;
+  char *p = skip_root(s);
+  if (p && ((*p && *p != '\\') || !(g_flags & CH_FLAGS_NO_ROOT_DIR)))
   {
-    if (*s)
-    {
-      s=CharNext(s);
-      if (*(WORD*)s == CHAR2_TO_WORD(':','\\'))
-      {
-        s+=2;
-        if (req || (*s && *s != '\\')) ivp++;
-      }
-    }
+    char pb = *p;
+    *p = 0;
+    ret = GetFileAttributes(s) != (DWORD)-1;
+    *p = pb;
   }
-  return ivp;
+  return ret;
 }
 
 char * NSISCALL mystrstr(char *a, char *b)
@@ -674,13 +679,13 @@ char * NSISCALL validate_filename(char *in) {
   char *out;
   char *out_save;
   while (*in == ' ') in=CharNext(in);
-  if (in[0] && in[1] && in[2]) {
+  if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\') {
     // at least four bytes
-    if (*(DWORD*)in == CHAR4_TO_DWORD('\\', '\\', '?', '\\')) in += 4;
+    in += 4;
   }
   if (*in) {
     // at least two bytes
-    if (in[0] && validpathspec(in)) in += 2;
+    if (validpathspec(in)) in += 2;
   }
   out = out_save = in;
   while (*(char*)&cur_char = *in) {

@@ -171,6 +171,8 @@ int NSISCALL ui_doinstall(void)
   static WNDCLASS wc; // richedit subclassing and bgbg creation
   g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
 
+  set_language();
+
   if (!is_valid_instpath(state_install_directory))
   {
     if (header->install_reg_key_ptr)
@@ -201,8 +203,9 @@ int NSISCALL ui_doinstall(void)
             d=GetFileAttributes(p);
             if (d == (DWORD)-1 || !(d&FILE_ATTRIBUTE_DIRECTORY))
             {
-              e=scanendslash(p);
-              if (e>=p) *e=0;
+              // if there is no back-slash, the string will become empty, but that's ok because
+              // it would make an invalid instdir anyway
+              trimslashtoend(p);
             }
           }
         }
@@ -223,8 +226,6 @@ int NSISCALL ui_doinstall(void)
     log_dolog=1;
   }
 #endif
-
-  set_language();
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   g_hIcon=LoadImage(g_hInstance,MAKEINTRESOURCE(IDI_ICON2),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_SHARED);
@@ -790,6 +791,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
   {
     static char s[NSIS_MAX_STRLEN];
+    char *p;
     int is_valid_path;
     int x;
     int total=0, available=-1;
@@ -799,16 +801,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     is_valid_path=is_valid_instpath(dir);
 
     mystrcpy(s,dir);
-    if (s[1] == ':') s[3]=0;
-    else if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
-    {
-      char *p = mystrstr(s+2,"\\");
-      if (p) {
-        p = mystrstr(p+1,"\\");
-        if (p) *p = 0;
-      }
-      addtrailingslash(s);
-    }
+    p=skip_root(s);
+    if (p)
+      *p=0;
 
     if (GetDiskFreeSpace(s,&spc,&bps,&fc,&tc))
     {
