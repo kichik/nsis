@@ -2,7 +2,9 @@ Name "UserInfo.dll test"
 OutFile UserInfo.exe
 
 Section
+	ClearErrors
 	UserInfo::GetName
+	IfErrors Win9x
 	Pop $0
 	UserInfo::GetAccountType
 	Pop $1
@@ -18,7 +20,12 @@ Section
 	StrCmp $1 "Guest" 0 +3
 		MessageBox MB_OK 'User "$0" is a guest'
 		Goto done
-	MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
+	MessageBox MB_OK "Unknown error"
+
+	Win9x:
+		# This one means you don't need to care about admin or
+		# not admin because Windows 9x doesn't either
+		MessageBox MB_OK "Error! This DLL can't run under Windows 9x!"
 
 	done:
 SectionEnd
