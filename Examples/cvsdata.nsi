@@ -42,10 +42,13 @@ Function .onInit
 
   StrCpy ${NSISPATH} "$EXEDIR\.."
   
-  IfFileExists "${NSISPATH}\CVS\Root" "" +3
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-    "Your NSIS folder already contains CVS data. Do you want to overwrite your current data?" IDYES +2
-    Quit
+  IfFileExists "${NSISPATH}\CVS\Root" "" +6
+    Call GetParameters
+    Pop $R0
+    StrCmp $R0 "nooverwrite" +2
+      MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+      "Your NSIS folder already contains CVS data. Do you want to overwrite your current data?" IDYES +2
+      Quit
 
 FunctionEnd
 
@@ -67,7 +70,6 @@ Section ""
 !insertmacro CVSDATA "Contrib\LangDLL"
 !insertmacro CVSDATA "Contrib\Language files"
 !insertmacro CVSDATA "Contrib\Makensisw"
-!insertmacro CVSDATA "Contrib\Makensisw\jnetlib"
 !insertmacro CVSDATA "Contrib\Modern UI"
 !insertmacro CVSDATA "Contrib\Modern UI\Language files"
 !insertmacro CVSDATA "Contrib\NSIS Update"
@@ -103,3 +105,35 @@ Section ""
 SectionEnd
 
 !verbose 4
+
+;--------------------------------
+;Function
+
+Function GetParameters
+
+  Push $R0
+  Push $R1
+  Push $R2
+  
+  StrCpy $R0 $CMDLINE 1
+  StrCpy $R1 '"'
+  StrCpy $R2 1
+  StrCmp $R0 '"' loop
+    StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
+  loop:
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 $R1 loop2
+    StrCmp $R0 "" loop2
+    IntOp $R2 $R2 + 1
+    Goto loop
+  loop2:
+    IntOp $R2 $R2 + 1
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 " " loop2
+  StrCpy $R0 $CMDLINE "" $R2
+  
+  Pop $R2
+  Pop $R1
+  Exch $R0
+  
+FunctionEnd
