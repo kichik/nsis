@@ -197,7 +197,7 @@ int NSISCALL ui_doinstall(void)
         if (e > p)
         {
           // if filename ends in .exe, and is not a directory, remove the filename
-          if (*(int*)e == CHAR4_TO_DWORD('.', 'e', 'x', 'e')) // check extension
+          if (!lstrcmpi(e, ".exe")) // check extension
           {
             DWORD d;
             d=GetFileAttributes(p);
