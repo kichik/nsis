@@ -72,7 +72,7 @@ bool dir_reader::matches(const string& name, const string& spec) {
 
       default:
         if (::tolower(*name_itr) != ::tolower(*spec_itr)) {
-          if (last_good_spec) {
+          if (last_good_spec != NULL) {
             // matched wrong part of the name, try again
             spec_itr = last_good_spec;
             name_itr = ++last_good_name;
@@ -87,7 +87,7 @@ bool dir_reader::matches(const string& name, const string& spec) {
           spec_itr++;
           name_itr++;
 
-          if (spec_itr == spec_end && name_itr != name_end && last_good_spec) {
+          if (spec_itr == spec_end && name_itr != name_end && last_good_spec != NULL) {
             // asterisk hasn't matched enough, keep matching
             spec_itr = last_good_spec;
           }
