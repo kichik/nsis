@@ -123,8 +123,8 @@ with a custom user interface.</p>
   has already been written for you!</p>
 <p class="text">The easiest way to use the Modern UI is to customize one of the <a href="#examples">example</a>
   scripts, but you can also modify an existing script.</p>
-<p class="text"><span class="bold">Note:</span> If you want to add a double quote (") to a Modern UI string,
-you should always escape it ($\"), because the Modern UI macro's use " to separate parameters.</p>
+<p class="text"><span class="bold">Note:</span> If you want to add a double quote (&quot;) to a Modern UI string,
+you should always escape it ($\&quot;), because the Modern UI macro's use &quot; to separate parameters.</p>
 <p class="text">How to use the Modern UI in an existing script:</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
@@ -198,9 +198,9 @@ you should always escape it ($\"), because the Modern UI macro's use " to separa
   <i>(Verdana, 12, 700)</i><br>
   The font for the title on the Welcome and Finish pages. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br>
-  The hexadecimal colors of the details screen ("foreground" "background")
+  The hexadecimal colors of the details screen (&quot;foreground&quot; &quot;background&quot;)
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
-  The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or "" for a old-school windows look)</p>
+  The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look)</p>
   <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\ioSpecial.ini)</i><br>
   Install Options INI File for the Welcome and Finish pages</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
