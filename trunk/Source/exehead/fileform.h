@@ -342,6 +342,7 @@ enum
 #define SF_RO         16
 #define SF_EXPAND     32
 #define SF_PSELECTED  64
+#define SF_TOGGLED    128
 
 typedef struct
 {
@@ -467,8 +468,8 @@ typedef struct
   int _;
   int __;
 #endif
-  int cur_insttype;
-  int insttype_changed;
+  int XXX_cur_insttype; // depreacted
+  int XXX_insttype_changed; // deprecated
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   int silent;
 #else
