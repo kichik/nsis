@@ -364,7 +364,6 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)rfont, FALSE);
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)rfont, FALSE);
 			}
-			//char buf[MAX_STRING];
 			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,NSISW_VERSION);
 			SetDlgItemText(hwndDlg,IDC_ABOUTCOPY,COPYRIGHT);
 			SetDlgItemText(hwndDlg,IDC_ABOUTPORTIONS,CONTRIBUTOR);

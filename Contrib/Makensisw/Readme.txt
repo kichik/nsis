@@ -145,6 +145,7 @@ Version History
  - About Box is closeable
  - Fixed some random crashes
  - Drag and Drop Support into the Makensisw window
+ - Updated icon to Trace's modern NSIS icon
 
 
 Copyright Information
