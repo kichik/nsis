@@ -807,14 +807,6 @@ Section Uninstall
   RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
-  ; if $INSTDIR was removed, skip these next ones
-  IfFileExists $INSTDIR 0 Removed
-    MessageBox MB_YESNO|MB_ICONQUESTION \
-      "Remove all files in your NSIS directory? (If you have anything you created that you want to keep, click No)" IDNO Removed
-    RMDir /r $INSTDIR
-    IfFileExists $INSTDIR 0 Removed
-      MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
-  Removed:
 !ifndef CLASSIC_UI
   !insertmacro MUI_UNFINISHHEADER
 !endif
