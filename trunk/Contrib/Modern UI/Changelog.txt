@@ -1,17 +1,23 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.62 - December 14, 2002
+* No problems anymore when using both 'Run program' and 'Show Readme' on the finish page
+* Default state of checkboxes on the finish page can be changed
+* Welcome / Finish pages compatible with custom DPI settings
+* Converted Install Options INI files to use dialog units
+
 1.61 - December 5, 2002
 * Final version for NSIS 2 beta 0
 * modern3.exe UI without description area
 * Added define to show uninstall confirm page
 * Added language string for finish page title and continue to uninstall
-* Define for parameters for the application to run on the finishpage
+* Define for parameters for the application to run on the finish page
 * Bugfixes
 
 1.6 - November 18, 2002
 * Welcome / Finish pages
 * Automatic ask for reboot on finish page
-* Create no shortcut option on Start Menu Folder selection page
+* Create no shortcut option on the Start Menu Folder selection page
 * Customizing GUIInit functions easier
 * Minor font / UI changes
 
@@ -35,71 +41,71 @@ NSIS Modern User Interface - VERSION HISTORY
 * Modern UI Language Files load NLF language files
 * Renamed macro's and defines
 
-1.3 - October 27, 2002 
-* Easier macro system for basic scripts 
-* New MultiLanguage system using Modern UI Language Files 
-* New directory structure (header/language files in Contrib\Modern UI) 
-* Small bugfixes & typo corrections 
-* SetPage function should be set using defines 
-* Different NextPage/PrevPage/FinishHeader macro's for install/uninstall 
-* Interface settings can be definend (for example, MUI_ICON), no parameters for MUI_INTERFACE anymore 
-* New Install Options macro's to read/write IO INI file values
+1.3 - October 27, 2002
+* Easier macro system for basic scripts
+* New MultiLanguage system using Modern UI Language Files
+* New directory structure (header/language files in Contrib\Modern UI)
+* Small bugfixes & typo corrections
+* SetPage function should be set using defines
+* Different NextPage/PrevPage/FinishHeader macro's for install/uninstall
+* Interface settings can be definend (for example, MUI_ICON), no parameters for MUI_INTERFACE anymore
+* New Install Options macro's to read/write IO INI file value
 
-1.21 - September 30, 2002 
-* Temp vars set in Modern UI header 
-* Currentpage & Install Options vars should be set using parameters of the MUI_INTERFACE and * MUI_INSTALLOPTIONS macro's 
-* MultiLanguage.nsi uses the new language strings 
+1.21 - September 30, 2002
+* Temp vars set in Modern UI header
+* Currentpage & Install Options vars should be set using parameters of the MUI_INTERFACE and * MUI_INSTALLOPTIONS macro's
+* MultiLanguage.nsi uses the new language strings
 
-1.2 - September 22, 2002 
-* Lots of macro system updates & fixes 
-* InstallOptions support in macro system 
-* Added Modern UI + InstallOptions example (InstallOptions.nsi) 
-* MUI_NEXTPAGE_OUTER integrated in MUI_NEXTPAGE 
+1.2 - September 22, 2002
+* Lots of macro system updates & fixes
+* InstallOptions support in macro system
+* Added Modern UI + InstallOptions example (InstallOptions.nsi)
+* MUI_NEXTPAGE_OUTER integrated in MUI_NEXTPAGE
 * No hard-coded function names anymore (you should give MUI_PREVPAGE a parameter with the set page function name (for example, MUI_PREVPAGE SetPage) 
-* Examples use ReserveFile for faster startup 
+* Examples use ReserveFile for faster startup
 
-1.19 - Semtember 19, 2002 
-* Renamed some macro's 
-* Custom code can be used between page start/stop macro's 
+1.19 - Semtember 19, 2002
+* Renamed some macro's
+* Custom code can be used between page start/stop macro's
 
-1.18 - Semtember 13, 2002 
-* Uses the new Sendmessage string option 
+1.18 - Semtember 13, 2002
+* Uses the new Sendmessage string option
 
-1.17 - Semtember 10, 2002 
-* Win9x font weight bug fixed (font of title in white rect) 
+1.17 - Semtember 10, 2002
+* Win9x font weight bug fixed (font of title in white rect)
 
-1.16 - Semtember 6, 2002 
-* Change text 'Scroll down' on license page to 'Press Page Down', because the RichEdit control has focus by default now 
+1.16 - Semtember 6, 2002
+* Change text 'Scroll down' on license page to 'Press Page Down', because the RichEdit control has focus by default now
 
-1.15 - Semtember 4, 2002 
-* Multilanguage example: changed LangDialog to LangDLL::LangDialog (using the DLL name is now required) 
+1.15 - Semtember 4, 2002
+* Multilanguage example: changed LangDialog to LangDLL::LangDialog (using the DLL name is now required)
 
-1.14 - Semtember 3, 2002 
-* Small grammar fix (thanks eccles) 
-* UI files updated by Justin for better RichEdit usage 
+1.14 - Semtember 3, 2002
+* Small grammar fix (thanks eccles)
+* UI files updated by Justin for better RichEdit usage
 
-1.13 - Semtember 2, 2002 
+1.13 - Semtember 2, 2002
 * Added 16 color icons 
 
-1.12 - August 30, 2002 
-* Verifying installer & Unpacking data dialog has no titlebar anymore 
+1.12 - August 30, 2002
+* Verifying installer & Unpacking data dialog has no titlebar anymore
 
-1.11 - August 29, 2002 
-* Finish header for uninstaller can also be set using MUI_FINISHHEADER 
+1.11 - August 29, 2002
+* Finish header for uninstaller can also be set using MUI_FINISHHEADER
 
-1.1 - August 29, 2002 
-* Header file with macros, it's now very easy to use the UI in your scripts :) 
-* Added the modern2.exe UI, with an other location of the Description frame, for installers with a lot of subsections (thanks rainwater) 
-* Updated example scripts 
-* Added Multilanguage.nsi example (Multilanguage & LangDLL) 
-* Fixed background color issue with some custom XP themes 
-* Removed WS_VISIBLE from black rect for inner dialog (fixes display issues) 
-* Changed size of description area 
-* Example script: Added instructions for the user on the Description frame 
-* Auto sizing branding text 
-* Used modern.bmp for the checks (thanks rainwater) 
-* Using the new NSIS version, descriptions work using the keyboard and you can give descriptions to subsections 
-* Correct font size using High-DPI fonts 
+1.1 - August 29, 2002
+* Header file with macros, it's now very easy to use the UI in your scripts :)
+* Added the modern2.exe UI, with an other location of the Description frame, for installers with a lot of subsections (thanks rainwater)
+* Updated example scripts
+* Added Multilanguage.nsi example (Multilanguage & LangDLL)
+* Fixed background color issue with some custom XP themes
+* Removed WS_VISIBLE from black rect for inner dialog (fixes display issues)
+* Changed size of description area
+* Example script: Added instructions for the user on the Description frame
+* Auto sizing branding text
+* Used modern.bmp for the checks (thanks rainwater)
+* Using the new NSIS version, descriptions work using the keyboard and you can give descriptions to subsections
+* Correct font size using High-DPI fonts
 
-1.0 - August 26, 2002 
-* Initial release 
+1.0 - August 26, 2002
+* Initial release

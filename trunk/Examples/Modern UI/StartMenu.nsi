@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.61
+;NSIS Modern User Interface version 1.62
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
@@ -12,7 +12,7 @@
 
 ;You can change this variable or the default Start Menu Folder by using
 ;these defines:
-;!define MUI_STARTMENU_VARIABLE "$VARNAME"
+;!define MUI_STARTMENU_VARIABLE "$VAR"
 ;!define MUI_STARTMENU_DEFAULTFOLDER "Folder Name"
 
 ;--------------------------------
