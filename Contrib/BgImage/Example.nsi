@@ -17,8 +17,8 @@ Function .onGUIInit
 	# the plugins dir is automatically deleted when the installer exits
 	InitPluginsDir
 	# lets extract some bitmaps...
-	File /oname=$PLUGINSDIR\1.bmp "${NSISDIR}\Contrib\Icons\modern-wizard llama.bmp"
-	File /oname=$PLUGINSDIR\2.bmp "${NSISDIR}\Contrib\Icons\modern.bmp"
+	File /oname=$PLUGINSDIR\1.bmp "${NSISDIR}\Contrib\Graphics\Wizard\llama.bmp"
+	File /oname=$PLUGINSDIR\2.bmp "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
 
 !ifdef DEBUG
 	# turn return values on if in debug mode
