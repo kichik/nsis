@@ -17,7 +17,6 @@
 #define IDS_BROWSESCR                   11
 #define IDS_CLEARLOG                    12
 #define IDS_NSISHOME                    13
-#define IDS_NSISDEV                     14
 #define IDS_FORUM                       15
 #define IDS_NSISUPDATE                  16
 #define IDS_DOCS                        17
@@ -67,7 +66,6 @@
 #define IDM_SELECTALL                   40007
 #define IDM_CLEARLOG                    40009
 #define IDM_BROWSESCR                   40013
-#define IDM_NSISDEV                     40014
 #define IDM_FORUM                       40016
 #define IDM_DEFINES                     40017
 #define IDM_NSISUPDATE                  40018

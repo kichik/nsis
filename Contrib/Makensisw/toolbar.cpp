@@ -64,7 +64,6 @@ void CreateToolBar()
   tbButton[TBB_CLEARLOG]    = CreateToolBarButton(IDB_CLEARLOG,      IDM_CLEARLOG,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_SEP3]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_NSISHOME]    = CreateToolBarButton(IDB_NSISHOME,      IDM_NSISHOME,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_NSISDEV]     = CreateToolBarButton(IDB_NSISDEV,       IDM_NSISDEV,    TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_FORUM]       = CreateToolBarButton(IDB_FORUM,         IDM_FORUM,      TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_NSISUPDATE]  = CreateToolBarButton(IDB_NSISUPDATE,    IDM_NSISUPDATE, TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_SEP4]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
@@ -194,7 +193,6 @@ void AddToolBarTooltips()
   AddToolBarButtonTooltip(TBB_BROWSESCR, IDS_BROWSESCR);
   AddToolBarButtonTooltip(TBB_CLEARLOG, IDS_CLEARLOG);
   AddToolBarButtonTooltip(TBB_NSISHOME, IDS_NSISHOME);
-  AddToolBarButtonTooltip(TBB_NSISDEV, IDS_NSISDEV);
   AddToolBarButtonTooltip(TBB_FORUM, IDS_FORUM);
   AddToolBarButtonTooltip(TBB_NSISUPDATE, IDS_NSISUPDATE);
   AddToolBarButtonTooltip(TBB_DOCS, IDS_DOCS);
