@@ -37,7 +37,7 @@
   !endif
   
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GREEK} "Επόμενο >"
+    InstallButtonText /LANG=${LANG_GREEK} "&Επόμενο >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_GREEK} "Εγκατάσταση Σε Εξέλιξη"
@@ -51,10 +51,10 @@
   !endif
 
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< Πίσω"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "Εμπρός >"
+    LangString MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< &Πίσω"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "&Επόμενο >"
     LangString MUI_BUTTONTEXT_CANCEL ${LANG_GREEK} "’κυρο"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GREEK} "Εγκατάσταση"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GREEK} "&Εγκατάσταση"
   !endif
 
   
@@ -73,14 +73,14 @@
   !endif
   
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GREEK} "Επόμενο >"
+    InstallButtonText /LANG=${LANG_GREEK} "&Επόμενο >"
   !endif
  
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< Προηγούμενο"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "Επόμενο >"
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< &Πίσω"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "&Επόμενο >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_GREEK} "’κυρο"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GREEK} "Απεγκατάστ."
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GREEK} "Απε&γκατάστ."
   !endif
     
 !endif
