@@ -663,6 +663,8 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
 		case BN_CLICKED:
       {
         int nIdx = FindControlIdx(id);
+        if (nIdx < 0)
+          break;
         if (pFields[nIdx].nType == FIELD_BROWSEBUTTON) {
           int nParentIdx = pFields[nIdx].nParentIdx;
           switch(pFields[nParentIdx].nType) {
@@ -726,7 +728,10 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         HFONT OldFont;
         LOGFONT lf;
 #endif
-        
+
+        if (nIdx < 0)
+          break;
+
 #ifdef IO_LINK_UNDERLINED
         GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
         lf.lfUnderline = TRUE;
@@ -789,6 +794,9 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
   int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
+  if (StaticField < 0)
+    return 0;
+
   switch(uMsg)
   {
   case WM_GETDLGCODE:
