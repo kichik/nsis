@@ -344,7 +344,11 @@ parse_again:
   return PS_OK;
 }
 
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines /*= false*/)
+#else
 void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist)
+#endif
 {
     // convert $\r, $\n to their literals
     // preprocessor replace ${VAR} with whatever value
@@ -396,7 +400,11 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
           if (*t == '}' && bn-- == 0) break;
           t=CharNext(t);
         }
-        if (*t && t!=s)
+        if (*t && t!=s 
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+          && !bIgnoreDefines 
+#endif
+          )
         {
           *t=0;
           // check for defines inside the define name - ${bla${blo}}
@@ -409,12 +417,47 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             in+=strlen(s)+2;
             add=0;
             hist.add((char*)defname.get(),0);
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+            ps_addtoline(t,linedata,hist, true);
+#else
             ps_addtoline(t,linedata,hist);
+#endif
             hist.delbypos(hist.find((char*)defname.get(),0));
           }
         }
         free(s);
       }
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+      else if (in[0] == '$' )
+      {
+        if ( in[1] == '{' ) // Found $$ before - Don't replace this define
+        {
+          char *s=strdup(in+2);
+          char *t=s;
+          unsigned int bn = 0;
+          while (*t)
+          {
+            if (*t == '{') bn++;
+            if (*t == '}' && bn-- == 0) break;
+            t=CharNext(t);
+          }
+          if (*t && t!=s )
+          {
+            *t=0;
+            // add text unchanged
+            GrowBuf defname;
+            ps_addtoline(s,defname,hist);
+            in++;
+          }
+          free(s);
+        }
+        else
+        {
+          linedata.add((void*)&c,1);
+          in++;
+        }
+      }
+#endif
     }
     if (add) linedata.add((void*)&c,1);
   }
@@ -4570,9 +4613,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
-        LANGID LangID = line.gettoken_int(1);
-        char *pKey = line.gettoken_str(2);
-        char *pValue = line.gettoken_str(3);
+        LANGID LangID=0;        
+        int a = 1;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) 
+          LangID=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+2) PRINTHELP();
+        char *pKey = line.gettoken_str(a);
+        char *pValue = line.gettoken_str(a+1);
         if ( !(*pKey) )
         {
            ERROR_MSG("Error: empty name for version info key!\n");
@@ -4580,10 +4627,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else
         {
-           SCRIPT_MSG("%s: \"%s\" \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
+           SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
+           LANGID lReaded = LangID;
            StringTable *strTable = GetTable(LangID);
-           if ( line.gettoken_int(1) == 0 && !strTable->nlf )
-             warning("%s: \"%s\" language not loaded, using default \"1033-English\". (%s:%d)", line.gettoken_str(0), line.gettoken_str(1), curfilename,linecnt);
+           if ( a > 1 && lReaded == 0 )
+             warning("%s: %s language not loaded, using default \"1033-English\". (%s:%d)", line.gettoken_str(0), line.gettoken_str(1), curfilename,linecnt);
            if ( rVersionInfo.SetKeyValue(LangID, strTable->nlf ? strTable->nlf->m_uCodePage : 1252 /*English US*/, pKey, pValue) )
            {
              ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, strTable->nlf ? strTable->nlf->m_szName : LangID == 1033 ? "English" : "???");

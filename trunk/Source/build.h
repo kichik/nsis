@@ -113,7 +113,11 @@ class CEXEBuild {
     void restore_line_predefine(char *);
 #endif
     int parseScript();
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+    void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
+#else
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist);
+#endif
     int doParse(const char *str);
     int doCommand(int which_token, LineParser &line);
     int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1, int *data_handle=0, int rec_depth=0);
@@ -144,7 +148,11 @@ class CEXEBuild {
     int add_intstring(const int i); // returns offset in stringblock
     int add_string_main(const char *string, int process=1); // returns offset (in string table)
     int add_string_uninst(const char *string, int process=1); // returns offset (in string table)
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    int preprocess_string(char *out, const char *in, bool bUninstall);
+#else
     int preprocess_string(char *out, const char *in);
+#endif
 
     int make_sure_not_in_secorfunc(const char *str);
 

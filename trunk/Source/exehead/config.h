@@ -210,6 +210,11 @@
 // NSIS_SUPPORT_VERSION_INFO enables support for version information on final exe
 #define NSIS_SUPPORT_VERSION_INFO
 
+// NSIS_SUPPORT_LANG_IN_STRINGS enables support for language strings inside other strings
+//#define NSIS_SUPPORT_LANG_IN_STRINGS
+
+// NSIS_FIX_DEFINES_IN_STRINGS fix defines inside defines and handles chars $ perfectly
+//#define NSIS_FIX_DEFINES_IN_STRINGS
 
 // Added by Ximon Eighteen 5th August 2002
 // If this is uncommented the following changes/new features are

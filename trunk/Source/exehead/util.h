@@ -1,7 +1,11 @@
 #include "config.h"
 
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+char * NSISCALL process_string(const char *in, int iStartIdx);
+#else
 char * NSISCALL process_string(const char *in);
+#endif
 char * NSISCALL process_string_fromtab(char *out, int offs);
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int NSISCALL myatoi(char *s);
