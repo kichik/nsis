@@ -243,7 +243,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
   return PS_OK;
 }
 
-bool CEXEBuild::_IsSet(int *str, WORD lang) {
+bool CEXEBuild::_IsSet(int *str, LANGID lang) {
   if (!str) return false;
   lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
   lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
@@ -628,7 +628,7 @@ NLF::~NLF() {
   }
 }
 
-WORD NLF::GetLang() {
+LANGID NLF::GetLang() {
   return m_wLangId;
 }
 

@@ -106,7 +106,7 @@ CResourceEditor::~CResourceEditor() {
 
 // Adds/Replaces/Removes a resource.
 // If lpData is 0 UpdateResource removes the resource.
-void CResourceEditor::UpdateResource(char* szType, char* szName, WORD wLanguage, BYTE* lpData, DWORD dwSize) {
+void CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 	CResourceDirectory* nameDir = 0;
 	CResourceDirectory* langDir = 0;
 	CResourceDataEntry* data = 0;
@@ -168,21 +168,21 @@ void CResourceEditor::UpdateResource(char* szType, char* szName, WORD wLanguage,
 	}
 }
 
-void CResourceEditor::UpdateResource(WORD szType, char* szName, WORD wLanguage, BYTE* lpData, DWORD dwSize) {
+void CResourceEditor::UpdateResource(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 	UpdateResource(MAKEINTRESOURCE(szType), szName, wLanguage, lpData, dwSize);
 }
 
-void CResourceEditor::UpdateResource(char* szType, WORD szName, WORD wLanguage, BYTE* lpData, DWORD dwSize) {
+void CResourceEditor::UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 	UpdateResource(szType, MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
 }
 
-void CResourceEditor::UpdateResource(WORD szType, WORD szName, WORD wLanguage, BYTE* lpData, DWORD dwSize) {
+void CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 	UpdateResource(MAKEINTRESOURCE(szType), MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
 }
 
 // Returns a copy of the resource requested
 // Returns 0 if resource can't be found
-BYTE* CResourceEditor::GetResource(char* szType, char* szName, WORD wLanguage) {
+BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage) {
 	CResourceDirectory* nameDir = 0;
 	CResourceDirectory* langDir = 0;
 	CResourceDataEntry* data = 0;
