@@ -21,7 +21,7 @@ const set<string>& dir_reader::dirs() {
 }
 
 void dir_reader::exclude(const string& spec) {
-  if (spec.find_first_of("?*") >= 0) {
+  if (spec.find_first_of("?*") != string::npos) {
     m_wildcard_excluded.insert(spec);
   } else {
     m_excluded.insert(spec);
@@ -114,7 +114,7 @@ void dir_reader::add_file(const string& file) {
   }
 }
 
-void dir_reader::add_dir(const std::string& dir) {
+void dir_reader::add_dir(const string& dir) {
   if (!is_excluded(dir)) {
     m_dirs.insert(dir);
   }
