@@ -61,7 +61,7 @@
 --*/
 
 
-#include "bzlib_private.h"
+#include "bzlib.h"
 
 
 
