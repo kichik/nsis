@@ -22,7 +22,7 @@
 
 \b Splash.exe is now a plugin (splash.dll)
 
-\b Added new plugins: ShowWin, System, AdvSplash, nsExec
+\b Added new plugins: ShowWin, System, AdvSplash, nsExec, UserInfo, BgImage and StartMenu
 
 \b !ifdef and friends can now be used in macros
 
