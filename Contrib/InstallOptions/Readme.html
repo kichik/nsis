@@ -522,8 +522,9 @@ Function FunctionName ;FunctionName defined with Page command
     SendMessage $R1 ${WM_SETFONT} $R2 0
 	
     InstallOptions::show
-	
-  Pop $R1
+    Pop $R0
+  
+  Pop $R2  
   Pop $R1
   Pop $R0
 
