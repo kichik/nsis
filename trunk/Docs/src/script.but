@@ -27,7 +27,7 @@ A NSIS Script File (.nsi) is just a text file with a series of commands.
 \c           MessageBox MB_OK "I'll be happy" ; this one puts a ' inside a string
 \c           MessageBox MB_OK 'And he said to me "Hi there!"' ; this one puts a " inside a string
 \c           MessageBox MB_OK `And he said to me "I'll be fucked!"` ; this one puts both ' and "s inside a string
-\c           MessageBox MB_OK "$\\"A quote from a wise man$\\" said the wise man" ; this one shows escaping of quotes
+\c           MessageBox MB_OK "$\"A quote from a wise man$\" said the wise man" ; this one shows escaping of quotes
 
 \b To extend a command over multiple lines, use a backslash (\\) at the end of the line, and the next line will effectively be concatenated the end of it. For example:
 
