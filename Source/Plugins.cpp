@@ -14,6 +14,38 @@
 
 extern FILE *g_output;
 
+int PluginsList::add(const char *name, const char *path)
+{
+  int pos=SortedStringListND<struct plugin>::add(name);
+  if (pos == -1) return 1;
+
+  ((struct plugin*)gr.get())[pos].path=strings.add(path, strlen(path)+1);
+  ((struct plugin*)gr.get())[pos].dataHandle=-1;
+  ((struct plugin*)gr.get())[pos].unDataHandle=-1;
+
+  return 0;
+}
+
+char* PluginsList::get(char **name, int *dataHandle/*=0*/, int *uninstDataHandle/*=0*/)
+{
+  if (dataHandle) *dataHandle=-1;
+  if (uninstDataHandle) *uninstDataHandle=-1;
+  int v=SortedStringListND<struct plugin>::find(*name);
+  if (v==-1) return NULL;
+  strcpy(*name, (char*)strings.get()+((struct plugin*)gr.get())[v].name);
+  if (dataHandle) *dataHandle=((struct plugin*)gr.get())[v].dataHandle;
+  if (uninstDataHandle) *uninstDataHandle=((struct plugin*)gr.get())[v].unDataHandle;
+  return (char*)strings.get()+((struct plugin*)gr.get())[v].path;
+}
+
+void PluginsList::setDataHandle(const char *name, int dataHandle, int uninstDataHandle)
+{
+  int v=SortedStringListND<struct plugin>::find(name);
+  if (v==-1) return;
+  ((struct plugin*)gr.get())[v].dataHandle=dataHandle;
+  ((struct plugin*)gr.get())[v].unDataHandle=uninstDataHandle;
+}
+
 void Plugins::FindCommands(char* path, bool displayInfo)
 {
   if (path)
