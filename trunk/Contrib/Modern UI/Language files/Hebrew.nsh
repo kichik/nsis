@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Hebrew (1037)
 ;By Yaron Shahrabani
@@ -53,6 +53,7 @@
 
   !define MUI_TEXT_ABORTWARNING "?$(^Name) האם אתה בטוח שברצונך לצאת מהתקנת המוצר"
 
+
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "ברוכים הבאים לאשף ההסרה של $(^Name)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "אשף זה ינחה אותכם במהלך ההסרה של $(^Name).\r\n\r\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההתקנה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.\r\n\r\n$_CLICK"
 
@@ -82,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "$(^Name) משלים את אשף ההסרה של"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "הותקן בהצלחה $(^Name)\r\n\r\nלחץ על סיום בכדי .לסגור את האשף"
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "?האם ברצונך לאתחל כעת .$(^Name) עלייך לאתחל את המחשב בכדי לסיים את הסרת"
 
   !define MUI_UNTEXT_ABORTWARNING "?$(^Name) האם אתה בטוח שברצונך לצאת מהסרת"
 
