@@ -9,7 +9,7 @@
 Name example
 OutFile one-section.exe
 
-ComponentText "please choose just one but the default"
+Page components
 
 # defines SF_*, SECTION_OFF and some macros
 !include Sections.nsh

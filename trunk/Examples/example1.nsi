@@ -16,8 +16,12 @@ OutFile "example1.exe"
 ; The default installation directory
 InstallDir $PROGRAMFILES\Example1
 
-; The text to prompt the user to enter a directory
-DirText "This will install the very simple example1 on your computer. Choose a directory"
+;--------------------------------
+
+; Pages
+
+Page directory
+Page instfiles
 
 ;--------------------------------
 

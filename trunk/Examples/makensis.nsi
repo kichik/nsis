@@ -27,51 +27,48 @@ InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
 ;--------------------------------
-!ifndef CLASSIC_UI
 
-  ;Include Modern UI
-  !include "MUI.nsh"
+;Include Modern UI
+!include "MUI.nsh"
 
-  ;--------------------------------
-  ;Modern UI Configuration
+;--------------------------------
+;Modern UI Configuration
 
-  ;Names
-  !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "${VER_MAJOR}.${VER_MINOR} (CVS)"
+;Names
+!define MUI_PRODUCT "NSIS"
+!define MUI_VERSION "${VER_MAJOR}.${VER_MINOR} (CVS)"
 
-  !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}"
+!define MUI_NAME "Nullsoft Install System ${MUI_VERSION}"
 
-  ;Pages
-  !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE "..\license.txt"
-  !insertmacro MUI_PAGE_COMPONENTS
-  !insertmacro MUI_PAGE_DIRECTORY
-  !insertmacro MUI_PAGE_INSTFILES
-  
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
-  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
-  
-  !insertmacro MUI_PAGE_FINISH
-  
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
-  
-  ;Settings
-  !define MUI_ABORTWARNING  
-  
-  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
-  !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
+;Pages
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "..\license.txt"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
 
-  !define MUI_COMPONENTSPAGE_SMALLDESC
-  
-  ;--------------------------------
-  ;Languages
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
+!define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
-  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of NSIS, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
+!insertmacro MUI_PAGE_FINISH
 
-  !insertmacro MUI_LANGUAGE "English"
-  
-!endif
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+;Settings
+!define MUI_ABORTWARNING  
+
+!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
+!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
+
+!define MUI_COMPONENTSPAGE_SMALLDESC
+
+;--------------------------------
+;Languages
+
+!define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of NSIS, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
+
+!insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
 ;Installer Sections
@@ -1045,8 +1042,6 @@ SectionEnd
 ;--------------------------------
 ;Descriptions
 
-!ifndef CLASSIC_UI
-
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
@@ -1098,8 +1093,6 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL plugin source in C and plugin function header"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "Source code to MakeNSIS Wrapper"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
- 
-!endif
 
 ;--------------------------------
 ;Installer Functions
