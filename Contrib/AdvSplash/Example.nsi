@@ -7,25 +7,28 @@ XPStyle on
 Function .onInit
         # the plugins dir is automatically deleted when the installer exits
         InitPluginsDir
-        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Icons\modern-header.bmp"
         #optional
         #File /oname=$PLUGINSDIR\splash.wav "C:\myprog\sound.wav"
 
+        MessageBox MB_OK "Fading"
+
         advsplash::show 1000 600 400 -1 $PLUGINSDIR\splash
 
-        Pop $0 ; $0 has '1' if the user closed the splash screen early,
+        Pop $0          ; $0 has '1' if the user closed the splash screen early,
                         ; '0' if everything closed normal, and '-1' if some error occured.
 
-        MessageBox MB_OK "Now with transparency"
+        MessageBox MB_OK "Transparency"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
+        advsplash::show 2000 0 0 0x1856B1 $PLUGINSDIR\splash
+        Pop $0 
 
-        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Icons\modern.bmp"
+        MessageBox MB_OK "Transparency/Fading"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Icons\modern-wizard llama.bmp"
+        advsplash::show 1000 600 400 0x00005B $PLUGINSDIR\splash
+        Pop $0 
 
-        advsplash::show 1000 600 400 0xFF00FF $PLUGINSDIR\splash
-
-        Pop $0 ; $0 has '1' if the user closed the splash screen early,
-                        ; '0' if everything closed normal, and '-1' if some error occured.
-        MessageBox MB_OK "$0"
-
+        Delete $PLUGINSDIR\splash.bmp
 FunctionEnd
 
 Section
