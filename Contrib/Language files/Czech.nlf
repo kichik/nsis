@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1029
 # Font and size - dash (-) means default
@@ -40,7 +40,8 @@ Zvolte adresáø pro instalaci programu %s:
 Dostupné volné místo: 
 Potøebné volné místo: 
 Odinstalování z:
-Chyba pøi pokusu o zápis souboru: \r\n\t"$0"\r\nStiskni 'Pøerušit' pro pøerušení instalace,\r\n'Znovu' pro další pokus o zápis souboru, nebo\r\n'Ignorovat' pro pøeskoèení tohoto souboru
+Chyba pøi otevírání souboru pro zápis: \r\n\t"$0"\r\nStiskni 'Pøerušit' pro pøerušení instalace,\r\n'Znovu' pro další pokus o zápis souboru, nebo\r\n'Ignorovat' pro pøeskoèení tohoto souboru
+Chyba pøi otevírání souboru pro zápis: \r\n\t"$0"\r\nStiskni 'Znovu' pro další pokus o zápis souboru, nebo\r\n'Storno' pro pøerušení instalace
 Nelze zapsat: 
 Kopírování selhalo
 Kopírování do 
