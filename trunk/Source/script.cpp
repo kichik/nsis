@@ -1621,7 +1621,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()!=a+2) PRINTHELP();
         int s;
         int w=line.gettoken_int(a,&s);
-        if (!s || w < 0 || w > 2) PRINTHELP()
+        if (!s || w < 0 || w > 4) PRINTHELP()
         SetString(line.gettoken_str(a+1),NLF_SUBCAPTION_LICENSE+w,1,lang);
         SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(a+1));
       }

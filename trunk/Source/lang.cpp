@@ -375,7 +375,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 #ifdef NSIS_SUPPORT_FILE
   if (m_uninst_fileused && table->ucommon.fileerrtext<0)
   {
-    table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext,0);
+    table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext);
   }
 #endif
 
