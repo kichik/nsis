@@ -110,7 +110,7 @@ with a custom user interface.</p>
 <p class="text"> I made this interface with a modern wizard style, 
   like the wizards of recent Windows versions. This new interface 
   also features new graphics and a description area on the
-  component-selection page.</p>
+  component selection page.</p>
 <p class="text">To use this new interface for for installer, you need 
   to add some code to your NSIS script. Read this document for more info!</p>
 <p class="header">Requirements</p>
@@ -121,11 +121,15 @@ with a custom user interface.</p>
 <p class="header">How to use</p>
 <p class="text">The Modern UI has a macro system, so most of the code
   has already been written for you!</p>
-<p class="text">The easiest way to use the Modern UI is to customize one of the <a href="#examples">example</a>
-  scripts, but you can also modify an existing script.</p>
-<p class="text"><span class="bold">Note:</span> If you want to add a double quote (&quot;) to a Modern UI string,
-you should always escape it ($\&quot;), because the Modern UI macro's use &quot; to separate parameters.</p>
-<p class="text">How to use the Modern UI in an existing scrip (in order, from the beginning of the script):</p>
+<p class="text">The easiest way to use the Modern UI is to customize
+one of the <a href="#examples">example</a> scripts, but you can also
+modify an existing script.</p>
+<p class="text"><span class="bold">Note:</span> If you want to add a
+double quote (&quot;) to a Modern UI string, you should always escape
+it ($\&quot;), because the Modern UI macro's use &quot; to separate
+parameters.</p>
+<p class="text">To use the Modern UI in an existing script, you should
+add the following things (in order, from the beginning of the script):</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
   <p class="subheader">2. Define the name and version of your software</p>
@@ -155,24 +159,26 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   Show the directory selection page.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br>
   Show the Start Menu Folder selection page page.</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_STARTMENU_VARIABLE</span><br>
   Variable to store the current Start Menu Folder. Default is $9.
-  You cannot use this variable in your script (or you should Push/Pop it)
-  if you are using the Start Menu Folder selection page.</p>
+  You cannot use this variable in your script (or you should Push/Pop it).e.</p>
   <p class="text"><span class="bold">MUI_STARTMENU_DEFAULTFOLDER</span><br>
-  The default start menu Folder. Use $(LANGSTRINGNAME) as value is you want
+  The default Start Menu Folder. Use $(LANGSTRINGNAME) as value is you want
   to use a language string.</p>
+  </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE</span><br>
   Show the Finish page.</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN</span><br>
   Applcation which the user can select to run (using a checkbox).
-  You don't need to put quotes around the value when it contains spaces.</p>
+  You don't need to put quotes around the filename when it contains spaces.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS</span><br>
   Parameters for the application to run. Don't forget to escape double
   quotes ($\") in the value.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME</span><br>
   File which the user can select to view (using a checkbox).
-  You don't need to put quotes around the value when it contains spaces.
+  You don't need to put quotes around the filename when it contains spaces.
   Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br>
   Do not automatically jump to the finish page, to allow the user to
@@ -180,6 +186,7 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOREBOOTSUPPORT</span><br>
   Disables support for a reboot option. Use this to save some space if
   you are not using /REBOOTOK or SetRebootFlag.</p>
+  </div>
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br>
   Show a message box with a warning (are you sure?) when the user closes
   the installation.</p>
@@ -191,12 +198,14 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   custom code to the function. <a href="#customGUIInit">More info...</a></p>
   <p class="text"><span class="bold">MUI_UNINSTALLER</span><br>
   Define if you are using an uninstaller.</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_UNCUSTOMPAGECOMMANDS</span><br>
   Don't insert UninstPage commands. Use this if you are using custom
   UninstPage commands to add your own pages.</p>
   <p class="text"><span class="bold">MUI_UNCUSTOMGUIINIT</span><br>
   Don't insert the un.onGUIInit function. Use this if you want to add
   custom code to the function. <a href="#customGUIInit">More info...</a></p>
+  </div>
   <p class="subheader">4. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
@@ -209,7 +218,7 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
 !insertmacro MUI_LANGUAGE "English"
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
-  names.
+  string names.
   <p class="text"><span class="bold">Note:</span> Not all language files contain strings for the
   new Start Menu Folder selection, Welcome and Finish pages yet. If you are using one of these
   pages and the language file does not contain these strings, you should always define them.<br>
@@ -239,7 +248,7 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   <i>(Verdana, 12, 700)</i><br>
   The font for the title on the Welcome and Finish pages. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br>
-  The hexadecimal colors of the details screen (&quot;foreground&quot; &quot;background&quot;).
+  The colors of the details screen, hexadecimal (&quot;foreground&quot; &quot;background&quot;).
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
   The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look).</p>
   <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br>
@@ -272,7 +281,7 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 </pre>
 <p class="text">Add an extra parameter to the Section command to
-set a define with the section number:</p>
+set the define with the section number:</p>
 <pre class="margin">
 Section "Section Name 1" Section1
   ...
@@ -282,7 +291,7 @@ SectionEnd
 <p class="text">
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
-own page commands to set the order of the pages and the names of the page functions.</p>
+own page commands to set the order of the pages and the names of the page functions:</p>
 <pre class="margin">
 LangString TEXT_IO_WINDOWTITLE ": Install Options Page Title"
 
@@ -394,8 +403,8 @@ FunctionEnd
   Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS 
   to make this possible.</p>
 <p class="header">Help</p>
-<p class="text">Please post questions at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS 
-  Forum</a>.</p>
+<p class="text">Please post questions at the
+<a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
 <p class="header">License</p>
 <pre class="margin">Copyright &copy; 2002 Joost Verburg
 
