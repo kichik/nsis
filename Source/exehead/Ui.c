@@ -142,37 +142,48 @@ void NSISCALL build_g_logfile()
 #endif
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
+static int NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   HTREEITEM hItem;
-  int l=0;
+  TV_ITEM thisItem;
+  int ro_down_below = 0, items = 0;
   int *flags;
 
   pItem->mask|=TVIF_PARAM;
 
   TreeView_GetItem(hWnd, pItem);
   if (pItem->state >> 12 == 0)
-    return;
+    return 0;
 
-  flags=&g_inst_section[pItem->lParam].flags;
+  pItem->mask&=~TVIF_PARAM;
 
-  if (iState < 3 && (*flags & SF_RO)) l=3;
+  thisItem = *pItem;
 
-  pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
-  pItem->stateMask = TVIS_STATEIMAGEMASK;
-
-  if (!(*flags & SF_RO))
-  {
-    if (iState == 2) *flags |= SF_SELECTED;
-    else *flags &= ~SF_SELECTED;
-    TreeView_SetItem(hWnd, pItem);
-  }
+  pItem->state = INDEXTOSTATEIMAGEMASK(iState);
+  thisItem.stateMask = pItem->stateMask = TVIS_STATEIMAGEMASK;
 
   hItem = TreeView_GetChild(hWnd, pItem->hItem);
-  while (hItem) {
+  while (hItem)
+  {
     pItem->hItem = hItem;
-    SetChildrenStates(hWnd, pItem, iState);
+    ro_down_below += SetChildrenStates(hWnd, pItem, iState);
+    items++;
     hItem = TreeView_GetNextSibling(hWnd, hItem);
   }
+  flags=&g_inst_section[thisItem.lParam].flags;
+  if (!(*flags & SF_RO))
+  {
+    if (ro_down_below)
+    {
+      if (ro_down_below==items) iState = 2;
+      else iState |= 2;
+    }
+    thisItem.state = INDEXTOSTATEIMAGEMASK(iState);
+    if (iState == 2) *flags |= SF_SELECTED;
+    else *flags &= ~SF_SELECTED;
+    TreeView_SetItem(hWnd, &thisItem);
+    return 0;
+  }
+  return 1;
 }
 
 static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
@@ -187,10 +198,9 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
 
   while (hItem) {
     pItem->hItem = hItem;
-    pItem->mask|=TVIF_PARAM;
     TreeView_GetItem(hWnd, pItem);
     iState = pItem->state >> 12;
-    if (iState && !(g_inst_section[pItem->lParam].flags & SF_RO))
+    if (iState)
     {
       if (iState==5) iState=2;
       else if (iState==4) iState=1;
@@ -205,7 +215,6 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
 
   pItem->hItem = hParent;
   if (iState) {
-    pItem->mask&=~TVIF_PARAM;
     pItem->state = INDEXTOSTATEIMAGEMASK(iState);
     TreeView_SetItem(hWnd, pItem);
   }
@@ -904,7 +913,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int doLines=0;
     HTREEITEM Par;
     HBITMAP hBMcheck1;
-    int x;
+    int x, lastGoodX;
 
     g_SectionHack=hwndDlg;
 
@@ -944,7 +953,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     Par=NULL;
 
-    for (x = 0; x < num_sections; x ++)
+    for (lastGoodX = x = 0; x < num_sections; x ++)
     {
       section *sec=g_inst_section+x;
 
@@ -992,9 +1001,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         else if (sec->flags&SF_SUBSECEND)
         {
           TV_ITEM it;
-          it.hItem = hTreeItems[x-1];
+          it.hItem = hTreeItems[lastGoodX];
           it.mask = TVIF_STATE;
-          it.stateMask=TVIS_STATEIMAGEMASK;
+          it.stateMask = TVIS_STATEIMAGEMASK;
 
           SetParentState(hwndTree1,&it);
 
@@ -1002,6 +1011,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         else
         {
+          lastGoodX = x;
           hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
         }
       }
