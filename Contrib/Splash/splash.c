@@ -1,20 +1,11 @@
 #include <windows.h>
-
-typedef struct _stack_t {
-  struct _stack_t *next;
-  char text[1]; // this should be the length of string_size
-} stack_t;
-
-int popstring(char *str); // 0 on success, 1 on empty stack
-void pushstring(char *str);
+#include "../exdll/exdll.h"
 
 HINSTANCE g_hInstance;
-stack_t **g_stacktop;
-int g_stringsize;
 
 HBITMAP g_hbm;
 int sleep_val;
-int g_rv;
+int g_rv=-1;
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -70,11 +61,11 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
   char temp[64];
   char *sleep=temp;
 
-  g_stringsize=string_size;
-  g_stacktop=stacktop;
+ 
+  EXDLL_INIT();
 
-  popstring(fn);
   popstring(sleep);
+  popstring(fn);
 
   sleep_val=0;
   while (*sleep >= '0' && *sleep <= '9')
@@ -118,31 +109,9 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
         DeleteObject(g_hbm);
 
-        wsprintf(temp,"%d",g_rv);
-        pushstring(temp);
       }
     }
   }
-}
-
-// utility functions (not required but often useful)
-int popstring(char *str)
-{
-  stack_t *th;
-  if (!g_stacktop || !*g_stacktop) return 1;
-  th=(*g_stacktop);
-  lstrcpy(str,th->text);
-  *g_stacktop = th->next;
-  GlobalFree((HGLOBAL)th);
-  return 0;
-}
-
-void pushstring(char *str)
-{
-  stack_t *th;
-  if (!g_stacktop) return;
-  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
-  lstrcpyn(th->text,str,g_stringsize);
-  th->next=*g_stacktop;
-  *g_stacktop=th;
+  wsprintf(temp,"%d",g_rv);
+  pushstring(temp);
 }
