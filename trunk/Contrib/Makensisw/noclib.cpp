@@ -49,3 +49,10 @@ void *my_memset(void *dest, int c, size_t count) {
   for (size_t i=0; i<count;i++) ((char*)dest)[i]=c;
   return dest;
 }
+
+int lstrcmpn(char *s1, const char *s2, int chars)
+{
+    while ((chars > 0) && (*s1) && (*s2) && (*(s1) == *(s2))) chars--, s1++, s2++;
+    if ((chars == 0) || (*s1 == *s2)) return 0;
+    return (*s1 - *s2);
+}

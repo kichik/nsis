@@ -88,6 +88,13 @@ BEGIN
         MENUITEM "&Define Symbols...\tCtrl+D",  IDM_DEFINES
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Recompile and Run\tCtrl+M",   IDM_RECOMPILE_TEST
+        POPUP "&Set Compressor"
+        BEGIN
+            MENUITEM "Defa&ult",                    IDM_DEFAULT
+            MENUITEM "&zlib",                       IDM_ZLIB
+            MENUITEM "bzi&p2",                      IDM_BZIP2
+            MENUITEM "&Best",                       IDM_BEST
+        END
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
@@ -119,9 +126,9 @@ BEGIN
     "D",            IDM_DEFINES,            VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
-    "G",            IDM_GZIP,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
+    "P",            IDM_BZIP2,              VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
     "U",            IDM_DEFAULT,            VIRTKEY, CONTROL, NOINVERT
@@ -248,6 +255,7 @@ BEGIN
     IDS_FIND                "Find..."
     IDS_RECOMPILE           "Recompile"
     IDS_DEFINES             "Define Symbols..."
+    IDS_COMPRESSOR          "Set Compressor"
     IDS_TEST                "Test Installer"
     IDS_EDITSCRIPT          "Edit Script"
     IDS_BROWSESCR           "Browse Script"
@@ -262,8 +270,9 @@ BEGIN
     IDS_DOCS                "Documentation"
     IDS_DEFAULT             "Default"
     IDS_ZLIB                "zlib"
-    IDS_GZIP                "gzip"
+    IDS_BZIP2               "bzip2"
     IDS_RECOMPILE_TEST      "Recompile and run"
+    IDS_BEST                "Best"
 END
 
 #endif    // English (U.S.) resources

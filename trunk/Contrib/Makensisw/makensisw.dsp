@@ -153,6 +153,10 @@ SOURCE=.\logo.bmp
 # End Source File
 # Begin Source File
 
+SOURCE="..\Graphics\Icons\modern-install-blue-full.ico"
+# End Source File
+# Begin Source File
+
 SOURCE="..\Icons\modern-install.ico"
 # End Source File
 # Begin Source File

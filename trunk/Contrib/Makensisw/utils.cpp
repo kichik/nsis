@@ -105,9 +105,9 @@ void Items(HWND hwnd, int on){
   EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,mf);
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,mf);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,mf);
+  EnableMenuItem(g_sdata.menu,IDM_COMPRESSOR,mf);
 
   EnableToolBarButton(IDM_SAVE,on);
-
   // Altered by Darren Owen (DrO) on 6/10/2003
   if((!g_sdata.retcode && on) || !on)
     EnableToolBarButton(IDM_TEST,on);
@@ -119,6 +119,7 @@ void Items(HWND hwnd, int on){
   EnableToolBarButton(IDM_CLEARLOG,on);
   EnableToolBarButton(IDM_BROWSESCR,on);
   EnableToolBarButton(IDM_RECOMPILE_TEST,on);
+  EnableToolBarButton(IDM_COMPRESSOR,on);
 
   if(!on) {
     if (!IsWindowEnabled(g_sdata.focused_hwnd))
@@ -128,9 +129,42 @@ void Items(HWND hwnd, int on){
     SetFocus(g_sdata.focused_hwnd);
 }
 
+void SetCompressorStats()
+{
+  DWORD line_count, i;
+  char buf[1024];
+  bool found = false;
+
+  line_count = SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINECOUNT, 0, 0);
+  for(i=0; i<line_count; i++) {
+    *((LPWORD)buf) = sizeof(buf); 
+    SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_GETLINE, (WPARAM)i, (LPARAM)buf);
+    if(found) {
+      DWORD len = lstrlen(TOTAL_SIZE_COMPRESSOR_STAT);
+      lstrcat(g_sdata.compressor_stats,buf);
+
+      if(!lstrcmpn(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
+        break;
+      }
+    }
+    else {
+      DWORD len = lstrlen(EXE_HEADER_COMPRESSOR_STAT);
+      if(!lstrcmpn(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
+        found = true;
+        lstrcpy(g_sdata.compressor_stats,"\n\n");
+        lstrcat(g_sdata.compressor_stats,buf);
+      }
+    }
+  }
+}
+
 void CompileNSISScript() {
   static char *s;
   DragAcceptFiles(g_sdata.hwnd,FALSE);
+  if(((g_sdata.compressor == COMPRESSOR_BEST) &&
+      (!lstrcmpi(g_sdata.compressor_name,BZIP2_COMPRESSOR_NAME)))) {
+    SetCompressorStats();
+  }
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
   if (lstrlen(g_sdata.script)==0) {
@@ -155,8 +189,17 @@ void CompileNSISScript() {
   if (!g_sdata.appended) {
     if (s) GlobalFree(s);
     char *defines = BuildDefines();
-    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(defines)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+16);
-    wsprintf(s,"%s %s /NOTIFYHWND %d %s",EXENAME,defines,g_sdata.hwnd,g_sdata.script);
+    
+    char compressor[40];
+    if(lstrlen(g_sdata.compressor_name)) {
+      wsprintf(compressor,"/X\"SetCompressor /FINAL %s\" ",g_sdata.compressor_name);
+    }
+    else {
+      lstrcpy(compressor,"");
+    }
+
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(defines)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+20);
+    wsprintf(s,"%s %s%s /NOTIFYHWND %d %s",EXENAME,compressor,defines,g_sdata.hwnd,g_sdata.script);
     GlobalFree(defines);
     if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
     g_sdata.script_alloced = true;
@@ -259,6 +302,7 @@ void ResetObjects() {
   g_sdata.warnings = FALSE;
   g_sdata.retcode = -1;
   g_sdata.thread = NULL;
+  lstrcpy(g_sdata.compressor_stats,"");
 }
 
 void ResetDefines() {
@@ -618,4 +662,45 @@ void ClearMRUList()
   }
 
   BuildMRUMenus();
+}
+
+void RestoreCompressor()
+{
+  HKEY hKey;
+  NCOMPRESSOR v = COMPRESSOR_DEFAULT;
+  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    DWORD l = sizeof(g_sdata.compressor);
+    DWORD t;
+    if ((RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(unsigned char*)&v,&l)==ERROR_SUCCESS) &&
+        (t == REG_DWORD) &&
+        (l==sizeof(v))) {
+    }
+    RegCloseKey(hKey);
+  }
+  SetCompressor(v);
+}
+
+void SaveCompressor()
+{
+  HKEY hKey;
+  NCOMPRESSOR v = g_sdata.compressor;
+  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_DWORD,(unsigned char*)&v,sizeof(v));
+    RegCloseKey(hKey);
+  }
+}
+
+BOOL FileExists(char *fname)
+{
+  WIN32_FIND_DATA wfd;
+  HANDLE h;
+
+  h = FindFirstFile(fname,&wfd);
+  if(h == INVALID_HANDLE_VALUE) {
+    return false;
+  }
+  else {
+    FindClose(h);
+    return true;
+  }
 }

@@ -46,10 +46,14 @@ void InitTooltips(HWND h);
 void DestroyTooltips();
 void AddTip(HWND hWnd,LPSTR lpszToolTip);
 void ShowDocs();
+void RestoreCompressor();
+void SaveCompressor();
 
 BOOL PopMRUFile(char* fname);
 void PushMRUFile(char* fname);
 void BuildMRUMenus();
 void LoadMRUFile(int position);
 void ClearMRUList();
+
+BOOL FileExists(char *fname);
 #endif
