@@ -1,5 +1,5 @@
-;NSIS Modern UI version 1.3
-;Basic Example Script
+;NSIS Modern User Interface version 1.3
+;Basic Macro System Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -8,6 +8,8 @@
 !verbose 3
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 !verbose 4
+
+;$9 is the variable used to store the current page, do not use this var!
 
 ;--------------------------------
 ;Configuration
@@ -29,16 +31,15 @@
   Name "${NAME} ${VERSION}"
   OutFile "Basic.exe"
 
-  ;User interface - icons, ui file, check bitmap, progress bar etc.
-  !insertmacro MUI_INTERFACE "modern.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9" ;$9 is the variable used to store the current page, do not use this var!
+  !insertmacro MUI_INTERFACE
 
-  ;License dialog
+  ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Descriptions
   LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder-select dialog
+  ;Folder-selection page
   InstallDir "$PROGRAMFILES\${NAME}"
 
 ;--------------------------------
