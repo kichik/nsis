@@ -18,47 +18,43 @@
 !define MUI_TEMP2 $R1
 
 !macro MUI_INTERFACE
-  
+
   !verbose 3
 
   ;User interface
-  
+
   !ifndef MUI_ICON
     !define MUI_ICON "${NSISDIR}\Contrib\Icons\modern-install.ico"
   !endif
-  
+
   !ifndef MUI_UNICON
     !define MUI_UNICON "${NSISDIR}\Contrib\Icons\modern-uninstall.ico"
   !endif
-  
+
   !ifndef MUI_CHECKBITMAP
     !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Icons\modern.bmp"
   !endif
-  
+
   !ifndef MUI_UI
     !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
   !endif
-  
+
   !ifndef MUI_FONT
     !define MUI_FONT "Tahoma"
   !endif
-  
+
   !ifndef MUI_INSTALLCOLORS
     !define MUI_INSTALLCOLORS "/windows"
   !endif
-  
+
   !ifndef MUI_PROGRESSBAR
     !define MUI_PROGRESSBAR "smooth"
   !endif
-  
+
   !ifndef MUI_BRANDINGTEXT
     !define MUI_BRANDINGTEXT "" ;Default value
   !endif
-  
-  !ifndef MUI_CURRENTPAGEVAR
-    !define MUI_CURRENTPAGEVAR "$9"
-  !endif
-  
+
   XPStyle On
 
   Icon "${MUI_ICON}"
@@ -69,9 +65,9 @@
   InstallColors "${MUI_INSTALLCOLORS}"
   InstProgressFlags "${MUI_PROGRESSBAR}"
   BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
-  
+
   !define CURRENTPAGE ${MUI_CURRENTPAGEVAR}
-  
+
   !verbose 4
 
 !macroend
@@ -82,15 +78,15 @@
 
   ;Set text on inner dialogs component
   Push ${MUI_TEMP1}
-  
+
     FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
     GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} ${CONTROL}
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-    
+
   Pop ${MUI_TEMP1}
-	
+
   !verbose 4
-	
+
 !macroend
 
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
@@ -99,14 +95,14 @@
 
   ;Set text on the white rectangle
   Push ${MUI_TEMP1}
-  
+
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
-    
+
   Pop ${MUI_TEMP1}
-  
+
   !verbose 4
 
 !macroend
@@ -119,7 +115,7 @@
 
   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
-  
+
   !verbose 4
 
 !macroend
@@ -135,7 +131,7 @@
     Goto done
 
   !verbose 4
-    
+
 !macroend
 
 !macro MUI_DESCRIPTION_END
@@ -146,7 +142,7 @@
   Pop ${MUI_TEMP1}
 
   !verbose 4
-  
+
 !macroend
 
 !macro MUI_FINISHHEADER
@@ -204,9 +200,9 @@
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
   SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
 
-  Pop ${MUI_TEMP2}  
+  Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
-    
+
 !macroend
 
 ;--------------------------------
@@ -221,8 +217,8 @@
     !define MUI_INSTALLOPTIONS_INITPLUGINS
     Call Initialize_____Plugins
     SetDetailsPrint both
-  !endif  
-  
+  !endif
+
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
 
   !verbose 4
@@ -239,17 +235,17 @@
     Call un.Initialize_____Plugins
     SetDetailsPrint both
   !endif
-  
+
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
 
   !verbose 4
-  
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SHOW FILE
 
   !verbose 3
-  
+
   Push ${MUI_TEMP1}
 
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
@@ -261,7 +257,7 @@
   StrCmp ${MUI_TEMP1} "back" "" +3
     Pop ${MUI_TEMP1}
     Abort
-    
+
   Pop ${MUI_TEMP1}
 
   !verbose 4
@@ -292,53 +288,50 @@
 ;BASIC FUNCTIONS
 
 !macro MUI_BASICFUNCTIONS
-  
-  !ifdef MUI_LICENSEPAGE
-    Page license SetLicense SetLicenseDialog
-  !endif
-  !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog
-  !endif
-  !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog
-  !endif
-  Page instfiles SetInstFiles
 
   !ifdef MUI_LICENSEPAGE
-  Function SetLicense
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-  FunctionEnd
+    Page license SetLicense SetLicenseDialog
+
+    Function SetLicense
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
+    FunctionEnd
+
+    Function SetLicenseDialog
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
+    FunctionEnd
   !endif
-  
+
   !ifdef MUI_COMPONENTSPAGE
-  Function SetComponents
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-  FunctionEnd
+    Page components SetComponents SetComponentsDialog
+
+    Function SetComponents
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+    FunctionEnd
+
+    Function SetComponentsDialog
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
+    FunctionEnd
   !endif
-  
+
   !ifdef MUI_DIRECTORYPAGE
-  Function SetDirectory
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-  FunctionEnd
+    Page directory SetDirectory SetDirectoryDialog
+
+    Function SetDirectory
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+    FunctionEnd
+
+    Function SetDirectoryDialog
+      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+    FunctionEnd
   !endif
-  
+
+  Page instfiles SetInstFiles
+
   Function SetInstFiles
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
   FunctionEnd
-          
-  Function SetLicenseDialog
-    !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-  FunctionEnd
-  
-  Function SetComponentsDialog
-    !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-    !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-  FunctionEnd
-  
-  Function SetDirectoryDialog
-    !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-  FunctionEnd
-  
+
   Function .onGUIInit
     !insertmacro MUI_GUIINIT
   FunctionEnd
@@ -365,7 +358,7 @@
     !insertmacro MUI_DESCRIPTION_END
   FunctionEnd
 
-  !verbose 4  
+  !verbose 4
 
 !macroend
 
@@ -391,11 +384,11 @@ UninstPage instfiles un.SetInstFiles
   Function un.SetUninstConfirm
     !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
   FunctionEnd
- 
+
   Function un.SetInstFiles
     !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
   FunctionEnd
-  
+
   Function un.onGUIInit
     !insertmacro MUI_GUIINIT
   FunctionEnd
