@@ -538,6 +538,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
               p.postfunc = ns_func.add(line.gettoken_str(3),0);
             else
               p.caption = add_string_main(line.gettoken_str(3),0);
+            if (line.getnumtokens()>4)
+              lstrcpy(build_last_page_define, line.gettoken_str(4));
           }
 #else
           ERROR_MSG("Error: Page callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
@@ -574,6 +576,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             p.id = NSIS_PAGE_DIR;
             break;
           case 4:
+            if (*build_last_page_define) definedlist.add(build_last_page_define,"");
             p.id = NSIS_PAGE_INSTFILES;
             break;
           default:
@@ -636,6 +639,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             }
             else
               p.caption = add_string_uninst(line.gettoken_str(3),0);
+            if (line.getnumtokens()>4)
+              lstrcpy(ubuild_last_page_define, line.gettoken_str(4));
           }
 #else
           ERROR_MSG("Error: UninstPage callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
@@ -656,6 +661,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             p.id = NSIS_PAGE_UNINST;
             break;
           case 2:
+            if (*ubuild_last_page_define) definedlist.add(ubuild_last_page_define,"");
             p.id = NSIS_PAGE_INSTFILES;
             break;
           default:

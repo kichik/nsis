@@ -526,7 +526,7 @@ nextPage:
       {
         process_string_fromtab(
           g_tmp+mystrlen(g_tmp),
-          this_page->caption // post_func contains the caption for custom functions
+          this_page->caption
         );
 
         SetWindowText(hwndDlg,g_tmp);
