@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Start editing here
 # Language ID
 1033
@@ -42,6 +42,7 @@ Space available:
 Space required: 
 Uninstalling from:
 Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file
+Error opening file for writing: \r\n\t"$0"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation
 Can't write: 
 Copy failed
 Copy to 

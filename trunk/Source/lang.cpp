@@ -43,6 +43,7 @@ char *english_strings[] = {
   "Space required: ",
   "Uninstalling from:",
   "Error opening file for writing: \r\n\t\"$0\"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file",
+  "Error opening file for writing: \r\n\t\"$0\"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation",
   "Can't write: ",
   "Copy failed",
   "Copy to ",
@@ -183,6 +184,7 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
 
 #ifdef NSIS_SUPPORT_FILE
     HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
+    HANDLE_STRING_C(NLF_FILE_ERROR_NOIGNORE, common.fileerrtext_noignore);
 #endif
 
     default:
@@ -540,9 +542,16 @@ void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
 #endif
 
 #ifdef NSIS_SUPPORT_FILE
-  if (m_inst_fileused && !table->common.fileerrtext)
+  if (m_inst_fileused)
   {
-    table->common.fileerrtext=add_string_main(str(NLF_FILE_ERROR));
+    if (!table->common.fileerrtext)
+    {
+      table->common.fileerrtext=add_string_main(str(NLF_FILE_ERROR));
+    }
+    if (!table->common.fileerrtext_noignore)
+    {
+      table->common.fileerrtext_noignore=add_string_main(str(NLF_FILE_ERROR_NOIGNORE));
+    }
   }
 #endif
 
@@ -579,9 +588,16 @@ void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
   }
 
 #ifdef NSIS_SUPPORT_FILE
-  if (m_uninst_fileused && !table->ucommon.fileerrtext)
+  if (m_uninst_fileused)
   {
-    table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext);
+    if (!table->ucommon.fileerrtext)
+    {
+      table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext);
+    }
+    if (!table->ucommon.fileerrtext_noignore)
+    {
+      table->ucommon.fileerrtext_noignore=add_string_uninst(build_strlist.get() + table->common.fileerrtext_noignore);
+    }
   }
 #endif
 
@@ -726,7 +742,7 @@ NLF::NLF(char *filename) {
   if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
   int nlf_version = atoi(buf+5);
   if (nlf_version != NLF_VERSION) {
-    if (nlf_version != 2 && nlf_version != 3)
+    if (nlf_version != 2 && nlf_version != 3 && nlf_version != 4)
       throw runtime_error("Language file version doesn't match NSIS version!");
   }
 
@@ -790,6 +806,14 @@ NLF::NLF(char *filename) {
           strcpy(m_szStrings[i], english_strings[i]);
           continue;
           break;
+      }
+    }
+
+    if (nlf_version < 5) {
+      if (i == NLF_FILE_ERROR_NOIGNORE) {
+        m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
+        strcpy(m_szStrings[i], english_strings[i]);
+        continue;
       }
     }
 
