@@ -272,9 +272,7 @@ lang_again:
 
   myitoa(state_language, cur_common_strings_table->lang_id);
 
-  process_string_from_lang(g_caption,LANGID_CAPTION);
-
-  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)g_caption);
+  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_from_lang(g_caption,LANGID_CAPTION));
 }
 
 int NSISCALL ui_doinstall(void)
@@ -1001,12 +999,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (g_inst_section[x].name_ptr>=0)
       {
         TVINSERTSTRUCT tv;
-        process_string_fromtab(ps_tmpbuf,g_inst_section[x].name_ptr);
         tv.hParent=Par;
         tv.hInsertAfter=TVI_LAST;
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
-        tv.item.pszText=ps_tmpbuf;
+        tv.item.pszText=process_string_fromtab(ps_tmpbuf,g_inst_section[x].name_ptr);
         tv.item.stateMask=TVIS_STATEIMAGEMASK;
 
         if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(g_inst_section[x].default_state&DFS_RO))
@@ -1083,10 +1080,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (g_inst_section[x].name_ptr>=0 && ns >= 0)
     {
       TVITEM tv;
-      process_string_fromtab(ps_tmpbuf,ns);
       tv.hItem=hTreeItems[x];
       tv.mask=TVIF_TEXT;
-      tv.pszText=ps_tmpbuf;
+      tv.pszText=process_string_fromtab(ps_tmpbuf,ns);
       TreeView_SetItem(hwndTree1,&tv);
     }
     SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].default_state&DFS_SET));
