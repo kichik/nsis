@@ -77,7 +77,7 @@ Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie all
 # ^UnLicenseText
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^UnLicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren sie das Kästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. $_CLICK
 # ^UnLicenseTextRB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^Custom
@@ -91,7 +91,7 @@ Wählen Sie die Komponenten aus, die Sie installieren möchten:
 # ^ComponentsSubText2
 oder wählen Sie zusätzliche Komponenten aus, die Sie installieren möchten:
 # ^UnComponentsText
-Wählen Sie die Komponenten aus, die Sie entferne möchten und wählen Sie diejenigen ab, die Sie nicht entfernen wollen. $_CLICK
+Wählen Sie die Komponenten aus, die Sie entfernen möchten und wählen Sie diejenigen ab, die Sie nicht entfernen wollen. $_CLICK
 # ^UnComponentsSubText1
 Deinstallations-Typ bestimmen:
 # ^UnComponentsSubText2_NoInstTypes
