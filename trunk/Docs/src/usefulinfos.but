@@ -259,7 +259,7 @@ Here is the function:
 
 \c !define LVM_GETITEMCOUNT 0x1004
 \c !define LVM_GETITEMTEXT 0x102D
-\c 
+\c
 \c Function DumpLog
 \c   Exch $5
 \c   Push $0
@@ -268,7 +268,7 @@ Here is the function:
 \c   Push $3
 \c   Push $4
 \c   Push $6
-\c 
+\c
 \c   FindWindow $0 "#32770" "" $HWNDPARENT
 \c   GetDlgItem $0 $0 1016
 \c   StrCmp $0 0 error
@@ -303,5 +303,140 @@ Here is the function:
 \c     Pop $0
 \c     Exch $5
 \c FunctionEnd
+
+written by KiCHiK
+
+
+\H{readreg_multi_sz} How to Read REG_MULTI_SZ Values
+
+I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.php?s=&threadid=131154}{this forum thread}. It reads a registry value of the type REG_MULTI_SZ and prints it out. Don't forget to edit where it says "Edit this!" when you test this script. The values must point to a REG_MULTI_SZ value or the example will spit out an error.
+
+
+\c OutFile "REG_MULTI_SZ Reader.exe"
+\c 
+\c Name "REG_MULTI_SZ Reader"
+\c 
+\c ShowInstDetails show
+\c 
+\c !define HKEY_CLASSES_ROOT        0x80000000
+\c !define HKEY_CURRENT_USER        0x80000001
+\c !define HKEY_LOCAL_MACHINE       0x80000002
+\c !define HKEY_USERS               0x80000003
+\c !define HKEY_PERFORMANCE_DATA    0x80000004
+\c !define HKEY_PERFORMANCE_TEXT    0x80000050
+\c !define HKEY_PERFORMANCE_NLSTEXT 0x80000060
+\c !define HKEY_CURRENT_CONFIG      0x80000005
+\c !define HKEY_DYN_DATA            0x80000006
+\c 
+\c !define KEY_QUERY_VALUE          0x0001
+\c !define KEY_ENUMERATE_SUB_KEYS   0x0008
+\c 
+\c !define REG_NONE                 0
+\c !define REG_SZ                   1
+\c !define REG_EXPAND_SZ            2
+\c !define REG_BINARY               3
+\c !define REG_DWORD                4
+\c !define REG_DWORD_LITTLE_ENDIAN  4
+\c !define REG_DWORD_BIG_ENDIAN     5
+\c !define REG_LINK                 6
+\c !define REG_MULTI_SZ             7
+\c 
+\c !define RegOpenKeyEx     "Advapi32::RegOpenKeyExA(i, t, i, i, i) i"
+\c !define RegQueryValueEx  "Advapi32::RegQueryValueExA(i, t, i, i, i, i, i) i"
+\c !define RegCloseKey      "Advapi32::RegCloseKeyA(i) i"
+\c 
+\c ####### Edit this!
+\c 
+\c !define ROOT_KEY         ${HKEY_CURRENT_USER}
+\c !define SUB_KEY          "Software\Joe Software"
+\c !define VALUE            "Strings"
+\c 
+\c ####### Stop editing
+\c 
+\c Section "Read"
+\c   StrCpy $0 ""
+\c   StrCpy $1 ""
+\c   StrCpy $2 ""
+\c   StrCpy $3 ""
+\c   SetPluginUnload alwaysoff
+\c   System::Call "*(i) i (0) .r0"
+\c   System::Call "*(i) i (0) .r1"
+\c   System::Call "*(i) i (0) .r2"
+\c   System::Call "${RegOpenKeyEx}(${ROOT_KEY}, '${SUB_KEY}', \
+\c     0, ${KEY_QUERY_VALUE}|${KEY_ENUMERATE_SUB_KEYS}, r0) .r3"
+\c   
+\c   StrCmp $3 0 goon
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't open registry key! ($3)"
+\c     Goto done
+\c goon:
+\c 
+\c   System::Call "*$0(&i4 .r4)"
+\c   System::Call "${RegQueryValueEx}(r4, '${VALUE}', 0, r1, 0, r2) .r3"
+\c 
+\c   StrCmp $3 0 read
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)"
+\c     Goto done
+\c 
+\c read:
+\c 
+\c   System::Call "*$1(&i4 .r3)"
+\c 
+\c   StrCmp $3 ${REG_MULTI_SZ} multisz
+\c     MessageBox MB_OK|MB_ICONSTOP "Registry value no SZ_MULTI_SZ! ($3)"
+\c     Goto done
+\c 
+\c multisz:
+\c 
+\c   System::Call "*$2(&i4 .r3)"
+\c 
+\c   StrCmp $3 0 0 multiszalloc
+\c     MessageBox MB_OK|MB_ICONSTOP "Registry value empty! ($3)"
+\c     Goto done
+\c 
+\c multiszalloc:
+\c 
+\c   System::Free $1
+\c   System::Alloc $3
+\c   Pop $1
+\c 
+\c   StrCmp $1 0 0 multiszget
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't allocate enough memory! ($3)"
+\c     Goto done
+\c 
+\c multiszget:
+\c 
+\c   System::Call "${RegQueryValueEx}(r4, 'bla', 0, 0, r1, r2) .r3"
+\c 
+\c   StrCmp $3 0 multiszprocess
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)[2]"
+\c     Goto done
+\c 
+\c multiszprocess:
+\c 
+\c   StrCpy $4 $1
+\c 
+\c   loop:
+\c 
+\c     System::Call "*$4(&t${NSIS_MAX_STRLEN} .r3)"
+\c     StrCmp $3 "" done
+\c     DetailPrint $3
+\c     StrLen $5 $3
+\c     IntOp $4 $4 + $5
+\c     IntOp $4 $4 + 1
+\c     Goto loop
+\c 
+\c done:
+\c 
+\c   System::Free $2
+\c   System::Free $1
+\c 
+\c   StrCmp $0 0 noClose
+\c     System::Call "${RegCloseKey}(r0)"
+\c 
+\c noClose:
+\c 
+\c   SetPluginUnload manual
+\c   System::Free $0
+\c SectionEnd
 
 written by KiCHiK
