@@ -450,10 +450,10 @@ void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
     table->ucommon.name=add_string_uninst(str(NLF_DEF_NAME),0);
   }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  table->common.byte=add_string_main(str(NLF_BYTE));
-  table->common.kilo=add_string_main(str(NLF_KILO));
-  table->common.mega=add_string_main(str(NLF_MEGA));
-  table->common.giga=add_string_main(str(NLF_GIGA));
+  table->common.byte=add_string_main(str(NLF_BYTE),0);
+  table->common.kilo=add_string_main(str(NLF_KILO),0);
+  table->common.mega=add_string_main(str(NLF_MEGA),0);
+  table->common.giga=add_string_main(str(NLF_GIGA),0);
 
   /* not yet needed
   
