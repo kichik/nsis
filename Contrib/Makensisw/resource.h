@@ -8,7 +8,7 @@
 #define IDS_COPY                        4
 #define IDS_FIND                        5
 #define IDS_RECOMPILE                   6
-#define IDS_DEFINES                     7
+#define IDS_SETTINGS                    7
 #define IDS_COMPRESSOR                  8
 #define IDS_TEST                        9
 #define IDS_EDITSCRIPT                  10
@@ -18,7 +18,7 @@
 #define IDS_FORUM                       15
 #define IDS_NSISUPDATE                  16
 #define IDS_DOCS                        17
-#define IDS_DEFAULT                     18
+#define IDS_SCRIPT                      18
 #define IDS_ZLIB                        19
 #define IDS_BZIP2                       20
 #define IDS_RECOMPILE_TEST              21
@@ -31,9 +31,10 @@
 #define IDK_ACCEL                       105
 #define IDI_SHELL                       112
 #define IDB_LOGO                        115
-#define DLG_DEFINES                     116
+#define DLG_SETTINGS                    116
 #define IDB_BITMAP1                     120
 #define IDB_TOOLBAR                     122
+#define DLG_COMPRESSOR                  124
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -57,6 +58,7 @@
 #define IDLEFT                          1020
 #define IDC_DEFINES                     1021
 #define IDC_RECOMPILE_TEST              1022
+#define IDC_COMPRESSOR                  1025
 #define IDM_COMPRESSOR                  40001
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
@@ -67,9 +69,8 @@
 #define IDM_CLEARLOG                    40009
 #define IDM_BROWSESCR                   40013
 #define IDM_FORUM                       40016
-#define IDM_DEFINES                     40017
 #define IDM_NSISUPDATE                  40018
-#define IDM_DEFAULT                     40020
+#define IDM_SCRIPT                      40020
 #define IDM_ZLIB                        40021
 #define IDM_BZIP2                       40022
 #define IDM_MRU_FILE                    40023
@@ -77,14 +78,15 @@
 #define IDM_RECOMPILE_TEST              40030
 #define IDM_BEST                        40031
 #define IDM_LZMA                        40032
+#define IDM_SETTINGS                    40033
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        124
-#define _APS_NEXT_COMMAND_VALUE         40033
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_RESOURCE_VALUE        125
+#define _APS_NEXT_COMMAND_VALUE         40034
+#define _APS_NEXT_CONTROL_VALUE         1027
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

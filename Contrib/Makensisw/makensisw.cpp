@@ -91,6 +91,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	    char **argv;
       int i, j;
       int argSpaceSize;
+      bool chooseCompressor = false;
 
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
@@ -111,6 +112,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
       RestoreWindowPos(g_sdata.hwnd);
+      RestoreCompressor();
       g_sdata.compressor =  (NCOMPRESSOR)-1;
 
       argSpaceSize = SetArgv((char *)GetCommandLine(), &argc, &argv);
@@ -128,13 +130,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             }
             while(*p == ' ') p++;
             if(p && lstrlen(p)) {
-              for(j=(int)COMPRESSOR_DEFAULT+1; j < (int)COMPRESSOR_BEST; j++) {
+              for(j=(int)COMPRESSOR_SCRIPT+1; j < (int)COMPRESSOR_BEST; j++) {
                 if(!lstrcmpi(p,compressor_names[j])) {
-                  g_sdata.command_line_compressor = true;
                   SetCompressor((NCOMPRESSOR)j);
                 }
               }
             }
+          }
+          else if(!lstrcmpi(argv[i],"/ChooseCompressor")) {
+            chooseCompressor = true;
           }
           else {
             lstrcat(g_sdata.script,"\"");
@@ -151,7 +155,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
 
       if(g_sdata.compressor ==  (NCOMPRESSOR)-1) {
-        RestoreCompressor();
+        SetCompressor(g_sdata.default_compressor);
+      }
+      if(chooseCompressor) {
+          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc);
       }
       CompileNSISScript();
       return TRUE;
@@ -170,8 +177,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_DESTROY:
     {
       SaveDefines();
-      SaveMRUList();
       SaveCompressor();
+      SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
       DestroyTooltips();
       PostQuitMessage(0);
@@ -245,11 +252,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (g_sdata.retcode==0 && FileExists(g_sdata.output_exe)) {
           char temp_file_name[MAX_PATH];
           wsprintf(temp_file_name,"%s_makensisw_temp",g_sdata.output_exe);
-          if(!lstrcmpi(g_sdata.compressor_name,compressor_names[(int)COMPRESSOR_DEFAULT+1])) {
+          if(!lstrcmpi(g_sdata.compressor_name,compressor_names[(int)COMPRESSOR_SCRIPT+1])) {
             SetCompressorStats();
             CopyFile(g_sdata.output_exe,temp_file_name,false);
             g_sdata.best_compressor_name = g_sdata.compressor_name;
-            g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+2];
+            g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_SCRIPT+2];
             ResetObjects();
             ResetInputScript();
 
@@ -264,7 +271,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             DWORD prevSize, thisSize;
 
 
-            for(i=(int)COMPRESSOR_DEFAULT+2; i<(int)COMPRESSOR_BEST; i++) {
+            for(i=(int)COMPRESSOR_SCRIPT+2; i<(int)COMPRESSOR_BEST; i++) {
               if(!lstrcmpi(g_sdata.compressor_name,compressor_names[i])) {
                 this_compressor = i;
                 last_compressor = i-1;
@@ -301,7 +308,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             if(this_compressor == ((int)COMPRESSOR_BEST - 1)) {
               char buf[1024];
 
-              g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+1];
+              g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_SCRIPT+1];
               g_sdata.appended = false;
               ResetInputScript();
 
@@ -316,7 +323,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                 LogMessage(g_sdata.hwnd, g_sdata.compressor_stats);
               }
               DeleteFile(temp_file_name);
-              ResetObjects();
               ResetInputScript();
               lstrcpy(g_sdata.compressor_stats,"");
             }
@@ -511,7 +517,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           return TRUE;
         case IDM_COMPRESSOR:
         {
-          g_sdata.command_line_compressor = false;
           SetCompressor((NCOMPRESSOR)(g_sdata.compressor+1));
           return TRUE;
         }
@@ -535,9 +540,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           CompileNSISScript();
           return TRUE;
         }
-        case IDM_DEFINES:
+        case IDM_SETTINGS:
         {
-          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_DEFINES),g_sdata.hwnd,(DLGPROC)DefinesProc);
+          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SETTINGS),g_sdata.hwnd,(DLGPROC)SettingsProc);
           return TRUE;
         }
         case IDM_TEST:
@@ -624,9 +629,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           {
             int i;
             DWORD command = LOWORD(wParam);
-            for(i=(int)COMPRESSOR_DEFAULT; i<=(int)COMPRESSOR_BEST; i++) {
+            for(i=(int)COMPRESSOR_SCRIPT; i<=(int)COMPRESSOR_BEST; i++) {
               if(command == compressor_commands[i]) {
-                g_sdata.command_line_compressor = false;
                 SetCompressor((NCOMPRESSOR)i);
                 return TRUE;
               }
@@ -790,12 +794,19 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   return FALSE;
 }
 
-BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch(msg) {
     case WM_INITDIALOG:
     {
+      int i=0;
+      LRESULT rv;
+
+      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
+        rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
+      }
+      rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
+
       if(g_sdata.defines) {
-        int i=0;
         while(g_sdata.defines[i]) {
           SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_ADDSTRING, 0, (LPARAM)g_sdata.defines[i]);
           i++;
@@ -824,6 +835,15 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
             }
             g_sdata.defines[n] = NULL;
           }
+
+          n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+          if(n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
+            g_sdata.default_compressor = (NCOMPRESSOR)n;
+          }
+          else {
+            g_sdata.default_compressor = COMPRESSOR_SCRIPT;
+          }
+
           EndDialog(hwndDlg, TRUE);
         }
         break;
@@ -911,6 +931,50 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
   return FALSE;
 }
 
+BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+  switch(msg) {
+    case WM_INITDIALOG:
+    {
+      int i=0;
+      LRESULT rv;
+
+      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
+        rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
+      }
+      rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.compressor, (LPARAM)0);
+
+      SetFocus(GetDlgItem(hwndDlg, IDC_COMPRESSOR));
+      break;
+    }
+    case WM_COMMAND:
+    {
+      switch (LOWORD(wParam)) {
+        case IDOK:
+        {
+          int n;
+          n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+          if(n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
+            SetCompressor((NCOMPRESSOR)n);
+          }
+          else {
+            SetCompressor(g_sdata.default_compressor);
+          }
+
+          EndDialog(hwndDlg, TRUE);
+          break;
+        }
+        case IDCANCEL:
+        {
+          EndDialog(hwndDlg, TRUE);
+          break;
+        }
+      }
+      break;
+    }
+  }
+  return FALSE;
+}
+
 void SetCompressor(NCOMPRESSOR compressor)
 {
   int i;
@@ -919,23 +983,23 @@ void SetCompressor(NCOMPRESSOR compressor)
     WORD command;
     char *compressor_name;
 
-    if(compressor > COMPRESSOR_DEFAULT && compressor < COMPRESSOR_BEST) {
+    if(compressor > COMPRESSOR_SCRIPT && compressor < COMPRESSOR_BEST) {
       command = compressor_commands[(int)compressor];
       compressor_name = compressor_names[(int)compressor];
     }
     else if(compressor == COMPRESSOR_BEST) {
       command = compressor_commands[(int)compressor];
-      compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+1];
+      compressor_name = compressor_names[(int)COMPRESSOR_SCRIPT+1];
     }
     else {
-      compressor = COMPRESSOR_DEFAULT;
-      command = IDM_DEFAULT;
+      compressor = COMPRESSOR_SCRIPT;
+      command = IDM_SCRIPT;
       compressor_name = "";
     }
     g_sdata.compressor = compressor;
     g_sdata.compressor_name = compressor_name;
     UpdateToolBarCompressorButton();
-    for(i=(int)COMPRESSOR_DEFAULT; i<= (int)COMPRESSOR_BEST; i++) {
+    for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
       CheckMenuItem(g_sdata.menu, compressor_commands[i], MF_BYCOMMAND | MF_UNCHECKED);
     }
     CheckMenuItem(g_sdata.menu, command, MF_BYCOMMAND | MF_CHECKED);

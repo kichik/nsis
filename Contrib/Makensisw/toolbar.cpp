@@ -53,8 +53,8 @@ void CreateToolBar()
   tbButton[TBB_COPY]        = CreateToolBarButton(IDB_COPY,          IDM_COPY,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_FIND]        = CreateToolBarButton(IDB_FIND,          IDM_FIND,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_SEP2]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
+  tbButton[TBB_SETTINGS]    = CreateToolBarButton(IDB_SETTINGS,      IDM_SETTINGS,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_RECOMPILE]   = CreateToolBarButton(IDB_RECOMPILE,     IDM_RECOMPILE,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_DEFINES]     = CreateToolBarButton(IDB_DEFINES,       IDM_DEFINES,    TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(IDB_COMPRESSOR,    IDM_COMPRESSOR, TBSTATE_ENABLED,        TBSTYLE_DROPDOWN, 0, 0);
   tbButton[TBB_TEST]        = CreateToolBarButton(IDB_TEST,          IDM_TEST,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   // Added by Darren Owen (DrO) on 1/10/2003
@@ -101,7 +101,7 @@ void UpdateToolBarCompressorButton()
 
   my_memset(&ti, 0, sizeof(TOOLINFO));
 
-  if(g_sdata.compressor >= COMPRESSOR_DEFAULT && g_sdata.compressor <= COMPRESSOR_BEST) {
+  if(g_sdata.compressor >= COMPRESSOR_SCRIPT && g_sdata.compressor <= COMPRESSOR_BEST) {
     iBitmap = compressor_bitmaps[(int)g_sdata.compressor];
     iString = compressor_strings[(int)g_sdata.compressor];
   }
@@ -170,8 +170,8 @@ void AddToolBarTooltips()
   AddToolBarButtonTooltip(TBB_EXIT, IDS_EXIT);
   AddToolBarButtonTooltip(TBB_COPY, IDS_COPY);
   AddToolBarButtonTooltip(TBB_FIND, IDS_FIND);
+  AddToolBarButtonTooltip(TBB_SETTINGS, IDS_SETTINGS);
   AddToolBarButtonTooltip(TBB_RECOMPILE, IDS_RECOMPILE);
-  AddToolBarButtonTooltip(TBB_DEFINES, IDS_DEFINES);
   AddToolBarButtonTooltip(TBB_COMPRESSOR, IDS_COMPRESSOR);
   AddToolBarButtonTooltip(TBB_TEST, IDS_TEST);
   // Added by Darren Owen (DrO) on 1/10/2003
