@@ -44,6 +44,13 @@ If +offset or -offset is specified, jump is relative by offset instructions. Got
 
 If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress). Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
 
+\S2{ifabort} IfAbort
+
+\c label_to_goto_if_abort [label_to_goto_if_no_abort]
+
+If abort is called it will "return" true. This can happen if the user choose abort on a file that failed to create (or overwrite) or if the user aborted by hand. This function can only be called from the leave function of the instfiles \R{page}{page}.
+
+
 \S2{iferrors} IfErrors
 
 \c jumpto_iferror [jumpto_ifnoerror]
