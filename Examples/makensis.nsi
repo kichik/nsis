@@ -20,7 +20,7 @@ SetCompressor bzip2
   !define MUI_DIRECTORYPAGE
   !define MUI_FINISHPAGE
   
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\makensis.htm"
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT
   
   !define MUI_ABORTWARNING
@@ -137,7 +137,7 @@ Section "Start Menu + Desktop Shortcuts" SecIcons
   CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS GUI.lnk" "$INSTDIR\Makensisw.exe" ""
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
-  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\makensis.htm"
+  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
   
   CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" ""
 SectionEnd
