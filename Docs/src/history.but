@@ -10,8 +10,6 @@
 
 \b Renamed nsisconf.nsi to nsisconf.nsh
 
-\b Added user defined multilingual strings. 
-
 \b Added CreateShortcut comment/description parameter
 
 \b Added new plugins: ShowWin, System
