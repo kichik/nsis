@@ -18,6 +18,15 @@
 #include "../exdll/exdll.h"
 #undef popstring
 
+// Use for functions only called from one place to possibly reduce some code
+// size.  Allows the source code to remain readable by leaving the function
+// intact.
+#ifdef _MSC_VER
+#define INLINE __forceinline
+#else
+#define INLINE inline
+#endif
+
 void *WINAPI MALLOC(int len) { return (void*)GlobalAlloc(GPTR,len); }
 void WINAPI FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
 
@@ -62,57 +71,37 @@ char *WINAPI STRDUP(const char *c)
 
 //---------------------------------------------------------------------
 // settings
-// crashes on windows 98 - #define IO_ENABLE_LINK
 #define IO_ENABLE_LINK
 
 //#define IO_LINK_UNDERLINED // Uncomment to show links text underlined
 //---------------------------------------------------------------------
 
-// general flags
-#define FLAG_RIGHT         0x00000001
+// Flags
 
-// OFN_OVERWRITEPROMPT     0x00000002
-// OFN_HIDEREADONLY        0x00000004
-
-#define FLAG_DISABLED      0x00000008
-#define FLAG_GROUP         0x00000010
-#define FLAG_NOTABSTOP     0x00000020
-
-// text box flags
-#define FLAG_PASSWORD      0x00000040
-#define FLAG_ONLYNUMBERS   0x00000080
-#define FLAG_MULTILINE     0x00000100
-
-// listbox flags
-#define FLAG_MULTISELECT   0x00000200
-#define FLAG_EXTENDEDSEL   0x00000400
-
-// OFN_PATHMUSTEXIST       0x00000800
-// OFN_FILEMUSTEXIST       0x00001000
-// OFN_CREATEPROMPT        0x00002000
-
-// combobox flags
-#define FLAG_DROPLIST      0x00004000
-
-// bitmap flags
-#define FLAG_RESIZETOFIT   0x00008000
-
-// general flags
-#define FLAG_NOTIFY        0x00010000 // Notify NSIS script when control is "activated" (exact meaning depends on the type of control)
-
-// browse flags
-#define FLAG_SAVEAS        0x00020000 // Show "Save As" instead of "Open" for FileRequest field
-
-// text box flags
-#define FLAG_NOWORDWRAP    0x00040000 // Disable word-wrap in multi-line text boxes
-
-// OFN_EXPLORER            0x00080000
-
-// more text box flags
-#define FLAG_WANTRETURN    0x00100000
-#define FLAG_VSCROLL       0x00200000
-#define FLAG_HSCROLL       0x00400000
-#define FLAG_READONLY      0x00800000
+// LBS_NOTIFY              0x00000001 // LISTBOX/CHECKBOX/RADIOBUTTON/BUTTON/LINK - Notify NSIS script when control is "activated" (exact meaning depends on the type of control)
+// OFN_OVERWRITEPROMPT     0x00000002 // FILEREQUEST
+// OFN_HIDEREADONLY        0x00000004 // FILEREQUEST
+// LBS_MULTIPLESEL         0x00000008 // LISTBOX
+#define FLAG_READONLY      0x00000010 // TEXT/FILEREQUEST/DIRREQUEST
+// BS_LEFTTEXT             0x00000020 // CHECKBOX/RADIOBUTTON
+#define FLAG_PASSWORD      0x00000040 // TEXT/FILEREQUEST/DIRREQUEST
+#define FLAG_ONLYNUMBERS   0x00000080 // TEXT/FILEREQUEST/DIRREQUEST
+#define FLAG_MULTILINE     0x00000100 // TEXT/FILEREQUEST/DIRREQUEST
+#define FLAG_NOWORDWRAP    0x00000200 // TEXT/FILEREQUEST/DIRREQUEST - Disable word-wrap in multi-line text boxes
+#define FLAG_WANTRETURN    0x00000400 // TEXT/FILEREQUEST/DIRREQUEST
+// LBS_EXTENDEDSEL         0x00000800 // LISTBOX
+// OFN_PATHMUSTEXIST       0x00000800 // FILEREQUEST
+// OFN_FILEMUSTEXIST       0x00001000 // FILEREQUEST
+// OFN_CREATEPROMPT        0x00002000 // FILEREQUEST
+#define FLAG_DROPLIST      0x00004000 // COMBOBOX
+#define FLAG_RESIZETOFIT   0x00008000 // BITMAP
+// WS_TABSTOP              0x00010000 // *ALL*
+// WS_GROUP                0x00020000 // *ALL*
+#define FLAG_SAVEAS        0x00040000 // FILEREQUEST - Show "Save As" instead of "Open" for FileRequest field
+// OFN_EXPLORER            0x00080000 // FILEREQUEST
+// WS_HSCROLL              0x00100000 // *ALL*
+// WS_VSCROLL              0x00200000 // *ALL*
+// WS_DISABLED             0x08000000 // *ALL*
 
 struct TableEntry {
   char *pszName;
@@ -150,7 +139,7 @@ struct FieldType {
 
 // initial buffer size.  buffers will grow as required.
 // use a value larger than MAX_PATH to prevent need for excessive growing.
-#define MAX_BUFFER_LENGTH (300)
+#define BUFFER_SIZE 8192 // 8kb of mem is max char count in multiedit
 
 char szBrowseButtonCaption[] = "...";
 
@@ -159,7 +148,6 @@ HWND hMainWindow      = NULL;
 HWND hCancelButton    = NULL;
 HWND hNextButton      = NULL;
 HWND hBackButton      = NULL;
-HWND hInitialFocus    = NULL;
 
 HINSTANCE m_hInstance = NULL;
 
@@ -197,20 +185,28 @@ LRESULT WINAPI mySendMessage(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
   return SendMessage(hWnd, Msg, wParam, lParam);
 }
 
+void WINAPI mySetFocus(HWND hWnd)
+{
+  mySendMessage(hMainWindow, WM_NEXTDLGCTL, (WPARAM)hWnd, TRUE);
+}
+
+void WINAPI mySetWindowText(HWND hWnd, LPCTSTR pszText)
+{
+  if (pszText)
+    SetWindowText(hWnd, pszText);
+}
 
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
-   static TCHAR szDir[MAX_PATH];
+  static TCHAR szDir[MAX_PATH];
 
-   if (uMsg == BFFM_INITIALIZED) {
-      if (GetWindowText(pFields[(int)pData].hwnd, szDir, MAX_PATH) > 0) {
-        mySendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)szDir);
-      }
-    }
-   return 0;
+  if (uMsg == BFFM_INITIALIZED &&
+      GetWindowText(pFields[(int)pData].hwnd, szDir, MAX_PATH) > 0)
+    mySendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)szDir);
+  return 0;
 }
 
 
-bool WINAPI ValidateFields() {
+bool INLINE ValidateFields() {
   int nIdx;
   int nLength;
 
@@ -228,7 +224,7 @@ bool WINAPI ValidateFields() {
         if (pField->pszValidateText) {
           MessageBox(hConfigWindow, pField->pszValidateText, NULL, MB_OK|MB_ICONWARNING);
         }
-        SetFocus(pField->hwnd);
+        mySetFocus(pField->hwnd);
         return false;
       }
 
@@ -239,110 +235,111 @@ bool WINAPI ValidateFields() {
 
 bool WINAPI SaveSettings(void) {
   static char szField[25];
-  int nIdx;
-  int nBufLen = MAX_BUFFER_LENGTH;
+  int nBufLen = BUFFER_SIZE;
   char *pszBuffer = (char*)MALLOC(nBufLen);
   if (!pszBuffer) return false;
 
-  int CurrField = 1;
-  for (nIdx = 0; nIdx < nNumFields; nIdx++) {
+  int nIdx;
+  int CurrField;
+  for (nIdx = 0, CurrField = 1; nIdx < nNumFields; nIdx++, CurrField++) {
     FieldType *pField = pFields + nIdx;
     HWND hwnd = pField->hwnd;
     switch (pField->nType) {
       case FIELD_BROWSEBUTTON:
         if (g_NotifyField > CurrField)
           --g_NotifyField;
+        --CurrField;
+      default:
         continue;
-      case FIELD_INVALID:
-      case FIELD_LABEL:
-      case FIELD_BUTTON:
-        *pszBuffer=0;
-        break;
+
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
         wsprintf(pszBuffer, "%d", !!mySendMessage(hwnd, BM_GETCHECK, 0, 0));
         break;
+
       case FIELD_LISTBOX:
-        {
-          // Ok, this one requires a bit of work.
-          // First, we allocate a buffer long enough to hold every item.
-          // Then, we loop through every item and if it's selected we add it to our buffer.
-          // If there is already an item in the list, then we prepend a | character before the new item.
-          // We could simplify for single-select boxes, but using one piece of code saves some space.
-          int nLength = lstrlen(pField->pszListItems) + 10;
-          if (nLength > nBufLen) {
-            FREE(pszBuffer);
-            nBufLen = nLength;
-            pszBuffer = (char*)MALLOC(nBufLen);
-            if (!pszBuffer) return false;
-          }
-          char *pszItem = (char*)MALLOC(nBufLen);
-          if (!pszItem) return false;
+      {
+        // Ok, this one requires a bit of work.
+        // First, we allocate a buffer long enough to hold every item.
+        // Then, we loop through every item and if it's selected we add it to our buffer.
+        // If there is already an item in the list, then we prepend a | character before the new item.
+        // We could simplify for single-select boxes, but using one piece of code saves some space.
+        int nLength = lstrlen(pField->pszListItems) + 10;
+        if (nLength > nBufLen) {
+          FREE(pszBuffer);
+          nBufLen = nLength;
+          pszBuffer = (char*)MALLOC(nBufLen);
+          if (!pszBuffer) return false;
+        }
+        char *pszItem = (char*)MALLOC(nBufLen);
+        if (!pszItem) return false;
 
-          *pszBuffer = '\0';
-          int nNumItems = mySendMessage(hwnd, LB_GETCOUNT, 0, 0);
-          for (int nIdx2 = 0; nIdx2 < nNumItems; nIdx2++) {
-            if (mySendMessage(hwnd, LB_GETSEL, nIdx2, 0) > 0) {
-              if (*pszBuffer) lstrcat(pszBuffer, "|");
-              mySendMessage(hwnd, LB_GETTEXT, (WPARAM)nIdx2, (LPARAM)pszItem);
-              lstrcat(pszBuffer, pszItem);
+        *pszBuffer = '\0';
+        int nNumItems = mySendMessage(hwnd, LB_GETCOUNT, 0, 0);
+        for (int nIdx2 = 0; nIdx2 < nNumItems; nIdx2++) {
+          if (mySendMessage(hwnd, LB_GETSEL, nIdx2, 0) > 0) {
+            if (*pszBuffer) lstrcat(pszBuffer, "|");
+            mySendMessage(hwnd, LB_GETTEXT, (WPARAM)nIdx2, (LPARAM)pszItem);
+            lstrcat(pszBuffer, pszItem);
+          }
+        }
+
+        FREE(pszItem);
+        break;
+      }
+
+      case FIELD_TEXT:
+      case FIELD_FILEREQUEST:
+      case FIELD_DIRREQUEST:
+      case FIELD_COMBOBOX:
+      {
+        int nLength = mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
+        if (nLength > nBufLen) {
+          FREE(pszBuffer);
+          // add a bit extra so we do this less often
+          nBufLen = nLength + 20;
+          pszBuffer = (char*)MALLOC(nBufLen);
+          if (!pszBuffer) return false;
+        }
+        *pszBuffer='"';
+        GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
+        pszBuffer[nLength+1]='"';
+        pszBuffer[nLength+2]='\0';
+
+        if ( pField->nType == FIELD_TEXT && (pField->nFlags & FLAG_MULTILINE) )
+        {
+          char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
+          char *p1, *p2;
+          for (p1=pszBuffer,p2=pszBuf2; *p1; p1++, p2++) {
+            switch (*p1) {
+              case '\t':
+                *p2++ = '\\';
+                *p2 = 't';
+                break;
+              case '\n':
+                *p2++ = '\\';
+                *p2 = 'n';
+                break;
+              case '\r':
+                *p2++ = '\\';
+                *p2 = 'r';
+                break;
+              case '\\':
+                *p2++ = '\\';
+              default:
+                *p2=*p1;
             }
           }
-
-          FREE(pszItem);
-          break;
+          *p2 = 0;
+          nBufLen = nBufLen*2;
+          FREE(pszBuffer);
+          pszBuffer=pszBuf2;
         }
-      default:
-        {
-          int nLength = mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
-          if (nLength > nBufLen) {
-            FREE(pszBuffer);
-            // add a bit extra so we do this less often
-            nBufLen = nLength + 20;
-            pszBuffer = (char*)MALLOC(nBufLen);
-            if (!pszBuffer) return false;
-          }
-          *pszBuffer='"';
-          GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
-          pszBuffer[nLength+1]='"';
-          pszBuffer[nLength+2]='\0';
-
-          if ( pField->nType == FIELD_TEXT && pField->nFlags & FLAG_MULTILINE )
-          {
-            char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
-            char *p1, *p2;
-            for (p1=pszBuffer,p2=pszBuf2; *p1; p1++, p2++) {
-              switch (*p1) {
-                case '\r':
-                  *p2++ = '\\';
-                  *p2 = 'r';
-                  break;
-                case '\n':
-                  *p2++ = '\\';
-                  *p2 = 'n';
-                  break;
-                case '\t':
-                  *p2++ = '\\';
-                  *p2 = 't';
-                  break;
-                case '\\':
-                  *p2++ = '\\';
-                default:
-                  *p2=*p1;
-              }
-            }
-            *p2 = 0;
-            nBufLen = nBufLen*2;
-            FREE(pszBuffer);
-            pszBuffer=pszBuf2;
-          }
-
-          break;
-        }
+        break;
+      }
     }
     wsprintf(szField, "Field %d", CurrField);
     WritePrivateProfileString(szField, "State", pszBuffer, pszFilename);
-    CurrField++;
   }
 
   // Tell NSIS which control was activated, if any
@@ -356,7 +353,6 @@ bool WINAPI SaveSettings(void) {
 
 #define BROWSE_WIDTH 15
 
-#define BUFFER_SIZE 8192 // 8kb of mem is max char count in multiedit
 static char szResult[BUFFER_SIZE];
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
@@ -432,59 +428,52 @@ int WINAPI ReadSettings(void) {
     };
     // Control flags
     static TableEntry FlagTable[] = {
-      { "RIGHT",             FLAG_RIGHT          },
+      { "NOTIFY",            LBS_NOTIFY          },
       { "WARN_IF_EXIST",     OFN_OVERWRITEPROMPT },
       { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
-      { "DISABLED",          FLAG_DISABLED       },
-      { "GROUP",             FLAG_GROUP          },
-      { "NOTABSTOP",         FLAG_NOTABSTOP      },
+      { "MULTISELECT",       LBS_MULTIPLESEL     },
+      { "READONLY",          FLAG_READONLY       },
+      { "RIGHT",             BS_LEFTTEXT         },
       { "PASSWORD",          FLAG_PASSWORD       },
       { "ONLY_NUMBERS",      FLAG_ONLYNUMBERS    },
       { "MULTILINE",         FLAG_MULTILINE      },
-      { "MULTISELECT",       FLAG_MULTISELECT    },
-      { "EXTENDEDSELCT",     FLAG_EXTENDEDSEL    },
-      { "FILE_MUST_EXIST",   OFN_FILEMUSTEXIST   },
+      { "NOWORDWRAP",        FLAG_NOWORDWRAP     },
+      { "WANTRETURN",        FLAG_WANTRETURN     },
+      { "EXTENDEDSELCT",     LBS_EXTENDEDSEL     },
       { "PATH_MUST_EXIST",   OFN_PATHMUSTEXIST   },
+      { "FILE_MUST_EXIST",   OFN_FILEMUSTEXIST   },
       { "PROMPT_CREATE",     OFN_CREATEPROMPT    },
       { "DROPLIST",          FLAG_DROPLIST       },
       { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
-      { "NOTIFY",            FLAG_NOTIFY         },
+      { "NOTABSTOP",         WS_TABSTOP          },
+      { "GROUP",             WS_GROUP            },
       { "REQ_SAVE",          FLAG_SAVEAS         },
-      { "NOWORDWRAP",        FLAG_NOWORDWRAP     },
       { "FILE_EXPLORER",     OFN_EXPLORER        },
-      { "WANTRETURN",        FLAG_WANTRETURN     },
-      { "VSCROLL",           FLAG_VSCROLL        },
-      { "HSCROLL",           FLAG_HSCROLL        },
-      { "READONLY",          FLAG_READONLY       },
+      { "HSCROLL",           WS_HSCROLL          },
+      { "VSCROLL",           WS_VSCROLL          },
+      { "DISABLED",          WS_DISABLED         },
       { NULL,                0                   }
     };
     FieldType *pField = pFields + nIdx;
 
     wsprintf(szField, "Field %d", nCtrlIdx + 1);
-    myGetProfileString(szField, "TYPE");
 
     // Get the control type
+    myGetProfileString(szField, "TYPE");
     pField->nType = LookupToken(TypeTable, szResult);
     if (pField->nType == FIELD_INVALID)
       continue;
 
     // Lookup flags associated with the control type
-    pField->nFlags |= LookupToken(FlagTable, szResult);
-
-    pField->pszText = myGetProfileStringDup(szField, "TEXT");
-
-    // Label Text - convert newline
-
-    if (pField->nType == FIELD_LABEL) {
-      ConvertNewLines(pField->pszText);
-    }
+    pField->nFlags = LookupToken(FlagTable, szResult);
+    myGetProfileString(szField, "Flags");
+    pField->nFlags |= LookupTokens(FlagTable, szResult);
 
     // pszState must not be NULL!
     myGetProfileString(szField, "State");
     pField->pszState = strdup(szResult);
 
-    pField->pszRoot = myGetProfileStringDup(szField, "ROOT");
-
+    // ListBox items list
     {
       int nResult = myGetProfileString(szField, "ListItems");
       if (nResult) {
@@ -495,21 +484,24 @@ int WINAPI ReadSettings(void) {
         pField->pszListItems[nResult + 1] = '\0';
       }
     }
-    pField->nMaxLength = myGetProfileInt(szField, "MaxLen", 0);
-    pField->nMinLength = myGetProfileInt(szField, "MinLen", 0);
 
-    pField->pszValidateText = myGetProfileStringDup(szField, "ValidateText");
+    // Label Text - convert newline
+    pField->pszText = myGetProfileStringDup(szField, "TEXT");
+    if (pField->nType == FIELD_LABEL)
+      ConvertNewLines(pField->pszText);
+
+    // Dir request - root folder
+    pField->pszRoot = myGetProfileStringDup(szField, "ROOT");
 
     // ValidateText - convert newline
-
-    if (pField->pszValidateText) {
-      ConvertNewLines(pField->pszValidateText);
-    }
+    pField->pszValidateText = myGetProfileStringDup(szField, "ValidateText");
+    ConvertNewLines(pField->pszValidateText);
 
     {
       int nResult = GetPrivateProfileString(szField, "Filter", "All Files|*.*", szResult, sizeof(szResult), pszFilename);
       if (nResult) {
-        // add an extra | character to the end to simplify the loop where we add the items.
+        // Convert the filter to the format required by Windows: NULL after each
+        // item followed by a terminating NULL
         pField->pszFilter = (char*)MALLOC(nResult + 2);
         strcpy(pField->pszFilter, szResult);
         char *pszPos = pField->pszFilter;
@@ -521,15 +513,13 @@ int WINAPI ReadSettings(void) {
     }
 
     pField->rect.left = myGetProfileInt(szField, "LEFT", 0);
-    pField->rect.right = myGetProfileInt(szField, "RIGHT", 0);
     pField->rect.top = myGetProfileInt(szField, "TOP", 0);
+    pField->rect.right = myGetProfileInt(szField, "RIGHT", 0);
     pField->rect.bottom = myGetProfileInt(szField, "BOTTOM", 0);
-
-    myGetProfileString(szField, "Flags");
-    pField->nFlags |= LookupTokens(FlagTable, szResult);
+    pField->nMinLength = myGetProfileInt(szField, "MinLen", 0);
+    pField->nMaxLength = myGetProfileInt(szField, "MaxLen", 0);
 
     // Text color for LINK control, default is pure blue
-    //if (pField->nType == FIELD_LINK)
     pField->hImage = (HANDLE)myGetProfileInt(szField, "TxtColor", RGB(0,0,255));
 
     pField->nControlID = 1200 + nIdx;
@@ -538,7 +528,7 @@ int WINAPI ReadSettings(void) {
       FieldType *pNewField = &pFields[nIdx+1];
       pNewField->nControlID = 1200 + nIdx + 1;
       pNewField->nType = FIELD_BROWSEBUTTON;
-      pNewField->nFlags = pField->nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
+      pNewField->nFlags = pField->nFlags & (WS_DISABLED | WS_TABSTOP);
       pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
       pNewField->rect.right  = pField->rect.right;
       pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
@@ -556,7 +546,9 @@ int WINAPI ReadSettings(void) {
 
 LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
   switch (codeNotify) {
-    case BN_CLICKED:
+    case BN_CLICKED:    // The user pressed a button
+    case LBN_SELCHANGE: // The user changed the selection in a ListBox control
+//  case CBN_SELCHANGE: // The user changed the selection in a DropList control (same value as LBN_SELCHANGE)
     {
       char szBrowsePath[MAX_PATH];
       int nIdx = FindControlIdx(id);
@@ -580,7 +572,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
 
         tryagain:
           if ((pField->nFlags & FLAG_SAVEAS) ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn)) {
-            SetWindowText(pField->hwnd, szBrowsePath);
+            mySetWindowText(pField->hwnd, szBrowsePath);
             break;
           }
           else if (szBrowsePath[0] && CommDlgExtendedError() == FNERR_INVALIDFILENAME) {
@@ -625,7 +617,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
             break;
 
           if (SHGetPathFromIDList(pResult, szBrowsePath)) {
-            SetWindowText(pField->hwnd, szBrowsePath);
+            mySetWindowText(pField->hwnd, szBrowsePath);
           }
 
           LPMALLOC pMalloc;
@@ -637,16 +629,20 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
         }
 
         case FIELD_LINK:
-          ShellExecute(hMainWindow, NULL, pField->pszState, NULL, NULL, SW_SHOWDEFAULT);
+        case FIELD_BUTTON:
+          // Allow the state to be empty - this might be useful in conjunction
+          // with the NOTIFY flag
+          if (*pField->pszState)
+            ShellExecute(hMainWindow, NULL, pField->pszState, NULL, NULL, SW_SHOWDEFAULT);
           break;
       }
 
-      if (pField->nFlags & FLAG_NOTIFY) {
+      if (pField->nFlags & LBS_NOTIFY) {
         // Remember which control was activated then pretend the user clicked Next
         g_NotifyField = nIdx + 1;
         // the next button must be enabled or nsis will ignore WM_COMMAND
         BOOL bWasDisabled = EnableWindow(hNextButton, TRUE);
-        FORWARD_WM_COMMAND(hMainWindow, IDOK, hNextButton, codeNotify, mySendMessage);
+        FORWARD_WM_COMMAND(hMainWindow, IDOK, hNextButton, BN_CLICKED, mySendMessage);
         if (bWasDisabled)
           EnableWindow(hNextButton, FALSE);
       }
@@ -715,12 +711,11 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // We need lpdis->rcItem later
       RECT rc = lpdis->rcItem;
 
-      // Get TxtColor unless the user has set another using SetCtlColors
-      if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
-        SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
-
       // Calculate needed size of the control
       DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+
+      // Make some more room so the focus rect won't cut letters off
+      rc.right = min(rc.right + 2, lpdis->rcItem.right);
 
       // Move rect to right if in RTL mode
       if (bRTL)
@@ -729,19 +724,24 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         rc.right += lpdis->rcItem.right - rc.right;
       }
 
-      // Make some more room so the focus rect won't cut letters off
-      rc.right = min(rc.right + 2, lpdis->rcItem.right);
+      if (lpdis->itemAction & ODA_DRAWENTIRE)
+      {
+        // Get TxtColor unless the user has set another using SetCtlColors
+        if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
+          SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
 
-      // Draw the text
-      DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | (bRTL ? DT_RTLREADING : 0));
+        // Draw the text
+        DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | (bRTL ? DT_RTLREADING : 0));
+      }
 
       // Draw the focus rect if needed
-      if (((lpdis->itemState & ODS_FOCUS) && (lpdis->itemAction & ODA_DRAWENTIRE)) || (lpdis->itemAction & ODA_FOCUS) || (lpdis->itemAction & ODA_SELECT))
+      if (((lpdis->itemState & ODS_FOCUS) && (lpdis->itemAction & ODA_DRAWENTIRE)) || (lpdis->itemAction & ODA_FOCUS))
       {
+        // NB: when not in DRAWENTIRE mode, this will actually toggle the focus
+        // rectangle since it's drawn in a XOR way
         DrawFocusRect(lpdis->hDC, &rc);
       }
 
-      MapWindowPoints(lpdis->hwndItem, 0, (LPPOINT) &rc, 2);
       pField->rect = rc;
 
 #ifdef IO_LINK_UNDERLINED
@@ -755,7 +755,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORLISTBOX:
       // let the NSIS window handle colors, it knows best
-      return mySendMessage(hMainWindow, WM_CTLCOLORSTATIC, wParam, lParam);
+      return mySendMessage(hMainWindow, uMsg, wParam, lParam);
   }
   return 0;
 }
@@ -766,31 +766,44 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #define IDC_HAND MAKEINTRESOURCE(32649)
 #endif
 
+#ifndef BS_TYPEMASK
+#define BS_TYPEMASK 0x0000000FL
+#endif
+
 // pFields[nIdx].nParentIdx is used to store original windowproc
 int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
-  int CtrlId = GetDlgCtrlID(hWin);
-  int StaticField = FindControlIdx(CtrlId);
+  int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
   if (StaticField < 0)
     return 0;
   FieldType *pField = pFields + StaticField;
 
   switch(uMsg)
   {
-  case WM_SETFOCUS:
-    mySendMessage(hConfigWindow, DM_SETDEFID, CtrlId, 0);
-    // remove the BS_DEFPUSHBUTTON style from IDOK
-    mySendMessage(GetDlgItem(hMainWindow, IDOK), BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
-    break;
-  case WM_NCHITTEST:
+    case WM_GETDLGCODE:
+      // Pretend we are a normal button/default button as appropriate
+      return DLGC_BUTTON | ((pField->nFlags & FLAG_WANTRETURN) ? DLGC_DEFPUSHBUTTON : DLGC_UNDEFPUSHBUTTON);
+
+    case BM_SETSTYLE:
+      // Detect when we are becoming the default button but don't lose the owner-draw style
+      if ((wParam & BS_TYPEMASK) == BS_DEFPUSHBUTTON)
+        pField->nFlags |= FLAG_WANTRETURN;  // Hijack this flag to indicate default button status
+      else
+        pField->nFlags &= ~FLAG_WANTRETURN;
+      wParam = (wParam & ~BS_TYPEMASK) | BS_OWNERDRAW;
+      break;
+
+    case WM_NCHITTEST:
     {
       POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+      MapWindowPoints(0, hWin, &pt, 1);
       if (PtInRect(&pField->rect, pt))
         return HTCLIENT;
       else
         return HTNOWHERE;
     }
-  case WM_SETCURSOR:
+
+    case WM_SETCURSOR:
     {
       if ((HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT)
       {
@@ -838,12 +851,12 @@ int WINAPI createCfgDlg()
   }
 
   hCancelButton = GetDlgItem(mainwnd,IDCANCEL);
-  hInitialFocus = hNextButton = GetDlgItem(mainwnd,IDOK);
+  hNextButton = GetDlgItem(mainwnd,IDOK);
   hBackButton = GetDlgItem(mainwnd,3);
 
-  if (pszCancelButtonText) SetWindowText(hCancelButton,pszCancelButtonText);
-  if (pszNextButtonText) SetWindowText(hNextButton,pszNextButtonText);
-  if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
+  mySetWindowText(hCancelButton,pszCancelButtonText);
+  mySetWindowText(hNextButton,pszNextButtonText);
+  mySetWindowText(hBackButton,pszBackButtonText);
 
   if (bBackEnabled!=-1) EnableWindow(hBackButton,bBackEnabled);
   if (bCancelEnabled!=-1) EnableWindow(hCancelButton,bCancelEnabled);
@@ -894,6 +907,8 @@ int WINAPI createCfgDlg()
 
   DeleteDC(memDC);
 
+  BOOL fFocused = FALSE;
+
 #define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
 
   for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
@@ -905,18 +920,18 @@ int WINAPI createCfgDlg()
       DWORD dwRTLExStyle;
     } ClassTable[] = {
       { "STATIC",       // FIELD_LABEL
-        DEFAULT_STYLES /*| WS_TABSTOP*/,
-        DEFAULT_STYLES | SS_RIGHT /*| WS_TABSTOP*/,
+        DEFAULT_STYLES,
+        DEFAULT_STYLES | SS_RIGHT,
         WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT | WS_EX_RTLREADING },
       { "STATIC",       // FIELD_ICON
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
+        DEFAULT_STYLES | SS_ICON,
+        DEFAULT_STYLES | SS_ICON,
         0,
         WS_EX_RTLREADING },
       { "STATIC",       // FIELD_BITMAP
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
+        DEFAULT_STYLES | SS_BITMAP | SS_CENTERIMAGE,
+        DEFAULT_STYLES | SS_BITMAP | SS_CENTERIMAGE,
         0,
         WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_BROWSEBUTTON
@@ -1025,9 +1040,7 @@ int WINAPI createCfgDlg()
         break;
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
-      case FIELD_BUTTON:
-        if (pField->nFlags & FLAG_RIGHT)
-          dwStyle |= BS_RIGHTBUTTON;
+        dwStyle ^= pField->nFlags & BS_LEFTTEXT;
         break;
       case FIELD_TEXT:
       case FIELD_FILEREQUEST:
@@ -1036,40 +1049,37 @@ int WINAPI createCfgDlg()
           dwStyle |= ES_PASSWORD;
         if (pField->nFlags & FLAG_ONLYNUMBERS)
           dwStyle |= ES_NUMBER;
+        if (pField->nFlags & FLAG_WANTRETURN)
+          dwStyle |= ES_WANTRETURN;
+        if (pField->nFlags & FLAG_READONLY)
+          dwStyle |= ES_READONLY;
+        title = pField->pszState;
         if (pField->nFlags & FLAG_MULTILINE)
         {
           dwStyle |= ES_MULTILINE | ES_AUTOVSCROLL;
           // Enable word-wrap unless we have a horizontal scroll bar
           // or it has been explicitly disallowed
-          if (!(pField->nFlags & (FLAG_HSCROLL | FLAG_NOWORDWRAP)))
+          if (!(pField->nFlags & (WS_HSCROLL | FLAG_NOWORDWRAP)))
             dwStyle &= ~ES_AUTOHSCROLL;
           ConvertNewLines(pField->pszState);
+          // If multiline-readonly then hold the text back until after the
+          // initial focus has been set. This is so the text is not initially
+          // selected - useful for License Page look-a-likes.
+          if (pField->nFlags & FLAG_READONLY)
+            title = NULL;
         }
-        if (pField->nFlags & FLAG_WANTRETURN)
-          dwStyle |= ES_WANTRETURN;
-        if (pField->nFlags & FLAG_VSCROLL)
-          dwStyle |= WS_VSCROLL;
-        if (pField->nFlags & FLAG_HSCROLL)
-          dwStyle |= WS_HSCROLL;
-        if (pField->nFlags & FLAG_READONLY)
-          dwStyle |= ES_READONLY;
-        title = pField->pszState;
         break;
       case FIELD_COMBOBOX:
         dwStyle |= (pField->nFlags & FLAG_DROPLIST) ? CBS_DROPDOWNLIST : CBS_DROPDOWN;
         title = pField->pszState;
         break;
       case FIELD_LISTBOX:
-        if (pField->nFlags & FLAG_EXTENDEDSEL)
-          dwStyle |= LBS_EXTENDEDSEL;
-        if (pField->nFlags & FLAG_MULTISELECT)
-          dwStyle |= LBS_MULTIPLESEL;
+        dwStyle |= pField->nFlags & (LBS_NOTIFY | LBS_MULTIPLESEL | LBS_EXTENDEDSEL);
         break;
     }
 
-    if (pField->nFlags & FLAG_DISABLED) dwStyle |= WS_DISABLED;
-    if (pField->nFlags & FLAG_GROUP) dwStyle |= WS_GROUP;
-    if (pField->nFlags & FLAG_NOTABSTOP) dwStyle &= ~WS_TABSTOP;
+    dwStyle |= pField->nFlags & (WS_GROUP | WS_HSCROLL | WS_VSCROLL | WS_DISABLED);
+    if (pField->nFlags & WS_TABSTOP) dwStyle &= ~WS_TABSTOP;
 
     HWND hwCtrl = pField->hwnd = CreateWindowEx(
       dwExStyle,
@@ -1090,15 +1100,20 @@ int WINAPI createCfgDlg()
       // Sets the font of IO window to be the same as the main window
       mySendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
       // Set initial focus to the first appropriate field
-      if ((hInitialFocus == hNextButton) && (dwStyle & WS_TABSTOP))
-        hInitialFocus = hwCtrl;
+      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP) {
+        fFocused = TRUE;
+        mySetFocus(hwCtrl);
+      }
       // make sure we created the window, then set additional attributes
       switch (pField->nType) {
         case FIELD_TEXT:
-          mySendMessage(hwCtrl, WM_SETTEXT, 0, (LPARAM)title);
-          // no break;
         case FIELD_FILEREQUEST:
         case FIELD_DIRREQUEST:
+          // If multiline-readonly then hold the text back until after the
+          // initial focus has been set. This is so the text is not initially
+          // selected - useful for License Page look-a-likes.
+          if ((pField->nFlags & (FLAG_MULTILINE | FLAG_READONLY)) == (FLAG_MULTILINE | FLAG_READONLY))
+            mySetWindowText(hwCtrl, pField->pszState);
           mySendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pField->nMaxLength, (LPARAM)0);
           break;
 
@@ -1139,7 +1154,7 @@ int WINAPI createCfgDlg()
             }
             FREE(pszList);
             if (pField->pszState) {
-              if (pField->nFlags & (FLAG_MULTISELECT|FLAG_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
+              if (pField->nFlags & (LBS_MULTIPLESEL|LBS_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
                 mySendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
                 pszStart = pszEnd = pField->pszState;
                 while (*pszStart) {
@@ -1212,8 +1227,10 @@ int WINAPI createCfgDlg()
     }
   }
 
-  if (pszTitle)
-    SetWindowText(mainwnd,pszTitle);
+  if (!fFocused)
+    mySetFocus(hNextButton);
+
+  mySetWindowText(mainwnd,pszTitle);
   pFilenameStackEntry = *g_stacktop;
   *g_stacktop = (*g_stacktop)->next;
   static char tmp[32];
@@ -1229,7 +1246,6 @@ void WINAPI showCfgDlg()
   // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
   mySendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, (WPARAM)hConfigWindow, 0);
   ShowWindow(hConfigWindow, SW_SHOWNA);
-  SetFocus(hInitialFocus);
 
   g_done = g_NotifyField = 0;
 
@@ -1364,14 +1380,14 @@ void WINAPI ConvertNewLines(char *str) {
   for (p1=p2=str; *p1; p1++, p2++) {
     if (*p1 == '\\') {
       switch (p1[1]) {
+        case 't':
+          *p2 = '\t';
+          break;
         case 'n':
           *p2 = '\n';
           break;
         case 'r':
           *p2 = '\r';
-          break;
-        case 't':
-          *p2 = '\t';
           break;
         case '\\':
           *p2 = '\\';
