@@ -17,7 +17,7 @@
 #endif
 
 #define MAX_INCLUDEDEPTH 10
-#define MAX_LINELENGTH 4096
+#define MAX_LINELENGTH 16384
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
