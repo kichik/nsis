@@ -17,7 +17,7 @@
   !endif
   
   !ifdef MUI_COMPONENTPAGE
-    ComponentText /LANG=${LANG_TRADCHINESE} "核選您想要安裝的元件，並解除核選您不想要安裝的元件。點選 [下一步] 繼續。" " "
+    ComponentText /LANG=${LANG_TRADCHINESE} "核選您想要安裝的元件，並解除核選您不想要安裝的元件。點選 [下一步] 繼續。"
   !endif
   
   !ifdef MUI_DIRSELECTPAGE

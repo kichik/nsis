@@ -17,7 +17,7 @@
   !endif
   
   !ifdef MUI_COMPONENTPAGE
-    ComponentText /LANG=${LANG_ENGLISH} "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue." " "
+    ComponentText /LANG=${LANG_ENGLISH} "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
   !endif
   
   !ifdef MUI_DIRSELECTPAGE

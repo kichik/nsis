@@ -17,7 +17,7 @@
   !endif
   
   !ifdef MUI_COMPONENTPAGE
-    ComponentText /LANG=${LANG_SIMPCHINESE} "选取您想安装的组件并取消选取您不想安装的组件. 点击下一步继续." " "
+    ComponentText /LANG=${LANG_SIMPCHINESE} "选取您想安装的组件并取消选取您不想安装的组件. 点击下一步继续."
   !endif
   
   !ifdef MUI_DIRSELECTPAGE
