@@ -669,11 +669,7 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
       if (pField->nFlags & LBS_NOTIFY) {
         // Remember which control was activated then pretend the user clicked Next
         g_NotifyField = nIdx + 1;
-        // the next button must be enabled or nsis will ignore WM_COMMAND
-        BOOL bWasDisabled = EnableWindow(hNextButton, TRUE);
-        FORWARD_WM_COMMAND(hMainWindow, IDOK, hNextButton, BN_CLICKED, mySendMessage);
-        if (bWasDisabled)
-          EnableWindow(hNextButton, FALSE);
+        mySendMessage(hMainWindow, WM_NOTIFY_OUTER_NEXT, 1, 0);
       }
     }
     break;
