@@ -1105,11 +1105,6 @@ int CEXEBuild::write_output(void)
     return 1;
   }
 
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  if (build_header.license_bg<0)
-    build_header.license_bg=GetSysColor(COLOR_BTNFACE);
-#endif
-
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen())
   {
@@ -1398,25 +1393,15 @@ int CEXEBuild::write_output(void)
     int ns=build_sections.getlen()/sizeof(section);
     section *s=(section*)build_sections.get();
     int x;
-    int req=1;
-    int div=0;
-    int divptr=build_strlist.find("-",2);
+    int req=0;
     for (x = 1; x < ns; x ++)
     {
-      if (s[x].name_ptr == divptr) div++;
-      if (s[x].name_ptr == -1)  req++;
+      if (s[x].name_ptr == -1 || s[x].default_state & DFS_RO) req++;
     }
     INFO_MSG("Install: %d section%s",ns,ns==1?"":"s");
-    if (req||div) 
+    if (req)
     {
-      INFO_MSG(" (");
-      if (req) 
-      {
-        INFO_MSG("%d required",req);
-        if (div) INFO_MSG(", ");
-      }
-      if (div) INFO_MSG("%d divider%s",div,div==1?"":"s");
-      INFO_MSG(")");
+      INFO_MSG(" (%d required)",req);
     }
     INFO_MSG(".\n");
   }
