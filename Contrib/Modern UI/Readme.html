@@ -2,7 +2,6 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>NSIS Modern User Interface</title>
 <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 <style type="text/css">
 /*<![CDATA[*/
@@ -100,6 +99,7 @@ a:hover
         
 /*]]>*/
 </style>
+<title></title>
 </head>
 <body>
 <div class="center">
@@ -370,8 +370,11 @@ MUI_UNPAGE_COMPONENTS<br />
 MUI_UNPAGE_DIRECTORY<br />
 MUI_UNPAGE_INSTFILES<br />
 MUI_UNPAGE_FINISH</p>
-<p>Page Settings apply to a single page and should be set before inserting a page macro.
-Example:</p>
+<h3>Page Settings</h3>
+<div>
+<p>Page Settings apply to a single page and should be set before inserting a page macro. If you
+have multiple pages of one type and you want to set a setting for all them, put the setting before
+each page macro. Example:</p>
 <pre>
 ;Add a directory page to let the user specify a plug-ins folder
 ;Store the folder in $PLUGINS_FOLDER
@@ -380,8 +383,7 @@ Var PLUGINS_FOLDER
 !define MUI_DIRECTORYPAGE_VARIABLE $PLUGINS_FOLDER
 !insertmacro MUI_PAGE_DIRECTORY
 </pre>
-<h3>Page Settings</h3>
-<div>
+<p><b>Note:</b> There is no diference between installer and uninstaller page settings.</p>
 <h3>General Page Settings</h3>
 <div>
 <p><strong>MUI_PAGE_HEADER_TEXT</strong> <span class="parameter">text</span><br />
@@ -552,8 +554,8 @@ Text for a link on the which the user can click to view a website or file.</p>
 <p><strong>MUI_FINISHPAGE_LINK_LOCATION</strong> <span class="parameter">file/url</span><br />
 Website or file which the user can select to view using the link. You don't need to put quotes
 around the filename when it contains spaces.</p>
-<p><strong>MUI_FINISHPAGE_LINK_COLOR</strong> <span class="parameter">(color: RRGGBB hexadecimal)
-</span><br />
+<p><strong>MUI_FINISHPAGE_LINK_COLOR</strong> <span class="parameter">(color: RRGGBB
+hexadecimal)</span><br />
 Text color for the link on the Finish page.<br />
 <em>Default: 000080</em></p>
 </div>
@@ -792,7 +794,7 @@ FunctionEnd
 </pre>
 <h3>General Custom Functions</h3>
 <div>
-<p>These defines should be set before inserting a the language macros.</p>
+<p>These defines should be set before inserting the language macros.</p>
 <p><strong>MUI_CUSTOMFUNCTION_GUIINIT</strong> <span class="parameter">function</span><br />
 <strong>MUI_CUSTOMFUNCTION_UNGUIINIT</strong> <span class="parameter">function</span><br />
 <strong>MUI_CUSTOMFUNCTION_ABORT</strong> <span class="parameter">function</span><br />
@@ -854,7 +856,7 @@ it freely, subject to the following restrictions:
 </tr>
 <tr>
 <td>
-<div class="footer">&copy;2002-2003 Joost Verburg</div>
+<div class="footer">&copy;2002-2004 Joost Verburg</div>
 </td>
 </tr>
 </table>
