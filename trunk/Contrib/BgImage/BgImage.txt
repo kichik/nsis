@@ -26,7 +26,7 @@ Notes
 
 * Do not call SetBg (which creates the window) from a section unless you're going to destroy it from a section.
 
-* Always use /NOUNLOAD in .onInstSuccess and .onInstFailed. Failing to do so will cause the installer to crash.
+* Never use /NOUNLOAD in .onInstSuccess and .onInstFailed. Failing to do so will cause the installer to crash.
   This means you should not call Destroy from .onInstSuccess or .onInstFailed.
 
 Available functions
