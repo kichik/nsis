@@ -29,8 +29,7 @@
 #undef _RICHEDIT_VER
 
 // Defines
-#define NSIS_DEV     "http://nsis.sourceforge.net/"
-#define NSIS_URL     "http://www.nullsoft.com/free/nsis/"
+#define NSIS_URL     "http://nsis.sourceforge.net/"
 #define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
 #define NSIS_UPDATE  "\\Bin\\NSISUpdate.exe"
 #define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""

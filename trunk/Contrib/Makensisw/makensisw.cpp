@@ -269,11 +269,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           ShellExecute(g_sdata.hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
           return TRUE;
         }
-        case IDM_NSISDEV:
-        {
-          ShellExecute(g_sdata.hwnd,"open",NSIS_DEV,NULL,NULL,SW_SHOWNORMAL);
-          return TRUE;
-        }
         case IDM_FORUM:
         {
           ShellExecute(g_sdata.hwnd,"open",NSIS_FOR,NULL,NULL,SW_SHOWNORMAL);
