@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "FARSI"
 
-  !define MUI_LANGNAME "Ё«—”н" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Farsi" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "  »е »—д«ге д’»$(^NameDA) ќж‘ ¬гѕнѕ  "
   !define MUI_TEXT_WELCOME_INFO_TEXT "«нд »—д«ге ‘г« —« »—«н д’»  $(^NameDA) —«едг«нн гнШдѕ.\r\n\r\nБн‘де«ѕ гнШднг Шбне »—д«ге е«н ѕнР— —« ё»б «“ «ѕ«ге д’» »»дѕнѕ. «нд Ш«— »е »—д«ге д’» «ћ«“е гнѕеѕ Ше »ѕжд дн«“ »е —«е «дѕ«“н гћѕѕ Ш«гБнж — Ш«— ќжѕ —« «дћ«г ѕеѕ.\r\n\r\n$_CLICK"

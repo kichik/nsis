@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ARABIC"
 
-  !define MUI_LANGNAME "⁄—»Ì" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Arabic" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) „—Õ»« »ﬂ ›Ì „‰’» »—‰«„Ã"
   !define MUI_TEXT_WELCOME_INFO_TEXT "≈‰ ‘«¡ «··Â ”Ì „  ‰’Ì» «·»—‰«„Ã $(^NameDA).\r\n\r\n„‰ «·„›÷· ≈€·«ﬁ Ã„Ì⁄ «·»—«„Ã ﬁ»· «· ‰’Ì».Â–« ”Ì”«⁄œ ›Ì  ÃœÌœ „·›«  «·‰Ÿ«„ „‰ œÊ‰ «·Õ«Ã… ·≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ „‰ ÃœÌœ.\r\n\r\n$_CLICK"
