@@ -103,6 +103,12 @@ void NSISCALL myDelete(char *buf, int flags)
   char *fn;
   int valid_dir=is_valid_instpath(buf);
 
+  if ((flags & DEL_SIMPLE))
+  {
+    g_exec_flags.exec_error += !DeleteFile(buf);
+    return;
+  }
+
 #ifdef NSIS_SUPPORT_RMDIR
   if (!(flags & DEL_DIR) || (valid_dir && (flags & DEL_RECURSE)))
 #endif//NSIS_SUPPORT_RMDIR

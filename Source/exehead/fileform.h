@@ -442,6 +442,7 @@ typedef struct {
 #define DEL_DIR 1
 #define DEL_RECURSE 2
 #define DEL_REBOOT 4
+#define DEL_SIMPLE 8
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 // Added by ramon 3 jun 2003
