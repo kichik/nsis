@@ -1038,10 +1038,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_CHANGEUI:
       try {
-        int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0");
+        DWORD dwSize;
+        int a = 1;
+        bool rtl = false;
+        if (!stricmp(line.gettoken_str(a), "/RTL")) {
+          rtl = true;
+          a++;
+        }
+        int k=line.gettoken_enum(a++, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0");
         if (k<0) PRINTHELP();
 
-        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
+        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(a), 0, LOAD_LIBRARY_AS_DATAFILE);
         if (!hUIFile) {
           ERROR_MSG("Error: Can't find \"%s\" in \"%s\"!\n", line.gettoken_str(1), line.gettoken_str(2));
           return PS_ERROR;
@@ -1052,6 +1059,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         // Search for required items
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return 0;}
+        #define SAVE(x) if (rtl) {UIDlg.ConvertToRTL(); dlg = UIDlg.Save(dwSize);} else dwSize = UIDlg.GetSize(); re.UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
 
         BYTE* dlg = 0;
 
@@ -1060,7 +1068,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_EDIT1);
-          re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_LICENSE);
         }
 
         if (k == 0 || k == 2) {
@@ -1072,7 +1080,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_LOG
           SEARCH(IDC_CHECK1);
 #endif
-          re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_DIR);
         }
 
         if (k == 0 || k == 3) {
@@ -1081,7 +1089,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_TREE1);
           SEARCH(IDC_COMBO1);
-          re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_SELCOM);
         }
 
         if (k == 0 || k == 4) {
@@ -1110,7 +1118,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             i++;
           }
 
-          re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_INST);
         }
 
         if (k == 0 || k == 5) {
@@ -1121,7 +1129,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SEARCH(IDC_PROGRESS1);
           SEARCH(IDC_PROGRESS2);
           SEARCH(IDC_SHOWDETAILS);
-          re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_INSTFILES);
         }
 
         if (k == 0 || k == 6) {
@@ -1129,7 +1137,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_EDIT1);
-          re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_UNINST);
         }
 
         if (k == 0 || k == 7) {
@@ -1137,6 +1145,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_STR);
+          // No RTL here, pure English goes here.
+          //SAVE(IDD_VERIFY);
           re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
@@ -1147,7 +1157,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ERROR_MSG("can't free library!\n");
         }
 
-        SCRIPT_MSG("ChangeUI: %s %s%s\n", line.gettoken_str(1), line.gettoken_str(2), branding_image_found?" (branding image holder found)":"");
+        SCRIPT_MSG("ChangeUI: %s%s %s%s\n", rtl?"(RTL) ":"", line.gettoken_str(a-1), line.gettoken_str(a), branding_image_found?" (branding image holder found)":"");
       }
       catch (exception& err) {
         ERROR_MSG("Error while changing UI: %s\n", err.what());
