@@ -767,7 +767,6 @@ int createCfgDlg()
   hNextButton = GetDlgItem(hMainWindow,IDOK);
   hBackButton = GetDlgItem(hMainWindow,3);
 
-  was_cancel_enabled=EnableWindow(hCancelButton,1);
   was_ok_enabled=EnableWindow(hNextButton,1);
   GetWindowText(hCancelButton,old_cancel,sizeof(old_cancel));
   if (pszCancelButtonText) SetWindowText(hCancelButton,pszCancelButtonText);
