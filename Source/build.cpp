@@ -415,7 +415,11 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 }
 
 // based on Dave Laundon's code
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+int CEXEBuild::preprocess_string(char *out, const char *in, bool bUninstall)
+#else
 int CEXEBuild::preprocess_string(char *out, const char *in)
+#endif
 {
 #ifndef NSIS_SUPPORT_NAMED_USERVARS
     static const char VarNames[] =
@@ -494,8 +498,12 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
       *out++ = (char)255;
     }
 #else
-    // Test for characters that equals to control char of variable codes
-    if (i == VAR_CODES_START || i == 255 ) {
+    // Test for characters that equals to control char of variable codes or lang strings
+    if (i == VAR_CODES_START ||
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+        i == LANG_CODES_START ||
+#endif
+        i == 255 ) {
       *out++ = (char)255;
     }
 #endif
@@ -549,6 +557,57 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
                 pUserVarName--;
             }
           }
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+          if ( !bProceced && *p == '(' )
+          {
+            int idx = -1;
+            char *cp = strdup(p+1);
+            char *pos = strchr(cp, ')');
+            if (pos) 
+            {
+              *pos = 0;
+              if ( !bUninstall )
+              {
+                if (!strnicmp(cp,"un.",3)) {
+                  warning("Installer language strings can't start with un. (%s)! (%s:%d)", p, curfilename, linecnt);
+                }
+                else
+                {                
+                  idx = GetUserString(cp);
+                  if ( idx >= 0 )
+                  {
+                    idx = -((int)(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)));
+                    *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                    *(WORD*)out=(WORD)idx;
+                    out += sizeof(WORD);
+                    p += strlen(cp)+2;
+                    bProceced = true;
+                  }
+                }
+              }
+              else
+              {
+                if (strnicmp(cp,"un.",3)) {
+                  warning("Uninstaller language strings must start with un. (%s)! (%s:%d)", p, curfilename, linecnt);
+                }
+                else
+                {                
+                  idx = GetUserString(cp);
+                  if ( idx >= 0 )
+                  {
+                    idx = -((int)(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int)));
+                    *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                    *(WORD*)out=(WORD)idx;
+                    out += sizeof(WORD);
+                    p += strlen(cp)+2;
+                    bProceced = true;
+                  }
+                }
+              }
+            }
+            free(cp);              
+          }
+#endif
           if ( bProceced )
             continue;
           else
@@ -556,6 +615,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
           {
             char tbuf[64];
             char cBracket = '\0';
+            bool bDoWarning = true;
+
             if ( *p == '[' )
               cBracket = ']';
             else if ( *p == '(' )
@@ -569,12 +630,19 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
             if ( cBracket != 0 )
             {
               if (strchr(tbuf,cBracket)) (strchr(tbuf,cBracket)+1)[0]=0;
+              if ( tbuf[0] == '{' && tbuf[strlen(tbuf)-1] == '}' )
+              {
+                char *tstIfDefine = strdup(tbuf+1);
+                tstIfDefine[strlen(tstIfDefine)-1] = '\0';
+                bDoWarning = definedlist.find(tstIfDefine) == NULL;
+              }
             }
             else
             {
               if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
             }
-            warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
+            if ( bDoWarning )
+              warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
             i = '$';
           }
         }
@@ -594,7 +662,11 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
     int idx = -1;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    if (p && p[1] == '\0' ) { // if string is only a language str identifier
+#else
     if (p) {
+#endif
       *p = 0;
       if (!strnicmp(cp,"un.",3)) {
         warning("Installer language strings can't start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
@@ -610,7 +682,11 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
   if (!process) return build_strlist.add(string,2);
 
   char buf[4096];
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  preprocess_string(buf,string, false);
+#else
   preprocess_string(buf,string);
+#endif
   return build_strlist.add(buf,2);
 }
 
@@ -622,7 +698,11 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
     int idx = -1;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    if (p && p[1] == '\0' ) { // if string is only a language str identifier
+#else
     if (p) {
+#endif
       *p = 0;
       if (strnicmp(cp,"un.",3)) {
         warning("Uninstaller language strings must start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
@@ -638,7 +718,11 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
   if (!process) return ubuild_strlist.add(string,2);
 
   char buf[4096];
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  preprocess_string(buf,string, true);
+#else
   preprocess_string(buf,string);
+#endif
   return ubuild_strlist.add(buf,2);
 }
 

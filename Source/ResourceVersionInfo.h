@@ -91,7 +91,7 @@ public:
     LANGID GetLangID(int Index);
     int GetCodePage(int Index);
     char *FindKey(LANGID LangID, int codepage, char *pKeyName);
-    bool IsValidCodePage(WORD codePage );
+    //bool IsValidCodePage(WORD codePage );
 };
 
 #endif

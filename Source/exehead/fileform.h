@@ -524,6 +524,10 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 #endif
 #endif
 
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  #define LANG_CODES_START 251
+#endif
+
 union installer_flags {
   struct {
     int autoclose;

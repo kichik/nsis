@@ -230,8 +230,8 @@ static tokenType tokenlist[TOK__LAST] =
 // Added by ramon 3 jun 2003
 {TOK_DEFVAR,"dim",1,0,"VarName"},
 // Added by ramon 6 jun 2003
-{TOK_VI_ADDKEY,"VIAddVersionKey", 3, 0, "lang_id keyname value"},
-{TOK_VI_SETPRODUCTVERSION,"VIProductVersion", 1, 0, "[version string X.X.X.X]"},
+{TOK_VI_ADDKEY,"VIAddVersionKey", 2, 1, "[/LANG=lang_id] keyname value"},
+{TOK_VI_SETPRODUCTVERSION,"VIProductVersion", 1, 0, "[version_string_X.X.X.X]"},
 };
 
 void CEXEBuild::print_help(char *commandname)

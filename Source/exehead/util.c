@@ -333,7 +333,11 @@ char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 char * NSISCALL process_string_fromtab(char *out, int offs)
 {
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  char *p=process_string(GetStringFromStringTab(offs), 0);
+#else
   char *p=process_string(GetStringFromStringTab(offs));
+#endif
   if (!out) return p;
   return lstrcpyn(out,p,NSIS_MAX_STRLEN);
 }
@@ -394,9 +398,17 @@ int NSISCALL mystrlen(const char *in)
 }
 
 // Dave Laundon's simplified process_string
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+char * NSISCALL process_string(const char *in, int iStartIdx )
+#else
 char * NSISCALL process_string(const char *in)
+#endif
 {
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  char *out = ps_tmpbuf+iStartIdx;
+#else
   char *out = ps_tmpbuf;
+#endif
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     int nVarIdx = (unsigned char)*in++;
@@ -525,11 +537,7 @@ char * NSISCALL process_string(const char *in)
     {      
       *out++ = *in++;      
     }
-    else if (nVarIdx != VAR_CODES_START)
-    {
-	    *out++ = nVarIdx;
-    }
-    else
+    else if (nVarIdx == VAR_CODES_START)
     {
       DWORD f;
       static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
@@ -613,6 +621,19 @@ char * NSISCALL process_string(const char *in)
       }
       out+=mystrlen(out);
     } // == VAR_CODES_START
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    else if ( nVarIdx == LANG_CODES_START )
+    {
+      char *p;
+      nVarIdx = *(short*)in; in+=sizeof(WORD);
+      p = process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
+      out+=mystrlen(out);
+    }
+#endif
+    else // Normal char
+    {
+	    *out++ = nVarIdx;
+    }
 #endif
   } // while
   *out = 0;
