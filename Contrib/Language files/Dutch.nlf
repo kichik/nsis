@@ -8,7 +8,7 @@ Nullsoft Install System %s
 %s Uninstall
 : Licentie Overeenkomst
 : Installatie Opties
-: Installatie Directory
+: Installatie Map
 : Bestanden Installeren
 : Voltooid
 : Bevestiging
@@ -29,7 +29,7 @@ Handmatig
 Selecteer het installatietype:
 Selecteer de installatieonderdelen:
 Of selecteer de onderdelen die geïnstalleerd moeten worden:
-Selecteer de directory om %s in te installeren:
+Selecteer de map om %s in te installeren:
 Beschikbare ruimte: 
 Vereiste ruimte: 
 Uninstallatie vanuit:
@@ -39,7 +39,7 @@ Kopiëren mislukt
 Kopiëren naar 
 Kon symbool niet vinden: 
 Kon niet laden: 
-Directory maken: 
+Map maken: 
 Snelkoppeling maken: 
 Uninstaller maken: 
 Bestand verwijderen: 
@@ -54,8 +54,8 @@ Uitpakken:
 Uitpakken: fout bij schrijven naar bestand 
 Installatie beschadigd: ongeldige opcode
 Geen OLE voor: 
-Uitvoer directory: 
-Verwijder directory: 
+Uitvoer map: 
+Verwijder map: 
 Hernoem na opstarten: 
 Hernoem: 
 Overgeslagen: 
