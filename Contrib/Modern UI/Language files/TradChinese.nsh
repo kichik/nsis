@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Kii Ali <kiiali@cpatch.org>
@@ -44,8 +44,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "完成 ${MUI_PRODUCT} 安裝精靈"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} 已在你的系統安裝。\r\n按一下 [完成(F)] 關閉此精靈。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "你的系統需要重新啟動，以便完成 ${MUI_PRODUCT} 的安裝過程。現在要重新啟動嗎？"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "現在重新啟動"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "稍後重新啟動"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "現在重新啟動(&N)"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "稍後手動地重新啟動(&L)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "執行 ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "顯示「讀我」"
   
@@ -53,10 +53,12 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "選擇開始功能表資料夾"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "選擇「開始功能表」資料夾，用於程式的捷徑。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "選擇「開始功能表」資料夾，以便建立程式的捷徑。你也可以輸入名稱，建立新資料夾。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "不要建立捷徑"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "不要建立捷徑(&N)"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你確定要離開 ${MUI_PRODUCT} 安裝程式？"
   
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "按一下 [解除安裝] 開始解除安裝的進程。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "解除安裝 ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "從你的系統解除安裝 ${MUI_PRODUCT} 。"
