@@ -2,8 +2,7 @@
 NLF v2
 # Language ID
 1045
-# Start editing here
-# translated by Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
+# Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
 Nullsoft Install System %s
 %s Instalator
 %s Odinstaluj
@@ -52,7 +51,7 @@ B³¹d zapisu DLL
 ExecShell: 
 Uruchom: 
 Rozpakuj: 
-Rozapkuj: b³¹d zapisu do pliku
+Rozapkuj: b³¹d zapisu do pliku 
 Instalacja przerwana: z³y kod operacji
 Brak OLE dla: 
 Folder wyjœciowy: 

@@ -2,7 +2,6 @@
 NLF v2
 # Language ID
 1034
-# Start editing here
 # Translation by MoNKi
 Nullsoft Install System %s
 Instalación de %s
@@ -52,7 +51,7 @@ Error registrando DLL
 Ejecutar comando: 
 Ejecutar: 
 Extraer: 
-Extraer: error escribiendo al archivo
+Extraer: error escribiendo al archivo 
 Instalador corrupto: código de operación no valido
 No OLE para: 
 Directorio de salida: 

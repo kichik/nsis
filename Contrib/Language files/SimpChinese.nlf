@@ -2,9 +2,7 @@
 NLF v2
 # Language ID
 2052
-# Language:  "Chinese (Simplified)"
-# Translator: Kii Ali <kiiali@cpatch.org>
-# Start editing here
+# Translation by Kii Ali <kiiali@cpatch.org>
 Nullsoft Install System %s
 %s 安装
 %s 解除安装
@@ -53,7 +51,7 @@ Nullsoft Install System %s
 运行外部程序: 
 运行: 
 解压缩: 
-解压缩: 无法写入文件
+解压缩: 无法写入文件 
 安装损毁: 无效的操作代码
 无 OLE 用于: 
 输出目录: 
