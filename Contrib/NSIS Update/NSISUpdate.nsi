@@ -102,23 +102,23 @@ Function .onInit
 
   StrCpy ${NSISPATH} "$EXEDIR\.."
   
-  StrCpy $R0 $CMDLINE "" -23
+  StrCpy $R0 $CMDLINE "" -15
   
-    StrCmp $R0 'NSISUpdate Running.exe"' temp
+    StrCmp $R0 'NSISUpdate.bin"' temp
     
     # Create a temporary file, so NSIS Update can update itself
     
-    CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$EXEDIR\NSISUpdate Running.exe"
-    Exec '"$EXEDIR\NSISUpdate Running.exe"'
+    CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$EXEDIR\NSISUpdate.bin"
+    Exec '"$EXEDIR\NSISUpdate.bin"'
     Quit
     
   temp:
 
   # Remove temporary file on next reboot
   
-  Delete /REBOOTOK "$EXEDIR\NSISUpdate Running.exe"
+  Delete /REBOOTOK "$EXEDIR\NSISUpdate.bin"
   
-  # InstallOptions INI File for "Update Method" idalog
+  # InstallOptions INI File for the "Update Method" dialog
   
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "Resources\GUI\io.ini" "io.ini"
   
