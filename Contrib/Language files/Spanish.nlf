@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1034
 # Font and size - dash (-) means default
@@ -42,8 +42,10 @@ Espacio requerido:
 Desinstalando desde:
 Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para abortar la instalación,\r\nreintentar para reintentar escribir el archivo, o\r\nignorar para saltarse este archivo
 No pudo escribirse: 
-Falló la copia
+Falló la copia 
 Copiar a 
+Registrando: 
+Eliminando registro: 
 No pudo encontrarse símbolo: 
 No pudo cargarse: 
 Crear directorio: 
@@ -67,3 +69,12 @@ Eliminar al reinicio:
 Renombrar: 
 Omitido: 
 Copiar Detalles al Portapapeles
+Proceso de registro de la instalación 
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
