@@ -76,14 +76,18 @@ BEGIN
     END
     POPUP "&Edit"
     BEGIN
-        MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
-        MENUITEM SEPARATOR
         MENUITEM "&Copy\tCtrl+C",               IDM_COPYSELECTED
         MENUITEM "Copy &All",                   IDM_COPY
         MENUITEM SEPARATOR
         MENUITEM "Find...\tCtrl+F",             IDM_FIND
         MENUITEM SEPARATOR
         MENUITEM "&Select All\tCtrl+A",         IDM_SELECTALL
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
+        MENUITEM "",                            1
+        MENUITEM "Clear &Log\tCtrl+W",          IDM_CLEARLOG
     END
     POPUP "&Help"
     BEGIN
@@ -92,19 +96,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "About &NSIS",                 IDM_ABOUTNSIS
         MENUITEM "&About MakeNSISW",            IDM_ABOUT
-    END
-END
-
-IDM_LOGWIN MENU DISCARDABLE 
-BEGIN
-    POPUP "Edit"
-    BEGIN
-        MENUITEM "&Copy",                       IDM_COPYSELECTED
-        MENUITEM "Copy &All",                   IDM_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "Find...",                     IDM_FIND
-        MENUITEM SEPARATOR
-        MENUITEM "&Select All",                 IDM_SELECTALL
     END
 END
 
@@ -124,6 +115,7 @@ BEGIN
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
     VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
+    "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
 END
 
@@ -172,7 +164,7 @@ STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_CAPTION |
 CAPTION "About NSIS"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "&Close",IDOK,235,140,50,14
+    DEFPUSHBUTTON   "&Close",IDOK,235,140,50,15
     ICON            IDI_ICON,IDC_STATIC,7,7,21,20
     LTEXT           "NSIS",IDC_NSISVER,38,13,90,11
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,133,278,1
