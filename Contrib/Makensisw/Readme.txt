@@ -34,6 +34,7 @@ Shortcut Keys
 Ctrl+A: Select All text
 Ctrl+B: Browse Script
 Ctrl+C: Copy selected text
+Ctrl+D: Opens the Define Symbols dialog
 Ctrl+E: Edits the script
 Ctrl+F: Find text
 Ctrl+L: Load a script
@@ -172,6 +173,9 @@ Version History
  - Added NSIS Update menu.
  - Added toolbar for commonly used menus.
 
+1.11
+ - Made the Toolbar style flat
+ 
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater

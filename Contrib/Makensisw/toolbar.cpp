@@ -69,7 +69,7 @@ void CreateToolBar()
   tbButton[TBB_DOCS]        = CreateToolBarButton(IDB_DOCS,          IDM_DOCS,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
 
   g_toolbar.hwnd = CreateToolbarEx(g_sdata.hwnd,
-                                   WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT,
+                                   WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
                                    TOOLBAR_ID,
                                    NUMIMAGES,
                                    g_sdata.hInstance,
