@@ -17,6 +17,10 @@ extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #endif
 
 char g_usrvars[24][NSIS_MAX_STRLEN];
+char *state_command_line=g_usrvars[20];
+char *state_install_directory=g_usrvars[21];
+char *state_output_directory=g_usrvars[22];
+char *state_exe_directory=g_usrvars[23];
 
 HANDLE g_hInstance;
 
