@@ -146,7 +146,8 @@ follow these steps:</p>
   <p class="text">All defines are optional. If you don't define
   a page or option, the page won't use or show it.</p>
   <p class="text"><span class="bold">MUI_WELCOMEPAGE</span><br />
-  Show the welcome page.</p>
+  Show the welcome page. The welcome page is an introduction
+  and shows information for the user.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE</span><br />
   Show the license page.</p>
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE</span><br />
@@ -181,7 +182,10 @@ follow these steps:</p>
   value as default folder.</p>  
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE</span><br />
-  Show the Finish page.</p>
+  Show the finish page. The finish page tells that the installation is succesful.
+  You can also add options to run the application or show the Readme file.
+  If the reboot flag is set, a page that allows the user to reboot the system
+  will be displayed (this option can be disabled).</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN</span><br />
   Application which the user can select to run (using a checkbox).
@@ -189,7 +193,7 @@ follow these steps:</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS</span><br />
   Parameters for the application to run. Don't forget to escape double
-  quotes ($\") in the value.</p>
+  quotes in the value (use $\&quot;).</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br />
   Do not check the 'Run program' checkbox by default</p>
   </div>
@@ -205,8 +209,9 @@ follow these steps:</p>
   Do not automatically jump to the finish page, to allow the user to
   check the log.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOREBOOTSUPPORT</span><br />
-  Disables support for a reboot option. Use this to save some space if
-  you are not using /REBOOTOK or SetRebootFlag.</p>
+  Disables support for the page that allows the user to reboot the system.
+  Define this option to save some space if you are not using the /REBOOTOK
+  flag or SetRebootFlag.</p>
   </div>
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
   Show a message box with a warning (are you sure?) when the user closes
