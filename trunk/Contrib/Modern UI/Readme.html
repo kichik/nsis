@@ -330,6 +330,10 @@ follow these steps:</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
   Display the header image on the right side instead of the left side.</p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP_NOSTRETCH</span><br />
+  Do not stretch the header bitmap to fit the size of the field. Use this option only if you have an
+  image that does not use the whole space. If you have a full size bitmap that fits exactly, you should
+  not use this option because the size of the field will be different if the user has a custom DPI setting.</p>
   </div>
   <p class="text"><span class="bold">MUI_SPECIALINI </span><span class="parameter">ini_file</span><br />
   InstallOptions INI file for the Welcome and Finish page.<br />
@@ -337,6 +341,13 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
   <i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP_NOSTRETCH</span><br />
+  Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
+  Use this option only if you have an image that does not use the whole space. If you have a full size
+  bitmap that fits exactly, you should not use this option because the size of the field will be different
+  if the user has a custom DPI setting.</p>
+  </div>
   <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: 0xBBGGRR)</span><br />
   Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
   <p class="text"><span class="bold">MUI_RTL_UI</span><br />
@@ -651,7 +662,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.65 - June 17, 2003
+<li>1.65 - June 26, 2003
   <ul>
     <li>New page configuration system, no different system for installers
     with custom pages</li>
@@ -659,9 +670,11 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>New format for example scripts</li>
     <li>Improved registry storage for Start Menu folder</li>
     <li>ReserveFile macro for StartMenu plug-in</li>
-    <li>Added MUI_LANGDLL_ALWAYSSHOW option</li>
+    <li>Option to always show the language selection dialog
+    (even if a language has been stored in the registry)</li>
     <li>Checkboxes on Finish page can be used to call a function</li>
     <li>Support for a link on the Finish page</li>
+    <li>Options to disable bitmap stretching</li>
   </ul></li>
 </ul>
 <p class="text"></p>
