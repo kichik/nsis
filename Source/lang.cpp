@@ -113,6 +113,8 @@ struct {
   {"^Kilo", "K", BOTH_STATIC},
   {"^Mega", "M", BOTH_STATIC},
   {"^Giga", "G", BOTH_STATIC},
+  {"^Font", "MS Shell Dlg", NONE_STATIC},
+  {"^FontSize", "8", NONE_STATIC},
   {"^RTL", "0", NONE_STATIC}
 };
 
@@ -613,6 +615,28 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
             table->lang_strings->set(sn, temp);
             continue;
           }
+          else if (i == NLF_FONT)
+          {
+            int font_size = *build_font ? build_font_size : table->nlf.m_iFontSize;
+            if (font_size)
+            {
+              char temp[64];
+              sprintf(temp, "%d", font_size);
+              table->lang_strings->set(sn, temp);
+            }
+            else
+              table->lang_strings->set(sn, dstr);
+            continue;
+          }
+          else if (i == NLF_FONTSIZE)
+          {
+            char *font = *build_font ? build_font : table->nlf.m_szFont;
+            if (font)
+              table->lang_strings->set(sn, font);
+            else
+              table->lang_strings->set(sn, dstr);
+            continue;
+          }
           table->lang_strings->set(sn, dstr);
         }
       }
@@ -751,7 +775,7 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   }
 
   // Read strings
-  for (int i = 0; i < NLF_STRINGS - 1; i++) {
+  for (int i = 0; i < NLF_STRINGS - 3 /* ^Font, ^FontSize and ^RTL */; i++) {
 
     // skip virtual strings
     if (!NLFStrings[i].szDefault)

@@ -275,6 +275,9 @@ enum {
   NLF_KILO,
   NLF_MEGA,
   NLF_GIGA,
+
+  NLF_FONT,
+  NLF_FONTSIZE,
   NLF_RTL,
 
   NLF_STRINGS
