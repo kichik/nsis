@@ -25,8 +25,6 @@
   OutFile "Basic.exe"
   Name "${NAME} ${VERSION}"
 
-  !insertmacro MUI_INTERFACE
-
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
@@ -59,14 +57,15 @@ Section ""
 SectionEnd
 
 ;--------------------------------
-;Installer Functions
+;Modern UI System
 
-!insertmacro MUI_FUNCTIONS_BASIC
+!insertmacro MUI_SYSTEM
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
+
 ;--------------------------------
 ;Uninstaller Section
 
@@ -83,8 +82,3 @@ Section "Uninstall"
   !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
-
-;--------------------------------
-;Uninstaller Functions
-
-!insertmacro MUI_UNFUNCTIONS_BASIC
