@@ -1122,9 +1122,9 @@ void update_status_text(const char *text1, const char *text2)
     {
       // Changed by Amir Szekely 26th July 2002
       new_item.pszText=ps_tmpbuf;
+      new_item.iItem=ListView_GetItemCount(insthwnd);
       ListView_InsertItem(insthwnd, &new_item);
       ListView_EnsureVisible(insthwnd, new_item.iItem, 0);
-      new_item.iItem++;
       GetClientRect(insthwnd,&r);
       ListView_SetColumnWidth(insthwnd, 0, r.right-r.left);
     }
