@@ -546,7 +546,15 @@ Var MUI_TEMP2
     
     LicenseData "${LICENSEDATA}"
     
-    !ifdef MUI_LICENSEPAGE_TEXT
+    !ifndef MUI_LICENSEPAGE_TEXT
+      !ifndef MUI_LICENSEPAGE_CHECKBOX & MUI_LICENSEPAGE_RADIOBUTTONS
+        LicenseText "$(MUI_INNERTEXT_LICENSE_BOTTOM)"
+      !else ifdef MUI_LICENSEPAGE_CHECKBOX
+        LicenseText "$(MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX)"
+      !else
+        LicenseText "$(MUI_INNERTEXT_LICENSE_RADIOBUTTONS)"
+      !endif
+    !else
       LicenseText ${MUI_LICENSEPAGE_TEXT}
       !undef MUI_LICENSEPAGE_TEXT
     !endif
@@ -591,7 +599,7 @@ Var MUI_TEMP2
     Caption " "
     
     !ifdef MUI_COMPONENTSPAGE_TEXT
-      LicenseText ${MUI_COMPONENTSPAGE_TEXT}
+      ComponentText ${MUI_COMPONENTSPAGE_TEXT}
       !undef MUI_COMPONENTSPAGE_TEXT
     !endif
   
@@ -621,12 +629,12 @@ Var MUI_TEMP2
     Caption " "
     
     !ifdef MUI_DIRECTORYPAGE_TEXT
-      LicenseText ${MUI_DIRECTORYPAGE_TEXT}
+      DirText ${MUI_DIRECTORYPAGE_TEXT}
       !undef MUI_DIRECTORYPAGE_TEXT
     !endif
     
     !ifdef MUI_DIRECTORYPAGE_VARIABLE
-      LicenseText "${MUI_DIRECTORYPAGE_VARIABLE}"
+      DirVar "${MUI_DIRECTORYPAGE_VARIABLE}"
       !undef "MUI_DIRECTORYPAGE_VARAIBLE"
     !endif
     
@@ -801,6 +809,60 @@ Var MUI_TEMP2
    
 !macroend
 
+!macro MUI_UNPAGE_LICENSE LICENSEDATA
+
+  !verbose push
+  !verbose 3
+
+  !ifndef MUI_UNLICENSEPAGE
+    !define MUI_UNLICENSEPAGE
+  !endif
+  
+  !insertmacro MUI_UNIQUEID
+  
+  PageEx un.license
+  
+    PageCallbacks un.mui.LicensePre_${MUI_UNIQUEID} un.mui.LicenseShow_${MUI_UNIQUEID} un.mui.LicenseLeave_${MUI_UNIQUEID}
+    
+    Caption " "
+    
+    LicenseData "${LICENSEDATA}"
+    
+    !ifndef MUI_LICENSEPAGE_TEXT
+      !ifndef MUI_LICENSEPAGE_CHECKBOX & MUI_LICENSEPAGE_RADIOBUTTONS
+        LicenseText "$(MUI_UNINNERTEXT_LICENSE_BOTTOM)"
+      !else ifdef MUI_LICENSEPAGE_CHECKBOX
+        LicenseText "$(MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX)"
+      !else
+        LicenseText "$(MUI_UNINNERTEXT_LICENSE_RADIOBUTTONS)"
+      !endif
+    !else
+      LicenseText ${MUI_LICENSEPAGE_TEXT}
+      !undef MUI_LICENSEPAGE_TEXT
+    !endif
+    
+    !ifdef MUI_LICENSEPAGE_CHECKBOX
+      !ifndef MUI_UNLICENSEPAGE_CHECKBOX_USED
+        !define MUI_UNLICENSEPAGE_CHECKBOX_USED
+      !endif
+      LicenseForceSelection checkbox
+      !undef MUI_LICENSEPAGE_CHECKBOX
+    !else ifdef MUI_LICENSEPAGE_RADIOBUTTONS
+      !ifndef MUI_UNLICENSEPAGE_RADIOBUTTONS_USED
+        !define MUI_UNLICENSEPAGE_RADIOBUTTONS_USED
+      !endif
+      LicenseForceSelection radiobuttons
+      !undef MUI_LICENSEPAGE_RADIOBUTTONS
+    !endif
+    
+  PageExEnd
+  
+  !insertmacro MUI_UNFUNCTION_LICENSEPAGE un.mui.LicensePre_${MUI_UNIQUEID} un.mui.LicenseShow_${MUI_UNIQUEID} un.mui.LicenseLeave_${MUI_UNIQUEID}
+  
+  !verbose pop
+  
+!macroend
+
 !macro MUI_UNPAGE_COMPONENTS
 
   !verbose push
@@ -822,12 +884,52 @@ Var MUI_TEMP2
     
     Caption " "
     
+    !ifdef MUI_COMPONENTSPAGE_TEXT
+      ComponentText ${MUI_COMPONENTSPAGE_TEXT}
+      !undef MUI_COMPONENTSPAGE_TEXT
+    !endif
+    
   PageExEnd
   
   !insertmacro MUI_UNFUNCTION_COMPONENTSPAGE un.mui.ComponentsPre_${MUI_UNIQUEID} un.mui.ComponentsShow_${MUI_UNIQUEID} un.mui.ComponentsLeave_${MUI_UNIQUEID}
   
   !verbose pop
    
+!macroend
+
+!macro MUI_UNPAGE_DIRECTORY
+
+  !verbose push
+  !verbose 3
+
+  !ifndef MUI_UNDIRECTORYPAGE
+    !define MUI_UNDIRECTORYPAGE
+  !endif
+    
+  !insertmacro MUI_UNIQUEID
+    
+  PageEx un.directory
+  
+    PageCallbacks un.mui.DirectoryPre_${MUI_UNIQUEID} un.mui.DirectoryShow_${MUI_UNIQUEID} un.mui.DirectoryLeave_${MUI_UNIQUEID}
+    
+    Caption " "
+    
+    !ifdef MUI_DIRECTORYPAGE_TEXT
+      DirText ${MUI_DIRECTORYPAGE_TEXT}
+      !undef MUI_DIRECTORYPAGE_TEXT
+    !endif
+    
+    !ifdef MUI_DIRECTORYPAGE_VARIABLE
+      DirVar "${MUI_DIRECTORYPAGE_VARIABLE}"
+      !undef "MUI_DIRECTORYPAGE_VARAIBLE"
+    !endif
+    
+  PageExEnd
+  
+  !insertmacro MUI_UNFUNCTION_DIRECTORYPAGE un.mui.DirectoryPre_${MUI_UNIQUEID} un.mui.DirectoryShow_${MUI_UNIQUEID} un.mui.DirectoryLeave_${MUI_UNIQUEID}
+  
+  !verbose pop
+  
 !macroend
 
 !macro MUI_UNPAGE_INSTFILES
@@ -1623,7 +1725,7 @@ Var MUI_TEMP2
   Function "${PRE}"
   
    !insertmacro MUI_FUNCTION_CUSTOM PRE
-   !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
+   !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_CONFIRM_TITLE) $(MUI_UNTEXT_CONFIRM_SUBTITLE)
   
   FunctionEnd
   
@@ -1639,6 +1741,35 @@ Var MUI_TEMP2
     
   FunctionEnd
   
+!macroend
+
+!macro MUI_UNFUNCTION_LICENSEPAGE PRE SHOW LEAVE
+
+  Function "${PRE}"
+  
+    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_LICENSE_TITLE) $(MUI_UNTEXT_LICENSE_SUBTITLE)
+    
+  FunctionEnd
+
+  Function "${SHOW}"
+  
+    !ifndef MUI_LICENSEPAGE_TEXT_TOP
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE_TOP)
+    !else
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 "${MUI_LICENSEPAGE_TEXT_TOP}"
+      !undef MUI_LICENSEPAGE_TEXT_TOP
+    !endif
+    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    
+  FunctionEnd
+  
+  Function "${LEAVE}"
+  
+    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    
+  FunctionEnd
+
 !macroend
 
 !macro MUI_UNFUNCTION_COMPONENTSPAGE PRE SHOW LEAVE
@@ -1668,6 +1799,23 @@ Var MUI_TEMP2
   
   FunctionEnd
   
+!macroend
+
+!macro MUI_UNFUNCTION_DIRECTORYPAGE PRE SHOW LEAVE
+
+  Function "${PRE}"
+    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_DIRECTORY_TITLE) $(MUI_UNTEXT_DIRECTORY_SUBTITLE)
+  FunctionEnd
+
+  Function "${SHOW}"
+    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+  FunctionEnd
+  
+  Function "${LEAVE}"
+    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+  FunctionEnd
+
 !macroend
 
 !macro MUI_UNFUNCTION_INSTFILESPAGE PRE SHOW LEAVE
@@ -1913,12 +2061,12 @@ Var MUI_TEMP2
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_TITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_SUBTITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_TOP"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMSTRING "MUI_INNERTEXT_LICENSE_BOTTOM" "^LicenseText"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_BOTTOM"
     !ifdef MUI_LICENSEPAGE_CHECKBOX_USED
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMSTRING "MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX" "^LicenseTextCB"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX"
     !endif
     !ifdef MUI_LICENSEPAGE_RADIOBUTTONS_USED
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMSTRING "MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS" "^LicenseTextRB"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS"
     !endif
   !endif
   
@@ -1982,13 +2130,33 @@ Var MUI_TEMP2
   !ifdef MUI_UNINSTALLER
     
     !ifdef MUI_UNCONFIRMPAGE
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_INTRO_TITLE"
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_INTRO_SUBTITLE"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_CONFIRM_TITLE"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_CONFIRM_SUBTITLE"
+    !endif
+    
+    !ifdef MUI_UNLICENSEPAGE
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_LICENSE_TITLE"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_LICENSE_SUBTITLE"
+      !ifndef MUI_LICENSEPAGE
+        !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_TOP"
+      !endif
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNINNERTEXT_LICENSE_BOTTOM"
+      !ifdef MUI_UNLICENSEPAGE_CHECKBOX_USED
+        !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX"
+      !endif
+      !ifdef MUI_UNLICENSEPAGE_RADIOBUTTONS_USED
+        !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS"
+      !endif
     !endif
     
     !ifdef MUI_UNCOMPONENTSPAGE
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_COMPONENTS_TITLE"
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_COMPONENTS_SUBTITLE"
+    !endif
+    
+    !ifdef MUI_DIRECTORYPAGE
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_DIRECTORY_TITLE"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_DIRECTORY_SUBTITLE"
     !endif
      
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_FINISH_TITLE"
