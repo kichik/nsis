@@ -1277,7 +1277,7 @@ static int ExecuteEntry(entry *entries, int pos)
                   seeker += sizeof(DWORD);
                   dwOffset = *(DWORD*)seeker;
                   seeker += sizeof(DWORD);
-                  mini_memcpy(filebuf, seeker, dwSize);
+                  mini_memcpy(filebuf+dwOffset, seeker, dwSize);
                   seeker += dwSize;
                 }
                 GlobalFree(unicon_data);
