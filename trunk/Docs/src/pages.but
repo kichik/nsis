@@ -21,7 +21,7 @@ If you don't use any Page command the installer pages order will be just as in o
 
 \S{pagecallbacks} Callbacks
 
-Each built-in page has three callback functions. The pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown so you can tweak its user interface with \R{createfont}{CreateFont}, \R{setstaticbkcolor}{SetStaticBkColor } and \R{sendmessage}{SendMessage}; the leave-function is called right after the user has pressed the next button and before the page is left.
+Each built-in page has three callback functions. The pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown so you can tweak its user interface with \R{createfont}{CreateFont}, \R{setbkcolor}{SetBkColor } and \R{sendmessage}{SendMessage}; the leave-function is called right after the user has pressed the next button and before the page is left.
 
 A custom page has only two callback functions, one that creates it which is mandatory, and one leave-function that acts just like the leave-function for built-in pages.
 
