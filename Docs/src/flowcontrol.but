@@ -142,7 +142,7 @@ Returns from a function or section.
 
 \b \e{WM_USER} 1024
 
-Include $\{NSISDIR\}\\Examples\\WinMessages.nsh to have all of Windows messages defined in your script.
+Include $\{NSISDIR\}\\Include\\WinMessages.nsh to have all of Windows messages defined in your script.
 
 To send a string param, put STR: before the parameter, for example: "STR:Some string".
 

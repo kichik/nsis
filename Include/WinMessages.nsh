@@ -1,6 +1,12 @@
-; KiCHiK put together this list of WM_ messages.
-!ifndef WINMESSAGES_NSH
-!define WINMESSAGES_NSH
+; List of common Windows Messages
+; By KiCHiK
+
+; Include in your script using:
+; !include "${NSISDIR}\Include\WinMessages.nsh"
+
+!ifndef WINMESSAGES_INCLUDED
+
+!define WINMESSAGES_INCLUDED
 
 !define HWND_BROADCAST 0xFFFF
 
