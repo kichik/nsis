@@ -80,11 +80,11 @@ If both NoModify and NoRepair are set to 1, the button displays "Remove" instead
 
 \H{usefulvb6_runtime} How to install the VB6 runtimes
 
-The best way to install the VB6 runtimes is to use the \R{upgradedll}{UpgradeDLL macro} to upgrade the DLL files, and the \R{addshareddll}{AddSharedDLL macro} when installing the software for the first time to increase the shared DLL count. Define UPGRADEDLL_NOREGISTER before upgrading Stdole2.tlb (and undefine it before upgrading other files).
+The best way to install the VB6 runtimes is to use the \R{upgradedll}{UpgradeDLL macro} to upgrade the DLL files and the \R{addshareddll}{AddSharedDLL function} to increment the shared DLL count.
 
 Use the Modern UI with a Finish page to ask for a reboot if required or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or messagebox.
 
-You can extract the files from vbrun60sp5.exe using any archiver that supports CAB compression, or if you have installed the latest version on your system, copy the following files from your system directory:
+To get the VB6 runtime files, you can extract the files from vbrun60sp5.exe using any archiver that supports CAB compression or, if you have installed the latest version, copy the the files from the System folder. You need the following files:
 
 Asycfilt.dll \\<br\\>
 Comcat.dll \\<br\\>
@@ -93,27 +93,29 @@ Oleaut32.dll \\<br\\>
 Olepro32.dll \\<br\\>
 Stdole2.tlb \\<br\\>
 
-During the uninstallation, use \R{unremovesharedll}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because the shared DLL registration is not reliable enough for such important system files.
+During the uninstallation, use the un.DecrementSharedDLL function below to decrement the shared DLL count (never remove the files, because the shared DLL count is not reliable enough for such imporant files).
 
-\c # Don't forget to copy the macro's!
+\c !include "UpgradeDLL.nsh"
 \c
-\c !define VBFILESDIR C:\Windows\System
-\c # or
-\c #!define VBFILESDIR C:\Path\to\where\vbrun60sp5.exe\extracted
+\c !define VBFILESDIR "C:\Windows\System" ;Location of VB6 runtime files
 \c
 \c Section "Install VB DLLs"
+\c
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Comcat.dll $SYSDIR\Comcat.dll $SYSDIR
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Msvbvm60.dll $SYSDIR\Msvbvm60.dll $SYSDIR
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Oleaut32.dll $SYSDIR\Oleaut32.dll $SYSDIR
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Olepro32.dll $SYSDIR\Olepro32.dll $SYSDIR
+\c
 \c   !define UPGRADEDLL_NOREGISTER
 \c     !insertmacro UpgradeDLL ${VBFILESDIR}\Asycfilt.dll $SYSDIR\Asycfilt.dll $SYSDIR
 \c     !insertmacro UpgradeDLL ${VBFILESDIR}\Stdole2.tlb $SYSDIR\Stdole2.tlb $SYSDIR
 \c   !undef UPGRADEDLL_NOREGISTER
-\c   # skip shared count increasing if already done once for this application
-\c   IfFileExists $INSTDIR\myprog.exe skipAddShared
+\c
+\c   ;Only iease DLL count on new installation
+\c   ;Replace myprog.exe or use another detection method
+\c   IfFileExists $INSTDIR\myprog.exe skipAddSharedDLL
 \c     Push $SYSDIR\Asycfilt.dll
-\c     Call AddSharedDLL
+\c     Call AncrddSharedDLL
 \c     Push $SYSDIR\Comcat.dll
 \c     Call AddSharedDLL
 \c     Push $SYSDIR\Msvbvm60.dll
@@ -124,23 +126,53 @@ During the uninstallation, use \R{unremovesharedll}{un.RemoveSharedDLL} to decre
 \c     Call AddSharedDLL
 \c     Push $SYSDIR\Stdole2.tlb
 \c     Call AddSharedDLL
-\c   skipAddShared:
+\c   skipAddSharedDLL:
+\c
 \c SectionEnd
 \c
 \c Section "Uninstall"
+\c
 \c   Push $SYSDIR\Asycfilt.dll
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
 \c   Push $SYSDIR\Comcat.dll
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
 \c   Push $SYSDIR\Msvbvm60.dll
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
 \c   Push $SYSDIR\Oleaut32.dll
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
 \c   Push $SYSDIR\Olepro32.dll
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
 \c   Push $SYSDIR\Stdole2.tlb
-\c   Call un.RemoveSharedDLL
+\c   Call un.DecrementSharedDLL
+\c
 \c SectionEnd
+\c
+\c Function AddSharedDLL
+\c   Exch $R1
+\c   Push $R0
+\c     ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c     IntOp $R0 $R0 + 1
+\c     WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c    Pop $R0
+\c    Pop $R1
+\c  FunctionEnd
+\c
+\c Function un.DecrementSharedDLL
+\c   Exch $R1
+\c   Push $R0
+\c   ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c   StrCmp $R0 "" done
+\c     IntOp $R0 $R0 - 1
+\c     IntCmp $R0 0 rk rk uk
+\c     rk:
+\c       DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c       Goto done
+\c     uk:
+\c       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c   done:
+\c   Pop $R0
+\c   Pop $R1
+\c FunctionEnd
 
 \H{useful_system_plugin} Calling an external DLL using the System.dll plugin
 
