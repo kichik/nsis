@@ -56,7 +56,7 @@ enum
   EW_GETTEMPFILENAME,   // GetTempFileName: 1 [output]
 #endif
 #ifdef NSIS_SUPPORT_FILE
-  EW_EXTRACTFILE,       // File to extract: 5,[overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh]
+  EW_EXTRACTFILE,       // File to extract: 6 [overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh, allow ignore]
                         //  overwriteflag: 0x1 = no. 0x0=force, 0x2=try, 0x3=if date is newer
 #endif
 #ifdef NSIS_SUPPORT_DELETE
@@ -238,6 +238,7 @@ typedef struct
 
 #ifdef NSIS_SUPPORT_FILE
   int fileerrtext;
+  int fileerrtext_noignore;
 #endif
 
 #if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)

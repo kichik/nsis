@@ -231,6 +231,9 @@ CEXEBuild::CEXEBuild()
   // init public data.
   build_packname[0]=build_packcmd[0]=build_output_filename[0]=0;
 
+  // Added by ramon 23 May 2003
+  build_allowskipfiles=1;
+
   build_overwrite=0;
   build_compress=1;
   build_crcchk=1;
