@@ -29,6 +29,7 @@ Execute the specified program using ShellExecute. Note that action is usually "o
 
 \c ExecShell "open" "http://nsis.sf.net/"
 \c ExecShell "open" "$INSTDIR\readme.txt"
+\c ExecShell "print" "$INSTDIR\readme.txt"
 
 \S2{execwait} ExecWait
 
@@ -52,7 +53,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b Wildcards are supported.
 
-\b If the /r switch is used, files and directories are added recursively. If there is no trailing wildcard (e.g. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.*
+\b If the /r switch is used, matching files are recursively searched for in subdirectories. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.
 
 \b Use the /x switch to exclude files or directories.
 
@@ -60,7 +61,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b The File command sets the error flag if overwrite mode is set to 'try' and the file could not be overwritten, or if the overwrite mode is set to 'on' and the file could not be overwritten and the user selects ignore.
 
-\b If the /nonfatal switch is used, a warning will be issued if no files found instead of an error.
+\b If the /nonfatal switch is used and no files are found, a warning will be issued instead of an error.
 
 \c File something.exe
 \c File /a something.exe
@@ -69,8 +70,8 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /r data
 \c File /oname=$TEMP\temp.dat somefile.ext
 \c File /nonfatal "a file that might not exist"
-\c File /r /x CVS myproject
-\c File /r /x *.res /x *.obj /x *.pch source
+\c File /r /x CVS myproject\*.*
+\c File /r /x *.res /x *.obj /x *.pch source\*.*
 
 \S2{rename} Rename
 
