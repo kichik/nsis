@@ -572,12 +572,24 @@
 !macroend
 
 ;--------------------------------
-;BASIC FUNCTIONS
+;BASIC MACRO'S
 
-!macro MUI_FUNCTIONS_BASIC
+!macro MUI_SYSTEM
+
+  !verbose 3
+  
+  !insertmacro MUI_BASIC
+  !insertmacro MUI_UNBASIC
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_BASIC
 
   !verbose 3
 
+  !insertmacro MUI_INTERFACE
   !insertmacro MUI_PAGECOMMANDS
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
@@ -587,10 +599,11 @@
 
 !macroend
 
-!macro MUI_UNFUNCTIONS_BASIC
+!macro MUI_UNBASIC
 
   !verbose 3
 
+  !insertmacro MUI_INTERFACE
   !insertmacro MUI_UNPAGECOMMANDS
   !insertmacro MUI_UNFUNCTIONS_PAGES
   !insertmacro MUI_UNFUNCTIONS_GUIINIT

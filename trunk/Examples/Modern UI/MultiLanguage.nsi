@@ -74,8 +74,6 @@
     !include "${NSISDIR}\Contrib\Modern UI\Language files\Ukrainian.nsh"
   
   OutFile "MultiLanguage.exe"
-
-  !insertmacro MUI_INTERFACE
   
   ;Name
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
@@ -217,7 +215,10 @@ Function .onInit
 
 FunctionEnd
 
-!insertmacro MUI_FUNCTIONS_BASIC
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
@@ -248,5 +249,3 @@ SectionEnd
 Function un.onInit
   ReadRegStr $LANGUAGE HKCU "Software\${NAME}" "Installer Language"
 FunctionEnd
-
-!insertmacro MUI_UNFUNCTIONS_BASIC

@@ -38,8 +38,6 @@
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
   Page custom SetCustomC
   !insertmacro MUI_PAGECOMMAND_INSTFILES
-
-  !insertmacro MUI_INTERFACE
   
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -134,10 +132,13 @@ Function SetCustomC
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
 
-!insertmacro MUI_FUNCTIONS_BASIC
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
 
 ;--------------------------------
-;Uninstaller
+;Uninstaller Section
 
 Section "Uninstall"
 
@@ -151,10 +152,5 @@ Section "Uninstall"
   !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
-
-;--------------------------------
-;Uninstaller Functions
-
-  !insertmacro MUI_UNFUNCTIONS_BASIC
 
 ;eof
