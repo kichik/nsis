@@ -577,7 +577,7 @@ skipPage:
     m_curwnd = (HWND)wParam;
     goto skipPage;
   }
-  if (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1)
+  if (uMsg == WM_QUERYENDSESSION || (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1))
   {
     if (!IsWindowEnabled(m_hwndCancel))
     {
@@ -631,11 +631,6 @@ skipPage:
       // Without this, enter on buttons in inner dialogs won't work.
       SendMessage(m_curwnd, WM_COMMAND, wParam, lParam);
     }
-  }
-  if (uMsg == WM_ENDSESSION && wParam)
-  {
-    // the session can end any time after we process this message so we better clean up now
-    CleanUp();
   }
   return HandleStaticBkColor();
 }
