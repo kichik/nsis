@@ -2966,7 +2966,9 @@ int CEXEBuild::uninstall_generate()
         pos += l;
         left -= l;
       }
+      udata.setro(FALSE);
       udata.add(&crc, sizeof(crc));
+      udata.setro(TRUE);
     }
 #endif
 
