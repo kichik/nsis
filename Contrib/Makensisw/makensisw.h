@@ -72,7 +72,7 @@ enum {
 };
 
 typedef enum {
-  COMPRESSOR_DEFAULT,
+  COMPRESSOR_SCRIPT,
   COMPRESSOR_ZLIB,
   COMPRESSOR_BZIP2,
   COMPRESSOR_LZMA,
@@ -85,7 +85,12 @@ char *compressor_names[] = {"",
                             "bzip2",
                             "lzma",
                             "Best"};
-WORD compressor_commands[] = {IDM_DEFAULT,
+char *compressor_display_names[] = {"Defined in Script/MakeNSIS Default",
+                            "ZLIB",
+                            "BZIP2",
+                            "7-Zip (LZMA)",
+                            "Best Compressor"};
+WORD compressor_commands[] = {IDM_SCRIPT,
                               IDM_ZLIB,
                               IDM_BZIP2,
                               IDM_LZMA,
@@ -93,12 +98,12 @@ WORD compressor_commands[] = {IDM_DEFAULT,
 #endif
 
 #ifdef TOOLBAR_CPP
-int compressor_bitmaps[] = {IDB_COMPRESSOR_DEFAULT, 
+int compressor_bitmaps[] = {IDB_COMPRESSOR_SCRIPT, 
                             IDB_COMPRESSOR_ZLIB, 
                             IDB_COMPRESSOR_BZIP2, 
                             IDB_COMPRESSOR_LZMA, 
                             IDB_COMPRESSOR_BEST};
-int compressor_strings[] = {IDS_DEFAULT, 
+int compressor_strings[] = {IDS_SCRIPT, 
                             IDS_ZLIB, 
                             IDS_BZIP2, 
                             IDS_LZMA, 
@@ -114,7 +119,8 @@ DWORD WINAPI   MakeNSISProc(LPVOID p);
 BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK  AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK  DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK  SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK  CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           CompileNSISScript();
 char*          BuildDefines();
 void           SetCompressor(NCOMPRESSOR);
@@ -144,11 +150,11 @@ typedef struct NSISScriptData {
   HANDLE thread;
   HWND focused_hwnd;
   CHARRANGE textrange;
+  NCOMPRESSOR default_compressor;
   NCOMPRESSOR compressor;
   char *compressor_name;
   char compressor_stats[512];
   char *best_compressor_name;
-  BOOL command_line_compressor;
   // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
 } NSCRIPTDATA;

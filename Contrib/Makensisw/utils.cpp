@@ -31,6 +31,7 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { NULL, NULL, NULL, NULL, NULL };
 
 extern NSCRIPTDATA g_sdata;
+extern char *compressor_names[];
 
 int SetArgv(char *cmdLine, int *argc, char ***argv)
 {
@@ -751,29 +752,40 @@ void ClearMRUList()
 void RestoreCompressor()
 {
   HKEY hKey;
-  NCOMPRESSOR v = COMPRESSOR_DEFAULT;
+  NCOMPRESSOR v = COMPRESSOR_SCRIPT;
   if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-    DWORD l = sizeof(g_sdata.compressor);
+    char compressor_name[32];
+    DWORD l = sizeof(compressor_name);
     DWORD t;
-    if ((RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(unsigned char*)&v,&l)==ERROR_SUCCESS) &&
-        (t == REG_DWORD) &&
-        (l==sizeof(v))) {
+
+    if (RegQueryValueEx(hKey,REGCOMPRESSOR,NULL,&t,(unsigned char*)compressor_name,&l)==ERROR_SUCCESS) {
+      int i;
+      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
+        if(!lstrcmpi(compressor_names[i],compressor_name)) {
+          v = (NCOMPRESSOR)i;
+          break;
+        }
+      }
     }
     RegCloseKey(hKey);
   }
-  g_sdata.command_line_compressor = false;
-  SetCompressor(v);
+  g_sdata.default_compressor=v;
 }
 
 void SaveCompressor()
 {
-  if(!g_sdata.command_line_compressor) {
-    HKEY hKey;
-    NCOMPRESSOR v = g_sdata.compressor;
-    if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-      RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_DWORD,(unsigned char*)&v,sizeof(v));
-      RegCloseKey(hKey);
-    }
+  HKEY hKey;
+  int n = (int)COMPRESSOR_SCRIPT;
+  NCOMPRESSOR v = g_sdata.default_compressor;
+
+  if(v >= COMPRESSOR_SCRIPT && v <= COMPRESSOR_BEST) {
+    n = (int)v;
+  }
+
+  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_SZ,(unsigned char*)compressor_names[n],
+                  lstrlen(compressor_names[n]));
+    RegCloseKey(hKey);
   }
 }
 
