@@ -436,23 +436,23 @@ int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
 }
 #else // EXEHEAD
 
-/*---------------------------------------------------*/
-/*--- Decompression stuff                         ---*/
+#ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
 /*---------------------------------------------------*/
 
-int BZ_API(BZ2_bzDecompressInit)
-                     ( DState * s)
-{
-   s->state                 = BZ_X_BLKHDR_1;
-
-   return BZ_OK;
+Int32 BZ2_indexIntoF ( Int32 indx, Int32 *cftab )   
+{      
+  Int32 nb, na, mid;
+  nb = 0;
+  na = 256;
+  do {
+    mid = (nb + na) >> 1;
+    if (indx >= cftab[mid]) nb = mid; 
+    else na = mid;
+  } while (na - nb != 1);
+  return nb;
 }
 
 
-
-
-#ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
-/*---------------------------------------------------*/
 static
 void unRLE_obuf_to_output_SMALL ( DState* s )
 {
@@ -460,14 +460,12 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
   while (True) {
      /* try to finish existing run */
      while (True) {
-        if (s->strm->avail_out == 0) return;
+        if (s->avail_out == 0) return;
         if (s->state_out_len == 0) break;
-        *( (UChar*)(s->strm->next_out) ) = s->state_out_ch;
+        *( (UChar*)(s->next_out) ) = s->state_out_ch;
         s->state_out_len--;
-        s->strm->next_out++;
-        s->strm->avail_out--;
-//            s->strm->total_out_lo32++;
-//          if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+        s->next_out++;
+        s->avail_out--;
      }
 
      /* can a new run be started? */
@@ -495,8 +493,7 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
   }
 }
 #else//!small, fast
-static
-void unRLE_obuf_to_output_FAST ( DState* s )
+static void unRLE_obuf_to_output_FAST ( DState* s )
 {
    UChar k1;
 
