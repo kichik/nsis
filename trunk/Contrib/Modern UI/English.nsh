@@ -50,7 +50,7 @@
   LangString MUI_MSGTEXT_ABORTWARNING ${LANG_ENGLISH} "Are you sure you want to quit ${NAME} Setup?"
 
   LangString MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
-  LangString MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next > "
+  LangString MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
   LangString MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
   LangString MUI_BUTTONTEXT_INSTALL ${LANG_ENGLISH} "Install"
 
@@ -74,8 +74,8 @@
   LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_ENGLISH} "Finished"
   LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_ENGLISH} "Uninstall was completed successfully."
   
-  LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "Back > "
-  LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next > "
+  LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "Back >"
+  LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
   LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
   LangString un.MUI_BUTTONTEXT_INSTALL ${LANG_ENGLISH} "Install"
     
