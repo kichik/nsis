@@ -397,7 +397,7 @@ Function PatchCVSRoot
   Pop $TEMP1
   FileOpen $TEMP2 $TEMP1 "r"
   FileRead $TEMP2 $TEMP3
-  FileClose $TEMP3
+  FileClose $TEMP2
   Push $TEMP3
   Call TrimNewLines
   Pop $TEMP3
@@ -406,7 +406,7 @@ Function PatchCVSRoot
     Push "stop"
     Return
 go:
-  FileOpen $TEMP1 $TEMP1 "w"
+  FileOpen $TEMP2 $TEMP1 "w"
   FileWrite $TEMP2 ":pserver:anonymous:@cvs.sourceforge.net:/cvsroot/nsis$\r$\n"
   FileClose $TEMP2
   Push "go"
