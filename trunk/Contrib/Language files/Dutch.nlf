@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v5
+NLF v6
 # Language ID
 1043
 # Font and size - dash (-) means default
@@ -9,75 +9,183 @@ NLF v5
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by Hendri Adriaens & Joost Verburg
+# Translation by Joost Verburg & Hendri Adireans
+# ^Branding
 Nullsoft Install System %s
+# ^SetupCaption
 $(^Name) Installatie
+# ^UninstallCaption
 $(^Name) Deïnstallatie
+# ^LicenseSubCaption
 : Licentie Overeenkomst
+# ^ComponentsSubCaption
 : Installatie Opties
+# ^DirSubCaption
 : Installatie Map
+# ^InstallingSubCaption
 : Bezig met installeren
+# ^CompletedSubCaption
 : Voltooid
+# ^UnComponentsSubCaption
+: Deïnstallatie Opties
+# ^UnDirSubCaption
+: Deïnstallatie Map
+# ^ConfirmSubCaption
 : Bevestiging
+# ^UninstallingSubCaption
 : Bezig met verwijderen
+# ^UnCompletedSubCaption
 : Voltooid
+# ^BackBtn
 < V&orige
+# ^NextBtn
 &Volgende >
+# ^AgreeBtn
 &Akkoord
+# ^AcceptBtn
 Ik &accepteer de overeenkomst
+# ^DontAcceptBtn
 Ik accepteer de overeenkomst &niet
+# ^InstallBtn
 &Installeren
-&Deïnstalleer
+# ^UninstallBtn
+&Verwijderen
+# ^CancelBtn
 Annuleren
+# ^CloseBtn
 &Afsluiten
+# ^BrowseBtn
 &Bladeren...
+# ^ShowDetailsBtn
 &Details tonen
+# ^ClickNext
+Klik op Volgende om verder te gaan.
+# ^ClickInstall
+Klik op Installeren om de installatie te starten.
+# ^ClickUninstall
+Klik op Verijderen om het verwijderen te starten.
+# ^Name
 Naam
+# ^Completed
 Voltooid
-Handmatig
+# ^LicenseText
+Lees de licentie overeenkomst voordat u $(^Name) installeert. Klik op Akkoord als u de overeenkomst accepteerd.
+# ^LicenseTextCB
+Lees de licentie overeenkomst voordat u $(^Name) installeert. Klik op het keuzevak hieronder als u de overeenkomst accepteerd. $_CLICK
+# ^LicesnseTextRB
+Lees de licentie overeenkomst voordat u $(^Name) installeert. Selecteer de eerste optie hieronder als u de overeenkomst accepteerd. $_CLICK
+# ^UnLicenseText
+Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Klik op Akkoord als u de overeenkomst accepteerd.
+# ^UnLicenseTextCB
+Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Klik op het keuzevak hieronder als u de overeenkomst accepteerd. $_CLICK
+# ^UnLicesnseTextRB
+Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Selecteer de eerste optie hieronder als u de overeenkomst accepteerd. $_CLICK
+# ^UnLicenseText
+# ^Custom
+Aangepast
+# ^ComponentsText
+Selecteer de onderdelen die u wilt installleren en deselecteer de onderdelen die u niet wilt installeren. $_CLICK
+# ^ComponentsSubText1
 Selecteer het installatietype:
-Selecteer de installatieonderdelen:
+# ^ComponentsSubText2_NoInstTypes
+Selecteer de onderdelen die geïnstalleerd moeten worden:
+# ^ComponentsSubText2
 Of selecteer de onderdelen die geïnstalleerd moeten worden:
+# ^UnComponentsText
+Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+# ^UnComponentsSubText1
+Selecteer het verwijdertype:
+# ^UnComponentsSubText2_NoInstTypes
+Selecteer de onderdelen die verwijdert moeten worden:
+# ^UnComponentsSubText2
+Of selecteer de onderdelen die verwijdert moeten worden:
+# ^DirText
+Setup zal $(^Name) in de volgende map installeren. Klik op Bladeren als u in een andere map wilt installeren en selecteer een andere map. $_CLICK
+# ^DirSubText
+Installatie Map
+# ^DirBrowseText
 Selecteer de map om $(^Name) in te installeren:
-Beschikbare ruimte: 
-Vereiste ruimte: 
-Uninstallatie vanuit:
+# ^UnDirText
+Setup zal $(^Name) uit de volgende map verwijderen. Klik op Bladeren als u uit een andere map wilt verwijderen, en selecteer een andere map. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Selecteer de map om $(^Name) uit te verwijderen:
+# ^SpaceAvailable
+"Beschikbare ruimte: "
+# ^SpaceRequired
+"Vereiste ruimte: "
+# ^UninstallingText
+Deze wizard zal $(^Name) van uw systeem verwijderen. $_CLICK
+# ^UninstallingSubText
+Verwijderen uit:
+# ^FileError
 Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik afbreken om de installatie te stoppen,\r\nopnieuw om het opnieuw te proberen, of\r\nnegeren om dit bestand over te slaan
+# ^FileError_NoIgnore
 Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik opnieuw om het opnieuw te proberen, of \r\nafbreken de installatie te stoppen
-Kon niet schrijven: 
+# ^CantWrite
+"Kon niet schrijven: "
+# ^CopyFailed
 Kopiëren mislukt
-Kopiëren naar 
-Registreren: 
-Deregistreren: 
-Kon symbool niet vinden: 
-Kon niet laden: 
-Map maken: 
-Snelkoppeling maken: 
-Uninstaller maken: 
-Bestand verwijderen: 
-Verwijderen na opstarten: 
-Fout bij maken snelkoppeling: 
-Fout bij maken: 
-Fout bij decomprimeren van data! Data beschadigd?
+# ^CopyTo
+"Kopiëren naar "
+# ^Registering
+"Registreren: "
+# ^Unregistering
+"Deregistreren: "
+# ^SymbolNotFound
+"Kon symbool niet vinden: "
+# ^CouldNotLoad
+"Kon niet laden: "
+# ^CreateFolder
+"Map maken: "
+# ^CreateShortcut
+"Snelkoppeling maken: "
+# ^CreatedUninstaller
+"Deïnstallatie programma maken: "
+# ^Delete
+"Bestand verwijderen: "
+# ^DeleteOnReboot
+"Verwijderen na opnieuw opstarten: "
+# ^ErrorCreatingShortcut
+"Fout bij maken snelkoppeling: "
+# ^ErrorCreating
+"Fout bij maken: "
+# ^ErrorDecompressing
+Fout bij uitpakken van gegevens! Gegevens beschadigd?
+# ^ErrorRegistering
 Fout bij registreren DLL
-ExecShell: 
-Uitvoeren: 
-Uitpakken: 
-Uitpakken: fout bij schrijven naar bestand 
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Uitvoeren: "
+# ^Extract
+"Uitpakken: "
+# ^ErrorWriting
+"Uitpakken: fout bij schrijven naar bestand "
+# ^InvalidOpcode
 Installatie programma beschadigd: ongeldige opcode
-Geen OLE voor: 
-Uitvoer map: 
-Verwijder map: 
-Hernoem na opstarten: 
-Hernoem: 
-Overgeslagen: 
+# ^NoOLE
+"Geen OLE voor: "
+# ^OutputFolder
+"Uitvoer map: "
+# ^RemoveFolder
+"Verwijder map: "
+# ^RenameOnReboot
+"Hernoem na opnieuw opstarten: "
+# ^Rename
+"Hermoen: "
+# ^Skipped
+"Overgeslagen: "
+# ^CopyDetails
 Kopieer Details naar Klembord
+# ^LogInstall
 Gegevens over installatie bewaren
-# byte
+# ^Byte
 B
-# kilo
+# ^Kilo
 K
-# mega
+# ^Mega
 M
-# giga
+# ^Giga
 G
