@@ -303,7 +303,7 @@ NSISFunc(Clear) {
   myImageList *img = &bgBitmap;
   while (img) {
     switch (img->iType) {
-    	case MIL_BITMAP:
+      case MIL_BITMAP:
       case MIL_TRANSPARENT_BITMAP:
         DeleteObject(img->hBitmap);
         break;
@@ -620,7 +620,7 @@ int myatoi(char *s)
 BOOL WINAPI _DllMainCRTStartup(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   g_hInstance=hInst;
   switch (ul_reason_for_call) {
-  	case DLL_PROCESS_ATTACH:
+    case DLL_PROCESS_ATTACH:
       InitializeCriticalSection(&CriticalSection);
       break;
     case DLL_PROCESS_DETACH:
