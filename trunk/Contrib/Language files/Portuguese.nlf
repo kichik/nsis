@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v5
+NLF v6
 # Start editing here
 # Language ID
 2070
@@ -11,70 +11,177 @@ NLF v5
 # RTL - anything else than RTL means LTR
 -
 # Translation v4.0.3 by DragonSoull <dragonsoull@madalien.tk> with help from Dre` - Updated by Ramon
+# ^Branding
 Sistema de Instalação Nullsoft %s
+# ^SetupCaption
 Instalação de $(^Name)
+# ^UninstallCaption
 Desinstalação de $(^Name)
+# ^LicenseSubCaption
 : Contrato de Licença
+# ^ComponentsSubCaption
 : Opções de instalação
-: Directoria de instalação
+# ^DirSubCaption
+: Diretório de instalação
+# ^InstallingSubCaption
 : Instalando Ficheiros
+# ^CompletedSubCaption
 : Concluído
+# ^UnComponentsSubCaption
+: Opções de Desinstalação
+# ^UnDirSubCaption
+: Pasta de Desinstalação
+# ^ConfirmSubCaption
 : Confirmação
-: Desinstalado Ficheiros
+# ^UninstallingSubCaption
+: Desinstalando
+# ^UnCompletedSubCaption
 : Concluído
-< An&terior
+# ^BackBtn
+< &Anterior
+# ^NextBtn
 &Seguinte >
+# ^AgreeBtn
 &Aceito
-Eu &aceito os termos da licença
-Eu &não aceito os termos da licença
+# ^AcceptBtn
+Eu &aceito os termos do Contrato de Licença
+# ^DontAcceptBtn
+Eu &não aceito os termos do Contrato de Licença
+# ^InstallBtn
 &Instalar
+# ^UninstallBtn
 &Desinstalar
-&Cancelar
-Fechar
+# ^CancelBtn
+Cancelar
+# ^CloseBtn
+&Fechar
+# ^BrowseBtn
 &Procurar...
-&Ver Detalhes
+# ^ShowDetailsBtn
+Ver &Detalhes
+# ^ClickNext
+Clique em 'Seguinte' para continuar.
+# ^ClickInstall
+Clique em 'Instalar' para iniciar a instalação.
+# ^ClickUninstall
+Clique em 'Desinstalar' para iniciar a desinstalação.
+# ^Name
 Nome
+# ^Completed
 Concluído
-Personalizada
+# ^LicenseText
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, clique em 'Aceito'.
+# ^LicenseTextCB
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+# ^LicenseTextRB
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+# ^UnLicenseText
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, clique em 'Aceito'.
+# ^UnLicenseTextCB
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+# ^UnLicenseTextRB
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+# ^Custom
+Personalizado
+# ^ComponentsText
+Marque os componentes que deseja instalar e desmarque os componentes que não deseja instalar. $_CLICK
+# ^ComponentsSubText1
 Escolha o tipo de instalação:
-Escolha os componentes a instalar:
+# ^ComponentsSubText2_NoInstTypes
+Escolha os componentes para instalar:
+# ^ComponentsSubText2
 Ou, escolha os componentes opcionais que deseja instalar:
-Escolha a directoria a instalar $(^Name):
-Espaço disponível: 
-Espaço necessário: 
-A Desinstalar de:
-Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nCarregue Abort para abortar instalação,\r\nRetry para voltar a tentar a escrita do ficheiro, ou\r\nIgnore para saltar este ficheiro
-Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nCarregue Retry para voltar a tentar a escrita do ficheiro, ou\r\nCancel para abortar instalação
-Não e possível Escrever: 
-Copia Falhada
-A Copiar para 
-A Registar: 
-A Desregistar: 
-Não foi encontrado símbolo: 
-Não foi possível carregar: 
-A Criar directoria: 
-A Criar atalho: 
-A Criar Desinstalador: 
-Apagando ficheiro: 
-Apagar ao reiniciar: 
-Erro criando atalho: 
-Erro criando: 
-Erro descomprimindo informação? Instalador corrupto?
-Erro a registar DLL
-ExecShell: 
-Executar: 
-Extrair: 
-Extrair: erro ao escrever para o ficheiro 
-Instalação corrupta: opcode invalido
-Sem OLE para: 
-Directoria de Saída: 
-Remover directoria: 
-Mudar o nome ao Reiniciar: 
-A mudar nome: 
-Saltado: 
-Copiar Detalhes para a Área de Transferencia
-A gravar registo da instalação
-# byte
+# ^UnComponentsText
+Marque os componentes que queira desinstalar e vice versa. $_CLICK
+# ^UnComponentsSubText1
+Escolha o tipo de desinstalação: 
+# ^UnComponentsSubText2_NoInstTypes
+Escolha os componentes para desinstalar:
+# ^UnComponentsSubText2
+Ou, escolha os componentes opcionais que queira desinstalar:
+# ^DirText
+O $(^Name) será instalado na seguinte pasta. Para instalar numa pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
+# ^DirSubText
+Pasta de Destino
+# ^DirBrowseText
+Escolha uma pasta para instalar o $(^Name):
+# ^UnDirText
+O $(^Name) será desinstalado da seguinte pasta. Para desinstalar de uma pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Escolha uma pasta de onde será desinstalado o $(^Name):
+# ^SpaceAvailable
+"Espaço disponível: "
+# ^SpaceRequired
+"Espaço necessário: "
+# ^UninstallingText
+Este assistente irá proceder à desinstalação do $(^Name) do seu computador. $_CLICK
+# ^UninstallingSubText
+Desinstalando de:
+# ^FileError
+Erro ao abrir ficheiro para escrita: \r\n\t"$0"\r\nClique em Abortar para abortar a instalação,\r\nRepetir para tentar novamente a escrita do ficheiro, ou\r\nIgnorar para ignorar este ficheiro.
+# ^FileError_NoIgnore
+Erro ao abrir ficheiro para escrita: \r\n\t"$0"\r\nClique em Repetir para tentar novamente a gravação do ficheiro, ou\r\nCancelar para abortar a instalação.
+# ^CantWrite
+"Não foi possível escrever: "
+# ^CopyFailed
+Falha ao copiar
+# ^CopyTo
+"Copiar para "
+# ^Registering
+"Registando: "
+# ^Unregistering
+"Desregistando: "
+# ^SymbolNotFound
+"Símbolo não encontrado: "
+# ^CouldNotLoad
+"Não foi possível carregar: "
+# ^CreateFolder
+"Criando diretório: "
+# ^CreateShortcut
+"Criando atalho: "
+# ^CreatedUninstaller
+"Criando desinstalador: "
+# ^Delete
+"Apagando ficheiro: "
+# ^DeleteOnReboot
+"Apagar ao reiniciar: "
+# ^ErrorCreatingShortcut
+"Erro ao criar atalho: "
+# ^ErrorCreating
+"Erro ao criar: "
+# ^ErrorDecompressing
+Erro ao descomprimir dados! Instalador corrompido?
+# ^ErrorRegistering
+Erro ao registar DLL
+# ^ExecShell
+"Executando pelo Shell: "
+# ^Exec
+"Executando: "
+# ^Extract
+"Extraindo: "
+# ^ErrorWriting
+"Extraindo: erro ao escrever ficheiro "
+# ^InvalidOpcode
+Instalador corrompido: código de operação inválido
+# ^NoOLE
+"Sem OLE para: "
+# ^OutputFolder
+"Pasta de destino: "
+# ^RemoveFolder
+"Removendo pasta: "
+# ^RenameOnReboot
+"Renomear ao reiniciar: "
+# ^Rename
+"Renomeando: "
+# ^Skipped
+"Ignorado: "
+# ^CopyDetails
+Copiar detalhes para a Área de Transfêrencia
+# ^LogInstall
+Registar processo de instalação
+# ^Byte
 B
 # kilo
 K
