@@ -77,7 +77,6 @@ class CResourceVersionInfo
 {
     VS_FIXEDFILEINFO m_FixedInfo;
     CVersionStrigList m_ChildStringLists;
-    char m_VersionInfoLang[10];
     
 public:
     CResourceVersionInfo();
