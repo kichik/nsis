@@ -30,9 +30,9 @@ How to use (for another example, see waplugin.nsi in the nsis directory):
 	"success" if success
         otherwise, an error string describing the error
 
-  NSISDLL::download http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
+  NSISdl::download http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
 or
-  NSISDLL::download /TIMEOUT=30000 http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
+  NSISdl::download /TIMEOUT=30000 http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
 
 
 then, check $0 for errors:
