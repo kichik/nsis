@@ -87,9 +87,10 @@ void NSISCALL doRMDir(char *buf, int recurse)
 }
 #endif//NSIS_SUPPORT_RMDIR
 
-void NSISCALL addtrailingslash(char *str)
+char *NSISCALL addtrailingslash(char *str)
 {
   if (lastchar(str)!='\\') lstrcat(str,"\\");
+  return str;
 }
 
 char NSISCALL lastchar(const char *str)
