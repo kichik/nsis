@@ -50,10 +50,6 @@ char g_caption[NSIS_MAX_STRLEN*2];
 int g_filehdrsize;
 HWND g_hwnd;
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-extern char plugins_temp_dir[NSIS_MAX_STRLEN];
-#endif
-
 int m_length;
 int m_pos;
 
@@ -106,6 +102,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   char seekchar=' ';
 
   InitCommonControls();
+
+  GetTempPath(sizeof(temp_directory), temp_directory);
+
   lstrcpyn(state_command_line,GetCommandLine(),NSIS_MAX_STRLEN);
 
   if (*cmdline == '\"') seekchar = *cmdline++;
@@ -303,7 +302,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         static char ibuf[NSIS_MAX_STRLEN];
 
         buf2[0]='\"';
-        GetTempPath(sizeof(buf2)-1,buf2+1);
+        mystrcpy(buf2+1,temp_directory);
         lstrcat(buf2,s);
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
@@ -330,8 +329,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2,realcmds);
             lstrcat(buf2," _?=");
             lstrcat(buf2,ibuf);
-            GetTempPath(sizeof(ibuf),ibuf);
-            hProc=myCreateProcess(buf2,ibuf);
+            hProc=myCreateProcess(buf2,temp_directory);
             if (hProc) CloseHandle(hProc);
             else m_Err = g_errorcopyinginstall;
           }

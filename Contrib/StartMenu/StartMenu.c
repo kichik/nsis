@@ -94,8 +94,6 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       lpWndProcOld = (void *) SetWindowLong(hwndParent, GWL_WNDPROC, (long) ParentWndProc);
     }
 
-    //LockWindowUpdate(0);
-
     while (!g_done)
     {
       MSG msg;
@@ -254,7 +252,9 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       AddFolderFromReg(HKEY_CURRENT_USER);
 
       ShowWindow(hwndDlg, SW_SHOWNA);
+      InvalidateRect(hwndDlg,0,0);
       SetFocus(GetDlgItem(hwParent, IDOK));
+      LockWindowUpdate(0);
     }
     break;
     case WM_COMMAND:

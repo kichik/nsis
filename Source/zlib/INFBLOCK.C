@@ -154,143 +154,6 @@ local int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
   return inflate_flush(z,r);
 }
 
-
-local __inline int inflate_codes(z, r)
-z_streamp z;
-int r;
-{
-  inflate_blocks_statef *s=&z->blocks;
-  uInt j;               /* temporary storage */
-  inflate_huft *t;      /* temporary pointer */
-  uInt e;               /* extra bits or operation */
-  uLong b;              /* bit buffer */
-  uInt k;               /* bits in bit buffer */
-  Bytef *p;             /* input data pointer */
-  uInt n;               /* bytes available there */
-  Bytef *q;             /* output window write pointer */
-  uInt m;               /* bytes to end of window or read pointer */
-  Bytef *f;             /* pointer to copy strings from */
-  inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */
-
-  /* copy input/output information to locals (UPDATE macro restores) */
-  LOAD
-
-  /* process input and output based on current state */
-  while (1) switch (c->mode)
-  {             /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
-    case START:         /* x: set up for LEN */
-      c->sub.code.need = c->lbits;
-      c->sub.code.tree = c->ltree;
-      c->mode = LEN;
-    case LEN:           /* i: get length/literal/eob next */
-      j = c->sub.code.need;
-      NEEDBITS(j)
-      t = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[j]);
-      DUMPBITS(t->bits)
-      e = (uInt)(t->exop);
-      if (e == 0)               /* literal */
-      {
-        c->sub.lit = t->base;
-        c->mode = LIT;
-        break;
-      }
-      if (e & 16)               /* length */
-      {
-        c->sub.copy.get = e & 15;
-        c->len = t->base;
-        c->mode = LENEXT;
-        break;
-      }
-      if ((e & 64) == 0)        /* next table */
-      {
-        c->sub.code.need = e;
-        c->sub.code.tree = t + t->base;
-        break;
-      }
-      if (e & 32)               /* end of block */
-      {
-        c->mode = WASH;
-        break;
-      }
-    goto badcode;
-    case LENEXT:        /* i: getting length extra (have base) */
-      j = c->sub.copy.get;
-      NEEDBITS(j)
-      c->len += (uInt)b & (uInt)inflate_mask[j];
-      DUMPBITS(j)
-      c->sub.code.need = c->dbits;
-      c->sub.code.tree = c->dtree;
-      c->mode = DIST;
-    case DIST:          /* i: get distance next */
-      j = c->sub.code.need;
-      NEEDBITS(j)
-      t = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[j]);
-      DUMPBITS(t->bits)
-      e = (uInt)(t->exop);
-      if (e & 16)               /* distance */
-      {
-        c->sub.copy.get = e & 15;
-        c->sub.copy.dist = t->base;
-        c->mode = DISTEXT;
-        break;
-      }
-      if ((e & 64) == 0)        /* next table */
-      {
-        c->sub.code.need = e;
-        c->sub.code.tree = t + t->base;
-        break;
-      }
-      goto badcode;
-//      c->mode = BADCODE;        /* invalid code */
-  //    r = Z_DATA_ERROR;
-    //  LEAVE
-    case DISTEXT:       /* i: getting distance extra */
-      j = c->sub.copy.get;
-      NEEDBITS(j)
-      c->sub.copy.dist += (uInt)b & (uInt)inflate_mask[j];
-      DUMPBITS(j)
-      c->mode = COPY;
-    case COPY:          /* o: copying bytes in window, waiting for space */
-      f = (uInt)(q - s->window) < c->sub.copy.dist ?
-          s->end - (c->sub.copy.dist - (q - s->window)) :
-          q - c->sub.copy.dist;
-
-      while (c->len)
-      {
-        NEEDOUT
-        OUTBYTE(*f++)
-        if (f == s->end)
-          f = s->window;
-        c->len--;
-      }
-      c->mode = START;
-      break;
-    case LIT:           /* o: got literal, waiting for output space */
-      NEEDOUT
-      OUTBYTE(c->sub.lit)
-      c->mode = START;
-      break;
-    case WASH:          /* o: got eob, possibly more output */
-      if (k > 7)        /* return unused byte, if any */
-      {
-        k -= 8;
-        n++;
-        p--;            /* can always return one */
-      }
-      FLUSH
-      if (s->read != s->write)
-        LEAVE
-      c->mode = END;
-    case END:
-      r = Z_STREAM_END;
-      LEAVE
-    default:
-    badcode:
-      r = Z_STREAM_ERROR;
-      LEAVE
-  }
-}
-
 #define BMAX 15         /* maximum bit length of any code */
 
 local int huft_build(
@@ -731,7 +594,137 @@ int r=Z_OK;
       s->mode = CODES;
     case CODES:
       UPDATE
-      if ((r = inflate_codes(z, r)) != Z_STREAM_END)
+      {
+        inflate_huft *j;      /* temporary pointer */
+        uInt e;               /* extra bits or operation */
+        Bytef *f;             /* pointer to copy strings from */
+        inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */
+
+        int done = 0;
+
+        /* process input and output based on current state */
+        while (!done) switch (c->mode)
+        {             /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
+          case START:         /* x: set up for LEN */
+            c->sub.code.need = c->lbits;
+            c->sub.code.tree = c->ltree;
+            c->mode = LEN;
+          case LEN:           /* i: get length/literal/eob next */
+            t = c->sub.code.need;
+            NEEDBITS(t)
+            j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
+            DUMPBITS(j->bits)
+            e = (uInt)(j->exop);
+            if (e == 0)               /* literal */
+            {
+              c->sub.lit = j->base;
+              c->mode = LIT;
+              break;
+            }
+            if (e & 16)               /* length */
+            {
+              c->sub.copy.get = e & 15;
+              c->len = j->base;
+              c->mode = LENEXT;
+              break;
+            }
+            if ((e & 64) == 0)        /* next table */
+            {
+              c->sub.code.need = e;
+              c->sub.code.tree = j + j->base;
+              break;
+            }
+            if (e & 32)               /* end of block */
+            {
+              c->mode = WASH;
+              break;
+            }
+          goto badcode;
+          case LENEXT:        /* i: getting length extra (have base) */
+            t = c->sub.copy.get;
+            NEEDBITS(t)
+            c->len += (uInt)b & (uInt)inflate_mask[t];
+            DUMPBITS(t)
+            c->sub.code.need = c->dbits;
+            c->sub.code.tree = c->dtree;
+            c->mode = DIST;
+          case DIST:          /* i: get distance next */
+            t = c->sub.code.need;
+            NEEDBITS(t)
+            j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
+            DUMPBITS(j->bits)
+            e = (uInt)(j->exop);
+            if (e & 16)               /* distance */
+            {
+              c->sub.copy.get = e & 15;
+              c->sub.copy.dist = j->base;
+              c->mode = DISTEXT;
+              break;
+            }
+            if ((e & 64) == 0)        /* next table */
+            {
+              c->sub.code.need = e;
+              c->sub.code.tree = j + j->base;
+              break;
+            }
+            goto badcode;
+      //      c->mode = BADCODE;        /* invalid code */
+        //    r = Z_DATA_ERROR;
+          //  LEAVE
+          case DISTEXT:       /* i: getting distance extra */
+            t = c->sub.copy.get;
+            NEEDBITS(t)
+            c->sub.copy.dist += (uInt)b & (uInt)inflate_mask[t];
+            DUMPBITS(t)
+            c->mode = COPY;
+          case COPY:          /* o: copying bytes in window, waiting for space */
+            f = (uInt)(q - s->window) < c->sub.copy.dist ?
+                s->end - (c->sub.copy.dist - (q - s->window)) :
+                q - c->sub.copy.dist;
+
+            while (c->len)
+            {
+              NEEDOUT
+              OUTBYTE(*f++)
+              if (f == s->end)
+                f = s->window;
+              c->len--;
+            }
+            c->mode = START;
+            break;
+          case LIT:           /* o: got literal, waiting for output space */
+            NEEDOUT
+            OUTBYTE(c->sub.lit)
+            c->mode = START;
+            break;
+          case WASH:          /* o: got eob, possibly more output */
+            if (k > 7)        /* return unused byte, if any */
+            {
+              k -= 8;
+              n++;
+              p--;            /* can always return one */
+            }
+            FLUSH
+            if (s->read != s->write)
+            {
+              r = inflate_flush(z,r);
+              done = 1;
+              break;
+            }
+            c->mode = END;
+          case END:
+            r = inflate_flush(z,Z_STREAM_END);
+            done = 1;
+            break;
+          default:
+          badcode:
+            r = inflate_flush(z,Z_STREAM_ERROR);
+            done = 1;
+            break;
+        }
+        UPDATE
+      }
+      if (r != Z_STREAM_END)
         return inflate_flush(z, r);
       r = Z_OK;
       LOAD

@@ -1,6 +1,6 @@
 \S1{secmanage} Section Management
 
-\S2{SectionSetFlags} SectionSetFlags
+\S2{sectionsetflags} SectionSetFlags
 
 \c section_index section_flags
 
@@ -8,19 +8,19 @@ Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) r
 
 For an example of usage please see the \W{../Examples/one-section.nsi}{one-section.nsi} example.
 
-\S2{SectionGetFlags} SectionGetFlags
+\S2{sectiongetflags} SectionGetFlags
 
 \c section_index user_var(output)
 
 Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.
 
-\S2{SectionSetText} SectionSetText
+\S2{sectionsettext} SectionSetText
 
 \c section_index section_text
 
 Sets the description for the section section_index. To set a subsection, you must use - at the beginning of the text.  The error flag will be set if an out of range section is specified.
 
-\S2{SectionGetText} SectionGetText
+\S2{sectiongettext} SectionGetText
 
 \c section_index user_var(output)
 

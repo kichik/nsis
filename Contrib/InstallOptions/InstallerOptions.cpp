@@ -1004,8 +1004,8 @@ void showCfgDlg()
   lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
 
   ShowWindow(hConfigWindow, SW_SHOWNA);
-	SetFocus(hNextButton);
-
+  InvalidateRect(hConfigWindow,0,0);
+  SetFocus(hNextButton);
   LockWindowUpdate(0);
 
   g_done=0;

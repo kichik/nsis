@@ -379,7 +379,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_GETTEMPFILENAME:
       {
         char *textout=var0;
-        if (!GetTempPath(NSIS_MAX_STRLEN,buf0) || !GetTempFileName(buf0,"nst",0,textout))
+        if (!GetTempFileName(temp_directory,"nst",0,textout))
         {
           exec_errorflag++;
           *textout=0;
