@@ -1259,9 +1259,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SEARCH(IDCANCEL);
 
           // Search for bitmap holder (default for SetBrandingImage)
+          branding_image_found = false;
           DialogItemTemplate* dlgItem = 0;
-          int i = 0;
-          while (dlgItem = UIDlg.GetItemByIdx(i)) {
+          for (int i = 0; dlgItem = UIDlg.GetItemByIdx(i); i++) {
             if (IS_INTRESOURCE(dlgItem->szClass)) {
               if (dlgItem->szClass == MAKEINTRESOURCE(0x0082)) {
                 if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
@@ -1271,7 +1271,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
                 }
               }
             }
-            i++;
           }
 
           SAVE(IDD_INST);
