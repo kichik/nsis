@@ -1,7 +1,7 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.64
 
-;Language: English (1063)
+;Language: Lithuanian (1063)
 ;By Andrius Norkaitis (NorCis)
 
 ;--------------------------------
