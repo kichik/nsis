@@ -223,8 +223,6 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
-!insertmacro MUI_FUNCTIONS_ABORTWARNING
-
 ;--------------------------------
 ;Uninstaller Section
 
