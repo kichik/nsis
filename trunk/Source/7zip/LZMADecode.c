@@ -3,14 +3,53 @@ LzmaDecode.c
 LZMA Decoder
 LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
 
-Modified by Amir Szekely
+Converted to a state machine by Amir Szekely
 */
 
 #include "LzmaDecode.h"
 
-#ifndef Byte
-#define Byte unsigned char
-#endif
+#define LEAVE { goto saveStateAndReturn; }
+#define NEED_BYTE(c) case c: if (!avail_in) { mode = c; LEAVE; }
+#define NEED_BYTE_ if (!avail_in) LEAVE;
+#define NEXT_BYTE (avail_in--, *next_in++)
+#define NEED_OUT(c) case c: if (!avail_out) { mode = c; LEAVE; }
+#define PUT_BYTE_(b) { *next_out = b; next_out++; avail_out--; }
+#define PUT_BYTE(b) { totalOut++; PUT_BYTE_(b) }
+#define DECODE_BIT(c, x) prob = x; last = c; goto _LZMA_C_RDBD; case c:
+#define DECODE_LEN(c, x) probs = x; last2 = c; goto _LZMA_C_LEND; case c:
+#define DECODE_BIT_TREE(c, x, y) probs = x; numLevels = y; last3 = c; goto _LZMA_C_BTD; case c:
+
+enum {
+  /*  0 */ LZMA_C_INIT = 0,
+  /*  1 */ LZMA_C_GETDICT,
+  /*  2 */ LZMA_C_BLOCK,
+  /*  3 */ LZMA_C_RDI, /* RangeDecoderInit */
+  /*  4 */ LZMA_C_RDBD, /* RangeDecoderBitDecode */
+  /*  5 */ LZMA_C_RDBD_IN, /* RangeDecoderBitDecode */
+  /*  6 */ LZMA_C_TYPE,
+  /*  7 */ LZMA_C_ISREP,
+  /*  8 */ LZMA_C_ISREPG0,
+  /*  9 */ LZMA_C_ISREP0LONG,
+  /* 10 */ LZMA_C_ISREPG1,
+  /* 11 */ LZMA_C_ISREPG2,
+  /* 12 */ LZMA_C_NORM,
+  /* 13 */ LZMA_C_LITDM1, /* LzmaLiteralDecodeMatch */
+  /* 14 */ LZMA_C_LITDM2, /* LzmaLiteralDecodeMatch */
+  /* 15 */ LZMA_C_LITD, /* LzmaLiteralDecode */
+  /* 16 */ LZMA_C_RDRBTD, /* RangeDecoderReverseBitTreeDecode */
+  /* 17 */ LZMA_C_LEND, /* LzmaLenDecode */
+  /* 18 */ LZMA_C_LEND1, /* LzmaLenDecode */
+  /* 19 */ LZMA_C_LEND2, /* LzmaLenDecode */
+  /* 20 */ LZMA_C_LEND_RES, /* LzmaLenDecode */
+  /* 21 */ LZMA_C_LEND_C1,
+  /* 22 */ LZMA_C_LEND_C2,
+  /* 23 */ LZMA_C_BTD, /* RangeDecoderBitTreeDecode */
+  /* 24 */ LZMA_C_BTD_LOOP,
+  /* 25 */ LZMA_C_BTD_C1,
+  /* 26 */ LZMA_C_OUTPUT_1,
+  /* 27 */ LZMA_C_OUTPUT_2,
+  /* 28 */ LZMA_C_OUTPUT_3
+};
 
 #define kNumTopBits 24
 #define kTopValue ((UInt32)1 << kNumTopBits)
@@ -19,218 +58,18 @@ Modified by Amir Szekely
 #define kBitModelTotal (1 << kNumBitModelTotalBits)
 #define kNumMoveBits 5
 
-void LZMACALL LZMAGetIO(CLZMAStateP lzmaState)
-{
-  InterlockedExchange(&lzmaState->sync_state, 0);
-  while (InterlockedCompareExchange(&lzmaState->sync_state, 2, 1) != 1)
-    Sleep(1);
-}
+#define RC_NORMALIZE(c) if (range < kTopValue) { NEED_BYTE(c); range <<= 8; code = (code << 8) | NEXT_BYTE; }
 
-Byte LZMACALL RangeDecoderReadByte(CLZMAStateP lzmaState)
-{
-  if (!lzmaState->avail_in)
-  {
-    LZMAGetIO(lzmaState);
-    if (!lzmaState->avail_in)
-    {
-      lzmaState->Result = LZMA_RESULT_DATA_ERROR;
-      return 0xFF;
-    }
-  }
-  lzmaState->avail_in--;
-  return (*lzmaState->next_in++);
-}
-
-#define ReadByte (RangeDecoderReadByte(lzmaState))
-
-FORCE_INLINE void LZMACALL RangeDecoderInit(CLZMAStateP lzmaState)
-{
-  int i = 5;
-  lzmaState->Code = 0;
-  lzmaState->Range = (0xFFFFFFFF);
-  while (i--)
-    lzmaState->Code = (lzmaState->Code << 8) | ReadByte;
-}
-
-#define RC_INIT_VAR UInt32 range = lzmaState->Range; UInt32 code = lzmaState->Code;        
-#define RC_FLUSH_VAR lzmaState->Range = range; lzmaState->Code = code;
-#define RC_NORMALIZE if (range < kTopValue) { range <<= 8; code = (code << 8) | ReadByte; }
-
-FORCE_INLINE UInt32 LZMACALL RangeDecoderDecodeDirectBits(CLZMAStateP lzmaState, int numTotalBits)
-{
-  RC_INIT_VAR
-  UInt32 result = 0;
-  int i;
-  for (i = numTotalBits; i > 0; i--)
-  {
-    /* UInt32 t; */
-    range >>= 1;
-
-    result <<= 1;
-    if (code >= range)
-    {
-      code -= range;
-      result |= 1;
-    }
-    /*
-    t = (code - range) >> 31;
-    t &= 1;
-    code -= range & (t - 1);
-    result = (result + result) | (1 - t);
-    */
-    RC_NORMALIZE
-  }
-  RC_FLUSH_VAR
-  return result;
-}
-
-int LZMACALL RangeDecoderBitDecode(CProb *prob, CLZMAStateP lzmaState)
-{
-  UInt32 bound = (lzmaState->Range >> kNumBitModelTotalBits) * *prob;
-  if (lzmaState->Code < bound)
-  {
-    lzmaState->Range = bound;
-    *prob += (kBitModelTotal - *prob) >> kNumMoveBits;
-    if (lzmaState->Range < kTopValue)
-    {
-      lzmaState->Code = (lzmaState->Code << 8) | ReadByte;
-      lzmaState->Range <<= 8;
-    }
-    return 0;
-  }
-  else
-  {
-    lzmaState->Range -= bound;
-    lzmaState->Code -= bound;
-    *prob -= (*prob) >> kNumMoveBits;
-    if (lzmaState->Range < kTopValue)
-    {
-      lzmaState->Code = (lzmaState->Code << 8) | ReadByte;
-      lzmaState->Range <<= 8;
-    }
-    return 1;
-  }
-}
-
-#define RC_GET_BIT2(prob, mi, A0, A1) \
+#define RC_GET_BIT2(c, prob, mi, A0, A1) { \
   UInt32 bound = (range >> kNumBitModelTotalBits) * *prob; \
   if (code < bound) \
     { A0; range = bound; *prob += (kBitModelTotal - *prob) >> kNumMoveBits; mi <<= 1; } \
   else \
     { A1; range -= bound; code -= bound; *prob -= (*prob) >> kNumMoveBits; mi = (mi + mi) + 1; } \
-  RC_NORMALIZE
-
-#define RC_GET_BIT(prob, mi) RC_GET_BIT2(prob, mi, ; , ;)               
-
-int LZMACALL RangeDecoderBitTreeDecode(CProb *probs, int numLevels, CLZMAStateP lzmaState)
-{
-  int mi = 1;
-  int i;
-  #ifdef _LZMA_LOC_OPT
-  RC_INIT_VAR
-  #endif
-  for(i = numLevels; i > 0; i--)
-  {
-    #ifdef _LZMA_LOC_OPT
-    CProb *prob = probs + mi;
-    RC_GET_BIT(prob, mi)
-    #else
-    mi = (mi + mi) + RangeDecoderBitDecode(probs + mi, lzmaState);
-    #endif
-  }
-  #ifdef _LZMA_LOC_OPT
-  RC_FLUSH_VAR
-  #endif
-  return mi - (1 << numLevels);
+  RC_NORMALIZE(c) \
 }
 
-int LZMACALL RangeDecoderReverseBitTreeDecode(CProb *probs, int numLevels, CLZMAStateP lzmaState)
-{
-  int mi = 1;
-  int i;
-  int symbol = 0;
-  #ifdef _LZMA_LOC_OPT
-  RC_INIT_VAR
-  #endif
-  for(i = 0; i < numLevels; i++)
-  {
-    #ifdef _LZMA_LOC_OPT
-    CProb *prob = probs + mi;
-    RC_GET_BIT2(prob, mi, ; , symbol |= (1 << i))
-    #else
-    int bit = RangeDecoderBitDecode(probs + mi, lzmaState);
-    mi = mi + mi + bit;
-    symbol |= (bit << i);
-    #endif
-  }
-  #ifdef _LZMA_LOC_OPT
-  RC_FLUSH_VAR
-  #endif
-  return symbol;
-}
-
-FORCE_INLINE Byte LZMACALL LzmaLiteralDecode(CProb *probs, CLZMAStateP lzmaState)
-{ 
-  int symbol = 1;
-  #ifdef _LZMA_LOC_OPT
-  RC_INIT_VAR
-  #endif
-  do
-  {
-    #ifdef _LZMA_LOC_OPT
-    CProb *prob = probs + symbol;
-    RC_GET_BIT(prob, symbol)
-    #else
-    symbol = (symbol + symbol) | RangeDecoderBitDecode(probs + symbol, lzmaState);
-    #endif
-  }
-  while (symbol < 0x100);
-  #ifdef _LZMA_LOC_OPT
-  RC_FLUSH_VAR
-  #endif
-  return symbol;
-}
-
-FORCE_INLINE Byte LZMACALL LzmaLiteralDecodeMatch(CProb *probs, CLZMAStateP lzmaState, Byte matchByte)
-{ 
-  int symbol = 1;
-  #ifdef _LZMA_LOC_OPT
-  RC_INIT_VAR
-  #endif
-  do
-  {
-    int bit;
-    int matchBit = (matchByte >> 7) & 1;
-    matchByte <<= 1;
-    #ifdef _LZMA_LOC_OPT
-    {
-      CProb *prob = probs + ((1 + matchBit) << 8) + symbol;
-      RC_GET_BIT2(prob, symbol, bit = 0, bit = 1)
-    }
-    #else
-    bit = RangeDecoderBitDecode(probs + ((1 + matchBit) << 8) + symbol, lzmaState);
-    symbol = (symbol << 1) | bit;
-    #endif
-    if (matchBit != bit)
-    {
-      while (symbol < 0x100)
-      {
-        #ifdef _LZMA_LOC_OPT
-        CProb *prob = probs + symbol;
-        RC_GET_BIT(prob, symbol)
-        #else
-        symbol = (symbol + symbol) | RangeDecoderBitDecode(probs + symbol, lzmaState);
-        #endif
-      }
-      break;
-    }
-  }
-  while (symbol < 0x100);
-  #ifdef _LZMA_LOC_OPT
-  RC_FLUSH_VAR
-  #endif
-  return symbol;
-}
+#define RC_GET_BIT(c, prob, mi) RC_GET_BIT2(c, prob, mi, ; , ;)
 
 #define kNumPosBitsMax 4
 #define kNumPosStatesMax (1 << kNumPosBitsMax)
@@ -247,19 +86,7 @@ FORCE_INLINE Byte LZMACALL LzmaLiteralDecodeMatch(CProb *probs, CLZMAStateP lzma
 #define LenLow (LenChoice2 + 1)
 #define LenMid (LenLow + (kNumPosStatesMax << kLenNumLowBits))
 #define LenHigh (LenMid + (kNumPosStatesMax << kLenNumMidBits))
-#define kNumLenProbs (LenHigh + kLenNumHighSymbols) 
-
-int LZMACALL LzmaLenDecode(CProb *p, CLZMAStateP lzmaState, int posState)
-{
-  if(RangeDecoderBitDecode(p + LenChoice, lzmaState) == 0)
-    return RangeDecoderBitTreeDecode(p + LenLow +
-        (posState << kLenNumLowBits), kLenNumLowBits, lzmaState);
-  if(RangeDecoderBitDecode(p + LenChoice2, lzmaState) == 0)
-    return kLenNumLowSymbols + RangeDecoderBitTreeDecode(p + LenMid +
-        (posState << kLenNumMidBits), kLenNumMidBits, lzmaState);
-  return kLenNumLowSymbols + kLenNumMidSymbols + 
-      RangeDecoderBitTreeDecode(p + LenHigh, kLenNumHighBits, lzmaState);
-}
+#define kNumLenProbs (LenHigh + kLenNumHighSymbols)
 
 #define kNumStates 12
 
@@ -288,131 +115,249 @@ int LZMACALL LzmaLenDecode(CProb *p, CLZMAStateP lzmaState, int posState)
 #define RepLenCoder (LenCoder + kNumLenProbs)
 #define Literal (RepLenCoder + kNumLenProbs)
 
+#define LZMA_BASE_SIZE 1846
+#define LZMA_LIT_SIZE 768
+
 #if Literal != LZMA_BASE_SIZE
 StopCompilingDueBUG
 #endif
 
-int LZMACALL LzmaDecoderInit(CLZMAStateP lzmaState)
+void LZMACALL lzmaInit(lzma_stream *s)
 {
-  CProb *p = (CProb *) lzmaState->DynamicData;
-  UInt32 numProbs = Literal + ((UInt32)LZMA_LIT_SIZE << (lzmaState->lc + lzmaState->lp));
-  if (lzmaState->DynamicDataSize < numProbs * sizeof(CProb))
-    return LZMA_RESULT_NOT_ENOUGH_MEM;
-  lzmaState->Result = LZMA_RESULT_OK;
-  lzmaState->DictionaryPos = 0;
-  lzmaState->GlobalPos = 0;
-  lzmaState->Reps[0] = lzmaState->Reps[1] = lzmaState->Reps[2] = lzmaState->Reps[3] = 1;
-  lzmaState->State = 0;
-  lzmaState->PreviousIsMatch = 0;
-  lzmaState->RemainLen = 0;
-  lzmaState->Dictionary[lzmaState->DictionarySize - 1] = 0;
-  while (numProbs--)
-    p[numProbs] = kBitModelTotal >> 1; 
-  RangeDecoderInit(lzmaState);
-  return LZMA_RESULT_OK;
+  /* size of lzma_stream minus the size of the two allocated buffer pointers.
+     we don't want to lose to pointer or else we won't be able to free them. */
+  size_t i = sizeof(lzma_stream) - (sizeof(unsigned char *) * 2);
+  while (i--)
+    ((Byte *)s)[i] = 0;
+
+  s->rep0 = s->rep1 = s->rep2 = s->rep3 = 1;
+  s->range = (0xFFFFFFFF);
 }
 
-int LZMACALL LzmaDecode(CLZMAStateP lzmaState)
+int LZMACALL lzmaDecode(lzma_stream *s)
 {
-  CProb *p = (CProb *) lzmaState->DynamicData;
-  int state = lzmaState->State;
-  int previousIsMatch = lzmaState->PreviousIsMatch;
-  Byte previousByte;
-  UInt32 rep0 = lzmaState->Reps[0], rep1 = lzmaState->Reps[1], rep2 = lzmaState->Reps[2], rep3 = lzmaState->Reps[3];
-  UInt32 nowPos = 0;
-  UInt32 posStateMask = (1 << (lzmaState->pb)) - 1;
-  UInt32 literalPosMask = (1 << (lzmaState->lp)) - 1;
-  int lc = lzmaState->lc;
-  int len = lzmaState->RemainLen;
-  UInt32 globalPos = lzmaState->GlobalPos;
+  /* restore decoder state */
+  lzma_stream _s = *s;
 
-  Byte *dictionary = lzmaState->Dictionary;
-  UInt32 dictionarySize = lzmaState->DictionarySize;
-  UInt32 dictionaryPos = lzmaState->DictionaryPos;
+#define mode _s.mode
+#define last _s.last
+#define last2 _s.last2
+#define last3 _s.last3
 
-  UInt32 outSize = lzmaState->avail_out;
-  unsigned char *outStream = lzmaState->next_out;
+#define p ((CProb *) _s.dynamicData)
+#define dynamicDataSize _s.dynamicDataSize
+
+#define state _s.state
+#define isPreviousMatch _s.isPreviousMatch
+#define previousByte _s.previousByte
+#define rep0 _s.rep0
+#define rep1 _s.rep1
+#define rep2 _s.rep2
+#define rep3 _s.rep3
+#define lc _s.lc
+#define len _s.len
+#define totalOut _s.totalOut
+
+#define dictionary _s.dictionary
+#define dictionarySize _s.dictionarySize
+#define dictionaryPos _s.dictionaryPos
+
+#define posStateMask _s.posStateMask
+#define literalPosMask _s.literalPosMask
+
+#define avail_in _s.avail_in
+#define next_in _s.next_in
+#define avail_out _s.avail_out
+#define next_out _s.next_out
+
+#define range _s.range
+#define code _s.code
+
+#define probs _s.probs
+#define prob _s.prob
+
+#define symbol _s.temp2
+#define bit _s.temp3
+#define matchBit _s.temp1
+#define i _s.temp1
+#define result _s.temp2
+#define numLevels _s.temp3
+#define posSlot _s.temp2
+#define newDictionarySize ((UInt32) _s.temp3)
+
+#define matchByte _s.matchByte
+#define mi _s.mi
+#define posState _s.posState
 
   if (len == -1)
-    return LZMA_RESULT_OK;
+    return LZMA_STREAM_END;
 
-  while(len > 0 && nowPos < outSize)
+  for (;;) switch (mode)
   {
-    UInt32 pos = dictionaryPos - rep0;
-    if (pos >= dictionarySize)
-      pos += dictionarySize;
-    outStream[nowPos++] = dictionary[dictionaryPos] = dictionary[pos];
-    if (++dictionaryPos == dictionarySize)
-      dictionaryPos = 0;
-    len--;
-  }
-  if (dictionaryPos == 0)
-    previousByte = dictionary[dictionarySize - 1];
-  else
-    previousByte = dictionary[dictionaryPos - 1];
-
-  while(nowPos < outSize)
-  {
-    int posState = (int)((nowPos + globalPos) & posStateMask);
-    if (lzmaState->Result != LZMA_RESULT_OK)
-      return lzmaState->Result;
-    if (RangeDecoderBitDecode(p + IsMatch + (state << kNumPosBitsMax) + posState, lzmaState) == 0)
+  case LZMA_C_INIT:
     {
-      CProb *probs = p + Literal + (LZMA_LIT_SIZE * 
-        ((((nowPos + globalPos) & literalPosMask) << lc) + (previousByte >> (8 - lc))));
+      Byte firstByte;
+      UInt32 newDynamicDataSize;
+      UInt32 numProbs;
+      int lp;
+      int pb;
+
+      NEED_BYTE_;
+
+      firstByte = NEXT_BYTE;
+
+      if (firstByte > (9*5*5))
+        return LZMA_DATA_ERROR;
+
+      pb = firstByte / (9*5);
+      firstByte %= (9*5);
+      lp = firstByte / 9;
+      firstByte %= 9;
+      lc = firstByte;
+
+      posStateMask = (1 << (pb)) - 1;
+      literalPosMask = (1 << (lp)) - 1;
+
+      numProbs = Literal + (LZMA_LIT_SIZE << (lc + pb));
+      newDynamicDataSize = numProbs * sizeof(CProb);
+
+      if (newDynamicDataSize != dynamicDataSize)
+      {
+        if (p)
+          lzmafree(p);
+        p = lzmaalloc(newDynamicDataSize);
+        if (!p)
+          return LZMA_NOT_ENOUGH_MEM;
+        dynamicDataSize = newDynamicDataSize;
+      }
+
+      while (numProbs--)
+        p[numProbs] = kBitModelTotal >> 1;
+
+      for (i = 0, newDictionarySize = 0; i < 4; i++)
+      {
+        NEED_BYTE(LZMA_C_GETDICT);
+        newDictionarySize |= NEXT_BYTE << (i * 8);
+      }
+
+      if (newDictionarySize != dictionarySize)
+      {
+        dictionarySize = newDictionarySize;
+        if (dictionary)
+          lzmafree(dictionary);
+        dictionary = lzmaalloc(dictionarySize);
+        if (!dictionary)
+          return LZMA_NOT_ENOUGH_MEM;
+      }
+
+      dictionary[dictionarySize - 1] = 0;
+
+      i = 5;
+      while (i--)
+      {
+        NEED_BYTE(LZMA_C_RDI);
+        code = (code << 8) | NEXT_BYTE;
+      }
+    }
+  case LZMA_C_BLOCK:
+    posState = (int)(totalOut & posStateMask);
+    DECODE_BIT(LZMA_C_TYPE, p + IsMatch + (state << kNumPosBitsMax) + posState);
+    if (bit == 0)
+    {
+      probs = p + Literal + (LZMA_LIT_SIZE *
+        (((totalOut & literalPosMask) << lc) + (previousByte >> (8 - lc))));
 
       if (state < 4) state = 0;
       else if (state < 10) state -= 3;
       else state -= 6;
-      if (previousIsMatch)
+      if (isPreviousMatch)
       {
-        Byte matchByte;
         UInt32 pos = dictionaryPos - rep0;
         if (pos >= dictionarySize)
           pos += dictionarySize;
         matchByte = dictionary[pos];
-        previousByte = LzmaLiteralDecodeMatch(probs, lzmaState, matchByte);
-        previousIsMatch = 0;
+        {
+          symbol = 1;
+          do
+          {
+            matchBit = (matchByte >> 7) & 1;
+            matchByte <<= 1;
+            {
+              prob = probs + ((1 + matchBit) << 8) + symbol;
+              RC_GET_BIT2(LZMA_C_LITDM1, prob, symbol, bit = 0, bit = 1)
+            }
+            if (matchBit != bit)
+            {
+              while (symbol < 0x100)
+              {
+                prob = probs + symbol;
+                RC_GET_BIT(LZMA_C_LITDM2, prob, symbol)
+              }
+              break;
+            }
+          }
+          while (symbol < 0x100);
+          previousByte = symbol;
+        }
+        isPreviousMatch = 0;
       }
       else
-        previousByte = LzmaLiteralDecode(probs, lzmaState);
-      outStream[nowPos++] = previousByte;
-      dictionary[dictionaryPos] = previousByte;
-      if (++dictionaryPos == dictionarySize)
-        dictionaryPos = 0;
-    }
-    else             
-    {
-      previousIsMatch = 1;
-      if (RangeDecoderBitDecode(p + IsRep + state, lzmaState) == 1)
       {
-        if (RangeDecoderBitDecode(p + IsRepG0 + state, lzmaState) == 0)
+        symbol = 1;
+        do
         {
-          if (RangeDecoderBitDecode(p + IsRep0Long + (state << kNumPosBitsMax) + posState, lzmaState) == 0)
+          prob = probs + symbol;
+          RC_GET_BIT(LZMA_C_LITD, prob, symbol)
+        }
+        while (symbol < 0x100);
+        previousByte = symbol;
+      }
+      NEED_OUT(LZMA_C_OUTPUT_1);
+      PUT_BYTE(previousByte);
+      dictionary[dictionaryPos] = previousByte;
+      dictionaryPos = (dictionaryPos + 1) % dictionarySize;
+    }
+    /* bit == 1 */
+    else
+    {
+      isPreviousMatch = 1;
+      DECODE_BIT(LZMA_C_ISREP, p + IsRep + state);
+      if (bit == 1)
+      {
+        DECODE_BIT(LZMA_C_ISREPG0, p + IsRepG0 + state);
+        if (bit == 0)
+        {
+          DECODE_BIT(LZMA_C_ISREP0LONG, p + IsRep0Long + (state << kNumPosBitsMax) + posState);
+          if (bit == 0)
           {
             UInt32 pos;
-            if ((nowPos + globalPos) == 0)
-              return LZMA_RESULT_DATA_ERROR;
+            if (totalOut == 0)
+              return LZMA_DATA_ERROR;
             state = state < 7 ? 9 : 11;
+            NEED_OUT(LZMA_C_OUTPUT_2);
             pos = dictionaryPos - rep0;
             if (pos >= dictionarySize)
               pos += dictionarySize;
             previousByte = dictionary[pos];
             dictionary[dictionaryPos] = previousByte;
-            if (++dictionaryPos == dictionarySize)
-              dictionaryPos = 0;
-            outStream[nowPos++] = previousByte;
-            continue;
+            dictionaryPos = (dictionaryPos + 1) % dictionarySize;
+            PUT_BYTE(previousByte);
+            mode = LZMA_C_BLOCK;
+            break;
           }
         }
         else
         {
           UInt32 distance;
-          if(RangeDecoderBitDecode(p + IsRepG1 + state, lzmaState) == 0)
-            distance = rep1;
-          else 
+          DECODE_BIT(LZMA_C_ISREPG1, p + IsRepG1 + state);
+          if (bit == 0)
           {
-            if(RangeDecoderBitDecode(p + IsRepG2 + state, lzmaState) == 0)
+            distance = rep1;
+          }
+          else
+          {
+            DECODE_BIT(LZMA_C_ISREPG2, p + IsRepG2 + state);
+            if (bit == 0)
               distance = rep2;
             else
             {
@@ -424,35 +369,65 @@ int LZMACALL LzmaDecode(CLZMAStateP lzmaState)
           rep1 = rep0;
           rep0 = distance;
         }
-        len = LzmaLenDecode(p + RepLenCoder, lzmaState, posState);
+        DECODE_LEN(LZMA_C_LEND_C1, p + RepLenCoder);
         state = state < 7 ? 8 : 11;
       }
       else
       {
-        int posSlot;
         rep3 = rep2;
         rep2 = rep1;
         rep1 = rep0;
         state = state < 7 ? 7 : 10;
-        len = LzmaLenDecode(p + LenCoder, lzmaState, posState);
-        posSlot = RangeDecoderBitTreeDecode(p + PosSlot +
-            ((len < kNumLenToPosStates ? len : kNumLenToPosStates - 1) << 
-            kNumPosSlotBits), kNumPosSlotBits, lzmaState);
+        DECODE_LEN(LZMA_C_LEND_C2, p + LenCoder);
+        DECODE_BIT_TREE(
+          LZMA_C_BTD_C1,
+          p + PosSlot + ((len < kNumLenToPosStates ? len : kNumLenToPosStates - 1) << kNumPosSlotBits),
+          kNumPosSlotBits
+        );
         if (posSlot >= kStartPosModelIndex)
         {
           int numDirectBits = ((posSlot >> 1) - 1);
           rep0 = ((2 | ((UInt32)posSlot & 1)) << numDirectBits);
           if (posSlot < kEndPosModelIndex)
           {
-            rep0 += RangeDecoderReverseBitTreeDecode(
-                p + SpecPos + rep0 - posSlot - 1, numDirectBits, lzmaState);
+            probs = p + SpecPos + rep0 - posSlot - 1;
+            numLevels = numDirectBits;
           }
           else
           {
-            rep0 += RangeDecoderDecodeDirectBits(lzmaState, 
-                numDirectBits - kNumAlignBits) << kNumAlignBits;
-            rep0 += RangeDecoderReverseBitTreeDecode(p + Align, kNumAlignBits, lzmaState);
+            int numTotalBits = numDirectBits - kNumAlignBits;
+            result = 0;
+            for (i = numTotalBits; i > 0; i--)
+            {
+              /* UInt32 t; */
+              range >>= 1;
+
+              result <<= 1;
+              if (code >= range)
+              {
+                code -= range;
+                result |= 1;
+              }
+              /*
+              t = (code - range) >> 31;
+              t &= 1;
+              code -= range & (t - 1);
+              result = (result + result) | (1 - t);
+              */
+              RC_NORMALIZE(LZMA_C_NORM)
+            }
+            rep0 += result << kNumAlignBits;
+            probs = p + Align;
+            numLevels = kNumAlignBits;
           }
+          mi = 1;
+          symbol = 0;
+          for(i = 0; i < numLevels; i++)
+          {
+            prob = probs + mi;
+            RC_GET_BIT2(LZMA_C_RDRBTD, prob, mi, ; , symbol |= (1 << i));
+          }
+          rep0 += symbol;
         }
         else
           rep0 = posSlot;
@@ -460,159 +435,102 @@ int LZMACALL LzmaDecode(CLZMAStateP lzmaState)
       }
       if (rep0 == (UInt32)(0))
       {
-        /* it's for stream version */
         len = -1;
-        break;
+        LEAVE;
       }
-      if (rep0 > nowPos + globalPos)
+      if (rep0 > totalOut)
       {
-        return LZMA_RESULT_DATA_ERROR;
+        return LZMA_DATA_ERROR;
       }
       len += kMatchMinLen;
+      totalOut += len;
       do
       {
-        UInt32 pos = dictionaryPos - rep0;
+        UInt32 pos;
+        NEED_OUT(LZMA_C_OUTPUT_3);
+        pos = dictionaryPos - rep0;
         if (pos >= dictionarySize)
           pos += dictionarySize;
         previousByte = dictionary[pos];
         dictionary[dictionaryPos] = previousByte;
-        if (++dictionaryPos == dictionarySize)
-          dictionaryPos = 0;
-        outStream[nowPos++] = previousByte;
+        dictionaryPos = (dictionaryPos + 1) % dictionarySize;
+        PUT_BYTE_(previousByte);
         len--;
       }
-      while(len > 0 && nowPos < outSize);
+      while(len > 0);
     }
+    mode = LZMA_C_BLOCK;
+    break;
+  case LZMA_C_RDBD:
+  _LZMA_C_RDBD:
+    {
+      UInt32 bound = (range >> kNumBitModelTotalBits) * *prob;
+      if (code < bound)
+      {
+        range = bound;
+        *prob += (kBitModelTotal - *prob) >> kNumMoveBits;
+        bit = 0;
+      }
+      else
+      {
+        range -= bound;
+        code -= bound;
+        *prob -= (*prob) >> kNumMoveBits;
+        bit = 1;
+      }
+      RC_NORMALIZE(LZMA_C_RDBD_IN);
+    }
+    mode = last;
+    break;
+  case LZMA_C_LEND:
+  _LZMA_C_LEND:
+      DECODE_BIT(LZMA_C_LEND1, probs + LenChoice);
+      if (bit == 0)
+      {
+        len = 0;
+        probs += LenLow + (posState << kLenNumLowBits);
+        numLevels = kLenNumLowBits;
+      }
+      else {
+        DECODE_BIT(LZMA_C_LEND2, probs + LenChoice2);
+        if (bit == 0)
+        {
+          len = kLenNumLowSymbols;
+          probs += + LenMid + (posState << kLenNumMidBits);
+          numLevels = kLenNumMidBits;
+        }
+        else
+        {
+          len = kLenNumLowSymbols + kLenNumMidSymbols;
+          probs += LenHigh;
+          numLevels = kLenNumHighBits;
+        }
+      }
+
+      last3 = LZMA_C_LEND_RES;
+  case LZMA_C_BTD:
+  _LZMA_C_BTD:
+    mi = 1;
+    for(i = numLevels; i > 0; i--)
+    {
+      prob = probs + mi;
+      RC_GET_BIT(LZMA_C_BTD_LOOP, prob, mi)
+    }
+    result = mi - (1 << numLevels);
+    mode = last3;
+    break;
+  case LZMA_C_LEND_RES:
+    len += result;
+    mode = last2;
+    break;
+  default:
+    return LZMA_DATA_ERROR;
   }
 
-  lzmaState->DictionaryPos = dictionaryPos;
-  lzmaState->GlobalPos = globalPos + nowPos;
-  lzmaState->Reps[0] = rep0;
-  lzmaState->Reps[1] = rep1;
-  lzmaState->Reps[2] = rep2;
-  lzmaState->Reps[3] = rep3;
-  lzmaState->State = state;
-  lzmaState->PreviousIsMatch = previousIsMatch;
-  lzmaState->RemainLen = len;
+saveStateAndReturn:
 
-  return nowPos;
-}
+  /* save decoder state */
+  *s = _s;
 
-// interface
-
-void LZMACALL lzmaInit(CLZMAStateP lzmaState)
-{
-  if (lzmaState->hThread)
-  {
-    CloseHandle(lzmaState->hThread);
-    lzmaState->hThread = NULL;
-  }
-
-  lzmaState->sync_state = 1;
-
-  lzmaState->finished = FALSE;
-}
-
-#define kPropertiesSize 5
-
-DWORD WINAPI lzmaDecompressThread(LPVOID lpParameter)
-{
-  CLZMAStateP lzmaState = (CLZMAStateP) lpParameter;
-
-  LPBYTE properties;
-  BYTE firstByte;
-  UINT32 dictionarySize;
-
-  int res;
-
-  lzmaState->res = -4;
-  if (lzmaState->avail_in < kPropertiesSize)
-  {
-    goto finished;
-  }
-  properties = lzmaState->next_in;
-  lzmaState->avail_in -= kPropertiesSize;
-  lzmaState->next_in += kPropertiesSize;
-
-  firstByte = properties[0];
-
-  if (firstByte > (9*5*5))
-  {
-    goto finished;
-  }
-
-  lzmaState->pb = firstByte / (9*5);
-  firstByte %= (9*5);
-  lzmaState->lp = firstByte / 9;
-  firstByte %= 9;
-  lzmaState->lc = firstByte;
-  
-  lzmaState->DynamicDataSize = LZMA_BASE_SIZE + (LZMA_LIT_SIZE << (lzmaState->lc + lzmaState->pb));
-  lzmaState->DynamicDataSize *= sizeof(CProb);
-
-  if (!lzmaState->DynamicData || firstByte != lzmaState->FirstProp)
-  {
-    if (lzmaState->DynamicData)
-      GlobalFree(lzmaState->DynamicData);
-    lzmaState->DynamicData = LZMAAlloc(lzmaState->DynamicDataSize);
-    lzmaState->FirstProp = firstByte;
-  }
-
-  dictionarySize = *(UINT32 *)(properties + 1);
-  if (dictionarySize != lzmaState->DictionarySize)
-  {
-    if (lzmaState->Dictionary)
-      GlobalFree(lzmaState->Dictionary);
-    lzmaState->Dictionary = LZMAAlloc(dictionarySize);
-    lzmaState->DictionarySize = dictionarySize;
-  }
-
-  LzmaDecoderInit(lzmaState);
-
-  for (;;)
-  {
-    res = LzmaDecode(lzmaState);
-    if (res <= 0)
-      break;
-
-    lzmaState->next_out += res;
-    lzmaState->avail_out -= res;
-
-    LZMAGetIO(lzmaState);
-  }
-
-  lzmaState->res = 1;
-  if (res < 0)
-    lzmaState->res = res;
-
-finished:
-
-  lzmaState->finished = TRUE;
-  InterlockedExchange(&lzmaState->sync_state, 0);
-
-  return 0;
-}
-
-int LZMACALL lzmaDecompress(CLZMAStateP lzmaState)
-{
-  if (lzmaState->finished)
-    return lzmaState->res;
-
-  if (!lzmaState->hThread)
-  {
-    DWORD dwThreadId;
-    lzmaState->hThread = CreateThread(0, 0, lzmaDecompressThread, (LPVOID) lzmaState, 0, &dwThreadId);
-    if (!lzmaState->hThread)
-      return -4;
-  }
-  else
-    InterlockedExchange(&lzmaState->sync_state, 1);
-
-  while (InterlockedCompareExchange(&lzmaState->sync_state, 2, 0) != 0)
-    Sleep(1);
-
-  if (lzmaState->finished)
-    return lzmaState->res;
-
-  return 0;
+  return LZMA_OK;
 }
