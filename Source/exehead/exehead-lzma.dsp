@@ -67,11 +67,6 @@ PostBuild_Cmds=bin2h Release-lzma\exehead_lzma.exe Release-lzma\exehead_lzma.h l
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\InBuffer.cpp
-# ADD CPP /D "__STREAM_VERSION"
-# End Source File
-# Begin Source File
-
 SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\InBuffer.h
 # End Source File
 # Begin Source File
@@ -94,11 +89,6 @@ SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMALenCoder.h
 # Begin Source File
 
 SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMALiteralCoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZOutWindow.cpp
-# ADD CPP /D "__STREAM_VERSION"
 # End Source File
 # Begin Source File
 
