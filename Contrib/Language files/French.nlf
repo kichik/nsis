@@ -4,6 +4,7 @@ NLF v2
 1036
 # Start editing here
 # from french NSIS team - http://www.winampfr.com/nsis - veekee@winampfr.com
+# updated by Sébastien Delahaye <seb@delahaye.net>
 Nullsoft Install System %s
 Installation de %s
 Désinstallation de %s
@@ -15,15 +16,15 @@ Désinstallation de %s
 : Confirmation
 : Désinstallation des fichiers
 : Terminé
-< Retour
-Suivant >
-D'accord
-Installer
-Désinstaller
+< &Précédent
+&Suivant >
+J'a&ccepte
+&Installer
+&Désinstaller
 Annuler
-Fermer
-Parcourir...
-Détails
+&Terminer
+&Parcourir
+P&lus d'infos
 Nom
 Terminé
 Personnalisée
