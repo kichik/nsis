@@ -22,6 +22,7 @@
 
 #include "DialogTemplate.h"
 #include "util.h"
+#include <cassert> // for assert(3)
 #ifndef _WIN32
 #  include <stdio.h>
 #  include <stdlib.h>
@@ -63,7 +64,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
       {
         throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
       }
-      seeker += iStrLen * sizeof(WCHAR);
+      while (*(WCHAR*)seeker++);
     }
     break;
   }
@@ -89,7 +90,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     seeker += sizeof(WORD);
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (strlen(x)+1)*sizeof(WCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : MultiByteToWideChar(m_uCodePage, 0, x, -1, 0, 0) * sizeof(WCHAR)) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -98,8 +99,13 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
 CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
   m_uCodePage = uCodePage;
 
+  m_dwHelpId = 0;
   m_szClass = 0;
   m_szFont = 0;
+  m_sFontSize = 0;
+  m_sFontWeight = 0;
+  m_bItalic = 0;
+  m_bCharset = 0;
   m_szMenu = 0;
   m_szTitle = 0;
 
@@ -184,6 +190,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
     else {
       DLGITEMTEMPLATE* rawItem = (DLGITEMTEMPLATE*)seeker;
 
+      item->dwHelpId = 0;
       item->dwStyle = rawItem->style;
       item->dwExtStyle = rawItem->dwExtendedStyle;
       item->sX = rawItem->x;
@@ -603,6 +610,8 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
       seeker += m_vItems[i]->wCreateDataSize;
     }
   }
+
+  assert(seeker - pbDlg == dwSize);
 
   // DONE!
   return pbDlg;
