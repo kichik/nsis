@@ -1096,7 +1096,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
 
-        if (ExitWindowsEx(EWX_REBOOT|EWX_FORCE,0)) ExitProcess(0);
+        if (ExitWindowsEx(EWX_REBOOT,0)) ExitProcess(0);
 
         FreeLibrary(h);
 
