@@ -23,5 +23,5 @@
 ;and paths should ideally be absolute (since you could be 
 ;building your installer anywhere).
 ;
-;!packhdr tmp.dat "C:\program files\upx\upx -9 -q tmp.dat"
-;!packhdr tmp.dat "C:\program files\petite\petite -9 -b0 -r** -p0 -y tmp.dat"
+;!packhdr tmp.dat '"C:\program files\upx\upx" -9 -q tmp.dat'
+;!packhdr tmp.dat '"C:\program files\petite\petite" -9 -b0 -r** -p0 -y tmp.dat'
