@@ -125,7 +125,9 @@ parameters.</p>
 <p class="text">To use the Modern UI in an existing script, you should
 follow these steps:</p>
   <p class="subheader">1. Include the header file</p>
-  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
+  <pre class="margin">!include "MUI.nsh"</pre>
+  <p class="text">MUI.nsh is in the Include directory, so you don't have
+  to specify a path.
   <p class="subheader">2. Define the name and version of your software</p>
 <pre class="margin">
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
