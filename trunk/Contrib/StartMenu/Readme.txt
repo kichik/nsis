@@ -9,7 +9,11 @@ which is the program group default name, and some more optional parameters:
                              "Select the Start Menu folder in which..."
   /lastused [folder] - sets the edit box to a specific value folder.
                        Use this to make this plug-in remember the last
-		       folder selected by the user
+                       folder selected by the user
+  /checknoshortcuts text - Shows a check box with the text "text". If
+                           the user checks this box, the return value
+                           will have ^ as its first character and you
+                           should not create the program group.
 
 The function pushes the folder selection back to the stack. It does not push the 
 full path but only the selected sub-folder. It's up to you to decide if to put 

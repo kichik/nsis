@@ -13,11 +13,13 @@ HWND hwIcon;
 HWND hwText;
 HWND hwLocation;
 HWND hwDirList;
+HWND hwCheckBox;
 
 char buf[MAX_PATH];
 char text[1024];
 char progname[1024];
 char lastused[1024];
+char checkbox[1024];
 
 int autoadd = 0;
 int g_done = 0;
@@ -25,17 +27,10 @@ int noicon = 0;
 
 void *lpWndProcOld;
 
-typedef struct {
-  char *pszName;
-  int   nValue;
-} TableEntry;
-
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(char *name, HKEY rootKey);
 void PopulateListWithDir(char *dir);
-int LookupToken(TableEntry*, char*);
-int LookupTokens(TableEntry*, char*);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
@@ -73,6 +68,10 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       else if (!lstrcmpi(buf+1, "lastused"))
       {
         popstring(lastused);
+      }
+      else if (!lstrcmpi(buf+1, "checknoshortcuts"))
+      {
+        popstring(checkbox);
       }
       if (popstring(buf))
         *buf = 0;
@@ -143,7 +142,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     case WM_INITDIALOG:
     {
-      RECT dialog_r, temp_r, icon_r;
+      RECT dialog_r, temp_r;
 
       HFONT hFont = (HFONT)SendMessage(hwParent, WM_GETFONT, 0, 0);
 
@@ -166,12 +165,14 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       hwText = GetDlgItem(hwndDlg, IDC_TEXT);
       hwLocation = GetDlgItem(hwndDlg, IDC_LOCATION);
       hwDirList = GetDlgItem(hwndDlg, IDC_DIRLIST);
+      hwCheckBox = GetDlgItem(hwndDlg, IDC_CHECK);
 
       SendMessage(hwndDlg, WM_SETFONT, (WPARAM) hFont, TRUE);
       SendMessage(hwIcon, WM_SETFONT, (WPARAM) hFont, TRUE);
       SendMessage(hwText, WM_SETFONT, (WPARAM) hFont, TRUE);
       SendMessage(hwLocation, WM_SETFONT, (WPARAM) hFont, TRUE);
       SendMessage(hwDirList, WM_SETFONT, (WPARAM) hFont, TRUE);
+      SendMessage(hwCheckBox, WM_SETFONT, (WPARAM) hFont, TRUE);
 
       if (!noicon)
       {
@@ -195,16 +196,16 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (!*text)
         lstrcpy(text, "Select the Start Menu folder in which you would like to create the program's shortcuts:");
 
-      GetWindowRect(hwIcon, &icon_r);
-      icon_r.right += 5;
-      icon_r.bottom += 5;
-      ScreenToClient(hwndDlg, ((LPPOINT) &icon_r) + 1);
+      GetWindowRect(hwIcon, &temp_r);
+      temp_r.right += 5;
+      temp_r.bottom += 5;
+      ScreenToClient(hwndDlg, ((LPPOINT) &temp_r) + 1);
 
       ProgressiveSetWindowPos(
         hwText,
-        noicon ? 0 : icon_r.right,
-        dialog_r.right - dialog_r.left - (noicon ? 0 : icon_r.right),
-        icon_r.bottom + 2
+        noicon ? 0 : temp_r.right,
+        dialog_r.right - dialog_r.left - (noicon ? 0 : temp_r.right),
+        temp_r.bottom + 2
       );
 
       SendMessage(hwText, WM_SETTEXT, 0, (LPARAM) text);
@@ -218,14 +219,38 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         temp_r.bottom - temp_r.top
       );
 
+      if (*lastused == '>')
+      {
+        SendMessage(hwCheckBox, BM_SETCHECK, BST_CHECKED, 0);
+        lstrcpy(buf, lastused);
+        lstrcpy(lastused, buf + 1);
+      }
+
       SendMessage(hwLocation, WM_SETTEXT, 0, (LPARAM) (*lastused ? lastused : progname));
+
+      GetWindowRect(hwCheckBox, &temp_r);
+      ScreenToClient(hwndDlg, ((LPPOINT) &temp_r));
+      ScreenToClient(hwndDlg, ((LPPOINT) &temp_r) + 1);
 
       ProgressiveSetWindowPos(
         hwDirList,
         0,
         dialog_r.right - dialog_r.left,
-        dialog_r.bottom - dialog_r.top - y_offset
+        dialog_r.bottom - dialog_r.top - y_offset - (*checkbox ? temp_r.bottom - temp_r.top + 5 : 0)
       );
+
+      ProgressiveSetWindowPos(
+        hwCheckBox,
+        0,
+        dialog_r.right - dialog_r.left,
+        temp_r.bottom - temp_r.top
+      );
+
+      if (*checkbox)
+      {
+        ShowWindow(hwCheckBox, SW_SHOWNA);
+        SendMessage(hwCheckBox, WM_SETTEXT, 0, (LPARAM) checkbox);
+      }
 
       AddFolderFromReg("Programs", HKEY_LOCAL_MACHINE);
       AddFolderFromReg("Programs", HKEY_CURRENT_USER);
@@ -252,7 +277,13 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushstring("cancel");
       else
       {
-        SendMessage(hwLocation, WM_GETTEXT, MAX_PATH, (LPARAM) buf);
+        if (SendMessage(hwCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED)
+        {
+          buf[0] = '>';
+          buf[1] = 0;
+        }
+        else *buf = 0;
+        SendMessage(hwLocation, WM_GETTEXT, MAX_PATH, (LPARAM) buf + lstrlen(buf));
         pushstring(buf);
       }
     break;
@@ -323,34 +354,4 @@ void PopulateListWithDir(char *dir)
       }
     }
   } while (FindNextFile(hSearch, &FileData));
-}
-
-int LookupToken(TableEntry* psTable_, char* pszToken_)
-{
-  int i;
-  for (i = 0; psTable_[i].pszName; i++)
-    if (!lstrcmpi(pszToken_, psTable_[i].pszName))
-      return psTable_[i].nValue;
-  return 0;
-}
-
-int LookupTokens(TableEntry* psTable_, char* pszTokens_)
-{
-  int n = 0;
-  char *pszStart = pszTokens_;
-  char *pszEnd = pszTokens_;
-  for (;;) {
-    if (*pszEnd == '\0') {
-      n |= LookupToken(psTable_, pszStart);
-      break;
-    }
-    if (*pszEnd == '|') {
-      *pszEnd = '\0';
-      n |= LookupToken(psTable_, pszStart);
-      *pszEnd = '|';
-      pszStart = pszEnd + 1;
-    }
-    pszEnd++;
-  }
-  return n;
 }

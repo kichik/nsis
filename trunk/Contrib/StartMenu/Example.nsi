@@ -19,7 +19,7 @@ FunctionEnd
 
 Page custom StartMenuGroupSelect ": Start Menu Folder"
 Function StartMenuGroupSelect
-	StartMenu::Select /autoadd /lastused $R0 "StartMenu.dll test"
+	StartMenu::Select /checknoshortcuts "Don't create a start menu folder" /autoadd /lastused $R0 "StartMenu.dll test"
 	Pop $R1
 
 	StrCpy $R2 $R1 5
@@ -33,10 +33,16 @@ FunctionEnd
 
 Page instfiles
 Section
-	CreateDirectory $SMPROGRAMS\$R0
-	CreateShortCut $SMPROGRAMS\$R0\MakeNSIS.lnk $INSTDIR\makensis.exe
+	# this part is only necessary if you used /checknoshortcuts
+	StrCpy $R1 $R0 1
+	StrCmp $R1 ">" skip
 
-	SetShellVarContext All
-	CreateDirectory $SMPROGRAMS\$R0
-	CreateShortCut "$SMPROGRAMS\$R0\All users MakeNSIS.lnk" $INSTDIR\makensis.exe
+		CreateDirectory $SMPROGRAMS\$R0
+		CreateShortCut $SMPROGRAMS\$R0\MakeNSIS.lnk $INSTDIR\makensis.exe
+
+		SetShellVarContext All
+		CreateDirectory $SMPROGRAMS\$R0
+		CreateShortCut "$SMPROGRAMS\$R0\All users MakeNSIS.lnk" $INSTDIR\makensis.exe
+
+	skip:
 SectionEnd
