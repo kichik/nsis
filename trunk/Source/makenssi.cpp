@@ -1,10 +1,13 @@
 const char *NSIS_VERSION="v2.0";
 
 /* 
+
   Nullsoft Scriptable Install System (NSIS)
   makensis.cpp - installer compiler code
 
   Copyright (C) 1999-2004 Nullsoft, Inc.
+  
+  This license applies to everything in the NSIS package, except where otherwise noted.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,7 +28,9 @@ const char *NSIS_VERSION="v2.0";
   This is the zlib/libpng license, which is approved by opensource.org.
 
   Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).
-  Includes portions derived from bzip2 (see documentation for details).
+  Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).
+  Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).
+
 */
 
 #include "Platform.h"
@@ -112,8 +117,9 @@ int main(int argc, char **argv)
     fprintf(g_output,"MakeNSIS %s - Copyright 1999-2004 Nullsoft, Inc.\n"
            "\n"
            "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
-           "Includes portions derived from bzip2 (see documentation for details).\n"
+           "Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).\n"
            "Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).\n"
+           "\n"
            "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",NSIS_VERSION);
     fflush(g_output);
   }
@@ -183,8 +189,10 @@ int main(int argc, char **argv)
     {
       if (build.display_info) 
       {
-        fprintf(g_output,"This software is provided 'as-is', without any express or implied warranty.  In\n"
-             "no event will the authors be held liable for any damages arising from the use\n"
+        fprintf(g_output,"Copyright (C) 1999-2004 Nullsoft, Inc.\n\n"
+             "This license applies to everything in the NSIS package, except where otherwise noted.\n\n"
+             "This software is provided 'as-is', without any express or implied warranty.\n"
+             "In no event will the authors be held liable for any damages arising from the use\n"
              "of this software.\n\n"
              "Permission is granted to anyone to use this software for any purpose, including\n"
              "commercial applications, and to alter it and redistribute it freely, subject to\n"
