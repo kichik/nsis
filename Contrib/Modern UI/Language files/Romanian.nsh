@@ -20,7 +20,7 @@
   !define MUI_INNERTEXT_LICENSE_TOP "Apasati Page Down pentru a vizualiza restul contractului de licenta."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii contractului de licenta, apasati De Acord. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, alegeti prima optiune de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a instala $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "Selectare componente"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Selectati componentele produsului $(^NameDA) pe care doriti sa le instalati."
@@ -48,8 +48,8 @@
   !define MUI_TEXT_FINISH_RUN "Executare $(^NameDA)"
   !define MUI_TEXT_FINISH_SHOWREADME "Afisare fisierul cu informatii."
 
-  !define MUI_TEXT_STARTMENU_TITLE "Alegere grup Meniul Start"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Alegeti un grup in Meniul Start pentru a crea comenzi rapide produsului."
+  !define MUI_TEXT_STARTMENU_TITLE "Selectare grup Meniul Start"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Selectati un grup in Meniul Start pentru a crea comenzi rapide produsului."
   !define MUI_INNERTEXT_STARTMENU_TOP "Selectati grupul din Meniul Start in care vor fi create comenzi rapide produsului. Puteti de asemenea sa creati un grup nou."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu doresc comenzi rapide"
 
@@ -66,7 +66,7 @@
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii contractului de licenta inainte de a elimina $(^NameDA)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii contractului de licenta, apasati De Acord. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii contractului de licenta, bifati caseta de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, alegeti prima optiune de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. Pentru a elimina $(^NameDA) trebuie sa acceptati termenii din contractul de licenta. $_CLICK"
 
   !define MUI_UNTEXT_COMPONENTS_TITLE "Selectare componente"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Selectati componentele produsului $(^NameDA) pe care doriti sa le eliminati."
