@@ -1,44 +1,13 @@
-!define MUI_PRODUCT "NSIS"
-!define MUI_VERSION "2.0b1 (CVS)"
-
-!define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
+;NSIS Setup Script
 
 !define VER_MAJOR 2
 !define VER_MINOR 0b1
 
+;--------------------------------
+;Configuration
+
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
-
 SetCompressor bzip2
-
-!ifndef CLASSIC_UI
-
-  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-
-  !define MUI_WELCOMEPAGE
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-  !define MUI_DIRECTORYPAGE
-  !define MUI_FINISHPAGE
-  
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
-  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
-  
-  !define MUI_ABORTWARNING
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
-
-  ;NSIS updates no system files
-  !define MUI_TEXT_WELCOME_INFO "\r\n\r\nThis will install ${MUI_PRODUCT} on your computer.\r\n\r\n\r\n\r\n"
-
-  !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
-
-  !insertmacro MUI_LANGUAGE "English"
-  
-  !insertmacro MUI_SYSTEM
-  
-!endif
-
-LicenseData ..\license.txt
 
 InstType "Full (w/ Source and Contrib)"
 InstType "Normal (w/ Contrib, w/o Source)"
@@ -52,9 +21,61 @@ SetDateSave on
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
-!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-!insertmacro MUI_RESERVEFILE_SPECIALINI
-!insertmacro MUI_RESERVEFILE_SPECIALBITMAP
+;--------------------------------
+!ifndef CLASSIC_UI
+
+  ;Include Modern UI Macro's
+  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
+
+  ;--------------------------------
+  ;Modern UI Configuration
+
+  !define MUI_PRODUCT "NSIS"
+  !define MUI_VERSION "2.0b1 (CVS)"
+
+  !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
+
+  !define MUI_WELCOMEPAGE
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTSPAGE
+  !define MUI_DIRECTORYPAGE
+  !define MUI_FINISHPAGE
+    !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
+    !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
+  !define MUI_ABORTWARNING
+  
+  !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
+
+  !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
+  
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
+
+  ;--------------------------------
+  ;Languages
+
+  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of the ${MUI_PRODUCT}, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
+
+  !insertmacro MUI_LANGUAGE "English"
+  
+  ;--------------------------------
+  ;Reserve Files
+  
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+  !insertmacro MUI_RESERVEFILE_SPECIALINI
+  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
+  
+!endif
+
+;--------------------------------
+;Data
+
+LicenseData ..\license.txt
+
+;--------------------------------
+;Installer Sections
 
 Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
@@ -514,71 +535,6 @@ SectionEnd
 SubSectionEnd
 SubSectionEnd
 
-!define SF_SELECTED 1
-
-!macro secSelected SEC
-  SectionGetFlags ${SEC} $R7
-  IntOp $R7 $R7 & ${SF_SELECTED}
-  StrCmp $R7 ${SF_SELECTED} 0 +2
-    IntOp $R0 $R0 + 1
-!macroend
-
-Function .onInit
-  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-FunctionEnd
-
-Function .onSelChange
-  StrCpy $R0 0
-  !insertmacro secSelected ${SecContribSplashTS}
-  !insertmacro secSelected ${SecContribBannerS}
-  !insertmacro secSelected ${SecContribBgImageS}
-  !insertmacro secSelected ${SecContribIOS}
-  !insertmacro secSelected ${SecContribLangDLLS}
-  !insertmacro secSelected ${SecContribnsExecS}
-  !insertmacro secSelected ${SecContribNSISdlS}
-  !insertmacro secSelected ${SecContribSplashS}
-  !insertmacro secSelected ${SecContribStartMenuS}
-  !insertmacro secSelected ${SecContribUserInfoS}
-  SectionGetFlags ${SecSrcEx} $R7
-  StrCmp $R0 0 notRequired
-    IntOp $R7 $R7 | ${SF_SELECTED}
-    SectionSetFlags ${SecSrcEx} $R7
-    SectionSetText ${SecSrcEx} "ExDLL Source (required)"
-    Goto done
-  notRequired:
-    SectionSetText ${SecSrcEx} "ExDLL Source"
-  done:
-FunctionEnd
-
-Function AddContribToStartMenu
-  Pop $0 ; link
-  Pop $1 ; file
-  IfFileExists $INSTDIR\Contrib\$1 0 +2
-    CreateShortCut $SMPROGRAMS\NSIS\Contrib\$0.lnk $INSTDIR\Contrib\$1
-FunctionEnd
-
-Function AddWorkspaceToStartMenu
-  Pop $0
-  IfFileExists $INSTDIR\Contrib\$0\$0.dsw 0 done
-    Push $0\$0.dsw
-    Push "Source\$0 project workspace"
-    Call AddContribToStartMenu
-  done:
-FunctionEnd
-
-Function AddReadmeToStartMenu
-  Pop $0
-  IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
-    Push $0\$0.txt
-    Goto create
-  IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
-    Push $0\Readme.txt
-  create:
-    Push "$0 readme"
-    Call AddContribToStartMenu
-  done:
-FunctionEnd
-
 Section -post
   SetOutPath $INSTDIR
   WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
@@ -708,6 +664,9 @@ Section -post
 
 SectionEnd
 
+;--------------------------------
+;Descriptions
+
 !ifndef CLASSIC_UI
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
@@ -757,6 +716,73 @@ SectionEnd
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
 !endif
+
+;--------------------------------
+;Installer Functions
+
+!define SF_SELECTED 1
+
+!macro secSelected SEC
+  SectionGetFlags ${SEC} $R7
+  IntOp $R7 $R7 & ${SF_SELECTED}
+  StrCmp $R7 ${SF_SELECTED} 0 +2
+    IntOp $R0 $R0 + 1
+!macroend
+
+Function .onSelChange
+  StrCpy $R0 0
+  !insertmacro secSelected ${SecContribSplashTS}
+  !insertmacro secSelected ${SecContribBannerS}
+  !insertmacro secSelected ${SecContribBgImageS}
+  !insertmacro secSelected ${SecContribIOS}
+  !insertmacro secSelected ${SecContribLangDLLS}
+  !insertmacro secSelected ${SecContribnsExecS}
+  !insertmacro secSelected ${SecContribNSISdlS}
+  !insertmacro secSelected ${SecContribSplashS}
+  !insertmacro secSelected ${SecContribStartMenuS}
+  !insertmacro secSelected ${SecContribUserInfoS}
+  SectionGetFlags ${SecSrcEx} $R7
+  StrCmp $R0 0 notRequired
+    IntOp $R7 $R7 | ${SF_SELECTED}
+    SectionSetFlags ${SecSrcEx} $R7
+    SectionSetText ${SecSrcEx} "ExDLL Source (required)"
+    Goto done
+  notRequired:
+    SectionSetText ${SecSrcEx} "ExDLL Source"
+  done:
+FunctionEnd
+
+Function AddContribToStartMenu
+  Pop $0 ; link
+  Pop $1 ; file
+  IfFileExists $INSTDIR\Contrib\$1 0 +2
+    CreateShortCut $SMPROGRAMS\NSIS\Contrib\$0.lnk $INSTDIR\Contrib\$1
+FunctionEnd
+
+Function AddWorkspaceToStartMenu
+  Pop $0
+  IfFileExists $INSTDIR\Contrib\$0\$0.dsw 0 done
+    Push $0\$0.dsw
+    Push "Source\$0 project workspace"
+    Call AddContribToStartMenu
+  done:
+FunctionEnd
+
+Function AddReadmeToStartMenu
+  Pop $0
+  IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
+    Push $0\$0.txt
+    Goto create
+  IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
+    Push $0\Readme.txt
+  create:
+    Push "$0 readme"
+    Call AddContribToStartMenu
+  done:
+FunctionEnd
+
+;--------------------------------
+;Uninstaller Section
 
 Section Uninstall
   IfFileExists $INSTDIR\makensis.exe skip_confirmation
@@ -809,7 +835,9 @@ Section Uninstall
   RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
-!ifndef CLASSIC_UI
-  !insertmacro MUI_UNFINISHHEADER
-!endif
+  !ifndef CLASSIC_UI
+    ;Modern UI Finish Header
+    !insertmacro MUI_UNFINISHHEADER
+  !endif
+
 SectionEnd
