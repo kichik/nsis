@@ -125,7 +125,7 @@ Sets mode at which commands print their status. None has commands be quiet, list
 
 \c hwnd [/BRANDING] [text_color] [transparent|bg_color]
 
-Sets a background color and the text color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
+Sets a background color and the text color for a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
 
 \c FindWindow $0 "#32770" "" $HWNDPARENT
 \c GetDlgItem $0 $0 1006

@@ -11,15 +11,24 @@ Cancels the install, stops execution of script, and displays user_message in the
 
 \S2{call} Call
 
-\c function_name | :label_name
+\c function_name | :label_name | user_var(input)
 
-Calls the function named function_name. If in the Uninstall section, Call can only be used with function names beginning with "un.". If the parameter starts with a ':' it will be treated as a label (so you can call to a label in your function - this is probably not going to be used most of the time).
+Calls the function named \e{function_name}, the label named \e{label_name}, or a variable that specifies an address. An address is returned by \R{getcurrentaddress}{GetCurrentAddress}, \R{getfunctionaddress}{GetFunctionAddress} or \R{getlabeladdress}{GetLabelAddress}. A call returns when it encouters a \R{return}{Return} instruction. Sections and functions are automatically ended with a \R{return}{Return} instruction. Uninstall functions cannot be called from installer functions and sections, and vice-versa.
 
 \c Function func
-\c   DetailPrint "hello world from func"
+\c   Call :label
+\c   DetailPrint "#1: This will only appear 1 time."
+\c label:
+\c   DetailPrint "#2: This will appear before and after message #1."
+\c   Call :.global_label
 \c FunctionEnd
+\c
 \c Section
 \c   Call func
+\c   Return
+\c
+\c .global_label:
+\c   DetailPrint "#3: The global label was called"
 \c SectionEnd
 
 \S2{clearerrors} ClearErrors
@@ -261,6 +270,11 @@ Returns from a function or section.
 \c     Return
 \c   # do stuff
 \c FunctionEnd
+\c
+\c Section
+\c   Call func
+\c   ;"Return" will return here
+\c SectionEnd
 
 \S2{quit} Quit
 
