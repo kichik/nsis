@@ -1998,7 +1998,7 @@ again:
         dlg = dt.Save(dwSize); \
         res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
       } \
-      free(dlg); \
+      res_editor->FreeResource(dlg); \
     } \
   }
 
@@ -3177,17 +3177,23 @@ again:
 
 void CEXEBuild::init_res_editor()
 {
-  build_compressor_set=true;
+  build_compressor_set = true;
   if (!res_editor)
-    res_editor=new CResourceEditor(header_data_new, exeheader_size_new);
+    res_editor = new CResourceEditor(header_data_new, exeheader_size_new);
 }
 
 void CEXEBuild::close_res_editor()
 {
   if (!res_editor) return;
-  unsigned char *header_data_new_edited = res_editor->Save((DWORD&)exeheader_size_new);
+  DWORD newsize;
+  // query size
+  newsize = res_editor->Save(NULL, newsize);
+  unsigned char *new_header = (unsigned char *) malloc(newsize);
+  // save
+  res_editor->Save(new_header, newsize);
   free(header_data_new);
-  header_data_new = header_data_new_edited;
+  header_data_new = new_header;
+  exeheader_size_new = (int) newsize;
   delete res_editor;
   res_editor=0;
 }
