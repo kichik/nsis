@@ -177,9 +177,12 @@ int NSISCALL ui_doinstall(void)
   {
     if (header->install_reg_key_ptr)
     {
-      myRegGetStr((HKEY)header->install_reg_rootkey,
+      myRegGetStr(
+        (HKEY)header->install_reg_rootkey,
         GetNSISStringNP(header->install_reg_key_ptr),
-          GetNSISStringNP(header->install_reg_value_ptr),ps_tmpbuf);
+        GetNSISStringNP(header->install_reg_value_ptr),
+        ps_tmpbuf
+      );
       if (ps_tmpbuf[0])
       {
         char *p=ps_tmpbuf;
@@ -728,6 +731,20 @@ static char * NSISCALL inttosizestr(int kb, char *str)
   return str;
 }
 
+static int NSISCALL getreqsize()
+{
+  int x,total;
+  section *sections = g_sections;
+  for (total = x = 0; x < num_sections; x++)
+  {
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+    if (sections[x].flags & SF_SELECTED)
+#endif
+      total += sections[x].size_kb;
+  }
+  return total;
+}
+
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   char *dir = g_usrvars[g_this_page->parms[4]];
@@ -809,8 +826,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     static char s[NSIS_MAX_STRLEN];
     char *p;
     int is_valid_path;
-    int x;
-    int total=0, available=-1;
+    int total, available=-1;
     DWORD spc,bps,fc,tc;
 
     GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
@@ -827,13 +843,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (r > 0x7fffffff) r=0x7fffffff;
       available=(int)r;
     }
-    for (x = 0; x < num_sections; x ++)
-    {
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (g_sections[x].flags&SF_SELECTED)
-#endif
-       total+=g_sections[x].size_kb;
-    }
+
+    total = getreqsize();
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
@@ -1345,14 +1356,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     } // end of typecheckshit
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      int x,total;
       char s[128];
-      for (total=x=0; x < num_sections; x ++)
-      {
-        if (sections[x].flags&SF_SELECTED)
-          total+=sections[x].size_kb;
-      }
-      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
+      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(getreqsize(),GetNSISString(s,LANG_SPACE_REQ)));
     }
   }
 
@@ -1389,20 +1394,14 @@ void NSISCALL update_status_text(int strtab, const char *text) {
     {
       new_item.mask = LVIF_TEXT;
       new_item.pszText = tmp;
-      new_item.iItem = ListView_GetItemCount(linsthwnd);
+      new_item.iItem = ListView_GetItemCount(linsthwnd) - (updateflag & 1);
       new_item.iSubItem = 0;
-      if (updateflag & 1)
-      {
-        new_item.iItem--;
-        ListView_SetItem(linsthwnd, &new_item);
-      }
-      else
-        ListView_InsertItem(linsthwnd, &new_item);
+      SendMessage(linsthwnd, (updateflag & 1) ? LVM_SETITEM : LVM_INSERTITEM, 0, (LPARAM) &new_item);
       ListView_EnsureVisible(linsthwnd, new_item.iItem, 0);
     }
 
     if (updateflag & 1)
-      tmp[tmplen]=0;
+      tmp[tmplen] = 0;
   }
 }
 

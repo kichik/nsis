@@ -49,10 +49,18 @@ HWND g_hwnd;
 HANDLE g_hInstance;
 #endif
 
+char *ValidateTempDir()
+{
+  validate_filename(state_temp_dir);
+  CreateDirectory(state_temp_dir, NULL);
+  // g_caption is used as a temp var here
+  return my_GetTempFileName(g_caption, state_temp_dir);
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
   int ret;
-  const char *m_Err = 0;
+  const char *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
 
@@ -69,20 +77,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
 #endif
 
-  GetTempPath(sizeof(state_temp_dir), state_temp_dir);
-  validate_filename(state_temp_dir);
-  CreateDirectory(state_temp_dir, NULL);
-
-  // g_caption is used as a temp var here
-  if (!my_GetTempFileName(g_caption, state_temp_dir))
+  GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
+  if (!ValidateTempDir())
   {
-    GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir));
+    GetWindowsDirectory(state_temp_dir, NSIS_MAX_STRLEN - 5); // leave space for \Temp
     lstrcat(state_temp_dir, "\\Temp");
-    validate_filename(state_temp_dir);
-    CreateDirectory(state_temp_dir, NULL);
-    if (!my_GetTempFileName(g_caption, state_temp_dir))
+    if (!ValidateTempDir())
     {
-      m_Err = _LANG_ERRORWRITINGTEMP;
       goto end;
     }
   }
@@ -200,7 +201,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2," _?=");
             lstrcat(buf2,ibuf);
             // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
-            lstrcat(buf2,"\\");
+            addtrailingslash(buf2);
             hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc)
             {
