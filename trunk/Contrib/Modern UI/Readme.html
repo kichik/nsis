@@ -120,10 +120,12 @@ with a custom user interface.</p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt=""></p>
 <p class="header">How to use</p>
 <p class="text">The Modern UI has a macro system, so most of the code
-  has already been written for you!<br><br>
-  The easiest way to use the Modern UI is to customize one of the <a href="#examples">example</a>
-  scripts, but you can also modify an existing script.<br><br>
-  How to use the Modern UI in an existing script:<br><br>
+  has already been written for you!</p>
+<p class="text">The easiest way to use the Modern UI is to customize one of the <a href="#examples">example</a>
+  scripts, but you can also modify an existing script.</p>
+<p class="text"><span class="bold">Note:</span> If you want to add a double quote (") to a Modern UI string,
+you should always escape it ($\"), because the Modern UI macro's use " to separate parameters.</p>
+<p class="text">How to use the Modern UI in an existing script:</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
   <p class="subheader">2. Define the name and version of your software</p>
@@ -185,6 +187,8 @@ with a custom user interface.</p>
   The icon of the uninstaleller</p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br>
   The bitmap with images for the checks of the component select treeview</p>
+  <p class="text"><span class="bold">MUI_BRANDINGTEXT</span> <i>(Nullsoft Install System ?.??)</i><br>
+  The text at the bottom left corner of the window</p>
   <p class="text"><span class="bold">MUI_FONT, MUI_FONTSIZE</span> <i>(MS Shell Dlg, 8)</i><br>
   The font for the normal texts.</p>
   <p class="text"><span class="bold">MUI_FONT_HEADER, MUI_FONTSIZE_HEADER, MUI_FONTSTYLE_HEADER</span>
