@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Catalan (1027)
 ;By falanko
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Català" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Benvingut a l'Assistent d'Instal·lació de $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Aquest assistent instal·larà $(^NameDA) en el seu ordinador.\r\n\r\nEs recomana tancar tota la resta d'aplicacions abans de començar la Instal·lació. Això permetrà a la Instal·lació actualitzar certs arxius del sistema sense haver de reiniciar el seu ordinador.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Aquest assistent el guiarà durant el procés d'instal·lació de $(^NameDA).\r\n\r\nEs recomana tancar tota la resta d'aplicacions abans de començar la Instal·lació. Això permetrà a la Instal·lació actualitzar certs arxius del sistema sense haver de reiniciar el seu ordinador.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Acord de Llicència"
   !define MUI_TEXT_LICENSE_SUBTITLE "Per favor revisi els termes de la llicència abans d'instal·lar $(^NameDA)."
@@ -44,12 +44,12 @@
   !define MUI_TEXT_FINISH_REBOOTNOW "Reiniciar ara"
   !define MUI_TEXT_FINISH_REBOOTLATER "Reiniciar més tard manualment"
   !define MUI_TEXT_FINISH_RUN "Executar $(^NameDA)"
-  !define MUI_TEXT_FINISH_SHOWREADME "Veure LLEGEIXME.TXT"
+  !define MUI_TEXT_FINISH_SHOWREADME "Veure LlegeixMe"
 
   !define MUI_TEXT_STARTMENU_TITLE "Escollir Carpeta del Menú d'Inici"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Esculli una Carpeta del Menú d'Inici per als accessos directes del programa."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Seleccioni la carpeta del Menú d'Inici en la que hi vulgui crear els accessos directes del programa. Pot introduir un altre nom si vol crear una carpeta nova."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "No crear accessos directes"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Esculli una carpeta del Menú d'Inici per a les dreceres del programa."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Seleccioni la carpeta del Menú d'Inici en la que hi vulgui crear les dreceres del programa. Pot introduir un altre nom si vol crear una carpeta nova."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "No crear dreceres"
 
   !define MUI_TEXT_ABORTWARNING "Està segur que desitja sortir de la Instal·lació de $(^Name)?"
 
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Finalitzant l'Assistent de Desinstal·lació de $(^NameDA)."
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) s'ha desinstal·lat del seu ordinador.\r\n\r\nPremi Finalitzar per tancar aquest assistent."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "L'ordinador s'ha de reiniciar per que pugui completar-se la desinstal·lació de $(^NameDA). Desitja reiniciar-lo ara?"
 
   !define MUI_UNTEXT_ABORTWARNING "Està segur que desitja sortir de la Desinstal·lació de $(^Name)?"
 
