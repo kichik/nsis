@@ -472,6 +472,8 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c   Push $R1
 \c   Push $R2
 \c   Push $R3
+\c   Push $R4
+\c   Push $R5
 \c
 \c   ;------------------------
 \c   ;Unique number for labels
@@ -479,13 +481,20 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c   !define UPGRADEDLL_UNIQUE ${__LINE__}
 \c
 \c   ;------------------------
+\c   ;Copy the parameters used on run-time to a variable
+\c   ;This allows the usage of variables as paramter
+\c
+\c   StrCpy $R4 "${DESTFILE}"
+\c   StrCpy $R5 "${TEMPBASEDIR}"
+\c
+\c   ;------------------------
 \c   ;Check file and version
 \c
-\c   IfFileExists "${DESTFILE}" 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
+\c   IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
 \c
 \c   ClearErrors
 \c     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
-\c     GetDLLVersion "${DESTFILE}" $R2 $R3
+\c     GetDLLVersion $R4 $R2 $R3
 \c   IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
 \c
 \c   IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
@@ -500,30 +509,30 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
 \c     !ifndef UPGRADEDLL_NOREGISTER
 \c       ;Unregister the DLL
-\c       UnRegDLL "${DESTFILE}"
+\c       UnRegDLL $R4
 \c     !endif
 \c
 \c   ;------------------------
 \c   ;Try to copy the DLL directly
 \c
 \c   ClearErrors
-\c     StrCpy $R0 "${DESTFILE}"
+\c     StrCpy $R0 $R4
 \c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
 \c   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
 \c
 \c   ;------------------------
 \c   ;DLL is in use. Copy it to a temp file and Rename it on reboot.
 \c
-\c   GetTempFileName $R0 "${TEMPBASEDIR}"
+\c   GetTempFileName $R0 $R5
 \c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-\c   Rename /REBOOTOK $R0 "${DESTFILE}"
+\c   Rename /REBOOTOK $R0 $R4
 \c
 \c   ;------------------------
 \c   ;Register the DLL on reboot
 \c
 \c   !ifndef UPGRADEDLL_NOREGISTER
 \c     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-\c       "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
+\c       "Register $R4" '"$SYSDIR\rundll32.exe" "$R4",DllRegisterServer'
 \c   !endif
 \c
 \c   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
@@ -532,7 +541,7 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c   ;DLL does not exist - just extract
 \c
 \c   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
-\c     StrCpy $R0 "${DESTFILE}"
+\c     StrCpy $R0 $R4
 \c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
 \c
 \c   ;------------------------
@@ -540,7 +549,7 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c
 \c   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
 \c     !ifndef UPGRADEDLL_NOREGISTER
-\c       RegDLL "${DESTFILE}"
+\c       RegDLL $R4
 \c     !endif
 \c
 \c   ;------------------------
@@ -548,6 +557,8 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c
 \c   upgradedll.done_${UPGRADEDLL_UNIQUE}:
 \c
+\c   Pop $R5
+\c   Pop $R4
 \c   Pop $R3
 \c   Pop $R2
 \c   Pop $R1
