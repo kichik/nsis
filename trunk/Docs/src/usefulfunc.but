@@ -443,6 +443,8 @@
 
 \H{upgradedll} Upgrade a DLL (macro)
 
+There is also a copy of this macro in the Include folder, so you only have to include UpgradeDLL.nsh to use it.
+
 \c ; Macro - Upgrade DLL File
 \c ; Written by Joost Verburg
 \c ; ------------------------
