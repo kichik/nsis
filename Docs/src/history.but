@@ -2,6 +2,14 @@
 
 \e{v2.0b1}
 
+\b New version of the Modern User Interface with bugfixes and some small new features
+
+\b InstallOptions 2.0 with support for custom font and DPI settings
+
+\b All !if/!else/!endif problems should be solved now 
+
+\b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style 
+
 \b UI changes: Added minimize box, increased size of component page textarea
 
 \b Win9x rename on reboot now also works when the destination file does not exist
