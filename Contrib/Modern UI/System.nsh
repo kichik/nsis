@@ -6,6 +6,11 @@
 ;directory for examples of usage.
 
 ;--------------------------------
+
+!ifndef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  !error "To use Modern UI you must have a NSIS version compiled with NSIS_CONFIG_ENHANCEDUI_SUPPORT (in Source/exehead/config.h)!"
+!endif
+
 !verbose 3
 
 !ifndef MUI_MACROS_USED
