@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v4
 # Language ID
 1050
 # Font and size - dash (-) means default
@@ -22,6 +22,8 @@ Nullsoft Install System %s
 < &Nazad
 &Dalje >
 Ja &Prihvaæam
+Ja &prihvaæam uvjete u licenci
+Ja &ne prihvaæam uvjete u licenci
 &Instaliraj
 &Deinstaliraj
 Odbaci
@@ -35,13 +37,15 @@ Odaberi tip instalacije:
 Odaberi komponente koje želiš instalirati:
 Ili, odaberi opcionalne komponente koje želiš instalirati:
 Odaberi direktorij da u koji želiš instalirati %s:
-Slobodnog prostora na disku:
-Prostora na disku potrebno:
+Slobodnog prostora na disku: 
+Prostora na disku potrebno: 
 Deinstaliram iz:
 Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš zapisivati u datoteku, or\r\nignore da preskoèiš tu datoteku
 Ne mogu zapisati: 
 Greška prilikom kopiranja
-Kopiraj u
+Kopiraj u 
+Registriranje:  
+Unregistriranje:  
 Ne mogu naæi simbol: 
 Ne mogu uèitati: 
 Napravi direktorij: 
@@ -56,7 +60,7 @@ Greška prilikom registriranja DLLa
 Pokreni iz Shella: 
 Pokreni: 
 Odpakiraj: 
-Odpakiravanje: greška prilikom zapisivanja u datoteku
+Odpakiravanje: greška prilikom zapisivanja u datoteku 
 Uništena instalacijska datoteka: nevaljali opkod
 Nema OLE za: 
 Izlazni direktorij: 
@@ -65,3 +69,12 @@ Preimenuj prilikom ponovnog pokretanja:
 Preimenuj: 
 Preskoèeno: 
 Kopiraj Detalje u Clipboard
+Logiraj instalacijski proces
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
