@@ -81,7 +81,7 @@ Section "NSIS Examples (recommended)" SecExample
   File ..\Examples\functions.htm
   SetOutPath "$INSTDIR\Examples\Modern UI"
   File "..\Examples\Modern UI\Screenshot.png"
-  File "..\Examples\Modern UI\Readme.png"
+  File "..\Examples\Modern UI\Readme.jpg"
   File "..\Examples\Modern UI\Readme.html"
   File "..\Examples\Modern UI\License.txt"
   File "..\Examples\Modern UI\Example.nsi"
@@ -548,7 +548,7 @@ Section Uninstall
   Delete $INSTDIR\Examples\upgradedll.nsh
   Delete $INSTDIR\Examples\WinMessages.nsh
   Delete "$INSTDIR\Examples\Modern UI\Screenshot.png"
-  Delete "$INSTDIR\Examples\Modern UI\Readme.png"
+  Delete "$INSTDIR\Examples\Modern UI\Readme.jpg"
   Delete "$INSTDIR\Examples\Modern UI\Readme.html"
   Delete "$INSTDIR\Examples\Modern UI\License.txt"
   Delete "$INSTDIR\Examples\Modern UI\Example.nsi"
