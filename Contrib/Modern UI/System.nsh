@@ -12,7 +12,13 @@
 
 ;--------------------------------
 
-!verbose 3
+!verbose push
+
+!ifndef MUI_VERBOSE
+  !define MUI_VERBOSE 3
+!endif
+
+!verbose ${MUI_VERBOSE}
 
 !ifndef MUI_INCLUDED
 
@@ -21,7 +27,10 @@
 ;--------------------------------
 ;HEADER FILES, DECLARATIONS
 
+!verbose push
+!verbose ${MUI_VERBOSE}
 !include "WinMessages.nsh"
+!verbose pop
 
 Var MUI_TEMP1
 Var MUI_TEMP2
@@ -162,7 +171,7 @@ Var MUI_TEMP2
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
   GetDlgItem $MUI_TEMP1 $MUI_TEMP1 ${CONTROL}
@@ -175,7 +184,7 @@ Var MUI_TEMP2
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
   SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${TEXT}"
@@ -220,7 +229,7 @@ Var MUI_TEMP2
 !macro MUI_DESCRIPTION_TEXT VAR TEXT
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   StrCmp $0 ${VAR} 0 mui.description_${VAR}_done
     SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:"
@@ -236,7 +245,7 @@ Var MUI_TEMP2
 !macro MUI_DESCRIPTION_END
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   mui.description_done:
 
@@ -429,7 +438,7 @@ Var MUI_TEMP2
 !macro MUI_FUNCTION_DESCRIPTION_BEGIN
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !ifndef MUI_VAR_TEXT
     Var MUI_TEXT
@@ -446,7 +455,7 @@ Var MUI_TEMP2
 !macro MUI_FUNCTION_DESCRIPTION_END
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
     !insertmacro MUI_DESCRIPTION_END
   FunctionEnd
@@ -458,7 +467,7 @@ Var MUI_TEMP2
 !macro MUI_UNFUNCTION_DESCRIPTION_BEGIN
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   Function un.onMouseOverSection
     !insertmacro MUI_DESCRIPTION_BEGIN
@@ -470,7 +479,7 @@ Var MUI_TEMP2
 !macro MUI_UNFUNCTION_DESCRIPTION_END
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
     !insertmacro MUI_DESCRIPTION_END
   FunctionEnd
@@ -564,7 +573,7 @@ Var MUI_TEMP2
 !macro MUI_STARTMENU_WRITE_BEGIN ID
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !define MUI_STARTMENUPAGE_CURRENT_ID "${ID}"
   
@@ -584,7 +593,7 @@ Var MUI_TEMP2
 !macro MUI_STARTMENU_WRITE_END
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !ifdef MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_ROOT & MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_KEY & MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_VALUENAME
     WriteRegStr "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_REGISTRY_VALUENAME}" "${MUI_STARTMENUPAGE_${MUI_STARTMENUPAGE_CURRENT_ID}_VARIABLE}"
@@ -644,7 +653,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_WELCOME
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_PAGE_INIT
 
@@ -676,7 +685,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_LICENSE LICENSEDATA
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_PAGE_INIT
 
@@ -734,7 +743,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_COMPONENTS
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_PAGE_INIT
 
@@ -776,7 +785,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_DIRECTORY
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_PAGE_INIT
 
@@ -812,7 +821,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_STARTMENU ID VAR
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_PAGE_INIT
   
@@ -861,7 +870,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_INSTFILES
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !insertmacro MUI_PAGE_INIT
   
@@ -889,7 +898,7 @@ Var MUI_TEMP2
 !macro MUI_PAGE_FINISH
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !insertmacro MUI_PAGE_INIT
   
@@ -959,7 +968,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_WELCOME
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -974,7 +983,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_CONFIRM
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !ifndef MUI_UNINSTALLER
     !define MUI_UNINSTALLER
@@ -1009,7 +1018,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_LICENSE LICENSEDATA
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -1024,7 +1033,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_COMPONENTS
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -1039,7 +1048,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_DIRECTORY
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -1054,7 +1063,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_INSTFILES
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -1069,7 +1078,7 @@ Var MUI_TEMP2
 !macro MUI_UNPAGE_FINISH
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !insertmacro MUI_UNPAGE_INIT
   
@@ -1688,7 +1697,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   InitPluginsDir
 
@@ -1703,7 +1712,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   InitPluginsDir
 
@@ -1718,7 +1727,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_DISPLAY FILE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
   Pop $MUI_TEMP1
@@ -1730,7 +1739,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
 
@@ -1741,7 +1750,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_INITDIALOG FILE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
 
@@ -1752,7 +1761,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_SHOW
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   InstallOptions::show
   Pop $MUI_TEMP1
@@ -1764,7 +1773,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_SHOW_RETURN
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   InstallOptions::show
 
@@ -1775,7 +1784,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
 
@@ -1786,7 +1795,7 @@ Var MUI_TEMP2
 !macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
 
@@ -1800,7 +1809,7 @@ Var MUI_TEMP2
 !macro MUI_RESERVEFILE_INSTALLOPTIONS
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
   
@@ -1811,7 +1820,7 @@ Var MUI_TEMP2
 !macro MUI_RESERVEFILE_LANGDLL
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
   
@@ -1825,7 +1834,7 @@ Var MUI_TEMP2
 !macro MUI_LANGUAGE LANGUAGE
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
   
   !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
   
@@ -1839,7 +1848,7 @@ Var MUI_TEMP2
 !macro MUI_LANGDLL_DISPLAY
 
   !verbose push
-  !verbose 3
+  !verbose ${MUI_VERBOSE}
 
   !ifdef NSIS_CONFIG_SILENT_SUPPORT
     IfSilent mui.langdll_done
@@ -2126,4 +2135,4 @@ Var MUI_TEMP2
 
 !endif
 
-!verbose 4
+!verbose pop
