@@ -270,11 +270,12 @@ follow these steps:</p>
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
-  <p class="text"><span class="bold">Note:</span> Not all language files contain strings for the
-  new Start Menu Folder selection-, Welcome- and Finish page yet. If you are using one of these
-  pages and the language file does not contain these strings, you should always define them.<br />
-  Please help to translate the new strings and post them at the
-  <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
+  <p class="text">If you are using the LangDLL for a language selection dialog
+  (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
+  MultiLanguage.nsi</a> example) use MUI_LANGDLL_PUSH to add the name of the
+  language (in the language itself) to the stack:</p>
+<pre class="margin">
+!insertmacro MUI_LANGDLL_PUSH "English" ;Language file name in English</pre>
   <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
@@ -522,7 +523,7 @@ FunctionEnd
 <ul>
 <li>1.62 - February 2, 2003
   <ul>
-    <li>Final version for NSIS 2 beta 0</li>
+    <li>Final version for NSIS 2 beta 1</li>
     <li>Possibility to let a Modern UI Function call your own function</li>
     <li>No problems anymore when using both 'Run program' and 'Show Readme'
     on the finish page</li>
