@@ -1,17 +1,6 @@
 # This example demonstrates how to control section selection.
 # It allows only one of the four optional section to be
 # selected at any given time.
-#
-# Please note that the initial value will not be what you expect
-# it to be if you are are using InstType because InstType is taken
-# into consideration after the .onInit, where the initial state is
-# set, executes.
-# To use this code with InstType you will either have to specify
-# you first InstType to match the initial value you set in .onInit
-# (only StrCpy $1 ${sec1} is important in this case because the
-# other set the section and that will be done by InstType), or set
-# the initial section selection from .onSelChange when it is called
-# for the first time.
 
 #### Uncomment the next line for an example with subsections too
 # !define USE_SUBSECTION
@@ -30,7 +19,7 @@ Section !Required
 SectionEnd
 
 !ifdef USE_SUBSECTION
-	SubSection /e "choose one"
+	SubSection /e "choose one" subsec
 !endif
 
 Section "optional #1" sec1
@@ -58,23 +47,14 @@ Function .onSelChange
 
 !ifdef USE_SUBSECTION
 ; Check if the user have selected all of the sections using the sub-section
-	Push $2
-	StrCpy $2 ${SF_SELECTED}
-	SectionGetFlags ${sec1} $0
-	IntOp $2 $2 & $0
-	SectionGetFlags ${sec2} $0
-	IntOp $2 $2 & $0
-	SectionGetFlags ${sec3} $0
-	IntOp $2 $2 & $0
-	SectionGetFlags ${sec4} $0
-	IntOp $2 $2 & $0
-	StrCmp $2 0 skip
+	SectionGetFlags ${subsec} $0
+	IntOp $0 $0 & ${SF_SELECTED}
+	StrCmp $0 0 skip
 		SectionSetFlags ${sec1} 0
 		SectionSetFlags ${sec2} 0
 		SectionSetFlags ${sec3} 0
 		SectionSetFlags ${sec4} 0
 	skip:
-	Pop $2
 !endif
 
 	; Turn off old selected section
