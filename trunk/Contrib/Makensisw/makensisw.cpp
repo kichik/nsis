@@ -138,7 +138,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				if (g_warnings) SetTitle(g_hwnd,"Finished with Warnings");
 				else SetTitle(g_hwnd,"Finished Sucessfully");
 			}
-			else SetTitle(g_hwnd,"Compile Error: See Log for Details");
+			else {
+        MessageBeep(MB_ICONEXCLAMATION);
+        SetTitle(g_hwnd,"Compile Error: See Log for Details");
+      }
 			EnableItems(g_hwnd);
 			return TRUE;
 		}
