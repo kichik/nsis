@@ -7,6 +7,8 @@
 extern common_strings *cur_common_strings_table;
 extern char *cur_install_strings_table;	// installer_strings/uninstall_strings depending on installer type
 
+void NSISCALL set_language(LANGID lang);
+
 int NSISCALL ui_doinstall(void);
 void NSISCALL update_status_text_from_lang(langid_t id, const char *text2);
 void NSISCALL update_status_text(const char *text1, const char *text2);
