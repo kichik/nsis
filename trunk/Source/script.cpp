@@ -1333,9 +1333,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         int k=line.gettoken_enum(1,"zlib\0bzip2\0");
         switch (k) {
-          case 0:
-            // Default is zlib...
-            break;
+          case 0: // JF> should handle the state of going from bzip2 back to zlib:
+            compressor = &zlib_compressor;
+            free(header_data_new);
+            header_data_new=(unsigned char*)malloc(zlib_exeheader_size);
+            exeheader_size_new=zlib_exeheader_size;
+            exeheader_size=zlib_exeheader_size;
+
+            if (!header_data_new)
+            {
+              ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
+              extern void quit(); quit();
+            }
+
+            memcpy(header_data_new,zlib_header_data,zlib_exeheader_size);
+#ifdef NSIS_ZLIB_COMPRESS_WHOLE
+            build_compress_whole=true;
+#else
+            build_compress_whole=false;
+#endif
+          break;
           case 1:
             compressor=&bzip2_compressor;
             free(header_data_new);
