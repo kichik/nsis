@@ -74,4 +74,42 @@
 	Pop $0
 !macroend
 
+# more macros by derekrprice
+
+; Set one or more BITS in SECTION's flags.
+!macro SetSectionFlag SECTION BITS
+	Push $R0
+	SectionGetFlags "${SECTION}" $R0
+	IntOp $R0 $R0 | "${BITS}"
+	SectionSetFlags "${SECTION}" $R0
+	Pop $R0
+!macroend
+
+; Clear one or more BITS in SECTION's flags.
+!macro ClearSectionFlag SECTION BITS
+	Push $R0
+	Push $R1
+	SectionGetFlags "${SECTION}" $R0
+	IntOp $R1 "${BITS}" ~
+	IntOp $R0 $R0 & $R1
+	SectionSetFlags "${SECTION}" $R0
+	Pop $R1
+	Pop $R0
+!macroend
+
+; Check if one or more BITS in SECTION's flags are set.
+; If they are, jump to JUMPIFSET
+; If not, jump to JUMPIFNOTSET
+!macro SectionFlagIsSet SECTION BITS JUMPIFSET JUMPIFNOTSET
+	Push $R0
+	SectionGetFlags "${SECTION}" $R0
+	IntOp $R0 $R0 & "${BITS}"
+	IntCmp $R0 "${BITS}" +3
+	Pop $R0
+	StrCmp "" "${JUMPIFNOTSET}" +3 "${JUMPIFNOTSET}"
+	Pop $R0
+	Goto "${JUMPIFSET}"
+!macroend
+
+
 !endif
