@@ -228,6 +228,7 @@
     !insertmacro MUI_PAGECOMMAND_LICENSE
     !insertmacro MUI_PAGECOMMAND_COMPONENTS
     !insertmacro MUI_PAGECOMMAND_DIRECTORY
+    !insertmacro MUI_PAGECOMMAND_STARTMENU
     !insertmacro MUI_PAGECOMMAND_INSTFILES
   
   !endif
@@ -266,6 +267,18 @@
 
   !ifdef MUI_DIRECTORYPAGE
     Page directory SetDirectory SetDirectoryDialog
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_STARTMENU
+
+  !verbose 3
+
+  !ifdef MUI_STARTMENUPAGE
+    Page custom SetStartmenu
   !endif
   
   !verbose 4
@@ -337,8 +350,7 @@
   ;Init plugin system
   !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
     !define MUI_INSTALLOPTIONS_INITPLUGINS
-    Call Initialize_____Plugins
-    SetDetailsPrint both
+    InitPluginsDir
   !endif
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
@@ -354,8 +366,7 @@
   ;Init plugin system
   !ifndef MUI_INSTALLOPTIONS_UNINITPLUGINS
     !define MUI_INSTALLOPTIONS_UNINITPLUGINS
-    Call un.Initialize_____Plugins
-    SetDetailsPrint both
+    InitPluginsDir
   !endif
 
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
@@ -367,19 +378,8 @@
 !macro MUI_INSTALLOPTIONS_DISPLAY FILE
 
   !verbose 3
-
-  Push ${MUI_TEMP1}
-
+  
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
-  Pop ${MUI_TEMP1}
-
-  StrCmp ${MUI_TEMP1} "cancel" "" +2
-    Quit
-
-  StrCmp ${MUI_TEMP1} "back" "" +3
-    Pop ${MUI_TEMP1}
-    Abort
-
   Pop ${MUI_TEMP1}
 
   !verbose 4
@@ -455,18 +455,18 @@
   
 !macroend
 
-!macro MUI_INSTALLOPTIONS_WRITEABORTWARNING FILE
-  
+!macro MUI_UNINSTALLOPTIONS_WRITETITLE FILE TITLE
+
   !verbose 3
   
-  !ifdef MUI_ABORTWARNING
+  Push ${MUI_TEMP1}
 
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_WINDOWTITLE)"
+    StrCpy ${MUI_TEMP1} "$(MUI_UNTEXT_WINDOWTITLE)"
+    StrCpy ${MUI_TEMP2} "${MUI_TEMP1}: ${TITLE}"
+    
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "Title" "${MUI_TEMP1}"
   
-  !endif
-  
-  !verbose 4
+  Pop ${MUI_TEMP1}
   
 !macroend
 
@@ -519,6 +519,10 @@
     !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
   !endif
   
+  !ifdef MUI_STARTMENUPAGE
+    !insertmacro MUI_FUNCTIONS_STARTMENUPAGE SetStartmenu
+  !endif
+  
   !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
 
   !verbose 4
@@ -558,18 +562,54 @@
     
 !macroend
 
-!macro MUI_FUNCTIONS_DIRECTORYPAGE SETDIRECTORYPAGE SETDIRECTORYDIALOGPAGE
+!macro MUI_FUNCTIONS_DIRECTORYPAGE SETDIRECTORY SETDIRECTORYDIALOG
 
   !verbose 3
 
-  Function "${SETDIRECTORYPAGE}"
+  Function "${SETDIRECTORY}"
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRECTORY_TITLE) $(MUI_TEXT_DIRECTORY_SUBTITLE)
   FunctionEnd
 
-  Function "${SETDIRECTORYDIALOGPAGE}"
+  Function "${SETDIRECTORYDIALOG}"
     !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DIRECTORY_DESTINATION)
   FunctionEnd
   
+  !verbose 4
+  
+!macroend
+
+!macro MUI_FUNCTIONS_STARTMENUPAGE SETSTARTMENU
+
+  !verbose 3
+  
+  ;Check defines
+  !ifndef MUI_STARTMENU_VARIABLE
+    !define MUI_STARTMENU_VARIABLE "$9"
+  !endif
+  !ifndef MUI_STARTMENU_DEFAULTFOLDER
+    !define MUI_STARTMENU_DEFAULTFOLDER "${MUI_PRODUCT}"
+  !endif
+
+  Function "${SETSTARTMENU}"
+  
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
+    
+    Push ${MUI_TEMP1}
+    Push ${MUI_TEMP2}
+    
+      StrCpy ${MUI_TEMP1} "$(MUI_TEXT_WINDOWTITLE)"
+      StrCpy ${MUI_TEMP2} "$(MUI_TEXT_STARTMENU_WINDOWTITLE)"
+    
+      SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:${MUI_TEMP1}: ${MUI_TEMP2}"
+      
+      StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU)" /lastused "${MUI_STARTMENU_VARIABLE}" "${MUI_STARTMENU_DEFAULTFOLDER}"
+      Pop "${MUI_STARTMENU_VARIABLE}"
+      
+    Pop ${MUI_TEMP1}
+    Pop ${MUI_TEMP2}
+    
+  FunctionEnd
+
   !verbose 4
   
 !macroend
@@ -766,6 +806,12 @@
 
 !macro MUI_LANGUAGEFILE_END
 
+  !ifdef MUI_STARTMENUPAGE
+    !ifndef MUI_WINDOWTITLE
+      !define MUI_WINDOWTITLE
+    !endif
+  !endif
+    
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME" "${MUI_LANGNAME}"
 
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND Name MUI_NAME "${MUI_NAME}"
@@ -792,6 +838,13 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_INNERTEXT_DIRECTORY_DESTINATION "${MUI_INNERTEXT_DIRECTORY_DESTINATION}"
   !endif
   
+  !ifdef MUI_STARTMENUPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_TITLE" "${MUI_TEXT_STARTMENU_TITLE}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_SUBTITLE" "${MUI_TEXT_STARTMENU_SUBTITLE}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_STARTMENU" "${MUI_INNERTEXT_STARTMENU}"
+  !endif
+  
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE" "${MUI_TEXT_INSTALLING_TITLE}"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_SUBTITLE" "${MUI_TEXT_INSTALLING_SUBTITLE}"
   
@@ -802,7 +855,7 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORTWARNING" "${MUI_TEXT_ABORTWARNING}"
   !endif
   
-  !ifdef MUI_INSTALLOPTIONS
+  !ifdef MUI_WINDOWTITLE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WINDOWTITLE" "${MUI_TEXT_WINDOWTITLE}"
   !endif
   
@@ -818,7 +871,7 @@
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_TITLE" "${MUI_UNTEXT_FINISHED_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_SUBTITLE" "${MUI_UNTEXT_FINISHED_SUBTITLE}"
   
-    !ifdef MUI_UNINSTALLOPTIONS
+    !ifdef MUI_UNWINDOWTITLE
       !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_WINDOWTITLE" "${MUI_UNTEXT_WINDOWTITLE}"
     !endif
   !endif
