@@ -129,16 +129,22 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  if (uMsg == WM_CTLCOLORSTATIC) {
-    BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
-    if (brush == -1) {
-      COLORREF dlgColor = GetSysColor(COLOR_BTNFACE);
-      SetBkColor((HDC)wParam, dlgColor);
-      SetTextColor((HDC)wParam, dlgColor);
-      return (BOOL)GetStockObject(NULL_BRUSH);
+  switch (uMsg) {
+    case WM_CTLCOLORSTATIC:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORBTN:
+    {
+      BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+      if (brush == -1) {
+        COLORREF dlgColor = GetSysColor(COLOR_BTNFACE);
+        SetBkColor((HDC)wParam, dlgColor);
+        SetTextColor((HDC)wParam, dlgColor);
+        return (BOOL)GetStockObject(NULL_BRUSH);
+      }
+      SetBkMode((HDC)wParam, TRANSPARENT);
+      return brush;
     }
-    SetBkMode((HDC)wParam, TRANSPARENT);
-    return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
   }
   return 0;
 }

@@ -55,12 +55,8 @@
 #define NSIS_CONFIG_VISIBLE_SUPPORT
 
 // NSIS_CONFIG_ENHANCEDUI_SUPPORT enables support for CreateFont, 
-// SetStaticBkColor (used by some UIs), SetBrandingImage, .onInitDialog, etc
+// SetBkColor (used by some UIs), SetBrandingImage, .onInitDialog, etc
 #define NSIS_CONFIG_ENHANCEDUI_SUPPORT
-
-
-// Changed by Amir Szekely 31st July 2002
-// Now supports runtime choice of compression method
 
 // NSIS_CONFIG_COMPRESSION_SUPPORT enables support for making installers
 // that use compression (recommended).

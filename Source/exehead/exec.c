@@ -607,17 +607,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int v,v2;
         v=process_string_fromparm_toint(0);
         v2=process_string_fromparm_toint(1);
-        if (v<v2) return parm3;
-        if (v>v2) return parm4;
-      }
-    return parm2;
-    case EW_INTCMPU:
-      {
-        unsigned int v,v2;
-        v=(unsigned int)process_string_fromparm_toint(0);
-        v2=(unsigned int)process_string_fromparm_toint(1);
-        if (v<v2) return parm3;
-        if (v>v2) return parm4;
+        if (!parm5) {
+          // signed
+          if (v<v2) return parm3;
+          if (v>v2) return parm4;
+        }
+        else {
+          // unsigned
+          if ((unsigned int)v<(unsigned int)v2) return parm3;
+          if ((unsigned int)v>(unsigned int)v2) return parm4;
+        }
       }
     return parm2;
     case EW_INTOP:
@@ -746,7 +745,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         NSIS_MAX_STRLEN
       );
     return 0;
-    case EW_SETSTATICBKCOLOR:
+    case EW_SETBKCOLOR:
       DeleteObject(
         (HGDIOBJ)SetWindowLong(
           (HWND)process_string_fromparm_toint(0),
@@ -769,7 +768,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         parm2?r.bottom-r.top:0,
         LR_LOADFROMFILE
       );
-      DeleteObject((HGDIOBJ)SetWindowLong(hwImage,DWL_USER,(LONG)hImage));
+      DeleteObject((HGDIOBJ)SetWindowLong(hwImage,GWL_USERDATA,(LONG)hImage));
       SendMessage(
         hwImage,
         STM_SETIMAGE,

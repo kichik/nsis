@@ -2774,11 +2774,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("GetWindowText: output=%s hwnd=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
-    case TOK_SETSTATICBKCOLOR:
-      ent.which=EW_SETSTATICBKCOLOR;
+    case TOK_SETBKCOLOR:
+      ent.which=EW_SETBKCOLOR;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=line.gettoken_int(2);
-      SCRIPT_MSG("SetStaticBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("SetBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
@@ -2845,7 +2845,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
-    case TOK_SETSTATICBKCOLOR:
+    case TOK_SETBKCOLOR:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
@@ -2857,7 +2857,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SENDMESSAGE:
     case TOK_FINDWINDOW:
     case TOK_GETDLGITEM:
-    case TOK_SETSTATICBKCOLOR:
+    case TOK_SETBKCOLOR:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
@@ -3465,9 +3465,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_INTCMP:
     case TOK_INTCMPU:
-      ent.which=(which_token == TOK_INTCMP) ? EW_INTCMP : EW_INTCMPU;
+      ent.which=EW_INTCMP;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[5]=which_token == TOK_INTCMPU;
       if (process_jump(line,3,&ent.offsets[2]) ||
           process_jump(line,4,&ent.offsets[3]) ||
           process_jump(line,5,&ent.offsets[4]))  PRINTHELP()

@@ -987,7 +987,7 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
   }
 #endif
 #ifdef NSIS_SUPPORT_INTOPTS
-  else if (w->which == EW_INTCMP || w->which == EW_INTCMPU)
+  else if (w->which == EW_INTCMP)
   {
     if (resolve_jump_int(fn,&w->offsets[2],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[3],offs,start,end)) return 1;

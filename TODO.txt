@@ -4,7 +4,11 @@ TODO
 
 NSIS
 
+* MB and friends translatable
+
 * skip plugin calls, file instructions that add more than one file with +1 with goto
+
+* add version numbers for the installer
 
 * move more ui changes to compile time.
   inst details could be changed in compile time too
