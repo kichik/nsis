@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Korean (1042)
 ;by linak linak@korea.com - modified by koder@popdesk.co.kr
@@ -21,7 +21,9 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "사용 계약 동의"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "${MUI_PRODUCT}(을)를 설치하시기 전에 사용 계약 내용을 살펴보시기 바랍니다."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "사용 계약 동의 사항의 나머지 부분을 보시려면 [Page Down] 키를 눌러주세요."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "내용에 동의 하셨다면 동의함을 선택해 주세요. ${MUI_PRODUCT}(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "내용에 동의 하셨다면 '동의함'을 눌러 주세요. ${MUI_PRODUCT}(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "내용에 동의 하셨다면 아래 사항을 선택해 주세요. ${MUI_PRODUCT}(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "내용에 동의 하셨다면 첫번째 사항을 선택해 주세요. ${MUI_PRODUCT}(을)를 설치하기 위해서는 반드시 내용에 동의하셔야 합니다."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "구성 요소 선택"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "설치하고자 하는 ${MUI_PRODUCT}의 구성 요소를 선택해 주세요."
@@ -34,7 +36,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT}(을)를 다음의 폴더에 설치할 예정입니다. $\r$\n$\r$\n다른 폴더에 설치하고 싶으시면 '찾아보기' 버튼을 눌러서 다른 폴더를 선택해주세요."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "설치할 폴더"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "설치"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "설치중"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "${MUI_PRODUCT}(을)를 설치하는 동안 잠시 기다려 주세요."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "설치 완료"

@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1049
 # Translation by Sergey `Timon` Kusnetsov <tmn@hotbox.ru>
@@ -17,6 +17,8 @@ Nullsoft Install System %s
 < Назад
 Далее >
 Согласен
+Я принимаю условия Лицензионного соглашения
+Я не принимаю условия Лицензионного соглашения
 Установить
 Удалить
 Отмена
