@@ -1,0 +1,63 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1038
+# Start editing here
+# from Orfanik - http://www.orfanik.hu
+Nullsoft Telepítõ Rendszer %s
+%s Telepítõ
+%s Eltávolító
+: Végfelhasználói szerzõdés
+: Telepítési lehetõségek
+: Célkönyvtár
+: Fájlok telepítése
+: Kész
+: Megerõsítés
+: Fájlok eltávolítása
+: Kész
+< Vissza
+Következõ >
+Elfogadom
+Telepít
+Eltávolít
+Megszakítás
+Bezárás
+Választás...
+Részletek megtekintése
+Név
+Kész
+Egyéni
+A telepítés típusa:
+Választható összetevõk:
+vagy, válaszd ki az összetevõket:
+Melyik könyvtárba telepítsem a(z) %s-t:
+Szabad hely: 
+Szükséges hely: 
+Eltávolítás innen:
+Hiba a file írásánál: \r\n\t"$0"\r\nVálaszd a Megszakítás-t a befejezéshez vagy az\r\nÚjra-t az írás megismétléséhez vagy a\r\nKihagy-ot ennek a fájlnak a kihagyásához
+Nem tudom írni: 
+Másolás megszakadt
+Másolás 
+Nem találom a következõ szimbólumot: 
+Nem tudom betölteni: 
+Könyvtár létrehozás: 
+Parancsikon létrehozás: 
+Eltávolító létrehozás: 
+Fájl törlése: 
+Törlendõ a következõ induláskor: 
+Hiba a parancsikon létrehozásakor: 
+Hiba a létrehozáskor: 
+Hiba az adatok kitömörítésekor! Megsérült a Telepítõ?
+Hiba a DLL regisztrálásakor
+Végrehajtás a hozzárendeléseken keresztül: 
+Végrehajtás: 
+Kitömörítés: 
+Kitömörítés: Hiba a fájl írásakor 
+Megsérült a telepítõ: hibás utasítás
+Nincs OLE: 
+Célkönyvtár: 
+Könyvtár törlése: 
+Átnevezendõ a következõ induláskor: 
+Átnevezés: 
+Átlépve: 
+Részletek másolása a vágólapra
