@@ -3570,9 +3570,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
 
         // First push dll args
+
+        int parmst=i; // we push  em in reverse order
         for (; i < line.getnumtokens(); i++) {
+          int w=parmst + (line.getnumtokens()-i - 1);
           ent.which=EW_PUSHPOP;
-          ent.offsets[0]=add_string(line.gettoken_str(i));
+          ent.offsets[0]=add_string(line.gettoken_str(w));
           ent.offsets[1]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) return ret;
