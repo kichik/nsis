@@ -115,7 +115,7 @@ Selecteer de map om $(^Name) uit te verwijderen:
 # ^SpaceRequired
 "Vereiste ruimte: "
 # ^UninstallingText
-Deze wizard zal $(^Name) van uw systeem verwijderen. $_CLICK
+$(^Name) zal uit de volgende map worden verwijderd. $_CLICK
 # ^UninstallingSubText
 Verwijderen uit:
 # ^FileError

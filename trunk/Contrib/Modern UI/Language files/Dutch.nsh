@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Dutch (1043)
 ;By Joost Verburg
@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Setup wilt afsluiten?"
   
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Welkom bij de $(^Name) Deïnstallatie Wizard"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^Name) van uw syteem verwijderen.\r\n\r\nControleer voordat u begint met verwijderen dat $(^Name) is afgesloten.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Verwijder $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Verwijder $(^Name) van uw system."
   
@@ -72,10 +75,15 @@
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Bezig met verwijderen"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Een ogenblik geduld a.u.b. terwijl $(^Name) van uw systeem wordt verwijderd."
   
-  !define MUI_UNTEXT_FINISH_TITLE "Verwijderen Gereed"
+  !define MUI_UNTEXT_FINISH_TITLE "Deïnstallatie Gereed"
   !define MUI_UNTEXT_FINISH_SUBTITLE "$(^Name) is verwijderd van uw systeem."
   
-  !define MUI_UNTEXT_ABORT_TITLE "Verwijderen Afgebroken"
+  !define MUI_UNTEXT_ABORT_TITLE "Deïnstallatie Afgebroken"
   !define MUI_UNTEXT_ABORT_SUBTITLE "$(^Name) is niet volledig verwijderd van uw systeem."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Voltooien van de $(^Name) Deïnstallatie Wizard"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) zijn verwijderd van uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Deïnstallatie wilt afsluiten?"
   
 !insertmacro MUI_LANGUAGEFILE_END
