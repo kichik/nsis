@@ -49,49 +49,20 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      int iStrLen;
-#ifdef _WIN32
-      iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
+      int iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
       if (iStrLen)
       {
         readInto = new char[iStrLen];
-        WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
-      }
-      else
-      {
-        *arr = 0;
-        seeker += sizeof(WCHAR);
-      }
-#else
-      iStrLen = WCStrLen((WCHAR *) arr);
-
-      char cp[128] = "CP1252";
-      if (uCodePage != CP_ACP)
-        snprintf(cp, 128, "CP%d", uCodePage);
-      iconv_t cd = iconv_open(cp, "UCS-2");
-      if (cd != (iconv_t) -1)
-      {
-        char *in = (char *) arr;
-        char *out = readInto = new char[iStrLen + 1];
-        size_t insize = (iStrLen + 1) * sizeof(WCHAR);
-        size_t outsize = iStrLen + 1;
-        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
+        if (!WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0))
         {
           delete [] readInto;
-          readInto = 0;
-          iconv_close(cd);
-          static char err[1024];
-          snprintf(err,1024,"iconv failed (%d)!",errno);
-          throw runtime_error(err);
+          throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
         }
-        iconv_close(cd);
       }
       else
       {
-        readInto = 0;
-        throw runtime_error("iconv failed! no converter from UCS-2 to current code page");
+        throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
       }
-#endif
       seeker += iStrLen * sizeof(WCHAR);
     }
     break;
@@ -99,7 +70,6 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
 }
 
 // A macro that writes a given string (that can be a number too) into the buffer
-#ifdef _WIN32
 #define WriteStringOrId(x) \
   if (x) \
     if (IS_INTRESOURCE(x)) { \
@@ -110,52 +80,13 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     } \
     else { \
       int us = MultiByteToWideChar(m_uCodePage, 0, x, -1, (WCHAR*)seeker, dwSize); \
+      if (!us) { \
+        throw runtime_error("WriteStringOrId - Unicode conversion failed."); \
+      } \
       seeker += us*sizeof(WCHAR); \
     } \
   else \
     seeker += sizeof(WORD);
-#else
-#define WriteStringOrId(x) \
-  if (x) \
-    if (IS_INTRESOURCE(x)) { \
-      *(WORD*)seeker = 0xFFFF; \
-      seeker += sizeof(WORD); \
-      *(WORD*)seeker = WORD(DWORD(x)); \
-      seeker += sizeof(WORD); \
-    } \
-    else { \
-      char cp[128] = "CP1252"; \
-      if (m_uCodePage != CP_ACP) \
-        snprintf(cp, 128, "CP%d", m_uCodePage); \
-      iconv_t cd = iconv_open("UCS-2", cp); \
-      if (cd != (iconv_t) -1) \
-      { \
-        char *in = (char *) x; \
-        char *out = (char *) seeker; \
-        size_t insize = strlen(in) + 1; \
-        size_t outsize = insize * sizeof(WCHAR); \
-        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1) \
-        { \
-          *(WCHAR*)seeker = 0; \
-          seeker += sizeof(WCHAR); \
-          iconv_close(cd); \
-          static char err[1024]; \
-          snprintf(err,1024,"iconv failed (%d)!",errno); \
-          throw runtime_error(err); \
-        } \
-        seeker = (BYTE *) out; \
-        iconv_close(cd); \
-      } \
-      else \
-      { \
-        *(WCHAR*)seeker = 0; \
-        seeker += sizeof(WCHAR); \
-        throw runtime_error("iconv failed! no converter from UCS-2 to current code page"); \
-      } \
-    } \
-  else \
-    seeker += sizeof(WORD);
-#endif
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
 #define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (strlen(x)+1)*sizeof(WCHAR)) : sizeof(WORD)

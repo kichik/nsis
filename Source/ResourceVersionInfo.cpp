@@ -122,34 +122,14 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 // Util function - must be freeded
 WCHAR* StrToWstrAlloc(const char* istr, int codepage)
 {
-#ifdef _WIN32
   int strSize = MultiByteToWideChar(codepage, 0, istr, -1, 0, 0);
   WCHAR* wstr = new WCHAR[strSize];
-  MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize);
-  return wstr;
-#else
-  WCHAR *wstr = NULL;
-  char cp[128] = "";
-  if (codepage != CP_ACP)
-    snprintf(cp, 128, "CP%d", codepage);
-  iconv_t cd = iconv_open("UCS-2", cp);
-  if (cd != (iconv_t) -1)
+  if (!MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize))
   {
-    int len = strlen(istr);
-    char *in = (char *) istr;
-    wstr = new WCHAR[len + 1];
-    char *out = (char *) wstr;
-    size_t insize = len + 1;
-    size_t outsize = (len + 1) * sizeof(WCHAR);
-    if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
-    {
-      delete [] wstr;
-      wstr = NULL;
-    }
-    iconv_close(cd);
+    delete [] wstr;
+    wstr = NULL;
   }
   return wstr;
-#endif
 }
 
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
