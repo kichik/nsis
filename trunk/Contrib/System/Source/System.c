@@ -567,7 +567,10 @@ void ParamsIn(SystemProc *proc)
             *((__int64*) place) = myatoi(realbuf);
             break;
         case PAT_STRING:
-            *((int*) place) = (int) AllocStr(realbuf);
+/*            if (proc->Params[i].Input == IOT_NONE) 
+                *((int*) place) = (int) NULL;
+            else*/
+                *((int*) place) = (int) AllocStr(realbuf);
             break;
         case PAT_BOOLEAN:
             *((int*) place) = lstrcmpi(realbuf, "true");
@@ -650,6 +653,8 @@ void ParamsOut(SystemProc *proc)
     while (i >= 0);
 }
 
+void _alloca_probe();
+
 SystemProc __declspec(naked) *CallProc(SystemProc *proc)
 {
     int z3;
@@ -669,22 +674,28 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
 
     if ((CallbackIndex > 0) && ((proc->Options & POPT_GENSTACK) == 0))
     {
-        if (LastStackPlace == 0)
-        {
-            // Create new stack
-            LastStackPlace = (int) GlobalAlloc(GPTR, NEW_STACK_SIZE);
-            // Point to stack end
-            LastStackPlace += NEW_STACK_SIZE;
-        }
-
         _asm
         {
-            // Save previous stack location
             push    ebp
+            // Save previous stack location
             mov     LastStackReal, esp
-            // Move stack pointer
-            mov     esp, LastStackPlace
         }
+
+        if (LastStackPlace == 0)
+        {
+            _asm
+            {
+                // Create new stack
+                mov     eax, NEW_STACK_SIZE
+                call    _alloca_probe
+                mov     LastStackPlace, esp
+            }
+        } else
+            _asm
+            {
+                // Move stack pointer
+                mov     esp, LastStackPlace
+            }
     }
 
     // Push arguments to stack
@@ -735,7 +746,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     // In case of cdecl convention we should clear stack
     if ((proc->Options & POPT_CDECL) != 0)
     {
-        if ((CallbackIndex > 0) && ((LastProc->Options & POPT_GENSTACK) == 0))
+        if ((CallbackIndex > 0) && ((proc->Options & POPT_GENSTACK) == 0))
         {
             // In case of temporary stack
             for (z3 = 1; z3 <= proc->ParamCount; z3++)
@@ -751,6 +762,9 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
             }
         }
     }
+
+    // In case of cleared call-proc-queue -> clear allocated stack place (more flexible)
+    if (LastProc == NULL) LastStackPlace = NULL;
 
     // Save return
     proc->Params[0].Value = z1;
@@ -935,6 +949,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
 void CallStruct(SystemProc *proc)
 {
+    BOOL ssflag = FALSE; // structsize flag -> structure size should be loaded
     int i, structsize = 0, size = 0;
     char *st, *ptr;
 
@@ -974,16 +989,12 @@ void CallStruct(SystemProc *proc)
             switch (proc->Params[i].Type)
             {
             case PAT_VOID: ptr = NULL; break;
-            case PAT_INT: 
-                // clear unused value bits
-                proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
-                // pointer
-                ptr = (char*) &(proc->Params[i].Value); 
-                break;
             case PAT_LONG: 
                 // real structure size
                 proc->Params[i].Value = structsize;
                 proc->Params[i]._value = 0;
+                ssflag = TRUE;
+            case PAT_INT: 
                 // clear unused value bits
                 proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
                 // pointer
@@ -997,7 +1008,7 @@ void CallStruct(SystemProc *proc)
         if (ptr != NULL)
         {
             // Input
-            if (proc->Params[i].Input != IOT_NONE)
+            if ((proc->Params[i].Input != IOT_NONE) || (ssflag))
                 copymem(st, ptr, size);
 
             // Output
@@ -1012,20 +1023,6 @@ void CallStruct(SystemProc *proc)
     // Proc virtual return - pointer to memory struct
     proc->Params[0].Value = (int) proc->Proc;
 }
-
-
-/*__int64 __declspec(dllexport) just(__int64 a, __int64 b, __int64 *c)
-{
-    *c += a*b + 8402934020348;
-    return a*b+(*c);
-}*/
-
-/*typedef int (__stdcall *func)(int a, int b);
-
-int __declspec(dllexport) cbtest(func f)
-{
-    return f(5, 10);
-}*/
 
 BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {

@@ -12,7 +12,7 @@
 #define SYSTEM_API __declspec(dllimport)
 #endif
 
-#define NEW_STACK_SIZE     65536
+#define NEW_STACK_SIZE     256*256
 
 // Proc types:
 #define PT_NOTHING      0
