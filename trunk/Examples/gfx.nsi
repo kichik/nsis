@@ -50,9 +50,8 @@ FunctionEnd
 
 Function customPage
 	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\modern.bmp" /RESIZETOFIT
-	MessageBox MB_YESNO 'This is a nice custom "page" with yet another image :P$\r$\n$\r$\nWould you like to go to the next page now?' IDYES yes
-		Abort
-	yes:
+	MessageBox MB_OK 'This is a nice custom "page" with yet another image :P'
+	#insert install options/start menu/<insert plugin name here> here
 FunctionEnd
 
 Function dirImage
@@ -60,7 +59,7 @@ Function dirImage
 FunctionEnd
 
 Function instImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks4.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks-sdbarker.bmp" /RESIZETOFIT
 FunctionEnd
 
 ; Install dir
