@@ -139,7 +139,7 @@ int NSISCALL is_valid_instpath(char *s)
 {
   int ivp=0;
   // if 8 is set, req is 0, which means rootdirs are not allowed.
-  int req=!(g_inst_cmnheader->misc_flags&8);
+  int req=!(inst_flags&CH_FLAGS_NO_ROOT_DIR);
   if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
   {
     if (lastchar(s)!='\\') ivp++;

@@ -21,8 +21,7 @@
 #define IDC_EDIT1                       1000
 #define IDC_BROWSE                      1001
 #define IDC_COPYRIGHT                   1003
-#define IDC_PROGRESS1                   1004
-#define IDC_PROGRESS2                   1005
+#define IDC_PROGRESS                    1004
 #define IDC_INTROTEXT                   1006
 #define IDC_WMA                         1007
 #define IDC_CHECK1                      1008
