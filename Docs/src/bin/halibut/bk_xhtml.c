@@ -1075,6 +1075,7 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     }
     fprintf(fp, "<li>");
     fprintf(fp, "<a href=\"%s#%s\">", section->file->filename,section->fragment);
+    if (section->para->type==para_Chapter||section->para->type==para_Appendix) fprintf(fp, "<b>");
     if ((section->para->type!=para_Heading&&section->para->type!=para_Subsect)||(section->para->kwtext&&!section->para->words)) {
 	    xhtml_para(fp, section->para->kwtext);
         if (section->para->words)
@@ -1083,6 +1084,7 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     if (section->para->words) {
 	    xhtml_para(fp, section->para->words);
     }
+    if (section->para->type==para_Chapter||section->para->type==para_Appendix) fprintf(fp, "</b>");
     fprintf(fp, "</a></li>\n");
     return TRUE;
 }
