@@ -1305,6 +1305,10 @@ Var MUI_TEMP2
           
     !ifdef MUI_FINISHPAGE_SHOWREADME
     
+      !ifdef MUI_FINISHPAGE_CURFIELD_NO
+        !undef MUI_FINISHPAGE_CURFIELD_NO
+      !endif
+    
       !ifndef MUI_FINISHPAGE_RUN
         !define MUI_FINISHPAGE_CURFIELD_NO 4
         !define MUI_FINISHPAGE_CURFIELD_TOP 90
