@@ -41,9 +41,7 @@
 #define TBB_SEP2                         6
 #define TBB_RECOMPILE                    7
 #define TBB_DEFINES                      8
-#ifdef COMPRESSOR_OPTION
 #define TBB_COMPRESSOR                   9
-#endif
 #define TBB_TEST                         10
 #define TBB_EDITSCRIPT                   11
 #define TBB_BROWSESCR                    12
