@@ -208,6 +208,44 @@
 !macro MUI_GUIINIT
 
   !verbose 3
+  
+  !ifdef MUI_WELCOMEPAGE
+    !insertmacro MUI_WELCOMEFINISHPAGE_INIT
+  !endif
+  
+  !ifndef MUI_WELCOMEPAGE
+    !ifdef MUI_FINISHPAGE
+      !insertmacro MUI_WELCOMEFINISHPAGE_INIT
+    !endif
+  !endif
+
+  Push ${MUI_TEMP1}
+  Push ${MUI_TEMP2}
+
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
+  CreateFont ${MUI_TEMP2} "Tahoma" 10 700
+  SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
+  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
+  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
+  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
+  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+  Pop ${MUI_TEMP2}
+  Pop ${MUI_TEMP1}
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_UNGUIINIT
+
+  !verbose 3
 
   Push ${MUI_TEMP1}
   Push ${MUI_TEMP2}
@@ -1023,7 +1061,7 @@
   !ifndef MUI_UNCUSTOMGUIINIT
 
     Function un.onGUIInit
-      !insertmacro MUI_GUIINIT
+      !insertmacro MUI_UNGUIINIT
     FunctionEnd
     
   !endif
@@ -1141,24 +1179,36 @@
 
   !endif
   
+  !verbose 4
+  
 !macroend
 
 !macro MUI_LANGUAGEFILE_STRING STRING VALUE
+
+  !verbose 3
 
   !ifndef "${STRING}"
     !define "${STRING}" "${VALUE}"
   !endif
   
+  !verbose 4
+  
 !macroend
 
 !macro MUI_LANGUAGEFILE_LANGSTRING NAME VALUE
 
+  !verbose 3
+
   LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE NAME VALUE INSTALLBUTTON
+
+  !verbose 3
  
   !ifndef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_NEXT
@@ -1180,23 +1230,46 @@
 
   !undef "${NAME}"
   
+  !verbose 4
+  
 !macroend
 
 !macro MUI_LANGUAGEFILE_UNLANGSTRING NAME VALUE
 
+  !verbose 3
+
   LangString "un.${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND COMMAND NAME VALUE
 
+  !verbose 3
+
   "${COMMAND}" "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
+  
+  !verbose 4
+
+!macroend
+
+!macro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER COMMAND NAME VALUE
+
+  !verbose 3
+
+  "${COMMAND}" "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" ${VALUE}
+  !undef "${NAME}"
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE COMMAND NAME VALUE INSTALLBUTTON
+
+  !verbose 3
 
   !ifndef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_NEXT
@@ -1217,19 +1290,27 @@
   !endif
   
   !undef "${NAME}"
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_DEFINE DEFINE NAME VALUE
 
+  !verbose 3
+
   !ifndef "${DEFINE}"
     !define "${DEFINE}" "${VALUE}"
   !endif
   !undef "${NAME}"
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_END
+
+  !verbose 3
     
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME" "${MUI_LANGNAME}"
 
@@ -1299,7 +1380,7 @@
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE" "${MUI_TEXT_FINISH_TITLE}"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE" "${MUI_TEXT_FINISH_SUBTITLE}"
   !ifdef MUI_FINISHPAGE
-    MiscButtonText "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "" "" "" "${MUI_TEXT_FINISH_BUTTON}"
+    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO "${MUI_TEXT_FINISH_INFO}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_TEXT_FINISH_INFO_REBOOT}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_REBOOTNOW "${MUI_TEXT_FINISH_REBOOTNOW}"
