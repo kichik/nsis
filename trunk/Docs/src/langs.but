@@ -16,7 +16,7 @@ Defines a multilingual string. This means the its value will be different (or no
 
 Each LangString has a name that identifies it and a value for each language used by the installer. To use a LangString you must know its name. LangStrings can be used in any runtime string in the script. To use a LangString all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.
 
-If you set the ID to 0 it will use the ID of the last inserted language file.
+If you set the ID to 0 it will use the last used language by LangString or \R{loadlanguagefile}{LoadLanguageFile}.
 
 \\<b\\>Note:\\</b\\> Unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
 
