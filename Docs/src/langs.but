@@ -43,25 +43,31 @@ Does the same as \R{langstring}{LangString} only it loads the string from a text
 
 \S0{langs} Multiple Languages
 
-As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated using \R{langstring}{LangStrings}.
+As of version 2 NSIS fully supports multiple languages. The interface of one installer can support multiple languages.
 
-Each installer has one or more language tables which hold references to strings in the strings table. To create a language table all you need to do is use that language. Either use \R{loadlanguagefile}{LoadLanguageFile} or define a \R{langstring}{LangString} and you have built your installer a language table. To make sure all of the inner strings NSIS uses are there you should load a language file using use \R{loadlanguagefile}{LoadLanguageFile}. The strings from the language file will be used as defaults in case you don't define some strings in the script. The language file strings can be used by the script too, not just internally by NSIS. Each string in the language file is assigned to a specific LangString. That LangString's name is listed as a comment just above the string in the English language file for your convenience. The language file is located in \L{../Contrib/Language files}{Contrib\\Language Files}.
+Use \R{loadlanguagefile}{LoadLanguageFile} for every langauge to load the default interface texts and language properties.
 
-For an example of usage see \L{../Examples/languages.nsi}{languages.nsi}.
+The default interface texts can easily be changed using instructions like \R{acomponenttext}{ComponentText} etc. 
+
+You can also use the contents of the standard language strings in your own strings (for example, $(^Name) contains the installer's name set using the \R{aname}{Name} instruction). The names of all standard langauges strings are listed as comments just above the strings in the language files. The language files are located in \L{../Contrib/Language files}{Contrib\\Language Files}.
+
+To create your own langauge strings, use \R{langstring}{LangString}.
+
+For an example of an installer with multiple langauges, see \L{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{langselection} Language Selection
 
 When the installer starts up it goes through these steps to select the interface language:
 
-\n Get user's default language (GetUserDefaultLangID()) into \R{varconstant}{$LANGUAGE}
+\n Get user's default Windows language
 
-\n Find a perfect match for the language id in \R{varconstant}{$LANGUAGE}
+\n Find a perfect match for the default langauge
 
 \n If there is no perfect match, find a primary language match
 
-\n If there is no match, use the first language defined in the script
+\n If there is no match, use the first language defined in the script (make sure your first language is a common one like English)
 
-\n If \R{varconstant}{$LANGUAGE} has changed during .onInit, go through steps 2 to 4 again
+\n If the langauge variable \R{varconstant}{$LANGUAGE} has changed during .onInit, NSIS goes through steps 2 to 4 again.
 
 \S1{langdll} LangDLL Plug-in
 
@@ -71,4 +77,4 @@ For an example of usage see \L{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{rtl} RTL Languages
 
-RTL languages are languages that are written from right to left. NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. If it is, NSIS will create another set of dialogs for the language that will be RTL. To find out on runtime if the language you're currently using is RTL or not check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise.
+RTL languages are languages that are written from the right to the left (like Arabic and Hebrew). NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. To find out on runtime if the the current langaugeis RTL or not check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise. This can be useful when using plug-ins that create dialogs, they usually have RTL settings too.

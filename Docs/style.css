@@ -7,6 +7,9 @@ pre {
 	background-color: #F7F7F7;
 	padding: 1px;
 }
+pre b {
+	color: red;
+}
 a {
 	color: #567599;
 	text-decoration: none;
