@@ -135,6 +135,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
   int parm2=parms[2];
   int parm3=parms[3];
   int parm4=parms[4];
+  int parm5=parms[5];
   int which=entries[pos].which;
   switch (which)
   {
@@ -654,12 +655,21 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 
         if (which == EW_SENDMESSAGE) 
         {
-          process_string_fromtab(buf,parm3);
-          process_string_fromtab(buf2,parm4);
-          if (*(int*)buf == *(int*)"STR:") b3=(int)buf+4;
-          if (*(int*)buf2 == *(int*)"STR:") b4=(int)buf2+4;
+          HWND hwnd=(HWND)process_string_fromtab_toint(parm1);
+          int msg=process_string_fromtab_toint(parm2);
+          if (parm5&1) 
+          {
+            process_string_fromtab(buf,parm3);
+            b3=(int)buf;
+          }
+          if (parm5&2) 
+          {
+            process_string_fromtab(buf2,parm4);
+            b4=(int)buf2;
+          }
 
-          v=SendMessage((HWND)process_string_fromtab_toint(parm1),process_string_fromtab_toint(parm2),b3,b4);
+          if (parm5>>2) exec_errorflag += !SendMessageTimeout(hwnd,msg,b3,b4, SMTO_BLOCK, (parm5>>2), (LPDWORD)&v);
+          else v=SendMessage(hwnd,msg,b3,b4);
         }
         else
         {

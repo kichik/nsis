@@ -124,7 +124,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SECTIONSETTEXT,"SectionSetText",2,0,"section_index text_string"},
 {TOK_SECTIONEND,"SectionEnd",0,0,""},
 {TOK_SECTIONIN,"SectionIn",1,-1,"InstTypeIdx [InstTypeIdx [...]]"},
-{TOK_SENDMESSAGE,"SendMessage",4,1,"hwnd message wparam lparam [$(user_var: return value)]"},
+{TOK_SENDMESSAGE,"SendMessage",4,2,"hwnd message [wparam|STR:wParam] [lparam|STR:lParam] [$(user_var: return value)] [/TIMEOUT=X]"},
 {TOK_SETAUTOCLOSE,"SetAutoClose",1,0,"(false|true)"},
 {TOK_SETBRANDINGIMAGE,"SetBrandingImage",1,2,"[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp"},
 {TOK_SETCOMPRESS,"SetCompress",1,0,"(off|auto|force)"},
