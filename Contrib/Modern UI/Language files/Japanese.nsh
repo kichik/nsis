@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Japanese (1041)
 ;By Dnanako
@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "[インストール]を押して、インストールを開始してください。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "${MUI_PRODUCT} セットアップ ウィザードへようこそ"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "${MUI_PRODUCT} をこのコンピュータにインストールします。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これは、セットアップがこのシステムを再起動せずに、確実にシステム ファイルをアップデートすることが出来るようになります。\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、${MUI_PRODUCT} のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これは、セットアップがこのコンピュータを再起動せずに、確実にシステム ファイルをアップデートすることが出来るようになります。\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "ライセンス契約書"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "${MUI_PRODUCT} をインストールする前に、ライセンス条件を確認してください。"
@@ -27,7 +27,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "${MUI_PRODUCT} のインストール オプションを選んでください。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "コンポーネントをインストールするにはチェックし、不要ならば、チェックを外してください。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "説明"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネント上にマウス カーソルを移動すると、ここの説明が表示されます。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネント上でマウス カーソルを移動すると、ここに説明が表示されます。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "インストール先を選んでください。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "${MUI_PRODUCT} をインストールするフォルダを選んでください。"
@@ -42,8 +42,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE "：完了"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "完了(&F)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "${MUI_PRODUCT} セットアップ ウィザードは完了しました。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} は、このシステムにインストールされました。\r\n\r\nウィザードを閉じるには[完了]を押してください。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT} のインストールを完了するには、このシステムを再起動する必要があります。今すぐ再起動しますか？"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} は、このコンピュータにインストールされました。\r\n\r\nウィザードを閉じるには[完了]を押してください。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT} のインストールを完了するには、このコンピュータを再起動する必要があります。今すぐ再起動しますか？"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "今すぐ再起動する"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "後で手動で再起動する"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "${MUI_PRODUCT} を実行。"
@@ -58,9 +58,11 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "${MUI_PRODUCT} のインストールを中止しますか？"  
   
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "[ｱﾝｲﾝｽﾄｰﾙ]を押して、アンインストールを開始してください。"
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "${MUI_PRODUCT} のアンインストール。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "${MUI_PRODUCT} をこのシステムから削除します。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "${MUI_PRODUCT} をこのシステムからアンインストールします。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "${MUI_PRODUCT} をこのコンピュータから削除します。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "このウィザードは、このコンピュータから ${MUI_PRODUCT} をアンインストールします。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "アンインストール"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "${MUI_PRODUCT} をアンインストールしています。しばらくお待ちください。"
