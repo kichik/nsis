@@ -71,15 +71,6 @@ SectionEnd
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 
 ;--------------------------------
-;Installer Functions
-
-Function .onInit
-
-  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-  
-FunctionEnd
-
-;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
