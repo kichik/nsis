@@ -1151,7 +1151,8 @@ int WINAPI createCfgDlg()
                 do { pszEnd++; } while (*pszEnd == '|');
                 pszStart = pszEnd;
               }
-              pszEnd++;
+              else
+                pszEnd++;
             }
             FREE(pszList);
             if (pField->pszState) {
