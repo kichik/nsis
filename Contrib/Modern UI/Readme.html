@@ -175,27 +175,31 @@ with a custom user interface.</p>
   <p class="text">You can change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
-  <p class="text">The following settings are available: <i>(default)</i><br><br>
-  <span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i>
-   - The interface file with the dialog resources<br>
-  <span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i>
-   - The icon of the instaleller<br>
-  <span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i>
-   - The icon of the uninstaleller<br>
-  <span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i>
-   - The bitmap with images for the checks of the
-  component select treeview.<br>
-  <span class="bold">MUI_FONT</span> <i>(Tahoma)</i> 
-  - The font of the installer and uninstaller<br>
-  <span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i>
-   - The hexadecimal colors of the details screen ("foreground" "background")<br>
-  <span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i>
-   - The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or ""
-  for a old-school windows look)<br>
-  <span class="bold">MUI_WIZARDINI</span> <i>(${NSISDIR}\Contrib\ioWizard.ini)</i>
-   - Install Options INI File for the Welcome and Finish pages<br>
-  <span class="bold">MUI_WIZARDBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i>
-   - Bitmap for the Welcome and Finish pages</p>
+  <p class="text">The following settings are available: <i>(default values)</i></p>
+  <p class="text"><span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br>
+  The interface file with the dialog resources</p>
+  <p class="text"><span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br>
+  The icon of the instaleller</p>
+  <p class="text"><span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br>
+  The icon of the uninstaleller</p>
+  <p class="text"><span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br>
+  The bitmap with images for the checks of the component select treeview</p>
+  <p class="text"><span class="bold">MUI_FONT, MUI_FONTSIZE</span> <i>(MS Shell Dlg, 8)</i><br>
+  The font for the normal texts.</p>
+  <p class="text"><span class="bold">MUI_FONT_HEADER, MUI_FONTSIZE_HEADER, MUI_FONTSTYLE_HEADER</span>
+  <i>(MS Sans Serif, 8, 700)</i><br>
+  The font for the title in the header. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
+  <p class="text"><span class="bold">MUI_FONT_TITLE, MUI_FONTSIZE_TITLE, MUI_FONTSTYLE_TITLE</span>
+  <i>(Verdana, 12, 700)</i><br>
+  The font for the title on the Welcome and Finish pages. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br>
+  The hexadecimal colors of the details screen ("foreground" "background")
+  <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
+  The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or "" for a old-school windows look)</p>
+  <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\ioSpecial.ini)</i><br>
+  Install Options INI File for the Welcome and Finish pages</p>
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
+  Bitmap for the Welcome and Finish pages</p>
   <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro
@@ -312,12 +316,13 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li class="changelog">1.6 - November 16, 2002
+<li class="changelog">1.6 - November 18, 2002
   <ul>
     <li>Welcome / Finish pages
     <li>Automatic ask for reboot on finish page
     <li>Create no shortcut option on Start Menu Folder selection page
     <li>Customizing GUIInit functions easier
+    <li>Minor font / UI changes
   </ul>
 <p class="text"></p>
 <li class="changelog">1.5 - November 11, 2002
