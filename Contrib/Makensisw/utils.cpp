@@ -30,13 +30,13 @@ char *g_input_script;
 HWND g_tip;
 HWND g_tip_p;
 HHOOK g_hook;
+DWORD g_dwLength;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
 extern BOOL g_warnings;
 extern HANDLE g_hThread;
 extern int g_retcode;
-
-DWORD g_dwLength;
+extern HMENU g_mnu;
 
 static BOOL g_appended = FALSE;
 
@@ -87,16 +87,15 @@ void ErrorMessage(HWND hwnd,const char *str) {
 void DisableItems(HWND hwnd) {
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
 	EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
-	HMENU m = GetMenu(hwnd);
-	EnableMenuItem(m,IDM_SAVE,MF_GRAYED);
-	EnableMenuItem(m,IDM_TEST,MF_GRAYED);
-	EnableMenuItem(m,IDM_EXIT,MF_GRAYED);
-	EnableMenuItem(m,IDM_LOADSCRIPT,MF_GRAYED);
-	EnableMenuItem(m,IDM_RECOMPILE,MF_GRAYED);
-	EnableMenuItem(m,IDM_COPY,MF_GRAYED);
-	EnableMenuItem(m,IDM_COPYSELECTED,MF_GRAYED);
-	EnableMenuItem(m,IDM_EDITSCRIPT,MF_GRAYED);
-	EnableMenuItem(m,IDM_CLEARLOG,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_SAVE,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_TEST,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_EXIT,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_LOADSCRIPT,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_COPY,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_ENABLED);
 }
 
 void EnableItems(HWND hwnd) {
@@ -143,20 +142,19 @@ void EnableItems(HWND hwnd) {
 	ft.lpstrText = "warnings:";
 	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
 
-	HMENU m = GetMenu(hwnd);
 	if (g_output_exe && !g_retcode) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
-			EnableMenuItem(m,IDM_TEST,MF_ENABLED);
+			EnableMenuItem(g_mnu,IDM_TEST,MF_ENABLED);
 	}
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
-	EnableMenuItem(m,IDM_SAVE,MF_ENABLED);
-	EnableMenuItem(m,IDM_EXIT,MF_ENABLED);
-	EnableMenuItem(m,IDM_LOADSCRIPT,MF_ENABLED);
-	EnableMenuItem(m,IDM_RECOMPILE,MF_ENABLED);
-	EnableMenuItem(m,IDM_COPY,MF_ENABLED);
-	EnableMenuItem(m,IDM_COPYSELECTED,MF_ENABLED);
-	EnableMenuItem(m,IDM_EDITSCRIPT,MF_ENABLED);
-	EnableMenuItem(m,IDM_CLEARLOG,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_SAVE,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_EXIT,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_LOADSCRIPT,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_COPY,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_ENABLED);
 }
 
 void CompileNSISScript() {
@@ -165,11 +163,10 @@ void CompileNSISScript() {
 	ClearLog(g_hwnd);
 	SetTitle(g_hwnd,NULL);
 	if (lstrlen(g_script)==0) {
-		HMENU m = GetMenu(g_hwnd);
 		LogMessage(g_hwnd,USAGE);
-		EnableMenuItem(m,IDM_RECOMPILE,MF_GRAYED);
-		EnableMenuItem(m,IDM_EDITSCRIPT,MF_GRAYED);
-		EnableMenuItem(m,IDM_TEST,MF_GRAYED);
+		EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_GRAYED);
+		EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
+		EnableMenuItem(g_mnu,IDM_TEST,MF_GRAYED);
 		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
 		DragAcceptFiles(g_hwnd,TRUE);
 		return;
