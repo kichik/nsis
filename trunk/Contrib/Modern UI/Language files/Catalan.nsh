@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Catalan (1027)
 ;By falanko
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Català" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Benvingut a l'Assistent d'Instal·lació de $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Aquest programa instal·larà $(^Name) en el seu ordinador.\r\n\r\nEs recomana tancar tota la resta d'aplicacions abans de començar la Instal·lació. Això permetrà a la Instal·lació actualitzar certs arxius del sistema sense haver de reiniciar el seu ordinador.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Aquest assistent instal·larà $(^Name) en el seu ordinador.\r\n\r\nEs recomana tancar tota la resta d'aplicacions abans de començar la Instal·lació. Això permetrà a la Instal·lació actualitzar certs arxius del sistema sense haver de reiniciar el seu ordinador.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Acord de Llicència"
   !define MUI_TEXT_LICENSE_SUBTITLE "Per favor revisi els termes de la llicència abans d'instal·lar $(^Name)."
@@ -39,7 +39,7 @@
 
   !define MUI_BUTTONTEXT_FINISH "&Finalitzar"
   !define MUI_TEXT_FINISH_INFO_TITLE "Finalitzant l'Assistent d'Instal·lació de $(^Name)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) s'ha instal·lat en l'ordinador.\r\n\r\nPremi Finalitzar per tancar aquest assistent."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) s'ha instal·lat en el seu ordinador.\r\n\r\nPremi Finalitzar per tancar aquest assistent."
   !define MUI_TEXT_FINISH_INFO_REBOOT "L'ordinador s'ha de reiniciar per que pugui completar-se la instal·lació de $(^Name). Desitja reiniciar-lo ara?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Reiniciar ara"
   !define MUI_TEXT_FINISH_REBOOTLATER "Reiniciar més tard manualment"
@@ -51,8 +51,11 @@
   !define MUI_INNERTEXT_STARTMENU_TOP "Seleccioni la carpeta del Menú d'Inici en la que hi vulgui crear els accessos directes del programa. Pot introduir un altre nom si vol crear una carpeta nova."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "No crear accessos directes"
 
-  !define MUI_TEXT_ABORTWARNING "Està segur que desitja sortir de la instal·lació de $(^Name)?"
+  !define MUI_TEXT_ABORTWARNING "Està segur que desitja sortir de la Instal·lació de $(^Name)?"
 
+
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvingut a l'Assistent d'Instal·lació de $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Aquest assistent el guiarà a través de la desinstal·lació de $(^Name).\r\n\rAbans de començar la desinstal·lació, asseguris que $(^Name) no s'està executant.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstal·lar $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name) del seu ordinador."
@@ -77,5 +80,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Desinstal·lació Anul·lada"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La desinstal·lació no s'ha realitzat correctament."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Finalitzant l'Assistent de Desinstal·lació de $(^Name)."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) s'ha desinstal·lat del seu ordinador.\r\n\r\nPremi Finalitzar per tancar aquest assistent."
+
+  !define MUI_UNTEXT_ABORTWARNING "Està segur que desitja sortir de la Desinstal·lació de $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
