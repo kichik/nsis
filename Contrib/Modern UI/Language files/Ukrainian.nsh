@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Ukrainian (1058)
 ;By Yuri Holubow, http://www.Nash-Soft.com
@@ -54,28 +54,36 @@
   !define MUI_TEXT_ABORTWARNING "Ви впевненнi, що бажаєте покинути установку $(^Name)?"
 
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Ласкаво просимо до Майстра Видалення $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Даний майстер доможе видалити $(^Name).\r\n\r\nПеред початком видалення, перевірте, чи не запусщено $(^Name).\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Видалення $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Видалення $(^Name) з вашого комп'ютера."
- 
-  !define MUI_UNTEXT_LICENSE_TITLE "Ліцензійна угода"
+  
+  !define MUI_UNTEXT_LICENSE_TITLE "Ліцензійна угода"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Прочитайте умови ліцензійної угоди перед видаленням $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "ЕЯкщо Ви приймаєте всi умови Угоди, натиснiть на кнопку Згоден. Ви повиннi прийняти умови Угоди для видалення $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Якщо Ви приймаєте всi умови Угоди, натиснiть на кнопку Згоден. Ви повиннi прийняти умови Угоди для видалення $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Якщо Ви приймаєте всі умови Угоди, встановіть відмітку у квадратику нижче. Ви повинні прийняти умови Угоди для видалення $(^Name). $_CLICK"
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Якщо Ви приймаєте всі умови Угоди, виберіть перший варіант з тих що нижче. Ви повинні прийняти умови Угоди для видалення $(^Name). $_CLICK"
-
+  
   !define MUI_UNTEXT_COMPONENTS_TITLE "Компоненти програми"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Виберіть які компоненти $(^Name) Ви бажаєте видалити."
- 
+  
   !define MUI_UNTEXT_DIRECTORY_TITLE "Вибір директорії для видалення"
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Виберіть директорію, з якої Ви бажаєте видалити $(^Name)."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Видалення"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Будь-ласка зачекайте, йде видалення файлів $(^Name)."
-
+    
   !define MUI_UNTEXT_FINISH_TITLE "Видалення завершено"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Видалення програми було успішно завершено."
-
+  
   !define MUI_UNTEXT_ABORT_TITLE "Видалення перервано"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Видалення не було виконано повністю."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Завершення Майстра Видалення $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) видалений з вашого комп'ютера.\r\n\r\nНатисніть Фініш, щоб закрити Майстра."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Ви впевненні що бажаєте покинути Майстр Видалення $(^Name)?"  
   
 !insertmacro MUI_LANGUAGEFILE_END
