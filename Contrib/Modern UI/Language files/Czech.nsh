@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Czech (1029)
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu $(^Name)?"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Vítejte v $(^Name) odinstalaèním prùvodci"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás bude provázet skrz odinstalaci $(^Name).\r\n\r\nPøed zapoèetím odinstalace, se pøesvìdète, že $(^Name) nebìží.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinstalovat program $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odebrat program $(^Name) z Vašeho poèítaèe."
   
@@ -77,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Odinstalace pøerušena"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinstalace nebyla dokonèena."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèuji $(^Name) odinstalaèního prùvodce"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) byl odinstalován z vašeho poèítaèe.\r\n\r\nKliknìte na Dokonèit pro ukonèení tohoto prùvodce."
+
+  !define MUI_UNTEXT_ABORTWARNING "Jste si jistý, že chcete ukonèit $(^Name) odinstalaci?"  
   
 !insertmacro MUI_LANGUAGEFILE_END
