@@ -182,9 +182,9 @@ Sets the icon of the installer.
 
 \H{aoutfile} OutFile
 
-\c install.exe
+\c [path\]install.exe
 
-Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't effect the contents of the installer.
+Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't affect the contents of the installer.
 
 \H{aplugindir} PluginDir
 
