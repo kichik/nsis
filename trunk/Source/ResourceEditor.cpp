@@ -82,8 +82,6 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
 }
 
 CResourceEditor::~CResourceEditor() {
-	if (m_pbPE)
-		delete [] m_pbPE;
 	if (m_cResDir) {
 		m_cResDir->Destroy();
 		delete m_cResDir;
@@ -297,10 +295,30 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
 		dwSectionsSize += sectionHeadersArray[i].SizeOfRawData;
 
 	CopyMemory(seeker, oldSeeker, dwSectionsSize);
+  seeker += dwSectionsSize;
+  oldSeeker += dwSectionsSize;
+
+  // Copy data tacked after the PE headers and sections (NSIS installation data for example)
+  DWORD dwTackedSize = oldSeeker - m_pbPE - m_iSize;
+  if (dwTackedSize)
+    CopyMemory(seeker, oldSeeker, dwTackedSize);
+
+  seeker += dwTackedSize;
+  oldSeeker += dwTackedSize;
 
 	/**********************************************************
 	 * To add checksum to the header use MapFileAndCheckSum
 	 **********************************************************/
+
+  // From now on, we are working on the new PE
+  // Freeing the old PE memory is up to the user
+  m_pbPE = pbNewPE;
+  m_iSize = dwSize;
+  m_dosHeader = PIMAGE_DOS_HEADER(m_pbPE);
+  m_ntHeaders = ntHeaders;
+  // We just wrote the resource section according to m_cResDir, so we don't need to rescan
+  // m_dwResourceSectionIndex and m_dwResourceSectionVA have also been left unchanged as
+  // we didn't move the resources section
 
 	return pbNewPE;
 }
