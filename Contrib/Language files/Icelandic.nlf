@@ -1,0 +1,191 @@
+# Header, don't edit
+NLF v6
+# Start editing here
+# Language ID
+1039
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by Gretar Orri Kristinsson
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Uppsetning
+# ^UninstallCaption
+$(^Name) Fjarlægja
+# ^LicenseSubCaption
+: Leyfissamningur
+# ^ComponentsSubCaption
+: Uppsetningar valmöguleikar
+# ^DirSubCaption
+: Uppsetningar skráarsafn
+# ^InstallingSubCaption
+: Set upp
+# ^CompletedSubCaption
+: Lokið
+# ^UnComponentsSubCaption
+: Fjarlægja valmöguleikar
+# ^UnDirSubCaption
+: Fjarlægja skráarsafn
+# ^ConfirmSubCaption
+: Staðfesting
+# ^UninstallingSubCaption
+: Fjarlægi
+# ^UnCompletedSubCaption
+: Lokið
+# ^BackBtn
+< &Til baka
+# ^NextBtn
+&Áfram >
+# ^AgreeBtn
+Ég &Samþykki
+# ^AcceptBtn
+Ég &samþykki skilmála leyfissamningsins
+# ^DontAcceptBtn
+Ég samþykki &ekki skilmála leyfissamningsins
+# ^InstallBtn
+&Setja upp
+# ^UninstallBtn
+&Fjarlægja
+# ^CancelBtn
+Hætta við
+# ^CloseBtn
+&Loka
+# ^BrowseBtn
+&Vafra...
+# ^ShowDetailsBtn
+Sýna &smáatriði
+# ^ClickNext
+Smelltu á 'Áfram' til að halda áfram.
+# ^ClickInstall
+Smelltu á 'Setja upp' til þess að hefja uppsetninguna.
+# ^ClickUninstall
+Smelltu á 'Fjarlægja' til að hefja fjarlægingar ferlið.
+# ^Name
+Nafn
+# ^Completed
+Lokið
+# ^LicenseText
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
+# ^LicenseTextCB
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassan hér að neðan. $_CLICK
+# ^LicenseTextRB
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
+# ^UnLicenseText
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
+# ^UnLicenseTextCB
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassan hér að neðan. $_CLICK
+# ^UnLicenseTextRB
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
+# ^Custom
+Sjálfsniðið
+# ^ComponentsText
+Hakaðu við þá hluti sem þú vilt setja upp og taktu hakið af þeim hlutum sem þú vilt ekki setja upp. $_CLICK
+# ^ComponentsSubText1
+Veldu tegund uppsetningar:
+# ^ComponentsSubText2_NoInstTypes
+Veldu hluti til að setja upp:
+# ^ComponentsSubText2
+Eða, veldu valfrjálsa hluti sem þú vilt setja upp:
+# ^UnComponentsText
+Hakaðu við þá hluti sem þú vilt fjarlægja og taktu hakið af þeim hlutum sem þú vilt ekki fjarlægja. $_CLICK
+# ^UnComponentsSubText1
+Veldu tegund fjarlægingar:
+# ^UnComponentsSubText2_NoInstTypes
+Veldu hluti til að fjarlægja:
+# ^UnComponentsSubText2
+Eða, veldu valfrjálsa hluti sem þú vilt fjarlægja:
+# ^DirText
+Uppsetningin mun setja upp $(^NameDA) í eftirfarandi skráarsafn. Til að setja forritið upp í annað skráarsafn, smelltu á Vafra og veldu annað skráarsafn. $_CLICK
+# ^DirSubText
+Móttökuskráarsafn
+# ^DirBrowseText
+Veldu það skráarsafn sem þú vilt setja $(^NameDA) upp í:
+# ^UnDirText
+Uppsetningin mun fjarlægja $(^NameDA) úr eftirfarandi skráarsafni. Til að fjarlægja forritið úr öðru skráarsafni, smelltu á Vafra og veldu annað skráarsafn. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Veldu það skráarsafn sem þú vilt fjarlægja $(^NameDA) frá:
+# ^SpaceAvailable
+"Tiltækt rými: "
+# ^SpaceRequired
+"Nauðsynlegt rými: "
+# ^UninstallingText
+$(^NameDA) verður fjarlægt frá eftirfarandi skráarsafni. $_CLICK
+# ^UninstallingSubText
+Fjarlægi frá:
+# ^FileError
+Villa við opnun skrár til notkunar: \r\n\r\n$0\r\n\r\nSmelltu á 'Hætta við' til að stoppa uppsetninguna,\r\n'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hunsa' til sleppa þessari skrá.
+# ^FileError_NoIgnore
+Villa við opnun skrár til notkunar: \r\n\r\n$0\r\n\r\nSmelltu á 'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hætta við' til að stoppa uppsetninguna.
+# ^CantWrite
+"Get ei skrifað: "
+# ^CopyFailed
+Afritun mistókst
+# ^CopyTo
+"Afrita til "
+# ^Registering
+"Skrásetja: "
+# ^Unregistering
+"Afskrá: "
+# ^SymbolNotFound
+"Fann ekki tákn: "
+# ^CouldNotLoad
+"Gat ekki hlaðið: "
+# ^CreateFolder
+"Búa til skráarsafn: "
+# ^CreateShortcut
+"Búa til flýtileið: "
+# ^CreatedUninstaller
+"Bjó til fjarlægjara: "
+# ^Delete
+"Eyða skrá: "
+# ^DeleteOnReboot
+"Eyða við endurræsingu: "
+# ^ErrorCreatingShortcut
+"Villa við gerð flýtileið: "
+# ^ErrorCreating
+"Villa við gerð: "
+# ^ErrorDecompressing
+Vill við afþjöppun gagna! Bilaður uppsetjari?
+# ^ErrorRegistering
+Villa við skrásetningu DLL
+# ^ExecShell
+"Keyrslu gluggi: "
+# ^Exec
+"Keyra: "
+# ^Extract
+"Færa út: "
+# ^ErrorWriting
+"Fæar út: villa við að skrifa í skrá "
+# ^InvalidOpcode
+Uppsetjari bilaður: rangur stýrikóði
+# ^NoOLE
+"Engin OLE fyrir: "
+# ^OutputFolder
+"Útskráarsafn: "
+# ^RemoveFolder
+"Fjarlægja skráarsafn: "
+# ^RenameOnReboot
+"Endurskíra við endurræsingu: "
+# ^Rename
+"Endurskíra: "
+# ^Skipped
+"Sleppt: "
+# ^CopyDetails
+Afrita upplýsingar í skrifbrettið
+# ^LogInstall
+Skrá uppsetningarferli
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G
