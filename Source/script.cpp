@@ -1751,9 +1751,44 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         int a = 1;
         WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        int trim = 0;
+        while (line.gettoken_str(a)[0] == '/') {
+          if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+          if (!strnicmp(line.gettoken_str(a),"/TRIM",5)) {
+            if (!stricmp(line.gettoken_str(a)+5,"LEFT")) trim = 1;
+            else if (!stricmp(line.gettoken_str(a)+5,"RIGHT")) trim = 2;
+            else if (!stricmp(line.gettoken_str(a)+5,"CENTER")) trim = 3;
+            a++;
+          }
+        }
         if (line.getnumtokens()!=a+1) PRINTHELP();
         SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
+        if (trim) try {
+          build_compressor_set=true;
+          CResourceEditor re(header_data_new, exeheader_size_new);
+
+          BYTE* dlg = re.GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+          CDialogTemplate td(dlg);
+          free(dlg);
+
+          switch (trim) {
+          	case 1: td.LTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
+            case 2: td.RTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
+            case 3: td.CTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
+          }
+
+          DWORD dwSize;
+          dlg = td.Save(dwSize);
+          re.UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+          free(dlg);
+
+          free(header_data_new);
+          header_data_new = re.Save((DWORD&)exeheader_size_new);
+        }
+        catch (exception& err) {
+          ERROR_MSG("Error while triming branding text control: %s\n", err.what());
+          return PS_ERROR;
+        }
         SCRIPT_MSG("BrandingText: \"%s\"\n",line.gettoken_str(a));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -3357,7 +3392,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETLANG:
       ent.which=EW_SETLANG;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      SCRIPT_MSG("SetLanguage: language=%s", line.gettoken_str(1));
+      SCRIPT_MSG("SetLanguage: language=%s\n", line.gettoken_str(1));
     return add_entry(&ent);
 
     // end of instructions
