@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,6 +22,7 @@
 #include <windows.h>
 #include "resource.h"
 #include "makensisw.h"
+#include "toolbar.h"
 #include "noclib.h"
 
 NTOOLTIP g_tip;
@@ -83,12 +84,21 @@ void DisableItems(HWND hwnd) {
   EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_COPY,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+
+  EnableToolBarButton(IDM_SAVE,FALSE);
+  EnableToolBarButton(IDM_TEST,FALSE);
+  EnableToolBarButton(IDM_EXIT,FALSE);
+  EnableToolBarButton(IDM_LOADSCRIPT,FALSE);
+  EnableToolBarButton(IDM_RECOMPILE,FALSE);
+  EnableToolBarButton(IDM_COPY,FALSE);
+  EnableToolBarButton(IDM_EDITSCRIPT,FALSE);
+  EnableToolBarButton(IDM_CLEARLOG,FALSE);
+  EnableToolBarButton(IDM_BROWSESCR,FALSE);
 
   if (!IsWindowEnabled(g_sdata.focused_hwnd))
     SetFocus(GetDlgItem(hwnd,IDC_LOGWIN));
@@ -98,18 +108,27 @@ void EnableItems(HWND hwnd) {
   if (g_sdata.output_exe && !g_sdata.retcode) {
     EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
     EnableMenuItem(g_sdata.menu,IDM_TEST,MF_ENABLED);
+    EnableToolBarButton(IDM_TEST,TRUE);
   }
   EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
   EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_COPY,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
+
+  EnableToolBarButton(IDM_SAVE,TRUE);
+  EnableToolBarButton(IDM_EXIT,TRUE);
+  EnableToolBarButton(IDM_LOADSCRIPT,TRUE);
+  EnableToolBarButton(IDM_RECOMPILE,TRUE);
+  EnableToolBarButton(IDM_COPY,TRUE);
+  EnableToolBarButton(IDM_EDITSCRIPT,TRUE);
+  EnableToolBarButton(IDM_CLEARLOG,TRUE);
+  EnableToolBarButton(IDM_BROWSESCR,TRUE);
   
   SetFocus(g_sdata.focused_hwnd);
 }
@@ -122,10 +141,14 @@ void CompileNSISScript() {
   if (lstrlen(g_sdata.script)==0) {
     LogMessage(g_sdata.hwnd,USAGE);
     EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
-    EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+    EnableToolBarButton(IDM_RECOMPILE,FALSE);
+    EnableToolBarButton(IDM_EDITSCRIPT,FALSE);
+    EnableToolBarButton(IDM_TEST,FALSE);
+    EnableToolBarButton(IDM_BROWSESCR,FALSE);
+
     EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),0);
     DragAcceptFiles(g_sdata.hwnd,TRUE);
     return;
@@ -178,7 +201,68 @@ void SaveWindowPos(HWND hwnd) {
   }
 }
 
+void RestoreDefines()
+{
+    HKEY hKey;
+    HKEY hSubKey;
+    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+        int n = 0;
+        DWORD l = sizeof(n);
+        DWORD t;
+        if ((RegQueryValueEx(hKey,REGDEFCOUNT,NULL,&t,(unsigned char*)&n,&l)==ERROR_SUCCESS)&&(t == REG_DWORD)&&(l==sizeof(n))) {
+            if(n > 0) {
+                if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+                    char buf[8];
+                    g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
+                    for(int i=0; i<n; i++) {
+                        wsprintf(buf,"%d",i);
+                        l = 0;
+                        if ((RegQueryValueEx(hSubKey,buf,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
+                            l++;
+                            g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
+                            RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)g_sdata.defines[i],&l);
+                        }
+                    }
+                    g_sdata.defines[n] = NULL;
+                    RegCloseKey(hSubKey);
+                }
+            }
+        }
+        RegCloseKey(hKey);
+    }
+}
+
+void SaveDefines()
+{
+    HKEY hKey;
+    HKEY hSubKey;
+    int n = 0;
+    if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+        RegDeleteKey(hKey,REGDEFSUBKEY);
+        if(g_sdata.defines) {
+          if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+              char buf[8];
+              while(g_sdata.defines[n]) {
+                  wsprintf(buf,"%d",n);
+                  RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)g_sdata.defines[n],lstrlen(g_sdata.defines[n]));
+                  n++;
+              }
+              RegCloseKey(hSubKey);
+          }
+        }
+        RegSetValueEx(hKey,REGDEFCOUNT,0,REG_DWORD,(CONST BYTE *)&n,sizeof(n));
+        RegCloseKey(hKey);
+    }
+}
+
 void ResetObjects() {
+  g_sdata.appended = FALSE;
+  g_sdata.warnings = FALSE;
+  g_sdata.retcode = -1;
+  g_sdata.thread = NULL;
+}
+
+void ResetDefines() {
   if(g_sdata.defines) {
     int i=0;
     while(g_sdata.defines[i]) {
@@ -188,10 +272,6 @@ void ResetObjects() {
     GlobalFree(g_sdata.defines);
     g_sdata.defines = NULL;
   }
-  g_sdata.appended = FALSE;
-  g_sdata.warnings = FALSE;
-  g_sdata.retcode = -1;
-  g_sdata.thread = NULL;
 }
 
 int InitBranding() {
@@ -260,6 +340,7 @@ void InitTooltips(HWND h) {
   g_tip.hook = SetWindowsHookEx(WH_GETMESSAGE,TipHookProc,NULL, GetCurrentThreadId());
   AddTip(GetDlgItem(h,IDC_CLOSE),TEXT("Close MakeNSISW"));
   AddTip(GetDlgItem(h,IDC_TEST),TEXT("Test the installer generated by MakeNSISW"));
+  AddToolBarTooltips();
 }
 
 void DestroyTooltips() {
