@@ -92,7 +92,6 @@ FunctionEnd
 
 Function .onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
@@ -170,7 +169,6 @@ SectionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetPage
 
 FunctionEnd
