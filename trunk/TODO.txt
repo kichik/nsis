@@ -1,8 +1,10 @@
 TODO
 
--- NSIS 2 Beta 3 --
+-- NSIS 2 Beta 4 --
 
 NSIS
+
+* check big licenses (over 50K)
 
 * skip plugin calls, file instructions that add more than one file with +1 with goto
 
@@ -40,6 +42,8 @@ INSTALLOPTIONS
 OTHER PLUGINS
 
 * BgImage - SetImage /RESIZETOFIT doesn't work
+
+* nsExec - live output
 
 -- Before NSIS 2 Final --
 
