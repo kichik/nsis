@@ -85,8 +85,9 @@ BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
+        MENUITEM "Browse Script\tCtrl+B",           IDM_BROWSESCR
         MENUITEM SEPARATOR
-        MENUITEM "Clear &Log\tCtrl+W",          IDM_CLEARLOG
+        MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
     END
     POPUP "&Help"
     BEGIN
@@ -106,6 +107,7 @@ END
 IDK_ACCEL ACCELERATORS PRELOAD MOVEABLE PURE 
 BEGIN
     "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
+    "B",            IDM_BROWSESCR,          VIRTKEY, CONTROL, NOINVERT
     "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
