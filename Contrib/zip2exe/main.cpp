@@ -4,6 +4,9 @@
 
 /*
 
+version 0.32
+* Fixed codepage problems
+
 version 0.31 (by Joost Verburg)
 * LZMA compression support
 * Fixed compression setting
