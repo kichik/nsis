@@ -5673,7 +5673,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
       if (basedir == "") {
         new_dir = *dirs_itr;
       } else {
-        new_dir = basedir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr;
+        new_dir = basedir + '\\' + *dirs_itr;
       }
 
       string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
@@ -5937,14 +5937,6 @@ int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir
     outdir_s = outdir_s.insert(pos, "$");
     pos = outdir_s.find('$', pos + 2);
   }
-
-#ifndef _WIN32
-  pos = outdir_s.find('/');
-  while (pos != string::npos) {
-    outdir_s[pos] = '\\';
-    pos = outdir_s.find('/');
-  }
-#endif
 
   int outdir = add_string(outdir_s.c_str());
 
