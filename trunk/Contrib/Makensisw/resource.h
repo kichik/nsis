@@ -39,6 +39,10 @@
 #define IDB_TOOLBAR                     122
 #define DLG_COMPRESSOR                  124
 #define DLG_SYMBOLSET                   125
+#define IDB_TOOLBAR24                   129
+#define IDB_TOOLBAR24D                  130
+#define IDB_BITMAP2                     131
+#define IDB_TOOLBAR24H                  132
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -90,7 +94,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        126
+#define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         40034
 #define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           101

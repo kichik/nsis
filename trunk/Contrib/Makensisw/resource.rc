@@ -81,6 +81,7 @@ BEGIN
         MENUITEM "&Find...\tCtrl+F",            IDM_FIND
         MENUITEM SEPARATOR
         MENUITEM "&Select All\tCtrl+A",         IDM_SELECTALL
+        MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
     END
     POPUP "&Script"
     BEGIN
@@ -104,7 +105,6 @@ BEGIN
     BEGIN
         MENUITEM "&Settings..\tCtrl+S",         IDM_SETTINGS
         MENUITEM SEPARATOR
-        MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
         MENUITEM "Clear Recent &Files List",    IDM_CLEAR_MRU_LIST
     END
     POPUP "&Help"
@@ -172,7 +172,7 @@ CAPTION "About MakeNSISW"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,174,104,49,15
-    CONTROL         115,IDC_STATIC,"Static",SS_BITMAP,0,0,20,20
+    CONTROL         115,IDC_STATIC,"Static",SS_BITMAP,0,0,233,25
     LTEXT           "MakeNSISW",IDC_ABOUTVERSION,14,31,219,8
     LTEXT           "Copyright",IDC_ABOUTCOPY,14,43,220,8
     LTEXT           "Other Contributors:",IDC_ABOUTPORTIONS,14,56,220,10
@@ -297,6 +297,8 @@ END
 
 IDB_LOGO                BITMAP                  "logo.bmp"
 IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
+IDB_TOOLBAR24           BITMAP                  "toolbar24.bmp"
+IDB_TOOLBAR24D          BITMAP                  "toolbar24d.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -334,6 +336,25 @@ BEGIN
 END
 
 #endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Dutch (Netherlands) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NLD)
+#ifdef _WIN32
+LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
+#endif    // Dutch (Netherlands) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
