@@ -31,8 +31,11 @@
 #include "fileform.h"
 #include "state.h"
 #include "ui.h"
-
 #include "lang.h"
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+#include "dllpaths.h"
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
 
 extern unsigned long CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
 
@@ -359,6 +362,11 @@ end:
   if (dbd_hFile!=INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
 #endif
   if (m_Err) MessageBox(NULL,m_Err,g_caption,MB_OK|MB_ICONSTOP);
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  DllPathsCleanup();
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
+
   ExitProcess(ret);
 }
 

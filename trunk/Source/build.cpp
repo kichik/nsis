@@ -352,10 +352,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     else if (i == '$') 
     {
       if (*p == '$') 
-      {
-        i='$';
         p++; // Can simply convert $$ to $ now
-      }
       else 
       {
         const char *pVarName;
@@ -1824,3 +1821,23 @@ void CEXEBuild::print_warnings()
   }
   fflush(g_output);
 }
+
+// Added by Ximon Eighteen 5th August 2002
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+void CEXEBuild::build_external_command_table(void)
+{
+  char* nsisdir = definedlist.find("NSISDIR");
+  if (nsisdir)
+  {
+    char* searchPath = new char [strlen(nsisdir)+12];
+    if (searchPath)
+    {
+      strcpy(searchPath,nsisdir);
+      strcat(searchPath,"\\dlls\\*.dll");
+      INFO_MSG("\nProcessing plugin dlls: \"%s\"\n",searchPath);
+      m_externalCommands.FindCommands(searchPath,display_info?true:false);
+      delete[] searchPath;
+    }
+  }
+}
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT

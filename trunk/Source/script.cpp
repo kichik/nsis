@@ -92,8 +92,23 @@ parse_again:
       line.eattoken();
       goto parse_again;
     }
-    ERROR_MSG("Invalid command: %s\n",line.gettoken_str(0));
-    return PS_ERROR;
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    // Added by Ximon Eighteen 5th August 2002
+    // We didn't recognise this command, could it be the name of a
+    // function exported from a dll?
+    if (m_externalCommands.IsExternalCommand(line.gettoken_str(0)))
+    {
+      np   = 0;   // parameters are optional
+      op   = -1;  // unlimited number of optional parameters
+      tkid = TOK__EXTERNALCOMMAND;
+    }
+    else
+#endif
+    {
+      ERROR_MSG("Invalid command: %s\n",line.gettoken_str(0));
+      return PS_ERROR;
+    }
   }
 
   int v=line.getnumtokens()-(np+1);
@@ -290,6 +305,7 @@ int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr, int 
     int ret=doParse((char*)linedata.get(),fp,curfilename,lineptr,ignore);
     if (ret != PS_OK) return ret;
   }
+
   return PS_EOF;
 }
 
@@ -3173,6 +3189,65 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // end of instructions
     ///////////////////////////////////////////////////////////////////////////////
 
+    // Added by Ximon Eighteen 5th August 2002
+    case TOK__EXTERNALCOMMAND:
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    {
+      if (line.getnumtokens()-1 > MAX_ENTRY_OFFSETS)
+      {
+        ERROR_MSG("Error: Too many arguments (%d max) to command %s!\n",MAX_ENTRY_OFFSETS,line.gettoken_str(0));
+        return PS_ERROR;
+      }
+
+      char* dllPath = m_externalCommands.GetExternalCommandDll(line.gettoken_str(0));
+      if (dllPath)
+      {
+        int dataHandle = m_externalCommands.GetDllDataHandle(dllPath);
+        if (dataHandle == -1)
+        {
+          int error;
+          if (PS_OK != (error = do_add_file(dllPath,0,0,-1,&dataHandle,0)))
+          {
+            ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
+            return error;
+          }
+
+          m_externalCommands.StoreDllDataHandle(line.gettoken_str(0),dataHandle);
+        }
+
+        // Create the runtime command to execute the custom instruction
+        ent.which      = EW_EXTERNALCOMMANDPREP;
+        ent.offsets[0] = add_string(dllPath);
+        ent.offsets[1] = add_string(line.gettoken_str(0));
+        ent.offsets[2] = dataHandle;
+        add_entry(&ent);
+
+        SCRIPT_MSG("Plugin Command: %s",line.gettoken_str(0));
+        ent.which = EW_EXTERNALCOMMAND;
+
+        for (int i = 0; i < MAX_ENTRY_OFFSETS && i+1 < line.getnumtokens(); i++)
+        {
+          ent.offsets[i] = add_string(line.gettoken_str(i+1));
+          SCRIPT_MSG(" %s",line.gettoken_str(i+1));
+        }
+        SCRIPT_MSG("\n");
+
+        // since the runtime code won't know how many arguments to expect (why
+        // should it, an arbitrary command is being executed so it has no way
+        // of knowing) if it's less than the max 
+        if (i < MAX_ENTRY_OFFSETS)
+          ent.offsets[i] = -1;
+
+        return add_entry(&ent);
+      }
+      ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
+      return PS_ERROR;
+    }
+#else
+    ERROR_MSG("Error: %s specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n",line.gettoken_str(0));
+    return PS_ERROR;
+#endif// NSIS_CONFIG_PLUGIN_SUPPORT
+    
     default: break;
 
   }
@@ -3180,6 +3255,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
   return PS_ERROR;
 }
 
+// If linecnt == -1 no decompress command will be created in the installer,
+// instead some action during execution of the installer should cause the file
+// to be decompressed manually - Ximon Eighteen 5th August 2002
 int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override)
 {
   char dir[1024];
@@ -3235,7 +3313,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           ent.offsets[0]=add_string(cur_out_path);
           ent.offsets[1]=1;
           a=add_entry(&ent);
-		  if (a != PS_OK) 
+    		  if (a != PS_OK) 
           {
             FindClose(h);
             return a;
@@ -3312,11 +3390,14 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         section_add_size_kb((len+1023)/1024);
         if (name_override) SCRIPT_MSG("File: \"%s\"->\"%s\"",d.cFileName,name_override);
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+        else if (linecnt == -1) SCRIPT_MSG("File: Auto included \"%s\"",d.cFileName);
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
         else SCRIPT_MSG("File: \"%s\"",d.cFileName);
         if (!build_compress_whole)
           if (build_compress) SCRIPT_MSG(" [compress]");
         fflush(stdout);
-		char buf[1024];
+        char buf[1024];
         int last_build_datablock_used=getcurdbsize();
         entry ent={0,};
         ent.which=EW_EXTRACTFILE;
@@ -3379,11 +3460,24 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         else m_inst_fileused++;
 
         CloseHandle(hFile);
-        int a=add_entry(&ent);
-        if (a != PS_OK) 
+
+        int a;
+        // Only insert a EW_EXTRACTFILE command into the installer for this
+        // file if linecnt is NOT -1. This has nothing to do with line counts
+        // - linecnt was just a handy value to use since this function doesn't
+        // appear to be using it anywhere else for anything :-)
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+        if (-1 == linecnt)
+          *total_files = ent.offsets[2];
+        else
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
         {
-          FindClose(h);
-          return a;
+          a=add_entry(&ent);
+          if (a != PS_OK) 
+          {
+            FindClose(h);
+            return a;
+          }
         }
         if (attrib)
         {
@@ -3413,4 +3507,3 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
   }
   return PS_OK;
 }
-  

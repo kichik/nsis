@@ -178,6 +178,29 @@
 // NSIS_SUPPORT_MESSAGEBOX enables support for MessageBox
 #define NSIS_SUPPORT_MESSAGEBOX
 
+// Added by Ximon Eighteen 5th August 2002
+// If this is uncommented the following changes/new features are
+// turned on :-
+//   - At the start of compilation a directory called dlls in
+//     the directory where makensis.exe is running from will be
+//     scanned for .dll files.
+//   - Any functions in the detected dll files that are exported
+//     by name will be remembered. These names are then legal
+//     command keywords in an NSIS script.
+//   - Any command that is unrecognised is checked against the
+//     list of external dll command names. If matched the dll will
+//     be packed into the installer.
+//   - On the installer machine (rather than the build machine)
+//     on first use of a command that requires a plugin dll that
+//     dll will be extracted to the temporary directory with a
+//     temporary file name.
+//   - Any parameters following the command will be pushed onto
+//     the stack in left to right order.
+//   - The command will then be invoked in the dll as if 
+//     "CallInstDLL dll command" had been invoked.
+//   - When the installer exits any extracted temporary dlls will
+//     be deleted.
+//#define NSIS_CONFIG_PLUGIN_SUPPORT
 
 
 // fixes
