@@ -160,11 +160,11 @@ For more information see \R{comptime}{Compile Time Commands}.
 
 The second thing you need to do in order to create your installer after you have created your script is to compile your script. MakeNSIS.exe is the NSIS compiler. It reads your script, parses it and creates an installer for you.
 
-To compile you have to right-click your .nsi file and select Compile NSI or Compile NSIS (with bz2). This will cause MakeNSISw to launch and call MakeNSIS to compile your script. MakeNSISw will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. If you don't have the Compile NSI entry in the context (right-click) menu you have probably unselected Shell Extensions in the NSIS installer. You can either use MakeNSIS.exe from a command prompt window (DOS) or reinstall NSIS with Shell Extensions selected.
+To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.
 
 The compiler will check your script and give you warnings or an error. If an errors occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical error the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
 
-NSIS supports different compression methods zlib and bzip2. zlib is fast and is very efficient in resources consumption. bzip2 usually gives better results for large installers, but requires a bit more memory and is a little slower. To set the compressor use \R{asetcompressor}{SetCompressor}.
+NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
 \H{tutmodernui} Modern UI
 
