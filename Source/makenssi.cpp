@@ -1,4 +1,4 @@
-const char *NSIS_VERSION="v2.03";
+const char *NSIS_VERSION="v2.04";
 
 /* 
 
