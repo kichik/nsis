@@ -164,13 +164,18 @@ Version History
  - Check for Update command
  - Added link to the NSIS Forum under Help menu
  - Bunch of other stuff not worth mentioning
- - Define Symbols menu (Ctrl+D) (iceman_k)
+ - Define Symbols menu (Ctrl+D)
 
+1.10
+ - Define Symbols is available even if a script is not loaded.
+ - Defined Symbols are saved on exit and reloaded on start.
+ - Added NSIS Update menu.
+ - Added toolbar for commonly used menus.
 
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater
-Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely, iceman_k
+Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages

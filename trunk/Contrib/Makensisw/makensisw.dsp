@@ -23,8 +23,8 @@ CFG=makensisw - Win32 Debug
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName ""
-# PROP Scc_LocalPath ""
+# PROP Scc_ProjName "makensisw"
+# PROP Scc_LocalPath ".."
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
@@ -101,6 +101,10 @@ SOURCE=.\noclib.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\toolbar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\utils.cpp
 # End Source File
 # Begin Source File
@@ -129,6 +133,10 @@ SOURCE=.\resource.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\toolbar.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\utils.h
 # End Source File
 # End Group
@@ -154,6 +162,10 @@ SOURCE=.\resource.rc
 # Begin Source File
 
 SOURCE=.\shell.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\toolbar.bmp
 # End Source File
 # End Group
 # Begin Group "Documentation"

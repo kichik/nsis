@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,25 +32,26 @@
 #define NSIS_DEV     "http://nsis.sourceforge.net/"
 #define NSIS_URL     "http://www.nullsoft.com/free/nsis/"
 #define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
+#define NSIS_UPDATE  "\\Bin\\NSISUpdate.exe"
 #define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
-#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely"
+#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath"
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    "\\docs\\index.html"
 #define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
 #define DLGERROR     "Unable to intialize MakeNSISW."
 #define DEFINESERROR "Symbol cannot contain whitespace characters"
+#define NSISUPDATEPROMPT "Running NSIS Update will close MakeNSISW.\nContinue?"
 #define REGSEC       HKEY_LOCAL_MACHINE
 #define REGKEY       "Software\\NSIS"
 #define REGLOC       "MakeNSISWPlacement"
+#define REGDEFSUBKEY "Defines"
+#define REGDEFCOUNT  "MakeNSISWDefinesCount"
 #define EXENAME      "makensis.exe"
 #define MAX_STRING   256
 #define TIMEOUT      100
 #define MINWIDTH     350
 #define MINHEIGHT    180
-#define REGSEC       HKEY_LOCAL_MACHINE 
-#define REGKEY       "Software\\NSIS"
-#define REGLOC       "MakeNSISWPlacement"
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
@@ -61,6 +62,13 @@ enum {
   MAKENSIS_NOTIFY_OUTPUT
 };
 
+#ifdef COMPRESSOR_OPTION
+typedef enum {
+  COMPRESSOR_DEFAULT,
+  COMPRESSOR_ZLIB,
+  COMPRESSOR_GZIP
+} NCOMPRESSOR;
+#endif
 // Extern Variables
 extern const char* NSISW_VERSION;
 
@@ -73,6 +81,11 @@ BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           CompileNSISScript();
 char*          BuildDefines();
+#ifdef COMPRESSOR_OPTION
+BOOL           SetCompressor(WORD);
+#endif
+void           RestoreDefines();
+void           SaveDefines();
 
 typedef struct NSISScriptData {
   bool script_alloced;
@@ -93,6 +106,9 @@ typedef struct NSISScriptData {
   HANDLE thread;
   HWND focused_hwnd;
   CHARRANGE textrange;
+#ifdef COMPRESSOR_OPTION
+  NCOMPRESSOR compressor;
+#endif
 } NSCRIPTDATA;
 
 typedef struct ResizeData {

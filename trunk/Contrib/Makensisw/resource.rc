@@ -83,7 +83,15 @@ BEGIN
     POPUP "&Tools"
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
-        MENUITEM "&Define Symbols\tCtrl+D",     IDM_DEFINES
+        MENUITEM "&Define Symbols...\tCtrl+D",  IDM_DEFINES
+#ifdef COMPRESSOR_OPTION
+        POPUP "&Set Compressor"
+        BEGIN
+            MENUITEM "Defa&ult",                    IDM_DEFAULT
+            MENUITEM "&zlib",                       IDM_ZLIB
+            MENUITEM "&gzip",                       IDM_GZIP
+        END
+#endif
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
@@ -94,6 +102,7 @@ BEGIN
         MENUITEM "NSIS Homepage",               IDM_NSISHOME
         MENUITEM "NSIS Developer Site",         IDM_NSISDEV
         MENUITEM "NSIS Forum",                  IDM_FORUM
+        MENUITEM "NSIS Update",                 IDM_NSISUPDATE
         MENUITEM SEPARATOR
         MENUITEM "Documentation\tF1",           IDM_DOCS
         MENUITEM SEPARATOR
@@ -115,12 +124,15 @@ BEGIN
     "D",            IDM_DEFINES,            VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
+    "G",            IDM_GZIP,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
+    "U",            IDM_DEFAULT,            VIRTKEY, CONTROL, NOINVERT
     VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
     "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
+    "Z",            IDM_ZLIB,               VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -129,7 +141,7 @@ END
 // Dialog
 //
 
-DLG_MAIN DIALOG DISCARDABLE  0, 0, 361, 228
+DLG_MAIN DIALOG DISCARDABLE  0, 0, 362, 246
 STYLE DS_3DLOOK | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | 
     WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | 
     WS_THICKFRAME
@@ -139,11 +151,11 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     CONTROL         "",IDC_LOGWIN,"RICHEDIT",ES_MULTILINE | ES_AUTOVSCROLL | 
                     ES_NOHIDESEL | ES_READONLY | ES_NUMBER | WS_BORDER | 
-                    WS_VSCROLL,7,4,345,186
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,202,346,1
-    LTEXT           "",IDC_VERSION,7,212,200,12,WS_DISABLED
-    DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,296,208,49,15
-    PUSHBUTTON      "Test &Installer",IDC_TEST,230,208,60,15,WS_DISABLED
+                    WS_VSCROLL,7,22,345,186
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,220,346,1
+    LTEXT           "",IDC_VERSION,7,230,200,12,WS_DISABLED
+    DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,296,226,49,15
+    PUSHBUTTON      "Test &Installer",IDC_TEST,230,226,60,15,WS_DISABLED
 END
 
 DLG_ABOUT DIALOGEX 0, 0, 233, 126
@@ -165,7 +177,7 @@ END
 DLG_DEFINES DIALOGEX 0, 0, 250, 127
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Define Symbols"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&OK",IDOK,145,106,48,14
     PUSHBUTTON      "&Cancel",IDCANCEL,195,106,48,14
@@ -189,6 +201,12 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO DISCARDABLE 
 BEGIN
+    DLG_MAIN, DIALOG
+    BEGIN
+        RIGHTMARGIN, 361
+        BOTTOMMARGIN, 228
+    END
+
     DLG_ABOUT, DIALOG
     BEGIN
         BOTTOMMARGIN, 121
@@ -218,6 +236,43 @@ END
 //
 
 IDB_LOGO                BITMAP  DISCARDABLE     "logo.bmp"
+IDB_TOOLBAR             BITMAP  DISCARDABLE     "toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_LOADSCRIPT          "Load Script..."
+    IDS_SAVE                "Save Output..."
+    IDS_EXIT                "Exit"
+    IDS_COPY                "Copy"
+    IDS_FIND                "Find..."
+    IDS_RECOMPILE           "Recompile"
+    IDS_DEFINES             "Define Symbols..."
+#ifdef COMPRESSOR_OPTION
+    IDS_COMPRESSOR          "Set Compressor"
+#endif
+    IDS_TEST                "Test Installer"
+    IDS_EDITSCRIPT          "Edit Script"
+    IDS_BROWSESCR           "Browse Script"
+    IDS_CLEARLOG            "Clear Log Window"
+    IDS_NSISHOME            "NSIS Homepage"
+    IDS_NSISDEV             "NSIS Developer Site"
+    IDS_FORUM               "NSIS Forum"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NSISUPDATE          "NSIS Update"
+    IDS_DOCS                "Documentation"
+	IDS_DEFAULT				"Default"
+	IDS_ZLIB				"zlib"
+	IDS_GZIP				"gzip"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
