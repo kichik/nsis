@@ -27,6 +27,8 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 // returns the number of WCHARs in str including null charcter
 int WCStrLen(const WCHAR* szwStr);
 
+size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
+
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
