@@ -2,13 +2,13 @@
 
 \e{v2.0b1}
 
-\b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box
+\b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
 
 \b LangString improvements: can be used before they have been defined, warning if not present in all language tables 
 
 \b New version of the Modern User Interface with UI improvements, bugfixes and some small new features
 
-\b InstallOptions 2.0 with support for custom font and DPI settings, groupboxes, grouped controls etc.
+\b InstallOptions 2.0 with support for custom font and DPI settings, groupboxes, grouped controls, lots of bugfixes etc.
 
 \b Include dirs
 
@@ -17,6 +17,14 @@
 \b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style 
 
 \b Win9x rename on reboot now also works when the destination file does not exist
+
+\b DeleteRegKey works on default value
+
+\b nsExec can be called from an installer executed by CreateProcess
+
+\b WriteUninstaller sets error code
+
+\b Banner.dll compatible with Modern UI
 
 \b Updated and new translations
 
