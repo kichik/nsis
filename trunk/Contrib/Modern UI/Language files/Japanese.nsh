@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Japanese (1041)
 ;By Dnanako
@@ -59,6 +59,9 @@
   !define MUI_TEXT_ABORTWARNING "$(^Name) セットアップを中止しますか？"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "$(^Name) アンインストール ウィザードへようこそ"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "このウィザードは、$(^Name)のアンインストールをガイドしていきます。\r\n\r\nアンインストールを開始する前に、$(^Name)が起動していないことを確認して下さい。\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "$(^Name)のアンインストール"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "$(^Name)をこのコンピュータから削除します。"
 
@@ -82,5 +85,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "アンインストールの中止"
   !define MUI_UNTEXT_ABORT_SUBTITLE "アンインストールは正常に完了されませんでした。"
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "$(^Name) アンインストール ウィザードは完了しました。"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name)は、このコンピュータからアンインストールされました。\r\n\r\nウィザードを閉じるには [完了] を押してください。"
+  
+  !define MUI_UNTEXT_ABORTWARNING "$(^Name) アンインストールを中止しますか？"  
   
 !insertmacro MUI_LANGUAGEFILE_END

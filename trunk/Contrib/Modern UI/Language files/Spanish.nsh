@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Spanish (1034)
 ;By MoNKi & Lobo Lunar
@@ -53,6 +53,9 @@
   
   !define MUI_TEXT_ABORTWARNING "¿Está seguro de que desea salir de la instalación de $(^Name)?"
 
+
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenido al Asistente de Desinstalación de $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este asistente le guiará durante la desinstalación de $(^Name).\r\n\r\nAntes de comenzar la desinstalación, asegúrese de que $(^Name) no se está ejecutando.\r\n\r\n$_CLICK"
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstalar $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name) de su sistema."
@@ -77,5 +80,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Desinstalación Anulada"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La desinstalación no se completó correctamente."
-    
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Completando el Asistente de Desinstalación de $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ha sido desinstalado de su sistema.\r\n\r\nPresione Terminar para cerrar este asistente."
+  	 
+  !define MUI_UNTEXT_ABORTWARNING "¿Está seguro de que desea salir de la desinstalación de $(^Name)?"
+
 !insertmacro MUI_LANGUAGEFILE_END
