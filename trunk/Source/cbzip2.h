@@ -6,7 +6,7 @@
 
 class CBzip2 : public ICompressor {
   public:
-    int Init(int level) {
+    int Init(int level, unsigned int dict_size) {
       last_ret = !BZ_STREAM_END;
       stream = new bz_stream;
       if (!stream) return BZ_MEM_ERROR;

@@ -801,11 +801,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
     int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
     db->resize(st + bufferlen + sizeof(int));
 
-    int n;
-    if (compressor == &lzma_compressor)
-      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
-    else
-      n = compressor->Init(build_compress_level);
+    int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
@@ -944,11 +940,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     int bufferlen=length+1024+length/4; // give a nice 25% extra space
     dblock->resize(st+bufferlen+sizeof(int));
 
-    int n;
-    if (compressor == &lzma_compressor)
-      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
-    else
-      n = compressor->Init(build_compress_level);
+    int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
@@ -2458,11 +2450,7 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole)
   {
-    int n;
-    if (compressor == &lzma_compressor)
-      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
-    else
-      n = compressor->Init(build_compress_level);
+    int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
@@ -2891,11 +2879,7 @@ int CEXEBuild::uninstall_generate()
       // compress uninstaller too
       {
         char obuf[65536];
-        int n;
-        if (compressor == &lzma_compressor)
-          n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
-        else
-          n = compressor->Init(build_compress_level);
+        int n = compressor->Init(build_compress_level, build_compress_dict_size);
         if (n != C_OK)
         {
           ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));

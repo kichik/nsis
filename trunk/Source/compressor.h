@@ -6,7 +6,7 @@
 
 class ICompressor {
   public:
-    virtual int Init(int level) = 0;
+    virtual int Init(int level, unsigned int dict_size) = 0;
     virtual int End() = 0;
     virtual int Compress(bool finish) = 0;
 

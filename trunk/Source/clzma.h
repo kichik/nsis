@@ -64,8 +64,7 @@ public:
   CLZMA();
   virtual ~CLZMA();
 
-  virtual int Init(int level);
-  virtual int Init(int level, UINT32 dicSize);
+  virtual int Init(int level, unsigned int dicSize);
   virtual int End();
   virtual int Compress(bool flush);
 
