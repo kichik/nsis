@@ -680,8 +680,8 @@ static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   lstrcpyn(pbBuff,(char*)dwCookie+dwRead,cb);
-  dwRead+=lstrlen(pbBuff);
-  *pcb=lstrlen(pbBuff);
+  dwRead+=mystrlen(pbBuff);
+  *pcb=mystrlen(pbBuff);
   return 0;
 }
 
@@ -951,7 +951,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
       hItem.hItem = ht.hItem;
       hItem.mask = TVIF_PARAM;
-      
+
       TreeView_GetItem(hwnd, &hItem);
 
       lParam = hItem.lParam;
@@ -967,7 +967,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
       myitoa(g_usrvars[0], last_item);
       ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onMouseOverSection,NULL);
-        
+
       mystrcpy(g_usrvars[0], g_tmp);
     }
   }
@@ -1443,7 +1443,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
-    if (g_quit_flag) 
+    if (g_quit_flag)
         EndDialog(g_hwnd,1);
     else if (!wParam)
     {

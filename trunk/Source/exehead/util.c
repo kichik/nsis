@@ -442,13 +442,6 @@ int NSISCALL mystrlen(const char *in)
   return lstrlen(in);
 }
 
-
-int NSISCALL process_string_fromtab_toint(int offs)
-{
-  process_string(ps_tmpbuf,GetStringFromStringTab(offs));
-  return myatoi(ps_tmpbuf);
-}
-
 // Dave Laundon's simplified process_string
 void NSISCALL process_string(char *out, const char *in)
 {
