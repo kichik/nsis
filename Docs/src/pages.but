@@ -59,12 +59,12 @@ Examples:
 
 \S{page} Page
 
-\c (custom function [caption]) | ((license|components|directory|instfiles) [pre_function] [show_function] [leave_function]) [define_if_last]
+\c ((license|components|directory|instfiles|custom caption) [pre_function] [show_function] [leave_function]) [define_if_last]
 
 Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions. If define_if_last is specified, the parameter will be !defined if the page turns out to be the last page before a instfiles page. This helps you decide on dynamic scripts (such as the Modern UI script) what to put in this page's text, "click the install button to start installation" or "click next to continue" for example.
 
 \S{uninstpage} UninstPage
 
-\c (custom function [caption]) | ((uninstConfirm|instfiles) [pre_function] [show_function] [leave_function]) [define_if_last]
+\c ((uninstConfirm|instfiles|custom caption) [pre_function] [show_function] [leave_function]) [define_if_last]
 
 Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions. See Page for an explanation about define_if_last.

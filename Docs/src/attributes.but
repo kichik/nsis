@@ -26,7 +26,7 @@ Sets whether or not the install window automatically closes when completed. This
 
 \S2{abggradient} BGGradient
 
-\c [\\<b\\>off\\</b\\>]|[topc botc [textcolor|notext]]
+\c [\\<b\\>off\\</b\\>|(topc botc [textcolor|notext])]
 
 Specifies whether or not to use a gradient background window. If 'off', the installer will not show a background window, if no parameters are specified, the default black to blue gradient is used, and otherwise the top_color or bottom_color are used to make a gradient. Top_color and bottom_color are specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). 'textcolor' can be specified as well, or 'notext' can be specified to turn the big background text off.
 
@@ -72,13 +72,13 @@ This bitmap should have a size of 96x16 pixels and contain six 16x16 images for 
 
 \S2{acompletedtext} CompletedText
 
-\c [/LANG=lang_id] [Completed text]
+\c [/LANG=lang_id] Completed text
 
 Replaces the default text ("Completed") that is printed at the end of the install if parameter is specified. Otherwise, the default is used.
 
 \S2{acomponenttext} ComponentText
 
-\c [/LANG=lang_id] [text] [subtext] [subtext2]
+\c [[/LANG=lang_id] text [subtext] [subtext2]]
 
 Specifies a string that is above the component list. This can be something that notifies the user what it is they are actually installing. Note that if no parameter is specified, or if the ComponentText command is omitted, then the component page will not be visible, and all of the sections will be installed. Note: if text is specified and non-empty and you leave subtext or subtext2 empty, the defaults will be used (to set one to blank, use a string like " "). empty strings mean default on subtext and subtext2. Likewise, if you wish to enable the component page, but don't want any text on the top line, set text to " ".
 
@@ -90,7 +90,7 @@ Specifies whether or not the installer will perform a CRC on itself before allow
 
 \S2{adetailsbuttontext} DetailsButtonText
 
-\c [/LANG=lang_id] [show details text]
+\c [/LANG=lang_id] show details text
 
 Replaces the default details button text of "Show details", if parameter is specified (otherwise the default is used).
 
@@ -102,19 +102,19 @@ Specifies whether or not the user will see the directory selection page. Note th
 
 \S2{adirtext} DirText
 
-\c [/LANG=lang_id] [text] [subtext] [browse text]
+\c [[/LANG=lang_id] text [subtext] [browse text]]
 
 Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). If subtext is specified and not empty, it overrides the default text above the path entry box ("Select the directory to install MyApp in:"). If browse button text is specified but not empty, it overrides the default browse button text ("Browse...").
 
 \S2{a} FileErrorText
 
-\c [/LANG=lang_id] [file error text]
+\c [/LANG=lang_id] file error text
 
 Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck, bitch.".
 
 \S2{ainstallbuttontext} InstallButtonText
 
-\c [/LANG=lang_id] [install button text]
+\c [/LANG=lang_id] install button text
 
 If parameter is specified, overrides the default install button text (of "Install") with the specified text.
 
@@ -164,7 +164,7 @@ If you make your license file a RTF file it is recommended you edit it with Word
 
 \S2{alicensetext} LicenseText
 
-\c [/LANG=lang_id] text [button_text]
+\c [[/LANG=lang_id] text [button_text]]
 
 Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
 
@@ -176,7 +176,7 @@ Loads a NLF (NSIS Language File) that will be used to create a string table for 
 
 \S2{amiscbuttontext} MiscButtonText
 
-\c [/LANG=lang_id] [back button text] [next button text] [cancel button text] [close button text]
+\c [[/LANG=lang_id] back button text [next button text] [cancel button text] [close button text]]
 
 Replaces the default text strings for the four buttons (< Back, Next >, Cancel and Close). If parameters are omitted, the defaults are used.
 
@@ -188,9 +188,9 @@ Sets the name of the installer. The name is usually simply the product name such
 
 \S2{aicon} Icon
 
-\c path_to_icon.ico
+\c [path\]icon.ico
 
-Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail. 
+Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail.
 
 \S2{aoutfile} OutFile
 
@@ -236,19 +236,19 @@ Specifies whether or not the uninstaller should be silent. If it is 'silent' or 
 
 \S2{aspacetexts} SpaceTexts
 
-\c [/LANG=lang_id] [req text] [avail text]
+\c [[/LANG=lang_id] req text [avail text]]
 
 If parameters are specified, overrides the space required and space available text ("Space required: " and "Space available: " by default). If 'none' is specified as the required text no space texts will be shown.
 
 \S2{asubcaption} SubCaption
 
-\c [/LANG=lang_id] page_number subcaption
+\c [[/LANG=lang_id] page_number subcaption]
 
 Overrides the subcaptions for each of the installer pages (0=": License Agreement",1=": Installation Options",2=": Installation Directory", 3=": Installing Files", 4=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
 
 \S2{auninstallbuttontext} UninstallButtonText
 
-\c [/LANG=lang_id] [button text]
+\c [/LANG=lang_id] button text
 
 Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also WriteUninstaller in \k{WriteUninstaller} (replaces UninstallEXEName).
 
@@ -260,7 +260,7 @@ Sets what the titlebars of the uninstaller will display. By default, it is 'Name
 
 \S2{auninstallicon} UninstallIcon
 
-\c path_to_icon.ico
+\c [path\]icon.ico
 
 Sets the icon of the uninstaller. This icon file \e{must} have the exact same structure as the installer icon file.
 
