@@ -329,32 +329,19 @@ int main(int argc, char **argv)
           }
           if (do_cd)
           {
-            char dirbuf[1024]="";
-            char *p;
-#ifdef _WIN32
-            GetFullPathName(sfile,sizeof(dirbuf),dirbuf,&p);
-            p=CharPrev(dirbuf,p);
-#else
-            getcwd(dirbuf,sizeof(dirbuf)-strlen(sfile)-2);
-            if (dirbuf[strlen(dirbuf)-1]!=PLATFORM_PATH_SEPARATOR_C)
-              strcat(dirbuf,PLATFORM_PATH_SEPARATOR_STR);
-            strcat(dirbuf,sfile);
-            p=strrchr(dirbuf,PLATFORM_PATH_SEPARATOR_C);
-#endif
-            if (!p) p=dirbuf;
-            *p=0;
-            if (dirbuf[0]) 
+            string dir = get_dir_name(get_full_path(sfile));
+            if (!dir.empty()) 
             {
               if (build.display_script) 
               {
-                fprintf(g_output,"Changing directory to: \"%s\"\n",dirbuf);
+                fprintf(g_output,"Changing directory to: \"%s\"\n",dir.c_str());
                 fflush(g_output);
               }
-              if (chdir(dirbuf))
+              if (chdir(dir.c_str()))
               {
                 if (build.display_errors)
                 {
-                  fprintf(g_output,"Error changing directory to \"%s\"\n",dirbuf);
+                  fprintf(g_output,"Error changing directory to \"%s\"\n",dir.c_str());
                   fflush(g_output);
                 }
                 return 1;

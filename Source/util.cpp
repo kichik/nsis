@@ -398,32 +398,6 @@ int wsprintf(char *s, const char *format, ...) {
   return res;
 }
 
-char *my_realpath(char *path)
-{
-#ifdef PATH_MAX
-  static char buffer[PATH_MAX];
-#else
-  int path_max = pathconf(path, _PC_PATH_MAX);
-  if (path_max <= 0)
-    path_max = 4096;
-  char *buffer = (char *) malloc(path_max);
-  if (!buffer)
-    return path;
-#endif
-  if (!realpath(path, buffer))
-    strcpy(buffer, path);
-  return buffer;
-}
-
-void my_free_realpath(char *path, char *buffer)
-{
-#ifndef PATH_MAX
-  if (buffer != path)
-    free(buffer);
-#endif
-}
-
-
 #define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
 
 char *my_convert(const char *path)
@@ -523,11 +497,30 @@ string get_full_path(const string &path) {
   assert(rc <= 1024); // path size is limited by MAX_PATH (260)
   assert(rc != 0); // rc==0 in case of error
   return string(real_path);
-#else
-  // TODO: inline my_{,free_}realpath
-  char *real_path = my_realpath(path.c_str());
-  string result(real_path);
-  my_free_realpath(real_path);
+#else//_WIN32
+#ifdef PATH_MAX
+  static char buffer[PATH_MAX];
+#else//PATH_MAX
+  int path_max = pathconf(path, _PC_PATH_MAX);
+  if (path_max <= 0)
+    path_max = 4096;
+  char *buffer = (char *) malloc(path_max);
+  if (!buffer)
+    return string(path);
+#endif//PATH_MAX
+  if (!realpath(path.c_str(), buffer))
+    strcpy(buffer, path.c_str());
+  string result(buffer);
+#ifndef PATH_MAX
+  free(buffer);
+#endif//!PATH_MAX
   return result;
 #endif//_WIN32
+}
+
+string get_dir_name(const string& path) {
+  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
+  if (last_separator_pos == string::npos)
+    return path;
+  return path.substr(0, last_separator_pos);
 }

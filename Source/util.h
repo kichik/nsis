@@ -45,13 +45,12 @@ size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
   (((x)&0x000000FF) << 24) )
 
 std::string get_full_path(const std::string &path);
+std::string get_dir_name(const std::string& path);
 
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
 int wsprintf(char *s, const char *format, ...);
-char *my_realpath(char *path);
-void my_free_realpath(char *path, char *buffer);
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
 inline size_t __iconv_adaptor

@@ -58,8 +58,8 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
     definedlist.del("__TIMESTAMP__");
   }
 
-  char timestampbuf[256] = "";
 #ifdef _WIN32
+  char timestampbuf[256] = "";
   char datebuf[128] = "";
   char timebuf[128] = "";
   WIN32_FIND_DATA fd;
@@ -83,13 +83,7 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
 #else
   struct stat st;
   if (!stat(filename, &st))
-  {
-    ctime_r(&st.st_mtime, timestampbuf);
-    char *p = timestampbuf + strlen(timestampbuf);
-    while (!*p || *p == '\n')
-      *p-- = 0;
-    definedlist.add("__TIMESTAMP__",timestampbuf);
-  }
+    definedlist.add("__TIMESTAMP__",ctime(&st.st_mtime));
 #endif
 
   return oldtimestamp;
