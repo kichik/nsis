@@ -395,13 +395,18 @@ void CDialogTemplate::ConvertToRTL() {
     }
     // Static
     else if (int(m_vItems[i]->szClass) == 0x82) {
-      if (m_vItems[i]->dwStyle & (SS_LEFT|SS_LEFTNOWORDWRAP)) addExStyle = true;
+      if (!(m_vItems[i]->dwStyle & (SS_CENTER|SS_RIGHT))) {
+        m_vItems[i]->dwStyle &= ~SS_LEFT;
+        m_vItems[i]->dwStyle &= ~SS_LEFTNOWORDWRAP;
+        m_vItems[i]->dwStyle |= SS_RIGHT;
+      }
     }
     else addExStyle = true;
     if (addExStyle)
 		  m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
 	}
+  m_dwExtStyle |= WS_EX_RIGHT;
 }
 
 // Saves the dialog in the form of DLGTEMPLATE[EX]
