@@ -1075,7 +1075,7 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
     }
     fprintf(fp, "<li>");
     fprintf(fp, "<a href=\"%s#%s\">", section->file->filename,section->fragment);
-    if ((section->para->type!=para_Heading&&section->para->type!=para_Appendix)||(section->para->kwtext&&!section->para->words)) {
+    if ((section->para->type!=para_Heading&&section->para->type!=para_Subsect)||(section->para->kwtext&&!section->para->words)) {
 	    xhtml_para(fp, section->para->kwtext);
         if (section->para->words)
             fprintf(fp, ": ");
