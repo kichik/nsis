@@ -223,7 +223,16 @@ void * NSISCALL mini_memcpy(void *out, const void *in, int len)
 
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
 {
-  return CreateFile(fn,da,FILE_SHARE_READ,NULL,cd,0,NULL);
+  int attr = GetFileAttributes(fn);
+  return CreateFile(
+    fn,
+    da,
+    FILE_SHARE_READ,
+    NULL,
+    cd,
+    attr == INVALID_FILE_ATTRIBUTES ? 0 : attr,
+    NULL
+  );
 }
 
 char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
@@ -241,7 +250,7 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
+void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
   HMODULE hLib=GetModuleHandle("kernel32.dll");
@@ -319,12 +328,12 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
             else dwRenameLinePos = dwFileSize;
           }
 
-          mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine,cchRenameLine);
+          mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
           dwFileSize += cchRenameLine;
 
           UnmapViewOfFile(pszWinInit);
 
-          fOk++;
+          //fOk++;
         }
         CloseHandle(hfilemap);
       }
@@ -333,7 +342,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
       CloseHandle(hfile);
     }
   }
-  return fOk;
+  //return fOk;
 }
 #endif
 
