@@ -198,12 +198,6 @@ Sets the icon of the installer. Every icon in the icon file will be included in 
 
 Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't affect the contents of the installer.
 
-\S2{aplugindir} PluginDir
-
-\c directory
-
-Causes the NSIS compiler to scan the given directory for Plugin DLLs.
-
 \S2{asetfont} SetFont
 
 \c font_face_name font_size
