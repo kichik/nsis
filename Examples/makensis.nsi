@@ -273,7 +273,7 @@ SectionEnd
 
 
 Section "Language DLL Source" SecContribLangDLLS
-  SectionIn 1 2
+  SectionIn 1
   SetOutPath $INSTDIR\Contrib\LangDLL
   File ..\Contrib\LangDLL\LangDLL.c
   File ..\Contrib\LangDLL\resource.h
@@ -339,7 +339,7 @@ Section "InstallOptions Source" SecContribIOS
 SectionEnd
 
 
-Section "NSIS-DL Source" SecSrcNSISDL
+Section "NSIS-DL Source" SecContribNSISDLS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\nsisdl.dsw
@@ -536,12 +536,19 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExecS} "Source code to plugin that executes DOS based programs and hides the output"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2ES} "Source code to Zip2Exe utility that converts zip files into an NSIS installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIO} "Plugin that lets you add user interface components to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDL} "Plugin that lets you create a web based installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrc} "Source code to NSIS and all related files"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcNSIS} "Source code to NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcContrib} "Source code to user contributed utilities"
