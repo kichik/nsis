@@ -10,26 +10,27 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by Vytautas Krivickas (Vytautas)
+# Updated by Danielius Scepanskis (Daan daniel@takas.lt) 2004.01.09
 # ^Branding
-Nullsoft Install System %s
+Nullsoft instaliavimo sistema %s
 # ^SetupCaption
-$(^Name) Idiegimas
+$(^Name) Ádiegimas
 # ^UninstallCaption
-$(^Name) Panaikinti
+$(^Name) Ðalinti
 # ^LicenseSubCaption
 : Naudojimo sutartis
 # ^ComponentsSubCaption
-: Idiegimo nustatymai
+: Ádiegimo nustatymai
 # ^DirSubCaption
-: Idiegimo katalogas
+: Ádiegimo katalogas
 # ^InstallingSubCaption
-: Diegiama
+: Ádiegiama
 # ^CompletedSubCaption
 : Baigta
 # ^UnComponentsSubCaption
-: Ištrinimo nustatymai
+: Iðtrinimo nustatymai
 # ^UnDirSubCaption
-: Ištrinimo katalogas
+: Iðtrinimo katalogas
 # ^ConfirmSubCaption
 : Patvirtinimas
 # ^UninstallingSubCaption
@@ -41,146 +42,146 @@ $(^Name) Panaikinti
 # ^NextBtn
 &Toliau >
 # ^AgreeBtn
-Aš &Sutinku
+Að &sutinku
 # ^AcceptBtn
-Aš &sutinku su naudojimo sutarties salygomis
+Að &sutinku su naudojimo sutarties sàlygomis
 # ^DontAcceptBtn
-Aš &nesutinku su naudojimo sutarties salygomis
+Að &nesutinku su naudojimo sutarties sàlygomis
 # ^InstallBtn
-&Idiegti
+&Ádiegti
 # ^UninstallBtn
 &Panaikinti
 # ^CancelBtn
 Nutraukti
 # ^CloseBtn
-&Uždaryti
+&Uþdaryti
 # ^BrowseBtn
 P&asirinkti...
 # ^ShowDetailsBtn
 Parodyti &detales
 # ^ClickNext
-Paspauskite Toliau
+Paspauskite toliau
 # ^ClickInstall
-Paspauskite Idiegti
+Paspauskite ádiegti
 # ^ClickUninstall
-Paspauskite Ištrinti
+Paspauskite iðtrinti
 # ^Name
 Vardas
 # ^Completed
 Baigta
 # ^LicenseText
-Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, spauskite Sutinku.
 # ^LicenseTextCB
-Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje.
 # ^LicenseTextRB
-Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+Praðome perskaityti sutartá prieð ádiegdami $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau.
 # ^UnLicenseText
-Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, spauskite Sutinku.
 # ^UnLicenseTextCB
-Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, padëkite varnelæ tam skirtame laukelyje.
 # ^UnLicenseTextRB
-Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+Praðome perskaityti sutartá prieð iðtrinant $(^NameDA). Jei jûs sutinkate su nurodytomis sàlygomis, pasirinkite pirmà pasirinkimà esantá þemiau.
 # ^Custom
 Kitoks
 # ^ComponentsText
-Padekite varneles laukeliuose komponentu kuriuos norite idiegti ir išimkite iš kitu.
+Padëkite varneles laukeliuose komponentø kuriuos norite ádiegti ir nuimkite nuo kuriø nenorite ádiegti.
 # ^ComponentsSubText1
-Pasirinkite idiegimo tipa:
+Pasirinkite ádiegimo tipà:
 # ^ComponentsSubText2_NoInstTypes
-Pasirinkite komponentus, kuriuos idiegti:
+Pasirinkite komponentus, kuriuos ádiegti:
 # ^ComponentsSubText2
-Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite idiegti:
+Arba, pasirinkite neprivalomus komponentus, kuriuos jûs norite ádiegti:
 # ^UnComponentsText
-Padekite varneles laukeliuose komponentu kuriuos norite ištraukti ir išimkite iš kitu.
+Padëkite varneles laukeliuose komponentø kuriuos norite paðalinti ir nuimkite nuo kuriø nenorite paðalinti.
 # ^UnComponentsSubText1
-Pasirinkite ištraukimo tipa:
+Pasirinkite ðalinimo tipà:
 # ^UnComponentsSubText2_NoInstTypes
-Pasirinkite komponentus, kuriuos ištraukti:
+Pasirinkite komponentus, kuriuos ðalinti:
 # ^UnComponentsSubText2
-Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite ištraukti:
+Arba, pasirinkite neprivalomus komponentus, kuriuos jûs norite paðalinti:
 # ^DirText
-Idiegimas dabar idiegs $(^NameDA) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Ádiegimas dabar ádiegs $(^NameDA) ðiame kataloge. Jeigu norite pakeisti ðá katalogà, paspauskite Pasirinkti
 # ^DirSubText
-Idiegimo katalogas
+Ádiegimo katalogas
 # ^DirBrowseText
-Pasirinkite kataloga, kur idiegti $(^NameDA):
+Pasirinkite katalogà, kur ádiegti $(^NameDA):
 # ^UnDirText
-Idiegimas dabar ištrauks $(^NameDA) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Ádiegimas dabar paðalins $(^NameDA) ið ðio katalogo. Jeigu norite pakeisti ðá katalogà paspauskite Pasirinkti
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Pasirinkite kataloga iš kurio ištrinti $(^NameDA):
+Pasirinkite katalogà ið kurio paðalinti $(^NameDA):
 # ^SpaceAvailable
 Yra vietos: 
 # ^SpaceRequired
 Reikia vietos: 
 # ^UninstallingText
-Idiegimas dabar ištrauks $(^NameDA).
-$(^NameDA) dabar bus ištrauktas iš šio katalogo.
+Idiegimas dabar paðalins $(^NameDA).
+$(^NameDA) dabar bus paðalintas ið ðio katalogo.
 # ^UninstallingSubText
-Trinama iš:
+Trinama ið:
 # ^FileError
-Klaida atidarant byla irašymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti idiegima,\r\nPakartoti, jei norite pabandyti dar karta irašyti byla, ar\r\nIgnoruoti, jei norite praleisti šia byla
+Klaida atidarant failà áraðymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti ádiegimà,\r\nPakartoti, jei norite pabandyti dar kartà iraðyti failà, ar\r\nIgnoruoti, jei norite praleisti ðá failà
 # ^FileError_NoIgnore
-Klaida atidarant byla irašymui: \r\n\t"$0"\r\nPaspauskite Pakartoti, jei norite pabandyti dar karta irašyti byla, ar\r\nNutraukti, jei norite nutraukti idiegima.
+Klaida atidarant failà áraðymui: \r\n\t"$0"\r\nPaspauskite Pakartoti, jei norite pabandyti dar kartà áraðyti failà, ar\r\nNutraukti, jei norite nutraukti ádiegimà.
 # ^CantWrite
-Negalima irašyti: 
+"Negalima áraðyti: "
 # ^CopyFailed
 Kopijavimas nepavyko
 # ^CopyTo
-Kopijuoti i 
+Kopijuoti á 
 # ^Registering
-"Užregistruojama: "
+"Uþregistruojama: "
 # ^Unregistering
-"Išregistruojama: "
+"Iðregistruojama: "
 # ^SymbolNotFound
 Nerastas simbolis: 
 # ^CouldNotLoad
 Negalima paleisti: 
 # ^CreateFolder
-Sukurti kataloga: 
+Sukurti katalogà: 
 # ^CreateShortcut
-Sukurti nuoroda: 
+Sukurti nuorodà: 
 # ^CreatedUninstaller
-Sukurti panaikinimo pragrama:
+Sukurti panaikinimo programà:
 # ^Delete
-Ištrinti byla: 
+Iðtrinti failà: 
 # ^DeleteOnReboot
-Ištrinti perkraunant: 
+"Iðtrinti perkraunant: "
 # ^ErrorCreatingShortcut
-Klaida kuriant nuoroda: 
+"Klaida kuriant nuorodà: "
 # ^ErrorCreating
-Klaida kuriant: 
+"Klaida kuriant: "
 # ^ErrorDecompressing
-Klaida išskleidžiant duomenis! Sugadinta idiegimo byla?
+Klaida iðskleidþiant duomenis! Sugadintas ádiegimo failas?
 # ^ErrorRegistering
-Klaida užregistruojant DLL
+Klaida uþregistruojant DLL
 # ^ExecShell
-ExecShell: 
+"ExecShell: "
 # ^Exec
-Paleisti: 
+"Paleisti: "
 # ^Extract
-Išskleisti: 
+"Iðskleisti: "
 # ^ErrorWriting
-Išskleisti: klaida irašant i byla
+Iðskleisti: klaida áraðant á failà
 # ^InvalidOpcode
-Idiegimo byla sugadinta: neteisingas opkodas
+Ádiegimo failas sugadintas: neteisingas opkodas
 # ^NoOLE
-Nera OLE del: 
+"Nëra OLE dël: "
 # ^OutputFolder
-Išeinantis katalogas: 
+"Iðeinantis katalogas: "
 # ^RemoveFolder
-Panaikinti kataloga: 
+"Panaikinti katalogà: "
 # ^RenameOnReboot
-Pervardinti perkraunant: 
+"Pervardinti perkraunant: "
 # ^Rename
 "Pervardinti: "
 # ^Skipped
 "Praleista: "
 # ^CopyDetails
-Kopijuoti detales i atminti
+Kopijuoti detales á atmintá
 # ^LogInstall
-Irašyti idiegimo detales
+Áraðyti ádiegimo detales
 # ^Byte
 B
 # ^Kilo
