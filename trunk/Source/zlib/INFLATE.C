@@ -15,14 +15,12 @@
 #include "infcodes.h"
 #include "infutil.h"
 
-int ZEXPORT inflateInit(z_streamp z)
+void inflateInit(z_streamp z)
 {
   z->blocks.end = z->blocks.window + (1 << DEF_WBITS);
   z->blocks.mode = TYPE;
 
   inflateReset(z);
-
-  return Z_OK;
 }
 
 
