@@ -78,6 +78,10 @@ The quick launch folder for IE4 active desktop and above. If quick launch is not
 
 The decimal HWND of the parent window.
 
+\e{$PLUGINSDIR}
+
+The path to a temporary folder created upon the first usage of a plugin or a call to InitPluginsDir (See \k{initpluginsdir}). This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for InstallOptions, bitmaps for the splash plugin, or any other file that a plugin needs to work.
+
 \e{$$}
 
 Use to represent $.
