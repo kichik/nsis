@@ -42,6 +42,54 @@
 	Pop $0
 !macroend
 
+# macros for mutually exclusive section selection
+# written by Tim Gallagher
+
+#### usage example:
+
+# Function .onSelChange
+# !insertmacro StartRadioButtons
+# !insertmacro RadioButton ${sec1}
+# !insertmacro RadioButton ${sec2}
+# !insertmacro RadioButton ${sec3}
+# !insertmacro EndRadioButtons
+# FunctionEnd
+
+# Function .onInit
+# !insertmacro UnselectSection ${sec1}
+# !insertmacro UnselectSection ${sec2}
+# !insertmacro UnselectSection ${sec3}
+# FunctionEnd
+
+# starts the Radio Button Block
+!macro StartRadioButtons
+	Push $0
+	SectionGetFlags $1 $0
+	IntOp $0 $0 & ${SECTION_OFF}
+	SectionSetFlags $1 $0
+
+	Push $2
+	StrCpy $2 $1
+!macroend
+
+!macro RadioButton SECTION_NAME
+  SectionGetFlags ${SECTION_NAME} $0
+	IntOp $0 $0 & ${SF_SELECTED}
+	IntCmp $0 ${SF_SELECTED} 0 +2 +2
+		StrCpy $1 ${SECTION_NAME}
+!macroend
+
+# ends the radio button block
+!macro EndRadioButtons
+	StrCmp $2 $1 0 +4 ; selection hasn't changed
+		SectionGetFlags $1 $0
+		IntOp $0 $0 | ${SF_SELECTED}
+		SectionSetFlags $1 $0
+
+	Pop $2
+	Pop $0
+!macroend
+
 ; For details about SetSectionInInstType and ClearSectionInInstType, see
 ; http://nsis.sourceforge.net/archive/nsisweb.php?page=287
 
