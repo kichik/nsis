@@ -70,47 +70,20 @@ PostBuild_Cmds=bin2h Release-zlib\exehead_zlib.exe Release-zlib\exehead_zlib.h z
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\zlib\Infblock.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Infcodes.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Inftrees.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Infutil.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\zlib\Zconf.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\zlib\Zlib.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\zlib\Zutil.h
+# End Source File
 # End Group
 # Begin Source File
 
 SOURCE=..\zlib\INFBLOCK.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFCODES.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFTREES.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFUTIL.C
 # ADD CPP /Gz
 # End Source File
 # End Group
