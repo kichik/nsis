@@ -218,6 +218,8 @@ Displays a MessageBox containing the text "messagebox_text". mb_option_list must
 
 \b \e{MB_RIGHT} - Right align text
 
+\b \e{MB_RTLREADING} - RTL reading order
+
 \b \e{MB_DEFBUTTON1} - Button 1 is default
 
 \b \e{MB_DEFBUTTON2} - Button 2 is default
