@@ -1,5 +1,16 @@
 \A{history} Release History
 
+\e{v2.0b1}
+
+\b UI changes: Added minimize box, increased size of component page textarea
+
+\b Win9x rename on reboot now also works when the destination file does not exist
+
+\b Updated and new translations
+
+\b Minor bugfixes
+
+
 \e{v2.0b0}
 
 \b New paging system
