@@ -2,6 +2,8 @@
 
 \e{v2.0b0}
 
+\b Accelerator keys
+
 \b New version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
 
 \b Unprocessed strings (such as InstType) can now use LangString/$(name) too
@@ -20,19 +22,19 @@
 
 \b Prevent multiple inclusion of !defines 
 
-\b [InstallOptions] Clicking [x] behaves the same as Cancel. 
+\b [InstallOptions] Clicking [x] behaves the same as Cancel.
 
-\b SendMessage can send strings (put STR: before a param) and supports timeouts 
+\b SendMessage can send strings (put STR: before a param) and supports timeouts
 
-\b Right mouse button "Copy to clipboard" context menu for the Details window 
+\b Right mouse button "Copy to clipboard" context menu for the Details window
 
-\b PluginDir is an attribute, not an instruction, corrected makensis.htm 
+\b PluginDir is an attribute, not an instruction, corrected makensis.htm
 
-\b Plugin syntax now requires dll name, e.g. dll::func not just func 
+\b Plugin syntax now requires dll name, e.g. dll::func not just func
 
-\b Licence text receives initial focus (page up & down work immediately) 
+\b Licence text receives initial focus (page up & down work immediately)
 
-\b Return key still works with initial focus licence text change ;) 
+\b Return key still works with initial focus licence text change ;)
 
 \b Made win9x move/delete on reboot support proper and function like on win2k
 
@@ -42,15 +44,17 @@
 
 \b Included makensisw 1.9 (lots of changes)
 
-\b New InstallOptions 
+\b New InstallOptions
 
-\b Added nsExec 
+\b Added nsExec
 
-\b Added UberSplash 
+\b Added advSplash
 
-\b A lot of new icons 
+\b A lot of new language files
 
-\b New docs format (WOOHA!) 
+\b A lot of new icons
+
+\b New docs format (WOOHA!)
 
 
 \e{v2.0a7}
