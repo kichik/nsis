@@ -18,7 +18,7 @@
 #include "../exdll/exdll.h"
 #undef popstring
 
-static int popstring(char *str)
+static int WINAPI popstring(char *str)
 {
   stack_t *th;
   if (!g_stacktop || !*g_stacktop) return 1;
@@ -46,10 +46,10 @@ typedef struct {
 #define stricmp(x,y) lstrcmpi(x,y)
 //#define abs(x) ((x) < 0 ? -(x) : (x))
 
-void *MALLOC(int len) { return (void*)GlobalAlloc(GPTR,len); }
-void FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
+void *WINAPI MALLOC(int len) { return (void*)GlobalAlloc(GPTR,len); }
+void WINAPI FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
 
-char *STRDUP(const char *c)
+char *WINAPI STRDUP(const char *c)
 {
   char *t=(char*)MALLOC(lstrlen(c)+1);
   return lstrcpy(t,c);
@@ -120,10 +120,10 @@ struct TableEntry {
   int   nValue;
 };
 
-int LookupToken(TableEntry*, char*);
-int LookupTokens(TableEntry*, char*);
+int WINAPI LookupToken(TableEntry*, char*);
+int WINAPI LookupTokens(TableEntry*, char*);
 
-void ConvertNewLines(char *str);
+void WINAPI ConvertNewLines(char *str);
 
 struct FieldType {
   char  *pszText;
@@ -185,7 +185,7 @@ int nRectId          = 0;
 int nNumFields       = 0;
 int g_done;
 
-int FindControlIdx(UINT id)
+int WINAPI FindControlIdx(UINT id)
 {
   for (int nIdx = 0; nIdx < nNumFields; nIdx++)
     if (id == pFields[nIdx].nControlID)
@@ -195,7 +195,7 @@ int FindControlIdx(UINT id)
 
 // array of HWNDs and window styles used to make the main NSIS controls invisible while this program runs.
 
-bool BrowseForFile(int nControlIdx) {
+bool WINAPI BrowseForFile(int nControlIdx) {
   OPENFILENAME ofn={0,};
   HWND hControl;
   BOOL bResult;
@@ -260,7 +260,7 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
 }
 
 
-bool BrowseForFolder(int nControlIdx) {
+bool WINAPI BrowseForFolder(int nControlIdx) {
   BROWSEINFO bi;
 
   bi.hwndOwner = hConfigWindow;
@@ -311,7 +311,7 @@ bool BrowseForFolder(int nControlIdx) {
   return true;
 }
 
-bool ValidateFields() {
+bool WINAPI ValidateFields() {
   int nIdx;
   int nLength;
 
@@ -337,7 +337,7 @@ bool ValidateFields() {
   return true;
 }
 
-bool SaveSettings(void) {
+bool WINAPI SaveSettings(void) {
   static char szField[25];
   int nIdx;
   HWND hwnd;
@@ -414,20 +414,24 @@ bool SaveSettings(void) {
             char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
             char *p1, *p2;
             for (p1=pszBuffer,p2=pszBuf2; *p1; p1++, p2++) {
-              if (*p1 == '\r') {
+              switch (*p1) {
+                case '\r':
                   *p2++ = '\\';
                   *p2 = 'r';
-              }
-              else if (*p1 == '\n') {
+                  break;
+                case '\n':
                   *p2++ = '\\';
                   *p2 = 'n';
-              }
-              else if (*p1 == '\t') {
+                  break;
+                case '\t':
                   *p2++ = '\\';
                   *p2 = 't';
-              }
-              else
+                  break;
+                case '\\':
+                  *p2++ = '\\';
+                default:
                   *p2=*p1;
+              }
             }
             *p2 = 0;
             nBufLen = nBufLen*2;
@@ -472,7 +476,7 @@ UINT WINAPI myGetProfileInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nDefault)
   return GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, pszFilename);
 }
 
-int ReadSettings(void) {
+int WINAPI ReadSettings(void) {
   static char szField[25];
   int nIdx, nCtrlIdx;
 
@@ -667,7 +671,7 @@ int ReadSettings(void) {
 }
 
 
-LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
+LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
 	switch (codeNotify) {
 		case BN_CLICKED:
       {
@@ -837,7 +841,7 @@ int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lPar
 
 int old_cancel_visible;
 
-int createCfgDlg()
+int WINAPI createCfgDlg()
 {
   UINT nAddMsg, nFindMsg, nSetSelMsg;
 
@@ -1228,7 +1232,7 @@ int createCfgDlg()
   return 0;
 }
 
-void showCfgDlg()
+void WINAPI showCfgDlg()
 {
   lpWndProcOld = (void *) SetWindowLong(hMainWindow,DWL_DLGPROC,(long)ParentWndProc);
 
@@ -1344,7 +1348,7 @@ extern "C" BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call
 }
 
 
-int LookupToken(TableEntry* psTable_, char* pszToken_)
+int WINAPI LookupToken(TableEntry* psTable_, char* pszToken_)
 {
   for (int i = 0; psTable_[i].pszName; i++)
     if (!stricmp(pszToken_, psTable_[i].pszName))
@@ -1352,7 +1356,7 @@ int LookupToken(TableEntry* psTable_, char* pszToken_)
   return 0;
 }
 
-int LookupTokens(TableEntry* psTable_, char* pszTokens_)
+int WINAPI LookupTokens(TableEntry* psTable_, char* pszTokens_)
 {
   int n = 0;
   char *pszStart = pszTokens_;
@@ -1373,7 +1377,7 @@ int LookupTokens(TableEntry* psTable_, char* pszTokens_)
   return n;
 }
 
-void ConvertNewLines(char *str) {
+void WINAPI ConvertNewLines(char *str) {
   char *p1, *p2;
   if (!str) return;
   for (p1=p2=str; *p1; p1++, p2++) {
