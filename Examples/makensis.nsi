@@ -4,10 +4,10 @@
 !define VER_MAJOR 2
 !define VER_MINOR 0
 !define VER_REVISION 0
-!define VER_BUILD 17
+!define VER_BUILD 18
 
-!define VER_FILE "20rc4"
-!define VER_DISPLAY "2.0 release candidate 4"
+!define VER_FILE "20"
+!define VER_DISPLAY "2.0"
 
 ;--------------------------------
 ;Compile CVS Data Setup
@@ -47,12 +47,13 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 !define MUI_ABORTWARNING
 
 !define MUI_HEADERIMAGE
-!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nullsoft.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nsis.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
 ;Pages
-!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System), the Windows installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n$_CLICK"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to the NSIS ${VER_DISPLAY} Setup Wizard"
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System) ${VER_DISPLAY}, the next generation of the Windows installer and uninstaller system that doesn't suck and isn't huge.\r\n\r\nNSIS 2 includes a new Modern User Interface, LZMA compression, support for multiple languages and an easy plug-in system.\r\n\r\n$_CLICK"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\license.txt"
@@ -251,13 +252,17 @@ Section "Modern User Interface" SecInterfacesModernUI
 
   SetOutPath "$INSTDIR\Contrib\Modern UI"
   File "..\Contrib\Modern UI\System.nsh"
-  File "..\Contrib\Modern UI\Readme.gif"
   File "..\Contrib\Modern UI\Readme.html"
   File "..\Contrib\Modern UI\Changelog.txt"
-  File "..\Contrib\Modern UI\Screenshot.png"
-  File "..\Contrib\Modern UI\Screenshot2.png"
   File "..\Contrib\Modern UI\License.txt"
   File "..\Contrib\Modern UI\ioSpecial.ini"
+  
+  SetOutPath "$INSTDIR\Contrib\Modern UI\images"
+  File "..\Contrib\Modern UI\images\header.gif"
+  File "..\Contrib\Modern UI\images\screen1.png"
+  File "..\Contrib\Modern UI\images\screen2.png"
+  File "..\Contrib\Modern UI\images\open.gif"
+  File "..\Contrib\Modern UI\images\closed.gif"
 
   SetOutPath $INSTDIR\Contrib\UIs
   File "..\Contrib\UIs\modern.exe"
