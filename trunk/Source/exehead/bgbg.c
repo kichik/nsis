@@ -29,7 +29,11 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc=BeginPaint(hwnd,&ps);
         RECT r;
+        LOGBRUSH lh;
         int ry;
+
+        lh.lbStyle = BS_SOLID;
+
         GetClientRect(hwnd,&r);
         // this portion by Drew Davidson, drewdavidson@mindspring.com
         ry=r.bottom;
@@ -42,7 +46,8 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           rv = (GetRValue(c2) * r.top + GetRValue(c1) * (ry-r.top)) / ry;
           gv = (GetGValue(c2) * r.top + GetGValue(c1) * (ry-r.top)) / ry;
           bv = (GetBValue(c2) * r.top + GetBValue(c1) * (ry-r.top)) / ry;
-          brush = CreateSolidBrush(RGB(rv,gv,bv));
+          lh.lbColor = RGB(rv,gv,bv);
+          brush = CreateBrushIndirect(&lh);
           // note that we don't need to do "SelectObject(hdc, brush)"
           // because FillRect lets us specify the brush as a parameter.
           FillRect(hdc, &r, brush);
@@ -53,18 +58,31 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         if (header->bg_textcolor != -1)
         {
-          HFONT newFont, oldFont;
-          newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
+          HFONT oldFont;
+          HFONT newFont = CreateFont(
+            40,
+            0,
+            0,
+            0,
+            FW_BOLD,
+            TRUE,
+            FALSE,
+            FALSE,
+            DEFAULT_CHARSET,
+            OUT_DEFAULT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            DEFAULT_QUALITY,
+            DEFAULT_PITCH,
+            "Garamond"
+          );
           if (newFont)
           {
-            static char buf[256];
             r.left=16;
             r.top=8;
-            my_GetWindowText(hwnd,buf,sizeof(buf));
             SetBkMode(hdc,TRANSPARENT);
             SetTextColor(hdc,header->bg_textcolor);
             oldFont = SelectObject(hdc,newFont);
-            DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
+            DrawText(hdc,g_caption,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
             SelectObject(hdc,oldFont);
             DeleteObject(newFont);
           }

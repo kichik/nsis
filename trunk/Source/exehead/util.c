@@ -58,10 +58,10 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
-BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
+/*BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
 {
   return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);
-}
+}*/
 
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
 {

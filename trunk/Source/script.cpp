@@ -3573,18 +3573,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!strcmpi(line.gettoken_str(a+1),"transparent")) {
           c.flags|=CC_BKB;
-          c.bk.lbStyle=BS_NULL;
+          c.lbStyle=BS_NULL;
           c.bkmode=TRANSPARENT;
         }
         else {
           p=line.gettoken_str(a+1);
           if (*p) {
             int v=strtoul(p,&p,16);
-            c.bk.lbColor=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+            c.bkc=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
             c.flags|=CC_BK|CC_BKB;
           }
 
-          c.bk.lbStyle=BS_SOLID;
+          c.lbStyle=BS_SOLID;
           c.bkmode=OPAQUE;
         }
 
@@ -3599,10 +3599,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (a == 3)
       {
         c.flags|=CC_BK|CC_BKB;
-        c.bk.lbStyle=BS_NULL;
+        c.lbStyle=BS_NULL;
         if (!*line.gettoken_str(a))
         {
-          c.bk.lbColor=COLOR_BTNFACE;
+          c.bkc=COLOR_BTNFACE;
           c.flags|=CC_BK_SYS;
         }
         c.flags|=CC_TEXT;

@@ -739,16 +739,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETCTLCOLORS:
     {
       ctlcolors *c = (ctlcolors *)(g_blocks[NB_CTLCOLORS].offset + parm1);
-
-      if (c->flags & CC_TEXT_SYS)
-        c->text = GetSysColor(c->text);
-      if (c->flags & CC_BK_SYS)
-        c->bk.lbColor = GetSysColor(c->bk.lbColor);
-      if (c->flags & CC_BKB)
-        c->bkb = CreateBrushIndirect(&c->bk);
-
-      c->flags &= ~(CC_BK_SYS|CC_TEXT_SYS|CC_BKB);
-
       SetWindowLong((HWND) GetIntFromParm(0), GWL_USERDATA, (long) c);
     }
     break;
