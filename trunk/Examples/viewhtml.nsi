@@ -24,7 +24,12 @@ Section ""
   GetTempFileName $R0
   
   ; Extract file
-  File /oname=$R0 "..\Docs\Chapter1.html"
+  ; Lets skip this one, it's not built to be showin in IE
+  ; File /oname=$R0 "..\Menu\compiler.html"
+  ; and write our own! :)
+  FileOpen $0 $R0 "w"
+  FileWrite $0 "<HTML><BODY><H1>HTML page for viewhtml.nsi</H1></BODY></HTML>"
+  FileClose $0
   
   ; View file
   ExecWait '"$PROGRAMFILES\Internet Explorer\iexplore.exe" "$R0"'
