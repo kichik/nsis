@@ -17,7 +17,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONTSIZE_TITLE "9"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 $(^Name) 安裝精靈"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "這將會在你的電腦，安裝 $(^Name) 。\r\n\r\n在開始安裝之前，建議先關閉其他所有應用程式。這將允許\「安裝程式」更新指定的系統檔案，而不需要重新啟動你的電腦。\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "這將會在你的電腦，安裝 $(^Name) 。\r\n\r\n在開始安裝之前，建議先關閉其他所有應用程式。這將允許\「安裝程式」更新指定的系統檔案，而不需要重新啟動你的電腦。\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授權協議"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安裝 $(^Name) 之前，請檢閱授權條款。"

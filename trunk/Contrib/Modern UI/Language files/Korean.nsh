@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Korean"  ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "$(^Name) 설치 마법사에 오신 것을 환영합니다."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "이 마법사는 당신의 컴퓨터에 $(^Name)(을)를 설치할 것입니다.\r\n\r\n설치를 시작하기 전에 모든 프로그램을 종료해주시기 바랍니다. 프로그램을 종료하게 되면 시스템을 재부팅 하지 않고서도 특정한 시스템 파일을 수정할 수 있기 때문입니다.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "이 마법사는 당신의 컴퓨터에 $(^Name)(을)를 설치할 것입니다.\r\n\r\n설치를 시작하기 전에 모든 프로그램을 종료해주시기 바랍니다. 프로그램을 종료하게 되면 시스템을 재부팅 하지 않고서도 특정한 시스템 파일을 수정할 수 있기 때문입니다.\r\n\r\n$_CLICK"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "사용 계약 동의"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "$(^Name)(을)를 설치하시기 전에 사용 계약 내용을 살펴보시기 바랍니다."

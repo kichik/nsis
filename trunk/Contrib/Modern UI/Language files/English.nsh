@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "English" ;Name of the language in the language itself
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Welcome to the $(^Name) Setup Wizard"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of $(^Name).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will allow Setup to update certain system files without rebooting your computer.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of $(^Name).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will allow Setup to update certain system files without rebooting your computer.\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "License Agreement"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Please review the license terms before installing $(^Name)."

@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Russian"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Добро пожаловать в мастер установки $(^Name)"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Эта программа установит $(^Name) на Ваш компьютер.\r\n\r\nПеред продолжением установки, рекомендуется закрыть все запущенные приложения. Это позволит программе установки обновить системные файлы без перезагрузки.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Эта программа установит $(^Name) на Ваш компьютер.\r\n\r\nПеред продолжением установки, рекомендуется закрыть все запущенные приложения. Это позволит программе установки обновить системные файлы без перезагрузки.\r\n\r\n$_CLICK"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лицензионное соглашение"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Прочтите условия лицензионного соглашения перед установкой $(^Name)."

@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Slovensky" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi inštalácie programu $(^Name)"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chystáte sa nainštalova $(^Name) na svoj poèítaè.\r\n\r\nPred zaèiatkom inštalácie je odporúèané zavrie všetky ostatné aplikácie. Tımto umoníte inštalátoru aktualizova prípadné systémové súbory bez nutnosti reštartova systém.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chystáte sa nainštalova $(^Name) na svoj poèítaè.\r\n\r\nPred zaèiatkom inštalácie je odporúèané zavrie všetky ostatné aplikácie. Tımto umoníte inštalátoru aktualizova prípadné systémové súbory bez nutnosti reštartova systém.\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenèná zmluva"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Pred inštaláciou programu $(^Name) si prosím preštudujte licenèné podmienky."

@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Português (do Brasil)" ;Name of the language in the language itself
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do $(^Name)"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Este assistente te guiará durante a instalação do $(^Name).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Este assistente te guiará durante a instalação do $(^Name).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Contrato de Licença"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o $(^Name)."
