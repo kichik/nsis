@@ -1199,20 +1199,6 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   return PS_OK;
 }
 
-int CEXEBuild::make_sure_not_in_secorfunc(const char *str, int page_ok/*=0*/)
-{
-  if (build_cursection)
-  {
-    ERROR_MSG("Error: command %s not valid in %s\n",str,build_cursection_isfunc?"function":"section");
-    return PS_ERROR;
-  }
-  if (cur_page && !page_ok) {
-    ERROR_MSG("Error: command %s not valid in PageEx\n",str);
-    return PS_ERROR;
-  }
-  return PS_OK;
-}
-
 int CEXEBuild::add_entry(const entry *ent)
 {
   if (!build_cursection && !uninstall_mode)
