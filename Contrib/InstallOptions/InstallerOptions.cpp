@@ -1329,17 +1329,7 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
   showCfgDlg();
 }
 
-#ifdef _DEBUG
-#ifndef DEBUG
-#define DEBUG
-#endif
-#endif
-
-#ifdef DEBUG
 extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
-#else
-extern "C" BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
-#endif
 {
   m_hInstance=(HINSTANCE) hInst;
   if (ul_reason_for_call == DLL_THREAD_DETACH || ul_reason_for_call == DLL_PROCESS_DETACH)

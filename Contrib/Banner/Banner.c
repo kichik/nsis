@@ -149,7 +149,7 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
     Sleep(25);
 }
 
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   hInstance = hInst;
   if (hwBanner && ul_reason_for_call == DLL_PROCESS_DETACH)

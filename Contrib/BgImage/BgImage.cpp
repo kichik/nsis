@@ -619,7 +619,7 @@ int myatoi(char *s)
   return (int)v;
 }
 
-BOOL WINAPI _DllMainCRTStartup(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
+BOOL WINAPI DllMain(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   g_hInstance=hInst;
   switch (ul_reason_for_call) {
     case DLL_PROCESS_ATTACH:
