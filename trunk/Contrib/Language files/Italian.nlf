@@ -39,6 +39,7 @@ Spazio disponibile :
 Spazio necessario : 
 Rimozione da :
 Errore nell'apertura del file in fase di scrittura: \r\n\t"$0"\r\nClicca su Annulla per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
+Errore nell'apertura del file in fase di scrittura: \r\n\t"$0"\r\nClicca su Riprova per riprovare a scrivere il file, oppure\r\nsu Annulla per sospendere l'installazione
 Scrittura impossibile : 
 Copia fallita
 Copia in 
