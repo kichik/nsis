@@ -131,6 +131,8 @@ with a custom user interface.</p>
 !define MUI_VERSION "1.0" ;Define your own software version here
 
 !define MUI_NAME "${NAME} ${VERSION}" ;Installer name</pre>
+<p class="text">Note: If you want to use a different name for different languages, undef these
+defines and define them again before you insert a language file.</p>
   <p class="subheader">3. Define which elements you are using</span></p>
   <p class="text">The Modern UI should know which things it should insert. Use the following defines:</p>
 <pre class="margin">!define MUI_LICENSEPAGE ;License page
@@ -203,7 +205,7 @@ SectionEnd
 <p class="header">Custom pages</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
 Install Options documentation</a> for info about creating Install Options INI Files.</p>
-<p class="subheader">Custom Page Commands</p>
+<p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer using Install Options,
 you should insert you own page commands to set the order of the pages and the names
 of the page functions and define MUI_CUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM
