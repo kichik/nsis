@@ -1,0 +1,13 @@
+File /oname=bitmap.bmp "C:\pathto\bitmap.bmp"
+File /oname=splash.exe "${NSISDIR}\Bin\UberSplash.exe"
+ExecWait '"$TEMP\splash.exe" bitmap.bmp FADEINSTEP MILLISECONDSHOW FADEOUTSTEP'
+
+FADEINSTEP and FADEOUTSTEP between 0 and 255
+
+supports magiclime and the alpha fading
+for a display and die.. [no fade]
+ExecWait '"$TEMP\splash.exe" bitmap.bmp 0 MILLISECONDSHOW 0'
+win95 and win98 just display for full length
+
+code by vince
+idea by snowchyld
