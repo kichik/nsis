@@ -194,7 +194,6 @@ Section "InstallOptions" SecContribIO
   File "..\contrib\installoptions\Install Options.html"
   File ..\contrib\installoptions\test.ini
   File ..\contrib\installoptions\test.nsi
-
 SectionEnd
 
 Section "NSIS-DL" SecContribNSISDL
@@ -203,7 +202,6 @@ Section "NSIS-DL" SecContribNSISDL
   File ..\Plugins\nsisdl.dll
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\ReadMe.txt
-
 SectionEnd
 
 Section "System" SecContribSystem
@@ -218,6 +216,7 @@ Section "ShowWin" SecContribShowWin
   File ..\Plugins\ShowWin.dll
   SetOutPath $INSTDIR\contrib\ShowWin
   File ..\contrib\ShowWin\ShowWin.txt
+  File ..\contrib\ShowWin\ShowWin.nsi
 SectionEnd
 
 SubSectionEnd
@@ -361,11 +360,10 @@ Section "ShowWin Source" SecContribShowWinS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\System
   File ..\contrib\System\*.c
-  File ..\contrib\System\*.h
-  File ..\contrib\System\*.ncb
-  File ..\contrib\System\*.sln
-  File ..\contrib\System\*.txt
-  File ..\contrib\System\*.vcproj
+  File ..\contrib\System\*.dsp
+  File ..\contrib\System\*.dsw
+  File ..\contrib\System\ShowWin.txt
+  File ..\contrib\System\ShowWin.nsi
 SectionEnd
 
 
