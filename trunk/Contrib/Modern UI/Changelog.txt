@@ -1,7 +1,10 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.62b - March 2, 2003
+1.62b - March 6, 2003
 * New system for custom functions
+* New InstallOptions macro's that do not remove the return value from
+  the stack
+* Support for custom pages before the finish page
 * Renamed Start Menu page defines
 * 'Do not create shortcuts' checkbox can be removed
 * RTL support
