@@ -4,10 +4,10 @@
 !define VER_MAJOR 2
 !define VER_MINOR 0
 !define VER_REVISION 0
-!define VER_BUILD 16
+!define VER_BUILD 17
 
-!define VER_FILE "20rc3"
-!define VER_DISPLAY "2.0 release candidate 3"
+!define VER_FILE "20rc4"
+!define VER_DISPLAY "2.0 release candidate 4"
 
 ;--------------------------------
 ;Compile CVS Data Setup
