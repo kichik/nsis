@@ -2,7 +2,7 @@
 ;--------------------------------
 
 ; Original version Copyright (C) 2002-2003 Nathan Purciful.
-; Version for NSIS distribution Copyright (C) 2003-2004 Joost Verburg.
+; Version for NSIS distribution Copyright (C) 2003-2005 Joost Verburg.
 ;
 ; This software is provided 'as-is', without any express or implied
 ; warranty.  In no event will the authors be held liable for any 
