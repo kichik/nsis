@@ -466,6 +466,10 @@
 
   !insertmacro MUI_FUNCTIONS_GUIINIT
   
+  !ifdef MUI_ABORTWARNING
+    !insertmacro MUI_FUNCTIONS_ABORTWARNING
+  !endif
+  
   !verbose 4
 
 !macroend
