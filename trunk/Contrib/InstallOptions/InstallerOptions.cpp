@@ -35,7 +35,9 @@
  *
  *   - Font is now taken from the main NSIS window (by Amir Szekely 22nd July 2002)
  *
- *   - Added CancelEnabled (by ORTIM)
+ *   - Added CancelEnabled (by ORTIM: 13-August-2002)
+ *   - Added CancelShow (by ORTIM: 13-August 2002)
+ *   - Added pixel transformation for widgets (by ORTIM: 14-August-2002)
  *
  *   - Added CancelConfirmCaption and CancelConfirmIcon (by Amir Szekely)
  *
@@ -199,7 +201,9 @@ char *pszBackButtonText = NULL;
 char *pszOldTitle   = NULL;
 unsigned int nCancelQuestionIcon = 0;
 BOOL bBackEnabled=FALSE;
-BOOL bCancelEnabled=TRUE;  // by ORTIM
+
+BOOL bCancelEnabled=TRUE;  // by ORTIM: 13-August-2002
+int  bCancelShow=1;        // by ORTIM: 13-August-2002
 
 FieldType *pFields   = NULL;
 int nNumFields       = 0;
@@ -519,7 +523,9 @@ bool ReadSettings(LPSTR pszFilename) {
   
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
-  bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 1, pszFilename);  // by ORTIM
+
+  bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 1, pszFilename);  // by ORTIM: 13-August-2002
+  bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 1, pszFilename);        // by ORTIM: 13-August-2002
   
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
@@ -809,9 +815,11 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   int old_back_visible=IsWindowVisible(GetDlgItem(hMainWindow,3));
   ShowWindow(GetDlgItem(hMainWindow,3),bBackEnabled?SW_SHOWNA:SW_HIDE);
 
-  int old_cancel_enabled=!EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled);  // by ORTIM
-  int old_cancel_visible=IsWindowVisible(GetDlgItem(hMainWindow,IDCANCEL));               // by ORTIM
-  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled?SW_SHOWNA:SW_HIDE);          // by ORTIM
+
+  int old_cancel_enabled=!EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled);  // by ORTIM: 13-August-2002
+  int old_cancel_visible=IsWindowVisible(GetDlgItem(hMainWindow,IDCANCEL));               // by ORTIM: 13-August-2002
+  EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled?SW_SHOWNA:SW_HIDE);		  // by ORTIM: 13-August-2002
+  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelShow?SW_SHOWNA:SW_HIDE);             // by ORTIM: 13-August-2002
 
 	lpWndProcOld = (void *) GetWindowLong(hMainWindow,GWL_WNDPROC);
 	SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
@@ -838,7 +846,8 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
     return;
   }
 
-  
+  // by ORTIM: 14-August-2002
+  DWORD dwBaseUnits = GetDialogBaseUnits();
 
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
     char szFieldClass[20];
@@ -913,19 +922,24 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
         continue;
     }
 
-	  pFields[nIdx].hwnd = CreateWindowEx(
-          dwExStyle,
-		      szFieldClass, 
-          title, 
-          dwStyle,
-		      pFields[nIdx].rect.left,
-          pFields[nIdx].rect.top,
-          pFields[nIdx].rect.right-pFields[nIdx].rect.left,
-          pFields[nIdx].rect.bottom-pFields[nIdx].rect.top,
-		      hConfigWindow,
-		      (HMENU)pFields[nIdx].nControlID, 
-		      m_hInstance, 
-		      NULL);
+    // by ORTIM: 14-August-2002
+    // transform the pixel sizes of the widget with dialog units
+    // used example code from MS SDK
+
+    pFields[nIdx].hwnd = CreateWindowEx(
+      dwExStyle,
+      szFieldClass,
+      title,
+      dwStyle,
+      ((pFields[nIdx].rect.left) * LOWORD(dwBaseUnits)) / 8,
+      ((pFields[nIdx].rect.top) * HIWORD(dwBaseUnits)) / 16,
+      ((pFields[nIdx].rect.right-pFields[nIdx].rect.left) * LOWORD(dwBaseUnits)) / 8,
+      ((pFields[nIdx].rect.bottom-pFields[nIdx].rect.top) * HIWORD(dwBaseUnits)) / 16,
+      hConfigWindow,
+      (HMENU)pFields[nIdx].nControlID,
+      m_hInstance,
+      NULL
+    );
 
     if (pFields[nIdx].hwnd) {
       // Changed by Amir Szekely 22nd July 2002
@@ -1010,8 +1024,8 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
 
   EnableWindow(GetDlgItem(hMainWindow,3),old_back_enabled);
 
-  EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_enabled);                  // by ORTIM
-  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM
+  EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_enabled);                  // by ORTIM: 13-August-2002
+  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM: 13-August-2002
 
   ShowWindow(GetDlgItem(hMainWindow,3),old_back_visible?SW_SHOWNA:SW_HIDE);
   if (pszTitle) SetWindowText(hMainWindow,old_title);
