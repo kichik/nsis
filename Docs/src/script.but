@@ -8,7 +8,7 @@ A NSIS Script File (.nsi) is just a text file with a series of commands.
 
 \b Non-comment lines are in the form of 'command [parameters]'
 
-\b To call a plugin, use 'plugin::command [parameters]'. For more info see \k{plugindlls}.
+\b To call a plugin, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plugin DLLs}.
 
 \b Anything after a ; or # that is not in a parameter (i.e. in quotes or part of another string) is treated as a comment. (i.e. "File myfile ; this is the file" would work)
 
