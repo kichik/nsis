@@ -1061,8 +1061,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_uninst.common.num_pages) {
           if (resolve_call_int("uninstall pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (p->id != NSIS_PAGE_CUSTOM)
-            if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
           p++;
           i++;
         }
@@ -1093,8 +1092,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_header.common.num_pages) {
           if (resolve_call_int("pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (p->id != NSIS_PAGE_CUSTOM)
-            if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
           p++;
           i++;
         }
@@ -1265,8 +1263,9 @@ int CEXEBuild::write_output(void)
       0,
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       -1,
-      -1
+      -1,
 #endif
+      0
     };
     int add_pages=!build_pages.getlen();
     int add_uninst_pages=!ubuild_pages.getlen();
@@ -1336,6 +1335,7 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_LICENSEPAGE
         if (license) {
           pg.id=NSIS_PAGE_LICENSE;
+          pg.caption=LANG_SUBCAPTION(0);
           build_pages.add(&pg,sizeof(page));
           build_header.common.num_pages++;
         }
@@ -1343,20 +1343,24 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
         if (selcom) {
           pg.id=NSIS_PAGE_SELCOM;
+          pg.caption=LANG_SUBCAPTION(1);
           build_pages.add(&pg,sizeof(page));
           build_header.common.num_pages++;
         }
 #endif
         if (dir) {
           pg.id=NSIS_PAGE_DIR;
+          pg.caption=LANG_SUBCAPTION(2);
           build_pages.add(&pg,sizeof(page));
           build_header.common.num_pages++;
         }
         instlog++;
         pg.id=NSIS_PAGE_INSTFILES;
+        pg.caption=LANG_SUBCAPTION(3);
         build_pages.add(&pg,sizeof(page));
         build_header.common.num_pages++;
         pg.id=NSIS_PAGE_COMPLETED;
+        pg.caption=LANG_SUBCAPTION(4);
         build_pages.add(&pg,sizeof(page));
         build_header.common.num_pages++;
       }
@@ -1422,14 +1426,17 @@ int CEXEBuild::write_output(void)
       else {
         if (uninst) {
           pg.id=NSIS_PAGE_UNINST;
+          pg.caption=LANG_SUBCAPTION(0);
           ubuild_pages.add(&pg,sizeof(page));
           build_uninst.common.num_pages++;
         }
         instlog++;
         pg.id=NSIS_PAGE_INSTFILES;
+        pg.caption=LANG_SUBCAPTION(1);
         ubuild_pages.add(&pg,sizeof(page));
         build_uninst.common.num_pages++;
         pg.id=NSIS_PAGE_COMPLETED;
+        pg.caption=LANG_SUBCAPTION(2);
         ubuild_pages.add(&pg,sizeof(page));
         build_uninst.common.num_pages++;
       }

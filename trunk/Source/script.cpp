@@ -7,8 +7,9 @@
 #include "exedata.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
-#include "exehead/resource.h"
 #include "lang.h"
+#include "exehead/lang.h"
+#include "exehead/resource.h"
 
 #ifndef FOF_NOERRORUI
 #define FOF_NOERRORUI 0x0400
@@ -525,8 +526,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           0,
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           -1,
-          -1
+          -1,
 #endif
+          0
         };
 
         if (line.getnumtokens()>2) {
@@ -561,6 +563,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           case 1:
 #ifdef NSIS_CONFIG_LICENSEPAGE
             p.id = NSIS_PAGE_LICENSE;
+            p.caption = LANG_SUBCAPTION(0);
             break;
 #else
             ERROR_MSG("Error: %s specified, NSIS_CONFIG_LICENSEPAGE not defined.\n", line.gettoken_str(1));
@@ -569,6 +572,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           case 2:
 #ifdef NSIS_CONFIG_COMPONENTPAGE
             p.id = NSIS_PAGE_SELCOM;
+            p.caption = LANG_SUBCAPTION(1);
             break;
 #else
             ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n", line.gettoken_str(1));
@@ -576,10 +580,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif
           case 3:
             p.id = NSIS_PAGE_DIR;
+            p.caption = LANG_SUBCAPTION(2);
             break;
           case 4:
             if (*build_last_page_define) definedlist.add(build_last_page_define,"");
             p.id = NSIS_PAGE_INSTFILES;
+            p.caption = LANG_SUBCAPTION(3);
             break;
           default:
             PRINTHELP();
@@ -597,12 +603,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         build_pages.add(&p,sizeof(page));
         build_header.common.num_pages++;
-        if (p.id==NSIS_PAGE_INSTFILES) {
+        if (p.id == NSIS_PAGE_INSTFILES) {
           p.id=NSIS_PAGE_COMPLETED;
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          p.prefunc=-1;
-          p.postfunc=-1;
+          p.prefunc = -1;
+          p.postfunc = -1;
 #endif
+          p.caption = LANG_SUBCAPTION(4);
           build_pages.add(&p,sizeof(page));
           build_header.common.num_pages++;
         }
@@ -618,8 +625,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           0,
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           -1,
-          -1
+          -1,
 #endif
+          0
         };
 
         if (line.getnumtokens()>2) {
@@ -665,10 +673,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             break;
           case 1:
             p.id = NSIS_PAGE_UNINST;
+            p.caption=LANG_SUBCAPTION(0);
             break;
           case 2:
             if (*ubuild_last_page_define) definedlist.add(ubuild_last_page_define,"");
             p.id = NSIS_PAGE_INSTFILES;
+            p.caption=LANG_SUBCAPTION(1);
             break;
           default:
             PRINTHELP();
@@ -692,6 +702,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           p.prefunc=-1;
           p.postfunc=-1;
 #endif
+          p.caption=LANG_SUBCAPTION(2);
           ubuild_pages.add(&p,sizeof(page));
           build_uninst.common.num_pages++;
         }
@@ -720,7 +731,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()!=a+1) PRINTHELP();
         if (IsSet(common.name,lang))
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_NAME,0,lang);
+        SetString(line.gettoken_str(a),SLANG_NAME,0,lang);
         SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(a));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -780,7 +791,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()==a) PRINTHELP();
         if (IsSet(installer.text,lang) && line.gettoken_str(a)[0])
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_DIR_TEXT,0,lang);
+        SetString(line.gettoken_str(a),SLANG_DIR_TEXT,0,lang);
         if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_DIR_SUBTEXT,0,lang);
         if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_BTN_BROWSE,0,lang);
         SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
@@ -799,7 +810,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()==a) PRINTHELP();
         if (IsSet(installer.componenttext,lang) && line.gettoken_str(a)[0])
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_COMP_TEXT,0,lang);
+        SetString(line.gettoken_str(a),SLANG_COMP_TEXT,0,lang);
         if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_COMP_SUBTEXT1,0,lang);
         if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_COMP_SUBTEXT2,0,lang);
         SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
@@ -863,7 +874,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()==a) PRINTHELP();
         if (IsSet(installer.licensetext,lang))
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_LICENSE_TEXT,0,lang);
+        SetString(line.gettoken_str(a),SLANG_LICENSE_TEXT,0,lang);
         if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_BTN_LICENSE,0,lang);
         SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }
@@ -901,7 +912,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         fclose(fp);
         data[datalen]=0;
-        SetString(data,LANG_LICENSE_DATA,0,lang);
+        SetString(data,SLANG_LICENSE_DATA,0,lang);
         SCRIPT_MSG("LicenseData: \"%s\"\n",line.gettoken_str(a));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1723,7 +1734,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()==a) PRINTHELP();
         if (IsSet(uninstall.uninstalltext,lang))
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_UNINST_TEXT,0,lang);
+        SetString(line.gettoken_str(a),SLANG_UNINST_TEXT,0,lang);
         if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_UNINST_SUBTEXT,0,lang);
         SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }

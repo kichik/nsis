@@ -159,32 +159,32 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     HANDLE_STRING_U(NLF_UCAPTION, ucommon.caption);
-    HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[0]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[1]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[2]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[0]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[1]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[2]);
     HANDLE_STRING_U(NLF_BTN_UNINSTALL, uninstall.uninstbutton);
     HANDLE_STRING_U(NLF_UNINST_SUBTEXT, uninstall.uninstalltext2);
 #endif
 
 #endif
 
-    HANDLE_STRING_C(LANG_NAME, common.name);
+    HANDLE_STRING_C(SLANG_NAME, common.name);
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    HANDLE_STRING_I(LANG_COMP_TEXT, installer.componenttext);
+    HANDLE_STRING_I(SLANG_COMP_TEXT, installer.componenttext);
 #endif
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
-    HANDLE_STRING_I(LANG_LICENSE_TEXT, installer.licensetext);
-    HANDLE_STRING_I(LANG_LICENSE_DATA, installer.licensedata);
+    HANDLE_STRING_I(SLANG_LICENSE_TEXT, installer.licensetext);
+    HANDLE_STRING_I(SLANG_LICENSE_DATA, installer.licensedata);
 #endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-    HANDLE_STRING_I(LANG_DIR_TEXT, installer.text);
+    HANDLE_STRING_I(SLANG_DIR_TEXT, installer.text);
 #endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    HANDLE_STRING_U(LANG_UNINST_TEXT, uninstall.uninstalltext);
+    HANDLE_STRING_U(SLANG_UNINST_TEXT, uninstall.uninstalltext);
 #endif
 
     default:
@@ -450,11 +450,11 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
       if (!table->ucommon.subcaptions[0])
-        table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
+        table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
       if (!table->ucommon.subcaptions[1])
-        table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
+        table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
       if (!table->ucommon.subcaptions[2])
-        table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
+        table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
       table->ucommon.branding=add_string_uninst(build_strlist.get() + table->common.branding,0);
       table->ucommon.backbutton=add_string_uninst(build_strlist.get() + table->common.backbutton,0);
       table->ucommon.nextbutton=add_string_uninst(build_strlist.get() + table->common.nextbutton,0);
