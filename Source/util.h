@@ -21,4 +21,9 @@ unsigned char* generate_uninstall_icon_data(char* filename);
 int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
 #endif NSIS_CONFIG_UNINSTALL_SUPPORT
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+// Returns dialog's raw data from a given loaded module
+BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename);
+#endif
+
 #endif //_UTIL_H_

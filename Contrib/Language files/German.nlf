@@ -33,7 +33,7 @@ Wählen Sie das Verzeichnis, in dem Sie %s installieren wollen:
 Vorhandener Speicher: 
 Benötigter Speicher: 
 Deinstallieren von:
-Fehler beim Öffnen der Datei: $\r$\n$\t"$0"$\r$\nKlicken Sie Abbruch, um die Installation abzubrechen,$\r$\nWiederholen, um das Schreiben der Datei erneut zu versuchen, oder$\r$\nIgnorieren, um die Datei zu überspringen
+Fehler beim Öffnen der Datei: \r\n\t"$0"\r\nKlicken Sie Abbruch, um die Installation abzubrechen,\r\nWiederholen, um das Schreiben der Datei erneut zu versuchen, oder\r\nIgnorieren, um die Datei zu überspringen
 Fehler beim Schreiben: 
 Kopieren fehlgeschlagen
 Kopieren nach 
