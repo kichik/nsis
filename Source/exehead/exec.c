@@ -789,10 +789,6 @@ static int ExecuteEntry(entry *entries, int pos)
         if (hres == S_FALSE || hres == S_OK)
         {
           HANDLE h;
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-          if (!parms[0]) lstrcpy(buf,plugin);
-          else
-#endif
           process_string_fromtab(buf,parms[0]);
           process_string_fromtab(buf2,parms[1]);
           
@@ -1390,8 +1386,6 @@ static int ExecuteEntry(entry *entries, int pos)
       // parms[0] = dll name
 
       if (!*plugins_temp_dir) lstrcpy(plugins_temp_dir,g_usrvars[0]);
-      lstrcpy(plugin,plugins_temp_dir);
-      process_string_fromtab(plugin+lstrlen(plugins_temp_dir),parms[0]);
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }

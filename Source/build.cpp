@@ -328,6 +328,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "WINDIR\0"        // 32
   "SYSDIR\0"        // 33
   "LANGUAGE\0"      // 34
+  "PLUGINSDIR\0"    // 35
   ;
 
   const char *p=in;
