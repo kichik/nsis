@@ -394,6 +394,22 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   notify_hwnd=0;
 #endif
 
+  bg_default_font.lfHeight=40;
+  bg_default_font.lfWidth=0;
+  bg_default_font.lfEscapement=0;
+  bg_default_font.lfOrientation=0;
+  bg_default_font.lfWeight=FW_BOLD;
+  bg_default_font.lfItalic=TRUE;
+  bg_default_font.lfUnderline=FALSE;
+  bg_default_font.lfStrikeOut=FALSE;
+  bg_default_font.lfCharSet=DEFAULT_CHARSET;
+  bg_default_font.lfOutPrecision=OUT_DEFAULT_PRECIS;
+  bg_default_font.lfClipPrecision=CLIP_DEFAULT_PRECIS;
+  bg_default_font.lfQuality=DEFAULT_QUALITY;
+  bg_default_font.lfPitchAndFamily=DEFAULT_PITCH;
+  strncpy(bg_default_font.lfFaceName,"Times New Roman",LF_FACESIZE);
+  memcpy(&bg_font,&bg_default_font,sizeof(LOGFONT));
+
   defcodepage_set=false;
   uDefCodePage=CP_ACP;
 
@@ -2150,6 +2166,14 @@ void CEXEBuild::PreperHeaders(IGrowBuf *hdrbuf)
   hdrbuf->add(cur_langtables->get(),cur_langtables->getlen());
   cur_header->blocks[NB_CTLCOLORS].offset = hdrbuf->getlen();
   hdrbuf->add(cur_ctlcolors->get(),cur_ctlcolors->getlen());
+#ifdef NSIS_SUPPORT_BGBG
+  if (cur_header->bg_color1 != -1)
+  {
+    bg_font.lfFaceName[LF_FACESIZE-1]=0;
+    cur_header->blocks[NB_BGFONT].offset = hdrbuf->getlen();
+    hdrbuf->add(&bg_font,sizeof(LOGFONT));
+  }
+#endif
 
   memcpy(hdrbuf->get(),cur_header,sizeof(header));
 }
