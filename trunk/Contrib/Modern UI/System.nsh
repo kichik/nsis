@@ -71,12 +71,12 @@
 !macroend
 
 !macro MUI_INTERFACE_ALLRES UI ICON UNICON CHECKS PROGRESSBAR FONT
-  !define MUI_UI ${UI}
-  !define MUI_ICON ${ICON}
-  !define MUI_UNICON ${ICON}
-  !define MUI_CHECKBITMAP ${CHECKS}
-  !define MUI_PROGRESSBAR ${PROGRESSBAR}
-  !define MUI_FONT ${FONT}
+  !define MUI_UI "${UI}"
+  !define MUI_ICON "${ICON}"
+  !define MUI_UNICON "${UNICON}"
+  !define MUI_CHECKBITMAP "${CHECKS}"
+  !define MUI_PROGRESSBAR "${PROGRESSBAR}"
+  !define MUI_FONT "${FONT}"
   !insertmacro MUI_INTERFACE
 !macroend
 
@@ -578,6 +578,7 @@
 
   !verbose 3
   
+  !insertmacro MUI_INTERFACE
   !insertmacro MUI_BASIC
   !insertmacro MUI_UNBASIC
   
@@ -589,7 +590,6 @@
 
   !verbose 3
 
-  !insertmacro MUI_INTERFACE
   !insertmacro MUI_PAGECOMMANDS
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
@@ -603,7 +603,6 @@
 
   !verbose 3
 
-  !insertmacro MUI_INTERFACE
   !insertmacro MUI_UNPAGECOMMANDS
   !insertmacro MUI_UNFUNCTIONS_PAGES
   !insertmacro MUI_UNFUNCTIONS_GUIINIT
