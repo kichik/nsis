@@ -76,7 +76,7 @@
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Bitte warten Sie, während $(^NameDA) entfernt wird."
 
   !define MUI_UNTEXT_FINISH_TITLE "Die Deinstallation ist vollständig"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "Die Deinstallation von $(^NameDA) wurde erfolgreich abgeschlossen."
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Die Deinstallation wurde erfolgreich abgeschlossen."
 
   !define MUI_UNTEXT_ABORT_TITLE "Abbruch der Deinstallation"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Die Deinstallation wurde nicht vollständig abgeschlossen."
