@@ -74,6 +74,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_INITDIALOG:
 		{
 			g_hwnd=hwndDlg;
+			DragAcceptFiles(g_hwnd,FALSE);
 			HICON hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON));
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
