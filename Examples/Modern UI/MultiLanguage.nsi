@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.65
+;NSIS Modern User Interface version 1.66
 ;Multilingual Example Script
 ;Written by Joost Verburg
 
@@ -24,17 +24,7 @@
   
   ;Get install folder from registry if available
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
-  
-;--------------------------------
-;Pages
 
-  !insertmacro MUI_PAGE_COMPONENTS
-  !insertmacro MUI_PAGE_DIRECTORY
-  !insertmacro MUI_PAGE_INSTFILES
-  
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
-  
 ;--------------------------------
 ;Modern UI Configuration
 
@@ -44,6 +34,16 @@
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !define MUI_ABORTWARNING
+
+;--------------------------------
+;Pages
+
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
 
 ;--------------------------------
 ;Languages
@@ -148,9 +148,9 @@ FunctionEnd
   LangString DESC_SecDummy ${LANG_CATALAN} "Test section: Catalan description"
   LangString DESC_SecDummy ${LANG_SERBIAN} "Test section: Serbian description"
 
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 ;--------------------------------
 ;Uninstaller Section
