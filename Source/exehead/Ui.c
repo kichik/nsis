@@ -391,6 +391,22 @@ int NSISCALL ui_doinstall(void)
     g_hwnd=NULL;
     ShowWindow(m_bgwnd, SW_SHOW);
 #endif//NSIS_SUPPORT_CODECALLBACKS
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+    { // load richedit DLL
+      WNDCLASS wc={0,};
+      if (!LoadLibrary("RichEd20.dll")) LoadLibrary("RichEd32.dll");
+
+      // make richedit20a point to RICHEDIT
+      if (!GetClassInfo(NULL,"RichEdit20A",&wc))
+      {
+        GetClassInfo(NULL,"RICHEDIT",&wc);
+        wc.lpszClassName = "RichEdit20A";
+        RegisterClass(&wc);
+      }
+    }
+#endif
+
     return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),m_bgwnd,DialogProc);
   }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
@@ -645,22 +661,10 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static HWND hwLicense;
-  static HINSTANCE hRichEditDLL, hRichEdit2DLL;
-  static int new_richedit;
   if (uMsg == WM_INITDIALOG)
   {
     EDITSTREAM es={(DWORD)STR(LANG_LICENSE_DATA),0,StreamLicense};
-    if (!hRichEdit2DLL) hRichEdit2DLL=LoadLibrary("RichEd20.dll");
-    if (!hRichEditDLL) hRichEditDLL=LoadLibrary("RichEd32.dll");
-    if (!hRichEdit2DLL) {
-      // fake richedit2
-      WNDCLASS phony_richedit2 = {0,};
-      phony_richedit2.lpszClassName = "RichEdit20A";
-      RegisterClass(&phony_richedit2);
-    }
-    else new_richedit=10; // edit2 is 1010 while edit1 is 1000
-    hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1+new_richedit);
-    ShowWindow(hwLicense, SW_SHOW);
+    hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK);
