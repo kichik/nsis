@@ -2,6 +2,8 @@
 
 In all of the below registry instructions use an empty string (just two quotes with nothing between them - "") as the key name to specify the default key which is shown as (Default) in regedit.exe.
 
+If a full path is not specified for any of the INI handling instructions, the Windows directory will be used.
+
 \S2{deleteinisec} DeleteINISec
 
 \c ini_filename section_name
