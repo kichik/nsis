@@ -267,7 +267,7 @@ int CEXEBuild::WriteStringTables() {
     if (build_userlangstrings.getnum())
       build_langtables.add(string_tables[i]->user_strings.get(), string_tables[i]->user_strings.getlen());
   }
-  build_header.common.str_tables_num = st_num;
+  build_header.common.language_tables_num = st_num;
   build_header.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(installer_strings) + (build_userlangstrings.getnum() * sizeof(int));
 
   for (i = 0; i < st_num; i++) {
@@ -277,7 +277,7 @@ int CEXEBuild::WriteStringTables() {
     if (ubuild_userlangstrings.getnum())
       ubuild_langtables.add(string_tables[i]->user_ustrings.get(), string_tables[i]->user_ustrings.getlen());
   }
-  build_uninst.common.str_tables_num = st_num;
+  build_uninst.common.language_tables_num = st_num;
   build_uninst.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(uninstall_strings) + (ubuild_userlangstrings.getnum() * sizeof(int));
 
   SCRIPT_MSG("Done!\n");

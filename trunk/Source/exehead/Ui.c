@@ -43,9 +43,7 @@ static char gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
 char *language_tables;
-common_strings *cur_common_strings_table;
-char *cur_install_strings_table; // installer_strings/uninstall_strings depending on installer type
-int *cur_user_strings_table;
+int *cur_language_table;
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
@@ -115,8 +113,8 @@ static int m_page=-1,m_abort;
 static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
 static int m_whichcfg;
 
-static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, langid_t lid) {
-  return my_SetDialogItemText(dlg,id+1000,STR(GetLangString(lid)));
+static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
+  return my_SetDialogItemText(dlg,id+1000,LANG_STR(lid));
 }
 
 #define SetDlgItemTextFromLang(dlg,id,lid) SetDlgItemTextFromLang_(dlg,(id)-1000,lid)
@@ -258,14 +256,7 @@ lang_again:
   for (i = 0; i < lang_num; i++) {
     language_table=language_tables+i*g_inst_cmnheader->language_table_size;
     if (!((lang ^ *(LANGID*)language_table) & lang_mask)) {
-      cur_common_strings_table=(common_strings*)(language_table+sizeof(LANGID));
-      cur_install_strings_table=(void*)(cur_common_strings_table+1);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (g_is_uninstaller)
-        cur_user_strings_table=(int*)((uninstall_strings*)cur_install_strings_table+1);
-      else
-#endif
-        cur_user_strings_table=(int*)((installer_strings*)cur_install_strings_table+1);
+      cur_language_table=(int*)(language_table+sizeof(LANGID));
       break;
     }
   }
@@ -279,7 +270,7 @@ lang_again:
 
   myitoa(state_language, *(LANGID*)language_table);
 
-  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_from_lang(g_caption,LANGID_CAPTION));
+  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_fromtab(g_caption,LANG_CAPTION));
 }
 
 int NSISCALL ui_doinstall(void)
@@ -352,7 +343,7 @@ int NSISCALL ui_doinstall(void)
   // Multilingual support
   {
     extern char *g_db_strtab;
-    lang_num=g_inst_cmnheader->str_tables_num;
+    lang_num=g_inst_cmnheader->language_tables_num;
     language_tables=(void*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
 
     myitoa(state_language, GetUserDefaultLangID());
@@ -482,32 +473,32 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       g_hwnd=hwndDlg;
       m_hwndOK=GetDlgItem(hwndDlg,IDOK);
       m_hwndCancel=GetDlgItem(hwndDlg,IDCANCEL);
-      SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANGID_BRANDING);
+      SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANG_BRANDING);
       SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
-      SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANGID_BTN_CANCEL);
+      SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (!g_is_uninstaller)
 #endif
-        SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANGID_BTN_BACK);
+        SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
       ShowWindow(hwndDlg,SW_SHOW);
     }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
     {
-      islp = (LANG_UNINST_TEXT>0);
+      islp = LANG_STR_TAB(LANG_UNINST_TEXT);
       iscp++;
     }
     else
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      islp = (LANG_LICENSE_DATA>0);
+      islp = LANG_STR_TAB(LANG_LICENSE_DATA);
 #endif//NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      iscp = (LANG_COMP_TEXT>0);
+      iscp = LANG_STR_TAB(LANG_COMP_TEXT);
 #endif//NSIS_CONFIG_COMPONENTPAGE
-      ispotentiallydp = (LANG_DIR_TEXT>0);
+      ispotentiallydp = LANG_STR_TAB(LANG_DIR_TEXT);
       if (ispotentiallydp &&
           !((g_inst_cmnheader->misc_flags&2) &&
             is_valid_instpath(state_install_directory)
@@ -553,19 +544,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     else if (!m_curwnd)
     {
       HWND hwndtmp;
-      langid_t langid =
-        (m_page == g_max_page) ? LANGID_BTN_CLOSE :
+      int str =
+        (m_page == g_max_page) ? LANG_BTN_CLOSE :
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        g_is_uninstaller ? LANGID_BTN_UNINST :
+        g_is_uninstaller ? LANG_BTN_UNINST :
 #endif
 #ifdef NSIS_CONFIG_LICENSEPAGE
-        (m_page == 0) ? LANGID_BTN_LICENSE :
+        (m_page == 0) ? LANG_BTN_LICENSE :
 #endif
-        (m_page == 2 || (m_page == 1 && !isdp)) ? LANGID_BTN_INSTALL :
-        LANGID_BTN_NEXT;
-      SetDlgItemTextFromLang(hwndDlg,IDOK,langid);
+        (m_page == 2 || (m_page == 1 && !isdp)) ? LANG_BTN_INSTALL :
+        LANG_BTN_NEXT;
+      SetDlgItemTextFromLang(hwndDlg,IDOK,str);
       mystrcpy(g_tmp,g_caption);
-      process_string_from_lang(g_tmp+mystrlen(g_tmp),LANGID_SUBCAPTION(m_page));
+      process_string_fromtab(g_tmp+mystrlen(g_tmp),LANG_SUBCAPTION(m_page));
 
       SetWindowText(hwndDlg,g_tmp);
 
@@ -664,14 +655,14 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   static HWND hwLicense;
   if (uMsg == WM_INITDIALOG)
   {
-    EDITSTREAM es={(DWORD)STR(LANG_LICENSE_DATA),0,StreamLicense};
+    EDITSTREAM es={(DWORD)LANG_STR(LANG_LICENSE_DATA),0,StreamLicense};
     hwLicense=GetUIItem(IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS); //XGE 8th September 2002 Or'd in ENM_KEYEVENTS
     dwRead=0;
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
-    SetUITextFromLang(IDC_INTROTEXT,LANGID_LICENSE_TEXT);
+    SetUITextFromLang(IDC_INTROTEXT,LANG_LICENSE_TEXT);
     //XGE 5th September 2002 - place the initial focus in the richedit control
     gDontFookWithFocus++;
     SetFocus(hwLicense);
@@ -728,8 +719,8 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 {
   if (uMsg == WM_INITDIALOG)
   {
-    SetUITextFromLang(IDC_INTROTEXT,LANGID_UNINST_TEXT);
-    SetUITextFromLang(IDC_UNINSTFROM,LANGID_UNINST_SUBTEXT);
+    SetUITextFromLang(IDC_INTROTEXT,LANG_UNINST_TEXT);
+    SetUITextFromLang(IDC_UNINSTFROM,LANG_UNINST_SUBTEXT);
     SetUITextNT(IDC_EDIT1,state_install_directory);
   }
   return HandleStaticBkColor();
@@ -769,9 +760,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 #endif
     SetUITextNT(IDC_DIR,state_install_directory);
-    SetUITextFromLang(IDC_INTROTEXT,LANGID_DIR_TEXT);
-    SetUITextFromLang(IDC_BROWSE,LANGID_BTN_BROWSE);
-    SetUITextFromLang(IDC_SELDIRTEXT,LANGID_DIR_SUBTEXT);
+    SetUITextFromLang(IDC_INTROTEXT,LANG_DIR_TEXT);
+    SetUITextFromLang(IDC_BROWSE,LANG_BTN_BROWSE);
+    SetUITextFromLang(IDC_SELDIRTEXT,LANG_DIR_SUBTEXT);
   }
   if (uMsg == WM_COMMAND)
   {
@@ -862,12 +853,12 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     // Added by Amir Szekely 24th July 2002
     // Allows 'SpaceTexts none'
-    if (LANG_SPACE_REQ) {
-      inttosizestr(total,mystrcpy(s,STR(LANG_SPACE_REQ)));
+    if (LANG_STR_TAB(LANG_SPACE_REQ)) {
+      inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ)));
       SetUITextNT(IDC_SPACEREQUIRED,s);
       if (available != -1)
       {
-        inttosizestr(available,mystrcpy(s,STR(LANG_SPACE_AVAIL)));
+        inttosizestr(available,mystrcpy(s,LANG_STR(LANG_SPACE_AVAIL)));
         SetUITextNT(IDC_SPACEAVAILABLE,s);
       }
       else
@@ -967,9 +958,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     hTreeItems=(HTREEITEM*)my_GlobalAlloc(sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
-    SetUITextFromLang(IDC_INTROTEXT,LANGID_COMP_TEXT);
-    SetUITextFromLang(IDC_TEXT1,LANGID_COMP_SUBTEXT(0));
-    SetUITextFromLang(IDC_TEXT2,LANGID_COMP_SUBTEXT(1));
+    SetUITextFromLang(IDC_INTROTEXT,LANG_COMP_TEXT);
+    SetUITextFromLang(IDC_TEXT1,LANG_COMP_SUBTEXT(0));
+    SetUITextFromLang(IDC_TEXT2,LANG_COMP_SUBTEXT(1));
 
     oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
 
@@ -993,7 +984,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetStringFromStringTab(g_inst_header->install_types_ptr[m_num_insttypes]));
       }
-      if (g_inst_header->no_custom_instmode_flag!=1) SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)STR(LANG_COMP_CUSTOM));
+      if (g_inst_header->no_custom_instmode_flag!=1) SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
       SendMessage(hwndCombo1,CB_SETCURSEL,m_whichcfg,0);
     }
 
@@ -1251,7 +1242,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       ShowWindow(GetUIItem(IDC_TEXT2),c);
     }
 
-    if (LANG_SPACE_REQ) {
+    if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       int x,total;
       char s[128];
       for (total=x=0; x < num_sections; x ++)
@@ -1259,7 +1250,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (g_inst_section[x].default_state&DFS_SET)
           total+=g_inst_section[x].size_kb;
       }
-      inttosizestr(total,mystrcpy(s,STR(LANG_SPACE_REQ)));
+      inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ)));
       SetUITextNT(IDC_SPACEREQUIRED,s);
     }
   }
@@ -1271,9 +1262,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 int ui_st_updateflag=0x3;
 
-void NSISCALL update_status_text_from_lang(langid_t id, const char *text2)
+void NSISCALL update_status_text_from_lang(int id, const char *text2)
 {
-  update_status_text(STR(GetLangString(id)), text2);
+  update_status_text(LANG_STR(id), text2);
 }
 
 void NSISCALL update_status_text(const char *text1, const char *text2)
@@ -1358,7 +1349,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 #endif
     {
       int x;
-      log_printf3("New install of \"%s\" to \"%s\"",STR(LANG_NAME),state_install_directory);
+      log_printf3("New install of \"%s\" to \"%s\"",LANG_STR(LANG_NAME),state_install_directory);
       for (x=0; x < num_sections; x ++)
       {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -1380,7 +1371,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     if (lb_fg >= 0) {
       ListView_SetTextColor(insthwnd, lb_fg);
     }
-    SetWindowText(insthwndbutton,STR(LANG_BTN_DETAILS));
+    SetWindowText(insthwndbutton,LANG_STR(LANG_BTN_DETAILS));
     if (g_inst_cmnheader->show_details)
     {
       ShowWindow(insthwndbutton,SW_HIDE);
@@ -1423,8 +1414,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       {
         ShowWindow(g_hwnd,SW_SHOWNA);
         mystrcpy(g_tmp,g_caption);
-        process_string_from_lang(g_tmp+mystrlen(g_tmp),LANGID_SUBCAPTION(g_max_page+1));
-        update_status_text_from_lang(LANGID_COMPLETED,"");
+        process_string_fromtab(g_tmp+mystrlen(g_tmp),LANG_SUBCAPTION(g_max_page+1));
+        update_status_text_from_lang(LANG_COMPLETED,"");
         SetWindowText(g_hwnd,g_tmp);
         SetFocus(h);
       }
@@ -1450,7 +1441,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     {
       DWORD pos  = GetMessagePos();
       HMENU menu = CreatePopupMenu();
-      AppendMenu(menu,MF_STRING,1,GetStringFromStringTab(GetLangString(LANGID_COPYDETAILS)));
+      AppendMenu(menu,MF_STRING,1,LANG_STR(LANG_COPYDETAILS));
     	if (1==TrackPopupMenu(
         menu,
         TPM_NONOTIFY|TPM_RETURNCMD,

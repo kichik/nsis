@@ -407,7 +407,7 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
       if (build_userlangstrings.find(cp, 0, &idx) < 0) idx = -1;
     }
     free(cp);
-    if (idx >= 0) return -(idx+1);
+    if (idx >= 0) return -(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int));
   }
 
   char buf[4096];
@@ -429,7 +429,7 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
       if (ubuild_userlangstrings.find(cp, 0, &idx) < 0) idx = -1;
     }
     free(cp);
-    if (idx >= 0) return -(idx+1);
+    if (idx >= 0) return -(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int));
   }
 
   char buf[4096];
