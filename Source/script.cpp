@@ -3810,10 +3810,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK__PLUGINCOMMAND:
     {
       int ret, data_handle;
+      char* command = strdup(line.gettoken_str(0));
 
-      char* dllPath = m_plugins.GetPluginDll(uninstall_mode, line.gettoken_str(0), &data_handle);
+      char* dllPath = m_plugins.GetPluginDll(uninstall_mode, &command, &data_handle);
       if (dllPath)
       {
+        SCRIPT_MSG(command);
         if (uninstall_mode) uninst_plugin_used = true;
         else plugin_used = true;
 
@@ -3821,7 +3823,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.which=EW_CALL;
         ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
         ret=add_entry(&ent);
-        if (ret != PS_OK) return ret;
+        if (ret != PS_OK) {
+          free(command);
+          return ret;
+        }
 
         // DLL name on the user machine
         char tempDLL[NSIS_MAX_STRLEN];
@@ -3836,7 +3841,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           int old_build_datesave=build_datesave;
           build_datesave=0; // off
           ret=do_add_file(dllPath,0,0,linecnt,&files_added,tempDLL,2,&data_handle); // 2 means no size add
-          if (ret != PS_OK) return ret;
+          if (ret != PS_OK) {
+            free(command);
+            return ret;
+          }
           m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0),data_handle);
           build_overwrite=old_build_overwrite;
           build_datesave=old_build_datesave;
@@ -3848,7 +3856,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
           ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
+          if (ret != PS_OK) {
+            free(command);
+            return ret;
+          }
         }
 
         // SetDetailsPrint lastused
@@ -3857,13 +3868,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[1]=8; // lastused
         ent.offsets[2]=0;
         ret=add_entry(&ent);
-        if (ret != PS_OK) return ret;
+        if (ret != PS_OK) {
+          free(command);
+          return ret;
+        }
 
         // Call the DLL
-        char* command = strstr(line.gettoken_str(0),"::");
-        if (command) command += 2;
-        else         command  = line.gettoken_str(0);
-        SCRIPT_MSG("Plugin Command: %s",command);
+        char* funcname = strstr(command,"::");
+        if (funcname) funcname += 2;
+        else          funcname  = command;
+        SCRIPT_MSG("Plugin Command: %s",funcname);
 
         int i = 1;
         int nounload = 0;
@@ -3883,7 +3897,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!lstrcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
           ent.offsets[1]=0;
           ret=add_entry(&ent);
-          if (ret != PS_OK) return ret;
+          if (ret != PS_OK) {
+            free(command);
+            return ret;
+          }
           SCRIPT_MSG(" %s",line.gettoken_str(i));
         }
         SCRIPT_MSG("\n");
@@ -3893,11 +3910,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         // next, call it
         ent.which=EW_REGISTERDLL;
         ent.offsets[0]=add_string(tempDLL);;
-        ent.offsets[1]=add_string(command);
+        ent.offsets[1]=add_string(funcname);
         ent.offsets[2]=0;
         ent.offsets[3]=nounload|build_plugin_unload;
         ret=add_entry(&ent);
-        if (ret != PS_OK) return ret;
+        if (ret != PS_OK) {
+          free(command);
+          return ret;
+        }
+
+        free(command);
 
         return PS_OK;
       }

@@ -14,7 +14,7 @@ class Plugins
   public:
     void  FindCommands(char*,bool);
     bool  IsPluginCommand(char*);
-    char* GetPluginDll(int, char*, int*);
+    char* GetPluginDll(int, char**, int*);
     void  SetDllDataHandle(int, char*, int);
 
   protected:
