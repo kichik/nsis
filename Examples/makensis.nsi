@@ -383,7 +383,6 @@ Section "BgImage Source" SecContribBgImageS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\BgImage
   File ..\Contrib\BgImage\BgImage.cpp
-  File ..\Contrib\BgImage\ExDLL.h
   File ..\Contrib\BgImage\BgImage.dsw
   File ..\Contrib\BgImage\BgImage.dsp
 SectionEnd
@@ -429,7 +428,6 @@ Section "StartMenu Source" SecContribStartMenuS
   File ..\Contrib\StartMenu\StartMenu.dsw
   File ..\Contrib\StartMenu\StartMenu.rc
   File ..\Contrib\StartMenu\resource.h
-  File ..\Contrib\StartMenu\ExDLL.h
 SectionEnd
 
 Section "UserInfo Source" SecContribUserInfoS
