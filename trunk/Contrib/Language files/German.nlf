@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1031
 # Font and size - dash (-) means default
@@ -40,7 +40,8 @@ Wählen Sie das Verzeichnis aus, in das Sie %s installieren möchten:
 Verfügbarer Speicher: 
 Benötigter Speicher: 
 Deinstalliere aus:
-Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie Abbrechen um abzubrechen,\r\nWiederholen um den Schreibvorgang erneut zu versuchen\r\noder Ignorieren um diese Datei zu überspringen.
+Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Abbrechen um abzubrechen,\r\nauf Wiederholen um den Schreibvorgang erneut zu versuchen\r\noder auf Ignorieren um diese Datei zu überspringen.
+Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Wiederholen um den Schreibvorgang erneut zu versuchen\r\noder auf Abbrechen um die Installation zu beenden.
 Fehler beim Schreiben: 
 Kopieren fehlgeschlagen
 Kopiere nach 
