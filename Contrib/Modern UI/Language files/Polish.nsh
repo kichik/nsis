@@ -1,9 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Polish (1045)
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
-;Updates and correction since 2.0 a7 by cube cube(at)lp.net.pl
+;Updates and corrections since 2.0 b1 by cube cube(at)lp.net.pl
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "POLISH"
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Polski" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacji programu $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Ten kreator pomo¿e Ci zainstalowaæ program $(^NameDA).\r\n\r\nZalecamy, byœ zamkn¹³ wszystkie uruchomione programy zanim rozpoczniesz instalacjê. To pozwoli na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchomienia komputera.\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Ten kreator pomo¿e Ci zainstalowaæ program $(^NameDA).\r\n\r\nZalecamy, byœ zamkn¹³ wszystkie uruchomione programy zanim rozpoczniesz instalacjê. To pozwoli na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchomienia komputera.\r\n\r\n$_CLICK"
     
   !define MUI_TEXT_LICENSE_TITLE "Umowa licencyjna"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Przed instalacj¹ programu $(^NameDA) zapoznaj siê z warunkami licencji."
@@ -39,7 +39,7 @@
    
   !define MUI_BUTTONTEXT_FINISH "&Koniec"
   !define MUI_TEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora instalacji $(^NameDA)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.\r\n\r\nKliknij Koniec aby zamkn¹æ kreatora."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.\r\n\r\nKliknij Koniec, aby zakoñczyæ dzia³nie Kreatora."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony aby zakoñczyæ instalacjê programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Uruchom ponownie teraz"
   !define MUI_TEXT_FINISH_REBOOTLATER "PóŸniej sam uruchomiê komputer ponownie"
@@ -82,8 +82,9 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinstalowanie nie zosta³o zakoñczone pomyœlnie."
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy Kreatora Odinstalowania $(^NameDA)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z dysku Twojego komputera.\r\n\r\nKliknij na przycisku „Finish” (Zakoñcz), aby zakoñczyæ dzia³nie Kreatora."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z dysku Twojego komputera.\r\n\r\nKliknij Koniec, aby zakoñczyæ dzia³nie Kreatora."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony aby zakoñczyæ deinstalacjê programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
   
-  !define MUI_UNTEXT_ABORTWARNING "Czy na pewno chcesz zakoñczyæ proces odinstalowywania $(^Name)?"
+  !define MUI_UNTEXT_ABORTWARNING "Czy na pewno chcesz przerwaæ proces deinstalacji $(^Name)?"
      
 !insertmacro MUI_LANGUAGEFILE_END
