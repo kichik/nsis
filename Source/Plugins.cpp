@@ -51,7 +51,7 @@ void Plugins::FindCommands(char* path,bool displayInfo)
   }
 }
 
-void Plugins::GetExports(char* pathToDll,bool displayInfo)
+void Plugins::GetExports(char* pathToDll, bool displayInfo)
 {
   if (pathToDll)
   {
@@ -64,8 +64,18 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
     dllName[0] = 0;
     char* ptr = strrchr(pathToDll,'\\');
     if (ptr && *ptr && *(ptr+1)) strcpy(dllName,ptr+1);
-    ptr = strstr(dllName, ".dll");
-    if (ptr) *ptr = 0;
+
+    // find .dll
+    char *dllName2 = strdup(dllName);
+    for (ptr = dllName2; *ptr; ptr = CharNext(ptr))
+    {
+      if (!strcmpi(ptr, ".dll"))
+      {
+        *(dllName + (ptr - dllName2)) = 0;
+        break;
+      }
+    }
+    free(dllName2);
 
     FILE* dll = fopen(pathToDll,"rb");
     if (dll)
