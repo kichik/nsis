@@ -6,10 +6,6 @@
 
 ;Written by Joost Verburg
 
-!echo "Compiling CVS Data Setup..."
-
-!verbose 3
-
 ;--------------------------------
 ;Configuration
 
@@ -106,8 +102,6 @@ Section ""
 !insertmacro CVSDATA "Source\zlib"
 
 SectionEnd
-
-!verbose 4
 
 ;--------------------------------
 ;Function
