@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-05-01
+;Revision date: 2003-05-02
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
@@ -11,6 +11,12 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONT_HEADER "新細明體"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONTSIZE_HEADER "9"
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONT_TITLE "新細明體"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONTSIZE_TITLE "9"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "按一下 [下一步(N)] 繼續。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "按一下 [安裝(I)] 開始安裝。"
