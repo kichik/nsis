@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v5
+NLF v6
+# Start editing here
 # Language ID
 1046
 # Font and size - dash (-) means default
@@ -9,75 +10,182 @@ NLF v5
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by Diego Marcos <jump@osite.com.br>
+# Translation by Diego Marcos
+# ^Branding
 Sistema de Instalação Nullsoft %s
+# ^SetupCaption
 Instalação do $(^Name)
+# ^UninstallCaption
 Desinstalação do $(^Name)
+# ^LicenseSubCaption
 : Contrato de Licença
+# ^ComponentsSubCaption
 : Opções de instalação
+# ^DirSubCaption
 : Diretório de instalação
+# ^InstallingSubCaption
 : Instalando arquivos
+# ^CompletedSubCaption
 : Concluído
+# ^UnComponentsSubCaption
+: Opções de Desinstalação
+# ^UnDirSubCaption
+: Pasta de Desinstalação
+# ^ConfirmSubCaption
 : Confirmação
+# ^UninstallingSubCaption
 : Desinstalando
+# ^UnCompletedSubCaption
 : Concluído
+# ^BackBtn
 < &Voltar
+# ^NextBtn
 &Avançar >
+# ^AgreeBtn
 &Concordo
+# ^AcceptBtn
 Eu &aceito os termos do Contrato de Licença
+# ^DontAcceptBtn
 Eu &não aceito os termos do Contrato de Licença
+# ^InstallBtn
 &Instalar
+# ^UninstallBtn
 &Desinstalar
+# ^CancelBtn
 Cancelar
+# ^CloseBtn
 &Fechar
+# ^BrowseBtn
 &Procurar...
+# ^ShowDetailsBtn
 Ver &Detalhes
+# ^ClickNext
+Clique em "Avançar" para continuar.
+# ^ClickInstall
+Clique em "Instalar" para iniciar a instalação.
+# ^ClickUninstall
+Clique em "Desinstalar" para iniciar a desinstalação.
+# ^Name
 Nome
+# ^Completed
 Concluído
+# ^LicenseText
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se você concorda com todos os termos da licensa, clique em "Concordo".
+# ^LicenseTextCB
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se você concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+# ^LicesnseTextRB
+Por favor reveja o acordo de licensa antes de instalar $(^Name). Se você concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+# ^UnLicenseText
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se você concorda com todos os termos da licensa, clique em "Concordo".
+# ^UnLicenseTextCB
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se você concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+# ^UnLicesnseTextRB
+Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se você concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+# ^Custom
 Personalizado
+# ^ComponentsText
+Marque os componentes que queira instalar e vice versa. $_CLICK
+# ^ComponentsSubText1
 Escolha o tipo de instalação:
+# ^ComponentsSubText2_NoInstTypes
 Escolha os componentes para instalar:
-Ou, selecione os componentes opcionais que deseja instalar:
-Escolha o diretório para instalar $(^Name):
-Espaço disponível: 
-Espaço necessário: 
+# ^ComponentsSubText2
+Ou, escolha os componentes opcionais que deseja instalar:
+# ^UnComponentsText
+Marque os componentes que queira desinstalar e vice versa. $_CLICK
+# ^UnComponentsSubText1
+Escolha o tipo de desinstalação: 
+# ^UnComponentsSubText2_NoInstTypes
+Escolha os componentes para desinstalar:
+# ^UnComponentsSubText2
+Ou, escolha os componentes opcionais que queira desinstalar:
+# ^DirText
+Será instalado o $(^Name) na seguinte pasta. Para instalar em uma pasta diferente, clique em "Procurar..." e escolha outra pasta. $_CLICK
+# ^DirSubText
+Pasta de Destino
+# ^DirBrowseText
+Escolha uma pasta para instalar o $(^Name):
+# ^UnDirText
+Será desinstalado o $(^Name) da seguinte pasta. Para desinstalar de uma pasta diferente, clique em "Procurar..." e escolha outra pasta. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Escolha uma pasta de onde será desinstalado o $(^Name):
+# ^SpaceAvailable
+"Espaço disponível: "
+# ^SpaceRequired
+"Espaço necessário: "
+# ^UninstallingText
+This wizard will uninstall $(^Name) from your computer. $_CLICK
+# ^UninstallingSubText
 Desinstalando de:
+# ^FileError
 Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nIgnorar para ignorar este arquivo.
+# ^FileError_NoIgnore
 Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Repetir para tentar novamente a gravação do arquivo, ou\r\nCancelar para abortar a instalação.
-Não foi possível gravar: 
+# ^CantWrite
+"Não foi possível gravar: "
+# ^CopyFailed
 Falha ao copiar
-Copiar para 
-Registrando: 
-Desregistrando: 
-Não foi encontrado símbolo: 
-Não foi possível carregar: 
-Criando diretório: 
-Criando atalho: 
-Criando desinstalador: 
-Excluindo arquivo: 
-Excluir ao reiniciar: 
-Erro ao criar atalho: 
-Erro ao criar: 
+# ^CopyTo
+"Copiar para "
+# ^Registering
+"Registrando: "
+# ^Unregistering
+"Desregistrando: "
+# ^SymbolNotFound
+"Não foi encontrado símbolo: "
+# ^CouldNotLoad
+"Não foi possível carregar: "
+# ^CreateFolder
+"Criando diretório: "
+# ^CreateShortcut
+"Criando atalho: "
+# ^CreatedUninstaller
+"Criando desinstalador: "
+# ^Delete
+"Excluindo arquivo: "
+# ^DeleteOnReboot
+"Excluir ao reiniciar: "
+# ^ErrorCreatingShortcut
+"Erro ao criar atalho: "
+# ^ErrorCreating
+"Erro ao criar: "
+# ^ErrorDecompressing
 Erro ao descomprimir dados! Instalador corrompido?
+# ^ErrorRegistering
 Erro ao registar DLL
-ExecShell: 
-Executando: 
-Extraindo: 
-Extraindo: erro ao gravar para o arquivo 
-Instalador corrompido: opcode inválido
-Sem OLE para: 
-Diretório de saída: 
-Removendo diretório: 
-Renomear ao reiniciar: 
-Renomeando: 
-Ignorado: 
-Copiar detalhes para a Área de Transfêrencia
+# ^ExecShell
+"Executando pelo Shell: "
+# ^Exec
+"Executando: "
+# ^Extract
+"Extraindo: "
+# ^ErrorWriting
+"Extraindo: erro ao gravar arquivo "
+# ^InvalidOpcode
+Instalador corrompido: código de operação inválido
+# ^NoOLE
+"Sem OLE para: "
+# ^OutputFolder
+"Pasta de saída: "
+# ^RemoveFolder
+"Removendo pasta: "
+# ^RenameOnReboot
+"Renomear ao reiniciar: "
+# ^Rename
+"Renomeando: "
+# ^Skipped
+"Ignorado: "
+# ^CopyDetails
+Copiar detalhes à Área de Transfêrencia
+# ^LogInstall
 Registrar processo de instalação
-# byte 
+# ^Byte
 B
-# kilo 
+# ^Kilo
 K
-# mega 
+# ^Mega
 M
-# giga 
+# ^Giga
 G
