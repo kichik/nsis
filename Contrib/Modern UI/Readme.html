@@ -660,22 +660,19 @@ ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp" ;Special bitmap
   Start Menu Folder page: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br />
   </p>
 <p class="header">Customize the dialogs</p>
-  <p class="text">To change elements on the dialogs, modify the
-  resource files Contrib\UIs directory using a resource editor such as
-  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>
-  and use the interface setting to define to filename use your customized UI.</p>
-  <p class="text">The 'Please wait while Setup is loading...' text
-  on the splash screen which  is being displayed when the installer
-  is starting (Verifying installer, Unpacking data) cannot be changed
-  by the script,  because the installer is not started yet when this
-  dialog is being displayed. If you want to change this text, modify
-  dialog 111 of modern.exe.<br />
-  The 'Verifying installer' and 'Unpacking data' texts are defined in
-  the language header file of the NSIS exehead (Source\exehead\lang.h). 
-  To change them, you have to edit this file and recompile NSIS.</p>
-  <p class="text">To modify the Welcome and Finish dialog, use a custom
-  INI file (MUI_SPECIALINI setting) or write to the INI file in the
-  custom page functions.</p>
+  <p class="text">To change elements on the dialogs, use customized UI resource files
+  (see Interface settings). You can change your copies of the original files (in the
+  Contrib\UIs folder) by using an application such as
+  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
+  <p class="text">The 'Please wait while Setup is loading...' text on the splash
+  screen that is being displayed while the installer is starting (Verifying installer,
+  Unpacking data) can be changed by using a customized UI resource file (MUI_UI setting)
+  with a modified dialog 111.<br />
+  The 'Verifying installer' and 'Unpacking data' texts are defined in the language header
+  file of the NSIS exehead (Source\exehead\lang.h). To change them, you have to edit this
+  file and recompile NSIS.</p>
+  <p class="text">To modify the Welcome- and Finish dialog, use a custom INI file
+  (MUI_SPECIALINI setting) or write to the INI file in the custom page functions.</p>
   <p class="header"><a name="customFunctions">Customize Modern UI Functions</a></p>
   <p class="text">If you want add your own code to functions
   inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
