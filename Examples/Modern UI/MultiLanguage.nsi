@@ -84,7 +84,7 @@ Function .onInit
   Push "Tahoma"
   Push "8"
   Push "Select a language"
-  LangDialog "Please select a language." Nederlands 1043 English 1033 2
+  LangDLL::LangDialog "Please select a language." Nederlands 1043 English 1033 2
     Pop $LANGUAGE
     StrCmp $LANGUAGE "cancel" 0 +2
       Abort
