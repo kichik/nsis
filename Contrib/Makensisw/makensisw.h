@@ -29,27 +29,28 @@
 #undef _RICHEDIT_VER
 
 // Defines
-#define NSIS_DEV    "http://nsis.sourceforge.net/"
-#define NSIS_URL	"http://www.nullsoft.com/free/nsis/"
-#define NSIS_FOR	"http://forums.winamp.com/forumdisplay.php?forumid=65"
-#define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
-#define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
-#define CONTRIB     "Fritz Elfert, Justin Frankel, Amir Szekely"
-#define DOCPATH		"http://nsis.sourceforge.net/Docs/"
-#define LOCALDOCS	"\\docs\\index.html"
-#define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
-#define DLGERROR	"Unable to intialize MakeNSISW."
-#define REGSEC		HKEY_LOCAL_MACHINE
-#define REGKEY		"Software\\NSIS"
-#define REGLOC		"MakeNSISWPlacement"
-#define EXENAME		"makensis.exe"
-#define MAX_STRING	256
-#define TIMEOUT		100
-#define MINWIDTH	350
-#define MINHEIGHT	180
-#define REGSEC		HKEY_LOCAL_MACHINE 
-#define REGKEY		"Software\\NSIS"
-#define REGLOC		"MakeNSISWPlacement"
+#define NSIS_DEV     "http://nsis.sourceforge.net/"
+#define NSIS_URL     "http://www.nullsoft.com/free/nsis/"
+#define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
+#define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
+#define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
+#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely"
+#define DOCPATH      "http://nsis.sourceforge.net/Docs/"
+#define LOCALDOCS    "\\docs\\index.html"
+#define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
+#define DLGERROR     "Unable to intialize MakeNSISW."
+#define DEFINESERROR "Symbol cannot contain whitespace characters"
+#define REGSEC       HKEY_LOCAL_MACHINE
+#define REGKEY       "Software\\NSIS"
+#define REGLOC       "MakeNSISWPlacement"
+#define EXENAME      "makensis.exe"
+#define MAX_STRING   256
+#define TIMEOUT      100
+#define MINWIDTH     350
+#define MINHEIGHT    180
+#define REGSEC       HKEY_LOCAL_MACHINE 
+#define REGKEY       "Software\\NSIS"
+#define REGLOC       "MakeNSISWPlacement"
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
@@ -61,53 +62,56 @@ enum {
 };
 
 // Extern Variables
-extern const char*	NSISW_VERSION;
+extern const char* NSISW_VERSION;
 
-int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
-static BOOL		CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
-DWORD WINAPI	MakeNSISProc(LPVOID p);
-BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
-BOOL CALLBACK	AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-void			CompileNSISScript();
+int WINAPI     WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
+static BOOL    CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+DWORD WINAPI   MakeNSISProc(LPVOID p);
+BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
+BOOL CALLBACK  AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK  DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+void           CompileNSISScript();
+char*          BuildDefines();
 
 typedef struct NSISScriptData {
-    bool script_alloced;
-    char *script;
-    char *output_exe;
-    char *input_script;
-    char *branding;
-    char *brandingv;
-    int retcode;
-    DWORD logLength;
-    DWORD warnings;
-    BOOL appended;
-    HINSTANCE hInstance;
-    HWND hwnd;
-    HMENU menu;
-    HMENU submenu;
-    HANDLE thread;
-    HWND focused_hwnd;
-    CHARRANGE textrange;
+  bool script_alloced;
+  char *script;
+  char *output_exe;
+  char *input_script;
+  char *branding;
+  char *brandingv;
+  char **defines;
+  int retcode;
+  DWORD logLength;
+  DWORD warnings;
+  BOOL appended;
+  HINSTANCE hInstance;
+  HWND hwnd;
+  HMENU menu;
+  HMENU submenu;
+  HANDLE thread;
+  HWND focused_hwnd;
+  CHARRANGE textrange;
 } NSCRIPTDATA;
 
 typedef struct ResizeData {
-    RECT resizeRect;
-    RECT griprect;
-    int dx;
-    int dy;
+  RECT resizeRect;
+  RECT griprect;
+  int dx;
+  int dy;
 } NRESIZEDATA;
 
 typedef struct FindReplaceDialog {
-    FINDREPLACE fr;
-    UINT uFindReplaceMsg;
-    HWND hwndFind;
+  FINDREPLACE fr;
+  UINT uFindReplaceMsg;
+  HWND hwndFind;
 } NFINDREPLACE;
 
 typedef struct ToolTipStruct {
-    HWND tip;
-    HWND tip_p;
-    HHOOK hook;
+  HWND tip;
+  HWND tip_p;
+  HHOOK hook;
 } NTOOLTIP;
 
 #endif

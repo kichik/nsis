@@ -9,6 +9,7 @@
 #define IDK_ACCEL                       105
 #define IDI_SHELL                       112
 #define IDB_LOGO                        115
+#define DLG_DEFINES                     116
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -26,6 +27,11 @@
 #define IDC_CONTRIB                     1009
 #define IDC_NSISVER                     1010
 #define IDC_OTHERCONTRIB                1016
+#define IDC_SYMBOL                      1017
+#define IDC_VALUE                       1018
+#define IDRIGHT                         1019
+#define IDLEFT                          1020
+#define IDC_DEFINES                     1021
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
 #define IDM_DOCS                        40004
@@ -36,14 +42,15 @@
 #define IDM_BROWSESCR                   40013
 #define IDM_NSISDEV                     40014
 #define IDM_FORUM                       40016
+#define IDM_DEFINES                     40017
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        116
-#define _APS_NEXT_COMMAND_VALUE         40017
-#define _APS_NEXT_CONTROL_VALUE         1017
+#define _APS_NEXT_RESOURCE_VALUE        117
+#define _APS_NEXT_COMMAND_VALUE         40018
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
