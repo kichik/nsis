@@ -3701,7 +3701,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         if (len && !(hFileMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL)))
         {
           CloseHandle(hFile);
-          ERROR_MSG("File: failed creating mmap of \"%s\"\n",newfn);
+          ERROR_MSG("File: failed creating map of \"%s\"\n",newfn);
           return PS_ERROR;
         }
         char *filedata=NULL;
