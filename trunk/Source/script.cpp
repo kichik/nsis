@@ -574,12 +574,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
 #endif//!NSIS_SUPPORT_CODECALLBACKS
 
+        if (k != 4) {
+          *build_last_page_define=0;
+        }
+
         if (k) {
           // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           switch (line.getnumtokens()) {
             case 6:
-              lstrcpy(build_last_page_define, line.gettoken_str(5));
+              if (k != 4) {
+                lstrcpy(build_last_page_define, line.gettoken_str(5));
+              }
           	case 5:
               if (*line.gettoken_str(4))
                 p.leavefunc = ns_func.add(line.gettoken_str(4),0);
@@ -660,7 +666,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (p.showfunc>=0 && k)
           SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
         if (p.leavefunc>=0 && k)
-          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(3));
+          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
@@ -704,12 +710,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
 #endif//!NSIS_SUPPORT_CODECALLBACKS
 
+        if (k != 2) {
+          *ubuild_last_page_define=0;
+        }
+
         if (k) {
           // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           switch (line.getnumtokens()) {
             case 6:
-              lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
+              if (k != 2) {
+                lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
+              }
           	case 5:
               if (*line.gettoken_str(4)) {
                 if (strnicmp(line.gettoken_str(4),"un.",3)) {
@@ -1310,7 +1322,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
         init_res_editor();
-        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b2</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
+        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b3</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
         res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
       }
       catch (exception& err) {
