@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Hungarian (1038)
 ;Translation by Jozsef Tamas Herczeg ( - 1.61-ig),
@@ -55,6 +55,9 @@
   !define MUI_TEXT_ABORTWARNING "Biztos, hogy ki akar lépni a(z) $(^Name) Telepítõbõl?"
 
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Üdvözli a(z) $(^Name) Eltávolító Varázsló"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ez a varázsló segíti a(z) $(^Name) eltávolításában.\r\n\r\nMielõtt elkezdi az eltávilítást gyõzõdjön meg arról, hogy a(z) $(^Name) nem fut.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "A(z) $(^Name) Eltávolítása."
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "A(z) $(^Name) eltávolítása következik a számítógéprõl."
 
@@ -78,6 +81,11 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Az eltávolítás megszakadt"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Az eltávolítás sikertelen volt."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "A(z) $(^Name) eltávolítás varázslójának befejezése."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "A(z) $(^Name) eltávolítása sikeresen befejezõdött.\r\n\r\nA Finish-re kattintva bezárul ez a varázsló."
+
+  !define MUI_UNTEXT_ABORTWARNING "Biztos, hogy ki akar lépni a(z) $(^Name) Eltávolítóból?"
 
 !insertmacro MUI_LANGUAGEFILE_END
 
