@@ -139,7 +139,7 @@ Version History
  - Empty log window check (to prevent random crashes)
 
 1.9
- - Text always scrolls to bottom (Kickik)
+ - Text always scrolls to bottom (kichik)
  - Updated link to new docs
  - Makensisw now takes the same parameters as makensis
  - About Box is closeable by clicking X
@@ -147,7 +147,7 @@ Version History
  - Drag and Drop Support into the Makensisw window
  - Updated icon to more sexy one
  - Added Load Script option on File menu
- - Added Search Dialog (Ctrl+F) (Kickik)
+ - Added Search Dialog (Ctrl+F) (kichik)
  - Added Select All (Ctrl+A), Copy (Ctrl+C), Exit (Alt+X) keys
  - Branding text now reflects NSIS version
  - Bunch of other stuff not worth mentioning
