@@ -417,9 +417,9 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
 void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist)
 #endif
 {
-    // convert $\r, $\n to their literals
-    // preprocessor replace ${VAR} with whatever value
-    // note that if VAR does not exist, ${VAR} will go through unmodified
+  // convert $\r, $\n to their literals
+  // preprocessor replace ${VAR} and $%VAR% with whatever value
+  // note that if VAR does not exist, ${VAR} or $%VAR% will go through unmodified
   const char *in=str;
   while (*in)
   {
@@ -485,7 +485,39 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             add=0;
             hist.add((char*)defname.get(),0);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
-            ps_addtoline(t,linedata,hist, true);
+            ps_addtoline(t,linedata,hist,true);
+#else
+            ps_addtoline(t,linedata,hist);
+#endif
+            hist.delbypos(hist.find((char*)defname.get(),0));
+          }
+        }
+        free(s);
+      }
+      else if (in[0] == '%')
+      {
+        char *s=strdup(in+1);
+        char *t=s;
+        while (*t)
+        {
+          if (*t == '%') break;
+          t=CharNext(t);
+        }
+        if (*t && t!=s)
+        {
+          *t=0;
+          // check for defines inside the define name - ${bla${blo}}
+          GrowBuf defname;
+          ps_addtoline(s,defname,hist);
+          defname.add("",1);
+          t=getenv((char*)defname.get());
+          if (t && hist.find((char*)defname.get(),0)<0)
+          {
+            in+=strlen(s)+2;
+            add=0;
+            hist.add((char*)defname.get(),0);
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+            ps_addtoline(t,linedata,hist,true);
 #else
             ps_addtoline(t,linedata,hist);
 #endif
@@ -495,9 +527,9 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
         free(s);
       }
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
-      else if (in[0] == '$' )
+      else if (in[0] == '$')
       {
-        if ( in[1] == '{' ) // Found $$ before - Don't replace this define
+        if (in[1] == '{') // Found $$ before - Don't replace this define
         {
           char *s=strdup(in+2);
           char *t=s;
@@ -508,7 +540,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             if (*t == '}' && bn-- == 0) break;
             t=CharNext(t);
           }
-          if (*t && t!=s )
+          if (*t && t!=s)
           {
             *t=0;
             // add text unchanged
