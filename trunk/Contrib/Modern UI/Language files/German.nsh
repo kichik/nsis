@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Klicken Sie auf Installieren um mit der Installation zu beginnen."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-\r\n\Assistenten für ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von ${MUI_PRODUCT} begleiten.\r\n\r\nEs wird empfohlen alle anderen Programme zu schließen bevor Sie mit der Installation beginnen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von ${MUI_PRODUCT} begleiten.\r\n\r\nEs wird empfohlen vor der Installation alle anderen Programme zu schließen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Lizenzabkommen"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Bitte lesen Sie die Lizenzbedingungen durch, bevor Sie mit der Installation fortfahren."
