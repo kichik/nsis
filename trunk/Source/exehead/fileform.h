@@ -291,14 +291,15 @@ typedef struct
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onGUIInit;
   int code_onGUIEnd;
-#endif
-  int code_onVerifyInstDir;
-#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onMouseOverSection;
-#endif
+#endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  int code_onVerifyInstDir;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int code_onSelChange;
 #endif//NSIS_CONFIG_COMPONENTPAGE
+#ifdef NSIS_SUPPORT_REBOOT
+  int code_onRebootFailed;
+#endif//NSIS_SUPPORT_REBOOT
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -320,14 +321,15 @@ enum
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   CB_ONGUIINIT,
   CB_ONGUIEND,
-#endif
-  CB_ONVERIFYINSTDIR,
-#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   CB_ONMOUSEOVERSECTION,
-#endif
+#endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  CB_ONVERIFYINSTDIR,
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-  CB_ONSELCHANGE
+  CB_ONSELCHANGE,
 #endif//NSIS_CONFIG_COMPONENTPAGE
+#ifdef NSIS_SUPPORT_REBOOT
+  CB_ONREBOOTFAILED
+#endif//NSIS_SUPPORT_REBOOT
 };
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
@@ -459,6 +461,7 @@ typedef struct
   int abort;
 #ifdef NSIS_SUPPORT_REBOOT
   int exec_reboot;
+  int reboot_called;
 #endif
   int cur_insttype;
   int insttype_changed;

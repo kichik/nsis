@@ -2,7 +2,7 @@
 
 \S2{reboot} Reboot
 
-Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is successful, this instruction does not return.
+Reboots the computer. Be careful with this one. If it fails, \R{onrebootfailed}{.onRebootFailed} is called. In any case, this instruction never returns, just like \R{quit}{Quit}.
 
 \c MessageBox MB_YESNO|MB_ICONQUESTION "Do you wish to reboot the system?" IDNO +2
 \c   Reboot
