@@ -21,7 +21,6 @@ int ZEXPORT inflateReset(z_streamp z)
 {
   if (z == Z_NULL || z->state == Z_NULL)
     return Z_STREAM_ERROR;
-  z->total_in = z->total_out = 0;
   inflate_blocks_reset(&z->state->blocks, z, Z_NULL);
   return Z_OK;
 }

@@ -58,7 +58,7 @@ struct inflate_blocks_state {
 /* defines for inflate input/output */
 /*   update pointers and return */
 #define UPDBITS {s->bitb=b;s->bitk=k;}
-#define UPDIN {z->avail_in=n;z->total_in+=p-z->next_in;z->next_in=p;}
+#define UPDIN {z->avail_in=n;z->next_in=p;}
 #define UPDOUT {s->write=q;}
 #define UPDATE {UPDBITS UPDIN UPDOUT}
 #define LEAVE return __myleave(s,z,r,b,k,p,n,q);
