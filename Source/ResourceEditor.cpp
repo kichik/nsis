@@ -340,9 +340,10 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
 		if (rdToScan->Entries[i].NameIsString) {
 			PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rdToScan->Entries[i].NameOffset + (char*)rdRoot);
 
-			szName = new char[rds->Length+1];
-			WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, rds->Length, 0, 0);
-			szName[rds->Length] = 0;
+      int mbsSize = WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, 0, 0, 0, 0);
+      szName = new char[mbsSize+1];
+			WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, mbsSize, 0, 0);
+			szName[mbsSize] = 0;
 		}
 		// Else, set the name to this entry's id
 		else

@@ -49,10 +49,10 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 		break;
 	default:
 		{
-			DWORD dwStrLen = WCStrLen((WCHAR*)arr);
-			readInto = new char[dwStrLen];
-			WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, dwStrLen, readInto, dwStrLen, 0, 0);
-			seeker += (dwStrLen)*sizeof(WCHAR);
+			int iStrLen = WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
+			readInto = new char[iStrLen];
+			WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
+			seeker += WCStrLen((WCHAR*)arr)*sizeof(WCHAR);
 		}
 		break;
 	}
