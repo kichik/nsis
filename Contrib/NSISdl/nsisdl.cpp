@@ -96,184 +96,6 @@ static void progress_callback(char *msg, int read_bytes)
 extern char *_strstr(char *i, char *s);
 #define strstr _strstr
 
-static
-void downloadFile(char         *url, 
-           HANDLE hFile, 
-           char         **error)
-{
-  WSADATA wsaData;
-  WSAStartup(MAKEWORD(1, 1), &wsaData);
-
-  static char buf[8192]="";
-  char *p=NULL;
-  
-  HKEY hKey;
-  if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
-  {
-    DWORD l = 4;
-    DWORD t;
-    DWORD v;
-    if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD && v)
-    {
-      l=8192;
-      if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)buf,&l ) == ERROR_SUCCESS && t == REG_SZ)
-      {
-        p=strstr(buf,"http=");
-        if (!p) p=buf;
-        else {
-          p+=5;
-        }
-        char *tp=strstr(p,";");
-        if (tp) *tp=0;
-        char *p2=strstr(p,"=");
-        if (p2) p=0; // we found the wrong proxy
-      }
-    }
-    buf[8192-1]=0;
-    RegCloseKey(hKey);
-  }
-
-  DWORD start_time=GetTickCount();
-  JNL_HTTPGet *get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
-  int         st;
-  int         has_printed_headers = 0;
-  int         cl;
-  int         len;
-  int         sofar = 0;
-  DWORD last_recv_time=start_time;
-
-  get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
-  get->addheader ("Accept: */*");
-
-  get->connect (url);
-
-  while (1) {
-    if (g_dialog)
-    {
-      MSG msg;
-      while (PeekMessage(&msg,g_dialog,0,0,PM_REMOVE))
-      {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-      } 
-    }
-  
-    Sleep(25);
-
-    if (g_cancelled) break;
-
-    st = get->run ();
-
-    if (st == -1) {
-      *error=get->geterrorstr();
-      break;
-    } else if (st == 1) {
-      if (sofar < cl)
-        *error="download incomplete";
-      break;
-    } else {
-
-      if (get->get_status () == 0) {
-        // progressFunc ("Connecting ...", 0);
-        if (last_recv_time+g_timeout_ms < GetTickCount())
-        {
-          *error = "Timed out on connecting.";
-          break;
-        }
-
-      } else if (get->get_status () == 1) {
-
-        progress_callback("Reading headers", 0);
-        if (last_recv_time+g_timeout_ms < GetTickCount())
-        {
-          *error = "Timed out on getting headers.";
-          break;
-        }
-
-      } else if (get->get_status () == 2) {
-
-        if (! has_printed_headers) {
-          has_printed_headers = 1;
-          last_recv_time=GetTickCount();
-
-          cl = get->content_length ();
-          if (cl == 0) {
-            *error = "Server did not specify content length.";
-            break;
-          } else if (g_dialog) {
-              SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
-              g_file_size=cl;
-          }
-        }
-
-        while ((len = get->bytes_available ()) > 0) {
-          if (len > 8192)
-            len = 8192;
-          len = get->get_bytes (buf, len);
-          if (len > 0) {
-            last_recv_time=GetTickCount();
-            DWORD dw;
-            WriteFile(hFile,buf,len,&dw,NULL);
-            sofar += len;
-            int time_sofar=(GetTickCount()-start_time)/1000;
-            int bps=sofar/(time_sofar?time_sofar:1);
-            int remain=MulDiv(time_sofar,cl,sofar) - time_sofar;
-            char *rtext="second";
-            if (remain >= 60) 
-            {
-              remain/=60;
-              rtext="minute";
-              if (remain >= 60)
-              {
-                remain/=60;
-                rtext="hour";
-              }
-            }
-            wsprintf (buf, 
-                  "%dkB (%d%%) of %dkB @ %d.%01dkB/s", 
-                  sofar/1024,
-                  MulDiv(100,sofar,cl),
-                  cl/1024,
-                  bps/1024,((bps*10)/1024)%10
-                  );
-            if (remain) wsprintf(buf+lstrlen(buf)," (%d %s%s remaining)",
-                  remain,
-                  rtext,
-                  remain==1?"":"s"
-                  );
-            progress_callback(buf, sofar);
-          } else {
-            if (sofar < cl)
-              *error = "Server aborted.";
-
-            break;
-          }
-        }
-        if (GetTickCount() > last_recv_time+g_timeout_ms)
-        {
-          *error = "Downloading timed out.";
-          break;
-        }
-
-      } else {
-        *error = "Bad response status.";
-        break;
-      }
-    }
-    
-  }
-
-  if (*error)
-  {
-    char *t=*error;
-    *error = new char[lstrlen(t)+1];
-    lstrcpy(*error,t);
-  }
-  delete get;
-
-  WSACleanup();
-}
-
 RECT r, cr;
 void AdjustSize(int id)
 {
@@ -298,12 +120,42 @@ __declspec(dllexport) void download (HWND   parent,
   HWND hwndL=0;
   HWND hwndB=0;
 
+  static char szDownloading[32];//= "Downloading %s";
+  static char szConnecting[32];//= "Connecting ...";
+  static char szSecond[32];//= "second";
+  static char szMinute[32];//= "minute";
+  static char szHour[32];//= "hour";
+  static char szPlural[32];//= "s";
+  static char szProgress[128];//= "%dkB (%d%%) of %dkB @ %d.%01dkB/s";
+  static char szRemaining[128];//= " (%d %s%s remaining)";
+
   g_parent     = parent;
   EXDLL_INIT();
 
   popstring(url);
+  if (!lstrcmpi(url, "/TRANSLATE")) {
+    popstring(szDownloading);
+    popstring(szConnecting);
+    popstring(szSecond);
+    popstring(szMinute);
+    popstring(szHour);
+    popstring(szPlural);
+    popstring(szProgress);
+    popstring(szRemaining);
+    popstring(url);
+  }
+  else {
+    lstrcpy(szDownloading, "Downloading %s");
+    lstrcpy(szConnecting, "Connecting ...");
+    lstrcpy(szSecond, "second");
+    lstrcpy(szMinute, "minute");
+    lstrcpy(szHour, "hour");
+    lstrcpy(szPlural, "s");
+    lstrcpy(szProgress, "%dkB (%d%%) of %dkB @ %d.%01dkB/s");
+    lstrcpy(szRemaining, " (%d %s%s remaining)");
+  }
   lstrcpyn(buf, url, 10);
-  if (!lstrcmp(buf, "/TIMEOUT=")) {
+  if (!lstrcmpi(buf, "/TIMEOUT=")) {
     g_timeout_ms=my_atoi(url+9);
     popstring(url);
   }
@@ -312,7 +164,7 @@ __declspec(dllexport) void download (HWND   parent,
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
   if (hFile == INVALID_HANDLE_VALUE) {
-     wsprintf (buf, "Unable to open %s", filename);
+    wsprintf (buf, "Unable to open %s", filename);
     setuservariable(INST_0, buf);
   } else {  
     if (g_parent)
@@ -348,11 +200,10 @@ __declspec(dllexport) void download (HWND   parent,
         char *p=filename;
         while (*p) p++;
         while (*p != '\\' && p != filename) p=CharPrev(filename,p);
-        wsprintf(buf,"Downloading %s", p+1);
+        wsprintf(buf,szDownloading, p+1);
         SetDlgItemText(g_childwnd,1006,buf);
 
-        wsprintf(buf,"Connecting ...");
-        SetDlgItemText (g_dialog, IDC_STATIC2, buf);
+        SetDlgItemText (g_dialog, IDC_STATIC2, szConnecting);
       }
     }
 
@@ -360,7 +211,173 @@ __declspec(dllexport) void download (HWND   parent,
 
     char *error=NULL;
     
-    downloadFile(url, hFile, &error);
+    {
+      WSADATA wsaData;
+      WSAStartup(MAKEWORD(1, 1), &wsaData);
+
+      static char buf[8192]="";
+      char *p=NULL;
+      
+      HKEY hKey;
+      if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
+      {
+        DWORD l = 4;
+        DWORD t;
+        DWORD v;
+        if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD && v)
+        {
+          l=8192;
+          if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)buf,&l ) == ERROR_SUCCESS && t == REG_SZ)
+          {
+            p=strstr(buf,"http=");
+            if (!p) p=buf;
+            else {
+              p+=5;
+            }
+            char *tp=strstr(p,";");
+            if (tp) *tp=0;
+            char *p2=strstr(p,"=");
+            if (p2) p=0; // we found the wrong proxy
+          }
+        }
+        buf[8192-1]=0;
+        RegCloseKey(hKey);
+      }
+
+      DWORD start_time=GetTickCount();
+      JNL_HTTPGet *get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
+      int         st;
+      int         has_printed_headers = 0;
+      int         cl;
+      int         len;
+      int         sofar = 0;
+      DWORD last_recv_time=start_time;
+
+      get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
+      get->addheader ("Accept: */*");
+
+      get->connect (url);
+
+      while (1) {
+        if (g_dialog)
+        {
+          MSG msg;
+          while (PeekMessage(&msg,g_dialog,0,0,PM_REMOVE))
+          {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+          } 
+        }
+      
+        Sleep(25);
+
+        if (g_cancelled) break;
+
+        st = get->run ();
+
+        if (st == -1) {
+          error=get->geterrorstr();
+          break;
+        } else if (st == 1) {
+          if (sofar < cl)
+            error="download incomplete";
+          break;
+        } else {
+
+          if (get->get_status () == 0) {
+            // progressFunc ("Connecting ...", 0);
+            if (last_recv_time+g_timeout_ms < GetTickCount())
+            {
+              error = "Timed out on connecting.";
+              break;
+            }
+
+          } else if (get->get_status () == 1) {
+
+            progress_callback("Reading headers", 0);
+            if (last_recv_time+g_timeout_ms < GetTickCount())
+            {
+              error = "Timed out on getting headers.";
+              break;
+            }
+
+          } else if (get->get_status () == 2) {
+
+            if (! has_printed_headers) {
+              has_printed_headers = 1;
+              last_recv_time=GetTickCount();
+
+              cl = get->content_length ();
+              if (cl == 0) {
+                error = "Server did not specify content length.";
+                break;
+              } else if (g_dialog) {
+                  SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
+                  g_file_size=cl;
+              }
+            }
+
+            while ((len = get->bytes_available ()) > 0) {
+              if (len > 8192)
+                len = 8192;
+              len = get->get_bytes (buf, len);
+              if (len > 0) {
+                last_recv_time=GetTickCount();
+                DWORD dw;
+                WriteFile(hFile,buf,len,&dw,NULL);
+                sofar += len;
+                int time_sofar=(GetTickCount()-start_time)/1000;
+                int bps=sofar/(time_sofar?time_sofar:1);
+                int remain=MulDiv(time_sofar,cl,sofar) - time_sofar;
+                char *rtext=szSecond;
+                if (remain >= 60) 
+                {
+                  remain/=60;
+                  rtext=szMinute;
+                  if (remain >= 60)
+                  {
+                    remain/=60;
+                    rtext=szHour;
+                  }
+                }
+                wsprintf (buf, 
+                      szProgress,
+                      sofar/1024,
+                      MulDiv(100,sofar,cl),
+                      cl/1024,
+                      bps/1024,((bps*10)/1024)%10
+                      );
+                if (remain) wsprintf(buf+lstrlen(buf),szRemaining,
+                      remain,
+                      rtext,
+                      remain==1?"":szPlural
+                      );
+                progress_callback(buf, sofar);
+              } else {
+                if (sofar < cl)
+                  error = "Server aborted.";
+
+                break;
+              }
+            }
+            if (GetTickCount() > last_recv_time+g_timeout_ms)
+            {
+              error = "Downloading timed out.";
+              break;
+            }
+
+          } else {
+            error = "Bad response status.";
+            break;
+          }
+        }
+        
+      }
+
+      delete get;
+
+      WSACleanup();
+    }
 
     CloseHandle(hFile);
     if (g_parent)
