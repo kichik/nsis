@@ -664,8 +664,9 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 
     // Write creation data variant length array
     // First write its size
-    if (m_vItems[i]->wCreateDataSize) m_vItems[i]->wCreateDataSize += sizeof(WORD);
-    *(WORD*)seeker = m_vItems[i]->wCreateDataSize;
+    WORD wCreateDataSize = m_vItems[i]->wCreateDataSize;
+    if (m_vItems[i]->wCreateDataSize) wCreateDataSize += sizeof(WORD);
+    *(WORD*)seeker = wCreateDataSize;
     seeker += sizeof(WORD);
     // If size is nonzero write the data too
     if (m_vItems[i]->wCreateDataSize) {
