@@ -128,7 +128,7 @@ void EnableItems(HWND hwnd) {
   if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
 
 	HMENU m = GetMenu(hwnd);
-	if (g_output_exe) {
+	if (g_output_exe && !g_retcode) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
 			EnableMenuItem(m,IDM_TEST,MF_ENABLED);
 	}
