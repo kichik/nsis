@@ -145,8 +145,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #ifdef NSIS_CONFIG_LOG
 void NSISCALL build_g_logfile()
 {
-  addtrailingslash(mystrcpy(g_log_file,state_install_directory));
-  lstrcat(g_log_file,"install.log");
+  lstrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
 }
 #endif
 
@@ -820,8 +819,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           p=name+mystrlen(name)-mystrlen(post_str);
           if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
           {
-            addtrailingslash(name);
-            lstrcat(name,post_str);
+            lstrcat(addtrailingslash(name),post_str);
           }
         }
 
