@@ -52,7 +52,7 @@ Released on March 19th, 2005
 
 \b \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}: Fixed a small memory leak (Thanks Takhir)
 
-\b \L{../Contrib/StartMenu/Readme.txt}{StartMenu}: Added support for \R{setctlcolors}{SetCtlColors} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=711900}{RFE #711900}
+\b \L{../Contrib/StartMenu/Readme.txt}{StartMenu}: Added support for \R{setctlcolors}{SetCtlColors} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=711900}{RFE #711900})
 
 \H{v2.05} 2.05
 
