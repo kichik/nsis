@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.3
+;NSIS Modern User Interface version 1.4
 ;Basic Macro System Example Script
 ;Written by Joost Verburg
 
@@ -12,11 +12,9 @@
 ;--------------------------------
 ;Configuration
 
-  !insertmacro MUI_BASICFUNCTIONS_INIT
-
   !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTPAGE
-  !define MUI_DIRSELECTPAGE
+  !define MUI_COMPONENTSPAGE
+  !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
 
@@ -26,8 +24,8 @@
     !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
 
   ;General
-  Name "${NAME} ${VERSION}"
   OutFile "Basic.exe"
+  Name "${NAME} ${VERSION}"
 
   !insertmacro MUI_INTERFACE
 

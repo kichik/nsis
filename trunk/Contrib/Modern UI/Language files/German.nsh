@@ -1,5 +1,5 @@
-;Modern UI Language File
-;version 1 - Compatible with Modern UI 1.3
+;NSIS Modern User Interface - Language File
+;Compatible with Modern UI 1.4
 
 ;Language: German (1031)
 ;By L.King
@@ -22,7 +22,7 @@
      LangString MUI_INNERTEXT_LICENSE ${LANG_GERMAN} "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen um ${NAME} zu installieren."
   !endif
 
-  !ifdef MUI_COMPONENTPAGE
+  !ifdef MUI_COMPONENTSPAGE
     ComponentText /LANG=${LANG_GERMAN} "Wählen Sie die Komponenten aus, die Sie installieren möchten und wählen Sie diejenigen ab, die Sie nicht installieren wollen. Klicken Sie auf Weiter um fortzufahren."
     LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_GERMAN} "Wählen Sie die Komponenten aus"
     LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_GERMAN} "Wählen Sie die Komponenten aus, die Sie installieren möchten."
@@ -30,15 +30,11 @@
     LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_GERMAN} "Bewegen Sie den Mauszeiger über eine Komponente um ihre Beschreibung zu sehen."
   !endif
 
-  !ifdef MUI_DIRSELECTPAGE
+  !ifdef MUI_DIRECTORYPAGE
     DirText /LANG=${LANG_GERMAN} "${NAME} wird in das unten angegebene Verzeichnis installiert.$\r$\n$\r$\nKlicken Sie auf Installieren um fortzufahren. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_GERMAN} "Wählen Sie das Zielverzeichnis aus"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_GERMAN} "Wählen Sie das Verzeichnis aus, in dem ${NAME} installiert werden soll."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_GERMAN} "Zielverzeichnis"
-  !endif
-
-  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GERMAN} "&Weiter >"
   !endif
 
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_GERMAN} "Installiere..."
@@ -48,16 +44,13 @@
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_GERMAN} "Die Installation wurde erfolgreich abgeschlossen."
 
   !ifdef MUI_ABORTWARNING
-    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_GERMAN} "Sind Sie sicher, dass Sie die Installation von ${NAME} abbrechen wollen?"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_GERMAN} "Sind Sie sicher, dass Sie die Installation von ${NAME} abbrechen wollen?"
   !endif
-
+  
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< &Zurück"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "&Weiter >"
-    LangString MUI_BUTTONTEXT_CANCEL ${LANG_GERMAN} "Abbrechen"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GERMAN} "&Installieren"
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_GERMAN} "${NAME} ${VERSION} Installation"
   !endif
-
+  
 
   ;UNINSTALLER
 
@@ -72,16 +65,9 @@
     LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_GERMAN} "Fertig"
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_GERMAN} "Die Deinstallation von ${NAME} wurde erfolgreich abgeschlossen."
   !endif
-
-  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GERMAN} "&Weiter >"
-  !endif
-
+  
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< &Zurück"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "&Weiter >"
-    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_GERMAN} "Abbrechen"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GERMAN} "&Deinstallieren"
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_GERMAN} "${NAME} ${VERSION} Installation"
   !endif
 
 !endif

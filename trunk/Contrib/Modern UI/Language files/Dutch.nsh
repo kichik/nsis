@@ -1,5 +1,5 @@
-;Modern UI Language File
-;version 1 - Compatible with Modern UI 1.3
+;NSIS Modern User Interface - Language File
+;Compatible with Modern UI 1.4
 
 ;Language: Dutch (1043)
 ;By Joost Verburg
@@ -22,7 +22,7 @@
     LangString MUI_INNERTEXT_LICENSE ${LANG_DUTCH} "Als u de overeenkomt accepteert, kies Akkoord om verder te gaan. U moet met de overeenkomst acceptren om ${NAME} te installeren."
   !endif
   
-  !ifdef MUI_COMPONENTPAGE
+  !ifdef MUI_COMPONENTSPAGE
     ComponentText /LANG=${LANG_DUTCH} "Selecteer de onderdelen die u wilt installleren en deselecteer de onderdelen die u niet wilt installeren. Klik Volgende om verder te gaan."
     LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_DUTCH} "Kies Onderdelen"
     LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_DUTCH} "Kies de onderdelen die u wilt installeren."
@@ -30,17 +30,13 @@
     LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_DUTCH} "Beweeg uw muis over een onderdeel om een beschrijving te zien."
   !endif
   
-  !ifdef MUI_DIRSELECTPAGE
+  !ifdef MUI_DIRECTORYPAGE
     DirText /LANG=${LANG_DUTCH} "Setup zal ${NAME} in de volgende map installeren.$\r$\n$\r$\nOm in een deze map te intalleren, klik Installeren. Om in een andere map te installeren, klik Bladeren en selecteer een andere map." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_DUTCH} "Kies Installatie Locatie"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_DUTCH} "Kies de map waarin u ${NAME} in wilt installeren."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_DUTCH} "Installatie Map"
   !endif
-  
-  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_DUTCH} "&Volgende >"
-  !endif
-  
+ 
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_DUTCH} "Bezig met installeren"
   LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_DUTCH} "Een ogenblik geduld terwijl ${NAME} wordt geinstalleerd."
   
@@ -48,14 +44,11 @@
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_DUTCH} "De installatie is succesvol verlopen."
   
   !ifdef MUI_ABORTWARNING
-    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_DUTCH} "Weet u zeker dat u ${NAME} Setup wilt afsluiten?"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_DUTCH} "Weet u zeker dat u ${NAME} Setup wilt afsluiten?"
   !endif
   
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_DUTCH} "< V&orige"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_DUTCH} "&Volgende >"
-    LangString MUI_BUTTONTEXT_CANCEL ${LANG_DUTCH} "Annuleren"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_DUTCH} "&Installeren"
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_DUTCH} "${NAME} ${VERSION} Setup"
   !endif
 
 
@@ -73,15 +66,8 @@
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_DUTCH} "${NAME} is verwijderd van uw systeem."
   !endif
   
-  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    UnInstallButtonText /LANG=${LANG_DUTCH} "&Volgende >"
-  !endif
-  
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_DUTCH} "< V&orige"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_DUTCH} "&Volgende >"
-    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_DUTCH} "Annuleren"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_DUTCH} "&Verwijderen"
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_DUTCH} "${NAME} ${VERSION} Setup"
   !endif
     
 !endif
