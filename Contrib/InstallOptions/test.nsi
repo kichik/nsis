@@ -13,7 +13,9 @@ OutFile "Test.exe"
 InstallDir "$PROGRAMFILES\IOTest"
 
 ;Things that need to be extracted on startup (keep these lines before any File command!)
+;Only useful for BZIP2 compression
 ;Use ReserveFile for your own Install Options ini files too!
+
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "test.ini"
 
