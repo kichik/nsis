@@ -5881,15 +5881,12 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     WIN32_FIND_DATA temp;
 #endif
 
-#ifdef _WIN32
-    const char *fspec=lgss+strlen(dir)+!!dir[0];
-#else
     const char *fspec;
     if (!strcmp(dir,".") && strncmp(lgss,".",1))
       fspec=lgss;
     else
       fspec=lgss+strlen(dir)+!!dir[0];
-#endif
+
     strcpy(newfn,lgss);
 #ifdef _WIN32
     DWORD a=GetFileAttributes(lgss);
