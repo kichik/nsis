@@ -1,8 +1,8 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1058
-# Translation by Yuri Holubow, Our Soft <http://www.ns.lviv.ua>
+# Translation by Yuri Holubow, Our Soft <http://www.Nash-Soft.com/home>
 Nullsoft Install System %s
 %s Установка
 %s Видалення
@@ -17,6 +17,8 @@ Nullsoft Install System %s
 < Назад
 Далi >
 Згоден
+Я приймаю умови Ліцензійної угоди
+Я не приймаю умови Ліцензійної угоди
 Встановити
 Видалити
 Скасувати
