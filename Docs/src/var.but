@@ -2,6 +2,8 @@
 
 \S1{var1} Modifiable Variables Used in Instructions
 
+Note: All Variables provided by NSIS are case sensitive.
+
 \e{$INSTDIR}
 
 The installation directory ($INSTDIR is modifiable using StrCpy, ReadRegStr, ReadINIStr, etc. - This could be used, for example, in the .onInit function to do a more advanced detection of install location).
@@ -44,7 +46,7 @@ The location of the installer executable. (technically you can modify this varia
 
 \e{$\{NSISDIR\}}
 
-A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UI's... 
+A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UI's...
 
 \e{$WINDIR}
 
@@ -60,7 +62,7 @@ The system temporary directory (usually C:\\windows\\temp but detected at runtim
 
 \e{$STARTMENU}
 
-The start menu folder (useful in adding start menu items using CreateShortCut)
+The start menu folder (useful in adding start menu items using CreateShortCut). The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.
 
 \e{$SMPROGRAMS}
 

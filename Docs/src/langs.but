@@ -41,7 +41,7 @@ Use:
 
 As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated, and so can script strings such as messages in a message box.
 
-Each installer has one or more language table which holds refernces to strings in the strings table. To create a language table all you need to do is use LoadLanguageFile (See \k{loadlanguagefile}), define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using LangString or LangStringUP (See \k{langstring}) and you have built your installer a language table.
+Each installer has one or more language table which holds references to strings in the strings table. To create a language table all you need to do is use LoadLanguageFile (See \k{loadlanguagefile}), define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using LangString or LangStringUP (See \k{langstring}) and you have built your installer a language table.
 
 For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
 
