@@ -230,6 +230,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					ShellExecute(g_hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
 					return TRUE;
 				}
+				case IDM_NSISDEV:
+				{
+					ShellExecute(g_hwnd,"open",NSIS_DEV,NULL,NULL,SW_SHOWNORMAL);
+					return TRUE;
+				}
 				case IDM_SELECTALL:
 				{
 					SendDlgItemMessage(g_hwnd, IDC_LOGWIN, EM_SETSEL, 0, -1);

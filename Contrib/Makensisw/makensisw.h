@@ -30,7 +30,8 @@
 #undef _RICHEDIT_VER
 
 // Defines
-#define NSIS_URL	"http://nsis.sourceforge.net/"
+#define NSIS_DEV    "http://nsis.sourceforge.net/"
+#define NSIS_URL	"http://www.nullsoft.com/free/nsis/"
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
 #define CONTRIB     "Fritz Elfert, Justin Frankel, Amir Szekely"
