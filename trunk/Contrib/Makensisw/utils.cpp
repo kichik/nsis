@@ -43,10 +43,9 @@ void CopyToClipboard(HWND hwnd) {
 	EmptyClipboard();
 	existing_text[0]=0;
 	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
+	GlobalUnlock(mem);
 	SetClipboardData(CF_TEXT,existing_text);
 	CloseClipboard();
-	GlobalUnlock(mem);
-	GlobalFree(mem);
 }
 
 
