@@ -210,7 +210,7 @@ CDialogTemplate::~CDialogTemplate() {
   if (m_szTitle)
     delete [] m_szTitle;
   if (m_szFont)
-    delete [] m_szTitle;
+    delete [] m_szFont;
 
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     if (m_vItems[i]->szClass && !IS_INTRESOURCE(m_vItems[i]->szClass))

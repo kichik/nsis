@@ -84,6 +84,8 @@ int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/,
 
   re->UpdateResource(RT_BITMAP, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), bitmap, dwSize);
 
+  free(bitmap);
+
   return 0;
 }
 
@@ -158,9 +160,15 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
     fpos_t pos;
     fgetpos(f, &pos);
 
-    if (fseek(f, dwOffset, SEEK_SET)) return -1;
+    if (fseek(f, dwOffset, SEEK_SET)) {
+      free(rsrcIconGroup);
+      return -1;
+    }
     BYTE* iconData = (BYTE*)malloc(ige->dwRawSize);
-    if (!iconData) throw bad_alloc();
+    if (!iconData) {
+      free(rsrcIconGroup);
+      throw bad_alloc();
+    }
     fread(iconData, sizeof(BYTE), ige->dwRawSize, f);
     re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), iconData, ige->dwRawSize);
     free(iconData);

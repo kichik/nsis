@@ -412,7 +412,7 @@ int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 
 int CEXEBuild::add_string(const char *string, int process/*=1*/) // returns offset in stringblock
 {
-  if (!*string) return 0;
+  if (!string || !*string) return 0;
 
   if (*string == '$' && *(string+1) == '(') {
     int idx = 0;

@@ -24,6 +24,17 @@ struct version_string_list {
 class CVersionStrigList : public SortedStringListND<struct version_string_list>
 {
 public:
+    ~CVersionStrigList()
+    {
+      struct version_string_list *itr = (struct version_string_list *) gr.get();
+      int i = gr.getlen() / sizeof(struct version_string_list);
+
+      while (i--)
+      {
+        delete itr[i].pChildStrings;
+      }
+    }
+
     int add(LANGID langid, int codepage)
     {
       char Buff[10];
