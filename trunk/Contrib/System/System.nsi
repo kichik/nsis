@@ -21,7 +21,7 @@ Section "ThisNameIsIgnoredSoWhyBother?"
      ; The same example but using icon from resource.dll.
      ; You could use this dll for storing your resources, just replace FAR icon
      ; with something you really need.   
-     File "${NSISDIR}\Contrib\System\Additionals\Resource.dll"
+     File "${NSISDIR}\Contrib\System\Resource.dll"
      !insertmacro smMessageBox "`$TEMP\resource.dll`" "Message box with custom icon from resource.dll!" "System Example 1b" ${MB_OK} "i 103"
      Delete $TEMP\resource.dll
 
