@@ -470,15 +470,9 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
       while (l--)
       {
         int i = (unsigned char)*p++;
-#ifndef NSIS_SUPPORT_NAMED_USERVARS
         if (i >= VAR_CODES_START) {
           *out++ = (char)255;
         }
-#else
-        if (i == VAR_CODES_START || i == 255 ) {
-          *out++ = (char)255;
-        }
-#endif
         *out++=i;
       }
       continue;
@@ -488,21 +482,10 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     
     p=np;
     
-#ifndef NSIS_SUPPORT_NAMED_USERVARS
     // Test for characters extending into the variable codes
     if (i >= VAR_CODES_START) {
       *out++ = (char)255;
     }
-#else
-    // Test for characters that equals to control char of variable codes or lang strings
-    if (i == VAR_CODES_START ||
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-        i == LANG_CODES_START ||
-#endif
-        i == 255 ) {
-      *out++ = (char)255;
-    }
-#endif
     else if (i == '$')
     {
       if (*p == '$')
