@@ -54,7 +54,8 @@
 // that are visible.
 #define NSIS_CONFIG_VISIBLE_SUPPORT
 
-// NSIS_CONFIG_ENHANCEDUI_SUPPORT enables support for CreateFont, SetStaticBkColor (used by some UIs),etc
+// NSIS_CONFIG_ENHANCEDUI_SUPPORT enables support for CreateFont, 
+// SetStaticBkColor (used by some UIs), SetBrandingImage, .onInitDialog, etc
 #define NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 
@@ -222,7 +223,6 @@
 //     be deleted.
 #define NSIS_CONFIG_PLUGIN_SUPPORT
 
-
 // fixes
 #ifndef NSIS_CONFIG_VISIBLE_SUPPORT
   #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -233,6 +233,9 @@
   #endif
   #ifdef NSIS_SUPPORT_BGBG
     #undef NSIS_SUPPORT_BGBG
+  #endif
+  #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  #undef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   #endif
 #endif
 

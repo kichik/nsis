@@ -109,7 +109,9 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_C(NLF_BTN_CLOSE, common.closebutton);
     HANDLE_STRING_C(NLF_BTN_DETAILS, common.showdetailsbutton);
     HANDLE_STRING_C(NLF_COMPLETED, common.completed);
+#ifdef NSIS_SUPPORT_FILE
     HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
+#endif
 
     HANDLE_STRING_I(NLF_CAPTION, common.caption);
     HANDLE_STRING_I(NLF_SUBCAPTION_LICENSE, common.subcaptions[0]);
@@ -117,33 +119,51 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_I(NLF_SUBCAPTION_DIR, common.subcaptions[2]);
     HANDLE_STRING_I(NLF_SUBCAPTION_INSTFILES, common.subcaptions[3]);
     HANDLE_STRING_I(NLF_SUBCAPTION_COMPLETED, common.subcaptions[4]);
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     HANDLE_STRING_I(NLF_BTN_NEXT, installer.nextbutton);
     HANDLE_STRING_I(NLF_BTN_BACK, installer.backbutton);
+#ifdef NSIS_CONFIG_LICENSEPAGE
     HANDLE_STRING_I(NLF_BTN_LICENSE, installer.licensebutton);
+#endif
     HANDLE_STRING_I(NLF_BTN_INSTALL, installer.installbutton);
     HANDLE_STRING_I(NLF_BTN_BROWSE, installer.browse);
+#ifdef NSIS_CONFIG_COMPONENTPAGE
     HANDLE_STRING_I(NLF_COMP_SUBTEXT1, installer.componentsubtext[0]);
     HANDLE_STRING_I(NLF_COMP_SUBTEXT2, installer.componentsubtext[1]);
+#endif
     HANDLE_STRING_I(NLF_COMP_CUSTOM, installer.custom);
     HANDLE_STRING_I(NLF_DIR_SUBTEXT, installer.dirsubtext);
     HANDLE_STRING_I(NLF_SPACE_AVAIL, installer.spaceavailable);
     HANDLE_STRING_I(NLF_SPACE_REQ, installer.spacerequired);
+#endif
 
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     HANDLE_STRING_U(NLF_UCAPTION, ucommon.caption);
     HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[0]);
     HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[1]);
     HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[2]);
     HANDLE_STRING_U(NLF_BTN_UNINSTALL, uninstall.uninstbutton);
     HANDLE_STRING_U(NLF_UNINST_SUBTEXT, uninstall.uninstalltext2);
+#endif
 
     HANDLE_STRING_C(LANG_NAME, common.name);
 
+#ifdef NSIS_CONFIG_COMPONENTPAGE
     HANDLE_STRING_I(LANG_COMP_TEXT, installer.componenttext);
+#endif
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
     HANDLE_STRING_I(LANG_LICENSE_TEXT, installer.licensetext);
     HANDLE_STRING_I(LANG_LICENSE_DATA, installer.licensedata);
-    HANDLE_STRING_I(LANG_DIR_TEXT, installer.text);
+#endif
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+    HANDLE_STRING_I(LANG_DIR_TEXT, installer.text);
+#endif
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     HANDLE_STRING_U(LANG_UNINST_TEXT, uninstall.uninstalltext);
+#endif
 
     default:
       ERROR_MSG("Error: string doesn't exist or is not changeable (%d)\n", id);
@@ -275,6 +295,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     table->common.name=add_string_main(str(NLF_DEF_NAME),0);
     table->ucommon.name=add_string_uninst(str(NLF_DEF_NAME),0);
   }
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
   if (table->installer.licensedata<0 || table->installer.licensetext<0)
@@ -336,6 +357,8 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 
   if (table->common.closebutton<0) table->common.closebutton=add_string_main(str(NLF_BTN_CLOSE),0);
   if (table->common.completed<0) table->common.completed=add_string_main(str(NLF_COMPLETED),0);
+#endif
+
 #ifdef NSIS_SUPPORT_FILE
   if (m_inst_fileused && table->common.fileerrtext<0)
   {

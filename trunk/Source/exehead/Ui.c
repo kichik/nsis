@@ -143,6 +143,7 @@ static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
 #define GetUIText(it,a,s,ss) GetDlgItemText(hwndDlg,it,s,ss)
 #define GetUIItem(hw,it,a) GetDlgItem(hw,it)
 
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
   BOOL ret=0;
@@ -156,6 +157,9 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
   }
   return ret;
 }
+#else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#define HandleStaticBkColor() 0
+#endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 #ifdef NSIS_CONFIG_LOG
 void NSISCALL build_g_logfile()

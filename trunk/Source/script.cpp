@@ -594,12 +594,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else//NSIS_CONFIG_COMPONENTPAGE
-    case TOK_ENABLEDBITMAP:
-    case TOK_DISABLEDBITMAP:
+    case TOK_CHECKBITMAP:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_CONFIG_COMPONENTPAGE
     case TOK_DIRTEXT:
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
       {
         int a = 1;
         WORD lang = 0;
@@ -613,6 +613,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
+#else//NSIS_CONFIG_VISIBLE_SUPPORT
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",  line.gettoken_str(0));
+    return PS_ERROR;
+#endif//!NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
       {
@@ -1326,6 +1330,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // Added by Amir Szekely 31st July 2002
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
       {
         if (build_compressor_set) {
           ERROR_MSG("Error: can't change compressor after data already got compressed or header already changed!\n");
@@ -1379,6 +1384,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         SCRIPT_MSG("SetCompressor: %s\n", line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
+#else//NSIS_CONFIG_COMPRESSION_SUPPORT
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n",  line.gettoken_str(0));
+    return PS_ERROR;
+#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_LOADNLF:
     {
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
@@ -3599,6 +3608,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
   return PS_ERROR;
 }
 
+#ifdef NSIS_SUPPORT_FILE
 int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override)
 {
   char dir[1024];
@@ -3833,3 +3843,4 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
   }
   return PS_OK;
 }
+#endif

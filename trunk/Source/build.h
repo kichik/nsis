@@ -146,9 +146,11 @@ class CEXEBuild {
     // a whole bunch O data.
 
     // Added by Amir Szekely 31st July 2002
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     ICompressor *compressor;
     CZlib zlib_compressor;
     CBzip2 bzip2_compressor;
+#endif
     bool build_compressor_set;
     bool build_compress_whole;
 
@@ -206,7 +208,9 @@ class CEXEBuild {
     bool branding_image_found; // Added by Amir Szekely 29nd July 2002
     WORD branding_image_id; // Added by Amir Szekely 29nd July 2002
     unsigned char *m_unicon_data;
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
+#endif
 };
 
 #endif //_BUILD_H_
