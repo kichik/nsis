@@ -48,6 +48,24 @@ class CZlib : public ICompressor {
       return "zlib";
     }
 
+    const char* GetErrStr(int err) {
+      switch (err)
+      {
+      case Z_STREAM_ERROR:
+        return "invalid stream - bad call";
+      case Z_DATA_ERROR:
+        return "data error";
+      case Z_MEM_ERROR:
+        return "not enough memory";
+      case Z_BUF_ERROR:
+        return "buffer error - bad call";
+      case Z_VERSION_ERROR:
+        return "version error";
+      default:
+        return "unknown error";
+      }
+    }
+
   private:
     z_stream *stream;
 };

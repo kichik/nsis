@@ -102,10 +102,10 @@ HRESULT CInTree::Create(UINT32 sizeHistory, UINT32 keepAddBufferBefore,
     #ifdef WIN32
     _son = (CPair *)::VirtualAlloc(0, (_cyclicBufferSize + 1) * sizeof(CPair), MEM_COMMIT, PAGE_READWRITE);
     if (_son == 0)
-      throw 1; // CNewException();
+      throw CMemoryException();
     _hash = (CIndex *)::VirtualAlloc(0, (size + 1) * sizeof(CIndex), MEM_COMMIT, PAGE_READWRITE);
     if (_hash == 0)
-      throw 1; // CNewException();
+      throw CMemoryException();
     #else
     _son = new CPair[_cyclicBufferSize + 1];
     _hash = new CIndex[size + 1];

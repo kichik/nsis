@@ -19,4 +19,10 @@ inline int BoolToInt(bool value)
 inline bool IntToBool(int value)
   { return (value != 0); }
 
+class CMemoryException
+{
+public:
+  CMemoryException() {}
+};
+
 #endif
