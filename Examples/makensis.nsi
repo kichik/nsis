@@ -199,6 +199,15 @@ SectionEnd
 
 SubSection "Plugins" SecContribPlugins
 
+Section "Banner" SecContribBanner
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\Banner.dll
+  SetOutPath $INSTDIR\Contrib\Banner
+  File ..\Contrib\Banner\Readme.txt
+  File ..\Contrib\Banner\Example.nsi
+SectionEnd
+
 Section "Language DLL" SecContribLangDLL
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
@@ -361,6 +370,14 @@ Section "UI Holder Source" SecContribUIHolderS
 SectionEnd
 
 SubSection "Plugins" SecContribPluginsS
+
+Section "Banner Source" SecContribBannerS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\Banner
+  File ..\Contrib\Banner\Banner.dsw
+  File ..\Contrib\Banner\Banner.dsp
+  File ..\Contrib\Banner\Banner.c
+SectionEnd
 
 Section "Language DLL Source" SecContribLangDLLS
   SectionIn 1
@@ -604,6 +621,13 @@ Section -post
 	Push BgImage
 	Call AddWorkspaceToStartMenu
 
+	; Banner
+	Push Banner
+	Call AddReadmeToStartMenu
+
+	Push Banner
+	Call AddWorkspaceToStartMenu
+
 	; System
 	Push System
 	Call AddReadmeToStartMenu
@@ -644,6 +668,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBanner} "Plugin that letes you show a banner before installation starts"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBannerS} "Source code to plugin that letes you show a banner before installation starts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExec} "Plugin that executes console programs and prints its output in the NSIS log window or hides it"
