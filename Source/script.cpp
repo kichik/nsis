@@ -3530,7 +3530,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int files_added;
         int old_build_overwrite=build_overwrite;
         build_overwrite=1;
-        ret=do_add_file(dllPath,0,0,0,&files_added,tempDLL);
+        ret=do_add_file(dllPath,0,0,0,&files_added,tempDLL,2); // 2 means no size add
         if (ret != PS_OK) return ret;
         build_overwrite=old_build_overwrite;
 
@@ -3733,7 +3733,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           }
         }
 
-        if (generatecode)
+        if (generatecode&1)
           section_add_size_kb((len+1023)/1024);
         if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",d.cFileName,name_override);
         else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",d.cFileName);
