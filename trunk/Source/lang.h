@@ -21,118 +21,19 @@ struct langstring {
 class LangStringList : public SortedStringListND<struct langstring>
 {
   public:
-    LangStringList() {
-      count = 0;
-    }
-    ~LangStringList() { }
+    LangStringList();
 
-    int add(const char *name, int *sn=0)
-    {
-      int pos = SortedStringListND<struct langstring>::add(name);
-      if (pos == -1) return -1;
-
-      ((struct langstring*)gr.get())[pos].sn = count;
-      if (sn) *sn = count;
-      count++;
-      ((struct langstring*)gr.get())[pos].index = -1;
-      ((struct langstring*)gr.get())[pos].uindex = -1;
-      ((struct langstring*)gr.get())[pos].process = 1;
-
-      return pos;
-    }
-
-    int get(char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0)
-    {
-      if (index) *index = -1;
-      if (uindex) *uindex = -1;
-      if (sn) *sn = -1;
-      int v=find(name);
-      if (v==-1) return -1;
-      if (index) *index = ((struct langstring*)gr.get())[v].index;
-      if (uindex) *uindex = ((struct langstring*)gr.get())[v].uindex;
-      if (sn) *sn = ((struct langstring*)gr.get())[v].sn;
-      if (process) *process = ((struct langstring*)gr.get())[v].process;
-      return v;
-    }
-
-    void set(int pos, int index=-1, int uindex=-1, int process=-1)
-    {
-      if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
-        return;
-
-      struct langstring *data=(struct langstring *)gr.get();
-
-      if (index >= 0)
-        data[pos].index = index;
-      if (uindex >= 0)
-        data[pos].uindex = uindex;
-      if (process >= 0)
-        data[pos].process = process;
-    }
-
-    void set(char *name, int index, int uindex=-1, int process=-1)
-    {
-      set(get(name), index, uindex, process);
-    }
-
-    const char *pos2name(int pos)
-    {
-      struct langstring *data=(struct langstring *)gr.get();
-
-      if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
-        return 0;
-
-      return ((const char*)strings.get() + data[pos].name);
-    }
-
-    const char *offset2name(int name)
-    {
-      if ((unsigned int)name > (unsigned int)strings.getlen())
-        return 0;
-
-      return (const char*)strings.get() + name;
-    }
-
-    int getnum()
-    {
-      return gr.getlen() / sizeof(struct langstring);
-    }
-
-    static int compare_index(const void *item1, const void *item2)
-    {
-      struct langstring *ls1 = (struct langstring *)item1;
-      struct langstring *ls2 = (struct langstring *)item2;
-
-      return ls1->index - ls2->index;
-    }
-
-    struct langstring *sort_index(int *num)
-    {
-      if (!num) return 0;
-      sortbuf.resize(0);
-      sortbuf.add(gr.get(), gr.getlen());
-      *num = sortbuf.getlen() / sizeof(struct langstring);
-      qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_index);
-      return (struct langstring*) sortbuf.get();
-    }
-
-    static int compare_uindex(const void *item1, const void *item2)
-    {
-      struct langstring *ls1 = (struct langstring *)item1;
-      struct langstring *ls2 = (struct langstring *)item2;
-
-      return ls1->uindex - ls2->uindex;
-    }
-
-    struct langstring *sort_uindex(int *num)
-    {
-      if (!num) return 0;
-      sortbuf.resize(0);
-      sortbuf.add(gr.get(), gr.getlen());
-      *num = sortbuf.getlen() / sizeof(struct langstring);
-      qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_uindex);
-      return (struct langstring*) sortbuf.get();
-    }
+    int add(const char *name, int *sn=0);
+    int get(char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0);
+    void set(int pos, int index=-1, int uindex=-1, int process=-1);
+    void set(char *name, int index, int uindex=-1, int process=-1);
+    const char *pos2name(int pos);
+    const char *offset2name(int name);
+    int getnum();
+    static int compare_index(const void *item1, const void *item2);
+    langstring *sort_index(int *num);
+    static int compare_uindex(const void *item1, const void *item2);
+    langstring *sort_uindex(int *num);
 
   private:
     int count;
@@ -141,47 +42,16 @@ class LangStringList : public SortedStringListND<struct langstring>
 
 class StringsArray
 {
+  public:
+    StringsArray();
+
+    void resize(int num);
+    int set(int idx, char *str);
+    const char *get(int idx);
+
   private:
     TinyGrowBuf offsets;
     GrowBuf strings;
-
-  public:
-    StringsArray()
-    {
-      offsets.set_zeroing(1);
-
-      strings.add("", sizeof(""));
-    }
-
-    ~StringsArray() { }
-
-    void resize(int num)
-    {
-      offsets.resize(num * sizeof(int));
-    }
-
-    int set(int idx, char *str)
-    {
-      if (idx < 0)
-        return 0;
-
-      if (idx >= (int)(offsets.getlen() / sizeof(int)))
-        resize(idx+1);
-
-      int old = ((int*)offsets.get())[idx];
-
-      ((int*)offsets.get())[idx] = strings.add(str, strlen(str) + 1);
-
-      return old;
-    }
-
-    const char *get(int idx)
-    {
-      if ((unsigned int)idx >= (offsets.getlen() / sizeof(int)))
-        return 0;
-
-      return (const char *)strings.get() + ((int*)offsets.get())[idx];
-    }
 };
 
 #define NLF_VERSION 6
