@@ -9,7 +9,7 @@
 #  ifndef _WIN32_IE
 #    define _WIN32_IE 0x0400
 #  endif
-#  include <Windows.h>
+#  include <windows.h>
 #  include <commctrl.h>
 #else
 #  ifndef EXEHEAD
@@ -188,7 +188,7 @@ typedef WORD LANGID;
 // shell folders
 
 #ifdef _WIN32
-#  include <Shlobj.h>
+#  include <shlobj.h>
 #endif
 
 #ifndef CSIDL_FLAG_CREATE

@@ -9,7 +9,7 @@
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
-#include "../zlib/zlib.h"
+#include "../zlib/ZLIB.H"
 #endif
 
 #ifdef NSIS_COMPRESS_USE_LZMA

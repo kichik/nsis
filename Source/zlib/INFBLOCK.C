@@ -1,7 +1,7 @@
 #include "../exehead/config.h"
 #ifdef NSIS_COMPRESS_USE_ZLIB
 
-#include "zutil.h"
+#include "ZUTIL.H"
 
 
 /* defines for inflate input/output */
