@@ -211,13 +211,14 @@ int NSISCALL is_valid_instpath(char *s)
     WIN32_FIND_DATA *fd = file_exists(tmp);
     // if the directory bit not set then it's a file, which is not a valid inst dir...
     // GetFileAttributes is not used because it doesn't work with certain files (error 32)
-    // as for concers of the user using * or ?, that's invalid anyway...
+    // as for concerns of the user using * or ?, that's invalid anyway...
     if (fd && !(fd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
       return 0;
     trimslashtoend(tmp);
   }
 
   // if the root drive exists
+  addtrailingslash(tmp); // don't check the current directory, check the root directory
   if (GetFileAttributes(tmp) == INVALID_FILE_ATTRIBUTES)
     return 0;
 
