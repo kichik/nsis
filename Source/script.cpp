@@ -508,7 +508,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             definedlist.del(p);
             char *v;
             if ((v=l_define_saves.find(p))) definedlist.add(p,v);
-            p+=strlen(p);
+            p+=strlen(p)+1;
           }
         }
         SCRIPT_MSG("!insertmacro: end of %s\n",line.gettoken_str(1));
