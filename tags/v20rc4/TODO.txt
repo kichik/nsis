@@ -1,0 +1,29 @@
+TODO
+----
+
+NSIS
+
+* Compiler plug-ins
+
+* SetCurInstType should work without the components page
+
+* Empty subsections should not show
+
+* Smart relative jumps that work with File, plug-ins calls etc.
+
+* More powerful plug-ins (access to ExecFunc and flags and even more)
+
+* Option to cancel the installation process
+
+* DirShow back
+
+EXAMPLES
+
+* Write an advanced paging example showing multiple components page with multiple
+  instfiles pages
+
+PLUG-INS
+
+* InstallOptions - custom class names so you can include whatever control you want
+
+* nsExec - live outputs

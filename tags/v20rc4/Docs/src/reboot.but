@@ -1,0 +1,11 @@
+\S{rebootinst} Reboot Instructions
+
+\S2{Reboot} Reboot
+
+Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is successful, this instruction does not return.
+
+\S2{SetRebootFlag} SetRebootFlag
+
+\c true|false
+
+Sets the reboot flag to either true or false.

@@ -1,0 +1,190 @@
+# Header, don't edit
+NLF v6
+# Language ID
+1062
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by Valdis Griíis (valmiera-9@inbox.lv)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Uzstâdîðana
+# ^UninstallCaption
+$(^Name) Atinstalçðana
+# ^LicenseSubCaption
+: Licences lîgums
+# ^ComponentsSubCaption
+: Instalâcijas opcijas
+# ^DirSubCaption
+: Instalâcijas folderis
+# ^InstallingSubCaption
+: Norit instalâcija
+# ^CompletedSubCaption
+: Pabeigts
+# ^UnComponentsSubCaption
+: Atinstalçðanas opcijas
+# ^UnDirSubCaption
+: Atinstlçðanas folderis
+# ^ConfirmSubCaption
+: Apstiprinâðana
+# ^UninstallingSubCaption
+: Norit atinstalâcija
+# ^UnCompletedSubCaption
+: Pabeigts
+# ^BackBtn
+< &Atpakaï
+# ^NextBtn
+&Tâlâk >
+# ^AgreeBtn
+Es &Piekrîtu
+# ^AcceptBtn
+Es &pieòemu licences lîguma noteikumus
+# ^DontAcceptBtn
+Es &nepieòemu licences lîguma noteikumus
+# ^InstallBtn
+&Instalçt
+# ^UninstallBtn
+&Atinstalçt
+# ^CancelBtn
+Atcelt
+# ^CloseBtn
+Ai&zvçrt
+# ^BrowseBtn
+Pâ&rlûkot...
+# ^ShowDetailsBtn
+Râdît &detaïas
+# ^ClickNext
+Nospiediet 'Tâlâk', lai turpinâtu.
+# ^ClickInstall
+Nospiediet 'Instalçt', lai sâktu instalâcijas procesu.
+# ^ClickUninstall
+Nospiediet 'Atinstalçt', lai sâktu atinstalâcijas procesu.
+# ^Name
+Vârds
+# ^Completed
+Pabeigts
+# ^LicenseText
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) instalâcijas. Ja pieòemat licences lîguma noteikumus, tad izvçlieties "Es pieòemu...".
+# ^LicenseTextCB
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) instalâcijas. Ja pieòemat licences lîguma noteikumus, tad ieíeksçjiet izvçles rûtiòu. $_CLICK
+# ^LicenseTextRB
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) instalâcijas. Ja pieòemat licences lîguma noteikumus, tad izvçlieties pirmo opciju apakðâ. $_CLICK
+# ^UnLicenseText
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) atinstalâcijas. Ja pieòemat licences lîguma noteikumus, tad izvçlieties "Es pieòemu...".
+# ^UnLicenseTextCB
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) atinstalâcijas. Ja pieòemat licences lîguma noteikumus, tad ieíeksçjiet izvçles rûtiòu. $_CLICK
+# ^UnLicenseTextRB
+Lûdzu izlasiet licences lîgumu pirms $(^NameDA) atinstalâcijas. Ja pieòemat licences lîguma noteikumus, tad izvçlieties pirmo opciju apakðâ. $_CLICK
+# ^Custom
+Pielâgoti
+# ^ComponentsText
+Izvçlieties, kurus komponentus instalçt un noòemiet íeksîti tiem, kurus nevçlaties instalçt. $_CLICK
+# ^ComponentsSubText1
+Izvçlieties instalâcijas tipu:
+# ^ComponentsSubText2_NoInstTypes
+Izvçlieties instalçjamos komponentus:
+# ^ComponentsSubText2
+Vai arî izvçlieties tikai nepiecieðamos komponentus, kurus vçlaties instalçt:
+# ^UnComponentsText
+Izvçlieties, kurus komponentus atinstalçt un noòemiet íeksîti tiem, kurus nevçlaties atinstalçt. $_CLICK
+# ^UnComponentsSubText1
+Izvçlieties atinstalâcijas tipu:
+# ^UnComponentsSubText2_NoInstTypes
+Izvçlieties atinstalçjamos komponentus:
+# ^UnComponentsSubText2
+Vai arî izvçlieties tikai nepiecieðamos komponentus, kurus vçlaties atinstalçt:
+# ^DirText
+$(^NameDA) tiks instalçta ðajâ folderî. Lai norâdîtu citu folderi, nospiediet 'Pârlûkot' un izvçlieties citu folderi. $_CLICK
+# ^DirSubText
+Instalâcijas Folderis
+# ^DirBrowseText
+Izvçlieties folderi, kur instalçt $(^NameDA):
+# ^UnDirText
+$(^NameDA) tiks atinstalçta no ðî foldera. Lai norâdîtu citu folderi, nospiediet Pârlûkot un izvçlieties citu folderi. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Izvçlieties folderi, no kura atinstalçt $(^NameDA):
+# ^SpaceAvailable
+"Pieejamais diska apjoms: "
+# ^SpaceRequired
+"Nepiecieðamais diska apjoms: "
+# ^UninstallingText
+$(^NameDA) tiks atinstalçta no ðî foldera. $_CLICK
+# ^UninstallingSubText
+Atinstalâcija no:
+# ^FileError
+Kïûda atverot failu rakstîðanai: \r\n\t"$0"\r\nNospiediet Atcelt, lai atceltu instalâcijas procesu,\r\nMçìinât vçlreiz, lai atkârtoti mçìinâtu rakstît failâ, vai\r\nignorçt, lai izlaistu ðo failu
+# ^FileError_NoIgnore
+Kïûda atverot failu rakstîðanai: \r\n\t"$0"\r\nNospiediet Atcelt, lai atceltu instalâcijas procesu
+# ^CantWrite
+"Nav iespçjams ierakstît: "
+# ^CopyFailed
+Kopçðana neizdevâs
+# ^CopyTo
+"Kopçt uz "
+# ^Registering
+"Reìistrâcija: "
+# ^Unregistering
+"Atreìistrâcija: "
+# ^SymbolNotFound
+"Simbols netika atrasts: "
+# ^CouldNotLoad
+"Nebija iespçjams ielâdçt: "
+# ^CreateFolder
+"Izveidot folderi: "
+# ^CreateShortcut
+"Izveidot saîsni: "
+# ^CreatedUninstaller
+"Izveidots atinstalçtâjs: "
+# ^Delete
+"Izdzçst failu: "
+# ^DeleteOnReboot
+"Izdzçst pçc restarta: "
+# ^ErrorCreatingShortcut
+"Kïûda veidojot saîsni: "
+# ^ErrorCreating
+"Kïûda veidojot: "
+# ^ErrorDecompressing
+Kïûda dekompresçjot datus. Bojâta instalâcija?
+# ^ErrorRegistering
+Kïûda reìistrçjot DLL failu
+# ^ExecShell
+"Palaist Èaulâ: "
+# ^Exec
+"Izpildît: "
+# ^Extract
+"Atspiest: "
+# ^ErrorWriting
+"Atspieðana: kïûda rakstot failâ "
+# ^InvalidOpcode
+Instalâcija bojâta: nederîgs opkods
+# ^NoOLE
+"Nav OLE priekð: "
+# ^OutputFolder
+"Izejas folderis: "
+# ^RemoveFolder
+"Izdzçst folderi: "
+# ^RenameOnReboot
+"Pârsaukt pçc restarta: "
+# ^Rename
+"Pârsaukt: "
+# ^Skipped
+"Izlaists: "
+# ^CopyDetails
+Kopçt detaïas starpliktuvç
+# ^LogInstall
+Instalâcijas reìistrâcijas process
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G
