@@ -39,6 +39,10 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, type);
 }
 
+void * NSISCALL my_alloc(DWORD dwBytes) {
+  return (void *)GlobalAlloc(GPTR, dwBytes);
+}
+
 #ifdef NSIS_SUPPORT_RMDIR
 void NSISCALL doRMDir(char *buf, int recurse)
 {
@@ -251,7 +255,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
             int l=pszWinInit + dwFileSize-pszFirstRenameLine;
             if (!findinmem(pszFirstRenameLine,szRenameLine,l))
             {
-              void* data=(void*)GlobalAlloc(GMEM_FIXED,l);
+              void* data=(void*)my_alloc(l);
               mini_memcpy(data, pszFirstRenameLine, l);
               mini_memcpy(pszFirstRenameLine + cchRenameLine, data, l);
               GlobalFree((HGLOBAL)data);
