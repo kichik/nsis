@@ -14,3 +14,5 @@ DOCUMENTATION
 * default values bolded or something alike
 
 * go over everything and search for mistakes :)
+
+* Fix the history, go through the CVS log and copy everything that has changed since the last version
