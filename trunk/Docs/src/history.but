@@ -10,6 +10,8 @@
 
 \b New easier version of the Modern User Interface with better multilanguage support, InstallOptions integration, welcome and finish page etc.
 
+\b Custom pages no longer flicker when created
+
 \b Added accelerator keys
 
 \b Added LangString and LangStringUP for user defined multilingual strings
@@ -24,7 +26,7 @@
 
 \b Splash.exe is now a plugin (splash.dll)
 
-\b Added new plugins: System, AdvSplash, nsExec, UserInfo, BgImage and StartMenu
+\b Added new plugins: System, AdvSplash, nsExec, UserInfo, BgImage, Banner and StartMenu
 
 \b !ifdef and friends can now be used in macros
 

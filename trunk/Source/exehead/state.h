@@ -1,3 +1,8 @@
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+extern char plugins_temp_dir[NSIS_MAX_STRLEN];
+#endif
+extern char temp_directory[NSIS_MAX_STRLEN];
+
 extern char g_usrvars[25][NSIS_MAX_STRLEN];
 // changed by Amir Szekely 28th August 2002
 // smaller exehead

@@ -12,9 +12,7 @@
 char g_log_file[1024];
 #endif
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-extern char plugins_temp_dir[NSIS_MAX_STRLEN];
-#endif
+char temp_directory[NSIS_MAX_STRLEN];
 
 char g_usrvars[25][NSIS_MAX_STRLEN];
 char *state_command_line=g_usrvars[20];
@@ -24,6 +22,10 @@ char *state_exe_directory=g_usrvars[23];
 char *state_language=g_usrvars[24];
 
 HANDLE g_hInstance;
+
+#ifndef INVALID_FILE_ATTRIBUTES
+#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
+#endif
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
@@ -326,7 +328,7 @@ static void NSISCALL queryShellFolders(const char *name_, char *out)
       {
         f=0; goto again;
       }
-      GetTempPath(NSIS_MAX_STRLEN,out);
+      mystrcpy(out,temp_directory);
     }
   }
 }
@@ -477,7 +479,7 @@ char * NSISCALL process_string(char *out, const char *in)
           }
 
         case VAR_CODES_START + 32: // TEMP
-          GetTempPath(NSIS_MAX_STRLEN, out);
+          mystrcpy(out,temp_directory);
           break;
 
         case VAR_CODES_START + 33: // WINDIR

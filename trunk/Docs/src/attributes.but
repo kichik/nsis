@@ -140,7 +140,7 @@ This attribute tells the installer to check a string in the registry, and use it
 
 \c [flag [...]]
 
-Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee).
+Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with XPStyle on (see \k{axpstyle}).
 
 \S2{ainsttype} InstType
 
@@ -226,13 +226,13 @@ Sets whether or not the details of the uninstall are shown. Can be 'hide' to hid
 
 \c \\<b\\>normal\\</b\\>|silent|silentlog
 
-Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections are installed quietly, with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also LogSet (\k{logset}).
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using SectionSetFlags [see \k{sectionsetflags}]), with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also LogSet (\k{logset}).
 
 \S2{asilentuninstall} SilentUnInstall
 
 \c \\<b\\>normal\\</b\\>|silent
 
-Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', all sections are installed quietly, with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also LogSet (\k{logset}).
+Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also LogSet (\k{logset}).
 
 \S2{aspacetexts} SpaceTexts
 
