@@ -128,17 +128,11 @@ static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
   BOOL ret=0;
   if (uMsg == WM_CTLCOLORSTATIC) {
-    if (g_inst_cmnheader->code_onStaticCtlBkColor >= 0) {
-      char tmp[NSIS_MAX_STRLEN];
-      mystrcpy(tmp,g_usrvars[0]);
-      myitoa(g_usrvars[0],lParam);
-      ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onStaticCtlBkColor,NULL);
-      if (myatoi(g_usrvars[0]) != -1) {
-        LOGBRUSH b={BS_SOLID,myatoi(g_usrvars[0]),0};
-        SetBkColor((HDC)wParam, b.lbColor);
-        ret=(BOOL)CreateBrushIndirect(&b);
-      }
-      mystrcpy(g_usrvars[0],tmp);
+    COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
+    if (color) {
+      LOGBRUSH b={BS_SOLID, color-1, 0};
+      SetBkColor((HDC)wParam, b.lbColor);
+      ret=(BOOL)CreateBrushIndirect(&b);
     }
   }
   return ret;
@@ -563,6 +557,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+        ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
         ShowWindow(m_curwnd,SW_SHOWNA);
       }
 
@@ -1192,12 +1187,12 @@ void NSISCALL update_status_text_from_lang(langid_t id, const char *text2)
 
 void NSISCALL update_status_text(const char *text1, const char *text2)
 {
-  static LVITEM new_item = {LVIF_TEXT,0,0,0,0,ps_tmpbuf};
+  static LVITEM new_item = {LVIF_TEXT,0,0,0,0,g_tmp};
   RECT r;
   if (insthwnd)
   {
-    if (mystrlen(text1)+mystrlen(text2) >= sizeof(ps_tmpbuf)) return;
-    wsprintf(ps_tmpbuf,"%s%s",text1,text2);
+    if (mystrlen(text1)+mystrlen(text2) >= sizeof(g_tmp)) return;
+    wsprintf(g_tmp,"%s%s",text1,text2);
     if ((ui_st_updateflag&1))
     {
       // Changed by Amir Szekely 26th July 2002
