@@ -1,4 +1,5 @@
-#include "../exehead/config.h"
+#include "bzlib.h"
+
 #if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Huffman coding low-level stuff                        ---*/
@@ -58,9 +59,6 @@
 
   For more information on these sources, see the manual.
 --*/
-
-
-#include "bzlib.h"
 
 #ifndef EXEHEAD
 /*---------------------------------------------------*/

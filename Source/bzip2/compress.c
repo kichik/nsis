@@ -1,5 +1,3 @@
-#include "../exehead/config.h"
-#if !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Compression machinery (not incl block sorting)        ---*/
 /*---                                            compress.c ---*/
@@ -113,9 +111,7 @@ void bsFinishWrite ( EState* s )
 
 
 /*---------------------------------------------------*/
-static
-__inline__
-void bsW ( EState* s, Int32 n, UInt32 v )
+static void bsW ( EState* s, Int32 n, UInt32 v )
 {
    bsNEEDW ( n );
    s->bsBuff |= (v << (32 - s->bsLive - n));
@@ -656,5 +652,3 @@ void BZ2_compressBlock ( EState* s, Bool is_last_block )
 /*-------------------------------------------------------------*/
 /*--- end                                        compress.c ---*/
 /*-------------------------------------------------------------*/
-
-#endif
