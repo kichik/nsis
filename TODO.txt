@@ -38,6 +38,8 @@ INSTALLOPTIONS
 
 * manual validation
 
+* add an option for LBS_MULTIPLESEL too, not just LBS_EXTENDEDSEL
+
 -- Before NSIS 2 Final --
 
 NSIS
