@@ -842,10 +842,13 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
 }
 
 void CEXEBuild::DeleteLangTable(LanguageTable *table) {
-  free(table->nlf.m_szName);
-  free(table->nlf.m_szFont);
-  free(table->lang_strings);
+  if (table->nlf.m_szName)
+    free(table->nlf.m_szName);
+  if (table->nlf.m_szFont)
+    free(table->nlf.m_szFont);
+  delete table->lang_strings;
   for (int i = 0; i < NLF_STRINGS; i++) {
-    free(table->nlf.m_szStrings[i]);
+    if (table->nlf.m_szStrings[i])
+      free(table->nlf.m_szStrings[i]);
   }
 }

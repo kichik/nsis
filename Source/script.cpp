@@ -1205,6 +1205,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       rewind(fp);
       char *data=(char*)malloc(datalen+2);
+      if (!data)
+      {
+        ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
+        return PS_ERROR;
+      }
       char *ldata=data+1;
       if (fread(ldata,1,datalen,fp) != datalen)
       {
@@ -1220,6 +1225,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         *data = SF_TEXT;
 
       int ret = SetLangString(name, lang, data);
+      free(data);
       if (ret == PS_WARNING)
         warning_fl("LicenseLangString \"%s\" set multiple times for %d, wasting space", name, lang);
       else if (ret == PS_ERROR)
@@ -1483,10 +1489,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
           rewind(fp);
           data=(char*)malloc(datalen+2);
+          if (!data)
+          {
+            ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
+            return PS_ERROR;
+          }
           char *ldata=data+1;
           if (fread(ldata,1,datalen,fp) != datalen) {
             ERROR_MSG("LicenseData: can't read file.\n");
             fclose(fp);
+            free(data);
             return PS_ERROR;
           }
           fclose(fp);
@@ -1509,6 +1521,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           cur_page->parms[1] = add_string(data, 0);
         }
+
+        if (!idx)
+          free(data);
+
         SCRIPT_MSG("LicenseData: \"%s\"\n",file);
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
