@@ -1,6 +1,7 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+  Copyright (c) 2002 Robert Rainwater
+  Contributors: Justin Frankel, Fritz Elfert, and Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -33,6 +34,7 @@ void EnableItems(HWND hwnd);
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);
 void ResetObjects();
+void ResetDefines();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();

@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,10 +23,12 @@
 #include "makensisw.h"
 #include "resource.h"
 #include "noclib.h"
+#include "toolbar.h"
 
 NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
+extern NTOOLBAR g_toolbar;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
   MSG  msg;
@@ -38,6 +40,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.hInstance=GetModuleHandle(0);
   g_sdata.script_alloced=false;
   g_sdata.defines = NULL;
+  RestoreDefines();
   g_sdata.script=GetCommandLine();
   if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
   else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
@@ -52,8 +55,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     MessageBox(0,DLGERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
     return 1;
   }
-  haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
-    while ((status=GetMessage(&msg,0,0,0))!=0) {
+  haccel = LoadAccelerators(g_sdata.hInstance, MAKEINTRESOURCE(IDK_ACCEL));
+  while ((status=GetMessage(&msg,0,0,0))!=0) {
     if (status==-1) return -1;
     if (!IsDialogMessage(g_find.hwndFind, &msg)) {
       if (!TranslateAccelerator(hDialog,haccel,&msg)) {
@@ -80,9 +83,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
       SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE);  
       DragAcceptFiles(g_sdata.hwnd,FALSE);
-      InitTooltips(g_sdata.hwnd);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.submenu = GetSubMenu(g_sdata.menu,1);
+	  CreateToolBar();
+      InitTooltips(g_sdata.hwnd);
+#ifdef COMPRESSOR_OPTION
+      SetCompressor(IDM_DEFAULT);
+#endif
       SetBranding(g_sdata.hwnd);
       HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
@@ -104,6 +111,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
     case WM_DESTROY:
     {
+      SaveDefines();
       SaveWindowPos(g_sdata.hwnd);
       DestroyTooltips();
       PostQuitMessage(0);
@@ -196,10 +204,27 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       switch (((NMHDR*)lParam)->code ) {
         case EN_SELCHANGE: 
           SendDlgItemMessage(hwndDlg,IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM) &g_sdata.textrange);
-          EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?MF_GRAYED:MF_ENABLED));
-          break;  
+		  {
+			  BOOL enabled = (g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?FALSE:TRUE);
+			  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
+			  EnableToolBarButton(IDM_COPY,enabled);
+		  }
+#ifdef COMPRESSOR_OPTION
+        case TBN_DROPDOWN:
+        {
+            LPNMTOOLBAR pToolBar = (LPNMTOOLBAR) lParam;
+            if(pToolBar->hdr.hwndFrom == g_toolbar.hwnd &&
+               pToolBar->iItem == IDM_COMPRESSOR) {
+                ShowToolbarDropdownMenu();
+                return TBDDRET_DEFAULT;
+            }
+            else {
+                return TBDDRET_NODEFAULT;
+            }
+        }
+#endif
       }
-      return TRUE;
+	  return TRUE;
     case WM_COPYDATA:
     {
       PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
@@ -255,6 +280,21 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           ShellExecute(g_sdata.hwnd,"open",NSIS_FOR,NULL,NULL,SW_SHOWNORMAL);
           return TRUE;
         }
+        case IDM_NSISUPDATE:
+        {
+          int rv;
+          rv = MessageBox(g_sdata.hwnd,NSISUPDATEPROMPT,"Question",MB_YESNO|MB_ICONQUESTION);
+          if(rv == IDYES) {
+		      char pathf[MAX_PATH],*path;
+		      GetModuleFileName(NULL,pathf,sizeof(pathf));
+		      path=my_strrchr(pathf,'\\');
+		      if(path!=NULL) *path=0;
+		      lstrcat(pathf,NSIS_UPDATE);
+              ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL);
+              PostMessage(g_sdata.hwnd,WM_COMMAND, IDM_EXIT, 0);
+          }
+          return TRUE;
+        }
         case IDM_SELECTALL:
         {
           SendDlgItemMessage(g_sdata.hwnd, IDC_LOGWIN, EM_SETSEL, 0, -1);
@@ -289,6 +329,23 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           }
           return TRUE;
         }
+#ifdef COMPRESSOR_OPTION
+        case IDM_COMPRESSOR:
+        {
+			switch(g_sdata.compressor) {
+			case COMPRESSOR_DEFAULT:
+				SetCompressor(IDM_ZLIB);
+				break;
+			case COMPRESSOR_ZLIB:
+				SetCompressor(IDM_GZIP);
+				break;
+			case COMPRESSOR_GZIP:
+				SetCompressor(IDM_DEFAULT);
+				break;
+			}
+            return TRUE;
+        }
+#endif
         case IDM_CLEARLOG:
         {
           if (!g_sdata.thread) {
@@ -386,6 +443,12 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           g_find.hwndFind = FindText(&g_find.fr);
           return TRUE;
         }
+#ifdef COMPRESSOR_OPTION
+        case IDM_DEFAULT:
+        case IDM_ZLIB:
+        case IDM_GZIP:
+            return SetCompressor(LOWORD(wParam));
+#endif
       }
     }
   }
@@ -563,7 +626,8 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
       switch (LOWORD(wParam)) {
         case IDOK:
         {
-          ResetObjects();
+		  ResetObjects();
+          ResetDefines();
           if(g_sdata.input_script) {
             g_sdata.script_alloced = true;
             g_sdata.script = (char *)GlobalAlloc(GPTR, (lstrlen(g_sdata.input_script)+3)*sizeof(char));
@@ -665,3 +729,30 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
   }
   return FALSE;
 }
+
+#ifdef COMPRESSOR_OPTION
+BOOL SetCompressor(WORD command)
+{
+    switch(command) {
+        case IDM_DEFAULT:
+            g_sdata.compressor = COMPRESSOR_DEFAULT;
+            break;
+        case IDM_ZLIB:
+            g_sdata.compressor = COMPRESSOR_ZLIB;
+            break;
+        case IDM_GZIP:
+            g_sdata.compressor = COMPRESSOR_GZIP;
+            break;
+        default:
+            return FALSE;
+    }
+	UpdateToolBarCompressorButton();
+    CheckMenuItem(g_sdata.menu, IDM_DEFAULT, MF_BYCOMMAND | MF_UNCHECKED);
+    CheckMenuItem(g_sdata.menu, IDM_ZLIB, MF_BYCOMMAND | MF_UNCHECKED);
+    CheckMenuItem(g_sdata.menu, IDM_GZIP, MF_BYCOMMAND | MF_UNCHECKED);
+
+    CheckMenuItem(g_sdata.menu, command, MF_BYCOMMAND | MF_CHECKED);
+
+    return TRUE;
+}
+#endif
