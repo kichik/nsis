@@ -14,6 +14,7 @@
 #include "exehead/config.h"
 
 #include <string>
+#include <set>
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
@@ -145,7 +146,9 @@ class CEXEBuild {
     int doCommand(int which_token, LineParser &line);
 
     int do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char 
-      *name_override=0, int generatecode=1, int *data_handle=0, std::string& basedir=std::string(""));
+      *name_override=0, int generatecode=1, int *data_handle=0, 
+      const std::set<std::string>& excluded=std::set<std::string>(), 
+      std::string& basedir=std::string(""));
     int add_file(const std::string& dir, const std::string& file, int attrib, const char 
       *name_override, int generatecode, int *data_handle);
     int do_add_file_create_dir(const std::string& local_dir, const std::string& dir, int attrib=0);
