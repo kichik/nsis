@@ -286,7 +286,6 @@ Section "nsExec Source" SecContribnsExecS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\nsExec
   File ..\Contrib\nsExec\*.c
-  File ..\Contrib\nsExec\*.h
   File ..\Contrib\nsExec\*.txt
   File ..\Contrib\nsExec\*.dsw
   File ..\Contrib\nsExec\*.dsp
@@ -477,7 +476,6 @@ FunctionEnd
 
 Function .onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
@@ -663,7 +661,6 @@ SectionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetPage
 
 FunctionEnd
