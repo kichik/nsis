@@ -43,8 +43,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	if (*g_script++=='"') while (*g_script++!='"');
 	else while (*g_script++!=' ');
 	while (*g_script==' ') g_script++;
-	g_retcode = -1; // return code is always false unless set to true by GetExitCodeProcess
-	g_warnings = FALSE;
+	ResetObjects();
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
 	if (!hDialog) {
 		char buf [MAX_STRING];
@@ -93,10 +92,26 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_CLOSE:
 		{
 			if (!g_hThread) {
+				DragAcceptFiles(g_hwnd,FALSE);
 				DestroyWindow(hwndDlg);
 				FreeLibrary(hRichEditDLL);
 			}
 			return TRUE;
+		}
+		case WM_DROPFILES: {
+			int num;
+			char szTmp[MAX_PATH];
+			num = DragQueryFile((HDROP)wParam,-1,NULL,0);
+			if (num==1) {
+				DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
+				if (lstrlen(szTmp)>0) {
+					g_script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
+					wsprintf(g_script,"/CD \"%s\"",szTmp);
+					ResetObjects();
+					CompileNSISScript();
+				}
+			}
+			break;
 		}
 		case WM_GETMINMAXINFO:
 		{
@@ -133,16 +148,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				CloseHandle(g_hThread);
 				g_hThread=0;
 			}
-      EnableItems(g_hwnd);
+			EnableItems(g_hwnd);
 			if (g_retcode==0) {
 				MessageBeep(MB_ICONASTERISK);
 				if (g_warnings) SetTitle(g_hwnd,"Finished with Warnings");
 				else SetTitle(g_hwnd,"Finished Sucessfully");
 			}
 			else {
-        MessageBeep(MB_ICONEXCLAMATION);
-        SetTitle(g_hwnd,"Compile Error: See Log for Details");
-      }
+				MessageBeep(MB_ICONEXCLAMATION);
+				SetTitle(g_hwnd,"Compile Error: See Log for Details");
+			}
+			DragAcceptFiles(g_hwnd,TRUE);
 			return TRUE;
 		}
 		case WM_COMMAND:
