@@ -153,13 +153,13 @@ Function .onInit
   Push 8
 
   Push ${LANG_ENGLISH}
-  Push English
+  Push ${MUI_ENGLISH_LANGNAME}
   Push ${LANG_FRENCH}
-  Push Français
+  Push ${MUI_FRENCH_LANGNAME}
   Push ${LANG_GERMAN}
-  Push Deutsch
+  Push ${MUI_GERMAN_LANGNAME}
   Push ${LANG_DUTCH}
-  Push Nederlands
+  Push ${MUI_DUTCH_LANGNAME}
   Push ${LANG_POLISH}
   Push Polish
   Push ${LANG_GREEK}
