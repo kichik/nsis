@@ -73,6 +73,43 @@ Callback functions are called by the installer upon certain defined events such 
 
 For more information about sections see \k{functions}.
 
+\S1{tut-working-with-scripts} Working with Scripts
+
+\S2{tutVariables} Variables
+
+NSIS offers 20 Variables that can be used in any Section or Function. In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable. For example, the value of $0 is 123.
+
+Now you are going to call the function bla:
+
+\c Function bla
+\c
+\c   Push $0 ;123 added to the stack
+\c
+\c     ...the function can use $0...
+\c
+\c   Pop $0 ;Remove 123 from the stack and set $0 back to 123
+\c
+\c FunctionEnd
+
+After calling the function, the variables contain the same value as before. Note the order when using multiple variables (last-in first-out):
+
+\c Function bla
+\c
+\c   Push $0
+\c  Push $1
+\c
+\c     ...code...
+\c
+\c  Pop $1
+\c  Pop $0
+\c
+\c FunctionEnd
+
+\S2{tutdebug} Debugging Scripts
+
+The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debuging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file. See \R{dumplogtofile}{here}. Very useful if you force to close the installer automatically using \R{setautoclose}{SetAutoClose}.
+
+
 \S1{compilercommands} Compiler Commands
 
 Compiler commands will be executed on compile time on your computer. They can be used for conditional compilation, to include header files, to execute applications, to change the working directory and more. The most common usage is defines. Defines are compile time constants. You can define your product's version number and use it in your script. For example:

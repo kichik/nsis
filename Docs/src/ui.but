@@ -60,7 +60,7 @@ Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-ou
 
 \c true|false
 
-Overrides the default auto window-closing flag (specified for the installer using AutoCloseWindow, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.
+Overrides the default auto window-closing flag (specified for the installer using \R{aautoclosewindow}{AutoCloseWindow}, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.
 
 \S2{setbrandingimage} SetBrandingImage
 
@@ -72,7 +72,7 @@ Sets the current bitmap file displayed as the branding image. If no IMGID is spe
 
 \c show|hide
 
-Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via ShowInstDetails
+Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via \R{ashowinstdetails}{ShowInstDetails}.
 
 \S2{setdetailsprint} SetDetailsPrint
 
