@@ -149,6 +149,18 @@ int LogMessages(const char *pStr) {
 			else pStr = i+1;
 		}
 	}
+	else if (my_strstr(pStr,"\n")) {
+		while (*pStr) {
+			char *i = my_strstr(pStr,"\n");
+			if (i==0) {
+				LogMessage(pStr);
+				break;
+			}
+			*i=0;
+			LogMessage(pStr);
+			pStr = i+1;
+		}
+	}
 	return 1;
 }
 
@@ -174,7 +186,7 @@ char *my_strstr(const char *string, const char *strCharSet) {
 	char *s1, *s2;
 	size_t chklen;
 	size_t i;
-  if (lstrlen(string) < lstrlen(strCharSet)) return 0;
+	if (lstrlen(string) < lstrlen(strCharSet)) return 0;
 	if (!*strCharSet) return (char*)string;
 	chklen=lstrlen(string)-lstrlen(strCharSet);
 	for (i = 0; i < chklen; i++) {
