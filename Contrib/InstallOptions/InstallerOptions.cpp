@@ -14,10 +14,14 @@
 #include <commdlg.h>
 #include <cderr.h>
 #include "resource.h"
+#include "Shellapi.h"
 
 #define popstring dontuseme
 #include "../exdll/exdll.h"
 #undef popstring
+
+void * mini_memcpy(void *out, const void *in, int len);
+void * mini_zeromem(void *in, int len);
 
 static int popstring(char *str)
 {
@@ -57,6 +61,7 @@ char *STRDUP(const char *c)
 #define FIELD_COMBOBOX     (10)
 #define FIELD_LISTBOX      (11)
 #define FIELD_GROUPBOX     (12)
+#define FIELD_LINK         (13)
 
 // general flags
 #define FLAG_RIGHT         0x00000001
@@ -126,7 +131,7 @@ struct FieldType {
   HWND   hwnd;
   UINT   nControlID;
 
-  int    nParentIdx;  // this is used by the filerequest and dirrequest controls
+  int    nParentIdx;  // this is used by the filerequest and dirrequest controls, used to store original windowproc for LINK
   HANDLE hImage; // this is used by image/icon field to save the handle to the image
 };
 
@@ -377,6 +382,7 @@ bool SaveSettings(void) {
           GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
           pszBuffer[nLength+1]='"';
           pszBuffer[nLength+2]='\0';
+          
           if ( pFields[nIdx].nType == FIELD_TEXT && pFields[nIdx].nFlags & FLAG_MULTILINE )
           {
             char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
@@ -402,6 +408,7 @@ bool SaveSettings(void) {
             FREE(pszBuffer);
             pszBuffer=pszBuf2;
           }
+          
           break;
         }
     }
@@ -432,7 +439,7 @@ void AddBrowseButtons() {
         // with this trick browse button get tabstop after parent edit
         if ( nIdx < nNumFields - 1 )
         {
-          CopyMemory(&pFields[nIdx+2], &pFields[nIdx+1], (nNumFields-nIdx-1)*sizeof(FieldType) );
+          mini_memcpy(&pFields[nIdx+2], &pFields[nIdx+1], (nNumFields-nIdx-1)*sizeof(FieldType) );
           for ( int i = nIdx+2; i < nNumFields; i++ )
           {
             if ( pFields[i].nType == FIELD_BROWSEBUTTON )
@@ -441,7 +448,7 @@ void AddBrowseButtons() {
         }
         // After moving controls 1 position, don't forget to increment nNumFields at *end* of loop
         pNewField = &pFields[nIdx+1];
-        ZeroMemory(pNewField, sizeof(FieldType)); // don't use settings from other control
+        mini_zeromem(pNewField, sizeof(FieldType)); // don't use settings from other control
         pNewField->nControlID = 1200 + nNumFields;
         pNewField->nParentIdx = nIdx;
         pNewField->nType = FIELD_BROWSEBUTTON;
@@ -522,6 +529,7 @@ bool ReadSettings(void) {
       { "ICON",        FIELD_ICON        },
       { "BITMAP",      FIELD_BITMAP      },
       { "GROUPBOX",    FIELD_GROUPBOX    },
+      { "LINK",        FIELD_LINK        },
       { NULL,          0                 }
     };
     // Control flags
@@ -730,6 +738,93 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 	return 0;
 }
 
+// pFields[nIdx].nParentIdx is used to store original windowproc
+int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
+{
+  int StaticField = -1;
+  for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
+    if (pFields[nIdx].nType == FIELD_LINK && hWin == pFields[nIdx].hwnd ) {
+      StaticField = nIdx;
+      break;
+    }
+  }
+
+  if ( StaticField >= 0 )
+  {
+    switch(uMsg)
+    {
+    case WM_PAINT:
+      {
+        PAINTSTRUCT ps;
+        HFONT hOldFont;
+        HFONT hFont = (HFONT)SendMessage(hWin, WM_GETFONT, 0, 0);
+        HDC pDC = BeginPaint(hWin, &ps);
+        int OldMode = SetBkMode(pDC, TRANSPARENT);
+        int OldTextColor;
+        
+        if ( GetSysColorBrush(COLOR_HOTLIGHT) )
+          OldTextColor = SetTextColor(pDC, GetSysColor(COLOR_HOTLIGHT));
+        else
+          OldTextColor = SetTextColor(pDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
+        
+        hOldFont = (HFONT)SelectObject(pDC, hFont);        
+        GetClientRect(hWin, &pFields[StaticField].rect);
+
+        DrawText( pDC, pFields[StaticField].pszText, -1, &pFields[StaticField].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+        
+        DrawText( pDC, pFields[StaticField].pszText, -1, &pFields[StaticField].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
+        
+        SetTextColor(pDC, OldTextColor);
+        SetBkMode(pDC, OldMode);
+        SelectObject(pDC, hOldFont);
+        EndPaint(hWin, &ps);
+        return 0;
+      }
+    case WM_NCHITTEST:
+      {
+        POINT pt;
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+        ScreenToClient(hWin, &pt);
+        
+        if ( PtInRect(&pFields[StaticField].rect, pt) )
+        {
+          return HTCLIENT;
+        }
+        break;
+      }
+    case WM_SETCURSOR:
+      {
+        if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
+        {
+          HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
+          if ( hCur )
+          {
+            SetCursor(hCur);
+            return 1; // halt further processing
+          }
+        }
+        break;
+      }
+    case WM_LBUTTONUP:
+      {
+        POINT pt;
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+        
+        if ( PtInRect(&pFields[StaticField].rect, pt) )
+        {
+          ShellExecute(hWin, "", pFields[StaticField].pszState, "", "", SW_SHOWDEFAULT);	
+        }	
+        return 0;
+      }
+    }
+    return CallWindowProc((WNDPROC)pFields[StaticField].nParentIdx, hWin, uMsg, wParam, lParam);;
+  }
+  else
+    return 0;
+}
+
 int nIdx;
 HWND childwnd;
 int cw_vis;
@@ -868,7 +963,10 @@ int createCfgDlg()
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "BUTTON",       // FIELD_GROUPBOX
         DEFAULT_STYLES | BS_GROUPBOX,
-        WS_EX_TRANSPARENT }
+        WS_EX_TRANSPARENT },
+      { "STATIC",       // FIELD_LINK
+        DEFAULT_STYLES | WS_TABSTOP
+        },      
     };
 
     int nType = pFields[nIdx].nType;
@@ -925,8 +1023,7 @@ int createCfgDlg()
         if (pFields[nIdx].nFlags & FLAG_HSCROLL)
           dwStyle |= WS_HSCROLL;
         if (pFields[nIdx].nFlags & FLAG_READONLY)
-          dwStyle |= ES_READONLY
-          ;
+          dwStyle |= ES_READONLY;
         title = pFields[nIdx].pszState;
         break;
       case FIELD_COMBOBOX:
@@ -1057,6 +1154,9 @@ int createCfgDlg()
           nImageType,
           nImage
         );
+      } else if (nType == FIELD_LINK){
+
+        pFields[nIdx].nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);      
       }
     }
   }
@@ -1249,4 +1349,25 @@ void ConvertNewLines(char *str) {
     else *p2 = *p1;
   }
   *p2 = 0;
+}
+
+void * mini_memcpy(void *outBuf, const void *inBuf, int len)
+{
+  char *c_out=(char*)outBuf+(len-1);
+  char *c_in=(char *)inBuf+(len-1);
+  while (len-- > 0)
+  {
+    *c_out--=*c_in--;
+  }
+  return outBuf;
+}
+
+void * mini_zeromem(void *in, int len)
+{
+  char *c_in=(char *)in;
+  while (len-- > 0)
+  {
+    *c_in++=0;
+  }
+  return in;
 }
