@@ -276,7 +276,7 @@ Var MUI_TEMP2
   SetCtlColors $MUI_TEMP1 "branding"
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
   SetCtlColors $MUI_TEMP1 "branding"
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:$(^Branding)"
+  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:$(^Branding) "
 
 !macroend
 
