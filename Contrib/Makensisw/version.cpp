@@ -23,7 +23,7 @@
 #define STR(x) REALSTR(x)
 
 #ifdef RELEASE
-const char *NSISW_VERSION = "MakeNSISW " STR(RELEASE);
+const char *NSISW_VERSION = "MakeNSISW " STR(RELEASE) " (NSIS Compiler Interface)";
 #else
 const char *NSISW_VERSION = "MakeNSISW " __DATE__;
 #endif

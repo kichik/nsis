@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, Sunil Kamath, Joost Verburg
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

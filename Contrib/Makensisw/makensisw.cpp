@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, Sunil Kamath, Joost Verburg
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -111,7 +111,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SetBranding(g_sdata.hwnd);
       HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
-      SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
       RestoreWindowPos(g_sdata.hwnd);
       RestoreCompressor();
       g_sdata.compressor =  (NCOMPRESSOR)-1;
@@ -1069,6 +1068,7 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
         case IDCANCEL:
         {
           EndDialog(hwndDlg, 1);
+		  LogMessage(g_sdata.hwnd,USAGE);
           break;
         }
       }
