@@ -2,8 +2,8 @@
 ;Compatible with Modern UI 1.64
 
 ;Language: Romanian (1048)
-;Translated by Cristian Pirvu (pcristip@yahoo.com)
-;Small changes by 0.3 Sorin Sbarnea - INTERSOL SRL (sorin@intersol.ro)
+;Translated by Cristian Pirvu (pcristip@yahoo.com) - Small changes by Sorin Sbarnea - INTERSOL SRL (sorin@intersol.ro)
+
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ROMANIAN"
@@ -23,7 +23,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Apasati Page Down pentru a vedea restul licentei."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, alegeti De Acord pentru a continua. Trebuie sa acceptati licenta ca sa instalati ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a instala ${MUI_PRODUCT} trebuie sa accesptati termenii din acordul de licenta."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati trmenii acordului, alegeti prima obtiune de mai jos. Pentru a instala ${MUI_PRODUCT} trebuie sa accesptati acordul."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii acordului, alegeti prima optiune de mai jos. Pentru a instala ${MUI_PRODUCT} trebuie sa accesati acordul."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Alegeti componente"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Alegeti componentele produsului ${MUI_PRODUCT} pe care vreti sa le instalati."
@@ -68,7 +68,12 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "In proces de dezinstalare"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Asteaptati pana ${MUI_PRODUCT} este dezinstalat."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Terminat"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Dezinstalarea e completa"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Dezinstalarea s-a terminat cu succes."
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Instalare anulata"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Instalarea nu a fost terminata cu succes"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Dezinstalarea anulata"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Dezinstalarea nu a fost terminata cu succes"
 
 !insertmacro MUI_LANGUAGEFILE_END
