@@ -97,7 +97,7 @@ Section "Uninstall"
   ;Remove shortcut
   ReadRegStr ${TEMP1} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
   
-  StrCmp ${TEMP1} "" noshotcuts
+  StrCmp ${TEMP1} "" noshortcuts
   
     Delete "$SMPROGRAMS\${TEMP1}\Modern UI.lnk"
     Delete "$SMPROGRAMS\${TEMP1}\Uninstall.lnk"
