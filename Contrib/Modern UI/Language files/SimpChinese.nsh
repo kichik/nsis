@@ -1,8 +1,8 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.5
 
-;Language: 'Chinese (Simplified)' (2052)
-;By Kii Ali <kiiali@cpatch.org>
+; Language: "Chinese (Simplified)" (2052)
+; Kii Ali <kiiali@cpatch.org>
 
 ;--------------------------------
 
@@ -12,39 +12,47 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "单击 [下一步(N)] 继续。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "单击 [安装(I)] 继续安装。"
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授权合约"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安装 ${MUI_PRODUCT} 之前，请检阅授权条款。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "若要看授权合约的其余部分，请按 [PgDn] 往下卷动页面。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合约中的条款，选定 [我同意(A)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受授权合约才能安装  ${MUI_PRODUCT}。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "检阅授权合约的其余部分，请按 [PgDn] 往下卷动页面。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合约中的条款，选定 [我同意(A)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受授权合约才能安装 ${MUI_PRODUCT} 。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "选定组件"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "选定 ${MUI_PRODUCT} 中你想要安装的组件。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "核取想要安装的组件，并把不想安装的组件解除核取。按 [下一步(N)] 继续。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "选定 ${MUI_PRODUCT} 当中你想要安装的功能。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "核取想要安装的组件，并把不想安装的组件解除核取。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指标到组件之上，便可见到它的描述。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "选定安装位置" 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "选定 ${MUI_PRODUCT} 要安装的文件夹位置。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "选定 ${MUI_PRODUCT} 要安装的文件夹。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "安装程序将在下列文件夹，安装 ${MUI_PRODUCT} 。$\r$\n$\r$\n要安装到这个文件夹，单击 [安装(I)] 。要安装在不同文件夹，单击 [浏览(B)...] 并选择其他文件夹。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "目标文件夹"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "正在安装" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "正在安装"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "${MUI_PRODUCT} 正在安装，请等候。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "已完成"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "安装程序已成功地运行完成。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你确实要退出 ${MUI_PRODUCT} 安装程序？"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE "“开始”菜单文件夹"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "选择“开始”菜单文件夹"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "选择““开始”菜单”文件夹，用于程序的快捷方式。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU "选择““开始”菜单”文件夹，以便创建程序的快捷方式。你也可以输入名称，创建新文件夹。"
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你确实要退出 ${MUI_PRODUCT} 安装程序？"
 
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "解除安装 ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "从你的系统解除安装 ${MUI_PRODUCT} 。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "这将会从你的系统中解除安装 ${MUI_PRODUCT}。"
-    
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "从你的系统解除安装 ${MUI_PRODUCT}。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "从你的系统解除安装 ${MUI_PRODUCT} 。"
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "正在解除安装"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "${MUI_PRODUCT} 正在解除安装，请等候。"
+    
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "已完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "解除安装程序已成功地运行完成。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "完成"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "${MUI_PRODUCT} 已从你的系统解除安装。"
-
 !insertmacro MUI_LANGUAGEFILE_END
