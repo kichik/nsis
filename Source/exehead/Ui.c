@@ -50,16 +50,15 @@ int progress_bar_pos, progress_bar_len;
 
 static char g_tmp[4096];
 
-static int m_page=-1,m_retcode,m_delta=1;
+static int m_page=-1,m_retcode;
 static page *g_this_page;
 
 #define NOTIFY_BYE_BYE 'x'
 
-static void NSISCALL outernotify(char num) {
-  if (num==NOTIFY_BYE_BYE)
+static void NSISCALL outernotify(int delta) {
+  if (delta==NOTIFY_BYE_BYE)
     g_quit_flag++;
-  m_delta=num;
-  SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0); // it sends num again for plugins - DON'T REMOVE!
+  SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)delta,0);
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -404,6 +403,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
     page *this_page;
+    int delta = (int) wParam;
     static DLGPROC winprocs[]=
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -430,6 +430,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL);
 #endif
         //ShowWindow(hwndDlg, SW_SHOW);
+      delta = 1;
     }
 
     this_page=g_pages+m_page;
@@ -438,7 +439,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       // Call leave function. If Abort used don't move to the next page.
       // But if quit called we must exit now
-      if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return !g_quit_flag;
+      if (delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return !g_quit_flag;
 #endif
 
       // if the last page was a custom page, wait for it to finish by itself.
@@ -450,8 +451,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     NotifyCurWnd(WM_NOTIFY_INIGO_MONTOYA);
 
 nextPage:
-    m_page+=m_delta;
-    this_page+=m_delta;
+    m_page+=delta;
+    this_page+=delta;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     if (m_page==g_blocks[NB_PAGES].num) ExecuteCodeSegment(g_header->code_onInstSuccess,NULL);
