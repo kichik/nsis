@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Ukrainian (1058)
 ;By Yuri Holubow http://www.ns.lviv.ua/home
@@ -41,6 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Установка успiшно завершена."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Завершено"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Кінець"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Завершення ${MUI_PRODUCT} Майстера Установки"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} встановлено на ваш комп'ютер.\r\nНатисніть Кінець для виходу."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Ваша система мусить перезавантажитися для повної установки ${MUI_PRODUCT}. Do you want to reboot now?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Перезавантажити"
@@ -56,6 +57,8 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Ви впевненнi що хочете покинути установку ${MUI_PRODUCT}?"  
   
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Натисніть Uninstall щоб розпочати видалення."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Видалення ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Видалення ${MUI_PRODUCT} з вашої системи."
