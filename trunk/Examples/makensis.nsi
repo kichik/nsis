@@ -3,7 +3,7 @@
 !define VER_MAJOR 2
 !define VER_MINOR 0
 !define VER_REVISION 0
-!define VER_BUILD 12
+!define VER_BUILD 13
 
 !define VER_FILE "20b5"
 !define VER_DISPLAY "2.0 beta 5 (CVS)"
@@ -273,7 +273,6 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
     File "..\Contrib\Modern UI\ioSpecial.ini"
-    File "..\Contrib\Modern UI\ioSpecial3.ini"
 
     SetOutPath $INSTDIR\Contrib\UIs
     File "..\Contrib\UIs\modern.exe"
@@ -283,6 +282,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\UIs\modern_smalldesc.exe"
 
     Delete "$INSTDIR\Contrib\Modern UI\Readme.jpg"
+    Delete "$INSTDIR\Contrib\Modern UI\ioSpecial3.ini"
     Delete "$INSTDIR\Contrib\UIs\modern2.exe"
     Delete "$INSTDIR\Contrib\UIs\modern3.exe"
 
