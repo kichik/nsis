@@ -34,8 +34,6 @@
 #include "lang.h"
 #include "state.h"
 
-extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
-
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
 #error One of NSIS_CONFIG_SILENT_SUPPORT or NSIS_CONFIG_VISIBLE_SUPPORT must be defined.
 #endif
@@ -43,220 +41,46 @@ extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf,
 extern HANDLE dbd_hFile;
 #endif
 
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-static const char *g_errorcopyinginstall=_LANG_UNINSTINITERROR;
-#endif
-
 char g_caption[NSIS_MAX_STRLEN*2];
 int g_filehdrsize;
 HWND g_hwnd;
-
-int m_length;
-int m_pos;
-
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-#if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
-BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  static char *msg;
-  if (uMsg == WM_INITDIALOG)
-  {
-    SetTimer(hwndDlg,1,250,NULL);
-    msg = (char*)lParam;
-    uMsg = WM_TIMER;
-  }
-  if (uMsg == WM_TIMER)
-  {
-    static char bt[64];
-    wsprintf(bt,msg,MulDiv(m_pos,100,m_length));
-
-    my_SetWindowText(hwndDlg,bt);
-    my_SetDialogItemText(hwndDlg,IDC_STR,bt);
-  }
-  return 0;
-}
-#endif//NSIS_CONFIG_CRC_SUPPORT
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
   int ret;
   const char *m_Err = 0;
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  static HWND hwnd;
-#endif
-  static int crc;
-  static char no_crc;
-  static char do_crc;
-#endif//NSIS_CONFIG_CRC_SUPPORT
-#if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-  char silent = 0;
-#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
-  int left;
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  unsigned int verify_time=GetTickCount()+1000;
-#endif
-  
+  int cl_flags = 0;
+
   char *realcmds;
   char seekchar=' ';
   char *cmdline;
-  //WIN32_FIND_DATA *pfd;
 
   InitCommonControls();
-  
-  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
   GetTempPath(sizeof(state_temp_dir), state_temp_dir);
   validate_filename(state_temp_dir);
+  CreateDirectory(state_temp_dir, NULL);
 
-  // This is not so effective...!!??!
-  // The perfect way is:
-  //    - Test Access for filewrite
-  //    - Test Access for folder creation (needed for plugins)
-  //    - And if one of the above tests fail, change to "$WINDIR\TEMP" and re-test
-  // but this will take to much size in exehead and is unreliable too
-  /*
-  pfd = file_exists(state_temp_dir);
-  if (!pfd || !(pfd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+  // g_caption is used as a temp var here
+  if (!my_GetTempFileName(g_caption, state_temp_dir))
   {
-    // Setup temp dir to "$WINDIR\TEMP"
-    mystrcpy(state_temp_dir+GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir)), "\\Temp");
-    if ( !file_exists(state_temp_dir) || !CreateDirectory(state_temp_dir, NULL) )
+    mystrcpy(state_temp_dir + GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir)), "\\Temp");
+    validate_filename(state_temp_dir);
+    CreateDirectory(state_temp_dir, NULL);
+    if (!my_GetTempFileName(g_caption, state_temp_dir))
     {
       m_Err = _LANG_ERRORWRITINGTEMP;
       goto end;
     }
   }
-  */
+  DeleteFile(g_caption);
 
-  lstrcpyn(state_command_line,GetCommandLine(),NSIS_MAX_STRLEN);
+  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
-  g_hInstance=GetModuleHandle(NULL);
-  GetModuleFileName(g_hInstance,state_exe_directory,NSIS_MAX_STRLEN);
+  lstrcpyn(state_command_line, GetCommandLine(), NSIS_MAX_STRLEN);
 
-  g_db_hFile=myOpenFile(state_exe_directory,GENERIC_READ,OPEN_EXISTING);
-  if (g_db_hFile==INVALID_HANDLE_VALUE)
-  {
-    m_Err = _LANG_CANTOPENSELF;
-    goto end;
-  }
-
-  // make state_exe_directory point to dir, not full exe.
-
-  trimslashtoend(state_exe_directory);
-
-  left = m_length = GetFileSize(g_db_hFile,NULL);
-  while (left > 0)
-  {
-    static char temp[512];
-    DWORD l=left;
-    if (l > 512) l=512;
-    if (!ReadSelfFile(temp,l))
-    {
-      m_Err=_LANG_INVALIDCRC;
-#if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-      if (hwnd) DestroyWindow(hwnd);
-#endif//NSIS_CONFIG_CRC_SUPPORT
-      goto end;
-    }
-
-    if (!g_filehdrsize)
-    {
-      int dbl;
-      dbl=isheader((firstheader*)temp);
-      if (dbl)
-      {
-        int a=*(int*)temp;
-        g_filehdrsize=m_pos;
-        if (dbl > left)
-        {
-          m_Err=_LANG_INVALIDCRC;
-          goto end;
-        }
-#if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-        if (a&FH_FLAGS_SILENT) silent++;
-#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
-
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-        // Changed by Amir Szekely 23rd July 2002 (CRCCheck force)
-        if ((no_crc && !(a&FH_FLAGS_FORCE_CRC)) || !(a&FH_FLAGS_CRC)) break; // if first bit is not set, then no crc checking.
-
-        do_crc++;
-
-#ifndef NSIS_CONFIG_CRC_ANAL
-        left=dbl-4;
-        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.
-#else //!NSIS_CONFIG_CRC_ANAL
-        left-=4;
-#endif//NSIS_CONFIG_CRC_ANAL
-        // this is in case the end part is < 512 bytes.
-        if (l > (DWORD)left) l=(DWORD)left;
-
-#else//!NSIS_CONFIG_CRC_SUPPORT
-        break;
-#endif//!NSIS_CONFIG_CRC_SUPPORT
-      }
-    }
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    else if (!silent)
-#endif//NSIS_CONFIG_SILENT_SUPPORT
-    {
-      if (hwnd)
-      {
-        MSG msg;
-        while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
-      }
-      else if (GetTickCount() > verify_time)
-        hwnd=CreateDialogParam(
-          g_hInstance,
-          MAKEINTRESOURCE(IDD_VERIFY),
-          0,
-          verProc,
-          (LPARAM)_LANG_VERIFYINGINST
-        );
-    }
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
-
-#ifndef NSIS_CONFIG_CRC_ANAL
-    if (left<m_length)
-#endif//NSIS_CONFIG_CRC_ANAL
-      crc=CRC32(crc, temp, l);
-
-#endif//NSIS_CONFIG_CRC_SUPPORT
-    m_pos+=l;
-    left -= l;
-  }
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-  if (hwnd) DestroyWindow(hwnd);
-#endif//NSIS_CONFIG_CRC_SUPPORT
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
-  if (!g_filehdrsize) m_Err=_LANG_INVALIDCRC;
-  else
-  {
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (do_crc)
-    {
-      int fcrc;
-      SetSelfFilePointer(m_pos,FILE_BEGIN);
-      if (!ReadSelfFile(&fcrc,4) || crc != fcrc)
-      {
-        m_Err=_LANG_INVALIDCRC;
-        goto end;
-      }
-    }
-#endif//NSIS_CONFIG_CRC_SUPPORT
-    SetSelfFilePointer(g_filehdrsize,FILE_BEGIN);
-
-    m_Err=loadHeaders();
-  }
-  if (m_Err) goto end;
+  g_hInstance = GetModuleHandle(NULL);
 
   cmdline = state_command_line;
   if (*cmdline == '\"') seekchar = *cmdline++;
@@ -275,10 +99,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #define END_OF_ARG(c) (((c)|' ')==' ')
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) silent++;
+    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) no_crc++;
+    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
     if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
@@ -292,6 +116,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // skip over our parm
     while (!END_OF_ARG(*cmdline)) cmdline=CharNext(cmdline);
   }
+
+  m_Err = loadHeaders(cl_flags);
+  if (m_Err) goto end;
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
@@ -307,12 +134,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       p+=3; // skip over _?=
       if (is_valid_instpath(p))
       {
-        mystrcpy(state_install_directory,p);
-        mystrcpy(state_output_directory,p);
+        mystrcpy(state_install_directory, p);
+        mystrcpy(state_output_directory, p);
       }
       else
       {
-        m_Err = g_errorcopyinginstall;
+        m_Err = _LANG_UNINSTINITERROR;
         goto end;
       }
     }
@@ -356,37 +183,32 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2,ibuf);
             hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc) CloseHandle(hProc);
-            else m_Err = g_errorcopyinginstall;
+            else m_Err = _LANG_UNINSTINITERROR;
           }
         }
         s[0]++;
       }
-      if (!done) m_Err=g_errorcopyinginstall;
+      if (!done) m_Err = _LANG_UNINSTINITERROR;
       goto end;
     }
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (silent) inst_flags |= CH_FLAGS_SILENT;
-#endif//NSIS_CONFIG_SILENT_SUPPORT
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
-  ret=ui_doinstall();
+  ret = ui_doinstall();
 
 #ifdef NSIS_CONFIG_LOG
   log_write(1);
 #endif//NSIS_CONFIG_LOG
 end:
-  if (g_db_hFile!=INVALID_HANDLE_VALUE) CloseHandle(g_db_hFile);
+  if (g_db_hFile != INVALID_HANDLE_VALUE) CloseHandle(g_db_hFile);
 #ifdef NSIS_COMPRESS_WHOLE
-  if (dbd_hFile!=INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
+  if (dbd_hFile != INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
 #endif
-  if (m_Err) my_MessageBox(m_Err,MB_OK|MB_ICONSTOP);
+  if (m_Err) my_MessageBox(m_Err, MB_OK | MB_ICONSTOP);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins
-  if (state_plugins_dir[0]) doRMDir(state_plugins_dir,1);
+  if (state_plugins_dir[0]) doRMDir(state_plugins_dir, 1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   if (g_hIcon) DeleteObject(g_hIcon);
 
