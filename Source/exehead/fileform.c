@@ -223,6 +223,8 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
 }
 #else//NSIS_COMPRESS_WHOLE
 
+
+#if 0 // SHOUDLNT NEED THIS IF EVEYRTHING IS IN PROPER ORDER
 static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
 extern int m_length;
@@ -299,6 +301,55 @@ static int NSISCALL __ensuredata(int amount)
   return 0;
 }
 
+#else // JUSTINS CLASSIC VERSION
+
+static char _inbuffer[IBUFSIZE];
+static char _outbuffer[OBUFSIZE];
+static int __ensuredata(int amount)
+{
+  int needed=amount-(dbd_size-dbd_pos);
+  if (needed>0)
+  {
+    SetFilePointer(g_db_hFile,dbd_srcpos,NULL,FILE_BEGIN);
+    SetFilePointer(dbd_hFile,dbd_size,NULL,FILE_BEGIN);
+    for (;;)
+    {
+      int err;
+      DWORD or;
+      if (!ReadFile(g_db_hFile,(LPVOID)_inbuffer,min(IBUFSIZE,dbd_fulllen-dbd_srcpos),&or,NULL)) return -1;
+      dbd_srcpos+=or;
+      g_inflate_stream.next_in=_inbuffer;
+      g_inflate_stream.avail_in=or;
+      do
+      {
+        DWORD r,t;
+        g_inflate_stream.next_out=_outbuffer;
+        g_inflate_stream.avail_out=OBUFSIZE;
+        err=inflate(&g_inflate_stream);
+        if (err<0)
+        {
+          return -3;
+        }
+        r=g_inflate_stream.next_out-_outbuffer;
+        if (r)
+        {
+          if (!WriteFile(dbd_hFile,_outbuffer,r,&t,NULL) || r != t)
+          {
+            return -2;
+          }
+          dbd_size+=r;
+        }
+        else if (g_inflate_stream.avail_in || !or) return -3;
+        else break;
+      }
+      while (g_inflate_stream.avail_in);
+      if (amount-(dbd_size-dbd_pos) <= 0) break;
+    }
+    SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
+  }
+  return 0;
+}
+#endif
 
 static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
