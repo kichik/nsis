@@ -238,8 +238,9 @@ typedef z_stream FAR *z_streamp;
 ZEXTERN int ZEXPORT deflate OF((z_streamp strm, int flush));
 
 ZEXTERN int ZEXPORT deflateEnd OF((z_streamp strm));
-ZEXTERN void ZEXPORT inflateInit OF((z_streamp strm));
 
+
+#define inflateInit(x) inflateReset(x)
 int ZEXPORT inflate(z_streamp z);
 ZEXTERN int ZEXPORT inflateEnd OF((z_streamp strm));
 ZEXTERN int ZEXPORT deflateInit2 OF((z_streamp strm,
