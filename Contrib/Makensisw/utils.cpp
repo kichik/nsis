@@ -315,9 +315,13 @@ void RestoreWindowPos(HWND hwnd) {
         p.rcNormalPosition.left = 0;
         p.rcNormalPosition.right = width;
       }
-      else if(p.rcNormalPosition.right > width || p.rcNormalPosition.left < 0) {
-        p.rcNormalPosition.left = (width - windowWidth)/2;
-        p.rcNormalPosition.right = p.rcNormalPosition.left + windowWidth;
+      else if(p.rcNormalPosition.right > width) {
+        p.rcNormalPosition.left = width - windowWidth;
+        p.rcNormalPosition.right = width;
+      }
+      else if(p.rcNormalPosition.left < 0) {
+        p.rcNormalPosition.left = 0;
+        p.rcNormalPosition.right = windowWidth;
       }
 
       windowHeight = p.rcNormalPosition.bottom-p.rcNormalPosition.top;
@@ -325,10 +329,13 @@ void RestoreWindowPos(HWND hwnd) {
         p.rcNormalPosition.top = 0;
         p.rcNormalPosition.bottom = height;
       }
-      else if(p.rcNormalPosition.bottom > height || p.rcNormalPosition.top < 0) {
-        
-        p.rcNormalPosition.top = (height - windowHeight)/2;
-        p.rcNormalPosition.bottom = p.rcNormalPosition.top + windowHeight;
+      else if(p.rcNormalPosition.bottom > height) {
+        p.rcNormalPosition.top = height - windowHeight;
+        p.rcNormalPosition.bottom = height;
+      }
+      else if(p.rcNormalPosition.top < 0) {
+        p.rcNormalPosition.top = 0;
+        p.rcNormalPosition.bottom = windowHeight;
       }
 
       p.length = sizeof(p);
