@@ -7,8 +7,7 @@ NLF v5
 9
 # Codepage - dash (-) means ANSI code page
 932
-# Translation by Dnanako
-# Updated by Takahiro Yoshimura <takahiro_y@monolithworks.co.jp>
+# Translation by Dnanako, updated by Takahiro Yoshimura <takahiro_y@monolithworks.co.jp>
 Nullsoft Install System %s
 %s セットアップ
 %s アンインストール
@@ -25,7 +24,7 @@ Nullsoft Install System %s
 同意する(&A)
 このライセンス契約書に同意します(&A)
 このライセンス契約書には同意できません(&D)
-インストール(&I)
+インストール
 ｱﾝｲﾝｽﾄｰﾙ(&U)
 キャンセル
 閉じる(&C)
@@ -38,8 +37,8 @@ Nullsoft Install System %s
 インストール コンポーネントを選択：
 または、インストール オプション コンポーネントを選択：
 %s をインストールするフォルダを選択してください：
-利用可能なディスクスペース：
-必要なディスクスペース：
+利用可能なディスクスペース： 
+必要なディスクスペース： 
 アンインストール元：
 初期ファイルの作成エラー：\r\n\t"$0"\r\nインストールを中止するには中止を,\r\n再びこのファイルの作成を試みるには再試行を, また\r\nこのファイルをスキップして続けるには無視を押してください
 初期ファイルの作成エラー: \r\n\t"$0"\r\n再びこのファイルの作成を試みるには再試行を, また\r\nインストールを中止するにはキャンセルを押して下さい
