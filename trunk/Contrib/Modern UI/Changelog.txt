@@ -1,10 +1,14 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.65 - May 25, 2003
+1.65 - June 14, 2003
 * New page configuration system, no different system for installers
   with custom pages
 * Default windows color for the license text background
 * New format for example scripts
+* Improved registry storage for Start Menu folder
+* ReserveFile macro for StartMenu plug-in
+* Added MUI_LANGDLL_ALWAYSSHOW option
+* Checkboxes on Finish page can be used to call a function
 
 1.64 - April 27, 2003
 * Support for license page with checkbox or radiobuttons to let the

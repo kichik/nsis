@@ -42,7 +42,6 @@
 ;Modern UI Configuration
 
   !define MUI_ABORTWARNING
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
 
 ;--------------------------------
 ;Languages
@@ -53,6 +52,14 @@
 ;Data
   
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
+
+;--------------------------------
+;Reserve Files
+  
+  ;Things that need to be extracted on first (keep these lines before any File command!)
+  ;Only for BZIP2 compression
+  
+  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
 
 ;--------------------------------
 ;Installer Sections
