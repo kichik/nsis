@@ -16,6 +16,10 @@ EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple instfiles pages
 
+* write an example for each plugin
+
+* go through each and every one of the examples and make sure they all compile and work as should
+
 PLUGINS
 
 * make plugin size count only once
