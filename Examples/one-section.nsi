@@ -2,6 +2,11 @@
 # It allows only one of the four optional section to be
 # selected at any given time.
 
+#############################################################
+# New macros which make this so much easier can be found in #
+# Include\Sections.nsh.                                     #
+#############################################################
+
 #### Uncomment the next line for an example with subsections too
 # !define USE_SUBSECTION
 ####
