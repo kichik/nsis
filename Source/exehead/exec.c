@@ -29,10 +29,6 @@ static int exec_errorflag;
 static int exec_rebootflag;
 #endif
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-HBITMAP g_hBrandingBitmap = 0;
-#endif
-
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 char plugins_temp_dir[NSIS_MAX_STRLEN]="";
 #endif
@@ -781,10 +777,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SETBRANDINGIMAGE:
     {
       RECT r;
-      HWND hwImage = GetDlgItem(g_hwnd, parm1);
+      HANDLE hImage;
+      HWND hwImage=GetDlgItem(g_hwnd, parm1);
       GetWindowRect(hwImage, &r);
-      if (g_hBrandingBitmap) DeleteObject(g_hBrandingBitmap);
-      g_hBrandingBitmap=LoadImage(
+      hImage=LoadImage(
         0,
         process_string_fromparm_tobuf(0x00),
         IMAGE_BITMAP,
@@ -792,11 +788,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         parm2?r.bottom-r.top:0,
         LR_LOADFROMFILE
       );
+      DeleteObject((HGDIOBJ)SetWindowLong(hwImage,DWL_USER,(LONG)hImage));
       SendMessage(
         hwImage,
         STM_SETIMAGE,
         IMAGE_BITMAP,
-        (LPARAM)g_hBrandingBitmap
+        (LPARAM)hImage
       );
     }
     return 0;
