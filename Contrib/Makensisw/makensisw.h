@@ -93,6 +93,7 @@ typedef struct NSISScriptData {
     HMENU menu;
     HMENU submenu;
     HANDLE thread;
+    HWND focused_hwnd;
     CHARRANGE textrange;
 } NSCRIPTDATA;
 
