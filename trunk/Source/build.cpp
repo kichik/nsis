@@ -316,9 +316,6 @@ CEXEBuild::CEXEBuild()
 #endif
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
-  char lang_id[16];
-  wsprintf(lang_id, "%u", last_used_lang);
-  definedlist.add("LANG_ENGLISH",lang_id);
 
   build_header.common.num_pages=0;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
