@@ -3791,13 +3791,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         c.flags|=CC_BK|CC_BKB;
         c.lbStyle=BS_NULL;
-        if (!*line.gettoken_str(a))
+        if (!*line.gettoken_str(a+1))
         {
           c.bkc=COLOR_BTNFACE;
           c.flags|=CC_BK_SYS;
         }
         c.flags|=CC_TEXT;
-        if (!*line.gettoken_str(a+1))
+        if (!*line.gettoken_str(a))
         {
           c.text=COLOR_BTNFACE;
           c.flags|=CC_TEXT_SYS;
