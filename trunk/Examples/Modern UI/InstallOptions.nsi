@@ -13,7 +13,7 @@
 ;Configuration
 
   ;General
-  OutFile "Basic.exe"
+  OutFile "InstallOptions.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"

@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  OutFile "Basic.exe"
+  OutFile "MultiLanguage.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -43,6 +43,7 @@
   !insertmacro MUI_LANGUAGE "Japanese"    
   !insertmacro MUI_LANGUAGE "Italian"
   !insertmacro MUI_LANGUAGE "Dutch"
+  !insertmacro MUI_LANGUAGE "Danish"
   !insertmacro MUI_LANGUAGE "Polish"
   !insertmacro MUI_LANGUAGE "Greek"
   !insertmacro MUI_LANGUAGE "Russian"
@@ -67,6 +68,7 @@
   LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
   LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
   LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
+  LangString DESC_SecCopyUI ${LANG_DANISH} "modern.exe: Danish description"
   LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
   LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
   LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
@@ -90,6 +92,7 @@
   LicenseData /LANG=${LANG_JAPANESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_ITALIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_DANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_RUSSIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -150,6 +153,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Japanese"    
   !insertmacro MUI_LANGDLL_PUSH "Italian"
   !insertmacro MUI_LANGDLL_PUSH "Dutch"
+  !insertmacro MUI_LANGDLL_PUSH "Danish"
   !insertmacro MUI_LANGDLL_PUSH "Polish"
   !insertmacro MUI_LANGDLL_PUSH "Greek"
   !insertmacro MUI_LANGDLL_PUSH "Russian"
@@ -161,7 +165,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Romanian"
   !insertmacro MUI_LANGDLL_PUSH "Macedonian"
   
-  Push 19F ;19 = number of languages, F = change font
+  Push 20F ;20 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
