@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.65
+;NSIS Modern User Interface version 1.66
 ;Welcome/Finish Page Example Script
 ;Written by Joost Verburg
 
@@ -26,10 +26,15 @@
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
 
 ;--------------------------------
+;Modern UI Configuration
+
+  !define MUI_ABORTWARNING
+
+;--------------------------------
 ;Pages
 
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Contrib\Modern UI\License.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -39,19 +44,9 @@
   !insertmacro MUI_UNPAGE_INSTFILES
   
 ;--------------------------------
-;Modern UI Configuration
-
-  !define MUI_ABORTWARNING
-
-;--------------------------------
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-;Data
-  
-  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
 ;Reserve Files
@@ -83,9 +78,9 @@ SectionEnd
 
   LangString DESC_SecDummy ${LANG_ENGLISH} "A test section."
 
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 ;--------------------------------
 ;Uninstaller Section

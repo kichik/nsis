@@ -1,5 +1,12 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.66 - September 4, 2003
+* New system for page settings and custom pages
+* Support for uninstaller components page
+* Support for multiple pages of the same type
+* Changed macro names
+* Updated langauge system, new language files
+
 1.65 - July 16, 2003
 * New page configuration system, no different system for installers
   with custom pages
@@ -21,11 +28,11 @@ NSIS Modern User Interface - VERSION HISTORY
 1.64 - April 27, 2003
 * Support for license page with checkbox or radiobuttons to let the
   user accept the agreement or not
-* Macro's for finish headers don't have to be inserted anymore
+* Macros for finish headers don't have to be inserted anymore
 * Language preference stored when installation has completed,
   no problems anymore when the users selects the wrong language
 * Header text for aborted installation
-* New macro's: get language for uninstaller, delete shortcuts
+* New macros: get language for uninstaller, delete shortcuts
 * Language specific fonts
 * Welcome/Finish page INI files can be modified in pre functions
 * More texts can be customized
@@ -40,7 +47,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Easier to customize resource files
 * New system for custom functions
 * Start Menu folder registry key automatically written
-* New InstallOptions macro's that do not remove the return value from
+* New InstallOptions macros that do not remove the return value from
   the stack
 * Support for custom pages before the finish page
 * Renamed Start Menu page defines
@@ -52,7 +59,6 @@ NSIS Modern User Interface - VERSION HISTORY
 * No changed language strings
 
 1.62 - February 2, 2003
-* Final version for NSIS 2 beta 1
 * New language strings for finish page
 * Possibility to let a Modern UI Function call your own function
 * No problems anymore when using both 'Run program' and 'Show Readme'
@@ -60,7 +66,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Default state of checkboxes on the finish page can be changed
 * Welcome / Finish page compatible with custom DPI settings
 * Converted Install Options INI files to use dialog units
-* More ReserveFile macro's
+* More ReserveFile macros
 * Background color can be changed with a define
 * Support for multilingual branding texts
 * Start Menu / Finish page window titles also work when using
@@ -71,7 +77,6 @@ NSIS Modern User Interface - VERSION HISTORY
   the verbose settings during compilation
     
 1.61 - December 5, 2002
-* Final version for NSIS 2 beta 0
 * modern3.exe UI without description area
 * Added define to show uninstall confirm page
 * Added language string for finish page title and continue to uninstall
@@ -92,14 +97,14 @@ NSIS Modern User Interface - VERSION HISTORY
 * Start Menu Folder selection page
 * 'Click Next to continue' and 'Click Install to start the installation'
   texts automatically change to the page order
-* Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is the
+* Install Options macros updated. MUI_INSTALLOPTIONS_DISPLAY is the
   standard macro now.
   Use MUI_INSTALLOPTIONS_INITDIALOG and MUI_INSTALLOPTIONS_SHOW if you
   want to customize dialog controls.
 * No more writing window titles & abort warnings to Install Options
   INI Files
 * Compatible with updated paging system
-* Renamed macro's and defines
+* Renamed macros and defines
 * Some small fixes
 
 1.4 - November 4, 2002
@@ -107,7 +112,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Macro System updates (smaller)
 * Macro System a lot easier
 * Modern UI Language Files load NLF language files
-* Renamed macro's and defines
+* Renamed macros and defines
 
 1.3 - October 27, 2002
 * Easier macro system for basic scripts
@@ -115,16 +120,16 @@ NSIS Modern User Interface - VERSION HISTORY
 * New directory structure (header/language files in Contrib\Modern UI)
 * Small bugfixes & typo corrections
 * SetPage function should be set using defines
-* Different NextPage/PrevPage/FinishHeader macro's for
+* Different NextPage/PrevPage/FinishHeader macros for
   install/uninstall
 * Interface settings can be definend (for example, MUI_ICON), no
   parameters for MUI_INTERFACE anymore
-* New Install Options macro's to read/write IO INI file value
+* New Install Options macros to read/write IO INI file value
 
 1.21 - September 30, 2002
 * Temp vars set in Modern UI header
 * Currentpage & Install Options vars should be set using
-  parameters of the MUI_INTERFACE and * MUI_INSTALLOPTIONS macro's
+  parameters of the MUI_INTERFACE and * MUI_INSTALLOPTIONS macros
 * MultiLanguage.nsi uses the new language strings
 
 1.2 - September 22, 2002
@@ -138,8 +143,8 @@ NSIS Modern User Interface - VERSION HISTORY
 * Examples use ReserveFile for faster startup
 
 1.19 - Semtember 19, 2002
-* Renamed some macro's
-* Custom code can be used between page start/stop macro's
+* Renamed some macros
+* Custom code can be used between page start/stop macros
 
 1.18 - Semtember 13, 2002
 * Uses the new Sendmessage string option
@@ -170,7 +175,7 @@ NSIS Modern User Interface - VERSION HISTORY
 
 1.1 - August 29, 2002
 * Header file with macros, it's now very easy to use the UI in your
-  scripts :)
+  scripts
 * Added the modern2.exe UI, with an other location of the Description
   frame, for installers with a lot of subsections (thanks rainwater)
 * Updated example scripts
