@@ -1,22 +1,22 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.6
 
-; Language: "Chinese (Traditional)" (1028)
-; Kii Ali <kiiali@cpatch.org>
+;Language: "Chinese (Traditional)" (1028)
+;Kii Ali <kiiali@cpatch.org>
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;以語言本身的方式，寫下語言名稱 Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "按一下 [下一步(N)] 繼續。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "按一下 [安裝(I)] 開始安裝過程。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 ${MUI_PRODUCT} 安裝精靈"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "這將在你的電腦安裝 ${MUI_PRODUCT} 。\r\n\r\n在開始安裝之前，建議您先關閉其他所有應用程式。這將允許\安裝程式更新特定的系統檔案，而不需要重新啟動你的系統。\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "歡迎使用 ${MUI_PRODUCT} 安裝精靈"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "這將在你的電腦安裝 ${MUI_PRODUCT} 。\r\n\r\n在開始安裝之前，建議您先關閉其他所有應用程式。這將允許\安裝程式更新特定的系統檔案，而不需要重新啟動你的系統。\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授權合約"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安裝 ${MUI_PRODUCT} 之前，請檢閱授權條款。"
@@ -41,6 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "安裝程式已成功地執行完成。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": 已完成"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "完成(&F)"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "完成 ${MUI_PRODUCT} 安裝精靈"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} 已在你的系統安裝。\r\n按一下 [完成(F)] 關閉此精靈。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "你的系統需要重新啟動，以便完成 ${MUI_PRODUCT} 的安裝過程。現在要重新啟動嗎？"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "現在重新啟動"
