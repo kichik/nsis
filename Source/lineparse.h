@@ -15,15 +15,15 @@ class LineParser {
       freetokens();
     }
 
-    int parse(char *line) // returns -1 on error
+    int parse(char *line, int ignore_escaping=0) // returns -1 on error
     {
       freetokens();
-      int n=doline(line);
+      int n=doline(line, ignore_escaping);
       if (n) return n;
       if (m_nt) 
       {
         m_tokens=(char**)malloc(sizeof(char*)*m_nt);
-        n=doline(line);
+        n=doline(line, ignore_escaping);
         if (n) 
         {
           freetokens();
@@ -104,7 +104,7 @@ class LineParser {
       m_nt=0;
     }
 
-    int doline(char *line)
+    int doline(char *line, int ignore_escaping=0)
     {
       m_nt=0;
       while (*line == ' ' || *line == '\t') line++;
@@ -125,8 +125,9 @@ class LineParser {
             	case '"':
               case '\'':
               case '`':
-                nc += 1;
+                nc += ignore_escaping ? 3 : 1;
                 line += 3;
+                continue;
             }
           }
           if (lstate==1 && *line =='\"') break;
@@ -141,7 +142,7 @@ class LineParser {
           int i;
           m_tokens[m_nt]=(char*)malloc(nc+1);
           for (i = 0; p < line; i++, p++) {
-            if (p[0] == '$' && p[1] == '\\') {
+            if (!ignore_escaping && p[0] == '$' && p[1] == '\\') {
               switch (p[2]) {
             	  case '"':
                 case '\'':
@@ -151,7 +152,6 @@ class LineParser {
             }
             m_tokens[m_nt][i] = *p;
           }
-          //strncpy(m_tokens[m_nt],line-nc,nc);
           m_tokens[m_nt][nc]=0;
         }
         m_nt++;
