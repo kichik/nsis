@@ -12,6 +12,7 @@
 #  include <ctype.h>
 #  include <unistd.h> // for close(2)
 #  include <fcntl.h> // for open(2)
+#  include <iconv.h>
 #endif
 
 #include <cassert> // for assert
@@ -368,8 +369,8 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
 // returns the number of WCHARs in str including null charcter
-int WCStrLen(const WCHAR* szwStr) {
-  int i;
+size_t WCStrLen(const WCHAR* szwStr) {
+  size_t i;
   for (i = 0; szwStr[i]; i++);
   return i+1;
 }
@@ -400,6 +401,96 @@ int wsprintf(char *s, const char *format, ...) {
   int res = vsnprintf(s, 1024, format, val);
   va_end(val);
   return res;
+}
+
+// iconv const inconsistency workaround by Alexandre Oliva
+template <typename T>
+inline size_t __iconv_adaptor
+  (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
+  iconv_t cd, char **inbuf, size_t *inbytesleft,
+  char **outbuf, size_t *outbytesleft)
+{
+  return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
+}
+
+void static create_code_page_string(char *buf, size_t len, UINT code_page) {
+  if (code_page == CP_ACP)
+    code_page = 1252;
+
+  snprintf(buf, len, "CP%d", code_page);
+}
+
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
+    int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
+    LPBOOL lpUsedDefaultChar) {
+  static char buffer[4096];
+
+  char cp[128];
+  create_code_page_string(cp, sizeof(cp), CodePage);
+
+  iconv_t cd = iconv_open(cp, "UCS-2");
+  if (cd == (iconv_t) -1) {
+    return 0;
+  }
+
+  if (cchWideChar < 0) {
+    cchWideChar = (int) WCStrLen(lpWideCharStr); // including null char
+  }
+
+  if (cbMultiByte == 0) {
+    cbMultiByte = sizeof(buffer);
+    lpMultiByteStr = buffer;
+  }
+
+  char *in = (char *) lpWideCharStr;
+  char *out = lpMultiByteStr;
+  size_t inbytes = cchWideChar * sizeof(WCHAR);
+  size_t outbytes = cbMultiByte;
+
+  if (__iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
+    iconv_close(cd);
+    return 0;
+  }
+
+  iconv_close(cd);
+
+  return cbMultiByte - outbytes;
+}
+
+int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
+    int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar) {
+  static WCHAR buffer[4096];
+
+  char cp[128];
+  create_code_page_string(cp, sizeof(cp), CodePage);
+
+  iconv_t cd = iconv_open("UCS-2", cp);
+  if (cd == (iconv_t) -1) {
+    return 0;
+  }
+
+  if (cbMultiByte < 0) {
+    cbMultiByte = strlen(lpMultiByteStr) + 1;
+  }
+
+  if (cchWideChar == 0) {
+    cchWideChar = sizeof(buffer);
+    lpWideCharStr = buffer;
+  }
+
+  char *in = (char *) lpMultiByteStr;
+  char *out = (char *) lpWideCharStr;
+  size_t inbytes = cbMultiByte;
+  size_t outbytes = cchWideChar * sizeof(WCHAR);
+
+  if (__iconv_adaptor(iconv, cd, &in, &inbytes, &out, &outbytes) == (size_t) -1) {
+    iconv_close(cd);
+    return 0;
+  }
+
+  iconv_close(cd);
+
+  return cchWideChar - (outbytes / sizeof (WCHAR));
 }
 
 #define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
