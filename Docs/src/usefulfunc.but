@@ -322,7 +322,7 @@
 \c  ; 
 \c  ; Usage:
 \c  ;   Push $SYSDIR\myDll.dll
-\c  ;   Call un.RemoveShareDLL
+\c  ;   Call un.RemovedShareDLL
 \c  ;
 \c
 \c  Function un.RemoveSharedDLL
