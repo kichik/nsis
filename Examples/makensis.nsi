@@ -31,7 +31,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;Modern UI Configuration
 
   !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "2.0b1 (CVS)"
+  !define MUI_VERSION "2.0b1"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 

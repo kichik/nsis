@@ -984,7 +984,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
     case EW_CREATESHORTCUT: {
       char *buf2=process_string_fromparm_tobuf(-0x20);
-      char *buf1=process_string_fromparm_tobuf(-0x11);
+      char *buf1=process_string_fromparm_tobuf(0x11);
       char *buf0=process_string_fromparm_tobuf(0x02);
       char *buf3=process_string_fromparm_tobuf(-0x33);
       char *buf4=process_string_fromparm_tobuf(0x45);
