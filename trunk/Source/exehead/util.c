@@ -27,18 +27,15 @@ NSIS_STRING g_usrvars[1];
 #define SECTION_VARS_RWD "/section:" ## VARS_SECTION_NAME ## ",rwd"
 #pragma comment(linker, SECTION_VARS_RWD)
 
-int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl)
+void NSISCALL FreePIDL(LPITEMIDLIST idl)
 {
-  int Res;
   IMalloc *m;
   SHGetMalloc(&m);
-  Res = SHGetPathFromIDList(idl, out);
   if (m)
   {
     m->lpVtbl->Free(m, idl);
     m->lpVtbl->Release(m);
   }
-  return Res;
 }
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
@@ -537,7 +534,9 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       {
         if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
         {
-          if (my_PIDL2Path(out, idl))
+          BOOL res = SHGetPathFromIDList(idl, out);
+          FreePIDL(idl);
+          if (res)
           {
             break;
           }

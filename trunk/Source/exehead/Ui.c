@@ -855,17 +855,17 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       idlist = SHBrowseForFolder(&bi);
       if (idlist)
       {
-        // Get and free idlist
-        my_PIDL2Path(g_tmp, idlist);
+        // free idlist
+        FreePIDL(idlist);
 
         if (g_header->install_directory_auto_append)
         {
-          const char *post_str=ps_tmpbuf;
+          const char *post_str = ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
-          // name gives just the folder name
-          if (lstrcmpi(post_str,g_tmp))
+          // display name gives just the folder name
+          if (lstrcmpi(post_str, g_tmp))
           {
-            lstrcat(addtrailingslash(dir),post_str);
+            lstrcat(addtrailingslash(dir), post_str);
           }
         }
 
