@@ -258,7 +258,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             while (*p != '\\' && *p) p=CharNext(p);
             c=*p;
             *p=0;
-            g_flags.exec_error += !CreateDirectory(buf1,NULL);
+            if (!file_exists(buf1)) {
+              g_flags.exec_error += !CreateDirectory(buf1,NULL);
+            }
             *p++ = c;
           }
         }
