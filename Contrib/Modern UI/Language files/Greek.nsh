@@ -1,5 +1,5 @@
-;Modern UI Language File
-;version 1 - Compatible with Modern UI 1.3
+;NSIS Modern User Interface - Language File
+;Compatible with Modern UI 1.4
 
 ;Language: Greek (1032)
 ;By Makidis N. Mike
@@ -22,7 +22,7 @@
     LangString MUI_INNERTEXT_LICENSE ${LANG_GREEK} "Για να συνεχιστεί η εγκατάσταση πρέπει να αποδεχθείτε όλους τους όρους της άδειας χρήσης. Αν τους αποδέχεστε, κάντε κλικ στο Συμφωνώ, αλλιώς κάντε κλικ στο ’κυρο για να τερματιστεί η εγκατάσταση του '${NAME}'."
   !endif
   
-  !ifdef MUI_COMPONENTPAGE
+  !ifdef MUI_COMPONENTSPAGE
     ComponentText /LANG=${LANG_GREEK} "Επιλέξτε τα μέρη που θέλετε να εγκαταστήσετε και αποεπιλέξτε αυτά που δε θέλετε να εγκαταστήσετε. Κάντε κλικ στο Επόμενο για να συνεχίσετε."
     LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_GREEK} "Επιλογή Στοιχείων"
     LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_GREEK} "Επιλέξτε τα στοιχεία που θέλετε να εγκαταστήσετε."
@@ -30,17 +30,13 @@
     LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_GREEK} "Περάστε το δείκτη του ποντικιού πάνω από ένα στοιχείο για να δείτε την περιγραφή του."
   !endif
   
-  !ifdef MUI_DIRSELECTPAGE
+  !ifdef MUI_DIRECTORYPAGE
     DirText /LANG=${LANG_GREEK} "Το πρόγραμμα εγκατάστασης θα εγκαταστήσει το '${NAME}' στον παρακάτω φάκελο.$\r$\n$\r$\nΓια να το εγκαταστήσετε στο φάκελο αυτό, κάντε κλικ στο Εγκατάσταση. Για να το εγκαταστήσετε σε έναν άλλο φάκελο, κάντε κλικ στο Αναζήτηση και επιλέξτε κάποιον άλλο φάκελο." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_GREEK} "Επιλογή Θέσης Εγκατάστασης"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_GREEK} "Επιλέξτε το φάκελο μέσα στον οποίο θα εγκατασταθεί το '${NAME}'."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_GREEK} "Φάκελος εγκατάστασης"
   !endif
-  
-  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GREEK} "&Επόμενο >"
-  !endif
-  
+
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_GREEK} "Εγκατάσταση Σε Εξέλιξη"
   LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_GREEK} "Παρακαλώ περιμένετε όσο το '${NAME}' εγκαθίσταται."
   
@@ -48,16 +44,13 @@
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_GREEK} "Η εγκατάσταση ολοκληρώθηκε επιτυχώς."
   
   !ifdef MUI_ABORTWARNING
-    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_GREEK} "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '${NAME}';"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_GREEK} "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '${NAME}';"
   !endif
-
+  
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< &Πίσω"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "&Επόμενο >"
-    LangString MUI_BUTTONTEXT_CANCEL ${LANG_GREEK} "’κυρο"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GREEK} "&Εγκατάσταση"
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${NAME} ${VERSION}'"
   !endif
-
+  
   
   ;UNINSTALLER
   
@@ -73,17 +66,10 @@
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_GREEK} "Η απεγκατάσταση ολοκληρώθηκε επιτυχώς."
   !endif
   
-  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GREEK} "&Επόμενο >"
-  !endif
- 
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< &Πίσω"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "&Επόμενο >"
-    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_GREEK} "’κυρο"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GREEK} "Απε&γκατάστ."
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${NAME} ${VERSION}'"
   !endif
-    
+
 !endif
 
 !verbose 4

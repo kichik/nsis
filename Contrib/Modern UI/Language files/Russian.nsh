@@ -1,5 +1,5 @@
-;Modern UI Language File
-;version 1 - Compatible with Modern UI 1.3
+;NSIS Modern User Interface - Language File
+;Compatible with Modern UI 1.4
 
 ;Language: Russian (1049)
 ;By Nik Medved (brainsucker). Fixed by Scam.
@@ -22,7 +22,7 @@
      LangString MUI_INNERTEXT_LICENSE ${LANG_RUSSIAN} "Если Вы принимаете все условия Соглашения, нажмите на кнопку Согласен. Вы должны принять условия Соглашения для инсталяции ${NAME}."
   !endif
   
-  !ifdef MUI_COMPONENTPAGE
+  !ifdef MUI_COMPONENTSPAGE
     ComponentText /LANG=${LANG_RUSSIAN} "Отметьте те компоненты, которые Вы хотите установить, и снимите отметку для тех, которые Вы устанавливать не хотите. Нажмите Далее для продолжения."
     LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_RUSSIAN} "Выберите компоненты"
     LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_RUSSIAN} "Выберите какие возможности ${NAME} Вы хотите установить."
@@ -30,15 +30,11 @@
     LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_RUSSIAN} "Подведите курсор мыши к компоненту, чтобы увидеть его описание."
   !endif
   
-  !ifdef MUI_DIRSELECTPAGE
+  !ifdef MUI_DIRECTORYPAGE
     DirText /LANG=${LANG_RUSSIAN} "Инсталятор установит ${NAME} в следущий каталог.$\r$\n$\r$\nЧтобы установить в этот каталог, нажмите Установить. Чтобы установить в другой каталог, нажмите Обзор и выберите другой каталог." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_RUSSIAN} "Выберите место установки"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_RUSSIAN} "Выберите каталог для установки ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_RUSSIAN} "Каталог Назначения"
-  !endif
-  
-  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_RUSSIAN} "&Далее >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_RUSSIAN} "Идет установка"
@@ -48,14 +44,11 @@
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_RUSSIAN} "Установка успешно завершена."
   
   !ifdef MUI_ABORTWARNING
-    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_RUSSIAN} "Вы уверены, что хотите отменить установку ${NAME}?"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_RUSSIAN} "Вы уверены, что хотите отменить установку ${NAME}?"
   !endif
   
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_RUSSIAN} "< &Назад"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_RUSSIAN} "&Далее >"
-    LangString MUI_BUTTONTEXT_CANCEL ${LANG_RUSSIAN} "Отмена"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_RUSSIAN} "&Установить"
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_RUSSIAN} "${NAME} ${VERSION} Установка"
   !endif
 
 
@@ -73,16 +66,9 @@
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_RUSSIAN} "Удаление успешно завершено."
   !endif
   
-  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_RUSSIAN} "&Далее >"
-  !endif
-  
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_RUSSIAN} "< &Назад"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_RUSSIAN} "&Далее >"
-    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_RUSSIAN} "Отмена"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_RUSSIAN} "&Удалить"
-  !endif  
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_RUSSIAN} "${NAME} ${VERSION} Установка"
+  !endif
     
 !endif
 
