@@ -14,21 +14,15 @@ library exdll;
 uses
   nsis, windows;
 
-function ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer):integer; cdecl;
-var
-  c: PChar;
-  buf: array[0..1024] of char;
+procedure ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer); cdecl;
 begin
   // set up global variables
-  Init(hwndParent,string_size,variables,stacktop);
+  Init(hwndParent, string_size, variables, stacktop);
 
-  c:=GetUserVariable(INST_0);
-  MessageBox(g_hwndParent,c,'The value of $0',MB_OK);
-  PopString(@buf);
-  MessageBox(g_hwndParent,@buf,'pop',MB_OK);
-  PushString(PChar('Hello, this is a push'));
-
-  Result:=1;
+  NSISDialog(GetUserVariable(INST_0), 'The value of $0', MB_OK);
+  NSISDialog(PopString, 'pop', MB_OK);
+  PushString('Hello, this is a push');
+  SetUserVariable(INST_0, 'This is 0');
 end;
 
 exports ex_dll;
