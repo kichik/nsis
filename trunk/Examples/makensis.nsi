@@ -97,6 +97,7 @@ Section "NSIS Development System (required)" SecCore
 
   SetOutPath $INSTDIR\Include
   File ..\Include\WinMessages.nsh
+  File ..\Include\Sections.nsh
 
   SetOutPath $INSTDIR\Docs
   File ..\Docs\*.html
