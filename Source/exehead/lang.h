@@ -4,15 +4,18 @@
 
 // generic startup strings (these will never be overridable)
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-#define _LANG_INVALIDCRC "Installer corrupted or incomplete.\r\n\r\n"  \
-                        "This could be the result of a failed download or corruption from a virus."  \
-                        "\r\n\r\nIf desperate, try the /NCRC command line switch (NOT recommended)"
+#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\r\n"  \
+				"This could be the result of a damaged disk, a failed download or a virus.\r\n\r\n"  \
+				"You may want to contact the author of this installer to obtain a new copy.\r\n\r\n"  \
+				"It may be possible to skip this check using the /NCRC command line switch\r\n" \
+				"(NOT RECOMMENDED)."
 #else
-#define _LANG_INVALIDCRC  "Installer corrupted.\r\n\r\n" \
-                          "This could be the result of an incomplete download"
+#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\r\n"  \
+				"This could be the result of a damaged disk, a failed download or a virus.\r\n\r\n"  \
+				"You may want to contact the author of this installer to obtain a new copy."
 #endif
 
-#define _LANG_ERRORWRITINGTEMP "Error writing temp file. Make sure your temp directory is valid."
+#define _LANG_ERRORWRITINGTEMP "Error writing temporary file. Make sure your temp folder is valid."
 
 #define _LANG_UNINSTINITERROR "Error launching installer"
 
@@ -22,7 +25,7 @@
 
 #define _LANG_CANTOPENSELF "Error launching installer" // same as uninstiniterror for size
 
-#define _LANG_GENERIC_ERROR "NSIS ERROR"
+#define _LANG_GENERIC_ERROR "NSIS Error"
 
 #define LANG_STR_TAB(x)             cur_langtable[-((int)x+1)]
 
