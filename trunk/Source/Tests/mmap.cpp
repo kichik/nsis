@@ -1,11 +1,10 @@
 #include <cppunit/extensions/HelperMacros.h>
-#include "../strlist.h"
+#include "../mmap.h"
 
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-int MMapFile::m_iAllocationGranularity = 0;
 int g_display_errors = 1;
 FILE *g_output = stderr;
 
@@ -33,7 +32,7 @@ public:
 
     srand(time(NULL));
 
-    for (int i = 0; i < 100; i++) {
+    for (size_t i = 0; i < 100; i++) {
       int offset1 = rand() % BUF_SIZE;
       int size1 = rand() % (BUF_SIZE - offset1);
       char *p1 = (char *) mmap.get(offset1, size1);
@@ -43,7 +42,7 @@ public:
       char *p2 = (char *) mmap.getmore(offset2, &size2);
 
       int minsize = min(size1, size2);
-      for (int j = 0; j < minsize; j++) {
+      for (size_t j = 0; j < minsize; j++) {
         CPPUNIT_ASSERT_EQUAL( p1[j], p2[j] );
       }
 

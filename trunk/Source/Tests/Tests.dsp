@@ -87,6 +87,29 @@ LINK32=link.exe
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Group "Linked"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\growbuf.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\mmap.cpp
+
+!IF  "$(CFG)" == "Tests - Win32 Release"
+
+# PROP Intermediate_Dir "Release\Linked"
+
+!ELSEIF  "$(CFG)" == "Tests - Win32 Debug"
+
+# PROP Intermediate_Dir "Debug\Linked"
+
+!ENDIF 
+
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\endian.cpp
@@ -103,10 +126,10 @@ SOURCE=.\textrunner.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# End Group
-# Begin Group "Resource Files"
+# Begin Source File
 
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+SOURCE=..\mmap.h
+# End Source File
 # End Group
 # End Target
 # End Project
