@@ -2015,6 +2015,81 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("AllowRootDirInstall: %s\n",k?"false":"true");
       }
     return PS_OK;
+    case TOK_BGFONT:
+#ifndef NSIS_SUPPORT_BGBG
+      ERROR_MSG("Error: BGFont specified but NSIS_SUPPORT_BGBG not defined\n");
+      return PS_ERROR;
+#else//NSIS_SUPPORT_BGBG
+      if (line.getnumtokens()==1)
+      {
+        memcpy(&bg_font,&bg_default_font,sizeof(LOGFONT));
+        SCRIPT_MSG("BGFont: default font\n");
+        return PS_OK;
+      }
+
+      LOGFONT newfont;
+      newfont.lfHeight=40;
+      newfont.lfWidth=0;
+      newfont.lfEscapement=0;
+      newfont.lfOrientation=0;
+      newfont.lfWeight=FW_NORMAL;
+      newfont.lfItalic=FALSE;
+      newfont.lfUnderline=FALSE;
+      newfont.lfStrikeOut=FALSE;
+      newfont.lfCharSet=DEFAULT_CHARSET;
+      newfont.lfOutPrecision=OUT_DEFAULT_PRECIS;
+      newfont.lfClipPrecision=CLIP_DEFAULT_PRECIS;
+      newfont.lfQuality=DEFAULT_QUALITY;
+      newfont.lfPitchAndFamily=DEFAULT_PITCH;
+
+      strncpy(newfont.lfFaceName,line.gettoken_str(1),LF_FACESIZE);
+
+      SCRIPT_MSG("BGFont: \"%s\"",line.gettoken_str(1));
+      {
+        bool height=false;
+        bool weight=false;
+        for (int i = 2; i < line.getnumtokens(); i++) {
+          char *tok=line.gettoken_str(i);
+          if (tok[0]=='/') {
+            if (!strcmpi(tok,"/ITALIC")) {
+              SCRIPT_MSG(" /ITALIC");
+              newfont.lfItalic=TRUE;
+            }
+            else if (!strcmpi(tok,"/UNDERLINE")) {
+              SCRIPT_MSG(" /UNDERLINE");
+              newfont.lfUnderline=TRUE;
+            }
+            else if (!strcmpi(tok,"/STRIKE")) {
+              SCRIPT_MSG(" /STRIKE");
+              newfont.lfStrikeOut=TRUE;
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+          else {
+            if (!height) {
+              SCRIPT_MSG(" height=%s",tok);
+              newfont.lfHeight=line.gettoken_int(i);
+              height=true;
+            }
+            else if (!weight) {
+              SCRIPT_MSG(" weight=%s",tok);
+              newfont.lfWeight=line.gettoken_int(i);
+              weight=true;
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+        }
+      }
+      SCRIPT_MSG("\n");
+      memcpy(&bg_font, &newfont, sizeof(LOGFONT));
+    return PS_OK;
+#endif//NSIS_SUPPORT_BGBG
     case TOK_BGGRADIENT:
 #ifndef NSIS_SUPPORT_BGBG
       ERROR_MSG("Error: BGGradient specified but NSIS_SUPPORT_BGBG not defined\n");
@@ -2028,7 +2103,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else if (!stricmp(line.gettoken_str(1),"off"))
       {
-        build_header.bg_color1=build_header.bg_color2=-1;
+        build_header.bg_color1=build_header.bg_color2=build_header.bg_textcolor=-1;
         SCRIPT_MSG("BGGradient: off\n");
         if (line.getnumtokens()>2) PRINTHELP()
       }

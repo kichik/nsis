@@ -31,6 +31,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_ADDBRANDINGIMAGE,"AddBrandingImage",2,1,"(top|left|bottom|right) (height|width) [padding]",TP_GLOBAL},
 {TOK_ADDSIZE,"AddSize",1,0,"size_to_add_to_section_in_kb",TP_SEC},
 {TOK_AUTOCLOSE,"AutoCloseWindow",1,0,"(false|true)",TP_GLOBAL},
+{TOK_BGFONT,"BGFont",0,6,"[font_face [height [wieght] [/ITALIC] [/UNDERLINE] [/STRIKE]]]",TP_GLOBAL},
 {TOK_BGGRADIENT,"BGGradient",0,3,"(off | [top_color [bottom_color [text_color]]])",TP_GLOBAL},
 {TOK_BRANDINGTEXT,"BrandingText",1,1,"[/TRIM(LEFT|RIGHT|CENTER)] installer_text",TP_GLOBAL},
 {TOK_BRINGTOFRONT,"BringToFront",0,0,"",TP_CODE},

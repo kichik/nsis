@@ -59,22 +59,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (header->bg_textcolor != -1)
         {
           HFONT oldFont;
-          HFONT newFont = CreateFont(
-            40,
-            0,
-            0,
-            0,
-            FW_BOLD,
-            TRUE,
-            FALSE,
-            FALSE,
-            DEFAULT_CHARSET,
-            OUT_DEFAULT_PRECIS,
-            CLIP_DEFAULT_PRECIS,
-            DEFAULT_QUALITY,
-            DEFAULT_PITCH,
-            "Garamond"
-          );
+          HFONT newFont = CreateFontIndirect((LOGFONT *) header->blocks[NB_BGFONT].offset);
           if (newFont)
           {
             r.left=16;

@@ -479,6 +479,30 @@ typedef WORD LANGID;
 #ifndef TRANSPARENT
 #  define TRANSPARENT 1
 #endif
+#ifndef LF_FACESIZE
+#  define LF_FACESIZE 32
+#endif
+#ifndef FW_NORMAL
+#  define FW_NORMAL 400
+#endif
+#ifndef FW_BOLD
+#  define FW_BOLD 700
+#endif
+#ifndef DEFAULT_CHARSET
+#  define DEFAULT_CHARSET 1
+#endif
+#ifndef OUT_DEFAULT_PRECIS
+#  define OUT_DEFAULT_PRECIS 0
+#endif
+#ifndef CLIP_DEFAULT_PRECIS
+#  define CLIP_DEFAULT_PRECIS 0
+#endif
+#ifndef DEFAULT_QUALITY
+#  define DEFAULT_QUALITY 0
+#endif
+#ifndef DEFAULT_PITCH
+#  define DEFAULT_PITCH 0
+#endif
 
 // file ops
 
@@ -546,6 +570,22 @@ typedef WORD LANGID;
 // structures
 
 #ifndef _WIN32
+typedef struct _LOGFONT {
+  LONG lfHeight;
+  LONG lfWidth;
+  LONG lfEscapement;
+  LONG lfOrientation;
+  LONG lfWeight;
+  BYTE lfItalic;
+  BYTE lfUnderline;
+  BYTE lfStrikeOut;
+  BYTE lfCharSet;
+  BYTE lfOutPrecision;
+  BYTE lfClipPrecision;
+  BYTE lfQuality;
+  BYTE lfPitchAndFamily;
+  CHAR lfFaceName[LF_FACESIZE];
+} LOGFONT;
 #  pragma pack(2)
 typedef struct _IMAGE_DOS_HEADER {
   WORD e_magic;
