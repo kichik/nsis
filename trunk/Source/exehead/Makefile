@@ -1,14 +1,14 @@
 # -- Objects and source files --
 DEPENDS = ../Platform.h config.h
 
-ZLIB_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../zlib/infblock.c
-ZLIB_OBJS = Release-zlib/bgbg.o Release-zlib/exec.o Release-zlib/fileform.o Release-zlib/main.o Release-zlib/ui.o Release-zlib/util.o Release-zlib/crc32.o Release-zlib/resource.res Release-zlib/infblock.o
+ZLIB_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../zlib/INFBLOCK.C
+ZLIB_OBJS = Release-zlib/bgbg.o Release-zlib/exec.o Release-zlib/fileform.o Release-zlib/Main.o Release-zlib/Ui.o Release-zlib/util.o Release-zlib/crc32.o Release-zlib/resource.res Release-zlib/INFBLOCK.o
 
-BZIP2_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c
-BZIP2_OBJS = Release-bzip2/bgbg.o Release-bzip2/exec.o Release-bzip2/fileform.o Release-bzip2/main.o Release-bzip2/ui.o Release-bzip2/util.o Release-bzip2/crc32.o Release-bzip2/resource.res Release-bzip2/bzlib.o Release-bzip2/decompress.o Release-bzip2/huffman.o
+BZIP2_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c
+BZIP2_OBJS = Release-bzip2/bgbg.o Release-bzip2/exec.o Release-bzip2/fileform.o Release-bzip2/Main.o Release-bzip2/Ui.o Release-bzip2/util.o Release-bzip2/crc32.o Release-bzip2/resource.res Release-bzip2/bzlib.o Release-bzip2/decompress.o Release-bzip2/huffman.o
 
-LZMA_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../7zip/LZMADecode.c
-LZMA_OBJS = Release-lzma/bgbg.o Release-lzma/exec.o Release-lzma/fileform.o Release-lzma/main.o Release-lzma/ui.o Release-lzma/util.o Release-lzma/crc32.o Release-lzma/resource.res Release-lzma/LZMADecode.o
+LZMA_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../7zip/LZMADecode.c
+LZMA_OBJS = Release-lzma/bgbg.o Release-lzma/exec.o Release-lzma/fileform.o Release-lzma/Main.o Release-lzma/Ui.o Release-lzma/util.o Release-lzma/crc32.o Release-lzma/resource.res Release-lzma/LZMADecode.o
 
 SRCS = $(ZLIB_SRCS) $(BZIP2_SRCS) $(LZMA_SRCS)
 
@@ -28,8 +28,9 @@ LDFLAGS = -s -mwindows -nostdlib -nostartfiles --enable-stdcall-fixup -Wl,-Bdyna
 RCFLAGS = --input-format rc --output-format coff
 
 vpath %.c .:..:../zlib:../bzip2:../7zip
+vpath %.C ../zlib
 
-%c : config.h fileform.h
+%.c : config.h fileform.h
 
 all : exehead_zlib exehead_bzip2 exehead_lzma exehead_resources
 
@@ -56,6 +57,9 @@ Release-zlib/exehead_zlib.h : Release-zlib/exehead_zlib.exe
 
 Release-zlib/%.o : %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+
+Release-zlib/%.o : %.C
+	$(CC) -x c -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 Release-zlib/resource.res : resource.rc resource.h config.h
 	$(RC) $(RCFLAGS) -o $@ -i $<
@@ -116,7 +120,7 @@ Release-bzip2/ = -DNSIS_COMPRESS_USE_BZIP2
 Release-lzma/ = -DNSIS_COMPRESS_USE_LZMA
 getdefine = $($(dir $@))
 
-CFLAGS =: $(CFLAGS) $(getdefine)
+CFLAGS += $(getdefine)
 
 clean ::
 	$(RM) -f sections_script

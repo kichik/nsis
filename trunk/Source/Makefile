@@ -23,18 +23,21 @@ CXXFLAGS = -Wall -O3
 CPPFLAGS = $(DEFINES)
 LDFLAGS = -s -Wl,-Map,$(subst .exe,.map,$@)
 
-all : makensis
+all : exehead makensis
+
+exehead :
+	$(MAKE) -C exehead
 
 cs = zlib bzip2 lzma
 rs = bitmap1.h icon.h unicon.h
 deps = $(foreach c,$(cs),exehead/Release-$(c)/exehead_$(c).h) $(foreach r,$(rs),exehead/Release-zlib/$(r))
-exehead : $(deps)
-$(deps) :
-	$(MAKE) -C exehead $(foreach d,$^,$(subst exehead/,,$(d)))
+$(deps) : exehead
 
 makensis : ../makensis.exe
 
-../makensis.exe : $(SRCS) $(OBJS) $(deps)
+exedata.o : $(deps)
+
+../makensis.exe : $(SRCS) $(OBJS)
 	$(CC) -Wall $(LDFLAGS) -o ../makensis.exe $(OBJS) $(LIBS)
 
 VPATH=zlib:bzip2:7zip:7zip/Common:7zip/7zip:7zip/7zip/Compress/LZ:7zip/7zip/Compress/LZMA:7zip/7zip/Common:7zip/7zip/Compress/RangeCoder
