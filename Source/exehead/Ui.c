@@ -1164,7 +1164,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               CheckTreeItem(hwndTree1,tvItem.hItem,1);
             }
             lParam = 0;
-			wParam = 1;
+            wParam = 1;
             uMsg = WM_IN_UPDATEMSG;
           } // not ro
         } // was valid click
