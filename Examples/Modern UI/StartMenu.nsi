@@ -2,8 +2,6 @@
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
-!define TEMP $R0
-  
 ;--------------------------------
 ;Include Modern UI
 
@@ -28,6 +26,11 @@
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
 
 ;--------------------------------
+;Variables
+
+  Var TEMP
+
+;--------------------------------
 ;Pages
 
   !insertmacro MUI_PAGE_LICENSE
@@ -44,13 +47,6 @@
 
   !define MUI_ABORTWARNING
   
-  ;$9 is being used to store the Start Menu Folder.
-  ;Do not use this variable in your script!
-
-  ;To change this variable, use MUI_STARTMENUPAGE_VARIABLE.
-  ;Have a look at the Readme for info about other options (default folder,
-  ;registry).
-
   ;Remember the Start Menu Folder
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
@@ -91,8 +87,8 @@ Section "Dummy Section" SecDummy
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}"
-    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\$MUI_STARTMENU_FOLDER"
+    CreateShortCut "$SMPROGRAMS\$MUI_STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -118,17 +114,21 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  !insertmacro MUI_STARTMENU_DELETE_BEGIN ${TEMP}
-    Delete "$SMPROGRAMS\${TEMP}\Uninstall.lnk"
-	; Only if empty, so it won't delete other shortcuts
-	StrCpy ${TEMP} "$SMPROGRAMS\${TEMP}"
-	startMenuDeleteLoop:
-      RMDir ${TEMP}
-	  GetFullPathName ${TEMP} "${TEMP}\.."
-	  IfErrors startMenuDeleteLoopDone
-	  StrCmp ${TEMP} $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
-	startMenuDeleteLoopDone:
-  !insertmacro MUI_STARTMENU_DELETE_END
+  !insertmacro MUI_STARTMENU_GETFOLDER $TEMP
+    
+  Delete "$SMPROGRAMS\$TEMP\Uninstall.lnk"
+  
+  ;Delete empty start menu parent diretories
+  StrCpy $TEMP "$SMPROGRAMS\$TEMP"
+ 
+  startMenuDeleteLoop:
+    RMDir ${TEMP}
+    GetFullPathName $TEMP "$TEMP\.."
+    
+    IfErrors startMenuDeleteLoopDone
+  
+    StrCmp ${TEMP} $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
+  startMenuDeleteLoopDone:
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
