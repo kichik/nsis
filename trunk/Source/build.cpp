@@ -532,7 +532,7 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/, WORD codepage/*
 
   if (!process) return cur_strlist->add(string,2);
 
-  char buf[4096];
+  char buf[NSIS_MAX_STRLEN*4];
   preprocess_string(buf,string,codepage);
   return cur_strlist->add(buf,2);
 }
