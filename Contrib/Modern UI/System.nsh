@@ -387,16 +387,16 @@
   ;Extract InstallOptions INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALINI}" "ioSpecial.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
-  
+
   ;Write bitmap location
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
-  
+
   ;Write Welcome text
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
   !endif
-  
+
 !macroend
 
 !macro MUI_LANGUAGE LANGUAGE
@@ -533,7 +533,7 @@
   !endif
 
   !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog "MUI_INSTALLBUTTON_COMPONENTS"
+    Page components SetComponents SetComponentsDialog "" "MUI_INSTALLBUTTON_COMPONENTS"
   !endif
   
   !ifndef MUI_NOVERBOSE
@@ -553,7 +553,7 @@
   !endif
 
   !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog "MUI_INSTALLBUTTON_DIRECTORY"
+    Page directory SetDirectory SetDirectoryDialog "" "MUI_INSTALLBUTTON_DIRECTORY"
   !endif
   
   !ifndef MUI_NOVERBOSE
@@ -652,7 +652,7 @@
   !endif
 
   !ifdef MUI_UNCONFIRMPAGE
-    UninstPage uninstConfirm un.SetUninstConfirm "" "MUI_UNINSTALLBUTTON_CONFIRM"
+    UninstPage uninstConfirm un.SetUninstConfirm "" "" "MUI_UNINSTALLBUTTON_CONFIRM"
   !endif
    
   !ifndef MUI_NOVERBOSE
@@ -1755,7 +1755,7 @@
   !ifndef MUI_BRANDINGTEXT
     !define MUI_BRANDINGTEXT ""
   !endif
-  !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "BrandingText /TRIMRIGHT" "MUI_BRANDINGTEXT"
+  !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "BrandingText" "MUI_BRANDINGTEXT"
 
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WELCOME_INFO_TITLE"

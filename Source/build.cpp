@@ -1087,7 +1087,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_uninst.common.num_pages) {
           if (resolve_call_int("uninstall pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (resolve_call_int("uninstall pages","show-page function",p->showfunc,&p->showfunc)) return 1;
+          if (resolve_call_int("uninstall pages","leave-page function",p->leavefunc,&p->leavefunc)) return 1;
           p++;
           i++;
         }
@@ -1118,7 +1119,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_header.common.num_pages) {
           if (resolve_call_int("pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (resolve_call_int("pages","show-page function",p->showfunc,&p->showfunc)) return 1;
+          if (resolve_call_int("pages","leave-page function",p->leavefunc,&p->leavefunc)) return 1;
           p++;
           i++;
         }
@@ -1286,6 +1288,7 @@ int CEXEBuild::write_output(void)
     page pg = {
       0,
 #ifdef NSIS_SUPPORT_CODECALLBACKS
+      -1,
       -1,
       -1,
 #endif

@@ -124,9 +124,12 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-#define HandleStaticBkColor() _HandleStaticBkColor(uMsg, lParam)
-static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, LPARAM lParam) {
-  if (uMsg == WM_CTLCOLORSTATIC) return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+#define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
+static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+  if (uMsg == WM_CTLCOLORSTATIC) {
+    SetBkMode((HDC)wParam, TRANSPARENT);
+    return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+  }
   return 0;
 }
 #else
@@ -499,10 +502,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     this_page=g_inst_page+m_page;
 
-    // if the last page was a custom page, wait for it to finish by itself.
-    // if it doesn't, it's a BAD plugin.
-    // plugins should react to WM_NOTIFY_OUTER_NEXT.
-    if (m_page>=0&&this_page->id<0) return 0;
+    if (m_page>=0) {
+      // if the last page was a custom page, wait for it to finish by itself.
+      // if it doesn't, it's a BAD plugin.
+      // plugins should react to WM_NOTIFY_OUTER_NEXT.
+      if (this_page->id<0) return 0;
+
+      // Call leave function. If Abort used don't move to the next page.
+      if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return 0;
+    }
 
 nextPage:
 
@@ -557,7 +565,7 @@ nextPage:
           ScreenToClient(hwndDlg,(LPPOINT)&r);
           SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          ExecuteCodeSegment(this_page->postfunc,NULL);
+          ExecuteCodeSegment(this_page->showfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
           ShowWindow(m_curwnd,SW_SHOWNA);
           SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);

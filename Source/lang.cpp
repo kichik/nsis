@@ -360,7 +360,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       else c=build_strlist.get()[sec->name_ptr];
       if (c && c != '-' && !(sec->flags&SF_RO)) iscp++;
     }
-    if (iscp)
+    if (iscp || comppage_used)
     {
       if (!table->installer.custom) table->installer.custom=add_string_main(str(NLF_COMP_CUSTOM),0);
       if (!table->common.subcaptions[1])

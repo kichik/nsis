@@ -105,7 +105,11 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_NOP,"Nop",0,0,""},
 {TOK_NAME,"Name",1,1,"[/LANG=lang_id] installer_name"},
 {TOK_OUTFILE,"OutFile",1,0,"install_output.exe"},
-{TOK_PAGE,"Page",1,3,"(custom function [caption]) | ((license|components|directory|instfiles) [pre_function] [post_function])"},
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+{TOK_PAGE,"Page",1,4,"(custom function [caption]) | ((license|components|directory|instfiles) [pre_function] [show_function] [leave_function])"},
+#else
+{TOK_PAGE,"Page",1,1,"license|components|directory|instfiles"},
+#endif
 {TOK_POP,"Pop",1,0,"$(user_var: output)"},
 {TOK_PUSH,"Push",1,0,"string"},
 {TOK_QUIT,"Quit",0,0,""},
@@ -159,7 +163,11 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTALLEXENAME,"UninstallExeName",0,0,"no longer supported, use WriteUninstaller from section."},
 {TOK_UNINSTCAPTION,"UninstallCaption",1,1,"[/LANG=lang_id] uninstaller_caption"},
 {TOK_UNINSTICON,"UninstallIcon",1,0,"icon_on_local_system.ico"},
-{TOK_UNINSTPAGE,"UninstPage",1,3,"(custom function [caption]) | ((uninstConfirm|instfiles) [pre_function] [post_function])"},
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+{TOK_UNINSTPAGE,"UninstPage",1,4,"(custom function [caption]) | ((uninstConfirm|instfiles) [pre_function] [show_function] [leave_function])"},
+#else
+{TOK_UNINSTPAGE,"UninstPage",1,1,"uninstConfirm|instfiles"},
+#endif
 {TOK_UNINSTTEXT,"UninstallText",1,2,"[/LANG=lang_id] Text_to_go_on_uninstall page [subtext]"},
 {TOK_UNINSTSUBCAPTION,"UninstallSubCaption",2,1,"[/LANG=lang_id] page_number(0-2) new_subcaption"},
 {TOK_UNREGDLL,"UnRegDLL",1,0,"dll_path_on_target.dll"},
