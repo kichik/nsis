@@ -3993,6 +3993,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
       ent.which=EW_REBOOT;
+      ent.offsets[0]=0xbadf00d;
       SCRIPT_MSG("Reboot! (WOW)\n");
     return add_entry(&ent);
     case TOK_IFREBOOTFLAG:
