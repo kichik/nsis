@@ -83,31 +83,31 @@ Function .onInit
 	MessageBox MB_YESNO|MB_ICONQUESTION "The closest match for your default language is $0.$\nIf no close match was found (identical primary language) the installer default was selected.$\nDo you want to use it?" IDYES langSelected
 
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use English?" IDNO +3
-		SetLanguage 1033 ; English code is 1033
+		StrCpy $LANGUAGE 1033 ; English code is 1033
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Dutch?" IDNO +3
-		SetLanguage 1043 ; Dutch? code is 1043
+		StrCpy $LANGUAGE 1043 ; Dutch? code is 1043
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use French?" IDNO +3
-		SetLanguage 1036 ; French? code is 1036
+		StrCpy $LANGUAGE 1036 ; French? code is 1036
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use German?" IDNO +3
-		SetLanguage 1031 ; German code is 1031
+		StrCpy $LANGUAGE 1031 ; German code is 1031
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Korean?" IDNO +3
-		SetLanguage 1042 ; Korean code is 1042
+		StrCpy $LANGUAGE 1042 ; Korean code is 1042
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Russian?" IDNO +3
-		SetLanguage 1049 ; Russian code is 1049
+		StrCpy $LANGUAGE 1049 ; Russian code is 1049
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Spanish?" IDNO +3
-		SetLanguage 1034 ; Spanish code is 1034
+		StrCpy $LANGUAGE 1034 ; Spanish code is 1034
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Swedish?" IDNO +3
-		SetLanguage 1053 ; Swedish code is 1053
+		StrCpy $LANGUAGE 1053 ; Swedish code is 1053
 		Goto langSelected
 	MessageBox MB_YESNO|MB_ICONQUESTION "Do you want to use Traditional Chinese" IDNO +3
-		SetLanguage 1028 ; Traditional Chines code is 1028
+		StrCpy $LANGUAGE 1028 ; Traditional Chines code is 1028
 		Goto langSelected
 
 langSelected:
