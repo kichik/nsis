@@ -381,6 +381,11 @@
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
     !endif
     
+    ;Set stretching option
+    !ifdef MUI_SPECIALBITMAP_NOSTRETCH
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Flags" ""
+    !endif
+    
   !endif
 
 !macroend
@@ -390,7 +395,11 @@
   !ifdef MUI_HEADERBITMAP
     InitPluginsDir
     File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERBITMAP}"
-    SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
+    !ifndef MUI_HEADERBITMAP_NOSTRETCH
+      SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
+    !else
+      SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
+    !endif
   !endif
 
 !macroend
@@ -978,6 +987,9 @@
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+        
+        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1200
         SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
 
 	!ifdef MUI_CUSTOMFUNCTION_WELCOME_SHOW
