@@ -725,6 +725,7 @@ int CEXEBuild::datablock_optimize(int start_offset)
       {
         db_opt_save += this_len;
         db->resize(max(start_offset, pos + this_len));
+        db->setro(FALSE);
         return pos;
       }
     }
