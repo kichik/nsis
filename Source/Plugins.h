@@ -14,12 +14,13 @@ class Plugins
   public:
     void  FindCommands(char*,bool);
     bool  IsPluginCommand(char*);
-    char* GetPluginDll(char*, int*);
-    void  SetDllDataHandle(char*, int);
+    char* GetPluginDll(int, char*, int*);
+    void  SetDllDataHandle(int, char*, int);
 
   protected:
     DefineList m_commands;
     GrowBuf    m_dataHandles;
+    GrowBuf    m_uninstDataHandles;
     int        m_funcsCount;
 
     void GetExports(char*,bool);

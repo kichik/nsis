@@ -134,23 +134,26 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
 
 bool Plugins::IsPluginCommand(char* token)
 {
-  return GetPluginDll(token, 0) ? true : false;
+  return GetPluginDll(0, token, 0) ? true : false;
 }
 
-char* Plugins::GetPluginDll(char* command, int* dataHandle)
+char* Plugins::GetPluginDll(int uninst, char* command, int* dataHandle)
 {
   char* ret = m_commands.find(command, dataHandle);
-  if (dataHandle && ret)
-    *dataHandle = ((int*)m_dataHandles.get())[*dataHandle];
+  if (dataHandle && ret) {
+    if (uninst) *dataHandle = ((int*)m_uninstDataHandles.get())[*dataHandle];
+    else *dataHandle = ((int*)m_dataHandles.get())[*dataHandle];
+  }
   return ret;
 }
 
-void Plugins::SetDllDataHandle(char* command, int dataHandle)
+void Plugins::SetDllDataHandle(int uninst, char* command, int dataHandle)
 {
   int idx = -1;
   m_commands.find(command, &idx);
   if (idx == -1) return;
-  ((int*)m_dataHandles.get())[idx] = dataHandle;
+  if (uninst) ((int*)m_uninstDataHandles.get())[idx] = dataHandle;
+  else ((int*)m_dataHandles.get())[idx] = dataHandle;
 }
 
 #endif
