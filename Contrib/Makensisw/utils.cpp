@@ -128,6 +128,7 @@ void EnableItems(HWND hwnd) {
 	EnableMenuItem(m,IDM_EDITSCRIPT,MF_ENABLED);
 }
 
+static BOOL g_appended = FALSE;
 void CompileNSISScript() {
 	char s[MAX_PATH];
 	ClearLog(g_hwnd);
@@ -142,8 +143,11 @@ void CompileNSISScript() {
 		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
 		return;
 	}
-	wsprintf(s,"%s %s",EXENAME,g_script);
-	lstrcpy(g_script,s);
+	if (!g_appended) {
+		wsprintf(s,"%s %s",EXENAME,g_script);
+		lstrcpy(g_script,s);
+		g_appended = TRUE;
+	}
 	// Disable buttons during compile
 	DisableItems(g_hwnd);
 	DWORD id;
