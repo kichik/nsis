@@ -35,79 +35,82 @@ extern char *compressor_names[];
 
 int SetArgv(char *cmdLine, int *argc, char ***argv)
 {
-	char *p, *arg, *argSpace;
-	int size, argSpaceSize, inquote, copy, slashes;
+  char *p, *arg, *argSpace;
+  int size, argSpaceSize, inquote, copy, slashes;
 
-	size = 2;
-	for (p = cmdLine; *p != '\0'; p++) {
-		if ((*p == ' ') || (*p == '\t')) {
-			size++;
-			while ((*p == ' ') || (*p == '\t')) {
-				p++;
-			}
-			if (*p == '\0') {
-				break;
-			}
-		}
-	}
+  size = 2;
+  for (p = cmdLine; *p != '\0'; p++) {
+    if ((*p == ' ') || (*p == '\t')) {
+      size++;
+      while ((*p == ' ') || (*p == '\t')) {
+        p++;
+      }
+      if (*p == '\0') {
+        break;
+      }
+    }
+  }
 
   argSpaceSize = size * sizeof(char *) + lstrlen(cmdLine) + 1;
-	argSpace = (char *) LocalAlloc(GMEM_FIXED, argSpaceSize);
-	*argv = (char **) argSpace;
-	argSpace += size * sizeof(char *);
-	size--;
+  argSpace = (char *) GlobalAlloc(GMEM_FIXED, argSpaceSize);
+  if (!argSpace)
+    return 0;
 
-	p = cmdLine;
-	for (*argc = 0; *argc < size; (*argc)++) {
-		(*argv)[*argc] = arg = argSpace;
-		while ((*p == ' ') || (*p == '\t')) {
-			p++;
-		}
-		if (*p == '\0') {
-			break;
-		}
+  *argv = (char **) argSpace;
+  argSpace += size * sizeof(char *);
+  size--;
 
-		inquote = 0;
-		slashes = 0;
-		while (1) {
-			copy = 1;
-			while (*p == '\\') {
-				slashes++;
-				p++;
-			}
-			if (*p == '"') {
-				if ((slashes & 1) == 0) {
-					copy = 0;
-					if ((inquote) && (p[1] == '"')) {
-						p++;
-						copy = 1;
-					}
-					else {
-						inquote = !inquote;
-					}
-				}
-				slashes >>= 1;
-			}
+  p = cmdLine;
+  for (*argc = 0; *argc < size; (*argc)++) {
+    (*argv)[*argc] = arg = argSpace;
+    while ((*p == ' ') || (*p == '\t')) {
+      p++;
+    }
+    if (*p == '\0') {
+      break;
+    }
 
-			while (slashes) {
-				*arg = '\\';
-				arg++;
-				slashes--;
-			}
+    inquote = 0;
+    slashes = 0;
+    while (1) {
+      copy = 1;
+      while (*p == '\\') {
+        slashes++;
+        p++;
+      }
+      if (*p == '"') {
+        if ((slashes & 1) == 0) {
+          copy = 0;
+          if ((inquote) && (p[1] == '"')) {
+            p++;
+            copy = 1;
+          }
+          else {
+            inquote = !inquote;
+          }
+        }
+        slashes >>= 1;
+      }
 
-			if ((*p == '\0') || (!inquote && ((*p == ' ') || (*p == '\t')))) {
-				break;
-			}
-			if (copy != 0) {
-				*arg = *p;
-				arg++;
-			}
-			p++;
-		}
-		*arg = '\0';
-		argSpace = arg + 1;
-	}
-	(*argv)[*argc] = NULL;
+      while (slashes) {
+        *arg = '\\';
+        arg++;
+        slashes--;
+      }
+
+      if ((*p == '\0') || (!inquote && ((*p == ' ') || (*p == '\t')))) {
+        break;
+      }
+      if (copy != 0) {
+        *arg = *p;
+        arg++;
+      }
+      p++;
+    }
+    *arg = '\0';
+    argSpace = arg + 1;
+  }
+  (*argv)[*argc] = NULL;
 
   return argSpaceSize;
 }
@@ -321,56 +324,62 @@ void SaveWindowPos(HWND hwnd) {
 
 void RestoreDefines()
 {
-    HKEY hKey;
-    HKEY hSubKey;
-    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-        int n = 0;
-        DWORD l = sizeof(n);
-        DWORD t;
-        if ((RegQueryValueEx(hKey,REGDEFCOUNT,NULL,&t,(unsigned char*)&n,&l)==ERROR_SUCCESS)&&(t == REG_DWORD)&&(l==sizeof(n))) {
-            if(n > 0) {
-                if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-                    char buf[8];
-                    g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
-                    for(int i=0; i<n; i++) {
-                        wsprintf(buf,"%d",i);
-                        l = 0;
-                        if ((RegQueryValueEx(hSubKey,buf,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
-                            l++;
-                            g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
-                            RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)g_sdata.defines[i],&l);
-                        }
-                    }
-                    g_sdata.defines[n] = NULL;
-                    RegCloseKey(hSubKey);
-                }
+  HKEY hKey;
+  HKEY hSubKey;
+  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    int n = 0;
+    DWORD l = sizeof(n);
+    DWORD t;
+    if ((RegQueryValueEx(hKey,REGDEFCOUNT,NULL,&t,(unsigned char*)&n,&l)==ERROR_SUCCESS)&&(t == REG_DWORD)&&(l==sizeof(n))) {
+      if(n > 0) {
+        if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+          char buf[8];
+          g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
+          if (g_sdata.defines)
+          {
+            for(int i = 0; i < n; i++) {
+              wsprintf(buf,"%d",i);
+              l = 0;
+              if ((RegQueryValueEx(hSubKey,buf,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
+                l++;
+                g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
+                if (g_sdata.defines[i])
+                  RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)g_sdata.defines[i],&l);
+                else
+                  break;
+              }
             }
+            g_sdata.defines[n] = NULL;
+          }
+          RegCloseKey(hSubKey);
         }
-        RegCloseKey(hKey);
+      }
     }
+    RegCloseKey(hKey);
+  }
 }
 
 void SaveDefines()
 {
-    HKEY hKey;
-    HKEY hSubKey;
-    int n = 0;
-    if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-        RegDeleteKey(hKey,REGDEFSUBKEY);
-        if(g_sdata.defines) {
-          if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-              char buf[8];
-              while(g_sdata.defines[n]) {
-                  wsprintf(buf,"%d",n);
-                  RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)g_sdata.defines[n],lstrlen(g_sdata.defines[n]));
-                  n++;
-              }
-              RegCloseKey(hSubKey);
-          }
+  HKEY hKey;
+  HKEY hSubKey;
+  int n = 0;
+  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+    RegDeleteKey(hKey,REGDEFSUBKEY);
+    if(g_sdata.defines) {
+      if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+        char buf[8];
+        while(g_sdata.defines[n]) {
+          wsprintf(buf,"%d",n);
+          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)g_sdata.defines[n],lstrlen(g_sdata.defines[n])+1);
+          n++;
         }
-        RegSetValueEx(hKey,REGDEFCOUNT,0,REG_DWORD,(CONST BYTE *)&n,sizeof(n));
-        RegCloseKey(hKey);
+        RegCloseKey(hSubKey);
+      }
     }
+    RegSetValueEx(hKey,REGDEFCOUNT,0,REG_DWORD,(CONST BYTE *)&n,sizeof(n));
+    RegCloseKey(hKey);
+  }
 }
 
 void ResetObjects() {
@@ -382,7 +391,7 @@ void ResetObjects() {
 
 void ResetDefines() {
   if(g_sdata.defines) {
-    int i=0;
+    int i = 0;
     while(g_sdata.defines[i]) {
       GlobalFree(g_sdata.defines[i]);
       i++;
@@ -520,7 +529,7 @@ char* BuildDefines()
   }
   else {
     buf = (char *)GlobalAlloc(GPTR, sizeof(char));
-    lstrcpy(buf,"");
+    buf[0] = NULL;
   }
 
   return buf;
@@ -694,49 +703,49 @@ void LoadMRUFile(int position)
 
 void RestoreMRUList()
 {
-    HKEY hKey;
-    HKEY hSubKey;
-    int n = 0;
-    int i;
-    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-        if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-            char buf[8];
-            DWORD l;
-            for(int i=0; i<MRU_LIST_SIZE; i++) {
-                wsprintf(buf,"%d",i);
-                l = sizeof(g_mru_list[n]);
-                RegQueryValueEx(hSubKey,buf,NULL,NULL,(unsigned char*)g_mru_list[n],&l);
-                if(g_mru_list[n][0] != '\0') {
-                  n++;
-                }
-            }
-            RegCloseKey(hSubKey);
+  HKEY hKey;
+  HKEY hSubKey;
+  int n = 0;
+  int i;
+  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+      char buf[8];
+      DWORD l;
+      for(int i=0; i<MRU_LIST_SIZE; i++) {
+        wsprintf(buf,"%d",i);
+        l = sizeof(g_mru_list[n]);
+        RegQueryValueEx(hSubKey,buf,NULL,NULL,(unsigned char*)g_mru_list[n],&l);
+        if(g_mru_list[n][0] != '\0') {
+          n++;
         }
-        RegCloseKey(hKey);
+      }
+      RegCloseKey(hSubKey);
     }
-    for(i = n; i < MRU_LIST_SIZE; i++) {
-      g_mru_list[i][0] = '\0';
-    }
+    RegCloseKey(hKey);
+  }
+  for(i = n; i < MRU_LIST_SIZE; i++) {
+    g_mru_list[i][0] = '\0';
+  }
 
-    BuildMRUMenus();
+  BuildMRUMenus();
 }
 
 void SaveMRUList()
 {
-    HKEY hKey;
-    HKEY hSubKey;
-    int i = 0;
-    if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-        if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-            char buf[8];
-            for(i = 0; i < MRU_LIST_SIZE; i++) {
-                wsprintf(buf,"%d",i);
-                RegSetValueEx(hSubKey,buf,0,REG_SZ,(const unsigned char *)g_mru_list[i],lstrlen(g_mru_list[i]));
-            }
-            RegCloseKey(hSubKey);
-        }
-        RegCloseKey(hKey);
+  HKEY hKey;
+  HKEY hSubKey;
+  int i = 0;
+  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+    if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+      char buf[8];
+      for(i = 0; i < MRU_LIST_SIZE; i++) {
+        wsprintf(buf,"%d",i);
+        RegSetValueEx(hSubKey,buf,0,REG_SZ,(const unsigned char *)g_mru_list[i],lstrlen(g_mru_list[i]));
+      }
+      RegCloseKey(hSubKey);
     }
+    RegCloseKey(hKey);
+  }
 }
 
 void ClearMRUList()
