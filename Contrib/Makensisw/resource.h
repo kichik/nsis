@@ -8,7 +8,6 @@
 #define IDM_MENU                        104
 #define IDK_ACCEL                       105
 #define IDI_SHELL                       112
-#define DLG_ABOUTNSIS                   113
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -25,14 +24,12 @@
 #define IDC_ABOUTPORTIONS               1005
 #define IDC_CONTRIB                     1009
 #define IDC_NSISVER                     1010
-#define IDC_NSISNFO                     1011
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
 #define IDM_DOCS                        40004
 #define IDM_LOADSCRIPT                  40005
 #define IDM_FIND                        40006
 #define IDM_SELECTALL                   40007
-#define IDM_ABOUTNSIS                   40008
 #define IDM_CLEARLOG                    40009
 
 // Next default values for new objects
