@@ -36,6 +36,7 @@ static int dy;
 HINSTANCE g_hInstance;
 HWND g_hwnd;
 HANDLE g_hThread;
+BOOL g_warnings;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	HACCEL haccel; 
@@ -45,6 +46,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	else while (*g_script++!=' ');
 	while (*g_script==' ') g_script++;
 	g_retcode = -1; // return code is always false unless set to true by GetExitCodeProcess
+	g_warnings = FALSE;
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
     if (!hDialog) {
         char buf [MAX_STRING];
@@ -135,7 +137,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			if (g_retcode==0) {
 				MessageBeep(MB_ICONASTERISK);
-				SetTitle(g_hwnd,"Finished Sucessfully");
+				if (g_warnings) SetTitle(g_hwnd,"Finished with Warnings");
+				else SetTitle(g_hwnd,"Finished Sucessfully");
 			}
 			else SetTitle(g_hwnd,"Compile Error: See Log for Details");
 			EnableItems(g_hwnd);
