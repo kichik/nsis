@@ -18,6 +18,7 @@
 #  include <unistd.h>
 #  include <limits.h>
 #  include <stdlib.h>
+#  include <stdarg.h>
 #endif
 
 int MMapFile::m_iAllocationGranularity = 0;
@@ -1032,7 +1033,7 @@ int CEXEBuild::add_label(const char *name)
     }
   }
 
-  section s={{0}};
+  section s={0};
   s.name_ptr = offs;
   s.code = ce;
   cur_labels->add(&s,sizeof(s));
@@ -2402,7 +2403,7 @@ int CEXEBuild::write_output(void)
 #endif
     notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
     INFO_MSG("\nOutput: \"%s\"\n", buffer);
-#if !defined(_WIN32) && defined(PATH_MAX)
+#if !defined(_WIN32) && !defined(PATH_MAX)
     if (buffer != build_output_filename)
       free(buffer);
 #endif
