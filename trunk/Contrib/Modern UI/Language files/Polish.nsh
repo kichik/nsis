@@ -3,15 +3,15 @@
 
 ;Language: Polish (1045)
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
-;Updated by cube, cube(at)lp.net.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
+;Updated by cube, kubad(at)poczta.onet.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Polish"
 
   !define MUI_LANGNAME "Polski" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacyjny programu $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Ten kreator pomo¿e Ci zainstalowaæ program $(^NameDA).\r\n\r\nZalecane jest zamkniêcie wszystkich uruchomionych programów przed rozpoczniêciem instalacji. To pozwoli na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchomienia komputera.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Witamy w kreatorze instalacji programu $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Ten kreator pomo¿e Ci zainstalowaæ program $(^NameDA).\r\n\r\nZalecane jest zamkniêcie wszystkich uruchomionych programów przed rozpoczêciem instalacji. To pozwoli na uaktualnienie niezbêdnych plików systemowych bez koniecznoœci ponownego uruchomienia komputera.\r\n\r\n$_CLICK"
     
   !define MUI_TEXT_LICENSE_TITLE "Umowa licencyjna"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Przed instalacj¹ programu $(^NameDA) zapoznaj siê z warunkami licencji."
@@ -28,7 +28,7 @@
   !define MUI_TEXT_DIRECTORY_TITLE "Wybierz lokalizacjê dla instalacji"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Wybierz folder, w którym ma byæ zainstalowany $(^NameDA)."
   
-  !define MUI_TEXT_INSTALLING_TITLE "Instalowanie"
+  !define MUI_TEXT_INSTALLING_TITLE "Instalacja"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Proszê czekaæ, podczas gdy $(^NameDA) jest instalowany."
   
   !define MUI_TEXT_FINISH_TITLE "Zakoñczono"
@@ -39,7 +39,7 @@
    
   !define MUI_BUTTONTEXT_FINISH "&Zakoñcz"
   !define MUI_TEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora instalacji $(^NameDA)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.\r\n\r\nKliknij Zakoñcz, aby zakoñczyæ dzia³nie Kreatora."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ pomyœlnie zainstalowany na Twoim komputerze.\r\n\r\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie Kreatora."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony aby zakoñczyæ instalacjê programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Uruchom ponownie teraz"
   !define MUI_TEXT_FINISH_REBOOTLATER "Sam uruchomiê ponownie komputer póŸniej"
@@ -54,7 +54,7 @@
   !define MUI_TEXT_ABORTWARNING "Czy na pewno chcesz zakoñczyæ dzia³anie instalatora $(^Name)?"
 
     
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Witamy w Kreatorze Deinstalacji $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Witamy w kreatorze deinstalacji $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Kreator poprowadzi Ciê przez proces deinstalacji $(^NameDA).\r\n\r\nPrzed rozpoczêciem deinstalacji programu, upewnij siê, czy $(^NameDA) NIE jest w³aœnie uruchomiony.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinstaluj $(^NameDA)"
@@ -81,8 +81,8 @@
   !define MUI_UNTEXT_ABORT_TITLE "Deinstalacja przerwana"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Deinstalacja nie zosta³a zakoñczona pomyœlnie."
   
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy Kreatora Deinstalacyjnego $(^NameDA)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z Twojego komputera.\r\n\r\nKliknij Zakoñcz, aby zakoñczyæ dzia³nie Kreatora."
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy kreatora deinstalacyjnego $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zosta³ odinstalowany z Twojego komputera.\r\n\r\nKliknij Zakoñcz, aby zakoñczyæ dzia³anie Kreatora."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Twój komputer musi zostaæ ponownie uruchomiony w celu zakoñczenia deinstalacji programu $(^NameDA). Czy chcesz zrobiæ to teraz?"
   
   !define MUI_UNTEXT_ABORTWARNING "Czy na pewno chcesz przerwaæ proces deinstalacji $(^Name)?"
