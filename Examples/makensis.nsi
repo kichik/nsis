@@ -11,9 +11,18 @@
 !endif
 !verbose 4
 
-;Language
-LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-!include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
+!ifndef CLASSIC_UI
+  ;Modern UI defines
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTPAGE
+  !define MUI_DIRSELECTPAGE
+  !define MUI_ABORTWARNING
+  !define MUI_UNINSTALLER
+
+  ;Language
+  LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+  !include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
+!endif
 
 Name "NSIS"
 Caption "Nullsoft Install System - Setup"
@@ -24,10 +33,8 @@ SetCompressor bzip2
 !insertmacro MUI_INTERFACE "modern2.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9"
 !endif
 
-LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
 
-ComponentText "This will install the Nullsoft Install System v${VER_MAJOR}.${VER_MINOR} on your computer:"
 InstType "Full (w/ Source and Contrib)"
 InstType "Normal (w/ Contrib, w/o Source)"
 InstType "Lite (w/o Source or Contrib)"
@@ -35,7 +42,6 @@ InstType "Lite (w/o Source or Contrib)"
 AutoCloseWindow false
 ShowInstDetails show
 ShowUninstDetails show
-DirText "Please select a location to install NSIS (or use the default):" " "
 SetOverwrite on
 SetDateSave on
 
@@ -643,8 +649,6 @@ Function .onMouseOverSection
 
 FunctionEnd
 !endif
-
-UninstallText "This will uninstall NSIS from your system:"
 
 Section Uninstall
   IfFileExists $INSTDIR\makensis.exe skip_confirmation
