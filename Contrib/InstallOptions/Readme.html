@@ -218,7 +218,8 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         items in the list.<br />A "<span class="italic">listbox</span>" shows multiple items and can
         optionally allow the user to select more than one item.<br />A
         "<span class="italic">CheckBox</span>" control displays a check box with label.<br />
-        A "<span class="italic">RadioButton</span>" control displays a radio button with label.<br />
+        A "<span class="italic">RadioButton</span>" control displays a radio button with label.
+        Always add a GROUP flag the first control in a group of radio buttons!<br />
         A "<span class="italic">FileRequest</span>" control displays
         a textbox and a browse button. Clicking the browse button will display a
         file requester where the user can browse for a file.<br />A
@@ -385,6 +386,10 @@ numbers from 1 to NumFields. Each Field section can contain the following values
             <td class="righttable">This causes "<span class="italic">Bitmap</span>"
             controls to resize the image to the size of the control.
             Also useful to support custom DPI settings.</td></tr>
+          <tr>
+            <td class="righttable">GROUP</td>
+            <td class="righttable">Always add this flag to the first control in a group
+            of "<span class="italic">RadioButton</span>" controls.</td></tr>
         </table></td></tr></table>
 <p class="header">How to use</p>
 <p class="subheader">Modern UI</p>
