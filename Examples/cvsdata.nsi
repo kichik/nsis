@@ -136,5 +136,15 @@ Section
   !insertmacro CVSDATA "Source\bzip2"
   !insertmacro CVSDATA "Source\exehead"
   !insertmacro CVSDATA "Source\zlib"
+  !insertmacro CVSDATA "Source\7zip"
+  !insertmacro CVSDATA "Source\7zip\7zip"
+  !insertmacro CVSDATA "Source\7zip\7zip\Common"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZ"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZ\BinTree"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZMA"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZMA_SMALL"
+  !insertmacro CVSDATA "Source\7zip\7zip\Compress\RangeCoder"
+  !insertmacro CVSDATA "Source\7zip\Common"
 
 SectionEnd
