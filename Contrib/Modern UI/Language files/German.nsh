@@ -39,7 +39,7 @@
 
   !define MUI_BUTTONTEXT_FINISH "&Fertig stellen"
   !define MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^NameDA) wird abgeschlossen"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) ist auf Ihrem Computer installiert worden.\r\n\r\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) wurde auf Ihrem Computer installiert.\r\n\r\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^NameDA) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Jetzt neu starten"
   !define MUI_TEXT_FINISH_REBOOTLATER "Windows später selbst neu starten"
