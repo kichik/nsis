@@ -25,16 +25,16 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
 Name "Simplified Chinese"
 
 ; The language can be the last used language like above, but it can be defined using /LANG
-ComponentText /LANG=1033 "English component page"
-ComponentText /LANG=1043 "Dutch component page"
-ComponentText /LANG=1036 "French component page"
-ComponentText /LANG=1031 "German component page"
-ComponentText /LANG=1042 "Korean component page"
-ComponentText /LANG=1049 "Russian component page"
-ComponentText /LANG=1034 "Spanish component page"
-ComponentText /LANG=1053 "Swedish component page"
-ComponentText /LANG=1028 "Traditional Chinese component page"
-ComponentText /LANG=2052 "Simplified Chinese component page"
+ComponentText /LANG=${LANG_ENGLISH} "English component page"
+ComponentText /LANG=${LANG_DUTCH} "Dutch component page"
+ComponentText /LANG=${LANG_FRENCH} "French component page"
+ComponentText /LANG=${LANG_GERMAN} "German component page"
+ComponentText /LANG=${LANG_KOREAN} "Korean component page"
+ComponentText /LANG=${LANG_RUSSIAN} "Russian component page"
+ComponentText /LANG=${LANG_SPANISH} "Spanish component page"
+ComponentText /LANG=${LANG_SWEDISH} "Swedish component page"
+ComponentText /LANG=${LANG_TRADCHINESE} "Traditional Chinese component page"
+ComponentText /LANG=${LANG_SIMPCHINESE} "Simplified Chinese component page"
 
 ; scetion names will be given in .onInit to match the language choosen by the user
 Section " " sec1
@@ -43,25 +43,25 @@ Section " " sec1
 SectionEnd
 
 Section " " sec2
-	StrCmp $LANGUAGE 1033 0 +2
+	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
 		MessageBox MB_OK "Installing English stuff"
-	StrCmp $LANGUAGE 1043 0 +2
+	StrCmp $LANGUAGE ${LANG_DUTCH} 0 +2
 		MessageBox MB_OK "Installing Dutch stuff"
-	StrCmp $LANGUAGE 1036 0 +2
+	StrCmp $LANGUAGE ${LANG_FRENCH} 0 +2
 		MessageBox MB_OK "Installing French stuff"
-	StrCmp $LANGUAGE 1031 0 +2
+	StrCmp $LANGUAGE ${LANG_GERMAN} 0 +2
 		MessageBox MB_OK "Installing German stuff"
-	StrCmp $LANGUAGE 1042 0 +2
+	StrCmp $LANGUAGE ${LANG_KOREAN} 0 +2
 		MessageBox MB_OK "Installing Korean stuff"
-	StrCmp $LANGUAGE 1049 0 +2
+	StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
 		MessageBox MB_OK "Installing Russian stuff"
-	StrCmp $LANGUAGE 1034 0 +2
+	StrCmp $LANGUAGE ${LANG_SPANISH} 0 +2
 		MessageBox MB_OK "Installing Spanish stuff"
-	StrCmp $LANGUAGE 1053 0 +2
+	StrCmp $LANGUAGE ${LANG_SWEDISH} 0 +2
 		MessageBox MB_OK "Installing Swedish stuff"
-	StrCmp $LANGUAGE 1028 0 +2
+	StrCmp $LANGUAGE ${LANG_TRADCHINESE} 0 +2
 		MessageBox MB_OK "Installing Traditional Chinese stuff"
-	StrCmp $LANGUAGE 2052 0 +2
+	StrCmp $LANGUAGE ${LANG_SIMPCHINESE} 0 +2
 		MessageBox MB_OK "Installing Simplified Chinese stuff"
 SectionEnd
 
@@ -69,25 +69,25 @@ Function .onInit
 	Push "Installer Language" ; caption
 	Push "Please select the language of the installer" ; text
 	Push English
-	Push 1033
+	Push ${LANG_ENGLISH}
 	Push Dutch
-	Push 1043
+	Push ${LANG_DUTCH}
 	Push French
-	Push 1036
+	Push ${LANG_FRENCH}
 	Push German
-	Push 1031
+	Push ${LANG_GERMAN}
 	Push Korean
-	Push 1042
+	Push ${LANG_KOREAN}
 	Push Russian
-	Push 1049
+	Push ${LANG_RUSSIAN}
 	Push Spanish
-	Push 1034
+	Push ${LANG_SPANISH}
 	Push Swedish
-	Push 1053
+	Push ${LANG_SWEDISH}
 	Push "Traditional Chinese"
-	Push 1028
+	Push ${LANG_TRADCHINESE}
 	Push "Simplified Chinese"
-	Push 2052
+	Push ${LANG_SIMPCHINESE}
 
 	LangDLL::LangDialog 10 ; 10 is the number of languages
 
@@ -95,25 +95,25 @@ Function .onInit
 	StrCmp $LANGUAGE "cancel" 0 +2
 		Abort
 
-	StrCmp $LANGUAGE 1033 0 +2
+	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
 		StrCpy $0 "English"
-	StrCmp $LANGUAGE 1043 0 +2
+	StrCmp $LANGUAGE ${LANG_DUTCH} 0 +2
 		StrCpy $0 "Dutch"
-	StrCmp $LANGUAGE 1036 0 +2
+	StrCmp $LANGUAGE ${LANG_FRENCH} 0 +2
 		StrCpy $0 "French"
-	StrCmp $LANGUAGE 1031 0 +2
+	StrCmp $LANGUAGE ${LANG_GERMAN} 0 +2
 		StrCpy $0 "German"
-	StrCmp $LANGUAGE 1042 0 +2
+	StrCmp $LANGUAGE ${LANG_KOREAN} 0 +2
 		StrCpy $0 "Korean"
-	StrCmp $LANGUAGE 1049 0 +2
+	StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
 		StrCpy $0 "Russian"
-	StrCmp $LANGUAGE 1034 0 +2
+	StrCmp $LANGUAGE ${LANG_SPANISH} 0 +2
 		StrCpy $0 "Spanish"
-	StrCmp $LANGUAGE 1053 0 +2
+	StrCmp $LANGUAGE ${LANG_SWEDISH} 0 +2
 		StrCpy $0 "Swedish"
-	StrCmp $LANGUAGE 1028 0 +2
+	StrCmp $LANGUAGE ${LANG_TRADCHINESE} 0 +2
 		StrCpy $0 "Traditional Chinese"
-	StrCmp $LANGUAGE 2052 0 +2
+	StrCmp $LANGUAGE ${LANG_SIMPCHINESE} 0 +2
 		StrCpy $0 "Simplified Chinese"
 
 	; Set the section name to something localized
