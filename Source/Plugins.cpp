@@ -147,8 +147,8 @@ char* Plugins::GetPluginDll(int uninst, char** command, int* dataHandle)
     int v = m_commands.defines.idx2pos(idx);
     if (v < 0) return 0;
     strcpy(*command, m_commands.defines.get() + v);
-    if (uninst) *dataHandle = ((int*)m_uninstDataHandles.get())[*dataHandle];
-    else *dataHandle = ((int*)m_dataHandles.get())[*dataHandle];
+    if (uninst) *dataHandle = ((int*)m_uninstDataHandles.get())[idx];
+    else *dataHandle = ((int*)m_dataHandles.get())[idx];
   }
   return ret;
 }
