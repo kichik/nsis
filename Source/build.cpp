@@ -11,9 +11,9 @@
 #include "ResourceEditor.h"
 #include "exehead/resource.h"
 
-void CEXEBuild::define(const char *p, const char *v) 
-{ 
-  definedlist.add(p,v); 
+void CEXEBuild::define(const char *p, const char *v)
+{
+  definedlist.add(p,v);
 }
 
 
@@ -39,7 +39,7 @@ CEXEBuild::CEXEBuild()
   exeheader_size_new=zlib_exeheader_size;
   exeheader_size=zlib_exeheader_size;
 
-  if (!header_data_new) 
+  if (!header_data_new)
   {
     ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
     extern void quit(); quit();
@@ -216,7 +216,7 @@ CEXEBuild::CEXEBuild()
 
   build_overwrite=0;
   build_compress=1;
-  build_crcchk=1; 
+  build_crcchk=1;
   build_datesave=1;
   build_optimize_datablock=1;
 
@@ -278,7 +278,7 @@ CEXEBuild::CEXEBuild()
   m_uninst_fileused=0;
 
   branding_image_found=false; // Added by Amir Szekely 22nd July 2002
-  
+
   no_space_texts=false;
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
@@ -338,7 +338,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   ;
 
   const char *p=in;
-  while (*p) 
+  while (*p)
   {
     const char *np=CharNext(p);
 
@@ -364,11 +364,11 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     if (i >= VAR_CODES_START) {
       *out++ = (char)255;
     }
-    else if (i == '$') 
+    else if (i == '$')
     {
-      if (*p == '$') 
+      if (*p == '$')
         p++; // Can simply convert $$ to $ now
-      else 
+      else
       {
         const char *pVarName;
         for (
@@ -415,7 +415,7 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
   return ubuild_strlist.add(buf,2);
 }
 
-// what it does is, when you pass it the offset of the last item added, it will determine if 
+// what it does is, when you pass it the offset of the last item added, it will determine if
 // that data is already present in the datablock, and if so, reference it instead (and shorten
 // the datablock as necessary). Reduces overhead if you want to add files to a couple places.
 // Woo, an optimizing installer generator, now we're styling.
@@ -470,7 +470,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     dblock->resize(st+bufferlen+sizeof(int));
 
     int n;
-    if ((n=compressor->Init(9)) != C_OK) 
+    if ((n=compressor->Init(9)) != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n",n);
       extern void quit(); quit();
@@ -524,12 +524,12 @@ int CEXEBuild::add_label(const char *name)
 {
   if (!build_cursection && !uninstall_mode)
   {
-    ERROR_MSG("Error: Label declaration not valid outside of function/section\n"); 
+    ERROR_MSG("Error: Label declaration not valid outside of function/section\n");
     return PS_ERROR;
   }
   if ((name[0] >= '0' && name[0] <= '9') || name[0] == '-' || name[0] == ' ' || name[0] == ':')
   {
-    ERROR_MSG("Error: labels must not begin with 0-9, -, :, or a space.\n"); 
+    ERROR_MSG("Error: labels must not begin with 0-9, -, :, or a space.\n");
     return PS_ERROR;
   }
   int cs;
@@ -556,7 +556,7 @@ int CEXEBuild::add_label(const char *name)
     section *t=(section*)cur_labels->get();
     while (n--)
     {
-      if ((*name == '.' || (t->code >= cs && t->code <= ce))  &&        
+      if ((*name == '.' || (t->code >= cs && t->code <= ce))  &&
           t->name_ptr==offs)
       {
         if (*name == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name);
@@ -566,7 +566,7 @@ int CEXEBuild::add_label(const char *name)
       t++;
     }
   }
-  
+
   section s={0,};
   s.name_ptr = offs;
   s.code = ce;
@@ -686,7 +686,7 @@ int CEXEBuild::section_end()
     ERROR_MSG("Error: SectionEnd specified and no sections open\n");
     return PS_ERROR;
   }
-  else 
+  else
   {
     entry ent={EW_RET,};
     cur_entries->add(&ent,sizeof(entry));
@@ -745,9 +745,9 @@ int CEXEBuild::add_section(const char *secname, const char *file, int line, cons
   if (secname[0]=='-')
   {
     build_cursection=NULL;
-    entry ent={EW_RET,}; 
-    cur_entries->add(&ent,sizeof(entry)); 
-    build_header.common.num_entries++; 
+    entry ent={EW_RET,};
+    cur_entries->add(&ent,sizeof(entry));
+    build_header.common.num_entries++;
   }
 
   if (defname[0])
@@ -760,7 +760,7 @@ int CEXEBuild::add_section(const char *secname, const char *file, int line, cons
       return PS_ERROR;
     }
   }
-  
+
   build_header.num_sections++;
 
   return PS_OK;
@@ -778,7 +778,7 @@ int CEXEBuild::make_sure_not_in_secorfunc(const char *str)
 
 int CEXEBuild::add_entry(const entry *ent)
 {
-  if (!build_cursection && !uninstall_mode) 
+  if (!build_cursection && !uninstall_mode)
   {
     ERROR_MSG("Error: Can't add entry, no section or function is open!\n");
     return PS_ERROR;
@@ -808,14 +808,14 @@ int CEXEBuild::add_entry(const entry *ent)
 
 int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int end)
 {
-  if (*a > 0) 
+  if (*a > 0)
   {
     char *lname=(char*)ns_label.get()+*a;
     if (lname[0] == '-' || lname[0]=='+')
     {
       *a=offs+atoi(lname)+1;
     }
-    else 
+    else
     {
       section *s = (section*)cur_labels->get();
       int n=cur_labels->getlen()/sizeof(section);
@@ -915,10 +915,10 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
     {
       if (w->offsets[0] >= 0 && resolve_call_int(fn,str,w->offsets[0],w->offsets)) return 1;
       // if w->offsets[0] >= 0, EW_CALL requires that it 1-based.
-      // otherwise, if < 0, it needs an increment anyway (since it 
+      // otherwise, if < 0, it needs an increment anyway (since it
       // was encoded with a -2 base, to prevent it looking like an
       // empty string "")
-      w->offsets[0]++; 
+      w->offsets[0]++;
     }
   }
   else if (w->which == EW_GETFUNCTIONADDR)
@@ -929,7 +929,7 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
       ERROR_MSG("Error: GetFunctionAddress requires a real function to get address of.\n");
       return 1;
     }
-    
+
     if (resolve_call_int(fn,str,w->offsets[1],&w->offsets[1])) return 1;
 
     w->which=EW_ASSIGNVAR;
@@ -951,7 +951,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
 {
   // resolve jumps&calls
   {
-    section *sec=(section *)cur_functions->get();    
+    section *sec=(section *)cur_functions->get();
     int l=cur_functions->getlen()/sizeof(section);
     entry *w=(entry*)cur_entries->get();
     while (l-- > 0)
@@ -994,7 +994,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
 
   // optimize unused functions
   {
-    section *sec=(section *)cur_functions->get();    
+    section *sec=(section *)cur_functions->get();
     int l=cur_functions->getlen()/sizeof(section);
     entry *w=(entry*)cur_entries->get();
     while (l-- > 0)
@@ -1031,7 +1031,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
       t++;
     }
   }
-  
+
   return 0;
 }
 
@@ -1092,7 +1092,7 @@ int CEXEBuild::write_output(void)
   {
     ERROR_MSG("Error: Section left open at EOF\n");
     return PS_ERROR;
-  } 
+  }
 
   if (subsection_open_cnt)
   {
@@ -1118,7 +1118,7 @@ int CEXEBuild::write_output(void)
     {
       build_uninst.common.progress_flags=build_header.common.progress_flags;
       build_uninst.common.misc_flags|=build_header.common.misc_flags&(4|8);
-      
+
       set_uninstall_mode(1);
   #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onInit",0),&build_uninst.common.code_onInit)) return PS_ERROR;
@@ -1154,7 +1154,7 @@ int CEXEBuild::write_output(void)
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onSelChange",0),&build_header.code_onSelChange)) return PS_ERROR;
 #endif//NSIS_CONFIG_COMPONENTPAGE
 #endif//NSIS_SUPPORT_CODECALLBACKS
-  
+
   if (resolve_coderefs("install")) return PS_ERROR;
 
   // Added by Amir Szekely 8th July 2002
@@ -1288,7 +1288,7 @@ int CEXEBuild::write_output(void)
 
   build_optimize_datablock=0;
 
-  if (uninstall_generate() != PS_OK) 
+  if (uninstall_generate() != PS_OK)
   {
     return PS_ERROR;
   }
@@ -1301,7 +1301,7 @@ int CEXEBuild::write_output(void)
     INFO_MSG("\nOutput: \"%s\"\n",buffer);
   }
   FILE *fp = fopen(build_output_filename,"w+b");
-  if (!fp) 
+  if (!fp)
   {
     ERROR_MSG("Can't open output file\n");
     return PS_ERROR;
@@ -1347,13 +1347,13 @@ int CEXEBuild::write_output(void)
     GrowBuf ihd;
     {
       GrowBuf hdrcomp;
-      hdrcomp.add(&build_header,sizeof(build_header)); 
-      hdrcomp.add(build_sections.get(),build_sections.getlen()); 
+      hdrcomp.add(&build_header,sizeof(build_header));
+      hdrcomp.add(build_sections.get(),build_sections.getlen());
       hdrcomp.add(build_entries.get(),build_entries.getlen());
       hdrcomp.add(build_strlist.get(),build_strlist.getlen());
 
       if (add_data((char*)hdrcomp.get(),hdrcomp.getlen(),&ihd) < 0) return PS_ERROR;
- 
+
       installinfo_compressed=ihd.getlen();
       fh.length_of_header=hdrcomp.getlen();
     }
@@ -1411,7 +1411,7 @@ int CEXEBuild::write_output(void)
   int ne=build_entries.getlen()/sizeof(entry);
   INFO_MSG("Install: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
   INFO_MSG("%d byte string table.\n",build_strlist.getlen());
-  if (ubuild_entries.getlen()) 
+  if (ubuild_entries.getlen())
   {
     int tmp=ubuild_entries.getlen()/sizeof(entry);
     INFO_MSG("Uninstall: ");
@@ -1420,7 +1420,7 @@ int CEXEBuild::write_output(void)
   }
 
 
-  if (db_opt_save) 
+  if (db_opt_save)
   {
     int total_out_size_estimate=
       exeheader_size_new+sizeof(fh)+build_datablock.getlen()+(build_crcchk?4:0);
@@ -1436,12 +1436,12 @@ int CEXEBuild::write_output(void)
 
   if (build_compress_whole) {
     INFO_MSG("Install code+strings:                  (%d bytes)\n",
-      sizeof(fh)+fh.length_of_header+sizeof(int)); 
+      sizeof(fh)+fh.length_of_header+sizeof(int));
   }
   else {
     INFO_MSG("Install code+strings:     %10d / %d bytes\n",
       sizeof(fh)+installinfo_compressed,
-      sizeof(fh)+fh.length_of_header+sizeof(int)); 
+      sizeof(fh)+fh.length_of_header+sizeof(int));
   }
 
   total_usize+=sizeof(fh)+fh.length_of_header+sizeof(int);
@@ -1462,7 +1462,7 @@ int CEXEBuild::write_output(void)
     total_usize+=dbsizeu;
   }
 
-  if (uninstall_size>=0) 
+  if (uninstall_size>=0)
   {
     if (build_compress_whole)
       INFO_MSG("Uninstall code+data+strings:           (%d bytes)\n",uninstall_size_full);
@@ -1536,7 +1536,7 @@ int CEXEBuild::write_output(void)
     fseek(fp,0,SEEK_END); // reset eof flag
   }
 
-  if (build_crcchk) 
+  if (build_crcchk)
   {
     total_usize+=sizeof(int);
     if (fwrite(&crc,1,sizeof(int),fp) != sizeof(int))
@@ -1567,7 +1567,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
   char obuf[32768];
   int flush=0;
   compressor->SetNextIn(buf,len);
-  if (!buf||!len) 
+  if (!buf||!len)
   {
     char a;
     compressor->SetNextIn(&a,0);
@@ -1599,7 +1599,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
 int CEXEBuild::uninstall_generate()
 {
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  if (ubuild_entries.getlen() && uninstaller_writes_used) 
+  if (ubuild_entries.getlen() && uninstaller_writes_used)
   {
     firstheader fh={0,};
 
@@ -1610,15 +1610,15 @@ int CEXEBuild::uninstall_generate()
 
       udata.add(&build_uninst,sizeof(build_uninst));
       udata.add(ubuild_entries.get(),ubuild_entries.getlen());
-      udata.add(ubuild_strlist.get(),ubuild_strlist.getlen()); 
-    
+      udata.add(ubuild_strlist.get(),ubuild_strlist.getlen());
+
       set_uninstall_mode(1);
       fh.length_of_header=udata.getlen();
-      int err=add_data((char*)udata.get(),udata.getlen(),&uhd);      
+      int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
       set_uninstall_mode(0);
       if (err < 0) return PS_ERROR;
     }
-        
+
     int crc=0;
 
     build_header.uninstdata_offset=build_datablock.getlen();
@@ -1674,7 +1674,7 @@ int CEXEBuild::uninstall_generate()
       udata.add(&fh,sizeof(fh));
       {
         char obuf[32768];
-        if ((compressor->Init(9)) != C_OK) 
+        if ((compressor->Init(9)) != C_OK)
         {
           ERROR_MSG("Error: deflateInit() returned < 0\n");
           return PS_ERROR;
@@ -1701,7 +1701,7 @@ int CEXEBuild::uninstall_generate()
           if (compressor->GetNextOut()-obuf > 0)
             udata.add(obuf,compressor->GetNextOut()-obuf);
           else break;
-        }     
+        }
         compressor->End();
       }
 
@@ -1721,7 +1721,7 @@ int CEXEBuild::uninstall_generate()
     }
 #endif
 
-    if (add_data((char*)udata.get(),udata.getlen()) < 0) 
+    if (add_data((char*)udata.get(),udata.getlen()) < 0)
       return PS_ERROR;
 
     uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
@@ -1766,7 +1766,7 @@ void CEXEBuild::warning(const char *s, ...)
   vsprintf(buf,s,val);
   va_end(val);
   m_warnings.add(buf,-1);
-  if (display_warnings) 
+  if (display_warnings)
   {
     fprintf(g_output,"warning: %s\n",buf);
     fflush(g_output);
@@ -1839,7 +1839,7 @@ void CEXEBuild::build_plugin_table(void)
   char* nsisdir = definedlist.find("NSISDIR");
   if (nsisdir)
   {
-    char* searchPath = new char [strlen(nsisdir)+6];
+    char* searchPath = new char [strlen(nsisdir)+9];
     if (searchPath)
     {
       wsprintf(searchPath,"%s\\plugins",nsisdir);
