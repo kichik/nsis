@@ -2,11 +2,6 @@
 //
 #include "resource.h"
 
-// Generated Help ID header file
-#define APSTUDIO_HIDDEN_SYMBOLS
-#include "resource.hm"
-#undef APSTUDIO_HIDDEN_SYMBOLS
-
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -75,7 +70,7 @@ BEGIN
         MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "&Save Output...",             IDM_SAVE
         MENUITEM SEPARATOR
-        MENUITEM "&Load Script...",             IDM_LOADSCRIPT
+        MENUITEM "&Load Script...\tCtrl+L",     IDM_LOADSCRIPT
         MENUITEM SEPARATOR
         MENUITEM "E&xit\tAlt+X",                IDM_EXIT
     END
@@ -125,8 +120,10 @@ BEGIN
     "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
+    "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
 END
 
@@ -163,8 +160,7 @@ BEGIN
     LTEXT           "MakeNSISW",IDC_ABOUTVERSION,44,4,184,8
     LTEXT           "Copyright",IDC_ABOUTCOPY,44,18,184,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,47,78,181,1
-    LTEXT           "Other Contributors:",IDC_ABOUTPORTIONS,44,30,184,10,0,0,
-                    HIDC_ABOUTPORTIONS
+    LTEXT           "Other Contributors:",IDC_ABOUTPORTIONS,44,30,184,10
     LISTBOX         IDC_CONTRIB,48,40,179,33,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
                     LBS_NOSEL | NOT WS_BORDER | WS_VSCROLL | WS_TABSTOP,
                     WS_EX_TRANSPARENT
