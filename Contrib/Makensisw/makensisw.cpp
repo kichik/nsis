@@ -1107,10 +1107,12 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
       SendMessage(hwndEdit, EM_LIMITTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN, 0);
       if(g_symbol_set_mode == 1) { //Load
         SetWindowText(hwndDlg, LOAD_SYMBOL_SET_DLG_NAME);
+        SetWindowText(GetDlgItem(hwndDlg, IDOK), LOAD_BUTTON_TEXT);
         SendMessage(hwndEdit, EM_SETREADONLY, (WPARAM)TRUE, 0);
       }
       else {
         SetWindowText(hwndDlg, SAVE_SYMBOL_SET_DLG_NAME);
+        SetWindowText(GetDlgItem(hwndDlg, IDOK), SAVE_BUTTON_TEXT);
       }
       break;
     }
