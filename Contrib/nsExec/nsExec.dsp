@@ -61,21 +61,13 @@ LINK32=link.exe
 
 SOURCE=.\nsexec.c
 # End Source File
-# Begin Source File
-
-SOURCE=.\nsis.c
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\nsexec.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\nsis.h
+SOURCE=..\ExDLL\exdll.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
