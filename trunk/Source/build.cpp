@@ -399,10 +399,13 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
   if (!process) return build_strlist.add(string,2);
 
   if (*string == '$' && *(string+1) == '(') {
+    int idx = -1;
     char *cp = strdup(string+2);
-    strchr(cp, ')')[0] = 0;
-    int idx;
-    if (build_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    char *p = strchr(cp, ')');
+    if (*p) {
+      *p = 0;
+      if (build_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    }
     free(cp);
     if (idx >= 0) return -(idx+1);
   }
@@ -418,10 +421,13 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
   if (!process) return ubuild_strlist.add(string,2);
 
   if (*string == '$' && *(string+1) == '(') {
+    int idx = -1;
     char *cp = strdup(string+2);
-    strchr(cp, ')')[0] = 0;
-    int idx;
-    if (ubuild_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    char *p = strchr(cp, ')');
+    if (*p) {
+      *p = 0;
+      if (ubuild_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    }
     free(cp);
     if (idx >= 0) return -(idx+1);
   }
