@@ -2,7 +2,7 @@
 ;version 1 - Compatible with Modern UI 1.3
 
 ;Language: French (1036)
-;By Netsabes
+;By Sébastien Delahaye <seb@delahaye.net>
 
 ;--------------------------------
 
