@@ -31,7 +31,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Выберите место установки"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Выберите каталог для установки ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Инсталятор установит ${MUI_PRODUCT} в следущий каталог.$\r$\n$\r$\Чтобы установить в другой каталог, нажмите Обзор и выберите другой каталог."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Инсталятор установит ${MUI_PRODUCT} в следущий каталог.$\r$\n$\r$\nЧтобы установить в другой каталог, нажмите Обзор и выберите другой каталог."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Каталог Назначения"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Идет установка"
