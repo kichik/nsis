@@ -142,6 +142,8 @@ Version History
  - Text always scrolls to bottom (Kickik)
  - Updated link to new docs
  - Makensisw now takes the same parameters as makensis
+ - About Box is closeable
+ - Fixed some random crashes
 
 
 Copyright Information
