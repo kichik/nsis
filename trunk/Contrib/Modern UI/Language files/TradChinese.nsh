@@ -6,7 +6,7 @@
 ;Revision date: 2003-12-29
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "TradChinese"
 
   !define MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Use only ASCII characters (if this is not possible, use the English name)
   

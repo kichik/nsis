@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "UKRAINIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Ukrainian"
 
   !define MUI_LANGNAME "Ukrainian" ;Use only ASCII characters (if this is not possible, use the English name)
 

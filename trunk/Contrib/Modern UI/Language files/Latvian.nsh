@@ -7,7 +7,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "LATVIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Latvian"
 
   !define MUI_LANGNAME "Latvieðu" ;Use only ASCII characters (if this is not possible, use the English name)
   

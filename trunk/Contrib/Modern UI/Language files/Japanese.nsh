@@ -8,7 +8,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "JAPANESE"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Japanese"
 
   !define MUI_LANGNAME "Japanese" ;(“ú–{Œê) Use only ASCII characters (if this is not possible, use the English name)
   

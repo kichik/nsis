@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "MONGOLIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Mongolian"
 
   !define MUI_LANGNAME "Mongolian" ;Use only ASCII characters (if this is not possible, use the English name)
   
@@ -62,9 +62,9 @@
   
   !define MUI_UNTEXT_LICENSE_TITLE "Лицензийн зєвшєєрєл"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "$(^NameDA) устгахын ємнє зєвшилцлийн зїйлсийг уншина уу."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвшєєрлєє товчийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвшєєрлєє товчийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, Зєвлєх хайрцгийг даран їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Хэрэв зєвшилцлийн зїйлсийг зєвшєєрч байвал, доорхоос эхнийг нь сонгон їргэлжлїїлнэ її. $(^NameDA)-ыг устгахын тулд заавал зєвшєєрєх шаардлагатай. $_CLICK"
   
   !define MUI_UNTEXT_COMPONENTS_TITLE "Нэгдлийг сонгох"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "$(^NameDA)-ын устгах шаардлагатай нэгдлийг сонгох."

@@ -8,7 +8,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "ROMANIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Romanian"
 
   !define MUI_LANGNAME "Romana" ;Use only ASCII characters (if this is not possible, use the English name)
 

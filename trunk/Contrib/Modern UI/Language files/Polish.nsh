@@ -6,7 +6,7 @@
 ;Updates and corrections since 2.0 b1 by cube cube(at)lp.net.pl
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "POLISH"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Polish"
 
   !define MUI_LANGNAME "Polski" ;Use only ASCII characters (if this is not possible, use the English name)
   
