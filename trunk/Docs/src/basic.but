@@ -10,7 +10,7 @@ Delete file (which can be a file or wildcard, but should be specified with a ful
 
 \H{file} File
 
-\c [/nonfatal] ([/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
+\c [/nonfatal] [/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
 
 Adds file(s) to be extracted to the current output path ($OUTDIR).
 
