@@ -229,6 +229,10 @@
   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
 
+  StrCmp $0 -1 "" +3
+    SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:"
+    Goto mui.description_done
+
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
   !endif

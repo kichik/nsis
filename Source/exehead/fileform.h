@@ -437,12 +437,13 @@ typedef struct
 #define SF_BOLD       8
 #define SF_RO         16
 #define SF_EXPAND     32
+#define SF_PSELECTED  64
 
 typedef struct
 {
   int name_ptr; // '' for non-optional components
   int install_types; // bits set for each of the different install_types, if any.
-  int flags; // SF_SELECTED, SF_RO, SF_BOLD, SF_SUB, and/or SF_EXPAND
+  int flags; // SF_* - defined above
   int code;
   int code_size;
   int size_kb;
