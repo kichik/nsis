@@ -180,6 +180,8 @@
 \c    Push $R0
 \c    Push $R1
 \c  
+\c    ClearErrors
+\c  
 \c    ReadRegStr $R0 HKLM \
 \c    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
 \c
