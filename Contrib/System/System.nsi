@@ -7,7 +7,7 @@ Name "System Plugin Example"
 OutFile "System.exe"
 SetPluginUnload  alwaysoff
 
-!include "${NSISDIR}\Contrib\System\Additionals\sysfunc.nsh"
+!include "${NSISDIR}\Contrib\System\sysfunc.nsh"
 
 Section "ThisNameIsIgnoredSoWhyBother?"
      SetOutPath $TEMP
