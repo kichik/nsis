@@ -2,6 +2,8 @@
 
 \H{v2.01} 2.01
 
+Released on September 24th, 2004
+
 \S1{v2.01-rn} Release Notes
 
 \b See \R{compiling_infos}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
@@ -38,7 +40,11 @@
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
 
-\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, added StrCase, some fixes
+\b Speedup background gradient painting
+
+\b \L{../Examples/LogicLib.nsi}{LogicLib} 2.5: Added AndIf, AndUnless, OrIf, OrUnless. Avoids unused variable warnings by requiring !defines before using certain features.
+
+\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, some fixes and improvements. See the \L{../Include/StrFunc.txt}{readme} for a complete changelog
 
 \b The plug-ins folder is properly removed when the system is rebooted
 
@@ -64,6 +70,10 @@
 
 \b Made Times New Roman default font for the background text because it should always have support for the locale's language
 
+\b Fixed compilation of NSISdl under VS.NET
+
+\b SetCtlColors /BRANDING wasn't working right, if just one of the background or text color were specified
+
 \b Language file fixes and improvements
 
 \S2{} Utilities and Plug-ins
@@ -77,6 +87,10 @@
 \b Zip2Exe 0.32: Fixed codepage problems
 
 \b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
+
+\b \L{../Contrib/VPatch/Readme.html}{VPatch}: Close all open file handles when one of them fail to open
+
+\b \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl}: Added /NOIEPROXY (based on memph's code)
 
 \H{v2.0} 2.0
 
