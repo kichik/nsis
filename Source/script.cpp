@@ -238,7 +238,7 @@ int CEXEBuild::doParse(const char *str)
   while (*str == ' ' || *str == '\t') str++;
 
   // if ignoring, ignore all lines that don't begin with !.
-  if (cur_ifblock && cur_ifblock->ignore && *str!='!' && !last_line_had_slash) return PS_OK;
+  if (cur_ifblock && (cur_ifblock->ignore || cur_ifblock->inherited_ignore) && *str!='!' && !last_line_had_slash) return PS_OK;
 
   if (m_linebuild.getlen()>1) m_linebuild.resize(m_linebuild.getlen()-2);
 
