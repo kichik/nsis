@@ -159,7 +159,13 @@ public:
   int Compress(BOOL flush)
   {
     if (compressor_finished)
-      return -1;
+    {
+      // act like zlib when it comes to stream ending
+      if (flush)
+        return C_OK;
+      else
+        return -1;
+    }
 
     if (!hCompressionThread)
     {

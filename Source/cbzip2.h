@@ -7,6 +7,7 @@
 class CBzip2 : public ICompressor {
   public:
     int Init(int level) {
+      last_ret = !BZ_STREAM_END;
       stream = new bz_stream;
       if (!stream) return BZ_MEM_ERROR;
       return BZ2_bzCompressInit(stream, level, 0, 30);
@@ -19,7 +20,11 @@ class CBzip2 : public ICompressor {
     }
 
     int Compress(BOOL finish) {
-      return BZ2_bzCompress(stream, finish?BZ_FINISH:0);
+      // act like zlib when it comes to stream ending
+      if (last_ret == BZ_STREAM_END)
+        return BZ_STREAM_END;
+      last_ret = BZ2_bzCompress(stream, finish?BZ_FINISH:0);
+      return last_ret;
     }
 
     void SetNextIn(char *in, unsigned int size) {
@@ -50,6 +55,7 @@ class CBzip2 : public ICompressor {
 
   private:
     bz_stream *stream;
+    int last_ret;
 };
 
 #endif
