@@ -1,14 +1,14 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.61
 
-;Language: Korea (1042)
+;Language: Korean (1042)
 ;by linak linak@korea.com
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "KOREA"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "KOREAN"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "ÇÑ±Û" ;Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Korean" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
 
