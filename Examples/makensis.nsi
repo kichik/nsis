@@ -511,6 +511,8 @@ Section "InstallOptions" SecPluginsIO
   File ..\Contrib\InstallOptions\Changelog.txt
   File ..\Contrib\InstallOptions\test.ini
   File ..\Contrib\InstallOptions\test.nsi
+  File ..\Contrib\InstallOptions\testimgs.ini
+  File ..\Contrib\InstallOptions\testimgs.nsi
   File ..\Contrib\InstallOptions\testlink.ini
   File ..\Contrib\InstallOptions\testlink.nsi
   File ..\Contrib\InstallOptions\testnotify.ini
