@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -26,39 +26,45 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_DIALOG1 DIALOG DISCARDABLE  0, 0, 361, 234
-STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Nullsoft ZIP2EXE v0.20"
-FONT 8, "MS Sans Serif"
+IDD_DIALOG1 DIALOGEX 0, 0, 360, 271
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Zip2Exe 0.3"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    PUSHBUTTON      "Open &ZIP",IDC_BROWSE,13,17,49,14
-    EDITTEXT        IDC_ZIPFILE,66,18,284,12,ES_AUTOHSCROLL | ES_READONLY | 
+    ICON            IDI_ICON1,IDC_NSISICON,6,6,20,20
+    LTEXT           "Zip2Exe converts a ZIP file to a self extracting archive (a simple NSIS installer). To customize the NSIS script code, modify the header files in the 'Contrib\\zip2exe' folder.",
+                    IDC_INFO,36,6,312,18
+    GROUPBOX        "Source ZIP File",IDC_SZIPFRAME,7,31,347,101
+    PUSHBUTTON      "&Open...",IDC_BROWSE,18,48,54,13
+    EDITTEXT        IDC_ZIPFILE,78,48,264,12,ES_AUTOHSCROLL | ES_READONLY | 
                     NOT WS_TABSTOP
-    LISTBOX         IDC_ZIPINFO_FILES,13,43,335,62,LBS_NOINTEGRALHEIGHT | 
+    LTEXT           "",IDC_ZIPINFO_SUMMARY,18,66,324,8
+    LISTBOX         IDC_ZIPINFO_FILES,18,78,324,45,LBS_NOINTEGRALHEIGHT | 
                     LBS_NOSEL | WS_VSCROLL
-    EDITTEXT        IDC_INSTNAME,81,124,267,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_DESCTEXT,81,139,267,12,ES_AUTOHSCROLL
-    COMBOBOX        IDC_INSTPATH,81,154,268,126,CBS_DROPDOWN | WS_VSCROLL | 
+    GROUPBOX        "Output Installer Options",IDC_OFRAME,6,138,347,108
+    LTEXT           "Installer Name",IDC_INAMEST,18,156,48,8
+    EDITTEXT        IDC_INSTNAME,78,156,264,12,ES_AUTOHSCROLL
+    LTEXT           "Interface",IDC_INTERFACE,18,174,30,8
+    CONTROL         "Modern",IDC_MODERNUI,"Button",BS_AUTORADIOBUTTON,78,174,
+                    42,12
+    CONTROL         "Classic",IDC_CLASSICUI,"Button",BS_AUTORADIOBUTTON,132,
+                    174,42,12
+    LTEXT           "Default Folder",IDC_DEPST,18,192,48,8
+    COMBOBOX        IDC_INSTPATH,78,192,264,126,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP
-    EDITTEXT        IDC_OUTFILE,81,169,224,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Browse",IDC_BROWSE2,309,169,41,14
-    CONTROL         "Deflate (ZIP)",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,
-                    81,185,56,10
-    CONTROL         "BZIP2",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,139,186,
-                    36,10
-    LTEXT           "Compressor:",IDC_COMPRESSOR,13,186,42,8
-    DEFPUSHBUTTON   "Convert",IDOK,304,213,50,14,WS_DISABLED
-    GROUPBOX        "Source ZIP File",IDC_SZIPFRAME,7,7,347,102
-    LTEXT           "",IDC_ZIPINFO_SUMMARY,13,33,245,8
-    GROUPBOX        "Output",IDC_OFRAME,7,113,347,90
-    LTEXT           "Default extract path:",IDC_DEPST,13,156,66,8
-    LTEXT           "Description text:",IDC_DTEXTST,13,142,66,8
-    LTEXT           "Output EXE file:",IDC_OEFST,13,171,51,8
-    LTEXT           "Installer name",IDC_INAMEST,13,126,66,8
-    PUSHBUTTON      "Test",IDC_TEST,251,213,50,14,NOT WS_VISIBLE
-    PUSHBUTTON      "< Back",IDC_BACK,7,213,50,14,NOT WS_VISIBLE
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,210,347,1
-    EDITTEXT        IDC_OUTPUTTEXT,7,7,347,202,ES_MULTILINE | ES_AUTOVSCROLL | 
+    LTEXT           "Output EXE File",IDC_OEFST,18,210,54,8
+    EDITTEXT        IDC_OUTFILE,78,210,204,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_BROWSE2,288,210,54,13
+    LTEXT           "Compression",IDC_COMPRESSOR,18,228,42,8
+    CONTROL         "BZIP2",IDC_BZIP2,"Button",BS_AUTORADIOBUTTON,78,228,36,
+                    10
+    CONTROL         "ZLIB (Deflate)",IDC_ZLIB,"Button",BS_AUTORADIOBUTTON,
+                    132,228,60,10
+    DEFPUSHBUTTON   "&Generate",IDOK,306,252,48,14,WS_DISABLED
+    PUSHBUTTON      "&Test",IDC_TEST,246,252,49,14,NOT WS_VISIBLE
+    PUSHBUTTON      "< &Back",IDC_BACK,6,252,48,14,NOT WS_VISIBLE
+    EDITTEXT        IDC_OUTPUTTEXT,0,0,360,246,ES_MULTILINE | ES_AUTOVSCROLL | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE | 
                     WS_VSCROLL | WS_HSCROLL
 END
@@ -70,14 +76,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_DIALOG1, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 354
+        RIGHTMARGIN, 353
         TOPMARGIN, 7
-        BOTTOMMARGIN, 227
+        BOTTOMMARGIN, 264
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -89,18 +95,18 @@ END
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -116,14 +122,14 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "icon.ico"
+IDI_ICON1               ICON                    "icon.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 24
+// RT_MANIFEST
 //
 
-1                       24      MOVEABLE PURE   "zip2exe.xml"
+1                       RT_MANIFEST             "zip2exe.xml"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
