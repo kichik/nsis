@@ -22,6 +22,10 @@
   !verbose 3
 
   ;User interface
+  
+  !ifndef MUI_UI
+    !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
+  !endif
 
   !ifndef MUI_ICON
     !define MUI_ICON "${NSISDIR}\Contrib\Icons\modern-install.ico"
@@ -33,10 +37,6 @@
 
   !ifndef MUI_CHECKBITMAP
     !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Icons\modern.bmp"
-  !endif
-
-  !ifndef MUI_UI
-    !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
   !endif
 
   !ifndef MUI_FONT
@@ -57,10 +57,10 @@
 
   XPStyle On
 
+  ChangeUI all "${MUI_UI}"
   Icon "${MUI_ICON}"
   UninstallIcon "${MUI_UNICON}"
   CheckBitmap "${MUI_CHECKBITMAP}"
-  ChangeUI all "${MUI_UI}"
   SetFont "${MUI_FONT}" 8
   InstallColors "${MUI_INSTALLCOLORS}"
   InstProgressFlags "${MUI_PROGRESSBAR}"
@@ -71,6 +71,7 @@
 !macroend
 
 !macro MUI_INTERFACE_ALLRES UI ICON UNICON CHECKS PROGRESSBAR FONT
+  
   !define MUI_UI "${UI}"
   !define MUI_ICON "${ICON}"
   !define MUI_UNICON "${UNICON}"
@@ -78,6 +79,7 @@
   !define MUI_PROGRESSBAR "${PROGRESSBAR}"
   !define MUI_FONT "${FONT}"
   !insertmacro MUI_INTERFACE
+  
 !macroend
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
@@ -392,6 +394,56 @@
 
   !verbose 4
 
+!macroend
+
+!macro MUI_INSTALLOPTIONS_WRITETITLE FILE TITLE
+
+  !verbose 3
+  
+  Push ${MUI_TEMP1}
+  Push ${MUI_TEMP2}
+
+    StrCpy ${MUI_TEMP1} "$(MUI_TEXT_SETUPCAPTION)"
+    StrCpy ${MUI_TEMP2} "${TITLE}"
+    
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "Title" "${MUI_TEMP1}: ${MUI_TEMP2}"
+  
+  Pop ${MUI_TEMP2}
+  Pop ${MUI_TEMP1}
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_WRITEABORTWARNING FILE
+  
+  !verbose 3
+  
+  !ifdef MUI_ABORTWARNING
+
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
+  
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+;--------------------------------
+;SECTIONS
+
+!macro MUI_SECTIONS_FINISHHEADER
+
+  !verbose 3
+
+  Section ""
+
+    ;Invisible section to display the Finish header
+    !insertmacro MUI_FINISHHEADER
+
+  SectionEnd
+  
+  !verbose 4
+  
 !macroend
 
 ;--------------------------------

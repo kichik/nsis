@@ -2,8 +2,10 @@
 ;Basic Macro System Example Script
 ;Written by Joost Verburg
 
-!define NAME "Test Software" ;Define your own software name here
-!define VERSION "1.0" ;Define your own software version here
+!define MUI_PRODUCT "Test Software" ;Define your own software name here
+!define MUI_VERSION "1.0" ;Define your own software version here
+
+!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}" ;Installer name
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
@@ -17,13 +19,10 @@
   !define MUI_UNINSTALLER
 
   ;Language
-    ;English
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
-
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  
   ;General
   OutFile "Basic.exe"
-  Name "${NAME} ${VERSION}"
 
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -32,7 +31,12 @@
   LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
   ;Folder-selection page
-  InstallDir "$PROGRAMFILES\${NAME}"
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Installer Sections
@@ -49,17 +53,10 @@ Section "modern.exe" SecCopyUI
 
 SectionEnd
 
-Section ""
-
-  ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER
-
-SectionEnd
+!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
 
 ;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
+;Descriptions
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)

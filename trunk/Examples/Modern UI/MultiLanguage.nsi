@@ -2,8 +2,10 @@
 ;Basic Macro System & MultiLanguage Example Script
 ;Written by Joost Verburg
 
-!define NAME "Test Software" ;Define your own software name here
-!define VERSION "1.0" ;Define your own software version here
+!define MUI_PRODUCT "Test Software" ;Define your own software name here
+!define MUI_VERSION "1.0" ;Define your own software version here
+
+!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}" ;Installer name
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
@@ -17,79 +19,22 @@
   !define MUI_UNINSTALLER
 
   ;Languages
-    ;English
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
-       
-    ;French
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\French.nsh"
-    
-    ;German
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\German.nsh"
-    
-    ;Spanish
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Spanish.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Spanish.nsh"
-    
-    ;Simplified Chinese
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\SimpChinese.nsh"
-
-    ;Traditional Chinese
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
-    
-    ;Japanese
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Japanese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Japanese.nsh"    
-    
-    ;Italian
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Italian.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Italian.nsh"
-    
-    ;Dutch
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Dutch.nsh"
-    
-    ;Polish
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Polish.nsh"
-    
-    ;Greek
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Greek.nsh"
-
-    ;Russian
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Russian.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Russian.nsh"
-    
-    ;Portuguese (Brasil)
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\PortugueseBR.nsh"
-    
-    ;Ukrainian
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Ukrainian.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\Ukrainian.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\French.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\German.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Spanish.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\SimpChinese.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Japanese.nsh"    
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Italian.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Dutch.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Polish.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Greek.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Russian.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\PortugueseBR.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\Ukrainian.nsh"
   
   OutFile "MultiLanguage.exe"
-  
-  ;Name
-  Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_GERMAN} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_SPANISH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_SIMPCHINESE} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_TRADCHINESE} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_JAPANESE} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_ITALIAN} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_POLISH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_RUSSIAN} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_PORTUGUESEBR} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_UKRAINIAN} "${NAME} ${VERSION}"
 
   ;License page
   LicenseData /LANG=${LANG_ENGLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -141,7 +86,12 @@
     LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
     
   ;Folder-selection page
-  InstallDir "$PROGRAMFILES\${NAME}"
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
   
 ;--------------------------------
 ;Installer Sections
@@ -159,12 +109,12 @@ SectionEnd
 
 Section ""
 
-  ;Invisible section to display the Finish header & write the language to the registry
+  ;Invisible section to write the language to the registry
+  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Installer Language" $LANGUAGE
   
-  WriteRegStr HKCU "Software\${NAME}" "Installer Language" $LANGUAGE
-  !insertmacro MUI_FINISHHEADER
-
 SectionEnd
+  
+!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
 
 ;--------------------------------
 ;Installer Functions
@@ -216,9 +166,7 @@ Function .onInit
 FunctionEnd
 
 ;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
+;Descriptions
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
@@ -236,7 +184,7 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  DeleteRegValue HKCU "Software\${NAME}" "Installer Language"
+  DeleteRegValue HKCU "Software\${MUI_PRODUCT}" "Installer Language"
 
   ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER
@@ -247,5 +195,5 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onInit
-  ReadRegStr $LANGUAGE HKCU "Software\${NAME}" "Installer Language"
+  ReadRegStr $LANGUAGE HKCU "Software\${MUI_PRODUCT}" "Installer Language"
 FunctionEnd
