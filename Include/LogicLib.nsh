@@ -9,100 +9,58 @@
 ; Description:
 ;   Provides the use of various logic statements within NSIS.
 ;
-; Notes:
-;   Version 2 is a complete rewrite of the original. Here are some of the major differences:
-;   - Structure redesign based upon version by eccles.
-;   - No statement limitations.
-;   - Following statements are now available.
-;       if/unless..elseif/unless..else..endif/unless
-;         - Conditionally executes a group of statements, depending on the value of an expression.
-;       ifthen..|..|
-;         - Conditionally executes an inline statement, depending on the value of an expression.
-;       ifcmd..||..|
-;         - Conditionally executes an inline statement, depending on a True value of the provided NSIS function.
-;       select..case..case2..case3..case4..case5..caseelse..endselect
-;         - Executes one of several groups of statements, depending on the value of an expression.
-;       switch..case..default..endswitch
-;         - As above but with C-like features and behaviour.
-;       for..exitfor..continue..break..next
-;         - Repeats a group of statements a specified number of times.
-;       foreach..exitfor..continue..break..next
-;         - Repeats a group of statements a specified number of times stepping in order specified.
-;       do..exitdo..continue..break..loop
-;         - Repeats a block of statements until stopped.
-;       dowhile..exitdo..continue..break..loop
-;         - Repeats a block of statements while a condition is True.
-;       dountil..exitdo..continue..break..loop
-;         - Repeats a block of statements until a condition is True.
-;       do..exitdo..continue..break..loopwhile
-;         - Repeats a block of statements while a condition is True.
-;       do..exitdo..continue..break..loopuntil
-;         - Repeats a block of statements until a condition is True.
-;       while..exitwhile..continue..break..endwhile
-;         - Same as dowhile..loop.
-;
 ; Usage:
-;   See example.nsi
+;   The following "statements" are available:
+;       If|Unless..{ElseIf|ElseUnless}..[Else]..EndIf|EndUnless
+;         - Conditionally executes a block of statements, depending on the value
+;           of an expression.
+;       IfThen..|..|
+;         - Conditionally executes an inline statement, depending on the value
+;           of an expression.
+;       IfCmd..||..|
+;         - Conditionally executes an inline statement, depending on a true
+;           value of the provided NSIS function.
+;       Select..{Case[2|3|4|5]}..[CaseElse|Default]..EndSelect
+;         - Executes one of several blocks of statements, depending on the value
+;           of an expression.
+;       Switch..{Case|CaseElse|Default}..EndSwitch
+;         - Jumps to one of several labels, depending on the value of an
+;           expression.
+;       Do[While|Until]..{ExitDo|Continue|Break}..Loop[While|Until]
+;         - Repeats a block of statements until stopped, or depending on the
+;           value of an expression.
+;       While..{ExitWhile|Continue|Break}..EndWhile
+;         - An alias for DoWhile..Loop (for backwards-compatibility)
+;       For[Each]..{ExitFor|Continue|Break}..Next
+;         - Repeats a block of statements varying the value of a variable.
 ;
-; History:
-;   1.0 - 09/19/2003 - Initial release.
-;   1.1 - 09/20/2003 - Added simplified macros and removed NAME requirement.
-;   1.2 - 09/21/2003 - Changed library name to LogicLib.
-;                         - Allow for 5 statements deep without use of name variable.
-;                         - Added If..ElseIf..Else..Endif statements.
-;   1.3 - 09/22/2003 - Fixed maximum allow statements.
-;                         - Now allows 10 statement depth.
-;                         - Condensed code.
-;   2.0 - 10/03/2003 - Inital release 2, see notes.
-;   2.1 - 10/05/2003 - Added continue and break labels to repeat type statements.
-;   2.2 - 10/07/2003 - Updates by eccles
-;                         - Simplified IfThen by utilising If and EndIf.
-;                         - Simplified For by utilising ForEach.
-;                         - Fixed ForEach missing the final iteration.
-;                         - Fixed a couple of Break/Continue bugs.
-;   2.3 - 12/10/2003 - Much reworking and refactoring of things to help reduce
-;                      duplication, etc. E.g. all loop varieties now go through
-;                      a common set of macros.
-;                    - Added built-in support for the rest of NSIS's built-in
-;                      conditional tests (Abort, Errors, FileExists, RebootFlag,
-;                      Silent).
-;                    - Added ability to use any NSIS conditional command in a
-;                      normal If type statement (no longer restricted to the
-;                      specialised IfCmd statement).
-;                    - Optimised the code produced by If (fewer Goto's).
-;                    - Added statement similar to If that works in reverse:
-;                      "Unless" executes the code in the contained block if the
-;                      condition is false. If, Unless, ElseIf, ElseUnless, EndIf
-;                      and ElseUnless can be used freely in any combination.
-;                    - Fixed bug where using Continue in a Do..LoopUntil loop
-;                      went to the top of the loop and not the loop condition.
-;                    - Added DoWhile..Loop and Do..LoopWhile loop varieties (the
-;                      existing While..EndWhile loop is still available and is
-;                      identical to DoWhile..Loop).
-;                    - Optimised the code prodiced by Select (fewer Goto's).
-;                    - Renamed Case_Else to CaseElse (nothing else has an
-;                      underscore so why should that one). The old name is still
-;                      available too though (if you must).
-;                    - CaseElse can also be called Default (for the C-minded).
-;   2.4 - 12/13/2003 - Added Switch..Case*/Default..EndSwitch: similar to Select
-;                      but behaves just like the C version. I.e.:
-;                         - Each Case is more like a label than a block so
-;                           execution "falls through" unless you use Break.
-;                         - CaseElse (or Default) does not have to be the final
-;                           case.
-;                         - Case*/Default can appear anywhere inside the Switch
-;                           (e.g. inside an If inside the Switch).
-;                      (With thanks to kichik for the idea and proof-of-concept
-;                      model).
-;                    - Added unsigned integer comparisons U<, U>=, U> and U<=.
-;                    - Added 64-bit integer comparisons L=, L<>, L<, L>=, L> and
-;                      L<= (these use System.dll).
-;                    - Added case-sensitive string tests S== and S!= (these use
-;                      System.dll).
-;                    - Added string comparisons (not case sensitive) S<, S>=, S>
-;                      and S<= (these use System.dll).
-;                    - Added section flag tests (SectionIsSelected, etc.) (to
-;                      use these your script must include sections.nsh).
+;   The following "expressions" are available:
+;       Standard (built-in) string tests (which are case-insensitive):
+;         a == b; a != b
+;       Additional case-insensitive string tests (using System.dll):
+;         a S< b; a S>= b; a S> b; a S<= b
+;       Case-sensitive string tests (using System.dll):
+;         a S== b; a S!= b
+;       Standard (built-in) signed integer tests:
+;         a = b; a <> b; a < b; a >= b; a > b; a <= b
+;       Standard (built-in) unsigned integer tests:
+;         a U< b; a U>= b; a U> b; a U<= b
+;       64-bit integer tests (using System.dll):
+;         a L= b; a L<> b; a L< b; a L>= b; a L> b; a L<= b
+;       Built-in NSIS flag tests:
+;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
+;       Built-in NSIS other tests:
+;         ${FileExists} a
+;       Any conditional NSIS instruction test:
+;         ${Cmd} a
+;       Section flag tests:
+;         ${SectionIsSelected} a; ${SectionIsSubSection} a;
+;         ${SectionIsSubSectionEnd} a; ${SectionIsBold} a;
+;         ${SectionIsReadOnly} a; ${SectionIsExpanded} a;
+;         ${SectionIsPartiallySelected} a
+;
+; Examples:
+;   See LogicLib.nsi in the Examples folder for lots of example usage.
 
 !verbose push
 !verbose 3
