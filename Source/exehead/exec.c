@@ -1537,7 +1537,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             if (parm1)
             {
               // update tree view
-              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)(sec->flags&SF_SELECTED));
+              SendMessage(g_SectionHack,WM_USER+0x18,x,0);
             }
           }
         }

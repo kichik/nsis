@@ -13,6 +13,7 @@
 !define SF_BOLD       8
 !define SF_RO         16
 !define SF_EXPAND     32
+!define SF_PSELECTED  64
 
 !define SECTION_OFF   0xFFFFFFFE
 
