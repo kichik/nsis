@@ -218,9 +218,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case IDM_UPDATE:
                 {
                     DWORD dwThreadId;
-					EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_GRAYED);
+                    EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_GRAYED);
                     CloseHandle(CreateThread(NULL,0,UpdateThread,(LPVOID)NULL,0,&dwThreadId));
-					EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_ENABLED);
                     break;
                 }
                 case IDM_ABOUT:
@@ -596,5 +595,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
     GlobalFree(response);
     delete get;
+    EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_ENABLED);
     return 0;
 }
