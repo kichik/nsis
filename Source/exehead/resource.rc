@@ -38,7 +38,7 @@ BEGIN
     ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,105
+                    WS_TABSTOP | 0x804,0,24,266,105
 END
 #endif
 
@@ -54,7 +54,7 @@ BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,85
+                    WS_TABSTOP | 0x804,0,24,266,85
     CONTROL         "",IDC_LICENSEDISAGREE,"Button",BS_AUTORADIOBUTTON | 
                     WS_TABSTOP,0,120,266,9
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTORADIOBUTTON | 
@@ -74,7 +74,7 @@ BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,95
+                    WS_TABSTOP | 0x804,0,24,266,95
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,0,120,266,9
 END
