@@ -2028,7 +2028,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       else if (which_token == TOK_CALLINSTDLL)
       {
-        ent.offsets[1] = add_string(line.gettoken_str(2));
+        int a = 2;
+        if (!stricmp(line.gettoken_str(a++), "/NOUNLOAD"))
+          ent.offsets[3]=1;
+        if (a+1 != line.getnumtokens()) PRINTHELP();
+        ent.offsets[1]=add_string(line.gettoken_str(a));
         if (ent.offsets[1]<0) PRINTHELP()
         ent.offsets[2]=-1;
       }
@@ -2039,7 +2043,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[2]=add_string("Registering: ");
       }
 
-      SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(2));
+      SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(ent.offsets[3]?3:2));
     return add_entry(&ent);
 #endif//NSIS_SUPPORT_ACTIVEXREG
     case TOK_RENAME:
@@ -3433,7 +3437,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0));
       if (dllPath)
       {
-        plugin_used = true;
+        if (uninstall_mode) uninst_plugin_used = true;
+        else plugin_used = true;
 
         ent.which=EW_CALL;
         ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);

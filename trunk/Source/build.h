@@ -116,6 +116,7 @@ class CEXEBuild {
     // Added by Ximon Eighteen 5th August 2002
     Plugins m_plugins;
     bool plugin_used;
+    bool uninst_plugin_used;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp
