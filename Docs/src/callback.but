@@ -35,7 +35,7 @@ Here are two examples of how this might be used:
 or:
 
 \c  Function .onInit
-\c    ReadINIStr $INSTDIR $WINDIR\\wincmd.ini Configuration InstallDir
+\c    ReadINIStr $INSTDIR $WINDIR\wincmd.ini Configuration InstallDir
 \c    StrCmp $INSTDIR "" 0 NoAbort
 \c      MessageBox MB_OK "Windows Commander not found. Unable to get install path."
 \c      Abort ; causes installer to quit.
@@ -75,10 +75,10 @@ Example:
 \c     GetDlgItem $R0 $R0 1043 ; description item
 \c
 \c     StrCmp $0 0 "" +2
-\c       SendMessage $R0 $\{WM_SETTEXT\} 0 "first section description"
+\c       SendMessage $R0 ${WM_SETTEXT} 0 "first section description"
 \c
 \c     StrCmp $0 1 "" +2
-\c       SendMessage $R0 $\{WM_SETTEXT\} 0 "second section description"
+\c       SendMessage $R0 ${WM_SETTEXT} 0 "second section description"
 \c   FunctionEnd
 
 \S3{onselchange} .onSelChange
@@ -132,7 +132,7 @@ Here are two examples of how this might be used:
 or:
 
 \c   Function un.onInit
-\c     IfFileExists $INSTDIR\\myfile.exe found
+\c     IfFileExists $INSTDIR\myfile.exe found
 \c       Messagebox MB_OK "Uninstall path incorrect"
 \c       Abort
 \c     found:
