@@ -10,6 +10,15 @@
 ;--------------------------------
 ;Configuration
 
+  ;General
+  OutFile "Basic.exe"
+
+  ;Folder selection page
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI Configuration
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
@@ -18,8 +27,13 @@
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
+  
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
 
-  ;Languages
+;--------------------------------
+;Languages
+
   !insertmacro MUI_LANGUAGE "English"
   !insertmacro MUI_LANGUAGE "French"
   !insertmacro MUI_LANGUAGE "German"
@@ -39,9 +53,32 @@
   !insertmacro MUI_LANGUAGE "Thai"
   !insertmacro MUI_LANGUAGE "Romanian"
   
-  OutFile "MultiLanguage.exe"
-
-  ;License page
+;--------------------------------
+;Language Strings
+    
+  ;Descriptions
+  LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
+  LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
+  LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
+  LangString DESC_SecCopyUI ${LANG_SPANISH} "modern.exe: Spanish description"
+  LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
+  LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
+  LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
+  LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
+  LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
+  LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
+  LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
+  LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
+  LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
+  LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
+  LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
+  LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
+  LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
+  LangString DESC_SecCopyUI ${LANG_ROMANIAN} "modern.exe: Romanian description"
+  
+;--------------------------------
+;Data
+  
   LicenseData /LANG=${LANG_ENGLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_FRENCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GERMAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -61,63 +98,17 @@
   LicenseData /LANG=${LANG_THAI} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_ROMANIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component selection page
-    ;Titles
-    LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_GERMAN} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_SPANISH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_JAPANESE} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_ITALIAN} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_POLISH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_RUSSIAN} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_UKRAINIAN} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_CZECH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_BULGARIAN} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_THAI} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_ROMANIAN} "modern.exe"
-    
-    ;Descriptions
-    LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
-    LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
-    LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
-    LangString DESC_SecCopyUI ${LANG_SPANISH} "modern.exe: Spanish description"
-    LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
-    LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
-    LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
-    LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
-    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
-    LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
-    LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
-    LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
-    LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
-    LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
-    LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
-    LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
-    LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
-    LangString DESC_SecCopyUI ${LANG_ROMANIAN} "modern.exe: Thai description"
-    
-  ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+;--------------------------------
+;Reserve Files
   
   ;Things that need to be extracted on first (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
   !insertmacro MUI_RESERVEFILE_LANGDLL
   
 ;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
-  
-;--------------------------------
 ;Installer Sections
 
-Section $(TITLE_SecCopyUI) SecCopyUI
+Section "modern.exe" SecCopyUI
 
   ;ADD YOUR OWN STUFF HERE!
 

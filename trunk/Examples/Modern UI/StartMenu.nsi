@@ -15,8 +15,19 @@
 ;!define MUI_STARTMENU_VARIABLE "$VAR"
 ;!define MUI_STARTMENU_DEFAULTFOLDER "Folder Name"
 
+!define TEMP $R0
+
 ;--------------------------------
 ;Configuration
+
+  ;General
+  OutFile "Basic.exe"
+
+  ;Folder selection page
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI Configuration
 
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
@@ -28,27 +39,24 @@
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
   
-  !define TEMP1 $R0
-
-  ;Language
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
+  
+;--------------------------------
+;Languages
+ 
   !insertmacro MUI_LANGUAGE "English"
   
-  ;General
-  OutFile "StartMenu.exe"
+;--------------------------------
+;Language Strings
 
-  ;License page
-  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
-
-  ;Descriptions
+  ;Description
   LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder-selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
-
 ;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
+;Data
+  
+  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
 ;Installer Sections
@@ -99,13 +107,13 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   
   ;Remove shortcut
-  ReadRegStr ${TEMP1} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
+  ReadRegStr ${TEMP} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
   
-  StrCmp ${TEMP1} "" noshortcuts
+  StrCmp ${TEMP} "" noshortcuts
   
-    Delete "$SMPROGRAMS\${TEMP1}\Modern UI.lnk"
-    Delete "$SMPROGRAMS\${TEMP1}\Uninstall.lnk"
-    RMDir "$SMPROGRAMS\${TEMP1}" ;Only if empty, so it won't delete other shortcuts
+    Delete "$SMPROGRAMS\${TEMP}\Modern UI.lnk"
+    Delete "$SMPROGRAMS\${TEMP}\Uninstall.lnk"
+    RMDir "$SMPROGRAMS\${TEMP}" ;Only if empty, so it won't delete other shortcuts
     
   noshortcuts:
 

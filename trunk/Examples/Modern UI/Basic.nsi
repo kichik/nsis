@@ -10,6 +10,15 @@
 ;--------------------------------
 ;Configuration
 
+  ;General
+  OutFile "Basic.exe"
+
+  ;Folder selection page
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI Configuration
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
@@ -18,26 +27,25 @@
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
-
-  ;Language
+  
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
+  
+;--------------------------------
+;Languages
+ 
   !insertmacro MUI_LANGUAGE "English"
   
-  ;General
-  OutFile "Basic.exe"
+;--------------------------------
+;Language Strings
 
-  ;License page
-  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
-
-  ;Descriptions
+  ;Description
   LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
-
 ;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
+;Data
+  
+  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
 ;Installer Sections
