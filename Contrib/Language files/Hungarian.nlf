@@ -8,7 +8,7 @@ NLF v4
 # Codepage - dash (-) means ANSI code page
 -
 # Translation by Soft-Trans Bt. (V2)
-# Translation by Orfanik Kft.   (V3)
+# Translation by Orfanik Kft.   (V3-V4)
 Nullsoft Telepítõrendszer %s
 %s Telepítõ
 %s Eltávolító
@@ -23,8 +23,8 @@ Nullsoft Telepítõrendszer %s
 < &Vissza
 &Tovább >
 &Elfogadom
-Elfogadom a Licencszerzõdés feltételeit
-Nem fogaom el a Licencszerzõdés feltételeit
+&Elfogadom a Licencszerzõdés feltételeit
+&Nem fogaom el a Licencszerzõdés feltételeit
 &Telepítés
 &Eltávolítás
 &Mégse
