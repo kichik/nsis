@@ -792,7 +792,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
+      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n", compressor->GetErrStr(n), n);
       extern void quit(); quit();
     }
 
@@ -808,7 +808,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
       compressor->SetNextOut((char *) db->get(st + sizeof(int) + bufferlen - avail_out, out_len), out_len);
       if ((ret = compressor->Compress(0)) < 0)
       {
-        ERROR_MSG("Error: add_db_data() - compress() failed(%d - %s)\n", ret, compressor->GetErrStr(ret));
+        ERROR_MSG("Error: add_db_data() - compress() failed(%s [%d])\n", compressor->GetErrStr(ret), ret);
         return -1;
       }
       map->release();
@@ -839,7 +839,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
         compressor->SetNextOut(out, out_len);
         if ((ret = compressor->Compress(C_FINISH)) < 0)
         {
-          ERROR_MSG("Error: add_db_data() - compress() failed(%d - %s)\n", ret, compressor->GetErrStr(ret));
+          ERROR_MSG("Error: add_db_data() - compress() failed(%s [%d])\n", compressor->GetErrStr(ret), ret);
           return -1;
         }
 
@@ -931,7 +931,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
+      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n", compressor->GetErrStr(n), n);
       extern void quit(); quit();
     }
 
@@ -2447,7 +2447,7 @@ int CEXEBuild::write_output(void)
     int n = compressor->Init(build_compress_level, build_compress_dict_size);
     if (n != C_OK)
     {
-      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
+      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n", compressor->GetErrStr(n), n);
       return PS_ERROR;
     }
   }
@@ -2748,7 +2748,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
     int ret=compressor->Compress(flush);
     if (ret<0 && (ret!=-1 || !flush))
     {
-      ERROR_MSG("Error: deflateToFile: deflate() failed(%d - %s)\n", ret, compressor->GetErrStr(ret));
+      ERROR_MSG("Error: deflateToFile: deflate() failed(%s [%d])\n", compressor->GetErrStr(ret), ret);
       return 1;
     }
     int l=compressor->GetNextOut()-obuf;
@@ -2876,7 +2876,7 @@ int CEXEBuild::uninstall_generate()
         int n = compressor->Init(build_compress_level, build_compress_dict_size);
         if (n != C_OK)
         {
-          ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d - %s).\n", n, compressor->GetErrStr(n));
+          ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%s [%d]).\n", compressor->GetErrStr(n), n);
           extern void quit(); quit();
         }
 
