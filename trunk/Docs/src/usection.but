@@ -10,3 +10,5 @@ A special Section named 'Uninstall' must be created in order to generate an unin
 \c SectionEnd
 
 The first \R{delete}{Delete} instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall.
+
+Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does \\<b\\>not\\</b\\> necessarily contain the same value it contained in the installer.
