@@ -90,6 +90,7 @@
   !insertmacro MUI_LANGUAGE "Mongolian"
   !insertmacro MUI_LANGUAGE "Luxembourgish"
   !insertmacro MUI_LANGUAGE "Albanian"
+  !insertmacro MUI_LANGUAGE "Breton"
 
 ;--------------------------------
 ;Reserve Files
