@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v4
+NLF v5
+# Start editing here
 # Language ID
 1027
 # Font and size - dash (-) means default
@@ -12,9 +13,9 @@ Nullsoft Install System %s
 Instal·lació de %s
 Desinstal·lació de %s
 : Acord de Llicència
-: Opciones d'Instal·lació
+: Opcions d'Instal·lació
 : Carpeta d'Instal·lació
-: Instal·lant Arxius
+: Instal·lant
 : Finalitzat
 : Confirmació
 : Desinstal·lant
@@ -41,11 +42,12 @@ Espai lliure:
 Espai necessari: 
 Desinstal·lant de:
 Error obrint arxiu per escriptura: \r\n\t"$0"\r\nPremi abortar per abortar l'instal·lació,\r\nreintentar per reintentar escriure l'arxiu, o\r\nignorar per saltar aquest arxiu
+Error obrint arxiu per escriptura: \r\n\t"$0"\r\nPremi reintentar per reintentar escriure l'arxiu, o\r\cancel·lar per abortar la instal·lació
 No s'ha pogut escriure: 
 Ha fallat la còpia
 Copiar a
 Registrant: 
-Eliminant registre: 
+Eliminant registres: 
 No s'ha trobat el símbol: 
 No s'ha pogut carregar: 
 Crear directori: 
@@ -60,7 +62,7 @@ Error registrant DLL
 Executar comanda: 
 Executar: 
 Extraure: 
-Extraure: error escrivint l'arxiu
+Extraure: error escrivint a l'arxiu 
 Instal·lador corrupte: codi d'operació no vàlid
 No OLE per: 
 Directori de sortida: 
@@ -69,7 +71,7 @@ Eliminar al reiniciar:
 Renombrar: 
 Saltat: 
 Copiar Detalls al Portapapers
-Procés de registre de la instal·lació 
+Procés de registre de la instal·lació
 # byte
 B
 # kilo

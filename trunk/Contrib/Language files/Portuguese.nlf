@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v4
+NLF v5
+# Start editing here
 # Language ID
 2070
 # Font and size - dash (-) means default
@@ -7,11 +8,11 @@ NLF v4
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation v4.0.3 by DragonSoull <dragonsoull@madalien.tk> with help from Dre`
+# Translation v4.0.3 by DragonSoull <dragonsoull@madalien.tk> with help from Dre` - Updated by Ramon
 Sistema de Instalação Nullsoft %s
 Instalação de %s
 Desinstalação de %s
-: Acordo de Licença
+: Contrato de Licença
 : Opções de instalação
 : Directoria de instalação
 : Instalando Ficheiros
@@ -40,7 +41,8 @@ Escolha a directoria a instalar %s:
 Espaço disponível: 
 Espaço necessário: 
 A Desinstalar de:
-Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nHCarregue Abort para Abortar instalação,\r\nretry para voltar a tentar a escrita do ficheiro, ou\r\nignore para Saltar este ficheiro
+Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nCarregue Abort para abortar instalação,\r\nRetry para voltar a tentar a escrita do ficheiro, ou\r\nIgnore para saltar este ficheiro
+Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nCarregue Retry para voltar a tentar a escrita do ficheiro, ou\r\nCancel para abortar instalação
 Não e possível Escrever: 
 Copia Falhada
 A Copiar para 
