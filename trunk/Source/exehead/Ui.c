@@ -778,7 +778,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static char * NSISCALL inttosizestr(int kb, char *str)
+static char * NSISCALL inttosizestr(unsigned kb, char *str)
 {
   char scalestr[32], byte[32];
   char sh=20;
@@ -787,7 +787,7 @@ static char * NSISCALL inttosizestr(int kb, char *str)
   else if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
   wsprintf(
     str+mystrlen(str),
-    "%d.%d%s%s",
+    "%u.%u%s%s",
     kb>>sh,
     ((kb*10)>>sh)%10,
     GetNSISString(scalestr,scale),
@@ -892,7 +892,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     static char s[NSIS_MAX_STRLEN];
     char *p;
     int error = 0;
-    int total, available=-1;
+    int available_set=0;
+    unsigned total, available;
     HMODULE hLib;
 
     GetUIText(IDC_DIR,dir);
@@ -915,22 +916,28 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         ULARGE_INTEGER available64;
         ULARGE_INTEGER a, b;
         if (GDFSE(s, &available64, &a, &b))
+        {
           available = (int)(available64.QuadPart >> 10);
+          available_set++;
+        }
       }
 
     }
 
-    if (available == -1)
+    if (!available_set)
     {
       // GetDiskFreeSpaceEx is not available
       DWORD spc, bps, fc, tc;
       if (GetDiskFreeSpace(s, &spc, &bps, &fc, &tc))
+      {
         available = (int)MulDiv(bps * spc, fc, 1 << 10);
+        available_set++;
+      }
     }
 
-    total = sumsecsfield(size_kb);
+    total = (unsigned) sumsecsfield(size_kb);
 
-    if ((unsigned int)available < (unsigned int)total)
+    if (available < total)
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
