@@ -826,16 +826,7 @@ int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lPar
 }
 #endif
 
-int nIdx;
-HWND childwnd;
-int cw_vis;
-int was_ok_enabled;
-char old_cancel[256];
-char old_ok[256];
-char old_back[256];
-int old_cancel_enabled;
 int old_cancel_visible;
-char old_title[1024];
 
 int createCfgDlg()
 {
@@ -858,8 +849,7 @@ int createCfgDlg()
     return 1;
   }
 
-  childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
-  if (!childwnd || nRectId != DEFAULT_RECT) childwnd=GetDlgItem(hMainWindow,nRectId);
+  HWND childwnd=GetDlgItem(hMainWindow,nRectId);
   if (!childwnd)
   {
     popstring(NULL);
@@ -867,23 +857,16 @@ int createCfgDlg()
     return 1;
   }
 
-  cw_vis=IsWindowVisible(childwnd);
-  if (cw_vis) ShowWindow(childwnd,SW_HIDE);
-
   hCancelButton = GetDlgItem(hMainWindow,IDCANCEL);
   hNextButton = GetDlgItem(hMainWindow,IDOK);
   hBackButton = GetDlgItem(hMainWindow,3);
 
-  was_ok_enabled=EnableWindow(hNextButton,1);
-  GetWindowText(hCancelButton,old_cancel,sizeof(old_cancel));
   if (pszCancelButtonText) SetWindowText(hCancelButton,pszCancelButtonText);
-  GetWindowText(hNextButton,old_ok,sizeof(old_ok));
   if (pszNextButtonText) SetWindowText(hNextButton,pszNextButtonText);
-  GetWindowText(hBackButton,old_back,sizeof(old_back));
   if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
   if (bBackEnabled!=0xFFFF0000) EnableWindow(hBackButton,bBackEnabled);
-  if (bCancelEnabled!=0xFFFF0000) old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);
+  if (bCancelEnabled!=0xFFFF0000) EnableWindow(hCancelButton,bCancelEnabled);
   if (bCancelShow!=0xFFFF0000) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
@@ -933,7 +916,7 @@ int createCfgDlg()
 
 #define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
 
-  for (nIdx = 0; nIdx < nNumFields; nIdx++) {
+  for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
     static struct {
       char* pszClass;
       DWORD dwStyle;
@@ -1217,10 +1200,7 @@ int createCfgDlg()
   }
 
   if (pszTitle)
-  {
-    GetWindowText(hMainWindow,old_title,sizeof(old_title));
     SetWindowText(hMainWindow,pszTitle);
-  }
   pFilenameStackEntry = *g_stacktop;
   *g_stacktop = (*g_stacktop)->next;
   char tmp[32];
@@ -1254,18 +1234,9 @@ void showCfgDlg()
   if (lpWndProcOld)
     SetWindowLong(hMainWindow,DWL_DLGPROC,(long)lpWndProcOld);
   DestroyWindow(hConfigWindow);
-  if (was_ok_enabled) EnableWindow(hNextButton,0);
-  SetWindowText(hCancelButton,old_cancel);
-  SetWindowText(hNextButton,old_ok);
-  SetWindowText(hBackButton,old_back);
 
   // by ORTIM: 13-August-2002
-  if (bCancelEnabled!=0xFFFF0000) EnableWindow(hCancelButton,old_cancel_enabled);
   if (bCancelShow!=0xFFFF0000) ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);
-
-  if (pszTitle) SetWindowText(hMainWindow,old_title);
-
-  if (cw_vis) ShowWindow(childwnd,SW_SHOWNA);
 
   FREE(pFilenameStackEntry);
   FREE(pszTitle);

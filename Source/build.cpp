@@ -1818,6 +1818,7 @@ again:
         warning("%sage instfiles not used, no sections will be executed!", uninstall_mode ? "Uninstall p" : "P");
       }
     }
+  }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!uninstall_mode) {
@@ -1827,7 +1828,7 @@ again:
     else
       set_uninstall_mode(0);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
-  }
+
 
   SCRIPT_MSG("Done!\n");
 
@@ -2944,8 +2945,9 @@ void CEXEBuild::init_res_editor()
 void CEXEBuild::close_res_editor()
 {
   if (!res_editor) return;
+  unsigned char *header_data_new_edited = res_editor->Save((DWORD&)exeheader_size_new);
   free(header_data_new);
-  header_data_new = res_editor->Save((DWORD&)exeheader_size_new);
+  header_data_new = header_data_new_edited;
   delete res_editor;
   res_editor=0;
 }
