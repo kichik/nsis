@@ -3,7 +3,7 @@
 \H{intro-about} About NSIS
 
 An installer is the first experience of a user with your application.
-Slow or unsuccesful software installations are the most irritating computer problems.
+Slow or unsuccessful software installations are the most irritating computer problems.
 A quick and user friendly installer is therefore an essential part of your software product. 
 
 NSIS (Nullsoft Scriptable Install System) is a tool that allows programmers to create such installers for Windows.
@@ -11,7 +11,7 @@ It is released under an open source license and is \R{license}{completely free f
 
 NSIS creates installers that are capable of installing, uninstalling, setting system settings, extracting files, etc.
 Because it's based on script files, you can fully control every part of your installers.
-The script language support variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
+The script language supports variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
 Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.
 
 \H{intro-features} Main Features
@@ -42,7 +42,7 @@ The script language provides commands you can use on the target system. From sim
 
 \\<b\\>Custom dialogs and interfaces\\</b\\>
 
-You can create custom wizard pages to get user input or integrate configuration options. NSIS includes a classic and modern wizard interface, but it is even possible to create a own custom interface.
+You can create custom wizard pages to get user input or integrate configuration options. NSIS includes a classic and modern wizard interface, but it is even possible to create your own custom interface.
 
 \\<b\\>Plug-in system\\</b\\>
 
@@ -58,7 +58,7 @@ The NSIS compiler features a powerful preprocessor. This allows you to easily in
 
 \\<b\\>Easy and human readable file formats\\</b\\>
 
-The NSIS script format and the format used for interface dialogs are easy, documented and human readable, so you can edit your files with your favorite editor. This also makes automatic script generation possible. 
+The NSIS script format and the format used for interface dialogs are easy, documented and humanly readable, so you can edit your files with your favorite editor. This also makes automatic script generation possible. 
 
 \H{intro-featurelist} Feature List
 
