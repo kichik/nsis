@@ -16,7 +16,7 @@
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
-  ;Remember install folder
+  ;Get install folder from registry if available
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
   
   ;$9 is being used to store the Start Menu Folder.
