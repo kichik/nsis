@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Ukrainian (1058)
 ;By Yuri Holubow, http://www.Nash-Soft.com
@@ -83,6 +83,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Завершення Майстра Видалення $(^Name)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) видалений з вашого комп'ютера.\r\n\r\nНатисніть Фініш, щоб закрити Майстра."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Для того, щоб закінчити видалення $(^Name) ваш комп'ютер повинен перезавантажитися. Ви бажаєте зробити це зараз?"
   
   !define MUI_UNTEXT_ABORTWARNING "Ви впевненні що бажаєте покинути Майстр Видалення $(^Name)?"  
   
