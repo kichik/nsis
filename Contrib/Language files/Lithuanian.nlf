@@ -99,23 +99,23 @@ Pasirinkite komponentus, kuriuos ištraukti:
 # ^UnComponentsSubText2
 Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite ištraukti:
 # ^DirText
-Idiegimas dabar idiegs $(Name) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Idiegimas dabar idiegs $(^Name) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
 # ^DirSubText
 Idiegimo katalogas
 # ^DirBrowseText
-Pasirinkite kataloga, kur idiegti $(Name):
+Pasirinkite kataloga, kur idiegti $(^Name):
 # ^UnDirText
-Idiegimas dabar ištrauks $(Name) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Idiegimas dabar ištrauks $(^Name) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Pasirinkite kataloga iš kurio ištrinti $(Name):
+Pasirinkite kataloga iš kurio ištrinti $(^Name):
 # ^SpaceAvailable
 Yra vietos: 
 # ^SpaceRequired
 Reikia vietos: 
 # ^UninstallingText
-Idiegimas dabar ištrauks $(Name).
+Idiegimas dabar ištrauks $(^Name).
 # ^UninstallingSubText
 Trinama iš:
 # ^FileError
