@@ -38,6 +38,8 @@ Section "Components"
   DetailPrint "File=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 6" "State"
   DetailPrint "Dir=${TEMP1}"
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 8" "State"
+  DetailPrint "Info=${TEMP1}"
   
 SectionEnd
 
@@ -54,7 +56,7 @@ FunctionEnd
 Function SetCustom
 
   ;Display the InstallOptions dialog
-  
+
   Push ${TEMP1}
 
     InstallOptions::dialog "$PLUGINSDIR\test.ini"
