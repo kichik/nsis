@@ -62,6 +62,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FINDFIRST,"FindFirst",3,0,"$(user_var: handle output) $(user_var: filename output) filespec"},
 {TOK_FINDNEXT,"FindNext",2,0,"$(user_var: handle input) $(user_var: filename output)"},
 {TOK_FILE,"File",1,-1,"([/a] [/r] filespec [...]|/oname=outfile one_file_only)"},
+{TOK_RESERVEFILE,"ReserveFile",1,-1,"[/r] file [file...]"},
 {TOK_FILECLOSE,"FileClose",1,0,"$(user_var: handle input)"},
 {TOK_FILEERRORTEXT,"FileErrorText",0,2,"[/LANG=lang_id] [text (can contain $0)]"},
 {TOK_FILEOPEN,"FileOpen",3,0,"$(user_var: handle output) filename openmode\n   openmode=r|w|a"},
@@ -184,7 +185,6 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_MACROEND,"!macroend",0,0,""},
 {TOK_P_INSERTMACRO,"!insertmacro",1,-1,"macroname [parms ...]"},
 
-
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,5,"[/LANG=lang_id] [back button text] [next button text] [cancel button text] [close button text]"},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,2,"[/LANG=lang_id] [details button text]"},
 {TOK_UNINSTBUTTONTEXT,"UninstallButtonText",0,2,"[/LANG=lang_id] [uninstall button text]"},
@@ -196,8 +196,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETLABELADDR,"GetLabelAddress",2,0,"output label"},
 {TOK_GETCURRENTADDR,"GetCurrentAddress",1,0,"output"},
 
-{TOK_PLUGINDIR,"PluginDir",1,0,"SetPluginDir directory"},
-
+{TOK_PLUGINDIR,"PluginDir",1,0,"new_plugin_directory"},
 };
 
 void CEXEBuild::print_help(char *commandname)
