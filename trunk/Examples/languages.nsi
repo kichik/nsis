@@ -21,6 +21,8 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\Swedish.nlf"
 Name Swedish
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
 Name "Traditional Chinese"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
+Name "Simplified Chinese"
 
 ; The language can be the last used language like above, but it can be defined using /LANG
 ComponentText /LANG=1033 "English component page"
@@ -32,6 +34,7 @@ ComponentText /LANG=1049 "Russian component page"
 ComponentText /LANG=1034 "Spanish component page"
 ComponentText /LANG=1053 "Swedish component page"
 ComponentText /LANG=1028 "Traditional Chinese component page"
+ComponentText /LANG=2052 "Simplified Chinese component page"
 
 ; scetion names will be given in .onInit to match the language choosen by the user
 Section " " sec1
@@ -58,6 +61,8 @@ Section " " sec2
 		MessageBox MB_OK "Installing Swedish stuff"
 	StrCmp $LANGUAGE 1028 0 +2
 		MessageBox MB_OK "Installing Traditional Chinese stuff"
+	StrCmp $LANGUAGE 2052 0 +2
+		MessageBox MB_OK "Installing Simplified Chinese stuff"
 SectionEnd
 
 Function .onInit
@@ -81,8 +86,10 @@ Function .onInit
 	Push 1053
 	Push "Traditional Chinese"
 	Push 1028
+	Push "Simplified Chinese"
+	Push 2052
 
-	LangDLL::LangDialog 9 ; 9 is the number of languages
+	LangDLL::LangDialog 10 ; 10 is the number of languages
 
 	Pop $LANGUAGE
 	StrCmp $LANGUAGE "cancel" 0 +2
@@ -106,6 +113,8 @@ Function .onInit
 		StrCpy $0 "Swedish"
 	StrCmp $LANGUAGE 1028 0 +2
 		StrCpy $0 "Traditional Chinese"
+	StrCmp $LANGUAGE 2052 0 +2
+		StrCpy $0 "Simplified Chinese"
 
 	; Set the section name to something localized
 	SectionSetText ${sec1} "!$0 section #1"
