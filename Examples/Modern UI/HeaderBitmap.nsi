@@ -23,7 +23,7 @@
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
+  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
   !define MUI_ABORTWARNING
 
 ;--------------------------------
@@ -48,7 +48,7 @@
   ;Things that need to be extracted on first (keep these lines before any File command!)
   ;Only for BZIP2 compression
   
-  ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp"
+  ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
 
 ;--------------------------------
 ;Installer Sections
