@@ -1082,7 +1082,6 @@ int CEXEBuild::write_output(void)
 
   // Added by Amir Szekely 3rd August 2002
   if (WriteStringTables() == PS_ERROR) return PS_ERROR;
-  build_header.common.num_string_bytes=build_strlist.getlen();
 
 /*#ifdef NSIS_CONFIG_COMPONENTPAGE
     if (build_header.componenttext_ptr < 0 &&
@@ -1366,6 +1365,8 @@ int CEXEBuild::write_output(void)
   }
 #endif
 
+  build_header.common.num_string_bytes=build_strlist.getlen();
+
   {
     GrowBuf ihd;
     {
@@ -1437,13 +1438,15 @@ int CEXEBuild::write_output(void)
   }
   int ne=build_entries.getlen()/sizeof(entry);
   INFO_MSG("Install: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
-  INFO_MSG("%d byte string table.\n",build_strlist.getlen());
+  INFO_MSG("%d byte string table, ",build_strlist.getlen());
+  INFO_MSG("%d byte language tables.\n",build_langtables.getlen());
   if (ubuild_entries.getlen())
   {
     int tmp=ubuild_entries.getlen()/sizeof(entry);
     INFO_MSG("Uninstall: ");
     INFO_MSG("%d instruction%s (%d bytes), ",tmp,tmp==1?"":"s",tmp*sizeof(entry));
-    INFO_MSG("%d byte string table.\n",ubuild_strlist.getlen());
+    INFO_MSG("%d byte string table, ",ubuild_strlist.getlen());
+    INFO_MSG("%d byte language tables.\n",ubuild_langtables.getlen());
   }
 
 
