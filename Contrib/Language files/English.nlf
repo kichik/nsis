@@ -9,7 +9,7 @@ Nullsoft Install System %s
 %s Uninstall
 : License Agreement
 : Installation Options
-: Installation Directory
+: Installation Folder
 : Installing Files
 : Completed
 : Confirmation
@@ -30,7 +30,7 @@ Custom
 Select the type of install:
 Select components to install:
 Or, select the optional components you wish to install:
-Select the directory to install %s in:
+Select the folder to install %s in:
 Space available: 
 Space required: 
 Uninstalling from:
@@ -40,7 +40,7 @@ Copy failed
 Copy to 
 Could not find symbol: 
 Could not load: 
-Create directory: 
+Create folder: 
 Create shortcut: 
 Created uninstaller: 
 Delete file: 
@@ -55,8 +55,8 @@ Extract:
 Extract: error writing to file 
 Install corrupted: invalid opcode
 No OLE for: 
-Output directory: 
-Remove directory: 
+Output folder: 
+Remove folder: 
 Rename on reboot: 
 Rename: 
 Skipped: 
