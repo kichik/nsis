@@ -74,4 +74,6 @@ void			DisableItems(HWND hwnd);
 void			EnableItems(HWND hwnd);
 void			RestoreWindowPos(HWND hwnd);
 void			SaveWindowPos(HWND hwnd);
+void			ResetObjects();
+
 #endif

@@ -37,13 +37,13 @@ void SetBranding(HWND hwnd) {
 
 void CopyToClipboard(HWND hwnd) {
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-  HGLOBAL mem = GlobalAlloc(GHND,len);
+	HGLOBAL mem = GlobalAlloc(GHND,len);
 	char *existing_text = (char *)GlobalLock(mem);
 	if (!hwnd||!OpenClipboard(hwnd)||!existing_text) return;
 	EmptyClipboard();
 	existing_text[0]=0;
 	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
-  GlobalUnlock(mem);
+	GlobalUnlock(mem);
 	SetClipboardData(CF_TEXT,existing_text);
 	CloseClipboard();
 }
@@ -58,7 +58,7 @@ char *g_input_script;
 extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, -1, 0);
+	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, -1, 0);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_VSCROLL, SB_BOTTOM, 0);
 }
@@ -154,6 +154,7 @@ void CompileNSISScript() {
 		EnableMenuItem(m,IDM_EDITSCRIPT,MF_GRAYED);
 		EnableMenuItem(m,IDM_TEST,MF_GRAYED);
 		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
+		DragAcceptFiles(g_hwnd,TRUE);
 		return;
 	}
 	if (!g_appended) {
@@ -192,4 +193,14 @@ void SaveWindowPos(HWND hwnd) {
 				RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
 		RegCloseKey(hKey);
 	}
+}
+
+extern HANDLE g_hThread;
+extern int g_retcode;
+
+void ResetObjects() {
+	g_appended = FALSE;
+	g_warnings = FALSE;
+	g_retcode = -1;
+	g_hThread = NULL;
 }
