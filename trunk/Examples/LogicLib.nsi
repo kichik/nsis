@@ -1,9 +1,9 @@
 Name "NSIS LogicLib Example"
-OutFile "example.exe"
+OutFile "LogicLib.exe"
 ShowInstDetails show
 
-!include "sections.nsh"
-!include "logiclib.nsh"
+!include "Sections.nsh"
+!include "LogicLib.nsh"
 
 ;!undef LOGICLIB_VERBOSITY
 ;!define LOGICLIB_VERBOSITY 4   ; For debugging - watch what logiclib does with your code!
