@@ -284,23 +284,3 @@ void ShowDocs() {
   if ((int)ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
     ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 }
-
-int getProxyInfo(char *out) {
-  DWORD v=0;
-  HKEY hKey;
-  if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-    DWORD l = 4;
-    DWORD t;
-    if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
-      l=8192;
-      if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
-        v=0; 
-        *out=0; 
-      }
-    }
-    else v=0;
-    out[8192-1]=0;
-    RegCloseKey(hKey);
-  }
-  return v;
-}
