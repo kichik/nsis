@@ -9,7 +9,7 @@
 
 ;--------------------------------
 ;Configuration
-
+  
   !define MUI_INSTALLOPTIONS
   
   !define MUI_LICENSEPAGE
@@ -21,6 +21,8 @@
   
   !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
   !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
+  
+  !define TEMP1 $R0
 
   ;Language
     ;English
@@ -74,6 +76,12 @@ Section "modern.exe" SecCopyUI
 
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
+  
+  ;Read a value from an Install Options INI File
+  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "ioC.ini" "Field 2" "State"
+  StrCmp ${TEMP1} "1" "" +2
+    ;Checked
+    MessageBox MB_OK "A MessageBox..."
 
 SectionEnd
 
@@ -140,23 +148,23 @@ Function SetPage
 
     !insertmacro MUI_PAGE_START 2
       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
       !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "ioA.ini" "" "IO" ;Next page is an IO page
     !insertmacro MUI_PAGE_STOP 2
     
     !insertmacro MUI_PAGE_START 3
       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
       !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "ioB.ini" "IO" "" ;Previous page is an IO page
     !insertmacro MUI_PAGE_STOP 3
 
@@ -170,13 +178,13 @@ Function SetPage
 
     !insertmacro MUI_PAGE_START 6
       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_INSTALL)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "ioC.ini" "" "" ;Next/previous pages are NO IO pages
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_INSTALL)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "ioC.ini" "" "" ;Next/previous pages are no IO pages
     !insertmacro MUI_PAGE_STOP 6
 
     !insertmacro MUI_PAGE_START 7

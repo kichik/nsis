@@ -478,6 +478,18 @@
 	
 !macroend
 
+!macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
+
+  ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
+
+  WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
+
+!macroend
+
 ;--------------------------------
 ;BASIC FUNCTIONS
 
