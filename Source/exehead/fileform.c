@@ -123,7 +123,7 @@ const char * NSISCALL GetStringFromStringTab(int offs)
 
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
 
-static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
   static char inbuffer[IBUFSIZE+OBUFSIZE];
   char *outbuffer;
@@ -301,7 +301,7 @@ static int NSISCALL __ensuredata(int amount)
 }
 
 
-static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
   DWORD r;
   int input_len;
@@ -342,17 +342,6 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
   return retval;
 }
 #endif//NSIS_COMPRESS_WHOLE
-
-
-int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut)
-{
-  return _dodecomp(offset,hFileOut,NULL,0);
-}
-
-int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len)
-{
-  return _dodecomp(offset,NULL,out,out_len);
-}
 
 BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead)
 {
