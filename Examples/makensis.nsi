@@ -39,14 +39,18 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !define MUI_PRODUCT "NSIS"
   !define MUI_VERSION "${VER_MAJOR}.${VER_MINOR} (CVS)"
 
-  !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
+  !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}"
 
   ;Pages
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_LICENSE "..\license.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
+  
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
   !insertmacro MUI_PAGE_FINISH
   
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -59,9 +63,6 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
-
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
-  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
   
   ;--------------------------------
   ;Languages
@@ -71,11 +72,6 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !insertmacro MUI_LANGUAGE "English"
   
 !endif
-
-;--------------------------------
-;Data
-
-LicenseData ..\license.txt
 
 ;--------------------------------
 ;Installer Sections
@@ -1051,7 +1047,7 @@ SectionEnd
 
 !ifndef CLASSIC_UI
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "A menu that contains links to NSIS information, utilities and websites"
@@ -1101,7 +1097,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL plugin source in C and plugin function header"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "Source code to MakeNSIS Wrapper"
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 !endif
 
