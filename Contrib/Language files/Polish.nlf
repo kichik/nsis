@@ -32,20 +32,20 @@ Wybierz komponenty do zainstalowania:
 lub wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
 Wybierz folder instalacji %s:
 Dostêpne miejsce: 
-Wymagane miejsce: 
-Odinstalowuje z:
+Wymagane miejsce:  
+Odinstalowuje z: 
 B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby anulowaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
-Nie mo¿na zapisaæ: 
+Nie mo¿na zapisaæ:  
 B³¹d kopiowania
-Kopiuj do
-Nie mo¿na by³o znaleŸæ symbolu:
+Kopiuj do 
+Nie mo¿na by³o znaleŸæ symbolu: 
 Nie mo¿na by³o wczytaæ: 
 Twórz folder: 
 Twórz skrót klawiszowy: 
 Utworzone odinstalowanie: 
-Usuñ plik:
+Usuñ plik: 
 Usuñ przy restarcie: 
-B³¹d tworzenia skrótu klawiszowego:
+B³¹d tworzenia skrótu klawiszowego: 
 B³¹d tworzenia: 
 B³¹d dekompresji danych! Czy przerwaæ instalacjê?
 B³¹d zapisu DLL
