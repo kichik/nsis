@@ -106,20 +106,14 @@ FunctionEnd
 Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
-  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
-    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_NEXT}
-  no_setdirection:
-  StrCpy ${IO_NOSETDIRECTION} "0"
+  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
   !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
 
 Function .onPrevPage
 
-  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
-    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_PREV}
-  no_setdirection:
-  StrCpy ${IO_NOSETDIRECTION} "0"
+  !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
   !insertmacro MUI_PREVPAGE SetPage
 
 FunctionEnd

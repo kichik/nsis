@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19g
+;Modern UI Header File version 1.19h
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -226,6 +226,24 @@
 
   StrCpy ${IO_DIRECTION} "${DIRECTION}"
 
+!macroend
+
+!macro MUI_INSTALLOPTIONS_NEXTPAGE
+
+  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_NEXT}
+  no_setdirection:
+  StrCpy ${IO_NOSETDIRECTION} "0"
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_PREVPAGE
+
+  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_PREV}
+  no_setdirection:
+  StrCpy ${IO_NOSETDIRECTION} "0"
+  
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SHOW PAGE FILE IOBACK IONEXT
