@@ -36,6 +36,10 @@ HWND g_hwnd;
 HANDLE g_hThread;
 BOOL g_warnings;
 
+FINDREPLACE fr;
+UINT uFindReplaceMsg;  // message identifier for FINDMSGSTRING 
+HWND hwndFind;
+
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	HACCEL haccel; 
 	g_hInstance=GetModuleHandle(0);
@@ -56,12 +60,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	int status;
 	while ((status=GetMessage(&msg,0,0,0))!=0) {
 		if (status==-1) return -1;
-		if (!TranslateAccelerator(hDialog,haccel,&msg)) {
-			if (!IsDialogMessage(hDialog,&msg)) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
+    if (!IsDialogMessage(hwndFind, &msg)) {
+      if (!TranslateAccelerator(hDialog,haccel,&msg)) {
+        if (!IsDialogMessage(hDialog,&msg)) {
+          TranslateMessage(&msg);
+          DispatchMessage(&msg);
+        }
+      }
+    }
 	}
 	ExitProcess(msg.wParam);
 	return msg.wParam;
@@ -282,9 +288,44 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					} 
 					return TRUE;
 				}
+        case IDM_FIND:
+        {
+          if (!uFindReplaceMsg)
+            uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
+          my_memset(&fr, 0, sizeof(FINDREPLACE));
+          fr.lStructSize = sizeof(FINDREPLACE);
+          fr.hwndOwner = hwndDlg;
+          fr.Flags = FR_NOUPDOWN;
+          fr.lpstrFindWhat = (char *)GlobalAlloc(GPTR, 128);
+          if (!fr.lpstrFindWhat) return TRUE;
+          fr.wFindWhatLen = 128;
+          hwndFind = FindText(&fr);
+          return TRUE;
+        }
 			}
 		}
-		}
+  }
+  if (msg == uFindReplaceMsg) {
+    LPFINDREPLACE lpfr = (LPFINDREPLACE)lParam;
+    if (lpfr->Flags & FR_FINDNEXT) {
+      WPARAM flags = FR_DOWN;
+      if (lpfr->Flags & FR_MATCHCASE) flags |= FR_MATCHCASE;
+      if (lpfr->Flags & FR_WHOLEWORD) flags |= FR_WHOLEWORD;
+
+	    FINDTEXTEX ft;
+      SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM)&ft.chrg);
+      if (ft.chrg.cpMax == ft.chrg.cpMin) ft.chrg.cpMin = 0;
+      else ft.chrg.cpMin = ft.chrg.cpMax;
+      ft.chrg.cpMax = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+      ft.lpstrText = lpfr->lpstrFindWhat;
+      ft.chrg.cpMin = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_FINDTEXTEX, flags, (LPARAM)&ft);
+      if (ft.chrg.cpMin != -1)
+        SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
+      else MessageBeep(MB_ICONASTERISK);
+    }
+    if (lpfr->Flags & FR_DIALOGTERM) hwndFind = 0;
+    return TRUE;
+  }
 	return 0;
 }
 

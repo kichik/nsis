@@ -79,6 +79,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy &All",                   IDM_COPY
         MENUITEM "Copy &Selected",              IDM_COPYSELECTED
+        MENUITEM SEPARATOR
+        MENUITEM "Find...\tCtrl+F",             IDM_FIND
     END
     POPUP "&Help"
     BEGIN
@@ -98,6 +100,7 @@ END
 IDK_ACCEL ACCELERATORS PRELOAD MOVEABLE PURE 
 BEGIN
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
+    "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, CONTROL, NOINVERT
@@ -117,7 +120,8 @@ MENU IDM_MENU
 FONT 8, "MS Shell Dlg"
 BEGIN
     CONTROL         "",IDC_LOGWIN,"RICHEDIT",ES_MULTILINE | ES_AUTOVSCROLL | 
-                    ES_READONLY | WS_BORDER | WS_VSCROLL,7,4,345,186
+                    ES_NOHIDESEL | ES_READONLY | WS_BORDER | WS_VSCROLL,7,4,
+                    345,186
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,202,346,1
     LTEXT           "",IDC_VERSION,7,212,200,12,WS_DISABLED
     DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,303,209,49,14
