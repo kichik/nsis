@@ -2,8 +2,6 @@
 // Microsoft Developer Studio generated include file.
 // Used by Script1.rc
 //
-#define IDI_ICON1                       101
-#define IDD_DIALOG1                     110
 
 // Next default values for new objects
 // 
