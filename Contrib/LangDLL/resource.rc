@@ -35,7 +35,7 @@ BEGIN
                     WS_TABSTOP
     DEFPUSHBUTTON   "OK",IDOK,75,59,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,135,59,50,14
-    LTEXT           "Static",IDC_TEXT,45,10,140,23
+    LTEXT           "",IDC_TEXT,45,10,140,27
     ICON            "",IDC_APPICON,10,10,20,20
 END
 
