@@ -1345,13 +1345,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (hFile != INVALID_HANDLE_VALUE)
         {
           unsigned char *filebuf;
-          DWORD l;
           filebuf=(unsigned char *)my_GlobalAlloc(g_filehdrsize);
           if (filebuf)
           {
             int fixoffs=0;
+            DWORD lout;
             SetSelfFilePointer(0,FILE_BEGIN);
-            ReadSelfFile((char*)filebuf,g_filehdrsize,&l);
+            ReadSelfFile((char*)filebuf,g_filehdrsize);
             if (g_inst_header->uninstdata_offset != -1)
             {
               // Changed by Amir Szekely 11th July 2002
@@ -1373,7 +1373,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 GlobalFree(unicon_data);
               }
             }
-            WriteFile(hFile,(char*)filebuf,g_filehdrsize,&l,NULL);
+            WriteFile(hFile,(char*)filebuf,g_filehdrsize,&lout,NULL);
             GlobalFree(filebuf);
             ret=GetCompressedDataFromDataBlock(-1,hFile);
           }
