@@ -878,7 +878,6 @@ Section "NSISdl Source" SecPluginsNSISDLS
   File ..\contrib\NSISdl\nsisdl.dsp
   File ..\contrib\NSISdl\*.cpp
   File ..\contrib\NSISdl\*.h
-  File ..\contrib\NSISdl\*.rc
 SectionEnd
 
 Section "System Source" SecPluginsSystemS
