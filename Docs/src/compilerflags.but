@@ -18,13 +18,23 @@ This command sets the size of the compiler's internal file buffers. This command
 
 \c \\<b\\>auto\\</b\\>|force|off
 
-This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will effect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster). Note that this option has no effect on bzip2 installers (compression is always used on bzip2 installers).
+This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will effect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).
+
+Note that this option has no effect when solid compression is used, which is enabled for BZIP2 and LZMA by default.
 
 \S2{asetcompressor} SetCompressor
 
-\c \\<b\\>zlib\\</b\\>|bzip2
+\c \\<b\\>zlib\\</b\\>|bzip2|lzma
 
-This command sets the compression algorithm used to compress files/data in the installer. Options are ZLib or BZip2. ZLib (the default) uses deflate compression. This mode uses less memory at runtime and is faster. BZip2 compression is usually better for large installers, but it is slower and uses a lot more memory at runtime.
+This command sets the compression algorithm used to compress files/data in the installer.
+
+Three compression methods are supported: ZLIB, BZIP2 and LZMA.
+
+ZLIB (the default) uses the deflate algorithm, it is a quick and simple method. With the default compression level it uses about 300 KB of memory.
+
+BZIP2 usually gives better compression ratios than ZLIB, but it is a bit slower and uses more memory. With the default compression level it uses about 4 MB of memory.
+
+LZMA is a new compression method that gives very good compression ratios. The decompression speed is high (10-20 MB/s on a 2 GHz CPU), the compression speed is lower. The memory size that will be used for decompression is the dictionary size plus a few KBs, the default is 8 MB.
 
 \S2{asetcompressordictsize} SetCompressorDictSize
 
