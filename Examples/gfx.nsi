@@ -41,14 +41,16 @@ LicenseText "License page"
 LicenseData "gfx.nsi"
 DirText "Lets make a third page!"
 
+; Install dir
+InstallDir "${NSISDIR}\Examples"
+
+;--------------------------------
+
 ; Pages
 Page license licenseImage
 Page custom customPage
 Page directory dirImage
 Page instfiles instImage
-
-; Install dir
-InstallDir "${NSISDIR}\Examples"
 
 ;--------------------------------
 

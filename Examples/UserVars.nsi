@@ -8,7 +8,15 @@
   OutFile "UserVars.exe"
   
   InstallDir "$PROGRAMFILES\User Variables Test"
-  DirText "Choose a folder to install in which to install the test:" " "
+  
+;--------------------------------
+
+  ;Pages
+  Page directory
+  Page instfiles
+  
+  UninstPage uninstConfirm
+  UninstPage instfiles
 
 ;--------------------------------
 ; Declaration of user variables (Var command), allowed charaters for variables names : [a-z][A-Z][0-9] and '_'

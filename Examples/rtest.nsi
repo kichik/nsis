@@ -7,7 +7,6 @@
 Name "rtest"
 OutFile "rtest.exe"
 
-DirShow hide
 ComponentText "Select tests!"
 ShowInstDetails show
 

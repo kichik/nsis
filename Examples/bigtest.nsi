@@ -27,15 +27,25 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
 XPStyle on
 
-LicenseText "A license text, make sure it's all there"
+InstallDir "$PROGRAMFILES\NSISCrap\BigNSISTest"
+InstallDirRegKey HKLM "Software\NSISCrap\BigNSISTest" ""
+
+CheckBitmap ..\contrib\Icons\checksX.bmp
+
+LicenseText "A test text, make sure it's all there"
 LicenseData "..\source\exehead\main.c"
 
-InstallDir "$PROGRAMFILES\NSISCrap\BigNSISTest"
-InstallDirRegKey HKLM SOFTWARE\NSISCrap\BigNSISTest "Install_Dir"
-DirText "Choose a directory to install in to:"
+;--------------------------------
 
-ComponentText "This will install the test on your computer. Select which optional things you want installed."
-CheckBitmap ..\contrib\Icons\checksX.bmp
+Page license
+Page components
+Page directory
+Page instfiles
+
+UninstPage uninstConfirm
+UninstPage instfiles
+
+;--------------------------------
 
 !ifndef NOINSTTYPES ; only if not defined
   InstType "Most"
