@@ -1,54 +1,25 @@
 #include <windows.h>
 #include "resource.h"
 
-typedef struct _stack_t {
-  struct _stack_t *next;
-  char text[1]; // this should be the length of string_size
-} stack_t;
+// JF> updated usage
+// call like this:
+// LangDLL:LangDialog "Window Title" "Window subtext" <number of languages>[F] language_text language_id ... [font_size font_face]
+// ex:
+//  LangDLL:LangDialog "Language Selection" "Choose a language" 2 French 1036 English 1033
+// or (the F after the 2 means we're supplying font information)
+//  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
 
-int popstring(char *str); // 0 on success, 1 on empty stack
-void pushstring(char *str);
 
-enum
-{
-  INST_0,         // $0
-  INST_1,         // $1
-  INST_2,         // $2
-  INST_3,         // $3
-  INST_4,         // $4
-  INST_5,         // $5
-  INST_6,         // $6
-  INST_7,         // $7
-  INST_8,         // $8
-  INST_9,         // $9
-  INST_R0,        // $R0
-  INST_R1,        // $R1
-  INST_R2,        // $R2
-  INST_R3,        // $R3
-  INST_R4,        // $R4
-  INST_R5,        // $R5
-  INST_R6,        // $R6
-  INST_R7,        // $R7
-  INST_R8,        // $R8
-  INST_R9,        // $R9
-  INST_CMDLINE,   // $CMDLINE
-  INST_INSTDIR,   // $INSTDIR
-  INST_OUTDIR,    // $OUTDIR
-  INST_EXEDIR,    // $EXEDIR
-  INST_LANG,      // $LANGUAGE
-  __INST_LAST
-};
+#include "../exdll/exdll.h"
 
-char *getuservariable(int varnum);
 int myatoi(char *s);
 
 HINSTANCE g_hInstance;
 HWND g_hwndParent;
-int g_stringsize;
-stack_t **g_stacktop;
-char *g_variables;
 
 char temp[1024];
+char g_wndtitle[1024], g_wndtext[1024];
+int dofont;
 
 int langs_num;
 
@@ -66,10 +37,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       for (i = langs_num - 1; i >= 0; i--) {
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM)langs[i].name);
       }
-      if (!popstring(temp))
-        SetDlgItemText(hwndDlg, IDC_TEXT, temp);
-      if (!popstring(temp))
-        SetWindowText(hwndDlg, temp);
+      SetDlgItemText(hwndDlg, IDC_TEXT, g_wndtext);
+      SetWindowText(hwndDlg, g_wndtitle);
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
       for (i = 0; i < langs_num; i++) {
         if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
@@ -77,18 +46,20 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           break;
         }
       }
-      if (!popstring(temp))
+      if (dofont && !popstring(temp))
+      {
         size = myatoi(temp);
-      if (!popstring(temp)) {
-        LOGFONT f = {0,};
-        f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
-        lstrcpy(f.lfFaceName, temp);
-        font = CreateFontIndirect(&f);
-        SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
-        SendDlgItemMessage(hwndDlg, IDOK, WM_SETFONT, (WPARAM)font, 1);
-        SendDlgItemMessage(hwndDlg, IDCANCEL, WM_SETFONT, (WPARAM)font, 1);
-        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, WM_SETFONT, (WPARAM)font, 1);
-        SendDlgItemMessage(hwndDlg, IDC_TEXT, WM_SETFONT, (WPARAM)font, 1);
+        if (!popstring(temp)) {
+          LOGFONT f = {0,};
+          f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
+          lstrcpy(f.lfFaceName, temp);
+          font = CreateFontIndirect(&f);
+          SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
+          SendDlgItemMessage(hwndDlg, IDOK, WM_SETFONT, (WPARAM)font, 1);
+          SendDlgItemMessage(hwndDlg, IDCANCEL, WM_SETFONT, (WPARAM)font, 1);
+          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, WM_SETFONT, (WPARAM)font, 1);
+          SendDlgItemMessage(hwndDlg, IDC_TEXT, WM_SETFONT, (WPARAM)font, 1);
+        }
       }
       ShowWindow(hwndDlg, SW_SHOW);
       break;
@@ -119,24 +90,33 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
                                       char *variables, stack_t **stacktop)
 {
   g_hwndParent=hwndParent;
-  g_stringsize=string_size;
-  g_stacktop=stacktop;
-  g_variables=variables;
+  EXDLL_INIT();
 
   {
     int i;
-    popstring(temp);
+
+    if (popstring(g_wndtitle)) return;
+    if (popstring(g_wndtext)) return;
+
+    if (popstring(temp)) return;
     langs_num = myatoi(temp);
+    {
+      char *p=temp;
+      while (*p) if (*p++ == 'F') dofont=1;
+    }
+
+    if (!langs_num) return;
 
     langs = (struct lang *)GlobalAlloc(GPTR, langs_num*sizeof(struct lang));
 
     for (i = 0; i < langs_num; i++) {
       if (popstring(temp)) return;
-      langs[i].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
-      lstrcpy(langs[i].id, temp);
-      if (popstring(temp)) return;
       langs[i].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
       lstrcpy(langs[i].name, temp);
+
+      if (popstring(temp)) return;
+      langs[i].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
+      lstrcpy(langs[i].id, temp);
     }
 
     DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc);
@@ -147,34 +127,6 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 {
   g_hInstance=hInst;
 	return TRUE;
-}
-
-// utility functions (not required but often useful)
-int popstring(char *str)
-{
-  stack_t *th;
-  if (!g_stacktop || !*g_stacktop) return 1;
-  th=(*g_stacktop);
-  lstrcpy(str,th->text);
-  *g_stacktop = th->next;
-  GlobalFree((HGLOBAL)th);
-  return 0;
-}
-
-void pushstring(char *str)
-{
-  stack_t *th;
-  if (!g_stacktop) return;
-  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
-  lstrcpyn(th->text,str,g_stringsize);
-  th->next=*g_stacktop;
-  *g_stacktop=th;
-}
-
-char *getuservariable(int varnum)
-{
-  if (varnum < 0 || varnum >= __INST_LAST) return NULL;
-  return g_variables+varnum*g_stringsize;
 }
 
 int myatoi(char *s)
