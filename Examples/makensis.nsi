@@ -23,7 +23,7 @@ SetFont Tahoma 8
 CheckBitmap "${NSISDIR}\Contrib\Icons\modern.bmp"
 BrandingText /TRIMRIGHT
 
-LicenseText "Scroll down to read the rest of the license agreement:"
+LicenseText "Please read the following license agreement.  You must accept the terms of the agreement before continuing."
 LicenseData ..\license.txt
 LicenseBkColor FFFFFF
 
@@ -324,7 +324,7 @@ Section -post
   SetOutPath $INSTDIR
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
     ExecShell open '$SMPROGRAMS\NSIS'
-    Sleep 500
+    Sleep 800
     BringToFront
   nofunshit:
   Delete $INSTDIR\uninst-nsis.exe 
@@ -337,24 +337,6 @@ Function .onInstSuccess
   MessageBox MB_YESNO|MB_ICONQUESTION "Setup has completed. View readme file now?" IDNO NoReadme
     ExecShell open '$INSTDIR\makensis.htm'
   NoReadme:
-FunctionEnd
-
-Function .onInitDialog
-  Push ${TEMP1}
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    GetDlgItem ${TEMP1} ${TEMP1} 1040
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
-    Goto done
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    GetDlgItem ${TEMP1} ${TEMP1} 1042
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Description"
-    Goto done
-  StrCmp ${CURRENTPAGE} 3 "" +3
-    GetDlgItem ${TEMP1} ${TEMP1} 1041
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Destination Folder"
-  done:
-  Pop ${TEMP1}
 FunctionEnd
 
 Function .onNextPage
