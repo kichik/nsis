@@ -12,6 +12,7 @@
 #include <atlbase.h>
 #include <stdio.h>
 #include <commdlg.h>
+#include <cderr.h>
 #include "resource.h"
 
 #include "../exdll/exdll.h"
@@ -28,8 +29,7 @@ void FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
 char *STRDUP(const char *c)
 {
   char *t=(char*)MALLOC(lstrlen(c)+1);
-  lstrcpy(t,c);
-  return t;
+  return lstrcpy(t,c);
 }
 
 
@@ -179,24 +179,20 @@ bool BrowseForFile(int nControlIdx) {
 
   GetWindowText(hControl, ofn.lpstrFile, MAX_PATH);
 
-  //for(;;) {
-    if (pThisField->bSaveDlg) {
-      bResult = GetSaveFileName(&ofn);
-    } else {
-      bResult = GetOpenFileName(&ofn);
-    }
-    if (bResult) {
-      SetWindowText(hControl, ofn.lpstrFile);
-      return true;
-    }
-    // check this because the dialog will sometimes return this error just because a directory is specified
-    // instead of a filename.  in this case, try it without the initial filename and see if that works.
-//    if (*(ofn.lpstrFile)) { //&& (CommDlgExtendedError() == FNERR_INVALIDFILENAME)) {
-  //    *(ofn.lpstrFile) = '\0';
-   // } else {
-      //break;
-   // }
-  //}
+tryagain:
+  if (pThisField->bSaveDlg) {
+    bResult = GetSaveFileName(&ofn);
+  } else {
+    bResult = GetOpenFileName(&ofn);
+  }
+  if (bResult) {
+    SetWindowText(hControl, ofn.lpstrFile);
+    return true;
+  }
+  else if (ofn.lpstrFile[0] && CommDlgExtendedError() == FNERR_INVALIDFILENAME) {
+    ofn.lpstrFile[0] = '\0';
+    goto tryagain;
+  }
 
   return false;
 }
@@ -1038,17 +1034,19 @@ void showCfgDlg()
   FREE(pszCancelButtonText);
   FREE(pszNextButtonText);
   FREE(pszBackButtonText);
-  for (nIdx = 0; nIdx < nNumFields; nIdx++) {
-    FREE(pFields[nIdx].pszText);
-    FREE(pFields[nIdx].pszState);
-    FREE(pFields[nIdx].pszListItems);
-    FREE(pFields[nIdx].pszFilter);
-    FREE(pFields[nIdx].pszRoot);
-    if (pFields[nIdx].nType == FIELD_BITMAP) {
-      DeleteObject(pFields[nIdx].hImage);
+
+  int i = nNumFields;
+  while (i--) {
+    FREE(pFields[i].pszText);
+    FREE(pFields[i].pszState);
+    FREE(pFields[i].pszListItems);
+    FREE(pFields[i].pszFilter);
+    FREE(pFields[i].pszRoot);
+    if (pFields[i].nType == FIELD_BITMAP) {
+      DeleteObject(pFields[i].hImage);
     }
-    if (pFields[nIdx].nType == FIELD_ICON) {
-      DestroyIcon((HICON)pFields[nIdx].hImage);
+    if (pFields[i].nType == FIELD_ICON) {
+      DestroyIcon((HICON)pFields[i].hImage);
     }
   }
   FREE(pFields);
