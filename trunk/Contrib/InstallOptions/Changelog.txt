@@ -1,3 +1,8 @@
+DLL version 2.41 (5/8/2004)
+* Bitmaps are now automatically centered
+* Fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages
+* Fixed a rare freeze
+
 DLL version 2.4 (1/4/2004)
 * Initial focus is set in "initDialog" making it possible to override it from NSIS prior to calling "show"
 * When initial focus is to a Text field InstallOptions now follows standard Windows behaviour by having the text selected
