@@ -313,36 +313,7 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   }
 }
 
-
-static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
-//int g_all_user_var_flag;
-
-static void NSISCALL queryShellFolders(const char *name_, char *out)
-{
-  static char name[20] = "Common ";
-  mystrcpy(name + 7, name_);
-  {
-    char f=g_flags.all_user_var;
-
-  again:
-
-    smwcvesf[41]='\\';
-    myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
-      smwcvesf,
-      f?name:name_,out);
-    if (!out[0])
-    {
-      if (f)
-      {
-        f=0; goto again;
-      }
-      mystrcpy(out,temp_directory);
-    }
-  }
-}
-
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
-
 
 char * NSISCALL process_string_fromtab(char *out, int offs)
 {
@@ -423,6 +394,7 @@ char * NSISCALL process_string(const char *in)
     else
     {
       DWORD f;
+      static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
       switch (nVarIdx) // The order of this list must match that in ..\strlist.cpp (err, build.cpp -J)
       {
         case VAR_CODES_START + 0: // HWNDPARENT
@@ -476,7 +448,26 @@ char * NSISCALL process_string(const char *in)
               "Start Menu",
               "AppData"
             };
-            queryShellFolders(tab[nVarIdx-(VAR_CODES_START+27)], out);
+            static char name[20]="Common ";
+            const char *name_=tab[nVarIdx-(VAR_CODES_START+27)];
+            mystrcpy(name+7,name_);
+            f=g_flags.all_user_var & (nVarIdx != VAR_CODES_START + 31);
+
+            again:
+
+              smwcvesf[41]='\\';
+              myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
+                smwcvesf,
+                f?name:name_,out);
+              if (!out[0])
+              {
+                if (f)
+                {
+                  f=0; goto again;
+                }
+                mystrcpy(out,temp_directory);
+              }
+
             if (nVarIdx == VAR_CODES_START + 31) {
               lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
               f = GetFileAttributes(out);
