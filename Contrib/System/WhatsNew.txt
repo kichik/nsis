@@ -1,0 +1,6 @@
+1. Syntax, with inline input
+2. Int64 full support (conversion/operations/comparison)
+3. Structures support
+4. Callbacks support, including multilevel callbacks
+5. Some useful rountines (Alloc, Free, Copy)
+6. CDecl and StdCall calling conventions

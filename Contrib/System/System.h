@@ -12,39 +12,83 @@
 #define SYSTEM_API __declspec(dllimport)
 #endif
 
-// Real world types
-#define	PT_VOID		0
-#define PT_INT		1
-#define	PT_LONG		2
-#define PT_STRING	3
-#define PT_BOOLEAN	4
+#define NEW_STACK_SIZE     65536
+
+// Proc types:
+#define PT_NOTHING      0
+#define PT_PROC         1
+#define PT_STRUCT       2
+
+// Proc results:
+#define PR_OK           0
+#define PR_ERROR        -1
+#define PR_CALLBACK     1
+
+// Real world argument types
+#define	PAT_VOID		0
+#define PAT_INT		    1
+#define	PAT_LONG		2
+#define PAT_STRING	    3
+#define PAT_BOOLEAN	    4
+#define PAT_CALLBACK    5
 
 // Input/Output Source/Destination
 #define	IOT_NONE	0
 #define	IOT_STACK	-1
 #define	IOT_REG		1
+// #define INLINE_INPUT -> any other value, will contain pointer to input string
+
+// Options
+#define POPT_CDECL      0x1    // (Option & 0x1) == 0x1 -> cdecl, otherwise stdcall
+#define POPT_PERMANENT  0x2    // Permanent proc, will not be destroyed after calling
+#define POPT_ALWRETURN  0x4    // Always return
+#define POPT_NEVERREDEF 0x8    // Never redefine
+#define POPT_GENSTACK   0x10   // Use general stack (non temporary for callback)
+#define POPT_CLONE      0x20   // This is clone callback
 
 // Our single proc parameter
 typedef struct
 {
 	int Type;
-	BOOL IsPointer;
-	int Value;	// it can hold any value
+	int Option; // -1 -> Pointer, 1-... -> Special
+	int Value;	// it can hold any 4 byte value 
+    int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
+    int Size; // Value real size (should be either 1 or 2 (the number of pushes))
     int Input;
 	int Output;
 } ProcParameter;
 
-// Our single proc
-typedef struct 
+// Our single proc (Since the user will free proc with GlobalFree, 
+// I've declared all variables as statics)
+typedef struct tag_SystemProc SystemProc;
+typedef struct tag_SystemProc
 {
-	HANDLE dll;
-	HANDLE proc;
+	int ProcType;
+    int ProcResult;
+    char DllName[1024];
+    char ProcName[1024];
+	HANDLE Dll;
+	HANDLE Proc;
+    int Options;
 	int ParamCount;
-	ProcParameter Params[20];	// I hope nobody will use more than 20 params
+	ProcParameter Params[100];	// I hope nobody will use more than 100 params
+
+    // Callback specific
+    int CallbackIndex;
+    int ArgsSize;
+    // Clone of current element (used for multi-level callbacks)
+    SystemProc *Clone;
 } SystemProc;
 
-extern SystemProc *ParseProc(char *ProcID);
-extern BOOL ParseParam(SystemProc *proc, char *ParamID);
-extern void ParamsInput(SystemProc *proc);
-extern void ParamsOutput(SystemProc *proc);
-extern void SystemCall(SystemProc *proc);
+extern int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
+
+extern HANDLE CreateCallback(SystemProc *cbproc);
+extern SystemProc *PrepareProc();
+extern void ParamAllocate(SystemProc *proc);
+extern void ParamsDeAllocate(SystemProc *proc);
+extern void ParamsIn(SystemProc *proc);
+extern void ParamsOut(SystemProc *proc);
+extern SystemProc *CallProc(SystemProc *proc);
+extern SystemProc *CallBack(SystemProc *proc);
+extern SystemProc *RealCallBack();
+extern void CallStruct(SystemProc *proc);
