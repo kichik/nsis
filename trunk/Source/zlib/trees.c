@@ -869,7 +869,6 @@ local void copy_block(s, buf, len, header)
 
     if (header) {
         put_short(s, (ush)len);   
-        put_short(s, (ush)~len);
 #ifdef DEBUG
         s->bits_sent += 2*16;
 #endif
