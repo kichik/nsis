@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v1
+NLF v2
 # Language ID
 1043
 # Dutch translation by Hendri Adriaens
@@ -27,8 +27,8 @@ Naam
 Voltooid
 Handmatig
 Selecteer het installatietype:
-Selecteer de installatiecomponenten:
-Of selecteer de componenten die geïnstalleerd moeten worden:
+Selecteer de installatieonderdelen:
+Of selecteer de onderdelen die geïnstalleerd moeten worden:
 Selecteer de directory om %s in te installeren:
 Beschikbare ruimte: 
 Vereiste ruimte: 
@@ -59,3 +59,4 @@ Verwijder directory:
 Hernoem na opstarten: 
 Hernoem: 
 Overgeslagen: 
+Kopieer Details naar Klembord
