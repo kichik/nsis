@@ -47,6 +47,8 @@ The list below lists what commands affect the certain page type. Unless mentione
 
 \b \R{adirvar}{DirVar} - can only be used in \R{pageex}{PageEx}
 
+\b \R{adirverify}{DirVerify}
+
 \e{Un/Installation log page}
 
 \b \R{adetailsbuttontext}{DetailsButtonText}
