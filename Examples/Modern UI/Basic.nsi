@@ -30,7 +30,7 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
-  LicenseData "License.txt"
+  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-select dialog
     ;Descriptions

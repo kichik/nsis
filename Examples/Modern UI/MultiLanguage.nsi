@@ -65,14 +65,14 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
-  LicenseData /LANG=${LANG_ENGLISH} "License.txt"
-  LicenseData /LANG=${LANG_FRENCH} "License.txt"
-  LicenseData /LANG=${LANG_GERMAN} "License.txt"
-  LicenseData /LANG=${LANG_DUTCH} "License.txt"
-  LicenseData /LANG=${LANG_POLISH} "License.txt"
-  LicenseData /LANG=${LANG_GREEK} "License.txt"
-  LicenseData /LANG=${LANG_SIMPCHINESE} "License.txt"
-  LicenseData /LANG=${LANG_TRADCHINESE} "License.txt"
+  LicenseData /LANG=${LANG_ENGLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_FRENCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_GERMAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-select dialog
     ;Titles
