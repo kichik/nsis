@@ -3,11 +3,17 @@
 !define NAME "NSIS"
 
 !verbose 3
+!ifdef CLASSIC_UI ;Modern UI already includes WinMessages
 !include "${NSISDIR}\Examples\WinMessages.nsh"
+!endif
 !ifndef CLASSIC_UI
-!include "${NSISDIR}\Examples\Modern UI\ModernUI.nsh"
+!include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 !endif
 !verbose 4
+
+;Language
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+!include "${NSISDIR}\Contrib\Modern UI\English.nsh"
 
 Name "NSIS"
 Caption "Nullsoft Install System - Setup"
@@ -84,14 +90,6 @@ Section "NSIS Examples (recommended)" SecExample
   File ..\Examples\WinMessages.nsh
   File ..\Examples\branding.nsh
   File ..\Examples\functions.htm
-  SetOutPath "$INSTDIR\Examples\Modern UI"
-  File "..\Examples\Modern UI\Screenshot.png"
-  File "..\Examples\Modern UI\Readme.jpg"
-  File "..\Examples\Modern UI\Readme.html"
-  File "..\Examples\Modern UI\License.txt"
-  File "..\Examples\Modern UI\Example.nsi"
-  File "..\Examples\Modern UI\MultiLanguage.nsi"
-  File "..\Examples\Modern UI\ModernUI.nsh"
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
@@ -132,6 +130,20 @@ Section "Start Menu + Desktop Shortcuts" SecIcons
 SectionEnd
 
 SubSection "Contrib" SecContrib
+Section "Modern User Interface" SecContribModernUI
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\Examples\Modern UI"
+  File "..\Examples\Modern UI\Screenshot.png"
+  File "..\Examples\Modern UI\Readme.jpg"
+  File "..\Examples\Modern UI\Readme.html"
+  File "..\Examples\Modern UI\License.txt"
+  File "..\Examples\Modern UI\Basic.nsi"
+  File "..\Examples\Modern UI\MultiLanguage.nsi"
+  File "..\Examples\Modern UI\InstallOptions.nsi"
+  SetOutPath "$INSTDIR\Contrib\Modern UI"
+  File "..\Contrib\Modern UI\*.nsh"
+SectionEnd
+
 Section "Extra Icons" SecContribIcons
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Icons
@@ -498,17 +510,17 @@ Function .onInitDialog
   !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
     !insertmacro MUI_INNERDIALOG_STOP 1
 
     !insertmacro MUI_INNERDIALOG_START 2
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
     !insertmacro MUI_INNERDIALOG_STOP 2
 
     !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
-      !insertmacro MUI_INNERDIALOG_STOP 3
+      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+    !insertmacro MUI_INNERDIALOG_STOP 3
 
   !insertmacro MUI_INNERDIALOG_END
 
@@ -531,33 +543,32 @@ Function SetPage
   !insertmacro MUI_PAGE_INIT
 
     !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 3
 
     !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 4
 
     !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 5
 
-  !insertmacro MUI_PAGE_END
+ !insertmacro MUI_PAGE_END
 
 FunctionEnd
 
 Function .onUserAbort
 
-  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
-  !insertmacro MUI_ABORTWARNING_END
+  !insertmacro MUI_ABORTWARNING
 
 FunctionEnd
 
@@ -565,40 +576,41 @@ Function .onMouseOverSection
 
   !insertmacro MUI_DESCRIPTION_INIT
 
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCore} "The Core files required to use NSIS"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExample} "Example installation scripts that show you how to use NSIS"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContrib} "Tools, files, and other utilities contributed by other NSIS developers"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIcons} "Icon files contributed by other NSIS developers"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPluginsS} "Source code for plugins"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExecS} "Source code to plugin that executes DOS based programs and hides the output"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribShowWin} "Plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribShowWinS} "Source code to plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2ES} "Source code to Zip2Exe utility that converts zip files into an NSIS installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIO} "Plugin that lets you add user interface components to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDL} "Plugin that lets you create a web based installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrc} "Source code to NSIS and all related files"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcNSIS} "Source code to NSIS"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcContrib} "Source code to user contributed utilities"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcEx} "Example DLL source in C"
-    !insertmacro MUI_DESCRIPTION_TEXT 1033  ${SecSrcMNW} "MakeNSIS Wrapper source code"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Tools, files, and other utilities contributed by other NSIS developers"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "Icon files contributed by other NSIS developers"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExecS} "Source code to plugin that executes DOS based programs and hides the output"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribShowWin} "Plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribShowWinS} "Source code to plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to Zip2Exe utility that converts zip files into an NSIS installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add user interface components to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Source code to NSIS and all related files"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL source in C"
+    !insertmacro MUI_DESCRIPTION_TEXT  ${SecSrcMNW} "MakeNSIS Wrapper source code"
 
  !insertmacro MUI_DESCRIPTION_END
 
@@ -717,17 +729,17 @@ FunctionEnd
 Function un.SetPage
 
   !insertmacro MUI_PAGE_INIT
-
+    
     !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 3
 
   !insertmacro MUI_PAGE_END
