@@ -8,11 +8,13 @@
 
 Name "CVS Data"
 OutFile "..\Bin\InstallCVSData.exe"
-SetCompressor bzip2
+SetCompressor lzma
 
 SilentInstall silent
 
 Var NSISPATH
+Var UNINSTALL
+Var TEMP1
 
 ;--------------------------------
 ;Macro
@@ -35,13 +37,12 @@ Function .onInit
 
   StrCpy $NSISPATH "$EXEDIR\.."
   
-  IfFileExists "$NSISPATH\CVS\Root" "" +6
-    Call GetParameters
-    Pop $R0
-    StrCmp $R0 "nooverwrite" +2
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-      "Your NSIS folder already contains CVS data. Do you want to overwrite your current data?" IDYES +2
-      Quit
+  Call GetParameters
+  Pop $TEMP1
+  
+  StrCmp $TEMP1 "nooverwrite" 0 +3
+    IfFileExists "$NSISPATH\CVS\Root" 0 +2
+      Abort
 
 FunctionEnd
 
