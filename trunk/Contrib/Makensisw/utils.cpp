@@ -83,6 +83,7 @@ void DisableItems(HWND hwnd) {
   EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
+  EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_COPY,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
@@ -95,14 +96,15 @@ void DisableItems(HWND hwnd) {
 
 void EnableItems(HWND hwnd) {
   if (g_sdata.output_exe && !g_sdata.retcode) {
-      EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
-      EnableMenuItem(g_sdata.menu,IDM_TEST,MF_ENABLED);
+    EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
+    EnableMenuItem(g_sdata.menu,IDM_TEST,MF_ENABLED);
   }
   EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
   EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_ENABLED);
+  EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_COPY,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
@@ -120,6 +122,7 @@ void CompileNSISScript() {
   if (lstrlen(g_sdata.script)==0) {
     LogMessage(g_sdata.hwnd,USAGE);
     EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
+    EnableMenuItem(g_sdata.menu,IDM_DEFINES,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
@@ -129,8 +132,10 @@ void CompileNSISScript() {
   }
   if (!g_sdata.appended) {
     if (s) GlobalFree(s);
-    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+16);
-    wsprintf(s,"%s /NOTIFYHWND %d %s",EXENAME,g_sdata.hwnd,g_sdata.script);
+    char *defines = BuildDefines();
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(defines)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+16);
+    wsprintf(s,"%s %s /NOTIFYHWND %d %s",EXENAME,defines,g_sdata.hwnd,g_sdata.script);
+    GlobalFree(defines);
     if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
     g_sdata.script_alloced = true;
     g_sdata.script = s;
@@ -174,6 +179,15 @@ void SaveWindowPos(HWND hwnd) {
 }
 
 void ResetObjects() {
+  if(g_sdata.defines) {
+    int i=0;
+    while(g_sdata.defines[i]) {
+      GlobalFree(g_sdata.defines[i]);
+      i++;
+    }
+    GlobalFree(g_sdata.defines);
+    g_sdata.defines = NULL;
+  }
   g_sdata.appended = FALSE;
   g_sdata.warnings = FALSE;
   g_sdata.retcode = -1;
@@ -267,7 +281,7 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
   switch (((MSG*)lParam)->message) { 
     case WM_MOUSEMOVE:
       if (IsChild(g_tip.tip_p,((MSG*)lParam)->hwnd)) 
-          SendMessage(g_tip.tip, TTM_RELAYEVENT, 0,lParam); 
+        SendMessage(g_tip.tip, TTM_RELAYEVENT, 0,lParam); 
       break; 
     default: 
       break; 
@@ -282,5 +296,33 @@ void ShowDocs() {
   if(path!=NULL) *path=0;
   lstrcat(pathf,LOCALDOCS);
   if ((int)ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
-    ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+  ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+}
+
+char* BuildDefines()
+{
+  char *buf = NULL;
+
+  if(g_sdata.defines) {
+    int i=0;
+    while(g_sdata.defines[i]) {
+      if(buf) {
+        char *buf3 = (char *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.defines[i])+6)*sizeof(char));
+        wsprintf(buf3,"%s \"/D%s\"",buf,g_sdata.defines[i]);
+        GlobalFree(buf);
+        buf = buf3;
+      }
+      else {
+        buf = (char *)GlobalAlloc(GPTR,(lstrlen(g_sdata.defines[i])+5)*sizeof(char));
+        wsprintf(buf,"\"/D%s\"",g_sdata.defines[i]);
+      }
+      i++;
+    }
+  }
+  else {
+    buf = (char *)GlobalAlloc(GPTR, sizeof(char));
+    lstrcpy(buf,"");
+  }
+
+  return buf;
 }

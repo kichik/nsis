@@ -83,6 +83,7 @@ BEGIN
     POPUP "&Tools"
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
+        MENUITEM "&Define Symbols\tCtrl+D",     IDM_DEFINES
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
@@ -111,6 +112,7 @@ BEGIN
     "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
     "B",            IDM_BROWSESCR,          VIRTKEY, CONTROL, NOINVERT
     "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
+    "D",            IDM_DEFINES,            VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
@@ -160,6 +162,24 @@ BEGIN
     CONTROL         115,IDC_STATIC,"Static",SS_BITMAP,0,0,20,20
 END
 
+DLG_DEFINES DIALOGEX 0, 0, 250, 127
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Define Symbols"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,145,106,48,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,195,106,48,14
+    EDITTEXT        IDC_SYMBOL,7,37,74,12,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_VALUE,7,63,74,12,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    PUSHBUTTON      ">",IDRIGHT,91,41,14,14
+    PUSHBUTTON      "<",IDLEFT,91,56,14,14
+    LTEXT           "Symbol",IDC_STATIC,7,28,24,8
+    LTEXT           "Value (optional)",IDC_STATIC,7,54,50,8
+    LISTBOX         IDC_DEFINES,117,16,121,79,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+    GROUPBOX        "Defined Symbols List",IDC_STATIC,112,7,131,93
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -172,6 +192,14 @@ BEGIN
     DLG_ABOUT, DIALOG
     BEGIN
         BOTTOMMARGIN, 121
+    END
+
+    DLG_DEFINES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
     END
 END
 #endif    // APSTUDIO_INVOKED
