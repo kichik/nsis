@@ -83,6 +83,10 @@ Section "NSIS Examples (recommended)" SecExample
   File "..\Examples\Modern UI\Example.nsi"
   File "..\Examples\Modern UI\MultiLanguage.nsi"
   File "..\Examples\Modern UI\ModernUI.nsh"
+  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
+    CreateDirectory $SMPROGRAMS\NSIS\Contrib
+    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
+  NoShortCuts:
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
