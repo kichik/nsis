@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <commctrl.h>
-#include "nsexec.h"
+#include "../exdll/exdll.h"
 
 #ifndef true
 #define true TRUE
@@ -29,9 +29,7 @@ int my_atoi(char *s);
 
 void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
 	g_hwndParent=hwndParent;
-	g_stringsize=string_size;
-	g_stacktop=stacktop;
-	g_variables=variables;
+  EXDLL_INIT();
 	{
 		ExecScript(false);
 	}
@@ -39,9 +37,7 @@ void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variable
 
 void __declspec(dllexport) ExecToLog(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
 	g_hwndParent=hwndParent;
-	g_stringsize=string_size;
-	g_stacktop=stacktop;
-	g_variables=variables;
+  EXDLL_INIT();
 	{
 		ExecScript(true);
 	}

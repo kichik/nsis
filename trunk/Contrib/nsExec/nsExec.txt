@@ -5,11 +5,11 @@ without opening a dos box.
 
 Usage
 -----
-nsExec::Exec path [/TIMEOUT=x]
+nsExec::Exec [/TIMEOUT=x] path
 
 -or-
 
-nsExec::ExecToLog path [/TIMEOUT=x]
+nsExec::ExecToLog [/TIMEOUT=x] path
 
 Both functions are the same except ExecToLog will print the output
 to the logwindow.
