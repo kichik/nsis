@@ -509,7 +509,7 @@ nextPage:
     {
       HWND hwndtmp;
 
-      LockWindowUpdate(g_hwnd);
+      //LockWindowUpdate(g_hwnd);
 
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
@@ -528,7 +528,7 @@ nextPage:
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
 #endif //NSIS_SUPPORT_CODECALLBACKS
-      LockWindowUpdate(0);
+      //LockWindowUpdate(0);
       if (this_page->id>=0) // NSIS page
       {
         gDontFookWithFocus = 0;
