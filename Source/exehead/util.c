@@ -443,6 +443,14 @@ char * NSISCALL process_string(const char *in)
     {
       *out++ = *in++;
     }
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    else if (nVarIdx == LANG_CODES_START)
+    {
+        nVarIdx = *(short*)in; in+=sizeof(WORD);
+        process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
+        out+=mystrlen(out);
+    }
+#endif
     else
     {
       DWORD f;
