@@ -4,9 +4,11 @@
 
 !verbose 3
 !include "${NSISDIR}\Examples\WinMessages.nsh"
+!include "${NSISDIR}\Examples\Modern UI\ModernUI.nsh"
 !verbose 4
 
 !define CURRENTPAGE $9
+
 !define TEMP1 $R0
 !define TEMP2 $R1
 
@@ -15,17 +17,10 @@ Caption "Nullsoft Install System - Setup"
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
-InstallColors /windows
-InstProgressFlags smooth
-XPStyle on
-ChangeUI all "${NSISDIR}\Contrib\UIs\modernsimple.exe"
-SetFont Tahoma 8
-CheckBitmap "${NSISDIR}\Contrib\Icons\modern.bmp"
-BrandingText /TRIMRIGHT
+!insertmacro MUI_INTERFACE "modernsimple.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
 
-LicenseText "Please read the following license agreement.  You must accept the terms of the agreement before continuing."
+LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
-LicenseBkColor FFFFFF
 
 ComponentText "This will install the Nullsoft Install System v${VER_MAJOR}.${VER_MINOR} on your computer:"
 InstType "Full"
@@ -86,6 +81,8 @@ Section "NSIS Examples (recommended)" SecExample
   File "..\Examples\Modern UI\Readme.html"
   File "..\Examples\Modern UI\License.txt"
   File "..\Examples\Modern UI\Example.nsi"
+  File "..\Examples\Modern UI\MultiLanguage.nsi"
+  File "..\Examples\Modern UI\ModernUI.nsh"
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
@@ -149,6 +146,19 @@ Section "Language files" SecContribLang
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
   SetOutPath $INSTDIR
+SectionEnd
+
+Section "Language DLL" SecContribLangDLL
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  SetOverwrite try
+  File ..\Plugins\LangDLL.dll
+  SetOutPath $INSTDIR\Contrib\LangDLL
+  File ..\Contrib\LangDLL\LangDLL.c
+  File ..\Contrib\LangDLL\resource.h
+  File ..\Contrib\LangDLL\resource.rc
+  File ..\Contrib\LangDLL\LangDLL.dsw
+  File ..\Contrib\LangDLL\LangDLL.dsp
 SectionEnd
 
 Section "Splash" SecContribSplash
@@ -324,13 +334,12 @@ Section -post
   SetOutPath $INSTDIR
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
     ExecShell open '$SMPROGRAMS\NSIS'
-    Sleep 800
+    Sleep 500
     BringToFront
   nofunshit:
   Delete $INSTDIR\uninst-nsis.exe 
   WriteUninstaller $INSTDIR\uninst-nsis.exe
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call SetHeader
+  !insertmacro MUI_FINISHHEADER
 SectionEnd
 
 Function .onInstSuccess
@@ -339,124 +348,100 @@ Function .onInstSuccess
   NoReadme:
 FunctionEnd
 
+Function .onInitDialog
+
+  !insertmacro MUI_INNERDIALOG_INIT
+
+    !insertmacro MUI_INNERDIALOG_START 1
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+    !insertmacro MUI_INNERDIALOG_STOP 1
+
+    !insertmacro MUI_INNERDIALOG_START 2
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+    !insertmacro MUI_INNERDIALOG_STOP 2
+
+    !insertmacro MUI_INNERDIALOG_START 3
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
+      !insertmacro MUI_INNERDIALOG_STOP 3
+
+  !insertmacro MUI_INNERDIALOG_END
+
+FunctionEnd
+
 Function .onNextPage
-  Push ${TEMP1}
-  Push ${TEMP2}  
-  StrCmp ${CURRENTPAGE} "" "" no_set_outer
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 16 1000
-    SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    no_set_outer:
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call SetHeader
-  Pop ${TEMP2}  
-  Pop ${TEMP1}
+
+  !insertmacro MUI_NEXTPAGE_OUTER
+  !insertmacro MUI_NEXTPAGE SetHeader
+  
 FunctionEnd
 
 Function .onPrevPage
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
-  Call SetHeader
+
+  !insertmacro MUI_PREVPAGE
+
 FunctionEnd
 
 Function SetHeader
-  Push ${TEMP1}
-  Push ${TEMP2}
-  GetDlgItem ${TEMP1} $HWNDPARENT 1037
-  GetDlgItem ${TEMP2} $HWNDPARENT 1038
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "License Agreement"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please review the license terms before installing ${NAME}."
-    Goto done
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Choose Components"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Choose the components you want to install."
-    Goto done
-  StrCmp ${CURRENTPAGE} 3 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Choose Install Location"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Choose the folder in which to install ${NAME} in."
-    Goto done
-  StrCmp ${CURRENTPAGE} 4 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Installing"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please wait while ${NAME} is being installed."
-    Goto done
-  StrCmp ${CURRENTPAGE} 5 "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Finished"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Setup was completed successfully."
-  done:
-  Pop ${TEMP1}
-  Pop ${TEMP2}
-FunctionEnd
 
-Function .onMouseOverSection
-  Push ${TEMP1}
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
-  GetDlgItem ${TEMP1} ${TEMP1} 14585
-  StrCmp $0 ${SecCore} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "The Core files required to use NSIS"
-    Goto done
-  StrCmp $0 ${SecExample} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Example installation scripts that show you how to use NSIS"
-    Goto done
-  StrCmp $0 ${SecExtention} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Adds right mouse click integration to nsi files so you can compile scripts easily"
-    Goto done
-  StrCmp $0 ${SecIcons} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Adds icons to your start menu and your desktop for easy access"
-    Goto done
-  StrCmp $0 ${SecContrib} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Tools, files, and other utilities contributed by other NSIS developers"
-    Goto done
-  StrCmp $0 ${SecContribIcons} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Icon files contributed by other NSIS developers"
-    Goto done
-  StrCmp $0 ${SecContribUIs} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "User interface designs that can be used to change the installer look and feel"
-    Goto done
-  StrCmp $0 ${SecContribLang} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Language files used to support multiple languages in an installer"
-    Goto done
-  StrCmp $0 ${SecContribSplash} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Splash screen add-on that lets you add a splash screen to an installer"
-    Goto done
-  StrCmp $0 ${SecContribSplashT} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
-    Goto done
-  StrCmp $0 ${SecContribZ2E} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Zip2Exe utility that converts zip files into an NSIS installer"
-    Goto done
-   StrCmp $0 ${SecContribIO} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Plugin that lets you add user interface components to an installer"
-    Goto done
-   StrCmp $0 ${SecContribNSISDL} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Plugin that lets you create a web based installer"
-    Goto done
-   StrCmp $0 ${SecSrc} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Source code to NSIS and all related files"
-    Goto done
-   StrCmp $0 ${SecSrcContrib} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Source code to user contributed utilities"
-    Goto done
-   StrCmp $0 ${SecSrcEx} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Example DLL source in C"
-    Goto done
-   StrCmp $0 ${SecSrcMNW} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "MakeNSIS Wrapper source code"
-    Goto done
-  done:
-  Pop ${TEMP1}
+  !insertmacro MUI_HEADER_INIT
+
+    !insertmacro MUI_HEADER_START 1
+       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+    !insertmacro MUI_HEADER_STOP 1
+
+    !insertmacro MUI_HEADER_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+    !insertmacro MUI_HEADER_STOP 2
+
+    !insertmacro MUI_HEADER_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME} in."
+    !insertmacro MUI_HEADER_STOP 3
+
+    !insertmacro MUI_HEADER_START 4
+      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+    !insertmacro MUI_HEADER_STOP 4
+
+    !insertmacro MUI_HEADER_START 5
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+    !insertmacro MUI_HEADER_STOP 5
+
+  !insertmacro MUI_HEADER_END
+
 FunctionEnd
 
 Function .onUserAbort
-  MessageBox MB_YESNO|MB_ICONQUESTION "Are you sure you want to quit the NSIS Setup?" IDYES quit
-    Abort
-  quit:
+
+  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
+  !insertmacro MUI_ABORTWARNING_END
+  
+FunctionEnd
+
+Function .onMouseOverSection
+
+  !insertmacro MUI_DESCRIPTION_INIT
+
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCore} "The Core files required to use NSIS"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExample} "Example installation scripts that show you how to use NSIS"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContrib} "Tools, files, and other utilities contributed by other NSIS developers"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIcons} "Icon files contributed by other NSIS developers"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIO} "Plugin that lets you add user interface components to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDL} "Plugin that lets you create a web based installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrc} "Source code to NSIS and all related files"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcContrib} "Source code to user contributed utilities"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcEx} "Example DLL source in C"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033  ${SecSrcMNW} "MakeNSIS Wrapper source code"
+
+ !insertmacro MUI_DESCRIPTION_END
+
 FunctionEnd
 
 UninstallText "This will uninstall NSIS from your system:"
@@ -500,6 +485,7 @@ Section Uninstall
   Delete $INSTDIR\Bin\magiclime.txt
   Delete $INSTDIR\Plugins\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
+  Delete $INSTDIR\Plugins\LangDLL.dll
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Examples\functions.htm
   Delete $INSTDIR\makensis.rtf
@@ -524,6 +510,8 @@ Section Uninstall
   Delete "$INSTDIR\Examples\Modern UI\Readme.html"
   Delete "$INSTDIR\Examples\Modern UI\License.txt"
   Delete "$INSTDIR\Examples\Modern UI\Example.nsi"
+  Delete "$INSTDIR\Examples\Modern UI\MultiLanguage.nsi"
+  Delete "$INSTDIR\Examples\Modern UI\ModernUI.nsh"
   Delete $INSTDIR\main.ico
   Delete $INSTDIR\makensis-license.txt
   Delete $INSTDIR\license.txt
@@ -533,6 +521,7 @@ Section Uninstall
   RMDir /r $INSTDIR\Source
   RMDir /r $INSTDIR\Bin
   RMDir /r $INSTDIR\Plugins
+  RMDir /r "$INSTDIR\Examples\Modern UI"
   RMDir /r $INSTDIR\Examples
   RMDir $INSTDIR
 
@@ -550,43 +539,28 @@ Section Uninstall
 SectionEnd
 
 Function un.onNextPage
-  Push ${TEMP1}
-  Push ${TEMP2}
-  StrCmp ${CURRENTPAGE} "" "" no_set_outer
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 16 1000
-    SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    GetDlgItem ${TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-    no_set_outer:
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call un.SetHeader
-  Pop ${TEMP2}
-  Pop ${TEMP1}
+
+  !insertmacro MUI_NEXTPAGE_OUTER
+  !insertmacro MUI_NEXTPAGE un.SetHeader
+  
 FunctionEnd
 
 Function un.SetHeader
-  Push ${TEMP1}
-  Push ${TEMP2}
-  GetDlgItem ${TEMP1} $HWNDPARENT 1037
-  GetDlgItem ${TEMP2} $HWNDPARENT 1038
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Uninstall ${NAME}"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Remove ${NAME} from your system."
-    Goto done
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Uninstalling"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please wait while ${NAME} is being uninstalled."
-    Goto done
-  StrCmp ${CURRENTPAGE} 3 "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Finished"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "${NAME} has been removed from your system."
-  done:
-  Pop ${TEMP2}
-  Pop ${TEMP1}
+
+  !insertmacro MUI_HEADER_INIT
+
+    !insertmacro MUI_HEADER_START 1
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+    !insertmacro MUI_HEADER_STOP 1
+
+    !insertmacro MUI_HEADER_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+    !insertmacro MUI_HEADER_STOP 2
+
+    !insertmacro MUI_HEADER_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+    !insertmacro MUI_HEADER_STOP 3
+
+  !insertmacro MUI_HEADER_END
+
 FunctionEnd
