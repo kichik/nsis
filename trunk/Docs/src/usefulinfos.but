@@ -28,7 +28,13 @@ Like other applications installers made by NSIS return error levels as a result 
 
 As of NSIS 2.01, you can set the error level to other values using \R{seterrorlevel}{SetErrorLevel}.
 
-All of the above information applies both to installers and uninstallers.
+Note that uninstallers copy themselves to the temporary directory and execute from there so the original uninstaller can be deleted. This means the error level the uninstaller sets is not available to the executing process, unless it simulates this copy process and executes the copied uninstaller. To simulate this process, use:
+
+\c CopyFiles $INSTDIR\uninstaller.exe $TEMP
+\c ExecWait '"$TEMP\uninstaller.exe" _?=$INSTDIR' $0
+\c DetailPrint "uninstaller set error level $0"
+
+If you don't do this, you'll only be able to know if the uninstaller failed copying itself to the temporary directory.
 
 \H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 
