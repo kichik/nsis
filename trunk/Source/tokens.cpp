@@ -108,7 +108,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_NAME,"Name",1,1,"[/LANG=lang_id] installer_name"},
 {TOK_OUTFILE,"OutFile",1,0,"install_output.exe"},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_PAGE,"Page",1,5,"((custom [function] [caption]) | ((license|components|directory|instfiles) [pre_function] [show_function] [leave_function])) [define_if_last]"},
+{TOK_PAGE,"Page",1,5,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles) [pre_function] [show_function] [leave_function])) [define_if_last]"},
 #else
 {TOK_PAGE,"Page",1,1,"license|components|directory|instfiles"},
 #endif
@@ -168,7 +168,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTCAPTION,"UninstallCaption",1,1,"[/LANG=lang_id] uninstaller_caption"},
 {TOK_UNINSTICON,"UninstallIcon",1,0,"icon_on_local_system.ico"},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_UNINSTPAGE,"UninstPage",1,5,"((custom [function] [caption]) | ((uninstConfirm|instfiles) [pre_function] [show_function] [leave_function])) [define_if_last]"},
+{TOK_UNINSTPAGE,"UninstPage",1,5,"((custom [creator_function] [leave_function] [caption]) | ((uninstConfirm|instfiles) [pre_function] [show_function] [leave_function])) [define_if_last]"},
 #else
 {TOK_UNINSTPAGE,"UninstPage",1,1,"uninstConfirm|instfiles"},
 #endif

@@ -26,7 +26,7 @@ int noicon = 0;
 void *lpWndProcOld;
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(HKEY rootKey);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
@@ -91,7 +91,7 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
     }
     else
     {
-      lpWndProcOld = (void *) SetWindowLong(hwndParent, GWL_WNDPROC, (long) ParentWndProc);
+      lpWndProcOld = (void *) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentWndProc);
     }
 
     while (!g_done)
@@ -103,19 +103,21 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
     }
     DestroyWindow(hwStartMenuSelect);
 
-    SetWindowLong(hwndParent, GWL_WNDPROC, (long) lpWndProcOld);
+    SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
 
     if (cw_vis) ShowWindow(hwChild, SW_SHOW);
   }
 }
 
-static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  if (message == WM_NOTIFY_OUTER_NEXT)
+  BOOL bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
+  if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
+    // if leave function didn't abort (lRes != 0 in that case)
     PostMessage(hwStartMenuSelect,WM_USER+666,wParam,0);
   }
-  return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
+  return bRes;
 }
 
 #define ProgressiveSetWindowPos(hwWindow, x, cx, cy) \

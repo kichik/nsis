@@ -10,6 +10,9 @@ Name "InstallOptions Test"
 ;The file to write
 OutFile "Test.exe"
 
+; Show install details
+ShowInstDetails show
+
 ;Things that need to be extracted on startup (keep these lines before any File command!)
 ;Only useful for BZIP2 compression
 ;Use ReserveFile for your own InstallOptions INI files too!
@@ -18,7 +21,7 @@ ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "test.ini"
 
 ;Order of pages
-Page custom SetCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
+Page custom SetCustom VerifyCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
 Page instfiles
 
 Section "Components"
@@ -26,15 +29,15 @@ Section "Components"
   ;Get Install Options dialog user input
 
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 2" "State"
-  MessageBox MB_OK "Install X=${TEMP1}"
+  DetailPrint "Install X=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 3" "State"
-  MessageBox MB_OK "Install Y=${TEMP1}"
+  DetailPrint "Install Y=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 4" "State"
-  MessageBox MB_OK "Install Z=${TEMP1}"
+  DetailPrint "Install Z=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 5" "State"
-  MessageBox MB_OK "File=${TEMP1}"
+  DetailPrint "File=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 6" "State"
-  MessageBox MB_OK "Dir=${TEMP1}"
+  DetailPrint "Dir=${TEMP1}"
   
 SectionEnd
 
@@ -59,4 +62,16 @@ Function SetCustom
   
   Pop ${TEMP1}
 
+FunctionEnd
+
+Function VerifyCustom
+	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 2" "State"
+	StrCmp ${TEMP1} 1 done
+	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 3" "State"
+	StrCmp ${TEMP1} 1 done
+	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 4" "State"
+	StrCmp ${TEMP1} 1 done
+		MessageBox MB_ICONSTOP|MB_OK "You must select at least one install option!"
+		Abort
+	done:
 FunctionEnd
