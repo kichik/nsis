@@ -203,7 +203,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
     case EW_BRINGTOFRONT:
       log_printf("BringToFront");
-      ShowWindow(g_hwnd,SW_SHOW);
       SetForegroundWindow(g_hwnd);
     return 0;
     case EW_SETFLAG:
@@ -515,13 +514,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         v=my_MessageBox(buf3,parm0);
         if (v)
         {
-          if (v==(parm2&0xffff))
+          if (v==parm2)
           {
             return parm3;
           }
-          if (v==(parm2>>16))
+          if (v==parm4)
           {
-            return parm4;
+            return parm5;
           }
         }
         else g_flags.exec_error++;
@@ -695,21 +694,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SENDMESSAGE:
       {
         int v;
-        int b3=process_string_fromparm_toint(3);
-        int b4=process_string_fromparm_toint(4);
+        int b3=(int)process_string_fromparm_tobuf(0x03);
+        int b4=(int)process_string_fromparm_tobuf(0x14);
+        if (!(parm5&1)) b3=myatoi((char*)b3);
+        if (!(parm5&2)) b4=myatoi((char*)b4);
 
         if (which == EW_SENDMESSAGE)
         {
           HWND hwnd=(HWND)process_string_fromparm_toint(1);
           int msg=process_string_fromparm_toint(2);
-          if (parm5&1)
-          {
-            b3=(int)process_string_fromparm_tobuf(0x03);
-          }
-          if (parm5&2)
-          {
-            b4=(int)process_string_fromparm_tobuf(0x14);
-          }
 
           if (parm5>>2) g_flags.exec_error += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
           else v=SendMessage(hwnd,msg,b3,b4);

@@ -964,7 +964,7 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
   else if (w->which == EW_MESSAGEBOX)
   {
     if (resolve_jump_int(fn,&w->offsets[3],offs,start,end)) return 1;
-    if (resolve_jump_int(fn,&w->offsets[4],offs,start,end)) return 1;
+    if (resolve_jump_int(fn,&w->offsets[5],offs,start,end)) return 1;
   }
 #endif
   else if (w->which == EW_IFFILEEXISTS)
