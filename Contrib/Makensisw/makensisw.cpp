@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,18 +24,16 @@
 #include "resource.h"
 #include "noclib.h"
 
-char *g_script;
-int	g_retcode;
-
 static RECT resizeRect;
 static int dx;
 static int dy;
 
+char *g_script;
+int	g_retcode;
 HINSTANCE g_hInstance;
 HWND g_hwnd;
 HANDLE g_hThread;
 BOOL g_warnings;
-
 FINDREPLACE fr;
 UINT uFindReplaceMsg=0;
 HWND hwndFind=0;
@@ -43,20 +41,18 @@ HWND hwndFind=0;
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	HACCEL haccel; 
 	g_hInstance=GetModuleHandle(0);
-	g_script=GetCommandLine(); // set commandline global string
+	g_script=GetCommandLine();
 	if (*g_script++=='"') while (*g_script++!='"');
 	else while (*g_script++!=' ');
 	while (*g_script==' ') g_script++;
 	if (!InitBranding()) {
-		MessageBox(0,"Unable to find makensis.exe.","Error",MB_ICONEXCLAMATION|MB_OK);
+		MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
 		return 1;
 	}
 	ResetObjects();
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
 	if (!hDialog) {
-		char buf [MAX_STRING];
-		wsprintf(buf, "Error creating dialog box.\n\nError: %x", GetLastError ());
-		MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_OK);
+		MessageBox(0, DLGERROR, "Error", MB_ICONEXCLAMATION|MB_OK);
 		return 1;
 	}
 	haccel = LoadAccelerators(g_hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
@@ -301,8 +297,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 				case IDM_FIND:
 				{
-					if (!uFindReplaceMsg)
-					  uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
+					if (!uFindReplaceMsg) uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
 					my_memset(&fr, 0, sizeof(FINDREPLACE));
 					fr.lStructSize = sizeof(FINDREPLACE);
 					fr.hwndOwner = hwndDlg;
@@ -329,8 +324,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			ft.chrg.cpMax = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
 			ft.lpstrText = lpfr->lpstrFindWhat;
 			ft.chrg.cpMin = SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_FINDTEXTEX, flags, (LPARAM)&ft);
-			if (ft.chrg.cpMin != -1)
-				SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
+			if (ft.chrg.cpMin != -1) SendDlgItemMessage(hwndDlg, IDC_LOGWIN, EM_SETSEL, ft.chrgText.cpMin, ft.chrgText.cpMax);
 			else MessageBeep(MB_ICONASTERISK);
 		}
 		if (lpfr->Flags & FR_DIALOGTERM) hwndFind = 0;
@@ -345,7 +339,6 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
 	SECURITY_DESCRIPTOR sd={0,};
 	PROCESS_INFORMATION pi={0,};
 	HANDLE newstdout=0,read_stdout=0; 
-
 	OSVERSIONINFO osv={sizeof(osv)};
 	GetVersionEx(&osv);
 	if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
@@ -374,11 +367,9 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
 		PostMessage(g_hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
 		return 1;
 	}
-
 	char szBuf[1024];
 	DWORD dwRead = 1;
 	DWORD dwExit = !STILL_ACTIVE;
-
 	while (dwExit == STILL_ACTIVE || dwRead) {
 		PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
 		if (dwRead) {
