@@ -46,7 +46,7 @@
   
   !insertmacro MUI_PAGE_STARTMENU Application
   
-  ;!insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_INSTFILES
   
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
