@@ -1,4 +1,7 @@
-DLL version 2.41 (5/8/2004)
+DLL version 2.42 (1/21/2005)
+* Added TRANSPARENT flag for BITMAP fields
+
+DLL version 2.41 (8/5/2004)
 * Bitmaps are now automatically centered
 * Fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages
 * Fixed a rare freeze
