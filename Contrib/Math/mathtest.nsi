@@ -90,7 +90,7 @@ FunctionEnd
 
 Function GetLine
   push $TEMP1
-  Math::Script /NOUNLOAD "DL()"
+  Math::Script /NOUNLOAD "mtsDL()"
   pop $TEMP2
   pop $TEMP1
 FunctionEnd
@@ -98,13 +98,13 @@ FunctionEnd
 Function ExecuteScript
   !insertmacro MUI_INSTALLOPTIONS_READ $TEMP1 "MathTest.ini" "Field 2" "State" 
 
-  Math::Script /NOUNLOAD "TQ(s) (s = s(NS); #[s[0]=='$\"',s=s[1,]]; #[s[-1]=='$\"',s=s[,-2]]; NS = s)"
-  Math::Script /NOUNLOAD "P(s,e, p,i) (p=-1;i=0; #{(i<l(s))&&(p<0), #[s[i,i+l(e)-1]==e, p=i]; i++}; p)"
-  Math::Script /NOUNLOAD "DL(s) (s=s(NS); p=P(s,'\r\n'); #[p>=0, (NS=s[p+4,]; NS=#[p>0,s[,p-1],'']), (NS='';NS=s)])"
+  Math::Script /NOUNLOAD "mtsTQ(s) (s = s(NS); #[s[0]=='$\"',s=s[1,]]; #[s[-1]=='$\"',s=s[,-2]]; NS = s)"
+  Math::Script /NOUNLOAD "mtsP(s,e, p,i) (p=-1;i=0; #{(i<l(s))&&(p<0), #[s[i,i+l(e)-1]==e, p=i]; i++}; p)"
+  Math::Script /NOUNLOAD "mtsDL(s) (s=s(NS); p=mtsP(s,'\r\n'); #[p>=0, (NS=s[p+4,]; NS=#[p>0,s[,p-1],'']), (NS='';NS=s)])"
 
   push  $TEMP1
   ; remove ""
-  Math::Script /NOUNLOAD "TQ()"
+  Math::Script /NOUNLOAD "mtsTQ()"
   pop   $TEMP1
 
   ; script at $TEMP1
