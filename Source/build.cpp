@@ -1305,6 +1305,7 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
     {
       int jump = atoi(lname);
       int *skip_map = (int *) cur_instruction_entry_map->get();
+      int maxoffs = cur_instruction_entry_map->getlen() / (int) sizeof(int);
 
       int direction = 1;
       if (jump < 0)
@@ -1313,7 +1314,7 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
       for (; jump != 0; jump -= direction)
       {
         offs += direction;
-        if (offs >= 0 && offs < cur_instruction_entry_map->getlen() * (int) sizeof(int))
+        if (offs >= 0 && offs < maxoffs)
         {
           while (skip_map[offs])
           {
