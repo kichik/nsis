@@ -148,7 +148,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   // Saves 8 bytes
   // HWND mainHwnd = g_hwnd;
   // #define g_hwnd mainHwnd
-
+  
   HWND hwSectionHack = g_SectionHack;
   
   parms = entry_->offsets;
@@ -379,7 +379,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf3=process_string_fromparm_tobuf(0x31);
         #define overwriteflag parm0
 
-        log_printf3("File: overwriteflag=%d, name=\"%s\"",overwriteflag,buf3);
+        // Modified by ramon 23 May 2003
+        log_printf4("File: overwriteflag=%d, allowskipfilesflag=%d, name=\"%s\"",overwriteflag,allowskipfilesflag,buf3);
         if (validpathspec(buf3))
         {
           mystrcpy(buf0,buf3);
@@ -416,10 +417,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           mystrcpy(buf2,g_usrvars[0]);//save $0
           mystrcpy(g_usrvars[0],buf0);
 
-          process_string_fromtab(buf1,LANG_FILEERR);
+          process_string_fromtab(buf1,parm5&MB_ABORTRETRYIGNORE?LANG_FILEERR:LANG_FILEERR_NOIGNORE);
           mystrcpy(g_usrvars[0],buf2); // restore $0
 
-          switch (my_MessageBox(buf1,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
+          // Modified by ramon 23 May 2003
+          switch (my_MessageBox(buf1, parm5))
           {
             case IDRETRY:
               log_printf("File: error, user retry");
@@ -461,6 +463,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
 
         #undef overwriteflag
+		// Added by ramon 23 May 2003
+		#undef allowskipfilesflag
       }
     break;
 #endif//NSIS_SUPPORT_FILE
@@ -1535,7 +1539,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
       }
       else g_flags.exec_error++;
-    }
+          }
     break;
     case EW_INSTTYPESET:
     {

@@ -65,7 +65,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FLUSHINI,"FlushINI",1,0,"ini_file"},
 {TOK_RESERVEFILE,"ReserveFile",1,-1,"[/nonfatal] [/r] file [file...]"},
 {TOK_FILECLOSE,"FileClose",1,0,"$(user_var: handle input)"},
-{TOK_FILEERRORTEXT,"FileErrorText",0,2,"[/LANG=lang_id] [text (can contain $0)]"},
+{TOK_FILEERRORTEXT,"FileErrorText",0,3,"[/LANG=lang_id] [text (can contain $0)] [text without ignore (can contain $0)]"},
 {TOK_FILEOPEN,"FileOpen",3,0,"$(user_var: handle output) filename openmode\n   openmode=r|w|a"},
 {TOK_FILEREAD,"FileRead",2,1,"$(user_var: handle input) $(user_var: text output) [maxlen]"},
 {TOK_FILEWRITE,"FileWrite",2,0,"$(user_var: handle input) text"},
@@ -224,7 +224,9 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETCURRENTADDR,"GetCurrentAddress",1,0,"output"},
 
 {TOK_PLUGINDIR,"!AddPluginDir",1,0,"new_plugin_directory"},
-{TOK_INITPLUGINSDIR,"InitPluginsDir",0,0,""}
+{TOK_INITPLUGINSDIR,"InitPluginsDir",0,0,""},
+// Added by ramon 23 May 2003
+{TOK_ALLOWSKIPFILES,"AllowSkipFiles",1,0,"(off|on)"}
 };
 
 void CEXEBuild::print_help(char *commandname)

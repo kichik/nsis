@@ -80,7 +80,7 @@ struct StringTable {
   NLF *nlf;
 };
 
-#define NLF_VERSION 4
+#define NLF_VERSION 5
 
 enum {
   NLF_BRANDING,
@@ -116,6 +116,7 @@ enum {
   NLF_SPACE_REQ,
   NLF_UNINST_SUBTEXT,
   NLF_FILE_ERROR,
+  NLF_FILE_ERROR_NOIGNORE,
   NLF_CANT_WRITE,
   NLF_COPY_FAILED,
   NLF_COPY_TO,

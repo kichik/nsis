@@ -1218,10 +1218,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         else
         {
-          int v=strtoul(p,&p,16);
-          build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-          SCRIPT_MSG("LicenseBkColor: %06X\n",v);
-        }
+        int v=strtoul(p,&p,16);
+        build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+        SCRIPT_MSG("LicenseBkColor: %06X\n",v);
+      }
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else//!NSIS_CONFIG_LICENSEPAGE
@@ -2317,6 +2317,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // flag setters
     ///////////////////////////////////////////////////////////////////////////////
 
+    // BEGIN - Added by ramon 23 May 2003
+    case TOK_ALLOWSKIPFILES:
+      build_allowskipfiles=line.gettoken_enum(1,"off\0on\0");
+      if (build_allowskipfiles==-1) PRINTHELP()
+      SCRIPT_MSG("AllowSkipFiles: %s\n",line.gettoken_str(1));
+    return PS_OK;
+    // END - Added by ramon 23 May 2003
     case TOK_SETDATESAVE:
       build_datesave=line.gettoken_enum(1,"off\0on\0");
       if (build_datesave==-1) PRINTHELP()
@@ -2376,9 +2383,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int a = 1;
         WORD lang = 0;
         if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+1) PRINTHELP();
         SetString(line.gettoken_str(a),NLF_FILE_ERROR,1,lang);
-        SCRIPT_MSG("FileErrorText: \"%s\"\n",line.gettoken_str(a));
+        SetString(line.gettoken_str(a+1),NLF_FILE_ERROR_NOIGNORE,1,lang);
+        SCRIPT_MSG("FileErrorText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
@@ -4366,6 +4373,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (data_handle == -1)
         {
           int files_added;
+          // BEGIN - Added by ramon 23 May 2003
+          int old_build_allowskipfiles=build_allowskipfiles;
+          build_allowskipfiles=1; // on
+          // END - Added by ramon 23 May 2003
           int old_build_overwrite=build_overwrite;
           build_overwrite=1; // off
           int old_build_datesave=build_datesave;
@@ -4378,6 +4389,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0),data_handle);
           build_overwrite=old_build_overwrite;
           build_datesave=old_build_datesave;
+          // Added by ramon 23 May 2003
+          build_allowskipfiles=old_build_allowskipfiles;
         }
         else
         {
@@ -4385,6 +4398,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[0]=1; // overwrite off
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
+          ent.offsets[3]=0xffffffff;
+          ent.offsets[4]=0xffffffff;
+          ent.offsets[5]=MB_ABORTRETRYIGNORE | MB_ICONSTOP;
           ret=add_entry(&ent);
           if (ret != PS_OK) {
             free(command);
@@ -4622,6 +4638,9 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             ent.offsets[3]=0xffffffff;
             ent.offsets[4]=0xffffffff;
           }
+          // Added by ramon 23 May 2003
+          ent.offsets[5]=(build_allowskipfiles?MB_ABORTRETRYIGNORE:MB_RETRYCANCEL) | MB_ICONSTOP;
+
           if (uninstall_mode) m_uninst_fileused++;
           else m_inst_fileused++;
         }

@@ -91,6 +91,7 @@
 
 // instruction strings
 #define LANG_FILEERR                  (COMMON_STR(fileerrtext))
+#define LANG_FILEERR_NOIGNORE         (COMMON_STR(fileerrtext_noignore))
 #define LANG_DELETEFILE               (COMMON_STR(del_file))
 #define LANG_DLLREGERROR              (COMMON_STR(err_reg_dll))
 #define LANG_REMOVEDIR                (COMMON_STR(remove_dir))
