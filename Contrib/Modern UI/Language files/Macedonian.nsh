@@ -2,8 +2,7 @@
 ;Compatible with Modern UI 1.68
 
 ;Language: Macedonian (1071)
-;By Sasko Zdravkin [vardarce@mail.com]
-;Updated by Sasko Zdravkin [wingman2083@yahoo.com]
+;By Sasko Zdravkin [wingman2083@yahoo.com]
 
 ;--------------------------------
 
