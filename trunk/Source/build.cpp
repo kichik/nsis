@@ -116,6 +116,9 @@ CEXEBuild::CEXEBuild() :
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
   definedlist.add("NSIS_COMPRESS_BZIP2_SMALLMODE");
 #endif
+  #ifdef NSIS_LZMA_COMPRESS_WHOLE
+  definedlist.add("NSIS_LZMA_COMPRESS_WHOLE");
+#endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   definedlist.add("NSIS_CONFIG_COMPONENTPAGE");
 #endif
