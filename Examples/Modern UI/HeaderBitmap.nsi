@@ -2,7 +2,7 @@
 ;Header Bitmap Example Script
 ;Written by Joost Verburg
 
-!define MUI_PRODUCT "Test Software" ;Define your own software name here
+!define MUI_PRODUCT "Modern UI Test" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
 
 !include "MUI.nsh"
