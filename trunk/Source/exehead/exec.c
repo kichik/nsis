@@ -200,10 +200,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         Sleep(x);
       }
     return 0;
-    case EW_HIDEWINDOW:
-      log_printf("HideWindow");
-      ShowWindow(g_hwnd,SW_HIDE);
-    return 0;
     case EW_BRINGTOFRONT:
       log_printf("BringToFront");
       ShowWindow(g_hwnd,SW_SHOW);
@@ -798,6 +794,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     }
     return 0;
     case EW_SHOWWINDOW:
+      if (parm2) log_printf("HideWindow");
       ShowWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
     return 0;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
