@@ -445,12 +445,15 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // (or m_uninstheader)
 const char * NSISCALL loadHeaders(void);
 
+int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen);
+
+#define GetCompressedDataFromDataBlock(offset, hFileOut) _dodecomp(offset,hFileOut,NULL,0)
+#define GetCompressedDataFromDataBlockToMemory(offset, out, out_len) _dodecomp(offset,NULL,out,out_len)
+
 extern HANDLE g_db_hFile;
 extern int g_quit_flag;
 
 const char * NSISCALL GetStringFromStringTab(int offs);
-int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
-int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
 BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead);
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 
