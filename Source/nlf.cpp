@@ -40,6 +40,7 @@ NLF::NLF(char *filename) {
       wsprintf(buf, "String too long (string #%d)!", i);
       throw runtime_error(buf);
     }
+    StrTrim(buf, "\r\n\0");
     m_szStrings[i] = new char[lstrlen(buf)+1];
     lstrcpy(m_szStrings[i], buf);
   }
