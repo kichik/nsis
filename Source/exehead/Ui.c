@@ -1014,7 +1014,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (g_inst_header->install_types[i])
       {
         int j;
-        doCombo++;
+        if (i != NSIS_MAX_INST_TYPES) doCombo++;
         process_string_fromtab(g_tmp,g_inst_header->install_types[i]);
         j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)ps_tmpbuf);
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
