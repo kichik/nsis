@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Επιλογή Στοιχείων"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Επιλέξτε τα στοιχεία του '$(^NameDA)' που θέλετε να εγκαταστήσετε."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Περιγραφή"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Περάστε το δείκτη του ποντικιού πάνω από ένα στοιχείο για να δείτε την περιγραφή του."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Περάστε το δείκτη του ποντικιού πάνω από ένα στοιχείο για να δείτε την περιγραφή του."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Επιλέξτε ένα στοιχείο για να δείτε την περιγραφή του."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Επιλογή Θέσης Εγκατάστασης"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Επιλέξτε το φάκελο μέσα στον οποίο θα εγκατασταθεί το '$(^NameDA)'."
