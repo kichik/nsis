@@ -30,16 +30,6 @@
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 #define RALIGN(dwToAlign, dwAlignOn) ((dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn)
 
-void *operator new(size_t size) {
-	void *p = malloc(size);
-	if (!p)
-		throw bad_alloc();
-	return p;
-}
-void operator delete(void *p) {
-	if (p) free(p);
-}
-
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 // CResourceEditor
