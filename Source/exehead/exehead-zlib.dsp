@@ -252,9 +252,5 @@ SOURCE=.\resource.rc
 SOURCE=.\uninst.ico
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\exehead.xml
-# End Source File
 # End Target
 # End Project
