@@ -52,6 +52,8 @@ HANDLE g_hInstance;
 char *ValidateTempDir()
 {
   validate_filename(state_temp_dir);
+  if (!validpathspec(state_temp_dir))
+    return NULL;
   CreateDirectory(state_temp_dir, NULL);
   // g_caption is used as a temp var here
   return my_GetTempFileName(g_caption, state_temp_dir);
