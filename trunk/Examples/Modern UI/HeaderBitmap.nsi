@@ -50,6 +50,14 @@
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
+;Reserve Files
+  
+  ;Things that need to be extracted on first (keep these lines before any File command!)
+  ;Only useful for BZIP2 compression
+  
+  ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp"
+
+;--------------------------------
 ;Installer Sections
 
 Section "modern.exe" SecCopyUI
