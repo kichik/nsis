@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.65
+;Compatible with Modern UI 1.67
 
 ;Language: Hebrew (1037)
 ;By Yaron Shahrabani
