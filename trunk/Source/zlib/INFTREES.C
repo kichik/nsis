@@ -139,25 +139,23 @@ uInt *hn)               /* working area: values in order of bit length */
     a = c[k];
     while (a--)
     {
+      int nextw=w;
       /* here i is the Huffman code of length k bits for value *p */
       /* make tables up to required level */
-      while (k > w + l)
+      while (k > (nextw=w + l))
       {
         h++;
-        w += l;                 /* previous table always l bits */
 
         /* compute minimum size table less than or equal to l bits */
-        z = g - w;
+        z = g - nextw;
         z = z > (uInt)l ? l : z;        /* table size upper limit */
-        if ((f = 1 << (j = k - w)) > a + 1)     /* try a k-w bit table */
+        if ((f = 1 << (j = k - nextw)) > a + 1)     /* try a k-w bit table */
         {                       /* too few codes for k-w bit table */
           f -= a + 1;           /* deduct codes from patterns left */
           xp = c + k;
           if (j < z)
-            while (++j < z)     /* try smaller tables up to z bits */
+            while (++j < z && (f <<= 1) > *++xp)     /* try smaller tables up to z bits */
             {
-              if ((f <<= 1) <= *++xp)
-                break;          /* enough codes to use up j bits */
               f -= *xp;         /* else deduct codes from patterns */
             }
         }
@@ -175,12 +173,13 @@ uInt *hn)               /* working area: values in order of bit length */
           x[h] = i;             /* save pattern for backing up */
           r.bits = (Byte)l;     /* bits to dump before this table */
           r.exop = (Byte)j;     /* bits in this table */
-          j = i >> (w - l);
+          j = i >> w;
           r.base = (uInt)(q - u[h-1] - j);   /* offset to this table */
           u[h-1][j] = r;        /* connect to last table */
         }
         else
           *t = q;               /* first table is returned result */
+        w=nextw;                 /* previous table always l bits */
       }
 
       /* set up table entry in r */
