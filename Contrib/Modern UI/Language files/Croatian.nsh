@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Hrvatski" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli u instalaciju programa $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Ovaj èarbnjak æe Vas provesti kroz instalaciju programa $(^Name) na Vaše raèunalo.\r\n\r\nPreporuèamo da zatvorite sve ostale aplikacije prije poèetka instalacije. To æe omoguæiti nadogradnju nekih sistemskih datoteka bez potrebe za ponovnim pokretanjem Vašeg raèunala.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Instalacija programa $(^Name) na Vaše raèunalo sastoji se od nekoliko jednostavnih koraka kroz koje æe Vas provesti ovaj èarobnjak.\r\n\r\nPreporuèamo zatvaranje svih ostalih aplikacija prije samog poèetka instalacije. To æe omoguæiti nadogradnju nekih sistemskih datoteka bez potrebe za ponovnim pokretanjem Vašeg raèunala. U svakom trenutku instalaciju možete prekinuti pritiskom na 'Odustani'.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licenèni ugovor"
   !define MUI_TEXT_LICENSE_SUBTITLE "Molim proèitajte licencu prije instalacije programa $(^Name)."
@@ -26,7 +26,7 @@
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Prijeðite pokazivaèem iznad komponente za njezin opis."
 
   !define MUI_TEXT_DIRECTORY_TITLE "Odaberite odredište za instalaciju"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Odaberite mapu u koji želite instalirati program $(^Name)."
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Odaberite mapu u koju želite instalirati program $(^Name)."
 
   !define MUI_TEXT_INSTALLING_TITLE "Instaliranje"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Molim prièekajte na završetak instalacije programa $(^Name)."
@@ -46,9 +46,9 @@
   !define MUI_TEXT_FINISH_RUN "&Pokreni program $(^Name)"
   !define MUI_TEXT_FINISH_SHOWREADME "Prikaži &Readme"
 
-  !define MUI_TEXT_STARTMENU_TITLE "Odaberite mapu u Start meniju"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Odaberite mapu u Start meniju za programske preèace."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Odaberite mapu u Start Meniju u kojem želite napraviti programske preèace. Možete i upisati ime za stvaranje nove mape."
+  !define MUI_TEXT_STARTMENU_TITLE "Izbor mape u Start meniju"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Odaberite ime za programsku mapu unutar Start menija."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Program æe pripadati odabranoj programskoj mapi u Start meniju. Možete odrediti novo ime za mapu ili odabrati veæ postojeæu."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nemoj napraviti preèace"
 
   !define MUI_TEXT_ABORTWARNING "Jeste li sigurni da želite prekinuti instalaciju programa $(^Name)?"

@@ -1,6 +1,5 @@
 # Header, don't edit
 NLF v6
-# Start editing here
 # Language ID
 1050
 # Font and size - dash (-) means default
@@ -60,11 +59,11 @@ Odustani
 # ^ShowDetailsBtn
 Prikaži &detalje
 # ^ClickNext
-Odaberite 'Dalje' za nastavak.
+Za nastavak odaberite 'Dalje'.
 # ^ClickInstall
-Odaberite 'Instaliraj' za poèetak instalacije.
+Za poèetak instalacije odaberite 'Instaliraj'.
 # ^ClickUninstall
-Odaberite 'Ukloni' za poèetak uklanjanja.
+Za poèetak uklanjanja odaberite 'Ukloni'.
 # ^Name
 Ime
 # ^Completed
@@ -100,7 +99,7 @@ Odaberite komponente za uklanjanje:
 # ^UnComponentsSubText2
 Ili po izboru oznaèite komponente koje želite ukloniti:
 # ^DirText
-Program $(^Name) æe biti instaliran u slijedeæu mapu. Za instalaciju na drugo mjesto odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
+Program $(^Name) æe biti instaliran u slijedeæu mapu. Za instalaciju na drugo odredište odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
 # ^DirSubText
 Odredišna mapa
 # ^DirBrowseText
@@ -116,7 +115,7 @@ Mapa iz koje æe program $(^Name) biti uklonjen:
 # ^SpaceRequired
 "Potrebno prostora na disku: "
 # ^UninstallingText
-Ovaj èarobnjak æe ukloniti program $(^Name) s Vašeg raèunala. $_CLICK
+Pokrenuli ste postupak uklanjanja programa $(^Name) s Vašeg raèunala. $_CLICK
 # ^UninstallingSubText
 Uklanjam iz:
 # ^FileError
