@@ -327,7 +327,7 @@ int ui_doinstall(void)
         break;
       }
     }
-    if (size==g_inst_header->str_tables_num) {
+    if (size==g_inst_header->str_tables_num && !c) {
       c=1;
       goto lang_again;
     }
