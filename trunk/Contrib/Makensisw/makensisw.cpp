@@ -74,11 +74,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 
 void ResetInputScript()
 {
-    if(g_sdata.input_script) {
-      g_sdata.script_alloced = true;
-      g_sdata.script = (char *)GlobalAlloc(GPTR, (lstrlen(g_sdata.input_script)+3)*sizeof(char));
-      wsprintf(g_sdata.script,"\"%s\"",g_sdata.input_script);
-    }
+  if(g_sdata.input_script) {
+    g_sdata.script_alloced = true;
+    g_sdata.script = (char *)GlobalAlloc(GPTR, (lstrlen(g_sdata.input_script)+3)*sizeof(char));
+    wsprintf(g_sdata.script,"\"%s\"",g_sdata.input_script);
+  }
 }
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -87,8 +87,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
-	    int argc;
-	    char **argv;
+      int argc;
+      char **argv;
       int i, j;
       int argSpaceSize;
       bool chooseCompressor = false;
@@ -120,7 +120,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         int n;
 
         g_sdata.script_alloced = true;
-        g_sdata.script = (char *)GlobalAlloc(GPTR,argSpaceSize + 2*(argc-1)*sizeof(char)+1);
+        g_sdata.script = (char *) GlobalAlloc(GPTR,argSpaceSize+2*(argc-1)*sizeof(char)+1);
         lstrcpy(g_sdata.script,"");
         for(i=1; i<argc; i++) {
           if(!lstrncmpi(argv[i],"/XSetCompressor ",lstrlen("/XSetCompressor "))) {
@@ -151,14 +151,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           g_sdata.script[n-1] = '\0';
         }
         PushMRUFile(argv[argc-1]);
-	      LocalFree(argv);
       }
+      if (argSpaceSize)
+        GlobalFree(argv);
 
-      if(g_sdata.compressor ==  (NCOMPRESSOR)-1) {
+      if(g_sdata.compressor == (NCOMPRESSOR)-1) {
         SetCompressor(g_sdata.default_compressor);
       }
       if(chooseCompressor) {
-          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc);
+        DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc);
       }
       CompileNSISScript();
       return TRUE;
@@ -338,15 +339,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
       }
       EnableItems(g_sdata.hwnd);
-      if (g_sdata.retcode==0) {
+      if (!g_sdata.retcode) {
         MessageBeep(MB_ICONASTERISK);
-        if (g_sdata.warnings) SetTitle(g_sdata.hwnd,"Finished with Warnings");
-        else {
+        if (g_sdata.warnings)
+          SetTitle(g_sdata.hwnd,"Finished with Warnings");
+        else
           SetTitle(g_sdata.hwnd,"Finished Sucessfully");
-          // Added by Darren Owen (DrO) on 1/10/2003
-          if(g_sdata.recompile_test)
-            PostMessage(g_sdata.hwnd, WM_COMMAND, LOWORD(IDM_TEST), 0);
-        }
+        // Added by Darren Owen (DrO) on 1/10/2003
+        if(g_sdata.recompile_test)
+          PostMessage(g_sdata.hwnd, WM_COMMAND, LOWORD(IDC_TEST), 0);
       }
       else {
         MessageBeep(MB_ICONEXCLAMATION);
@@ -798,16 +799,17 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
   switch(msg) {
     case WM_INITDIALOG:
     {
-      int i=0;
+      int i = 0;
       LRESULT rv;
 
-      for(i=(int)COMPRESSOR_SCRIPT; i<= (int)COMPRESSOR_BEST; i++) {
+      for(i = (int)COMPRESSOR_SCRIPT; i <= (int)COMPRESSOR_BEST; i++) {
         rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_ADDSTRING, 0, (LPARAM)compressor_display_names[i]);
       }
       rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
 
-      if(g_sdata.defines) {
-        while(g_sdata.defines[i]) {
+      i = 0;
+      if (g_sdata.defines) {
+        while (g_sdata.defines[i]) {
           SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_ADDSTRING, 0, (LPARAM)g_sdata.defines[i]);
           i++;
         }
@@ -828,7 +830,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCOUNT, 0, 0);
           if(n > 0) {
             g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
-            for(int i=0; i<n; i++) {
+            for (int i = 0; i < n; i++) {
               int len = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXTLEN, (WPARAM)i, 0);
               g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, (len+1)*sizeof(char));
               SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXT, (WPARAM)i, (LPARAM)g_sdata.defines[i]);
@@ -837,7 +839,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           }
 
           n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-          if(n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
+          if (n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
             g_sdata.default_compressor = (NCOMPRESSOR)n;
           }
           else {
@@ -879,53 +881,53 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           }
         }
         break;
-      case IDLEFT:
-      {
-        int index = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
-        if(index != LB_ERR) {
-          int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXTLEN, (WPARAM)index, 0);
-          if(n > 0) {
-            char *buf = (char *)GlobalAlloc(GPTR, (n+1)*sizeof(char));
-            SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
-            char *p = my_strstr(buf,"=");
-            if(p) {
-              SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, (LPARAM)(p+1));
-              *p=0;
+        case IDLEFT:
+        {
+          int index = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
+          if(index != LB_ERR) {
+            int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXTLEN, (WPARAM)index, 0);
+            if(n > 0) {
+              char *buf = (char *)GlobalAlloc(GPTR, (n+1)*sizeof(char));
+              SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
+              char *p = my_strstr(buf,"=");
+              if(p) {
+                SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, (LPARAM)(p+1));
+                *p=0;
+              }
+              SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, (LPARAM)buf);
+              GlobalFree(buf);
+              SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_DELETESTRING, (WPARAM)index, (LPARAM)buf);
+              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
             }
-            SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, (LPARAM)buf);
-            GlobalFree(buf);
-            SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_DELETESTRING, (WPARAM)index, (LPARAM)buf);
-            EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
           }
         }
-      }
+        break;
+        case IDC_SYMBOL:
+          if(HIWORD(wParam) == EN_CHANGE)
+          {
+            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
+            if(n > 0) {
+              EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), TRUE);
+            }
+            else {
+              EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
+            }
+          }
+          break;
+        case IDC_DEFINES:
+          if(HIWORD(wParam) == LBN_SELCHANGE)
+          {
+            int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
+            if(n != LB_ERR) {
+              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
+            }
+            else {
+              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+            }
+          }
+          break;
+        }
       break;
-      case IDC_SYMBOL:
-        if(HIWORD(wParam) == EN_CHANGE)
-        {
-          int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXTLENGTH, 0, 0);
-          if(n > 0) {
-            EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), TRUE);
-          }
-          else {
-            EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
-          }
-        }
-        break;
-      case IDC_DEFINES:
-        if(HIWORD(wParam) == LBN_SELCHANGE)
-        {
-          int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
-          if(n != LB_ERR) {
-            EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
-          }
-          else {
-            EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-          }
-        }
-        break;
-      }
-    break;
     }
   }
   return FALSE;
