@@ -52,8 +52,7 @@ Function .onInit
   ;Extract Install Options files
   ;$PLUGINSDIR will automatically be removed when the installer closes
   
-  Call Initialize_____Plugins
-  SetDetailsPrint both
+  InitPluginsDir
   
   File /oname=$PLUGINSDIR\test.ini "test.ini"
   
