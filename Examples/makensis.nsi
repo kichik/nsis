@@ -1,5 +1,5 @@
 !define VER_MAJOR 2
-!define VER_MINOR 0a7
+!define VER_MINOR 0b0
 !define NAME "NSIS"
 
 !verbose 3
