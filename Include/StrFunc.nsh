@@ -1,6 +1,6 @@
 /*
 o-----------------------------------------------------------------------------o
-|String Functions Header File 1.08                                            |
+|String Functions Header File 1.09                                            |
 (-----------------------------------------------------------------------------)
 | By deguix                                     / A Header file for NSIS 2.01 |
 | <cevo_deguix@yahoo.com.br>                   -------------------------------|
@@ -34,7 +34,7 @@ o-----------------------------------------------------------------------------o
   ;Header File Version
 
   !define STRFUNC_VERMAJ 1
-  !define STRFUNC_VERMED 08
+  !define STRFUNC_VERMED 09
  ;!define STRFUNC_VERMIN 0
  ;!define STRFUNC_VERBLD 0
 
@@ -191,7 +191,7 @@ o-----------------------------------------------------------------------------o
   ################
 
   !macro FUNCTION_STRING_StrCase
-    !insertmacro STRFUNC_FUNC `StrCase` `2004 Diego Pedroso`
+    !insertmacro STRFUNC_FUNC `StrCase` `2004 Diego Pedroso - Based on functions by Dave Laundon`
 
     /*After this point:
       ------------------------------------------
@@ -209,6 +209,7 @@ o-----------------------------------------------------------------------------o
       Exch $1
       Exch
       Exch $0
+      Exch
       Push $2
       Push $3
       Push $4
@@ -367,12 +368,12 @@ o-----------------------------------------------------------------------------o
   !macroend
 
   !macro FUNCTION_STRING_StrClb
-    !insertmacro STRFUNC_FUNC `StrClb` `2004 Diego Pedroso - Based on CopyToClipboard and CopyFromClipboard by Nik Medved`
+    !insertmacro STRFUNC_FUNC `StrClb` `2004 Diego Pedroso - Based on functions by Nik Medved`
 
     /*After this point:
       ------------------------------------------
-       $0 = Action (input)
-       $1 = String (input)
+       $0 = String (input)
+       $1 = Action (input)
        $2 = Lock/Unlock (temp)
        $3 = Temp (temp)
        $4 = Temp2 (temp)*/
@@ -386,6 +387,10 @@ o-----------------------------------------------------------------------------o
       Push $2
       Push $3
       Push $4
+      
+      StrCpy $2 ""
+      StrCpy $3 ""
+      StrCpy $4 ""
 
       ;Open the clipboard to do the operations the user chose (kichik's fix)
       System::Call 'user32::OpenClipboard(i $HWNDPARENT)'
@@ -428,7 +433,7 @@ o-----------------------------------------------------------------------------o
       ${ElseIf} $1 == "<>" ;Swap
 
         ;Step 1: Get clipboard data
-        System::Call 'user32::GetClipboardData(i 1) t .r2'
+        System::Call 'user32::GetClipboardData(i 1) i .r2'
 
         ;Step 2: Lock and copy data (kichik's fix)
         System::Call 'kernel32::GlobalLock(i r2) t .r4'
@@ -455,7 +460,7 @@ o-----------------------------------------------------------------------------o
 
         ;Step 9: Set the information to the clipboard
         System::Call 'user32::SetClipboardData(i 1, i r2)'
-
+        
         StrCpy $0 $4
       ${Else} ;Clear
 
@@ -486,78 +491,68 @@ o-----------------------------------------------------------------------------o
   ####################
 
   !macro FUNCTION_STRING_StrIOToNSIS
-    !insertmacro STRFUNC_FUNC `StrIOToNSIS` `2003-2004 Amir Szekely, Joost Verburg and Dave Laundon`
+    !insertmacro STRFUNC_FUNC `StrIOToNSIS` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
 
     /*After this point:
       ------------------------------------------
-       $0 = String (input)
-       $1 = OutVar (output)
-       $2 = Temp (temp)*/
+       $R0 = String (input/output)
+       $R1 = StartCharPos (temp)
+       $R2 = StrLen (temp)
+       $R3 = TempStr (temp)
+       $R4 = TempRepStr (temp)*/
 
       ;Get input from user
-      Exch $0
-      Push $1
-      Push $2
-
-      ;Initialize output
-      StrCpy $1 ``
-
-      ;Loop until an escape character is found or "String" reaches its end
-      ${Do}
-        ;Get the next "String" character
-        StrCpy $2 $0 1
-
-        ;Abort when none left
-        ${If} $2 == ``
-          ${ExitDo}
-        ${Else}
-          ;Remove current character from "String"
-          StrCpy $0 $0 `` 1
-
-          ;Detect if current character is an escape character
-          ${If} $2 != `\`
-            ;If not just output
-            StrCpy $1 `$1$2`
-          ${Else}
-            ;Get the next "String" character
-            StrCpy $2 $0 1
-            ;Remove current character from "String"
-            StrCpy $0 $0 `` 1
-
-            ;Detect if current character is:
-            ${If} $2 == `\` ;Back-slash
-              StrCpy $1 `$1\`
-            ${ElseIf} $2 == `r` ;Carriage return
-              StrCpy $1 `$1$\r`
-            ${ElseIf} $2 == `n` ;Line feed
-              StrCpy $1 `$1$\n`
-            ${ElseIf} $2 == `t` ;Tab
-              StrCpy $1 `$1$\t`
-            ${Else} ;Anything else
-              StrCpy $1 "$1$2"
-            ${EndIf}
-          ${EndIf}
-        ${EndIf}
-      ${Loop}
+      Exch $R0
+      Push $R1
+      Push $R2
+      Push $R3
+      Push $R4
       
-    /*After this point:
-      ------------------------------------------
-       $0 = OutVar (output)*/
+      ;Get "String" length
+      StrLen $R2 $R0
 
-      ;Return output to user
-      StrCpy $0 $1
-      Pop $2
-      Pop $1
-      Exch $0
+      ;Loop until "String" end is reached
+      ${For} $R1 0 $R2
+        ;Get the next "String" characters
+        StrCpy $R3 $R0 2 $R1
+        
+        ;Detect if current character is:
+        ${If} $R3 == "\\" ;Back-slash
+          StrCpy $R4 "\"
+        ${ElseIf} $R3 == "\r" ;Carriage return
+          StrCpy $R4 "$\r"
+        ${ElseIf} $R3 == "\n" ;Line feed
+          StrCpy $R4 "$\n"
+        ${ElseIf} $R3 == "\t" ;Tab
+          StrCpy $R4 "$\t"
+        ${Else} ;Anything else
+          StrCpy $R4 ""
+        ${EndIf}
+
+        ;Detect if "TempRepStr" is not empty
+        ${If} $R4 != ""
+          ;Replace the old characters with the new one
+          StrCpy $R3 $R0 $R1
+          IntOp $R1 $R1 + 2
+          StrCpy $R0 $R0 "" $R1
+          StrCpy $R0 "$R3$R4$R0"
+          IntOp $R2 $R2 - 1 ;Decrease "StrLen"
+          IntOp $R1 $R1 - 2 ;Go back to the next character
+        ${EndIf}
+      ${Next}
+      Pop $R4
+      Pop $R3
+      Pop $R2
+      Pop $R1
+      Exch $R0
     FunctionEnd
-
   !macroend
 
   # Function StrLoc
   ###############
 
   !macro FUNCTION_STRING_StrLoc
-    !insertmacro STRFUNC_FUNC `StrLoc` `2004 Diego Pedroso`
+    !insertmacro STRFUNC_FUNC `StrLoc` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------
@@ -627,67 +622,69 @@ o-----------------------------------------------------------------------------o
   ####################
 
   !macro FUNCTION_STRING_StrNSISToIO
-    !insertmacro STRFUNC_FUNC `StrNSISToIO` `2003-2004 Amir Szekely, Joost Verburg and Dave Laundon`
+    !insertmacro STRFUNC_FUNC `StrNSISToIO` `2004 "bluenet" - Based on functions by Amir Szekely, Joost Verburg, Dave Laundon and Diego Pedroso`
 
     /*After this point:
       ------------------------------------------
-       $0 = String (input)
-       $1 = OutVar (output)
-       $2 = Temp (temp)*/
+       $R0 = String (input/output)
+       $R1 = StartCharPos (temp)
+       $R2 = StrLen (temp)
+       $R3 = TempStr (temp)
+       $R4 = TempRepStr (temp)*/
 
       ;Get input from user
-      Exch $0 ;String (input)
-      Push $1 ;OutVar (output)
-      Push $2 ;Temp (temp)
-
-      ;Initialize output
-      StrCpy $1 ``
-
-      ;Loop until an escape character is found or "String" reaches its end
-      ${Do}
-        ;Get the next "String" character
-        StrCpy $2 $0 1
-
-        ;Abort when none left
-        ${If} $2 == ``
-          ${ExitDo}
-        ${Else}
-          ;Remove current character from "String"
-          StrCpy $0 $0 `` 1
-
-          ;Detect if current character is:
-          ${If} $2 == `\` ;Back-slash
-            StrCpy $1 `$1\\`
-          ${ElseIf} $2 == `$\r` ;Carriage return
-            StrCpy $1 `$1\r`
-          ${ElseIf} $2 == `$\n` ;Line feed
-            StrCpy $1 `$1\n`
-          ${ElseIf} $2 == `$\t` ;Tab
-            StrCpy $1 `$1\t`
-          ${Else} ;Anything else
-            StrCpy $1 "$1$2"
-          ${EndIf}
-        ${EndIf}
-      ${Loop}
+      Exch $R0
+      Push $R1
+      Push $R2
+      Push $R3
+      Push $R4
       
-    /*After this point:
-      ------------------------------------------
-       $0 = OutVar (output)*/
+      ;Get "String" length
+      StrLen $R2 $R0
+
+      ;Loop until "String" end is reached
+      ${For} $R1 0 $R2
+        ;Get the next "String" character
+        StrCpy $R3 $R0 1 $R1
+
+        ;Detect if current character is:
+        ${If} $R3 == "$\r" ;Back-slash
+          StrCpy $R4 "\r"
+        ${ElseIf} $R3 == "$\n" ;Carriage return
+          StrCpy $R4 "\n"
+        ${ElseIf} $R3 == "$\t" ;Line feed
+          StrCpy $R4 "\t"
+        ${ElseIf} $R3 == "\" ;Tab
+          StrCpy $R4 "\\"
+        ${Else} ;Anything else
+          StrCpy $R4 ""
+        ${EndIf}
+
+        ;Detect if "TempRepStr" is not empty
+        ${If} $R4 != ""
+          ;Replace the old character with the new ones
+          StrCpy $R3 $R0 $R1
+          IntOp $R1 $R1 + 1
+          StrCpy $R0 $R0 "" $R1
+          StrCpy $R0 "$R3$R4$R0"
+          IntOp $R2 $R2 + 1 ;Increase "StrLen"
+        ${EndIf}
+      ${Next}
 
       ;Return output to user
-      StrCpy $0 $1
-      Pop $2
-      Pop $1
-      Exch $0
+      Pop $R4
+      Pop $R3
+      Pop $R2
+      Pop $R1
+      Exch $R0
     FunctionEnd
-
   !macroend
 
   # Function StrRep
   ###############
 
   !macro FUNCTION_STRING_StrRep
-    !insertmacro STRFUNC_FUNC `StrRep` `2002-2004 Hendri Adriaens`
+    !insertmacro STRFUNC_FUNC `StrRep` `2004 Diego Pedroso - Based on functions by Hendri Adriaens`
 
     /*After this point:
       ------------------------------------------
@@ -767,6 +764,7 @@ o-----------------------------------------------------------------------------o
       Pop $R6
       Pop $R5
       Pop $R4
+      Pop $R3
       Pop $R2
       Pop $R1
       Exch $R0
@@ -778,7 +776,7 @@ o-----------------------------------------------------------------------------o
   ################
 
   !macro FUNCTION_STRING_StrSort
-    !insertmacro STRFUNC_FUNC `StrSort` `2004 Diego Pedroso - based on SortString by "Afrow UK"`
+    !insertmacro STRFUNC_FUNC `StrSort` `2004 Diego Pedroso - Based on functions by Stuart Welch`
 
     /*After this point:
       ------------------------------------------
@@ -985,7 +983,7 @@ o-----------------------------------------------------------------------------o
   ###############
 
   !macro FUNCTION_STRING_StrStr
-    !insertmacro STRFUNC_FUNC `StrStr` `2002-2004 Ximon Eighteen`
+    !insertmacro STRFUNC_FUNC `StrStr` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------
@@ -1309,7 +1307,7 @@ o-----------------------------------------------------------------------------o
   ###############
 
   !macro FUNCTION_STRING_StrTok
-    !insertmacro STRFUNC_FUNC `StrTok` `2004 Diego Pedroso - based on StrTok by "bigmac666"`
+    !insertmacro STRFUNC_FUNC `StrTok` `2004 Diego Pedroso - Based on functions by "bigmac666"`
     /*After this point:
       ------------------------------------------
        $0 = SkipEmptyParts (input)
@@ -1341,6 +1339,8 @@ o-----------------------------------------------------------------------------o
       Push $6
       Push $7
       Push $8
+      Push $9
+      Push $R0
 
       ;Parameter defaults
       ${IfThen} $2 == `` ${|} StrCpy $2 `|` ${|}
@@ -1434,6 +1434,8 @@ o-----------------------------------------------------------------------------o
 
       ;Return output to user
 
+      Pop $R0
+      Pop $9
       Pop $8
       Pop $7
       Pop $6
@@ -1451,7 +1453,7 @@ o-----------------------------------------------------------------------------o
   ########################
 
   !macro FUNCTION_STRING_StrTrimNewLines
-    !insertmacro STRFUNC_FUNC `StrTrimNewLines` `2003-2004 Ximon Eighteen`
+    !insertmacro STRFUNC_FUNC `StrTrimNewLines` `2004 Diego Pedroso - Based on functions by Ximon Eighteen`
 
     /*After this point:
       ------------------------------------------

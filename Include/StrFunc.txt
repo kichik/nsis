@@ -378,7 +378,7 @@ How to use
 
     Example: 
 
-      ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
+      ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0" "0"
                     [_______(___)_______]( )
                               C           R
 
@@ -474,7 +474,7 @@ How to use
 
     Example: 
 
-      ${StrStrAdv} $0 "This IS really just an example" "IS " ">" ">" "1" "0" "1"
+      ${StrStrAdv} $0 "This IS really just an example" "IS " ">" ">" "0" "0" "1"
                        >>>>>( )[____________________]                       
 
 
@@ -584,11 +584,22 @@ Functions included and not included
 Version History
 ---------------
 
+1.09 - 10/22/2004
+
+- Fixed stack problems involving: StrCase, StrRep, StrSort, StrTok.
+- Fixed StrClb: When "Action" = "<>", handle was wrongly outputed as
+  text.
+- Fixed StrSort, StrStrAdv documentation examples.
+- Fixed StrIOToNSIS, StrLoc, StrNSISToIO, StrRep, StrStr: sometimes
+  didn't find "StrToSearch" at all.
+
 1.08 - 10/12/2004
 
 - Converted all the functions to LogicLib.
 - StrSort: Totally remade and it can break old scripts. See
   documentation for details.
+- StrTok: "ResultPart" has to start from 0 and it can break old scripts.
+  See documentation for details.
 - Added defines: StrFunc_List, *_List and *_TypeList.
 - Fixed StrStrAdv: Variables $R0-$R3 couldn't be used on scripts before
   calling.
@@ -598,8 +609,8 @@ Version History
 1.07 - 09/21/2004
 
 - Removed ${UnStrFunc} command. Now you can just include uninstall
-functions commands like ${UnStrStr} to be supported by uninstall functions
-and sections.
+  functions commands like ${UnStrStr} to be supported by uninstall functions
+  and sections.
 - Added case-sensitive comparation option for StrStrAdv.
 - StrCase now uses System.dll which makes case convertions effective with
 all latin letters (i.e. ê).
@@ -607,8 +618,6 @@ all latin letters (i.e. ê).
 - StrClbSet and StrClbGet removed, added StrClb.
 - Made compact the most usual operations inside the header file. File size
 reduced.
-- Added "!verbose" to header file -> faster compilation and header file
-output organized (code borrowed from LogicLib.nsh).
 
 1.06 - 03/26/2004
 
@@ -658,27 +667,25 @@ output organized (code borrowed from LogicLib.nsh).
 
 0.02 - 01/24/2004
 
-  - Completed StrFunc.nsh file. Need some tests and the readme.
+- Completed StrFunc.nsh file. Need some tests and the readme.
 
 0.01 - 01/22/2004
 
-  - First version to test ideas...
+- First version to test ideas...
 
 Credits
 -------
 
-Made by Diego Pedroso (aka deguix).
+  Made by Diego Pedroso (aka deguix).
 
 Functions Credits
 -----------------
 
-- StrCase, StrClb, StrLoc, StrSort, StrStrAdv and StrTok made
-  by Diego Pedroso, some based on functions made by Dave Laundon,
-  "Afrow UK" and "bigmac666".
-- StrRep made by Hendri Adriaens.
-- StrStr, StrTrimNewLines made by Ximon Eighteen.
-- StrNSISToIO and StrIOToNSIS made by Amir Szekely, Joost Verburg and
-  Dave Laundon.
+- All functions are made by Diego Pedroso on LogicLib format. They
+  are based on functions by Amir Szekely, Dave Laundon, Hendri
+  Adriaens, Nik Medved, Joost Verburg, Stuart Welch, Ximon Eighteen,
+  "bigmac666" and "bluenet". "bluenet"'s version of StrIOToNSIS and
+  StrNSISToIO on LogicLib format were included.
 
 License
 -------
