@@ -32,6 +32,35 @@ char *STRDUP(const char *c)
   return t;
 }
 
+void ConvertNewLines(char *str) {
+  char *p1, *p2;
+  for (p1=p2=str; *p1; p1++, p2++) {
+    if (*p1 == '\\') {
+      switch (p1[1]) {
+        case 'n':
+          *p2 = '\n';
+          break;
+        case 'r':
+          *p2 = '\r';
+          break;
+        case 't':
+          *p2 = '\t';
+          break;
+        case '\\':
+          *p2 = '\\';
+          break;
+        default:
+          p1--;
+          p2--;
+          break;
+      }
+      p1++;
+    }
+    else *p2 = *p1;
+  }
+  *p2 = 0;
+}
+
 #define FIELD_LABEL        (1)
 #define FIELD_ICON         (2)
 #define FIELD_BITMAP       (3)
@@ -482,33 +511,11 @@ bool ReadSettings(void) {
     pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
     pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
+    
+    // Label Text - convert newline
+        
     if (pFields[nIdx].nType == FIELD_LABEL && pFields[nIdx].pszText) {
-      char *p1, *p2;
-      for (p1=p2=pFields[nIdx].pszText; *p1; p1++, p2++) {
-        if (*p1 == '\\') {
-          switch (p1[1]) {
-            case 'n':
-              *p2 = '\n';
-              break;
-            case 'r':
-              *p2 = '\r';
-              break;
-            case 't':
-              *p2 = '\t';
-              break;
-            case '\\':
-              *p2 = '\\';
-              break;
-            default:
-              p1--;
-              p2--;
-              break;
-          }
-          p1++;
-        }
-        else *p2 = *p1;
-      }
-      *p2 = 0;
+      ConvertNewLines(pFields[nIdx].pszText);
     }
 
     // pszState cannot be NULL (?)
@@ -531,21 +538,11 @@ bool ReadSettings(void) {
     pFields[nIdx].nMinLength = GetPrivateProfileInt(szField, "MinLen", 0, pszFilename);
 
     pFields[nIdx].pszValidateText = myGetProfileStringDup(szField, "ValidateText");
+    
+    // ValidateText - convert newline
+        
     if (pFields[nIdx].pszValidateText) {
-      // translate backslash-n in the input into actual carriage-return/line-feed characters.
-      for (char *pPos = pFields[nIdx].pszValidateText; *pPos; pPos++) {
-        if (*pPos == '\\') {
-          if ((*(pPos + 1) == 'n') || (*(pPos + 1) == 'N')) {
-            *pPos = '\r';
-            *(pPos + 1) = '\n';
-/*
-          } else if (*(pPos + 1) == '\\') {
-            // if it's 2 backslash in a row, then skip the second.
-            pPos++;
-*/
-          }
-        }
-      }
+      ConvertNewLines(pFields[nIdx].pszValidateText);
     }
 
     {
