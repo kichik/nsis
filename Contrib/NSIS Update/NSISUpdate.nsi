@@ -540,6 +540,8 @@ Section ""
       StrCmp $TEMP1 "error" "" +3
         MessageBox MB_OK|MB_ICONSTOP "Can't execute CVS client."
         Quit
+        
+      DetailPrint "CVS Update Completed"
   
   done:
   
