@@ -153,7 +153,7 @@ uInt *hn)               /* working area: values in order of bit length */
   /* Generate counts for each bit length */
   p=c;
   y=16; while (y--) *p++ = 0;
-  p = b;  
+  p = b;
   i = n;
   do {
     c[*p++]++;                  /* assume all entries <= BMAX */
@@ -347,7 +347,7 @@ int inflate(z_streamp z)
       NEEDBITS(3)
       t = (uInt)b & 7;
       DUMPBITS(3)
-      s->last = t & 1 ? DRY : TYPE;
+      s->last = (t & 1) ? DRY : TYPE;
       switch (t >> 1)
       {
         case 0:                         /* stored */
@@ -459,7 +459,7 @@ int inflate(z_streamp z)
 
         t = huft_build(s->sub.trees.t_blens, 19, 19, (short *)Z_NULL, (short*)Z_NULL,
                  &s->sub.trees.tb, &s->sub.trees.bb, s->hufts, &hn);
-        if (t != Z_OK || s->sub.trees.bb == 0) 
+        if (t != Z_OK || !s->sub.trees.bb)
         {
           s->mode = BAD;
           break;
@@ -673,7 +673,7 @@ int inflate(z_streamp z)
       /* DRY if last, TYPE if not */
       s->mode = s->last;
       if (s->mode == TYPE)
-        LEAVE(Z_OK)
+        break;
       LEAVE(Z_STREAM_END)
     //case BAD:
       //r = Z_DATA_ERROR;
