@@ -1066,11 +1066,27 @@
   !ifndef MUI_STARTMENU_DEFAULTFOLDER
     !define MUI_STARTMENU_DEFAULTFOLDER "${MUI_PRODUCT}"
   !endif
-
+  
   Function "${SETSTARTMENU}"
   
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
     
+    !ifdef MUI_STARTMENU_REGISTRY_ROOT
+      !ifdef MUI_STARTMENU_REGISTRY_KEY
+        !ifdef MUI_STARTMENU_REGISTRY_VALUENAME
+        
+          StrCmp "${MUI_STARTMENU_VARIABLE}" "" "" +6
+          
+          Push ${MUI_TEMP1}
+            ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENU_REGISTRY_ROOT}" "${MUI_STARTMENU_REGISTRY_KEY}" "${MUI_STARTMENU_REGISTRY_VALUENAME}"
+            StrCmp ${MUI_TEMP1} "" +2
+              StrCpy "${MUI_STARTMENU_VARIABLE}" ${MUI_TEMP1}
+          Pop ${MUI_TEMP1}
+        
+        !endif
+      !endif
+    !endif
+
     StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENU_VARIABLE}" /checknoshortcuts "$(MUI_INNERTEXT_STARTMENU_CHECKBOX)" "${MUI_STARTMENU_DEFAULTFOLDER}"
     Pop "${MUI_STARTMENU_VARIABLE}"
     

@@ -10,10 +10,9 @@
 ;$9 is being used to store the Start Menu Folder.
 ;Do not use this variable in your script (or Push/Pop it)!
 
-;You can change this variable or the default Start Menu Folder by using
-;these defines:
-;!define MUI_STARTMENU_VARIABLE "$VAR"
-;!define MUI_STARTMENU_DEFAULTFOLDER "Folder Name"
+;To change this variable, use MUI_STARTMENU_VARIABLE.
+;Have a look at the Readme for info about other options (default folder,
+;registry).
 
 !define TEMP $R0
 
