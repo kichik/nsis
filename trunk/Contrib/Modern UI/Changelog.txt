@@ -1,7 +1,17 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.62b - March 2, 2003
+* New system for custom functions
+* Renamed Start Menu page defines
+* 'Do not create shortcuts' checkbox can be removed
+* RTL support
+* Documentation updates
+* Minor fixes
+* No changed language strings
+
 1.62 - February 2, 2003
 * Final version for NSIS 2 beta 1
+* New language strings for finish page
 * Possibility to let a Modern UI Function call your own function
 * No problems anymore when using both 'Run program' and 'Show Readme'
   on the finish page
