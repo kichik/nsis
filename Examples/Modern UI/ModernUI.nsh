@@ -198,13 +198,19 @@
   
 !macroend
 
+;INSTALL OPTIONS
+
 !macro MUI_INSTALLOPTIONS_INIT
+
+  ;Init plugin system (call this when using no plugins before using InstallOptions)
 
   Call Initialize_____Plugins
   
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNINIT
+
+  ;Init plugin system (call this when using no plugins before using InstallOptions)
 
   Call un.Initialize_____Plugins
   
