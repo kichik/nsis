@@ -36,7 +36,7 @@
 #define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
 #define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath"
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
-#define LOCALDOCS    "\\docs\\index.html"
+#define LOCALDOCS    "\\NSIS.chm"
 #define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
 #define DLGERROR     "Unable to intialize MakeNSISW."
 #define DEFINESERROR "Symbol cannot contain whitespace characters"
