@@ -492,7 +492,7 @@ Function FunctionName ;FunctionName defined with Page command
   Push $R1
   Push $R2
 
-    InstallOptions::initDialog $PLUGINSDIR\test.ini
+    InstallOptions::initDialog /NOUNLOAD $PLUGINSDIR\test.ini
     Pop $R0
     
     GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
