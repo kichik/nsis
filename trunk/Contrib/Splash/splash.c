@@ -1,5 +1,52 @@
 #include <windows.h>
 
+typedef struct _stack_t {
+  struct _stack_t *next;
+  char text[1]; // this should be the length of string_size
+} stack_t;
+
+int popstring(char *str); // 0 on success, 1 on empty stack
+void pushstring(char *str);
+
+enum
+{
+INST_0,         // $0
+INST_1,         // $1
+INST_2,         // $2
+INST_3,         // $3
+INST_4,         // $4
+INST_5,         // $5
+INST_6,         // $6
+INST_7,         // $7
+INST_8,         // $8
+INST_9,         // $9
+INST_R0,        // $R0
+INST_R1,        // $R1
+INST_R2,        // $R2
+INST_R3,        // $R3
+INST_R4,        // $R4
+INST_R5,        // $R5
+INST_R6,        // $R6
+INST_R7,        // $R7
+INST_R8,        // $R8
+INST_R9,        // $R9
+INST_CMDLINE,   // $CMDLINE
+INST_INSTDIR,   // $INSTDIR
+INST_OUTDIR,    // $OUTDIR
+INST_EXEDIR,    // $EXEDIR
+INST_LANG,      // $LANGUAGE
+__INST_LAST
+};
+
+char *getuservariable(int varnum);
+
+
+HINSTANCE g_hInstance;
+HWND g_hwndParent;
+int g_stringsize;
+stack_t **g_stacktop;
+char *g_variables;
+
 HBITMAP g_hbm;
 int sleep_val;
 int g_rv;
@@ -51,87 +98,101 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   return DefWindowProc(hwnd,uMsg,wParam,lParam);
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
+BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
-  char fn[MAX_PATH];
-  int hwndParent;
-  char *o=fn;
+  g_hInstance=hInst;
+	return TRUE;
+}
 
-  hInstance=GetModuleHandle(NULL);
-  lpszCmdParam=GetCommandLine();
-  if (*lpszCmdParam == '\"')
+void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+{
+  g_hwndParent=hwndParent;
+  g_stringsize=string_size;
+  g_stacktop=stacktop;
+  g_variables=variables;
+
+  // do your stuff here
   {
-    do
+    char fn[MAX_PATH];
+    char temp[64];
+    char *sleep=temp;
+
+    popstring(fn);
+    popstring(sleep);
+
+    sleep_val=0;
+    while (*sleep >= '0' && *sleep <= '9')
     {
-      lpszCmdParam++; 
-    } while (*lpszCmdParam != '\"' && *lpszCmdParam);
-    if (*lpszCmdParam) lpszCmdParam++;
-  }
-  else 
-  {
-    do
+      sleep_val*=10;
+      sleep_val+=*sleep++-'0';
+    }
+
+    if (fn[0] && sleep_val>0)
     {
-      lpszCmdParam++; 
-    } while (*lpszCmdParam != ' ' && *lpszCmdParam);
-  }
-  while (*lpszCmdParam == ' ') lpszCmdParam++;
-  sleep_val=0;
-  while (*lpszCmdParam >= '0' && *lpszCmdParam <= '9')
-  {
-    sleep_val*=10;
-    sleep_val += *lpszCmdParam++-'0';
-  }
-
-  while (*lpszCmdParam == ' ') lpszCmdParam++;
-  hwndParent=0;
-  while (*lpszCmdParam >= '0' && *lpszCmdParam <= '9')
-  {
-    hwndParent*=10;
-    hwndParent += *lpszCmdParam++-'0';
-  }
-
-  while (*lpszCmdParam == ' ') lpszCmdParam++;
-  while (*lpszCmdParam)
-  {
-    *o++=*lpszCmdParam++;
-  }
-  *o=0;
-
-  if (fn[0] && sleep_val>0)
-  {
-    MSG msg;
-    char classname[4]="_sp";
-    static WNDCLASS wc;
-	  wc.lpfnWndProc = WndProc;
-	  wc.hInstance = hInstance;
-	  wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-	  wc.lpszClassName = classname;
-    if (RegisterClass(&wc)) 
-    {
-      char fn2[MAX_PATH];
-      lstrcpy(fn2,fn);
-      lstrcat(fn,".bmp");
-      lstrcat(fn2,".wav");
-      g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
-      if (g_hbm) 
+      MSG msg;
+      char classname[4]="_sp";
+      static WNDCLASS wc;
+      wc.lpfnWndProc = WndProc;
+      wc.hInstance = g_hInstance;
+      wc.hCursor = LoadCursor(NULL,IDC_ARROW);
+      wc.lpszClassName = classname;
+      if (RegisterClass(&wc)) 
       {
-        BOOL s=0;
-        HANDLE f=CreateFile(fn2,0,0,NULL,OPEN_EXISTING,0,NULL);
-        if (f != INVALID_HANDLE_VALUE) { CloseHandle(f); s=PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME); }
-
-        CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
-          0,0,0,0,0,(HWND)hwndParent,NULL,hInstance,NULL);
-
-        while (GetMessage(&msg,NULL,0,0))
+        char fn2[MAX_PATH];
+        lstrcpy(fn2,fn);
+        lstrcat(fn,".bmp");
+        lstrcat(fn2,".wav");
+        g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
+        if (g_hbm) 
         {
-          DispatchMessage(&msg);
+          BOOL s=0;
+          HANDLE f=CreateFile(fn2,0,0,NULL,OPEN_EXISTING,0,NULL);
+          if (f != INVALID_HANDLE_VALUE) { CloseHandle(f); s=PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME); }
+
+          CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
+            0,0,0,0,0,(HWND)hwndParent,NULL,g_hInstance,NULL);
+
+          while (GetMessage(&msg,NULL,0,0))
+          {
+            DispatchMessage(&msg);
+          }
+
+          if (s) PlaySound(NULL,0,0);
+
+          DeleteObject(g_hbm);
+
+          wsprintf(temp,"%d",g_rv);
+          pushstring(temp);
         }
-
-        if (s) PlaySound(NULL,0,0);
-
-        DeleteObject(g_hbm);
       }
     }
   }
-  ExitProcess(g_rv);
+}
+
+// utility functions (not required but often useful)
+int popstring(char *str)
+{
+  stack_t *th;
+  if (!g_stacktop || !*g_stacktop) return 1;
+  th=(*g_stacktop);
+  lstrcpy(str,th->text);
+  *g_stacktop = th->next;
+  GlobalFree((HGLOBAL)th);
+  return 0;
+}
+
+void pushstring(char *str)
+{
+  stack_t *th;
+  if (!g_stacktop) return;
+  th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
+  lstrcpyn(th->text,str,g_stringsize);
+  th->next=*g_stacktop;
+  *g_stacktop=th;
+}
+
+char *getuservariable(int varnum)
+{
+  if (varnum < 0 || varnum >= __INST_LAST) return NULL;
+  return g_variables+varnum*g_stringsize;
 }
