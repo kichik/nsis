@@ -12,8 +12,11 @@ How to use
   Parameters are specified in this format: required (option1 | option2)
   [optional]
 
-  The stars in commands title (*****) are the function usefullness in my
+  The stars in command titles (*****) are the function usefulness in my
   opinion. 5 stars (*****) the function is much useful.
+
+  Any time when is mentioned "Default is" means that you can use the value
+  mentioned or keep blank, the result is the same.
 
   If you want a certain value (e.g. a text) to be language-specific, set a
   language string (using LangString) and define $(STRINGNAME) as value.
@@ -67,17 +70,17 @@ How to use
 
       "StrToSearchFor" + the string after where it was found in "String".
 
-    Example:
+    Example: 
 
       ${StrStr} $0 "This is just an example" "just"
 
       $0 = "just an example"
 
     =========================================================================
-    **                    ${StrLoc} ResultVar String StrToSearchFor Direction
+    **         ${StrLoc} ResultVar String StrToSearchFor OffsetDirection(>|<)
     =========================================================================
     Searches for "StrToSearchFor" in "String" and returns its location,
-    according to "Direction"
+    according to "OffsetDirection".
 
     Parameters:
 
@@ -90,15 +93,15 @@ How to use
       StrToSearchFor
       String to search in "String".
 
-      Direction
-      Direction where the counter goes to. (Anything except < = To Right,
-      < = To Left).
+      OffsetDirection(>|<)
+      Direction where the counter goes to. Default is ">". (> = left to right,
+      < = right to left)
 
     Result Value -> ResultVar:
 
-      Where "StrToSearchFor" is going to "direction".
+      Where "StrToSearchFor" is, according to "OffsetDirection".
 
-    Example:
+    Example: 
 
       ${StrLoc} $0 "This is just an example" "just" "<"
 
@@ -128,7 +131,7 @@ How to use
 
       ResultStrDirection (>|<)
       Where the result string will be based on in relation of "StrToSearchFor"
-      position. Default is ">" (to right) (< = To left, > = To right)
+      position. Default is ">" (to right). (< = To left, > = To right)
 
       DisplayStrToSearch (1|0)
       Display "StrToSearchFor" in the result. Default is "1" (True). (1 = True,
@@ -141,8 +144,8 @@ How to use
 
     Result Value -> ResultVar:
 
-      "StrToSearchFor" if "DisplayStrToSearch" is 1 + the result string the
-      direction "ResultStrDirection" of the "StrToSearchFor".
+      "StrToSearchFor" if "DisplayStrToSearch" is 1 + the result string after
+      or before "StrToSearchFor", depending on "ResultStrDirection".
 
     Result with Errors:
 
@@ -154,16 +157,16 @@ How to use
       When you put nothing in "String", will return an empty string and set
       error flag.
 
-    Example:
+    Example: 
 
       ${StrStrAdv} $0 "This is just an example" "is" "<" "<" "1" "1"
 
       $0 = "This"
 
     =========================================================================
-    *****        ${StrRep} ResultVar String StringToReplace ReplacementString
+    *****           ${StrRep} ResultVar String StrToReplace ReplacementString
     =========================================================================
-    Searches for all "StringToReplace" in "String" replacing those with
+    Searches for all "StrToReplaceFor" in "String" replacing those with
     "ReplacementString".
 
     Parameters:
@@ -172,12 +175,12 @@ How to use
       Destination where result is returned.
 
       String
-      String where to search "StringToReplaceIn".
+      String where to search "StrToReplaceFor".
 
-      StringToReplace
-      String to search for in "String".
+      StrToReplaceFor
+      String to search in "String".
 
-      ReplacementString
+      StringToBeReplacedWith
       String to replace "StringToReplace" when it is found in "String".
 
     Result Value -> ResultVar:
@@ -185,7 +188,7 @@ How to use
       "String" with all occurences of "StringToReplace" replaced with
       "ReplacementString".
 
-    Example:
+    Example: 
 
       ${StrRep} $0 "This is just an example" "an" "one"
 
@@ -195,7 +198,7 @@ How to use
     =========================================================================
     ****                                                  ${StrClbSet} String
     =========================================================================
-    Copy "String" to the clipboard.
+    Copy "String" to clipboard.
 
     Parameters:
 
@@ -234,7 +237,7 @@ How to use
       String where to search for "Separators".
 
       Separators
-      Characters to find in "StrToTokenizing".
+      Characters to find in "StrToTokenize".
 
       ResultPart
       The part want to be found in "StrToTokenize" between two "Separators".
@@ -249,7 +252,7 @@ How to use
 
       "StrToTokenize" part "Part" between two "Separators".
 
-    Examples:
+    Examples: 
 
       1) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "1"
 
@@ -307,6 +310,57 @@ How to use
       $0 = "oh man!"
 
     =========================================================================
+    *****              ${StrSort} ResultVar String CenterStr LeftStr RightStr
+                               IncludeLeftRightStr(1|0) IncludeCenterStr(1|0)
+    =========================================================================
+    Searches for "CenterStr" in "String", and returns only the value
+    between "LeftStr" and "RightStr", including or not the "CenterStr" using
+    "IncludeCenterStr" and/or the "LeftStr" and "RightStr" using
+    "IncludeLeftRightStr".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String where to search "CenterStr".
+
+      CenterStr
+      String to search in "String".
+
+      LeftStr
+      The first occurrence of "LeftStr" on the left of "CenterStr".
+      If it is an empty value, or was not found, will return
+      everything on the left of "CenterStr".
+
+      RightStr
+      The first occurrence of "RightStr" on the right of "CenterStr".
+      If it is an empty value, or was not found, will return
+      everything on the right of "CenterStr".
+
+      IncludeLeftRightStr(1|0)
+      Include or not the "LeftStr" and "RightStr" in the result value.
+      Default is 1 (True). (1 = True, 0 = False)
+
+      IncludeCenterStr(1|0)
+      Include or not the "CenterStr" in the result value. Default is 1
+      (True). (1 = True, 0 = False)
+
+    Result Value -> ResultVar:
+
+      String between "LeftStr" and "RightStr" of a found "CenterStr"
+      including or not the "LeftStr" and "RightStr" if
+      "IncludeLeftRightStr" is 1 and/or the "CenterStr" if
+      "IncludeCenterStr" is 1.
+
+    Example: 
+
+      ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
+
+      $0 = "This is an exam"
+
+    =========================================================================
     *                                     ${StrTrimNewLines} ResultVar String
     =========================================================================
     Deletes unnecessary new lines at end of "String".
@@ -332,7 +386,7 @@ How to use
     =========================================================================
     *****                                     ${StrNSISToIO} ResultVar String
     =========================================================================
-    Convert "String" from NSIS to be supported by Install Options plugin.
+    Converts "String" from NSIS to be supported by Install Options plugin.
     Escape, back-slash, carriage return, line feed and tab characters are
     converted.
 
@@ -382,35 +436,34 @@ How to use
 Comments about functions included and not included
 --------------------------------------------------
 
-12 functions have been included
+13 functions have been included
   7 were included was it was in Archive
-  4 were not included in Archive
-    AdvStrTok
+  5 were not included in Archive
+    StrTok
     NSISToIO
     IOToNSIS
     StrLoc
+    StrSort
   1 was been changed from original version
     StrClbGet
 
-11 functions were not been included
-  7 were not included because of better functions
-    5 were not included because of AdvStrTok (called here as StrTok)
+12 functions have not been included
+  8 were not included because of better functions
+    6 were not included because of AdvStrTok (called here as StrTok)
       First String Part Function
       Save on Variables Function
-      Sort Strings (1, and 2) Functions
+      Sort Strings (1, 2 and 3) Functions
       StrTok Function
     1 was not included because of NSISToIO and IOToNSIS
       Convert / to // in Paths Function
     1 was not included because of original String Replace Function (called
       here as StrRep)
       Another String Replace Function
-  2 were not included because isn't usefull anymore
+  2 were not included because isn't useful anymore
     Slash <-> Backslash Converter Function
     Trim Function
   1 was not included because of bugs
     Number to String Converter Function
-  1 removed by kichik
-    StrSort
 
 Comments
 ------------------------------------------------------------
@@ -420,6 +473,10 @@ Advanced Token String Function
   New function not published in Archive, much better than original StrTok,
   going to replace several functions with just one. The principal idea was
   based on "Save On Variables" by Afrow UK.
+
+Advanced String Sort Function
+
+  New function not published in Archive, much better than original StrSort.
 
 Another String Replace Function
 
@@ -455,12 +512,15 @@ Save on Variables Function
 
   AdvStrTok (called here as StrTok) is better.
 
-
 Slash <-> Backslash Converter Function
 
   Will convert "http://www.site.com\" to "http:\\www.site.com/", not
   really useful for anyone.
 
+Sort Strings (1, 2 and 3) Functions
+
+  AdvStrTok (called here as StrTok), AdvStrStr (called here as StrStrAdv)
+  and AdvStrSort (called here as StrSort) are better.
 
 Split String Function
 
@@ -478,18 +538,17 @@ Trim Function
   paths, and now with the NSIS command GetFullPathName this is not useful
   anymore.
 
-
 Version History
 ---------------
 
-1.02 (kichik) - 02/07/2004
+1.02 - 02/07/2004
 
- - Documentation fixes.
- - Fixed StrLoc.
- - Remove StrSort as it was giving too much trouble and it looks like it's
-built for a very specific, nongeneric purpose.
+- Fixed StrLoc.
+- Fixed Documentation about StrLoc. "Direction" is really
+"OffsetDirection".
+- Added my new AdvStrSort, and removed the old one.
 
-1.01 - 02/06/2004
+1.01 - 02/05/2004
 
 - Fixed Documentation about StrSort and StrTok.
 - Fixed StrTok default value for the string part. Now it's "L".
@@ -503,7 +562,7 @@ substrings one after another in a string.
 - Renamed header file to "StrFunc.nsh".
 - Added 1 function, StrLoc.
 - Modified StrStrAdv, removed some lines.
-- Fixed StrTok, 2 simple numbers made it loop everytime.
+- Fixed StrTok, 2 simple numbers made it loop every time.
 - Fixed some small issues in the header file.
 
 0.02 - 01/24/2004
@@ -522,10 +581,9 @@ Made by Diego Pedroso (aka deguix).
 Functions Credits
 -----------------
 
-- Advanced Search in String, Advanced Token String, String Localizator
+- Advanced Search in String, Advanced Token String, Localize in String
 made by Diego Pedroso.
 - Copy to/from clipboard made by Nik Medved.
-- Sort String 3 made by "Afrow UK".
 - StrUpper made by Dave Laundon.
 - StrReplace made by Hendri Adriaens.
 - Search in a string, Trim newlines made by Ximon Eighteen.
