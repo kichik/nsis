@@ -34,6 +34,22 @@
   !ifndef MUI_UI
     !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
   !endif
+  
+  !ifndef MUI_UI_HEADERBITMAP
+    !define MUI_UI_HEADERBITMAP "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+  !endif
+
+  !ifndef MUI_UI_HEADERBITMAP_RIGHT
+    !define MUI_UI_HEADERBITMAP_RIGHT "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+  !endif
+  
+  !ifndef MUI_UI_SMALLDESCRIPTION
+    !define MUI_UI_SMALLDESCRIPTION "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+  !endif
+
+  !ifndef MUI_UI_NODESCRIPTION
+    !define MUI_UI_NODESCRIPTION "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+  !endif
 
   !ifndef MUI_ICON
     !define MUI_ICON "${NSISDIR}\Contrib\Icons\modern-install.ico"
@@ -111,27 +127,27 @@
     ChangeUI all "${MUI_UI}"
     !ifdef MUI_HEADERBITMAP
       !ifndef MUI_HEADERBITMAP_RIGHT
-        ChangeUI IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+        ChangeUI IDD_INST "${MUI_UI_HEADERBITMAP}"
       !else
-        ChangeUI IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+        ChangeUI IDD_INST "${MUI_UI_HEADERBITMAP_RIGHT}"
       !endif
     !endif
     !ifdef MUI_COMPONENTSPAGE_SMALLDESC
-      ChangeUI IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+      ChangeUI IDD_SELCOM "${MUI_UI_SMALLDESCRIPTION}"
     !else ifdef MUI_COMPONENTSPAGE_NODESC
-      ChangeUI IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+      ChangeUI IDD_SELCOM "${MUI_UI_NODESCRIPTION}"
     !endif
   !else
     ChangeUI /RTL all "${MUI_UI}"
     !ifndef MUI_HEADERBITMAP_RIGHT
-      ChangeUI /RTL IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+      ChangeUI /RTL IDD_INST "${MUI_UI_HEADERBITMAP}"
     !else
-      ChangeUI /RTL IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+      ChangeUI /RTL IDD_INST "${MUI_UI_HEADERBITMAP_RIGHT}"
     !endif
     !ifdef MUI_COMPONENTSPAGE_SMALLDESC
-      ChangeUI /RTL IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+      ChangeUI /RTL IDD_SELCOM "${MUI_UI_SMALLDESCRIPTION}"
     !else ifdef MUI_COMPONENTSPAGE_NODESC
-      ChangeUI /RTL IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+      ChangeUI /RTL IDD_SELCOM "${MUI_UI_NODESCRIPTION}"
     !endif
   !endif
   
