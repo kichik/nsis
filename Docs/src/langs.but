@@ -55,7 +55,7 @@ When the installer starts up it goes through these stages to select the interfac
 
 \n If no match, take the first language defined in the script
 
-\n If \R{var1}{$LANGUAGE} has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
+\n If \R{varconstant}{$LANGUAGE} has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
 
 \S1{/lang} The /LANG Parameter
 

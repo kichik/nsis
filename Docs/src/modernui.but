@@ -1,4 +1,3 @@
 \A{modernui} Modern User Interface
 
-Use the NSIS Modern User Interface to give your installers a modern look.
-For more info, have a look at the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme}.
+If you want to create an installer with a modern user interface (like the wizards of recent Windows versions), have look at the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme}.

@@ -1,8 +1,24 @@
-\H{var} Variables
+\H{variables} Variables
 
-\S1{var1} Modifiable Variables Used in Instructions
+All variables are global and can be used in Sections or Functions. Variables are case sensitive.
 
-Note: All Variables provided by NSIS are case sensitive.
+\S1{varuser} User Variables
+
+\e{$VARNAME}
+
+User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with sring manipulation etc.
+
+\S2{var} Var
+
+\c var_name
+
+Declare a user variable. Allowed charaters for variables names: [a-z][A-Z][0-9] and '_'.
+
+\S1{varother} Other Writable Variables
+
+\e{$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9}
+
+Registers. These variables can be used just like user variables, but are usually used in shared functions or macro's. You don't have to declare these variables, so you won't get any name conflics when using them in shared code. When using these variables in shared code, it's recommended that you use the stack to save and restore their original values. These variables can also be used for communication with plug-ins, because they can be read and written by the plug-in DLL's.
 
 \e{$INSTDIR}
 
@@ -11,10 +27,6 @@ The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{
 \e{$OUTDIR}
 
 The current output directory (set implicitly via \R{setoutpath}{SetOutPath} or explicitly via \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc)
-
-\e{$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9}
-
-User variables (set via \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc, and use like any other variable). It is recommended (but not required) that you use $R1-$R9 as local registers, and $0-$9 as global values. Note that any function that lets you specify one of these variables as an output, can use $INSTDIR or $OUTDIR as well (but has different implications).
 
 \e{$CMDLINE}
 
@@ -30,7 +42,9 @@ The command line of the installer. The format of the command line can be one of 
 
 The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
 
-\S1{var2} Constant Variables Used in Instructions and InstallDir
+\S1{varconstant} Constant Variables
+
+Constant variables can also be used in the \R{ainstalldir}{InstallDir} attribute.
 
 \e{$PROGRAMFILES}
 
@@ -84,11 +98,11 @@ The decimal HWND of the parent window.
 
 The path to a temporary folder created upon the first usage of a plugin or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \W{../Contrib/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plugin, or any other file that a plugin needs to work.
 
+\S1{varstrings} Variables Used in Strings
+
 \e{$$}
 
 Use to represent $.
-
-\S1{var3} Variables Used in Strings
 
 \e{$\\r}
 
@@ -115,3 +129,5 @@ This code will set the name of the installer to "Test Program $\{VERSION\}". The
 \c Name "Test Program ${VERSION}"
 
 This code sets the name of the installer to "Test Program V.1.0"
+
+For more info, see \R{compdefines}{Conditional Compilation}.

@@ -77,9 +77,21 @@ For more information about sections see \R{functions}{Functions}.
 
 \S2{tutVariables} Variables
 
-NSIS offers 20 Variables that can be used in any Section or Function. In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable. For example, the value of $0 is 123.
+You can decalare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function. For shared code, there are also \R{varother}{20 registers avaibable} (like $0). These static variables don't have to be declared and you won't get any name conflics.
 
-Now you are going to call the function bla:
+Declaring and using a user variable:
+
+\c Var BLA ;Declare the variable
+\c
+\c Section bla
+\c
+\c   StrCpy $BLA "123" ;Now you can use the variable $BLA
+\c
+\c SectionEnd
+
+In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable.
+
+For example, the value of $0 is 123. Now you are going to call the function bla:
 
 \c Function bla
 \c
@@ -96,12 +108,12 @@ After calling the function, the variables contain the same value as before. Note
 \c Function bla
 \c
 \c   Push $0
-\c  Push $1
+\c   Push $1
 \c
 \c     ...code...
 \c
-\c  Pop $1
-\c  Pop $0
+\c   Pop $1
+\c   Pop $0
 \c
 \c FunctionEnd
 
@@ -158,7 +170,7 @@ Every plug-in's function has its own requirements when it comes to parameters, s
 
 \c nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
 \c InstallOptions::dialog "$PLUGINSDIR\test.ini"
-\c NSISdl::download http://download.nullsoft.com/winamp/client/winamp281_lite.exe $2
+\c NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
 
 The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \W{../Plugins/}{Plugins directory} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addPluginDir} to tell NSIS to search in other directories too.
 

@@ -2,7 +2,7 @@
 
 \S2{initpluginsdir} InitPluginsDir
 
-Initializes the plugins dir (\R{var2}{$PLUGINSDIR}) if not already initialized.
+Initializes the plugins dir (\R{varconstant}{$PLUGINSDIR}) if not already initialized.
 
 \S2{setshellvarcontext} SetShellVarContext
 
