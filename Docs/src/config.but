@@ -12,6 +12,8 @@
 
 \preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
 
+\preamble To talk with others in the NSIS community set your browser to \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum}.
+
 \preamble For more useful functions, NSIS related software, example scripts, plugins and tutorials: visit the \W{http://nsis.sourceforge.net/archive/}{the NSIS Archive}.
 
 \copyright Copyright (c) 2002 Nullsoft, Inc.

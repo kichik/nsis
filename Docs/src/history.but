@@ -10,9 +10,31 @@
 
 \b InstallOptions 2.0 with support for custom font and DPI settings, groupboxes, grouped controls, lots of bugfixes etc.
 
-\b Include dirs
+\b No more random compression ratios
 
-\b All !if/!else/!endif problems should be solved now 
+\b SetOutPath now sets the working directory
+
+\b File names are validated, directory given by the user will now always work
+
+\b $QUICKLAUNCH now works with SetShellVarContext all
+
+\b Automatically appended directory name in the directory selection dialog will no longer contain squares if not all characters are ASCII.
+
+\b Fixed a bug with remote drives and available space (\\\\remote\\drive)
+
+\b LangStrings now work as function, can be used before defined
+
+\b Plug-in function's names are now case insensitive
+
+\b Fixed a bug with specifying Icon twice
+
+\b Include dirs (!addincludedir)
+
+\b On leave function for pages
+
+\b Installers can now really contain more than one branding image
+
+\b All !if/!else/!endif problems should be solved now
 
 \b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style 
 
@@ -26,9 +48,19 @@
 
 \b Banner.dll compatible with Modern UI
 
+\b Fixed focus problems in MakeNSISw
+
 \b Updated and new translations
 
+\b Some new bitmaps for the MUI by Virtlink
+
+\b Faster and better MakeNSISw integration
+
+\b New .NET Framework detection function in \k{detect.netframework}
+
 \b Minor bugfixes
+
+\b Code clean-ups (compiles on VC7)
 
 
 \e{v2.0b0}
