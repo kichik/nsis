@@ -65,8 +65,7 @@
 
 
 // smaller data mode that saves 336 bytes of data, but adds 60 bytes of code.
-// currently saving code is more important to reach our targets. this may change tho.
-#if 0
+#if 1
 
 #define PACK3(x,y,z) ((z) << 20)|((y) << 10)|(x)
 
