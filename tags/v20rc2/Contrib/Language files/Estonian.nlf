@@ -1,0 +1,83 @@
+# Header, don't edit
+NLF v5
+# Language ID
+1061
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by izzo (izzo@hot.ee)
+Nullsoft Install System %s
+$(^Name) Paigaldamine
+$(^Name) Eemaldamine
+: Litsentsileping
+: Paigaldusvalikud
+: Paigalduskaust
+: Paigaldan
+: Valmis
+: Kinnitus
+: Eemaldan
+: Valmis
+< &Tagasi
+&Edasi >
+&Nõustun
+&Nõustun litsentsilepingu tingimustega
+&Ei nõustu litsentsilepingu tingimustega 
+&Paigalda
+&Eemalda
+Loobu
+&Sule
+S&irvi...
+&detailid
+Nimi
+Valmis
+Kohandatud
+Vali paigalduse tüüp:
+Vali paigaldatavad komponendid:
+või, vali lisakomponendid mida soovid paigaldada:
+Vali kaust kuhu installeerida %:
+Olemasolev ruum: 
+Vajalik ruum: 
+Eemaldan sealt:
+Tõrge faili kirjutamiseks avamisel: \r\n\t"$0"\r\nPaigalduse katkestamiseks vajuta 'katkesta',\r\nvajuta 'ürita uuesti', et faili kirjutamist uuesti proovida, või\r\n'ignoreeri', et see fail vahele jätta
+Tõrge faili kirjutamiseks avamisel: \r\n\t"$0"\r\nVajuta 'ürita uuesti', et faili kirjutamist uuesti proovida, või\r\n'loobu', et paigaldamine katkestada
+Ei saa kirjutada: 
+Kopeerimine ebaõnnestus
+kopeeri sinna
+Registreerin:
+Desregistreerin 
+Ei leidnud sümbolit: 
+Ei saanud laadida: 
+Loo kaust: 
+Loo otsetee: 
+Loodud eemaldaja: 
+Kustuta fail: 
+Kustuta taaskäivitusel: 
+Tõrge otsetee loomisel: 
+Tõrge loomisel: 
+Tõrge andmete lahtipakkimisel! Vigane paigaldaja?
+Tõrge DLL-i registreerimisel
+ExecShell: 
+Teosta: 
+Paki lahti: 
+Paki lahti: viga faili kirjutamisel 
+Paigaldaja kõlbmatu: vigane opkood
+No OLE for: 
+Väljastatav kaust: 
+Eemalda kaust: 
+Nimeta ümber taaskäivitusel: 
+Nimeta ümber: 
+Vahele jäetud:
+Kopeeri detailid lõikelauale
+Logi paigaldusprotsess
+# bait
+B
+# kilo
+K
+# mega
+M
+# giga
+G

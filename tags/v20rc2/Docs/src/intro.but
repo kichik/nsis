@@ -1,0 +1,105 @@
+\C{intro} Introduction to NSIS
+
+\B{intro-about} About NSIS
+
+NSIS, which stands for "Nullsoft Scriptable Installation System", is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge. It was originally created by Nullsoft to distribute Winamp and its plug-ins, but is now a system used to distribute hundreds of applications.
+
+NSIS creates installers that are capable of installing, uninstalling, setting system settings, extracting files, etc. Pretty much anything. Because it's based on script files, you can fully control every part of your installers. The script language support variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
+
+Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB. NSIS installers don't bother decompressing themselves three different times, telling the user to "please wait". They get to the point and get the job done.
+
+NSIS is released under an open source license (it is actually the zlib/libpng license, which is approved by opensource.org). What does this mean? It means that if you want to add the functionality you need to NSIS, you can. It means if you want to make your own custom version of NSIS (or some product that includes NSIS), and sell it, you can. Or if you just want to distribute your software using NSIS, you sure as hell can. NSIS 2 is now being developed by a team of open source developers.
+
+The result of all of this is an installation system that lets you compile nice little scripts into tiny installers. Many features are supported, and the whole thing just works pretty damn well (at least, we think).
+
+\B{intro-features} Main Features
+
+Here's a short list of some of NSIS' features:
+
+\b SuperPiMP\\&trade; technology (so advanced, so amazing, we won't even tell you what it is)
+
+\b Generates self contained executable installers
+
+\b Support for ZLib, BZip2 and LZMA data compression (files can be compressed individually or together) 
+
+\b Uninstall support (installer can generate an uninstaller) 
+
+\b Customizable user interface (dialogs, fonts, backgrounds, icons, text, checkmarks, images etc.)
+
+\b Classic and Modern wizard interface
+
+\b Fully multilingual, support for multiple languages in one installer. More than 35 translations are available, but you can also create your own 
+
+\b Page system: You can add standard wizard pages or custom pages 
+
+\b User selection of installation components, tree for component selection
+
+\b Multiple install configurations (usually Minimal, Typical, Full), and custom configuration
+
+\b Installer self-verification using a CRC32 checksum
+
+\b Small overhead over compressed data size (34 KB with default options)
+
+\b Ability to display a license agreement in text or RTF format
+
+\b Ability to detect destination directory from the registry
+
+\b Easy to use plug-in system (lots of plug-ins for creation of custom dialogs, internet connections, HTTP downloading, file patching, Win32 API calls etc. are included)
+
+\b Installers can be as large as 2GB
+
+\b Optional silent mode for automated installations
+
+\b A preprocessor with support for defined symbols, macro's, conditional compilation, standard predefines
+
+\b A lovely coding experience with elements of PHP and assembly (includes user variables, a stack, real flow control, etc.)
+
+\b Installers have their own VMs that let you write code that can support:
+
+\\<ul\\>
+
+\b File extraction (with configurable overwrite parameters)
+
+\b File/directory copying, renaming, deletion, searching
+
+\b Plug-in DLL calling
+
+\b DLL/ActiveX control registration/deregistration
+
+\b Executable execution (shell execute and wait options)
+
+\b Shortcut creation
+
+\b Registry key reading/setting/enumerating/deleting
+
+\b INI file reading/writing
+
+\b Generic text file reading/writing
+
+\b Powerful string and integer manipulation
+
+\b Window finding based on class name or title
+
+\b User interface manipulation (font/text setting)
+
+\b Window message sending
+
+\b User interaction with message boxes or custom pages
+
+\b Branching, comparisons, etc.
+
+\b Error checking
+
+\b Reboot support, including delete or rename on reboot
+
+\b Installer behaviour commands (such as show/hide/wait/etc)
+
+\b User functions in script
+
+\b Callback functions for user actions
+
+\\</ul\\>
+
+\b Completely free for any use. See \R{license}{license}.
+
+\b More
