@@ -9,8 +9,6 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <shlobj.h>
-#include <atlbase.h>
-#include <stdio.h>
 #include <commdlg.h>
 #include <cderr.h>
 #include "resource.h"
@@ -269,15 +267,14 @@ bool BrowseForFolder(int nControlIdx) {
 	  LPSHELLFOLDER sf;
 	  ULONG eaten;
 	  LPITEMIDLIST root;
-#define _alloca MALLOC
-	  USES_CONVERSION;
-	  LPOLESTR s = A2OLE(pFields[nControlIdx].pszRoot);
-#undef _alloca
+    int ccRoot = (lstrlen(pFields[nControlIdx].pszRoot) * 2) + 2;
+    LPWSTR pwszRoot = (LPWSTR) MALLOC(ccRoot);
+    MultiByteToWideChar(CP_ACP, 0, pFields[nControlIdx].pszRoot, -1, pwszRoot, ccRoot);
 	  SHGetDesktopFolder(&sf);
-	  sf->ParseDisplayName(hConfigWindow, NULL, (unsigned short *)s, &eaten, &root, NULL);
+	  sf->ParseDisplayName(hConfigWindow, NULL, pwszRoot, &eaten, &root, NULL);
 	  bi.pidlRoot = root;
 	  sf->Release();
-	  FREE(s);
+	  FREE(pwszRoot);
   }
 //  CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
   LPITEMIDLIST pResult = SHBrowseForFolder(&bi);
