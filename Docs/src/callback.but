@@ -162,9 +162,9 @@ Example:
 \c     MessageBox MB_OK "Congrats, it's gone."
 \c   FunctionEnd
 
-\S3{unonguiend} .onGUIEnd
+\S3{unonguiend} un.onGUIEnd
 
-This callback is called right after the installer window closes. Use it to free any user interface related plug-ins if needed.
+This callback is called right after the uninstaller window closes. Use it to free any user interface related plug-ins if needed.
 
 \S3{unonuserabort} un.onUserAbort
 
