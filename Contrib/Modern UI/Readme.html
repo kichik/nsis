@@ -31,9 +31,9 @@ table
 
 .maintable
 	{
-    border: 2px solid #376EAB;
+	border: 2px solid #376EAB;
 	}
-
+	
 .margin
 	{
 	margin: 20px;
@@ -48,10 +48,6 @@ table
 	{
 	font-weight: bold;
 	color: #303030;
-	}
-
-.changelog
-	{
 	}
 
 .header
@@ -95,10 +91,10 @@ a:hover
 <body>
 
 <div class="center">
-<table width="750" cellpadding="0" cellspacing="0" class="maintable">
+<table width="750" class="maintable" cellspacing="0" cellpadding="0">
 <tr><td>
-<table border="0" cellpadding="0" cellspacing="0">
-<tr class="header">
+<table cellspacing="0" cellpadding="0">
+<tr>
   <td><img src="Readme.jpg" width="750" height="80" alt=""></td>
 </tr>
 
@@ -113,8 +109,6 @@ with a custom user interface.</p>
   component selection page.</p>
 <p class="text">To use this new interface for your installer, you need 
   to add some code to your NSIS script. Read this document for more info!</p>
-<p class="header">Requirements</p>
-<p class="text"><a href="http://nsis.sourceforge.net">NSIS 2 beta 0 (or later)</a></p>
 <p class="header">Screenshots</p>
 <p class="text"><img src="Screenshot.png" width="503" height="393" alt=""></p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt=""></p>
@@ -129,7 +123,7 @@ double quote (&quot;) to a Modern UI string, you should always escape
 it ($\&quot;), because the Modern UI macro's use &quot; to separate
 parameters.</p>
 <p class="text">To use the Modern UI in an existing script, you should
-add the following things (in order, from the beginning of the script):</p>
+follow these steps:</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
   <p class="subheader">2. Define the name and version of your software</p>
@@ -228,13 +222,13 @@ add the following things (in order, from the beginning of the script):</p>
   <p class="text">You don't need to edit the language files if you want to customize
   some strings. Use defines before you insert the language file:</p>
 <pre class="margin">
-!define MUI_INNERTEXT_LICENSE_TOP "Text on the top of the license dialog"
-!insertmacro MUI_LANGUAGE "English"
+!define MUI_BRANDINGTEXT "French Branding Text"
+!insertmacro MUI_LANGUAGE "French"
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.
   <p class="text"><span class="bold">Note:</span> Not all language files contain strings for the
-  new Start Menu Folder selection, Welcome and Finish pages yet. If you are using one of these
+  new Start Menu Folder selection-, Welcome- and Finish page yet. If you are using one of these
   pages and the language file does not contain these strings, you should always define them.<br>
   Please help to translate the new strings and post them at the
   <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
@@ -251,8 +245,6 @@ add the following things (in order, from the beginning of the script):</p>
   The icon of the uninstaleller.</p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br>
   The bitmap with images for the checks of the component select treeview.</p>
-  <p class="text"><span class="bold">MUI_BRANDINGTEXT</span> <i>(Nullsoft Install System ?.??)</i><br>
-  The text at the bottom left corner of the window.</p>
   <p class="text"><span class="bold">MUI_FONT, MUI_FONTSIZE</span> <i>(MS Shell Dlg, 8)</i><br>
   The font for the normal texts.</p>
   <p class="text"><span class="bold">MUI_FONT_HEADER, MUI_FONTSIZE_HEADER, MUI_FONTSTYLE_HEADER</span>
@@ -260,15 +252,17 @@ add the following things (in order, from the beginning of the script):</p>
   The font for the title in the header. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
   <p class="text"><span class="bold">MUI_FONT_TITLE, MUI_FONTSIZE_TITLE, MUI_FONTSTYLE_TITLE</span>
   <i>(Verdana, 12, 700)</i><br>
-  The font for the title on the Welcome and Finish pages. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
+  The font for the title on the Welcome and Finish page. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br>
   The colors of the details screen, hexadecimal (&quot;foreground&quot; &quot;background&quot;).
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
   The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look).</p>
   <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br>
-  Install Options INI File for the Welcome and Finish pages.</p>
+  Install Options INI File for the Welcome and Finish page.</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
-  Bitmap for the Welcome and Finish pages.</p>
+  Bitmap for the Welcome and Finish page.</p>
+  <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br>
+  Background color for the header, Welcome page and Finish page.</p>
   <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro
@@ -303,6 +297,9 @@ Section "Section Name 1" Section1
   ...
 SectionEnd
 </pre>
+<p class="subheader">10. Reserve Files</p>
+<p class="text">If you are using BZIP2 compression, you might need to
+insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="text">
 <p class="subheader">Custom page commands</p>
@@ -348,13 +345,58 @@ LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
 
 Function FunctionName
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioFile.ini"
+FunctionEnd
+</pre>
+<p class="text">For custom fonts and colors, macro's for the initDialog and show
+functions of InstallOptions are also available:</p>
+<pre class="margin">
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
+
+Function FunctionName ;FunctionName defined with Page command
+
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+
+  Push $R0
+  Push $R1
+  Push $R2
+
+    !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
+    Pop $R0
+    
+    GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
+    
+    ;$R1 contains the HWND of the first field
+    CreateFont $R2 "Tahoma" 10 700 
+    SendMessage $R1 ${WM_SETFONT} $R2 0
+	
+    !insertmacro MUI_INSTALLOPTIONS_SHOW
+	
+  Pop $R1
+  Pop $R1
+  Pop $R0
+
 FunctionEnd
 </pre>
 <p class="text">To read or write values to the INI Files on runtime, use these macro's:</p>
 <pre class="margin">
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
+</pre>
+<p class="header"><a name="ReserveFile">Reserve files</a></p>
+<p class="text">If you are using BZIP2 compression, it's important that
+files which are being extracted in the .onInit function or in Page
+functions are first in the data block, because this will make your installer
+start faster.</p>
+<p class="text">If these functions are not above any other File command,
+insert the ReserveFile commands or macro's above other File commands:</p>
+<pre class="margin">
+ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+
+!insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
+!insertmacro MUI_RESERVEFILE_INSTALLOPTION ;InstallOptions
+!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection page)
 </pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
@@ -368,7 +410,7 @@ FunctionEnd
   <p class="text">There are three different versions of the Modern UI.
   Modern.exe contains the dialogs of the standard interface.
   If you have an installer with a lot of subsections or long section
-  names, use modern2.exe, which has a different component-selection page.
+  names, use modern2.exe, which has a different component selection page.
   Use modern3.exe if you are not using descriptions.</p>
 <p class="subheader">Customize the dialogs</p>
   <p class="text">To change elements on the dialogs, modify modern?.exe
@@ -400,32 +442,35 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li class="changelog">1.62 - December 14, 2002
+<li>1.62 - December 15, 2002
   <ul>
     <li>No problems anymore when using both 'Run program' and 'Show Readme'
-    on the finish page
-    <li>Default state of checkboxes on the finish page can be changed
-    <li>Welcome / Finish pages compatible with custom DPI settings
-    <li>Converted Install Options INI files to use dialog units
+    on the finish page</li>
+    <li>Default state of checkboxes on the finish page can be changed</li>
+    <li>Welcome / Finish page compatible with custom DPI settings</li>
+    <li>Converted Install Options INI files to use dialog units</li>
+    <li>Support for multilingual branding texts</li>
+    <li>More ReserveFile macro's</li>
+    <li>Background color can be changed with a define</li>
   </ul>
 <p class="text"></p>
-<li class="changelog">1.61 - December 5, 2002
+<li>1.61 - December 5, 2002
   <ul>
-    <li>Final version for NSIS 2 beta 0
-    <li>modern3.exe UI without description area
-    <li>Added define to show uninstall confirm page
-    <li>Added language string for finish page title and continue to uninstall
-    <li>Define for parameters for the application to run on the finish page
+    <li>Final version for NSIS 2 beta 0</li>
+    <li>modern3.exe UI without description area</li>
+    <li>Added define to show uninstall confirm page</li>
+    <li>Added language string for finish page title and continue to uninstall</li>
+    <li>Define for parameters for the application to run on the finish page</li>
     <li>Bugfixes
   </ul>
 <p class="text"></p>
-<li class="changelog">1.6 - November 18, 2002
+<li>1.6 - November 18, 2002
   <ul>
-    <li>Welcome / Finish pages
-    <li>Automatic ask for reboot on the finish page
-    <li>Create no shortcut option on the Start Menu Folder selection page
-    <li>Customizing GUIInit functions easier
-    <li>Minor font / UI changes
+    <li>Welcome / Finish page</li>
+    <li>Automatic ask for reboot on the finish page</li>
+    <li>Create no shortcut option on the Start Menu Folder selection page</li>
+    <li>Customizing GUIInit functions easier</li>
+    <li>Minor font / UI changes</li>
   </ul>
 </ul>  
 <p class="text"><a href="Changelog.txt">Complete version history</a></p>
