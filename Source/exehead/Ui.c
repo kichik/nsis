@@ -735,9 +735,11 @@ static char * NSISCALL inttosizestr(int kb, char *str)
 {
   char sh=20;
   char c='G';
+  char s=0;;
   if (kb < 1024) { sh=0; c='K'; }
   else if (kb < 1024*1024) { sh=10; c='M'; }
-  wsprintf(str+mystrlen(str),"%d.%d%cB%c",kb>>sh,((kb*10)>>sh)%10,c,GetVersion()&0x80000000?'+':' ');
+  else if (GetVersion()&0x80000000) s='+';//only display the + on GB shown on win9x.
+  wsprintf(str+mystrlen(str),"%d.%d%cB%c",kb>>sh,((kb*10)>>sh)%10,c,s);
   return str;
 }
 
