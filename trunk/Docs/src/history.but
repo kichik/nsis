@@ -50,6 +50,8 @@ Released on December 3rd, 2004
 
 \b Language file fixes
 
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.72}: Fixed state of Cancel button on Finish page when used in installer and uninstaller, added a string for NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+
 \b nsisconf.nsh was not always parsed when compiling using MakeNSISw
 
 \H{v2.02} 2.02
