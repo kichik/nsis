@@ -25,7 +25,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "コンポーネントを選んでください。"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "$(^NameDA)のインストール オプションを選んでください。"
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "説明"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントの上にマウス カーソルを移動すると、ここに説明が表示されます。"
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントの上にマウス カーソルを移動すると、ここに説明が表示されます。"
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "コンポーネントを選択すると、ここに説明が表示されます。"
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "インストール先を選んでください。"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "$(^NameDA)をインストールするフォルダを選んでください。"
