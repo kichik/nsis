@@ -1934,7 +1934,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
         init_res_editor();
-        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b4</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
+        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b5 (CVS)</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
         res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
       }
       catch (exception& err) {
@@ -2201,7 +2201,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("%s expects 2 parameters, got 3.\n",line.gettoken_str(0));
           PRINTHELP();
         }
-        int k=line.gettoken_enum(a,"zlib\0bzip2\0");
+        int k=line.gettoken_enum(a,"zlib\0bzip2\0lzma\0");
         switch (k) {
           case 0: // JF> should handle the state of going from bzip2 back to zlib:
             compressor = &zlib_compressor;
@@ -2217,11 +2217,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             memcpy(header_data_new,zlib_header_data,zlib_exeheader_size);
-  #ifdef NSIS_ZLIB_COMPRESS_WHOLE
+#ifdef NSIS_ZLIB_COMPRESS_WHOLE
             build_compress_whole=true;
-  #else
+#else
             build_compress_whole=false;
-  #endif
+#endif
           break;
           case 1:
             compressor=&bzip2_compressor;
@@ -2237,12 +2237,32 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             memcpy(header_data_new,bzip2_header_data,bzip2_exeheader_size);
-  #ifdef NSIS_BZIP2_COMPRESS_WHOLE
+#ifdef NSIS_BZIP2_COMPRESS_WHOLE
             build_compress_whole=true;
-  #else
+#else
             build_compress_whole=false;
-  #endif
+#endif
             break;
+          case 2:
+            compressor = &lzma_compressor;
+            free(header_data_new);
+            header_data_new=(unsigned char*)malloc(lzma_exeheader_size);
+            exeheader_size_new=lzma_exeheader_size;
+            exeheader_size=lzma_exeheader_size;
+
+            if (!header_data_new)
+            {
+              ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
+              extern void quit(); quit();
+            }
+
+            memcpy(header_data_new, lzma_header_data, lzma_exeheader_size);
+#ifdef NSIS_LZMA_COMPRESS_WHOLE
+            build_compress_whole=true;
+#else
+            build_compress_whole=false;
+#endif
+          break;
           default:
             PRINTHELP();
         }
@@ -2590,6 +2610,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         unselected = 1;
         a++;
       }
+      else if (line.getnumtokens() > 3)
+        PRINTHELP();
       SCRIPT_MSG("Section: \"%s\"",line.gettoken_str(a));
       if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(" ->(%s)",line.gettoken_str(a+1));
       SCRIPT_MSG("\n");
@@ -2763,6 +2785,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
       SCRIPT_MSG("FileBufSize: %smb (%d bytes)\n",line.gettoken_str(1),build_filebuflen);
+    return PS_OK;
+    case TOK_SETCOMPRESSIONLEVEL:
+    {
+      if (compressor == &lzma_compressor)
+        warning_fl("SetCompressionLevel: compressor is set to LZMA. Effectively ignored.");
+      if (build_compressor_set && build_compress_whole)
+        warning_fl("SetCompressionLevel: data already compressed in compress whole mode. Effectively ignored.");
+
+      int s;
+      build_compress_level=line.gettoken_int(1,&s);
+      if (!s || build_compress_level < 0 || build_compress_level > 9) PRINTHELP();
+      SCRIPT_MSG("SetCompressionLevel: %u\n", build_compress_level);
+    }
+    return PS_OK;
+    case TOK_SETCOMPRESSORDICTSIZE:
+    {
+      if (compressor != &lzma_compressor)
+        warning_fl("SetCompressorDictSize: compressor is not set to LZMA. Effectively ignored.");
+      if (build_compressor_set && build_compress_whole)
+        warning_fl("SetCompressorDictSize: data already compressed in compress whole mode. Effectively ignored.");
+
+      int s;
+      build_compress_dict_size=line.gettoken_int(1,&s);
+      if (!s) PRINTHELP();
+      SCRIPT_MSG("SetCompressorDictSize: %u mb\n", build_compress_dict_size);
+      build_compress_dict_size <<= 20;
+    }
     return PS_OK;
     case TOK_ADDSIZE:
       {
@@ -4760,7 +4809,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG("/IMGID=%d ",ent.offsets[1]);
         }
         else if (!stricmp(line.gettoken_str(i),"/RESIZETOFIT")) {
-          ent.offsets[2]=1;
+          ent.offsets[2]=1; // must be 1 or 0
           SCRIPT_MSG("/RESIZETOFIT ");
         }
         else if (!ent.offsets[0]) {

@@ -257,6 +257,9 @@ CEXEBuild::CEXEBuild()
 #else
   build_compress_whole = false;
 #endif
+  build_compress=1;
+  build_compress_level=9;
+  build_compress_dict_size=1<<23;
 
   cur_entries=&build_entries;
   cur_datablock=&build_datablock;
@@ -288,7 +291,6 @@ CEXEBuild::CEXEBuild()
 #endif
 
   build_overwrite=build_last_overwrite=0;
-  build_compress=1;
   build_crcchk=1;
   build_datesave=1;
   build_optimize_datablock=1;
@@ -770,7 +772,11 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
     db->resize(st + bufferlen + sizeof(int));
 
     int n;
-    if ((n = compressor->Init(9)) != C_OK)
+    if (compressor == &lzma_compressor)
+      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
+    else
+      n = compressor->Init(build_compress_level);
+    if (n != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n", n);
       extern void quit(); quit();
@@ -907,7 +913,11 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     dblock->resize(st+bufferlen+sizeof(int));
 
     int n;
-    if ((n=compressor->Init(9)) != C_OK)
+    if (compressor == &lzma_compressor)
+      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
+    else
+      n = compressor->Init(build_compress_level);
+    if (n != C_OK)
     {
       ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n",n);
       extern void quit(); quit();
@@ -2396,9 +2406,14 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole)
   {
-    if ((compressor->Init(9)) != C_OK)
+  	int n;
+    if (compressor == &lzma_compressor)
+      n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
+    else
+      n = compressor->Init(build_compress_level);
+    if (n != C_OK)
     {
-      ERROR_MSG("Error: deflateInit() returned < 0\n");
+      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n", n);
       return PS_ERROR;
     }
   }
@@ -2581,7 +2596,8 @@ int CEXEBuild::write_output(void)
       int l = min(build_filebuflen, left);
       char *dbptr = (char *) build_datablock.get(dbl - left, l);
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-      if (build_compress_whole) {
+      if (build_compress_whole)
+      {
         if (deflateToFile(fp,dbptr,l))
         {
           fclose(fp);
@@ -2794,10 +2810,15 @@ int CEXEBuild::uninstall_generate()
       // compress uninstaller too
       {
         char obuf[65536];
-        if ((compressor->Init(9)) != C_OK)
+        int n;
+        if (compressor == &lzma_compressor)
+          n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
+        else
+          n = compressor->Init(build_compress_level);
+        if (n != C_OK)
         {
-          ERROR_MSG("Error: deflateInit() returned < 0\n");
-          return PS_ERROR;
+          ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n", n);
+          extern void quit(); quit();
         }
 
         compressor->SetNextIn((char*)uhd.get(), uhd.getlen());

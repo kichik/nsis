@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /Ob2 /D "NDEBUG" /D "_CONSOLE" /D "WIN32" /D "_MBCS" /FD /c
 # SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
 # SUBTRACT BASE CPP /Fr /YX /Yc /Yu
-# ADD CPP /nologo /MLd /W3 /GX /ZI /Od /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /Fr /FD /Zm200 /c
+# ADD CPP /nologo /MLd /W3 /GX /ZI /Od /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /Fr /FD /Zm200 /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -147,6 +147,48 @@ SOURCE=.\bzip2\compress.c
 SOURCE=.\bzip2\huffman.c
 # End Source File
 # End Group
+# Begin Group "7zip"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\7zip\7zGuids.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\Common\CRC.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Compress\LZ\LZInWindow.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Compress\LZMA\LZMAEncoder.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Compress\LZMA\LZMALen.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Compress\LZMA\LZMALiteral.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Common\OutBuffer.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
+SOURCE=.\7zip\7zip\Compress\RangeCoder\RangeCoderBit.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\build.cpp
@@ -212,6 +254,10 @@ SOURCE=.\build.h
 # Begin Source File
 
 SOURCE=.\cbzip2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\clzma.h
 # End Source File
 # Begin Source File
 

@@ -1,4 +1,4 @@
-const char *NSIS_VERSION="v2.0b4";
+const char *NSIS_VERSION="v2.0b5 (CVS)";
 
 /* 
   Nullsoft Scriptable Install System (NSIS)
@@ -113,6 +113,7 @@ int main(int argc, char **argv)
            "\n"
            "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
            "Includes portions derived from bzip2 (see documentation for details).\n"
+           "Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).\n"
            "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",NSIS_VERSION);
     fflush(g_output);
   }
