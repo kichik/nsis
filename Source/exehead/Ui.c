@@ -789,14 +789,16 @@ static char * NSISCALL inttosizestr(int kb, char *str)
 
 static int NSISCALL _sumsecsfield(int idx)
 {
-  int x,total;
-  section *sections = g_sections;
-  for (total = x = 0; x < num_sections; x++)
+  int total = 0;
+  int x = num_sections;
+  section *s = g_sections;
+  while (x--)
   {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    if (sections[x].flags & SF_SELECTED)
+    if (s->flags & SF_SELECTED)
 #endif
-      total += ((int *)&sections[x])[idx];
+      total += ((int *)s)[idx];
+    s++;
   }
   return total;
 }
@@ -1156,8 +1158,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         int j;
         if (i != NSIS_MAX_INST_TYPES) noCombo = 0;
-        GetNSISString(g_tmp,install_types[i]);
-        j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)g_tmp);
+        j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetNSISStringTT(install_types[i]));
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
         if (i == g_exec_flags.cur_insttype)
           SendMessage(hwndCombo1, CB_SETCURSEL, j, 0);
@@ -1501,8 +1502,9 @@ void NSISCALL update_status_text(int strtab, const char *text) {
 
 static DWORD WINAPI install_thread(LPVOID p)
 {
-  int m_inst_sec=0;
+  int m_inst_sec=num_sections;
   HWND progresswnd = (HWND)p;
+  section *s = g_sections;
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   {
@@ -1511,14 +1513,14 @@ static DWORD WINAPI install_thread(LPVOID p)
   }
 #endif
 
-  while (m_inst_sec<num_sections)
+  while (m_inst_sec--)
   {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    if (g_sections[m_inst_sec].flags&SF_SELECTED)
+    if (s->flags&SF_SELECTED)
 #endif
     {
-      log_printf2("Section: \"%s\"",GetNSISStringTT(g_sections[m_inst_sec].name_ptr));
-      if (ExecuteCodeSegment(g_sections[m_inst_sec].code,progresswnd))
+      log_printf2("Section: \"%s\"",GetNSISStringTT(s->name_ptr));
+      if (ExecuteCodeSegment(s->code,progresswnd))
       {
         g_exec_flags.abort++;
         break;
@@ -1527,10 +1529,10 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     else
     {
-      log_printf2("Skipping section: \"%s\"",GetNSISStringTT(g_sections[m_inst_sec].name_ptr));
+      log_printf2("Skipping section: \"%s\"",GetNSISStringTT(s->name_ptr));
     }
 #endif
-    m_inst_sec++;
+    s++;
   }
   NotifyCurWnd(WM_NOTIFY_INSTPROC_DONE);
 
