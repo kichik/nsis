@@ -843,8 +843,8 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           else {
             g_sdata.default_compressor = COMPRESSOR_SCRIPT;
           }
-
           EndDialog(hwndDlg, TRUE);
+          SetCompressor(g_sdata.default_compressor);
         }
         break;
         case IDCANCEL:
