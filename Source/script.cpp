@@ -2281,11 +2281,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SENDMESSAGE:
       ent.which=EW_SENDMESSAGE;
       SCRIPT_MSG("SendMessage:");
-      ent.offsets[0]=line.gettoken_enum(5,usrvars);
-      if (ent.offsets[0]>=0)
       {
-        SCRIPT_MSG("(->%s)",line.gettoken_str(5));
+        int a=5;
+        ent.offsets[0]=line.gettoken_enum(5,usrvars);
+        if (ent.offsets[0]>=0)
+        {
+          SCRIPT_MSG("(->%s)",line.gettoken_str(5));
+          a++;
+        }
+      
+        if (!strncmp(line.gettoken_str(a),"/TIMEOUT=",9))
+        {
+          ent.offsets[5]|=atoi(line.gettoken_str(a)+9)<<2;
+          SCRIPT_MSG(" (timeout=%d)",ent.offsets[5]>>2);
+        }
       }
+
+      if (!strncmp(line.gettoken_str(3),"STR:",4)) ent.offsets[5]|=1;
+      if (!strncmp(line.gettoken_str(4),"STR:",4)) ent.offsets[5]|=2;
 
       ent.offsets[1]=add_string(line.gettoken_str(1));
       ent.offsets[2]=add_string(line.gettoken_str(2));
