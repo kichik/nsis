@@ -103,7 +103,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
-      SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE);  
+      // Altered by Darren Owen (DrO) on 29/9/2003
+      // Added in receiving of mouse and key events from the richedit control
+      SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE|ENM_MOUSEEVENTS|ENM_KEYEVENTS);  
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.fileSubmenu = GetSubMenu(g_sdata.menu, FILE_MENU_INDEX);
@@ -157,7 +159,20 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       // This does not work on Windows versions < Windows 2000
       // See http://support.microsoft.com:80/support/kb/articles/Q245/7/54.asp
       if ((HWND)wParam==GetDlgItem(g_sdata.hwnd,IDC_LOGWIN)) {
-        TrackPopupMenu(g_sdata.editSubmenu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_sdata.hwnd,0);
+      // Added and altered by Darren Owen (DrO) on 29/9/2003
+      // Will place the right-click menu in the top left corner of the window
+      // if the application key is pressed and the mouse is not in the window
+      // from here...
+      POINT pt;
+      RECT r;
+      pt.x = LOWORD(lParam);	pt.y = HIWORD(lParam);
+      ScreenToClient((HWND)wParam,&pt);
+      GetClientRect((HWND)wParam,&r);
+      if(!PtInRect(&r,pt)) { pt.x = pt.y = 0; }
+        MapWindowPoints((HWND)wParam,HWND_DESKTOP,&pt,1);
+      TrackPopupMenu(g_sdata.editSubmenu,TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_RIGHTBUTTON,pt.x,pt.y,0,g_sdata.hwnd,0);
+	  // ...to here
+      //TrackPopupMenu(g_sdata.editSubmenu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_sdata.hwnd,0);
       }
       return TRUE;
     }
@@ -237,6 +252,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             BOOL enabled = (g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?FALSE:TRUE);
             EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
             EnableToolBarButton(IDM_COPY,enabled);
+          }
+        // Added by Darren Owen (DrO) on 29/9/2003
+        // Allows the detection of the right-click menu when running on OSes below Windows 2000
+        // and will then simulate the effective WM_CONTEXTMENU message that would be received
+        case EN_MSGFILTER:
+          #define lpnmMsg ((MSGFILTER*)lParam)
+          if(WM_RBUTTONUP == lpnmMsg->msg || WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS){
+            POINT pt;
+            GetCursorPos(&pt);
+            SendMessage(GetParent(lpnmMsg->nmhdr.hwndFrom),WM_CONTEXTMENU,(WPARAM)lpnmMsg->nmhdr.hwndFrom,MAKELPARAM(pt.x,pt.y));
           }
 #ifdef COMPRESSOR_OPTION
         case TBN_DROPDOWN:
