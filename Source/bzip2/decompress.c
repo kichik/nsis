@@ -64,17 +64,6 @@
 #include "bzlib_private.h"
 
 
-/*---------------------------------------------------*/
-static
-void makeMaps_d ( DState* s )
-{
-   Int32 i;
-   s->nInUse = 0;
-   for (i = 0; i < 256; i++)
-      if (s->inUse[i])
-         s->seqToUnseq[s->nInUse++] = i;
-}
-
 
 /*---------------------------------------------------*/
 #define RETURN(rrr)                               \
@@ -234,7 +223,14 @@ Int32 BZ2_decompress ( DState* s )
                GET_BIT(BZ_X_MAPPING_2, uc);
                if (uc == 1) s->inUse[i * 16 + j] = True;
             }
-      makeMaps_d ( s );
+      {
+         Int32 qi;
+         s->nInUse = 0;
+         for (qi = 0; qi < 256; qi++)
+            if (s->inUse[qi])
+               s->seqToUnseq[s->nInUse++] = qi;
+      }
+
       if (s->nInUse == 0) RETURN(BZ_DATA_ERROR);
       alphaSize = s->nInUse+2;
 
