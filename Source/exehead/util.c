@@ -208,30 +208,29 @@ int NSISCALL is_valid_instpath(char *s)
   }
 
   // if the root drive exists
-  if (GetFileAttributes(tmp) == (DWORD)-1)
+  if (GetFileAttributes(tmp) == INVALID_FILE_ATTRIBUTES)
     return 0;
 
   return 1;
 }
 
-char * NSISCALL mystrstr(char *a, char *b)
+char * NSISCALL mystrstri(char *a, char *b)
 {
-  int len_of_a = mystrlen(a) - mystrlen(b);
-  while (*a && len_of_a >= 0)
+  int l = mystrlen(b);
+  while (mystrlen(a) >= l)
   {
-    char *t=a,*u=b;
-    while (*t && *t == *u)
+    char c = a[l];
+    a[l] = 0;
+    if (!lstrcmpi(a, b))
     {
-      t++;
-      u++;
+      a[l] = c;
+      return a;
     }
-    if (!*u) return a;
-    a++;
-    len_of_a--;
+    a[l] = c;
+    a = CharNext(a);
   }
   return NULL;
 }
-
 
 void * NSISCALL mini_memcpy(void *out, const void *in, int len)
 {
@@ -264,7 +263,8 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
   int n = 100;
   while (n--)
   {
-    char prefix[4] = "nsa";
+    char prefix[4];
+    *(LPDWORD)prefix = CHAR4_TO_DWORD('n', 's', 'a', 0);
     prefix[2] += (char)(GetTickCount() % 26);
     if (GetTempFileName(dir, prefix, 0, buf))
       return buf;
@@ -333,7 +333,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
         if (pszWinInit != NULL)
         {
-          LPSTR pszRenameSecInFile = mystrstr(pszWinInit, szRenameSec);
+          LPSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
           {
             mystrcpy(pszWinInit+dwFileSize, szRenameSec);
@@ -343,7 +343,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           else
           {
             char *pszFirstRenameLine = pszRenameSecInFile+10;
-            char *pszNextSec = mystrstr(pszFirstRenameLine,"\n[");
+            char *pszNextSec = mystrstri(pszFirstRenameLine,"\n[");
             if (pszNextSec)
             {
               char *p = ++pszNextSec;
@@ -583,7 +583,7 @@ char * NSISCALL validate_filename(char *in) {
   short cur_char = 0;
   char *out;
   char *out_save;
-  while (*in == ' ') in=CharNext(in);
+  while (*in == ' ') in = CharNext(in);
   if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\') {
     // at least four bytes
     in += 4;
@@ -594,16 +594,20 @@ char * NSISCALL validate_filename(char *in) {
   }
   out = out_save = in;
   while (*(char*)&cur_char = *in) {
-    if (cur_char > 31 && !mystrstr(nono, (char*)&cur_char)) {
+    if (cur_char > 31 && !mystrstri(nono, (char*)&cur_char)) {
       mini_memcpy(out, in, CharNext(in) - in);
       out = CharNext(out);
     }
     in = CharNext(in);
   }
+  *out = 0;
   do {
-    *out = 0;
-    --out;
-  } while (out_save <= out && (*out == ' ' || *out == '\\'));
+    out = CharPrev(out_save, out);
+    if (*out == ' ' || *out == '\\')
+      *out = 0;
+    else
+      break;
+  } while (out_save < out);
   return out_save;
 }
 

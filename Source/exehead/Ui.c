@@ -243,7 +243,7 @@ __forceinline int NSISCALL ui_doinstall(void)
           {
             DWORD d;
             d=GetFileAttributes(p);
-            if (d == (DWORD)-1 || !(d&FILE_ATTRIBUTE_DIRECTORY))
+            if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY))
             {
               // if there is no back-slash, the string will become empty, but that's ok because
               // it would make an invalid instdir anyway
