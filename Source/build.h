@@ -13,6 +13,8 @@
 #include "exehead/fileform.h"
 #include "exehead/config.h"
 
+#include <string>
+
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
 #  include <time.h>
@@ -141,7 +143,13 @@ class CEXEBuild {
 #endif
     int doParse(const char *str);
     int doCommand(int which_token, LineParser &line);
-    int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1, int *data_handle=0, int rec_depth=0);
+
+    int do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char 
+      *name_override=0, int generatecode=1, int *data_handle=0, std::string& basedir=std::string(""));
+    int add_file(const std::string& dir, const std::string& file, int attrib, const char 
+      *name_override, int generatecode, int *data_handle);
+    int do_add_file_create_dir(const std::string& local_dir, const std::string& dir, int attrib=0);
+
     GrowBuf m_linebuild; // used for concatenating lines
 
     // used by doParse to do preprocessing

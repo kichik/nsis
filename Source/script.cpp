@@ -8,8 +8,11 @@
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "lang.h"
+#include "dirreader.h"
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
+
+using namespace std;
 
 #ifdef _WIN32
 #  include <direct.h>
@@ -3982,7 +3985,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         if (which_token == TOK_FILE && !stricmp(line.gettoken_str(a),"/a"))
         {
+#ifdef _WIN32
           attrib=1;
+#else
+          warning_fl("%sFile /a is disabled for non Win32 platforms.",(which_token == TOK_FILE)?"":"Reserve");
+#endif
           a++;
         }
         if (!stricmp(line.gettoken_str(a),"/r"))
@@ -3998,10 +4005,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           int tf=0;
 #ifdef _WIN32
-          int v=do_add_file(line.gettoken_str(a), attrib, 0, linecnt,&tf,on);
+          int v=do_add_file(line.gettoken_str(a), attrib, 0, &tf, on);
 #else
           char *fn = my_convert(line.gettoken_str(a));
-          int v=do_add_file(fn, attrib, 0, linecnt,&tf,on);
+          int v=do_add_file(fn, attrib, 0, &tf, on);
           my_convert_free(fn);
 #endif
           if (v != PS_OK) return v;
@@ -4040,10 +4047,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
           int tf=0;
 #ifdef _WIN32
-          int v=do_add_file(t, attrib, rec, linecnt,&tf,NULL,which_token == TOK_FILE);
+          int v=do_add_file(t, attrib, rec, &tf, NULL, which_token == TOK_FILE);
 #else
           char *fn = my_convert(t);
-          int v=do_add_file(fn, attrib, rec, linecnt,&tf,NULL,which_token == TOK_FILE);
+          int v=do_add_file(fn, attrib, rec, &tf, NULL, which_token == TOK_FILE);
           my_convert_free(fn);
 #endif
           if (v != PS_OK) return v;
@@ -5400,7 +5407,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           build_overwrite=1; // off
           int old_build_datesave=build_datesave;
           build_datesave=0; // off
-          ret=do_add_file(dllPath,0,0,linecnt,&files_added,tempDLL,2,&data_handle); // 2 means no size add
+          ret=do_add_file(dllPath,0,0,&files_added,tempDLL,2,&data_handle); // 2 means no size add
           if (ret != PS_OK) {
             return ret;
           }
@@ -5547,513 +5554,347 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode, int *data_handle, int rec_depth)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, string& basedir)
 {
-  char dir[1024];
-  char newfn[1024];
-#ifdef _WIN32
-  HANDLE h;
-  WIN32_FIND_DATA d;
-#else
-  glob_t globbuf;
-#endif
-  strcpy(dir,lgss);
-  {
-    char *s=dir+strlen(dir);
-    while (s > dir && *s != PLATFORM_PATH_SEPARATOR_C) s=CharPrev(dir,s);
-    if (s == dir)
-    {
-      if (*s == PLATFORM_PATH_SEPARATOR_C)
-        sprintf(dir,"%c.",PLATFORM_PATH_SEPARATOR_C);
-      else
-        strcpy(dir,".");
-    }
-    else
-      s[0]=0;
+  assert(!name_override || !recurse);
+
+  string dir = get_dir_name(lgss);
+  string spec;
+
+  if (dir == lgss) {
+    dir = ".";
+    spec = lgss;
+  } else {
+    spec = string(lgss).substr(dir.length() + 1, string::npos);
   }
 
-#ifdef _WIN32
-  h = FindFirstFile(lgss,&d);
-  if (h != INVALID_HANDLE_VALUE)
-  {
-    do
-    {
-      if ((d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-      {
-#else
-  GLOB(lgss, GLOB_NOSORT, NULL, &globbuf);
-  {
-    for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
-    {
-      struct stat s;
-      if (!stat(globbuf.gl_pathv[i], &s) && S_ISREG(s.st_mode))
-      {
-        char *filename = strrchr(globbuf.gl_pathv[i], PLATFORM_PATH_SEPARATOR_C);
-        if (filename)
-          filename++;
-        else
-          filename = globbuf.gl_pathv[i];
-#endif
-        MMapFile mmap;
-        DWORD len;
-        (*total_files)++;
-
-#ifdef _WIN32
-        sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",d.cFileName);
-        HANDLE hFile = CreateFile(
-          newfn,
-          GENERIC_READ,
-          FILE_SHARE_READ,
-          NULL,
-          OPEN_EXISTING,
-          FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
-          NULL
-        );
-        if (hFile == INVALID_HANDLE_VALUE)
-        {
-          FindClose(h);
-          ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
-          return PS_ERROR;
-        }
-
-        // Will auto-CloseHandle hFile
-        MANAGE_WITH(hFile, CloseHandle);
-
-        len = GetFileSize(hFile, NULL);
-        if (len && !mmap.setfile(hFile, len))
-        {
-          FindClose(h);
-          ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
-          return PS_ERROR;
-        }
-#else
-        sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",filename);
-        len = (DWORD) s.st_size;
-
-        int fd = OPEN(newfn, O_RDONLY);
-        if (fd == -1)
-        {
-          globfree(&globbuf);
-          ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
-          return PS_ERROR;
-        }
-
-        // Will auto-close(2) fd
-        MANAGE_WITH(fd, close);
-
-        if (len && !mmap.setfile(fd, len))
-        {
-          globfree(&globbuf);
-          ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
-          return PS_ERROR;
-        }
-#endif
-
-        if (generatecode&1)
-          section_add_size_kb((len+1023)/1024);
-#ifdef _WIN32
-        if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",d.cFileName,name_override);
-        else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",d.cFileName);
-#else
-        if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",filename,name_override);
-        else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",filename);
-#endif
-        if (!build_compress_whole)
-          if (build_compress) SCRIPT_MSG(" [compress]");
-        fflush(stdout);
-        char buf[1024];
-        int last_build_datablock_used=getcurdbsize();
-        entry ent={0,};
-        if (generatecode)
-        {
-          ent.which=EW_EXTRACTFILE;
-
-          DefineInnerLangString(NLF_SKIPPED);
-          DefineInnerLangString(NLF_ERR_DECOMPRESSING);
-          DefineInnerLangString(NLF_ERR_WRITING);
-          DefineInnerLangString(NLF_EXTRACT);
-          DefineInnerLangString(NLF_CANT_WRITE);
-
-          ent.offsets[0]=build_overwrite;
-          if (name_override)
-          {
-            ent.offsets[1]=add_string(name_override);
-          }
-          else
-          {
-#ifdef _WIN32
-            char *i=d.cFileName,*o=buf;
-#else
-            char *i=filename,*o=buf;
-#endif
-            while (*i)
-            {
-              char c=*i++;
-              *o++=c;
-              if (c == '$') *o++='$';
-            }
-            *o=0;
-            ent.offsets[1]=add_string(buf);
-          }
-        }
-        ent.offsets[2]=add_db_data(&mmap);
-
-        mmap.clear();
-
-        if (ent.offsets[2] < 0)
-        {
-#ifdef _WIN32
-          FindClose(h);
-#else
-          globfree(&globbuf);
-#endif
-          return PS_ERROR;
-        }
-
-        if (data_handle)
-        {
-          *data_handle=ent.offsets[2];
-        }
-
-        {
-          DWORD s=getcurdbsize()-last_build_datablock_used;
-          if (s) s-=4;
-          if (s != len) SCRIPT_MSG(" %d/%d bytes\n",s,len);
-          else SCRIPT_MSG(" %d bytes\n",len);
-        }
-
-        if (generatecode)
-        {
-          if (build_datesave || build_overwrite>=0x3 /*ifnewer or ifdiff*/)
-          {
-#ifdef _WIN32
-            FILETIME ft;
-            if (GetFileTime(hFile,NULL,NULL,&ft))
-            {
-              ent.offsets[3]=ft.dwLowDateTime;
-              ent.offsets[4]=ft.dwHighDateTime;
-            }
-            else
-            {
-              FindClose(h);
-#else
-            struct stat st;
-            if (!fstat(fd, &st))
-            {
-              union
-              {
-                struct
-                {
-                  long l;
-                  long h;
-                } words;
-                long long ll;
-              };
-              ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
-              ent.offsets[3] = words.l;
-              ent.offsets[4] = words.h;
-            }
-            else
-            {
-              globfree(&globbuf);
-#endif
-              ERROR_MSG("%sFile: failed getting file date from \"%s\"\n",generatecode?"":"Reserve",newfn);
-              return PS_ERROR;
-            }
-          }
-          else
-          {
-            ent.offsets[3]=0xffffffff;
-            ent.offsets[4]=0xffffffff;
-          }
-
-          // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
-          int mb = 0;
-          if (build_allowskipfiles)
-          {
-            mb = MB_ABORTRETRYIGNORE | MB_ICONSTOP;
-            // default for silent installers
-            mb |= IDIGNORE << 20;
-          }
-          else
-          {
-            mb = MB_RETRYCANCEL | MB_ICONSTOP;
-            // default for silent installers
-            mb |= IDCANCEL << 20;
-          }
-          ent.offsets[0] |= mb << 3;
-
-          ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
-        }
-
-        if (generatecode)
-        {
-          int a=add_entry(&ent);
-          if (a != PS_OK)
-          {
-#ifdef _WIN32
-            FindClose(h);
-#else
-            globfree(&globbuf);
-#endif
-            return a;
-          }
-          if (attrib)
-          {
-#ifdef _WIN32
-            ent.which=EW_SETFILEATTRIBUTES;
-            // $OUTDIR is the working directory
-            ent.offsets[0]=add_string(name_override?name_override:buf);
-            ent.offsets[1]=d.dwFileAttributes;
-            ent.offsets[2]=0;
-            ent.offsets[3]=0;
-            ent.offsets[4]=0;
-            ent.offsets[5]=0;
-
-            a=add_entry(&ent);
-            if (a != PS_OK)
-            {
-              FindClose(h);
-              return a;
-            }
-#else
-            warning_fl("File /a is disabled for non Win32 platforms.");
-#endif
-          }
-        }
-      }
-    }
-#ifdef _WIN32
-    while (FindNextFile(h,&d));
-    FindClose(h);
-#else
-    globfree(&globbuf);
-#endif
+  if (spec == "") {
+    spec = "*";
   }
 
-  if (recurse)
-  {
-#ifdef NSIS_SUPPORT_STACK
-#ifdef _WIN32
-    WIN32_FIND_DATA temp;
-#endif
+  dir_reader *dr = new_dir_reader();
+  dr->read(dir);
 
-    const char *fspec;
-    if (!strcmp(dir,".") && strncmp(lgss,".",1))
-      fspec=lgss;
-    else
-      fspec=lgss+strlen(dir)+!!dir[0];
+  dir_reader::iterator files_itr = dr->files().begin();
+  dir_reader::iterator files_end = dr->files().end();
 
-    strcpy(newfn,lgss);
-#ifdef _WIN32
-    DWORD a=GetFileAttributes(lgss);
-    if (a==INVALID_FILE_ATTRIBUTES)
-    {
-      a=GetFileAttributes(dir);
-      sprintf(newfn,"%s%s*.*",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"");
-    }
-#else
-    int a;
-    struct stat st;
-    if (stat(lgss, &st))
-    {
-      stat(dir, &st);
-      sprintf(newfn,"%s%s*",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"");
-    }
-#endif
-    else
-    {
-      // we don't want to include a whole directory if it's not the first call
-      if (rec_depth) return PS_OK;
-#ifdef _WIN32
-      fspec="*.*";
-#else
-      fspec="*";
-#endif
-    }
-#ifdef _WIN32
-    if (a&FILE_ATTRIBUTE_DIRECTORY)
-    {
-      h=FindFirstFile(newfn,&d);
-      if (h != INVALID_HANDLE_VALUE)
-      {
-        do
-        {
-          if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-          {
-            if (strcmp(d.cFileName,"..") && strcmp(d.cFileName,"."))
-            {
-#else
-    if (S_ISDIR(st.st_mode))
-    {
-      if (!GLOB(newfn, GLOB_NOSORT, NULL, &globbuf))
-      {
-        for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
-        {
-          struct stat s;
-          if (!stat(globbuf.gl_pathv[i], &s) && S_ISDIR(s.st_mode))
-          {
-            char *dirname = strrchr(globbuf.gl_pathv[i], PLATFORM_PATH_SEPARATOR_C);
-            if (dirname)
-              dirname++;
-            else
-              dirname = globbuf.gl_pathv[i];
-            if (strcmp(dirname, "..") && strcmp(dirname, "."))
-            {
-#endif
-              char out_path[1024] = "$OUTDIR\\";
+  bool dir_created = false;
 
-              {
-#ifdef _WIN32
-                char *i = d.cFileName;
-#else
-                char *i = dirname;
-#endif
-                char *o=out_path+strlen(out_path);
+  if (basedir == "") {
+    dir_created = true;
 
-                while (*i)
-                {
-                  char *ni=CharNext(i);
-                  if (ni-i > 1)
-                  {
-                    int l=ni-i;
-                    while (l--)
-                    {
-                      *o++=*i++;
-                    }
-                  }
-                  else
-                  {
-                    char c=*i++;
-                    *o++=c;
-                    if (c == '$') *o++='$';
-                  }
-                }
-                *o=0;
-              }
-
-              char spec[1024];
-#ifdef _WIN32
-              wsprintf(spec,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",d.cFileName);
-#else
-              wsprintf(spec,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",dirname);
-#endif
-              SCRIPT_MSG("%sFile: Descending to: \"%s\"\n",generatecode?"":"Reserve",spec);
-              strcat(spec,PLATFORM_PATH_SEPARATOR_STR);
-              strcat(spec,fspec);
-              if (generatecode)
-              {
-                a=add_entry_direct(EW_PUSHPOP, add_string("$OUTDIR"));
-                if (a != PS_OK)
-                {
-#ifdef _WIN32
-                  FindClose(h);
-#else
-                  globfree(&globbuf);
-#endif
-                  return a;
-                }
-
-                a=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("OUTDIR"), add_string(out_path));
-                if (a != PS_OK)
-                {
-#ifdef _WIN32
-                  FindClose(h);
-#else
-                  globfree(&globbuf);
-#endif
-                  return a;
-                }
-
-#ifdef _WIN32
-                HANDLE htemp = FindFirstFile(spec,&temp);
-                if (htemp != INVALID_HANDLE_VALUE)
-                {
-                  FindClose(htemp);
-#else
-                glob_t globbuf2;
-                GLOB(spec, GLOB_NOSORT, NULL, &globbuf2);
-                if (globbuf2.gl_pathc)
-                {
-#endif
-
-                  a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
-                  if (a != PS_OK)
-                  {
-#ifdef _WIN32
-                    FindClose(h);
-#else
-                    globfree(&globbuf2);
-#endif
-                    return a;
-                  }
-                }
-              }
-              a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode,data_handle,rec_depth+1);
-              if (a != PS_OK)
-              {
-#ifdef _WIN32
-                FindClose(h);
-#else
-                globfree(&globbuf);
-#endif
-                return a;
-              }
-
-              if (generatecode)
-              {
-                a=add_entry_direct(EW_PUSHPOP, m_UserVarNames.get("OUTDIR"), 1);
-                if (a != PS_OK)
-                {
-#ifdef _WIN32
-                  FindClose(h);
-#else
-                  globfree(&globbuf);
-#endif
-                  return a;
-                }
-
-                if (attrib)
-                {
-#ifdef _WIN32
-                  a=add_entry_direct(EW_SETFILEATTRIBUTES, add_string(out_path), d.dwFileAttributes);
-                  if (a != PS_OK)
-                  {
-                    FindClose(h);
-                    return a;
-                  }
-#else
-                  warning_fl("File /a is disabled for non Win32 platforms.");
-#endif
-                }
-              }
-              SCRIPT_MSG("%sFile: Returning to: \"%s\"\n",generatecode?"":"Reserve",dir);
-            }
-          }
-        }
-#ifdef _WIN32
-        while (FindNextFile(h,&d));
-        FindClose(h);
-#else
-        globfree(&globbuf);
-#endif
-
-        if (!rec_depth)
-        {
-          // return to the original $OUTDIR
-          a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
-          if (a != PS_OK)
-          {
-            return a;
-          }
-        }
+    if (recurse) {
+      // save $OUTDIR into $0
+      if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("0"), add_string("$OUTDIR")) != PS_OK) {
+        delete dr;
+        return PS_ERROR;
       }
     }
-#else
-    ERROR_MSG("Error: recursive [Reserve]File requires NSIS_SUPPORT_STACK\n");
+  }
+
+  for (; files_itr != files_end; files_itr++) {
+    if (!dir_reader::matches(*files_itr, spec))
+      continue;
+
+    if (!dir_created && generatecode) {
+      SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode? "" : "Reserve", dir.c_str());
+
+      if (do_add_file_create_dir(dir, basedir, attrib) != PS_OK) {
+        delete dr;
+        return PS_ERROR;
+      }
+
+      dir_created = true;
+    }
+
+    if (add_file(dir, *files_itr, attrib, name_override, generatecode, data_handle) != PS_OK) {
+      delete dr;
+      return PS_ERROR;
+    }
+
+    (*total_files)++;
+  }
+
+  if (recurse) {
+    dir_reader::iterator dirs_itr = dr->dirs().begin();
+    dir_reader::iterator dirs_end = dr->dirs().end();
+
+    for (; dirs_itr != dirs_end; dirs_itr++) {
+      string new_dir;
+
+      if (basedir == "") {
+        new_dir = *dirs_itr;
+      } else {
+        new_dir = basedir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr;
+      }
+
+      string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
+
+      if (!dir_reader::matches(*dirs_itr, spec)) {
+        new_spec += spec;
+      }
+
+      const char *new_spec_c = new_spec.c_str();
+      
+      if (do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, new_dir) != PS_OK) {
+        delete dr;
+        return PS_ERROR;
+      }
+    }
+
+    if (basedir == "") {
+      SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
+
+      // restore $OUTDIR from $0
+      if (do_add_file_create_dir(dir, basedir) != PS_OK) {
+        delete dr;
+        return PS_ERROR;
+      }
+    }
+  }
+
+  delete dr;
+
+  return PS_OK;
+}
+
+int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const char *name_override, int generatecode, int *data_handle) {
+  string newfn_s = dir + PLATFORM_PATH_SEPARATOR_C + file;
+  const char *newfn = newfn_s.c_str();
+  const char *filename = file.c_str();
+
+  MMapFile mmap;
+  DWORD len;
+
+#ifdef _WIN32
+  HANDLE hFile = CreateFile(
+    newfn,
+    GENERIC_READ,
+    FILE_SHARE_READ,
+    NULL,
+    OPEN_EXISTING,
+    FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
+    NULL
+  );
+  if (hFile == INVALID_HANDLE_VALUE)
+  {
+    ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
     return PS_ERROR;
-#endif
   }
+
+  // Will auto-CloseHandle hFile
+  MANAGE_WITH(hFile, CloseHandle);
+
+  len = GetFileSize(hFile, NULL);
+  if (len && !mmap.setfile(hFile, len))
+  {
+    ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
+    return PS_ERROR;
+  }
+#else
+  struct stat s;
+  if (stat(newfn, &s)) {
+    ERROR_MSG("%sFile: failed stating file \"%s\"\n",generatecode?"":"Reserve",newfn);
+    return PS_ERROR;
+  }
+
+  len = (DWORD) s.st_size;
+
+  int fd = OPEN(newfn, O_RDONLY);
+  if (fd == -1)
+  {
+    ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
+    return PS_ERROR;
+  }
+
+  // Will auto-close(2) fd
+  MANAGE_WITH(fd, close);
+
+  if (len && !mmap.setfile(fd, len))
+  {
+    ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
+    return PS_ERROR;
+  }
+#endif
+
+  if (generatecode&1)
+    section_add_size_kb((len+1023)/1024);
+  if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",filename,name_override);
+  else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",filename);
+  if (!build_compress_whole)
+    if (build_compress) SCRIPT_MSG(" [compress]");
+  fflush(stdout);
+  char buf[1024];
+  int last_build_datablock_used=getcurdbsize();
+  entry ent={0,};
+  if (generatecode)
+  {
+    ent.which=EW_EXTRACTFILE;
+
+    DefineInnerLangString(NLF_SKIPPED);
+    DefineInnerLangString(NLF_ERR_DECOMPRESSING);
+    DefineInnerLangString(NLF_ERR_WRITING);
+    DefineInnerLangString(NLF_EXTRACT);
+    DefineInnerLangString(NLF_CANT_WRITE);
+
+    ent.offsets[0]=build_overwrite;
+    if (name_override)
+    {
+      ent.offsets[1]=add_string(name_override);
+    }
+    else
+    {
+      const char *i=filename;
+      char *o=buf;
+      while (*i)
+      {
+        const char c=*i++;
+        *o++=c;
+        if (c == '$') *o++='$';
+      }
+      *o=0;
+      ent.offsets[1]=add_string(buf);
+    }
+  }
+  ent.offsets[2]=add_db_data(&mmap);
+
+  mmap.clear();
+
+  if (ent.offsets[2] < 0)
+  {
+    return PS_ERROR;
+  }
+
+  if (data_handle)
+  {
+    *data_handle=ent.offsets[2];
+  }
+
+  {
+    DWORD s=getcurdbsize()-last_build_datablock_used;
+    if (s) s-=4;
+    if (s != len) SCRIPT_MSG(" %d/%d bytes\n",s,len);
+    else SCRIPT_MSG(" %d bytes\n",len);
+  }
+
+  if (generatecode)
+  {
+    if (build_datesave || build_overwrite>=0x3 /*ifnewer or ifdiff*/)
+    {
+#ifdef _WIN32
+      FILETIME ft;
+      if (GetFileTime(hFile,NULL,NULL,&ft))
+      {
+        ent.offsets[3]=ft.dwLowDateTime;
+        ent.offsets[4]=ft.dwHighDateTime;
+      }
+#else
+      struct stat st;
+      if (!fstat(fd, &st))
+      {
+        union
+        {
+          struct
+          {
+            long l;
+            long h;
+          } words;
+          long long ll;
+        };
+        ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+        ent.offsets[3] = words.l;
+        ent.offsets[4] = words.h;
+      }
+#endif
+      else
+      {
+        ERROR_MSG("%sFile: failed getting file date from \"%s\"\n",generatecode?"":"Reserve",newfn);
+        return PS_ERROR;
+      }
+    }
+    else
+    {
+      ent.offsets[3]=0xffffffff;
+      ent.offsets[4]=0xffffffff;
+    }
+
+    // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
+    int mb = 0;
+    if (build_allowskipfiles)
+    {
+      mb = MB_ABORTRETRYIGNORE | MB_ICONSTOP;
+      // default for silent installers
+      mb |= IDIGNORE << 20;
+    }
+    else
+    {
+      mb = MB_RETRYCANCEL | MB_ICONSTOP;
+      // default for silent installers
+      mb |= IDCANCEL << 20;
+    }
+    ent.offsets[0] |= mb << 3;
+
+    ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
+  }
+
+  if (generatecode)
+  {
+    int a=add_entry(&ent);
+    if (a != PS_OK)
+    {
+      return a;
+    }
+    if (attrib)
+    {
+#ifdef _WIN32
+      ent.which=EW_SETFILEATTRIBUTES;
+      // $OUTDIR is the working directory
+      ent.offsets[0]=add_string(name_override?name_override:buf);
+      ent.offsets[1]=GetFileAttributes(newfn);
+      ent.offsets[2]=0;
+      ent.offsets[3]=0;
+      ent.offsets[4]=0;
+      ent.offsets[5]=0;
+
+      a=add_entry(&ent);
+      if (a != PS_OK)
+      {
+        return a;
+      }
+#endif
+    }
+  }
+
+  return PS_OK;
+}
+
+int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir, int attrib) {
+  string outdir_s = "$0\\" + dir;
+
+  string::size_type pos = 1;
+  pos = outdir_s.find('$', pos);
+  while (pos != string::npos) {
+    outdir_s = outdir_s.insert(pos, "$");
+    pos = outdir_s.find('$', pos + 2);
+  }
+
+  int outdir = add_string(outdir_s.c_str());
+
+  if (add_entry_direct(EW_CREATEDIR, outdir, 1) != PS_OK) {
+    return PS_ERROR;
+  }
+
+#ifdef _WIN32
+  if (attrib) {
+    int ndc = add_string(".");
+
+    DWORD attr = GetFileAttributes(local_dir.c_str());
+
+    if (add_entry_direct(EW_SETFILEATTRIBUTES, ndc, attr) != PS_OK) {
+      return PS_ERROR;
+    }
+  }
+#endif
 
   return PS_OK;
 }
