@@ -163,15 +163,15 @@ HWND hNextButton      = NULL;
 HWND hBackButton      = NULL;
 HINSTANCE m_hInstance = NULL;
 
-char *pszFilename = NULL;
-char *pszTitle = NULL;
+char *pszFilename         = NULL;
+char *pszTitle            = NULL;
 char *pszCancelButtonText = NULL;
-char *pszNextButtonText = NULL;
-char *pszBackButtonText = NULL;
-BOOL bBackDisabled=FALSE;
+char *pszNextButtonText   = NULL;
+char *pszBackButtonText   = NULL;
+BOOL bBackDisabled        = FALSE;
 
-BOOL bCancelEnabled=TRUE;  // by ORTIM: 13-August-2002
-int  bCancelShow=1;        // by ORTIM: 13-August-2002
+BOOL bCancelEnabled = TRUE;  // by ORTIM: 13-August-2002
+int  bCancelShow    = 1;     // by ORTIM: 13-August-2002
 
 FieldType *pFields   = NULL;
 int nNumFields       = 0;
@@ -740,8 +740,7 @@ int createCfgDlg()
   GetWindowText(hBackButton,old_back,sizeof(old_back));
   if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
-
-  EnableWindow(hBackButton,!bBackDisabled);
+  if (bBackDisabled) EnableWindow(hBackButton,0);
 
   old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);                     // by ORTIM: 13-August-2002
   old_cancel_visible=IsWindowVisible(hCancelButton);                                  // by ORTIM: 13-August-2002
