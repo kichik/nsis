@@ -2,7 +2,7 @@
 #define _EXDLL_H_
 
 // only include this file from one place in your DLL.
-// (it is all static shit, if you use it in two places it will fail)
+// (it is all static, if you use it in two places it will fail)
 
 #define EXDLL_INIT()           {  \
         g_stringsize=string_size; \
@@ -80,6 +80,12 @@ static char *getuservariable(int varnum)
 {
   if (varnum < 0 || varnum >= __INST_LAST) return NULL;
   return g_variables+varnum*g_stringsize;
+}
+
+static void setuservariable(int varnum, char *var)
+{
+	if (var != NULL && varnum >= 0 && varnum < __INST_LAST) 
+		lstrcpy(g_variables + varnum*g_stringsize, var);
 }
 
 
