@@ -12,9 +12,9 @@ For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language
 
 \c [un.]name language_id string
 
-Defines a multilingual string and spares the comparing of $LANGUAGE to every possible string you have. This also allows you to make section names and install types multilingual. To use in the uninstaller make sure you define the string with the un. prefix before its name.
+Defines a multilingual string and spares the comparing of $LANGUAGE to every language you have in your installer for every string you use. This also allows you to make section names and install types multilingual. To use in the uninstaller make sure you name the string with the un. prefix before.
 
-LangStrings can you only be used on their own. You can't include them in other strings. "look at my $(string)! isn't it beautiful?" will be seen exactly as written, $(string) will not be expanded.
+LangStrings can you only be used on their own. You can't include them in other strings. "look at my $(string)! isn't it beautiful?" will be seen exactly as written, $(string) will not be expanded. If you want to use LangStrings in other strings you can first copy the LangString to a variable and then use the variable wherever you want. This is a temporary situation, it will be changed before NSIS 2 final.
 
 Note that unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
 
