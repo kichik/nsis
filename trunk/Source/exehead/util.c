@@ -44,7 +44,7 @@ void doRMDir(char *buf, int recurse)
     WIN32_FIND_DATA fd;
     lstrcat(buf,"\\*.*");
     h = FindFirstFile(buf,&fd);
-    if (h != INVALID_HANDLE_VALUE) 
+    if (h != INVALID_HANDLE_VALUE)
     {
       do
       {
@@ -53,10 +53,10 @@ void doRMDir(char *buf, int recurse)
         {
           lstrcpy(buf+i+1,fd.cFileName);
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
-          else 
+          else
           {
-            update_status_text_from_tab(LANG_DELETEFILE,buf);
-            if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) 
+            update_status_text_from_lang(LANGID_DELETEFILE,buf);
+            if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
               SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
             DeleteFile(buf);
           }
@@ -67,7 +67,7 @@ void doRMDir(char *buf, int recurse)
     buf[i]=0; // fix buffer
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-  update_status_text_from_tab(LANG_REMOVEDIR,buf);
+  update_status_text_from_lang(LANGID_REMOVEDIR,buf);
   RemoveDirectory(buf);
 }
 #endif//NSIS_SUPPORT_RMDIR
@@ -106,7 +106,7 @@ char *scanendslash(const char *str)
 
 int validpathspec(char *ubuf)
 {
-  return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *CharNext(ubuf)==':')); 
+  return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *CharNext(ubuf)==':'));
 }
 
 int is_valid_instpath(char *s)
@@ -117,7 +117,7 @@ int is_valid_instpath(char *s)
   if (s[0] == '\\' && s[1] == '\\') // \\ path
   {
     if (lastchar(s)!='\\') ivp++;
-    while (*s) 
+    while (*s)
     {
       if (*s == '\\') ivp++;
       s=CharNext(s);
@@ -213,34 +213,34 @@ BOOL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     // wininit is used as a temporary here
     GetShortPathName(pszExisting,wininit,1024);
     cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);
-  
+
     GetWindowsDirectory(wininit, 1024-16);
     lstrcat(wininit, "\\wininit.ini");
-    hfile = CreateFile(wininit,      
-        GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, 
+    hfile = CreateFile(wininit,
+        GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
-    if (hfile != INVALID_HANDLE_VALUE) 
+    if (hfile != INVALID_HANDLE_VALUE)
     {
       dwFileSize = GetFileSize(hfile, NULL);
       hfilemap = CreateFileMapping(hfile, NULL, PAGE_READWRITE, 0, dwFileSize + cchRenameLine + 10, NULL);
 
-      if (hfilemap != NULL) 
+      if (hfilemap != NULL)
       {
         LPSTR pszWinInit = (LPSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
 
-        if (pszWinInit != NULL) 
+        if (pszWinInit != NULL)
         {
           int do_write=0;
           LPSTR pszRenameSecInFile = findinmem(pszWinInit, szRenameSec,-1);
-          if (pszRenameSecInFile == NULL) 
+          if (pszRenameSecInFile == NULL)
           {
             lstrcpy(pszWinInit+dwFileSize, szRenameSec);
             dwFileSize += 10;
             dwRenameLinePos = dwFileSize;
             do_write++;
-          } 
-          else 
+          }
+          else
           {
             char *pszFirstRenameLine = findinmem(pszRenameSecInFile, "\n",-1)+1;
             int l=pszWinInit + dwFileSize-pszFirstRenameLine;
@@ -256,7 +256,7 @@ BOOL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
             }
           }
 
-          if (do_write) 
+          if (do_write)
           {
             mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine,cchRenameLine);
             dwFileSize += cchRenameLine;
@@ -353,6 +353,19 @@ void process_string_fromtab(char *out, int offs)
 {
   process_string(ps_tmpbuf,GetStringFromStringTab(offs));
   lstrcpyn(out,ps_tmpbuf,NSIS_MAX_STRLEN);
+}
+
+void process_string_from_lang(char *out, langid_t id)
+{
+  process_string_fromtab(out, GetLangString(id));
+}
+
+// Retrieve the string offset associated with the language string ID given
+int GetLangString(langid_t id)
+{
+  return (int)id < 0 ?
+    *((int *)cur_install_strings_table - 1 - (int)id) :
+    *((int *)cur_common_strings_table + (int)id);
 }
 
 void myitoa(char *s, int d) { wsprintf(s,"%d",d); }
@@ -498,7 +511,7 @@ void process_string(char *out, const char *in)
           break;
 
         case VAR_CODES_START + 34: // LANGUAGE
-          wsprintf(out, "%u", cur_install_strings_table->lang_id);
+          wsprintf(out, "%u", cur_common_strings_table->lang_id);
           break;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -529,12 +542,12 @@ void process_string(char *out, const char *in)
 char log_text[4096];
 int log_dolog;
 void log_write(int close)
-{ 
+{
   extern char g_log_file[1024];
   static HANDLE fp=INVALID_HANDLE_VALUE;
   if (close)
   {
-    if (fp!=INVALID_HANDLE_VALUE) 
+    if (fp!=INVALID_HANDLE_VALUE)
     {
       CloseHandle(fp);
     }
@@ -546,7 +559,7 @@ void log_write(int close)
     if (g_log_file[0] && fp==INVALID_HANDLE_VALUE)
     {
       fp = CreateFile(g_log_file,GENERIC_WRITE,FILE_SHARE_READ,NULL,OPEN_ALWAYS,0,NULL);
-      if (fp!=INVALID_HANDLE_VALUE) 
+      if (fp!=INVALID_HANDLE_VALUE)
         SetFilePointer(fp,0,NULL,FILE_END);
     }
     if (fp!=INVALID_HANDLE_VALUE)
@@ -585,7 +598,7 @@ int CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int ic
        if (showmode) psl->lpVtbl->SetShowCmd(psl,showmode);
        if (hotkey) psl->lpVtbl->SetHotkey(psl,(unsigned short)hotkey);
        if (pszIconFile) psl->lpVtbl->SetIconLocation(psl,pszIconFile,iconindex);
-       if (pszArg) 
+       if (pszArg)
        {
          psl->lpVtbl->SetArguments(psl,pszArg);
        }

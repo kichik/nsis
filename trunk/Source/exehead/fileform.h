@@ -126,7 +126,6 @@ enum
 
 };
 
-
 // used for section->default_state
 #define DFS_SET 0x80000000
 #define DFS_RO  0x40000000
@@ -150,8 +149,6 @@ typedef struct
 // Strings common to both installers and uninstallers
 typedef struct
 {
-  WORD lang_id;
-
   // unprocessed strings
   int branding;
   int cancelbutton;
@@ -219,12 +216,18 @@ typedef struct
   int inst_corrupted;
   int output_dir;
   int create_dir;
+
+  // Note - should be at the end (everything before here should be just ints)
+  WORD lang_id;
+
 } common_strings;
 
 // Settings common to both installers and uninstallers
 typedef struct
 {
-  int str_tables; // offset to tables array
+  int str_tables_num; // number of strings tables in array
+  int str_tables; // offset to common string tables array
+  int inst_str_tables; // offset to install/uninstall string tables array
 
   int num_entries; // total number of entries
 
@@ -259,8 +262,6 @@ typedef struct
 // Strings specific to installers
 typedef struct
 {
-  WORD lang_id;
-
   // these first strings are literals (should not be encoded)
   int backbutton;
   int nextbutton;
@@ -287,9 +288,6 @@ typedef struct
 {
   // common settings
   common_header common;
-
-  int str_tables_num; // number of strings tables in array
-  int str_tables; // offset to tables array
 
   int install_reg_rootkey, install_reg_key_ptr, install_reg_value_ptr;
 
@@ -337,8 +335,6 @@ typedef struct
 // Strings specific to uninstallers
 typedef struct
 {
-  WORD lang_id;
-
   // unprocessed strings
   int uninstbutton;
   int uninstalltext;
@@ -350,9 +346,6 @@ typedef struct
 {
   // common settings
   common_header common;
-
-  int str_tables_num; // number of strings tables in array
-  int str_tables; // offset to tables array
 
   int code;
   int code_size;
