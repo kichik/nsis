@@ -6,6 +6,10 @@
 
 ;Written by Joost Verburg
 
+!echo "Compiling CVS Data Setup..."
+
+!verbose 3
+
 ;--------------------------------
 ;Configuration
 
@@ -24,6 +28,8 @@ SilentInstall silent
 
   SetOutPath "${NSISPATH}\${DIR}\CVS"
   File "/oname=${NSISPATH}\${DIR}\CVS\Entries" "..\${DIR}\CVS\Entries"
+  ;CVS sometimes uses Entries.log files. Ignore warnings about not existing Entries.log files.
+  File /nonfatal "/oname=${NSISPATH}\${DIR}\CVS\Entries.log" "..\${DIR}\CVS\Entries.log"
   File "/oname=${NSISPATH}\${DIR}\CVS\Repository" "..\${DIR}\CVS\Repository"
   File "/oname=${NSISPATH}\${DIR}\CVS\Root" "..\${DIR}\CVS\Root"
     
@@ -47,10 +53,6 @@ FunctionEnd
 ;Installer Section
 
 Section ""
-
-!echo "Adding CVS data..."
-
-!verbose 3
 
 !insertmacro CVSDATA "."
 !insertmacro CVSDATA "Bin"
@@ -90,8 +92,9 @@ Section ""
 !insertmacro CVSDATA "Plugins"
 !insertmacro CVSDATA "Source"
 !insertmacro CVSDATA "Source\bzip2"
+!insertmacro CVSDATA "Source\exehead"
 !insertmacro CVSDATA "Source\zlib"
 
-!verbose 4
-
 SectionEnd
+
+!verbose 4
