@@ -1,3 +1,7 @@
+/* I modified the window styles to eliminate the annoying title bar.
+   8th February 2003 Ximon Eighteen aka Sunjammer */
+
+
 #include <Windows.h>
 #include <Mmsystem.h>
 #include "../exdll/exdll.h"
@@ -39,10 +43,10 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
   }
 
   hWndImage = CreateWindowEx(
-    WS_EX_TOOLWINDOW,
+    WS_EX_TOOLWINDOW|WS_EX_LEFT|WS_EX_LTRREADING|WS_EX_RIGHTSCROLLBAR,
     "NSISBGImage",
     0,
-    WS_VISIBLE,
+    WS_POPUPWINDOW|WS_VISIBLE|WS_CLIPSIBLINGS|WS_OVERLAPPED,
     (GetSystemMetrics(SM_CXSCREEN)-x)/2,
     (GetSystemMetrics(SM_CYSCREEN)-y)/2,
     x,
