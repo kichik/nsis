@@ -90,7 +90,7 @@ Installations-Typ bestimmen:
 # ^ComponentsSubText2_NoInstTypes
 Wählen Sie die Komponenten aus, die Sie installieren möchten:
 # ^ComponentsSubText2
-oder wählen Sie zusätzliche Komponenten aus Sie installieren möchten:
+oder wählen Sie zusätzliche Komponenten aus, die Sie installieren möchten:
 # ^UnComponentsText
 Wählen Sie die Komponenten aus, die Sie deinstallieren möchten und wählen Sie diejenigen ab, die Sie nicht deinstallieren wollen. $_CLICK
 # ^UnComponentsSubText1
