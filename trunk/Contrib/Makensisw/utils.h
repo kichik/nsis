@@ -43,7 +43,7 @@ void EnableItems(HWND hwnd);*/
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);
 void ResetObjects();
-void ResetDefines();
+void ResetSymbols();
 int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();

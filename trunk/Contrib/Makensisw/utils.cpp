@@ -267,7 +267,7 @@ void CompileNSISScript() {
   }
   if (!g_sdata.appended) {
     if (s) GlobalFree(s);
-    char *defines = BuildDefines();
+    char *symbols = BuildSymbols();
     
     char compressor[40];
     if(lstrlen(g_sdata.compressor_name)) {
@@ -277,9 +277,9 @@ void CompileNSISScript() {
       lstrcpy(compressor,"");
     }
 
-    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(defines)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+20);
-    wsprintf(s,"%s %s%s /NOTIFYHWND %d %s",EXENAME,compressor,defines,g_sdata.hwnd,g_sdata.script);
-    GlobalFree(defines);
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(symbols)+lstrlen(compressor)+sizeof(EXENAME)+sizeof(" /NOTIFYHWND  ")+20);
+    wsprintf(s,"%s %s%s /NOTIFYHWND %d %s",EXENAME,compressor,symbols,g_sdata.hwnd,g_sdata.script);
+    GlobalFree(symbols);
     if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
     g_sdata.script_alloced = true;
     g_sdata.script = s;
@@ -322,62 +322,131 @@ void SaveWindowPos(HWND hwnd) {
   }
 }
 
-void RestoreDefines()
+void RestoreSymbols()
 {
-  HKEY hKey;
-  HKEY hSubKey;
-  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-    int n = 0;
-    DWORD l = sizeof(n);
-    DWORD t;
-    if ((RegQueryValueEx(hKey,REGDEFCOUNT,NULL,&t,(unsigned char*)&n,&l)==ERROR_SUCCESS)&&(t == REG_DWORD)&&(l==sizeof(n))) {
-      if(n > 0) {
-        if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
-          char buf[8];
-          g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
-          if (g_sdata.defines)
-          {
-            for(int i = 0; i < n; i++) {
-              wsprintf(buf,"%d",i);
-              l = 0;
-              if ((RegQueryValueEx(hSubKey,buf,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
-                l++;
-                g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
-                if (g_sdata.defines[i])
-                  RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)g_sdata.defines[i],&l);
-                else
-                  break;
-              }
-            }
-            g_sdata.defines[n] = NULL;
-          }
-          RegCloseKey(hSubKey);
-        }
-      }
+  g_sdata.symbols = LoadSymbolSet(NULL);
+}
+
+void SaveSymbols()
+{
+  SaveSymbolSet(NULL, g_sdata.symbols);
+}
+
+void DeleteSymbolSet(char *name)
+{
+  if(name) {
+    HKEY hKey;
+    if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+      char subkey[1024];
+      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+      RegDeleteKey(hKey,subkey);
+      RegCloseKey(hKey);
     }
-    RegCloseKey(hKey);
   }
 }
 
-void SaveDefines()
+char** LoadSymbolSet(char *name)
+{
+  HKEY hKey;
+  HKEY hSubKey;
+  char **symbols = NULL;
+  if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+    char subkey[1024];
+    if(name) {
+      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+    }
+    else {
+      lstrcpy(subkey,REGSYMSUBKEY);
+    }
+    if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
+      char buf[8];
+      DWORD l;
+      DWORD t;
+      DWORD bufSize;
+      DWORD i = 0;
+      HGLOBAL hMem;
+
+      while(TRUE) {
+        l = 0;
+        bufSize = sizeof(buf);
+        if ((RegEnumValue(hSubKey,i, buf, &bufSize,NULL,&t,NULL,&l)==ERROR_SUCCESS)&&(t == REG_SZ)) {
+          if(symbols) {
+            GlobalUnlock(hMem);
+            hMem = GlobalReAlloc(hMem, (i+2)*sizeof(char *), GMEM_MOVEABLE|GMEM_ZEROINIT);
+            symbols = (char **)GlobalLock(hMem);
+          }
+          else {
+            hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (i+2)*sizeof(char *));
+            symbols = (char **)GlobalLock(hMem);
+          }
+          if(symbols) {
+            l++;
+            symbols[i] = (char *)GlobalAlloc(GPTR, l*sizeof(char));
+            if (symbols[i]) {
+              RegQueryValueEx(hSubKey,buf,NULL,&t,(unsigned char*)symbols[i],&l);
+            }
+            else {
+              break;
+            }
+          }
+          else {
+            break;
+          }
+          i++;
+          symbols[i] = NULL;
+        }
+        else {
+          break;
+        }
+      }
+      RegCloseKey(hSubKey);
+    }
+    RegCloseKey(hKey);
+  }
+
+  return symbols;
+}
+
+void SaveSymbolSet(char *name, char **symbols)
 {
   HKEY hKey;
   HKEY hSubKey;
   int n = 0;
   if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-    RegDeleteKey(hKey,REGDEFSUBKEY);
-    if(g_sdata.defines) {
-      if (RegCreateKey(hKey,REGDEFSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+    char subkey[1024];
+    if(name) {
+      wsprintf(subkey,"%s\\%s",REGSYMSUBKEY,name);
+    }
+    else {
+      lstrcpy(subkey,REGSYMSUBKEY);
+    }
+
+    if (RegOpenKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
+      char buf[8];
+      DWORD l;
+      while(TRUE) {
+        l = sizeof(buf);
+        if (RegEnumValue(hSubKey,0, buf, &l,NULL,NULL,NULL,NULL)==ERROR_SUCCESS) {
+          RegDeleteValue(hSubKey,buf);
+        }
+        else {
+          break;
+        }
+      }
+      RegCloseKey(hSubKey);
+    }
+    if(symbols) {
+      if (RegCreateKey(hKey,subkey,&hSubKey) == ERROR_SUCCESS) {
         char buf[8];
-        while(g_sdata.defines[n]) {
+        n = 0;
+        while(symbols[n]) {
           wsprintf(buf,"%d",n);
-          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)g_sdata.defines[n],lstrlen(g_sdata.defines[n])+1);
+          RegSetValueEx(hSubKey,buf,0,REG_SZ,(CONST BYTE *)symbols[n],lstrlen(symbols[n])+1);
           n++;
         }
         RegCloseKey(hSubKey);
       }
     }
-    RegSetValueEx(hKey,REGDEFCOUNT,0,REG_DWORD,(CONST BYTE *)&n,sizeof(n));
     RegCloseKey(hKey);
   }
 }
@@ -389,15 +458,18 @@ void ResetObjects() {
   g_sdata.thread = NULL;
 }
 
-void ResetDefines() {
-  if(g_sdata.defines) {
+void ResetSymbols() {
+  if(g_sdata.symbols) {
+    HGLOBAL hMem;
     int i = 0;
-    while(g_sdata.defines[i]) {
-      GlobalFree(g_sdata.defines[i]);
+    while(g_sdata.symbols[i]) {
+      GlobalFree(g_sdata.symbols[i]);
       i++;
     }
-    GlobalFree(g_sdata.defines);
-    g_sdata.defines = NULL;
+    hMem = GlobalHandle(g_sdata.symbols);
+    GlobalUnlock(hMem);
+    GlobalFree(hMem);
+    g_sdata.symbols = NULL;
   }
 }
 
@@ -507,22 +579,22 @@ void ShowDocs() {
   ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 }
 
-char* BuildDefines()
+char* BuildSymbols()
 {
   char *buf = NULL;
 
-  if(g_sdata.defines) {
+  if(g_sdata.symbols) {
     int i=0;
-    while(g_sdata.defines[i]) {
+    while(g_sdata.symbols[i]) {
       if(buf) {
-        char *buf3 = (char *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.defines[i])+6)*sizeof(char));
-        wsprintf(buf3,"%s \"/D%s\"",buf,g_sdata.defines[i]);
+        char *buf3 = (char *)GlobalAlloc(GPTR,(lstrlen(buf)+lstrlen(g_sdata.symbols[i])+6)*sizeof(char));
+        wsprintf(buf3,"%s \"/D%s\"",buf,g_sdata.symbols[i]);
         GlobalFree(buf);
         buf = buf3;
       }
       else {
-        buf = (char *)GlobalAlloc(GPTR,(lstrlen(g_sdata.defines[i])+5)*sizeof(char));
-        wsprintf(buf,"\"/D%s\"",g_sdata.defines[i]);
+        buf = (char *)GlobalAlloc(GPTR,(lstrlen(g_sdata.symbols[i])+5)*sizeof(char));
+        wsprintf(buf,"\"/D%s\"",g_sdata.symbols[i]);
       }
       i++;
     }
