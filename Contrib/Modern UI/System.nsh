@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.69
+;NSIS Modern User Interface version 1.70
 ;Macro System
 ;Written by Joost Verburg
 
@@ -8,7 +8,7 @@
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.69 - © 2002-2004 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.70 - © 2002-2004 Joost Verburg"
 
 ;--------------------------------
 
@@ -32,7 +32,7 @@
 !include "WinMessages.nsh"
 !verbose pop
 
-!define MUI_SYSVERSION "1.69"
+!define MUI_SYSVERSION "1.70"
 
 Var MUI_TEMP1
 Var MUI_TEMP2
@@ -1177,8 +1177,10 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
     
-    GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    !ifdef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
+      SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    !endif
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
   
@@ -1630,8 +1632,10 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
     
-    GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
-    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    !ifdef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+      GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
+      SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    !endif
     
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
