@@ -9,18 +9,13 @@
 !endif
 !verbose 4
 
-!define CURRENTPAGE $9
-
-!define TEMP1 $R0
-!define TEMP2 $R1
-
 Name "NSIS"
 Caption "Nullsoft Install System - Setup"
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
 !ifndef CLASSIC_UI
-!insertmacro MUI_INTERFACE "modern2.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
+!insertmacro MUI_INTERFACE "modern2.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9"
 !endif
 
 LicenseText "Scroll down to see the rest of the agreement."
