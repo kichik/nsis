@@ -27,37 +27,37 @@ Détails
 Nom
 Terminé
 Personnalisée
-Sélectionnez le type d'installation:
-Sélectionnez les composants à installer:
-Ou, sélectionnez les composants optionnels que vous voulez installer:
-Sélectionnez le répertoire d'installation de %s:
-Espace disponible: 
-Espace requis: 
-Désinstallation de:
-Erreur lors de l'ouverture du fichier en écriture: \r\n\t"$0"\r\nAppuyez sur Abandonner pour annuler l'installation,\r\nRéessayer pour réessayer l'écriture du fichier, ou\r\nIgnorer pour passer ce fichier
-Impossible d'écrire: 
-Echec de la copie
+Sélectionnez le type d'installation :
+Sélectionnez les composants à installer :
+Ou, sélectionnez les composants optionnels que vous voulez installer :
+Sélectionnez le répertoire d'installation de %s :
+Espace disponible : 
+Espace requis : 
+Désinstallation de :
+Erreur lors de l'ouverture du fichier en écriture : \r\n\t"$0"\r\nAppuyez sur Abandonner pour annuler l'installation,\r\nRéessayer pour réessayer l'écriture du fichier, ou\r\nIgnorer pour passer ce fichier.
+Impossible d'écrire : 
+Échec de la copie
 Copier vers 
-Impossible de trouver un symbôle: 
-Impossible de charger: 
-Création du répertoire: 
-Création du raccourci: 
-Création de la désinstallation: 
-Suppression: 
-Suppression au redémarrage: 
-Erreur lors de la création du répertoire: 
-Erreur de la création: 
-Erreur lors de la décompression des données! Installation corrompue?
+Impossible de trouver un symbole : 
+Impossible de charger : 
+Création du répertoire : 
+Création du raccourci : 
+Création de la désinstallation : 
+Suppression : 
+Suppression au redémarrage : 
+Erreur lors de la création du répertoire : 
+Erreur de la création : 
+Erreur lors de la décompression des données ! Installation corrompue ? 
 Erreur lors de l'enregistrement de la DLL
-ExeSys: 
-Execution: 
-Extraction: 
-Extraction: erreur d'ouverture du fichier 
-Installation corrompue: opcode incorrect
-Pas de OLE pour: 
-Destination: 
-Suppression du répertoire: 
-Renommer au redémarrage: 
-Renommer: 
-Passer: 
+ExeSys : 
+Exécution : 
+Extraction : 
+Extraction : erreur d'ouverture du fichier 
+Installation corrompue : opcode incorrect
+Pas de OLE pour : 
+Destination : 
+Suppression du répertoire : 
+Renommer au redémarrage : 
+Renommer : 
+Passer : 
 Copier les Détails dans le Presse-papier
