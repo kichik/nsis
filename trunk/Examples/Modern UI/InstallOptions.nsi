@@ -93,6 +93,7 @@ SectionEnd
 ;Installer Functions
 
 Function .onInitDialog
+
     !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
@@ -109,16 +110,21 @@ Function .onInitDialog
     !insertmacro MUI_INNERDIALOG_STOP 5
 
   !insertmacro MUI_INNERDIALOG_END
+  
 FunctionEnd
 
 Function .onNextPage
+
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
   !insertmacro MUI_NEXTPAGE SetPage
+  
 FunctionEnd
 
 Function .onPrevPage
+
   !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
   !insertmacro MUI_PREVPAGE SetPage
+  
 FunctionEnd
 
 Function SetPage

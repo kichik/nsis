@@ -72,6 +72,7 @@ SectionEnd
 ;Installer Functions
 
 Function .onInitDialog
+
     !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
@@ -88,14 +89,19 @@ Function .onInitDialog
     !insertmacro MUI_INNERDIALOG_STOP 3
 
   !insertmacro MUI_INNERDIALOG_END
+  
 FunctionEnd
 
 Function .onNextPage
+
   !insertmacro MUI_NEXTPAGE SetPage
+  
 FunctionEnd
 
 Function .onPrevPage
+
   !insertmacro MUI_PREVPAGE SetPage
+  
 FunctionEnd
 
 Function SetPage
@@ -163,7 +169,9 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onNextPage
+
   !insertmacro MUI_NEXTPAGE un.onNextPage
+  
 FunctionEnd
 
 Function un.SetPage
