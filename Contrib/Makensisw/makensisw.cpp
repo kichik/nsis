@@ -245,9 +245,18 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
 	return 0;
 }
+DWORD CALLBACK EditStreamCallback(DWORD dwCookie,LPBYTE pbBuff, LONG cb, LONG FAR *pcb) {
+	DWORD dwNumberOfBytesRead ;
+	lstrcpy((char *)pbBuff,"tttttt");
+	//PeekNamedPipe((HANDLE)dwCookie,pbBuff,cb,&dwNumberOfBytesRead,&dwNumberOfBytesRead,NULL);
+	BOOL bSuccess = ReadFile((HANDLE)dwCookie,pbBuff,cb,&dwNumberOfBytesRead,NULL);
+	*pcb = dwNumberOfBytesRead;
+	return 0;
+}
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
 	char buf[1024];
+	EDITSTREAM es;
 	STARTUPINFO si={sizeof(si),};
 	SECURITY_ATTRIBUTES sa={sizeof(sa),};
 	SECURITY_DESCRIPTOR sd={0,};
@@ -282,24 +291,15 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
 		PostMessage(g_hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
 		return 1;
 	}
+
 	unsigned long exit=0,read,avail;
 	my_memset(buf,0,sizeof(buf));
+	es.dwCookie    = (DWORD)read_stdout;														
+	es.dwError 	   = 0;
+	es.pfnCallback = EditStreamCallback; 
+	//SendDlgItemMessage(g_hwnd,IDC_LOGWIN,EM_STREAMIN,SF_TEXT,(LPARAM)&es);
 	while(1) {
-		PeekNamedPipe(read_stdout,buf,sizeof(buf)-1,&read,&avail,NULL);
-		if (read != 0) {
-			my_memset(buf,0,sizeof(buf));
-			if (avail > sizeof(buf)-1) 	{
-				while (read >= sizeof(buf)-1) {
-					ReadFile(read_stdout,buf,sizeof(buf)-1,&read,NULL);
-					LogMessage(g_hwnd,buf);
-					my_memset(buf,0,sizeof(buf));
-				}
-			}
-			else {
-				ReadFile(read_stdout,buf,sizeof(buf),&read,NULL);
-				LogMessage(g_hwnd,buf);
-			}			
-		}
+		//SendDlgItemMessage(g_hwnd,IDC_LOGWIN,EM_STREAMIN,SF_TEXT,(LPARAM)&es);
 		GetExitCodeProcess(pi.hProcess,&exit);
 		if (exit != STILL_ACTIVE) break;
 		Sleep(TIMEOUT);
