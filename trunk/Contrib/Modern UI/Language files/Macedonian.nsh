@@ -3,6 +3,7 @@
 
 ;Language: Macedonian (1071)
 ;By Sasko Zdravkin [vardarce@mail.com]
+;Updated by Sasko Zdravkin [wingman2083@yahoo.com]
 
 ;--------------------------------
 
@@ -23,7 +24,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Одберете Компоненти"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Одберете кои работи од $(^NameDA) сакате да се инсталираат."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Објаснение"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Однесете го курсорот до компонентата за го видете нејзиното објаснение."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Однесете го курсорот до компонентата за да го видете нејзиното објаснение."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Одберете ја компонентата за да го видете нејзиното објаснение."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Одберете ја локацијата за инсталирање"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Одберете го директориумот каде што сакате да се инсталира $(^NameDA)."
