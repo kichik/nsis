@@ -57,7 +57,7 @@ int NSISCALL loadHeaders(void)
 
   if (!ReadFile(g_db_hFile,(LPVOID)&h,sizeof(h),&r,NULL) || r != sizeof(h) || !isheader(&h)) return -1;
 
-  data=(void*)GlobalAlloc(GMEM_FIXED,h.length_of_header);
+  data=(void*)my_alloc(h.length_of_header);
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   inflateInit(&g_inflate_stream);
