@@ -3230,9 +3230,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SETOUTPATH:
       {
-        SCRIPT_MSG("SetOutPath: \"%s\"\n",line.gettoken_str(1));
+        char *op=line.gettoken_str(1);
+        if (!strcmp(op,"-"))
+        {
+          op="$INSTDIR";
+        }
+        SCRIPT_MSG("SetOutPath: \"%s\"\n",op);
         ent.which=EW_CREATEDIR;
-        ent.offsets[0]=add_string(line.gettoken_str(1));
+        ent.offsets[0]=add_string(op);
         ent.offsets[1]=1;
 
         DefineInnerLangString(NLF_OUTPUT_DIR);
