@@ -1071,19 +1071,15 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
     int x=wParam;
     int ns=lParam;
+    TVITEM tv;
 
-    if (g_inst_section[x].name_ptr && ns >= 0)
+    if (tv.hItem=hTreeItems[x])
     {
-      TVITEM tv;
-      tv.hItem=hTreeItems[x];
       tv.mask=TVIF_TEXT;
       process_string_fromtab(0,ns);
       tv.pszText=ps_tmpbuf;
       TreeView_SetItem(hwndTree1,&tv);
     }
-    uMsg = WM_USER+0x18;
-    wParam = x;
-    lParam = (LPARAM)(g_inst_section[x].flags&SF_SELECTED);
   }
   if (uMsg == WM_USER+0x18) // select
   {

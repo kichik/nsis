@@ -1499,13 +1499,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int x=process_string_fromparm_toint(0);
         if (g_inst_section && x >= 0 && x < g_inst_header->num_sections)
         {
-          int z=0;
-          if (g_SectionHack)
-          {
-            int a;
-            for (a = 0; a < x; a ++) if (g_inst_section[a].name_ptr) z++;
-          }
-
           if (parm1==0) //set text
           {
             if (g_SectionHack)
