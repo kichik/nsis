@@ -80,19 +80,19 @@ Var MUI_TEMP2
   !endif
 
   !ifndef MUI_WELCOMEFINISHPAGE_INI
-    !ifndef MUI_WELCOMEFINISHPAGE_3LINES
-      !define MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
-    !else
-      !define MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini"
-    !endif
+    !define MUI_WELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
+  !endif
+  
+  !ifndef MUI_WELCOMEFINISHPAGE_INI_3LINES
+    !define MUI_WELCOMEFINISHPAGE_INI_3LINES "${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini"
   !endif
   
   !ifndef MUI_UNWELCOMEFINISHPAGE_INI
-    !ifndef MUI_UNWELCOMEFINISHPAGE_3LINES
-      !define MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
-    !else
-      !define MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini"
-    !endif
+    !define MUI_UNWELCOMEFINISHPAGE_INI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
+  !endif
+  
+  !ifndef MUI_UNWELCOMEFINISHPAGE_INI_3LINES
+    !define MUI_UNWELCOMEFINISHPAGE_INI_3LINES "${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini"
   !endif
   
   !ifndef MUI_WELCOMEFINISHPAGE_BITMAP
@@ -359,8 +359,12 @@ Var MUI_TEMP2
 !macro MUI_WELCOMEFINISHPAGE_INIT
 
   !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
-
-    !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_WELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
+  
+    !ifndef MUI_WELCOMEFINISHPAGE_3LINES
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_WELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
+    !else
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_WELCOMEFINISHPAGE_INI_3LINES}" "ioSpecial.ini"
+    !endif
     File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_WELCOMEFINISHPAGE_BITMAP}"
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
@@ -377,7 +381,11 @@ Var MUI_TEMP2
 
   !ifdef MUI_UNWELCOMEPAGE | UNMUI_FINISHPAGE
 
-    !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_UNWELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
+    !ifndef MUI_UNWELCOMEFINISHPAGE_3LINES
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_UNWELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
+    !else
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_UNWELCOMEFINISHPAGE_INI_3LINES}" "ioSpecial.ini"
+    !endif
     File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_UNWELCOMEFINISHPAGE_BITMAP}"
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
@@ -1104,6 +1112,9 @@ Var MUI_TEMP2
   !endif
 
   Function "${PRE}"
+  
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" ""
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "CancelEnabled" ""
   
     !ifndef MUI_WELCOMEPAGE_TITLE
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_${MUI_PAGE_UNINSTALLER}TEXT_WELCOME_INFO_TITLE)"

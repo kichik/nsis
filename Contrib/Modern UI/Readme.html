@@ -194,7 +194,7 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
   Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
   </div>
-  <p class="sub2header">User Interface Resource Settings</p>
+  <p class="sub2header">Interface Resource Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
   The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
@@ -216,13 +216,9 @@ will also help you to learn more about the Modern UI.</p>
   </div>
   <p class="sub2header">Welcome/Finish Page Interface Settings</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_3LINES </span><span class="parameter">ini_file</span><br />
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_3LINES</span><br />
   Create a bigger area for the title on the Welcome- and Finish page, to allow displaying 3 lines of text
-  (with the default font). This setting has no effect when using a custom INI file.</p>
-  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
-  InstallOptions INI file for the Welcome- and Finish page. You can create your own modified copy of
-  ioSpecial.ini or ioSpecial3.ini (for 3 lines title).<br />
-  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  (with the default font).</p>
   <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_BITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap for the Welcome- and Finish page (recommended size: 164x314 pixels).<br />
   <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
@@ -234,15 +230,20 @@ will also help you to learn more about the Modern UI.</p>
   if the user has a custom DPI setting.</p>
   </div>
   </div>
-  <p class="sub2header">Uninstaller Welcome/Finish Page Interface Settings</p>
+  <p class="sub2header">Welcome/Finish Page InstallOptions INI Settings</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_3LINES </span><span class="parameter">ini_file</span><br />
-  Create a bigger area for the title on the uninstaller Welcome- and Finish page, to allow displaying 3 lines of text
-  (with the default font). This setting has no effect when using a custom INI file.</p>
-  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
-  InstallOptions INI file for the uninstaller Welcome- and Finish page. You can create your own modified copy of
-  ioSpecial.ini or ioSpecial3.ini (for 3 lines title).<br />
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the Welcome- and Finish page.<br />
   <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_INI_3LINES </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the Welcome- and Finish page with space for 3 lines of title text (with the default font).<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini</i></p>
+  </div>
+  <p class="sub2header">Uninstaller Welcome/Finish Page InstallOptions INI Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_3LINES</span><br />
+  Create a bigger area for the title on the uninstaller Welcome- and Finish page, to allow displaying 3 lines of text
+  (with the default font).</p>
   <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_BITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap for the Welcome- and Finish page (recommended size: 164x314 pixels).<br />
   <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
@@ -253,6 +254,15 @@ will also help you to learn more about the Modern UI.</p>
   bitmap that fits exactly, you should not use this option because the size of the field will be different
   if the user has a custom DPI setting.</p>
   </div>
+  </div>
+  <p class="sub2header">Uninstaller Welcome/Finish Page Interface INI File Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the uninstaller Welcome- and Finish page.<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_INI_3LINES </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the Welcome- and Finish page with space for 3 lines of title text (with the default font).<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini</i></p>
   </div>
   <p class="sub2header">License Page Interface Settings</p>
   <div class="margin">
