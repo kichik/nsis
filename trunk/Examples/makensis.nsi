@@ -21,6 +21,7 @@ XPStyle on
 ChangeUI all "${NSISDIR}\Contrib\UIs\modernsimple.exe"
 SetFont Tahoma 8
 CheckBitmap "${NSISDIR}\Contrib\Icons\modern.bmp"
+BrandingText /TRIMRIGHT
 
 LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
