@@ -280,9 +280,15 @@ Here is a little example:
 		CreateFont $2 "Tahoma" 10 700 
 		SendMessage $1 ${WM_SETFONT} $2 0
 		InstallOptions::show
-		Goto done
+		Pop $0
+		StrCmp $0 "success" done
+		StrCmp $0 "back" 0 +2
+			Abort
+		StrCmp $0 "cancel" 0 error
+			Quit
 	error:
-		MessageBox MB_OK "IO error: $0"
+		MessageBox MB_OK|MB_ICONSTOP "IO error: $0"
+		Quit
 	done:</PRE>
 <HR>
 <A name=history><A name=top><B>History:</B>
