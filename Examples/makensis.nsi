@@ -339,7 +339,7 @@ Section -post
   nofunshit:
   Delete $INSTDIR\uninst-nsis.exe 
   WriteUninstaller $INSTDIR\uninst-nsis.exe
-  !insertmacro MUI_FINISHHEADER
+  !insertmacro MUI_FINISHHEADER SetHeader
 SectionEnd
 
 Function .onInstSuccess
@@ -535,8 +535,7 @@ Section Uninstall
     IfFileExists $INSTDIR 0 Removed 
       MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
   Removed:
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call un.SetHeader
+  !insertmacro MUI_FINISHHEADER un.SetHeader
 SectionEnd
 
 Function un.onNextPage

@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.0
+;Modern UI Header File version 1.01
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -23,12 +23,12 @@
 
 !macroend
 
-!macro MUI_FINISHHEADER
+!macro MUI_FINISHHEADER CALL
 
   ;Finish text on the header (white rectangle)
   
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call SetHeader
+  Call ${CALL}
 
 !macroend
 

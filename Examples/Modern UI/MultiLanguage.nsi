@@ -1,5 +1,5 @@
 ;NSIS Modern Style UI
-;Multilanguage & LangDLL Example Script version 1.0
+;Multilanguage & LangDLL Example Script version 1.01
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -72,7 +72,7 @@ SectionEnd
 Section ""
 
   ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER
+  !insertmacro MUI_FINISHHEADER SetHeader
   
 SectionEnd
 
@@ -199,10 +199,8 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
-  ;Display the Finish header
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call un.SetHeader
- 
+  !insertmacro MUI_FINISHHEADER un.SetHeader
+
 SectionEnd
 
 ;--------------------------------
