@@ -397,7 +397,8 @@ typedef struct
 
 typedef struct {
   COLORREF text;
-  LOGBRUSH bk;
+  COLORREF bkc;
+  UINT lbStyle;
   HBRUSH bkb;
   int bkmode;
   int flags;
