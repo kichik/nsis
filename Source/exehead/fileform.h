@@ -315,15 +315,21 @@ typedef struct
 #define SF_EXPAND     32
 #define SF_PSELECTED  64
 
-typedef struct
+typedef union
 {
-  int name_ptr; // '' for non-optional components
-  int install_types; // bits set for each of the different install_types, if any.
-  int flags; // SF_* - defined above
-  int code;
-  int code_size;
-  int size_kb;
+  struct
+  {
+    int name_ptr; // '' for non-optional components
+    int install_types; // bits set for each of the different install_types, if any.
+    int flags; // SF_* - defined above
+    int code;
+    int code_size;
+    int size_kb;
+  };
+  int fields[1];
 } section;
+
+#define SECTION_OFFSET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 
 typedef struct
 {
@@ -427,9 +433,14 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 // Added by ramon 3 jun 2003
-#define VAR_CODES_START 252
-#define SHELL_CODES_START 253
-#define LANG_CODES_START 254
+#define NS_SKIP_CODE 252
+#define NS_VAR_CODE 253
+#define NS_SHELL_CODE 254
+#define NS_LANG_CODE 255
+#define NS_CODES_START NS_SKIP_CODE
+
+#define CODE_SHORT(x) (WORD)((((WORD)x & 0x7F) | (((WORD)x & 0x3F80) << 1) | 0x8080))
+#define MAX_CODED 16383
 
 #define NSIS_INSTDIR_INVALID 1
 #define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2

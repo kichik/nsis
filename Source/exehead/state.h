@@ -1,4 +1,4 @@
-extern NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
+extern NSIS_STRING g_usrvars[1];
 
 #define state_command_line        g_usrvars[20]
 #define state_install_directory   g_usrvars[21]

@@ -286,6 +286,17 @@ int CEXEBuild::GenerateLangTables() {
 
   SCRIPT_MSG("Generating language tables... ");
 
+  if (
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      ubuild_langstring_num > MAX_CODED ||
+#endif
+      build_langstring_num > MAX_CODED
+     )
+  {
+    ERROR_MSG("\nError: too many LangStrings. Maximum allowed is %u.\n", MAX_CODED);
+    return PS_ERROR;
+  }
+
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
   if (!lang_tables.getlen()) {
     LANGID lang = NSIS_DEFAULT_LANG;
@@ -334,7 +345,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
     }
     catch (exception& err) {
-      ERROR_MSG("Error while applying font: %s\n", err.what());
+      ERROR_MSG("\nError while applying font: %s\n", err.what());
       return PS_ERROR;
     }
   }
@@ -390,7 +401,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG("Error while applying NLF font/RTL: %s\n", err.what());
+        ERROR_MSG("\nError while applying NLF font/RTL: %s\n", err.what());
         return PS_ERROR;
       }
 
@@ -411,7 +422,9 @@ int CEXEBuild::GenerateLangTables() {
       build_langtables.add(&rtl, sizeof(int));
     }
 
-    int *lst = (int *)((char *)build_langtables.get() + build_langtables.getlen());
+    int *lst = NULL;
+    unsigned int oldlen = build_langtables.getlen();
+
     cnt = 0;
     tabsset = 1;
 
@@ -426,6 +439,7 @@ int CEXEBuild::GenerateLangTables() {
       lang_strings = build_langstrings.sort_index(&l);
 
       for (j = 0; j < l; j++) {
+        lst = (int *)((char *)build_langtables.get() + oldlen);
         if (lang_strings[j].index >= 0) {
           if (cnt >= lastcnt || !lst[lang_strings[j].index]) {
             const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
@@ -459,6 +473,8 @@ int CEXEBuild::GenerateLangTables() {
         }
       }
     }
+
+    lst = (int *)((char *)build_langtables.get() + oldlen);
 
     // optimize langstrings and check for recursion
     TinyGrowBuf rec;
@@ -498,7 +514,9 @@ int CEXEBuild::GenerateLangTables() {
       ubuild_langtables.add(&rtl, sizeof(int));
     }
 
-    int *lst = (int *)((char *)ubuild_langtables.get() + ubuild_langtables.getlen());
+    int *lst = NULL;
+    unsigned int oldlen = ubuild_langtables.getlen();
+
     cnt = 0;
     tabsset = 1;
 
@@ -513,6 +531,7 @@ int CEXEBuild::GenerateLangTables() {
       lang_strings = build_langstrings.sort_uindex(&l);
 
       for (j = 0; j < l; j++) {
+        lst = (int *)((char *)ubuild_langtables.get() + oldlen);
         if (lang_strings[j].uindex >= 0) {
           if (cnt >= lastcnt || !lst[lang_strings[j].uindex]) {
             const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
@@ -546,6 +565,8 @@ int CEXEBuild::GenerateLangTables() {
         }
       }
     }
+
+    lst = (int *)((char *)ubuild_langtables.get() + oldlen);
 
     // optimize langstrings and check for recursion
     TinyGrowBuf rec;

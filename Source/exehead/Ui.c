@@ -81,17 +81,39 @@ static DWORD WINAPI install_thread(LPVOID p);
 
 HWND insthwnd, insthwnd2, insthwndbutton;
 
-static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
+HWND m_curwnd;
+static HWND m_bgwnd, m_hwndOK, m_hwndCancel;
 
 static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
   return my_SetDialogItemText(dlg,id+1000,GetNSISStringTT(lid));
+}
+
+static void NSISCALL SetNextDef()
+{
+  SendMessage(g_exec_flags.abort ? m_hwndCancel : m_hwndOK, BM_SETSTYLE, BS_DEFPUSHBUTTON, TRUE);
+}
+
+static void NSISCALL EnableNext(BOOL e)
+{
+  EnableWindow(m_hwndOK, e);
+}
+
+static void NSISCALL SetActiveCtl(HWND hDlg, HWND hCtl)
+{
+  SendMessage(hDlg, WM_NEXTDLGCTL, (WPARAM) hCtl, TRUE);
+}
+
+static void NSISCALL NotifyCurWnd(UINT uNotifyCode)
+{
+  if (m_curwnd)
+    SendMessage(m_curwnd, uNotifyCode, 0, 0);
 }
 
 #define SetDlgItemTextFromLang(dlg,id,lid) SetDlgItemTextFromLang_(dlg,(id)-1000,lid)
 
 #define SetUITextFromLang(it,la) SetDlgItemTextFromLang_(hwndDlg,(it)-1000,la)
 #define SetUITextNT(it,text) my_SetDialogItemText(hwndDlg,it,text)
-#define GetUIText(it,s,ss) my_GetDialogItemText(hwndDlg,it,s,ss)
+#define GetUIText(it,s) my_GetDialogItemText(it,s)
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -183,7 +205,7 @@ lang_again:
   }
 }
 
-int NSISCALL ui_doinstall(void)
+__forceinline int NSISCALL ui_doinstall(void)
 {
   header *header = g_header;
   static WNDCLASS wc; // richedit subclassing and bgbg creation
@@ -359,7 +381,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
 {
   if (uMsg==BFFM_INITIALIZED)
   {
-    my_GetDialogItemText(m_curwnd,IDC_DIR,(char*)lpData,NSIS_MAX_STRLEN);
+    my_GetDialogItemText(IDC_DIR,(char*)lpData);
     SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,lpData);
   }
   if (uMsg==BFFM_SELCHANGED)
@@ -418,14 +440,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // But if quit called we must exit now
       if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return !g_quit_flag;
 #endif
-      
+
       // if the last page was a custom page, wait for it to finish by itself.
       // if it doesn't, it's a BAD plugin.
       // plugins should react to WM_NOTIFY_OUTER_NEXT.
       if (!this_page->dlg_id) return 0;
     }
 
-    SendMessage(m_curwnd, WM_NOTIFY_INIGO_MONTOYA, 0, 0);
+    NotifyCurWnd(WM_NOTIFY_INIGO_MONTOYA);
 
 nextPage:
     m_page+=m_delta;
@@ -451,21 +473,31 @@ nextPage:
       SetDlgItemTextFromLang(hwndDlg, IDOK, this_page->next);
       SetDlgItemTextFromLang(hwndDlg, IDC_BACK, this_page->back);
       SetDlgItemTextFromLang(hwndDlg, IDCANCEL, this_page->cancel);
-      
+
       hwndtmp = GetDlgItem(hwndDlg, IDC_BACK);
+
       if (g_exec_flags.abort)
       {
         pflags &= ~(PF_BACK_ENABLE | PF_NEXT_ENABLE);
         pflags |= PF_CANCEL_ENABLE;
-        SendMessage(hwndDlg, DM_SETDEFID, IDCANCEL, 0);
       }
-      else SendMessage(hwndDlg, DM_SETDEFID, IDOK, 0);
-      
-      SetWindowLong(hwndtmp, GWL_STYLE, GetWindowLong(hwndtmp, GWL_STYLE) & ~BS_DEFPUSHBUTTON);
+
       ShowWindow(hwndtmp, pflags & PF_BACK_SHOW);// SW_HIDE = 0, PF_BACK_SHOW = SW_SHOWNA = 8
       EnableWindow(hwndtmp, pflags & PF_BACK_ENABLE);
-      EnableWindow(m_hwndOK, pflags & PF_NEXT_ENABLE);
+      EnableNext(pflags & PF_NEXT_ENABLE);
       EnableWindow(m_hwndCancel, pflags & PF_CANCEL_ENABLE);
+
+      SendMessage(hwndtmp, BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
+
+      if (g_exec_flags.abort)
+      {
+        SendMessage(hwndDlg, DM_SETDEFID, IDCANCEL, 0);
+        SetActiveCtl(hwndDlg, m_hwndCancel);
+      }
+      else
+      {
+        SetActiveCtl(hwndDlg, m_hwndOK);
+      }
 
       mystrcpy(g_tmp,g_caption);
       GetNSISString(g_tmp+mystrlen(g_tmp),this_page->caption);
@@ -478,12 +510,15 @@ nextPage:
       }
 #endif //NSIS_SUPPORT_CODECALLBACKS
 
-      if (this_page->wndproc_id != PWP_COMPLETED) DestroyWindow(m_curwnd);
+      if (this_page->wndproc_id != PWP_COMPLETED)
+      {
+        DestroyWindow(m_curwnd);
+      }
       else {
-        if (g_exec_flags.abort) SetFocus(m_hwndCancel);
-        else if (g_exec_flags.autoclose) goto nextPage;
-        else SetFocus(m_hwndOK); // without focus button, the system Beeps every time user press one key
-        goto skipPage;
+        if (!g_exec_flags.abort && g_exec_flags.autoclose)
+          goto nextPage;
+        // no need to go to skipPage because PWP_COMPLETED always follows PWP_INSTFILES
+        return FALSE;
       }
 
       // update g_this_page for the dialog proc
@@ -509,15 +544,8 @@ nextPage:
           ExecuteCodeSegment(this_page->showfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
           ShowWindow(m_curwnd,SW_SHOWNA);
-          SendMessage(m_curwnd,WM_NOTIFY_START,0,0);
+          NotifyCurWnd(WM_NOTIFY_START);
         }
-
-        //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
-        //on the license page, instead we want the focus left alone because in
-        //WM_INITDIALOG it is given to the richedit control.
-        if ((pflags & PF_NO_NEXT_FOCUS) == 0)
-          SetFocus(m_hwndOK);
-        //XGE End
       }
     }
 
@@ -525,7 +553,7 @@ skipPage:
 
     if (!ui_dlg_visible && m_curwnd)
     {
-      ShowWindow(hwndDlg, SW_SHOW);
+      ShowWindow(hwndDlg, SW_SHOWDEFAULT);
       ui_dlg_visible = 1;
     }
 
@@ -559,8 +587,12 @@ skipPage:
   {
     int id = LOWORD(wParam);
     HWND hCtl = GetDlgItem(hwndDlg, id);
-    if (hCtl && !IsWindowEnabled(hCtl))
-      return 0;
+    if (hCtl)
+    {
+      SendMessage(hCtl, BM_SETSTATE, FALSE, 0);
+      if (!IsWindowEnabled(hCtl))
+        return 0;
+    }
 
     if (id == IDOK)
     {
@@ -621,6 +653,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 {
   page *m_this_page=g_this_page;
   HWND hwLicense;
+  static int ignoreWMCommand;
 
   if (uMsg == WM_INITDIALOG)
   {
@@ -636,10 +669,11 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
     SetUITextFromLang(IDC_LICENSEAGREE,this_page->parms[2]);
     SetUITextFromLang(IDC_LICENSEDISAGREE,this_page->parms[3]);
-    SendMessage(GetUIItem(IDC_LICENSEAGREE+!selected),BM_SETCHECK,BST_CHECKED,0);
-    EnableWindow(m_hwndOK,selected);
+    CheckDlgButton(hwndDlg,IDC_LICENSEAGREE+!selected,BST_CHECKED);
+    EnableNext(selected);
 
     hwLicense=GetUIItem(IDC_EDIT1);
+    SetActiveCtl(hwndDlg, hwLicense);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
 #define lbg g_header->license_bg
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,lbg>=0?lbg:GetSysColor(-lbg));
@@ -648,20 +682,16 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     dwRead=0;
     SendMessage(hwLicense,EM_EXLIMITTEXT,0,mystrlen(l));
     SendMessage(hwLicense,EM_STREAMIN,lt,(LPARAM)&es);
-    //XGE 5th September 2002 - place the initial focus in the richedit control
-    SetFocus(hwLicense);
+    ignoreWMCommand = 0;
     return FALSE;
-    //End Xge
   }
-  if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED) {
+  if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED && !ignoreWMCommand) {
     if (m_this_page->flags & PF_LICENSE_FORCE_SELECTION) {
       int is = SendMessage(GetUIItem(IDC_LICENSEAGREE), BM_GETCHECK, 0, 0) & BST_CHECKED;
       m_this_page->flags &= ~PF_LICENSE_SELECTED;
       m_this_page->flags |= is;
-      EnableWindow(
-        m_hwndOK,
-        is
-      );
+      EnableNext(is);
+      SetNextDef();
     }
   }
   if (uMsg == WM_NOTIFY) {
@@ -712,6 +742,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     #undef enlink
     #undef msgfilter
   }
+  if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
+  {
+    ignoreWMCommand++;
+  }
   return HandleStaticBkColor();
 }
 #endif
@@ -750,7 +784,7 @@ static char * NSISCALL inttosizestr(int kb, char *str)
   return str;
 }
 
-static int NSISCALL getreqsize()
+static int NSISCALL _sumsecsfield(int idx)
 {
   int x,total;
   section *sections = g_sections;
@@ -759,19 +793,22 @@ static int NSISCALL getreqsize()
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (sections[x].flags & SF_SELECTED)
 #endif
-      total += sections[x].size_kb;
+      total += sections[x].fields[idx];
   }
   return total;
 }
 
+#define sumsecsfield(x) _sumsecsfield(SECTION_OFFSET(x))
+
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  static int dontsetdefstyle;
   page *thispage = g_this_page;
   char *dir = g_usrvars[thispage->parms[4]];
   int browse_text = thispage->parms[3];
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
-    GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
+    GetUIText(IDC_DIR,dir);
     validate_filename(dir);
 #ifdef NSIS_CONFIG_LOG
 #ifndef NSIS_CONFIG_LOG_ODS
@@ -795,6 +832,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetUITextNT(IDC_DIR,dir);
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
+    SetActiveCtl(hwndDlg, GetUIItem(IDC_DIR));
   }
   if (uMsg == WM_COMMAND)
   {
@@ -805,11 +843,10 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (id == IDC_BROWSE)
     {
-      char name[MAX_PATH];
       BROWSEINFO bi = {0,};
       ITEMIDLIST *idlist;
       bi.hwndOwner = hwndDlg;
-      bi.pszDisplayName = name;
+      bi.pszDisplayName = g_tmp;
       bi.lpfn = BrowseCallbackProc;
       bi.lParam = (LPARAM)dir;
       bi.lpszTitle = GetNSISStringTT(browse_text);
@@ -821,19 +858,20 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (idlist)
       {
         // Get and free idlist
-        my_PIDL2Path(name, idlist);
+        my_PIDL2Path(g_tmp, idlist);
 
         if (g_header->install_directory_auto_append)
         {
           const char *post_str=ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
           // name gives just the folder name
-          if (lstrcmpi(post_str,name))
+          if (lstrcmpi(post_str,g_tmp))
           {
             lstrcat(addtrailingslash(dir),post_str);
           }
         }
 
+        dontsetdefstyle++;
         SetUITextNT(IDC_DIR,dir);
       }
     }
@@ -846,7 +884,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int total, available=-1;
     DWORD spc,bps,fc,tc;
 
-    GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
+    GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
       error = NSIS_INSTDIR_INVALID;
 
@@ -862,7 +900,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       available=(int)r;
     }
 
-    total = getreqsize();
+    total = sumsecsfield(size_kb);
 
     if ((unsigned int)available < (unsigned int)total)
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
@@ -885,7 +923,10 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (thispage->flags & PF_DIR_NO_BTN_DISABLE)
       error = 0;
 
-    EnableWindow(m_hwndOK, !error);
+    EnableNext(!error);
+    if (!error && !dontsetdefstyle)
+      SetNextDef();
+    dontsetdefstyle = 0;
   }
   return HandleStaticBkColor();
 }
@@ -901,7 +942,7 @@ static int NSISCALL SetChildrenStates(HWND hwTree, HTREEITEM hItem, int iChecked
   int iCheckedChildren = 0, iChildren = 0, *pFlags, iState = 1;
   HTREEITEM hItrItem;
   TVITEM tvItem;
-  
+
   hItrItem = TreeView_GetChild(hwTree, hItem);
   while (hItrItem)
   {
@@ -909,12 +950,12 @@ static int NSISCALL SetChildrenStates(HWND hwTree, HTREEITEM hItem, int iChecked
     iChildren++;
     hItrItem = TreeView_GetNextSibling(hwTree, hItrItem);
   }
-  
+
   tvItem.hItem = hItem;
   tvItem.mask = TVIF_PARAM | TVIF_STATE;
   tvItem.stateMask = TVIS_STATEIMAGEMASK;
   TreeView_GetItem(hwTree, &tvItem);
-  
+
   pFlags = &(g_sections[tvItem.lParam].flags);
 
   if (*pFlags & SF_RO)
@@ -995,10 +1036,10 @@ HTREEITEM NSISCALL TreeHitTest(HWND tree)
 
   ht.pt.x = GET_X_LPARAM(dwpos);
   ht.pt.y = GET_Y_LPARAM(dwpos);
-  MapWindowPoints(HWND_DESKTOP, tree, &ht.pt, 1);
+  ScreenToClient(tree, &ht.pt);
 
   TreeView_HitTest(tree, &ht);
-  
+
   if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
     return ht.hItem;
 
@@ -1009,9 +1050,9 @@ static LONG oldTreeWndProc;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static LPARAM last_item=-1;
-  if (uMsg == WM_KEYDOWN && wParam == VK_SPACE)
+  if (uMsg == WM_CHAR && wParam == VK_SPACE)
   {
-    SendMessage(m_curwnd,WM_TREEVIEW_KEYHACK,0,0);
+    NotifyCurWnd(WM_TREEVIEW_KEYHACK);
   }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
   if (uMsg == WM_DESTROY) {
@@ -1020,9 +1061,9 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   if (uMsg == WM_MOUSEMOVE) {
     TVITEM tvItem;
 
-    if (GetWindowLong(hwnd, GWL_STYLE) & WS_VISIBLE) {
+    if (IsWindowVisible(hwnd)) {
       tvItem.hItem = TreeHitTest(hwnd);
-      
+
       lParam = -1;
 
       if (tvItem.hItem)
@@ -1030,7 +1071,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         tvItem.mask = TVIF_PARAM;
 
         TreeView_GetItem(hwnd, &tvItem);
-        
+
         lParam = tvItem.lParam;
       }
       uMsg = WM_NOTIFY_SELCHANGE;
@@ -1062,6 +1103,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   HWND hwndTree1 = GetUIItem(IDC_TREE1);
   extern HWND g_SectionHack;
   section *sections=g_sections;
+  int *install_types=g_header->install_types;
   if (uMsg == WM_INITDIALOG)
   {
     int doLines=0;
@@ -1071,14 +1113,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     g_SectionHack=hwndDlg;
 
-    if (hTreeItems) GlobalFree(hTreeItems);
     hTreeItems=(HTREEITEM*)my_GlobalAlloc(sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 
-    oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
-
-    if (hImageList) ImageList_Destroy(hImageList);
+    oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(long)newTreeWndProc);
 
     hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
@@ -1099,20 +1138,17 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     for (i = 0; i < NSIS_MAX_INST_TYPES+1; i++)
     {
-      if (g_header->install_types[i])
+      if (install_types[i])
       {
         int j;
         if (i != NSIS_MAX_INST_TYPES) noCombo = 0;
-        GetNSISString(g_tmp,g_header->install_types[i]);
+        GetNSISString(g_tmp,install_types[i]);
         j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)g_tmp);
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
         if (i == g_exec_flags.cur_insttype)
           SendMessage(hwndCombo1, CB_SETCURSEL, j, 0);
       }
     }
-
-    if (!noCombo)
-      ShowWindow(hwndCombo1,SW_SHOW);
 
     SetUITextFromLang(IDC_TEXT1,this_page->parms[1+noCombo]);
     SetUITextFromLang(IDC_TEXT2,this_page->parms[2+noCombo]);
@@ -1176,6 +1212,14 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
     }
     SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
+
+    if (!noCombo)
+    {
+      ShowWindow(hwndCombo1, SW_SHOW);
+      SetActiveCtl(hwndDlg, hwndCombo1);
+    }
+    else
+      SetActiveCtl(hwndDlg, hwndTree1);
 
     uMsg = g_exec_flags.insttype_changed ? WM_NOTIFY_INSTTYPE_CHANGE : WM_IN_UPDATEMSG;
   }
@@ -1280,7 +1324,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE ||
      (uMsg == WM_COMMAND && LOWORD(wParam)==IDC_COMBO1 && HIWORD(wParam)==CBN_SELCHANGE))
   {
-    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);    
+    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
     if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE || t != CB_ERR)
     {
       int whichcfg=SendMessage(hwndCombo1,CB_GETITEMDATA,t,0);
@@ -1291,7 +1335,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       }
       else lParam = 1;
 
-      if (whichcfg == CB_ERR || !(g_header->install_types[whichcfg]))
+      if (whichcfg == CB_ERR || !(install_types[whichcfg]))
         whichcfg = NSIS_MAX_INST_TYPES;
 
       if (whichcfg != NSIS_MAX_INST_TYPES) // not custom
@@ -1336,8 +1380,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
     if (hImageList) ImageList_Destroy(hImageList);
     if (hTreeItems) GlobalFree(hTreeItems);
-    hTreeItems=0;
-    g_SectionHack=0;
+    hImageList=NULL;
+    hTreeItems=NULL;
+    g_SectionHack=NULL;
   }
   if (uMsg == WM_IN_UPDATEMSG)
   {
@@ -1362,7 +1407,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         section *t=sections;
         x=num_sections;
 
-        if (!g_header->install_types[r]) continue;
+        if (!install_types[r]) continue;
 
         while (x--)
         {
@@ -1387,8 +1432,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     } // end of typecheckshit
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      char s[128];
-      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(getreqsize(),GetNSISString(s,LANG_SPACE_REQ)));
+      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(sumsecsfield(size_kb),GetNSISString(g_tmp,LANG_SPACE_REQ)));
+
     }
   }
 
@@ -1448,14 +1493,18 @@ static DWORD WINAPI install_thread(LPVOID p)
   }
 #endif
 
-  while (m_inst_sec<num_sections && !g_exec_flags.abort)
+  while (m_inst_sec<num_sections)
   {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (g_sections[m_inst_sec].flags&SF_SELECTED)
 #endif
     {
       log_printf2("Section: \"%s\"",GetNSISStringTT(g_sections[m_inst_sec].name_ptr));
-      if (ExecuteCodeSegment(g_sections[m_inst_sec].code,progresswnd)) g_exec_flags.abort++;
+      if (ExecuteCodeSegment(g_sections[m_inst_sec].code,progresswnd))
+      {
+        g_exec_flags.abort++;
+        break;
+      }
     }
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     else
@@ -1465,7 +1514,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #endif
     m_inst_sec++;
   }
-  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,0,0);
+  NotifyCurWnd(WM_NOTIFY_INSTPROC_DONE);
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   OleUninitialize();
@@ -1487,21 +1536,15 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     RECT r;
     LVCOLUMN lvc = {LVCF_WIDTH, 0, -1, 0, 0, -1};
     int lb_bg=g_header->lb_bg,lb_fg=g_header->lb_fg;
-    int x=num_sections;
 
     insthwndbutton=GetUIItem(IDC_SHOWDETAILS);
     insthwnd2=GetUIItem(IDC_INTROTEXT);
     linsthwnd=insthwnd=GetUIItem(IDC_LIST1);
 
-    progress_bar_len=0;
+    progress_bar_len=sumsecsfield(code_size);
     progress_bar_pos=0;
 
     log_printf3("New install of \"%s\" to \"%s\"",GetNSISStringTT(LANG_NAME),state_install_directory);
-    while (x--)
-    {
-      if (g_sections[x].flags&SF_SELECTED)
-        progress_bar_len+=g_sections[x].code_size;
-    }
 
     GetClientRect(linsthwnd, &r);
     lvc.cx = r.right - GetSystemMetrics(SM_CXHSCROLL);
@@ -1543,6 +1586,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   {
     ShowWindow(insthwndbutton,SW_HIDE);
     ShowWindow(linsthwnd,SW_SHOWNA);
+    SetNextDef();
   }
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
@@ -1562,22 +1606,33 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   //>>>Ximon Eighteen aka Sunjammer 30th August 2002
   //+++Popup "Copy Details To Clipboard" menu when RMB clicked in DetailView
   //+++Currently this has no language support for the popup menu tex
-  if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == NM_RCLICK)
+  if (uMsg == WM_CONTEXTMENU && wParam == (WPARAM) linsthwnd)
   {
     int count = ListView_GetItemCount(linsthwnd);
     if (count > 0)
     {
-      DWORD pos  = GetMessagePos();
       HMENU menu = CreatePopupMenu();
+      POINT pt;
       AppendMenu(menu,MF_STRING,1,GetNSISStringTT(LANG_COPYDETAILS));
+      if (lParam == ((UINT)-1))
+      {
+        RECT r;
+        GetWindowRect(linsthwnd, &r);
+        pt.x = r.left;
+        pt.y = r.top;
+      }
+      else
+      {
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
+      }
       if (1==TrackPopupMenu(
         menu,
         TPM_NONOTIFY|TPM_RETURNCMD,
-        GET_X_LPARAM(pos),
-        GET_Y_LPARAM(pos),
+        pt.x,
+        pt.y,
         0,linsthwnd,0))
       {
-        char textBuf[1024];
         int i,total = 1; // 1 for the null char
         LVITEM item;
         HGLOBAL memory;
@@ -1585,8 +1640,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 
         // 1st pass - determine clipboard memory required.
         item.iSubItem   = 0;
-        item.pszText    = textBuf;
-        item.cchTextMax = 1023;
+        item.pszText    = g_tmp;
+        item.cchTextMax = sizeof(g_tmp) - 1;
         i = count;
         while (i--)
           // Add 2 for the CR/LF combination that must follow every line.
