@@ -1,0 +1,191 @@
+# Header, don't edit
+NLF v6
+# Language ID
+1045
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+1250
+# RTL - anything else than RTL means LTR
+-
+# Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
+# Translation corrections, additions, updates since 2.0 a7 by cube cube(at)lp.net.pl
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+Instalator $(^Name)
+# ^UninstallCaption
+Deinstalator $(^Name) 
+# ^LicenseSubCaption
+: Warunki licencji
+# ^ComponentsSubCaption
+: Opcje instalacji
+# ^DirSubCaption
+: Folder instalacji
+# ^InstallingSubCaption
+: Instaluje pliki
+# ^CompletedSubCaption
+: Zakoñczono
+# ^UnComponentsSubCaption
+: Opcje deinstalacji
+# ^UnDirSubCaption
+: Folder deinstalacji
+# ^ConfirmSubCaption
+: Potwierdzenie
+# ^UnDirSubCaption
+: Deinstaluje pliki
+# ^UnCompletedSubCaption
+: Zakoñczono
+# ^BackBtn
+< &Cofnij
+# ^NextBtn
+&Dalej >
+# ^AgreeBtn
+&Zgadzam siê
+# ^AcceptBtn
+&Akceptujê warunki licencji
+# ^DontAcceptBtn
+&Nie akceptujê warunków licencji
+# ^InstallBtn
+&Instaluj
+# ^UninstallBtn
+&Odinstaluj
+# ^CancelBtn
+&Anuluj
+# ^CloseBtn
+&Zamknij
+# ^BrowseBtn
+&Przegl¹daj...
+# ^ShowDetailsBtn
+Poka¿ &szczegó³y
+# ^ClickNext
+Kliknij Dalej aby kontynuowaæ.
+# ^ClickInstall
+Kliknij Instaluj aby rozpocz¹æ instalacjê.
+# ^ClickUninstall
+Kliknij Odinstaluj aby rozpocz¹æ deinstalacjê.
+# ^Name
+Nazwa
+# ^Completed
+Zakoñczono
+# ^LicenseText
+Przed zainstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, kliknij Zgadzam siê.
+# ^LicenseTextCB
+Przed zainstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, kliknij pole poni¿ej. $_CLICK.
+# ^LicenseTextRB
+Przed zainstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, wybierz pierwsz¹ opcjê poni¿ej. $_CLICK.
+# ^UnLicenseText
+Przed odinstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, kliknij Zgadzam siê.
+# ^UnLicenseTextCB
+Przed odinstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, kliknij pole poni¿ej. $_CLICK.
+# ^UnLicenseTextRB
+Przed odinstalowaniem $(^Name) przeczytaj licencjê. Jeœli akceptujesz wszystkie warunki umowy, wybierz pierwsz¹ opcjê poni¿ej. $_CLICK.
+# ^Custom
+U¿ytkownika
+# ^ComponentsText
+Zaznacz komponenty które chcesz zainstalowaæ i odznacz te, których nie chcesz zainstalowaæ. $_CLICK
+# ^ComponentsSubText1
+Wybierz typ instalacji:
+# ^ComponentsSubText2_NoInstTypes
+Wybierz komponenty do zainstalowania:
+# ^ComponentsSubText2
+Lub wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
+# ^UnComponentsText
+Zaznacz komponenty które chcesz odinstalowaæ i odznacz te, których nie chcesz odinstalowaæ. $_CLICK
+# ^UnComponentsSubText1
+Wybierz typ deinstalacji:
+# ^UnComponentsSubText2_NoInstTypes
+Wybierz komponenty do odinstalowania:
+# ^UnComponentsSubText2
+Lub wybierz opcjonalne komponenty, które chcesz odinstalowaæ:
+# ^DirText
+Instalator zainstaluje $(^Name) w nastêpuj¹cym folderze. Aby zainstalowaæ w innym folderze, kliknij Przegl¹daj i wybierz folder. $_CLICK
+# ^DirSubText
+Folder docelowy
+# ^DirBrowseText
+Wybierz folder instalacji $(^Name):
+# ^UnDirText
+Deinstalator usunie $(^Name) z nastêpuj¹cego folderu. Aby odinstalowaæ z innego folderu, kliknij Przegl¹daj i wybierz folder. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Wybierz folder z którego zostanie odinstalowany $(^Name):
+# ^SpaceAvailable
+Dostêpne miejsce: 
+# ^SpaceRequired
+Wymagane miejsce: 
+# ^UninstallingText
+Ten kreator odinstaluje  $(^Name) z twojego komputera. $_CLICK
+# ^UninstallingSubText
+Deinstaluje z: 
+# ^FileError
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby przerwaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
+# ^FileError_NoIgnore
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz ponów, aby ponowiæ zapis do pliku lub\r\nanuluj, aby przerwaæ instalacjê
+# ^CantWrite
+Nie mo¿na zapisaæ:  
+# ^CopyFailed
+B³¹d kopiowania
+# ^CopyTo
+"Kopiuj do"
+# ^Registering 
+"Rejestrowanie: "
+# ^Unregistering
+"Odrejestrowanie:"
+# ^SymbolNotFound
+"Nie mo¿na by³o znaleŸæ symbolu: "
+# ^CouldNotLoad
+"Nie mo¿na by³o wczytaæ: "
+#^CreateFolder
+"Twórz folder: "
+# ^CreateShortcut
+"Twórz skrót: "
+# ^CreatedUninstaller
+"Utworzono deinstalator: "
+# ^Delete
+"Usuñ plik: "
+# ^DeleteOnReboot
+"Usuñ przy restarcie: "
+# ^ErrorCreatingShortcut
+"B³¹d tworzenia skrótu: "
+# ^ErrorCreating
+"B³¹d tworzenia: "
+# ^ErrorDecompressing
+B³¹d rozpakowania danych! Uszkodzony instalator?
+# ^ErrorRegistering
+B³¹d rejestracji DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Uruchom: "
+# ^Extract
+"Rozpakuj: "
+# ^ErrorWriting
+"Rozpakuj: b³¹d zapisu do pliku "
+# ^InvalidOpcode
+Instalator uszkodzony: z³y kod operacji
+# ^NoOLE
+"Brak OLE dla: 
+# ^OutputFolder
+"Folder wyjœciowy: 
+# ^RemoveFolder
+"Usuñ folder: 
+# ^RenameOnReboot
+"Zmieñ nazwê przy restarcie: 
+# ^Rename
+"Zmieñ nazwê: 
+# ^Skipped
+"Pominiête: 
+# ^CopyDetails
+Kopiuj szczegó³y do schowka
+# ^LogInstall
+Loguj przebieg instalacji
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G

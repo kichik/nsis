@@ -1,0 +1,30 @@
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+pre {
+	font-family: Courier New, Courier, mono;
+	background-color: #F7F7F7;
+	padding: 1px;
+}
+pre b {
+	text-decoration: underline;
+}
+a {
+	color: #567599;
+	text-decoration: none;
+}
+a:hover {
+	background-color: #F4F4F4;
+	color: #303030;
+	text-decoration: underline;
+}
+.btitle {
+	color: #000000;
+	text-decoration: none;
+}
+.btitle:hover {
+	background-color: #F4F4F4;
+	color: #000000;
+	text-decoration: underline;
+}

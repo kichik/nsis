@@ -1,0 +1,133 @@
+\H{variables} Variables
+
+All variables are global and can be used in Sections or Functions. Variables are case sensitive.
+
+\S1{varuser} User Variables
+
+\e{$VARNAME}
+
+User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with string manipulation etc.
+
+\S2{var} Var
+
+\c var_name
+
+Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'.
+
+\S1{varother} Other Writable Variables
+
+\e{$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9}
+
+Registers. These variables can be used just like user variables, but are usually used in shared functions or macro's. You don't have to declare these variables, so you won't get any name conflicts when using them in shared code. When using these variables in shared code, it's recommended that you use the stack to save and restore their original values. These variables can also be used for communication with plug-ins, because they can be read and written by the plug-in DLL's.
+
+\e{$INSTDIR}
+
+The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc. - This could be used, for example, in the .onInit function to do a more advanced detection of install location).
+
+\e{$OUTDIR}
+
+The current output directory (set implicitly via \R{setoutpath}{SetOutPath} or explicitly via \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc)
+
+\e{$CMDLINE}
+
+The command line of the installer. The format of the command line can be one of the following:
+
+\b "full\\path to\\installer.exe" PARAMETER PARAMETER PARAMETER
+
+\b installer.exe PARAMETER PARAMETER PARAMETER
+
+\b For parsing out the PARAMETER portion, see GetParameters on the \R{getparameters}{useful functions appendix}. If /D= is specified on the command line (to override the install directory) it won't show up in $CMDLINE.
+
+\e{$LANGUAGE}
+
+The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
+
+\S1{varconstant} Constant Variables
+
+Constant variables can also be used in the \R{ainstalldir}{InstallDir} attribute.
+
+\e{$PROGRAMFILES}
+
+The program files directory (usually C:\\Program Files but detected at runtime).
+
+\e{$DESKTOP}
+
+The windows desktop directory (usually C:\\windows\\desktop but detected at runtime). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$EXEDIR}
+
+The location of the installer executable. (technically you can modify this variable, but it is probably not a good idea)
+
+\e{$\{NSISDIR\}}
+
+A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UI's...
+
+\e{$WINDIR}
+
+The windows directory (usually C:\\windows or C:\\winnt but detected at runtime)
+
+\e{$SYSDIR}
+
+The windows system directory (usually C:\\windows\\system or C:\\winnt\\system32 but detected at runtime)
+
+\e{$TEMP}
+
+The system temporary directory (usually C:\\windows\\temp but detected at runtime)
+
+\e{$STARTMENU}
+
+The start menu folder (useful in adding start menu items using \R{createshortcut}{CreateShortCut}). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$SMPROGRAMS}
+
+The start menu programs folder (use this whenever you want $STARTMENU\\Programs). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$SMSTARTUP}
+
+The start menu programs / startup folder. The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$QUICKLAUNCH}
+
+The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP.
+
+\e{$HWNDPARENT}
+
+The decimal HWND of the parent window.
+
+\e{$PLUGINSDIR}
+
+The path to a temporary folder created upon the first usage of a plugin or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plugin, or any other file that a plugin needs to work.
+
+\S1{varstrings} Variables Used in Strings
+
+\e{$$}
+
+Use to represent $.
+
+\e{$\\r}
+
+Use to represent a carriage return (\\r).
+
+\e{$\\n}
+
+Use to represent a newline (\\n).
+
+\e{$\\t}
+
+Use to represent a tab (\\t).
+
+\e{$\{SYMBOL\}}
+
+Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. The order of calling Symbols in the script is important.
+
+\c Name "Test Program ${VERSION}"
+\c !define VERSION "V.1.0"
+
+This code will set the name of the installer to "Test Program $\{VERSION\}". The Same happens if the Symbol has not been defined.
+
+\c !define VERSION "V.1.0"
+\c Name "Test Program ${VERSION}"
+
+This code sets the name of the installer to "Test Program V.1.0"
+
+For more info, see \R{compdefines}{Conditional Compilation}.

@@ -1,0 +1,19 @@
+\title NSIS Users Manual
+
+\cfg{xhtml-leaf-level}{1}
+
+\cfg{xhtml-leaf-smallest-contents}{3}
+
+\cfg{xhtml-leaf-contains-contents}{true}
+
+\cfg{xhtml-contents-depth-0}{3}
+
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' />}
+
+\preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
+
+\preamble Check \W{http://nsis.sourceforge.net/}{http://nsis.sf.net} for news, information, support, examples, tutorials and more.
+
+\preamble Quick links:\\<br\\>\W{http://nsis.sourceforge.net/site/FAQ.15.0.html}{FAQ} - A list of frequently asked questions\\<br\\>\W{http://nsis.sourceforge.net/archive/}{NSIS Archive} - Examples, functions, tutorials, plug-ins, software, more\\<br\\>\W{http://forums.winamp.com/forumdisplay.php?forumid=65}{Forum} - Post questions or discuss NSIS features
+
+\copyright Copyright (C) 1999-2003 Nullsoft, Inc.

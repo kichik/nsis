@@ -1,0 +1,24 @@
+TODO
+
+NSIS
+
+* SetCurInstType should work without the components page
+
+* empty subsections should not show
+
+* skip plugin calls, file instructions that add more than one file with +1 with goto
+
+* more powerful plug-ins (access to ExecFunc and flags and even more)
+
+* LZMA compression
+
+EXAMPLES
+
+* write an advanced paging example showing multiple components page with multiple
+  instfiles pages
+
+PLUGINS
+
+* InstallOptions - custom class names so you can include whatever control you want
+
+* nsExec - live output

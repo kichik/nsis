@@ -1,0 +1,91 @@
+\C{comptime} Compile Time Commands
+
+\S0{compcommands} Compiler Utility Commands
+
+These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing, and processes execution during the build process. Note: none of these commands allow use of variables.
+
+\S1{include} !include
+
+\c file
+
+This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See !addincludedir for more information.
+
+\S1{addincludedir} !addincludedir
+
+\c directory
+
+Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include alone.
+
+\S1{addplugindir} !addplugindir
+
+\c directory
+
+Causes the NSIS compiler to scan the given directory for Plugin DLLs.
+
+\S1{cd} !cd
+
+\c new_path
+
+This command will change the compiler to the new directory, new_path. new_path can be relative or absolute.
+
+\S1{echo} !echo
+
+\c message
+
+This command will echo a message to the user compiling the script.
+
+\S1{error} !error
+
+\c [message]
+
+This command will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.
+
+\S1{packhdr} !packhdr
+
+\c tempfile command
+
+This option makes the compiler an external EXE packer (such as Petite or UPX) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.
+
+\S1{system} !system
+
+\c command [compare comparevalue]
+
+This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '='.
+
+\S1{warning} !warning
+
+\c [message]
+
+This command will issue a warning to the script compiler. You can also add a message to this warning.
+
+\S1{verbose} !verbose
+
+\c level | push | pop
+
+This command will set the level of verbosity. 4=all, 3=no script, 2=no info, 1=no warnings, 0=none.
+
+Passing push will cause !verbose to push the current verbosity level on a special stack. Passing pop will cause !verbose to pop the current verbosity level from the same stack and use it.
+
+\S0{comppredefines} Predefines
+
+You can use these standard predefines to automatically add the build time to the title of development versions, add the date to the version number, etc.
+
+\S1{prefile} $\{__FILE__\}
+
+Current script name.
+
+\S1{preline} $\{__LINE__\}
+
+Current line number.
+
+\S1{predate} $\{__DATE__\}
+
+Date according to the current locale.
+
+\S1{pretime} $\{__TIME__\}
+
+Time according to the current locale.
+
+\S1{pretimestamp} $\{__TIMESTAMP__\}
+
+Date & time according to the current locale.

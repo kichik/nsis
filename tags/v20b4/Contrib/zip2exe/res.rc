@@ -1,0 +1,147 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 360, 271
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Zip2Exe 0.3"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    ICON            IDI_ICON1,IDC_NSISICON,6,6,20,20
+    LTEXT           "Zip2Exe converts a ZIP file to a self extracting archive (a simple NSIS installer). To customize the NSIS script code, modify the header files in the 'Contrib\\zip2exe' folder.",
+                    IDC_INFO,36,6,312,18
+    GROUPBOX        "Source ZIP File",IDC_SZIPFRAME,7,31,347,101
+    PUSHBUTTON      "&Open...",IDC_BROWSE,18,48,54,13
+    EDITTEXT        IDC_ZIPFILE,78,48,264,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_TABSTOP
+    LTEXT           "",IDC_ZIPINFO_SUMMARY,18,66,324,8
+    LISTBOX         IDC_ZIPINFO_FILES,18,78,324,45,LBS_NOINTEGRALHEIGHT | 
+                    LBS_NOSEL | WS_VSCROLL
+    GROUPBOX        "Output Installer Options",IDC_OFRAME,6,138,347,108
+    LTEXT           "Installer Name",IDC_INAMEST,18,156,48,8
+    EDITTEXT        IDC_INSTNAME,78,156,264,12,ES_AUTOHSCROLL
+    LTEXT           "Interface",IDC_INTERFACE,18,174,30,8
+    CONTROL         "Modern",IDC_MODERNUI,"Button",BS_AUTORADIOBUTTON,78,174,
+                    42,12
+    CONTROL         "Classic",IDC_CLASSICUI,"Button",BS_AUTORADIOBUTTON,132,
+                    174,42,12
+    LTEXT           "Default Folder",IDC_DEPST,18,192,48,8
+    COMBOBOX        IDC_INSTPATH,78,192,264,126,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Output EXE File",IDC_OEFST,18,210,54,8
+    EDITTEXT        IDC_OUTFILE,78,210,204,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_BROWSE2,288,210,54,13
+    LTEXT           "Compression",IDC_COMPRESSOR,18,228,42,8
+    CONTROL         "BZIP2",IDC_BZIP2,"Button",BS_AUTORADIOBUTTON,78,228,36,
+                    10
+    CONTROL         "ZLIB (Deflate)",IDC_ZLIB,"Button",BS_AUTORADIOBUTTON,
+                    132,228,60,10
+    DEFPUSHBUTTON   "&Generate",IDOK,306,252,48,14,WS_DISABLED
+    PUSHBUTTON      "&Test",IDC_TEST,246,252,49,14,NOT WS_VISIBLE
+    PUSHBUTTON      "< &Back",IDC_BACK,6,252,48,14,NOT WS_VISIBLE
+    EDITTEXT        IDC_OUTPUTTEXT,0,0,360,246,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_VISIBLE | 
+                    WS_VSCROLL | WS_HSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 353
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 264
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "zip2exe.xml"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
