@@ -31,6 +31,17 @@ int WCStrLen(const WCHAR* szwStr);
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
+#ifndef __BIG_ENDIAN__
+# define FIX_ENDIAN_INT32_INPLACE(x) (x)
+#else
+# define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
+#endif
+#define SWAP_ENDIAN_INT32(x) ( \
+  (((x)&0xFF000000) >> 24) | \
+  (((x)&0x00FF0000) >>  8) | \
+  (((x)&0x0000FF00) <<  8) | \
+  (((x)&0x000000FF) << 24) )
+
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
