@@ -32,8 +32,11 @@ void CopyToClipboard(HWND hwnd);
 void ClearLog(HWND hwnd);
 void LogMessage(HWND hwnd,const char *str);
 void ErrorMessage(HWND hwnd,const char *str);
-void DisableItems(HWND hwnd);
-void EnableItems(HWND hwnd);
+#define DisableItems(hwnd) Items(hwnd, 0)
+#define EnableItems(hwnd) Items(hwnd, 1)
+void Items(HWND hwnd, int on);
+/*void DisableItems(HWND hwnd);
+void EnableItems(HWND hwnd);*/
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);
 void ResetObjects();

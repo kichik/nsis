@@ -87,6 +87,7 @@ BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "&Define Symbols...\tCtrl+D",  IDM_DEFINES
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
+        MENUITEM "Recompile and Run\tCtrl+M",   IDM_RECOMPILE_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
@@ -120,6 +121,7 @@ BEGIN
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "G",            IDM_GZIP,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
+    "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
     "U",            IDM_DEFAULT,            VIRTKEY, CONTROL, NOINVERT
@@ -261,6 +263,7 @@ BEGIN
     IDS_DEFAULT             "Default"
     IDS_ZLIB                "zlib"
     IDS_GZIP                "gzip"
+    IDS_RECOMPILE_TEST      "Recompile and run"
 END
 
 #endif    // English (U.S.) resources
