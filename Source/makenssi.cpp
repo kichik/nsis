@@ -261,7 +261,7 @@ int main(int argc, char **argv)
         {
           if (build.display_script) 
           {
-            fprintf(g_output,"\n\nProcessing config: \n");
+            fprintf(g_output,"Processing config: \n");
             fflush(g_output);
           }
           int ret=build.process_script(cfg,exepath);
@@ -275,6 +275,8 @@ int main(int argc, char **argv)
             }
             return 1;
           }
+          fprintf(g_output,"\n");
+          fflush(g_output);
         }
       }
 
@@ -328,22 +330,16 @@ int main(int argc, char **argv)
                 }
                 return 1;
               }
+              fprintf(g_output,"\n");
+              fflush(g_output);
             }
           }
         }
 
-        #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-        // Added by Ximon Eighteen 5th August 2002
-        if (!plugins_processed) {
-          build.build_plugin_table();
-          plugins_processed=1;
-        }
-        #endif //NSIS_CONFIG_PLUGIN_SUPPORT
-
         if (build.display_script) 
         {
           build.notify(MAKENSIS_NOTIFY_SCRIPT,sfile);
-          fprintf(g_output,"\n\nProcessing script file: \"%s\"\n",sfile);
+          fprintf(g_output,"Processing script file: \"%s\"\n",sfile);
           fflush(g_output);
         }
         int ret=build.process_script(fp,sfile);
