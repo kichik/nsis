@@ -37,7 +37,7 @@ PLUGINFUNCTIONSHORT(Copy)
         size = (int) myatoi(str+1);
         dest = (HANDLE) popint();
     }
-    else dest = (HANDLE) myatoi(str+1);
+    else dest = (HANDLE) myatoi(str);
     source = (HANDLE) popint();
 
     // Ok, check the size
