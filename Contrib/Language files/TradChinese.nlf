@@ -2,9 +2,7 @@
 NLF v2
 # Language ID
 1028
-# Language:  "Chinese (Traditional)"
-# Translator: Kii Ali <kiiali@cpatch.org>
-# Start editing here
+# Translation by Kii Ali <kiiali@cpatch.org>
 Nullsoft Install System %s
 %s 安裝
 %s 解除安裝
@@ -53,7 +51,7 @@ Nullsoft Install System %s
 執行外部程式: 
 執行: 
 解壓縮: 
-解壓縮: 無法寫入檔案
+解壓縮: 無法寫入檔案 
 安裝損毀: 無效的作業代碼
 無 OLE 用於: 
 輸出目錄: 

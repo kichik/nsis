@@ -2,7 +2,7 @@
 NLF v2
 # Language ID
 1040
-# from Orfanik - http://www.orfanik.hu
+# Translation by Orfanik - http://www.orfanik.hu
 Nullsoft Install System %s
 Installazione di %s
 Rimozione di %s
@@ -51,7 +51,7 @@ Errore nella registrazione della DLL
 ExecShell : 
 Esecuzione : 
 Estrazione : 
-Estrazione : errore nella scrittura sul file
+Estrazione : errore nella scrittura sul file 
 Installazione corrotta : opcode non valido
 Nessuna OLE per : 
 Destinazione : 

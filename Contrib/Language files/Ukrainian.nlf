@@ -2,8 +2,7 @@
 NLF v2
 # Language ID
 1058
-# Start editing here
-# Translated by Yuri Holubow, Our Soft <http://www.ns.lviv.ua>
+# Translation by Yuri Holubow, Our Soft <http://www.ns.lviv.ua>
 Nullsoft Install System %s
 %s Установка
 %s Видалення
@@ -52,7 +51,7 @@ Iм'я
 Виконання команди оболонки: 
 Виконання: 
 Витягнення: 
-Витягнення: помилка запису файла
+Витягнення: помилка запису файла 
 Iнсталляцiя пошкоджена: помилковий код вiдповiдi
 Немає OLE для: 
 Директорiя призначення: 
