@@ -512,8 +512,12 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
         else  // warning should go here
 #endif // not NSIS_SUPPORT_NAMED_USERVARS
         {
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
+
+#if defined(NSIS_SUPPORT_NAMED_USERVARS) || defined(NSIS_SUPPORT_LANG_IN_STRINGS)
           bool bProceced=false;
+#endif
+
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
           if ( *p )
           {
             const char *pUserVarName = p;
@@ -540,6 +544,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
                 pUserVarName--;
             }
           }
+#endif
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
           if ( !bProceced && *p == '(' )
           {
@@ -591,6 +596,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
             free(cp);              
           }
 #endif
+#if defined(NSIS_SUPPORT_NAMED_USERVARS) || defined(NSIS_SUPPORT_LANG_IN_STRINGS)
           if ( bProceced )
             continue;
           else
