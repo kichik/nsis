@@ -52,6 +52,7 @@ void Plugins::FindCommands(char* path,bool displayInfo)
     m_dataHandles.resize(m_funcsCount*sizeof(int));
     m_uninstDataHandles.resize(m_funcsCount*sizeof(int));
     memset(m_dataHandles.get(), -1, m_funcsCount*sizeof(int));
+    memset(m_uninstDataHandles.get(), -1, m_funcsCount*sizeof(int));
   }
 }
 
