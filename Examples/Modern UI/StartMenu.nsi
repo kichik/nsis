@@ -110,6 +110,7 @@ Section "Uninstall"
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  
   startMenuDeleteLoop:
+	ClearErrors
     RMDir $MUI_TEMP
     GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
     
