@@ -126,13 +126,13 @@ void *index234(tree234 * t, int index);
  *       consume(p);
  */
 enum {
-    REL234_EQ, REL234_LT, REL234_LE, REL234_GT, REL234_GE
+  REL234_EQ, REL234_LT, REL234_LE, REL234_GT, REL234_GE
 };
 void *find234(tree234 * t, void *e, cmpfn234 cmp);
 void *findrel234(tree234 * t, void *e, cmpfn234 cmp, int relation);
 void *findpos234(tree234 * t, void *e, cmpfn234 cmp, int *index);
 void *findrelpos234(tree234 * t, void *e, cmpfn234 cmp, int relation,
-		    int *index);
+                    int *index);
 
 /*
  * Delete an element e in a 2-3-4 tree. Does not free the element,
@@ -199,4 +199,4 @@ tree234 *join234r(tree234 * t1, tree234 * t2);
  */
 tree234 *copytree234(tree234 * t, copyfn234 copyfn, void *copyfnstate);
 
-#endif				/* TREE234_H */
+#endif                          /* TREE234_H */
