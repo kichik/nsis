@@ -31,3 +31,15 @@ Example:
 Banner::show /NOUNLOAD /set 76 "bah #1" /set 54 "bah #2" "Normal text"
 
 The second parameter for /set is the ID of the control.
+
+Some More Tricks
+----------------
+
+If you use /set to set the main string (IDC_STR, 1030) you can specify a different string for the window's caption and for the main string.
+
+If you use an empty string as the main string (Banner::show /NOUNLOAD "") the banner window will not show on the taskbar.
+
+Credits
+-------
+
+A joint effort of brainsucker and kichik in honor of the messages dropped during the battle
