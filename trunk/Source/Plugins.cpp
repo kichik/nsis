@@ -1,141 +1,12 @@
-
+#include "exehead/config.h"
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 
 #include "Plugins.h"
 #include <windows.h>
+#include <WinNT.h>
 
 
 extern FILE *g_output;
-
-
-struct COFFHeader
-{
-    unsigned short Machine;
-    unsigned short NumberOfSections;
-    unsigned long  TimeDateStamp;
-    unsigned long  PointerToSymbolTable;
-    unsigned long  NumberOfSymbols;
-    unsigned short SizeOfOptionalHeader;
-    unsigned short Characteristics;
-};
-const int COFFHeaderSize = 20;
-
-struct StandardHeader
-{
-    unsigned short Magic;
-    unsigned char  MajorLinkerVersion;
-    unsigned char  MinorLinkerVersion;
-    unsigned long  SizeOfCode;
-    unsigned long  SizeOfInitializedData;
-    unsigned long  SizeOfUninitializedData;
-    unsigned long  AddressOfEntryPoint;
-    unsigned long  BaseOfCode;
-    unsigned long  BaseOfData;                  // PE32+
-};
-const int StandardHeaderSize = 24;
-const int StandardHeaderSizePlus = 28;
-
-struct WindowsSpecificFields
-{
-    unsigned long  ImageBase;
-    unsigned long  SectionAlignment;
-    unsigned long  FileAlignment;
-    unsigned short MajorOperatingSystemVersion;
-    unsigned short MinorOperatingSystemVersion;
-    unsigned short MajorImageVersion;
-    unsigned short MinorImageVersion;
-    unsigned short MajorSubsystemVersion;
-    unsigned short MinorSubsystemVersion;
-    unsigned long  Reserved;
-    unsigned long  SizeOfImage;
-    unsigned long  SizeOfHeaders;
-    unsigned long  CheckSum;
-    unsigned short Subsystem;
-    unsigned short DllCharacteristics;
-    unsigned long  SizeOfStackReserve;
-    unsigned long  SizeOfStackCommit;
-    unsigned long  SizeOfHeapReserve;
-    unsigned long  SizeOfHeapCommit;
-    unsigned long  LoaderFlags;                 // Obsolete
-    unsigned long  NumberOfRvaAndSizes;
-};
-struct WindowsSpecificFieldsPlus
-{
-    unsigned long  ImageBase;
-    unsigned long  ImageBasePlus;               // PE32+
-    unsigned long  SectionAlignment;
-    unsigned long  FileAlignment;
-    unsigned short MajorOperatingSystemVersion;
-    unsigned short MinorOperatingSystemVersion;
-    unsigned short MajorImageVersion;
-    unsigned short MinorImageVersion;
-    unsigned short MajorSubsystemVersion;
-    unsigned short MinorSubsystemVersion;
-    unsigned long  Reserved;
-    unsigned long  SizeOfImage;
-    unsigned long  SizeOfHeaders;
-    unsigned long  CheckSum;
-    unsigned short Subsystem;
-    unsigned short DllCharacteristics;
-    unsigned long  SizeOfStackReserve;
-    unsigned long  SizeOfStackReservePlus;      // PE32+
-    unsigned long  SizeOfStackCommit;
-    unsigned long  SizeOfStackCommitPlus;       // PE32+
-    unsigned long  SizeOfHeapReserve;
-    unsigned long  SizeOfHeapReservePlus;       // PE32+
-    unsigned long  SizeOfHeapCommit;
-    unsigned long  SizeOfHeapCommitPlus;        // PE32+
-    unsigned long  LoaderFlags;                 // Obsolete
-    unsigned long  NumberOfRvaAndSizes;
-};
-const int WindowsHeaderSize = 68;
-const int WindowsHeaderSizePlus = 88;
-
-struct DataDirectory
-{
-    unsigned long Rva;
-    unsigned long Size;
-};
-const int DataDirectorySize = 8;
-
-struct SectionHeader
-{
-    unsigned char  Name[8];                     // null terminated ONLY if
-    unsigned long  VirtualSize;                 // all 8 bytes are NOT used
-    unsigned long  VirtualAddress;
-    unsigned long  SizeOfRawData;
-    unsigned long  PointerToRawData;
-    unsigned long  PointerToRelocations;
-    unsigned long  PointerToLineNumbers;
-    unsigned short NumberOfRelocations;
-    unsigned short NumberOfLineNumbers;
-    unsigned long  Characteristics;
-};
-const int SectionHeaderSize = 40;
-
-struct ExportTable
-{
-    unsigned long  ExportFlags;
-    unsigned long  TimeDateStamp;
-    unsigned short MajorVersion;
-    unsigned short MinorVersion;
-    unsigned long  NameRVA;
-    unsigned long  OrdinalBase;
-    unsigned long  AddressTableEntries;
-    unsigned long  NumberOfNamePointers;
-    unsigned long  ExportAddressTableRVA;
-    unsigned long  NamePointerRVA;
-    unsigned long  OrdinalTableRVA;
-};
-
-#define IMAGE_FILE_DLL 0x2000
-
-enum
-{
-    EXPORT, IMPORT, RESOURCE, EXCEPTION, CERTIFICATES, DEBUG, BASERELOCATION,
-    ARCHITECTURE, SPECIAL, THREADSTORAGE, LOADCONFIG, BOUND, IMPORTADDRESS, 
-    DELAYIMPORT, RESERVED1, RESERVED2
-};
-
 
 void Plugins::FindCommands(char* path,bool displayInfo)
 {
@@ -168,9 +39,7 @@ void Plugins::FindCommands(char* path,bool displayInfo)
         do
         {
           char* dllPath = new char [length+strlen(data.cFileName)+2];
-          strcpy(dllPath,basePath);
-          strcat(dllPath,"\\");
-          strcat(dllPath,data.cFileName);
+          wsprintf(dllPath,"%s\\%s",basePath,data.cFileName);
           GetExports(dllPath,displayInfo);
           delete[] dllPath;
         } while (FindNextFile(handle,&data));
@@ -221,96 +90,33 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
       return;
     }
 
-    // read the file offset stored at 0x3c (a single byte)
-    // then find the pe signature bytes stored at that offset
-    unsigned long* peheaderoffset = (unsigned long*) &dlldata[0x3c];
-    unsigned char pesignature[4] = {
-      dlldata[(*peheaderoffset)+0],
-      dlldata[(*peheaderoffset)+1],
-      dlldata[(*peheaderoffset)+2],
-      dlldata[(*peheaderoffset)+3],
-    };
-
-    if (pesignature[0] == 'P' &&
-        pesignature[1] == 'E' &&
-        pesignature[2] == '\0' &&
-        pesignature[3] == '\0')
+    PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(dlldata + PIMAGE_DOS_HEADER(dlldata)->e_lfanew);
+    if (NTHeaders->Signature == IMAGE_NT_SIGNATURE)
     {
-      // after the signature comes the COFF header
-      COFFHeader* coffHeader = (COFFHeader*)&dlldata[(*peheaderoffset)+4];
-
-      if (coffHeader->Characteristics & IMAGE_FILE_DLL)
+      if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
       {
-        // after the COFF header comes the Optional Header magic number
-        // (two bytes)
-        unsigned char ohmagicnumber[2] = {
-          dlldata[(*peheaderoffset)+4+COFFHeaderSize+0],
-          dlldata[(*peheaderoffset)+4+COFFHeaderSize+1]
-        };
+        if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes <= IMAGE_DIRECTORY_ENTRY_EXPORT) return;
 
-        // 0x10b means a PE header, but 0x20b means a PE+ header
-        // not sure if I need to care yet.
-        if ((ohmagicnumber[0] == 0x0b  &&
-             ohmagicnumber[1] == 0x01) ||
-            (ohmagicnumber[0] == 0x0b  &&
-             ohmagicnumber[1] == 0x02))
-        {
-          bool plus = (ohmagicnumber[0] == 0x0b && 
-                       ohmagicnumber[1] == 0x02);
+        DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+        DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+        PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
 
-          if (!plus)
+        for (int i = 0; i < NTHeaders->FileHeader.NumberOfSections; i++)
           {
-            const int standardHeaderSize         = (plus ? StandardHeaderSizePlus : StandardHeaderSize);
-            const int windowsHeaderSize          = (plus ? WindowsHeaderSizePlus : WindowsHeaderSize);
-      
-            int optionalHeaderOffset             = (*peheaderoffset)+4+COFFHeaderSize;
-            StandardHeader* standardHeader       = (StandardHeader*)&dlldata[optionalHeaderOffset];
-            WindowsSpecificFields* windowsHeader = (WindowsSpecificFields*)&dlldata[optionalHeaderOffset+standardHeaderSize+4];
-            DataDirectory* directories           = (DataDirectory*)&dlldata[optionalHeaderOffset+standardHeaderSize+windowsHeaderSize+4];
-
-            DataDirectory* exportHeader = directories;
-            SectionHeader* sectionTable = 
-              (SectionHeader*) &dlldata[
-                  (*peheaderoffset)
-                + 4
-                + COFFHeaderSize
-                + coffHeader->SizeOfOptionalHeader];
-
-            SectionHeader* section = sectionTable;
-            for (unsigned long i = 0; i < coffHeader->NumberOfSections; i++)
+          if (sections[i].VirtualAddress <= ExportDirVA
+              && sections[i].VirtualAddress+sections[i].Misc.VirtualSize >= ExportDirVA+ExportDirSize)
             {
-              DataDirectory* directory = directories;
-              for (unsigned long i = 0; i < windowsHeader->NumberOfRvaAndSizes; i++)
-              {
-                  if (directory->Rva >= section->VirtualAddress &&
-                     (directory->Rva+directory->Size) <= (section->VirtualAddress+section->VirtualSize) &&
-                      i == EXPORT)
-                  {
-                    unsigned char* ptr   = dlldata+section->PointerToRawData;
-                    ExportTable* exports = (ExportTable*)(dlldata+section->PointerToRawData+(directory->Rva-section->VirtualAddress));
-
-                    // find the start of the name table
-                    unsigned long* nameTableEntry = (unsigned long*)(ptr+exports->NamePointerRVA-section->VirtualAddress);
-
-                    // walk the name table
-                    for (unsigned long i = 0; i < exports->NumberOfNamePointers; i++)
-                    {
-                      char* namePointer = (char*)(ptr+(*nameTableEntry)-section->VirtualAddress);
-                      strcpy(signature,dllName);
-                      strcat(signature,"::");
-                      strcat(signature,namePointer);
-                      m_commands.add(signature,pathToDll);
-                      if (displayInfo)
-                        fprintf(g_output," - %s\n",signature);
-                      nameTableEntry++;
-                    }
-                  }
-
-                  directory++;
-              }
-            
-              section++;
+            PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(dlldata + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
+            unsigned long *names = (unsigned long*)((char*)exports + exports->AddressOfNames - ExportDirVA);
+            for (unsigned long j = 0; j < exports->NumberOfNames; j++)
+            {
+              char *name = (char*)exports + names[j] - ExportDirVA;
+              wsprintf(signature,"%s::%s", dllName, name);
+              m_commands.add(signature, pathToDll);
+              if (displayInfo)
+                fprintf(g_output, " - %s\n", signature);
             }
+            break;
           }
         }
       }
@@ -365,3 +171,5 @@ int Plugins::GetDllDataHandle(char* signature)
     return m_dataHandles[idx];
   return -1;
 }
+
+#endif

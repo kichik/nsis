@@ -200,7 +200,7 @@
 //     "CallInstDLL dll command" had been invoked.
 //   - When the installer exits any extracted temporary dlls will
 //     be deleted.
-//#define NSIS_CONFIG_PLUGIN_SUPPORT
+#define NSIS_CONFIG_PLUGIN_SUPPORT
 
 
 // fixes
