@@ -4,10 +4,10 @@
 !define VER_MAJOR 2
 !define VER_MINOR 0
 !define VER_REVISION 0
-!define VER_BUILD 13
+!define VER_BUILD 14
 
-!define VER_FILE "20b5"
-!define VER_DISPLAY "2.0 beta 5 (CVS)"
+!define VER_FILE "20rc1"
+!define VER_DISPLAY "2.0 release candidate 1"
 
 ;--------------------------------
 ;Compile CVS Data Setup
@@ -645,6 +645,8 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\7zip\7zip\Compress\LZMA_SMALL\*.*
   SetOutPath $INSTDIR\Source\7zip\7zip\Compress\RangeCoder
   File ..\Source\7zip\7zip\Compress\RangeCoder\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Common
+  File ..\Source\7zip\7zip\Common\*.*
   # exehead
   SetOutPath $INSTDIR\Source\exehead
   File ..\Source\exehead\*.c
