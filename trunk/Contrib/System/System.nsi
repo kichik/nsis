@@ -103,9 +103,6 @@ enumex: ; End of drives or user cancel
  
      MessageBox MB_OK "GetFileSysTime example: file '$CMDLINE', year $1, month $2, dow $3, day $4, hour $5, min $6, sec $7, ms $8"     
 
-     ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete the temporary DLL
-     SetPluginUnload manual
-
      ; free memory from SYSTEMTIME
      System::Free $R0   
 
@@ -126,6 +123,11 @@ enumex: ; End of drives or user cancel
 
      ; Display splash result
      MessageBox MB_OK "Splash (callbacks) demo result $R0"
+
+     ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete the temporary DLL
+     SetPluginUnload manual
+     ; do nothing
+     System::Free 0
 SectionEnd 
 
 ; eof
