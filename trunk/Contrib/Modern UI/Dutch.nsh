@@ -77,6 +77,6 @@
   LangString un.MUI_BUTTONTEXT_BACK ${LANG_DUTCH} "< Vorige"
   LangString un.MUI_BUTTONTEXT_NEXT ${LANG_DUTCH} "Volgende >"
   LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_DUTCH} "Annuleren"
-  LangString un.MUI_BUTTONTEXT_INSTALL ${LANG_DUTCH} "Installeren"
+  LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_DUTCH} "Verwijderen"
     
 !endif

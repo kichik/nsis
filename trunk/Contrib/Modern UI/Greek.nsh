@@ -77,6 +77,6 @@
   LangString un.MUI_BUTTONTEXT_BACK ${LANG_GREEK} "< Προηγούμενο"
   LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GREEK} "Επόμενο >"
   LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_GREEK} "’κυρο"
-  LangString un.MUI_BUTTONTEXT_INSTALL ${LANG_GREEK} "Εγκατάσταση"
+  LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GREEK} "Απεγκατάστ."
     
 !endif
