@@ -1,8 +1,10 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.4 and Basic Modern UI 1.61 scripts (needs te be updated!)
+;Compatible with Modern UI 1.4 (OUTDATED - NEEDS TO BE UPDATED!)
 
 ;Language: Polish (1045)
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
+
+!error "The Polish Modern UI Language File is very outdated and not compatible with the current version of the Modern UI. If you can update it, please send us your updated version!"
 
 ;--------------------------------
 
