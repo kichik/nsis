@@ -3401,11 +3401,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       SCRIPT_MSG("\n");
     return add_entry(&ent);
-    case TOK_SETLANG:
-      ent.which=EW_SETLANG;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      SCRIPT_MSG("SetLanguage: language=%s\n", line.gettoken_str(1));
-    return add_entry(&ent);
 
     // end of instructions
     ///////////////////////////////////////////////////////////////////////////////

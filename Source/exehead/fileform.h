@@ -121,8 +121,6 @@ enum
 
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
 
-  EW_SETLANG,           // SetLanguage:       1: [language]
-
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
