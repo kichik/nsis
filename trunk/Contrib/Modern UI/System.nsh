@@ -63,16 +63,20 @@ Var MUI_TEMP2
     !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
   !endif
   
-  !ifndef MUI_LICENSEBKCOLOR
-    !define MUI_LICENSEBKCOLOR "/windows"
+  !ifndef MUI_LICENSEPAGE_BGCOLOR
+    !define MUI_LICENSEPAGE_BGCOLOR "/windows"
   !endif
   
-  !ifndef MUI_INSTALLCOLORS
-    !define MUI_INSTALLCOLORS "/windows"
+  !ifndef MUI_INSTFILESPAGE_COLORS
+    !define MUI_INSTFILESPAGE_COLORS "/windows"
   !endif
 
-  !ifndef MUI_PROGRESSBAR
-    !define MUI_PROGRESSBAR "smooth"
+  !ifndef MUI_INSTFILESPAGE_PROGRESSBAR
+    !define MUI_INSTFILESPAGE_PROGRESSBAR "smooth"
+  !endif
+  
+  !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
+    AutoCloseWindow true
   !endif
 
   !ifndef MUI_BGCOLOR
@@ -104,15 +108,12 @@ Var MUI_TEMP2
   !endif
   
   Icon "${MUI_ICON}"
-  
-  !ifdef MUI_UNINSTALLER
-    UninstallIcon "${MUI_UNICON}"
-  !endif
+  UninstallIcon "${MUI_UNICON}"
   
   CheckBitmap "${MUI_CHECKBITMAP}"
-  LicenseBkColor "${MUI_LICENSEBKCOLOR}"
-  InstallColors ${MUI_INSTALLCOLORS}
-  InstProgressFlags ${MUI_PROGRESSBAR}
+  LicenseBkColor "${MUI_LICENSEPAGE_BGCOLOR}"
+  InstallColors ${MUI_INSTFILESPAGE_COLORS}
+  InstProgressFlags ${MUI_INSTFILESPAGE_PROGRESSBAR}
   
 !macroend
 
@@ -529,8 +530,13 @@ Var MUI_TEMP2
 ;--------------------------------
 ;PAGE COMMANDS
 
-!macro MUI_UNIQUEID
+!macro MUI_PAGE_INIT
 
+  !ifndef MUI_INSERT_INTERFACE
+    !insertmacro MUI_INTERFACE
+    !define MUI_INSERT_INTERFACE
+  !endif
+  
   !ifdef MUI_UNIQUEID
     !undef MUI_UNIQUEID
   !endif
@@ -548,11 +554,7 @@ Var MUI_TEMP2
     !define MUI_WELCOMEPAGE
   !endif
   
-  !ifndef MUI_BGCOLOR
-    !define MUI_BGCOLOR "FFFFFF"
-  !endif
-  
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx custom
   
@@ -580,7 +582,7 @@ Var MUI_TEMP2
     !define MUI_LICENSEPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx license
   
@@ -652,7 +654,7 @@ Var MUI_TEMP2
     !define MUI_VAR_TEXT
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx components
   
@@ -682,7 +684,7 @@ Var MUI_TEMP2
     !define MUI_DIRECTORYPAGE
   !endif
     
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
     
   PageEx directory
   
@@ -726,7 +728,7 @@ Var MUI_TEMP2
     !define MUI_STARTMENUPAGE_DEFAULTFOLDER "$(^Name)"
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx custom
   
@@ -751,7 +753,7 @@ Var MUI_TEMP2
     !define MUI_INSTFILESPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx instfiles
   
@@ -776,20 +778,13 @@ Var MUI_TEMP2
     !define MUI_FINISHPAGE
   !endif
   
-  !ifndef MUI_BGCOLOR
-    !define MUI_BGCOLOR "FFFFFF"
-  !endif
-  
-  !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
-    AutoCloseWindow true
-  !endif
   !ifdef MUI_FINISHPAGE_LINK
     !ifndef MUI_FINISHPAGE_LINK_COLOR
       !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
     !endif
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx custom
   
@@ -857,7 +852,7 @@ Var MUI_TEMP2
     !define MUI_UNCONFIRMPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx un.uninstConfirm
   
@@ -887,7 +882,7 @@ Var MUI_TEMP2
     !define MUI_UNLICENSEPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx un.license
   
@@ -939,7 +934,7 @@ Var MUI_TEMP2
     !define MUI_UNCOMPONENTSPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx un.components
   
@@ -969,7 +964,7 @@ Var MUI_TEMP2
     !define MUI_UNDIRECTORYPAGE
   !endif
     
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
     
   PageEx un.directory
   
@@ -1008,7 +1003,7 @@ Var MUI_TEMP2
     !define MUI_UNINSTFILESPAGE
   !endif
   
-  !insertmacro MUI_UNIQUEID
+  !insertmacro MUI_PAGE_INIT
   
   PageEx un.instfiles
   
@@ -1665,6 +1660,7 @@ Var MUI_TEMP2
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
       !endif
       SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+      !undef MUI_FINISHPAGE_LINK_COLO
     !endif
      
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -2055,8 +2051,6 @@ Var MUI_TEMP2
   !ifdef MUI_PRODUCT | MUI_VERSION
     !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
   !endif
-  
-  !insertmacro MUI_INTERFACE
   
   !insertmacro MUI_FUNCTION_GUIINIT
   !insertmacro MUI_FUNCTION_ABORTWARNING
