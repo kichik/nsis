@@ -120,6 +120,8 @@ __declspec(dllexport) void download (HWND   parent,
   HWND dlg=0;
   HWND childwnd=0;
 
+  char *error=NULL;
+
   static char szDownloading[32];//= "Downloading %s";
   static char szConnecting[32];//= "Connecting ...";
   static char szSecond[32];//= "second";
@@ -164,8 +166,9 @@ __declspec(dllexport) void download (HWND   parent,
 
   if (hFile == INVALID_HANDLE_VALUE) {
     wsprintf (buf, "Unable to open %s", filename);
-    setuservariable(INST_0, buf);
-  } else {  
+    error=buf;
+    goto done;
+  } else {
     if (parent)
     {
       childwnd=FindWindowEx(parent,NULL,"#32770",NULL);
@@ -213,7 +216,6 @@ __declspec(dllexport) void download (HWND   parent,
     g_hwndProgressBar = GetDlgItem (dlg, IDC_PROGRESS1);
 
     JNL_HTTPGet *get;
-    char *error=NULL;
     
     {
       WSADATA wsaData;
@@ -395,6 +397,8 @@ __declspec(dllexport) void download (HWND   parent,
       if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),0);
     }
 
+done:
+
     if (g_cancelled) {
       pushstring("cancel");
       DeleteFile(filename);
@@ -405,7 +409,7 @@ __declspec(dllexport) void download (HWND   parent,
       pushstring(error);
     }
     
-    delete get;
+    if (get) delete get;
   }
 }
 
