@@ -115,7 +115,7 @@ Nullsoft Install System %s
 # ^SpaceRequired
 "Απαιτούμενος χώρος: "
 # ^UninstallingText
-Ο οδηγός αυτός θα απεγκαταστήσει το '$(^Name)' από τον υπολογιστή σας. $_CLICK
+Το '$(^Name)' θα απεγκατασταθεί από τον ακόλουθο φάκελο. $_CLICK
 # ^UninstallingSubText
 Απεγκατάστ. από:
 # ^FileError

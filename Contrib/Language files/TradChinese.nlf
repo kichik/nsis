@@ -9,7 +9,7 @@ NLF v6
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-10-20
+# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-10-23
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -159,9 +159,9 @@ Setup 將解除安裝 $(^Name) 在下列資料夾。要解除安裝到不同資料夾，按一下 [瀏覽(B)]
 # ^Exec
 "執行: "
 # ^Extract
-"解壓縮: "
+"抽取: "
 # ^ErrorWriting
-"解壓縮: 無法寫入檔案 "
+"抽取: 無法寫入檔案 "
 # ^InvalidOpcode
 "安裝損毀: 無效的作業代碼 "
 # ^NoOLE
