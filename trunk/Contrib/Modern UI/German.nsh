@@ -10,6 +10,8 @@
 
 !define MUI_GERMAN_USED
 
+  !define MUI_GERMAN_LANGNAME "Deutsch" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+
   ;INSTALLER
 
   !ifdef MUI_LICENSEPAGE

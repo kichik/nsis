@@ -10,6 +10,8 @@
 
 !define MUI_FRENCH_USED
 
+  !define MUI_FRENCH_LANGNAME "Français" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+
   ;INSTALLER
   
   !ifdef MUI_LICENSEPAGE
