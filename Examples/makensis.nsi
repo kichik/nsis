@@ -59,7 +59,7 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_FINISHPAGE_LINK "Visit the NSIS website for the latest news, a FAQ and support"
+!define MUI_FINISHPAGE_LINK "Visit the NSIS website for the latest news, FAQs and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
@@ -239,11 +239,12 @@ SubSection "User Interfaces" SecInterfaces
 
 Section "Modern User Interface" SecInterfacesModernUI
 
-SetDetailsPrint textonly
-DetailPrint "Installing Interfaces | Modern User Interface..."
-SetDetailsPrint listonly
+  SetDetailsPrint textonly
+  DetailPrint "Installing Interfaces | Modern User Interface..."
+  SetDetailsPrint listonly
 
   SectionIn 1 2 3
+
   SetOutPath "$INSTDIR\Examples\Modern UI"
   File "..\Examples\Modern UI\Basic.nsi"
   File "..\Examples\Modern UI\HeaderBitmap.nsi"
@@ -284,11 +285,12 @@ SectionEnd
 
 Section "Default User Interface" SecInterfacesDefaultUI
 
-SetDetailsPrint textonly
-DetailPrint "Installing Interfaces | Default User Interface..."
-SetDetailsPrint listonly
+  SetDetailsPrint textonly
+  DetailPrint "Installing Interfaces | Default User Interface..."
+  SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath "$INSTDIR\Contrib\UIs"
   File "..\Contrib\UIs\default.exe"
 
@@ -296,11 +298,12 @@ SectionEnd
 
 Section "Tiny User Interface" SecInterfacesTinyUI
 
-SetDetailsPrint textonly
-DetailPrint "Installing Interfaces | Tiny User Interface..."
-SetDetailsPrint listonly
+  SetDetailsPrint textonly
+  DetailPrint "Installing Interfaces | Tiny User Interface..."
+  SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath "$INSTDIR\Contrib\UIs"
   File "..\Contrib\UIs\sdbarker_tiny.exe"
 
@@ -315,6 +318,7 @@ Section "Graphics" SecPluginsGraphics
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   Delete $INSTDIR\Contrib\Icons\*.ico
   Delete $INSTDIR\Contrib\Icons\*.bmp
   RMDir $INSTDIR\Contrib\Icons
@@ -355,6 +359,7 @@ Section "NSIS Update" SecToolsUpdate
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Bin
   File ..\Bin\NSISUpdate.exe
   File ..\Bin\InstallCVSData.exe
@@ -367,6 +372,7 @@ Section "Zip2Exe" SecToolsZ2E
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
   SetOutPath $INSTDIR\Contrib\zip2exe
@@ -387,6 +393,7 @@ Section "Banner" SecPluginsBanner
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\Banner.dll
   SetOutPath $INSTDIR\Contrib\Banner
@@ -412,6 +419,7 @@ Section "nsExec" SecPluginsnsExec
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsExec.dll
   SetOutPath $INSTDIR\Contrib\nsExec
@@ -426,6 +434,7 @@ Section "Splash" SecPluginsSplash
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\splash.dll
   SetOutPath $INSTDIR\Contrib\Splash
@@ -440,6 +449,7 @@ Section "AdvSplash" SecPluginsSplashT
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\advsplash.dll
   SetOutPath $INSTDIR\Contrib\AdvSplash
@@ -454,6 +464,7 @@ Section "BgImage" SecPluginsBgImage
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\BgImage.dll
   SetOutPath $INSTDIR\Contrib\BgImage
@@ -468,6 +479,7 @@ Section "InstallOptions" SecPluginsIO
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\InstallOptions.dll
   SetOutPath $INSTDIR\Contrib\InstallOptions
@@ -486,6 +498,7 @@ Section "Math" SecPluginsMath
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\Math.dll
   SetOutPath $INSTDIR\Contrib\Math
@@ -504,6 +517,7 @@ Section "NSISdl" SecPluginsNSISDL
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
   SetOutPath $INSTDIR\Contrib\NSISdl
@@ -518,6 +532,7 @@ Section "System" SecPluginsSystem
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\System.dll
   SetOutPath $INSTDIR\Contrib\System
@@ -534,6 +549,7 @@ Section "StartMenu" SecPluginsStartMenu
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\StartMenu.dll
   SetOutPath $INSTDIR\Contrib\StartMenu
@@ -548,6 +564,7 @@ Section "UserInfo" SecPluginsUserInfo
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\UserInfo.dll
   SetOutPath $INSTDIR\Contrib\UserInfo
@@ -561,6 +578,7 @@ Section "Dialer" SecPluginsDialer
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\Dialer.dll
   SetOutPath $INSTDIR\Contrib\Dialer
@@ -574,6 +592,7 @@ Section "VPatch" SecPluginsVPatch
   SetDetailsPrint listonly
 
   SectionIn 1 2
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\VPatch.dll
   SetOutPath $INSTDIR\Contrib\VPatch
@@ -596,23 +615,45 @@ Section "NSIS Source Code" SecSrcNSIS
   SetDetailsPrint listonly
 
   SectionIn 1
+
+  # makensis
   SetOutPath $INSTDIR\Source
   File ..\Source\*.cpp
   File ..\Source\*.c
   File ..\Source\*.h
-  File ..\Source\Makefile
+  ; outdated - File ..\Source\Makefile
   File ..\Source\makenssi.dsp
   File ..\Source\makenssi.dsw
+  # zlib
   SetOutPath $INSTDIR\Source\zlib
   File ..\Source\zlib\*.*
+  # bzip2
   SetOutPath $INSTDIR\Source\bzip2
   File ..\Source\bzip2\*.*
+  # lzma
+  SetOutPath $INSTDIR\Source\7zip
+  File ..\Source\7zip\*.*
+  SetOutPath $INSTDIR\Source\7zip\Common
+  File ..\Source\7zip\Common\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip
+  File ..\Source\7zip\7zip\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZ
+  File ..\Source\7zip\7zip\Compress\LZ\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZ\BinTree
+  File ..\Source\7zip\7zip\Compress\LZ\BinTree\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZMA
+  File ..\Source\7zip\7zip\Compress\LZMA\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZMA_SMALL
+  File ..\Source\7zip\7zip\Compress\LZMA_SMALL\*.*
+  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\RangeCoder
+  File ..\Source\7zip\7zip\Compress\RangeCoder\*.*
+  # exehead
   SetOutPath $INSTDIR\Source\exehead
   File ..\Source\exehead\*.c
   File ..\Source\exehead\*.h
   File ..\Source\exehead\resource.rc
   File ..\Source\exehead\*.dsp
-  File ..\Source\exehead\Makefile
+  ; outdated - File ..\Source\exehead\Makefile
   File ..\Source\exehead\nsis.ico
   File ..\Source\exehead\uninst.ico
   File ..\Source\exehead\bitmap1.bmp
@@ -629,6 +670,7 @@ Section "ExDLL Source (required)" SecSrcEx
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\ExDLL
   File ..\Contrib\exdll\exdll.c
   File ..\Contrib\exdll\exdll.h
@@ -648,6 +690,7 @@ Section "Zip2Exe Source" SecToolsZ2ES
   SetDetailsPrint listonly
 
   SectionIn 1
+
   RMDir /r $INSTDIR\Source\Zip2Exe
   SetOutPath $INSTDIR\Contrib\zip2exe
   File ..\Contrib\zip2exe\*.cpp
@@ -670,6 +713,7 @@ Section "MakeNSISW Source" SecSrcMNW
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\Contrib\Makensisw\*.cpp
   File ..\Contrib\Makensisw\*.xml
@@ -690,6 +734,7 @@ Section "UI Holder Source" SecSrcUIHolder
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath "$INSTDIR\Contrib\UIs\UI Holder"
   File "..\Contrib\UIs\UI Holder\*.h"
   File "..\Contrib\UIs\UI Holder\*.cpp"
@@ -709,6 +754,7 @@ Section "Banner Source" SecPluginsBannerS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\Banner
   File ..\Contrib\Banner\Banner.dsw
   File ..\Contrib\Banner\Banner.dsp
@@ -722,6 +768,7 @@ Section "Language DLL Source" SecPluginsLangDLLS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\LangDLL
   File ..\Contrib\LangDLL\LangDLL.c
   File ..\Contrib\LangDLL\resource.h
@@ -737,6 +784,7 @@ Section "nsExec Source" SecPluginsnsExecS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\nsExec
   File ..\Contrib\nsExec\*.c
   File ..\Contrib\nsExec\*.dsw
@@ -750,6 +798,7 @@ Section "Splash Source" SecPluginsSplashS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\Splash
   File ..\Contrib\Splash\splash.c
   File ..\Contrib\Splash\splash.dsp
@@ -763,6 +812,7 @@ Section "AdvSplash Source" SecPluginsSplashTS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\AdvSplash
   File ..\Contrib\AdvSplash\*.c
   File ..\Contrib\AdvSplash\*.dsw
@@ -776,6 +826,7 @@ Section "BgImage Source" SecPluginsBgImageS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\BgImage
   File ..\Contrib\BgImage\BgImage.cpp
   File ..\Contrib\BgImage\BgImage.dsw
@@ -789,6 +840,7 @@ Section "InstallOptions Source" SecPluginsIOS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\InstallOptions
   File ..\contrib\installoptions\io.dsp
   File ..\contrib\installoptions\io.dsw
@@ -804,6 +856,7 @@ Section "Math Source" SecPluginsMathS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\Math\Source
   File ..\contrib\Math\Source\*.c
   File ..\contrib\Math\Source\*.h
@@ -819,6 +872,7 @@ Section "NSISdl Source" SecPluginsNSISDLS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\nsisdl.dsw
   File ..\contrib\NSISdl\nsisdl.dsp
@@ -834,6 +888,7 @@ Section "System Source" SecPluginsSystemS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\System\Source
   File ..\contrib\System\Source\*.c
   File ..\contrib\System\Source\*.h
@@ -864,6 +919,7 @@ Section "UserInfo Source" SecPluginsUserInfoS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\UserInfo
   File ..\Contrib\UserInfo\UserInfo.c
   File ..\Contrib\UserInfo\UserInfo.dsp
@@ -877,6 +933,7 @@ Section "Dialer Source" SecPluginsDialerS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\Dialer
   File ..\Contrib\Dialer\dialer.c
   File ..\Contrib\Dialer\dialer.dsp
@@ -890,6 +947,7 @@ Section "VPatch Source" SecPluginsVPatchS
   SetDetailsPrint listonly
 
   SectionIn 1
+
   SetOutPath $INSTDIR\Contrib\VPatch\Source
   File ..\Contrib\VPatch\Source\*.bpg
 
