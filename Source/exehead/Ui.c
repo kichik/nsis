@@ -50,7 +50,6 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 #error invalid value for NSIS_MAX_INST_TYPES
 #endif
 
-//int g_autoclose;
 int progress_bar_pos, progress_bar_len;
 int g_is_uninstaller;
 
@@ -545,7 +544,12 @@ nextPage:
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
-      SendMessage(g_hwnd,DM_SETDEFID,IDOK,0);
+      if (g_flags.abort)
+      {
+        this_page->button_states|=16|4;
+        SendMessage(g_hwnd,DM_SETDEFID,IDCANCEL,0);
+      }
+      else SendMessage(g_hwnd,DM_SETDEFID,IDOK,0);
       SetWindowLong(hwndtmp,GWL_STYLE,GetWindowLong(hwndtmp,GWL_STYLE)&~BS_DEFPUSHBUTTON);
       ShowWindow(hwndtmp,this_page->button_states&SW_SHOWNA);// SW_HIDE = 0, SW_SHOWNA = 8
       EnableWindow(hwndtmp,this_page->button_states&2);
@@ -565,7 +569,8 @@ nextPage:
 
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else {
-        if (g_flags.autoclose) goto nextPage;
+        if (g_flags.abort) SetFocus(m_hwndCancel);
+        else if (g_flags.autoclose) goto nextPage;
         return 0;
       }
 
@@ -1358,7 +1363,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   }
 #endif
-  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,g_flags.abort,0);
+  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,0,0);
   return g_flags.abort;
 }
 
@@ -1444,20 +1449,12 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       m_retcode=1;
       outernotify(NOTIFY_BYE_BYE);
     }
-    else if (!wParam)
-    {
-      HWND h=m_hwndOK;
-      EnableWindow(h,1);
-      ShowWindow(g_hwnd,SW_SHOWNA);
-      update_status_text_from_lang(LANG_COMPLETED,"");
-      outernotify(1);
-      SetFocus(h);
-    }
     else
     {
-      HWND h=m_hwndCancel;
-      EnableWindow(h,1);
-      SetFocus(h);
+      ShowWindow(g_hwnd,SW_SHOWNA);
+      if (!g_flags.abort)
+        update_status_text_from_lang(LANG_COMPLETED,"");
+      outernotify(1);
     }
   }
   //>>>Ximon Eighteen aka Sunjammer 30th August 2002
