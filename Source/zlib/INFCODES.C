@@ -67,9 +67,6 @@ int r;
       if (e == 0)               /* literal */
       {
         c->sub.lit = t->base;
-        Tracevv((stderr, t->base >= 0x20 && t->base < 0x7f ?
-                 "inflate:         literal '%c'\n" :
-                 "inflate:         literal 0x%02x\n", t->base));
         c->mode = LIT;
         break;
       }
@@ -88,14 +85,10 @@ int r;
       }
       if (e & 32)               /* end of block */
       {
-        Tracevv((stderr, "inflate:         end of block\n"));
         c->mode = WASH;
         break;
       }
-      c->mode = BADCODE;        /* invalid code */
-//      z->msg = (char*)"err";//invalid literal/length code";
-      r = Z_DATA_ERROR;
-      LEAVE
+    goto badcode;
     case LENEXT:        /* i: getting length extra (have base) */
       j = c->sub.copy.get;
       NEEDBITS(j)
@@ -103,7 +96,6 @@ int r;
       DUMPBITS(j)
       c->sub.code.need = c->dbits;
       c->sub.code.tree = c->dtree;
-      Tracevv((stderr, "inflate:         length %u\n", c->len));
       c->mode = DIST;
     case DIST:          /* i: get distance next */
       j = c->sub.code.need;
@@ -124,27 +116,21 @@ int r;
         c->sub.code.tree = t + t->base;
         break;
       }
-      c->mode = BADCODE;        /* invalid code */
-//      z->msg = (char*)"err";//invalid distance code";
-      r = Z_DATA_ERROR;
-      LEAVE
+      goto badcode;
+//      c->mode = BADCODE;        /* invalid code */
+  //    r = Z_DATA_ERROR;
+    //  LEAVE
     case DISTEXT:       /* i: getting distance extra */
       j = c->sub.copy.get;
       NEEDBITS(j)
       c->sub.copy.dist += (uInt)b & (uInt)inflate_mask[j];
       DUMPBITS(j)
-      Tracevv((stderr, "inflate:         distance %u\n", c->sub.copy.dist));
       c->mode = COPY;
     case COPY:          /* o: copying bytes in window, waiting for space */
-#ifndef __TURBOC__ /* Turbo C bug for following expression */
       f = (uInt)(q - s->window) < c->sub.copy.dist ?
           s->end - (c->sub.copy.dist - (q - s->window)) :
           q - c->sub.copy.dist;
-#else
-      f = q - c->sub.copy.dist;
-      if ((uInt)(q - s->window) < c->sub.copy.dist)
-        f = s->end - (c->sub.copy.dist - (uInt)(q - s->window));
-#endif
+
       while (c->len)
       {
         NEEDOUT
@@ -163,7 +149,6 @@ int r;
     case WASH:          /* o: got eob, possibly more output */
       if (k > 7)        /* return unused byte, if any */
       {
-        Assert(k < 16, "inflate_codes grabbed too many bytes")
         k -= 8;
         n++;
         p--;            /* can always return one */
@@ -175,16 +160,11 @@ int r;
     case END:
       r = Z_STREAM_END;
       LEAVE
-    case BADCODE:       /* x: got error */
-      r = Z_DATA_ERROR;
-      LEAVE
     default:
+    badcode:
       r = Z_STREAM_ERROR;
       LEAVE
   }
-#ifdef NEED_DUMMY_RETURN
-  return Z_STREAM_ERROR;  /* Some dumb compilers complain without this */
-#endif
 }
 
 
