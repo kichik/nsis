@@ -43,6 +43,13 @@ NSISdl reads the proxy configuration from Internet Explorer's registry key
 under HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings. It
 reads and parses ProxyEnable and ProxyServer.
 
+If you don't want NSISdl to use Internet Explorer's settings, use the
+/NOIEPROXY flag. /NOIEPROXY should be used after /TRANSLATE and
+/TIMEOUT. For example:
+
+NSISdl::download /NOIEPROXY http://www.domain.com/file localfile.exe
+NSISdl::download /TIMEOUT=30000 /NOIEPROXY http://www.domain.com/file localfile.exe
+
 TRANSLATE
 ---------
 
