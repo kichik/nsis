@@ -29,7 +29,7 @@
 #define REGKEY "Software\\NSIS"
 #define REGLOC "MakeNSISWPlacement"
 
-extern const char *NSISW_VERSION;
+extern const char NSISW_VERSION[];
 
 // Methods
 void SetTitle(HWND hwnd,char *substr);

@@ -46,26 +46,26 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	g_retcode = -1; // return code is always false unless set to true by GetExitCodeProcess
 	g_warnings = FALSE;
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
-		if (!hDialog) {
-				char buf [MAX_STRING];
-				wsprintf(buf, "Error creating dialog box.\n\nError: %x", GetLastError ());
-				MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_OK);
-				return 1;
-		}
+	if (!hDialog) {
+		char buf [MAX_STRING];
+		wsprintf(buf, "Error creating dialog box.\n\nError: %x", GetLastError ());
+		MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_OK);
+		return 1;
+	}
 	haccel = LoadAccelerators(g_hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
-		MSG	msg;
-		int status;
-		while ((status=GetMessage(&msg,0,0,0))!=0) {
-				if (status==-1) return -1;
+	MSG	msg;
+	int status;
+	while ((status=GetMessage(&msg,0,0,0))!=0) {
+		if (status==-1) return -1;
 		if (!TranslateAccelerator(hDialog,haccel,&msg)) {
 			if (!IsDialogMessage(hDialog,&msg)) {
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
 		}
-		}
+	}
 	ExitProcess(msg.wParam);
-		return msg.wParam;
+	return msg.wParam;
 }
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -161,7 +161,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					GetModuleFileName(NULL,pathf,sizeof(pathf));
 					path=my_strrchr(pathf,'\\');
 					if(path!=NULL) *path=0;
-					lstrcat(pathf,"\\makensis.htm");
+					lstrcat(pathf,LOCALDOCS);
 					if ((int)ShellExecute(g_hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
 						ShellExecute(g_hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 					return TRUE;
@@ -345,9 +345,8 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)rfont, FALSE);
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)rfont, FALSE);
 			}
-			char buf[MAX_STRING];
-			wsprintf(buf,"MakeNSISW %s",NSISW_VERSION);
-			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,buf);
+			//char buf[MAX_STRING];
+			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,NSISW_VERSION);
 			SetDlgItemText(hwndDlg,IDC_ABOUTCOPY,COPYRIGHT);
 			SetDlgItemText(hwndDlg,IDC_ABOUTPORTIONS,CONTRIBUTOR);
 		}

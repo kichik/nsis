@@ -24,7 +24,7 @@
 #define STR(x) REALSTR(x)
 
 #ifdef RELEASE
-const char *NSISW_VERSION = STR(RELEASE);
+const char *NSISW_VERSION = "MakeNSISW " STR(RELEASE);
 #else
-const char *NSISW_VERSION = "Local Build: " __DATE__;
+const char *NSISW_VERSION = "MakeNSISW Local Build: " __DATE__;
 #endif
