@@ -118,6 +118,7 @@ class CEXEBuild {
     Plugins m_plugins;
     bool plugin_used;
     bool uninst_plugin_used;
+    int build_plugin_unload;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp

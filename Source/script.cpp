@@ -1747,6 +1747,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       if (build_overwrite==-1) PRINTHELP()
       SCRIPT_MSG("SetOverwrite: %s\n",line.gettoken_str(1));
     return PS_OK;
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    case TOK_SETPLUGINUNLOAD:
+      build_plugin_unload=line.gettoken_enum(1,"manual\0alwaysoff\0");
+      if (build_plugin_unload==-1) PRINTHELP()
+      SCRIPT_MSG("SetPluginUnload: %s\n",line.gettoken_str(1));
+    return PS_OK;
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
     case TOK_SETCOMPRESS:
       build_compress=line.gettoken_enum(1,"off\0auto\0force\0");
       if (build_compress==-1) PRINTHELP()
@@ -3593,7 +3600,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=add_string(tempDLL);;
         ent.offsets[1]=add_string(command);
         ent.offsets[2]=0;
-        ent.offsets[3]=nounload;
+        ent.offsets[3]=nounload|build_plugin_unload;
         ret=add_entry(&ent);
         if (ret != PS_OK) return ret;
 

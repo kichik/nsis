@@ -139,6 +139,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETFONT,"SetFont",2,0,"font_face_name font_size"},
 {TOK_SETOUTPATH,"SetOutPath",1,0,"output_path"},
 {TOK_SETOVERWRITE,"SetOverwrite",1,0,"(on|off|try|ifnewer)"},
+{TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"(manual|alwaysoff)"},
 {TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false"},
 {TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current"},
 {TOK_SETSTATICBKCOLOR,"SetStaticBkColor",2,0,"hwnd color"},
