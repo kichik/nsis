@@ -737,10 +737,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
 
       // Make some more room so the focus rect won't cut letters off
-      rc.left = max(rc.left - 2, lpdis->rcItem.left);
       rc.right = min(rc.right + 2, lpdis->rcItem.right);
-      /*rc.top = max(rc.top - 2, lpdis->rcItem.top);
-      rc.bottom = min(rc.bottom + 2, lpdis->rcItem.bottom);*/
 
       // Draw the text
       DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | (bRTL ? DT_RTLREADING : 0));
@@ -750,6 +747,9 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         DrawFocusRect(lpdis->hDC, &rc);
       }
+
+      MapWindowPoints(lpdis->hwndItem, 0, (LPPOINT) &rc, 2);
+      pField->rect = rc;
 
 #ifdef IO_LINK_UNDERLINED
       DeleteObject(SelectObject(lpdis->hDC, OldFont));
@@ -787,29 +787,33 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 // pFields[nIdx].nParentIdx is used to store original windowproc
 int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
-  int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
+  int CtrlId = GetDlgCtrlID(hWin);
+  int StaticField = FindControlIdx(CtrlId);
   if (StaticField < 0)
     return 0;
   FieldType *pField = pFields + StaticField;
 
   switch(uMsg)
   {
-  case WM_GETDLGCODE:
-    return DLGC_BUTTON|DLGC_WANTALLKEYS;
-  case WM_KEYDOWN:
-    {
-      if ( wParam == VK_RETURN )
-        WMCommandProc(hMainWindow, pField->nControlID, pField->hwnd, BN_CLICKED);
-      else if ( wParam == VK_TAB )
-        mySendMessage(hMainWindow, WM_NEXTDLGCTL, GetKeyState(VK_SHIFT) & 0x8000, FALSE);
-    }
+  case WM_SETFOCUS:
+    mySendMessage(hConfigWindow, DM_SETDEFID, CtrlId, 0);
+    // remove the BS_DEFPUSHBUTTON style from IDOK
+    mySendMessage(GetDlgItem(hMainWindow, IDOK), BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
     break;
+  case WM_NCHITTEST:
+    {
+      POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+      if (PtInRect(&pField->rect, pt))
+        return HTCLIENT;
+      else
+        return HTNOWHERE;
+    }
   case WM_SETCURSOR:
     {
-      if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
+      if ((HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT)
       {
         HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
-        if ( hCur )
+        if (hCur)
         {
           SetCursor(hCur);
           return 1; // halt further processing
@@ -866,21 +870,21 @@ int WINAPI createCfgDlg()
   HFONT hFont = (HFONT)mySendMessage(mainwnd, WM_GETFONT, 0, 0);
 
   RECT dialog_r;
-  int width;
+  int mainWndWidth, mainWndHeight;
   hConfigWindow=CreateDialog(m_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),mainwnd,cfgDlgProc);
   if (hConfigWindow)
   {
     GetWindowRect(childwnd,&dialog_r);
-    ScreenToClient(mainwnd,(LPPOINT)&dialog_r);
-    ScreenToClient(mainwnd,((LPPOINT)&dialog_r)+1);
-    width = dialog_r.right-dialog_r.left;
+    MapWindowPoints(0, mainwnd, (LPPOINT) &dialog_r, 2);
+    mainWndWidth = dialog_r.right - dialog_r.left;
+    mainWndHeight = dialog_r.bottom - dialog_r.top;
     SetWindowPos(
       hConfigWindow,
       0,
       dialog_r.left,
       dialog_r.top,
-      width,
-      dialog_r.bottom-dialog_r.top,
+      mainWndWidth,
+      mainWndHeight,
       SWP_NOZORDER|SWP_NOACTIVATE
     );
     // Sets the font of IO window to be the same as the main window
@@ -1017,18 +1021,18 @@ int WINAPI createCfgDlg()
     rect.bottom = MulDiv(pField->rect.bottom, baseUnitY, 8);
 
     if (pField->rect.left < 0)
-      rect.left += dialog_r.right - dialog_r.left;
+      rect.left += mainWndWidth;
     if (pField->rect.right < 0)
-      rect.right += dialog_r.right - dialog_r.left;
+      rect.right += mainWndWidth;
     if (pField->rect.top < 0)
-      rect.top += dialog_r.bottom - dialog_r.top;
+      rect.top += mainWndHeight;
     if (pField->rect.bottom < 0)
-      rect.bottom += dialog_r.bottom - dialog_r.top;
+      rect.bottom += mainWndHeight;
 
     if (bRTL) {
       int right = rect.right;
-      rect.right = width - rect.left;
-      rect.left = width - right;
+      rect.right = mainWndWidth - rect.left;
+      rect.left = mainWndWidth - right;
     }
 
     char *title = pField->pszText;
