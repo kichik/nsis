@@ -360,6 +360,7 @@ enum
 #define PF_LICENSE_SELECTED 1 // must be 1
 #define PF_NO_NEXT_FOCUS 128
 #define PF_PAGE_EX 512
+#define PF_DIR_NO_BTN_DISABLE 1024
 
 typedef struct
 {
@@ -448,6 +449,9 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove);
   #endif
 #endif
 
+#define NSIS_INSTDIR_INVALID 1
+#define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
+
 union exec_flags {
   struct {
     int autoclose;
@@ -462,6 +466,7 @@ union exec_flags {
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     int silent;
 #endif
+    int instdir_error;
   };
   int flags[1];
 };

@@ -122,31 +122,43 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   char *buf3 = bufs[3];
   char *buf4 = bufs[4];
 
-  int parm0 = entry_->offsets[0];
-  char *var0 = g_usrvars[parm0];
-  int parm1 = entry_->offsets[1];
-  char *var1 = g_usrvars[parm1];
-  int parm2 = entry_->offsets[2];
-  char *var2 = g_usrvars[parm2];
-  int parm3 = entry_->offsets[3];
-  char *var3 = g_usrvars[parm3];
-  int parm4 = entry_->offsets[4];
-//char *var4 = g_usrvars[parm4]; // not used yet
-  int parm5 = entry_->offsets[5];
-//char *var5 = g_usrvars[parm5]; // not used yet
-  int which = entry_->which;
-
-  // Saves 8 bytes
-  // HWND mainHwnd = g_hwnd;
-  // #define g_hwnd mainHwnd
+  char *var0;
+  char *var1;
+  char *var2;
+  char *var3;
+  //char *var4;
+  //char *var5;
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   HWND hwSectionHack = g_SectionHack;
 #endif
 
+  // Saves 8 bytes
+  HWND mainHwnd = g_hwnd;
+#define g_hwnd mainHwnd
+
   int exec_error = 0;
 
-  parms = entry_->offsets;
+  entry lent;
+  mini_memcpy(&lent, entry_, sizeof(entry));
+
+#define which (lent.which)
+#define parm0 (lent.offsets[0])
+#define parm1 (lent.offsets[1])
+#define parm2 (lent.offsets[2])
+#define parm3 (lent.offsets[3])
+#define parm4 (lent.offsets[4])
+#define parm5 (lent.offsets[5])
+
+  var0 = g_usrvars[parm0];
+  var1 = g_usrvars[parm1];
+  var2 = g_usrvars[parm2];
+  var3 = g_usrvars[parm3];
+  // not used yet
+  //var4 = g_usrvars[parm4];
+  //var5 = g_usrvars[parm5];
+
+  parms = lent.offsets;
 
   switch (which)
   {
@@ -202,7 +214,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_IFFLAG:
     {
-      int f=entry_->offsets[!g_exec_flags.flags[parm2]];
+      int f=lent.offsets[!g_exec_flags.flags[parm2]];
       g_exec_flags.flags[parm2]&=parm3;
       return f;
     }
@@ -377,7 +389,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           int cmp=0;
           if (ffd)
           {
-            cmp=CompareFileTime(&ffd->ftLastWriteTime, (FILETIME*)(entry_->offsets + 3));
+            cmp=CompareFileTime(&ffd->ftLastWriteTime, (FILETIME*)(lent.offsets + 3));
           }
           overwriteflag=!(cmp & (0x80000000 | (overwriteflag - 3)));
         }
@@ -431,7 +443,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf3("File: wrote %d to \"%s\"",ret,buf0);
 
         if (parm3 != 0xffffffff || parm4 != 0xffffffff)
-          SetFileTime(hOut,(FILETIME*)(entry_->offsets+3),NULL,(FILETIME*)(entry_->offsets+3));
+          SetFileTime(hOut,(FILETIME*)(lent.offsets+3),NULL,(FILETIME*)(lent.offsets+3));
 
         CloseHandle(hOut);
 

@@ -751,8 +751,9 @@ static int NSISCALL getreqsize()
 
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  char *dir = g_usrvars[g_this_page->parms[4]];
-  int browse_text = g_this_page->parms[3];
+  page *thispage = g_this_page;
+  char *dir = g_usrvars[thispage->parms[4]];
+  int browse_text = thispage->parms[3];
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
     GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
@@ -831,12 +832,13 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
     static char s[NSIS_MAX_STRLEN];
     char *p;
-    int is_valid_path;
+    int error = 0;
     int total, available=-1;
     DWORD spc,bps,fc,tc;
 
     GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
-    is_valid_path=is_valid_instpath(dir);
+    if (!is_valid_instpath(dir))
+      error = NSIS_INSTDIR_INVALID;
 
     mystrcpy(s,dir);
     p=skip_root(s);
@@ -852,6 +854,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     total = getreqsize();
 
+    if ((unsigned int)available < (unsigned int)total)
+      error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
+
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
       if (available != -1)
@@ -860,12 +865,17 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
 
-    EnableWindow(m_hwndOK,
-      is_valid_path && ((unsigned int)available >= (unsigned int)total)
+    g_exec_flags.instdir_error = error;
+
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
+    if (!error)
+      error = ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL);
 #endif
-    );
+
+    if (thispage->flags & PF_DIR_NO_BTN_DISABLE)
+      error = 0;
+
+    EnableWindow(m_hwndOK, !error);
   }
   return HandleStaticBkColor();
 }
