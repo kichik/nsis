@@ -2979,7 +2979,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("\n");
       }
     return PS_OK;
+    case TOK_SECTIONGROUPEND:
     case TOK_SUBSECTIONEND:
+    case TOK_SECTIONGROUP:
     case TOK_SUBSECTION:
     {
       char buf[1024];
@@ -2990,7 +2992,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         a++;
       }
       wsprintf(buf,"-%s",line.gettoken_str(a));
-      if (which_token == TOK_SUBSECTION)
+      if (which_token == TOK_SECTIONGROUP || which_token == TOK_SUBSECTION)
       {
         char *s = line.gettoken_str(a);
         if (!s[0] || (!strcmpi(s, "un.") && !s[3]))

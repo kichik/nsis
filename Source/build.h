@@ -318,7 +318,7 @@ class CEXEBuild {
     char version_product_v[1024];
 #endif
 
-    int subsection_open_cnt;
+    int sectiongroup_open_cnt;
     FastStringList m_warnings;
     GrowBuf m_macros;
 

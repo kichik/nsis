@@ -16,8 +16,10 @@
 ; Generic section defines
 
 !define SF_SELECTED   1
-!define SF_SUBSEC     2
-!define SF_SUBSECEND  4
+!define SF_SECGRP     2
+!define SF_SUBSEC     2 # deprecated
+!define SF_SECGRPEND  4
+!define SF_SUBSECEND  4 # deprecated
 !define SF_BOLD       8
 !define SF_RO         16
 !define SF_EXPAND     32
