@@ -1,4 +1,5 @@
-#include "../exehead/config.h"
+#include "bzlib.h"
+
 #if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Library top-level functions.                          ---*/
@@ -114,8 +115,7 @@ Bool isempty_RL ( EState* s )
 }
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzCompressInit)
-                    ( bz_stream* strm,
+int BZ2_bzCompressInit( bz_stream* strm,
                      int        blockSize100k,
                      int        verbosity,
                      int        workFactor )
@@ -356,7 +356,7 @@ Bool handle_compress ( bz_stream* strm )
 
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzCompress) ( bz_stream *strm, int action )
+int BZ2_bzCompress( bz_stream *strm, int action )
 {
    Bool progress;
    EState* s;
@@ -417,7 +417,7 @@ int BZ_API(BZ2_bzCompress) ( bz_stream *strm, int action )
 
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
+int BZ2_bzCompressEnd( bz_stream *strm )
 {
    EState* s;
    if (strm == NULL) return BZ_PARAM_ERROR;
@@ -576,9 +576,8 @@ static void unRLE_obuf_to_output_FAST ( DState* s )
 
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzDecompress) ( DState *s )
+int NSISCALL BZ2_bzDecompress( DState *s )
 {
-
    while (True) {
       if (s->state == BZ_X_IDLE) return BZ_SEQUENCE_ERROR;
       if (s->state == BZ_X_OUTPUT) {
