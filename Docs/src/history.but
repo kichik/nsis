@@ -3,6 +3,12 @@
 
 \e{v2.0b4}
 
+\b /o Switch for \R{ssection}{Section} provides ability to unselect the section by default
+
+\b Increased amount of InstTypes to 32
+
+\b Added \R{ssectionsetsize}{SectionSetSize}, \R{ssectiongetsize}{SectionGetSize}, \R{ssetcurinsttype}{SetCurInstType}, \R{sgetcurinsttype}{GetCurInstType}
+
 \b InstallOptions PlugIn: Fixed bug [ 720332 ] ">301 Characters in State of List Box Bug in InstallOptions"
 
 \b System PlugIn: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
@@ -34,10 +40,10 @@
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
 
+\\<b\\>Notes:\\</b\\>
 
-
-\R{page}{Custom Pages} now have a leave function. As this parameter is before the caption you have to add another "" empty string for the title to work.
-
+\R{page}{Custom Pages} now have a leave function. As this parameter is before the caption you have to add another "" empty string for the title to work. \\<br\\>
+\R{onselchange}{.onSelChange} is no longer called when the components page is created
 
 
 \e{v2.0b3}
