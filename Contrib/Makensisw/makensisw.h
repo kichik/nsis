@@ -29,16 +29,16 @@
 #undef _RICHEDIT_VER
 
 // Defines
-#define NSIS_URL	"http://www.nullsoft.com/free/nsis/"
+#define NSIS_URL	"http://sourceforge.net/projects/nsis2k/"
 #define USAGE		"Usage:\r\n   makensisw full_path_of_makensis.exe [options] [script.nsi | - [...]]\r\n"
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
 #define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert"
-#define DOCPATH		"http://firehose.net/free/nsis/makensis.htm"
+#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis2k/NSIS/makensis.htm?rev=HEAD"
 #define REGSEC		HKEY_LOCAL_MACHINE
 #define REGKEY		"Software\\NSIS"
 #define REGLOC		"MakeNSISWPlacement"
 #define MAX_STRING	256
-#define TIMEOUT		200
+#define TIMEOUT		800
 #define MINWIDTH	350
 #define MINHEIGHT	180
 
