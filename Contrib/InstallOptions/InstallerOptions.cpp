@@ -132,17 +132,17 @@ char *STRDUP(const char *c)
   return t;
 }
 
-#define FIELD_BROWSEBUTTON (1)
-#define FIELD_LABEL        (2)
-#define FIELD_TEXT         (3)
-#define FIELD_COMBOBOX     (4)
-#define FIELD_FILEREQUEST  (5)
-#define FIELD_DIRREQUEST   (6)
-#define FIELD_CHECKBOX     (7)
-#define FIELD_RADIOBUTTON  (8)
-#define FIELD_LISTBOX      (9)
-#define FIELD_ICON        (10)
-#define FIELD_BITMAP      (11)
+#define FIELD_LABEL        (1)
+#define FIELD_ICON         (2)
+#define FIELD_BITMAP       (3)
+#define FIELD_BROWSEBUTTON (4)
+#define FIELD_CHECKBOX     (5)
+#define FIELD_RADIOBUTTON  (6)
+#define FIELD_TEXT         (7)
+#define FIELD_FILEREQUEST  (8)
+#define FIELD_DIRREQUEST   (9)
+#define FIELD_COMBOBOX     (10)
+#define FIELD_LISTBOX      (11)
 
 // general flags
 #define FLAG_BOLD          (0x1)
@@ -347,7 +347,7 @@ bool ValidateFields() {
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
     // this if statement prevents a stupid bug where a min/max length is assigned to a label control
     //   where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
-    if (pFields[nIdx].nType > FIELD_LABEL) {
+    if (pFields[nIdx].nType >= FIELD_TEXT) {
       nLength = GetWindowTextLength(pFields[nIdx].hwnd);
 
       if (((pFields[nIdx].nMaxLength > 0) && (nLength > pFields[nIdx].nMaxLength)) ||
@@ -365,10 +365,10 @@ bool ValidateFields() {
 }
 
 bool SaveSettings(LPSTR pszFilename) {
-  char szField[25];
+  static char szField[25];
   int nIdx;
   HWND hwnd;
-  int nBufLen     = MAX_BUFFER_LENGTH;
+  int nBufLen = MAX_BUFFER_LENGTH;
   char *pszBuffer = (char*)MALLOC(nBufLen);
 
   if (!pszBuffer) return false;
@@ -462,12 +462,7 @@ void AddBrowseButtons() {
         pNewField->rect.bottom = pFields[nIdx].rect.bottom;
         pNewField->rect.top    = pFields[nIdx].rect.top;
 
-        pFields[nIdx].rect.right = pNewField->rect.right - 3 - nWidth;
-
-        pNewField->rect.right-=nWidth;
-        pNewField->rect.left-=nWidth;
-
-
+        pFields[nIdx].rect.right = pNewField->rect.left - 3;
 
         nNumFields++;
         break;
@@ -477,9 +472,8 @@ void AddBrowseButtons() {
 
 bool ReadSettings(LPSTR pszFilename) {
   int nResult;
-  char *pszResult;
-  char pszField[25];
-  int nSize;
+  static char szResult[1000];
+  static char szField[25];
   int nIdx;
   // Messagebox icon types
   static TableEntry IconTable[] = {
@@ -494,26 +488,22 @@ bool ReadSettings(LPSTR pszFilename) {
     { NULL,                 0                  }
   };
 
-  nSize = 1000;
-  pszResult = (char*)MALLOC(nSize); // buffer to read from the file
-  if (!pszResult) return false;
+  nResult = GetPrivateProfileString("Settings", "Title", "", szResult, sizeof(szResult), pszFilename);
+  pszTitle = (nResult > 0) ? strdup(szResult) : NULL;
 
-  nResult = GetPrivateProfileString("Settings", "Title", "", pszResult, nSize, pszFilename);
-  pszTitle = (nResult > 0) ? strdup(pszResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "CancelConfirm", "", szResult, sizeof(szResult), pszFilename);
+  pszCancelQuestion = (nResult > 0) ? strdup(szResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "CancelConfirmCaption", "", szResult, sizeof(szResult), pszFilename);
+  pszCancelQuestionCaption = (nResult > 0) ? strdup(szResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "CancelConfirmIcon", "", szResult, sizeof(szResult), pszFilename);
+  nCancelQuestionIcon = LookupToken(IconTable, szResult);
 
-  nResult = GetPrivateProfileString("Settings", "CancelConfirm", "", pszResult, nSize, pszFilename);
-  pszCancelQuestion = (nResult > 0) ? strdup(pszResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "CancelConfirmCaption", "", pszResult, nSize, pszFilename);
-  pszCancelQuestionCaption = (nResult > 0) ? strdup(pszResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "CancelConfirmIcon", "", pszResult, nSize, pszFilename);
-  nCancelQuestionIcon = LookupToken(IconTable, pszResult);
-
-  nResult = GetPrivateProfileString("Settings", "CancelButtonText", "", pszResult, nSize, pszFilename);
-  pszCancelButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "NextButtonText", "", pszResult, nSize, pszFilename);
-  pszNextButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "BackButtonText", "", pszResult, nSize, pszFilename);
-  pszBackButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "CancelButtonText", "", szResult, sizeof(szResult), pszFilename);
+  pszCancelButtonText = (nResult > 0) ? strdup(szResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "NextButtonText", "", szResult, sizeof(szResult), pszFilename);
+  pszNextButtonText = (nResult > 0) ? strdup(szResult) : NULL;
+  nResult = GetPrivateProfileString("Settings", "BackButtonText", "", szResult, sizeof(szResult), pszFilename);
+  pszBackButtonText = (nResult > 0) ? strdup(szResult) : NULL;
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
@@ -566,42 +556,42 @@ bool ReadSettings(LPSTR pszFilename) {
       { NULL,                0                   }
     };
 
-    wsprintf(pszField, "field %d", nIdx + 1);
-    *pszResult = '\0';
-    nResult = GetPrivateProfileString(pszField, "TYPE", "", pszResult, nSize, pszFilename);
+    wsprintf(szField, "Field %d", nIdx + 1);
+    *szResult = '\0';
+    nResult = GetPrivateProfileString(szField, "TYPE", "", szResult, sizeof(szResult), pszFilename);
 
     // Get the control type
-    pFields[nIdx].nType = LookupToken(TypeTable, pszResult);
+    pFields[nIdx].nType = LookupToken(TypeTable, szResult);
     if (!pFields[nIdx].nType)
       continue;
 
     // Lookup flags associated with the control type
-    pFields[nIdx].nFlags |= LookupToken(FlagTable, pszResult);
+    pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
-    nResult = GetPrivateProfileString(pszField, "TEXT", "", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "TEXT", "", szResult, sizeof(szResult), pszFilename);
     if (nResult) {
-      pFields[nIdx].pszText = STRDUP(pszResult);
+      pFields[nIdx].pszText = STRDUP(szResult);
     }
-    nResult = GetPrivateProfileString(pszField, "STATE", "", pszResult, nSize, pszFilename);
-    pFields[nIdx].pszState = STRDUP(pszResult);
+    nResult = GetPrivateProfileString(szField, "STATE", "", szResult, sizeof(szResult), pszFilename);
+    pFields[nIdx].pszState = STRDUP(szResult);
 
-    nResult = GetPrivateProfileString(pszField, "ROOT", "", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "ROOT", "", szResult, sizeof(szResult), pszFilename);
     if (nResult) {
-      pFields[nIdx].pszRoot = STRDUP(pszResult);
+      pFields[nIdx].pszRoot = STRDUP(szResult);
     }
 
-    nResult = GetPrivateProfileString(pszField, "ListItems", "", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "ListItems", "", szResult, sizeof(szResult), pszFilename);
     if (nResult) {
       // add an extra | character to the end to simplify the loop where we add the items.
       pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
-      wsprintf(pFields[nIdx].pszListItems, "%s|", pszResult);
+      wsprintf(pFields[nIdx].pszListItems, "%s|", szResult);
     }
-    pFields[nIdx].nMaxLength = GetPrivateProfileInt(pszField, "MaxLen", 0, pszFilename);
-    pFields[nIdx].nMinLength = GetPrivateProfileInt(pszField, "MinLen", 0, pszFilename);
+    pFields[nIdx].nMaxLength = GetPrivateProfileInt(szField, "MaxLen", 0, pszFilename);
+    pFields[nIdx].nMinLength = GetPrivateProfileInt(szField, "MinLen", 0, pszFilename);
 
-    nResult = GetPrivateProfileString(pszField, "ValidateText", "", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "ValidateText", "", szResult, sizeof(szResult), pszFilename);
     if (nResult) {
-      pFields[nIdx].pszValidateText = STRDUP(pszResult);
+      pFields[nIdx].pszValidateText = STRDUP(szResult);
       // translate backslash-n in the input into actual carriage-return/line-feed characters.
       for (char *pPos = pFields[nIdx].pszValidateText; *pPos; pPos++) {
         if (*pPos == '\\') {
@@ -618,11 +608,11 @@ bool ReadSettings(LPSTR pszFilename) {
       }
     }
 
-    nResult = GetPrivateProfileString(pszField, "Filter", "All Files|*.*", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "Filter", "All Files|*.*", szResult, sizeof(szResult), pszFilename);
     if (nResult) {
       // add an extra | character to the end to simplify the loop where we add the items.
       pFields[nIdx].pszFilter = (char*)MALLOC(nResult + 2);
-      strcpy(pFields[nIdx].pszFilter, pszResult);
+      strcpy(pFields[nIdx].pszFilter, szResult);
       char *pszPos = pFields[nIdx].pszFilter;
       while (*pszPos) {
         if (*pszPos == '|') *pszPos = '\0';
@@ -630,18 +620,18 @@ bool ReadSettings(LPSTR pszFilename) {
       }
     }
 
-    pFields[nIdx].rect.left = GetPrivateProfileInt(pszField, "LEFT", 0, pszFilename);
-    pFields[nIdx].rect.right = GetPrivateProfileInt(pszField, "RIGHT", 0, pszFilename);
-    pFields[nIdx].rect.top = GetPrivateProfileInt(pszField, "TOP", 0, pszFilename);
-    pFields[nIdx].rect.bottom = GetPrivateProfileInt(pszField, "BOTTOM", 0, pszFilename);
+    pFields[nIdx].rect.left = GetPrivateProfileInt(szField, "LEFT", 0, pszFilename);
+    pFields[nIdx].rect.right = GetPrivateProfileInt(szField, "RIGHT", 0, pszFilename);
+    pFields[nIdx].rect.top = GetPrivateProfileInt(szField, "TOP", 0, pszFilename);
+    pFields[nIdx].rect.bottom = GetPrivateProfileInt(szField, "BOTTOM", 0, pszFilename);
 
-    nResult = GetPrivateProfileString(pszField, "flags", "", pszResult, nSize, pszFilename);
+    nResult = GetPrivateProfileString(szField, "Flags", "", szResult, sizeof(szResult), pszFilename);
     if (nResult > 0) {
       // append the | to make parsing a bit easier
-      if (lstrlen(pszResult)<nSize-1) lstrcat(pszResult, "|");
+      if (lstrlen(szResult)<sizeof(szResult)-1) lstrcat(szResult, "|");
       // parse the flags text
       char *pszStart, *pszEnd;
-      pszStart = pszEnd = pszResult;
+      pszStart = pszEnd = szResult;
       while ((*pszEnd) && (*pszStart)) {
         if (*pszEnd == '|') {
           *pszEnd = '\0';
@@ -665,8 +655,6 @@ bool ReadSettings(LPSTR pszFilename) {
 
     pFields[nIdx].nControlID = 1200 + nIdx;
   }
-
-  FREE(pszResult);
 
   AddBrowseButtons();
 
@@ -832,99 +820,108 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   DWORD dwBaseUnits = GetDialogBaseUnits();
 
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
-    char szFieldClass[20];
+    static struct {
+      char* pszClass;
+      DWORD dwStyle;
+      DWORD dwExStyle;
+    } ClassTable[] = {
+      { "STATIC",       // FIELD_LABEL
+        WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS /*| WS_TABSTOP*/,
+        WS_EX_TRANSPARENT },
+      { "STATIC",       // FIELD_ICON
+        WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS /*| WS_TABSTOP*/ | SS_ICON,
+        0 },
+      { "STATIC",       // FIELD_BITMAP
+        WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS /*| WS_TABSTOP*/ | SS_BITMAP,
+        0 },
+      { "BUTTON",       // FIELD_BROWSEBUTTON
+        WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP,
+        0 },
+      { "BUTTON",       // FIELD_CHECKBOX
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX,
+        0 },
+      { "BUTTON",       // FIELD_RADIOBUTTON
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON,
+        0 },
+      { "EDIT",         // FIELD_TEXT
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+      { "EDIT",         // FIELD_FILEREQUEST
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+      { "EDIT",         // FIELD_DIRREQUEST
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+      { "COMBOBOX",     // FIELD_COMBOBOX
+        WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+      { "LISTBOX",      // FIELD_LISTBOX
+        WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE }
+    };
 
-    if (pFields[nIdx].rect.left<0) pFields[nIdx].rect.left+=dialog_r.right;
-    if (pFields[nIdx].rect.right<0) pFields[nIdx].rect.right+=dialog_r.right;
-    if (pFields[nIdx].rect.top<0) pFields[nIdx].rect.top+=dialog_r.bottom;
-    if (pFields[nIdx].rect.bottom<0) pFields[nIdx].rect.bottom+=dialog_r.bottom;
+    if (pFields[nIdx].nType < 1 || pFields[nIdx].nType > (sizeof(ClassTable) / sizeof(ClassTable[0])))
+      continue;
 
-    DWORD dwExStyle = 0;
-    DWORD dwStyle=0;
-    char *title=pFields[nIdx].pszText;
+    DWORD dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
+    DWORD dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwExStyle;
+
+    // by ORTIM: 14-August-2002
+    //  transform the pixel sizes of the widget with dialog units
+    //  used example code from MS SDK
+
+    // Changed by Dave Laundon 9th September 2002
+    //  Scale to pixels /before/ adjusting for negative positions
+    //  NB - scaling /could/ turn a -1 into 0, so use the original rect for the -ve tests
+    //  NB - original rect used later on too
+
+    RECT rect;
+    rect.left = (pFields[nIdx].rect.left * LOWORD(dwBaseUnits)) / 8;
+    rect.right = (pFields[nIdx].rect.right * LOWORD(dwBaseUnits)) / 8;
+    rect.top = (pFields[nIdx].rect.top * HIWORD(dwBaseUnits)) / 16;
+    rect.bottom = (pFields[nIdx].rect.bottom * HIWORD(dwBaseUnits)) / 16;
+    if (pFields[nIdx].rect.left < 0)
+      rect.left += dialog_r.right - dialog_r.left;
+    if (pFields[nIdx].rect.right < 0)
+      rect.right += dialog_r.right - dialog_r.left;
+    if (pFields[nIdx].rect.top < 0)
+      rect.top += dialog_r.bottom - dialog_r.top;
+    if (pFields[nIdx].rect.bottom < 0)
+      rect.bottom += dialog_r.bottom - dialog_r.top;
+
+    char *title = pFields[nIdx].pszText;
     switch (pFields[nIdx].nType) {
-      case FIELD_LABEL:
-        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP;
-        dwExStyle = WS_EX_TRANSPARENT;
-        strcpy(szFieldClass, "STATIC");
+      case FIELD_CHECKBOX:
+      case FIELD_RADIOBUTTON:
+        if (pFields[nIdx].nFlags & FLAG_RIGHT)
+          dwStyle |= BS_RIGHTBUTTON;
         break;
       case FIELD_FILEREQUEST:
       case FIELD_DIRREQUEST:
-        pFields[nIdx].rect.right-=25;
       case FIELD_TEXT:
-        if (pFields[nIdx].nFlags & FLAG_PASSWORD) {
-          dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL | ES_PASSWORD;
-        } else {
-          dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL;
-        }
-        dwExStyle = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
-        strcpy(szFieldClass, "EDIT");
-        title=pFields[nIdx].pszState;
+        if (pFields[nIdx].nFlags & FLAG_PASSWORD)
+          dwStyle |= ES_PASSWORD;
+        title = pFields[nIdx].pszState;
         break;
       case FIELD_COMBOBOX:
-        if (pFields[nIdx].nFlags & FLAG_DROPLIST) {
-          dwStyle = CBS_DROPDOWNLIST | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CBS_AUTOHSCROLL | CBS_HASSTRINGS;
-        } else {
-          dwStyle = CBS_DROPDOWN | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CBS_AUTOHSCROLL | CBS_HASSTRINGS;
-        }
-        dwExStyle = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
-        title=pFields[nIdx].pszState;
-        strcpy(szFieldClass, "COMBOBOX");
-        break;
-      case FIELD_BROWSEBUTTON:
-        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP;
-        strcpy(szFieldClass, "BUTTON");
+        dwStyle |= (pFields[nIdx].nFlags & FLAG_DROPLIST) ? CBS_DROPDOWNLIST : CBS_DROPDOWN;
+        title = pFields[nIdx].pszState;
         break;
       case FIELD_LISTBOX:
-        if (pFields[nIdx].nFlags & FLAG_MULTISELECT) {
-          dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL;
-        } else {
-          dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT;
-        }
-        dwExStyle = WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE;
-        strcpy(szFieldClass, "LISTBOX");
+        if (pFields[nIdx].nFlags & FLAG_MULTISELECT)
+          dwStyle |= LBS_EXTENDEDSEL;
         break;
-      case FIELD_CHECKBOX:
-        if (pFields[nIdx].nFlags & FLAG_RIGHT) {
-          dwStyle = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_CLIPSIBLINGS | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_RIGHTBUTTON;
-        } else {
-          dwStyle = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_CLIPSIBLINGS | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX;
-        }
-        strcpy(szFieldClass, "BUTTON");
-        break;
-      case FIELD_RADIOBUTTON:
-        if (pFields[nIdx].nFlags & FLAG_RIGHT) {
-          dwStyle = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_CLIPSIBLINGS | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_RIGHTBUTTON;
-        } else {
-          dwStyle = WS_VISIBLE | WS_TABSTOP | WS_CHILD | WS_CLIPSIBLINGS | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON;
-        }
-        strcpy(szFieldClass, "BUTTON");
-        break;
-      case FIELD_ICON:
-        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | SS_ICON;
-        strcpy(szFieldClass, "STATIC");
-        break;
-      case FIELD_BITMAP:
-        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | SS_BITMAP;
-        strcpy(szFieldClass, "STATIC");
-        break;
-      default:
-        continue;
     }
-
-    // by ORTIM: 14-August-2002
-    // transform the pixel sizes of the widget with dialog units
-    // used example code from MS SDK
 
     pFields[nIdx].hwnd = CreateWindowEx(
       dwExStyle,
-      szFieldClass,
+      ClassTable[pFields[nIdx].nType - 1].pszClass,
       title,
       dwStyle,
-      ((pFields[nIdx].rect.left) * LOWORD(dwBaseUnits)) / 8,
-      ((pFields[nIdx].rect.top) * HIWORD(dwBaseUnits)) / 16,
-      ((pFields[nIdx].rect.right-pFields[nIdx].rect.left) * LOWORD(dwBaseUnits)) / 8,
-      ((pFields[nIdx].rect.bottom-pFields[nIdx].rect.top) * HIWORD(dwBaseUnits)) / 16,
+      rect.left,
+      rect.top,
+      rect.right - rect.left,
+      rect.bottom - rect.top,
       hConfigWindow,
       (HMENU)pFields[nIdx].nControlID,
       m_hInstance,
@@ -986,8 +983,15 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
             0,
             pFields[nIdx].pszText,
             nImageType,
-            pFields[nIdx].rect.right-pFields[nIdx].rect.left,
-            pFields[nIdx].rect.bottom-pFields[nIdx].rect.top,
+            // Scaling an icon/bitmap in relation to dialog units usually looks crap, so
+            // take the size originally specified as pixels, *unless* it seems likely the
+            // image is required to span the whole dialog.
+            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0)
+              ? (pFields[nIdx].rect.right - pFields[nIdx].rect.left)
+              : (rect.right - rect.left),
+            (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top > 0)
+              ? (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top)
+              : (rect.bottom - rect.top),
             LR_LOADFROMFILE
           ):(LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103))
         );
