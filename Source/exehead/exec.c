@@ -746,7 +746,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
     case EW_CREATEFONT:
     {
-      LOGFONT f={0,};
+      static LOGFONT f;
       f.lfHeight=-MulDiv(process_string_fromparm_toint(2),GetDeviceCaps(GetDC(g_hwnd),LOGPIXELSY),72);
       f.lfWeight=process_string_fromparm_toint(3);
       f.lfItalic=parm4&1;
