@@ -778,22 +778,25 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static char * NSISCALL inttosizestr(unsigned kb, char *str)
+static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
 {
   char scalestr[32], byte[32];
-  char sh=20;
+  unsigned sh=20;
   int scale=LANG_GIGA;
+  
   if (kb < 1024) { sh=0; scale=LANG_KILO; }
   else if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
+
   wsprintf(
-    str+mystrlen(str),
+    GetNSISString(g_tmp,prefix)+mystrlen(g_tmp),
     "%u.%u%s%s",
     kb>>sh,
     ((kb*10)>>sh)%10,
     GetNSISString(scalestr,scale),
     GetNSISString(byte,LANG_BYTE)
   );
-  return str;
+
+  my_SetDialogItemText(m_curwnd,dlgItem,g_tmp);
 }
 
 static int NSISCALL _sumsecsfield(int idx)
@@ -941,9 +944,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total);
       if (available_set)
-        SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,GetNSISString(s,LANG_SPACE_AVAIL)));
+        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available);
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
@@ -1350,7 +1353,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     RefreshComponents(hwndTree1, hTreeItems);
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(sumsecsfield(size_kb),GetNSISString(g_tmp,LANG_SPACE_REQ)));
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb));
     }
   }
 
