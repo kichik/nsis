@@ -150,7 +150,7 @@ Specifies a text file to use for the license that the user can read. Omit this t
 
 \H{alicensetext} LicenseText
 
-LicenseText text \e{[/LANG=lang_id] [button_text]}
+LicenseText \e{[/LANG=lang_id] text [button_text]}
 
 Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree". 
 
