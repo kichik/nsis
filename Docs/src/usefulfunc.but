@@ -521,7 +521,44 @@
 \c
 \c   SetOverwrite on
 \c
-\c  !macroend
+\c  !macroend\
+
+\H{connectinternet} Connect to the internet
+
+\c  ; ConnectInternet (uses Dialer plugin)
+\c  ; Written by Joost Verburg 
+\c  ;
+\c  ; This function attempts to make a connection to the internet if there is no
+\c  ; connection available. If you are not sure that a system using the installer
+\c  ; has an active internet connection, call this function before downloading
+\c  ; files with NSISdl.
+\c  ; 
+\c  ; The function requires Internet Explorer 3, but asks to connect manually if
+\c  ; IE3 is not installed.
+\c  
+\c  Function ConnectInternet
+\c  
+\c    Push $R0
+\c      
+\c      ClearErrors
+\c      Dialer::AttemptConnect
+\c      IfErrors noie3
+\c      
+\c      Pop $R0
+\c      StrCmp $R0 "online" connected
+\c        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
+\c        Quit ;Remove to make error not fatal
+\c      
+\c      noie3:
+\c    
+\c      ; IE3 not installed
+\c      MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
+\c      
+\c      connected:
+\c    
+\c    Pop $R0
+\c    
+\c  FunctionEnd
 
 \H{morefuncs} More
 

@@ -169,22 +169,26 @@ Function MakeSureIGotWinamp
 FunctionEnd
 
 Function ConnectInternet
+
+  Push $R0
     
-  ClearErrors
-  Dialer::AttemptConnect
-  IfErrors noie3
+    ClearErrors
+    Dialer::AttemptConnect
+    IfErrors noie3
     
+    Pop $R0
+    StrCmp $R0 "online" connected
+      MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
+      Quit
+    
+    noie3:
+  
+    ; IE3 not installed
+    MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
+    
+    connected:
+  
   Pop $R0
-  StrCmp $R0 "online" connected
-    MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
-    Quit
-  
-  noie3:
-  
-  ; IE3 not installed
-  MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
-  
-  connected:
   
 FunctionEnd
 
