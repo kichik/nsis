@@ -305,24 +305,30 @@ void RestoreWindowPos(HWND hwnd) {
     DWORD t;
     if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(unsigned char*)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
       int width, height;
+      int windowWidth, windowHeight;
 
       width = GetSystemMetrics(SM_CXFULLSCREEN);
       height = GetSystemMetrics(SM_CYFULLSCREEN);
       height += GetSystemMetrics(SM_CYCAPTION);
-      if((p.rcNormalPosition.right-p.rcNormalPosition.left) > width) {
+      windowWidth = p.rcNormalPosition.right-p.rcNormalPosition.left;
+      if(windowWidth > width) {
         p.rcNormalPosition.left = 0;
         p.rcNormalPosition.right = width;
       }
-      else if(p.rcNormalPosition.right > width) {
-        p.rcNormalPosition.left = (width - (p.rcNormalPosition.right-p.rcNormalPosition.left))/2;
+      else if(p.rcNormalPosition.right > width || p.rcNormalPosition.left < 0) {
+        p.rcNormalPosition.left = (width - windowWidth)/2;
+        p.rcNormalPosition.right = p.rcNormalPosition.left + windowWidth;
       }
 
-      if((p.rcNormalPosition.bottom-p.rcNormalPosition.top) > height) {
+      windowHeight = p.rcNormalPosition.bottom-p.rcNormalPosition.top;
+      if(windowHeight > height) {
         p.rcNormalPosition.top = 0;
         p.rcNormalPosition.bottom = height;
       }
-      else if(p.rcNormalPosition.bottom > height) {
-        p.rcNormalPosition.top = (height - (p.rcNormalPosition.bottom-p.rcNormalPosition.top))/2;
+      else if(p.rcNormalPosition.bottom > height || p.rcNormalPosition.top < 0) {
+        
+        p.rcNormalPosition.top = (height - windowHeight)/2;
+        p.rcNormalPosition.bottom = p.rcNormalPosition.top + windowHeight;
       }
 
       p.length = sizeof(p);
