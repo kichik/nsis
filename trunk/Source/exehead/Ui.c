@@ -353,8 +353,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
   }
   return 0;
 }
-
-
+BOOL bMainShown = FALSE;
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
@@ -381,11 +380,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       m_hwndOK=GetDlgItem(hwndDlg,IDOK);
       m_hwndCancel=GetDlgItem(hwndDlg,IDCANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANG_BRANDING);
-      SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
+      SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);      
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      if (!(g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL)))
+      g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL);
 #endif
-        ShowWindow(hwndDlg,SW_SHOW);
+        //ShowWindow(hwndDlg,SW_SHOW);
     }
 
     this_page=g_pages+m_page;
@@ -422,7 +421,7 @@ nextPage:
     }
     else
     {
-      HWND hwndtmp;
+      HWND hwndtmp, newPage;
 
       int pflags = this_page->flags;
 
@@ -456,7 +455,10 @@ nextPage:
       }
 #endif //NSIS_SUPPORT_CODECALLBACKS
 
-      if (this_page->wndproc_id != PWP_COMPLETED) DestroyWindow(m_curwnd);
+      if (this_page->wndproc_id != PWP_COMPLETED) {
+          // Done inside WM_NOTIFY_CUSTOM_READY
+          //DestroyWindow(m_curwnd);
+      }
       else {
         if (g_exec_flags.abort) SetFocus(m_hwndCancel);
         else if (g_exec_flags.autoclose) goto nextPage;
@@ -469,25 +471,25 @@ nextPage:
 
       if (this_page->dlg_id > 0) // NSIS page
       {
-        m_curwnd=CreateDialogParam(
+        newPage=CreateDialogParam(
           g_hInstance,
           MAKEINTRESOURCE(this_page->dlg_id+dlg_offset),
           hwndDlg,winprocs[this_page->wndproc_id],(LPARAM)this_page
         );
-        if (m_curwnd)
+        if (newPage)
         {
           RECT r;
 
-          SetDlgItemTextFromLang(m_curwnd,IDC_INTROTEXT,this_page->parms[0]);
+          SetDlgItemTextFromLang(newPage,IDC_INTROTEXT,this_page->parms[0]);
 
           GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
           ScreenToClient(hwndDlg,(LPPOINT)&r);
-          SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+          SetWindowPos(newPage,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER|SWP_NOREDRAW);
+          SendMessage(hwndDlg, WM_NOTIFY_CUSTOM_READY, (WPARAM)newPage, 0);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           ExecuteCodeSegment(this_page->showfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
-          ShowWindow(m_curwnd,SW_SHOWNA);
-          SendMessage(m_curwnd,WM_NOTIFY_START,0,0);
+          SendMessage(newPage,WM_NOTIFY_START,0,0);
         }
 
         //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
@@ -511,10 +513,23 @@ nextPage:
   }
 #endif //NSIS_SUPPORT_BGBG
 
-  if (uMsg == WM_NOTIFY_CUSTOM_READY) {
+  if (uMsg == WM_NOTIFY_CUSTOM_READY ) {
+    SetWindowPos(m_curwnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW | SWP_NOREDRAW );
     DestroyWindow(m_curwnd);
+
     m_curwnd = (HWND)wParam;
+
+    SetWindowPos(m_curwnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW );
+
+    if ( !bMainShown )
+    {
+        bMainShown = TRUE;
+        SetWindowPos(hwndDlg, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+    }
+    
+    InvalidateRect(hwndDlg, NULL, TRUE);
   }
+
   if (uMsg == WM_CLOSE)
   {
     if (!IsWindowEnabled(m_hwndCancel) && IsWindowEnabled(m_hwndOK))
@@ -559,6 +574,7 @@ nextPage:
     else
     {
       // Forward WM_COMMANDs to inner dialogs, can be custom ones
+      // It allow inner dialogs to react on keyboard, ex: button can be clicked using the ENTER key
       SendMessage(m_curwnd, uMsg, wParam, lParam);
     }
   }
@@ -1033,6 +1049,16 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
 
     TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
+
+#ifndef TVM_SETITEMHEIGHT
+#define TVM_SETITEMHEIGHT (TV_FIRST + 27)
+#endif
+#ifndef TVM_GETITEMHEIGHT
+#define TVM_GETITEMHEIGHT (TV_FIRST + 28)
+#endif
+
+    if (SendMessage(hwndTree1, TVM_GETITEMHEIGHT, 0, 0) < 16)
+      SendMessage(hwndTree1, TVM_SETITEMHEIGHT, 16, 0);
 
     DeleteObject(hBMcheck1);
 
