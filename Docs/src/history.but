@@ -14,7 +14,7 @@
 
 \b !if[n]def/!else fixes
 
-\b LogSet fixed
+\b LogSet on now really starts logging
 
 \b Cancel button available on all pages after the instfiles page but the last page unless /ENABLECANCEL was used in its Page command
 
@@ -24,11 +24,17 @@
 
 \b Page and UninstPage can not be used inside sesctions/functions
 
-\b CreateDirectory can now set errorflag
+\b CreateDirectory now uses the error flag
 
 \b EnumRegKey/Value output_var check fixed
 
 \b Updated translations
+
+\b Dreaded BSOD after plug-ins enumeration finally banished
+
+\b Minimize button and BGGradient and BGImage compatibility fixes
+
+\b WriteINIStr with empty value works again
 
 \e{v2.0b2}
 
