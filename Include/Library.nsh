@@ -521,7 +521,7 @@ Example:
   !ifdef UNINSTALLLIB_SHARED_SHARED
 
     ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
-    StrCmp $R0 "" uninstalllib.remove_${UNINSTALLLIB_UNIQUE}
+    StrCmp $R0 "" uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}
 
     IntOp $R0 $R0 - 1
     IntCmp $R0 0 uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE} \
@@ -530,19 +530,19 @@ Example:
     uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE}:
       DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
       !ifndef UNINSTALLLIB_SHARED_SHAREDNOREMOVE
-        Goto uninstalllib.remove_${UNINSTALLLIB_UNIQUE}
+        Goto uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}
       !endif
 
     uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}:
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
       Goto uninstalllib.done_${UNINSTALLLIB_UNIQUE}
 
+	uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:
+
   !endif
 
   ;------------------------
   ;Remove
-
-  uninstalllib.remove_${UNINSTALLLIB_UNIQUE}:
 
   !ifndef UNINSTALLLIB_UNINSTALL_NOREMOVE
 
