@@ -94,6 +94,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
   {
     int i;
+    BOOL bPopOneMore = FALSE;
 
     if (popstring(g_wndtitle)) return;
     if (popstring(g_wndtext)) return;
@@ -110,6 +111,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       }
       if (!th) return;
       langs_num /= 2;
+      bPopOneMore = TRUE;
     }
     else
       langs_num = myatoi(temp);
@@ -130,6 +132,9 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       if (popstring(temp)) return;
       langs[i].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
       lstrcpy(langs[i].id, temp);
+    }
+    if (bPopOneMore) {
+      if (popstring(temp)) return;
     }
 
     DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc);
