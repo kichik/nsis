@@ -2320,7 +2320,7 @@ again:
   ret=add_entry_direct(EW_PUSHPOP, zero_offset);
   if (ret != PS_OK) return ret;
   // ClearErrors
-  ret=add_entry_direct(EW_SETFLAG, add_intstring(FLAG_OFFSET(exec_error)));
+  ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
   ret=add_entry_direct(EW_GETTEMPFILENAME);
@@ -2335,7 +2335,7 @@ again:
   ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error)/sizeof(int));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
-  ret=add_entry_direct(EW_ASSIGNVAR,25,zero_offset);
+  ret=add_entry_direct(EW_ASSIGNVAR, 25, zero_offset);
   if (ret != PS_OK) return ret;
   // Pop $0
   ret=add_entry_direct(EW_PUSHPOP, 0, 1);
