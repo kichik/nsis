@@ -76,7 +76,7 @@
     InstallButtonText /LANG=${LANG_ENGLISH} "Next >"
   !endif
   
-  !ifdef MUI_INSTALLOPTIONS
+  !ifdef MUI_UNINSTALLOPTIONS
     LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
     LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
