@@ -10,7 +10,11 @@ You can also compile NSIS using \W{http://www.mingw.org/}{MinGW} and \W{http://w
 
 As of NSIS 2.01, the compiler, makensis, also compiles on POSIX platforms. POSIX platforms include Linux, *BSD, Mac OS X and others. You must first compile the exeheads to be able to compile makensis. This can be done on Windows using the methods explained above, or using a cross compiler (\W{http://www.libsdl.org/extras/win32/cross/README.txt}{HOWTO}). Once the exeheads are compiled, you must copy over the .h files in Source\\exehead\\Release-*. These .h files are automatically generated during the build process from the compiled exeheads. Official NSIS source code releases for POSIX include these .h files, so it is only needed to manually compile them if the source code was taken from CVS.
 
-\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command, see \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is also highly recommended to decrease the size of the installer overhead.
+When building with precompiled exehead .h files, you should set the USE_PRECOMPILED_EXEHEADS flag to 1 on the make command line. This forces the makefile to skip the compilation process of the exeheads, even if the .h files seem outdated or if dependencies are missing.
+
+\c make USE_PRECOMPILED_EXEHEADS=1
+
+\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
 
 \H{errorlevels}Error Levels
 
