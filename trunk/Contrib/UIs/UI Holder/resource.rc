@@ -13,6 +13,118 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LICENSE DIALOG DISCARDABLE  0, 0, 266, 130
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            103,IDC_ULICON,0,0,20,20
+    LTEXT           "",IDC_INTROTEXT,25,0,241,23
+    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+                    0x804,0,24,266,105
+END
+
+IDD_DIR DIALOG DISCARDABLE  0, 0, 266, 130
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    EDITTEXT        IDC_DIR,8,49,187,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "",IDC_BROWSE,202,48,55,14
+    ICON            103,IDC_ULICON,0,0,20,20
+    CONTROL         "",IDC_SELDIRTEXT,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,
+                    0,36,265,8
+    CONTROL         "",IDC_SPACEAVAILABLE,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_GROUP,0,122,265,8
+    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
+                    WS_TABSTOP,8,65,118,10
+    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_GROUP,0,111,265,8
+    LTEXT           "",IDC_INTROTEXT,25,0,241,34
+END
+
+IDD_SELCOM DIALOG DISCARDABLE  0, 0, 266, 130
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    COMBOBOX        IDC_COMBO1,114,25,152,102,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    ICON            103,IDC_ULICON,0,0,21,20
+    LTEXT           "",IDC_TEXT2,0,40,108,21
+    CONTROL         "",IDC_TEXT1,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,0,27,
+                    108,8
+    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_GROUP,0,111,111,8
+    LTEXT           "",IDC_INTROTEXT,25,0,241,25
+    CONTROL         "",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
+                    WS_BORDER | WS_TABSTOP,114,39,151,90
+END
+
+IDD_INST DIALOG DISCARDABLE  0, 0, 280, 162
+STYLE DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+FONT 8, "MS Shell Dlg"
+BEGIN
+    PUSHBUTTON      "",IDOK,223,142,50,14
+    PUSHBUTTON      "",IDCANCEL,7,142,50,14
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,138,267,1
+    CONTROL         "",IDC_CHILDRECT,"Static",SS_BLACKRECT | NOT WS_VISIBLE,
+                    7,6,266,130
+    PUSHBUTTON      "",IDC_BACK,171,142,50,14,NOT WS_VISIBLE
+    CTEXT           "",IDC_VERSTR,59,145,108,8,WS_DISABLED
+END
+
+IDD_INSTFILES DIALOG DISCARDABLE  0, 0, 266, 130
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
+                    WS_BORDER,24,10,241,11
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_SMOOTH | NOT 
+                    WS_VISIBLE | WS_BORDER,24,10,241,11
+    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,
+                    24,0,241,8
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 
+                    LVS_NOCOLUMNHEADER | NOT WS_VISIBLE | WS_BORDER | 
+                    WS_TABSTOP,0,25,265,104
+    ICON            103,IDC_ULICON,0,0,20,20
+    PUSHBUTTON      "",IDC_SHOWDETAILS,0,28,60,14,NOT WS_TABSTOP
+END
+
+IDD_UNINST DIALOG DISCARDABLE  0, 0, 266, 130
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            103,IDC_ULICON,0,1,20,20
+    LTEXT           "",IDC_UNINSTFROM,0,45,55,8
+    EDITTEXT        IDC_EDIT1,56,43,209,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "",IDC_INTROTEXT,25,0,241,34
+END
+
+IDD_VERIFY DIALOG DISCARDABLE  0, 0, 162, 22
+STYLE DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CTEXT           "",IDC_STR,7,7,148,8
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Unknown language: 0xD, 0x1 resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
@@ -45,105 +157,6 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_LICENSE DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_CONTROL | WS_CHILD
-FONT 8, "MS Shell Dlg"
-BEGIN
-    ICON            103,IDC_ULICON,0,0,20,20
-    LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,105
-END
-
-IDD_DIR DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
-FONT 8, "MS Shell Dlg"
-BEGIN
-    EDITTEXT        IDC_DIR,8,49,187,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "",IDC_BROWSE,202,48,55,14
-    ICON            103,IDC_ULICON,0,0,20,20
-    CONTROL         "",IDC_SELDIRTEXT,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,
-                    0,36,265,8
-    CONTROL         "",IDC_SPACEAVAILABLE,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,0,122,265,8
-    CONTROL         "",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | NOT WS_VISIBLE | 
-                    WS_TABSTOP,8,65,118,10
-    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,0,111,265,8
-    LTEXT           "",IDC_INTROTEXT,25,0,241,34
-END
-
-IDD_SELCOM DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
-FONT 8, "MS Shell Dlg"
-BEGIN
-    COMBOBOX        IDC_COMBO1,114,25,152,102,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    ICON            103,IDC_ULICON,0,0,21,20
-    LTEXT           "",IDC_TEXT2,0,40,108,21
-    CONTROL         "",IDC_TEXT1,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,0,27,
-                    108,8
-    CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_GROUP,0,111,111,8
-    LTEXT           "",IDC_INTROTEXT,25,0,241,25
-    CONTROL         "",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
-                    TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
-                    WS_BORDER | WS_TABSTOP,114,39,151,90
-END
-
-IDD_INST DIALOG DISCARDABLE  0, 0, 280, 162
-STYLE DS_MODALFRAME | DS_CENTER | DS_SHELLFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU
-FONT 8, "MS Shell Dlg"
-BEGIN
-    PUSHBUTTON      "",IDOK,223,142,50,14
-    PUSHBUTTON      "",IDCANCEL,7,142,50,14
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,138,267,1
-    CONTROL         "",IDC_CHILDRECT,"Static",SS_BLACKRECT | NOT WS_VISIBLE,
-                    7,6,266,130
-    PUSHBUTTON      "",IDC_BACK,171,142,50,14,NOT WS_VISIBLE
-    CTEXT           "",IDC_VERSTR,59,145,108,8,WS_DISABLED
-END
-
-IDD_INSTFILES DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
-FONT 8, "MS Shell Dlg"
-BEGIN
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,24,10,241,11
-    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_SMOOTH | NOT 
-                    WS_VISIBLE | WS_BORDER,24,10,241,11
-    CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,
-                    24,0,241,8
-    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 
-                    LVS_NOCOLUMNHEADER | NOT WS_VISIBLE | WS_BORDER | 
-                    WS_TABSTOP,0,25,265,104
-    ICON            103,IDC_ULICON,0,0,20,20
-    PUSHBUTTON      "",IDC_SHOWDETAILS,0,28,60,14,NOT WS_TABSTOP
-END
-
-IDD_UNINST DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
-FONT 8, "MS Shell Dlg"
-BEGIN
-    ICON            103,IDC_ULICON,0,1,20,20
-    LTEXT           "",IDC_UNINSTFROM,0,45,55,8
-    EDITTEXT        IDC_EDIT1,56,43,209,12,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "",IDC_INTROTEXT,25,0,241,34
-END
-
-IDD_VERIFY DIALOG DISCARDABLE  0, 0, 162, 22
-STYLE DS_MODALFRAME | DS_CENTER | DS_SHELLFONT | WS_POPUP | WS_VISIBLE
-FONT 8, "MS Shell Dlg"
-BEGIN
-    CTEXT           "",IDC_STR,7,7,148,8
-END
 
 #endif    // Unknown language: 0xD, 0x1 resources
 /////////////////////////////////////////////////////////////////////////////
