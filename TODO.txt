@@ -11,6 +11,10 @@ BANNER
 
 -- Later ---
 
+NSIS
+
+* Current working directory changes
+
 DOCUMENTATION
 
 * user_vars should link to the user_vars section as in the old docs
