@@ -21,7 +21,7 @@
 
 static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
-                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0";
+                             "$LANGUAGE\0$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0";
 
 
 int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
@@ -1067,7 +1067,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_DIR);
           SEARCH(IDC_BROWSE);
+#ifdef NSIS_CONFIG_LOG
           SEARCH(IDC_CHECK1);
+#endif
           re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
@@ -1174,7 +1176,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           build_uninst.uninst_subtext_id=id;
           break;
       }
-      SCRIPT_MSG("%s: %s now uses outer ui item %d\n",line.gettoken_str(0),line.gettoken_str(1),id);
+      SCRIPT_MSG("%s: %s now uses outer UI item %d\n",line.gettoken_str(0),line.gettoken_str(1),id);
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
@@ -1354,12 +1356,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             break;
           }
         }
-        if (i < string_tables.size()) {
+        if (i == string_tables.size()) {
           StringTable *table = (StringTable*)malloc(sizeof(StringTable));
           memset(table, -1, sizeof(StringTable));
           table->common.lang_id=table->ucommon.lang_id=newNLF->GetLang();
           string_tables.push_back(table);
         }
+        last_used_lang=newNLF->GetLang();
       }
       catch (exception &err) {
         ERROR_MSG("Error while loading language file: %s\n", err.what());
@@ -1517,7 +1520,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()==a) PRINTHELP();
         if (IsSet(uninstall.uninstalltext,lang))
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),LANG_UNINST_TEXT,1,lang);
+        SetString(line.gettoken_str(a),LANG_UNINST_TEXT,0,lang);
         if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_UNINST_SUBTEXT,0,lang);
         SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }
@@ -2191,18 +2194,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           process_jump(line,3,&ent.offsets[2])) PRINTHELP()
       SCRIPT_MSG("IsWindow(%s): %s:%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
-    case TOK_SETDLGITEMTEXT:
-      ent.which=EW_SETDLGITEMTEXT;
-      ent.offsets[0]=line.gettoken_enum(1,"inner\0outer\0");
+    case TOK_GETDLGITEM:
+      ent.which=EW_GETDLGITEM;
+      ent.offsets[0]=line.gettoken_enum(1,usrvars);
       if (ent.offsets[0]<0) PRINTHELP();
-      ent.offsets[1]=line.gettoken_int(2);
+      ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
-      SCRIPT_MSG("SetDlgItemText: %s dialog item=%s text=%s\n",ent.offsets[0]?"outer":"inner",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_HWNDS
     case TOK_ISWINDOW:
     case TOK_SENDMESSAGE:
     case TOK_FINDWINDOW:
+    case TOK_GETDLGITEM:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_HWNDS
@@ -3278,6 +3282,58 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
+    case TOK_CREATEFONT:
+      ent.which=EW_CREATEFONT;
+      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
+      {
+        int height=-1;
+        int weight=-1;
+        int flags=0;
+        for (int i = 3; i < line.getnumtokens(); i++) {
+          char *tok=line.gettoken_str(i);
+          if (tok[0]=='/') {
+            if (!lstrcmpi(tok,"/ITALIC")) {
+              SCRIPT_MSG(" /ITALIC");
+              flags|=1;
+            }
+            else if (!lstrcmpi(tok,"/UNDERLINE")) {
+              SCRIPT_MSG(" /UNDERLINE");
+              flags|=2;
+            }
+            else if (!lstrcmpi(tok,"/STRIKE")) {
+              SCRIPT_MSG(" /STRIKE");
+              flags|=4;
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+          else {
+            if (height==-1) {
+              SCRIPT_MSG(" height=%s",tok);
+              height=add_string(tok);
+            }
+            else if (weight==-1) {
+              SCRIPT_MSG(" weight=%s",tok);
+              weight=add_string(tok);
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+        }
+        if (height==-1) height=add_string("0");
+        if (weight==-1) weight=add_string("0");
+        ent.offsets[2]=height;
+        ent.offsets[3]=weight;
+        ent.offsets[4]=flags;
+      }
+      SCRIPT_MSG("\n");
+    return add_entry(&ent);
 
     // end of instructions
     ///////////////////////////////////////////////////////////////////////////////
