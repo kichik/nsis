@@ -116,6 +116,8 @@ typedef struct NSISScriptData {
 #ifdef COMPRESSOR_OPTION
   NCOMPRESSOR compressor;
 #endif
+  // Added by Darren Owen (DrO) on 1/10/2003
+  int recompile_test;
 } NSCRIPTDATA;
 
 typedef struct ResizeData {

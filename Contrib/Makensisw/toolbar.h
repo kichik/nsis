@@ -30,7 +30,8 @@
 #define BUTTONWIDTH     0
 #define BUTTONHEIGHT    0
 
-#define BUTTONCOUNT     20
+// Altered by Darren Owen (DrO) on 1/10/2003
+#define BUTTONCOUNT     21 // was 20
 
 #define TBB_LOADSCRIPT                   0
 #define TBB_SAVE                         1
@@ -43,15 +44,17 @@
 #define TBB_DEFINES                      8
 #define TBB_COMPRESSOR                   9
 #define TBB_TEST                         10
-#define TBB_EDITSCRIPT                   11
-#define TBB_BROWSESCR                    12
-#define TBB_CLEARLOG                     13
-#define TBB_SEP3                         14
-#define TBB_NSISHOME                     15
-#define TBB_FORUM                        16
-#define TBB_NSISUPDATE                   17
-#define TBB_SEP4                         18
-#define TBB_DOCS                         19
+// Added by Darren Owen (DrO) on 1/10/2003 and altered following ids
+#define TBB_RECOMPILE_TEST               11
+#define TBB_EDITSCRIPT                   12
+#define TBB_BROWSESCR                    13
+#define TBB_CLEARLOG                     14
+#define TBB_SEP3                         15
+#define TBB_NSISHOME                     16
+#define TBB_FORUM                        17
+#define TBB_NSISUPDATE                   18
+#define TBB_SEP4                         19
+#define TBB_DOCS                         20
 
 #define IDB_LOADSCRIPT                   0
 #define IDB_SAVE                         1
@@ -75,6 +78,8 @@
 #define IDB_COMPRESSOR_ZLIB              17
 #define IDB_COMPRESSOR_GZIP              18
 #endif
+// Added by Darren Owen (DrO) on 1/10/2003
+#define IDB_RECOMPILE_TEST               19
 
 typedef struct ToolBarStruct {
   HWND hwnd;

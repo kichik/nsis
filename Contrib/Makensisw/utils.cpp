@@ -76,63 +76,56 @@ void ErrorMessage(HWND hwnd,const char *str) {
   LogMessage(hwnd,buf);
 }
 
-void DisableItems(HWND hwnd) {
-  g_sdata.focused_hwnd = GetFocus();
-  
-  EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
-  EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
-  EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_COPY,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_GRAYED);
-  EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+// Altered by Darren Owen (DrO) on 1/10/2003
+void Items(HWND hwnd, int on){
+  UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
 
-  EnableToolBarButton(IDM_SAVE,FALSE);
-  EnableToolBarButton(IDM_TEST,FALSE);
-  EnableToolBarButton(IDM_EXIT,FALSE);
-  EnableToolBarButton(IDM_LOADSCRIPT,FALSE);
-  EnableToolBarButton(IDM_RECOMPILE,FALSE);
-  EnableToolBarButton(IDM_COPY,FALSE);
-  EnableToolBarButton(IDM_EDITSCRIPT,FALSE);
-  EnableToolBarButton(IDM_CLEARLOG,FALSE);
-  EnableToolBarButton(IDM_BROWSESCR,FALSE);
+  if(!on)
+      g_sdata.focused_hwnd = GetFocus();
+  // Altered by Darren Owen (DrO) on 6/10/2003
+  else
+    EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
 
-  if (!IsWindowEnabled(g_sdata.focused_hwnd))
-    SetFocus(GetDlgItem(hwnd,IDC_LOGWIN));
-}
+  EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),on);
+  // Altered by Darren Owen (DrO) on 6/10/2003
+  if((!g_sdata.retcode && on) || !on)
+    EnableWindow(GetDlgItem(hwnd,IDC_TEST),on);
+  EnableWindow(GetDlgItem(hwnd,IDC_RECOMPILE_TEST),on);
 
-void EnableItems(HWND hwnd) {
-  if (g_sdata.output_exe && !g_sdata.retcode) {
-    EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
-    EnableMenuItem(g_sdata.menu,IDM_TEST,MF_ENABLED);
-    EnableToolBarButton(IDM_TEST,TRUE);
+  EnableMenuItem(g_sdata.menu,IDM_SAVE,mf);
+  // Altered by Darren Owen (DrO) on 6/10/2003
+  if((!g_sdata.retcode && on) || !on)
+    EnableMenuItem(g_sdata.menu,IDM_TEST,mf);
+  EnableMenuItem(g_sdata.menu,IDM_EXIT,mf);
+  EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,mf);
+  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,mf);
+  EnableMenuItem(g_sdata.menu,IDM_COPY,mf);
+  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,mf);
+  EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,mf);
+  EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,mf);
+  EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,mf);
+  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,mf);
+
+  EnableToolBarButton(IDM_SAVE,on);
+
+  // Altered by Darren Owen (DrO) on 6/10/2003
+  if((!g_sdata.retcode && on) || !on)
+    EnableToolBarButton(IDM_TEST,on);
+  EnableToolBarButton(IDM_EXIT,on);
+  EnableToolBarButton(IDM_LOADSCRIPT,on);
+  EnableToolBarButton(IDM_RECOMPILE,on);
+  EnableToolBarButton(IDM_COPY,on);
+  EnableToolBarButton(IDM_EDITSCRIPT,on);
+  EnableToolBarButton(IDM_CLEARLOG,on);
+  EnableToolBarButton(IDM_BROWSESCR,on);
+  EnableToolBarButton(IDM_RECOMPILE_TEST,on);
+
+  if(!on) {
+    if (!IsWindowEnabled(g_sdata.focused_hwnd))
+      SetFocus(GetDlgItem(hwnd,IDC_LOGWIN));
   }
-  EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
-  EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_COPY,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_ENABLED);
-  EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
-
-  EnableToolBarButton(IDM_SAVE,TRUE);
-  EnableToolBarButton(IDM_EXIT,TRUE);
-  EnableToolBarButton(IDM_LOADSCRIPT,TRUE);
-  EnableToolBarButton(IDM_RECOMPILE,TRUE);
-  EnableToolBarButton(IDM_COPY,TRUE);
-  EnableToolBarButton(IDM_EDITSCRIPT,TRUE);
-  EnableToolBarButton(IDM_CLEARLOG,TRUE);
-  EnableToolBarButton(IDM_BROWSESCR,TRUE);
-  
-  SetFocus(g_sdata.focused_hwnd);
+  else
+    SetFocus(g_sdata.focused_hwnd);
 }
 
 void CompileNSISScript() {
@@ -146,9 +139,13 @@ void CompileNSISScript() {
     EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
     EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+    // Added by Darren Owen (DrO) on 1/10/2003
+    EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,MF_GRAYED);
+
     EnableToolBarButton(IDM_RECOMPILE,FALSE);
     EnableToolBarButton(IDM_EDITSCRIPT,FALSE);
     EnableToolBarButton(IDM_TEST,FALSE);
+    EnableToolBarButton(IDM_RECOMPILE_TEST,FALSE);
     EnableToolBarButton(IDM_BROWSESCR,FALSE);
 
     EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),0);

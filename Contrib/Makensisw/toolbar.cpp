@@ -59,6 +59,8 @@ void CreateToolBar()
   tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(0,                 0,              TBSTATE_HIDDEN,         TBSTYLE_DROPDOWN, 0, 0);
 #endif
   tbButton[TBB_TEST]        = CreateToolBarButton(IDB_TEST,          IDM_TEST,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
+  // Added by Darren Owen (DrO) on 1/10/2003
+  tbButton[TBB_RECOMPILE_TEST] = CreateToolBarButton(IDB_RECOMPILE_TEST, IDM_RECOMPILE_TEST, TBSTATE_INDETERMINATE, TBSTYLE_BUTTON, 0, 0);
   tbButton[TBB_EDITSCRIPT]  = CreateToolBarButton(IDB_EDITSCRIPT,    IDM_EDITSCRIPT, TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_BROWSESCR]   = CreateToolBarButton(IDB_BROWSESCR,     IDM_BROWSESCR,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_CLEARLOG]    = CreateToolBarButton(IDB_CLEARLOG,      IDM_CLEARLOG,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
@@ -189,6 +191,8 @@ void AddToolBarTooltips()
   AddToolBarButtonTooltip(TBB_COMPRESSOR, IDS_COMPRESSOR);
 #endif
   AddToolBarButtonTooltip(TBB_TEST, IDS_TEST);
+  // Added by Darren Owen (DrO) on 1/10/2003
+  AddToolBarButtonTooltip(TBB_RECOMPILE_TEST, IDS_RECOMPILE_TEST);
   AddToolBarButtonTooltip(TBB_EDITSCRIPT, IDS_EDITSCRIPT);
   AddToolBarButtonTooltip(TBB_BROWSESCR, IDS_BROWSESCR);
   AddToolBarButtonTooltip(TBB_CLEARLOG, IDS_CLEARLOG);
