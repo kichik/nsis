@@ -124,7 +124,7 @@ Section "Start Menu + Desktop Icons" SecIcons
   Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.lnk"
   WriteINIStr "$SMPROGRAMS\NSIS\NSI Online Template Generator.url" "InternetShortcut" "URL" "http://www.firehose.net/free/nsis/makensitemplate.phtml"
   SetOutPath $INSTDIR
-  CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" '"$INSTDIR\makensis.exe" /CD'
+  CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" "/CD"
 SectionEnd
 
 SubSection "Contrib" SecContrib
