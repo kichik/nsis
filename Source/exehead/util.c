@@ -39,7 +39,7 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, type);
 }
 
-void * NSISCALL my_alloc(DWORD dwBytes) {
+void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
   return (void *)GlobalAlloc(GPTR, dwBytes);
 }
 
@@ -254,7 +254,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
             if (pszNextSec)
             {
               int l=dwFileSize - (pszNextSec - pszWinInit);
-              void* data=(void*)my_alloc(l);
+              void* data=(void*)my_GlobalAlloc(l);
               mini_memcpy(data, pszNextSec, l);
               mini_memcpy(pszNextSec + cchRenameLine, data, l);
               GlobalFree((HGLOBAL)data);
