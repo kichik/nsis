@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface version 1.4
-;Advanced Macro System & Install Options Example Script
+;Install Options Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -30,19 +30,13 @@
   Name "${NAME} ${VERSION}"
   
   ;Page order
-  !ifdef MUI_LICENSEPAGE
-    Page license SetLicense SetLicenseDialog
-  !endif
+  !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA
   Page custom SetCustomB
-  !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog
-  !endif
-  !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog
-  !endif
+  !insertmacro MUI_PAGECOMMAND_COMPONENTS
+  !insertmacro MUI_PAGECOMMAND_DIRECTORY
   Page custom SetCustomC
-  Page instfiles SetInstFiles
+  !insertmacro MUI_PAGECOMMAND_INSTFILES
 
   !insertmacro MUI_INTERFACE
   
@@ -62,8 +56,8 @@
   LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
   
   ;Uninstaller
-  UninstPage uninstConfirm un.SetUninstConfirm
-  UninstPage instfiles un.SetInstFiles
+  !insertmacro MUI_UNPAGECOMMAND_CONFIRM
+  !insertmacro MUI_UNPAGECOMMAND_INSTFILES
   
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Use ReserveFile for your own Install Options ini files too!
@@ -107,13 +101,8 @@ Section "modern.exe" SecCopyUI
   StrCmp ${TEMP1} "1" "" +2
     ;Checked
     MessageBox MB_OK "A MessageBox..."
-
-SectionEnd
-
-Section "Create uninstaller" SecCreateUninst
-
-  ;Add your stuff here
-
+    
+  ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
@@ -128,10 +117,6 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-!ifdef MUI_LICENSEPAGE
-  !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
-!endif
-
 Function SetCustomA
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioA.ini"
@@ -141,30 +126,13 @@ Function SetCustomB
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioB.ini"
 FunctionEnd
-  
-!ifdef MUI_COMPONENTSPAGE
-  !insertmacro MUI_FUNCTIONS_COMPONENTSPAGE SetComponents SetComponentsDialog
-!endif
-  
-!ifdef MUI_DIRECTORYPAGE
-  !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
-!endif
 
 Function SetCustomC
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
 
-!insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
-
-!insertmacro MUI_FUNCTIONS_GUIINIT
-
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
-
-!insertmacro MUI_FUNCTIONS_ABORTWARNING
+!insertmacro MUI_FUNCTIONS_CUSTOMPAGE_BASIC
 
 ;--------------------------------
 ;Uninstaller
@@ -185,12 +153,6 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
-  UninstPage uninstConfirm un.SetUninstConfirm
-  UninstPage instfiles un.SetInstFiles
-
-  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
-  !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
-
-  !insertmacro MUI_UNFUNCTIONS_GUIINIT
+  !insertmacro MUI_UNFUNCTIONS_CUSTOMPAGE_BASIC
 
 ;eof
