@@ -402,7 +402,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           while (p >= str && (*p == '\r' || *p == '\n' || *p == ' ' || *p == '\t')) p--;
           *++p=0;
           LineParser l2;
-          if (!l2.parse(str) && !stricmp(l2.gettoken_str(0),"!macroend")) break;
+          if (!l2.parse(str))
+          {
+            if (!stricmp(l2.gettoken_str(0),"!macroend")) break;
+            if (!stricmp(l2.gettoken_str(0),"!macro"))
+            {
+              ERROR_MSG("Error: can't define a macro inside a macro!\n");
+              return PS_ERROR;
+            }
+          }
           if (str[0]) m_macros.add(str,strlen(str)+1);
           else m_macros.add(" ",2);
         }
