@@ -2,10 +2,10 @@
 NLF v2
 # Language ID
 1043
-# Translation by Hendri Adriaens
+# Translation by Hendri Adriaens & Joost Verburg
 Nullsoft Install System %s
-%s Setup
-%s Uninstall
+%s Installatie
+%s Deïnstallatie
 : Licentie Overeenkomst
 : Installatie Opties
 : Installatie Map
@@ -46,7 +46,7 @@ Bestand verwijderen:
 Verwijderen na opstarten: 
 Fout bij maken snelkoppeling: 
 Fout bij maken: 
-Fout bij decomprimeren van data! Installatie beschadigd?
+Fout bij decomprimeren van data! Data beschadigd?
 Fout bij registreren DLL
 ExecShell: 
 Uitvoeren: 
