@@ -2,8 +2,8 @@
 ;Compatible with Modern UI 1.66
 
 ;Language: Romanian (1048)
-;Translated by Cristian Pirvu (pcristip@yahoo.com) - Small changes by Sorin Sbarnea - INTERSOL SRL (sorin@intersol.ro)
-
+;Translated by Cristian Pirvu (pcristip@yahoo.com)
+;Updated by Sorin Sbarnea - INTERSOL SRL (sbarneasorin@intersol.ro)
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ROMANIAN"
@@ -47,26 +47,35 @@
   !define MUI_TEXT_FINISH_SHOWREADME "Arata fisierul citeste.ma"
 
   !define MUI_TEXT_STARTMENU_TITLE "Alegeti directorul din Start Menu"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Alegeti un director din Start Menu pentru shortcut-urile aplicatiei."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Selectati directorul din Start Menu in care sa creez shortcut-urile programului. Puteti de asemenea sa creati un director nou daca tastati un nume nou."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu crea shortcut-uri"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Alegeti un director din Start Menu pentru comenzi rapide la aplicati."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Selectati directorul din Start Menu in care sa creez comenzi rapide programului. Puteti de asemenea sa creati un director nou daca tastati un nume nou."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu crea comenzi rapide"
 
   !define MUI_TEXT_ABORTWARNING "Sunteti sigur(a) ca vreti sa opriti instalarea pentru $(^Name) ?"
-
-
+  
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Dezinstaleaza $(^Name)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Sterge $(^Name)."
-
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name)."
+  
+  !define MUI_UNTEXT_LICENSE_TITLE "Licenta de utilizare"  
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Va rugam sa revedeti termenii din licenta inainte de dezinstalarea $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, apasati De acord. Trebuie sa acceptati termenii pentru a dezinstala $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a dezinstala $(^Name) trebuie sa accesptati termenii din acordul de licenta."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii acordului, alegeti prima optiune de mai jos. Pentru a instala $(^Name) trebuie sa accesati acordul. $_CLICK"
+  
   !define MUI_UNTEXT_COMPONENTS_TITLE "Alegeti componentele"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Selectati componentele $(^Name) pe care vreti sa le dezinstalati."
-
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Alegeti caracteristicile $(^Name) pentru dezinstalare."
+  
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Alegeti locatiza pentru dezisntalare"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Alegeti dosarul din care sa dezinstalati $(^Name)."
+  
   !define MUI_UNTEXT_UNINSTALLING_TITLE "In proces de dezinstalare"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Asteaptati pana $(^Name) este dezinstalat."
-
-  !define MUI_UNTEXT_FINISH_TITLE "Dezinstalarea e completa"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "Dezinstalarea s-a terminat cu succes."
-
-  !define MUI_UNTEXT_ABORT_TITLE "Dezinstalarea anulata"
-  !define MUI_UNTEXT_ABORT_SUBTITLE "Dezinstalarea nu a fost terminata cu succes"
-
+    
+  !define MUI_UNTEXT_FINISH_TITLE "Dezinstalare finalizata"
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Dezinstalarea a fost finalizata cu succes."
+  
+  !define MUI_UNTEXT_ABORT_TITLE "Dezinstalare oprita"
+  !define MUI_UNTEXT_ABORT_SUBTITLE "Dezinstalarea a fost oprita."
+  
 !insertmacro MUI_LANGUAGEFILE_END
