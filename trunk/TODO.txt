@@ -10,6 +10,8 @@ DOCUMENTATION
 
 * go over everything and search for mistakes :)
 
+* find somewhere to put a link to the forum and nsis.sf.net
+
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple instfiles pages
