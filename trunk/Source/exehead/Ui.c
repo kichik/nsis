@@ -518,6 +518,17 @@ nextPage:
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else if (g_autoclose) goto nextPage;
 
+      if (this_page->id==NSIS_PAGE_CUSTOM) // custom page
+      {
+        mystrcpy(g_tmp,g_caption);
+        process_string_fromtab(
+          g_tmp+mystrlen(g_tmp),
+          this_page->caption // post_func contains the caption for custom functions
+        );
+
+        SetWindowText(hwndDlg,g_tmp);
+      }
+
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
