@@ -1,6 +1,15 @@
+; languages.nsi
+;
+; This is an example of a multilingual installer
+; The user can select the language on startup
+
+;--------------------------------
+
 OutFile languages.exe
 
 XPStyle on
+
+;--------------------------------
 
 ; First is default
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -63,6 +72,8 @@ LangString Message ${LANG_TRADCHINESE} "Trandional Chinese message"
 LangString Message ${LANG_SIMPCHINESE} "Simplified Chinese message"
 LangString Message ${LANG_SLOVAK} "Slovak message"
 
+;--------------------------------
+
 ;Section names set by Language strings
 ;It works with ! too
 Section !$(Sec1Name) sec1
@@ -94,7 +105,12 @@ Section "Section number two"
 		MessageBox MB_OK "Installing Slovak stuff"
 SectionEnd
 
+;--------------------------------
+
 Function .onInit
+
+	;Language selection dialog
+
 	Push ""
 	Push ${LANG_ENGLISH}
 	Push English
