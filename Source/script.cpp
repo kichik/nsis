@@ -782,7 +782,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA
   };
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   build_plugin_table();
+#endif
 
   entry ent={0,};
   switch (which_token)
@@ -3729,7 +3731,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SENDMESSAGE:
     case TOK_FINDWINDOW:
     case TOK_GETDLGITEM:
-    case TOK_SETBKCOLOR:
+    case TOK_SETCTLCOLORS:
     case TOK_SHOWWINDOW:
     case TOK_ENABLEWINDOW:
     case TOK_CREATEFONT:

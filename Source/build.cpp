@@ -2196,7 +2196,7 @@ int CEXEBuild::write_output(void)
       DefineInnerLangString(NLF_UCAPTION);
       if (resolve_coderefs("uninstall"))
         return PS_ERROR;
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT 
+#ifdef NSIS_CONFIG_COMPONENTPAGE 
       // set sections to the first insttype
       PreperInstTypes();
 #endif
@@ -2214,7 +2214,7 @@ int CEXEBuild::write_output(void)
   if (resolve_coderefs("install"))
     return PS_ERROR;
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+#ifdef NSIS_CONFIG_COMPONENTPAGE
   // set sections to the first insttype
   PreperInstTypes();
 #endif
