@@ -71,10 +71,8 @@ void makeMaps_d ( DState* s )
    Int32 i;
    s->nInUse = 0;
    for (i = 0; i < 256; i++)
-      if (s->inUse[i]) {
-         s->seqToUnseq[s->nInUse] = i;
-         s->nInUse++;
-      }
+      if (s->inUse[i])
+         s->seqToUnseq[s->nInUse++] = i;
 }
 
 
@@ -99,8 +97,8 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
       s->bsLive += 8;
       s->strm->next_in++;
       s->strm->avail_in--;
-      s->strm->total_in_lo32++;
-      if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
+//      s->strm->total_in_lo32++;
+  //    if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
    }
   return 0;
 }
