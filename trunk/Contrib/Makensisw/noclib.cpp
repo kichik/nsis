@@ -36,18 +36,3 @@ void *my_memset(void *dest, int c, size_t count) {
 	for (size_t i = 0; i < count; i++) ((char*)dest)[i]=c;
 	return dest;
 }
-
-char *my_strstr(const char *string, const char *strCharSet) {
-	if (!*strCharSet) return (char*)string;
-  if (lstrlen(string) < lstrlen(strCharSet)) return 0;
-	size_t chklen=lstrlen(string)-lstrlen(strCharSet);
-	char *s1, *s2;
-	for (size_t i = 0; i < chklen; i++) {
-		s1=&((char*)string)[i];
-		s2=(char*)strCharSet;
-		while (*s1++ == *s2++)
-			if (!*s2)
-				return &((char*)string)[i];
-	}
-	return 0;
-}

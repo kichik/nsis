@@ -51,8 +51,8 @@ extern const char	*NSISW_VERSION;
 extern char			*g_script;
 extern HWND			g_hwnd;
 extern HANDLE		g_hThread;
-extern char			g_output_exe[1024];
-extern char			g_input_script[1024];
+extern char			*g_output_exe;
+extern char			*g_input_script;
 
 // makensisw
 int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
