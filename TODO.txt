@@ -36,6 +36,8 @@ OTHER PLUGINS
 
 NSIS
 
+* stringlist -> sorted linked list with binary search
+
 * custom class names for IO so you can include whatever item you want
 
 * set resource's font at run-time by saving offsets at compile time
