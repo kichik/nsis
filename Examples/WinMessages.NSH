@@ -181,6 +181,6 @@
 !define SW_RESTORE 9
 !define SW_SHOWDEFAULT 10
 !define SW_FORCEMINIMIZE 11
-!define SW_MAX              11
+!define SW_MAX 11
 
 !endif
