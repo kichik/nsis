@@ -109,7 +109,7 @@ class CEXEBuild {
     void restore_file_predefine(char *);
     char* set_timestamp_predefine(char *);
     void restore_timestamp_predefine(char *);
-    char* set_line_predefine(int);
+    char* set_line_predefine(int, BOOL);
     void restore_line_predefine(char *);
 #endif
     int parseScript();
