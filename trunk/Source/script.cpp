@@ -21,7 +21,7 @@
 
 static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
-                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
+                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0";
 
 
 int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
@@ -2216,6 +2216,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GWL_USERDATA;
       ent.offsets[2]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("SetStaticBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_HWNDS
     case TOK_ISWINDOW:
@@ -3349,6 +3350,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[4]=flags;
       }
       SCRIPT_MSG("\n");
+    return add_entry(&ent);
+    case TOK_SETLANG:
+      ent.which=EW_SETLANG;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      SCRIPT_MSG("SetLanguage: language=%s", line.gettoken_str(1));
     return add_entry(&ent);
 
     // end of instructions
