@@ -29,9 +29,9 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beskrivelse"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Flyt musemarkøren over et komponent for at se beskrivelsen på dette."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Vælg installerings placering"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Vælg installationsmappe"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Vælg hvilken mappe du vil installere ${MUI_PRODUCT} i."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Setup-guiden vil installere ${MUI_PRODUCT} i følgende mappe.$\r$\n$\r$\nÆndr til anden placering , klik gennemse og vælg en anden mappe."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Setup-guiden vil installere ${MUI_PRODUCT} i følgende mappe.$\r$\n$\r$\nSkift til anden placering , klik gennemse og vælg en anden mappe."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Placerings mappe"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Installerer"
