@@ -177,6 +177,8 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETDETAILSVIEW,"SetDetailsView",1,0,"(hide|show)",TP_CODE},
 {TOK_SETDETAILSPRINT,"SetDetailsPrint",1,0,"(none|listonly|textonly|both)",TP_CODE},
 {TOK_SETERRORS,"SetErrors",0,0,"",TP_CODE},
+{TOK_SETERRORLEVEL,"SetErrorLevel",1,0,"error_level",TP_CODE},
+{TOK_GETERRORLEVEL,"GetErrorLevel",1,0,"$(user_var: output)",TP_CODE},
 {TOK_SETFILEATTRIBUTES,"SetFileAttributes",2,0,"file attribute[|attribute[...]]\n    attribute=(NORMAL|ARCHIVE|HIDDEN|OFFLINE|READONLY|SYSTEM|TEMPORARY|0)",TP_CODE},
 {TOK_SETFONT,"SetFont",2,1,"[/LANG=lang_id] font_face_name font_size",TP_GLOBAL},
 {TOK_SETOUTPATH,"SetOutPath",1,0,"output_path",TP_CODE},
