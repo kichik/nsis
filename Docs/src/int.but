@@ -1,6 +1,6 @@
 \S1{intinst} Integer Support
 
-\S2{IntFmt} IntFmt
+\S2{intfmt} IntFmt
 
 \c user_var(output) format numberstring
 
@@ -9,7 +9,7 @@ Formats the number in "numberstring" using the format "format", and sets the out
 \c IntFmt $0 "0x%08X" 195948557
 \c IntFmt $0 "%c" 0x41
 
-\S2{IntOp} IntOp
+\S2{intop} IntOp
 
 \c user_var(output) value1 OP [value2]
 
