@@ -2,17 +2,19 @@
 !define VER_MINOR 0b0
 !define NAME "NSIS"
 
-!verbose 3
 !ifdef CLASSIC_UI ;Modern UI already includes WinMessages
-!include "${NSISDIR}\Examples\WinMessages.nsh"
+  !verbose 3
+    !include "${NSISDIR}\Examples\WinMessages.nsh"
+  !verbose 4
 !endif
-!ifndef CLASSIC_UI
-!include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-!endif
-!verbose 4
 
 !ifndef CLASSIC_UI
-  ;Modern UI defines
+  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
+!endif
+
+!ifndef CLASSIC_UI
+  !insertmacro MUI_BASICFUNCTIONS_INIT
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
@@ -30,7 +32,8 @@ OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
 !ifndef CLASSIC_UI
-!insertmacro MUI_INTERFACE "modern2.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9"
+  !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
+  !insertmacro MUI_INTERFACE
 !endif
 
 LicenseData ..\license.txt
@@ -526,7 +529,7 @@ Section -post
   Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 !ifndef CLASSIC_UI
-  !insertmacro MUI_FINISHHEADER SetPage
+  !insertmacro MUI_FINISHHEADER
 !endif
 SectionEnd
 
@@ -537,77 +540,9 @@ Function .onInstSuccess
 FunctionEnd
 
 !ifndef CLASSIC_UI
-Function .onInitDialog
+!insertmacro MUI_BASICFUNCTIONS
 
-  !insertmacro MUI_INNERDIALOG_INIT
-
-    !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    !insertmacro MUI_INNERDIALOG_STOP 1
-
-    !insertmacro MUI_INNERDIALOG_START 2
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 2
-
-    !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    !insertmacro MUI_INNERDIALOG_STOP 3
-
-  !insertmacro MUI_INNERDIALOG_END
-
-FunctionEnd
-
-Function .onNextPage
-
-  !insertmacro MUI_NEXTPAGE SetPage
-
-FunctionEnd
-
-Function .onPrevPage
-
-  !insertmacro MUI_PREVPAGE SetPage
-
-FunctionEnd
-
-Function SetPage
-
-  !insertmacro MUI_PAGE_INIT
-
-    !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 5
-
- !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-Function .onUserAbort
-
-  !insertmacro MUI_ABORTWARNING
-
-FunctionEnd
-
-Function .onMouseOverSection
-
-  !insertmacro MUI_DESCRIPTION_INIT
-
+!insertmacro MUI_FUNCTION_DESCRIPTION_START
     !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
@@ -645,10 +580,9 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL source in C"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "MakeNSIS Wrapper source code"
-
- !insertmacro MUI_DESCRIPTION_END
-
-FunctionEnd
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+ 
+!insertmacro MUI_FUNCTION_ABORTWARNING
 !endif
 
 Section Uninstall
@@ -745,36 +679,11 @@ Section Uninstall
       MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
   Removed:
 !ifndef CLASSIC_UI
-  !insertmacro MUI_FINISHHEADER un.SetPage
+  !insertmacro MUI_UNFINISHHEADER
 !endif
 SectionEnd
 
 
 !ifndef CLASSIC_UI
-
-Function un.onNextPage
-
-  !insertmacro MUI_NEXTPAGE un.SetPage
-
-FunctionEnd
-
-Function un.SetPage
-
-  !insertmacro MUI_PAGE_INIT
-    
-    !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-  !insertmacro MUI_PAGE_END
-
-FunctionEnd
+  !insertmacro MUI_UNBASICFUNCTIONS
 !endif
