@@ -2407,7 +2407,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_FILE:
 #ifdef NSIS_SUPPORT_FILE
       {
-        int a=1,attrib=0,rec=0;
+        int a=1,attrib=0,rec=0,fatal=1;
+        if (!stricmp(line.gettoken_str(a),"/nonfatal")) {
+          fatal=0;
+          a++;
+        }
         if (which_token == TOK_FILE && !stricmp(line.gettoken_str(a),"/a"))
         {
           attrib=1;
@@ -2431,7 +2435,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!tf)
           {
             ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
-            PRINTHELP()
+            if (fatal) PRINTHELP()
           }
 
           return PS_OK;
@@ -2455,7 +2459,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!tf)
           {
             ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",t);
-            PRINTHELP()
+            if (fatal) PRINTHELP()
           }
         }
       }
