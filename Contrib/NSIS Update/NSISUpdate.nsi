@@ -32,7 +32,11 @@
 !define TEMP2 $R1
 !define TEMP3 $R2
 
-!include "WinMessages.nsh"
+!verbose 3
+  !include "WinMessages.nsh"
+!verbose 4
+
+!addplugindir "${NSISDIR}\Contrib\NSIS Update\Resources\BIN"
 
 #####################################################################
 # Configuration
@@ -67,23 +71,26 @@ Page instfiles
 !macro checkFileDownload PATH FILE
 
   IfFileExists "${PATH}\${FILE}" "Done_${FILE}"
-    
-    IfFileExists "$PLUGINSDIR\bzip2.exe" +3"
-      File "/oname=$PLUGINSDIR\bzip2.exe" "Resources\bin\bzip2.exe"
-    
-    NSISdl::download "http://nsis.sourceforge.net/nsisupdate/${FILE}.bz2" "${PATH}\${FILE}.bz2"
+        
+    NSISdl::download "http://nsis.sourceforge.net/nsisupdate/${FILE}.dat" "${PATH}\${FILE}.dat"
     Pop ${TEMP1}
     
     StrCmp ${TEMP1} "success" "Extract_${FILE}"
       MessageBox MB_OK|MB_ICONSTOP "Download failed: ${TEMP1}."
       Quit
       
-    "Extract_${FILE}:"
-      nsExec::ExecToLog '"$PLUGINSDIR\bzip2.exe" -vd "${PATH}\${FILE}.bz2"'
+    Push ${TEMP1}
       
-    IfFileExists "${PATH}\${FILE}" "Done_${FILE}"
-      MessageBox MB_OK|MB_ICONSTOP "Extraction failed."
+    "Extract_${FILE}:"
+      ExtractDLL::extract "${PATH}\${FILE}" "${PATH}\${FILE}.dat"
+      Delete "${PATH}\${FILE}.dat"
+      
+    Pop ${TEMP1}
+    StrCmp ${TEMP1} "success" +3
+      MessageBox MB_OK|MB_ICONSTOP "Extraction failed: ${TEMP1}."
       Quit
+      
+    Pop ${TEMP1}
     
     "Done_${FILE}:"
     
@@ -93,12 +100,14 @@ Page instfiles
 # Functions
 
 Function .onInit
-  
+ 
+  Push ${TEMP1}
+ 
   Call GetInstallerFile
-  Pop $R0
+  Pop ${TEMP1}
   
-  StrCpy $R0 $R0 "" -14
-    StrCmp $R0 "NSISUpdate.bin" temp
+  StrCpy ${TEMP1} ${TEMP1} "" -14
+    StrCmp ${TEMP1} "NSISUpdate.bin" temp
     
     # Create a temporary file, so NSIS Update can update itself
     
@@ -107,6 +116,8 @@ Function .onInit
     Quit
     
   temp:
+  
+  Pop ${TEMP1}
 
   # Close the NSIS Menu (files in use cannot be updated)
   
