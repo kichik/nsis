@@ -22,7 +22,7 @@ char g_log_file[1024];
 // which result in extra memory for extra variables without code to do allocation :)
 // nsis then removes the "DISCARDABLE" style from section (for safe)
 #pragma bss_seg( VARS_SECTION_NAME )
-NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
+NSIS_STRING g_usrvars[1];
 #pragma bss_seg()
 #define SECTION_VARS_RWD "/section:" ## VARS_SECTION_NAME ## ",rwd"
 #pragma comment(linker, SECTION_VARS_RWD)
@@ -48,10 +48,12 @@ int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl)
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
   DWORD d;
-  static PROCESS_INFORMATION ProcInfo;
-  STARTUPINFO StartUp = {sizeof(StartUp), };
+  PROCESS_INFORMATION ProcInfo;
+  static STARTUPINFO StartUp;
+  StartUp.cb=sizeof(StartUp);
   d=GetFileAttributes(dir);
-  if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY)) dir=0;
+  if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY))
+    dir=0;
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
     return NULL;
   CloseHandle(ProcInfo.hThread);
@@ -69,25 +71,21 @@ BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
   //return my_SetWindowText(GetDlgItem(dlg,idx),val);
 }
 
-/*int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size)
+int NSISCALL my_GetDialogItemText(UINT idx, char *val)
 {
-  return SendMessage(hWnd,WM_GETTEXT,size,(LPARAM)val);
+  extern HWND m_curwnd;
+  return GetDlgItemText(m_curwnd, idx, val, NSIS_MAX_STRLEN);
 }
 
-int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size)
-{
-  return my_GetWindowText(GetDlgItem(dlg,idx),val,size);
-}*/
-
 int NSISCALL my_MessageBox(const char *text, UINT type) {
+  int _type = type & 0x000FFFFF;
   // default for silent installers
   if (g_exec_flags.silent && type >> 20)
     return type >> 20;
   // no silent or no default, just show
-  if (!g_exec_flags.rtl)
-    return MessageBox(g_hwnd, text, g_caption, type & 0x000FFFFF);
-  else
-    return MessageBox(g_hwnd, text, g_caption, (type & 0x000FFFFF) ^ (MB_RIGHT | MB_RTLREADING));
+  if (g_exec_flags.rtl)
+    _type ^= MB_RIGHT | MB_RTLREADING;
+  return MessageBox(g_hwnd, text, g_caption, _type);
 }
 
 void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
@@ -102,7 +100,7 @@ void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
     if (flags&1) {
       SHFILEOPSTRUCT op;
 
-      op.hwnd=0;
+      op.hwnd=g_hwnd;
       op.wFunc=FO_DELETE;
       buf[mystrlen(buf)+1]=0;
       op.pFrom=buf;
@@ -472,12 +470,23 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
   }
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
-    int nVarIdx = (unsigned char)*in++;
-    if (nVarIdx == 255)
+    unsigned char nVarIdx = (unsigned char)*in++;
+    int nData;
+    int fldrs[4];
+    if (nVarIdx > NS_SKIP_CODE)
+    {
+      nData = ((in[1] & 0x7F) << 7) | (in[0] & 0x7F);
+      fldrs[0] = in[0]; // current user
+      fldrs[1] = in[0] | CSIDL_FLAG_CREATE;
+      fldrs[2] = in[1]; // all users
+      fldrs[3] = in[1] | CSIDL_FLAG_CREATE;
+      in += 2;
+    }
+    if (nVarIdx == NS_SKIP_CODE)
     {
       *out++ = *in++;
     }
-    else if (nVarIdx == SHELL_CODES_START)
+    else if (nVarIdx == NS_SHELL_CODE)
     {
       // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
       // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
@@ -485,18 +494,9 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       LPITEMIDLIST idl;
       char *append = 0;
 
-      int fldrs[4] = {
-        in[0], // current user
-        in[0] | CSIDL_FLAG_CREATE,
-        in[1], // all users
-        in[1] | CSIDL_FLAG_CREATE
-      };
-
       int x = 0;
 
       *out = 0;
-
-      in += 2;
 
       if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
       {
@@ -550,27 +550,23 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       validate_filename(out);
       out += mystrlen(out);
     }
-    else if (nVarIdx == VAR_CODES_START)
+    else if (nVarIdx == NS_VAR_CODE)
     {
-      nVarIdx = (*(WORD*)in  - 1) & 0x7FFF;
-      in += sizeof(WORD);
-      if (nVarIdx == 27) // HWNDPARENT
+      if (nData == 27) // HWNDPARENT
         myitoa(out, (unsigned int) g_hwnd);
       else
-        mystrcpy(out, g_usrvars[nVarIdx]);
+        mystrcpy(out, g_usrvars[nData]);
       // validate the directory name
-      if ((unsigned int)(nVarIdx - 21) < 6) {
+      if ((unsigned int)(nData - 21) < 6) {
         // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP and $PLUGINSDIR
         // $LANGUAGE is just a number anyway...
         validate_filename(out);
       }
       out += mystrlen(out);
     } // == VAR_CODES_START
-    else if (nVarIdx == LANG_CODES_START)
+    else if (nVarIdx == NS_LANG_CODE)
     {
-      nVarIdx = *(short*)in;
-      in += sizeof(short);
-      GetNSISString(out, nVarIdx);
+      GetNSISString(out, -nData-1);
       out += mystrlen(out);
     }
     else // Normal char

@@ -419,6 +419,8 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_UserVarNames.add("HWNDPARENT",-1);   // 27
   m_UserVarNames.add("_CLICK",-1);       // 28
 
+  m_iBaseVarsNum = m_UserVarNames.getnum();
+
   m_ShellConstants.add("WINDIR",CSIDL_WINDOWS,CSIDL_WINDOWS);
   m_ShellConstants.add("SYSDIR",CSIDL_SYSTEM,CSIDL_SYSTEM);
   m_ShellConstants.add("PROGRAMFILES",CSIDL_PROGRAM_FILES, CSIDL_PROGRAM_FILES);
@@ -498,8 +500,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
       while (l--)
       {
         int i = (unsigned char)*p++;
-        if (i >= VAR_CODES_START) {
-          *out++ = (char)255;
+        if (i >= NS_CODES_START) {
+          *out++ = (char)NS_SKIP_CODE;
         }
         *out++=i;
       }
@@ -511,8 +513,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
     p=np;
     
     // Test for characters extending into the variable codes
-    if (i >= VAR_CODES_START) {
-      *out++ = (char)255;
+    if (i >= NS_CODES_START) {
+      *out++ = (char)NS_SKIP_CODE;
     }
     else if (i == '$')
     {
@@ -541,8 +543,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 // which is also memory wasting
                 // So the line below must be commented !??
                 //m_UserVarNames.inc_reference(idxUserVar);
-                *out++ = (unsigned int) VAR_CODES_START; // Named user variable;
-                *(WORD*)out = (WORD) ((idxUserVar + 1) | 0x8000);
+                *out++ = (unsigned int) NS_VAR_CODE; // Named user variable;
+                *(WORD*)out = CODE_SHORT(idxUserVar);
                 out += sizeof(WORD);
                 p += pUserVarName-p;
                 bProceced = true;
@@ -564,7 +566,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               {
                 int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
                 int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
-                *out++=(unsigned int)SHELL_CODES_START; // Constant code identifier
+                *out++=(unsigned int)NS_SHELL_CODE; // Constant code identifier
                 *out++=(char)CSIDL_Value_current;
                 *out++=(char)CSIDL_Value_all;
                 p = pShellConstName;
@@ -585,8 +587,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               idx = DefineLangString(cp);
               if (idx < 0)
               {
-                *out++ = (unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                *(WORD*)out= (WORD) idx;
+                *out++ = (unsigned int)NS_LANG_CODE; // Next word is lang-string Identifier
+                *(WORD*)out= CODE_SHORT(-idx-1);
                 out += sizeof(WORD);
                 p += strlen(cp) + 2;
                 bProceced = true;
@@ -2231,7 +2233,8 @@ int CEXEBuild::write_output(void)
   init_res_editor();
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
   int MaxUserVars = m_UserVarNames.getnum();
-  if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars-TOTAL_COMPATIBLE_STATIC_VARS_COUNT) * sizeof(NSIS_STRING)))
+  // -1 because the default size is 1
+  if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
   {
     ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", VARS_SECTION_NAME);
     return PS_ERROR;
@@ -3218,9 +3221,9 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
   }
 
   m_UserVarNames.add(szVarName);
-  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS )
+  if (m_UserVarNames.getnum() > MAX_CODED)
   {
-    ERROR_MSG("Error: too many user variables declared!\n");
+    ERROR_MSG("Error: too many user variables declared. Maximum allowed is %u.\n", MAX_CODED - m_iBaseVarsNum);
     return PS_ERROR;
   }
   return PS_OK;
@@ -3252,9 +3255,9 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 
 void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
 {
-  for ( int i = TOTAL_COMPATIBLE_STATIC_VARS_COUNT; i < pVarsStringList->getnum(); i++ )
+  for (int i = m_iBaseVarsNum; i < pVarsStringList->getnum(); i++)
   {
-    if ( !pVarsStringList->get_reference(i) )
+    if (!pVarsStringList->get_reference(i))
     {      
       warning("Variable \"%s\" not referenced, wasting memory!", pVarsStringList->idx2name(i));
     }  

@@ -3,7 +3,7 @@
 
 extern int *cur_langtable;
 
-int NSISCALL ui_doinstall(void);
+extern int NSISCALL ui_doinstall(void);
 void NSISCALL update_status_text(int strtab, const char *text2);
 extern int ui_st_updateflag;
 

@@ -254,6 +254,7 @@ class CEXEBuild {
     int GetUserVarIndex(LineParser &line, int token);
     // Added by ramon 3 jun 2003
     UserVarsStringList m_UserVarNames;
+    int m_iBaseVarsNum;
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 

@@ -19,10 +19,11 @@ int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl);
 //BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
 #define my_SetWindowText SetWindowText
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val);
+//#define my_SetDialogItemText SetDlgItemText
 //int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size);
 #define my_GetWindowText GetWindowText
-//int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size);
-#define my_GetDialogItemText GetDlgItemText
+int NSISCALL my_GetDialogItemText(UINT idx, char *val);
+//#define my_GetDialogItemText GetDlgItemText
 
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];

@@ -4985,7 +4985,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
         SCRIPT_MSG("VAR \"%s\"\n",line.gettoken_str(1));
         int res = DeclaredUserVar(line.gettoken_str(1));
-        if ( res != PS_OK )
+        if (res != PS_OK)
           return res;        
     }
     return PS_OK;

@@ -112,6 +112,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
   while ( !TryEnterCS() ) Sleep(0);
   if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
   {
+    SendMessage(GetDlgItem(hwnd, IDCANCEL), BM_SETSTATE, FALSE, 0);
     g_cancelled = 1;
   }
   else
@@ -308,10 +309,7 @@ __declspec(dllexport) void download (HWND   parent,
 
       // enable the cancel button
       wasen=EnableWindow(GetDlgItem(parent,IDCANCEL),TRUE);
-      SendMessage(parent, DM_SETDEFID, IDCANCEL, 0);
-      // remove the BS_DEFPUSHBUTTON style from IDOK
-      SendMessage(GetDlgItem(parent, IDOK), BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
-      SetFocus(GetDlgItem(parent,IDCANCEL));
+      SendMessage(parent, WM_NEXTDLGCTL, (WPARAM) GetDlgItem(parent, IDCANCEL), TRUE);
     }
     {
       WSADATA wsaData;
@@ -387,10 +385,16 @@ __declspec(dllexport) void download (HWND   parent,
             
             if (hwndB) ShowWindow(hwndB,SW_SHOWNA);
             if (hwndL) ShowWindow(hwndL,SW_SHOWNA);
-            
-            SetWindowPos(childwnd,0,0,0,orig_childRc.right-orig_childRc.left,orig_childRc.bottom-orig_childRc.top,SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE);
-            
-            if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),FALSE);
+
+            SetWindowPos(
+              childwnd,0,0,0,
+              orig_childRc.right-orig_childRc.left,
+              orig_childRc.bottom-orig_childRc.top,
+              SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE
+            );
+
+            if (wasen)
+              EnableWindow(GetDlgItem(parent, IDCANCEL), FALSE);
           }
           if ( !error )
             error = "cancel";
