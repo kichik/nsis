@@ -53,7 +53,7 @@ table
 	{
 	font-weight: bold;
 	}
-	
+
 .italic
 	{
 	font-style: italic;
@@ -72,7 +72,7 @@ table
 	font-size: 14pt;
 	color: #7A7272;
 	}
-	
+
 .subheader
 	{
 	margin: 20px;
@@ -88,13 +88,13 @@ table
     font-size: 8pt;
 	color: #909090;
 	}
-	
+
 a:link, a:visited, a:active
 	{
 	color: #294F75;
 	text-decoration: none;
 	}
-	
+
 a:hover
 	{
 	color: #182634;
@@ -112,13 +112,13 @@ a:hover
 	background-color: #CCCCCC;
 	vertical-align: top;
 	}
-	
+
 .righttable
 	{
 	background-color: #EEEEEE;
 	vertical-align: top;
 	}
-	
+
 </style>
 
 </head>
@@ -138,7 +138,7 @@ a:hover
 <p class="header">Introduction</p>
 <p class="text">InstallOptions is a NSIS plugin which allows you to create custom
 pages for NSIS installers, to prompt the user for extra information.</p>
-<p class="text">InstallerOptions will create a dialog which will be displayed inside
+<p class="text">InstallOptions will create a dialog which will be displayed inside
 the NSIS window. The controls on the dialog can be defined in an INI file.</p>
 <p class="text">NSIS 2 has a new page system, which allows you to add custom pages
 to your installer without messing with Prev/Next functions. With the new plugin
@@ -203,7 +203,7 @@ It can contain the following values:</p>
     <tr>
       <td class="lefttable"><span class="bold">RTL</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
-      <td class="righttable">If 1 is specified the dialog will be mirrored and all texts will be aligned to the 
+      <td class="righttable">If 1 is specified the dialog will be mirrored and all texts will be aligned to the
 	  right. Use NSIS's $(^RTL) to fill this field, it's the easiest way.</td></tr>
 </table>
 <p class="text">Each field section has the heading "Field #" where # must be sequential
@@ -248,8 +248,10 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Specifies the caption of a label, checkbox, or radio button control.
       For icon and bitmaps control this specifies the path to the image.<br /><br />
-      <span class="bold">Note:</span> For labels, \r\n will be converted to a newline. To use a back-slash in your text you have to escape it using another back-slash - \\.
-      </td></tr>
+      <span class="bold">Note:</span> For labels, \r\n will be converted to a newline.
+			To use a back-slash in your text you have to escape it using another back-slash - \\.
+			Described <a href="#escaping">below</a> are NSIS functions for converting text to/from
+			this format.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">State</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
@@ -257,7 +259,11 @@ numbers from 1 to NumFields. Each Field section can contain the following values
           closes the window, so you can read from it from NSIS. For edit texts and dir and file
           request boxes, this is the string that is specified. For radio button and check boxes,
           this can be '0' or '1' (for unchecked or checked). For list boxes, combo boxes and drop lists this is the selected items separated by pipes ('|').
-        </td></tr>
+				<br /><br />
+      	<span class="bold">Note:</span> For Text fields with the MULTILINE flag, \r\n will be converted to a newline.
+				To use a back-slash in your text you have to escape it using another back-slash - \\.
+				Described <a href="#escaping">below</a> are NSIS functions for converting text to/from
+				this format.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">ListItems</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
@@ -293,7 +299,9 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="righttable">If the field fails the test for
         "<span class="italic">MinLen</span>" or "<span class="italic">MaxLen</span>",
         a messagebox will be displayed with this text.<br /><br /><span class="bold">
-        Note:</span> \r\n will be converted to a newline, two back-slashes will be converted to one - \\.</td></tr>
+        Note:</span> \r\n will be converted to a newline, two back-slashes will be converted to one - \\.
+				Described <a href="#escaping">below</a> are NSIS functions for converting text to/from
+				this format.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Left<br />Right<br />Top<br />Bottom</span></td>
       <td class="lefttable"><span class="italic">(required)</span></td>
@@ -318,7 +326,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Specifies the filter to be used in the
         "<span class="italic">FileRequest</span>" control.<br />This is constructed
-        by putting pairs of entries together, each item seperated by a | character.
+        by putting pairs of entries together, each item separated by a | character.
         <br />The first value in each pair is the text to display for the filter.
         <br />The second value is the pattern to use to match files.<br />
         For example, you might specify:<br />
@@ -337,7 +345,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="bold">Flags</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">This specifies additional flags for the
-        display of different controls. Each value should be seperated by a |
+        display of different controls. Each value should be separated by a |
         character, and you should be careful not to put any spaces around the |
         character.<br />
         <table class="righttable">
@@ -373,7 +381,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
             <td class="righttable">PATH_MUST_EXIST</td>
             <td class="righttable">Used by "<span class="italic">FileRequest</span>"
             to force the path to
-              exist. Prevents the user from typing a non-existant path into the
+              exist. Prevents the user from typing a non-existent path into the
               browse dialog window.<br />This only validates path's
               selected with the browse button.</td></tr>
           <tr>
@@ -392,11 +400,11 @@ numbers from 1 to NumFields. Each Field section can contain the following values
           <tr>
             <td class="righttable">MULTISELECT</td>
             <td class="righttable">Used by "<span class="italic">Listbox</span>"
-              controls. Turns string selection on or off each time the user clicks or double-clicks a string in the list box. The user can select any number of strings. If this flag and EXTENDEDSELCT are not specified, only one item can be selected from the the list.</td></tr>
+              controls. Turns string selection on or off each time the user clicks or double-clicks a string in the list box. The user can select any number of strings. If this flag and EXTENDEDSELCT are not specified, only one item can be selected from the list.</td></tr>
           <tr>
             <td class="righttable">EXTENDEDSELCT</td>
             <td class="righttable">Used by "<span class="italic">Listbox</span>"
-              controls. Allows multiple items to be selected by using the SHIFT key and the mouse or special key combinations. If this flag and MULTISELECT are not specified, only one item can be selected from the the list.</td></tr>
+              controls. Allows multiple items to be selected by using the SHIFT key and the mouse or special key combinations. If this flag and MULTISELECT are not specified, only one item can be selected from the list.</td></tr>
           <tr>
             <td class="righttable">RESIZETOFIT</td>
             <td class="righttable">This causes "<span class="italic">Bitmap</span>"
@@ -421,20 +429,20 @@ numbers from 1 to NumFields. Each Field section can contain the following values
              <td class="righttable">Used by "<span class="italic">Text</span>" controls. Forces the user to enter only numbers into the edit box.</td></tr>
           <tr>
             <td class="righttable">MULTILINE</td>
-            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Causes the control to accept multiple-lines.</td></tr>             
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Causes the control to accept multiple-lines.</td></tr>
           <tr>
             <td class="righttable">WANTRETURN</td>
-            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Specifies that a carriage return be inserted when the user presses the ENTER key 
-            while entering text into the text box.</td></tr>             
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Specifies that a carriage return be inserted when the user presses the ENTER key
+            while entering text into the text box.</td></tr>
           <tr>
             <td class="righttable">HSCROLL</td>
-            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a horizontal scrollbar.</td></tr>             
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a horizontal scrollbar.</td></tr>
           <tr>
             <td class="righttable">VSCROLL</td>
-            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a vertical scrollbar.</td></tr>             
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a vertical scrollbar.</td></tr>
           <tr>
             <td class="righttable">READONLY</td>
-            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Prevents the user from entering or editing text in the edit control, but allow the user to select and copy the text.</td></tr>             
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Prevents the user from entering or editing text in the edit control, but allow the user to select and copy the text.</td></tr>
         </table></td></tr>
     <tr>
       <td class="lefttable"><span class="bold">TxtColor</span></td>
@@ -455,7 +463,7 @@ Function .onInit
 
   InitPluginsDir
   File /oname=$PLUGINSDIR\test.ini test.ini
-  
+
 FunctionEnd
 </pre>
 <p class="subheader">Call the DLL</p>
@@ -467,7 +475,7 @@ Page custom SetCustom ValidateCustom
 </pre>
 <p class="text">The InstallOptions DLL has three functions:</p>
 <ul>
-<li>dialog - Creates the dialog immidiately</li>
+<li>dialog - Creates the dialog immediately</li>
 <li>initDialog - Creates the dialog in memory, does not show it</li>
 <li>show - Shows a dialog created in memory</li>
 </ul>
@@ -490,52 +498,111 @@ value of a Field using ReadINIStr:</p>
 <pre class="margin">
 ReadINIStr $R0 "$PLUGINSDIR\test.ini" "Field 1" "State"
 </pre>
-<p class="text"><span class="bold">Note:</span></p>
-<p class="text">For Multiline edit boxes the output &quot;State&quot; comes with &quot;\r\n&quot;
-if the text contains more than one line. You have to convert it to &quot;$\r$\n&quot; if needed,
-using this macro:</p>
-<pre class="margin">!macro NORMALIZE_CRCF VALUE
+<p class="text"><a name="escaping"></a><span class="bold">Note:</span></p>
+<p class="text">Some InstallOptions values are escaped (in a similar manner to &quot;C&quot;
+	strings) to allow characters to be used that are not normally valid in INI file values.
+	The affected values are:</p>
+<ul>
+	<li>The ValidateText field</li>
+	<li>The Text value of Label fields</li>
+	<li>The State value of Text fields that have the MULTILINE flag</li>
+</ul>
+<p class="text">The escape character is the back-slash character (&quot;\&quot;)
+	and the available escape sequences are:</p>
+<table class="subtable">
+	<tr>
+		<td class="lefttable">&quot;\\&quot;</td>
+		<td class="righttable">Back-slash</td>
+	</tr>
+	<tr>
+		<td class="lefttable">&quot;\r&quot;</td>
+		<td class="righttable">Carriage return (ASCII 13)</td>
+	</tr>
+	<tr>
+		<td class="lefttable">&quot;\n&quot;</td>
+		<td class="righttable">Line feed (ASCII 10)</td>
+	</tr>
+	<tr>
+		<td class="lefttable">&quot;\t&quot;</td>
+		<td class="righttable">Tab (ASCII 9)</td>
+	</tr>
+</table>
+<p class="text">The following functions can be used to convert a string to and from
+	this format:</p>
+<pre class="margin">; Convert an NSIS string to a form suitable for use by InstallOptions
+; Usage:
+;   Push &lt;NSIS-string&gt;
+;   Call Nsis2Io
+;   Pop &lt;IO-string&gt;
+Function Nsis2Io
+  Exch $0 ; The source
+  Push $1 ; The output
+  Push $2 ; Temporary char
+  StrCpy $1 &quot;&quot; ; Initialise the output
+loop:
+  StrCpy $2 $0 1 ; Get the next source char
+  StrCmp $2 &quot;&quot; done ; Abort when none left
+    StrCpy $0 $0 &quot;&quot; 1 ; Remove it from the source
+    StrCmp $2 &quot;\&quot; &quot;&quot; +3 ; Back-slash?
+      StrCpy $1 &quot;$1\\&quot;
+      Goto loop
+    StrCmp $2 &quot;$\r&quot; &quot;&quot; +3 ; Carriage return?
+      StrCpy $1 &quot;$1\r&quot;
+      Goto loop
+    StrCmp $2 &quot;$\n&quot; &quot;&quot; +3 ; Line feed?
+      StrCpy $1 &quot;$1\n&quot;
+      Goto loop
+    StrCmp $2 &quot;$\t&quot; &quot;&quot; +3 ; Tab?
+      StrCpy $1 &quot;$1\t&quot;
+      Goto loop
+    StrCpy $1 &quot;$1$2&quot; ; Anything else
+    Goto loop
+done:
+  StrCpy $0 $1
+  Pop $2
+  Pop $1
+  Exch $0
+FunctionEnd
 
-  ;Note: Do not use $R1-$R4 as value
-
-  Push $R1 ; Index
-  Push $R2 ; Output char by char
-  Push $R3 ; Output char by char next
-  Push $R4 ; Text Accumulator
-
-  StrCpy $R1 &quot;0&quot;
-  
-  DONEXT:
-    StrCpy $R2 ${VALUE} 1 $R1
-    IntOp $R1 $R1 + 1
-    StrCpy $R3 ${VALUE} 1 $R1
-    StrCmp $R3 &quot;&quot; EOT
-    StrCmp $R2 &quot;\&quot; 0 NORMAL_CHAR
-    StrCmp $R3 &quot;r&quot; FOUND_CR
-    StrCmp $R3 &quot;n&quot; 0 NORMAL_CHAR
-
-    StrCpy $R4 &quot;$R4$\r&quot;
-    IntOp $R1 $R1 + 1
-    Goto DONEXT
-
-  FOUND_CR:
-    StrCpy $R4 &quot;$R4$\n&quot;
-    IntOp $R1 $R1 + 1
-    Goto DONEXT
-
-  NORMAL_CHAR:
-    StrCpy $R4 &quot;$R4$R2&quot;
-    Goto DONEXT
-
-  EOT:
-    StrCpy ${VALUE} $R4
-  
-    Pop $R4
-    Pop $R3
-    Pop $R2
-    Pop $R1
-
-!macroend
+; Convert an InstallOptions string to a form suitable for use by NSIS
+; Usage:
+;   Push &lt;IO-string&gt;
+;   Call Io2Nsis
+;   Pop &lt;NSIS-string&gt;
+Function Io2Nsis
+  Exch $0 ; The source
+  Push $1 ; The output
+  Push $2 ; Temporary char
+  StrCpy $1 &quot;&quot; ; Initialise the output
+loop:
+  StrCpy $2 $0 1 ; Get the next source char
+  StrCmp $2 &quot;&quot; done ; Abort when none left
+    StrCpy $0 $0 &quot;&quot; 1 ; Remove it from the source
+    StrCmp $2 &quot;\&quot; +3 ; Escape character?
+      StrCpy $1 &quot;$1$2&quot; ; If not just output
+      Goto loop
+    StrCpy $2 $0 1 ; Get the next source char
+    StrCpy $0 $0 &quot;&quot; 1 ; Remove it from the source
+    StrCmp $2 &quot;\&quot; &quot;&quot; +3 ; Back-slash?
+      StrCpy $1 &quot;$1\&quot;
+      Goto loop
+    StrCmp $2 &quot;r&quot; &quot;&quot; +3 ; Carriage return?
+      StrCpy $1 &quot;$1$\r&quot;
+      Goto loop
+    StrCmp $2 &quot;n&quot; &quot;&quot; +3 ; Line feed?
+      StrCpy $1 &quot;$1$\n&quot;
+      Goto loop
+    StrCmp $2 &quot;t&quot; &quot;&quot; +3 ; Tab?
+      StrCpy $1 &quot;$1$\t&quot;
+      Goto loop
+    StrCpy $1 &quot;$1$2&quot; ; Anything else (should never get here)
+    Goto loop
+done:
+  StrCpy $0 $1
+  Pop $2
+  Pop $1
+  Exch $0
+FunctionEnd
 </pre>
 <p class="subheader">Validate the input</p>
 <p class="text">If you want to validate the input on the page,
@@ -549,7 +616,7 @@ Function ValidateCustom
   StrCmp $0 "" 0 +3
     MessageBox MB_ICONEXCLAMATION|MB_OK "Please enter your name."
     Abort
-    
+
 FunctionEnd
 </pre>
 <p class="subheader">Return value</p>
@@ -559,12 +626,12 @@ adds one value to the stack, with one of the following values:</p>
 <li>success - The user has pressed the Next button</li>
 <li>back - The user has pressed the Back button</li>
 <li>cancel - The user has pressed the Cancel button</li>
-<li>error - An error has occured, the dialog cannot be displayed.</li>
+<li>error - An error has occurred, the dialog cannot be displayed.</li>
 </ul>
 <p class="text">Usually, you don't need to check this value,
 but you still have to remove it from the stack (have a look at
 the example above).</p>
-<p class="text">If you want to check the user input immidiately,
+<p class="text">If you want to check the user input immediately,
 for example, to display a warning  when the input is invalid, you
 should check whether the user has pressed the Back or Next button.</p>
 <p class="subheader">ReserveFile</p>
@@ -599,17 +666,17 @@ Function FunctionName ;FunctionName defined with Page command
 
     InstallOptions::initDialog /NOUNLOAD $PLUGINSDIR\test.ini
     Pop $R0
-    
+
     GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
-    
+
     ;$R1 contains the HWND of the first field
-    CreateFont $R2 "Tahoma" 10 700 
+    CreateFont $R2 "Tahoma" 10 700
     SendMessage $R1 ${WM_SETFONT} $R2 0
-	
+
     InstallOptions::show
     Pop $R0
-  
-  Pop $R2  
+
+  Pop $R2
   Pop $R1
   Pop $R0
 
@@ -676,7 +743,7 @@ Permission is granted to anyone to use this software for any purpose,
 including commercial applications, and to alter it and redistribute
 it freely, subject to the following restrictions:
 
-1. The origin of this software must not be misrepresented; 
+1. The origin of this software must not be misrepresented;
    you must not claim that you wrote the original software.
    If you use this software in a product, an acknowledgment in the
    product documentation would be appreciated but is not required.
