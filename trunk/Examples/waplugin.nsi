@@ -106,13 +106,9 @@ Function MakeSureIGotWinamp
   StrCmp $0 "" getwinamp
     Return
   getwinamp:
-  StrCpy $1 $TEMP\porearre1.dll 
   StrCpy $2 "$TEMP\Winamp Installer.exe"
-  File /oname=$1 nsisdl.dll
-  Push http://download.nullsoft.com/winamp/client/winamp281_lite.exe
-  Push $2
-  CallInstDLL $1 download
-  Delete $1
+  NSISdl::download http://download.nullsoft.com/winamp/client/winamp281_lite.exe $2
+  Pop $0
   StrCmp $0 success success
     SetDetailsView show
     DetailPrint "download failed: $0"
