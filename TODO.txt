@@ -2,9 +2,6 @@ TODO
 
 DOCUMENTATION
 
-* We should have a section about multiple language
-  whole lots of /LANGs but no explaintation :)
-
 * user_vars should link to the user_vars section as in the old docs
   callbacks and other stuff should be linked too
 
