@@ -2297,13 +2297,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
       }
 
-      if (!strncmp(line.gettoken_str(3),"STR:",4)) ent.offsets[5]|=1;
-      if (!strncmp(line.gettoken_str(4),"STR:",4)) ent.offsets[5]|=2;
+      if (!strncmp(line.gettoken_str(3),"STR:",4)) 
+      {
+        ent.offsets[5]|=1;
+        ent.offsets[3]=add_string(line.gettoken_str(3)+4);
+      }
+      else ent.offsets[3]=add_string(line.gettoken_str(3));
+      if (!strncmp(line.gettoken_str(4),"STR:",4)) 
+      {
+        ent.offsets[5]|=2;
+        ent.offsets[4]=add_string(line.gettoken_str(4)+4);
+      }
+      else ent.offsets[4]=add_string(line.gettoken_str(4));
 
       ent.offsets[1]=add_string(line.gettoken_str(1));
       ent.offsets[2]=add_string(line.gettoken_str(2));
-      ent.offsets[3]=add_string(line.gettoken_str(3));
-      ent.offsets[4]=add_string(line.gettoken_str(4));
 
       SCRIPT_MSG("(%s,%s,%s,%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
     return add_entry(&ent);
