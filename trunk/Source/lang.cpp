@@ -305,11 +305,17 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     int iscp=0;
     for (x = 0; x < build_header.num_sections&&!iscp; x ++)
     {
-      int name_ptr = ((section*)build_sections.get())[x].name_ptr;
+      section *sec = &((section*)build_sections.get())[x];
       char c;
-      if (name_ptr < 0) c = 'a';
-      else char c=build_strlist.get()[((section*)build_sections.get())[x].name_ptr];
-      if (c && c != '-' && !(((section*)build_sections.get())[x].default_state&DFS_RO)) iscp++;
+      if (sec->name_ptr < 0) c = 'a';
+      else c=build_strlist.get()[sec->name_ptr];
+      if (c && c != '-' && !(sec->default_state&DFS_RO)) {
+        SCRIPT_MSG("one section\n");
+        iscp++;
+      }
+      else {
+        SCRIPT_MSG("one section down\n");
+      }
     }
     if (iscp)
     {
