@@ -289,6 +289,7 @@ int main(int argc, char **argv)
             {
               if (build.display_errors) 
               {
+                sfile[strlen(sfile)-4]=0;
                 fprintf(g_output,"Can't open script \"%s\"\n",sfile);
                 fflush(g_output);
               }
