@@ -1,5 +1,45 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.01} 2.01
+
+\S1{v2.01-cl}
+
+\b makensis compiles on POSIX platforms (Linux, *BSD, Mac OS X)
+
+\b \L{../Contrib/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
+
+\b Language files fixes and improvements
+
+\b Windows 95 (OSR2)/98/ME no longer see drive free space capped to 2GB
+
+\b LZMA exehead is now 34kb and should also decompress faster
+
+\b Fixed a bug which made plug-ins that didn't have lower case extension not be found
+
+\b Fixed a bug that caused directories with drives that had their current directory set to an invalid directory to not be accepted in the directory selection page
+
+\b makensis shows meaningful errors for compression errors instead of just magic numbers
+
+\b Added SW_HIDE to \R{execshell}{ExecShell}'s accepted show modes
+
+\b Fixed a bug with \R{aallowrootdirinstall}{AllowRootDirInstall} used along with \R{ainstalldirregkey}{InstallDirRegKey} that caused the directory in the registry to be ignored
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
+
+\b \R{upgradedll}{UpgradeDLL}: rundll32 not always in $SYSDIR
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages, bitmaps are now automatically centered, fixed a rare freeze
+
+\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, added StrCase, some fixes
+
+\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle
+
+\b \R{setoutpath}{SetOutPath} "-" works again
+
+\b Added \R{abgfont}{BGFont} that allows setting the background text font
+
+\b Made Times New Roman default font for the background text because it should always have support for the locale's language
+
 \H{v2.0} 2.0
 
 Released on February 7th, 2004
