@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1035
 # Font and size - dash (-) means default
@@ -7,26 +7,26 @@ NLF v4
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by AKX <akx@theakx.tk>
+# Translation by AKX <akx@theakx.tk> - Modifications by Eclipser <Eclipser@pilvikaupunki.net>
 Nullsoft Asennusjärjestelmä %s
 %s Asennus
 %s Poisto
 : Lisenssisopimus
 : Asennusvaihtoehdot
-: Asennuskansio
+: Asennushakemisto
 : Asennetaan
 : Valmis
 : Varmistus
 : Poistetaan
 : Valmis
-&Takaisin
-&Jatka
+< &Takaisin
+&Seuraava >
 &Hyväksyn
 Hyväksyn lisenssisopimuksen ehdot
 En hyväksy sopimuksen ehtoja
 &Asenna
 &Poista
-Peru
+Peruuta
 &Sulje
 S&elaa...
 &Näytä tiedot
@@ -36,45 +36,46 @@ Oma
 Valitse asennustyyppi:
 Valitse asennettavat komponentit:
 Tai, valitse valinnaiset komponentit:
-Valitse kansio, johon %s asennetaan:
-Tilaa saatavilla: 
-Tarvittu tila: 
-Poistetaan kansiosta:
-Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Hylkää lopettaaksesi asennuksen,\r\nUudelleen yrittääksesi uudelleen, or\r\nOhita ohittaaksesi tiedoston
-Ei voi kirjoittaa: 
+Valitse hakemisto, johon %s asennetaan:
+Tilaa vapaana:
+Tarvittava tila:
+Poistetaan hakemistosta:
+Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Hylkää lopettaaksesi asennuksen,\r\nUudelleen yrittääksesi uudelleen, tai\r\nOhita ohittaaksesi tiedoston
+Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Uudelleen yrittääksesi uudelleen, tai\r\nHylkää lopettaaksesi asennuksen
+Ei voi kirjoittaa:
 Kopiointi epäonnistui
-Kopioi kohteeseen 
+Kopioidaan kohteeseen
 Rekisteröidään:
 Poistetaan rekisteröinti:
-Symbolia ei löydy: 
-Ei voitu ladata: 
-Luo kansio: 
+Symbolia ei löytynyt:
+Ei voitu ladata:
+Luo hakemisto:
 Luo kuvake: 
 Poisto-ohjelma luotiin: 
 Poista: 
 Poista käynnistyksen yhteydessä: 
-Ei voitu luoda kuvaketta: 
-Ei voitu luoda: 
+Virhe luotaessa pikakuvaketta:
+Virhe luotaessa:
 Pakettia ei voitu purkaa. Korruptoitunut asennusohjelma?
-Ei voitu rekisteröidä DLL-tiedostoa
+Virhe rekisteröidessä DLL-tiedostoa
 ExecShell: 
-Aja: 
+Aja:
 Pura: 
 Pura: ei voitu kirjoittaa 
-Asennus korrupti: opcode invalid
-Ei ole OLEa: 
-Kansio: 
-Poista kansio: 
-Muuta nimi käynn. yhteydessä: 
-Muuta nimi: 
-Hypättiin: 
-Kopioi leikepöydälle
-Tallenna asennusprosessi
+Asennus korruptoitunut
+Ei ole OLEa:
+Hakemisto:
+Poista hakemisto:
+Muuta nimi uudelleenkäynnistyksen yhteydessä:
+Muuta nimi:
+Ohitettiin:
+Kopioi tiedot leikepöydälle
+Tallenna asennustiedot
 # byte
 t
 # kilo
 k
 # mega
-m
+M
 # giga
-g
+G
