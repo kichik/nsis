@@ -20,7 +20,7 @@
 *  3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <windows.h>
+#include "../Platform.h"
 #include <windowsx.h>
 #include <shlobj.h>
 #include <shellapi.h>
@@ -33,9 +33,6 @@
 #include "ui.h"
 #include "exec.h"
 #include "lang.h"
-
-#define LB_ICONWIDTH 20
-#define LB_ICONHEIGHT 20
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HICON g_hIcon;
@@ -721,9 +718,6 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         }
       }
       if (enlink->msg==WM_SETCURSOR) {
-#ifndef IDC_HAND
-#define IDC_HAND MAKEINTRESOURCE(32649)
-#endif
         SetCursor(LoadCursor(0,IDC_HAND));
       }
     }
@@ -857,9 +851,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       bi.lpfn = BrowseCallbackProc;
       bi.lParam = (LPARAM)dir;
       bi.lpszTitle = GetNSISStringTT(browse_text);
-#ifndef BIF_NEWDIALOGSTYLE
-#define BIF_NEWDIALOGSTYLE 0x0040
-#endif
       bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
       idlist = SHBrowseForFolder(&bi);
       if (idlist)
@@ -939,10 +930,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 }
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-
-#ifndef TVITEM
-#define TVITEM TV_ITEM
-#endif
 
 static int NSISCALL SetChildrenStates(HWND hwTree, HTREEITEM hItem, int iChecked)
 {
@@ -1131,13 +1118,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
 
     TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
-
-#ifndef TVM_SETITEMHEIGHT
-#define TVM_SETITEMHEIGHT (TV_FIRST + 27)
-#endif
-#ifndef TVM_GETITEMHEIGHT
-#define TVM_GETITEMHEIGHT (TV_FIRST + 28)
-#endif
 
     if (SendMessage(hwndTree1, TVM_GETITEMHEIGHT, 0, 0) < 16)
       SendMessage(hwndTree1, TVM_SETITEMHEIGHT, 16, 0);
@@ -1532,9 +1512,6 @@ static DWORD WINAPI install_thread(LPVOID p)
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-
-// listview unfolds partly hidden labels if it does not have infotip text
-#define LVS_EX_LABELTIP 0x00004000
 
 static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

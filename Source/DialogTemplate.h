@@ -27,18 +27,11 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <Windows.h>
+#include "Platform.h"
 #include <Vector>
 
 #include <StdExcept>
 using namespace std;
-
-#ifndef IS_INTRESOURCE
-#ifndef ULONG_PTR
-#define ULONG_PTR DWORD
-#endif
-#define IS_INTRESOURCE(_r) (((ULONG_PTR)(_r) >> 16) == 0)
-#endif
 
 struct DialogItemTemplate {
   DWORD  dwHelpId; // Extended only

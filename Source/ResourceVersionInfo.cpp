@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <windows.h>
+#include "Platform.h"
 #include "build.h"
 
 #include "ResourceVersionInfo.h"

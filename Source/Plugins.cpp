@@ -2,7 +2,7 @@
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 
 #include "Plugins.h"
-#include <windows.h>
+#include "Platform.h"
 #include <WinNT.h>
 
 

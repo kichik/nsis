@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "Platform.h"
 #include <stdio.h>
 #include <shlobj.h>
 #define _RICHEDIT_VER 0x0200
@@ -12,10 +12,6 @@
 #include "DialogTemplate.h"
 #include "lang.h"
 #include "exehead/resource.h"
-
-#ifndef FOF_NOERRORUI
-#define FOF_NOERRORUI 0x0400
-#endif
 
 #define MAX_INCLUDEDEPTH 10
 #define MAX_LINELENGTH 4096

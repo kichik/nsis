@@ -29,7 +29,7 @@
 
 #ifdef RESOURCE_EDITOR_NOT_API
 
-#include <Windows.h>
+#include "Platform.h"
 #include <WinNT.h>
 #include <Time.h>
 #include <Vector>
@@ -39,13 +39,6 @@
 
 #include <StdExcept>
 using namespace std;
-
-#ifndef IS_INTRESOURCE
-#ifndef ULONG_PTR
-#define ULONG_PTR DWORD
-#endif
-#define IS_INTRESOURCE(_r) (((ULONG_PTR)(_r) >> 16) == 0)
-#endif
 
 class CResourceDirectory;
 class CResourceDirectoryEntry;

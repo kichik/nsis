@@ -21,7 +21,6 @@
 */
 
 #include "DialogTemplate.h"
-#include <commctrl.h>
 
 //////////////////////////////////////////////////////////////////////
 // Utilities
@@ -262,10 +261,6 @@ int CDialogTemplate::RemoveItem(WORD wId) {
   }
   return 0;
 }
-
-#ifndef DS_SHELLFONT
-#define DS_SHELLFONT (DS_SETFONT | DS_FIXEDSYS)
-#endif
 
 // Sets the font of the dialog
 void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
