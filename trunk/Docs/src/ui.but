@@ -90,4 +90,4 @@ Sets a background color for a static control, edit control, button or a dialog. 
 
 \c hwnd show_state
 
-Sets the visibilty of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Widnows ShowWindow} function. SW_* are defined in \W{../Include/WinMessages.NSH}{Include\\WinMessages.NSH}.
+Sets the visibilty of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \W{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
