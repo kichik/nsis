@@ -46,7 +46,11 @@ vpath %.C ../zlib
 
 %.c : config.h fileform.h
 
+ifeq ($(USE_PRECOMPILED_EXEHEADS),1)
+all : Release-zlib/exehead_zlib.h Release-bzip2/exehead_bzip2.h Release-lzma/exehead_lzma.h
+else
 all : dirs exehead_zlib exehead_bzip2 exehead_lzma exehead_resources
+endif
 
 missing_dirs = $(filter-out $(wildcard Release-*),Release-zlib Release-bzip2 Release-lzma)
 
@@ -67,8 +71,10 @@ exehead_zlib : dirs Release-zlib/exehead_zlib.exe Release-zlib/exehead_zlib.h
 Release-zlib/exehead_zlib.exe : $(ZLIB_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(ZLIB_OBJS) $(LIBS)
 
+ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-zlib/exehead_zlib.h : Release-zlib/exehead_zlib.exe $(BIN2H)
 	$(BIN2H) $< $@ zlib_header_data
+endif
 
 Release-zlib/%.o : %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
@@ -84,8 +90,10 @@ exehead_bzip2 : dirs Release-bzip2/exehead_bzip2.exe Release-bzip2/exehead_bzip2
 Release-bzip2/exehead_bzip2.exe : $(BZIP2_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(BZIP2_OBJS) $(LIBS)
 
+ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-bzip2/exehead_bzip2.h : Release-bzip2/exehead_bzip2.exe $(BIN2H)
 	$(BIN2H) $< $@ bzip2_header_data
+endif
 
 Release-bzip2/%.o : %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
@@ -98,8 +106,10 @@ exehead_lzma : dirs Release-lzma/exehead_lzma.exe Release-lzma/exehead_lzma.h
 Release-lzma/exehead_lzma.exe : $(LZMA_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LZMA_OBJS) $(LIBS)
 
+ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-lzma/exehead_lzma.h :  Release-lzma/exehead_lzma.exe $(BIN2H)
 	$(BIN2H) $< $@ lzma_header_data
+endif
 
 Release-lzma/%.o : %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
