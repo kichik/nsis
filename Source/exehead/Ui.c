@@ -158,6 +158,7 @@ void NSISCALL build_g_logfile()
 static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   HTREEITEM hItem;
   int l=0;
+  section sec;
 
   pItem->mask|=TVIF_PARAM;
 
@@ -165,15 +166,17 @@ static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   if (pItem->state >> 12 == 0)
     return;
 
-  if (iState < 3 && (g_inst_section[pItem->lParam].default_state & DFS_RO)) l=3;
+  sec=g_inst_section[pItem->lParam];
+
+  if (iState < 3 && (sec.default_state & DFS_RO)) l=3;
 
   pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
   pItem->stateMask = TVIS_STATEIMAGEMASK;
 
-  if (!(g_inst_section[pItem->lParam].default_state & DFS_RO))
+  if (!(sec.default_state & DFS_RO))
   {
-    if (iState == 2) g_inst_section[pItem->lParam].default_state |= DFS_SET;
-    else g_inst_section[pItem->lParam].default_state &= ~DFS_SET;
+    if (iState == 2) sec.default_state |= DFS_SET;
+    else sec.default_state &= ~DFS_SET;
     TreeView_SetItem(hWnd, pItem);
   }
 
@@ -727,7 +730,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_DIR_TEXT);
     SetDlgItemTextFromLang(hwndDlg,IDC_BROWSE,LANGID_BTN_BROWSE);
     SetUITextFromLang(hwndDlg,IDC_SELDIRTEXT,g_inst_header->dir_subtext_id,LANGID_DIR_SUBTEXT);
-    SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+    uMsg=WM_IN_UPDATEMSG;
   }
   if (uMsg == WM_COMMAND)
   {
@@ -1034,7 +1037,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
 
-    SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+    uMsg=WM_IN_UPDATEMSG;
   }
   if (uMsg == WM_USER+0x17)
   {
