@@ -50,6 +50,7 @@ int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *
 {
   static int ignore;
   static int ignored_if_count;
+  static int wait_for_endif;
 
   LineParser line;
   int res;
@@ -142,11 +143,23 @@ parse_again:
     if (line.getnumtokens() == 1) PRINTHELP()
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
-    ignore=0; // process the ifdef
+    if (ignore && !wait_for_endif) {
+      ignore=0; // process the ifdef
+    }
+    else {
+      // don't process the if(n)def because the else code shouldn't be executed
+      // one if was already executed
+      ignore=1;
+      wait_for_endif=1;
+    }
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
   {
+    if (wait_for_endif) {
+      ERROR_MSG("waiting for !endif\n");
+      return PS_OK;
+    }
     if (ignore) {
       ignored_if_count++;
       return PS_OK;
@@ -182,7 +195,10 @@ parse_again:
   if (tkid == TOK_P_ENDIF) {
     if (ignore) {
       if (ignored_if_count) ignored_if_count--;
-      else ignore=0;
+      else {
+        wait_for_endif=0;
+        ignore=0;
+      }
     }
     return PS_OK;
   }
