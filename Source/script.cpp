@@ -4737,9 +4737,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       int ret;
       SCRIPT_MSG("SetCurInstType: %s\n",line.gettoken_str(1));
-      ret = add_entry_indirect(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
+      ret = add_entry_direct(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
       if (ret != PS_OK) return ret;
-      ret = add_entry_indirect(EW_INSTTYPESET, 0, 0, 0, 1);
+      ret = add_entry_direct(EW_INSTTYPESET, 0, 0, 0, 1);
       if (ret != PS_OK) return ret;
     }
     return PS_OK;
@@ -5304,14 +5304,14 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
               strcat(spec,fspec);
               if (generatecode)
               {
-                a=add_entry_indirect(EW_PUSHPOP, add_string("$OUTDIR"));
+                a=add_entry_direct(EW_PUSHPOP, add_string("$OUTDIR"));
                 if (a != PS_OK)
                 {
                   FindClose(h);
                   return a;
                 }
 
-                a=add_entry_indirect(EW_ASSIGNVAR, m_UserVarNames.get("OUTDIR"), add_string(out_path));
+                a=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("OUTDIR"), add_string(out_path));
                 if (a != PS_OK)
                 {
                   FindClose(h);
@@ -5323,7 +5323,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                 {
                   FindClose(htemp);
 
-                  a=add_entry_indirect(EW_CREATEDIR, add_string("$OUTDIR"), 1);
+                  a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
                   if (a != PS_OK)
                   {
                     FindClose(h);
@@ -5340,7 +5340,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
               if (generatecode)
               {
-                a=add_entry_indirect(EW_PUSHPOP, m_UserVarNames.get("OUTDIR"), 1);
+                a=add_entry_direct(EW_PUSHPOP, m_UserVarNames.get("OUTDIR"), 1);
                 if (a != PS_OK)
                 {
                   FindClose(h);
@@ -5349,7 +5349,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
                 if (attrib)
                 {
-                  a=add_entry_indirect(EW_SETFILEATTRIBUTES, add_string(out_path), d.dwFileAttributes);
+                  a=add_entry_direct(EW_SETFILEATTRIBUTES, add_string(out_path), d.dwFileAttributes);
                   if (a != PS_OK)
                   {
                     FindClose(h);
@@ -5366,7 +5366,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         if (!rec_depth)
         {
           // return to the original $OUTDIR
-          a=add_entry_indirect(EW_CREATEDIR, add_string("$OUTDIR"), 1);
+          a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
           if (a != PS_OK)
           {
             FindClose(h);
