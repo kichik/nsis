@@ -42,6 +42,12 @@ Set user variable $x with the name of the 'index'th registry value in root_key\\
 
 Expands environment variables in "string" into the user variable $x. If error, the variable is set to empty, and the error flag is set.
 
+\S2{flushini} FlushINI
+
+\c ini_filename
+
+Flushes the INI file's buffers. Windows 9x keeps all changes to the INI file in memory. This command causes the changes to be written to the disk immediately. Use it if you edit the INI manually, delete it, move it or copy it right after you change it with \R{writeinistr}{WriteINIStr}, \R{deleteinisec}{DeleteINISec} or \R{deleteinistr}{DeleteINStr}.
+
 \S2{readenvstr} ReadEnvStr
 
 \c user_var(output) name

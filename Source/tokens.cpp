@@ -62,6 +62,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FINDFIRST,"FindFirst",3,0,"$(user_var: handle output) $(user_var: filename output) filespec"},
 {TOK_FINDNEXT,"FindNext",2,0,"$(user_var: handle input) $(user_var: filename output)"},
 {TOK_FILE,"File",1,-1,"[/nonfatal] [/a] ([/r] filespec [...]|/oname=outfile one_file_only)"},
+{TOK_FLUSHINI,"FlushINI",1,0,"ini_file"},
 {TOK_RESERVEFILE,"ReserveFile",1,-1,"[/nonfatal] [/r] file [file...]"},
 {TOK_FILECLOSE,"FileClose",1,0,"$(user_var: handle input)"},
 {TOK_FILEERRORTEXT,"FileErrorText",0,2,"[/LANG=lang_id] [text (can contain $0)]"},
