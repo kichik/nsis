@@ -934,7 +934,7 @@ int createCfgDlg()
         break;
     }
 
-    if (pFields[nIdx.nFlags & FLAG_DISABLED) dwStyle |= WS_DISABLED;
+    if (pFields[nIdx].nFlags & FLAG_DISABLED) dwStyle |= WS_DISABLED;
 
     HWND hwCtrl = pFields[nIdx].hwnd = CreateWindowEx(
       dwExStyle,
