@@ -518,21 +518,27 @@ char * NSISCALL process_string(const char *in)
 
 char * NSISCALL validate_filename(char *in) {
   char *nono = "*?|<>/\":";
-  char *cur_char = " ";
-  char *out = in;
-  char *out_save = out;
-  int i = 0;
-  while (*cur_char = *in++) {
-    if (!mystrstr(nono, cur_char) ||
-        (i == 1 && *(WORD*)out == CHAR2_TO_WORD(':','\\')) ||
-        (i == 2 && *cur_char == '?' && *(DWORD*)in == CHAR4_TO_DWORD('\\','\\','?','\\'))
-       )
-      *out++ = *cur_char;
-    i++;
+  short cur_char = 0;
+  char *out;
+  char *out_save;
+  if (in[0] && in[1] && in[2]) {
+    // at least four bytes
+    if (*(DWORD*)in == CHAR4_TO_DWORD('\\', '\\', '?', '\\')) in += 4;
+  }
+  if (*in) {
+    // at least two bytes
+    if (in[0] && validpathspec(in)) in += 2;
+  }
+  out = in;
+  out_save = out;
+  while (*(char*)&cur_char = *in++) {
+    if (!mystrstr(nono, (char*)&cur_char))
+      *out++ = *(char*)&cur_char;
   }
   do {
     *out = 0;
-  } while (i && (*(--out) == ' ' || *out == '\\'));
+    --out;
+  } while (out_save <= out && (*out == ' ' || *out == '\\'));
   return out_save;
 }
 
