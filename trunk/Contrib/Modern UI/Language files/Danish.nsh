@@ -63,8 +63,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "afinstallerer"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vent venligst imens ${MUI_PRODUCT} bliver fjernet fra dit system."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Færdig"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Afinstalleringen blev afsluttet med success."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Færdig"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Afinstalleringen blev afsluttet med success."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Klik 'Afinstaller' for at starte afinstallationen."
 
 !insertmacro MUI_LANGUAGEFILE_END

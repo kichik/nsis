@@ -67,7 +67,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Désinstallation en cours"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Veuillez patienter pendant que ${MUI_PRODUCT} est en train d'être supprimé de votre ordinateur."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Désinstallation terminée"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "La désinstallation s'est terminée avec succès."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Désinstallation terminée"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "La désinstallation s'est terminée avec succès."
 
 !insertmacro MUI_LANGUAGEFILE_END
