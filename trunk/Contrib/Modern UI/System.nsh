@@ -22,29 +22,20 @@
 
   ;User interface
   
-  Icon "${NSISDIR}\Contrib\Icons\${ICON}"
-  UninstallIcon "${NSISDIR}\Contrib\Icons\${UNICON}"
-  XPStyle On
-  ChangeUI all "${NSISDIR}\Contrib\UIs\${UI}"
-  SetFont "${FONT}" 8
-  CheckBitmap "${NSISDIR}\Contrib\Icons\${CHECKS}"
-  InstallColors /windows
-  InstProgressFlags "${PROGRESSBAR}"
-  BrandingText /TRIMRIGHT
-  !define CURRENTPAGE ${CURRENTPAGEVAR}
-
-!macroend
-
-!macro MUI_INTERFACE_ABSOLUTEPATH UI ICON UNICON CHECKS PROGRESSBAR FONT CURRENTPAGEVAR
-
-  ;User interface
+  !ifndef MUI_ICONPATH
+    !define MUI_ICONPATH "${NSISDIR}\Contrib\Icons\"
+  !endif
   
-  Icon "${ICON}"
-  UninstallIcon "${UNICON}"
+  !ifndef MUI_UIPATH
+    !define MUI_UIPATH "${NSISDIR}\Contrib\UIs\"
+  !endif
+  
+  Icon "${MUI_ICONPATH}${ICON}"
+  UninstallIcon "${MUI_ICONPATH}${UNICON}"
   XPStyle On
-  ChangeUI all "${UI}"
+  ChangeUI all "${MUI_UIPATH}${UI}"
   SetFont "${FONT}" 8
-  CheckBitmap "${CHECKS}"
+  CheckBitmap "${MUI_ICONPATH}${CHECKS}"
   InstallColors /windows
   InstProgressFlags "${PROGRESSBAR}"
   BrandingText /TRIMRIGHT
@@ -52,12 +43,31 @@
 
 !macroend
 
-!macro MUI_FINISHHEADER CALL
+!macro MUI_FINISHHEADER
 
   ;Finish text on the header (white rectangle)
   
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call ${CALL}
+  
+  !ifndef MUI_SETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: SetPage function name (MUI_SETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_SETPAGE_FUNCTIONNAME}"
+
+!macroend
+
+!macro MUI_UNFINISHHEADER
+
+  ;Finish text on the header (white rectangle)
+  
+  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
+  
+  !ifndef MUI_UNSETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: Uninstall SetPage function name (MUI_UNSETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
 
 !macroend
 
@@ -97,7 +107,7 @@
 
 !macroend
 
-!macro MUI_NEXTPAGE CALL
+!macro MUI_NEXTPAGE
 
   ;Set backgrounds & fonts for the outer dialog (only once)
   StrCmp ${CURRENTPAGE} "" "" no_first_run
@@ -126,15 +136,72 @@
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
 
-  Call "${CALL}"
+  !ifndef MUI_SETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: SetPage function name (MUI_SETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_SETPAGE_FUNCTIONNAME}"
    
 !macroend
 
-!macro MUI_PREVPAGE CALL
+!macro MUI_UNNEXTPAGE
+
+  ;Set backgrounds & fonts for the outer dialog (only once)
+  StrCmp ${CURRENTPAGE} "" "" no_first_run
+
+  Push ${MUI_TEMP1}
+  Push ${MUI_TEMP2}
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
+    CreateFont ${MUI_TEMP2} "Tahoma" 10 700
+    SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+ 
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+    
+  Pop ${MUI_TEMP2}  
+  Pop ${MUI_TEMP1}
+
+  no_first_run:
+
+  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
+
+  !ifndef MUI_UNSETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: Uninstall SetPage function name (MUI_UNSETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
+   
+!macroend
+
+!macro MUI_PREVPAGE
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
 
-  Call "${CALL}"
+  !ifndef MUI_SETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: SetPage function name (MUI_SETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_SETPAGE_FUNCTIONNAME}"
+  
+!macroend
+
+!macro MUI_UNPREVPAGE
+
+  IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
+
+  !ifndef MUI_UNSETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: Uninstall SetPage function name (MUI_UNSETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
   
 !macroend
 
@@ -211,6 +278,7 @@
 
 !macroend
 
+;--------------------------------
 ;INSTALL OPTIONS
 
 !macro MUI_INSTALLOPTIONS DIRECTIONVAR NOSETDIRECTIONVAR
@@ -378,17 +446,24 @@
 	
 !macroend
 
-
+;--------------------------------
 ;BASIC FUNCTIONS
+
+!macro MUI_BASICFUNCTIONS_INIT
+
+  !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
+  !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
+  
+!macroend
 
 !macro MUI_BASICFUNCTIONS
 
 Function .onNextPage
-  !insertmacro MUI_NEXTPAGE SetPage
+  !insertmacro MUI_NEXTPAGE
 FunctionEnd
 
 Function .onPrevPage
-  !insertmacro MUI_PREVPAGE SetPage
+  !insertmacro MUI_PREVPAGE
 FunctionEnd
 
 Function .onInitDialog
@@ -494,7 +569,7 @@ FunctionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE un.SetPage
+  !insertmacro MUI_UNNEXTPAGE
   
 FunctionEnd
 
