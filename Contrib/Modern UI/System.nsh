@@ -239,26 +239,21 @@
 
 !macro MUI_FINISHHEADER
 
-  !ifndef MUI_FINISHPAGE
-    !insertmacro MUI_FINISHHEADER_DISPLAY
-  !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
-    !insertmacro MUI_FINISHHEADER_DISPLAY
-  !endif
-  
-!macroend
-
-!macro MUI_FINISHHEADER_DISPLAY
-
   IfAbort mui.finishheader_abort
-    
-  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+  
+  !ifndef MUI_FINISHPAGE
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+  !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+  !endif
+
   Goto mui.finishheader_done
   
   mui.finishheader_abort:
   !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_ABORT_TITLE) $(MUI_TEXT_ABORT_SUBTITLE)
   
   mui.finishheader_done:
-
+  
 !macroend
 
 !macro MUI_UNFINISHHEADER
@@ -573,20 +568,29 @@
     !verbose 4
   !endif
 
-  Push ${MUI_TEMP1}
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+
+    Push ${MUI_TEMP1}
   
-    ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+      ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+      StrCmp ${MUI_TEMP1} "" 0 mui.ungetlanguage_setlang
+  
+  !endif
     
-    StrCmp ${MUI_TEMP1} "" 0 mui.ungetlanguage_setlang
-      !insertmacro MUI_LANGDLL_DISPLAY
+  !insertmacro MUI_LANGDLL_DISPLAY
+      
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+  
       Goto mui.ungetlanguage_done
   
-    mui.ungetlanguage_setlang:
-      StrCpy $LANGUAGE ${MUI_TEMP1}
+      mui.ungetlanguage_setlang:
+        StrCpy $LANGUAGE ${MUI_TEMP1}
+        
+      mui.ungetlanguage_done:
   
-    mui.ungetlanguage_done:
-    
-  Pop ${MUI_TEMP1}
+    Pop ${MUI_TEMP1}
+  
+  !endif
   
   !ifndef MUI_MANUALVERBOSE
     !verbose 4
@@ -1958,9 +1962,25 @@
   !endif
   
   !ifndef MUI_FINISHPAGE
-    !insertmacro MUI_LANGUAGEFILE_END_FINISHHEADER
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
   !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
-    !insertmacro MUI_LANGUAGEFILE_END_FINISHHEADER
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
+  !endif
+  
+  !ifdef MUI_TEXT_ABORT_TITLE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_TITLE"
+  !else
+    ;1.63 compatibility
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_TITLE" "MUI_TEXT_INSTALLING_TITLE"
+  !endif
+  
+  !ifdef MUI_TEXT_ABORT_SUBTITLE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_SUBTITLE"
+  !else
+    ;1.63 compatibility
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_SUBTITLE" "MUI_TEXT_INSTALLING_SUBTITLE"
   !endif
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE"
@@ -2037,27 +2057,6 @@
   
   !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
     !undef MUI_UNTEXT_CONTINUE_UNINSTALL
-  !endif
-    
-!macroend
-
-!macro MUI_LANGUAGEFILE_END_FINISHHEADER
-
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
-
-  !ifdef MUI_TEXT_ABORT_TITLE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_TITLE"
-  !else
-    ;1.63 compatibility
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_TITLE" "MUI_TEXT_INSTALLING_TITLE"
-  !endif
-  
-  !ifdef MUI_TEXT_ABORT_SUBTITLE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_SUBTITLE"
-  !else
-    ;1.63 compatibility
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_SUBTITLE" "MUI_TEXT_INSTALLING_SUBTITLE"
   !endif
     
 !macroend
