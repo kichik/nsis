@@ -396,6 +396,7 @@ Example:
 
     GetTempFileName $R0 $R5
     Call :installlib.file_${INSTALLLIB_UNIQUE}
+    SetFileAttributes $R4 FILE_ATTRIBUTE_NORMAL
     Rename /REBOOTOK $R0 $R4
 
     ;------------------------
