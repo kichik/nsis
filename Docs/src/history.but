@@ -24,6 +24,12 @@
 
 \b Added SW_HIDE to \R{execshell}{ExecShell}'s accepted show modes
 
+\b \R{rmdir}{RMDir} can now be used with both /r and /REBOOTOK at the same time
+
+\b Extended maximum binary data for \R{writeregbin}{WriteRegBin} to 3 * NSIS_MAX_STRLEN
+
+\b Added \R{execute}{!execute}
+
 \S2{} Minor Changes
 
 \b LZMA exehead is now 34KB and should also decompress faster
@@ -48,7 +54,11 @@
 
 \b Fixed a bug with \R{aallowrootdirinstall}{AllowRootDirInstall} used along with \R{ainstalldirregkey}{InstallDirRegKey} that caused the directory in the registry to be ignored
 
+\b Fixed \R{FileRead}{FileRead} setting the error flag when a null character is the first character it reads
+
 \b \R{file}{File} paths relative to the root folder work again
+
+\b Added \L{../Include/Colors.nsh}{Colors.nsh}
 
 \b Made Times New Roman default font for the background text because it should always have support for the locale's language
 
