@@ -414,7 +414,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *p=str;
           str[0]=0;
           fgets(str,MAX_LINELENGTH,fp);
-          if (feof(fp) || !str[0])
+          SCRIPT_MSG("%s\n", str);
+          if (feof(fp) && !str[0])
           {
             ERROR_MSG("!macro \"%s\": unterminated (no !macroend found in file)!\n",line.gettoken_str(1));
             return PS_ERROR;
@@ -1599,7 +1600,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif
 
     if (line.gettoken_str(a)[0]=='-') return add_section("",curfilename,linecnt,line.gettoken_str(a+1),ex);
-    return add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(2),ex);
+    return add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1),ex);
     }
     case TOK_SECTIONEND:
       SCRIPT_MSG("SectionEnd\n");
@@ -1643,12 +1644,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SUBSECTION:
     {
       char buf[1024];
-    int a=1,ex = 0;
-    if (!strcmp(line.gettoken_str(1),"/e"))
+      int a=1,ex = 0;
+      if (!strcmp(line.gettoken_str(1),"/e"))
       {
-    ex = 1;
-    a++;
-    }
+        ex = 1;
+        a++;
+      }
       wsprintf(buf,"-%s",line.gettoken_str(a));
       if (which_token == TOK_SUBSECTION && !line.gettoken_str(a)[0]) PRINTHELP()
 
@@ -1664,8 +1665,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       else
         subsection_open_cnt++;
 
-      SCRIPT_MSG("%s %s\n",line.gettoken_str(0),line.gettoken_str(a));
-      return add_section(buf,curfilename,linecnt,"",ex);
+      SCRIPT_MSG("%s %s",line.gettoken_str(0),line.gettoken_str(a));
+      if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(" ->(%s)",line.gettoken_str(a+1));
+      SCRIPT_MSG("\n");
+      return add_section(buf,curfilename,linecnt,line.gettoken_str(a+1),ex);
     }
     case TOK_FUNCTION:
       if (!line.gettoken_str(1)[0]) PRINTHELP()
@@ -1754,12 +1757,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int trim = 0;
         while (line.gettoken_str(a)[0] == '/') {
           if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-          if (!strnicmp(line.gettoken_str(a),"/TRIM",5)) {
+          else if (!strnicmp(line.gettoken_str(a),"/TRIM",5)) {
             if (!stricmp(line.gettoken_str(a)+5,"LEFT")) trim = 1;
             else if (!stricmp(line.gettoken_str(a)+5,"RIGHT")) trim = 2;
             else if (!stricmp(line.gettoken_str(a)+5,"CENTER")) trim = 3;
+            else PRINTHELP();
             a++;
           }
+          else PRINTHELP();
         }
         if (line.getnumtokens()!=a+1) PRINTHELP();
         SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
