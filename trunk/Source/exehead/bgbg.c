@@ -7,9 +7,9 @@
 
 #ifdef NSIS_SUPPORT_BGBG
 
-static int m_color1, m_color2, m_textcolor;
+int bg_color1, bg_color2, bg_textcolor;
 
-static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {
@@ -30,9 +30,9 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
           int rv,gv,bv;
 		      RECT rect;
 		      HBRUSH brush;
-          rv = (GetRValue(m_color2) * y + GetRValue(m_color1) * ry) / r.bottom;
-          gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * ry) / r.bottom;
-          bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * ry) / r.bottom;
+          rv = (GetRValue(bg_color2) * y + GetRValue(bg_color1) * ry) / r.bottom;
+          gv = (GetGValue(bg_color2) * y + GetGValue(bg_color1) * ry) / r.bottom;
+          bv = (GetBValue(bg_color2) * y + GetBValue(bg_color1) * ry) / r.bottom;
 		      brush = CreateSolidBrush(RGB(rv,gv,bv));
 		      SetRect(&rect, 0 /*r.left*/, y, r.right, y+4);
 		      // note that we don't need to do "SelectObject(hdc, brush)"
@@ -43,7 +43,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
           y+=4;
         }
 
-        if (m_textcolor != -1)
+        if (bg_textcolor != -1)
         {
           HFONT newFont, oldFont;
           newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
@@ -54,7 +54,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
             r.top+=8;
             GetWindowText(hwnd,buf,sizeof(buf));
             SetBkMode(hdc,TRANSPARENT);
-            SetTextColor(hdc,m_textcolor);
+            SetTextColor(hdc,bg_textcolor);
             oldFont = SelectObject(hdc,newFont);
             DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
             SelectObject(hdc,oldFont);
@@ -67,29 +67,5 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   }
   return DefWindowProc(hwnd,uMsg,wParam,lParam);
 }
-
-
-HWND NSISCALL bgWnd_Init()
-{
-  RECT vp;
-  static WNDCLASS wc;
-	wc.lpfnWndProc = BG_WndProc;
-	wc.hInstance = g_hInstance;
-	wc.hIcon = g_hIcon;
-	wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-	wc.lpszClassName = "_Nb";
-
-  if (!RegisterClass(&wc)) return 0;
-
-  m_color1=g_inst_cmnheader->bg_color1;
-  m_color2=g_inst_cmnheader->bg_color2;
-  m_textcolor=g_inst_cmnheader->bg_textcolor;
-
-  SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
-
-  return CreateWindow("_Nb","",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
-    vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,g_hInstance,NULL);
-}
-
 
 #endif //NSIS_SUPPORT_BGBG
