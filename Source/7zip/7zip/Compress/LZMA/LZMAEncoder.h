@@ -249,6 +249,7 @@ private:
 
 public:
   CEncoder();
+  virtual ~CEncoder() {}
   void SetWriteEndMarkerMode(bool writeEndMarker)
     { _writeEndMark= writeEndMarker; }
 

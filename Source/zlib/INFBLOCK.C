@@ -447,11 +447,11 @@ int ZEXPORT inflate(z_streamp z)
       while (s->sub.trees.index < 4 + (s->sub.trees.table >> 10))
       {
         NEEDBITS(3)
-        s->sub.trees.t_blens[border[s->sub.trees.index++]] = (uInt)b & 7;
+        s->sub.trees.t_blens[(int)border[s->sub.trees.index++]] = (uInt)b & 7;
         DUMPBITS(3)
       }
       while (s->sub.trees.index < 19)
-        s->sub.trees.t_blens[border[s->sub.trees.index++]] = 0;
+        s->sub.trees.t_blens[(int)border[s->sub.trees.index++]] = 0;
       s->sub.trees.bb = 7;
 
       {

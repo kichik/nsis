@@ -62,6 +62,7 @@ class CInTree2: public CInTree
   virtual void BeforeMoveBlock();
   virtual void AfterMoveBlock();
 public:
+  virtual ~CInTree2() {}
   void SetCallback(IMatchFinderCallback *callback)
   {
     _callback = callback;
@@ -102,6 +103,7 @@ public:
   void SetWindowReservSize(UINT32 reservWindowSize)
     { m_WindowReservSize = reservWindowSize; }
   */
+  virtual ~CMatchFinderBinTree() {}
 };
  
 }

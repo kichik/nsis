@@ -96,7 +96,7 @@ class CInTree: public CLZInWindow
 
 public:
   CInTree();
-  ~CInTree();
+  virtual ~CInTree();
   HRESULT Create(UINT32 sizeHistory, UINT32 keepAddBufferBefore, UINT32 matchMaxLen, 
       UINT32 keepAddBufferAfter, UINT32 sizeReserv = (1<<17));
 	HRESULT Init(ISequentialInStream *stream);

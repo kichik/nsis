@@ -30,7 +30,7 @@ protected:
   void Free();
 public:
   CLZInWindow(): _bufferBase(0) {}
-  ~CLZInWindow();
+  virtual ~CLZInWindow();
   void Create(UINT32 keepSizeBefore, UINT32 keepSizeAfter, 
       UINT32 keepSizeReserv = (1<<17));
 
