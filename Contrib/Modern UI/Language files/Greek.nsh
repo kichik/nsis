@@ -53,8 +53,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '$(^Name)';"
 
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Κάντε κλικ στο Απεγκατάσταση για να αρχίσετε την απεγκατάσταση."  
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_TITLE "Απεγκατάσταση του '$(^Name)'"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_SUBTITLE "Αφαίρεση του '$(^Name)' από τον υπολογιστή σας."

@@ -54,8 +54,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Està segur que desitja sortir de la instal·lació de $(^Name)?"
 
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Premi Desinstal·lar per efectuar la desinstal·lació."
-
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_TITLE "Desinstal·lar $(^Name)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name) del seu sistema."
 

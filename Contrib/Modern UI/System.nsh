@@ -1978,26 +1978,6 @@ Var MUI_TEMP2
   
 !macroend
 
-!macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE NAME DEFINE
-
-  LangString "${NAME}" 0 "${${DEFINE}}"
-  !undef "${NAME}"
-
-!macroend
-
-!macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMSTRING NAME STRING
-
-  LangString "${STRING}" 0 "${${NAME}}"
-  !undef "${NAME}"
-
-!macroend
-
-!macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF NAME DEFINE
-
-  LangString "${NAME}" 0 "${${DEFINE}}"
-
-!macroend
-
 !macro MUI_LANGUAGEFILE_DEFINE DEFINE NAME
 
   !ifndef "${DEFINE}"
