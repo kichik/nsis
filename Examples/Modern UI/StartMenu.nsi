@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.6
+;NSIS Modern User Interface version 1.61
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
@@ -75,7 +75,9 @@ Section "modern.exe" SecCopyUI
 
 SectionEnd
 
-!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
+;Display the Finish header
+;Insert this macro after the sections if you are not using a finish page
+!insertmacro MUI_SECTIONS_FINISHHEADER
 
 ;--------------------------------
 ;Descriptions

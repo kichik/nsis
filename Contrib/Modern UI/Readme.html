@@ -133,26 +133,35 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
 </pre>
-  <p class="subheader">3. Define which elements you are using</p>
+  <p class="subheader">3. Define settings</p>
   <p class="text">The Modern UI should know which things it should insert. Use the following defines:</p>
 <pre class="margin">
 !define MUI_WELCOMEPAGE ;Welcome page
 !define MUI_LICENSEPAGE ;License page
 !define MUI_COMPONENTSPAGE ;Component-selection page
 !define MUI_DIRECTORYPAGE ;Directory-selection page
+
 !define MUI_STARTMENUPAGE ;Start Menu Folder selection page
+  !define MUI_STARTMENU_VARIABLE "$VARNAME" ;The variable to store the current
+                                            ;Start Menu Folder
+  !define MUI_STARTMENU_DEFAULTFOLDER "Folder Name" ;The default Start Menu Folder
+
 !define MUI_FINISHPAGE ;Finish page with options to run the program or reboot
   !define MUI_FINISHPAGE_RUN "$INSTDIR\File.exe" ;Option to run a file
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Readme.txt" ;Option to show a Readme
+  !define MUI_FINISHPAGE_NOAUTOCLOSE ;Do not automatically jump to the finish page,
+                                     ;to allow the user to check the log
   !define MUI_FINISHPAGE_NOREBOOTSUPPORT ;Disables support for a reboot option.
                                          ;Use this if you are not using /REBOOTOK
                                          ;or SetRebootFlag.
 
 !define MUI_ABORTWARNING ;Abort warning messagebox
+
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
 !define MUI_CUSTOMGUIINIT ;Use customized .onGUIInit function
 
 !define MUI_UNINSTALLER ;Uninstaller
+
 !define MUI_UNCUSTOMPAGECOMMANDS ;Use customized uninstaller pages
 !define MUI_UNCUSTOMGUIINIT ;Use customized un.onGUIInit function
 </pre>
@@ -182,7 +191,7 @@ LangString FILE_README ${LANG_ENGLISH} "$INSTDIR\Readme-English.txt"
   Please help to translate the new strings and  post them at the
   <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
   <p class="subheader">5. Define interface settings (optional)</p>
-  <p class="text">You can change the settings of the interface by usings defines:</p>
+  <p class="text">You can also change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
   <p class="text">The following settings are available: <i>(default values)</i></p>
@@ -208,7 +217,7 @@ LangString FILE_README ${LANG_ENGLISH} "$INSTDIR\Readme-English.txt"
   The hexadecimal colors of the details screen (&quot;foreground&quot; &quot;background&quot;)
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
   The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look)</p>
-  <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\ioSpecial.ini)</i><br>
+  <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br>
   Install Options INI File for the Welcome and Finish pages</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
   Bitmap for the Welcome and Finish pages</p>
@@ -342,6 +351,13 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
+<li class="changelog">1.61 - December 5, 2002
+  <ul>
+    <li>Final version for NSIS 2 beta 0
+    <li>Different translation for finish page title
+    <li>Bugfixes
+  </ul>
+<p class="text"></p>
 <li class="changelog">1.6 - November 18, 2002
   <ul>
     <li>Welcome / Finish pages
