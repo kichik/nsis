@@ -40,11 +40,16 @@ Name "NSIS"
 Caption "NSIS ${VER_DISPLAY} Setup"
 
 ;Pages
+!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of NSIS (Nullsoft Scriptable Install System), the Windows installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n$_CLICK"
+
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\license.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
+
+!define MUI_FINISHPAGE_LINK "Visit the NSIS website for the latest news, a FAQ and support"
+!define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
 
 !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -65,9 +70,14 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 ;--------------------------------
 ;Languages
 
-!define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of NSIS, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
-
 !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Reserve Files
+    
+  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
+  ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+  ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
 
 ;--------------------------------
 ;Installer Sections
@@ -945,10 +955,12 @@ Section -post
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" "$INSTDIR\uninst-nsis.exe"
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
+  IfFileExists "$INSTDIR\NSIS.exe" 0 +2
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${VER_DISPLAY}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sf.net/"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
 
