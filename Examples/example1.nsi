@@ -22,7 +22,7 @@ DirText "This will install the very simple example1 on your computer. Choose a d
 ;--------------------------------
 
 ; The stuff to install
-Section "" ;Only one section, so the name is not important
+Section "" ;No components page, name is not important
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
