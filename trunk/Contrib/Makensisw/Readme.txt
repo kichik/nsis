@@ -32,10 +32,15 @@ compiler.  For the options, please see the MakeNSIS documentation.
 
 Shortcut Keys
 -------------
-Ctrl+R: Recompiles the script
-Ctrl+X: Exits the application
-Ctrl+T: Tests the installer
+Ctrl+A: Select All text
+Ctrl+C: Copy selected text
 Ctrl+E: Edits the script
+Ctrl+F: Find text
+Ctrl+L: Load a script
+Ctrl+R: Recompiles the script
+Ctrl+T: Tests the installer
+Alt+X: Exits the application
+F1: View Documentation
 
 
 Version History
@@ -150,11 +155,11 @@ Version History
  - Added Search Dialog (Ctrl+F) (kichik)
  - Added Select All (Ctrl+A), Copy (Ctrl+C), Exit (Alt+X) keys
  - Branding text now reflects NSIS version
- - Bunch of other stuff not worth mentioning
  - Added some simple tool tips
  - Added Context Menu in log window
  - Added resize gripper
  - Ctrl+L loads a script
+ - Bunch of other stuff not worth mentioning
 
 
 Copyright Information
