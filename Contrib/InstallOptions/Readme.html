@@ -829,77 +829,12 @@ FunctionEnd
 <h2>Version history</h2>
 <div>
 <ul>
-<li>DLL version 2.4 (1/4/2004)
+<li>DLL version 2.41 (5/8/2004)
 <ul>
-<li>Initial focus is set in "initDialog" making it possible to
-override it from NSIS prior to calling "show"</li>
-<li>When initial focus is to a Text field InstallOptions now
-follows standard Windows behaviour by having the text selected</li>
-<li>Label and other static fields no longer have State= written to
-the INI file when leaving the dialog</li>
-<li>NOTIFY flag can now be used with Link fields (State should be
-omitted in this case)</li>
-<li>Likewise, State can now be used with Button fields (behaves the
-same as with Link fields)</li>
-<li>NOTIFY flag can also now be used with ListBox and DropList
-fields to have NSIS notified when the selection changes</li>
-<li>Meaning of RIGHT flag is now reversed in right-to-left language
-mode</li>
-<li>HSCROLL and VSCROLL flags are no longer restricted to Text
-fields</li>
-<li>Various Link field fixes</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>DLL version 2.3 (12/4/2003)
-<ul>
-<li>Added new control type "Button"</li>
-<li>Added new flag "NOTIFY"</li>
-<li>Added new flag "NOWORDWRAP" for multi-line text boxes</li>
-<li>Reduced size down to 12K</li>
-<li>Better RTL support</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>DLL version 2.2 (4/9/2003)
-<ul>
-<li>Added new control "link"</li>
-<li>\r\n converts to newline in Multiline edit box</li>
-<li>Support for multiline edit box</li>
-<li>Better tab order in DirRequest and FileRequest</li>
-<li>Added RTL support</li>
-<li>Minor fixes</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>DLL version 2.1 (3/15/2003)
-<ul>
-<li>\r\n converts to newline in both label Text and
-ValidateText</li>
-<li>New browse dialog style (modern)</li>
-<li>Word wrapping for check boxes and radio buttons</li>
-<li>No ugly border for edit fields under XP</li>
-<li>Scroll bar for list boxes</li>
-<li>Works with SetStaticBkColor</li>
-<li>DISABLED dir and file request fields now disable the browse
-button too</li>
-<li>No more STATE value for labels</li>
-<li>Minor fixes</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>DLL version 2.0 (1/4/2003)
-<ul>
-<li>Supports custom font and DPI settings (by Joost Verburg)</li>
-<li>INI files should contain dialog units now, no pixels (by Joost
-Verburg)</li>
-<li>RESIZETOFIT flag for Bitmap control (by Amir Szekely)</li>
-<li>New documentation (by Joost Verburg)</li>
-<li>New GROUP/NOTABSTOP/DISABLED flags</li>
+<li>Bitmaps are now automatically centered</li>
+<li>Fixed a bug which prevented enabling the next button from</li>
+the leave function of InstallOptions pages
+<li>Fixed a rare freeze</li>
 </ul>
 </li>
 </ul>
