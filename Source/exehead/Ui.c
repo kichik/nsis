@@ -892,8 +892,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     static char s[NSIS_MAX_STRLEN];
     char *p;
     int error = 0;
-    int available_set=0;
-    unsigned total, available;
+    int available_set = 0;
+    unsigned total, available = 0xFFFFFFFF;
     HMODULE hLib;
 
     GetUIText(IDC_DIR,dir);
@@ -942,8 +942,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
-      // Did we get a usable value above?
-      if (available >= 0)
+      if (available_set)
         SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,GetNSISString(s,LANG_SPACE_AVAIL)));
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
