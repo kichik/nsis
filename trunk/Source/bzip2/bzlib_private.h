@@ -125,7 +125,7 @@ typedef unsigned short  UInt16;
 
 /*-- Stuff for randomising repetitive blocks. --*/
 
-extern Int16 BZ2_rNums[512];
+extern Int16 BZ2_rNums[513];
 
 #define BZ_RAND_DECLS                          \
    Int32 rNToGo;                               \

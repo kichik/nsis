@@ -7,11 +7,13 @@
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
 #include "../zlib/zlib.h"
+#define genrtable()
 #endif
 
 #ifdef NSIS_COMPRESS_USE_BZIP2
 #include "../bzip2/bzlib.h"
 static int bz2_needreinit;
+void NSISCALL genrtable();
 #define z_stream bz_stream
 #define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return _LANG_INVALIDCRC; }
 #define inflate(x) BZ2_bzDecompress(x)
@@ -59,6 +61,7 @@ const char * NSISCALL loadHeaders(void)
   data=(void*)my_GlobalAlloc(h.length_of_header);
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+  genrtable();
   inflateInit(&g_inflate_stream);
 
 #ifdef NSIS_COMPRESS_WHOLE
