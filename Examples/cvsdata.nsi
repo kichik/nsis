@@ -144,7 +144,6 @@ Section
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZ"
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZ\BinTree"
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZMA"
-  !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZMA_SMALL"
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\RangeCoder"
   !insertmacro CVSDATA "Source\7zip\Common"
 
