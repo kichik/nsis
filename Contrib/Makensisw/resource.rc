@@ -71,14 +71,14 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Load Script...",             IDM_LOADSCRIPT
         MENUITEM SEPARATOR
-        MENUITEM "E&xit\tCtrl+X",               IDM_EXIT
+        MENUITEM "E&xit\tAlt+X",                IDM_EXIT
     END
     POPUP "&Edit"
     BEGIN
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM SEPARATOR
+        MENUITEM "&Copy\tCtrl+C",               IDM_COPYSELECTED
         MENUITEM "Copy &All",                   IDM_COPY
-        MENUITEM "Copy &Selected",              IDM_COPYSELECTED
         MENUITEM SEPARATOR
         MENUITEM "Find...\tCtrl+F",             IDM_FIND
         MENUITEM SEPARATOR
@@ -102,11 +102,12 @@ END
 IDK_ACCEL ACCELERATORS PRELOAD MOVEABLE PURE 
 BEGIN
     "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
+    "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
-    "X",            IDM_EXIT,               VIRTKEY, CONTROL, NOINVERT
+    "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
 END
 
 
