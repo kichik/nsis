@@ -1340,7 +1340,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
         for (x = sec->code; x < sec->code+sec->code_size; x ++)
         {
           char fname[1024];
-          if (sec->name_ptr) wsprintf(fname,"section \"%s\" (%d)",build_strlist.get()+sec->name_ptr,cnt);
+          char *secname = (sec->name_ptr < 0) ? build_userlangstrings.idx2name(-sec->name_ptr-1-(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)) : build_strlist.get()+sec->name_ptr;
+          if (sec->name_ptr) wsprintf(fname,"section \"%s\" (%d)",secname,cnt);
           else wsprintf(fname,"unnamed section (%d)",cnt);
           if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
         }
