@@ -34,7 +34,7 @@
 
 \b DeleteRegKey now complains if given a third parameter (other than /ifempty)
 
-\b ${LANG_langName} defined as the language id when loading a NLF
+\b $\{LANG_langName\} defined as the language id when loading a NLF
 
 \b Fixed a few bugs that caused the installer to load slower than before
 
