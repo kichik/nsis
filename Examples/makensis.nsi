@@ -144,6 +144,7 @@ Section "Script Examples" SecExample
   Delete $INSTDIR\functions.htm
   File ..\Examples\cvsdata.nsi
   File ..\Examples\makensis.nsi
+  File ..\Examples\makensis.ini
   File ..\Examples\example1.nsi
   File ..\Examples\example2.nsi
   File ..\Examples\viewhtml.nsi
