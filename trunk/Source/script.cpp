@@ -23,8 +23,12 @@
 // Added by Sunil Kamath 11 June 2003
 char *CEXEBuild::set_file_predefine(char *filename)
 {
-  char *oldfilename = strdup(definedlist.find("__FILE__"));
-  if(oldfilename) definedlist.del("__FILE__");
+  char *oldfilename = definedlist.find("__FILE__");
+  if(oldfilename)
+  {
+    oldfilename = strdup(oldfilename);
+    definedlist.del("__FILE__");
+  }
   char *p = strrchr(filename,'\\');
   if(p) {
     p++;
@@ -32,7 +36,6 @@ char *CEXEBuild::set_file_predefine(char *filename)
   else {
     p = curfilename;
   }
-  p = strdup(p);
   definedlist.add("__FILE__",p);
 
   return oldfilename;
@@ -46,30 +49,32 @@ void CEXEBuild::restore_file_predefine(char *oldfilename)
 
 char *CEXEBuild::set_timestamp_predefine(char *filename)
 {
-  char *oldtimestamp = strdup(definedlist.find("__TIMESTAMP__"));
-  if(oldtimestamp) definedlist.del("__TIMESTAMP__");
+  char *oldtimestamp = definedlist.find("__TIMESTAMP__");
+  if(oldtimestamp) {
+    oldtimestamp = strdup(oldtimestamp);
+    definedlist.del("__TIMESTAMP__");
+  }
 
-  char *timestampbuf = (char *)malloc(100);
-  char datebuf[80];
-  char timebuf[16];
-  struct stat fs;
-  struct tm * ltime;
-  SYSTEMTIME stime;
-  
-  stat(filename, &fs);
-  ltime = localtime(&fs.st_mtime);
-  stime.wYear = ltime->tm_year+1900;
-  stime.wMonth = ltime->tm_mon + 1;
-  stime.wDay = ltime->tm_mday;
-  stime.wHour= ltime->tm_hour; 
-  stime.wMinute= ltime->tm_min; 
-  stime.wSecond= ltime->tm_sec; 
-  stime.wMilliseconds= 0; 
-  GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
-  GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
-  wsprintf(timestampbuf,"%s %s",datebuf,timebuf);
+  char timestampbuf[256] = "";
+  char datebuf[128] = "";
+  char timebuf[128] = "";
+  WIN32_FIND_DATA fd;
+  SYSTEMTIME stime, sloctime;
 
-  definedlist.add("__TIMESTAMP__",timestampbuf);
+  HANDLE hSearch = FindFirstFile(filename, &fd);
+  if (hSearch != INVALID_HANDLE_VALUE)
+  {
+    FindClose(hSearch);
+
+    FileTimeToSystemTime(&fd.ftLastWriteTime, &stime);
+    SystemTimeToTzSpecificLocalTime(0, &stime, &sloctime);
+
+    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &sloctime, NULL, datebuf, sizeof(datebuf)); 
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &sloctime, NULL, timebuf, sizeof(timebuf)); 
+    wsprintf(timestampbuf,"%s %s",datebuf,timebuf);
+
+    definedlist.add("__TIMESTAMP__",timestampbuf);
+  }
 
   return oldtimestamp;
 }
@@ -82,11 +87,14 @@ void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
 
 char *CEXEBuild::set_line_predefine(int linecnt)
 {
-  char *linebuf = (char *)malloc(8);
+  char linebuf[32] = "";
   wsprintf(linebuf,"%d",linecnt);
 
-  char *oldline = (char *)strdup(definedlist.find("__LINE__"));
-  if(oldline) definedlist.del("__LINE__");
+  char *oldline = definedlist.find("__LINE__");
+  if(oldline) {
+    oldline = strdup(oldline);
+    definedlist.del("__LINE__");
+  }
   definedlist.add("__LINE__",linebuf);
 
   return oldline;
@@ -122,7 +130,9 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   restore_file_predefine(oldfilename);
+  if (oldfilename) free(oldfilename);
   restore_timestamp_predefine(oldtimestamp);
+  if (oldtimestamp) free(oldtimestamp);
 #endif
 
   fp = 0;
@@ -427,6 +437,7 @@ int CEXEBuild::parseScript()
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
     // Added by Sunil Kamath 11 June 2003
     restore_line_predefine(oldline);
+    if (oldline) free(oldline);
 #endif
     
     if (ret != PS_OK) return ret;
@@ -450,8 +461,8 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   char *oldfilename = NULL;
   char *oldtimestamp = NULL;
   char *oldline = NULL;
-  BOOL is_commandline = !lstrcmp(filename,"command line");
-  BOOL is_macro = !strncmp(filename,"macro:",lstrlen("macro:"));
+  BOOL is_commandline = !strcmp(filename,"command line");
+  BOOL is_macro = !strncmp(filename,"macro:",strlen("macro:"));
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(is_macro) {
@@ -472,9 +483,12 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
       restore_file_predefine(oldfilename);
+      if (oldfilename) free(oldfilename);
       restore_timestamp_predefine(oldtimestamp);
+      if (oldtimestamp) free(oldtimestamp);
     }
     restore_line_predefine(oldline);
+    if (oldline) free(oldline);
   }
 #endif
 
@@ -2251,7 +2265,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
         // Added by Sunil Kamath 11 June 2003
         restore_file_predefine(oldfilename);
+        if (oldfilename) free(oldfilename);
         restore_timestamp_predefine(oldtimestamp);
+        if (oldtimestamp) free(oldtimestamp);
 #endif
 
 
