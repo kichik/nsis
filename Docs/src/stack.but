@@ -1,0 +1,19 @@
+\H{stackinst} Stack Support
+
+\S{Push} Push
+
+Push \e{string}
+
+Pushes a string onto the stack. The string can then be Popped off of the stack.  
+
+\S{Pop} Pop
+
+Pop \e{user_var(out)}
+
+Pops a string off of the stack into user variable $x. If the stack is empty, the error flag will be set.  
+
+\S{Exch} Exch
+
+Exch \e{[user_var] | stack_index}
+
+When no parmater is specified, exchanges the top two elements of the stack. When a parameter is specified and is a user variable, exchanges the top element of the stack with the parameter. When a parameter is specified and is a positive integer, the parameter specifies which item on the stack that the top of the stack is swapped with. If there are not enough items on the stack to accomplish the exchange, a fatal error will occur (to help you debug your code :).  

@@ -1,0 +1,97 @@
+\C{var} Variables
+
+\H{var1} Modifiable variables usded in Instructions
+
+\e{$INSTDIR}
+
+The installation directory ($INSTDIR is modifiable using StrCpy, ReadRegStr, ReadINIStr, etc. - This could be used, for example, in the .onInit function to do a more advanced detection of install location).  
+
+\e{$OUTDIR}
+
+The current output directory (set implicitly via SetOutPath or explicitly via StrCpy, ReadRegStr, ReadINIStr, etc)  
+
+\e{$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9}
+
+User variables (set via StrCpy, ReadRegStr, ReadINIStr, etc, and use like any other variable). It is recommended (but not required) that you use $R1-$R9 as local registers, and $0-$9 as global values. Note that any function that lets you specify one of these variables as an output, can use $INSTDIR or $OUTDIR as well (but has different implications).  
+
+\e{$CMDLINE}
+
+The command line of the installer. The format of the command line can be one of the following:
+
+\b "full\\path to\\installer.exe" PARAMETER PARAMETER PARAMETER 
+
+\b installer.exe PARAMETER PARAMETER PARAMETER 
+
+\b For parsing out the PARAMETER portion, see GetParameters on the utility functions page. It's worth noting that if /D= is specified on the command line (to override the install directory), it won't be in $CMDLINE.  
+
+\e{$LANGUAGE}
+
+The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.  
+
+\H{var2} Constant Variables used in Instructions and InstallDir
+
+\e{$PROGRAMFILES}
+
+The program files directory (usually C:\\Program Files but detected at runtime).  
+
+\e{$DESKTOP} 
+
+The windows desktop directory (usually C:\\windows\\desktop but detected at runtime). The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.  
+
+\e{$EXEDIR} 
+
+The location of the installer executable. (technically you can modify this variable, but it is probably not a good idea)  
+
+\e{$WINDIR} 
+
+The windows directory (usually C:\\windows or C:\\winnt but detected at runtime)  
+
+\e{$SYSDIR} 
+
+The windows system directory (usually C:\\windows\\system or C:\\winnt\\system32 but detected at runtime)  
+
+\e{$TEMP} 
+
+The system temporary directory (usually C:\\windows\\temp but detected at runtime)  
+
+\e{$STARTMENU} 
+
+The start menu folder (useful in adding start menu items using CreateShortCut)  
+
+\e{$SMPROGRAMS} 
+
+The start menu programs folder (use this whenever you want $STARTMENU\\Programs). The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.  
+
+\e{$SMSTARTUP} 
+
+The start menu programs / startup folder. The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.  
+
+\e{$QUICKLAUNCH} 
+
+The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP. The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.  
+
+\e{$HWNDPARENT} 
+
+The decimal HWND of the parent window.  
+
+\e{$$} 
+
+Use to represent $.  
+
+\H{var3} Variables used Strings 
+
+\e{$\\r} 
+
+Use to represent a carriage return (\\r).  
+
+\e{$\\n} 
+
+Use to represent a newline (\\n).  
+
+\e{$\{SYMBOL\}}
+
+Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. If the symbol is not defined, no replace occurs (i.e. if $\{POOP\} is encountered, and POOP is not defined, $\{POOP\} is output).  
+
+\e{$\{NSISDIR\}} 
+
+A symbol contains the path where NSIS is installed.  
