@@ -15,17 +15,18 @@ nsExec::ExecToLog [/TIMEOUT=x] path
 Both functions are the same except ExecToLog will print the output
 to the logwindow.
 
-The timeout value is optional and is used to set the time in 
-milliseconds for the plugin to wait for the process to return
-before it quits, or the time in milliseconds for the plugin
-to wait for output to come out before it quits if using
-ExecToLog. The default is no timeout.
+The timeout value is optional.  The timeout is the time in
+milliseconds nsExec will wait for output.  If output from the
+process is received, the timeout value is reset and it will
+again wait for more output using the timeout value.  See Return 
+Value for how to check if there was a timeout.
 
 
 Return Value
 ------------
 If nsExec is unable to execute the process, it will return "error"
-on the top of the stack, else it returns the return code from the
+on the top of the stack, if the process timed out it will return
+"timeout", else it will return the return code from the
 executed process.
 
 
