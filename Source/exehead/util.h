@@ -33,6 +33,7 @@ extern char g_log_file[1024];
 #endif
 
 HANDLE myCreateProcess(char *cmd, char *dir);
+int my_MessageBox(const char *text, UINT type);
 
 void doRMDir(char *buf, int recurse);
                        

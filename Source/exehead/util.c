@@ -19,12 +19,15 @@ HANDLE g_hInstance;
 HANDLE myCreateProcess(char *cmd, char *dir)
 {
   PROCESS_INFORMATION ProcInfo={0,};
-  STARTUPINFO StartUp={0,};
-  StartUp.cb=sizeof(StartUp);
+  STARTUPINFO StartUp={sizeof(StartUp),};
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
     return NULL;
   if (NULL != ProcInfo.hThread)  CloseHandle( ProcInfo.hThread );
   return ProcInfo.hProcess;
+}
+
+int my_MessageBox(const char *text, UINT type) {
+  return MessageBox(g_hwnd, text, g_caption, type);
 }
 
 #ifdef NSIS_SUPPORT_RMDIR
@@ -491,7 +494,7 @@ void process_string(char *out, const char *in)
           break;
 
         case VAR_CODES_START + 34: // LANGUAGE
-          wsprintf(out, "%u", cur_common_strings_table->lang_id);
+          wsprintf(out, "%u", cur_install_strings_table->lang_id);
           break;
 
         #if VAR_CODES_START + 34 >= 255
