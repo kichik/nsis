@@ -425,9 +425,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (p > str) p--;
           while (p >= str && (*p == '\r' || *p == '\n' || *p == ' ' || *p == '\t')) p--;
           *++p=0;
-          LineParser l2;
-          l2.parse(str);
-          if (!stricmp(l2.gettoken_str(0),"!macroend")) break;
+          if (!strnicmp(str,"!macroend",sizeof("!macroend"))) break;
           if (str[0]) m_macros.add(str,strlen(str)+1);
           else m_macros.add(" ",2);
         }
