@@ -144,6 +144,7 @@ void EnableItems(HWND hwnd) {
 static BOOL g_appended = FALSE;
 void CompileNSISScript() {
 	static char *s;
+	DragAcceptFiles(g_hwnd,FALSE);
 	ClearLog(g_hwnd);
 	SetTitle(g_hwnd,NULL);
 	SetBranding(g_hwnd);
