@@ -441,10 +441,8 @@
   !verbose 3
   
   !ifndef MUI_UNCUSTOMPAGECOMMANDS
-
     !insertmacro MUI_UNPAGECOMMAND_CONFIRM
     !insertmacro MUI_UNPAGECOMMAND_INSTFILES
-    
   !endif
   
   !verbose 4
@@ -971,15 +969,17 @@
       
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
           
-           StrCmp ${MUI_TEMP1} "1" "" +2
-             Exec '"${MUI_FINISHPAGE_RUN}"'
+           StrCmp ${MUI_TEMP1} "1" "" +3
+             StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_RUN}
+             ExecShell "open" '"${MUI_TEMP1}"'
              
            !ifdef MUI_FINISHPAGE_SHOWREADME
           
              !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 5" "State"
             
-             StrCmp ${MUI_TEMP1} "1" "" +2
-               ExecShell "open" '"${MUI_FINISHPAGE_SHOWREADME}"'
+             StrCmp ${MUI_TEMP1} "1" "" +3
+               StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_SHOWREADME}
+               ExecShell "open" '"${MUI_TEMP1}"'
                
            !endif
              
@@ -991,8 +991,9 @@
           
             !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
             
-             StrCmp ${MUI_TEMP1} "1" "" +2
-               ExecShell "open" '"${MUI_FINISHPAGE_SHOWREADME}"'
+             StrCmp ${MUI_TEMP1} "1" "" +3
+               StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_SHOWREADME}
+               ExecShell "open" '"${MUI_TEMP1}"'
                
           !endif
           
@@ -1129,6 +1130,7 @@
 
   !verbose 3
 
+  !insertmacro MUI_PAGECOMMANDS
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
   !insertmacro MUI_FUNCTIONS_ABORTWARNING
@@ -1143,6 +1145,7 @@
   
   !ifdef MUI_UNINSTALLER
 
+    !insertmacro MUI_UNPAGECOMMANDS
     !insertmacro MUI_UNFUNCTIONS_PAGES
     !insertmacro MUI_UNFUNCTIONS_GUIINIT
   
@@ -1173,37 +1176,25 @@
 
   !endif
   
-  !verbose 4
-  
 !macroend
 
 !macro MUI_LANGUAGEFILE_STRING STRING VALUE
 
-  !verbose 3
-
   !ifndef "${STRING}"
     !define "${STRING}" "${VALUE}"
   !endif
-  
-  !verbose 4
-  
+
 !macroend
 
 !macro MUI_LANGUAGEFILE_LANGSTRING NAME VALUE
 
-  !verbose 3
-
   LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
-  
-  !verbose 4
   
 !macroend
 
 !macro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE NAME VALUE INSTALLBUTTON
 
-  !verbose 3
- 
   !ifndef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_NEXT
       LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}${MUI_TEXT_CONTINUE_NEXT}"
@@ -1224,46 +1215,30 @@
 
   !undef "${NAME}"
   
-  !verbose 4
-  
 !macroend
 
 !macro MUI_LANGUAGEFILE_UNLANGSTRING NAME VALUE
 
-  !verbose 3
-
   LangString "un.${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
-  
-  !verbose 4
   
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND COMMAND NAME VALUE
 
-  !verbose 3
-
   "${COMMAND}" "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
   !undef "${NAME}"
-  
-  !verbose 4
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER COMMAND NAME VALUE
 
-  !verbose 3
-
   "${COMMAND}" "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" ${VALUE}
   !undef "${NAME}"
-  
-  !verbose 4
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE COMMAND NAME VALUE INSTALLBUTTON
-
-  !verbose 3
 
   !ifndef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_NEXT
@@ -1285,54 +1260,22 @@
   
   !undef "${NAME}"
   
-  !verbose 4
-
 !macroend
 
 !macro MUI_LANGUAGEFILE_DEFINE DEFINE NAME VALUE
-
-  !verbose 3
 
   !ifndef "${DEFINE}"
     !define "${DEFINE}" "${VALUE}"
   !endif
   !undef "${NAME}"
   
-  !verbose 4
-
 !macroend
 
 !macro MUI_LANGUAGEFILE_END
-
-  !verbose 3
     
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME" "${MUI_LANGNAME}"
 
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND Name MUI_NAME "${MUI_NAME}"
-
-  !ifdef MUI_STARTMENUPAGE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
-  !endif
-  
-  !ifdef MUI_FINISHPAGE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_WINDOWTITLE" "${MUI_TEXT_FINISH_WINDOWTITLE}"
-  !endif
-
-  !ifndef MUI_CUSTOMPAGECOMMANDS
-    !ifndef MUI_PAGECOMMANDS
-      !define MUI_PAGECOMMANDS
-      !insertmacro MUI_PAGECOMMANDS
-    !endif
-  !endif
-  
-  !ifdef MUI_UNINSTALLER
-    !ifndef MUI_UNCUSTOMPAGECOMMANDS
-      !ifndef MUI_UNPAGECOMMANDS
-        !define MUI_UNPAGECOMMANDS
-        !insertmacro MUI_UNPAGECOMMANDS
-      !endif
-    !endif
-  !endif
 
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WELCOME_TITLE" "${MUI_TEXT_WELCOME_TITLE}"
@@ -1362,6 +1305,7 @@
   !endif
   
   !ifdef MUI_STARTMENUPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_TITLE" "${MUI_TEXT_STARTMENU_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_SUBTITLE" "${MUI_TEXT_STARTMENU_SUBTITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU_TOP" "${MUI_INNERTEXT_STARTMENU_TOP} " "MUI_INSTALLBUTTON_STARTMENU"
@@ -1373,7 +1317,9 @@
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE" "${MUI_TEXT_FINISH_TITLE}"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE" "${MUI_TEXT_FINISH_SUBTITLE}"
+  
   !ifdef MUI_FINISHPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_WINDOWTITLE" "${MUI_TEXT_FINISH_WINDOWTITLE}"
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO "${MUI_TEXT_FINISH_INFO}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_TEXT_FINISH_INFO_REBOOT}"
