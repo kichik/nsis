@@ -872,7 +872,7 @@ int CEXEBuild::function_end()
     return PS_ERROR;
   }
   // add ret.
-  add_entry_indirect(EW_RET);
+  add_entry_direct(EW_RET);
 
   build_cursection_isfunc=0;
   build_cursection=NULL;
@@ -926,7 +926,7 @@ int CEXEBuild::section_end()
     ERROR_MSG("Error: SectionEnd specified and no sections open\n");
     return PS_ERROR;
   }
-  add_entry_indirect(EW_RET);
+  add_entry_direct(EW_RET);
   build_cursection->code_size--;
   build_cursection=NULL;
   if (!subsection_open_cnt)
@@ -1024,7 +1024,9 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     else
       subsection_open_cnt++;
 
-    add_entry_indirect(EW_RET);
+    add_entry_direct(EW_RET);
+    build_cursection->code_size = 0;
+
     build_cursection = 0;
   }
 
@@ -1073,7 +1075,7 @@ int CEXEBuild::add_entry(const entry *ent)
   return PS_OK;
 }
 
-int CEXEBuild::add_entry_indirect(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
+int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
 {
   entry ent;
   ent.which = which;
@@ -2824,62 +2826,62 @@ again:
   zero_offset=add_string("$0");
 
   // SetDetailsPrint none
-  ret=add_entry_indirect(EW_UPDATETEXT, 0, 16);
+  ret=add_entry_direct(EW_UPDATETEXT, 0, 16);
   if (ret != PS_OK) return ret;
 
   // StrCmp $PLUGINSDIR ""
-  ret=add_entry_indirect(EW_STRCMP, add_string("$PLUGINSDIR"), 0, 0, ns_label.add("Initialize_____Plugins_done",0));
+  ret=add_entry_direct(EW_STRCMP, add_string("$PLUGINSDIR"), 0, 0, ns_label.add("Initialize_____Plugins_done",0));
   if (ret != PS_OK) return ret;
   // Push $0
-  ret=add_entry_indirect(EW_PUSHPOP, zero_offset);
+  ret=add_entry_direct(EW_PUSHPOP, zero_offset);
   if (ret != PS_OK) return ret;
   // ClearErrors
-  ret=add_entry_indirect(EW_SETFLAG, FLAG_OFFSET(exec_error));
+  ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_indirect(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
+  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
 #else
-  ret=add_entry_indirect(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
+  ret=add_entry_direct(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
 #endif
   if (ret != PS_OK) return ret;
   // Delete $0 - the temp file created
-  ret=add_entry_indirect(EW_DELETEFILE, zero_offset);
+  ret=add_entry_direct(EW_DELETEFILE, zero_offset);
   if (ret != PS_OK) return ret;
   // CraeteDirectory $0 - a dir instead of that temp file
-  ret=add_entry_indirect(EW_CREATEDIR, zero_offset);
+  ret=add_entry_direct(EW_CREATEDIR, zero_offset);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
-  ret=add_entry_indirect(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FLAG_OFFSET(exec_error));
+  ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_indirect(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
+  ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
 #else
-  ret=add_entry_indirect(EW_ASSIGNVAR, 25, zero_offset);
+  ret=add_entry_direct(EW_ASSIGNVAR, 25, zero_offset);
 #endif
   if (ret != PS_OK) return ret;
   // Pop $0
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_indirect(EW_PUSHPOP, var_zero, 1);
+  ret=add_entry_direct(EW_PUSHPOP, var_zero, 1);
 #else
-  ret=add_entry_indirect(EW_PUSHPOP, 0, 1);
+  ret=add_entry_direct(EW_PUSHPOP, 0, 1);
 #endif
   if (ret != PS_OK) return ret;
 
   // done
   if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
   // Return
-  ret=add_entry_indirect(EW_RET);
+  ret=add_entry_direct(EW_RET);
   if (ret != PS_OK) return ret;
 
   // error
   if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
   // error message box
-  ret=add_entry_indirect(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
+  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
   if (ret != PS_OK) return ret;
   // Quit
-  ret=add_entry_indirect(EW_QUIT);
+  ret=add_entry_direct(EW_QUIT);
   if (ret != PS_OK) return ret;
 
   // FunctionEnd
