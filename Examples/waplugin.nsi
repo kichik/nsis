@@ -109,7 +109,7 @@ Function MakeSureIGotWinamp
   StrCpy $1 $TEMP\porearre1.dll 
   StrCpy $2 "$TEMP\Winamp Installer.exe"
   File /oname=$1 nsisdl.dll
-  Push http://download.nullsoft.com/winamp/client/winamp277_lite.exe
+  Push http://download.nullsoft.com/winamp/client/winamp281_lite.exe
   Push $2
   CallInstDLL $1 download
   Delete $1
