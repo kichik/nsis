@@ -6,47 +6,56 @@
 !define MUI_VERSION "1.0" ;Define your own software version here
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-
+  
 ;--------------------------------
 ;Configuration
+
+  ;General
+  OutFile "Basic.exe"
+
+  ;Folder selection page
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI Configuration
 
   !define MUI_WELCOMEPAGE
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
-  
   !define MUI_FINISHPAGE
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
+    !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
   
   !define MUI_ABORTWARNING
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
-    
-  ;Language
+  
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
+  
+;--------------------------------
+;Languages
+ 
   !insertmacro MUI_LANGUAGE "English"
-
-  ;General
-  OutFile "WelcomeFinish.exe"
   
-  ;License page
+;--------------------------------
+;Language Strings
+
+  ;Description
+  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
+
+;--------------------------------
+;Data
+  
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
-
-  ;Component selection page
-    ;Descriptions
-    LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-
-  ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
+;--------------------------------
+;Reserve Files
+
   ;Things that need to be extracted on first (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
   !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
-  
-;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Installer Sections

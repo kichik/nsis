@@ -7,40 +7,62 @@
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
+!define TEMP $R0
+
 ;--------------------------------
 ;Configuration
-  
+
+  ;General
+  OutFile "Basic.exe"
+
+  ;Folder selection page
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+
+;--------------------------------
+;Modern UI Configuration
+
+  !define MUI_CUSTOMPAGECOMMANDS
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
-  !define MUI_ABORTWARNING
   
-  !define MUI_CUSTOMPAGECOMMANDS
+  !define MUI_ABORTWARNING
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
-    
-  !define TEMP1 $R0
-  !define TEMP2 $R1
   
-  ;Language
+  ;Modern UI System
+  !insertmacro MUI_SYSTEM
+  
+;--------------------------------
+;Languages
+ 
   !insertmacro MUI_LANGUAGE "English"
+  
+;--------------------------------
+;Language Strings
 
-  ;General
-  OutFile "InstallOptions.exe"
+  ;Description
+  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
   
-  ;InstallOptions pages
+  ;Header
+  LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions Page"
+  LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
   
-    ;Header
-    LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions Page"
-    LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+  ;Window titles
+  LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} ": Custom Page A"
+  LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} ": Custom Page B"
+  LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} ": Custom Page C"
+
+;--------------------------------
+;Data
   
-    ;Window titles
-    LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} ": Custom Page A"
-    LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} ": Custom Page B"
-    LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} ": Custom Page C"
+  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
+
+;--------------------------------
+;Pages
   
-  ;Page order 
   !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA "$(TEXT_IO_PAGETITLE_A)"
   Page custom SetCustomB "$(TEXT_IO_PAGETITLE_B)"
@@ -48,29 +70,17 @@
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
   Page custom SetCustomC "$(TEXT_IO_PAGETITLE_C)"
   !insertmacro MUI_PAGECOMMAND_INSTFILES
-  
-  ;License page
-  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component selection page
-    ;Descriptions
-    LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-
-  ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+;--------------------------------
+;Reserve Files
   
-  ;Things that need to be extracted on startup (keep these lines before any File command!)
+  ;Things that need to be extracted on first (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
-  ;Use ReserveFile for your own InstallOptions INI files too!
+  
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-
-;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Installer Sections
@@ -83,8 +93,8 @@ Section "modern.exe" SecCopyUI
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
   ;Read a value from an InstallOptions INI File
-  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "ioC.ini" "Field 2" "State"
-  StrCmp ${TEMP1} "1" "" +2
+  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP} "ioC.ini" "Field 2" "State"
+  StrCmp ${TEMP} "1" "" +2
     ;Checked
     MessageBox MB_OK "A MessageBox..."
     
@@ -129,7 +139,6 @@ FunctionEnd
 Function SetCustomC
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioC.ini"
-
 FunctionEnd
 
 ;--------------------------------
