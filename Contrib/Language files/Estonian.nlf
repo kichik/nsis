@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by izzo (izzo@hot.ee)
 Nullsoft Install System %s
-%s Paigaldamine
-%s Eemaldamine
+$(^Name) Paigaldamine
+$(^Name) Eemaldamine
 : Litsentsileping
 : Paigaldusvalikud
 : Paigalduskaust

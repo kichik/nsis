@@ -481,7 +481,7 @@ class MMapBuf : public IGrowBuf
     int add(const void *data, int len) 
     { 
       if (len<=0) return 0;
-      resize(getlen()+len); 
+      resize(getlen()+len);
       memcpy((char*)get()+getlen()-len,data,len);
       return getlen()-len;
     }
@@ -507,7 +507,7 @@ class MMapBuf : public IGrowBuf
           char buf[MAX_PATH],buf2[MAX_PATH];
           GetTempPath(MAX_PATH,buf);
           GetTempFileName(buf,"nsd",0,buf2);
-          m_hFile=CreateFile(buf2,GENERIC_READ|GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
+          m_hFile=CreateFile(buf2,GENERIC_READ|GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
         }
         if (m_hFile != INVALID_HANDLE_VALUE)
           m_hFileMap=CreateFileMapping(m_hFile,NULL,PAGE_READWRITE,0,m_alloc,NULL);

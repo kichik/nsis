@@ -29,6 +29,17 @@ static int popstring(char *str)
   return 0;
 }
 
+#define CC_TEXT 1
+#define CC_BK 4
+
+typedef struct {
+  COLORREF text;
+  LOGBRUSH bk;
+  HBRUSH bkb;
+  int bkmode;
+  int flags;
+} ctlcolors;
+
 #define strcpy(x,y) lstrcpy(x,y)
 #define strncpy(x,y,z) lstrcpyn(x,y,z)
 #define strdup(x) STRDUP(x)
@@ -163,6 +174,8 @@ char *pszBackButtonText   = NULL;
 int bBackEnabled   = FALSE;
 int bCancelEnabled = FALSE;   // by ORTIM: 13-August-2002
 int bCancelShow    = FALSE;   // by ORTIM: 13-August-2002
+
+int bRTL = FALSE;
 
 FieldType *pFields   = NULL;
 #define DEFAULT_RECT 1018
@@ -468,6 +481,8 @@ int ReadSettings(void) {
   bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 0xFFFF0000, pszFilename);
   bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 0xFFFF0000, pszFilename);
 
+  bRTL = GetPrivateProfileInt("Settings", "RTL", 0, pszFilename);
+
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
     // the structure is small enough that this won't waste much memory.
@@ -621,21 +636,21 @@ int ReadSettings(void) {
     pFields[nIdx].hImage = (HANDLE)GetPrivateProfileInt(szField, "TxtColor", RGB(0,0,255), pszFilename);
 
     pFields[nIdx].nControlID = 1200 + nIdx;
-    if ( pFields[nIdx].nType == FIELD_FILEREQUEST || pFields[nIdx].nType == FIELD_DIRREQUEST )
+    if (pFields[nIdx].nType == FIELD_FILEREQUEST || pFields[nIdx].nType == FIELD_DIRREQUEST)
     {
-        FieldType *pNewField = &pFields[nIdx+1];
-        pNewField->nControlID = 1200 + nIdx + 1;
-        pNewField->nParentIdx = nIdx;
-        pNewField->nType = FIELD_BROWSEBUTTON;
-        pNewField->nFlags = pFields[nIdx].nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
-        pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
-        pNewField->rect.right  = pFields[nIdx].rect.right;
-        pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
-        pNewField->rect.bottom = pFields[nIdx].rect.bottom;
-        pNewField->rect.top    = pFields[nIdx].rect.top;
-        pFields[nIdx].rect.right = pNewField->rect.left - 3;
-        nNumFields++;
-        nIdx++;
+      FieldType *pNewField = &pFields[nIdx+1];
+      pNewField->nControlID = 1200 + nIdx + 1;
+      pNewField->nParentIdx = nIdx;
+      pNewField->nType = FIELD_BROWSEBUTTON;
+      pNewField->nFlags = pFields[nIdx].nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
+      pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
+      pNewField->rect.right  = pFields[nIdx].rect.right;
+      pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
+      pNewField->rect.bottom = pFields[nIdx].rect.bottom;
+      pNewField->rect.top    = pFields[nIdx].rect.top;
+      pFields[nIdx].rect.right = pNewField->rect.left - 3;
+      nNumFields++;
+      nIdx++;
     }
   }
 
@@ -753,11 +768,16 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORLISTBOX:
     {
-      BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
-      if (brush)
-      {
-        SetBkMode((HDC)wParam, TRANSPARENT);
-        return brush;
+      ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
+      
+      if (c) {
+        SetBkMode((HDC)wParam, c->bkmode);
+        if (c->flags & CC_BK)
+          SetBkColor((HDC)wParam, c->bk.lbColor);
+        if (c->flags & CC_TEXT)
+          SetTextColor((HDC)wParam, c->text);
+
+        return (BOOL)c->bkb;
       }
     }
   }
@@ -861,13 +881,23 @@ int createCfgDlg()
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
 
   RECT dialog_r;
+  int width;
   hConfigWindow=CreateDialog(m_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),hMainWindow,cfgDlgProc);
   if (hConfigWindow)
   {
     GetWindowRect(childwnd,&dialog_r);
     ScreenToClient(hMainWindow,(LPPOINT)&dialog_r);
     ScreenToClient(hMainWindow,((LPPOINT)&dialog_r)+1);
-    SetWindowPos(hConfigWindow,0,dialog_r.left,dialog_r.top,dialog_r.right-dialog_r.left,dialog_r.bottom-dialog_r.top,SWP_NOZORDER|SWP_NOACTIVATE);
+    width = dialog_r.right-dialog_r.left;
+    SetWindowPos(
+      hConfigWindow,
+      0,
+      dialog_r.left,
+      dialog_r.top,
+      width,
+      dialog_r.bottom-dialog_r.top,
+      SWP_NOZORDER|SWP_NOACTIVATE
+    );
     // Sets the font of IO window to be the same as the main window
     SendMessage(hConfigWindow, WM_SETFONT, (WPARAM)hFont, TRUE);
   }
@@ -899,47 +929,75 @@ int createCfgDlg()
     static struct {
       char* pszClass;
       DWORD dwStyle;
+      DWORD dwRTLStyle;
       DWORD dwExStyle;
+      DWORD dwRTLExStyle;
     } ClassTable[] = {
       { "STATIC",       // FIELD_LABEL
         DEFAULT_STYLES /*| WS_TABSTOP*/,
+        DEFAULT_STYLES | SS_RIGHT /*| WS_TABSTOP*/,
+        WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT },
       { "STATIC",       // FIELD_ICON
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
+        0,
         0 },
       { "STATIC",       // FIELD_BITMAP
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
+        0,
         0 },
       { "BUTTON",       // FIELD_BROWSEBUTTON
         DEFAULT_STYLES | WS_TABSTOP,
+        DEFAULT_STYLES | WS_TABSTOP,
+        0,
         0 },
       { "BUTTON",       // FIELD_CHECKBOX
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE,
+        DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
+        0,
         0 },
       { "BUTTON",       // FIELD_RADIOBUTTON
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE,
+        DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
+        0,
         0 },
       { "EDIT",         // FIELD_TEXT
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
+        DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "EDIT",         // FIELD_FILEREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
+        DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "EDIT",         // FIELD_DIRREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
+        DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "COMBOBOX",     // FIELD_COMBOBOX
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+        DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RIGHT | WS_EX_RTLREADING },
       { "LISTBOX",      // FIELD_LISTBOX
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+        DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RIGHT | WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_GROUPBOX
         DEFAULT_STYLES | BS_GROUPBOX,
+        DEFAULT_STYLES | BS_GROUPBOX | BS_RIGHT,
+        WS_EX_TRANSPARENT,
         WS_EX_TRANSPARENT },
       { "BUTTON",       // FIELD_LINK
-        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW
-        },      
+        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW,
+        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW | BS_RIGHT,
+        0,
+        0 },
     };
 
     int nType = pFields[nIdx].nType;
@@ -949,8 +1007,15 @@ int createCfgDlg()
     if (nType < 1 || nType > (sizeof(ClassTable) / sizeof(ClassTable[0])))
       continue;
 
-    DWORD dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
-    DWORD dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwExStyle;
+    DWORD dwStyle, dwExStyle;
+    if (bRTL) {
+      dwStyle = ClassTable[pFields[nIdx].nType - 1].dwRTLStyle;
+      dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwRTLExStyle;
+    }
+    else {
+      dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
+      dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwExStyle;
+    }
 
     // Convert from dialog units
 
@@ -969,6 +1034,12 @@ int createCfgDlg()
       rect.top += dialog_r.bottom - dialog_r.top;
     if (pFields[nIdx].rect.bottom < 0)
       rect.bottom += dialog_r.bottom - dialog_r.top;
+
+    if (bRTL) {
+      int right = rect.right;
+      rect.right = width - rect.left;
+      rect.left = width - right;
+    }
 
     char *title = pFields[nIdx].pszText;
     switch (nType) {

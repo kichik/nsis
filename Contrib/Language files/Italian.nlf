@@ -7,10 +7,12 @@ NLF v2
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Orfanik - http://www.orfanik.hu
 Nullsoft Install System %s
-Installazione di %s
-Disinstallazione di %s
+Installazione di $(^Name)
+Disinstallazione di $(^Name)
 : Licenza d'uso
 : Opzioni di installazione
 : Cartella di installazione
@@ -34,7 +36,7 @@ Personalizzata
 Seleziona il tipo d'installazione :
 Seleziona i componenti da installare :
 Oppure, seleziona i componenti opzionali che vuoi installare :
-Seleziona la cartella dove installare %s :
+Seleziona la cartella dove installare $(^Name) :
 Spazio disponibile : 
 Spazio necessario : 
 Rimozione da :

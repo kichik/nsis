@@ -7,10 +7,12 @@ NLF v5
 9
 # Codepage - dash (-) means ANSI code page ANSI 字码页
 936
+# RTL - anything else than RTL means LTR
+-
 # Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-30
 Nullsoft Install System %s
-%s 安装
-%s 解除安装
+$(^Name) 安装
+$(^Name) 解除安装
  : 授权条款
  : 安装选项
  : 安装文件夹
@@ -36,7 +38,7 @@ Nullsoft Install System %s
 选定安装的类型: 
 选定安装的组件: 
 或者，自定义选定想安装的组件: 
-选定要安装 %s 的文件夹: 
+选定要安装 $(^Name) 的文件夹: 
 可用空间: 
 所需空间: 
 解除安装目录: 

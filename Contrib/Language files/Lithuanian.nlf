@@ -7,10 +7,12 @@ NLF v3
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by NorCis
 Nullsoft Install System %s
-%s Idiegimas
-%s Panaikinti
+$(^Name) Idiegimas
+$(^Name) Panaikinti
 : Naudojimo sutartis
 : Idiegimo nustatymai
 : Idiegimo katalogas
@@ -36,7 +38,7 @@ Kitoks
 Pasirinkite idiegimo tipa:
 Pasirinkite komponentus, kuriuos idiegti:
 Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite idiegti:
-Pasirinkite kataloga, kur idiegti %s:
+Pasirinkite kataloga, kur idiegti $(^Name):
 Yra vietos: 
 Reikia vietos: 
 Trinama iš:

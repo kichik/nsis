@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by MoNKi
 Nullsoft Install System %s
-Instalación de %s
-Desinstalación de %s
+Instalación de $(^Name)
+Desinstalación de $(^Name)
 : Acuerdo de Licencia
 : Opciones de Instalación
 : Directorio de Instalación
@@ -36,7 +38,7 @@ Personalizada
 Indique el tipo de instalación:
 Seleccione los componentes:
 O seleccione los componentes opcionales a instalar:
-Seleccione el directorio en el que instalar %s:
+Seleccione el directorio en el que instalar $(^Name):
 Espacio disponible: 
 Espacio requerido: 
 Desinstalando desde:

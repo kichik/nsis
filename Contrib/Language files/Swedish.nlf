@@ -8,10 +8,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Magnus Bonnevier (magnus.bonnevier@telia.com)
 Nullsoft Install System %s
-%s Setup
-%s Avinstallation
+$(^Name) Setup
+$(^Name) Avinstallation
 : Licens Avtal
 : Installations Val
 : Installations Katalog
@@ -37,7 +39,7 @@ Custom
 Välj typ av installation:
 Välj komponenter att installera:
 Eller, välj alternativa komponenter du önskar installera:
-Välj katalog att installera %s i:
+Välj katalog att installera $(^Name) i:
 Ytrymme tillgängligt: 
 Ytrymme som behövs: 
 Avinstallerar från:

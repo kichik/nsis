@@ -49,7 +49,7 @@ struct DialogItemTemplate {
   short  sHeight;
   DWORD  dwExtStyle;
   DWORD  dwStyle;
-  WORD  wId;
+  WORD   wId;
 
   char  *szClass;
   char  *szTitle;

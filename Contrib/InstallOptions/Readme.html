@@ -195,11 +195,16 @@ It can contain the following values:</p>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Overrides the text for the back button. If not specified, the back button text
       will not be changed.</td></tr>
-	<tr>
+    <tr>
       <td class="lefttable"><span class="bold">Rect</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Overrides the default rect ID to run over. This will make IO resize itself
       according to a different rect than NSIS's dialogs rect.</td></tr>
+    <tr>
+      <td class="lefttable"><span class="bold">RTL</span></td>
+      <td class="lefttable"><span class="italic">(optional)</span></td>
+      <td class="righttable">If 1 is specified the dialog will be mirrored and all texts will be aligned to the 
+	  right. Use NSIS's $(^RTL) to fill this field, it's the easiest way.</td></tr>
 </table>
 <p class="text">Each field section has the heading "Field #" where # must be sequential
 numbers from 1 to NumFields. Each Field section can contain the following values:</p>
@@ -612,12 +617,13 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>DLL version 2.2 (6/10/2003)
+<li>DLL version 2.2 (4/9/2003)
   <ul>
     <li>Added new control "link"</li>
     <li>\r\n converts to newline in Multiline edit box</li>
     <li>Support for multiline edit box</li>
     <li>Better tab order in DirRequest and FileRequest</li>
+	<li>Added RTL support</li>
     <li>Minor fixes</li>
   </ul></li>
 </ul>

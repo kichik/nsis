@@ -4,290 +4,307 @@
 #include "build.h"
 #include "DialogTemplate.h"
 #include "exehead\resource.h"
-#include "exehead\lang.h"
 
 extern const char *NSIS_VERSION;
 
-char *english_strings[] = {
-  "Nullsoft Install System %s",
-  "%s Setup",
-  "%s Uninstall",
-  ": License Agreement",
-  ": Installation Options",
-  ": Installation Folder",
-  ": Installing",
-  ": Completed",
-  ": Confirmation",
-  ": Uninstalling",
-  ": Completed",
-  "< &Back",
-  "&Next >",
-  "I &Agree",
-  "I &accept the terms in the License Agreement",
-  "I &do not accept the terms in the License Agreement",
-  "&Install",
-  "&Uninstall",
-  "Cancel",
-  "&Close",
-  "B&rowse...",
-  "Show &details",
-  "Name",
-  "Completed",
-  "Custom",
-  "Select the type of install:",
-  "Select components to install:",
-  "Or, select the optional components you wish to install:",
-  "Select the folder to install %s in:",
-  "Space available: ",
-  "Space required: ",
-  "Uninstalling from:",
-  "Error opening file for writing: \r\n\t\"$0\"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file",
-  "Error opening file for writing: \r\n\t\"$0\"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation",
-  "Can't write: ",
-  "Copy failed",
-  "Copy to ",
-  "Registering: ",
-  "Unregistering: ",
-  "Could not find symbol: ",
-  "Could not load: ",
-  "Create folder: ",
-  "Create shortcut: ",
-  "Created uninstaller: ",
-  "Delete file: ",
-  "Delete on reboot: ",
-  "Error creating shortcut: ",
-  "Error creating: ",
-  "Error decompressing data! Corrupted installer?",
-  "Error registering DLL",
-  "ExecShell: ",
-  "Execute: ",
-  "Extract: ",
-  "Extract: error writing to file ",
-  "Installer corrupted: invalid opcode",
-  "No OLE for: ",
-  "Output folder: ",
-  "Remove folder: ",
-  "Rename on reboot: ",
-  "Rename: ",
-  "Skipped: ",
-  "Copy Details To Clipboard",
-  "Log install process",
-  "B",
-  "K",
-  "M",
-  "G"
+// Default English strings. Should match NSIS_DEFAULT_LANG
+// Do not change the first string in every item, it's the LangString
+// name for usage in scripts.
+
+typedef enum {
+  NONE_STATIC = 0,
+  INSTALL_STATIC = 1,
+  UNINSTALL_STATIC = 2,
+  BOTH_STATIC = 3
+} STATICID;
+
+struct {
+  char *szLangStringName;
+  char *szDefault;
+  STATICID eStaticID;
+} NLFStrings[NLF_STRINGS] = {
+  {"^Branding", "Nullsoft Install System %s", BOTH_STATIC},
+  {"^SetupCaption", "$(^Name) Setup", INSTALL_STATIC},
+  {"^UninstallCaption", "$(^Name) Uninstall", UNINSTALL_STATIC},
+  {"^LicenseSubCaption", ": License Agreement", NONE_STATIC},
+  {"^ComponentsSubCaption", ": Installation Options", NONE_STATIC},
+  {"^DirSubCaption", ": Installation Folder", NONE_STATIC},
+  {"^InstallingSubCaption", ": Installing", NONE_STATIC},
+  {"^CompletedSubCaption", ": Completed", NONE_STATIC},
+  {"^UnComponentsSubCaption", ": Uninstallation Options", NONE_STATIC},
+  {"^UnDirSubCaption", ": Uninstallation Folder", NONE_STATIC},
+  {"^ConfirmSubCaption", ": Confirmation", NONE_STATIC},
+  {"^UninstallingSubCaption", ": Uninstalling", NONE_STATIC},
+  {"^UnCompletedSubCaption", ": Completed", NONE_STATIC},
+  {"^BackBtn", "< &Back", NONE_STATIC},
+  {"^NextBtn", "&Next >", NONE_STATIC},
+  {"^AgreeBtn", "I &Agree", NONE_STATIC},
+  {"^AcceptBtn", "I &accept the terms in the License Agreement", NONE_STATIC},
+  {"^DontAcceptBtn", "I &do not accept the terms in the License Agreement", NONE_STATIC},
+  {"^InstallBtn", "&Install", NONE_STATIC},
+  {"^UninstallBtn", "&Uninstall", NONE_STATIC},
+  {"^CancelBtn", "Cancel", NONE_STATIC},
+  {"^CloseBtn", "&Close", NONE_STATIC},
+  {"^BrowseBtn", "B&rowse...", NONE_STATIC},
+  {"^ShowDetailsBtn", "Show &details", NONE_STATIC},
+  {"^ClickNext", "Click Next to continue.", NONE_STATIC},
+  {"^ClickInstall", "Click Install to start the installation.", NONE_STATIC},
+  {"^ClickUninstall", "Click Uninstall to start the uninstallation.", NONE_STATIC},
+  {"^Name", "Name", BOTH_STATIC},
+  {"^Completed", "Completed", NONE_STATIC},
+  {"^LicenseText", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
+  {"^LicenseTextCB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
+  {"^LicesnseTextRB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^UnLicenseText", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
+  {"^UnLicenseTextCB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
+  {"^UnLicesnseTextRB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^LicenseData", 0, NONE_STATIC}, // virtual - not processed
+  {"^Custom", "Custom", NONE_STATIC},
+  {"^ComponentsText", "Check the components you want to install and uncheck the components you don't want to install. $_CLICK", NONE_STATIC},
+  {"^ComponentsSubText1", "Select the type of install:", NONE_STATIC},
+  {"^ComponentsSubText2_NoInstTypes", "Select components to install:", NONE_STATIC},
+  {"^ComponentsSubText2", "Or, select the optional components you wish to install:", NONE_STATIC},
+  {"^UnComponentsText", "Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK", NONE_STATIC},
+  {"^UnComponentsSubText1", "Select the type of uninstall:", NONE_STATIC},
+  {"^UnComponentsSubText2_NoInstTypes", "Select components to uninstall:", NONE_STATIC},
+  {"^UnComponentsSubText2", "Or, select the optional components you wish to uninstall:", NONE_STATIC},
+  {"^DirText", "Setup will install $(^Name) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
+  {"^DirSubText", "Destination Folder", NONE_STATIC},
+  {"^DirBrowseText", "Select the folder to install $(^Name) in:", NONE_STATIC},
+  {"^UnDirText", "Setup will uninstall $(^Name) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
+  {"^UnDirSubText", "", NONE_STATIC},
+  {"^UnDirBrowseText", "Select the folder to uninstall $(^Name) from:", NONE_STATIC},
+  {"^SpaceAvailable", "Space available: ", BOTH_STATIC},
+  {"^SpaceRequired", "Space required: ", BOTH_STATIC},
+  {"^UninstallingText", "This wizard will uninstall $(^Name) from your computer. $_CLICK", NONE_STATIC},
+  {"^UninstallingSubText", "Uninstalling from:", NONE_STATIC},
+  {"^FileError", "Error opening file for writing: \r\n\t\"$0\"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file", NONE_STATIC},
+  {"^FileError_NoIgnore", "Error opening file for writing: \r\n\t\"$0\"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation", NONE_STATIC},
+  {"^CantWrite", "Can't write: ", BOTH_STATIC},
+  {"^CopyFailed", "Copy failed", BOTH_STATIC},
+  {"^CopyTo", "Copy to ", BOTH_STATIC},
+  {"^Registering", "Registering: ", NONE_STATIC},
+  {"^Unregistering", "Unregistering: ", NONE_STATIC},
+  {"^SymbolNotFound", "Could not find symbol: ", BOTH_STATIC},
+  {"^CouldNotLoad", "Could not load: ", BOTH_STATIC},
+  {"^CreateFolder", "Create folder: ", BOTH_STATIC},
+  {"^CreateShortcut", "Create shortcut: ", BOTH_STATIC},
+  {"^CreatedUninstaller", "Created uninstaller: ", BOTH_STATIC},
+  {"^Delete", "Delete file: ", BOTH_STATIC},
+  {"^DeleteOnReboot", "Delete on reboot: ", BOTH_STATIC},
+  {"^ErrorCreatingShortcut", "Error creating shortcut: ", BOTH_STATIC},
+  {"^ErrorCreating", "Error creating: ", BOTH_STATIC},
+  {"^ErrorDecompressing", "Error decompressing data! Corrupted installer?", BOTH_STATIC},
+  {"^ErrorRegistering", "Error registering DLL", BOTH_STATIC},
+  {"^ExecShell", "ExecShell: ", BOTH_STATIC},
+  {"^Exec", "Execute: ", BOTH_STATIC},
+  {"^Extract", "Extract: ", BOTH_STATIC},
+  {"^ErrorWriting", "Extract: error writing to file ", BOTH_STATIC},
+  {"^InvalidOpcode", "Installer corrupted: invalid opcode", BOTH_STATIC},
+  {"^NoOLE", "No OLE for: ", BOTH_STATIC},
+  {"^OutputFolder", "Output folder: ", BOTH_STATIC},
+  {"^RemoveFolder", "Remove folder: ", BOTH_STATIC},
+  {"^RenameOnReboot", "Rename on reboot: ", BOTH_STATIC},
+  {"^Rename", "Rename: ", BOTH_STATIC},
+  {"^Skipped", "Skipped: ", BOTH_STATIC},
+  {"^CopyDetails", "Copy Details To Clipboard", BOTH_STATIC},
+  {"^LogInstall", "Log install process", BOTH_STATIC},
+  {"^Byte", "B", BOTH_STATIC},
+  {"^Kilo", "K", BOTH_STATIC},
+  {"^Mega", "M", BOTH_STATIC},
+  {"^Giga", "G", BOTH_STATIC},
+  {"^RTL", "0", NONE_STATIC}
 };
 
-StringTable* CEXEBuild::GetTable(LANGID &lang) {
-  lang=lang?lang:last_used_lang;
-  last_used_lang=lang;
-  StringTable *table = 0;
-  for (unsigned int i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->lang_id) {
-      table = string_tables[i];
+void CEXEBuild::InitLangTables() {
+  keep_ref = false;
+
+  for (int i = 0; i < NLF_STRINGS; i++) {
+    NLFRefs[i].iRef = 0;
+    NLFRefs[i].iUnRef = 0;
+
+#ifdef NSIS_CONFIG_LOG
+    if (i == NLF_NAME) {
+      NLFRefs[i].iRef++;
+      NLFRefs[i].iUnRef++;
+    }
+#endif
+
+    if (NLFStrings[i].eStaticID & INSTALL_STATIC) {
+      set_uninstall_mode(0);
+      DefineLangString(NLFStrings[i].szLangStringName);
+    }
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (NLFStrings[i].eStaticID & UNINSTALL_STATIC) {
+      set_uninstall_mode(1);
+      DefineLangString(NLFStrings[i].szLangStringName);
+    }
+#endif
+  }
+
+  set_uninstall_mode(0);
+
+  keep_ref = true;
+}
+
+LanguageTable* CEXEBuild::GetLangTable(LANGID &lang) {
+  int nlt = lang_tables.getlen() / sizeof(LanguageTable);
+  LanguageTable *nla = (LanguageTable*)lang_tables.get();
+
+  lang = lang ? lang : last_used_lang;
+  last_used_lang = lang;
+  LanguageTable *table = 0;
+
+  for (int i = 0; i < nlt; i++) {
+    if (lang == nla[i].lang_id) {
+      table = &nla[i];
       break;
     }
   }
   if (!table) {
-    table = new StringTable;
-    if (!table) {
-      ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
-      return 0;
-    }
-    table->dlg_offset = 0;
-    memset(&(table->common), 0, sizeof(common_strings));
-    memset(&(table->ucommon), 0, sizeof(common_strings));
-    memset(&(table->installer), 0, sizeof(installer_strings));
-    memset(&(table->uninstall), 0, sizeof(uninstall_strings));
-    table->nlf = 0;
+    LanguageTable newtable;
 
-    table->lang_id = lang;
+    newtable.lang_id = lang;
+    newtable.dlg_offset = 0;
+    memset(&newtable.nlf, 0, sizeof(NLF));
 
-    table->user_strings.set_zeroing(1);
-    table->user_strings.resize(build_userlangstrings.getnum()*sizeof(int));
+    newtable.lang_strings = new StringsArray;
 
-    table->user_ustrings.set_zeroing(1);
-    table->user_ustrings.resize(ubuild_userlangstrings.getnum()*sizeof(int));
-
-    string_tables.push_back(table);
+    lang_tables.add(&newtable, sizeof(LanguageTable));
+    table = (LanguageTable*)lang_tables.get() + nlt;
   }
 
   return table;
 }
 
-int CEXEBuild::SetString(char *string, int id, int process, LANGID lang/*=0*/) {
-  StringTable *table = GetTable(lang);
+int CEXEBuild::DefineLangString(char *name, int process/*=-1*/) {
+  int index, uindex, pos, ret, sn;
+  pos = build_langstrings.get(name, &sn, &index, &uindex);
+  if (pos < 0) {
+    pos = build_langstrings.add(name);
+  }
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  if (!uninstall_mode) {
+#endif
+    if (index < 0) {
+      index = build_langstring_num++;
+    }
+    ret = -index - 1;
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  }
+  else {
+    if (uindex < 0) {
+      uindex = ubuild_langstring_num++;
+    }
+    ret = -uindex - 1;
+  }
+#endif
+
+  build_langstrings.set(pos, index, uindex, process);
+
+  // set reference count for NLF strings
+  if (keep_ref && name[0] == '^') {
+    for (int i = 0; i < NLF_STRINGS; i++) {
+      if (!strcmp(name, NLFStrings[i].szLangStringName)) {
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+        if (uninstall_mode)
+          NLFRefs[i].iUnRef++;
+        else
+#endif
+          NLFRefs[i].iRef++;
+
+        break;
+      }
+    }
+  }
+
+  return ret;
+}
+
+int CEXEBuild::DefineInnerLangString(int id, int process/*=-1*/) {
+  bool old_keep_ref = keep_ref;
+
+  // set reference count for NLF strings
+  if (keep_ref) {
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (uninstall_mode)
+      NLFRefs[id].iUnRef++;
+    else
+#endif
+      NLFRefs[id].iRef++;
+
+    keep_ref = false;
+  }
+
+  int ret = DefineLangString(NLFStrings[id].szLangStringName, process);
+
+  keep_ref = old_keep_ref;
+
+  return ret;
+}
+
+int CEXEBuild::SetLangString(char *name, LANGID lang, char *string) {
+  if (!string || !name) return PS_ERROR;
+
+  LanguageTable *table = GetLangTable(lang);
   if (!table) return PS_ERROR;
-  return SetString(string, id, process, table);
-}
 
-int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) {
-  int *str = 0;
-  int *ustr = 0;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  #define HANDLE_STRING_C(id,strname) case id: str=&(table->strname); ustr=&(table->u##strname); break;
-#else
-  #define HANDLE_STRING_C(id,strname) HANDLE_STRING_I(id,strname)
-#endif
-  #define HANDLE_STRING_I(id,strname) case id: str=&(table->strname); break;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  #define HANDLE_STRING_U(id,strname) case id: ustr=&(table->strname); break;
-#endif
-  switch (id) {
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-    HANDLE_STRING_C(NLF_COMPLETED, common.completed);
-    HANDLE_STRING_C(NLF_BTN_NEXT, common.nextbutton);
-    HANDLE_STRING_C(NLF_BTN_BACK, common.backbutton);
-    HANDLE_STRING_C(NLF_BRANDING, common.branding);
-    HANDLE_STRING_C(NLF_BTN_CANCEL, common.cancelbutton);
-    HANDLE_STRING_C(NLF_BTN_CLOSE, common.closebutton);
-    HANDLE_STRING_C(NLF_BTN_DETAILS, common.showdetailsbutton);
-    HANDLE_STRING_I(NLF_CAPTION, common.caption);
-    HANDLE_STRING_I(NLF_SUBCAPTION_LICENSE, common.subcaptions[0]);
-    HANDLE_STRING_I(NLF_SUBCAPTION_OPTIONS, common.subcaptions[1]);
-    HANDLE_STRING_I(NLF_SUBCAPTION_DIR, common.subcaptions[2]);
-    HANDLE_STRING_I(NLF_SUBCAPTION_INSTFILES, common.subcaptions[3]);
-    HANDLE_STRING_I(NLF_SUBCAPTION_COMPLETED, common.subcaptions[4]);
-    HANDLE_STRING_I(NLF_BTN_INSTALL, installer.installbutton);
-    HANDLE_STRING_I(NLF_BTN_BROWSE, installer.browse);
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-    HANDLE_STRING_I(NLF_COMP_SUBTEXT1, installer.componentsubtext[0]);
-    HANDLE_STRING_I(NLF_COMP_SUBTEXT2, installer.componentsubtext[1]);
-    HANDLE_STRING_I(SLANG_COMP_TEXT, installer.componenttext);
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-    HANDLE_STRING_I(NLF_BTN_LICENSE, installer.licensebutton);
-    HANDLE_STRING_I(NLF_BTN_LICENSE_AGREE, installer.licensebuttonagree);
-    HANDLE_STRING_I(NLF_BTN_LICENSE_DISAGREE, installer.licensebuttondisagree);
-    HANDLE_STRING_I(SLANG_LICENSE_TEXT, installer.licensetext);
-    HANDLE_STRING_I(SLANG_LICENSE_DATA, installer.licensedata);
-#endif
-    HANDLE_STRING_I(SLANG_DIR_TEXT, installer.text);
-    HANDLE_STRING_I(NLF_COMP_CUSTOM, installer.custom);
-    HANDLE_STRING_I(NLF_DIR_SUBTEXT, installer.dirsubtext);
-    HANDLE_STRING_I(NLF_SPACE_AVAIL, installer.spaceavailable);
-    HANDLE_STRING_I(NLF_SPACE_REQ, installer.spacerequired);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    HANDLE_STRING_U(NLF_UCAPTION, ucommon.caption);
-    HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[0]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[1]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[2]);
-    HANDLE_STRING_U(NLF_BTN_UNINSTALL, uninstall.uninstbutton);
-    HANDLE_STRING_U(NLF_UNINST_SUBTEXT, uninstall.uninstalltext2);
-    HANDLE_STRING_U(SLANG_UNINST_TEXT, uninstall.uninstalltext);
-#endif
+  int sn;
 
-#endif //NSIS_CONFIG_VISIBLE_SUPPORT
+  int pos = build_langstrings.get(name, &sn);
+  if (pos < 0)
+    pos = build_langstrings.add(name, &sn);
 
-    HANDLE_STRING_C(SLANG_NAME, common.name);
-
-#ifdef NSIS_SUPPORT_FILE
-    HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
-    HANDLE_STRING_C(NLF_FILE_ERROR_NOIGNORE, common.fileerrtext_noignore);
-#endif
-
-    default:
-      ERROR_MSG("Error: string doesn't exist or is not changeable (%d)\n", id);
-      return PS_ERROR;
-  }
-
-  if (str) *str = add_string_main(string,process);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  if (ustr) *ustr = add_string_uninst(string,process);
-#endif
+  if (table->lang_strings->set(sn, string))
+    return PS_WARNING;
 
   return PS_OK;
 }
 
-int CEXEBuild::GetUserString(char *name) {
-  LangStringList *user_strings_list = 0;
+int CEXEBuild::SetInnerString(int id, char *string) {
+  if ((unsigned int)id >= NLF_STRINGS || !string) return PS_ERROR;
 
-  if (strnicmp(name,"un.",3)) {
-    user_strings_list=&build_userlangstrings;
-  }
-  else {
-    user_strings_list=&ubuild_userlangstrings;
-  }
+  int ret = PS_OK;
 
-  SetUserString(name, 0, 0, 0);
+  const char *ps = UserInnerStrings.get(id);
+  if (ps && *ps)
+    ret = PS_WARNING;
 
-  return user_strings_list->get(name);
+  UserInnerStrings.set(id, string);
+
+  return ret;
 }
 
-int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/*=1*/) {
-  StringTable *table = 0;
-  if (string) {
-    table = GetTable(lang);
-    if (!table) return PS_ERROR;
-  }
-
-  TinyGrowBuf *user_strings = 0;
-  LangStringList *user_strings_list = 0;
-  bool uninst;
-  if (!(uninst = !strnicmp(name,"un.",3))) {
-    if (string) user_strings=&table->user_strings;
-    user_strings_list=&build_userlangstrings;
-  }
-  else {
-    if (string) user_strings=&table->user_ustrings;
-    user_strings_list=&ubuild_userlangstrings;
-  }
-
-  int idx = user_strings_list->get(name);
-  if (idx < 0) {
-    // if lang string doesn't exist yet
-    idx = user_strings_list->add(name);
-    unsigned int new_size = user_strings_list->getnum() * sizeof(int);
-    for (unsigned int i = 0; i < string_tables.size(); i++) {
-      if (uninst) string_tables[i]->user_ustrings.resize(new_size);
-      else string_tables[i]->user_strings.resize(new_size);
-    }
-  }
-
-  if (string)
-    ((int*)user_strings->get())[idx] = uninst ? add_string_uninst(string,process) : add_string_main(string,process);
-
-  return PS_OK;
-}
-
-bool CEXEBuild::_IsSet(int *str, LANGID lang) {
-  if (!str) return false;
-  lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->m_wLangId:0;
-  lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
-  unsigned int i;
-  for (i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->lang_id) {
-      break;
-    }
-  }
-  if (i == string_tables.size()) return false;
-  if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))) return true;
-  return false;
-}
-
-int CEXEBuild::WriteStringTables() {
+int CEXEBuild::GenerateLangTables() {
   int i;
+  LanguageTable *lt = (LanguageTable*)lang_tables.get();
 
   SCRIPT_MSG("Generating language tables... ");
 
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
-  if (!string_tables.size()) {
-    LANGID lang = 1033;
-    StringTable *table = GetTable(lang);
+  if (!lang_tables.getlen()) {
+    LANGID lang = NSIS_DEFAULT_LANG;
+    LanguageTable *table = GetLangTable(lang);
     if (!table) return PS_ERROR;
+
+    lt = (LanguageTable*)lang_tables.get();
   }
 
   // Fill tables with defaults (if needed) and with instruction strings
   // Create language specific resources (currently only dialogs with different fonts)
-  int st_num = string_tables.size();
+  int num_lang_tables = lang_tables.getlen() / sizeof(LanguageTable);
   // if there is one string table then there is no need for two sets of dialogs
-  int cur_offset = st_num == 1 ? 0 : 100;
-  for (i = 0; i < st_num; i++)
+  int cur_offset = num_lang_tables == 1 ? 0 : 100;
+  for (i = 0; i < num_lang_tables; i++)
   {
-    FillStringTable(string_tables[i]);
-    if (string_tables[i]->nlf && string_tables[i]->nlf->m_szFont)
+    if (lt[i].nlf.m_bLoaded && (lt[i].nlf.m_szFont || lt[i].nlf.m_bRTL))
     {
-      string_tables[i]->dlg_offset = cur_offset;
+      SCRIPT_MSG("RTLing...\n");
+      lt[i].dlg_offset = cur_offset;
+
+      char *font = lt[i].nlf.m_szFont;
 
       try {
         init_res_editor();
@@ -295,18 +312,21 @@ int CEXEBuild::WriteStringTables() {
 #define ADD_FONT(id) { \
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
           if (dlg) { \
-            CDialogTemplate td(dlg,string_tables[i]->nlf->m_uCodePage); \
+            CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             free(dlg); \
-            td.SetFont(string_tables[i]->nlf->m_szFont, string_tables[i]->nlf->m_iFontSize); \
+            if (font) td.SetFont(font, lt[i].nlf.m_iFontSize); \
+            if (lt[i].nlf.m_bRTL) td.ConvertToRTL(); \
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
-            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), string_tables[i]->lang_id, dlg, dwSize); \
+            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
             free(dlg); \
           } \
         }
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
         ADD_FONT(IDD_LICENSE);
+        ADD_FONT(IDD_LICENSE_FSRB);
+        ADD_FONT(IDD_LICENSE_FSCB);
 #endif
         ADD_FONT(IDD_DIR);
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -323,7 +343,7 @@ int CEXEBuild::WriteStringTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG("Error while applying NLF font for %s: %s\n", err.what());
+        ERROR_MSG("Error while applying NLF font/RTL for %s: %s\n", err.what());
         return PS_ERROR;
       }
 
@@ -331,365 +351,219 @@ int CEXEBuild::WriteStringTables() {
     }
   }
 
-  // check for missing LangStrings
-  int userstrings_num = build_userlangstrings.getnum();
-  for (i = 0; i < userstrings_num; i++) {
-    int counter = 0;
-    for (int j = 0; j < st_num; j++) {
-      counter += !((int*)string_tables[j]->user_strings.get())[i];
+  // Add language tables into their datablock
+  int j, l, cnt, tabsset;
+  struct langstring* lang_strings;
+
+  i = num_lang_tables;
+  while (i--) {
+    build_langtables.add(&lt[i].lang_id, sizeof(LANGID));
+    build_langtables.add(&lt[i].dlg_offset, sizeof(int));
+
+    int *lst = (int *)((char *)build_langtables.get() + build_langtables.getlen());
+    cnt = 0;
+    tabsset = 1;
+
+    // write langstrings
+    while (tabsset) {
+      FillLanguageTable(&lt[i]);
+
+      int lastcnt = cnt;
+      cnt = 0;
+      tabsset = 0;
+
+      lang_strings = build_langstrings.sort_index(&l);
+
+      for (j = 0; j < l; j++) {
+        if (lang_strings[j].index >= 0) {
+          if (cnt >= lastcnt || !lst[lang_strings[j].index]) {
+            const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
+            int tab = 0;
+
+            const char *lsn = build_langstrings.offset2name(lang_strings[j].name);
+
+            if (!str || !*str) {
+              if (lsn[0] != '^')
+                warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+            }
+            else {
+              char fn[1024];
+              sprintf(fn, "LangString %s", lsn);
+              curfilename = fn;
+              linecnt = lt[i].lang_id;
+
+              tab = add_string(str, lang_strings[j].process);
+              tabsset++;
+
+              curfilename = 0;
+            }
+
+            if (cnt < lastcnt)
+              lst[lang_strings[j].index] = tab;
+            else
+              build_langtables.add(&tab, sizeof(int));
+          }
+
+          cnt++;
+        }
+      }
     }
-    if (counter) {
-      char *name=build_userlangstrings.idx2name(i);
-      if (!name) continue;
-      warning("LangString \"%s\" is not present in all language tables!", name);
+
+    // optimize langstrings and check for recursion
+    TinyGrowBuf rec;
+    for (j = 0; j < build_langstring_num; j++) {
+      while (lst[j] < 0) {
+        for (int k = 0; k < rec.getlen() / sizeof(int); k++) {
+          if (((int*)rec.get())[k] == lst[j]) {
+            const char *name = "(unnamed)";
+            for (k = 0; k < l; k++) {
+              if (lang_strings[k].index == j) {
+                name = build_langstrings.offset2name(lang_strings[k].name);
+              }
+            }
+            ERROR_MSG("Error: LangString %s is recursive!\n", name);
+            return PS_ERROR;
+          }
+        }
+        rec.add(&lst[j], sizeof(int));
+        lst[j] = lst[-lst[j] - 1];
+      }
+      rec.resize(0);
     }
   }
 
-  int userustrings_num = ubuild_userlangstrings.getnum();
-  for (i = 0; i < userustrings_num; i++) {
-    int counter = 0;
-    for (int j = 0; j < st_num; j++) {
-      counter += !((int*)string_tables[j]->user_ustrings.get())[i];
+  build_header.blocks[NB_LANGTABLES].num = num_lang_tables;
+  build_header.langtable_size = build_langtables.getlen() / num_lang_tables;
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  set_uninstall_mode(1);
+
+  i = num_lang_tables;
+  while (i--) {
+    ubuild_langtables.add(&lt[i].lang_id, sizeof(LANGID));
+    ubuild_langtables.add(&lt[i].dlg_offset, sizeof(int));
+
+    int *lst = (int *)((char *)ubuild_langtables.get() + ubuild_langtables.getlen());
+    cnt = 0;
+    tabsset = 1;
+
+    int h = 0;
+
+    // write langstrings
+    while (tabsset) {
+      FillLanguageTable(&lt[i]);
+
+      int lastcnt = cnt;
+      cnt = 0;
+      tabsset = 0;
+
+      if (h++ > 10) {
+        return PS_ERROR;
+      }
+
+      lang_strings = build_langstrings.sort_uindex(&l);
+
+      for (j = 0; j < l; j++) {
+        if (lang_strings[j].uindex >= 0) {
+          if (cnt >= lastcnt || !lst[lang_strings[j].uindex]) {
+            const char *str = lt[i].lang_strings->get(lang_strings[j].sn);
+            int tab = 0;
+
+            const char *lsn = build_langstrings.offset2name(lang_strings[j].name);
+
+            if (!str || !*str) {
+              if (lsn[0] != '^')
+                warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+            }
+            else {
+              char fn[1024];
+              sprintf(fn, "LangString %s", lsn);
+              curfilename = fn;
+              linecnt = lt[i].lang_id;
+
+              tab = add_string(str, lang_strings[j].process);
+              tabsset++;
+
+              curfilename = 0;
+            }
+
+            if (cnt < lastcnt)
+              lst[lang_strings[j].uindex] = tab;
+            else
+              ubuild_langtables.add(&tab, sizeof(int));
+          }
+
+          cnt++;
+        }
+      }
     }
-    if (counter) {
-      char *name=ubuild_userlangstrings.idx2name(i);
-      if (!name) continue;
-      warning("LangString \"%s\" is not present in all language tables!", name);
+
+    // optimize langstrings and check for recursion
+    TinyGrowBuf rec;
+    for (j = 0; j < ubuild_langstring_num; j++) {
+      while (lst[j] < 0) {
+        for (int k = 0; k < rec.getlen() / sizeof(int); k++) {
+          if (((int*)rec.get())[k] == lst[j]) {
+            const char *name = "(unnamed)";
+            for (k = 0; k < l; k++) {
+              if (lang_strings[k].uindex == j) {
+                name = build_langstrings.offset2name(lang_strings[k].name);
+              }
+            }
+            ERROR_MSG("Error: LangString %s is recursive!\n", name);
+            return PS_ERROR;
+          }
+        }
+        rec.add(&lst[j], sizeof(int));
+        lst[j] = lst[-lst[j] - 1];
+      }
+      rec.resize(0);
     }
   }
 
-  // Add string tables into their datablock
-  for (i = 0; i < st_num; i++) {
-    build_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
-    build_langtables.add(&string_tables[i]->dlg_offset, sizeof(int));
-    build_langtables.add(&string_tables[i]->common, sizeof(common_strings));
-    build_langtables.add(&string_tables[i]->installer, sizeof(installer_strings));
-    if (build_userlangstrings.getnum())
-      build_langtables.add(string_tables[i]->user_strings.get(), string_tables[i]->user_strings.getlen());
-  }
-  build_header.common.language_tables_num = st_num;
-  build_header.common.language_table_size = build_langtables.getlen() / st_num;
+  build_uninst.blocks[NB_LANGTABLES].num = num_lang_tables;
+  build_uninst.langtable_size = ubuild_langtables.getlen() / num_lang_tables;
 
-  for (i = 0; i < st_num; i++) {
-    ubuild_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
-    ubuild_langtables.add(&string_tables[i]->dlg_offset, sizeof(int));
-    ubuild_langtables.add(&string_tables[i]->ucommon, sizeof(common_strings));
-    ubuild_langtables.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
-    if (ubuild_userlangstrings.getnum())
-      ubuild_langtables.add(string_tables[i]->user_ustrings.get(), string_tables[i]->user_ustrings.getlen());
-  }
-  build_uninst.common.language_tables_num = st_num;
-  build_uninst.common.language_table_size = ubuild_langtables.getlen() / st_num;
+  set_uninstall_mode(0);
+#endif
+  
   SCRIPT_MSG("Done!\n");
 
   return PS_OK;
 }
 
-void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
-  if (!nlf) {
-    for (unsigned int i = 0; i < build_nlfs.size(); i++) {
-      if (build_nlfs[i]->m_wLangId == table->lang_id) {
-        nlf = table->nlf = build_nlfs[i];
-        break;
-      }
-    }
-  }
-
-#define str(id) (nlf?nlf->GetString(id):english_strings[id])
-
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  // if component page, do component strings:
-  if (table->installer.componenttext)
-  {
-    int x;
-    int iscp=0;
-    for (x = 0; x < build_header.num_sections&&!iscp; x ++)
-    {
-      section *sec = &((section*)build_sections.get())[x];
-      char c;
-      if (sec->name_ptr < 0) c = 'a';
-      else c=build_strlist.get()[sec->name_ptr];
-      if (c && c != '-' && !(sec->flags&SF_RO)) iscp++;
-    }
-    if (iscp || comppage_used)
-    {
-      if (!table->installer.custom) table->installer.custom=add_string_main(str(NLF_COMP_CUSTOM),0);
-      if (!table->common.subcaptions[1])
-        table->common.subcaptions[1]=add_string_main(str(NLF_SUBCAPTION_OPTIONS));
-
-      if (!table->installer.componentsubtext[2])
-      {
-        if (table->installer.componentsubtext[0])
-          table->installer.componentsubtext[2]=table->installer.componentsubtext[0];
-      }
-      if (!table->installer.componentsubtext[3])
-      {
-        if (table->installer.componentsubtext[1])
-          table->installer.componentsubtext[3]=table->installer.componentsubtext[1];
-        else
-          table->installer.componentsubtext[3]=add_string_main(str(NLF_COMP_SUBTEXT1_NO_INST_TYPES),0);
-      }
-      if (!table->installer.componentsubtext[0])
-        table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
-      if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM) && !table->installer.componentsubtext[1])
-        table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
-
-      if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM))
-        build_header.install_types[NSIS_MAX_INST_TYPES] = LANG_COMP_CUSTOM;
-    }
-    else table->installer.componenttext=0;
-  }
-#endif
-
-  static bool nameWarned = false;
-  if (!table->common.name)
-  {
-    if (!nameWarned) {
-      warning("Name command not specified. Assuming default.");
-      nameWarned = true;
-    }
-    table->common.name=add_string_main(str(NLF_DEF_NAME),0);
-    table->ucommon.name=add_string_uninst(str(NLF_DEF_NAME),0);
-  }
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  table->common.byte=add_string_main(str(NLF_BYTE),0);
-  table->common.kilo=add_string_main(str(NLF_KILO),0);
-  table->common.mega=add_string_main(str(NLF_MEGA),0);
-  table->common.giga=add_string_main(str(NLF_GIGA),0);
-
-  /* not yet needed
-  
-  table->ucommon.byte=add_string_uninst(str(NLF_BYTE));
-  table->ucommon.kilo=add_string_uninst(str(NLF_KILO));
-  table->ucommon.mega=add_string_uninst(str(NLF_MEGA));
-  table->ucommon.giga=add_string_uninst(str(NLF_GIGA));*/
-
-#ifdef NSIS_CONFIG_LOG
-  table->common.log_install_process=add_string_main(str(NLF_LOG_INSTALL_PROCESS));
-  table->ucommon.log_install_process=add_string_uninst(str(NLF_LOG_INSTALL_PROCESS));
-#endif
-
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  if (!table->installer.licensedata || !table->installer.licensetext)
-  {
-    table->installer.licensedata=0;
-    table->installer.licensetext=0;
-    table->installer.licensebuttonagree=0;
-    table->installer.licensebuttondisagree=0;
-  }
-
-  if (table->installer.licensedata)
-  {
-    if (!table->common.subcaptions[0])
-      table->common.subcaptions[0]=add_string_main(str(NLF_SUBCAPTION_LICENSE));
-    if (!table->installer.licensebutton)
-      table->installer.licensebutton=add_string_main(str(NLF_BTN_LICENSE),0);
-    if (build_header.common.flags&CH_FLAGS_LICENSE_FORCE_SELECTION) {
-      if (!table->installer.licensebuttonagree)
-        table->installer.licensebuttonagree=add_string_main(str(NLF_BTN_LICENSE_AGREE),0);
-      if (!table->installer.licensebuttondisagree && license_force_radio_used)
-        table->installer.licensebuttondisagree=add_string_main(str(NLF_BTN_LICENSE_DISAGREE),0);
-    }
-  }
-#endif //NSIS_CONFIG_LICENSEPAGE
-
-  if (table->installer.text)
-  {
-    if (!table->installer.dirsubtext)
-    {
-      char buf[2048];
-      wsprintf(buf,str(NLF_DIR_SUBTEXT),build_strlist.get()+table->common.name);
-      table->installer.dirsubtext=add_string_main(buf,0);
-    }
-    if (!table->common.subcaptions[2])
-      table->common.subcaptions[2]=add_string_main(str(NLF_SUBCAPTION_DIR));
-    if (!table->installer.browse) table->installer.browse=add_string_main(str(NLF_BTN_BROWSE),0);
-    if (!table->installer.spaceavailable && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_AVAIL),0);
-  }
-
-  if (table->installer.text
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-    || table->installer.componenttext
-#endif
-    )
-  {
-    if (!table->installer.spacerequired && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
-  }
-  if (next_used)
-  {
-    if (!table->common.nextbutton) table->common.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
-  }
-  if (install_used)
-  {
-    if (!table->installer.installbutton) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
-  }
-
-  if (!table->common.subcaptions[3])
-    table->common.subcaptions[3]=add_string_main(str(NLF_SUBCAPTION_INSTFILES));
-  if (!table->common.subcaptions[4])
-    table->common.subcaptions[4]=add_string_main(str(NLF_SUBCAPTION_COMPLETED));
-
-  if (!table->common.branding)
-  {
-    char buf[256];
-    wsprintf(buf,str(NLF_BRANDING),NSIS_VERSION);
-    table->common.branding=add_string_main(buf,0);
-  }
-  if (!table->common.backbutton) table->common.backbutton=add_string_main(str(NLF_BTN_BACK),0);
-  if (!table->common.cancelbutton) table->common.cancelbutton=add_string_main(str(NLF_BTN_CANCEL),0);
-  if (!table->common.showdetailsbutton) table->common.showdetailsbutton=add_string_main(str(NLF_BTN_DETAILS),0);
-
-  if (!table->common.closebutton) table->common.closebutton=add_string_main(str(NLF_BTN_CLOSE),0);
-  if (!table->common.completed) table->common.completed=add_string_main(str(NLF_COMPLETED),0);
-#endif
-
-#ifdef NSIS_SUPPORT_FILE
-  if (m_inst_fileused)
-  {
-    if (!table->common.fileerrtext)
-    {
-      table->common.fileerrtext=add_string_main(str(NLF_FILE_ERROR));
-    }
-    if (!table->common.fileerrtext_noignore)
-    {
-      table->common.fileerrtext_noignore=add_string_main(str(NLF_FILE_ERROR_NOIGNORE));
-    }
-  }
-#endif
-
+void CEXEBuild::FillLanguageTable(LanguageTable *table) {
+  for (int i = 0; i < NLF_STRINGS; i++) {
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  if (ubuild_entries.getlen())
-  {
-    if (uninstaller_writes_used) {
-      if (!table->uninstall.uninstalltext2)
-        table->uninstall.uninstalltext2=add_string_uninst(str(NLF_UNINST_SUBTEXT),0);
-      if (!table->ucommon.caption)
-      {
-        char buf[1024];
-        wsprintf(buf,str(NLF_UCAPTION),ubuild_strlist.get()+table->ucommon.name);
-        table->ucommon.caption=add_string_uninst(buf);
+    if (!NLFRefs[i].iUnRef && !NLFRefs[i].iRef)
+      continue;
+#else
+    if (!NLFRefs[i].iRef)
+      continue;
+#endif
+
+    int sn, index;
+    int pos = build_langstrings.get(NLFStrings[i].szLangStringName, &sn, &index);
+    if (pos >= 0) {
+      const char *str = table->lang_strings->get(sn);
+      if (!str || !*str) {
+        const char *us = UserInnerStrings.get(i);
+        if (us && *us) {
+          table->lang_strings->set(sn, (char *) us);
+        }
+        else {
+          char *dstr = table->nlf.m_szStrings[i] ? table->nlf.m_szStrings[i] : NLFStrings[i].szDefault;
+          if (i == NLF_BRANDING) {
+            char temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)];
+            sprintf(temp, dstr, NSIS_VERSION);
+            table->lang_strings->set(sn, temp);
+            continue;
+          }
+          table->lang_strings->set(sn, dstr);
+        }
       }
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-      if (!table->ucommon.subcaptions[0])
-        table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
-      if (!table->ucommon.subcaptions[1])
-        table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
-      if (!table->ucommon.subcaptions[2])
-        table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
-      table->ucommon.branding=add_string_uninst(build_strlist.get() + table->common.branding,0);
-      table->ucommon.backbutton=add_string_uninst(build_strlist.get() + table->common.backbutton,0);
-      table->ucommon.nextbutton=add_string_uninst(build_strlist.get() + table->common.nextbutton,0);
-      table->ucommon.cancelbutton=add_string_uninst(build_strlist.get() + table->common.cancelbutton,0);
-      table->ucommon.showdetailsbutton=add_string_uninst(build_strlist.get() + table->common.showdetailsbutton,0);
-      table->ucommon.closebutton=add_string_uninst(build_strlist.get() + table->common.closebutton,0);
-      table->ucommon.completed=add_string_uninst(build_strlist.get() + table->common.completed,0);
-#endif
-
-      if (!table->uninstall.uninstbutton) table->uninstall.uninstbutton=add_string_uninst(str(NLF_BTN_UNINSTALL),0);
     }
   }
-
-#ifdef NSIS_SUPPORT_FILE
-  if (m_uninst_fileused)
-  {
-    if (!table->ucommon.fileerrtext)
-    {
-      table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext);
-    }
-    if (!table->ucommon.fileerrtext_noignore)
-    {
-      table->ucommon.fileerrtext_noignore=add_string_uninst(build_strlist.get() + table->common.fileerrtext_noignore);
-    }
-  }
-#endif
-
-#endif
-
-  if (!table->common.caption)
-  {
-    char buf[1024];
-    wsprintf(buf,str(NLF_CAPTION),build_strlist.get()+table->common.name);
-    table->common.caption=add_string_main(buf);
-  }
-
-#define SET_INSTRUCTION(id,s) table->common.s=add_string_main(str(id),0);table->ucommon.s=add_string_uninst(str(id),0)
-
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  #if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)
-    SET_INSTRUCTION(NLF_CANT_WRITE, cant_write);
-  #endif
-  #ifdef NSIS_SUPPORT_RMDIR
-    SET_INSTRUCTION(NLF_REMOVE_DIR, remove_dir);
-  #endif
-  #ifdef NSIS_SUPPORT_COPYFILES
-    SET_INSTRUCTION(NLF_COPY_FAILED, copy_failed);
-    SET_INSTRUCTION(NLF_COPY_TO, copy_to);
-  #endif
-  #ifdef NSIS_SUPPORT_ACTIVEXREG
-    if (register_used)
-    {
-      SET_INSTRUCTION(NLF_REGISTERING, registering);
-    }
-    if (unregister_used)
-    {
-      SET_INSTRUCTION(NLF_UNREGISTERING, unregistering);
-    }
-    SET_INSTRUCTION(NLF_SYMBOL_NOT_FOUND, symbol_not_found);
-    SET_INSTRUCTION(NLF_COULD_NOT_LOAD, could_not_load);
-    SET_INSTRUCTION(NLF_NO_OLE, no_ole);
-    // not used anywhere - SET_INSTRUCTION(NLF_ERR_REG_DLL, err_reg_dll);
-  #endif
-  #ifdef NSIS_SUPPORT_CREATESHORTCUT
-    SET_INSTRUCTION(NLF_CREATE_SHORTCUT, create_shortcut);
-    SET_INSTRUCTION(NLF_ERR_CREATING_SHORTCUT, err_creating_shortcut);
-  #endif
-  #ifdef NSIS_SUPPORT_DELETE
-    SET_INSTRUCTION(NLF_DEL_FILE, del_file);
-    #ifdef NSIS_SUPPORT_MOVEONREBOOT
-      SET_INSTRUCTION(NLF_DEL_ON_REBOOT, del_on_reboot);
-    #endif
-  #endif
-  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    SET_INSTRUCTION(NLF_CREATED_UNINST, created_uninst);
-    SET_INSTRUCTION(NLF_ERR_CREATING, err_creating);
-  #endif
-  #ifdef NSIS_SUPPORT_SHELLEXECUTE
-    SET_INSTRUCTION(NLF_EXEC_SHELL, exec_shell);
-  #endif
-  #ifdef NSIS_SUPPORT_EXECUTE
-    SET_INSTRUCTION(NLF_EXEC, exec);
-  #endif
-  #ifdef NSIS_SUPPORT_MOVEONREBOOT
-    SET_INSTRUCTION(NLF_RENAME_ON_REBOOT, rename_on_reboot);
-  #endif
-  #ifdef NSIS_SUPPORT_RENAME
-    SET_INSTRUCTION(NLF_RENAME, rename);
-  #endif
-
-  #ifdef NSIS_SUPPORT_FILE
-    SET_INSTRUCTION(NLF_EXTRACT, extract);
-    SET_INSTRUCTION(NLF_SKIPPED, skipped);
-  #endif
-  SET_INSTRUCTION(NLF_OUTPUT_DIR, output_dir);
-  SET_INSTRUCTION(NLF_CREATE_DIR, create_dir);
-  SET_INSTRUCTION(NLF_COPY_DETAILS, copy_details);
-#endif//NSIS_CONFIG_VISIBLE_SUPPORT
-
-  #ifdef NSIS_SUPPORT_FILE
-    SET_INSTRUCTION(NLF_ERR_WRITING, err_writing);
-    SET_INSTRUCTION(NLF_ERR_DECOMPRESSING, err_decompressing);
-  #endif
-  SET_INSTRUCTION(NLF_INST_CORRUPTED, inst_corrupted);
-}
-
-bool CEXEBuild::_IsNotSet(int *str) {
-  if (!str) return true;
-  for (unsigned int i = 0; i < string_tables.size(); i++) {
-    if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))) {
-      return false;
-    }
-  }
-  return true;
 }
 
 char SkipComments(FILE *f) {
@@ -709,9 +583,46 @@ char SkipComments(FILE *f) {
 }
 
 // NSIS Language File parser
-NLF::NLF(char *filename) {
+LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   FILE *f = fopen(filename, "r");
-  if (!f) throw runtime_error("Can't open language file!");
+  if (!f) {
+    ERROR_MSG("Error: Can't open language file!\n");
+    return 0;
+  }
+
+  // Check header
+  char buf[NSIS_MAX_STRLEN];
+  buf[0] = SkipComments(f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
+
+  if (strncmp(buf, "NLF v", 5)) {
+    ERROR_MSG("Error: Invalid language file.\n");
+    return 0;
+  }
+  int nlf_version = atoi(buf+5);
+  if (nlf_version != NLF_VERSION) {
+    if (nlf_version != 2 && nlf_version != 3 && nlf_version != 4 && nlf_version != 5) {
+      ERROR_MSG("Error: Language file version doesn't match NSIS version.\n");
+      return 0;
+    }
+  }
+
+  // Get language ID
+  buf[0] = SkipComments(f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
+  LANGID lang_id = atoi(buf);
+
+  // Get appropriate table
+  LanguageTable *table = GetLangTable(lang_id);
+  if (!table)
+    return 0;
+
+  NLF *nlf = &table->nlf;
+
+  if (nlf->m_bLoaded) {
+    ERROR_MSG("Error: can't load same language file twice.\n");
+    return 0;
+  }
 
   // Generate language name
   char *p, *p2, t;
@@ -726,113 +637,141 @@ NLF::NLF(char *filename) {
   if (p2)
   {
     p2++;
-    m_szName = new char[strlen(p2)+1];
-    strcpy(m_szName, p2);
+    nlf->m_szName = (char*)malloc(strlen(p2)+1);
+    strcpy(nlf->m_szName, p2);
   }
   else
   {
-    m_szName = new char[strlen(filename)+1];
-    strcpy(m_szName, filename);
+    nlf->m_szName = (char*)malloc(strlen(filename)+1);
+    strcpy(nlf->m_szName, filename);
   }
   if (p) *p = t;
 
-  // Check header
-  char buf[1024];
-  buf[0] = SkipComments(f);
-  fgets(buf+1, 1024, f);
-
-  if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
-  int nlf_version = atoi(buf+5);
-  if (nlf_version != NLF_VERSION) {
-    if (nlf_version != 2 && nlf_version != 3 && nlf_version != 4)
-      throw runtime_error("Language file version doesn't match NSIS version!");
+  if (nlf_version != NLF_VERSION)
+  {
+    warning_fl("%s language file version doesn't match. Using default English texts for missing strings.", nlf->m_szName);
   }
-
-  // Get language ID
-  buf[0] = SkipComments(f);
-  fgets(buf+1, 1024, f);
-  m_wLangId = atoi(buf);
 
   int temp;
 
   // Get font
-  m_szFont = NULL;
-  m_iFontSize = 0;
+  nlf->m_szFont = NULL;
+  nlf->m_iFontSize = 0;
 
   buf[0] = SkipComments(f);
-  fgets(buf+1, 1024, f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
   temp=strlen(buf);
   while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
     buf[temp-1] = 0;
     temp--;
   }
   if (buf[0] != '-' && buf [1] != 0) {
-    m_szFont = new char[strlen(buf) + 1];
-    strcpy(m_szFont, buf);
+    nlf->m_szFont = (char*)malloc(strlen(buf)+1);;
+    strcpy(nlf->m_szFont, buf);
   }
 
   buf[0] = SkipComments(f);
-  fgets(buf+1, 1024, f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
   if (buf[0] != '-' && buf [1] != 0) {
-    m_iFontSize = atoi(buf);
+    nlf->m_iFontSize = atoi(buf);
   }
 
   // Get code page
-  m_uCodePage = CP_ACP;
+  nlf->m_uCodePage = CP_ACP;
   buf[0] = SkipComments(f);
-  fgets(buf+1, 1024, f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
   if (buf[0] != '-' && buf [1] != 0) {
-    m_uCodePage = atoi(buf);
-    if (!IsValidCodePage(m_uCodePage))
-      m_uCodePage = CP_ACP;
+    nlf->m_uCodePage = atoi(buf);
+    if (!IsValidCodePage(nlf->m_uCodePage))
+      nlf->m_uCodePage = CP_ACP;
+  }
+
+  // Get RTL setting
+  nlf->m_szStrings[NLF_RTL] = (char *)malloc(2);
+  nlf->m_bRTL = false;
+  buf[0] = SkipComments(f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
+  if (buf[0] == 'R' && buf[1] == 'T' && buf[2] == 'L' && (!buf[3] || buf[3] == '\r' || buf[3] == '\n')) {
+    nlf->m_bRTL = true;
+    strcpy(nlf->m_szStrings[NLF_RTL], "1");
+  }
+  else {
+    strcpy(nlf->m_szStrings[NLF_RTL], "0");
   }
 
   // Read strings
-  for (int i = 0; i < NLF_STRINGS; i++) {
-    if (nlf_version < 3 && (i == NLF_BTN_LICENSE_AGREE || i == NLF_BTN_LICENSE_DISAGREE)) {
-      m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
-      strcpy(m_szStrings[i], english_strings[i]);
+  for (int i = 0; i < NLF_STRINGS - 1; i++) {
+
+    // skip virtual strings
+    if (!NLFStrings[i].szDefault)
       continue;
-    }
-
-    if (nlf_version < 4) {
-      switch (i) {
-        case NLF_LOG_INSTALL_PROCESS:
-        case NLF_BYTE:
-        case NLF_KILO:
-        case NLF_MEGA:
-        case NLF_GIGA:
-        case NLF_REGISTERING:
-        case NLF_UNREGISTERING:
-          m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
-          strcpy(m_szStrings[i], english_strings[i]);
-          continue;
-          break;
-      }
-    }
-
-    if (nlf_version < 5) {
-      if (i == NLF_FILE_ERROR_NOIGNORE) {
-        m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
-        strcpy(m_szStrings[i], english_strings[i]);
+    
+    // Fill in for missing strings
+    // 0 will mean default will be used from NLFStrings
+    switch (i) {
+      case NLF_BTN_LICENSE_AGREE:
+      case NLF_BTN_LICENSE_DISAGREE:
+        if (nlf_version >= 3) break;
+      case NLF_LOG_INSTALL_PROCESS:
+      case NLF_BYTE:
+      case NLF_KILO:
+      case NLF_MEGA:
+      case NLF_GIGA:
+      case NLF_REGISTERING:
+      case NLF_UNREGISTERING:
+        if (nlf_version >= 4) break;
+      case NLF_FILE_ERROR_NOIGNORE:
+        if (nlf_version >= 5) break;
+      case NLF_USUBCAPTION_OPTIONS:
+      case NLF_USUBCAPTION_DIR:
+      case NLF_CLICK_NEXT:
+      case NLF_CLICK_INSTALL:
+      case NLF_CLICK_UNINSTALL:
+      case NLF_LICENSE_TEXT:
+      case NLF_LICENSE_TEXT_FSCB:
+      case NLF_LICENSE_TEXT_FSRB:
+      case NLF_ULICENSE_TEXT:
+      case NLF_ULICENSE_TEXT_FSCB:
+      case NLF_ULICENSE_TEXT_FSRB:
+      case NLF_COMP_TEXT:
+      case NLF_UCOMP_TEXT:
+      case NLF_UCOMP_SUBTEXT1:
+      case NLF_UCOMP_SUBTEXT1_NO_INST_TYPES:
+      case NLF_UCOMP_SUBTEXT2:
+      case NLF_DIR_TEXT:
+      case NLF_DIR_BROWSETEXT:
+      case NLF_UDIR_TEXT:
+      case NLF_UDIR_SUBTEXT:
+      case NLF_UDIR_BROWSETEXT:
+      case NLF_UNINST_TEXT:
+        if (nlf_version >= 6) break;
+        nlf->m_szStrings[i] = 0;
         continue;
-      }
     }
 
     buf[0] = SkipComments(f);
 
     fgets(buf+1, NSIS_MAX_STRLEN, f);
     if (strlen(buf) == NSIS_MAX_STRLEN-1) {
-      wsprintf(buf, "String too long (string #%d)!", i);
-      throw runtime_error(buf);
+      ERROR_MSG("Error: String too long (string #%d - \"%s\")", i, NLFStrings[i].szLangStringName);
+      return 0;
     }
     temp=strlen(buf);
+
     while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
-      buf[temp-1] = 0;
-      temp--;
+      buf[--temp] = 0;
     }
-    m_szStrings[i] = new char[strlen(buf)+1];
-    for (char *out = m_szStrings[i], *in = buf; *in; in++, out++) {
+
+    char *in = buf;
+
+    // trim quotes
+    if (buf[0] == '"' && buf[temp-1] == '"') {
+      in++;
+      buf[--temp] = 0;
+    }
+
+    nlf->m_szStrings[i] = (char*)malloc(temp+1);
+    for (char *out = nlf->m_szStrings[i]; *in; in++, out++) {
       if (*in == '\\') {
         in++;
         switch (*in) {
@@ -855,17 +794,17 @@ NLF::NLF(char *filename) {
     *out = 0;
   }
   fclose(f);
+
+  nlf->m_bLoaded = true;
+
+  return table;
 }
 
-NLF::~NLF() {
-  delete [] m_szName;
-  delete [] m_szFont;
+void CEXEBuild::DeleteLangTable(LanguageTable *table) {
+  free(table->nlf.m_szName);
+  free(table->nlf.m_szFont);
+  free(table->lang_strings);
   for (int i = 0; i < NLF_STRINGS; i++) {
-    delete [] m_szStrings[i];
+    free(table->nlf.m_szStrings[i]);
   }
-}
-
-char* NLF::GetString(int idx) {
-  if (idx < 0 || idx >= NLF_STRINGS) return 0;
-  return m_szStrings[idx];
 }

@@ -18,6 +18,7 @@
 #define PT_NOTHING      0
 #define PT_PROC         1
 #define PT_STRUCT       2
+#define PT_VTABLEPROC   3
 
 // Proc results:
 #define PR_OK           0
@@ -29,8 +30,9 @@
 #define PAT_INT		    1
 #define	PAT_LONG		2
 #define PAT_STRING	    3
-#define PAT_BOOLEAN	    4
-#define PAT_CALLBACK    5
+#define PAT_WSTRING	    4
+#define PAT_GUID	    5
+#define PAT_CALLBACK    6
 
 // Input/Output Source/Destination
 #define	IOT_NONE    0
@@ -58,6 +60,7 @@ typedef struct
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
     int Input;
 	int Output;
+    HGLOBAL allocatedBlock; // block allocated for passing string, wstring or guid param
 } ProcParameter;
 
 // Our single proc (Since the user will free proc with GlobalFree, 

@@ -8,10 +8,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Janez Dolinar
 Nullsoft Install System %s
-%s Namestitev
-%s Odstranitev
+$(^Name) Namestitev
+$(^Name) Odstranitev
 : Licenèna pogodba
 : Možnosti namestitve
 : Mapa namestitve
@@ -37,7 +39,7 @@ Po meri
 Izberite tip namestitve: 
 Izberite bloke namestitve: 
 Ali si izberite bloke namestitve, ki jih želite: 
-Izberi mapo za namestitev %s: 
+Izberi mapo za namestitev $(^Name): 
 Prosto: 
 Zahtevano: 
 Odstranjujem iz: 

@@ -7,11 +7,13 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Soft-Trans Bt. (V2)
 # Translation by Orfanik Kft.   (V3-V5)
 Nullsoft Telepítõrendszer %s
-%s Telepítõ
-%s Eltávolító
+$(^Name) Telepítõ
+$(^Name) Eltávolító
 : Licencszerzõdés
 : Telepítési lehetõségek
 : Célmappa
@@ -37,7 +39,7 @@ Egyéni
 Válassza ki a telepítés típusát:
 Válassza ki a telepítendõ összetevõket:
 vagy, jelölje ki a választható összetevõk közül a telepíteni kívánta(ka)t:
-Melyik mappába telepíti a(z) %s fájlt:
+Melyik mappába telepíti a(z) $(^Name) fájlt:
 Szabad terület: 
 Helyigény: 
 Eltávolítás helye:

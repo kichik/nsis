@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis.
 Nullsoft Install System %s
-Installation de %s
-Désinstallation de %s
+Installation de $(^Name)
+Désinstallation de $(^Name)
  : Licence
  : Options d'installation
  : Dossier d'installation
@@ -36,7 +38,7 @@ Personnalisée
 Sélectionnez le type d'installation :
 Sélectionnez les composants à installer :
 Ou, sélectionnez les composants optionnels que vous voulez installer :
-Sélectionnez le dossier d'installation de %s :
+Sélectionnez le dossier d'installation de $(^Name) :
 Espace disponible : 
 Espace requis : 
 Désinstallation de :
