@@ -12,8 +12,6 @@ NSIS
 
 * all installer strings should be language strings
 
-* make temp (for compress whole) creation better (and verify it exists)
-
 * move no custom to compiler (custom as just another inst type)
 
 * empty subsections should not show

@@ -118,7 +118,6 @@ void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
 #endif
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-  update_status_text_from_lang(LANG_REMOVEDIR,buf);
 }
 #endif//NSIS_SUPPORT_RMDIR
 
@@ -224,6 +223,20 @@ void * NSISCALL mini_memcpy(void *out, const void *in, int len)
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
 {
   return CreateFile(fn,da,FILE_SHARE_READ,NULL,cd,0,NULL);
+}
+
+char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
+{
+  int n = 100;
+  while (n--)
+  {
+    char prefix[4] = "nsa";
+    prefix[2] = 'a' + (char)(GetTickCount() % 26);
+    if (GetTempFileName(dir, prefix, 0, buf))
+      return buf;
+  }
+  *buf = 0;
+  return 0;
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT

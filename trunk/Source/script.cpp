@@ -3914,6 +3914,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETTEMPFILENAME:
       ent.which=EW_GETTEMPFILENAME;
       ent.offsets[0]=GetUserVarIndex(line, 1);
+      if (line.getnumtokens() == 3)
+        ent.offsets[1]=add_string(line.gettoken_str(2));
+      else
+        ent.offsets[1]=add_string("$TEMP");
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG("GetTempFileName -> %s\n",line.gettoken_str(1));
     return add_entry(&ent);

@@ -36,73 +36,218 @@ HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
 static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 #endif//NSIS_COMPRESS_WHOLE
 
-int inst_flags;
+static int m_length;
+static int m_pos;
 
-int NSISCALL isheader(firstheader *h)
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+#if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
+BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  if ((h->flags & (~FH_FLAGS_MASK)) ||
-      h->siginfo != FH_SIG ||
-      h->nsinst[2] != FH_INT3 ||
-      h->nsinst[1] != FH_INT2 ||
-      h->nsinst[0] != FH_INT1) return 0;
-  return h->length_of_all_following_data;
-}
+  static char *msg;
+  if (uMsg == WM_INITDIALOG)
+  {
+    SetTimer(hwndDlg,1,250,NULL);
+    msg = (char*)lParam;
+    uMsg = WM_TIMER;
+  }
+  if (uMsg == WM_TIMER)
+  {
+    static char bt[64];
+    wsprintf(bt,msg,MulDiv(m_pos,100,m_length));
 
+    my_SetWindowText(hwndDlg,bt);
+    my_SetDialogItemText(hwndDlg,IDC_STR,bt);
+  }
+  return 0;
+}
+#endif//NSIS_CONFIG_CRC_SUPPORT || NSIS_COMPRESS_WHOLE
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
+
+int inst_flags;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 static z_stream g_inflate_stream;
 #endif
 
-const char * NSISCALL loadHeaders(void)
+extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
+
+const char * NSISCALL loadHeaders(int cl_flags)
 {
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  HWND hwnd = 0;
+  unsigned int verify_time = GetTickCount() + 1000;
+#endif
+  int crc = 0;
+  int do_crc = 0;
+#endif//NSIS_CONFIG_CRC_SUPPORT
+  int left;
+
   void *data;
   firstheader h;
 
-  if (!ReadSelfFile((LPVOID)&h,sizeof(h)) || !isheader(&h)) return _LANG_INVALIDCRC;
+  GetModuleFileName(g_hInstance, state_exe_directory, NSIS_MAX_STRLEN);
 
-  data=(void*)my_GlobalAlloc(h.length_of_header);
+  g_db_hFile = myOpenFile(state_exe_directory, GENERIC_READ, OPEN_EXISTING);
+  if (g_db_hFile == INVALID_HANDLE_VALUE)
+  {
+    return _LANG_CANTOPENSELF;
+  }
 
-#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  //inflateInit(&g_inflate_stream);
+  // make state_exe_directory point to dir, not full exe.
 
-#ifdef NSIS_COMPRESS_WHOLE
+  trimslashtoend(state_exe_directory);
+
+  left = m_length = GetFileSize(g_db_hFile,NULL);
+  while (left > 0)
+  {
+    static char temp[512];
+    DWORD l = left;
+    l = min(l, 512);
+    if (!ReadSelfFile(temp, l))
+    {
+#if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
+      if (hwnd) DestroyWindow(hwnd);
+#endif//NSIS_CONFIG_CRC_SUPPORT
+      return "can't read self";
+    }
+
+    if (!g_filehdrsize)
+    {
+      mini_memcpy(&h, temp, sizeof(firstheader));
+      if (
+           (h.flags & (~FH_FLAGS_MASK)) == 0 &&
+           h.siginfo == FH_SIG &&
+           h.nsinst[2] == FH_INT3 &&
+           h.nsinst[1] == FH_INT2 &&
+           h.nsinst[0] == FH_INT1
+         )
+      {
+        if (h.length_of_all_following_data > left)
+          return "not enough data";
+
+        g_filehdrsize = m_pos;
+
+#if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
+        cl_flags |= h.flags & FH_FLAGS_SILENT;
+#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
+
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+        if ((h.flags & FH_FLAGS_FORCE_CRC) == 0)
+        {
+          if ((cl_flags & FH_FLAGS_NO_CRC) | (h.flags & FH_FLAGS_NO_CRC))
+            break;
+        }
+
+        do_crc++;
+
+#ifndef NSIS_CONFIG_CRC_ANAL
+        left = h.length_of_all_following_data - 4;
+        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.
+#else //!NSIS_CONFIG_CRC_ANAL
+        left -= 4;
+#endif//NSIS_CONFIG_CRC_ANAL
+        // this is in case the end part is < 512 bytes.
+        if (l > (DWORD)left) l=(DWORD)left;
+
+#else//!NSIS_CONFIG_CRC_SUPPORT
+        // no crc support, no need to keep on reading
+        break;
+#endif//!NSIS_CONFIG_CRC_SUPPORT
+      }
+    }
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    else if (cl_flags & FH_FLAGS_SILENT == 0)
+#endif//NSIS_CONFIG_SILENT_SUPPORT
+    {
+      if (hwnd)
+      {
+        MSG msg;
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) DispatchMessage(&msg);
+      }
+      else if (GetTickCount() > verify_time)
+        hwnd = CreateDialogParam(
+          g_hInstance,
+          MAKEINTRESOURCE(IDD_VERIFY),
+          0,
+          verProc,
+          (LPARAM)_LANG_VERIFYINGINST
+        );
+    }
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
+
+#ifndef NSIS_CONFIG_CRC_ANAL
+    if (left < m_length)
+#endif//NSIS_CONFIG_CRC_ANAL
+      crc = CRC32(crc, temp, l);
+
+#endif//NSIS_CONFIG_CRC_SUPPORT
+    m_pos += l;
+    left -= l;
+  }
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+  if (hwnd) DestroyWindow(hwnd);
+#endif//NSIS_CONFIG_CRC_SUPPORT
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
+  if (!g_filehdrsize) return "couldn't find header";
+
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+  if (do_crc)
+  {
+    int fcrc;
+    if (!ReadSelfFile(&fcrc, sizeof(int)) || crc != fcrc)
+      return "bad crc";
+  }
+#endif//NSIS_CONFIG_CRC_SUPPORT
+
+  data = (void *)my_GlobalAlloc(h.length_of_header);
+
+#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(NSIS_COMPRESS_WHOLE)
   inflateReset(&g_inflate_stream);
 
   {
     char fno[MAX_PATH];
-    GetTempFileName(state_temp_dir,"nst",0,fno);
+    my_GetTempFileName(fno, state_temp_dir);
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE)
-    {
       return _LANG_ERRORWRITINGTEMP;
-    }
   }
-  dbd_srcpos=SetSelfFilePointer(0,FILE_CURRENT);
-  dbd_fulllen=dbd_srcpos-sizeof(h)+h.length_of_all_following_data-((h.flags&FH_FLAGS_CRC)?4:0);
-#endif
+  dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader), FILE_BEGIN);
+  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((cl_flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
+#else
+  SetSelfFilePointer(g_filehdrsize + sizeof(firstheader), FILE_BEGIN);
 #endif
 
-  if (GetCompressedDataFromDataBlockToMemory(-1,data,h.length_of_header) != h.length_of_header)
+  if ((crc = GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header)) != h.length_of_header)
   {
     GlobalFree((HGLOBAL)data);
-    return _LANG_INVALIDCRC;
+    wsprintf(g_caption, "can't read headers %d", crc);
+    return g_caption;
   }
 
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
-  g_db_offset=SetSelfFilePointer(0,FILE_CURRENT);
+  g_db_offset = SetSelfFilePointer(0,FILE_CURRENT);
 #else
-  g_db_offset=dbd_pos;
+  g_db_offset = dbd_pos;
 #endif
 
-  g_inst_combinedheader=data;
+  g_inst_combinedheader = data;
 
-  inst_flags=((common_header *)data)->flags;
+  inst_flags = g_inst_cmnheader->flags;
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+  if (cl_flags & FH_FLAGS_SILENT) inst_flags |= CH_FLAGS_SILENT;
+#endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  if (h.flags&FH_FLAGS_UNINSTALL)
+  if (h.flags & FH_FLAGS_UNINSTALL)
   {
     g_is_uninstaller++;
-    g_inst_page=(page *) (g_inst_uninstheader + 1);
+    g_inst_page = (page *) (g_inst_uninstheader + 1);
   }
   else
 #endif
@@ -111,7 +256,7 @@ const char * NSISCALL loadHeaders(void)
     num_sections=g_inst_header->num_sections;
     g_inst_page=(page *) (g_inst_section + num_sections);
   }
-  g_inst_entry=(entry *) (g_inst_page + g_inst_cmnheader->num_pages);
+  g_inst_entry = (entry *) (g_inst_page + g_inst_cmnheader->num_pages);
   g_db_strtab = (char *) (g_inst_entry + g_inst_cmnheader->num_entries);
   return 0;
 }
@@ -267,8 +412,8 @@ static int NSISCALL __ensuredata(int amount)
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }
-            else if (GetWindowLong(g_hwnd,DWL_DLGPROC) != (long)DialogProc && GetTickCount() > verify_time)
-              hwnd=CreateDialogParam(
+            else if (g_hwnd && GetTickCount() > verify_time)
+              hwnd = CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
                 0,

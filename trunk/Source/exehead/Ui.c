@@ -417,6 +417,7 @@ nextPage:
     if (g_quit_flag || m_page < 0 || m_page == g_inst_cmnheader->num_pages)
     {
       DestroyWindow(m_curwnd);
+      g_hwnd = 0;
       EndDialog(hwndDlg,m_retcode);
     }
     else
