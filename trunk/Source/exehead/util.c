@@ -328,21 +328,25 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
 
 char g_all_user_var_flag;
 
-static void NSISCALL queryShellFolders(const char *name, char *out)
+static void NSISCALL queryShellFolders(const char *name_, char *out)
 {
-  char f=g_all_user_var_flag;
-again:
-
-  myRegGetStr(g_all_user_var_flag?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
-    "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-    name+(f?0:7),out);
-  if (!out[0])
+  static char name[20] = "Common ";
+  mystrcpy(name + 7, name_);
   {
-    if (f)
+    char f=g_all_user_var_flag;
+  again:
+
+    myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
+      "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+      name+(f?0:7),out);
+    if (!out[0])
     {
-      f=0; goto again;
+      if (f)
+      {
+        f=0; goto again;
+      }
+      GetTempPath(NSIS_MAX_STRLEN,out);
     }
-    GetTempPath(NSIS_MAX_STRLEN,out);
   }
 }
 
@@ -497,17 +501,17 @@ void NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 29: // STARTMENU
           {
             static const char *tab[]={
-              "Common Programs",
-              "Common Startup",
-              "Common Desktop",
-              "Common Start Menu"
+              "Programs",
+              "Startup",
+              "Desktop",
+              "Start Menu"
             };
             queryShellFolders(tab[nVarIdx-(VAR_CODES_START+26)], out);
           }
         break;
 
         case VAR_CODES_START + 30: // QUICKLAUNCH
-          queryShellFolders("Common AppData", out);
+          queryShellFolders("AppData", out);
           lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
           f = GetFileAttributes(out);
           if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
