@@ -69,13 +69,13 @@ System::Free $0
 <h4>Usage example</h4>
 <blockquote><pre>
 # allocate a buffer and put 'test string' and an int in it
-System::Call "*(&t1024 'test string', i 5) i .s"
+System::Call "*(&amp;t1024 'test string', i 5) i .s"
 Pop $0
 # copy to an automatically created buffer
 System::<b>Copy</b> 0 $0
 Pop $1
 # get string and int in $1 buffer
-System::Call "*$1(&t1024 .r2, i .r3)"
+System::Call "*$1(&amp;t1024 .r2, i .r3)"
 # free buffer
 System::Free $1
 # print result
@@ -86,7 +86,7 @@ System::Alloc 1028
 Pop $1
 System::<b>Copy</b> $1 $0
 # get string and int in $1 buffer
-System::Call "*$1(&t1024 .r2, i .r3)"
+System::Call "*$1(&amp;t1024 .r2, i .r3)"
 # free
 System::Free $0
 System::Free $1
@@ -351,25 +351,27 @@ DetailPrint $4
 <blockquote>
 <p>Callback functions are simply functions which are passed to a function and called back by it. They are frequently used to pass a possibly large set of data item by item. For example, <a href="http://msdn.microsoft.com/library/en-us/winui/WinUI/WindowsUserInterface/Windowing/Windows/WindowReference/WindowFunctions/EnumChildWindows.asp">EnumChildWindows</a> uses a <a href="http://msdn.microsoft.com/library/en-us/winui/WinUI/WindowsUserInterface/Windowing/Windows/WindowReference/WindowFunctions/EnumChildProc.asp">callback function</a>. As NSIS functions are not quite regular functions, the System plug-in provides its own mechanism to support callback functions. It allows you to create callback functions and notifies you each time a callback function was called.</p>
 
-<p>Creation of callback functions is done using <a href="#callfuncs">Get</a> and the callback creation syntax. As you will not call the callbacks yourself, the source of the parameters should be omitted using a dot. When the callback is called, the destination of the parameters will be filled with the values passed on to the callback. The value the callback will return is set by the source of the return "parameter". The destination of the return "parameter" should always be set as that's where System will notify you the callback was called.
-<blockquote><pre>System::Get "(i .r0, i .r1) iss"</pre></blockquote>
-</p>
+<p>Creation of callback functions is done using <a href="#callfuncs">Get</a> and the callback creation syntax. As you will not call the callbacks yourself, the source of the parameters should be omitted using a dot. When the callback is called, the destination of the parameters will be filled with the values passed on to the callback. The value the callback will return is set by the source of the return "parameter". The destination of the return "parameter" should always be set as that's where System will notify you the callback was called.</p>
 
-<p>To pass a callback to a function, use the k type.
+<blockquote><pre>System::Get "(i .r0, i .r1) iss"</pre></blockquote>
+
+<p>To pass a callback to a function, use the k type.</p>
+
 <blockquote><pre>System::Get "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"</pre></blockquote>
-</p>
 
-<p>Each time the callback is called, the string callback#, where # is the number of the callback, will be placed in the destination of the return "parameter". The number of the first callback created is 1, the second's is 2, the third's is 3 and so on. As System is single threaded, a callback can only be called while calling another function. For example, EnumChildWindows's callback can only be called when EnumChildWindows is being called. You should therefore check for callback# after each function call that might call your callback.
+<p>Each time the callback is called, the string callback#, where # is the number of the callback, will be placed in the destination of the return "parameter". The number of the first callback created is 1, the second's is 2, the third's is 3 and so on. As System is single threaded, a callback can only be called while calling another function. For example, EnumChildWindows's callback can only be called when EnumChildWindows is being called. You should therefore check for callback# after each function call that might call your callback.</p>
+
 <blockquote><pre>System::Call "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
 StrCmp $R0 "callback1" 0 +2
 DetailPrint "UseCallback passed ($0, $1) to the callback"
-</pre></blockquote></p>
+</pre></blockquote>
 
 <p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value.</p>
+
 <blockquote><pre>System::Call "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
@@ -383,8 +385,6 @@ done:
 </pre></blockquote>
 
 <p>A complete working <a href="#callback">example</a> is available in the usage examples section.</p>
-
-</p>
 
 </blockquote>
 
