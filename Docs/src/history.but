@@ -2,9 +2,9 @@
 
 \e{v2.0b0}
 
-\b Added accelerator keys
+\b New easier version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
 
-\b New version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
+\b Added accelerator keys
 
 \b Added LangString and LangStringUP for user defined multilingual strings
 
@@ -50,7 +50,7 @@
 
 \b Updated ZIP2EXE
 
-\b Updated NSIS-dl (timeout added)
+\b Updated HTTP download plugin, NSIS-dl (timeout added, better proxy detection)
 
 \b A lot of new language files
 
