@@ -501,9 +501,11 @@ void process_string(char *out, const char *in)
           wsprintf(out, "%u", cur_install_strings_table->lang_id);
           break;
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
         case VAR_CODES_START + 35: // PLUGINSDIR
           lstrcpy(out, plugins_temp_dir);
           break;
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
         #if VAR_CODES_START + 34 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
