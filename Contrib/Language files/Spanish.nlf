@@ -1,8 +1,9 @@
 # Header, don't edit
-NLF v1
+NLF v2
 # Language ID
 1034
 # Start editing here
+# Translation by LSMoNKi
 Nullsoft Install System %s
 Instalación de %s
 Desinstalación de %s
@@ -59,3 +60,4 @@ Eliminar directorio:
 Eliminar al reinicio: 
 Renombrar: 
 Saltado: 
+Copiar Detalles al Portapapeles
