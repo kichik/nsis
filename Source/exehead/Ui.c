@@ -65,6 +65,9 @@ static int num_sections;
 // sent to the last child window to tell it that the install thread is done
 #define WM_NOTIFY_INSTPROC_DONE (WM_USER+0x4)
 
+// sent to every child window to tell it it can start executing NSIS code
+#define WM_NOTIFY_START (WM_USER+0x5)
+
 // sent to the outer window to tell it to go to the next inner window
 #define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
 
@@ -581,6 +584,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
       gDontFookWithFocus = FALSE;
       m_curwnd=CreateDialog(g_hInstance,windows[g_page_offs+m_page].id,hwndDlg,windows[g_page_offs+m_page].proc);
+      my_MessageBox("after CreateDialog", MB_OK);
       if (m_curwnd)
       {
         RECT r;
@@ -588,12 +592,9 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        {
-          MSG msg;
-          while (PeekMessage(&msg,m_curwnd,0,0,PM_NOREMOVE)) Sleep(100);
-          ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
-        }
+        ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
+        SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
         ShowWindow(m_curwnd,SW_SHOWNA);
       }
 
@@ -782,7 +783,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_DIR_TEXT);
     SetDlgItemTextFromLang(hwndDlg,IDC_BROWSE,LANGID_BTN_BROWSE);
     SetUITextFromLang(hwndDlg,IDC_SELDIRTEXT,g_inst_header->dir_subtext_id,LANGID_DIR_SUBTEXT);
-    uMsg=WM_IN_UPDATEMSG;
   }
   if (uMsg == WM_COMMAND)
   {
@@ -839,7 +839,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       }
     }
   }
-  if (uMsg == WM_IN_UPDATEMSG)
+  if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
   {
     static char s[NSIS_MAX_STRLEN];
     int is_valid_path;
@@ -1357,7 +1357,6 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   if (uMsg == WM_INITDIALOG)
   {
     RECT r;
-    DWORD id;
     int num=0;
     int x=0;
     LVCOLUMN lvc = {0, 0, -1, 0, 0, -1};
@@ -1416,7 +1415,9 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 
     EnableWindow(GetDlgItem(g_hwnd,IDOK),0);
     EnableWindow(GetDlgItem(g_hwnd,IDCANCEL),0);
-
+  }
+  if (uMsg == WM_NOTIFY_START) {
+    DWORD id;
     CloseHandle(CreateThread(NULL,0,install_thread,(LPVOID)hwndDlg,0,&id));
   }
   if (uMsg == WM_COMMAND && LOWORD(wParam) == IDC_SHOWDETAILS)
