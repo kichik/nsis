@@ -228,7 +228,7 @@ class CEXEBuild {
     char build_packname[1024], build_packcmd[1024];
     int build_overwrite, build_compress, build_crcchk, 
         build_datesave, build_optimize_datablock,
-		build_allowskipfiles; // Added by ramon 23 May 2003
+    build_allowskipfiles; // Added by ramon 23 May 2003
 
     header build_header;
     int uninstall_mode;

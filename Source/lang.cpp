@@ -793,7 +793,7 @@ NLF::NLF(char *filename) {
 
     if (nlf_version < 4) {
       switch (i) {
-      	case NLF_LOG_INSTALL_PROCESS:
+        case NLF_LOG_INSTALL_PROCESS:
         case NLF_BYTE:
         case NLF_KILO:
         case NLF_MEGA:
@@ -832,7 +832,7 @@ NLF::NLF(char *filename) {
       if (*in == '\\') {
         in++;
         switch (*in) {
-        	case 'n':
+          case 'n':
             *out = '\n';
             break;
           case 'r':

@@ -67,8 +67,8 @@ void * NSISCALL mini_memcpy(void *out, const void *in, int len);
 // Turn four chars into a dword
 #ifdef __BIG_ENDIAN__ // Not very likely, but, still...
 #define CHAR2_TO_WORD(a,b) (((WORD)(b))|((a)<<8))
-#define CHAR4_TO_DWORD(a,b,c,d)	(((DWORD)CHAR2_TO_WORD(c,d))|(CHAR2_TO_WORD(a,b)<<16))
+#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(c,d))|(CHAR2_TO_WORD(a,b)<<16))
 #else
 #define CHAR2_TO_WORD(a,b) (((WORD)(a))|((b)<<8))
-#define CHAR4_TO_DWORD(a,b,c,d)	(((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
+#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
 #endif
