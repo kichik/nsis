@@ -67,6 +67,9 @@ typedef struct ToolBarStruct {
   HWND hwnd;
   HMENU dropdownmenu;
   POINT dropdownpoint;
+  HIMAGELIST imagelist;
+  HIMAGELIST imagelistd;
+  HIMAGELIST imagelisth;
 } NTOOLBAR;
 
 void CreateToolBar();
