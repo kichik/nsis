@@ -10,6 +10,24 @@ The instructions that NSIS uses for scripting are sort of a cross between PHP an
 
 Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set from trying to delete a file that does not exist.
 
+\S2{exec} Exec
+
+\c command
+
+Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: Exec '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
+
+\S2{execshell} ExecShell
+
+\c action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]
+
+Execute the specified program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
+
+\S2{execwait} ExecWait
+
+\c command [user_var(exit code)]
+
+Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: ExecWait '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
+
 \S2{file} File
 
 \c [/nonfatal] [/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
@@ -30,35 +48,11 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b If the /nonfatal switch is used, a warning will be issued if no files found instead of an error.
 
-\S2{exec} Exec
-
-\c command
-
-Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: Exec '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
-
-\S2{execshell} ExecShell
-
-\c action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]
-
-Execute the specified program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
-
-\S2{execwait} ExecWait
-
-\c command [user_var(exit code)]
-
-Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: ExecWait '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
-
 \S2{rename} Rename
 
 \c [/REBOOTOK] source_file dest_file
 
 Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. If /REBOOTOK is specified, and the file cannot be overwritten, then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.
-
-\S2{rmdir} RMDir
-
-\c [/r] directory
-
-Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
 
 \S2{reservefile} ReserveFile
 
@@ -67,6 +61,12 @@ Remove the specified directory (which should be a full path). Without /r, the di
 Reserves a file in the data block for later use. As files are added in the order they are used in the script files that are used in the .onInit function, for example, might be added last and slow the loading of the installer. This is where this command comes useful, allowing you to speed up the loading process by including the file at the top of the data block instead of letting NSIS seek all the way down to the bottom of the \e{compressed} data block.
 
 See \R{file}{File} for more information about the parameters.
+
+\S2{rmdir} RMDir
+
+\c [/r|/REBOOTOK] directory_name
+
+Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. IF /REBOOTOK is specified, and the directory cannot be overwritten, then the directory will be deleted when the system reboots -- if the directory will be removed on a reboot, the reboot flag will be set. The error flag is set if the directory cannot be removed.
 
 \S2{setoutpath} SetOutPath
 

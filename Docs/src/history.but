@@ -2,9 +2,11 @@
 
 \e{v2.0b4}
 
+\b Added \R{rmdir}{RMDir /REBOOTOK}
+
 \b Controls can be transparent using \R{setbkcolor}{SetBkColor}
 
-\b Added LicenseForceSelection
+\b Added \R{alicenseforceselection}{LicenseForceSelection}
 
 \e{v2.0b3}
 
