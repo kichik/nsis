@@ -187,6 +187,9 @@ Var MUI_TEMP2
   !else
     !insertmacro MUI_HEADER_TEXT "${TEXT}" "${SUBTEXT}"
   !endif
+  
+  !insertmacro MUI_UNSET MUI_PAGE_HEADER_TEXT
+  !insertmacro MUI_UNSET MUI_PAGE_HEADER_SUBTEXT
 
 !macroend
 
@@ -574,9 +577,6 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_PAGE_UNINSTALLER_FUNCPREFIX ""
   
   !insertmacro MUI_UNSET MUI_UNIQUEID
-  
-  !insertmacro MUI_UNSET MUI_PAGE_HEADER_TEXT
-  !insertmacro MUI_UNSET MUI_PAGE_HEADER_SUBTEXT
   
   !define MUI_UNIQUEID ${__LINE__}
 
