@@ -59,7 +59,7 @@
   LicenseData /LANG=${LANG_BULGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_THAI} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-selection page
+  ;Component selection page
     ;Titles
     LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
@@ -98,8 +98,12 @@
     LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
     LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
     
-  ;Folder-selection page
+  ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  
+  ;Things that need to be extracted on first (keep these lines before any File command!)
+  ;Only useful for BZIP2 compression
+  !insertmacro MUI_RESERVEFILE_LANGDLL
   
 ;--------------------------------
 ;Modern UI System

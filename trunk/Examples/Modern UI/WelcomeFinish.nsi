@@ -32,19 +32,16 @@
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-selection page
+  ;Component selection page
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder-selection page
+  ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
-  ;Things that need to be extracted on startup (keep these lines before any File command!)
+  ;Things that need to be extracted on first (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
-  ;Use ReserveFile for your own Install Options ini files too!
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_SPECIALINI
-  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
+  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
   
 ;--------------------------------
 ;Modern UI System

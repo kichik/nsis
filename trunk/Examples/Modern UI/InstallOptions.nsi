@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface version 1.62
-;Install Options Example Script
+;InstallOptions Example Script
 ;Written by Joost Verburg
 
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
@@ -29,10 +29,10 @@
   ;General
   OutFile "InstallOptions.exe"
   
-  ;Install Options pages
+  ;InstallOptions pages
   
     ;Header
-    LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
+    LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions Page"
     LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
   
     ;Window titles
@@ -52,20 +52,20 @@
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-selection page
+  ;Component selection page
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder-selection page
+  ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
-  ;Use ReserveFile for your own Install Options ini files too!
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+  ;Use ReserveFile for your own InstallOptions INI files too!
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 ;--------------------------------
 ;Modern UI System
@@ -82,7 +82,7 @@ Section "modern.exe" SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
-  ;Read a value from an Install Options INI File
+  ;Read a value from an InstallOptions INI File
   !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "ioC.ini" "Field 2" "State"
   StrCmp ${TEMP1} "1" "" +2
     ;Checked
@@ -109,7 +109,7 @@ SectionEnd
 
 Function .onInit
 
-  ;Extract Install Options INI Files
+  ;Extract InstallOptions INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
