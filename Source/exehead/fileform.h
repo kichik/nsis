@@ -20,7 +20,7 @@
 // CRC (optional - 4 bytes)
 
 
-#define MAX_ENTRY_OFFSETS 5
+#define MAX_ENTRY_OFFSETS 6
 
 
 // if you want people to not be able to decompile your installers as easily,
@@ -66,7 +66,7 @@ enum
   EW_PUSHPOP,           // Push/Pop/Exchange: 3 [variable/string, ?pop:push, ?exch]
 
   EW_FINDWINDOW,        // FindWindow: 5, [outputvar, window class,window name, window_parent, window_after]
-  EW_SENDMESSAGE,       // SendMessage: 5 [output, hwnd, msg, lparam, wparam]
+  EW_SENDMESSAGE,       // SendMessage: 6 [output, hwnd, msg, wparam, lparam, [wparamstring?1:0 | lparamstring?2:0 | timeout<<2]
   EW_ISWINDOW,          // IsWindow: 3 [hwnd, jump_if_window, jump_if_notwindow]
   EW_GETDLGITEM,        // GetDlgItem: 3 [outputvar, dialog, item_id]
   EW_SETWINDOWLONG,     // SetStaticBkColor: 2 [hwnd, color]
