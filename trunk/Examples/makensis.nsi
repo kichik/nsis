@@ -17,7 +17,7 @@ Caption "Nullsoft Install System - Setup"
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
-!insertmacro MUI_INTERFACE "modernsimple.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
+!insertmacro MUI_INTERFACE "modern2.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
 
 LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
