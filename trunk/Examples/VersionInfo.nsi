@@ -1,62 +1,30 @@
-;NSIS Modern User Interface version 1.65
-;User variables Example Script
-;Written by Ramon
+; VersionInfo.nsi
+;
+; This script shows you how to add version information to an installer.
+; Windows shows this information on the Version tab of the File properties.
 
 ;--------------------------------
-;Include Modern UI
 
-!include "MUI.nsh"
+Name "Version Info"
 
-;--------------------------------
-;Product Info
-
-!define MUI_PRODUCT "User Variables"
-!define MUI_VERSION "1.65"
-
-;--------------------------------
-;Configuration
-
-  ;General
-  OutFile "VersionInfo.exe"
-
-  ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
-
-  ;Get install folder from registry if available
-  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
-  
-  ShowInstDetails nevershow
+OutFile "VersionInfo.exe"
 
 ;--------------------------------
 ;Version Information
+
   VISetVersionLanguage 2057 1200 ; English UK
   VIAddTranslation 2057 1200     ; English UK
   VIProductVersion "1.2.3.4"
-  VIAddVersionKey "ProductName" "NSIS"
-  VIAddVersionKey "Comments" "visit us at nsis.sourceforge.net"
-  VIAddVersionKey "CompanyName" "NSIS Team"
-  VIAddVersionKey "LegalTrademarks" "Nullsoft Installer System"
-  VIAddVersionKey "LegalCopyright" "© Nullsoft Installer System"
-  VIAddVersionKey "FileDescription" "NSIS Self-extracting Setup"
+  VIAddVersionKey "ProductName" "Test Application"
+  VIAddVersionKey "Comments" "A test comment"
+  VIAddVersionKey "CompanyName" "Fake company"
+  VIAddVersionKey "LegalTrademarks" "Test Application is a trademark of Fake company"
+  VIAddVersionKey "LegalCopyright" "© Fake company"
+  VIAddVersionKey "FileDescription" "Test Application"
   VIAddVersionKey "FileVersion" "1.2.3"
 
 ;--------------------------------
-;Pages
 
-  !insertmacro MUI_PAGE_INSTFILES
-  !insertmacro MUI_PAGE_FINISH
-
-;--------------------------------
-;Languages
-
-  !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-;Installer Sections
-
-Section "Dummy Section" SecCopyUI
-
-     /* Copy your files here */
+Section ""
 
 SectionEnd
-
