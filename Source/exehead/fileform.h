@@ -390,7 +390,7 @@ typedef struct
   int install_reg_key_ptr, install_reg_value_ptr;
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-  int install_types[NSIS_MAX_INST_TYPES];
+  int install_types[NSIS_MAX_INST_TYPES+1];
 #endif
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
