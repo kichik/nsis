@@ -123,10 +123,12 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 #ifdef NSIS_CONFIG_LOG
+#ifndef NSIS_CONFIG_LOG_ODS
 void NSISCALL build_g_logfile()
 {
   lstrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
 }
+#endif
 #endif
 
 int *cur_langtable;
@@ -225,7 +227,9 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_CONFIG_LOG
   if (g_flags & CH_FLAGS_SILENT_LOG && !g_is_uninstaller)
   {
+#ifndef NSIS_CONFIG_LOG_ODS
     build_g_logfile();
+#endif
     log_dolog=1;
   }
 #endif
@@ -754,7 +758,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     GetUIText(IDC_DIR,dir,NSIS_MAX_STRLEN);
     validate_filename(dir);
 #ifdef NSIS_CONFIG_LOG
+#ifndef NSIS_CONFIG_LOG_ODS
     build_g_logfile();
+#endif
     log_dolog = IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
 #endif
   }
