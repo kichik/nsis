@@ -47,7 +47,7 @@ Writes the integer interpretation of 'string' to a file opened with FileOpen. Of
 \c FileWriteByte file_handle "13"
 \c FileWriteByte file_handle "10"
 
-You can If an error occurs writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
+If an error occurs while writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
 
 \S2{FindClose} FindClose
 

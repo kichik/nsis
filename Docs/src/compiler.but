@@ -52,7 +52,7 @@ On POSIX platforms, !execute will use system() just like \R{system}{!system}.
 
 \c tempfile command
 
-This option makes the compiler an external EXE packer (such as Petite or UPX) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.
+This option makes the compiler use an external EXE packer (such as \W{http://www.un4seen.com/petite/}{Petite} or \W{http://upx.sourceforge.net/}{UPX}) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.
 
 \S1{system} !system
 
