@@ -99,23 +99,23 @@ Izberite bloke za odstranitev:
 # ^UnComponentsSubText2
 Ali pa si izberite bloke namestitve, ki jih želite odstraniti: 
 # ^DirText
-Nastavitev bo namestila $(^Name) v sledeèo mapo. Za izbiro druge mape, kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape, kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
 # ^DirSubText
 Ciljna mapa
 # ^DirBrowseText
-Izberi mapo, kamor bo $(^Name) namešèen:
+Izberi mapo, kamor bo $(^NameDA) namešèen:
 # ^UnDirText
-Nastavitev bo ostranila $(^Name) iz sledeèe mapo. Za izbiro druge mape, kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo ostranila $(^NameDA) iz sledeèe mapo. Za izbiro druge mape, kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Izberi mapo, od koder bo $(^Name) odstranjen:
+Izberi mapo, od koder bo $(^NameDA) odstranjen:
 # ^SpaceAvailable
 "Prosti disk: "
 # ^SpaceRequired
 "Zahtevan prostor: "
 # ^UninstallingText
-$(^Name) bo odstranjen iz sledeèe mape. $_CLICK
+$(^NameDA) bo odstranjen iz sledeèe mape. $_CLICK
 # ^UninstallingSubText
 Odstranjujem iz: 
 # ^FileError

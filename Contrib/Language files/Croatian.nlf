@@ -69,17 +69,17 @@ Ime
 # ^Completed
 Završeno
 # ^LicenseText
-Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
+Molim proèitajte licencu prije instalacije programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
 # ^LicenseTextCB
-Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
+Molim proèitajte licencu prije instalacije programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
 # ^LicenseTextRB
-Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
+Molim proèitajte licencu prije instalacije programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
 # ^UnLicenseText
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
+Molim proèitajte licencu prije uklanjanja programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
 # ^UnLicenseTextCB
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
 # ^UnLicenseTextRB
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^NameDA). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
 # ^Custom
 Posebna
 # ^ComponentsText
@@ -99,23 +99,23 @@ Odaberite komponente za uklanjanje:
 # ^UnComponentsSubText2
 Ili po izboru oznaèite komponente koje želite ukloniti:
 # ^DirText
-Program $(^Name) æe biti instaliran u slijedeæu mapu. Za instalaciju na drugo odredište odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
+Program $(^NameDA) æe biti instaliran u slijedeæu mapu. Za instalaciju na drugo odredište odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
 # ^DirSubText
 Odredišna mapa
 # ^DirBrowseText
-Odaberite mapu u koju želite instalirati program $(^Name):
+Odaberite mapu u koju želite instalirati program $(^NameDA):
 # ^UnDirText
-Program $(^Name) æe biti uklonjen iz slijedeæe mape. Za uklanjanje s drugog mjesta odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
+Program $(^NameDA) æe biti uklonjen iz slijedeæe mape. Za uklanjanje s drugog mjesta odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Mapa iz koje æe program $(^Name) biti uklonjen:
+Mapa iz koje æe program $(^NameDA) biti uklonjen:
 # ^SpaceAvailable
 "Slobodno prostora na disku: "
 # ^SpaceRequired
 "Potrebno prostora na disku: "
 # ^UninstallingText
-Program $(^Name) æe biti uklonjen iz slijedeæe mape. $_CLICK
+Program $(^NameDA) æe biti uklonjen iz slijedeæe mape. $_CLICK
 # ^UninstallingSubText
 Uklanjam iz:
 # ^FileError

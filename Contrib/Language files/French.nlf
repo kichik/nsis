@@ -70,17 +70,17 @@ Nom
 # ^Completed
 Terminé
 # ^LicenseText
-Veuillez examiner le contrat de licence avant d'installer $(^Name). Si vous acceptez tous les termes du contrat, cliquez J'accepte.
+Veuillez examiner le contrat de licence avant d'installer $(^NameDA). Si vous acceptez tous les termes du contrat, cliquez J'accepte.
 # ^LicenseTextCB
-Veuillez examiner le contrat de licence avant d'installer $(^Name). Si vous acceptez tous les termes du contrat, cochez la boîte de contrôle ci-dessous. $_CLICK
+Veuillez examiner le contrat de licence avant d'installer $(^NameDA). Si vous acceptez tous les termes du contrat, cochez la boîte de contrôle ci-dessous. $_CLICK
 # ^LicesnseTextRB
-Veuillez examiner le contrat de licence avant d'installer $(^Name). Si vous acceptez tous les termes du contrat, sélectionnez la première option ci-dessous. $_CLICK
+Veuillez examiner le contrat de licence avant d'installer $(^NameDA). Si vous acceptez tous les termes du contrat, sélectionnez la première option ci-dessous. $_CLICK
 # ^UnLicenseText
-Veuillez examiner le contrat de licence avant de désinstaller $(^Name). Si vous acceptez tous les termes du contrat, cliquez J'accepte.
+Veuillez examiner le contrat de licence avant de désinstaller $(^NameDA). Si vous acceptez tous les termes du contrat, cliquez J'accepte.
 # ^UnLicenseTextCB
-Veuillez examiner le contrat de licence avant de désinstaller $(^Name). Si vous acceptez tous les termes du contrat, cochez la boîte de contrôle ci-dessous. $_CLICK
+Veuillez examiner le contrat de licence avant de désinstaller $(^NameDA). Si vous acceptez tous les termes du contrat, cochez la boîte de contrôle ci-dessous. $_CLICK
 # ^UnLicesnseTextRB
-Veuillez examiner le contrat de licence avant de désinstaller $(^Name). Si vous acceptez tous les termes du contrat, sélectionnez la première option ci-dessous. $_CLICK
+Veuillez examiner le contrat de licence avant de désinstaller $(^NameDA). Si vous acceptez tous les termes du contrat, sélectionnez la première option ci-dessous. $_CLICK
 # ^Custom
 Personnalisée
 # ^ComponentsText
@@ -100,23 +100,23 @@ Sélectionnez les composants à désinstaller :
 # ^UnComponentsSubText2
 Ou, sélectionnez les composants optionnels que vous voulez déinstaller :
 # ^DirText
-Ceci installera $(^Name) dans le dossier suivant. Pour installer dans un autre dossier, cliquez Parcourir et choisissez un autre dossier. $_CLICK
+Ceci installera $(^NameDA) dans le dossier suivant. Pour installer dans un autre dossier, cliquez Parcourir et choisissez un autre dossier. $_CLICK
 # ^DirSubText
 Dossier d'installation
 # ^DirBrowseText
-Sélectionnez le dossier d'installation pour $(^Name) :
+Sélectionnez le dossier d'installation pour $(^NameDA) :
 # ^UnDirText
-Ceci désinstallera $(^Name) du dossier suivant. Pour désinstaller d'un autre dossier, cliquez Parcourir et choisissez un autre dossier. $_CLICK
+Ceci désinstallera $(^NameDA) du dossier suivant. Pour désinstaller d'un autre dossier, cliquez Parcourir et choisissez un autre dossier. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Sélectionnez le dossier de désinstallation pour $(^Name) :
+Sélectionnez le dossier de désinstallation pour $(^NameDA) :
 # ^SpaceAvailable
 "Espace disponible : "
 # ^SpaceRequired
 "Espace requis : "
 # ^UninstallingText
-Ce programme désinstallera $(^Name) de votre ordinateur. $_CLICK
+Ce programme désinstallera $(^NameDA) de votre ordinateur. $_CLICK
 # ^UninstallingSubText
 Désinstallation à partir de :
 # ^FileError

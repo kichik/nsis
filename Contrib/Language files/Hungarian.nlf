@@ -70,17 +70,17 @@ Név
 # ^Completed
 Kész
 # ^LicenseText
-A(z) $(^Name) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja.
+A(z) $(^NameDA) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja.
 # ^LicenseTextCB
-A(z) $(^Name) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, jelölje be a Jelölõnégyzeten. $_CLICK
+A(z) $(^NameDA) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, jelölje be a Jelölõnégyzeten. $_CLICK
 # ^LicenseTextRB
-A(z) $(^Name) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, válassza az elsõ lehetõséget. $_CLICK
+A(z) $(^NameDA) telepítése elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, válassza az elsõ lehetõséget. $_CLICK
 # ^UnLicenseText
-A(z) $(^Name) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja.
+A(z) $(^NameDA) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja.
 # ^UnLicenseTextCB
-A(z) $(^Name) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, jelölje be a Jelölõnégyzeten. $_CLICK
+A(z) $(^NameDA) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, jelölje be a Jelölõnégyzeten. $_CLICK
 # ^UnLicenseTextRB
-A(z) $(^Name) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, válassza az elsõ lehetõséget. $_CLICK
+A(z) $(^NameDA) eltávolítása elõtt tekintse át a szerzõdés feltételeit. Ha elfogadja a szerzõdés valamennyi feltételét, válassza az elsõ lehetõséget. $_CLICK
 # ^Custom
 Egyéni
 # ^ComponentsText
@@ -100,23 +100,23 @@ Válassza ki az eltávolítandó összetevõket:
 # ^UnComponentsSubText2
 vagy, jelölje ki a választható összetevõk közül az eltávolítani kívánta(ka)t:
 # ^DirText
-A $(^Name) a következõ mappába kerül. Másik mappa választásához kattintson a Tallózás gombra. $_CLICK
+A $(^NameDA) a következõ mappába kerül. Másik mappa választásához kattintson a Tallózás gombra. $_CLICK
 # ^DirSubText
 Telepítés helye
 # ^DirBrowseText
-A(z) $(^Name) telepítési helyének kiválasztása:
+A(z) $(^NameDA) telepítési helyének kiválasztása:
 # ^UnDirText
-A(z) $(^Name) eltávolítása a következõ mappából. Másik mappa választásához kattintson a Tallózás gombra. $_CLICK
+A(z) $(^NameDA) eltávolítása a következõ mappából. Másik mappa választásához kattintson a Tallózás gombra. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Válassza ki, hogy a $(^Name) melyik mappából kerüljön eltávolításra:
+Válassza ki, hogy a $(^NameDA) melyik mappából kerüljön eltávolításra:
 # ^SpaceAvailable
 "Szabad terület: "
 # ^SpaceRequired
 "Helyigény: "
 # ^UninstallingText
-A(z) $(^Name) eltávolítása következik a számítógéprõl. $_CLICK
+A(z) $(^NameDA) eltávolítása következik a számítógéprõl. $_CLICK
 # ^UninstallingSubText
 Eltávolítás helye:
 # ^FileError

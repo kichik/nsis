@@ -70,17 +70,17 @@ Nome
 # ^Completed
 Concluído
 # ^LicenseText
-Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, clique em 'Aceito'.
+Por favor reveja o acordo de licensa antes de instalar $(^NameDA). Se concorda com todos os termos da licensa, clique em 'Aceito'.
 # ^LicenseTextCB
-Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licensa antes de instalar $(^NameDA). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
 # ^LicenseTextRB
-Por favor reveja o acordo de licensa antes de instalar $(^Name). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licensa antes de instalar $(^NameDA). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
 # ^UnLicenseText
-Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, clique em 'Aceito'.
+Por favor reveja o acordo de licensa antes de desinstalar $(^NameDA). Se concorda com todos os termos da licensa, clique em 'Aceito'.
 # ^UnLicenseTextCB
-Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
+Por favor reveja o acordo de licensa antes de desinstalar $(^NameDA). Se concorda com todos os termos da licensa, clique na caixa de seleção abaixo. $_CLICK
 # ^UnLicenseTextRB
-Por favor reveja o acordo de licensa antes de desinstalar $(^Name). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
+Por favor reveja o acordo de licensa antes de desinstalar $(^NameDA). Se concorda com todos os termos da licensa, escolha a primeira opção abaixo. $_CLICK
 # ^Custom
 Personalizado
 # ^ComponentsText
@@ -100,23 +100,23 @@ Escolha os componentes para desinstalar:
 # ^UnComponentsSubText2
 Ou, escolha os componentes opcionais que queira desinstalar:
 # ^DirText
-O $(^Name) será instalado na seguinte pasta. Para instalar numa pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
+O $(^NameDA) será instalado na seguinte pasta. Para instalar numa pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
 # ^DirSubText
 Pasta de Destino
 # ^DirBrowseText
-Escolha uma pasta para instalar o $(^Name):
+Escolha uma pasta para instalar o $(^NameDA):
 # ^UnDirText
-O $(^Name) será desinstalado da seguinte pasta. Para desinstalar de uma pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
+O $(^NameDA) será desinstalado da seguinte pasta. Para desinstalar de uma pasta diferente, clique em 'Procurar...' e escolha outra pasta. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Escolha uma pasta de onde será desinstalado o $(^Name):
+Escolha uma pasta de onde será desinstalado o $(^NameDA):
 # ^SpaceAvailable
 "Espaço disponível: "
 # ^SpaceRequired
 "Espaço necessário: "
 # ^UninstallingText
-$(^Name) será desinstalado da seguinte pasta. $_CLICK
+$(^NameDA) será desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError

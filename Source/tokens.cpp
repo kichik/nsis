@@ -113,7 +113,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_MESSAGEBOX,"MessageBox",2,6,"mode messagebox_text [/SD return] [return_check label_to_goto_if_equal [return_check2 label2]]\n    mode=modeflag[|modeflag[|modeflag[...]]]\n    "
                                 "modeflag=(MB_ABORTRETRYIGNORE|MB_OK|MB_OKCANCEL|MB_RETRYCANCEL|MB_YESNO|MB_YESNOCANCEL|MB_ICONEXCLAMATION|MB_ICONINFORMATION|MB_ICONQUESTION|MB_ICONSTOP|MB_TOPMOST|MB_SETFOREGROUND|MB_RIGHT"},
 {TOK_NOP,"Nop",0,0,""},
-{TOK_NAME,"Name",1,0,"installer_name"},
+{TOK_NAME,"Name",1,1,"installer_name installer_name_doubled_ampersands"},
 {TOK_OUTFILE,"OutFile",1,0,"install_output.exe"},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
 {TOK_PAGE,"Page",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function]))"},

@@ -13,9 +13,9 @@ NLF v6
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-%s Idiegimas
+$(^Name) Idiegimas
 # ^UninstallCaption
-%s Panaikinti
+$(^Name) Panaikinti
 # ^LicenseSubCaption
 : Naudojimo sutartis
 # ^ComponentsSubCaption
@@ -69,17 +69,17 @@ Vardas
 # ^Completed
 Baigta
 # ^LicenseText
-Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
 # ^LicenseTextCB
-Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
 # ^LicenseTextRB
-Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+Prašome perskaityti sutarti prieš idiegdami $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
 # ^UnLicenseText
-Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
 # ^UnLicenseTextCB
-Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
 # ^UnLicenseTextRB
-Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+Prašome perskaityti sutarti prieš ištrinant $(^NameDA). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
 # ^Custom
 Kitoks
 # ^ComponentsText
@@ -99,24 +99,24 @@ Pasirinkite komponentus, kuriuos ištraukti:
 # ^UnComponentsSubText2
 Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite ištraukti:
 # ^DirText
-Idiegimas dabar idiegs $(^Name) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Idiegimas dabar idiegs $(^NameDA) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
 # ^DirSubText
 Idiegimo katalogas
 # ^DirBrowseText
-Pasirinkite kataloga, kur idiegti $(^Name):
+Pasirinkite kataloga, kur idiegti $(^NameDA):
 # ^UnDirText
-Idiegimas dabar ištrauks $(^Name) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+Idiegimas dabar ištrauks $(^NameDA) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Pasirinkite kataloga iš kurio ištrinti $(^Name):
+Pasirinkite kataloga iš kurio ištrinti $(^NameDA):
 # ^SpaceAvailable
 Yra vietos: 
 # ^SpaceRequired
 Reikia vietos: 
 # ^UninstallingText
-Idiegimas dabar ištrauks $(^Name).
-$(^Name) dabar bus ištrauktas iš šio katalogo.
+Idiegimas dabar ištrauks $(^NameDA).
+$(^NameDA) dabar bus ištrauktas iš šio katalogo.
 # ^UninstallingSubText
 Trinama iš:
 # ^FileError
