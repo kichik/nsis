@@ -1042,7 +1042,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
         if (!hUIFile) {
-          ERROR_MSG("Error: Can't find \"%s\"!\n", line.gettoken_str(1));
+          ERROR_MSG("Error: Can't find \"%s\" in \"%s\"!\n", line.gettoken_str(1), line.gettoken_str(2));
           return PS_ERROR;
         }
 
