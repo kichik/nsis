@@ -158,6 +158,7 @@ void ExecScript(int log) {
     PROCESS_INFORMATION pi={0,};
     OSVERSIONINFO osv={sizeof(osv)};
     HANDLE newstdout=0,read_stdout=0;
+    HANDLE newstdin=0,read_stdin=0;
     DWORD dwRead = 1;
     DWORD dwExit = !STILL_ACTIVE;
     DWORD dwLastOutput;
@@ -187,11 +188,15 @@ void ExecScript(int log) {
       lstrcpy(szRet, "error");
       goto done;
     }
+    if (!CreatePipe(&read_stdin,&newstdin,&sa,0)) {
+      lstrcpy(szRet, "error");
+      goto done;
+    }
 
     GetStartupInfo(&si);
     si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_HIDE;
-    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    si.hStdInput = newstdin;
     si.hStdOutput = newstdout;
     si.hStdError = newstdout;
     if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
@@ -294,6 +299,8 @@ done:
     CloseHandle(pi.hProcess);
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
+    CloseHandle(newstdin);
+    CloseHandle(read_stdin);
     *(pExec-1) = '\0';
     DeleteFile(g_exec);
     GlobalFree(g_exec);
@@ -382,7 +389,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   char *cmdline;
   
   si.cb = sizeof(si);
-  // Make child process use this app's standard files. Not needed !??
+  // Make child process use this app's standard files. Not needed because the handles
+  // we created when executing this process were inheritable.
   //si.dwFlags    = STARTF_USESTDHANDLES;
   //si.hStdInput  = GetStdHandle (STD_INPUT_HANDLE);
   //si.hStdOutput = GetStdHandle (STD_OUTPUT_HANDLE);
@@ -401,8 +409,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     NULL, NULL,
     &si, &pi
     );
-  
-  if ( Ret )
+
+  if (Ret)
   {
     do
     {
