@@ -206,9 +206,9 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text">To configure a page, you can define the page settings before inserting a page macro.</p>
   <p class="sub2header">General Page Settings</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_PAGE_HEADER_TEXT </span><br />
+  <p class="text"><span class="bold">MUI_PAGE_HEADER_TEXT </span><span class="parameter">text </span><br />
   Custom text to display on the header of the page.</p>
-  <p class="text"><span class="bold">MUI_PAGE_HEADER_SUBTEXT </span><br />
+  <p class="text"><span class="bold">MUI_PAGE_HEADER_SUBTEXT </span><span class="parameter">text </span><br />
   Custom subtext to display on the header of the page.</p>
   </div>
   <p class="sub2header">Welcome Page Settings</p>
@@ -439,15 +439,7 @@ will also help you to learn more about the Modern UI.</p>
   <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title on the Welcome and Finish page.</p>
-  </div>
-  <p class="sub2header">Customize other texts</p>
-  <div class="margin">
-  <p class="text">To customize button texts, use the following defines.</p>
-  <p class="text">
-  <span class="bold">MUI_BUTTONTEXT_BACK </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_BUTTONTEXT_NEXT </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_BUTTONTEXT_CANCEL </span><span class="parameter">text</span>
-  </p>
+  <p class="text"><span class="bold">Note: </span>Page texts can be changed using page settings.</p>
   </div>
   <p class="sub2header">Language selection dialog</p>
   <div class="margin">
@@ -646,7 +638,7 @@ ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
   <p class="text">If you want add your own code to functions
   inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
   create your own function and let the Modern UI functions call them. Use the defines
-  to define the name of your functions. Add the defines before the MUI_LANGUAGE macros.</p>
+  to define the name of your functions.</p>
  <p class="text">Example:</p>
 <pre class="text">
 !define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
@@ -657,16 +649,17 @@ FunctionEnd
 </pre>
   <p class="sub2header">General Custom Functions</p>
   <div class="margin">
-  <p class="text">MUI_CUSTOMFUNCTION_GUIINIT<br />
-  MUI_CUSTOMFUNCTION_UNGUIINIT<br />
-  MUI_CUSTOMFUNCTION_ABORT</p>
+  <p class="text">These defines should be set before inserting a the language macros.</p>
+  <p class="text"><span class="bold">MUI_CUSTOMFUNCTION_GUIINIT </span><span class="parameter">function </span><br />
+  <span class="bold">MUI_CUSTOMFUNCTION_UNGUIINIT </span><span class="parameter">function </span><br />
+  <span class="bold">MUI_CUSTOMFUNCTION_ABORT </span><span class="parameter">function </span></p>
   </div>
   <p class="sub2header">Page Custom Functions</p>
   <div class="margin">
   <p class="text">These defines should be set before inserting a page macro.</p>
-  <p class="text">MUI_PAGE_CUSTOMFUNCTION_PRE<br />
-  MUI_PAGE_CUSTOMFUNCTION_SHOW<br />
-  MUI_PAGE_CUSTOMFUNCTION_LEAVE</p>
+  <p class="text"><span class="bold">MUI_PAGE_CUSTOMFUNCTION_PRE </span><span class="parameter">function </span><br />
+  <span class="bold">MUI_PAGE_CUSTOMFUNCTION_SHOW </span><span class="parameter">function </span><br />
+  <span class="bold">MUI_PAGE_CUSTOMFUNCTION_LEAVE </span><span class="parameter">function </span></p>
   <p class="text"><span class="bold">Notes:</span></p>
   <ul>
   <li>The StartMenu page does not have a Show function</li>
