@@ -15,6 +15,15 @@
 
 int MMapFile::m_iAllocationGranularity = 0;
 
+DWORD WINAPI lzmaCompressThread(LPVOID lpParameter)
+{
+  CLZMA *Compressor = (CLZMA *) lpParameter;
+  if (!Compressor)
+    return 0;
+
+  return Compressor->CompressReal();
+}
+
 bool isSimpleChar(char ch)
 {
   return (ch == '.' ) || (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
