@@ -42,18 +42,18 @@ typedef void *(*copyfn234) (void *state, void *element);
  * lookups by key will fail: you can only look things up by numeric
  * index, and you have to use addpos234() and delpos234().
  */
-tree234 *newtree234 (cmpfn234 cmp);
+tree234 *newtree234(cmpfn234 cmp);
 
 /*
  * Free a 2-3-4 tree (not including freeing the elements).
  */
-void freetree234 (tree234 * t);
+void freetree234(tree234 * t);
 
 /*
  * Add an element e to a sorted 2-3-4 tree t. Returns e on success,
  * or if an existing element compares equal, returns that.
  */
-void *add234 (tree234 * t, void *e);
+void *add234(tree234 * t, void *e);
 
 /*
  * Add an element e to an unsorted 2-3-4 tree t. Returns e on
@@ -63,7 +63,7 @@ void *add234 (tree234 * t, void *e);
  * Index range can be from 0 to the tree's current element count,
  * inclusive.
  */
-void *addpos234 (tree234 * t, void *e, int index);
+void *addpos234(tree234 * t, void *e, int index);
 
 /*
  * Look up the element at a given numeric index in a 2-3-4 tree.
@@ -83,7 +83,7 @@ void *addpos234 (tree234 * t, void *e, int index);
  *       consume(p);
  *   }
  */
-void *index234 (tree234 * t, int index);
+void *index234(tree234 * t, int index);
 
 /*
  * Find an element e in a sorted 2-3-4 tree t. Returns NULL if not
@@ -125,15 +125,14 @@ void *index234 (tree234 * t, int index);
  *   for (p = NULL; (p = findrel234(tree, p, NULL, REL234_LT)) != NULL ;)
  *       consume(p);
  */
-enum
-{
-  REL234_EQ, REL234_LT, REL234_LE, REL234_GT, REL234_GE
+enum {
+    REL234_EQ, REL234_LT, REL234_LE, REL234_GT, REL234_GE
 };
-void *find234 (tree234 * t, void *e, cmpfn234 cmp);
-void *findrel234 (tree234 * t, void *e, cmpfn234 cmp, int relation);
-void *findpos234 (tree234 * t, void *e, cmpfn234 cmp, int *index);
-void *findrelpos234 (tree234 * t, void *e, cmpfn234 cmp, int relation,
-                     int *index);
+void *find234(tree234 * t, void *e, cmpfn234 cmp);
+void *findrel234(tree234 * t, void *e, cmpfn234 cmp, int relation);
+void *findpos234(tree234 * t, void *e, cmpfn234 cmp, int *index);
+void *findrelpos234(tree234 * t, void *e, cmpfn234 cmp, int relation,
+		    int *index);
 
 /*
  * Delete an element e in a 2-3-4 tree. Does not free the element,
@@ -152,13 +151,13 @@ void *findrelpos234 (tree234 * t, void *e, cmpfn234 cmp, int relation,
  * is out of range (delpos234) or the element is already not in the
  * tree (del234) then they return NULL.
  */
-void *del234 (tree234 * t, void *e);
-void *delpos234 (tree234 * t, int index);
+void *del234(tree234 * t, void *e);
+void *delpos234(tree234 * t, int index);
 
 /*
  * Return the total element count of a tree234.
  */
-int count234 (tree234 * t);
+int count234(tree234 * t);
 
 /*
  * Split a tree234 into two valid tree234s.
@@ -173,8 +172,8 @@ int count234 (tree234 * t);
  * in the tree that satisfy the relation are returned; the
  * remainder are left.
  */
-tree234 *splitpos234 (tree234 * t, int index, int before);
-tree234 *split234 (tree234 * t, void *e, cmpfn234 cmp, int rel);
+tree234 *splitpos234(tree234 * t, int index, int before);
+tree234 *split234(tree234 * t, void *e, cmpfn234 cmp, int rel);
 
 /*
  * Join two tree234s together into a single one.
@@ -188,8 +187,8 @@ tree234 *split234 (tree234 * t, void *e, cmpfn234 cmp, int rel);
  * The tree returned is t1 (join234) or t2 (join234r), if the
  * operation is successful.
  */
-tree234 *join234 (tree234 * t1, tree234 * t2);
-tree234 *join234r (tree234 * t1, tree234 * t2);
+tree234 *join234(tree234 * t1, tree234 * t2);
+tree234 *join234r(tree234 * t1, tree234 * t2);
 
 /*
  * Make a complete copy of a tree234. Element pointers will be
@@ -198,6 +197,6 @@ tree234 *join234r (tree234 * t1, tree234 * t2);
  * first is private state and the second is the element. A simple
  * copy routine probably won't need private state.)
  */
-tree234 *copytree234 (tree234 * t, copyfn234 copyfn, void *copyfnstate);
+tree234 *copytree234(tree234 * t, copyfn234 copyfn, void *copyfnstate);
 
-#endif /* TREE234_H */
+#endif				/* TREE234_H */
