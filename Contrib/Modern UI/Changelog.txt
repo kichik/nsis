@@ -1,12 +1,15 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.67 - October 27, 2003
+1.67 - November 7, 2003
 * Support for uninstaller Welcome- and Finish pages
 * Renamed a few settings
 * Default header image
 * Support for uninstaller abort warning
 * Setting for 3 line text on Welcome- and Finish page
 * Langauge file backwards compatibility: English for missing strings
+* Support for different uninstaller header image
+* Language selection dialog not displayed if installer is silent
+* Cancel button on Finish page when there are options
 
 1.66 - October 7, 2003
 * New system for page settings and custom pages
