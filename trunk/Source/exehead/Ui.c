@@ -673,7 +673,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
-    SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS);
+    SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS); //XGE 8th September 2002 Or'd in ENM_KEYEVENTS
     dwRead=0;
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_LICENSE_TEXT);
@@ -685,6 +685,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   }
   else if (uMsg == WM_NOTIFY) {
     ENLINK *enlink=(ENLINK *)lParam;
+    MSGFILTER* msgfilter=(MSGFILTER *)lParam;
     if (enlink->nmhdr.code==EN_LINK) {
       if (enlink->msg==WM_LBUTTONDOWN) {
         char *szUrl;
@@ -704,15 +705,15 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         SetCursor(LoadCursor(0,IDC_HAND));
       }
     }
-    // nmhdr.code==EN_MSGFILTER but I noticed that the 3e8 value I *was* 
-    // getting contains the bits set by EN_MSGFILTER so I figured I'd set
-    // this to & EN_MSGFILTER and pray :) Since it only works when return
-    // is pressed *and* in that case both these tests pass I figure that
-    // must be correct... wish it was documented somewhere gawd damnit!
-    else if (((MSGFILTER*)lParam)->nmhdr.code&EN_MSGFILTER)
+    //Ximon Eighteen 8th September 2002 Capture return key presses in the rich
+    //edit control now that the control gets the focus rather than the default
+    //push button. When the user presses return ask the outer dialog to move
+    //the installer onto the next page. MSDN docs say return non-zero if the
+    //rich edit control should NOT process this message, hence the return 1.
+    else if (msgfilter->nmhdr.code==EN_MSGFILTER)
     {
-      if (((MSGFILTER*)lParam)->msg==WM_KEYDOWN &&
-      ((MSGFILTER*)lParam)->wParam==VK_RETURN)
+      if (msgfilter->msg==WM_KEYDOWN &&
+          msgfilter->wParam==VK_RETURN)
       {
         SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,1,0);
         return 1;
