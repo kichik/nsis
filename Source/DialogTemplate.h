@@ -101,6 +101,7 @@ public:
 	void RTrimToString(WORD id, char *str, int margins);
 	void LTrimToString(WORD id, char *str, int margins);
 	void CTrimToString(WORD id, char *str, int margins);
+  void ConvertToRTL();
 	BYTE* Save(DWORD& dwSize);
 	DWORD GetSize();
 
