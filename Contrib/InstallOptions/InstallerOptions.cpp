@@ -932,7 +932,7 @@ int createCfgDlg()
       } else if (nType == FIELD_BITMAP || nType == FIELD_ICON) {
         WPARAM nImageType = nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
         LPARAM nImage = 0;
-        if (nImageType == IMAGE_BITMAP) {
+        if (pFields[nIdx].pszText) {
           pFields[nIdx].hImage = LoadImage(
             0,
             pFields[nIdx].pszText,
@@ -1019,7 +1019,12 @@ void showCfgDlg()
     FREE(pFields[nIdx].pszListItems);
     FREE(pFields[nIdx].pszFilter);
     FREE(pFields[nIdx].pszRoot);
-    DeleteObject(pFields[nIdx].hImage);
+    if (pFields[nIdx].nType == FIELD_BITMAP) {
+      DeleteObject(pFields[nIdx].hImage);
+    }
+    if (pFields[nIdx].nType == FIELD_ICON) {
+      DestroyIcon((HICON)pFields[nIdx].hImage);
+    }
   }
   FREE(pFields);
 
