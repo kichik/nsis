@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Klicken Sie auf Installieren um mit der Installation zu beginnen."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-\r\n\Assistenten für ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "${MUI_PRODUCT} wird auf ihrem Computer installiert.\r\n\r\nEs wird empfohlen alle anderen Programme zu schließen bevor Sie mit der Installation beginnen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von ${MUI_PRODUCT} begleiten.\r\n\r\nEs wird empfohlen alle anderen Programme zu schließen bevor Sie mit der Installation beginnen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Lizenzabkommen"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Bitte lesen Sie die Lizenzbedingungen durch, bevor Sie mit der Installation fortfahren."
@@ -58,9 +58,11 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von ${MUI_PRODUCT} abbrechen wollen?"
 
 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Klicken Sie auf Deinstallieren um mit der Deinstallation zu beginnen."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Deinstallation von ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Entferne ${MUI_PRODUCT} von ihrem System."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Deinstalliert ${MUI_PRODUCT} von ihrem System."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Entferne ${MUI_PRODUCT} von ihrem Computer."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Dieser Assistent deinstalliert ${MUI_PRODUCT} von ihrem Computer."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Deinstalliere..."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Bitte warten Sie, während ${MUI_PRODUCT} entfernt wird."
