@@ -42,7 +42,7 @@ If label is specified, goto the label 'label_to_jump_to:'.
 
 If +offset or -offset is specified, jump is relative by offset instructions. Goto +1 goes to the next instruction, Goto -1 goes to the previous instruction, etc.
 
-If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. I Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
+If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
 
 \S2{iferrors} IfErrors
 
