@@ -1134,6 +1134,12 @@
     !define "MUI_LANGUAGEFILE_${LANGUAGE}_USED"
 
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
+
+  !else
+
+    !error "${LANGUAGE} included twice!"
+
+  !endif
   
 !macroend
 
@@ -1326,8 +1332,6 @@
 
   !ifdef MUI_TEXT_CONTINUE_INSTALL
     !undef MUI_TEXT_CONTINUE_INSTALL
-  !endif
-  
   !endif
   
   !undef MUI_LANGUAGEFILE_CURRENT
