@@ -39,11 +39,11 @@
 ;Pages
   
   !insertmacro MUI_PAGECOMMAND_LICENSE
-  Page custom SetCustomA "$(TEXT_IO_PAGETITLE_A)"
-  Page custom SetCustomB "$(TEXT_IO_PAGETITLE_B)"
+  Page custom SetCustomA
+  Page custom SetCustomB
   !insertmacro MUI_PAGECOMMAND_COMPONENTS
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetCustomC "$(TEXT_IO_PAGETITLE_C)"
+  Page custom SetCustomC
   !insertmacro MUI_PAGECOMMAND_INSTFILES
 
 ;--------------------------------
@@ -60,11 +60,6 @@
   ;Header
   LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions Page"
   LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
-  
-  ;Window titles
-  LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} ": Custom Page A"
-  LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} ": Custom Page B"
-  LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} ": Custom Page C"
 
 ;--------------------------------
 ;Data
