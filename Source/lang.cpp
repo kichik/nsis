@@ -405,6 +405,10 @@ int CEXEBuild::GenerateLangTables() {
   while (i--) {
     build_langtables.add(&lt[i].lang_id, sizeof(LANGID));
     build_langtables.add(&lt[i].dlg_offset, sizeof(int));
+    {
+      int rtl = lt[i].nlf.m_bRTL ? 1 : 0;
+      build_langtables.add(&rtl, sizeof(int));
+    }
 
     int *lst = (int *)((char *)build_langtables.get() + build_langtables.getlen());
     cnt = 0;
@@ -488,6 +492,10 @@ int CEXEBuild::GenerateLangTables() {
   while (i--) {
     ubuild_langtables.add(&lt[i].lang_id, sizeof(LANGID));
     ubuild_langtables.add(&lt[i].dlg_offset, sizeof(int));
+    {
+      int rtl = lt[i].nlf.m_bRTL ? 1 : 0;
+      ubuild_langtables.add(&rtl, sizeof(int));
+    }
 
     int *lst = (int *)((char *)ubuild_langtables.get() + ubuild_langtables.getlen());
     cnt = 0;

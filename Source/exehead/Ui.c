@@ -146,7 +146,8 @@ lang_again:
     language_table=((char*)g_blocks[NB_LANGTABLES].offset)+lang_num*g_header->langtable_size;
     if (!((lang ^ *(LANGID*)language_table) & lang_mask)) {
       dlg_offset=*(int*)(language_table+sizeof(LANGID));
-      cur_langtable=(int*)(language_table+sizeof(LANGID)+sizeof(int));
+      g_exec_flags.rtl=*(int*)(language_table+sizeof(LANGID)+sizeof(int));
+      cur_langtable=(int*)(language_table+sizeof(LANGID)+2*sizeof(int));
       break;
     }
   }

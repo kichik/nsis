@@ -37,9 +37,9 @@ Nullsoft Install System %s
 # ^UnCompletedSubCaption
 : ההסרה הושלמה
 # ^BackBtn
-ה&קודם >
+< ה&קודם
 # ^NextBtn
-< ה&בא
+ה&בא >
 # ^AgreeBtn
 אני &מסכים
 # ^AcceptBtn
@@ -55,7 +55,7 @@ Nullsoft Install System %s
 # ^CloseBtn
 סגור&
 # ^BrowseBtn
-...&עיין
+&עיין...
 # ^ShowDetailsBtn
 ה&צג פרטים
 # ^ClickNext
@@ -85,31 +85,31 @@ Nullsoft Install System %s
 # ^ComponentsText
 סמן את הרכיבים שברצונך להתקין ובטל את הסימון של רכיבים שאין ברצונך להתקין. $_CLICK
 # ^ComponentsSubText1
-:בחר סוג התקנה
+בחר סוג התקנה:
 # ^ComponentsSubText2_NoInstTypes
-:בחר רכיבים להתקנה
+בחר רכיבים להתקנה:
 # ^ComponentsSubText2
-:או, בחר רכיבי רשות להתקנה
+או, בחר רכיבי רשות להתקנה:
 # ^UnComponentsText
 סמן את הרכיבים שברצונך להסיר ובטל את הסימון של רכיבים שאין ברצונך להסיר. $_CLICK
 # ^UnComponentsSubText1
-:בחר סוג הסרה
+בחר סוג הסרה:
 # ^UnComponentsSubText2_NoInstTypes
-:בחר רכיבים להסרה
+בחר רכיבים להסרה:
 # ^UnComponentsSubText2
-:או, בחר רכיבי רשות להסרה
+או, בחר רכיבי רשות להסרה:
 # ^DirText
 תוכנית זו תתקין את $(^Name) לתיקייה שלהלן. כדי להתקין לתיקייה אחרת, לחץ על 'עיין' ובחר תיקייה אחרת. $_CLICK
 # ^DirSubText
 תיקיית יעד
 # ^DirBrowseText
-:בחר תיקייה להתקנת $(^Name)
+בחר תיקייה להתקנת $(^Name):
 # ^UnDirText
 תוכנית זו תסיר את $(^Name) מהתיקייה שלהלן. כדי להסיר מתיקייה אחרת, לחץ על 'עיין' ובחר תיקייה אחרת. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-:בחר תיקייה ממנה תוסר $(^Name)
+בחר תיקייה ממנה תוסר $(^Name):
 # ^SpaceAvailable
 "מקום פנוי: "
 # ^SpaceRequired
@@ -117,7 +117,7 @@ Nullsoft Install System %s
 # ^UninstallingText
 הסרת $(^Name) תתבצע מהתיקייה שלהלן. $_CLICK
 # ^UninstallingSubText
-:מסיר מ
+מסיר מ:
 # ^FileError
 ארעה שגיאה בעת פתיחת קובץ לכתיבה:\r\n\t"$0"\r\nלחץ על ביטול כדי לבטל את ההתקנה,\r\nנסה שנית כדי לנסות לפתוח את הקובץ שוב, או\r\nהתעלם כדי לדלג על הקובץ
 # ^FileError_NoIgnore
@@ -183,8 +183,8 @@ Nullsoft Install System %s
 # ^Byte
 "ב
 # ^Kilo
-ק
+" ק"
 # ^Mega
-מ
+" מ"
 # ^Giga
-ג
+" ג"
