@@ -1476,7 +1476,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("settings logging to %d",parm1);
         log_dolog=parm1;
         log_printf2("logging set to %d",parm1);
+#ifndef NSIS_CONFIG_LOG_ODS
         if (parm1) build_g_logfile();
+#endif
       }
       else
       {

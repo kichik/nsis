@@ -11,7 +11,9 @@
 #include "ui.h"
 
 #ifdef NSIS_CONFIG_LOG
+#ifndef NSIS_CONFIG_LOG_ODS
 char g_log_file[1024];
+#endif
 #endif
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
@@ -722,11 +724,12 @@ char * NSISCALL validate_filename(char *in) {
 }
 
 #ifdef NSIS_CONFIG_LOG
-char log_text[4096];
 int log_dolog;
+char log_text[NSIS_MAX_STRLEN*4];
+
+#ifndef NSIS_CONFIG_LOG_ODS
 void NSISCALL log_write(int close)
 {
-  extern char g_log_file[1024];
   static HANDLE fp=INVALID_HANDLE_VALUE;
   if (close)
   {
@@ -753,7 +756,22 @@ void NSISCALL log_write(int close)
     }
   }
 }
+#endif//!NSIS_CONFIG_LOG_ODS
+
+void log_printf(char *format, ...)
+{
+  va_list val;
+  va_start(val,format);
+  wvsprintf(log_text,format,val);
+  va_end(val);
+#ifdef NSIS_CONFIG_LOG_ODS
+  if (log_dolog)
+    OutputDebugString(log_text);
+#else
+  log_write(0);
 #endif
+}
+#endif//NSIS_CONFIG_LOG
 
 WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
