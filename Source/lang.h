@@ -7,6 +7,64 @@
 #include <StdExcept>
 using namespace std;
 
+struct langstring {
+  int name;
+  int index;
+};
+
+class LangStringList : public SortedStringListND<struct langstring>
+{
+  public:
+    LangStringList()
+    {
+      index = 0;
+    }
+    ~LangStringList() { }
+
+    int add(const char *name)
+    {
+      int pos=SortedStringListND<struct langstring>::add(name);
+      if (pos == -1) return -1;
+
+      ((struct langstring*)gr.get())[pos].index = index;
+
+      int temp = index;
+      index++;
+
+      return temp;
+    }
+
+    int get(char *name)
+    {
+      int v=SortedStringListND<struct langstring>::find(name);
+      if (v==-1) return -1;
+      return ((struct langstring*)gr.get())[v].index;
+    }
+
+    int getnum()
+    {
+      return index;
+    }
+
+    char *idx2name(int idx)
+    {
+      struct langstring *data=(struct langstring *)gr.get();
+      
+      for (int i = 0; i < index; i++)
+      {
+        if (data[i].index == idx)
+        {
+          return ((char*)strings.get() + data[i].name);
+        }
+      }
+
+      return NULL;
+    }
+
+  private:
+    int index;
+};
+
 struct StringTable {
   LANGID lang_id;
   common_strings common;

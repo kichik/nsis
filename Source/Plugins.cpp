@@ -8,11 +8,6 @@
 
 extern FILE *g_output;
 
-Plugins::Plugins()
-{
-  m_funcsCount = 0;
-}
-
 void Plugins::FindCommands(char* path,bool displayInfo)
 {
   if (path)
@@ -53,11 +48,6 @@ void Plugins::FindCommands(char* path,bool displayInfo)
       delete[] pathAndWildcard;
       delete[] basePath;
     }
-
-    m_dataHandles.resize(m_funcsCount*sizeof(int));
-    m_uninstDataHandles.resize(m_funcsCount*sizeof(int));
-    memset(m_dataHandles.get(), -1, m_funcsCount*sizeof(int));
-    memset(m_uninstDataHandles.get(), -1, m_funcsCount*sizeof(int));
   }
 }
 
@@ -124,8 +114,7 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
             {
               char *name = (char*)exports + names[j] - ExportDirVA;
               wsprintf(signature, "%s::%s", dllName, name);
-              m_commands.add(signature, pathToDll);
-              m_funcsCount++;
+              m_list.add(signature, pathToDll);
               if (displayInfo)
                 fprintf(g_output, " - %s\n", signature);
             }
@@ -141,30 +130,25 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
 
 bool Plugins::IsPluginCommand(char* token)
 {
-  return GetPluginDll(0, &token, 0) ? true : false;
+  return m_list.get(&token) ? true : false;
 }
 
 char* Plugins::GetPluginDll(int uninst, char** command, int* dataHandle)
-{
-  int idx = 0;
-  char* ret = m_commands.find(*command, &idx);
-  if (ret && dataHandle) {
-    int v = m_commands.defines.idx2pos(idx);
-    if (v < 0) return 0;
-    strcpy(*command, m_commands.defines.get() + v);
-    if (uninst) *dataHandle = ((int*)m_uninstDataHandles.get())[idx];
-    else *dataHandle = ((int*)m_dataHandles.get())[idx];
-  }
-  return ret;
+{  
+  *dataHandle = -1;
+  
+  if (uninst)
+    return m_list.get(command, 0, dataHandle);
+  else
+    return m_list.get(command, dataHandle, 0);
 }
 
 void Plugins::SetDllDataHandle(int uninst, char* command, int dataHandle)
 {
-  int idx = -1;
-  m_commands.find(command, &idx);
-  if (idx == -1) return;
-  if (uninst) ((int*)m_uninstDataHandles.get())[idx] = dataHandle;
-  else ((int*)m_dataHandles.get())[idx] = dataHandle;
+  if (uninst)
+    m_list.setDataHandle(command, -1, dataHandle);
+  else
+    m_list.setDataHandle(command, dataHandle, -1);
 }
 
 #endif
