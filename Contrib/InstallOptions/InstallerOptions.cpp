@@ -18,8 +18,6 @@
 #include "../exdll/exdll.h"
 #undef popstring
 
-void * mini_memcpy(void *out, const void *in, int len);
-void * mini_zeromem(void *in, int len);
 
 static int popstring(char *str)
 {
@@ -138,7 +136,7 @@ struct FieldType {
   UINT   nControlID;
 
   int    nParentIdx;  // this is used by the filerequest and dirrequest controls, used to store original windowproc for LINK
-  HANDLE hImage; // this is used by image/icon field to save the handle to the image, or used by LINK control to store the color
+  HANDLE hImage; // this is used by image/icon field to save the handle to the image
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -434,56 +432,6 @@ bool SaveSettings(void) {
 }
 
 #define BROWSE_WIDTH 15
-
-void AddBrowseButtons() {
-  // this function loops through all the controls and if a filerequest or dirrequest
-  // control is found, then it adds the corresponding browse button.
-  // NOTE: this also resizes the text box created to make room for the button.
-  int nIdx;
-  FieldType *pNewField;
-
-  for (nIdx = nNumFields - 1; nIdx >= 0; nIdx--) {
-    // we loop down so we don't run into the newly added fields.
-    switch (pFields[nIdx].nType) {
-      case FIELD_FILEREQUEST:
-      case FIELD_DIRREQUEST:
-        // Insert button after edit, tabstop depends in creation order,
-        // with this trick browse button get tabstop after parent edit
-        if ( nIdx < nNumFields - 1 )
-        {
-          mini_memcpy(&pFields[nIdx+2], &pFields[nIdx+1], (nNumFields-nIdx-1)*sizeof(FieldType) );
-          for ( int i = nIdx+2; i < nNumFields; i++ )
-          {
-            if ( pFields[i].nType == FIELD_BROWSEBUTTON )
-              pFields[i].nParentIdx++; // Ohh! where is your dady :)
-          }          
-        }
-        // After moving controls 1 position, don't forget to increment nNumFields at *end* of loop
-        pNewField = &pFields[nIdx+1];
-        mini_zeromem(pNewField, sizeof(FieldType)); // don't use settings from other control
-        pNewField->nControlID = 1200 + nNumFields;
-        pNewField->nParentIdx = nIdx;
-        pNewField->nType = FIELD_BROWSEBUTTON;
-        pNewField->nFlags = pFields[nIdx].nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
-        //pNewField->pszListItems = NULL;
-        //pNewField->nMaxLength = 0;
-        //pNewField->nMinLength = 0;
-        pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
-        //pNewField->pszValidateText = NULL;
-
-        pNewField->rect.right  = pFields[nIdx].rect.right;
-        pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
-        pNewField->rect.bottom = pFields[nIdx].rect.bottom;
-        pNewField->rect.top    = pFields[nIdx].rect.top;
-
-        pFields[nIdx].rect.right = pNewField->rect.left - 3;
-
-        nNumFields++;
-        break;
-    }
-  }
-}
-
 static char szResult[4096];
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
@@ -502,7 +450,7 @@ char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 
 bool ReadSettings(void) {
   static char szField[25];
-  int nIdx;
+  int nIdx, nCtrlIdx;
 
   pszTitle = myGetProfileStringDup("Settings", "Title");
   pszCancelButtonText = myGetProfileStringDup("Settings", "CancelButtonText");
@@ -525,7 +473,7 @@ bool ReadSettings(void) {
     pFields = (FieldType *)MALLOC(sizeof(FieldType)*2*nNumFields);
   }
 
-  for(nIdx = 0; nIdx < nNumFields; nIdx++) {
+  for(nIdx = 0, nCtrlIdx = 0; nCtrlIdx < nNumFields; nCtrlIdx++, nIdx++) {
     // Control types
     static TableEntry TypeTable[] = {
       { "LABEL",       FIELD_LABEL       },
@@ -574,7 +522,7 @@ bool ReadSettings(void) {
       { NULL,                0                   }
     };
 
-    wsprintf(szField, "Field %d", nIdx + 1);
+    wsprintf(szField, "Field %d", nCtrlIdx + 1);
     myGetProfileString(szField, "TYPE");
 
     // Get the control type
@@ -671,9 +619,24 @@ bool ReadSettings(void) {
     pFields[nIdx].hImage = (HANDLE)GetPrivateProfileInt(szField, "TxtColor", RGB(0,0,255), pszFilename);
 
     pFields[nIdx].nControlID = 1200 + nIdx;
+    if ( pFields[nIdx].nType == FIELD_FILEREQUEST || pFields[nIdx].nType == FIELD_DIRREQUEST )
+    {
+        FieldType *pNewField = &pFields[nIdx+1];
+        pNewField->nControlID = 1200 + nIdx + 1;
+        pNewField->nParentIdx = nIdx;
+        pNewField->nType = FIELD_BROWSEBUTTON;
+        pNewField->nFlags = pFields[nIdx].nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
+        pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
+        pNewField->rect.right  = pFields[nIdx].rect.right;
+        pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
+        pNewField->rect.bottom = pFields[nIdx].rect.bottom;
+        pNewField->rect.top    = pFields[nIdx].rect.top;
+        pFields[nIdx].rect.right = pNewField->rect.left - 3;
+        nNumFields++;
+        nIdx++;
+    }
   }
 
-  AddBrowseButtons();
 
   return true;
 }
@@ -696,7 +659,7 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
           }
           break;
         } else if (pFields[nIdx].nType == FIELD_LINK) {
-          ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);	            
+          ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);
         }
       }
 			break;
@@ -761,7 +724,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
           (lpdis->itemAction & ODA_SELECT))
           DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
-
+        
         SetTextColor(lpdis->hDC, (COLORREF)pFields[nIdx].hImage);
         
         pFields[nIdx].rect = lpdis->rcItem;
@@ -1363,23 +1326,3 @@ void ConvertNewLines(char *str) {
   *p2 = 0;
 }
 
-void * mini_memcpy(void *outBuf, const void *inBuf, int len)
-{
-  char *c_out=(char*)outBuf+(len-1);
-  char *c_in=(char *)inBuf+(len-1);
-  while (len-- > 0)
-  {
-    *c_out--=*c_in--;
-  }
-  return outBuf;
-}
-
-void * mini_zeromem(void *in, int len)
-{
-  char *c_in=(char *)in;
-  while (len-- > 0)
-  {
-    *c_in++=0;
-  }
-  return in;
-}

@@ -6,15 +6,15 @@ without opening a dos box.
 
 Usage
 -----
-nsExec::Exec [/TIMEOUT=x] path
+nsExec::Exec [/TIMEOUT=x] [/CMD] path
 
 -or-
 
-nsExec::ExecToLog [/TIMEOUT=x] path
+nsExec::ExecToLog [/TIMEOUT=x] [/CMD] path
 
 -or-
 
-nsExec::ExecToStack [/TIMEOUT=x] path
+nsExec::ExecToStack [/TIMEOUT=x] [/CMD] path
 
 All functions are the same except ExecToLog will print the output
 to the logwindow and ExecToStack will push up to ${NSIS_MAX_STRLEN}
@@ -26,6 +26,18 @@ process is received, the timeout value is reset and it will
 again wait for more output using the timeout value.  See Return 
 Value for how to check if there was a timeout.
 
+The /CMD param is optional.  The /CMD indicates that the exec procedure should use
+command processor to execute the command, ie, %COMSPEC% path
+
+*IMPORTANT NOTICE* The /CMD param should be used for 16bits MS-DOS applications
+or applications that create windows, or any form of user interface
+
+To ensure that command are executed without problems on all windows versions,
+is recommended to use the following syntax:
+
+   nsExec::ExecToStack [OPTIONS] '"PATH" param1 param2 paramN'
+
+This way the application path may contain non 8.3 paths (with spaces)
 
 Return Value
 ------------

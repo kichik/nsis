@@ -40,6 +40,7 @@ void ExecScript(BOOL log);
 void LogMessage(const char *pStr);
 char *my_strstr(const char *string, const char *strCharSet);
 unsigned int my_atoi(char *s);
+void * mini_memcpy(void *outBuf, const void *inBuf, int len);
 
 void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
   g_hwndParent=hwndParent;
@@ -69,23 +70,50 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
   return TRUE;
 }
 
+#define TAB_REPLACE "        "
+#define TAB_REPLACE_SIZE (sizeof(TAB_REPLACE)-1)
+
 void ExecScript(int log) {
   char szRet[128] = "";
+  char *pExec;
+  char sAux[MAX_PATH];
+  char *pRoot = NULL;
+  int nComSpecSize;
+  BOOL bUseComSpec=false;
 
+  nComSpecSize = ExpandEnvironmentStrings("%ComSpec% /c ", sAux, MAX_PATH);
   g_to = 0; // default is no timeout
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
-  g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+1);
-  if (!popstring(g_exec)) {
+  g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+1);
+  lstrcpy(g_exec, sAux);
+  pExec = g_exec + nComSpecSize - 1;
+  
+  while ( !popstring(pExec) ) {
     if (my_strstr(g_exec,"/TIMEOUT=")) {
       char *szTimeout = g_exec + 9;
       g_to = my_atoi(szTimeout);
-      popstring(g_exec);
     }
+    else if (my_strstr(g_exec,"/CMD")) {
+      bUseComSpec = true;
+    }
+    else
+      break;
   }
-  if (!g_exec[0]) {
+  
+  if (!pExec[0] ) 
+  {
     lstrcpy(szRet, "error");
     goto done;
   }
+  
+  if ( bUseComSpec )
+  {
+    GetWindowsDirectory(sAux, MAX_PATH); // UNC paths not supported on cmd.exe / command.com
+    pRoot = sAux;
+  }
+  else
+    lstrcpy(g_exec, pExec);
+
   {
     STARTUPINFO si={sizeof(si),};
     SECURITY_ATTRIBUTES sa={sizeof(sa),};
@@ -128,7 +156,7 @@ void ExecScript(int log) {
     si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
     si.hStdOutput = newstdout;
     si.hStdError = newstdout;
-    if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
+    if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,0,NULL,pRoot,&si,&pi)) {
       lstrcpy(szRet, "error");
       goto done;
     }
@@ -160,12 +188,21 @@ void ExecScript(int log) {
           }
 
           if (!(log & 2)) {
+            while ( p = my_strstr(p, "\t") ) 
+            {
+              mini_memcpy(p+TAB_REPLACE_SIZE, p+1, lstrlen(p));
+              lstrcpy(p, TAB_REPLACE);
+              p += TAB_REPLACE_SIZE;
+              *p = ' ';
+            }
+            
+            p = szUnusedBuf; // get the old left overs
             while (lineBreak = my_strstr(p, "\r\n")) {
               *lineBreak = 0;
               LogMessage(p);
               p = lineBreak + 2;
             }
-
+            
             // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
             if (p != szUnusedBuf) {
               char *p2 = szUnusedBuf;
@@ -269,4 +306,15 @@ unsigned int my_atoi(char *s) {
     }
   }
   return (int)v;
+}
+
+void * mini_memcpy(void *outBuf, const void *inBuf, int len)
+{
+  char *c_out=(char*)outBuf+(len-1);
+  char *c_in=(char *)inBuf+(len-1);
+  while (len-- > 0)
+  {
+    *c_out--=*c_in--;
+  }
+  return outBuf;
 }
