@@ -1,5 +1,5 @@
-; NSIS LOGIC LIBRARY - logiclib.nsh
-; Version 2.4 - 12/13/2003
+; NSIS LOGIC LIBRARY - LogicLib.nsh
+; Version 2.5 - 23/08/2004
 ; By dselkirk@hotmail.com
 ; and eccles@users.sf.net
 ;
@@ -14,6 +14,9 @@
 ;       If|Unless..{ElseIf|ElseUnless}..[Else]..EndIf|EndUnless
 ;         - Conditionally executes a block of statements, depending on the value
 ;           of an expression.
+;       AndIf|AndUnless|OrIf|OrUnless
+;         - Adds any number of extra conditions to If, Unless, ElseIf and
+;           ElseUnless statements.
 ;       IfThen..|..|
 ;         - Conditionally executes an inline statement, depending on the value
 ;           of an expression.
@@ -39,14 +42,17 @@
 ;         a == b; a != b
 ;       Additional case-insensitive string tests (using System.dll):
 ;         a S< b; a S>= b; a S> b; a S<= b
+;           - Requires a !define LOGICLIB_STRCMP above !include LogicLib.nsh
 ;       Case-sensitive string tests (using System.dll):
 ;         a S== b; a S!= b
+;           - Requires a !define LOGICLIB_STRCMP above !include LogicLib.nsh
 ;       Standard (built-in) signed integer tests:
 ;         a = b; a <> b; a < b; a >= b; a > b; a <= b
 ;       Standard (built-in) unsigned integer tests:
 ;         a U< b; a U>= b; a U> b; a U<= b
 ;       64-bit integer tests (using System.dll):
 ;         a L= b; a L<> b; a L< b; a L>= b; a L> b; a L<= b
+;           - Requires a !define LOGICLIB_INT64CMP above !include LogicLib.nsh
 ;       Built-in NSIS flag tests:
 ;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
 ;       Built-in NSIS other tests:
@@ -58,6 +64,7 @@
 ;         ${SectionIsSubSectionEnd} a; ${SectionIsBold} a;
 ;         ${SectionIsReadOnly} a; ${SectionIsExpanded} a;
 ;         ${SectionIsPartiallySelected} a
+;           - Requires a !define LOGICLIB_SECTIONCMP above !include LogicLib.nsh
 ;
 ; Examples:
 ;   See LogicLib.nsi in the Examples folder for lots of example usage.
@@ -76,7 +83,14 @@
   !define | "'"
   !define || "' '"
 
-  Var _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
+  !ifdef LOGICLIB_SECTIONCMP
+    !include Sections.nsh
+  !endif
+
+  !ifdef LOGICLIB_STRCMP | LOGICLIB_INT64CMP | LOGICLIB_SECTIONCMP
+    !define _LOGICLIB_TEMP
+    Var _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
+  !endif
 
   !macro _PushLogic
     !insertmacro _PushScope Logic _${__LINE__}
@@ -124,9 +138,13 @@
 
   ; Case-sensitive string tests
   !macro _StrCmp _a _b _e _l _m
-    System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
-    Pop $_LOGICLIB_TEMP
-    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+    !ifdef _LOGICLIB_TEMP
+      System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
+      Pop $_LOGICLIB_TEMP
+      IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+    !else
+      !error "Please !define LOGICLIB_STRCMP above !include LogicLib.nsh and recompile"
+    !endif
   !macroend
 
   !macro _S== _a _b _t _f
@@ -139,9 +157,13 @@
 
   ; Extra string tests (cannot do these case-sensitively - I tried and lstrcmp still ignored the case)
   !macro _StrCmpI _a _b _e _l _m
-    System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
-    Pop $_LOGICLIB_TEMP
-    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+    !ifdef _LOGICLIB_TEMP
+      System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
+      Pop $_LOGICLIB_TEMP
+      IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+    !else
+      !error "Please !define LOGICLIB_STRCMP above !include LogicLib.nsh and recompile"
+    !endif
   !macroend
 
   !macro _S< _a _b _t _f
@@ -204,9 +226,13 @@
 
   ; Int64 tests
   !macro _Int64Cmp _a _o _b _t _f
-    System::Int64Op `${_a}` `${_o}` `${_b}`
-    Pop $_LOGICLIB_TEMP
-    !insertmacro _= $_LOGICLIB_TEMP 0 `${_f}` `${_t}`
+    !ifdef _LOGICLIB_TEMP
+      System::Int64Op `${_a}` `${_o}` `${_b}`
+      Pop $_LOGICLIB_TEMP
+      !insertmacro _= $_LOGICLIB_TEMP 0 `${_f}` `${_t}`
+    !else
+      !error "Please !define LOGICLIB_INT64CMP above !include LogicLib.nsh and recompile"
+    !endif
   !macroend
 
   !macro _L= _a _b _t _f
@@ -283,9 +309,13 @@
 
   ; Section flag test
   !macro _SectionFlagIsSet _a _b _t _f
-    SectionGetFlags `${_b}` $_LOGICLIB_TEMP
-    IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
-    !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
+    !ifdef _LOGICLIB_TEMP & SF_SELECTED
+      SectionGetFlags `${_b}` $_LOGICLIB_TEMP
+      IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
+      !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
+    !else
+      !error "Please !define LOGICLIB_SECTIONCMP above !include LogicLib.nsh and recompile"
+    !endif
   !macroend
   !define SectionIsSelected `${SF_SELECTED} SectionFlagIsSet`
   !define SectionIsSubSection `${SF_SUBSEC} SectionFlagIsSet`
@@ -314,6 +344,55 @@
   !macroend
   !define If     `!insertmacro _If true`
   !define Unless `!insertmacro _If false`
+
+  !macro _And _c _a _o _b
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !ifndef _Logic | ${_Logic}If
+      !error "Cannot use And without a preceding If or Unless"
+    !endif
+    !ifndef ${_Logic}Else
+      !error "Cannot use And following an Else"
+    !endif
+    !define _c=${_c}
+    !ifdef _c=true                                        ; If is true
+      !insertmacro _${_o} `${_a}` `${_b}` "" ${${_Logic}Else}
+    !else                                                 ; If condition is false
+      !insertmacro _${_o} `${_a}` `${_b}` ${${_Logic}Else} ""
+    !endif
+    !undef _c=${_c}
+    !verbose pop
+  !macroend
+  !define AndIf     `!insertmacro _And true`
+  !define AndUnless `!insertmacro _And false`
+
+  !macro _Or _c _a _o _b
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !ifndef _Logic | ${_Logic}If
+      !error "Cannot use Or without a preceding If or Unless"
+    !endif
+    !ifndef ${_Logic}Else
+      !error "Cannot use Or following an Else"
+    !endif
+    !define _label _${__LINE__}                           ; Skip this test as we already
+    Goto ${_label}                                        ; have a successful result
+    ${${_Logic}Else}:                                     ; Place the Else label
+    !undef ${_Logic}Else                                  ; and remove it
+    !define ${_Logic}Else _${__LINE__}                    ; Get a label for the next Else and perform the new If
+    !define _c=${_c}
+    !ifdef _c=true                                        ; If is true
+      !insertmacro _${_o} `${_a}` `${_b}` "" ${${_Logic}Else}
+    !else                                                 ; If condition is false
+      !insertmacro _${_o} `${_a}` `${_b}` ${${_Logic}Else} ""
+    !endif
+    !undef _c=${_c}
+    ${_label}:
+    !undef _label
+    !verbose pop
+  !macroend
+  !define OrIf     `!insertmacro _Or true`
+  !define OrUnless `!insertmacro _Or false`
 
   !macro _Else
     !verbose push
