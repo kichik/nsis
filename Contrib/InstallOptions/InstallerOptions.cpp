@@ -674,7 +674,7 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
   if (message == WM_NOTIFY_OUTER_NEXT && wParam == 1)
   {
     // Don't call leave function if fields aren't valid
-    if (!ValidateFields())
+    if (!g_NotifyField && !ValidateFields())
       return 0;
     // Get the settings ready for the leave function verification
     SaveSettings();
@@ -728,7 +728,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       // Calculate needed size of the control
       DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
-      
+
       // Move rect to right if in RTL mode
       if (bRTL)
       {
