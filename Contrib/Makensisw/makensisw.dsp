@@ -137,6 +137,18 @@ SOURCE=..\..\source\icon.ico
 # End Source File
 # Begin Source File
 
+SOURCE=..\Icons\lama.ico
+# End Source File
+# Begin Source File
+
+SOURCE=..\Icons\lama3.ico
+# End Source File
+# Begin Source File
+
+SOURCE=..\Icons\new_nsis.ico
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource.rc
 # End Source File
 # Begin Source File
