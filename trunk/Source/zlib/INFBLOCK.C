@@ -10,13 +10,13 @@
 #define UPDIN {z->avail_in=n;z->next_in=p;}
 #define UPDOUT {s->write=q;}
 #define UPDATE {UPDBITS UPDIN UPDOUT}
-#define LEAVE return __myleave(z,r,b,k,p,n,q);
+#define LEAVE(r) {UPDATE inflate_flush(z); return r;}
 
 /*   get bytes and bits */
 #define LOADIN {p=z->next_in;n=z->avail_in;b=s->bitb;k=s->bitk;}
 
 
-#define NEEDBYTE {if(n)r=Z_OK;else LEAVE}
+#define NEEDBYTE {if(!n)LEAVE(Z_OK)}
 #define NEXTBYTE (n--,*p++)
 #define NEEDBITS(j) {while(k<(j)){NEEDBYTE;b|=((uLong)NEXTBYTE)<<k;k+=8;}}
 
@@ -25,11 +25,13 @@
 #define WAVAIL (uInt)(q<s->read?s->read-q-1:s->end-q)
 #define LOADOUT {q=s->write;m=(uInt)WAVAIL;}
 #define WRAP {if(q==s->end&&s->read!=s->window){q=s->window;m=(uInt)WAVAIL;}}
-#define FLUSH {UPDOUT r=inflate_flush(z,r); LOADOUT}
-#define NEEDOUT {if(m==0){WRAP if(m==0){FLUSH WRAP if(m==0) LEAVE}}r=Z_OK;}
+#define FLUSH {UPDOUT inflate_flush(z); LOADOUT}
+#define NEEDOUT {if(m==0){WRAP if(m==0){FLUSH WRAP if(m==0) LEAVE(Z_OK)}}}
 #define OUTBYTE(a) {*q++=(Byte)(a);m--;}
 /*   load local pointers */
 #define LOAD {LOADIN LOADOUT}
+
+#define LAST (s->last == DRY)
 
 #define FIXEDH 544      /* number of hufts used by fixed tables */
 
@@ -65,7 +67,7 @@ local const unsigned short  cpdext[30] = { /* Extra bits for distance codes */
         7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
         12, 12, 13, 13};
 
-        /* build fixed tables only once--keep them here */
+/* build fixed tables only once--keep them here */
 local char fixed_built = 0;
 local inflate_huft fixed_mem[FIXEDH];
 local uInt fixed_bl=9;
@@ -73,47 +75,29 @@ local uInt fixed_bd=5;
 local inflate_huft *fixed_tl;
 local inflate_huft *fixed_td;
 
-
-local void inflate_codes_new(c,bl, bd, tl, td)
-inflate_codes_statef *c;
-uInt bl, bd;
-inflate_huft *tl;
-inflate_huft *td; /* need separate declaration for Borland C++ */
-{
-  c->mode = START;
-  c->lbits = (Byte)bl;
-  c->dbits = (Byte)bd;
-  c->ltree = tl;
-  c->dtree = td;
-}
-
-
 /* copy as much as possible from the sliding window to the output area */
-local int inflate_flush(z, r)
+local void inflate_flush(z)
 z_streamp z;
-int r;
 {
-  inflate_blocks_statef *s=&z->blocks;
+  inflate_blocks_statef *s = &z->blocks;
   uInt n;
-  Bytef *p;
   Bytef *q;
 
   /* local copies of source and destination pointers */
-  p = z->next_out;
   q = s->read;
 
+again:
   /* compute number of bytes to copy as far as end of window */
   n = (uInt)((q <= s->write ? s->write : s->end) - q);
-  if (n > z->avail_out) n = z->avail_out;
-  if (n && r == Z_BUF_ERROR) r = Z_OK;
+  n = min(n, z->avail_out);
 
   /* update counters */
   z->avail_out -= n;
-//  z->total_out += n;
+  //z->total_out += n;
 
   /* copy as far as end of window */
-  zmemcpy(p, q, n);
-  p += n;
+  zmemcpy(z->next_out, q, n);
+  z->next_out += n;
   q += n;
 
   /* see if more to copy at beginning of window */
@@ -124,34 +108,12 @@ int r;
     if (s->write == s->end)
       s->write = s->window;
 
-    /* compute bytes to copy */
-    n = (uInt)(s->write - q);
-    if (n > z->avail_out) n = z->avail_out;
-    if (n && r == Z_BUF_ERROR) r = Z_OK;
-
-    /* update counters */
-    z->avail_out -= n;
-    //z->total_out += n;
-
-    /* copy */
-    zmemcpy(p, q, n);
-    p += n;
-    q += n;
+    /* do the same for the beginning of the window */
+    goto again;
   }
 
   /* update pointers */
-  z->next_out = p;
   s->read = q;
-
-  /* done */
-  return r;
-}
-
-local int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
-{
-  inflate_blocks_statef *s = &z->blocks;
-  UPDATE 
-  return inflate_flush(z,r);
 }
 
 #define BMAX 15         /* maximum bit length of any code */
@@ -344,18 +306,10 @@ uInt *hn)               /* working area: values in order of bit length */
   return (y != 0 && g != 1) ? Z_BUF_ERROR : Z_OK;
 }
 
-void inflateReset(z_streamp z)
-{
-  inflate_blocks_statef *s=&z->blocks;
-  s->mode = TYPE;
-  s->bitk = s->bitb = 0;
-  s->read = s->write = s->window;
-  s->end = s->window + (1 << DEF_WBITS);
-}
-
 int inflate(z_streamp z)
 {
-  inflate_blocks_statef *s=&z->blocks;
+  inflate_blocks_statef *s = &z->blocks;
+  inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */
 
   // lousy two bytes saved by doing this
   struct
@@ -367,9 +321,13 @@ int inflate(z_streamp z)
     uInt n;               /* bytes available there */
     Bytef *q;             /* output window write pointer */
     uInt m;               /* bytes to end of window or read pointer */
-  } _state;
 
-int r=Z_OK;
+    /* CODES variables */
+
+    inflate_huft *j;      /* temporary pointer */
+    uInt e;               /* extra bits or operation */
+    Bytef *f;             /* pointer to copy strings from */
+  } _state;
 
 #define t _state.t
 #define b _state.b
@@ -389,18 +347,18 @@ int r=Z_OK;
       NEEDBITS(3)
       t = (uInt)b & 7;
       DUMPBITS(3)
-      s->last = t & 1;
+      s->last = t & 1 ? DRY : TYPE;
       switch (t >> 1)
       {
         case 0:                         /* stored */
           Tracev((stderr, "inflate:     stored block%s\n",
-                 s->last ? " (last)" : ""));
+                 LAST ? " (last)" : ""));
           DUMPBITS(k&7)
           s->mode = LENS;               /* get length of stored block */
           break;
         case 1:                         /* fixed */
           Tracev((stderr, "inflate:     fixed codes block%s\n",
-                 s->last ? " (last)" : ""));
+                 LAST ? " (last)" : ""));
           {
             if (!fixed_built)
             {
@@ -419,31 +377,34 @@ int r=Z_OK;
                 }
                 c[_k] = v;
               }
-          //    fixed_bl = 9;
+
               huft_build(c, 288, 257, cplens, cplext, &fixed_tl, &fixed_bl, fixed_mem, &f);
 
               /* distance table */
               for (_k = 0; _k < 30; _k++) c[_k] = 5;
-            //  fixed_bd = 5;
+
               huft_build(c, 30, 0, cpdist, cpdext, &fixed_td, &fixed_bd, fixed_mem, &f);
 
               /* done */
               fixed_built++;
             }
 
-            inflate_codes_new(&s->sub.decode.t_codes,fixed_bl, fixed_bd, fixed_tl, fixed_td);
+            //s->sub.decode.t_codes.mode = CODES_START;
+            s->sub.decode.t_codes.lbits = (Byte)fixed_bl;
+            s->sub.decode.t_codes.dbits = (Byte)fixed_bd;
+            s->sub.decode.t_codes.ltree = fixed_tl;
+            s->sub.decode.t_codes.dtree = fixed_td;
           }
-          s->mode = CODES;
+          s->mode = CODES_START;
           break;
         case 2:                         /* dynamic */
           Tracev((stderr, "inflate:     dynamic codes block%s\n",
-                 s->last ? " (last)" : ""));
+                 LAST ? " (last)" : ""));
           s->mode = TABLE;
           break;
-        default:                         /* illegal */
-          s->mode = BAD;
-          r = Z_DATA_ERROR;
-          LEAVE
+        case 3:                         /* illegal */
+          /* the only illegal value possible is 3 because we check only 2 bits */
+          goto bad;
       }
       break;
     case LENS:
@@ -451,31 +412,33 @@ int r=Z_OK;
       s->sub.left = (uInt)b & 0xffff;
       b = k = 0;                      /* dump bits */
       Tracev((stderr, "inflate:       stored length %u\n", s->sub.left));
-      s->mode = s->sub.left ? STORED : (s->last ? DRY : TYPE);
+      s->mode = s->sub.left ? STORED : s->last;
       break;
     case STORED:
+    {
+      uInt mn;
+
       if (n == 0)
-        LEAVE
+        LEAVE(Z_OK)
       NEEDOUT
-      t = s->sub.left;
-      if (t > n) t = n;
-      if (t > m) t = m;
+      mn = min(m, n);
+      t = min(s->sub.left, mn);
       zmemcpy(q, p, t);
       p += t;  n -= t;
       q += t;  m -= t;
       if (!(s->sub.left -= t))
-        s->mode = s->last ? DRY : TYPE;
+        s->mode = s->last;
       break;
+    }
     case TABLE:
       NEEDBITS(14)
       s->sub.trees.table = t = (uInt)b & 0x3fff;
       if ((t & 0x1f) > 29 || ((t >> 5) & 0x1f) > 29)
       {
         s->mode = BAD;
-        r = Z_DATA_ERROR;
-        LEAVE
+        LEAVE(Z_DATA_ERROR);
       }
-//      t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
+      //t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
       DUMPBITS(14)
       s->sub.trees.index = 0;
       Tracev((stderr, "inflate:       table sizes ok\n"));
@@ -496,15 +459,13 @@ int r=Z_OK;
 
         t = huft_build(s->sub.trees.t_blens, 19, 19, (short *)Z_NULL, (short*)Z_NULL,
                  &s->sub.trees.tb, &s->sub.trees.bb, s->hufts, &hn);
-        if (t == Z_BUF_ERROR || s->sub.trees.bb == 0) t=Z_DATA_ERROR;
+        if (t != Z_OK || s->sub.trees.bb == 0) 
+        {
+          s->mode = BAD;
+          break;
+        }
       }
 
-      if (t != Z_OK)
-      {
-        r = t;
-        s->mode = BAD;
-        LEAVE
-      }
       s->sub.trees.index = 0;
       Tracev((stderr, "inflate:       bits tree ok\n"));
       s->mode = DTREE;
@@ -547,8 +508,7 @@ int r=Z_OK;
               (c == 16 && i < 1))
           {
             s->mode = BAD;
-            r = Z_DATA_ERROR;
-            LEAVE
+            LEAVE(Z_DATA_ERROR);
           }
           c = c == 16 ? s->sub.trees.t_blens[i - 1] : 0;
           do {
@@ -565,192 +525,163 @@ int r=Z_OK;
         int nl,nd;
         t = s->sub.trees.table;
 
-        nl=257 + (t & 0x1f);
-        nd=1 + ((t >> 5) & 0x1f);
+        nl = 257 + (t & 0x1f);
+        nd = 1 + ((t >> 5) & 0x1f);
         bl = 9;         /* must be <= 9 for lookahead assumptions */
         bd = 6;         /* must be <= 9 for lookahead assumptions */
 
         t = huft_build(s->sub.trees.t_blens, nl, 257, cplens, cplext, &tl, &bl, s->hufts, &hn);
-        if (t != Z_OK || bl == 0) t=Z_DATA_ERROR;
-        else
+        if (bl == 0) t = Z_DATA_ERROR;
+        if (t == Z_OK)
         {
           /* build distance tree */
           t = huft_build(s->sub.trees.t_blens + nl, nd, 0, cpdist, cpdext, &td, &bd, s->hufts, &hn);
-          if (t != Z_OK || (bd == 0 && nl > 257))
-          {
-              t=Z_DATA_ERROR;
-          }
         }
-
-        if (t != Z_OK)
+        if (t != Z_OK || (bd == 0 && nl > 257))
         {
           s->mode = BAD;
-          r = t;
-          LEAVE
+          LEAVE(Z_DATA_ERROR);
         }
         Tracev((stderr, "inflate:       trees ok\n"));
-        inflate_codes_new(&s->sub.decode.t_codes,bl, bd, tl, td);
+
+        //s->sub.decode.t_codes.mode = CODES_START;
+        s->sub.decode.t_codes.lbits = (Byte)bl;
+        s->sub.decode.t_codes.dbits = (Byte)bd;
+        s->sub.decode.t_codes.ltree = tl;
+        s->sub.decode.t_codes.dtree = td;
       }
-      s->mode = CODES;
-    case CODES:
-      UPDATE
+      s->mode = CODES_START;
+
+#define j (_state.j)
+#define e (_state.e)
+#define f (_state.f)
+
+    /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
+
+    case CODES_START:         /* x: set up for LEN */
+      c->sub.code.need = c->lbits;
+      c->sub.code.tree = c->ltree;
+      s->mode = CODES_LEN;
+    case CODES_LEN:           /* i: get length/literal/eob next */
+      t = c->sub.code.need;
+      NEEDBITS(t)
+      j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
+      DUMPBITS(j->bits)
+      e = (uInt)(j->exop);
+      if (e == 0)               /* literal */
       {
-        inflate_huft *j;      /* temporary pointer */
-        uInt e;               /* extra bits or operation */
-        Bytef *f;             /* pointer to copy strings from */
-        inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */
-
-        int done = 0;
-
-        /* process input and output based on current state */
-        while (!done) switch (c->mode)
-        {             /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
-          case START:         /* x: set up for LEN */
-            c->sub.code.need = c->lbits;
-            c->sub.code.tree = c->ltree;
-            c->mode = LEN;
-          case LEN:           /* i: get length/literal/eob next */
-            t = c->sub.code.need;
-            NEEDBITS(t)
-            j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
-            DUMPBITS(j->bits)
-            e = (uInt)(j->exop);
-            if (e == 0)               /* literal */
-            {
-              c->sub.lit = j->base;
-              c->mode = LIT;
-              break;
-            }
-            if (e & 16)               /* length */
-            {
-              c->sub.copy.get = e & 15;
-              c->len = j->base;
-              c->mode = LENEXT;
-              break;
-            }
-            if ((e & 64) == 0)        /* next table */
-            {
-              c->sub.code.need = e;
-              c->sub.code.tree = j + j->base;
-              break;
-            }
-            if (e & 32)               /* end of block */
-            {
-              c->mode = WASH;
-              break;
-            }
-          goto badcode;
-          case LENEXT:        /* i: getting length extra (have base) */
-            t = c->sub.copy.get;
-            NEEDBITS(t)
-            c->len += (uInt)b & (uInt)inflate_mask[t];
-            DUMPBITS(t)
-            c->sub.code.need = c->dbits;
-            c->sub.code.tree = c->dtree;
-            c->mode = DIST;
-          case DIST:          /* i: get distance next */
-            t = c->sub.code.need;
-            NEEDBITS(t)
-            j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
-            DUMPBITS(j->bits)
-            e = (uInt)(j->exop);
-            if (e & 16)               /* distance */
-            {
-              c->sub.copy.get = e & 15;
-              c->sub.copy.dist = j->base;
-              c->mode = DISTEXT;
-              break;
-            }
-            if ((e & 64) == 0)        /* next table */
-            {
-              c->sub.code.need = e;
-              c->sub.code.tree = j + j->base;
-              break;
-            }
-            goto badcode;
-      //      c->mode = BADCODE;        /* invalid code */
-        //    r = Z_DATA_ERROR;
-          //  LEAVE
-          case DISTEXT:       /* i: getting distance extra */
-            t = c->sub.copy.get;
-            NEEDBITS(t)
-            c->sub.copy.dist += (uInt)b & (uInt)inflate_mask[t];
-            DUMPBITS(t)
-            c->mode = COPY;
-          case COPY:          /* o: copying bytes in window, waiting for space */
-            f = (uInt)(q - s->window) < c->sub.copy.dist ?
-                s->end - (c->sub.copy.dist - (q - s->window)) :
-                q - c->sub.copy.dist;
-
-            while (c->len)
-            {
-              NEEDOUT
-              OUTBYTE(*f++)
-              if (f == s->end)
-                f = s->window;
-              c->len--;
-            }
-            c->mode = START;
-            break;
-          case LIT:           /* o: got literal, waiting for output space */
-            NEEDOUT
-            OUTBYTE(c->sub.lit)
-            c->mode = START;
-            break;
-          case WASH:          /* o: got eob, possibly more output */
-            if (k > 7)        /* return unused byte, if any */
-            {
-              k -= 8;
-              n++;
-              p--;            /* can always return one */
-            }
-            FLUSH
-            if (s->read != s->write)
-            {
-              r = inflate_flush(z,r);
-              done = 1;
-              break;
-            }
-            c->mode = END;
-          case END:
-            r = inflate_flush(z,Z_STREAM_END);
-            done = 1;
-            break;
-          default:
-          badcode:
-            r = inflate_flush(z,Z_STREAM_ERROR);
-            done = 1;
-            break;
-        }
-        UPDATE
-      }
-      if (r != Z_STREAM_END)
-        return inflate_flush(z, r);
-      r = Z_OK;
-      LOAD
-      Tracev((stderr, "inflate:       codes end, %lu total out\n",
-              z->total_out + (q >= s->read ? q - s->read :
-              (s->end - s->read) + (q - s->window))));
-      if (!s->last)
-      {
-        s->mode = TYPE;
+        c->sub.lit = j->base;
+        s->mode = CODES_LIT;
         break;
       }
-      s->mode = DRY;
+      if (e & 16)               /* length */
+      {
+        c->sub.copy.get = e & 15;
+        c->len = j->base;
+        s->mode = CODES_LENEXT;
+        break;
+      }
+      if ((e & 64) == 0)        /* next table */
+      {
+        c->sub.code.need = e;
+        c->sub.code.tree = j + j->base;
+        break;
+      }
+      if (e & 32)               /* end of block */
+      {
+        s->mode = CODES_WASH;
+        break;
+      }
+    goto bad;
+    case CODES_LENEXT:        /* i: getting length extra (have base) */
+      t = c->sub.copy.get;
+      NEEDBITS(t)
+      c->len += (uInt)b & (uInt)inflate_mask[t];
+      DUMPBITS(t)
+      c->sub.code.need = c->dbits;
+      c->sub.code.tree = c->dtree;
+      s->mode = CODES_DIST;
+    case CODES_DIST:          /* i: get distance next */
+      t = c->sub.code.need;
+      NEEDBITS(t)
+      j = c->sub.code.tree + ((uInt)b & (uInt)inflate_mask[t]);
+      DUMPBITS(j->bits)
+      e = (uInt)(j->exop);
+      if (e & 16)               /* distance */
+      {
+        c->sub.copy.get = e & 15;
+        c->sub.copy.dist = j->base;
+        s->mode = CODES_DISTEXT;
+        break;
+      }
+      if ((e & 64) == 0)        /* next table */
+      {
+        c->sub.code.need = e;
+        c->sub.code.tree = j + j->base;
+        break;
+      }
+      goto bad;        /* invalid code */
+    case CODES_DISTEXT:       /* i: getting distance extra */
+      t = c->sub.copy.get;
+      NEEDBITS(t)
+      c->sub.copy.dist += (uInt)b & (uInt)inflate_mask[t];
+      DUMPBITS(t)
+      s->mode = CODES_COPY;
+    case CODES_COPY:          /* o: copying bytes in window, waiting for space */
+      f = (uInt)(q - s->window) < c->sub.copy.dist ?
+          s->end - (c->sub.copy.dist - (q - s->window)) :
+          q - c->sub.copy.dist;
+
+      while (c->len)
+      {
+        NEEDOUT
+        OUTBYTE(*f++)
+        if (f == s->end)
+          f = s->window;
+        c->len--;
+      }
+      s->mode = CODES_START;
+      break;
+    case CODES_LIT:           /* o: got literal, waiting for output space */
+      NEEDOUT
+      OUTBYTE(c->sub.lit)
+      s->mode = CODES_START;
+      break;
+    case CODES_WASH:          /* o: got eob, possibly more output */
+      if (k > 7)        /* return unused byte, if any */
+      {
+        k -= 8;
+        n++;
+        p--;            /* can always return one */
+      }
+      /* flushing will be done in DRY */
+
+#undef j
+#undef e
+#undef f
+
     case DRY:
       FLUSH
-      if (s->read != s->write)
-        LEAVE
-      s->mode = DONE;
-    case DONE:
-      r = Z_STREAM_END;
-      LEAVE
-//    case BAD:
-  //    r = Z_DATA_ERROR;
-    //  LEAVE
+      if (s->write != s->read)
+        LEAVE(Z_OK)
+      if (s->mode == CODES_WASH)
+      {
+        Tracev((stderr, "inflate:       codes end, %lu total out\n",
+               z->total_out + (q >= s->read ? q - s->read :
+               (s->end - s->read) + (q - s->window))));
+      }
+      /* DRY if last, TYPE if not */
+      s->mode = s->last;
+      if (s->mode == TYPE)
+        LEAVE(Z_OK)
+      LEAVE(Z_STREAM_END)
+    //case BAD:
+      //r = Z_DATA_ERROR;
+      //LEAVE
     default: // we'll call Z_STREAM_ERROR if BAD anyway
-      r = Z_STREAM_ERROR;
-      LEAVE
+    bad:
+      s->mode = BAD;
+      LEAVE(Z_STREAM_ERROR)
   }
 }
 

@@ -57,23 +57,34 @@ typedef struct inflate_huft_s FAR inflate_huft;
 
 
 typedef enum {        /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
-      START,    /* x: set up for LEN */
-      LEN,      /* i: get length/literal/eob next */
-      LENEXT,   /* i: getting length extra (have base) */
-      DIST,     /* i: get distance next */
-      DISTEXT,  /* i: getting distance extra */
-      COPY,     /* o: copying bytes in window, waiting for space */
-      LIT,      /* o: got literal, waiting for output space */
-      WASH,     /* o: got eob, possibly still output waiting */
-      END,      /* x: got eob and all data flushed */
-      BADCODE}  /* x: got error */
-inflate_codes_mode;
+      CODES_START,    /* x: set up for LEN */
+      CODES_LEN,      /* i: get length/literal/eob next */
+      CODES_LENEXT,   /* i: getting length extra (have base) */
+      CODES_DIST,     /* i: get distance next */
+      CODES_DISTEXT,  /* i: getting distance extra */
+      CODES_COPY,     /* o: copying bytes in window, waiting for space */
+      CODES_LIT,      /* o: got literal, waiting for output space */
+      CODES_WASH,     /* o: got eob, possibly still output waiting */
+      //CODES_END,      /* x: got eob and all data flushed */
+      //CODES_BADCODE,  /* x: got error */
+      
+      TYPE,     /* get type bits (3, including end bit) */
+      LENS,     /* get lengths for stored */
+      STORED,   /* processing stored block */
+      TABLE,    /* get table lengths */
+      BTREE,    /* get bit lengths tree for a dynamic block */
+      DTREE,    /* get length, distance trees for a dynamic block */
+      CODES,    /* processing fixed or dynamic block */
+      DRY,      /* output remaining window bytes */
+      DONE,     /* finished last block, done */
+      BAD       /* got a data error--stuck here */
+} inflate_mode;
 
 /* inflate codes private state */
 struct inflate_codes_state {
 
   /* mode */
-  inflate_codes_mode mode;      /* current inflate_codes mode */
+  //inflate_mode mode;      /* current inflate_codes mode */
 
   /* mode dependent information */
   uInt len;
@@ -97,22 +108,6 @@ struct inflate_codes_state {
 
 };
 
-
-
-
- typedef enum {
-      TYPE,     /* get type bits (3, including end bit) */
-      LENS,     /* get lengths for stored */
-      STORED,   /* processing stored block */
-      TABLE,    /* get table lengths */
-      BTREE,    /* get bit lengths tree for a dynamic block */
-      DTREE,    /* get length, distance trees for a dynamic block */
-      CODES,    /* processing fixed or dynamic block */
-      DRY,      /* output remaining window bytes */
-      DONE,     /* finished last block, done */
-      BAD}      /* got a data error--stuck here */
-inflate_block_mode;
-
 struct inflate_huft_s {
   union {
     struct {
@@ -131,7 +126,7 @@ typedef struct inflate_codes_state inflate_codes_statef;
 struct inflate_blocks_state {
 
   /* mode */
-  inflate_block_mode  mode;     /* current inflate_block mode */
+  inflate_mode  mode;    /* current inflate_block mode */
 
   /* mode dependent information */
   union {
@@ -147,7 +142,8 @@ struct inflate_blocks_state {
       inflate_codes_statef t_codes;
     } decode;           /* if CODES, current state */
   } sub;                /* submode */
-  uInt last;            /* true if this block is the last block */
+
+  uInt last;            /* DRY if this block is the last block, TYPE otherwise */
 
   /* mode independent information */
   uInt bitk;            /* bits in bit buffer */
@@ -204,11 +200,25 @@ typedef z_stream FAR *z_streamp;
 #define Z_STREAM_END    1
 #define Z_NEED_DICT     2
 #define Z_ERRNO        (-1)
+
+#ifndef EXEHEAD
+
 #define Z_STREAM_ERROR (-2)
 #define Z_DATA_ERROR   (-3)
 #define Z_MEM_ERROR    (-4)
 #define Z_BUF_ERROR    (-5)
 #define Z_VERSION_ERROR (-6)
+
+#else
+// EXEHEAD doesn't need a specific return code, just < 0
+
+#define Z_STREAM_ERROR  Z_ERRNO
+#define Z_DATA_ERROR    Z_ERRNO
+#define Z_MEM_ERROR     Z_ERRNO
+#define Z_BUF_ERROR     Z_ERRNO
+#define Z_VERSION_ERROR Z_ERRNO
+
+#endif
 /* Return codes for the compression/decompression functions. Negative
  * values are errors, positive values are used for special but normal events.
  */
@@ -253,8 +263,15 @@ ZEXTERN int ZEXPORT deflateInit2 OF((z_streamp strm,
 
 ZEXTERN int ZEXPORT deflateReset OF((z_streamp strm));
 
-void ZEXPORT inflateReset OF((
-    z_streamp));                
+//void ZEXPORT inflateReset OF((
+  //  z_streamp));
+#define inflateReset(z) \
+{ \
+  (z)->blocks.mode = TYPE; \
+  (z)->blocks.bitk = (z)->blocks.bitb = 0; \
+  (z)->blocks.read = (z)->blocks.write = (z)->blocks.window; \
+  (z)->blocks.end = (z)->blocks.window + (1 << DEF_WBITS); \
+}
 
                         /* various hacks, don't look :) */
 
