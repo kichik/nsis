@@ -1,5 +1,6 @@
 # Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1042
 # Font and size - dash (-) means default
@@ -9,7 +10,7 @@ NLF v6
 949
 # RTL - anything else than RTL means LTR
 -
-# Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx  /  Modified by koder@popdesk.co.kr 수정시 '꼭' 메일로 연락 바랍니다.
+# Translation by dTomoyo dtomoyo@empal.com ( ~V2.0 BETA2 ) / By koder@popdesk.co.kr (V2.0 BETA3 ~ )
 # ^Branding
 널소프트 설치 시스템 %s
 # ^SetupCaption
@@ -17,7 +18,7 @@ $(^Name) 설치
 # ^UninstallCaption
 $(^Name) 제거
 # ^LicenseSubCaption
-: 사용 계약 동의
+: 사용권 계약 동의
 # ^ComponentsSubCaption
 : 설치 옵션
 # ^DirSubCaption
@@ -69,17 +70,17 @@ $(^Name) 제거
 # ^Completed
 완료
 # ^LicenseText
-$(^Name)(을)를 설치하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
+$(^Name)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
 # ^LicenseTextCB
-$(^Name)(을)를 설치하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
+$(^Name)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
 # ^LicesnseTextRB
-$(^Name)(을)를 설치하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
+$(^Name)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
 # ^UnLicenseText
-$(^Name)(을)를 제거하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
+$(^Name)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
 # ^UnLicenseTextCB
-$(^Name)(을)를 제거하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
+$(^Name)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
 # ^UnLicesnseTextRB
-$(^Name)(을)를 제거하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
+$(^Name)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
 # ^Custom
 사용자 정의
 # ^ComponentsText
@@ -91,7 +92,7 @@ $(^Name)(을)를 제거하시기 전에 사용 계약 내용을 살펴보시기 바랍니다. 내용에 동의
 # ^ComponentsSubText2
 구성요소 직접 선택:
 # ^UnComponentsText
-제거를 원하시는 구성 요소를 체크해 주시기 바랍니다. $_CLICK
+제거를 원하는 구성 요소를 체크해 주시기 바랍니다. $_CLICK
 # ^UnComponentsSubText1
 제거 형태 선택:
 # ^UnComponentsSubText2_NoInstTypes
@@ -111,9 +112,9 @@ $(^Name)(을)를 다음 폴더에서 제거할 예정입니다. \r\n다른 폴더에서 제거하고 싶으�
 # ^UnDirBrowseText
 $(^Name)(을)를 다음 폴더에서 제거 합니다:
 # ^SpaceAvailable
-남은 디스크 공간: 
+"남은 디스크 공간: "
 # ^SpaceRequired
-필요한 디스크 공간: 
+"필요한 디스크 공간: "
 # ^UninstallingText
 시스템에서 $(^Name)(을)를 제거 할 것입니다. $_CLICK
 # ^UninstallingText
@@ -133,7 +134,7 @@ $(^Name)(을)를 다음 폴더에서 제거 합니다:
 # ^Unregistering
 "등록 해제중: "
 # ^SymbolNotFound
-심볼을 찾을 수 없음: 
+"심볼을 찾을 수 없음: "
 # ^CouldNotLoad
 "불러올 수 없음: "
 # ^CreateFolder
