@@ -1862,6 +1862,10 @@
   SubCaption 3 " "
   SubCaption 4 " "
   
+  UninstallSubCaption 0 " "
+  UninstallSubCaption 1 " "
+  UninstallSubCaption 2 " "
+  
   !ifndef MUI_BRANDINGTEXT
     !define MUI_BRANDINGTEXT ""
   !endif
