@@ -63,7 +63,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Kaldýrýlýyor"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Lütfen ${MUI_PRODUCT} kaldýrýlýrken bekleyiniz."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Tamamlandý"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Kaldýrma iþlemi baþarýyla tamamlandý."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Tamamlandý"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Kaldýrma iþlemi baþarýyla tamamlandý."
   
 !insertmacro MUI_LANGUAGEFILE_END

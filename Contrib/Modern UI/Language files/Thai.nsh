@@ -65,7 +65,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "กำลังลบ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "กรุณารอขณะที่ ${MUI_PRODUCT} กำลังถูกลบ"
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "เรียบร้อย"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "การลบโปรแกรมเสร็จสมบูรณ์แล้ว"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "เรียบร้อย"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "การลบโปรแกรมเสร็จสมบูรณ์แล้ว"
   
 !insertmacro MUI_LANGUAGEFILE_END
