@@ -23,7 +23,7 @@
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
 
-!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR CURRENTPAGEVAR
+!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR FONT CURRENTPAGEVAR
 
   ;User interface
   
@@ -31,7 +31,7 @@
   UninstallIcon "${NSISDIR}\Contrib\Icons\${UNICON}"
   XPStyle On
   ChangeUI all "${NSISDIR}\Contrib\UIs\${UI}"
-  SetFont Tahoma 8
+  SetFont "${FONT}" 8
   CheckBitmap "${NSISDIR}\Contrib\Icons\${CHECKS}"
   InstallColors /windows
   InstProgressFlags "${PROGRESSBAR}"
