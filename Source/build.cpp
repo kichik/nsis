@@ -1171,16 +1171,6 @@ int CEXEBuild::write_output(void)
     }
   }
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  // Added by Amir Szekely 9th August 2002
-  int err=add_plugins_dir_initializer();
-  if (err != PS_OK)
-    return err;
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
-
-  // Added by Amir Szekely 3rd August 2002
-  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
-
   if (!build_entries.getlen())
   {
     ERROR_MSG("Error: invalid script: no entries specified\n");
@@ -1205,6 +1195,13 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("Error: Function still open at EOF, cannot proceed\n");
     return 1;
   }
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  // Added by Amir Szekely 9th August 2002
+  int err=add_plugins_dir_initializer();
+  if (err != PS_OK)
+    return err;
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen())
@@ -1374,8 +1371,10 @@ int CEXEBuild::write_output(void)
 
         p->next=LANG_BTN_NEXT;
 
-        if (i<build_header.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES)
+        if (i<build_header.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES) {
           p->next=LANG_BTN_INSTALL;
+          install_used = true;
+        }
         #ifdef NSIS_CONFIG_LICENSEPAGE
         if (p->id==NSIS_PAGE_LICENSE)
           p->next=LANG_BTN_LICENSE;
@@ -1384,6 +1383,8 @@ int CEXEBuild::write_output(void)
           p->back&=~2;
         if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
           p->back&=~2;
+
+        if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
@@ -1458,6 +1459,8 @@ int CEXEBuild::write_output(void)
         }
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
           p->back=noinstlogback?0:SW_SHOWNA;
+
+        if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
@@ -1518,6 +1521,9 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("\nError: %s\n", err.what());
     return PS_ERROR;
   }
+
+  // Generate language tables
+  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
 
   // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
