@@ -1,4 +1,4 @@
-\H{functions} Functions
+\C{functions} Functions
 
 Functions are like similar to Sections in that they contain zero or more instructions. Functions are not called by the installer directly, instead they are called from Sections using the Call instruction (Note: there are some special Callback Functions that can be called by the installer directly).
 

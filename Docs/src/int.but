@@ -1,37 +1,38 @@
-\H{intinst} Integer Support
+\C{intinst} Integer Support
 
-\S{IntOp} IntOp
-
-IntOp \e{user_var(output) value1 OP}
-
-[value2] Combines value1 and (depending on OP) value2 into the user variable $x. OP is defined as one of the following:
-
-\b + ADDs value1 and value2 
-
-\b - SUBTRACTs value2 from value1 
-
-\b * MULTIPLIES value1 and value2 
-
-\b / DIVIDEs value1 by value2 
-
-\b % MODULUSs value1 by value2 
-
-\b | BINARY ORs value1 and value2 
-
-\b & BINARY ANDs value1 and value2 
-
-\b ^ BINARY XORs value1 and value2 
-
-\b ~ BITWISE NEGATEs value1 (i.e. 7 becomes 4294917288) 
-
-\b ! LOGICALLY NEGATEs value1 (i.e. 7 becomes 0) 
-
-\b || LOGICALLY ORs value1 and value2 
-
-\b && LOGICALLY ANDs value1 and value2 
- 
-\S{IntFmt} IntFmt
+\H{IntFmt} IntFmt
 
 IntFmt \e{user_var(output) format numberstring}
 
 Formats the number in "numberstring" using the format "format", and sets the output to user variable $x. Example format strings include "%08X" "%u"  
+
+\H{IntOp} IntOp
+
+IntOp \e{user_var(output) value1 OP [value2]}
+
+Combines value1 and (depending on OP) value2 into the user variable $x. OP is defined as one of the following:
+
+\b \e{+} ADDs value1 and value2 
+
+\b \e{-} SUBTRACTs value2 from value1 
+
+\b \e{*} MULTIPLIES value1 and value2 
+
+\b \e{/} DIVIDEs value1 by value2 
+
+\b \e{%} MODULUSs value1 by value2 
+
+\b \e{|} BINARY ORs value1 and value2 
+
+\b \e{&} BINARY ANDs value1 and value2 
+
+\b \e{^} BINARY XORs value1 and value2 
+
+\b \e{~} BITWISE NEGATEs value1 (i.e. 7 becomes 4294917288) 
+
+\b \e{!} LOGICALLY NEGATEs value1 (i.e. 7 becomes 0) 
+
+\b \e{||} LOGICALLY ORs value1 and value2 
+
+\b \e{&&} LOGICALLY ANDs value1 and value2 
+ 
