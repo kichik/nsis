@@ -70,7 +70,9 @@
 
 \b SectionSetFlags can now set bold too
 
-\b SectionSetName for sub sections doesn't need - in front of the name
+\b SectionSetFlags now works in silent installers too
+
+\b SectionSetName for sub sections doesn't need '-' in front of the name
 
 \b Added SetPluginUnload
 
