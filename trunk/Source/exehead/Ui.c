@@ -545,9 +545,10 @@ nextPage:
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
       SendMessage(g_hwnd,DM_SETDEFID,IDOK,0);
       SetWindowLong(hwndtmp,GWL_STYLE,GetWindowLong(hwndtmp,GWL_STYLE)&~BS_DEFPUSHBUTTON);
-      ShowWindow(hwndtmp,this_page->back&SW_SHOWNA);// SW_HIDE = 0
-      EnableWindow(hwndtmp,this_page->back&2);
+      ShowWindow(hwndtmp,this_page->button_states&SW_SHOWNA);// SW_HIDE = 0, SW_SHOWNA = 8
+      EnableWindow(hwndtmp,this_page->button_states&2);
       EnableWindow(m_hwndOK,1);
+      EnableWindow(m_hwndCancel,this_page->button_states&4);
 
       mystrcpy(g_tmp,g_caption);
       process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
@@ -1389,7 +1390,6 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
 
     EnableWindow(m_hwndOK,0);
-    EnableWindow(m_hwndCancel,0);
   }
   if (uMsg == WM_NOTIFY_START) {
     DWORD id;

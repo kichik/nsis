@@ -313,6 +313,8 @@ CEXEBuild::CEXEBuild()
 
   build_last_page_define[0]=0;
   ubuild_last_page_define[0]=0;
+  enable_last_page_cancel=0;
+  uenable_last_page_cancel=0;
 
   notify_hwnd=0;
 }
@@ -1392,8 +1394,11 @@ int CEXEBuild::write_output(void)
 
       page *p=(page *) build_pages.get();
       for (int i=0; i<build_header.common.num_pages; i++, p++) {
-        if (i) p->back=SW_SHOWNA|2; // 2 - enabled, SW_SHOWNA - visible, 0 - invisible (or'ed)
-        else p->back=0;
+        // 2 - back enabled
+        // 4 - cancel enabled
+        // SW_SHOWNA (8) - back visible
+        if (i) p->button_states=SW_SHOWNA|2|4;
+        else p->button_states=4;
 
         p->next=LANG_BTN_NEXT;
 
@@ -1406,13 +1411,16 @@ int CEXEBuild::write_output(void)
           p->next=LANG_BTN_LICENSE;
         #endif
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->back&=~2;
+          p->button_states&=~6;
         if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
-          p->back&=~2;
+          p->button_states&=~2;
 
         if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
+      if (!enable_last_page_cancel) {
+        p->button_states&=~4;
+      }
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
     }
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -1473,8 +1481,11 @@ int CEXEBuild::write_output(void)
       page *p=(page *) ubuild_pages.get();
       int noinstlogback=0;
       for (int i=0; i<build_uninst.common.num_pages; i++, p++) {
-        if (i) p->back=SW_SHOWNA|2; // 2 - enabled, SW_SHOWNA - visible, 0 - invisible (or'ed)
-        else p->back=0;
+        // 2 - back enabled
+        // 4 - cancel enabled
+        // SW_SHOWNA (8) - back visible
+        if (i) p->button_states=SW_SHOWNA|2|4;
+        else p->button_states=4;
 
         p->next=LANG_BTN_NEXT;
 
@@ -1484,11 +1495,16 @@ int CEXEBuild::write_output(void)
           p->next=LANG_BTN_UNINST;
         }
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->back=noinstlogback?0:SW_SHOWNA;
+          p->button_states=noinstlogback?0:SW_SHOWNA;
+        if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
+          p->button_states&=~2;
 
         if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
+      if (!uenable_last_page_cancel) {
+        p->button_states&=~4;
+      }
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
     }
 #ifdef NSIS_CONFIG_SILENT_SUPPORT

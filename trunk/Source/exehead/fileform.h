@@ -470,7 +470,7 @@ typedef struct
 #endif //NSIS_SUPPORT_CODECALLBACKS
   int caption; // caption tab
   int next;
-  int back;
+  int button_states;
 } page;
 
 // the following are only used/implemented in exehead, not makensis.

@@ -220,8 +220,8 @@ class CEXEBuild {
     GrowBuf build_pages, ubuild_pages;
 
     char build_last_page_define[1024], ubuild_last_page_define[1024];
-
     int build_custom_used, ubuild_custom_used;
+    int enable_last_page_cancel, uenable_last_page_cancel;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
     IGrowBuf *cur_datablock; 
