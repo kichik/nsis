@@ -81,7 +81,7 @@ void ExecScript(BOOL log) {
 		OSVERSIONINFO osv={sizeof(osv)};
 		HANDLE newstdout=0,read_stdout=0;
 		DWORD dwRead = 1;
-		DWORD dwExit = !STILL_ACTIVE;
+		DWORD dwExit;
 		HGLOBAL memory;
 		char *szBuf;
 		GetVersionEx(&osv);
@@ -106,7 +106,9 @@ void ExecScript(BOOL log) {
 			CloseHandle(read_stdout);
 			pushstring("error");
 		}
-		WaitForSingleObject(pi.hProcess,INFINITE);
+		if (WaitForSingleObject(pi.hProcess,INFINITE)==WAIT_TIMEOUT) {
+			TerminateProcess(pi.hProcess,GetExitCodeProcess(pi.hProcess,&dwExit));
+		}
 		PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
 		memory = GlobalAlloc(GMEM_MOVEABLE,dwRead+1);
 		szBuf = (char *)GlobalLock(memory);
