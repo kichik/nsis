@@ -33,3 +33,5 @@ Credits
 ~~~~~~~
 
 Coded by Amir Szekely, aka KiCHiK
+Modified by Ximon Eighteen, aka Sunjammer (08Feb2003) - Removed the window title bar
+  
