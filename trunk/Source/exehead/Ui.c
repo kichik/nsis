@@ -532,6 +532,8 @@ nextPage:
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
+      SendMessage(g_hwnd,DM_SETDEFID,IDOK,0);
+      SetWindowLong(hwndtmp,GWL_STYLE,GetWindowLong(hwndtmp,GWL_STYLE)&~BS_DEFPUSHBUTTON);
       ShowWindow(hwndtmp,this_page->back&SW_SHOWNA);// SW_HIDE = 0
       EnableWindow(hwndtmp,this_page->back&2);
       EnableWindow(m_hwndOK,1);
