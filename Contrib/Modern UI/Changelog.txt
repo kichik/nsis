@@ -3,7 +3,8 @@ NSIS Modern User Interface - VERSION HISTORY
 1.61 - December 5, 2002
 * Final version for NSIS 2 beta 0
 * modern3.exe UI without description area
-* Different translation for finish page title
+* Added define to show uninstall confirm page
+* Added language string for finish page title and continue to uninstall
 * Define for parameters for the application to run on the finishpage
 * Bugfixes
 

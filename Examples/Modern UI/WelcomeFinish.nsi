@@ -11,14 +11,17 @@
 ;Configuration
 
   !define MUI_WELCOMEPAGE
-  !define MUI_FINISHPAGE
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
-  
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
+  
+  !define MUI_FINISHPAGE
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
+  
   !define MUI_ABORTWARNING
+  
   !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
     
   ;Language
   !insertmacro MUI_LANGUAGE "English"
