@@ -982,6 +982,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   HWND hwndCombo1 = GetUIItem(IDC_COMBO1);
   HWND hwndTree1 = GetUIItem(IDC_TREE1);
   extern HWND g_SectionHack;
+  BYTE bSelChanged=0;
   if (uMsg == WM_INITDIALOG)
   {
     int doLines=0;
@@ -1166,9 +1167,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             lParam = 0;
             uMsg = WM_IN_UPDATEMSG;
 
-#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-            ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
+            bSelChanged=1;
           } // not ro
         } // was valid click
       } // was click or hack
@@ -1196,10 +1195,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE ||
      (uMsg == WM_COMMAND && LOWORD(wParam)==IDC_COMBO1 && HIWORD(wParam)==CBN_SELCHANGE))
   {
-    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);    
     if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE || t != CB_ERR)
     {
       int whichcfg=SendMessage(hwndCombo1,CB_GETITEMDATA,t,0);
+      bSelChanged = uMsg == uMsg != WM_NOTIFY_INSTTYPE_CHANGE;
       if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE)
       {
         whichcfg = g_flags.cur_insttype;
@@ -1308,6 +1308,12 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ))));
     }
   }
+
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
+  if ( bSelChanged )
+    ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
+
   return HandleStaticBkColor();
 }
 #endif//NSIS_CONFIG_COMPONENTPAGE
