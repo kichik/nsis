@@ -2,7 +2,9 @@
 
 \e{v2.0b0}
 
-\b Unprocessed strings (such as InstType) can now use LangString/$(name) too.
+\b New version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
+
+\b Unprocessed strings (such as InstType) can now use LangString/$(name) too
 
 \b Fixed a bug with ReadRegStr and $0
 
