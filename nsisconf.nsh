@@ -48,6 +48,8 @@
 
 ;------------------------
 
+!define MUI_INSERT_NSISCONF
+
 !macro MUI_NSISCONF
 
   ;Example: Change the default Modern UI icons
