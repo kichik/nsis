@@ -73,7 +73,7 @@
       * wrong parameter order in call to bzDecompressInit in
         bzBuffToBuffDecompress.  Fixed.
 --*/
-#include "bzlib_private.h"
+#include "bzlib.h"
 
 
 /*---------------------------------------------------*/
@@ -546,7 +546,6 @@ void unRLE_obuf_to_output_FAST ( DState* s )
                if (cs_avail_out == 0) goto return_notr;
                if (c_state_out_len == 1) break;
                *( (UChar*)(cs_next_out) ) = c_state_out_ch;
-               BZ_UPDATE_CRC ( c_calculatedBlockCRC, c_state_out_ch );
                c_state_out_len--;
                cs_next_out++;
                cs_avail_out--;
@@ -557,7 +556,6 @@ void unRLE_obuf_to_output_FAST ( DState* s )
                   c_state_out_len = 1; goto return_notr;
                };
                *( (UChar*)(cs_next_out) ) = c_state_out_ch;
-               BZ_UPDATE_CRC ( c_calculatedBlockCRC, c_state_out_ch );
                cs_next_out++;
                cs_avail_out--;
             }
