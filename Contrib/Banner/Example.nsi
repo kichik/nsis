@@ -2,6 +2,8 @@ Name "Banner.dll test"
 
 OutFile "Banner Test.exe"
 
+ShowInstDetails show
+
 Function .onInit
 	Banner::show /NOUNLOAD "Calculating important stuff..."
 	again:
@@ -12,4 +14,8 @@ Function .onInit
 FunctionEnd
 
 Section
+	DetailPrint "Using previous calculations to quickly calculate 1*2000..."
+	Sleep 1000
+	DetailPrint "Eureka! It's $0!!!"
+	DetailPrint ""
 SectionEnd
