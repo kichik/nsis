@@ -137,20 +137,12 @@ SOURCE=.\netinc.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\resource.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\util.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-# Begin Source File
-
-SOURCE=.\Script1.rc
-# End Source File
 # End Group
 # End Target
 # End Project

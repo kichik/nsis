@@ -1,5 +1,5 @@
 /*
-  NSIS-DL 1.2 - http downloading DLL for NSIS
+  NSIS-DL 1.3 - http downloading DLL for NSIS
   Copyright (C) 2001-2002 Yaroslav Faybishenko & Justin Frankel
 
   This software is provided 'as-is', without any express or implied
@@ -17,22 +17,13 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
-
-
-  Note: this source code is pretty hacked together right now, improvements
-  and cleanups will come later.
-
-  IMPORTANT: The dialog must have the style "No Parent Notify"
-
-  */
+*/
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>
 
 #include "netinc.h"
 #include "util.h"
-#include "resource.h"
 #include "httpget.h"
 #include "../exdll/exdll.h"
 
@@ -43,106 +34,165 @@ void *operator new( unsigned int num_bytes )
 void operator delete( void *p ) { if (p) GlobalFree(p); }
 
 
-HANDLE    hModule;
-HWND      g_hwndProgressBar;
+HMODULE     hModule;
+HWND        g_hwndProgressBar;
+HWND        g_hwndStatic;
 static int  g_cancelled;
-long lBusy;
-ULONG idThreadOwner;
-ULONG ulRefCount;
 static void *lpWndProcOld;
 
-BOOL CALLBACK DownloadDialogProc(HWND   hwndDlg,
-                 UINT   uMsg,
-                 WPARAM wParam,
-                 LPARAM lParam)
-{
-  return 0;
-}
+static UINT uMsgCreate;
 
-BOOL TryEnterCS()
-{
-   DWORD CurThreadID = ::GetCurrentThreadId();
-   BOOL bRet = TRUE;
-   long *plBusy = &lBusy;
-   while (::InterlockedExchange(plBusy, 1) != 0)
-   {
-       Sleep(0);
-   }
-
-   if (idThreadOwner == 0)
-   {
-      idThreadOwner = CurThreadID;
-      ulRefCount = 1;
-   }
-   else if (idThreadOwner == CurThreadID)
-   {
-      ulRefCount++;
-   }
-   else
-   {
-      bRet = FALSE;
-   }
-
-   ::InterlockedExchange(plBusy, 0);
-
-   return bRet;
-}
-
-void LeaveCS()
-{
-   long *plBusy = &lBusy;
-   while (::InterlockedExchange(plBusy, 1) != 0)
-   {
-     Sleep(0);
-   }
-   if (idThreadOwner == ::GetCurrentThreadId())
-   {
-      if (--ulRefCount == 0)
-      {
-         // No owner from now
-         idThreadOwner = 0;
-      }
-   }
-   ::InterlockedExchange(plBusy, 0);
-}
+HWND childwnd;
+HWND hwndL;
+HWND hwndB;
 
 static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  LRESULT Res = 0;
-  while ( !TryEnterCS() ) Sleep(0);
-  if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
+  if (uMsgCreate && message == uMsgCreate)
+  {
+    if (wParam)
+    {
+      childwnd = FindWindowEx((HWND) lParam, NULL, "#32770", NULL);
+      hwndL = GetDlgItem(childwnd, 1016);
+      hwndB = GetDlgItem(childwnd, 1027);
+      HWND hwndP = GetDlgItem(childwnd, 1004);
+      HWND hwndS = GetDlgItem(childwnd, 1006);
+      if (childwnd && hwndP && hwndS)
+      {
+        if (IsWindowVisible(hwndL))
+          ShowWindow(hwndL, SW_HIDE);
+        else
+          hwndL = NULL;
+        if (IsWindowVisible(hwndB))
+          ShowWindow(hwndB, SW_HIDE);
+        else
+          hwndB = NULL;
+
+        RECT wndRect, ctlRect;
+
+        GetClientRect(childwnd, &wndRect);
+
+        GetWindowRect(hwndS, &ctlRect);
+
+        HWND s = g_hwndStatic = CreateWindow(
+          "STATIC",
+          "",
+          WS_CHILD | WS_CLIPSIBLINGS | SS_CENTER,
+          0,
+          wndRect.bottom / 2 - (ctlRect.bottom - ctlRect.top) / 2,
+          wndRect.right,
+          ctlRect.bottom - ctlRect.top,
+          childwnd,
+          NULL,
+          hModule,
+          NULL
+        );
+
+        DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS;
+        dwStyle |= GetWindowLong(hwndP, GWL_STYLE) & PBS_SMOOTH;
+        
+        GetWindowRect(hwndP, &ctlRect);
+
+        HWND pb = g_hwndProgressBar = CreateWindow(
+          "msctls_progress32",
+          "",
+          dwStyle,
+          0,
+          wndRect.bottom / 2 + (ctlRect.bottom - ctlRect.top) / 2,
+          wndRect.right,
+          ctlRect.bottom - ctlRect.top,
+          childwnd,
+          NULL,
+          hModule,
+          NULL
+        );
+
+        long c;
+
+        c = SendMessage(hwndP, PBM_SETBARCOLOR, 0, 0);
+        SendMessage(hwndP, PBM_SETBARCOLOR, 0, c);
+        SendMessage(pb, PBM_SETBARCOLOR, 0, c);
+
+        c = SendMessage(hwndP, PBM_SETBKCOLOR, 0, 0);
+        SendMessage(hwndP, PBM_SETBKCOLOR, 0, c);
+        SendMessage(pb, PBM_SETBKCOLOR, 0, c);
+
+        // set font
+        long hFont = SendMessage((HWND) lParam, WM_GETFONT, 0, 0);
+        SendMessage(pb, WM_SETFONT, hFont, 0);
+        SendMessage(s, WM_SETFONT, hFont, 0);
+
+        ShowWindow(pb, SW_SHOWNA);
+        ShowWindow(s, SW_SHOWNA);
+      }
+      else
+        childwnd = NULL;
+    }
+    else if (childwnd)
+    {
+      if (g_hwndStatic)
+      {
+        DestroyWindow(g_hwndStatic);
+        g_hwndStatic = NULL;
+      }
+      if (g_hwndProgressBar)
+      {
+        DestroyWindow(g_hwndProgressBar);
+        g_hwndProgressBar = NULL;
+      }
+      if (hwndB)
+      {
+        ShowWindow(hwndB, SW_SHOWNA);
+        hwndB = NULL;
+      }
+      if (hwndL)
+      {
+        ShowWindow(hwndL, SW_SHOWNA);
+        hwndL = NULL;
+      }
+
+      childwnd = NULL;
+    }
+  }
+  else if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
+  {
     g_cancelled = 1;
+  }
   else
-    Res = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
-  LeaveCS();
-  return Res;
+  {
+    return CallWindowProc(
+      (WNDPROC) lpWndProcOld,
+      hwnd,
+      message,
+      wParam,
+      lParam
+    );
+  }
+  return 0;
 }
 
-BOOL APIENTRY DllMain( HANDLE _hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-           )
+BOOL APIENTRY DllMain(HINSTANCE _hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
   hModule = _hModule;
   return TRUE;
 }
 
-
 static int g_file_size;
 static DWORD g_dwLastTick = 0;
-void progress_callback(HWND dlg, char *msg, int read_bytes)
+void progress_callback(char *msg, int read_bytes)
 {
   // flicker reduction by A. Schiffler
   DWORD dwLastTick = g_dwLastTick;
   DWORD dwThisTick = GetTickCount();
-  if (dlg)
+  if (childwnd)
   {
     if (dwThisTick - dwLastTick > 500)
     {
-      SetDlgItemText (dlg, IDC_STATIC2, msg);
+      SetWindowText(g_hwndStatic, msg);
       dwLastTick = dwThisTick;
     }
-    if (g_file_size) SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM)MulDiv(read_bytes,30000,g_file_size), 0);
+    if (g_file_size)
+      SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM) MulDiv(read_bytes, 30000, g_file_size), 0);
     g_dwLastTick = dwLastTick;
   }
 }
@@ -161,13 +211,7 @@ __declspec(dllexport) void download (HWND   parent,
   char buf[1024];
   char url[1024];
   char filename[1024];
-  HWND hwndAux;
-  HWND hwndL=0;
-  HWND hwndB=0;
-  HWND dlg=0;
-  HWND childwnd=0;
   BOOL bSuccess=FALSE;
-  RECT r, cr, orig_childRc;
   int timeout_ms=30000;
 
   char *error=NULL;
@@ -226,88 +270,19 @@ __declspec(dllexport) void download (HWND   parent,
 
     if (parent)
     {
-      childwnd=FindWindowEx(parent,NULL,"#32770",NULL);
-      hwndL=GetDlgItem(childwnd,1016);
-      hwndB=GetDlgItem(childwnd,1027);
-      if ( IsWindowVisible(hwndL) ) ShowWindow(hwndL,SW_HIDE);
-      else hwndL=NULL;
-      if (IsWindowVisible(hwndB)) ShowWindow(hwndB,SW_HIDE);
-      else hwndB=NULL;
+      uMsgCreate = RegisterWindowMessage("nsisdl create");
 
       lpWndProcOld = (void *)SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
 
-      dlg = CreateDialog((HINSTANCE)hModule,
-                    MAKEINTRESOURCE(IDD_DIALOG1),
-                    parent,
-                    DownloadDialogProc);
-      if (dlg)
-      {
-        int pbid = IDC_PROGRESS1;
-        HWND hwPb = GetDlgItem(childwnd, 1004);
+      SendMessage(parent, uMsgCreate, TRUE, (LPARAM) parent);
 
-        // Set progress bar style
-        if (GetWindowLong(hwPb, GWL_STYLE) & PBS_SMOOTH)
-          pbid = IDC_PROGRESS2;
-
-        HWND pb = g_hwndProgressBar = GetDlgItem(dlg, pbid);
-
-        if (hwPb)
-        {
-          long c;
-
-          c = SendMessage(hwPb, PBM_SETBARCOLOR, 0, 0);
-          SendMessage(hwPb, PBM_SETBARCOLOR, 0, c);
-          SendMessage(pb, PBM_SETBARCOLOR, 0, c);
-
-          c = SendMessage(hwPb, PBM_SETBKCOLOR, 0, 0);
-          SendMessage(hwPb, PBM_SETBKCOLOR, 0, c);
-          SendMessage(pb, PBM_SETBKCOLOR, 0, c);
-        }
-
-        ShowWindow(pb, SW_SHOWNA);
-
-        GetWindowRect(childwnd,&orig_childRc);
-        GetWindowRect(dlg,&cr);
-        ScreenToClient(dlg,(LPPOINT)&cr);
-        ScreenToClient(dlg,((LPPOINT)&cr)+1);
-
-        hwndAux = GetDlgItem(childwnd,1016);
-        GetWindowRect(hwndAux,&r);
-        ScreenToClient(childwnd,(LPPOINT)&r);
-        ScreenToClient(childwnd,((LPPOINT)&r)+1);
-        SetWindowPos(childwnd,0,0,0,r.right-r.left,r.top,SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE);
-
-        GetWindowRect(hwndAux,&r);
-        ScreenToClient(parent,(LPPOINT)&r);
-        ScreenToClient(parent,((LPPOINT)&r)+1);
-        SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
-
-        hwndAux = GetDlgItem(dlg,IDC_STATIC2);
-        GetWindowRect(hwndAux,&cr);
-        ScreenToClient(dlg,(LPPOINT)&cr);
-        ScreenToClient(dlg,((LPPOINT)&cr)+1);
-        SetWindowPos(hwndAux,0,0,0,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
-
-        hwndAux = GetDlgItem(dlg,pbid);
-        GetWindowRect(hwndAux,&cr);
-        ScreenToClient(dlg,(LPPOINT)&cr);
-        ScreenToClient(dlg,((LPPOINT)&cr)+1);
-        SetWindowPos(hwndAux,0,0,0,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
-
-        char *p=filename;
-        while (*p) p++;
-        while (*p != '\\' && p != filename) p=CharPrev(filename,p);
-        wsprintf(buf,szDownloading, p!=filename?p+1:p);
-        SetDlgItemText(childwnd,1006,buf);
-        SetDlgItemText(dlg, IDC_STATIC2, szConnecting);
-
-        // set font
-        long hFont = SendMessage(parent, WM_GETFONT, 0, 0);
-        SendDlgItemMessage(dlg, pbid, WM_SETFONT, hFont, 0);
-        SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
-
-        ShowWindow(dlg, SW_SHOWNA);
-      }
+      // set initial text
+      char *p = filename;
+      while (*p) p++;
+      while (*p != '\\' && p != filename) p = CharPrev(filename, p);
+      wsprintf(buf, szDownloading, p != filename ? p + 1 : p);
+      SetDlgItemText(childwnd, 1006, buf);
+      SetWindowText(g_hwndStatic, szConnecting);
 
       // enable the cancel button
       hwndPrevFocus = GetFocus();
@@ -365,44 +340,15 @@ __declspec(dllexport) void download (HWND   parent,
       get->connect (url);
 
       while (1) {
-        do
-        {
-          if ( dlg )
-          {
-            MSG msg;
-            while (PeekMessage(&msg,dlg,0,0,PM_REMOVE))
-            {
-              TranslateMessage(&msg);
-              DispatchMessage(&msg);
-            }
-          }
-        }
-        while (!TryEnterCS()); // Process messages
-        if (g_cancelled || error)
-        {
-          if (dlg)
-            DestroyWindow(dlg);
-          dlg = NULL;
-          if (!error)
+        if (g_cancelled)
             error = "cancel";
-        }
-        LeaveCS();
 
         if (error)
         {
           if (parent)
           {
-            SetWindowLong(parent,GWL_WNDPROC,(long)lpWndProcOld);
-
-            if (hwndB) ShowWindow(hwndB,SW_SHOWNA);
-            if (hwndL) ShowWindow(hwndL,SW_SHOWNA);
-
-            SetWindowPos(
-              childwnd,0,0,0,
-              orig_childRc.right-orig_childRc.left,
-              orig_childRc.bottom-orig_childRc.top,
-              SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE
-            );
+            SendMessage(parent, uMsgCreate, FALSE, (LPARAM) parent);
+            SetWindowLong(parent, GWL_WNDPROC, (long)lpWndProcOld);
 
             // Prevent wierd stuff happening if the cancel button happens to be
             // pressed at the moment we are finishing
@@ -439,7 +385,7 @@ __declspec(dllexport) void download (HWND   parent,
 
           } else if (get->get_status () == 1) {
 
-            progress_callback(dlg, "Reading headers", 0);
+            progress_callback("Reading headers", 0);
             if (last_recv_time+timeout_ms < GetTickCount())
               error = "Timed out on getting headers.";
 
@@ -452,9 +398,9 @@ __declspec(dllexport) void download (HWND   parent,
               cl = get->content_length ();
               if (cl == 0)
                 error = "Server did not specify content length.";
-              else if (dlg) {
-                SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
-                g_file_size=cl;
+              else if (g_hwndProgressBar) {
+                SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 30000));
+                g_file_size = cl;
               }
             }
 
@@ -493,7 +439,7 @@ __declspec(dllexport) void download (HWND   parent,
                       rtext,
                       remain==1?"":szPlural
                       );
-                progress_callback(dlg, buf, sofar);
+                progress_callback(buf, sofar);
               } else {
                 if (sofar < cl)
                   error = "Server aborted.";
