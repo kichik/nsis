@@ -30,9 +30,9 @@ SetCompressor bzip2
   ;NSIS updates no system files
   !define MUI_TEXT_WELCOME_INFO "\r\n\r\nThis will install ${MUI_PRODUCT} on your computer.\r\n\r\n\r\n\r\n"
 
-  !insertmacro MUI_LANGUAGE "English"
-
   !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
+
+  !insertmacro MUI_LANGUAGE "English"
   
   !insertmacro MUI_SYSTEM
   
