@@ -209,19 +209,15 @@
 // NSIS_SUPPORT_MESSAGEBOX enables support for MessageBox
 #define NSIS_SUPPORT_MESSAGEBOX
 
-// Added by ramon 3 jun 2003
-// NSIS_SUPPORT_NAMED_USERVARS enables support for user variables
-#define NSIS_SUPPORT_NAMED_USERVARS
-
 // Added by ramon 5 jun 2003
 // NSIS_SUPPORT_VERSION_INFO enables support for version information on final exe
 #define NSIS_SUPPORT_VERSION_INFO
 
-// NSIS_SUPPORT_LANG_IN_STRINGS enables support for language strings inside other strings
-#define NSIS_SUPPORT_LANG_IN_STRINGS
-
 // NSIS_FIX_DEFINES_IN_STRINGS fixes defines inside defines and handles chars $ perfectly
 // #define NSIS_FIX_DEFINES_IN_STRINGS
+
+// NSIS_SUPPORT_SHELLFOLDERS_CONST enable support for common shell folder codes
+#define NSIS_SUPPORT_SHELLFOLDERS_CONST
 
 // NSIS_SUPPORT_STANDARD_PREDEFINES enables standard predefines in NSIS.
 // The defines enabled are:
@@ -402,10 +398,13 @@
 // From $0 to $PLUGINSDIR, $_CLICK
 #define USER_VARS_COUNT 28
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
 // This is the total number of old static var
 // From $0 to $HWNDPARENT
-#define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 37
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  #define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 32
+#else
+  #define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 31
+#endif
 
 #define VARS_SECTION_NAME ".ndata"
 
@@ -415,8 +414,6 @@ typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 // the complier also use this value to abort if exceded
 // The real maximum is (0x0FFF - USER_VARS_COUNT) = 4068
 #define MAX_NAMED_USER_VARS (0x0FFF - USER_VARS_COUNT)
-
-#endif //NSIS_SUPPORT_NAMED_USERVARS
 
 #endif//!APSTUDIO_INVOKED
 

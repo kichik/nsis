@@ -1,8 +1,4 @@
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  extern NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
-#else
-  extern char g_usrvars[USER_VARS_COUNT][NSIS_MAX_STRLEN];
-#endif
+extern NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
 
 #define state_command_line        g_usrvars[20]
 #define state_install_directory   g_usrvars[21]
@@ -12,7 +8,7 @@
 #define state_temp_dir            g_usrvars[25]
 #define state_click_next          g_usrvars[26]
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  #define state_plugins_dir       g_usrvars[27]
+#define state_plugins_dir       g_usrvars[27]
 #endif
 
 extern char g_caption[NSIS_MAX_STRLEN*2];

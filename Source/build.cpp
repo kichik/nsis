@@ -12,6 +12,7 @@
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "ResourceVersionInfo.h"
+#include <Shlobj.h>
 
 int MMapFile::m_iAllocationGranularity = 0;
 
@@ -240,15 +241,17 @@ CEXEBuild::CEXEBuild()
   // Added by Sunil Kamath 11 June 2003
   definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
 #endif
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  definedlist.add("NSIS_SUPPORT_NAMED_USERVARS");
-#endif
+
+// no more optional
+definedlist.add("NSIS_SUPPORT_NAMED_USERVARS");
+
 #ifdef NSIS_SUPPORT_VERSION_INFO
   definedlist.add("NSIS_SUPPORT_VERSION_INFO");
 #endif
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
-#endif
+
+// no more optional
+definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
+
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
   definedlist.add("NSIS_FIX_DEFINES_IN_STRINGS");
 #endif
@@ -393,8 +396,7 @@ CEXEBuild::CEXEBuild()
 
   InitLangTables();
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  // Register static user variables $0, $1 and so one
+  // Register static user variables $0, $1 and so on
   // with ONE of reference count, to avoid warning on this vars
   char Aux[3];
   for ( int i = 0; i < 10; i++ )    // 0 - 9
@@ -415,15 +417,49 @@ CEXEBuild::CEXEBuild()
   m_UserVarNames.add("TEMP",-1);         // 25
   m_UserVarNames.add("_CLICK",-1);       // 26
   m_UserVarNames.add("PLUGINSDIR",-1);   // 27
+
+#ifndef NSIS_SUPPORT_SHELLFOLDERS_CONST
   m_UserVarNames.add("PROGRAMFILES",-1); // 28
   m_UserVarNames.add("SMPROGRAMS",-1);   // 29
   m_UserVarNames.add("SMSTARTUP",-1);    // 30
   m_UserVarNames.add("DESKTOP",-1);      // 31
   m_UserVarNames.add("STARTMENU",-1);    // 32
   m_UserVarNames.add("QUICKLAUNCH",-1);  // 33
-  m_UserVarNames.add("WINDIR",-1);       // 34
-  m_UserVarNames.add("SYSDIR",-1);       // 35 everything after here doesn't have trailing slash removal
-  m_UserVarNames.add("HWNDPARENT",-1);   // 36
+#endif
+                                         //        (if not using shell codes)
+  m_UserVarNames.add("WINDIR",-1);       // 34     (28)
+  m_UserVarNames.add("SYSDIR",-1);       // 35     (29) everything after here doesn't have trailing slash removal
+  m_UserVarNames.add("HWNDPARENT",-1);   // 36     (30)
+
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+  m_ShellConstants.add("PROGRAMFILES",CSIDL_CONTROLS, CSIDL_CONTROLS); // Special for virtual "Program Files"
+  m_ShellConstants.add("SMPROGRAMS",CSIDL_PROGRAMS, CSIDL_COMMON_PROGRAMS );
+  m_ShellConstants.add("SMSTARTUP",CSIDL_STARTUP, CSIDL_COMMON_STARTUP );
+  m_ShellConstants.add("DESKTOP",CSIDL_DESKTOPDIRECTORY, CSIDL_COMMON_DESKTOPDIRECTORY);
+  m_ShellConstants.add("STARTMENU",CSIDL_STARTMENU, CSIDL_COMMON_STARTMENU );
+  m_ShellConstants.add("QUICKLAUNCH", CSIDL_DESKTOP, CSIDL_DESKTOP ); // Special for virtual quick launch (needed for compatibility)
+  m_ShellConstants.add("COMMONFILES",CSIDL_BITBUCKET, CSIDL_BITBUCKET ); // Special for virtual "Commmon Files"
+  m_ShellConstants.add("DOCUMENTS",CSIDL_PERSONAL, CSIDL_COMMON_DOCUMENTS );
+  m_ShellConstants.add("SENDTO",CSIDL_SENDTO, CSIDL_SENDTO );
+  m_ShellConstants.add("RECENT",CSIDL_RECENT, CSIDL_RECENT );
+  m_ShellConstants.add("FAVORITES",CSIDL_FAVORITES, CSIDL_COMMON_FAVORITES );
+  m_ShellConstants.add("MUSIC",CSIDL_MYMUSIC, CSIDL_COMMON_MUSIC );
+  m_ShellConstants.add("PICTURES",CSIDL_MYPICTURES, CSIDL_COMMON_PICTURES );
+  m_ShellConstants.add("VIDEOS",CSIDL_MYVIDEO, CSIDL_COMMON_VIDEO );
+  m_ShellConstants.add("NETHOOD", CSIDL_NETHOOD, CSIDL_NETHOOD );
+  m_ShellConstants.add("FONTS", CSIDL_FONTS, CSIDL_FONTS );
+  m_ShellConstants.add("TEMPLATES", CSIDL_TEMPLATES, CSIDL_COMMON_TEMPLATES );
+  m_ShellConstants.add("APPDATA", CSIDL_APPDATA, CSIDL_COMMON_APPDATA );
+  m_ShellConstants.add("PRINTHOOD", CSIDL_PRINTHOOD, CSIDL_PRINTHOOD );
+  //m_ShellConstants.add("ALTSTARTUP", CSIDL_ALTSTARTUP, CSIDL_COMMON_ALTSTARTUP );
+  m_ShellConstants.add("INTERNET_CACHE", CSIDL_INTERNET_CACHE, CSIDL_INTERNET_CACHE);
+  m_ShellConstants.add("COOKIES", CSIDL_COOKIES, CSIDL_COOKIES);
+  m_ShellConstants.add("HISTORY", CSIDL_HISTORY, CSIDL_HISTORY);
+  m_ShellConstants.add("PROFILE", CSIDL_PROFILE, CSIDL_PROFILE);
+  m_ShellConstants.add("ADMINTOOLS", CSIDL_ADMINTOOLS, CSIDL_COMMON_ADMINTOOLS);
+  m_ShellConstants.add("RESOURCES", CSIDL_RESOURCES, CSIDL_RESOURCES);
+  m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
+  m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 #endif
 }
 
@@ -438,11 +474,7 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/, WORD codepage/*
     int idx = 0;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
     if (p && p[1] == '\0' ) { // if string is only a language str identifier
-#else
-    if (p) {
-#endif
       *p = 0;
       idx = DefineLangString(cp, process);
     }
@@ -467,49 +499,6 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 // based on Dave Laundon's code
 int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_ACP*/)
 {
-#ifndef NSIS_SUPPORT_NAMED_USERVARS
-  static const char VarNames[] =
-    "HWNDPARENT\0"    // 0
-    "0\0"             // 1
-    "1\0"             // 2
-    "2\0"             // 3
-    "3\0"             // 4
-    "4\0"             // 5
-    "5\0"             // 6
-    "6\0"             // 7
-    "7\0"             // 8
-    "8\0"             // 9
-    "9\0"             // 10
-    "R0\0"            // 11
-    "R1\0"            // 12
-    "R2\0"            // 13
-    "R3\0"            // 14
-    "R4\0"            // 15
-    "R5\0"            // 16
-    "R6\0"            // 17
-    "R7\0"            // 18
-    "R8\0"            // 19
-    "R9\0"            // 20
-    "CMDLINE\0"       // 21 everything before here doesn't have trailing slash removal
-    
-    "INSTDIR\0"       // 22
-    "OUTDIR\0"        // 23
-    "EXEDIR\0"        // 24
-    "LANGUAGE\0"      // 25
-    "TEMP\0"          // 26
-    "_CLICK\0"        // 27
-    "PLUGINSDIR\0"    // 28
-    "PROGRAMFILES\0"  // 29
-    "SMPROGRAMS\0"    // 30
-    "SMSTARTUP\0"     // 31
-    "DESKTOP\0"       // 32
-    "STARTMENU\0"     // 33
-    "QUICKLAUNCH\0"   // 34
-    "WINDIR\0"        // 35
-    "SYSDIR\0"        // 36
-    ;
-#endif
-  
   const char *p=in;
   while (*p)
   {
@@ -543,32 +532,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
         p++; // Can simply convert $$ to $ now
       else
       {
-#ifndef NSIS_SUPPORT_NAMED_USERVARS
-
-        const char *pVarName;
-        for (
-          pVarName = VarNames, i = VAR_CODES_START;
-        strncmp(pVarName, p, strlen(pVarName));
-        pVarName += strlen(pVarName) + 1, i++
-          );
-        // Found?
-        if (*pVarName
-#ifndef NSIS_CONFIG_PLUGIN_SUPPORT
-          && i != VAR_CODES_START + USER_VARS_COUNT
-#endif
-          )
         {
-          p += strlen(pVarName);
-        }
-        else  // warning should go here
-#endif // not NSIS_SUPPORT_NAMED_USERVARS
-        {
-
-#if defined(NSIS_SUPPORT_NAMED_USERVARS) || defined(NSIS_SUPPORT_LANG_IN_STRINGS)
           bool bProceced=false;
-#endif
-
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
           if ( *p )
           {
             const char *pUserVarName = p;
@@ -577,6 +542,11 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
 
             while ( pUserVarName > p )
             {
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+                if ( m_ShellConstants.get((char*)p, pUserVarName-p) >= 0 )
+                  break; // Upps it's a shell constant
+#endif
+
                 int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
                 if ( idxUserVar >= 0 )
                 {
@@ -595,8 +565,33 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 pUserVarName--;
             }
           }
-#endif
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+          if ( !bProceced && *p )
+          {
+            const char *pShellConstName = p;
+            while ( isSimpleChar(*pShellConstName) )
+              pShellConstName++;
+
+            while ( pShellConstName > p )
+            {
+                int idxConst = m_ShellConstants.get((char*)p, pShellConstName-p);
+                if ( idxConst >= 0 )
+                {
+                  int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
+                  int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
+                  *out++=(unsigned int)SHELL_CODES_START; // Constant code identifier
+                  *(WORD*)out=((WORD)CSIDL_Value_current+1) | 0xF000;
+                  out += sizeof(WORD);
+                  *(WORD*)out=((WORD)CSIDL_Value_all+1) | 0xF000;
+                  out += sizeof(WORD);
+                  p += pShellConstName-p;
+                  bProceced = true;
+                  break;
+                }
+                pShellConstName--;
+            }
+          }
+#endif //NSIS_SUPPORT_SHELLFOLDERS_CONST
           if ( !bProceced && *p == '(' )
           {
             int idx = -1;
@@ -617,12 +612,9 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
             }
             free(cp);              
           }
-#endif
-#if defined(NSIS_SUPPORT_NAMED_USERVARS) || defined(NSIS_SUPPORT_LANG_IN_STRINGS)
           if ( bProceced )
             continue;
           else
-#endif
           {
             char tbuf[64];
             char cBracket = '\0';
@@ -653,7 +645,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
             }
             if ( bDoWarning )
-              warning_fl("unknown variable \"%s\" detected, ignoring",tbuf);
+              warning_fl("unknown variable/constant \"%s\" detected, ignoring",tbuf);
             i = '$';
           }
         }
@@ -2268,7 +2260,6 @@ int CEXEBuild::write_output(void)
   if (err != PS_OK)
     return err;
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   init_res_editor();
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
   int MaxUserVars = m_UserVarNames.getnum();
@@ -2277,7 +2268,6 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", VARS_SECTION_NAME);
     return PS_ERROR;
   }
-#endif
 
   // Save all changes to the exe header
   try {
@@ -3129,10 +3119,8 @@ int CEXEBuild::add_plugins_dir_initializer(void)
   int ret;
   int zero_offset;
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   int var_zero;
   var_zero=m_UserVarNames.get("0");
-#endif
 
 again:
   // Function [un.]Initialize_____Plugins
@@ -3156,11 +3144,7 @@ again:
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
-#else
-  ret=add_entry_direct(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
-#endif
   if (ret != PS_OK) return ret;
   // Delete $0 - the temp file created
   ret=add_entry_direct(EW_DELETEFILE, zero_offset);
@@ -3172,18 +3156,10 @@ again:
   ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
-#else
-  ret=add_entry_direct(EW_ASSIGNVAR, 25, zero_offset);
-#endif
   if (ret != PS_OK) return ret;
   // Pop $0
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   ret=add_entry_direct(EW_PUSHPOP, var_zero, 1);
-#else
-  ret=add_entry_direct(EW_PUSHPOP, 0, 1);
-#endif
   if (ret != PS_OK) return ret;
 
   // done
@@ -3233,12 +3209,18 @@ void CEXEBuild::close_res_editor()
   res_editor=0;
 }
 
-// Added by ramon 3 jun 2003
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
 int CEXEBuild::DeclaredUserVar(const char *szVarName)
 {
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+  if ( m_ShellConstants.get((char*)szVarName) >= 0 )
+  {
+    ERROR_MSG("Error: name \"%s\" in use by constant\n", szVarName);
+    return PS_ERROR;  
+  }
+#endif
+
   int idxUserVar = m_UserVarNames.get((char*)szVarName);
-  if ( idxUserVar > 0 )
+  if ( idxUserVar >= 0 )
   {
     ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
     return PS_ERROR;  
@@ -3277,11 +3259,10 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
   }
   return PS_OK;
 }
-#endif
+
 
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
   char *p = line.gettoken_str(token);
   if ( *p == '$' && *(p+1) )
   {
@@ -3291,17 +3272,20 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
       m_UserVarNames.inc_reference(idxUserVar);
       return idxUserVar;
     }
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+    else
+    {
+        int idxConst = m_ShellConstants.get((char *)p+1);
+        if ( idxConst >= 0 )
+        {
+            ERROR_MSG("Error: cannot change constants : %s\n", p);
+        }
+    }
+#endif
   }
   return -1;
-#else
-  static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
-                             "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
-                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
-  return line.gettoken_enum(token, usrvars);
-#endif
 }
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
 void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
 {
   for ( int i = TOTAL_COMPATIBLE_STATIC_VARS_COUNT; i < pVarsStringList->getnum(); i++ )
@@ -3312,4 +3296,3 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
     }  
   }
 }
-#endif

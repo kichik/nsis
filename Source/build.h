@@ -11,6 +11,7 @@ using namespace std;
 #include "ResourceEditor.h"
 #include "ResourceVersionInfo.h"
 #include "uservars.h"
+#include "constants.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -253,10 +254,12 @@ class CEXEBuild {
     // User variables stuff
     int GetUserVarIndex(LineParser &line, int token);
     // Added by ramon 3 jun 2003
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
     UserVarsStringList m_UserVarNames;
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
+
+#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
+    ConstantsStringList m_ShellConstants;
 #endif
 
     // a whole bunch O data.
