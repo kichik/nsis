@@ -60,8 +60,6 @@ Gets the Size of the section specified by section_index and stores the value in 
 
 Sets the current InstType. inst_type_idx should be between 0 and 31. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
 
-SetCurInstType currently only works when the components page is active (\R{pagecallbacks_explain}{show function}, \R{pagecallbacks_explain}{leave function}, \R{onselchange}{.onSelChange} and \R{onmouseoversection}{.onMouseOverSection}).
-
 \S2{sgetcurinsttype} GetCurInstType
 
 \c user_var
