@@ -20,17 +20,17 @@ $(^Name) Fjarlægja
 # ^LicenseSubCaption
 : Leyfissamningur
 # ^ComponentsSubCaption
-: Uppsetningar valmöguleikar
+: Uppsetningarvalmöguleikar
 # ^DirSubCaption
-: Uppsetningar skráarsafn
+: Uppsetningarskráarsafn
 # ^InstallingSubCaption
 : Set upp
 # ^CompletedSubCaption
 : Lokið
 # ^UnComponentsSubCaption
-: Fjarlægja valmöguleikar
+: Fjarlægjavalmöguleikar
 # ^UnDirSubCaption
-: Fjarlægja skráarsafn
+: Fjarlægjaskráarsafn
 # ^ConfirmSubCaption
 : Staðfesting
 # ^UninstallingSubCaption
@@ -72,17 +72,17 @@ Lokið
 # ^LicenseText
 Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
 # ^LicenseTextCB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassan hér að neðan. $_CLICK
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassann hér að neðan. $_CLICK
 # ^LicenseTextRB
 Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
 # ^UnLicenseText
 Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, smelltu á 'Ég samþykki'.
 # ^UnLicenseTextCB
-Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassan hér að neðan. $_CLICK
+Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, hakaðu í kassann hér að neðan. $_CLICK
 # ^UnLicenseTextRB
 Vinsamlegast skoðaðu vandlega leyfissamninginn áður en uppsetning $(^NameDA) hefst. Ef þú samþykkir alla skilmála samningsins, veldu þá fyrsta valmöguleikann hér að neðan. $_CLICK
 # ^Custom
-Sjálfsniðið
+Sjálfsnið
 # ^ComponentsText
 Hakaðu við þá hluti sem þú vilt setja upp og taktu hakið af þeim hlutum sem þú vilt ekki setja upp. $_CLICK
 # ^ComponentsSubText1
@@ -100,29 +100,29 @@ Veldu hluti til að fjarlægja:
 # ^UnComponentsSubText2
 Eða, veldu valfrjálsa hluti sem þú vilt fjarlægja:
 # ^DirText
-Uppsetningin mun setja upp $(^NameDA) í eftirfarandi skráarsafn. Til að setja forritið upp í annað skráarsafn, smelltu á Vafra og veldu annað skráarsafn. $_CLICK
+Uppsetningin mun setja upp $(^NameDA) í eftirfarandi skráarsafn. Til að setja forritið upp í annað skráarsafn, smelltu á 'Vafra' og veldu annað skráarsafn. $_CLICK
 # ^DirSubText
-Móttökuskráarsafn
+Uppsetningarskráarsafn
 # ^DirBrowseText
 Veldu það skráarsafn sem þú vilt setja $(^NameDA) upp í:
 # ^UnDirText
-Uppsetningin mun fjarlægja $(^NameDA) úr eftirfarandi skráarsafni. Til að fjarlægja forritið úr öðru skráarsafni, smelltu á Vafra og veldu annað skráarsafn. $_CLICK
+Uppsetningin mun fjarlægja $(^NameDA) úr eftirfarandi skráarsafni. Til að fjarlægja forritið úr öðru skráarsafni, smelltu á 'Vafra' og veldu annað skráarsafn. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Veldu það skráarsafn sem þú vilt fjarlægja $(^NameDA) frá:
+Veldu það skráarsafn sem þú vilt fjarlægja $(^NameDA) úr:
 # ^SpaceAvailable
 "Tiltækt rými: "
 # ^SpaceRequired
 "Nauðsynlegt rými: "
 # ^UninstallingText
-$(^NameDA) verður fjarlægt frá eftirfarandi skráarsafni. $_CLICK
+$(^NameDA) verður fjarlægt úr eftirfarandi skráarsafni. $_CLICK
 # ^UninstallingSubText
-Fjarlægi frá:
+Fjarlægi úr:
 # ^FileError
-Villa við opnun skrár til notkunar: \r\n\r\n$0\r\n\r\nSmelltu á 'Hætta við' til að stoppa uppsetninguna,\r\n'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hunsa' til sleppa þessari skrá.
+Villa við að opna skrá til að skrifa til: \r\n\r\n$0\r\n\r\nSmelltu á 'Hætta við' til að stoppa uppsetninguna,\r\n'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hunsa' til sleppa þessari skrá.
 # ^FileError_NoIgnore
-Villa við opnun skrár til notkunar: \r\n\r\n$0\r\n\r\nSmelltu á 'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hætta við' til að stoppa uppsetninguna.
+Villa við að opna skrá til að skrifa til: \r\n\r\n$0\r\n\r\nSmelltu á 'Reyna aftur' til að gera aðra tilraun, eða\r\n'Hætta við' til að stoppa uppsetninguna.
 # ^CantWrite
 "Get ei skrifað: "
 # ^CopyFailed
@@ -136,7 +136,7 @@ Afritun mistókst
 # ^SymbolNotFound
 "Fann ekki tákn: "
 # ^CouldNotLoad
-"Gat ekki hlaðið: "
+"Gat ekki ræst: "
 # ^CreateFolder
 "Búa til skráarsafn: "
 # ^CreateShortcut
@@ -148,21 +148,21 @@ Afritun mistókst
 # ^DeleteOnReboot
 "Eyða við endurræsingu: "
 # ^ErrorCreatingShortcut
-"Villa við gerð flýtileið: "
+"Villa við gerð flýtileiðar: "
 # ^ErrorCreating
 "Villa við gerð: "
 # ^ErrorDecompressing
-Vill við afþjöppun gagna! Bilaður uppsetjari?
+Villa við afþjöppun gagna! Bilaður uppsetjari?
 # ^ErrorRegistering
 Villa við skrásetningu DLL
 # ^ExecShell
-"Keyrslu gluggi: "
+"Keyrslugluggi: "
 # ^Exec
 "Keyra: "
 # ^Extract
 "Færa út: "
 # ^ErrorWriting
-"Fæar út: villa við að skrifa í skrá "
+"Færa út: villa við að skrifa í skrá "
 # ^InvalidOpcode
 Uppsetjari bilaður: rangur stýrikóði
 # ^NoOLE
@@ -178,7 +178,7 @@ Uppsetjari bilaður: rangur stýrikóði
 # ^Skipped
 "Sleppt: "
 # ^CopyDetails
-Afrita upplýsingar í skrifbrettið
+Afrita upplýsingar til skrifbrettis
 # ^LogInstall
 Skrá uppsetningarferli
 # ^Byte
