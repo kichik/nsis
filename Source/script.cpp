@@ -44,7 +44,10 @@ char *CEXEBuild::set_file_predefine(char *filename)
 void CEXEBuild::restore_file_predefine(char *oldfilename)
 {
   definedlist.del("__FILE__");
-  if(oldfilename) definedlist.add("__FILE__",oldfilename);
+  if(oldfilename) {
+      definedlist.add("__FILE__",oldfilename);
+      free(oldfilename);
+  }
 }
 
 char *CEXEBuild::set_timestamp_predefine(char *filename)
@@ -82,7 +85,10 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
 void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
 {
   definedlist.del("__TIMESTAMP__");
-  if(oldtimestamp) definedlist.add("__TIMESTAMP__",oldtimestamp);
+  if(oldtimestamp) {
+      definedlist.add("__TIMESTAMP__",oldtimestamp);
+      free(oldtimestamp);
+  }
 }
 
 char *CEXEBuild::set_line_predefine(int linecnt)
@@ -103,7 +109,10 @@ char *CEXEBuild::set_line_predefine(int linecnt)
 void CEXEBuild::restore_line_predefine(char *oldline)
 {
   definedlist.del("__LINE__");
-  if(oldline) definedlist.add("__LINE__",oldline);
+  if(oldline) {
+      definedlist.add("__LINE__",oldline);
+      free(oldline);
+  }
 }
 #endif
 
@@ -130,9 +139,7 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   restore_file_predefine(oldfilename);
-  if (oldfilename) free(oldfilename);
   restore_timestamp_predefine(oldtimestamp);
-  if (oldtimestamp) free(oldtimestamp);
 #endif
 
   fp = 0;
@@ -483,12 +490,9 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   if(!is_commandline) { // Don't set the predefines for command line /X option
     if(!is_macro) {
       restore_file_predefine(oldfilename);
-      if (oldfilename) free(oldfilename);
       restore_timestamp_predefine(oldtimestamp);
-      if (oldtimestamp) free(oldtimestamp);
     }
     restore_line_predefine(oldline);
-    if (oldline) free(oldline);
   }
 #endif
 
@@ -2265,9 +2269,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
         // Added by Sunil Kamath 11 June 2003
         restore_file_predefine(oldfilename);
-        if (oldfilename) free(oldfilename);
         restore_timestamp_predefine(oldtimestamp);
-        if (oldtimestamp) free(oldtimestamp);
 #endif
 
 
