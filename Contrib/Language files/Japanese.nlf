@@ -3,10 +3,10 @@ NLF v2
 # Language ID
 1041
 # Font and size - dash (-) means default
--
--
+ＭＳ Ｐゴシック
+9
 # Codepage - dash (-) means ANSI code page
--
+932
 # Translation by Dnanako
 Nullsoft Install System %s
 %s セットアップ
