@@ -38,7 +38,7 @@
 #define LB_ICONWIDTH 20
 #define LB_ICONHEIGHT 20
 
-static BOOL gDontFookWithFocus = FALSE;
+static char gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
 common_strings *common_strings_tables;
@@ -567,7 +567,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       SetWindowText(hwndDlg,g_tmp);
 
-      gDontFookWithFocus = FALSE;
+      gDontFookWithFocus = 0;
       m_curwnd=CreateDialog(g_hInstance,windows[g_page_offs+m_page].id,hwndDlg,windows[g_page_offs+m_page].proc);
       if (m_curwnd)
       {
@@ -671,7 +671,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(IDC_INTROTEXT,LANGID_LICENSE_TEXT);
     //XGE 5th September 2002 - place the initial focus in the richedit control
-    gDontFookWithFocus = TRUE;
+    gDontFookWithFocus++;
     SetFocus(hwLicense);
     return FALSE;
     //End Xge
@@ -965,8 +965,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetUITextFromLang(IDC_TEXT1,LANGID_COMP_SUBTEXT(0));
     SetUITextFromLang(IDC_TEXT2,LANGID_COMP_SUBTEXT(1));
 
-    oldTreeWndProc=GetWindowLong(hwndTree1,GWL_WNDPROC);
-    SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
+    oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
 
     if (hImageList) ImageList_Destroy(hImageList);
 
