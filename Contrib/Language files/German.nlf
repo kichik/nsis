@@ -112,9 +112,9 @@ $(^Name) wird aus dem unten angegebenen Verzeichnis deinstalliert. Um aus einem 
 # ^UnDirBrowseText
 Wählen Sie das Verzeichnis aus, aus dem (^Name) deinstalliert werden soll:
 # ^SpaceAvailable
-Verfügbarer Speicher: 
+"Verfügbarer Speicher: "
 # ^SpaceRequired
-Benötigter Speicher: 
+"Benötigter Speicher: "
 # ^UninstallingText
 Dieser Assisten deinstalliert (^Name) von Ihrem Computer. $_CLICK
 # ^UninstallingSubText
@@ -124,59 +124,59 @@ Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Abbrechen um 
 # ^FileError_NoIgnore
 Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Wiederholen um den Schreibvorgang erneut zu versuchen\r\noder auf Abbrechen um die Installation zu beenden.
 # ^CantWrite
-Fehler beim Schreiben: 
+"Fehler beim Schreiben: "
 # ^CopyFailed
 Kopieren fehlgeschlagen
 # ^CopyTo
-Kopiere nach 
+"Kopiere nach "
 # ^Registering
-Registriere: 
+"Registriere: "
 # ^Unregistering
-Deregistriere: 
+"Deregistriere: "
 # ^SymbolNotFound
-Symbol ist nicht vorhanden: 
+"Symbol ist nicht vorhanden: "
 # ^CouldNotLoad
-Fehler beim Laden von 
+"Fehler beim Laden von: "
 # ^CreateFolder
-Erstelle Verzeichnis: 
+"Erstelle Verzeichnis: "
 # ^CreateShortcut
-Erstelle Verknüpfung: 
+"Erstelle Verknüpfung: "
 # ^CreatedUninstaller
-Erstelle Deinstallations-Programm: 
+"Erstelle Deinstallations-Programm: "
 # ^Delete
-Lösche Datei: 
+"Lösche Datei: "
 # ^DeleteOnReboot
-Lösche Datei nach Neustart: 
+"Lösche Datei nach Neustart: "
 # ^ErrorCreatingShortcut
-Fehler beim Erstellen der Verknüpfung: 
+"Fehler beim Erstellen der Verknüpfung: "
 # ^ErrorCreating
-Fehler beim Erstellen: 
+"Fehler beim Erstellen: "
 # ^ErrorDecompressing
 Fehler beim Dekomprimieren. Beschädigtes Installations-Programm?
 # ^ErrorRegistering
 Fehler beim Registrieren der DLL
 # ^ExecShell
-ExecShell:
+"ExecShell: "
 # ^Exec
-Starte:
+"Starte: "
 # ^Extract
-Dekomprimiere: 
+"Dekomprimiere: "
 # ^ErrorWriting
-Dekomprimierung: Fehler beim Schreiben der Datei 
+"Dekomprimierung: Fehler beim Schreiben der Datei "
 # ^InvalidOpcode
 Beschädigtes Installations-Programm: ungültiger Befehlscode
 # ^NoOLE
-Kein OLE für: 
+"Kein OLE für: "
 # ^OutputFolder
-Zielverzeichnis: 
+"Zielverzeichnis: "
 # ^RemoveFolder
-Entferne Verzeichnis: 
+"Entferne Verzeichnis: "
 # ^RenameOnReboot
-Umbenennen nach Neustart: 
+"Umbenennen nach Neustart: "
 # ^Rename
-Umbenennen: 
+"Umbenennen: "
 # ^Skipped
-Übersprungen: 
+"Übersprungen: "
 # ^CopyDetails
 Details in die Zwischenablage kopieren
 # ^LogInstall
