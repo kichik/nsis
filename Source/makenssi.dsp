@@ -192,6 +192,10 @@ SOURCE=.\build.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\clzma.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\crc32.c
 # End Source File
 # Begin Source File
