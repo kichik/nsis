@@ -80,7 +80,6 @@ Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Klik op Akkoord als
 Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Klik op het keuzevak hieronder als u de overeenkomst accepteerd. $_CLICK
 # ^UnLicenseTextRB
 Lees de licentie overeenkomst voordat u $(^Name) verwijdert. Selecteer de eerste optie hieronder als u de overeenkomst accepteerd. $_CLICK
-# ^UnLicenseText
 # ^Custom
 Aangepast
 # ^ComponentsText
