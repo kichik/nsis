@@ -123,25 +123,27 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
   #define HANDLE_STRING_U(id,strname) case id: ustr=&(table->strname); break;
 #endif
   switch (id) {
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+    HANDLE_STRING_C(NLF_COMPLETED, common.completed);
+    HANDLE_STRING_C(NLF_BTN_NEXT, common.nextbutton);
+    HANDLE_STRING_C(NLF_BTN_BACK, common.backbutton);
     HANDLE_STRING_C(NLF_BRANDING, common.branding);
     HANDLE_STRING_C(NLF_BTN_CANCEL, common.cancelbutton);
     HANDLE_STRING_C(NLF_BTN_CLOSE, common.closebutton);
     HANDLE_STRING_C(NLF_BTN_DETAILS, common.showdetailsbutton);
-    HANDLE_STRING_C(NLF_COMPLETED, common.completed);
+#endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_SUPPORT_FILE
     HANDLE_STRING_C(NLF_FILE_ERROR, common.fileerrtext);
 #endif
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     HANDLE_STRING_I(NLF_CAPTION, common.caption);
     HANDLE_STRING_I(NLF_SUBCAPTION_LICENSE, common.subcaptions[0]);
     HANDLE_STRING_I(NLF_SUBCAPTION_OPTIONS, common.subcaptions[1]);
     HANDLE_STRING_I(NLF_SUBCAPTION_DIR, common.subcaptions[2]);
     HANDLE_STRING_I(NLF_SUBCAPTION_INSTFILES, common.subcaptions[3]);
     HANDLE_STRING_I(NLF_SUBCAPTION_COMPLETED, common.subcaptions[4]);
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-    HANDLE_STRING_I(NLF_BTN_NEXT, installer.nextbutton);
-    HANDLE_STRING_I(NLF_BTN_BACK, installer.backbutton);
-#ifdef NSIS_CONFIG_LICENSEPAGE
     HANDLE_STRING_I(NLF_BTN_LICENSE, installer.licensebutton);
 #endif
     HANDLE_STRING_I(NLF_BTN_INSTALL, installer.installbutton);
@@ -154,15 +156,16 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_I(NLF_DIR_SUBTEXT, installer.dirsubtext);
     HANDLE_STRING_I(NLF_SPACE_AVAIL, installer.spaceavailable);
     HANDLE_STRING_I(NLF_SPACE_REQ, installer.spacerequired);
-#endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     HANDLE_STRING_U(NLF_UCAPTION, ucommon.caption);
-    HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[0]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[1]);
-    HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[2]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_INSTFILES, ucommon.subcaptions[0]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_COMPLETED, ucommon.subcaptions[1]);
+    HANDLE_STRING_U(NLF_USUBCAPTION_CONFIRM, ucommon.subcaptions[2]);
     HANDLE_STRING_U(NLF_BTN_UNINSTALL, uninstall.uninstbutton);
     HANDLE_STRING_U(NLF_UNINST_SUBTEXT, uninstall.uninstalltext2);
+#endif
+
 #endif
 
     HANDLE_STRING_C(LANG_NAME, common.name);
@@ -397,7 +400,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     // Changed by Amir Szekely 22nd July 2002
     // Adds the ability to disable space texts
     if (!table->installer.spacerequired && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
-    if (!table->installer.nextbutton) table->installer.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
+    if (!table->common.nextbutton) table->common.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
     if (!table->installer.installbutton) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
   }
 
@@ -412,7 +415,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     wsprintf(buf,str(NLF_BRANDING),NSIS_VERSION);
     table->common.branding=add_string_main(buf,0);
   }
-  if (!table->installer.backbutton) table->installer.backbutton=add_string_main(str(NLF_BTN_BACK),0);
+  if (!table->common.backbutton) table->common.backbutton=add_string_main(str(NLF_BTN_BACK),0);
   if (!table->common.cancelbutton) table->common.cancelbutton=add_string_main(str(NLF_BTN_CANCEL),0);
   if (!table->common.showdetailsbutton) table->common.showdetailsbutton=add_string_main(str(NLF_BTN_DETAILS),0);
 
@@ -433,23 +436,27 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     if (uninstaller_writes_used) {
       if (!table->uninstall.uninstalltext2)
         table->uninstall.uninstalltext2=add_string_uninst(str(NLF_UNINST_SUBTEXT),0);
-      if (!table->ucommon.subcaptions[0])
-        table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
-      if (!table->ucommon.subcaptions[1])
-        table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
-      if (!table->ucommon.subcaptions[2])
-        table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
       if (!table->ucommon.caption)
       {
         char buf[1024];
         wsprintf(buf,str(NLF_UCAPTION),ubuild_strlist.get()+table->ucommon.name);
         table->ucommon.caption=add_string_uninst(buf);
       }
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+      if (!table->ucommon.subcaptions[0])
+        table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
+      if (!table->ucommon.subcaptions[1])
+        table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
+      if (!table->ucommon.subcaptions[2])
+        table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
       table->ucommon.branding=add_string_uninst(build_strlist.get() + table->common.branding,0);
+      table->ucommon.backbutton=add_string_uninst(build_strlist.get() + table->common.backbutton,0);
+      table->ucommon.nextbutton=add_string_uninst(build_strlist.get() + table->common.nextbutton,0);
       table->ucommon.cancelbutton=add_string_uninst(build_strlist.get() + table->common.cancelbutton,0);
       table->ucommon.showdetailsbutton=add_string_uninst(build_strlist.get() + table->common.showdetailsbutton,0);
       table->ucommon.closebutton=add_string_uninst(build_strlist.get() + table->common.closebutton,0);
       table->ucommon.completed=add_string_uninst(build_strlist.get() + table->common.completed,0);
+#endif
 
       if (!table->uninstall.uninstbutton) table->uninstall.uninstbutton=add_string_uninst(str(NLF_BTN_UNINSTALL),0);
     }

@@ -1,22 +1,22 @@
 \C{flowcontrol} Flow Control Instructions
 
-\H{Abort} Abort
+\H{abort} Abort
 
 \c user_message
 
-Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions (\k{callbacks}) to do special things. Note 2: When using from .onNextPage (\k{onNextPage}) or .onPrevPage (\k{onPrevPage}), the parameter to Abort can be an integer that specifies how many pages to skip.
+Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions (\k{callbacks}) to do special things. Pages callbacks (\K{pages}) also uses Abort for special purposes.
 
-\H{Call} Call
+\H{call} Call
 
 \c function_name | :label_name
 
 Calls the function named function_name. If in the Uninstall section, Call can only be used with function names beginning with "un.". If the parameter starts with a ':' it will be treated as a label (so you can call to a label in your function - this is probably not going to be used most of the time).
 
-\H{ClearErrors} ClearErrors
+\H{clearerrors} ClearErrors
 
 Clears the error flag.
 
-\H{FindWindow} FindWindow
+\H{findwindow} FindWindow
 
 \c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
 
@@ -28,13 +28,13 @@ Searches for a window. Behaves like the win32 FindWindowEx(). Seaches by windowc
 
 Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.
 
-\H{GetDlgItem} GetDlgItem
+\H{getdlgitem} GetDlgItem
 
 \c user_var(output) dialog item_id
 
 Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control on the inner dialog, first use FindWindow user_var(output) "#32770" "" $HWNDPARENT to get the handle of the inner dialog.
 
-\H{GetFunctionAddress} GetFunctionAddress
+\H{getfunctionaddress} GetFunctionAddress
 
 \c user_var(output) function_name
 
@@ -56,37 +56,37 @@ If +offset or -offset is specified, jump is relative by offset instructions. Got
 
 If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. I Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
 
-\H{IfErrors} IfErrors
+\H{iferrors} IfErrors
 
 \c jumpto_iferror [jumpto_ifnoerror]
 
 Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.
 
-\H{IfFileExists} IfFileExists
+\H{iffileexists} IfFileExists
 
 \c file_to_check_for jump_if_present [jump_otherwise]
 
 Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*
 
-\H{IntCmp} IntCmp
+\H{intcmp} IntCmp
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more.
 
-\H{IntCmpU} IntCmpU
+\H{intcmpu} IntCmpU
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.
 
-\H{IsWindow} IsWindow
+\H{iswindow} IsWindow
 
 \c HWND jump_if_window [jump_if_not_window]
 
 If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).
 
-\H{MessageBox} MessageBox
+\H{messagebox} MessageBox
 
 \c mb_option_list messagebox_text [return_check jumpto] [return_check_2 jumpto_2]
 
@@ -144,11 +144,11 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 
 If the return value of the MessageBox is return_check, the installer will Goto jumpto.
 
-\H{Return} Return
+\H{return} Return
 
 Returns from a function or section.
 
-\H{SendMessage} SendMessage
+\H{sendmessage} SendMessage
 
 \c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
 
@@ -166,15 +166,15 @@ To send a string param, put STR: before the parameter, for example: "STR:Some st
 
 Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
 
-\H{Quit} Quit
+\H{quit} Quit
 
 Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
 
-\H{SetErrors} SetErrors
+\H{seterrors} SetErrors
 
 Sets the error flag.
 
-\H{StrCmp} StrCmp
+\H{strcmp} StrCmp
 
 \c str1 str2 jump_if_equal [jump_if_not_equal]
 

@@ -13,6 +13,7 @@
 //     sections (20 bytes each)
 //   (if uninstall)
 //     uninstall_header (~116 bytes)
+//   pages (12 bytes each)
 //   entries (24 bytes each)
 //   string table
 //   language tables
@@ -182,9 +183,25 @@ enum
 
 };
 
+#define FH_FLAGS_MASK 15
+#define FH_FLAGS_CRC 1
+#define FH_FLAGS_UNINSTALL 2
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+#define FH_FLAGS_SILENT 4
+#endif
+// Added by Amir Szekely 23rd July 2002
+#define FH_FLAGS_FORCE_CRC 8
+
+#define FH_SIG 0xDEADBEEF
+
+// neato surprise signature that goes in firstheader. :)
+#define FH_INT1 0x6C6C754E
+#define FH_INT2 0x74666F73
+#define FH_INT3 0x74736E49
+
 typedef struct
 {
-  int flags; // &1=CRC, &2=uninstall, &4=silent
+  int flags; // &1=CRC, &2=uninstall, &4=silent, &8=force CRC
   int siginfo;  // FH_SIG
 
   int nsinst[3]; // FH_INT1,FH_INT2,FH_INT3
@@ -199,17 +216,22 @@ typedef struct
 // Strings common to both installers and uninstallers
 typedef struct
 {
-  // unprocessed strings
-  int branding;
-  int cancelbutton;
-  int showdetailsbutton;
-  int completed;
-  int closebutton;   // "Close"
   int name; // name of installer
 
+  // unprocessed strings
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  int branding;
+  int backbutton;
+  int nextbutton;
+  int cancelbutton;
+  int showdetailsbutton;
+  int closebutton;   // "Close"
+  int completed;
+
   // processed strings
-  int caption; // name of installer + " Setup" or whatever.
   int subcaptions[5];
+#endif
+  int caption; // name of installer + " Setup" or whatever.
 
 #ifdef NSIS_SUPPORT_FILE
   int fileerrtext;
@@ -278,6 +300,8 @@ typedef struct
   int num_entries; // total number of entries
   int num_string_bytes; // total number of bytes taken by strings
 
+  int num_pages; // number of used pages (including custom pages)
+
 #ifdef NSIS_SUPPORT_BGBG
   int bg_color1, bg_color2, bg_textcolor;
 #endif
@@ -289,9 +313,8 @@ typedef struct
   int code_onInstSuccess;
   int code_onInstFailed;
   int code_onUserAbort;
-  int code_onNextPage;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-  int code_onInitDialog;
+  int code_onGUIInit;
 #endif
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
@@ -309,8 +332,6 @@ typedef struct
 {
   // these first strings are literals (should not be encoded)
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  int backbutton;
-  int nextbutton;
   int browse; // "Browse..."
   int installbutton; // "Install"
   int spacerequired; // "Space required: "
@@ -364,7 +385,6 @@ typedef struct
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
   // .on* calls
-  int code_onPrevPage;
   int code_onVerifyInstDir;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onMouseOverSection;
@@ -418,22 +438,33 @@ typedef struct
   int offsets[MAX_ENTRY_OFFSETS];	// count and meaning of offsets depend on 'which'
 } entry;
 
-
-#define FH_FLAGS_MASK 15
-#define FH_FLAGS_CRC 1
-#define FH_FLAGS_UNINSTALL 2
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-#define FH_FLAGS_SILENT 4
+enum
+{
+  NSIS_PAGE_CUSTOM = -1,
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  NSIS_PAGE_LICENSE,
 #endif
-// Added by Amir Szekely 23rd July 2002
-#define FH_FLAGS_FORCE_CRC 8
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  NSIS_PAGE_SELCOM,
+#endif
+  NSIS_PAGE_DIR,
+  NSIS_PAGE_INSTFILES,
+  NSIS_PAGE_COMPLETED,
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  NSIS_PAGE_UNINST
+#endif
+};
 
-#define FH_SIG 0xDEADBEEF
-
-// neato surprise signature that goes in firstheader. :)
-#define FH_INT1 0x6C6C754E
-#define FH_INT2 0x74666F73
-#define FH_INT3 0x74736E49
+typedef struct
+{
+  int id; // index in the pages array
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+  int prefunc; // function to use Abort in, or show the custom page if id == NSIS_PAGE_CUSTOM
+  int postfunc; // function to do stuff after the page is shown
+#endif //NSIS_SUPPORT_CODECALLBACKS
+  int next;
+  int back;
+} page;
 
 // the following are only used/implemented in exehead, not makensis.
 

@@ -1,0 +1,68 @@
+\C{pages} Pages
+
+Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with InstallOptions for example).
+
+\H{pageoreder} Ordering
+
+The page order is set simply by the order they are in the script. For example:
+
+\c  Page license
+\c  Page components
+\c  Page directory
+\c  Page instfiles
+
+This code will show the license page, then the components selction page, then the directory selection page and then the install log, just like in old installers.
+
+Please note that you must still use LicenseText and LicenseData for the license page to show, ComponentText for the components selection page to show and DirText for the directory page to show.
+
+If you don't use any Page command the installer pages order will be just as in older version: license (if LicenseText and LicenseData were specified), components (if ComponentText was specified and there is more than one visible section), directory (if DirText was specified), instfiles.
+
+\H{pagecallbacks} Callbacks
+
+Each built-in page has two callback functions. The pre-function and the post-creation function. The pre-function is called right before the page is created and the post-function is called right after it is created and before it is showed so you can tweak its user interface with CreateFont (\K{createfont}), SetStaticBkColor (\K{setstaticbkcolor}) and SendMessage (\K{sendmessage}).
+
+A custom page has only one callback function that creates it but unlike the built-in pages this function is mandatory.
+
+Abort (see \K{abort}) has special usage from pages' callback functions.
+
+\b Use Abort from a built-in pre-function to skip the page
+
+\b Use Abort from a custom page creator function to go to the previous page
+
+Examples:
+
+\c  Page license skipLicense
+\c  Page custom customPage
+\c  Page instfiles
+\c
+\c  Function skipLicense
+\c    MessageBox MB_YES "Do you want to skip the license page?" IDNO no
+\c      Abort
+\c    no:
+\c  FunctionEnd
+\c  
+\c  Function customPage
+\c    GetTempFileName $R0
+\c    File /oname=$R0 customPage.ini
+\c    InstallOptions::dialog $R0
+\c    Delete $R0
+\c    Pop $R1
+\c    StrCmp $R1 "cancel" "" nocancel
+\c      Quit
+\c    nocancel:
+\c    StrCmp $R1 "back" "" noback
+\c      Abort
+\c    noback:
+\c  FunctionEnd
+
+\H{page} Page
+
+\c custom function | (license|components|directory|instfiles) [pre_function] [post_function]
+
+Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
+
+\H{uninstpage} UninstPage
+
+\c custom function | (uninstConfirm|instfiles) [pre_function] [post_function]
+
+Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.

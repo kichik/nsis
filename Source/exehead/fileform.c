@@ -99,15 +99,16 @@ const char * NSISCALL loadHeaders(void)
   if (h.flags&FH_FLAGS_UNINSTALL)
   {
     g_is_uninstaller++;
-    g_inst_entry=(entry *) ((g_inst_uninstheader) + 1);
+    g_inst_page=(page *) (g_inst_uninstheader + 1);
   }
   else
 #endif
   {
     g_inst_section=(section *) (g_inst_header + 1);
-    g_inst_entry=(entry *) (g_inst_section + g_inst_header->num_sections);
+    g_inst_page=(page *) (g_inst_section + g_inst_header->num_sections);
   }
-  g_db_strtab = (char *)(g_inst_entry + g_inst_cmnheader->num_entries);
+  g_inst_entry=(entry *) (g_inst_page + g_inst_cmnheader->num_pages);
+  g_db_strtab = (char *) (g_inst_entry + g_inst_cmnheader->num_entries);
   return 0;
 }
 

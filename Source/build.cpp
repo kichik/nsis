@@ -10,6 +10,7 @@
 
 #include "ResourceEditor.h"
 #include "exehead/resource.h"
+#include "exehead/lang.h"
 
 void CEXEBuild::define(const char *p, const char *v)
 {
@@ -281,9 +282,16 @@ CEXEBuild::CEXEBuild()
 
   no_space_texts=false;
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   build_plugin_unload=0;
+#endif
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+  build_header.common.num_pages=0;
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  build_uninst.common.num_pages=0;
+#endif
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -1021,7 +1029,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
   {
     section *sec=(section *)cur_functions->get();
     int l=cur_functions->getlen()/sizeof(section);
-    entry *w=(entry*)cur_entries->get();
+    entry *w=(entry *)cur_entries->get();
     while (l-- > 0)
     {
       int x;
@@ -1038,6 +1046,19 @@ int CEXEBuild::resolve_coderefs(const char *str)
       int x;
       for (x = build_uninst.code; x < build_uninst.code+build_uninst.code_size; x ++)
         if (resolve_instruction("\"uninstall section\"",str,w+x,x,build_uninst.code,build_uninst.code+build_uninst.code_size)) return 1;
+
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      if (ubuild_pages.getlen()) {
+        page *p=(page *)ubuild_pages.get();
+        int i = 0;
+        while (i < build_uninst.common.num_pages) {
+          if (resolve_call_int("uninstall pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
+          if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          p++;
+          i++;
+        }
+      }
+#endif
     }
     else
     {
@@ -1057,6 +1078,18 @@ int CEXEBuild::resolve_coderefs(const char *str)
         sec++;
         cnt++;
       }
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      if (build_pages.getlen()) {
+        page *p=(page *)build_pages.get();
+        int i = 0;
+        while (i < build_header.common.num_pages) {
+          if (resolve_call_int("pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
+          if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          p++;
+          i++;
+        }
+      }
+#endif
     }
   }
 
@@ -1181,11 +1214,11 @@ int CEXEBuild::write_output(void)
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstSuccess",0),&build_uninst.common.code_onInstSuccess)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstFailed",0),&build_uninst.common.code_onInstFailed)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUserAbort",0),&build_uninst.common.code_onUserAbort)) return PS_ERROR;
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onNextPage",0),&build_uninst.common.code_onNextPage)) return PS_ERROR;
     #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onInitDialog",0),&build_uninst.common.code_onInitDialog)) return PS_ERROR;
+      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onGUIInit",0),&build_uninst.common.code_onGUIInit)) return PS_ERROR;
     #endif
   #endif//NSIS_SUPPORT_CODECALLBACKS
+
       if (resolve_coderefs("uninstall")) return PS_ERROR;
       set_uninstall_mode(0);
     }
@@ -1204,10 +1237,8 @@ int CEXEBuild::write_output(void)
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInstFailed",0),&build_header.common.code_onInstFailed)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onUserAbort",0),&build_header.common.code_onUserAbort)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onVerifyInstDir",0),&build_header.code_onVerifyInstDir)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onNextPage",0),&build_header.common.code_onNextPage)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onPrevPage",0),&build_header.code_onPrevPage)) return PS_ERROR;
   #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInitDialog",0),&build_header.common.code_onInitDialog)) return PS_ERROR;
+    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onGUIInit",0),&build_header.common.code_onGUIInit)) return PS_ERROR;
     if (resolve_call_int("install callback",".callbacks",ns_func.find(".onMouseOverSection",0),&build_header.code_onMouseOverSection)) return PS_ERROR;
   #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -1217,73 +1248,248 @@ int CEXEBuild::write_output(void)
 
   if (resolve_coderefs("install")) return PS_ERROR;
 
-  // Added by Amir Szekely 8th July 2002
-  // Removes any unused resources
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  try {
-  	SCRIPT_MSG("Removing unused resources... ");
-    CResourceEditor re(header_data_new, exeheader_size_new);
+  {
+    page pg = {
+      0,
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      -1,
+      -1
+#endif
+    };
+    int add_pages=!build_pages.getlen();
+    int add_uninst_pages=!ubuild_pages.getlen();
+
+    int license=0;
+    int selcom=0;
+    int dir=0;
+    int uninst=0;
+    int instlog=0;
+    int main=2;
+
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    if (!build_header.common.silent_install)
+#endif
+    {
 #ifdef NSIS_CONFIG_LICENSEPAGE
-    if (IsNotSet(installer.licensedata)
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-      || build_header.common.silent_install
-#endif // NSIS_CONFIG_SILENT_SUPPORT
-     )
-    {
-      re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-    }
-#endif // NSIS_CONFIG_LICENSEPAGE
+      if (!IsNotSet(installer.licensedata)) license++;
+#endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    if (IsNotSet(installer.componenttext)
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-      || build_header.common.silent_install
-#endif // NSIS_CONFIG_SILENT_SUPPORT
-     )
-    {
-      re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      re.UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-    }
-#endif // NSIS_CONFIG_COMPONENTPAGE
-    if (IsNotSet(installer.text)
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-      || build_header.common.silent_install
-#endif // NSIS_CONFIG_SILENT_SUPPORT
-     )
-    {
-      re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-    }
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    if (!uninstaller_writes_used
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-      || build_uninst.common.silent_install
-#endif // NSIS_CONFIG_SILENT_SUPPORT
-     )
-    {
-      re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-    }
-#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (build_header.common.silent_install
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        && (build_uninst.common.silent_install || !uninstaller_writes_used)
-#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
-     )
-    {
-      re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      if (!build_compress_whole && !build_crcchk)
-        re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-    }
-#endif // NSIS_CONFIG_SILENT_SUPPORT
+      if (!IsNotSet(installer.componenttext)) selcom++;
+#endif
+      if (!IsNotSet(installer.text)) dir++;
 
-    free(header_data_new);
-    header_data_new = re.Save((DWORD&)exeheader_size_new);
+      if (!add_pages) {
+        int i=0;
+        page *p=(page *) build_pages.get();
+        while (i!=build_header.common.num_pages) {
+          switch (p->id) {
+#ifdef NSIS_CONFIG_LICENSEPAGE
+            case NSIS_PAGE_LICENSE:
+              license++;
+              break;
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+            case NSIS_PAGE_SELCOM:
+              selcom++;
+              break;
+#endif
+            case NSIS_PAGE_DIR:
+              dir++;
+              break;
+            case NSIS_PAGE_INSTFILES:
+              instlog++;
+              break;
+          }
+          p++;
+          i++;
+        }
 
-    SCRIPT_MSG("Done!\n");
-  }
-  catch (exception& err) {
-    ERROR_MSG("\nError: %s\n", err.what());
-    return PS_ERROR;
+        if (license==1) {
+          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "license", "LicenseData");
+          return PS_ERROR;
+        }
+        if (selcom==1) {
+          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "components", "ComponentText");
+          return PS_ERROR;
+        }
+        if (dir==1) {
+          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "directory selection", "DirText");
+          return PS_ERROR;
+        }
+        if (!instlog) {
+          warning("Page instfiles not specefied, no sections will be executed!");
+        }
+      }
+      else {
+#ifdef NSIS_CONFIG_LICENSEPAGE
+        if (license) {
+          pg.id=NSIS_PAGE_LICENSE;
+          build_pages.add(&pg,sizeof(page));
+          build_header.common.num_pages++;
+        }
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+        if (selcom) {
+          pg.id=NSIS_PAGE_SELCOM;
+          build_pages.add(&pg,sizeof(page));
+          build_header.common.num_pages++;
+        }
+#endif
+        if (dir) {
+          pg.id=NSIS_PAGE_DIR;
+          build_pages.add(&pg,sizeof(page));
+          build_header.common.num_pages++;
+        }
+        instlog++;
+        pg.id=NSIS_PAGE_INSTFILES;
+        build_pages.add(&pg,sizeof(page));
+        build_header.common.num_pages++;
+        pg.id=NSIS_PAGE_COMPLETED;
+        build_pages.add(&pg,sizeof(page));
+        build_header.common.num_pages++;
+      }
+
+      page *p=(page *) build_pages.get();
+      for (int i=0; i<build_header.common.num_pages; i++, p++) {
+        if (i) p->back=2; // 2 - enabled, 1 - disabled, 0 - invisible
+        else p->back=0;
+
+        p->next=LANG_BTN_NEXT;
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+        if (p->id==NSIS_PAGE_LICENSE)
+          p->next=LANG_BTN_LICENSE;
+#endif
+        if (i<build_header.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES)
+          p->next=LANG_BTN_INSTALL;
+        if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
+          p->back=1;
+      }
+      (--p)->next=LANG_BTN_CLOSE;
+      if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
+    }
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    else main--;
+#endif
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    if (!build_uninst.common.silent_install && uninstaller_writes_used)
+#endif
+    {
+      if (!IsNotSet(uninstall.uninstalltext)) uninst++;
+
+      if (!add_uninst_pages) {
+        int i=0;
+        page *p=(page *) ubuild_pages.get();
+        while (i!=build_header.common.num_pages) {
+          switch (p->id) {
+  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+            case NSIS_PAGE_UNINST:
+              uninst++;
+              break;
+  #endif
+            case NSIS_PAGE_INSTFILES:
+              instlog++;
+              break;
+          }
+          p++;
+          i++;
+        }
+
+        if (uninst==1) {
+          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "UninstallText");
+          return PS_ERROR;
+        }
+        if (!instlog) {
+          warning("UninstPage instfiles not specefied, no sections will be executed!");
+        }
+      }
+      else {
+        if (uninst) {
+          pg.id=NSIS_PAGE_UNINST;
+          ubuild_pages.add(&pg,sizeof(page));
+          build_uninst.common.num_pages++;
+        }
+        instlog++;
+        pg.id=NSIS_PAGE_INSTFILES;
+        ubuild_pages.add(&pg,sizeof(page));
+        build_uninst.common.num_pages++;
+        pg.id=NSIS_PAGE_COMPLETED;
+        ubuild_pages.add(&pg,sizeof(page));
+        build_uninst.common.num_pages++;
+      }
+      
+      /*case NSIS_PAGE_UNINST:
+            p->next=LANG_BTN_UNINST;
+            break;*/
+
+      page *p=(page *) ubuild_pages.get();
+      int noinstlogback=0;
+      for (int i=0; i<build_uninst.common.num_pages; i++, p++) {
+        if (i) p->back=2; // 2 - enabled, 1 - disabled, 0 - invisible
+        else p->back=0;
+
+        p->next=LANG_BTN_NEXT;
+
+        if (i<build_uninst.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES) {
+          if (p->id==NSIS_PAGE_UNINST)
+            noinstlogback=1;
+          p->next=LANG_BTN_UNINST;
+        }
+        if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
+          p->back=noinstlogback?0:1;
+      }
+      (--p)->next=LANG_BTN_CLOSE;
+      if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
+    }
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    else
+#endif
+#endif
+      main--;
+  
+    try {
+      SCRIPT_MSG("Removing unused resources... ");
+      CResourceEditor re(header_data_new, exeheader_size_new);
+  #ifdef NSIS_CONFIG_LICENSEPAGE
+      if (!license) {
+        re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+  #endif // NSIS_CONFIG_LICENSEPAGE
+  #ifdef NSIS_CONFIG_COMPONENTPAGE
+      if (!selcom) {
+        re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        re.UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+  #endif // NSIS_CONFIG_COMPONENTPAGE
+      if (!dir) {
+        re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (!uninst) {
+        re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+  #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (!instlog) {
+        re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+      if (!main) {
+        re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        if (!build_compress_whole && !build_crcchk)
+          re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      }
+
+      free(header_data_new);
+      header_data_new = re.Save((DWORD&)exeheader_size_new);
+
+      SCRIPT_MSG("Done!\n");
+    }
+    catch (exception& err) {
+      ERROR_MSG("\nError: %s\n", err.what());
+      return PS_ERROR;
+    }
   }
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
 
@@ -1415,6 +1621,9 @@ int CEXEBuild::write_output(void)
       GrowBuf hdrcomp;
       hdrcomp.add(&build_header,sizeof(build_header));
       hdrcomp.add(build_sections.get(),build_sections.getlen());
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+      hdrcomp.add(build_pages.get(),build_pages.getlen());
+#endif
       hdrcomp.add(build_entries.get(),build_entries.getlen());
       hdrcomp.add(build_strlist.get(),build_strlist.getlen());
       hdrcomp.add(build_langtables.get(),build_langtables.getlen());
@@ -1692,6 +1901,9 @@ int CEXEBuild::uninstall_generate()
       GrowBuf udata;
 
       udata.add(&build_uninst,sizeof(build_uninst));
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+      udata.add(ubuild_pages.get(),ubuild_pages.getlen());
+#endif
       udata.add(ubuild_entries.get(),ubuild_entries.getlen());
       udata.add(ubuild_strlist.get(),ubuild_strlist.getlen());
       udata.add(ubuild_langtables.get(),ubuild_langtables.getlen());
