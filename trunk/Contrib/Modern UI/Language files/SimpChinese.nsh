@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
@@ -44,8 +44,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "完成 ${MUI_PRODUCT} 安装向导"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} 已在你的系统安装。\r\n单击 [完成(F)] 关闭此向导。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "你的系统需要重新启动，以便完成 ${MUI_PRODUCT} 的安装过程。现在要重新启动吗？"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "现在重新启动"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "稍后重新启动"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "现在重新启动(&N)"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "稍后手工地重新启动(&L)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "运行 ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "显示“读我”"
   
@@ -53,10 +53,12 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "选择“开始”菜单文件夹"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "选择““开始”菜单”文件夹，用于程序的快捷方式。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "选择““开始”菜单”文件夹，以便创建程序的快捷方式。你也可以输入名称，创建新文件夹。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "不要创建快捷方式"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "不要创建快捷方式(&N)"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你确实要退出 ${MUI_PRODUCT} 安装程序？"
   
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "单击 [解除安装] 开始解除安装的进程。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "解除安装 ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "从你的系统解除安装 ${MUI_PRODUCT} 。"

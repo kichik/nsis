@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Thai (1054)
 ;By TuW@nNu tuwannu@hotmail.com (asdfuae)
