@@ -18,14 +18,8 @@ OutFile one-section.exe
 
 ComponentText "please choose just one but the default"
 
-!define SF_SELECTED   1
-!define SF_SUBSEC     2
-!define SF_SUBSECEND  4
-!define SF_BOLD       8
-!define SF_RO         16
-!define SF_EXPAND     32
-
-!define SECTION_OFF   0xFFFFFFFE
+# defines SF_*, SECTION_OFF and some macros
+!include Sections.nsh
 
 Section !Required
 	SectionIn RO
@@ -50,18 +44,22 @@ Function .onInit
 	SectionGetFlags ${sec1} $0
 	IntOp $0 $0 | ${SF_SELECTED}
 	SectionSetFlags ${sec1} $0
+	# !insertmacro SelectSection ${sec1}
 
 	SectionGetFlags ${sec2} $0
 	IntOp $0 $0 & ${SECTION_OFF}
 	SectionSetFlags ${sec2} $0
+	# !insertmacro UnselectSection ${sec2}
 
 	SectionGetFlags ${sec3} $0
 	IntOp $0 $0 & ${SECTION_OFF}
 	SectionSetFlags ${sec3} $0
+	# !insertmacro UnselectSection ${sec3}
 
 	SectionGetFlags ${sec4} $0
 	IntOp $0 $0 & ${SECTION_OFF}
 	SectionSetFlags ${sec4} $0
+	# !insertmacro UnselectSection ${sec4}
 
 	Pop $0
 FunctionEnd
@@ -73,6 +71,7 @@ Function .onSelChange
 	SectionGetFlags $1 $0
 	IntOp $0 $0 & ${SECTION_OFF}
 	SectionSetFlags $1 $0
+	# !insertmacro UnselectSection $1
 
 	; Now remember the current selection
 	Push $2
@@ -99,6 +98,7 @@ Function .onSelChange
 		SectionGetFlags $1 $0
 		IntOp $0 $0 | ${SF_SELECTED}
 		SectionSetFlags $1 $0
+		# !insertmacro SelectSection $1
 	Pop $2
 	Pop $0
 FunctionEnd
