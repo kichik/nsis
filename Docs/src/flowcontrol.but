@@ -136,18 +136,6 @@ If the return value of the MessageBox is return_check, the installer will Goto j
 
 Returns from a function or section.
 
-\b \e{WM_CLOSE} 16
-
-\b \e{WM_COMMAND} 273
-
-\b \e{WM_USER} 1024
-
-Include $\{NSISDIR\}\\Include\\WinMessages.nsh to have all of Windows messages defined in your script.
-
-To send a string param, put STR: before the parameter, for example: "STR:Some string".
-
-Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
-
 \S2{quit} Quit
 
 Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
