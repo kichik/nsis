@@ -44,7 +44,7 @@ enumok:
 
      ; Is it DRIVE_FIXED?
      System::Call '${sysGetDriveType} (i r1) .r3'
-     IntCmp $3 ${DRIVE_FIXED} 0 enumnext
+     StrCmp $3 ${DRIVE_FIXED} 0 enumnext
 
      ; Drive space   
      System::Call '${sysGetDiskFreeSpaceEx}(i r1, .r3, .r4, .r5)'
