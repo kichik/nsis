@@ -115,6 +115,7 @@ Section "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Include
   File ..\Include\WinMessages.nsh
   File ..\Include\Sections.nsh
+  File ..\Include\Library.nsh
   File ..\Include\UpgradeDLL.nsh
   File ..\Include\LogicLib.nsh
   File ..\Include\StrFunc.nsh
@@ -133,6 +134,26 @@ Section "NSIS Core Files (required)" SecCore
   Delete $INSTDIR\Docs\*.html
   Delete $INSTDIR\Docs\style.css
   RMDir $INSTDIR\Docs
+
+  SetOutPath $INSTDIR\Contrib\Library
+  
+  SetOutPath $INSTDIR\Contrib\LibraryLocal
+  File ..\Contrib\Library\LibraryLocal\*.exe
+  File ..\Contrib\Library\LibraryLocal\*.cpp
+  File ..\Contrib\Library\LibraryLocal\*.dsw
+  File ..\Contrib\Library\LibraryLocal\*.dsp
+
+  SetOutPath $INSTDIR\Contrib\RegTool
+  File ..\Contrib\Library\RegTool\*.nsi
+  File ..\Contrib\Library\RegTool\*.bin
+  
+  SetOutPath $INSTDIR\Contrib\TypeLib
+  File ..\Contrib\Library\TypeLib\*.cpp
+  File ..\Contrib\Library\TypeLib\*.dsw
+  File ..\Contrib\Library\TypeLib\*.dsp
+  
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\TypeLib.dll
 
   ReadRegStr $R0 HKCR ".nsi" ""
   StrCmp $R0 "NSISFile" 0 +2
