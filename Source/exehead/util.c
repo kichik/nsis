@@ -316,7 +316,7 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   {
 		DWORD l = NSIS_MAX_STRLEN;
 		DWORD t;
-    if (RegQueryValueEx(hKey,name,NULL,&t,out,&l ) != ERROR_SUCCESS || t != REG_SZ) *out=0;
+    if (RegQueryValueEx(hKey,name,NULL,&t,out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
     out[NSIS_MAX_STRLEN-1]=0;
     RegCloseKey(hKey);
   }
