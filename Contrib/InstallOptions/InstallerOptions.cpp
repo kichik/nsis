@@ -139,6 +139,8 @@ char *STRDUP(const char *c)
 #define FIELD_CHECKBOX     (7)
 #define FIELD_RADIOBUTTON  (8)
 #define FIELD_LISTBOX      (9)
+#define FIELD_ICON        (10)
+#define FIELD_BITMAP      (11)
 
 // general flags
 #define FLAG_BOLD          (0x1)
@@ -561,6 +563,10 @@ bool ReadSettings(LPSTR pszFilename) {
       pFields[nIdx].nType = FIELD_CHECKBOX;
     } else if (!stricmp(pszResult, "RADIOBUTTON")) {
       pFields[nIdx].nType = FIELD_RADIOBUTTON;
+    } else if (!stricmp(pszResult, "ICON")) {
+      pFields[nIdx].nType = FIELD_ICON;
+    } else if (!stricmp(pszResult, "BITMAP")) {
+      pFields[nIdx].nType = FIELD_BITMAP;
     } else {
       continue;
     }
@@ -918,6 +924,14 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
         }
         strcpy(szFieldClass, "BUTTON");
         break;
+      case FIELD_ICON:
+        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | SS_ICON;
+        strcpy(szFieldClass, "STATIC");
+        break;
+      case FIELD_BITMAP:
+        dwStyle = WS_GROUP | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | SS_BITMAP;
+        strcpy(szFieldClass, "STATIC");
+        break;
       default:
         continue;
     }
@@ -985,7 +999,23 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
             SendMessage(pFields[nIdx].hwnd, CB_SETCURSEL, nItem, 0);
           }
         }
-      }          
+      } else if (pFields[nIdx].nType == FIELD_BITMAP || pFields[nIdx].nType == FIELD_ICON) {
+        WPARAM nImageType = pFields[nIdx].nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
+        SendMessage(
+          pFields[nIdx].hwnd,
+          STM_SETIMAGE,
+          nImageType,
+          pFields[nIdx].pszText?
+          (LPARAM)LoadImage(
+            0,
+            pFields[nIdx].pszText,
+            nImageType,
+            pFields[nIdx].rect.right-pFields[nIdx].rect.left,
+            pFields[nIdx].rect.bottom-pFields[nIdx].rect.top,
+            LR_LOADFROMFILE
+          ):(LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103))
+        );
+      }
     }
   }
 
