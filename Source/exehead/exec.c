@@ -841,7 +841,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
               update_status_text_from_lang(LANGID_CANNOTFINDSYMBOL,buf2);
               log_printf3("Error registering DLL: %s not found in %s",buf2,buf);
             }
-            FreeLibrary(h);
+            if (!parm3) FreeLibrary(h);
           }
           else
           {
