@@ -15,6 +15,7 @@
 HINSTANCE hInstance;
 HWND hwBanner;
 HANDLE hThread;
+BOOL bFailed;
 
 char buf[1024];
 
@@ -59,7 +60,6 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
   HWND hwndParent = (HWND) lpParameter;
   HWND lhwBanner;
   MSG msg;
-  //BOOL bRet;
 
   lhwBanner = CreateDialog(
     GetModuleHandle(0),
@@ -67,6 +67,13 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
     hwndParent,
     BannerProc
   );
+  if (!lhwBanner)
+  {
+    bFailed = TRUE;
+    return 0;
+  }
+
+  SetForegroundWindow(lhwBanner);
 
   while (IsWindow(lhwBanner))
   {
@@ -95,10 +102,15 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
     hwBanner = NULL;
 
+    if (!IsWindowVisible(hwndParent))
+      hwndParent = 0;
+
+    bFailed = FALSE;
+
     hThread = CreateThread(0, 0, BannerThread, (LPVOID) hwndParent, 0, &dwThreadId);
 
     // wait for the window to initalize and for the stack operations to finish
-    while (hThread && !hwBanner)
+    while (hThread && !hwBanner && !bFailed)
     {
       Sleep(10);
     }
@@ -124,11 +136,10 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
 
   if (!hwndParent)
   {
-    // create a dummy window on the thread the NSIS window will be created on and set it
-    // as the foreground window so this thread will return to be the foreground window
+    // reset the thread that called banner::Show to be the foreground thread.
+    // if banner was called from .onInit, this will make sure the NSIS dialog
+    // will still be created on the foreground
     HWND hwTemp;
-
-    AttachThreadInput(GetWindowThreadProcessId(hwndParent, 0), GetCurrentThreadId(), TRUE);
 
     hwTemp = CreateWindowEx(
       WS_EX_TOOLWINDOW,
@@ -146,8 +157,6 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
     );
     SetForegroundWindow(hwTemp);
     DestroyWindow(hwTemp);
-
-    AttachThreadInput(GetWindowThreadProcessId(hwndParent, 0), GetCurrentThreadId(), FALSE);
   }
 
   // Wait for the thread to finish
