@@ -59,8 +59,8 @@ Var MUI_TEMP2
     !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
   !endif
 
-  !ifndef MUI_CHECKBITMAP
-    !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
+  !ifndef MUI_COMPONENTSPAGE_CHECKBITMAP
+    !define MUI_COMPONENTSPAGE_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
   !endif
   
   !ifndef MUI_LICENSEPAGE_BGCOLOR
@@ -128,7 +128,7 @@ Var MUI_TEMP2
   Icon "${MUI_ICON}"
   UninstallIcon "${MUI_UNICON}"
   
-  CheckBitmap "${MUI_CHECKBITMAP}"
+  CheckBitmap "${MUI_COMPONENTSPAGE_CHECKBITMAP}"
   LicenseBkColor "${MUI_LICENSEPAGE_BGCOLOR}"
   InstallColors ${MUI_INSTFILESPAGE_COLORS}
   InstProgressFlags ${MUI_INSTFILESPAGE_PROGRESSBAR}
