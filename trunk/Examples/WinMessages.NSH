@@ -1,4 +1,6 @@
 ; KiCHiK put together this list of WM_ messages.
+!ifndef WINMESSAGES_NSH
+!define WINMESSAGES_NSH
 
 !define HWND_BROADCAST 0xFFFF
 
@@ -164,3 +166,5 @@
 !define WM_IME_CHAR 0x286
 !define WM_IME_KEYDOWN 0x290
 !define WM_IME_KEYUP 0x291
+
+!endif
