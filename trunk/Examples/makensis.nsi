@@ -48,6 +48,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
 
+  !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
   !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
   
   ;Modern UI System
