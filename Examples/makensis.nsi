@@ -623,7 +623,7 @@ FunctionEnd
 
 !ifndef CLASSIC_UI
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
