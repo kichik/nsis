@@ -262,7 +262,8 @@ typedef struct
 
   // Added by Amir Szekely 6th August 2002
   // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
-  WORD intro_text_id;
+  /* Useless
+  WORD intro_text_id;*/
 
 } common_header;
 
@@ -332,11 +333,14 @@ typedef struct
 
   // Added by Amir Szekely 6th August 2002
   // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
+  /*
+  Useless
+  
   WORD space_avail_id;
   WORD space_req_id;
   WORD dir_subtext_id;
   WORD com_subtext1_id;
-  WORD com_subtext2_id;
+  WORD com_subtext2_id;*/
 
 } header;
 
@@ -360,7 +364,8 @@ typedef struct
 
   // Added by Amir Szekely 6th August 2002
   // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
-  WORD uninst_subtext_id;
+  /* Useless
+  WORD uninst_subtext_id;*/
 
 } uninstall_header;
 

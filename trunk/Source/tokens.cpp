@@ -156,7 +156,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTCAPTION,"UninstallCaption",1,1,"[/LANG=lang_id] uninstaller_caption"},
 {TOK_UNINSTSUBCAPTION,"UninstallSubCaption",2,1,"[/LANG=lang_id] page_number(0-2) new_subcaption"},
 {TOK_UNREGDLL,"UnRegDLL",1,0,"dll_path_on_target.dll"},
-{TOK_USEOUTERUIITEM,"UseOuterUIItem",2,0,"item id"},
+// useless - {TOK_USEOUTERUIITEM,"UseOuterUIItem",2,0,"item id"},
 {TOK_WINDOWICON,"WindowIcon",1,0,"on|off"},
 {TOK_WRITEINISTR,"WriteINIStr",4,0,"ini_file section_name entry_name new_value"},
 {TOK_WRITEREGBIN,"WriteRegBin",4,0,"rootkey subkey entry_name hex_string_like_12848412AB\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD)"},
