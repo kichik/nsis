@@ -44,6 +44,8 @@
 
 \b DeleteRegKey now complains if given a third parameter (other than /ifempty)
 
+\b RegDLL now works with DLLs dependent on DLLs from the same directory
+
 \b $\{LANG_langName\} defined as the language id when loading a NLF
 
 \b Fixed a few bugs that caused the installer to load slower than before
@@ -81,6 +83,8 @@
 \b File /nonfatal switch added
 
 \b Plugins no longer add size to their containing section
+
+\b Defines can now be used inside define names ($\{bla$\{blo\}\})
 
 \b New docs format (WOOHA!)
 
