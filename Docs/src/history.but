@@ -1,5 +1,31 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.04} 2.04
+
+Released on January 7th, 2005
+
+\S1{v2.04-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed $0 changed by \R{file}{File} /r
+
+\b Fixed empty directory not included by \R{file}{File} /r
+
+\b Fixed invalid directory creation by \R{file}{File} /r on POSIX
+
+\b Fixed Unicode conversion problems on POSIX
+
+\S2{} Minor Changes
+
+\b Added new test for dir_reader::matches
+
+\b Fixed LibraryLocal failure with UNC paths
+
+\b Fixed VC 7.1 and GCC 3.4 compile errors
+
+\b Language file fixes
+
 \H{v2.03} 2.03
 
 Released on December 3rd, 2004
