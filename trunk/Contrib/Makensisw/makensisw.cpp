@@ -349,13 +349,17 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,NSISW_VERSION);
 			SetDlgItemText(hwndDlg,IDC_ABOUTCOPY,COPYRIGHT);
 			SetDlgItemText(hwndDlg,IDC_ABOUTPORTIONS,CONTRIBUTOR);
+			break;
 		}
+		case WM_CLOSE:
+			EndDialog(hwndDlg, TRUE);
+			break;
 		case WM_COMMAND:
 		{
 			switch (LOWORD(wParam)) {
-				case IDOK: {
+				case WM_CLOSE:
+				case IDOK: 
 					EndDialog(hwndDlg, TRUE);
-				}
 			}
 		}
 	}
