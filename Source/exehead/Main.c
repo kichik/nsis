@@ -1,7 +1,11 @@
-/*
-  Nullsoft "SuperPimp" Installation System - main.c - executable header main code
+/* 
+
+  Nullsoft Scriptable Install System (NSIS)
+  main.c - executable header main code
 
   Copyright (C) 1999-2004 Nullsoft, Inc.
+  
+  This license applies to everything in the NSIS package, except where otherwise noted.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,10 +23,13 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  This source distribution includes portions of zlib. see zlib/zlib.h for
-  its license and so forth. Note that this license is also borrowed from zlib.
-*/
+  This is the zlib/libpng license, which is approved by opensource.org.
 
+  Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).
+  Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).
+  Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).
+
+*/
 
 #include "../Platform.h"
 #include <shlobj.h>
