@@ -119,7 +119,7 @@ parse_again:
   {
     ERROR_MSG("%s expects %d",line.gettoken_str(0),np);
     if (op < 0) ERROR_MSG("+");
-    if (op > 0) ERROR_MSG("-%d",op);
+    if (op > 0) ERROR_MSG("-%d",op+np);
     ERROR_MSG(" parameters, got %d.\n",line.getnumtokens()-1);
     PRINTHELP()
   }
