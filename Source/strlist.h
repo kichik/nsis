@@ -162,48 +162,280 @@ private:
   GrowBuf gr;
 };
 
-
-class DefineList
+template <class T>
+class SortedStringList
 {
-public:
-  DefineList() { }
-  ~DefineList() { }
+  public:
+    SortedStringList() { }
+    ~SortedStringList()
+    {
+      T *s=(T*)gr.get();
+      int num=gr.getlen()/sizeof(T);
 
-  int add(const char *str, const char *value="")
-  {
-    if (defines.find(str,0)>=0) return 1;
+      for (int i=0; i<num; i++) {
+        free(s[i].name);
+      }
+    }
 
-    defines.add(str,0);
-    values.add(value,-1);
-    return 0;
-  }
+    // returns -1 when name already exists and pos if added
+    int add(const char *name, int case_sensitive=0)
+    {
+      T newstruct={0,};
+      int pos=find(name,case_sensitive,1);
+      if (pos==-1) return -1;
+      newstruct.name=(char*)malloc(strlen(name)+1);
+      if (!newstruct.name)
+      {
+        extern FILE *g_output;
+        extern int g_display_errors;
+        extern void quit();
+        if (g_display_errors) 
+        {
+          fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(name)+1);
+          fflush(g_output);
+        }
+        quit();
+      }
+      strcpy(newstruct.name,name);
+      gr.add(&newstruct,sizeof(T));
 
-  int del(const char *str)
-  {
-    int id;
-    int v=defines.find(str,0,&id);
-    if (v<0) return 1;
-    id=values.idx2pos(id);
-    if (id<0)return 1;
-    defines.delbypos(v);
-    values.delbypos(id);
-    return 0;
-  }
+      T *s=(T*)gr.get();
+      memmove(s+pos+1,s+pos,gr.getlen()-((pos+1)*sizeof(T)));
+      memcpy(s+pos,&newstruct,sizeof(T));
 
-  char *find(const char *str, int *idx=0) // returns NULL if not found
-  {
-    int id;
-    int v=defines.find(str,0,&id);
-    if (v<0) return NULL;
-    v=values.idx2pos(id);
-    if (v<0) return NULL;
-    if (idx) *idx=id;
-    return (char*)values.get()+v;
-  }
+      return pos;
+    }
 
-  StringList defines, values;
+    // returns -1 if not found, position if found
+    // if returnbestpos=1 returns -1 if found, best pos to insert if not found
+    int find(const char *str, int case_sensitive=0, int returnbestpos=0)
+    {
+      T *data=(T *)gr.get();
+      int ul=gr.getlen()/sizeof(T);
+      int ll=0;
+      int nextpos=(ul+ll)/2;
+
+      while (ul > ll)
+      {
+        int res;
+        if (case_sensitive)
+          res=strcmp(str, data[nextpos].name);
+        else
+          res=stricmp(str, data[nextpos].name);
+        if (res==0) return returnbestpos ? -1 : nextpos;
+        if (res<0) ul=nextpos;
+        else ll=nextpos+1;
+        nextpos=(ul+ll)/2;
+      }
+      
+      return returnbestpos ? nextpos : -1;
+    }
+
+    // returns 0 on success, 1 otherwise
+    int del(const char *str, int case_sensitive=0)
+    {
+      int pos=find(str, case_sensitive);
+      if (pos==-1) return 1;
+
+      T *db=(T *)gr.get();
+      free(db[pos].name);
+      freestruct(pos);
+      memmove(db+pos,db+pos+1,gr.getlen()-(pos*sizeof(T))-sizeof(T));
+      gr.resize(gr.getlen()-sizeof(T));
+
+      return 0;
+    }
+
+    void delbypos(int pos)
+    {
+      T *db=(T *)gr.get();
+      free(db[pos].name);
+      memmove(db+pos,db+pos+1,gr.getlen()-(pos*sizeof(T))-sizeof(T));
+      gr.resize(gr.getlen()-sizeof(T));
+    }
+
+  protected:
+    GrowBuf gr;
 };
 
+template <class T>
+class SortedStringListND // no delete - can be placed in GrowBuf
+{
+  public:
+    SortedStringListND() { }
+    ~SortedStringListND() { }
+
+    // returns -1 when name already exists and pos if added
+    int add(const char *name, int case_sensitive=0, int alwaysreturnpos=0)
+    {
+      int where;
+      T newstruct={0,};
+      int pos=find(name,case_sensitive,1,&where);
+      if (pos==-1) return alwaysreturnpos ? where : -1;
+      newstruct.name=strings.add(name,strlen(name)+1);
+      
+      gr.add(&newstruct,sizeof(T));
+      T *s=(T*)gr.get();
+      memmove(s+pos+1,s+pos,gr.getlen()-((pos+1)*sizeof(T)));
+      memcpy(s+pos,&newstruct,sizeof(T));
+
+      return pos;
+    }
+
+    // returns -1 if not found, position if found
+    // if returnbestpos=1 returns -1 if found, best pos to insert if not found
+    int find(const char *str, int case_sensitive=0, int returnbestpos=0, int *where=0)
+    {
+      T *data=(T *)gr.get();
+      int ul=gr.getlen()/sizeof(T);
+      int ll=0;
+      int nextpos=(ul+ll)/2;
+
+      while (ul > ll)
+      {
+        int res;
+        if (case_sensitive)
+          res=strcmp(str, (char*)strings.get() + data[nextpos].name);
+        else
+          res=stricmp(str, (char*)strings.get() + data[nextpos].name);
+        if (res==0)
+        {
+          if (where) *where = nextpos;
+          return returnbestpos ? (case_sensitive!=-1 ? -1 : nextpos) : nextpos;
+        }
+        if (res<0) ul=nextpos;
+        else ll=nextpos+1;
+        nextpos=(ul+ll)/2;
+      }
+      
+      return returnbestpos ? nextpos : -1;
+    }
+
+  protected:
+    GrowBuf gr;
+    GrowBuf strings;
+};
+
+struct define {
+  char *name;
+  char *value;
+};
+
+class DefineList : public SortedStringList<struct define>
+{
+  public:
+    DefineList() { }
+    ~DefineList()
+    {
+      struct define *s=(struct define*)gr.get();
+      int num=gr.getlen()/sizeof(struct define);
+
+      for (int i=0; i<num; i++) {
+        free(s[i].value);
+      }
+    }
+
+    int add(const char *name, const char *value="")
+    {
+      int pos=SortedStringList<struct define>::add(name);
+      if (pos == -1)
+      {
+        return 1;
+      }
+
+      char **newvalue=&(((struct define*)gr.get())[pos].value);
+      *newvalue=(char*)malloc(strlen(value)+1);
+      if (!(*newvalue))
+      {
+        extern FILE *g_output;
+        extern int g_display_errors;
+        extern void quit();
+        if (g_display_errors) 
+        {
+          fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(value)+1);
+          fflush(g_output);
+        }
+        quit();
+      }
+      strcpy(*newvalue,value);
+      return 0;
+    }
+
+    char *find(const char *name)
+    {
+      int v=SortedStringList<struct define>::find(name);
+      if (v==-1)
+      {
+        return NULL;
+      }
+      return ((struct define*)gr.get())[v].value;
+    }
+
+    // returns 0 on success, 1 otherwise
+    int del(const char *str)
+    {
+      int pos=SortedStringList<struct define>::find(str);
+      if (pos==-1) return 1;
+
+      struct define *db=(struct define *)gr.get();
+      free(db[pos].value);
+      delbypos(pos);
+
+      return 0;
+    }
+
+    int getnum()
+    {
+      return gr.getlen()/sizeof(define);
+    }
+
+    char *getname(int num)
+    {
+      if ((unsigned int)getnum() <= (unsigned int)num)
+        return 0;
+      return ((struct define*)gr.get())[num].name;
+    }
+
+    char *getvalue(int num)
+    {
+      if ((unsigned int)getnum() <= (unsigned int)num)
+        return 0;
+      return ((struct define*)gr.get())[num].value;
+    }
+};
+
+struct string {
+  int name;
+};
+
+class FastStringList : public SortedStringListND<struct string>
+{
+  public:
+    FastStringList() { }
+    ~FastStringList() { }
+
+    int add(const char *name, int case_sensitive=0)
+    {
+      int pos = SortedStringListND<struct string>::add(name, case_sensitive);
+      if (pos == -1) return -1;
+      return ((struct string*)gr.get())[pos].name;
+    }
+
+    char *get()
+    {
+      return (char*)strings.get();
+    }
+
+    int getlen()
+    {
+      return strings.getlen();
+    }
+
+    int getnum()
+    {
+      return gr.getlen()/sizeof(struct string);
+    }
+};
 
 class MMapBuf : public IGrowBuf
 {

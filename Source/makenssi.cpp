@@ -218,18 +218,14 @@ int main(int argc, char **argv)
         fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));
         fprintf(g_output,"Size of each page is %d bytes.\n",sizeof(page));
         fprintf(g_output,"Size of each instruction is %d bytes.\n",sizeof(entry));
-        char *p=build.definedlist.defines.get();
-        char *p2=build.definedlist.values.get();
-        int x=0;
+        int x=build.definedlist.getnum();
         fprintf(g_output,"\nDefined symbols: ");
-        while (x < build.definedlist.defines.getlen())
+        for (int i=0; i<x; i++)
         {
-          if (x) fprintf(g_output,",");;
-          fprintf(g_output,"%s",p+x);
-          if (*p2) fprintf(g_output,"=%s",p2);
-
-          x+=strlen(p+x)+1;
-          p2+=strlen(p2)+1;
+          fprintf(g_output,"%s",build.definedlist.getname(i));
+          char *p=build.definedlist.getvalue(i);
+          if (*p) fprintf(g_output,"=%s",p);
+          if (i<x-1) fprintf(g_output,",");
         }
         if (!x) fprintf(g_output,"none");
         fprintf(g_output,"\n");
