@@ -20,7 +20,6 @@ SetCompressor bzip2
   !include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
 
   !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
-  !insertmacro MUI_INTERFACE
   
 !endif
 
@@ -531,9 +530,10 @@ Function .onInstSuccess
 FunctionEnd
 
 !ifndef CLASSIC_UI
-!insertmacro MUI_BASICFUNCTIONS
 
-!insertmacro MUI_FUNCTION_DESCRIPTION_START
+!insertmacro MUI_SYSTEM
+
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
@@ -571,9 +571,8 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL source in C"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "MakeNSIS Wrapper source code"
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
-!insertmacro MUI_FUNCTION_ABORTWARNING
 !endif
 
 Section Uninstall
@@ -672,8 +671,3 @@ Section Uninstall
   !insertmacro MUI_UNFINISHHEADER
 !endif
 SectionEnd
-
-
-!ifndef CLASSIC_UI
-  !insertmacro MUI_UNBASICFUNCTIONS
-!endif
