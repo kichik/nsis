@@ -20,8 +20,8 @@ SetCompressor bzip2
 BGGradient 000000 308030 FFFFFF
 InstallColors FF8080 000000
 InstProgressFlags smooth colored
-XPStyle on
 !else
+XPStyle on
 WindowIcon off
 !endif
 
