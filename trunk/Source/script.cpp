@@ -3199,7 +3199,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
         if (trim)
         {
-          ERROR_MSG("Error: BrandingText /TRIM* disabled for non Win32 platforms.\n");
+          ERROR_MSG("Error: BrandingText /TRIM* is disabled for non Win32 platforms.\n");
           return PS_ERROR;
         }
 #endif
@@ -4338,11 +4338,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
-#ifdef _WIN32
         char buf[128];
         DWORD low=0, high=0;
-        DWORD s,d;
         int flag=0;
+#ifdef _WIN32
+        DWORD s,d;
         int alloced=0;
         char *path=line.gettoken_str(1);
         if (!((*path == '\\' && path[1] == '\\') || (*path && path[1] == ':'))) {
@@ -4390,6 +4390,66 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
         }
         if (alloced) free(path);
+#else
+        FILE *fdll = FOPEN(line.gettoken_str(1), "rb");
+        if (!fdll) {
+          ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(1));
+          return PS_ERROR;
+        }
+
+        fseek(fdll, 0, SEEK_END);
+        unsigned int len = ftell(fdll);
+        fseek(fdll, 0, SEEK_SET);
+        LPBYTE dll = (LPBYTE) malloc(len);
+        if (!dll) {
+          ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", dll);
+          extern void quit(); quit();
+        }
+        if (fread(dll, 1, len, fdll) != len) {
+          fclose(fdll);
+          free(dll);
+          ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(1));
+          return PS_ERROR;
+        }
+        fclose(fdll);
+
+        try
+        {
+          CResourceEditor *dllre = new CResourceEditor(dll, len);
+          LPBYTE ver = dllre->GetResource(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+          int versize = dllre->GetResourceSize(VS_FILE_INFO, MAKEINTRESOURCE(VS_VERSION_INFO), 0);
+
+          if (ver)
+          {
+            if (versize > sizeof(WORD) * 3)
+            {
+              // get VS_FIXEDFILEINFO from VS_VERSIONINFO
+              WCHAR *szKey = (WCHAR *)(ver + sizeof(WORD) * 3);
+              int len = WCStrLen(szKey) * sizeof(WCHAR) + sizeof(WORD) * 3;
+              len = (len + 3) & ~3; // align on DWORD boundry
+              VS_FIXEDFILEINFO *verinfo = (VS_FIXEDFILEINFO *)(ver + len);
+              if (versize > len && verinfo->dwSignature == VS_FFI_SIGNATURE)
+              {
+                low = verinfo->dwFileVersionLS;
+                high = verinfo->dwFileVersionMS;
+                flag = 1;
+              }
+            }
+            dllre->FreeResource(ver);
+          }
+
+          delete dllre;
+        }
+        catch (exception& err) {
+          free(dll);
+          ERROR_MSG(
+            "GetDLLVersionLocal: error reading version info from \"%s\": %s\n",
+            line.gettoken_str(1),
+            err.what()
+          );
+          return PS_ERROR;
+        }
+#endif
         if (!flag)
         {
           ERROR_MSG("GetDLLVersionLocal: error reading version info from \"%s\"\n",line.gettoken_str(1));
@@ -4412,10 +4472,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ent.offsets[0]<0) PRINTHELP()
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
-#else
-        ERROR_MSG("Error: GetDLLVersionLocal is disabled for non Win32 platforms.\n");
-        return PS_ERROR;
-#endif
       }
     return add_entry(&ent);
     case TOK_GETFILETIMELOCAL:

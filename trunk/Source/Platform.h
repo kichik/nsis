@@ -361,6 +361,16 @@ typedef WORD LANGID;
 #  define RT_VERSION MAKEINTRESOURCE(16)
 #endif
 
+#ifndef VS_FILE_INFO
+#  define VS_FILE_INFO RT_VERSION
+#endif
+#ifndef VS_VERSION_INFO
+#  define VS_VERSION_INFO 1
+#endif
+#ifndef VS_FFI_SIGNATURE
+#  define VS_FFI_SIGNATURE 0xFEEFO4BD
+#endif
+
 // message box
 
 #ifndef MB_OK

@@ -104,6 +104,7 @@ public:
   bool  UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
   bool  UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
   BYTE* GetResource(char* szType, char* szName, LANGID wLanguage);
+  int   GetResourceSize(char* szType, char* szName, LANGID wLanguage);
   void  FreeResource(BYTE* pbResource);
 
   bool  AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
