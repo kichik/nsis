@@ -10,7 +10,7 @@ Delete file (which can be a file or wildcard, but should be specified with a ful
 
 \H{file} File
 
-\c [/a] ([/r] file|wildcard [...]) | (/oname=file.dat infile.dat)
+\c [/nonfatal] ([/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
 
 Adds file(s) to be extracted to the current output path ($OUTDIR).
 
@@ -25,6 +25,8 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \b If the /a switch is used, the attributes of the file(s) added will be preserved.
 
 \b The File command sets the error flag if overwrite mode is set to 'try' and the file could not be overwritten, or if the overwrite mode is set to 'on' and the file could not be overwritten and the user selects ignore.
+
+\n If the /nonfatal switch is used, a warning will be issued if no files found instead of an error.
 
 \H{exec} Exec
 
@@ -55,6 +57,14 @@ Rename source_file to dest_file. Functions just like the Win32 API MoveFile, whi
 \c [/r] directory
 
 Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the dictory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
+
+\H{reservefile} ReserveFile
+
+\c [/nonfatal] [/r] file [file...]
+
+Reserves a file in the data block for later use. As files are added in the order they are used in the script files that are used in the .onInit function, for example, might be added last and slow the loading of the installer. This is where this command comes useful, allowing you to speed up the loading process by including the file at the top of the data block instead of letting NSIS seek all the way down to the bottom of the \e{compressed} data block.
+
+See File (\K{file}) for more information about the parameters.
 
 \H{setoutpath} SetOutPath
 
