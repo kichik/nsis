@@ -378,7 +378,7 @@ char *CharPrev(const char *s, const char *p) {
 char *CharNext(const char *s) {
   int l = 0;
   if (s && *s)
-    l = min(1, mblen(s, strlen(s)));
+    l = max(1, mblen(s, strlen(s)));
   return (char *) s + l;
 }
 
