@@ -18,25 +18,24 @@
   3. This notice may not be removed or altered from any source distribution.
 
 
-
-
 This dll can be used from NSIS to download files via http.
 
 How to use (for another example, see waplugin.nsi in the nsis directory):
 
   You can also pass /TIMEOUT=### to set the timeout in milliseconds
-  Result is returned in $0
+  Result is pushed to the stack
 	"cancel" if cancelled
 	"success" if success
-        otherwise, an error string describing the error
+    otherwise, an error string describing the error
 
   NSISdl::download http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
 or
   NSISdl::download /TIMEOUT=30000 http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
 
 
-then, check $0 for errors:
+then, pop a value from the stack and for errors:
 
+  Pop $0
   StrCmp $0 "success" yay
     Abort "Error downloading file
   yay:
