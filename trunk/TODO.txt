@@ -2,7 +2,6 @@
 
 NSIS
 
-* fix button selection bug
 * transparent BrandingText control
 * check for invalid chars/spaces in folder input
 
