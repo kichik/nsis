@@ -2211,11 +2211,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[2]=add_string(line.gettoken_str(3));
       SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
+    case TOK_SETSTATICBKCOLOR:
+      ent.which=EW_SETWINDOWLONG;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=GWL_USERDATA;
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+    return add_entry(&ent);
 #else//!NSIS_SUPPORT_HWNDS
     case TOK_ISWINDOW:
     case TOK_SENDMESSAGE:
     case TOK_FINDWINDOW:
     case TOK_GETDLGITEM:
+    case TOK_SETSTATICBKCOLOR:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_HWNDS

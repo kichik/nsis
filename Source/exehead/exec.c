@@ -672,6 +672,9 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         )
       );
     return 0;
+    case EW_SETWINDOWLONG:
+      SetWindowLong((HWND)process_string_fromtab_toint(parms[0]),parms[1],process_string_fromtab_toint(parms[2]));
+    return 0;
 #endif
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     case EW_SHELLEXEC: // this uses improvements of Andras Varga
@@ -888,10 +891,10 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         op.pFrom=buf;
 			  op.pTo=buf2;
         op.lpszProgressTitle=buf3;
-			  op.fFlags=parms[2];        
+			  op.fFlags=parms[2];
         update_status_text("",buf3);
 			  res=SHFileOperation(&op);
-			  if (res) 
+			  if (res)
         { // some of these changes were from Edgewise (wiked_edge@yahoo.com)
           update_status_text_from_lang(LANGID_COPYFAILED,"");
           exec_errorflag++;

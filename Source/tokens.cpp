@@ -139,6 +139,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETOVERWRITE,"SetOverwrite",1,0,"(on|off|try|ifnewer)"},
 {TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false"},
 {TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current"},
+{TOK_SETSTATICBKCOLOR,"SetStaticBkColor",2,0,"hwnd color"},
 {TOK_SHOWDETAILS,"ShowInstDetails",1,0,"(hide|show|nevershow)"},
 {TOK_SHOWDETAILSUNINST,"ShowUninstDetails",1,0,"(hide|show|nevershow)"},
 {TOK_SILENTINST,"SilentInstall",1,0,"(normal|silent|silentlog)"},
