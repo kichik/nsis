@@ -12,6 +12,12 @@
 ;--------------------------------
 ;Configuration
 
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTPAGE
+  !define MUI_DIRSELECTPAGE
+  !define MUI_INSTALLBUTTONTEXT_NEXT
+  !define MUI_UNINSTALLER
+
   ;Language
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -26,26 +32,19 @@
   !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
 
   ;License dialog
-  !insertmacro MUI_ENGLISH_LICENSETEXT
   LicenseData "License.txt"
 
   ;Component-select dialog
-  !insertmacro MUI_ENGLISH_COMPONENTTEXT
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
     LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
 
   ;Folder-select dialog
-  !insertmacro MUI_ENGLISH_DIRTEXT
   InstallDir "$PROGRAMFILES\${NAME}"
-  InstallButtonText "Next >" ;Install Options dialog has 'Install' button
   
   ;Install Options dialogs
   LangString MUI_TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
   LangString MUI_TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
-
-  ;Uninstaller
-  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
   
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Use ReserveFile for your own Install Options ini files too!
