@@ -210,7 +210,7 @@ CDialogTemplate::~CDialogTemplate() {
 	if (m_szFont)
 		delete [] m_szTitle;
 
-	for (int i = 0; i < m_vItems.size(); i++) {
+	for (unsigned int i = 0; i < m_vItems.size(); i++) {
 		if (m_vItems[i]->szClass && !IS_INTRESOURCE(m_vItems[i]->szClass))
 			delete [] m_vItems[i]->szClass;
 		if (m_vItems[i]->szTitle && !IS_INTRESOURCE(m_vItems[i]->szTitle))
@@ -226,7 +226,7 @@ CDialogTemplate::~CDialogTemplate() {
 
 // Returns info about the item with the id wId
 DialogItemTemplate* CDialogTemplate::GetItem(WORD wId) {
-	for (int i = 0; i < m_vItems.size(); i++)
+	for (unsigned int i = 0; i < m_vItems.size(); i++)
 		if (m_vItems[i]->wId == wId)
 			return m_vItems[i];
 	return 0;
@@ -240,7 +240,7 @@ DialogItemTemplate* CDialogTemplate::GetItemByIdx(DWORD i) {
 
 // Removes an item
 void CDialogTemplate::RemoveItem(WORD wId) {
-  for (int i = 0; i < m_vItems.size(); i++)
+  for (unsigned int i = 0; i < m_vItems.size(); i++)
 		if (m_vItems[i]->wId == wId)
       m_vItems.erase(m_vItems.begin() + i);
 }
@@ -283,7 +283,7 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
 // Moves all of the items in the dialog by (x,y) and resizes the dialog by (x,y)
 void CDialogTemplate::MoveAllAndResize(short x, short y) {
 	// Move all items
-	for (int i = 0; i < m_vItems.size(); i++) {
+	for (unsigned int i = 0; i < m_vItems.size(); i++) {
 		m_vItems[i]->sX += x;
 		m_vItems[i]->sY += y;
 	}
@@ -311,8 +311,8 @@ void CDialogTemplate::PixelsToDlgUnits(short& x, short& y) {
 	MapDialogRect(hDlg, &r);
 	DestroyWindow(hDlg);
 
-	x = float(x) / (float(r.right)/10000);
-	y = float(y) / (float(r.bottom)/10000);
+	x = short(float(x) / (float(r.right)/10000));
+	y = short(float(y) / (float(r.bottom)/10000));
 }
 
 // Converts pixels to this dialog's units
@@ -322,8 +322,8 @@ void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) {
 	MapDialogRect(hDlg, &r);
 	DestroyWindow(hDlg);
 
-	x = float(x) * (float(r.right)/10000);
-	y = float(y) * (float(r.bottom)/10000);
+	x = short(float(x) * (float(r.right)/10000));
+	y = short(float(y) * (float(r.bottom)/10000));
 }
 
 // Returns the size of a string in the dialog (in dialog units)
@@ -359,8 +359,8 @@ void CDialogTemplate::RTrimToString(WORD id, char *str, int margins) {
 	size.cx += margins;
 	size.cy += 2;
 
-	item->sWidth = size.cx;
-	item->sHeight = size.cy;
+	item->sWidth = short(size.cx);
+	item->sHeight = short(size.cy);
 }
 
 // Trims the left margins of a control to fit a given text string size.
@@ -373,9 +373,9 @@ void CDialogTemplate::LTrimToString(WORD id, char *str, int margins) {
 	size.cx += margins;
 	size.cy += 2;
 
-	item->sX += item->sWidth - size.cx;
-	item->sWidth =  size.cx;
-	item->sHeight = size.cy;
+	item->sX += item->sWidth - short(size.cx);
+	item->sWidth = short(size.cx);
+	item->sHeight = short(size.cy);
 }
 
 // Trims the left and right margins of a control to fit a given text string size.
@@ -388,14 +388,14 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 	size.cx += margins;
 	size.cy += 2;
 
-	item->sX += item->sWidth/2 - size.cx/2;
-	item->sWidth =  size.cx;
-	item->sHeight = size.cy;
+	item->sX += item->sWidth/2 - short(size.cx/2);
+	item->sWidth = short(size.cx);
+	item->sHeight = short(size.cy);
 }
 
 // Moves every item right and gives it the WS_EX_RIGHT extended style
 void CDialogTemplate::ConvertToRTL() {
-  for (int i = 0; i < m_vItems.size(); i++) {
+  for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
     if (m_vItems[i]->dwExtStyle & WS_EX_LEFT)
       addExStyle = true;
@@ -486,7 +486,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 	}
 
 	// Write all of the items
-	for (int i = 0; i < m_vItems.size(); i++) {
+	for (unsigned int i = 0; i < m_vItems.size(); i++) {
 		// DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
 		if (DWORD(seeker - pbDlg) % sizeof(DWORD))
 			seeker += sizeof(WORD);
@@ -559,7 +559,7 @@ DWORD CDialogTemplate::GetSize() {
 		AddStringOrIdSize(m_szFont);
 	}
 
-	for (int i = 0; i < m_vItems.size(); i++) {
+	for (unsigned int i = 0; i < m_vItems.size(); i++) {
 		// DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
 		ALIGN(dwSize, sizeof(DWORD));
 

@@ -201,7 +201,7 @@ BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage)
 
 // Saves the edited PE into a buffer and returns it.
 BYTE* CResourceEditor::Save(DWORD &dwSize) {
-	int i;
+	unsigned int i;
 
 	DWORD dwRsrcSize = m_cResDir->GetSize(); // Size of new resource section
 	DWORD dwRsrcSizeAligned = RALIGN(dwRsrcSize, m_ntHeaders->OptionalHeader.FileAlignment); // Align it to FileAlignment
@@ -513,8 +513,8 @@ IMAGE_RESOURCE_DIRECTORY CResourceDirectory::GetInfo() {
 	return m_rdDir;
 }
 
-CResourceDirectoryEntry* CResourceDirectory::GetEntry(int i) {
-	if (m_vEntries.size() < i || i < 0)
+CResourceDirectoryEntry* CResourceDirectory::GetEntry(unsigned int i) {
+	if (m_vEntries.size() < i)
 		return 0;
 	return m_vEntries[i];
 }
@@ -571,9 +571,9 @@ int CResourceDirectory::Find(char* szName) {
 		return Find(WORD(szName));
 	else
 		if (szName[0] == '#')
-			return Find(atol(szName+1));
+			return Find(WORD(atoi(szName+1)));
 
-	for (int i = 0; i < m_vEntries.size(); i++) {
+	for (unsigned int i = 0; i < m_vEntries.size(); i++) {
 		if (!m_vEntries[i]->HasName())
 			continue;
 
@@ -591,7 +591,7 @@ int CResourceDirectory::Find(char* szName) {
 // Returns the index of a directory entry with the specified id
 // Returns -1 if can not be found
 int CResourceDirectory::Find(WORD wId) {
-	for (int i = 0; i < m_vEntries.size(); i++) {
+	for (unsigned int i = 0; i < m_vEntries.size(); i++) {
 		if (m_vEntries[i]->HasName())
 			continue;
 
@@ -605,7 +605,7 @@ int CResourceDirectory::Find(WORD wId) {
 // Get the size of this resource directory (including all of its children)
 DWORD CResourceDirectory::GetSize() {
 	DWORD dwSize = sizeof(IMAGE_RESOURCE_DIRECTORY);
-	for (int i = 0; i < m_vEntries.size(); i++) {
+	for (unsigned int i = 0; i < m_vEntries.size(); i++) {
 		dwSize += sizeof(IMAGE_RESOURCE_DIRECTORY_ENTRY);
 		if (m_vEntries[i]->HasName())
 			dwSize += sizeof(IMAGE_RESOURCE_DIR_STRING_U) + m_vEntries[i]->GetNameLength()*sizeof(WCHAR);
@@ -622,7 +622,7 @@ DWORD CResourceDirectory::GetSize() {
 
 // Destroys this directory and all of its children
 void CResourceDirectory::Destroy() {
-	for (int i = 0; i < m_vEntries.size(); i++) {
+	for (unsigned int i = 0; i < m_vEntries.size(); i++) {
 		if (m_vEntries[i]->IsDataDirectory()) {
 			m_vEntries[i]->GetSubDirectory()->Destroy();
 			delete m_vEntries[i]->GetSubDirectory();

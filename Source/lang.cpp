@@ -71,7 +71,7 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
   lang=lang?lang:last_used_lang;
   last_used_lang=lang;
   StringTable *table = 0;
-  for (int i = 0; i < string_tables.size(); i++) {
+  for (unsigned int i = 0; i < string_tables.size(); i++) {
     if (lang == string_tables[i]->lang_id) {
       table = string_tables[i];
       break;
@@ -89,7 +89,7 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
     int zero = 0;
 
     // make sure all of the user's strings tables are the same size
-    for (int j = 0; j < string_tables.size(); j++) {
+    for (unsigned int j = 0; j < string_tables.size(); j++) {
       int i = build_userlangstrings.getnum();
       i -= table->user_strings.getlen() / sizeof(int);
       while (i--) table->user_strings.add(&zero, sizeof(int));
@@ -224,13 +224,13 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
   }
 
   #define MAX(a, b) (a > b ? a : b)
-  user_strings->resize(MAX(user_strings->getlen(), (idx+1)*sizeof(int)));
+  user_strings->resize(MAX(user_strings->getlen(), (unsigned int)(idx+1)*sizeof(unsigned int)));
   ((int*)user_strings->get())[idx] = uninst ? add_string_uninst(string,process) : add_string_main(string,process);
 
   int zero = 0;
 
   // make sure all of the user's strings tables are the same size
-  for (int j = 0; j < string_tables.size(); j++) {
+  for (unsigned int j = 0; j < string_tables.size(); j++) {
     int i = user_strings_list->getnum();
     if (uninst) i -= string_tables[j]->user_ustrings.getlen() / sizeof(int);
     else i -= string_tables[j]->user_strings.getlen() / sizeof(int);
@@ -247,7 +247,7 @@ bool CEXEBuild::_IsSet(int *str, LANGID lang) {
   if (!str) return false;
   lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
   lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
-  int i;
+  unsigned int i;
   for (i = 0; i < string_tables.size(); i++) {
     if (lang == string_tables[i]->lang_id) {
       break;
@@ -302,7 +302,7 @@ int CEXEBuild::WriteStringTables() {
 
 void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   if (!nlf) {
-    for (int i = 0; i < build_nlfs.size(); i++) {
+    for (unsigned int i = 0; i < build_nlfs.size(); i++) {
       if (build_nlfs[i]->GetLang() == table->lang_id) {
           nlf = build_nlfs[i];
           break;
@@ -546,7 +546,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 
 bool CEXEBuild::_IsNotSet(int *str) {
   if (!str) return true;
-  for (int i = 0; i < string_tables.size(); i++) {
+  for (unsigned int i = 0; i < string_tables.size(); i++) {
     if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))) {
       return false;
     }
