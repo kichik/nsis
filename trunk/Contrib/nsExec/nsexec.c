@@ -198,6 +198,7 @@ done:
     CloseHandle(pi.hProcess);
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
+	GlobalFree(g_exec);
     if (log) {
       GlobalUnlock(hUnusedBuf);
       GlobalFree(hUnusedBuf);
