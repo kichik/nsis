@@ -7,6 +7,14 @@
 
 #include "ResourceVersionInfo.h"
 #ifdef NSIS_SUPPORT_VERSION_INFO
+
+int ValidCodePages[] = {
+437, 708, 709, 710, 720, 737, 775, 850, 852, 855, 85, 86, 86, 86, 86, 864,
+865, 866, 869, 874, 932, 936, 949, 950, 1200, 1250, 1251, 1252, 1253, 1254,
+1255, 1256, 1257, 1258, 20000, 20001, 20002, 20003, 20004, 20005, 20127, 20261,
+20269, 20866, 21027, 21866, 28591, 28592, 28593, 28594, 28595, 28596, 28597, 28598,
+28599, 29001, 1361, 0 };
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -16,6 +24,16 @@ CResourceVersionInfo::CResourceVersionInfo()
     m_FixedInfo.dwSignature = 0xFEEF04BD;
     m_FixedInfo.dwFileOS = VOS__WINDOWS32;
     m_FixedInfo.dwFileType = VFT_APP;
+
+    // Detect local codepage and language
+    WORD Lang = GetSystemDefaultLangID();
+    WORD CodePage = GetACP();
+    char Buff[10];
+    sprintf(Buff, "%04x%04x", Lang, CodePage);
+    SetVersionInfoLang(Buff);
+
+    AddTranslation(CodePage, Lang);
+    b_CustomTranslations = false;
 }
 
 CResourceVersionInfo::~CResourceVersionInfo()
@@ -46,7 +64,7 @@ wstring StrToWstr(const string& istr)
     wstring wstr;
     for(string::const_iterator it = istr.begin(); it != istr.end(); ++it)
     {
-        wstr += *it;
+        wstr += (unsigned char)*it;
     } return wstr;
 }
 
@@ -112,8 +130,9 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm)
     if ( m_ChildStrings.getnum() > 0 )
     {
         GrowBuf stringInfoStream;
+        KeyName = StrToWstr(m_VersionInfoLang);
         
-        SaveVersionHeader (stringInfoStream, 0, 0, 0, VERINFO_LANGUAGE, &ZEROS);
+        SaveVersionHeader (stringInfoStream, 0, 0, 0, KeyName.c_str(), &ZEROS);
         
         for ( int i = 0; i < m_ChildStrings.getnum(); i++ )
         {
@@ -177,8 +196,46 @@ void CResourceVersionInfo::SetKeyValue(char* AKeyName, char* AValue)
 
 void CResourceVersionInfo::AddTranslation(WORD CodePage, WORD LangID )
 {
+    if ( !b_CustomTranslations )
+    {
+      b_CustomTranslations = true;
+      m_Translations.clear(); // remove local system default, user want to customize
+    }
     DWORD dwTrans = MAKELONG(LangID, CodePage);
     if ( find(m_Translations.begin(), m_Translations.end(), dwTrans) == m_Translations.end() )
         m_Translations.push_back(dwTrans);
+}
+
+int CResourceVersionInfo::GetKeyCount()
+{
+  return m_ChildStrings.getnum();
+}
+
+int CResourceVersionInfo::GetTranslationCount()
+{
+  return m_Translations.size();
+}
+
+char *CResourceVersionInfo::FindKey(char *pKeyName)
+{
+  return m_ChildStrings.find(pKeyName);
+}
+
+void CResourceVersionInfo::SetVersionInfoLang(char *pLandCp)
+{
+  m_VersionInfoLang = pLandCp;
+}
+
+bool CResourceVersionInfo::IsValidCodePage(WORD codePage )
+{
+  int *pCP = ValidCodePages;
+  if ( !codePage )
+    return false;
+  while ( *pCP++ )
+  {
+    if ( *pCP == codePage )
+      return true;  
+  }
+  return false;
 }
 #endif

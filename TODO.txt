@@ -6,7 +6,7 @@ NSIS
 
 * DATE, FILE, TIME, etc. defines
 
-* add version numbers for the installer
+* add named user variables
 
 * component page for uninstaller, multiple sections
 
