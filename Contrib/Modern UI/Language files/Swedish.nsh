@@ -1,9 +1,8 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: Swedish (1053)
-;By Magnus Bonnevier (magnus.bonnevier@telia.com)
-;Updated by Rickard Angbratt (r.angbratt@home.se)
+;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SWEDISH"

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>

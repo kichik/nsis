@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: Brazilian Portuguese (1046)
 ;By Diego Marcos <jump@osite.com.br>
