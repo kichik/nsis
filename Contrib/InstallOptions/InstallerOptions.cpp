@@ -122,6 +122,7 @@ struct TableEntry {
 };
 
 int LookupToken(TableEntry*, char*);
+int LookupTokens(TableEntry*, char*);
 
 struct FieldType {
   char *pszText;
@@ -164,7 +165,7 @@ char *pszCancelQuestionCaption = NULL;
 char *pszCancelButtonText = NULL;
 char *pszNextButtonText = NULL;
 char *pszBackButtonText = NULL;
-unsigned int nCancelQuestionIcon = 0;
+unsigned int nCancelConfirmFlags=0;
 BOOL bBackEnabled=FALSE;
 
 BOOL bCancelEnabled=TRUE;  // by ORTIM: 13-August-2002
@@ -449,16 +450,23 @@ char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 bool ReadSettings(void) {
   static char szField[25];
   int nIdx;
-  // Messagebox icon types
-  static TableEntry IconTable[] = {
+  // Messagebox flags
+  static TableEntry MBFlagTable[] = {
     { "MB_ICONEXCLAMATION", MB_ICONEXCLAMATION },
-    { "MB_ICONWARNING",     MB_ICONWARNING     },
+//  { "MB_ICONWARNING",     MB_ICONWARNING     }, // same as above
     { "MB_ICONINFORMATION", MB_ICONINFORMATION },
-    { "MB_ICONASTERISK",    MB_ICONASTERISK    },
+//  { "MB_ICONASTERISK",    MB_ICONASTERISK    }, // same as above
     { "MB_ICONQUESTION",    MB_ICONQUESTION    },
     { "MB_ICONSTOP",        MB_ICONSTOP        },
-    { "MB_ICONERROR",       MB_ICONERROR       },
-    { "MB_ICONHAND",        MB_ICONHAND        },
+//  { "MB_ICONERROR",       MB_ICONERROR       }, // same as above
+//  { "MB_ICONHAND",        MB_ICONHAND        }, // same as above
+    { "MB_TOPMOST",         MB_TOPMOST         },
+    { "MB_SETFOREGROUND",   MB_SETFOREGROUND   },
+    { "MB_RIGHT",           MB_RIGHT           },
+    { "MB_DEFBUTTON1",      MB_DEFBUTTON1      },
+    { "MB_DEFBUTTON2",      MB_DEFBUTTON2      },
+//  { "MB_DEFBUTTON3",      MB_DEFBUTTON3      }, // useless, as there are only two buttons
+//  { "MB_DEFBUTTON4",      MB_DEFBUTTON4      }, // useless, as there are only two buttons
     { NULL,                 0                  }
   };
 
@@ -469,8 +477,8 @@ bool ReadSettings(void) {
   pszNextButtonText = myGetProfileStringDup("Settings", "NextButtonText");
   pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
 
-  myGetProfileString("Settings", "CancelConfirmIcon");
-  nCancelQuestionIcon = LookupToken(IconTable, szResult);
+  myGetProfileString("Settings", "CancelConfirmFlags");
+  nCancelConfirmFlags = LookupTokens(MBFlagTable, szResult);
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
@@ -684,7 +692,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
     return 0;
     case WM_USER+666:
-      if (lParam != IDCANCEL || !pszCancelQuestion || MessageBox(hwndDlg,pszCancelQuestion,pszCancelQuestionCaption?pszCancelQuestionCaption:"Question",MB_YESNO|nCancelQuestionIcon)==IDYES)
+      if (lParam != IDCANCEL || !pszCancelQuestion || MessageBox(hwndDlg,pszCancelQuestion,pszCancelQuestionCaption?pszCancelQuestionCaption:"Question",MB_YESNO|nCancelConfirmFlags)==IDYES)
       {
         if (lParam == IDCANCEL || lParam == 3 || ValidateFields()) {
           if (lParam == 3) g_is_back++;
@@ -1040,3 +1048,23 @@ int LookupToken(TableEntry* psTable_, char* pszToken_)
   return 0;
 }
 
+int LookupTokens(TableEntry* psTable_, char* pszTokens_)
+{
+  int n = 0;
+  char *pszStart = pszTokens_;
+  char *pszEnd = pszTokens_;
+  for (;;) {
+    if (*pszEnd == '\0') {
+      n |= LookupToken(psTable_, pszStart);
+      break;
+    }
+    if (*pszEnd == '|') {
+      *pszEnd = '\0';
+      n |= LookupToken(psTable_, pszStart);
+      *pszEnd = '|';
+      pszStart = pszEnd + 1;
+    }
+    pszEnd++;
+  }
+  return n;
+}
