@@ -2603,6 +2603,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("!system: returned %d\n",ret);
       }
     return PS_OK;
+    case TOK_P_EXECUTE:
+      {
+        char *exec=line.gettoken_str(1);
+#ifdef _WIN32
+        PROCESS_INFORMATION pi;
+        STARTUPINFO si={sizeof(STARTUPINFO),};
+        if (CreateProcess(NULL,exec,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+        {
+          WaitForSingleObject(pi.hProcess,INFINITE);
+          CloseHandle(pi.hThread);
+          CloseHandle(pi.hProcess);
+        }
+#else
+        system(exec);
+#endif
+        SCRIPT_MSG("!execute: \"%s\"\n",exec);
+      }
     case TOK_P_ADDINCLUDEDIR:
       include_dirs.add(line.gettoken_str(1),0);
     return PS_OK;

@@ -40,6 +40,14 @@ This command will echo a message to the user compiling the script.
 
 This command will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.
 
+\S1{execute} !execute
+
+\c command
+
+This command will execute 'command' using a call to CreateProcess(). Unlike \R{system}{!system}, it does not use the command line processor, so input/output redirection and commands like 'cd', 'dir' and 'type' can not be used. !execute also ignores the return value of the executed command. Currently, the only known advantage of !execute over \R{system}{!system} is that it does not give trouble when the current working directory is specified using UNC.
+
+On POSIX platforms, !execute will use system() just like \R{system}{!system}.
+
 \S1{packhdr} !packhdr
 
 \c tempfile command
