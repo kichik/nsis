@@ -2048,6 +2048,8 @@ Var MUI_TEMP2
 
 !macro MUI_INSERT
   
+  !insertmacro MUI_NSISCONF
+  
   !ifdef MUI_PRODUCT | MUI_VERSION
     !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
   !endif
