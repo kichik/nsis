@@ -75,6 +75,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_INITDIALOG:
 		{
 			g_hwnd=hwndDlg;
+      g_output_exe = (char *)GlobalAlloc(GPTR, 1);
+      g_input_script = (char *)GlobalAlloc(GPTR, 1);
 			HICON hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON));
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
@@ -133,6 +135,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				CloseHandle(g_hThread);
 				g_hThread=0;
 			}
+      EnableItems(g_hwnd);
 			if (g_retcode==0) {
 				MessageBeep(MB_ICONASTERISK);
 				if (g_warnings) SetTitle(g_hwnd,"Finished with Warnings");
@@ -142,7 +145,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         MessageBeep(MB_ICONEXCLAMATION);
         SetTitle(g_hwnd,"Compile Error: See Log for Details");
       }
-			EnableItems(g_hwnd);
 			return TRUE;
 		}
 		case WM_COMMAND:
@@ -220,7 +222,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					l.hwndOwner = hwndDlg;
 					l.lpstrFilter = "Log Files (*.log)\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
 					l.lpstrFile = buf;
-					l.nMaxFile = 1023;
+					l.nMaxFile = MAX_STRING-1;
 					l.lpstrTitle = "Save Output";
 					l.lpstrDefExt = "log";
 					l.lpstrInitialDir = NULL;

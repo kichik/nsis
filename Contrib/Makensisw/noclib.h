@@ -27,6 +27,5 @@ Contribution by kickik
 
 char *my_strrchr(const char *string, int c);
 void *my_memset(void *dest, int c, size_t count);
-char *my_strstr(const char *string, const char *strCharSet);
 
 #endif
