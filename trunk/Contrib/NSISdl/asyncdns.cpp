@@ -33,7 +33,6 @@ JNL_AsyncDNS::~JNL_AsyncDNS()
 unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
 {
   JNL_AsyncDNS *_this=(JNL_AsyncDNS*)_d;
-  int nowinsock=JNL::open_socketlib();
   struct hostent *hostentry;
   hostentry=::gethostbyname(_this->m_hostname);
   if (hostentry)
@@ -42,7 +41,6 @@ unsigned long WINAPI JNL_AsyncDNS::_threadfunc(LPVOID _d)
   }
   else
     _this->m_addr=INADDR_NONE;
-  if (!nowinsock) JNL::close_socketlib();
   _this->m_thread_kill=1;
   return 0;
 }

@@ -29,8 +29,6 @@ JNL_Connection::JNL_Connection(JNL_AsyncDNS *dns, int sendbufsize, int recvbufsi
   m_recv_buffer=(char*)malloc(m_recv_buffer_len);
   m_send_buffer=(char*)malloc(m_send_buffer_len);
   m_socket=-1;
-  memset(m_recv_buffer,0,recvbufsize);
-  memset(m_send_buffer,0,sendbufsize);
   m_remote_port=0;
   m_state=STATE_NOCONNECTION;
   m_recv_len=m_recv_pos=0;
