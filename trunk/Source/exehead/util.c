@@ -521,6 +521,7 @@ char * NSISCALL validate_filename(char *in) {
   short cur_char = 0;
   char *out;
   char *out_save;
+  while (*in == ' ') in=CharNext(in);
   if (in[0] && in[1] && in[2]) {
     // at least four bytes
     if (*(DWORD*)in == CHAR4_TO_DWORD('\\', '\\', '?', '\\')) in += 4;
@@ -529,11 +530,12 @@ char * NSISCALL validate_filename(char *in) {
     // at least two bytes
     if (in[0] && validpathspec(in)) in += 2;
   }
-  out = in;
-  out_save = out;
-  while (*(char*)&cur_char = *in++) {
+  out = out_save = in;
+  while (*(char*)&cur_char = *in) {
     if (!mystrstr(nono, (char*)&cur_char))
-      *out++ = *(char*)&cur_char;
+      mini_memcpy(out, in, CharNext(in) - in);
+    in = CharNext(in);
+    out = CharNext(out);
   }
   do {
     *out = 0;
