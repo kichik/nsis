@@ -127,6 +127,8 @@ __declspec(dllexport) void download (HWND   parent,
   HWND dlg=0;
   HWND childwnd=0;
 
+  JNL_HTTPGet *get = 0;
+
   char *error=NULL;
 
   static char szDownloading[32];//= "Downloading %s";
@@ -222,7 +224,7 @@ __declspec(dllexport) void download (HWND   parent,
         GetWindowRect(dlg,&cr);
         ScreenToClient(dlg,(LPPOINT)&cr);
         ScreenToClient(dlg,((LPPOINT)&cr)+1);
-        GetWindowRect(hwndL,&r);
+        GetWindowRect(GetDlgItem(childwnd,1016),&r);
         ScreenToClient(childwnd,(LPPOINT)&r);
         ScreenToClient(childwnd,((LPPOINT)&r)+1);
         SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
@@ -242,8 +244,6 @@ __declspec(dllexport) void download (HWND   parent,
         SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
       }
     }
-
-    JNL_HTTPGet *get = 0;
     
     {
       WSADATA wsaData;
@@ -424,8 +424,6 @@ __declspec(dllexport) void download (HWND   parent,
       }
       if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),0);
     }
-
-    if (get) delete get;
   }
   
   if (g_cancelled) {
@@ -437,6 +435,8 @@ __declspec(dllexport) void download (HWND   parent,
     DeleteFile(filename);
     pushstring(error);
   }
+
+  if (get) delete get;
 }
 
 
