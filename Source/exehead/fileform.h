@@ -68,7 +68,7 @@ enum
   EW_FINDWINDOW,        // FindWindow: 5, [outputvar,window class,window name, window_parent, window_after]
   EW_SENDMESSAGE,       // SendMessage: 5 [output, hwnd, msg, lparam, wparam]
   EW_ISWINDOW,          // IsWindow: 3 [hwnd, jump_if_window, jump_if_notwindow]
-  EW_SETDLGITEMTEXT,    // SetDlgItemText: 2 [item_id, text]
+  EW_SETDLGITEMTEXT,    // SetDlgItemText: 3 [outer? item_id, text]
 
   EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
 
@@ -252,6 +252,10 @@ typedef struct
   // additional flags
   char misc_flags; // auto_close=&1, no_show_dirpage=&2, no_show_icon&4, no_rootdir&8;
 
+  // Added by Amir Szekely 6th August 2002
+  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
+  WORD intro_text_id;
+
 } common_header;
 
 // Strings specific to installers
@@ -322,6 +326,14 @@ typedef struct
 #endif//NSIS_CONFIG_COMPONENTPAGE
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
+  // Added by Amir Szekely 6th August 2002
+  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
+  WORD space_avail_id;
+  WORD space_req_id;
+  WORD dir_subtext_id;
+  WORD com_subtext1_id;
+  WORD com_subtext2_id;
+
 } header;
 
 // Strings specific to uninstallers
@@ -346,6 +358,10 @@ typedef struct
 
   int code;
   int code_size;
+
+  // Added by Amir Szekely 6th August 2002
+  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
+  WORD uninst_subtext_id;
 
 } uninstall_header;
 

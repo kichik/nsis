@@ -1,0 +1,61 @@
+# Header, don't edit
+NLF v1
+# Language ID
+1034
+# Start editing here
+Sistema de Instalación Nullsoft %s
+Instalación de %s
+Desinstalación de %s
+: Acuerdo de Licencia
+: Opciones de Instalación
+: Directorio de Instalación
+: Instalando Archivos
+: Completado
+: Confirmación
+: Desinstalando
+: Completado
+< Atras
+Siguiente >
+De acuerdo
+Instalar
+Desinstalar
+Cancelar
+Cerrar
+Buscar...
+Ver detalles
+Nombre
+Completado
+Personalizada
+Seleccione el tipo de instalación:
+Seleccione los componentes:
+O seleccione los componentes opcionales que desea instalar:
+Seleccione el directorio en el que instalar %s:
+Espacio disponible: 
+Espacio requerido: 
+Desinstalando desde:
+Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para abortar la instalación,\r\nreintentar para reintentar escribir el archivo, o\r\nignorar para saltarse este archivo
+No pudo escribirse: 
+Falló la copia
+Copiar a 
+No pudo encontrarse simbolo: 
+No pudo cargarse: 
+Crear directorio: 
+Crear acceso directo: 
+Crear desinstalador: 
+Borrar archivo:
+Borrar al reinicio: 
+Error creando acceso directo: 
+Error creando: 
+¡Error descomprimiendo datos! ¿Instalador corrupto?
+Error registrando DLL
+Ejecutar comando: 
+Ejecutar: 
+Extraer: 
+Extraer: error escribiendo al archivo
+Instalador corrupto: código de operación no valido
+No OLE para: 
+Directorio de salida: 
+Eliminar directorio: 
+Eliminar al reinicio: 
+Renombrar: 
+Saltado: 
