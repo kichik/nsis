@@ -32,7 +32,7 @@ vpath %.C ../zlib
 
 %.c : config.h fileform.h
 
-all : exehead_zlib exehead_bzip2 exehead_lzma exehead_resources
+all : dirs exehead_zlib exehead_bzip2 exehead_lzma exehead_resources
 
 missing_dirs = $(filter-out $(wildcard Release-*),Release-zlib Release-bzip2 Release-lzma)
 
@@ -45,9 +45,7 @@ endif
 dirs :
 	$(mkdirline)
 
-%.o : dirs
-
-exehead_zlib : Release-zlib/exehead_zlib.exe Release-zlib/exehead_zlib.h
+exehead_zlib : dirs Release-zlib/exehead_zlib.exe Release-zlib/exehead_zlib.h
 
 Release-zlib/exehead_zlib.exe : $(ZLIB_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(ZLIB_OBJS) $(LIBS)
@@ -64,7 +62,7 @@ Release-zlib/%.o : %.C
 Release-zlib/resource.res : resource.rc resource.h config.h
 	$(RC) $(RCFLAGS) -o $@ -i $<
 
-exehead_bzip2 : Release-bzip2/exehead_bzip2.exe Release-bzip2/exehead_bzip2.h
+exehead_bzip2 : dirs Release-bzip2/exehead_bzip2.exe Release-bzip2/exehead_bzip2.h
 
 Release-bzip2/exehead_bzip2.exe : $(BZIP2_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(BZIP2_OBJS) $(LIBS)
@@ -78,7 +76,7 @@ Release-bzip2/%.o : %.c
 Release-bzip2/resource.res : resource.rc resource.h config.h
 	$(RC) $(RCFLAGS) -o $@ -i $<
 
-exehead_lzma : Release-lzma/exehead_lzma.exe Release-lzma/exehead_lzma.h
+exehead_lzma : dirs Release-lzma/exehead_lzma.exe Release-lzma/exehead_lzma.h
 
 Release-lzma/exehead_lzma.exe : $(LZMA_OBJS) sections_script
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(LZMA_OBJS) $(LIBS)
@@ -92,7 +90,7 @@ Release-lzma/%.o : %.c
 Release-lzma/resource.res : resource.rc resource.h config.h
 	$(RC) $(RCFLAGS) -o $@ -i $<
 
-exehead_resources : Release-zlib/bitmap1.h Release-zlib/icon.h Release-zlib/unicon.h
+exehead_resources : dirs Release-zlib/bitmap1.h Release-zlib/icon.h Release-zlib/unicon.h
 
 Release-zlib/bitmap1.h : bitmap1.bmp
 	$(BIN2H) bitmap1.bmp Release-zlib/bitmap1.h bitmap1_data
