@@ -1,3 +1,10 @@
+; primes.nsi
+;
+; This is an example of the possibities of the NSIS Script language.
+; It calculates prime numbers.
+
+;--------------------------------
+
 Name "primes"
 AllowRootDirInstall true
 OutFile "primes.exe"
@@ -7,13 +14,19 @@ AllowRootDirInstall true
 InstallDir "$EXEDIR"
 DirText "Select directory to write primes.txt"
 
-Section "crap"
+;--------------------------------
+
+Section ""
   SetOutPath $INSTDIR
   Call DoPrimes 
 SectionEnd
 
+;--------------------------------
+
 Function DoPrimes
+
 ; we put this in here so it doesn't update the progress bar (faster)
+
 !define PPOS $0 ; position in prime searching
 !define PDIV $1 ; divisor
 !define PMOD $2 ; the result of the modulus
@@ -44,5 +57,5 @@ outerloop:
      Goto outerloop
    stop:
   FileClose $9
+  
 FunctionEnd
-

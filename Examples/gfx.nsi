@@ -4,7 +4,8 @@
 ; graphic related additions introduced in NSIS 2
 ;
 ; Written by Amir Szkeley 22nd July 2002
-;
+
+;--------------------------------
 
 !macro BIMAGE IMAGE PARMS
 	Push $0
@@ -14,6 +15,8 @@
 	Delete $0
 	Pop $0
 !macroend
+
+;--------------------------------
 
 Name "Graphical effects"
 
@@ -44,6 +47,21 @@ Page custom customPage
 Page directory dirImage
 Page instfiles instImage
 
+; Install dir
+InstallDir "${NSISDIR}\Examples"
+
+;--------------------------------
+
+Section ""
+	; You can also use the BI_NEXT macro here...
+	MessageBox MB_YESNO "We can change the branding image from within a section too!$\nDo you want me to change it?" IDNO done
+		!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX2.bmp" ""
+	done:
+	WriteUninstaller uninst.exe
+SectionEnd
+
+;--------------------------------
+
 Function licenseImage
 	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks1.bmp" /RESIZETOFIT
 	MessageBox MB_YESNO 'Would you like to skip the license page?' IDNO no
@@ -65,21 +83,10 @@ Function instImage
 	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks-sdbarker.bmp" /RESIZETOFIT
 FunctionEnd
 
-; Install dir
-InstallDir "${NSISDIR}\Examples"
-
-Section
-	; You can also use the BI_NEXT macro here...
-	MessageBox MB_YESNO "We can change the branding image from within a section too!$\nDo you want me to change it?" IDNO done
-		!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX2.bmp" ""
-	done:
-	WriteUninstaller uninst.exe
-SectionEnd
-
-; Another page for uninstaller
-UninstallText "Another page..."
+;--------------------------------
 
 ; Uninstall pages
+
 UninstPage uninstConfirm un.uninstImage
 UninstPage custom un.customPage
 UninstPage instfiles un.instImage
@@ -98,6 +105,14 @@ Function un.instImage
 	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\jarsonic-checks.bmp" /RESIZETOFIT
 FunctionEnd
 
+;--------------------------------
+
+; Uninstaller
+
+; Another page for uninstaller
+UninstallText "Another page..."
+
 Section uninstall
 	MessageBox MB_OK "Bla"
 SectionEnd
+
