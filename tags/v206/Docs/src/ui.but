@@ -1,0 +1,150 @@
+\S1{ui} User Interface Instructions
+
+\S2{BringToFront} BringToFront
+
+Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus.
+
+Recent Windows versions restrict the setting of foreground windows. If the user if working with another application during installation, the user may be notifed using a different method.
+
+\S2{createfont} CreateFont
+
+\c user_var(handle output) face_name [height] [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]
+
+Creates a font and puts its handle into user_var. For more information about the different parameters have a look at \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp}{MSDN's page about the Win32 API function CreateFont()}.
+
+You can get the current font used by NSIS using the ^Font and ^FontSize \R{langstring}{LangString}s.
+
+\c !include WinMessages.nsh
+\c GetDlgItem $$0 $HWNDPARENT 1
+\c CreateFont $1 "Times New Roman" "7" "700" /UNDERLINE
+\c SendMessage $0 ${WM_SETFONT} $1 1
+
+\S2{detailprint} DetailPrint
+
+\c user_message
+
+Adds the string "user_message" to the details view of the installer.
+
+\c DeteailPrint "this message will show on the installation window"
+
+\S2{enablewindow} EnableWindow
+
+\c hwnd (1|0)
+
+Enables or disables mouse and keyboard input to the specified window or control. Possible states are 0 (disabled) or 1 (enabled).
+
+\c GetDlgItem $0 $HWNDPARENT 1
+\c EnableWindow $0 0
+\c Sleep 1000
+\c EnableWindow $0 1
+
+\S2{findwindow} FindWindow
+
+\c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
+
+Searches for a window. Behaves like the win32 FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style FindWindow behavior, use FindWindow with SendMessage.
+
+\c FindWindow $0 "#32770" "" $HWNDPARENT
+\c FIndWindow $0 "my window class" "my window title"
+
+\S2{getdlgitem} GetDlgItem
+
+\c user_var(output) dialog item_id
+
+Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control on the inner dialog, first use FindWindow user_var(output) "#32770" "" $HWNDPARENT to get the handle of the inner dialog.
+
+\c GetDlgItem $0 $HWNDPARENT 1 # next/install button
+
+\S2{hidewindow} HideWindow
+
+Hides the installer.
+
+\S2{iswindow} IsWindow
+
+\c HWND jump_if_window [jump_if_not_window]
+
+If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).
+
+\c GetDlgItem $0 $HWNDPARENT 1
+\c IsWindow 0 +3
+\c   MessageBox MB_OK "found a window"
+\c   Goto +2
+\c   MessageBox MB_OK "no window"
+
+\S2{sendmessage} SendMessage
+
+\c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
+
+Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value of SendMessage will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. If you wish to send strings use "STR:a string" as wParam or lParam where needed.
+
+\b \e{WM_CLOSE} 16
+
+\b \e{WM_COMMAND} 273
+
+\b \e{WM_USER} 1024
+
+Include WinMessages.nsh to have all of Windows messages defined in your script.
+
+To send a string param, put STR: before the parameter, for example: "STR:Some string".
+
+Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
+
+\c !include WinMessages.nsh
+\c FindWindow $0 "Winamp v1.x"
+\c SendMessage $0 ${WM_CLOSE} 0 0
+
+\S2{setautoclose} SetAutoClose
+
+\c true|false
+
+Overrides the default auto window-closing flag (specified for the installer using \R{aautoclosewindow}{AutoCloseWindow}, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.
+
+\S2{setbrandingimage} SetBrandingImage
+
+\c [/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp
+
+Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by \R{aaddbrandingimage}{AddBrandingImage}. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used \R{aaddbrandingimage}{AddBrandingImage} you can get this size, by compiling your script and watching for \R{aaddbrandingimage}{AddBrandingImage} output, it will tell you the size. SetBrandingImage will not work when called from .onInit!
+
+\S2{setdetailsview} SetDetailsView
+
+\c show|hide
+
+Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via \R{ashowinstdetails}{ShowInstDetails}.
+
+\S2{setdetailsprint} SetDetailsPrint
+
+\c none|listonly|textonly|both|lastused
+
+Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).
+
+\c SetDetailsPrint none
+\c File "secret file.dat"
+\c SetDetailsPrint both
+
+\S2{setctlcolors} SetCtlColors
+
+\c hwnd [/BRANDING] [text_color] [transparent|bg_color]
+
+Sets a background color and the text color for a static control, edit control, button or a dialog. \e{text_color} and \e{bg_color} don't accept variables. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.
+
+\c FindWindow $0 "#32770" "" $HWNDPARENT
+\c GetDlgItem $0 $0 1006
+\c SetCtlColors $0 0xFF0000 0x00FF00
+
+\S2{setsilent} SetSilent
+
+\c silent | normal
+
+Sets the installer to silent mode or normal mode. See \R{asilentinstall}{SilentInstall} for more information about silent installations. Can only be used in \R{oninit}{.onInit}.
+
+\S2{showwindow} ShowWindow
+
+\c hwnd show_state
+
+Sets the visability of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \L{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
+
+\c !include WinMessages.nsh
+\c GetDlgItem $0 $HWNDPARENT 1
+\c ShowWindow $0 ${SW_HIDE}
+\c Sleep 1000
+\c ShowWindow $0 ${SW_SHOW}

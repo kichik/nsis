@@ -1,0 +1,16 @@
+\S1{installlog} Install Logging Instructions
+
+\S2{logset} LogSet
+
+\c on|\\<b\\>off\\</b\\>
+
+Sets whether install logging to $INSTDIR\\install.log will happen. $INSTDIR must have a value before you call this function or it will not work. Note that \e{NSIS_CONFIG_LOG} must be set in the compile configuration file (config.h) on compile time (it is not by default) to support this. See \R{compiling_infos}{Compiling NSIS Sources} for more information about recompiling NSIS.
+
+\S2{logtext} LogText
+
+\c text
+
+If installer logging is enabled, inserts text "text" into the log file.
+
+\c IfFileExists $WINDIR\notepad.exe 0 +2
+\c   LogText "$$WINDIR\notepad.exe exists"
