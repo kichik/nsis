@@ -10,6 +10,8 @@
 
 !define MUI_POLISH_USED
 
+  !define MUI_POLISH_LANGNAME "Polysk" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+
   ;INSTALLER
   
   !ifdef MUI_LICENSEPAGE
