@@ -365,7 +365,6 @@ end:
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins
-  MessageBox(0, plugins_temp_dir, "delete", MB_OK);
   if (plugins_temp_dir[0]) doRMDir(plugins_temp_dir,1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
 
