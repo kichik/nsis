@@ -104,18 +104,19 @@ void ExecScript(int log) {
   if ( CopyFile(meDLLPath, g_exec, FALSE) )
   {
     HANDLE hFile, hMapping;
+    LPBYTE pMapView;
     PIMAGE_NT_HEADERS pNTHeaders;
     hFile = CreateFile(g_exec, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
     hMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
-    pNTHeaders = (PIMAGE_NT_HEADERS)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
-    if ( pNTHeaders )
+    pMapView = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
+    if ( pMapView )
     {
-      pNTHeaders = (PIMAGE_NT_HEADERS)((BYTE*)pNTHeaders + ((PIMAGE_DOS_HEADER)pNTHeaders)->e_lfanew);
+      pNTHeaders = (PIMAGE_NT_HEADERS)(pMapView + ((PIMAGE_DOS_HEADER)pMapView)->e_lfanew);
       pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
         IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
       pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
       pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)WinMain - (DWORD)g_hInst;  
-      UnmapViewOfFile(pNTHeaders);
+      UnmapViewOfFile(pMapView);
     }
     CloseHandle(hMapping);
     CloseHandle(hFile);
@@ -379,8 +380,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   {
     do
     {
-        GetExitCodeProcess(pi.hProcess, &Ret);
-        Sleep(LOOPTIMEOUT);
+      GetExitCodeProcess(pi.hProcess, &Ret);
+      Sleep(LOOPTIMEOUT);
     } while ( Ret == STILL_ACTIVE );
     CloseHandle (pi.hProcess);
     CloseHandle (pi.hThread);
