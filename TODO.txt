@@ -46,6 +46,8 @@ OTHER PLUGINS
 
 NSIS
 
+* ChangeUI RTL support
+
 * LZMA compression
 
 * multiple directory pages
