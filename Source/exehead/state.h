@@ -12,3 +12,4 @@ extern HWND g_hwnd;
 extern int g_filehdrsize;
 extern HANDLE g_hInstance;
 extern HWND insthwnd,insthwndbutton;
+extern HICON g_hIcon;
