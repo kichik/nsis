@@ -3627,8 +3627,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (tf > 1) PRINTHELP()
           if (!tf)
           {
-            ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
-            if (fatal) PRINTHELP()
+            if (fatal)
+            {
+              ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
+              PRINTHELP()
+            }
+            else
+            {
+              warning_fl("%sFile: \"%s\" -> no files found",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
+            }
           }
 
           return PS_OK;
