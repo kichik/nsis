@@ -31,6 +31,8 @@ int WCStrLen(const WCHAR* szwStr);
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
 int wsprintf(char *s, const char *format, ...);
+char *my_realpath(char *path);
+void my_free_realpath(char *path, char *buffer);
 // iconv const inconsistency workaround by Alexandre Oliva
 template <typename T>
 inline size_t __iconv_adaptor
