@@ -342,11 +342,11 @@ parse_again:
 
     line.eattoken();
 
-    int v=line.gettoken_enum(0,"ifdef\0ifndef\0");
+    int v=line.gettoken_enum(0,"ifdef\0ifndef\0ifmacrodef\0ifmacrondef\0");
     if (v < 0) PRINTHELP()
     if (line.getnumtokens() == 1) PRINTHELP()
-    if (!v) tkid = TOK_P_IFDEF;
-    else tkid = TOK_P_IFNDEF;
+    int cmds[] = {TOK_P_IFDEF, TOK_P_IFNDEF, TOK_P_IFMACRODEF, TOK_P_IFMACRONDEF};
+    tkid = cmds[v];
     if_from_else++;
   }
 
