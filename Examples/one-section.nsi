@@ -57,7 +57,7 @@ SectionEnd
 Function .onInit
 
   StrCpy $1 ${g1o1} ; Group 1 - Option 1 is selected by default
-  StrCpy $1 ${g2o1} ; Group 2 - Option 1 is selected by default
+  StrCpy $2 ${g2o1} ; Group 2 - Option 1 is selected by default
 
 FunctionEnd
 
