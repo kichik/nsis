@@ -1,5 +1,59 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.06} 2.06
+
+Released on March 19th, 2005
+
+\S1{v2.06-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug, introduced in 2.05, that made components selection not function properly if the first section in the script was a section group
+
+\b Fixed a bug, introduced in 2.05, that corrupted the state of section groups inside section groups (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155836&group_id=22049&atid=373085}{bug #1155836})
+
+\S2{} New/Changed Commands
+
+\b Added MB_RTLREADING style to \R{messagebox}{MessageBox} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1159701}{RFE #1159701})
+
+\b All registry instructions now accept SHCTX which is replaced with HKLM or HKCU on runtime according to \R{setshellvarcontext}{SetShellVarContext} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1124901}{RFE #1124901})
+
+\S2{} Minor Changes
+
+\b Added Belarusian and Icelandic language files
+
+\b Added components.c to the Makefile (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1123154&group_id=22049&atid=373087}{patch #1123154})
+
+\b Added missing \R{clearerrors}{ClearErrors} in \R{getwindowsversion}{GetWindowsVersion} (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155588&group_id=22049&atid=373085}{bug #1155588})
+
+\b Fixed a bug in install.sh that made it try to install a non existing directory
+
+\b Fixed a bug in the Russian language file distributed with 2.05
+
+\b Fixed a bug that caused SetFont to not function properly with RTL languages on Windows 9x (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1159700&group_id=22049&atid=373085}{bug #1159700})
+
+\b Fixed a bug, introduced in 2.05, that caused problems with \R{ainsttype}{InstType} /COMPONENTSONLYONCUSTOM (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1155060&group_id=22049&atid=373085}{bug #1155060})
+
+\b Fixed a crash caused by compiling large uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1144763&group_id=22049&atid=373085}{bug #1144763})
+
+\b Fixed compile error without NSIS_CONFIG_CRC_SUPPORT
+
+\b Fixed compile errors of MinGW on POSIX for source code under Contrib (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1164307&group_id=22049&atid=373087}{patch #1164307})
+
+\b Fixed plug-ins directory initialization for extremely restricted guest users with no directory listing access to the temporary directory
+
+\b Made install.sh not use $(tempfile) and install files under /usr/share instead of /lib (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1120399&group_id=22049&atid=373087}{patch #1120399})
+
+\b Minor documentation updates and fixes
+
+\b Updated Slovenian, Serbian and Serbian Latin language files
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}: Fixed a small memory leak (Thanks Takhir)
+
+\b \L{../Contrib/StartMenu/Readme.txt}{StartMenu}: Added support for \R{setctlcolors}{SetCtlColors} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=711900}{RFE #711900}
+
 \H{v2.05} 2.05
 
 Released on February 4th, 2005
