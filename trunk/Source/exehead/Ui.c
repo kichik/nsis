@@ -272,6 +272,8 @@ lang_again:
     goto lang_again;
   }
 
+  myitoa(state_language, cur_common_strings_table->lang_id);
+
   process_string_from_lang(g_caption,LANGID_CAPTION);
 
   SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)g_caption);
