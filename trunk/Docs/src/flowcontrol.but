@@ -1,52 +1,40 @@
-\C{flowcontrol} Flow Control Instructions
+\H{flowcontrol} Flow Control Instructions
 
-\H{abort} Abort
+\S{abort} Abort
 
 \c user_message
 
 Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions (\k{callbacks}) to do special things. Pages callbacks (\K{pages}) also uses Abort for special purposes.
 
-\H{call} Call
+\S{call} Call
 
 \c function_name | :label_name
 
 Calls the function named function_name. If in the Uninstall section, Call can only be used with function names beginning with "un.". If the parameter starts with a ':' it will be treated as a label (so you can call to a label in your function - this is probably not going to be used most of the time).
 
-\H{clearerrors} ClearErrors
+\S{clearerrors} ClearErrors
 
 Clears the error flag.
 
-\H{findwindow} FindWindow
-
-\c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
-
-Searches for a window. Behaves like the win32 FindWindowEx(). Seaches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style FindWindow behavior, use FindWindow with SendMessage.
-
-\H{getcurrentaddress} GetCurrentAddress
+\S{getcurrentaddress} GetCurrentAddress
 
 \c user_var(output)
 
 Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.
 
-\H{getdlgitem} GetDlgItem
-
-\c user_var(output) dialog item_id
-
-Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control on the inner dialog, first use FindWindow user_var(output) "#32770" "" $HWNDPARENT to get the handle of the inner dialog.
-
-\H{getfunctionaddress} GetFunctionAddress
+\S{getfunctionaddress} GetFunctionAddress
 
 \c user_var(output) function_name
 
 Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).
 
-\H{getlabeladdress} GetLabelAddress
+\S{getlabeladdress} GetLabelAddress
 
 \c user_var(output) label
 
 Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.
 
-\H{goto} Goto
+\S{goto} Goto
 
 \c label_to_jump_to | +offset| -offset| user_var(target)
 
@@ -56,37 +44,37 @@ If +offset or -offset is specified, jump is relative by offset instructions. Got
 
 If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. I Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
 
-\H{iferrors} IfErrors
+\S{iferrors} IfErrors
 
 \c jumpto_iferror [jumpto_ifnoerror]
 
 Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.
 
-\H{iffileexists} IfFileExists
+\S{iffileexists} IfFileExists
 
 \c file_to_check_for jump_if_present [jump_otherwise]
 
 Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*
 
-\H{intcmp} IntCmp
+\S{IfRebootFlag} IfRebootFlag
+
+\c [jump_if_set] [jump_if_not_set]
+
+Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with SetRebootFlag.
+
+\S{intcmp} IntCmp
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more.
 
-\H{intcmpu} IntCmpU
+\S{intcmpu} IntCmpU
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.
 
-\H{iswindow} IsWindow
-
-\c HWND jump_if_window [jump_if_not_window]
-
-If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).
-
-\H{messagebox} MessageBox
+\S{messagebox} MessageBox
 
 \c mb_option_list messagebox_text [return_check jumpto] [return_check_2 jumpto_2]
 
@@ -144,15 +132,9 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 
 If the return value of the MessageBox is return_check, the installer will Goto jumpto.
 
-\H{return} Return
+\S{return} Return
 
 Returns from a function or section.
-
-\H{sendmessage} SendMessage
-
-\c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
-
-Sends a message to HWND. If a user variable $x is specified as the last parameter, the return value of SendMessage will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. Here are a few example messages and their values:
 
 \b \e{WM_CLOSE} 16
 
@@ -166,15 +148,15 @@ To send a string param, put STR: before the parameter, for example: "STR:Some st
 
 Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
 
-\H{quit} Quit
+\S{quit} Quit
 
 Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
 
-\H{seterrors} SetErrors
+\S{seterrors} SetErrors
 
 Sets the error flag.
 
-\H{strcmp} StrCmp
+\S{strcmp} StrCmp
 
 \c str1 str2 jump_if_equal [jump_if_not_equal]
 

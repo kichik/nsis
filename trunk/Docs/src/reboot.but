@@ -1,16 +1,10 @@
-\C{rebootinst} Reboot Support
+\H{rebootinst} Reboot Support
 
-\H{IfRebootFlag} IfRebootFlag
-
-\c [jump_if_set] [jump_if_not_set]
-
-Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with SetRebootFlag.
-
-\H{Reboot} Reboot
+\S{Reboot} Reboot
 
 Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is sucessful, this instruction does not return.
 
-\H{SetRebootFlag} SetRebootFlag
+\S{SetRebootFlag} SetRebootFlag
 
 \c true|false
 
