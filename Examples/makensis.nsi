@@ -21,7 +21,7 @@ OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
 !ifndef CLASSIC_UI
-!insertmacro MUI_INTERFACE "modern2.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9"
+!insertmacro MUI_INTERFACE "modern2.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9"
 !endif
 
 LicenseText "Scroll down to see the rest of the agreement."
@@ -130,23 +130,38 @@ Section "Start Menu + Desktop Shortcuts" SecIcons
 SectionEnd
 
 SubSection "Contrib" SecContrib
-Section "Modern User Interface" SecContribModernUI
-  SectionIn 1 2
-  SetOutPath "$INSTDIR\Examples\Modern UI"
-  File "..\Examples\Modern UI\Basic.nsi"
-  File "..\Examples\Modern UI\MultiLanguage.nsi"
-  File "..\Examples\Modern UI\InstallOptions.nsi"
-  File "..\Examples\Modern UI\ioA.ini"
-  File "..\Examples\Modern UI\ioB.ini"
-  File "..\Examples\Modern UI\ioC.ini"
-  SetOutPath "$INSTDIR\Contrib\Modern UI"
-  File "..\Contrib\Modern UI\System.nsh"
-  File "..\Contrib\Modern UI\Language files\*.nsh"
-  File "..\Contrib\Modern UI\Readme.jpg"
-  File "..\Contrib\Modern UI\Readme.html"
-  File "..\Contrib\Modern UI\Screenshot.png"
-  File "..\Contrib\Modern UI\License.txt"
-SectionEnd
+
+SubSection "Extra User Interfaces" SecContribUIs
+  Section "Modern User Interface" SecContribModernUI
+    SectionIn 1 2
+    SetOutPath "$INSTDIR\Examples\Modern UI"
+    File "..\Examples\Modern UI\Basic.nsi"
+    File "..\Examples\Modern UI\MultiLanguage.nsi"
+    File "..\Examples\Modern UI\InstallOptions.nsi"
+    File "..\Examples\Modern UI\ioA.ini"
+    File "..\Examples\Modern UI\ioB.ini"
+    File "..\Examples\Modern UI\ioC.ini"
+    SetOutPath "$INSTDIR\Contrib\Modern UI"
+    File "..\Contrib\Modern UI\System.nsh"
+    File "..\Contrib\Modern UI\Language files\*.nsh"
+    File "..\Contrib\Modern UI\Readme.jpg"
+    File "..\Contrib\Modern UI\Readme.html"
+    File "..\Contrib\Modern UI\Screenshot.png"
+    File "..\Contrib\Modern UI\License.txt"
+    SetOutPath "$INSTDIR\Contrib\UIs"
+    File "..\Contrib\UIs\modern.exe"
+    File "..\Contrib\UIs\modern2.exe"
+    SetOutPath $INSTDIR\Contrib\Icons
+    File "..\Contrib\Icons\modern-install.ico"
+    File "..\Contrib\Icons\modern-uninstall.ico"
+  SectionEnd
+  
+  Section "Default User Interface" SecContribDefaultUI
+    SectionIn 1 2
+    SetOutPath "$INSTDIR\Contrib\UIs"
+    File "..\Contrib\UIs\default.exe"
+  SectionEnd
+SubSectionEnd
 
 Section "Extra Icons" SecContribIcons
   SectionIn 1 2
@@ -155,12 +170,6 @@ Section "Extra Icons" SecContribIcons
   Delete $INSTDIR\Contrib\*.bmp
   File ..\Contrib\Icons\*.ico
   File ..\Contrib\Icons\*.bmp
-SectionEnd
-
-Section "Extra UIs" SecContribUIs
-  SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\UIs
-  File ..\Contrib\UIs\*.exe
 SectionEnd
 
 Section "Language files" SecContribLang
@@ -282,24 +291,34 @@ SubSection "Contrib" SecSrcContrib
 Section "ExDLL Source" SecSrcEx
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
-  File ..\contrib\exdll\exdll.c
-  File ..\contrib\exdll\exdll.dpr
-  File ..\contrib\exdll\exdll.dsp
-  File ..\contrib\exdll\exdll.dsw
+  File ..\Contrib\exdll\exdll.c
+  File ..\Contrib\exdll\exdll.dpr
+  File ..\Contrib\exdll\exdll.dsp
+  File ..\Contrib\exdll\exdll.dsw
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Makensisw
-  File ..\contrib\makensisw\*.cpp
-  File ..\contrib\makensisw\*.xml
-  File ..\contrib\makensisw\*.h
-  File ..\contrib\makensisw\*.ds?
-  File ..\contrib\makensisw\*.rc
-  File ..\contrib\makensisw\*.txt
-  File ..\contrib\makensisw\*.bmp
-  #File ..\contrib\makensisw\Makefile
+  File ..\Contrib\Makensisw\*.cpp
+  File ..\Contrib\Makensisw\*.xml
+  File ..\Contrib\Makensisw\*.h
+  File ..\Contrib\Makensisw\*.dsw
+  File ..\Contrib\Makensisw\*.dsp
+  File ..\Contrib\Makensisw\*.rc
+  File ..\Contrib\Makensisw\*.txt
+  File ..\Contrib\Makensisw\*.bmp
+  #File ..\Contrib\Makensisw\Makefile
+SectionEnd
 
+Section "UI Holder Source" SecContribUIHolderS
+  SectionIn 1
+  SetOutPath "$INSTDIR\Contrib\UIs\UI Holder"
+  File "..\Contrib\UIs\UI Holder\*.h"
+  File "..\Contrib\UIs\UI Holder\*.cpp"
+  File "..\Contrib\UIs\UI Holder\*.rc"
+  File "..\Contrib\UIs\UI Holder\*.dsw"
+  File "..\Contrib\UIs\UI Holder\*.dsp"
 SectionEnd
 
 SubSection "Plugins" SecContribPluginsS
@@ -585,10 +604,11 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Tools, files, and other utilities contributed by other NSIS developers"
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "Icon files contributed by other NSIS developers"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Tools, graphics, files, and other utilities contributed by other NSIS developers"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "Icon files contributed by other NSIS developers"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
@@ -611,6 +631,7 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your UI recources in to preview your UI"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Source code to NSIS and all related files"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
