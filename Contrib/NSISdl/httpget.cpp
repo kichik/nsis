@@ -186,7 +186,7 @@ void JNL_HTTPGet::connect(char *url)
     wsprintf(str,"GET %s HTTP/1.0\r\n",m_http_url);
   }
 
-  wsprintf(str+strlen(str),"Host:%s\r\n",m_http_host);
+  wsprintf(str+strlen(str),"Host: %s\r\n",m_http_host);
 
   if (m_http_lpinfo&&m_http_lpinfo[0])
   {
