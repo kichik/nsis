@@ -39,7 +39,7 @@ extern char g_log_file[1024];
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir);
 int NSISCALL my_MessageBox(const char *text, UINT type);
-void * NSISCALL my_alloc(DWORD dwBytes);
+void * NSISCALL my_GlobalAlloc(DWORD dwBytes);
 
 void NSISCALL doRMDir(char *buf, int recurse);
 
