@@ -2280,6 +2280,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SENDMESSAGE:
       ent.which=EW_SENDMESSAGE;
+
+      if (line.gettoken_str(1)[0] == '/' || line.gettoken_str(2)[0] == '/' ||
+          line.gettoken_str(3)[0] == '/' || line.gettoken_str(4)[0] == '/')
+      {
+        PRINTHELP()
+      }
+
       SCRIPT_MSG("SendMessage:");
       {
         int a=5;
@@ -2289,11 +2296,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
           a++;
         }
-      
+        
         if (!strncmp(line.gettoken_str(a),"/TIMEOUT=",9))
         {
           ent.offsets[5]|=atoi(line.gettoken_str(a)+9)<<2;
           SCRIPT_MSG(" (timeout=%d)",ent.offsets[5]>>2);
+          a++;
+        }
+        
+        if (line.getnumtokens()>a) 
+        {
+          PRINTHELP()
         }
       }
 
