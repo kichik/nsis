@@ -3,6 +3,7 @@
 #include <string>
 #include <set>
 
+#include <string.h> // for stricmp()
 #include <ctype.h> // for tolower()
 
 using namespace std;
@@ -125,7 +126,7 @@ bool dir_reader::is_excluded(const string& name) const {
   iterator e = m_excluded.end();
 
   for (; i != e; i++) {
-    if (name == *i) {
+    if (!::stricmp(name.c_str(), i->c_str())) {
       return true;
     }
   }
