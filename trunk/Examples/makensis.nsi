@@ -12,7 +12,7 @@ CRCCheck off
 
 Name "NSIS"
 Caption "Nullsoft Install System - Setup"
-OutFile nsis${VER_MAJOR}${VER_MINOR}.exe
+OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 
 SetCompressor bzip2
 
@@ -53,6 +53,7 @@ Section "NSIS development system (required)"
   SectionIn 1 2 3 RO
   SetOutPath $INSTDIR
   SetOverwrite try
+  Delete $INSTDIR\makensis-bz2.exe
   File ..\makensis.exe
   File ..\makensisw.exe
   File ..\makensis.htm
