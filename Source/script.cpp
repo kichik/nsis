@@ -97,11 +97,11 @@ parse_again:
     // Added by Ximon Eighteen 5th August 2002
     // We didn't recognise this command, could it be the name of a
     // function exported from a dll?
-    if (m_externalCommands.IsExternalCommand(line.gettoken_str(0)))
+    if (m_plugins.IsPluginCommand(line.gettoken_str(0)))
     {
       np   = 0;   // parameters are optional
       op   = -1;  // unlimited number of optional parameters
-      tkid = TOK__EXTERNALCOMMAND;
+      tkid = TOK__PLUGINCOMMAND;
     }
     else
 #endif
@@ -3190,8 +3190,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     ///////////////////////////////////////////////////////////////////////////////
 
     // Added by Ximon Eighteen 5th August 2002
-    case TOK__EXTERNALCOMMAND:
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    case TOK_PLUGINDIR:
+    {
+      if (line.getnumtokens() == 2)
+      {
+        SCRIPT_MSG("PluginDir: \"%s\"\n",line.gettoken_str(1));
+        m_plugins.FindCommands(line.gettoken_str(1),display_info?true:false);
+        return PS_OK;
+      }
+    }
+    return PS_ERROR;
+    case TOK__PLUGINCOMMAND:
     {
       if (line.getnumtokens()-1 > MAX_ENTRY_OFFSETS)
       {
@@ -3199,10 +3209,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         return PS_ERROR;
       }
 
-      char* dllPath = m_externalCommands.GetExternalCommandDll(line.gettoken_str(0));
+      char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0));
       if (dllPath)
       {
-        int dataHandle = m_externalCommands.GetDllDataHandle(dllPath);
+        int dataHandle = m_plugins.GetDllDataHandle(dllPath);
         if (dataHandle == -1)
         {
           int error;
@@ -3212,18 +3222,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             return error;
           }
 
-          m_externalCommands.StoreDllDataHandle(line.gettoken_str(0),dataHandle);
+          m_plugins.StoreDllDataHandle(line.gettoken_str(0),dataHandle);
         }
 
         // Create the runtime command to execute the custom instruction
-        ent.which      = EW_EXTERNALCOMMANDPREP;
+        ent.which      = EW_PLUGINCOMMANDPREP;
         ent.offsets[0] = add_string(dllPath);
         ent.offsets[1] = add_string(line.gettoken_str(0));
         ent.offsets[2] = dataHandle;
         add_entry(&ent);
 
         SCRIPT_MSG("Plugin Command: %s",line.gettoken_str(0));
-        ent.which = EW_EXTERNALCOMMAND;
+        ent.which = EW_PLUGINCOMMAND;
 
         for (int i = 0; i < MAX_ENTRY_OFFSETS && i+1 < line.getnumtokens(); i++)
         {
@@ -3240,14 +3250,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         return add_entry(&ent);
       }
-      ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
-      return PS_ERROR;
-    }
+      else
+        ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
+    }    
+    return PS_ERROR;
 #else
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n",line.gettoken_str(0));
+    case TOK_PLUGINDIR:
+    case TOK__PLUGINCOMMAND:
+    {
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n",line.gettoken_str(0));
+    }
     return PS_ERROR;
 #endif// NSIS_CONFIG_PLUGIN_SUPPORT
-    
+
     default: break;
 
   }

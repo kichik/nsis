@@ -1824,18 +1824,18 @@ void CEXEBuild::print_warnings()
 
 // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-void CEXEBuild::build_external_command_table(void)
+void CEXEBuild::build_plugin_table(void)
 {
   char* nsisdir = definedlist.find("NSISDIR");
   if (nsisdir)
   {
-    char* searchPath = new char [strlen(nsisdir)+12];
+    char* searchPath = new char [strlen(nsisdir)+6];
     if (searchPath)
     {
       strcpy(searchPath,nsisdir);
-      strcat(searchPath,"\\dlls\\*.dll");
-      INFO_MSG("\nProcessing plugin dlls: \"%s\"\n",searchPath);
-      m_externalCommands.FindCommands(searchPath,display_info?true:false);
+      strcat(searchPath,"\\bin");
+      INFO_MSG("\nProcessing plugin dlls: \"%s\\*.dll\"\n",searchPath);
+      m_plugins.FindCommands(searchPath,display_info?true:false);
       delete[] searchPath;
     }
   }
