@@ -365,22 +365,18 @@ insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 own page commands to set the order of the pages and the names of the page functions.
 For the normal Modern UI pages, insert one of the PAGECOMMAND macro's:</p>
 <pre class="margin">
-LangString TEXT_IO_WINDOWTITLE ": Install Options Page Title"
-
 !insertmacro MUI_PAGECOMMAND_WELCOME
 !insertmacro MUI_PAGECOMMAND_LICENSE
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
 !insertmacro MUI_PAGECOMMAND_DIRECTORY
-Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
+Page custom FunctionName ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 !insertmacro MUI_PAGECOMMAND_FINISH
 </pre>
 <p class="text">For the uninstaller:</p>
 <pre class="margin">
-LangString un.UNTEXT_IO_WINDOWTITLE ": Install Options Page Title"
-
 !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
+UninstPage custom un.FunctionName ;A custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
