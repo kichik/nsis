@@ -14,7 +14,7 @@ Desinstalación de %s
 : Confirmación
 : Desinstalando
 : Completado
-< Atras
+< Atrás
 Siguiente >
 De acuerdo
 Instalar
@@ -37,7 +37,7 @@ Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para abort
 No pudo escribirse: 
 Falló la copia
 Copiar a 
-No pudo encontrarse simbolo: 
+No pudo encontrarse símbolo: 
 No pudo cargarse: 
 Crear directorio: 
 Crear acceso directo: 
