@@ -940,7 +940,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               {
                 char *buf2=process_string_fromparm_tobuf(0x22);
                 update_status_text(buf2,buf0);
-                funke();
+                if (funke()) exec_errorflag++;
               }
               else
               {
