@@ -224,23 +224,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_CREATEDIR: {
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
-      if (parm1)
-      {
-        update_status_text(LANG_OUTPUTDIR,buf1);
-        mystrcpy(state_output_directory,buf1);
-        SetCurrentDirectory(buf1);
-      }
-      else update_status_text(LANG_CREATEDIR,buf1);
       {
         char *tp=CharNext(buf1);
         char *p=buf1;
-        char c = 'c';
+        char c='c';
         if (*p) {
           if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
           else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
           {
-            int x;
-            for (x = 0; x < 4; x ++)
+            int x=4;
+            while (x--)
             {
               while (*p != '\\' && *p) p=CharNext(p); // skip host then share
               p=CharNext(p);
@@ -263,6 +256,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
       }
+      if (parm1)
+      {
+        update_status_text(LANG_OUTPUTDIR,buf1);
+        mystrcpy(state_output_directory,buf1);
+        SetCurrentDirectory(buf1);
+      }
+      else update_status_text(LANG_CREATEDIR,buf1);
     }
     break;
     case EW_IFFILEEXISTS:
