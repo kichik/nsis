@@ -2422,11 +2422,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_RMDIR not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_RMDIR
+    case TOK_RESERVEFILE:
     case TOK_FILE:
 #ifdef NSIS_SUPPORT_FILE
       {
         int a=1,attrib=0,rec=0;
-        if (!stricmp(line.gettoken_str(a),"/a"))
+        if (which_token == TOK_FILE && !stricmp(line.gettoken_str(a),"/a"))
         {
           attrib=1;
           a++;
@@ -2436,7 +2437,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           rec=1;
           a++;
         }
-        else if (!strnicmp(line.gettoken_str(a),"/oname=",7))
+        else if (which_token == TOK_FILE && !strnicmp(line.gettoken_str(a),"/oname=",7))
         {
           char *on=line.gettoken_str(a)+7;
           a++;
@@ -2448,7 +2449,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (tf > 1) PRINTHELP()
           if (!tf)
           {
-            ERROR_MSG("File: \"%s\" -> no files found.\n",line.gettoken_str(a));
+            ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
             PRINTHELP()
           }
 
@@ -2468,11 +2469,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             t=buf;
           }
           int tf=0;
-          int v=do_add_file(t, attrib, rec, linecnt,&tf);
+          int v=do_add_file(t, attrib, rec, linecnt,&tf,NULL,which_token == TOK_FILE);
           if (v != PS_OK) return v;
           if (!tf)
           {
-            ERROR_MSG("File: \"%s\" -> no files found.\n",t);
+            ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",t);
             PRINTHELP()
           }
         }
@@ -3609,7 +3610,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode)
 {
   char dir[1024];
   char newfn[1024], *s;
@@ -3659,34 +3660,37 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             *o=0;
           }
 
-          (*total_files)++;
-          ent.which=EW_CREATEDIR;
-          ent.offsets[0]=add_string(cur_out_path);
-          ent.offsets[1]=1;
-          a=add_entry(&ent);
-          if (a != PS_OK)
+          if (generatecode)
           {
-            FindClose(h);
-            return a;
-          }
-          if (attrib)
-          {
-            ent.which=EW_SETFILEATTRIBUTES;
+            (*total_files)++;
+            ent.which=EW_CREATEDIR;
             ent.offsets[0]=add_string(cur_out_path);
-            ent.offsets[1]=d.dwFileAttributes;
-
+            ent.offsets[1]=1;
             a=add_entry(&ent);
             if (a != PS_OK)
             {
               FindClose(h);
               return a;
             }
+            if (attrib)
+            {
+              ent.which=EW_SETFILEATTRIBUTES;
+              ent.offsets[0]=add_string(cur_out_path);
+              ent.offsets[1]=d.dwFileAttributes;
+
+              a=add_entry(&ent);
+              if (a != PS_OK)
+              {
+                FindClose(h);
+                return a;
+              }
+            }
           }
           char spec[1024];
           sprintf(spec,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
-          SCRIPT_MSG("File: Descending to: \"%s\" -> \"%s\"\n",spec,cur_out_path);
+          SCRIPT_MSG("%sFile: Descending to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",spec,cur_out_path);
           strcat(spec,"\\*.*");
-          a=do_add_file(spec,attrib,recurse,linecnt,total_files);
+          a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode);
           if (a != PS_OK)
           {
             FindClose(h);
@@ -3696,7 +3700,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           cur_out_path[wd_save]=0;
           ent.which=EW_CREATEDIR;
           ent.offsets[1]=1;
-          SCRIPT_MSG("File: Returning to: \"%s\" -> \"%s\"\n",dir,cur_out_path);
+          SCRIPT_MSG("%sFile: Returning to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",dir,cur_out_path);
           ent.offsets[0]=add_string(cur_out_path);
           a=add_entry(&ent);
           if (a != PS_OK)
@@ -3715,7 +3719,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         hFile=CreateFile(newfn,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
         if (hFile == INVALID_HANDLE_VALUE)
         {
-          ERROR_MSG("File: failed opening file \"%s\"\n",newfn);
+          ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
         hFileMap=NULL;
@@ -3723,7 +3727,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         if (len && !(hFileMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL)))
         {
           CloseHandle(hFile);
-          ERROR_MSG("File: failed creating mmap of \"%s\"\n",newfn);
+          ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
         char *filedata=NULL;
@@ -3734,37 +3738,41 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           {
             if (hFileMap) CloseHandle(hFileMap);
             CloseHandle(hFile);
-            ERROR_MSG("File: failed mmapping file \"%s\"\n",newfn);
+            ERROR_MSG("%sFile: failed mmapping file \"%s\"\n",generatecode?"":"Reserve",newfn);
             return PS_ERROR;
           }
         }
 
-        section_add_size_kb((len+1023)/1024);
-        if (name_override) SCRIPT_MSG("File: \"%s\"->\"%s\"",d.cFileName,name_override);
-        else SCRIPT_MSG("File: \"%s\"",d.cFileName);
+        if (generatecode)
+          section_add_size_kb((len+1023)/1024);
+        if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",d.cFileName,name_override);
+        else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",d.cFileName);
         if (!build_compress_whole)
           if (build_compress) SCRIPT_MSG(" [compress]");
         fflush(stdout);
         char buf[1024];
         int last_build_datablock_used=getcurdbsize();
         entry ent={0,};
-        ent.which=EW_EXTRACTFILE;
-        ent.offsets[0]=build_overwrite;
-        if (name_override)
+        if (generatecode)
         {
-          ent.offsets[1]=add_string(name_override);
-        }
-        else
-        {
-          char *i=d.cFileName,*o=buf;
-          while (*i)
+          ent.which=EW_EXTRACTFILE;
+          ent.offsets[0]=build_overwrite;
+          if (name_override)
           {
-            char c=*i++;
-            *o++=c;
-            if (c == '$') *o++='$';
+            ent.offsets[1]=add_string(name_override);
           }
-          *o=0;
-          ent.offsets[1]=add_string(buf);
+          else
+          {
+            char *i=d.cFileName,*o=buf;
+            while (*i)
+            {
+              char c=*i++;
+              *o++=c;
+              if (c == '$') *o++='$';
+            }
+            *o=0;
+            ent.offsets[1]=add_string(buf);
+          }
         }
         ent.offsets[2]=add_data(filedata?filedata:"",len);
 
@@ -3784,59 +3792,65 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           else SCRIPT_MSG(" %d bytes\n",len);
         }
 
-        if (build_datesave || build_overwrite==0x3 /*ifnewer*/)
+        if (generatecode)
         {
-          FILETIME ft;
-          if (GetFileTime(hFile,NULL,NULL,&ft))
+          if (build_datesave || build_overwrite==0x3 /*ifnewer*/)
           {
-            ent.offsets[3]=ft.dwLowDateTime;
-            ent.offsets[4]=ft.dwHighDateTime;
+            FILETIME ft;
+            if (GetFileTime(hFile,NULL,NULL,&ft))
+            {
+              ent.offsets[3]=ft.dwLowDateTime;
+              ent.offsets[4]=ft.dwHighDateTime;
+            }
+            else
+            {
+              CloseHandle(hFile);
+              ERROR_MSG("%sFile: failed getting file date from \"%s\"\n",generatecode?"":"Reserve",newfn);
+              return PS_ERROR;
+            }
           }
           else
           {
-            CloseHandle(hFile);
-            ERROR_MSG("File: failed getting file date from \"%s\"\n",newfn);
-            return PS_ERROR;
+            ent.offsets[3]=0xffffffff;
+            ent.offsets[4]=0xffffffff;
           }
+          if (uninstall_mode) m_uninst_fileused++;
+          else m_inst_fileused++;
         }
-        else
-        {
-          ent.offsets[3]=0xffffffff;
-          ent.offsets[4]=0xffffffff;
-        }
-        if (uninstall_mode) m_uninst_fileused++;
-        else m_inst_fileused++;
 
         CloseHandle(hFile);
 
-        int a=add_entry(&ent);
-        if (a != PS_OK)
+        if (generatecode)
         {
-          FindClose(h);
-          return a;
-        }
-        if (attrib)
-        {
-          char tmp_path[1024];
-          ent.which=EW_SETFILEATTRIBUTES;
-          if (name_override)
-          {
-            sprintf(tmp_path,"%s\\%s",cur_out_path,name_override);
-          }
-          else
-          {
-            sprintf(tmp_path,"%s\\%s",cur_out_path,buf);
-          }
-          ent.offsets[0]=add_string(tmp_path);
-          ent.offsets[1]=d.dwFileAttributes;
-
-          a=add_entry(&ent);
+          int a=add_entry(&ent);
           if (a != PS_OK)
           {
             FindClose(h);
             return a;
           }
-         }
+          if (attrib)
+          {
+            char tmp_path[1024];
+            ent.which=EW_SETFILEATTRIBUTES;
+            if (name_override)
+            {
+              sprintf(tmp_path,"%s\\%s",cur_out_path,name_override);
+            }
+            else
+            {
+              sprintf(tmp_path,"%s\\%s",cur_out_path,buf);
+            }
+            ent.offsets[0]=add_string(tmp_path);
+            ent.offsets[1]=d.dwFileAttributes;
+
+            a=add_entry(&ent);
+            if (a != PS_OK)
+            {
+              FindClose(h);
+              return a;
+            }
+          }
+        }
       }
     } while (FindNextFile(h,&d));
     FindClose(h);
