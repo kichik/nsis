@@ -539,10 +539,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 
             while ( pUserVarName > p )
             {
-                char b = ((char*)p)[pUserVarName-p];
-                ((char*)p)[pUserVarName-p] = 0;
                 int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
-                ((char*)p)[pUserVarName-p] = b;
                 if ( idxUserVar >= 0 )
                 {
                   // Well, using variables inside string formating doens't mean 
