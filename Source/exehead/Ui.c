@@ -632,7 +632,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     EDITSTREAM es={(DWORD)STR(LANG_LICENSE_DATA),0,StreamLicense};
     hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
-    SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg);
+    SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK);
     SendMessage(hwLicense,EM_SETLIMITTEXT,lstrlen((char*)es.dwCookie)+1,0);
     dwRead=0;
