@@ -123,6 +123,7 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
     HANDLE_STRING_I(NLF_BTN_BROWSE, installer.browse);
     HANDLE_STRING_I(NLF_COMP_SUBTEXT1, installer.componentsubtext[0]);
     HANDLE_STRING_I(NLF_COMP_SUBTEXT2, installer.componentsubtext[1]);
+    HANDLE_STRING_I(NLF_COMP_CUSTOM, installer.custom);
     HANDLE_STRING_I(NLF_DIR_SUBTEXT, installer.dirsubtext);
     HANDLE_STRING_I(NLF_SPACE_AVAIL, installer.spaceavailable);
     HANDLE_STRING_I(NLF_SPACE_REQ, installer.spacerequired);
