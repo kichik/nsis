@@ -208,7 +208,8 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         "<span class="italic">DropList</span>", "<span class="italic">Listbox</span>",
         "<span class="italic">CheckBox</span>", "<span class="italic">RadioButton</span>",
         "<span class="italic">FileRequest</span>", "<span class="italic">DirRequest</span>"
-        "<span class="italic">Icon</span>" or "<span class="italic">Bitmap</span>",.<br /><br />A
+        "<span class="italic">Icon</span>", "<span class="italic">Bitmap</span>" or
+        "<span class="italic">GroupBox</span>".<br /><br />A
         "<span class="italic">Label</span>" is used to display static text. (i.e. a caption for a
         textbox)<br />A "<span class="italic">Text</span>" and "<span class="italic">Password</span>"
         accept text input  from the user. "<span class="italic">Password</span>" masks the input
@@ -218,15 +219,17 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         optionally allow the user to select more than one item.<br />A
         "<span class="italic">CheckBox</span>" control displays a check box with label.<br />
         A "<span class="italic">RadioButton</span>" control displays a radio button with label.<br />
-	    A "<span class="italic">FileRequest</span>" control displays
+        A "<span class="italic">FileRequest</span>" control displays
         a textbox and a browse button. Clicking the browse button will display a
         file requester where the user can browse for a file.<br />A
         "<span class="italic">DirRequest</span>" control displays a textbox and a browse button.
         Clicking the browse button will display a directory requester where the
         user can browse for a directory.<br />
-		"<span class="italic">Icon</span>" control displays an icon.
-		Use no Text to use the installer icon.<br />
-		"<span class="italic">Bitmap</span>" control displays a bitmap.<br /></td></tr>
+        An "<span class="italic">Icon</span>" control displays an icon.
+        Use no Text to use the installer icon.<br />
+        A "<span class="italic">Bitmap</span>" control displays a bitmap.<br />
+        A "<span class="italic">GroupBox</span>" control displays a frame to group controls.<br />
+        </td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Text</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
@@ -422,6 +425,21 @@ Function FunctionName ;FunctionName defined with Page command
 
 FunctionEnd
 </pre>
+<p class="subheader">Return value</p>
+<p class="text">After you have called the DLL, InstallOptions
+adds one value to the stack, with one of the following values:</p>
+<ul>
+<li>success - The user has pressed the Next button</li>
+<li>back - The user has pressed the Back button</li>
+<li>cancel - The user has pressed the Cancel button</li>
+<li>error - An error has occured, the dialog cannot be displayed.</li>
+</ul>
+<p class="text">Usually, you don't need to check this value,
+but you still have to remove it from the stack (have a look at
+the example above).</p>
+<p class="text">If you want to check the user input immidiately,
+for example, to display a warning  when the input is invalid, you
+should check whether the user has pressed the Back or Next button.</p>
 <p class="subheader">Get the output</p>
 <p class="text">In most cases, you will need the output from the INI File
 in a section. Get it using ReadINIStr:</p>
