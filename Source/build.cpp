@@ -441,11 +441,10 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
         free(cp);
         return 0;
       }
-      if (build_userlangstrings.find(cp, 0, &idx) < 0) idx = -1;
+      idx = GetUserString(cp);
     }
     free(cp);
-    if (idx < 0) SetUserString(cp, 0, 0, process);
-    return -((int)(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)));
+    if (idx >= 0) return -((int)(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)));
   }
 
   if (!process) return build_strlist.add(string,2);
@@ -470,11 +469,10 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
         free(cp);
         return 0;
       }
-      if (ubuild_userlangstrings.find(cp, 0, &idx) < 0) idx = -1;
+      idx = GetUserString(cp);
     }
     free(cp);
-    if (idx < 0) SetUserString(cp, 0, 0, process);
-    return -((int)(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int)));
+    if (idx >= 0) return -((int)(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int)));
   }
 
   if (!process) return ubuild_strlist.add(string,2);
