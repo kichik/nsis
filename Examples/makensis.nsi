@@ -386,6 +386,14 @@ Section "UserInfo" SecContribUserInfo
   File ..\Contrib\UserInfo\UserInfo.nsi
 SectionEnd
 
+Section "Dialer" SecContribDialer
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\Dialer.dll
+  SetOutPath $INSTDIR\Contrib\Dialer
+  File ..\Contrib\Dialer\Dialer.txt
+SectionEnd
+
 SubSectionEnd
 
 Section "Zip2Exe" SecContribZ2E
@@ -566,6 +574,14 @@ Section "UserInfo Source" SecContribUserInfoS
   File ..\Contrib\UserInfo\UserInfo.c
   File ..\Contrib\UserInfo\UserInfo.dsp
   File ..\Contrib\UserInfo\UserInfo.dsw
+SectionEnd
+
+Section "Dialer Source" SecContribDialerS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\Dialer
+  File ..\Contrib\Dialer\dialer.c
+  File ..\Contrib\Dialer\dialer.dsp
+  File ..\Contrib\Dialer\dialer.dsw
 SectionEnd
 
 SubSectionEnd ; plugins
@@ -773,6 +789,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialer} "Plugin with internet connection functions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin with internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to a utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add user interface components to an installer"
@@ -806,6 +824,7 @@ SectionEnd
 !macroend
 
 Function .onSelChange
+  ;Plugins are linked to ExDLL
   StrCpy $R0 0
   !insertmacro secSelected ${SecContribSplashTS}
   !insertmacro secSelected ${SecContribBannerS}
@@ -817,6 +836,7 @@ Function .onSelChange
   !insertmacro secSelected ${SecContribSplashS}
   !insertmacro secSelected ${SecContribStartMenuS}
   !insertmacro secSelected ${SecContribUserInfoS}
+  !insertmacro secSelected ${SecContribDialerS}
   SectionGetFlags ${SecSrcEx} $R7
   StrCmp $R0 0 notRequired
     IntOp $R7 $R7 | ${SF_SELECTED}
