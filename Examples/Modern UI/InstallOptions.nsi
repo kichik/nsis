@@ -30,6 +30,7 @@
   Name "${NAME} ${VERSION}"
   
   ;Page order
+  !define MUI_CUSTOMPAGECOMMANDS
   !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA
   Page custom SetCustomB
@@ -56,6 +57,7 @@
   LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
   
   ;Uninstaller
+  !define MUI_UNCUSTOMPAGECOMMANDS
   !insertmacro MUI_UNPAGECOMMAND_CONFIRM
   !insertmacro MUI_UNPAGECOMMAND_INSTFILES
   
@@ -132,7 +134,7 @@ Function SetCustomC
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
 
-!insertmacro MUI_FUNCTIONS_CUSTOMPAGE_BASIC
+!insertmacro MUI_FUNCTIONS_BASIC
 
 ;--------------------------------
 ;Uninstaller
@@ -153,6 +155,6 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
-  !insertmacro MUI_UNFUNCTIONS_CUSTOMPAGE_BASIC
+  !insertmacro MUI_UNFUNCTIONS_BASIC
 
 ;eof
