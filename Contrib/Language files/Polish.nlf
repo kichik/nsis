@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1045
 # Font and size - dash (-) means default
@@ -41,7 +41,8 @@ Wybierz folder instalacji %s:
 Dostêpne miejsce: 
 Wymagane miejsce:  
 Odinstalowuje z: 
-B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby anulowaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby przerwaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz ponów, aby ponowiæ zapis do pliku lub\r\nanuluj, aby przerwaæ instalacjê
 Nie mo¿na zapisaæ:  
 B³¹d kopiowania
 Kopiuj do 
