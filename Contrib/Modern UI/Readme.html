@@ -134,7 +134,7 @@ follow these steps:</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
   <p class="text">MUI.nsh is in the Include directory, so you don't have
-  to specify a path.
+  to specify a path.</p>
   <p class="subheader">2. Define the name and version of your software</p>
 <pre class="margin">
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
@@ -177,13 +177,12 @@ follow these steps:</p>
   Show the Start Menu Folder selection page.<br /><br />
   If you did not disable the 'Do not create shortcuts' checkbox,
   put the script code to write the shortcuts between these macro's,
-  because the creation can be disabled by the user:
+  because the creation can be disabled by the user:</p>
 <pre class="margin">
 !insertmacro MUI_STARTMENU_WRITE_BEGIN
   ...create the shortcuts...
 !insertmacro MUI_STARTMENU_WRITE_END
 </pre>
-  </p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE </span><span class="parameter">variable</span><br />
   Variable to store the current Start Menu Folder. Default is $9.
@@ -278,7 +277,7 @@ follow these steps:</p>
   <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title in the header.<br /><i>Defaults: MS Shell Dlg, 8, 700</i></p>
   <p class="text"><span class="bold">MUI_FONT_TITLE </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span></br />
+  <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title on the Welcome and Finish page.<br /><i>Defaults: Verdana, 12, 700</i></p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows | (foreground color: RRBBGG)
@@ -286,7 +285,7 @@ follow these steps:</p>
   <br />The colors of the details screen. Use /windows instead of the colors to use the Windows
   colors (the default).<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
-  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.</br /><i>Default: smooth</i></p>
+  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
   <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57
   won't have to be resized. The NSIS Setup uses the ${NSISDIR}\Contrib\Icons\modern-header.bmp bitmap,
@@ -511,7 +510,7 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
   <p class="text">To modify the Welcome and Finish dialog, edit the Install
   Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.</p>
 <p class="header">Customize Modern UI Functions</p>
-<a name="customFunctions"><p class="text">If you want add your own code to functions
+<a name="customFunctions"></a><p class="text">If you want add your own code to functions
 inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
 create your own function and let the Modern UI functions call them. Use the defines
 to define the name of your functions.</p>
@@ -524,64 +523,63 @@ Function myGUIInit
 FunctionEnd
 </pre>
 <p class="text">
-<span class="bold">GUI Init</span><br>
-MUI_CUSTOMFUNCTION_GUIINIT<br>
+<span class="bold">GUI Init</span><br />
+MUI_CUSTOMFUNCTION_GUIINIT<br />
 MUI_CUSTOMFUNCTION_UNGUIINIT
 </p>
 <p class="text">
-<span class="bold">Welcome Page</span><br>
-MUI_CUSTOMFUNCTION_WELCOME_PRE<br>
+<span class="bold">Welcome Page</span><br />
+MUI_CUSTOMFUNCTION_WELCOME_PRE<br />
 MUI_CUSTOMFUNCTION_WELCOME_SHOW - ${MUI_TEMP1} contains HWND of Welcome dialog
 </p>
 <p class="text">
-<span class="bold">License Page</span><br>
-MUI_CUSTOMFUNCTION_LICENSE_PRE<br>
-MUI_CUSTOMFUNCTION_LICENSE_SHOW<br>
+<span class="bold">License Page</span><br />
+MUI_CUSTOMFUNCTION_LICENSE_PRE<br />
+MUI_CUSTOMFUNCTION_LICENSE_SHOW<br />
 MUI_CUSTOMFUNCTION_LICENSE_LEAVE
 </p>
 <p class="text">
-<span class="bold">Components Page</span><br>
-MUI_CUSTOMFUNCTION_COMPONENTS_PRE<br>
-MUI_CUSTOMFUNCTION_COMPONENTS_SHOW<br>
+<span class="bold">Components Page</span><br />
+MUI_CUSTOMFUNCTION_COMPONENTS_PRE<br />
+MUI_CUSTOMFUNCTION_COMPONENTS_SHOW<br />
 MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE
 </p>
 <p class="text">
-<span class="bold">Directory Page</span><br>
-MUI_CUSTOMFUNCTION_DIRECTORY_PRE<br>
-MUI_CUSTOMFUNCTION_DIRECTORY_SHOW<br>
+<span class="bold">Directory Page</span><br />
+MUI_CUSTOMFUNCTION_DIRECTORY_PRE<br />
+MUI_CUSTOMFUNCTION_DIRECTORY_SHOW<br />
 MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
 </p>
 <p class="text">
-<span class="bold">Start Menu Folder Page</span><br>
+<span class="bold">Start Menu Folder Page</span><br />
 MUI_CUSTOMFUNCTION_STARTMENU_PRE
 MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
 </p>
 <p class="text">
-<span class="bold">Install Files Page</span><br>
-MUI_CUSTOMFUNCTION_INSTFILES_PRE<br>
-MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br>
+<span class="bold">Install Files Page</span><br />
+MUI_CUSTOMFUNCTION_INSTFILES_PRE<br />
+MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br />
 MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="text">
-<span class="bold">Finish Page</span><br>
-MUI_CUSTOMFUNCTION_FINISH_PRE<br>
+<span class="bold">Finish Page</span><br />
+MUI_CUSTOMFUNCTION_FINISH_PRE<br />
 MUI_CUSTOMFUNCTION_FINISH_SHOW - ${MUI_TEMP1} contains HWND of Finish dialog
 </p>
-</p>
 <p class="text">
-<span class="bold">Installer Abort</span><br>
+<span class="bold">Installer Abort</span><br />
 MUI_CUSTOMFUNCTION_ABORT
 </p>
 <p class="text">
-<span class="bold">Uninstaller - Confirm Page</span><br>
-MUI_UNCUSTOMFUNCTION_CONFIRM_PRE<br>
-MUI_UNCUSTOMFUNCTION_CONFIRM_SHOW<br>
+<span class="bold">Uninstaller - Confirm Page</span><br />
+MUI_UNCUSTOMFUNCTION_CONFIRM_PRE<br />
+MUI_UNCUSTOMFUNCTION_CONFIRM_SHOW<br />
 MUI_UNCUSTOMFUNCTION_CONFIRM_LEAVE
 </p>
 <p class="text">
-<span class="bold">Uninstaller - Uninstall Files Page</span><br>
-MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br>
-MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br>
+<span class="bold">Uninstaller - Uninstall Files Page</span><br />
+MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br />
+MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br />
 MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
@@ -607,7 +605,9 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>Minor fixes</li>
     <li>No changed language strings</li>
   </ul></li>
+</ul>
 <p class="text"></p>
+<ul>
 <li>1.62 - February 2, 2003
   <ul>
     <li>Final version for NSIS 2 beta 1</li>
