@@ -278,7 +278,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
     if (p >= cmdline)
     {
-      p[0]=0; // terminate on the _?=
+      *(p-1)=0; // terminate before the " _?="
       p+=3; // skip over _?=
       if (is_valid_instpath(p))
       {
