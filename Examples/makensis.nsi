@@ -20,7 +20,7 @@
 ;Configuration
 
 OutFile ..\nsis${VER_FILE}.exe
-SetCompressor lzma
+SetCompressor /SOLID lzma
 
 InstType "Full"
 InstType "Standard"
