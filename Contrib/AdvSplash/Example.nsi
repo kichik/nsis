@@ -9,7 +9,7 @@ Function .onInit
 	InitPluginsDir
 	File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
 	#optional
-	#File /oname=$PLUGINSDIR\splash.wav "${NSISDIR}\Contrib\Makensisw\sound.wav"
+	#File /oname=$PLUGINSDIR\splash.wav "C:\myprog\sound.wav"
 
 	advsplash::show 1000 600 400 -1 $PLUGINSDIR\splash
 
