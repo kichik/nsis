@@ -3,7 +3,7 @@ NLF v2
 # Language ID
 1046
 # Translation by Diego Marcos <jump@osite.com.br>
-NSIS %s
+Sistema de Instalação Nullsoft %s
 Instalação do %s
 Desinstalação do %s
 : Contrato de Licença
