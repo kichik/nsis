@@ -64,7 +64,9 @@
   !endif
   
   !ifdef MUI_FINISHPAGE
-    AutoCloseWindow true
+    !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
+      AutoCloseWindow true
+    !endif
   !endif
 
   XPStyle On
@@ -591,7 +593,7 @@
   !endif
   
   !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
-  
+    
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_FUNCTIONS_FINISHPAGE SetFinish
   !endif
@@ -840,8 +842,6 @@
           
           !endif
         
-        !ifdef MUI_FINISHPAGE_RUN
-        
         show:
 
       !insertmacro MUI_INSTALLOPTIONS_SHOW
@@ -866,10 +866,14 @@
       
       noreboot_end:
       
-         !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
+        !ifdef MUI_FINISHPAGE_RUN
+      
+          !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
         
-         StrCmp ${MUI_TEMP1} "1" "" +2
-           Exec '"${MUI_FINISHPAGE_RUN}"'
+           StrCmp ${MUI_TEMP1} "1" "" +2
+             Exec '"${MUI_FINISHPAGE_RUN}"'
+             
+        !endif
 
     done:
 
