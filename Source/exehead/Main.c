@@ -361,7 +361,7 @@ end:
 #ifdef NSIS_COMPRESS_WHOLE
   if (dbd_hFile!=INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
 #endif
-  if (m_Err) MessageBox(NULL,m_Err,g_caption,MB_OK|MB_ICONSTOP);
+  if (m_Err) my_MessageBox(m_Err,MB_OK|MB_ICONSTOP);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins

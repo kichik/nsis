@@ -363,7 +363,7 @@ static int ExecuteEntry(entry *entries, int pos)
           process_string_fromtab(buf2,COMMON_STR(fileerrtext));
           lstrcpy(g_usrvars[0],buf3); // restore $0
 
-          switch (MessageBox(g_hwnd,buf2,g_caption,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
+          switch (my_MessageBox(buf2,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
           {
             case IDRETRY:
               log_printf("File: error, user retry"); 
@@ -393,15 +393,14 @@ static int ExecuteEntry(entry *entries, int pos)
         {
           if (ret == -2)
           {
-            lstrcpy(buf,STR(LANG_ERRORWRITING));
-            lstrcat(buf,buf4);
+            wsprintf(buf,"%s%s",STR(LANG_ERRORWRITING),buf4);
           }
           else
           {
             lstrcpy(buf,STR(LANG_ERRORDECOMPRESSING));
           }
           log_printf2("%s",buf);
-          MessageBox(g_hwnd,buf,g_caption,MB_OK|MB_ICONSTOP);
+          my_MessageBox(buf,MB_OK|MB_ICONSTOP);
           return EXEC_ERROR;
         }
       }
@@ -462,7 +461,7 @@ static int ExecuteEntry(entry *entries, int pos)
         int v;
         process_string_fromtab(buf4,parms[1]);
         log_printf3("MessageBox: %d,\"%s\"",parms[0],buf4); 
-        v=MessageBox(g_hwnd,buf4,g_caption,parms[0]);
+        v=my_MessageBox(buf4,parms[0]);
         if (v)
         {
           if (v==(parms[2]&0xffff))
@@ -672,9 +671,7 @@ static int ExecuteEntry(entry *entries, int pos)
         process_string_fromtab(buf,parms[0]);
         process_string_fromtab(buf2,parms[1]);
         process_string_fromtab(buf3,parms[2]);
-        lstrcpy(buf4,buf);
-        lstrcat(buf4," ");
-        lstrcat(buf4,buf2);
+        wsprintf(buf4,"%s %s",buf,buf2);
         update_status_text_from_tab(LANG_EXECSHELL, buf4);
         x=(int)ShellExecute(g_hwnd,buf[0]?buf:NULL,buf2,buf3[0]?buf3:NULL,state_output_directory,parms[3]);
         if (x < 33)
@@ -881,8 +878,7 @@ static int ExecuteEntry(entry *entries, int pos)
 			  buf[lstrlen(buf)+1]=0;
 			  buf2[lstrlen(buf2)+1]=0;
 
-        lstrcpy(buf3,STR(LANG_COPYTO));
-        lstrcat(buf3,buf2);
+        wsprintf(buf3,"%s%s",STR(LANG_COPYTO),buf2);
 
         op.pFrom=buf;
 			  op.pTo=buf2;
@@ -1271,7 +1267,7 @@ static int ExecuteEntry(entry *entries, int pos)
               // Changed by Amir Szekely 11th July 2002
               unsigned char* unicon_data = (unsigned char*)GlobalAlloc(GMEM_FIXED, g_inst_header->uninsticon_size);
               if (unicon_data) {
-                DWORD i, j;
+                DWORD i;
                 unsigned char* seeker = unicon_data + sizeof(DWORD);
                 GetCompressedDataFromDataBlockToMemory(g_inst_header->uninstdata_offset,
                   unicon_data,g_inst_header->uninsticon_size);
@@ -1281,8 +1277,7 @@ static int ExecuteEntry(entry *entries, int pos)
                   seeker += sizeof(DWORD);
                   dwOffset = *(DWORD*)seeker;
                   seeker += sizeof(DWORD);
-                  for (j = 0; j < dwSize; j++)
-                    filebuf[dwOffset+j] = seeker[j];
+                  mini_memcpy(filebuf, seeker, dwSize);
                   seeker += dwSize;
                 }
                 GlobalFree(unicon_data);
@@ -1309,10 +1304,10 @@ static int ExecuteEntry(entry *entries, int pos)
     case EW_LOG:
       if (parms[0])
       {
-        if (!g_log_file && parms[1]) build_g_logfile();
         log_printf2("settings logging to %d",parms[1]);
         log_dolog=parms[1];
         log_printf2("logging set to %d",parms[1]);
+        if (!g_log_file && log_dolg) build_g_logfile();
       }
       else
       {
@@ -1400,6 +1395,6 @@ static int ExecuteEntry(entry *entries, int pos)
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }
-  MessageBox(g_hwnd,STR(LANG_INSTCORRUPTED),g_caption,MB_OK|MB_ICONSTOP);
+  my_MessageBox(STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;
 }
