@@ -385,8 +385,8 @@
 !macro MUI_WELCOMEFINISHPAGE_INIT
 
   ;Extract InstallOptions INI Files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_SPECIALINI}" "ioSpecial.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALINI}" "ioSpecial.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
   
   ;Write bitmap location
   !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
@@ -705,7 +705,7 @@
 
 !macroend
 
-!macro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME FILE FILENAME
+!macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
 
   !ifndef MUI_NOVERBOSE
     !ifndef MUI_MANUALVERBOSE
