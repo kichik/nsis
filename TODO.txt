@@ -8,10 +8,6 @@ NSIS
 
 * DATE, FILE, TIME, etc. defines
 
-* different font and code page for every language
-
-* MB and friends translatable
-
 * add version numbers for the installer
 
 * component page for uninstaller, multiple sections
