@@ -1009,7 +1009,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     DeleteObject(hBMcheck1);
 
-    for (i = 0; i < NSIS_MAX_INST_TYPES; i++)
+    for (i = 0; i < NSIS_MAX_INST_TYPES+1; i++)
     {
       if (g_inst_header->install_types[i])
       {
@@ -1018,12 +1018,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         process_string_fromtab(g_tmp,g_inst_header->install_types[i]);
         j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)ps_tmpbuf);
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
+        if (i == g_flags.cur_insttype)
+          SendMessage(hwndCombo1, CB_SETCURSEL, j, 0);
       }
-    }
-    if (!(inst_flags&CH_FLAGS_NO_CUSTOM))
-    {
-      int j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
-      SendMessage(hwndCombo1,CB_SETITEMDATA,j,NSIS_MAX_INST_TYPES);
     }
 
     if (doCombo)
@@ -1260,11 +1257,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
 
-    if (inst_flags&CH_FLAGS_COMP_ONLY_ON_CUSTOM)
+    if (inst_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)
     {
-      int c=(g_flags.cur_insttype == NSIS_MAX_INST_TYPES)<<3;// SW_SHOWNA=8, SW_HIDE=0
-      ShowWindow(hwndTree1,c);
-      ShowWindow(GetUIItem(IDC_TEXT2),c);
+      int c = (g_flags.cur_insttype == NSIS_MAX_INST_TYPES) << 3;// SW_SHOWNA=8, SW_HIDE=0
+      ShowWindow(hwndTree1, c);
+      ShowWindow(GetUIItem(IDC_TEXT2), c);
     }
     else if (!lParam)
     {
