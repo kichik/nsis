@@ -1841,14 +1841,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       build_header.install_directory_ptr = add_string(p);
       build_header.install_directory_auto_append = 0;
-      if (*p && *CharPrev(p, p + strlen(p)) != '\\')
+      char *p2 = p + strlen(p);
+      if (*p && *CharPrev(p, p2) != '\\')
       {
-        p = build_strlist.get() + build_header.install_directory_ptr;
-        char *p2 = p + strlen(p);
-        while (p2 >= p && *CharPrev(p, p2) != '\\') p2--;;
-        if (p2)
+        // we risk hitting $\r or something like $(bla\ad) or ${bla\ad} here, but it's better
+        // than hitting backslashes in processed strings
+        while (p2 > p && *p2 != '\\')
+          p2 = CharPrev(p, p2);
+        if (*p2 == '\\')
         {
-          build_header.install_directory_auto_append = build_header.install_directory_ptr + (p2 - p);
+          build_header.install_directory_auto_append = add_string(p2 + 1);
         }
       }
       SCRIPT_MSG("InstallDir: \"%s\"\n",line.gettoken_str(1));
