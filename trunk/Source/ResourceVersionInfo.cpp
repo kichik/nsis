@@ -20,14 +20,72 @@
 #  include <iconv.h>
 #endif
 
-/*
-int ValidCodePages[] = {
-437, 708, 709, 710, 720, 737, 775, 850, 852, 855, 85, 86, 86, 86, 86, 864,
-865, 866, 869, 874, 932, 936, 949, 950, 1200, 1250, 1251, 1252, 1253, 1254,
-1255, 1256, 1257, 1258, 20000, 20001, 20002, 20003, 20004, 20005, 20127, 20261,
-20269, 20866, 21027, 21866, 28591, 28592, 28593, 28594, 28595, 28596, 28597, 28598,
-28599, 29001, 1361, 0 };
-*/
+struct version_string_list
+{
+  int codepage;
+  LANGID lang_id;
+  int name;
+  DefineList *pChildStrings;
+};
+
+CVersionStrigList::~CVersionStrigList()
+{
+  struct version_string_list *itr = (struct version_string_list *) gr.get();
+  int i = gr.getlen() / sizeof(struct version_string_list);
+
+  while (i--)
+  {
+    delete itr[i].pChildStrings;
+  }
+}
+
+int CVersionStrigList::add(LANGID langid, int codepage)
+{
+  char Buff[10];
+  sprintf(Buff, "%04x", langid);
+  int pos = SortedStringListND<struct version_string_list>::add(Buff);
+  if (pos == -1) return false;
+  ((struct version_string_list*)gr.get())[pos].pChildStrings = new DefineList;
+  ((struct version_string_list*)gr.get())[pos].codepage = codepage;
+  ((struct version_string_list*)gr.get())[pos].lang_id = langid;
+  return pos;
+}
+
+LANGID CVersionStrigList::get_lang(int idx)
+{
+  version_string_list *data=(version_string_list *)gr.get();
+  return data[idx].lang_id;
+}
+
+int CVersionStrigList::get_codepage(int idx)
+{
+  version_string_list *data=(version_string_list *)gr.get();
+  return data[idx].codepage;
+}
+
+DefineList* CVersionStrigList::get_strings(int idx)
+{
+  version_string_list *data=(version_string_list *)gr.get();
+  return data[idx].pChildStrings;
+}
+
+int CVersionStrigList::find(LANGID lang_id, int codepage)
+{
+  char Buff[10];
+  sprintf(Buff, "%04x", lang_id);
+  return SortedStringListND<struct version_string_list>::find(Buff);
+}
+
+int CVersionStrigList::getlen()
+{
+  return strings.getlen();
+}
+
+int CVersionStrigList::getnum()
+{
+  return gr.getlen()/sizeof(struct version_string_list);
+}
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -37,29 +95,6 @@ CResourceVersionInfo::CResourceVersionInfo()
     m_FixedInfo.dwSignature = 0xFEEF04BD;
     m_FixedInfo.dwFileOS = VOS__WINDOWS32;
     m_FixedInfo.dwFileType = VFT_APP;
-
-    // Detect local codepage and language
-/*  
-    WORD Lang = GetSystemDefaultLangID();
-    WORD CodePage = GetACP();
-
-    SetKeyValue(Lang, CodePage, "Comments", "Portuguese");
-    SetKeyValue(Lang, CodePage, "FileVersion", "1.2");
-    SetKeyValue(Lang, CodePage, "FileDescription", "Soft");
-    SetKeyValue(Lang, CodePage, "LegalCopyright", "My");
-    SetKeyValue(Lang, CodePage, "InternalName", "My");
-    SetKeyValue(Lang, CodePage, "CompanyName", "rats");
-    SetKeyValue(Lang, CodePage, "ProductVersion", "ProductVersion");
-
-    Lang = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
-    SetKeyValue(Lang, CodePage, "Comments", "English");
-    SetKeyValue(Lang, CodePage, "FileVersion", "1.2");
-    SetKeyValue(Lang, CodePage, "FileDescription", "Soft");
-    SetKeyValue(Lang, CodePage, "LegalCopyright", "My");
-    SetKeyValue(Lang, CodePage, "InternalName", "My");
-    SetKeyValue(Lang, CodePage, "CompanyName", "rats");
-    SetKeyValue(Lang, CodePage, "ProductVersion", "ProductVersion");
-*/
 }
 
 CResourceVersionInfo::~CResourceVersionInfo()
@@ -299,18 +334,5 @@ char *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, char *pKeyName)
   DefineList *pStrings = m_ChildStringLists.get_strings(pos);
   return pStrings->find(pKeyName);
 }
-/*
-bool CResourceVersionInfo::IsValidCodePage(WORD codePage )
-{
-  int *pCP = ValidCodePages;
-  if ( !codePage )
-    return false;
-  while ( *pCP++ )
-  {
-    if ( *pCP == codePage )
-      return true;  
-  }
-  return false;
-}
-*/
+
 #endif
