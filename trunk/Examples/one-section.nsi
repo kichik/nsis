@@ -13,6 +13,10 @@
 # the initial section selection from .onSelChange when it is called
 # for the first time.
 
+#### Uncomment the next line for an example with subsections too
+# !define USE_SUBSECTION
+####
+
 Name example
 OutFile one-section.exe
 
@@ -25,6 +29,10 @@ Section !Required
 	SectionIn RO
 SectionEnd
 
+!ifdef USE_SUBSECTION
+	SubSection /e choose one
+!endif
+
 Section "optional #1" sec1
 SectionEnd
 
@@ -36,6 +44,10 @@ SectionEnd
 
 Section "optional #4" sec4
 SectionEnd
+
+!ifdef USE_SUBSECTION
+	SubSectionEnd
+!endif
 
 Function .onInit
 	Push $0
@@ -66,6 +78,26 @@ FunctionEnd
 
 Function .onSelChange
 	Push $0
+
+!ifdef USE_SUBSECTION
+	Push $2
+	StrCpy $2 ${SF_SELECTED}
+	SectionGetFlags ${sec1} $0
+	IntOp $2 $2 & $0
+	SectionGetFlags ${sec2} $0
+	IntOp $2 $2 & $0
+	SectionGetFlags ${sec3} $0
+	IntOp $2 $2 & $0
+	SectionGetFlags ${sec4} $0
+	IntOp $2 $2 & $0
+	StrCmp $2 0 skip
+		SectionSetFlags ${sec1} 0
+		SectionSetFlags ${sec2} 0
+		SectionSetFlags ${sec3} 0
+		SectionSetFlags ${sec4} 0
+	skip:
+	Pop $2
+!endif
 
 	; Turn off old selected section
 	SectionGetFlags $1 $0
