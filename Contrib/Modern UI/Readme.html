@@ -146,30 +146,116 @@ an older script with the Classic UI, follow the steps below.</p>
 <p class="text">Taking a look at the <a href="#examples">example</a> scripts
 will also help you to learn more about the Modern UI.</p>
   <p class="subheader">Syntax</p>
-  <p class="text">Most defines (i.e. MUI_COMPONENTSPAGE_SMALLDESC) don't need a value, they are true/false settings.
-  Others (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
-  value.</p>
+  <p class="text">Some defines (i.e. MUI_COMPONENTSPAGE_SMALLDESC) don't need a value, they are true/false settings.
+  Others (i.e. MUI_UI) can be used to define a specific value.</p>
   <p class="text">Parameters are specified in this format:
   <span class="parameter">required (option1 | option2)
   [optional]</span></p>
-  <p class="text">You should put all parameters in one string for the define:</p>
+  <p class="text">You should put all parameters in one string.</p>
 <pre class="margin">
 !define MUI_STARTMENUPAGE_NODISABLE ;No value
 !define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
-!define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple settings
 !define MUI_LICENSEPAGE_TEXT '"Text"' ;Text
 !define MUI_LICENSEPAGE_TEXT '"Text" "Buttontext"' ;Multiple texts
+!define MUI_INSTFILESPAGE_COLORS "FFFFFF 000000" ;Multiple settings
 </pre>
   <p class="text">If you want a certain value (i.e. a text) to be language-specific, set a language string (using LangString)
-  and define $(LANGUAGESTRINGNAME) as value. Use a license language string (LicenseLangString) for the license text.</p>
+  and define $(STRINGNAME) as value. Use a license language string (LicenseLangString) for the license text.</p>
   <p class="text">When adding &quot; to a Modern UI string, you should always escape it ($\&quot;),
   because the Modern UI macros use &quot; to separate parameters. If you want to set texts like above you have to
   escape both &quot; and ' (using $\&quot; and $\').</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
-    <p class="text">MUI.nsh is in the Include directory, so you don't have
+  <p class="text">MUI.nsh is in the Include directory, so you don't have
   to specify a path.</p>
-  <p class="subheader">2. Pages</p>
+  <p class="subheader">2. Interface Settings</p>
+  <p class="text">Page interface settings apply to all pages of a certain type.</p>
+  <p class="sub2header">General Interface Settings</p>
+  <div class="margin">
+  <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
+  has not been defined.</p>
+  <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
+  The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
+  <i>Default: ${NSISDIR}\Contrib\UIs\modern.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP </span><span class="parameter">ui_file</span><br />
+  <span class="bold">MUI_UI_HEADERBITMAP_RIGHT </span><span class="parameter">ui_file</span><br />
+  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
+  the header bitmap.<br /><i>Defaults: ${NSISDIR}\Contrib\UIs\modern-headerbmp.exe,
+  ${NSISDIR}\Contrib\UIs\modern-headerbmpr.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION<br />MUI_UI_NODESCRIPTION</span><br />
+  The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.<br />
+  <i>Defaults: {NSISDIR}\Contrib\UIs\modern-smalldesc.exe, {NSISDIR}\Contrib\UIs\modern-nodesc.exe</i></p>
+  <p class="text"><span class="bold">MUI_ICON </span><span class="parameter">icon_file</span><br />
+  The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico</i></p>
+  <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
+  The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico</i></p>
+  <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
+  The bitmap with images for the checks of the component select treeview.<br />
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Checks\modern.bmp</i></p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
+  Bitmap to display in the white header (recommended size: 150x57 pixels). The NSIS Setup uses the bitmap
+  ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp, but can also make one with your own logo.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
+  Display the header image on the right side instead of the left side.</p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP_NOSTRETCH</span><br />
+  Do not stretch the header bitmap to fit the size of the field. Use this option only if you have an
+  image that does not use the whole space. If you have a full size bitmap that fits exactly, you should
+  not use this option because the size of the field will be different if the user has a custom DPI setting.</p>
+  </div>
+  <p class="text"><span class="bold">MUI_SPECIALINI </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the Welcome and Finish page.<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
+  Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP_NOSTRETCH</span><br />
+  Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
+  Use this option only if you have an image that does not use the whole space. If you have a full size
+  bitmap that fits exactly, you should not use this option because the size of the field will be different
+  if the user has a custom DPI setting.</p>
+  </div>
+  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
+  Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
+  </div>
+  <p class="sub2header">License Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_BGCOLOR </span><span class="parameter">
+  (/windows | /grey | (color: RRGGBB hexadecimal))</span><br />
+  The background color for the license textbox. Use /windows for the default text background (usually white).
+  Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
+  </div>
+  <p class="sub2header">Components Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
+  A small description area on the bottom of the page. Use this layout
+  if you have a lot of sections and don't need large descriptions.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
+  No description area.</p>
+  </div>
+  <p class="sub2header">Installation Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_COLORS </span><span class="parameter">(/windows |
+  (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
+  The colors of the details screen. Use /windows for the default colors.</p>
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
+  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
+  </div>
+  <p class="sub2header">Finish Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
+  Do not automatically jump to the finish page, to allow the user to
+  check the log.</p>
+  </div>
+  <p class="sub2header">Abort Warning Message Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
+  Show a message box with a warning when the user wants to close the installer.</p>
+  <p class="text"><span class="bold">MUI_ABORTWARNING_TEXT </span><span class="parameter">text </span><br />
+  Texts to display next to the abort warning messagebox.</p>
+  </div>
+  <p class="subheader">3. Pages</p>
   <p class="text">Insert the following macros to set the pages you want to use.
   The pages will appear in the order you insert them in your script.
   You can also insert custom Page commands between the macros to add custom pages.
@@ -355,10 +441,9 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_LOCATION </span><span class="parameter">file/url</span><br />
   Website or file which the user can select to view using the link.
   You don't need to put quotes around the filename when it contains spaces.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_COLOR </span><span class="parameter">(color: 0xBBGGRR hexadecimal)</span><br />
+  Text color for the link on the Finish page.<br /><i>Default: 0x800000</i></p>
   </div>
-  <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
-  Do not automatically jump to the finish page, to allow the user to
-  check the log.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOREBOOTSUPPORT</span><br />
   Disables support for the page that allows the user to reboot the system.
   Define this option to save some space if you are not using the /REBOOTOK
@@ -375,99 +460,20 @@ will also help you to learn more about the Modern UI.</p>
   <a href="#customFunctions">More info...</a></p>
   </div>
   </div>
-  <p class="subheader">3. Interface Settings</p>
-  <p class="text">Page interface settings apply to all pages of a certain type.</p>
-  <p class="sub2header">General Interface Settings</p>
-  <div class="margin">
-  <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
-  has not been defined.</p>
-  <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
-  The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
-  <i>Default: ${NSISDIR}\Contrib\UIs\modern.exe</i></p>
-  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP </span><span class="parameter">ui_file</span><br />
-  <span class="bold">MUI_UI_HEADERBITMAP_RIGHT </span><span class="parameter">ui_file</span><br />
-  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
-  the header bitmap.<br /><i>Defaults: ${NSISDIR}\Contrib\UIs\modern-headerbmp.exe,
-  ${NSISDIR}\Contrib\UIs\modern-headerbmpr.exe</i></p>
-  <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION<br />MUI_UI_NODESCRIPTION</span><br />
-  The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.<br />
-  <i>Defaults: {NSISDIR}\Contrib\UIs\modern-smalldesc.exe, {NSISDIR}\Contrib\UIs\modern-nodesc.exe</i></p>
-  <p class="text"><span class="bold">MUI_ICON </span><span class="parameter">icon_file</span><br />
-  The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico</i></p>
-  <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
-  The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico</i></p>
-  <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">
-  (/windows | /grey | (color: RRGGBB hexadecimal))</span><br />
-  The background color for the license textbox. Use /windows for the default text background (usually white).
-  Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
-  <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
-  The bitmap with images for the checks of the component select treeview.<br />
-  <i>Default: ${NSISDIR}\Contrib\Graphics\Checks\modern.bmp</i></p>
-  <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows |
-  (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
-  The colors of the details screen. Use /windows for the default colors.</p>
-  <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
-  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap to display in the white header (recommended size: 150x57 pixels). The NSIS Setup uses the bitmap
-  ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp, but can also make one with your own logo.</p>
-  <div class="margin">
-  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
-  Display the header image on the right side instead of the left side.</p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP_NOSTRETCH</span><br />
-  Do not stretch the header bitmap to fit the size of the field. Use this option only if you have an
-  image that does not use the whole space. If you have a full size bitmap that fits exactly, you should
-  not use this option because the size of the field will be different if the user has a custom DPI setting.</p>
-  </div>
-  <p class="text"><span class="bold">MUI_SPECIALINI </span><span class="parameter">ini_file</span><br />
-  InstallOptions INI file for the Welcome and Finish page.<br />
-  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
-  <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
-  <div class="margin">
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP_NOSTRETCH</span><br />
-  Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
-  Use this option only if you have an image that does not use the whole space. If you have a full size
-  bitmap that fits exactly, you should not use this option because the size of the field will be different
-  if the user has a custom DPI setting.</p>
-  </div>
-  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
-  Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
-  <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_COLOR </span><span class="parameter">(color: 0xBBGGRR hexadecimal)</span><br />
-  Text color for the link on the Finish page.<br /><i>Default: 0x800000</i></p>
-  <p class="text"><span class="bold">MUI_RTL_UI</span><br />
-  Right-to-left interface.</p>
-  </div>
-  <p class="sub2header">Components Page Interface Settings</p>
-  <div class="margin">
-  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
-  A small description area on the bottom of the page. Use this layout
-  if you have a lot of sections and don't need large descriptions.</p>
-  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
-  No description area.</p>
-  </div>
-  <p class="sub2header">Message Settings</p>
-  <div class="margin">
-  <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
-  Show a message box with a warning when the user wants to close the installer.</p>
-  <p class="text"><span class="bold">MUI_ABORTWARNING_TEXT </span><span class="parameter">text </span><br />
-  Texts to display next to the abort warning messagebox.</p>
-  </div>
   <p class="subheader">4. Define custom functions</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
   own function and let the Modern UI functions call them.</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
   <p class="subheader">5. Insert language files</p>
-  <p class="text">Insert the Modern UI language files for the languages you are using:</p>
+  <p class="text">Insert the Modern UI language files for the languages to want to include.</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
   <p class="sub2header">Customize fonts</p>
   <div class="margin">
   <p class="text">You can customize the fonts for a language using the following defines before inserting
-  a language:</p>
+  a language.</p>
   <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
   <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
@@ -482,7 +488,7 @@ will also help you to learn more about the Modern UI.</p>
   <div class="margin">
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
-  MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit:</p>
+  MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit.</p>
 <pre class="margin">
 Function .onInit
 
@@ -490,7 +496,7 @@ Function .onInit
 
 FunctionEnd
 </pre>
-  <p class="text">To customize the language selection dialog, use these defines before inserting the macro:</p>
+  <p class="text">To customize the language selection dialog, use these defines before inserting the macro.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_WINDOWTITLE </span><span class="parameter">text</span><br />
   The window title of the language selection dialog.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_INFO </span><span class="parameter">text</span><br />
@@ -502,7 +508,7 @@ FunctionEnd
   You can also use it in the uninstaller to display the right language. Don't forget
   to remove this key in the uninstaller.</p>
   <p class="text">In the uninstaller, insert the MUI_UNGETLANGUAGE macro in un.onInit to get the stored language
-  preference:</p>
+  preference.</p>
 <pre class="margin">
 Function un.onInit
 
@@ -521,7 +527,7 @@ FunctionEnd
   setting.</p>
   <p class="text">To set a description for a section, you have to add an
   additional parameter to the Section commmand with a name for the define
-  that should contain the section number:</p>
+  that should contain the section number.</p>
 <pre class="margin">
 Section "Section Name 1" Section1
    ...
@@ -540,19 +546,18 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 <p class="text">For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN
 and MUI_UNFUNCTIONS_DESCRIPTION_END macros</p>
 <p class="subheader">7. Reserve Files</p>
-<p class="text">If you are using BZIP2 compression, you might need to
+<p class="text">If you are using BZIP2 (solid) compression, you might need to
 insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
-own page commands between the page macros:</p>
+own page commands between the page macros.</p>
 <pre class="margin">
 !insertmacro MUI_PAGE_WELCOME
 Page custom FunctionName ;Custom page
 !insertmacro MUI_PAGE_COMPONENTS
-</pre>
-<p class="text">For the uninstaller:</p>
-<pre class="margin">
+
+;Uninstaller
 !insertmacro MUI_UNPAGE_CONFIRM
 UninstPage custom un.FunctionName ;Custom page
 !insertmacro MUI_UNPAGE_INSTFILES
@@ -562,18 +567,16 @@ UninstPage custom un.FunctionName ;Custom page
 using INI files.</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Readme.html">
 InstallOptions documentation</a> for info about creating InstallOptions INI files.</p>
-<p class="text">First, you need to extract your InstallOptions INI
-File in the .onInit function (un.onInit for the uninstaller) using
-the MUI_INSTALLOPTIONS_EXTRACT macro:</p>
+<p class="text">First, you have to extract your InstallOptions INI File in the .onInit function
+(un.onInit for the uninstaller) using the MUI_INSTALLOPTIONS_EXTRACT macro.</p>
 <pre class="margin">
 Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
 FunctionEnd
 </pre>
-<p class="text">If your INI File is located in another directory, use
-MUI_INSTALLOPTIONS_EXTRACT_AS. The second parameter is the filename for
-the Plugins directory. Use this name when inserting the other InstallOptions
-macros:</p>
+<p class="text">If your INI File is located in another directory, use MUI_INSTALLOPTIONS_EXTRACT_AS.
+The second parameter is the filename for the temporary plug-ins directory, use this filename as
+parameter for the other InstallOptions macros.</p>
 <pre class="margin">
 Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
@@ -581,7 +584,7 @@ FunctionEnd
 </pre>
 <p class="text">You can call Instal Options in the function defined with the Page
 or UninstPage command using the MUI_INSTALLOPTIONS_DISPLAY macro.
-Use the MUI_HEADER_TEXT macro to set the text in the white box:</p>
+Use the MUI_HEADER_TEXT macro to set the text in the white box.</p>
 <pre class="margin">
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
@@ -592,7 +595,7 @@ Function FunctionName ;FunctionName defined with Page command
 FunctionEnd
 </pre>
 <p class="text">For custom fonts and colors, macros for the initDialog and show
-functions of InstallOptions are also available:</p>
+functions of InstallOptions are also available.</p>
 <pre class="margin">
 Var HWND
 Var DLGITEM
@@ -621,7 +624,7 @@ FunctionEnd
 <p class="text">If you need the InstallOptions return value (success, back, cancel, error),
 use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The
 return value will be added to the stack, so you can use the Pop command to get it.</p>
-<p class="text">To read or write INI file values use these macros:</p>
+<p class="text">Use these macros to read or write INI file values.</p>
 <pre class="margin">
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
@@ -637,7 +640,7 @@ to get the user input:</p>
 files which are being extracted in init- or page functions functions are first in
 the data block, because this will make your installer start faster.</p>
 <p class="text">If there are File commands in your script above Modern UI settings
-or above your own init- or page functions, you have to reserve files:</p>
+or above your own init- or page functions, you have to reserve files.</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
@@ -669,9 +672,10 @@ ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp" ;Special bitmap
   dialog 111 of modern.exe.<br />
   The 'Verifying installer' and 'Unpacking data' texts are defined in
   the language header file of the NSIS exehead (Source\exehead\lang.h). 
-  To change them, you need to edit this file and recompile NSIS.</p>
-  <p class="text">To modify the Welcome and Finish dialog, edit the Install
-  Options INI File ioSpecial.ini in the 'Contrib\Modern UI' directory.</p>
+  To change them, you have to edit this file and recompile NSIS.</p>
+  <p class="text">To modify the Welcome and Finish dialog, use a custom
+  INI file (MUI_SPECIALINI setting) or write to the INI file in the
+  custom page functions.</p>
   <p class="header"><a name="customFunctions">Customize Modern UI Functions</a></p>
   <p class="text">If you want add your own code to functions
   inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
@@ -703,17 +707,18 @@ FunctionEnd
   <li>The StartMenu page does not have a Show function</li>
   <li>In the Pre function of the Welcome- and Finish page, you can write to the InstallOptions INI file
   of the page (ioSpecial.ini)</li>
-  <li>In the Show function of Welcome- and Finish page, $MUI_HWND contains the HWND of the inner dialog.</li>
+  <li>In the Show function of Welcome- and Finish page, $MUI_HWND contains the HWND of the inner dialog</li>
   </ul>
   </div>
 <p class="header">Version history</p>
 <ul>
-<li>1.66 - September 25, 2003
+<li>1.66 - October 7, 2003
   <ul>
     <li>New system for page settings and custom pages</li>
     <li>Support for uninstaller components page</li>
     <li>Support for multiple pages of the same type</li>
-    <li>Changed macro names</li>
+    <li>New possition for interface settings</li>
+    <li>Changed macro, setting names</li>
     <li>Updated langauge system, new language files and settings</li>
     <li>Removed MUI_PRODUCT and MUI VERSION. Use Name command now.</li>
     <li>Removed MUI_BRANDINGTEXT. Use BrandingText command now.</li>
