@@ -242,6 +242,13 @@ follow these steps:</p>
   <p class="text">The following settings are available: <i>(default values)</i></p>
   <p class="text"><span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
   The interface file with the dialog resources. Change this if you have made your own customized UI.</p>
+  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP, MUI_UI_HEADERBITMAP_RIGHT</span>
+  <i>(${NSISDIR}\Contrib\UIs\modern-headerbmp(r).exe)</i><br />
+  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
+  the header bitmap.</p>
+  <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION, MUI_UI_NODESCRIPTION</span>
+  <i>(${NSISDIR}\Contrib\UIs\modern-(small/no)desc.exe)</i><br />
+  The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.</p>
   <p class="text"><span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
   The icon of the installer.</p>
   <p class="text"><span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
@@ -461,10 +468,10 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
   Welcome/Finish page: <a href="../../Examples/Modern UI/WelcomeFinish.nsi">WelcomeFinish.nsi</a><br />
   </p>
 <p class="header">Customize the dialogs</p>
-  <p class="text">To change elements on the dialogs, modify modern.exe
-  in the Contrib\UIs directory using a resource editor such as
+  <p class="text">To change elements on the dialogs, modify the
+  resource files Contrib\UIs directory using a resource editor such as
   <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>
-  and use the MUI_UI define to use your customized UI.</p>
+  and use the interface setting to define to filename use your customized UI.</p>
   <p class="text">The 'Please wait while Setup is loading...' text
   on the splash screen which  is being displayed when the installer
   is starting (Verifying installer, Unpacking data) cannot be changed
