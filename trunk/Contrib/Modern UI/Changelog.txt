@@ -1,6 +1,10 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.62b - March 6, 2003
+1.63 - March 9, 2003
+* Support for a bitmap in the wizard header
+* New defines to change the description area
+* MUI_SYSTEM inserted automatically
+* Easier to customize resouce files
 * New system for custom functions
 * New InstallOptions macro's that do not remove the return value from
   the stack

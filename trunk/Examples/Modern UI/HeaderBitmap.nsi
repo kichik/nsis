@@ -1,17 +1,17 @@
 ;NSIS Modern User Interface version 1.63
-;Welcome/Finish Page Example Script
+;Header Bitmap Example Script
 ;Written by Joost Verburg
 
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
 
 !include "MUI.nsh"
-  
+
 ;--------------------------------
 ;Configuration
 
   ;General
-  OutFile "WelcomeFinish.exe"
+  OutFile "HeaderBitmap.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -19,17 +19,16 @@
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_WELCOMEPAGE
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
-  !define MUI_FINISHPAGE
-    !define MUI_FINISHPAGE_RUN "$INSTDIR\modern.exe"
   
   !define MUI_ABORTWARNING
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
+  
+  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
   
 ;--------------------------------
 ;Languages
@@ -46,28 +45,25 @@
 ;Data
   
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
-  
-;--------------------------------
-;Reserve Files
-
-  ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only useful for BZIP2 compression
-  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
 
 ;--------------------------------
 ;Installer Sections
 
 Section "modern.exe" SecCopyUI
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
-    
+  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
+
+;Display the Finish header
+;Insert this macro after the sections if you are not using a finish page
+!insertmacro MUI_SECTIONS_FINISHHEADER
 
 ;--------------------------------
 ;Descriptions
@@ -75,19 +71,20 @@ SectionEnd
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
-
+ 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
 
+  ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd

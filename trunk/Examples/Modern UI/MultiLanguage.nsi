@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.62
+;NSIS Modern User Interface version 1.63
 ;MultiLanguage Example Script
 ;Written by Joost Verburg
 
@@ -27,9 +27,6 @@
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
-  
-  ;Modern UI System
-  !insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Languages
@@ -40,7 +37,8 @@
   !insertmacro MUI_LANGUAGE "Spanish"
   !insertmacro MUI_LANGUAGE "SimpChinese"
   !insertmacro MUI_LANGUAGE "TradChinese"    
-  !insertmacro MUI_LANGUAGE "Japanese"    
+  !insertmacro MUI_LANGUAGE "Japanese"
+  !insertmacro MUI_LANGUAGE "Korean"
   !insertmacro MUI_LANGUAGE "Italian"
   !insertmacro MUI_LANGUAGE "Dutch"
   !insertmacro MUI_LANGUAGE "Danish"
@@ -69,6 +67,7 @@
   LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
   LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
   LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
+  LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Korean description"
   LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
   LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
   LangString DESC_SecCopyUI ${LANG_DANISH} "modern.exe: Danish description"
@@ -96,6 +95,7 @@
   LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_JAPANESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_KOREAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_ITALIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -159,7 +159,8 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Spanish"
   !insertmacro MUI_LANGDLL_PUSH "SimpChinese"
   !insertmacro MUI_LANGDLL_PUSH "TradChinese"    
-  !insertmacro MUI_LANGDLL_PUSH "Japanese"    
+  !insertmacro MUI_LANGDLL_PUSH "Japanese" 
+  !insertmacro MUI_LANGDLL_PUSH "Korean"
   !insertmacro MUI_LANGDLL_PUSH "Italian"
   !insertmacro MUI_LANGDLL_PUSH "Dutch"
   !insertmacro MUI_LANGDLL_PUSH "Danish"
@@ -177,7 +178,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Macedonian"
   !insertmacro MUI_LANGDLL_PUSH "Turkish"
   
-  Push 23F ;22 = number of languages, F = change font
+  Push 24F ;24 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
