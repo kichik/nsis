@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Seleziona Installa per iniziare l'installazione."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Benvenuto nel progamma di installazione di ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Questo programma installerà ${MUI_PRODUCT} nel vostro computer.\r\n\r\nSi raccomanda di chiudere la vostre applicazioni, prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i parametri di sistema senza dover riavviare il vostro computer.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Questo programma installerà ${MUI_PRODUCT} nel vostro computer.\r\n\r\nSi raccomanda di chiudere tutte le vostre applicazioni, prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i parametri di sistema senza dover riavviare il vostro computer.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenza d'uso"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Per favore esamina i termini della licenza d'uso prima di installare ${MUI_PRODUCT}."
