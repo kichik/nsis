@@ -595,8 +595,17 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #else
       ShowWindow(hwndtmp,m_page?SW_SHOWNA:SW_HIDE);
 #endif
-        EnableWindow(hwndtmp, (m_page==1&&islp) || (m_page==2&&(islp||iscp)));
+      EnableWindow(hwndtmp, (m_page==1&&islp) || (m_page==2&&(islp||iscp)));
+//XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
+//on the license page, instead we want the focus left alone because in
+//WM_INITDIALOG it is given to the richedit control.
+#ifdef NSIS_CONFIG_LICENSEPAGE
+      if (m_page != 0)
+          SetFocus(GetDlgItem(hwndDlg,IDOK));
+#else
       SetFocus(GetDlgItem(hwndDlg,IDOK));
+#endif
+//XGE End
     }
   }
   if (uMsg == WM_COMMAND)
@@ -671,6 +680,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     dwRead=0;
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_LICENSE_TEXT);
+    //XGE 5th September 2002 - place the initial focus in the richedit control
+    SetFocus(hwLicense);
+    return FALSE;
+    //End Xge
   }
   else if (uMsg == WM_NOTIFY) {
     ENLINK *enlink=(ENLINK *)lParam;
