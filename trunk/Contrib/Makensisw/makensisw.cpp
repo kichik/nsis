@@ -192,6 +192,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     {
       if (!g_sdata.thread) {
         DragAcceptFiles(g_sdata.hwnd,FALSE);
+		ImageList_Destroy(g_toolbar.imagelist);
+		ImageList_Destroy(g_toolbar.imagelistd);
+		ImageList_Destroy(g_toolbar.imagelisth);
         DestroyWindow(hwndDlg);
         FreeLibrary(hRichEditDLL);
       }
