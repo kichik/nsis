@@ -1,5 +1,5 @@
-;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.5
+;NSIS Modern User Interface - 語言檔案
+;Compatible with Modern UI 1.6
 
 ; Language: "Chinese (Traditional)" (1028)
 ; Kii Ali <kiiali@cpatch.org>
@@ -13,7 +13,10 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "按一下 [下一步(N)] 繼續。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "按一下 [安裝(I)] 繼續安裝。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "按一下 [安裝(I)] 開始安裝過程。"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "歡迎使用 ${MUI_PRODUCT} 安裝精靈"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "這將在你的電腦安裝 ${MUI_PRODUCT} 。\r\n\r\n在開始安裝之前，建議您先關閉其他所有應用程式。這將允許安裝程式更新特定的系統檔案，而不需要重新啟動你的系統。\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授權合約"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安裝 ${MUI_PRODUCT} 之前，請檢閱授權條款。"
@@ -34,20 +37,29 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "正在安裝"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "${MUI_PRODUCT} 正在安裝，請等候。"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "已完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "安裝完成"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "安裝程式已成功地執行完成。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": 已完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "完成(&F)"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} 已在你的系統安裝。\r\n按一下 [完成(F)] 關閉此精靈。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "你的系統需要重新啟動，以便完成 ${MUI_PRODUCT} 的安裝過程。現在要重新啟動嗎？"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "現在重新啟動"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "稍後重新啟動"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "執行 ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "顯示「讀我」"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE "開始功能表資料夾"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": 開始功能表資料夾"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "選擇開始功能表資料夾"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "選擇「開始功能表」資料夾，用於程式的捷徑。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU "選擇「開始功能表」資料夾，以便建立程式的捷徑。你也可以輸入名稱，建立新資料夾。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "選擇「開始功能表」資料夾，以便建立程式的捷徑。你也可以輸入名稱，建立新資料夾。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "不要建立捷徑"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你確定要離開 ${MUI_PRODUCT} 安裝程式？"
-
+  
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "解除安裝 ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "從你的系統解除安裝 ${MUI_PRODUCT}。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "從你的系統解除安裝 ${MUI_PRODUCT} 。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "從你的系統解除安裝 ${MUI_PRODUCT} 。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "這將從你的系統解除安裝 ${MUI_PRODUCT} 。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "正在解除安裝"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "${MUI_PRODUCT} 正在解除安裝，請等候。"
