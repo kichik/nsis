@@ -2183,7 +2183,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int s;
         int size_kb=line.gettoken_int(1,&s);
         if (!s) PRINTHELP()
-        SCRIPT_MSG("AddSize: %d kb\n");
+        SCRIPT_MSG("AddSize: %d kb\n",size_kb);
         section_add_size_kb(size_kb);
       }
     return PS_OK;
