@@ -15,6 +15,13 @@ using namespace std;
 #include "exehead/fileform.h"
 #include "exehead/config.h"
 
+#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
+// Added by Sunil Kamath 11 June 2003
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#endif
+
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 // Changed by Amir Szekely 31st July 2002
 #include "compressor.h"
@@ -96,6 +103,15 @@ class CEXEBuild {
     int get_commandtoken(char *s, int *np, int *op);
 
     // script.cpp
+#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
+  // Added by Sunil Kamath 11 June 2003
+    char* set_file_predefine(char *);
+    void restore_file_predefine(char *);
+    char* set_timestamp_predefine(char *);
+    void restore_timestamp_predefine(char *);
+    char* set_line_predefine(int);
+    void restore_line_predefine(char *);
+#endif
     int parseScript();
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist);
     int doParse(const char *str);
