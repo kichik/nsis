@@ -554,7 +554,7 @@
 
   !verbose 3
   
-  !ifndef MUI_NOGUIINIT
+  !ifndef MUI_CUSTOMGUIINIT
 
     Function .onGUIInit
       !insertmacro MUI_GUIINIT
@@ -922,10 +922,14 @@
 !macro MUI_UNFUNCTIONS_GUIINIT
 
   !verbose 3
+  
+  !ifndef MUI_UNCUSTOMGUIINIT
 
-  Function un.onGUIInit
-    !insertmacro MUI_GUIINIT
-  FunctionEnd
+    Function un.onGUIInit
+      !insertmacro MUI_GUIINIT
+    FunctionEnd
+    
+  !endif
 
   !verbose 4
 
