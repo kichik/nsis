@@ -225,7 +225,7 @@ Section "InstallOptions"
   File ..\contrib\installoptions\*.rc
   File ..\contrib\installoptions\*.h
   File "..\contrib\installoptions\Install Options.html"
-  SetOutPath $INSTDIR\Bin
+  SetOutPath $INSTDIR\Plugins
   File ..\Bin\InstallOptions.dll
   IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
     CreateDirectory $SMPROGRAMS\NSIS\Contrib
@@ -244,7 +244,7 @@ Section "NSIS-DL"
   File ..\contrib\NSISdl\*.h
   File ..\contrib\NSISdl\*.rc
   File ..\contrib\NSISdl\ReadMe.txt
-  SetOutPath $INSTDIR\Bin
+  SetOutPath $INSTDIR\Plugins
   File ..\Bin\nsisdl.dll
   IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
     CreateDirectory $SMPROGRAMS\NSIS\Contrib
@@ -396,12 +396,12 @@ Section Uninstall
   Delete $INSTDIR\makensis*.exe
   Delete $INSTDIR\Bin\zip2exe.exe
   Delete $INSTDIR\Bin\installoptions.exe
-  Delete $INSTDIR\Bin\installoptions.dll
+  Delete $INSTDIR\Plugins\installoptions.dll
   Delete $INSTDIR\Bin\splash.txt
   Delete $INSTDIR\Bin\splash.exe
   Delete $INSTDIR\Bin\magiclime.exe
   Delete $INSTDIR\Bin\magiclime.txt
-  Delete $INSTDIR\Bin\nsisdl.dll
+  Delete $INSTDIR\Plugins\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Examples\functions.htm
@@ -435,6 +435,7 @@ Section Uninstall
   Delete $INSTDIR\bitmap2.bmp
   RMDir /r $INSTDIR\Source
   RMDir /r $INSTDIR\Bin
+  RMDir /r $INSTDIR\Plugins
   RMDir /r $INSTDIR\Examples
   RMDir $INSTDIR
 
