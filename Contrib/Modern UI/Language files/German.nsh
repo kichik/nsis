@@ -15,15 +15,15 @@
 
   !define MUI_TEXT_LICENSE_TITLE "Lizenzabkommen"
   !define MUI_TEXT_LICENSE_SUBTITLE "Bitte lesen Sie die Lizenzbedingungen durch, bevor Sie mit der Installation fortfahren."
-  !define MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-nach-unten Taste um den Rest des Abkommens zu sehen."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können. $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-nach-unten Taste, um den Rest des Abkommens zu sehen."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie unten die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können. $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "Komponenten auswählen"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Wählen Sie die Komponenten aus, die Sie installieren möchten."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreibung"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente um ihre Beschreibung zu sehen."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
 
   !define MUI_TEXT_DIRECTORY_TITLE "Zielverzeichnis auswählen"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Wählen Sie das Verzeichnis aus, in das $(^Name) installiert werden soll."
@@ -39,8 +39,8 @@
 
   !define MUI_BUTTONTEXT_FINISH "&Fertig stellen"
   !define MUI_TEXT_FINISH_INFO_TITLE "Die Installation von $(^Name) wird abgeschlossen"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) ist auf Ihrem Computer installiert worden.\r\n\r\nKlicken Sie auf Fertig stellen um den Installations-Assistenten zu schließen."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden um die Installation von $(^Name) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) ist auf Ihrem Computer installiert worden.\r\n\r\nKlicken Sie auf Fertig stellen, um den Installations-Assistenten zu schließen."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Installation von $(^Name) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Jetzt neu starten"
   !define MUI_TEXT_FINISH_REBOOTLATER "Windows später selbst neu starten"
   !define MUI_TEXT_FINISH_RUN "$(^Name) ausführen"
@@ -62,9 +62,9 @@
 
   !define MUI_UNTEXT_LICENSE_TITLE "Lizenzabkommen"
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Bitte lesen Sie die Lizenzbedingungen durch, bevor Sie mit der Deinstallation von $(^Name) fortfahren."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) deinstallieren zu können."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) deinstallieren zu können. $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie untenstehend die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) deinstallieren zu können. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) deinstallieren zu können."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) deinstallieren zu können. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie unten die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) deinstallieren zu können. $_CLICK"
 
   !define MUI_UNTEXT_COMPONENTS_TITLE "Komponenten auswählen"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Wählen Sie die Komponenten aus, die Sie entfernen möchten."
@@ -82,7 +82,7 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "Die Deinstallation wurde nicht vollständig abgeschlossen."
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^Name) wird abgeschlossen"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Beenden um den Assistenten zu schließen."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Beenden, um den Assistenten zu schließen."
 
   !define MUI_UNTEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Deinstallation von $(^Name) abbrechen möchten?"
 

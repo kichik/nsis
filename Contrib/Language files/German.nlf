@@ -59,11 +59,11 @@ Abbrechen
 # ^ShowDetailsBtn
 &Details anzeigen
 # ^ClickNext
-Klicken Sie auf Weiter um fortzufahren.
+Klicken Sie auf Weiter, um fortzufahren.
 # ^ClickInstall
-Klicken Sie auf Installieren um die Installation zu starten.
+Klicken Sie auf Installieren, um die Installation zu starten.
 # ^ClickUninstall
-Klicken Sie auf Deinstallieren um die Deinstallation zu starten.
+Klicken Sie auf Deinstallieren, um die Deinstallation zu starten.
 # ^Name
 Name
 # ^Completed
@@ -71,13 +71,13 @@ Fertig
 # ^LicenseText
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^LicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
 # ^LicenseTextRB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^UnLicenseText
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^UnLicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
 # ^UnLicenseTextRB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^Custom
@@ -119,9 +119,9 @@ $(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. $_CLICK
 # ^UninstallingSubText
 Entferne aus:
 # ^FileError
-Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Abbrechen um abzubrechen,\r\nauf Wiederholen um den Schreibvorgang erneut zu versuchen\r\noder auf Ignorieren um diese Datei zu überspringen.
+Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Abbrechen, um abzubrechen,\r\nauf Wiederholen, um den Schreibvorgang erneut zu versuchen\r\noder auf Ignorieren, um diese Datei zu überspringen.
 # ^FileError_NoIgnore
-Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Wiederholen um den Schreibvorgang erneut zu versuchen\r\noder auf Abbrechen um die Installation zu beenden.
+Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie auf Wiederholen, um den Schreibvorgang erneut zu versuchen\r\noder auf Abbrechen, um die Installation zu beenden.
 # ^CantWrite
 "Fehler beim Schreiben: "
 # ^CopyFailed
