@@ -132,6 +132,15 @@ char *NSISCALL addtrailingslash(char *str)
   return *CharPrev(str,str+mystrlen(str));
 }*/
 
+char * NSISCALL findchar(char *str, char c)
+{
+  while (*str && *str != c)
+  {
+    str = CharNext(str);
+  }
+  return str;
+}
+
 void NSISCALL trimslashtoend(char *buf)
 {
   char *p = buf + mystrlen(buf);
@@ -166,12 +175,9 @@ char * NSISCALL skip_root(char *path)
     int x = 2;
     while (x--)
     {
-      while (*p2 != '\\')
-      {
-        if (!*p2)
-          return NULL;
-        p2 = CharNext(p2);
-      }
+      p2 = findchar(p2, '\\');
+      if (!*p2)
+        return NULL;
       p2 = CharNext(p2);
     }
 
@@ -580,28 +586,32 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
 char * NSISCALL validate_filename(char *in) {
   char *nono = "*?|<>/\":";
-  short cur_char = 0;
   char *out;
   char *out_save;
   while (*in == ' ') in = CharNext(in);
-  if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\') {
+  if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\')
+  {
     // at least four bytes
     in += 4;
   }
-  if (*in) {
+  if (*in)
+  {
     // at least two bytes
     if (validpathspec(in)) in += 2;
   }
   out = out_save = in;
-  while (*(char*)&cur_char = *in) {
-    if (cur_char > 31 && !mystrstri(nono, (char*)&cur_char)) {
+  while (*in)
+  {
+    if (*in > 31 && !*findchar(nono, *in))
+    {
       mini_memcpy(out, in, CharNext(in) - in);
       out = CharNext(out);
     }
     in = CharNext(in);
   }
   *out = 0;
-  do {
+  do
+  {
     out = CharPrev(out_save, out);
     if (*out == ' ' || *out == '\\')
       *out = 0;
