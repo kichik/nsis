@@ -54,7 +54,7 @@
   !define MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von $(^Name) abbrechen wollen?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen beim Deinstallations-\r\n\Assistenten für $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Willkommen beim Deinstallations-\r\nAssistenten für $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Deinstallation von $(^NameDA) begleiten.\r\n\r\nBitte beenden Sie $(^NameDA), bevor Sie mit der Deinstallation fortfahren.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Deinstallation von $(^NameDA)"
