@@ -1,4 +1,4 @@
-const char *NSIS_VERSION="v2.0b0";
+const char *NSIS_VERSION="v2.0b1 (CVS)";
 
 /* 
   Nullsoft "SuperPimp" Installation System - makensis.cpp - installer compiler code
