@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1043
 # Translation by Hendri Adriaens & Joost Verburg
@@ -17,6 +17,8 @@ Nullsoft Install System %s
 < V&orige
 &Volgende >
 &Akkoord
+Ik &accepteer de overeenkomst
+Ik accepteer de overeenkomst &niet
 &Installeren
 &Deïnstalleer
 Annuleren
