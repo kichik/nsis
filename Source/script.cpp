@@ -1012,7 +1012,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
         else
         {
-          for (x = 0; x < NSIS_MAX_INST_TYPES && build_header.install_types_ptr[x]; x ++);
+          for (x = 0; x < NSIS_MAX_INST_TYPES && build_header.install_types[x]; x ++);
           if (x==NSIS_MAX_INST_TYPES)
           {
             ERROR_MSG("InstType: no more than %d install types allowed. %d specified\n",NSIS_MAX_INST_TYPES,NSIS_MAX_INST_TYPES+1);
@@ -1020,7 +1020,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
           else
           {
-            build_header.install_types_ptr[x] = add_string_main(line.gettoken_str(1),0);
+            build_header.install_types[x] = add_string_main(line.gettoken_str(1));
             SCRIPT_MSG("InstType: %d=\"%s\"\n",x+1,line.gettoken_str(1));
           }
         }
@@ -2182,10 +2182,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
     case TOK_SECTION:
     {
-      int a=1,ex = 0;
-      if (!strcmpi(line.gettoken_str(1),"/e"))
+      int a=1,unselected = 0;
+      if (!strcmpi(line.gettoken_str(1),"/o"))
       {
-        ex = 1;
+        unselected = 1;
         a++;
       }
       SCRIPT_MSG("Section: \"%s\"",line.gettoken_str(a));
@@ -2199,8 +2199,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
 #endif
 
-    if (line.gettoken_str(a)[0]=='-') return add_section("",curfilename,linecnt,line.gettoken_str(a+1),ex);
-    return add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1),ex);
+      int ret;
+
+      if (line.gettoken_str(a)[0]=='-') ret=add_section("",curfilename,linecnt,line.gettoken_str(a+1));
+      ret=add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1));
+      if (ret != PS_OK) return ret;
+      
+      if (unselected)
+      {
+        use_first_insttype = false;
+        build_cursection->flags &= ~SF_SELECTED;
+      }
+
+      return PS_OK;
     }
     case TOK_SECTIONEND:
       SCRIPT_MSG("SectionEnd\n");
@@ -2502,11 +2513,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETSHELLVARCONTEXT:
+    {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(all_user_var);
-      ent.offsets[1]=line.gettoken_enum(1,"current\0all\0");
-      if (ent.offsets[1]<0) PRINTHELP()
+      int k=line.gettoken_enum(1,"current\0all\0");
+      if (k<0) PRINTHELP()
+      ent.offsets[1]=add_intstring(k);
       SCRIPT_MSG("SetShellVarContext: %s\n",line.gettoken_str(1));
+    }
     return add_entry(&ent);
     case TOK_RET:
       SCRIPT_MSG("Return\n");
@@ -3282,11 +3296,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
+    {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(autoclose);
-      ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
-      if (ent.offsets[1] < 0) PRINTHELP()
+      int k=line.gettoken_enum(1,"false\0true\0");
+      if (k < 0) PRINTHELP()
+      ent.offsets[1]=add_intstring(k);
       SCRIPT_MSG("SetAutoClose: %s\n",line.gettoken_str(1));
+    }
     return add_entry(&ent);
     case TOK_IFERRORS:
       ent.which=EW_IFFLAG;
@@ -3307,13 +3324,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_CLEARERRORS:
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=0;
+      ent.offsets[1]=add_intstring(0);
       SCRIPT_MSG("ClearErrors\n");
     return add_entry(&ent);
     case TOK_SETERRORS:
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(exec_error);
-      ent.offsets[1]=1;
+      ent.offsets[1]=add_intstring(1);
       SCRIPT_MSG("SetErrors\n");
     return add_entry(&ent);
 #ifdef NSIS_SUPPORT_STROPTS
@@ -4050,10 +4067,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETREBOOTFLAG:
+    {
       ent.which=EW_SETFLAG;
       ent.offsets[0]=FLAG_OFFSET(exec_reboot);
-      ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
-      if (ent.offsets[1] < 0) PRINTHELP()
+      int k=line.gettoken_enum(1,"false\0true\0");
+      if (k < 0) PRINTHELP()
+      ent.offsets[1]=add_intstring(k);
+    }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
@@ -4095,7 +4115,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_SET(name_ptr);
       ent.offsets[2]=add_string(line.gettoken_str(2));
-      SCRIPT_MSG("SectionSetText: %s=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("SectionSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
       if (uninstall_mode)
@@ -4135,6 +4155,31 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
+    case TOK_INSTTYPESETTEXT:
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      ent.which=EW_INSTTYPESET;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=1;
+      SCRIPT_MSG("InstTypeSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_INSTTYPEGETTEXT:
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      ent.which=EW_INSTTYPESET;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=line.gettoken_enum(2,usrvars);
+      ent.offsets[2]=0;
+      if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
+      SCRIPT_MSG("InstTypeGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_SECTIONSETINSTTYPES:
       if (uninstall_mode)
       {
@@ -4160,13 +4205,69 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
+    case TOK_SECTIONSETSIZE:
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      ent.which=EW_SECTIONSET;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=SECTION_FIELD_SET(size_kb);
+      ent.offsets[2]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("SectionSetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_SECTIONGETSIZE:
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      ent.which=EW_SECTIONSET;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=SECTION_FIELD_GET(size_kb);
+      ent.offsets[2]=line.gettoken_enum(2,usrvars);
+      if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+      SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_SETCURINSTTYPE:
+    {
+      int ret;
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      SCRIPT_MSG("SetCurInstType: %s\n",line.gettoken_str(1));
+      ret = add_entry_direct(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
+      if (ret != PS_OK) return ret;
+      ret = add_entry_direct(EW_INSTTYPESET, 0, 0, 0, 1);
+      if (ret != PS_OK) return ret;
+    }
+    return PS_OK;
+    case TOK_GETCURINSTTYPE:
+      if (uninstall_mode)
+      {
+        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
+        return PS_ERROR;
+      }
+      ent.which=EW_GETFLAG;
+      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[1]=FLAG_OFFSET(cur_insttype);
+      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
+      SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
+    return add_entry(&ent);
 #else//!NSIS_CONFIG_COMPONENTPAGE
-    case TOK_SECTIONGETTEXT:
     case TOK_SECTIONSETTEXT:
+    case TOK_SECTIONGETTEXT:
     case TOK_SECTIONSETFLAGS:
     case TOK_SECTIONGETFLAGS:
+    case TOK_SECTIONSETSIZE:
+    case TOK_SECTIONGETSIZE:
     case TOK_SECTIONSETINSTTYPES:
     case TOK_SECTIONGETINSTTYPES:
+    case TOK_SETCURINSTTYPE:
+    case TOK_GETCURINSTTYPE:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_CONFIG_COMPONENTPAGE

@@ -47,7 +47,7 @@ int dlg_offset;
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
-#if NSIS_MAX_INST_TYPES >= 31 || NSIS_MAX_INST_TYPES < 1
+#if NSIS_MAX_INST_TYPES > 32 || NSIS_MAX_INST_TYPES < 1
 #error invalid value for NSIS_MAX_INST_TYPES
 #endif
 
@@ -59,25 +59,6 @@ HWND g_progresswnd;
 static char g_tmp[4096];
 
 int num_sections;
-
-// sent to the last child window to tell it that the install thread is done
-#define WM_NOTIFY_INSTPROC_DONE (WM_USER+0x4)
-
-// sent to every child window to tell it it can start executing NSIS code
-#define WM_NOTIFY_START (WM_USER+0x5)
-
-// sent to the outer window to tell it to go to the next inner window
-#define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
-
-// sent to every child window to tell it it is closing soon
-#define WM_NOTIFY_INIGO_MONTOYA (WM_USER+0xb)
-
-// update message used by DirProc and SelProc for space display
-#define WM_IN_UPDATEMSG (WM_USER+0xf)
-
-#define WM_NOTIFY_CUSTOM_READY (WM_USER+0xd)
-
-#define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
 static int m_page=-1,m_retcode,m_delta=1;
 
@@ -112,7 +93,6 @@ section *g_inst_section;
 entry *g_inst_entry;
 
 static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
-static int m_whichcfg;
 
 static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
   return my_SetDialogItemText(dlg,id+1000,LANG_STR(lid));
@@ -967,10 +947,10 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         
         lParam = tvItem.lParam;
       }
-      uMsg = WM_USER+0x19;
+      uMsg = WM_NOTIFY_SELCHANGE;
     }
   }
-  if (uMsg == WM_USER+0x19) {
+  if (uMsg == WM_NOTIFY_SELCHANGE) {
     if (last_item != lParam)
     {
       last_item = lParam;
@@ -988,8 +968,6 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   return CallWindowProc((WNDPROC)oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
-int m_num_insttypes;
-
 static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static HTREEITEM *hTreeItems;
@@ -1002,7 +980,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int doLines=0;
     HTREEITEM Par;
     HBITMAP hBMcheck1;
-    int x, lastGoodX;
+    int x, lastGoodX, i, doCombo=0;
 
     g_SectionHack=hwndDlg;
 
@@ -1011,8 +989,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
     SetUITextFromLang(IDC_INTROTEXT,LANG_COMP_TEXT);
-    SetUITextFromLang(IDC_TEXT1,LANG_COMP_SUBTEXT(0));
-    SetUITextFromLang(IDC_TEXT2,LANG_COMP_SUBTEXT(1));
 
     oldTreeWndProc=SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
 
@@ -1025,20 +1001,33 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     DeleteObject(hBMcheck1);
 
-    if (!g_inst_header->install_types_ptr[0])
+    for (i = 0; i < NSIS_MAX_INST_TYPES; i++)
     {
-      ShowWindow(hwndCombo1,SW_HIDE);
+      if (g_inst_header->install_types[i])
+      {
+        int j;
+        doCombo++;
+        process_string_fromtab(g_tmp,g_inst_header->install_types[i]);
+        j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)ps_tmpbuf);
+        SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
+      }
+    }
+    if (!(inst_flags&CH_FLAGS_NO_CUSTOM))
+    {
+      int j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
+      SendMessage(hwndCombo1,CB_SETITEMDATA,j,NSIS_MAX_INST_TYPES);
+    }
+
+    if (doCombo)
+    {
+      ShowWindow(hwndCombo1,SW_SHOW);
+      SetUITextFromLang(IDC_TEXT1,LANG_COMP_SUBTEXT(0));
+      SetUITextFromLang(IDC_TEXT2,LANG_COMP_SUBTEXT(1));
     }
     else
     {
-      for (m_num_insttypes = 0; m_num_insttypes < NSIS_MAX_INST_TYPES &&
-           g_inst_header->install_types_ptr[m_num_insttypes]; m_num_insttypes ++)
-      {
-        SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetStringFromStringTab(g_inst_header->install_types_ptr[m_num_insttypes]));
-      }
-      if (!(inst_flags&CH_FLAGS_NO_CUSTOM))
-        SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
-      SendMessage(hwndCombo1,CB_SETCURSEL,m_whichcfg,0);
+      SetUITextFromLang(IDC_TEXT1,LANG_COMP_SUBTEXT(2));
+      SetUITextFromLang(IDC_TEXT2,LANG_COMP_SUBTEXT(3));
     }
 
     Par=NULL;
@@ -1046,14 +1035,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     for (lastGoodX = x = 0; x < num_sections; x ++)
     {
       section *sec=g_inst_section+x;
-
-      if (m_num_insttypes && m_whichcfg != m_num_insttypes)
-      {
-        if ((sec->install_types>>m_whichcfg) & 1)
-          sec->flags|=SF_SELECTED;
-        else
-          sec->flags&=~SF_SELECTED;
-      }
 
       if (sec->name_ptr)
       {
@@ -1107,9 +1088,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
 
-    uMsg=WM_IN_UPDATEMSG;
+    uMsg = g_flags.insttype_changed ? WM_NOTIFY_INSTTYPE_CHANGE : WM_IN_UPDATEMSG;
   }
-  if (uMsg == WM_USER+0x17) // update text
+  if (uMsg == WM_NOTIFY_SECTEXT) // update text
   {
     int x=wParam;
     int ns=lParam;
@@ -1123,7 +1104,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       TreeView_SetItem(hwndTree1,&tv);
     }
   }
-  if (uMsg == WM_USER+0x18) // change flags
+  if (uMsg == WM_NOTIFY_SECFLAGS) // change flags
   {
     int flags = g_inst_section[wParam].flags;
     TVITEM tvItem;
@@ -1179,6 +1160,10 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
             lParam = 0;
             uMsg = WM_IN_UPDATEMSG;
+
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
+            ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
           } // not ro
         } // was valid click
       } // was click or hack
@@ -1186,7 +1171,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (lpnmh)
       {
         if (lpnmh->code == TVN_SELCHANGED)
-          SendMessage(hwndTree1, WM_USER+0x19, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
+          SendMessage(hwndTree1, WM_NOTIFY_SELCHANGE, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
         if (lpnmh->code == TVN_ITEMEXPANDED)
         {
           LPNMTREEVIEW pnmtv = (LPNMTREEVIEW) lpnmh;
@@ -1203,50 +1188,59 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
     SendMessage(hwndTree1, WM_MOUSEMOVE, 0, 0);
   }
-  if (uMsg == WM_COMMAND)
+  if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE ||
+     (uMsg == WM_COMMAND && LOWORD(wParam)==IDC_COMBO1 && HIWORD(wParam)==CBN_SELCHANGE))
   {
-    int id=LOWORD(wParam),code=HIWORD(wParam);
-    if (id == IDC_COMBO1 && code==CBN_SELCHANGE)
+    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+    if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE || t != CB_ERR)
     {
-      int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
-      if (t != CB_ERR)
+      int whichcfg=SendMessage(hwndCombo1,CB_GETITEMDATA,t,0);
+      if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE)
       {
-        m_whichcfg=t;
-        if (m_whichcfg != m_num_insttypes) // not custom
-        {
-          int x=num_sections;
-          section *t=g_inst_section;
-          HTREEITEM *ht=hTreeItems;
-          while (x--)
-          {
-            TVITEM tv;
-            int l=1;
-
-            if (t->install_types & (1<<m_whichcfg))
-            {
-              l++;
-              t->flags|=SF_SELECTED;
-            }
-            else t->flags&=~SF_SELECTED;
-
-            if (t->flags&SF_RO) l+=3;
-
-            if (tv.hItem=*ht) {
-              tv.mask=TVIF_STATE;
-              tv.state=INDEXTOSTATEIMAGEMASK(l);
-              tv.stateMask=TVIS_STATEIMAGEMASK;
-
-              TreeView_SetItem(hwndTree1,&tv);
-              SetParentState(hwndTree1,tv.hItem);
-            }
-            t++;
-            ht++;
-          }
-          SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
-        }
-        lParam = 1;
-        uMsg = WM_IN_UPDATEMSG;
+        whichcfg = g_flags.cur_insttype;
+        g_flags.insttype_changed = 0;
       }
+      else lParam = 1;
+
+      if (whichcfg == CB_ERR || !(g_inst_header->install_types[whichcfg]))
+        whichcfg = NSIS_MAX_INST_TYPES;
+
+      if (whichcfg != NSIS_MAX_INST_TYPES) // not custom
+      {
+        int x=num_sections;
+        section *t=g_inst_section;
+        HTREEITEM *ht=hTreeItems;
+        while (x--)
+        {
+          TVITEM tv;
+          int l=1;
+
+          if (t->install_types & (1<<whichcfg))
+          {
+            l++;
+            t->flags|=SF_SELECTED;
+          }
+          else t->flags&=~SF_SELECTED;
+
+          if (t->flags&SF_RO) l+=3;
+
+          if (tv.hItem=*ht) {
+            tv.mask=TVIF_STATE;
+            tv.state=INDEXTOSTATEIMAGEMASK(l);
+            tv.stateMask=TVIS_STATEIMAGEMASK;
+
+            TreeView_SetItem(hwndTree1,&tv);
+            SetParentState(hwndTree1,tv.hItem);
+          }
+          t++;
+          ht++;
+        }
+        SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
+      }
+
+      g_flags.cur_insttype=whichcfg;
+
+      uMsg = WM_IN_UPDATEMSG;
     }
   }
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
@@ -1258,24 +1252,24 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   if (uMsg == WM_IN_UPDATEMSG)
   {
-#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-    ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
     if (inst_flags&CH_FLAGS_COMP_ONLY_ON_CUSTOM)
     {
-      int c=(m_whichcfg == m_num_insttypes && m_num_insttypes)<<3;// SW_SHOWNA=8, SW_HIDE=0
+      int c=(g_flags.cur_insttype == NSIS_MAX_INST_TYPES)<<3;// SW_SHOWNA=8, SW_HIDE=0
       ShowWindow(hwndTree1,c);
       ShowWindow(GetUIItem(IDC_TEXT2),c);
     }
     else if (!lParam)
     {
-      int r,x;
+      int r,x,cbi;
       // check to see which install type we are
-      for (r = 0; r < m_num_insttypes; r ++)
+      for (r = 0, cbi = 0; r < NSIS_MAX_INST_TYPES; r ++)
       {
         HTREEITEM *ht=hTreeItems;
         section *t=g_inst_section;
         x=num_sections;
+
+        if (!g_inst_header->install_types[r]) continue;
+
         while (x--)
         {
           if (*ht && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
@@ -1290,10 +1284,12 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           ht++;
         }
         if (x < 0) break;
+
+        cbi++;
       }
 
-      m_whichcfg=r;
-      SendMessage(hwndCombo1,CB_SETCURSEL,m_whichcfg,0);
+      g_flags.cur_insttype=r;
+      SendMessage(hwndCombo1,CB_SETCURSEL,cbi,0);
     } // end of typecheckshit
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
@@ -1476,7 +1472,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       DWORD pos  = GetMessagePos();
       HMENU menu = CreatePopupMenu();
       AppendMenu(menu,MF_STRING,1,LANG_STR(LANG_COPYDETAILS));
-    	if (1==TrackPopupMenu(
+      if (1==TrackPopupMenu(
         menu,
         TPM_NONOTIFY|TPM_RETURNCMD,
         GET_X_LPARAM(pos),

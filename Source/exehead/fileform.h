@@ -30,8 +30,8 @@
 
 enum
 {
-  EW_INVALID_OPCODE,    // zero is invalid. useful for catching errors. (otherwise an all zeroes instruction does nothing, which is
-                        // easily ignored but means something is wrong.
+  EW_INVALID_OPCODE,    // zero is invalid. useful for catching errors. (otherwise an all zeroes instruction
+                        // does nothing, which is easily ignored but means something is wrong.
   EW_RET,               // return from function call
   EW_NOP,               // Nop/Jump, do nothing: 1, [?new address+1:advance one]
   EW_ABORT,             // Abort: 1 [status]
@@ -39,7 +39,6 @@ enum
   EW_CALL,              // Call: 1 [new address+1]
   EW_UPDATETEXT,        // Update status text: 2 [update str, ui_st_updateflag=?ui_st_updateflag:this]
   EW_SLEEP,             // Sleep: 1 [sleep time in milliseconds]
-  EW_HIDEWINDOW,        // HideWindow: 0
   EW_BRINGTOFRONT,      // BringToFront: 0
   EW_CHDETAILSVIEW,     // SetDetailsView: 2 [listaction,buttonaction]
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
@@ -47,6 +46,7 @@ enum
   EW_IFFILEEXISTS,      // IfFileExists: 3, [file name, jump amount if exists, jump amount if not exists]
   EW_SETFLAG,           // Sets a flag: 2 [id, data]
   EW_IFFLAG,            // If a flag: 4 [on, off, id, new value mask]
+  EW_GETFLAG,           // Gets a flag: 2 [output, id]
 #ifdef NSIS_SUPPORT_RENAME
   EW_RENAME,            // Rename: 3 [old, new, rebootok]
 #endif
@@ -129,7 +129,6 @@ enum
 
 #ifdef NSIS_SUPPORT_REBOOT
   EW_REBOOT,            // Reboot: 0
-  EW_IFREBOOTFLAG,      // IfRebootFlag: 2 [if reboot flag set, if not reboot flag]
 #endif
 
 #ifdef NSIS_SUPPORT_INIFILES
@@ -172,21 +171,13 @@ enum
                         // SectionGetText:    3: [idx, 1, output]
                         // SectionSetFlags:   3: [idx, 2, flags]
                         // SectionGetFlags:   3: [idx, 3, output]
+  EW_INSTTYPESET,       // InstTypeSetFlags:  3: [idx, 0, flags]
+                        // InstTypeGetFlags:  3: [idx, 1, output]
 #endif
 
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
-
-  // Saves 56 bytes, don't ask me how
-  // Hmm... now it doesn't =/
-  /*EW_DUMMY,
-  EW_DUMMY2,
-  EW_DUMMY3,
-  EW_DUMMY4,
-  EW_DUMMY5,*/
-
-  EW_PLUGINCOMMANDPREP,
 };
 
 #define FH_FLAGS_MASK 15
@@ -371,7 +362,7 @@ typedef struct
   int dirsubtext; // directory text2
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int componenttext; // component page text
-  int componentsubtext[2];
+  int componentsubtext[4];
 #endif
 #ifdef NSIS_CONFIG_LICENSEPAGE
   int licensetext; // license page text
@@ -394,7 +385,7 @@ typedef struct
   int install_reg_rootkey, install_reg_key_ptr, install_reg_value_ptr;
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-  int install_types_ptr[NSIS_MAX_INST_TYPES]; // -1 if not used. can describe as lite, normal, full, etc.
+  int install_types[NSIS_MAX_INST_TYPES];
 #endif
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -535,6 +526,8 @@ union installer_flags {
 #ifdef NSIS_SUPPORT_REBOOT
     int exec_reboot;
 #endif
+    int cur_insttype;
+    int insttype_changed;
   };
   int flags[1];
 };
