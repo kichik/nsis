@@ -138,10 +138,27 @@ SectionEnd
 
 Function .onInit
 
-  LangDLL::LangDialog "Installer Language" "Please select a language." "7F" \
-  "English" "${LANG_ENGLISH}" "French" "${LANG_FRENCH}" "German" "${LANG_GERMAN}" \
-  "Dutch" "${LANG_DUTCH}" "Greek" "${LANG_GREEK}" "Simplified Chinese" "${LANG_SIMPCHINESE}" \
-  "Traditional Chinese" "${LANG_TRADCHINESE}" "8" "Tahoma"
+  Push Tahoma
+  Push 8
+
+  Push ${LANG_ENGLISH}
+  Push English
+  Push ${LANG_FRENCH}
+  Push French
+  Push ${LANG_GERMAN}
+  Push German
+  Push ${LANG_DUTCH}
+  Push Dutch
+  Push ${LANG_GREEK}
+  Push Greek
+  Push ${LANG_TRADCHINESE}
+  Push "Traditional Chinese"
+  Push ${LANG_SIMPCHINESE}
+  Push "Simplified Chinese"
+  
+  Push 7F ; 7 is the number of languages, F = change font
+
+  LangDLL::LangDialog "Installer Language" "Please select a language."
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
