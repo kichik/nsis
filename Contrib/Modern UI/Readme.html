@@ -416,11 +416,15 @@ Function FunctionName ;FunctionName defined with Page command
 
 FunctionEnd
 </pre>
+
 <p class="text">To read or write values to the INI Files on runtime, use these macro's:</p>
 <pre class="margin">
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
 </pre>
+<p class="text">If you need the InstallOptions return value (success, back, cancel, error),
+use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The
+return value will be added to the stack, so you can use the Pop command to get it.</p>
 <p class="header"><a name="ReserveFile">Reserve files</a></p>
 <p class="text">If you are using BZIP2 compression, it's important that
 files which are being extracted in the .onInit function or in Page
@@ -540,9 +544,12 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>1.62b - March 2, 2003
+<li>1.62b - March 6, 2003
   <ul>
     <li>New system for custom functions</li>
+    <li>New InstallOptions macro's that do not remove the return value from
+    the stack</li>
+    <li>Support for custom pages before the finish page</li>
     <li>Renamed Start Menu page defines</li>
     <li>'Do not create shortcuts' checkbox can be removed</li>
     <li>RTL support</li>
