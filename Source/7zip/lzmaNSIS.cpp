@@ -140,14 +140,14 @@ int __stdcall lzmaDecompress(CLZMAStateP lzmaState)
   EnterCriticalSection(&lzmaState->cs);
   lzmaState->it_locked = TRUE;
 
+  while (lzmaState->dt_locked)
+    Sleep(0);
+
   if (lzmaState->finished)
   {
     LeaveCriticalSection(&lzmaState->cs);
     return lzmaState->res;
   }
-  
-  while (lzmaState->dt_locked)
-    Sleep(0);
 
   return 0;
 }

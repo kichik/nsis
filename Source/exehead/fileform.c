@@ -244,7 +244,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   data = (void *)my_GlobalAlloc(h.length_of_header);
 
-#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(NSIS_COMPRESS_WHOLE)
+#ifdef NSIS_COMPRESS_WHOLE
   inflateReset(&g_inflate_stream);
 
   {
@@ -336,7 +336,8 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
       int l=min(input_len,IBUFSIZE);
       int err;
 
-      if (!ReadSelfFile((LPVOID)inbuffer,l)) return -3;
+      if (!ReadSelfFile((LPVOID)inbuffer,l))
+        return -3;
 
       g_inflate_stream.next_in = inbuffer;
       g_inflate_stream.avail_in = l;
@@ -345,6 +346,13 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
       for (;;)
       {
         int u;
+
+#ifdef NSIS_COMPRESS_USE_LZMA
+        // lzma decompressor doesn't like to stay dry
+        if (!g_inflate_stream.avail_in && input_len)
+          break;
+#endif
+
         g_inflate_stream.next_out = outbuffer;
         g_inflate_stream.avail_out = (unsigned int)outbuffer_len;
 

@@ -420,7 +420,7 @@ extern void BZ2_hbCreateDecodeTables ( Int32*, Int32*, Int32*, UChar*,
                            Int32,  Int32, Int32 );
 
 
-#define BZ2_bzDecompressInit(s) { (s)->state = BZ_X_BLKHDR_1; }
+#define BZ2_bzDecompressInit(s) { (s)->state = BZ_X_BLKHDR_1; (s)->bsLive = 0; }
 int NSISCALL BZ2_bzDecompress(DState *s);
 
 #endif//EXEHEAD

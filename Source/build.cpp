@@ -729,7 +729,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
   int st = db->getlen();
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  if (!build_compress_whole && build_compress)
+  if (length && !build_compress_whole && build_compress)
   {
     // grow datablock so that there is room to compress into
     int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
@@ -798,7 +798,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
 
         avail_out -= out_len - compressor->GetAvailOut();
       }
-      while (compressor->GetNextOut() - out > 0);
+      while (compressor->GetNextOut() - out > 0 && avail_out > 0);
 
       compressor->End();
 
@@ -818,6 +818,8 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
         else st = nst;
       }
     }
+    else
+      compressor->End();
   }
 #endif // NSIS_CONFIG_COMPRESSION_SUPPORT
 
