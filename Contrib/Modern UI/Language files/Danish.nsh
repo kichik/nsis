@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Tryk næste for at fortsætte."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Klik installer for at installere."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Velkommen til ${MUI_PRODUCT} setup guide"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Dette vil installere ${MUI_PRODUCT} på din computer.\r\n\r\ndet foretrækkes at du lukker alle kørende programmer inden start af guiden . Dette vil tillade guiden at opdatere bestemte systemfiler uden genstart af dit system.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til ${MUI_PRODUCT} setup guide"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Dette vil installere ${MUI_PRODUCT} på din computer.\r\n\r\ndet foretrækkes at du lukker alle kørende programmer inden start af guiden . Dette vil tillade guiden at opdatere bestemte systemfiler uden genstart af dit system.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licens Aftale"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Læs venligst licens reglerne før du installerer ${MUI_PRODUCT}."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Setup-guiden blev afsluttet med success."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Færdig"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Færdig"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} er blevet installeret på din computer.\r\nklik færdig for at lukke denne guide."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} er blevet installeret på din computer.\r\n\r\nKlik færdig for at lukke denne guide."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Dit system skal genstartes før installeringen af ${MUI_PRODUCT} er færdig. Vil du genstarte nu?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Genstart"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Jeg genstarter selv på andet tidspunkt"

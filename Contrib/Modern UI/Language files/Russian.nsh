@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Нажмите Далее для продолжения."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Нажмите Установить для начала инсталяции."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Добро пожаловать в ${MUI_PRODUCT} Мастер Установки"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Эта программа установит ${MUI_PRODUCT} на Ваш компьютер.\r\n\r\nРекомендовано закрыть все остальные приложения перед началом установки. Это позволит програме Установки обновить системные файлы без перезагрузки.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Добро пожаловать в ${MUI_PRODUCT} Мастер Установки"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Эта программа установит ${MUI_PRODUCT} на Ваш компьютер.\r\n\r\nРекомендовано закрыть все остальные приложения перед началом установки. Это позволит програме Установки обновить системные файлы без перезагрузки.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лицензионное Соглашение"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Просмотрите условия Соглашения перед инсталяцией ${MUI_PRODUCT}."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Установка успешно завершена."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Завершена"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Закрыть"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} был установлен на вашу систему.\r\nНажмите Закрыть чтобы завершить данный Мастер Установки."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} был установлен на вашу систему.\r\nНажмите Закрыть чтобы завершить данный Мастер Установки."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Ваша система должна быть перезапущена с целью завершения инсталяции ${MUI_PRODUCT}. Вы хотите перезагрузиться сейчас?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Перезагрузиться сейчас"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Я хочу перезагрузиться вручную позже"

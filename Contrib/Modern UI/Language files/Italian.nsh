@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Seleziona Seguente per continuare." 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Seleziona Installa per iniziare l'installazione."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Benvenuto nel progamma di installazione di ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Questo programma installerà ${MUI_PRODUCT} nel vostro computer.\r\n\r\nSi raccomanda di chiudere la vostre applicazioni, prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i parametri di sistema senza dover riavviare il vostro computer.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Benvenuto nel progamma di installazione di ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Questo programma installerà ${MUI_PRODUCT} nel vostro computer.\r\n\r\nSi raccomanda di chiudere la vostre applicazioni, prima di iniziare l'installazione. Questo permetterà al programma di installazione di aggiornare i parametri di sistema senza dover riavviare il vostro computer.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenza d'uso"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Per favore esamina i termini della licenza d'uso prima di installare ${MUI_PRODUCT}."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "L'installazione è stata completata con successo."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " : Installazione completata"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Fine"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} è stato installato sul vostro computer.\r\nSelezionate Fine per chiudere il programma di installazione."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} è stato installato sul vostro computer.\r\n\r\nSelezionate Fine per chiudere il programma di installazione."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Il vostro computer deve essere riavviato per completare l'installazione di ${MUI_PRODUCT}. Desiderate riavviarlo ora ?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Riavvio immediato"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Preferisco riavviarlo più tardi"
