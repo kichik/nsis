@@ -1,8 +1,6 @@
 #include "config.h"
 #include "lang.h"
 
-void NSISCALL recursive_create_directory(char *directory);
-
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 char * NSISCALL process_string(char *out, const char *in);
 char * NSISCALL process_string_fromtab(char *out, int offs);
@@ -45,7 +43,6 @@ void * NSISCALL my_GlobalAlloc(DWORD dwBytes);
 void NSISCALL doRMDir(char *buf, int recurse);
 
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd);
-int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey);
 int NSISCALL validpathspec(char *ubuf);
 char * NSISCALL addtrailingslash(char *str);
 char NSISCALL lastchar(const char *str);
