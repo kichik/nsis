@@ -62,7 +62,7 @@ SectionEnd
 
 Function .onInit
 	Push "Installer Language" ; caption
-	Push "Please select the language of the isntaller" ; text
+	Push "Please select the language of the installer" ; text
 	Push English
 	Push 1033
 	Push Dutch
