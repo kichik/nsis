@@ -26,9 +26,10 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
           int rv,gv,bv;
 		      RECT rect;
 		      HBRUSH brush;
-          rv = (GetRValue(m_color2) * y + GetRValue(m_color1) * (r.bottom - y)) / r.bottom;
-          gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * (r.bottom - y)) / r.bottom;
-          bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * (r.bottom - y)) / r.bottom;
+          int ry=r.bottom-y;
+          rv = (GetRValue(m_color2) * y + GetRValue(m_color1) * ry) / r.bottom;
+          gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * ry) / r.bottom;
+          bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * ry) / r.bottom;
 		      brush = CreateSolidBrush(RGB(rv,gv,bv));
 		      SetRect(&rect, r.left, y, r.right, y+4);
 		      // note that we don't need to do "SelectObject(hdc, brush)"
