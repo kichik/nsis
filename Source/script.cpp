@@ -556,33 +556,60 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           -1,
           -1,
+          -1,
 #endif
           0
         };
 
-        if (line.getnumtokens()>2) {
+#ifndef NSIS_SUPPORT_CODECALLBACKS
+        if (!k) {
+          ERROR_MSG("Error: custom page specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n");
+          return PS_ERROR;
+        }
+#endif//!NSIS_SUPPORT_CODECALLBACKS
+
+        if (k) {
+          // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          if (*line.gettoken_str(2))
-            p.prefunc = ns_func.add(line.gettoken_str(2),0);
-          if (line.getnumtokens()>3) {
-            if (k) {
+          switch (line.getnumtokens()) {
+            case 6:
+              lstrcpy(build_last_page_define, line.gettoken_str(5));
+          	case 5:
+              if (*line.gettoken_str(4))
+                p.leavefunc = ns_func.add(line.gettoken_str(4),0);
+            case 4:
               if (*line.gettoken_str(3))
-                p.postfunc = ns_func.add(line.gettoken_str(3),0);
-            }
-            else
-              p.caption = add_string_main(line.gettoken_str(3),0);
-            if (line.getnumtokens()>4)
-              lstrcpy(build_last_page_define, line.gettoken_str(4));
+                p.showfunc = ns_func.add(line.gettoken_str(3),0);
+            case 3:
+              if (*line.gettoken_str(2))
+                p.prefunc = ns_func.add(line.gettoken_str(2),0);
           }
 #else
-          ERROR_MSG("Error: Page callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
-          return PS_ERROR;
-#endif
+          if (line.getnumtokens() == 3)
+            lstrcpy(build_last_page_define, line.gettoken_str(2));
+#endif//NSIS_SUPPORT_CODECALLBACKS
         }
-        else if (k==0) {
-          ERROR_MSG("\nError: custom page must have a creator function!\n");
-          PRINTHELP();
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+        else {
+          // a custom page
+          switch (line.getnumtokens()) {
+            case 6:
+              ERROR_MSG("Error: custom page can not have more than the creator function.\n");
+              return PS_ERROR;
+            case 5:
+              lstrcpy(build_last_page_define, line.gettoken_str(4));
+            case 4:
+              p.caption = add_string_main(line.gettoken_str(3));
+            case 3:
+              if (*line.gettoken_str(2))
+                p.prefunc = ns_func.add(line.gettoken_str(2),0);
+              break;
+            case 2:
+              ERROR_MSG("\nError: custom page must have a creator function!\n");
+              PRINTHELP();
+          }
         }
+#endif//NSIS_SUPPORT_CODECALLBACKS
 
         switch (k) {
         	case 0:
@@ -602,6 +629,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_COMPONENTPAGE
             p.id = NSIS_PAGE_SELCOM;
             p.caption = LANG_SUBCAPTION(1);
+            comppage_used++;
             break;
 #else
             ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n", line.gettoken_str(1));
@@ -623,8 +651,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (p.prefunc>=0)
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.postfunc>=0 && k)
-          SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+        if (p.showfunc>=0 && k)
+          SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
+        if (p.leavefunc>=0 && k)
+          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(3));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
@@ -636,7 +666,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           p.id=NSIS_PAGE_COMPLETED;
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           p.prefunc = -1;
-          p.postfunc = -1;
+          p.showfunc = -1;
+          p.leavefunc = -1;
 #endif
           p.caption = LANG_SUBCAPTION(4);
           build_pages.add(&p,sizeof(page));
@@ -655,45 +686,80 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           -1,
           -1,
+          -1,
 #endif
           0
         };
 
-        if (line.getnumtokens()>2) {
+#ifndef NSIS_SUPPORT_CODECALLBACKS
+        if (!k) {
+          ERROR_MSG("Error: custom page specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n");
+          return PS_ERROR;
+        }
+#endif//!NSIS_SUPPORT_CODECALLBACKS
+
+        if (k) {
+          // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          if (*line.gettoken_str(2)) {
-            if (*line.gettoken_str(2)) {
-              if (strnicmp(line.gettoken_str(2),"un.",3)) {
-                ERROR_MSG("\nError: function must have a un. prefix!\n");
-                return PS_ERROR;
-              }
-              p.prefunc = ns_func.add(line.gettoken_str(2),0);
-            }
-          }
-          if (line.getnumtokens()>3) {
-            if (k) {
-              if (*line.gettoken_str(3)) {
-                if (strnicmp(line.gettoken_str(3),"un.",3)) {
-                  ERROR_MSG("\nError: function must have a un. prefix!\n");
+          switch (line.getnumtokens()) {
+            case 6:
+              lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
+          	case 5:
+              if (*line.gettoken_str(4)) {
+                if (strnicmp(line.gettoken_str(4),"un.",3)) {
+                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
                   return PS_ERROR;
                 }
-                p.postfunc = ns_func.add(line.gettoken_str(3),0);
+                p.leavefunc = ns_func.add(line.gettoken_str(4),0);
               }
-            }
-            else
-              p.caption = add_string_uninst(line.gettoken_str(3),0);
-            if (line.getnumtokens()>4)
-              lstrcpy(ubuild_last_page_define, line.gettoken_str(4));
+            case 4:
+              if (*line.gettoken_str(3)) {
+                if (strnicmp(line.gettoken_str(3),"un.",3)) {
+                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
+                  return PS_ERROR;
+                }
+                p.showfunc = ns_func.add(line.gettoken_str(3),0);
+              }
+            case 3:
+              if (*line.gettoken_str(2)) {
+                if (strnicmp(line.gettoken_str(2),"un.",3)) {
+                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
+                  return PS_ERROR;
+                }
+                p.prefunc = ns_func.add(line.gettoken_str(2),0);
+              }
           }
 #else
-          ERROR_MSG("Error: UninstPage callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
-          return PS_ERROR;
-#endif
+          if (line.getnumtokens() == 3)
+            lstrcpy(ubuild_last_page_define, line.gettoken_str(2));
+#endif//NSIS_SUPPORT_CODECALLBACKS
         }
-        else if (k==0) {
-          ERROR_MSG("\nError: custom page must have a creator function!\n");
-          PRINTHELP();
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+        else {
+          // a custom page
+          switch (line.getnumtokens()) {
+            case 6:
+              ERROR_MSG("Error: custom page can not have more than the creator function.\n");
+              return PS_ERROR;
+            case 5:
+              lstrcpy(ubuild_last_page_define, line.gettoken_str(4));
+            case 4:
+              p.caption = add_string_uninst(line.gettoken_str(3));
+            case 3:
+              if (*line.gettoken_str(2)) {
+                if (strnicmp(line.gettoken_str(2),"un.",3)) {
+                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
+                  return PS_ERROR;
+                }
+                p.prefunc = ns_func.add(line.gettoken_str(2),0);
+              }
+              break;
+            case 2:
+              ERROR_MSG("\nError: custom page must have a creator function!\n");
+              PRINTHELP();
+          }
         }
+#endif//NSIS_SUPPORT_CODECALLBACKS
 
         switch (k) {
         	case 0:
@@ -716,8 +782,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (p.prefunc>=0)
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.postfunc>=0 && k)
-          SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+        if (p.showfunc>=0 && k)
+          SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
+        if (p.showfunc>=0 && k)
+          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
@@ -729,7 +797,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           p.id=NSIS_PAGE_COMPLETED;
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           p.prefunc=-1;
-          p.postfunc=-1;
+          p.showfunc=-1;
+          p.leavefunc=-1;
 #endif
           p.caption=LANG_SUBCAPTION(2);
           ubuild_pages.add(&p,sizeof(page));
