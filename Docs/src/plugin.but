@@ -27,3 +27,5 @@ InstallOptions needs the name of it's ini file as a parameter to the dialog func
 CallInstDLL has an option not to unload the DLL after usage. To use it with the newer plugin command syntax just specify the first parameter as /NOUNLOAD. For example:
 
 \c InstallOptions::dialog /NOUNLOAD "ini_file_location.ini"
+
+You can also use SetPluginUnload alawysoff (See \k{setpluginunload}) to avoid writing /NOUNLOAD each and every time you use the same plugin. Please note that the last call to the plugin must not have the /NOUNLOAD flag or the plugin will not be deleted from $PLUGINSDIR, thus keeping garbage on the user's machine.
