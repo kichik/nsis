@@ -1172,14 +1172,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (hKey)
           {
             char *buf3=GetStringFromParm(0x33);
-            log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf2,buf3);
             res = RegDeleteValue(hKey,buf3);
+            log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf2,buf3);
             RegCloseKey(hKey);
           }
         }
         else
         {
-          log_printf3("DeleteRegKey: %d\\%s",rootkey,buf2);
+          char *buf2=GetStringFromParm(0x22);
+          log_printf3("DeleteRegKey: %d\\%s",parm1,buf2);
           res = myRegDeleteKeyEx((HKEY)parm1,buf2,parm4&2);
         }
         if (res != ERROR_SUCCESS)
