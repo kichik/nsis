@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Choose Components"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Choose which features of $(^NameDA) you want to install."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Description"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Position your mouse over a component to see its description."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Position your mouse over a component to see its description."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Select a component to see its description."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Choose Install Location"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Choose the folder in which to install $(^NameDA)."
