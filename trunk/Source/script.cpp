@@ -2356,7 +2356,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int size_kb=line.gettoken_int(a+2,&s);
         if (!s && line.gettoken_str(a+2)[0]) PRINTHELP()
         section_add_size_kb(size_kb);
-        SCRIPT_MSG("CopyFiles: %s\"%s\" -> \"%s\", size=%iKB\n",ent.offsets[2]?"(silent) ":"", line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
+        SCRIPT_MSG("CopyFiles: %s\"%s\" -> \"%s\", size=%iKB\n",ent.offsets[2]&FOF_SILENT?"(silent) ":"", line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_COPYFILES
