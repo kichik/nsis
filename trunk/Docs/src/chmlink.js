@@ -1,4 +1,17 @@
-function parser(fn) {
+function FolderExists(fn)
+{
+   var fso = new ActiveXObject("Scripting.FileSystemObject");
+   return fso.FolderExists(fn);
+}
+
+function FileExists(fn)
+{
+  var fso = new ActiveXObject("Scripting.FileSystemObject");
+  return fso.FileExists(fn);
+}
+
+function parser(fn)
+{
   var X, Y, sl, a, ra, link;
   ra = /:/;
   a = location.href.search(ra);
@@ -8,28 +21,31 @@ function parser(fn) {
     X = 7;
   sl = "\\";
   Y = location.href.lastIndexOf(sl) + 1;
-  fso = new ActiveXObject("Scripting.FileSystemObject");
   lfn = location.href.substring(X, Y) + fn;
   re = /%20/g;
   lfn = lfn.replace(re, " ");
   re = /\//g;
   lfn = lfn.replace(re, "\\");
-  if (fso.FolderExists(lfn))
+  var objShell = new ActiveXObject("Shell.Application");
+  if (FolderExists(lfn))
   {
-    var objShell = new ActiveXObject("Shell.Application");      
     objShell.Open(lfn);
   }
-  else if (fso.FileExists(lfn))
+  else if (FileExists(lfn))
   {
     htmlre = /\.html?$/;
     txtre = /\.txt$/;
-    if (lfn.match(htmlre) || lfn.match(txtre))
+    if (!("ShellExecute" in objShell) || lfn.match(htmlre) || lfn.match(txtre))
     {
       re = /\\/g;
       lfn = lfn.replace(re, "/");
       re = /\ /g;
       lfn = lfn.replace(re, "%20");
       location.href = 'file:///' + lfn;
+    }
+    else
+    {
+      objShell.ShellExecute(lfn, "", "", "open", 1);
     }
   }
   else if (fn.substring(0, 3) == "../")
@@ -38,7 +54,6 @@ function parser(fn) {
   }
   else
   {
-    alert(fn.substring(0, 3));
     alert(fn + " doesn't exist");
   }
 }
