@@ -131,17 +131,19 @@ Function systemMessageBox
      StrCpy $1 $2
      IntCmp $1 0 0 smbnext smbnext
 
+	 ; Get module handle
+	 System::Call '${sysGetModuleHandle}($2) .r1'
+	 IntCmp $1 0 loadlib libnotloaded libnotloaded
+
+loadlib:
      ; Load module and get handle
      System::Call '${sysLoadLibrary}($2) .r1'
      IntCmp $1 0 0 smbnext smbnext
 
-     ; Get module handle. This may look stupid (to call GetModuleHandle in case
-     ; when the LoadLibrary doesn't works, but LoadLibrary couldn't return 
-     ; a handle to starting process (for 'i 0').
-     System::Call '${sysGetModuleHandle}($2) .r1'
+libnotloaded:
+	 ; Indicate that LoadLibrary wasn't used
+	 StrCpy $2 1
 
-     ; Indicate that LoadLibrary wasn't used
-     StrCpy $2 1
 smbnext:
      ; Create MSGBOXPARAMS structure
      System::Call '*${stMSGBOXPARAMS}(, $HWNDPARENT, r1, r3, r4, "$5|${MB_USERICON}", $6, _) .r0'
