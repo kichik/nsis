@@ -1,0 +1,190 @@
+\A{history} Release History
+
+\e{v2.0a8}
+
+\b CTRL-C in Detail View now copies contents to clipboard
+
+\e{v2.0a7}
+
+\b Can now select the language from .onInit ($LANGUAGE is a variable)
+
+\b Added CreateFont
+
+\b Added .onMouseOverSection
+
+\b Added .onInitDialog and un.onInitDialog
+
+\b Added SetStaticBkColor
+
+\b Disabled UseOuterUIItem
+
+\b SendMessage WM_SETTEXT treats lParam as a string and not a number
+
+\b CopyFiles script message no longer always prints (silent)
+
+\b Custom install type text can now be changed
+
+\b ChangeUI can now change IDD_VERIFY
+
+\b Default license color now fits the user system
+
+\b Summary reports the right number of required sections
+
+\b Checkbox is only required in IDD_DIR if logging is enabled
+
+\b Not using /LANG now really causes the script compiler to use the last used language
+
+\b Fixed a bug with MBCS and the uninstaller text
+
+\b MBCS to Unicode and Unicode to MBCS conversion bugs fixed
+
+\b Fixed a bug that caused RTF not to show on Windows 9x
+
+\b Added a dialog that shows up if compress whole is used and initial uncompressing lasts longer than a second
+
+\b Updated to InstallOptions 1.3
+
+\b MakeNSISw 1.7 included
+
+\b Added modern UI by Joost Verburg (Examples\\Modern UI)
+
+\b Added new full color icons by adni18
+
+\b Added Dutch, Korean, Russian, Swedish and Tradional Chinese language files
+
+\b Updated Spanish language file version (thanks to LsMoNKi)
+
+\b Added /TRIM(LEFT|RIGHT|CENTER) for BrandingText
+
+\b EXE header size down to 36.5KB
+
+\b Added yi-pixel.ico and yi-pixel-uninstall.ico by Jan T. Sott
+
+\b Fixed a bug with macros at the end of the file
+
+\b Sub-sections can now have defined names too
+
+\b Added LangDLL.dll plugin
+
+\b CallInstDLL /NOUNLOAD added (works on plugin calls too)
+
+\e{v2.0a6}
+
+\b Fixed two bugs with the plug-in mechanism
+
+\b Fixed infinite loop bug
+
+\e{v2.0a5}
+
+\b Added UseOuterUIItem
+
+\b Enhanced ChangeUI
+
+\b Enhanced SetDlgItemText
+
+\b Added one-section.nsi example file
+
+\b Optimized Ximon's code for plug-in DLLs (back to 37KB)
+
+\b If default user language doesn't fit exactly, will try to find primary language match
+
+\b Fixed some strings that got replaced (space available and required etc.)
+
+\b Compiles without MS Platform SDK
+
+\b Included Spanish.nlf
+
+\b Included MagicLime.exe by snowchyld
+
+\e{v2.0a4}
+
+\b Added automatic detection, packing, unpacking and deletion of plugin dlls
+
+\b Added simplified calling syntax for plugin dlls
+
+\b Added PluginDir
+
+\e{v2.0a3}
+
+\b Added LoadLanguageFile
+
+\b Added $LANGUAGE
+
+\b Added /LANG option to string setters (Name, Caption, etc.)
+
+\b 'LogSet on' now builds a log file if not already created
+
+\e{v2.0a2}
+
+\b Added NSISDIR
+
+\b Added XPStyle
+
+\b Added SetFont
+
+\b Added ChangeUI
+
+\b Added AddBrandingImage, and SetBrandingImage
+
+\b Added SetCompressor (no more makensis-bz2.exe)
+
+\b Added LicenseBkColor
+
+\b 'SpaceTexts none' now causes no space texts to appear
+
+\b Icon and UninstallIcon now support icons of any type
+
+\b CheckBitmap now support bitmaps with any color table/depth
+
+\b Unused resources are removed before wrinting out the installer
+
+\b Documented !error and !warning
+
+\b Added !echo and !verbose
+
+\b Added force option for CRCCheck
+
+\b Updated to Makensisw 1.6
+
+\b Updated to InstallOptions 1.2
+
+\b Installer can now be compressed using UPX
+
+\b A hint is shown if a line is longer than the detail window
+
+\b Modern style folder select dialog
+
+\b License data can now be RTF
+
+\b WindowIcon is now handled in the compiler
+
+\b Removed debug version (it never worked anyway)
+
+\b Faster compile time (WIN32_LEAN_AND_MEAN)
+
+\e{v2.0a1}
+
+\b Added expand node option to Section and SubSection
+
+\b Added preserv file attribute option to File command
+
+\b Copy-All bug fix in Makensisw
+
+\b Added NSISDIR to the define list
+
+\b Reorganized NSIS directory structure
+
+\e{v2.0a0}
+
+\b TreeView component list (care of Jeff Doozan)
+
+\b No more SectionDivider, but SubSection and SubSectionEnd.
+
+\b No more EnabledBitmap/DisabledBitmap, just CheckBitmap. (with tons of button states)
+
+\b Bugfixes of brokenness.
+
+\b Added ! for Section/SubSection to make bold.
+
+\b Made config.h have hacks for easier building for me. :)
+
