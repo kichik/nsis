@@ -156,13 +156,15 @@ will also help you to learn more about the Modern UI.</p>
 <pre class="margin">
 !define MUI_STARTMENUPAGE_NODISABLE ;No value
 !define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
-!define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple parameters
-!define MUI_LICENSEPAGE_TEXT "$\"Text$\" $\"Buttontext$\"" ;Multiple texts
+!define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple settings
+!define MUI_LICENSEPAGE_TEXT '"Text"' ;Text
+!define MUI_LICENSEPAGE_TEXT '"Text" "Buttontext"' ;Multiple texts
 </pre>
   <p class="text">If you want a certain value (i.e. a text) to be language-specific, set a language string and define
   $(LANGUAGESTRINGNAME) as value.</p>
-  <p class="text">When adding a double quote (&quot;) to a Modern UI string, you should always  escape it ($\&quot;),
-  because the Modern UI macros use &quot; to separate parameters.</p>
+  <p class="text">When adding &quot; to a Modern UI string, you should always escape it ($\&quot;),
+  because the Modern UI macros use &quot; to separate parameters. If you want to set texts like above you have to
+  escape both &quot; and ' (using $\&quot; and $\').</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
     <p class="text">MUI.nsh is in the Include directory, so you don't have
@@ -223,7 +225,7 @@ will also help you to learn more about the Modern UI.</p>
   <p class="sub2header">License Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_LICENSEPAGE_TEXT </span><span class="parameter">text [buttontext]</span><br />
-  Texts to display on the inner dialog of the license page. Put quotes around the different texts ($\").</p>
+  Texts to display on the inner dialog of the license page. See syntax information about setting multiple texts.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_TEXT_TOP </span><span class="parameter">text</span><br />
   Text to display on the top of the inner dialog of the license page.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_CHECKBOX</span><br />
@@ -235,12 +237,12 @@ will also help you to learn more about the Modern UI.</p>
   <p class="sub2header">Components Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_TEXT </span><span class="parameter">text [subtext] [subtext2]</span><br />
-  Texts to display on the inner dialog of the components page. Put quotes around the different texts ($\").</p>
+  Texts to display on the inner dialog of the components page. See syntax information about setting multiple texts.</p>
   </div>
   <p class="sub2header">Directory Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_DIRECTORYPAGE_TEXT </span><span class="parameter">text [subtext]</span><br />
-  Texts to display on the inner dialog of the directory page. Put quotes around the different texts ($\").</p>
+  Texts to display on the inner dialog of the directory page. See syntax information about setting multiple texts.</p>
   <p class="text"><span class="bold">MUI_DIRECTORYPAGE_VARIABLE </span><span class="parameter">variable</span><br />
   Variable in which to store the selected folder<br />
   <i>Default: $INSTDIR</i></p>
@@ -425,6 +427,7 @@ will also help you to learn more about the Modern UI.</p>
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
+  <p class="text">You only have to escape &quot; (using $\&quot;).</p>
   <p class="text"><span class="bold">Note: </span>When using different product name (MUI_PRODUCT)
   for different languges, !undef MUI_PRODUCT after inserting a language file (or use a language
   string).</p>
