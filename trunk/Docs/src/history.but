@@ -56,6 +56,8 @@
 
 \b Fixed \R{FileRead}{FileRead} setting the error flag when a null character is the first character it reads
 
+\b Fixed a bug which caused the background gradient to paint slowly
+
 \b \R{file}{File} paths relative to the root folder work again
 
 \b Added \L{../Include/Colors.nsh}{Colors.nsh}
