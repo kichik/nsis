@@ -16,6 +16,12 @@ Creates a font and puts its handle into user_var. For more information about the
 
 Adds the string "user_message" to the details view of the installer.
 
+\S2{enablewindow} EnableWindow
+
+\c hwnd (1|0)
+
+Enables or disables mouse and keyboard input to the specified window or control. Possible states are 0 (disabled) or 1 (enabled).
+
 \S2{findwindow} FindWindow
 
 \c user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]

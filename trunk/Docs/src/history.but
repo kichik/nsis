@@ -3,15 +3,19 @@
 
 \e{v2.0b4}
 
+\b User variables ($VARNAME) that can be declared with the \R{var}{Var} command
+
 \b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Easier page macro system, language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed
 
-\b \W{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
+\b \W{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.2}: Added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
 
 \b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
 
 \b \W{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, toolbar, more
+
+\b NLF language files (v5): More strings translatable (K/M/G Byte, registering, unregistering), language specific fonts
 
 \b /o Switch for \R{ssection}{Section} provides ability to unselect the section by default
 
@@ -39,7 +43,7 @@
 
 \b Improved \R{aaddbrandingimage}{AddBrandingImage}: Doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value 
 
-\b NLF language files (v5): More strings translatable (K/M/G Byte, registering, unregistering), language specific fonts
+\b Added base_dir for \R{gettempfilename}{GetTempFileName}
 
 \b Fixed a problem regarding borders in Plug-ins BgImage and InstallOptions
 
@@ -49,8 +53,8 @@
 
 \\<b\\>Notes:\\</b\\>
 
-\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Because of the new page macro's, you have to make some small changes to your scripts, see the Modern UI Readme for details \\<br\\>
-\R{page}{Custom Pages} now have a leave function. As this parameter is before the caption you have to add another "" empty string for the title to work. \\<br\\>
+\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Because of the new page macro's and changed define and variable names, you have to make some small changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
+\R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work. \\<br\\>
 \R{onselchange}{.onSelChange} is no longer called when the components page is created
 
 

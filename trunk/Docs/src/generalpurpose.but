@@ -69,9 +69,9 @@ Assign to the user variable $x, the full path of the file specified. If the path
 
 \S2{gettempfilename} GetTempFileName
 
-\c user_var(output)
+\c user_var(output) base_dir
 
-Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. Delete the file when done with it.
+Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. If to want the temporary file to be created in another directory than the Windows temp direcory, specify a base_dir. Delete the file when done with it.
 
 \S2{searchpath} SearchPath
 

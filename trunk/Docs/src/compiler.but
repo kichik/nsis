@@ -63,3 +63,27 @@ This command will issue a warning to the script compiler. You can also add a mes
 \c level
 
 This command will set the level of verbosity. 4=all, 3=no script, 2=no info, 1=no warnings, 0=none
+
+\S0{comppredefines} Predefines
+
+You can use these standard predefines to automatically add the build time to the title of development versions, add the date to the version number, etc.
+
+\S1{prefile} $\{__FILE__\}
+
+Current script name.
+
+\S1{preline} $\{__LINE__\}
+
+Current line number.
+
+\S1{predate} $\{__DATE__\}
+
+Date date according to the current locale.
+
+\S1{pretime} $\{__TIME__\}
+
+Time according to the current locale.
+
+\S1{pretimestamp} $\{__TIMESTAMP__\}
+
+Date & time according to the current locale.
