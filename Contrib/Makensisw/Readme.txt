@@ -129,6 +129,10 @@ Version History
  - Editbox not limited to 32k (now using richedit control)
  - Made the log window font-size smaller.
 
+1.7
+ - Added check for warnings
+ - Added sound for sucessfull compilations
+
 
 Copyright Information
 ---------------------
