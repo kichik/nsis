@@ -1379,12 +1379,14 @@ void NSISCALL update_status_text(int strtab, const char *text)
       {
         new_item.iItem--;
         ListView_SetItem(linsthwnd, &new_item);
-        tmp[tmplen]=0;
       }
       else
         ListView_InsertItem(linsthwnd, &new_item);
       ListView_EnsureVisible(linsthwnd, new_item.iItem, 0);
     }
+
+    if (ui_st_updateflag & 1)
+      tmp[tmplen]=0;
   }
 }
 
