@@ -4359,7 +4359,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode, int *data_handle)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode, int *data_handle, int rec_depth)
 {
   char dir[1024];
   char newfn[1024];
@@ -4530,9 +4530,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
   if (recurse)
   {
-    static int counter;
-    int thiscounter=counter++;
-
     int a=GetFileAttributes(lgss);
     const char *fspec=lgss+strlen(dir)+!!dir[0];
     strcpy(newfn,lgss);
@@ -4544,7 +4541,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     else
     {
       // we don't want to include a whole directory if it's not the first call
-      if (thiscounter) return PS_OK;
+      if (rec_depth) return PS_OK;
       fspec="*.*";
     }
     if (a&FILE_ATTRIBUTE_DIRECTORY)
@@ -4624,7 +4621,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                   }
                 }
               }
-              a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode);
+              a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode,data_handle,rec_depth+1);
               if (a != PS_OK)
               {
                 FindClose(h);
@@ -4638,7 +4635,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         } while (FindNextFile(h,&d));
         FindClose(h);
 
-        if (!thiscounter)
+        if (!rec_depth)
         {
           entry ent={0,};
           ent.which=EW_CREATEDIR;
