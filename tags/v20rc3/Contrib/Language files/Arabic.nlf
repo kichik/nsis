@@ -1,0 +1,190 @@
+# Header, don't edit
+NLF v6
+# Language ID
+1025
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+RTL
+# Translation by asdfuae@msn.com
+# ^Branding
+äÙÇã ÇáÊäÕíÈ äáÓæİÊ %s
+# ^SetupCaption
+ÊäÕíÈ $(^Name)
+# ^UninstallCaption
+ãÒíá $(^Name)
+# ^LicenseSubCaption
+ÇÊİÇŞíÉş ÇáÊÑÎíÕ :
+# ^ComponentsSubCaption
+ÎíÇÑÇÊ ÇáÊäÕíÈ :
+# ^DirSubCaption
+ãÌáÏ ÇáÊäÕíÈ :
+# ^InstallingSubCaption
+íäÕÈ :
+# ^CompletedSubCaption
+Êã ÈÍãÏ Çááå :
+# ^UnComponentsSubCaption
+ÎíÇÑÇÊ ÇáÅÒÇáÉ :
+# ^UnDirSubCaption
+ãÌáÏ ÇáÅÒÇáÉ :
+# ^ConfirmSubCaption
+ÊÃßíÏ :
+# ^UninstallingSubCaption
+ÅÒÇáÉ :
+# ^UnCompletedSubCaption
+ÇáÍãÏááå Êã ÈäÌÇÍ :
+# ^BackBtn
+< &ÇáÓÇÈŞ
+# ^NextBtn
+&ÇáÊÇáí >
+# ^AgreeBtn
+ãæÇİŞ&
+# ^AcceptBtn
+ÇäÇ &ÃæÇİŞ Úáì ÔÑæØ ÇÊİÇŞíÉ ÇáÊÑÎíÕ
+# ^DontAcceptBtn
+ÇäÇ &áÇ ÃæÇİŞ Úáì ÔÑæØ ÇÊİÇŞíÉ ÇáÊÑÎíÕ
+# ^InstallBtn
+&ÊäÕíÈ
+# ^UninstallBtn
+&ÅÒÇáÉ
+# ^CancelBtn
+ÅáÛÇÁ
+# ^CloseBtn
+&ÅÛáÇŞ
+# ^BrowseBtn
+&ÚÑÖ...
+# ^ShowDetailsBtn
+ÅÙåÇÑ& ÇáÊİÇÕíá
+# ^ClickNext
+ÅÖÛØ Úáì ÇáÊÇáí ááÊßãáÉ.
+# ^ClickInstall
+ÅÖÛØ Úáì ÊäÕíÈ áÊÔÛíá ÇáÊäÕíÈ.
+# ^ClickUninstall
+ÅÖÛØ Úáì ÅÒÇáÉ áÊÔÛíá ÇáÅÒÇáÉ.
+# ^Name
+ÇáÅÓã
+# ^Completed
+Êã ÈÍãÏááå
+# ^LicenseText
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÊäÕíÈ $(^NameDA). ÇÖÛØ ãæÇİŞ¡ ÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ.
+# ^LicenseTextCB
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÊäÕíÈ $(^NameDA). æÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ¡ÇÖÛØ Úáì ãÑÈÚ ÇáãÄÔÑ $_CLICK.
+# ^LicenseTextRB
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÊäÕíÈ $(^NameDA). æÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ¡ÇÎÊÑ ÇáÎíÇÑ ÇáÃæá ÇáÊÇáí $_CLICK.
+# ^UnLicenseText
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÅÒÇáÉ $(^NameDA). ÅÖÛØ ãæÇİŞ¡ ÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ.
+# ^UnLicenseTextCB
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÅÒÇáÉ $(^NameDA). æÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ¡ÇÖÛØ Úáì ãÑÈÚ ÇáãÄÔÑ $_CLICK.
+# ^UnLicenseTextRB
+ÑÇÌÚ ÅÊİÇŞíÉ ÇáÊÑÎíÕ ŞÈá ÅÒÇáÉ $(^NameDA). æÚäÏ ÇáãæÇİŞÉ Úáì ÌãíÚ ÔÑæØ ÇáÅÊİÇŞíÉ¡ÇÎÊÑ ÇáÎíÇÑ ÇáÃæá ÇáÊÇáí $_CLICK.
+# ^Custom
+ÇÎÊíÇÑí
+# ^ComponentsText
+ÖÚ ÚáÇãÉ ÕÍ Úáì ÇáãßæäÇÊ ÇáãÑÇÏ ÊäÕíÈåÇ. $_CLICK
+# ^ComponentsSubText1
+ÇÎÊÑ äæÚ ÇáÊäÕíÈ:
+# ^ComponentsSubText2_NoInstTypes
+ÇÎÊÑ ÇáãßæäÇÊ áÊäÕíÈåÇ:
+# ^ComponentsSubText2
+Ãæ, ÇÎÊÑ ÇáãßæäÇÊ ÇáÎíÇÑíÉ ÇáãÑÇÏ ÊäÕíÈåÇ:
+# ^UnComponentsText
+Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+# ^UnComponentsSubText1
+ÇÎÊÑ äæÚ ÇáÅÒÇáÉ:
+# ^UnComponentsSubText2_NoInstTypes
+ÇÎÊÑ ÇáãßæäÇÊ áÅÒÇáÊåÇ:
+# ^UnComponentsSubText2
+Ãæ, ÇÎÊÑ ÇáãßæäÇÊ ÇáÎíÇÑíÉ ÇáãÑÇÏ ÅÒÇáÊåÇ:
+# ^DirText
+ÓíÊã ÊäÕíÈ $(^NameDA) İí ÇáãÌáÏ ÇáÊÇáí. ááÊäÕíÈ İí ãÌáÏ ÂÎÑ¡ ÇÖÛØ ÚÑÖ æ ÇÎÊÑ ÇáãÌáÏ ÇáãÑÇÏ. $_CLICK
+# ^DirSubText
+ãßÇä ÇáãÌáÏ
+# ^DirBrowseText
+ÇÎÊÑ ãÌáÏ áÊäÕíÈ $(^NameDA) İíå:
+# ^UnDirText
+ÓíÊã ÅÒÇáÉ $(^NameDA) ãä ÇáãÌáÏ ÇáÊÇáí. ááÅÒÇáÉ ãä ãÌáÏ ÂÎÑ¡ ÇÖÛØ ÚÑÖ æ ÇÎÊÑ ÇáãÌáÏ ÇáãÑÇÏ. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+ÇÎÊÑ ãÌáÏ $(^NameDA) áÅÒÇáÊå ãäå:
+# ^SpaceAvailable
+"ÇáãÓÇÍÉ ÇáãÊæİÑÉ: "
+# ^SpaceRequired
+"ÇáãÓÇÍÉ ÇáãØáæÈÉ: "
+# ^UninstallingText
+ÇáãÒíá ÓíÒíá $(^NameDA) ãä ÇáäÙÇã. $_CLICK
+# ^UninstallingSubText
+íÒíá ãä:
+# ^FileError
+Îáá İí İÊÍ ãáİ ááßÊÇÈÉ İíå: \r\n\t\"$0\"\r\nÇÖÛØ ÅáÛÇÁ áÅáÛÇÁ ÇáÊäÕíÈ¡\r\nãÍÇæáÉ áãÍÇæáÉ ßÊÇÈÉ Çáãáİ¡\r\nÊÌÇåá áÊÎØí Çáãáİ
+# ^FileError_NoIgnore
+Îáá İí İÊÍ ãáİ ááßÊÇÈÉ İíå: \r\n\t\"$0\"\r\nÇÖÛØ ãÍÇæáÉ áãÍÇæáÉ ßÊÇÈÉ Çáãáİ¡ Ãæ\r\nÅáÛÇÁ áÅáÛÇÁ ÇáÊäÕíÈ
+# ^CantWrite
+"áÇ íÓÊØíÚ ÇáßÊÇÈÉ: "
+# ^CopyFailed
+İÔá ÇáäÓÎ
+# ^CopyTo
+"äÓÎ Åáì"
+# ^Registering
+"ÊÓÌíá: "
+# ^Unregistering
+"ÅáÛÇÁ ÊÓÌíá: "
+# ^SymbolNotFound
+"áã íÊãßä ãä ÅíÌÇÏ ÇáÑãÒ :"
+# ^CouldNotLoad
+"áã íÊãßä ãä ÊÍãíá :"
+# ^CreateFolder
+"ÅäÔÇÁ ãÌáÏ" "
+# ^CreateShortcut
+"ÅäÔÇÁ ÅÎÊÕÇÑ: "
+# ^CreatedUninstaller
+"ÅäÔÇÁ ãÒíá: "
+# ^Delete
+"íÍĞİ ãáİ: "
+# ^DeleteOnReboot
+"ÍĞİ ÈÚÏ ÇáÅÚÇÏÉ: "
+# ^ErrorCreatingShortcut
+"İÔá ÅäÔÇÁ ÅÎÊÕÇÑ: "
+# ^ErrorCreating
+"ÎØÇÁ Êßæíä :"
+# ^ErrorDecompressing
+Îáá İí İÊÍ ÇáÈíÇäÇÊ ÇáãÖÛæØÉ! ÇáãäÕÈ ÎÑÈÇä¿
+# ^ErrorRegistering
+İÔá ÊÓÌíá ãÔÛá
+# ^ExecShell
+"ÇáäÙÇã íÔÛá:"
+# ^Exec
+"íÔÛá: "
+# ^Extract
+"íÓÊÎÑÌ: "
+# ^ErrorWriting
+"ÇÓÊÎÑÇÌ: İÔá ÇáßÊÇÈÉ İí Çáãáİ "
+# ^InvalidOpcode
+ÇáãäÕÈ ÎÑÈÇä: ÔİÑÉ ÛíÑ ÕÇáÍÉ
+# ^NoOLE
+"No OLE for: "
+# ^OutputFolder
+"ÇáãÌáÏ ÇáÎÇÑÌ: "
+# ^RemoveFolder
+"ÅÒÇáÉ ãÌáÏ: "
+# ^RenameOnReboot
+"ÓíÓãì ÈÚÏ ÇáÅÚÇÏÉ: "
+# ^Rename
+"íÓãì: "
+# ^Skipped
+"ÊÎØì: "
+# ^CopyDetails
+äÓÎ ÇáÊİÇÕíá Åáì ÇáĞÇßÑÉ
+# ^LogInstall
+ÊİÇÕíá ÚãáíÉ ÇáÊäÕíÈ
+# ^Byte
+È
+# ^Kilo
+ß
+# ^Mega
+ã
+# ^Giga
+Û
