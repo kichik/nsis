@@ -11,7 +11,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Romana" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Bine ati venit la instalarea produsului $(^Name)"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "$(^Name) incepe instalarea.\r\n\r\nE recomandat sa inchideti toate aplicatiile inainte. Aceasta va permite programului sa modifice anumite fisiere de sistem fara repornirea calculatorului.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "$(^Name) incepe instalarea.\r\n\r\nE recomandat sa inchideti toate aplicatiile inainte. Aceasta va permite programului sa modifice anumite fisiere de sistem fara repornirea calculatorului.\r\n\r\n$_CLICK"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenta de utilizare"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii licentei inaintea instalarii $(^Name)."
