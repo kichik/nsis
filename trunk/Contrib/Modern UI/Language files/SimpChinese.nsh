@@ -18,12 +18,12 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用 ${MUI_PRODUCT} 安装向导"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "这将会在你的计算机，安装 ${MUI_PRODUCT} 。\r\n\r\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。\r\n\r\n"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授权合约"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "许可证协议"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安装 ${MUI_PRODUCT} 之前，请检阅授权条款。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "检阅授权合约的其余部分，请按 [PgDn] 往下卷动页面。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合约中的条款，单击 [我同意(I)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受授权合约才能安装 ${MUI_PRODUCT} 。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受授权合约中的条款，单击下方的复选框。必须要接受授权合约才能安装 ${MUI_PRODUCT}。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受授权合约中的条款，选择下方第一个选项。必须要接受授权合约才能安装 ${MUI_PRODUCT}。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "检阅许可证协议的其余部分，请按 [PgDn] 往下卷动页面。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合约中的条款，单击 [我同意(I)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受许可证协议才能安装 ${MUI_PRODUCT} 。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受许可证协议中的条款，单击下方的复选框。必须要接受许可证协议才能安装 ${MUI_PRODUCT}。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受许可证协议中的条款，选择下方第一个选项。必须要接受许可证协议才能安装 ${MUI_PRODUCT}。"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "选定组件"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "选定 ${MUI_PRODUCT} 当中你想要安装的功能。"
@@ -52,7 +52,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "是，现在重新启动(&Y)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "否，我稍后再自行重新启动(&N)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "运行 ${MUI_PRODUCT}(&R)"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "显示“读我”(&M)"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "显示“自述文件”(&M)"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "选择“开始菜单”文件夹"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "选择“开始菜单”文件夹，用于程序的快捷方式。"

@@ -7,7 +7,7 @@ NLF v4
 9
 # Codepage - dash (-) means ANSI code page ANSI 字碼頁
 950
-# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-04-30
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-01
 Nullsoft Install System %s
 %s 安裝
 %s 解除安裝
@@ -23,12 +23,12 @@ Nullsoft Install System %s
 下一步(&N) >
 我同意(&I)
 我同意「授權合約」中的條款(&A)
-我不同意「授權合約」中的條款(&A)
+我不同意「授權合約」中的條款(&N)
 安裝(&I)
 移除(&U)
 取消(&C)
 關閉(&L)
-瀏覽(&R)...
+瀏覽(&B)...
 顯示細節(&D)
 名稱
 已完成
@@ -40,7 +40,7 @@ Nullsoft Install System %s
 可用空間: 
 所需空間: 
 解除安裝目錄:
-無法開啟目的檔案: \r\n\r\n"$0"\r\n\r\n按一下 [Abort] 放棄安裝，[Retry] 重試寫入檔案，或\r\n [Ignore] 略過這個檔案。
+無法開啟目的檔案: \r\n\r\n"$0"\r\n\r\n按一下 [Abort] 放棄安裝，[Retry] 重試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
 無法寫入: 
 複製失敗 
 複製到: 
