@@ -225,7 +225,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_IFDEF,"!ifdef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_IFNDEF,"!ifndef",1,-1,"symbol [| symbol2 [& symbol3 [...]]]",TP_ALL},
 {TOK_P_ENDIF,"!endif",0,0,"",TP_ALL},
-{TOK_P_DEFINE,"!define",1,1,"symbol [value]",TP_ALL},
+{TOK_P_DEFINE,"!define",1,2,"[/date] symbol [value]",TP_ALL},
 {TOK_P_UNDEF,"!undef",1,1,"symbol [value]",TP_ALL},
 {TOK_P_ELSE,"!else",0,-1,"[ifdef|ifndef symbol [|symbol2 [& symbol3 [...]]]]",TP_ALL},
 {TOK_P_ECHO,"!echo",1,0,"message",TP_ALL},

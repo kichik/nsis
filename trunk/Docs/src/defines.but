@@ -10,11 +10,15 @@ Define/conditional compilation related commands:
 
 \S1{define} !define
 
-\c gflag [value]
+\c [/date] gflag [value]
 
 This command will add 'gflag' to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
 
+If \e{/date} is used, \e{value} will be passed into strftime and the result will be used as the value of \e{gflag}. strftime converts special symbols into certain parts of the current time or date. For example, %H will be converted into the current hour in 24-hour format. For a complete list of available symbols, search for strftime on \W{http://msdn.microsoft.com/}{MSDN}. On POSIX, you can get the list by using \c{man strftime}.
+
+\c !define USE_SOMETHING
 \c !define VERSION 1.2
+\c !define /date NOW "%H:%M:%S %d %b, %Y"
 
 \S1{undef} !undef
 
