@@ -1295,6 +1295,7 @@
     !endif
 
     !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
+    Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 mui.finish_done
     
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
