@@ -4,17 +4,19 @@ DIALER PLUGIN
 Written by Amir Szekely aka KiCHiK
 Readme by Joost Verburg
 
+The Dialer plugin for NSIS provides five functions related to internet connections.
+
+To download files from the internet, use the NSISdl plugin.
+
 USAGE
 -----
-
-The DialerDLL plugin for NSIS provides five functions related to internet connections.
 
 Example of usage:
 
 ClearErrors           ;Clear the error flag
 Dialer::FunctionName  ;Call Dialer function
 IfErrors "" +3        ;Check for errors
-  MessageBox "Function not available"
+  MessageBox MB_OK "Function not available"
   Quit
 Pop $R0               ;Get the return value from the stack
 MessageBox MB_OK $R0  ;Display the return value
