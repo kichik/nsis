@@ -39,24 +39,24 @@
 \c  ; modifies no other variables.
 \c
 \c  Function TrimNewlines
-\c      Exch $R0
-\c      Push $R1
-\c      Push $R2
-\c      StrCpy $R1 0
+\c    Exch $R0
+\c    Push $R1
+\c    Push $R2
+\c    StrCpy $R1 0
 \c  
 \c  loop:
-\c      IntOp $R1 $R1 - 1
-\c      StrCpy $R2 $R0 1 $R1
-\c      StrCmp $R2 "$\r" loop
-\c      StrCmp $R2 "$\n" loop
-\c  IntOp $R1 $R1 + 1
-\c  IntCmp $R1 0 no_trim_needed
+\c    IntOp $R1 $R1 - 1
+\c    StrCpy $R2 $R0 1 $R1
+\c    StrCmp $R2 "$\r" loop
+\c    StrCmp $R2 "$\n" loop
+\c    IntOp $R1 $R1 + 1
+\c    IntCmp $R1 0 no_trim_needed
 \c    StrCpy $R0 $R0 $R1
 \c  
 \c  no_trim_needed:
-\c      Pop $R2
-\c      Pop $R1
-\c      Exch $R0
+\c    Pop $R2
+\c    Pop $R1
+\c    Exch $R0
 \c  FunctionEnd
 
 
