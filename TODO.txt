@@ -1,0 +1,16 @@
+TODO
+
+DOCUMENTATION
+
+* We should have a section about multiple language
+  whole lots of /LANGs but no explaintation :)
+
+* user_vars should link to the user_vars section as in the old docs
+  callbacks and other stuff should be linked too
+ 
+* not so important but could be nice, links to examples in the examples directory for every function
+  every function will link to the example file that containts it
+
+* default values bolded or something alike
+
+* go over everything and search for mistakes :)
