@@ -28,28 +28,28 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDD_DIALOG1 DIALOG DISCARDABLE  0, 0, 361, 234
 STYLE DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Nullsoft ZIP2EXE v0.16"
+CAPTION "Nullsoft ZIP2EXE v0.17"
 FONT 8, "MS Sans Serif"
 BEGIN
     PUSHBUTTON      "Open &ZIP",IDC_BROWSE,13,17,49,14
     EDITTEXT        IDC_ZIPFILE,66,18,284,12,ES_AUTOHSCROLL | ES_READONLY | 
                     NOT WS_TABSTOP
-    LISTBOX         IDC_ZIPINFO_FILES,13,45,335,56,LBS_NOINTEGRALHEIGHT | 
+    LISTBOX         IDC_ZIPINFO_FILES,13,43,335,62,LBS_NOINTEGRALHEIGHT | 
                     LBS_NOSEL | WS_VSCROLL
-    EDITTEXT        IDC_INSTNAME,81,113,267,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_DESCTEXT,81,129,267,12,ES_AUTOHSCROLL
-    COMBOBOX        IDC_INSTPATH,81,144,268,126,CBS_DROPDOWN | WS_VSCROLL | 
+    EDITTEXT        IDC_INSTNAME,81,124,267,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_DESCTEXT,81,139,267,12,ES_AUTOHSCROLL
+    COMBOBOX        IDC_INSTPATH,81,154,268,126,CBS_DROPDOWN | WS_VSCROLL | 
                     WS_TABSTOP
-    EDITTEXT        IDC_OUTFILE,13,169,292,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "Browse",IDC_BROWSE2,307,168,41,14
+    EDITTEXT        IDC_OUTFILE,81,169,224,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Browse",IDC_BROWSE2,309,169,41,14
     DEFPUSHBUTTON   "Convert",IDOK,304,213,50,14,WS_DISABLED
-    GROUPBOX        "Source ZIP file",IDC_SZIPFRAME,7,7,347,180
+    GROUPBOX        "Source ZIP File",IDC_SZIPFRAME,7,7,347,102
     LTEXT           "",IDC_ZIPINFO_SUMMARY,13,33,245,8
-    GROUPBOX        "Output",IDC_OFRAME,7,102,347,85
-    LTEXT           "Default extract path:",IDC_DEPST,13,145,66,8
-    LTEXT           "Description text:",IDC_DTEXTST,13,131,66,8
-    LTEXT           "Output EXE file:",IDC_OEFST,14,157,51,8
-    LTEXT           "Installer name",IDC_INAMEST,13,116,66,8
+    GROUPBOX        "Output",IDC_OFRAME,7,110,347,77
+    LTEXT           "Default extract path:",IDC_DEPST,13,156,66,8
+    LTEXT           "Description text:",IDC_DTEXTST,13,142,66,8
+    LTEXT           "Output EXE file:",IDC_OEFST,13,171,51,8
+    LTEXT           "Installer name",IDC_INAMEST,13,126,66,8
     PUSHBUTTON      "Test",IDC_TEST,251,213,50,14,NOT WS_VISIBLE
     PUSHBUTTON      "< Back",IDC_BACK,7,213,50,14,NOT WS_VISIBLE
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,210,347,1
@@ -115,6 +115,13 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON    DISCARDABLE     "icon.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      MOVEABLE PURE   "zip2exe.xml"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
