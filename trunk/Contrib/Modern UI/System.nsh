@@ -1284,6 +1284,17 @@ Var MUI_TEMP2
       !endif
       SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"  
     !endif
+    
+    !ifdef MUI_FINISHPAGE_LINK
+      !ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1205
+      !else ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
+      !else
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
+      !endif
+      SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
+    !endif
      
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       mui.finish_show:
