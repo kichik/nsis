@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "LITHUANIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Lithuanian"
 
   !define MUI_LANGNAME "Lietuviu" ;Use only ASCII characters (if this is not possible, use the English name)
 

@@ -7,7 +7,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "KOREAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Korean"
 
   !define MUI_LANGNAME "Korean" ;Use only ASCII characters (if this is not possible, use the English name)
 

@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "FARSI"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Farsi"
 
   !define MUI_LANGNAME "Farsi (Persian)" ;Use only ASCII characters (if this is not possible, use the English name)
   

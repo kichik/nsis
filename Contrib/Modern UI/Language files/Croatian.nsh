@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "CROATIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Croatian"
 
   !define MUI_LANGNAME "Hrvatski" ;Use only ASCII characters (if this is not possible, use the English name)
 

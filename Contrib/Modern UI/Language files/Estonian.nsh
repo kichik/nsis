@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "ESTONIAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Estonian"
 
   !define MUI_LANGNAME "Eesti keel" ;Use only ASCII characters (if this is not possible, use the English name)
 

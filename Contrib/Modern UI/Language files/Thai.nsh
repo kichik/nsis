@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "THAI"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Thai"
 
   !define MUI_LANGNAME "Thai" ;(ภาษาไทย) Use only ASCII characters (if this is not possible, use the English name)
 

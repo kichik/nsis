@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "GERMAN"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "German"
 
   !define MUI_LANGNAME "Deutsch" ;Use only ASCII characters (if this is not possible, use the English name)
 
