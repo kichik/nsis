@@ -202,11 +202,13 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
     resolution = sleep_val + fadein_val + fadeout_val;
     fadeout_val = fadein_val = 0;
     sleep_val = 1;
+    state = 1; // skip fade in
   } else {
     // div them by resolution
     sleep_val >>= 5;
     fadein_val >>= 5;
     fadeout_val >>= 5;
+    state = 0;
 
     alphaparam = LWA_ALPHA | ((keycolor == -1) ? (0) : (LWA_COLORKEY));
     keycolor =
@@ -261,7 +263,6 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size,
         PlaySound(fn2, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
         // Start up timer...
-        state = 0;
         timeleft = fadein_val;
         timerEvent =
             timeSetEvent(resolution, RESOLUTION / 4, TimeProc,
