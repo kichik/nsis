@@ -36,6 +36,8 @@ extern BOOL g_warnings;
 extern HANDLE g_hThread;
 extern int g_retcode;
 
+DWORD g_dwLength;
+
 static BOOL g_appended = FALSE;
 
 void SetTitle(HWND hwnd,char *substr) {
@@ -69,9 +71,8 @@ void ClearLog(HWND hwnd) {
 }
 
 void LogMessage(HWND hwnd,const char *str) {
-  GETTEXTLENGTHEX tl={GTL_DEFAULT,CP_ACP};
-	DWORD dwLength = SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_GETTEXTLENGTHEX, (WPARAM)&tl, 0);
-	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, dwLength, dwLength);
+	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, g_dwLength, g_dwLength);
+	g_dwLength += lstrlen(str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
 }
@@ -178,6 +179,7 @@ void CompileNSISScript() {
 		g_script = s;
 		g_appended = TRUE;
 	}
+  g_dwLength = 0;
 	// Disable buttons during compile
 	DisableItems(g_hwnd);
 	DWORD id;
