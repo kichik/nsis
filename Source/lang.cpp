@@ -224,7 +224,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
   }
 
   #define MAX(a, b) (a > b ? a : b)
-  user_strings->resize(MAX(user_strings->getlen(), (unsigned int)(idx+1)*sizeof(unsigned int)));
+  user_strings->resize(MAX((unsigned int)user_strings->getlen(), (idx+1)*sizeof(unsigned int)));
   ((int*)user_strings->get())[idx] = uninst ? add_string_uninst(string,process) : add_string_main(string,process);
 
   int zero = 0;
