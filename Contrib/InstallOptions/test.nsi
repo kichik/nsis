@@ -66,7 +66,7 @@ Function .onInit
   StrCpy $9 0
   GetTempFileName $8
   GetTempFileName $7
-  File /oname=$8 ..\..\Bin\InstallOptions.dll
+  File /oname=$8 ..\..\Plugins\InstallOptions.dll
   File /oname=$7 "test.ini"
 FunctionEnd
 
