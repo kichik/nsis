@@ -1,7 +1,7 @@
 ;NSIS Setup Script
 
 !define VER_MAJOR 2
-!define VER_MINOR 0b2
+!define VER_MINOR 0b3
 
 ;--------------------------------
 ;Compile CVS Data Setup
@@ -36,7 +36,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;Modern UI Configuration
 
   !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "2.0b2"
+  !define MUI_VERSION "2.0b3"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
