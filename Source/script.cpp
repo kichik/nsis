@@ -5935,6 +5935,14 @@ int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir
     pos = outdir_s.find('$', pos + 2);
   }
 
+#ifndef _WIN32
+  pos = outdir_s.find('/');
+  while (pos != string::npos) {
+    outdir_s[pos] = '\\';
+    pos = outdir_s.find('/');
+  }
+#endif
+
   int outdir = add_string(outdir_s.c_str());
 
   if (add_entry_direct(EW_CREATEDIR, outdir, 1) != PS_OK) {
