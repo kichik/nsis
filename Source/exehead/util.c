@@ -132,7 +132,7 @@ void NSISCALL myDelete(char *buf, int flags)
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
           {
 #ifdef NSIS_SUPPORT_RMDIR
-            if ((flags & DEL_DIR | DEL_RECURSE) == (DEL_DIR | DEL_RECURSE))
+            if ((flags & (DEL_DIR | DEL_RECURSE)) == (DEL_DIR | DEL_RECURSE))
             {
               myDelete(buf,flags);
             }
