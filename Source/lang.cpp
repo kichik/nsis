@@ -279,6 +279,33 @@ int CEXEBuild::WriteStringTables() {
   for (i = 0; i < st_num; i++)
     FillDefaultsIfNeeded(string_tables[i]);
 
+  // check for missing LangStrings
+  int userstrings_num = build_userlangstrings.getnum();
+  for (i = 0; i < userstrings_num; i++) {
+    int counter = 0;
+    for (int j = 0; j < st_num; j++) {
+      counter += !((int*)string_tables[j]->user_strings.get())[i];
+    }
+    if (counter) {
+      int offset=build_userlangstrings.idx2pos(i);
+      if (offset<0) continue;
+      warning("LangString \"%s\" is not present in all language tables!", build_userlangstrings.get()+offset);
+    }
+  }
+
+  int userustrings_num = ubuild_userlangstrings.getlen();
+  for (i = 0; i < userustrings_num; i++) {
+    int counter = 0;
+    for (int j = 0; j < st_num; j++) {
+      counter += !((int*)string_tables[j]->user_ustrings.get())[i];
+    }
+    if (counter) {
+      int offset=ubuild_userlangstrings.idx2pos(i);
+      if (offset<0) continue;
+      warning("LangString \"%s\" is not present in all language tables!", ubuild_userlangstrings.get()+offset);
+    }
+  }
+
   // Add string tables into their datablock
   for (i = 0; i < st_num; i++) {
     build_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
