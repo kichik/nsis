@@ -215,11 +215,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					DialogBox(g_hInstance,MAKEINTRESOURCE(DLG_ABOUT),g_hwnd,(DLGPROC)AboutProc);
 					return TRUE;
 				}
-				case IDM_ABOUTNSIS:
-				{
-					DialogBox(g_hInstance,MAKEINTRESOURCE(DLG_ABOUTNSIS),g_hwnd,(DLGPROC)AboutNSISProc);
-					return TRUE;
-				}
 				case IDM_NSISHOME:
 				{
 					ShellExecute(g_hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
@@ -469,80 +464,6 @@ char * ContribUsers[] = {
 
 extern char *g_branding;
 
-BOOL CALLBACK AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
-	switch(msg) {
-		case WM_INITDIALOG:
-		{
-			HFONT bfont = CreateFont(14,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
-							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
-							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
-			HFONT hFont = CreateFont(12,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"MS Shell Dlg");
-			if (bfont) SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)bfont, FALSE);
-			SetDlgItemText(hwndDlg,IDC_NSISVER,g_branding);
-			SendDlgItemMessage(hwndDlg,IDC_NSISNFO,WM_SETFONT,(WPARAM)hFont,0);
-			SendDlgItemMessage(hwndDlg,IDC_NSISNFO,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
-			{
-				char *s;
-				s = (char *)GlobalAlloc(GPTR,lstrlen(EXENAME)+10);
-				wsprintf(s,"%s /license",EXENAME);
-				STARTUPINFO si={sizeof(si),};
-				SECURITY_ATTRIBUTES sa={sizeof(sa),};
-				SECURITY_DESCRIPTOR sd={0,};
-				PROCESS_INFORMATION pi={0,};
-				HANDLE newstdout=0,read_stdout=0; 
-
-				OSVERSIONINFO osv={sizeof(osv)};
-				GetVersionEx(&osv);
-				if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-					InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-					SetSecurityDescriptorDacl(&sd,true,NULL,false);
-					sa.lpSecurityDescriptor = &sd;
-				}
-				else sa.lpSecurityDescriptor = NULL;
-				sa.bInheritHandle = true;
-				if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-					return 0;
-				}
-				GetStartupInfo(&si);
-				si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-				si.wShowWindow = SW_HIDE;
-				si.hStdOutput = newstdout;
-				si.hStdError = newstdout;
-				if (!CreateProcess(NULL,s,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
-					CloseHandle(newstdout);
-					CloseHandle(read_stdout);
-					return 0;
-				}
-				char szBuf[2048];
-				DWORD dwRead = 1;
-				DWORD dwExit = !STILL_ACTIVE;
-				if (WaitForSingleObject(pi.hProcess,10000)!=WAIT_OBJECT_0) {
-					return 0;
-				}
-				ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
-				szBuf[dwRead] = 0;
-				if (lstrlen(szBuf)==0) EndDialog(hwndDlg,TRUE);
-				SetDlgItemText(hwndDlg,IDC_NSISNFO,szBuf);
-				GlobalFree(s);
-			}
-			break;
-		}
-		case WM_CLOSE:
-			EndDialog(hwndDlg, TRUE);
-			break;
-		case WM_COMMAND:
-		{
-			switch (LOWORD(wParam)) {
-				case WM_CLOSE:
-				case IDOK: 
-					EndDialog(hwndDlg, TRUE);
-					break;
-			}
-		}
-	}
-	return FALSE;
-}
-
 BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static HBRUSH hBrush;
 	switch(msg) {
@@ -554,11 +475,16 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			HFONT rfont = CreateFont(12,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
 							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
 							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
+            HFONT sfont = CreateFont(11,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
+							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
+							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
 			if (bfont) SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)bfont, FALSE);
 			if (rfont) {
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)rfont, FALSE);
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)rfont, FALSE);
 			}
+            if (sfont) SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)rfont, FALSE);
+            SetDlgItemText(hwndDlg,IDC_NSISVER,g_branding);
 			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,NSISW_VERSION);
 			SetDlgItemText(hwndDlg,IDC_ABOUTCOPY,COPYRIGHT);
 			HWND ilist = GetDlgItem(hwndDlg,IDC_CONTRIB);
@@ -580,13 +506,9 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			SelectObject((HDC)wParam, hBrush);
 			return((LONG)hBrush);
 		}
-		case WM_CLOSE:
-			EndDialog(hwndDlg, TRUE);
-			break;
 		case WM_COMMAND:
 		{
 			switch (LOWORD(wParam)) {
-				case WM_CLOSE:
 				case IDOK: 
 					EndDialog(hwndDlg, TRUE);
 					break;
