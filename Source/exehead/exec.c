@@ -238,12 +238,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
           {
             int x;
-            for (x = 0; x < 2; x ++)
+            for (x = 0; x < 4; x ++)
             {
               while (*p != '\\' && *p) p=CharNext(p); // skip host then share
               p=CharNext(p);
             }
-
           }
           else break;
           while (c)
