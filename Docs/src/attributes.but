@@ -190,7 +190,7 @@ Sets the name of the installer. The name is usually simply the product name such
 
 \c path_to_icon.ico
 
-Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the built of the installer will fail.
+Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail. 
 
 \S2{aoutfile} OutFile
 
