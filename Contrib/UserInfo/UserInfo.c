@@ -94,8 +94,12 @@ void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size,
               FreeSid(psid);
             }
           }
+
+          GlobalFree(ptg);
         }
       }
+
+      CloseHandle(hThread);
     }
 
     pushstring(group);
