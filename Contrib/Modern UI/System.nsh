@@ -1113,6 +1113,7 @@
 
   !ifdef MUI_CUSTOMFUNCTION_START
     Call "${MUI_CUSTOMFUNCTION_START}"
+  !endif
 
   FunctionEnd
 
