@@ -535,7 +535,7 @@
 \c
 \c   SetOverwrite on
 \c
-\c  !macroend\
+\c  !macroend
 
 \H{connectinternet} Connect to the internet
 
