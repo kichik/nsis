@@ -40,7 +40,7 @@
   !endif
 
   !ifndef MUI_FONT
-    !define MUI_FONT "Tahoma" ;"MS Shell Dlg"
+    !define MUI_FONT "MS Shell Dlg"
   !endif
 
   !ifndef MUI_INSTALLCOLORS
@@ -82,18 +82,6 @@
 
   !verbose 4
 
-!macroend
-
-!macro MUI_INTERFACE_ALLRES UI ICON UNICON CHECKS PROGRESSBAR FONT
-  
-  !define MUI_UI "${UI}"
-  !define MUI_ICON "${ICON}"
-  !define MUI_UNICON "${UNICON}"
-  !define MUI_CHECKBITMAP "${CHECKS}"
-  !define MUI_PROGRESSBAR "${PROGRESSBAR}"
-  !define MUI_FONT "${FONT}"
-  !insertmacro MUI_INTERFACE
-  
 !macroend
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
@@ -667,7 +655,7 @@
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
         SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
-        CreateFont ${MUI_TEMP3} "Tahoma" 12 1000
+        CreateFont ${MUI_TEMP3} "Verdana" 12 1000
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
@@ -802,7 +790,7 @@
      ;Write Finish text
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 2" "Text" "$(MUI_TEXT_FINISH_TITLE)"
     
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Bottom" "170"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Bottom" "150"
     
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
@@ -816,16 +804,16 @@
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "160"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "175"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
           
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Type" "RadioButton"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "190"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "205"
       
           Goto init
       
@@ -847,8 +835,8 @@
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_RUN)"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "160"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "175"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
           
           !ifdef MUI_FINISHPAGE_SHOWREADME
@@ -859,8 +847,8 @@
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
-            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
-            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "190"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "205"
             
           !endif
 
@@ -876,8 +864,8 @@
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
-            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
-            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "160"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "175"
             !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
             
           !endif
@@ -896,7 +884,7 @@
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
         SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
-        CreateFont ${MUI_TEMP3} "Tahoma" 12 1000
+        CreateFont ${MUI_TEMP3} "Verdana" 12 1000
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
