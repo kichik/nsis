@@ -37,8 +37,14 @@ How to use
   2. Commands
   -----------
 
-    IMPORTANT: Every command in this header file have to be called first
-    before, out of sections and functions and without parameters. Example:
+    2.1 How To Use Commands In Install Sections and Functions
+    ---------------------------------------------------------
+
+    Every command used in install sections and functions have to be called
+    first before and out any sections and functions, and without parameters.
+
+    Example:
+    --------
 
     !include "StrFunc.nsh"
 
@@ -49,6 +55,49 @@ How to use
       ${StrStr} $0 "OK! Now what?" "wh"
 
     SectionEnd
+    
+    2.2 How To Use Commands In Uninstall Sections and Functions
+    -----------------------------------------------------------
+
+    Commands with Uninstall Sections and Functions support have "Un" before
+    the words inside brackets "{}".
+
+    Example:
+    --------
+    
+    ${UnStrStr}
+    
+    Every command used in uninstall sections and functions have to be called
+    first before and out any sections and functions, without parameters, and
+    after the header command "${UnStrFunc}" to activate the Uninstall sections
+    and functions support for the commands following.
+    
+    Example:
+    --------
+
+    !include "StrFunc.nsh"
+
+    ${StrStr} # Supportable for Install Sections and Functions
+    
+    ${UnStrFunc} # Command to separate commands supportable for
+                 # Install/Uninstall sections and functions
+
+    ${UnStrStr} # Supportable for Uninstall Sections and Functions
+
+    Section
+
+      ${StrStr} $0 "OK! Now what?" "wh"
+
+    SectionEnd
+    
+    Section Uninstall
+
+      ${UnStrStr} $0 "OK! Now what?" "wh"
+
+    SectionEnd
+    
+    2.3 Commands
+    ------------
 
     =========================================================================
     *****                           ${StrStr} ResultVar String StrToSearchFor
@@ -540,6 +589,11 @@ Trim Function
 
 Version History
 ---------------
+
+1.03 - 02/12/2004
+
+- Added commands support for uninstall sections and functions.
+- Fixed variables switch in "StrLoc" and "StrTok" after using these.
 
 1.02 - 02/07/2004
 
