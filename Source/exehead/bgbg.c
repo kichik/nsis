@@ -37,6 +37,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetClientRect(hwnd,&r);
         // this portion by Drew Davidson, drewdavidson@mindspring.com
         ry=r.bottom;
+        r.bottom=0;
 
         // JF: made slower, reduced to 4 pixels high, because I like how it looks better/
         while (r.top < ry)
@@ -50,18 +51,18 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           brush = CreateBrushIndirect(&lh);
           // note that we don't need to do "SelectObject(hdc, brush)"
           // because FillRect lets us specify the brush as a parameter.
+          r.bottom+=4;
           FillRect(hdc, &r, brush);
           DeleteObject(brush);
           r.top+=4;
-          r.bottom+=4;
         }
 
         if (header->bg_textcolor != -1)
         {
-          HFONT oldFont;
           HFONT newFont = CreateFontIndirect((LOGFONT *) header->blocks[NB_BGFONT].offset);
           if (newFont)
           {
+            HFONT oldFont;
             r.left=16;
             r.top=8;
             SetBkMode(hdc,TRANSPARENT);
@@ -74,7 +75,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         EndPaint(hwnd,&ps);
       }
-    return 0;
+      return 0;
   }
   return DefWindowProc(hwnd,uMsg,wParam,lParam);
 }
