@@ -32,6 +32,7 @@
   !insertmacro MUI_LANGUAGE "PortugueseBR"
   !insertmacro MUI_LANGUAGE "Ukrainian"
   !insertmacro MUI_LANGUAGE "Czech"
+  !insertmacro MUI_LANGUAGE "Bulgarian"
   
   OutFile "MultiLanguage.exe"
 
@@ -51,6 +52,7 @@
   LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_CZECH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_BULGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-selection page
     ;Titles
@@ -69,6 +71,7 @@
     LangString TITLE_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_UKRAINIAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_CZECH} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_BULGARIAN} "modern.exe"
     
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
@@ -86,6 +89,7 @@
     LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
     LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
     LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
+    LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
     
   ;Folder-selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -121,41 +125,29 @@ Function .onInit
 
   ;Language selection
 
+  ;Font
   Push Tahoma
   Push 8
 
-  Push ${LANG_ENGLISH}
-  Push "${MUI_ENGLISH_LANGNAME}"
-  Push ${LANG_FRENCH}
-  Push "${MUI_FRENCH_LANGNAME}"
-  Push ${LANG_GERMAN}
-  Push "${MUI_GERMAN_LANGNAME}"
-  Push ${LANG_SPANISH}
-  Push "${MUI_SPANISH_LANGNAME}"
-  Push ${LANG_TRADCHINESE}
-  Push "${MUI_TRADCHINESE_LANGNAME}"
-  Push ${LANG_SIMPCHINESE}
-  Push "${MUI_SIMPCHINESE_LANGNAME}"
-  Push ${LANG_JAPANESE}
-  Push "${MUI_JAPANESE_LANGNAME}"
-  Push ${LANG_ITALIAN}
-  Push "${MUI_ITALIAN_LANGNAME}"
-  Push ${LANG_DUTCH}
-  Push "${MUI_DUTCH_LANGNAME}"
-  Push ${LANG_POLISH}
-  Push "${MUI_POLISH_LANGNAME}"
-  Push ${LANG_GREEK}
-  Push "${MUI_GREEK_LANGNAME}"
-  Push ${LANG_RUSSIAN}
-  Push "${MUI_RUSSIAN_LANGNAME}"
-  Push ${LANG_PORTUGUESEBR}
-  Push "${MUI_PORTUGUESEBR_LANGNAME}"
-  Push ${LANG_UKRAINIAN}
-  Push "${MUI_UKRAINIAN_LANGNAME}"
-  Push ${LANG_CZECH}
-  Push "${MUI_CZECH_LANGNAME}"
+  ;Languages
+  !insertmacro MUI_LANGDLL_PUSH "English"
+  !insertmacro MUI_LANGDLL_PUSH "French"
+  !insertmacro MUI_LANGDLL_PUSH "German"
+  !insertmacro MUI_LANGDLL_PUSH "Spanish"
+  !insertmacro MUI_LANGDLL_PUSH "SimpChinese"
+  !insertmacro MUI_LANGDLL_PUSH "TradChinese"    
+  !insertmacro MUI_LANGDLL_PUSH "Japanese"    
+  !insertmacro MUI_LANGDLL_PUSH "Italian"
+  !insertmacro MUI_LANGDLL_PUSH "Dutch"
+  !insertmacro MUI_LANGDLL_PUSH "Polish"
+  !insertmacro MUI_LANGDLL_PUSH "Greek"
+  !insertmacro MUI_LANGDLL_PUSH "Russian"
+  !insertmacro MUI_LANGDLL_PUSH "PortugueseBR"
+  !insertmacro MUI_LANGDLL_PUSH "Ukrainian"
+  !insertmacro MUI_LANGDLL_PUSH "Czech"
+  !insertmacro MUI_LANGDLL_PUSH "Bulgarian"
   
-  Push 15F ;15 = number of languages, F = change font
+  Push 16F ;16 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
@@ -195,5 +187,8 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onInit
+
+  ;Get language from registry
   ReadRegStr $LANGUAGE HKCU "Software\${MUI_PRODUCT}" "Installer Language"
+  
 FunctionEnd
