@@ -1,6 +1,6 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.6 - November 15, 2002
+1.6 - November 16, 2002
 * Welcome / Finish pages
 * Automatic ask for reboot on finish page
 * Create no shortcut option on Start Menu Folder selection page
