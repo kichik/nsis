@@ -90,12 +90,16 @@ public:
 
 	DialogItemTemplate* GetItem(WORD wId);
 	DialogItemTemplate* GetItemByIdx(DWORD i);
-  void RemoveItem(WORD wId);
+	void RemoveItem(WORD wId);
 	void SetFont(char* szFaceName, WORD wFontSize);
 	void AddItem(DialogItemTemplate item);
 	void MoveAllAndResize(short x, short y);
 	void PixelsToDlgUnits(short& x, short& y);
 	void DlgUnitsToPixels(short& x, short& y);
+	SIZE GetStringSize(char *str);
+	void RTrimToString(WORD id, char *str, int margins);
+	void LTrimToString(WORD id, char *str, int margins);
+	void CTrimToString(WORD id, char *str, int margins);
 	BYTE* Save(DWORD& dwSize);
 	DWORD GetSize();
 
