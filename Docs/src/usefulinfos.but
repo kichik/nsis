@@ -115,7 +115,7 @@ During the uninstallation, use the un.DecrementSharedDLL function below to decre
 \c   ;Replace myprog.exe or use another detection method
 \c   IfFileExists $INSTDIR\myprog.exe skipAddSharedDLL
 \c     Push $SYSDIR\Asycfilt.dll
-\c     Call AncrddSharedDLL
+\c     Call AddSharedDLL
 \c     Push $SYSDIR\Comcat.dll
 \c     Call AddSharedDLL
 \c     Push $SYSDIR\Msvbvm60.dll
