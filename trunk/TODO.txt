@@ -49,6 +49,8 @@ OTHER PLUGINS
 
 NSIS
 
+* MAYBE - set resources code page and font at run-time by saving offsets at compile time
+
 * ChangeUI RTL support
 
 * LZMA compression
