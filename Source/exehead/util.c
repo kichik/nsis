@@ -79,9 +79,11 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val)
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {
   int _type = type & 0x000FFFFF;
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
   // default for silent installers
   if (g_exec_flags.silent && type >> 20)
     return type >> 20;
+#endif
   // no silent or no default, just show
   if (g_exec_flags.rtl)
     _type ^= MB_RIGHT | MB_RTLREADING;

@@ -981,8 +981,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       set_uninstall_mode(1);
     case TOK_PAGE:
       {
-        SCRIPT_MSG("%sPage: %s", uninstall_mode?"Uninst":"", line.gettoken_str(1));
-
         if (!uninstall_mode) {
           enable_last_page_cancel = 0;
           if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
@@ -1042,11 +1040,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
                 cur_page->prefunc = ns_func.add(line.gettoken_str(2),0);
               break;
             case 2:
-              ERROR_MSG("\nError: custom page must have a creator function!\n");
+              ERROR_MSG("Error: custom page must have a creator function!\n");
               PRINTHELP();
           }
         }
 #endif//NSIS_SUPPORT_CODECALLBACKS
+
+        SCRIPT_MSG("%sPage: %s", uninstall_mode?"Uninst":"", line.gettoken_str(1));
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (cur_page->prefunc>=0)
@@ -2918,6 +2918,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG("FileBufSize: %smb (%d bytes)\n",line.gettoken_str(1),build_filebuflen);
     return PS_OK;
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_SETCOMPRESSIONLEVEL:
     {
       if (compressor == &lzma_compressor)
@@ -2945,6 +2946,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       build_compress_dict_size <<= 20;
     }
     return PS_OK;
+#else
+    case TOK_SETCOMPRESSIONLEVEL:
+    case TOK_SETCOMPRESSORDICTSIZE:
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n",  line.gettoken_str(0));
+    return PS_ERROR;
+#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     case TOK_ADDSIZE:
       {
         int s;

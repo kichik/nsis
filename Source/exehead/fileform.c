@@ -255,10 +255,14 @@ const char * NSISCALL loadHeaders(int cl_flags)
       return _LANG_ERRORWRITINGTEMP;
   }
   dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
+#ifdef NSIS_CONFIG_CRC_SUPPORT
   dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((cl_flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
 #else
+  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data;
+#endif//NSIS_CONFIG_CRC_SUPPORT
+#else
   SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
-#endif
+#endif//NSIS_COMPRESS_WHOLE
 
   if (GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header) != h.length_of_header)
   {
@@ -282,9 +286,10 @@ const char * NSISCALL loadHeaders(int cl_flags)
     g_is_uninstaller++;
 #endif
 
-  crc = BLOCKS_NUM;
-  while (crc--)
-    header->blocks[crc].offset += (int)data;
+  // set offsets to real memory offsets rather than installer's header offset
+  left = BLOCKS_NUM;
+  while (left--)
+    header->blocks[left].offset += (int)data;
 
 #ifdef NSIS_COMPRESS_WHOLE
   header->blocks[NB_DATA].offset = dbd_pos;

@@ -133,9 +133,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   HWND hwSectionHack = g_SectionHack;
 #endif
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   // Saves 8 bytes
   HWND mainHwnd = g_hwnd;
 #define g_hwnd mainHwnd
+#endif
 
   int exec_error = 0;
 
