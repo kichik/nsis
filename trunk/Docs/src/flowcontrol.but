@@ -65,15 +65,15 @@ Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a
 
 \S2{IfRebootFlag} IfRebootFlag
 
-\c [jump_if_set] [jump_if_not_set]
+\c jump_if_set [jump_if_not_set]
 
-Atleast one parameter is required.  Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with SetRebootFlag.
+Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with SetRebootFlag.
 
 \S2{ifsilent} IfSilent
 
-\c [jump_if_silent] [jump_if_not]
+\c jump_if_silent [jump_if_not]
 
-Atleast one parameter is required.  Checks the silent flag, and jumps to jump_if_silent if the installer is silent, otherwise jumps to jump_if_not. The silent flag can be set by \R{asilentinstall}{SilentInstall}, \R{asilentuninstall}{SilentUninstall}, \R{setsilent}{SetSilent} and by the user passing /S on the command line.
+Checks the silent flag, and jumps to jump_if_silent if the installer is silent, otherwise jumps to jump_if_not. The silent flag can be set by \R{asilentinstall}{SilentInstall}, \R{asilentuninstall}{SilentUninstall}, \R{setsilent}{SetSilent} and by the user passing /S on the command line.
 
 \S2{intcmp} IntCmp
 
