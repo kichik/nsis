@@ -95,11 +95,11 @@ class NLF {
     NLF(char *filename);
     ~NLF();
 
-    WORD GetLang();
+    LANGID GetLang();
     char* GetString(int idx);
 
   private:
-    WORD m_wLangId;
+    LANGID m_wLangId;
     char *m_szStrings[NLF_STRINGS];
 };
 
