@@ -40,7 +40,9 @@ Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') i
 
 \c caption
 
-Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name command}. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name command}. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+
+If used inside a \R{pageex}{PageEx} block, it sets the caption for the page.
 
 \S2{achangeui} ChangeUI
 

@@ -59,6 +59,8 @@ The list below lists what commands affect the certain page type. Unless mentione
 
 \b \R{auninstalltext}{UninstallText}
 
+To set the page caption use \R{acaption}{Caption}.
+
 \S{pagecallbacks_explain} Callbacks
 
 Each built-in page has three callback functions. The pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.
@@ -121,7 +123,7 @@ Adds an uninstaller page. See the above sections for more information about buil
 
 \c [un.](custom|uninstConfirm|license|components|directory|instfiles)
 
-Adds an installer page or an uninstaller page if the un. prefix was used. Every PageEx must have a matching \R{pageexend}{PageExEnd}. In a PageEx block you can set options that are specific to this page and will not be used for other pages. Options that are not set will revert to what was set outside the PageEx block or the default if nothing was set. To set the callback functions for a page set with PageEx use \R{pagecallbacks}{PageCallbacks}. See the above sections for more information about built-in versus custom pages.
+Adds an installer page or an uninstaller page if the un. prefix was used. Every PageEx must have a matching \R{pageexend}{PageExEnd}. In a PageEx block you can set options that are specific to this page and will not be used for other pages. Options that are not set will revert to what was set outside the PageEx block or the default if nothing was set. To set the sub-caption for a page use \R{acaption}{Caption} or \R{asubcaption}{SubCaption} to set the default. To set the callback functions for a page set with PageEx use \R{pagecallbacks}{PageCallbacks}. See the above sections for more information about built-in versus custom pages.
 
 Example usage:
 
