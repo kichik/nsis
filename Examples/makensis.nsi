@@ -153,7 +153,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Readme.html"
     File "..\Contrib\Modern UI\Screenshot.png"
     File "..\Contrib\Modern UI\License.txt"
-	SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+    SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
     File "..\Contrib\Modern UI\Language files\*.nsh"
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\modern.exe"
@@ -643,7 +643,7 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
     !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL source in C"
-    !insertmacro MUI_DESCRIPTION_TEXT  ${SecSrcMNW} "MakeNSIS Wrapper source code"
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "MakeNSIS Wrapper source code"
 
  !insertmacro MUI_DESCRIPTION_END
 
