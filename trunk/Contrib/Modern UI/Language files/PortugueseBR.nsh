@@ -62,7 +62,6 @@
   
   !define MUI_UNTEXT_LICENSE_TITLE "Contrato de Licença"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de desinstalar o $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_TOP "Tecle Page Down para ver o restante da licença."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Se você aceitar os termos da licença, clique em Concordo para continuar. Você deve aceitar o contrato para desinstalar o $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se você aceitar os termos da licença, clique na caixa de seleção abaixo. Você deve aceitar o contrato para desinstalar o $(^Name). $_CLICK"
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se você aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para desinstalar o $(^Name). $_CLICK"
