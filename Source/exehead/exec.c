@@ -636,7 +636,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         }
         else
         {
-          s=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t));
+          s=(stack_t*)my_alloc(sizeof(stack_t));
           process_string_fromtab(s->text,parm0);
           s->next=g_st;
           g_st=s;
@@ -783,7 +783,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         if (s1)
         {
           void *b1;
-          b1=(void*)GlobalAlloc(GPTR,s1);
+          b1=my_alloc(s1);
           if (b1)
           {
             UINT uLen;
@@ -912,7 +912,6 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_REBOOT
     case EW_REBOOT:
       exec_errorflag++;
-      if (parm0 == 0xbadf00d) 
       {
         HANDLE h=LoadLibrary("advapi32.dll");
         if (h)
@@ -1270,7 +1269,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         {
           unsigned char *filebuf;
           DWORD l;
-          filebuf=(unsigned char *)GlobalAlloc(GMEM_FIXED,g_filehdrsize);
+          filebuf=(unsigned char *)my_alloc(g_filehdrsize);
           if (filebuf)
           {
             int fixoffs=0;
@@ -1279,7 +1278,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
             if (g_inst_header->uninstdata_offset != -1)
             {
               // Changed by Amir Szekely 11th July 2002
-              unsigned char* unicon_data = (unsigned char*)GlobalAlloc(GMEM_FIXED, g_inst_header->uninsticon_size);
+              unsigned char* unicon_data = (unsigned char*)my_alloc(g_inst_header->uninsticon_size);
               if (unicon_data) {
                 DWORD i;
                 unsigned char* seeker = unicon_data + sizeof(DWORD);
