@@ -10,7 +10,7 @@
 
 !define MUI_ARABIC_USED
 
-  !define MUI_ARABIC_LANGNAME "ÚÑÈí" ;Name of the language in the language itself (Arabic, Deutsch, Français etc.)
+  !define MUI_ARABIC_LANGNAME "Arabic" ;ÚÑÈí (English, Deutsch, Français etc.)
 
   ;INSTALLER
   
