@@ -174,18 +174,30 @@ There's not much point in being able to call an external function if you can't g
 NSIS $0..$9 become System.dll r0..r9
 NSIS $R0..$R9 become System.dll r10..r19
 
-There is one final wrinkle: placing a period/dot ('.') in front of a System.dll variable means 'makes no change to source' and it appears to be used everywhere except \e{where a pointer is returned}. This is important and WILL cause you grief if you forget!! See the example below.
+Each parameter is specified by type, input and output. To skip input or output use a dot. Examples:
+
+String (pointer to a characters array), input is 'happy calling':
+
+\c t 'happy calling'
+
+String (pointer to a characters array), input is taken from $5 and changes to the array made by the call are saved into $R8:
+
+\c t r5R8
+
+Pointer to an integer, value taken from $1 and put into $2:
+
+\c *i r1r2
+
+Pointer to a 64-bit integer, output pushed on stack, no input:
+
+\c *l .s
 
 Using System.dll::Call
 To call a function in a third party DLL, the Call function is used like this:
 
+\c System::Call 'YourDllName::YourDllFunction(i, *i, t) i(r0, .r1, r2) .r3'
 
-\c System::Call 'YourDllName::YourDllFunction(i, *i, t) i(.r0, r1, .r2) .r3'
-
-
-'(.r0, r1, .r2) .r3'
-
-section at the end are the parameters that are passed between your DLL and your NSIS script. Note the absence of the dot in front of the 'r1' parameter...
+The '(r0, .r1, r2) .r3' section at the end are the parameters that are passed between your DLL and your NSIS script. As can be seen in this parameters list type and input/output can be seperated. Each block of "(parms list) return value" overrides and/or adds to the last one. In this case, the first block specifies the types and the second specifies input and output.
 
 \\<b\\>Before starting to code the NSIS script\\</b\\> \\<br\\>
 Before you start to code any NSIS code, you need to know the full prototype of the function you are going to call. For the purposes of this example, we will use the 'CmGetHotSyncExecPath' function from the Palm 'CondMgr.dll'. This function is used to return the full path of 'HotSync.exe'.
@@ -240,9 +252,9 @@ Save this script
 \c   SetOutPath $TEMP\eInspect             ; create temp directory
 \c   File bin\CondMgr.dll                  ; copy dll there
 \c   StrCpy $1 ${NSIS_MAX_STRLEN}          ; assign memory to $0
-\c   System::Call 'CondMgr::CmGetHotSyncExecPath(t, *i) i(.r0, r1).r2'
+\c   System::Call 'CondMgr::CmGetHotSyncExecPath(t, *i) i(.r0, r1r1).r2'
 \c   DetailPrint 'Path: "$0"'
-\c   DetailPrint "Path length (I think): $1"
+\c   DetailPrint "Path length: $1"
 \c   DetailPrint "Return value: $2"
 \c
 \c ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete
@@ -260,7 +272,7 @@ and this function produces the following output in the 'details' page:
 Output folder: c:\\windows\\TEMP\\eInspect \\<br\\>
 Extract: CondMgr.dll \\<br\\>
 Path: "C:\\Dave\\palm\\Hotsync.exe" \\<br\\>
-Path length (I think): 1024 \\<br\\>
+Path length: 24 \\<br\\>
 Return value: 0
 
 
