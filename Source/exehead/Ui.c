@@ -395,7 +395,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (m_page>=0) {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       // Call leave function. If Abort used don't move to the next page.
-      if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return 1;
+      // But if quit called we must exit now
+      if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return !g_quit_flag;
 #endif
       
       // if the last page was a custom page, wait for it to finish by itself.

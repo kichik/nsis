@@ -26,19 +26,6 @@ static stack_t *g_st;
 
 union installer_flags g_flags;
 
-static WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
-{
-  HANDLE h;
-  static WIN32_FIND_DATA fd;
-  h = FindFirstFile(buf,&fd);
-  if (h != INVALID_HANDLE_VALUE)
-  {
-    FindClose(h);
-    return &fd;
-  }
-  return NULL;
-}
-
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
 // based loosely on code from Tim Kosse
 // in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),

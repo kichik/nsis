@@ -102,18 +102,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   char *realcmds;
   char seekchar=' ';
   char *cmdline;
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  g_usrvars = (NSIS_STRING*)my_GlobalAlloc(USER_VARS_COUNT*sizeof(NSIS_STRING));
-#endif
+  //WIN32_FIND_DATA *pfd;
 
   InitCommonControls();
+  
+  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
   GetTempPath(sizeof(state_temp_dir), state_temp_dir);
-  CreateDirectory(state_temp_dir,NULL);
+  validate_filename(state_temp_dir);
+
+  // This is not so effective...!!??!
+  // The perfect way is:
+  //    - Test Access for filewrite
+  //    - Test Access for folder creation (needed for plugins)
+  //    - And if one of the above tests fail, change to "$WINDIR\TEMP" and re-test
+  // but this will take to much size in exehead and is unreliable too
+  /*
+  pfd = file_exists(state_temp_dir);
+  if (!pfd || !(pfd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+  {
+    // Setup temp dir to "$WINDIR\TEMP"
+    mystrcpy(state_temp_dir+GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir)), "\\Temp");
+    if ( !file_exists(state_temp_dir) || !CreateDirectory(state_temp_dir, NULL) )
+    {
+      m_Err = _LANG_ERRORWRITINGTEMP;
+      goto end;
+    }
+  }
+  */
 
   lstrcpyn(state_command_line,GetCommandLine(),NSIS_MAX_STRLEN);
-
-  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
   g_hInstance=GetModuleHandle(NULL);
   GetModuleFileName(g_hInstance,state_exe_directory,NSIS_MAX_STRLEN);
@@ -304,7 +322,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
       for (x = 0; x < 26; x ++)
       {
-        static char s[]="A~NSISu_.exe";
+        // File name need slash before coz temp dir was changed by validate_filename(...)
+        static char s[]="\\A~NSISu_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
 
