@@ -1133,7 +1133,7 @@
           
            StrCmp ${MUI_TEMP1} "1" "" +3
              StrCpy ${MUI_TEMP1} "${MUI_FINISHPAGE_RUN}"
-             ExecShell "open" '"${MUI_TEMP1}"'
+             Exec "$\"${MUI_TEMP1}$\""
              
            !ifdef MUI_FINISHPAGE_SHOWREADME
           
@@ -1141,7 +1141,7 @@
             
              StrCmp ${MUI_TEMP1} "1" "" +3
                StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_SHOWREADME}
-               ExecShell "open" '"${MUI_TEMP1}"'
+               ExecShell "open" "$\"${MUI_TEMP1}$\""
                
            !endif
              
