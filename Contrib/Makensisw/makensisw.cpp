@@ -580,6 +580,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
         }
     }
     else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
-    
+    GlobalFree(response);
     return 0;
 }
