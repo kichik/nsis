@@ -2,6 +2,7 @@ NSIS Modern User Interface - VERSION HISTORY
 
 1.61 - December 5, 2002
 * Final version for NSIS 2 beta 0
+* modern3.exe UI without description area
 * Different translation for finish page title
 * Bugfixes
 
