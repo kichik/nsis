@@ -61,6 +61,7 @@ unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
           sections[sec].flags |= SF_PSELECTED;
         } else {
           sections[sec].flags |= SF_SELECTED;
+          sections[sec].flags &= ~SF_TOGGLED;
         }
       }
 
