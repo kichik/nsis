@@ -3835,10 +3835,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
     }
     return PS_ERROR;
-    case TOK_INITPLUGINDIR:
+    case TOK_INITPLUGINSDIR:
     {
       int ret;
       SCRIPT_MSG("%s\n",line.gettoken_str(0));
+      if (uninstall_mode) uninst_plugin_used = true;
+      else plugin_used = true;
       // Call [un.]Initialize_____Plugins
       ent.which=EW_CALL;
       ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
@@ -3855,7 +3857,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #else
     case TOK_PLUGINDIR:
     case TOK__PLUGINCOMMAND:
-    case TOK_INITPLUGINDIR:
+    case TOK_INITPLUGINSDIR:
     {
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n",line.gettoken_str(0));
     }
