@@ -507,7 +507,7 @@ void NSISCALL process_string(char *out, const char *in)
               "Desktop",
               "Start Menu"
             };
-            queryShellFolders(tab[nVarIdx-(VAR_CODES_START+26)], out);
+            queryShellFolders(tab[nVarIdx-(VAR_CODES_START+27)], out);
           }
         break;
 
