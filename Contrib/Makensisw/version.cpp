@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,12 +19,11 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-// Turns a define into a string
 #define REALSTR(x) #x
 #define STR(x) REALSTR(x)
 
 #ifdef RELEASE
 const char *NSISW_VERSION = "MakeNSISW " STR(RELEASE);
 #else
-const char *NSISW_VERSION = "MakeNSISW Local Build: " __DATE__;
+const char *NSISW_VERSION = "MakeNSISW Build: " __DATE__;
 #endif
