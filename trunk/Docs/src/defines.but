@@ -1,4 +1,4 @@
-\C{compdefines} Compiler Defines/Conditional Compilation
+\C{compdefines} Conditional Compilation
 
 The compiler maintains a list of defined symbols, which can be defined using !define or the /D command line switch. These defined symbols can be used for conditional compilation (using !ifdef) or for symbol replacement (a simple form of macros). To replace a symbol with its value, use $\{SYMBOL\} (if SYMBOL is not defined, no translation will occur). The translation is first-come-first-served, meaning if you do:
        
@@ -12,25 +12,25 @@ Define/conditional compilation related commands:
 
 This command will add 'gflag' to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).  
 
-\e{!undef gflag} 
-
-Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".  
-
 \e{!ifdef gflag [bcheck [gflag [...]]]} 
 
 This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If gflag is globally defined (using !define or the /D switch), then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.  
 
 \e{!ifndef gflag [bcheck [gflag [...]]]} 
 
-This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. I.e. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".  
-
-\e{!endif}  
-
 This command closes a block started with !ifdef or !ifndef.  
 
 \e{!else [ifdef|ifndef [...]]} 
 
+This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. I.e. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".  
+
+\e{!endif}  
+
 This command is the logical lovemonkey to !ifdef and !endif. !ifdef/!else/!endif, !ifdef/!else ifdef/!endif, !ifdef/!else ifdef/!else ifndef/!endif, etc. If ifdef or ifndef is specified as the first parameter, it behaves as expected.  
+
+\e{!insertmacro macro_name [parameter] [...]} 
+
+Inserts the contents of a macro that was created with !macro. If the macro was created with parameters, then you must pass as many parameters to the macro as it requires.  
 
 \e{!macro macro_name [parameter][...]} 
 
@@ -40,7 +40,6 @@ Creates a macro named 'macro_name'. All lines between the !macro and the !macroe
 
 Ends a macro that was started with !macro.  
 
-\e{!insertmacro macro_name [parameter] [...]} 
+\e{!undef gflag} 
 
-Inserts the contents of a macro that was created with !macro. If the macro was created with parameters, then you must pass as many parameters to the macro as it requires.  
-
+Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".  

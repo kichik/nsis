@@ -1,4 +1,4 @@
-\H{labels} Labels
+\C{labels} Labels
 
 Labels are the targets of Goto instructions, or of the various branching instructions (such as IfErrors, MessageBox, IfFileExists, and StrCmp). Labels must be within a Section or a Function. Labels are local in scope, meaning they are only accessable from within the Section or Function that they reside in.
 To declare a label, simply do:

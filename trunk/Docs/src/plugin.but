@@ -22,7 +22,7 @@ The following two examples both invoke the same plugin command. The first exampl
 
 InstallOptions needs the name of it's ini file as a parameter to the dialog function so it has to be pushed onto the stack before the dialog call is made. Some plugin commands may not need any parameters on the stack, others might require two or three. To use a plugin command you will need to read the documentation for the plugin so that you know what parameters it's functions require, if any.
 
-\H{disablingplug} Disabling Unloading
+\H{disablingplug} Disabling Plugin Unloading
 
 CallInstDLL has an option not to unload the DLL after usage. To use it with the newer plugin command syntax just specify the first parameter as /NOUNLOAD. For example:
 
