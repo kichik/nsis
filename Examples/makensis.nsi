@@ -3,8 +3,8 @@
 
 !define VER_MAJOR 2
 !define VER_MINOR 0
-!define VER_REVISION 0
-!define VER_BUILD 18
+!define VER_REVISION 1
+!define VER_BUILD 19
 
 !define VER_FILE "201"
 !define VER_DISPLAY "2.01"
