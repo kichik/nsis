@@ -2854,7 +2854,9 @@ int CEXEBuild::uninstall_generate()
     fh.nsinst[1]=FH_INT2;
     fh.nsinst[2]=FH_INT3;
     fh.flags=FH_FLAGS_UNINSTALL;
+#ifdef NSIS_CONFIG_CRC_SUPPORT
     fh.flags|=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
+#endif
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     if (build_uninst.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
