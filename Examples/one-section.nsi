@@ -74,7 +74,7 @@ Function .onSelChange
 	IntCmp $0 ${SECTION_ON} 0 +2 +2
 		StrCpy $1 ${sec4}
 
-	StrCmp $2 $1 0 +2 ; selection hasn't changed
+	StrCmp $2 $1 0 +4 ; selection hasn't changed
 		SectionGetFlags $1 $0
 		IntOp $0 $0 | ${SECTION_ON}
 		SectionSetFlags $1 $0
