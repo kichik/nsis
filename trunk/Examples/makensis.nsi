@@ -281,7 +281,6 @@ Section "NSIS Source Code" SecSrcNSIS
   SetOutPath $INSTDIR\Source\exehead
   File ..\Source\exehead\*.c
   File ..\Source\exehead\*.h
-  File ..\Source\exehead\exehead.xml
   File ..\Source\exehead\resource.rc
   File ..\Source\exehead\*.dsp
   File ..\Source\exehead\Makefile
@@ -531,12 +530,12 @@ Section Uninstall
   RMDir $INSTDIR
 
   ; if $INSTDIR was removed, skip these next ones
-  IfFileExists $INSTDIR 0 Removed 
+  IfFileExists $INSTDIR 0 Removed
     MessageBox MB_YESNO|MB_ICONQUESTION \
       "Remove all files in your NSIS directory? (If you have anything you created that you want to keep, click No)" IDNO Removed
     Delete $INSTDIR\*.* ; this would be skipped if the user hits no
     RMDir /r $INSTDIR
-    IfFileExists $INSTDIR 0 Removed 
+    IfFileExists $INSTDIR 0 Removed
       MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
   Removed:
   !insertmacro MUI_FINISHHEADER un.SetHeader
@@ -546,7 +545,7 @@ Function un.onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetHeader
-  
+
 FunctionEnd
 
 Function un.SetHeader
