@@ -47,6 +47,7 @@ Function .onSelChange
 
 !ifdef USE_SUBSECTION
 ; Check if the user have selected all of the sections using the sub-section
+; This piece of code is not needed when there are only two sections
 	SectionGetFlags ${subsec} $0
 	IntOp $0 $0 & ${SF_SELECTED}
 	StrCmp $0 0 skip
