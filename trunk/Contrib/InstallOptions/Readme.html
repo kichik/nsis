@@ -54,10 +54,6 @@ table
 	font-style: italic;
 	}
 
-.changelog
-	{
-	}
-
 .bigheader
 	{
 	margin: 10px;
@@ -431,6 +427,15 @@ FunctionEnd
 in a section. Get it using ReadINIStr:</p>
 <pre class="margin">
 ReadINIStr $R0 "$PLUGINSDIR\test.ini" "Field 1" "State"
+</pre>
+<p class="subheader">ReserveFile</p>
+<p class="text">It you are using BZIP2 compression and your .onInit and Page
+functions are not above all other sections/functions with File commands, use
+ReserveFile on the top of your script to put the DLL/INI files first in the
+data block, which will make your installer start faster:</p>
+<pre class="margin">
+ReserveFile "${NSISDIR}\Plugins\test.ini"
+ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 </pre>
 <p class="header">Fonts and colors</p>
 <p class="text">If you want to use custom fonts or colors on your InstallOptions
