@@ -229,21 +229,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
       {
-        char *tp=CharNext(buf1);
         char *p=buf1;
         char c='c';
         if (*p) {
-          if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
-          else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
-          {
-            int x=4;
-            while (x--)
-            {
-              while (*p != '\\' && *p) p=CharNext(p); // skip host then share
-              p=CharNext(p);
-            }
-          }
-          else break;
+          p = skip_root(buf1);
+          if (!p)
+            break;
           while (c)
           {
             WIN32_FIND_DATA *fd;
@@ -767,8 +758,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         0,
         GetStringFromParm(0x00),
         IMAGE_BITMAP,
-        parm2?r.right:0,
-        parm2?r.bottom:0,
+        parm2*r.right,
+        parm2*r.bottom,
         LR_LOADFROMFILE
       );
       hImage = (HANDLE)SendMessage(
@@ -924,6 +915,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_REGISTERDLL:
       {
         exec_error++;
+        SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
         if (SUCCEEDED(g_hres))
         {
           HANDLE h;
@@ -978,6 +970,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           update_status_text(LANG_NOOLE,buf1);
           log_printf("Error registering DLL: Could not initialize OLE");
         }
+        SetErrorMode(0);
       }
     break;
 #endif

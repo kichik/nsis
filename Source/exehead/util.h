@@ -56,7 +56,7 @@ char * NSISCALL addtrailingslash(char *str);
 //char NSISCALL lastchar(const char *str);
 #define lastchar(str) *CharPrev(str,str+mystrlen(str))
 void NSISCALL trimslashtoend(char *buf);
-char * NSISCALL scanendslash(const char *str);
+char * NSISCALL skip_root(char *path);
 int NSISCALL is_valid_instpath(char *s);
 char * NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
