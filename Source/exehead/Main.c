@@ -141,13 +141,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
+      if (*(LPDWORD)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
         cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-      if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
+      if (*(LPDWORD)(cmdline-2) == CHAR4_TO_DWORD(' ', '/', 'D','='))
       {
-        cmdline[-1]=0; // keep this from being passed to uninstaller if necessary
+        cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
         break; // /D= must always be last
       }
@@ -168,14 +168,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   {
     char *p = findchar(realcmds, 0);
 
-    while (p >= realcmds && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
+    // state_command_line has state_install_directory right after it in memory, so reading
+    // a bit over state_command_line won't do any harm
+    while (p >= realcmds && *(LPDWORD)p != CHAR4_TO_DWORD(' ', '_', '?', '=')) p--;
 
     m_Err = _LANG_UNINSTINITERROR;
 
     if (p >= realcmds)
     {
-      *p=0; // terminate before the "_?="
-      p+=3; // skip over _?=
+      *p=0; // terminate before "_?="
+      p+=4; // skip over " _?="
       if (is_valid_instpath(p))
       {
         mystrcpy(state_install_directory, p);
