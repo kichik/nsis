@@ -1197,7 +1197,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         free(dlg);
       }
       catch (exception& err) {
-        ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
+        ERROR_MSG("Error in LicenseForceSelection: %s\n", err.what());
         return PS_ERROR;
       }
       SCRIPT_MSG("LicenseForceSelection: %s \"%s\" \"%s\"\n", line.gettoken_str(1+a), line.gettoken_str(2+a), line.gettoken_str(3+a));
