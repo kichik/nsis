@@ -13,7 +13,7 @@ by Diego Pedroso (aka deguix)
   !define MUI_VERBOSE 3
 !endif
 
-!echo "$\r$\n----------------------------------------------------------------------$\r$\nNSIS String Functions Header File 1.01 - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+!echo "$\r$\n----------------------------------------------------------------------$\r$\nNSIS String Functions Header File 1.02 - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
 
 !define StrClbGet "!insertmacro FUNCTION_STRING_StrClbGet"
 !define StrClbSet "!insertmacro FUNCTION_STRING_StrClbSet"
@@ -22,6 +22,7 @@ by Diego Pedroso (aka deguix)
 !define StrLowerCase "!insertmacro FUNCTION_STRING_StrLowerCase"
 !define StrNSISToIO "!insertmacro FUNCTION_STRING_StrNSISToIO"
 !define StrRep "!insertmacro FUNCTION_STRING_StrRep"
+!define StrSort "!insertmacro FUNCTION_STRING_StrSort"
 !define StrStr "!insertmacro FUNCTION_STRING_StrStr"
 !define StrStrAdv "!insertmacro FUNCTION_STRING_StrStrAdv"
 !define StrTok "!insertmacro FUNCTION_STRING_StrTok"
@@ -116,8 +117,8 @@ by Diego Pedroso (aka deguix)
 
       StrCmp $R0 "<" 0 +5
         StrLen $R0 $R2
-        IntOp $R0 $R0 - $R4
-        IntOp $R0 $R0 - $R3
+        IntOp $R5 $R3 + $R4
+        IntOp $R0 $R0 - $R5
         Goto +2
 
       StrCpy $R0 $R4
@@ -138,13 +139,13 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
-!macro FUNCTION_STRING_StrLoc_Call ResultVar String StrToSearchFor Direction
+!macro FUNCTION_STRING_StrLoc_Call ResultVar String StrToSearchFor OffsetDirection
 
-  !echo `$ {StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${Direction}"$\r$\n`
+  !echo `$ {StrLoc} "${ResultVar}" "${String}" "${StrToSearchFor}" "${OffsetDirection}"$\r$\n`
 
   Push `${String}`
   Push `${StrToSearchFor}`
-  Push `${Direction}`
+  Push `${OffsetDirection}`
 
   Call StrLoc
 
@@ -525,11 +526,11 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
-!macro FUNCTION_STRING_StrTok_Call ResultVar StrToTokenizing Separators ResultPart SkipEmptyParts
+!macro FUNCTION_STRING_StrTok_Call ResultVar StrToTokenize Separators ResultPart SkipEmptyParts
 
-  !echo `$ {StrTok} "${ResultVar}" "${StrToTokenizing}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"$\r$\n`
+  !echo `$ {StrTok} "${ResultVar}" "${StrToTokenize}" "${Separators}" "${ResultPart}" "${SkipEmptyParts}"$\r$\n`
 
-  Push `${StrToTokenizing}`
+  Push `${StrToTokenize}`
   Push `${Separators}`
   Push `${ResultPart}`
   Push `${SkipEmptyParts}`
@@ -792,15 +793,174 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
-!macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplaceFor StringToBeReplacedWith
+!macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplace ReplacementString
 
-  !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplaceFor}" "${StringToBeReplacedWith}"$\r$\n`
+  !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"$\r$\n`
 
   Push `${String}`
-  Push `${StringToReplaceFor}`
-  Push `${StringToBeReplacedWith}`
+  Push `${StringToReplace}`
+  Push `${ReplacementString}`
 
   Call StrReplace
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_StrSort
+
+  !ifndef FUNCTION_STRING_StrSort
+
+    !echo "$\r$\n----------------------------------------------------------------------$\r$\nAdvanced String Sort Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+
+    !define FUNCTION_STRING_StrSort
+    !undef StrSort
+    !define StrSort "!insertmacro FUNCTION_STRING_StrSort_Call"
+
+    Function AdvStrSort
+
+      # Prepare Variables
+
+      Exch $R7 ;Include Center string
+      Exch
+      Exch $R6 ;Include Left and Right strings
+      Exch 2
+      Exch $0 ;Right String
+      Exch 3
+      Exch $1 ;Left String
+      Exch 4
+      Exch $2 ;Center String
+      Exch 5
+      Exch $R0 ;String
+      Push $3
+      Push $4
+      Push $5
+      Push $R1
+      Push $R2
+      Push $R3
+      Push $R4
+      Push $R5
+
+      StrLen $3 $0
+      StrLen $4 $1
+      StrLen $5 $2
+      StrCpy $R1 0
+
+      # Center String Search
+
+      loop:
+        StrCpy $R3 $R0 $5 $R1
+        StrCmp $R3 "" error
+          StrCmp $R3 $2 done
+            IntOp $R1 $R1 + 1
+            Goto loop
+      done:
+
+      StrCpy $R5 $R1
+
+      IntOp $R1 $R1 - $4
+
+      # Left String Search
+
+      loop2:
+        StrCpy $R3 $R0 $4 $R1
+        StrCmp $R3 "" error2
+          StrCmp $R3 $1 done2
+            IntOp $R1 $R1 - 1
+            Goto loop2
+
+        error2:
+        StrCpy $R1 0
+        StrCpy $R3 0
+        Goto +2
+
+      done2:
+      StrCpy $R3 1
+
+      StrCpy $R4 $R0 $R5
+
+      StrCmp $R1 0 +2
+        StrCpy $R4 $R4 "" $R1
+
+      StrCmp $R3 1 0 +3
+        StrCmp $R6 0 0 +2
+          StrCpy $R4 $R4 "" $4
+
+      # Center String Addition
+
+      StrCmp $R7 0 +2
+        StrCpy $R4 $R4$2
+
+      StrCpy $R1 $R5
+      IntOp $R1 $R1 + $5
+
+      # Right String Search
+
+      loop3:
+
+        StrCpy $R3 $R0 $3 $R1
+        StrCmp $R3 "" error3
+          StrCmp $R3 $0 done3
+            IntOp $R1 $R1 + 1
+            Goto loop3
+
+        error3:
+        StrCpy $R1 0
+
+      done3:
+
+      IntOp $R5 $R5 + $5
+      StrCpy $R3 $R0 "" $R5
+
+      StrCmp $R1 0 +5
+        IntOp $R1 $R1 - $R5
+        StrCmp $R6 0 +2
+          IntOp $R1 $R1 + $3
+        StrCpy $R3 $R3 $R1
+
+      StrCpy $R4 $R4$R3
+
+      StrCpy $2 $R4
+      Goto +2
+
+        Error:
+        StrCpy $2 ""
+
+      # Return to User
+
+      Pop $R5
+      Pop $R4
+      Pop $R3
+      Pop $R2
+      Pop $R1
+      Pop $5
+      Pop $4
+      Pop $3
+      Pop $R0
+      Pop $R7
+      Pop $R6
+      Pop $0
+      Pop $1
+      Exch $2
+
+    FunctionEnd
+
+  !endif
+
+!macroend
+
+!macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
+
+  !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"$\r$\n`
+
+  Push `${String}`
+  Push `${CenterStr}`
+  Push `${LeftStr}`
+  Push `${RightStr}`
+  Push `${IncludeLeftRightStr}`
+  Push `${IncludeCenterStr}`
+
+  Call AdvStrSort
 
   Pop `${ResultVar}`
 

@@ -17,6 +17,7 @@ ${StrStrAdv}
 ${StrTok}
 ${StrTrimNewLines}
 ${StrUpperCase}
+${StrSort}
 
 Section
 
@@ -130,6 +131,50 @@ strstradverror:
   Goto +2
 strreperror:
   DetailPrint "FAILED StrRep test"
+
+  # test sorting
+  ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
+  StrCmp $0 "This is an exam" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "j" " " " " "0" "1"
+  StrCmp $0 "just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "j" "" "" "0" "1"
+  StrCmp $0 "This is just an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "us" " " "" "0" "1"
+  StrCmp $0 "just an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "u" "" " " "0" "1"
+  StrCmp $0 "This is just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "just" " " " " "0" "1"
+  StrCmp $0 "just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "t" " " " " "0" "1"
+  StrCmp $0 "This" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "le" " " " " "0" "1"
+  StrCmp $0 "example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "le" " " " " "1" "0"
+  StrCmp $0 " examp" 0 strsorterror
+  ${StrSort} $0 "an error has occured" "e" " " " " "0" "1"
+  StrCmp $0 "error" 0 strsorterror
+  ${StrSort} $0 "" "something" " " " " "0" "1"
+  StrCmp $0 "" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "j" " " " " "1" "1"
+  StrCmp $0 " just " 0 strsorterror
+  ${StrSort} $0 "This is just an example" "j" " " " " "1" "0"
+  StrCmp $0 " ust " 0 strsorterror
+  ${StrSort} $0 "This is just an example" "j" "" "" "1" "0"
+  StrCmp $0 "This is ust an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "us" " " "" "1" "0"
+  StrCmp $0 " jt an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "u" "" " " "1" "0"
+  StrCmp $0 "This is jst " 0 strsorterror
+  ${StrSort} $0 "This is just an example" "just" " " " " "1" "0"
+  StrCmp $0 "  " 0 strsorterror
+  ${StrSort} $0 "an error has occured" "e" " " " " "1" "0"
+  StrCmp $0 " rror " 0 strsorterror
+  ${StrSort} $0 "" "something" " " " " "1" "0"
+  StrCmp $0 "" 0 strsorterror
+  DetailPrint "PASSED StrSort test"
+  Goto +2
+strsorterror:
+  DetailPrint "FAILED StrSort test"
 
   # test lower/upper case
   ${StrLowerCase} $0 "abcefghijklmnopqrstuvwxyz"
