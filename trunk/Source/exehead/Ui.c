@@ -731,15 +731,14 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static void NSISCALL inttosizestr(int kb, char *str)
+static char * NSISCALL inttosizestr(int kb, char *str)
 {
   char sh=20;
   char c='G';
-  char *s="";
   if (kb < 1024) { sh=0; c='K'; }
   else if (kb < 1024*1024) { sh=10; c='M'; }
-  else if (GetVersion()&0x80000000) s="+";
-  wsprintf(str+mystrlen(str),"%d.%d%cB%s",kb>>sh,((kb*10)>>sh)%10,c,s);
+  wsprintf(str+mystrlen(str),"%d.%d%cB%c",kb>>sh,((kb*10)>>sh)%10,c,GetVersion()&0x80000000?'+':' ');
+  return str;
 }
 
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -749,7 +748,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     GetUIText(IDC_DIR,state_install_directory,NSIS_MAX_STRLEN);
 #ifdef NSIS_CONFIG_LOG
     build_g_logfile();
-    log_dolog = !!IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
+    log_dolog = IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
 #endif
   }
   if (uMsg == WM_INITDIALOG)
@@ -857,13 +856,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Added by Amir Szekely 24th July 2002
     // Allows 'SpaceTexts none'
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ)));
-      SetUITextNT(IDC_SPACEREQUIRED,s);
+      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ))));
       if (available != -1)
-      {
-        inttosizestr(available,mystrcpy(s,LANG_STR(LANG_SPACE_AVAIL)));
-        SetUITextNT(IDC_SPACEAVAILABLE,s);
-      }
+        SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,mystrcpy(s,LANG_STR(LANG_SPACE_AVAIL))));
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
@@ -1074,7 +1069,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       tv.pszText=process_string_fromtab(ps_tmpbuf,ns);
       TreeView_SetItem(hwndTree1,&tv);
     }
-    SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].flags&SF_SELECTED));
+    SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)(g_inst_section[x].flags&SF_SELECTED));
   }
   if (uMsg == WM_USER+0x18) // select
   {
@@ -1246,8 +1241,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (g_inst_section[x].flags&SF_SELECTED)
           total+=g_inst_section[x].size_kb;
       }
-      inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ)));
-      SetUITextNT(IDC_SPACEREQUIRED,s);
+      SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ))));
     }
   }
   return HandleStaticBkColor();
@@ -1446,10 +1440,10 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         0,insthwnd,0))
       {
         char textBuf[1024];
-        int i,total = 1;
+        int i,total = 1; // 1 for the null char
         LVITEM item;
         HGLOBAL memory;
-        LPTSTR ptr,endPtr;
+        LPTSTR ptr;//,endPtr;
 
         // 1st pass - determine clipboard memory required.
         item.iSubItem   = 0;
@@ -1464,17 +1458,17 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
         OpenClipboard(0);
         EmptyClipboard();
-        memory = GlobalAlloc(GMEM_MOVEABLE,total);
+        memory = GlobalAlloc(GHND,total);
         ptr = GlobalLock(memory);
-        endPtr = ptr+total-2; // -2 to allow for CR/LF
+        //endPtr = ptr+total-2; // -2 to allow for CR/LF
         i = 0;
         do {
-          ListView_GetItemText(insthwnd,i,0,ptr,endPtr-ptr);
+          ListView_GetItemText(insthwnd,i,0,ptr,total);
           while (*ptr) ptr++;
           *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
           ptr+=2;
         } while (++i < count);
-        *ptr = 0;
+        // memory is auto zeroed when allocated with GHND - *ptr = 0;
         GlobalUnlock(memory);
         SetClipboardData(CF_TEXT,memory);
         CloseClipboard();
