@@ -168,6 +168,12 @@ If you make your license file a RTF file it is recommended you edit it with Word
 
 Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
 
+\S2{alicenseforceselection} LicenseForceSelection
+
+\c [/LANG=lang_id] (checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | off)
+
+Specifies if the displayed license must be accept explicit or not. This can be done either by a checkbox or by radiobuttons. If off is specified the license must not be accepted.
+
 \S2{aloadlanguagefile} LoadLanguageFile
 
 \c lang_file.nlf
