@@ -165,6 +165,19 @@ Section "Language DLL" SecContribLangDLL
   File ..\Contrib\LangDLL\LangDLL.dsp
 SectionEnd
 
+Section "nsExec" SecContribnsExec
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  SetOverwrite try
+  File ..\Plugins\nsExec.dll
+  SetOutPath $INSTDIR\Contrib\nsExec
+  File ..\Contrib\nsExec\*.c
+  File ..\Contrib\nsExec\*.h
+  File ..\Contrib\nsExec\*.txt
+  File ..\Contrib\nsExec\*.dsw
+  File ..\Contrib\nsExec\*.dsp
+SectionEnd
+
 Section "Splash" SecContribSplash
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Splash
@@ -436,6 +449,7 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output."
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
