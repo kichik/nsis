@@ -1,5 +1,37 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0rc3} 2.0 Release Candidate 3
+
+Released on January 24th, 2004
+
+\S1{v2.0rc3-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Fixed some bugs with LZMA/bzip2 and non-solid compression
+
+\b Fixed a bug that caused escaping not to be ignored on extended !define lines
+
+\b Language files updates and fixes
+
+\b Fixed installer crash when certain language strings were not referenced in all languages
+
+\b Some new and improved graphics
+
+\b Made CreateShortcut case insensitive when parsing hot key
+
+\b Some documentation improvements and fix-ups
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.69}: Made all uninstaller pages work without installer pages and fixed top text on uninstaller license page
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Fixed resize bug
+
+\b NSIS Update: Improved UI
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed minor problems with the new NOTIFY flag
+
 \H{v2.0rc2} 2.0 Release Candidate 2
 
 Released on January 5th, 2004
