@@ -62,38 +62,10 @@
     !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Icons\modern.bmp"
   !endif
 
-  !ifndef MUI_FONT
-    !define MUI_FONT "MS Shell Dlg"
+  !ifdef MUI_FONT
+    !error "Use SetFont to change the dialog font"
   !endif
   
-  !ifndef MUI_FONTSIZE
-    !define MUI_FONTSIZE "8"
-  !endif
-
-  !ifndef MUI_FONT_HEADER
-    !define MUI_FONT_HEADER "MS Shell Dlg"
-  !endif
-    
-  !ifndef MUI_FONTSIZE_HEADER
-    !define MUI_FONTSIZE_HEADER "8"
-  !endif
-  
-  !ifndef MUI_FONTSTYLE_HEADER
-    !define MUI_FONTSTYLE_HEADER "700"
-  !endif
-
-  !ifndef MUI_FONT_TITLE
-    !define MUI_FONT_TITLE "Verdana"
-  !endif
-  
-  !ifndef MUI_FONTSIZE_TITLE
-    !define MUI_FONTSIZE_TITLE "12"
-  !endif
-  
-  !ifndef MUI_FONTSTYLE_TITLE
-    !define MUI_FONTSTYLE_TITLE "700"
-  !endif
-
   !ifndef MUI_INSTALLCOLORS
     !define MUI_INSTALLCOLORS "/windows"
   !endif
@@ -165,7 +137,6 @@
   !endif
   
   CheckBitmap "${MUI_CHECKBITMAP}"
-  SetFont "${MUI_FONT}" "${MUI_FONTSIZE}"
   InstallColors ${MUI_INSTALLCOLORS}
   InstProgressFlags ${MUI_PROGRESSBAR}
 
@@ -341,7 +312,7 @@
 
   !insertmacro MUI_HEADERBITMAP_INIT
 
-  !insertmacro MUI_GUIINIT_BASIC
+  !insertmacro MUI_UNGUIINIT_BASIC
   
 !macroend
 
@@ -351,7 +322,38 @@
   Push ${MUI_TEMP2}
 
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
-    CreateFont ${MUI_TEMP2} "${MUI_FONT_HEADER}" "${MUI_FONTSIZE_HEADER}" "${MUI_FONTSTYLE_HEADER}"
+    CreateFont ${MUI_TEMP2} "$(MUI_FONT_HEADER)" "$(MUI_FONTSIZE_HEADER)" "$(MUI_FONTSTYLE_HEADER)"
+    SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+    SetBkColor ${MUI_TEMP1} -1
+    GetWindowText ${MUI_TEMP2} ${MUI_TEMP1}
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+    SetBkColor ${MUI_TEMP1} -1
+    SendMessage ${MUI_TEMP1} ${WM_SETTEXT} ${NSIS_MAX_STRLEN} "STR:${MUI_TEMP2}"
+
+  Pop ${MUI_TEMP2}
+  Pop ${MUI_TEMP1}
+
+!macroend
+
+!macro MUI_UNGUIINIT_BASIC
+
+  Push ${MUI_TEMP1}
+  Push ${MUI_TEMP2}
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
+    CreateFont ${MUI_TEMP2} "$(un.MUI_FONT_HEADER)" "$(un.MUI_FONTSIZE_HEADER)" "$(un.MUI_FONTSTYLE_HEADER)"
     SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
     SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
@@ -1001,7 +1003,7 @@
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
         SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-        CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
+        CreateFont ${MUI_TEMP3} "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
@@ -1353,7 +1355,7 @@
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
         SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-        CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
+        CreateFont ${MUI_TEMP3} "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
@@ -1919,6 +1921,30 @@
   
 !macroend
 
+!macro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT NAME DEFAULT
+
+  !ifdef "${NAME}"
+    Langstring "${NAME}" 0 "${${NAME}}"
+    !undef "${NAME}"
+  !else
+    Langstring "${NAME}" 0 "${DEFAULT}"
+  !endif
+  
+!macroend
+
+!macro MUI_LANGUAGEFILE_LANGSTRING_FONT NAME DEFAULT
+
+  !ifdef "${NAME}"
+    Langstring "${NAME}" 0 "${${NAME}}"
+    Langstring "un.${NAME}" 0 "${${NAME}}"
+    !undef "${NAME}"
+  !else
+    Langstring "${NAME}" 0 "${DEFAULT}"
+    Langstring "un.${NAME}" 0 "${DEFAULT}"
+  !endif
+  
+!macroend
+
 !macro MUI_LANGUAGEFILE_END
 
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
@@ -1934,6 +1960,14 @@
     !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} ${MUI_LANGDLL_PUSHLIST_TEMP}"
   !endif
   
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONT_HEADER" "MS Shell Dlg"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSIZE_HEADER" "8"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSTYLE_HEADER" "700"
+  
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONT_TITLE" "Verdana"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONTSIZE_TITLE" "12"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONTSTYLE_TITLE" "700"
+    
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "Name" "MUI_NAME"
   
   SubCaption 0 " "

@@ -281,17 +281,6 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
   <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
-  <p class="text"><span class="bold">MUI_FONT </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE </span><span class="parameter">font_size</span><br />
-  The font for the normal texts.<br /><i>Defaults: MS Shell Dlg, 8</i></p>
-  <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
-  <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
-  The font for the title in the header.<br /><i>Defaults: MS Shell Dlg, 8, 700</i></p>
-  <p class="text"><span class="bold">MUI_FONT_TITLE </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
-  <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
-  The font for the title on the Welcome and Finish page.<br /><i>Defaults: Verdana, 12, 700</i></p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows | (foreground color: RRBBGG)
   (background color: RRGGBB))</span>
   <br />The colors of the details screen. Use /windows instead of the colors to use the Windows
@@ -337,6 +326,15 @@ follow these steps:</p>
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
+  <p class="text">You can also customize the fonts for a language using these defines:</p>
+  <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
+  <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
+  <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
+  The font for the title in the header.</p>
+  <p class="text"><span class="bold">MUI_FONT_TITLE </span><span class="parameter">font_name</span><br />
+  <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
+  <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
+  The font for the title on the Welcome and Finish page.</p>
   <p class="text"><span class="bold">Language selection dialog</span></p>
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
@@ -599,7 +597,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.64 - April 7, 2003
+<li>1.64 - April 21, 2003
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
     let the user accept the agreement or not</li>
@@ -608,6 +606,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     no problems anymore when the users selects the wrong language</li>
     <li>Header text for aborted installation</li>
     <li>New macro's: get language for uninstaller, delete shortcuts</li>
+    <li>Language specific fonts</li>
     <li>Language files have to be updated</li>
   </ul></li>
 </ul>

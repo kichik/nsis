@@ -1,6 +1,6 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.64 - April 7, 2003
+1.64 - April 21, 2003
 * Support for license page with checkbox or radiobuttons to let the
   user accept the agreement or not
 * Macro's for finish headers don't have to be inserted anymore
@@ -8,6 +8,7 @@ NSIS Modern User Interface - VERSION HISTORY
   no problems anymore when the users selects the wrong language
 * Header text for aborted installation
 * New macro's: get language for uninstaller, delete shortcuts
+* Language specific fonts
 * Language files have to be updated
 
 1.63 - March 9, 2003
