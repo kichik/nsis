@@ -2,7 +2,7 @@
 NLF v2
 # Language ID
 1048
-# Translation by Cristian Pirvu (pcristip@yahoo.com)
+# Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2
 Nullsoft Install System %s
 Instalare %s
 Dezinstalare %s
@@ -21,19 +21,19 @@ Dezinstalare %s
 &Dezinstalare
 Anuleaza
 &Inchide
-&Alege...
+&Alegeti...
 Afiseaza &detalii
 Nume
 Complet
 Nestandard
-Alege tipul instalarii:
-Alege componentele de instalat:
-Sau alege componentele optionale pe care vrei sa le instalezi:
-Selecteaza directorul in care vrei sa instalezi %s:
+Alegeti tipul instalarii:
+Alegeti componentele de instalat:
+Sau alegeti componentele optionale pe care vreti sa le instalati:
+Selectati directorul in care vreti sa instalati %s:
 Spatiu disponibil: 
 Spatiu necesar: 
 Dezinstaleaza din:
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlege anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai incerca odata scrierea fisierului, \r\nignora pentru a trece peste acest fisier
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai incerca odata scrierea fisierului, \r\nignora pentru a trece peste acest fisier
 Nu pot sa scriu: 
 Copierea a esuat
 Copiaza in
@@ -51,8 +51,8 @@ Eroare la inregistrarea DLL-ului
 ExecShell: 
 Executa: 
 Extrage: 
-Extrage: eroare la scriere in fisier
-Program de instalare corupt: opcode invalid
+Extrage: eroare la scriere in fisier 
+Program de instalare corupt: opcode invalid 
 Nu exista OLE pentru: 
 Directorul destinatie: 
 Sterge destinatia: 
