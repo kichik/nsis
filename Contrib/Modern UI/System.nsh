@@ -910,10 +910,16 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
-      
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
-      
+
     !ifdef MUI_CUSTOMFUNCTION_WELCOME_PRE
       Call "${MUI_CUSTOMFUNCTION_WELCOME_PRE}"
     !endif
@@ -948,7 +954,13 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
-      
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
@@ -1120,6 +1132,12 @@ Var MUI_TEMP2
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
       
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1318,7 +1336,13 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
-      
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
       
