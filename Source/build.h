@@ -26,7 +26,7 @@ using namespace std;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 extern "C"
 {
-  unsigned long CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
+  unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
 };
 #endif
 
@@ -40,7 +40,7 @@ extern "C"
 #define IS_PS_ELSE(x) (( x ) >= PS_ELSE && ( x ) <= PS_ELSE_IF1)
 
 class CEXEBuild {
-  public: 
+  public:
     CEXEBuild();
     ~CEXEBuild();
 
@@ -60,7 +60,7 @@ class CEXEBuild {
     // it is as if they are concatenated)
     int process_script(FILE *fp, char *curfilename, int *lineptr);
     int process_oneline(char *line, char *curfilename, int lineptr);
-    
+
     // you only get to call write_output once, so use it wisely.
     int write_output(void);
 
@@ -160,7 +160,7 @@ class CEXEBuild {
     int has_called_write_output;
 
     char build_packname[1024], build_packcmd[1024];
-    int build_overwrite, build_compress, build_crcchk, 
+    int build_overwrite, build_compress, build_crcchk,
         build_datesave, build_optimize_datablock;
 
     header build_header;
@@ -178,7 +178,7 @@ class CEXEBuild {
 
     StringList m_macro_entry;
 
-    int db_opt_save, db_comp_save, db_full_size, db_opt_save_u, 
+    int db_opt_save, db_comp_save, db_full_size, db_opt_save_u,
         db_comp_save_u, db_full_size_u;
     int build_sections_req,build_sections_div;
 
@@ -193,7 +193,7 @@ class CEXEBuild {
     StringList build_strlist,ubuild_strlist;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
-    IGrowBuf *cur_datablock; 
+    IGrowBuf *cur_datablock;
 
     unsigned char *header_data_new;
     int exeheader_size_new;

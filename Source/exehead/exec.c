@@ -39,7 +39,7 @@ char plugins_temp_dir[NSIS_MAX_STRLEN]="";
 
 extern HWND m_curwnd;
 
-static WIN32_FIND_DATA *file_exists(char *buf)
+static WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
   HANDLE h;
   static WIN32_FIND_DATA fd;
@@ -56,7 +56,7 @@ static WIN32_FIND_DATA *file_exists(char *buf)
 // based loosely on code from Tim Kosse
 // in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
 // but in win2k you need to do this manually.
-static LONG myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
+static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 {
 	HKEY key;
 	int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ALL_ACCESS,&key);
@@ -82,15 +82,15 @@ static LONG myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 
 extern char g_all_user_var_flag;
 
-static int ExecuteEntry(entry *entries, int pos);
+static int NSISCALL ExecuteEntry(entry *entries, int pos);
 
-static int resolveaddr(int v)
+static int NSISCALL resolveaddr(int v)
 {
   if (v<0) return myatoi(g_usrvars[-(v+1)]);  // if <0, that means we
   return v;
 }
 
-int ExecuteCodeSegment(entry *entries, int pos, HWND hwndProgress)
+int NSISCALL ExecuteCodeSegment(entry *entries, int pos, HWND hwndProgress)
 {
   while (pos >= 0)
   {
@@ -124,7 +124,7 @@ int ExecuteCodeSegment(entry *entries, int pos, HWND hwndProgress)
 // returns EXEC_ERROR on error
 // returns 0, advance position by 1
 // otherwise, returns new_position+1
-static int ExecuteEntry(entry *entries, int pos)
+static int NSISCALL ExecuteEntry(entry *entries, int pos)
 {
   static char buf[NSIS_MAX_STRLEN],buf2[NSIS_MAX_STRLEN],buf3[NSIS_MAX_STRLEN],buf4[NSIS_MAX_STRLEN];
   int *parms=entries[pos].offsets;
@@ -1301,7 +1301,7 @@ static int ExecuteEntry(entry *entries, int pos)
         log_printf2("settings logging to %d",parms[1]);
         log_dolog=parms[1];
         log_printf2("logging set to %d",parms[1]);
-        if (!g_log_file && log_dolg) build_g_logfile();
+        if (!g_log_file && log_dolog) build_g_logfile();
       }
       else
       {

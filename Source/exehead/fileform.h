@@ -393,20 +393,20 @@ typedef struct
 
 // the following are only used/implemented in exehead, not makensis.
 
-int isheader(firstheader *h); // returns 0 on not header, length_of_datablock on success
+int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_datablock on success
 
 // returns nonzero on error
 // returns 0 on success
 // on success, m_header will be set to a pointer that should eventually be GlobalFree()'d.
 // (or m_uninstheader)
-int loadHeaders(void);
+int NSISCALL loadHeaders(void);
 
 extern HANDLE g_db_hFile;
 extern int g_quit_flag;
 
-const char *GetStringFromStringTab(int offs);
-int GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
-int GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
+const char * NSISCALL GetStringFromStringTab(int offs);
+int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
+int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT

@@ -32,7 +32,7 @@ struct internal_state {
 };
 
 
-int inflateReset(z_streamp z)
+int ZEXPORT inflateReset(z_streamp z)
 {
   if (z == Z_NULL || z->state == Z_NULL)
     return Z_STREAM_ERROR;
@@ -42,7 +42,7 @@ int inflateReset(z_streamp z)
 }
 
 
-int inflateInit(z_streamp z)
+int ZEXPORT inflateInit(z_streamp z)
 {
   int inflate_blocks_getssize(void);
   void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s);
@@ -57,7 +57,7 @@ int inflateInit(z_streamp z)
 }
 
 
-int inflate(z_streamp z)
+int ZEXPORT inflate(z_streamp z)
 {
   return inflate_blocks(&z->state->blocks, z, Z_OK);
 }

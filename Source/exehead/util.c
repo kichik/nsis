@@ -20,7 +20,7 @@ char g_usrvars[24][NSIS_MAX_STRLEN];
 
 HANDLE g_hInstance;
 
-HANDLE myCreateProcess(char *cmd, char *dir)
+HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
   PROCESS_INFORMATION ProcInfo={0,};
   STARTUPINFO StartUp={sizeof(StartUp),};
@@ -30,12 +30,12 @@ HANDLE myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
-int my_MessageBox(const char *text, UINT type) {
+int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, type);
 }
 
 #ifdef NSIS_SUPPORT_RMDIR
-void doRMDir(char *buf, int recurse)
+void NSISCALL doRMDir(char *buf, int recurse)
 {
   if (recurse && is_valid_instpath(buf))
   {
@@ -72,17 +72,17 @@ void doRMDir(char *buf, int recurse)
 }
 #endif//NSIS_SUPPORT_RMDIR
 
-void addtrailingslash(char *str)
+void NSISCALL addtrailingslash(char *str)
 {
   if (lastchar(str)!='\\') lstrcat(str,"\\");
 }
 
-char lastchar(const char *str)
+char NSISCALL lastchar(const char *str)
 {
   return *CharPrev(str,str+mystrlen(str));
 }
 
-void trimslashtoend(char *buf)
+void NSISCALL trimslashtoend(char *buf)
 {
   char *p=scanendslash(buf);
   if (p<buf) p=buf;
@@ -90,7 +90,7 @@ void trimslashtoend(char *buf)
 }
 
 
-char *scanendslash(const char *str)
+char * NSISCALL scanendslash(const char *str)
 {
   char *s=CharPrev(str,str+mystrlen(str));
 	if (!*str) return (char*)str-1;
@@ -104,12 +104,12 @@ char *scanendslash(const char *str)
 	}
 }
 
-int validpathspec(char *ubuf)
+int NSISCALL validpathspec(char *ubuf)
 {
   return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *CharNext(ubuf)==':'));
 }
 
-int is_valid_instpath(char *s)
+int NSISCALL is_valid_instpath(char *s)
 {
   int ivp=0;
   // if 8 is set, req is 0, which means rootdirs are not allowed.
@@ -143,7 +143,7 @@ int is_valid_instpath(char *s)
   return ivp;
 }
 
-static char *findinmem(char *a, char *b, int len_of_a)
+static char * NSISCALL findinmem(char *a, char *b, int len_of_a)
 {
   if (len_of_a<0) len_of_a=mystrlen(a);
   len_of_a -= mystrlen(b);
@@ -163,7 +163,7 @@ static char *findinmem(char *a, char *b, int len_of_a)
 }
 
 
-void *mini_memcpy(void *out, const void *in, int len)
+void * NSISCALL mini_memcpy(void *out, const void *in, int len)
 {
   char *c_out=(char*)out;
   char *c_in=(char *)in;
@@ -175,13 +175,13 @@ void *mini_memcpy(void *out, const void *in, int len)
 }
 
 
-HANDLE myOpenFile(const char *fn, DWORD da, DWORD cd)
+HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
 {
   return CreateFile(fn,da,FILE_SHARE_READ,NULL,cd,0,NULL);
 }
 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-BOOL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
+BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
   HMODULE hLib=LoadLibrary("kernel32.dll");
@@ -277,7 +277,7 @@ BOOL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 }
 #endif
 
-void recursive_create_directory(char *directory)
+void NSISCALL recursive_create_directory(char *directory)
 {
   char *tp;
 	char *p;
@@ -311,7 +311,7 @@ void recursive_create_directory(char *directory)
 }
 
 
-void myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
+void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
 {
 	HKEY hKey;
   *out=0;
@@ -328,7 +328,7 @@ void myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
 
 char g_all_user_var_flag;
 
-static void queryShellFolders(const char *name, char *out)
+static void NSISCALL queryShellFolders(const char *name, char *out)
 {
   char f=g_all_user_var_flag;
 again:
@@ -349,28 +349,28 @@ again:
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 
-void process_string_fromtab(char *out, int offs)
+void NSISCALL process_string_fromtab(char *out, int offs)
 {
   process_string(ps_tmpbuf,GetStringFromStringTab(offs));
   lstrcpyn(out,ps_tmpbuf,NSIS_MAX_STRLEN);
 }
 
-void process_string_from_lang(char *out, langid_t id)
+void NSISCALL process_string_from_lang(char *out, langid_t id)
 {
   process_string_fromtab(out, GetLangString(id));
 }
 
 // Retrieve the string offset associated with the language string ID given
-int GetLangString(langid_t id)
+int NSISCALL GetLangString(langid_t id)
 {
   return (int)id < 0 ?
     *((int *)cur_install_strings_table - 1 - (int)id) :
     *((int *)cur_common_strings_table + (int)id);
 }
 
-void myitoa(char *s, int d) { wsprintf(s,"%d",d); }
+void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
 
-int myatoi(char *s)
+int NSISCALL myatoi(char *s)
 {
   unsigned int v=0;
   if (*s == '0' && (s[1] == 'x' || s[1] == 'X'))
@@ -418,25 +418,25 @@ int myatoi(char *s)
 // Straight copies of selected shell functions.  Calling local functions
 // requires less code than DLL functions.  For the savings to outweigh the cost
 // of a new function there should be about a couple of dozen or so calls.
-char *mystrcpy(char *out, const char *in)
+char * NSISCALL mystrcpy(char *out, const char *in)
 {
   return lstrcpy(out, in);
 }
 
-int mystrlen(const char *in)
+int NSISCALL mystrlen(const char *in)
 {
   return lstrlen(in);
 }
 
 
-int process_string_fromtab_toint(int offs)
+int NSISCALL process_string_fromtab_toint(int offs)
 {
   process_string(ps_tmpbuf,GetStringFromStringTab(offs));
   return myatoi(ps_tmpbuf);
 }
 
 // Dave Laundon's simplified process_string
-void process_string(char *out, const char *in)
+void NSISCALL process_string(char *out, const char *in)
 {
   char *outsave = out;
   while (*in && out - outsave < NSIS_MAX_STRLEN)
@@ -555,7 +555,7 @@ void process_string(char *out, const char *in)
 
 char log_text[4096];
 int log_dolog;
-void log_write(int close)
+void NSISCALL log_write(int close)
 {
   extern char g_log_file[1024];
   static HANDLE fp=INVALID_HANDLE_VALUE;
@@ -589,7 +589,7 @@ void log_write(int close)
 #endif
 
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-int CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey)
+int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey)
 {
   HRESULT hres;
   int rv=1;
