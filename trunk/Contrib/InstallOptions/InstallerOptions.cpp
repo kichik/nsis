@@ -115,21 +115,22 @@ char *STRDUP(const char *c)
 // general flags
 #define FLAG_BOLD          (1)
 #define FLAG_RIGHT         (2)
+#define FLAG_DISABLED      (4)
 
 // text box flags
-#define FLAG_PASSWORD      (4)
+#define FLAG_PASSWORD      (8)
 
 // listbox flags
-#define FLAG_MULTISELECT   (8)
+#define FLAG_MULTISELECT   (16)
 
 // combobox flags
-#define FLAG_DROPLIST      (16)
+#define FLAG_DROPLIST      (32)
 
 // bitmap flags
-#define FLAG_RESIZETOFIT   (32)
+#define FLAG_RESIZETOFIT   (64)
 
 // radio button flags
-#define FLAG_GROUP         (64)
+#define FLAG_GROUP         (128)
 
 struct TableEntry {
   char *pszName;
@@ -519,6 +520,7 @@ bool ReadSettings(void) {
       { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
       { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
       { "GROUP",             FLAG_GROUP          },
+      { "DISABLED",          FLAG_DISABLED       },
 /*
       { "NO_ALPHA",          0                   },
       { "NO_NUMBERS",        0                   },
@@ -931,6 +933,8 @@ int createCfgDlg()
           dwStyle |= LBS_EXTENDEDSEL;
         break;
     }
+
+    if (pFields[nIdx.nFlags & FLAG_DISABLED) dwStyle |= WS_DISABLED;
 
     HWND hwCtrl = pFields[nIdx].hwnd = CreateWindowEx(
       dwExStyle,
