@@ -41,9 +41,24 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
+BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
+{
+  return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);
+}
+
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
 {
-  return SetDlgItemText(dlg,idx,val);
+  return my_SetWindowText(GetDlgItem(dlg,idx),val);
+}
+
+int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size)
+{
+  return SendMessage(hWnd,WM_GETTEXT,size,(LPARAM)val);
+}
+
+int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size)
+{
+  return my_GetWindowText(GetDlgItem(dlg,idx),val,size);
 }
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {

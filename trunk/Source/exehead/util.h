@@ -8,8 +8,10 @@ int NSISCALL myatoi(char *s);
 void NSISCALL myitoa(char *s, int d);
 char * NSISCALL mystrcpy(char *out, const char *in);
 int NSISCALL mystrlen(const char *in);
+BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val);
-
+int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size);
+int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size);
 
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];
