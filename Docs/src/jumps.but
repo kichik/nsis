@@ -16,5 +16,3 @@ Examples:
 \c  MessageBox MB_OK "You will never ever see this message box"
 \c  Goto -3
 \c  MessageBox MB_OK "Done"
-
-\\<b\\>Note:\\</b\\> relative jumps don't work with \R{Exch}{Exch}, \R{file}{File}, \R{plugindlls}{plug-ins (Plugin::Function)}, \R{initpluginsdir}{InitPluginsDir}, \R{getfiletimelocal}{GetFileTimeLocal} or \R{getdllversionlocal}{GetDLLVersionLocal}. Do \e{not} try to jump over them using relative jumps, you will not get the result you were expecting.

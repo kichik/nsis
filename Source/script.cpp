@@ -804,6 +804,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
   build_plugin_table();
 #endif
 
+  multiple_entries_instruction=0;
+
   entry ent={0,};
   switch (which_token)
   {
