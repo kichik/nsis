@@ -1,6 +1,17 @@
-\A{history} Release History
+\A{history} Changelog and Release Notes
+
 
 \e{v2.0b4}
+
+\b InstallOptions PlugIn: Fixed bug [ 720332 ] ">301 Characters in State of List Box Bug in InstallOptions"
+
+\b System PlugIn: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
+
+\b Fixed a problem regarding borders in PlugIns BgImage and InstallOptions
+
+\b Fixed pluginsdir init function generation
+
+\b Bug #717022 fixed: overlapping chars in dir input
 
 \b In Components Tree: Fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree, Added SF_PSELECTED for partially selected sub-sections
 
@@ -8,7 +19,7 @@
 
 \b RO sections can now be in \R{ainsttype}{InstTypes} too (default to old behavior)
 
-\b \W{../contrib/InstallOptions/readme.html}{IO}: Added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection)
+\b \W{../contrib/InstallOptions/readme.html}{InstallOptions}: Added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection)
 
 \b Modern UI 1.64: Finish header macro's don't have to be inserted anymore, \R{alicenseforceselection}{LicenseForceSelection} support, improved language preference storage
 
@@ -21,6 +32,13 @@
 \b Added \R{setbkcolor}{SetBkColor}: Background colors can be set for non-static controls, transparent background support
 
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
+
+
+
+
+\R{page}{Custom Pages} now have a leave function. As this parameter is before the caption you have to add another "" empty string for the title to work.
+
+
 
 \e{v2.0b3}
 
