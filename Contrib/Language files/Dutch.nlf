@@ -1,0 +1,61 @@
+# Header, don't edit
+NLF v1
+# Language ID
+1043
+# Dutch translation by Hendri Adriaens
+Nullsoft Install System %s
+%s Setup
+%s Uninstall
+: Licentie Overeenkomst
+: Installatie Opties
+: Installatie Directory
+: Bestanden Installeren
+: Voltooid
+: Bevestiging
+: Bestanden verwijderen
+: Voltooid
+< Vorige
+Volgende >
+Akkoord
+Installeren
+Uninstall
+Annuleren
+Afsluiten
+Bladeren...
+Details tonen
+Naam
+Voltooid
+Handmatig
+Selecteer het installatietype:
+Selecteer de installatiecomponenten:
+Of selecteer de componenten die geïnstalleerd moeten worden:
+Selecteer de directory om %s in te installeren:
+Beschikbare ruimte: 
+Vereiste ruimte: 
+Uninstallatie vanuit:
+Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik abort om de installatie te stoppen,\r\nretry om het opnieuw te proberen of\r\nignore om dit bestand over te slaan
+Kon niet schrijven: 
+Kopiëren mislukt
+Kopiëren naar 
+Kon symbool niet vinden: 
+Kon niet laden: 
+Directory maken: 
+Snelkoppeling maken: 
+Uninstaller maken: 
+Bestand verwijderen:
+Verwijderen na opstarten: 
+Fout bij maken snelkoppeling: 
+Fout bij maken: 
+Fout bij decomprimeren van data! Installatie beschadigd?
+Fout bij registreren DLL
+ExecShell: 
+Uitvoeren: 
+Uitpakken: 
+Uitpakken: fout bij schrijven naar bestand 
+Installatie beschadigd: ongeldige opcode
+Geen OLE voor: 
+Uitvoer directory: 
+Verwijder directory: 
+Hernoem na opstarten: 
+Hernoem: 
+Overgeslagen: 
