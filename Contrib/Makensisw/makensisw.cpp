@@ -46,7 +46,28 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
   else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
   while (*g_sdata.script==' ') g_sdata.script++;
-  PushMRUFile(g_sdata.script);
+  if(lstrlen(g_sdata.script)) {
+    bool is_quoted = false;
+    char *p = g_sdata.script + (lstrlen(g_sdata.script) - 1);
+
+    if(*p == '"') is_quoted = true;
+    p--;
+    while(p > g_sdata.script) {
+      if(*p == ' ') {
+        if(!is_quoted) {
+          p++;
+          break;
+        }
+      }
+      else if(*p == '"') {
+        p++;
+        break;
+      }
+      p--;
+    }
+    PushMRUFile(p);
+  }
+
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
     return 1;
@@ -255,9 +276,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       HMENU hMenu = (HMENU)lParam;
       UINT id = (UINT)LOWORD(wParam);
       UINT flags = (UINT)HIWORD(wParam);
-      if(hMenu == g_sdata.menu && id == 0 && (flags & MF_POPUP) == MF_POPUP) {
-        hMenu = GetSubMenu(hMenu, id);
-        BuildMRUMenu(hMenu);
+      if(hMenu == g_sdata.menu && (flags & MF_POPUP) == MF_POPUP) {
+        if(id == 0) { // File menu
+          BuildMRUMenu(GetSubMenu(hMenu, id));
+        }
+        else if (id == 2) { // Tools menu
+          SetClearMRUListMenuitemState(GetSubMenu(hMenu, id));
+        }
       }
       return TRUE;
     }
@@ -345,6 +370,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         case IDM_MRU_FILE+3:
         case IDM_MRU_FILE+4:
           LoadMRUFile(LOWORD(wParam)-IDM_MRU_FILE);
+          return TRUE;
+        case IDM_CLEAR_MRU_LIST:
+          ClearMRUList();
           return TRUE;
 #ifdef COMPRESSOR_OPTION
         case IDM_COMPRESSOR:

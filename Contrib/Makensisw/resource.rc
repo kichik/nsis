@@ -90,6 +90,7 @@ BEGIN
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
+        MENUITEM "Clear Recent &Files List",    IDM_CLEAR_MRU_LIST
     END
     POPUP "&Help"
     BEGIN
