@@ -416,18 +416,22 @@ void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
       if (!table->common.subcaptions[1])
         table->common.subcaptions[1]=add_string_main(str(NLF_SUBCAPTION_OPTIONS));
 
-      if (!build_header.install_types_ptr[0])
+      if (!table->installer.componentsubtext[2])
       {
-        if (!table->installer.componentsubtext[1])
-          table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT1_NO_INST_TYPES),0);
+        if (table->installer.componentsubtext[0])
+          table->installer.componentsubtext[2]=table->installer.componentsubtext[0];
       }
-      else
+      if (!table->installer.componentsubtext[3])
       {
-        if (!table->installer.componentsubtext[0])
-          table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
-        if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM) && !table->installer.componentsubtext[1])
-          table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
+        if (table->installer.componentsubtext[1])
+          table->installer.componentsubtext[3]=table->installer.componentsubtext[1];
+        else
+          table->installer.componentsubtext[3]=add_string_main(str(NLF_COMP_SUBTEXT1_NO_INST_TYPES),0);
       }
+      if (!table->installer.componentsubtext[0])
+        table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
+      if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM) && !table->installer.componentsubtext[1])
+        table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
     }
     else table->installer.componenttext=0;
   }

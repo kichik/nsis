@@ -26,10 +26,6 @@ static stack_t *g_st;
 
 union installer_flags g_flags;
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-char plugins_temp_dir[NSIS_MAX_STRLEN]="";
-#endif
-
 static WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
   HANDLE h;
@@ -73,11 +69,7 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
 
 static int NSISCALL ExecuteEntry(entry *entry_);
 
-static int NSISCALL resolveaddr(int v)
-{
-  if (v<0) return myatoi(g_usrvars[-(v+1)]);  // if <0, that means we
-  return v;
-}
+#define resolveaddr(v) ((v<0) ? myatoi(g_usrvars[-(v+1)]) : v)
 
 int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
 {
@@ -156,6 +148,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   // Saves 8 bytes
   // HWND mainHwnd = g_hwnd;
   // #define g_hwnd mainHwnd
+
+  HWND hwSectionHack = g_SectionHack;
   
   parms = entry_->offsets;
 
@@ -209,7 +203,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       SetForegroundWindow(g_hwnd);
     break;
     case EW_SETFLAG:
-      g_flags.flags[parm0]=parm1;
+      g_flags.flags[parm0]=process_string_fromparm_toint(1);
     break;
     case EW_IFFLAG:
     {
@@ -217,6 +211,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       g_flags.flags[parm2]&=parm3;
       return f;
     }
+    case EW_GETFLAG:
+      myitoa(var0,g_flags.flags[parm1]);
+    break;
     case EW_CHDETAILSVIEW:
       if (insthwndbutton) ShowWindow(insthwndbutton,parm1);
       if (insthwnd) ShowWindow(insthwnd,parm0);
@@ -980,7 +977,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-    case EW_CREATESHORTCUT: {
+    case EW_CREATESHORTCUT:
+    {
       char *buf2=process_string_fromparm_tobuf(-0x20);
       char *buf1=process_string_fromparm_tobuf(0x11);
       char *buf0=process_string_fromparm_tobuf(0x02);
@@ -1494,13 +1492,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
     break;
 #endif//NSIS_CONFIG_LOG
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    // Added by Ximon Eighteen 5th August 2002
-    case EW_PLUGINCOMMANDPREP:
-      // $0 temp plug-ins dir
-      if (!*plugins_temp_dir) mystrcpy(plugins_temp_dir,g_usrvars[0]);
-    break;
-#endif // NSIS_CONFIG_PLUGIN_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case EW_SECTIONSET:
     {
@@ -1533,14 +1524,37 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           else
           {
             // setting text, send the message to do it
-            SendMessage(g_SectionHack,WM_USER+0x17,x,parm2);
+            SendMessage(hwSectionHack,WM_NOTIFY_SECTEXT,x,parm2);
           }
           ((int*)sec)[parm1]=parm2;
           if (parm1)
           {
             // update tree view
-            SendMessage(g_SectionHack,WM_USER+0x18,x,0);
+            SendMessage(hwSectionHack,WM_NOTIFY_SECFLAGS,x,0);
           }
+        }
+      }
+      else g_flags.exec_error++;
+    }
+    break;
+    case EW_INSTTYPESET:
+    {
+      int x=process_string_fromparm_toint(0);
+
+      if (parm3)
+      {
+        g_flags.insttype_changed++;
+        SendMessage(hwSectionHack,WM_NOTIFY_INSTTYPE_CHANGE,0,0);
+      }
+      else if ((unsigned int)x < (unsigned int)NSIS_MAX_INST_TYPES)
+      {
+        if (parm2) // set text
+        {
+          g_inst_header->install_types[x] = parm1;
+        }
+        else // get text
+        {
+          process_string_fromtab(var1,g_inst_header->install_types[x]);
         }
       }
       else g_flags.exec_error++;

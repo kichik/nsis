@@ -362,7 +362,7 @@ end:
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins
-  if (plugins_temp_dir[0]) doRMDir(plugins_temp_dir,1);
+  if (state_plugins_dir[0]) doRMDir(state_plugins_dir,1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   if (g_hIcon) DeleteObject(g_hIcon);
 
