@@ -26,10 +26,6 @@ EXAMPLES
 * write an advanced paging example showing multiple components page with multiple
   instfiles pages
 
-INSTALLOPTIONS
-
-* add an option for LBS_MULTIPLESEL too, not just LBS_EXTENDEDSEL
-
 OTHER PLUGINS
 
 * BgImage - SetImage /RESIZETOFIT doesn't work
@@ -46,7 +42,7 @@ NSIS
 
 * more powerful plug-ins (access to ExecFunc and flags and even more)
 
-* ChangeUI RTL support
+* ChangeUI RTL full support
 
 * LZMA compression
 
