@@ -37,7 +37,9 @@
 #define LB_ICONWIDTH 20
 #define LB_ICONHEIGHT 20
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HICON g_hIcon;
+#endif
 
 int dlg_offset;
 

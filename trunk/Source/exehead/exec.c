@@ -191,10 +191,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         Sleep(max(x,1));
       }
     break;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_BRINGTOFRONT:
       log_printf("BringToFront");
       SetForegroundWindow(g_hwnd);
     break;
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFLAG:
       g_exec_flags.flags[parm0]=GetIntFromParm(1);
     break;
@@ -207,10 +209,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_GETFLAG:
       myitoa(var0,g_exec_flags.flags[parm1]);
     break;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_CHDETAILSVIEW:
       if (insthwndbutton) ShowWindow(insthwndbutton,parm1);
       if (insthwnd) ShowWindow(insthwnd,parm0);
     break;
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFILEATTRIBUTES: {
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("SetFileAttributes: \"%s\":%08X",buf1,parm1);
@@ -944,12 +948,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               {
                 void (*func)(HWND,int,char*,void*);
                 func=(void*)funke;
-                func(g_hwnd,NSIS_MAX_STRLEN,(char*)g_usrvars,
+                func(
+                  g_hwnd,
+                  NSIS_MAX_STRLEN,
+                  (char*)g_usrvars,
 #ifdef NSIS_SUPPORT_STACK
-                (void*)&g_st);
+                  (void*)&g_st
 #else
-                NULL);
-#endif
+                  NULL
+#endif//NSIS_SUPPORT_STACK
+                );
               }
             }
             else

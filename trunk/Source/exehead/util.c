@@ -40,8 +40,6 @@ char g_log_file[1024];
   char *state_plugins_dir=g_usrvars[36];
 #endif
 
-HANDLE g_hInstance;
-
 #ifndef INVALID_FILE_ATTRIBUTES
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif

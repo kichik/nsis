@@ -44,7 +44,10 @@ extern HANDLE dbd_hFile;
 
 char g_caption[NSIS_MAX_STRLEN*2];
 int g_filehdrsize;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HWND g_hwnd;
+HANDLE g_hInstance;
+#endif
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -89,7 +92,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   lstrcpyn(state_command_line, GetCommandLine(), NSIS_MAX_STRLEN);
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   g_hInstance = GetModuleHandle(NULL);
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
   cmdline = state_command_line;
   if (*cmdline == '\"') seekchar = *cmdline++;
@@ -139,6 +144,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
     while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
+    m_Err = _LANG_UNINSTINITERROR;
+
     if (p >= cmdline)
     {
       *(p-1)=0; // terminate before the " _?="
@@ -147,20 +154,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       {
         mystrcpy(state_install_directory, p);
         mystrcpy(state_output_directory, p);
+        m_Err = 0;
       }
       else
       {
-        m_Err = _LANG_UNINSTINITERROR;
         goto end;
       }
     }
     else
     {
-      int x,done=0;
+      int x;
 
       for (x = 0; x < 26; x ++)
       {
-        // File name need slash before coz temp dir was changed by validate_filename(...)
+        // File name need slash before because temp dir was changed by validate_filename
         static char s[]="\\A~NSISu_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
@@ -171,7 +178,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
 
-        if (!done)
+        if (m_Err) // not done yet
         {
           // get current name
           int l=GetModuleFileName(g_hInstance,ibuf,sizeof(ibuf));
@@ -187,19 +194,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif
             if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
             else trimslashtoend(ibuf);
-            done++;
             lstrcat(buf2,"\" ");
             lstrcat(buf2,realcmds);
             lstrcat(buf2," _?=");
             lstrcat(buf2,ibuf);
+            // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
+            lstrcat(buf2,"\\");
             hProc=myCreateProcess(buf2,state_temp_dir);
-            if (hProc) CloseHandle(hProc);
-            else m_Err = _LANG_UNINSTINITERROR;
+            if (hProc)
+            {
+              CloseHandle(hProc);
+              // success
+              m_Err = 0;
+            }
           }
         }
         s[0]++;
       }
-      if (!done) m_Err = _LANG_UNINSTINITERROR;
       goto end;
     }
   }
