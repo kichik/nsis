@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_UKRAINIAN} "Iнсталятор встановить ${NAME} у наступний каталог.$\r$\n$\r$\nЩоб встановити в цей каталог, натиснiть Встановити. Щоб встановити в iнший каталог натиснiть Вибрати i Виберiть iнший каталог." " "
+    DirText /LANG=${LANG_UKRAINIAN} "Iнсталятор встановить ${NAME} у наступний каталог.$\r$\n$\r$\nЩоб встановити в цей каталог, натиснiть Встановити. Щоб встановити в iнший каталог натиснiть Вибрати i Виберiть iнший каталог."
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_UKRAINIAN} "Виберiть мiсце установки"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_UKRAINIAN} "Виберiть каталог для установки ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_UKRAINIAN} "Каталог Призначення"
