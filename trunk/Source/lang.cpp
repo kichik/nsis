@@ -86,8 +86,11 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
     memset(table, 0, sizeof(StringTable)-sizeof(GrowBuf)*2);
     table->lang_id = lang;
 
-    table->user_strings.resize(build_userlangstrings.getnum()*sizeof(int), 1);
-    table->user_ustrings.resize(ubuild_userlangstrings.getnum()*sizeof(int), 1);
+    table->user_strings.set_zeroing(1);
+    table->user_ustrings.set_zeroing(1);
+
+    table->user_strings.resize(build_userlangstrings.getnum()*sizeof(int));
+    table->user_ustrings.resize(ubuild_userlangstrings.getnum()*sizeof(int));
 
     string_tables.push_back(table);
   }
@@ -236,8 +239,8 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
     if (string) user_strings_list->find(name, 0, &idx);
     unsigned int new_size = user_strings_list->getnum() * sizeof(int);
     for (unsigned int i = 0; i < string_tables.size(); i++) {
-      if (uninst) string_tables[i]->user_ustrings.resize(new_size, 1);
-      else string_tables[i]->user_strings.resize(new_size, 1);
+      if (uninst) string_tables[i]->user_ustrings.resize(new_size);
+      else string_tables[i]->user_strings.resize(new_size);
     }
   }
 
