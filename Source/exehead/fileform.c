@@ -11,12 +11,12 @@
 
 #ifdef NSIS_COMPRESS_USE_BZIP2
 #include "../bzip2/bzlib.h"
-static char bz2_needreinit;
 
 #define z_stream DState
-#define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return _LANG_INVALIDCRC; }
+#define inflateInit(x) BZ2_bzDecompressInit(x)
+#define inflateReset(x) BZ2_bzDecompressInit(x)
+
 #define inflate(x) BZ2_bzDecompress(x)
-#define inflateReset(x) { if (bz2_needreinit) { inflateInit(x); } else bz2_needreinit++; }
 #define Z_OK BZ_OK
 #define Z_STREAM_END BZ_STREAM_END
 #endif//NSIS_COMPRESS_USE_BZIP2
