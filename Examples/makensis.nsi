@@ -33,7 +33,7 @@ InstType "Lite"
 AutoCloseWindow false
 ShowInstDetails show
 ShowUninstDetails show
-DirText "Please select a location to install NSIS (or use the default):"
+DirText "Please select a location to install NSIS (or use the default):" " "
 SetOverwrite on
 SetDateSave on
 
