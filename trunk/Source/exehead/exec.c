@@ -130,9 +130,12 @@ static int NSISCALL process_string_fromparm_toint(int id_)
   return myatoi(ps_tmpbuf);
 }
 
-static void NSISCALL process_string_fromparm_tobuf(int id_)
+// NB - USE CAUTION when rearranging code to make use of the new return value of
+// this function - be sure the parm being accessed is not modified before the call.
+static char * NSISCALL process_string_fromparm_tobuf(int id_)
 {
   process_string_fromtab(bufs[id_ >> 4], parms[id_ & 0xF]);
+  return bufs[id_ >> 4];
 }
 
 // returns EXEC_ERROR on error
@@ -167,7 +170,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return parm0;
     case EW_ABORT:
       {
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         log_printf2("Aborting: \"%s\"",buf0);
         update_status_text("",buf0);
       }
@@ -186,7 +189,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (parm1) ui_st_updateflag=parm1;
       else
       {
-        process_string_fromparm_tobuf(0x30);
+        char *buf3=process_string_fromparm_tobuf(0x30);
         log_printf2("detailprint: %s",buf3);
         update_status_text(buf3,"");
       }
@@ -218,17 +221,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (insthwndbutton) ShowWindow(insthwndbutton,parm1);
       if (insthwnd) ShowWindow(insthwnd,parm0);
     return 0;
-    case EW_SETFILEATTRIBUTES:
-      process_string_fromparm_tobuf(0x00);
+    case EW_SETFILEATTRIBUTES: {
+      char *buf0=process_string_fromparm_tobuf(0x00);
       log_printf3("SetFileAttributes: \"%s\":%08X",buf0,parm1);
       if (!SetFileAttributes(buf0,parm1))
       {
         exec_errorflag++;
         log_printf("SetFileAttributes failed.");
       }
+    }
     return 0;
-    case EW_CREATEDIR:
-      process_string_fromparm_tobuf(0x10);
+    case EW_CREATEDIR: {
+      char *buf1=process_string_fromparm_tobuf(0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
       if (parm1)
       {
@@ -237,15 +241,17 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
       else update_status_text_from_lang(LANGID_CREATEDIR,buf1);
       recursive_create_directory(buf1);
+    }
     return 0;
-    case EW_IFFILEEXISTS:
-      process_string_fromparm_tobuf(0x00);
+    case EW_IFFILEEXISTS: {
+      char *buf0=process_string_fromparm_tobuf(0x00);
       if (file_exists(buf0))
       {
         log_printf3("IfFileExists: file \"%s\" exists, jumping %d",buf0,parm1);
         return parm1;
       }
       log_printf3("IfFileExists: file \"%s\" does not exist, jumping %d",buf0,parm2);
+    }
     return parm2;
     case EW_IFERRORS:
       {
@@ -260,8 +266,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_RENAME
     case EW_RENAME:
       {
-        process_string_fromparm_tobuf(0x00);
-        process_string_fromparm_tobuf(0x11);
+        char *buf0=process_string_fromparm_tobuf(0x00);
+        char *buf1=process_string_fromparm_tobuf(0x11);
         mystrcpy(buf3,buf0);
         if (mystrlen(buf0)+mystrlen(buf1) < NSIS_MAX_STRLEN-3)
         {
@@ -298,9 +304,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_FNUTIL
     case EW_GETFULLPATHNAME:
       {
-        char *p=var0;
         char *fp;
-        process_string_fromparm_tobuf(0x01);
+        char *p=var0;
+        char *buf0=process_string_fromparm_tobuf(0x01);
         if (!GetFullPathName(buf0,NSIS_MAX_STRLEN,p,&fp))
         {
           exec_errorflag++;
@@ -326,7 +332,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         char *fp;
         char *p=var0;
-        process_string_fromparm_tobuf(0x01);
+        char *buf0=process_string_fromparm_tobuf(0x01);
         if (!SearchPath(NULL,buf0,NULL,NSIS_MAX_STRLEN,p,&fp))
         {
           exec_errorflag++;
@@ -350,10 +356,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         HANDLE hOut;
         int ret;
+        char *buf3=process_string_fromparm_tobuf(0x31);
         #define overwriteflag parm0
         addtrailingslash(mystrcpy(buf0,state_output_directory));
 
-        process_string_fromparm_tobuf(0x31);
         log_printf3("File: overwriteflag=%d, name=\"%s\"",overwriteflag,buf3);
         if (validpathspec(buf3))
         {
@@ -443,7 +449,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
 		    HANDLE h;
 		    WIN32_FIND_DATA fd;
-        process_string_fromparm_tobuf(0x10);
+        char *buf1=process_string_fromparm_tobuf(0x10);
         mystrcpy(buf0,buf1);
         log_printf2("Delete: \"%s\"",buf0);
         trimslashtoend(buf0);
@@ -491,7 +497,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_MESSAGEBOX: // MessageBox
       {
         int v;
-        process_string_fromparm_tobuf(0x31);
+        char *buf3=process_string_fromparm_tobuf(0x31);
         log_printf3("MessageBox: %d,\"%s\"",parm0,buf3);
         v=my_MessageBox(buf3,parm0);
         if (v)
@@ -512,7 +518,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_RMDIR
     case EW_RMDIR:
       {
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         log_printf2("RMDir: \"%s\"",buf0);
 
         if (lastchar(buf0)=='\\') trimslashtoend(buf0);
@@ -523,9 +529,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
 #endif//NSIS_SUPPORT_RMDIR
 #ifdef NSIS_SUPPORT_STROPTS
-    case EW_STRLEN:
-      process_string_fromparm_tobuf(0x01);
+    case EW_STRLEN: {
+      char *buf0=process_string_fromparm_tobuf(0x01);
       myitoa(var0,mystrlen(buf0));
+    }
     return 0;
     case EW_ASSIGNVAR:
       {
@@ -533,7 +540,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int start=process_string_fromparm_toint(3);
         int l;
         char *p=var0;
-        process_string_fromparm_tobuf(0x01);
+        char *buf0=process_string_fromparm_tobuf(0x01);
         *p=0;
         if (parm2 < 0 || newlen)
         {
@@ -554,17 +561,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
       }
     return 0;
-    case EW_STRCMP:
-      process_string_fromparm_tobuf(0x20);
-      process_string_fromparm_tobuf(0x31);
+    case EW_STRCMP: {
+      char *buf2=process_string_fromparm_tobuf(0x20);
+      char *buf3=process_string_fromparm_tobuf(0x31);
       if (!lstrcmpi(buf2,buf3)) return parm2;
+    }
     return parm3;
 #endif//NSIS_SUPPORT_STROPTS
 #ifdef NSIS_SUPPORT_ENVIRONMENT
     case EW_READENVSTR:
       {
         char *p=var0;
-        process_string_fromparm_tobuf(0x01);
+        char *buf0=process_string_fromparm_tobuf(0x01);
         if (parm2)
         {
           if (!GetEnvironmentVariable(buf0,p,NSIS_MAX_STRLEN))
@@ -624,11 +632,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         myitoa(p,v);
       }
     return 0;
-    case EW_INTFMT:
-      process_string_fromparm_tobuf(0x01);
+    case EW_INTFMT: {
+      char *buf0=process_string_fromparm_tobuf(0x01);
       wsprintf(var0,
                buf0,
                process_string_fromparm_toint(2));
+    }
     return 0;
 #endif//NSIS_SUPPORT_INTOPTS
 #ifdef NSIS_SUPPORT_STACK
@@ -684,13 +693,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           int msg=process_string_fromparm_toint(2);
           if (parm5&1)
           {
-            process_string_fromparm_tobuf(0x03);
-            b3=(int)buf0;
+            b3=(int)process_string_fromparm_tobuf(0x03);
           }
           if (parm5&2)
           {
-            process_string_fromparm_tobuf(0x14);
-            b4=(int)buf1;
+            b4=(int)process_string_fromparm_tobuf(0x14);
           }
 
           if (parm5>>2) exec_errorflag += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
@@ -698,8 +705,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          process_string_fromparm_tobuf(0x01);
-          process_string_fromparm_tobuf(0x12);
+          char *buf0=process_string_fromparm_tobuf(0x01);
+          char *buf1=process_string_fromparm_tobuf(0x12);
           v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
         }
 
@@ -728,11 +735,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       RECT r;
       HWND hwImage = GetDlgItem(g_hwnd, parm1);
       GetWindowRect(hwImage, &r);
-      process_string_fromparm_tobuf(0x00);
       if (g_hBrandingBitmap) DeleteObject(g_hBrandingBitmap);
       g_hBrandingBitmap=LoadImage(
         0,
-        buf0,
+        process_string_fromparm_tobuf(0x00),
         IMAGE_BITMAP,
         parm2?r.right-r.left:0,
         parm2?r.bottom-r.top:0,
@@ -764,9 +770,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SHELLEXEC: // this uses improvements of Andras Varga
       {
         int x;
-        process_string_fromparm_tobuf(0x00);
-        process_string_fromparm_tobuf(0x11);
-        process_string_fromparm_tobuf(0x22);
+        char *buf0=process_string_fromparm_tobuf(0x00);
+        char *buf1=process_string_fromparm_tobuf(0x11);
+        char *buf2=process_string_fromparm_tobuf(0x22);
         wsprintf(buf3,"%s %s",buf0,buf1);
         update_status_text_from_lang(LANGID_EXECSHELL, buf3);
         x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf1,buf2[0]?buf2:NULL,state_output_directory,parm3);
@@ -786,7 +792,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_EXECUTE:
       {
         HANDLE hProc;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         log_printf2("Exec: command=\"%s\"",buf0);
         update_status_text_from_lang(LANGID_EXECUTE,buf0);
 
@@ -828,7 +834,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         WIN32_FIND_DATA *ffd;
         char *highout=var1;
         char *lowout=var2;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
 
         ffd=file_exists(buf0);
         if (ffd)
@@ -853,7 +859,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         DWORD t[4]; // our two members are the 3rd and 4th..
         VS_FIXEDFILEINFO *pvsf1=(VS_FIXEDFILEINFO*)t;
         DWORD d;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         s1=GetFileVersionInfoSize(buf0,&d);
         *lowout=*highout=0;
         exec_errorflag++;
@@ -885,8 +891,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (hres == S_FALSE || hres == S_OK)
         {
           HANDLE h;
-          process_string_fromparm_tobuf(0x00);
-          process_string_fromparm_tobuf(0x11);
+          char *buf0=process_string_fromparm_tobuf(0x00);
+          char *buf1=process_string_fromparm_tobuf(0x11);
 
           h=LoadLibrary(buf0);
           if (h)
@@ -908,7 +914,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               }
               else
               {
-                process_string_fromparm_tobuf(0x22);
+                char *buf2=process_string_fromparm_tobuf(0x22);
                 update_status_text(buf2,buf0);
                 funke();
               }
@@ -937,11 +943,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
 #endif
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-    case EW_CREATESHORTCUT:
-      process_string_fromparm_tobuf(0x20);
-      process_string_fromparm_tobuf(0x11);
-      process_string_fromparm_tobuf(0x02);
-      process_string_fromparm_tobuf(0x33);
+    case EW_CREATESHORTCUT: {
+      char *buf2=process_string_fromparm_tobuf(0x20);
+      char *buf1=process_string_fromparm_tobuf(0x11);
+      char *buf0=process_string_fromparm_tobuf(0x02);
+      char *buf3=process_string_fromparm_tobuf(0x33);
 
       log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
           buf2,buf1,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
@@ -956,6 +962,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         update_status_text_from_lang(LANGID_CREATESHORTCUT,buf2);
       }
+    }
     return 0;
 #endif//NSIS_SUPPORT_CREATESHORTCUT
 #ifdef NSIS_SUPPORT_COPYFILES
@@ -963,8 +970,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int res;
 		    SHFILEOPSTRUCT op;
-        process_string_fromparm_tobuf(0x00);
-        process_string_fromparm_tobuf(0x11);
+        char *buf0=process_string_fromparm_tobuf(0x00);
+        char *buf1=process_string_fromparm_tobuf(0x11);
         log_printf3("CopyFiles \"%s\"->\"%s\"",buf0,buf1);
 			  op.hwnd=g_hwnd;
 			  op.wFunc=FO_COPY;
@@ -1027,24 +1034,22 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_INIFILES
     case EW_WRITEINI:
       {
-        char *sec, *ent;
-        sec=ent=0;
+        char *sec=0, *ent=0;
+        char *buf0=process_string_fromparm_tobuf(0x00);
+        char *buf3;
 #ifdef NSIS_CONFIG_LOG
         mystrcpy(buf1,"<RM>");
         mystrcpy(buf2,buf1);
 #endif
-        process_string_fromparm_tobuf(0x00);
         if (parm1>=0)
         {
-          process_string_fromparm_tobuf(0x11);
-          sec=buf1;
+          sec=process_string_fromparm_tobuf(0x11);
         }
         if (parm2>=0)
         {
-          process_string_fromparm_tobuf(0x22);
-          ent=buf2;
+          ent=process_string_fromparm_tobuf(0x22);
         }
-        process_string_fromparm_tobuf(0x33);
+        buf3=process_string_fromparm_tobuf(0x33);
         log_printf5("WriteINIStr: wrote [%s] %s=%s in %s",buf0,buf1,buf2,buf3);
         if (!WritePrivateProfileString(buf0,sec,ent,buf3)) exec_errorflag++;
       }
@@ -1053,9 +1058,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         static const char *errstr="!N~";
         char *p=var0;
-        process_string_fromparm_tobuf(0x01);
-        process_string_fromparm_tobuf(0x12);
-        process_string_fromparm_tobuf(0x23);
+        char *buf0=process_string_fromparm_tobuf(0x01);
+        char *buf1=process_string_fromparm_tobuf(0x12);
+        char *buf2=process_string_fromparm_tobuf(0x23);
         GetPrivateProfileString(buf0,buf1,errstr,p,NSIS_MAX_STRLEN-1,buf2);
         if (*((int*)errstr) == *((int*)p))
         {
@@ -1069,14 +1074,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_DELREG:
       {
         int rootkey=parm0;
+        char *buf3=process_string_fromparm_tobuf(0x31);
         exec_errorflag++;
-        process_string_fromparm_tobuf(0x31);
         if (parm2 != -1)
         {
           HKEY hKey;
           if (RegOpenKeyEx((HKEY)rootkey,buf3,0,KEY_ALL_ACCESS,&hKey) == ERROR_SUCCESS)
           {
-            process_string_fromparm_tobuf(0x02);
+            char *buf0=process_string_fromparm_tobuf(0x02);
             log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf3,buf0);
             if (RegDeleteValue(hKey,buf0) == ERROR_SUCCESS) exec_errorflag--;
             RegCloseKey(hKey);
@@ -1094,14 +1099,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HKEY hKey;
         int rootkey=parm0;
         int type=parm4;
+        char *buf1=process_string_fromparm_tobuf(0x12);
+        char *buf3=process_string_fromparm_tobuf(0x31);
         exec_errorflag++;
-        process_string_fromparm_tobuf(0x12);
-        process_string_fromparm_tobuf(0x31);
         if (RegCreateKey((HKEY)rootkey,buf3,&hKey) == ERROR_SUCCESS)
         {
           if (type <= 1)
           {
-            process_string_fromparm_tobuf(0x23);
+            char *buf2=process_string_fromparm_tobuf(0x23);
             if (RegSetValueEx(hKey,buf1,0,type==1?REG_SZ:REG_EXPAND_SZ,buf2,mystrlen(buf2)+1) == ERROR_SUCCESS) exec_errorflag--;
             log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf3,buf1,buf2);
           }
@@ -1132,8 +1137,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HKEY hKey;
         char *p=var0;
         int rootkey=parm1;
-        process_string_fromparm_tobuf(0x02); // buf0 == subkey
-        process_string_fromparm_tobuf(0x13); // buf0 == key name
+        char *buf0=process_string_fromparm_tobuf(0x02); // buf0 == subkey
+        char *buf1=process_string_fromparm_tobuf(0x13); // buf1 == key name
         p[0]=0;
         if (RegOpenKeyEx((HKEY)rootkey,buf0,0,KEY_READ,&hKey) == ERROR_SUCCESS)
         {
@@ -1165,7 +1170,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HKEY key;
         char *p=var0;
         int b=process_string_fromparm_toint(3);
-        process_string_fromparm_tobuf(0x12);
+        char *buf1=process_string_fromparm_tobuf(0x12);
         p[0]=0;
         if (RegOpenKeyEx((HKEY)parm1,buf1,0,KEY_ALL_ACCESS,&key) == ERROR_SUCCESS)
         {
@@ -1191,7 +1196,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         HANDLE h;
         char *handleout=var3;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         h=myOpenFile(buf0,parm1,parm2);
         if (h == INVALID_HANDLE_VALUE)
         {
@@ -1216,8 +1221,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          process_string_fromparm_tobuf(0x11);
-          l=mystrlen(buf1);
+          l=mystrlen(process_string_fromparm_tobuf(0x11));
         }
         if (!*t || !WriteFile((HANDLE)myatoi(t),buf1,l,&dw,NULL))
         {
@@ -1308,7 +1312,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *handleout=var2;
         HANDLE h;
         WIN32_FIND_DATA fd;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
         h=FindFirstFile(buf0,&fd);
         if (h == INVALID_HANDLE_VALUE)
         {
@@ -1329,7 +1333,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int ret=-666;
         HANDLE hFile;
-        process_string_fromparm_tobuf(0x00);
+        char *buf0=process_string_fromparm_tobuf(0x00);
 
         if (validpathspec(buf0))
         {
@@ -1402,7 +1406,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
       else
       {
-        process_string_fromparm_tobuf(0x01);
+        char *buf0=process_string_fromparm_tobuf(0x01);
         log_printf2("%s",buf0);
       }
     return 0;
