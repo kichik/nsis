@@ -6,25 +6,19 @@ ShowInstDetails show
 
 Section "MakeNSIS commands help"
 	nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
-	Pop $0
+	Pop $0 # return value/error/timeout
 	DetailPrint ""
 	DetailPrint "       Return value: $0"
+	DetailPrint ""
 SectionEnd
 
 Section "Output to variable"
-	ReadEnvStr $0 COMSPEC
-	GetTempFileName $1
-	StrCpy $2 "${NSISDIR}\makensis.exe"
-	GetFullPathName /SHORT $2 $2
-	StrCpy $0 '"$0" /C $2 /VERSION > "$1"'
-	nsExec::Exec $0
-	FileOpen $0 $1 r
-	FileRead $0 $3
-	FileClose $0
-	SetDetailsPrint none
-	Delete $1
-	SetDetailsPrint both
+	nsExec::ExecToStack '"${NSISDIR}\makensis.exe" /VERSION'
+	Pop $0 # return value/error/timeout
+	Pop $1 # printed text, up to ${NSIS_MAX_STRLEN}
+	DetailPrint '"${NSISDIR}\makensis.exe" /VERSION printed: $1'
 	DetailPrint ""
-	DetailPrint "$2 /VERSION returned: $3"
+	DetailPrint "       Return value: $0"
 	DetailPrint ""
+	Return
 SectionEnd

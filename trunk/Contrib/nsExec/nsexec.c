@@ -45,7 +45,7 @@ void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variable
   g_hwndParent=hwndParent;
   EXDLL_INIT();
   {
-    ExecScript(false);
+    ExecScript(0);
   }
 }
 
@@ -53,7 +53,15 @@ void __declspec(dllexport) ExecToLog(HWND hwndParent, int string_size, char *var
   g_hwndParent=hwndParent;
   EXDLL_INIT();
   {
-    ExecScript(true);
+    ExecScript(1);
+  }
+}
+
+void __declspec(dllexport) ExecToStack(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
+  g_hwndParent=hwndParent;
+  EXDLL_INIT();
+  {
+    ExecScript(2);
   }
 }
 
@@ -61,7 +69,9 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
   return TRUE;
 }
 
-void ExecScript(BOOL log) {
+void ExecScript(int log) {
+  char szRet[128] = "";
+
   g_to = 0; // default is no timeout
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
   g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+1);
@@ -73,8 +83,8 @@ void ExecScript(BOOL log) {
     }
   }
   if (!g_exec[0]) {
-    pushstring("error");
-    return;
+    lstrcpy(szRet, "error");
+    goto done;
   }
   {
     STARTUPINFO si={sizeof(si),};
@@ -87,15 +97,14 @@ void ExecScript(BOOL log) {
     DWORD dwExit = !STILL_ACTIVE;
     DWORD dwLastOutput;
     static char szBuf[1024];
-    char szRet[128] = "";
     HGLOBAL hUnusedBuf;
     char *szUnusedBuf = 0;
 
     if (log) {
-      hUnusedBuf = GlobalAlloc(GHND, sizeof(szBuf)*4);
+      hUnusedBuf = GlobalAlloc(GHND, log & 2 ? g_stringsize : sizeof(szBuf)*4);
       if (!hUnusedBuf) {
-        pushstring("error");
-        return;
+        lstrcpy(szRet, "error");
+        goto done;
       }
       szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
     }
@@ -109,8 +118,8 @@ void ExecScript(BOOL log) {
     else sa.lpSecurityDescriptor = NULL;
     sa.bInheritHandle = true;
     if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-      pushstring("error");
-      return;
+      lstrcpy(szRet, "error");
+      goto done;
     }
 
     GetStartupInfo(&si);
@@ -119,14 +128,8 @@ void ExecScript(BOOL log) {
     si.hStdOutput = newstdout;
     si.hStdError = newstdout;
     if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
-      pushstring("error");
-      CloseHandle(newstdout);
-      CloseHandle(read_stdout);
-      if (log) {
-        GlobalUnlock(hUnusedBuf);
-        GlobalFree(hUnusedBuf);
-      }
-      return;
+      lstrcpy(szRet, "error");
+      goto done;
     }
 
     dwLastOutput = GetTickCount();
@@ -140,37 +143,34 @@ void ExecScript(BOOL log) {
         if (log) {
           char *p, *lineBreak;
           SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf);
-          if (GlobalSize(hUnusedBuf) < iReqLen) {
+          if (GlobalSize(hUnusedBuf) < iReqLen && (iReqLen < g_stringsize || !(log & 2))) {
             GlobalUnlock(hUnusedBuf);
             hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen+sizeof(szBuf), GHND);
             if (!hUnusedBuf) {
-              pushstring("error");
-              CloseHandle(pi.hThread);
-              CloseHandle(pi.hProcess);
-              CloseHandle(newstdout);
-              CloseHandle(read_stdout);
-              if (log) {
-                GlobalUnlock(hUnusedBuf);
-                GlobalFree(hUnusedBuf);
-              }
-              return;
+              lstrcpy(szRet, "error");
+              break;
             }
             szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
           }
           p = szUnusedBuf; // get the old left overs
-          lstrcat(p, szBuf);
-
-          while (lineBreak = my_strstr(p, "\r\n")) {
-            *lineBreak = 0;
-            LogMessage(p);
-            p = lineBreak + 2;
+          if (iReqLen < g_stringsize || !(log & 2)) lstrcat(p, szBuf);
+          else {
+            lstrcpyn(p + lstrlen(p), szBuf, g_stringsize - lstrlen(p));
           }
 
-          // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
-          if (p != szUnusedBuf) {
-            char *p2 = szUnusedBuf;
-            while (*p) *p2++ = *p++;
-            *p2 = 0;
+          if (!(log & 2)) {
+            while (lineBreak = my_strstr(p, "\r\n")) {
+              *lineBreak = 0;
+              LogMessage(p);
+              p = lineBreak + 2;
+            }
+
+            // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
+            if (p != szUnusedBuf) {
+              char *p2 = szUnusedBuf;
+              while (*p) *p2++ = *p++;
+              *p2 = 0;
+            }
           }
         }
       }
@@ -186,7 +186,9 @@ void ExecScript(BOOL log) {
         PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
       }
     }
-    if (log && *szUnusedBuf) LogMessage(szUnusedBuf);
+done:
+    if (log & 2) pushstring(szUnusedBuf);
+    if (log & 1 && *szUnusedBuf) LogMessage(szUnusedBuf);
     if (!szRet[0]) wsprintf(szRet,"%d",dwExit);
     pushstring(szRet);
     CloseHandle(pi.hThread);
