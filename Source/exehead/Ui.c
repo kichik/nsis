@@ -756,10 +756,13 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static void NSISCALL inttosizestr(int kb, char *str)
 {
-  str += mystrlen(str);
-  if (kb < 1024) wsprintf(str,"%dKB",kb);
-  else if (kb < 1024*1024) wsprintf(str,"%d.%dMB",kb>>10,((kb*10)>>10)%10);
-  else wsprintf(str,"%d.%dGB%s",kb>>20,((kb*10)>>20)%10,(GetVersion()&0x80000000) ? "+":"");
+  char sh=20;
+  char c='G';
+  char *s="";
+  if (kb < 1024) { sh=0; c='K'; }
+  else if (kb < 1024*1024) { sh=10; c='M'; }
+  else if (GetVersion()&0x80000000) s="+";
+  wsprintf(str+mystrlen(str),"%d.%d%cB%s",kb>>sh,((kb*10)>>sh)%10,c,s);
 }
 
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
