@@ -1,4 +1,4 @@
-OBJS = biblio.o bk_xhtml.o contents.o error.o help.o index.o input.o keywords.o licence.o main.o malloc.o misc.o style.o tree234.o ustring.o version.o winhelp.o
+OBJS = biblio.o bk_xhtml.o contents.o error.o help.o index.o input.o keywords.o licence.o main.o malloc.o misc.o style.o tree234.o ustring.o version.o
 LIBS = 
 
 CC	= gcc
