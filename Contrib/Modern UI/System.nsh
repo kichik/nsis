@@ -480,7 +480,9 @@ Var MUI_TEMP2
   !verbose push
   !verbose 3
 
-  IfSilent mui.langdll_done
+  !ifdef NSIS_CONFIG_SILENT_SUPPORT
+    IfSilent mui.langdll_done
+  !endif
 
   !ifndef MUI_LANGDLL_WINDOWTITLE
     !define MUI_LANGDLL_WINDOWTITLE "Installer Language"
@@ -508,7 +510,11 @@ Var MUI_TEMP2
   StrCmp $LANGUAGE "cancel" 0 +2
     Abort
   
-  mui.langdll_done:
+  !ifdef NSIS_CONFIG_SILENT_SUPPORT
+    mui.langdll_done:
+  !else ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    mui.langdll_done:
+  !endif
     
   !verbose pop
     
@@ -1677,7 +1683,7 @@ Var MUI_TEMP2
       StrCpy $MUI_NOABORTWARNING "1"
     !endif
     
-    !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
+    !insertmacro MUI_INSTALLOPTIONS_SHOW
     
     !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
       StrCpy $MUI_NOABORTWARNING ""
@@ -1701,9 +1707,12 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-    Pop $MUI_TEMP1
-    StrCmp $MUI_TEMP1 "success" 0 mui.finish_done
-      
+  FunctionEnd
+  
+  Function "${LEAVE}"
+  
+    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
       IfRebootFlag "" mui.finish_noreboot_end
@@ -1713,7 +1722,7 @@ Var MUI_TEMP2
           StrCmp $MUI_TEMP1 "1" 0 +2
             Reboot
             
-          Goto mui.finish_done
+          Return
       
       mui.finish_noreboot_end:
         
@@ -1757,14 +1766,6 @@ Var MUI_TEMP2
         mui.finish_noshowreadme:
                
     !endif
-        
-    mui.finish_done:
-
-  FunctionEnd
-  
-  Function "${LEAVE}"
-  
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
   
   FunctionEnd
   
