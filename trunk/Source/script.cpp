@@ -2613,9 +2613,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETDETAILSPRINT:
       ent.which=EW_UPDATETEXT;
       ent.offsets[0] = 0;
-      ent.offsets[1] = line.gettoken_enum(1,"none\0listonly\0textonly\0both\0");
+      ent.offsets[1] = line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
       if (ent.offsets[1] < 0) PRINTHELP()
-      if (!ent.offsets[1]) ent.offsets[1]=4;
+      if (!ent.offsets[1]) ent.offsets[1]=8;
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
@@ -3553,6 +3553,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ret=do_add_file(dllPath,0,0,0,&files_added,tempDLL);
         if (ret != PS_OK) return ret;
         build_overwrite=old_build_overwrite;
+
+        // SetDetailsPrint lastused
+        ent.which=EW_UPDATETEXT;
+        ent.offsets[1]=8; // lastused
+        ret=add_entry(&ent);
+        if (ret != PS_OK) return ret;
 
         // Call the DLL
         char* command = strstr(line.gettoken_str(0),"::");
