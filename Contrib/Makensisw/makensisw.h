@@ -44,7 +44,7 @@
 #define REGSEC       HKEY_LOCAL_MACHINE
 #define REGKEY       "Software\\NSIS"
 #define REGLOC       "MakeNSISWPlacement"
-#define REGCOMPRESSOR "Compressor"
+#define REGCOMPRESSOR "MakeNSISWCompressor"
 #define REGDEFSUBKEY "Defines"
 #define REGDEFCOUNT  "MakeNSISWDefinesCount"
 #define REGMRUSUBKEY "MRU"
@@ -77,7 +77,7 @@ typedef enum {
   COMPRESSOR_DEFAULT,
   COMPRESSOR_ZLIB,
   COMPRESSOR_BZIP2,
-  COMPRESSOR_BEST
+  COMPRESSOR_BEST,
 } NCOMPRESSOR;
 
 // Extern Variables

@@ -128,6 +128,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
       RestoreWindowPos(g_sdata.hwnd);
+      g_sdata.compressor =  (NCOMPRESSOR)-1;
       RestoreCompressor();
       CompileNSISScript();
       return TRUE;
