@@ -1784,9 +1784,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
 
           switch (trim) {
-          	case 1: td.LTrimToString(IDC_VERSTR, str, 1); break;
-            case 2: td.RTrimToString(IDC_VERSTR, str, 1); break;
-            case 3: td.CTrimToString(IDC_VERSTR, str, 1); break;
+          	case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
+            case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
+            case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
           }
 
           DWORD dwSize;
