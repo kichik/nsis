@@ -258,7 +258,9 @@ Var MUI_TEMP2
 
 !macro MUI_ABORTWARNING
 
-  StrCmp $MUI_NOABORTWARNING "1" mui.quit
+  !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
+    StrCmp $MUI_NOABORTWARNING "1" mui.quit
+  !endif
 
   !ifdef MUI_ABORTWARNING_TEXT
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
@@ -1382,11 +1384,6 @@ Var MUI_TEMP2
     Var MUI_HWND
     !define MUI_VAR_HWND
   !endif
-  
-  !ifndef MUI_VAR_NOABORTWARNING
-    Var MUI_NOABORTWARNING
-    !define MUI_VAR_NOABORTWARNING
-  !endif
 
   !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
     AutoCloseWindow true
@@ -1395,6 +1392,13 @@ Var MUI_TEMP2
   !ifdef MUI_FINISHPAGE_LINK
     !ifndef MUI_FINISHPAGE_LINK_COLOR
       !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
+    !endif
+  !endif
+
+  !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
+    !ifndef MUI_FINISHPAGE_ABORTWARNINGCHECK
+      !define MUI_FINISHPAGE_ABORTWARNINGCHECK
+      Var MUI_NOABORTWARNING
     !endif
   !endif
 
@@ -1423,6 +1427,10 @@ Var MUI_TEMP2
       !undef MUI_FINISHPAGE_BUTTON
     !else
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" "$(MUI_BUTTONTEXT_FINISH)"
+    !endif
+    
+    !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "CancelEnabled" "1"
     !endif
     
     !ifdef MUI_FINISHPAGE_TITLE
@@ -1667,11 +1675,15 @@ Var MUI_TEMP2
 
     !insertmacro MUI_FUNCTION_CUSTOM SHOW
     
-    StrCpy $MUI_NOABORTWARNING "1"
+    !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
+      StrCpy $MUI_NOABORTWARNING "1"
+    !endif
     
     !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
     
-    StrCpy $MUI_NOABORTWARNING ""
+    !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
+      StrCpy $MUI_NOABORTWARNING ""
+    !endif
     
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
