@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v4
 # Language ID
 1053
 # Font and size - dash (-) means default
@@ -7,61 +7,74 @@ NLF v2
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by Peter Gustafsson <sm5tri@passagen.se>
+# Translation by Magnus Bonnevier.(magnus.bonnevier@telia.com)
 Nullsoft Install System %s
-%s Installation
-%s Avinstallation
-: Licens avtal
-: Installations val
-: Installations mapp
-: Installerar filer
-: Klart!
-: Bekräfta
-: Avinstallerar filer
-: Klart!
-< Tillbaka
-Nästa >
-Jag godkänner
-Installera
-Avinstallera
+%s Setup
+%s Uninstall
+: Licens Avtal
+: Installations Val
+: Installations Katalog
+: Installerar
+: Genomförd
+: Bekräftelse
+: Avinstallerar
+: Genomförd
+< &Tillbaka
+&Nästa >
+Jag &Godkänner
+Jag &Godkänner vilkoren i licens avtalet
+Jag &Godkänner inte vilkoren för licens avtalet
+&Installera
+&Avinstallera
 Avbryt
-Stäng
-Bläddra...
-Visa detaljer
+&Stäng
+B&läddra
+Visa &detaljer
 Namn
-Färdigt!
-Anpassad
-Välj typ av installation: 
-Välj komponenter att installera: 
-eller, välj vilka komponenter du önskar installera: 
-Välj mapp att installera %s till: 
-Tillgängligt utrymme: 
-Utrymme som krävs: 
-Avinstallerar från: 
-Kan inte öppna fil för skrivning: \r\n\t"$0"\r\ntryck avbryt för att avbryta installationen,\r\nförsök igen för att försöka igen, eller\r\nignorera för att hoppa över denna fil
-Kan inte skriva 
-Kopiering misslyckades 
+Genomförd
+Special
+Välj typ av installation:
+Välj komponenter att installera:
+Eller, välj valfria komponenter att installera:
+Välj katalog att installera %s till:
+Disk utrymme tillgängligt: 
+Disk utrymme som behövs: 
+Avinstallerar från:
+Fel: Öppna fil för skrivning: \r\n\t"$0"\r\nKlicka abort för att avbryta installationen,\r\nKlicka retry för att försöka igen, or\r\nKlicka ignore för att hoppa över denna fil
+Kan inte skriva: 
+Kopiering misslyckades
 Kopiera till 
-Kunde inte hitta symbolen: 
-Kunde inte ladda: 
-Skapar mapp: 
-Skapar genväg: 
-Skapar avinstallerare: 
-Raderar fil: 
+Registrerar: 
+Avregistrerar: 
+Kan inte hitta symbol: 
+Kan inte ladda: 
+Skapa Katalog: 
+Skapa Genväg: 
+Skapa Avinstallerare: 
+Radera fil: 
 Radera vid omstart: 
-Kan inte skapa genväg: 
-Kan inte skapa:  
-Fel vid uppackning av data! Installeraren felaktig?
-Kan inte registrera DLL
+Fel vid skapande av Genväg: 
+Fel skapande: 
+Fel vid upp-packning av data! Korrupt installation?
+Fel vid registrering av DLL
 ExecShell: 
 Kör: 
-Packar upp: 
-Packar upp: fel vid skrivning till fil 
-Installation felaktig: felaktig opcode
+Extrahera: 
+Extrahera: fel vid skrivning till fil 
+Installation korrupt: ogiltig opcode
 Ingen OLE för: 
-Skapar installationsmapp: 
-Radera mapp: 
-Ändra namn vid omstart: 
-Ändra namn: 
-Hoppar över: 
-Kopiera detaljer till klippboken
+Ut Katalog: 
+Ta bort katalog: 
+Döp om vid omstart: 
+Döp om: 
+Ignorerade: 
+Kopiera detaljer till klippbordet
+Logga installations process
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
