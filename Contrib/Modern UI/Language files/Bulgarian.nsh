@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: Bulgarian (1026)
 ;Translated by Asparouh Kalyandjiev [acnapyx@sbline.net]
@@ -21,7 +21,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лицензно споразумение"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Моля прегледайте лицензните условия преди инсталирането на ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Натиснете 'Page Down', за да видите останалата част от споразумението."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ако приемане всички условия от споразумението, Изберете 'Съгласен съм', за да продължите. Трябва да приемете споразумението, за да инсталирате ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ако приемате всички условия от споразумението, Изберете 'Съгласен', за да продължите. Трябва да приемете споразумението, за да инсталирате ${MUI_PRODUCT}."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Изберете компонентите"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Изберете кои функции на  ${MUI_PRODUCT} желаете да бъдат инсталирани."

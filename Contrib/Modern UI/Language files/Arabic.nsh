@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: Arabic (1025)
 ;By asdfuae@msn.com

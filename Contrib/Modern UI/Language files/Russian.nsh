@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: Russian (1049)
 ;By Nik Medved (brainsucker). Fixed by Scam (1.5).

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
