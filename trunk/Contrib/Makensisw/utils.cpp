@@ -32,7 +32,12 @@ void SetTitle(HWND hwnd,char *substr) {
 }
 
 void SetBranding(HWND hwnd) {
-	char title[16];
+    // buffer overrun occured here, consider changing to a _snprintf style
+    // function (Rainwater this is your call, I don't want to introduce use of
+    // a new string function into your code)... if the buffer is overwritten
+    // it trashes the function post code. For now I've just increased the size
+    // of the title buffer -- Sunjammer 04 September 2002.
+	char title[128];
 	wsprintf(title,"MakeNSISW %s",NSISW_VERSION);
 	SetDlgItemText(hwnd, IDC_VERSION, title);
 }
