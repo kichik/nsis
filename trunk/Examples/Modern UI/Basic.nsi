@@ -27,7 +27,7 @@
   OutFile "Basic.exe"
 
   ;User interface - icons, ui file, check bitmap, progress bar etc.
-  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
+  !insertmacro MUI_INTERFACE "modern.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
