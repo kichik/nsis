@@ -21,6 +21,12 @@
 #  include <stdarg.h>
 #endif
 
+#define RET_UNLESS_OK( function_rc ) do { \
+  int rc = (function_rc); \
+  if ( rc != PS_OK) \
+    return rc; \
+} while (false)
+
 int MMapFile::m_iAllocationGranularity = 0;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -39,10 +45,14 @@ void *lzmaCompressThread(void *lpParameter)
 }
 #endif
 
+namespace { // begin anonymous namespace
+
 bool isSimpleChar(char ch)
 {
   return (ch == '.' ) || (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
 }
+
+} // end of anonymous namespace
 
 void CEXEBuild::define(const char *p, const char *v)
 {
@@ -80,7 +90,7 @@ CEXEBuild::CEXEBuild()
 
   build_include_depth=0;
 
-  has_called_write_output=0;
+  has_called_write_output=false;
 
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
   ns_label.add("",0);
@@ -478,23 +488,41 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 }
 
-void CEXEBuild::setdirs(char *argv0)
-{
-  char szNSISDir[NSIS_MAX_STRLEN*2],*fn2;
-  int len = sizeof(szNSISDir) - sizeof(PLATFORM_PATH_SEPARATOR_STR "Include") - 1;
+namespace {
+string get_executable_path(const char* argv0) {
 #ifdef _WIN32
-  GetModuleFileName(NULL,szNSISDir,len);
+  char temp_buf[1024];
+  temp_buf[0] = '\0';
+  int rc = GetModuleFileName(NULL,temp_buf,1024);
+  assert(rc != 0);
+  return string(temp_buf);
 #else
-  char *buffer = my_realpath(argv0);
-  strncpy(szNSISDir, buffer, len);
-  szNSISDir[sizeof(szNSISDir)-1] = 0;
-  my_free_realpath(argv0, buffer);
+  return get_full_path(argv0);
 #endif
-  fn2=strrchr(szNSISDir,PLATFORM_PATH_SEPARATOR_C);
-  if(fn2!=NULL) *fn2=0;
-  definedlist.add("NSISDIR",(char*)szNSISDir);
-  strcat(szNSISDir, PLATFORM_PATH_SEPARATOR_STR "Include");
-  include_dirs.add(szNSISDir,0);
+}
+
+string get_dirname(const string& path) {
+  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
+  if (last_separator_pos == string::npos)
+    return path;
+  return path.substr(0, last_separator_pos);
+}
+
+string get_executable_dir(const char *argv0) {
+  return get_dirname(get_executable_path(argv0));
+}
+
+} // end anonymous namespace
+
+void CEXEBuild::setdirs(const char *argv0)
+{
+  string nsis_dir = get_executable_dir(argv0);
+
+  definedlist.add("NSISDIR",nsis_dir.c_str());
+
+  nsis_dir += PLATFORM_PATH_SEPARATOR_STR;
+  nsis_dir += "Include";
+  include_dirs.add(nsis_dir.c_str(),0);
 }
 
 
@@ -2262,60 +2290,106 @@ int CEXEBuild::check_write_output_errors() const
   return PS_OK;
 }
 
-int CEXEBuild::write_output(void)
-{
-#ifndef NSIS_CONFIG_CRC_SUPPORT
-  build_crcchk=0;
-#endif
-
-  int err;
-
-  err = check_write_output_errors();
-  if (err != PS_OK)
-    return err;
-
-  has_called_write_output++;
-
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  err = add_plugins_dir_initializer();
-  if (err != PS_OK)
-    return err;
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
-
-#ifdef NSIS_SUPPORT_VERSION_INFO
-  err = AddVersionInfo();
-  if (err != PS_OK)
-    return err;
-#endif //NSIS_SUPPORT_VERSION_INFO
-
+int CEXEBuild::prepare_uninstaller() {
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen())
   {
     if (!uninstaller_writes_used)
     {
       warning("Uninstall section found but WriteUninstaller never used - no uninstaller will be created.");
+      return PS_OK;
     }
-    else
-    {
-      build_uninst.flags|=build_header.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
 
-      set_uninstall_mode(1);
-      DefineInnerLangString(NLF_UCAPTION);
-      if (resolve_coderefs("uninstall"))
-        return PS_ERROR;
+    build_uninst.flags|=build_header.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
+
+    set_uninstall_mode(1);
+    DefineInnerLangString(NLF_UCAPTION);
+    if (resolve_coderefs("uninstall"))
+      return PS_ERROR;
 #ifdef NSIS_CONFIG_COMPONENTPAGE 
-      // set sections to the first insttype
-      PrepareInstTypes();
+    // set sections to the first insttype
+    PrepareInstTypes();
 #endif
-      set_uninstall_mode(0);
-    }
+    set_uninstall_mode(0);
   }
   else if (uninstaller_writes_used)
   {
     ERROR_MSG("Error: no Uninstall section specified, but WriteUninstaller used %d time(s)\n",uninstaller_writes_used);
     return PS_ERROR;
   }
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
+  return PS_OK;
+}
+
+int CEXEBuild::pack_exe_header()
+{
+  if (!(build_packname[0] && build_packcmd[0])) {
+    // header not asked to be packed
+    return PS_OK;
+  }
+
+  // write out exe header, pack, read back in, align to 512, and
+  // update the header info
+  FILE *tmpfile=FOPEN(build_packname,"wb");
+  if (!tmpfile)
+  {
+    ERROR_MSG("Error: writing temporary file \"%s\" for pack\n",build_packname);
+    return PS_ERROR;
+  }
+  fwrite(header_data_new,1,exeheader_size_new,tmpfile);
+  fclose(tmpfile);
+  if (system(build_packcmd) == -1)
+  {
+    remove(build_packname);
+    ERROR_MSG("Error: calling packer on \"%s\"\n",build_packname);
+    return PS_ERROR;
+  }
+  tmpfile=FOPEN(build_packname,"rb");
+  if (!tmpfile)
+  {
+    remove(build_packname);
+    ERROR_MSG("Error: reading temporary file \"%s\" after pack\n",build_packname);
+    return PS_ERROR;
+  }
+  fseek(tmpfile,0,SEEK_END);
+  exeheader_size_new=ftell(tmpfile);
+  fseek(tmpfile,0,SEEK_SET);
+  unsigned char *header_data_older=header_data_new;
+  header_data_new=(unsigned char *)malloc(exeheader_size_new);
+  if (!header_data_new)
+  {
+    free(header_data_older);
+    fclose(tmpfile);
+    ERROR_MSG("Error: malloc(%d) failed (exepack)\n",exeheader_size_new);
+    return PS_ERROR;
+  }
+  memset(header_data_new,0,exeheader_size_new);
+  fread(header_data_new,1,exeheader_size_new,tmpfile);
+  fclose(tmpfile);
+  remove(build_packname);
+
+  return PS_OK;
+}
+
+int CEXEBuild::write_output(void)
+{
+#ifndef NSIS_CONFIG_CRC_SUPPORT
+  build_crcchk=0;
 #endif
+
+  RET_UNLESS_OK( check_write_output_errors() );
+
+  has_called_write_output=true;
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  RET_UNLESS_OK( add_plugins_dir_initializer() );
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+
+#ifdef NSIS_SUPPORT_VERSION_INFO
+  RET_UNLESS_OK( AddVersionInfo() );
+#endif //NSIS_SUPPORT_VERSION_INFO
+
+  RET_UNLESS_OK( prepare_uninstaller() );
 
   DefineInnerLangString(NLF_CAPTION);
   if (resolve_coderefs("install"))
@@ -2327,15 +2401,11 @@ int CEXEBuild::write_output(void)
 #endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  err = ProcessPages();
-  if (err != PS_OK)
-    return err;
+  RET_UNLESS_OK( ProcessPages() );
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
 
   // Generate language tables
-  err = GenerateLangTables();
-  if (err != PS_OK)
-    return err;
+  RET_UNLESS_OK( GenerateLangTables() );
 
   init_res_editor();
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
@@ -2356,76 +2426,23 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 
-  // Pack exe header if asked for
-  if (build_packname[0] && build_packcmd[0])
-  {
-    FILE *tmpfile=FOPEN(build_packname,"wb");
-    if (!tmpfile)
-    {
-      ERROR_MSG("Error: writing temporary file \"%s\" for pack\n",build_packname);
-      return PS_ERROR;
-    }
-    fwrite(header_data_new,1,exeheader_size_new,tmpfile);
-    fclose(tmpfile);
-    if (system(build_packcmd) == -1)
-    {
-      remove(build_packname);
-      ERROR_MSG("Error: calling packer on \"%s\"\n",build_packname);
-      return PS_ERROR;
-    }
-    tmpfile=FOPEN(build_packname,"rb");
-    if (!tmpfile)
-    {
-      remove(build_packname);
-      ERROR_MSG("Error: reading temporary file \"%s\" after pack\n",build_packname);
-      return PS_ERROR;
-    }
-    fseek(tmpfile,0,SEEK_END);
-    exeheader_size_new=ftell(tmpfile);
-    fseek(tmpfile,0,SEEK_SET);
-    unsigned char *header_data_older=header_data_new;
-    header_data_new=(unsigned char *)malloc(exeheader_size_new);
-    if (!header_data_new)
-    {
-      free(header_data_older);
-      fclose(tmpfile);
-      ERROR_MSG("Error: malloc(%d) failed (exepack)\n",exeheader_size_new);
-      return PS_ERROR;
-    }
-    memset(header_data_new,0,exeheader_size_new);
-    fread(header_data_new,1,exeheader_size_new,tmpfile);
-    fclose(tmpfile);
-    remove(build_packname);
+  RET_UNLESS_OK( pack_exe_header() );
 
-    // write out exe header, pack, read back in, align to 512, and
-    // update the header info
-  }
 
   build_optimize_datablock=0;
 
   int data_block_size_before_uninst = build_datablock.getlen();
 
-  if (uninstall_generate() != PS_OK)
-  {
-    return PS_ERROR;
-  }
+  RET_UNLESS_OK( uninstall_generate() );
 
   int crc=0;
 
   {
-#ifdef _WIN32
-    char buffer[1024];
-    char *p;
-    GetFullPathName(build_output_filename,1024,buffer,&p);
-#else
-    char *buffer = my_realpath(build_output_filename);
-#endif
-    notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
-    INFO_MSG("\nOutput: \"%s\"\n", buffer);
-#ifndef _WIN32
-    my_free_realpath(build_output_filename, buffer);
-#endif
+    string full_path = get_full_path(build_output_filename);
+    notify(MAKENSIS_NOTIFY_OUTPUT, full_path.c_str());
+    INFO_MSG("\nOutput: \"%s\"\n", full_path.c_str());
   }
+
   FILE *fp = FOPEN(build_output_filename,"w+b");
   if (!fp)
   {
@@ -3191,11 +3208,11 @@ void CEXEBuild::print_warnings()
 }
 
 #ifdef _WIN32
-void CEXEBuild::notify(notify_e code, char *data) const
+void CEXEBuild::notify(notify_e code, const char *data) const
 {
   if (notify_hwnd)
   {
-    COPYDATASTRUCT cds = {(DWORD)code, strlen(data)+1, data};
+    COPYDATASTRUCT cds = {(DWORD)code, strlen(data)+1, (void *) data};
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
 }

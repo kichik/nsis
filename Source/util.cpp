@@ -12,6 +12,8 @@
 #  include <ctype.h>
 #endif
 
+using std::string;
+
 int g_dopause=0;
 extern int g_display_errors;
 extern FILE *g_output;
@@ -415,11 +417,12 @@ char *my_realpath(char *path)
 
 void my_free_realpath(char *path, char *buffer)
 {
-#if !defined(_WIN32) && !defined(PATH_MAX)
+#ifndef PATH_MAX
   if (buffer != path)
     free(buffer);
 #endif
 }
+
 
 #define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
 
@@ -491,7 +494,7 @@ int my_glob(const char *pattern, int flags,
   my_convert_free(converted_pattern);
   return result;
 }
-#endif
+#endif//!_WIN32
 
 void *operator new(size_t size) {
   void *p = malloc(size);
@@ -510,4 +513,21 @@ void operator delete [](void *p) {
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm) {
   return strftime(s, max, fmt, tm);
+}
+
+string get_full_path(const string &path) {
+#ifdef _WIN32
+  char *throwaway;
+  char real_path[1024];
+  int rc = GetFullPathName(path.c_str(),1024,real_path,&throwaway);
+  assert(rc <= 1024); // path size is limited by MAX_PATH (260)
+  assert(rc != 0); // rc==0 in case of error
+  return string(real_path);
+#else
+  // TODO: inline my_{,free_}realpath
+  char *real_path = my_realpath(path.c_str());
+  string result(real_path);
+  my_free_realpath(real_path);
+  return result;
+#endif//_WIN32
 }

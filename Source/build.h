@@ -65,7 +65,7 @@ enum notify_e {
 class CEXEBuild {
   public:
     CEXEBuild();
-    void CEXEBuild::setdirs(char *argv0);
+    void setdirs(const char *argv0);
     ~CEXEBuild();
 
     // to add a warning to the compiler's warning list.
@@ -106,13 +106,15 @@ class CEXEBuild {
 
 #ifdef _WIN32
     HWND notify_hwnd;
-    void notify(notify_e code, char *data) const;
+    void notify(notify_e code, const char *data) const;
 #else
-    void notify(notify_e code, char *data) const { }
+    void notify(notify_e code, const char *data) const { }
 #endif
 
   private:
     int check_write_output_errors() const;
+    int prepare_uninstaller();
+    int pack_exe_header();
 
     // tokens.cpp
     int get_commandtoken(char *s, int *np, int *op, int *pos);
@@ -284,7 +286,7 @@ class CEXEBuild {
 
     bool no_space_texts;
 
-    int has_called_write_output;
+    bool has_called_write_output;
 
     char build_packname[1024], build_packcmd[1024];
     int build_overwrite, build_last_overwrite, build_crcchk,
