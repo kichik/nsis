@@ -279,7 +279,7 @@ typedef struct
 // Settings common to both installers and uninstallers
 typedef struct
 {
-  int str_tables_num; // number of strings tables in array
+  int language_tables_num; // number of strings tables in array
   int language_table_size; // size of each language table
 
   int num_entries; // total number of entries

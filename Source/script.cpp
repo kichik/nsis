@@ -2957,7 +2957,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=line.gettoken_enum(1,usrvars);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (!ent.offsets[0] || k == -1) PRINTHELP()
+        if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
         ent.offsets[1]=(int)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
