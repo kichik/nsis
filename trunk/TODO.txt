@@ -4,41 +4,36 @@ TODO
 
 NSIS
 
+* Section switch for defaulting to unselected mode
+
+* different font and code page for every language
+
 * MB and friends translatable
 
-* skip plugin calls, file instructions that add more than one file with +1 with goto
-
 * add version numbers for the installer
-
-* move more ui changes to compile time.
-  inst details could be changed in compile time too
 
 * component page for uninstaller, multiple sections
 
 * more default texts in NLF language files
 
-* different color for the drive space when there is not enough space
-
 * all installer strings should be language strings
+
+PLUGINS
+
+* BGImage - crash when called from .onInstSuccess
+
+-- Before NSIS 2 Final --
 
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple
   instfiles pages
 
-OTHER PLUGINS
-
-* nsExec - live output
-
--- Before NSIS 2 Final --
-
 NSIS
 
-* sorted list with binary search for defines for faster searching
+* skip plugin calls, file instructions that add more than one file with +1 with goto
 
-* custom class names for IO so you can include whatever item you want
-
-* set resource's font at run-time by saving offsets at compile time
+* different color for the drive space when there is not enough space
 
 * more powerful plug-ins (access to ExecFunc and flags and even more)
 
@@ -46,4 +41,8 @@ NSIS
 
 * LZMA compression
 
-* multiple directory pages
+PLUGINS
+
+* InstallOptions - custom class names so you can include whatever control you want
+
+* nsExec - live output
