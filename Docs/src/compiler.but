@@ -80,7 +80,7 @@ Current line number.
 
 \S1{predate} $\{__DATE__\}
 
-Date date according to the current locale.
+Date according to the current locale.
 
 \S1{pretime} $\{__TIME__\}
 
