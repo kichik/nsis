@@ -31,6 +31,7 @@
   !insertmacro MUI_LANGUAGE "Russian"
   !insertmacro MUI_LANGUAGE "PortugueseBR"
   !insertmacro MUI_LANGUAGE "Ukrainian"
+  !insertmacro MUI_LANGUAGE "Czech"
   
   OutFile "MultiLanguage.exe"
 
@@ -49,6 +50,7 @@
   LicenseData /LANG=${LANG_RUSSIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_CZECH} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-selection page
     ;Titles
@@ -66,6 +68,7 @@
     LangString TITLE_SecCopyUI ${LANG_RUSSIAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_UKRAINIAN} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_CZECH} "modern.exe"
     
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
@@ -82,6 +85,7 @@
     LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
     LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
     LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
+    LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
     
   ;Folder-selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -148,8 +152,10 @@ Function .onInit
   Push "${MUI_PORTUGUESEBR_LANGNAME}"
   Push ${LANG_UKRAINIAN}
   Push "${MUI_UKRAINIAN_LANGNAME}"
+  Push ${LANG_CZECH}
+  Push "${MUI_CZECH_LANGNAME}"
   
-  Push 14F ;14 = number of languages, F = change font
+  Push 15F ;15 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
