@@ -54,6 +54,9 @@
 // that are visible.
 #define NSIS_CONFIG_VISIBLE_SUPPORT
 
+// NSIS_CONFIG_ENHANCEDUI_SUPPORT enables support for CreateFont, SetStaticBkColor (used by some UIs),etc
+#define NSIS_CONFIG_ENHANCEDUI_SUPPORT
+
 
 // Changed by Amir Szekely 31st July 2002
 // Now supports runtime choice of compression method
@@ -194,6 +197,7 @@
 // NSIS_SUPPORT_MESSAGEBOX enables support for MessageBox
 #define NSIS_SUPPORT_MESSAGEBOX
 
+
 // Added by Ximon Eighteen 5th August 2002
 // If this is uncommented the following changes/new features are
 // turned on :-
@@ -229,6 +233,12 @@
   #endif
   #ifdef NSIS_SUPPORT_BGBG
     #undef NSIS_SUPPORT_BGBG
+  #endif
+#endif
+
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  #ifndef NSIS_SUPPORT_HWNDS
+    #define NSIS_SUPPORT_HWNDS
   #endif
 #endif
 
