@@ -18,7 +18,7 @@
      LicenseText /LANG=${LANG_FRENCH} "Appuyez sur Page Down pour lire le reste de la licence utilisateur."
      LangString MUI_TEXT_LICENSE_TITLE ${LANG_FRENCH} "Licence utilisateur"  
      LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_FRENCH} "Veuillez examiner les termes de la licence avant d'installer ${NAME}."
-     LangString MUI_INNERTEXT_LICENSE ${LANG_FRENCH} "Si vous acceptez tous les termes de la licence utilisateur, cliquez sur D'accord pour continuer. Vous devez accepter la licence utilisateur pour installer ${NAME}."  
+     LangString MUI_INNERTEXT_LICENSE ${LANG_FRENCH} "Si vous acceptez tous les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour installer ${NAME}."  
   !endif
   
   !ifdef MUI_COMPONENTPAGE
@@ -37,7 +37,7 @@
   !endif
   
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_FRENCH} "Suivant >"
+    InstallButtonText /LANG=${LANG_FRENCH} "&Suivant >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_FRENCH} "Installation en cours"
@@ -51,10 +51,10 @@
   !endif
 
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_FRENCH} "< Précédent"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_FRENCH} "Suivant >"
+    LangString MUI_BUTTONTEXT_BACK ${LANG_FRENCH} "< &Précédent"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_FRENCH} "&Suivant >"
     LangString MUI_BUTTONTEXT_CANCEL ${LANG_FRENCH} "Annuler"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_FRENCH} "Installer"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_FRENCH} "&Installer"
   !endif
   
   ;UNINSTALLER
@@ -72,14 +72,14 @@
   !endif
   
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_FRENCH} "Suivant >"
+    InstallButtonText /LANG=${LANG_FRENCH} "&Suivant >"
   !endif
   
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_FRENCH} "< Précédent"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_FRENCH} "Suivant >"
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_FRENCH} "< &Précédent"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_FRENCH} "&Suivant >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_FRENCH} "Annuler"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_FRENCH} "Désinstaller"
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_FRENCH} "&Désinstaller"
   !endif
     
 !endif
