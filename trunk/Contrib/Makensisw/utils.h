@@ -46,8 +46,7 @@ void ShowDocs();
 
 BOOL PopMRUFile(char* fname);
 void PushMRUFile(char* fname);
-void BuildMRUMenu(HMENU hMenu);
+void BuildMRUMenus();
 void LoadMRUFile(int position);
 void ClearMRUList();
-void SetClearMRUListMenuitemState(HMENU hMenu);
 #endif
