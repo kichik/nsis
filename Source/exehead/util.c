@@ -329,7 +329,9 @@ char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 char * NSISCALL process_string_fromtab(char *out, int offs)
 {
-  return lstrcpyn(out,process_string(GetStringFromStringTab(offs)),NSIS_MAX_STRLEN);
+  char *p=process_string(GetStringFromStringTab(offs));
+  if (!out) return p;
+  return lstrcpyn(out,p,NSIS_MAX_STRLEN);
 }
 
 void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
