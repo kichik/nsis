@@ -1430,7 +1430,7 @@ int CEXEBuild::write_output(void)
         }
 
         if (uninst==1) {
-          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "UninstallText");
+          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "uninstConfirm", "UninstallText");
           return PS_ERROR;
         }
         if (!instlog) {
