@@ -275,7 +275,7 @@ void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   }
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) delete [] m_szFont;
-  m_szFont = new char[lstrlen(szFaceName)];
+  m_szFont = new char[lstrlen(szFaceName)+1];
   lstrcpy(m_szFont, szFaceName);
   m_sFontSize = wFontSize;
 }

@@ -74,7 +74,7 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 WCHAR* StrToWstrAlloc(const char* istr, int codepage)
 {
   int strSize = strlen(istr);
-  WCHAR* wstr = new WCHAR[(strSize*2)];
+  WCHAR* wstr = new WCHAR[(strSize*2)+1];
   MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize*2);
   return wstr;
 }
