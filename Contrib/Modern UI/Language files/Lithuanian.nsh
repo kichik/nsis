@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Lithuanian (1063)
 ;By Vytautas Krivickas (Vytautas)
@@ -83,7 +83,8 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Baigiu $(^Name) ištrinimo programa."
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) buvo ištrinta iš jusu kompiuterio.\r\n\r\nPaspauskite Baigti."
-
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Jusu kompiuteris turi buti perkrautas, kad butu baigtas $(^Name) ištrynimas. Ar jus norite perkrauti dabar?"
+  
   !define MUI_UNTEXT_ABORTWARNING "Ar jus tikrai norite išjungti $(^Name) ištrinimo programa?"
   
 !insertmacro MUI_LANGUAGEFILE_END
