@@ -57,8 +57,8 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 ;Settings
 !define MUI_ABORTWARNING
 
-!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
-!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
+!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+!define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nullsoft.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
