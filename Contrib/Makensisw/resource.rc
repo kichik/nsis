@@ -55,6 +55,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON    DISCARDABLE     "..\\..\\contrib\\icons\\adni18-installer-C-no48xp.ico"
+IDI_SHELL               ICON    DISCARDABLE     "shell.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -66,7 +67,7 @@ BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
-        MENUITEM "&Test Installer\tCtrl+T",               IDM_TEST
+        MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "&Save Output...",             IDM_SAVE
         MENUITEM SEPARATOR
         MENUITEM "&Load Script...",             IDM_LOADSCRIPT
