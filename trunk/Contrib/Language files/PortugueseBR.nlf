@@ -33,7 +33,7 @@ Escolha o diretório para instalar %s:
 Espaço disponível: 
 Espaço necessário: 
 Desinstalando de:
-Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nHClique em Abortar para Abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nignorar para ignorar este arquivo
+Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para Abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nignorar para ignorar este arquivo.
 Não foi possível gravar: 
 Falha ao copiar
 Copiar para 
