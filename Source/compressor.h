@@ -2,13 +2,13 @@
 #define __COMPRESSOR_H__
 
 #define C_OK 0
-#define C_FINISH TRUE
+#define C_FINISH true
 
 class ICompressor {
   public:
     virtual int Init(int level) = 0;
     virtual int End() = 0;
-    virtual int Compress(BOOL finish) = 0;
+    virtual int Compress(bool finish) = 0;
 
     virtual void SetNextIn(char *in, unsigned int size) = 0;
     virtual void SetNextOut(char *out, unsigned int size) = 0;

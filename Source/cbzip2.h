@@ -19,7 +19,7 @@ class CBzip2 : public ICompressor {
       return ret;
     }
 
-    int Compress(BOOL finish) {
+    int Compress(bool finish) {
       // act like zlib when it comes to stream ending
       if (last_ret == BZ_STREAM_END && finish)
         return BZ_STREAM_END;

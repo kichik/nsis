@@ -18,7 +18,7 @@ class CZlib : public ICompressor {
       return ret;
     }
 
-    int Compress(BOOL finish) {
+    int Compress(bool finish) {
       return deflate(stream, finish?Z_FINISH:0);
     }
 

@@ -33,22 +33,6 @@ using namespace std;
     return rc; \
 } while (false)
 
-#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-#ifdef _WIN32
-DWORD WINAPI lzmaCompressThread(LPVOID lpParameter)
-#else
-void *lzmaCompressThread(void *lpParameter)
-#endif
-{
-  CLZMA *Compressor = (CLZMA *) lpParameter;
-  if (!Compressor)
-    return 0;
-
-  Compressor->CompressReal();
-  return 0;
-}
-#endif
-
 namespace { // begin anonymous namespace
 
 bool isSimpleChar(char ch)
@@ -2768,7 +2752,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
   build_compressor_set=true;
 
   char obuf[65536];
-  int flush=0;
+  bool flush=false;
   compressor->SetNextIn(buf,len);
   if (!buf||!len)
   {
