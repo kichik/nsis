@@ -31,8 +31,6 @@ Var MUI_TEMP2
 
 !macro MUI_INTERFACE
   
-  Name "$(MUI_NAME)"
-  
   !ifndef MUI_UI
     !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
   !endif
@@ -661,7 +659,7 @@ Var MUI_TEMP2
   !endif
   
   !ifndef MUI_STARTMENUPAGE_DEFAULTFOLDER
-    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "${MUI_PRODUCT}"
+    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "$(^Name)"
   !endif
   
   !insertmacro MUI_UNIQUEID
@@ -1920,6 +1918,10 @@ Var MUI_TEMP2
 
 !macro MUI_INSERT
   
+  !ifdef MUI_PRODUCT | MUI_VERSION
+    !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
+  !endif
+  
   !insertmacro MUI_INTERFACE
   
   !insertmacro MUI_FUNCTION_GUIINIT
@@ -2051,8 +2053,6 @@ Var MUI_TEMP2
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONTSTYLE_TITLE" "700"
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_NOUNDEF "MUI_BGCOLOR"
-    
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_NAME"
   
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WELCOME_INFO_TITLE"

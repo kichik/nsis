@@ -8,22 +8,17 @@
   !include "MUI.nsh"
 
 ;--------------------------------
-;Product Info
-
-  !define MUI_PRODUCT "Modern UI Test"
-  !define MUI_VERSION "1.66"
-
-;--------------------------------
 ;Configuration
 
   ;General
+  Name "Modern UI Test 1.66"
   OutFile "StartMenu.exe"
 
   ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  InstallDir "$PROGRAMFILES\Modern UI Test"
   
   ;Get install folder from registry if available
-  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
+  InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
 ;Variables
@@ -44,7 +39,7 @@
   
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Modern UI Test" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
   !insertmacro MUI_PAGE_STARTMENU
@@ -76,7 +71,7 @@ Section "Dummy Section" SecDummy
   ;ADD YOUR OWN STUFF HERE!
   
   ;Store install folder
-  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
+  WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -127,6 +122,6 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
 
-  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
+  DeleteRegKey /ifempty HKCU "Software\Modern UI Test"
 
 SectionEnd
