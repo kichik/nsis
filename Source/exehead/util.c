@@ -482,11 +482,11 @@ void NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 18: // R7
         case VAR_CODES_START + 19: // R8
         case VAR_CODES_START + 20: // R9
-        case VAR_CODES_START + 21: // LANGUAGE
-        case VAR_CODES_START + 22: // CMDLINE
-        case VAR_CODES_START + 23: // INSTDIR
-        case VAR_CODES_START + 24: // OUTDIR
-        case VAR_CODES_START + 25: // EXEDIR
+        case VAR_CODES_START + 21: // CMDLINE
+        case VAR_CODES_START + 22: // INSTDIR
+        case VAR_CODES_START + 23: // OUTDIR
+        case VAR_CODES_START + 24: // EXEDIR
+        case VAR_CODES_START + 25: // LANGUAGE
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
@@ -545,7 +545,7 @@ void NSISCALL process_string(char *out, const char *in)
       } // switch
       // remove trailing slash
       while (*out && *CharNext(out)) out++;
-      if (nVarIdx > 22+VAR_CODES_START && *out == '\\') // only if not $0 to $R9, $CMDLINE, $LANGUAGE, or $HWNDPARENT
+      if (nVarIdx > 21+VAR_CODES_START && nVarIdx != VAR_CODES_START+25 && *out == '\\') // only if not $0 to $R9, $CMDLINE, $LANGUAGE, or $HWNDPARENT
         *out = 0;
       out=CharNext(out);
     } // >= VAR_CODES_START
