@@ -154,21 +154,21 @@ Function .onInit
   Push 8
 
   Push ${LANG_ENGLISH}
-  Push ${MUI_ENGLISH_LANGNAME}
+  Push "${MUI_ENGLISH_LANGNAME}"
   Push ${LANG_FRENCH}
-  Push ${MUI_FRENCH_LANGNAME}
+  Push "${MUI_FRENCH_LANGNAME}"
   Push ${LANG_GERMAN}
-  Push ${MUI_GERMAN_LANGNAME}
+  Push "${MUI_GERMAN_LANGNAME}"
   Push ${LANG_DUTCH}
-  Push ${MUI_DUTCH_LANGNAME}
+  Push "${MUI_DUTCH_LANGNAME}"
   Push ${LANG_POLISH}
-  Push Polish
+  Push "${MUI_POLISH_LANGNAME}"
   Push ${LANG_GREEK}
-  Push ${MUI_GREEK_LANGNAME}
+  Push "${MUI_GREEK_LANGNAME}"
   Push ${LANG_TRADCHINESE}
-  Push "Traditional Chinese"
+  Push "${MUI_TRADCHINESE_LANGNAME}"
   Push ${LANG_SIMPCHINESE}
-  Push "Simplified Chinese"
+  Push "${MUI_SIMPCHINESE_LANGNAME}"
   
   Push 8F ; 8 is the number of languages, F = change font
 
