@@ -38,6 +38,7 @@ type
     INST_INSTDIR, // $INSTDIR
     INST_OUTDIR,  // $OUTDIR
     INST_EXEDIR,  // $EXEDIR
+    INST_LANG,    // $LANGUAGE
     __INST_LAST
     );
   TVariableList = INST_0..__INST_LAST;
