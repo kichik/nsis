@@ -2,7 +2,7 @@
 
 \S{Reboot} Reboot
 
-Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is sucessful, this instruction does not return.
+Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is successful, this instruction does not return.
 
 \S{SetRebootFlag} SetRebootFlag
 

@@ -6,7 +6,7 @@ You can create callback functions which have special names, that will be called 
 
 \S{onguiinit} .onGUIInit
 
-This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the the user interface.
+This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.
 
 Example:
 
@@ -66,7 +66,7 @@ Example:
 
 \S{onmouseoversection} .onMouseOverSection
 
-This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarly, in $0.
+This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarily, in $0.
 
 Example:
 
@@ -113,7 +113,7 @@ Example:
 
 \S{unonguiinit} un.onGUIInit
 
-This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the the user interface.
+This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.
 
 Have a look at .onGUIInit (\K{onguiinit}) for an example.
 

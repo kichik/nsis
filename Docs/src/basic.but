@@ -32,19 +32,19 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \c command
 
-Execute the specfied program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: Exec '"$INSTDIR\\command.exe" parameters'.
+Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: Exec '"$INSTDIR\\command.exe" parameters'.
 
 \S{execshell} ExecShell
 
 \c action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]
 
-Execute the specfied program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
+Execute the specified program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
 
 \S{execwait} ExecWait
 
 \c command [user_var(exit code)]
 
-Execute the specfied program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: ExecWait '"$INSTDIR\\command.exe" parameters'
+Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: ExecWait '"$INSTDIR\\command.exe" parameters'
 
 \S{rename} Rename
 
@@ -56,7 +56,7 @@ Rename source_file to dest_file. Functions just like the Win32 API MoveFile, whi
 
 \c [/r] directory
 
-Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the dictory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
+Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
 
 \S{reservefile} ReserveFile
 
