@@ -26,7 +26,7 @@ Sets the description for the section section_index. To set a subsection, you mus
 
 Stores the text description of the section section_index into the output. If the section is hidden, stores an empty string. The error flag will be set if an out of range section is specified.
 
-\S2{SectionSetInstTypes} SectionSetInstTypes
+\S2{sectionsetinsttypes} SectionSetInstTypes
 
 \c section_index inst_types
 
@@ -41,3 +41,42 @@ because the binary value for 5 is "00000101". The error flag will be set if the 
 \c section_index user_var(output)
 
 Retrieves the install types flags array of a section. See above explanation about SectionSetInstTypes for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.
+
+\S2{ssectionsetsize} SectionSetSize
+
+\c section_index new_size
+
+Sets the Size of the section specified by section_index. Note that the Index starts with Zero. The Value for Size must be entered in KiloByte and supports only whole numbers.
+
+\S2{ssectiongetsize} SectionGetSize
+
+\c section_index user_var
+
+Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero.
+
+\S2{ssetcurinsttype} SetCurInstType
+
+\c inst_type_idx
+
+Sets the current InstType. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
+
+\S2{sgetcurinsttype} GetCurInstType
+
+\c user_var
+
+Get the current InstType and stores the Value in the given User Variable. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the custom installation type was selected.
+
+\S2{sinsttypesettext} InstTypeSetText
+
+\c inst_type_idx text
+
+Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{sectionin}{SectionIn} the index is zero based, which means the first installation type's index is 0.
+
+\S2{sinsttypegettext} InstTypeGetText
+
+\c inst_type_idx user_var
+
+Gets the Text of the specified InstType.
+
+
+
