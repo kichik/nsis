@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Kliknìte na Další pro pokraèování."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Kliknìte na Instalovat pro spuštìní instalace."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Vítejte v prùvodci instalace programu ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Chystáte se nainstalovat ${MUI_PRODUCT} na svùj poèítaè.\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Tímto umožníte instalátoru aktualizovat pøípadné systémové soubory bez nutnosti restartovat systém.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chystáte se nainstalovat ${MUI_PRODUCT} na svùj poèítaè.\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Tímto umožníte instalátoru aktualizovat pøípadné systémové soubory bez nutnosti restartovat systém.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu ${MUI_PRODUCT}, prosím, prostudujte licenèní podmínky."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Instalace probìhla v poøádku."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": dokonèeno"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Dokonèit"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "Právì jste nainstalovali program ${MUI_PRODUCT} do svého systému.\r\nKliknìte na Dokonèit pro uzavøení tohoto prùvodce."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "Právì jste nainstalovali program ${MUI_PRODUCT} do svého systému.\r\nKliknìte na Dokonèit pro uzavøení tohoto prùvodce."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Pro úplné dokonèení instalace programu ${MUI_PRODUCT} je nutné provést restart Vašeho systému. Chcete restartovat ihned?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Restartovat ihned"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Restartovat ruènì pozdìji"

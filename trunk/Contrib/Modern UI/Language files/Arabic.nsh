@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "··≈” „—«— ≈÷€ÿ «· «·Ì"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "≈÷€ÿ  ‰’Ì» ··»œ¡ ›Ì  ‰’Ì» «·»—‰«„Ã"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "${MUI_PRODUCT} „—Õ»« »ﬂ ›Ì „‰’» »—‰«„Ã"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "≈‰ ‘«¡ «··Â ”Ì „  ‰’Ì» «·»—‰«„Ã ${MUI_PRODUCT}.\r\n\r\n„‰ «·„›÷· ≈€·«ﬁ Ã„Ì⁄ «·»—«„Ã ﬁ»· «· ‰’Ì».Â–« ”Ì”«⁄œ ›Ì  ÃœÌœ „·›«  «·‰Ÿ«„ „‰ œÊ‰ «·Õ«Ã… ·≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ „‰ ÃœÌœ.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "${MUI_PRODUCT} „—Õ»« »ﬂ ›Ì „‰’» »—‰«„Ã"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "≈‰ ‘«¡ «··Â ”Ì „  ‰’Ì» «·»—‰«„Ã ${MUI_PRODUCT}.\r\n\r\n„‰ «·„›÷· ≈€·«ﬁ Ã„Ì⁄ «·»—«„Ã ﬁ»· «· ‰’Ì».Â–« ”Ì”«⁄œ ›Ì  ÃœÌœ „·›«  «·‰Ÿ«„ „‰ œÊ‰ «·Õ«Ã… ·≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ „‰ ÃœÌœ.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "« ›«ﬁÌ…˛ «· —ŒÌ’"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "«·—Ã«¡ „—«Ã⁄… « ›«ﬁÌ…˛ «· —ŒÌ’ ﬁ»·  ‰’Ì» ${MUI_PRODUCT}."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " „ :"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&≈‰Â«¡"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} »‰Ã«Õ  „  ‰’Ì»\r\n≈÷€ÿ ≈‰Â«¡ ·≈Œ—«Ãﬂ „‰ «·„‰’»"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} »‰Ã«Õ  „  ‰’Ì»\r\n≈÷€ÿ ≈‰Â«¡ ·≈Œ—«Ãﬂ „‰ «·„‰’»"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT}ÌÃ» ≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ ·Ìﬂ „·  ‰’Ì» «·»—‰«„Ã . Â·  —Ìœ «·≈⁄«œ… «·¬‰ø"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "√⁄œ «· ‘€Ì· «·¬‰"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "√—€» ›Ì ≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ ›Ì Êﬁ  ¬Œ—."

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.5
+;Compatible with Modern UI 1.4 and Basic Modern UI 1.6 scripts (needs te be updated!)
 
 ;Language: 'Portuguese (Brasil)' (1046)
 ;By Layout do Brasil www.layoutdobrasil.com
