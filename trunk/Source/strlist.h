@@ -270,11 +270,7 @@ class SortedStringList
       int pos=find(str, case_sensitive);
       if (pos==-1) return 1;
 
-      T *db=(T *)gr.get();
-      free(db[pos].name);
-      freestruct(pos);
-      memmove(db+pos,db+pos+1,gr.getlen()-(pos*sizeof(T))-sizeof(T));
-      gr.resize(gr.getlen()-sizeof(T));
+      delbypos(pos);
 
       return 0;
     }
@@ -707,7 +703,11 @@ class MMapFile : public IMMap
         quit();
       }
 
+#ifdef _WIN32
       return (void *)((char *)m_pView + offset - alignedoffset);
+#else
+      return m_pView;
+#endif
     }
 
     void *getmore(int offset, int *size)
