@@ -1461,7 +1461,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!parm2)
           {
             // getting text
-            GetNSISString(var1,res);
+            mystrcpy(var1,sec->name);
           }
           else
           {
@@ -1479,9 +1479,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           else
           {
-            // setting text, send the message to do it
-            SendMessage(g_SectionHack,WM_NOTIFY_SECTEXT,x,parm1);
+            // setting text
+            GetNSISString(sec->name,parm4);
+            sec->flags|=SF_NAMECHG;
+            // parm1 is zero so name_ptr will be set to zero
+            // if name_ptr is zero, it won't be used after .onInit
           }
+
           ((int*)sec)[parm2]=parm1;
 
           if (parm3) // update flags

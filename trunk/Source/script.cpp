@@ -5193,8 +5193,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTIONSETTEXT:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(name_ptr);
+      ent.offsets[4]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SectionSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
