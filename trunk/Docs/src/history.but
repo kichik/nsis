@@ -50,6 +50,8 @@ Released on December 3rd, 2004
 
 \b Language file fixes
 
+\b nsisconf.nsh was not always parsed when compiling using MakeNSISw
+
 \H{v2.02} 2.02
 
 Released on October 23rd, 2004
@@ -105,8 +107,6 @@ Released on October 23rd, 2004
 \b Makefile improvements
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.71}: Made the selected language only be saved if the installation was successful
-
-\b nsisconf.nsh was not always parsed when compiling using MakeNSISw
 
 \b Some code refactoring
 
