@@ -202,6 +202,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETCURRENTADDR,"GetCurrentAddress",1,0,"output"},
 
 {TOK_PLUGINDIR,"PluginDir",1,0,"new_plugin_directory"},
+{TOK_INITPLUGINDIR,"InitPluginDir",0,0,""}
 };
 
 void CEXEBuild::print_help(char *commandname)

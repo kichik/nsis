@@ -295,6 +295,8 @@ CEXEBuild::CEXEBuild()
 
   build_custom_used=0;
   ubuild_custom_used=0;
+
+  res_editor=0;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -1253,6 +1255,7 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   {
+    SCRIPT_MSG("Processing pages... ");
     page pg = {
       0,
 #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -1309,15 +1312,15 @@ int CEXEBuild::write_output(void)
         }
 
         if (license==1) {
-          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "license", "LicenseData");
+          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "license", "LicenseData");
           return PS_ERROR;
         }
         if (selcom==1) {
-          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "components", "ComponentText");
+          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "components", "ComponentText");
           return PS_ERROR;
         }
         if (dir==1) {
-          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "directory selection", "DirText");
+          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "directory selection", "DirText");
           return PS_ERROR;
         }
         if (!instlog) {
@@ -1388,11 +1391,11 @@ int CEXEBuild::write_output(void)
         page *p=(page *) ubuild_pages.get();
         while (i!=build_header.common.num_pages) {
           switch (p->id) {
-  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
             case NSIS_PAGE_UNINST:
               uninst++;
               break;
-  #endif
+#endif
             case NSIS_PAGE_INSTFILES:
               instlog++;
               break;
@@ -1402,7 +1405,7 @@ int CEXEBuild::write_output(void)
         }
 
         if (uninst==1) {
-          ERROR_MSG("Error: %s page and %s depend on each other, both must be in the script!\n", "UninstallText");
+          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "UninstallText");
           return PS_ERROR;
         }
         if (!instlog) {
@@ -1423,10 +1426,6 @@ int CEXEBuild::write_output(void)
         ubuild_pages.add(&pg,sizeof(page));
         build_uninst.common.num_pages++;
       }
-      
-      /*case NSIS_PAGE_UNINST:
-            p->next=LANG_BTN_UNINST;
-            break;*/
 
       page *p=(page *) ubuild_pages.get();
       int noinstlogback=0;
@@ -1452,40 +1451,39 @@ int CEXEBuild::write_output(void)
 #endif
 #endif
       main--;
+
+    SCRIPT_MSG("Done!\n");
   
     try {
       SCRIPT_MSG("Removing unused resources... ");
-      CResourceEditor re(header_data_new, exeheader_size_new);
-  #ifdef NSIS_CONFIG_LICENSEPAGE
+      init_res_editor();
+#ifdef NSIS_CONFIG_LICENSEPAGE
       if (!license) {
-        re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
-  #endif // NSIS_CONFIG_LICENSEPAGE
-  #ifdef NSIS_CONFIG_COMPONENTPAGE
+#endif // NSIS_CONFIG_LICENSEPAGE
+#ifdef NSIS_CONFIG_COMPONENTPAGE
       if (!selcom) {
-        re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-        re.UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
-  #endif // NSIS_CONFIG_COMPONENTPAGE
+#endif // NSIS_CONFIG_COMPONENTPAGE
       if (!dir) {
-        re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
-  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (!uninst) {
-        re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
-  #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
+#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
       if (!instlog) {
-        re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
       if (!main) {
-        re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
         if (!build_compress_whole && !build_crcchk)
-          re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+          res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       }
-
-      free(header_data_new);
-      header_data_new = re.Save((DWORD&)exeheader_size_new);
 
       SCRIPT_MSG("Done!\n");
     }
@@ -1495,6 +1493,15 @@ int CEXEBuild::write_output(void)
     }
   }
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
+
+  // Save all changes to the exe header
+  try {
+    close_res_editor();	
+  }
+  catch (exception& err) {
+    ERROR_MSG("\nError: %s\n", err.what());
+    return PS_ERROR;
+  }
 
   // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
@@ -2246,3 +2253,19 @@ again:
   return PS_OK;
 }
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
+
+void CEXEBuild::init_res_editor()
+{
+  build_compressor_set=true;
+  if (!res_editor)
+    res_editor=new CResourceEditor(header_data_new, exeheader_size_new);	
+}
+
+void CEXEBuild::close_res_editor()
+{
+  if (!res_editor) return;
+  free(header_data_new);
+  header_data_new = res_editor->Save((DWORD&)exeheader_size_new);
+  delete res_editor;
+  res_editor=0;
+}

@@ -8,6 +8,7 @@ using namespace std;
 #include "strlist.h"
 #include "lineparse.h"
 #include "lang.h"
+#include "ResourceEditor.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -221,6 +222,10 @@ class CEXEBuild {
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
 #endif
+
+    CResourceEditor *res_editor;
+    void init_res_editor();
+    void close_res_editor();
 };
 
 #endif //_BUILD_H_
