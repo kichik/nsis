@@ -327,8 +327,8 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
 		if (rdToScan->Entries[i].NameIsString) {
 			PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rdToScan->Entries[i].NameOffset + (char*)rdRoot);
 
-      int mbsSize = WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, 0, 0, 0, 0);
-      szName = new char[mbsSize+1];
+			int mbsSize = WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, 0, 0, 0, 0);
+			szName = new char[mbsSize+1];
 			WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, mbsSize, 0, 0);
 			szName[mbsSize] = 0;
 		}
@@ -433,9 +433,9 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 		char* szName = cRDirE->GetName();
 		WORD iLen = lstrlen(szName);
 		WCHAR* szwName = new WCHAR[iLen];
-    // MultiByteToWideChar return value includes the null char, so -1
+		// MultiByteToWideChar return value includes the null char, so -1
 		iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
-    *(WORD*)seeker = iLen;
+		*(WORD*)seeker = iLen;
 		seeker += sizeof(WORD);
 		CopyMemory(seeker, szwName, iLen*sizeof(WCHAR));
 		seeker += iLen*sizeof(WCHAR);
@@ -553,7 +553,7 @@ void CResourceDirectory::RemoveEntry(int i) {
 		m_rdDir.NumberOfNamedEntries--;
 	else
 		m_rdDir.NumberOfIdEntries--;
-  delete m_vEntries[i];
+	delete m_vEntries[i];
 	m_vEntries.erase(m_vEntries.begin() + i);
 }
 
