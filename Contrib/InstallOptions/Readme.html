@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
 
 <title>InstallOptions 2</title>
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <style type="text/css">
 
@@ -208,30 +208,30 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         "<span class="italic">DropList</span>", "<span class="italic">Listbox</span>",
         "<span class="italic">CheckBox</span>", "<span class="italic">RadioButton</span>",
         "<span class="italic">FileRequest</span>", "<span class="italic">DirRequest</span>"
-        "<span class="italic">Icon</span>" or "<span class="italic">Bitmap</span>",.<br><br>A
+        "<span class="italic">Icon</span>" or "<span class="italic">Bitmap</span>",.<br /><br />A
         "<span class="italic">Label</span>" is used to display static text. (i.e. a caption for a
-        textbox)<br>A "<span class="italic">Textbox</span>" and "<span class="italic">Password</span>"
+        textbox)<br />A "<span class="italic">Textbox</span>" and "<span class="italic">Password</span>"
         accept text input  from the user. "<span class="italic">Password</span>" masks the input
-        with * characters.<br>A "<span class="italic">Combobox</span>" allows the user to type text
+        with * characters.<br />A "<span class="italic">Combobox</span>" allows the user to type text
         not in the popup list, a "<span class="italic">Droplist</span>" only allows selection of
-        items in the list.<br>A "<span class="italic">listbox</span>" shows multiple items and can
-        optionally allow the user to select more than one item.<br>A
-        "<span class="italic">CheckBox</span>" control displays a check box with label.<br>
-        A "<span class="italic">RadioButton</span>" control displays a radio button with label.<br>
+        items in the list.<br />A "<span class="italic">listbox</span>" shows multiple items and can
+        optionally allow the user to select more than one item.<br />A
+        "<span class="italic">CheckBox</span>" control displays a check box with label.<br />
+        A "<span class="italic">RadioButton</span>" control displays a radio button with label.<br />
 	    A "<span class="italic">FileRequest</span>" control displays
         a textbox and a browse button. Clicking the browse button will display a
-        file requester where the user can browse for a file.<br>A
+        file requester where the user can browse for a file.<br />A
         "<span class="italic">DirRequest</span>" control displays a textbox and a browse button.
         Clicking the browse button will display a directory requester where the
-        user can browse for a directory.<br>
+        user can browse for a directory.<br />
 		"<span class="italic">Icon</span>" control displays an icon.
-		Use no Text to use the installer icon.<br>
-		"<span class="italic">Bitmap</span>" control displays a bitmap.<br></td></tr>
+		Use no Text to use the installer icon.<br />
+		"<span class="italic">Bitmap</span>" control displays a bitmap.<br /></td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Text</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Specifies the caption of a label, checkbox, or radio button control.
-      For icon and bitmaps control this specifies the path to the image.<br><br>
+      For icon and bitmaps control this specifies the path to the image.<br /><br />
       <span class="bold">Note:</span> \r\n will be replaced by a newline.
       </td></tr>
     <tr>
@@ -246,51 +246,51 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="bold">ListItems</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">A list of items to display in a combobox,
-        droplist, or listbox.<br>This is a single line of text with each item
+        droplist, or listbox.<br />This is a single line of text with each item
         separated by a pipe character '|'</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">MaxLen</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Causes validation on the selected control
-        to limit the maximum length of text.<br>If the user specifies more text
+        to limit the maximum length of text.<br />If the user specifies more text
         than this, a message box will appear when they click "OK" and the dialog
-        will not be dismissed.<br>You should not use this on a
+        will not be dismissed.<br />You should not use this on a
         "<span class="italic">combobox</span>" since the user can not control what is
-        selected.<br>This should be set to a maximum of 260
+        selected.<br />This should be set to a maximum of 260
         for "<span class="italic">FileRequest</span>" and "<span class="italic">DirRequest</span>"
-        controls.<br>Ignored on "<span class="italic">label</span>"
+        controls.<br />Ignored on "<span class="italic">label</span>"
         controls.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">MinLen</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Causes validation on the selected control
-        to force the user to enter a minimum amount of text.<br>If the user
+        to force the user to enter a minimum amount of text.<br />If the user
         specifies less text than this, a message box will appear when they click
-        "OK" and the dialog will not be dismissed.<br>Unlike MaxLen, this is
+        "OK" and the dialog will not be dismissed.<br />Unlike MaxLen, this is
         useful for "<span class="italic">Combobox</span>" controls.
         By setting this to a value of "1" the program will force the user to
-        select an item.<br>Ignored on "<span class="italic">Label</span>"
+        select an item.<br />Ignored on "<span class="italic">Label</span>"
         controls.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">ValidateText</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">If a particular field fails the test for
         "<span class="italic">MinLen</span>" or "<span class="italic">MaxLen</span>",
-        a messagebox will be displayed with this text.<br><br><span class="bold">
+        a messagebox will be displayed with this text.<br /><br /><span class="bold">
         Note:</span> The only formatting performed on this text is "\n" will be
         replaced with a newline in the messagebox.</td></tr>
     <tr>
-      <td class="lefttable"><span class="bold">Left<br>Right<br>Top<br>Bottom</span></td>
+      <td class="lefttable"><span class="bold">Left<br />Right<br />Top<br />Bottom</span></td>
       <td class="lefttable"><span class="italic">(required)</span></td>
       <td class="righttable">The position on the dialog where this
-        control appears.<br>Sorry, no GUI here to help you.<br><br>
+        control appears.<br />Sorry, no GUI here to help you.<br /><br />
         <span class="bold">Note:</span> For combobox or droplist, the
         "<span class="italic">bottom</span>" value is not used in the
-        same way.<br>In this case, the bottom value is the maximum
+        same way.<br />In this case, the bottom value is the maximum
         size of the window when the pop-up list is being displayed. All other
         times, the combobox is automatically szed to be one element tall. If you
         have trouble where you can not see the combobox drop-down, then check
-        the bottom value and ensure it is large enough.<br><br>
+        the bottom value and ensure it is large enough.<br /><br />
         <span class="bold">Note (2):</span>
         FileRequest and DirRequest controls will allocate 20 pixels to the
         browse button. Make this control wide enough the contents of the textbox
@@ -300,14 +300,14 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="bold">Filter</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Specifies the filter to be used in the
-        "<span class="italic">FileRequest</span>" control.<br>This is constructed
+        "<span class="italic">FileRequest</span>" control.<br />This is constructed
         by putting pairs of entries together, each item seperated by a | character.
-        <br>The first value in each pair is the text to display for the filter.
-        <br>The second value is the pattern to use to match files.<br>
-        For example, you might specify:<br>
-        Filter=Text Files|*.txt|Programs|*.exe;*.com|All Files|*.*<br>
+        <br />The first value in each pair is the text to display for the filter.
+        <br />The second value is the pattern to use to match files.<br />
+        For example, you might specify:<br />
+        Filter=Text Files|*.txt|Programs|*.exe;*.com|All Files|*.*<br />
         If not specified, then the filter defaults to All
-        Files|*.*<br><br><span class="bold">Note:</span> you should not put
+        Files|*.*<br /><br /><span class="bold">Note:</span> you should not put
         any extra spaces around the | characters. </td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Root</span></td>
@@ -322,7 +322,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="righttable">This specifies additional flags for the
         display of different controls. Each value should be seperated by a |
         character, and you should be careful not to put any spaces around the |
-        character.<br>
+        character.<br />
         <table class="righttable">
           <tr>
             <td class="righttable"><span class="bold">Value</span></td>
@@ -335,8 +335,8 @@ numbers from 1 to NumFields. Each Field section can contain the following values
           <tr>
             <td class="righttable">FILE_MUST_EXIST</td>
             <td class="righttable">Used by "<span class="italic">FileRequest</span>" to
-              determine if the selected file must exist.<br>This only applies
-              if an "Open" dialog is being displayed.<br>This currently does not force
+              determine if the selected file must exist.<br />This only applies
+              if an "Open" dialog is being displayed.<br />This currently does not force
               the file to exist other than through the browse button.</td></tr>
           <tr>
             <td class="righttable">FILE_EXPLORER</td>
@@ -349,7 +349,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
 	      <tr>
             <td class="righttable">WARN_IF_EXIST</td>
             <td class="righttable">Used by "<span class="italic">FileRequest</span>"
-              to display a warning  message if the selected file already exists.<br>
+              to display a warning  message if the selected file already exists.<br />
               The  warning message is only displayed for files selected with the
               browse button.</td></tr>
           <tr>
@@ -357,14 +357,14 @@ numbers from 1 to NumFields. Each Field section can contain the following values
             <td class="righttable">Used by "<span class="italic">FileRequest</span>"
             to force the path to
               exist. Prevents the user from typing a non-existant path into the
-              browse dialog window.<br>This only validates path's
+              browse dialog window.<br />This only validates path's
               selected with the browse button.</td></tr>
           <tr>
             <td class="righttable">PROMPT_CREATE</td>
             <td class="righttable">Used by "<span class="italic">FileRequest</span>"
             to display a warning
               if the selected file does not exist. However, it still allows the
-              user to select the file.<br>This only displays the
+              user to select the file.<br />This only displays the
               warning for files selected with the browse button.</td></tr>
           <tr>
             <td class="righttable">RIGHT</td>
@@ -382,7 +382,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
             <td class="righttable">This causes "<span class="italic">Bitmap</span>"
             controls to resize the image to the size of the control.
             Also useful to support custom DPI settings.</td></tr>
-        </table></table>
+        </table></td></tr></table>
 <p class="header">How to use</p>
 <p class="subheader">Modern UI</p>
 <p class="text">For information about using InstallOptions with
@@ -390,7 +390,7 @@ the Modern UI, have a look at the <a href="..\Modern UI\Readme.html#customPages"
 Modern UI documentation</a>.</p>
 <p class="subheader">Extract the INI File</p>
 <p class="text">First, you have to extract the INI files for the dialogs
-in the .onInit function:
+in the .onInit function:</p>
 <pre class="margin">
 Function .onInit
 
@@ -402,7 +402,7 @@ FunctionEnd
 <p class="subheader">Call the DLL</p>
 <p class="text">You can call InstallOptions in a page function,
 check the <a href="..\..\Docs\Chapter3.html#3.5">NSIS documentation</a>
-for information about the page system.
+for information about the page system.</p>
 <p class="text">The InstallOptions DLL has three functions:</p>
 <ul>
 <li>dialog - Creates the dialog immidiately</li>
@@ -488,9 +488,9 @@ FunctionEnd
 </ul>
 <p class="text"><a href="Changelog.txt">Complete version history</a></p>
 <p class="header">Credits</p>
-<p class="text">Original version by Michael Bishop<br>
-  DLL version by Nullsoft, Inc.<br>
-  DLL version 2 by Amir Szekely, ORTIM, Joost Verburg<br>
+<p class="text">Original version by Michael Bishop<br />
+  DLL version by Nullsoft, Inc.<br />
+  DLL version 2 by Amir Szekely, ORTIM, Joost Verburg<br />
   New documentation by Joost Verburg</p>
 <p class="header">License</p>
 <pre class="margin">Copyright &copy; 2002 Michael Bishop
