@@ -273,12 +273,13 @@ Var MUI_TEMP2
 !macro MUI_ABORTWARNING
 
   !ifdef MUI_ABORTWARNING_TEXT
-    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT)" IDYES mui.quit
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
   !else
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(MUI_TEXT_ABORTWARNING)" IDYES mui.quit
   !endif
-    Abort
-    mui.quit:
+    
+  Abort
+  mui.quit:
 
 !macroend
 
@@ -559,9 +560,9 @@ Var MUI_TEMP2
     
   PageExEnd
   
-  !ifndef MUI_HWND_DEFINED
+  !ifndef MUI_VAR_HWND
     Var MUI_HWND
-    !define MUI_HWND_DEFINED
+    !define MUI_VAR_HWND
   !endif
   
   !insertmacro MUI_FUNCTION_WELCOMEPAGE mui.WelcomePre_${MUI_UNIQUEID} mui.WelcomeLeave_${MUI_UNIQUEID}
@@ -798,9 +799,9 @@ Var MUI_TEMP2
     
   PageExEnd
   
-  !ifndef MUI_HWND_DEFINED
+  !ifndef MUI_VAR_HWND
     Var MUI_HWND
-    !define MUI_HWND_DEFINED
+    !define MUI_VAR_HWND
   !endif
   
   !insertmacro MUI_FUNCTION_FINISHPAGE mui.FinishPre_${MUI_UNIQUEID} mui.FinishLeave_${MUI_UNIQUEID}
