@@ -98,6 +98,10 @@ Use to represent a carriage return (\\r).
 
 Use to represent a newline (\\n).
 
+\e{$\\t}
+
+Use to represent a tab (\\t).
+
 \e{$\{SYMBOL\}}
 
 Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. The order of calling Symbols in the script is important.
