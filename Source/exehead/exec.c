@@ -9,6 +9,10 @@
 #include "lang.h"
 #include "resource.h"
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+#include "dllpaths.h"
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
+
 #define EXEC_ERROR 0x7FFFFFFF
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -1418,6 +1422,71 @@ static int ExecuteEntry(entry *entries, int pos)
     }
     return 0;
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
+// Added by Ximon Eighteen 5th August 2002
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    case EW_EXTERNALCOMMANDPREP:
+    {
+      // parms[0] - dll name
+      // parms[1] - function name
+      // parms[2] - compressed data handle
+      char* dllPath = DllPathsDetermined(parms[0]);
+      if (!dllPath)
+      {
+        HANDLE hOut;
+
+        if (!GetTempPath(NSIS_MAX_STRLEN,buf2) ||
+            !GetTempFileName(buf2,"nst",0,buf))
+        {
+          exec_errorflag++;
+          return 0;
+        }
+
+        hOut = myOpenFile(buf,GENERIC_WRITE,CREATE_ALWAYS);
+        GetCompressedDataFromDataBlock(parms[2],hOut);
+        CloseHandle(hOut);
+
+        DllPathsAdd(parms[0],buf);
+      }
+
+      // leave buf containing the dll path
+      // and buf2 containing the function name
+      process_string_fromtab(buf2,parms[1]);
+    }
+    return 0;
+    case EW_EXTERNALCOMMAND:
+    {
+      // parms contain command arguments
+      FARPROC funke;
+      HANDLE h;
+      int i;
+
+      // Place the command arguments on the stack, then invoke a CallInstDLL
+      // command on behalf of the user. Error handling needs improving, this
+      // won't fail gracefully, instead it could leave the stack in a state
+      // the user script won't expect.
+      for (i = 0; parms[i] != -1 && i < MAX_ENTRY_OFFSETS; i++)
+      {
+          stack_t* s = (stack_t*)GlobalAlloc(GPTR,sizeof(stack_t));
+          process_string_fromtab(s->text,parms[i]);
+          s->next = g_st;
+          g_st = s;
+      }
+
+      h = LoadLibrary(buf);
+      if (h)
+      {
+        funke = GetProcAddress(h,buf2);
+        if (funke)
+        {
+          void (*func)(HWND,int,char*,void*);
+          func = (void*)funke;
+          func(g_hwnd,NSIS_MAX_STRLEN,(char*)g_usrvars,(void*)&g_st);
+        }
+        FreeLibrary(h);
+      }
+    }
+    return 0;
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }
   MessageBox(g_hwnd,LANG_INSTCORRUPTED,g_caption,MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;

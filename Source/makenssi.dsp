@@ -39,7 +39,7 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
-# SUBTRACT CPP /YX /Yc /Yu
+# SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -152,6 +152,10 @@ SOURCE=.\exedata.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ExternalCommands.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\lang.cpp
 # End Source File
 # Begin Source File
@@ -205,6 +209,10 @@ SOURCE=.\DialogTemplate.h
 # Begin Source File
 
 SOURCE=.\exedata.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ExternalCommands.h
 # End Source File
 # Begin Source File
 
