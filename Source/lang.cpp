@@ -54,10 +54,10 @@ struct {
   {"^Completed", "Completed", NONE_STATIC},
   {"^LicenseText", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
   {"^LicenseTextCB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
-  {"^LicesnseTextRB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^LicenseTextRB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
   {"^UnLicenseText", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
   {"^UnLicenseTextCB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
-  {"^UnLicesnseTextRB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^UnLicenseTextRB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
   {"^LicenseData", 0, NONE_STATIC}, // virtual - not processed
   {"^Custom", "Custom", NONE_STATIC},
   {"^ComponentsText", "Check the components you want to install and uncheck the components you don't want to install. $_CLICK", NONE_STATIC},

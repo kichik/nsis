@@ -3329,34 +3329,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SETCTLCOLORS;
       ent.offsets[0]=add_string(line.gettoken_str(1));
 
-      if (!strcmpi(line.gettoken_str(2),"branding")) {
-        if (line.getnumtokens() == 4) {
-          ERROR_MSG("Error: SetCtlColors expected 2 parameters, got 3\n");
-          return PS_ERROR;
-        }
+      int a = 2;
 
-        c.flags|=CC_BK|CC_BK_SYS|CC_BKB;
-        c.bk.lbStyle=BS_NULL;
-        c.bk.lbColor=COLOR_BTNFACE;
-        c.flags|=CC_TEXT|CC_TEXT_SYS;
-        c.text=COLOR_BTNFACE;
-        c.bkmode=OPAQUE;
-      }
-      else {
+      if (!strcmpi(line.gettoken_str(2),"/BRANDING"))
+        a++;
+      
+      {
         char *p;
 
-        if (line.getnumtokens() == 3) {
-          ERROR_MSG("Error: SetCtlColors expected 3 parameters, got 2\n");
+        if (a == 2 && line.getnumtokens() == 5) {
+          ERROR_MSG("Error: SetCtlColors expected 3 parameters, got 4\n");
           return PS_ERROR;
         }
 
-        if (!strcmpi(line.gettoken_str(3),"transparent")) {
+        if (!strcmpi(line.gettoken_str(a+1),"transparent")) {
           c.flags|=CC_BKB;
           c.bk.lbStyle=BS_NULL;
           c.bkmode=TRANSPARENT;
         }
         else {
-          p=line.gettoken_str(3);
+          p=line.gettoken_str(a+1);
           if (*p) {
             int v=strtoul(p,&p,16);
             c.bk.lbColor=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
@@ -3367,12 +3359,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           c.bkmode=OPAQUE;
         }
 
-        p=line.gettoken_str(2);
+        p=line.gettoken_str(a);
         if (*p) {
           int v=strtoul(p,&p,16);
           c.text=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
           c.flags|=CC_TEXT;
         }
+      }
+
+      if (a == 3)
+      {
+        c.flags|=CC_BK|CC_BKB;
+        c.bk.lbStyle=BS_NULL;
+        if (!*line.gettoken_str(a))
+        {
+          c.bk.lbColor=COLOR_BTNFACE;
+          c.flags|=CC_BK_SYS;
+        }
+        c.flags|=CC_TEXT;
+        if (!*line.gettoken_str(a+1))
+        {
+          c.text=COLOR_BTNFACE;
+          c.flags|=CC_TEXT_SYS;
+        }
+        c.bkmode=OPAQUE;
       }
 
       int i;
@@ -3387,7 +3397,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors));
       }
 
-      SCRIPT_MSG("SetCtlColors: hwnd=%s text=%s background=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
+      SCRIPT_MSG("SetCtlColors: hwnd=%s %stext=%s background=%s\n",line.gettoken_str(1),a==2?"":"/BRANDING ",line.gettoken_str(a),line.gettoken_str(a+1));
     }
     return add_entry(&ent);
     case TOK_CREATEFONT:

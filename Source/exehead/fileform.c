@@ -343,7 +343,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
         u=(char*)g_inflate_stream.next_out - outbuffer;
 
         tc = GetTickCount();
-        if (tc - ltc > 200 || !input_len)
+        if (ui_st_updateflag & 1 && (tc - ltc > 200 || !input_len))
         {
           wsprintf(progress, "... %d%%", MulDiv(input_len_total - input_len, 100, input_len_total));
           update_status_text(0, progress);

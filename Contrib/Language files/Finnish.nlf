@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v5
+NLF v6
+# Start editing here
 # Language ID
 1035
 # Font and size - dash (-) means default
@@ -9,75 +10,182 @@ NLF v5
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by AKX <akx@theakx.tk> - Modifications by Eclipser <Eclipser@pilvikaupunki.net>
+# Translation by Eclipser (Jonne Lehtinen) <Eclipser at pilvikaupunki dot net>
+# ^Branding
 Nullsoft Asennusjärjestelmä %s
+# ^SetupCaption
 $(^Name) Asennus
+# ^UninstallCaption
 $(^Name) Poisto
+# ^LicenseSubCaption
 : Lisenssisopimus
+# ^ComponentsSubCaption
 : Asennusvaihtoehdot
+# ^DirSubCaption
 : Asennushakemisto
+# ^InstallingSubCaption
 : Asennetaan
+# ^CompletedSubCaption
 : Valmis
+# ^UnComponentsSubCaption
+: Poistovaihtoehdot
+# ^UnDirSubCaption
+: Poistohakemisto
+# ^ConfirmSubCaption
 : Varmistus
+# ^UninstallingSubCaption
 : Poistetaan
-: Valmis
+# ^UnCompletedSubCaption
+: Valmis   
+# ^BackBtn
 < &Takaisin
-&Seuraava >
-&Hyväksyn
+# ^NextBtn
+&Seuraava >                      
+# ^AgreeBtn
+&Hyväksyn  
+# ^AcceptBtn
 Hyväksyn lisenssisopimuksen ehdot
+# ^DontAcceptBtn
 En hyväksy sopimuksen ehtoja
-&Asenna
-&Poista
-Peruuta
-&Sulje
-S&elaa...
+# ^InstallBtn
+&Asenna      
+# ^UninstallBtn
+&Poista        
+# ^CancelBtn
+Peruuta     
+# ^CloseBtn
+&Sulje     
+# ^BrowseBtn
+S&elaa...   
+# ^ShowDetailsBtn
 &Näytä tiedot
-Nimi
-Valmis
+# ^ClickNext
+Valitse Seuraava jatkaaksesi.
+# ^ClickInstall
+Valitse Asenna aloittaaksesi asennuksen.
+# ^ClickUninstall
+Valitse Poista poistaaksesi asennuksen.
+# ^Name
+Nimi   
+# ^Completed
+Valmis      
+# ^LicenseText
+Lue lisenssisopimus ennen asentamista. Jos hyväksyt kaikki ehdot, valitse Hyväksyn.
+# ^LicenseTextCB
+Lue lisenssisopimus ennen asentamista. Jos hyväksyt kaikki ehdot, laita rasti ruutuun. $_CLICK
+# ^LicenseTextRB
+Lue lisenssisopimus ennen asentamista. Jos hyväksyt kaikki ehdot, valitse ensimmäinen vaihtoehto alapuolelta. $_CLICK
+# ^UnLicenseText
+Lue lisenssisopimus ennen poistamista. Jos hyväksyt kaikki ehdot, valitse Hyväksyn.
+# ^UnLicenseTextCB
+Lue lisenssisopimus ennen poistamista. Jos hyväksyt kaikki ehdot, laita rasti ruutuun. $_CLICK
+# ^UnLicenseTextRB
+Lue lisenssisopimus ennen poistamista. Jos hyväksyt kaikki ehdot, valitse ensimmäinen vaihtoehto alapuolelta. $_CLICK
+# ^Custom
 Oma
+# ^ComponentsText
+Valitse komponentit, jotka haluat asentaa ja poista valinta komponenteista, joita et halua asennettavan. $_CLICK
+# ^ComponentsSubText1
 Valitse asennustyyppi:
+# ^ComponentsSubText2_NoInstTypes
 Valitse asennettavat komponentit:
-Tai, valitse valinnaiset komponentit:
-Valitse hakemisto, johon $(^Name) asennetaan:
+# ^ComponentsSubText2
+Tai, valitse valinnaiset komponentit, jotka haluat asentaa:
+# ^UnComponentsText
+Valitse komponentit, haluat poistaa ja poista valinta komponenteista, joita et haluat poistettavan. $_CLICK
+# ^UnComponentsSubText1
+Valitse poistotyyppi:
+# ^UnComponentsSubText2_NoInstTypes
+Valitse poistettavat komponentit:
+# ^UnComponentsSubText2
+Tai, valitse valinnaiset komponentit, jotka haluat poistaa       
+# ^DirText
+Asennus asentaa ohjelman $(^Name) seuraavaan hakemistoon. Asentaaksesi johonkin muuhun hakemistoon, valitse selaa ja valitse toinen hakemisto. $_CLICK
+# ^DirSubText
+Kohdehakemisto
+# ^DirBrowseText
+Valitse hakemisto, johon haluat asentaa ohjelman $(^Name):
+# ^UnDirText
+Asennus poistaa ohjelman $(^Name) seuraavasta hakemistosta. Poistaaksesi jostakin muusta hakemistosta, valitse selaa ja valitse toinen hakemisto. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Valitse hakemisto, josta haluat poistaa ohjelman $(^Name):
+# ^SpaceAvailable
 Tilaa vapaana:
+# ^SpaceRequired
 Tarvittava tila:
+# ^UninstallingText
+Tämä ohjelma poistaa ohjelman $(^Name) koneeltasi. $_CLICK
+# ^UninstallingSubText
 Poistetaan hakemistosta:
+# ^FileError
 Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Hylkää lopettaaksesi asennuksen,\r\nUudelleen yrittääksesi uudelleen, tai\r\nOhita ohittaaksesi tiedoston
+# ^FileError_NoIgnore
 Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Uudelleen yrittääksesi uudelleen, tai\r\nHylkää lopettaaksesi asennuksen
+# ^CantWrite
 Ei voi kirjoittaa:
+# ^CopyFailed
 Kopiointi epäonnistui
+# ^CopyTo
 Kopioidaan kohteeseen
+# ^Registering
 Rekisteröidään:
+# ^Unregistering
 Poistetaan rekisteröinti:
+# ^SymbolNotFound
 Symbolia ei löytynyt:
+# ^CouldNotLoad
 Ei voitu ladata:
-Luo hakemisto:
-Luo kuvake: 
-Poisto-ohjelma luotiin: 
-Poista: 
-Poista käynnistyksen yhteydessä: 
+# ^CreateFolder
+Luo hakemisto: 
+# ^CreateShortcut
+Luo pikakuvake:
+# ^CreatedUninstaller
+Poisto-ohjelma luotiin:
+# ^Delete
+Poista:  
+# ^DeleteOnReboot
+Poista käynnistyksen yhteydessä:
+# ^ErrorCreatingShortcut
 Virhe luotaessa pikakuvaketta:
+# ^ErrorCreating
 Virhe luotaessa:
+# ^ErrorDecompressing
 Pakettia ei voitu purkaa. Korruptoitunut asennusohjelma?
+# ^ErrorRegistering
 Virhe rekisteröidessä DLL-tiedostoa
-ExecShell: 
+# ^ExecShell
+ExecShell:  
+# ^Exec
 Aja:
-Pura: 
-Pura: ei voitu kirjoittaa 
+# ^Extract
+Pura:
+# ^ErrorWriting
+Pura: ei voitu kirjoittaa
+# ^InvalidOpcode
 Asennus korruptoitunut
-Ei ole OLEa:
-Hakemisto:
+# ^NoOLE
+Ei OLEa:
+# ^OutputFolder
+Hakemisto:     
+# ^RemoveFolder
 Poista hakemisto:
+# ^RenameOnReboot
 Muuta nimi uudelleenkäynnistyksen yhteydessä:
+# ^Rename
 Muuta nimi:
+# ^Skipped
 Ohitettiin:
+# ^CopyDetails
 Kopioi tiedot leikepöydälle
+# ^LogInstall
 Tallenna asennustiedot
-# byte
+# ^Byte
 t
-# kilo
+# ^Kilo
 k
-# mega
+# ^Mega
 M
-# giga
+# ^Giga
 G
