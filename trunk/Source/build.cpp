@@ -3216,8 +3216,8 @@ again:
   // GetTempFileName $0
   ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
   if (ret != PS_OK) return ret;
-  // Delete $0 - the temp file created
-  ret=add_entry_direct(EW_DELETEFILE, zero_offset);
+  // Delete $0 [simple, nothing that could clash with special temp permissions]
+  ret=add_entry_direct(EW_DELETEFILE, zero_offset, DEL_SIMPLE);
   if (ret != PS_OK) return ret;
   // CraeteDirectory $0 - a dir instead of that temp file
   ret=add_entry_direct(EW_CREATEDIR, zero_offset);
