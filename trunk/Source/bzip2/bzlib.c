@@ -162,10 +162,10 @@ int BZ_API(BZ2_bzCompressInit)
    s->ptr               = (UInt32*)s->arr1;
 
    strm->state          = s;
-   strm->total_in_lo32  = 0;
-   strm->total_in_hi32  = 0;
-   strm->total_out_lo32 = 0;
-   strm->total_out_hi32 = 0;
+//   strm->total_in_lo32  = 0;
+  // strm->total_in_hi32  = 0;
+//   strm->total_out_lo32 = 0;
+//   strm->total_out_hi32 = 0;
    init_RL ( s );
    prepare_new_block ( s );
    return BZ_OK;
@@ -258,8 +258,8 @@ Bool copy_input_until_stop ( EState* s )
          ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) ); 
          s->strm->next_in++;
          s->strm->avail_in--;
-         s->strm->total_in_lo32++;
-         if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
+  //       s->strm->total_in_lo32++;
+//         if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
       }
 
    } else {
@@ -276,8 +276,8 @@ Bool copy_input_until_stop ( EState* s )
          ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) ); 
          s->strm->next_in++;
          s->strm->avail_in--;
-         s->strm->total_in_lo32++;
-         if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
+  //       s->strm->total_in_lo32++;
+//         if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
          s->avail_in_expect--;
       }
    }
@@ -304,8 +304,8 @@ Bool copy_output_until_stop ( EState* s )
       s->state_out_pos++;
       s->strm->avail_out--;
       s->strm->next_out++;
-      s->strm->total_out_lo32++;
-      if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+//      s->strm->total_out_lo32++;
+  //    if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
    }
 
    return progress_out;
@@ -457,10 +457,10 @@ int BZ_API(BZ2_bzDecompressInit)
    s->state                 = BZ_X_BLKHDR_1;
  //  s->bsLive                = 0;
 //   s->bsBuff                = 0;
-   strm->total_in_lo32      = 0;
-   strm->total_in_hi32      = 0;
-   strm->total_out_lo32     = 0;
-   strm->total_out_hi32     = 0;
+//   strm->total_in_lo32      = 0;
+  // strm->total_in_hi32      = 0;
+//   strm->total_out_lo32     = 0;
+ //  strm->total_out_hi32     = 0;
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
          s->ll16 = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL*100000 * sizeof(UInt16) );
          s->ll4  = BZALLOC( 
@@ -513,8 +513,8 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
             s->state_out_len--;
             s->strm->next_out++;
             s->strm->avail_out--;
-            s->strm->total_out_lo32++;
-            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+//            s->strm->total_out_lo32++;
+//            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
    
          /* can a new run be started? */
@@ -558,8 +558,8 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
             s->state_out_len--;
             s->strm->next_out++;
             s->strm->avail_out--;
-            s->strm->total_out_lo32++;
-            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+//            s->strm->total_out_lo32++;
+  //          if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
    
          /* can a new run be started? */
@@ -606,8 +606,8 @@ void unRLE_obuf_to_output_FAST ( DState* s )
             s->state_out_len--;
             s->strm->next_out++;
             s->strm->avail_out--;
-            s->strm->total_out_lo32++;
-            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+//            s->strm->total_out_lo32++;
+//            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
    
          /* can a new run be started? */
@@ -656,7 +656,7 @@ void unRLE_obuf_to_output_FAST ( DState* s )
 
       UInt32       avail_out_INIT = cs_avail_out;
       Int32        s_save_nblockPP = s->save_nblock+1;
-      unsigned int total_out_lo32_old;
+//      unsigned int total_out_lo32_old;
 
       while (True) {
 
@@ -710,10 +710,10 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       }
 
       return_notr:
-      total_out_lo32_old = s->strm->total_out_lo32;
-      s->strm->total_out_lo32 += (avail_out_INIT - cs_avail_out);
-      if (s->strm->total_out_lo32 < total_out_lo32_old)
-         s->strm->total_out_hi32++;
+//      total_out_lo32_old = s->strm->total_out_lo32;
+//      s->strm->total_out_lo32 += (avail_out_INIT - cs_avail_out);
+  //    if (s->strm->total_out_lo32 < total_out_lo32_old)
+    //     s->strm->total_out_hi32++;
 
       /* save */
 //      s->calculatedBlockCRC = c_calculatedBlockCRC;
