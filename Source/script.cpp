@@ -5078,12 +5078,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_FILEFUNCTIONS
 #ifdef NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:
-      ent.which=EW_REBOOT;
-      ent.offsets[0]=0xbadf00d;
+    {
+      int ret = add_entry_direct(EW_REBOOT, 0xbadf00d);
+      if (ret != PS_OK) return ret;
+
+      ret = add_entry_direct(EW_QUIT);
+      if (ret != PS_OK) return ret;
+
       SCRIPT_MSG("Reboot! (WOW)\n");
 
       DefineInnerLangString(NLF_INST_CORRUPTED);
-    return add_entry(&ent);
+    }
+    return PS_OK;
     case TOK_IFREBOOTFLAG:
       ent.which=EW_IFFLAG;
       if (process_jump(line,1,&ent.offsets[0]) ||

@@ -245,8 +245,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   g_exec_flags.errlvl = -1;
   ret = ui_doinstall();
-  if (g_exec_flags.errlvl != -1)
-    ret = g_exec_flags.errlvl;
 
 #ifdef NSIS_CONFIG_LOG
 #ifndef NSIS_CONFIG_LOG_ODS
@@ -257,17 +255,53 @@ end:
 
   CleanUp();
 
-  if (m_Err)
-  {
-    my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
-    ret = 2;
-  }
-
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   OleUninitialize();
 #endif
 
+  if (m_Err)
+  {
+    my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
+    ExitProcess(2);
+    return 0;
+  }
+
+#ifdef NSIS_SUPPORT_REBOOT
+  if (g_exec_flags.reboot_called)
+  {
+    HANDLE h=GetModuleHandle("ADVAPI32.dll");
+    if (h)
+    {
+      BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
+      BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
+      BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
+      OPT=(void*)GetProcAddress(h,"OpenProcessToken");
+      LPV=(void*)GetProcAddress(h,"LookupPrivilegeValueA");
+      ATP=(void*)GetProcAddress(h,"AdjustTokenPrivileges");
+      if (OPT && LPV && ATP)
+      {
+        HANDLE hToken;
+        TOKEN_PRIVILEGES tkp;
+        if (OPT(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
+        {
+          LPV(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
+          tkp.PrivilegeCount = 1;
+          tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+          ATP(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
+        }
+      }
+    }
+
+    if (!ExitWindowsEx(EWX_REBOOT,0))
+      ExecuteCallbackFunction(CB_ONREBOOTFAILED);
+  }
+#endif//NSIS_SUPPORT_REBOOT
+
+  if (g_exec_flags.errlvl != -1)
+    ret = g_exec_flags.errlvl;
+
   ExitProcess(ret);
+  return 0;
 }
 
 void NSISCALL CleanUp()

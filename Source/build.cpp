@@ -1537,10 +1537,13 @@ int CEXEBuild::resolve_coderefs(const char *str)
       {"%s.onGUIInit", &cur_header->code_onGUIInit},
       {"%s.onGUIEnd", &cur_header->code_onGUIEnd},
       {"%s.onMouseOverSection", &cur_header->code_onMouseOverSection},
-#endif
+#endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       {"%s.onSelChange", &cur_header->code_onSelChange},
-#endif
+#endif//NSIS_CONFIG_COMPONENTPAGE
+#ifdef NSIS_SUPPORT_REBOOT
+      {"%s.onRebootFailed", &cur_header->code_onRebootFailed},
+#endif//NSIS_SUPPORT_REBOOT
       {0, 0}
     };
 
