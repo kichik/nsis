@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1036
 # Font and size - dash (-) means default
@@ -7,8 +7,7 @@ NLF v3
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis
-# Updated by Sébastien Delahaye <seb@delahaye.net>
+# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis. Updated by Sébastien Delahaye <seb@delahaye.net>.
 Nullsoft Install System %s
 Installation de %s
 Désinstallation de %s
@@ -45,6 +44,8 @@ Erreur lors de l'ouverture du fichier en écriture : \r\n\t"$0"\r\nAppuyez sur Ab
 Impossible d'écrire : 
 Échec de la copie
 Copier vers 
+Enregistrement : 
+Suppression de l'enregistrement : 
 Impossible de trouver un symbole : 
 Impossible de charger : 
 Création du dossier : 
@@ -68,3 +69,12 @@ Renommer au redémarrage :
 Renommer : 
 Passer : 
 Copier les Détails dans le Presse-papier
+Enregistrer le déroulement de l'installation
+# byte / octet
+o
+# kilo
+K
+# mega
+M
+# giga
+G

@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1031
 # Font and size - dash (-) means default
@@ -44,6 +44,8 @@ Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie Abbrechen um abzu
 Fehler beim Schreiben: 
 Kopieren fehlgeschlagen
 Kopiere nach 
+Registriere: 
+Deregistriere: 
 Symbol ist nicht vorhanden: 
 Fehler beim Laden von 
 Erstelle Verzeichnis: 
@@ -67,3 +69,12 @@ Umbenennen nach Neustart:
 Umbenennen: 
 Übersprungen: 
 Details in die Zwischenablage kopieren
+Installationsverlauf protokollieren
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
