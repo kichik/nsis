@@ -261,9 +261,11 @@ int CEXEBuild::WriteStringTables() {
   SCRIPT_MSG("Generating language tables... ");
 
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
-  LANGID lang = 1033;
-  StringTable *table = GetTable(lang);
-  if (!table) return PS_ERROR;
+  if (!string_tables.size()) {
+    LANGID lang = 1033;
+    StringTable *table = GetTable(lang);
+    if (!table) return PS_ERROR;
+  }
 
   // Fill tables with defaults (if needed) and with instruction strings
   int st_num = string_tables.size();
