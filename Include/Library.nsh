@@ -12,50 +12,50 @@ own page or message box.
 
 Usage:
 
-!insertmacro InstallLib libtype shared protection localfile destfile tempbasedir
+!insertmacro InstallLib libtype shared install localfile destfile tempbasedir
 
 Parameters:
 
-libtype			The type of the library
+libtype         The type of the library
 
-				DLL				Dynamic link library (DLL)
-				REGDLL			DLL that has to be registered
-				TLB 			Type library or DLL that contains a type LIBRARY
-				REGDLLTLB		DLL that has to be registered and contains a type library
+                DLL                 Dynamic link library (DLL)
+                REGDLL              DLL that has to be registered
+                TLB                 Type library or DLL that contains a type LIBRARY
+                REGDLLTLB           DLL that has to be registered and contains a type library
 
-shared			Specify whether the library is shared with other applications
+shared          Specify whether the library is shared with other applications
 
-				NOTSHARED		The library is not shared
-				$VARNAME		Variable that is empty when the application is installed for the first time,
-								which is when the shared library count will be increased.
+                NOTSHARED       The library is not shared
+                $VARNAME        Variable that is empty when the application is installed for the first time,
+                                which is when the shared library count will be increased.
 
-install			Specify the installation method
+install         Specify the installation method
 
-				REBOOT_PROTECTED		* Upgrade the library on reboot when in use (required for system files).
-										* Upgrade the library if the file is not protected by Windows File Protection.
+                REBOOT_PROTECTED        * Upgrade the library on reboot when in use (required for system files).
+                                        * Upgrade the library if the file is not protected by Windows File Protection.
 
-				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
-										  applications using the library.
-										* Upgrade the library if the file is not protected by Windows File Protection.
+                NOREBOOT_PROTECTED      * Warns the user when the library is in use. The user will have to close
+                                          applications using the library.
+                                        * Upgrade the library if the file is not protected by Windows File Protection.
 
-				REBOOT_NOTPROTECTED		* Upgrade the library on reboot when in use (required for system files).
-										* Upgrade the library without checking for Windows File Protection.
+                REBOOT_NOTPROTECTED     * Upgrade the library on reboot when in use (required for system files).
+                                        * Upgrade the library without checking for Windows File Protection.
 
-				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
-										  applications using the library.
-										* Upgrade the library without checking for Windows File Protection.
+                NOREBOOT_NOTPROTECTED   * Warns the user when the library is in use. The user will have to close
+                                          applications using the library.
+                                        * Upgrade the library without checking for Windows File Protection.
 
-localfile		Location of the library on the compiler system
+localfile       Location of the library on the compiler system
 
-destfile		Location to store the library on the user's system
+destfile        Location to store the library on the user's system
 
-tempbasedir		Directory on the user's system to store a temporary file when the system has
-				to be rebooted.
+tempbasedir     Directory on the user's system to store a temporary file when the system has
+                to be rebooted.
 
-				For Windows 9x/ME support, this directory should be on the same volume as the
-				destination file (destfile).
-				The Windows temp directory could be located on any volume, so you cannot use
-				this directory.
+                For Windows 9x/ME support, this directory should be on the same volume as the
+                destination file (destfile).
+                The Windows temp directory could be located on any volume, so you cannot use
+                this directory.
 
 Notes:
 
@@ -86,40 +86,40 @@ Usage:
 
 Parameters:
 
-libtype			The type of the library
+libtype         The type of the library
 
-				DLL				Dynamic link library (DLL)
-				REGDLL			DLL that has to be registered
-				TLB				Type library or DLL that contains a type LIBRARY
-				REGTLB			DLL that has to be registered and contains a type library
+                DLL             Dynamic link library (DLL)
+                REGDLL          DLL that has to be registered
+                TLB             Type library or DLL that contains a type LIBRARY
+                REGTLB          DLL that has to be registered and contains a type library
 
-shared			Specify whether the library is shared with other applications
+shared          Specify whether the library is shared with other applications
 
-				NOTSHARED		The library is not shared
-				SHARE			The library is shared and should be removed if the shared library count
-								indicates that the file is not in use anymore.
+                NOTSHARED       The library is not shared
+                SHARE           The library is shared and should be removed if the shared library count
+                                indicates that the file is not in use anymore.
 
-uninstall		Specify the uninstallation method
+uninstall       Specify the uninstallation method
 
-				NOREMOVE				The library should not be removed.
-										You should use this option for common or important system files such as the
-										Visual Basic/C++/MFC runtimes.
+                NOREMOVE                The library should not be removed.
+                                        You should use this option for common or important system files such as the
+                                        Visual Basic/C++/MFC runtimes.
 
-				REBOOT_PROTECTED		* Remove the library on reboot when in use (required for system files).
-										* Remove the library if the file is not protected by Windows File Protection.
+                REBOOT_PROTECTED        * Remove the library on reboot when in use (required for system files).
+                                        * Remove the library if the file is not protected by Windows File Protection.
 
-				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
-										  applications using the library.
-										* Remove the library if the file is not protected by Windows File Protection.
+                NOREBOOT_PROTECTED      * Warns the user when the library is in use. The user will have to close
+                                          applications using the library.
+                                        * Remove the library if the file is not protected by Windows File Protection.
 
-				REBOOT_NOTPROTECTED		* Remove the library on reboot when in use (required for system files).
-										* Remove the library without checking for Windows File Protection.
+                REBOOT_NOTPROTECTED     * Remove the library on reboot when in use (required for system files).
+                                        * Remove the library without checking for Windows File Protection.
 
-				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
-										  applications using the library.
-										* Remove the library without checking for Windows File Protection.
+                NOREBOOT_NOTPROTECTED   * Warns the user when the library is in use. The user will have to close
+                                          applications using the library.
+                                        * Remove the library without checking for Windows File Protection.
 
-file			Location of the library
+file            Location of the library
 
 ------------------------
 
