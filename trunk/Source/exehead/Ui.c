@@ -1190,7 +1190,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           tv.item.state|=(sec->flags&SF_BOLD)<<1;
         }
 
-        if (sec->flags&SF_SUBSEC)
+        if (sec->flags&SF_SECGRP)
         {
           tv.item.mask|=TVIF_CHILDREN;
           tv.item.cChildren=1;
@@ -1200,7 +1200,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
           doLines=1;
         }
-        else if (sec->flags&SF_SUBSECEND)
+        else if (sec->flags&SF_SECGRPEND)
         {
           SetParentState(hwndTree1,hTreeItems[lastGoodX]);
           Par=TreeView_GetParent(hwndTree1,Par);
@@ -1420,7 +1420,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         while (x--)
         {
-          if (*ht && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
+          if (*ht && !(t->flags&(SF_SECGRP|SF_SECGRPEND)))
           {
             TVITEM tvItem;
             tvItem.hItem=*ht;

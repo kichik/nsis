@@ -62,20 +62,19 @@ This command specifies which install types (see \R{ainsttype}{InstType}) the cur
 \c SectionIn 1
 \c SectionEnd
 
-\S2{ssubsection} SubSection
+\S2{ssectiongroup} SectionGroup
 
-\c [/e] Caption [subsection_name index output]
+\c [/e] Caption [section_group_name index output]
 
-This command inserts a subsection. The subsection must be closed with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for SectionSetText etc). If the name is prefixed with 'un.' the subsection is an uninstaller subsection.
+This command inserts a section group. The section group must be closed with \R{ssectiongroupend}{SectionGroupEnd}, and should contain 1 or more sections. If the section group name begins with a !, its name will be displayed with a bold font. If /e is present, the section group will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for \R{sectionsettext}{SectionSetText} etc). If the name is prefixed with 'un.' the section group is an uninstaller section group.
 
-\c SubSection "some stuff"
+\c SectionGroup "some stuff"
 \c Section "a section"
 \c SectionEnd
 \c Section "another section"
 \c SectionEnd
-\c SubSectionEnd
+\c SectionGroupEnd
 
-\S2{ssubsectionend} SubSectionEnd
+\S2{ssectiongroupend} SectionGroupEnd
 
-Closes a subsection opened with SubSection.
-
+Closes a section group opened with \R{ssectiongroup}{SectionGroup}.

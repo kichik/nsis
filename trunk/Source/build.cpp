@@ -289,7 +289,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 
   build_filebuflen=32<<20; // 32mb
 
-  subsection_open_cnt=0;
+  sectiongroup_open_cnt=0;
   build_cursection_isfunc=0;
   build_cursection=NULL;
   // init public data.
@@ -1125,7 +1125,7 @@ int CEXEBuild::section_end()
   add_entry_direct(EW_RET);
   build_cursection->code_size--;
   build_cursection=NULL;
-  if (!subsection_open_cnt)
+  if (!sectiongroup_open_cnt)
     set_uninstall_mode(0);
   return PS_OK;
 }
@@ -1159,11 +1159,11 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   {
     if (secname[1])
     {
-      new_section.flags |= SF_SUBSEC;
+      new_section.flags |= SF_SECGRP;
       name++;
     }
     else
-      new_section.flags |= SF_SUBSECEND;
+      new_section.flags |= SF_SECGRPEND;
   }
 
   if (name[0] == '!')
@@ -1187,16 +1187,16 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     set_uninstall_mode(1);
   }
 
-  if ((new_section.flags & SF_SUBSECEND) && subsection_open_cnt && old_uninstall_mode)
+  if ((new_section.flags & SF_SECGRPEND) && sectiongroup_open_cnt && old_uninstall_mode)
   {
     set_uninstall_mode(1);
   }
 
-  if (subsection_open_cnt)
+  if (sectiongroup_open_cnt)
   {
     if (uninstall_mode != old_uninstall_mode)
     {
-      ERROR_MSG("Error: Can't create %s section in %s subsection (use SubSectionEnd first)\n", uninstall_mode ? "uninstaller" : "installer", old_uninstall_mode ? "uninstaller" : "installer");
+      ERROR_MSG("Error: Can't create %s section in %s section group (use SectionGroupEnd first)\n", uninstall_mode ? "uninstaller" : "installer", old_uninstall_mode ? "uninstaller" : "installer");
       return PS_ERROR;
     }
   }
@@ -1226,28 +1226,28 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   cur_header->blocks[NB_SECTIONS].num++;
 
-  if (new_section.flags & (SF_SUBSEC | SF_SUBSECEND))
+  if (new_section.flags & (SF_SECGRP | SF_SECGRPEND))
   {
     add_entry_direct(EW_RET);
     build_cursection->code_size = 0;
 
     build_cursection = 0;
 
-    if (new_section.flags & SF_SUBSECEND)
+    if (new_section.flags & SF_SECGRPEND)
     {
-      subsection_open_cnt--;
-      if (subsection_open_cnt < 0)
+      sectiongroup_open_cnt--;
+      if (sectiongroup_open_cnt < 0)
       {
-        ERROR_MSG("SubSectionEnd: no SubSections are open\n");
+        ERROR_MSG("SectionGroupEnd: no SectionGroups are open\n");
         return PS_ERROR;
       }
-      if (!subsection_open_cnt)
+      if (!sectiongroup_open_cnt)
       {
         set_uninstall_mode(0);
       }
     }
     else
-      subsection_open_cnt++;
+      sectiongroup_open_cnt++;
   }
 
   return PS_OK;
@@ -2223,9 +2223,9 @@ int CEXEBuild::check_write_output_errors() const
     return PS_ERROR;
   }
 
-  if (subsection_open_cnt)
+  if (sectiongroup_open_cnt)
   {
-    ERROR_MSG("Error: SubSection left open at EOF\n");
+    ERROR_MSG("Error: SectionGroup left open at EOF\n");
     return PS_ERROR;
   }
 
