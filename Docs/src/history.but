@@ -1,6 +1,8 @@
 \A{history} Changelog and Release Notes
 
-\H{v2.0b5} 2.0 Beta 5
+\H{v2.0rc1} 2.0 Release Candidate 1
+
+Released on Decemeber 27th, 2003
 
 \S1{v2.0b5-rn} Release Notes
 
@@ -8,7 +10,7 @@
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: The setting to change the title size on the Welcome page and Finish page has been changed
 
-\S1{v2.0b5-cl} Changelog
+\S1{v2.0rc1-cl} Changelog
 
 \S2{} Major Changes
 
@@ -37,6 +39,8 @@
 \b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: More options to set the compression method
 
 \b Zip2Exe 0.31: Fixed compression setting, LZMA compression support
+
+\b \L{../Contrib/VPatch/Readme.html}{VPatch 2.1}: Better error handling and exit code for GenPat
 
 \H{v2.0b4} 2.0 Beta 4
 
