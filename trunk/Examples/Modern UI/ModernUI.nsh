@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19
+;Modern UI Header File version 1.19b
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -34,12 +34,7 @@
 
 !macro MUI_INNERDIALOG_INIT
 
-  ;Extra text elements on the inner dialogs
-
   Push ${TEMP1}
-  Push ${TEMP2}
-  
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
 
 !macroend
 
@@ -49,11 +44,14 @@
   
 !macroend
 
-!macro MUI_INNERDIALOG_TEXT LANGID ELEMENT TEXT
+!macro MUI_INNERDIALOG_TEXT LANGID CONTROL TEXT
+
+ ;Text on inner dialogs components
 
   StrCmp $LANGUAGE ${LANGID} "" +3
-    GetDlgItem ${TEMP2} ${TEMP1} ${ELEMENT}
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "STR:${TEXT}"
+    FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
+    GetDlgItem ${TEMP1} ${TEMP1} ${CONTROL}
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
 	
 !macroend
 
@@ -67,7 +65,6 @@
 !macro MUI_INNERDIALOG_END
 
   done:
-  Pop ${TEMP2}
   Pop ${TEMP1}
 
 !macroend
@@ -120,11 +117,7 @@
 !macro MUI_PAGE_INIT
 
   Push ${TEMP1}
-  Push ${TEMP2}
 
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    GetDlgItem ${TEMP2} $HWNDPARENT 1038
-  
 !macroend
 
 !macro MUI_PAGE_START PAGE
@@ -137,9 +130,11 @@
 
   ;Text on the white rectangle
 
-  StrCmp $LANGUAGE ${LANGID} "" +3
+  StrCmp $LANGUAGE ${LANGID} "" +4
+    GetDlgItem ${TEMP1} $HWNDPARENT 1037
     SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
+	GetDlgItem ${TEMP1} $HWNDPARENT 1038
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
 
 !macroend
 
@@ -153,8 +148,6 @@
 !macro MUI_PAGE_END
   
   done:
-  
-  Pop ${TEMP2}
   Pop ${TEMP1}
   
 !macroend
