@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.3
+;NSIS Modern User Interface version 1.4
 ;Advanced Macro System & Install Options Example Script
 ;Written by Joost Verburg
 
@@ -13,14 +13,10 @@
   !define MUI_INSTALLOPTIONS
   
   !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTPAGE
-  !define MUI_DIRSELECTPAGE
-  !define MUI_INSTALLBUTTONTEXT_NEXT
+  !define MUI_COMPONENTSPAGE
+  !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
-  
-  !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
-  !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
   
   !define TEMP1 $R0
 
@@ -30,12 +26,25 @@
     !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
 
   ;General
-  Name "${NAME} ${VERSION}"
   OutFile "InstallOptions.exe"
+  Name "${NAME} ${VERSION}"
+  
+  !ifdef MUI_LICENSEPAGE
+    Page license SetLicense SetLicenseDialog
+  !endif
+  Page custom SetCustomA
+  Page custom SetCustomB
+  !ifdef MUI_COMPONENTSPAGE
+    Page components SetComponents SetComponentsDialog
+  !endif
+  !ifdef MUI_DIRECTORYPAGE
+    Page directory SetDirectory SetDirectoryDialog
+  !endif
+  Page custom SetCustomC
+  Page instfiles SetInstFiles
 
   !insertmacro MUI_INTERFACE
-  !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
-
+  
   ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
@@ -48,8 +57,12 @@
   InstallDir "$PROGRAMFILES\${NAME}"
   
   ;Install Options pages
-  LangString MUI_TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
-  LangString MUI_TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+  LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
+  LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+  
+  ;Uninstaller
+  UninstPage uninstConfirm un.SetUninstConfirm
+  UninstPage instfiles un.SetInstFiles
   
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Use ReserveFile for your own Install Options ini files too!
@@ -62,12 +75,23 @@
 ;Installer Sections
 
 Function .onInit
-
   ;Init InstallOptions
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
-
+  ;Titles for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page A"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page B"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page C"
+  !ifdef MUI_ABORTWARNING
+    ;Abort warnings for Install Options dialogs
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
+  !endif
 FunctionEnd
 
 Section "modern.exe" SecCopyUI
@@ -103,121 +127,73 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-Function .onInitDialog
+!ifdef MUI_LICENSEPAGE
+  Function SetLicense
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
+  FunctionEnd
+!endif
 
-    !insertmacro MUI_INNERDIALOG_INIT
-
-    !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    !insertmacro MUI_INNERDIALOG_STOP 1
-
-    !insertmacro MUI_INNERDIALOG_START 4
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 4
-
-    !insertmacro MUI_INNERDIALOG_START 5
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    !insertmacro MUI_INNERDIALOG_STOP 5
-
-  !insertmacro MUI_INNERDIALOG_END
-  
+Function SetCustomA
+  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioA.ini"
 FunctionEnd
 
-Function .onNextPage
-
-  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_NEXTPAGE
+Function SetCustomB
+  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioB.ini"
+FunctionEnd
   
+!ifdef MUI_COMPONENTSPAGE
+  Function SetComponents
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+  FunctionEnd
+!endif
+  
+!ifdef MUI_DIRECTORYPAGE
+  Function SetDirectory
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+  FunctionEnd
+!endif
+
+Function SetCustomC
+  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
 
-Function .onPrevPage
-
-  !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
-  !insertmacro MUI_PREVPAGE
-  
+Function SetInstFiles
+  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
 FunctionEnd
-
-Function SetPage
-
-  !insertmacro MUI_PAGE_INIT
-
-    !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "ioA.ini" "" "IO" ;Next page is an IO page
-    !insertmacro MUI_PAGE_STOP 2
-    
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "ioB.ini" "IO" "" ;Previous page is an IO page
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 5
-
-    !insertmacro MUI_PAGE_START 6
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_INSTALL)
-      !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "ioC.ini" "" "" ;Next/previous pages are no IO pages
-    !insertmacro MUI_PAGE_STOP 6
-
-    !insertmacro MUI_PAGE_START 7
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 7
-
-    !insertmacro MUI_PAGE_START 8
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 8
-
- !insertmacro MUI_PAGE_END
-
+          
+Function SetLicenseDialog
+  !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
+FunctionEnd
+ 
+Function SetComponentsDialog
+  !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+  !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
+FunctionEnd
+  
+Function SetDirectoryDialog
+  !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+FunctionEnd
+  
+Function .onGUIInit
+  !insertmacro MUI_GUIINIT
 FunctionEnd
 
 Function .onMouseOverSection
-
   !insertmacro MUI_DESCRIPTION_INIT
-
     !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
     !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
-
  !insertmacro MUI_DESCRIPTION_END
-
 FunctionEnd
 
 Function .onUserAbort
-
   !insertmacro MUI_ABORTWARNING
-
 FunctionEnd
 
 ;--------------------------------
-;Uninstaller Section
+;Uninstaller
 
 Section "Uninstall"
 
@@ -235,31 +211,16 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
-Function un.onNextPage
-
-  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_UNNEXTPAGE
-  
+Function un.SetUninstConfirm
+  !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
+FunctionEnd
+ 
+Function un.SetInstFiles
+  !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
 FunctionEnd
 
-Function un.SetPage
-  
-  !insertmacro MUI_PAGE_INIT
-    
-    !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-  !insertmacro MUI_PAGE_END
-
+Function un.onGUIInit
+  !insertmacro MUI_GUIINIT 
 FunctionEnd
 
 ;eof

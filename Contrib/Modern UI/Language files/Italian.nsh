@@ -1,5 +1,5 @@
-;Modern UI Language File
-;version 1 - Compatible with Modern UI 1.3
+;NSIS Modern User Interface - Language File
+;Compatible with Modern UI 1.4
 
 ;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com>
@@ -22,7 +22,7 @@
      LangString MUI_INNERTEXT_LICENSE ${LANG_ITALIAN} "Se accetti i termini della licenza d'uso seleziona Accetto per continuare. Devi accettare i termini della licenza d'uso per installare ${NAME}."  
   !endif
   
-  !ifdef MUI_COMPONENTPAGE
+  !ifdef MUI_COMPONENTSPAGE
     ComponentText /LANG=${LANG_ITALIAN} "Seleziona i componenti che vuoi installare e deseleziona i componenti che non vuoi installare. Per continuare clicca su Sucessivo."
     LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_ITALIAN} "Seleziona i componenti"
     LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_ITALIAN} "Seleziona i componenti che vuoi installare."
@@ -30,15 +30,11 @@
     LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_ITALIAN} "Per leggere una descrizione più approfondita dei componenti posiziona il puntatore del mouse sul componente di tuo interesse."
   !endif
   
-  !ifdef MUI_DIRSELECTPAGE
+  !ifdef MUI_DIRECTORYPAGE
     DirText /LANG=${LANG_ITALIAN} "Il programma d'installazione installerà ${NAME} nella cartella selezionata.$\r$\n$\r$\nPer installare nella cartella selezionata clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_ITALIAN} "Scegli la cartella di installazione"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_ITALIAN} "Scegli la cartella dove installare ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_ITALIAN} "Cartella d'installazione"
-  !endif
-  
-  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_ITALIAN} "&Seguente >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_ITALIAN} "Installazione in corso"
@@ -48,17 +44,14 @@
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_ITALIAN} "L'installazione è stata completata con successo."
   
   !ifdef MUI_ABORTWARNING
-    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_ITALIAN} "Sei sicuro di voler terminare l'installazione di ${NAME} ?"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_ITALIAN} "Sei sicuro di voler terminare l'installazione di ${NAME} ?"
+  !endif
+  
+  !ifdef MUI_INSTALLOPTIONS
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_ITALIAN} "Installazione di ${NAME} ${VERSION}"
   !endif
 
-  !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_ITALIAN} "< &Precedente"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_ITALIAN} "&Seguente >"
-    LangString MUI_BUTTONTEXT_CANCEL ${LANG_ITALIAN} "Annula"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_ITALIAN} "&Installa"
-  !endif
-  
-  
+
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
@@ -73,15 +66,8 @@
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_ITALIAN} "La disinstallazione è stata completata con successo."
   !endif
   
-  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_ITALIAN} "&Seguente >"
-  !endif
-  
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_ITALIAN} "< &Precedente"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ITALIAN} "&Seguente >"
-    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_ITALIAN} "Annulla"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_ITALIAN} "&Disinstalla"
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_ITALIAN} "Installazione di ${NAME} ${VERSION}"
   !endif
     
 !endif
