@@ -273,23 +273,25 @@
     #endif
   #endif
 
-  #ifdef NSIS_COMPRESS_USE_ZLIB
-    #ifdef NSIS_ZLIB_COMPRESS_WHOLE
-      #define NSIS_COMPRESS_WHOLE
-      #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-        #ifndef _NSIS_CONFIG_VERIFYDIALOG
-          #define _NSIS_CONFIG_VERIFYDIALOG
+  #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+    #ifdef NSIS_COMPRESS_USE_ZLIB
+      #ifdef NSIS_ZLIB_COMPRESS_WHOLE
+        #define NSIS_COMPRESS_WHOLE
+        #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+          #ifndef _NSIS_CONFIG_VERIFYDIALOG
+            #define _NSIS_CONFIG_VERIFYDIALOG
+          #endif
         #endif
       #endif
     #endif
-  #endif
 
-  #ifdef NSIS_COMPRESS_USE_BZIP2
-    #ifdef NSIS_BZIP2_COMPRESS_WHOLE
-      #define NSIS_COMPRESS_WHOLE
-      #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-        #ifndef _NSIS_CONFIG_VERIFYDIALOG
-          #define _NSIS_CONFIG_VERIFYDIALOG
+    #ifdef NSIS_COMPRESS_USE_BZIP2
+      #ifdef NSIS_BZIP2_COMPRESS_WHOLE
+        #define NSIS_COMPRESS_WHOLE
+        #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+          #ifndef _NSIS_CONFIG_VERIFYDIALOG
+            #define _NSIS_CONFIG_VERIFYDIALOG
+          #endif
         #endif
       #endif
     #endif

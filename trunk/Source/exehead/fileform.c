@@ -29,7 +29,7 @@ static char *g_db_strtab;
 static int g_db_offset;
 HANDLE g_db_hFile;
 
-#ifdef NSIS_COMPRESS_WHOLE
+#if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(NSIS_COMPRESS_WHOLE)
 HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
 static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 #endif//NSIS_COMPRESS_WHOLE
@@ -61,7 +61,6 @@ int NSISCALL loadHeaders(void)
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   inflateInit(&g_inflate_stream);
-#endif
 
 #ifdef NSIS_COMPRESS_WHOLE
   inflateReset(&g_inflate_stream);
@@ -80,6 +79,7 @@ int NSISCALL loadHeaders(void)
   dbd_srcpos=SetFilePointer(g_db_hFile,0,NULL,FILE_CURRENT);
   dbd_fulllen=dbd_srcpos-sizeof(h)+h.length_of_all_following_data-((h.flags&FH_FLAGS_CRC)?4:0);
 #endif
+#endif
 
   if (GetCompressedDataFromDataBlockToMemory(-1,data,h.length_of_header) != h.length_of_header)
   {
@@ -88,7 +88,7 @@ int NSISCALL loadHeaders(void)
     return -1;
   }
 
-#ifndef NSIS_COMPRESS_WHOLE
+#if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
   g_db_offset=SetFilePointer(g_db_hFile,0,NULL,FILE_CURRENT);
 #else
   g_db_offset=dbd_pos;
@@ -123,7 +123,7 @@ const char * NSISCALL GetStringFromStringTab(int offs)
 
 // returns -3 if compression error/eof/etc
 
-#ifndef NSIS_COMPRESS_WHOLE
+#if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
 
 static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
