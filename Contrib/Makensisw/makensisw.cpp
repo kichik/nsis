@@ -518,6 +518,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     char *response = (char *)GlobalAlloc(GPTR,RSZ);
     char *r;
     char url[300];
+    BOOL error = FALSE;
     static char pbuf[8192];
     char *p=NULL;
     *response = 0;
@@ -540,7 +541,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     get->connect(url);
     while (1) {
         int st=get->run();
-        if (st<0) break; //error
+        if (st<0) { error = TRUE; break; }//error
         if (get->get_status()==2) {
             while(len=get->bytes_available()) {
                 char b[RSZ];
@@ -559,7 +560,10 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
         if (*r=='\n') { *r = 0; break; }
         r++;
     }
-    if (*response=='1'&&lstrlen(response)>2) {
+    if (error) {
+        MessageBox(g_sdata.hwnd,"There was a problem checking for an update.  Please try again later.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
+    }
+    else if (*response=='1'&&lstrlen(response)>2) {
         char buf[200];
         response+=2;
         wsprintf(buf,"NSIS %s is now available.  Would you like to download it now?",response);
