@@ -1,74 +1,78 @@
-# This example demonstrates how to control section selection.
-# It allows only one of the four optional section to be
-# selected at any given time.
+; one-section.nsi
+;
+; This example demonstrates how to control section selection.
+; It allows only one of the sections of a group to be selected.
 
-#############################################################
-# New macros which make this so much easier can be found in #
-# Include\Sections.nsh.                                     #
-#############################################################
+;--------------------------------
 
-#### Uncomment the next line for an example with subsections too
-# !define USE_SUBSECTION
-####
+; Section define/macro header file
+; See this header file for more info
 
-Name example
-OutFile one-section.exe
+!include "Sections.nsh"
+
+;--------------------------------
+
+Name "One Section"
+OutFile "one-section.exe"
+
+;--------------------------------
+
+; Pages
 
 Page components
 
-# defines SF_*, SECTION_OFF and some macros
-!include Sections.nsh
+;--------------------------------
+
+; Sections
 
 Section !Required
-	SectionIn RO
+  SectionIn RO
 SectionEnd
 
-!ifdef USE_SUBSECTION
-	SubSection /e "choose one" subsec
-!endif
-
-Section "optional #1" sec1
+Section "Group 1 - Option 1" g1o1
 SectionEnd
 
-Section /o "optional #2" sec2
+Section /o "Group 1 - Option 2" g1o2
 SectionEnd
 
-Section /o "optional #3" sec3
+Section /o "Group 1 - Option 3" g1o3
 SectionEnd
 
-Section /o "optional #4" sec4
+Section "Group 2 - Option 1" g2o1
 SectionEnd
 
-!ifdef USE_SUBSECTION
-	SubSectionEnd
-!endif
+Section /o "Group 2 - Option 2" g2o2
+SectionEnd
+
+Section /o "Group 2 - Option 3" g2o3
+SectionEnd
+
+;--------------------------------
+
+; Functions
+
+; $1 stores the status of group 1
+; $2 stores the status of group 2
 
 Function .onInit
-	StrCpy $1 ${sec1} ; Gotta remember which section we are at now...
+
+  StrCpy $1 ${g1o1} ; Group 1 - Option 1 is selected by default
+  StrCpy $1 ${g2o1} ; Group 2 - Option 1 is selected by default
+
 FunctionEnd
 
 Function .onSelChange
-!ifdef USE_SUBSECTION
-; Check if the user have selected all of the sections using the sub-section
-; This piece of code is not needed when there are only two sections
-	Push $0
-	
-	SectionGetFlags ${subsec} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	StrCmp $0 0 skip
-		SectionSetFlags ${sec1} 0
-		SectionSetFlags ${sec2} 0
-		SectionSetFlags ${sec3} 0
-		SectionSetFlags ${sec4} 0
-	skip:
-	
-	Pop $0
-!endif
 
-	!insertmacro StartRadioButtons $1
-	!insertmacro RadioButton ${sec1}
-	!insertmacro RadioButton ${sec2}
-	!insertmacro RadioButton ${sec3}
-	!insertmacro RadioButton ${sec4}
-	!insertmacro EndRadioButtons
+  !insertmacro StartRadioButtons $1
+    !insertmacro RadioButton ${g1o1}
+    !insertmacro RadioButton ${g1o2}
+    !insertmacro RadioButton ${g1o3}
+  !insertmacro EndRadioButtons
+	
+  !insertmacro StartRadioButtons $2
+    !insertmacro RadioButton ${g2o1}
+    !insertmacro RadioButton ${g2o2}
+    !insertmacro RadioButton ${g2o3}
+  !insertmacro EndRadioButtons
+	
 FunctionEnd
