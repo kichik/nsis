@@ -47,7 +47,7 @@ SetBg /GRADIENT R G B R G B
 AddImage [/TRANSPARENT R G B] path_to_bitmap X Y
    Adds an image to the background window at (X,Y)
    Use /TRANSPARENT to make BgImage draw the image transparently
-     Define the transprent color using R G B
+     Define the transparent color using R G B
 
    If SetReturn on was called returns "success" on the stack
      or an error string if there was an error
@@ -86,6 +86,6 @@ Credits
 Coded by Amir Szekely, aka KiCHiK
 
 Ximon Eighteen, aka Sunjammer - Fixed window title bar issues
-iceman_k - Text idea and original implmentation
-Lajos Molnar, aka orfanik - Tile idea and original implmentation
+iceman_k - Text idea and original implementation
+Lajos Molnar, aka orfanik - Tile idea and original implementation
 Jason Reis - Coding help
