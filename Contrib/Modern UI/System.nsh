@@ -1304,9 +1304,8 @@ Var MUI_TEMP2
 
   Function "${LEAVE}"
   
-    !ifdef MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE
-      Call "${MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE}"
-    !endif
+    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    
   FunctionEnd
   
     
