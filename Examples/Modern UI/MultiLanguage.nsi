@@ -26,6 +26,14 @@
   !define MUI_ABORTWARNING
 
 ;--------------------------------
+;Language Selection Dialog Settings
+
+  ;Remember the installer language
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\Modern UI Test" 
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
+;--------------------------------
 ;Pages
 
   !insertmacro MUI_PAGE_COMPONENTS
@@ -99,11 +107,6 @@ SectionEnd
 ;Installer Functions
 
 Function .onInit
-
-  ;Remember the installer language
-  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-  !define MUI_LANGDLL_REGISTRY_KEY "Software\Modern UI Test" 
-  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !insertmacro MUI_LANGDLL_DISPLAY
 
