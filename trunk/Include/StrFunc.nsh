@@ -1,6 +1,6 @@
 /*
 o-----------------------------------------------------------------------------o
-|String Functions Header File 1.07                                            |
+|String Functions Header File 1.08                                            |
 (-----------------------------------------------------------------------------)
 | By deguix                                     / A Header file for NSIS 2.01 |
 | <cevo_deguix@yahoo.com.br>                   -------------------------------|
@@ -20,6 +20,9 @@ o-----------------------------------------------------------------------------o
 
 !include LogicLib.nsh
 
+!define FALSE 0
+!define TRUE 1
+
 !ifndef STRFUNC
 
   ;Header File Identification
@@ -31,7 +34,7 @@ o-----------------------------------------------------------------------------o
   ;Header File Version
 
   !define STRFUNC_VERMAJ 1
-  !define STRFUNC_VERMED 07
+  !define STRFUNC_VERMED 08
  ;!define STRFUNC_VERMIN 0
  ;!define STRFUNC_VERBLD 0
 
@@ -56,7 +59,20 @@ o-----------------------------------------------------------------------------o
   
   ;Header File Function Macros
 
+  !macro STRFUNC_FUNCLIST_INSERT Name
+    !ifdef StrFunc_List
+      !define StrFunc_List2 `${StrFunc_List}`
+      !undef StrFunc_List
+      !define StrFunc_List `${StrFunc_List2}|${Name}`
+      !undef StrFunc_List2
+    !else
+      !define StrFunc_List `${Name}`
+    !endif
+  !macroend
+
   !macro STRFUNC_DEFFUNC Name
+    !insertmacro STRFUNC_FUNCLIST_INSERT ${Name}
+  
     !define `${Name}` `!insertmacro FUNCTION_STRING_${Name}`
     !define `Un${Name}` `!insertmacro FUNCTION_STRING_Un${Name}`
   !macroend
@@ -82,66 +98,88 @@ o-----------------------------------------------------------------------------o
   ;Function Names Startup Definition
 
   !insertmacro STRFUNC_DEFFUNC StrCase
+  !define StrCase_List `ResultVar|String|Type`
+  !define StrCase_TypeList `Output|Text|Option  U L T S <>`
   !macro `FUNCTION_STRING_UnStrCase`
     !undef UnStrCase
     !insertmacro FUNCTION_STRING_StrCase
   !macroend
   
   !insertmacro STRFUNC_DEFFUNC StrClb
+  !define StrClb_List `ResultVar|String|Action`
+  !define StrClb_TypeList `Output|Text|Option  > < <>`
   !macro `FUNCTION_STRING_UnStrClb`
     !undef UnStrClb
     !insertmacro FUNCTION_STRING_StrClb
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrIOToNSIS
+  !define StrIOToNSIS_List `ResultVar|String`
+  !define StrIOToNSIS_TypeList `Output|Text`
   !macro `FUNCTION_STRING_UnStrIOToNSIS`
     !undef UnStrIOToNSIS
     !insertmacro FUNCTION_STRING_StrIOToNSIS
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrLoc
+  !define StrLoc_List `ResultVar|String|StrToSearchFor|CounterDirection`
+  !define StrLoc_TypeList `Output|Text|Text|Option > <`
   !macro `FUNCTION_STRING_UnStrLoc`
     !undef UnStrLoc
     !insertmacro FUNCTION_STRING_StrLoc
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrNSISToIO
+  !define StrNSISToIO_List `ResultVar|String`
+  !define StrNSISToIO_TypeList `Output|Text`
   !macro `FUNCTION_STRING_UnStrNSISToIO`
     !undef UnStrNSISToIO
     !insertmacro FUNCTION_STRING_StrNSISToIO
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrRep
+  !define StrRep_List `ResultVar|String|StrToReplace|ReplacementString`
+  !define StrRep_TypeList `Output|Text|Text|Text`
   !macro `FUNCTION_STRING_UnStrRep`
     !undef UnStrRep
     !insertmacro FUNCTION_STRING_StrRep
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrSort
+  !define StrSort_List `ResultVar|String|LeftStr|CenterStr|RightStr|IncludeLeftStr|IncludeCenterStr|IncludeRightStr`
+  !define StrSort_TypeList `Output|Text|Text|Text|Text|Option 1 0|Option 1 0|Option 1 0`
   !macro `FUNCTION_STRING_UnStrSort`
     !undef UnStrSort
     !insertmacro FUNCTION_STRING_StrSort
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrStr
+  !define StrStr_List `ResultVar|String|StrToSearchFor`
+  !define StrStr_TypeList `Output|Text|Text`
   !macro `FUNCTION_STRING_UnStrStr`
     !undef UnStrStr
     !insertmacro FUNCTION_STRING_StrStr
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrStrAdv
+  !define StrStrAdv_List `ResultVar|String|StrToSearchFor|SearchDirection|ResultStrDirection|DisplayStrToSearch|Loops|CaseSensitive`
+  !define StrStrAdv_TypeList `Output|Text|Text|Option > <|Option > <|Option 1 0|Text|Option 0 1`
   !macro `FUNCTION_STRING_UnStrStrAdv`
     !undef UnStrStrAdv
     !insertmacro FUNCTION_STRING_StrStrAdv
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrTok
+  !define StrTok_List `ResultVar|String|Separators|ResultPart|SkipEmptyParts`
+  !define StrTok_TypeList `Output|Text|Text|Mixed L|Option 1 0`
   !macro `FUNCTION_STRING_UnStrTok`
     !undef UnStrTok
     !insertmacro FUNCTION_STRING_StrTok
   !macroend
 
   !insertmacro STRFUNC_DEFFUNC StrTrimNewLines
+  !define StrTrimNewLines_List `ResultVar|String`
+  !define StrTrimNewLines_TypeList `Output|Text`
   !macro `FUNCTION_STRING_UnStrTrimNewLines`
     !undef UnStrTrimNewLines
     !insertmacro FUNCTION_STRING_StrTrimNewLines
@@ -153,8 +191,21 @@ o-----------------------------------------------------------------------------o
   ################
 
   !macro FUNCTION_STRING_StrCase
-    !insertmacro STRFUNC_FUNC `StrCase` `2004 Diego Pedroso - Based on StrUpper and StrLower by Dave Laundon`
+    !insertmacro STRFUNC_FUNC `StrCase` `2004 Diego Pedroso`
 
+    /*After this point:
+      ------------------------------------------
+       $0 = String (input)
+       $1 = Type (input)
+       $2 = StrLength (temp)
+       $3 = StartChar (temp)
+       $4 = EndChar (temp)
+       $5 = ResultStr (temp)
+       $6 = CurrentChar (temp)
+       $7 = LastChar (temp)
+       $8 = Temp (temp)*/
+
+      ;Get input from user
       Exch $1
       Exch
       Exch $0
@@ -166,8 +217,7 @@ o-----------------------------------------------------------------------------o
       Push $7
       Push $8
 
-      ; Clean pushed variables
-
+      ;Initialize variables
       StrCpy $2 ""
       StrCpy $3 ""
       StrCpy $4 ""
@@ -176,6 +226,7 @@ o-----------------------------------------------------------------------------o
       StrCpy $7 ""
       StrCpy $8 ""
 
+      ;Upper and lower cases are simple to use
       ${If} $1 == "U"
 
         ;Upper Case System:
@@ -194,19 +245,25 @@ o-----------------------------------------------------------------------------o
         Goto StrCase_End
       ${EndIf}
 
+      ;For the rest of cases:
+      ;Get "String" length
       StrLen $2 $0
 
-      ; For the rest of cases, make a loop
+      ;Make a loop until the end of "String"
       ${For} $3 0 $2
-
+        ;Add 1 to "EndChar" counter also
         IntOp $4 $3 + 1
 
-        ; Step 1: Detect one character at a time
+        # Step 1: Detect one character at a time
 
+        ;Remove characters before "StartChar" except when
+        ;"StartChar" is the first character of "String"
         ${If} $3 <> 0
           StrCpy $6 $0 `` $3
         ${EndIf}
 
+        ;Remove characters after "EndChar" except when
+        ;"EndChar" is the last character of "String"
         ${If} $4 <> $2
           ${If} $3 = 0
             StrCpy $6 $0 1
@@ -215,7 +272,7 @@ o-----------------------------------------------------------------------------o
           ${EndIf}
         ${EndIf}
 
-        ; Step 2: Convert to the advanced case user chose:
+        # Step 2: Convert to the advanced case user chose:
 
         ${If} $1 == "T"
 
@@ -224,10 +281,13 @@ o-----------------------------------------------------------------------------o
           ; Convert all characters after a non-alphabetic character to upper case.
           ; Else convert to lower case.
 
+          ;Use "IsCharAlpha" for the job
           System::Call "*(&t1 r7) i .r8"
           System::Call "*$8(&i1 .r7)"
-		  System::Free $8
+          System::Free $8
           System::Call "user32::IsCharAlpha(i r7) i .r8"
+          
+          ;Verify "IsCharAlpha" result and convert the character
           ${If} $8 = 0
             System::Call "User32::CharUpper(t r6 r6)i"
           ${Else}
@@ -240,11 +300,13 @@ o-----------------------------------------------------------------------------o
           ; Convert all characters after a ".", "!" or "?" character to upper case.
           ; Else convert to lower case. Spaces or tabs after these marks are ignored.
 
+          ;Detect current characters and ignore if necessary
           ${If} $6 == " "
           ${OrIf} $6 == "$\t"
             Goto IgnoreLetter
           ${EndIf}
 
+          ;Detect last characters and convert
           ${If} $7 == "."
           ${OrIf} $7 == "!"
           ${OrIf} $7 == "?"
@@ -259,10 +321,13 @@ o-----------------------------------------------------------------------------o
           ;------------------
           ; Switch all characters cases to their inverse case.
 
+          ;Use "IsCharUpper" for the job
           System::Call "*(&t1 r6) i .r8"
           System::Call "*$8(&i1 .r7)"
-		  System::Free $8
+          System::Free $8
           System::Call "user32::IsCharUpper(i r7) i .r8"
+          
+          ;Verify "IsCharUpper" result and convert the character
           ${If} $8 = 0
             System::Call "User32::CharUpper(t r6 r6)i"
           ${Else}
@@ -270,21 +335,24 @@ o-----------------------------------------------------------------------------o
           ${EndIf}
         ${EndIf}
 
-        ; Write the character to TempString
-
+        ;Write the character to "LastChar"
         StrCpy $7 $6
 
         IgnoreLetter:
+        ;Add this character to "ResultStr"
         StrCpy $5 `$5$6`
-
       ${Next}
 
       StrCase_End:
 
-      ; TempString is the final string
+    /*After this point:
+      ------------------------------------------
+       $0 = OutVar (output)*/
 
+      ; Copy "ResultStr" to "OutVar"
       StrCpy $0 $5
 
+      ;Return output to user
       Pop $8
       Pop $7
       Pop $6
@@ -294,13 +362,20 @@ o-----------------------------------------------------------------------------o
       Pop $2
       Pop $1
       Exch $0
-
     FunctionEnd
 
   !macroend
 
   !macro FUNCTION_STRING_StrClb
     !insertmacro STRFUNC_FUNC `StrClb` `2004 Diego Pedroso - Based on CopyToClipboard and CopyFromClipboard by Nik Medved`
+
+    /*After this point:
+      ------------------------------------------
+       $0 = Action (input)
+       $1 = String (input)
+       $2 = Lock/Unlock (temp)
+       $3 = Temp (temp)
+       $4 = Temp2 (temp)*/
 
       ;Get input from user
 
@@ -312,7 +387,7 @@ o-----------------------------------------------------------------------------o
       Push $3
       Push $4
 
-      ;Open the clipboard to do the operations the user chose
+      ;Open the clipboard to do the operations the user chose (kichik's fix)
       System::Call 'user32::OpenClipboard(i $HWNDPARENT)'
 
       ${If} $1 == ">" ;Set
@@ -344,22 +419,22 @@ o-----------------------------------------------------------------------------o
         ;Step 1: Get clipboard data
         System::Call 'user32::GetClipboardData(i 1) i .r2'
 
-		;Step 2: Lock and copy data
-		System::Call 'kernel32::GlobalLock(i r2) t .r0'
+        ;Step 2: Lock and copy data (kichik's fix)
+        System::Call 'kernel32::GlobalLock(i r2) t .r0'
 
-		;Step 3: Unlcok
-		System::Call 'kernel32::GlobalUnlock(i r2)'
+        ;Step 3: Unlock (kichik's fix)
+        System::Call 'kernel32::GlobalUnlock(i r2)'
 
       ${ElseIf} $1 == "<>" ;Swap
 
         ;Step 1: Get clipboard data
         System::Call 'user32::GetClipboardData(i 1) t .r2'
 
-		;Step 2: Lock and copy data
-		System::Call 'kernel32::GlobalLock(i r2) t .r4'
+        ;Step 2: Lock and copy data (kichik's fix)
+        System::Call 'kernel32::GlobalLock(i r2) t .r4'
 
-		;Step 3: Unlcok
-		System::Call 'kernel32::GlobalUnlock(i r2)'
+        ;Step 3: Unlock (kichik's fix)
+        System::Call 'kernel32::GlobalUnlock(i r2)'
 
         ;Step 4: Clear the clipboard
         System::Call 'user32::EmptyClipboard()'
@@ -393,14 +468,16 @@ o-----------------------------------------------------------------------------o
       ;Close the clipboard
       System::Call 'user32::CloseClipboard()'
 
-      ;Return result to user
+    /*After this point:
+      ------------------------------------------
+       $0 = OutVar (output)*/
 
+      ;Return result to user
       Pop $4
       Pop $3
       Pop $2
       Pop $1
       Exch $0
-      
     FunctionEnd
 
   !macroend
@@ -411,34 +488,63 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrIOToNSIS
     !insertmacro STRFUNC_FUNC `StrIOToNSIS` `2003-2004 Amir Szekely, Joost Verburg and Dave Laundon`
 
-      Exch $0 ; The source
-      Push $1 ; The output
-      Push $2 ; Temporary char
-      StrCpy $1 `` ; Initialise the output
-    loop:
-      StrCpy $2 $0 1 ; Get the next source char
-      StrCmp $2 `` done ; Abort when none left
-        StrCpy $0 $0 `` 1 ; Remove it from the source
-        StrCmp $2 `\` +3 ; Escape character?
-          StrCpy $1 `$1$2` ; If not just output
-          Goto loop
-        StrCpy $2 $0 1 ; Get the next source char
-        StrCpy $0 $0 `` 1 ; Remove it from the source
-        StrCmp $2 `\` `` +3 ; Back-slash?
-          StrCpy $1 `$1\`
-          Goto loop
-        StrCmp $2 `r` `` +3 ; Carriage return?
-          StrCpy $1 `$1$\r`
-          Goto loop
-        StrCmp $2 `n` `` +3 ; Line feed?
-          StrCpy $1 `$1$\n`
-          Goto loop
-        StrCmp $2 `t` `` +3 ; Tab?
-          StrCpy $1 `$1$\t`
-          Goto loop
-        StrCpy $1 `$1$2` ; Anything else (should never get here)
-        Goto loop
-    done:
+    /*After this point:
+      ------------------------------------------
+       $0 = String (input)
+       $1 = OutVar (output)
+       $2 = Temp (temp)*/
+
+      ;Get input from user
+      Exch $0
+      Push $1
+      Push $2
+
+      ;Initialize output
+      StrCpy $1 ``
+
+      ;Loop until an escape character is found or "String" reaches its end
+      ${Do}
+        ;Get the next "String" character
+        StrCpy $2 $0 1
+
+        ;Abort when none left
+        ${If} $2 == ``
+          ${ExitDo}
+        ${Else}
+          ;Remove current character from "String"
+          StrCpy $0 $0 `` 1
+
+          ;Detect if current character is an escape character
+          ${If} $2 != `\`
+            ;If not just output
+            StrCpy $1 `$1$2`
+          ${Else}
+            ;Get the next "String" character
+            StrCpy $2 $0 1
+            ;Remove current character from "String"
+            StrCpy $0 $0 `` 1
+
+            ;Detect if current character is:
+            ${If} $2 == `\` ;Back-slash
+              StrCpy $1 `$1\`
+            ${ElseIf} $2 == `r` ;Carriage return
+              StrCpy $1 `$1$\r`
+            ${ElseIf} $2 == `n` ;Line feed
+              StrCpy $1 `$1$\n`
+            ${ElseIf} $2 == `t` ;Tab
+              StrCpy $1 `$1$\t`
+            ${Else} ;Anything else
+              StrCpy $1 "$1$2"
+            ${EndIf}
+          ${EndIf}
+        ${EndIf}
+      ${Loop}
+      
+    /*After this point:
+      ------------------------------------------
+       $0 = OutVar (output)*/
+
+      ;Return output to user
       StrCpy $0 $1
       Pop $2
       Pop $1
@@ -453,36 +559,59 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrLoc
     !insertmacro STRFUNC_FUNC `StrLoc` `2004 Diego Pedroso`
 
+    /*After this point:
+      ------------------------------------------
+       $R0 = OffsetDirection (input)
+       $R1 = StrToSearch (input)
+       $R2 = String (input)
+       $R3 = StrToSearchLen (temp)
+       $R4 = StrLen (temp)
+       $R5 = StartCharPos (temp)
+       $R6 = TempStr (temp)*/
+
+      ;Get input from user
       Exch $R0
       Exch
-      Exch $R1 ; st=haystack,old$R1, $R1=needle
-      Exch 2    ; st=old$R1,haystack
-      Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+      Exch $R1
+      Exch 2
+      Exch $R2
       Push $R3
       Push $R4
       Push $R5
+      Push $R6
+
+      ;Get "String" and "StrToSearch" length
       StrLen $R3 $R1
-      StrCpy $R4 0
-      loop:
-        StrCpy $R5 $R2 $R3 $R4
-        StrCmp $R5 $R1 done
-        StrCmp $R5 `` error
-        IntOp $R4 $R4 + 1
-        Goto loop
-      done:
+      StrLen $R4 $R2
+      ;Start "StartCharPos" counter
+      StrCpy $R5 0
 
-      StrCmp $R0 `<` 0 +5
-        StrLen $R0 $R2
-        IntOp $R5 $R3 + $R4
-        IntOp $R0 $R0 - $R5
-        Goto +2
+      ;Loop until "StrToSearch" is found or "String" reaches its end
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStr")
+        StrCpy $R6 $R2 $R3 $R5
 
-      StrCpy $R0 $R4
-      Goto +2
+        ;Compare "TempStr" with "StrToSearch"
+        ${If} $R6 == $R1
+          ${If} $R0 == `<`
+            IntOp $R6 $R3 + $R5
+            IntOp $R0 $R4 - $R6
+          ${Else}
+            StrCpy $R0 $R5
+          ${EndIf}
+          ${ExitDo}
+        ${EndIf}
+        ;If not "StrToSearch", this could be "String" end
+        ${If} $R5 >= $R4
+          StrCpy $R0 ``
+          ${ExitDo}
+        ${EndIf}
+        ;If not, continue the loop
+        IntOp $R5 $R5 + 1
+      ${Loop}
 
-      error:
-      StrCpy $R0 ``
-
+      ;Return output to user
+      Pop $R6
       Pop $R5
       Pop $R4
       Pop $R3
@@ -500,29 +629,52 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrNSISToIO
     !insertmacro STRFUNC_FUNC `StrNSISToIO` `2003-2004 Amir Szekely, Joost Verburg and Dave Laundon`
 
-      Exch $0 ; The source
-      Push $1 ; The output
-      Push $2 ; Temporary char
-      StrCpy $1 `` ; Initialise the output
-    loop:
-      StrCpy $2 $0 1 ; Get the next source char
-      StrCmp $2 `` done ; Abort when none left
-        StrCpy $0 $0 `` 1 ; Remove it from the source
-        StrCmp $2 `\` `` +3 ; Back-slash?
-          StrCpy $1 `$1\\`
-          Goto loop
-        StrCmp $2 `$\r` `` +3 ; Carriage return?
-          StrCpy $1 `$1\r`
-          Goto loop
-        StrCmp $2 `$\n` `` +3 ; Line feed?
-          StrCpy $1 `$1\n`
-          Goto loop
-        StrCmp $2 `$\t` `` +3 ; Tab?
-          StrCpy $1 `$1\t`
-          Goto loop
-        StrCpy $1 `$1$2` ; Anything else
-        Goto loop
-    done:
+    /*After this point:
+      ------------------------------------------
+       $0 = String (input)
+       $1 = OutVar (output)
+       $2 = Temp (temp)*/
+
+      ;Get input from user
+      Exch $0 ;String (input)
+      Push $1 ;OutVar (output)
+      Push $2 ;Temp (temp)
+
+      ;Initialize output
+      StrCpy $1 ``
+
+      ;Loop until an escape character is found or "String" reaches its end
+      ${Do}
+        ;Get the next "String" character
+        StrCpy $2 $0 1
+
+        ;Abort when none left
+        ${If} $2 == ``
+          ${ExitDo}
+        ${Else}
+          ;Remove current character from "String"
+          StrCpy $0 $0 `` 1
+
+          ;Detect if current character is:
+          ${If} $2 == `\` ;Back-slash
+            StrCpy $1 `$1\\`
+          ${ElseIf} $2 == `$\r` ;Carriage return
+            StrCpy $1 `$1\r`
+          ${ElseIf} $2 == `$\n` ;Line feed
+            StrCpy $1 `$1\n`
+          ${ElseIf} $2 == `$\t` ;Tab
+            StrCpy $1 `$1\t`
+          ${Else} ;Anything else
+            StrCpy $1 "$1$2"
+          ${EndIf}
+        ${EndIf}
+      ${Loop}
+      
+    /*After this point:
+      ------------------------------------------
+       $0 = OutVar (output)*/
+
+      ;Return output to user
       StrCpy $0 $1
       Pop $2
       Pop $1
@@ -537,50 +689,87 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrRep
     !insertmacro STRFUNC_FUNC `StrRep` `2002-2004 Hendri Adriaens`
 
-      Exch $0 ;this will replace wrong characters
+    /*After this point:
+      ------------------------------------------
+       $R0 = ReplacementString (input)
+       $R1 = StrToSearch (input)
+       $R2 = String (input)
+       $R3 = RepStrLen (temp)
+       $R4 = StrToSearchLen (temp)
+       $R5 = StrLen (temp)
+       $R6 = StartCharPos (temp)
+       $R7 = TempStrL (temp)
+       $R8 = TempStrR (temp)*/
+
+      ;Get input from user
+      Exch $R0
       Exch
-      Exch $1 ;needs to be replaced
+      Exch $R1
       Exch
       Exch 2
-      Exch $2 ;the orginal string
-      Push $3 ;counter
-      Push $4 ;temp character
-      Push $5 ;temp string
-      Push $6 ;length of string that need to be replaced
-      Push $7 ;length of string that will replace
-      Push $R0 ;tempstring
-      Push $R1 ;tempstring
-      Push $R2 ;tempstring
-      StrCpy $3 `-1`
-      StrCpy $5 ``
-      StrLen $6 $1
-      StrLen $7 $0
-      Loop:
-      IntOp $3 $3 + 1
-      StrCpy $4 $2 $6 $3
-      StrCmp $4 `` ExitLoop
-      StrCmp $4 $1 Replace
-      Goto Loop
-      Replace:
-      StrCpy $R0 $2 $3
-      IntOp $R2 $3 + $6
-      StrCpy $R1 $2 `` $R2
-      StrCpy $2 $R0$0$R1
-      IntOp $3 $3 + $7
-      Goto Loop
-      ExitLoop:
-      StrCpy $0 $2
+      Exch $R2
+      Push $R3
+      Push $R4
+      Push $R5
+      Push $R6
+      Push $R7
+      Push $R8
+
+      ;Return "String" if "StrToSearch" is ""
+      ${IfThen} $R1 == "" ${|} Goto Done ${|}
+
+      ;Get "ReplacementString", "String" and "StrToSearch" length
+      StrLen $R3 $R0
+      StrLen $R4 $R1
+      StrLen $R5 $R2
+      ;Start "StartCharPos" counter
+      StrCpy $R6 0
+
+      ;Loop until "StrToSearch" is found or "String" reaches its end
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStrL")
+        StrCpy $R7 $R2 $R4 $R6
+
+        ;Compare "TempStrL" with "StrToSearch"
+        ${If} $R7 == $R1
+          ;Split "String" to replace the string wanted
+          StrCpy $R7 $R2 $R6 ;TempStrL
+
+          ;Calc: "StartCharPos" + "StrToSearchLen" = EndCharPos
+          IntOp $R8 $R6 + $R4
+
+          StrCpy $R8 $R2 "" $R8 ;TempStrR
+
+          ;Insert the new string between the two separated parts of "String"
+          StrCpy $R2 $R7$R0$R8
+          ;Now calculate the new "StrLen" and "StartCharPos"
+          StrLen $R5 $R2
+          IntOp $R6 $R6 + $R3
+          ${Continue}
+        ${EndIf}
+
+        ;If not "StrToSearch", this could be "String" end
+        ${IfThen} $R6 >= $R5 ${|} ${ExitDo} ${|}
+        ;If not, continue the loop
+        IntOp $R6 $R6 + 1
+      ${Loop}
+
+      Done:
+
+    /*After this point:
+      ------------------------------------------
+       $R0 = OutVar (output)*/
+
+      ;Return output to user
+      StrCpy $R0 $R2
+      Pop $R8
+      Pop $R7
+      Pop $R6
+      Pop $R5
+      Pop $R4
       Pop $R2
       Pop $R1
-      Pop $R0
-      Pop $7
-      Pop $6
-      Pop $5
-      Pop $4
-      Pop $3
-      Pop $2
-      Pop $1
-      Exch $0
+      Exch $R0
     FunctionEnd
 
   !macroend
@@ -591,130 +780,203 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrSort
     !insertmacro STRFUNC_FUNC `StrSort` `2004 Diego Pedroso - based on SortString by "Afrow UK"`
 
-      # Prepare Variables
+    /*After this point:
+      ------------------------------------------
+       $R0 = String (input)
+       $R1 = LeftStr (input)
+       $R2 = CenterStr (input)
+       $R3 = RightStr (input)
+       $R4 = IncludeLeftStr (input)
+       $R5 = IncludeCenterStr (input)
+       $R6 = IncludeRightStr (input)
 
-      Exch $R7 ;Include Center string
+       $0 = StrLen (temp)
+       $1 = LeftStrLen (temp)
+       $2 = CenterStrLen (temp)
+       $3 = RightStrLen (temp)
+       $4 = StartPos (temp)
+       $5 = EndPos (temp)
+       $6 = StartCharPos (temp)
+       $7 = EndCharPos (temp)
+       $8 = TempStr (temp)*/
+
+      ;Get input from user
+      Exch $R6
       Exch
-      Exch $R6 ;Include Left and Right strings
+      Exch $R5
+      Exch
       Exch 2
-      Exch $0 ;Right String
+      Exch $R4
+      Exch 2
       Exch 3
-      Exch $1 ;Left String
+      Exch $R3
+      Exch 3
       Exch 4
-      Exch $2 ;Center String
+      Exch $R2
+      Exch 4
       Exch 5
-      Exch $R0 ;String
+      Exch $R1
+      Exch 5
+      Exch 6
+      Exch $R0
+      Exch 6
+      Push $0
+      Push $1
+      Push $2
       Push $3
       Push $4
       Push $5
-      Push $R1
-      Push $R2
-      Push $R3
-      Push $R4
-      Push $R5
+      Push $6
+      Push $7
+      Push $8
 
-      StrLen $3 $0
-      StrLen $4 $1
-      StrLen $5 $2
-      StrCpy $R1 0
+      ;Parameter defaults
+      ${IfThen} $R4 == `` ${|} StrCpy $R4 `1` ${|}
+      ${IfThen} $R5 == `` ${|} StrCpy $R5 `1` ${|}
+      ${IfThen} $R6 == `` ${|} StrCpy $R6 `1` ${|}
 
-      # Center String Search
+      ;Get "String", "CenterStr", "LeftStr" and "RightStr" length
+      StrLen $0 $R0
+      StrLen $1 $R1
+      StrLen $2 $R2
+      StrLen $3 $R3
+      ;Start "StartCharPos" counter
+      StrCpy $6 0
+      ;Start "EndCharPos" counter based on "CenterStr" length
+      IntOp $7 $6 + $2
 
-      loop:
-        StrCpy $R3 $R0 $5 $R1
-        StrCmp $R3 `` error
-          StrCmp $R3 $2 done
-            IntOp $R1 $R1 + 1
-            Goto loop
-      done:
+      ;Loop until "CenterStr" is found or "String" reaches its end
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStr")
+        StrCpy $8 $R0 $2 $6
 
-      StrCpy $R5 $R1
+        ;Compare "TempStr" with "CenterStr"
+        ${IfThen} $8 == $R2 ${|} ${ExitDo} ${|}
+        ;If not, this could be "String" end
+        ${IfThen} $7 >= $0 ${|} Goto Done ${|}
+        ;If not, continue the loop
+        IntOp $6 $6 + 1
+        IntOp $7 $7 + 1
+      ${Loop}
 
-      IntOp $R1 $R1 - $4
+      # "CenterStr" was found
 
-      # Left String Search
+      ;Remove "CenterStr" from "String" if the user wants
+      ${If} $R5 = ${FALSE}
+        StrCpy $8 $R0 $6
+        StrCpy $R0 $R0 `` $7
+        StrCpy $R0 $8$R0
+      ${EndIf}
 
-      loop2:
-        StrCpy $R3 $R0 $4 $R1
-        StrCmp $R3 `` error2
-          StrCmp $R3 $1 done2
-            IntOp $R1 $R1 - 1
-            Goto loop2
+      ;"StartPos" and "EndPos" will record "CenterStr" coordinates for now
+      StrCpy $4 $6
+      StrCpy $5 $7
+      ;"StartCharPos" and "EndCharPos" should be before "CenterStr"
+      IntOp $6 $6 - $1
+      IntOp $7 $6 + $1
 
-        error2:
-        StrCpy $R1 0
-        StrCpy $R3 0
-        Goto +2
+      ;Loop until "LeftStr" is found or "String" reaches its start
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStr")
+        StrCpy $8 $R0 $1 $6
 
-      done2:
-      StrCpy $R3 1
+        ;If "LeftStr" is empty
+        ${If} $R1 == ``
+          StrCpy $6 0
+          StrCpy $7 0
+          ${ExitDo}
+        ${EndIf}
 
-      StrCpy $R4 $R0 $R5
+        ;Compare "TempStr" with "LeftStr"
+        ${IfThen} $8 == $R1 ${|} ${ExitDo} ${|}
+        ;If not, this could be "String" start
+        ${IfThen} $6 <= 0 ${|} ${ExitDo} ${|}
+        ;If not, continue the loop
+        IntOp $6 $6 - 1
+        IntOp $7 $7 - 1
+      ${Loop}
 
-      StrCmp $R1 0 +2
-        StrCpy $R4 $R4 `` $R1
+      # "LeftStr" is found or "String" start was reached
 
-      StrCmp $R3 1 0 +3
-        StrCmp $R6 0 0 +2
-          StrCpy $R4 $R4 `` $4
+      ;Remove "LeftStr" from "String" if the user wants
+      ${If} $R4 = ${FALSE}
+        IntOp $6 $6 + $1
+      ${EndIf}
 
-      # Center String Addition
+      ;Record "LeftStr" first character position on "TempStr" (temporarily)
+      StrCpy $8 $6
 
-      StrCmp $R7 0 +2
-        StrCpy $R4 $R4$2
+      ;"StartCharPos" and "EndCharPos" should be after "CenterStr"
+      ${If} $R5 = ${FALSE}
+        StrCpy $6 $4
+      ${Else}
+        IntOp $6 $4 + $2
+      ${EndIf}
+      IntOp $7 $6 + $3
+      
+      ;Record "LeftStr" first character position on "StartPos"
+      StrCpy $4 $8
 
-      StrCpy $R1 $R5
-      IntOp $R1 $R1 + $5
+      ;Loop until "RightStr" is found or "String" reaches its end
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStr")
+        StrCpy $8 $R0 $3 $6
 
-      # Right String Search
+        ;If "RightStr" is empty
+        ${If} $R3 == ``
+          StrCpy $6 $0
+          StrCpy $7 $0
+          ${ExitDo}
+        ${EndIf}
 
-      loop3:
+        ;Compare "TempStr" with "RightStr"
+        ${IfThen} $8 == $R3 ${|} ${ExitDo} ${|}
+        ;If not, this could be "String" end
+        ${IfThen} $7 >= $0 ${|} ${ExitDo} ${|}
+        ;If not, continue the loop
+        IntOp $6 $6 + 1
+        IntOp $7 $7 + 1
+      ${Loop}
 
-        StrCpy $R3 $R0 $3 $R1
-        StrCmp $R3 `` error3
-          StrCmp $R3 $0 done3
-            IntOp $R1 $R1 + 1
-            Goto loop3
+      ;Remove "RightStr" from "String" if the user wants
+      ${If} $R6 = ${FALSE}
+        IntOp $7 $7 - $3
+      ${EndIf}
 
-        error3:
-        StrCpy $R1 0
+      ;Record "RightStr" last character position on "StartPos"
+      StrCpy $5 $7
 
-      done3:
+      ;As the positionment is relative...
+      IntOp $5 $5 - $4
 
-      IntOp $R5 $R5 + $5
-      StrCpy $R3 $R0 `` $R5
-
-      StrCmp $R1 0 +5
-        IntOp $R1 $R1 - $R5
-        StrCmp $R6 0 +2
-          IntOp $R1 $R1 + $3
-        StrCpy $R3 $R3 $R1
-
-      StrCpy $R4 $R4$R3
-
-      StrCpy $2 $R4
+      ;Write the string and finish the job
+      StrCpy $R0 $R0 $5 $4
       Goto +2
 
-        Error:
-        StrCpy $2 ``
+      Done:
+      StrCpy $R0 ``
 
-      # Return to User
+    /*After this point:
+      ------------------------------------------
+       $R0 = OutVar (output)*/
 
+      ;Return output to user
+      Pop $8
+      Pop $7
+      Pop $6
+      Pop $5
+      Pop $4
+      Pop $3
+      Pop $2
+      Pop $1
+      Pop $0
+      Pop $R6
       Pop $R5
       Pop $R4
       Pop $R3
       Pop $R2
       Pop $R1
-      Pop $5
-      Pop $4
-      Pop $3
-      Pop $R0
-      Pop $R7
-      Pop $R6
-      Pop $0
-      Pop $1
-      Exch $2
-
+      Exch $R0
     FunctionEnd
 
   !macroend
@@ -725,32 +987,57 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrStr
     !insertmacro STRFUNC_FUNC `StrStr` `2002-2004 Ximon Eighteen`
 
-      Exch $R1 ; st=haystack,old$R1, $R1=needle
-      Exch    ; st=old$R1,haystack
-      Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+    /*After this point:
+      ------------------------------------------
+       $R0 = StrToSearch (input)
+       $R1 = String (input)
+       $R2 = StrToSearchLen (temp)
+       $R3 = StrLen (temp)
+       $R4 = StartCharPos (temp)
+       $R5 = TempStr (temp)*/
+
+      ;Get input from user
+      Exch $R0
+      Exch
+      Exch $R1
+      Push $R2
       Push $R3
       Push $R4
       Push $R5
+
+      ;Get "String" and "StrToSearch" length
+      StrLen $R2 $R0
       StrLen $R3 $R1
+      ;Start "StartCharPos" counter
       StrCpy $R4 0
-      ; $R1=needle
-      ; $R2=haystack
-      ; $R3=len(needle)
-      ; $R4=cnt
-      ; $R5=tmp
-      loop:
-        StrCpy $R5 $R2 $R3 $R4
-        StrCmp $R5 $R1 done
-        StrCmp $R5 `` done
+
+      ;Loop until "StrToSearch" is found or "String" reaches its end
+      ${Do}
+        ;Remove everything before and after the searched part ("TempStr")
+        StrCpy $R5 $R1 $R2 $R4
+
+        ;Compare "TempStr" with "StrToSearch"
+        ${IfThen} $R5 == $R0 ${|} ${ExitDo} ${|}
+        ;If not "StrToSearch", this could be "String" end
+        ${IfThen} $R4 >= $R3 ${|} ${ExitDo} ${|}
+        ;If not, continue the loop
         IntOp $R4 $R4 + 1
-        Goto loop
-      done:
-      StrCpy $R1 $R2 `` $R4
+      ${Loop}
+
+    /*After this point:
+      ------------------------------------------
+       $R0 = OutVar (output)*/
+
+      ;Remove part before "StrToSearch" on "String" (if there has one)
+      StrCpy $R0 $R1 `` $R4
+
+      ;Return output to user
       Pop $R5
       Pop $R4
       Pop $R3
       Pop $R2
-      Exch $R1
+      Pop $R1
+      Exch $R0
     FunctionEnd
 
   !macroend
@@ -761,34 +1048,57 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrStrAdv
     !insertmacro STRFUNC_FUNC `StrStrAdv` `2003-2004 Diego Pedroso`
 
+    /*After this point:
+      ------------------------------------------
+       $0 = String (input)
+       $1 = StringToSearch (input)
+       $2 = DirectionOfSearch (input)
+       $3 = DirectionOfReturn (input)
+       $4 = ShowStrToSearch (input)
+       $5 = NumLoops (input)
+       $6 = CaseSensitive (input)
+       $7 = StringLength (temp)
+       $8 = StrToSearchLength (temp)
+       $9 = CurrentLoop (temp)
+       $R0 = EndCharPos (temp)
+       $R1 = StartCharPos (temp)
+       $R2 = OutVar (output)
+       $R3 = Temp (temp)*/
+
       ;Get input from user
 
-      Exch $6 ;CaseSensitive (input)
+      Exch $6
       Exch
-      Exch $5 ;NumLoops (input)
+      Exch $5
       Exch
       Exch 2
-      Exch $4 ;ShowStrToSearch (input)
+      Exch $4
       Exch 2
       Exch 3
-      Exch $3 ;DirectionOfReturn (input)
+      Exch $3
       Exch 3
       Exch 4
-      Exch $2 ;DirectionOfSearch (input)
+      Exch $2
       Exch 4
       Exch 5
-      Exch $1 ;StrToSearch (input)
+      Exch $1
       Exch 5
       Exch 6
-      Exch $0 ;String (input)
+      Exch $0
       Exch 6
-      Push $7 ;StringLength (temp)
-      Push $8 ;StrToSearchLength (temp)
-      Push $9 ;Loop (temp)
-      Push $R3 ;Temp (temp)
-      Push $R2 ;OutVar (output)
-      Push $R1 ;StartCharPos (output)
-      Push $R0 ;EndCharPos (output)
+      Push $7
+      Push $8
+      Push $9
+      Push $R3
+      Push $R2
+      Push $R1
+      Push $R0
+
+      ; Clean $R0-$R3 variables
+      StrCpy $R0 ""
+      StrCpy $R1 ""
+      StrCpy $R2 ""
+      StrCpy $R3 ""
 
       ; Verify if we have the correct values on the variables
       ${If} $0 == ``
@@ -911,11 +1221,11 @@ o-----------------------------------------------------------------------------o
             ${If} $4 == 0
               ;Return depends on AdvStrStr_DirectionOfReturn
               ${If} $3 == <
-      	        ; RTL
-      	        StrCpy $R0 $0 $R1
-      	      ${Else}
-      	        ; LTR
-      	        StrCpy $R0 $0 `` $R2
+                ; RTL
+                StrCpy $R0 $0 $R1
+              ${Else}
+                ; LTR
+                StrCpy $R0 $0 `` $R2
               ${EndIf}
               ${Break}
             ${Else}
@@ -1000,104 +1310,139 @@ o-----------------------------------------------------------------------------o
 
   !macro FUNCTION_STRING_StrTok
     !insertmacro STRFUNC_FUNC `StrTok` `2004 Diego Pedroso - based on StrTok by "bigmac666"`
-      Exch $9
+    /*After this point:
+      ------------------------------------------
+       $0 = SkipEmptyParts (input)
+       $1 = ResultPart (input)
+       $2 = Separators (input)
+       $3 = String (input)
+       $4 = StrToSearchLen (temp)
+       $5 = StrLen (temp)
+       $6 = StartCharPos (temp)
+       $7 = TempStr (temp)
+       $8 = CurrentLoop
+       $9 = CurrentSepChar
+       $R0 = CurrentSepCharNum
+       */
+
+      ;Get input from user
+      Exch $0
       Exch
-      Exch $R0
+      Exch $1
+      Exch
       Exch 2
-      Exch $R1
+      Exch $2
+      Exch 2
       Exch 3
-      Exch $R2
-      Push $R3
-      Push $R4
-      Push $R5
-      Push $R6
-      Push $R7
-      Push $R8
-      Push $R9
-      Push $0
-      Push $1
-      Push $2
+      Exch $3
+      Exch 3
+      Push $4
+      Push $5
+      Push $6
+      Push $7
+      Push $8
 
-      StrCpy $R8 0
-      StrCpy $R9 $R1
+      ;Parameter defaults
+      ${IfThen} $2 == `` ${|} StrCpy $2 `|` ${|}
+      ${IfThen} $1 == `` ${|} StrCpy $1 `L` ${|}
+      ${IfThen} $0 == `` ${|} StrCpy $0 `0` ${|}
 
-      IntCmp $R0 0 0 0 +2
-        StrCpy $R0 L
+      ;Get "String" and "StrToSearch" length
+      StrLen $4 $2
+      StrLen $5 $3
+      ;Start "StartCharPos" and "ResultPart" counters
+      StrCpy $6 0
+      StrCpy $8 -1
 
+      ;Loop until "ResultPart" is met, "StrToSearch" is found or
+      ;"String" reaches its end
+      ResultPartLoop: ;"CurrentLoop" Loop
 
-      StrCmp $R0 L 0 +5
-        StrCpy $2 1
-        StrCpy $R0 0
-        StrCpy $1 ``
-        StrCpy $9 1
+        ;Increase "CurrentLoop" counter
+        IntOp $8 $8 + 1
 
-      PartLoop:
+        StrSearchLoop:
+        ${Do} ;"String" Loop
+          ;Remove everything before and after the searched part ("TempStr")
+          StrCpy $7 $3 1 $6
 
-      StrCpy $R4 0
-      IntOp $R8 $R8 + 1
-      StrCpy $0 0
+          ;Verify if it's the "String" end
+          ${If} $6 >= $5
+            ;If "CurrentLoop" is what the user wants, remove the part
+            ;after "TempStr" and itself and get out of here
+            ${If} $8 == $1
+            ${OrIf} $1 == `L`
+              StrCpy $3 $3 $6
+            ${Else} ;If not, empty "String" and get out of here
+              StrCpy $3 ``
+            ${EndIf}
+            StrCpy $R0 `End`
+            ${ExitDo}
+          ${EndIf}
 
-      loop:
+          ;Start "CurrentSepCharNum" counter (for "Separators" Loop)
+          StrCpy $R0 0
 
-        StrCpy $R5 $R2 1 $R4
-        StrCmp $R5 `` done
+          ${Do} ;"Separators" Loop
+            ;Use one "Separators" character at a time
+            ${If} $R0 <> 0
+              StrCpy $9 $2 1 $R0
+            ${Else}
+              StrCpy $9 $2 1
+            ${EndIf}
 
-        StrCpy $R6 -1
-        StrCpy $R7 0
-        loop2:
+            ;Go to the next "String" char if it's "Separators" end
+            ${IfThen} $R0 >= $4 ${|} ${ExitDo} ${|}
 
-          IntOp $R6 $R6 + 1
-          IntOp $R7 $R6 + 1
-          StrCpy $R3 $R1 $R7 $R6
-          StrCmp $R3 `` 0 +3
-            IntOp $0 $0 + 1
-            Goto ContLoop2
-          StrCmp $R5 $R3 0 Loop2
-            StrCmp $9 1 0 done
-              StrCmp $0 0 0 done
-                StrCpy $R2 $R2 `` 1
-                Goto Loop
+            ;Or, if "TempStr" equals "CurrentSepChar", then...
+            ${If} $7 == $9
+              StrCpy $7 $3 $6
 
-        ContLoop2:
+              ;If "String" is empty because this result part doesn't
+              ;contain data, verify if "SkipEmptyParts" is activated,
+              ;so we don't return the output to user yet
 
-        IntOp $R4 $R4 + 1
-        Goto loop
+              ${If} $7 == ``
+              ${AndIf} $0 = ${TRUE}
+                IntOp $6 $6 + 1
+                StrCpy $3 $3 `` $6
+                StrCpy $6 0
+                Goto StrSearchLoop
+              ${ElseIf} $8 == $1
+                StrCpy $3 $3 $6
+                StrCpy $R0 "End"
+                ${ExitDo}
+              ${EndIf} ;If not, go to the next result part
+              IntOp $6 $6 + 1
+              StrCpy $3 $3 `` $6
+              StrCpy $6 0
+              Goto ResultPartLoop
+            ${EndIf}
 
-      done:
-      IntOp $R4 $R4 + $0
-      StrCpy $R1 $R2 $0
-      IntOp $0 $0 + 1
-      StrCpy $R2 $R2 `` $0
+            ;Increase "CurrentSepCharNum" counter
+            IntOp $R0 $R0 + 1
+          ${Loop}
+          ${IfThen} $R0 == "End" ${|} ${ExitDo} ${|}
+          
+          ;Increase "StartCharPos" counter
+          IntOp $6 $6 + 1
+        ${Loop}
 
-      StrCmp $2 1 0 +4
-        StrCmp $R1 `` 0 +3
-          StrCpy $R1 $1
-          Goto End
+    /*After this point:
+      ------------------------------------------
+       $3 = OutVar (output)*/
 
-      StrCmp $R0 $R8 End
-        StrCmp $2 1 0 +2
-          StrCpy $1 $R1
-        StrCpy $R1 $R9
-        Goto PartLoop
+      ;Return output to user
 
-      End:
-
-      StrCpy $9 $R1
-
-      Pop $2
-      Pop $1
+      Pop $8
+      Pop $7
+      Pop $6
+      Pop $5
+      Pop $4
       Pop $0
-      Pop $R9
-      Pop $R8
-      Pop $R7
-      Pop $R6
-      Pop $R5
-      Pop $R4
-      Pop $R3
-      Pop $R2
-      Pop $9
-      Pop $R0
-      Exch $R1
+      Pop $1
+      Pop $2
+      Exch $3
     FunctionEnd
 
   !macroend
@@ -1108,22 +1453,42 @@ o-----------------------------------------------------------------------------o
   !macro FUNCTION_STRING_StrTrimNewLines
     !insertmacro STRFUNC_FUNC `StrTrimNewLines` `2003-2004 Ximon Eighteen`
 
+    /*After this point:
+      ------------------------------------------
+       $R0 = String (input)
+       $R1 = TrimCounter (temp)
+       $R2 = Temp (temp)*/
+
+      ;Get input from user
       Exch $R0
       Push $R1
       Push $R2
+      
+      ;Initialize trim counter
       StrCpy $R1 0
 
-    loop:
-      IntOp $R1 $R1 - 1
-      StrCpy $R2 $R0 1 $R1
-      StrCmp $R2 `$\r` loop
-      StrCmp $R2 `$\n` loop
+      loop:
+        ;Subtract to get "String"'s last characters
+        IntOp $R1 $R1 - 1
 
+        ;Verify if they are either $\r or $\n
+        StrCpy $R2 $R0 1 $R1
+        ${If} $R2 == `$\r`
+        ${OrIf} $R2 == `$\n`
+          Goto loop
+        ${EndIf}
+
+      ;Trim characters (if needed)
       IntOp $R1 $R1 + 1
-      IntCmp $R1 0 no_trim_needed
-      StrCpy $R0 $R0 $R1
+      ${If} $R1 < 0
+        StrCpy $R0 $R0 $R1
+      ${EndIf}
 
-    no_trim_needed:
+    /*After this point:
+      ------------------------------------------
+       $R0 = OutVar (output)*/
+
+      ;Return output to user
       Pop $R2
       Pop $R1
       Exch $R0
@@ -1271,33 +1636,35 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
 
-  !macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
+  !macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
     !verbose push
     !verbose 4
-    !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"`
+    !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
     !verbose pop
 
     Push `${String}`
     Push `${CenterStr}`
     Push `${LeftStr}`
     Push `${RightStr}`
-    Push `${IncludeLeftRightStr}`
     Push `${IncludeCenterStr}`
+    Push `${IncludeLeftStr}`
+    Push `${IncludeRightStr}`
     Call StrSort
     Pop `${ResultVar}`
   !macroend
-  !macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
+  !macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeCenterStr IncludeLeftStr IncludeRightStr
     !verbose push
     !verbose 4
-    !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"`
+    !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeCenterStr}" "${IncludeLeftStr}" "${IncludeRightStr}"`
     !verbose pop
 
     Push `${String}`
     Push `${CenterStr}`
     Push `${LeftStr}`
     Push `${RightStr}`
-    Push `${IncludeLeftRightStr}`
     Push `${IncludeCenterStr}`
+    Push `${IncludeLeftStr}`
+    Push `${IncludeRightStr}`
     Call un.StrSort
     Pop `${ResultVar}`
   !macroend
@@ -1406,7 +1773,8 @@ o-----------------------------------------------------------------------------o
     Pop `${ResultVar}`
   !macroend
 
-  !ifndef MUI_VERBOSE
-    !define MUI_VERBOSE 4
-  !endif
 !endif
+!verbose 3
+!define STRFUNC_VERBOSITY ${_STRFUNC_VERBOSITY}
+!undef _STRFUNC_VERBOSITY
+!verbose pop
