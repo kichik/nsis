@@ -121,47 +121,49 @@ a:hover
  <td><div class="margin">
 <p class="header">Introduction</p>
 <p class="text">NSIS 2 makes it is possible to create installers
-  with a custom user interface. The Modern UI is an interface like
-  the wizards of recent Windows versions.</p>
+  with a custom user interface. The Modern UI is an interface with a
+  style like the wizards of recent Windows versions.</p>
 <p class="text">This new interface also features new pages
-(Welcome, Finish, Start Menu) and a description area on the component
- selection page.</p>
-<p class="text">Because of the macro system with support for plugins
-and the special language files, writing scripts for the Modern UI is
-easy.</p>
+(Welcome, Finish, Start Menu) and a description area on the components
+ page. The interface and the graphics can be customized using the
+ provided settings.</p>
+<p class="text">Using the Modern UI macro's and language files,
+writing scripts with a modern interface is easy. This document contains
+information about writing Modern UI scripts and a reference of all
+settings.</p>
 <p class="text"><span class="bold">Important: </span>Because the Modern
 UI has its own macro system, its own default settings and a lot of
 new features, the interface configuration works differently. So you
-should not use commands like Icon, BrandingText etc. Read this document
-for more info.</p>
+should not use commands like Icon, BrandingText etc.</p>
 <p class="header">Screenshots</p>
 <p class="text"><img src="Screenshot.png" width="503" height="393" alt="" /></p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt="" /></p>
 <p class="header">How to use</p>
-<p class="text">The Modern UI has a macro system, so most of the code
-  has already been written for you!</p>
-<p class="text">The easiest way to use the Modern UI is to customize
-one of the <a href="#examples">example</a> scripts, but you can also
-modify an existing script.</p>
+<p class="text">The Modern UI has a macro system, so all the code the
+control the interface has already been written for you.</p>
+<p class="text">If you want to start a new Modern UI script or upgrade
+an older script with the Classic UI, follow the steps below.</p>
+<p class="text">Taking a look at the <a href="#examples">example</a> scripts
+will also help you to learn more about the Modern UI.</p>
 <p class="text"><span class="bold">Note:</span> If you want to add a
 double quote (&quot;) to a Modern UI string, you should always escape
 it ($\&quot;), because the Modern UI macro's use &quot; to separate
 parameters.</p>
-<p class="text">To use the Modern UI in an existing script, you should
-follow these steps:</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
-  <p class="text">MUI.nsh is in the Include directory, so you don't have
+    <p class="text">MUI.nsh is in the Include directory, so you don't have
   to specify a path.</p>
   <p class="subheader">2. Define the name and version of your software</p>
 <pre class="margin">
 !define MUI_PRODUCT "Your Software"
 !define MUI_VERSION "1.0"
 </pre>
+  <p class="text">This information will be used inside the texts for the installer
+  interface.</p>
   <p class="subheader">3. Pages</p>
-  <p class="text">Insert the following macro's to set the pages you want to use
-  and the order of the pages. You can insert custom Page commmands between
-  the macro's to add custom pages.<br />
+  <p class="text">Insert the following macro's to set the pages you want to use.
+  The pages will appear in the order you insert them in your script.
+  You can also insert custom Page commmands between the macro's to add custom pages.<br />
   <a href="#customPages">More info about custom pages...</a></p>
   <p class="text">Example:</p>
   <pre class="margin">!insertmacro MUI_PAGE_COMPONENTS</pre>
@@ -213,7 +215,7 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
   No description area.</p>
   </div>
-  <p class="sub2header">Start Menu Folder Selection Page Settings</p>
+  <p class="sub2header">Start Menu Folder Page Settings</p>
   <div class="margin">
   <p class="text">If you did not disable the 'Do not create shortcuts' checkbox,
   put the script code to write the shortcuts between these macro's,
@@ -312,15 +314,17 @@ follow these steps:</p>
   The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-install.ico</i></p>
   <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
   The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-uninstall.ico</i></p>
-  <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">color: RRGGBB</span><br />
-  The background color for the license textbox.<br /><i>Default: /windows</i></p>
+  <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">
+  (/windows | /grey | (color: RRGGBB))</span><br />
+  The background color for the license textbox. Use /windows for the default text background (usually white).
+  Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
   <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
-  <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows | (foreground color: RRGGBB)
-  (background color: RRGGBB))</span><br />
-  The colors of the details screen. Use /windows instead of the colors to use the Windows
-  colors (the default).<br /><i>Default: /windows</i></p>
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows |
+  (foreground color: RRGGBB) (background color: RRGGBB))</span><br />
+  The colors of the details screen. Use /windows for the default colors.<br />
+  <i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
   The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
   <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
@@ -354,7 +358,7 @@ follow these steps:</p>
   <p class="subheader">5. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
-  own function and let the Modern UI functions call them..</p>
+  own function and let the Modern UI functions call them.</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
   <p class="subheader">6. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
@@ -395,6 +399,7 @@ follow these steps:</p>
   <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title on the Welcome and Finish page.</p>
   <p class="sub2header">Language selection dialog</p>
+  <div class="margin">
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
   MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit:</p>
@@ -428,11 +433,21 @@ FunctionEnd
   <p class="text"><span class="bold">MUI_LANGDLL_ALWAYSSHOW</span><br />
   Always show the language selection dialog, even if a language has been stored in the registry.
   The language stored in the registry will be selected by default.</p>
+  </div>
   <p class="subheader">7. Set the descriptions for the sections</p>
-  <p class="text">Insert the description macro's to set the descriptions
-  for the sections. These descriptions will be displayed on the component
-  selection page, when the users hovers the mouse over a section.
-  If you don't want to use descriptions, use the modern3.exe UI.</p>
+  <p class="text">The descriptions of sections will be displayed on the
+  componens page, when the users hovers the mouse over a section.
+  If you don't want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
+  setting.</p>
+  <p class="text">To set a description for a section, you have to add an
+  additional parameter to the Section commmand with a name for the define
+  that should contain the section number:</p>
+<pre class="margin">
+Section "Section Name 1" Section1
+   ...
+SectionEnd
+</pre>
+<p class="text">Use these macro's to set the descriptions:</p>
 <pre class="margin">
 LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
 LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
@@ -441,13 +456,6 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
   !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
-</pre>
-<p class="text">Add an extra parameter to the Section command to
-set the define with the section number:</p>
-<pre class="margin">
-Section "Section Name 1" Section1
-  ...
-SectionEnd
 </pre>
 <p class="subheader">8. Reserve Files</p>
 <p class="text">If you are using BZIP2 compression, you might need to
@@ -556,7 +564,7 @@ ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
 !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
 !insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
-!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu folder selection page
+!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu Folder page
 </pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br />
@@ -564,7 +572,7 @@ ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
   Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br />
   Header bitmap: <a href="../../Examples/Modern UI/MultiLanguage.nsi">HeaderBitmap.nsi</a><br />
   Custom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">InstallOptions.nsi</a><br />
-  Start Menu Folder selection: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br />
+  Start Menu Folder page: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br />
   </p>
 <p class="header">Customize the dialogs</p>
   <p class="text">To change elements on the dialogs, modify the
@@ -603,7 +611,7 @@ MUI_CUSTOMFUNCTION_UNGUIINIT
 <p class="text">
 <span class="bold">Welcome Page</span><br />
 MUI_CUSTOMFUNCTION_WELCOME_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_WELCOME_SHOW - $MUI_HWND contains HWND of Welcome dialog
+MUI_CUSTOMFUNCTION_WELCOME_SHOW - $MUI_HWND contains the HWND of the Welcome dialog
 MUI_CUSTOMFUNCTION_WELCOME_LEAVE
 </p>
 <p class="text">
@@ -630,7 +638,7 @@ MUI_CUSTOMFUNCTION_STARTMENU_PRE<br />
 MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
 </p>
 <p class="text">
-<span class="bold">Install Files Page</span><br />
+<span class="bold">Install Page</span><br />
 MUI_CUSTOMFUNCTION_INSTFILES_PRE<br />
 MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br />
 MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
@@ -638,7 +646,7 @@ MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
 <p class="text">
 <span class="bold">Finish Page</span><br />
 MUI_CUSTOMFUNCTION_FINISH_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_FINISH_SHOW - $MUI_HWND contains HWND of Finish dialog
+MUI_CUSTOMFUNCTION_FINISH_SHOW - $MUI_HWND contains the HWND of the Finish dialog
 MUI_CUSTOMFUNCTION_FINISH_LEAVE
 </p>
 <p class="text">
@@ -652,7 +660,7 @@ MUI_UNCUSTOMFUNCTION_CONFIRM_SHOW<br />
 MUI_UNCUSTOMFUNCTION_CONFIRM_LEAVE
 </p>
 <p class="text">
-<span class="bold">Uninstaller - Uninstall Files Page</span><br />
+<span class="bold">Uninstaller - Uninstall Page</span><br />
 MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br />
 MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br />
 MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
