@@ -77,7 +77,7 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
     }
 
     // Invalid section pointer (goes beyond the PE image)
-    if (sectionHeadersArray[i].PointerToRawData > m_iSize)
+    if (sectionHeadersArray[i].PointerToRawData > (unsigned int)m_iSize)
       throw runtime_error("Invalid section pointer");
   }
 
