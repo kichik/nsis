@@ -14,22 +14,19 @@ After you have inserted the language file $\{LANG_langfile\} will be defined as 
 
 Defines a multilingual string. This means the its value will be different (or not, it's up to you) for every language. It allows you to easily make your installer multilingual without the need to add massive switches to the script.
 
-Each LangString has a name that identifies it and a value for each language used by the installer. To use a LangString you must know its name. LangStrings can be used in any runtime string in the script. To use a LangString all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.
+Each language string has a name that identifies it and a value for each language used by the installer. They can be used in any runtime string in the script. To use a language string all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.
 
-If you set the ID to 0 it will use the last used language by LangString or \R{loadlanguagefile}{LoadLanguageFile}.
+\\<b\\>Notes:\\</b\\>
 
-\\<b\\>Note:\\</b\\> Unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
+\b Unlike defines that use curly braces - \{\}, language strings use parenthesis - ().
 
-For example, instead of:
+\b If you change the langauge in the .onInit function, note that language strings in .onInit will still use the detected language based on the user's default Windows language, because the language is initialized after .onInit.
 
-\c  StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
-\c    MessageBox MB_OK "English message"
-\c  StrCmp $LANGUAGE ${LANG_FRENCH} 0 +2
-\c    MessageBox MB_OK "French message"
-\c  StrCmp $LANGUAGE ${LANG_KOREAN} 0 +2
-\c    MessageBox MB_OK "Korean message"
+\b Always set langauge strings for every language in your script.
 
-Use:
+\b If you set the language ID to 0 the last used language by LangString or \R{loadlanguagefile}{LoadLanguageFile} will be used.
+
+\\<b\\>Example of usage:\\</b\\>
 
 \c  LangString message ${LANG_ENGLISH} "English message"
 \c  LangString message ${LANG_FRENCH} "French message"
@@ -63,7 +60,7 @@ When the installer starts up it goes through these steps to select the interface
 
 \n Get user's default Windows language
 
-\n Find a perfect match for the default langauge
+\n Find a perfect match for the langauge
 
 \n If there is no perfect match, find a primary language match
 
