@@ -297,6 +297,9 @@ CEXEBuild::CEXEBuild()
   ubuild_custom_used=0;
 
   res_editor=0;
+
+  build_last_page_define[0]=0;
+  ubuild_last_page_define[0]=0;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
