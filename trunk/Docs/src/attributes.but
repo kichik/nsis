@@ -257,13 +257,17 @@ Sets whether or not the details of the uninstall are shown. Can be 'hide' to hid
 
 \c \\<b\\>normal\\</b\\>|silent|silentlog
 
-Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using see \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using see \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+
+See \k{silent} for more information.
 
 \S2{asilentuninstall} SilentUnInstall
 
 \c \\<b\\>normal\\</b\\>|silent
 
-Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use \R{messagebox}{MessageBox}'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+
+See \k{silent} for more information.
 
 \S2{aspacetexts} SpaceTexts
 
