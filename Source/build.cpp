@@ -773,16 +773,23 @@ int CEXEBuild::add_section(const char *secname, const char *file, int line, cons
     return PS_OK;
   }
 
+  char *name = (char*)secname;
+
   int n=(build_sections.getlen()/sizeof(section));
   build_sections.resize(build_sections.getlen()+sizeof(section));
   build_cursection=((section*)build_sections.get()) + n;
   build_cursection->flags=SF_SELECTED;
-  build_cursection->name_ptr=add_string(secname[0]=='-'&&secname[1]?secname+1:secname);
+  build_cursection->flags|=expand?SF_EXPAND:0;
+  if (secname[0]=='!' || (secname[0]=='-' && secname[1]=='!')) {
+    name++;
+    build_cursection->flags|=SF_BOLD;
+  }
+  build_cursection->flags|=expand?SF_EXPAND:0;
+  build_cursection->name_ptr=add_string(secname[0]=='-'&&secname[1]?++name:name);
   build_cursection->code=cur_entries->getlen()/sizeof(entry);
   build_cursection->code_size=0;
   build_cursection->size_kb=0;
-  build_cursection->flags|=expand?SF_EXPAND:0;
-  build_cursectinn->install_tpyes=0;
+  build_cursection->install_types=0;
 
   if (secname[0]=='-')
   {
