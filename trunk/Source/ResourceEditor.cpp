@@ -403,13 +403,13 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
       szName[mbsSize] = 0;
 #else
       {
-        iconv_t cd = iconv_open("", "UCS-2");
+        iconv_t cd = iconv_open("CP1252", "UCS-2");
         if (cd != (iconv_t) -1)
         {
           char *in = (char *) rds->NameString;
-          char *out = szName = new char[rds->Length * 2 + 1];
+          char *out = szName = new char[(rds->Length + 1) * sizeof(WCHAR)];
           size_t insize = rds->Length;
-          size_t outsize = rds->Length * 2 + 1;
+          size_t outsize = (rds->Length + 1) * sizeof(WCHAR);
           if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
             throw runtime_error("Unicode conversion failed");
           iconv_close(cd);
@@ -528,17 +528,17 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
 #else
     {
-      iconv_t cd = iconv_open("UCS-2", "");
+      iconv_t cd = iconv_open("UCS-2", "CP1252");
       if (cd != (iconv_t) -1)
       {
         char *in = szName;
         char *out = (char *) szwName;
         size_t insize = iLen + 1;
-        size_t outsize = (iLen + 1) * sizeof(unsigned short);
+        size_t outsize = insize * sizeof(WCHAR);
         if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
           iLen = (WORD) -1;
         else
-          iLen = (WORD) ((int) out - (int) szwName - 1);
+          iLen = (WORD) (((int) out - (int) szwName - 2) / 2);
         iconv_close(cd);
       }
       else
