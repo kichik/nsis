@@ -1,89 +1,90 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
-;Language: Serbian (2074)
-;Translation by Vladan Obradovic
+;Language: Serbcyr (3098)
+;Translation by Срђан Обућина <obucina@srpskijezik.edu.yu>
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SERBIAN"
 
-  !define MUI_LANGNAME "Serbian" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Serbian (Cyrillic)" ;Use only ASCII characters (if this is not possible, use the English name)
 
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Dobro doљli u instalaciju programa $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Program жe instalirati $(^NameDA)-u na Vaљ raиunar.\r\n\r\nPreporuиuje se da se zatvore sve aplikacije pre odpoиinjanja Instalacije. Time жe se omoguжiti Instalaciji da aћurira potrebne sistemska datoteke bez potrebe za ponovnim pokretanjem vaљeg raиunara.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Добродошли у инсталациони процес програма $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес инсталирања програма $(^NameDA).\r\n\r\nПрепоручљиво је да искључите све друге програме пре почетка инсталирања. Ово може омогућити ажурирање системских фајлова без потребе за рестартовањем рачунара.\r\n\r\n$_CLICK"
 
-  !define MUI_TEXT_LICENSE_TITLE "Licenca"
-  !define MUI_TEXT_LICENSE_SUBTITLE "Proиitajte licencu pre instalacije $(^NameDA)-e."
-  !define MUI_INNERTEXT_LICENSE_TOP "Pritisnite Page Down da vidite ostatak licence."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Ukoliko prihvatate uslove licence, odaberite Prihvatam za nastavak. Licenca se mora prihvatiti ukolko ћelite da instalirate $(^NameDA)-u."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvatate uslove licence, kliknite na check box ispod. Licenca se mora prihvatiti ukolko ћelite da instalirate $(^NameDA)-u.  $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvatate uslove licence, odaberite prvu opciju ispod. Licenca se mora prihvatiti ukolko ћelite da instalirate $(^NameDA)-u. $_CLICK"
+  !define MUI_TEXT_LICENSE_TITLE "Договор о праву коришћења"
+  !define MUI_TEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре инсталације програма $(^NameDA)-e."
+  !define MUI_INNERTEXT_LICENSE_TOP "Притисните Page Down да би видели остатак договора."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме 'Прихватам' за наставак. Морате прихватити договор да би инсталирали програм $(^NameDA)-u."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да би инсталирали програм $(^NameDA)-u. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да би инсталирали програм $(^NameDA)-u. $_CLICK"
 
-  !define MUI_TEXT_COMPONENTS_TITLE "Odaberite komponente"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "Odaberite koje komponente $(^NameDA)-e ћelite da instalirate."
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Opis"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pozicionirajte se miљem iznad komponente da vidite njen opis."
+  !define MUI_TEXT_COMPONENTS_TITLE "Избор компоненти за инсталирање"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "Изаберите компоненте за инсталирање. Инсталирају се само означене компоненте."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Опис"
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Пређите курсором миша преко имена компоненте да бисте видели њен опис."
 
-  !define MUI_TEXT_DIRECTORY_TITLE "Odaberite instalacioni direktorijum"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Odaberite direktorijum u koji ћelite da instalirate $(^NameDA)-u."
+  !define MUI_TEXT_DIRECTORY_TITLE "Избор директоријума за инсталирање"
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Изаберите директоријум у који ћете инсталирати програм $(^NameDA)."
 
-  !define MUI_TEXT_INSTALLING_TITLE "Instalacija"
-  !define MUI_TEXT_INSTALLING_SUBTITLE "Molim Vas priиekajte instalacija $(^NameDA)-e je u toku."
+  !define MUI_TEXT_INSTALLING_TITLE "Инсталирање"
+  !define MUI_TEXT_INSTALLING_SUBTITLE "Сачекајте док се програм $(^NameDA) инсталира."
 
-  !define MUI_TEXT_FINISH_TITLE "Instalacija zavrљena"
-  !define MUI_TEXT_FINISH_SUBTITLE "Instalacija je uspeљno zavrљena."
+  !define MUI_TEXT_FINISH_TITLE "Завршено инсталирање"
+  !define MUI_TEXT_FINISH_SUBTITLE "Инсталирање је успешно завршено."
 
-  !define MUI_TEXT_ABORT_TITLE "Instalacija prekinuta"
-  !define MUI_TEXT_ABORT_SUBTITLE "Setup nije uspeљno zavrљen."
+  !define MUI_TEXT_ABORT_TITLE "Прекинуто инсталирање"
+  !define MUI_TEXT_ABORT_SUBTITLE "Инсталирање је прекинуто и није успешно завршено."
 
-  !define MUI_BUTTONTEXT_FINISH "&Zavrљi"
-  !define MUI_TEXT_FINISH_INFO_TITLE "Zavrљavanje $(^NameDA) Instalacije"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) je instalirana na Vaљ raиunar.\r\n\r\nKliknite Zavrљi da zatvorite instalacioni program."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Vaљ raиunar je potrebno restartovati da bi instalacija $(^NameDA)-e bila kompletirana. Ћelite li da raиunar restartujete odmah?"
-  !define MUI_TEXT_FINISH_REBOOTNOW "Restartuj odmah"
-  !define MUI_TEXT_FINISH_REBOOTLATER "Ћelim ga ruиno restartovati kasnije"
-  !define MUI_TEXT_FINISH_RUN "Pokreni $(^NameDA)-u"
-  !define MUI_TEXT_FINISH_SHOWREADME "Pokaћi Readme"
+  !define MUI_BUTTONTEXT_FINISH "Крај"
+  !define MUI_TEXT_FINISH_INFO_TITLE "Завршено инсталирање програма $(^NameDA)"
+  !define MUI_TEXT_FINISH_INFO_TEXT "Програм $(^NameDA) је инсталиран на рачунар.\r\n\r\nПритисните дугме 'Крај' за затварање овог прозора."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Рачунар мора бити рестартован да би се процес инсталирања програма $(^NameDA) успешно завршио. Желите ли одмах да рестартујете рачунар?"
+  !define MUI_TEXT_FINISH_REBOOTNOW "Рестартуј одмах"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Без рестартовања"
+  !define MUI_TEXT_FINISH_RUN "Покретање програма $(^NameDA)"
+  !define MUI_TEXT_FINISH_SHOWREADME "Прикажи ПрочитајМе фајл"
 
-  !define MUI_TEXT_STARTMENU_TITLE "Odaberite Direktorijum u Start Meniju"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Odaberite direktorijum u Start Meniju za programske shortcutove."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Odaberite direktorijum u Start Meniju u kom ћelite napraviti programske shortcutove. Takoрe, moћete uneti ime da bi se naparavio novi direktorijum."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nemoj praviti shortcut-ove"
+  !define MUI_TEXT_STARTMENU_TITLE "Избор директоријума у Старт менију"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Изаберите директоријум у Старт менију у коме ће се креирати пречице."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Изаберите директоријум у Старт менију у коме желите да буду креиране пречице програма. Такође можете уписати и име за креирање новог директоријума."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Без креирања пречица"
 
-  !define MUI_TEXT_ABORTWARNING "Da li ste sigurni da ћelite prekinuti $(^Name) Instalaciju?"
+  !define MUI_TEXT_ABORTWARNING "Сигурно желите да прекинете инсталирање програма $(^Name)?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodoљli u postupak deinstalacije programa $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj иarobnjak жe Vas provesti kroz postupak deinstalacije programa $(^NameDA).\r\n\r\nPre samog poиetka, molim Vas zatvorite program $(^NameDA) ukoliko je otvoren.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добродошли у деинсталирање програма $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес деинсталирања програма $(^NameDA).\r\n\r\nПре почетка деинсталирања, уверите се да је програм $(^NameDA) искључен. $_CLICK"
 
-  !define MUI_UNTEXT_CONFIRM_TITLE "Deinstalacija programa $(^NameDA)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^NameDA) жe biti deinstaliran s Vaљeg raиunara."
+  !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталирање програма$(^NameDA)"
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Деинсталирање програма $(^NameDA) са рачунара."
 
-  !define MUI_UNTEXT_LICENSE_TITLE "Licenca"  
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Proиitajte licencu pre deinstalacije programa $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Ukoliko prihvatate uslove licence, odaberite 'Prihvatam' za nastavak. Morate prihvatiti licencu za deinstalaciju programa $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvatate uslove iz licence, obeleћite kvadratiж ispod. Morate prihvatiti licencu za deinstalaciju programa $(^NameDA). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvatate uslove iz licence, odaberite prvu opciju ispod. Morate prihvatiti licencu za deinstalaciju programa $(^NameDA). $_CLICK"
+  !define MUI_UNTEXT_LICENSE_TITLE "Договор о праву коришћења"  
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре деинсталације програма $(^NameDA)-e."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме 'Прихватам' за наставак. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u. $_CLICK"
 
-  !define MUI_UNTEXT_COMPONENTS_TITLE "Izbor komponenti"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Odaberite koje komponente programa $(^NameDA) ћelite deinstalirati."
+  !define MUI_UNTEXT_COMPONENTS_TITLE "Избор компоненти за деинсталирање"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Изаберите компоненте за деинсталирање. Деинсталирају се само означене компоненте."
 
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Odaberite direktorijum koji se deinstalira"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Odaberite programsku grupu iz koje ћelite deinstalirati program $(^NameDA)."
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Избор директоријума за деинсталирање"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Изаберите директоријум из кога ћете деинсталирати програм $(^NameDA)."
 
-  !define MUI_UNTEXT_UNINSTALLING_TITLE "Deinstalacija"
-  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Priиekajte zavrљetak deinstalacije programa $(^NameDA)."
+  !define MUI_UNTEXT_UNINSTALLING_TITLE "Деинсталирање"
+  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Сачекајте док се програм $(^NameDA) деинсталира."
 
-  !define MUI_UNTEXT_FINISH_TITLE "Zavrљeno"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "Deinstalacija je uspeљno zavrљena."
+  !define MUI_UNTEXT_FINISH_TITLE "Завршено деинсталирање"
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Деинсталирање је успешно завршена."
   
-  !define MUI_UNTEXT_ABORT_TITLE "Deinstalacija prekinuta"
-  !define MUI_UNTEXT_ABORT_SUBTITLE "Deinstalacija nije uspeљno zavrљena."
+  !define MUI_UNTEXT_ABORT_TITLE "Прекинуто деинсталирање"
+  !define MUI_UNTEXT_ABORT_SUBTITLE "Деинсталирање је прекинуто и није успешно завршено."
 
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Kraj deinstalacije programa $(^NameDA)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^NameDA) je deinstaliran s Vaљeg raиunara.\r\n\r\nOdaberite 'Kraj' za zatvaranje ove deinstalacije."
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Завршено деинсталирање програма $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "Програм $(^NameDA) је деинсталиран са рачунара.\r\n\r\nПритисните дугме 'Крај' за затварање овог прозора."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Рачунар мора бити рестартован да би завршили деинсталирање програма $(^NameDA). Желите ли одмах да рестартујете рачунар?"
 
-  !define MUI_UNTEXT_ABORTWARNING "Jeste li sigurni da ћelite prekinuti deinstalaciju programa $(^Name)?"  
+  !define MUI_UNTEXT_ABORTWARNING "Сигурно желите да прекинете деинсталирање програма $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
