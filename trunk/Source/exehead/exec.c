@@ -433,10 +433,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             break;
           }
           log_printf2("File: error creating \"%s\"",buf0);
-          mystrcpy(buf2,g_usrvars[0]); //save $0
-          mystrcpy(g_usrvars[0],buf0);
 
-          GetNSISString(buf1,parm5);
+          mystrcpy(buf2,g_usrvars[0]); // save $0
+          mystrcpy(g_usrvars[0],buf0); // copy file name to $0
+          GetNSISString(buf1,parm5); // use $0
           mystrcpy(g_usrvars[0],buf2); // restore $0
 
           // Modified by ramon 23 May 2003
@@ -712,7 +712,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
     break;
     case EW_ISWINDOW:
-        if (IsWindow((HWND)GetIntFromParm(0))) return parm1;
+      if (IsWindow((HWND)GetIntFromParm(0))) return parm1;
     return parm2;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case EW_GETDLGITEM:
