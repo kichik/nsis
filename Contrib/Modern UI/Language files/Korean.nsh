@@ -1,9 +1,10 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Korean (1042)
 ;By linak linak@korea.com ( ~ V2.0 BETA3 )
-;By park,kun-hong koder@popdesk.co.kr(wini.pe.kr) ( V2.0 BETA3 ~ ) (last update:2003/10/23)  수정시 꼭 연락 바랍니다.
+;By park,kun-hong koder@popdesk.co.kr(wini.pe.kr) ( V2.0 BETA3 ~ ) (last update:2003/12/2)  수정시 꼭 연락 바랍니다.
+
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "KOREAN"
@@ -87,6 +88,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "제거 완료"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name)의 제거가 완료 되었습니다."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "$(^Name)의 제거를 완료하기 위해서는 시스템을 다시 시작해야 합니다. 지금 재부팅 하시겠습니까?"
   
   !define MUI_UNTEXT_ABORTWARNING "$(^Name) 제거를 취소 하시겠습니까?"
 
