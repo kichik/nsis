@@ -36,27 +36,27 @@ $(^Name) Poisto
 # ^UninstallingSubCaption
 : Poistetaan
 # ^UnCompletedSubCaption
-: Valmis   
+: Valmis
 # ^BackBtn
 < &Takaisin
 # ^NextBtn
-&Seuraava >                      
+&Seuraava >
 # ^AgreeBtn
-&Hyväksyn  
+&Hyväksyn
 # ^AcceptBtn
 Hyväksyn lisenssisopimuksen ehdot
 # ^DontAcceptBtn
 En hyväksy sopimuksen ehtoja
 # ^InstallBtn
-&Asenna      
+&Asenna
 # ^UninstallBtn
-&Poista        
+&Poista
 # ^CancelBtn
-Peruuta     
+Peruuta
 # ^CloseBtn
-&Sulje     
+&Sulje
 # ^BrowseBtn
-S&elaa...   
+S&elaa...
 # ^ShowDetailsBtn
 &Näytä tiedot
 # ^ClickNext
@@ -66,9 +66,9 @@ Valitse Asenna aloittaaksesi asennuksen.
 # ^ClickUninstall
 Valitse Poista poistaaksesi asennuksen.
 # ^Name
-Nimi   
+Nimi
 # ^Completed
-Valmis      
+Valmis
 # ^LicenseText
 Lue lisenssisopimus ennen asentamista. Jos hyväksyt kaikki ehdot, valitse Hyväksyn.
 # ^LicenseTextCB
@@ -98,7 +98,7 @@ Valitse poistotyyppi:
 # ^UnComponentsSubText2_NoInstTypes
 Valitse poistettavat komponentit:
 # ^UnComponentsSubText2
-Tai, valitse valinnaiset komponentit, jotka haluat poistaa       
+Tai, valitse valinnaiset komponentit, jotka haluat poistaa
 # ^DirText
 Asennus asentaa ohjelman $(^Name) seuraavaan hakemistoon. Asentaaksesi johonkin muuhun hakemistoon, valitse selaa ja valitse toinen hakemisto. $_CLICK
 # ^DirSubText
@@ -112,9 +112,9 @@ Asennus poistaa ohjelman $(^Name) seuraavasta hakemistosta. Poistaaksesi jostaki
 # ^UnDirBrowseText
 Valitse hakemisto, josta haluat poistaa ohjelman $(^Name):
 # ^SpaceAvailable
-Tilaa vapaana:
+"Tilaa vapaana: "
 # ^SpaceRequired
-Tarvittava tila:
+"Tarvittava tila: "
 # ^UninstallingText
 Tämä ohjelma poistaa ohjelman $(^Name) koneeltasi. $_CLICK
 # ^UninstallingSubText
@@ -124,59 +124,59 @@ Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Hylkää lopettaaksesi asennuksen,
 # ^FileError_NoIgnore
 Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Uudelleen yrittääksesi uudelleen, tai\r\nHylkää lopettaaksesi asennuksen
 # ^CantWrite
-Ei voi kirjoittaa:
+"Ei voi kirjoittaa: "
 # ^CopyFailed
 Kopiointi epäonnistui
 # ^CopyTo
-Kopioidaan kohteeseen
+"Kopioidaan kohteeseen "
 # ^Registering
-Rekisteröidään:
+"Rekisteröidään: "
 # ^Unregistering
-Poistetaan rekisteröinti:
+"Poistetaan rekisteröinti: "
 # ^SymbolNotFound
-Symbolia ei löytynyt:
+"Symbolia ei löytynyt: "
 # ^CouldNotLoad
-Ei voitu ladata:
+"Ei voitu ladata: "
 # ^CreateFolder
-Luo hakemisto: 
+"Luo hakemisto: "
 # ^CreateShortcut
-Luo pikakuvake:
+"Luo pikakuvake: "
 # ^CreatedUninstaller
-Poisto-ohjelma luotiin:
+"Poisto-ohjelma luotiin: "
 # ^Delete
-Poista:  
+"Poista: "
 # ^DeleteOnReboot
-Poista käynnistyksen yhteydessä:
+"Poista käynnistyksen yhteydessä: "
 # ^ErrorCreatingShortcut
-Virhe luotaessa pikakuvaketta:
+"Virhe luotaessa pikakuvaketta: "
 # ^ErrorCreating
-Virhe luotaessa:
+"Virhe luotaessa: "
 # ^ErrorDecompressing
 Pakettia ei voitu purkaa. Korruptoitunut asennusohjelma?
 # ^ErrorRegistering
 Virhe rekisteröidessä DLL-tiedostoa
 # ^ExecShell
-ExecShell:  
+"ExecShell: "
 # ^Exec
-Aja:
+"Aja: "
 # ^Extract
-Pura:
+"Pura: "
 # ^ErrorWriting
-Pura: ei voitu kirjoittaa
+"Pura: ei voitu kirjoittaa "
 # ^InvalidOpcode
 Asennus korruptoitunut
 # ^NoOLE
-Ei OLEa:
+"Ei OLEa: "
 # ^OutputFolder
-Hakemisto:     
+"Hakemisto: "
 # ^RemoveFolder
-Poista hakemisto:
+"Poista hakemisto: "
 # ^RenameOnReboot
-Muuta nimi uudelleenkäynnistyksen yhteydessä:
+"Muuta nimi uudelleenkäynnistyksen yhteydessä: "
 # ^Rename
-Muuta nimi:
+"Muuta nimi: "
 # ^Skipped
-Ohitettiin:
+"Ohitettiin: "
 # ^CopyDetails
 Kopioi tiedot leikepöydälle
 # ^LogInstall
