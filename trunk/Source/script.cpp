@@ -62,18 +62,19 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
   char datebuf[128] = "";
   char timebuf[128] = "";
   WIN32_FIND_DATA fd;
-  SYSTEMTIME stime, sloctime;
+  FILETIME floctime;
+  SYSTEMTIME stime;
 
   HANDLE hSearch = FindFirstFile(filename, &fd);
   if (hSearch != INVALID_HANDLE_VALUE)
   {
     FindClose(hSearch);
 
-    FileTimeToSystemTime(&fd.ftLastWriteTime, &stime);
-    SystemTimeToTzSpecificLocalTime(0, &stime, &sloctime);
+    FileTimeToLocalFileTime(&fd.ftLastWriteTime, &floctime);
+    FileTimeToSystemTime(&floctime, &stime);
 
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &sloctime, NULL, datebuf, sizeof(datebuf)); 
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &sloctime, NULL, timebuf, sizeof(timebuf)); 
+    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
     wsprintf(timestampbuf,"%s %s",datebuf,timebuf);
 
     definedlist.add("__TIMESTAMP__",timestampbuf);
