@@ -336,6 +336,15 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
 FunctionEnd
 </pre>
+<p class="text">If your INI File is located in another directory, use
+MUI_INSTALLOPTIONS_EXTRACT_AS. The second parameter is the filename for
+the Plugins directory. Use this name when inserting the other InstallOptions
+macro's:</p>
+<pre class="margin">
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
+FunctionEnd
+</pre>
 <p class="text">You can call Install Options in the function defined with the Page
 or UninstPage command:</p>
 <pre class="margin">
