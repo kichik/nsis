@@ -2480,7 +2480,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             c=VK_F1-1+atoi(s+1);
             if (atoi(s+1) < 1 || atoi(s+1) > 24)
             {
-              warning("CreateShortCut: F-key \"%s\" out of range (%s:%d)\n",s,curfilename,linecnt);
+              warning("CreateShortCut: F-key \"%s\" out of range (%s:%d)",s,curfilename,linecnt);
             }
           }
           else if (s[0] >= 'a' && s[0] <= 'z' && !s[1])
@@ -2490,7 +2490,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           else
           {
             c=s[0];
-            warning("CreateShortCut: unrecognized hotkey \"%s\" (%s:%d)\n",s,curfilename,linecnt);
+            warning("CreateShortCut: unrecognized hotkey \"%s\" (%s:%d)",s,curfilename,linecnt);
           }
           ent.offsets[4] |= (c) << 16;
         }
