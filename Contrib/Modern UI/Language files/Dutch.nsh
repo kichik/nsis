@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Nederlands" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Welkom bij de $(^NameDA) Setup Wizard"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^NameDA) op uw systeem installeren.\r\n\r\nHet is aanbevolen dat u alle andere programma's afsluit voordat u Setup start. Dit zorgt ervoor dat Setup bepaalde systeembestanden kan bijwerken zonder uw systeem opniew op te starten.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^NameDA) op uw systeem installeren.\r\n\r\nHet is aanbevolen dat u alle andere programma's afsluit voordat u Setup start. Dit zorgt ervoor dat Setup bepaalde systeembestanden kan bijwerken zonder uw systeem opnieuw op te starten.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licentie Overeenkomst"
   !define MUI_TEXT_LICENSE_SUBTITLE "Lees de licentie overeenkomst voordat u $(^NameDA) installeert."
@@ -26,7 +26,7 @@
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beweeg uw muis over een onderdeel om een beschrijving te zien."
   
   !define MUI_TEXT_DIRECTORY_TITLE "Kies Installatie Locatie"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Kies de map waarin u $(^NameDA) in wilt installeren."
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Kies de map waarin u $(^NameDA) wilt installeren."
   
   !define MUI_TEXT_INSTALLING_TITLE "Bezig met installeren"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Een ogenblik geduld a.u.b. terwijl $(^NameDA) wordt geinstalleerd."
