@@ -29,6 +29,19 @@ prefixed with '>'. The function does not push the full path but only the selecte
 sub-folder. It's up to you to decide if to put it in the current user or all
 users start menu.
 
-Look at Example.nsi for an example.
+To set properties of the controls on the page, such as colors and fonts use Init
+and Show instead of Select. Init will push the HWND of the page on the stack,
+or an error string. For example:
+
+StartMenu::Init /NOUNLOAD "Test"
+Pop $0
+IntCmp $0 0 failed
+GetDlgItem $0 $0 1003
+SetCtlColors $0 "" FF0000
+StartMenu::Show
+# continue as with Select here
+failed:
+
+Look at Example.nsi for a full example (without Init and Select).
 
 Created by Amir Szekely (aka KiCHiK)

@@ -27,7 +27,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
-void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
   HWND hwStartMenuSelect;
 
@@ -71,11 +71,17 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       {
         popstring(checkbox);
       }
+      
       if (popstring(buf))
+      {
         *buf = 0;
+      }
     }
+
     if (*buf)
+    {
       lstrcpy(progname, buf);
+    }
     else
     {
       pushstring("error reading parameters");
@@ -87,23 +93,40 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
     if (!hwStartMenuSelect)
     {
       pushstring("error creating dialog");
-      g_done = 1;
+      return;
     }
     else
     {
       lpWndProcOld = (void *) SetWindowLong(hwndParent, DWL_DLGPROC, (long) ParentWndProc);
+      wsprintf(buf, "%u", hwStartMenuSelect);
+      pushstring(buf);
     }
+  }
+}
 
-    while (!g_done)
-    {
-      MSG msg;
-      int nResult = GetMessage(&msg, NULL, 0, 0);
-      if (!IsDialogMessage(hwStartMenuSelect,&msg) && !IsDialogMessage(hwndParent,&msg) && !TranslateMessage(&msg))
-        DispatchMessage(&msg);
-    }
-    DestroyWindow(hwStartMenuSelect);
+void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+{
+  HWND hwStartMenuSelect = g_hwStartMenuSelect;
 
-    SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
+  while (!g_done)
+  {
+    MSG msg;
+    int nResult = GetMessage(&msg, NULL, 0, 0);
+    if (!IsDialogMessage(hwStartMenuSelect,&msg) && !IsDialogMessage(hwndParent,&msg) && !TranslateMessage(&msg))
+      DispatchMessage(&msg);
+  }
+  DestroyWindow(hwStartMenuSelect);
+
+  SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
+}
+
+void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+{
+  Init(hwndParent, string_size, variables, stacktop);
+  if (g_hwStartMenuSelect)
+  {
+    popstring(buf);
+    Show(hwndParent, string_size, variables, stacktop);
   }
 }
 
@@ -345,6 +368,13 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushstring(buf);
         pushstring("success");
       }
+    case WM_CTLCOLORSTATIC:
+    case WM_CTLCOLOREDIT:
+    case WM_CTLCOLORDLG:
+    case WM_CTLCOLORBTN:
+    case WM_CTLCOLORLISTBOX:
+      // let the NSIS window handle colors, it knows best
+      return SendMessage(hwParent, uMsg, wParam, lParam);
     break;
   }
 	return 0;
