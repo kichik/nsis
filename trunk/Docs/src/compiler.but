@@ -127,15 +127,15 @@ Current line number.
 
 \S1{predate} $\{__DATE__\}
 
-Date according to the current locale.
+Date when the script started compiling according to the current locale.
 
 \S1{pretime} $\{__TIME__\}
 
-Time according to the current locale.
+Time when the script started compiling according to the current locale.
 
 \S1{pretimestamp} $\{__TIMESTAMP__\}
 
-Date & time according to the current locale.
+Date & time of the last modification to the script file according to the current locale.
 
 \S0{compenvvarread} Read enviroment variables
 
