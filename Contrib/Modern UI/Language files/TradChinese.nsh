@@ -1,10 +1,11 @@
 ;Modern UI Language File
 ;version 1 - Compatible with Modern UI 1.3
 
-; Language: "Chinese (Traditional)" (1028)
-; Kii Ali <kiiali@cpatch.org>
+;Language: 'Chinese (Traditional)' (1028)
+;Kii Ali <kiiali@cpatch.org>
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_TRADCHINESE_USED
 
@@ -84,3 +85,5 @@
   !endif  
     
 !endif
+
+!verbose 4

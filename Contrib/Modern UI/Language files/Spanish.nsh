@@ -5,6 +5,7 @@
 ;By MoNKi
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_SPANISH_USED
 
@@ -84,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4

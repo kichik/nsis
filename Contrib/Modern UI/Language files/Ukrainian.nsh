@@ -5,6 +5,7 @@
 ;By Yuri Holubow, Our Soft (http://www.ns.lviv.ua)
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_UKRAINIAN_USED
 
@@ -84,3 +85,5 @@
   !endif  
     
 !endif
+
+!verbose 4

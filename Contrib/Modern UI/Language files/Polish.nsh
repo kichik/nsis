@@ -5,6 +5,7 @@
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_POLISH_USED
 
@@ -84,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4

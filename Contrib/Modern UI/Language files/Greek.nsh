@@ -5,6 +5,7 @@
 ;By Makidis N. Mike
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_GREEK_USED
 
@@ -84,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4

@@ -21,6 +21,8 @@
 !define MUI_TEMP2 $R1
 
 !macro MUI_INTERFACE
+  
+  !verbose 3
 
   ;User interface
   
@@ -72,75 +74,71 @@
   BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
   
   !define CURRENTPAGE ${MUI_CURRENTPAGEVAR}
-
-!macroend
-
-!macro MUI_FINISHHEADER
-
-  ;Finish text on the header (white rectangle)
   
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  
-  !ifndef MUI_SETPAGE_FUNCTIONNAME
-    !error "Modern UI Error: SetPage function name (MUI_SETPAGE_FUNCTIONNAME) not defined!"
-  !endif
-  
-  Call "${MUI_SETPAGE_FUNCTIONNAME}"
-
-!macroend
-
-!macro MUI_UNFINISHHEADER
-
-  ;Finish text on the header (white rectangle)
-  
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  
-  !ifndef MUI_UNSETPAGE_FUNCTIONNAME
-    !error "Modern UI Error: Uninstall SetPage function name (MUI_UNSETPAGE_FUNCTIONNAME) not defined!"
-  !endif
-  
-  Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
+  !verbose 4
 
 !macroend
 
 !macro MUI_INNERDIALOG_INIT
 
+  !verbose 3
+
   Push ${MUI_TEMP1}
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_INNERDIALOG_START PAGE
+  
+  !verbose 3
 
   StrCmp ${CURRENTPAGE} ${PAGE} "" done_${PAGE}
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
-   ;Text on inner dialogs components
+  !verbose 3
+
+  ;Text on inner dialogs components
    
-   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
-   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} ${CONTROL}
-   SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+  FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
+  GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} ${CONTROL}
+  SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+	
+  !verbose 4
 	
 !macroend
 
 !macro MUI_INNERDIALOG_STOP PAGE
 
+  !verbose 3
+
   Goto done
   done_${PAGE}:
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_INNERDIALOG_END
 
+  !verbose 3
+
   done:
   Pop ${MUI_TEMP1}
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_NEXTPAGE
 
+  !verbose 3
+
   ;Set backgrounds & fonts for the outer dialog (only once)
   StrCmp ${CURRENTPAGE} "" "" no_first_run
 
@@ -173,11 +171,15 @@
   !endif
   
   Call "${MUI_SETPAGE_FUNCTIONNAME}"
+  
+  !verbose 4
    
 !macroend
 
 !macro MUI_UNNEXTPAGE
 
+  !verbose 3
+
   ;Set backgrounds & fonts for the outer dialog (only once)
   StrCmp ${CURRENTPAGE} "" "" no_first_run
 
@@ -210,10 +212,14 @@
   !endif
   
   Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
+  
+  !verbose 4
    
 !macroend
 
 !macro MUI_PREVPAGE
+
+  !verbose 3
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
 
@@ -223,9 +229,13 @@
   
   Call "${MUI_SETPAGE_FUNCTIONNAME}"
   
+  !verbose 4
+  
 !macroend
 
 !macro MUI_UNPREVPAGE
+
+  !verbose 3
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
 
@@ -235,21 +245,33 @@
   
   Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
   
+  !verbose 4
+  
 !macroend
 
 !macro MUI_PAGE_INIT
 
+  !verbose 3
+
   Push ${MUI_TEMP1}
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_PAGE_START PAGE
 
-   StrCmp ${CURRENTPAGE} ${PAGE} "" done_${PAGE}
+  !verbose 3
+
+  StrCmp ${CURRENTPAGE} ${PAGE} "" done_${PAGE}
+   
+  !verbose 4
   
 !macroend
 
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
+
+  !verbose 3
 
   ;Text on the white rectangle
 
@@ -257,56 +279,118 @@
   SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
   SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_PAGE_STOP PAGE
 
+  !verbose 3
+
   Goto done
   done_${PAGE}:
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_PAGE_END
+
+  !verbose 3
   
   done:
   Pop ${MUI_TEMP1}
+  
+  !verbose 4
   
 !macroend
 
 !macro MUI_DESCRIPTION_INIT
 
+  !verbose 3
+
   Push ${MUI_TEMP1}
 
   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
+  
+  !verbose 4
 
 !macroend
 
 !macro MUI_DESCRIPTION_TEXT VAR TEXT
+
+  !verbose 3
 
   ;Set text on the Description frame
 
   StrCmp $0 ${VAR} "" +3
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     Goto done
+
+  !verbose 4
     
 !macroend
 
 !macro MUI_DESCRIPTION_END
 
+  !verbose 3
+
   done:
   Pop ${MUI_TEMP1}
+
+  !verbose 4
   
 !macroend
 
+!macro MUI_FINISHHEADER
+
+  !verbose 3
+
+  ;Finish text on the header (white rectangle)
+  
+  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
+  
+  !ifndef MUI_SETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: SetPage function name (MUI_SETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_SETPAGE_FUNCTIONNAME}"
+
+  !verbose 4
+
+!macroend
+
+!macro MUI_UNFINISHHEADER
+
+  !verbose 3
+
+  ;Finish text on the header (white rectangle)
+  
+  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
+  
+  !ifndef MUI_UNSETPAGE_FUNCTIONNAME
+    !error "Modern UI Error: Uninstall SetPage function name (MUI_UNSETPAGE_FUNCTIONNAME) not defined!"
+  !endif
+  
+  Call "${MUI_UNSETPAGE_FUNCTIONNAME}"
+
+  !verbose 4
+
+!macroend
+
 !macro MUI_ABORTWARNING
+
+  !verbose 3
 
   ;Warning when Cancel button is pressed
 
   MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(MUI_MSGTEXT_ABORTWARNING)" IDYES quit
     Abort
     quit:
+
+  !verbose 4
 
 !macroend
 
@@ -315,12 +399,18 @@
 
 !macro MUI_INSTALLOPTIONS DIRECTIONVAR NOSETDIRECTIONVAR
 
+  !verbose 3
+
   !define IO_NOSETDIRECTION ${DIRECTIONVAR}
   !define IO_DIRECTION ${NOSETDIRECTIONVAR}
-  
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
+
+  !verbose 3
 
   ;Init plugin system
   !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
@@ -330,10 +420,14 @@
   !endif  
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
-  
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNEXTRACT FILE
+
+  !verbose 3
 
   ;Init plugin system
   !ifndef MUI_INSTALLOPTIONS_UNINITPLUGINS
@@ -343,35 +437,51 @@
   !endif
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
+
+  !verbose 4
   
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SETDIRECTION DIRECTION
 
+  !verbose 3
+
   StrCpy ${IO_DIRECTION} "${DIRECTION}"
+
+  !verbose 4
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_NEXTPAGE
 
+  !verbose 3
+
   StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
     !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${MUI_INSTALLOPTIONS_DIRECTION_NEXT}
   no_setdirection:
   StrCpy ${IO_NOSETDIRECTION} "0"
-  
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_PREVPAGE
+
+  !verbose 3
 
   StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
     !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${MUI_INSTALLOPTIONS_DIRECTION_PREV}
   no_setdirection:
   StrCpy ${IO_NOSETDIRECTION} "0"
-  
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SHOW PAGE FILE IOBACK IONEXT
-        
+
+  !verbose 3
+
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
   Pop ${MUI_TEMP1}
 
@@ -383,11 +493,15 @@
   noback_${PAGE}:
 
   !insertmacro MUI_INSTALLOPTIONS_${IONEXT}NEXT
-		
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNSHOW PAGE FILE IOBACK IONEXT
-        
+
+  !verbose 3
+
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
   Pop ${MUI_TEMP1}
 
@@ -399,48 +513,68 @@
   noback_${PAGE}:
 
   !insertmacro MUI_INSTALLOPTIONS_UN${IONEXT}NEXT
-		
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_BACK
 
+  !verbose 3
+
   StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_NEXT}" "" +3
     Call .onPrevPage
     Abort
   StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_PREV}" "" +3
     Call .onPrevPage
     Goto done
-            
+
+  !verbose 4
+          
 !macroend
 
 !macro MUI_INSTALLOPTIONS_NEXT
 
+  !verbose 3
+
   StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_NEXT} "" +3
     Call .onNextPage
     Goto done
   StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_PREV} "" +3
     Call .onNextPage
     Abort
-   
+
+  !verbose 4
+ 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_IOBACK
-  
+
+  !verbose 3
+
   StrCpy ${IO_NOSETDIRECTION} "1"
   Call .onPrevPage
   Goto done
-            
+
+  !verbose 4
+          
 !macroend
 
 !macro MUI_INSTALLOPTIONS_IONEXT
 
+  !verbose 3
+
   StrCpy ${IO_NOSETDIRECTION} "1"
   Call .onNextPage
   Goto done
-	
+  
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNBACK
+
+  !verbose 3
 
   StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_NEXT}" "" +3
     Call un.onPrevPage
@@ -448,10 +582,14 @@
   StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_PREV}" "" +3
     Call un.onPrevPage
     Goto done
-            
+
+  !verbose 4
+          
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNNEXT
+
+  !verbose 3
 
   StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_NEXT} "" +3
     Call un.onNextPage
@@ -459,34 +597,52 @@
   StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_PREV} "" +3
     Call un.onNextPage
     Abort
-   
+
+  !verbose 4
+ 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNIOBACK
-  
+
+  !verbose 3
+
   StrCpy ${IO_NOSETDIRECTION} "1"
   Call .onPrevPage
   Goto done
-            
+
+  !verbose 4
+          
 !macroend
 
 !macro MUI_INSTALLOPTIONS_UNIONEXT
 
+  !verbose 3
+
   StrCpy ${IO_NOSETDIRECTION} "1"
   Call .onNextPage
   Goto done
-	
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
 
+  !verbose 3
+
   ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
+
+  !verbose 4
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
 
+  !verbose 3
+
   WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
+
+  !verbose 4
 
 !macroend
 
@@ -495,12 +651,18 @@
 
 !macro MUI_BASICFUNCTIONS_INIT
 
+  !verbose 3
+
   !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
   !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
-  
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_BASICFUNCTIONS
+
+!verbose 3
 
 Function .onNextPage
   !insertmacro MUI_NEXTPAGE
@@ -542,7 +704,7 @@ Function .onInitDialog
     !endif
 
   !insertmacro MUI_INNERDIALOG_END
-  
+
 FunctionEnd
 
 Function SetPage
@@ -591,25 +753,47 @@ Function SetPage
 
 FunctionEnd
 
+!verbose 4
+
 !macroend
 
 !macro MUI_FUNCTION_DESCRIPTION_START
+
+  !verbose 3
+
   Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_INIT
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_FUNCTION_DESCRIPTION_END
+
+  !verbose 3
+
     !insertmacro MUI_DESCRIPTION_END
   FunctionEnd
+
+  !verbose 4  
+
 !macroend
 
 !macro MUI_FUNCTION_ABORTWARNING
+
+  !verbose 3
+
   Function .onUserAbort
     !insertmacro MUI_ABORTWARNING
   FunctionEnd
+
+  !verbose 4
+
 !macroend
 
 !macro MUI_UNBASICFUNCTIONS
+
+!verbose 3
 
 Function un.onNextPage
 
@@ -636,6 +820,8 @@ Function un.SetPage
   !insertmacro MUI_PAGE_END
 
 FunctionEnd
+
+!verbose 4
 
 !macroend
 
