@@ -42,7 +42,7 @@ Sets what the titlebars of the installer will display. By default, it is 'Name S
 
 \c dialog ui_file.exe
 
-Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES} or \e{IDD_UNINST}) by a dialog with the same resource ID in ui_file.exe. You can also specifiy 'all' as the dialog if you wish to load replace all 6 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
+Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specifiy 'all' as the dialog if you wish to load replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
 
 \b \e{IDD_LICENSE} must contain \e{IDC_EDIT1} (RICHEDIT control).
 
