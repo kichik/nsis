@@ -371,7 +371,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         #define overwriteflag parm0
 
         // Modified by ramon 23 May 2003
-        log_printf4("File: overwriteflag=%d, allowskipfilesflag=%d, name=\"%s\"",overwriteflag,allowskipfilesflag,buf3);
+        log_printf4("File: overwriteflag=%d, allowskipfilesflag=%d, name=\"%s\"",overwriteflag,parm5&MB_ABORTRETRYIGNORE,buf3);
         if (validpathspec(buf3))
         {
           mystrcpy(buf0,buf3);
