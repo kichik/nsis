@@ -514,7 +514,7 @@ void BuildMRUMenu(HMENU hMenu)
       }
 
       mii.dwTypeData = buf;
-      mii.cch = sizeof(buf);
+      mii.cch = lstrlen(buf)+1;
       mii.fState = MFS_ENABLED;
       InsertMenuItem(hMenu, IDM_MRU_FILE+i, FALSE, &mii);
     }
