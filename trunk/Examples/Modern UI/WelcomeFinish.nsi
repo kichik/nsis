@@ -50,6 +50,7 @@
   ;Only for BZIP2 compression
   
   !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
+  ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
 
 ;--------------------------------
 ;Installer Sections

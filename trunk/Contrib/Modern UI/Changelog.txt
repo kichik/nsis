@@ -1,11 +1,11 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.66 - September 9, 2003
+1.66 - September 25, 2003
 * New system for page settings and custom pages
 * Support for uninstaller components page
 * Support for multiple pages of the same type
 * Changed macro names
-* Updated langauge system, new language files
+* Updated langauge system, new language files and settings
 * Removed MUI_BRANDINGTEXT. Use BrandingText command now.
 * Removed MUI_PRODUCT and MUI VERSION. Use Name command now.
 
