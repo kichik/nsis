@@ -319,7 +319,7 @@ public:
       SetEvent(hIOReadyEvent);
     }
 
-    HANDLE waitList[2] = {hNeedIOEvent, hCompressionThread};
+    HANDLE waitList[2] = {hNeedIOEvent, (HANDLE) hCompressionThread};
     if (WaitForMultipleObjects(2, waitList, FALSE, INFINITE) != WAIT_OBJECT_0)
     {
       // thread ended or WaitForMultipleObjects failed
