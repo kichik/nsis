@@ -22,7 +22,7 @@ Controls whether or not installs are enabled to the root directory of a drive, o
 
 \c true|\\<b\\>false\\</b\\>
 
-Sets whether or not the install window automatically closes when completed. This is overrideable from a section using SetAutoClose.
+Sets whether or not the install window automatically closes when completed. This is overrideable from a section using \R{setautoclose}{SetAutoClose}.
 
 \S2{abggradient} BGGradient
 
