@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1043
 # Font and size - dash (-) means default
@@ -67,3 +67,11 @@ Hernoem na opstarten:
 Hernoem: 
 Overgeslagen: 
 Kopieer Details naar Klembord
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
