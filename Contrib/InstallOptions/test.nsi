@@ -18,7 +18,7 @@ InstallDir "$PROGRAMFILES\IOTest"
 ;Use ReserveFile for your own InstallOptions INI files too!
 
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
-ReserveFile "Copy of test.ini"
+ReserveFile "test.ini"
 
 ;Texts on the dialogs
 DirText "Choose a directory"
@@ -56,7 +56,7 @@ Function .onInit
   ;$PLUGINSDIR will automatically be removed when the installer closes
   
   InitPluginsDir
-  File /oname=$PLUGINSDIR\test.ini "copy of test.ini"
+  File /oname=$PLUGINSDIR\test.ini "test.ini"
   
 FunctionEnd
 
