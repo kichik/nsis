@@ -1,6 +1,5 @@
 # Header, don't edit
 NLF v6
-# Start editing here
 # Language ID
 1051
 # Font and size - dash (-) means default
@@ -24,7 +23,7 @@ Odinštalácia $(^Name)
 # ^DirSubCaption
 : Adresár inštalácie
 # ^InstallingSubCaption
-: Inštalujem súbory
+: Prebieha inštalácia
 # ^CompletedSubCaption
 : Dokonèené
 # ^UnComponentsSubCaption
@@ -34,7 +33,7 @@ Odinštalácia $(^Name)
 # ^ConfirmSubCaption
 : Potvrdenie
 # ^UninstallingSubCaption
-: Odinštalovávam súbory
+: Prebieha odinštalácia
 # ^UnCompletedSubCaption
 : Dokonèené
 # ^BackBtn
@@ -106,7 +105,7 @@ Cie¾ovı adresár
 # ^DirBrowseText
 Zvo¾te adresár, do ktorého bude $(^Name) nainštalovanı:
 # ^UnDirText
-$(^Name) bude odinštalovanı z nasledujúceho adresára: Pre odinštalovanie z iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
+Inštalátor odinštaluje $(^Name) z nasledujúceho adresára: Pre odinštalovanie z iného adresára kliknite Prehliada a vyberte inı adresár. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -116,9 +115,9 @@ Zvo¾te adresár, z ktorého bude $(^Name) odinštalovanı:
 # ^SpaceRequired
 "Potrebnı priestor: "
 # ^UninstallingText
-Tento sprievodca odinštaluje $(^Name) z Vášho poèítaèa. $_CLICK
+$(^Name) bude odinštalovanı z nasledujúceho adresára. $_CLICK
 # ^UninstallingSubText
-Odinštalovávam z:
+Prebieha odinštalovanie z:
 # ^FileError
 Chyba pri otváraní súboru pre zápis: \r\n\t"$0"\r\nStlaète ukonèi pre ukonèenie inštalácie,\r\nopakova pre opakovanie zápisu súboru, alebo\r\nignorova pre preskoèenie tohto súboru
 # ^FileError_NoIgnore
@@ -130,9 +129,9 @@ Kopírovanie neúspešné
 # ^CopyTo
 "Kopírova do "
 # ^Registering
-"Registrova: "
+"Prebieha registrácia: "
 # ^Unregistering
-"Odregistrova: "
+"Prebieha zrušenie registrácie: "
 # ^SymbolNotFound
 "Nedá sa nájs symbol: "
 # ^CouldNotLoad
