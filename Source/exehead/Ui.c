@@ -152,7 +152,7 @@ void NSISCALL build_g_logfile()
 static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   HTREEITEM hItem;
   int l=0;
-  int *def_state;
+  int *flags;
 
   pItem->mask|=TVIF_PARAM;
 
@@ -160,17 +160,17 @@ static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   if (pItem->state >> 12 == 0)
     return;
 
-  def_state=&g_inst_section[pItem->lParam].default_state;
+  flags=&g_inst_section[pItem->lParam].flags;
 
-  if (iState < 3 && (*def_state & DFS_RO)) l=3;
+  if (iState < 3 && (*flags & SF_RO)) l=3;
 
   pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
   pItem->stateMask = TVIS_STATEIMAGEMASK;
 
-  if (!(*def_state & DFS_RO))
+  if (!(*flags & SF_RO))
   {
-    if (iState == 2) *def_state |= DFS_SET;
-    else *def_state &= ~DFS_SET;
+    if (iState == 2) *flags |= SF_SELECTED;
+    else *flags &= ~SF_SELECTED;
     TreeView_SetItem(hWnd, pItem);
   }
 
@@ -197,7 +197,7 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
     pItem->mask|=TVIF_PARAM;
     TreeView_GetItem(hWnd, pItem);
     iState = pItem->state >> 12;
-    if (iState && !(g_inst_section[pItem->lParam].default_state & DFS_RO))
+    if (iState && !(g_inst_section[pItem->lParam].flags & SF_RO))
     {
       if (iState==5) iState=2;
       else if (iState==4) iState=1;
@@ -229,7 +229,7 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
   if (pItem->state >> 12 == 0)
     return;
 
-  if (g_inst_section[pItem->lParam].default_state & DFS_RO) l=3;
+  if (g_inst_section[pItem->lParam].flags & SF_RO) l=3;
 
   pItem->state = INDEXTOSTATEIMAGEMASK(checked?2:1+l);
   pItem->stateMask = TVIS_STATEIMAGEMASK;
@@ -846,7 +846,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     for (x = 0; x < num_sections; x ++)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (g_inst_section[x].default_state&DFS_SET)
+      if (g_inst_section[x].flags&SF_SELECTED)
 #endif
        total+=g_inst_section[x].size_kb;
     }
@@ -1002,52 +1002,47 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.item.pszText=process_string_fromtab(ps_tmpbuf,g_inst_section[x].name_ptr);
         tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
 
-        if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(g_inst_section[x].default_state&DFS_RO))
+        if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(g_inst_section[x].flags&SF_RO))
         {
-          if ((g_inst_section[x].default_state>>m_whichcfg) & 1)
-            g_inst_section[x].default_state|=DFS_SET;
+          if ((g_inst_section[x].install_types>>m_whichcfg) & 1)
+            g_inst_section[x].flags|=SF_SELECTED;
           else
-            g_inst_section[x].default_state&=~DFS_SET;
+            g_inst_section[x].flags&=~SF_SELECTED;
         }
 
         {
           int l=1;
-          if (g_inst_section[x].default_state & DFS_SET) l++;
-          if (g_inst_section[x].default_state & DFS_RO) l+=3;
+          if (g_inst_section[x].flags & SF_SELECTED) l++;
+          if (g_inst_section[x].flags & SF_RO) l+=3;
 
           tv.item.state=INDEXTOSTATEIMAGEMASK(l);
         }
 
-        if (ps_tmpbuf[0] == '!' || *(WORD*)ps_tmpbuf == CHAR2_TO_WORD('-','!'))
+        if (g_inst_section[x].flags&SF_BOLD)
         {
-          tv.item.pszText++;
           tv.item.stateMask|=TVIS_BOLD;
           tv.item.state|=TVIS_BOLD;
         }
 
-        if (ps_tmpbuf[0] == '-')
+        if (g_inst_section[x].flags&SF_SUBSEC)
         {
-          if (ps_tmpbuf[1])
-          {
-            tv.item.pszText++;
-            tv.item.mask|=TVIF_CHILDREN;
-            tv.item.cChildren=1;
-            if (g_inst_section[x].name_ptr && g_inst_section[x].expand)
-              tv.item.state|=TVIS_EXPANDED;
-            Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
-            doLines=1;
-          }
-          else if (Par && x)
-          {
-            TV_ITEM it;
-            it.hItem = hTreeItems[x-1];
-            it.mask = TVIF_STATE;
-            it.stateMask=TVIS_STATEIMAGEMASK;
+          tv.item.mask|=TVIF_CHILDREN;
+          tv.item.cChildren=1;
+          if (g_inst_section[x].flags&SF_EXPAND)
+            tv.item.state|=TVIS_EXPANDED;
+          Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
+          doLines=1;
+        }
+        else if (g_inst_section[x].flags&SF_SUBSECEND)
+        {
+          TV_ITEM it;
+          it.hItem = hTreeItems[x-1];
+          it.mask = TVIF_STATE;
+          it.stateMask=TVIS_STATEIMAGEMASK;
 
-            SetParentState(hwndTree1,&it);
+          SetParentState(hwndTree1,&it);
 
-            Par=TreeView_GetParent(hwndTree1,Par);
-          }
+          Par=TreeView_GetParent(hwndTree1,Par);
         }
         else
         {
@@ -1076,7 +1071,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       tv.pszText=process_string_fromtab(ps_tmpbuf,ns);
       TreeView_SetItem(hwndTree1,&tv);
     }
-    SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].default_state&DFS_SET));
+    SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].flags&SF_SELECTED));
   }
   if (uMsg == WM_USER+0x18) // select
   {
@@ -1111,16 +1106,16 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           hItem.mask = TVIF_STATE|TVIF_PARAM;
           TreeView_GetItem(hwndTree1, &hItem);
 
-          if (!(g_inst_section[hItem.lParam].default_state&DFS_RO))
+          if (!(g_inst_section[hItem.lParam].flags&SF_RO))
           {
             if ((hItem.state >> 12) == 2) // already checked
             {
-              g_inst_section[hItem.lParam].default_state&=~DFS_SET;
+              g_inst_section[hItem.lParam].flags&=~SF_SELECTED;
               CheckTreeItem(hwndTree1,&hItem,0);
             }
             else
             {
-              g_inst_section[hItem.lParam].default_state|=DFS_SET;
+              g_inst_section[hItem.lParam].flags|=SF_SELECTED;
               CheckTreeItem(hwndTree1,&hItem,1);
             }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
@@ -1145,14 +1140,14 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                     hItem.hItem=*ht;
                     if (g_inst_header->no_custom_instmode_flag==1)
                     {
-                      int c=(t->default_state>>m_whichcfg)&1;
+                      int c=(t->install_types>>m_whichcfg)&1;
                       CheckTreeItem(hwndTree1, &hItem,c);
                     }
-                    else if (!(t->default_state&DFS_RO))
+                    else if (!(t->flags&SF_RO))
                     {
                       hItem.mask=TVIF_STATE;
                       TreeView_GetItem(hwndTree1,&hItem);
-                      if (!(t->default_state&(1<<r)) != !((hItem.state>>12)>1 )) break;
+                      if (!(t->install_types&(1<<r)) != !((hItem.state>>12)>1 )) break;
                     }
                   }
                   t++;
@@ -1194,20 +1189,20 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           HTREEITEM *ht=hTreeItems;
           while (x--)
           {
-            if (t->name_ptr && !(t->default_state & DFS_RO))
+            if (t->name_ptr && !(t->flags & SF_RO))
             {
               TVITEM tv;
               int l=1;
 
-              if (t->default_state & (1<<m_whichcfg))
+              if (t->install_types & (1<<m_whichcfg))
               {
                 l++;
-                t->default_state|=DFS_SET;
+                t->flags|=SF_SELECTED;
               }
-              else t->default_state&=~DFS_SET;
+              else t->flags&=~SF_SELECTED;
 
               // this can't happen because of the above if()
-              //if (t->default_state & DFS_RO) l+=3;
+              //if (t->flags & SF_RO) l+=3;
 
               tv.hItem=*ht;
               tv.mask=TVIF_STATE;
@@ -1247,7 +1242,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       char s[128];
       for (total=x=0; x < num_sections; x ++)
       {
-        if (g_inst_section[x].default_state&DFS_SET)
+        if (g_inst_section[x].flags&SF_SELECTED)
           total+=g_inst_section[x].size_kb;
       }
       inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ)));
@@ -1302,7 +1297,7 @@ static DWORD WINAPI install_thread(LPVOID p)
     while (m_inst_sec<num_sections && !m_abort)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (g_inst_section[m_inst_sec].default_state&DFS_SET
+      if (g_inst_section[m_inst_sec].flags&SF_SELECTED
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
         || g_inst_cmnheader->silent_install
 #endif//NSIS_CONFIG_SILENT_SUPPORT
@@ -1353,7 +1348,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       for (x=0; x < num_sections; x ++)
       {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-        if (g_inst_section[x].default_state&DFS_SET)
+        if (g_inst_section[x].flags&SF_SELECTED)
 #endif
           num+=g_inst_section[x].code_size;
       }

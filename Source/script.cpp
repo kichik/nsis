@@ -1658,7 +1658,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *p=line.gettoken_str(wt);
           if (p[0]=='R' && p[1]=='O')
           {
-            if (section_add_flags(DFS_SET|DFS_RO) != PS_OK) return PS_ERROR;
+            if (section_add_flags(SF_SELECTED|SF_RO) != PS_OK) return PS_ERROR;
             SCRIPT_MSG("[RO] ");
           }
           else
@@ -1666,7 +1666,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             int x=atoi(p)-1;
             if (x >= 0 && x < NSIS_MAX_INST_TYPES)
             {
-              if (section_add_flags(1<<x) != PS_OK) return PS_ERROR;
+              if (section_add_install_type(1<<x) != PS_OK) return PS_ERROR;
               SCRIPT_MSG("[%d] ",x);
             }
             else if (x < 0)
@@ -3556,6 +3556,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         // SetDetailsPrint lastused
         ent.which=EW_UPDATETEXT;
+        ent.offsets[0]=0;
         ent.offsets[1]=8; // lastused
         ret=add_entry(&ent);
         if (ret != PS_OK) return ret;

@@ -102,6 +102,7 @@ class CEXEBuild {
     int function_end();
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
+    int section_add_install_type(int inst_type);
     int add_label(const char *name);
     int add_entry(const entry *ent);
     int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
