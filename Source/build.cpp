@@ -1840,8 +1840,7 @@ void CEXEBuild::build_plugin_table(void)
     char* searchPath = new char [strlen(nsisdir)+6];
     if (searchPath)
     {
-      strcpy(searchPath,nsisdir);
-      strcat(searchPath,"\\bin");
+      wsprintf(searchPath,"%s\\bin",nsisdir);
       INFO_MSG("\nProcessing plugin dlls: \"%s\\*.dll\"\n",searchPath);
       m_plugins.FindCommands(searchPath,display_info?true:false);
       delete[] searchPath;
