@@ -472,10 +472,13 @@ void BuildMRUMenu(HMENU hMenu)
   MENUITEMINFO mii;
   char buf[MRU_DISPLAY_LENGTH+1];
   char buf2[MRU_DISPLAY_LENGTH - 6];
+  int n;
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
     DeleteMenu(hMenu, IDM_MRU_FILE+i, MF_BYCOMMAND);
   }
+
+  n = GetMenuItemCount(hMenu);
 
   for(i = 0; i < MRU_LIST_SIZE; i++) {
     if(g_mru_list[i][0]) {
@@ -516,7 +519,8 @@ void BuildMRUMenu(HMENU hMenu)
       mii.dwTypeData = buf;
       mii.cch = lstrlen(buf)+1;
       mii.fState = MFS_ENABLED;
-      InsertMenuItem(hMenu, IDM_MRU_FILE+i, FALSE, &mii);
+      InsertMenuItem(hMenu, n++, TRUE, &mii);
+
     }
     else {
       break;
