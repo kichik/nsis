@@ -366,11 +366,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         HANDLE hOut;
         int ret;
-        char *buf3=GetStringFromParm(0x31);
-        #define overwriteflag parm0
+        char *buf3 = GetStringFromParm(0x31);
+        int overwriteflag = parm0 & 7;
 
-        // Modified by ramon 23 May 2003
-        log_printf4("File: overwriteflag=%d, allowskipfilesflag=%d, name=\"%s\"",overwriteflag,(parm0>>2)&MB_ABORTRETRYIGNORE,buf3);
+        log_printf4("File: overwriteflag=%d, allowskipfilesflag=%d, name=\"%s\"",overwriteflag,(parm0>>3)&MB_ABORTRETRYIGNORE,buf3);
         if (validpathspec(buf3))
         {
           mystrcpy(buf0,buf3);
@@ -378,14 +377,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         else lstrcat(addtrailingslash(mystrcpy(buf0,state_output_directory)),buf3);
         validate_filename(buf0);
       _tryagain:
-        if (overwriteflag == 3) // check date and time
+        if (overwriteflag >= 3) // check date and time
         {
           WIN32_FIND_DATA *ffd=file_exists(buf0);
-          overwriteflag=1; // if it doesn't exist, fall back to no overwrites (since it shouldn't matter anyway)
           if (ffd)
           {
-            overwriteflag=(CompareFileTime(&ffd->ftLastWriteTime,(FILETIME*)(entry_->offsets+3)) >= 0);  // if first one is newer, then don't overwrite
+            // if first one is newer, then don't overwrite
+            int cmp=CompareFileTime(&ffd->ftLastWriteTime, (FILETIME*)(entry_->offsets + 3));
+            overwriteflag=!(cmp & (0x80000000 | (overwriteflag - 3)));
           }
+          // if it doesn't exist, overwrite flag won't matter. it stays on off though.
         }
         if (!overwriteflag)
         {
@@ -411,7 +412,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           mystrcpy(g_usrvars[0],buf2); // restore $0
 
           // Modified by ramon 23 May 2003
-          switch (my_MessageBox(buf1, parm0>>2))
+          switch (my_MessageBox(buf1, parm0>>3))
           {
             case IDRETRY:
               log_printf("File: error, user retry");
@@ -456,10 +457,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           my_MessageBox(buf0,MB_OK|MB_ICONSTOP);
           return EXEC_ERROR;
         }
-
-        #undef overwriteflag
-        // Added by ramon 23 May 2003
-        #undef allowskipfilesflag
       }
     break;
 #endif//NSIS_SUPPORT_FILE
