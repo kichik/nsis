@@ -464,7 +464,7 @@ void NSISCALL process_string(char *out, const char *in)
       switch (nVarIdx) // The order of this list must match that in ..\strlist.cpp (err, build.cpp -J)
       {
         case VAR_CODES_START + 0: // HWNDPARENT
-          wsprintf(out, "%u", (unsigned int)g_hwnd);
+          myitoa(out, (unsigned int)g_hwnd);
         break;
         case VAR_CODES_START + 1:  // 0
         case VAR_CODES_START + 2:  // 1
@@ -494,7 +494,7 @@ void NSISCALL process_string(char *out, const char *in)
           break;
 
         case VAR_CODES_START + 25: // LANGUAGE
-          wsprintf(out, "%u", cur_common_strings_table->lang_id);
+          myitoa(out, cur_common_strings_table->lang_id);
           break;
 
         case VAR_CODES_START + 26: // PROGRAMFILES
