@@ -14,6 +14,12 @@ Define/conditional compilation related commands:
 
 This command will add 'gflag' to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
 
+\S1{undef} !undef
+
+\c gflag
+
+Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".
+
 \S1{ifdef} !ifdef
 
 \c gflag [bcheck [gflag [...]]]
@@ -24,7 +30,7 @@ This command, when paired with an !endif command, will tell the compiler whether
 
 \c gflag [bcheck [gflag [...]]]
 
-The opposite of !ifmacrodef. The lines will be compiled when the gflag has not been defined.
+The opposite of !ifdef. The lines will be compiled when the gflag has not been defined.
 
 \S1{ifmacrodef} !ifmacrodef
 
@@ -42,7 +48,7 @@ The opposite of !ifmacrodef. The lines will be compiled when the macro gflag doe
 
 \c [ifdef|ifndef|ifmacrodef|ifmacrondef [...]]
 
-This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. e.g. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".
+This command allows to easily insert different code when different defines or macros are set. You can create blocks like !ifdef/!else/!endif, !ifdef/!else ifdef/!else/!endif etc.
 
 \S1{endif} !endif
 
@@ -63,9 +69,3 @@ Creates a macro named 'macro_name'. All lines between the !macro and the !macroe
 \S1{macroend} !macroend
 
 Ends a macro that was started with !macro.
-
-\S1{undef} !undef
-
-\c gflag
-
-Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".
