@@ -38,5 +38,6 @@ void InitTooltips(HWND h);
 void DestroyTooltips();
 void AddTip(HWND hWnd,LPSTR lpszToolTip);
 void ShowDocs();
+int getProxyInfo(char *out);
 
 #endif

@@ -23,6 +23,7 @@
 #define NOCLIB_H
 
 // kickik's clib methods
+char *my_strstr(char *i, char *s);
 char *my_strrchr(const char *string, int c);
 void *my_memset(void *dest, int c, size_t count);
 
