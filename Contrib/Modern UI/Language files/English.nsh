@@ -37,7 +37,7 @@
   !endif
   
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_ENGLISH} "Next >"
+    InstallButtonText /LANG=${LANG_ENGLISH} "&Next >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_ENGLISH} "Installing"
@@ -51,10 +51,10 @@
   !endif
   
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
+    LangString MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< &Back"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "&Next >"
     LangString MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_ENGLISH} "Install"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_ENGLISH} "&Install"
   !endif
 
 
@@ -73,14 +73,14 @@
   !endif
   
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_ENGLISH} "Next >"
+    InstallButtonText /LANG=${LANG_ENGLISH} "&Next >"
   !endif
   
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< &Back"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "&Next >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_ENGLISH} "Uninstall"
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_ENGLISH} "&Uninstall"
   !endif  
     
 !endif
