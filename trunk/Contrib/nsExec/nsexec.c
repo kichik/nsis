@@ -8,16 +8,18 @@
 #ifndef false
 #define false FALSE
 #endif
+#define TIMEOUT 100000
 
 HINSTANCE	g_hInstance;
 HWND		g_hwndParent;
 HWND		g_hwndList;
 HWND		g_hwndDlg;
-char		g_exec[MAX_PATH];
-BOOL		g_done;
+char *		g_exec;
+char *		g_szto;
 BOOL		g_foundto;
 int			g_to;
 
+void ExecScript(BOOL log);
 int LogMessage(const char *pStr);
 char *my_strstr(const char *string, const char *strCharSet);
 int my_atoi(char *s);
@@ -28,85 +30,114 @@ void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variable
 	g_stacktop=stacktop;
 	g_variables=variables;
 	{
-		g_to = 100000;
-		g_foundto = FALSE;
-		g_hwndDlg = FindWindowEx(g_hwndParent,NULL,"#32770",NULL);
-		g_hwndList = FindWindowEx(g_hwndDlg,NULL,"SysListView32",NULL);
+		ExecScript(false);
+	}
+}
 
-		if (!g_foundto&&!popstring(g_exec)) {
-			STARTUPINFO si={sizeof(si),};
-			SECURITY_ATTRIBUTES sa={sizeof(sa),};
-			SECURITY_DESCRIPTOR sd={0,};
-			PROCESS_INFORMATION pi={0,};
-			OSVERSIONINFO osv={sizeof(osv)};
-			HANDLE newstdout=0,read_stdout=0;
-			DWORD dwRead = 1;
-			DWORD dwExit = !STILL_ACTIVE;
-			HGLOBAL memory;
-			char *szBuf;
-			GetVersionEx(&osv);
-			if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-				InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-				SetSecurityDescriptorDacl(&sd,true,NULL,false);
-				sa.lpSecurityDescriptor = &sd;
-			}
-			else sa.lpSecurityDescriptor = NULL;
-			sa.bInheritHandle = true;
-			if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-				pushstring("");
-				pushstring("error");
-				return;
-			}
-			GetStartupInfo(&si);
-			si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-			si.wShowWindow = SW_HIDE;
-			si.hStdOutput = newstdout;
-			si.hStdError = newstdout;
-			if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
-				CloseHandle(newstdout);
-				CloseHandle(read_stdout);
-				pushstring("");
-				pushstring("error");
-			}
-			WaitForSingleObject(pi.hProcess,INFINITE);
-			PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-			memory = GlobalAlloc(GMEM_MOVEABLE,dwRead+1);
-			szBuf = (char *)GlobalLock(memory);
-			ReadFile(read_stdout, szBuf, dwRead, &dwRead, NULL);
-			pushstring(szBuf);
-			pushstring("success");
-			if (my_strstr(szBuf,"\r\n")) {
-				while (szBuf&&*szBuf) {
-					char *i = my_strstr(szBuf,"\r\n");
-					if (!i) {
-						LogMessage(szBuf);
-						break;
-					}
-					*i=0;
-					LogMessage(szBuf);
-					szBuf = i+2;
-				}
-			}
-			else if (my_strstr(szBuf,"\n")) {
-				MessageBox(0,"n","n",MB_OK);
-			}
-			else {
-				LogMessage(szBuf);
-			}
-			GlobalFree(szBuf);
-			CloseHandle(pi.hThread);
-			CloseHandle(pi.hProcess);
-			CloseHandle(newstdout);
-			CloseHandle(read_stdout);
-		}
-		pushstring("");
-		pushstring("error");
+void __declspec(dllexport) ExecToLog(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
+	g_hwndParent=hwndParent;
+	g_stringsize=string_size;
+	g_stacktop=stacktop;
+	g_variables=variables;
+	{
+		ExecScript(true);
 	}
 }
 
 BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
 	g_hInstance=hInst;
 	return TRUE;
+}
+
+void ExecScript(BOOL log) {
+	g_to = TIMEOUT;
+	g_foundto = FALSE;
+	g_hwndDlg = FindWindowEx(g_hwndParent,NULL,"#32770",NULL);
+	g_hwndList = FindWindowEx(g_hwndDlg,NULL,"SysListView32",NULL);
+	g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+1);
+	g_szto = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+1);
+	if (!popstring(g_szto)) {
+		if (my_strstr(g_szto,"/TIMEOUT=")) {
+			g_szto += 9;
+			g_to = my_atoi(g_szto);
+			if (g_to<0) g_to = TIMEOUT;
+			g_foundto = TRUE;
+		}
+	}
+	if (g_foundto) {
+		if (popstring(g_exec)) {
+			pushstring("error");
+			return;
+		}
+	}
+	else {
+		lstrcpy(g_exec,g_szto);
+	}
+	{
+		STARTUPINFO si={sizeof(si),};
+		SECURITY_ATTRIBUTES sa={sizeof(sa),};
+		SECURITY_DESCRIPTOR sd={0,};
+		PROCESS_INFORMATION pi={0,};
+		OSVERSIONINFO osv={sizeof(osv)};
+		HANDLE newstdout=0,read_stdout=0;
+		DWORD dwRead = 1;
+		DWORD dwExit = !STILL_ACTIVE;
+		HGLOBAL memory;
+		char *szBuf;
+		GetVersionEx(&osv);
+		if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
+			InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
+			SetSecurityDescriptorDacl(&sd,true,NULL,false);
+			sa.lpSecurityDescriptor = &sd;
+		}
+		else sa.lpSecurityDescriptor = NULL;
+		sa.bInheritHandle = true;
+		if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
+			pushstring("error");
+			return;
+		}
+		GetStartupInfo(&si);
+		si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+		si.wShowWindow = SW_HIDE;
+		si.hStdOutput = newstdout;
+		si.hStdError = newstdout;
+		if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
+			CloseHandle(newstdout);
+			CloseHandle(read_stdout);
+			pushstring("error");
+		}
+		WaitForSingleObject(pi.hProcess,INFINITE);
+		PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+		memory = GlobalAlloc(GMEM_MOVEABLE,dwRead+1);
+		szBuf = (char *)GlobalLock(memory);
+		ReadFile(read_stdout, szBuf, dwRead, &dwRead, NULL);
+		pushstring("success");
+		if (log) {
+			if (my_strstr(szBuf,"\r")) {
+				while (*szBuf) {
+					char *i = my_strstr(szBuf,"\r");
+					if (i==0) {
+						LogMessage(szBuf);
+						break;
+					}
+					*i=0;
+					if (*(i+1)=='\n') *(i+1)=0;
+					LogMessage(szBuf);
+					if (!*(i+1)) szBuf = i+2;
+					else szBuf = i+1;
+				}
+			}
+			else {
+				LogMessage(szBuf);
+			}
+		}
+		GlobalFree(memory);
+		CloseHandle(pi.hThread);
+		CloseHandle(pi.hProcess);
+		CloseHandle(newstdout);
+		CloseHandle(read_stdout);
+	}
+	
 }
 
 // code I stole (err borrowed) from Tim Kosse
