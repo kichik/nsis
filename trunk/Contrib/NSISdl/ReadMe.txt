@@ -40,3 +40,19 @@ then, check $0 for errors:
   StrCmp $0 "success" yay
     Abort "Error downloading file
   yay:
+
+To translate NSISdl add:
+/TRANSLATE downloading connecting second minute hour plural progress remianing
+to the call line.
+
+Default values are:
+  downloading - "Downloading %s"
+  connecting - "Connecting ..."
+  second - "second"
+  minute - "minute"
+  hour - "hour"
+  plural - "s"
+  progress - "%dkB (%d%%) of %dkB @ %d.%01dkB/s"
+  remaining -  "(%d %s%s remaining)"
+
+/TRANSLATE must come before /TIMEOUT.
