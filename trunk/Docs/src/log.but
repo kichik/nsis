@@ -2,7 +2,7 @@
 
 \S2{logset} LogSet
 
-\c on|off
+\c on|\\<b\\>off\\</b\\>
 
 Sets whether install logging to $INSTDIR\\install.log will happen. $INSTDIR must have a value before you call this function or it will not work. Note that \e{NSIS_CONFIG_LOG} must be set in the installer configuration (it is not by default) to support this.
 
