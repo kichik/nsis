@@ -14,8 +14,8 @@ How to use
   required (required) (option1 | option2) [optional]
 
   The stars in command titles (*****) are the function usefulness in my
-  opinion. The more starts, the most useful it is. 5 stars (*****) is much
-  useful.
+  opinion. The more starts, the more useful it is. 5 stars (*****) is the
+  most useful.
 
   Any time when is mentioned "Default is" means that you can use the value
   mentioned or keep it blank, the result is the same.
@@ -26,7 +26,25 @@ How to use
   If you want to add ` to a string, you should always escape it using $\`
   because the header file macro functions use ` to separate parameters.
 
-  1. Include Header file
+  1. Include LogicLib.nsh
+  ----------------------
+
+    !include "LogicLib.nsh"
+
+    LogicLib.nsh has to be inside Include directory, so you don't have to
+    specify a path.
+
+    You have to put this command before including the StrFunc.nsh header
+    file.
+
+    Some functions from this header file depend on LogicLib. This means that
+    functions are less likely to have bugs and easier to understand. Extra
+    options from LogicLib header file do not work as most of the functions
+    are still using the default coding.
+
+    Functions that use LogicLib are mentioned on their descriptions.  
+
+  2. Include Header file
   ----------------------
 
     !include "StrFunc.nsh"
@@ -36,13 +54,13 @@ How to use
 
     You have to put this command before any command used in this header file.
 
-  2. Commands
+  3. Commands
   -----------
 
   Some commands have special specifications to work. Consult command's
-  documentation on "2.3 Commands" section.
+  documentation on "3.3 Commands" section.
 
-    2.1 How To Use Commands In Install Sections and Functions
+    3.1 How To Use Commands In Install Sections and Functions
     ---------------------------------------------------------
 
     Every command used in install sections and functions have to be called
@@ -52,41 +70,26 @@ How to use
     Example:
     --------
 
-    !include "StrFunc.nsh"
-
     ${StrStr}
-
-    Section
-
-      ${StrStr} $0 "OK! Now what?" "wh"
-
-    SectionEnd
     
-    2.2 How To Use Commands In Uninstall Sections and Functions
+    3.2 How To Use Commands In Uninstall Sections and Functions
     -----------------------------------------------------------
 
     Commands with Uninstall Sections and Functions support have "Un" before
-    the words inside brackets "{}".
+    the words inside curly brackets "{}".
 
     Example:
     --------
     
     ${UnStrStr}
-    
-    Every command used in uninstall sections and functions have to be called
-    first before and out any sections and functions, without parameters, and
-    after the header command "${UnStrFunc}" to activate the Uninstall
-    sections and functions support for the commands following.
-    
-    Example:
-    --------
+
+    A complete example with both Install and Uninstall Commands:
+    ------------------------------------------------------------
+
 
     !include "StrFunc.nsh"
 
     ${StrStr} # Supportable for Install Sections and Functions
-    
-    ${UnStrFunc} # Command to separate commands supportable for
-                 # Install/Uninstall sections and functions
 
     ${UnStrStr} # Supportable for Uninstall Sections and Functions
 
@@ -95,22 +98,22 @@ How to use
       ${StrStr} $0 "OK! Now what?" "wh"
 
     SectionEnd
-    
+
     Section Uninstall
 
       ${UnStrStr} $0 "OK! Now what?" "wh"
 
     SectionEnd
-    
-    2.3 Commands
+
+    3.3 Commands
     ------------
 
     =========================================================================
-    ****                                                           ${StrCase}
+    **                                                             ${StrCase}
     -------------------------------------------------------------------------
-    ResultVar String Type(Lower|Upper|Title|Sentence (Case))
+    ResultVar String Type(L|U|T|S|<>|"")
     =========================================================================
-    Converts "String" to "Type" Case.
+    Converts "String" to "Type" Case. Uses LogicLib.
 
     Parameters:
 
@@ -122,14 +125,15 @@ How to use
       
       Type
       Type of string case to convert to:
-      
-        - Lower Case (this is just an example. however this can be useful.)
-        - Upper Case (THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL.)
-        - Title Case (This Is Just An Example. However This Can Be Useful.)
-        - Sentence Case (This is just an example. However this can be
-          useful.)
+
+        - L = Lower Case (this is just an example. a very simple one.)
+        - U = Upper Case (THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE.)
+        - T = Title Case (This Is Just An Example. A Very Simple One.)
+        - S = Sentence Case (This is just an example. A very simple one.)
+        - <> = Switch Case (This is just an example. A very simple one.)
+        - "" = Original Case (same as "String")
         
-      Default value is "Setence Case".
+      Default value is "" (Original Case).
 
     Result Value -> ResultVar:
 
@@ -137,40 +141,37 @@ How to use
 
     Example:
 
-      ${StrCase} $0 "That's gonna hurt!" "Upper Case"
+      ${StrCase} $0 '"Você" is "You" in English.' "U"
 
-      $0 = "THAT'S GONNA HURT!"
+      $0 = '"VOCÊ" IS "YOU" IN ENGLISH.'
 
     =========================================================================
-    ****                                                         ${StrClbSet}
+    *                                                               ${StrClb}
     -------------------------------------------------------------------------
-    String
+    ResultVar String Action(>|<|<>|)
     =========================================================================
-    Copy "String" to clipboard.
+    Makes an action with the clipboard depending on value of parameter
+    "Action". Uses LogicLib.
 
     Parameters:
 
       String
-      String to put in the clipboard.
+      If "Action" = ">" or "<>" - String to put on the clipboard.
 
-    =========================================================================
-    ****                                                         ${StrClbGet}
-    -------------------------------------------------------------------------
-    ResultVar
-    =========================================================================
-    Get a string from the clipboard and return it to "ResultVar".
+      Action
+      Can be one of the following values:
 
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
+        - ">" = Set string to clipboard.
+        - "<" = Get string from clipboard.
+        - "<>" = Swap string with clipboard's.
+        - "" = Cleans the clipboard.
 
     Result Value -> ResultVar:
 
-      The string found in clipboard.
+      If "Action" = "<" or "<>" - String found on the clipboard.
 
     =========================================================================
-    *****                                                      ${StrIOToNSIS}
+    ***                                                        ${StrIOToNSIS}
     -------------------------------------------------------------------------
     ResultVar String
     =========================================================================
@@ -197,7 +198,7 @@ How to use
       $0 = "$\r$\n$\t\This is just an example\"
 
     =========================================================================
-    **                                                              ${StrLoc}
+    *                                                               ${StrLoc}
     -------------------------------------------------------------------------
     ResultVar String StrToSearchFor OffsetDirection(>|<)
     =========================================================================
@@ -230,7 +231,7 @@ How to use
       $0 = "11"
 
     =========================================================================
-    *****                                                      ${StrNSISToIO}
+    ***                                                        ${StrNSISToIO}
     -------------------------------------------------------------------------
     ResultVar String
     =========================================================================
@@ -288,10 +289,10 @@ How to use
     *****                                                        ${StrStrAdv}
     -------------------------------------------------------------------------
     ResultVar String StrToSearchFor SearchDirection(>|<)
-    ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops
+    ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops CaseSensitive
     =========================================================================
     Searches for "StrToSearchFor" in "String" in the direction specified by
-    "SearchDirection" and looping "Loops" times.
+    "SearchDirection" and looping "Loops" times. Uses LogicLib.
 
     Parameters:
 
@@ -321,6 +322,11 @@ How to use
       Number of times the code will search "StrToSearchFor" in "String" not
       including the original execution. Default is "0" (1 code execution).
 
+      CaseSensitive
+      If "1" the search will be case-sensitive (diferenciates between cases).
+      If "0" it is case-insensitive (does not diferenciate between cases).
+      Default is "0" (Case-Insensitive).
+
 
     Result Value -> ResultVar:
 
@@ -337,11 +343,12 @@ How to use
       When you put nothing in "String", will return an empty string and set
       error flag.
 
-    Example: 
+    Example (!define LOGICLIB_STRCMP activated): 
 
-      ${StrStrAdv} $0 "This is just an example" "is" "<" "<" "1" "1"
+      ${StrStrAdv} $0 "This IS really just an example" "IS " ">" ">" "1" "0"
+      "1"
 
-      $0 = "This"
+      $0 = "really just an example"
 
     =========================================================================
     *****                                                           ${StrRep}
@@ -377,7 +384,7 @@ How to use
       $0 = "This is just one example"
 
     =========================================================================
-    *****                                                          ${StrSort}
+    ***                                                            ${StrSort}
     -------------------------------------------------------------------------
     ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr(1|0)
     IncludeCenterStr(1|0)
@@ -430,7 +437,7 @@ How to use
       $0 = "This is an exam"
 
     =========================================================================
-    *****                                                           ${StrTok}
+    ****                                                            ${StrTok}
     -------------------------------------------------------------------------
     ResultVar StrToTokenize Separators ResultPart SkipEmptyParts(1|0)
     =========================================================================
@@ -496,21 +503,25 @@ How to use
 
       $0 = "$\r$\nThis is just an example"
 
-Comments about functions included and not included
+Functions included and not included
 --------------------------------------------------
 
-12 functions have been included
-  6 were included as are in Archive
-  6 were not included in Archive
-    StrTok (AdvStrTok)
-    StrLoc
-    StrSort (AdvStrSort)
-    StrCase
-    NSISToIO
-    IOToNSIS
+11 functions have been included
+  3 were included as are in Archive
+  8 were not included in Archive
+    3 were made with LogicLib coding
+      StrClb
+      StrStrAdv (AdvStrStr)
+      StrCase
+    5 were made with normal NSIS coding
+      StrTok (AdvStrTok)
+      StrLoc
+      StrSort (AdvStrSort)
+      NSISToIO
+      IOToNSIS
 
-13 functions have not been included
-  10 were not included because of better functions
+15 functions have not been included
+  12 were not included because of better functions
     6 were not included because of AdvStrTok (called here as StrTok)
       First String Part Function
       Save on Variables Function
@@ -519,82 +530,39 @@ Comments about functions included and not included
     2 were not included because of StrCase
       StrLower Function
       StrUpper Function
+    2 were not included because of StrClb
+      StrClbSet Function
+      StrClbGet Function
     1 was not included because of NSISToIO and IOToNSIS
       Convert / to // in Paths Function
     1 was not included because of original String Replace Function (called
       here as StrRep)
       Another String Replace Function
-  2 were not included because isn't useful anymore
+  2 were not included because they aren't useful anymore
     Slash <-> Backslash Converter Function
     Trim Function
   1 was not included because of bugs
     Number to String Converter Function
 
-Comments
-------------------------------------------------------------
-
-Advanced Token String Function
-
-  New function not published in Archive, much better than original StrTok,
-  going to replace several functions with just one. The principal idea was
-  based on "Save On Variables" by Afrow UK.
-
-Advanced String Sort Function
-
-  New function not published in Archive, much better than original StrSort.
-
-Another String Replace Function
-
-  Another doesn't mean better and simpler than the original version.
-  (Don't confuse the original StrRep that is in this header file with this
-  one)
-
-Convert / to // in Paths Function
-
-  StrNSISToIO and StrIOToNSIS are better.
-
-First String Part Function
-
-  AdvStrTok (called here as StrTok) is better.
-
-NSIS <-> Install Options String Convertor Functions
-
-  Included from Install Options Readme.
-
-Number to String Converter Function
-
-  A buggy one, needs to be remade.
-
-Save on Variables Function
-
-  AdvStrTok (called here as StrTok) is better.
-
-Slash <-> Backslash Converter Function
-
-  Will convert "http://www.site.com\" to "http:\\www.site.com/", not
-  really useful for anyone.
-
-Sort Strings (1, 2 and 3) Functions
-
-  AdvStrTok (called here as StrTok), AdvStrStr (called here as StrStrAdv)
-  and AdvStrSort (called here as StrSort) are better.
-
-Split String Function
-
-  AdvStrTok (called here as StrTok) is better.
-
-StrTok Function
-
-  AdvStrTok (called here as StrTok) is better.
-
-Trim Function
-
-  The real purpose of this function was to remove spaces from directory
-  paths, and now with the NSIS command GetFullPathName this is not useful
-  anymore.
-
 Version History
 ---------------
+
+1.07 - 09/21/2004
+
+- LogicLib is required now, because of the remodelation of StrStrAdv,
+StrCase and StrClb functions.
+- Removed ${UnStrFunc} command. Now you can just include uninstall
+functions commands like ${UnStrStr} to be supported by uninstall functions
+and sections.
+- Added case-sensitive comparation option for StrStrAdv.
+- StrCase now uses System.dll which makes case convertions effective with
+all latin letters (i.e. ê).
+- Added switch case and original case for StrCase.
+- StrClbSet and StrClbGet removed, added StrClb.
+- Made compact the most usual operations inside the header file. File size
+reduced.
+- Added "!verbose" to header file -> faster compilation and header file
+output organized (code borrowed from LogicLib.nsh).
 
 1.06 - 03/26/2004
 
@@ -631,7 +599,7 @@ Version History
 - Fixed StrTok default value for the string part. Now it's "L".
 - Fixed StrStrAdv fixed wrong search when had a combination of same
   substrings one after another in a string.
-- Fixed StrLoc, when a string isn't found, don't return any value at all.
+- Fixed StrLoc: when a string isn't found, don't return any value at all.
 
 1.00 - 02/01/2004
 
@@ -639,8 +607,8 @@ Version History
 - Renamed header file to "StrFunc.nsh".
 - Added 1 function, StrLoc.
 - Modified StrStrAdv, removed some lines.
-- Fixed StrTok, 2 simple numbers made it loop every time.
-- Fixed some small issues in the header file.
+- Fixed StrTok, 2 simple numbers made it loop everytime.
+- Fixed some small issues on the header file.
 
 0.02 - 01/24/2004
 
@@ -658,12 +626,13 @@ Made by Diego Pedroso (aka deguix).
 Functions Credits
 -----------------
 
-- Advanced Search in String, Advanced Token String, Localize in String,
-String Case, Advanced Sort String, made by Diego Pedroso.
-- Copy to/from clipboard made by Nik Medved.
-- StrReplace made by Hendri Adriaens.
-- Search in a string, Trim newlines made by Ximon Eighteen.
-- NSISToIO and IOToNSIS made by Amir Szekely, Joost Verburg and Dave Laundon.
+- StrCase, StrClb, StrLoc, StrSort, StrStrAdv and StrTok (Adv) made
+  by Diego Pedroso, some based on functions made by Dave Laundon,
+  "Afrow UK" and "bigmac666".
+- StrRep made by Hendri Adriaens.
+- StrStr, StrTrimNewLines made by Ximon Eighteen.
+- StrNSISToIO and StrIOToNSIS made by Amir Szekely, Joost Verburg and
+  Dave Laundon.
 
 License
 -------

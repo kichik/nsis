@@ -8,8 +8,7 @@ XPStyle on
 
 # Declare used functions
 ${StrCase}
-${StrClbGet}
-${StrClbSet}
+${StrClb}
 ${StrIOToNSIS}
 ${StrLoc}
 ${StrNSISToIO}
@@ -20,11 +19,8 @@ ${StrTok}
 ${StrTrimNewLines}
 ${StrSort}
 
-${UnStrFunc}
-
 ${UnStrCase}
-${UnStrClbGet}
-${UnStrClbSet}
+${UnStrClb}
 ${UnStrIOToNSIS}
 ${UnStrLoc}
 ${UnStrNSISToIO}
@@ -38,25 +34,27 @@ ${UnStrSort}
 Section
 
   # Test case conversion
-  ${StrCase} $0 "This is just an example. However this can be useful." ""
-  StrCmp $0 "This is just an example. However this can be useful." 0 strcaseerror
+  ${StrCase} $0 "This is just an example. A very simple one." ""
+  StrCmp $0 "This is just an example. A very simple one." 0 strcaseerror
 
-  ${StrCase} $0 "This is just an example. However this can be useful." "Sentence Case"
-  StrCmp $0 "This is just an example. However this can be useful." 0 strcaseerror
-  ${StrCase} $0 "this is just an example. however this can be useful." "Lower Case"
-  StrCmp $0 "this is just an example. however this can be useful." 0 strcaseerror
-  ${StrCase} $0 "THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL." "Upper Case"
-  StrCmp $0 "THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL." 0 strcaseerror
-  ${StrCase} $0 "This Is Just An Example. However This Can Be Useful." "Title Case"
-  StrCmp $0 "This Is Just An Example. However This Can Be Useful." 0 strcaseerror
+  ${StrCase} $0 "THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE." "S"
+  StrCmp $0 "This is just an example. A very simple one." 0 strcaseerror
+  ${StrCase} $0 "This is just an example. A very simple one." "L"
+  StrCmp $0 "this is just an example. a very simple one." 0 strcaseerror
+  ${StrCase} $0 "This is just an example. A very simple one." "U"
+  StrCmp $0 "THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE." 0 strcaseerror
+  ${StrCase} $0 "This is just an example. A very simple one." "T"
+  StrCmp $0 "This Is Just An Example. A Very Simple One." 0 strcaseerror
+  ${StrCase} $0 "This is just an example. A very simple one." "<>"
+  StrCmp $0 "tHIS IS JUST AN EXAMPLE. a VERY SIMPLE ONE." 0 strcaseerror
 
-  ${StrCase} $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" "Setence Case"
+  ${StrCase} $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" "S"
   StrCmp $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" 0 strcaseerror
 
-  ${StrCase} $0 "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%^&*()abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" "Setence Case"
-  StrCmp $0 "123456789Abcdefghijklmnopqrstuvwxyz!@#%^&*()Abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" 0 strcaseerror
+  ${StrCase} $0 "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%^&*()abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" "<>"
+  StrCmp $0 "123456789abcdefghijklmnopqrstuvwxyz!@#%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ-_=+[]{};:,./<>?" 0 strcaseerror
 
-  ${StrCase} $0 "what about taking a shower tomorrow? it's late to do so now! try to sleep now. Good Night!" "Setence Case"
+  ${StrCase} $0 "what about taking a shower tomorrow? it's late to do so now! try to sleep now. Good Night!" "S"
   StrCmp $0 "What about taking a shower tomorrow? It's late to do so now! Try to sleep now. Good night!" 0 strcaseerror
 
   DetailPrint "PASSED StrCase test"
@@ -64,13 +62,15 @@ Section
 strcaseerror:
   DetailPrint "FAILED StrCase test"
 
-  # Test clipboard functions
-  ${StrClbSet} "StrFunc clipboard test"
-  ${StrClbGet} $0
-  StrCmp $0 "StrFunc clipboard test" +3
-    DetailPrint "FAILED StrClbGet/StrClbSet test"
-    Goto +2
-    DetailPrint "PASSED StrClbGet/StrClbSet test"
+  # Test clipboard function
+  ${StrClb} $0 "StrFunc clipboard test" ">"
+  ${StrClb} $0 "" "<"
+  StrCmp $0 "StrFunc clipboard test" 0 strclberror
+  
+  DetailPrint "PASSED StrClb test"
+  Goto +2
+strclberror:
+  DetailPrint "FAILED StrClb test"
 
   # Test IO functions
   !macro testio str
@@ -130,25 +130,46 @@ strlocerror:
 strstrerror:
   DetailPrint "FAILED StrStr test"
 
-  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "0"
+  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "0" "0"
   StrCmp $0 "abcabcabc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "1"
+  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "1" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "2"
+  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "2" "0"
   StrCmp $0 "abc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "3"
+  ${StrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "3" "0"
   StrCmp $0 "" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" ">" "<" "1" "1"
+  ${StrStrAdv} $0 "abcabcabc" "abc" ">" "<" "1" "1" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" ">" "<" "0" "1"
+  ${StrStrAdv} $0 "abcabcabc" "abc" ">" "<" "0" "1" "0"
   StrCmp $0 "abc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" "<" "<" "1" "0"
+  ${StrStrAdv} $0 "abcabcabc" "abc" "<" "<" "1" "0" "0"
   StrCmp $0 "abcabcabc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" "<" "<" "0" "0"
+  ${StrStrAdv} $0 "abcabcabc" "abc" "<" "<" "0" "0" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "0"
+  ${StrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "0" "0"
   StrCmp $0 "" 0 strstradverror
-  ${StrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1"
+  ${StrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1" "0"
+  StrCmp $0 "abc" 0 strstradverror
+  
+  ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "0" "1"
+  StrCmp $0 "abcabc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "1" "1"
+  StrCmp $0 "abc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "2" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "3" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" ">" "<" "1" "1" "1"
+  StrCmp $0 "ABCabcabc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" ">" "<" "0" "1" "1"
+  StrCmp $0 "ABCabc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" "<" "<" "1" "0" "1"
+  StrCmp $0 "ABCabcabc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" "<" "<" "0" "0" "1"
+  StrCmp $0 "ABCabc" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" "<" ">" "0" "0" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${StrStrAdv} $0 "ABCabcabc" "abc" "<" ">" "0" "1" "1"
   StrCmp $0 "abc" 0 strstradverror
   DetailPrint "PASSED StrStrAdv test"
   Goto +2
@@ -253,25 +274,27 @@ SectionEnd
 Section Uninstall
 
   # Test case conversion
-  ${UnStrCase} $0 "This is just an example. However this can be useful." ""
-  StrCmp $0 "This is just an example. However this can be useful." 0 strcaseerror
+  ${UnStrCase} $0 "This is just an example. A very simple one." ""
+  StrCmp $0 "This is just an example. A very simple one." 0 strcaseerror
 
-  ${UnStrCase} $0 "This is just an example. However this can be useful." "Sentence Case"
-  StrCmp $0 "This is just an example. However this can be useful." 0 strcaseerror
-  ${UnStrCase} $0 "this is just an example. however this can be useful." "Lower Case"
-  StrCmp $0 "this is just an example. however this can be useful." 0 strcaseerror
-  ${UnStrCase} $0 "THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL." "Upper Case"
-  StrCmp $0 "THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL." 0 strcaseerror
-  ${UnStrCase} $0 "This Is Just An Example. However This Can Be Useful." "Title Case"
-  StrCmp $0 "This Is Just An Example. However This Can Be Useful." 0 strcaseerror
+  ${UnStrCase} $0 "THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE." "S"
+  StrCmp $0 "This is just an example. A very simple one." 0 strcaseerror
+  ${UnStrCase} $0 "This is just an example. A very simple one." "L"
+  StrCmp $0 "this is just an example. a very simple one." 0 strcaseerror
+  ${UnStrCase} $0 "This is just an example. A very simple one." "U"
+  StrCmp $0 "THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE." 0 strcaseerror
+  ${UnStrCase} $0 "This is just an example. A very simple one." "T"
+  StrCmp $0 "This Is Just An Example. A Very Simple One." 0 strcaseerror
+  ${UnStrCase} $0 "This is just an example. A very simple one." "<>"
+  StrCmp $0 "tHIS IS JUST AN EXAMPLE. a VERY SIMPLE ONE." 0 strcaseerror
 
-  ${UnStrCase} $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" "Setence Case"
+  ${UnStrCase} $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" "S"
   StrCmp $0 "123456789!@#%^&*()-_=+[]{};:,./<>?" 0 strcaseerror
 
-  ${UnStrCase} $0 "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%^&*()abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" "Setence Case"
-  StrCmp $0 "123456789Abcdefghijklmnopqrstuvwxyz!@#%^&*()Abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" 0 strcaseerror
+  ${UnStrCase} $0 "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%^&*()abcdefghijklmnopqrstuvwxyz-_=+[]{};:,./<>?" "<>"
+  StrCmp $0 "123456789abcdefghijklmnopqrstuvwxyz!@#%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ-_=+[]{};:,./<>?" 0 strcaseerror
 
-  ${UnStrCase} $0 "what about taking a shower tomorrow? it's late to do so now! try to sleep now. Good Night!" "Setence Case"
+  ${UnStrCase} $0 "what about taking a shower tomorrow? it's late to do so now! try to sleep now. Good Night!" "S"
   StrCmp $0 "What about taking a shower tomorrow? It's late to do so now! Try to sleep now. Good night!" 0 strcaseerror
 
   DetailPrint "PASSED StrCase test"
@@ -279,13 +302,15 @@ Section Uninstall
 strcaseerror:
   DetailPrint "FAILED StrCase test"
 
-  # Test clipboard functions
-  ${UnStrClbSet} "StrFunc clipboard test"
-  ${UnStrClbGet} $0
-  StrCmp $0 "StrFunc clipboard test" +3
-    DetailPrint "FAILED StrClbGet/StrClbSet test"
-    Goto +2
-    DetailPrint "PASSED StrClbGet/StrClbSet test"
+  # Test clipboard function
+  ${UnStrClb} $0 "StrFunc clipboard test" ">"
+  ${UnStrClb} $0 "" "<"
+  StrCmp $0 "StrFunc clipboard test" 0 strclberror
+
+  DetailPrint "PASSED StrClb test"
+  Goto +2
+strclberror:
+  DetailPrint "FAILED StrClb test"
 
   # Test IO functions
   !macro untestio str
@@ -345,25 +370,46 @@ strlocerror:
 strstrerror:
   DetailPrint "FAILED StrStr test"
 
-  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "0"
+  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "0" "0"
   StrCmp $0 "abcabcabc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "1"
+  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "1" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "2"
+  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "2" "0"
   StrCmp $0 "abc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "3"
+  ${UnStrStrAdv} $0 "abcabcabc" "a" ">" ">" "1" "3" "0"
   StrCmp $0 "" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" ">" "<" "1" "1"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" ">" "<" "1" "1" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" ">" "<" "0" "1"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" ">" "<" "0" "1" "0"
   StrCmp $0 "abc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" "<" "1" "0"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" "<" "1" "0" "0"
   StrCmp $0 "abcabcabc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" "<" "0" "0"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" "<" "0" "0" "0"
   StrCmp $0 "abcabc" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "0"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "0" "0"
   StrCmp $0 "" 0 strstradverror
-  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1"
+  ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1" "0"
+  StrCmp $0 "abc" 0 strstradverror
+  
+  ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "0" "1"
+  StrCmp $0 "abcabc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "1" "1"
+  StrCmp $0 "abc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "2" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "3" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" ">" "<" "1" "1" "1"
+  StrCmp $0 "ABCabcabc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" ">" "<" "0" "1" "1"
+  StrCmp $0 "ABCabc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" "<" "<" "1" "0" "1"
+  StrCmp $0 "ABCabcabc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" "<" "<" "0" "0" "1"
+  StrCmp $0 "ABCabc" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" "<" ">" "0" "0" "1"
+  StrCmp $0 "" 0 strstradverror
+  ${UnStrStrAdv} $0 "ABCabcabc" "abc" "<" ">" "0" "1" "1"
   StrCmp $0 "abc" 0 strstradverror
   DetailPrint "PASSED StrStrAdv test"
   Goto +2
@@ -460,4 +506,3 @@ strtokerror:
     DetailPrint "PASSED StrTrimNewLines test"
 
 SectionEnd
-
