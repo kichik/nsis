@@ -1,7 +1,5 @@
 // Common/Defs.h
 
-// #pragma once
-
 #ifndef __COMMON_DEFS_H
 #define __COMMON_DEFS_H
 
@@ -18,11 +16,5 @@ inline int BoolToInt(bool value)
 
 inline bool IntToBool(int value)
   { return (value != 0); }
-
-class CMemoryException
-{
-public:
-  CMemoryException() {}
-};
 
 #endif

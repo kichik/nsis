@@ -135,6 +135,18 @@ private:
 
 #endif
 
+  int ConvertError(HRESULT result)
+  {
+    if (result != S_OK)
+    {
+      if (result == E_OUTOFMEMORY)
+        return LZMA_MEM_ERROR;
+      else
+        return LZMA_IO_ERROR;
+    }
+    return C_OK;
+  }
+
 public:
   MY_UNKNOWN_IMP
 
@@ -207,7 +219,7 @@ public:
     props[2].ulVal = 64;
     if (_encoder->SetCoderProperties(propdIDs, props, kNumProps) != 0)
       return LZMA_INIT_ERROR;
-    return _encoder->SetStreams(this, this, 0, 0);
+    return _encoder->SetStreams(this, this, 0, 0) == S_OK ? C_OK : LZMA_INIT_ERROR;
   }
 
   int Init(int level)
@@ -251,18 +263,16 @@ public:
   {
     try
     {
-      if (_encoder->WriteCoderProperties(this) == S_OK)
+      HRESULT hResult = _encoder->WriteCoderProperties(this);
+      if (res == S_OK)
       {
         while (true)
         {
           UINT64 inSize, outSize;
           INT32 finished;
-          if (_encoder->CodeOneBlock(&inSize, &outSize, &finished))
-          {
-            if (res != C_OK)
-              res = LZMA_IO_ERROR;
+          res = ConvertError(_encoder->CodeOneBlock(&inSize, &outSize, &finished));
+          if (res != C_OK)
             break;
-          }
           if (finished)
           {
             res = C_OK;
@@ -272,12 +282,8 @@ public:
       }
       else
       {
-        res = LZMA_IO_ERROR;
+        res = ConvertError(hResult);
       }
-    }
-    catch (CMemoryException)
-    {
-      res = LZMA_MEM_ERROR;
     }
     catch (...)
     {
