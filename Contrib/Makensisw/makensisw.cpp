@@ -47,6 +47,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	if (*g_script++=='"') while (*g_script++!='"');
 	else while (*g_script++!=' ');
 	while (*g_script==' ') g_script++;
+	if (!InitBranding()) {
+		MessageBox(0,"Unable to find makensis.exe.","Error",MB_ICONEXCLAMATION|MB_OK);
+		return 1;
+	}
 	ResetObjects();
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
 	if (!hDialog) {
@@ -83,6 +87,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			HICON hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON));
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
 			DragAcceptFiles(g_hwnd,FALSE);
+			InitTooltips(g_hwnd);
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
@@ -93,6 +98,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_DESTROY:
 		{
 			SaveWindowPos(g_hwnd);
+			DestroyTooltips();
 			PostQuitMessage(0);
 			return TRUE;
 		}

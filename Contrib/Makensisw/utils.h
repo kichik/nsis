@@ -43,5 +43,9 @@ void EnableItems(HWND hwnd);
 void RestoreWindowPos(HWND hwnd);
 void SaveWindowPos(HWND hwnd);
 void ResetObjects();
+int InitBranding();
+void InitTooltips(HWND h);
+void DestroyTooltips();
+void AddTip(HWND hWnd,LPSTR lpszToolTip);
 
 #endif
