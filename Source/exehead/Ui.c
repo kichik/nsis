@@ -204,7 +204,7 @@ lang_again:
   }
 }
 
-__forceinline int NSISCALL ui_doinstall(void)
+FORCE_INLINE int NSISCALL ui_doinstall(void)
 {
   header *header = g_header;
   static WNDCLASS wc; // richedit subclassing and bgbg creation

@@ -638,7 +638,7 @@ class MMapFile : public IMMap
       size += offset - alignedoffset;
 
       m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
-      
+
       if (!m_pView)
       {
         extern FILE *g_output;

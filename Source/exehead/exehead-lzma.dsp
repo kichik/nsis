@@ -39,7 +39,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_LZMA" /D ZEXPORT=__stdcall /FD /c
+# ADD CPP /nologo /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_LZMA" /D LZMACALL=__stdcall /FD /c
 # SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -67,65 +67,12 @@ PostBuild_Cmds=bin2h Release-lzma\exehead_lzma.exe Release-lzma\exehead_lzma.h l
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\InBuffer.h
+SOURCE=..\7zip\LZMADecode.c
+# ADD CPP /Gd
 # End Source File
 # Begin Source File
 
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMA.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMADecoder.cpp
-# ADD CPP /D "__STREAM_VERSION"
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMADecoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMALenCoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZMALiteralCoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\LZOutWindow.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\RangeCoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\RangeCoderBit.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\RangeCoderBitTree.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\RangeCoderOpt.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\7zip\Compress\LZMA_SMALL\Types.h
-# End Source File
-# End Group
-# Begin Group "lzmaNSIS"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\7zip\lzmaNSIS.cpp
-# ADD CPP /D "__STREAM_VERSION"
-# End Source File
-# Begin Source File
-
-SOURCE=..\7zip\lzmaNSIS.h
+SOURCE=..\7zip\LZMADecode.h
 # End Source File
 # End Group
 # Begin Source File
