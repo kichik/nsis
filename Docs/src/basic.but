@@ -1,14 +1,14 @@
-\C{basicinstructions} Basic Instructions
+\H{basicinstructions} Basic Instructions
 
 The instructions that NSIS uses for scripting are sort of a cross between PHP and assembly. There are no real high level language constructs, but the instructions themselves are (for the most part) high level, and you have handy string capability (i.e. you don't have to worry about concatenating strings, etc). You essentially have 25 registers (20 general purpose, 5 special purpose), and a stack.
 
-\H{delete} Delete
+\S{delete} Delete
 
 \c [/REBOOTOK] file
 
 Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set from trying to delete a file that does not exist.
 
-\H{file} File
+\S{file} File
 
 \c [/nonfatal] [/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
 
@@ -28,37 +28,37 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b If the /nonfatal switch is used, a warning will be issued if no files found instead of an error.
 
-\H{exec} Exec
+\S{exec} Exec
 
 \c command
 
 Execute the specfied program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: Exec '"$INSTDIR\\command.exe" parameters'.
 
-\H{execshell} ExecShell
+\S{execshell} ExecShell
 
 \c action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]
 
 Execute the specfied program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
 
-\H{execwait} ExecWait
+\S{execwait} ExecWait
 
 \c command [user_var(exit code)]
 
 Execute the specfied program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: ExecWait '"$INSTDIR\\command.exe" parameters'
 
-\H{rename} Rename
+\S{rename} Rename
 
 \c [/REBOOTOK] source_file dest_file
 
 Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. If /REBOOTOK is specified, and the file cannot be overwritten, then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.
 
-\H{rmdir} RMDir
+\S{rmdir} RMDir
 
 \c [/r] directory
 
 Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the dictory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
 
-\H{reservefile} ReserveFile
+\S{reservefile} ReserveFile
 
 \c [/nonfatal] [/r] file [file...]
 
@@ -66,7 +66,7 @@ Reserves a file in the data block for later use. As files are added in the order
 
 See File (\K{file}) for more information about the parameters.
 
-\H{setoutpath} SetOutPath
+\S{setoutpath} SetOutPath
 
 \c outpath
 
