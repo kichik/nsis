@@ -50,13 +50,13 @@ This command closes a block started with !ifdef, !ifndef, !ifmacrodef or !ifmacr
 
 \S1{insertmacro} !insertmacro
 
-\c !insertmacro macro_name [parameter] [...]
+\c macro_name [parameter] [...]
 
 Inserts the contents of a macro that was created with !macro. If the macro was created with parameters, then you must pass as many parameters to the macro as it requires.
 
 \S1{macro} !macro
 
-\c !macro macro_name [parameter][...]
+\c macro_name [parameter][...]
 
 Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (e.g. $\{PARMNAME\}) from inside the macro.
 
@@ -66,6 +66,6 @@ Ends a macro that was started with !macro.
 
 \S1{undef} !undef
 
-\c !undef gflag
+\c gflag
 
 Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".
