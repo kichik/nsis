@@ -95,7 +95,8 @@ void DisableItems(HWND hwnd) {
 	EnableMenuItem(g_mnu,IDM_COPY,MF_GRAYED);
 	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_GRAYED);
 	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_ENABLED);
+	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_GRAYED);
+	EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_GRAYED);
 }
 
 void EnableItems(HWND hwnd) {
@@ -155,6 +156,7 @@ void EnableItems(HWND hwnd) {
 	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_ENABLED);
 	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_ENABLED);
 	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_ENABLED);
+    EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_ENABLED);
 }
 
 void CompileNSISScript() {
@@ -167,6 +169,7 @@ void CompileNSISScript() {
 		EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_GRAYED);
 		EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
 		EnableMenuItem(g_mnu,IDM_TEST,MF_GRAYED);
+		EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_GRAYED);
 		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
 		DragAcceptFiles(g_hwnd,TRUE);
 		return;
