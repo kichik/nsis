@@ -16,7 +16,7 @@ SetCompress off
 
 Name "BigNSISTest"
 Caption "NSIS Big Test"
-Icon "..\contrib\Icons\normal-install.ico"
+Icon "..\Contrib\Graphics\Icons\nsis1-install.ico"
 OutFile "bigtest.exe"
 
 SetDateSave on
@@ -30,7 +30,7 @@ XPStyle on
 InstallDir "$PROGRAMFILES\NSISCrap\BigNSISTest"
 InstallDirRegKey HKLM "Software\NSISCrap\BigNSISTest" ""
 
-CheckBitmap ..\contrib\Icons\checksX.bmp
+CheckBitmap "..\Contrib\Graphics\Checks\classic-cross.bmp"
 
 LicenseText "A test text, make sure it's all there"
 LicenseData "..\source\exehead\main.c"
@@ -277,7 +277,7 @@ FunctionEnd
 ; Uninstaller
 
 UninstallText "This will uninstall example2. Hit next to continue."
-UninstallIcon "..\contrib\Icons\normal-uninstall.ico"
+UninstallIcon "..\Contrib\Graphics\Icons\nsis1-uninstall.ico"
 
 Section "Uninstall"
 
