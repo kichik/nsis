@@ -1,0 +1,71 @@
+\S0{compdefines} Conditional Compilation
+
+The compiler maintains a list of defined symbols, which can be defined using !define or the /D command line switch. These defined symbols can be used for conditional compilation (using !ifdef) or for symbol replacement (a simple form of macros). To replace a symbol with its value, use $\{SYMBOL\} (if SYMBOL is not defined, no translation will occur). The translation is first-come-first-served, meaning if you do:
+
+\c !define symbol1 ${symbol2}
+
+If symbol2 is defined when that line occurs, it will be replaced. Otherwise, any replacing will occur when $\{symbol1\} is referenced.
+
+Define/conditional compilation related commands:
+
+\S1{define} !define
+
+\c gflag [value]
+
+This command will add 'gflag' to the global define list. This will have a similar effect as using the /D switch on the command line (only the define only becomes effective after the !define command).
+
+\S1{ifdef} !ifdef
+
+\c gflag [bcheck [gflag [...]]]
+
+This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If gflag is globally defined (using !define or the /D switch), then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.
+
+\S1{ifndef} !ifndef
+
+\c gflag [bcheck [gflag [...]]]
+
+The opposite of !ifmacrodef. The lines will be compiled when the gflag has not been defined.
+
+\S1{ifmacrodef} !ifmacrodef
+
+\c gflag [bcheck [gflag [...]]]
+
+This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If the macro gflag exists, then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.
+
+\S1{ifmacrondef} !ifmacrondef
+
+\c gflag [bcheck [gflag [...]]]
+
+The opposite of !ifmacrodef. The lines will be compiled when the macro gflag does not exist.
+
+\S1{else} !else
+
+\c [ifdef|ifndef|ifmacrodef|ifmacrondef [...]]
+
+This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. e.g. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".
+
+\S1{endif} !endif
+
+This command closes a block started with !ifdef, !ifndef, !ifmacrodef or !ifmacrondef.
+
+\S1{insertmacro} !insertmacro
+
+\c !insertmacro macro_name [parameter] [...]
+
+Inserts the contents of a macro that was created with !macro. If the macro was created with parameters, then you must pass as many parameters to the macro as it requires.
+
+\S1{macro} !macro
+
+\c !macro macro_name [parameter][...]
+
+Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (e.g. $\{PARMNAME\}) from inside the macro.
+
+\S1{macroend} !macroend
+
+Ends a macro that was started with !macro.
+
+\S1{undef} !undef
+
+\c !undef gflag
+
+Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL is undefined will be translated to "$\{SYMBOL\}".

@@ -1,0 +1,190 @@
+# Header, don't edit
+NLF v6
+# Language ID
+2074
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by Vladan Obradovic
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Instalacija
+# ^UninstallCaption
+$(^Name) Deinstalacija
+# ^LicenseSubCaption
+: Uslovi Licence
+# ^ComponentsSubCaption
+: Instalacione Komponente
+# ^DirSubCaption
+: Instalacioni Direktorijum
+# ^InstallingSubCaption
+: Instaliacija
+# ^CompletedSubCaption
+: Kompletirano
+# ^UnComponentsSubCaption
+: Opcije uklanjanja
+# ^UnDirSubCaption
+: Programska grupa uklanjanja
+# ^ConfirmSubCaption
+: Potvrda
+# ^UninstallingSubCaption
+: Deinstalacija
+# ^UnCompletedSubCaption
+: Kompletirano
+# ^BackBtn
+< &Nazad
+# ^NextBtn
+&Dalje >
+# ^AgreeBtn
+&Prihvatam
+# ^AcceptBtn
+&Prihvatam uslove u licenci
+# ^DontAcceptBtn
+&Ne prihvatam uslove u licenci
+# ^InstallBtn
+&Instaliraj
+# ^UninstallBtn
+&Deinstaliraj
+# ^CancelBtn
+Odustani
+# ^CloseBtn
+&Zatvori
+# ^BrowseBtn
+T&raži...
+# ^ShowDetailsBtn
+Pokaži &detalje
+# ^ClickNext
+Odaberite 'Dalje' za nastavak.
+# ^ClickInstall
+Odaberite 'Instaliraj' za poèetak instalacije.
+# ^ClickUninstall
+Odaberite 'Deinstaliraj' za poèetak deinstalacije.
+# ^Name
+Ime
+# ^Completed
+Završeno
+# ^LicenseText
+Proèitajte licencu pre instalacije programa $(^NameDA). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvatam'.
+# ^LicenseTextCB
+Proèitajte licencu pre instalacije programa $(^NameDA). Ukoliko prihvatate sve uslove licence, obeležite kvadratiæ ispod. $_CLICK
+# ^LicenseTextRB
+Proèitajte licencu pre instalacije programa $(^NameDA). Ukoliko prihvatate sve uslove licence, odaberite ispod prvu opciju. $_CLICK
+# ^UnLicenseText
+Proèitajte licencu pre deinstalacije programa $(^NameDA). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvaæam'.
+# ^UnLicenseTextCB
+Proèitajte licencu pre deinstalacije programa $(^NameDA). Ukoliko prihvatate sve uslove licence, oznaèite kvadratiæ ispod. $_CLICK
+# ^UnLicenseTextRB
+Molim proèitajte licencu pre uklanjanja programa $(^NameDA). Ukoliko prihvaæate sve uslove ugovora, odaberite prvu opciju ispod. $_CLICK
+# ^Custom
+Posebno
+# ^ComponentsText
+Odaberite komponente koje želite instalirati i uklonite oznaku s onih koje ne želite instalirati. $_CLICK
+# ^ComponentsSubText1
+Odaberite tip instalacije:
+# ^ComponentsSubText2_NoInstTypes
+Odaberite komponente koje želite da instalirate:
+# ^ComponentsSubText2
+Ili, odaberite opcione komponente koje želite da instalirate:
+# ^UnComponentsText
+Oznaèite komponente koje želite da deinstalirate i uklonite oznaku s onih koje ne želite deinstalirati. $_CLICK
+# ^UnComponentsSubText1
+Izaberite tip deinstalacije:
+# ^UnComponentsSubText2_NoInstTypes
+Odaberite komponente za deinstalaciju:
+# ^UnComponentsSubText2
+Ili po izboru obeležite komponente koje želite deinstalairati:
+# ^DirText
+Program $(^NameDA) æe biti instaliran u sledeæi direktorijum. Za instalaciju u neki drugi direktorijum izaberite 'Traži' i izaberite drugi direktorijum. $_CLICK
+# ^DirSubText
+Instalacioni direktorijum
+# ^DirBrowseText
+Odaberite programsku grupu u koju želite instalirati program $(^NameDA):
+# ^UnDirText
+Program $(^NameDA) æe biti deinstaliran iz sledeæe programske grupe. Za deinstalaciju s drugog mesta odaberite 'Pregledaj' i obeležite drugu programsku grupu. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Programska grupa iz koje æe program $(^NameDA) biti deinstaliran:
+# ^SpaceAvailable
+Slobodno na disku: 
+# ^SpaceRequired
+Potrebno na disku:
+# ^UninstallingText
+Program $(^NameDA) æe biti deinstalirati iz sledeæe programske grupe. $_CLICK
+# ^UninstallingSubText
+Deinstalacija iz:
+# ^FileError
+Greška prilikom otvaranja datoteke za upis: \r\n\t"$0"\r\nPritisnite abort da prekinete instalaciju,\r\nretry da ponovno pokušate upis u datoteku, ili\r\nignore da preskoèite tu datoteku
+# ^FileError_NoIgnore
+Greška prilikom otvaranja datoteke za upis: \r\n\t"$0"\r\nPritisnite retry da ponovo pokušate upis u datoteku, ili\r\ncancel da prekinete instalaciju
+# ^CantWrite
+Ne može se upisati:
+# ^CopyFailed
+Greška prilikom kopiranja
+# ^CopyTo
+Kopiraj u
+# ^Registering
+Registrovanje:
+# ^Unregistering
+Deregistrovanje:
+# ^SymbolNotFound
+Ne mogu da naðem simbol:
+# ^CouldNotLoad
+Ne mogu da uèitam:
+# ^CreateFolder
+Napravi direktorijum:
+# ^CreateShortcut
+Napravi shortcut: 
+# ^CreatedUninstaller
+Kreiran deinstaler: 
+# ^Delete
+Obriši datoteku: 
+# ^DeleteOnReboot
+Obriši prilikom novog startovanja: 
+# ^ErrorCreatingShortcut
+Greška prilikom kreiranja shortcut-a: 
+# ^ErrorCreating
+Greška prilikom kreiranja: 
+# ^ErrorDecompressing
+Greška prilikom dekompresije podataka! Uništena instalaciona datoteka?
+# ^ErrorRegistering
+Greška prilikom registrovanja DLL-a
+# ^ExecShell
+Pokreni iz Shell-a: 
+# ^Exec
+Pokreni: 
+# ^Extract
+Otpakuj: 
+# ^ErrorWriting
+Otpakivanje: greška prilikom upisa u datoteku 
+# ^InvalidOpcode
+Uništena instalaciona datoteka: neispravan opcode
+# ^NoOLE
+Nema OLE za: 
+# ^OutputFolder
+Instalacioni direktorijum: 
+# ^RemoveFolder
+Obriši direktorijum: 
+# ^RenameOnReboot
+Preimenuj prilikom ponovnog pokretanja: 
+# ^Rename
+Preimenuj: 
+# ^Skipped
+Preskoèeno: 
+# ^CopyDetails
+Kopiraj Detalje u Clipboard
+# ^LogInstall
+Upiši u log instalacioni proces
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G

@@ -1,0 +1,190 @@
+# Header, don't edit
+NLF v6
+# Language ID
+1025
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+RTL
+# Translation by ..... (any credits should go here)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Setup
+# ^UninstallCaption
+$(^Name) Uninstall
+# ^LicenseSubCaption
+: « ›«ﬁÌ… «·—Œ’…
+# ^ComponentsSubCaption
+: ≈Œ Ì«—«  «· À»Ì 
+# ^DirSubCaption
+: „Ã·œ «· À»Ì 
+# ^InstallingSubCaption
+: Ã«—Ì «· À»Ì 
+# ^CompletedSubCaption
+: «‰ ÂÏ «· À»Ì 
+# ^UnComponentsSubCaption
+: ≈Œ Ì«—«  ≈“«·… «· À»Ì 
+# ^UnDirSubCaption
+: „Ã·œ ≈“«·… «· À»Ì 
+# ^ConfirmSubCaption
+:  √ﬂÌœ
+# ^UninstallingSubCaption
+: ≈“«·… «· À»Ì 
+# ^UnCompletedSubCaption
+: «‰ Â  ≈“«·… «· À»Ì 
+# ^BackBtn
+< «·”«»ﬁ
+# ^NextBtn
+«· «·Ì >
+# ^AgreeBtn
+I „Ê«›ﬁ
+# ^AcceptBtn
+I √ﬁ»· »»‰Êœ « ›«ﬁÌ… «·—Œ’…
+# ^DontAcceptBtn
+I ·« √ﬁ»· »»‰Êœ « ›«ﬁÌ… «·—Œ’…
+# ^InstallBtn
+ À»Ì 
+# ^UninstallBtn
+≈“«·… «· À»Ì 
+# ^CancelBtn
+≈·€«¡
+# ^CloseBtn
+≈€·«ﬁ
+# ^BrowseBtn
+...  ’›Õ
+# ^ShowDetailsBtn
+√ŸÂ—  ›’Ì·« 
+# ^ClickNext
+«÷€ÿ «· «·Ì ··„ «»⁄…
+# ^ClickInstall
+«÷€ÿ  À»Ì  »œ¡  À»Ì  «·»—‰«„Ã
+# ^ClickUninstall
+«÷€ÿ ≈“«·…  À»Ì  »œ¡ ≈“«·… «·»—‰«„Ã
+# ^Name
+«·«”„
+# ^Completed
+«‰ ÂÏ
+# ^LicenseText
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «·À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «÷€ÿ “— „Ê«›ﬁ
+# ^LicenseTextCB
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «· À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «÷€ÿ ›Ì «·’‰œÊﬁ «· «·Ì
+# ^LicenseTextRB
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «· À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «Œ — √Ê· «Œ Ì«— „‰ «· «·Ì
+# ^UnLicenseText
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «· À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «÷€ÿ “— „Ê«›ﬁ
+# ^UnLicenseTextCB
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «· À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «Œ — √Ê· «Œ Ì«— „‰ «· «·Ì
+# ^UnLicenseTextRB
+«·—Ã«¡ ﬁ—«¡… « ›«ﬁÌ… «·—Œ’… ﬁ»· «· À»Ì ° ›Ì Õ«· «·„Ê«›ﬁ… ⁄·Ï Ã„Ì⁄ «·»‰Êœ° «÷€ÿ “— „Ê«›ﬁ
+# ^Custom
+„Œ’’
+# ^ComponentsText
+«Œ — «·„ﬂÊ‰«  «· Ì  —€» » À»Ì Â«
+# ^ComponentsSubText1
+«Œ — ‰Ê⁄ «· À»Ì 
+# ^ComponentsSubText2_NoInstTypes
+«Œ — «·„ﬂÊ‰«  «·„ÿ·Ê»  À»Ì Â«
+# ^ComponentsSubText2
+√Ê «Œ — «·„ﬂÊ‰«  «·≈Œ Ì«—Ì… «· Ì  —€» » À»Ì Â«
+# ^UnComponentsText
+«Œ — «·„ﬂÊ‰«  «· Ì  —€» »≈“«·…  À»Ì Â«
+# ^UnComponentsSubText1
+«Œ — ‰Ê⁄ ≈“«·… «· À»Ì 
+# ^UnComponentsSubText2_NoInstTypes
+«Œ — «·„ﬂÊ‰«  «· Ì  —€» »≈“«·…  À»Ì Â«
+# ^UnComponentsSubText2
+√Ê «Œ — «·„ﬂÊ‰«  «·«Œ Ì«—Ì… «· Ì  —€» »≈“«·…  À»Ì Â«
+# ^DirText
+”Ì „ «· À»Ì  ›Ì «·„Ã·œ «· «·Ì. ·≈Ã—«¡ «· À»Ì  ›Ì „Ã·œ ¬Œ— «÷€ÿ  ’›Õ Ê«Œ — «·„Ã·œ «·ÃœÌœ
+# ^DirSubText
+„Ã·œ «· À»Ì 
+# ^DirBrowseText
+«Œ — „Ã·œ «· À»Ì 
+# ^UnDirText
+”Ì „ ≈“«·… «·»—‰«„Ã „‰ «·„Ã·œ «· «·Ì. ·≈“«· Â „‰ „Ã·œ ¬Œ—° «÷€ÿ “—  ’›Õ Ê«Œ — «·„Ã·œ «·¬Œ—
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+«Œ — «·„Ã·œ ·≈“«·… «·»—‰«„Ã „‰Â
+# ^SpaceAvailable
+"«·ÕÃ„ «· Œ“Ì‰Ì «·„ «Õ "
+# ^SpaceRequired
+"«·ÕÃ„ «· Œ“Ì‰Ì «·„ÿ·Ê» "
+# ^UninstallingText
+”ÌﬁÊ„ Â–« «·„⁄«·Ã »≈“«·…  À»Ì  «·»—‰«„Ã „‰ «·Õ«”»
+# ^UninstallingSubText
+≈“«·… «· À»Ì  „‰ «·„Ã·œ
+# ^FileError
+ÕœÀ Œÿ√ ›Ì › Õ „·› «·ﬂ «»…
+# ^FileError_NoIgnore
+ÕœÀ Œÿ√ ›Ì › Õ „·› «·ﬂ «»…
+# ^CantWrite
+"·„ Ì” ÿ⁄ «·Õ«”» «·ﬂ «»… "
+# ^CopyFailed
+ÕœÀ Œÿ√ ›Ì «·‰”Œ
+# ^CopyTo
+"‰”Œ ≈·Ï "
+# ^Registering
+" ”ÃÌ· "
+# ^Unregistering
+"≈“«·… «· ”ÃÌ· "
+# ^SymbolNotFound
+"·„ ÌÃœ «·Õ«”» «·—„“ "
+# ^CouldNotLoad
+"·„ Ì” ÿ⁄ «·Õ«”»  Õ„Ì· "
+# ^CreateFolder
+"≈‰‘«¡ „Ã·œ "
+# ^CreateShortcut
+"≈‰‘«¡ «Œ ’«— "
+# ^CreatedUninstaller
+"≈‰‘«¡»—‰«„Ã ≈“«·… «· À»Ì  "
+# ^Delete
+"Õ–› «·„·› "
+# ^DeleteOnReboot
+"Õ–› ⁄‰œ ≈⁄«œ… «· ‘€Ì· "
+# ^ErrorCreatingShortcut
+"ÕœÀ Œÿ√ ›Ì ≈‰‘«¡ «·«Œ ’«— "
+# ^ErrorCreating
+"ÕœÀ Œÿ√ ›Ì «·≈‰‘«¡ "
+# ^ErrorDecompressing
+ÕœÀ Œÿ√ ›Ì ›ﬂ «·„⁄ÿÌ«  «·„÷€Êÿ… : »—‰«„Ã «· À»Ì  €Ì— ’«·Õ
+# ^ErrorRegistering
+ÕœÀ Œÿ√ ›Ì  ”ÃÌ· «·„ﬂ »«  «·œÌ‰«„ÌﬂÌ…
+# ^ExecShell
+"ÿ»ﬁ… «· ‰›Ì– "
+# ^Exec
+" ‰›Ì–"
+# ^Extract
+"«” Œ·«’ «·„·›«  "
+# ^ErrorWriting
+"ÕœÀ Œÿ√ ›Ì «·ﬂ «»… ›Ì „·› "
+# ^InvalidOpcode
+»—‰«„Ã «· À»Ì  €Ì— ’«·Õ
+# ^NoOLE
+"No OLE for: "
+# ^OutputFolder
+"„Ã·œ «· Œ“Ì‰ "
+# ^RemoveFolder
+"≈“«·… «·„Ã·œ "
+# ^RenameOnReboot
+"≈⁄«œ… «· ”„Ì… »⁄œ ≈⁄«œ… «· ‘€Ì· "
+# ^Rename
+"√ﬁ—√ √Ê·« "
+# ^Skipped
+" „  Ã«Ê“Â« "
+# ^CopyDetails
+‰”Œ «· ›«’Ì·
+# ^LogInstall
+Õ›Ÿ „·› „—«Ã⁄… ⁄„·Ì… «· À»Ì 
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G

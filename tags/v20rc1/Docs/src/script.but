@@ -1,0 +1,42 @@
+\C{scriptref} Scripting Reference
+
+\H{fileformat} Script File Format
+
+A NSIS Script File (.nsi) is just a text file with a series of commands.
+
+\b Lines beginning with ; or # are comments.
+
+\b Non-comment lines are in the form of 'command [parameters]'
+
+\b To call a plugin, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plugin DLLs}.
+
+\b Anything after a ; or # that is not in a parameter (i.e. in quotes or part of another string) is treated as a comment. (i.e. "File myfile ; this is the file" would work)
+
+\b For parameters that are treated as numbers, use decimal (the number) or hexadecimal (with 0x prepended to it, i.e. 0x12345AB), or octal (numbers beginning with a 0 and no x).
+
+\b To represent strings that have spaces, use quotes.
+
+\b Quotes only have the property of containing a parameter if they begin the parameter.
+
+\b Quotes can be either single quotes, double quotes, or the backward single quote.
+
+\b You can escape quotes using $\\.
+
+\b Examples:
+
+\c           MessageBox MB_OK "I'll be happy" ; this one puts a ' inside a string
+\c           MessageBox MB_OK 'And he said to me "Hi there!"' ; this one puts a " inside a string
+\c           MessageBox MB_OK `And he said to me "I'll be fucked!"` ; this one puts both ' and "s inside a string
+\c           MessageBox MB_OK "$\"A quote from a wise man$\" said the wise man" ; this one shows escaping of quotes
+
+\b To extend a command over multiple lines, use a backslash (\\) at the end of the line, and the next line will effectively be concatenated the end of it. For example:
+
+\c           CreateShortCut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
+\c                          "$INSTDIR\source\zip2exe\zip2exe.dsw"
+\c
+\c           MessageBox MB_YESNO|MB_ICONQUESTION \
+\c                      "Remove all files in your NSIS directory? (If you have anything \
+\c                      you created that you want to keep, click No)" \
+\c                      IDNO NoRemoveLabel
+
+\b If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used).
