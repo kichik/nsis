@@ -20,6 +20,9 @@
 #define IDS_DEFAULT                     18
 #define IDS_ZLIB                        19
 #define IDS_GZIP                        20
+// Added by Darren Owen (DrO) on 1/10/2003
+#define IDS_RECOMPILE_TEST				21
+
 #define DLG_MAIN                        101
 #define IDI_ICON                        102
 #define DLG_ABOUT                       103
@@ -52,6 +55,9 @@
 #define IDRIGHT                         1019
 #define IDLEFT                          1020
 #define IDC_DEFINES                     1021
+// Added by Darren Owen (DrO) on 1/10/2003
+#define IDC_RECOMPILE_TEST				1022
+
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
 #define IDM_DOCS                        40004
@@ -68,13 +74,15 @@
 #define IDM_GZIP                        40022
 #define IDM_MRU_FILE                    40023
 #define IDM_CLEAR_MRU_LIST              40029
+// Added by Darren Owen (DrO) on 1/10/2003
+#define IDM_RECOMPILE_TEST				40030
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        124
-#define _APS_NEXT_COMMAND_VALUE         40030
+#define _APS_NEXT_COMMAND_VALUE         40031
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

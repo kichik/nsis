@@ -154,28 +154,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
       return TRUE;
     }
-    case WM_CONTEXTMENU:
-    {
-      // This does not work on Windows versions < Windows 2000
-      // See http://support.microsoft.com:80/support/kb/articles/Q245/7/54.asp
-      if ((HWND)wParam==GetDlgItem(g_sdata.hwnd,IDC_LOGWIN)) {
-      // Added and altered by Darren Owen (DrO) on 29/9/2003
-      // Will place the right-click menu in the top left corner of the window
-      // if the application key is pressed and the mouse is not in the window
-      // from here...
-      POINT pt;
-      RECT r;
-      pt.x = LOWORD(lParam);	pt.y = HIWORD(lParam);
-      ScreenToClient((HWND)wParam,&pt);
-      GetClientRect((HWND)wParam,&r);
-      if(!PtInRect(&r,pt)) { pt.x = pt.y = 0; }
-        MapWindowPoints((HWND)wParam,HWND_DESKTOP,&pt,1);
-      TrackPopupMenu(g_sdata.editSubmenu,TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_RIGHTBUTTON,pt.x,pt.y,0,g_sdata.hwnd,0);
-	  // ...to here
-      //TrackPopupMenu(g_sdata.editSubmenu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_sdata.hwnd,0);
-      }
-      return TRUE;
-    }
     case WM_DROPFILES: {
       int num;
       char szTmp[MAX_PATH];
@@ -235,12 +213,21 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       if (g_sdata.retcode==0) {
         MessageBeep(MB_ICONASTERISK);
         if (g_sdata.warnings) SetTitle(g_sdata.hwnd,"Finished with Warnings");
-        else SetTitle(g_sdata.hwnd,"Finished Sucessfully");
+        else {
+          SetTitle(g_sdata.hwnd,"Finished Sucessfully");
+          // Added by Darren Owen (DrO) on 1/10/2003
+          if(g_sdata.recompile_test)
+            PostMessage(g_sdata.hwnd, WM_COMMAND, LOWORD(IDM_TEST), 0);
+        }
       }
       else {
         MessageBeep(MB_ICONEXCLAMATION);
         SetTitle(g_sdata.hwnd,"Compile Error: See Log for Details");
       }
+
+      // Added by Darren Owen (DrO) on 1/10/2003
+      // ensures the recompile and run state is reset after use
+      g_sdata.recompile_test = 0;
       DragAcceptFiles(g_sdata.hwnd,TRUE);
       return TRUE;
     }
@@ -253,15 +240,29 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
             EnableToolBarButton(IDM_COPY,enabled);
           }
-        // Added by Darren Owen (DrO) on 29/9/2003
+        // Altered by Darren Owen (DrO) on 6/10/2003
         // Allows the detection of the right-click menu when running on OSes below Windows 2000
         // and will then simulate the effective WM_CONTEXTMENU message that would be received
+        // note: removed the WM_CONTEXTMENU handling to prevent a duplicate menu appearing on
+        // Windows 2000 and higher
         case EN_MSGFILTER:
           #define lpnmMsg ((MSGFILTER*)lParam)
           if(WM_RBUTTONUP == lpnmMsg->msg || WM_KEYUP == lpnmMsg->msg && lpnmMsg->wParam == VK_APPS){
-            POINT pt;
+          POINT pt;
+          HWND edit = GetDlgItem(g_sdata.hwnd,IDC_LOGWIN);
+          RECT r;
             GetCursorPos(&pt);
-            SendMessage(GetParent(lpnmMsg->nmhdr.hwndFrom),WM_CONTEXTMENU,(WPARAM)lpnmMsg->nmhdr.hwndFrom,MAKELPARAM(pt.x,pt.y));
+
+            // Added and altered by Darren Owen (DrO) on 29/9/2003
+            // Will place the right-click menu in the top left corner of the window
+            // if the application key is pressed and the mouse is not in the window
+            // from here...
+            ScreenToClient(edit, &pt);
+            GetClientRect(edit, &r);
+            if(!PtInRect(&r, pt))
+              pt.x = pt.y = 0;
+            MapWindowPoints(edit, HWND_DESKTOP, &pt, 1);
+            TrackPopupMenu(g_sdata.editSubmenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON, pt.x, pt.y, 0, g_sdata.hwnd, 0);
           }
 #ifdef COMPRESSOR_OPTION
         case TBN_DROPDOWN:
@@ -414,6 +415,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case IDM_RECOMPILE:
         {
+          CompileNSISScript();
+          return TRUE;
+        }
+        // Added by Darren Owen (DrO) on 1/10/2003
+        case IDM_RECOMPILE_TEST:
+        case IDC_RECOMPILE_TEST:
+        {
+          g_sdata.recompile_test = 1;
           CompileNSISScript();
           return TRUE;
         }
