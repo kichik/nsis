@@ -341,16 +341,16 @@ will also help you to learn more about the Modern UI.</p>
   The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.<br />
   <i>Defaults: {NSISDIR}\Contrib\UIs\modern-smalldesc.exe, {NSISDIR}\Contrib\UIs\modern-nodesc.exe</i></p>
   <p class="text"><span class="bold">MUI_ICON </span><span class="parameter">icon_file</span><br />
-  The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-install.ico</i></p>
+  The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico</i></p>
   <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
-  The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-uninstall.ico</i></p>
+  The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico</i></p>
   <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">
   (/windows | /grey | (color: RRGGBB hexadecimal))</span><br />
   The background color for the license textbox. Use /windows for the default text background (usually white).
   Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
-  <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Checks\modern.bmp</i></p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows |
   (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
   The colors of the details screen. Use /windows for the default colors.</p>
@@ -358,7 +358,7 @@ will also help you to learn more about the Modern UI.</p>
   The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
   <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap to display in the white header (recommended size: 150x57 pixels). The NSIS Setup uses the bitmap
-  ${NSISDIR}\Contrib\Icons\modern-header.bmp, but can also make one with your own logo.</p>
+  ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp, but can also make one with your own logo.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
   Display the header image on the right side instead of the left side.</p>
@@ -372,7 +372,7 @@ will also help you to learn more about the Modern UI.</p>
   <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
-  <i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_SPECIALBITMAP_NOSTRETCH</span><br />
   Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
@@ -601,7 +601,7 @@ the data block, because this will make your installer start faster.</p>
 or above your own init- or page functions, you have to reserve files:</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
-ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
+ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
 
 !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions

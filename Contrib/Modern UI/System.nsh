@@ -52,15 +52,15 @@ Var MUI_TEMP2
   !endif
 
   !ifndef MUI_ICON
-    !define MUI_ICON "${NSISDIR}\Contrib\Icons\modern-install.ico"
+    !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico"
   !endif
 
   !ifndef MUI_UNICON
-    !define MUI_UNICON "${NSISDIR}\Contrib\Icons\modern-uninstall.ico"
+    !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
   !endif
 
   !ifndef MUI_CHECKBITMAP
-    !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Icons\modern.bmp"
+    !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
   !endif
   
   !ifndef MUI_LICENSEBKCOLOR
@@ -84,7 +84,7 @@ Var MUI_TEMP2
   !endif
   
   !ifndef MUI_SPECIALBITMAP
-    !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
+    !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
   !endif
 
   XPStyle On

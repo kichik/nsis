@@ -57,7 +57,7 @@ Page instfiles instImage
 Section ""
 	; You can also use the BI_NEXT macro here...
 	MessageBox MB_YESNO "We can change the branding image from within a section too!$\nDo you want me to change it?" IDNO done
-		!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX2.bmp" ""
+		!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Wizard\nsis.bmp" ""
 	done:
 	WriteUninstaller uninst.exe
 SectionEnd
@@ -65,24 +65,24 @@ SectionEnd
 ;--------------------------------
 
 Function licenseImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks1.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" /RESIZETOFIT
 	MessageBox MB_YESNO 'Would you like to skip the license page?' IDNO no
 		Abort
 	no:
 FunctionEnd
 
 Function customPage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\modern.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp" /RESIZETOFIT
 	MessageBox MB_OK 'This is a nice custom "page" with yet another image :P'
 	#insert install options/start menu/<insert plugin name here> here
 FunctionEnd
 
 Function dirImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks2.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Header\win.bmp" /RESIZETOFIT
 FunctionEnd
 
 Function instImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks-sdbarker.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Wizard\llama.bmp" /RESIZETOFIT
 FunctionEnd
 
 ;--------------------------------
@@ -94,17 +94,17 @@ UninstPage custom un.customPage
 UninstPage instfiles un.instImage
 
 Function un.uninstImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp" /RESIZETOFIT
 FunctionEnd
 
 Function un.customPage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\modern.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Header\win.bmp" /RESIZETOFIT
 	MessageBox MB_OK 'This is a nice uninstaller custom "page" with yet another image :P'
 	#insert install options/start menu/<insert plugin name here> here
 FunctionEnd
 
 Function un.instImage
-	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\jarsonic-checks.bmp" /RESIZETOFIT
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Graphics\Wizard\llama.bmp" /RESIZETOFIT
 FunctionEnd
 
 ;--------------------------------
