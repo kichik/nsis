@@ -59,7 +59,8 @@ struct lang {
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  int i;
+  int i, size;
+  static HFONT font;
   switch (uMsg) {
   	case WM_INITDIALOG:
       for (i = langs_num - 1; i >= 0; i--) {
@@ -76,6 +77,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           break;
         }
       }
+      if (!popstring(temp))
+        size = myatoi(temp);
+      if (!popstring(temp)) {
+        LOGFONT f = {0,};
+        f.lfHeight = size;
+        lstrcpy(f.lfFaceName, temp);
+        font = CreateFontIndirect(&f);
+        SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
+        SendDlgItemMessage(hwndDlg, IDOK, WM_SETFONT, (WPARAM)font, 1);
+        SendDlgItemMessage(hwndDlg, IDCANCEL, WM_SETFONT, (WPARAM)font, 1);
+        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, WM_SETFONT, (WPARAM)font, 1);
+        SendDlgItemMessage(hwndDlg, IDC_TEXT, WM_SETFONT, (WPARAM)font, 1);
+      }
       ShowWindow(hwndDlg, SW_SHOW);
       break;
     case WM_COMMAND:
@@ -91,6 +105,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       break;
     case WM_CLOSE:
+      if (font) DeleteObject(font);
       pushstring("cancel");
       EndDialog(hwndDlg, 1);
       break;
