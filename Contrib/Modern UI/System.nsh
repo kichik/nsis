@@ -99,6 +99,11 @@ Var MUI_TEMP2
     !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
       AutoCloseWindow true
     !endif
+    !ifdef MUI_FINISHPAGE_LINK
+      !ifndef MUI_FINISHPAGE_LINK_COLOR
+        !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
+      !endif
+    !endif
   !endif
 
   XPStyle On
@@ -650,6 +655,10 @@ Var MUI_TEMP2
     !verbose 3
   !endif
   
+  !ifndef MUI_INSTFILESPAGE
+    !define MUI_INSTFILESPAGE
+  !endif
+  
   Page instfiles mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
    
   !ifndef MUI_MANUALVERBOSE
@@ -706,6 +715,10 @@ Var MUI_TEMP2
 
   !ifndef MUI_UNINSTALLER
     !define MUI_UNINSTALLER
+  !endif
+  
+  !ifndef MUI_UNINSTFILESPAGE
+    !define MUI_UNINSTFILESPAGE
   !endif
 
   UninstPage instfiles un.mui.InstFilesPre un.mui.InstFilesShow un.mui.InstFilesLeave
@@ -890,7 +903,9 @@ Var MUI_TEMP2
     !insertmacro MUI_FUNCTIONS_STARTMENUPAGE mui.StartmenuPre mui.StartmenuLeave
   !endif
   
-  !insertmacro MUI_FUNCTIONS_INSTFILESPAGE mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
+  !ifdef MUI_INSTFILESPAGE
+    !insertmacro MUI_FUNCTIONS_INSTFILESPAGE mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
+  !endif
     
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_FUNCTIONS_FINISHPAGE mui.FinishPre mui.FinishLeave
@@ -911,10 +926,10 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -955,10 +970,10 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1238,7 +1253,7 @@ Var MUI_TEMP2
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Top" "175"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Bottom" "185"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "State" "${MUI_FINISHPAGE_LINK_LOCATION}"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "TxtColor" "0x800000"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "TxtColor" "${MUI_FINISHPAGE_LINK_COLOR}"
             
     !endif
     
@@ -1335,16 +1350,16 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
-	Pop $MUI_TEMP1
+    Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 mui.finish_done
       
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -1403,10 +1418,6 @@ Var MUI_TEMP2
         
     mui.finish_done:
 
-    !ifdef MUI_CUSTOMFUNCTION_FINISH
-      Call "${MUI_CUSTOMFUNCTION_FINISH}"
-    !endif
-    
   FunctionEnd
   
   Function "${LEAVE}"
@@ -1485,8 +1496,10 @@ Var MUI_TEMP2
   !ifdef MUI_UNCONFIRMPAGE
     !insertmacro MUI_UNFUNCTION_CONFIRMPAGE un.mui.ConfirmPre un.mui.ConfirmShow un.mui.ConfirmLeave
   !endif
-    
-  !insertmacro MUI_UNFUNCTION_INSTFILESPAGE un.mui.InstFilesPre un.mui.InstFilesShow un.mui.InstFilesLeave
+  
+  !ifdef MUI_UNINSTFILESPAGE
+    !insertmacro MUI_UNFUNCTION_INSTFILESPAGE un.mui.InstFilesPre un.mui.InstFilesShow un.mui.InstFilesLeave
+  !endif
   
 !macroend
 
