@@ -3,7 +3,7 @@ NLF v2
 # Language ID
 1045
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
-# Spelling corrected by cube cube(at)lp.net.pl
+# spelling corrected by cube cube(at)lp.net.pl
 Nullsoft Install System %s
 %s Instalator
 %s Odinstaluj
@@ -15,15 +15,15 @@ Nullsoft Install System %s
 : Potwierdzenie
 : Odinstalowuje pliki
 : Zakoñczono
-< Cofnij
-Dalej >
-Zgadzam siê
-Instaluj
-Odinstaluj
-Anuluj
-Zamknij
-Przegl¹daj...
-Poka¿ szczegó³y
+< &Cofnij
+&Dalej >
+&Zgadzam siê
+&Instaluj
+&Odinstaluj
+&Anuluj
+&Zamknij
+&Przegl¹daj...
+Poka¿ &szczegó³y
 Nazwa
 Zakoñczono
 U¿ytkownika
@@ -46,7 +46,7 @@ Utworzone odinstalowanie:
 Usuñ plik:
 Usuñ przy restarcie: 
 B³¹d tworzenia skrótu klawiszowego:
-B³¹d tworzenia:
+B³¹d tworzenia: 
 B³¹d dekompresji danych! Czy przerwaæ instalacjê?
 B³¹d zapisu DLL
 ExecShell: 
