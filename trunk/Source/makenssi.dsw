@@ -3,6 +3,18 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
+Project: "Tests"=.\Tests\Tests.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "exehead_bzip2"=".\exehead\exehead-bzip2.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -39,7 +51,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "makenssi"=".\makenssi.dsp" - Package Owner=<4>
+Project: "makenssi"=.\makenssi.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
