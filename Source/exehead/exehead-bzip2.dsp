@@ -62,63 +62,6 @@ PostBuild_Cmds=bin2h Release-bzip2\exehead_bzip2.exe Release-bzip2\exehead_bzip2
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-# Begin Group "zlib"
-
-# PROP Default_Filter ""
-# Begin Group "headers"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\zlib\Infblock.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Infcodes.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Inftrees.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Infutil.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Zconf.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\Zlib.h
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=..\zlib\INFBLOCK.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFCODES.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFLATE.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFTREES.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\zlib\INFUTIL.C
-# ADD CPP /Gz
-# End Source File
-# End Group
 # Begin Group "bzip2"
 
 # PROP Default_Filter ""
