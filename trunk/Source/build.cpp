@@ -366,15 +366,15 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "EXEDIR\0"        // 24
   "LANGUAGE\0"      // 25
   "PLUGINSDIR\0"    // 26
-  "PROGRAMFILES\0"  // 26
-  "SMPROGRAMS\0"    // 27
-  "SMSTARTUP\0"     // 28
-  "DESKTOP\0"       // 29
-  "STARTMENU\0"     // 30
-  "QUICKLAUNCH\0"   // 31
-  "TEMP\0"          // 32
-  "WINDIR\0"        // 33
-  "SYSDIR\0"        // 34
+  "PROGRAMFILES\0"  // 27
+  "SMPROGRAMS\0"    // 28
+  "SMSTARTUP\0"     // 29
+  "DESKTOP\0"       // 30
+  "STARTMENU\0"     // 31
+  "QUICKLAUNCH\0"   // 32
+  "TEMP\0"          // 33
+  "WINDIR\0"        // 34
+  "SYSDIR\0"        // 35
   ;
 
   const char *p=in;

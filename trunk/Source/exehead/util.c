@@ -461,9 +461,9 @@ char * NSISCALL process_string(const char *in)
               "AppData"
             };
             static char name[20]="Common ";
-            const char *name_=tab[nVarIdx-(VAR_CODES_START+27)];
+            const char *name_=tab[nVarIdx-(VAR_CODES_START+28)];
             mystrcpy(name+7,name_);
-            f=g_flags.all_user_var & (nVarIdx != VAR_CODES_START + 31);
+            f=g_flags.all_user_var & (nVarIdx != VAR_CODES_START + 32);
 
             again:
 
@@ -480,7 +480,7 @@ char * NSISCALL process_string(const char *in)
                 mystrcpy(out,temp_directory);
               }
 
-            if (nVarIdx == VAR_CODES_START + 31) {
+            if (nVarIdx == VAR_CODES_START + 32) {
               lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
               f = GetFileAttributes(out);
               if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
