@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Hungarian (1038)
 ;Translation by Jozsef Tamas Herczeg ( - 1.61-ig),
@@ -12,7 +12,7 @@
   !define MUI_LANGNAME "Magyar" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Üdvözli a(z) $(^Name) Telepítõ Varázsló"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "A(z) $(^Name) telepítése következik a számítógépre.\r\n\r\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "A(z) $(^Name) telepítése következik a számítógépre.\r\n\r\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licencszerzõdés"
   !define MUI_TEXT_LICENSE_SUBTITLE "A(z) $(^Name) telepítése elõtt tekintse át a szerzõdés feltételeit."
@@ -84,9 +84,8 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "A(z) $(^Name) eltávolítás varázslójának befejezése."
   !define MUI_UNTEXT_FINISH_INFO_TEXT "A(z) $(^Name) eltávolítása sikeresen befejezõdött.\r\n\r\nA Finish-re kattintva bezárul ez a varázsló."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "A számítógépet újra kell indítani, hogy a(z) $(^Name) eltávolítása teljes legyen. Akarja most újraindítani a rendszert?"
 
   !define MUI_UNTEXT_ABORTWARNING "Biztos, hogy ki akar lépni a(z) $(^Name) Eltávolítóból?"
 
 !insertmacro MUI_LANGUAGEFILE_END
-
-
