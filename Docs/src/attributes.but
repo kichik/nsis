@@ -90,6 +90,7 @@ subtext: Text next to the installation type selection.
 
 subtext2: Text to the left of the components list and below the installation type.
 
+The default string will be used if a string is empty ("").
 
 \S2{acrccheck} CRCCheck
 
@@ -117,6 +118,7 @@ browse_button_text: Text on the Browse button.
 
 browse_dlg_text: Text on the "Browse For Folder" dialog, appears after clicking on "Browse" button.
 
+The default string will be used if a string is empty ("").
 
 \S2{adirvar} DirVar
 
@@ -203,6 +205,7 @@ text: Text above the controls, to the right of the installation icon.
 
 button_text: Text on the "I Agree" button.
 
+The default string will be used if a string is empty ("").
 
 \S2{amiscbuttontext} MiscButtonText
 
