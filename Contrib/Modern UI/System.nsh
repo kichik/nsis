@@ -1387,7 +1387,21 @@ Var MUI_TEMP2
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
   
       IfRebootFlag 0 mui.finish_noreboot_init
-    
+      
+        !ifndef MUI_FINISHPAGE_TITLE_3LINES
+          !ifndef MUI_FINISHPAGE_TEXT_LARGE
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "85"
+          !else
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "115"
+          !endif
+        !else
+          !ifndef MUI_FINISHPAGE_TEXT_LARGE
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "95"
+          !else
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "125"
+          !endif
+        !endif
+        
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "${MUI_FINISHPAGE_TEXT_REBOOT}"
     
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
