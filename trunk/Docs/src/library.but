@@ -1,0 +1,247 @@
+\A{library} DLL/TLB Library Setup
+
+
+\H{library_intro} Introduction
+
+NSIS 2.01 features a new system for the installation and uninstallation of dynamic link libraries (DLL) and type libraries (TLB).
+Using this new system you can handle the complete setup with one single line of code:
+
+\b File copying
+
+\b File copying on reboot
+
+\b Version checks
+
+\b Registration and unregistration
+
+\b Registration and unregistration on reboot
+
+\b Shared DLL counting
+
+\b Windows File Protection checks
+
+The macros are stored in the header file Library.nsh, which should be included in scripts using this system:
+
+\c !include Library.nsh
+
+Note that you can only compile scripts using this system on Windows systems. It is not possible to compile on Linux etc.
+
+
+\H{library_install} Library Installation
+
+\S1{} Introduction
+
+The InstallLib macro allows you to install a library.
+
+To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or message box.
+
+\S1{} Parameters
+
+\c libtype shared protection localfile destfile tempbasedir
+
+\\<b\\>libtype\\</b\\>
+
+The type of the library
+
+DLL	-			Dynamic link library (DLL)\\<br\\>
+REGDLL -		DLL that has to be registered\\<br\\>
+TLB - 			Type library or DLL that contains a type LIBRARY\\<br\\>
+REGDLLTLB -		DLL that has to be registered and contains a type library\\<br\\>
+
+
+\\<b\\>shared\\</b\\>
+
+Specify whether the library is shared with other applications
+
+NOTSHARED -		The library is not shared\\<br\\>
+$VARNAME -		Variable that is empty when the application is installed for the first time,
+				which is when the shared library count will be increased.\\<br\\>
+
+\\<b\\>install\\</b\\>
+
+Specify the installation method
+
+REBOOT_PROTECTED
+
+\b Upgrade the libary on reboot when in use (required for system files).
+
+\b Upgrade the library if the file is not protected by Windows File Protection.
+
+NOREBOOT_PROTECTED
+
+\b Warns the user when the library is in use. The user will have to close applications using the library.
+						  
+\b Upgrade the library if the file is not protected by Windows File Protection.
+
+REBOOT_NOTPROTECTED
+
+\b Upgrade the libary on reboot when in use (required for system files).
+
+\b Upgrade the library without checking for Windows File Protection.
+										
+NOREBOOT_NOTPROTECTED
+
+\b Warns the user when the library is in use. The user will have to close  applications using the library.
+						  
+\b Upgrade the library without checking for Windows File Protection.	
+
+\\<b\\>localfile\\</b\\>
+
+Location of the library on the compiler system
+
+\\<b\\>destfile\\</b\\>
+
+Location to store the library on the user's system
+
+\\<b\\>tempbasedir\\</b\\>
+
+Directory on the user's system to store a temporary file when the system has to be rebooted.
+
+For Windows 9x/ME support, this directory should be on the same volume as the destination file (destfile).
+The Windows temp directory could be located on any volume, so you cannot use this directory.
+
+\S1{} Notes
+
+\b If you want to support Windows 9x/ME, you can only use short filenames (8.3).
+
+\S1{} Example
+
+\c  ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is
+\c  ;already installed. For example:
+\c  
+\c  IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
+\c    StrCpy $ALREADY_INSTALLED 1
+\c  new_installation:
+\c
+\c  !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED dllname.dll $SYSDIR\dllname.dll $SYSDIR
+
+
+\H{library_uninstall} Library Uninstallation
+
+\S1{} Introduction
+
+The UnInstallLib macro allows you to uninstall a library.
+
+\S1{} Parameters
+
+\c libtype shared uninstall file
+
+\\<b\\>libtype\\</b\\>
+
+The type of the library
+
+DLL	-			Dynamic link library (DLL)\\<br\\>
+REGDLL -		DLL that has to be registered\\<br\\>
+TLB - 			Type library or DLL that contains a type LIBRARY\\<br\\>
+REGDLLTLB -		DLL that has to be registered and contains a type library\\<br\\>
+
+
+\\<b\\>shared\\</b\\>
+
+Specify whether the library is shared with other applications
+
+NOTSHARED -		The library is not shared\\<br\\>
+SHARED -		The library is shared and should be removed if the shared library count
+				indicates that the file is not in use anymore..\\<br\\>
+
+\\<b\\>uninstall\\</b\\>
+
+Specify the uninstallation method
+
+NOREMOVE
+
+\b The library should not be removed. You should use this option for common or important
+system files such as the Visual Basic/C++/MFC runtimes.
+										
+REBOOT_PROTECTED
+
+\b Remove the libary on reboot when in use (required for system files).
+
+\b Remove the library if the file is not protected by Windows File Protection.
+										
+NOREBOOT_PROTECTED
+
+\b Warns the user when the library is in use. The user will have to close applications using the library.
+
+\b Remove the library if the file is not protected by Windows File Protection.
+										
+REBOOT_NOTPROTECTED
+
+\b Remove the libary on reboot when in use (required for system files).
+
+\b Remove the library without checking for Windows File Protection.
+										
+NOREBOOT_NOTPROTECTED
+
+\b Warns the user when the library is in use. The user will have to close applications using the library.
+
+\b Remove the library without checking for Windows File Protection.	
+
+
+\\<b\\>file\\</b\\>
+
+Location of the library 
+
+\S1{} Example
+
+\c  !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $SYSDIR\dllname.dll
+
+
+\H{library_vb6} Visual Basic 6 Runtimes
+
+Add this code to your script to install and uninstall the VB6 runtimes.
+
+The correct version of the following files should be stored in your script folder
+(or modify the paths to the local files if you want to use another folder):
+
+\b  msvbvm60.dll
+
+\b  oleaut32.dll
+
+\b  olepro32.dll
+
+\b  oleaut32.dll
+
+\b  comcat.dll
+
+\b  asycfilt.dll
+
+\b  stdole2.tlb
+
+A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} is available that explains you how to obatain these files.
+
+To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or message box.
+
+\c  !include Library.nsh
+\c
+\c  Var ALREADY_INSTALLED
+\c  
+\c  Section "-Install VB6 runtimes"
+\c  
+\c    ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is already installed. For example:
+\c
+\c    IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
+\c      StrCpy $ALREADY_INSTALLED 1
+\c    new_installation:
+\c
+\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED "msvbvm60.dll" "$SYSDIR\msvbvm60.dll" "$SYSDIR"
+\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "oleaut32.dll" "$SYSDIR\oleaut32.dll" "$SYSDIR"
+\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "olepro32.dll" "$SYSDIR\olepro32.dll" "$SYSDIR"
+\c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "comcat.dll"   "$SYSDIR\comcat.dll"   "$SYSDIR"
+\c    !insertmacro InstallLib DLL    $ALREADY_INSTALLED REBOOT_PROTECTED    "asycfilt.dll" "$SYSDIR\asycfilt.dll" "$SYSDIR"
+\c    !insertmacro InstallLib TLB    $ALREADY_INSTALLED REBOOT_PROTECTED    "stdole2.tlb"  "$SYSDIR\stdole2.tlb"  "$SYSDIR"
+\c  
+\c  SectionEnd
+\c
+\c  Section "-un.Uninstall VB6 runtimes"
+\c  
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\msvbvm60.dll"
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\oleaut32.dll" 
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\olepro32.dll"
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat32.dll" 
+\c    !insertmacro UnInstallLib DLL    SHARED NOREMOVE "$SYSDIR\asycfilt.dll"
+\c    !insertmacro UnInstallLib TLB    SHARED NOREMOVE "$SYSDIR\stdole2.tlb"
+\c  
+\c  SectionEnd
+
+You can use similar code to install common VB6 ActiveX controls (such as the controls for Windows Common Controls).

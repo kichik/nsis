@@ -140,7 +140,7 @@ Compiler commands will be executed on compile time on your computer. They can be
 
 For more information about defines see \R{compdefines}{Conditional Compilation}.
 
-Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. An example of a macro is \R{upgradedll}{UpgradeDLL}, which you can use to upgrade a DLL file. The macro's commands are inserts at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
+Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserts at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
 
 \c !macro MyFunc UN
 \c Function ${UN}MyFunc
@@ -166,6 +166,8 @@ The compiler will check your script and give you warnings or an error. If an err
 
 NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
+It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See \R{compiling_infos}{Compiling NSIS Sources} for details.
+
 \H{tutmodernui} Modern UI
 
 A popular user interface for NSIS is the Modern User Interface, it has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
@@ -186,7 +188,7 @@ Every plug-in's function has its own requirements when it comes to parameters, s
 \c InstallOptions::dialog "$PLUGINSDIR\test.ini"
 \c NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
 
-The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addPluginDir} to tell NSIS to search in other directories too.
+The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addplugindir} to tell NSIS to search in other directories too.
 
 The NSIS distribution already included many plug-ins. \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Contrib/}{Contrib folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/archive/}{NSIS Archive}.
 
