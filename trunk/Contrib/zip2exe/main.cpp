@@ -38,7 +38,7 @@ int g_zipfile_size;
 
 char *g_options="";//"/V3";
 
-static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+static BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
@@ -62,7 +62,7 @@ static void doRMDir(char *buf)
   while (*p) p++;
   lstrcpy(p,"\\*.*");
   h = FindFirstFile(buf,&fd);
-  if (h != INVALID_HANDLE_VALUE) 
+  if (h != INVALID_HANDLE_VALUE)
   {
     do
     {
@@ -70,10 +70,10 @@ static void doRMDir(char *buf)
           (fd.cFileName[1] != '.' && fd.cFileName[1]))
       {
         lstrcpy(p+1,fd.cFileName);
-        if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) 
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
           SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
         if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf);
-        else 
+        else
         {
           DeleteFile(buf);
         }
@@ -87,28 +87,28 @@ static void doRMDir(char *buf)
 
 static void doMKDir(char *directory)
 {
-	char *p, *p2;
-	char buf[MAX_PATH];
+  char *p, *p2;
+  char buf[MAX_PATH];
   if (!*directory) return;
-	lstrcpy(buf,directory);
+  lstrcpy(buf,directory);
   p=buf; while (*p) p++;
-	while (p >= buf && *p != '\\') p--;
-	p2 = buf;
-	if (p2[1] == ':') p2+=4;
-	else if (p2[0] == '\\' && p2[1] == '\\')
-	{
-		p2+=2;
-		while (*p2 && *p2 != '\\') p2++;
-		if (*p2) p2++;
-		while (*p2 && *p2 != '\\') p2++;
-		if (*p2) p2++;
-	}
-	if (p >= p2)
-	{
-		*p=0;
-		doMKDir(buf);
-	}
-	CreateDirectory(directory,NULL);
+  while (p >= buf && *p != '\\') p--;
+  p2 = buf;
+  if (p2[1] == ':') p2+=4;
+  else if (p2[0] == '\\' && p2[1] == '\\')
+  {
+    p2+=2;
+    while (*p2 && *p2 != '\\') p2++;
+    if (*p2) p2++;
+    while (*p2 && *p2 != '\\') p2++;
+    if (*p2) p2++;
+  }
+  if (p >= p2)
+  {
+    *p=0;
+    doMKDir(buf);
+  }
+  CreateDirectory(directory,NULL);
 }
 
 
@@ -159,14 +159,14 @@ int tempzip_make(HWND hwndDlg, char *fn)
     MessageBox(hwndDlg,"Error opening ZIP file",g_errcaption,MB_OK|MB_ICONSTOP);
     return 1;
   }
-	
+
   int nf=0, nkb=0;
   g_extracting=1;
-	do {
-		char filename[MAX_PATH];
-	  unzGetCurrentFileInfo(f,NULL,filename,sizeof(filename),NULL,0,NULL,0);
-    if (filename[0] && 
-        filename[strlen(filename)-1] != '\\' && 
+  do {
+    char filename[MAX_PATH];
+    unzGetCurrentFileInfo(f,NULL,filename,sizeof(filename),NULL,0,NULL,0);
+    if (filename[0] &&
+        filename[strlen(filename)-1] != '\\' &&
         filename[strlen(filename)-1] != '/')
     {
       char *pfn=filename;
@@ -193,19 +193,19 @@ int tempzip_make(HWND hwndDlg, char *fn)
         if (buf[0]) doMKDir(buf);
       }
 
-  		if (unzOpenCurrentFile(f) == UNZ_OK)
-	  	{
+      if (unzOpenCurrentFile(f) == UNZ_OK)
+      {
         SendDlgItemMessage(hwndDlg,IDC_ZIPINFO_FILES,LB_ADDSTRING,0,(LPARAM)pfn);
-			  FILE *fp;
-			  int l;
-			  fp = fopen(out_filename,"wb");
-			  if (fp)
-			  {
-				  do
-				  {
-					  char buf[1024];
-					  l=unzReadCurrentFile(f,buf,sizeof(buf));
-					  if (l > 0) 
+        FILE *fp;
+        int l;
+        fp = fopen(out_filename,"wb");
+        if (fp)
+        {
+          do
+          {
+            char buf[1024];
+            l=unzReadCurrentFile(f,buf,sizeof(buf));
+            if (l > 0)
             {
               if (fwrite(buf,1,l,fp) != (unsigned int)l)
               {
@@ -217,10 +217,10 @@ int tempzip_make(HWND hwndDlg, char *fn)
               }
               nkb++;
             }
-				  } while (l > 0);
+          } while (l > 0);
 
-				  fclose(fp);
-			  }
+          fclose(fp);
+        }
         else
         {
           unzClose(f);
@@ -235,7 +235,7 @@ int tempzip_make(HWND hwndDlg, char *fn)
         int quit=0;
         while (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
         {
-          if (msg.message == WM_DESTROY && msg.hwnd == g_hwnd) 
+          if (msg.message == WM_DESTROY && msg.hwnd == g_hwnd)
           {
             quit++;
             break;
@@ -243,9 +243,9 @@ int tempzip_make(HWND hwndDlg, char *fn)
           TranslateMessage(&msg);
           DispatchMessage(&msg);
         }
-			  unzCloseCurrentFile(f);
+        unzCloseCurrentFile(f);
         if (quit) break;
-		  }
+      }
       else
       {
         unzClose(f);
@@ -255,7 +255,7 @@ int tempzip_make(HWND hwndDlg, char *fn)
       }
     }
   } while (unzGoToNextFile(f) == UNZ_OK);
-  
+
   g_extracting=0;
   wsprintf(buf,"Extracted: %d files, %dKB",nf,nkb);
   SetDlgItemText(hwndDlg,IDC_ZIPINFO_SUMMARY,buf);
@@ -274,9 +274,9 @@ char *gp_poi = "(PATH OF INSTALLER)";
 void wnd_printf(const char *str)
 {
   if (!*str) return;
-	char existing_text[32000];
+  char existing_text[32000];
   existing_text[0]=0;
-	UINT l=GetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text, 32000);
+  UINT l=GetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text, 32000);
   l+=strlen(str);
 
   char *p=existing_text;
@@ -300,32 +300,32 @@ void wnd_printf(const char *str)
   lstrcpy(existing_text,buf);
   lstrcat(existing_text,str);
 
-	SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text);
-	SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_LINESCROLL, 0, SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_GETLINECOUNT, 0, 0)); // scroll to the last line of the textbox
+  SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, existing_text);
+  SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_LINESCROLL, 0, SendDlgItemMessage(g_hwnd, IDC_OUTPUTTEXT, EM_GETLINECOUNT, 0, 0)); // scroll to the last line of the textbox
 
 }
 
 void ErrorMessage(char *str)  //display detailed error info
 {
-	LPVOID msg;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL,
-		GetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR) &msg,
-		0,
-		NULL
-		);
+  LPVOID msg;
+  FormatMessage(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+    NULL,
+    GetLastError(),
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+    (LPTSTR) &msg,
+    0,
+    NULL
+    );
   wnd_printf(str);
   wnd_printf(": ");
   wnd_printf((char*)msg);
-	LocalFree(msg);
+  LocalFree(msg);
 }
 
 DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor wwwinamp
 {
-	char buf[1024];           //i/o buffer
+  char buf[1024];           //i/o buffer
   STARTUPINFO si={sizeof(si),};
   SECURITY_ATTRIBUTES sa={sizeof(sa),};
   SECURITY_DESCRIPTOR sd={0,};               //security information for pipes
@@ -333,92 +333,92 @@ DWORD WINAPI ThreadProc(LPVOID p) // thread that will start & monitor wwwinamp
   HANDLE newstdout=0,read_stdout=0;         //pipe handles
 
   OSVERSIONINFO osv={sizeof(osv)};
-	GetVersionEx(&osv);
-	if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT)        //initialize security descriptor (Windows NT)
-	{
-		InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-		SetSecurityDescriptorDacl(&sd, true, NULL, false);
-		sa.lpSecurityDescriptor = &sd;
-	}
-	else sa.lpSecurityDescriptor = NULL;
-	sa.bInheritHandle = true;         //allow inheritable handles
-	
-	if (!CreatePipe(&read_stdout,&newstdout,&sa,0))  //create stdout pipe
-	{
-		ErrorMessage("CreatePipe");
+  GetVersionEx(&osv);
+  if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT)        //initialize security descriptor (Windows NT)
+  {
+    InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
+    SetSecurityDescriptorDacl(&sd, true, NULL, false);
+    sa.lpSecurityDescriptor = &sd;
+  }
+  else sa.lpSecurityDescriptor = NULL;
+  sa.bInheritHandle = true;         //allow inheritable handles
+
+  if (!CreatePipe(&read_stdout,&newstdout,&sa,0))  //create stdout pipe
+  {
+    ErrorMessage("CreatePipe");
     PostMessage(g_hwnd,WM_USER+1203,0,1);
-		return 1;
-	}
+    return 1;
+  }
 
-	GetStartupInfo(&si);      //set startupinfo for the spawned process
-							  /*
-							  The dwFlags member tells CreateProcess how to make the process.
-							  STARTF_USESTDHANDLES validates the hStd* members. STARTF_USESHOWWINDOW
-							  validates the wShowWindow member.
-	*/
-	si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
-	si.wShowWindow = SW_HIDE;
-	si.hStdOutput = newstdout;
-	si.hStdError = newstdout;     //set the new handles for the child process
+  GetStartupInfo(&si);      //set startupinfo for the spawned process
+  /*
+    The dwFlags member tells CreateProcess how to make the process.
+    STARTF_USESTDHANDLES validates the hStd* members. STARTF_USESHOWWINDOW
+    validates the wShowWindow member.
+  */
+  si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+  si.wShowWindow = SW_HIDE;
+  si.hStdOutput = newstdout;
+  si.hStdError = newstdout;     //set the new handles for the child process
 
-	// *******************************************************************
-	// If there is a command line in the config file, use it for create process
+  // *******************************************************************
+  // If there is a command line in the config file, use it for create process
 
-	//spawn the child process
-	if (!CreateProcess(NULL,g_cmdline,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,
-		NULL,tempzip_path,&si,&pi))
-	{
-		ErrorMessage("CreateProcess");
-		wnd_printf("\r\nPlease make sure the path to makensis.exe is correct.");
-		CloseHandle(newstdout);
-		CloseHandle(read_stdout);
+  //spawn the child process
+  if (!CreateProcess(NULL,g_cmdline,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,
+      NULL,tempzip_path,&si,&pi))
+  {
+    ErrorMessage("CreateProcess");
+    wnd_printf("\r\nPlease make sure the path to makensis.exe is correct.");
+    CloseHandle(newstdout);
+    CloseHandle(read_stdout);
     PostMessage(g_hwnd,WM_USER+1203,0,1);
-		return 1;
-	}
-	
-	unsigned long exit=0;  //process exit code
-	unsigned long bread;   //bytes read
-	unsigned long avail;   //bytes available
-	
+    return 1;
+  }
+
+  unsigned long exit=0;  //process exit code
+  unsigned long bread;   //bytes read
+  unsigned long avail;   //bytes available
+
   memset(buf,0,sizeof(buf));
-	while (1)      //main program loop
-	{
-		PeekNamedPipe(read_stdout,buf,1023,&bread,&avail,NULL);
-		//check to see if there is any data to read from stdout
-		if (bread != 0)
-		{
+  while (1)      //main program loop
+  {
+    PeekNamedPipe(read_stdout,buf,1023,&bread,&avail,NULL);
+    //check to see if there is any data to read from stdout
+    if (bread != 0)
+    {
       memset(buf,0,sizeof(buf));
-			if (avail > 1023)
-			{
-				while (bread >= 1023)
-				{
-					ReadFile(read_stdout,buf,1023,&bread,NULL);  //read the stdout pipe
-					wnd_printf(buf);
+      if (avail > 1023)
+      {
+        while (bread >= 1023)
+        {
+          ReadFile(read_stdout,buf,1023,&bread,NULL);  //read the stdout pipe
+          wnd_printf(buf);
           memset(buf,0,sizeof(buf));
-				}
-			}
-			else 
-			{
-				ReadFile(read_stdout,buf,1023,&bread,NULL);
-				wnd_printf(buf);
-			}			
-		}
+        }
+      }
+      else
+      {
+        ReadFile(read_stdout,buf,1023,&bread,NULL);
+        wnd_printf(buf);
+      }
+    }
 
-		GetExitCodeProcess(pi.hProcess,&exit);      //while the process is running
-		if (exit != STILL_ACTIVE)
-			break;
+    GetExitCodeProcess(pi.hProcess,&exit);      //while the process is running
+    if (exit != STILL_ACTIVE)
+      break;
 
-		Sleep(100);
-	}
-	CloseHandle(pi.hThread);
-	CloseHandle(pi.hProcess);
-	CloseHandle(newstdout);
-	CloseHandle(read_stdout);
+    Sleep(100);
+  }
+  CloseHandle(pi.hThread);
+  CloseHandle(pi.hProcess);
+  CloseHandle(newstdout);
+  CloseHandle(read_stdout);
 
 
   wsprintf(buf,"(source ZIP size was %d bytes)\r\n",g_zipfile_size);
   wnd_printf(buf);
-	
+
   PostMessage(g_hwnd,WM_USER+1203,0,0);
   return 0;
 }
@@ -455,7 +455,7 @@ void makeEXE(HWND hwndDlg)
   int iswinamp=0;
   char *iswinampmode=NULL;
   if (!strcmp(buf,gp_poi)) lstrcpy(buf,"$EXEDIR");
-  
+
   if (!strcmp(buf,gp_winamp))
   {
     iswinamp=1;
@@ -463,7 +463,7 @@ void makeEXE(HWND hwndDlg)
   if (!strcmp(buf,gp_winamp_plugins))
   {
     iswinamp=1;
-	fprintf(fp,"!define ZIP2EXE_INSTALLDIR_PLUGINS\n");
+    fprintf(fp,"!define ZIP2EXE_INSTALLDIR_PLUGINS\n");
   }
   if (!strcmp(buf,gp_winamp_vis))
   {
@@ -479,7 +479,7 @@ void makeEXE(HWND hwndDlg)
   {
     iswinamp=1;
     iswinampmode="SkinDir";
-	fprintf(fp,"!define ZIP2EXE_INSTALLDIR_SKINS\n");
+    fprintf(fp,"!define ZIP2EXE_INSTALLDIR_SKINS\n");
   }
 
   if (iswinamp)
@@ -493,7 +493,7 @@ void makeEXE(HWND hwndDlg)
   }
   else  // set out path to $INSTDIR
   {
-	  fprintf(fp,"!define ZIP2EXE_INSTALLDIR `%s`\n",buf);
+    fprintf(fp,"!define ZIP2EXE_INSTALLDIR `%s`\n",buf);
   }
 
   fprintf(fp,"!include `${NSISDIR}\\Contrib\\zip2exe\\Base.nsh`\n");
@@ -516,7 +516,7 @@ void makeEXE(HWND hwndDlg)
   HANDLE h=FindFirstFile(g_makensis_path,&fd);
   if (h==INVALID_HANDLE_VALUE)
   {
-    if ((p-g_makensis_path>4)&&(tolower(*(p-1))=='n')&&(tolower(*(p-2))=='i')&&(tolower(*(p-3))=='b')&&(*(p-4)=='\\')) 
+    if ((p-g_makensis_path>4)&&(tolower(*(p-1))=='n')&&(tolower(*(p-2))=='i')&&(tolower(*(p-3))=='b')&&(*(p-4)=='\\'))
     {
       p -= 4;
       strcpy(p+1,"makensis.exe");
@@ -553,7 +553,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
       CheckDlgButton(hwndDlg,IDC_LZMA,BST_CHECKED);
-	  CheckDlgButton(hwndDlg,IDC_MODERNUI,BST_CHECKED);
+      CheckDlgButton(hwndDlg,IDC_MODERNUI,BST_CHECKED);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_poi);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$TEMP");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$SYSDIR");
@@ -569,11 +569,11 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_vis);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_dsp);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_skins);
-    
-	  SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
-     
-	  hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
-	  SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);      
+
+      SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
+
+      hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
+      SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
 
       hFont=CreateFont(15,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,
               OUT_CHARACTER_PRECIS,
@@ -592,7 +592,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (g_hThread)
       {
-        if (!lParam) ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_SHOWNA);            
+        if (!lParam) ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_SHOWNA);
         CloseHandle(g_hThread);
         g_hThread=0;
       }
@@ -616,9 +616,9 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             l.lpstrTitle = "Open ZIP File";
             l.lpstrDefExt = "zip";
             l.lpstrInitialDir = NULL;
-            l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST;  	        
+            l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST;
             buf[0]=0;
-            if (GetOpenFileName(&l)) 
+            if (GetOpenFileName(&l))
             {
               char buf2[1024];
               lstrcpy(buf2,buf);
@@ -641,7 +641,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
               }
             }
-          }          
+          }
         break;
         case IDC_BROWSE2:
           {
@@ -654,25 +654,25 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             l.lpstrTitle = "Select Output EXE File";
             l.lpstrDefExt = "exe";
             l.lpstrInitialDir = NULL;
-            l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER;  	        
+            l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER;
             GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
-            if (GetSaveFileName(&l)) 
+            if (GetSaveFileName(&l))
             {
               SetDlgItemText(hwndDlg,IDC_OUTFILE,buf);
             }
-          }   
+          }
         break;
         case IDC_BACK:
           if (!g_hThread)
           {
             made=0;
             ShowWindow(GetDlgItem(hwndDlg,IDC_BACK),SW_HIDE);
-            ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);            
+            ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_HIDE);
             ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_HIDE);
             {
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
-                ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);            
+                ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,"&Generate");
               EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
             }
@@ -690,24 +690,24 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           {
             if (!made)
             {
-			  if (IsDlgButtonChecked(hwndDlg,IDC_ZLIB))
+              if (IsDlgButtonChecked(hwndDlg,IDC_ZLIB))
                 g_compressor = 1;
-			  if (IsDlgButtonChecked(hwndDlg,IDC_BZIP2))
+              if (IsDlgButtonChecked(hwndDlg,IDC_BZIP2))
                 g_compressor = 2;
-			  if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
+              if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
                 g_compressor = 3;
-			  g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
+              g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
-                ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);            
+                ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);
               ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_SHOWNA);
               SetDlgItemText(hwndDlg,IDOK,"&Close");
               EnableWindow(GetDlgItem(hwndDlg,IDOK),0);
 
               makeEXE(hwndDlg);
             }
-            else 
+            else
             {
               tempzip_cleanup(hwndDlg,0);
               EndDialog(hwndDlg,0);
