@@ -762,11 +762,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         )
       );
     return 0;
-    case EW_SETWINDOWLONG:
+    case EW_SETSTATICBKCOLOR:
       SetWindowLong(
         (HWND)process_string_fromparm_toint(0),
-        process_string_fromparm_toint(1),
-        process_string_fromparm_toint(2)
+        GWL_USERDATA,
+        (LONG)CreateSolidBrush(parm1)
       );
     return 0;
     case EW_SETBRANDINGIMAGE:
