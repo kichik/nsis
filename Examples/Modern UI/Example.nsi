@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.16
+;NSIS Modern Style UI version 1.17
 ;Example Script
 ;Written by Joost Verburg
 
