@@ -348,6 +348,15 @@
   #error NSIS_MAX_INST_TYPES > 32
 #endif
 
+#ifndef INVALID_FILE_ATTRIBUTES
+#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
+#endif
+
+// Added by Sunil Kamath 11 June 2003
+#ifndef NSIS_SUPPORT_STANDARD_PREDEFINES
+#define NSIS_SUPPORT_STANDARD_PREDEFINES
+#endif
+
 #endif//!APSTUDIO_INVOKED
 
 #endif // NSIS_CONFIG_H
