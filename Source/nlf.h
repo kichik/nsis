@@ -1,7 +1,8 @@
 #ifndef ___NLF___H_____
 #define ___NLF___H_____
 
-#include <Windows.h>
+#include <StdExcept>
+using namespace std;
 
 #define NLF_VERSION 1
 #define NLF_STRINGS 57
@@ -64,62 +65,14 @@
 #define NLF_RENAME 55
 #define NLF_SKIPPED 56
 
-char SkipComments(FILE *f) {
-  char c;
-  while (c = fgetc(f))
-    if (c == '#' || c == ';') {
-      while (c = fgetc(f))
-       if (c == '\n') break;
-      }
-    else break;
-  return c;
-}
-
-extern FILE *g_output;
-#define s(x) fprintf(g_output, x"\n"); fflush(g_output);
-#define s2(x,y) fprintf(g_output, x"\n", y); fflush(g_output);
-
 // NSIS Language File parser
 class NLF {
   public:
-    NLF(char *filename) {
-      FILE *f = fopen(filename, "r");
-      if (!f) throw runtime_error("Can't open language file!");
+    NLF(char *filename);
+    ~NLF();
 
-      char buf[1024];
-      buf[0] = SkipComments(f);
-      fgets(buf+1, 1024, f);
-
-      // Check header
-      if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
-      if (atoi(buf+5) != NLF_VERSION) throw runtime_error("Language file version doesn't match NSIS version!");
-
-      // Get language ID
-      buf[0] = SkipComments(f);
-      fgets(buf+1, 1024, f);
-      m_wLangId = atoi(buf);
-
-      // Read entries
-      int i = 0;
-      while (i < NLF_STRINGS) {
-        buf[0] = SkipComments(f);
-        fgets(buf+1, 1024, f);
-        if (lstrlen(buf) == 1023) {
-          wsprintf(buf, "String too long (string #%d)!", i);
-          throw runtime_error(buf);
-        }
-        //m_szStrings[i] = new char[lstrlen(buf)];
-        m_szStrings[i] = (char*)GlobalAlloc(GPTR, lstrlen(buf));
-        lstrcpy(m_szStrings[i], buf);
-        i++;
-      }
-
-      for (i = 0; i < NLF_STRINGS; i++) {
-        GlobalFree(m_szStrings[i]);
-      }
-
-      fclose(f);
-    }
+    WORD GetLang();
+    char* GetString(int idx);
 
   private:
     WORD m_wLangId;
