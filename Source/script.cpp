@@ -3558,7 +3558,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           {
             int k=line.gettoken_enum(4,retstr);
             if (k <= 0) PRINTHELP();
-            ent.offsets[0]|=rettab[k]<<20;
+            ent.offsets[0]|=rettab[k]<<21;
             a=5;
           }
           else if (line.getnumtokens() > 7)
@@ -5477,7 +5477,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DefineInnerLangString(NLF_CANT_WRITE);
 
           ent.offsets[0]=1; // overwrite off
-          ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<20))<<3;
+          ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<21))<<3;
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
           ent.offsets[3]=0xffffffff;
@@ -5887,13 +5887,13 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
     {
       mb = MB_ABORTRETRYIGNORE | MB_ICONSTOP;
       // default for silent installers
-      mb |= IDIGNORE << 20;
+      mb |= IDIGNORE << 21;
     }
     else
     {
       mb = MB_RETRYCANCEL | MB_ICONSTOP;
       // default for silent installers
-      mb |= IDCANCEL << 20;
+      mb |= IDCANCEL << 21;
     }
     ent.offsets[0] |= mb << 3;
 
