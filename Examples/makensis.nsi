@@ -160,6 +160,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Readme.html"
     File "..\Contrib\Modern UI\Changelog.txt"
     File "..\Contrib\Modern UI\Screenshot.png"
+    File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
 	File "..\Contrib\Modern UI\ioSpecial.ini"
     SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
