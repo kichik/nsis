@@ -34,7 +34,7 @@ SetFont "Comic Sans MS" 8
 ; Just to make it three pages...
 SubCaption 0 ": Yet another page..."
 SubCaption 2 ": Yet another page..."
-LicenseText "Second page"
+LicenseText "License page"
 LicenseData "gfx.nsi"
 DirText "Lets make a third page!"
 
