@@ -1168,7 +1168,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rootkey=parm0;
         char *buf3=process_string_fromparm_tobuf(0x31);
         exec_errorflag++;
-        if (parm2)
+        if (parm3)
         {
           HKEY hKey;
           if (RegOpenKeyEx((HKEY)rootkey,buf3,0,KEY_ALL_ACCESS,&hKey) == ERROR_SUCCESS)
@@ -1182,7 +1182,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         else
         {
           log_printf3("DeleteRegKey: %d\\%s",rootkey,buf3);
-          if (myRegDeleteKeyEx((HKEY)rootkey,buf3,parm3) == ERROR_SUCCESS) exec_errorflag--;
+          if (myRegDeleteKeyEx((HKEY)rootkey,buf3,parm3&2) == ERROR_SUCCESS) exec_errorflag--;
         }
       }
     return 0;
