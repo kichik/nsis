@@ -174,12 +174,6 @@ Specifies a string that is above the license text. Omit this to not have a licen
 
 Specifies if the displayed license must be accept explicit or not. This can be done either by a checkbox or by radiobuttons. By default the "next button" is disabled and will only be enabled if the checkbox is enabled or the right radio button is selected. If off is specified the "next button" is enabled by default.
 
-\S2{aloadlanguagefile} LoadLanguageFile
-
-\c lang_file.nlf
-
-Loads a NLF (NSIS Language File) that will be used to create a string table for the specific language in that NLF.
-
 \S2{amiscbuttontext} MiscButtonText
 
 \c [[/LANG=lang_id] back button text [next button text] [cancel button text] [close button text]]
