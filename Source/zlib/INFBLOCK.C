@@ -50,13 +50,26 @@ inflate_blocks_statef *s;
 z_streamp z;
 int r;
 {
-  uInt t;               /* temporary storage */
-  uLong b;              /* bit buffer */
-  uInt k;               /* bits in bit buffer */
-  Bytef *p;             /* input data pointer */
-  uInt n;               /* bytes available there */
-  Bytef *q;             /* output window write pointer */
-  uInt m;               /* bytes to end of window or read pointer */
+
+  // lousy two bytes saved by doing this
+  struct
+  {
+    uInt t;               /* temporary storage */
+    uLong b;              /* bit buffer */
+    uInt k;               /* bits in bit buffer */
+    Bytef *p;             /* input data pointer */
+    uInt n;               /* bytes available there */
+    Bytef *q;             /* output window write pointer */
+    uInt m;               /* bytes to end of window or read pointer */
+  } _state;
+
+#define t _state.t
+#define b _state.b
+#define k _state.k
+#define p _state.p
+#define n _state.n
+#define q _state.q
+#define m _state.m
 
   /* copy input/output information to locals (UPDATE macro restores) */
   LOAD

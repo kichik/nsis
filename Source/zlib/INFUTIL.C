@@ -20,6 +20,18 @@ unsigned short inflate_mask[17] = {
     0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 };
 
+/*
+void NSISCALL genrtable()
+{
+  int x=17;
+  while (x>=0)
+  {
+    inflate_mask[x]=(1<<x)-1;
+    x--;
+  }
+}
+*/
+
 int __myleave(inflate_blocks_statef *s, z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
 {
   UPDATE 
@@ -47,7 +59,7 @@ int r;
 
   /* update counters */
   z->avail_out -= n;
-  z->total_out += n;
+//  z->total_out += n;
 
   /* copy as far as end of window */
   zmemcpy(p, q, n);
@@ -69,7 +81,7 @@ int r;
 
     /* update counters */
     z->avail_out -= n;
-    z->total_out += n;
+    //z->total_out += n;
 
     /* copy */
     zmemcpy(p, q, n);
