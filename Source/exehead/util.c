@@ -16,7 +16,7 @@ char g_log_file[1024];
 extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #endif
 
-char g_usrvars[25][NSIS_MAX_STRLEN];
+char g_usrvars[24][NSIS_MAX_STRLEN];
 
 HANDLE g_hInstance;
 
@@ -486,8 +486,11 @@ void NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 22: // INSTDIR
         case VAR_CODES_START + 23: // OUTDIR
         case VAR_CODES_START + 24: // EXEDIR
-        case VAR_CODES_START + 25: // LANGUAGE
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
+          break;
+
+        case VAR_CODES_START + 25: // LANGUAGE
+          wsprintf(out, "%u", cur_common_strings_table->lang_id);
           break;
 
         case VAR_CODES_START + 26: // PROGRAMFILES
