@@ -158,7 +158,7 @@ void CompileNSISScript() {
 	}
 	if (!g_appended) {
     if (s) GlobalFree(s);
-    s = (char *)GlobalAlloc(GPTR, lstrlen(g_script)+lstrlen(EXENAME)+1);
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_script)+lstrlen(EXENAME)+2);
 		wsprintf(s,"%s %s",EXENAME,g_script);
     g_script = s;
 		g_appended = TRUE;
