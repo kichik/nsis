@@ -530,3 +530,9 @@ string get_dir_name(const string& path) {
   return path.substr(0, last_separator_pos);
 }
 
+string get_file_name(const string& path) {
+  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
+  if (last_separator_pos == string::npos)
+    return path;
+  return path.substr(last_separator_pos + 1, string::npos);
+}
