@@ -7,20 +7,6 @@
 
 !include "MUI.nsh"
 
-;$9 is being used to store the Start Menu Folder.
-;Do not use this variable in your script (or Push/Pop it)!
-
-;To change this variable, use MUI_STARTMENUPAGE_VARIABLE.
-;Have a look at the Readme for info about other options (default folder,
-;registry).
-
-;Remember the Start Menu Folder
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-
-!define TEMP $R0
-
 ;--------------------------------
 ;Configuration
 
@@ -29,7 +15,21 @@
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  
+  ;$9 is being used to store the Start Menu Folder.
+  ;Do not use this variable in your script (or Push/Pop it)!
 
+  ;To change this variable, use MUI_STARTMENUPAGE_VARIABLE.
+  ;Have a look at the Readme for info about other options (default folder,
+  ;registry).
+
+  ;Remember the Start Menu Folder
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
+  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+
+  !define TEMP $R0
+  
 ;--------------------------------
 ;Modern UI Configuration
 
