@@ -1343,7 +1343,6 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   {
     RECT r;
     int num=0;
-    int x=0;
     LVCOLUMN lvc = {0, 0, -1, 0, 0, -1};
     int lb_bg=g_inst_cmnheader->lb_bg,lb_fg=g_inst_cmnheader->lb_fg;
 
@@ -1358,8 +1357,9 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     else
 #endif
     {
+      int x;
       log_printf3("New install of \"%s\" to \"%s\"",STR(LANG_NAME),state_install_directory);
-      for (; x < num_sections; x ++)
+      for (x=0; x < num_sections; x ++)
       {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
         if (g_inst_section[x].default_state&DFS_SET)
@@ -1459,7 +1459,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         0,insthwnd,0))
       {
         char textBuf[1024];
-        int i,total = 0;
+        int i,total = 1;
         LVITEM item;
         HGLOBAL memory;
         LPTSTR ptr,endPtr;
@@ -1468,28 +1468,26 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         item.iSubItem   = 0;
         item.pszText    = textBuf;
         item.cchTextMax = 1023;
-        for (i = 0; i < count; i++)
-        {
+        i = count;
+        while (i--)
           // Add 2 for the CR/LF combination that must follow every line.
           total += 2+SendMessage(insthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-        }
 
         // 2nd pass - store detail view strings on the clipboard
         // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
         OpenClipboard(0);
         EmptyClipboard();
-        memory = GlobalAlloc(GMEM_MOVEABLE,total+1);
+        memory = GlobalAlloc(GMEM_MOVEABLE,total);
         ptr = GlobalLock(memory);
-        endPtr = ptr+total+1;
-        for (i = 0; i < count; i++)
-        {
-          // -2 to allow for CR/LF
-          ListView_GetItemText(insthwnd,i,0,ptr,(endPtr-2)-ptr);
+        endPtr = ptr+total-2; // -2 to allow for CR/LF
+        i = 0;
+        do {
+          ListView_GetItemText(insthwnd,i,0,ptr,endPtr-ptr);
           while (*ptr) ptr++;
           *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
           ptr+=2;
-        }
-        *ptr++ = 0;
+        } while (++i < count);
+        *ptr = 0;
         GlobalUnlock(memory);
         SetClipboardData(CF_TEXT,memory);
         CloseClipboard();
