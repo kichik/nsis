@@ -240,6 +240,7 @@ static tokenType tokenlist[TOK__LAST] =
 // Added by ramon 6 jun 2003
 {TOK_VI_ADDKEY,"VIAddVersionKey",2,1,"/LANG=lang_id keyname value"},
 {TOK_VI_SETPRODUCTVERSION,"VIProductVersion",1,0,"[version_string_X.X.X.X]"},
+{TOK_LOCKWINDOW,"LockWindow",1,0,"(on|off)"},
 };
 
 void CEXEBuild::print_help(char *commandname)

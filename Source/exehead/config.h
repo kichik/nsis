@@ -221,6 +221,8 @@
 //   __TIMESTAMP__ - date & time according to the current locale
 #define NSIS_SUPPORT_STANDARD_PREDEFINES
 
+#define NSIS_LOCKWINDOW_SUPPORT
+
 // Added by Ximon Eighteen 5th August 2002
 // If this is uncommented the following changes/new features are
 // turned on :-

@@ -7,6 +7,9 @@ int NSISCALL ui_doinstall(void);
 void NSISCALL update_status_text(int strtab, const char *text2);
 extern int ui_st_updateflag;
 
+extern int ui_dlg_visible;
+extern HWND m_curwnd;
+
 #ifdef NSIS_CONFIG_LOG
 void NSISCALL build_g_logfile(void);
 #endif
