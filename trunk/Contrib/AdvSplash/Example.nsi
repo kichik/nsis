@@ -7,7 +7,7 @@ XPStyle on
 Function .onInit
         # the plugins dir is automatically deleted when the installer exits
         InitPluginsDir
-        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Icons\modern-header.bmp"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
         #optional
         #File /oname=$PLUGINSDIR\splash.wav "C:\myprog\sound.wav"
 
@@ -24,7 +24,7 @@ Function .onInit
         Pop $0 
 
         MessageBox MB_OK "Transparency/Fading"
-        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Icons\modern-wizard llama.bmp"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Graphics\Wizard\llama.bmp"
         advsplash::show 1000 600 400 0x00005B $PLUGINSDIR\splash
         Pop $0 
 
