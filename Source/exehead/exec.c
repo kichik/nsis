@@ -64,6 +64,11 @@ int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
   return 0;
 }
 
+int NSISCALL ExecuteCallbackFunction(int num)
+{
+  return ExecuteCodeSegment(*(&g_header->code_onInit + num), NULL);
+}
+
 static char bufs[5][NSIS_MAX_STRLEN];
 static int *parms;
 
