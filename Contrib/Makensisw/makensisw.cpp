@@ -211,47 +211,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                 }
 				case IDM_UPDATE:
                 {
-                    #define RSZ 5
-                    int len;
-                    char *response = (char *)GlobalAlloc(GPTR,RSZ);
-                    char url[300];
-                    static char pbuf[8192];
-                    char *p=NULL;
-                    if (getProxyInfo(pbuf)) {
-                        p=my_strstr(pbuf,"http=");
-                        if (!p) p=pbuf;
-                        else {
-                            p+=5;
-                            char *tp=my_strstr(p,";");
-                            if (tp) *tp=0;
-                        }
-                    }
-                    JNL_HTTPGet *get = new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);;
-                    JNL::open_socketlib();
-                    lstrcpy(url,NSIS_UPDATE);
-                    lstrcat(url,g_sdata.brandingv);
-                    lstrcpy(response,"0");
-                    get->addheader("User-Agent:Nullsoft Sex (Mozilla)");
-                    get->addheader("Accept:*/*");
-                    get->connect(url);
-                    while (1) {
-                        int st=get->run();
-                        if (st<0) break; //error
-                        if (get->get_status()==2) {
-                            if(len=get->bytes_available()) {
-                                if (len>RSZ) len=RSZ;
-                                len=get->get_bytes(response,len);
-                            }
-                        }
-                        if (st==1) break; //closed
-                    }
-                    JNL::close_socketlib();
-                    if (*response=='1') { 
-                        if (MessageBox(0,"A new version of NSIS is now available.  Would you like to download it now?","NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
-                            ShellExecute(g_sdata.hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
-                        }
-                    }
-                    else MessageBox(0,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
+                    DWORD dwThreadId;
+                    CloseHandle(CreateThread(NULL,0,UpdateThread,(LPVOID)NULL,0,&dwThreadId));
                     break;
                 }
 				case IDM_ABOUT:
@@ -549,4 +510,72 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		}
 	}
 	return FALSE;
+}
+
+DWORD CALLBACK UpdateThread(LPVOID v) {
+    #define RSZ 30
+    int len;
+    char *response = (char *)GlobalAlloc(GPTR,RSZ);
+    char *r;
+    char url[300];
+    static char pbuf[8192];
+    char *p=NULL;
+    *response = 0;
+    if (getProxyInfo(pbuf)) {
+        p=my_strstr(pbuf,"http=");
+        if (!p) p=pbuf;
+        else {
+            p+=5;
+            char *tp=my_strstr(p,";");
+            if (tp) *tp=0;
+        }
+    }
+    JNL_HTTPGet *get = new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,8192,(p&&p[0])?p:NULL);;
+    JNL::open_socketlib();
+    lstrcpy(url,NSIS_UPDATE);
+    lstrcat(url,g_sdata.brandingv);
+    lstrcpy(response,"");
+    get->addheader("User-Agent:Nullsoft Sex (Mozilla)");
+    get->addheader("Accept:*/*");
+    get->connect(url);
+    while (1) {
+        int st=get->run();
+        if (st<0) break; //error
+        if (get->get_status()==2) {
+            while(len=get->bytes_available()) {
+                char b[RSZ];
+                if (len>RSZ) len=RSZ;
+                if (lstrlen(response)+len>RSZ) break;
+                len=get->get_bytes(b,len);
+                b[len]=0;
+                lstrcat(response,b);
+            }
+        }
+        if (st==1) break; //closed
+    }
+    JNL::close_socketlib();
+    r = response;
+    while (r&&*r) {
+        if (*r=='\n') { *r = 0; break; }
+        r++;
+    }
+    if (*response=='1'&&lstrlen(response)>2) {
+        char buf[200];
+        response+=2;
+        wsprintf(buf,"NSIS %s is now available.  Would you like to download it now?",response);
+        if (MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
+            ShellExecute(g_sdata.hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
+        }
+    }
+    else if (*response=='2'&&lstrlen(response)>2) {
+        char buf[200];
+        response+=2;
+        wsprintf(buf,"NSIS %s is now available.  Would you like to download this preview release now?",response);
+        if (MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
+            ShellExecute(g_sdata.hwnd,"open",NSIS_DDL,NULL,NULL,SW_SHOWNORMAL);
+        }
+    }
+    else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
+    
+    return 0;
 }
