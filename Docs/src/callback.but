@@ -86,6 +86,16 @@ Example:
 \c       SendMessage $R0 ${WM_SETTEXT} 0 "second section description"
 \c   FunctionEnd
 
+\S3{onrebootfailed} .onRebootFailed
+
+This callback is called if \R{reboot}{Reboot} fails. \R{writeuninstaller}{WriteUninstaller}, \R{plugindlls}{plug-ins}, \R{file}{File} and \R{writeregbin}{WriteRegBin} should not be used in this callback.
+
+Example:
+
+\c  Function .onRebootFailed
+\c    MessageBox MB_OK|MB_ICONSTOP "Reboot failed. Please reboot manually." /SD IDOK
+\c  FunctionEnd
+
 \S3{onselchange} .onSelChange
 
 Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
@@ -166,6 +176,16 @@ Example:
 \S3{unonguiend} un.onGUIEnd
 
 This callback is called right after the uninstaller window closes. Use it to free any user interface related plug-ins if needed.
+
+\S3{unonrebootfailed} un.onRebootFailed
+
+This callback is called if \R{reboot}{Reboot} fails. \R{writeuninstaller}{WriteUninstaller}, \R{plugindlls}{plug-ins}, \R{file}{File} and \R{writeregbin}{WriteRegBin} should not be used in this callback.
+
+Example:
+
+\c  Function un.onRebootFailed
+\c    MessageBox MB_OK|MB_ICONSTOP "Reboot failed. Please reboot manually." /SD IDOK
+\c  FunctionEnd
 
 \S3{unonuserabort} un.onUserAbort
 

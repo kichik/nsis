@@ -327,7 +327,7 @@ You can also set a subcaption (or override the default) using \R{acaption}{Capti
 
 \c text
 
-Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{WriteUninstaller}{WriteUninstaller} (replaces UninstallEXEName).
+Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{writeuninstaller}{WriteUninstaller} (replaces UninstallEXEName).
 
 \S2{auninstallcaption} UninstallCaption
 

@@ -577,7 +577,12 @@ skipPage:
     m_curwnd = (HWND)wParam;
     goto skipPage;
   }
-  if (uMsg == WM_QUERYENDSESSION || (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1))
+  if (uMsg == WM_QUERYENDSESSION)
+  {
+    SetWindowLong(hwndDlg, DWL_MSGRESULT, FALSE);
+    return TRUE;
+  }
+  if (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1)
   {
     if (!IsWindowEnabled(m_hwndCancel))
     {
