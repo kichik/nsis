@@ -895,19 +895,20 @@ Section Uninstall
   DeleteRegKey HKLM SOFTWARE\NSIS
 
   RMDir /r $SMPROGRAMS\NSIS
-  Delete $DESKTOP\MakeNSIS.lnk
+  Delete "$DESKTOP\Nullsoft Install System.lnk"
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\makensis.htm
+  Delete $INSTDIR\NSIS.exe
   Delete $INSTDIR\license.txt
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh
   RMDir /r $INSTDIR\Contrib
+  RMDir /r $INSTDIR\Menu
   RMDir /r $INSTDIR\Source
   RMDir /r $INSTDIR\Bin
   RMDir /r $INSTDIR\Plugins
-  RMDir /r "$INSTDIR\Examples\Modern UI"
   RMDir /r $INSTDIR\Examples
   RMDir /r $INSTDIR\Include
   RMDir /r $INSTDIR\Docs
