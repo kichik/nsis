@@ -142,8 +142,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   char *buf3 = bufs[3];
   char *buf4 = bufs[4];
 
-  // changed by Amir Szekely 28 August 2002
-  // shaves off 0.5KB
   int parm0 = (parms = entry_->offsets)[0]; // the ordering of these makes a size diff (4 bytes) -Justin
   char *var0 = g_usrvars[parm0];
   int parm1 = parms[1];
@@ -153,9 +151,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   int parm3 = parms[3];
   char *var3 = g_usrvars[parm3];
   int parm4 = parms[4];
+//char *var4 = g_usrvars[parm4]; // not used yet
   int parm5 = parms[5];
-//char *var4 = g_usrvars[parm4];  // not used yet
-//char *var5 = g_usrvars[parm5];
+//char *var5 = g_usrvars[parm5]; // not used yet
   int which = entry_->which;
   switch (which)
   {
@@ -805,7 +803,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       f.lfItalic=parm4&1;
       f.lfUnderline=parm4&2;
       f.lfStrikeOut=parm4&4;
-      f.lfCharSet=DEFAULT_CHARSET; 
+      f.lfCharSet=DEFAULT_CHARSET;
       process_string_fromtab(f.lfFaceName,parm1);
       myitoa(var0,(int)CreateFontIndirect(&f));
     }
