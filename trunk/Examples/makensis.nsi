@@ -62,7 +62,7 @@ Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_FINISHPAGE_LINK "Visit the NSIS website for the latest news, FAQs and support"
+!define MUI_FINISHPAGE_LINK "Visit the NSIS site for the latest news, FAQs and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
 
 !define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
@@ -100,7 +100,6 @@ Section "NSIS Core Files (required)" SecCore
   RMDir /r $SMPROGRAMS\NSIS
 
   SetOverwrite on
-  Delete $INSTDIR\makensis-bz2.exe
   File ..\makensis.exe
   File ..\makensisw.exe
   File ..\license.txt
@@ -174,7 +173,6 @@ Section "Script Examples" SecExample
 
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
-  Delete $INSTDIR\functions.htm
   File ..\Examples\cvsdata.nsi
   File ..\Examples\makensis.nsi
   File ..\Examples\makensis.ini
@@ -273,12 +271,7 @@ Section "Modern User Interface" SecInterfacesModernUI
   File "..\Contrib\UIs\modern_headerbmpr.exe"
   File "..\Contrib\UIs\modern_nodesc.exe"
   File "..\Contrib\UIs\modern_smalldesc.exe"
-
-  Delete "$INSTDIR\Contrib\Modern UI\Readme.jpg"
-  Delete "$INSTDIR\Contrib\Modern UI\ioSpecial3.ini"
-  Delete "$INSTDIR\Contrib\UIs\modern2.exe"
-  Delete "$INSTDIR\Contrib\UIs\modern3.exe"
-
+  
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
 
