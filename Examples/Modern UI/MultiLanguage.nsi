@@ -1,5 +1,5 @@
-;NSIS Modern Style UI
-;Multilanguage & LangDLL Example Script version 1.01
+;NSIS Modern Style UI version 1.16
+;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here

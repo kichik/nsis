@@ -1,5 +1,5 @@
-;NSIS Modern Style UI
-;Example Script version 1.11
+;NSIS Modern Style UI version 1.16
+;Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
