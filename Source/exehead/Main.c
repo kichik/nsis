@@ -173,7 +173,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       for (x = 0; x < 26; x ++)
       {
         // File name need slash before because temp dir was changed by validate_filename
-        static char s[]="\\A~NSISu_.exe";
+        static char s[]="A~NSISu_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
 
