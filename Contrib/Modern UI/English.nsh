@@ -33,7 +33,7 @@
   LangString MUI_INNERTEXT_LICENSE ${LANG_ENGLISH} "If you accept all the terms of the agreement, choose I Agree to continue. You must accept the agreement to install ${NAME}."
   
   LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_ENGLISH} "Choose Components"
-  LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_ENGLISH} "Choose the components you want to install."
+  LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_ENGLISH} "Choose which features of ${NAME} you want to install."
   LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_ENGLISH} "Description"
   LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_ENGLISH} "Hover your mouse over a component to see it's description."
   
