@@ -119,6 +119,15 @@ class LineParser {
         int nc=0;
         while (*line)
         {
+          if (line[0] == '$' && line[1] == '\\') {
+            switch (line[2]) {
+            	case '"':
+              case '\'':
+              case '`':
+                nc += 3;
+                line += 3;
+            }
+          }
           if (lstate==1 && *line =='\"') break;
           if (lstate==2 && *line =='\'') break;
           if (lstate==4 && *line =='`') break;
@@ -128,8 +137,21 @@ class LineParser {
         }
         if (m_tokens)
         {
+          char *p;
+          int i;
           m_tokens[m_nt]=(char*)malloc(nc+1);
-          strncpy(m_tokens[m_nt],line-nc,nc);
+          for (i = 0, p = line - nc; p < line; i++, p++) {
+            if (p[0] == '$' && p[1] == '\\') {
+              switch (p[2]) {
+            	  case '"':
+                case '\'':
+                case '`':
+                  p += 2;
+              }
+            }
+            m_tokens[m_nt][i] = *p;
+          }
+          //strncpy(m_tokens[m_nt],line-nc,nc);
           m_tokens[m_nt][nc]=0;
         }
         m_nt++;
