@@ -30,7 +30,8 @@
   Name "${NAME} ${VERSION}"
   
   ;Page order
-  !define MUI_CUSTOMPAGECOMMANDS
+  !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
+  
   !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA
   Page custom SetCustomB

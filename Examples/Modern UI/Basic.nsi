@@ -65,7 +65,6 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
-
 ;--------------------------------
 ;Uninstaller Section
 
