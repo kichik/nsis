@@ -111,9 +111,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   while (*cmdline)
   {
     // skip over any spaces
-    while (*cmdline == ' ') cmdline=CharNext(cmdline);
+    while (*cmdline == ' ') cmdline++;
     // find out if this parm is quoted
-    if (cmdline[0] == '"')
+    if (cmdline[0] == '\"')
     {
       cmdline++;
       seekchar = '\"';
@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     // skip over our parm
     cmdline = findchar(cmdline, seekchar);
     // skip the quote
-    if (*cmdline = '\"')
+    if (*cmdline == '\"')
       cmdline++;
   }
 
