@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v5
+NLF v6
 # Language ID
 1050
 # Font and size - dash (-) means default
@@ -12,12 +12,14 @@ NLF v5
 # Translation by Igor Ostriz
 Nullsoft Install System %s
 $(^Name) Instalacija
-$(^Name) Deinstalacija
+$(^Name) Uklanjanje
 : Licenenèni uvjeti
 : Instalacijske opcije
 : Instalacijska mapa
 : Instaliranje
 : Završeno
+: Opcije uklanjanja
+: Mapa uklanjanja
 : Potvrda
 : Uklanjanje
 : Završeno
@@ -27,51 +29,71 @@ $(^Name) Deinstalacija
 &Prihvaæam uvjete licenènog ugovora
 &Ne prihvaæam uvjete licenènog ugovora
 &Instaliraj
-&Uklanjanje
+&Ukloni
 Odustani
 &Zatvori
 &Pregledaj...
 Prikaži &detalje
+Odaberite 'Dalje' za nastavak.
+Odaberite 'Instaliraj' za poèetak instalacije.
+Odaberite 'Ukloni' za poèetak uklanjanja.
 Ime
 Završeno
+Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
+Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite ispod kvadratiæ. $_CLICK
+Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite ispod prvu opciju. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
+Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite ispod kvadratiæ. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite ispod prvu opciju. $_CLICK
 Posebna
+Oznaèite komponente koje želite instalirati i uklonite oznaku s onih koje ne želite instalirati. $_CLICK
 Izaberite tip instalacije:
 Odaberite komponente za instalaciju:
 Ili po izboru oznaèite komponente koje želite instalirati:
+Oznaèite komponente koje želite ukloniti i uklonite oznaku s onih koje ne želite ukloniti. $_CLICK
+Izaberite tip uklanjanja:
+Odaberite komponente za uklanjanje:
+Ili po izboru oznaèite komponente koje želite ukloniti:
+Program $(^Name) æe biti instaliran u slijedeæu mapu. Za instalaciju na drugo mjesto odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
+Odredišna mapa
 Odaberite mapu u koju želite instalirati program $(^Name):
-Slobodno prostora na disku: 
-Potrebno prostora na disku:
+Program $(^Name) æe biti uklonjen iz slijedeæe mape. Za uklanjanje s drugog mjesta odaberite 'Pregledaj' i oznaèite drugu mapu. $_CLICK
+""
+Mapa iz koje æe program $(^Name) biti uklonjen:
+"Slobodno prostora na disku: "
+"Potrebno prostora na disku: "
+Ovaj èarobnjak æe ukloniti program $(^Name) s Vašeg raèunala. $_CLICK
 Uklanjam iz:
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Abort\" za prekid instalacije,\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Ignore\" za zanemarenje te datoteke
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Cancel\" za prekid instalacije
-Ne mogu zapisati:
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t\"$0\"\r\n\"Abort\" za prekid instalacije,\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Ignore\" za zanemarenje te datoteke
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t\"$0\"\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Cancel\" za prekid instalacije
+"Ne mogu zapisati: "
 Greška prilikom kopiranja
-Kopiraj u
-Prijava:
-Odjava:
-Ne mogu naæi simbol:
-Ne mogu uèitati:
-Stvori mapu:
-Stvori preèac: 
-Program za uklanjanje: 
-Obriši datoteku: 
-Obriši prilikom ponovnog pokretanja: 
-Greška prilikom stvaranja preèaca: 
-Greška prilikom stvaranja: 
+"Kopiraj u "
+"Prijava: "
+"Odjava: "
+"Ne mogu naæi simbol: "
+"Ne mogu uèitati: "
+"Stvori mapu: "
+"Stvori preèac: "
+"Program za uklanjanje: "
+"Obriši datoteku: "
+"Obriši prilikom ponovnog pokretanja: "
+"Greška prilikom stvaranja preèaca: "
+"Greška prilikom stvaranja: "
 Greška dekompresije podataka! Ošteæena instalacijska datoteka?
 Greška prilikom prijavljivanja DLLa
-ExecShell: 
-Izvrši: 
-Odpakiraj: 
-Odpakiravanje: greška prilikom zapisivanja u datoteku 
+"ExecShell: "
+"Izvrši: "
+"Otpakiraj: "
+"Otpakiranje: greška zapisivanja u datoteku "
 Ošteæena instalacijska datoteka: neispravni opkod
-Nema OLE za: 
-Izlazna mapa: 
-Obriši mapu: 
-Preimenuj prilikom ponovnog pokretanja: 
-Preimenuj: 
-Preskoèeno: 
-Kopiraj Detalje u Clipboard
+"Nema OLE za: "
+"Izlazna mapa: "
+"Obriši mapu: "
+"Preimenuj prilikom ponovnog pokretanja: "
+"Preimenuj: "
+"Preskoèeno: "
+Kopiraj detalje u Clipboard
 Logiraj instalacijski proces
 # byte
 B
