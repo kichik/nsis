@@ -647,18 +647,18 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   static HWND hwLicense;
   static HINSTANCE hRichEditDLL, hRichEdit2DLL;
   static int new_richedit;
-  if (!hRichEdit2DLL) hRichEdit2DLL=LoadLibrary("RichEd20.dll");
-  if (!hRichEditDLL) hRichEditDLL=LoadLibrary("RichEd32.dll");
-  if (!hRichEdit2DLL) {
-    // fake richedit2
-    WNDCLASS phony_richedit2 = {0,};
-    phony_richedit2.lpszClassName = "RichEdit20A";
-    RegisterClass(&phony_richedit2);
-  }
-  else new_richedit=10; // edit2 is 1010 while edit1 is 1000
   if (uMsg == WM_INITDIALOG)
   {
     EDITSTREAM es={(DWORD)STR(LANG_LICENSE_DATA),0,StreamLicense};
+    if (!hRichEdit2DLL) hRichEdit2DLL=LoadLibrary("RichEd20.dll");
+    if (!hRichEditDLL) hRichEditDLL=LoadLibrary("RichEd32.dll");
+    if (!hRichEdit2DLL) {
+      // fake richedit2
+      WNDCLASS phony_richedit2 = {0,};
+      phony_richedit2.lpszClassName = "RichEdit20A";
+      RegisterClass(&phony_richedit2);
+    }
+    else new_richedit=10; // edit2 is 1010 while edit1 is 1000
     hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1+new_richedit);
     ShowWindow(hwLicense, SW_SHOW);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
