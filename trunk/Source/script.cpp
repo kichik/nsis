@@ -4566,11 +4566,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_INTOP:
       ent.which=EW_INTOP;
       ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0~\0");
-      if (ent.offsets[0] < 0 || ent.offsets[3]<0 || ((ent.offsets[3] == 7 || ent.offsets[3]==11) && line.getnumtokens()>4)) PRINTHELP()
+      ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0<<\0>>\0~\0");
+      if (ent.offsets[0] < 0 || ent.offsets[3] < 0 ||
+        ((ent.offsets[3] == 7 || ent.offsets[3] == 13) && line.getnumtokens() > 4))
+        PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[3] != 7 && ent.offsets[3] != 11) ent.offsets[2]=add_string(line.gettoken_str(4));
-      if (ent.offsets[3] == 11) {
+      if (ent.offsets[3] != 7 && ent.offsets[3] != 13) ent.offsets[2]=add_string(line.gettoken_str(4));
+      if (ent.offsets[3] == 13) {
         ent.offsets[3]=6;
         ent.offsets[2]=add_string("0xFFFFFFFF");
       }

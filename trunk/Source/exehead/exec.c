@@ -648,6 +648,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           case 8: v=v||v2; break;
           case 9: v=v&&v2; break;
           case 10: if (v2) v%=v2; else { v=0; exec_error++; } break;
+          case 11: v=v<<v2; break;
+          case 12: v=v>>v2; break;
         }
         myitoa(p,v);
       }

@@ -106,7 +106,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INSTDIR,"InstallDir",1,0,"default_install_directory",TP_GLOBAL},
 {TOK_INSTPROGRESSFLAGS,"InstProgressFlags",0,-1,"[flag [...]]\n    flag={smooth|colored}",TP_GLOBAL},
 {TOK_INSTTYPE,"InstType",1,0,"[un.]install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM",TP_GLOBAL},
-{TOK_INTOP,"IntOp",3,1,"$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || &&)",TP_CODE},
+{TOK_INTOP,"IntOp",3,1,"$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || && << >>)",TP_CODE},
 {TOK_INTCMP,"IntCmp",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]",TP_CODE},
 {TOK_INTCMPU,"IntCmpU",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]",TP_CODE},
 {TOK_INTFMT,"IntFmt",3,0,"$(user_var: output) format_string input",TP_CODE},
