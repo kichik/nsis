@@ -3052,7 +3052,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_last_overwrite=build_overwrite;
         build_overwrite=k;
       }
-      SCRIPT_MSG("overwrite = %d, last_overwrite = %d\n", build_overwrite, build_last_overwrite);
       SCRIPT_MSG("SetOverwrite: %s\n",line.gettoken_str(1));
     }
     return PS_OK;
