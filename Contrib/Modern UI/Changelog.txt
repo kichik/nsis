@@ -1,5 +1,8 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.71 - October 14, 2004
+* The selected language is only stored in the registry when installation was succesful
+
 1.70 - February 6, 2004
 * Improved documentation
 * New Init custom function for Welcome and Finish page
@@ -23,7 +26,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Default header image
 * Support for uninstaller abort warning
 * Setting for 3 line text on Welcome and Finish page
-  (NOTE: New settings have been introduces in version 1.68)
+  (NOTE: New settings have been introduced in version 1.68)
 * Langauge file backwards compatibility: English for missing strings
 * Support for different uninstaller header image
 * Language selection dialog not displayed if installer is silent
@@ -37,8 +40,8 @@ NSIS Modern User Interface - VERSION HISTORY
 * New position for interface settings
 * Changed macro, setting names
 * Updated langauge system, new language files and settings
-* Removed MUI_BRANDINGTEXT. Use BrandingText command now.
-* Removed MUI_PRODUCT and MUI VERSION. Use Name command now.
+* Removed MUI_BRANDINGTEXT. You can use the standard BrandingText instruction.
+* Removed MUI_PRODUCT and MUI VERSION. You can use the standard Name instruction.
 
 1.65 - July 16, 2003
 * New page configuration system, no different system for installers with custom pages
@@ -106,7 +109,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Added define to show uninstall confirm page
 * Added language string for finish page title and continue to uninstall
 * Define for parameters for the application to run on the finish page
-* Bugfixes
+* Minor fixes
 
 1.6 - November 18, 2002
 * Welcome / Finish page
@@ -125,7 +128,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * No more writing window titles & abort warnings to Install Options INI Files
 * Compatible with updated paging system
 * Renamed macros and defines
-* Some small fixes
+* Minor fixes
 
 1.4 - November 4, 2002
 * Uses new NSIS Page command
@@ -153,7 +156,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * MultiLanguage.nsi uses the new language strings
 
 1.2 - September 22, 2002
-  (NOTE: All macors mentioned here have been removed in version 1.4)
+  (NOTE: All macros mentioned here have been removed in version 1.4)
   
 * Lots of macro system updates & fixes
 * InstallOptions support in macro system

@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.70
+;NSIS Modern User Interface version 1.71
 ;Macro System
 ;Written by Joost Verburg
 
@@ -8,7 +8,7 @@
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.70 - © 2002-2004 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.71 - © 2002-2004 Joost Verburg"
 
 ;--------------------------------
 
@@ -1349,9 +1349,7 @@ Var MUI_TEMP2
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
 
     !insertmacro MUI_ENDHEADER
-    !ifndef MUI_PAGE_UNINSTALLER
-      !insertmacro MUI_LANGDLL_SAVELANGUAGE
-    !endif
+    !insertmacro MUI_LANGDLL_SAVELANGUAGE
 
   FunctionEnd
 
@@ -1987,8 +1985,16 @@ Var MUI_TEMP2
 
 !macro MUI_LANGDLL_SAVELANGUAGE
 
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
+  !ifndef MUI_PAGE_UNINSTALLER
+    
+    IfAbort mui.langdllsavelanguage_abort
+    
+    !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+      WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
+    !endif
+    
+    mui.langdllsavelanguage_abort:
+    
   !endif
 
 !macroend
