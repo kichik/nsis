@@ -12,8 +12,8 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Klik Volgende om verder te gaan."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Klik Installeren om de installatie te starten."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Klik op Volgende om verder te gaan."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Klik op Installeren om de installatie te starten."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licentie Overeenkomst"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Lees de licentie overeenkomst voordat u ${MUI_PRODUCT} installeerd."
@@ -28,7 +28,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Kies Installatie Locatie"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Kies de map waarin u ${MUI_PRODUCT} in wilt installeren."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Setup zal ${MUI_PRODUCT} in de volgende map installeren.$\r$\n$\r$\nOm in een andere map te installeren, klik Bladeren en selecteer een andere map."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Setup zal ${MUI_PRODUCT} in de volgende map installeren.$\r$\n$\r$\nOm in een andere map te installeren, klik op Bladeren en selecteer een andere map."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Installatie Map"
  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Bezig met installeren"
