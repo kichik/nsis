@@ -670,7 +670,7 @@
     !define MUI_STARTMENUPAGE
   !endif
   
-  Page custom mui.Startmenu "" "" "MUI_INSTALLBUTTON_STARTMENU"
+  Page custom mui.StartmenuPre mui.StartmenuLeave "" "MUI_INSTALLBUTTON_STARTMENU"
   
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
@@ -931,7 +931,7 @@
   !endif
   
   !ifdef MUI_STARTMENUPAGE
-    !insertmacro MUI_FUNCTIONS_STARTMENUPAGE mui.Startmenu
+    !insertmacro MUI_FUNCTIONS_STARTMENUPAGE mui.StartmenuPre mui.StartmenuLeave
   !endif
   
   !insertmacro MUI_FUNCTIONS_INSTFILESPAGE mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
@@ -1079,44 +1079,48 @@
 
 !macroend
 
-!macro MUI_FUNCTIONS_STARTMENUPAGE FUNCTION
+!macro MUI_FUNCTIONS_STARTMENUPAGE PRE LEAVE
   
-  Function "${FUNCTION}"
+  Function "${PRE}"
   
-  !ifdef MUI_CUSTOMFUNCTION_STARTMENU_PRE
-    Call "${MUI_CUSTOMFUNCTION_STARTMENU_PRE}"
-  !endif
-
-  Push ${MUI_TEMP1}
-
-    !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
-  
-      StrCmp "${MUI_STARTMENUPAGE_VARIABLE}" "" 0 +4
-
-      ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
-        StrCmp ${MUI_TEMP1} "" +2
-        StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" ${MUI_TEMP1}
-    
+    !ifdef MUI_CUSTOMFUNCTION_STARTMENU_PRE
+      Call "${MUI_CUSTOMFUNCTION_STARTMENU_PRE}"
     !endif
+
+    Push ${MUI_TEMP1}
+
+      !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
   
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
+        StrCmp "${MUI_STARTMENUPAGE_VARIABLE}" "" 0 +4
+
+        ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
+          StrCmp ${MUI_TEMP1} "" +2
+          StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" ${MUI_TEMP1}
     
-    !ifndef MUI_STARTMENUPAGE_NODISABLE
-      StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "$(MUI_INNERTEXT_STARTMENU_CHECKBOX)" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
-    !else
-      StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
-    !endif
+      !endif
+  
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
+    
+      !ifndef MUI_STARTMENUPAGE_NODISABLE
+        StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "$(MUI_INNERTEXT_STARTMENU_CHECKBOX)" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+      !else
+        StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+      !endif
       
-    Pop ${MUI_TEMP1}
+      Pop ${MUI_TEMP1}
     
-    StrCmp ${MUI_TEMP1} "success" 0 +2
-      Pop "${MUI_STARTMENUPAGE_VARIABLE}"
+      StrCmp ${MUI_TEMP1} "success" 0 +2
+        Pop "${MUI_STARTMENUPAGE_VARIABLE}"
 
-  Pop ${MUI_TEMP1}
+    Pop ${MUI_TEMP1}
+      
+  FunctionEnd
 
-  !ifdef MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
-    Call "${MUI_CUSTOMFUNCTION_STARTMENU_LEAVE}"
-  !endif
+  Function "${LEAVE}"
+
+    !ifdef MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
+      Call "${MUI_CUSTOMFUNCTION_STARTMENU_LEAVE}"
+    !endif
 
   FunctionEnd
 
