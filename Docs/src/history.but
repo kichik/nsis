@@ -1,10 +1,44 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0rc2} 2.0 Release Candidate 2
+
+Released on January 5th, 2004
+
+\S1{v2.0rc2-cl} Changelog
+
+\S2{} Minor Changes
+
+\b Set focus to the main control in each page to ease keyboard control (plug-ins too)
+
+\b LangStrings and user variables limit is now 16383 and is enforced
+
+\b Fixed control colors set using SetCtlColors not changing when the system colors were changed
+
+\b Log window now responds to the context menu key
+
+\b Fixed a bug which caused beeping when the space key is hit on the components tree
+
+\b Added code to prevent weird usage of WM_COMMAND which can cause weird behavior
+
+\b Fixed compile errors when NSIS_CONFIG_COMPONENTPAGE, NSIS_CONFIG_PLUGIN_SUPPORT or NSIS_SUPPORT_HWNDS are not defined
+
+\b More language files updated to the latest version
+
+\b Fixed CHM's script errors
+
+\b Documentation improvements
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.4}: NOTIFY for link, drop list and list box; UI fixes and improvements. See IO's \L{../Contrib/InstallOptions/Changelog.txt}{change log} for a complete list
+
+\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Improved user interface, added support for named symbol sets and fixed best compressor selector
+
 \H{v2.0rc1} 2.0 Release Candidate 1
 
 Released on Decemeber 27th, 2003
 
-\S1{v2.0b5-rn} Release Notes
+\S1{v2.0rc1-rn} Release Notes
 
 \b Trying the LZMA compression method for your installer is recommended. It often gives a 20% better compression ratio.
 
