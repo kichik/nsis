@@ -138,7 +138,7 @@ struct FieldType {
   UINT   nControlID;
 
   int    nParentIdx;  // this is used by the filerequest and dirrequest controls, used to store original windowproc for LINK
-  HANDLE hImage; // this is used by image/icon field to save the handle to the image
+  HANDLE hImage; // this is used by image/icon field to save the handle to the image, or used by LINK control to store the color
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -666,6 +666,10 @@ bool ReadSettings(void) {
       }
     }
 
+    // Text color for LINK control, default is pure blue
+    //if (pFields[nIdx].nType == FIELD_LINK)
+    pFields[nIdx].hImage = (HANDLE)GetPrivateProfileInt(szField, "TxtColor", RGB(0,0,255), pszFilename);
+
     pFields[nIdx].nControlID = 1200 + nIdx;
   }
 
@@ -743,9 +747,6 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         HFONT OldFont;
         LOGFONT lf;
 #endif
-        if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
-          (lpdis->itemAction & ODA_SELECT))
-          DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
         
 #ifdef IO_LINK_UNDERLINED
         GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
@@ -753,12 +754,15 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
 #endif
         // Set up tranparent background
-        SetBkMode(lpdis->hDC, TRANSPARENT);
-        
-        if ( GetSysColorBrush(COLOR_HOTLIGHT) )
-          SetTextColor(lpdis->hDC, GetSysColor(COLOR_HOTLIGHT));
-        else
-          SetTextColor(lpdis->hDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
+        HBRUSH brush = (HBRUSH)GetWindowLong(lpdis->hwndItem, GWL_USERDATA);
+        if ( brush )
+          FillRect(lpdis->hDC, &lpdis->rcItem, brush);
+
+        if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
+          (lpdis->itemAction & ODA_SELECT))
+          DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
+
+        SetTextColor(lpdis->hDC, (COLORREF)pFields[nIdx].hImage);
         
         pFields[nIdx].rect = lpdis->rcItem;
         // Calculate needed size of the control
@@ -772,9 +776,6 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         lpdis->rcItem = pFields[nIdx].rect;
         // Add little margin to avoid focus rect over text
         lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
-        
-        if ( lpdis->itemState & ODS_HOTLIGHT )
-          OutputDebugString("Hot");
         
         DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
 #ifdef IO_LINK_UNDERLINED
@@ -806,8 +807,6 @@ int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lPar
   int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
   switch(uMsg)
   {
-  case WM_ERASEBKGND:
-    return 0;
   case WM_GETDLGCODE:
     return DLGC_BUTTON|DLGC_WANTALLKEYS;
   case WM_KEYDOWN:
