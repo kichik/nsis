@@ -94,7 +94,7 @@ CResourceEditor::~CResourceEditor() {
 
 // Adds/Replaces/Removes a resource.
 // If lpData is 0 UpdateResource removes the resource.
-void CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+bool CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
 	CResourceDirectory* nameDir = 0;
 	CResourceDirectory* langDir = 0;
 	CResourceDataEntry* data = 0;
@@ -118,7 +118,7 @@ void CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguag
 		// Replace/Add the resource
 		if (data) {
 			data->SetData(lpData, dwSize);
-			return;
+			return true;
 		}
 
 		if (!nameDir) {
@@ -151,18 +151,20 @@ void CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguag
 			}
 		}
 	}
+  else return false;
+  return true;
 }
 
-void CResourceEditor::UpdateResource(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-	UpdateResource(MAKEINTRESOURCE(szType), szName, wLanguage, lpData, dwSize);
+bool CResourceEditor::UpdateResource(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+	return UpdateResource(MAKEINTRESOURCE(szType), szName, wLanguage, lpData, dwSize);
 }
 
-void CResourceEditor::UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-	UpdateResource(szType, MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
+bool CResourceEditor::UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+	return UpdateResource(szType, MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
 }
 
-void CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
-	UpdateResource(MAKEINTRESOURCE(szType), MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
+bool CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize) {
+	return UpdateResource(MAKEINTRESOURCE(szType), MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
 }
 
 // Returns a copy of the resource requested

@@ -127,9 +127,14 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 
   RsrcIconGroupEntry* ige = (RsrcIconGroupEntry*)(rsrcIconGroup + sizeof(IconGroupHeader));
 
+  int i = 1;
+
+  // Delete old icons
+  while (re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i++), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0));
+
   int iNewIconSize = 0;
 
-  for (int i = 0; i < igh.wCount; i++) {
+  for (i = 0; i < igh.wCount; i++) {
     fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
     ige->wRsrcId = i+1;
 
