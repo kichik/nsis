@@ -596,7 +596,6 @@ class MMapFile : public IMMap
 
         if (!m_hFileMap)
         {
-          MessageBox(0, "failed", "asd", MB_OK);
           extern FILE *g_output;
           extern void quit(); extern int g_display_errors;
           if (g_display_errors)
