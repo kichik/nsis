@@ -112,13 +112,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   {
     // skip over any spaces
     while (*cmdline == ' ') cmdline++;
-    // find out if this parm is quoted
+    
+    // get char we should look for to get the next parm
+    seekchar = ' ';
     if (cmdline[0] == '\"')
     {
       cmdline++;
       seekchar = '\"';
     }
-    else seekchar = ' ';
+
+    // is it a switch?
     if (cmdline[0] == '/')
     {
       cmdline++;
@@ -137,9 +140,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
       if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
       {
-        cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
+        cmdline[-1]=0; // keep this from being passed to uninstaller if necessary
         mystrcpy(state_install_directory,cmdline+2);
-        cmdline=""; // prevent further processing of cmdline
+        break; // /D= must always be last
       }
     }
 
@@ -156,8 +159,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    char *p=realcmds;
-    while (*p) p++;
+    char *p = findchar(realcmds, 0);
 
     while (p >= realcmds && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
@@ -165,7 +167,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
     if (p >= realcmds)
     {
-      *(p-1)=0; // terminate before the " _?="
+      *p=0; // terminate before the "_?="
       p+=3; // skip over _?=
       if (is_valid_instpath(p))
       {
