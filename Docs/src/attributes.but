@@ -278,7 +278,7 @@ Sets whether or not the installer's icon is in the upper left corner of the inst
 
 \S{axpstyle} XPStyle
 
-XPStyle on|off
+XPStyle \e{on|off}
 
 Sets whether or not an XP manifest will be added to the installer. Default value is off. This affects the uninstaller too.
 
