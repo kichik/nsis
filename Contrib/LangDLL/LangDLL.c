@@ -35,6 +35,7 @@ enum
   INST_INSTDIR,   // $INSTDIR
   INST_OUTDIR,    // $OUTDIR
   INST_EXEDIR,    // $EXEDIR
+  INST_LANG,      // $LANGUAGE
   __INST_LAST
 };
 
@@ -61,12 +62,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   int i;
   switch (uMsg) {
   	case WM_INITDIALOG:
-      for (i = 0; i < langs_num; i++) {
+      for (i = langs_num - 1; i >= 0; i--) {
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM)langs[i].name);
-        if (popstring(temp))
-          SetDlgItemText(hwndDlg, IDC_TEXT, temp);
-        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, 0, 0);
-        SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
+      }
+      if (!popstring(temp))
+        SetDlgItemText(hwndDlg, IDC_TEXT, temp);
+      if (!popstring(temp))
+        SetWindowText(hwndDlg, temp);
+      SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
+      for (i = 0; i < langs_num; i++) {
+        if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
+          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, i, 0);
+          break;
+        }
       }
       ShowWindow(hwndDlg, SW_SHOW);
       break;
