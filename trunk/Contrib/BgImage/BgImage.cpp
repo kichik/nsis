@@ -5,7 +5,7 @@
 int x, y;
 char temp[MAX_PATH];
 HBITMAP hBitmap;
-HWND hWndImage;
+HWND hWndImage, hWndParent;
 
 HINSTANCE g_hInstance;
 
@@ -15,6 +15,8 @@ int myatoi(char *s);
 extern "C" void __declspec(dllexport) SetImage(HWND hwndParent, int string_size, char *variables, stack_t **stacktop);
 
 extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
+  hWndParent = hwndParent;
+
   SetImage(hwndParent, string_size, variables, stacktop);
 
   WNDCLASSEX wc = {
@@ -24,7 +26,7 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
     0,
     0,
     g_hInstance,
-    LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103)),
+    0,//LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103)),
     0,
     (HBRUSH)GetStockObject(WHITE_BRUSH),
     0,
@@ -57,7 +59,7 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
 
   SetWindowLong(hWndImage, GWL_STYLE, WS_VISIBLE);
 
-  oldProc = (void *)SetWindowLong(g_hwndParent, GWL_WNDPROC, (long)WndProc);
+  oldProc = (void *)SetWindowLong(hwndParent, GWL_WNDPROC, (long)WndProc);
 }
 
 extern "C" void __declspec(dllexport) SetImage(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
@@ -87,14 +89,14 @@ extern "C" void __declspec(dllexport) SetImage(HWND hwndParent, int string_size,
   if (hWndImage) {
     SetWindowPos(
       hWndImage,
-      g_hwndParent,
+      hWndParent,
       (GetSystemMetrics(SM_CXSCREEN)-x)/2,
       (GetSystemMetrics(SM_CYSCREEN)-y)/2,
       x,
       y,
       SWP_NOACTIVATE
     );
-    RedrawWindow(hWndImage, 0, 0, RDW_INVALIDATE);
+    RedrawWindow(hWndImage, 0, 0, RDW_INVALIDATE | RDW_UPDATENOW);
   }
 }
 
@@ -170,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
           wParam,
           lParam
         );
-        SetWindowPos(hWndImage, g_hwndParent, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE);
+        SetWindowPos(hWndImage, hWndParent, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE);
         return 0;
       }
     }
@@ -201,11 +203,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
       {
         LPWINDOWPOS wp = (LPWINDOWPOS) lParam;
         wp->flags |= SWP_NOACTIVATE;
-        wp->hwndInsertAfter = g_hwndParent;
+        wp->hwndInsertAfter = hWndParent;
         break;
       }
     case WM_DESTROY:
-      SetWindowLong(g_hwndParent, GWL_WNDPROC, (long)oldProc);
+      SetWindowLong(hWndParent, GWL_WNDPROC, (long)oldProc);
     default:
       return DefWindowProc(hwnd, message, wParam, lParam);
   }
