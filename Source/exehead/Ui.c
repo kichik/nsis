@@ -1364,17 +1364,19 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 int ui_st_updateflag=0x6;
 
-void NSISCALL update_status_text(int strtab, const char *text)
-{
+void NSISCALL update_status_text(int strtab, const char *text) {
   static char tmp[NSIS_MAX_STRLEN*2];
   LVITEM new_item;
   HWND linsthwnd = insthwnd;
   if (linsthwnd)
   {
-    int tmplen = mystrlen(tmp);
+    int updateflag = ui_st_updateflag;
+    int tmplen;
 
-    if (!(ui_st_updateflag & 1))
+    if (!(updateflag & 1))
       GetNSISString(tmp, strtab);
+
+    tmplen = mystrlen(tmp);
 
     if (text)
     {
@@ -1382,14 +1384,14 @@ void NSISCALL update_status_text(int strtab, const char *text)
       lstrcat(tmp, text);
     }
 
-    if ((ui_st_updateflag & 4)) my_SetWindowText(insthwnd2, tmp);
-    if ((ui_st_updateflag & 2))
+    if ((updateflag & 4)) my_SetWindowText(insthwnd2, tmp);
+    if ((updateflag & 2))
     {
       new_item.mask = LVIF_TEXT;
       new_item.pszText = tmp;
       new_item.iItem = ListView_GetItemCount(linsthwnd);
       new_item.iSubItem = 0;
-      if (ui_st_updateflag & 1)
+      if (updateflag & 1)
       {
         new_item.iItem--;
         ListView_SetItem(linsthwnd, &new_item);
@@ -1399,7 +1401,7 @@ void NSISCALL update_status_text(int strtab, const char *text)
       ListView_EnsureVisible(linsthwnd, new_item.iItem, 0);
     }
 
-    if (ui_st_updateflag & 1)
+    if (updateflag & 1)
       tmp[tmplen]=0;
   }
 }
