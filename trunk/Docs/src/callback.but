@@ -64,6 +64,10 @@ Example:
 \c     NoReadme:
 \c   FunctionEnd
 
+\S3{onguiend} .onGUIEnd
+
+This callback is called right after the installer window closes. Use it to free any user interface related plug-ins if needed.
+
 \S3{onmouseoversection} .onMouseOverSection
 
 This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarily, in $0.
@@ -157,6 +161,10 @@ Example:
 \c   Function un.onUninstSuccess
 \c     MessageBox MB_OK "Congrats, it's gone."
 \c   FunctionEnd
+
+\S3{unonguiend} .onGUIEnd
+
+This callback is called right after the installer window closes. Use it to free any user interface related plug-ins if needed.
 
 \S3{unonuserabort} un.onUserAbort
 
