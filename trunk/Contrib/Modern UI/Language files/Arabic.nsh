@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ARABIC"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Arabic" ;⁄—»Ì
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Arabic" ;(⁄—»Ì) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
@@ -21,11 +21,11 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "« ›«ﬁÌ…˛ «· —ŒÌ’"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "«·—Ã«¡ „—«Ã⁄… « ›«ﬁÌ…˛ «· —ŒÌ’ ﬁ»·  ‰’Ì» ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "≈÷€ÿ «”›· «·’›Õ… ·ﬁ—¬Â « ›«ﬁÌ…˛ «· —ŒÌ’"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "≈÷€ÿ „Ê«›ﬁ · ﬂ„·… «· ‰’Ì» ≈‰ Ê«›ﬁ  ⁄·Ï ﬂ«„· « ›«ﬁÌ…˛ «· —ŒÌ’, ·«  ” ÿÌ⁄ «· ‰’Ì» »œÊ‰ «·„Ê«›ﬁ… ⁄·Ï « ›«ﬁÌ…˛  —ŒÌ’ ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "≈÷€ÿ √Ê«›ﬁ · ﬂ„·… «· ‰’Ì» ≈‰ Ê«›ﬁ  ⁄·Ï ﬂ«„· « ›«ﬁÌ…˛ «· —ŒÌ’, ·«  ” ÿÌ⁄ «· ‰’Ì» »œÊ‰ «·„Ê«›ﬁ… ⁄·Ï « ›«ﬁÌ…˛  —ŒÌ’ ${MUI_PRODUCT}."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "«Œ — «·⁄‰«’— ·· ‰’Ì»"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "«Œ — «·„Ì“ «·„—«œ  ‰’Ì»Â« „‰ ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "«Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»…"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "√Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« „‰ „‰’» ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "«Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»… Ê"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "√‘— »›√—ﬂ ⁄·Ï √Õœ «·⁄‰«’— ·„⁄—›… „Ì“ Â √Ê Ê’›Â"
   
@@ -41,6 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " „ :"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&≈‰Â«¡"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Ì‰ÂÌ „‰’» »—‰«„Ã ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} »‰Ã«Õ  „  ‰’Ì»\r\n≈÷€ÿ ≈‰Â«¡ ·≈Œ—«Ãﬂ „‰ «·„‰’»"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT}ÌÃ» ≈⁄«œ…  ‘€Ì· «·‰Ÿ«„ ·Ìﬂ „·  ‰’Ì» «·»—‰«„Ã . Â·  —Ìœ «·≈⁄«œ… «·¬‰ø"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "√⁄œ «· ‘€Ì· «·¬‰"
@@ -54,7 +55,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "«Œ — „Ã·œ ·ﬁ«∆„… «»œ«¡ «·–Ì ”Ì‰‘«¡ ›ÌÂ «Œ ’«—«  «·»—‰«„Ã. Ì„ﬂ‰ﬂ «Ì÷« ﬂ «»… «”„ ·≈‰‘«¡ „Ã·œ ÃœÌœ."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "·«  ‰‘√ «Œ ’«—« "
    
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ «·„‰’» ${MUI_PRODUCT}ø"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» »—‰«„Ã ${MUI_PRODUCT}ø"
   
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "„“Ì· ${MUI_PRODUCT}"
