@@ -1,5 +1,33 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0rc4} 2.0 Release Candidate 4
+
+Released on February 2nd, 2004
+
+\S1{v2.0rc4-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed MBCS mishandling in exehead, InstallOptions and nsExec
+
+\S2{} Minor Changes
+
+\b Language files updates and fixes
+
+\b Fixed logging (NSIS_CONFIG_LOG)
+
+\b Fixed compile errors caused by removing some config.h options
+
+\b NSIS compiles without PSDK again
+
+\b Documentation fixes
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl}: All potential and rare crashes should be completely fixed now
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed a rare crash related to ListItems and a small memory leak when using ValidateText
+
 \H{v2.0rc3} 2.0 Release Candidate 3
 
 Released on January 26th, 2004
