@@ -5,6 +5,7 @@
 #include "7zip/7zip/IStream.h"
 #include "7zip/7zip/Compress/LZMA/LZMAEncoder.h"
 #include "7zip/Common/MyCom.h"
+#include "7zip/Common/Defs.h"
 
 // implemented in build.cpp - simply calls CompressReal
 #ifdef _WIN32
@@ -12,6 +13,12 @@ DWORD WINAPI lzmaCompressThread(LPVOID lpParameter);
 #else
 void *lzmaCompressThread(void *arg);
 #endif
+
+#define LZMA_BAD_CALL -1
+#define LZMA_INIT_ERROR -2
+#define LZMA_THREAD_ERROR -3
+#define LZMA_IO_ERROR -4
+#define LZMA_MEM_ERROR -5
 
 class CLZMA:
   public ICompressor,
@@ -169,6 +176,12 @@ public:
 
     compressor_finished = FALSE;
     finish = FALSE;
+    res = C_OK;
+
+    if (!hNeedIOEvent || !hIOReadyEvent)
+    {
+      return LZMA_INIT_ERROR;
+    }
 
     ResetEvent(hNeedIOEvent);
     ResetEvent(hIOReadyEvent);
@@ -193,7 +206,7 @@ public:
     props[2].vt = VT_UI4;
     props[2].ulVal = 64;
     if (_encoder->SetCoderProperties(propdIDs, props, kNumProps) != 0)
-      return -1;
+      return LZMA_INIT_ERROR;
     return _encoder->SetStreams(this, this, 0, 0);
   }
 
@@ -246,7 +259,8 @@ public:
           INT32 finished;
           if (_encoder->CodeOneBlock(&inSize, &outSize, &finished))
           {
-            res = -2;
+            if (res != C_OK)
+              res = LZMA_IO_ERROR;
             break;
           }
           if (finished)
@@ -258,12 +272,16 @@ public:
       }
       else
       {
-        res = -2;
+        res = LZMA_IO_ERROR;
       }
+    }
+    catch (CMemoryException)
+    {
+      res = LZMA_MEM_ERROR;
     }
     catch (...)
     {
-      res = -3;
+      res = LZMA_IO_ERROR;
     }
 
     compressor_finished = TRUE;
@@ -279,7 +297,7 @@ public:
       if (flush)
         return C_OK;
       else
-        return -1;
+        return LZMA_BAD_CALL;
     }
 
     finish = flush;
@@ -294,7 +312,7 @@ public:
 #else
       if (pthread_create(&hCompressionThread, NULL, lzmaCompressThread, (LPVOID) this))
 #endif
-        return -2;
+        return LZMA_INIT_ERROR;
     }
     else
     {
@@ -307,7 +325,7 @@ public:
       // thread ended or WaitForMultipleObjects failed
       compressor_finished = TRUE;
       SetEvent(hIOReadyEvent);
-      return -4;
+      return LZMA_THREAD_ERROR;
     }
 
     if (compressor_finished)
@@ -322,7 +340,10 @@ public:
   {
     SetEvent(hNeedIOEvent);
     if (WaitForSingleObject(hIOReadyEvent, INFINITE) != WAIT_OBJECT_0)
+    {
       compressor_finished = TRUE;
+      res = LZMA_THREAD_ERROR;
+    }
   }
 
   STDMETHOD(Read)(void *data, UINT32 size, UINT32 *processedSize)
@@ -411,6 +432,24 @@ public:
   virtual unsigned int GetAvailIn() { return avail_in; }
   virtual unsigned int GetAvailOut() { return avail_out; }
   const char *GetName() { return "lzma"; }
+
+  const char* GetErrStr(int err) {
+    switch (err)
+    {
+    case LZMA_BAD_CALL:
+      return "bad call";
+    case LZMA_INIT_ERROR:
+      return "initialization failed";
+    case LZMA_THREAD_ERROR:
+      return "thread synchronization error";
+    case LZMA_IO_ERROR:
+      return "input/output error";
+    case LZMA_MEM_ERROR:
+      return "not enough memory";
+    default:
+      return "unknown error";
+    }
+  }
 };
 
 #endif
