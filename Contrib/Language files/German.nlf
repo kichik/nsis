@@ -6,7 +6,7 @@ NLF v2
 Nullsoft Install System %s
 %s Installation
 %s Deinstallation
-: Lizenz-Vereinbarung
+: Lizenzvertrag
 : Installations-Optionen
 : Installations-Verzeichnis
 : Installiere Dateien
@@ -17,18 +17,18 @@ Nullsoft Install System %s
 < Zurück
 Weiter >
 Ich stimme zu
-Installation
+Installieren
 Deinstallation
-Abbruch
+Beenden
 Schließen
 Durchsuchen...
 Zeige Details
 Name
 Abgeschlossen
 Eigene
-Selektieren Sie den Installation-Typ:
-Selektieren Sie die zu installierenden Komponenten:
-Oder selektieren Sie die zu installierenden optionalen Komponenten:
+Wählen Sie den Installation-Typ:
+Wählen Sie die zu installierenden Komponenten:
+Oder wählen Sie die zu installierenden optionalen Komponenten:
 Wählen Sie das Verzeichnis, in dem Sie %s installieren wollen:
 Vorhandener Speicher: 
 Benötigter Speicher: 
@@ -39,8 +39,8 @@ Kopieren fehlgeschlagen
 Kopieren nach 
 Kann Symbol nicht finden: 
 Laden fehlgeschlagen: 
-Erzeuge Verzeichnis: 
-Erzeuge Link: 
+Erstelle Verzeichnis: 
+Erstelle Verknüpfung: 
 Deinstallations-Programm erzeugt: 
 Lösche Datei: 
 Lösche beim Neustart: 
@@ -50,7 +50,7 @@ Fehler beim Entpacken der Daten! Defekter Installer?
 Fehler beim Registrieren der DLL
 ExecShell: 
 Ausführen: 
-Entpacke: 
+Entpacken: 
 Entpacker: Fehler beim Schreiben in Datei 
 Installer defekt: ungültiger opcode
 Kein OLE für: 
