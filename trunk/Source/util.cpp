@@ -179,6 +179,8 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 
   re->UpdateResource(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
 
+  free(rsrcIconGroup);
+
   icondata_size = iNewIconSize;
 
   return 0;
