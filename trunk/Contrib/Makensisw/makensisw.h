@@ -30,7 +30,7 @@
 
 // Defines
 #define NSIS_URL	"http://sourceforge.net/projects/nsis/"
-#define USAGE		"Usage:\r\n  [options] [script.nsi | - [...]]\r\n"
+#define USAGE		"Usage:\r\n\r\n  File | Load Script...\r\n  -or-\r\n  Drag .nsi file into this window\r\n  -or-\r\n  Right click .nsi and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
 #define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel, Fritz Elfert, and Amir Szekely"
 #define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
