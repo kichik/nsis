@@ -642,8 +642,6 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\7zip\7zip\Compress\LZ\BinTree\*.*
   SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZMA
   File ..\Source\7zip\7zip\Compress\LZMA\*.*
-  SetOutPath $INSTDIR\Source\7zip\7zip\Compress\LZMA_SMALL
-  File ..\Source\7zip\7zip\Compress\LZMA_SMALL\*.*
   SetOutPath $INSTDIR\Source\7zip\7zip\Compress\RangeCoder
   File ..\Source\7zip\7zip\Compress\RangeCoder\*.*
   SetOutPath $INSTDIR\Source\7zip\7zip\Common
