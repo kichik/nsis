@@ -193,7 +193,7 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
     return PS_ERROR;
   }
 
-  if (num_ifblock())
+  if (ret == PS_EOF && num_ifblock())
   {
     ERROR_MSG("!if[n]def: open at EOF - need !endif\n");
     return PS_ERROR;
