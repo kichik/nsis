@@ -81,6 +81,8 @@ BEGIN
         MENUITEM "Copy &Selected",              IDM_COPYSELECTED
         MENUITEM SEPARATOR
         MENUITEM "Find...\tCtrl+F",             IDM_FIND
+        MENUITEM SEPARATOR
+        MENUITEM "&Select All\tCtrl+A",         IDM_SELECTALL
     END
     POPUP "&Help"
     BEGIN
@@ -99,6 +101,7 @@ END
 
 IDK_ACCEL ACCELERATORS PRELOAD MOVEABLE PURE 
 BEGIN
+    "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
     "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT

@@ -147,6 +147,8 @@ Version History
  - Drag and Drop Support into the Makensisw window
  - Updated icon to Trace's modern NSIS icon
  - Added Load Script option on File menu
+ - Added Search Dialog (Ctrl+F) (Kickik)
+ - Added Select All (Ctrl+A)
 
 
 Copyright Information
