@@ -158,6 +158,9 @@ char szBrowseButtonCaption[] = "...";
 
 HWND hConfigWindow    = NULL;
 HWND hMainWindow      = NULL;
+HWND hCancelButton    = NULL;
+HWND hNextButton      = NULL;
+HWND hBackButton      = NULL;
 HINSTANCE m_hInstance = NULL;
 
 char *pszFilename = NULL;
@@ -668,14 +671,14 @@ static void *lpWndProcOld;
 
 static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+  if (message == WM_CLOSE)
+  {
+    message = WM_COMMAND;
+    wParam = IDCANCEL;
+  }
 	if (message == WM_COMMAND && (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK || LOWORD(wParam) == 3))
   {
 		PostMessage(hConfigWindow,WM_USER+666,0,LOWORD(wParam));
-    return 0;
-  }
-  if (message == WM_CLOSE)
-  {
-    PostMessage(hConfigWindow,WM_USER+666,0,IDCANCEL);
     return 0;
   }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
@@ -760,24 +763,25 @@ int createCfgDlg()
   cw_vis=IsWindowVisible(childwnd);
   if (cw_vis) ShowWindow(childwnd,SW_HIDE);
 
-  was_cancel_enabled=EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),1);
-  was_ok_enabled=EnableWindow(GetDlgItem(hMainWindow,IDOK),1);
-  GetDlgItemText(hMainWindow,IDCANCEL,old_cancel,sizeof(old_cancel));
-  if (pszCancelButtonText) SetDlgItemText(hMainWindow,IDCANCEL,pszCancelButtonText);
-  GetDlgItemText(hMainWindow,IDOK,old_ok,sizeof(old_ok));
-  if (pszNextButtonText) SetDlgItemText(hMainWindow,IDOK,pszNextButtonText);
-  GetDlgItemText(hMainWindow,3,old_back,sizeof(old_back));
-  if (pszBackButtonText) SetDlgItemText(hMainWindow,3,pszBackButtonText);
+  hCancelButton = GetDlgItem(hMainWindow,IDCANCEL);
+  hNextButton = GetDlgItem(hMainWindow,IDOK);
+  hBackButton = GetDlgItem(hMainWindow,3);
+
+  was_cancel_enabled=EnableWindow(hCancelButton,1);
+  was_ok_enabled=EnableWindow(hNextButton,1);
+  GetWindowText(hCancelButton,old_cancel,sizeof(old_cancel));
+  if (pszCancelButtonText) SetWindowText(hCancelButton,pszCancelButtonText);
+  GetWindowText(hNextButton,old_ok,sizeof(old_ok));
+  if (pszNextButtonText) SetWindowText(hNextButton,pszNextButtonText);
+  GetWindowText(hBackButton,old_back,sizeof(old_back));
+  if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
 
-  EnableWindow(GetDlgItem(hMainWindow,3),!bBackDisabled);
+  EnableWindow(hBackButton,!bBackDisabled);
 
-  old_cancel_enabled=!EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled);  // by ORTIM: 13-August-2002
-  old_cancel_visible=IsWindowVisible(GetDlgItem(hMainWindow,IDCANCEL));               // by ORTIM: 13-August-2002
-  EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled?SW_SHOWNA:SW_HIDE);		  // by ORTIM: 13-August-2002
-  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelShow?SW_SHOWNA:SW_HIDE);             // by ORTIM: 13-August-2002
-
-  lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
+  old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);                     // by ORTIM: 13-August-2002
+  old_cancel_visible=IsWindowVisible(hCancelButton);                                  // by ORTIM: 13-August-2002
+  ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);                            // by ORTIM: 13-August-2002
 
   // Added by Amir Szekely 22nd July 2002
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
@@ -898,7 +902,7 @@ int createCfgDlg()
         break;
     }
 
-    pFields[nIdx].hwnd = CreateWindowEx(
+    HWND hwCtrl = pFields[nIdx].hwnd = CreateWindowEx(
       dwExStyle,
       ClassTable[pFields[nIdx].nType - 1].pszClass,
       title,
@@ -913,24 +917,24 @@ int createCfgDlg()
       NULL
     );
 
-    if (pFields[nIdx].hwnd) {
+    if (hwCtrl) {
       // Changed by Amir Szekely 22nd July 2002
       // Sets the font of IO window to be the same as the main window
-      SendMessage(pFields[nIdx].hwnd, WM_SETFONT, (WPARAM)hFont, TRUE);
+      SendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
       // make sure we created the window, then set additional attributes
       if (pFields[nIdx].nMaxLength > 0) {
         switch (pFields[nIdx].nType) {
           case FIELD_TEXT:
           case FIELD_DIRREQUEST:
           case FIELD_FILEREQUEST:
-            SendMessage(pFields[nIdx].hwnd, EM_LIMITTEXT, (WPARAM)pFields[nIdx].nMaxLength, (LPARAM)0);
+            SendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pFields[nIdx].nMaxLength, (LPARAM)0);
             break;
         }
       }
       if ((pFields[nIdx].nType == FIELD_CHECKBOX) || (pFields[nIdx].nType == FIELD_RADIOBUTTON)) {
         if (pFields[nIdx].pszState[0] == '1')
         {
-          SendMessage(pFields[nIdx].hwnd, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
+          SendMessage(hwCtrl, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
         }
       } else if (
                  ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)) ||
@@ -943,7 +947,7 @@ int createCfgDlg()
           if (*pszEnd == '|') {
             *pszEnd = '\0';
             if (pszEnd > pszStart) {
-              SendMessage(pFields[nIdx].hwnd, nAddMsg, 0, (LPARAM)pszStart);
+              SendMessage(hwCtrl, nAddMsg, 0, (LPARAM)pszStart);
             }
             // jump to the next item, skip any redundant | characters
             do { pszEnd++; } while (*pszEnd == '|');
@@ -952,15 +956,15 @@ int createCfgDlg()
           pszEnd++;
         }
         if (pFields[nIdx].pszState) {
-          int nItem = SendMessage(pFields[nIdx].hwnd, CB_FINDSTRINGEXACT, -1, (LPARAM)pFields[nIdx].pszState);
+          int nItem = SendMessage(hwCtrl, CB_FINDSTRINGEXACT, -1, (LPARAM)pFields[nIdx].pszState);
           if (nItem != CB_ERR) {
-            SendMessage(pFields[nIdx].hwnd, CB_SETCURSEL, nItem, 0);
+            SendMessage(hwCtrl, CB_SETCURSEL, nItem, 0);
           }
         }
       } else if (pFields[nIdx].nType == FIELD_BITMAP || pFields[nIdx].nType == FIELD_ICON) {
         WPARAM nImageType = pFields[nIdx].nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
         SendMessage(
-          pFields[nIdx].hwnd,
+          hwCtrl,
           STM_SETIMAGE,
           nImageType,
           pFields[nIdx].pszText?
@@ -997,8 +1001,10 @@ int createCfgDlg()
 
 void showCfgDlg()
 {
+  lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
+
   ShowWindow(hConfigWindow, SW_SHOWNA);
-	SetFocus(GetDlgItem(hMainWindow,IDOK));
+	SetFocus(hNextButton);
 
   g_done=0;
 
@@ -1016,14 +1022,14 @@ void showCfgDlg()
   if (lpWndProcOld)
     SetWindowLong(hMainWindow,GWL_WNDPROC,(long)lpWndProcOld);
   DestroyWindow(hConfigWindow);
-  if (was_cancel_enabled) EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),0);
-  if (was_ok_enabled) EnableWindow(GetDlgItem(hMainWindow,IDOK),0);
-  SetDlgItemText(hMainWindow,IDCANCEL,old_cancel);
-  SetDlgItemText(hMainWindow,IDOK,old_ok);
-  SetDlgItemText(hMainWindow,3,old_back);
+  if (was_cancel_enabled) EnableWindow(hCancelButton,0);
+  if (was_ok_enabled) EnableWindow(hNextButton,0);
+  SetWindowText(hCancelButton,old_cancel);
+  SetWindowText(hNextButton,old_ok);
+  SetWindowText(hBackButton,old_back);
 
-  EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_enabled);                  // by ORTIM: 13-August-2002
-  ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM: 13-August-2002
+  EnableWindow(hCancelButton,old_cancel_enabled);                  // by ORTIM: 13-August-2002
+  ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM: 13-August-2002
 
   if (pszTitle) SetWindowText(hMainWindow,old_title);
 
@@ -1094,6 +1100,8 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
 extern "C" BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   m_hInstance=(HINSTANCE) hInst;
+  if (ul_reason_for_call == DLL_THREAD_DETACH || ul_reason_for_call == DLL_PROCESS_DETACH)
+    DestroyWindow(hConfigWindow);
 	return TRUE;
 }
 
