@@ -46,80 +46,132 @@ enum
   EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
   EW_IFFILEEXISTS,      // IfFileExists: 3, [file name, jump amount if exists, jump amount if not exists]
   EW_IFERRORS,           //a IfErrors: 3 [jump if error, jump if not error, new_erflag]
+#ifdef NSIS_SUPPORT_RENAME
   EW_RENAME,            // Rename: 3 [old, new, rebootok]
+#endif
+#ifdef NSIS_SUPPORT_FNUTIL
   EW_GETFULLPATHNAME,   // GetFullPathName: 2 [output, input, ?lfn:sfn]
   EW_SEARCHPATH,        // SearchPath: 2 [output, filename]
   EW_GETTEMPFILENAME,   // GetTempFileName: 1 [output]
+#endif
+#ifdef NSIS_SUPPORT_FILE
   EW_EXTRACTFILE,       // File to extract: 5,[overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh]
                         //  overwriteflag: 0x1 = no. 0x0=force, 0x2=try, 0x3=if date is newer
+#endif                       
+#ifdef NSIS_SUPPORT_DELETE
   EW_DELETEFILE,        // Delete File: 2, [filename, rebootok]
+#endif
+#ifdef NSIS_SUPPORT_MESSAGEBOX
   EW_MESSAGEBOX,        // MessageBox: 5,[MB_flags,text,retv1:retv2,moveonretv1:moveonretv2]
+#endif
+#ifdef NSIS_SUPPORT_RMDIR
   EW_RMDIR,             // RMDir: 2 [path, recursiveflag]
+#endif
+#ifdef NSIS_SUPPORT_STROPTS
   EW_STRLEN,            // StrLen: 2 [output, input]
   EW_ASSIGNVAR,         // Assign: 4 [variable (0-9) to assign, string to assign, maxlen, startpos]
   EW_STRCMP,            // StrCmp: 4 [str1, str2, jump_if_equal, jump_if_not_equal] (case-insensitive)
+#endif
+#ifdef NSIS_SUPPORT_ENVIRONMENT
   EW_READENVSTR,        // ReadEnvStr/ExpandEnvStrings: 3 [output, string_with_env_variables, IsRead]
+#endif
+#ifdef NSIS_SUPPORT_INTOPTS
   EW_INTCMP,            // IntCmp: 5 [val1, val2, equal, val1<val2, val1>val2]
   EW_INTCMPU,           // IntCmpU: 5 [val1, val2, equal, val1<val2, val1>val2]
   EW_INTOP,             // IntOp: 4 [output, input1, input2, op] where op: 0=add, 1=sub, 2=mul, 3=div, 4=bor, 5=band, 6=bxor, 7=bnot input1, 8=lnot input1, 9=lor, 10=land], 11=1%2
   EW_INTFMT,            // IntFmt: [output, format, input]
+#endif
+#ifdef NSIS_SUPPORT_STACK
   EW_PUSHPOP,           // Push/Pop/Exchange: 3 [variable/string, ?pop:push, ?exch]
-
+#endif
+#ifdef NSIS_SUPPORT_HWNDS
   EW_FINDWINDOW,        // FindWindow: 5, [outputvar, window class,window name, window_parent, window_after]
   EW_SENDMESSAGE,       // SendMessage: 6 [output, hwnd, msg, wparam, lparam, [wparamstring?1:0 | lparamstring?2:0 | timeout<<2]
   EW_ISWINDOW,          // IsWindow: 3 [hwnd, jump_if_window, jump_if_notwindow]
+#endif
+
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem: 3 [outputvar, dialog, item_id]
-  EW_SETWINDOWLONG,     // SetStaticBkColor: 2 [hwnd, color]
+  EW_SETWINDOWLONG,     // SetWindowLong (used by StaticBkColor): 3 [hwnd, which(numeric), value]
+  EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
+  EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
+#endif
 
+#ifdef NSIS_SUPPORT_SHELLEXECUTE
   EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
+#endif
 
+#ifdef NSIS_SUPPORT_EXECUTE
   EW_EXECUTE,           // Execute program: 3,[complete command line,waitflag,>=0?output errorcode]
+#endif
 
+#ifdef NSIS_SUPPORT_GETFILETIME
   EW_GETFILETIME,       // GetFileTime; 3 [file highout lowout]
+#endif
 
+#ifdef NSIS_SUPPORT_GETDLLVERSION
   EW_GETDLLVERSION,     // GetDLLVersion: 3 [file highout lowout]
+#endif
 
+#ifdef NSIS_SUPPORT_ACTIVEXREG
   EW_REGISTERDLL,       // Register DLL: 3,[DLL file name, string ptr of function to call, text to put in display (<0 if none/pass parms), 1 - no unload, 0 - unload]
+#endif
 
+#ifdef NSIS_SUPPORT_CREATESHORTCUT
   EW_CREATESHORTCUT,    // Make Shortcut: 5, [link file, target file, parameters, icon file, iconindex|show mode<<8|hotkey<<16]
+#endif
 
+#ifdef NSIS_SUPPORT_COPYFILES
   EW_COPYFILES,         // CopyFiles: 3 [source mask, destination location, flags]
+#endif
 
+#ifdef NSIS_SUPPORT_REBOOT
   EW_REBOOT,            // Reboot: 0
   EW_IFREBOOTFLAG,      // IfRebootFlag: 2 [if reboot flag set, if not reboot flag]
   EW_SETREBOOTFLAG,     // SetRebootFlag: 1 [new value]
+#endif
 
+#ifdef NSIS_SUPPORT_INIFILES
   EW_WRITEINI,          // Write INI String: 4, [Section, Name, Value, INI File]
   EW_READINISTR,        // ReadINIStr: 4 [output, section, name, ini_file]
+#endif
 
+#ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
   EW_DELREG,            // DeleteRegValue/DeleteRegKey: 4, [root key(int), KeyName, ValueName, delkeyonlyifempty]. ValueName is -1 if delete key
   EW_WRITEREG,          // Write Registry value: 5, [RootKey(int),KeyName,ItemName,ItemData,typelen]
                         //  typelen=1 for str, 2 for dword, 3 for binary, 0 for expanded str
   EW_READREGSTR,        // ReadRegStr: 5 [output, rootkey(int), keyname, itemname, ==1?int::str]
   EW_REGENUM,           // RegEnum: 5 [output, rootkey, keyname, index, ?key:value]
+#endif
 
+#ifdef NSIS_SUPPORT_FILEFUNCTIONS
   EW_FCLOSE,            // FileClose: 1 [handle]
   EW_FOPEN,             // FileOpen: 4  [name, openmode, createmode, outputhandle]
   EW_FPUTS,             // FileWrite: 3 [handle, string, ?int:string]
   EW_FGETS,             // FileRead: 4  [handle, output, maxlen, ?getchar:gets]
   EW_FSEEK,             // FileSeek: 4  [handle, offset, mode, >=0?positionoutput]
+#endif//NSIS_SUPPORT_FILEFUNCTIONS
 
+#ifdef NSIS_SUPPORT_FINDFIRST
   EW_FINDCLOSE,         // FindClose: 1 [handle]
   EW_FINDNEXT,          // FindNext: 2  [output, handle]
   EW_FINDFIRST,         // FindFirst: 2 [filespec, output, handleoutput]
+#endif
 
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   EW_WRITEUNINSTALLER,  // WriteUninstaller: 1 [name]
+#endif
 
+#ifdef NSIS_CONFIG_LOG
   EW_LOG,               // LogText: 2 [0, text] / LogSet: [1, logstate]
+#endif
 
+#ifdef NSIS_CONFIG_COMPONENTPAGE
   EW_SECTIONSET,        // SectionSetText:    3: [idx, 0, text]
                         // SectionGetText:    3: [idx, 1, output]
                         // SectionSetFlags:   3: [idx, 2, flags]
                         // SectionGetFlags:   3: [idx, 3, output]
-
-  EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
-
-  EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
+#endif
 
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
@@ -248,7 +300,9 @@ typedef struct
   int code_onInstFailed;
   int code_onUserAbort;
   int code_onNextPage;
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onInitDialog;
+#endif
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
   char show_details;
@@ -270,6 +324,7 @@ typedef struct
 typedef struct
 {
   // these first strings are literals (should not be encoded)
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   int backbutton;
   int nextbutton;
   int browse; // "Browse..."
@@ -288,6 +343,9 @@ typedef struct
   int licensedata; // license text
   int licensebutton; // license button text
 #endif//NSIS_CONFIG_LICENSEPAGE
+#else
+  int foo;
+#endif
 } installer_strings;
 
 // Settings specific to installers
@@ -324,7 +382,9 @@ typedef struct
   // .on* calls
   int code_onPrevPage;
   int code_onVerifyInstDir;
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onMouseOverSection;
+#endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int code_onSelChange;
 #endif//NSIS_CONFIG_COMPONENTPAGE
