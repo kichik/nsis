@@ -3460,8 +3460,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         else         command  = line.gettoken_str(0);
         SCRIPT_MSG("Plugin Command: %s",command);
 
+        int i = 1;
+        int nounload = 0;
+        if (!lstrcmpi(line.gettoken_str(i), "/NOUNLOAD")) {
+          i++;
+          nounload++;
+        }
+
         // First push dll args
-        for (int i = 1; i < line.getnumtokens(); i++) {
+        for (; i < line.getnumtokens(); i++) {
           ent.which=EW_PUSHPOP;
           ent.offsets[0]=add_string(line.gettoken_str(i));
           ent.offsets[1]=0;
@@ -3476,6 +3483,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=tempDLLtab;
         ent.offsets[1]=add_string(command);
         ent.offsets[2]=-1;
+        ent.offsets[3]=nounload;
         ret=add_entry(&ent);
         if (ret != PS_OK) return ret;
 
