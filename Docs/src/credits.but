@@ -28,7 +28,7 @@
 
 \b NSIS Menu
 
-\b NSIS Update for NSIS distribution
+\b NSIS Update for NSIS distribution (original version by Nathan Purciful)
 
 \e{Robert Rainwater}
 
@@ -78,12 +78,6 @@
 
 \b Lots of icons and check marks
 
-\e{Nathan Purciful aka Techkid}
-
-\b NSIS Menu Graphics
-
-\b Original NSIS Update version
-
 \H{translators} Translators
 
 Arabic - \e{TuW@nNu (asdfuae)}
@@ -123,6 +117,8 @@ Korean - \e{dTomoyo, linak, koder}
 Lithuanian - \e{NorCis,  Vytautas Krivickas}
 
 Macedonian - \e{Sasko Zdravkin}
+
+Norwegian - \e{Jonas Christoffer Lindstrøm}
 
 Polish - \e{Piotr Murawski & Rafa³ Lampe, cube}
 

@@ -55,7 +55,7 @@ Example:
 
 \S3{oninstsuccess} .onInstSuccess
 
-This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{aautoclosewindow}{AutoCloseWindow} is set to false).
+This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{aautoclosewindow}{AutoCloseWindow} or \R{setautoclose}{SetAutoClose} is set to false).
 
 Example:
 
@@ -155,7 +155,7 @@ Example:
 
 \S3{unonuninstsuccess} un.onUninstSuccess
 
-This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{aautoclosewindow}{AutoCloseWindow} is set to false).
+This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{setautoclose}{SetAutoClose} is set to false)..
 
 Example:
 
