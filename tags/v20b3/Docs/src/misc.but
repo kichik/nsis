@@ -1,0 +1,17 @@
+\S1{miscinst} Miscellaneous Instructions
+
+\S2{initpluginsdir} InitPluginsDir
+
+Initializes the plugins dir (\R{var2}{$PLUGINSDIR}) if not already initialized.
+
+\S2{setshellvarcontext} SetShellVarContext
+
+\c \\<b\\>current\\</b\\>|all
+
+Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used. Please take into consideration that a "normal user" has no rights to write in the all users area. Only admins have full access rights to the all users area. You can check this by using the UserInfo Plugin. See Contrib\\UserInfo\\UserInfo.nsi for an example.
+
+\S2{sleep} Sleep
+
+\c sleeptime_in_ms
+
+Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, e.g. "$0" or a number, i.e. "666".

@@ -1,0 +1,70 @@
+\H{pages} Pages
+
+Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with InstallOptions for example).
+
+\S{pageoreder} Ordering
+
+The page order is set simply by the order they are in the script. For example:
+
+\c  Page license
+\c  Page components
+\c  Page directory
+\c  Page instfiles
+
+This code will show the license page, then the components selection page, then the directory selection page and then the install log, just like in old installers.
+
+You can specify the same page type more than once, just make sure you know what you are doing.
+
+Please note that you must still use LicenseText and LicenseData for the license page to show, ComponentText for the components selection page to show and DirText for the directory page to show.
+
+If you don't use any Page command the installer pages order will be just as in older version: license (if LicenseText and LicenseData were specified), components (if ComponentText was specified and there is more than one visible section), directory (if DirText was specified), instfiles.
+
+\S{pagecallbacks} Callbacks
+
+Each built-in page has three callback functions. The pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is showen so you can tweak its user interface with \R{createfont}{CreateFont}, \R{setstaticbkcolor}{SetStaticBkColor } and \R{sendmessage}{SendMessage}; the leave-function is called right after the user has pressed the next button and before the page is left.
+
+A custom page has only one callback function that creates it but unlike the built-in pages this function is mandatory.
+
+Use \R{abort}{Abort} from a built-in page's pre-function to skip the page, and from a built-in page's leave-function to stay in the page.
+
+Examples:
+
+\c  Page license skipLicense "" stayInLicense
+\c  Page custom customPage ": custom page"
+\c  Page instfiles
+\c
+\c  Function skipLicense
+\c    MessageBox MB_YES "Do you want to skip the license page?" IDNO no
+\c      Abort
+\c    no:
+\c  FunctionEnd
+\c
+\c  Function stayInLicense
+\c    MessageBox MB_YES "Do you want to stay in the license page?" IDNO no
+\c      Abort
+\c    no:
+\c  FunctionEnd
+\c
+\c  Function customPage
+\c    GetTempFileName $R0
+\c    File /oname=$R0 customPage.ini
+\c    InstallOptions::dialog $R0
+\c    Pop $R1
+\c    StrCmp $R1 "cancel" done
+\c    StrCmp $R1 "back" done
+\c    StrCmp $R1 "success" done
+\c    error: MessageBox MB_OK|MB_ICONSTOP "InstallOptions error:$\r$\n$R1"
+\c    done:
+\c  FunctionEnd
+
+\S{page} Page
+
+\c ((license|components|directory|instfiles|custom caption) [pre_function] [show_function] [leave_function]) [define_if_last]
+
+Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions. If define_if_last is specified, the parameter will be !defined if the page turns out to be the last page before a instfiles page. This helps you decide on dynamic scripts (such as the Modern UI script) what to put in this page's text, "click the install button to start installation" or "click next to continue" for example.
+
+\S{uninstpage} UninstPage
+
+\c ((uninstConfirm|instfiles|custom caption) [pre_function] [show_function] [leave_function]) [define_if_last]
+
+Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions. See Page for an explanation about define_if_last.

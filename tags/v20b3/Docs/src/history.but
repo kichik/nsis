@@ -1,0 +1,405 @@
+\A{history} Release History
+
+\e{v2.0b3}
+
+\b Modern UI 1.63: Header bitmap support, new defines to change the description area, single macro for language selection dialog, more!
+
+\b New tutorial in the documentation
+
+\b define_if_last in Page command also works when a define has not been specified for all Page commands.\\<br\\>This fixes the problem with the Modern UI "Click Next" / "Click Install" texts.
+
+\b Added SectionSetInstTypes and SectionGetInstTypes
+
+\b Reboot commmand does not force a reboot anymore (allows the user to save work)
+
+\b !if[n]def/!else fixes
+
+\b LogSet on now really starts logging
+
+\b Cancel button available on all pages after the instfiles page but the last page unless /ENABLECANCEL was used in its Page command
+
+\b License page: No more limit on RTF size
+
+\b LangDLL: Option to auto-count number of languages, shell font support
+
+\b Page and UninstPage can not be used inside sections/functions
+
+\b CreateDirectory now uses the error flag
+
+\b EnumRegKey/Value output_var check fixed
+
+\b Updated translations
+
+\b Dreaded BSOD after plug-ins enumeration finally banished
+
+\b Minimize button and BGGradient and BGImage compatibility fixes
+
+\b WriteINIStr with empty value works again
+
+\b Added FlushINI
+
+\e{v2.0b2}
+
+\b NSIS Menu: links to all NSIS utitlies, documentation and websites
+
+\b NSIS Update: check for new releases, download latest development files
+
+\b Dialer plugin to connect to the internet
+
+\b Improved filename validation
+
+\b VC7 compiler compatibility issues fixed
+
+\b CreateDirectory sets error flag
+
+\b InstallOptions: INI File State value fixed
+
+\b Updated translations
+
+\b Minor fixes
+
+\e{v2.0b1}
+
+\b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
+
+\b LangString improvements: can be used before they have been defined, warning if not present in all language tables
+
+\b New version of the Modern User Interface with UI improvements, bugfixes and some small new features
+
+\b InstallOptions 2.0 with support for custom font and DPI settings, groupboxes, grouped controls, lots of bugfixes etc.
+
+\b No more random compression ratios
+
+\b SetOutPath now sets the working directory
+
+\b File names are validated, directory given by the user will now always work
+
+\b $QUICKLAUNCH now works with SetShellVarContext all
+
+\b Automatically appended directory name in the directory selection dialog will no longer contain squares if not all characters are ASCII.
+
+\b Fixed a bug with remote drives and available space (\\\\remote\\drive)
+
+\b Plug-in function's names are now case insensitive
+
+\b Fixed a bug with specifying Icon twice
+
+\b Include dirs (!addincludedir)
+
+\b On leave function for pages
+
+\b Installers can now really contain more than one branding image
+
+\b All !if/!else/!endif problems should be solved now
+
+\b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style
+
+\b Win9x rename on reboot now also works when the destination file does not exist
+
+\b DeleteRegKey works on default value
+
+\b nsExec can be called from an installer executed by CreateProcess
+
+\b WriteUninstaller sets error code
+
+\b Banner.dll compatible with Modern UI
+
+\b Fixed focus problems in MakeNSISw
+
+\b Updated and new translations
+
+\b Some new bitmaps for the MUI by Virtlink
+
+\b Faster and better MakeNSISw integration
+
+\b \R{detect.netframework}{New .NET Framework detection function}
+
+\b Minor bugfixes
+
+\b Code clean-ups (compiles on VC7)
+
+
+\e{v2.0b0}
+
+\b New paging system
+
+\b Added Page and UninstPage
+
+\b Removed .onNextPage, .onPrevPage, .onInitDialog
+
+\b New easier version of the Modern User Interface with better multilanguage support, InstallOptions integration, welcome and finish page etc.
+
+\b Custom pages no longer flicker when created
+
+\b Added accelerator keys
+
+\b Added LangString and LangStringUP for user defined multilingual strings
+
+\b Added support for transparent check marks
+
+\b Added InitPluginsDir
+
+\b Renamed nsisconf.nsi to nsisconf.nsh
+
+\b Added CreateShortcut comment/description parameter
+
+\b Splash.exe is now a plugin (splash.dll)
+
+\b Added new plugins: System, AdvSplash, nsExec, UserInfo, BgImage, Banner and StartMenu
+
+\b !ifdef and friends can now be used in macros
+
+\b SendMessage can send strings (put STR: before a param) and supports timeouts
+
+\b Right mouse button "Copy to clipboard" context menu for the Details window
+
+\b Plugin syntax now requires dll name, e.g. dll::func not just func
+
+\b Licence text receives initial focus (page up & down work immediately, return key still works)
+
+\b Made win9x move/delete on reboot support proper and function like on win2k
+
+\b Now always loads RichEdit v2 if present (links work on Win9x)
+
+\b DeleteRegKey now complains if given a third parameter (other than /ifempty)
+
+\b RegDLL now works with DLLs dependent on DLLs from the same directory
+
+\b $\{LANG_langName\} defined as the language id when loading a NLF
+
+\b Fixed a few bugs that caused the installer to load slower than before
+
+\b Uninstall can now get command line parameters too
+
+\b Added ReserveFile
+
+\b Added ExDLL.h
+
+\b Included makensisw 1.9 (lots of changes)
+
+\b Updated InstallOptions
+
+\b Updated ZIP2EXE
+
+\b Updated HTTP download plugin, NSIS-dl (timeout added, better proxy detection)
+
+\b A lot of new language files
+
+\b A lot of new icons and check marks
+
+\b Changed section flags values
+
+\b SectionSetFlags can now set bold too
+
+\b SectionSetFlags now works in silent installers too
+
+\b SectionSetName for sub sections doesn't need '-' in front of the name
+
+\b Added SetPluginUnload
+
+\b Hidden section can now use SectionIn too
+
+\b File /nonfatal switch added
+
+\b Plugins no longer add size to their containing section
+
+\b Defines can now be used inside define names ($\{bla$\{blo\}\})
+
+\b New docs format (WOOHA!)
+
+\b EXE header size a lot smaller, 33.5KB for bzip2 and 34KB for zlib
+
+\b Lots of other bugs fixed...
+
+
+\e{v2.0a7}
+
+\b Can now select the language from .onInit ($LANGUAGE is a variable)
+
+\b Added CreateFont
+
+\b Added .onMouseOverSection
+
+\b Added .onInitDialog and un.onInitDialog
+
+\b Added SetStaticBkColor
+
+\b Disabled UseOuterUIItem
+
+\b SendMessage WM_SETTEXT treats lParam as a string and not a number
+
+\b CopyFiles script message no longer always prints (silent)
+
+\b Custom install type text can now be changed
+
+\b ChangeUI can now change IDD_VERIFY
+
+\b Default license color now fits the user system
+
+\b Summary reports the right number of required sections
+
+\b Checkbox is only required in IDD_DIR if logging is enabled
+
+\b Not using /LANG now really causes the script compiler to use the last used language
+
+\b Fixed a bug with MBCS and the uninstaller text
+
+\b MBCS to Unicode and Unicode to MBCS conversion bugs fixed
+
+\b Fixed a bug that caused RTF not to show on Windows 9x
+
+\b Added a dialog that shows up if compress whole is used and initial uncompressing lasts longer than a second
+
+\b Updated to InstallOptions 1.3
+
+\b MakeNSISw 1.7 included
+
+\b Added modern UI by Joost Verburg (Examples\\Modern UI)
+
+\b Added new full color icons by adni18
+
+\b Added Dutch, Korean, Russian, Swedish and Traditional Chinese language files
+
+\b Updated Spanish language file version (thanks to LsMoNKi)
+
+\b Added /TRIM(LEFT|RIGHT|CENTER) for BrandingText
+
+\b EXE header size down to 36.5KB
+
+\b Added yi-pixel.ico and yi-pixel-uninstall.ico by Jan T. Sott
+
+\b Fixed a bug with macros at the end of the file
+
+\b Sub-sections can now have defined names too
+
+\b Added LangDLL.dll plugin
+
+\b CallInstDLL /NOUNLOAD added (works on plugin calls too)
+
+
+\e{v2.0a6}
+
+\b Fixed two bugs with the plug-in mechanism
+
+\b Fixed infinite loop bug
+
+
+\e{v2.0a5}
+
+\b Added UseOuterUIItem
+
+\b Enhanced ChangeUI
+
+\b Enhanced SetDlgItemText
+
+\b Added one-section.nsi example file
+
+\b Optimized Ximon's code for plug-in DLLs (back to 37KB)
+
+\b If default user language doesn't fit exactly, will try to find primary language match
+
+\b Fixed some strings that got replaced (space available and required etc.)
+
+\b Compiles without MS Platform SDK
+
+\b Included Spanish.nlf
+
+\b Included MagicLime.exe by snowchyld
+
+
+\e{v2.0a4}
+
+\b Added automatic detection, packing, unpacking and deletion of plugin dlls
+
+\b Added simplified calling syntax for plugin dlls
+
+\b Added PluginDir
+
+\e{v2.0a3}
+
+\b Added LoadLanguageFile
+
+\b Added $LANGUAGE
+
+\b Added /LANG option to string setters (Name, Caption, etc.)
+
+\b 'LogSet on' now builds a log file if not already created
+
+
+\e{v2.0a2}
+
+\b Added $\{NSISDIR\}
+
+\b Added XPStyle
+
+\b Added SetFont
+
+\b Added ChangeUI
+
+\b Added AddBrandingImage, and SetBrandingImage
+
+\b Added SetCompressor (no more makensis-bz2.exe)
+
+\b Added LicenseBkColor
+
+\b 'SpaceTexts none' now causes no space texts to appear
+
+\b Icon and UninstallIcon now support icons of any type
+
+\b CheckBitmap now support bitmaps with any color table/depth
+
+\b Unused resources are removed before writing out the installer
+
+\b Documented !error and !warning
+
+\b Added !echo and !verbose
+
+\b Added force option for CRCCheck
+
+\b Updated to Makensisw 1.6
+
+\b Updated to InstallOptions 1.2
+
+\b Installer can now be compressed using UPX
+
+\b A hint is shown if a line is longer than the detail window
+
+\b Modern style folder select dialog
+
+\b License data can now be RTF
+
+\b WindowIcon is now handled in the compiler
+
+\b Removed debug version (it never worked anyway)
+
+\b Faster compile time (WIN32_LEAN_AND_MEAN)
+
+
+\e{v2.0a1}
+
+\b Added expand node option to Section and SubSection
+
+\b Added preserv file attribute option to File command
+
+\b Copy-All bug fix in Makensisw
+
+\b Added NSISDIR to the define list
+
+\b Reorganized NSIS directory structure
+
+
+\e{v2.0a0}
+
+\b TreeView component list (care of Jeff Doozan)
+
+\b No more SectionDivider, but SubSection and SubSectionEnd.
+
+\b No more EnabledBitmap/DisabledBitmap, just CheckBitmap. (with tons of button states)
+
+\b Bugfixes of brokenness.
+
+\b Added ! for Section/SubSection to make bold.
+
+\b Made config.h have hacks for easier building for me. :)
+
+\e{For complete version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}}

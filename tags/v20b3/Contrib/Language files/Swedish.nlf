@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1053
+# Translation by Peter Gustafsson <sm5tri@passagen.se>
+Nullsoft Install System %s
+%s Installation
+%s Avinstallation
+: Licens avtal
+: Installations val
+: Installations mapp
+: Installerar filer
+: Klart!
+: Bekräfta
+: Avinstallerar filer
+: Klart!
+< Tillbaka
+Nästa >
+Jag godkänner
+Installera
+Avinstallera
+Avbryt
+Stäng
+Bläddra...
+Visa detaljer
+Namn
+Färdigt!
+Anpassad
+Välj typ av installation: 
+Välj komponenter att installera: 
+eller, välj vilka komponenter du önskar installera: 
+Välj mapp att installera %s till: 
+Tillgängligt utrymme: 
+Utrymme som krävs: 
+Avinstallerar från: 
+Kan inte öppna fil för skrivning: \r\n\t"$0"\r\ntryck avbryt för att avbryta installationen,\r\nförsök igen för att försöka igen, eller\r\nignorera för att hoppa över denna fil
+Kan inte skriva 
+Kopiering misslyckades 
+Kopiera till 
+Kunde inte hitta symbolen: 
+Kunde inte ladda: 
+Skapar mapp: 
+Skapar genväg: 
+Skapar avinstallerare: 
+Raderar fil: 
+Radera vid omstart: 
+Kan inte skapa genväg: 
+Kan inte skapa:  
+Fel vid uppackning av data! Installeraren felaktig?
+Kan inte registrera DLL
+ExecShell: 
+Kör: 
+Packar upp: 
+Packar upp: fel vid skrivning till fil 
+Installation felaktig: felaktig opcode
+Ingen OLE för: 
+Skapar installationsmapp: 
+Radera mapp: 
+Ändra namn vid omstart: 
+Ändra namn: 
+Hoppar över: 
+Kopiera detaljer till klippboken

@@ -1,0 +1,171 @@
+NSIS System Plugin
+(c) brainsucker (Nik Medved), 2002
+
+        The whole system plugin and this documentation as a part could be a hard
+barrier for non Win32 programmers, in this case you could come to NSIS forum 
+(http://forums.winamp.com/forumdisplay.php?forumid=65) and ask some questions 
+to the people living there, they'll always help you.
+
+        By the way, any help in writing complete and easy-to-go System plugin
+documentation will be appreciated.
+
+        Note: it will be best to turn plugin onload off in case of using System
+plugin (SetPluginUnload alwaysoff).
+
+============== Main functions ==============
+
+RESULT/PROC System::Get "Proc"
+RESULT/RETURN System::Call "Proc" StackArgs...
+
+These functions return error RESULTs or PROC/RETURN in OK case.
+Error result is "error" and callback results are "callbackN", where N is
+callback index.
+
+============== Additional functions ==============
+
+----------------------------------
+System::Int64Op ARG1 OP1
+System::Int64Op ARG1 OP2 ARG2
+----------------------------------
+        Performs operation on ARG1 and ARG2 (or on ARG1 only at single argument
+operator cases) and returns result on stack. Here are the OP2s: +, -, *, / DIV, 
+% MOD, | OR, & AND, ^ XOR, || LOGIC-OR, && LOGIC-AND, < BELOW, > ABOVE, = EQUAL. 
+There are only 2 OP1s: ~ (BITWISE-NOT) and ! (LOGIC-NOT).
+
+----------------------------------
+System::Alloc SIZE
+----------------------------------
+        Allocates SIZE bytes and returns the pointer on stack.
+
+----------------------------------
+System::Copy 0 SOURCE
+System::Copy DESTINATION SOURCE
+System::Copy /SIZE 0 SOURCE 
+System::Copy /SIZE DESTINATION SOURCE 
+----------------------------------
+        Copys data from source to destination, if /SIZE option and SIZE itself
+are undefined uses GlobalSize to determine source size. If destination is equal
+to 0, allocates the new memory block.
+
+----------------------------------
+System::Free ADDR
+----------------------------------
+        Frees memory used by object at ADDR (callbacks too). 
+
+----------------------------------
+System::Store COMMAND
+----------------------------------
+        Store operations, allows to save/restore registers, pop/push values on
+stack. COMMAND is string consisting of following ops:
+        s, S    -       push the whole registers range (to separate stack)
+        l, L    -       pop the whole registers range (from separate stack)
+        pN      -       push $N register to general nsis stack
+        PN      -       push $RN register to general nsis stack
+        rN      -       pop $N register from general nsis stack
+        RN      -       pop $RN register from general nsis stack
+
+============== Get/Call syntaxis ==============
+
+----------------------------------
+Syntax:
+----------------------------------
+        "Proc(Params)Return?Options#Proc(Params)Return?Options..."
+
+----------------------------------
+Proc:
+----------------------------------
+        dll::proc       -> Proc from DLL
+        ::addr          -> Handle to system proc (memory address)
+        *addr           -> Structure
+        *               -> New structure
+        nothing         -> Dup proc, usually callback or for future defenition
+
+        proc            -> Ready proc specification for use or redefinition
+
+
+        If in System::Call proc specification points to already existing proc,
+the existing proc will be adapted and executed, otherwise the new proc will be
+created, executed and deleted.
+
+----------------------------------
+Params syntax: 
+----------------------------------
+        (Param1, Param2, Param3...), the number of params of proc is set
+to number of params at last Params section (so params cutting may ocur). If you 
+need to save previous Param defenition use '_' after last param at Params 
+section - no param cutting will ocur for it (section).
+Syntax of single param: "Type Source Destination", type can be omitted (previous
+or void will be used), each of Source and Destination can be replaced with 
+'.' placeholder. Any parameter can be omitted at all - previous or default 
+values will be used (example: "(i1,,i2)", 2nd arg omitted).
+
+        Return section is like single param defenition, but the Source defenition is 
+never used, beside callback cases.
+
+----------------------------------
+Params & Return - Type:
+----------------------------------
+        v - void (generaly for return)
+        i - int (includes char, byte, short, handles, pointers and so on)
+        l - long & large integer (know as int64)
+        t - text, string (LPCSTR, pointer to first character)
+        b - boolean (needs/returns 'true':'false') - by the fact this type is 
+                senseless -> usual integer can be used ('0':'1')
+        k - callback. See Callback section.
+
+        * - pointer specifier -> the proc needs the pointer to type, affects
+                next char (parameter) [ex: '*i' - pointer to int]
+
+----------------------------------
+For structures: 
+        & - additional meaning specificator.
+----------------------------------
+        &v      - padding, &vN - pad for N bytes
+        &i      - smaller types: &i4, &i2 (short), &i1 (byte)
+        &l      - cumbersome, but &lN means the structure size (N bytes value),
+                  calculated automaticaly, outputed always as int (N could be 0).
+        &t      - structure contains plain text, &tN - lenght == N bytes.
+
+----------------------------------
+Params & Return - Source / Destination:
+----------------------------------
+        . - makes no change to source
+        0..9 - starts numeric inline input (accepts 0..9, x, |)
+        " / ' / ` - starts / ends string inline input
+        Registers $0-$9 -> r(0..9)
+        Registers $R0-$R9 -> 'r(10..19)' or 'R(0..9)'
+        Additional regs -> c(Cmdline) d(instDir) o(Outdir) e(Exedir) a(lAng)
+        Stack -> s (you could pass arguments from Call line, see examples)
+        None -> n (0 (null) for input / specifies no output is required)
+
+Note: If you are using inline input syntax, you shouldn't use the same quotes for
+quoting inlines and the whole defenition. If you need to place the
+same quotes into input as you used for separation of input expression just use 
+these characters in doubled way. For example (t "just an ""Example""!").
+
+----------------------------------
+Options:
+        (any option can be turned off (returned to default value) by specifing
+        '!' where needed, for example _stdcall cc can be turned on by '!c'):
+----------------------------------
+        c - _cdecl calling convention (the stack restored by caller). By default
+stdcall calling convention is used (the stack restored by callee).
+        r - always return (for GET means you should pop result and proc,
+for CALL means you should pop result (at least)). By default result is returned
+for errors only (for GET you will pop either error result or right 
+proc, and for CALL you will get either your return or result at defined 
+return place.
+        n - no redefine. Whenever this proc will be used it will never be 
+redefined either by GET or CALL. This options is never inherited to childs.
+        s - use general Stack. Whenever the first callback defined the system
+starts using the temporary stacks for function calls. 
+
+----------------------------------
+Callback:
+----------------------------------
+You should check for callbacked return after every function call which can use 
+your callback. General scheme is:
+        1. Check result for callback or normal return
+        2. Input arguments defined for callback are at places.
+        3. Place output and return arguments
+        4. Call System::Call using callback proc handle

@@ -1,0 +1,283 @@
+\H{instattribs} Installer Attributes
+
+\S1{attribgen} General Attributes
+
+The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a Section or Function.  With the exception of InstallDir, none of these attributes allow use of Variables other than $\\r and $\\n in their strings.
+
+\\<b\\>Defaults are bold\\</b\\>
+
+\S2{aaddbrandingimage} AddBrandingImage
+
+\c (left|top) (width|height)
+
+Adds a branding image on the top of the installer or on the left. Its size will be set according to the width/height specified, the installer width/height and the installer font. Because this depends on the installer font, you should put SetFont before AddBrandingImage.
+
+\S2{aallowrootdirinstall} AllowRootDirInstall
+
+\c true|\\<b\\>false\\</b\\>
+
+Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\\ or \\\\Server\\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see \R{onverifyinstdir}{.onVerifyInstDir}.
+
+\S2{aautoclosewindow} AutoCloseWindow
+
+\c true|\\<b\\>false\\</b\\>
+
+Sets whether or not the install window automatically closes when completed. This is overrideable from a section using SetAutoClose.
+
+\S2{abggradient} BGGradient
+
+\c [\\<b\\>off\\</b\\>|(topc botc [textcolor|notext])]
+
+Specifies whether or not to use a gradient background window. If 'off', the installer will not show a background window, if no parameters are specified, the default black to blue gradient is used, and otherwise the top_color or bottom_color are used to make a gradient. Top_color and bottom_color are specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). 'textcolor' can be specified as well, or 'notext' can be specified to turn the big background text off.
+
+\S2{abrandingtext} BrandingText
+
+\c [/LANG=lang_id] /TRIM(LEFT|RIGHT|CENTER) text
+
+Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') in the bottom of the install window. Setting this to an empty string ("") uses the default; to set the string to blank, use " " (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.
+
+\S2{acaption} Caption
+
+\c [/LANG=lang_id] caption
+
+Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name command}. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+
+\S2{achangeui} ChangeUI
+
+\c dialog ui_file.exe
+
+Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to load replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
+
+\b \e{IDD_LICENSE} must contain \e{IDC_EDIT1} (RICHEDIT control).
+
+\b \e{IDD_DIR} must contain \e{IDC_DIR} (edit box), \e{IDC_BROWSE} (button) and \e{IDC_CHECK1} (checkbox).
+
+\b \e{IDD_SELCOM} must contain \e{IDC_TREE1} (SysTreeView32 control), and \e{IDC_COMBO1} (combo box).
+
+\b \e{IDD_INST} must contain \e{IDC_BACK} (button), \e{IDC_CHILDRECT} (static control the size of all other dialogs), \e{IDC_VERSTR} (static), \e{IDOK} (button), and \e{IDCANCEL} (button). If an image control (static with \e{SS_BITMAP} style) will be found in this dialog it will be used as the default for SetBrandingImage.
+
+\b \e{IDD_INSTFILES} must contain \e{IDC_LIST1} (SysListView32 control), \e{IDC_PROGRESS1} and \e{IDC_PROGRESS2} (msctls_progress32 controls), and \e{IDC_SHOWDETAILS} (button).
+
+\b \e{IDD_UNINST} must contain \e{IDC_EDIT1} (edit box).
+
+\b \e{IDD_VERIFY} must contain \e{IDC_STR} (static).
+
+\S2{acheckbitmap} CheckBitmap
+
+\c bitmap.bmp
+
+Specifies the bitmap with the images used for the checks of the component-selection page treeview.
+
+This bitmap should have a size of 96x16 pixels and contain six 16x16 images for the different states (in order: selection mask, not checked, checked, greyed out, unchecked & read-only, checked & read-only). Use magenta as mask color (this area will be transparent).
+
+\S2{acompletedtext} CompletedText
+
+\c [/LANG=lang_id] Completed text
+
+Replaces the default text ("Completed") that is printed at the end of the install if parameter is specified. Otherwise, the default is used.
+
+\S2{acomponenttext} ComponentText
+
+\c [[/LANG=lang_id] text [subtext] [subtext2]]
+
+Specifies a string that is above the component list. This can be something that notifies the user what it is they are actually installing. Note that if no parameter is specified, or if the ComponentText command is omitted, then the component page will not be visible, and all of the sections will be installed. Note: if text is specified and non-empty and you leave subtext or subtext2 empty, the defaults will be used (to set one to blank, use a string like " "). empty strings mean default on subtext and subtext2. Likewise, if you wish to enable the component page, but don't want any text on the top line, set text to " ".
+
+\S2{acrccheck} CRCCheck
+
+\c \\<b\\>on\\</b\\>|off|force
+
+Specifies whether or not the installer will perform a CRC on itself before allowing an install. Note that if the user uses /NCRC on the command line when executing the installer, and you didn't specify 'force', the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.
+
+\S2{adetailsbuttontext} DetailsButtonText
+
+\c [/LANG=lang_id] show details text
+
+Replaces the default details button text of "Show details", if parameter is specified (otherwise the default is used).
+
+\S2{adirshow} DirShow
+
+\c \\<b\\>show\\</b\\>|hide
+
+Specifies whether or not the user will see the directory selection page. Note that if 'hide' is specified, the installer will still check the validity of the installation path (using internal logic and .onVerifyInstDir if it is declared). If the path is deemed invalid, the directory page will be shown. To completely disable the Directory page (and install without prompting, even if a valid installation path is not available), specify DirText with no parameter (this might be useful if the installer installs everything into $SYSDIR or something like that).
+
+\S2{adirtext} DirText
+
+\c [[/LANG=lang_id] text [subtext] [browse text]]
+
+Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). If subtext is specified and not empty, it overrides the default text above the path entry box ("Select the directory to install MyApp in:"). If browse button text is specified but not empty, it overrides the default browse button text ("Browse...").
+
+\S2{a} FileErrorText
+
+\c [/LANG=lang_id] file error text
+
+Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck, bitch.".
+
+\S2{ainstallbuttontext} InstallButtonText
+
+\c [/LANG=lang_id] install button text
+
+If parameter is specified, overrides the default install button text (of "Install") with the specified text.
+
+\S2{ainstallcolors} InstallColors
+
+\c /windows | foreground background
+
+Sets the colors to use for the install info screen (the default is 00FF00 000000. Use the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). Note that if "/windows" is specified as the only parameter, the default windows colors will be used.
+
+\S2{ainstalldir} InstallDir
+
+\c definstdir
+
+Sets the default installation directory is. See the variables section for variables that can be used to make this string (especially $PROGRAMFILES). Note that the part of this string following the last \\ will be used if the user selects 'browse', and may be appended back on to the string at install time (to disable this, end the directory with a \\ (which will require the entire parameter to be enclosed with quotes)). If this doesn't make any sense, play around with the browse button a bit.
+
+\S2{ainstalldirregkey} InstallDirRegKey
+
+\c root_key subkey key_name
+
+This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the InstallDir attribute if the registry key is valid, otherwise it will fall back to the InstallDir default. When querying the registry, this command will automatically remove any quotes. If the string ends in ".exe", it will automatically remove the filename component of the string (i.e. if the string is "C:\\program files\\poop\\poop.exe", it will know to use "C:\\program files\\poop"). For more advanced install directory configuration, set $INSTDIR in .onInit.
+
+\S2{ainstprogressflags} InstProgressFlags
+
+\c [flag [...]]
+
+Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with \R{axpstyle}{XPStyle} on when the installer runs on Windows XP with a modern theme.
+
+\S2{ainsttype} InstType
+
+\c install_type_name | /NOCUSTOM | ([/LANG=lang_id] /CUSTOMSTRING=str) | /COMPONENTSONLYONCUSTOM
+
+Adds an install type to the install type list, or disables the custom install type. There can be as many as 8 types, each one specifying the name of the install. The first type is the default (generally 'Typical'). Each type is numbered, starting at 1. See SectionIn for information on how those numbers are used. If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
+
+\S2{alicensebkcolor} LicenseBkColor
+
+\c color
+
+Sets the background color of the license data. Color is specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments).
+
+\S2{alicensedata} LicenseData
+
+\c [/LANG=lang_id] licdata.(txt|rtf)
+
+Specifies a text file or a RTF file to use for the license that the user can read. Omit this to not have a license displayed. Note that the file must be in the evil DOS text format (\\r\\n, yeah!)
+
+If you make your license file a RTF file it is recommended you edit it with WordPad and not MS Word. Using WordPad will result in a much smaller file.
+
+\S2{alicensetext} LicenseText
+
+\c [[/LANG=lang_id] text [button_text]]
+
+Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
+
+\S2{aloadlanguagefile} LoadLanguageFile
+
+\c lang_file.nlf
+
+Loads a NLF (NSIS Language File) that will be used to create a string table for the specific language in that NLF.
+
+\S2{amiscbuttontext} MiscButtonText
+
+\c [[/LANG=lang_id] back button text [next button text] [cancel button text] [close button text]]
+
+Replaces the default text strings for the four buttons (< Back, Next >, Cancel and Close). If parameters are omitted, the defaults are used.
+
+\S2{aname} Name
+
+\c [/LANG=lang_id] name
+
+Sets the name of the installer. The name is usually simply the product name such as 'MyApp' or 'CrapSoft MyApp'.
+
+\S2{aicon} Icon
+
+\c [path\]icon.ico
+
+Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail.
+
+\S2{aoutfile} OutFile
+
+\c [path\]install.exe
+
+Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't affect the contents of the installer.
+
+\S2{asetfont} SetFont
+
+\c font_face_name font_size
+
+Sets the installer font. Please remember that the font you choose must be present on the user's machine as well. Don't use rare fonts that only you have.
+
+\S2{ashowinstdetails} ShowInstDetails
+
+\c \\<b\\>hide\\</b\\>|show|nevershow
+
+Sets whether or not the details of the install are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using SetDetailsView.
+
+\S2{ashowuninstdetails} ShowUninstDetails
+
+\c \\<b\\>hide\\</b\\>|show|nevershow
+
+Sets whether or not the details of the uninstall are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using SetDetailsView.
+
+\S2{asilentinstall} SilentInstall
+
+\c \\<b\\>normal\\</b\\>|silent|silentlog
+
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using see \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+
+\S2{asilentuninstall} SilentUnInstall
+
+\c \\<b\\>normal\\</b\\>|silent
+
+Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
+
+\S2{aspacetexts} SpaceTexts
+
+\c [[/LANG=lang_id] req text [avail text]]
+
+If parameters are specified, overrides the space required and space available text ("Space required: " and "Space available: " by default). If 'none' is specified as the required text no space texts will be shown.
+
+\S2{asubcaption} SubCaption
+
+\c [[/LANG=lang_id] page_number subcaption]
+
+Overrides the subcaptions for each of the installer pages (0=": License Agreement",1=": Installation Options",2=": Installation Directory", 3=": Installing Files", 4=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+
+\S2{auninstallbuttontext} UninstallButtonText
+
+\c [/LANG=lang_id] button text
+
+Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{WriteUninstaller}{WriteUninstaller} (replaces UninstallEXEName).
+
+\S2{auninstallcaption} UninstallCaption
+
+\c [/LANG=lang_id] caption
+
+Sets what the titlebars of the uninstaller will display. By default, it is 'Name Uninstall', where Name is specified with the Name command. You can, however, override it with 'MyApp uninstaller' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+
+\S2{auninstallicon} UninstallIcon
+
+\c [path\]icon.ico
+
+Sets the icon of the uninstaller. This icon file \e{must} have the exact same structure as the installer icon file.
+
+\S2{auninstallsubcaption} UninstallSubCaption
+
+\c [/LANG=lang_id] page_number subcaption
+
+Overrides the subcaptions for each of the uninstaller pages (0=": Confirmation",1=": Uninstalling Files",2=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+
+\S2{auninstalltext} UninstallText
+
+\c [/LANG=lang_id] text [subtext]
+
+Specifies the text on the first page of the uninstaller. If subtext is specified and not empty, it will replace the default secondary text on that page, "Uninstall from:".
+
+\S2{awindowicon} WindowIcon
+
+\c \\<b\\>on\\</b\\>|off
+
+Sets whether or not the installer's icon is being displayed.
+
+\S2{axpstyle} XPStyle
+
+\c on|\\<b\\>off\\</b\\>
+
+Sets whether or not an XP manifest will be added to the installer. This affects the uninstaller too.

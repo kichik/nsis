@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1050
+# Translation by Vedran "RIV@NVX" Miletic
+Nullsoft Install System %s
+%s Instalacija
+%s Deinstalacija
+: Licenencni Uvjeti
+: Installacijske Opcije
+: Installacijski Direktorij
+: Installiram
+: Završeno
+: Potvrda
+: Deinstaliram
+: Završeno
+< &Nazad
+&Dalje >
+Ja &Prihvaæam
+&Instaliraj
+&Deinstaliraj
+Odbaci
+&Zatvori
+T&raži...
+Pokaži &detalje
+Ime
+Završeno
+Posebno
+Odaberi tip instalacije:
+Odaberi komponente koje želiš instalirati:
+Ili, odaberi opcionalne komponente koje želiš instalirati:
+Odaberi direktorij da u koji želiš instalirati %s:
+Slobodnog prostora na disku:
+Prostora na disku potrebno:
+Deinstaliram iz:
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš zapisivati u datoteku, or\r\nignore da preskoèiš tu datoteku
+Ne mogu zapisati: 
+Greška prilikom kopiranja
+Kopiraj u
+Ne mogu naæi simbol: 
+Ne mogu uèitati: 
+Napravi direktorij: 
+Napravi shortcut: 
+Created uninstaller: 
+Obriši datoteku: 
+Obriši prilikom ponovnog pokretanja: 
+Greška prilikom kreiranja shortcuta: 
+Greška prilikom kreiranja: 
+Greška prilikom dekompresije podataka! Uništena instalacijska datoteka?
+Greška prilikom registriranja DLLa
+Pokreni iz Shella: 
+Pokreni: 
+Odpakiraj: 
+Odpakiravanje: greška prilikom zapisivanja u datoteku
+Uništena instalacijska datoteka: nevaljali opkod
+Nema OLE za: 
+Izlazni direktorij: 
+Obriši direktorij: 
+Preimenuj prilikom ponovnog pokretanja: 
+Preimenuj: 
+Preskoèeno: 
+Kopiraj Detalje u Clipboard

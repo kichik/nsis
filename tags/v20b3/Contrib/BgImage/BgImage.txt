@@ -1,0 +1,37 @@
+BgImage.DLL - NSIS extension DLL
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Displays an image behind the NSIS window.
+Can also play WAVs.
+
+Note
+~~~~
+
+All but the last used function (which should be Destroy) must use /NOUNLOAD so the image window won't be destroyed before it should. Therefore, this DLL requires NSIS 2.0a7 and above.
+
+Available functions
+~~~~~~~~~~~~~~
+
+Init [/FILLSCREEN] path_to_bitmap
+   Create a new image window
+   Use /FILLSCREEN to make the image fill the screen
+   Do not use in .onInit!
+
+SetImage [/FILLSCREEN] path_to_bitmap
+   Sets a new image to the current timage window
+   Use /FILLSCREEN to make the image fill the screen
+   Do not use in .onInit!
+
+Destroy
+   Destroys the current image window
+
+Sound [/WAIT] path_to_wav
+   Plays a wave file
+   Use /WAIT to wait for the sound to finish playing
+
+Credits
+~~~~~~~
+
+Coded by Amir Szekely, aka KiCHiK
+Modified by Ximon Eighteen, aka Sunjammer (08Feb2003) - Removed the window title bar
+  

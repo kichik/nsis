@@ -1,0 +1,149 @@
+\A{credits} Credits
+
+\H{programmers} Programmers
+
+\e{Justin Frankel aka 0xDEADBEEF}
+
+\b Creating the all mighty NSIS
+
+\e{Amir "make me stop" Szekely aka KiCHiK}
+
+\b Multilingual NSIS
+
+\b RTF license text
+
+\b The new paging system
+
+\b Full color support for icons and bitmaps
+
+\b Branding image
+
+\b Customizable UI
+
+\b One makensis.exe for both zlib and bzip2
+
+\e{Joost Verburg}
+
+\b Modern User Interface
+
+\b NSIS Menu
+
+\b NSIS Update for NSIS distribution
+
+\e{Robert Rainwater}
+
+\b MakeNSISw
+
+\b New documentation format
+
+\b Enhancing the TreeView
+
+\b Reorganizing NSIS directory structure
+
+\e{Dave "bit-by-bit" Laundon aka eccles}
+
+\b Massive optimizing
+
+\e{Ximon Eighteen aka Sunjammer}
+
+\b The new plug-ins system
+
+\b "Copy to clipboard" context menu for the Details window
+
+\b License text initial focus
+
+\e{nnop@newmail.ru}
+
+\e{Ryan Geiss}
+
+\e{Andras Varga}
+
+\e{Drew Davidson}
+
+\e{Peter Windridge}
+
+\e{Yaroslav Faybishenko}
+
+\e{Jeff Doozan}
+
+\b NSIS 2's new TreeView
+
+\H{designers} Designers
+
+\e{Nikos Adamamas}
+
+\b The new modern icons
+
+\e{Jan T. Sott / whyEye.org}
+
+\b Lots of icons and check marks
+
+\e{Nathan Purciful aka Techkid}
+
+\b NSIS Menu Graphics
+
+\b Original NSIS Update version
+
+\H{translators} Translators
+
+Arabic - \e{asdfuae}
+
+Bulgarian - \e{Asparouh Kalyandjiev}
+
+Croatian - \e{Vedran "RIV@NVX" Miletic}
+
+Czech - \e{T.V. Zuggy}
+
+Danish - \e{Christopher, Casper Bergenstoff}
+
+Dutch - \e{Hendri Adriaens, Joost Verburg}
+
+French - \e{veekee, Sébastien Delahaye}
+
+German - \e{L.King, K. Windszus}
+
+Greek - \e{Makidis N. Mike}
+
+Hebrew - \e{Amir Szekely (aka KiCHiK)}
+
+Hungarian - \e{Soft-Trans Bt., Jozsef Tamas Herczeg, Lajos Molnar (Orfanik)}
+
+Italian - \e{Orfanik, sanface}
+
+Japanese - \e{Dnanako}
+
+Korean - \e{dTomoyo, linak}
+
+Macedonian - \e{Sasko Zdravkin}
+
+Polish - \e{Piotr Murawski & Rafa³ Lampe, cube}
+
+Portuguese - \e{DragonSoull}
+
+Portuguese Brasil - \e{Layout do Brasil, Diego Marcos}
+
+Romanian - \e{Cristian Pirvu}
+
+Russian - \e{Sergey `Timon` Kusnetsov, Nik Medved, Scam}
+
+Slovak - \e{trace, Kypec}
+
+Spanish - \e{MoNKi}
+
+Swedish - \e{Peter Gustafsson}
+
+Thai - \e{TuW@nNu}
+
+Traditional & Simplified Chinese - \e{Kii Ali}
+
+Turkish - \e{Bertan Kodamanoglu}
+
+Ukrainian - \e{Yuri Holubow}
+
+\H{addition} Maintenance Staff
+
+\e{Sebastian Armbrust aka flizebogen}
+
+\b Maintaining the Docs
+
+\b Tutorial

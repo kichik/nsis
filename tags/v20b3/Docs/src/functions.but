@@ -1,0 +1,17 @@
+\H{functions} Functions
+
+Functions are like similar to Sections in that they contain zero or more instructions. User functions are not called by the installer directly, instead they are called from Sections using the Call instruction. Callback functions will be called by the installer when a certain event occurs.
+
+Functions must be declared outside of Sections or other Functions.
+
+\S1{ffunctioncommands} Function Commands
+
+\S2{ffunction} Function
+
+\c [function_name]
+
+Begins and opens a new function. Function names beginning with "." (e.g. ".Whatever") are generally reserved for callback functions. Function names beginning with "un." are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions.
+
+\S2{ffunctionend} FunctionEnd
+
+This command closes the current open function.
