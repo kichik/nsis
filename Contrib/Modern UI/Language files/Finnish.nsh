@@ -1,8 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.86
 
 ;Language: Finnish (1035)
 ;By Eclipser (Jonne Lehtinen) <Eclipser at pilvikaupunki dot com>
+;Updated by Puuhis (puuhis@puuhis.net)
 
 ;--------------------------------
 
@@ -23,7 +24,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Valitse komponentit"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Valitse toiminnot, jotka haluat asentaa ohjelmaan $(^NameDA)."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Selitys"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Siirr‰ hiiri komponentin nimen p‰‰lle saadaksesi sen selityksen."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Siirr‰ hiiri komponentin nimen p‰‰lle saadaksesi sen selityksen."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Valitse komponentti n‰hd‰ksesi sen selityksen."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Valitse asennuskohde"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Valitse hakemisto, johon haluat asentaa ohjelman $(^NameDA)."
@@ -54,11 +59,23 @@
   !define MUI_TEXT_ABORTWARNING "Haluatko varmasti lopettaa $(^Name) Asennuksen?"
 
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Tervetuloa $(^NameDA) -ohjelmiston poisto-ohjelmaan"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "T‰m‰ velho auttaa sinut l‰pi $(^NameDA) -ohjelmiston poistamisen.\r\n\r\nEnnen poisto-ohjelman aloitusta, varmista ettei $(^NameDA) ole k‰ynniss‰.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Poista $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Poista $(^NameDA) tietokoneestasi."
 
+  !define MUI_UNTEXT_LICENSE_TITLE "Lisenssisopimus"  
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Lue huolellisesti lisenssiehdot ennen $(^NameDA) -ohjelmiston poistoa."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Jos hyv‰ksyt s‰‰nnˆt ja ehdot, paina Hyv‰ksyn -nappia jatkaakseni. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jos hyv‰ksyt ehdot, klikkaa valintaruutua alhaalla. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jos hyv‰ksyt ehdot, valitse ensimm‰inen vaihtoehto alhaalta. Sinun t‰ytyy hyv‰ksy‰ ehdot poistaaksesi $(^NameDA) -ohjelmiston. $_CLICK"
+
   !define MUI_UNTEXT_COMPONENTS_TITLE "Valitse komponentit"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Valitse $(^NameDA) toiminnot, jotka haluat poistaa."
+
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Valitse paikka mist‰ poistetaan"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Valitse kansio mist‰ $(^NameDA) poistetaan."
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Poistetaan"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Odota... Ohjelmaa $(^NameDA) poistetaan."
@@ -68,5 +85,12 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Poisto lopetettu"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Ohjelmaa poisto ep‰onnistuneesti."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Viimeistell‰‰n $(^NameDA) -ohjelmiston poistamista"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) on poistettu koneeltasi.\r\n\r\nPaina Lopeta -nappia sulkeaksesi t‰m‰n velhon."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Jotta $(^NameDA) -ohjelmiston poistaminen olisi valmis, tulee tietokone k‰ynnist‰‰ uudelleen. Haluatko uudelleenk‰ynnist‰‰ nyt?"
+  
+  !define MUI_UNTEXT_ABORTWARNING "Oletko varma ett‰ haluat poistua $(^Name) poisto-ohjelmasta?"
+
 
 !insertmacro MUI_LANGUAGEFILE_END
