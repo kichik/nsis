@@ -745,7 +745,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
         }
 
-        if (parm0)
+        if (parm0>=0)
           myitoa(var0,v);
       }
     return 0;
