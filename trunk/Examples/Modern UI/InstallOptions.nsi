@@ -2,7 +2,7 @@
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
----------------------
+;---------------------
 ;Include Modern UI
 
   !include "MUI.nsh"
@@ -28,7 +28,7 @@
 ;--------------------------------
 ;Variables
 
-  Var TEMP
+  Var MUI_TEMP
 
 ;--------------------------------
 ;Pages
@@ -86,10 +86,10 @@ Section "Dummy Section" SecDummy
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
   ;Read a value from an InstallOptions INI file
-  !insertmacro MUI_INSTALLOPTIONS_READ $TEMP "ioC.ini" "Field 2" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $MUI_TEMP "ioC.ini" "Field 2" "State"
   
   ;Display a messagebox if check box was checked
-  StrCmp $TEMP "1" "" +2
+  StrCmp $MUI_TEMP "1" "" +2
     MessageBox MB_OK "You checked the check box, here is the MessageBox..."
 
 SectionEnd
