@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-04-12
+;Revision date: 2003-04-30
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
@@ -27,7 +27,7 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "選取元件"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "選取 ${MUI_PRODUCT} 當中你想要安裝的功能。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "核取想要安裝的元件，並把不想安裝的元件解除核取。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "勾選想要安裝的元件，並把不想安裝的元件解除勾選。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
   
