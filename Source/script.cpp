@@ -5611,7 +5611,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         }
 
         // Will auto-CloseHandle hFile
-        ResourceManager<HANDLE, __free_with_CloseHandle> hFileManager(fd);
+        ResourceManager<HANDLE, __free_with_CloseHandle> hFileManager(hFile);
 
         len = GetFileSize(hFile, NULL);
         if (len && !mmap.setfile(hFile, len))
