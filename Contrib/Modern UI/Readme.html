@@ -100,6 +100,14 @@ a:hover
         display: none;
         }
         
+.options
+	{
+	text-align: center;
+	cursor: pointer;
+        cursor: hand;
+        color: #294F75;
+	}
+        
 /*]]>*/
 </style>
 
@@ -138,22 +146,41 @@ a:hover
       }
    
    }
-   
+
+   function expandall() {
+
+     var divNodeList = document.getElementsByTagName('div'); 
+     for (i = 0; i < divNodeList.length; i++) { 
+        if(divNodeList[i].id) {
+           divNodeList[i].style.display = "block";
+           document.getElementById('trigger_' + divNodeList[i].id.substr(7)).src = "images/open.gif";
+        }
+     }
+     
+   }
+
+   function hideall() {
+
+     var divNodeList = document.getElementsByTagName('div'); 
+     for (i = 0; i < divNodeList.length; i++) { 
+        if(divNodeList[i].id) {
+           divNodeList[i].style.display = "none";
+           document.getElementById('trigger_' + divNodeList[i].id.substr(7)).src = "images/closed.gif";
+        }
+     }
+
+   }
+
 //]]>
 </script>
 </head>
 <body>
 <table width="750" class="maintable" cellspacing="0" cellpadding=
 "0" align="center">
-<tr>
-<td>
-<table cellspacing="0" cellpadding="0">
-<tr>
-<td><img src="images/header.gif" width="750" height="80" alt=
-"" /></td>
-</tr>
-<tr>
-<td>
+<tr><td>
+<img src="images/header.gif" width="750" height="80" alt=
+"" />
+<p class="options"><a onclick="expandall()">[Expand all]</a> <a onclick="hideall()">[Hide all]</a></p>
 <div>
 <h1>Introduction</h1>
 <div>
@@ -1237,14 +1264,7 @@ it freely, subject to the following restrictions:
 </pre></div>
 </div>
 </div>
-</td>
-</tr>
-<tr>
-<td>
 <div class="footer">&copy;2002-2004 Joost Verburg</div>
-</td>
-</tr>
-</table>
 </td>
 </tr>
 </table>
