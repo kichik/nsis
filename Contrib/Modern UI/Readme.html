@@ -149,8 +149,8 @@ settings. Others (e.g. MUI_UI) can be used to define a specific value.</p>
 <p>If you want a certain value (e.g. a text) to be language-specific, set a language string (using
 LangString) and define $(STRINGNAME) as value. Use a license language string (LicenseLangString)
 for the license text.</p>
-<p>When adding " or ` to a Modern UI string, you should always escape ($\" or $\`), because the
-Modern UI macros use " and ` to separate parameters.</p>
+<p>If you want to add " to a Modern UI string, you should always escape it: $\" because the Modern
+UI macros use " separate parameters.</p>
 <h2>1. Header file</h2>
 <pre>
 !include "MUI.nsh"
@@ -335,15 +335,18 @@ multiple folders).</p>
 <pre>
 !insertmacro MUI_PAGE_LICENSE "License.rtf"
 !insertmacro MUI_PAGE_COMPONENTS
-!insertmacro MUI_PAGE_STARTMENU "Application" ;Unique ID for page
+
+Var STARTMENU_FOLDER
+!insertmacro MUI_PAGE_STARTMENU "Application" $STARTMENU_FOLDER
 </pre>
-<p>You need the page ID for the Start Menu Folder page when using the Start Menu Folder macros.</p>
+<p>You need the page ID for the Start Menu Folder page when using the Start Menu Folder macros. The
+Start Menu Forder will be stored in the specified variable.</p>
 <p><strong>Installer Pages</strong><br />
 MUI_PAGE_WELCOME<br />
 MUI_PAGE_LICENSE <span class="parameter">text/rtf_file</span><br />
 MUI_PAGE_COMPONENTS<br />
 MUI_PAGE_DIRECTORY<br />
-MUI_PAGE_STARTMENU <span class="parameter">page_id</span><br />
+MUI_PAGE_STARTMENU <span class="parameter">page_id variable</span><br />
 MUI_PAGE_INSTFILES<br />
 MUI_PAGE_FINISH</p>
 <p><strong>Uninstaller Pages</strong><br />
@@ -354,9 +357,17 @@ MUI_UNPAGE_COMPONENTS<br />
 MUI_UNPAGE_DIRECTORY<br />
 MUI_UNPAGE_INSTFILES<br />
 MUI_UNPAGE_FINISH</p>
+<p>Page Settings apply to a single page and should be set before inserting a page macro. Example:</p>
+<pre>
+;Add a directory page to let the user specify a plug-ins folder
+;Store the folder in $PLUGINS_FOLDER
+
+Var PLUGINS_FOLDER
+!define MUI_DIRECTORYPAGE_VARIABLE $PLUGINS_FOLDER
+!insertmacro MUI_PAGE_DIRECTORY
+</pre>
 <h3>Page Settings</h3>
 <div>
-<p>Page Settings apply to a single page and should be set before inserting a page macro.</p>
 <h3>General Page Settings</h3>
 <div>
 <p><strong>MUI_PAGE_HEADER_TEXT</strong> <span class="parameter">text</span><br />
@@ -437,9 +448,6 @@ shortcuts you want to write.</p>
 Text to display on the top of the page.</p>
 <p><strong>MUI_STARTMENUPAGE_TEXT_CHECKBOX</strong> <span class="parameter">text</span><br />
 Text to display next to the checkbox to disable the Start Menu folder creation.</p>
-<p><strong>MUI_STARTMENUPAGE_VARIABLE</strong> <span class="parameter">variable</span><br />
-Variable to store the current Start Menu Folder. You cannot use this variable in your script (or
-you should Push/Pop it), therefore using a user variable is recommended.</p>
 <p><strong>MUI_STARTMENUPAGE_DEFAULTFOLDER</strong> <span class="parameter">folder</span><br />
 The default Start Menu Folder.</p>
 <p><strong>MUI_STARTMENUPAGE_NODISABLE</strong><br />
@@ -720,7 +728,7 @@ FunctionEnd
 <p>If you need the InstallOptions return value (success, back, cancel, error), use the
 MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The return value will be
 added to the stack, so you can use the Pop command to get it.</p>
-<p>Use these macros to read or write INI file values.</p>
+<p>Use these macros to read or write INI file values:</p>
 <pre>
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
