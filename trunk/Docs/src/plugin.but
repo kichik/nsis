@@ -4,7 +4,7 @@ The abilities of the NSIS scripting language can be extended by utilising functi
 
 When the NSIS compiler starts it scans the plugins directory for DLLs and makes a list of the plugins found and their exported functions. During compilation if a sequence such as fred::flintstone is encountered where the compiler expected to find a language keyword the compiler will look through this list. If a list entry specifies that fred.dll exports function flintstone NSIS will pack the fred.dll file into the created installer binary.
 
-During execution of the created installer if a plugin command is executed NSIS will unpack the necessary DLL to the $TEMP directory, execute the DLL function, then delete the DLL. If the /NOUNLOAD option is specified the DLL will not be deleted until the installer exits.
+During execution of the created installer if a plugin command is executed NSIS will unpack the necessary DLL to the $TEMP directory, push all of the arguments specified (right-to-left order), and then execute the DLL function. If the /NOUNLOAD option is specified the DLL will not be deleted until the installer exits or the next time you use the DLL without /NOUNLOAD.
 
 \H{usingplug} Using Plugin Commands
 
