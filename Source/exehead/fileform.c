@@ -252,7 +252,10 @@ static int NSISCALL __ensuredata(int amount)
         DWORD r,t;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
         if (g_inst_cmnheader)
-          if (!g_inst_cmnheader->silent_install) {
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+          if (!g_inst_cmnheader->silent_install)
+#endif
+          {
             if (hwnd) {
               static MSG msg;
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
