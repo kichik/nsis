@@ -441,18 +441,19 @@ void PushMRUFile(char* fname)
   char*  file_part;
   char full_file_name[MAX_PATH+1];
 
-  my_memset(full_file_name,0,sizeof(full_file_name));
-  if(!fname || fname[0] == '\0') {
+  if(!fname || fname[0] == '\0' || fname[0] == '/' || fname[0] == '-') {
     return;
   }
 
   if(fname[0] == '"') {
     fname++;
   }
+
   lstrcpy(buf,fname);
   if(buf[lstrlen(buf)-1] == '"') {
     buf[lstrlen(buf)-1] = '\0';
   }
+  my_memset(full_file_name,0,sizeof(full_file_name));
   rv = GetFullPathName(buf,sizeof(full_file_name),full_file_name,&file_part);
   if (rv == 0) {
     return;
