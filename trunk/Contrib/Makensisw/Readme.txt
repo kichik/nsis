@@ -144,6 +144,7 @@ Version History
  - Makensisw now takes the same parameters as makensis
  - About Box is closeable
  - Fixed some random crashes
+ - Drag and Drop Support into the Makensisw window
 
 
 Copyright Information
