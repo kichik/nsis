@@ -37,10 +37,8 @@ FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDI_ICON2,IDC_ULICON,0,0,20,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RICHEDIT",ES_MULTILINE | ES_READONLY | 
-                    WS_BORDER | WS_VSCROLL | NOT WS_VISIBLE,0,24,266,105
-    CONTROL         "",IDC_EDIT2,"RichEdit20A",ES_MULTILINE | ES_READONLY | 
-                    WS_BORDER | WS_VSCROLL | NOT WS_VISIBLE,0,24,266,105
+    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
+                    0x804,0,24,266,105
 END
 #endif
 
