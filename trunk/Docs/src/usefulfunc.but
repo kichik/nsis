@@ -161,7 +161,8 @@
 \c  
 \c    ReadRegStr $R0 HKLM \
 \c    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-\c    StrCmp $R0 "" 0 lbl_winnt
+\c
+\c    IfErrors 0 lbl_winnt
 \c    
 \c    ; we are not NT
 \c    ReadRegStr $R0 HKLM \
