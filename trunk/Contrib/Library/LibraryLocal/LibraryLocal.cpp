@@ -51,7 +51,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 				
 			filepath.append(filename);
 
-		} else if (filename.substr(0, 1).compare("\\") == 0) {
+		} else if ((filename.substr(0, 1).compare("\\") == 0) && (filename.substr(1, 1).compare("\\") != 0)) {
 
 			// Path is relative to current root
 
@@ -108,7 +108,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			DWORD versionsize;
 			DWORD temp;
 			  
-			versionsize = GetFileVersionInfoSize(filepath.c_str(), &temp);
+			versionsize = GetFileVersionInfoSize((char*)filepath.c_str(), &temp);
 			
 			if (versionsize)
 			{
@@ -122,7 +122,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 					UINT uLen;
 					VS_FIXEDFILEINFO *pvsf;
 
-					if (GetFileVersionInfo(filepath.c_str(), 0, versionsize, buf) && VerQueryValue(buf, "\\", (void**)&pvsf,&uLen))
+					if (GetFileVersionInfo((char*)filepath.c_str(), 0, versionsize, buf) && VerQueryValue(buf, "\\", (void**)&pvsf,&uLen))
 					{
 						high = pvsf->dwFileVersionMS;
 						low = pvsf->dwFileVersionLS;
