@@ -134,7 +134,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				g_hThread=0;
 			}
 			if (g_retcode==0) {
-				Beep(500,250);
+				MessageBeep(MB_OK);
 				SetTitle(g_hwnd,"Finished Sucessfully");
 			}
 			else SetTitle(g_hwnd,"Compile Error: See Log for Details");
