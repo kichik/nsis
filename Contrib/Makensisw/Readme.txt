@@ -153,6 +153,7 @@ Version History
  - Bunch of other stuff not worth mentioning
  - Added some simple tool tips
  - Added Context Menu in log window
+ - Added resize gripper
 
 
 Copyright Information
