@@ -1170,9 +1170,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             ht++;
           }
           SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
-          lParam = 0;
         }
-        else lParam = 1;
+        lParam = 1;
         uMsg = WM_IN_UPDATEMSG;
       }
     }
@@ -1186,51 +1185,49 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   if (uMsg == WM_IN_UPDATEMSG)
   {
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
+    {
+      ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
+    }
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
     if (!lParam)
     {
-#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
+      int r,x;
+      // check to see which install type we are
+      for (r = 0; r < m_num_insttypes; r ++)
       {
-        ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-      }
-#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
-      {
-        int r,x;
-        // check to see which install type we are
-        for (r = 0; r < m_num_insttypes; r ++)
+        HTREEITEM *ht=hTreeItems;
+        section *t=g_inst_section;
+        x=num_sections;
+        while (x--)
         {
-          HTREEITEM *ht=hTreeItems;
-          section *t=g_inst_section;
-          x=num_sections;
-          while (x--)
+          if (t->name_ptr && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
           {
-            if (t->name_ptr && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
+            TV_ITEM hItem;
+            hItem.hItem=*ht;
+            if (g_inst_header->no_custom_instmode_flag==1)
             {
-              TV_ITEM hItem;
-              hItem.hItem=*ht;
-              if (g_inst_header->no_custom_instmode_flag==1)
-              {
-                CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
-              }
-              else if (!(t->flags&SF_RO))
-              {
-                hItem.mask=TVIF_STATE;
-                TreeView_GetItem(hwndTree1,&hItem);
-                if (!(t->install_types&(1<<r)) != !((hItem.state>>12)>1 )) break;
-              }
+              CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
             }
-            t++;
-            ht++;
+            else if (!(t->flags&SF_RO))
+            {
+              hItem.mask=TVIF_STATE;
+              TreeView_GetItem(hwndTree1,&hItem);
+              if (!(t->install_types&(1<<r)) != !((hItem.state>>12)>1 )) break;
+            }
           }
-          if (x < 0) break;
+          t++;
+          ht++;
         }
+        if (x < 0) break;
+      }
 
-        if (!g_inst_header->no_custom_instmode_flag)
-        {
-          SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
-          m_whichcfg=r;
-        }
-      } // end of typecheckshit
-    }
+      if (!g_inst_header->no_custom_instmode_flag)
+      {
+        SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
+        m_whichcfg=r;
+      }
+    } // end of typecheckshit
 
     if (g_inst_header->no_custom_instmode_flag==2)
     {
