@@ -63,7 +63,8 @@ extern char *english_strings[] = {
   "Remove directory: ",
   "Rename on reboot: ",
   "Rename: ",
-  "Skipped: "
+  "Skipped: ",
+  "Copy Details To Clipboard"
 };
 
 int CEXEBuild::SetString(char *string, int id, int process, LANGID lang/*=0*/) {
@@ -438,6 +439,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   SET_INSTRUCTION(NLF_INST_CORRUPTED, inst_corrupted);
   SET_INSTRUCTION(NLF_OUTPUT_DIR, output_dir);
   SET_INSTRUCTION(NLF_CREATE_DIR, create_dir);
+  SET_INSTRUCTION(NLF_COPY_DETAILS, copy_details);
 }
 
 bool CEXEBuild::_IsNotSet(int *str) {
@@ -477,6 +479,7 @@ NLF::NLF(char *filename) {
 
   // Check header
   if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
+  int nlf_version = atoi(buf+5);
   if (atoi(buf+5) != NLF_VERSION) throw runtime_error("Language file version doesn't match NSIS version!");
 
   // Get language ID
