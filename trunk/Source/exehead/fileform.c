@@ -266,7 +266,7 @@ static int NSISCALL __ensuredata(int amount)
               hwnd=CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
-                GetDesktopWindow(),
+                0,
                 verProc,
                 (LPARAM)_LANG_UNPACKING
               );
