@@ -358,12 +358,12 @@ SectionEnd
 
 Section "ShowWin Source" SecContribShowWinS
   SectionIn 1
-  SetOutPath $INSTDIR\Contrib\System
-  File ..\contrib\System\*.c
-  File ..\contrib\System\*.dsp
-  File ..\contrib\System\*.dsw
-  File ..\contrib\System\ShowWin.txt
-  File ..\contrib\System\ShowWin.nsi
+  SetOutPath $INSTDIR\Contrib\ShowWin
+  File ..\contrib\ShowWin\*.c
+  File ..\contrib\ShowWin\*.dsp
+  File ..\contrib\ShowWin\*.dsw
+  File ..\contrib\ShowWin\ShowWin.txt
+  File ..\contrib\ShowWin\ShowWin.nsi
 SectionEnd
 
 
