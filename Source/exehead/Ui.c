@@ -73,7 +73,7 @@ static void NSISCALL outernotify(char num) {
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
+static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 #ifdef NSIS_CONFIG_LICENSEPAGE
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
@@ -706,11 +706,11 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (id == IDC_BROWSE)
     {
-      char name[256];
+      char name[MAX_PATH];
       char str[256];
       BROWSEINFO bi={0,};
       ITEMIDLIST *idlist;
-      GetUIText(IDC_DIR,name,256);
+      GetUIText(IDC_DIR,name,MAX_PATH);
       GetUIText(IDC_SELDIRTEXT,str,256);
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = name;
@@ -721,25 +721,22 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #define BIF_NEWDIALOGSTYLE 0x0040
 #endif
       bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-      idlist = SHBrowseForFolder( &bi );
+      idlist = SHBrowseForFolder(&bi);
       if (idlist)
       {
-        const char *post_str;
-        const char *p;
         IMalloc *m;
-        SHGetPathFromIDList( idlist, name );
+        SHGetPathFromIDList(idlist, name);
         SHGetMalloc(&m);
         if (m)
         {
           m->lpVtbl->Free(m,idlist);
           m->lpVtbl->Release(m);
         }
-        post_str=GetStringFromStringTab(g_inst_header->install_directory_ptr);
 
-        p=scanendslash(post_str);
-        if (p >= post_str && *++p)
+        if (g_inst_header->install_directory_auto_append)
         {
-          post_str=process_string(p);
+          const char *p, *post_str=ps_tmpbuf;
+          process_string_fromtab(0,g_inst_header->install_directory_auto_append);
           p=name+mystrlen(name)-mystrlen(post_str);
           if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
           {

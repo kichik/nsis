@@ -383,7 +383,9 @@ typedef struct
   // common settings
   common_header common;
 
-  int install_reg_rootkey, install_reg_key_ptr, install_reg_value_ptr;
+  int install_reg_rootkey;
+  // these two are not processed!
+  int install_reg_key_ptr, install_reg_value_ptr;
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int install_types[NSIS_MAX_INST_TYPES];
@@ -393,8 +395,8 @@ typedef struct
   int license_bg; // license background color
 #endif//NSIS_CONFIG_LICENSEPAGE
 
-  // below here, the strings are processed (can have variables etc)
   int install_directory_ptr; // default install dir.
+  int install_directory_auto_append; // auto append part
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   int uninstdata_offset; // -1 if no uninst data.
@@ -418,7 +420,6 @@ typedef struct
 // Strings specific to uninstallers
 typedef struct
 {
-  // unprocessed strings
   int uninstbutton;
   int uninstalltext;
   int uninstalltext2;
