@@ -1,0 +1,363 @@
+<HTML><HEAD><TITLE>Install Options/DLL Documentation</TITLE></HEAD>
+<BODY bgColor=#ffffff>
+<CENTER><FONT size=+2><A 
+href="http://installoptions.sourceforge.net/"><B>Install 
+Options</B></A> (/DLL)</FONT><BR><FONT size=-1>Copyright © 2001 <A 
+href="mailto:mbishop@bytealliance.com?subject=Installer Options">Michael 
+Bishop</A> (original version) and Nullsoft, Inc. (DLL conversion and integration)
+</FONT></CENTER>
+<UL><B>Table of Contents</B> 
+  <LI><A 
+  href="#introduction">Introduction</A> 
+
+  <LI><A 
+  href="#history">Version 
+  History</A> 
+  <LI><A 
+  href="#license">License</A> 
+  </LI></UL>
+<HR>
+<A name=introduction><B>Introduction:</B><BR><I>Installer Options</I> was a quick 
+application Michael Bishop threw together so he could prompt the user for some information 
+during the install process. This version is a highly modified version of it that is designed 
+as a NSIS extension DLL for the <A 
+href="http://www.nullsoft.com/free/nsis/">NSIS</A> installer. Installer Options will create a 
+dialog box which will be displayed inside of the NSIS window. The dialog box is 
+defined by an INI file, which allows you to define the layout of controls by 
+changing the INI file. 
+<P>To use the DLL, you should include it as part of your installation. 
+Extract it to known location (probably $TEMP), and then load it using CallInstDLL, passing one parameter on the stack. 
+The one parameter is a name of an .ini file that defines the window.
+Example: <PRE>
+	SetOutPath $TEMP
+	File inst.ini
+	File InstallOptions.dll
+	Push $TEMP\inst.ini
+ 	CallInstDLL $TEMP\InstallOptions.dll dialog
+        Pop $0 
+        ;  ($0 would be "success" "cancel" "back" or some other value on error.
+
+	ReadINIStr $1 $TEMP\inst.ini "Field 1" State ; $1 = field #1's state
+
+	Delete $TEMP\inst.nsi
+	Delete $TEMP\InstallOptions.dll
+</PRE>
+It is often very useful to call InstallOptions from the NSIS callback functions .onNextPage and .onPrevPage.
+<P>The INI file has one required section. This section includes the number of controls to be created as well as general window attributes. The INI file also 
+includes a variable number of Field sections which are used to create the 
+controls to be displayed. 
+<P>The required section is named "<I>Settings</I>". It will contain the 
+following values: 
+<UL>
+  <TABLE border=0>
+    <TBODY>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>NumFields</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(required)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>The number of control elements to be 
+        displayed on the dialog window.</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Title</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>If specified, gives the text to set the 
+        titlebar to. Otherwise, the titlebar text is not changed.</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>CancelConfirm</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>If specified, prompts the user (With text) whether or not to cancel if they select the cancel button.</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>BackEnabled</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Controls whether or not the back button in the NSIS window is enabled. If set to 0 or omitted, the back button will be disabled. If set to 1, the back button will be enabled.</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>CancelButtonText</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Overrides the text for the cancel button. If not specified, the cancel button text will not be changed. Recommended value: "Cancel"</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>NextButtonText</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Overrides the text for the next button. If not specified, the next button text will not be changed. Recommended value: "Next >"</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>BackButtonText</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Overrides the text for the back button. If not specified, the back button text will not be changed. Recommended value: "< Back"</TD></TR>
+</TBODY></TABLE></UL>
+<P>Each field section has the heading "Field #" where # must be sequential 
+numbers from 1 to NumFields. Each Field section contains the following values: 
+<UL>
+  <TABLE border=0>
+    <TBODY>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Type</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(required)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Type of control to be created. Valid 
+        values are "<I>Label</I>", "<I>Text</I>", "<I>Password</I>", 
+        "<I>Combobox</I>", "<I>DropList</I>", "<I>Listbox</I>", "<I>CheckBox</I>",
+        "<I>RadioButton</I>",
+        "<I>FileRequest</I>", or "<I>DirRequest</I>".<BR><FONT size=-1>A 
+        "<I>label</I>" is used to display static text. (i.e. a caption for a 
+        textbox)<BR>A "<I>textbox</I>" and "<I>password</I>" accept text input 
+        from the user. "<I>password</I>" masks the input with * characters.<BR>A 
+        "<I>combobox</I>" allows the user to type text not in the popup list, a 
+        "<I>droplist</I>" only allows selection of items in the list.<BR>A 
+        "<I>listbox</I>" shows multiple items and can optionally allow the user 
+        to select more than one item.<BR>
+	A "<I>CheckBox</I>" control displays a check box with label.<BR>
+        A "<I>RadioButton</I>" control displays a radio button with label.<BR>
+	A "<I>FileRequest</I>" control displays 
+        a textbox and a browse button. Clicking the browse button will display a 
+        file requester where the user can browse for a file.<BR>A 
+        "<I>DirRequest</I>" control displays a textbox and a browse button. 
+        Clicking the browse button will display a directory requester where the 
+        user can browse for a directory.<BR></FONT></TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Text</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Specifies the caption of a label, checkbox, or radio button control. 
+        </TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>State</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Specifies the state of the control. This is updated when the user closes the window, 
+          so you can read from it from NSIS. For edit texts and dir and file request boxes, this is the string that is
+          specified. For radio button and check boxes, this can be '0' or '1' (for unchecked or checked).
+        </TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>ListItems</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>A list of items to display in a combobox, 
+        droplist, or listbox.<BR>This is a single line of text with each item 
+        separated by a pipe character '<B>|</B>'</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>MaxLen</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Causes validation on the selected control 
+        to limit the maximum length of text.<BR>If the user specifies more text 
+        than this, a message box will appear when they click "OK" and the dialog 
+        will not be dismissed.<BR><FONT size=-1>You should not use this on a 
+        "<I>combobox</I>" since the user can not control what is 
+        selected.</FONT><BR><FONT size=-1>This should be set to a maximum of 260 
+        for "<I>FileRequest</I>" and "<I>DirRequest</I>" 
+        controls.</FONT><BR><FONT size=-1>Ignored on "<I>label</I>" 
+        controls.</FONT></TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>MinLen</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Causes validation on the selected control 
+        to force the user to enter a minimum amount of text.<BR>If the user 
+        specifies less text than this, a message box will appear when they click 
+        "OK" and the dialog will not be dismissed.<BR>Unlike MaxLen, this is 
+        useful for "<I>Combobox</I>" controls. By setting this to a value of "1" 
+        the program will force the user to select an item.<BR><FONT 
+        size=-1>Ignored on "<I>label</I>" controls.</FONT></TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>ValidateText</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>If a particular field fails the test for 
+        "<I>MinLen</I>" or "<I>MaxLen</I>", a messagebox will be displayed with 
+        this text.<BR><FONT size=-1>NOTE: The only formatting performed on this 
+        text is "\n" will be replaced with a newline in the 
+    messagebox.</FONT></TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Left<BR>Right<BR>Top<BR>Bottom</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(required)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>The position on the dialog where this 
+        control appears.<BR>Sorry, no GUI here to help you.<BR><FONT color=red 
+        size=-1>NOTE: For combobox or droplist, the "<I>bottom</I>" value is not 
+        used in the same way.<BR>In this case, the bottom value is the maximum 
+        size of the window when the pop-up list is being displayed. All other 
+        times, the combobox is automatically szed to be one element tall. If you 
+        have trouble where you can not see the combobox drop-down, then check 
+        the bottom value and ensure it is large enough. <BR>NOTE (2): 
+        FileRequest and DirRequest controls will allocate 20 pixels to the 
+        browse button. Make this control wide enough the contents of the textbox 
+        can be seen. Note that you can specify negative coordinates to specify the distance from the right or bottom edge.</FONT></TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Filter</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Specifies the filter to be used in the 
+        "<I>FileRequest</I>" control.<BR>This is constructed by putting pairs of 
+        entries together, each item seperated by a | character.<BR>The first 
+        value in each pair is the text to display for the filter.<BR>The second 
+        value is the pattern to use to match files.<BR>For example, you might 
+        specify:<BR>
+        <UL>Filter=Text Files|*.txt|Programs|*.exe;*.com|All Files|*.* 
+        </UL><FONT size=-1>If not specified, then the filter defaults to All 
+        Files|*.*</FONT><BR><FONT size=-1>NOTE: you should not put any extra 
+        spaces around the | characters.</FONT> </TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Root</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>Used by <I>DirRequest</I> controls to 
+        specify the root directory of the search. By default, this allows the 
+        user to browse any directory on the computer. This will limit the search 
+        to a particular directory on the system.</TD></TR>
+    <TR>
+      <TD vAlign=top bgColor=#cccccc><B>Flags</B></TD>
+      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
+      <TD vAlign=top bgColor=#eeeeee>This specifies additional flags for the 
+        display of different controls. Each value should be seperated by a | 
+        character, and you should be careful not to put any spaces around the | 
+        character.<BR>
+        <TABLE border=0>
+          <TBODY>
+          <TR>
+            <TD vAlign=top><B>Value</B></TD>
+            <TD vAlign=top><B>Meaning</B></TD></TR>
+          <TR>
+            <TD vAlign=top>REQ_SAVE</TD>
+            <TD vAlign=top>This causes the "<I>FileRequest</I>" to dislpay a 
+              Save As dialog. If not specified, an Open dialog is used.</TD></TR>
+          <TR>
+            <TD vAlign=top>FILE_MUST_EXIST</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>" to determine if the 
+              selected file must exist.<BR>This only applies if an "Open" dialog 
+              is being displayed.<BR><FONT size=-1>This currently does not force 
+              the file to exist other than through the browse 
+          button.</FONT></TD></TR>
+          <TR>
+            <TD vAlign=top>FILE_EXPLORER</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>", enables new file request look (recommended)</FONT></TD></TR>
+          <TR>
+            <TD vAlign=top>FILE_HIDEREADONLY</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>", hides "open read only" checkbox in open dialog.</FONT></TD></TR>         
+	  <TR>
+            <TD vAlign=top>WARN_IF_EXIST</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>" to display a warning 
+              message if the selected file already exists.<BR><FONT size=-1>The 
+              warning message is only displayed for files selected with the 
+              browse button.</FONT></TD></TR>
+          <TR>
+            <TD vAlign=top>PATH_MUST_EXIST</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>" to force the path to 
+              exist. Prevents the user from typing a non-existant path into the 
+              browse dialog window.<BR><FONT size=-1>This only validates path's 
+              selected with the browse button.</FONT></TD></TR>
+          <TR>
+            <TD vAlign=top>PROMPT_CREATE</TD>
+            <TD vAlign=top>Used by "<I>FileRequest</I>" to display a warning 
+              if the selected file does not exist. However, it still allows the 
+              user to select the file.<BR><FONT size=-1>This only displays the 
+              warning for files selected with the browse button.</FONT></TD></TR>
+          <TR>
+            <TD vAlign=top>RIGHT</TD>
+            <TD vAlign=top>Used by "<I>Checkbox</I>" and "<I>Radiobutton</I>" 
+              controls to specify you want the checkbox to the right of the text 
+              instead of the left as is the default. </TD></TR>
+          <TR>
+            <TD vAlign=top>MULTISELECT</TD>
+            <TD vAlign=top>Used by "<I>Listbox</I>" controls to specify if 
+              more than item may be selected. If this flag is not specified, 
+              then only one item may be selected from the 
+        list.</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></UL>
+<HR>
+<A name=history><A name=top><B>History:</B>
+<P>
+<UL>
+  <LI><a name=DLL1.1>DLL version 1.2 beta (7/31/2002)
+  <UL>
+     <li>Added CancelEnabled (by ORTIM)
+     <li>Added CancelConfirmCaption and CancelConfirmIcon (by Amir Szekely)
+  </UL>
+  <LI><a name=DLL1.1>DLL version 1.1 beta (7/22/2002)
+  <UL>
+     <li>Font is now taken from the main NSIS window (by Amir Szekely)
+  </UL>
+  <LI><a name=DLL1.0>DLL version 1.0 beta (12/16/2001)
+  <UL>
+     <LI>Moved to DLL, no longer need parentwnd ini writing
+     <li>Tons of changes - no longer fully compatible (see source for a big list)
+     <LI>removed support for silent installers (it seems the old version would bring up it's own dialog)
+  </UL>
+  <LI><A name=1.4>version 1.4 (11/18/2001) 
+  <UL>
+    <LI>Added <I>Listbox</I> controls. 
+    <UL>
+      <LI>Added <I>MULTISELECT</I> flag. </LI></UL>
+    <LI>Made the HWND list for the parent window controls dynamically allocated. 
+    This prevents a crash if NSIS ever gets more than 150 controls on it's main 
+    window. 
+    <LI>The <I>TEXT</I> property of DirRequest control can be used to specify an 
+    initial directory. The current directory is automatically selected when 
+    clicking the browse button of the DirRequest control. 
+    <LI>Added <I>ROOT</I> property to DirRequest which can be used to set the 
+    root directory. (mostly due to felfert) 
+    <LI>Edit controls will now auto scroll. (thanks felfert) 
+    <LI>Fixed a problem where the window wouldn't draw properly on some systems. 
+    (thanks felfert) </LI></UL>
+  <LI><A name=1.3>version 1.3 (11/03/2001) 
+  <UL>
+    <LI>Got rid of the call to RedrawWindow() because it's no longer needed with 
+    the WS_CLIPCHILDREN flag for NSIS. 
+    <LI>Removed a few hardcoded limits of buffer sizes. 
+    <LI>Added <I>Checkbox</I> and <I>RadioButton</I> controls. 
+    <UL>
+      <LI>Added <I>RIGHT</I> and <I>CHECKED</I> flags. </LI></UL></LI></UL>
+  <LI><A name=1.2.2>version 1.2.2 (10/30/2001) 
+  <UL>
+    <LI>Additional size reductions. Further reduced the size down to 8k. 
+    <LI>The text parameter to a combobox can now be used to specify the initial 
+    value. 
+    <LI>Changed from InvalidateRect() to RedrawWindow() to force a redraw after 
+    a browse dialog. 
+    <LI>On startup, set the flags of the NSIS window to include WS_CLIPCHILDREN. 
+    Otherwise, our controls don't get drawn right. </LI></UL>
+  <LI><A name=1.2.1>version 1.2.1 (10/28/2001) 
+  <UL>
+    <LI>Bug fix. ControlID for the caption and the OK button were reused by the 
+    first two controls. (Thanks Schultz) </LI></UL>
+  <LI><A name=1.2j>version 1.2j (10/28/2001) (justin frankel's modifications)
+  <UL>
+    <LI>8.5kb from 44kb. heh. </LI></UL>
+  <LI><A name=1.2>version 1.2 (10/28/2001) 
+  <UL><FONT size=-1>(Thanks to Schultz for requesting the first 
+    item.)</FONT><BR><FONT size=-1>Still 44k, but would like to make it smaller. 
+    All of NSIS only amounts to 35.5k</FONT> 
+    <LI>Added the "<I>FileRequest</I>" and "<I>DirRequest</I>" control 
+    types.<BR><FONT size=-1>NOTE: Please let me know if this is going to require 
+    any DLL's which might not be on the target machine.<BR>Keep in mind that 
+    although we are using system DLL's, the program will exit before NSIS tries 
+    to copy any files.</FONT> 
+    <LI>Added "<I>MinLen</I>", "<I>MaxLen</I>", and "<I>ValidateText</I>" 
+    properties to fields. 
+    <LI>Added "<I>Flags</I>" as a way to specifiy additional parameters for 
+    controls. 
+    <LI>Few more changes to the documentation. 
+    <LI>Cleaned the code in a few places...still trying to make it smaller. 
+  </LI></UL>
+  <LI><A name=1.1>version 1.1 (10/27/2001) 
+  <UL><FONT size=-1>(Thanks to Alex ??? for requesting the first 
+    three.)</FONT> 
+    <LI>Added the "<I>Title</I>" option. 
+    <LI>Moved the OK button so it is in the same location as the buttons on the 
+    main NSIS window. 
+    <LI>Pressing "ENTER" will now automatically select the OK butt/FONT&gt; 
+    <LI>Slightly improved the documentation. </LI></UL>
+  <LI><A name=1.01>version 1.01: (10/25/2001) 
+  <UL>
+    <LI>Fixed the SetFocus loop so it exits after the first control like it was 
+    supposed to. 
+    <LI>Added the license to the documentation. </LI></UL>
+  <LI><A name=1.0>version 1.0: (10/25/2001) 
+  <UL>
+    <LI>Barely qualifies as a distribution. </LI></UL></LI></UL>
+<HR>
+<A name=license><PRE>  Copyright © 2001 Michael Bishop
+  Portions Copyright © 2001 Nullsoft, Inc.
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+</PRE></A></BODY></HTML>

@@ -1,0 +1,38 @@
+Splash.exe - small (3.5k), simple (one file) program that lets you throw 
+up a splash screen in NSIS installers.
+
+--- UPDATED in 1.50 - will break old scripts ---
+
+To use:
+
+Create a .BMP file of your splash screen.
+(optional) Create a .WAV file to play while your splash screen shows.
+
+Add the following lines to your .NSI file:
+
+Function .onInit
+  SetOutPath $TEMP
+  File /oname=spltmp.bmp "my_splash.bmp"
+
+; optional
+; File /oname=spltmp.wav "my_splashshit.wav"
+
+  File /oname=spltmp.exe "C:\program files\nsis\splash.exe"
+  ExecWait '"$TEMP\spltmp.exe" 1000 $HWNDPARENT $TEMP\spltmp'
+  Delete $TEMP\spltmp.exe
+  Delete $TEMP\spltmp.bmp
+;  Delete $TEMP\spltmp.wav
+FunctionEnd
+
+Note that the first parameter to splash.exe is the length to show the
+screen for (in milliseconds), the second is the parent window (in decimal), 
+and the last is the splash bitmap filename (without the .bmp). The BMP file
+used will be this parameter.bmp, and the wave file used (if present) will be 
+this parameter.wav.
+
+(If you already have an .onInit function, put that in it)
+
+Note: the return value of splash.exe is 1 if the user closed the splash 
+screen early (you can check it using ClearErrors/IfErrors)
+
+-Justin
