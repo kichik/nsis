@@ -2467,7 +2467,7 @@ extern FILE *g_output;
 
 void CEXEBuild::warning(const char *s, ...)
 {
-  char buf[4096];
+  char buf[NSIS_MAX_STRLEN*4];
   va_list val;
   va_start(val,s);
   vsprintf(buf,s,val);
@@ -2485,7 +2485,7 @@ void CEXEBuild::ERROR_MSG(const char *s, ...)
 {
   if (display_errors || notify_hwnd)
   {
-    char buf[4096];
+    char buf[NSIS_MAX_STRLEN*4];
     va_list val;
     va_start(val,s);
     vsprintf(buf,s,val);
@@ -2503,7 +2503,7 @@ void CEXEBuild::SCRIPT_MSG(const char *s, ...)
 {
   if (display_script)
   {
-    char buf[4096];
+    char buf[NSIS_MAX_STRLEN*4];
     va_list val;
     va_start(val,s);
     vsprintf(buf,s,val);
@@ -2517,7 +2517,7 @@ void CEXEBuild::INFO_MSG(const char *s, ...)
 {
   if (display_info)
   {
-    char buf[4096];
+    char buf[NSIS_MAX_STRLEN*4];
     va_list val;
     va_start(val,s);
     vsprintf(buf,s,val);
