@@ -60,6 +60,8 @@ Gets the Size of the section specified by section_index and stores the value in 
 
 Sets the current InstType. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
 
+SetCurInstType currently only works when the there is a components page.
+
 \S2{sgetcurinsttype} GetCurInstType
 
 \c user_var
