@@ -16,7 +16,7 @@ Copies files from the source to the destination on the installing system. Useful
 
 \c path_to_create
 
-Creates (recursively if necessary) the specified directory.
+Creates (recursively if necessary) the specified directory. The error flag is \\<b\\>not\\</b\\> set if the directory couldn't be created.
 
 \S2{createshortcut} CreateShortCut
 
@@ -33,7 +33,14 @@ The error flag is set if the shortcut cannot be created (i.e. the path does not 
 
 \c filename user_var(high dword output) user_var(low dword output)
 
-Gets the version information from the DLL in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set.
+Gets the version information from the DLL in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set. The following example reads the DLLVersion and makes it readable.
+
+\c GetDllVersion "$EXEDIR\ScummVM.exe" $R0 $R1
+\c IntOp $R2 $R0 / 0x00010000
+\c IntOp $R3 $R0 & 0x0000FFFF
+\c IntOp $R4 $R1 / 0x00010000
+\c IntOp $R5 $R1 & 0x0000FFFF
+\c StrCpy $0 "$R2.$R3.$R4.$R5"
 
 \S2{getdllversionlocal} GetDLLVersionLocal
 

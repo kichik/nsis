@@ -24,6 +24,8 @@ The command line of the installer. The format of the command line can be one of 
 
 \b For parsing out the PARAMETER portion, see GetParameters on the utility functions page. It's worth noting that if /D= is specified on the command line (to override the install directory), it won't be in $CMDLINE.
 
+If you want to deal with parameters you should take a look at the GetParameters Function (See \k{getparameters}). 
+
 \e{$LANGUAGE}
 
 The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
@@ -44,7 +46,7 @@ The location of the installer executable. (technically you can modify this varia
 
 \e{$\{NSISDIR\}}
 
-A symbol that contains the path where NSIS is installed.
+A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UI's... 
 
 \e{$WINDIR}
 
@@ -72,7 +74,7 @@ The start menu programs / startup folder. The context of this variable (All User
 
 \e{$QUICKLAUNCH}
 
-The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP. The context of this variable (All Users or Current user) depends on the SetShellVarContext setting. The default is the current user.
+The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP. It seems that there is no Quicklaunch for all users. Therefore current user is always used.
 
 \e{$HWNDPARENT}
 
@@ -98,5 +100,14 @@ Use to represent a newline (\\n).
 
 \e{$\{SYMBOL\}}
 
-Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. If the symbol is not defined, no replace occurs (i.e. if $\{POOP\} is encountered, and POOP is not defined, $\{POOP\} is output).
+Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. The order of calling Symbols in the script is important.
 
+\c Name "Test Program ${VERSION}"
+\c !define VERSION "V.1.0"
+
+This code will set the name of the installer to "Test Program ${VERSION}". The Same happens if the Symbol has not been defined.
+
+\c !define VERSION "V.1.0"
+\c Name "Test Program ${VERSION}"
+
+This code sets the name of the installer to "Test Program V.1.0"

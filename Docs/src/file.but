@@ -40,7 +40,12 @@ Writes a string to a file opened with FileOpen. If an error occurs writing, the 
 
 \c handle string
 
-Writes the integer interpretation of 'string' to a file opened with FileOpen. If an error occurs writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
+Writes the integer interpretation of 'string' to a file opened with FileOpen. Of course you can enter the integer value directly. The following code writes an "Carriage Return / Line Feed" - Enter to the file.
+
+\c FileWriteByte file_handle "13"
+\c FileWriteByte file_handle "10"
+
+You can If an error occurs writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
 
 \S2{FindClose} FindClose
 
