@@ -2,6 +2,10 @@
 // Microsoft Developer Studio generated include file.
 // Used by resource.rc
 //
+#ifndef DS_SHELLFONT
+#define DS_SHELLFONT        (DS_SETFONT | DS_FIXEDSYS)
+#endif
+
 #define IDC_BACK                        3
 #define IDD_DIALOG1                     101
 #define IDI_ICON1                       102
