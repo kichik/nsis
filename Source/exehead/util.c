@@ -240,36 +240,33 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
         if (pszWinInit != NULL)
         {
-          int do_write=0;
           LPSTR pszRenameSecInFile = findinmem(pszWinInit, szRenameSec,-1);
           if (pszRenameSecInFile == NULL)
           {
             mystrcpy(pszWinInit+dwFileSize, szRenameSec);
             dwFileSize += 10;
             dwRenameLinePos = dwFileSize;
-            do_write++;
           }
           else
           {
-            char *pszFirstRenameLine = findinmem(pszRenameSecInFile, "\n",-1)+1;
-            int l=pszWinInit + dwFileSize-pszFirstRenameLine;
-            if (!findinmem(pszFirstRenameLine,szRenameLine,l))
+            char *pszFirstRenameLine = pszRenameSecInFile+10;
+            char *pszNextSec = findinmem(pszFirstRenameLine,"\n[",-1);
+            if (pszNextSec)
             {
+              int l=dwFileSize - (pszNextSec - pszWinInit);
               void* data=(void*)my_alloc(l);
-              mini_memcpy(data, pszFirstRenameLine, l);
-              mini_memcpy(pszFirstRenameLine + cchRenameLine, data, l);
+              mini_memcpy(data, pszNextSec, l);
+              mini_memcpy(pszNextSec + cchRenameLine, data, l);
               GlobalFree((HGLOBAL)data);
 
-              dwRenameLinePos = pszFirstRenameLine - pszWinInit;
-              do_write++;
+              dwRenameLinePos = pszNextSec - pszWinInit;
             }
+            // rename section is last, stick item at end of file
+            else dwRenameLinePos = dwFileSize;
           }
 
-          if (do_write)
-          {
-            mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine,cchRenameLine);
-            dwFileSize += cchRenameLine;
-          }
+          mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine,cchRenameLine);
+          dwFileSize += cchRenameLine;
 
           UnmapViewOfFile(pszWinInit);
 
