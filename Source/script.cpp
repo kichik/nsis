@@ -1350,6 +1350,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("DirVar: %s\n", line.gettoken_str(1));
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    case TOK_DIRVERIFY:
+    {
+      if (!cur_page || cur_page_type != PAGE_DIRECTORY) {
+        ERROR_MSG("Error: can't use DirVerify outside of PageEx directory.\n");
+        return PS_ERROR;
+      }
+      cur_page->flags &= ~PF_DIR_NO_BTN_DISABLE;
+      int k = line.gettoken_enum(1,"auto\0leave\0");
+      if (k == -1)
+        PRINTHELP();
+      if (k)
+        cur_page->flags |= PF_DIR_NO_BTN_DISABLE;
+      SCRIPT_MSG("DirVerify: %s\n", line.gettoken_str(1));
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    case TOK_GETINSTDIRERROR:
+      ent.which = EW_GETFLAG;
+      ent.offsets[0] = GetUserVarIndex(line, 1);
+      ent.offsets[1] = FLAG_OFFSET(instdir_error);
+    return add_entry(&ent);
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
       {
