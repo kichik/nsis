@@ -57,7 +57,9 @@
    
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» »—‰«„Ã ${MUI_PRODUCT}ø"
   
-
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "≈÷€ÿ ≈“«·… ·»œ«¡ „“Ì· «·»—‰«„Ã"
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "„“Ì· ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "≈“«·… ${MUI_PRODUCT} „‰ ‰Ÿ«„ﬂ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Â–« ”Ì“Ì· „‰ ‰Ÿ«„ﬂ «·»—‰«„Ã ${MUI_PRODUCT}"

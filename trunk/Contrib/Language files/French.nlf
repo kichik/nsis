@@ -6,21 +6,21 @@ NLF v2
 Nullsoft Install System %s
 Installation de %s
 Désinstallation de %s
-: Licence
-: Options d'installation
-: Répertoire d'installation
-: Installation des fichiers
-: Terminé
-: Confirmation
-: Désinstallation des fichiers
-: Terminé
+ : Licence
+ : Options d'installation
+ : Dossier d'installation
+ : Installation des fichiers
+ : Terminé
+ : Confirmation
+ : Désinstallation des fichiers
+ : Terminé
 < &Précédent
 &Suivant >
 J'a&ccepte
 &Installer
 &Désinstaller
 Annuler
-&Terminer
+&Fermer
 &Parcourir...
 P&lus d'infos
 Nom
@@ -29,7 +29,7 @@ Personnalisée
 Sélectionnez le type d'installation :
 Sélectionnez les composants à installer :
 Ou, sélectionnez les composants optionnels que vous voulez installer :
-Sélectionnez le répertoire d'installation de %s :
+Sélectionnez le dossier d'installation de %s :
 Espace disponible : 
 Espace requis : 
 Désinstallation de :
@@ -39,12 +39,12 @@ Impossible d'écrire :
 Copier vers 
 Impossible de trouver un symbole : 
 Impossible de charger : 
-Création du répertoire : 
+Création du dossier : 
 Création du raccourci : 
 Création de la désinstallation : 
 Suppression : 
 Suppression au redémarrage : 
-Erreur lors de la création du répertoire : 
+Erreur lors de la création du dossier : 
 Erreur de la création : 
 Erreur lors de la décompression des données ! Installation corrompue ? 
 Erreur lors de l'enregistrement de la DLL
@@ -55,7 +55,7 @@ Extraction : erreur d'ouverture du fichier
 Installation corrompue : opcode incorrect
 Pas de OLE pour : 
 Destination : 
-Suppression du répertoire : 
+Suppression du dossier : 
 Renommer au redémarrage : 
 Renommer : 
 Passer : 
