@@ -150,5 +150,8 @@ Section
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\LZMA"
   !insertmacro CVSDATA "Source\7zip\7zip\Compress\RangeCoder"
   !insertmacro CVSDATA "Source\7zip\Common"
+  !insertmacro CVSDATA "Source\Tests"
+  !insertmacro CVSDATA "Source\boost"
+  !insertmacro CVSDATA "Source\boost\detail"
 
 SectionEnd
