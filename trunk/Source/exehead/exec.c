@@ -380,13 +380,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (overwriteflag >= 3) // check date and time
         {
           WIN32_FIND_DATA *ffd=file_exists(buf0);
+          // if it doesn't exist, overwrite flag will be off (though it doesn't really matter)
+          int cmp=0;
           if (ffd)
           {
-            // if first one is newer, then don't overwrite
-            int cmp=CompareFileTime(&ffd->ftLastWriteTime, (FILETIME*)(entry_->offsets + 3));
-            overwriteflag=!(cmp & (0x80000000 | (overwriteflag - 3)));
+            cmp=CompareFileTime(&ffd->ftLastWriteTime, (FILETIME*)(entry_->offsets + 3));
           }
-          // if it doesn't exist, overwrite flag won't matter. it stays on off though.
+          overwriteflag=!(cmp & (0x80000000 | (overwriteflag - 3)));
         }
         if (!overwriteflag)
         {
