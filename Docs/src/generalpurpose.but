@@ -16,7 +16,7 @@ Copies files from the source to the destination on the installing system. Useful
 
 \c path_to_create
 
-Creates (recursively if necessary) the specified directory. The error flag is \\<b\\>not\\</b\\> set if the directory couldn't be created.
+Creates (recursively if necessary) the specified directory. The error flag is set if the directory couldn't be created.
 
 \S2{createshortcut} CreateShortCut
 
