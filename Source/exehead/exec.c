@@ -234,10 +234,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
       if (parm1)
       {
-        update_status_text_from_lang(LANGID_OUTPUTDIR,buf1);
+        update_status_text_from_lang(LANG_OUTPUTDIR,buf1);
         mystrcpy(state_output_directory,buf1);
       }
-      else update_status_text_from_lang(LANGID_CREATEDIR,buf1);
+      else update_status_text_from_lang(LANG_CREATEDIR,buf1);
       {
         char *tp;
         char *p;
@@ -306,7 +306,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("Rename: %s",buf3);
         if (MoveFile(buf0,buf1))
         {
-          update_status_text_from_lang(LANGID_RENAME,buf3);
+          update_status_text_from_lang(LANG_RENAME,buf3);
         }
         else
         {
@@ -317,7 +317,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             exec_rebootflag++;
 #endif
             MoveFileOnReboot(buf0,buf1);
-            update_status_text_from_lang(LANGID_RENAMEONREBOOT,buf3);
+            update_status_text_from_lang(LANG_RENAMEONREBOOT,buf3);
             log_printf2("Rename on reboot: %s",buf3);
           }
           else
@@ -415,7 +415,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           if (overwriteflag)
           {
-            update_status_text_from_lang(LANGID_SKIPPED,buf3);
+            update_status_text_from_lang(LANG_SKIPPED,buf3);
             if (overwriteflag==2) exec_errorflag++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf0,overwriteflag);
             return 0;
@@ -424,7 +424,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           mystrcpy(buf2,g_usrvars[0]);//save $0
           mystrcpy(g_usrvars[0],buf0);
 
-          process_string_from_lang(buf1,LANGID_FILEERR);
+          process_string_fromtab(buf1,LANG_FILEERR);
           mystrcpy(g_usrvars[0],buf2); // restore $0
 
           switch (my_MessageBox(buf1,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
@@ -438,12 +438,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               return 0;
             default:
               log_printf("File: error, user abort");
-              update_status_text_from_lang(LANGID_CANTWRITE,buf0);
+              update_status_text_from_lang(LANG_CANTWRITE,buf0);
             return EXEC_ERROR;
           }
         }
 
-        update_status_text_from_lang(LANGID_EXTRACT,buf3);
+        update_status_text_from_lang(LANG_EXTRACT,buf3);
         ret=GetCompressedDataFromDataBlock(parm2,hOut);
 
         log_printf3("File: wrote %d to \"%s\"",ret,buf0);
@@ -457,11 +457,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           if (ret == -2)
           {
-            wsprintf(buf0,"%s%s",STR(LANG_ERRORWRITING),buf3);
+            wsprintf(buf0,"%s%s",LANG_STR(LANG_ERRORWRITING),buf3);
           }
           else
           {
-            mystrcpy(buf0,STR(LANG_ERRORDECOMPRESSING));
+            mystrcpy(buf0,LANG_STR(LANG_ERRORDECOMPRESSING));
           }
           log_printf2("%s",buf0);
           my_MessageBox(buf0,MB_OK|MB_ICONSTOP);
@@ -494,7 +494,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               if (DeleteFile(buf1))
               {
                 log_printf2("Delete: DeleteFile(\"%s\")",buf1);
-                update_status_text_from_lang(LANGID_DELETEFILE,buf1);
+                update_status_text_from_lang(LANG_DELETEFILE,buf1);
               }
               else
               {
@@ -505,7 +505,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                   exec_rebootflag++;
 #endif
                   log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf1);
-                  update_status_text_from_lang(LANGID_DELETEONREBOOT,buf1);
+                  update_status_text_from_lang(LANG_DELETEONREBOOT,buf1);
                   MoveFileOnReboot(buf1,NULL);
                 }
                 else
@@ -802,7 +802,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf1=process_string_fromparm_tobuf(0x11);
         char *buf2=process_string_fromparm_tobuf(0x22);
         wsprintf(buf3,"%s %s",buf0,buf1);
-        update_status_text_from_lang(LANGID_EXECSHELL, buf3);
+        update_status_text_from_lang(LANG_EXECSHELL, buf3);
         x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf1,buf2[0]?buf2:NULL,state_output_directory,parm3);
         if (x < 33)
         {
@@ -822,7 +822,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HANDLE hProc;
         char *buf0=process_string_fromparm_tobuf(0x00);
         log_printf2("Exec: command=\"%s\"",buf0);
-        update_status_text_from_lang(LANGID_EXECUTE,buf0);
+        update_status_text_from_lang(LANG_EXECUTE,buf0);
 
         hProc=myCreateProcess(buf0,*state_output_directory?state_output_directory:NULL);
 
@@ -949,7 +949,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             }
             else
             {
-              update_status_text_from_lang(LANGID_CANNOTFINDSYMBOL,buf1);
+              update_status_text_from_lang(LANG_CANNOTFINDSYMBOL,buf1);
               log_printf3("Error registering DLL: %s not found in %s",buf1,buf0);
             }
             if (!parm3) FreeLibrary(h);
@@ -957,14 +957,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           else
           {
-            update_status_text_from_lang(LANGID_COULDNOTLOAD,buf0);
+            update_status_text_from_lang(LANG_COULDNOTLOAD,buf0);
             log_printf2("Error registering DLL: Could not load %s",buf0);
           }
           OleUninitialize();
         }
         else
         {
-          update_status_text_from_lang(LANGID_NOOLE,buf0);
+          update_status_text_from_lang(LANG_NOOLE,buf0);
           log_printf("Error registering DLL: Could not initialize OLE");
         }
       }
@@ -1023,11 +1023,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (rv)
       {
         exec_errorflag++;
-        update_status_text_from_lang(LANGID_ERRORCREATINGSHORTCUT,buf2);
+        update_status_text_from_lang(LANG_ERRORCREATINGSHORTCUT,buf2);
       }
       else
       {
-        update_status_text_from_lang(LANGID_CREATESHORTCUT,buf2);
+        update_status_text_from_lang(LANG_CREATESHORTCUT,buf2);
       }
     }
     return 0;
@@ -1045,7 +1045,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         buf0[mystrlen(buf0)+1]=0;
         buf1[mystrlen(buf1)+1]=0;
 
-        wsprintf(buf2,"%s%s",STR(LANG_COPYTO),buf1);
+        wsprintf(buf2,"%s%s",LANG_STR(LANG_COPYTO),buf1);
 
         op.pFrom=buf0;
         op.pTo=buf1;
@@ -1055,7 +1055,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 			  res=SHFileOperation(&op);
 			  if (res)
         { // some of these changes were from Edgewise (wiked_edge@yahoo.com)
-          update_status_text_from_lang(LANGID_COPYFAILED,"");
+          update_status_text_from_lang(LANG_COPYFAILED,"");
           exec_errorflag++;
 			  }
     	}
@@ -1453,11 +1453,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf3("created uninstaller: %d, \"%s\"",ret,buf1);
         if (ret < 0)
         {
-          update_status_text_from_lang(LANGID_ERRORCREATING,buf0);
+          update_status_text_from_lang(LANG_ERRORCREATING,buf0);
           DeleteFile(buf1);
         }
         else
-          update_status_text_from_lang(LANGID_CREATEDUNINST,buf0);
+          update_status_text_from_lang(LANG_CREATEDUNINST,buf0);
       }
     return 0;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -1528,6 +1528,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }
-  my_MessageBox(STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
+  my_MessageBox(LANG_STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;
 }

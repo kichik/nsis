@@ -70,7 +70,7 @@ void NSISCALL doRMDir(char *buf, int recurse)
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
           else
           {
-            update_status_text_from_lang(LANGID_DELETEFILE,buf);
+            update_status_text_from_lang(LANG_DELETEFILE,buf);
             if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
               SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
             DeleteFile(buf);
@@ -82,7 +82,7 @@ void NSISCALL doRMDir(char *buf, int recurse)
     buf[i]=0; // fix buffer
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-  update_status_text_from_lang(LANGID_REMOVEDIR,buf);
+  update_status_text_from_lang(LANG_REMOVEDIR,buf);
   RemoveDirectory(buf);
 }
 #endif//NSIS_SUPPORT_RMDIR
@@ -334,19 +334,6 @@ char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 char * NSISCALL process_string_fromtab(char *out, int offs)
 {
   return lstrcpyn(out,process_string(ps_tmpbuf,GetStringFromStringTab(offs)),NSIS_MAX_STRLEN);
-}
-
-char * NSISCALL process_string_from_lang(char *out, langid_t id)
-{
-  return process_string_fromtab(out, GetLangString(id));
-}
-
-// Retrieve the string offset associated with the language string ID given
-int NSISCALL GetLangString(langid_t id)
-{
-  return (int)id < 0 ?
-    *((int *)cur_install_strings_table - 1 - (int)id) :
-    *((int *)cur_common_strings_table + (int)id);
 }
 
 void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }

@@ -3,6 +3,7 @@
 #include "util.h"
 #include "state.h"
 #include "resource.h"
+#include "lang.h"
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
@@ -112,11 +113,7 @@ const char * NSISCALL loadHeaders(void)
 
 const char * NSISCALL GetStringFromStringTab(int offs)
 {
-  /*if (offs < 0) {
-    wsprintf(ps_tmpbuf, "my first user madasd %d->%d which should be %d\n%d", offs, cur_user_strings_table[-(offs+1)], cur_user_strings_table[0], LANG_COMP_TEXT);
-    my_MessageBox(ps_tmpbuf, MB_OK);
-  }*/
-  return g_db_strtab+(offs < 0 ? cur_user_strings_table[-(offs+1)] : offs);
+  return g_db_strtab+(offs < 0 ? LANG_STR_TAB(offs) : offs);
 }
 
 #define IBUFSIZE 16384
