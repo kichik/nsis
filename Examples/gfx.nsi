@@ -78,10 +78,17 @@ UninstallText "Another page..."
 
 ; Uninstall pages
 UninstPage uninstConfirm un.uninstImage
+UninstPage custom un.customPage
 UninstPage instfiles un.instImage
 
 Function un.uninstImage
 	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX.bmp" /RESIZETOFIT
+FunctionEnd
+
+Function un.customPage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\modern.bmp" /RESIZETOFIT
+	MessageBox MB_OK 'This is a nice uninstaller custom "page" with yet another image :P'
+	#insert install options/start menu/<insert plugin name here> here
 FunctionEnd
 
 Function un.instImage
