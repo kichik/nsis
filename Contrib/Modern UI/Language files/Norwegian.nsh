@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Norwegian (2068)
 ;By Jonas Lindsrøm (jonasc_88@hotmail.com)
@@ -12,7 +12,7 @@
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til $(^Name) installasjons veiviser"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Denne veiviseren vil lede deg gjennom installasjonen av $(^Name).\r\n\r\nIt Det anbefales at du slår av alle andre programmer når du kjører denne installasjonsveiviseren. Dette vil la installasjons programmet  forandre på visse systemfiler uren at du må starte maskinen om på nytt.\r\n\r\n$_CLICK"
-  
+
   !define MUI_TEXT_LICENSE_TITLE "Lisens Avtale"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Vennligst les gjennom lisens avtalen før du starter installasjonen $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "Trykk Page Down knappen for å se resten av lisens avtalen."
@@ -51,10 +51,13 @@
   !define MUI_INNERTEXT_STARTMENU_TOP "Velg mappe du vil lage snarveiene til programmet. Du kan også skrive inn et annet navn for å lag  en mappe."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ikke lag snarveier"
   
-  !define MUI_TEXT_ABORTWARNING "Er du sikker på at du vil avslutte installasjonen av $(^Name)?"  
+  !define MUI_TEXT_ABORTWARNING "Er du sikker på at du vil avslutte installasjonen av $(^Name)?"
   
   
-  !define MUI_UNTEXT_CONFIRM_TITLE "Avinstaller $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Velkommen til avisntallerinsveiveser for $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Denne veiviseren vil lede deg gjennom avistallasjonen av $(^Name).\r\n\r\nFør du starter avinstallasjonen må du forsikre deg om at ikke $(^Name) kjører.\r\n\r\n$_CLICK"
+  
+  !define MUI_UNTEXT_CONFIRM_TITLE "Avistaller $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Fjern $(^Name) fra din datamaskin."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Lisens Avtale"  
@@ -68,14 +71,19 @@
   
   !define MUI_UNTEXT_DIRECTORY_TITLE "Velg avinstallasjons bane"
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Velg mappe du vil avistallere $(^Name) fra."
-  
+    
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Avistallerer"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vennligst vent mens $(^Name) blir avistallert."
-    
+
   !define MUI_UNTEXT_FINISH_TITLE "Avistallasjon ferdig"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Avistallasjoen ble utført uten feil."
   
   !define MUI_UNTEXT_ABORT_TITLE "Avistallasjon avbrutt"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Avistallajonen ble ikke utført riktig."
   
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fullfører avistallasjonen av $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) har blitt avistallert fra din datamaskin.\r\n\r\nTrykk på ferdig for å avslutte denne veiviseren."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Er du sikker på at du vil avbryte avistalleringen av $(^Name)?"
+
 !insertmacro MUI_LANGUAGEFILE_END
