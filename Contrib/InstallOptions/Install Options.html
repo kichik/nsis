@@ -7,15 +7,12 @@ href="mailto:mbishop@bytealliance.com?subject=Installer Options">Michael
 Bishop</A> (original version) and Nullsoft, Inc. (DLL conversion and integration)
 </FONT></CENTER>
 <UL><B>Table of Contents</B>
-  <LI><A
-  href="#introduction">Introduction</A>
-
-  <LI><A
-  href="#history">Version
-  History</A>
-  <LI><A
-  href="#license">License</A>
-  </LI></UL>
+  <LI><A href="#introduction">Introduction</A></LI>
+  <LI><A href="#ini">Settings</A></LI>
+  <LI><A href="#ui">Fonts and colors</A></LI>
+  <LI><A href="#history">Version History</A></LI>
+  <LI><A href="#license">License</A></LI>
+</UL>
 <HR>
 <A name=introduction><B>Introduction:</B><BR><I>Installer Options</I> was a quick
 application Michael Bishop threw together so he could prompt the user for some information
@@ -29,23 +26,20 @@ changing the INI file.
 Extract it to known location (probably $TEMP), and then load it using CallInstDLL, passing one parameter on the stack.
 The one parameter is a name of an .ini file that defines the window.
 Example: <PRE>
-	SetOutPath $TEMP
-	File inst.ini
-	File InstallOptions.dll
-	Push $TEMP\inst.ini
- 	CallInstDLL $TEMP\InstallOptions.dll dialog
-        Pop $0
-        ;  ($0 would be "success" "cancel" "back" or some other value on error.
+	GetTempFileName $R0
+	File /oname=$R0 inst.ini
+	InstallOptions::dialog $R0
+	Pop $0
+	; ($0 would be "success" "cancel" "back" or some other value on error.
 
-	ReadINIStr $1 $TEMP\inst.ini "Field 1" State ; $1 = field #1's state
+	ReadINIStr $1 $R0 "Field 1" State ; $1 = field #1's state
 
-	Delete $TEMP\inst.nsi
-	Delete $TEMP\InstallOptions.dll
+	Delete $R0
 </PRE>
-It is often very useful to call InstallOptions from the NSIS callback functions .onNextPage and .onPrevPage.
-<P>The INI file has one required section. This section includes the number of controls to be created as well as general window attributes. The INI file also
-includes a variable number of Field sections which are used to create the
-controls to be displayed.
+It is often very useful to call InstallOptions from a NSIS custom page callback function.
+<HR>
+<A name=ini><B>INI File Settings:</B>
+<P>The INI file has one required section. This section includes the number of controls to be created as well as general window attributes. The INI file also includes a variable number of Field sections which are used to create the controls to be displayed.
 <P>The required section is named "<I>Settings</I>". It will contain the
 following values:
 <UL>
@@ -269,14 +263,41 @@ numbers from 1 to NumFields. Each Field section contains the following values:
               then only one item may be selected from the
         list.</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></UL>
 <HR>
+<A name="ui"><B>Fonts and colors:</B>
+<P>InstallOptions supports the new UI enhancements in the new NSIS 2. To support them, InstallOptions now has two new functions, initDialog, and show. The first creates the dialog but doesn't show it. It pushes the HWND of the custom dialog to the stack. To get the HWND of any of the controls use:<BR><BR>
+<PRE>	GetDlgItem (output var) (hwnd of the custom dialog) (12000 + field number - 1)</PRE>
+To finally show the tweaked dialog use the show function.
+
+Here is a little example:
+<PRE>
+	InstallOptions::initDialog file.ini
+	Pop $0
+	IntCmp $0 0 error
+		; $0 is now the IO dialog HWND
+		; use getdlgitem with it and sendmessage
+		GetDlgItem $1 $0 12000 ; 12000 + field number - 1
+		; $1 is now the HWND of the first field
+		CreateFont $2 "Tahoma" 10 700 
+		SendMessage $1 ${WM_SETFONT} $2 0
+		InstallOptions::show
+		Goto done
+	error:
+		MessageBox MB_OK "IO error: $0"
+	done:</PRE>
+<HR>
 <A name=history><A name=top><B>History:</B>
 <P>
 <UL>
-  <LI><a name=DLL1.4>DLL version 1.6 beta (9/30/2002)
+  <LI><a name=DLL1.7>DLL version 1.6 beta (9/30/2002)
+  <UL>
+     <li>BackEnabled -> BackDisabled
+     <li>Added initDialog and show DLL functions
+  </UL>
+  <LI><a name=DLL1.6>DLL version 1.6 beta (9/30/2002)
   <UL>
      <li>CancelConfirmIcon becomes CancelConfirmFlags and can now take the other common MessageBox flags
   </UL>
-  <LI><a name=DLL1.4>DLL version 1.5 beta (9/26/2002)
+  <LI><a name=DLL1.5>DLL version 1.5 beta (9/26/2002)
   <UL>
      <li>Made close [x] button behave like Cancel (thanks brainsucker)
   </UL>
