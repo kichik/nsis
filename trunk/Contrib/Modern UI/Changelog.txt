@@ -1,6 +1,12 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.5 - Novermber 11, 2002
+1.6 - November 15, 2002
+* Welcome / Finish pages
+* Automatic ask for reboot on finish page
+* Create no shortcut option on Start Menu Folder selection page
+* Customizing GUIInit functions easier
+
+1.5 - November 11, 2002
 * New language file format
 * Language strings can be changed in the script without editing language files
 * Start Menu Folder selection page
@@ -9,7 +15,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is the standard macro now.
   Use MUI_INSTALLOPTIONS_INITDIALOG and MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
 * No more writing window titles & abort warnings to Install Options INI Files
-* Compatible with new paging system
+* Compatible with updated paging system
 * Renamed macro's and defines
 * Some small fixes
 
