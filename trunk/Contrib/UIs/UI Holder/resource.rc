@@ -32,7 +32,7 @@ BEGIN
     ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,105
+                    WS_TABSTOP | 0x804,0,24,266,105
 END
 
 IDD_LICENSE_FSRB DIALOG DISCARDABLE  0, 0, 266, 130
@@ -42,7 +42,7 @@ BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,85
+                    WS_TABSTOP | 0x804,0,24,266,85
     CONTROL         "",IDC_LICENSEDISAGREE,"Button",BS_AUTORADIOBUTTON | 
                     WS_TABSTOP,0,120,266,9
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTORADIOBUTTON | 
@@ -55,8 +55,8 @@ FONT 8, "MS Shell Dlg"
 BEGIN
     ICON            IDI_ICON2,1031,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
-    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
-                    0x804,0,24,266,95
+    CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL |
+                    WS_TABSTOP | 0x804,0,24,266,95
     CONTROL         "",IDC_LICENSEAGREE,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,0,120,266,9
 END
