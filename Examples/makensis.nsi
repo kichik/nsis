@@ -61,7 +61,7 @@ Page custom PageReinstall PageLeaveReinstall
 !define MUI_FINISHPAGE_LINK "Visit the NSIS website for the latest news, a FAQ and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://nsis.sf.net/"
 
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\NSIS.exe"
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
 !insertmacro MUI_PAGE_FINISH
@@ -103,8 +103,10 @@ Section "NSIS Development System (required)" SecCore
   Delete $INSTDIR\makensis-bz2.exe
   File ..\makensis.exe
   File ..\makensisw.exe
-  File ..\makensis.htm
   File ..\license.txt
+  File ..\NSIS.chm
+  
+  File ..\NSIS.exe
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
   SetOverwrite off
@@ -115,12 +117,14 @@ Section "NSIS Development System (required)" SecCore
   File ..\Include\WinMessages.nsh
   File ..\Include\Sections.nsh
 
-  SetOutPath $INSTDIR\Docs
-  File ..\Docs\*.html
-  File ..\Docs\*.css
-
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\contrib\makensisw\*.txt
+  
+  SetOutPath $INSTDIR\Menu
+  File ..\Menu\*.html
+  SetOutPath $INSTDIR\Menu\images
+  File ..\Menu\images\*.gif
+  
 SectionEnd
 
 Section "Script Examples" SecExample
@@ -146,21 +150,6 @@ Section "Script Examples" SecExample
   File ..\Examples\languages.nsi
   File ..\Examples\VersionInfo.nsi
   File ..\Examples\UserVars.nsi
-SectionEnd
-
-Section "NSIS Menu" SecMenu
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing NSIS Menu..."
-  SetDetailsPrint listonly
-
-  SectionIn 1 2 3
-  SetOutPath $INSTDIR
-  File ..\NSIS.exe
-  SetOutPath $INSTDIR\Menu
-  File ..\Menu\*.html
-  SetOutPath $INSTDIR\Menu\images
-  File ..\Menu\images\*.gif
 SectionEnd
 
 Section "NSIS Update" SecUpdate
@@ -230,31 +219,21 @@ Section "Desktop Shortcut" SecIcons
 !ifndef NO_STARTMENUSHORTCUTS
   CreateDirectory $SMPROGRAMS\NSIS
 
-  IfFileExists "$INSTDIR\NSIS.exe" "" +2
-    CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
+  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
 
   CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW (Compiler GUI).lnk" "$INSTDIR\makensisw.exe"
 
   IfFileExists "$INSTDIR\Bin\NSISUpdate.exe" "" +2
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Update.lnk" "$INSTDIR\Bin\NSISUpdate.exe"
 
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
+  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\NSIS.chm"
+  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
-  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
+  
 !endif
 
-  IfFileExists "$INSTDIR\NSIS.exe" 0 +3
-    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
-    Goto deskshortcut_done
-   
-  IfFileExists "$INSTDIR\makensisw.exe" 0 +3
-    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe"
-    Goto deskshortcut_done
-   
-  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensis.exe"
+  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
   
-  deskshortcut_done:
-
 SectionEnd
 
 SubSection "Contrib" SecContrib
@@ -287,6 +266,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
     File "..\Contrib\Modern UI\ioSpecial.ini"
+    File "..\Contrib\Modern UI\ioSpecial3.ini"
 
     SetOutPath $INSTDIR\Contrib\UIs
     File "..\Contrib\UIs\modern.exe"
@@ -1124,7 +1104,6 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "A menu that contains links to NSIS information, utilities and websites"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
