@@ -31,7 +31,7 @@ A NSIS script can contain Installer Attributes and Sections/Functions. You can a
 
 \S1{installerattributes} Installer Attributes
 
-Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can define what pages are shown in which order, texts that will shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
+Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can define what pages are shown in which order, texts that will be shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
 
 The most basic attributes are Name (\k{aname}), InstallDir (\k{ainstalldir}) and DirText (\k{adirtext}).
 
