@@ -41,11 +41,13 @@ const char *NSIS_VERSION="v2.03";
 #else
 #  include <unistd.h>
 #endif
+#include <string>
 
 #include "build.h"
 #include "util.h"
 #include "exedata.h"
 
+using namespace std;
 
 int g_noconfig=0;
 int g_display_errors=1;
@@ -278,15 +280,8 @@ int main(int argc, char **argv)
       if (!g_noconfig)
       {
         g_noconfig=1;
-        char exepath[1024];
-        strncpy(exepath,argv[0],sizeof(exepath)-1);
-        exepath[1023]=0;
-        char *p=exepath;
-        while (*p) p++;
-        while (p > exepath && *p != PLATFORM_PATH_SEPARATOR_C) p=CharPrev(exepath,p);
-        if (p>exepath) p++;
-        strcpy(p,"nsisconf.nsh");
-        FILE *cfg=fopen(exepath,"rt");
+        string nsisconf=get_executable_dir(argv[0])+PLATFORM_PATH_SEPARATOR_STR+"nsisconf.nsh";
+        FILE *cfg=fopen(nsisconf.c_str(),"rt");
         if (cfg)
         {
           if (build.display_script) 
@@ -294,7 +289,7 @@ int main(int argc, char **argv)
             fprintf(g_output,"Processing config: \n");
             fflush(g_output);
           }
-          int ret=build.process_script(cfg,exepath);
+          int ret=build.process_script(cfg,(char*)nsisconf.c_str());
           fclose(cfg);
           if (ret != PS_OK && ret != PS_EOF)
           {
