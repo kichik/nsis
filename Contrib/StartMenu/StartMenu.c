@@ -1,6 +1,8 @@
 #include <windows.h>
-#include "exdll.h"
+#include "../exdll/exdll.h"
 #include "resource.h"
+
+#define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
 
 HINSTANCE g_hInstance;
 
@@ -15,10 +17,7 @@ HWND hwDirList;
 char buf[MAX_PATH];
 char text[1024];
 char progname[1024];
-char cancelconfirm[1024];
-char cancelconfirmcaption[1024];
-
-unsigned int cancelconfirmflags = 0;
+char lastused[1024];
 
 int autoadd = 0;
 int g_done = 0;
@@ -71,24 +70,9 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       {
         autoadd = 1;
       }
-      else if (!lstrcmpi(buf+1, "cancelconfirm"))
+      else if (!lstrcmpi(buf+1, "lastused"))
       {
-        static TableEntry MBFlagTable[] = {
-          { "MB_ICONEXCLAMATION", MB_ICONEXCLAMATION },
-          { "MB_ICONINFORMATION", MB_ICONINFORMATION },
-          { "MB_ICONQUESTION",    MB_ICONQUESTION    },
-          { "MB_ICONSTOP",        MB_ICONSTOP        },
-          { "MB_TOPMOST",         MB_TOPMOST         },
-          { "MB_SETFOREGROUND",   MB_SETFOREGROUND   },
-          { "MB_RIGHT",           MB_RIGHT           },
-          { "MB_DEFBUTTON1",      MB_DEFBUTTON1      },
-          { "MB_DEFBUTTON2",      MB_DEFBUTTON2      },
-          { NULL,                 0                  }
-        };
-        popstring(cancelconfirm);
-        popstring(cancelconfirmcaption);
-        popstring(buf);
-        cancelconfirmflags = LookupTokens(MBFlagTable, buf);
+        popstring(lastused);
       }
       if (popstring(buf))
         *buf = 0;
@@ -131,15 +115,9 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
 
 static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  if (message == WM_CLOSE)
+  if (message == WM_NOTIFY_OUTER_NEXT)
   {
-    message = WM_COMMAND;
-    wParam = IDCANCEL;
-  }
-	if (message == WM_COMMAND && (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK || LOWORD(wParam) == 3))
-  {
-		PostMessage(hwStartMenuSelect,WM_USER+666,0,LOWORD(wParam));
-    return 0;
+    PostMessage(hwStartMenuSelect,WM_USER+666,wParam,0);
   }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
 }
@@ -238,7 +216,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         temp_r.bottom - temp_r.top
       );
 
-      SendMessage(hwLocation, WM_SETTEXT, 0, (LPARAM) progname);
+      SendMessage(hwLocation, WM_SETTEXT, 0, (LPARAM) (*lastused ? lastused : progname));
 
       ProgressiveSetWindowPos(
         hwDirList,
@@ -268,20 +246,12 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     break;
     case WM_USER+666:
       g_done = 1;
-      switch (lParam) {
-      	case IDOK:
-          SendMessage(hwLocation, WM_GETTEXT, MAX_PATH, (LPARAM) buf);
-          pushstring(buf);
-          break;
-        case IDCANCEL:
-          if (*cancelconfirm && MessageBox(hwStartMenuSelect, cancelconfirm, cancelconfirmcaption, MB_YESNO|cancelconfirmflags) == IDNO)
-            g_done = 0;
-          else
-            pushstring("cancel");
-          break;
-        case 3:
-          pushstring("back");
-          break;
+      if (wParam == 0xD1E)
+        pushstring("cancel");
+      else
+      {
+        SendMessage(hwLocation, WM_GETTEXT, MAX_PATH, (LPARAM) buf);
+        pushstring(buf);
       }
     break;
   }

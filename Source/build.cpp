@@ -1355,7 +1355,7 @@ int CEXEBuild::write_output(void)
 
       page *p=(page *) build_pages.get();
       for (int i=0; i<build_header.common.num_pages; i++, p++) {
-        if (i) p->back=2; // 2 - enabled, 1 - disabled, 0 - invisible
+        if (i) p->back=SW_SHOWNA|2; // 2 - enabled, SW_SHOWNA - visible, 0 - invisible (or'ed)
         else p->back=0;
 
         p->next=LANG_BTN_NEXT;
@@ -1367,7 +1367,7 @@ int CEXEBuild::write_output(void)
           p->next=LANG_BTN_LICENSE;
         #endif
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->back=1;
+          p->back&=~2;
       }
       (--p)->next=LANG_BTN_CLOSE;
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;

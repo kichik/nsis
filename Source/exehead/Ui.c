@@ -75,8 +75,13 @@ static int num_sections;
 
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
-static void NSISCALL outernotify(char num) {
-  SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0);
+static int m_page,m_abort,m_retcode,m_delta;
+
+static void NSISCALL outernotify(int num) {
+  if (num==0xD1E)
+    g_quit_flag=1;
+  m_delta=num;
+  SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0); // it sends num again for plugins - DON'T REMOVE!
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -102,7 +107,6 @@ page *g_inst_page;
 section *g_inst_section;
 entry *g_inst_entry;
 
-static int m_page=-1,m_abort;
 static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
 static int m_whichcfg;
 
@@ -442,7 +446,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
-    #define delta wParam
+    page *this_page;
     static struct
     {
       char *id;
@@ -479,10 +483,18 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       ShowWindow(hwndDlg,SW_SHOW);
     }
 
+    // initial m_page is zero, m_pages grows and checked after this line so no memory misread
+    this_page=g_inst_page+m_page;
+
+    // if the last page was a custom page, wait for it to finish by itself.
+    // if it doesn't, it's a bad plugin.
+    // plugins should react to WM_NOTIFY_OUTER_NEXT.
+    if (this_page->id<0) return 0;
+
 nextPage:
 
-    if (m_page<0) delta=1;
-    m_page+=delta;
+    m_page+=m_delta;
+    this_page+=m_delta;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     if (m_page==g_inst_cmnheader->num_pages) ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
@@ -491,69 +503,57 @@ nextPage:
     if (g_quit_flag || m_page < 0 || m_page == g_inst_cmnheader->num_pages)
     {
       DestroyWindow(m_curwnd);
-      EndDialog(hwndDlg,0);
+      EndDialog(hwndDlg,m_retcode);
     }
     else
     {
       HWND hwndtmp;
-      int page_id=g_inst_page[m_page].id;
 
-      SetDlgItemTextFromLang(hwndDlg,IDOK,g_inst_page[m_page].next);
+      SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
-      ShowWindow(hwndtmp,g_inst_page[m_page].back?SW_SHOWNA:SW_HIDE);
-      EnableWindow(hwndtmp, g_inst_page[m_page].back&2);
+      ShowWindow(hwndtmp,this_page->back&SW_SHOWNA);// SW_HIDE = 0
+      EnableWindow(hwndtmp,this_page->back&2);
 
-      if (page_id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
+      if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else if (g_autoclose) goto nextPage;
 
-      if (page_id>=0) // NSIS page
-      {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        if (ExecuteCodeSegment(g_inst_page[m_page].prefunc,NULL))
-          goto nextPage;
-        else
-#endif //NSIS_SUPPORT_CODECALLBACKS
-        {
-          mystrcpy(g_tmp,g_caption);
-          process_string_fromtab(
-            g_tmp+mystrlen(g_tmp),
-            LANG_SUBCAPTION(page_id-(g_is_uninstaller?NSIS_PAGE_INSTFILES:0))
-          );
-
-          SetWindowText(hwndDlg,g_tmp);
-
-          gDontFookWithFocus = 0;
-          m_curwnd=CreateDialog(g_hInstance,windows[page_id].id,hwndDlg,windows[page_id].proc);
-          if (m_curwnd)
-          {
-            RECT r;
-            GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
-            ScreenToClient(hwndDlg,(LPPOINT)&r);
-            SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
-            SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
-            ShowWindow(m_curwnd,SW_SHOWNA);
-          }
-
-          //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
-          //on the license page, instead we want the focus left alone because in
-          //WM_INITDIALOG it is given to the richedit control.
-          if (!gDontFookWithFocus)
-              SetFocus(m_hwndOK);
-          //XGE End
-        }
-      }
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      else // User custom page
-      {
-        if (ExecuteCodeSegment(g_inst_page[m_page].prefunc,NULL))
-          delta=-1;
-        else
-          delta=1;
+      if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
+#endif //NSIS_SUPPORT_CODECALLBACKS
+      if (this_page->id>=0) // NSIS page
+      {
+        mystrcpy(g_tmp,g_caption);
+        process_string_fromtab(
+          g_tmp+mystrlen(g_tmp),
+          LANG_SUBCAPTION(this_page->id-(g_is_uninstaller?NSIS_PAGE_INSTFILES:0))
+        );
+
+        SetWindowText(hwndDlg,g_tmp);
+
+        gDontFookWithFocus = 0;
+        m_curwnd=CreateDialog(g_hInstance,windows[this_page->id].id,hwndDlg,windows[this_page->id].proc);
+        if (m_curwnd)
+        {
+          RECT r;
+          GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
+          ScreenToClient(hwndDlg,(LPPOINT)&r);
+          SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+          SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
+          ShowWindow(m_curwnd,SW_SHOWNA);
+        }
+
+        //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
+        //on the license page, instead we want the focus left alone because in
+        //WM_INITDIALOG it is given to the richedit control.
+        if (!gDontFookWithFocus)
+            SetFocus(m_hwndOK);
+        //XGE End
       }
 
-      ExecuteCodeSegment(g_inst_page[m_page].postfunc,NULL);
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      ExecuteCodeSegment(this_page->postfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
     }
   }
@@ -580,7 +580,8 @@ nextPage:
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
-        EndDialog(hwndDlg,2);
+        m_retcode=2;
+        outernotify(0xD1E);
       }
       else
       {
@@ -588,7 +589,8 @@ nextPage:
         if (!ExecuteCodeSegment(g_inst_cmnheader->code_onUserAbort,NULL))
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
-          EndDialog(hwndDlg,1);
+          m_retcode=1;
+          outernotify(0xD1E);
         }
       }
     }
@@ -1362,7 +1364,10 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
     if (g_quit_flag)
-        EndDialog(g_hwnd,1);
+    {
+      m_retcode=1;
+      outernotify(0xD1E);
+    }
     else if (!wParam)
     {
       HWND h=m_hwndOK;

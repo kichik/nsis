@@ -61,21 +61,22 @@ FunctionEnd
 
 Function SetCustom
 
- ;Display the Install Options dialog
+  ;Display the Install Options dialog
 
- Push ${TEMP1}
+  Push ${TEMP1}
 
   InstallOptions::dialog "$PLUGINSDIR\test.ini"
   Pop ${TEMP1}
 
-  StrCmp ${TEMP1} "cancel" "" +3
-    Pop ${TEMP1}
-    Quit
+  StrCmp ${TEMP1} "cancel" done
+  StrCmp ${TEMP1} "back" done
+  StrCmp ${TEMP1} "success" 0 error
+    # User clicked Next, all fields validated, read stuff from the INI here or later
+    Goto done
 
-  StrCmp ${TEMP1} "back" "" +3
-    Pop ${TEMP1}
-    Abort
-    
- Pop ${TEMP1}
-  
+  error:
+    MessageBox MB_OK|MB_ICONSTOP "InstallOptions error:$\r$\n${TEMP1}"
+
+  done: Pop ${TEMP1}
+
 FunctionEnd
