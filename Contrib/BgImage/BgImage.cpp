@@ -31,7 +31,7 @@ enum {
   MIL_BITMAP,
   MIL_TRANSPARENT_BITMAP,
   MIL_TEXT
-};
+} ObjType;
 
 struct myImageList {
   BYTE iType;
@@ -298,8 +298,6 @@ NSISFunc(Redraw) {
 NSISFunc(Clear) {
   ECS();
 
-  BOOL bIsFirst = TRUE;
-
   myImageList *img = &bgBitmap;
   while (img) {
     switch (img->iType) {
@@ -315,21 +313,21 @@ NSISFunc(Clear) {
     myImageList *thisImg = img;
 
     img = img->next;
+    thisImg->next = NULL;
 
-    if (!bIsFirst)
+    if (thisImg != &bgBitmap)
       GlobalFree(thisImg);
-    else
-      bIsFirst = FALSE;
   }
 
-  bgBitmap.next = 0;
   bgBitmap.bReady = FALSE;
 
   LCS();
 }
 
 NSISFunc(Destroy) {
-  SetWindowLong(hWndParent, GWL_WNDPROC, (long)oldProc);
+  bgBitmap.bReady = FALSE;
+  if (IsWindow(hwndParent))
+    SetWindowLong(hwndParent, GWL_WNDPROC, (long)oldProc);
   SendMessage(hWndImage, WM_CLOSE, 0, 0);
   hWndImage = 0;
   Clear(0, 0, 0, 0);
@@ -342,7 +340,8 @@ NSISFunc(Sound) {
   char szStop[] = {'/', 'S', 'T', 'O', 'P', 0};
 
   DWORD flags = SND_FILENAME | SND_NODEFAULT;
-  g_stacktop=stacktop;
+  
+  g_stacktop = stacktop;
   popstring(szTemp);
   if (lstrcmpi(szTemp, szWait))
     flags |= SND_ASYNC;
@@ -356,12 +355,14 @@ NSISFunc(Sound) {
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  if (hwnd == hWndParent) {
+  HWND hwndParent = hWndParent;
+
+  if (hwnd == hwndParent) {
     if (message == WM_SIZE) {
       ShowWindow(hWndImage, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
     }
     if (message == WM_WINDOWPOSCHANGED) {
-      SetWindowPos(hWndImage, hWndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+      SetWindowPos(hWndImage, hwndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
     return CallWindowProc(
       (long (__stdcall *)(HWND,unsigned int,unsigned int,long))oldProc,
@@ -534,12 +535,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
     }
     break;
     case WM_WINDOWPOSCHANGING:
+      if (IsWindow(hwndParent))
       {
         LPWINDOWPOS wp = (LPWINDOWPOS) lParam;
         wp->flags |= SWP_NOACTIVATE;
-        wp->hwndInsertAfter = hWndParent;
-        break;
+        wp->hwndInsertAfter = hwndParent;
       }
+      break;
     case WM_CLOSE:
       DestroyWindow(hwnd);
     break;
