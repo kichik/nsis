@@ -40,7 +40,7 @@
 
 !macroend
 
-!macro MUI_INTERFACE_ABSOLUTEPATH UI ICON UNICON CHECKS PROGRESSBAR CURRENTPAGEVAR
+!macro MUI_INTERFACE_ABSOLUTEPATH UI ICON UNICON CHECKS PROGRESSBAR FONT CURRENTPAGEVAR
 
   ;User interface
   
@@ -48,7 +48,7 @@
   UninstallIcon "${UNICON}"
   XPStyle On
   ChangeUI all "${UI}"
-  SetFont Tahoma 8
+  SetFont "${FONT}" 8
   CheckBitmap "${CHECKS}"
   InstallColors /windows
   InstProgressFlags "${PROGRESSBAR}"
