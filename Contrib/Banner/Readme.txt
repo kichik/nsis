@@ -3,7 +3,7 @@ BANNER PLUG-IN
 
 The Banner plug-in shows a banner with customizable text. It uses the IDD_VERIFY dialog of the UI.
 
-There are only two functions, show and destroy.
+There are three functions - show, getWindow and destroy.
 
 Usage
 -----
