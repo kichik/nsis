@@ -210,15 +210,14 @@ Section "System" SecContribSystem
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\System.dll
-  SetOutPath $INSTDIR\contrib\ShowWin
-  File ..\contrib\ShowWin\ShowWin.txt
-
 SectionEnd
 
 Section "ShowWin" SecContribShowWin
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\ShowWin.dll
+  SetOutPath $INSTDIR\contrib\ShowWin
+  File ..\contrib\ShowWin\ShowWin.txt
 SectionEnd
 
 SubSectionEnd
