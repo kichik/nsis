@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.65
+;NSIS Modern User Interface version 1.66
 ;Basic Example Script
 ;Written by Joost Verburg
 
@@ -11,7 +11,7 @@
 ;Product Info
 
   !define MUI_PRODUCT "Modern UI Test"
-  !define MUI_VERSION "1.65"
+  !define MUI_VERSION "1.66"
 
 ;--------------------------------
 ;Configuration
