@@ -13,13 +13,13 @@ TempStack *tempstack = NULL;
 
 PLUGINFUNCTIONSHORT(Alloc)
 {
-	int size;
-	if ((size = popint()) == 0)
-	{
-		pushint(0);
-		return;
-	}
-	pushint((int) GlobalAlloc(GPTR, size));
+    int size;
+    if ((size = popint()) == 0)
+    {
+        pushint(0);
+        return;
+    }
+    pushint((int) GlobalAlloc(GPTR, size));
 }
 PLUGINFUNCTIONEND
 
@@ -27,9 +27,9 @@ PLUGINFUNCTIONSHORT(Copy)
 {
     int size = 0;
     HANDLE source, dest;
-	char *str;
+    char *str;
     // Get the string
-	if ((str = popstring()) == NULL) return;
+    if ((str = popstring()) == NULL) return;
 
     // Check for size option
     if (str[0] == '/')
@@ -43,7 +43,11 @@ PLUGINFUNCTIONSHORT(Copy)
     // Ok, check the size
     if (size == 0) size = (int) GlobalSize(source);
     // and the destinantion
-    if ((int) dest == 0) dest = GlobalAlloc((GPTR), size);
+    if ((int) dest == 0) 
+    {
+        dest = GlobalAlloc((GPTR), size);
+        pushint(dest);
+    }
 
     // COPY!
     copymem(dest, source, size);
