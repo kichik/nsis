@@ -1478,15 +1478,15 @@ int CEXEBuild::write_output(void)
   }
   int ne=build_entries.getlen()/sizeof(entry);
   INFO_MSG("Install: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
-  INFO_MSG("%d byte string table, ",build_strlist.getlen());
-  INFO_MSG("%d byte language tables (%d tables).\n",build_langtables.getlen(),string_tables.size());
+  INFO_MSG("%d strings (%d bytes), ",build_strlist.getnum(),build_strlist.getlen());
+  INFO_MSG("%d language tables (%d bytes).\n",string_tables.size(),build_langtables.getlen());
   if (ubuild_entries.getlen())
   {
     int tmp=ubuild_entries.getlen()/sizeof(entry);
     INFO_MSG("Uninstall: ");
     INFO_MSG("%d instruction%s (%d bytes), ",tmp,tmp==1?"":"s",tmp*sizeof(entry));
-    INFO_MSG("%d byte string table, ",ubuild_strlist.getlen());
-    INFO_MSG("%d byte language tables (%d tables).\n",ubuild_langtables.getlen(),string_tables.size());
+    INFO_MSG("%d strings (%d bytes), ",ubuild_strlist.getnum(),ubuild_strlist.getlen());
+    INFO_MSG("%d language tables (%d bytes).\n",string_tables.size(),ubuild_langtables.getlen());
   }
 
 
