@@ -195,7 +195,7 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
 
   if (ret == PS_EOF && num_ifblock())
   {
-    ERROR_MSG("!if[n]def: open at EOF - need !endif\n");
+    ERROR_MSG("!if[macro][n]def: open at EOF - need !endif\n");
     return PS_ERROR;
   }
 
@@ -350,7 +350,8 @@ parse_again:
     if_from_else++;
   }
 
-  if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
+  if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF ||
+      tkid == TOK_P_IFMACRODEF || tkid == TOK_P_IFMACRONDEF)
   {
     if (!if_from_else)
       start_ifblock();
@@ -370,8 +371,13 @@ parse_again:
     {
       if (p & 1)
       {
-        int new_s=!!definedlist.find(line.gettoken_str(p));
-        if (tkid == TOK_P_IFNDEF) new_s=!new_s;
+        int new_s;
+        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
+          new_s=!!definedlist.find(line.gettoken_str(p));
+        else
+          new_s=MacroExists(line.gettoken_str(p));
+        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFMACRONDEF)
+          new_s=!new_s;
 
         if (mod == 0) istrue = istrue || new_s;
         else istrue = istrue && new_s;
@@ -655,6 +661,33 @@ int CEXEBuild::includeScript(char *f)
   }
   SCRIPT_MSG("!include: closed: \"%s\"\n",f);
   return PS_OK;
+}
+
+// !ifmacro[n]def based on Anders Kjersem's code
+int CEXEBuild::MacroExists(const char *macroname)
+{
+  bool mdefined = false;
+  char *m = (char *) m_macros.get();
+
+  while (m && *m)
+  {
+    // check if macroname matches
+    if (!stricmp(m, macroname))
+      return 1;
+
+    // skip macro name
+    m += strlen(m) + 1;
+
+    // skip params
+    while (*m) m += strlen(m) + 1;
+    m++;
+
+    // skip data
+    while (*m) m += strlen(m) + 1;
+    if (m - (char *) m_macros.get() >= m_macros.getlen() - 1) break;
+    m++;
+  }
+  return 0;
 }
 
 int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
@@ -1677,7 +1710,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         cur_page->flags &= ~(PF_LICENSE_FORCE_SELECTION | PF_LICENSE_NO_FORCE_SELECTION);
 
         switch (k) {
-        	case 0:
+          case 0:
             cur_page->dlg_id = IDD_LICENSE;
             cur_page->flags |= PF_LICENSE_NO_FORCE_SELECTION;
             break;
@@ -3965,7 +3998,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1] = line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
       if (ent.offsets[1] < 0) PRINTHELP();
       switch (ent.offsets[1]) {
-      	case 0:
+        case 0:
           ent.offsets[1]=8;
         break;
         case 1:
