@@ -27,6 +27,7 @@
 NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
+static JNL_AsyncDNS *g_dns = NULL;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	MSG	msg;
@@ -37,6 +38,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     my_memset(&g_find,0,sizeof(NFINDREPLACE));
 	g_sdata.hInstance=GetModuleHandle(0);
 	g_sdata.script=GetCommandLine();
+    JNL::open_socketlib();
     if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
 	else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
 	while (*g_sdata.script==' ') g_sdata.script++;
@@ -62,6 +64,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 			}
 		}
 	}
+    JNL::close_socketlib();
 	ExitProcess(msg.wParam);
 	return msg.wParam;
 }
@@ -531,12 +534,14 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
             if (tp) *tp=0;
         }
     }
-    JNL_HTTPGet *get = new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,8192,(p&&p[0])?p:NULL);;
-    JNL::open_socketlib();
+    if (!g_dns) {
+        g_dns = new JNL_AsyncDNS();
+    }
+    JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);;
     lstrcpy(url,NSIS_UPDATE);
     lstrcat(url,g_sdata.brandingv);
     lstrcpy(response,"");
-    get->addheader("User-Agent:Nullsoft Sex (Mozilla)");
+    get->addheader("User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; Q312461; .NET CLR 1.0.3705)");
     get->addheader("Accept:*/*");
     get->connect(url);
     while (1) {
@@ -554,14 +559,15 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
         }
         if (st==1) break; //closed
     }
-    JNL::close_socketlib();
     r = response;
     while (r&&*r) {
         if (*r=='\n') { *r = 0; break; }
         r++;
     }
     if (error) {
-        MessageBox(g_sdata.hwnd,"There was a problem checking for an update.  Please try again later.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
+        char buf[1000];
+        wsprintf(buf,"There was a problem checking for an update.  Please try again later.\n\nError: %s",get->geterrorstr());
+        MessageBox(g_sdata.hwnd,buf,"NSIS Update",MB_OK|MB_ICONINFORMATION); 
     }
     else if (*response=='1'&&lstrlen(response)>2) {
         char buf[200];
@@ -581,5 +587,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     }
     else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
     GlobalFree(response);
+    delete get;
     return 0;
 }
