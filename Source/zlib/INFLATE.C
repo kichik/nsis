@@ -2,7 +2,7 @@
 #ifdef NSIS_COMPRESS_USE_ZLIB
 /* inflate.c -- zlib interface to inflate modules
  * Copyright (C) 1995-1998 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h 
+ * For conditions of distribution and use, see copyright notice in zlib.h
 
  * this has been HEAVILY modified for NSIS use, and is no longer compatible
  * with the stock zlib.
@@ -44,10 +44,10 @@ int inflateReset(z_streamp z)
 
 int inflateInit(z_streamp z)
 {
-  int inflate_blocks_getssize();
+  int inflate_blocks_getssize(void);
   void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s);
 
-  if ((z->state = 
+  if ((z->state =
     (struct internal_state FAR *) ZALLOC(z,1,sizeof(struct internal_state)+inflate_blocks_getssize())) == Z_NULL)
     return Z_MEM_ERROR;
 
