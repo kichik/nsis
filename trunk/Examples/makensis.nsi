@@ -138,7 +138,7 @@ Section "NSI Development Shell Extensions" SecExtention
   Label1:
   WriteRegStr HKCR ".nsh" "" "NSHFile"
   ReadRegStr $0 HKCR "NSHFile" ""
-  StrCmp $0 "" 0 skipNSIAssoc
+  StrCmp $0 "" 0 skipNSHAssoc
 	WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
 	WriteRegStr HKCR "NSHFile\shell" "" "open"
 	WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
