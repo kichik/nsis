@@ -100,7 +100,7 @@ static int g_page_offs=4;
 #endif
 
 static int m_page=-1,m_abort;
-HWND m_curwnd;
+static HWND m_curwnd, m_bgwnd;
 static int m_whichcfg;
 
 static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
@@ -186,7 +186,6 @@ static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
 }
 
 static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
-
   HTREEITEM hItem;
   int    iState = 0, iStatePrev = 0;
 
@@ -216,13 +215,13 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
 
   pItem->hItem = hParent;
   if (iState) {
+    pItem->mask&=~TVIF_PARAM;
     pItem->state = INDEXTOSTATEIMAGEMASK(iState);
     TreeView_SetItem(hWnd, pItem);
   }
 
   SetParentState(hWnd, pItem);
 }
-
 
 static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
   HTREEITEM hItem = pItem->hItem;
@@ -247,7 +246,7 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
-int lang_num;
+static int lang_num;
 
 void NSISCALL set_language(LANGID lang)
 {
@@ -273,6 +272,8 @@ lang_again:
   }
 
   process_string_from_lang(g_caption,LANGID_CAPTION);
+
+  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)g_caption);
 }
 
 int NSISCALL ui_doinstall(void)
@@ -365,24 +366,21 @@ int NSISCALL ui_doinstall(void)
   if (!g_inst_cmnheader->silent_install)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   {
-    HWND h=GetDesktopWindow();
+    m_bgwnd=GetDesktopWindow();
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
     {
-      h=bgWnd_Init(g_hInstance,g_inst_cmnheader->bg_color1,g_inst_cmnheader->bg_color2,g_inst_cmnheader->bg_textcolor);
+      m_bgwnd=bgWnd_Init(g_hInstance,g_inst_cmnheader->bg_color1,g_inst_cmnheader->bg_color2,g_inst_cmnheader->bg_textcolor);
     }
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    g_hwnd=h;
+    g_hwnd=m_bgwnd;
     // Select language
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
     g_hwnd=NULL;
-    if (h != GetDesktopWindow()) {
-      SendMessage(h, WM_SETTEXT, 0, (LPARAM)g_caption);
-      ShowWindow(h, SW_SHOW);
-    }
+    ShowWindow(m_bgwnd, SW_SHOW);
 #endif//NSIS_SUPPORT_CODECALLBACKS
-    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),h,DialogProc);
+    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),m_bgwnd,DialogProc);
   }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -556,7 +554,9 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+#ifdef NSIS_SUPPORT_CODECALLBACKS
         ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
+#endif //NSIS_SUPPORT_CODECALLBACKS
         ShowWindow(m_curwnd,SW_SHOWNA);
       }
 
@@ -642,7 +642,6 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK);
-    SendMessage(hwLicense,EM_SETLIMITTEXT,lstrlen((char*)es.dwCookie)+1,0);
     dwRead=0;
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_LICENSE_TEXT);
@@ -864,6 +863,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     SendMessage(GetParent(hwnd),WM_TREEVIEW_KEYHACK,0,0);
     return 0;
   }
+#ifdef NSIS_SUPPORT_CODECALLBACKS
   if (uMsg == WM_DESTROY) {
     last_item=-1;
   }
@@ -877,20 +877,25 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
       hItem.mask = TVIF_PARAM;
       
       TreeView_GetItem(hwnd, &hItem);
-      
-      if (last_item != hItem.lParam)
-      {
-        last_item = hItem.lParam;
 
-        mystrcpy(g_tmp, g_usrvars[0]);
-
-        wsprintf(g_usrvars[0], "%u", last_item); 
-        ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onMouseOverSection,NULL);
-        
-        mystrcpy(g_usrvars[0], g_tmp);
-      }
+      lParam = hItem.lParam;
+      uMsg = WM_USER+0x19;
     }
   }
+  if (uMsg == WM_USER+0x19) {
+    if (last_item != lParam)
+    {
+      last_item = lParam;
+
+      mystrcpy(g_tmp, g_usrvars[0]);
+
+      myitoa(g_usrvars[0], last_item);
+      ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onMouseOverSection,NULL);
+        
+      mystrcpy(g_usrvars[0], g_tmp);
+    }
+  }
+#endif//NSIS_SUPPORT_CODECALLBACKS
   return CallWindowProc((WNDPROC)oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
@@ -1006,7 +1011,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         else
         {
-      hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
+          hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
         }
       }
     }
@@ -1014,9 +1019,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       if (g_inst_section[x].name_ptr>=0 && g_inst_section[x].expand==1)
       {
-    SendMessage(hwndTree1,TVM_EXPAND,(WPARAM) TVE_TOGGLE,(LPARAM) hTreeItems[x]);
+        SendMessage(hwndTree1,TVM_EXPAND,(WPARAM) TVE_TOGGLE,(LPARAM) hTreeItems[x]);
+      }
     }
-  }
     if (!doLines)
     {
       SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
@@ -1136,6 +1141,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             } // not ro
         } // was valid click
       } // was click or hack
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      else if (lpnmh->code == TVN_SELCHANGED) {
+        SendMessage(hwndTree1, WM_USER+0x19, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
+      }
+#endif//NSIS_SUPPORT_CODECALLBACKS
     }
   }
   if (uMsg == WM_COMMAND)
