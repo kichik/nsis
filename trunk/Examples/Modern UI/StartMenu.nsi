@@ -95,6 +95,8 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\${TEMP1}" ;Only if empty, so it won't delete other shortcuts
 
   RMDir "$INSTDIR"
+  
+  DeleteRegValue HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
 
   ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER
