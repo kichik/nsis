@@ -2443,14 +2443,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[4]=line.gettoken_int(5,&s)&0xff;
       if (!s)
       {
-        if (line.getnumtokens() > 5)
+        if (line.getnumtokens() > 5 && *line.gettoken_str(5))
         {
           ERROR_MSG("CreateShortCut: cannot interpret icon index\n");
           PRINTHELP()
         }
         ent.offsets[4]=0;
       }
-      if (line.getnumtokens() > 6)
+      if (line.getnumtokens() > 6 && *line.gettoken_str(6))
       {
         int tab[3]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINNOACTIVE/*SW_SHOWMINIMIZED doesn't work*/};
         int a=line.gettoken_enum(6,"SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0");
