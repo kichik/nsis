@@ -3978,6 +3978,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILE:
 #ifdef NSIS_SUPPORT_FILE
       {
+        set<string> excluded;
         int a=1,attrib=0,rec=0,fatal=1;
         if (!stricmp(line.gettoken_str(a),"/nonfatal")) {
           fatal=0;
@@ -4028,8 +4029,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           return PS_OK;
         }
+        if (!strnicmp(line.gettoken_str(a),"/x",2))
+        {
+          while (!strnicmp(line.gettoken_str(a),"/x",2))
+          {
+            a++;
+
+            if (line.getnumtokens() < a+1) PRINTHELP()
+
+            excluded.insert(line.gettoken_str(a));
+            a++;
+          }
+        }
 #ifdef _WIN32
-        else if (line.gettoken_str(a)[0] == '/') PRINTHELP()
+        if (line.gettoken_str(a)[0] == '/') PRINTHELP()
 #endif
         if (line.getnumtokens()<a+1) PRINTHELP()
         while (a < line.getnumtokens())
@@ -4047,10 +4060,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
           int tf=0;
 #ifdef _WIN32
-          int v=do_add_file(t, attrib, rec, &tf, NULL, which_token == TOK_FILE);
+          int v=do_add_file(t, attrib, rec, &tf, NULL, which_token == TOK_FILE, NULL, excluded);
 #else
           char *fn = my_convert(t);
-          int v=do_add_file(fn, attrib, rec, &tf, NULL, which_token == TOK_FILE);
+          int v=do_add_file(fn, attrib, rec, &tf, NULL, which_token == TOK_FILE, NULL, excluded);
           my_convert_free(fn);
 #endif
           if (v != PS_OK) return v;
@@ -5554,7 +5567,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, string& basedir)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, const set<string>& excluded, string& basedir)
 {
   assert(!name_override || !recurse);
 
@@ -5573,6 +5586,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
   }
 
   dir_reader *dr = new_dir_reader();
+  dr->exclude(excluded);
   dr->read(dir);
 
   dir_reader::iterator files_itr = dr->files().begin();
@@ -5636,7 +5650,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
 
       const char *new_spec_c = new_spec.c_str();
       
-      if (do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, new_dir) != PS_OK) {
+      if (do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir) != PS_OK) {
         delete dr;
         return PS_ERROR;
       }
