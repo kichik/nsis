@@ -48,7 +48,7 @@ char *GetResultStr(SystemProc *proc)
 
 PLUGINFUNCTION(Get)
 {
-    SystemProc *proc = PrepareProc();
+    SystemProc *proc = PrepareProc(FALSE);
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
         // Always return flag set -> return separate proc and result
@@ -72,7 +72,7 @@ PLUGINFUNCTION(Get)
 PLUGINFUNCTION(Call)
 {
     // Prepare input
-    SystemProc *proc = PrepareProc();
+    SystemProc *proc = PrepareProc(TRUE);
     if (proc->ProcResult != PR_CALLBACK)
         ParamAllocate(proc);
     ParamsIn(proc);
@@ -184,7 +184,7 @@ __int64 GetIntFromString(char **p)
     return myatoi(buffer);
 }
 
-SystemProc *PrepareProc()
+SystemProc *PrepareProc(BOOL NeedForCall)
 {
     int SectionType = PST_PROC, // First section is always proc spec
         ProcType = PT_NOTHING, // Default proc spec
@@ -242,12 +242,18 @@ SystemProc *PrepareProc()
                     // Is it previous proc or just unknown proc?
                     if (cb != cbuf)
                     {
+                        // Previous proc (for clear up)
+                        SystemProc *pr = NULL;
+
                         if (proc != NULL) GlobalFree(proc);
                         // Get already defined proc                                      
                         proc = (SystemProc *) myatoi(cbuf);
 
                         // Find the last clone at proc queue
-                        while (proc->Clone != NULL) proc = proc->Clone;
+                        while (proc->Clone != NULL) proc = (pr = proc)->Clone;
+
+                        // Clear parents record for child callback proc
+                        if (pr != NULL) pr->Clone = NULL;
 
                         // Never Redefine?
                         if ((proc->Options & POPT_NEVERREDEF) != 0)
@@ -364,15 +370,17 @@ SystemProc *PrepareProc()
                 }
                 break;
 
-            case '\"': case '\'': case '\`':
+            case '\"': case '\'': case '`':
                 // Character inline
                 {
                     char start = *ib;
                     cb = cbuf;
                     // copy inline
-                    while ((*(++ib) != start) && (*ib))
-                        if (*ib == '\\') *(cb++) = *(++ib);
-                        else *(cb++) = *(ib);
+                    while (!((*(++ib) == start) && (*(ib+1) != start)) && (*ib))
+                    {
+                        if ((*ib) == start) ++ib;
+                        *(cb++) = *(ib);
+                    }
                     // finish and save
                     *cb = 0; 
                     temp4 = (int) AllocStr(cbuf);
@@ -400,7 +408,7 @@ SystemProc *PrepareProc()
                 proc->Params[ParamIndex].Size = // If pointer, then 1, else by type
                     (temp == -1)?(1):((ParamSizeByType[temp2]>0)?(ParamSizeByType[temp2]):(1));
                 // Get the parameter real special option value
-                if (temp == 1) temp = (int) GetIntFromString(&ib);
+                if (temp == 1) temp = ((int) GetIntFromString(&ib)) + 1;
                 proc->Params[ParamIndex].Option = temp;
                 proc->Params[ParamIndex].Value = 0;
                 proc->Params[ParamIndex].Input = IOT_NONE;
@@ -516,7 +524,9 @@ void ParamAllocate(SystemProc *proc)
 
     for (i = 0; i <= proc->ParamCount; i++)
         if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
+        {
             proc->Params[i].Value = (int) GlobalAlloc(GPTR, ParamSizeByType[proc->Params[i].Type]);
+        }
 }
 
 void ParamsIn(SystemProc *proc)
@@ -528,14 +538,16 @@ void ParamsIn(SystemProc *proc)
     do
     {
         // Step 1: retrive value
-        if (proc->Params[i].Input == IOT_NONE) realbuf = AllocStr("");
+        if ((proc->Params[i].Input == IOT_NONE) || (proc->Params[i].Input == IOT_INLINE)) 
+            realbuf = AllocStr("");
         else if (proc->Params[i].Input == IOT_STACK) realbuf = popstring();
-        else if ((proc->Params[i].Input > 0) && (proc->Params[i].Input <= __INST_LAST)) realbuf = getuservariable(proc->Params[i].Input - 1);
+        else if ((proc->Params[i].Input > 0) && (proc->Params[i].Input <= __INST_LAST)) 
+            realbuf = getuservariable(proc->Params[i].Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
             realbuf = (char*) proc->Params[i].Input;
-            proc->Params[i].Input = 0;
+            proc->Params[i].Input = IOT_INLINE;
         }
 
         // Retreive pointer to place
@@ -580,7 +592,13 @@ void ParamsDeAllocate(SystemProc *proc)
 
     for (i = proc->ParamCount; i >= 0; i--)
         if (((HANDLE) proc->Params[i].Value != NULL) && (proc->Params[i].Option == -1))
-            GlobalFree((HANDLE) proc->Params[i].Value);
+        {
+#ifndef _DEBUG
+            // I see no point for error debug version gives here
+            GlobalFree((HANDLE) (proc->Params[i].Value));
+#endif
+            proc->Params[i].Value = (int) NULL;
+        }
 }
 
 void ParamsOut(SystemProc *proc)
@@ -782,16 +800,11 @@ SystemProc __declspec(naked) *RealCallBack()
     }
 
     // Find last unused clone
-    while ((proc->ProcResult != PR_OK) && (proc->Clone != NULL)) proc = proc->Clone;
-    // Unused?
-    if (proc->ProcResult != PR_OK) 
-    {
-        // Callback already used, create new
-        // 2. Create new clone
-        proc = (proc->Clone = GlobalCopy(proc));
-        // 3. Set clone option
-        proc->Options |= POPT_CLONE;
-    }
+    while ((proc->Clone != NULL)) proc = proc->Clone;
+    // 2. Create new clone
+    proc = (proc->Clone = GlobalCopy(proc));
+    // 3. Set clone option
+    proc->Options |= POPT_CLONE;
 
     // Read arguments
     proc->ArgsSize = 0;
@@ -863,6 +876,9 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
     // Right return statement address
     retaddr = (HANDLE) retexpr;
 
+    // Remove unneeded callback proc
+    GlobalFree((HANDLE) proc);
+
     _asm
     {
         // Prepare return
@@ -919,22 +935,22 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
 void CallStruct(SystemProc *proc)
 {
-    int i, size = 0;
+    int i, structsize = 0, size = 0;
     char *st, *ptr;
+
+    // Calculate the structure size 
+    for (i = 1; i <= proc->ParamCount; i++)
+        if (proc->Params[i].Option < 1)
+            structsize += proc->Params[i].Size * 4;
+        else
+            structsize += proc->Params[i].Option-1;
 
     // Struct exists?
     if (proc->Proc == NULL)
-    {
-        // No. Calculate the size and create
-        for (i = 1; i <= proc->ParamCount; i++)
-            if (proc->Params[i].Option < 1)
-                size += proc->Params[i].Size * 4;
-            else
-                size += proc->Params[i].Option;
-
-        // Allocate struct memory
-        proc->Proc = (HANDLE) GlobalAlloc(GPTR, size);
-    }
+        // No. Allocate struct memory
+        proc->Proc = (HANDLE) GlobalAlloc(GPTR, structsize);
+    else  // In case of zero size defined structure use mapped size 
+        if (structsize == 0) structsize = (int) GlobalSize((HANDLE) proc->Proc);
     
     // Pointer to current data
     st = (char*) proc->Proc;
@@ -950,12 +966,29 @@ void CallStruct(SystemProc *proc)
         }
         else
         {
+            int intmask[4] = {0xFFFFFFFF, 0x000000FF, 0x0000FFFF, 0x00FFFFFF};
+
             // Special
-            size = proc->Params[i].Option;
+            size = proc->Params[i].Option-1;
+
             switch (proc->Params[i].Type)
             {
             case PAT_VOID: ptr = NULL; break;
-            case PAT_INT: ptr = (char*) &(proc->Params[i].Value); break;
+            case PAT_INT: 
+                // clear unused value bits
+                proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
+                // pointer
+                ptr = (char*) &(proc->Params[i].Value); 
+                break;
+            case PAT_LONG: 
+                // real structure size
+                proc->Params[i].Value = structsize;
+                proc->Params[i]._value = 0;
+                // clear unused value bits
+                proc->Params[i].Value &= intmask[((size >= 0) && (size < 4))?(size):(0)];
+                // pointer
+                ptr = (char*) &(proc->Params[i].Value); 
+                break;
             case PAT_STRING: ptr = (char*) proc->Params[i].Value; break;
             }
         }

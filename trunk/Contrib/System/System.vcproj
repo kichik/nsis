@@ -87,7 +87,7 @@
 				OutputFile="$(OutDir)/System.dll"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="TRUE"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				GenerateMapFile="TRUE"
 				MapExports="TRUE"
 				SubSystem="2"

@@ -3,6 +3,14 @@
 #include "System.h"
 #include "Buffers.h"
 
+typedef struct tagTempStack TempStack;
+typedef struct tagTempStack
+{
+    TempStack *Next;
+    char Data[0];
+} TempStack;
+TempStack *tempstack = NULL;
+
 PLUGINFUNCTIONSHORT(Alloc)
 {
 	int size;
@@ -27,10 +35,10 @@ PLUGINFUNCTIONSHORT(Copy)
     if (str[0] == '/')
     {
         size = (int) myatoi(str+1);
-        dest = popint();
+        dest = (HANDLE) popint();
     }
     else dest = (HANDLE) myatoi(str+1);
-    source = popint();
+    source = (HANDLE) popint();
 
     // Ok, check the size
     if (size == 0) size = (int) GlobalSize(source);
@@ -46,36 +54,53 @@ PLUGINFUNCTIONEND
 
 PLUGINFUNCTIONSHORT(Free)
 {
-	char *str;
-    // Get the string
-	if ((str = popstring()) == NULL) return;
-    // Check for callback clear
-    if (lstrcmpi(str,"/callback") == 0)
-    {
-        SystemProc *proc, *next;
-	    next = (SystemProc*) popint();
-        // Clear all the clone queue of callback
-        while ((proc = next) != NULL)
-        {
-            next = proc->Clone;
-            GlobalFree((HANDLE)proc);
-        }
-    }
-    else
-        GlobalFree((HANDLE) myatoi(str)); 
-    GlobalFree(str);
+    GlobalFree((HANDLE) popint());
 }
 PLUGINFUNCTIONEND
 
-char *copymem(char *output, char *input, int size)
+PLUGINFUNCTION(Store)
 {
-    char *out = output;
-    while (size-- > 0) *(out++) = *(input++);
-    return output;
-}
+    TempStack *tmp;
+    int size = ((INST_R9+1)*g_stringsize);    
 
-HANDLE GlobalCopy(HANDLE Old)
-{
-	SIZE_T size = GlobalSize(Old);
-    return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
+    char *command, *cmd = command = popstring();
+    while (*cmd != 0)
+    {
+        switch (*(cmd++))
+        {
+        case 's':
+        case 'S':
+            // Store the whole variables range
+            tmp = (TempStack*) GlobalAlloc(GPTR, sizeof(TempStack)+size);
+            tmp->Next = tempstack;
+            tempstack = tmp;
+
+            // Fill with data
+            copymem(tempstack->Data, g_variables, size);
+            break;
+        case 'l':
+        case 'L':
+            // Fill with data
+            copymem(g_variables, tempstack->Data, size);
+
+            // Restore stack
+            tmp = tempstack->Next;
+            GlobalFree((HANDLE) tempstack);
+            tempstack = tmp;
+            break;
+        case 'P':
+            *cmd += 10;
+        case 'p':
+            GlobalFree((HANDLE) pushstring(getuservariable(*(cmd++)-'0')));
+            break;
+        case 'R':
+            *cmd += 10;
+        case 'r':
+            GlobalFree((HANDLE) setuservariable(*(cmd++)-'0', popstring()));
+            break;
+        }
+    }
+
+    GlobalFree((HANDLE) command);
 }
+PLUGINFUNCTIONEND

@@ -45,18 +45,20 @@ __INST_LAST
 #define PLUGINFUNCTIONSHORT(name) void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) { \
   g_stringsize=string_size; \
   g_stacktop=stacktop; 
-#define PLUGINFUNCTIONEND }
 
 extern char *AllocStr(char *str);
 extern void myitoa64(__int64 i, char *buffer);
 extern char *AllocString();
 extern char *getuservariable(int varnum);
-extern void setuservariable(int varnum, char *var);
+extern char *setuservariable(int varnum, char *var);
 extern char* popstring();  // NULL - stack empty
 extern char* pushstring(char *str);
 extern __int64 myatoi(char *s);
 extern int popint();  // -1 -> stack empty
 extern void pushint(int value);
+
+extern HANDLE GlobalCopy(HANDLE Old);
+extern char *copymem(char *output, char *input, int size);
 
 extern HWND g_hwndParent;
 extern int g_stringsize;
