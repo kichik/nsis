@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.65
+;Compatible with Modern UI 1.67
 
 ;Language: Swedish (1053)
 ;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
@@ -13,11 +13,11 @@
   !define MUI_TEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom installationen av $(^Name).\r\n\r\nDet är rekomenderat att du avslutar alla program innan du fortsätter installationen. Detta tillåter att installationen kan uppdatera vissa systemfiler utan att starta om din dator.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licensavtal"  
-  !define MUI_TEXT_LICENSE_SUBTITLE "Var vänlig läs igenom licensvilkoren innan du installerar $(^Name)."
+  !define MUI_TEXT_LICENSE_SUBTITLE "Var vänlig läs igenom licensvillkoren innan du installerar $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "Tryck Page Down för att se resten av licensavtalet."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Om du accepterar vilkoren i avtalet, klicka Jag Godkänner för att fortsätta. Du måste acceptera avtalet för att installera $(^Name)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Om du accepterar vilkoren i avtalet, klicka i checkrutan nedan. Du måste acceptera avtalet för att installera $(^Name). $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Om du accepterar vilkoren i avtalet, välj det första alternativet nedan. Du måste acceptera avtalet för att installera $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Om du accepterar villkoren i avtalet, klicka Jag Godkänner för att fortsätta. Du måste acceptera avtalet för att installera $(^Name)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. Du måste acceptera avtalet för att installera $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Om du accepterar villkoren i avtalet, välj det första alternativet nedan. Du måste acceptera avtalet för att installera $(^Name). $_CLICK"
   
   !define MUI_TEXT_COMPONENTS_TITLE "Välj komponenter"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Välj vilka alternativ av $(^Name) som du vill installera."
@@ -34,7 +34,7 @@
   !define MUI_TEXT_FINISH_SUBTITLE "Guiden avslutades korrekt."
   
   !define MUI_TEXT_ABORT_TITLE "Installationen avbröts"
-  !define MUI_TEXT_ABORT_SUBTITLE "Guiden geonomfördes inte korrekt."
+  !define MUI_TEXT_ABORT_SUBTITLE "Guiden genomfördes inte korrekt."
   
   !define MUI_BUTTONTEXT_FINISH "&Avsluta"
   !define MUI_TEXT_FINISH_INFO_TITLE "Avslutar installationsguiden för $(^Name)."
@@ -53,8 +53,23 @@
   !define MUI_TEXT_ABORTWARNING "Är du säker på att du vill avbryta installationen av $(^Name)?"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Välkommen till avinstallationsguiden för $(^Name)."
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom avinstallationen av $(^Name).\r\n\r\nInnan du startar avinstallationen, försäkra dig om att $(^Name) inte körs.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Avinstallera $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Ta bort $(^Name) från din dator."
+
+  !define MUI_UNTEXT_LICENSE_TITLE "Licensavtal"
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Var vänlig läs igenom licensvillkoren innan du avinstallerar $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Om du accepterar villkoren i avtalet, klicka Jag Godkänner för att fortsätta. Du måste acceptera avtalet för att avinstallera $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Om du accepterar villkoren i avtalet, klicka i checkrutan nedan. Du måste acceptera avtalet för att avinstallera $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Om du accepterar villkoren i avtalet, välj det första alternativet nedan. Du måste acceptera avtalet för att avinstallera $(^Name). $_CLICK"
+
+  !define MUI_UNTEXT_COMPONENTS_TITLE "Välj komponenter"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Välj vilka alternativ av $(^Name) som du vill avinstallera."
+
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Välj avinstallationsväg"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Välj katalog att avinstallera $(^Name) från."
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Avinstallerar"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Var vänlig vänta medan $(^Name) avinstalleras."
