@@ -101,12 +101,14 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
       g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
       if (g_hbm) 
       {
+        HWND myWnd;
+
         PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME|SND_NODEFAULT);
 
-        CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
+        myWnd = CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
           0,0,0,0,0,(HWND)hwndParent,NULL,g_hInstance,NULL);
 
-        while (GetMessage(&msg,NULL,0,0))
+        while (IsWindow(myWnd) && GetMessage(&msg,myWnd,0,0))
         {
           DispatchMessage(&msg);
         }
