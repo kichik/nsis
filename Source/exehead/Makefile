@@ -29,7 +29,7 @@ ifeq "$(strip $(findstring i386pe,$(shell ld -V)))" ""
    chooseprefix = $(subst $(ccsuffix),,$(notdir $(call chooseexec,$(1))))
 
    EXESUFF =
-   POSSIBLE_CROSS_PREFIXES = mingw32- i586-mingw32msvc-
+   POSSIBLE_CROSS_PREFIXES = mingw32- i386-mingw32msvc- i486-mingw32msvc- i586-mingw32msvc- i686-mingw32msvc-
    CROSS_PREFIX := $(call chooseprefix,$(POSSIBLE_CROSS_PREFIXES))
 else
    CROSS_PREFIX =
