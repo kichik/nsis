@@ -17,7 +17,3 @@ EXAMPLES
 * write an advanced paging example showing multiple components page with multiple instfiles pages
 
 * language files auto updater
-
-NSIS
-
-* Include dirs
