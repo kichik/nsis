@@ -1,7 +1,6 @@
 ; waplugin.nsi
 ;
 ; This script will generate an installer that installs a Winamp 2 plug-in.
-; It also puts a license page on, for shits and giggles.
 ;
 ; This installer will automatically alert the user that installation was
 ; successful, and ask them whether or not they would like to make the 
