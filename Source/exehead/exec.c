@@ -1355,8 +1355,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (filebuf)
           {
             int fixoffs=0;
-            SetFilePointer(g_db_hFile,0,NULL,FILE_BEGIN);
-            ReadFile(g_db_hFile,(char*)filebuf,g_filehdrsize,&l,NULL);
+            SetSelfFilePointer(0,FILE_BEGIN);
+            ReadSelfFile((char*)filebuf,g_filehdrsize,&l);
             if (g_inst_header->uninstdata_offset != -1)
             {
               // Changed by Amir Szekely 11th July 2002
