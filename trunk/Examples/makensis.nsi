@@ -46,6 +46,10 @@ Section "NSIS Development System (required)" SecCore
   File ..\makensisw.exe
   File ..\makensis.htm
   File ..\license.txt
+  SetOutPath $INSTDIR\Docs
+  File ..\Docs\*.html
+  File ..\Docs\*.css
+  SetOutPath $INSTDIR
   SetOverwrite off
   File ..\nsisconf.nsi
 SectionEnd
@@ -514,6 +518,8 @@ Section Uninstall
   RMDir $SMPROGRAMS\NSIS
   Delete $DESKTOP\MakeNSIS.lnk
   Delete $INSTDIR\makensis*.exe
+  Delete $INSTDIR\Docs\*.html
+  Delete $INSTDIR\Docs\*.css
   Delete $INSTDIR\Bin\zip2exe.exe
   Delete $INSTDIR\Bin\installoptions.exe
   Delete $INSTDIR\Plugins\installoptions.dll
@@ -549,17 +555,12 @@ Section Uninstall
   Delete "$INSTDIR\Examples\Modern UI\Example.nsi"
   Delete "$INSTDIR\Examples\Modern UI\MultiLanguage.nsi"
   Delete "$INSTDIR\Examples\Modern UI\ModernUI.nsh"
-  Delete $INSTDIR\main.ico
-  Delete $INSTDIR\makensis-license.txt
-  Delete $INSTDIR\license.txt
-  Delete $INSTDIR\uninst.ico
-  Delete $INSTDIR\bitmap1.bmp
-  Delete $INSTDIR\bitmap2.bmp
   RMDir /r $INSTDIR\Source
   RMDir /r $INSTDIR\Bin
   RMDir /r $INSTDIR\Plugins
   RMDir /r "$INSTDIR\Examples\Modern UI"
   RMDir /r $INSTDIR\Examples
+  RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
   ; if $INSTDIR was removed, skip these next ones
