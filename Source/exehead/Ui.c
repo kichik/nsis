@@ -160,7 +160,7 @@ void NSISCALL build_g_logfile()
 static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   HTREEITEM hItem;
   int l=0;
-  section sec;
+  int *def_state;
 
   pItem->mask|=TVIF_PARAM;
 
@@ -168,17 +168,17 @@ static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   if (pItem->state >> 12 == 0)
     return;
 
-  sec=g_inst_section[pItem->lParam];
+  def_state=&g_inst_section[pItem->lParam].default_state;
 
-  if (iState < 3 && (sec.default_state & DFS_RO)) l=3;
+  if (iState < 3 && (*def_state & DFS_RO)) l=3;
 
   pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
   pItem->stateMask = TVIS_STATEIMAGEMASK;
 
-  if (!(sec.default_state & DFS_RO))
+  if (!(*def_state & DFS_RO))
   {
-    if (iState == 2) sec.default_state |= DFS_SET;
-    else sec.default_state &= ~DFS_SET;
+    if (iState == 2) *def_state |= DFS_SET;
+    else *def_state &= ~DFS_SET;
     TreeView_SetItem(hWnd, pItem);
   }
 
