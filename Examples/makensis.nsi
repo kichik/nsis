@@ -116,6 +116,7 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\WinMessages.nsh
   File ..\Include\Sections.nsh
   File ..\Include\UpgradeDLL.nsh
+  File ..\Include\LogicLib.nsh
 
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\contrib\makensisw\*.txt
@@ -186,6 +187,7 @@ Section "Script Examples" SecExample
   File ..\Examples\languages.nsi
   File ..\Examples\VersionInfo.nsi
   File ..\Examples\UserVars.nsi
+  File ..\Examples\LogicLib.nsi
 SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
