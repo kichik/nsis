@@ -13,7 +13,7 @@
 #include "../bzip2/bzlib.h"
 static int bz2_needreinit;
 #define z_stream bz_stream
-#define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return -1; }
+#define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return _LANG_INVALIDCRC; }
 #define inflate(x) BZ2_bzDecompress(x)
 #define inflateReset(x) { if (bz2_needreinit) { BZ2_bzDecompressEnd(x); inflateInit(x); } bz2_needreinit=1; }
 #define Z_OK BZ_OK
@@ -49,13 +49,13 @@ int NSISCALL isheader(firstheader *h)
 static z_stream g_inflate_stream;
 #endif
 
-int NSISCALL loadHeaders(void)
+const char * NSISCALL loadHeaders(void)
 {
   DWORD r;
   void *data;
   firstheader h;
 
-  if (!ReadFile(g_db_hFile,(LPVOID)&h,sizeof(h),&r,NULL) || r != sizeof(h) || !isheader(&h)) return -1;
+  if (!ReadFile(g_db_hFile,(LPVOID)&h,sizeof(h),&r,NULL) || r != sizeof(h) || !isheader(&h)) return _LANG_INVALIDCRC;
 
   data=(void*)my_GlobalAlloc(h.length_of_header);
 
@@ -72,8 +72,7 @@ int NSISCALL loadHeaders(void)
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE)
     {
-      my_MessageBox("Error writing temp file",MB_OK);
-      return -1;
+      return _LANG_ERRORWRITINGTEMP;
     }
   }
   dbd_srcpos=SetFilePointer(g_db_hFile,0,NULL,FILE_CURRENT);
@@ -83,9 +82,8 @@ int NSISCALL loadHeaders(void)
 
   if (GetCompressedDataFromDataBlockToMemory(-1,data,h.length_of_header) != h.length_of_header)
   {
-    my_MessageBox(_LANG_CANTOPENSELF,MB_OK);
     GlobalFree((HGLOBAL)data);
-    return -1;
+    return _LANG_INVALIDCRC;
   }
 
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
