@@ -36,15 +36,15 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         while (r.top < ry)
         {
           int rv,gv,bv;
-		      HBRUSH brush;
+          HBRUSH brush;
           rv = (GetRValue(c2) * r.top + GetRValue(c1) * (ry-r.top)) / ry;
           gv = (GetGValue(c2) * r.top + GetGValue(c1) * (ry-r.top)) / ry;
           bv = (GetBValue(c2) * r.top + GetBValue(c1) * (ry-r.top)) / ry;
-		      brush = CreateSolidBrush(RGB(rv,gv,bv));
-		      // note that we don't need to do "SelectObject(hdc, brush)"
-		      // because FillRect lets us specify the brush as a parameter.
-		      FillRect(hdc, &r, brush);
-		      DeleteObject(brush);
+          brush = CreateSolidBrush(RGB(rv,gv,bv));
+          // note that we don't need to do "SelectObject(hdc, brush)"
+          // because FillRect lets us specify the brush as a parameter.
+          FillRect(hdc, &r, brush);
+          DeleteObject(brush);
           r.top+=4;
           r.bottom+=4;
         }

@@ -828,7 +828,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               if (k != 4) {
                 lstrcpy(build_last_page_define, line.gettoken_str(5));
               }
-          	case 5:
+            case 5:
               if (*line.gettoken_str(4))
                 p.leavefunc = ns_func.add(line.gettoken_str(4),0);
             case 4:
@@ -868,7 +868,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
         switch (k) {
-        	case 0:
+          case 0:
             p.id = NSIS_PAGE_CUSTOM;
             build_custom_used++;
             break;
@@ -972,7 +972,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               if (k != 2) {
                 lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
               }
-          	case 5:
+            case 5:
               if (*line.gettoken_str(4)) {
                 if (strnicmp(line.gettoken_str(4),"un.",3)) {
                   ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
@@ -1037,7 +1037,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
         switch (k) {
-        	case 0:
+          case 0:
             p.id = NSIS_PAGE_CUSTOM;
             ubuild_custom_used++;
             break;
@@ -1143,7 +1143,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int err = update_bitmap(res_editor, IDB_BITMAP1, line.gettoken_str(1), 96, 16, 8);
         if (err) {
           switch (err) {
-          	case -1:
+            case -1:
               ERROR_MSG("Error: can't find bitmap\n");
               break;
             case -2:
@@ -1325,7 +1325,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (k < line.getnumtokens() - 2 - a) PRINTHELP()
 
       switch (line.getnumtokens()-a) {
-      	case 4:
+        case 4:
           SetString(line.gettoken_str(3+a), NLF_BTN_LICENSE_DISAGREE, 0, lang);
         case 3:
           SetString(line.gettoken_str(2+a), NLF_BTN_LICENSE_AGREE, 0, lang);
@@ -1341,7 +1341,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         free(dlg);
 
         switch (k) {
-        	case 0:
+          case 0:
             build_header.common.flags&=~CH_FLAGS_LICENSE_FORCE_SELECTION;
             dt.RemoveItem(IDC_LICENSEAGREE);
             dt.RemoveItem(IDC_LICENSEDISAGREE);
@@ -4599,7 +4599,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       return PS_ERROR;
 #endif//!NSIS_SUPPORT_CREATEFONT
 
-	  // Added by ramon 3 jun 2003
+    // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
     case TOK_DEFVAR:
     {
@@ -4609,7 +4609,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return make_sure_not_in_secorfunc(line.gettoken_str(0));    
 
 #else //NSIS_SUPPORT_NAMED_USERVARS
-	case TOK_DEFVAR:
+    case TOK_DEFVAR:
       ERROR_MSG("Error: %s specified, case NSIS_SUPPORT_NAMED_USERVARS not defined.\n",line.gettoken_str(0));
       return PS_ERROR;
 #endif //NSIS_SUPPORT_NAMED_USERVARS

@@ -457,7 +457,7 @@ typedef struct
 typedef struct
 {
   int which;
-  int offsets[MAX_ENTRY_OFFSETS];	// count and meaning of offsets depend on 'which'
+  int offsets[MAX_ENTRY_OFFSETS]; // count and meaning of offsets depend on 'which'
 } entry;
 
 enum
