@@ -1,5 +1,5 @@
 /*********************************************************************************
- * 
+ *
  *  InstallerOptions by Michael Bishop:
  *  InstallerOptions/DLL Version 1.2 beta
  *
@@ -10,7 +10,7 @@
  *   - to call now, use:
  *        Push $TEMP\inst.ini
  *        CallInstDLL $TEMP\mydll.dll dialog
- *        Pop $0 
+ *        Pop $0
  *         ($0 would be "success" "cancel" "back" or some other value on error.
  *   - new INI entries: [settings]\cancelconfirm (text to confirm cancel on cancel button click)
  *   - fixed some flag related bugs (multiple of them at 0x100 etc)
@@ -18,7 +18,7 @@
  *   - made it so that the file/dir requests automatically size the browse button in
  *   - removed a lot of code for the old style integration
  *   - removed support for silent installers (it seems the old version would bring up it's own dialog)
- *   
+ *
  *   - keyboard integration fixed
  *   - fixed issues with file open dialog too
  *
@@ -27,7 +27,7 @@
  *   - results are now read differently from the .ini file. Instead of [Results]\<number>,
  *     use [Field <number>]\State
  *
- *   - The state of checkboxes and radioboxes is now defined by State=. State=1 is checked, 
+ *   - The state of checkboxes and radioboxes is now defined by State=. State=1 is checked,
  *     State=0 (or no State=) is unchecked.
  *
  *   - The initial contents of edit controls and file/dir request controls is now defined by
@@ -61,7 +61,7 @@
  *  2. Altered source versions must be plainly marked as such, and must not be
  *     misrepresented as being the original software.
  *  3. This notice may not be removed or altered from any source distribution.
- * 
+ *
  **********************************************************************************/
 
 #include <windows.h>
@@ -159,8 +159,10 @@ char *STRDUP(const char *c)
 
 struct TableEntry {
   char *pszName;
-  int   nBitsToSet;
+  int   nValue;
 };
+
+int LookupToken(TableEntry*, char*);
 
 struct FieldType {
   char *pszText;
@@ -188,7 +190,7 @@ struct FieldType {
 
 // initial buffer size.  buffers will grow as required.
 // use a value larger than MAX_PATH to prevent need for excessive growing.
-#define MAX_BUFFER_LENGTH (300)  
+#define MAX_BUFFER_LENGTH (300)
 
 char szBrowseButtonCaption[] = "...";
 
@@ -202,7 +204,6 @@ char *pszCancelQuestionCaption = NULL;
 char *pszCancelButtonText = NULL;
 char *pszNextButtonText = NULL;
 char *pszBackButtonText = NULL;
-char *pszOldTitle   = NULL;
 unsigned int nCancelQuestionIcon = 0;
 BOOL bBackEnabled=FALSE;
 
@@ -212,14 +213,6 @@ int  bCancelShow=1;        // by ORTIM: 13-August-2002
 FieldType *pFields   = NULL;
 int nNumFields       = 0;
 int g_done;
-
-// will contain a count of the number of controls on the main NSIS window.
-unsigned int nNSISControlCount = 0;
-
-struct WindowEntry {
-  HWND hwnd;  
-  long nOldStyle;
-};
 
 
 // array of HWNDs and window styles used to make the main NSIS controls invisible while this program runs.
@@ -233,7 +226,7 @@ bool BrowseForFile(int nControlIdx) {
   hControl = pThisField->hwnd;
 
   ofn.Flags = pThisField->nFlags;
-  
+
 //  ofn.hInstance = m_hInstance;  // no templates so we can leave this at NULL;
   ofn.hwndOwner = hConfigWindow;
 //  ofn.lCustData = NULL;
@@ -246,9 +239,9 @@ bool BrowseForFile(int nControlIdx) {
 //  ofn.nMaxFileTitle = MAX_PATH;  // we ignore this for simplicity, leave lpstrFileTitle at NULL
 //  ofn.lpstrFileTitle = new char [ofn.nMaxFileTitle];
 
-  ofn.lpstrFilter = pThisField->pszFilter;      // TODO: implement this 
+  ofn.lpstrFilter = pThisField->pszFilter;      // TODO: implement this
 //  ofn.lpstrInitialDir = NULL;  // for now, just use the default initial directory.
-//  ofn.lpstrTitle = NULL;      // TODO: implement this 
+//  ofn.lpstrTitle = NULL;      // TODO: implement this
 //  ofn.lpTemplateName = NULL;
   ofn.lStructSize = sizeof(ofn);
 //  ofn.nFileExtension     // this is output variable, leave it to 0 for now.
@@ -268,7 +261,7 @@ bool BrowseForFile(int nControlIdx) {
       SetWindowText(hControl, ofn.lpstrFile);
       return true;
     }
-    // check this because the dialog will sometimes return this error just because a directory is specified 
+    // check this because the dialog will sometimes return this error just because a directory is specified
     // instead of a filename.  in this case, try it without the initial filename and see if that works.
 //    if (*(ofn.lpstrFile)) { //&& (CommDlgExtendedError() == FNERR_INVALIDFILENAME)) {
   //    *(ofn.lpstrFile) = '\0';
@@ -284,7 +277,7 @@ bool BrowseForFile(int nControlIdx) {
 int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
    TCHAR szDir[MAX_PATH];
 
-   if (uMsg == BFFM_INITIALIZED) {  
+   if (uMsg == BFFM_INITIALIZED) {
       if (GetWindowText(pFields[(int)pData].hwnd, szDir, MAX_PATH) > 0) {
         SendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)szDir);
       }
@@ -296,18 +289,18 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
 bool BrowseForFolder(int nControlIdx) {
   BROWSEINFO bi={0,};
   HWND hControl;
-  
+
   hControl = pFields[nControlIdx].hwnd;
 
-  bi.hwndOwner = hConfigWindow; 
-  // bi.pidlRoot = NULL; 
-  bi.pszDisplayName = (char*)MALLOC(MAX_PATH); 
-  //LPCTSTR lpszTitle = NULL; 
-  bi.ulFlags = BIF_STATUSTEXT; 
-  bi.lpfn = BrowseCallbackProc; 
+  bi.hwndOwner = hConfigWindow;
+  // bi.pidlRoot = NULL;
+  bi.pszDisplayName = (char*)MALLOC(MAX_PATH);
+  //LPCTSTR lpszTitle = NULL;
+  bi.ulFlags = BIF_STATUSTEXT;
+  bi.lpfn = BrowseCallbackProc;
   bi.lParam = nControlIdx;
-  //bi.iImage = 0; 
-  
+  //bi.iImage = 0;
+
   if (pFields[nControlIdx].pszRoot) {
 	  LPSHELLFOLDER sf;
 	  ULONG eaten;
@@ -346,13 +339,13 @@ bool BrowseForFolder(int nControlIdx) {
 }
 
 bool ValidateFields() {
-  int nIdx;  
+  int nIdx;
   int nLength;
 
   // In the unlikely event we can't allocate memory, go ahead and return true so we can get out of here.
   // May cause problems for the install script, but no memory is problems for us.
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
-    // this if statement prevents a stupid bug where a min/max length is assigned to a label control 
+    // this if statement prevents a stupid bug where a min/max length is assigned to a label control
     //   where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
     if (pFields[nIdx].nType > FIELD_LABEL) {
       nLength = GetWindowTextLength(pFields[nIdx].hwnd);
@@ -377,7 +370,7 @@ bool SaveSettings(LPSTR pszFilename) {
   HWND hwnd;
   int nBufLen     = MAX_BUFFER_LENGTH;
   char *pszBuffer = (char*)MALLOC(nBufLen);
-  
+
   if (!pszBuffer) return false;
   for(nIdx = 0; nIdx < nNumFields; nIdx++) {
     hwnd = pFields[nIdx].hwnd;
@@ -431,7 +424,7 @@ bool SaveSettings(LPSTR pszFilename) {
           GetWindowText(hwnd, pszBuffer, nBufLen);
           break;
         }
-    }    
+    }
     WritePrivateProfileString(szField, "STATE", pszBuffer, pszFilename);
   }
 
@@ -441,11 +434,11 @@ bool SaveSettings(LPSTR pszFilename) {
 }
 
 void AddBrowseButtons() {
-  // this function loops through all the controls and if a filerequest or dirrequest 
+  // this function loops through all the controls and if a filerequest or dirrequest
   // control is found, then it adds the corresponding browse button.
   // NOTE: this also resizes the text box created to make room for the button.
   int nIdx;
-  int nWidth = 22;    
+  int nWidth = 22;
   FieldType *pNewField;
 
   for (nIdx = nNumFields - 1; nIdx >= 0; nIdx--) {
@@ -488,6 +481,18 @@ bool ReadSettings(LPSTR pszFilename) {
   char pszField[25];
   int nSize;
   int nIdx;
+  // Messagebox icon types
+  static TableEntry IconTable[] = {
+    { "MB_ICONEXCLAMATION", MB_ICONEXCLAMATION },
+    { "MB_ICONWARNING",     MB_ICONWARNING     },
+    { "MB_ICONINFORMATION", MB_ICONINFORMATION },
+    { "MB_ICONASTERISK",    MB_ICONASTERISK    },
+    { "MB_ICONQUESTION",    MB_ICONQUESTION    },
+    { "MB_ICONSTOP",        MB_ICONSTOP        },
+    { "MB_ICONERROR",       MB_ICONERROR       },
+    { "MB_ICONHAND",        MB_ICONHAND        },
+    { NULL,                 0                  }
+  };
 
   nSize = 1000;
   pszResult = (char*)MALLOC(nSize); // buffer to read from the file
@@ -501,22 +506,7 @@ bool ReadSettings(LPSTR pszFilename) {
   nResult = GetPrivateProfileString("Settings", "CancelConfirmCaption", "", pszResult, nSize, pszFilename);
   pszCancelQuestionCaption = (nResult > 0) ? strdup(pszResult) : NULL;
   nResult = GetPrivateProfileString("Settings", "CancelConfirmIcon", "", pszResult, nSize, pszFilename);
-  if (!lstrcmpi(pszResult, "MB_ICONEXCLAMATION"))
-    nCancelQuestionIcon = MB_ICONEXCLAMATION;
-  else if (!lstrcmpi(pszResult, "MB_ICONWARNING"))
-    nCancelQuestionIcon = MB_ICONWARNING;
-  else if (!lstrcmpi(pszResult, "MB_ICONINFORMATION"))
-    nCancelQuestionIcon = MB_ICONINFORMATION;
-  else if (!lstrcmpi(pszResult, "MB_ICONASTERISK"))
-    nCancelQuestionIcon = MB_ICONASTERISK;
-  else if (!lstrcmpi(pszResult, "MB_ICONQUESTION"))
-    nCancelQuestionIcon = MB_ICONQUESTION;
-  else if (!lstrcmpi(pszResult, "MB_ICONSTOP"))
-    nCancelQuestionIcon = MB_ICONSTOP;
-  else if (!lstrcmpi(pszResult, "MB_ICONERROR"))
-    nCancelQuestionIcon = MB_ICONERROR;
-  else if (!lstrcmpi(pszResult, "MB_ICONHAND"))
-    nCancelQuestionIcon = MB_ICONHAND;
+  nCancelQuestionIcon = LookupToken(IconTable, pszResult);
 
   nResult = GetPrivateProfileString("Settings", "CancelButtonText", "", pszResult, nSize, pszFilename);
   pszCancelButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
@@ -524,13 +514,13 @@ bool ReadSettings(LPSTR pszFilename) {
   pszNextButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
   nResult = GetPrivateProfileString("Settings", "BackButtonText", "", pszResult, nSize, pszFilename);
   pszBackButtonText = (nResult > 0) ? strdup(pszResult) : NULL;
-  
+
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
 
   bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 1, pszFilename);  // by ORTIM: 13-August-2002
   bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 1, pszFilename);        // by ORTIM: 13-August-2002
-  
+
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
     // the structure is small enough that this won't waste much memory.
@@ -539,39 +529,54 @@ bool ReadSettings(LPSTR pszFilename) {
   }
 
   for(nIdx = 0; nIdx < nNumFields; nIdx++) {
-    wsprintf(pszField, "field %d", nIdx + 1);
+    // Control types
+    static TableEntry TypeTable[] = {
+      { "LABEL",       FIELD_LABEL       },
+      { "TEXT",        FIELD_TEXT        },
+      { "PASSWORD",    FIELD_TEXT        },
+      { "LISTBOX",     FIELD_LISTBOX     },
+      { "COMBOBOX",    FIELD_COMBOBOX    },
+      { "DROPLIST",    FIELD_COMBOBOX    },
+      { "FILEREQUEST", FIELD_FILEREQUEST },
+      { "DIRREQUEST",  FIELD_DIRREQUEST  },
+      { "CHECKBOX",    FIELD_CHECKBOX    },
+      { "RADIOBUTTON", FIELD_RADIOBUTTON },
+      { "ICON",        FIELD_ICON        },
+      { "BITMAP",      FIELD_BITMAP      },
+      { NULL,          0                 }
+    };
+    // Control flags
+    static TableEntry FlagTable[] = {
+      { "FILE_MUST_EXIST",   OFN_FILEMUSTEXIST   },
+      { "PATH_MUST_EXIST",   OFN_PATHMUSTEXIST   },
+      { "WARN_IF_EXIST",     OFN_OVERWRITEPROMPT },
+      { "PROMPT_CREATE",     OFN_CREATEPROMPT    },
+      { "RIGHT",             FLAG_RIGHT          },
+      { "PASSWORD",          FLAG_PASSWORD       },
+      { "DROPLIST",          FLAG_DROPLIST       },
+      { "MULTISELECT",       FLAG_MULTISELECT    },
+      { "FILE_EXPLORER",     OFN_EXPLORER        },
+      { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
+/*
+      { "NO_ALPHA",          0                   },
+      { "NO_NUMBERS",        0                   },
+      { "NO_SYMBOLS",        0                   },
+      { "BOLD",              FLAG_BOLD           },
+*/
+      { NULL,                0                   }
+    };
 
+    wsprintf(pszField, "field %d", nIdx + 1);
     *pszResult = '\0';
     nResult = GetPrivateProfileString(pszField, "TYPE", "", pszResult, nSize, pszFilename);
-    if (!stricmp(pszResult, "LABEL")) {
-      pFields[nIdx].nType = FIELD_LABEL;
-    } else if (!stricmp(pszResult, "TEXT")) {
-      pFields[nIdx].nType = FIELD_TEXT;
-    } else if (!stricmp(pszResult, "PASSWORD")) {
-      pFields[nIdx].nType = FIELD_TEXT;
-      pFields[nIdx].nFlags |= FLAG_PASSWORD;
-    } else if (!stricmp(pszResult, "LISTBOX")) {
-      pFields[nIdx].nType = FIELD_LISTBOX;
-    } else if (!stricmp(pszResult, "COMBOBOX")) {
-      pFields[nIdx].nType = FIELD_COMBOBOX;
-    } else if (!stricmp(pszResult, "DROPLIST")) {
-      pFields[nIdx].nType = FIELD_COMBOBOX;
-      pFields[nIdx].nFlags |= FLAG_DROPLIST;
-    } else if (!stricmp(pszResult, "FILEREQUEST")) {
-      pFields[nIdx].nType = FIELD_FILEREQUEST;
-    } else if (!stricmp(pszResult, "DIRREQUEST")) {
-      pFields[nIdx].nType = FIELD_DIRREQUEST;
-    } else if (!stricmp(pszResult, "CHECKBOX")) {
-      pFields[nIdx].nType = FIELD_CHECKBOX;
-    } else if (!stricmp(pszResult, "RADIOBUTTON")) {
-      pFields[nIdx].nType = FIELD_RADIOBUTTON;
-    } else if (!stricmp(pszResult, "ICON")) {
-      pFields[nIdx].nType = FIELD_ICON;
-    } else if (!stricmp(pszResult, "BITMAP")) {
-      pFields[nIdx].nType = FIELD_BITMAP;
-    } else {
+
+    // Get the control type
+    pFields[nIdx].nType = LookupToken(TypeTable, pszResult);
+    if (!pFields[nIdx].nType)
       continue;
-    }
+
+    // Lookup flags associated with the control type
+    pFields[nIdx].nFlags |= LookupToken(FlagTable, pszResult);
 
     nResult = GetPrivateProfileString(pszField, "TEXT", "", pszResult, nSize, pszFilename);
     if (nResult) {
@@ -590,7 +595,7 @@ bool ReadSettings(LPSTR pszFilename) {
       // add an extra | character to the end to simplify the loop where we add the items.
       pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
       wsprintf(pFields[nIdx].pszListItems, "%s|", pszResult);
-    }    
+    }
     pFields[nIdx].nMaxLength = GetPrivateProfileInt(pszField, "MaxLen", 0, pszFilename);
     pFields[nIdx].nMinLength = GetPrivateProfileInt(pszField, "MinLen", 0, pszFilename);
 
@@ -622,37 +627,13 @@ bool ReadSettings(LPSTR pszFilename) {
       while (*pszPos) {
         if (*pszPos == '|') *pszPos = '\0';
         pszPos++;
-      } 
-    }    
+      }
+    }
 
     pFields[nIdx].rect.left = GetPrivateProfileInt(pszField, "LEFT", 0, pszFilename);
     pFields[nIdx].rect.right = GetPrivateProfileInt(pszField, "RIGHT", 0, pszFilename);
     pFields[nIdx].rect.top = GetPrivateProfileInt(pszField, "TOP", 0, pszFilename);
     pFields[nIdx].rect.bottom = GetPrivateProfileInt(pszField, "BOTTOM", 0, pszFilename);
-  
-    TableEntry FlagTable[] = {
-      { "FILE_MUST_EXIST", OFN_FILEMUSTEXIST   },
-      { "PATH_MUST_EXIST", OFN_PATHMUSTEXIST   },
-      { "WARN_IF_EXIST",   OFN_OVERWRITEPROMPT },
-      { "PROMPT_CREATE",   OFN_CREATEPROMPT    },
-      
-      { "RIGHT"        ,   FLAG_RIGHT          },
-
-      { "PASSWORD"     ,   FLAG_PASSWORD       },
-      { "DROPLIST"     ,   FLAG_DROPLIST       },
-
-      { "MULTISELECT"  ,   FLAG_MULTISELECT    },
-      { "FILE_EXPLORER",     OFN_EXPLORER      },
-      { "FILE_HIDEREADONLY", OFN_HIDEREADONLY  },
-
-/*
-      { "NO_ALPHA",        0                   },
-      { "NO_NUMBERS",      0                   },
-      { "NO_SYMBOLS",      0                   },
-      { "BOLD",            FLAG_BOLD           },
-*/
-      { NULL,              0                   }
-    };
 
     nResult = GetPrivateProfileString(pszField, "flags", "", pszResult, nSize, pszFilename);
     if (nResult > 0) {
@@ -671,14 +652,7 @@ bool ReadSettings(LPSTR pszFilename) {
               // v1.3 converted this to a table lookup.
               // I think it's a bit larger now, but we can
               //   add new flags with very little overhead.
-              int nFlagIdx = 0;
-              while (FlagTable[nFlagIdx].pszName != NULL) {
-                if (!stricmp(FlagTable[nFlagIdx].pszName, pszStart)) {
-                  pFields[nIdx].nFlags |= FlagTable[nFlagIdx].nBitsToSet;
-                  break;
-                }
-                nFlagIdx++;
-              }
+              pFields[nIdx].nFlags |= LookupToken(FlagTable, pszStart);
             }
           }
           // jump to the next item, skip any redundant | characters
@@ -686,7 +660,7 @@ bool ReadSettings(LPSTR pszFilename) {
           pszStart = pszEnd;
         }
         pszEnd++;
-      }          
+      }
     }
 
     pFields[nIdx].nControlID = 1200 + nIdx;
@@ -743,16 +717,16 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 int g_is_cancel,g_is_back;
 
 
-BOOL CALLBACK cfgDlgProc(HWND   hwndDlg, 
-								 UINT   uMsg,    
+BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
+								 UINT   uMsg,
 								 WPARAM wParam,
 								 LPARAM lParam)
 {
   switch (uMsg)
   {
-    HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);  
+    HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
     return 0;
-    case WM_USER+666: 
+    case WM_USER+666:
       if (lParam != IDCANCEL || !pszCancelQuestion || MessageBox(hwndDlg,pszCancelQuestion,pszCancelQuestionCaption?pszCancelQuestionCaption:"Question",MB_YESNO|nCancelQuestionIcon)==IDYES)
       {
         if (lParam == IDCANCEL || lParam == 3 || ValidateFields()) {
@@ -771,7 +745,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 
 
 
-extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size, 
+extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
                                       char *variables, stack_t **stacktop)
 {
   hMainWindow=hwndParent;
@@ -782,7 +756,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   int nIdx;
   UINT nAddMsg;
 
-  if (!hMainWindow) 
+  if (!hMainWindow)
   {
     popstring(NULL);
     pushstring("error finding mainwnd");
@@ -790,14 +764,14 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   }
   HWND childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
   if (!childwnd) childwnd=GetDlgItem(hMainWindow,1018);
-  if (!childwnd) 
+  if (!childwnd)
   {
     popstring(NULL);
     pushstring("error finding childwnd");
     return;
   }
 
-  if (!*stacktop || !(*stacktop)->text[0] || !ReadSettings((*stacktop)->text)) 
+  if (!*stacktop || !(*stacktop)->text[0] || !ReadSettings((*stacktop)->text))
   {
     popstring(NULL);
     pushstring("error finding config");
@@ -817,7 +791,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   static char old_back[256];
   GetDlgItemText(hMainWindow,3,old_back,sizeof(old_back));
   if (pszBackButtonText) SetDlgItemText(hMainWindow,3,pszBackButtonText);
-  
+
 
   int old_back_enabled=!EnableWindow(GetDlgItem(hMainWindow,3),bBackEnabled);
   int old_back_visible=IsWindowVisible(GetDlgItem(hMainWindow,3));
@@ -877,7 +851,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
       case FIELD_FILEREQUEST:
       case FIELD_DIRREQUEST:
         pFields[nIdx].rect.right-=25;
-      case FIELD_TEXT:        
+      case FIELD_TEXT:
         if (pFields[nIdx].nFlags & FLAG_PASSWORD) {
           dwStyle = WS_VISIBLE | WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL | ES_PASSWORD;
         } else {
@@ -887,7 +861,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
         strcpy(szFieldClass, "EDIT");
         title=pFields[nIdx].pszState;
         break;
-      case FIELD_COMBOBOX:        
+      case FIELD_COMBOBOX:
         if (pFields[nIdx].nFlags & FLAG_DROPLIST) {
           dwStyle = CBS_DROPDOWNLIST | WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CBS_AUTOHSCROLL | CBS_HASSTRINGS;
         } else {
@@ -966,10 +940,10 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
         switch (pFields[nIdx].nType) {
           case FIELD_TEXT:
           case FIELD_DIRREQUEST:
-          case FIELD_FILEREQUEST:          
+          case FIELD_FILEREQUEST:
             SendMessage(pFields[nIdx].hwnd, EM_LIMITTEXT, (WPARAM)pFields[nIdx].nMaxLength, (LPARAM)0);
             break;
-        } 
+        }
       }
       if ((pFields[nIdx].nType == FIELD_CHECKBOX) || (pFields[nIdx].nType == FIELD_RADIOBUTTON)) {
         if (pFields[nIdx].pszState[0] == '1')
@@ -977,7 +951,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
           SendMessage(pFields[nIdx].hwnd, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
         }
       } else if (
-                 ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)) || 
+                 ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)) ||
                  ((pFields[nIdx].nType == FIELD_LISTBOX ) && (nAddMsg = LB_ADDSTRING))
                  ) {
         // if this is a listbox or combobox, we need to add the list items.
@@ -1117,4 +1091,11 @@ char *getuservariable(int varnum)
   return g_variables+varnum*g_stringsize;
 }
 
+int LookupToken(TableEntry* psTable_, char* pszToken_)
+{
+  for (int i = 0; psTable_[i].pszName; i++)
+    if (!stricmp(pszToken_, psTable_[i].pszName))
+      return psTable_[i].nValue;
+  return 0;
+}
 
