@@ -561,7 +561,10 @@
     !verbose 3
   !endif
 
-  !define MUI_WELCOMEPAGE
+  !ifndef MUI_WELCOMEPAGE
+    !define MUI_WELCOMEPAGE
+  !endif
+  
   Page custom mui.Welcome "" "" "MUI_INSTALLBUTTON_WELCOME"
   
   !ifndef MUI_MANUALVERBOSE
@@ -576,7 +579,10 @@
     !verbose 3
   !endif
 
-  !define MUI_LICENSEPAGE
+  !ifndef MUI_LICENSEPAGE
+    !define MUI_LICENSEPAGE
+  !endif
+  
   Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave "MUI_INSTALLBUTTON_LICENSE"
   
   !ifndef MUI_MANUALVERBOSE
@@ -591,7 +597,10 @@
     !verbose 3
   !endif
 
-  !define MUI_COMPONENTSPAGE
+  !ifndef MUI_COMPONENTSPAGE
+    !define MUI_COMPONENTSPAGE
+  !endif
+  
   Page components mui.ComponentsPre mui.ComponentsShow mui.ComponentsLeave "MUI_INSTALLBUTTON_COMPONENTS"
   
   !ifndef MUI_MANUALVERBOSE
@@ -606,7 +615,10 @@
     !verbose 3
   !endif
 
-  !define MUI_DIRECTORYPAGE
+  !ifndef MUI_DIRECTORYPAGE
+    !define MUI_DIRECTORYPAGE
+  !endif
+    
   Page directory mui.DirectoryPre mui.DirectoryShow mui.DirectoryLeave "MUI_INSTALLBUTTON_DIRECTORY"
   
   !ifndef MUI_MANUALVERBOSE
@@ -621,7 +633,10 @@
     !verbose 3
   !endif
 
-  !define MUI_STARTMENUPAGE
+  !ifndef MUI_STARTMENUPAGE
+    !define MUI_STARTMENUPAGE
+  !endif
+  
   Page custom mui.Startmenu "" "" "MUI_INSTALLBUTTON_STARTMENU"
   
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
@@ -650,7 +665,10 @@
     !verbose 3
   !endif
   
-  !define MUI_FINISHPAGE
+  !ifndef MUI_FINISHPAGE
+    !define MUI_FINISHPAGE
+  !endif
+  
   Page custom mui.Finish
   
   !ifndef MUI_MANUALVERBOSE
@@ -669,9 +687,12 @@
     !define MUI_UNINSTALLER
   !endif
 
-  !define MUI_UNCONFIRMPAGE
+  !ifndef MUI_UNCONFIRMPAGE
+    !define MUI_UNCONFIRMPAGE
+  !endif
+  
   UninstPage uninstConfirm un.mui.ConfirmPre un.mui.ConfirmShow un.mui.ConfirmLeave "MUI_UNINSTALLBUTTON_CONFIRM"
-   
+  
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
   !endif
