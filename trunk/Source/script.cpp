@@ -724,14 +724,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_ICON:
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
-        if (replace_icon(&re, IDI_ICON2, line.gettoken_str(1))) {
+        init_res_editor();
+        if (replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1))) {
           ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
           return PS_ERROR;
         }
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
       }
       catch (exception& err) {
         ERROR_MSG("Error while replacing icon: %s\n", err.what());
@@ -743,14 +740,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_CHECKBITMAP:
       SCRIPT_MSG("CheckBitmap: \"%s\"\n",line.gettoken_str(1));
       try {
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
-        if (update_bitmap(&re, IDB_BITMAP1, line.gettoken_str(1), 96, 16)) {
+        init_res_editor();
+        if (update_bitmap(res_editor, IDB_BITMAP1, line.gettoken_str(1), 96, 16)) {
           ERROR_MSG("Error: File doesn't exist, is an invalid bitmap, or has the wrong size\n");
           return PS_ERROR;
         }
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
       }
       catch (exception& err) {
         ERROR_MSG("Error while replacing bitmap: %s\n", err.what());
@@ -1014,11 +1008,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         if (!k) return make_sure_not_in_secorfunc(line.gettoken_str(0));
 
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
+        init_res_editor();
 
 #define REMOVE_ICON(id) { \
-          BYTE* dlg = re.GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
           if (!dlg) throw runtime_error(#id " doesn't exist!"); \
           CDialogTemplate dt(dlg); \
           free(dlg); \
@@ -1041,7 +1034,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
            \
           DWORD dwSize; \
           dlg = dt.Save(dwSize); \
-          re.UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
           free(dlg); \
         }
 
@@ -1059,9 +1052,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         REMOVE_ICON(IDD_VERIFY);
 #endif
-
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
       }
       catch (exception& err) {
         ERROR_MSG("Error removing window icon: %s\n", err.what());
@@ -1188,12 +1178,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int k=line.gettoken_enum(1,"on\0off\0");
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
+        init_res_editor();
         char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b0</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
-        re.UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
+        res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
       }
       catch (exception& err) {
         ERROR_MSG("Error while adding XP style: %s\n", err.what());
@@ -1220,12 +1207,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           return PS_ERROR;
         }
 
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
+        init_res_editor();
 
         // Search for required items
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return 0;}
-        #define SAVE(x) if (rtl) {UIDlg.ConvertToRTL(); dlg = UIDlg.Save(dwSize);} else dwSize = UIDlg.GetSize(); re.UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+        #define SAVE(x) if (rtl) {UIDlg.ConvertToRTL(); dlg = UIDlg.Save(dwSize);} else dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
 
         BYTE* dlg = 0;
 
@@ -1312,11 +1298,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SEARCH(IDC_STR);
           // No RTL here, pure English goes here.
           //SAVE(IDD_VERIFY);
-          re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
-
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
 
         if (!FreeLibrary(hUIFile)) {
           ERROR_MSG("can't free library!\n");
@@ -1381,8 +1364,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int wh=line.gettoken_int(2);
         if (k == -1) PRINTHELP()
 
-        CResourceEditor re(header_data_new, exeheader_size_new);
-        BYTE* dlg = re.GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+        init_res_editor();
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
 
         CDialogTemplate dt(dlg);
         delete [] dlg;
@@ -1419,12 +1402,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         DWORD dwDlgSize;
         dlg = dt.Save(dwDlgSize);
 
-        re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwDlgSize);
+        res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwDlgSize);
 
         delete [] dlg;
-
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
 
         dt.DlgUnitsToPixels(brandingCtl.sWidth, brandingCtl.sHeight);
         SCRIPT_MSG("AddBrandingImage: %s %ux%u\n", line.gettoken_str(1), brandingCtl.sWidth, brandingCtl.sHeight);
@@ -1445,18 +1425,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETFONT:
       SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
       try {
-        build_compressor_set=true;
-        CResourceEditor re(header_data_new, exeheader_size_new);
+        init_res_editor();
 
 #define SET_FONT(id) { \
-          BYTE* dlg = re.GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
           if (!dlg) throw runtime_error(#id " doesn't exist!"); \
           CDialogTemplate td(dlg); \
           free(dlg); \
           td.SetFont(line.gettoken_str(1), line.gettoken_int(2)); \
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
-          re.UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
           free(dlg); \
         }
 
@@ -1475,9 +1454,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         SET_FONT(IDD_VERIFY);
 #endif
-
-        free(header_data_new);
-        header_data_new = re.Save((DWORD&)exeheader_size_new);
       }
       catch (exception& err) {
         ERROR_MSG("Error while changing font: %s\n", err.what());
@@ -1979,10 +1955,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()!=a+1 && !trim) PRINTHELP();
         if (line.getnumtokens()==a+1) SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
         if (trim) try {
-          build_compressor_set=true;
-          CResourceEditor re(header_data_new, exeheader_size_new);
+          init_res_editor();
 
-          BYTE* dlg = re.GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
           CDialogTemplate td(dlg);
           free(dlg);
 
@@ -2003,11 +1978,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
           DWORD dwSize;
           dlg = td.Save(dwSize);
-          re.UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
           free(dlg);
-
-          free(header_data_new);
-          header_data_new = re.Save((DWORD&)exeheader_size_new);
         }
         catch (exception& err) {
           ERROR_MSG("Error while triming branding text control: %s\n", err.what());
@@ -3801,9 +3773,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
     }
     return PS_ERROR;
+    case TOK_INITPLUGINDIR:
+    {
+      int ret;
+      SCRIPT_MSG("%s\n",line.gettoken_str(0));
+      // Call [un.]Initialize_____Plugins
+      ent.which=EW_CALL;
+      ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
+      ret=add_entry(&ent);
+      if (ret != PS_OK) return ret;
+      // SetDetailsPrint lastused
+      ent.which=EW_UPDATETEXT;
+      ent.offsets[0]=0;
+      ent.offsets[1]=8; // lastused
+      ret=add_entry(&ent);
+      if (ret != PS_OK) return ret;
+    }
+    return PS_OK;
 #else
     case TOK_PLUGINDIR:
     case TOK__PLUGINCOMMAND:
+    case TOK_INITPLUGINDIR:
     {
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_PLUGIN_SUPPORT not defined.\n",line.gettoken_str(0));
     }
