@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1032
 # Translation by Makidis N. Mike
@@ -17,6 +17,8 @@ Nullsoft Install System %s
 < &Πίσω
 &Επόμενο >
 &Συμφωνώ
+&Αποδέχομαι τους όρους της άδειας χρήσης
+&Δεν αποδέχομαι τους όρους της άδειας χρήσης
 &Εγκατάσταση
 Απε&γκατάστ.
 Άκυρο
