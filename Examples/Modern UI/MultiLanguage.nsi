@@ -6,14 +6,8 @@
 !define VERSION "1.0" ;Define your own software version here
 
 !verbose 3
-!include "${NSISDIR}\Examples\WinMessages.nsh"
-!include "ModernUI.nsh"
+  !include "ModernUI.nsh"
 !verbose 4
-
-!define CURRENTPAGE $9
-
-!define TEMP1 $R0
-!define TEMP2 $R1
 
 ;--------------------------------
 ;Configuration
@@ -29,7 +23,7 @@
   SetOverwrite on
 
   ;User interface
-  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
+  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
   LicenseText /LANG=1033 "Press Page Down to see the rest of the agreement."
@@ -67,6 +61,9 @@ SectionEnd
 
 Section "Create uninstaller" SecCreateUninst
 
+  ;Write the language to the registry (for the uninstaller)
+  WriteRegStr HKCU "Software\${NAME}" "Installer Language" "$LANGUAGE"
+
   ;Add your stuff here
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -90,9 +87,6 @@ Function .onInit
     Pop $LANGUAGE
     StrCmp $LANGUAGE "cancel" 0 +2
       Abort
-
-  ;Write the language to the registry (for the uninstaller)
-  WriteRegStr HKCU "Software\${NAME}" "Installer Language" "$LANGUAGE"
 
   StrCmp $LANGUAGE 1043 "" +2
     SectionSetText ${SecCreateUninst} "Deïnstallatie programma"

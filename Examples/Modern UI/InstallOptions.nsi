@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.20
+;NSIS Modern Style UI version 1.20b
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
@@ -6,16 +6,8 @@
 !define VERSION "1.0" ;Define your own software version here
 
 !verbose 3
-!include "${NSISDIR}\Examples\WinMessages.nsh"
-!include "ModernUI.nsh"
+  !include "ModernUI.nsh"
 !verbose 4
-
-!define IO_NOSETDIRECTION $7
-!define IO_DIRECTION $8
-!define CURRENTPAGE $9
-
-!define TEMP1 $R0
-!define TEMP2 $R1
 
 ;--------------------------------
 ;Configuration
@@ -26,7 +18,8 @@
   SetOverwrite on
 
   ;User interface
-  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
+  !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
+  !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
 
   ;License dialog
   LicenseText "Press Page Down to see the rest of the agreement."

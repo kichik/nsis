@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.20
+;Modern UI Header File version 1.20b
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -7,13 +7,18 @@
 
 !define MUI_MACROS_USED
 
+!include "${NSISDIR}\Examples\WinMessages.nsh"
+
 !define IO_DIRECTION_NEXT 1
 !define IO_DIRECTION_PREV 2
 
 !define IO_INITPLUGINS "Call Initialize_____Plugins"
 !define IO_UNINITPLUGINS "Call un.Initialize_____Plugins"
 
-!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR
+!define TEMP1 $R0
+!define TEMP2 $R1
+
+!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR CURRENTPAGEVAR
 
   ;User interface
   
@@ -26,6 +31,7 @@
   InstallColors /windows
   InstProgressFlags "${PROGRESSBAR}"
   BrandingText /TRIMRIGHT
+  !define CURRENTPAGE ${CURRENTPAGEVAR}
 
 !macroend
 
@@ -198,6 +204,13 @@
 !macroend
 
 ;INSTALL OPTIONS
+
+!macro MUI_INSTALLOPTIONS DIRECTIONVAR NOSETDIRECTIONVAR
+
+  !define IO_NOSETDIRECTION ${DIRECTIONVAR}
+  !define IO_DIRECTION ${NOSETDIRECTIONVAR}
+  
+!macroend
 
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
