@@ -144,7 +144,7 @@ Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color
 
 \S2{ainsttype} InstType
 
-\c install_type_name | /NOCUSTOM | ([/LANG=lang_id] /CUSTOMSTRING=str)| /COMPONENTS.. ..ONLYONCUSTOM
+\c install_type_name | /NOCUSTOM | ([/LANG=lang_id] /CUSTOMSTRING=str) | /COMPONENTSONLYONCUSTOM
 
 Adds an install type to the install type list, or disables the custom install type. There can be as many as 8 types, each one specifying the name of the install. The first type is the default (generally 'Typical'). Each type is numbered, starting at 1. See SectionIn for information on how those numbers are used. If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
 
