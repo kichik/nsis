@@ -21,6 +21,7 @@ Section
 		MessageBox MB_OK 'User "$0" is a guest'
 		Goto done
 	MessageBox MB_OK "Unknown error"
+	Goto done
 
 	Win9x:
 		# This one means you don't need to care about admin or
