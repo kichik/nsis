@@ -10,9 +10,9 @@ This callback will be called just before the first page is loaded and the instal
 
 Example:
 
-\c  !insertmacro ${NSISDIR}\Examples\WinMessages.NSH
+\c  !include "${NSISDIR}\Examples\WinMessages.NSH"
 \c
-\c  Funciton .onGUIInit
+\c  Function .onGUIInit
 \c    # 1028 is the id of the branding text control
 \c    GetDlgItem $R0 $HWNDPARENT 1028
 \c    CreateFont $R1 "Tahoma" 10 700
