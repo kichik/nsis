@@ -280,7 +280,7 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
 		sectionHeadersArray[i].PointerToRawData -= IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData;
 		sectionHeadersArray[i].PointerToRawData += dwRsrcSizeAligned;
 		int secInDataDir = 0;
-		for (int j = 0; j < ntHeaders->OptionalHeader.NumberOfRvaAndSizes; j++)
+		for (unsigned int j = 0; j < ntHeaders->OptionalHeader.NumberOfRvaAndSizes; j++)
 			if (ntHeaders->OptionalHeader.DataDirectory[j].VirtualAddress == sectionHeadersArray[i].VirtualAddress)
 				secInDataDir = j;
 		sectionHeadersArray[i].VirtualAddress -= RALIGN(dwOldVirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
