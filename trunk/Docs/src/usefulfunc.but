@@ -1,0 +1,290 @@
+\A{usefulfunctions} Useful funtions
+
+\H{getparent} Get parent directory
+
+\c  ; GetParent
+\c  ; input, top of stack  (i.e. C:\Program Files\Poop)
+\c  ; output, top of stack (replaces, with i.e. C:\Program Files)
+\c  ; modifies no other variables.
+\c  ;
+\c  ; Usage:
+\c  ;   Push "C:\Program Files\Directory\Whatever"
+\c  ;   Call GetParent
+\c  ;   Pop $0
+\c  ;   ; at this point $0 will equal "C:\Program Files\Directory"
+\c
+\c  Function GetParent 
+\c    Exch $0 ; old $0 is on top of stack
+\c    Push $1
+\c    Push $2
+\c    StrCpy $1 -1
+\c    loop:
+\c      StrCpy $2 $0 1 $1
+\c      StrCmp $2 "" exit
+\c      StrCmp $2 "\" exit
+\c      IntOp $1 $1 - 1
+\c    Goto loop
+\c    exit:
+\c      StrCpy $0 $0 $1
+\c      Pop $2
+\c      Pop $1
+\c      Exch $0 ; put $0 on top of stack, restore $0 to original value
+\c  FunctionEnd
+
+\H{trimnewlines} Trim newlines
+
+\c  ; TrimNewlines
+\c  ; input, top of stack  (i.e. whatever$\r$\n)
+\c  ; output, top of stack (replaces, with i.e. whatever)
+\c  ; modifies no other variables.
+\c
+\c  Function TrimNewlines
+\c    Exch $0
+\c    Push $1
+\c    Push $2
+\c      StrCpy $1 0
+\c      loop:
+\c        IntOp $1 $1 - 1
+\c        StrCpy $2 $0 1 $1
+\c        StrCmp $2 "$\r" loop
+\c        StrCmp $2 "$\n" loop
+\c    IntOp $1 $1 + 1
+\c      
+\c    StrCpy $0 $0 $1
+\c    Pop $2
+\c    Pop $1
+\c  Exch $0
+\c  FunctionEnd
+
+\H{getparameters} Get command line parameters
+
+\c  ; GetParameters
+\c  ; input, none
+\c  ; output, top of stack (replaces, with i.e. whatever)
+\c  ; modifies no other variables.
+\c
+\c  Function GetParameters
+\c    Push $0
+\c    Push $1
+\c    Push $2
+\c    StrCpy $0 $CMDLINE 1
+\c    StrCpy $1 '"'
+\c    StrCpy $2 1
+\c    StrCmp $0 '"' loop
+\c      StrCpy $1 ' ' ; we're scanning for a space instead of a quote
+\c    loop:
+\c      StrCpy $0 $CMDLINE 1 $2
+\c      StrCmp $0 $1 loop2
+\c      StrCmp $0 "" loop2
+\c      IntOp $2 $2 + 1
+\c      Goto loop
+\c    loop2:
+\c      IntOp $2 $2 + 1
+\c      StrCpy $0 $CMDLINE 1 $2
+\c      StrCmp $0 " " loop2
+\c    StrCpy $0 $CMDLINE "" $2
+\c    Pop $2
+\c    Pop $1
+\c    Exch $0
+\c  FunctionEnd
+
+\H{strstr} Search in a string
+
+\c  ; StrStr
+\c  ; input, top of stack = string to search for
+\c  ;        top of stack-1 = string to search in
+\c  ; output, top of stack (replaces with the portion of the string remaining)
+\c  ; modifies no other variables.
+\c  ;
+\c  ; Usage:
+\c  ;   Push "this is a long ass string"
+\c  ;   Push "ass"
+\c  ;   Call StrStr
+\c  ;   Pop $0
+\c  ;  ($0 at this point is "ass string")
+\c
+\c  Function StrStr
+\c  Exch $1 ; st=haystack,old$1, $1=needle
+\c    Exch    ; st=old$1,haystack
+\c    Exch $2 ; st=old$1,old$2, $2=haystack
+\c    Push $3
+\c    Push $4
+\c    Push $5
+\c    StrLen $3 $1
+\c    StrCpy $4 0
+\c    ; $1=needle
+\c    ; $2=haystack
+\c    ; $3=len(needle)
+\c    ; $4=cnt
+\c    ; $5=tmp
+\c    loop:
+\c      StrCpy $5 $2 $3 $4
+\c      StrCmp $5 $1 done
+\c      StrCmp $5 "" done
+\c      IntOp $4 $4 + 1
+\c      Goto loop
+\c  done:
+\c    StrCpy $1 $2 "" $4
+\c    Pop $5
+\c    Pop $4
+\c    Pop $3
+\c    Pop $2
+\c    Exch $1
+\c  FunctionEnd
+
+\H{getwindowsversion} Get Windows version
+
+\c  ; GetWindowsVersion
+\c  ;
+\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ;
+\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, .NET Server)
+\c  ; or
+\c  ; '' (Unknown Windows Version)
+\c  ;
+\c  ; Usage:
+\c  ;   Call GetWindowsVersion
+\c  ;   Pop $0
+\c  ;   ; at this point $0 is "NT 4.0" or whatnot
+\c
+\c  Function GetWindowsVersion
+\c    Push $0
+\c    Push $9
+\c    ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+\c    StrCmp $0 "" 0 lbl_winnt
+\c    ; we are not NT.
+\c    ReadRegStr $0 HKLM SOFTWARE\Microsoft\Windows\CurrentVersion VersionNumber
+\c 
+\c    StrCpy $9 $0 1
+\c    StrCmp $9 '4' 0 lbl_error
+\c
+\c    StrCpy $9 $0 3
+\c
+\c    StrCmp $9 '4.0' lbl_win32_95
+\c    StrCmp $9 '4.9' lbl_win32_ME lbl_win32_98
+\c
+\c    lbl_win32_95:
+\c      StrCpy $0 '95'
+\c    Goto lbl_done
+\c
+\c    lbl_win32_98:
+\c      StrCpy $0 '98'
+\c    Goto lbl_done
+\c
+\c    lbl_win32_ME:
+\c      StrCpy $0 'ME'
+\c    Goto lbl_done
+\c
+\c    lbl_winnt: 
+\c
+\c      StrCpy $9 $0 1
+\c    
+\c      StrCmp $9 '3' lbl_winnt_x
+\c      StrCmp $9 '4' lbl_winnt_x
+\c    
+\c      StrCpy $9 $0 3
+\c    
+\c      StrCmp $9 '5.0' lbl_winnt_2000 lbl_error
+\c      StrCmp $9 '5.1' lbl_winnt_XP lbl_error
+\c      StrCmp $9 '5.2' lbl_winnt_dotNET lbl_error
+\c
+\c      lbl_winnt_x:
+\c        StrCpy $0 "NT $0" 6
+\c      Goto lbl_done
+\c
+\c      lbl_winnt_2000:
+\c        Strcpy $0 '2000'
+\c      Goto lbl_done
+\c    
+\c      lbl_winnt_XP:
+\c        Strcpy $0 'XP'
+\c      Goto lbl_done
+\c    
+\c      lbl_winnt_dotNET:
+\c        Strcpy $0 '.NET Server'
+\c      Goto lbl_done
+\c
+\c    lbl_error:
+\c      Strcpy $0 ''
+\c    lbl_done:
+\c    Pop $9
+\c    Exch $0
+\c  FunctionEnd
+
+\H{getieversion} Get Internet Explorer version
+
+\c  ; GetIEVersion
+\c  ;
+\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 1-6 (Installed IE Version)
+\c  ; or 
+\c  ; '' (IE is not installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call GetIEVersion
+\c  ;   Pop $0
+\c  ;   ; at this point $0 is "5" or whatnot
+\c
+\c  Function GetIEVersion
+\c  Push $0
+\c    ClearErrors
+\c    ReadRegStr $0 HKLM "Software\Microsoft\Internet Explorer" "Version"
+\c    IfErrors lbl_123 lbl_456
+\c
+\c    lbl_456: ; ie 4+
+\c      Strcpy $0 $0 1
+\c    Goto lbl_done
+\c
+\c    lbl_123: ; older ie version
+\c      ClearErrors
+\c      ReadRegStr $0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
+\c      IfErrors lbl_error
+\c
+\c        StrCpy $0 $0 3
+\c        StrCmp $0 '100' lbl_ie1
+\c        StrCmp $0 '101' lbl_ie2
+\c        StrCmp $0 '102' lbl_ie2
+\c
+\c        StrCpy $0 '3' ; default to ie3 if not 100, 101, or 102.
+\c        Goto lbl_done
+\c          lbl_ie1: 
+\c            StrCpy $0 '1'
+\c          Goto lbl_done
+\c          lbl_ie2:
+\c            StrCpy $0 '2'
+\c          Goto lbl_done
+\c      lbl_error:
+\c        StrCpy $0 ''
+\c    lbl_done:
+\c    Exch $0
+\c  FunctionEnd
+
+\H{isflashinstalled} Is Macromedia Flash Player installed?
+
+\c  ; IsFlashInstalled
+\c  ;
+\c  ; By Yazno, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 0 (Flash is not installed)
+\c  ; or
+\c  ; 1 (Flash is installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call IsFlashInstalled
+\c  ;   Pop $0
+\c  ;   ; $0 at this point is "1" or "0"
+\c
+\c  Function IsFlashInstalled
+\c   Push $0
+\c   ClearErrors
+\c   ReadRegStr $0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
+\c   IfErrors lbl_na 
+\c     StrCpy $0 1
+\c   Goto lbl_end
+\c   lbl_na:
+\c     StrCpy $0 0
+\c   lbl_end:
+\c   Exch $0
+\c  FunctionEnd
