@@ -24,21 +24,11 @@
 #include "makensisw.h"
 #include "noclib.h"
 
-char *g_branding;
-char *g_output_exe;
-char *g_input_script;
-HWND g_tip;
-HWND g_tip_p;
-HHOOK g_hook;
 DWORD g_dwLength;
+NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
-extern BOOL g_warnings;
-extern HANDLE g_hThread;
-extern int g_retcode;
-extern HMENU g_mnu;
-
-static BOOL g_appended = FALSE;
+extern NSCRIPTDATA g_sdata;
 
 void SetTitle(HWND hwnd,char *substr) {
 	char title[64];
@@ -48,7 +38,7 @@ void SetTitle(HWND hwnd,char *substr) {
 }
 
 void SetBranding(HWND hwnd) {
-	SetDlgItemText(hwnd, IDC_VERSION, g_branding);
+	SetDlgItemText(hwnd, IDC_VERSION, g_sdata.branding);
 }
 
 void CopyToClipboard(HWND hwnd) {
@@ -87,29 +77,29 @@ void ErrorMessage(HWND hwnd,const char *str) {
 void DisableItems(HWND hwnd) {
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
 	EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
-	EnableMenuItem(g_mnu,IDM_SAVE,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_TEST,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_EXIT,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_LOADSCRIPT,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_COPY,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_GRAYED);
-	EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_COPY,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_GRAYED);
+	EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
 }
 
 void EnableItems(HWND hwnd) {
 	#define MSG(a) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,0,0)
 	#define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
 	#define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
-	if (g_input_script) {
-		GlobalFree(g_input_script);
-		g_input_script = 0;
+	if (g_sdata.input_script) {
+		GlobalFree(g_sdata.input_script);
+		g_sdata.input_script = 0;
 	}
-	if (g_output_exe) {
-		GlobalFree(g_output_exe);
-		g_output_exe = 0;
+	if (g_sdata.output_exe) {
+		GlobalFree(g_sdata.output_exe);
+		g_sdata.output_exe = 0;
 	}
 	TEXTRANGE tr;
 	FINDTEXT ft;
@@ -121,8 +111,8 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  if (tr.chrg.cpMin == lstrlen("Processing script file: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
-	tr.lpstrText = g_input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+    if (tr.chrg.cpMin == lstrlen("Processing script file: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
+	tr.lpstrText = g_sdata.input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
 	// find output exe
@@ -132,60 +122,60 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  if (tr.chrg.cpMin == lstrlen("Output: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
-	tr.lpstrText = g_output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+    if (tr.chrg.cpMin == lstrlen("Output: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
+	tr.lpstrText = g_sdata.output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
-	g_warnings = FALSE;
+	g_sdata.warnings = FALSE;
 
 	ft.lpstrText = "warning:";
-	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_sdata.warnings++;
 	ft.lpstrText = "warnings:";
-	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+	if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_sdata.warnings++;
 
-	if (g_output_exe && !g_retcode) {
+	if (g_sdata.output_exe && !g_sdata.retcode) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
-			EnableMenuItem(g_mnu,IDM_TEST,MF_ENABLED);
+			EnableMenuItem(g_sdata.menu,IDM_TEST,MF_ENABLED);
 	}
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
-	EnableMenuItem(g_mnu,IDM_SAVE,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_EXIT,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_LOADSCRIPT,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_COPY,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_COPYSELECTED,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_ENABLED);
-	EnableMenuItem(g_mnu,IDM_CLEARLOG,MF_ENABLED);
-    EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_EXIT,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_LOADSCRIPT,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_COPY,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_ENABLED);
+    EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
 }
 
 void CompileNSISScript() {
 	static char *s;
-	DragAcceptFiles(g_hwnd,FALSE);
-	ClearLog(g_hwnd);
-	SetTitle(g_hwnd,NULL);
-	if (lstrlen(g_script)==0) {
-		LogMessage(g_hwnd,USAGE);
-		EnableMenuItem(g_mnu,IDM_RECOMPILE,MF_GRAYED);
-		EnableMenuItem(g_mnu,IDM_EDITSCRIPT,MF_GRAYED);
-		EnableMenuItem(g_mnu,IDM_TEST,MF_GRAYED);
-		EnableMenuItem(g_mnu,IDM_BROWSESCR,MF_GRAYED);
-		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
-		DragAcceptFiles(g_hwnd,TRUE);
+	DragAcceptFiles(g_sdata.hwnd,FALSE);
+	ClearLog(g_sdata.hwnd);
+	SetTitle(g_sdata.hwnd,NULL);
+	if (lstrlen(g_sdata.script)==0) {
+		LogMessage(g_sdata.hwnd,USAGE);
+		EnableMenuItem(g_sdata.menu,IDM_RECOMPILE,MF_GRAYED);
+		EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
+		EnableMenuItem(g_sdata.menu,IDM_TEST,MF_GRAYED);
+		EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+		EnableWindow(GetDlgItem(g_sdata.hwnd,IDC_TEST),0);
+		DragAcceptFiles(g_sdata.hwnd,TRUE);
 		return;
 	}
-	if (!g_appended) {
+	if (!g_sdata.appended) {
 		if (s) GlobalFree(s);
-		s = (char *)GlobalAlloc(GPTR, lstrlen(g_script)+lstrlen(EXENAME)+2);
-		wsprintf(s,"%s %s",EXENAME,g_script);
-		g_script = s;
-		g_appended = TRUE;
+		s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+lstrlen(EXENAME)+2);
+		wsprintf(s,"%s %s",EXENAME,g_sdata.script);
+		g_sdata.script = s;
+		g_sdata.appended = TRUE;
 	}
     g_dwLength = 0;
 	// Disable buttons during compile
-	DisableItems(g_hwnd);
+	DisableItems(g_sdata.hwnd);
 	DWORD id;
-	g_hThread=CreateThread(NULL,0,MakeNSISProc,0,0,&id);
+	g_sdata.thread=CreateThread(NULL,0,MakeNSISProc,0,0,&id);
 }
 
 void RestoreWindowPos(HWND hwnd) {
@@ -214,10 +204,10 @@ void SaveWindowPos(HWND hwnd) {
 }
 
 void ResetObjects() {
-	g_appended = FALSE;
-	g_warnings = FALSE;
-	g_retcode = -1;
-	g_hThread = NULL;
+	g_sdata.appended = FALSE;
+	g_sdata.warnings = FALSE;
+	g_sdata.retcode = -1;
+	g_sdata.thread = NULL;
 }
 
 int InitBranding() {
@@ -262,8 +252,8 @@ int InitBranding() {
 		ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
 		szBuf[dwRead] = 0;
 		if (lstrlen(szBuf)==0) return 0;
-		g_branding = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+6);
-		wsprintf(g_branding,"NSIS %s",szBuf);
+		g_sdata.branding = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+6);
+		wsprintf(g_sdata.branding,"NSIS %s",szBuf);
 		GlobalFree(s);
 	}
 	return 1;
@@ -271,45 +261,46 @@ int InitBranding() {
 
 void InitTooltips(HWND h) {
 	if (h == NULL)	return;
-	g_tip_p = h;
+    ZeroMemory(&g_tip,sizeof(NTOOLTIP));
+	g_tip.tip_p = h;
 	INITCOMMONCONTROLSEX icx;
 	icx.dwSize	= sizeof(icx);
 	icx.dwICC	= ICC_BAR_CLASSES;
 	InitCommonControlsEx(&icx);
 	DWORD dwStyle = WS_POPUP | WS_BORDER | TTS_ALWAYSTIP;
 	DWORD dwExStyle = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
-	g_tip = CreateWindowEx(dwExStyle,TOOLTIPS_CLASS,NULL,dwStyle,0,0,0,0,h,NULL,GetModuleHandle(NULL),NULL);
-	if (!g_tip) return;
-	g_hook = SetWindowsHookEx(WH_GETMESSAGE,TipHookProc,NULL, GetCurrentThreadId());
+	g_tip.tip = CreateWindowEx(dwExStyle,TOOLTIPS_CLASS,NULL,dwStyle,0,0,0,0,h,NULL,GetModuleHandle(NULL),NULL);
+	if (!g_tip.tip) return;
+	g_tip.hook = SetWindowsHookEx(WH_GETMESSAGE,TipHookProc,NULL, GetCurrentThreadId());
 	AddTip(GetDlgItem(h,IDC_CLOSE),TEXT("Close MakeNSISW"));
 	AddTip(GetDlgItem(h,IDC_TEST),TEXT("Test the installer generated by MakeNSISW"));
 }
 
 void DestroyTooltips() {
-	UnhookWindowsHookEx(g_hook);
+	UnhookWindowsHookEx(g_tip.hook);
 }
 
 void AddTip(HWND hWnd,LPSTR lpszToolTip) {
 	TOOLINFO ti;
 	ti.cbSize = sizeof(TOOLINFO);
 	ti.uFlags = TTF_IDISHWND;
-	ti.hwnd   = g_tip_p;
+	ti.hwnd   = g_tip.tip_p;
 	ti.uId = (UINT) hWnd;
 	ti.lpszText = lpszToolTip;
-	SendMessage(g_tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti); 
+	SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti); 
 }
 
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
-	if (nCode < 0) return CallNextHookEx(g_hook, nCode, wParam, lParam); 
+	if (nCode < 0) return CallNextHookEx(g_tip.hook, nCode, wParam, lParam); 
 	switch (((MSG*)lParam)->message) { 
 		case WM_MOUSEMOVE:
-			if (IsChild(g_tip_p,((MSG*)lParam)->hwnd)) 
-					SendMessage(g_tip, TTM_RELAYEVENT, 0,lParam); 
+			if (IsChild(g_tip.tip_p,((MSG*)lParam)->hwnd)) 
+					SendMessage(g_tip.tip, TTM_RELAYEVENT, 0,lParam); 
 			break; 
 		default: 
 			break; 
     } 
-    return CallNextHookEx(g_hook, nCode, wParam, lParam); 
+    return CallNextHookEx(g_tip.hook, nCode, wParam, lParam); 
 }
 
 void ShowDocs() {
@@ -318,6 +309,6 @@ void ShowDocs() {
 	path=my_strrchr(pathf,'\\');
 	if(path!=NULL) *path=0;
 	lstrcat(pathf,LOCALDOCS);
-	if ((int)ShellExecute(g_hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
-		ShellExecute(g_hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+	if ((int)ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
+		ShellExecute(g_sdata.hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 }

@@ -35,7 +35,7 @@
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
 #define CONTRIB     "Fritz Elfert, Justin Frankel, Amir Szekely"
-#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
+#define DOCPATH		"http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS	"\\docs\\index.html"
 #define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
 #define DLGERROR	"Unable to intialize MakeNSISW."
@@ -55,12 +55,6 @@
 
 // Extern Variables
 extern const char*	NSISW_VERSION;
-extern char*		g_script;
-extern HWND		  	g_hwnd;
-extern HANDLE	  	g_hThread;
-extern char *		g_output_exe;
-extern char	*		g_input_script;
-extern int			g_retcode;
 
 int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
 static BOOL		CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
@@ -69,5 +63,40 @@ BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK	AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void			CompileNSISScript();
+
+typedef struct NSISScriptData {
+    char *script;
+    char *output_exe;
+    char *input_script;
+    char *branding;
+    int retcode;
+    BOOL warnings;
+    BOOL appended;
+    HINSTANCE hInstance;
+    HWND hwnd;
+    HMENU menu;
+    HMENU submenu;
+    HANDLE thread;
+    CHARRANGE textrange;
+} NSCRIPTDATA;
+
+typedef struct ResizeData {
+    RECT resizeRect;
+    RECT griprect;
+    int dx;
+    int dy;
+} NRESIZEDATA;
+
+typedef struct FindReplaceDialog {
+    FINDREPLACE fr;
+    UINT uFindReplaceMsg;
+    HWND hwndFind;
+} NFINDREPLACE;
+
+typedef struct ToolTipStruct {
+    HWND tip;
+    HWND tip_p;
+    HHOOK hook;
+} NTOOLTIP;
 
 #endif
