@@ -105,7 +105,7 @@ int main(int argc, char **argv)
            "\n"
            "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
            "Includes portions derived from bzip2 (see documentation for details).\n"
-           "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, et al.\n\n",NSIS_VERSION);
+           "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",NSIS_VERSION);
     fflush(g_output);
   }
 
