@@ -12,7 +12,7 @@
                           "This could be the result of an incomplete download"
 #endif
 
-#define _LANG_ERRORWRITINGTEMP "Error writing temp file"
+#define _LANG_ERRORWRITINGTEMP "Error writing temp file. Make sure your temp directory is valid."
 
 #define _LANG_UNINSTINITERROR "Error launching installer"
 
