@@ -147,7 +147,6 @@ void Plugins::FindCommands(char* path,bool displayInfo)
     {
       WIN32_FIND_DATA data;
       HANDLE handle;
-      char* slashPtr;
       
       if (path[length-1] == '\\' ||
           path[length-1] == '/')
@@ -191,6 +190,7 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
     long           dlldatalen = 0;
     bool           loaded     = false;
     char           dllName[100];
+    char           signature[256];
 
     dllName[0] = 0;
     char* ptr = strrchr(pathToDll,'\\');
@@ -296,9 +296,12 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
                     for (unsigned long i = 0; i < exports->NumberOfNamePointers; i++)
                     {
                       char* namePointer = (char*)(ptr+(*nameTableEntry)-section->VirtualAddress);
-                      m_commands.add(namePointer,pathToDll);
+                      strcpy(signature,dllName);
+                      strcat(signature,"::");
+                      strcat(signature,namePointer);
+                      m_commands.add(signature,pathToDll);
                       if (displayInfo)
-                        fprintf(g_output," - %s::%s\n",dllName,namePointer);
+                        fprintf(g_output," - %s\n",signature);
                       nameTableEntry++;
                     }
                   }
@@ -324,13 +327,30 @@ bool Plugins::IsPluginCommand(char* token)
 
 char* Plugins::GetPluginDll(char* command)
 {
-  return m_commands.find(command);
+  if (strstr(command,"::"))
+    return m_commands.find(command);
+
+  // slow & stupid but it doesn't matter
+  int i = 0,pos = 0;
+  char* signatures = m_commands.defines.get();
+  while (pos != -1)
+  {
+    pos = m_commands.defines.idx2pos(i++);
+    if (pos >= 0)
+    {
+      char* cmd = strstr(signatures+pos,"::");
+      if (cmd && strcmp(cmd+2,command) == 0)
+        return m_commands.find(signatures+pos);
+    }
+  }
+
+  return 0;
 }
 
-void Plugins::StoreDllDataHandle(char* command,int handle)
+void Plugins::StoreDllDataHandle(char* signature,int handle)
 {
   int idx = -1;
-  m_commands.defines.find(command,0,&idx);
+  m_commands.defines.find(signature,0,&idx);
   if (idx > -1)
   {
     m_dataHandles.reserve(idx+1);
@@ -338,10 +358,10 @@ void Plugins::StoreDllDataHandle(char* command,int handle)
   }
 }
 
-int Plugins::GetDllDataHandle(char* command)
+int Plugins::GetDllDataHandle(char* signature)
 {
   int idx = -1;
-  if (-1 != m_commands.defines.find(command,0,&idx))
+  if (-1 != m_commands.defines.find(signature,0,&idx))
     return m_dataHandles[idx];
   return -1;
 }
