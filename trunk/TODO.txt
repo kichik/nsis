@@ -36,7 +36,7 @@ OTHER PLUGINS
 
 NSIS
 
-* stringlist -> sorted linked list with binary search
+* sorted list with binary search for defines for faster searching
 
 * custom class names for IO so you can include whatever item you want
 
