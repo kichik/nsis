@@ -33,7 +33,7 @@ Note that you can only compile scripts using this system on Windows systems. It 
 
 The InstallLib macro allows you to install a library.
 
-To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or message box.
+To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
 
 \S1{} Parameters
 
@@ -210,7 +210,7 @@ The correct version of the following files should be stored in your script folde
 
 A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} that explains how to obtain these files is available.
 
-To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or message box.
+To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
 
 \c  !include Library.nsh
 \c

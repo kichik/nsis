@@ -6,6 +6,9 @@
 
 Formats the number in "numberstring" using the format "format", and sets the output to user variable $x. Example format strings include "%08X" "%u"
 
+\c IntFmt $0 "0x%08X" 195948557
+\c IntFmt $0 "%c" 0x41
+
 \S2{IntOp} IntOp
 
 \c user_var(output) value1 OP [value2]
@@ -39,4 +42,9 @@ Combines value1 and (depending on OP) value2 into the user variable $x. OP is de
 \b \e{||} LOGICALLY ORs value1 and value2
 
 \b \e{&&} LOGICALLY ANDs value1 and value2
- 
+
+\c IntOp $0 1 + 1
+\c IntOp $0 $0 + 1
+\c IntOp $0 $0 << 2
+\c IntOp $0 $0 ~
+\c IntOp $0 $0 & 0xF

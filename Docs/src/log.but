@@ -11,3 +11,6 @@ Sets whether install logging to $INSTDIR\\install.log will happen. $INSTDIR must
 \c text
 
 If installer logging is enabled, inserts text "text" into the log file.
+
+\c IfFileExists $WINDIR\notepad.exe 0 +2
+\c   LogText "$$WINDIR\notepad.exe exists"
