@@ -912,11 +912,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
         if (SUCCEEDED(g_hres))
         {
-          HANDLE h;
+          HANDLE h=NULL;
           char *buf1=GetStringFromParm(-0x10);
           char *buf0=GetStringFromParm(0x01);
 
-          h=GetModuleHandle(buf1);
+          if (parm3)
+            h=GetModuleHandle(buf1);
           if (!h)
             h=LoadLibrary(buf1);
           if (h)
