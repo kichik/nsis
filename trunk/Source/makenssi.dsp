@@ -204,6 +204,10 @@ SOURCE=.\DialogTemplate.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\dirreader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\exedata.cpp
 # ADD CPP /G6
 # End Source File
@@ -290,6 +294,10 @@ SOURCE=.\czlib.h
 # Begin Source File
 
 SOURCE=.\DialogTemplate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\dirreader.h
 # End Source File
 # Begin Source File
 
