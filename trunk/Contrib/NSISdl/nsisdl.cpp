@@ -1,6 +1,6 @@
 /*
-  NSIS-DL 1.1 - http downloading DLL for NSIS
-  Copyright (C) 2001 Yaroslav Faybishenko & Justin Frankel
+  NSIS-DL 1.2 - http downloading DLL for NSIS
+  Copyright (C) 2001-2002 Yaroslav Faybishenko & Justin Frankel
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -34,6 +34,7 @@
 #include "resource.h"
 #include "httpget.h"
 
+int g_timeout_ms=30000;
 
 void *operator new( unsigned int num_bytes )
 {
@@ -200,8 +201,9 @@ void downloadFile(char         *url,
 	int         cl;
 	int         len;
 	int         sofar = 0;
+  DWORD last_recv_time=start_time;
 
-	get->addheader ("User-Agent: NSISDL/1.1 (Mozilla)");
+	get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
 	get->addheader ("Accept: */*");
 
 	get->connect (url);
@@ -234,15 +236,26 @@ void downloadFile(char         *url,
 
 			if (get->get_status () == 0) {
 				// progressFunc ("Connecting ...", 0);
+        if (last_recv_time+g_timeout_ms < GetTickCount())
+        {
+				  *error = "Timed out on connecting.";
+				  break;
+        }
 
 			} else if (get->get_status () == 1) {
 
 				progress_callback("Reading headers", 0);
+        if (last_recv_time+g_timeout_ms < GetTickCount())
+        {
+				  *error = "Timed out on getting headers.";
+				  break;
+        }
 
 			} else if (get->get_status () == 2) {
 
 				if (! has_printed_headers) {
 					has_printed_headers = 1;
+          last_recv_time=GetTickCount();
 
 					cl = get->content_length ();
 					if (cl == 0) {
@@ -260,6 +273,7 @@ void downloadFile(char         *url,
 						len = 8192;
 					len = get->get_bytes (buf, len);
 					if (len > 0) {
+            last_recv_time=GetTickCount();
             DWORD dw;
             WriteFile(hFile,buf,len,&dw,NULL);
 						sofar += len;
@@ -297,6 +311,11 @@ void downloadFile(char         *url,
 						break;
 					}
 				}
+        if (GetTickCount() > last_recv_time+g_timeout_ms)
+        {
+				  *error = "Downloading timed out.";
+				  break;
+        }
 
 			} else {
 				*error = "Bad response status.";
