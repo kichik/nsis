@@ -553,6 +553,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         switch (k) {
         	case 0:
             p.id = NSIS_PAGE_CUSTOM;
+            build_custom_used++;
             break;
           case 1:
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -648,6 +649,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         switch (k) {
         	case 0:
             p.id = NSIS_PAGE_CUSTOM;
+            ubuild_custom_used++;
             break;
           case 1:
             p.id = NSIS_PAGE_UNINST;

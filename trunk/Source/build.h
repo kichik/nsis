@@ -204,6 +204,8 @@ class CEXEBuild {
     StringList build_userlangstrings, ubuild_userlangstrings;
     GrowBuf build_pages, ubuild_pages;
 
+    int build_custom_used, ubuild_custom_used;
+
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
     IGrowBuf *cur_datablock; 
 
