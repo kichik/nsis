@@ -652,16 +652,21 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         int b3=process_string_fromtab_toint(parm3);
         int b4=process_string_fromtab_toint(parm4);
 
-        process_string_fromtab(buf,parm1);
-        process_string_fromtab(buf2,parm2);
+        if (which == EW_SENDMESSAGE) 
+        {
+          process_string_fromtab(buf,parm3);
+          process_string_fromtab(buf2,parm4);
+          if (*(int*)buf == *(int*)"STR:") b3=(int)buf+4;
+          if (*(int*)buf2 == *(int*)"STR:") b4=(int)buf2+4;
 
-        if (myatoi(buf2)==WM_SETTEXT) {
-          process_string_fromtab(buf3,parm4);
-          b4=(int)buf3;
+          v=SendMessage((HWND)process_string_fromtab_toint(parm1),process_string_fromtab_toint(parm2),b3,b4);
         }
-
-        if (which == EW_SENDMESSAGE) v=SendMessage((HWND)myatoi(buf),myatoi(buf2),b3,b4);
-        else v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf[0]?buf:NULL,buf2[0]?buf2:NULL);
+        else
+        {
+          process_string_fromtab(buf,parm1);
+          process_string_fromtab(buf2,parm2);
+          v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf[0]?buf:NULL,buf2[0]?buf2:NULL);
+        }
         
         if (parm0>=0)
           myitoa(g_usrvars[parm0],v);
