@@ -159,7 +159,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         SetCompressor(g_sdata.default_compressor);
       }
       if(chooseCompressor) {
-        DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc);
+        if (DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_COMPRESSOR),g_sdata.hwnd,(DLGPROC)CompressorProc)) {
+          EnableItems(g_sdata.hwnd);
+          return TRUE;
+        }
       }
       CompileNSISScript();
       return TRUE;
@@ -251,7 +254,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
       if(g_sdata.compressor == COMPRESSOR_BEST) {
         if (g_sdata.retcode==0 && FileExists(g_sdata.output_exe)) {
-          char temp_file_name[MAX_PATH];
+          char temp_file_name[1024];
           wsprintf(temp_file_name,"%s_makensisw_temp",g_sdata.output_exe);
           if(!lstrcmpi(g_sdata.compressor_name,compressor_names[(int)COMPRESSOR_SCRIPT+1])) {
             SetCompressorStats();
@@ -296,7 +299,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
                     if(thisSize != INVALID_FILE_SIZE) {
                       if(prevSize > thisSize) {
-                        CopyFile(temp_file_name,g_sdata.output_exe,false);
+                        CopyFile(g_sdata.output_exe,temp_file_name,false);
                         SetCompressorStats();
                         g_sdata.best_compressor_name = g_sdata.compressor_name;
                       }
@@ -962,12 +965,12 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
             SetCompressor(g_sdata.default_compressor);
           }
 
-          EndDialog(hwndDlg, TRUE);
+          EndDialog(hwndDlg, 0);
           break;
         }
         case IDCANCEL:
         {
-          EndDialog(hwndDlg, TRUE);
+          EndDialog(hwndDlg, 1);
           break;
         }
       }
