@@ -181,16 +181,35 @@ char * NSISCALL skip_root(char *path)
 
 int NSISCALL is_valid_instpath(char *s)
 {
-  int ret = 0;
-  char *p = skip_root(s);
-  if (p && ((*p && *p != '\\') || !(g_flags & CH_FLAGS_NO_ROOT_DIR)))
+  static char tmp[NSIS_MAX_STRLEN];
+  char *root;
+  
+  mystrcpy(tmp, s);
+
+  root = skip_root(tmp);
+
+  if (!root)
+    return 0;
+
+  if ((g_flags & CH_FLAGS_NO_ROOT_DIR) && (!*root || *root == '\\'))
+    return 0;
+
+  while (mystrlen(tmp) > root - tmp)
   {
-    char pb = *p;
-    *p = 0;
-    ret = GetFileAttributes(s) != (DWORD)-1;
-    *p = pb;
+    WIN32_FIND_DATA *fd = file_exists(tmp);
+    // if the directory bit not set then it's a file, which is not a valid inst dir...
+    // GetFileAttributes is not used because it doesn't work with certain files (error 32)
+    // as for concers of the user using * or ?, that's invalid anyway...
+    if (fd && !(fd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+      return 0;
+    trimslashtoend(tmp);
   }
-  return ret;
+
+  // if the root drive exists
+  if (GetFileAttributes(tmp) == (DWORD)-1)
+    return 0;
+
+  return 1;
 }
 
 char * NSISCALL mystrstr(char *a, char *b)
