@@ -1057,6 +1057,7 @@ int CEXEBuild::add_function(const char *funname)
   build_cursection->install_types=0;
   build_cursection->flags=0;
   build_cursection->size_kb=0;
+  memset(build_cursection->name,0,sizeof(build_cursection->name));
   return PS_OK;
 }
 
@@ -1205,6 +1206,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   new_section.install_types = *name ? 0 : ~0;
   new_section.name_ptr = add_string(name);
+  memset(&new_section.name,0,sizeof(new_section.name));
 
   cur_sections->add(&new_section, sizeof(section));
   build_cursection = (section *) cur_sections->get() + cur_header->blocks[NB_SECTIONS].num;
