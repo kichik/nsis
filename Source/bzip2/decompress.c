@@ -187,8 +187,6 @@ Int32 BZ2_decompress ( DState* s )
       }
       if (uc != 0x31) RETURN(BZ_DATA_ERROR);
 
-      s->currBlockNo++;
-
       s->origPtr = 0;
       GET_UCHAR(BZ_X_ORIGPTR_1, uc);
       s->origPtr = (s->origPtr << 8) | ((Int32)uc);

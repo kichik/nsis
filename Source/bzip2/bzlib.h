@@ -383,24 +383,19 @@ typedef
       /* state indicator for this stream */
       char state;
 
-      /* for doing the final run-length decoding */
       UChar    state_out_ch;
       Int32    state_out_len;
+      Int32    nblock_used;
+      Int32    k0;
+      UInt32   tPos;
 
       /* the buffer for bit stream reading */
       UInt32   bsBuff;
       Int32    bsLive;
 
-      /* misc administratium */
-      Int32    currBlockNo;
-      Int32    verbosity;
-
       /* for undoing the Burrows-Wheeler transform */
       Int32    origPtr;
-      UInt32   tPos;
-      Int32    k0;
       Int32    unzftab[256];
-      Int32    nblock_used;
       Int32    cftab[257];
       Int32    cftabCopy[257];
 
@@ -412,12 +407,6 @@ typedef
       UInt16   ll16 [ NSIS_COMPRESS_BZIP2_LEVEL*100000 ];
       UChar    ll4 [((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) ];
 #endif
-
-      /* stored and calculated CRCs */
-//      UInt32   storedBlockCRC;
-  //    UInt32   storedCombinedCRC;
-    //  UInt32   calculatedBlockCRC;
-      //UInt32   calculatedCombinedCRC;
 
       /* map of bytes used in block */
       Int32    nInUse;
@@ -439,7 +428,6 @@ typedef
 
       /* save area for scalars in the main decompress code */
       DState_save save;
-
    }
    DState;
 
