@@ -15,9 +15,10 @@
   !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
   
-  !define MUI_UNINSTALLER
-  
   !define MUI_CUSTOMPAGECOMMANDS
+  
+  !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
     
   !define TEMP1 $R0
   !define TEMP2 $R1

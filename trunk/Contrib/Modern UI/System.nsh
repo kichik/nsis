@@ -560,7 +560,9 @@
     !verbose 3
   !endif
 
-  UninstPage uninstConfirm un.SetUninstConfirm
+  !ifdef MUI_UNCONFIRMPAGE
+    UninstPage uninstConfirm un.SetUninstConfirm "" "MUI_UNINSTALLBUTTON_CONFIRM"
+  !endif
    
   !ifndef MUI_NOVERBOSE
     !verbose 4
@@ -1260,7 +1262,10 @@
 
 !macro MUI_UNFUNCTIONS_PAGES
   
-  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
+  !ifdef MUI_UNCONFIRMPAGE
+    !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
+  !endif
+    
   !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
   
 !macroend
@@ -1336,13 +1341,19 @@
 !macro MUI_SYSTEM
 
   !verbose 3
+  
   !define MUI_NOVERBOSE
+  
+  !ifndef MUI_LANGUAGEFILE_INSERTED
+    !error "No Modern UI language file inserted!"
+  !endif
   
   !insertmacro MUI_INTERFACE
   !insertmacro MUI_BASIC
   !insertmacro MUI_UNBASIC
   
   !undef MUI_NOVERBOSE
+  
   !verbose 4
   
 !macroend
@@ -1353,7 +1364,6 @@
     !verbose 3
   !endif
 
-  !insertmacro MUI_PAGECOMMANDS
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
   !insertmacro MUI_FUNCTIONS_ABORTWARNING
@@ -1372,7 +1382,6 @@
   
   !ifdef MUI_UNINSTALLER
 
-    !insertmacro MUI_UNPAGECOMMANDS
     !insertmacro MUI_UNFUNCTIONS_PAGES
     !insertmacro MUI_UNFUNCTIONS_GUIINIT
   
@@ -1397,7 +1406,7 @@
 
   !else
 
-    !error "${LANGUAGE} included twice!"
+    !error "Modern UI language file ${LANGUAGE} included twice!"
 
   !endif
   
@@ -1428,9 +1437,7 @@
       LangString "${NAME}" 0 "${${NAME}}"
     !endif
     
-  !endif
-  
-  !ifndef "${INSTALLBUTTON}"
+  !else
   
     !ifdef MUI_TEXT_CONTINUE_INSTALL
       LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_INSTALL}"
@@ -1475,9 +1482,7 @@
       "${COMMAND}" "${${NAME}}"
     !endif
     
-  !endif
-
-  !ifdef "${INSTALLBUTTON}"
+  !else
   
     !ifdef MUI_TEXT_CONTINUE_INSTALL
       "${COMMAND}" "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
@@ -1491,6 +1496,31 @@
   
 !macroend
 
+!macro MUI_LANGUAGEFILE_UNNSISCOMMAND_CONTINUE COMMAND NAME INSTALLBUTTON
+
+  !ifndef "${INSTALLBUTTON}"
+  
+    !ifdef MUI_TEXT_CONTINUE_NEXT
+      "${COMMAND}" "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
+    !else
+      "${COMMAND}" "${${NAME}}"
+    !endif
+    
+  !else
+  
+    !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
+      "${COMMAND}" "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
+    !else
+      "${COMMAND}" "${${NAME}}"
+    !endif
+    
+  !endif
+  
+  !undef "${NAME}"
+  
+!macroend
+
+
 !macro MUI_LANGUAGEFILE_DEFINE DEFINE NAME
 
   !ifndef "${DEFINE}"
@@ -1501,7 +1531,19 @@
 !macroend
 
 !macro MUI_LANGUAGEFILE_END
+
+  !ifndef MUI_LANGUAGEFILE_INSERTED
+  
+    !define MUI_LANGUAGEFILE_INSERTED
     
+    !insertmacro MUI_PAGECOMMANDS
+    
+    !ifdef MUI_UNINSTALLER
+      !insertmacro MUI_UNPAGECOMMANDS
+    !endif
+    
+  !endif
+
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
 
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND Name MUI_NAME
@@ -1577,7 +1619,9 @@
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_INTRO_TITLE"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_INTRO_SUBTITLE"
   
-    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "UninstallText" "MUI_UNINNERTEXT_INTRO"
+    !ifdef MUI_UNCONFIRMPAGE
+      !insertmacro MUI_LANGUAGEFILE_UNNSISCOMMAND_CONTINUE "UninstallText" "MUI_UNINNERTEXT_INTRO" "MUI_UNINSTALLBUTTON_CONFIRM"
+    !endif
   
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_UNINSTALLING_TITLE"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_UNINSTALLING_SUBTITLE"
@@ -1594,6 +1638,10 @@
     !undef MUI_TEXT_CONTINUE_INSTALL
   !endif
   
+  !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
+    !undef MUI_UNTEXT_CONTINUE_UNINSTALL
+  !endif
+    
 !macroend
 
 ;--------------------------------
