@@ -1,12 +1,6 @@
 TODO
 
--- NSIS 2 Beta 1 --
-
-NSIS
-
-* !define with line break ('\') inside !ifdef bug
-
--- NSIS 2 Beta 2 --
+-- NSIS 2 Beta 3 --
 
 NSIS
 
