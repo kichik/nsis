@@ -33,7 +33,6 @@
 #define NSIS_URL	"http://sourceforge.net/projects/nsis/"
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
-#define CONTRIBUTOR	"Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely"
 #define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
 #define LOCALDOCS	"\\docs\\index.html"
 #define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
@@ -65,6 +64,7 @@ int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cm
 static BOOL		CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 DWORD WINAPI	MakeNSISProc(LPVOID p);
 BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
+BOOL CALLBACK	AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void			CompileNSISScript();
 
