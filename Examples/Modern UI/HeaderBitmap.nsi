@@ -1,11 +1,17 @@
-;NSIS Modern User Interface version 1.64
+;NSIS Modern User Interface version 1.65
 ;Header Bitmap Example Script
 ;Written by Joost Verburg
 
-!define MUI_PRODUCT "Modern UI Test" ;Define your own software name here
-!define MUI_VERSION "1.0" ;Define your own software version here
+;--------------------------------
+;Include Modern UI
 
 !include "MUI.nsh"
+
+;--------------------------------
+;Product Info
+
+!define MUI_PRODUCT "Modern UI Test"
+!define MUI_VERSION "1.65"
 
 ;--------------------------------
 ;Configuration
@@ -20,29 +26,26 @@
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
 
 ;--------------------------------
+;Pages
+
+  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-  !define MUI_DIRECTORYPAGE
-  
-  !define MUI_ABORTWARNING
-  
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
-  
   !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
-  
+  !define MUI_ABORTWARNING
+
 ;--------------------------------
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-  
-;--------------------------------
-;Language Strings
-
-  ;Description
-  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
 ;--------------------------------
 ;Data
@@ -53,14 +56,14 @@
 ;Reserve Files
   
   ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only useful for BZIP2 compression
+  ;Only for BZIP2 compression
   
   ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp"
 
 ;--------------------------------
 ;Installer Sections
 
-Section "modern.exe" SecCopyUI
+Section "Dummy Test File" SecCopyUI
 
   ;ADD YOUR OWN STUFF HERE!
 
@@ -77,6 +80,8 @@ SectionEnd
 
 ;--------------------------------
 ;Descriptions
+
+LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy modern.exe to the application folder."
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)

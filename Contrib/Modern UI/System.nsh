@@ -1,12 +1,16 @@
-;NSIS Modern User Interface version 1.64
+;NSIS Modern User Interface version 1.65
 ;Macro System
 ;Written by Joost Verburg
 
-;Have a look the scripts in the 'Examples\Modern UI' directory for examples of usage.
+;Copyright © 2002-2003 Joost Verburg
+
+;Documentation: Readme.html
+;License: License.txt
+;Examples: Examples\Modern UI
 
 ;--------------------------------
 
-!echo "NSIS Modern User Interface version 1.64 - © 2002-2003 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.65 - © 2002-2003 Joost Verburg"
 
 !ifndef MUI_MANUALVERBOSE
   !verbose 3
@@ -24,10 +28,6 @@
 !define MUI_HWND ${MUI_TEMP1}
 
 !macro MUI_INTERFACE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   ;User interface
   
@@ -65,6 +65,10 @@
 
   !ifdef MUI_FONT
     !error "Use SetFont to change the dialog font"
+  !endif
+  
+  !ifndef MUI_LICENSEBKCOLOR
+    !define MUI_LICENSEBKCOLOR "/windows"
   !endif
   
   !ifndef MUI_INSTALLCOLORS
@@ -138,18 +142,15 @@
   !endif
   
   CheckBitmap "${MUI_CHECKBITMAP}"
+  LicenseBkColor "${MUI_LICENSEBKCOLOR}"
   InstallColors ${MUI_INSTALLCOLORS}
   InstProgressFlags ${MUI_PROGRESSBAR}
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
 
 !macroend
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
@@ -162,7 +163,7 @@
 
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -170,7 +171,7 @@
 
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
@@ -184,17 +185,13 @@
 
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_DESCRIPTION_BEGIN
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Push ${MUI_TEMP1}
 
@@ -205,15 +202,11 @@
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:"
     Goto mui.description_done
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_DESCRIPTION_TEXT VAR TEXT
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
@@ -223,7 +216,7 @@
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     Goto mui.description_done
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -231,14 +224,14 @@
 
 !macro MUI_DESCRIPTION_END
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   mui.description_done:
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -284,19 +277,11 @@
 
 !macro MUI_ABORTWARNING
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
   ;Warning when Cancel button is pressed
 
   MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(MUI_TEXT_ABORTWARNING)" IDYES quit
     Abort
     quit:
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
 
 !macroend
 
@@ -424,17 +409,11 @@
   
 !macroend
 
-!macro MUI_LANGDLL_PUSH LANGUAGE
-
-  ;1.62 compatibility
-
-  !error "To use the language selection dialog, you only have to add '!insertmacro MUI_LANGDLL_DISPLAY' to .onInit now. You should remove all the other code and Push commands."
-  
-!macroend
-
 !macro MUI_STARTMENU_WRITE_BEGIN
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
 
   Push ${MUI_TEMP1}
   
@@ -443,13 +422,17 @@
 
   Pop ${MUI_TEMP1}
   
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
 
 !macroend
 
 !macro MUI_STARTMENU_WRITE_END
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
   
   !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
     WriteRegStr "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}" "${MUI_STARTMENUPAGE_VARIABLE}"
@@ -457,28 +440,38 @@
 
   mui.startmenu_write_done:
   
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
 
 !macroend
 
 !macro MUI_STARTMENU_DELETE_BEGIN VAR
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
   
     ReadRegStr "${VAR}" "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
     StrCmp "${VAR}" "" mui.startmenu_delete_done
   
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
 
 !macroend
 
 !macro MUI_STARTMENU_DELETE_END
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
   
   mui.startmenu_delete_done:
   
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
 
 !macroend
 
@@ -562,23 +555,74 @@
 ;--------------------------------
 ;PAGE COMMANDS
 
-!macro MUI_PAGECOMMANDS
- 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+!macro MUI_PAGE_WELCOME
+
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
-  
-  !ifndef MUI_CUSTOMPAGECOMMANDS
 
-    !insertmacro MUI_PAGECOMMAND_WELCOME
-    !insertmacro MUI_PAGECOMMAND_LICENSE
-    !insertmacro MUI_PAGECOMMAND_COMPONENTS
-    !insertmacro MUI_PAGECOMMAND_DIRECTORY
-    !insertmacro MUI_PAGECOMMAND_STARTMENU
-    !insertmacro MUI_PAGECOMMAND_INSTFILES
-    !insertmacro MUI_PAGECOMMAND_FINISH
+  !define MUI_WELCOMEPAGE
+  Page custom mui.Welcome "" "" "MUI_INSTALLBUTTON_WELCOME"
   
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
   !endif
+  
+!macroend
+
+!macro MUI_PAGE_LICENSE
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+
+  !define MUI_LICENSEPAGE
+  Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave "MUI_INSTALLBUTTON_LICENSE"
+  
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+  
+!macroend
+
+!macro MUI_PAGE_COMPONENTS
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+
+  !define MUI_COMPONENTSPAGE
+  Page components mui.ComponentsPre mui.ComponentsShow mui.ComponentsLeave "MUI_INSTALLBUTTON_COMPONENTS"
+  
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+  
+!macroend
+
+!macro MUI_PAGE_DIRECTORY
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+
+  !define MUI_DIRECTORYPAGE
+  Page directory mui.DirectoryPre mui.DirectoryShow mui.DirectoryLeave "MUI_INSTALLBUTTON_DIRECTORY"
+  
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+  
+!macroend
+
+!macro MUI_PAGE_STARTMENU
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+
+  !define MUI_STARTMENUPAGE
+  Page custom mui.Startmenu "" "" "MUI_INSTALLBUTTON_STARTMENU"
   
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
@@ -586,148 +630,47 @@
   
 !macroend
 
-!macro MUI_PAGECOMMAND_WELCOME
+!macro MUI_PAGE_INSTFILES
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
-
-  !ifdef MUI_WELCOMEPAGE
-    Page custom mui.Welcome "" "" "MUI_INSTALLBUTTON_WELCOME"
-  !endif
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_PAGECOMMAND_LICENSE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !ifdef MUI_LICENSEPAGE
-    Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave "MUI_INSTALLBUTTON_LICENSE"
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_PAGECOMMAND_COMPONENTS
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !ifdef MUI_COMPONENTSPAGE
-    Page components mui.ComponentsPre mui.ComponentsShow mui.ComponentsLeave "MUI_INSTALLBUTTON_COMPONENTS"
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_PAGECOMMAND_DIRECTORY
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !ifdef MUI_DIRECTORYPAGE
-    Page directory mui.DirectoryPre mui.DirectoryShow mui.DirectoryLeave "MUI_INSTALLBUTTON_DIRECTORY"
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_PAGECOMMAND_STARTMENU
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !ifdef MUI_STARTMENUPAGE
-    Page custom mui.Startmenu "" "" "MUI_INSTALLBUTTON_STARTMENU"
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_PAGECOMMAND_INSTFILES
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
   Page instfiles mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
    
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
    
 !macroend
 
-!macro MUI_PAGECOMMAND_FINISH
+!macro MUI_PAGE_FINISH
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
-
-  !ifdef MUI_FINISHPAGE
-    !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME)
-      Page custom mui.Finish /ENABLECANCEL
-    !else
-      Page custom mui.Finish
-    !endif
-  !endif
-      
-  !endif
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !define MUI_FINISHPAGE
+  Page custom mui.Finish
+  
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
   
 !macroend
 
-!macro MUI_UNPAGECOMMANDS
- 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-  
-  !ifndef MUI_UNCUSTOMPAGECOMMANDS
-    !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-    !insertmacro MUI_UNPAGECOMMAND_INSTFILES
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
+!macro MUI_UNPAGE_CONFIRM
 
-!macro MUI_UNPAGECOMMAND_CONFIRM
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
-  !ifdef MUI_UNCONFIRMPAGE
-    UninstPage uninstConfirm un.mui.ConfirmPre un.mui.ConfirmShow un.mui.ConfirmLeave "MUI_UNINSTALLBUTTON_CONFIRM"
+  !ifndef MUI_UNINSTALLER
+    !define MUI_UNINSTALLER
   !endif
+
+  !define MUI_UNCONFIRMPAGE
+  UninstPage uninstConfirm un.mui.ConfirmPre un.mui.ConfirmShow un.mui.ConfirmLeave "MUI_UNINSTALLBUTTON_CONFIRM"
    
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
@@ -735,15 +678,19 @@
    
 !macroend
 
-!macro MUI_UNPAGECOMMAND_INSTFILES
+!macro MUI_UNPAGE_INSTFILES
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
+  !endif
+
+  !ifndef MUI_UNINSTALLER
+    !define MUI_UNINSTALLER
   !endif
 
   UninstPage instfiles un.mui.InstFilesPre un.mui.InstFilesShow un.mui.InstFilesLeave
    
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
    
@@ -754,7 +701,7 @@
 
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
@@ -763,7 +710,7 @@
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -771,7 +718,7 @@
 
 !macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
@@ -780,7 +727,7 @@
 
   File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -788,7 +735,7 @@
 
 !macro MUI_INSTALLOPTIONS_DISPLAY FILE
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
   
@@ -799,7 +746,7 @@
   
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -807,13 +754,13 @@
 
 !macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
   
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -821,13 +768,13 @@
 
 !macro MUI_INSTALLOPTIONS_INITDIALOG FILE
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
   
   InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -835,7 +782,7 @@
 
 !macro MUI_INSTALLOPTIONS_SHOW
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
   
@@ -846,7 +793,7 @@
   
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -854,13 +801,13 @@
 
 !macro MUI_INSTALLOPTIONS_SHOW_RETURN
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
   
   InstallOptions::show
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -868,13 +815,13 @@
 
 !macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
@@ -882,27 +829,16 @@
 
 !macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
 
-!macroend
-
-;--------------------------------
-;SECTIONS
-
-!macro MUI_SECTIONS_FINISHHEADER
-
-  ;1.63 compatibility
-  
-  !error "Remove '!insertmacro MUI_SECTIONS_FINISHHEADER' and '!insertmacro MUI_UNFINISHHEADER from your script. These macro's are being inserted automatically now."
-  
 !macroend
 
 ;--------------------------------
@@ -910,10 +846,6 @@
 
 !macro MUI_FUNCTIONS_GUIINIT
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-  
   Function .onGUIInit
      
   !insertmacro MUI_GUIINIT
@@ -924,17 +856,9 @@
 
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_FUNCTIONS_PAGES
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_FUNCTIONS_WELCOMEPAGE mui.Welcome
@@ -962,17 +886,9 @@
     !insertmacro MUI_FUNCTIONS_FINISHPAGE mui.Finish
   !endif
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_FUNCTIONS_WELCOMEPAGE FUNCTION
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${FUNCTION}"
 
@@ -1034,17 +950,9 @@
     
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 !macro MUI_FUNCTIONS_LICENSEPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${PRE}"
     !ifdef MUI_CUSTOMFUNCTION_LICENSE_PRE
@@ -1066,17 +974,9 @@
     !endif
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-    
 !macroend
 
 !macro MUI_FUNCTIONS_COMPONENTSPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${PRE}"
     !ifdef MUI_CUSTOMFUNCTION_COMPONENTS_PRE
@@ -1098,18 +998,10 @@
       Call "${MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE}"
     !endif
   FunctionEnd
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
     
 !macroend
 
 !macro MUI_FUNCTIONS_DIRECTORYPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${PRE}"
     !ifdef MUI_CUSTOMFUNCTION_DIRECTORY_PRE
@@ -1131,17 +1023,9 @@
     !endif
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 !macro MUI_FUNCTIONS_STARTMENUPAGE FUNCTION
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
   
   ;Check defines
   !ifndef MUI_STARTMENUPAGE_VARIABLE
@@ -1190,17 +1074,9 @@
 
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 !macro MUI_FUNCTIONS_INSTFILESPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${PRE}"
     !ifdef MUI_CUSTOMFUNCTION_INSTFILES_PRE
@@ -1224,18 +1100,10 @@
     !insertmacro MUI_LANGDLL_SAVELANGUAGE
     
   FunctionEnd
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
   
 !macroend
 
 !macro MUI_FUNCTIONS_FINISHPAGE FUNCTION
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${FUNCTION}"
 
@@ -1481,10 +1349,6 @@
     
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 !macro MUI_FUNCTIONS_DESCRIPTION_BEGIN
@@ -1523,10 +1387,6 @@
 
 !macro MUI_FUNCTIONS_ABORTWARNING
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
   !ifdef MUI_ABORTWARNING
     Function .onUserAbort
       !insertmacro MUI_ABORTWARNING
@@ -1536,39 +1396,19 @@
     FunctionEnd
   !endif
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_UNFUNCTION_GUIINIT
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
   
   Function un.onGUIInit
-    
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !insertmacro MUI_UNGUIINIT
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
+  !insertmacro MUI_UNGUIINIT
   
   !ifdef MUI_CUSTOMFUNCTION_UNGUIINIT
     Call "${MUI_CUSTOMFUNCTION_UNGUIINIT}"
   !endif
   
   FunctionEnd
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
 
 !macroend
 
@@ -1583,10 +1423,6 @@
 !macroend
 
 !macro MUI_UNFUNCTION_CONFIRMPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function "${PRE}"
     !ifdef MUI_UNCUSTOMFUNCTION_CONFIRM_PRE
@@ -1607,17 +1443,9 @@
     !endif
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 !macro MUI_UNFUNCTION_INSTFILESPAGE PRE SHOW LEAVE
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
 
   Function ${PRE}
     !ifdef MUI_UNCUSTOMFUNCTION_INSTFILES_PRE
@@ -1639,10 +1467,6 @@
     !insertmacro MUI_UNFINISHHEADER
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
 !macroend
 
 ;--------------------------------
@@ -1650,7 +1474,9 @@
 
 !macro MUI_RESERVEFILE_WELCOMEFINISHPAGE
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
   
     !define MUI_NOVERBOSE
 
@@ -1660,19 +1486,21 @@
     
     !undef MUI_NOVERBOSE
     
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
     
 !macroend
 
 !macro MUI_RESERVEFILE_INSTALLOPTIONS
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
   
@@ -1680,13 +1508,13 @@
 
 !macro MUI_RESERVEFILE_SPECIALINI
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
   
@@ -1694,13 +1522,13 @@
 
 !macro MUI_RESERVEFILE_SPECIALBITMAP
 
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
+  !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
   
@@ -1708,84 +1536,43 @@
 
 !macro MUI_RESERVEFILE_LANGDLL
 
-  !verbose 3
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
   
   ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
   
-  !verbose 4
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
   
 !macroend
 
 ;--------------------------------
-;BASIC MACRO'S
+;INSERT ALL CODE
 
-!macro MUI_SYSTEM
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
+!macro MUI_INSERT
+  
+  !ifndef MUI_MANUALVERBOSE
+    !define MUI_MANUALVERBOSE_SET
+    !define MUI_MANUALVERBOSE
   !endif
   
-  !ifndef MUI_SYSTEM_INSERTED
-  
-    !define MUI_SYSTEM_INSERTED
-  
-    ;1.62 compatibility
-    !ifdef MUI_STARTMENU_VARIABLE | MUI_STARTMENU_DEFAULTFOLDER | MUI_STARTMENU_REGISTRY_ROOT
-      !error "The Start Menu Folder page defines have been renamed from MUI_STARTMENU_??? to MUI_STARTMENUPAGE_???. Please rename these defines in your script."
-    !endif
-  
-    !insertmacro MUI_INTERFACE  
-    !insertmacro MUI_BASIC
-    !insertmacro MUI_UNBASIC
-    
-  !else
-  
-    ;1.62 compatibility
-    !warning "The MUI_SYSTEM macro is now being inserted automatically. You can remove '!insertmacro MUI_SYSTEM' from your script."
-  
-  !endif
-  
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-  
-!macroend
-
-!macro MUI_BASIC
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-
-  !insertmacro MUI_PAGECOMMANDS
+  !insertmacro MUI_INTERFACE  
+   
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
   !insertmacro MUI_FUNCTIONS_ABORTWARNING
   
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
-!macroend
-
-!macro MUI_UNBASIC
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-  
   !ifdef MUI_UNINSTALLER
-
-    !insertmacro MUI_UNPAGECOMMANDS
     !insertmacro MUI_UNFUNCTION_PAGES
     !insertmacro MUI_UNFUNCTION_GUIINIT
+  !endif
   
+  !ifdef MUI_MANUALVERBOSE_SET
+    !undef MUI_MANUALVERBOSE
   !endif
-
-  !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
+  
 !macroend
 
 ;--------------------------------
@@ -1793,14 +1580,9 @@
 
 !macro MUI_LANGUAGEFILE_BEGIN LANGUAGE
 
-  !ifndef MUI_SYSTEM_INSERT
-  
-    !define MUI_SYSTEM_INSERT
-    
-    !define MUI_NOVERBOSE
-       !insertmacro MUI_SYSTEM
-    !undef MUI_NOVERBOSE
-    
+  !ifndef MUI_INSERT
+    !define MUI_INSERT
+    !insertmacro MUI_INSERT
   !endif
   
   !ifndef "MUI_LANGUAGEFILE_${LANGUAGE}_USED"
