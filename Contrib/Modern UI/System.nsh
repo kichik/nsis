@@ -1110,9 +1110,20 @@ Var MUI_TEMP2
   
 !macroend
 
+!macro MUI_WELCOMEFINISHPAGE_FUNCTION_CUSTOM
+
+  !ifdef MUI_WELCOMEFINISHPAGE_CUSTOMFUNCTION_INIT
+    Call "${MUI_WELCOMEFINISHPAGE_CUSTOMFUNCTION_INIT}"
+    !undef MUI_WELCOMEFINISHPAGE_CUSTOMFUNCTION_INIT
+  !endif
+
+!macroend
+
 !macro MUI_FUNCTION_WELCOMEPAGE PRE LEAVE
 
   Function "${PRE}"
+  
+    !insertmacro MUI_WELCOMEFINISHPAGE_FUNCTION_CUSTOM
   
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NumFields" "3"
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" ""
@@ -1352,6 +1363,8 @@ Var MUI_TEMP2
 !macro MUI_FUNCTION_FINISHPAGE PRE LEAVE
 
   Function "${PRE}"
+    
+    !insertmacro MUI_WELCOMEFINISHPAGE_FUNCTION_CUSTOM
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" "${MUI_FINISHPAGE_BUTTON}"
     
