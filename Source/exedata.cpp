@@ -20,10 +20,11 @@
 #include "exehead/Debug-lzma/exehead_lzma.h"
 #endif*/
 
-int zlib_exeheader_size=sizeof(zlib_header_data);
-int bzip2_exeheader_size=sizeof(bzip2_header_data);
-int lzma_exeheader_size=sizeof(lzma_header_data);
-int exeheader_size=0;
+size_t zlib_exehead_size=sizeof(zlib_exehead);
+size_t bzip2_exehead_size=sizeof(bzip2_exehead);
+size_t lzma_exehead_size=sizeof(lzma_exehead);
+// TODO: rename to exehead_original_size
+size_t exeheader_size=0;
 
-int icondata_size=sizeof(icon_data)-22;
-int unicondata_size=sizeof(unicon_data)-22;
+size_t icondata_size=sizeof(icon_data)-22;
+size_t unicondata_size=sizeof(unicon_data)-22;

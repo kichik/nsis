@@ -235,9 +235,9 @@ int main(int argc, char **argv)
     {
       if (build.display_info) 
       {
-        fprintf(g_output,"Size of zlib EXE header is %d bytes.\n",zlib_exeheader_size);
-        fprintf(g_output,"Size of bzip2 EXE header is %d bytes.\n",bzip2_exeheader_size);
-        fprintf(g_output,"Size of lzma EXE header is %d bytes.\n",lzma_exeheader_size);
+        fprintf(g_output,"Size of zlib EXE header is %d bytes.\n",zlib_exehead_size);
+        fprintf(g_output,"Size of bzip2 EXE header is %d bytes.\n",bzip2_exehead_size);
+        fprintf(g_output,"Size of lzma EXE header is %d bytes.\n",lzma_exehead_size);
         fprintf(g_output,"Size of first header is %d bytes.\n",sizeof(firstheader));
         fprintf(g_output,"Size of main header is %d bytes.\n",sizeof(header));
         fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));

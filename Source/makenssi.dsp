@@ -205,12 +205,20 @@ SOURCE=.\exedata.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\growbuf.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\lang.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\makenssi.cpp
 # ADD CPP /G6
+# End Source File
+# Begin Source File
+
+SOURCE=.\mmap.cpp
 # End Source File
 # Begin Source File
 
@@ -229,6 +237,10 @@ SOURCE=.\ResourceVersionInfo.cpp
 SOURCE=.\script.cpp
 # ADD CPP /Ot /Ow /Oy
 # SUBTRACT CPP /Og
+# End Source File
+# Begin Source File
+
+SOURCE=.\strlist.cpp
 # End Source File
 # Begin Source File
 
@@ -273,11 +285,19 @@ SOURCE=.\exedata.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\growbuf.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lang.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\lineparse.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\mmap.h
 # End Source File
 # Begin Source File
 

@@ -54,7 +54,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=generating include file for makenssi
-PostBuild_Cmds=bin2h Release-bzip2\exehead_bzip2.exe Release-bzip2\exehead_bzip2.h bzip2_header_data
+PostBuild_Cmds=bin2h Release-bzip2\exehead_bzip2.exe Release-bzip2\exehead_bzip2.h bzip2_exehead
 # End Special Build Tool
 # Begin Target
 
