@@ -1,5 +1,41 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0b5} 2.0 Beta 5
+
+\S1{v2.0b5-rn} Release Notes
+
+\b Trying the LZMA compression method for your installer is recommended. It often gives a 20% better compression ratio.
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: The setting to change the title size on the Welcome page and Finish page has been changed
+
+\S1{v2.0b5-cl} Changelog
+
+\S2{} Major Changes
+
+\b LZMA compression support. Added \R{asetcompressordictsize}{SetCompresssorDictSize}.
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: New settings for extra space for title and text on Welcome page and Finish page, improved handling of verbose settings, language file string for uninstaller reboot information, more
+
+\b Added \R{adirverify}{DirVerify} and \R{getinstdirerror}{GetInstDirError} to allow custom error checking when the installation directory is invalid or the drive does not have enough space
+
+\b Added LogicLib to distribution (easier conditional execution etc.)
+
+\b Support for reading environmental variables on compile time: \R{compenvvar}{$%envVarName%}
+
+\b Added /SD parameter for \R{messagebox}{MessageBox}. Allows to set default for silent installers.
+
+\b New conditional compilation options: \R{ifmacrodef}{!ifmacrodef} and \R{ifmacrondef}{!ifmacrondef}.
+
+\b New sections macros for mutually exclusive section selection
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.3}: Added new control type "Button", added new flag "NOTIFY", added new flag "NOWORDWRAP" for multi-line text boxes, reduced size down to 12K
+
+\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: More options to set the compression method
+
+\b Zip2Exe 0.31: Fixed compression setting, LZMA compression support
+
 \H{v2.0b4} 2.0 Beta 4
 
 \S1{v2.0b4-rn} Release Notes

@@ -126,6 +126,12 @@ The default string will be used if a string is empty ("").
 
 Specifies which variable is to be used to contain the directory selected. This variable should contain the default value too. This allows to easily create two different directory pages that will not require you to move values in and out of $INSTDIR. The default variable is $INSTDIR. This can only be used in \R{pageex}{PageEx} and for directory and uninstConfirm pages.
 
+\S2{adirverify} DirVerify
+
+\c \\<b\\>auto\\</b\\>|leave
+
+If `DirVerify leave' is used, the Next button will not be disabled if the installation directory is not valid or there is not enough space and a flag that you can read in the leave function using \R{getinstdirerror}{GetInstDirError} will be set instead.
+
 \S2{a} FileErrorText
 
 \c file error text
