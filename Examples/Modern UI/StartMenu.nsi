@@ -8,7 +8,7 @@
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
 ;$9 is being used to store the Start Menu Folder.
-;Do not use this variable in your script!
+;Do not use this variable in your script (or Push/Pop it)!
 
 ;You can change this variable or the default Start Menu Folder by using
 ;these defines:
@@ -21,10 +21,12 @@
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
-  !define MUI_ABORTWARNING
-  !define MUI_UNINSTALLER
-  
   !define MUI_STARTMENUPAGE
+  
+  !define MUI_ABORTWARNING
+  
+  !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
   
   !define TEMP1 $R0
 
