@@ -226,7 +226,7 @@ SectionEnd
 
 Function un.onNextPage
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_NEXTPAGE un.onNextPage
+  !insertmacro MUI_NEXTPAGE un.SetPage
 FunctionEnd
 
 Function un.SetPage
