@@ -103,7 +103,7 @@ void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
 char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
 {
   char* linebuf = NULL;
-  ResourceManager<char*, __free_with_free> linebufManager(linebuf);
+  MANAGE_WITH(linebuf, free);
 
   char temp[128] = "";
   sprintf(temp,"%d",linecnt);
@@ -486,7 +486,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
       else if (in[0] == '{')
       {
         char *s=strdup(in+1);
-        ResourceManager<char*, __free_with_free> sManager(s);
+        MANAGE_WITH(s, free);
         char *t=s;
         unsigned int bn = 0;
         while (*t)
@@ -524,7 +524,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
       else if (in[0] == '%')
       {
         char *s=strdup(in+1);
-        ResourceManager<char*, __free_with_free> sManager(s);
+        MANAGE_WITH(s, free);
         char *t=s;
         while (*t)
         {
@@ -559,7 +559,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
         if (in[1] == '{') // Found $$ before - Don't replace this define
         {
           char *s=strdup(in+2);
-          ResourceManager<char*, __free_with_free> sManager(s);
+          MANAGE_WITH(s, free);
           char *t=s;
           unsigned int bn = 0;
           while (*t)
@@ -641,7 +641,7 @@ int CEXEBuild::includeScript(char *f)
   }
 
   // auto-fclose(3) incfp
-  ResourceManager<FILE*, __free_with_fclose> incfpManager(incfp);
+  MANAGE_WITH(incfp, fclose);
   
   if (build_include_depth >= MAX_INCLUDEDEPTH)
   {
@@ -1346,7 +1346,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("LicenseLangString: open failed \"%s\"\n",file);
         PRINTHELP()
       }
-      ResourceManager<FILE*, __free_with_fclose> fpManager(fp);
+      MANAGE_WITH(fp, fclose);
       fseek(fp,0,SEEK_END);
       datalen=ftell(fp);
       if (!datalen)
@@ -1361,7 +1361,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
         return PS_ERROR;
       }
-      ResourceManager<char*, __free_with_free> dataManager(data);
+      MANAGE_WITH(data, free);
       char *ldata=data+1;
       if (fread(ldata,1,datalen,fp) != datalen)
       {
@@ -1634,7 +1634,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (file[0] == '$' && file[1] == '(')
         {
           char *cp = strdup(file+2);
-          ResourceManager<char*, __free_with_free> cpManager(cp);
+          MANAGE_WITH(cp, free);
           char *p = strchr(cp, ')');
           if (p && p[1] == 0) { // if string is only a language str identifier
             *p = 0;
@@ -1652,7 +1652,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG("LicenseData: open failed \"%s\"\n",file);
             PRINTHELP()
           }
-          ResourceManager<FILE*, __free_with_fclose> fpManager(fp);
+          MANAGE_WITH(fp, fclose);
           fseek(fp,0,SEEK_END);
           datalen=ftell(fp);
           if (!datalen)
@@ -1667,7 +1667,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
             return PS_ERROR;
           }
-          //ResourceManager<char*, __free_with_free> dataManager(data);
+          //MANAGE_WITH(data, free);
           char *ldata=data+1;
           if (fread(ldata,1,datalen,fp) != datalen) {
             ERROR_MSG("LicenseData: can't read file.\n");
@@ -2202,7 +2202,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
         }
-        ResourceManager<FILE*, __free_with_fclose> fuiManager(fui);
+        MANAGE_WITH(fui, fclose);
 
         fseek(fui, 0, SEEK_END);
         unsigned int len = ftell(fui);
@@ -2212,7 +2212,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", len);
           extern void quit(); quit();
         }
-        ResourceManager<LPBYTE, __free_with_free> uiManager(ui);
+        MANAGE_WITH(ui, free);
         if (fread(ui, 1, len, fui) != len) {
           ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
@@ -2628,7 +2628,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         unsigned int malloced = strlen(f) + 100;
         char *incfile = (char *) malloc(malloced);
         assert(incfile != 0);
-        ResourceManager<char*, __free_with_free> incfileManager(incfile);
+        MANAGE_WITH(incfile, free);
         strcpy(incfile, f);
         glob_t globbuf;
         if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
@@ -4379,7 +4379,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(1));
           return PS_ERROR;
         }
-        ResourceManager<FILE*, __free_with_fclose> fdllManager(fdll);
+        MANAGE_WITH(fdll, fclose);
 
         fseek(fdll, 0, SEEK_END);
         unsigned int len = ftell(fdll);
@@ -4389,7 +4389,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", dll);
           extern void quit(); quit();
         }
-        ResourceManager<LPBYTE, __free_with_free> dllManager(dll);
+        MANAGE_WITH(dll, free);
         if (fread(dll, 1, len, fdll) != len) {
           ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(1));
           return PS_ERROR;
@@ -5366,7 +5366,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       int ret, data_handle;
       char* command = strdup(line.gettoken_str(0));
       assert(command != 0);
-      ResourceManager<char*, __free_with_free> commandManager(command);
+      MANAGE_WITH(command, free);
 
       char* dllPath = m_plugins.GetPluginDll(uninstall_mode, &command, &data_handle);
       if (dllPath)
@@ -5617,7 +5617,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         }
 
         // Will auto-CloseHandle hFile
-        ResourceManager<HANDLE, __free_with_CloseHandle> hFileManager(hFile);
+        MANAGE_WITH(hFile, CloseHandle);
 
         len = GetFileSize(hFile, NULL);
         if (len && !mmap.setfile(hFile, len))
@@ -5639,7 +5639,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         }
 
         // Will auto-close(2) fd
-        ResourceManager<int, __free_with_close> fdManager(fd);
+        MANAGE_WITH(fd, close);
 
         if (len && !mmap.setfile(fd, len))
         {
