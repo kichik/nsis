@@ -12,32 +12,33 @@ NLF v6
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v6
 # Revision by Sorin Sbarnea (sorin@intersol.ro)      v5.1
 # and Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
+# New revision by George Radu (georadu@hotmail.com)
 # ^Branding
-Sistem de instalare Nullsoft %s
+NSIS %s
 # ^SetupCaption
 Instalare $(^Name)
 # ^UninstallCaption
-Dezinstalare $(^Name)
+Eliminare $(^Name)
 # ^LicenseSubCaption
-: Licenta de utilizare
+: Contract de licenta
 # ^ComponentsSubCaption
 : Optiuni de instalare
 # ^DirSubCaption
-: Directorul de instalare
+: Directorul destinatie
 # ^InstallingSubCaption
 : In curs de instalare
 # ^CompletedSubCaption
 : Instalare terminata
 # ^UnComponentsSubCaption
-: Optiuni de dezinstalare
+: Optiuni de eliminare
 # ^UnDirSubCaption
-: Directorul de dezinstalare
+: Directorul de eliminare
 # ^ConfirmSubCaption
 : Confirmare
 # ^UninstallingSubCaption
-: In curs de dezinstalare
+: In curs de eliminare
 # ^UnCompletedSubCaption
-: Terminat
+: Terminare
 # ^BackBtn
 < Ina&poi
 # ^NextBtn
@@ -45,141 +46,141 @@ Dezinstalare $(^Name)
 # ^AgreeBtn
 &De acord
 # ^AcceptBtn
-&Accept termenii din acordul de licenta
+&Accept termenii contractului de licenta
 # ^DontAcceptBtn
-Nu accept termenii din acordul de licenta
+Nu accept termenii contractului de licenta
 # ^InstallBtn
 &Instalare
 # ^UninstallBtn
-&Dezinstalare
+&Eliminare
 # ^CancelBtn
-Anuleaza
+Anulare
 # ^CloseBtn
-&Inchide
+&Inchidere
 # ^BrowseBtn
-&Alegeti...
+&Rasfoire...
 # ^ShowDetailsBtn
-Afiseaza &detalii
+Afisare &detalii
 # ^ClickNext
 Apasati Inainte pentru a continua.
 # ^ClickInstall
 Apasati Instalare pentru a incepe instalarea.
 # ^ClickUninstall
-Apasati Dezinstalare pentru a incepe dezinstalarea.
+Apasati Eliminare pentru a incepe eliminarea.
 # ^Name
 Nume
 # ^Completed
-Complet
+Terminat
 # ^LicenseText
-Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, apasati butonul De acord.
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
 # ^LicenseTextCB
-Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
 # ^LicesnseTextRB
-Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
 # ^UnLicenseText
-Cititi cu atentie licenta inainte de a dezinstala $(^NameDA). Daca acceptati termenii licentei, apasati butonul De acord.
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
 # ^UnLicenseTextCB
-Cititi cu atentie licenta inainte de a dezinstala $(^NameDA). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
 # ^UnLicesnseTextRB
-Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
 # ^Custom
-Nestandard
+Nonstandard
 # ^ComponentsText
-Alegeti componentele pe care vreti sa le instalati. $_CLICK
+Selectati componentele pe care doriti sa le instalati. $_CLICK
 # ^ComponentsSubText1
-Alegeti tipul instalarii:
+Selectati tipul instalarii:
 # ^ComponentsSubText2_NoInstTypes
-Alegeti componentele de instalat:
+Selectati componentele ce urmeaza a fi instalate:
 # ^ComponentsSubText2
-Sau, alegeti componentele optionale pe care vreti sa le instalati:
+Sau, selectati componentele optionale pe care doriti sa le instalati:
 # ^UnComponentsText
-Alegeti componentele pe care vreti sa le dezinstalati. $_CLICK
+Selectati componentele pe care doriti sa le eliminati. $_CLICK
 # ^UnComponentsSubText1
-Selectati tipul de dezinstalare:
+Selectati tipul de eliminare:
 # ^UnComponentsSubText2_NoInstTypes
-Alegeti componentele pe care vreti sa le dezinstalati:
+Selectati componentele ce urmeaza a fi eliminate:
 # ^UnComponentsSubText2
-Sau, alegeti componentele optionale pe care vreti sa le dezinstalati:
+Sau, selectati componentele optionale pe care doriti sa le eliminati:
 # ^DirText
-$(^NameDA) va fi instalat in urmatorul director. Pentru a instala in alt director, apasati Alegeti si selectati alt director. $_CLICK
+$(^NameDA) va fi instalat in urmatorul director. Pentru a selecta alta destinatie, apasati Rasfoire si selectati alt director. $_CLICK
 # ^DirSubText
 Director destinatie
 # ^DirBrowseText
-Selectati directorul In care vreti sa instalati $(^NameDA):
+Selectati directorul In care doriti sa instalati $(^NameDA):
 # ^UnDirText
-$(^NameDA) va fi dezinstalat din urmatorul director. Pentru a dezinstala din alt director, apasati Alegeti si selectati alt director. $_CLICK
+$(^NameDA) va fi eliminat din urmatorul director. Pentru a elimina din alt director, apasati Rasfoire si selectati alt director. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Selectati directorul de dezinstalare al $(^NameDA):
+Selectati directorul de eliminare al $(^NameDA):
 # ^SpaceAvailable
 "Spatiu disponibil: "
 # ^SpaceRequired
 "Spatiu necesar: "
 # ^UninstallingText
-Acest vrajitor va dezinstala $(^NameDA) din calculatorul dumneavoastra. $_CLICK
+Aceasta aplicatie va elimina $(^NameDA) din computerul dumneavoastra. $_CLICK
 # ^UninstallingSubText
-Dezinstaleaza din:
+Eliminare din:
 # ^FileError
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti Anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai Incerca o data scrierea fisierului, \r\nignora pentru a trece peste acest fisier
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Anulare pentru oprirea instalarii,\r\nReincercare pentru a mai Incerca o data scrierea fisierului, \r\nIgnorare pentru a trece peste acest fisier
 # ^FileError_NoIgnore
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincearca pentru a mai incerca, sau\r\nAnuleaza pentru oprirea instalarii
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincercare pentru a mai incerca, sau\r\nAnulare pentru oprirea instalarii
 # ^CantWrite
-"Nu pot sa scriu: "
+"Scrierea nu a fost posibila: "
 # ^CopyFailed
 Copierea a esuat
 # ^CopyTo
-"Copiaza in "
+"Copiere in "
 # ^Registering
-"Inregistrez: "
+"Se inregistreaza: "
 # ^Unregistering
-"Dezinregistrez: "
+"Se elimina registrii: "
 # ^SymbolNotFound
-"N-am gasit simbolul: "
+"Simbolul nu a fost gasit: "
 # ^CouldNotLoad
-"N-am putut incarca: "
+"Incarcarea nu a avut loc: "
 # ^CreateFolder
-"Creaza director: "
+"Creare director: "
 # ^CreateShortcut
-"Creaza scurtatura: "
+"Creare comanda rapida: "
 # ^CreatedUninstaller
-"Crearea programului de dezinstalare este completa: "
+"Crearea aplicatiei de eliminare este terminata: "
 # ^Delete
-"Sterge fisier: "
+"Stergere fisier: "
 # ^DeleteOnReboot
-"Sterge la repornire: "
+"Stergere la repornire: "
 # ^ErrorCreatingShortcut
-"Eroare la creare scurtatura: "
+"Eroare la creare comanda rapida: "
 # ^ErrorCreating
 "Eroare la creare: "
 # ^ErrorDecompressing
-Eroare la decomprimarea datelor! Program de instalare corupt?
+Eroare la dezarhivarea datelor! Aplicatia de instalare este invalida?
 # ^ErrorRegistering
 Eroare la inregistrarea DLL-ului
 # ^ExecShell
 "ExecShell: "
 # ^Exec
-"Executa: "
+"Executare: "
 # ^Extract
-"Extrage: "
+"Extragere: "
 # ^ErrorWriting
-"Extrage: eroare la scriere in fisier "
+"Extragere: eroare la scriere in fisier "
 # ^InvalidOpcode
-Program de instalare corupt: opcode invalid
+Aplicatie de instalare invalida: opcode invalid
 # ^NoOLE
 "Nu exista OLE pentru: "
 # ^OutputFolder
 "Directorul destinatie: "
 # ^RemoveFolder
-"Sterge destinatia: "
+"Stergere destinatia: "
 # ^RenameOnReboot
-"Redenumeste la repornirea calculatorul: "
+"Redenumire la repornirea computerului: "
 # ^Rename
-"Redenumeste: "
+"Redenumire: "
 # ^Skipped
 "Sarite: "
 # ^CopyDetails
-Copiaza detaliile in clipboard
+Copiere detalii in clipboard
 # ^LogInstall
 Jurnal proces de instalare
 # ^Byte
