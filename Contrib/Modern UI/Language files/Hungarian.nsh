@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "A folytatáshoz nyomja meg a Tovább gombot."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "A Telepítés gomb megnyomásával indíthatja a folyamatot."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Üdvözli a(z) ${MUI_PRODUCT} Telepítõ Varázsló"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "A(z) ${MUI_PRODUCT} telepítése következik a számítógépre.\r\n\r\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Üdvözli a(z) ${MUI_PRODUCT} Telepítõ Varázsló"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "A(z) ${MUI_PRODUCT} telepítése következik a számítógépre.\r\n\r\nJavasoljuk, hogy indítás elõtt zárja be a futó alkalmazásokat. Így a telepítõ a rendszer újraindítása nélkül tudja frissíteni a szükséges rendszerfájlokat.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licencszerzõdés"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "A(z) ${MUI_PRODUCT} telepítése elõtt tekintse át a szerzõdés feltételeit."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "A telepítés sikeresen befejezõdött."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Befejezés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Befejezés"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "A(z) ${MUI_PRODUCT} telepítése megtörtént.\r\nA Befejezés gomb megnyomásával zárja be a varázslót."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "A(z) ${MUI_PRODUCT} telepítése megtörtént.\r\n\r\nA Befejezés gomb megnyomásával zárja be a varázslót."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "A(z) ${MUI_PRODUCT} telepítésének befejezéséhez újra kell indítani a rendszert. Most akarja újraindítani?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Most indítom újra"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Késõbb fogom újraindítani"

@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Натисніть Далі для продовження."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Натисніть Встановити для посатку установки."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Ласкаво просимо до ${MUI_PRODUCT} Майстру Установки"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Дана установка встановить ${MUI_PRODUCT} на ваш комп'ютер.\r\n\r\nРекомендовано закрити всі програми перед початком інсталяції. Це дозволить установці оновити системні файли без перезавантаження системи.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Ласкаво просимо до ${MUI_PRODUCT} Майстру Установки"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Дана установка встановить ${MUI_PRODUCT} на ваш комп'ютер.\r\n\r\nРекомендовано закрити всі програми перед початком інсталяції. Це дозволить установці оновити системні файли без перезавантаження системи.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Ліцензійна Угода"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Будь-ласка перегляньте ліцензію перед установкою ${MUI_PRODUCT}."
@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Установка успiшно завершена."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Завершено"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Кінець"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT} встановлено на ваш комп'ютер.\r\nНатисніть Кінець для виходу."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} встановлено на ваш комп'ютер.\r\nНатисніть Кінець для виходу."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Ваша система мусить перезавантажитися для повної установки ${MUI_PRODUCT}. Do you want to reboot now?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Перезавантажити"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Перезавантажити Пізніше"
