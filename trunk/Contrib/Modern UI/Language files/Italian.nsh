@@ -31,7 +31,7 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Scegli la cartella di installazione"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Scegli la cartella dove installare ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Il programma d'installazione installerà ${MUI_PRODUCT} nella cartella selezionata.$\r$\n$\r$\nPer installare nella cartella selezionata clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Il programma d'installazione installerà ${MUI_PRODUCT} nella cartella selezionata.$\r$\n$\r$\nPer installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Cartella d'installazione"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Installazione in corso"
