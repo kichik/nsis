@@ -17,7 +17,7 @@
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
   ;Remember install folder
-  InstallDirRegKey HKCU "Softare\${MUI_PRODUCT}" ""
+  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
   
   ;Remember the installer language
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
@@ -142,7 +142,7 @@ Section "modern.exe" SecCopyUI
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
   ;Store install folder
-  WriteRegStr HKCU "Softare\${MUI_PRODUCT}" "" $INSTDIR
+  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
   
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
