@@ -6,6 +6,8 @@ A NSIS Script File (.nsi) is just a text file with a series of commands.
 
 \b Non-comment lines are in the form of 'command [parameters]'
 
+\b To call a plugin, use 'plugin::command [parameters]'. For more info see \k{plugindlls}.
+
 \b Anything after a ; or # that is not in a parameter (i.e. in quotes or part of another string) is treated as a comment. (i.e. "File myfile ; this is the file" would work)
 
 \b For parameters that are treated as numbers, use decimal (the number) or hexadecimal (with 0x prepended to it, i.e. 0x12345AB), or octal (numbers beginning with a 0 and no x).
@@ -32,4 +34,4 @@ A NSIS Script File (.nsi) is just a text file with a series of commands.
 \c                      you created that you want to keep, click No)" \
 \c                      IDNO NoRemoveLabel
 
-\b If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used.
+\b If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used).
