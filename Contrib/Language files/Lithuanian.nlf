@@ -10,7 +10,7 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by Vytautas Krivickas (Vytautas)
-# Updated by Danielius Scepanskis (Daan daniel@takas.lt) 2004.01.09
+# Updated by Danielius Scepanskis (Daan daniel@takas.lt) 2004.03.24
 # ^Branding
 Nullsoft instaliavimo sistema %s
 # ^SetupCaption
@@ -86,7 +86,7 @@ Kitoks
 # ^ComponentsText
 Padëkite varneles laukeliuose komponentø kuriuos norite ádiegti ir nuimkite nuo kuriø nenorite ádiegti.
 # ^ComponentsSubText1
-Pasirinkite ádiegimo tipà:
+Pasirinkite ádiegimo bûdà:
 # ^ComponentsSubText2_NoInstTypes
 Pasirinkite komponentus, kuriuos ádiegti:
 # ^ComponentsSubText2
@@ -94,7 +94,7 @@ Arba, pasirinkite neprivalomus komponentus, kuriuos jûs norite ádiegti:
 # ^UnComponentsText
 Padëkite varneles laukeliuose komponentø kuriuos norite paðalinti ir nuimkite nuo kuriø nenorite paðalinti.
 # ^UnComponentsSubText1
-Pasirinkite ðalinimo tipà:
+Pasirinkite ðalinimo bûdà:
 # ^UnComponentsSubText2_NoInstTypes
 Pasirinkite komponentus, kuriuos ðalinti:
 # ^UnComponentsSubText2
@@ -121,7 +121,7 @@ $(^NameDA) dabar bus paðalintas ið ðio katalogo.
 # ^UninstallingSubText
 Trinama ið:
 # ^FileError
-Klaida atidarant failà áraðymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti ádiegimà,\r\nPakartoti, jei norite pabandyti dar kartà iraðyti failà, ar\r\nIgnoruoti, jei norite praleisti ðá failà
+Klaida atidarant failà áraðymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti ádiegimà,\r\nPakartoti, jei norite pabandyti dar kartà áraðyti failà, ar\r\nIgnoruoti, jei norite praleisti ðá failà
 # ^FileError_NoIgnore
 Klaida atidarant failà áraðymui: \r\n\t"$0"\r\nPaspauskite Pakartoti, jei norite pabandyti dar kartà áraðyti failà, ar\r\nNutraukti, jei norite nutraukti ádiegimà.
 # ^CantWrite
@@ -137,7 +137,7 @@ Kopijuoti á
 # ^SymbolNotFound
 Nerastas simbolis: 
 # ^CouldNotLoad
-Negalima paleisti: 
+Negaliu ákrauti: 
 # ^CreateFolder
 Sukurti katalogà: 
 # ^CreateShortcut
@@ -157,9 +157,9 @@ Klaida iðskleidþiant duomenis! Sugadintas ádiegimo failas?
 # ^ErrorRegistering
 Klaida uþregistruojant DLL
 # ^ExecShell
-"ExecShell: "
+"VykdytiShell: "
 # ^Exec
-"Paleisti: "
+"Vykdyti: "
 # ^Extract
 "Iðskleisti: "
 # ^ErrorWriting
@@ -169,7 +169,7 @@ Iðskleisti: klaida áraðant á failà
 # ^NoOLE
 "Nëra OLE dël: "
 # ^OutputFolder
-"Iðeinantis katalogas: "
+"Paskirties katalogas: "
 # ^RemoveFolder
 "Panaikinti katalogà: "
 # ^RenameOnReboot
