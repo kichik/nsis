@@ -31,7 +31,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
 // returns the number of WCHARs in str including null charcter
-int WCStrLen(const WCHAR* szwStr);
+size_t WCStrLen(const WCHAR* szwStr);
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
@@ -55,15 +55,11 @@ std::string get_executable_dir(const char *argv0);
 char *CharPrev(const char *s, const char *p);
 char *CharNext(const char *s);
 int wsprintf(char *s, const char *format, ...);
-// iconv const inconsistency workaround by Alexandre Oliva
-template <typename T>
-inline size_t __iconv_adaptor
-  (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
-  iconv_t cd, char **inbuf, size_t *inbytesleft,
-  char **outbuf, size_t *outbytesleft)
-{
-  return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
-}
+int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
+    int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar,
+    LPBOOL lpUsedDefaultChar);
+int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
+    int cbMultiByte, LPWSTR lpWideCharStr, int cchWideChar);
 
 char *my_convert(const char *path);
 void my_convert_free(char *converted_path);
