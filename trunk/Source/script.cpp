@@ -4437,11 +4437,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG("%s: %s\\%s\\%s=%s\n",
             line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
           ent.offsets[3]=add_string(line.gettoken_str(4));
+          ent.offsets[4]=ent.offsets[5]=REG_SZ;
           if (which_token == TOK_WRITEREGEXPANDSTR)
           {
-            ent.offsets[4]=0;
+            ent.offsets[5]=REG_EXPAND_SZ;
           }
-          else ent.offsets[4]=1;
         }
         if (which_token == TOK_WRITEREGBIN)
         {
@@ -4476,12 +4476,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
           ent.offsets[3]=add_db_data(data,data_len);
           if (ent.offsets[3] < 0) return PS_ERROR;
-          ent.offsets[4]=3;
+          ent.offsets[4]=ent.offsets[5]=REG_BINARY;
         }
         if (which_token == TOK_WRITEREGDWORD)
         {
           ent.offsets[3]=add_string(line.gettoken_str(4));
-          ent.offsets[4]=2;
+          ent.offsets[4]=ent.offsets[5]=REG_DWORD;
 
           SCRIPT_MSG("WriteRegDWORD: %s\\%s\\%s=%s\n",
             line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
@@ -5188,8 +5188,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("LockWindow: lock state=%d\n",line.gettoken_str(1));
       ent.which=EW_LOCKWINDOW;
       ent.offsets[0]=line.gettoken_enum(1,"on\0off\0");
-      if ( ent.offsets[0] == -1 )
-          PRINTHELP();
+      if (ent.offsets[0] == -1)
+        PRINTHELP();
     return add_entry(&ent);
 #else
     case TOK_LOCKWINDOW:
