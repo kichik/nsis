@@ -90,6 +90,9 @@ int main(int argc, char **argv)
   FILE *fp;
   int tmpargpos=1;
   int no_logo=0;
+#ifndef _WIN32
+  int in_files=0;
+#endif
 
   build.setdirs(argv[0]);
 
@@ -136,7 +139,13 @@ int main(int argc, char **argv)
   if (!g_output) g_output=stdout;
   while (argpos < argc)
   {
+#ifndef _WIN32
+    if (!strcmp(argv[argpos], "--"))
+      in_files=1;
+    else if (argv[argpos][0] == OPT_C && strcmp(argv[argpos], "-") && !in_files)
+#else
     if (argv[argpos][0] == OPT_C && strcmp(argv[argpos], "-"))
+#endif
     {
       if ((argv[argpos][1]=='D' || argv[argpos][1]=='d') && argv[argpos][2])
       {
@@ -260,7 +269,12 @@ int main(int argc, char **argv)
     else
     {
       files_processed++;
-      if (!strcmp(argv[argpos],"-")) g_dopause=0;
+#ifndef _WIN32
+      if (!strcmp(argv[argpos],"-") && !in_files)
+#else
+      if (!strcmp(argv[argpos],"-"))
+#endif
+        g_dopause=0;
       if (!g_noconfig)
       {
         g_noconfig=1;
@@ -301,7 +315,11 @@ int main(int argc, char **argv)
 
       {
         char sfile[1024];
+#ifndef _WIN32
+        if (!strcmp(argv[argpos],"-") && !in_files)
+#else
         if (!strcmp(argv[argpos],"-"))
+#endif
         {
           fp=stdin;
           strcpy(sfile,"stdin");
