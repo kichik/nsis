@@ -29,7 +29,7 @@
 
   ;User interface
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
-  
+
   ;License dialog
   LicenseText /LANG=1033 "Scroll down to see the rest of the agreement."
   LicenseText /LANG=1043 "Blader naar beneden om de rest van de overeenkomt te zien."
@@ -48,7 +48,7 @@
   ;Uninstaller
   UninstallText /LANG=1033 "This will uninstall ${NAME} from your system."
   UninstallText /LANG=1043 "Dit programma zal ${NAME} verwijderen van uw systeem."
-  
+
 ;--------------------------------
 ;Installer Sections
 
@@ -73,7 +73,7 @@ Section ""
 
   ;Invisible section to display the Finish header
   !insertmacro MUI_FINISHHEADER SetHeader
-  
+
 SectionEnd
 
 ;--------------------------------
@@ -123,7 +123,7 @@ Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetHeader
-  
+
 FunctionEnd
 
 Function .onPrevPage
@@ -138,7 +138,7 @@ Function SetHeader
 
     !insertmacro MUI_HEADER_START 1
       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
-      !insertmacro MUI_HEADER_TEXT 1043 "Licentie Overeenkomst" "Lees de licentie overeenkomst voordat u ${NAME} installeerd." 
+      !insertmacro MUI_HEADER_TEXT 1043 "Licentie Overeenkomst" "Lees de licentie overeenkomst voordat u ${NAME} installeerd."
     !insertmacro MUI_HEADER_STOP 1
 
     !insertmacro MUI_HEADER_START 2
@@ -147,7 +147,7 @@ Function SetHeader
     !insertmacro MUI_HEADER_STOP 2
 
     !insertmacro MUI_HEADER_START 3
-       !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME} in."
+       !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
        !insertmacro MUI_HEADER_TEXT 1043 "Kies Installatie Locatie" "Kies de map waarin u ${NAME} in wilt installeren."
     !insertmacro MUI_HEADER_STOP 3
 
@@ -184,7 +184,7 @@ Function .onUserAbort
   !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
   !insertmacro MUI_ABORTWARNING 1043 "Weet u zeker dat u ${NAME} Setup wilt afsluiten?"
   !insertmacro MUI_ABORTWARNING_END
-  
+
 FunctionEnd
 
 ;--------------------------------
@@ -210,7 +210,7 @@ Function un.onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetHeader
-  
+
 FunctionEnd
 
 Function un.SetHeader

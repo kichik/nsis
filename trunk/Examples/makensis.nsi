@@ -341,7 +341,7 @@ Section -post
     Sleep 500
     BringToFront
   nofunshit:
-  Delete $INSTDIR\uninst-nsis.exe 
+  Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
   !insertmacro MUI_FINISHHEADER SetHeader
 SectionEnd
@@ -377,7 +377,7 @@ Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetHeader
-  
+
 FunctionEnd
 
 Function .onPrevPage
@@ -399,7 +399,7 @@ Function SetHeader
     !insertmacro MUI_HEADER_STOP 2
 
     !insertmacro MUI_HEADER_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME} in."
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
     !insertmacro MUI_HEADER_STOP 3
 
     !insertmacro MUI_HEADER_START 4
@@ -418,7 +418,7 @@ Function .onUserAbort
 
   !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
   !insertmacro MUI_ABORTWARNING_END
-  
+
 FunctionEnd
 
 Function .onMouseOverSection
