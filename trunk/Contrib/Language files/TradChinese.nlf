@@ -9,7 +9,7 @@ NLF v6
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-12-29
+# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2004-12-14
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -41,11 +41,11 @@ $(^Name) 解除安裝
 # ^NextBtn
 下一步(&N) >
 # ^AgreeBtn
-我同意(&I)
+我接受(&I)
 # ^AcceptBtn
-我同意「授權協議」中的條款(&A)
+我接受「授權協議」中的條款(&A)
 # ^DontAcceptBtn
-我不同意「授權協議」中的條款(&N)
+我不接受「授權協議」中的條款(&N)
 # ^InstallBtn
 安裝(&I)
 # ^UninstallBtn
