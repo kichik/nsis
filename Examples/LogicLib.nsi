@@ -87,6 +87,18 @@ Section
   ${loop}
   MessageBox MB_OK "loopR1: $R1$\nloop2: $R2"
 
+  ; break..continue labels
+  StrCpy $R1 0
+  ${do}
+    StrCpy $R2 0
+    ${do}
+      IntOp $R2 $R2 + 1
+      MessageBox MB_YESNO "Do..Loop1: $R1.$\nDo..Loop2: $R2.$\n$\nDo you want to stop Loop2?" IDYES ${_Break} IDNO ${_Continue}
+    ${loop}
+    IntOp $R1 $R1 + 1
+    MessageBox MB_YESNO "Do..Loop1: $R1.$\nDo..Loop2: $R2.$\n$\nDo you want to stop Loop1?" IDYES ${_Break} IDNO ${_Continue}
+  ${loop}
+
   ; while..exitwhile..endwhile
   StrCpy $R1 0
   ${while} $R1 < 5 ;change to test while statement.

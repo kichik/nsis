@@ -1,5 +1,5 @@
 ; NSIS LOGIC LIBRARY - logiclib.nsh
-; Version 2.0 - 10/03/2003
+; Version 2.1 - 10/05/2003
 ; Questions/Comments - dselkirk@hotmail.com
 ; Special thanks to eccles for Push/Pop Logic!
 ;
@@ -21,15 +21,15 @@
 ;         - Executes one of several groups of statements, depending on the value of an expression. 
 ;       for..exitfor..next
 ;         - Repeats a group of statements a specified number of times.
-;       foreach..exitfor..next
+;       foreach..exitfor..continue..break..next
 ;         - Repeats a group of statements a specified number of times stepping in order specified.
-;       do..exitdo..loop
+;       do..exitdo..continue..break..loop
 ;         - Repeats a block of statements until stopped.
-;       dountil..exitdo..loop
+;       dountil..exitdo..continue..break..loop
 ;         - Repeats a block of statements until a condition is True.
-;       do..exitdo..loopuntil
+;       do..exitdo..continue..break..loopuntil
 ;         - Repeats a block of statements until a condition is True.
-;       while..exitwhile..endwhile
+;       while..exitwhile..continue..break..endwhile
 ;         - Executes a series of statements as long as a given condition is True.
 ;
 ; Usage:
@@ -44,7 +44,8 @@
 ;		1.3 - 09/22/2003 - Fixed maximum allow statements.
 ;                    			- Now allows 10 statement depth.
 ;                    			- Condensed code.
-;               2.0 - 10/03/2003 - Inital release 2, see notes.
+;   2.0 - 10/03/2003 - Inital release 2, see notes.
+;   2.1 - 10/05/2003 - Added continue and break labels to repeat type statements.
 
 !verbose 3
 
@@ -77,15 +78,15 @@
     !endif
   !macroend
 
-  !macro _PushCustom Type endlabel
+  !macro _PushCustom Type label
     !ifdef _${Type}                           ; If we already have a statement
       !define _Cur${Type} ${_${Type}}
       !undef _${Type}
-      !define _${Type} ${endlabel}
+      !define _${Type} ${label}
       !define ${_${Type}}Prev${Type} ${_Cur${Type}}      ; Save the current logic
       !undef _Cur${Type}
     !else
-      !define _${Type} ${endlabel}             ; Initialise for first statement
+      !define _${Type} ${label}             ; Initialise for first statement
     !endif
   !macroend
 
@@ -251,6 +252,8 @@
     !define ${_Logic}For2 _${__LINE__}       ; Get a label for the start of the loop
     !define ${_Logic}Next _${__LINE__}    ; Get a label for the end of the loop
     !insertmacro _PushCustom "ExitFor" ${${_Logic}Next}
+    !insertmacro _PushCustom "Break" ${${_Logic}Next}
+    !insertmacro _PushCustom "Continue" ${${_Logic}For}
     Goto ${${_Logic}For2}
     ${${_Logic}For}:                        ; Insert the loop condition
       IntOp ${_v} ${_v} ${_o} ${_s}
@@ -261,10 +264,7 @@
   !macroend
   !define ForEach "!insertmacro ForEach"
 
-  !macro ExitFor
-    Goto ${_ExitFor}
-  !macroend
-  !define ExitFor "!insertmacro ExitFor"
+  !define ExitFor "Goto ${_ExitFor}"
 
   !macro Next
     !verbose 3
@@ -277,6 +277,8 @@
     !undef ${_Logic}Next
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitFor"
+    !insertmacro _PushCustom "Break" ${${_Logic}Next}
+    !insertmacro _PushCustom "Continue" ${${_Logic}For}
     !verbose 4
   !macroend
   !define Next "!insertmacro Next"
@@ -287,16 +289,15 @@
     !define ${_Logic}While _${__LINE__}       ; Get a label for the start of the loop
     !define ${_Logic}EndWhile _${__LINE__}    ; Get a label for the end of the loop
     !insertmacro _PushCustom "ExitWhile" ${${_Logic}EndWhile}
+    !insertmacro _PushCustom "Break" ${${_Logic}EndWhile}
+    !insertmacro _PushCustom "Continue" ${${_Logic}While}
     ${${_Logic}While}:                        ; Insert the loop condition
     !insertmacro _${_o} "${_a}" "${_b}" "" ${${_Logic}EndWhile}
     !verbose 4
   !macroend
   !define While "!insertmacro While"
 
-  !macro ExitWhile
-    Goto ${_ExitWhile}
-  !macroend
-  !define ExitWhile "!insertmacro ExitWhile"
+  !define ExitWhile "Goto ${_ExitWhile}"
 
   !macro EndWhile
     !verbose 3
@@ -309,6 +310,8 @@
     !undef ${_Logic}EndWhile
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitWhile"
+    !insertmacro _PushCustom "Break" ${${_Logic}ExitWhile}
+    !insertmacro _PushCustom "Continue" ${${_Logic}While}
     !verbose 4
   !macroend
   !define EndWhile "!insertmacro EndWhile"
@@ -319,6 +322,8 @@
     !define ${_Logic}Do _${__LINE__}       ; Get a label for the start of the loop
     !define ${_Logic}Loop _${__LINE__}    ; Get a label for the end of the loop
     !insertmacro _PushCustom "ExitDo" ${${_Logic}Loop}
+    !insertmacro _PushCustom "Break" ${${_Logic}Loop}
+    !insertmacro _PushCustom "Continue" ${${_Logic}Do}
     ${${_Logic}Do}:                        ; Insert the loop condition
     !verbose 4
   !macroend
@@ -332,10 +337,7 @@
   !macroend
   !define DoUntil "!insertmacro DoUntil"
 
-  !macro ExitDo
-    Goto ${_ExitDo}
-  !macroend
-  !define ExitDo "!insertmacro ExitDo"
+  !define ExitDo "Goto ${_ExitDo}"
 
   !macro Loop
     !verbose 3
@@ -348,6 +350,8 @@
     !undef ${_Logic}Loop
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitDo"
+    !insertmacro _PopCustom "Break"
+    !insertmacro _PopCustom "Continue"
     !verbose 4
   !macroend
   !define Loop "!insertmacro Loop"
@@ -363,6 +367,8 @@
     !undef ${_Logic}Loop
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitDo"
+    !insertmacro _PopCustom "Break"
+    !insertmacro _PopCustom "Continue"
     !verbose 4
   !macroend
   !define LoopUntil "!insertmacro LoopUntil"
