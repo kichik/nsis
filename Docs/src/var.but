@@ -22,9 +22,7 @@ The command line of the installer. The format of the command line can be one of 
 
 \b installer.exe PARAMETER PARAMETER PARAMETER
 
-\b For parsing out the PARAMETER portion, see GetParameters on the utility functions page. It's worth noting that if /D= is specified on the command line (to override the install directory), it won't be in $CMDLINE.
-
-If you want to deal with parameters you should take a look at the GetParameters Function (See \k{getparameters}). 
+\b For parsing out the PARAMETER portion, see GetParameters on the useful functions appendix (See \k{getparameters}). It's worth noting that if /D= is specified on the command line (to override the install directory), it won't be in $CMDLINE.
 
 \e{$LANGUAGE}
 
@@ -105,7 +103,7 @@ Where SYMBOL is the name of something globally defined, this will be replaced wi
 \c Name "Test Program ${VERSION}"
 \c !define VERSION "V.1.0"
 
-This code will set the name of the installer to "Test Program ${VERSION}". The Same happens if the Symbol has not been defined.
+This code will set the name of the installer to "Test Program $\{VERSION\}". The Same happens if the Symbol has not been defined.
 
 \c !define VERSION "V.1.0"
 \c Name "Test Program ${VERSION}"

@@ -33,9 +33,9 @@ The error flag is set if the shortcut cannot be created (i.e. the path does not 
 
 \c filename user_var(high dword output) user_var(low dword output)
 
-Gets the version information from the DLL in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set. The following example reads the DLLVersion and makes it readable.
+Gets the version information from the DLL (or any other executable containing version information) in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set. The following example reads the DLL version and copies a human readable version of it into $0:
 
-\c GetDllVersion "$EXEDIR\ScummVM.exe" $R0 $R1
+\c GetDllVersion "$INSTDIR\MyDLL.dll" $R0 $R1
 \c IntOp $R2 $R0 / 0x00010000
 \c IntOp $R3 $R0 & 0x0000FFFF
 \c IntOp $R4 $R1 / 0x00010000
