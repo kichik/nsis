@@ -91,6 +91,10 @@ SOURCE=.\bgbg.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\components.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\crc32.c
 # End Source File
 # Begin Source File
@@ -117,6 +121,10 @@ SOURCE=.\util.c
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=.\components.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\config.h
