@@ -22,7 +22,7 @@ Registers. These variables can be used just like user variables, but are usually
 
 \e{$INSTDIR}
 
-The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc. - This could be used, for example, in the .onInit function to do a more advanced detection of install location).
+The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc. - This could be used, for example, in the \R{oninit}{.onInit} function to do a more advanced detection of install location).
 
 \e{$OUTDIR}
 
