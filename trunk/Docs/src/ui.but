@@ -71,6 +71,12 @@ If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (
 \c   Goto +2
 \c   MessageBox MB_OK "no window"
 
+\S2{lockwindow} LockWindow
+
+\c on|off
+
+\e{LockWindow on} makes the main window not to redraw itself upon changes. When \e{LockWindow off} is used, all controls that weren't redrawn since \e{LockWindow on} will be redrawn. This makes the pages flickering look nicer because now it flickers a group of controls at the same time, instead of one control at a time. The individual control flickering is more noticiable on older computers.
+
 \S2{sendmessage} SendMessage
 
 \c HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
