@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.20
+;NSIS Modern Style UI version 1.20b
 ;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
@@ -90,6 +90,9 @@ Function .onInit
     Pop $LANGUAGE
     StrCmp $LANGUAGE "cancel" 0 +2
       Abort
+
+  ;Write the language to the registry (for the uninstaller)
+  WriteRegStr HKCU "Software\${NAME}" "Installer Language" "$LANGUAGE"
 
   StrCmp $LANGUAGE 1043 "" +2
     SectionSetText ${SecCreateUninst} "Deïnstallatie programma"
@@ -200,12 +203,29 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
+  ;Security - do not delete anything if ${NAME} is empty
+  StrCmp "${NAME}" "" +2
+    DeleteRegKey HKCU "Software\${NAME}"
+
   !insertmacro MUI_FINISHHEADER un.SetPage
 
 SectionEnd
 
 ;--------------------------------
 ;Uninstaller Functions
+
+Function un.onInit
+
+  Push ${TEMP1}
+
+    ;Get the language from the registry (save by uninstaller)
+    ReadRegStr ${TEMP1} HKCU "Software\${NAME}" "Installer Language"
+    StrCmp ${TEMP1} "" +2
+      StrCpy $LANGUAGE ${TEMP1}      
+
+  Pop ${TEMP1}
+
+FunctionEnd
 
 Function un.onNextPage
 
