@@ -31,7 +31,6 @@ private:
   BOOL finish;
 
   CRITICAL_SECTION cs;
-  BOOL cs_initialized;
   BOOL nt_locked; /* nsis thread locked */
   BOOL ct_locked; /* compression thread locked */
   BOOL compressor_finished;
@@ -43,20 +42,17 @@ public:
   {
     _encoder = new NCompress::NLZMA::CEncoder();
     _encoder->SetWriteEndMarkerMode(true);
-    cs_initialized = FALSE;
     hCompressionThread = NULL;
     compressor_finished = FALSE;
     finish = FALSE;
     End();
+    InitializeCriticalSection(&cs);
   }
 
   ~CLZMA()
   {
     End();
-    if (cs_initialized)
-    {
-      DeleteCriticalSection(&cs);
-    }
+    DeleteCriticalSection(&cs);
     if (_encoder)
     {
       delete _encoder;
@@ -67,12 +63,6 @@ public:
   int Init(int level, UINT32 dicSize)
   {
     End();
-
-    if (!cs_initialized)
-    {
-      InitializeCriticalSection(&cs);
-      cs_initialized = TRUE;
-    }
 
     nt_locked = TRUE;
     ct_locked = FALSE;
@@ -130,27 +120,34 @@ public:
     while (nt_locked)
       Sleep(0);
 
-    if (_encoder->WriteCoderProperties(this) == S_OK)
+    try
     {
-      while (true)
+      if (_encoder->WriteCoderProperties(this) == S_OK)
       {
-        UINT64 inSize, outSize;
-        INT32 finished;
-        if (_encoder->CodeOneBlock(&inSize, &outSize, &finished))
+        while (true)
         {
-          res = -2;
-          break;
-        }
-        if (finished)
-        {
-          res = C_OK;
-          break;
+          UINT64 inSize, outSize;
+          INT32 finished;
+          if (_encoder->CodeOneBlock(&inSize, &outSize, &finished))
+          {
+            res = -2;
+            break;
+          }
+          if (finished)
+          {
+            res = C_OK;
+            break;
+          }
         }
       }
+      else
+      {
+        res = -2;
+      }
     }
-    else
+    catch (...)
     {
-      res = -2;
+      res = -3;
     }
 
     compressor_finished = TRUE;
@@ -185,15 +182,14 @@ public:
     EnterCriticalSection(&cs);
     nt_locked = TRUE;
 
-    while (ct_locked)
+    if (compressor_finished)
     {
-      if (compressor_finished)
-      {
-        LeaveCriticalSection(&cs);
-        return res;
-      }
-      Sleep(0);
+      LeaveCriticalSection(&cs);
+      return res;
     }
+
+    while (ct_locked)
+      Sleep(0);
 
     return C_OK;
   }
