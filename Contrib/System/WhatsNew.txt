@@ -39,6 +39,8 @@ release 5, 11 september 2003.
 
 bug-fix-release, 4.06.2004
 1. System::Copy /SIZE fixed (Kichik).
-2. System::Alloc with destination auto-allocation now pushes destination
+2. System::Copy with destination auto-allocation now pushes destination
 address on stack.
 3. Callbacks fixed (Kichik's kick is awesome).
+4. Bug with proc call parts redefinition, # for example (pointed by Kichik).
+5. Bug with memory protection during callback processing (Kichik).

@@ -29,7 +29,7 @@
 
 <p>The System plug-in also allows the developer to allocate, free and copy memory; interact with COM objects and perform mathematical operations on 64-bit integers.</p>
 
-<p>Programming knowledge is highly recommended in order to understand the System plug-in.</p>
+<p>Programming knowledge is highly recommended for good understanding of the System plug-in.</p>
 
 <h4>Usage Examples From The Archive</h4>
 
@@ -173,9 +173,9 @@ DetailPrint $4
 
 <p><i>PARAMS</i>, <i>RETURN</i> and <i>OPTIONS</i> can be repeated many times in one Get/Call line. When repeating, a lot can be omitted, and only what you wish to change can be used. <i>Type</i>, <i>source</i> and/or <i>destination</i> can be omitted for each parameter, even the return value. Options can be added or removed. This allows you to define function prototypes and save on some typing. The <a href="#repeat">last two examples</a> show this.</p>
 
-<p><b>(can't get a working example)</b> <i>PROC</i> can also be repeated but must be prefixed with a hash sign (`#').</p>
+<p><i>PROC</i> can also be repeated but must be prefixed with a hash sign (`#').</p>
 
-<h4>Possible <i>PROC</i> values and Meanings</h4>
+<h4>Possible <i>PROC</i> Values and Meanings</h4>
 
 <blockquote>
 <table>
@@ -284,6 +284,7 @@ DetailPrint $4
 <td><i>N</i> bytes of GUID (structures only)</td>
 </tr>
 </table>
+<p>Additionally, each type can be prefixed with an asterisk to denote a pointer. When using an asterisk, the System plug-in still expects the value of the parameter, rather than the pointer's address. To pass a direct address, use `i' with no asterisk. A <a href="#pointer">usage example</a> is available. <a href="#memfuncs">Alloc</a> returns addresses and its return value should therefore be used with `i', without an asterisk.</p>
 </blockquote>
 
 <h4>Available Sources and Destinations</h4>
@@ -370,9 +371,10 @@ StrCmp $R0 "callback1" 0 +2
 DetailPrint "UseCallback passed ($0, $1) to the callback"
 </pre></blockquote>
 
-<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value.</p>
+<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
 
-<blockquote><pre>System::Call "(i .r0, i .r1) isR0"
+<blockquote><pre>SetPluginUnload alwaysoff
+System::Call "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
 loop:
@@ -382,6 +384,8 @@ loop:
 	System::Call $0 # tell system to return from the callback
 	Goto loop
 done:
+SetPluginUnload manual
+System::Free $0
 </pre></blockquote>
 
 <p>A complete working <a href="#callback">example</a> is available in the usage examples section.</p>
@@ -456,6 +460,12 @@ Pop $0
 System::<b>Call</b> "$0(, 'This is a System::Get test', 'NSIS System Plug-in',)"
 </pre></blockquote>
 <blockquote><pre>
+<a name="pointer"></a>System::<b>Call</b> "advapi32::GetUserName(t .r0, *i ${NSIS_MAX_STRLEN} r1) i.r2"
+DetailPrint "User name - $0"
+DetailPrint "String length - $1"
+DetailPrint "Return value - $2"
+</pre></blockquote>
+<blockquote><pre>
 <a name="structaddr"></a>System::Alloc 4
 Pop $0
 System::<b>Call</b> "*$0(i 5)"
@@ -519,8 +529,8 @@ System::<b>Call</b> "${MB}(,'another message',,) i.r0"
 MessageBox MB_OK "last call returned $0"
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Call</b> "user32::MessageBox(i $HWNDPARENT, t 'test', t 'test', i 0) i.s ? \
-	e (,t'test replacement',,) i.r0 ? !e"
+System::<b>Call</b> "user32::SendMessage(i $HWNDPARENT, t 'test', t 'test', i 0) i.s ? \
+	e (,t'test replacement',,) i.r0 ? !e #user32::MessageBox"
 DetailPrint $0
 ClearErrors
 Pop $0
@@ -593,12 +603,14 @@ DetailPrint "0x89498A198E4566C % 157 = $0" # 118
 <blockquote><pre>
 System::<b>Int64Op</b> 0xF0F0F0F | 0xF0F0FFF
 Pop $0
+# IntFmt is 32-bit, this is just for the example
 IntFmt $0 "0x%X" $0
 DetailPrint "0xF0F0F0F | 0xF0F0FFF = $0" # 0xF0F0FFF
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 0x12345678 &amp; 0xF0F0F0F0
 Pop $0
+# IntFmt is 32-bit, this is just for the example
 IntFmt $0 "0x%X" $0
 DetailPrint "0x12345678 &amp; 0xF0F0F0F0 = $0" # 0x10305070
 </pre></blockquote>
@@ -618,9 +630,9 @@ Pop $0
 DetailPrint "1 &amp;&amp; 0 = $0" # 0
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Int64Op</b> 5168 &lt; 89873
+System::<b>Int64Op</b> 9302157012375 &lt; 570197509190760
 Pop $0
-DetailPrint "5168 &lt; 89873 = $0" # 1
+DetailPrint "9302157012375 &lt; 570197509190760 = $0" # 1
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 5168 &gt; 89873
@@ -633,10 +645,9 @@ Pop $0
 DetailPrint "189189 = 189189 = $0" # 1
 </pre></blockquote>
 <blockquote><pre>
-System::<b>Int64Op</b> 1 ~
+System::<b>Int64Op</b> 156545668489 ~
 Pop $0
-IntFmt $0 "0x%X" $0
-DetailPrint "1 ~ = $0" # 0xFFFFFFFE
+DetailPrint "1 ~ = $0" # -156545668490
 </pre></blockquote>
 <blockquote><pre>
 System::<b>Int64Op</b> 1 !
@@ -670,7 +681,7 @@ System::Alloc 16
 </pre></blockquote>
 
 <blockquote><pre>
-System::Call "*(i, i, i, t).s"
+System::Call "*(i, i, i, t)i.s"
 </pre></blockquote>
 
 </blockquote>
@@ -680,7 +691,7 @@ System::Call "*(i, i, i, t).s"
 <blockquote><p>Setting data can be done using <a href="#callfuncs">Call</a>. It can be done in the allocation stage, or in another stage using the struct handling syntax.</p>
 
 <blockquote><pre>
-System::Call "*(i 5, i 2, i 513, t 'test')"
+System::Call "*(i 5, i 2, i 513, t 'test')i.s"
 </pre></blockquote>
 
 <blockquote><pre>
