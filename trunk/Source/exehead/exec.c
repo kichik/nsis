@@ -263,7 +263,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_IFFILEEXISTS:
     {
       char *buf0=GetStringFromParm(0x00);
-      if (file_exists(buf0))
+      WIN32_FIND_DATA *fd;
+      // Avoid a "There is no disk in the drive" error box on empty removable drives
+      SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
+      fd = file_exists(buf0);
+      SetErrorMode(0);
+      if (fd)
       {
         log_printf3("IfFileExists: file \"%s\" exists, jumping %d",buf0,parm1);
         return parm1;
@@ -744,7 +749,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         c->bkb = CreateBrushIndirect(&c->bk);
 
       c->flags &= ~(CC_BK_SYS|CC_TEXT_SYS|CC_BKB);
-      
+
       SetWindowLong((HWND) GetIntFromParm(0), GWL_USERDATA, (long) c);
     }
     break;
