@@ -582,11 +582,7 @@ nextPage:
     {
       outernotify(1);
     }
-    if (
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      !g_is_uninstaller &&
-#endif
-      (id == IDC_BACK && m_page>0))
+    if (id == IDC_BACK && m_page>0)
     {
       outernotify(-1);
     }
