@@ -73,6 +73,8 @@ static int num_sections;
 // update message used by DirProc and SelProc for space display
 #define WM_IN_UPDATEMSG (WM_USER+0xf)
 
+#define WM_NOTIFY_CUSTOM_READY (WM_USER+0xd)
+
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
 static int m_page=-1,m_abort,m_retcode,m_delta=1;
@@ -122,8 +124,8 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-#define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
-static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+#define HandleStaticBkColor() _HandleStaticBkColor(hwndDlg, uMsg, wParam, lParam)
+static BOOL NSISCALL _HandleStaticBkColor(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   if (uMsg == WM_CTLCOLORSTATIC) {
     COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
     if (color) {
@@ -527,13 +529,6 @@ nextPage:
     {
       HWND hwndtmp;
 
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      // lock display for custom pages to prevent flickering
-      // the custom page must unlock the display
-      if (this_page->id<0 && uMsg != WM_INITDIALOG) LockWindowUpdate(m_curwnd);
-      else LockWindowUpdate(0);
-#endif
-
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
@@ -545,16 +540,17 @@ nextPage:
       process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
       my_SetWindowText(hwndDlg,g_tmp);
 
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
+        goto nextPage;
+#endif //NSIS_SUPPORT_CODECALLBACKS
+
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else {
         if (g_autoclose) goto nextPage;
         return 0;
       }
 
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
-        goto nextPage;
-#endif //NSIS_SUPPORT_CODECALLBACKS
       if (this_page->id>=0) // NSIS page
       {
         gDontFookWithFocus = 0;
@@ -580,6 +576,9 @@ nextPage:
         //XGE End
       }
     }
+  }
+  if (uMsg == WM_NOTIFY_CUSTOM_READY) {
+    DestroyWindow(m_curwnd);
   }
   if (uMsg == WM_CLOSE)
   {

@@ -175,6 +175,7 @@ int bCancelEnabled = FALSE;   // by ORTIM: 13-August-2002
 int bCancelShow    = FALSE;   // by ORTIM: 13-August-2002
 
 FieldType *pFields   = NULL;
+#define DEFAULT_RECT 1018
 int nRectId          = 0;
 int nNumFields       = 0;
 int g_done;
@@ -462,7 +463,7 @@ bool ReadSettings(void) {
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
 
-  nRectId = GetPrivateProfileInt("Settings", "Rect", 1018, pszFilename);
+  nRectId = GetPrivateProfileInt("Settings", "Rect", DEFAULT_RECT, pszFilename);
 
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0xFFFF0000, pszFilename);
   // by ORTIM: 13-August-2002
@@ -751,7 +752,7 @@ int createCfgDlg()
   }
 
   childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
-  if (!childwnd) childwnd=GetDlgItem(hMainWindow,nRectId);
+  if (!childwnd || nRectId != DEFAULT_RECT) childwnd=GetDlgItem(hMainWindow,nRectId);
   if (!childwnd)
   {
     popstring(NULL);
@@ -1003,10 +1004,9 @@ void showCfgDlg()
 {
   lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
 
+  SendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, 0, 0);
   ShowWindow(hConfigWindow, SW_SHOWNA);
-  InvalidateRect(hConfigWindow,0,0);
   SetFocus(hNextButton);
-  LockWindowUpdate(0);
 
   g_done=0;
 

@@ -251,10 +251,9 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       AddFolderFromReg(HKEY_LOCAL_MACHINE);
       AddFolderFromReg(HKEY_CURRENT_USER);
 
+      SendMessage(hwParent, WM_NOTIFY_CUSTOM_READY, 0, 0);
       ShowWindow(hwndDlg, SW_SHOWNA);
-      InvalidateRect(hwndDlg,0,0);
       SetFocus(GetDlgItem(hwParent, IDOK));
-      LockWindowUpdate(0);
     }
     break;
     case WM_COMMAND:
