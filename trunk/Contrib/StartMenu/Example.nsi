@@ -9,7 +9,7 @@ OutFile "StartMenu Test.exe"
 XPStyle on
 
 Page directory
-DirText "This installer will create some shortcuts to MakeNSIS in the start menu.$\nFor this it needs NSIS's folder path." \
+DirText "This installer will create some shortcuts to MakeNSIS in the start menu.$\nFor this it needs NSIS's path." \
   "Please specify the path in which you have installed NSIS:"
 InstallDir "${NSISDIR}"
 Function .onVerifyInstDir
@@ -21,7 +21,7 @@ Page custom StartMenuGroupSelect
 Function StartMenuGroupSelect
 	SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:StartMenu.dll test Setup: Start Menu Folder"
 
-	StartMenu::Select /autoadd "StartMenu.dll test"
+	StartMenu::Select /autoadd /lastused $R0 "StartMenu.dll test"
 	Pop $R1
 
 	StrCpy $R2 $R1 5
@@ -29,11 +29,8 @@ Function StartMenuGroupSelect
 		; error
 		MessageBox MB_OK $R1
 		Return
-	StrCmp $R1 "cancel" 0 +2
-		Quit
-	StrCmp $R1 "back" 0 +2
-		Abort
-	StrCpy $R0 $R1 ; got the dir
+	StrCpy $R0 $R1 ; got the dir, or cancel, but if it's cancel NSIS will exit and
+				   ; then we shouldn't care about the value of $R0
 FunctionEnd
 
 Page instfiles

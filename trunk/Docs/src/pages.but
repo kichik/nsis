@@ -25,11 +25,7 @@ Each built-in page has two callback functions. The pre-function and the post-cre
 
 A custom page has only one callback function that creates it but unlike the built-in pages this function is mandatory.
 
-Abort (see \K{abort}) has special usage from pages' callback functions.
-
-\b Use Abort from a built-in pre-function to skip the page
-
-\b Use Abort from a custom page creator function to go to the previous page
+Use Abort (see \K{abort}) from a built-in page pre-function to to skip the page.
 
 Examples:
 
@@ -47,14 +43,12 @@ Examples:
 \c    GetTempFileName $R0
 \c    File /oname=$R0 customPage.ini
 \c    InstallOptions::dialog $R0
-\c    Delete $R0
 \c    Pop $R1
-\c    StrCmp $R1 "cancel" "" nocancel
-\c      Quit
-\c    nocancel:
-\c    StrCmp $R1 "back" "" noback
-\c      Abort
-\c    noback:
+\c    StrCmp $R1 "cancel" done
+\c    StrCmp $R1 "back" done
+\c    StrCmp $R1 "sucess" done
+\c    error: MessageBox MB_OK|MB_ICONSTOP "InstallOptions error:$\r$\n$R1"
+\c    done:
 \c  FunctionEnd
 
 \S{page} Page

@@ -165,12 +165,9 @@ HINSTANCE m_hInstance = NULL;
 
 char *pszFilename = NULL;
 char *pszTitle = NULL;
-char *pszCancelQuestion = NULL;
-char *pszCancelQuestionCaption = NULL;
 char *pszCancelButtonText = NULL;
 char *pszNextButtonText = NULL;
 char *pszBackButtonText = NULL;
-unsigned int nCancelConfirmFlags=0;
 BOOL bBackDisabled=FALSE;
 
 BOOL bCancelEnabled=TRUE;  // by ORTIM: 13-August-2002
@@ -455,35 +452,11 @@ char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 bool ReadSettings(void) {
   static char szField[25];
   int nIdx;
-  // Messagebox flags
-  static TableEntry MBFlagTable[] = {
-    { "MB_ICONEXCLAMATION", MB_ICONEXCLAMATION },
-//  { "MB_ICONWARNING",     MB_ICONWARNING     }, // same as above
-    { "MB_ICONINFORMATION", MB_ICONINFORMATION },
-//  { "MB_ICONASTERISK",    MB_ICONASTERISK    }, // same as above
-    { "MB_ICONQUESTION",    MB_ICONQUESTION    },
-    { "MB_ICONSTOP",        MB_ICONSTOP        },
-//  { "MB_ICONERROR",       MB_ICONERROR       }, // same as above
-//  { "MB_ICONHAND",        MB_ICONHAND        }, // same as above
-    { "MB_TOPMOST",         MB_TOPMOST         },
-    { "MB_SETFOREGROUND",   MB_SETFOREGROUND   },
-    { "MB_RIGHT",           MB_RIGHT           },
-    { "MB_DEFBUTTON1",      MB_DEFBUTTON1      },
-    { "MB_DEFBUTTON2",      MB_DEFBUTTON2      },
-//  { "MB_DEFBUTTON3",      MB_DEFBUTTON3      }, // useless, as there are only two buttons
-//  { "MB_DEFBUTTON4",      MB_DEFBUTTON4      }, // useless, as there are only two buttons
-    { NULL,                 0                  }
-  };
 
   pszTitle = myGetProfileStringDup("Settings", "Title");
-  pszCancelQuestion = myGetProfileStringDup("Settings", "CancelConfirm");
-  pszCancelQuestionCaption = myGetProfileStringDup("Settings", "CancelConfirmCaption");
   pszCancelButtonText = myGetProfileStringDup("Settings", "CancelButtonText");
   pszNextButtonText = myGetProfileStringDup("Settings", "NextButtonText");
   pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
-
-  myGetProfileString("Settings", "CancelConfirmFlags");
-  nCancelConfirmFlags = LookupTokens(MBFlagTable, szResult);
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackDisabled = GetPrivateProfileInt("Settings", "BackDisabled", 0, pszFilename);
@@ -671,15 +644,9 @@ static void *lpWndProcOld;
 
 static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  if (message == WM_CLOSE)
+  if (message == WM_NOTIFY_OUTER_NEXT)
   {
-    message = WM_COMMAND;
-    wParam = IDCANCEL;
-  }
-	if (message == WM_COMMAND && (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK || LOWORD(wParam) == 3))
-  {
-		PostMessage(hConfigWindow,WM_USER+666,0,LOWORD(wParam));
-    return 0;
+    PostMessage(hConfigWindow,WM_USER+666,wParam,0);
   }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
 }
@@ -697,14 +664,11 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
     return 0;
     case WM_USER+666:
-      if (lParam != IDCANCEL || !pszCancelQuestion || MessageBox(hwndDlg,pszCancelQuestion,pszCancelQuestionCaption?pszCancelQuestionCaption:"Question",MB_YESNO|nCancelConfirmFlags)==IDYES)
-      {
-        if (lParam == IDCANCEL || lParam == 3 || ValidateFields()) {
-          if (lParam == 3) g_is_back++;
-          if (lParam == IDCANCEL) g_is_cancel++;
-          g_done++;
-          PostMessage(hwndDlg,WM_CLOSE,0,0);
-        }
+      if (wParam == 0xD1E || wParam == -1 || ValidateFields()) {
+        if (wParam == -1) g_is_back++;
+        if (wParam == 0xD1E) g_is_cancel++;
+        g_done++;
+        PostMessage(hwndDlg,WM_CLOSE,0,0);
       }
     break;
     case WM_CTLCOLORSTATIC:
@@ -1036,8 +1000,6 @@ void showCfgDlg()
   if (cw_vis) ShowWindow(childwnd,SW_SHOWNA);
 
   FREE(pszTitle);
-  FREE(pszCancelQuestion);
-  FREE(pszCancelQuestionCaption);
   FREE(pszCancelButtonText);
   FREE(pszNextButtonText);
   FREE(pszBackButtonText);

@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <Mmsystem.h>
-#include "exdll.h"
+#include "../exdll/exdll.h"
 
 int x, y;
 char temp[MAX_PATH];

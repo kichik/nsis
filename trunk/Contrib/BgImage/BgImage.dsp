@@ -67,7 +67,7 @@ SOURCE=.\BgImage.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=.\exdll.h
+SOURCE=..\ExDLL\exdll.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
