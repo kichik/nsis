@@ -133,6 +133,7 @@ void ExecScript(BOOL log) {
 				LogMessage(szBuf);
 			}
 		}
+    GlobalUnlock(memory);
 		GlobalFree(memory);
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
