@@ -900,7 +900,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (GDFSE)
       {
         ULARGE_INTEGER available64;
-        if (GDFSE(s, &available64, NULL, NULL))
+        ULARGE_INTEGER a, b;
+        if (GDFSE(s, &available64, &a, &b))
           available = (int)(available64.QuadPart >> 10);
       }
 
