@@ -138,6 +138,8 @@ HWND hBackButton      = NULL;
 
 HINSTANCE m_hInstance = NULL;
 
+struct _stack_t *pFilenameStackEntry = NULL;
+
 char *pszFilename         = NULL;
 char *pszTitle            = NULL;
 char *pszCancelButtonText = NULL;
@@ -997,6 +999,7 @@ int createCfgDlg()
     GetWindowText(hMainWindow,old_title,sizeof(old_title));
     SetWindowText(hMainWindow,pszTitle);
   }
+  pFilenameStackEntry = *g_stacktop;
   *g_stacktop = (*g_stacktop)->next;
   char tmp[32];
   wsprintf(tmp,"%d",hConfigWindow);
@@ -1041,7 +1044,7 @@ void showCfgDlg()
 
   if (cw_vis) ShowWindow(childwnd,SW_SHOWNA);
 
-  FREE(pszFilename);
+  FREE(pFilenameStackEntry);
   FREE(pszTitle);
   FREE(pszCancelButtonText);
   FREE(pszNextButtonText);
