@@ -1,4 +1,4 @@
-\S1{sections} Sections
+\H{sections} Sections
 
 Each NSIS installer contains one or more Sections. Each These sections are created, modified, and ended with the following commands.
 
@@ -7,6 +7,8 @@ Each NSIS installer contains one or more Sections. Each These sections are creat
 \b Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each section.
 
 \b If a section's name is 'Uninstall', then it is a special Uninstall Section.
+
+\S1{ssectioncommands} Section Commands
 
 \S2{saddsize} AddSize
 
