@@ -4,14 +4,14 @@
 # -- Objects and source files --
 DEPENDS = ../Platform.h config.h
 
-ZLIB_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../zlib/INFBLOCK.C
-ZLIB_OBJS = Release-zlib/bgbg.o Release-zlib/exec.o Release-zlib/fileform.o Release-zlib/Main.o Release-zlib/Ui.o Release-zlib/util.o Release-zlib/crc32.o Release-zlib/resource.res Release-zlib/INFBLOCK.o
+ZLIB_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c components.c util.c ../crc32.c resource.rc ../zlib/INFBLOCK.C
+ZLIB_OBJS = Release-zlib/bgbg.o Release-zlib/exec.o Release-zlib/fileform.o Release-zlib/Main.o Release-zlib/Ui.o Release-zlib/components.o Release-zlib/util.o Release-zlib/crc32.o Release-zlib/resource.res Release-zlib/INFBLOCK.o
 
-BZIP2_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c
-BZIP2_OBJS = Release-bzip2/bgbg.o Release-bzip2/exec.o Release-bzip2/fileform.o Release-bzip2/Main.o Release-bzip2/Ui.o Release-bzip2/util.o Release-bzip2/crc32.o Release-bzip2/resource.res Release-bzip2/bzlib.o Release-bzip2/decompress.o Release-bzip2/huffman.o
+BZIP2_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c components.c util.c ../crc32.c resource.rc ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c
+BZIP2_OBJS = Release-bzip2/bgbg.o Release-bzip2/exec.o Release-bzip2/fileform.o Release-bzip2/Main.o Release-bzip2/Ui.o Release-bzip2/components.o Release-bzip2/util.o Release-bzip2/crc32.o Release-bzip2/resource.res Release-bzip2/bzlib.o Release-bzip2/decompress.o Release-bzip2/huffman.o
 
-LZMA_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c util.c ../crc32.c resource.rc ../7zip/LZMADecode.c
-LZMA_OBJS = Release-lzma/bgbg.o Release-lzma/exec.o Release-lzma/fileform.o Release-lzma/Main.o Release-lzma/Ui.o Release-lzma/util.o Release-lzma/crc32.o Release-lzma/resource.res Release-lzma/LZMADecode.o
+LZMA_SRCS = bgbg.c exec.c fileform.c Main.c Ui.c components.c util.c ../crc32.c resource.rc ../7zip/LZMADecode.c
+LZMA_OBJS = Release-lzma/bgbg.o Release-lzma/exec.o Release-lzma/fileform.o Release-lzma/Main.o Release-lzma/Ui.o Release-lzma/components.o Release-lzma/util.o Release-lzma/crc32.o Release-lzma/resource.res Release-lzma/LZMADecode.o
 
 SRCS = $(ZLIB_SRCS) $(BZIP2_SRCS) $(LZMA_SRCS)
 
