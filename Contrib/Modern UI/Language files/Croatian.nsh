@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Croatian (1050)
 ;By Vedran "RIV@NVX" Miletic
@@ -21,7 +21,9 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenca"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Proèitaj licencu prije instalacije ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Pritisni Page Down da vidiš ostatak licence."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ako prihvaæaš sve uvjete licene, odaberi Prihvaæam za nastavak. Moraš prihvatiti ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ako prihvaæaš uvjete licence, odaberi Prihvaæam za nastavak. Moraš prihvatiti licencu da instaliraš ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ako prihvaæaš uvjete licence, klikni na kvadratiæ ispod. Moraš prihvatiti licencu da instaliraš ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ako prihvaæaš uvjete licence, odaberi prvu opciju ispod. Moraš prihvatiti licencu da instaliraš ${MUI_PRODUCT}."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Odaberi dijelove"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Odaberi koje moguænosti ${MUI_PRODUCT} želiš instalirati."
@@ -39,6 +41,10 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Instalacija završena"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Instalacija je završila dobro u cijelosti."
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Instalacija prekinuta"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Setup nije završio uspješno."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Završi"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Završavam ${MUI_PRODUCT} Instalaciju"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} je instaliran na tvoje raèunalo.\r\n\r\nKlikni Završi da zatvoriš ovaj prozor."
@@ -67,5 +73,8 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Završeno"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Deinstalacija je završila dobro u cijelosti."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Deinstalacija prekinuta"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Deinstalacija nije završila uspješno."
 
 !insertmacro MUI_LANGUAGEFILE_END
