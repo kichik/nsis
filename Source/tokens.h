@@ -90,6 +90,8 @@ enum
   TOK_P_MACRO,
   TOK_P_MACROEND,
   TOK_P_INSERTMACRO,
+  TOK_P_IFMACRODEF,
+  TOK_P_IFMACRONDEF,
 
   // section/function shit
   TOK_SECTION,

@@ -223,6 +223,8 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_MACRO,"!macro",1,-1,"macroname [parms ...]"},
 {TOK_P_MACROEND,"!macroend",0,0,""},
 {TOK_P_INSERTMACRO,"!insertmacro",1,-1,"macroname [parms ...]"},
+{TOK_P_IFMACRODEF,"!ifmacrodef",1,-1,"macro [| macro2 [& macro3 [...]]]"},
+{TOK_P_IFMACRONDEF,"!ifmacrondef",1,-1,"macro [| macro2 [& macro3 [...]]]"},
 
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]"},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]"},

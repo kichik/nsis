@@ -123,6 +123,7 @@ class CEXEBuild {
 #endif
     int parseScript();
     int includeScript(char *f);
+    int MacroExists(const char *macroname);
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines = false);
 #else
