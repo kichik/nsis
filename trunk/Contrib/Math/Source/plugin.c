@@ -92,7 +92,7 @@ ExpressionItem *AllocArray(int s)
 
     ExpressionItem *ai = (ExpressionItem*)dbgGlobalAlloc(GPTR,sizeof(ExpressionItem));
     ai->type = IT_CONST | ITC_ARRAY;
-    ai->param1 = (int) dbgGlobalAlloc(GPTR, sizeof(ArrayDesc));
+    ai->param1 = (EIPARAM) dbgGlobalAlloc(GPTR, sizeof(ArrayDesc));
     
     ArrayDesc *ad = *((ArrayDesc**)&(ai->param1));
     // initialize and clear the array memory
@@ -118,7 +118,7 @@ ExpressionItem *CopyItem(ExpressionItem *citem, int NeedConst)
     item->type = citem->type;
     if ((item->type & (ITEMTYPE | ITEMSUBTYPE)) == (IT_CONST | ITC_STRING))
     {
-        item->param1 = (int) AllocString();
+        item->param1 = (EIPARAM) AllocString();
         lstrcpy((LPSTR) item->param1, (LPSTR) citem->param1);
     } else if (((item->type & (ITEMTYPE | ITEMSUBTYPE)) == (IT_CONST | ITC_ARRAY))
         ||
