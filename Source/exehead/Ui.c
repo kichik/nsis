@@ -950,12 +950,16 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   static HIMAGELIST hImageList;
   HWND hwndCombo1 = GetUIItem(IDC_COMBO1);
   HWND hwndTree1 = GetUIItem(IDC_TREE1);
+  extern HWND g_SectionHack;
   if (uMsg == WM_INITDIALOG)
   {
     int doLines=0;
     HTREEITEM Par;
     HBITMAP hBMcheck1;
     int x;
+
+    g_SectionHack=hwndDlg;
+
     if (hTreeItems) GlobalFree(hTreeItems);
     hTreeItems=(HTREEITEM*)my_GlobalAlloc(sizeof(HTREEITEM)*num_sections);
 
@@ -1132,10 +1136,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
             {
-              extern HWND g_SectionHack;
-              g_SectionHack=hwndDlg;
               ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-              g_SectionHack=0;
             }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
             {
@@ -1241,6 +1242,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (hImageList) ImageList_Destroy(hImageList);
     if (hTreeItems) GlobalFree(hTreeItems);
     hTreeItems=0;
+    g_SectionHack=0;
   }
   if (uMsg == WM_IN_UPDATEMSG)
   {
