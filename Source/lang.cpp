@@ -235,7 +235,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
     user_strings_list->add(name, 0);
     if (string) user_strings_list->find(name, 0, &idx);
     unsigned int new_size = user_strings_list->getnum() * sizeof(int);
-    for (int i = 0; i < string_tables.size(); i++) {
+    for (unsigned int i = 0; i < string_tables.size(); i++) {
       if (uninst) string_tables[i]->user_ustrings.resize(new_size, 1);
       else string_tables[i]->user_strings.resize(new_size, 1);
     }
