@@ -76,4 +76,4 @@ For an example of usage see \L{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{rtl} RTL Languages
 
-RTL languages are languages that are written from the right to the left (like Arabic and Hebrew). NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. To find out on runtime if the the current langaugeis RTL or not check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise. This can be useful when using plug-ins that create dialogs, they usually have RTL settings too.
+RTL languages are languages that are written from the right to the left (like Arabic and Hebrew). NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. To find out on runtime if the the current langauge is RTL or not check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise. This can be useful when using plug-ins that create dialogs, they usually have RTL settings too.
