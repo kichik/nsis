@@ -36,7 +36,7 @@ This command specifies which install types (see \R{ainsttype}{InstType}) the cur
 
 \c [/e] Caption [section index output]
 
-This command inserts a subsection. The subsection must be close with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for SectionSetText etc).
+This command inserts a subsection. The subsection must be closed with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for SectionSetText etc).
 
 \S2{ssubsectionend} SubSectionEnd
 
