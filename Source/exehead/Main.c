@@ -226,7 +226,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         hwnd=CreateDialogParam(
           g_hInstance,
           MAKEINTRESOURCE(IDD_VERIFY),
-          GetDesktopWindow(),
+          0,
           verProc,
           (LPARAM)_LANG_VERIFYINGINST
         );
