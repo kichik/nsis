@@ -1449,12 +1449,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_LICENSEDATA:
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-      if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
-      {
-        warning_fl("LicenseData: SilentInstall enabled, wasting space");
-      }
-#endif
       {
         int idx = 0;
         char *file = line.gettoken_str(1);
@@ -1466,18 +1460,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char *p = strchr(cp, ')');
           if (p && p[1] == 0) { // if string is only a language str identifier
             *p = 0;
-            if (!uninstall_mode && !strnicmp(cp,"un.",3))
-            {
-              ERROR_MSG("Installer language strings can't start with un. (%s)! (%s:%d)", cp, curfilename, linecnt);
-              free(cp);
-              return PS_ERROR;
-            }
-            else if (uninstall_mode && strnicmp(cp,"un.",3))
-            {
-              ERROR_MSG("Uninstaller language strings must start with un. (%s)! (%s:%d)", cp, curfilename, linecnt);
-              free(cp);
-              return PS_ERROR;
-            }
             idx = DefineLangString(cp, 0);
           }
           free(cp);

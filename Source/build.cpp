@@ -409,7 +409,7 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/) // returns offs
 {
   if (!*string) return 0;
 
-  if (process && *string == '$' && *(string+1) == '(') {
+  if (*string == '$' && *(string+1) == '(') {
     int idx = 0;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
