@@ -3262,6 +3262,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[2]=FLAG_OFFSET(exec_error);
       ent.offsets[3]=0;//new value mask - clean error
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_IFABORT:
       ent.which=EW_IFFLAG;
       if (process_jump(line,1,&ent.offsets[0]) ||
