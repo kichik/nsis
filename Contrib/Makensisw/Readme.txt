@@ -147,8 +147,7 @@ Version History
 1.9
  - Text always scrolls to bottom (kichik)
  - Updated link to new docs
- - Makensisw now takes the same parameters as makensis
- - About Box is closeable by clicking X
+ - Makensisw now takes the same parameters as makensis.exe
  - Fixed some random crashes
  - Drag and Drop Support into the Makensisw window
  - Updated icon to more sexy one
