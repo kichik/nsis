@@ -402,7 +402,7 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
     int idx = -1;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
-    if (*p) {
+    if (p) {
       *p = 0;
       if (build_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
     }
@@ -424,7 +424,7 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
     int idx = -1;
     char *cp = strdup(string+2);
     char *p = strchr(cp, ')');
-    if (*p) {
+    if (p) {
       *p = 0;
       if (ubuild_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
     }
