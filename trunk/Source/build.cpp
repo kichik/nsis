@@ -21,13 +21,13 @@
 #  include <stdarg.h>
 #endif
 
+#include <cassert> // for assert
+
 #define RET_UNLESS_OK( function_rc ) do { \
   int rc = (function_rc); \
   if ( rc != PS_OK) \
     return rc; \
 } while (false)
-
-int MMapFile::m_iAllocationGranularity = 0;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef _WIN32
@@ -1508,18 +1508,18 @@ int CEXEBuild::resolve_coderefs(const char *str)
     {
       int x=sec->name_ptr;
       char fname[1024];
-      char *secname;
+      const char *section_name;
       if (x < 0)
       {
         // lang string
-        secname = "$(lang string)";
+        section_name = "$(lang string)";
       }
       else
       {
         // normal string
-        secname = cur_strlist->get() + x;
+        section_name = cur_strlist->get() + x;
       }
-      if (x) wsprintf(fname,"%s section \"%s\" (%d)",str,secname,cnt);
+      if (x) wsprintf(fname,"%s section \"%s\" (%d)",str,section_name,cnt);
       else wsprintf(fname,"unnamed %s section (%d)",str,cnt);
       for (x = sec->code; x < sec->code+sec->code_size; x ++)
       {

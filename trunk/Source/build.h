@@ -12,6 +12,7 @@ using namespace std;
 #include "ResourceVersionInfo.h"
 #include "uservars.h"
 #include "ShConstants.h"
+#include "mmap.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
