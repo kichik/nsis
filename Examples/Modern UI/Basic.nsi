@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  Name "zemer & kelev" "zemer && kelev"
+  Name "Modern UI Test 1.68"
   OutFile "Basic.exe"
 
   ;Folder selection page
@@ -46,8 +46,15 @@
 
 Section "Dummy Section" SecDummy
 
-  WriteUninstaller "${NSISDIR}\Examples\Modern UI\Uninstall.exe"
-  Exec "${NSISDIR}\Examples\Modern UI\Uninstall.exe"
+  SetOutPath "$INSTDIR"
+  
+  ;ADD YOUR OWN STUFF HERE!
+  
+  ;Store install folder
+  WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
+  
+  ;Create uninstaller
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
 
@@ -65,6 +72,12 @@ SectionEnd
 
 Section "Uninstall"
 
+  ;ADD YOUR OWN STUFF HERE!
+
   Delete "$INSTDIR\Uninstall.exe"
+
+  RMDir "$INSTDIR"
+
+  DeleteRegKey /ifempty HKCU "Software\Modern UI Test"
 
 SectionEnd
