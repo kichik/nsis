@@ -160,6 +160,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Changelog.txt"
     File "..\Contrib\Modern UI\Screenshot.png"
     File "..\Contrib\Modern UI\License.txt"
+	File "..\Contrib\Modern UI\ioWizard.ini"
     SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
     File "..\Contrib\Modern UI\Language files\*.nsh"
     SetOutPath "$INSTDIR\Contrib\UIs"
@@ -168,6 +169,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath $INSTDIR\Contrib\Icons
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
+	File "..\Contrib\Icons\modern-wizard.bmp"
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
