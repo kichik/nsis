@@ -1,17 +1,20 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-10-23
+;Revision date: 2003-12-04
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
   !define MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Use only ASCII characters (if this is not possible, use the English name)
+
+  !define MUI_FONT "新細明體"
+  !define MUI_FONTSIZE "9"
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 $(^Name) 安裝精靈"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "這將會在你的電腦，安裝 $(^Name) 。\r\n\r\n在開始安裝之前，建議先關閉其他所有應用程式。這將允許\「安裝程式」更新指定的系統檔案，而不需要重新啟動你的電腦。\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "這個精靈將指引你完成 $(^Name) 的安裝進程。\r\n\r\n在開始安裝之前，建議先關閉其他所有應用程式。這將允許\「安裝程式」更新指定的系統檔案，而不需要重新啟動你的電腦。\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "授權協議"
   !define MUI_TEXT_LICENSE_SUBTITLE "在安裝 $(^Name) 之前，請檢閱授權條款。"
@@ -83,7 +86,8 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "正在完成 $(^Name) 解除安裝精靈"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) 已從你的電腦解除安裝。\r\n\r\n按一下 [完成] 關閉這個精靈。"
-  
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "電腦需要重新啟動，以便完成 $(^Name) 的解除安裝。現在想要重新啟動嗎？"
+
   !define MUI_UNTEXT_ABORTWARNING "你確定要離開 $(^Name) 解除安裝嗎？"  
   
 !insertmacro MUI_LANGUAGEFILE_END

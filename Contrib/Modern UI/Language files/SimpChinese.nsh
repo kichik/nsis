@@ -1,17 +1,20 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-10-23
+;Revision date: 2003-12-04
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
 
   !define MUI_LANGNAME "Chinese (Simplified)" ;(以语言本身的方式，写下语言名称) Use only ASCII characters (if this is not possible, use the English name)
+
+  !define MUI_FONT "宋体"
+  !define MUI_FONTSIZE "9"
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用 $(^Name) 安装向导"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "这将会在你的计算机，安装 $(^Name) 。\r\n\r\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "这个向导将指引你完成 $(^Name) 的安装进程。\r\n\r\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "许可证协议"
   !define MUI_TEXT_LICENSE_SUBTITLE "在安装 $(^Name) 之前，请检阅授权条款。"
@@ -83,7 +86,8 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "正在完成 $(^Name) 解除安装向导"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) 已从你的计算机解除安装。\r\n\r\n单击 [完成] 关闭这个向导。"
-  
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "计算机需要重新启动，以便完成 $(^Name) 的解除安装。现在想要重新启动吗？"
+
   !define MUI_UNTEXT_ABORTWARNING "你确实要退出 $(^Name) 解除安装吗？"  
   
 !insertmacro MUI_LANGUAGEFILE_END
