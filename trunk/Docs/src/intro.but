@@ -35,15 +35,15 @@ Here's a short list of some of NSIS' features.
 
 \b Approximately 20-40k overhead over compressed data size (depending on features enabled, compression algorithm, and so on - the default options are ~34k).
 
-\b Ability to display a license agreement.
+\b Ability to display a license agreement, text or RTF
 
 \b Ability to detect destination directory from the registry, and let the user override (or not let them)
 
-\b Customizable appearance (background, icons, text, checkmarks)
+\b Customizable appearance (background, icons, text, checkmarks, images)
 
 \b Multiple install configurations (usually Minimal, Typical, Full), and custom configuration
 
-\b Plug-in system (includes plug-ins for generic dialog construction and user interaction, as well as HTTP downloading)
+\b Easy to use plug-in system (includes plug-ins for generic dialog construction and user interaction, as well as HTTP downloading)
 
 \b Fully multilingual. 20 translations available including German, French, Spanish, Italian, Dutch, Chinese and more...
 
@@ -52,6 +52,10 @@ Here's a short list of some of NSIS' features.
 \b Optional Silent mode for automated installations
 
 \b A primitive preprocessor
+
+\b User interface changeable from head to toe
+
+\b An optional modern user interface
 
 \b A lovely coding experience with elements of PHP and assembly (includes 20 general purpose variables, a stack, real flow control, etc)
 
@@ -88,6 +92,8 @@ Here's a short list of some of NSIS' features.
 \b Branching, comparisons, etc.
 
 \b Error checking.
+
+\b Reboot support, including delete or rename on reboot
 
 \b Installer behaviour commands (such as show/hide/wait/etc)
 
