@@ -159,7 +159,7 @@ enum
 #endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  EW_WRITEUNINSTALLER,  // WriteUninstaller: 1 [name]
+  EW_WRITEUNINSTALLER,  // WriteUninstaller: 3 [name, offset, icon_size]
 #endif
 
 #ifdef NSIS_CONFIG_LOG
@@ -304,11 +304,6 @@ typedef struct
 
   int install_directory_ptr; // default install dir.
   int install_directory_auto_append; // auto append part
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  int uninstdata_offset; // -1 if no uninst data.
-  int uninsticon_size;
-#endif
 } header;
 
 // used for section->flags

@@ -1436,10 +1436,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             ReadSelfFile((char*)filebuf,filehdrsize);
             {
               unsigned char* seeker;
-              unsigned char* unicon_data = seeker = (unsigned char*)my_GlobalAlloc(g_header->uninsticon_size);
+              unsigned char* unicon_data = seeker = (unsigned char*)my_GlobalAlloc(parm2);
               if (unicon_data) {
-                GetCompressedDataFromDataBlockToMemory(g_header->uninstdata_offset,
-                  unicon_data,g_header->uninsticon_size);
+                GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
                 while (*seeker) {
                   struct icondata {
                     DWORD dwSize;

@@ -2579,8 +2579,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       uninstaller_writes_used++;
       ent.which=EW_WRITEUNINSTALLER;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=0; // uninstall section 0
-      ent.offsets[2]=0;
       if (!ent.offsets[0]) PRINTHELP()
       SCRIPT_MSG("WriteUninstaller: \"%s\"\n",line.gettoken_str(1));
 
