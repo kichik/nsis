@@ -1,8 +1,35 @@
 \A{history} Release History
 
-\e{v2.0a8}
+\e{v2.0b0}
 
-\b CTRL-C in Detail View now copies contents to clipboard
+\b Right mouse button "Copy to clipboard" context menu for the Details window 
+
+\b PluginDir is an attribute, not an instruction, corrected makensis.htm 
+
+\b Plugin syntax now requires dll name, e.g. dll::func not just func 
+
+\b Licence text receives initial focus (page up & down work immediately) 
+
+\b Return key still works with initial focus licence text change ;) 
+
+\b EDIT ME - made win9x move/delete on reboot support proper and function like on win2k (in that shit is deleted in order) 
+
+\b Now always loads RichEdit v2 if present (links work on Win9x) 
+
+\b DeleteRegKey now complains if given a third parameter (other than /ifempty) 
+
+\b Included makensisw 1.9 
+
+\b New InstallOptions 
+
+\b Added nsExec 
+
+\b Added UberSplash 
+
+\b A lot of new icons 
+
+\b New docs format (WOOHA!) 
+
 
 \e{v2.0a7}
 
@@ -68,11 +95,13 @@
 
 \b CallInstDLL /NOUNLOAD added (works on plugin calls too)
 
+
 \e{v2.0a6}
 
 \b Fixed two bugs with the plug-in mechanism
 
 \b Fixed infinite loop bug
+
 
 \e{v2.0a5}
 
@@ -96,6 +125,7 @@
 
 \b Included MagicLime.exe by snowchyld
 
+
 \e{v2.0a4}
 
 \b Added automatic detection, packing, unpacking and deletion of plugin dlls
@@ -113,6 +143,7 @@
 \b Added /LANG option to string setters (Name, Caption, etc.)
 
 \b 'LogSet on' now builds a log file if not already created
+
 
 \e{v2.0a2}
 
@@ -162,6 +193,7 @@
 
 \b Faster compile time (WIN32_LEAN_AND_MEAN)
 
+
 \e{v2.0a1}
 
 \b Added expand node option to Section and SubSection
@@ -173,6 +205,7 @@
 \b Added NSISDIR to the define list
 
 \b Reorganized NSIS directory structure
+
 
 \e{v2.0a0}
 
