@@ -69,170 +69,122 @@ Nullsoft Install System %s
 # ^Completed
 הפעולה הושלמה
 # ^LicenseText
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.
+אנא סקור את הסכם הרישוי לפני התקנת $(^Name). אם הינך מסכים לכל תנאי ההסכם, לחץ 'אני מסכים'.
 # ^LicenseTextCB
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
-# ^LicesnseTextRB
-Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
+אנא סקור את הסכם הרישוי לפני התקנת $(^Name). אם הינך מסכים לכל תנאי ההסכם, סמן את תיבת הסימון שלהלן. $_CLICK
+# ^LicenseTextRB
+אנא סקור את הסכם הרישוי לפני התקנת $(^Name). אם הינך מסכים לכל תנאי ההסכם, בחר באפשרות הראשונה שלהלן. $_CLICK
 # ^UnLicenseText
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.
+אנא סקור את הסכם הרישוי לפני הסרת $(^Name). אם הינך מסכים לכל תנאי ההסכם, לחץ 'אני מסכים'.
 # ^UnLicenseTextCB
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
-# ^UnLicesnseTextRB
-Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
+אנא סקור את הסכם הרישוי לפני הסרת $(^Name). אם הינך מסכים לכל תנאי ההסכם, סמן את תיבת הסימון שלהלן. $_CLICK
+# ^UnLicenseTextRB
+אנא סקור את הסכם הרישוי לפני הסרת $(^Name). אם הינך מסכים לכל תנאי ההסכם, בחר באפשרות הראשונה שלהלן. $_CLICK
 # ^Custom
-Custom
+מותאם אישית
 # ^ComponentsText
-Check the components you want to install and uncheck the components you don't want to install. $_CLICK
+סמן את הרכיבים שברצונך להתקין ובטל את הסימון של רכיבים שאין ברצונך להתקין. $_CLICK
 # ^ComponentsSubText1
-Select the type of install:
+:בחר סוג התקנה
 # ^ComponentsSubText2_NoInstTypes
-Select components to install:
+:בחר רכיבים להתקנה
 # ^ComponentsSubText2
-Or, select the optional components you wish to install:
+:או, בחר רכיבי רשות להתקנה
 # ^UnComponentsText
-Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+סמן את הרכיבים שברצונך להסיר ובטל את הסימון של רכיבים שאין ברצונך להסיר. $_CLICK
 # ^UnComponentsSubText1
-Select the type of uninstall:
+:בחר סוג הסרה
 # ^UnComponentsSubText2_NoInstTypes
-Select components to uninstall:
+:בחר רכיבים להסרה
 # ^UnComponentsSubText2
-Or, select the optional components you wish to uninstall:
+:או, בחר רכיבי רשות להסרה
 # ^DirText
-Setup will install $(^Name) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK
+תוכנית זו תתקין את $(^Name) לתיקייה שלהלן. כדי להתקין לתיקייה אחרת, לחץ על 'עיין' ובחר תיקייה אחרת. $_CLICK
 # ^DirSubText
-Destination Folder
+תיקיית יעד
 # ^DirBrowseText
-Select the folder to install $(^Name) in:
+:בחר תיקייה להתקנת $(^Name)
 # ^UnDirText
-Setup will uninstall $(^Name) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK
+תוכנית זו תסיר את $(^Name) מהתיקייה שלהלן. כדי להסיר מתיקייה אחרת, לחץ על 'עיין' ובחר תיקייה אחרת. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Select the folder to uninstall $(^Name) from:
+:בחר תיקייה ממנה תוסר $(^Name)
 # ^SpaceAvailable
-"Space available: "
+"מקום פנוי: "
 # ^SpaceRequired
-"Space required: "
+"מקום דרוש: "
 # ^UninstallingText
-This wizard will uninstall $(^Name) from your computer. $_CLICK
+הסרת $(^Name) תתבצע מהתיקייה שלהלן. $_CLICK
 # ^UninstallingSubText
-Uninstalling from:
-# ^FileError
-Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file
-# ^FileError_NoIgnore
-Error opening file for writing: \r\n\t"$0"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation
-# ^CantWrite
-"Can't write: "
-# ^CopyFailed
-Copy failed
-# ^CopyTo
-"Copy to "
-# ^Registering
-"Registering: "
-# ^Unregistering
-"Unregistering: "
-# ^SymbolNotFound
-"Could not find symbol: "
-# ^CouldNotLoad
-"Could not load: "
-# ^CreateFolder
-"Create folder: "
-# ^CreateShortcut
-"Create shortcut: "
-# ^CreatedUninstaller
-"Created uninstaller: "
-# ^Delete
-"Delete file: "
-# ^DeleteOnReboot
-"Delete on reboot: "
-# ^ErrorCreatingShortcut
-"Error creating shortcut: "
-# ^ErrorCreating
-"Error creating: "
-# ^ErrorDecompressing
-Error decompressing data! Corrupted installer?
-# ^ErrorRegistering
-Error registering DLL
-# ^ExecShell
-"ExecShell: "
-# ^Exec
-"Execute: "
-# ^Extract
-"Extract: "
-# ^ErrorWriting
-"Extract: error writing to file "
-# ^InvalidOpcode
-Installer corrupted: invalid opcode
-# ^NoOLE
-"No OLE for: "
-# ^OutputFolder
-"Output folder: "
-# ^RemoveFolder
-"Remove folder: "
-# ^RenameOnReboot
-"Rename on reboot: "
-# ^Rename
-"Rename: "
-# ^Skipped
-"Skipped: "
-# ^CopyDetails
-Copy Details To Clipboard
-# ^LogInstall
-Log install process
-# ^Byte
-B
-# ^Kilo
-K
-# ^Mega
-M
-# ^Giga
-G
-
-מותאם אישית
-:בחר סוג התקנה
-:בחר רכיבים להתקנה
-:או, בחר רכיבי רשות להתקנה
-:בחר תיקייה להתקנת $(^Name)
-מקום פנוי: 
-מקום דרוש: 
 :מסיר מ
+# ^FileError
 ארעה שגיאה בעת פתיחת קובץ לכתיבה:\r\n\t"$0"\r\nלחץ על ביטול כדי לבטל את ההתקנה,\r\nנסה שנית כדי לנסות לפתוח את הקובץ שוב, או\r\nהתעלם כדי לדלג על הקובץ
+# ^FileError_NoIgnore
 ארעה שגיאה בעת פתיחת קובץ לכתיבה:\r\n\t"$0"\r\nלחץ על נסה שנית כדי לנסות לפתוח את הקובץ  שוב, או\r\nביטול כדי לבטל את התתקנה
-לא ניתן לכתוב: 
+# ^CantWrite
+"לא ניתן לכתוב: "
+# ^CopyFailed
 ההעתקה נכשלה
+# ^CopyTo
 העתק ל-
-רושם: 
-מסיר רישום: 
-סמל לא נמצא: 
-לא ניתן לטעון: 
-צור תיקייה: 
-צור קיצור דרך: 
-מסיר התקנה נוצר: 
-מחק קובץ: 
-מחק אחרי אתחול: 
-שגיאה בעת יצירת קיצור דרך: 
-שגיאה בעת יצירת: 
+# ^Registering
+"רושם: "
+# ^Unregistering
+"ביטול רישום: "
+# ^SymbolNotFound
+"סמל לא נמצא: "
+# ^CouldNotLoad
+"לא ניתן לטעון: "
+# ^CreateFolder
+"צור תיקייה: "
+# ^CreateShortcut
+"צור קיצור דרך: "
+# ^CreatedUninstaller
+"מסיר התקנה נוצר: "
+# ^Delete
+"מחק קובץ: "
+# ^DeleteOnReboot
+"מחק אחרי אתחול: "
+# ^ErrorCreatingShortcut
+"שגיאה בעת יצירת קיצור דרך: "
+# ^ErrorCreating
+"שגיאה בעת יצירת: "
+# ^ErrorDecompressing
 שגיאה בעת פרישת מידע! התקנה פגומה?
+# ^ErrorRegistering
 שגיאה בעת רישום DLL
-בצע פעולת-קובץ: 
-בצע: 
-פרוש: 
-פרוש: שגיאה בעת כתיבה לקובץ 
+# ^ExecShell
+"בצע פעולת-קובץ: "
+# ^Exec
+"בצע: "
+# ^Extract
+"פרוש: "
+# ^ErrorWriting
+"פרוש: שגיאה בעת כתיבה לקובץ "
+# ^InvalidOpcode
 התקנה פגומה! פקודת ביצוע שגויה
-אין OLE ל: 
-תיקיית פלט: 
-הסר תיקייה: 
-שנה שם לאחר אתחול: 
-שנה שם: 
-דלג: 
+# ^NoOLE
+"אין OLE ל: "
+# ^OutputFolder
+"תיקיית פלט: "
+# ^RemoveFolder
+"הסר תיקייה: "
+# ^RenameOnReboot
+"שנה שם לאחר אתחול: "
+# ^Rename
+"שנה שם: "
+# ^Skipped
+"דלג: "
+# ^CopyDetails
 העתק פרטים ללוח
+# ^LogInstall
 שמור רישום פעילויות ההתקנה
-# byte
+# ^Byte
 "ב
-# kilo
- ק
-# mega
- מ
-# giga
- ג
+# ^Kilo
+ק
+# ^Mega
+מ
+# ^Giga
+ג
