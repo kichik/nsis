@@ -839,7 +839,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("Exec: command=\"%s\"",buf0);
         update_status_text_from_lang(LANG_EXECUTE,buf0);
 
-        hProc=myCreateProcess(buf0,*state_output_directory?state_output_directory:NULL);
+        hProc=myCreateProcess(buf0,state_output_directory);
 
         if (hProc)
         {

@@ -27,12 +27,15 @@ HANDLE g_hInstance;
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
+  DWORD d;
   PROCESS_INFORMATION ProcInfo={0,};
   STARTUPINFO StartUp={0,};
   StartUp.cb=sizeof(StartUp);
+  d=GetFileAttributes(dir);
+  if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY)) dir=0;
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
     return NULL;
-  if (NULL != ProcInfo.hThread)  CloseHandle( ProcInfo.hThread );
+  if (NULL != ProcInfo.hThread) CloseHandle( ProcInfo.hThread );
   return ProcInfo.hProcess;
 }
 
