@@ -39,6 +39,7 @@ void *my_memset(void *dest, int c, size_t count) {
 
 char *my_strstr(const char *string, const char *strCharSet) {
 	if (!*strCharSet) return (char*)string;
+  if (lstrlen(string) < lstrlen(strCharSet)) return 0;
 	size_t chklen=lstrlen(string)-lstrlen(strCharSet);
 	char *s1, *s2;
 	for (size_t i = 0; i < chklen; i++) {
