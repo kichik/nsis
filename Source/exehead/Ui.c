@@ -1001,14 +1001,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
 
     if (hImageList) ImageList_Destroy(hImageList);
-    hImageList = ImageList_Create(16,16, ILC_COLOR32, 4, 4);
-    // From MSDN:
-    //   Sets the background color for an image list. This function only works if you add an icon or use
-    //   ImageList_AddMasked with a black and white bitmap. Without a mask, the entire image is drawn;
-    //   hence the background color is not visible. 
-    //ImageList_SetBkColor(hImageList, GetSysColor(COLOR_WINDOW));
 
-    ImageList_Add(hImageList,hBMcheck1,NULL);
+    hImageList = ImageList_Create(16,16, ILC_COLOR32|ILC_MASK, 6, 0);
+    ImageList_AddMasked(hImageList,hBMcheck1,RGB(255,0,255));
 
     TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
 
