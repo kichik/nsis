@@ -3771,16 +3771,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         // First push dll args
 
         int parmst=i; // we push  em in reverse order
+        int nounloadmisused=0;
         for (; i < line.getnumtokens(); i++) {
           int w=parmst + (line.getnumtokens()-i - 1);
           ent.which=EW_PUSHPOP;
           ent.offsets[0]=add_string(line.gettoken_str(w));
+          if (!lstrcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
           ent.offsets[1]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) return ret;
           SCRIPT_MSG(" %s",line.gettoken_str(i));
         }
         SCRIPT_MSG("\n");
+        if (nounloadmisused)
+          warning("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong.");
 
         // next, call it
         ent.which=EW_REGISTERDLL;
