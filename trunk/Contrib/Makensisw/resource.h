@@ -35,7 +35,6 @@
 #define IDM_CLEARLOG                    40009
 #define IDM_BROWSESCR                   40013
 #define IDM_NSISDEV                     40014
-#define IDM_UPDATE                      40015
 #define IDM_FORUM                       40016
 
 // Next default values for new objects
