@@ -63,8 +63,13 @@ char *STRDUP(const char *c)
 #define FIELD_GROUPBOX     (12)
 #define FIELD_LINK         (13)
 
+//---------------------------------------------------------------------
 // settings
 // crashes on windows 98 - #define IO_ENABLE_LINK
+#define IO_ENABLE_LINK
+
+//#define IO_LINK_UNDERLINED // Uncomment to show links text underlined
+//---------------------------------------------------------------------
 
 // general flags
 #define FLAG_RIGHT         0x00000001
@@ -671,10 +676,9 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
 		case BN_CLICKED:
       {
         for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
-          if (pFields[nIdx].nType == FIELD_BROWSEBUTTON) {
-            if (id == pFields[nIdx].nControlID) {
+          if (id == pFields[nIdx].nControlID) {
+            if (pFields[nIdx].nType == FIELD_BROWSEBUTTON) {
               int nParentIdx = pFields[nIdx].nParentIdx;
-
               switch(pFields[nParentIdx].nType) {
                 case FIELD_FILEREQUEST:
                   BrowseForFile(nParentIdx);
@@ -684,6 +688,8 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
                   break;
               }
               break;
+            } else if (pFields[nIdx].nType == FIELD_LINK) {
+              ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);	            
             }
           }
         }
@@ -728,6 +734,58 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
   switch (uMsg)
   {
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
+    case WM_DRAWITEM:
+    {
+        DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
+        for (int nIdx = 0; nIdx < nNumFields; nIdx++) 
+        {
+          if (pFields[nIdx].nControlID == lpdis->CtlID ) 
+          {
+#ifdef IO_LINK_UNDERLINED
+            HFONT OldFont;
+            LOGFONT lf;
+#endif
+            if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
+               (lpdis->itemAction & ODA_SELECT))
+               DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
+
+#ifdef IO_LINK_UNDERLINED
+            GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
+            lf.lfUnderline = TRUE;
+            OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
+#endif
+            // Set up tranparent background
+            SetBkMode(lpdis->hDC, TRANSPARENT);
+            
+            if ( GetSysColorBrush(COLOR_HOTLIGHT) )
+              SetTextColor(lpdis->hDC, GetSysColor(COLOR_HOTLIGHT));
+            else
+              SetTextColor(lpdis->hDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
+                        
+            GetClientRect(lpdis->hwndItem, &pFields[nIdx].rect);
+            // Calculate needed size of the control
+            DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &pFields[nIdx].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+            pFields[nIdx].rect.right += 4;
+            pFields[nIdx].rect.bottom = lpdis->rcItem.bottom;
+            // Resize but don't move
+            SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pFields[nIdx].rect.right - pFields[nIdx].rect.left, 
+              pFields[nIdx].rect.bottom - pFields[nIdx].rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+            // Draw the text
+            lpdis->rcItem = pFields[nIdx].rect;
+            // Add little margin to avoid focus rect over text
+            lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
+
+            if ( lpdis->itemState & ODS_HOTLIGHT )
+              OutputDebugString("Hot");
+
+            DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
+#ifdef IO_LINK_UNDERLINED
+            DeleteObject(SelectObject(lpdis->hDC, OldFont));
+#endif
+          }
+        }
+        break;
+    }
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLOREDIT:
     case WM_CTLCOLORDLG:
@@ -747,90 +805,33 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 
 #ifdef IO_ENABLE_LINK
 // pFields[nIdx].nParentIdx is used to store original windowproc
-int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
+int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
-  int StaticField = -1;
-  for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
-    if (pFields[nIdx].nType == FIELD_LINK && hWin == pFields[nIdx].hwnd ) {
-      StaticField = nIdx;
-      break;
-    }
-  }
-
-  if ( StaticField >= 0 )
+  for (int StaticField = 0; StaticField < nNumFields; StaticField++) 
   {
-    switch(uMsg)
+    if (pFields[StaticField].nType == FIELD_LINK && hWin == pFields[StaticField].hwnd ) 
     {
-    case WM_PAINT:
+      switch(uMsg)
       {
-        PAINTSTRUCT ps;
-        HFONT hOldFont;
-        HDC pDC = BeginPaint(hWin, &ps);
-        HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
-        int OldMode = SetBkMode(pDC, TRANSPARENT);
-        int OldTextColor;
-
-        if ( GetSysColorBrush(COLOR_HOTLIGHT) )
-          OldTextColor = SetTextColor(pDC, GetSysColor(COLOR_HOTLIGHT));
-        else
-          OldTextColor = SetTextColor(pDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
-
-        hOldFont = (HFONT)SelectObject(pDC, hFont);        
-        GetClientRect(hWin, &pFields[StaticField].rect);
-
-        DrawText( pDC, pFields[StaticField].pszText, -1, &pFields[StaticField].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
-        
-        DrawText( pDC, pFields[StaticField].pszText, -1, &pFields[StaticField].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
-        
-        SetTextColor(pDC, OldTextColor);
-        SetBkMode(pDC, OldMode);
-        SelectObject(pDC, hOldFont);
-        EndPaint(hWin, &ps);
-        return 0;
-      }
-    case WM_NCHITTEST:
-      {
-        POINT pt;
-        pt.x = GET_X_LPARAM(lParam);
-        pt.y = GET_Y_LPARAM(lParam);
-        ScreenToClient(hWin, &pt);
-        
-        if ( PtInRect(&pFields[StaticField].rect, pt) )
+      case WM_ERASEBKGND:
+          return 0;
+      case WM_SETCURSOR:
         {
-          return HTCLIENT;
-        }
-        break;
-      }
-    case WM_SETCURSOR:
-      {
-        if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
-        {
-          HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
-          if ( hCur )
+          if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
           {
-            SetCursor(hCur);
-            return 1; // halt further processing
+            HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
+            if ( hCur )
+            {
+              SetCursor(hCur);
+              return 1; // halt further processing
+            }
           }
         }
-        break;
       }
-    case WM_LBUTTONUP:
-      {
-        POINT pt;
-        pt.x = GET_X_LPARAM(lParam);
-        pt.y = GET_Y_LPARAM(lParam);
-        
-        if ( PtInRect(&pFields[StaticField].rect, pt) )
-        {
-          ShellExecute(hMainWindow, NULL, pFields[StaticField].pszState, NULL, NULL, SW_SHOWDEFAULT);	
-        }	
-        return 0;
-      }
+      return CallWindowProc((WNDPROC)pFields[StaticField].nParentIdx, hWin, uMsg, wParam, lParam);
     }
-    return CallWindowProc((WNDPROC)pFields[StaticField].nParentIdx, hWin, uMsg, wParam, lParam);;
   }
-  else
-    return 0;
+  return 0;
 }
 #endif
 
@@ -973,8 +974,8 @@ int createCfgDlg()
       { "BUTTON",       // FIELD_GROUPBOX
         DEFAULT_STYLES | BS_GROUPBOX,
         WS_EX_TRANSPARENT },
-      { "STATIC",       // FIELD_LINK
-        DEFAULT_STYLES | WS_TABSTOP
+      { "BUTTON",       // FIELD_LINK
+        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW
         },      
     };
 
