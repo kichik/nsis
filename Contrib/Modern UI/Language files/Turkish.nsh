@@ -1,69 +1,80 @@
 ;NSIS Modern User Interface - Turkish Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.65
 
 ;Language: Turkish (1055)
-;By Bertan Kodamanoglu (astoichen@soultrap.com)
+;By Fatih BOY (fatih@smartcoding.org)
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TURKISH"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Turkish";
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "'Devam'a týklayýn."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Kurulumu baþlatmak için KUR'a týklayýnýz"
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "${MUI_PRODUCT} Kurulumuna hoþgeldiniz."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "\r\nKurulumu baþlatmadan önce çalýþan diðer programlarý kapatmanýzý öneririz. Böylece bilgisayarýnýzý yeniden baþlatmadan bazý sistem dosyalarý sorunsuz kurulabilir.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Devam'a tiklayin."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Kurulumu baslatmak için KUR'a tiklayiniz."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Sözleþme"  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Lütfen programý kurmadan önce sözleþmeyi okuyunuz."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Page Down'a basarak sözleþmenin tamamýný görebilirsiniz."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Sözleþmeyi kabul ediyorsanýz 'Kabul'e basýn. Kurulumu baþlatabilmek için sözleþmeyi kabul etmeniz gerekli."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "${MUI_PRODUCT} Kurulum Sihirbazina hosgeldiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Bu sihirbaz size ${MUI_PRODUCT} kurulumu boyunca rehberlik edecektir.\r\n\r\nKurulumu baslatmadan önce çalisan diger programlari kapatmanizi öneririz. Böylece bilgisayarinizi yeniden baslatmadan bazi sistem dosyalari sorunsuz kurulabilir.\r\n\r\n"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Sözlesme"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Lütfen ${MUI_PRODUCT} programini kurmadan önce sözlesmeyi okuyunuz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Sözlesmenin gire kalanini görmek için Page Down'a basabilirsiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to install ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Sözlesmeyi kabul ediyorsaniz 'Kabul'e basin. ${MUI_PRODUCT} programini kurabilmeniz için sözlesmeyi kabul etmeniz gerekli."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Sözlesmeyi kabul ediyorsaniz, asagidaki ilk seçenegi seçiniz. ${MUI_PRODUCT} programini kurabilmeniz için sözlesmeyi kabul etmeniz gerekli."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Paket Seçimi"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Lütfen ${MUI_PRODUCT} için kurmak istediðiniz paketleri seçin."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Paket seçimini tamamladýktan sonra"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Açýklama"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Paketlerin açýklamalarýný görmek için mouse ile üzerine gelin."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Lütfen ${MUI_PRODUCT} için kurmak istediginiz paketleri seçin."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Kurulmasini istediginiz paketleri isaretleyiniz, kurulmasini istemediginiz paketlerin ise isaretlerini kaldiriniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Açiklama"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Paketlerin açiklamalarini görmek için mouse ile üzerine gelin."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Hedef dizini seçin"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Programý kurmak istediðiniz dizini seçin"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT} aþaðýda belirttiðiniz dizine kurulacak.$\r$\n$\r$\nFarklý bir dizine kurmak istiyorsanýz, 'Farklý Dizin'e týklayýn."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "${MUI_PRODUCT} programini kurmak istediginiz dizini seçin."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT} asagida belirttiginiz dizine kurulacak.$\r$\n$\r$\nFarkli bir dizine kurmak istiyorsaniz, 'Farkli Dizin'e tiklayin."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Hedef Dizin"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Kuruluyor"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Lütfen ${MUI_PRODUCT} kurulurken bekleyiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Lütfen ${MUI_PRODUCT} kurulurken bekleyiniz"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Kurulum Tamamlandý!"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "${MUI_PRODUCT} kurulumu sorunsuz bir þekilde sonlandý."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Kurulum Tamamlandi"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Kurulum basariyla gerçeklesti."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Kurulum Iptal Edildi"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Kurulum basariyla gerçeklestirilemedi."
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Bitir"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "${MUI_PRODUCT} Kurulumu Tamamlanýyor"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} baþarýyla bilgisayarýnýza yüklendi.\r\n\r\nLütfen 'Bitir'e basarak kurulumu sonlandýrýn."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT} kurulumunun tamamlanmasý için bilgisayarýnýzý yeniden baþlatmanýz gerekli. Bunu þimdi yapmak istiyor musunuz?"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Evet"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Hayýr"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Programý çalýþtýr"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Yardým dosyasýný göster"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "${MUI_PRODUCT} Kurulumu Tamamlaniyor"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} basariyla bilgisayariniza yüklendi.\r\n\r\nLütfen 'Bitir'e basarak kurulumu sonlandirin."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT} kurulumunun tamamlanmasi için bilgisayarinizi yeniden baslatmaniz gerekli. Bunu simdi yapmak istiyor musunuz?"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Yeniden baslat"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Bilgisayari daha sonra elle tekrar baslatacagim"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "${MUI_PRODUCT} programini &çalistir"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "'Beni Oku' dosyasini &göster"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Baþlat menüsü klasörü seçimi"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Programýn kýsayollarýnýn konulacaðý baþlat menüsü klasörünü seçimi"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Programýn kýsayollarýnýn konulacaðý baþlat menüsü klasörü seçin. Ayný zamanda farklý bir isim girerek yeni bir klasör yaratabilirsiniz."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Kýsayol yaratýmý"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Baslat menüsü klasörü seçimi"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Programin kisayollarinin konulacagi baslat menüsü klasörünü seçiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Programin kisayollarinin konulacagi baslat menüsü klasörünü seçiniz. Ayni zamanda farkli bir isim girerek yeni bir klasör yaratabilirsiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Kisa yollari olusturma"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "${MUI_PRODUCT} kurulumundan çýkmak istediðinizden emin misiniz?"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "${MUI_PRODUCT} kurulumundan çikmak istediginize emin misiniz?"  
   
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Programý kaldýrmak istiyorsanýz 'Kaldýr' a basýn."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "'Kaldir'a basarak kaldirma islemini baslatabilirsiniz."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "${MUI_PRODUCT} Kaldýrýlýyor"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "${MUI_PRODUCT} bilgisayarýnýzdan silinmek üzere"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO ""
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "${MUI_PRODUCT} programini kaldir"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "${MUI_PRODUCT} programini bilgisayarinizdan kaldirma."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "This wizard will uninstall ${MUI_PRODUCT} from your computer."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Kaldýrýlýyor"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Lütfen ${MUI_PRODUCT} kaldýrýlýrken bekleyiniz."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Kaldiriliyor"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Lütfen ${MUI_PRODUCT} kaldirilirken bekleyiniz."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Tamamlandý"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Kaldýrma iþlemi baþarýyla tamamlandý."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Kaldirma tamamlandi"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Program basariyla kaldirildi."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Program kaldirma iptal edildi"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Program kaldirilma islemi basarisiz oldu."
   
 !insertmacro MUI_LANGUAGEFILE_END
