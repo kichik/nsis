@@ -282,10 +282,8 @@ Here is a little example:
 		InstallOptions::show
 		Pop $0
 		StrCmp $0 "success" done
-		StrCmp $0 "back" 0 +2
-			Abort
-		StrCmp $0 "cancel" 0 error
-			Quit
+		StrCmp $0 "back" done
+		StrCmp $0 "cancel" done
 	error:
 		MessageBox MB_OK|MB_ICONSTOP "IO error: $0"
 		Quit
@@ -404,8 +402,8 @@ Here is a little example:
   <UL>
     <LI>Barely qualifies as a distribution. </LI></UL></LI></UL>
 <HR>
-<A name=license><PRE>  Copyright © 2001 Michael Bishop
-  Portions Copyright © 2001 Nullsoft, Inc.
+<A name=license><PRE>  Copyright &copy; 2001 Michael Bishop
+  Portions Copyright &copy; 2001 Nullsoft, Inc.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

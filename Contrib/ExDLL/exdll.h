@@ -9,6 +9,8 @@
         g_stacktop=stacktop;      \
         g_variables=variables; }
 
+// For page showing plug-ins
+#define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
 
 typedef struct _stack_t {
   struct _stack_t *next;
