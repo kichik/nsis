@@ -99,7 +99,20 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
     if (popstring(g_wndtext)) return;
 
     if (popstring(temp)) return;
-    langs_num = myatoi(temp);
+    if (*temp == 'A')
+    {
+      stack_t *th;
+      langs_num=0;
+      th=(*g_stacktop);
+      while (th && th->text[0]) {
+        langs_num++;
+        th = th->next;
+      }
+      if (!th) return;
+      langs_num /= 2;
+    }
+    else
+      langs_num = myatoi(temp);
     {
       char *p=temp;
       while (*p) if (*p++ == 'F') dofont=1;
@@ -132,44 +145,12 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 int myatoi(char *s)
 {
   unsigned int v=0;
-  if (*s == '0' && (s[1] == 'x' || s[1] == 'X'))
+  for (;;)
   {
-    s+=2;
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '9') c-='0';
-      else if (c >= 'a' && c <= 'f') c-='a'-10;
-      else if (c >= 'A' && c <= 'F') c-='A'-10;
-      else break;
-      v<<=4;
-      v+=c;
-    }
-  }
-  else if (*s == '0' && s[1] <= '7' && s[1] >= '0')
-  {
-    s++;
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '7') c-='0';
-      else break;
-      v<<=3;
-      v+=c;
-    }
-  }
-  else
-  {
-    int sign=0;
-    if (*s == '-') { s++; sign++; }
-    for (;;)
-    {
-      int c=*s++ - '0';
-      if (c < 0 || c > 9) break;
-      v*=10;
-      v+=c;
-    }
-    if (sign) return -(int) v;
+    int c=*s++ - '0';
+    if (c < 0 || c > 9) break;
+    v*=10;
+    v+=c;
   }
   return (int)v;
 }
