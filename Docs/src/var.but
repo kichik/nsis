@@ -46,7 +46,7 @@ The identifier of the language that is currently used. For example, English is 1
 
 Constants can also be used in the \R{ainstalldir}{InstallDir} attribute.
 
-Note that some of the new constants will not work on every OS. For example, $CDBURN_AREA will only work on Windows XP and above. If it's used on Windows 98, it'll be empty. We will try to gather a compatibility list before NSIS 2 final, but for now it's recommended you check your installer on all of the OSes you plan to support if you're using one of the new constants.
+Note that some of the new constants will not work on every OS. For example, $CDBURN_AREA will only work on Windows XP and above. If it's used on Windows 98, it'll be empty. Unless mentioned otherwise, a constant should be available on every OS.
 
 \e{$PROGRAMFILES}
 
@@ -100,9 +100,11 @@ The quick launch folder for IE4 active desktop and above. If quick launch is not
 
 The documents directory. A typical path for the current user is C:\\Documents and Settings\\Foo\\My Documents. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is not available on Windows 95 with Internet Explorer 4 not installed.
+
 \e{$SENDTO}
 
-The directory that contains Send To menu shorcut items.
+The directory that contains Send To menu shortcut items.
 
 \e{$RECENT}
 
@@ -112,21 +114,31 @@ The directory that contains shortcuts to the user's recently used documents.
 
 The directory that contains shortcuts to the user's favorite websites, documents, etc. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is not available on Windows 95 with Internet Explorer 4 not installed.
+
 \e{$MUSIC}
 
 The user's music files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+This constant is available on Windows XP, ME and above.
 
 \e{$PICTURES}
 
 The user's picture files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is available on Windows 2000, XP, ME and above.
+
 \e{$VIDEOS}
 
 The user's video files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is available on Windows XP, ME and above.
+
 \e{$NETHOOD}
 
 The directory that contains link objects that may exist in the My Network Places/Network Neighborhood folder.
+
+This constant is not available on Windows 95 with Internet Explorer 4 and Active Desktop not installed.
 
 \e{$FONTS}
 
@@ -140,41 +152,61 @@ The document templates directory. The context of this constant (All Users or Cur
 
 The application data directory. Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is not available on Windows 95 with Internet Explorer 4 and Active Desktop not installed.
+
 \e{$PRINTHOOD}
 
 The directory that contains link objects that may exist in the Printers folder.
+
+This constant is not available on Windows 95 and Windows 98.
 
 \e{$INTERNET_CACHE}
 
 Internet Explorer's temporary internet files directory.
 
+This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.
+
 \e{$COOKIES}
 
 Internet Explorer's cookies directory.
+
+This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.
 
 \e{$HISTORY}
 
 Internet Explorer's history directory.
 
+This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.
+
 \e{$PROFILE}
 
 The user's profile directory. A typical path is C:\\Documents and Settings\\Foo.
+
+This constant is available on Windows 2000 and above.
 
 \e{$ADMINTOOLS}
 
 A directory where administrative tools are kept. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
+This constant is available on Windows 2000, ME and above.
+
 \e{$RESOURCES}
 
-The resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources but detected at runtime)
+The resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources but detected at runtime).
+
+This constant is available on Windows XP and above.
 
 \e{$RESOURCES_LOCALIZED}
 
-The localized resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources\\1033 but detected at runtime)
+The localized resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources\\1033 but detected at runtime).
+
+This constant is available on Windows XP and above.
 
 \e{$CDBURN_AREA}
 
 A directory where files awaiting to be burned to CD are stored.
+
+This constant is available on Windows XP and above.
 
 \e{$HWNDPARENT}
 
