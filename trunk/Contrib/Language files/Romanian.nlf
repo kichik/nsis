@@ -3,6 +3,7 @@ NLF v3
 # Language ID
 1048
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2  Updated by Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v0.3
+# v0.4 - small grammar corrections
 Nullsoft Install System %s
 Instalare %s
 Dezinstalare %s
@@ -18,7 +19,7 @@ Dezinstalare %s
 &Inainte >
 &De acord
 &Accept termenii din acordul de licenta
-Nu accespt termenii din acordul de licenta
+Nu accept termenii din acordul de licenta
 &Instalare
 &Dezinstalare
 Anuleaza
@@ -36,7 +37,7 @@ Spatiu disponibil:
 Spatiu necesar: 
 Dezinstaleaza din:
 Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai incerca odata scrierea fisierului, \r\nignora pentru a trece peste acest fisier
-Nu pot sa scriu: 
+Nu pot sa scriu:
 Copierea a esuat
 Copiaza in
 N-am gasit simbolul: 
@@ -54,7 +55,7 @@ ExecShell:
 Executa: 
 Extrage: 
 Extrage: eroare la scriere in fisier 
-Program de instalare corupt: opcode invalid 
+Program de instalare corupt: opcode invalid
 Nu exista OLE pentru: 
 Directorul destinatie: 
 Sterge destinatia: 
