@@ -109,7 +109,11 @@
 
   ChangeUI all "${MUI_UI}"
   Icon "${MUI_ICON}"
-  UninstallIcon "${MUI_UNICON}"
+  
+  !ifdef MUI_UNINSTALLER
+    UninstallIcon "${MUI_UNICON}"
+  !endif
+  
   CheckBitmap "${MUI_CHECKBITMAP}"
   SetFont "${MUI_FONT}" "${MUI_FONTSIZE}"
   InstallColors ${MUI_INSTALLCOLORS}
