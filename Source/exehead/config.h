@@ -115,7 +115,12 @@
 // turning this on (by uncommenting it) adds about
 // 4kb, but can be useful in debugging your installers.
 // NOT ENABLED BY DEFAULT.
-//#define NSIS_CONFIG_LOG
+// #define NSIS_CONFIG_LOG
+
+// NSIS_CONFIG_LOG_ODS makes the logging facility
+// use OutputDebugString instead of a file.
+// NOT ENABLED BY DEFAULT.
+// #define NSIS_CONFIG_LOG_ODS
 
 // NSIS_SUPPORT_BGBG enables support for the blue (well, whatever
 // color you want) gradient background window.
@@ -275,6 +280,11 @@
   #endif
 #endif
 
+#ifdef NSIS_CONFIG_LOG_ODS
+  #ifndef NSIS_CONFIG_LOG
+    #error NSIS_CONFIG_LOG_ODS relies on NSIS_CONFIG_LOG, but NSIS_CONFIG_LOG is not defined
+  #endif
+#endif
 
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
   #define _NSIS_CONFIG_VERIFYDIALOG
