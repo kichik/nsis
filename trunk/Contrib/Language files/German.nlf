@@ -26,12 +26,12 @@ Abbrechen
 Name
 Fertig
 Benutzerdefiniert
-Bestimmen Sie die Installations-Art:
+Installations-Typ wählen:
 Wählen Sie die Komponenten aus, die Sie installieren möchten:
 oder wählen Sie zusätzliche Komponenten aus:
 Wählen Sie das Verzeichnis aus, in das Sie %s installieren möchten:
-Verfügbarer Speicherplatz: 
-Benötigter Speicherplatz: 
+Verfügbarer Speicher: 
+Benötigter Speicher: 
 Deinstalliere aus:
 Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie Abbrechen um abzubrechen,\r\nWiederholen um den Schreibvorgang erneut zu versuchen\r\noder Ignorieren um diese Datei zu überspringen.
 Fehler beim Schreiben:  
