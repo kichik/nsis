@@ -2356,8 +2356,10 @@ int CEXEBuild::write_output(void)
     GetFullPathName(build_output_filename,1024,buffer,&p);
 #else
     char *buffer = my_realpath(build_output_filename);
+#endif
     notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
     INFO_MSG("\nOutput: \"%s\"\n", buffer);
+#ifndef _WIN32
     my_free_realpath(build_output_filename, buffer);
 #endif
   }
