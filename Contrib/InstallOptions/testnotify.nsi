@@ -60,6 +60,13 @@ supportx:
   EnableWindow $1 $0
   GetDlgItem $1 $hwnd 1205 ; ... button (the following control)
   EnableWindow $1 $0
+  ; Add the disabled flag too so when we return to this page it's disabled again
+  StrCmp $0 0 0 +3
+
+    WriteINIStr "$PLUGINSDIR\test.ini" "Field 5" "Flags" "GROUP|FILE_MUST_EXIST|FILE_EXPLORER|FILE_HIDEREADONLY|DISABLED"
+    Goto +2
+
+    WriteINIStr "$PLUGINSDIR\test.ini" "Field 5" "Flags" "GROUP|FILE_MUST_EXIST|FILE_EXPLORER|FILE_HIDEREADONLY"
   Abort ; Return to the page
 
 clearbtn:
@@ -83,6 +90,13 @@ droplist:
   EnableWindow $1 $0
   GetDlgItem $1 $hwnd 1207 ; ... button (the following control)
   EnableWindow $1 $0
+  ; Add the disabled flag too so when we return to this page it's disabled again
+  StrCmp $0 0 0 +3
+
+    WriteINIStr "$PLUGINSDIR\test.ini" "Field 6" "Flags" "DISABLED"
+    Goto +2
+
+    WriteINIStr "$PLUGINSDIR\test.ini" "Field 6" "Flags" ""
   Abort ; Return to the page
 
 validate:
