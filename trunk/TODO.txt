@@ -37,6 +37,8 @@ NSIS
 
 * LZMA compression
 
+* stop using static variables so CEXEBuild can be used as a real class
+
 PLUGINS
 
 * InstallOptions - custom class names so you can include whatever control you want
