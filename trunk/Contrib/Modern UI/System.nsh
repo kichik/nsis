@@ -72,6 +72,16 @@
 
 !macroend
 
+!macro MUI_INTERFACE_ALLRES UI ICON UNICON CHECKS PROGRESSBAR FONT
+  !define MUI_UI ${UI}
+  !define MUI_ICON ${ICON}
+  !define MUI_UNICON ${ICON}
+  !define MUI_CHECKBITMAP ${CHECKS}
+  !define MUI_PROGRESSBAR ${PROGRESSBAR}
+  !define MUI_FONT ${FONT}
+  !insertmacro MUI_INTERFACE
+!macroend
+
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
   !verbose 3
