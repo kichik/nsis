@@ -59,6 +59,7 @@ extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
+  SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_VSCROLL, SB_BOTTOM, 0);
 }
 
 void ErrorMessage(HWND hwnd,const char *str) {
