@@ -3,7 +3,7 @@
 
 #include <stdlib.h> // for gcc
 
-class IGrowBuf 
+class IGrowBuf
 {
   public:
     virtual int add(const void *data, int len)=0;
@@ -34,10 +34,10 @@ class GrowBuf : public IGrowBuf
 
     void set_zeroing(int zero) { m_zero=zero; }
 
-    int add(const void *data, int len) 
-    { 
+    int add(const void *data, int len)
+    {
       if (len<=0) return 0;
-      resize(m_used+len); 
+      resize(m_used+len);
       memcpy((char*)m_s+m_used-len,data,len);
       return m_used-len;
     }
@@ -56,7 +56,7 @@ class GrowBuf : public IGrowBuf
         {
           extern FILE *g_output;
           extern int g_display_errors;
-          if (g_display_errors) 
+          if (g_display_errors)
           {
             fprintf(g_output,"\nack! realloc(%d) failed, trying malloc(%d)!\n",m_alloc,newlen);
             fflush(g_output);
@@ -66,7 +66,7 @@ class GrowBuf : public IGrowBuf
           if (!n)
           {
             extern void quit();
-            if (g_display_errors) 
+            if (g_display_errors)
             {
               fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",m_alloc);
               fflush(g_output);
@@ -77,8 +77,9 @@ class GrowBuf : public IGrowBuf
           free(m_s);
         }
         m_s=n;
-        if (m_zero) memset((char*)m_s+ou,0,m_alloc-ou);
       }
+      if (m_zero && m_used > ou)
+        memset((char*)m_s + ou, 0, m_used - ou);
       if (!m_used && m_alloc > 2*m_bs) // only free if you resize to 0 and we're > 64k
       {
         m_alloc=0;
@@ -132,7 +133,7 @@ public:
       {
         return offs;
       }
-      if (case_sensitive==2 && 
+      if (case_sensitive==2 &&
           strlen(str) < strlen(s+offs) &&  // check for end of string
           !strcmp(s+offs+strlen(s+offs)-strlen(str),str))
       {
@@ -212,7 +213,7 @@ class SortedStringList
         extern FILE *g_output;
         extern int g_display_errors;
         extern void quit();
-        if (g_display_errors) 
+        if (g_display_errors)
         {
           fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(name)+1);
           fflush(g_output);
@@ -250,7 +251,7 @@ class SortedStringList
         else ll=nextpos+1;
         nextpos=(ul+ll)/2;
       }
-      
+
       return returnbestpos ? nextpos : -1;
     }
 
@@ -296,7 +297,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       int pos=find(name,-1,case_sensitive,1,&where);
       if (pos==-1) return alwaysreturnpos ? where : -1;
       newstruct.name=strings.add(name,strlen(name)+1);
-      
+
       gr.add(&newstruct,sizeof(T));
       T *s=(T*)gr.get();
       memmove(s+pos+1,s+pos,gr.getlen()-((pos+1)*sizeof(T)));
@@ -345,7 +346,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
         else ll=nextpos+1;
         nextpos=(ul+ll)/2;
       }
-      
+
       return returnbestpos ? nextpos : -1;
     }
 
@@ -388,7 +389,7 @@ class DefineList : public SortedStringList<struct define>
         extern FILE *g_output;
         extern int g_display_errors;
         extern void quit();
-        if (g_display_errors) 
+        if (g_display_errors)
         {
           fprintf(g_output,"\nInternal compiler error #12345: GrowBuf realloc/malloc(%d) failed.\n",strlen(value)+1);
           fflush(g_output);
