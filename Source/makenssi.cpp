@@ -207,7 +207,12 @@ int main(int argc, char **argv)
         build.print_help(NULL);
       nousage++;
     }
-    else if (!stricmp(argv[argpos],"/NOTIFYHWND")) build.notify_hwnd=(HWND)atol(argv[++argpos]);
+    else if (!stricmp(argv[argpos],"/NOTIFYHWND"))
+    {
+      build.notify_hwnd=(HWND)atol(argv[++argpos]);
+      if (!IsWindow(build.notify_hwnd))
+        build.notify_hwnd=0;
+    }
     else if (!stricmp(argv[argpos],"/HDRINFO"))
     {
       if (build.display_info) 
