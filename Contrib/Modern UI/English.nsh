@@ -30,7 +30,7 @@
    
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_ENGLISH} "License Agreement"  
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_ENGLISH} "Please review the license terms before installing ${NAME}."
-  LangString MUI_INNERTEXT_LICENSE ${LANG_ENGLISH} "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+  LangString MUI_INNERTEXT_LICENSE ${LANG_ENGLISH} "If you accept all the terms of the agreement, choose I Agree to continue. You must accept the agreement to install ${NAME}."
   
   LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_ENGLISH} "Choose Components"
   LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_ENGLISH} "Choose the components you want to install."

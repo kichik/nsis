@@ -30,7 +30,7 @@
   
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_DUTCH} "Licentie Overeenkomst"
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_DUTCH} "Lees de licentie overeenkomst voordat u ${NAME} installeerd."
-  LangString MUI_INNERTEXT_LICENSE ${LANG_DUTCH} "Als u de overeenkomt accepteert, kies Akkoord om verder te gaan. Als u Annuleren kiest zal Setup sluiten. U moet met de overeenkomst acceptren om ${NAME} te installeren."
+  LangString MUI_INNERTEXT_LICENSE ${LANG_DUTCH} "Als u de overeenkomt accepteert, kies Akkoord om verder te gaan. U moet met de overeenkomst acceptren om ${NAME} te installeren."
   
   LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_DUTCH} "Kies Onderdelen"
   LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_DUTCH} "Kies de onderdelen die u wilt installeren."
