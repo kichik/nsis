@@ -479,7 +479,7 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c
 \c multiszget:
 \c
-\c   System::Call "${RegQueryValueEx}(r4, 'bla', 0, 0, r1, r2) .r3"
+\c   System::Call "${RegQueryValueEx}(r4, '${VALUE}', 0, 0, r1, r2) .r3"
 \c
 \c   StrCmp $3 0 multiszprocess
 \c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)[2]"
