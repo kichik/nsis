@@ -3,8 +3,6 @@
 #ifndef ___USERVARS___H_____
 #define ___USERVARS___H_____
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-
 #include "Lang.h"
 
 struct uservarstring {
@@ -87,6 +85,5 @@ class UserVarsStringList : public SortedStringListND<struct uservarstring>
       return -1;
     }
 };
-#endif //NSIS_SUPPORT_NAMED_USERVARS
 
 #endif

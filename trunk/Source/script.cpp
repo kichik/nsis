@@ -4984,7 +4984,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_SUPPORT_CREATEFONT
 
     // Added by ramon 3 jun 2003
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
     case TOK_DEFVAR:
     {
         SCRIPT_MSG("VAR \"%s\"\n",line.gettoken_str(1));
@@ -4993,12 +4992,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return res;        
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));    
-
-#else //NSIS_SUPPORT_NAMED_USERVARS
-    case TOK_DEFVAR:
-      ERROR_MSG("Error: %s specified, case NSIS_SUPPORT_NAMED_USERVARS not defined.\n",line.gettoken_str(0));
-      return PS_ERROR;
-#endif //NSIS_SUPPORT_NAMED_USERVARS
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
