@@ -427,6 +427,7 @@ void AddBrowseButtons() {
         pNewField->nControlID = 1200 + nNumFields;
         pNewField->nParentIdx = nIdx;
         pNewField->nType = FIELD_BROWSEBUTTON;
+        pNewField->nFlags = pFields[nIdx].nFlags & (FLAG_DISABLED | FLAG_NOTABSTOP);
         //pNewField->pszListItems = NULL;
         //pNewField->nMaxLength = 0;
         //pNewField->nMinLength = 0;
@@ -875,9 +876,11 @@ int createCfgDlg()
         WS_EX_TRANSPARENT }
     };
 
+    int nType = pFields[nIdx].nType;
+
 #undef DEFAULT_STYLES
 
-    if (pFields[nIdx].nType < 1 || pFields[nIdx].nType > (sizeof(ClassTable) / sizeof(ClassTable[0])))
+    if (nType < 1 || nType > (sizeof(ClassTable) / sizeof(ClassTable[0])))
       continue;
 
     DWORD dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
@@ -904,7 +907,7 @@ int createCfgDlg()
       rect.bottom += dialog_r.bottom - dialog_r.top;
 
     char *title = pFields[nIdx].pszText;
-    switch (pFields[nIdx].nType) {
+    switch (nType) {
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
         if (pFields[nIdx].nFlags & FLAG_RIGHT)
@@ -952,7 +955,7 @@ int createCfgDlg()
       SendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
       // make sure we created the window, then set additional attributes
       if (pFields[nIdx].nMaxLength > 0) {
-        switch (pFields[nIdx].nType) {
+        switch (nType) {
           case FIELD_TEXT:
           case FIELD_DIRREQUEST:
           case FIELD_FILEREQUEST:
@@ -960,15 +963,15 @@ int createCfgDlg()
             break;
         }
       }
-      if ((pFields[nIdx].nType == FIELD_CHECKBOX) || (pFields[nIdx].nType == FIELD_RADIOBUTTON)) {
+      if ((nType == FIELD_CHECKBOX) || (nType == FIELD_RADIOBUTTON)) {
         if (pFields[nIdx].pszState[0] == '1')
         {
           SendMessage(hwCtrl, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
         }
       } else if (pFields[nIdx].pszListItems && (
-                 ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)
+                 ((nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)
                        && (nFindMsg = CB_FINDSTRINGEXACT) && (nSetSelMsg = CB_SETCURSEL)) ||
-                 ((pFields[nIdx].nType == FIELD_LISTBOX ) && (nAddMsg = LB_ADDSTRING)
+                 ((nType == FIELD_LISTBOX ) && (nAddMsg = LB_ADDSTRING)
                        && (nFindMsg = LB_FINDSTRINGEXACT) && (nSetSelMsg = LB_SETCURSEL))
                  )) {
         // if this is a listbox or combobox, we need to add the list items.
@@ -1017,8 +1020,8 @@ int createCfgDlg()
             }
           }
         }
-      } else if (pFields[nIdx].nType == FIELD_BITMAP || pFields[nIdx].nType == FIELD_ICON) {
-        WPARAM nImageType = pFields[nIdx].nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
+      } else if (nType == FIELD_BITMAP || nType == FIELD_ICON) {
+        WPARAM nImageType = nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
         SendMessage(
           hwCtrl,
           STM_SETIMAGE,
