@@ -289,7 +289,6 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\*.cpp
   File ..\Source\*.c
   File ..\Source\*.h
-  File ..\Source\script1.rc
   File ..\Source\Makefile
   File ..\Source\makenssi.dsp
   File ..\Source\makenssi.dsw
