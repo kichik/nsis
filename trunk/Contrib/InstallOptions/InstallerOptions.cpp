@@ -116,21 +116,20 @@ char *STRDUP(const char *c)
 #define FLAG_BOLD          (1)
 #define FLAG_RIGHT         (2)
 #define FLAG_DISABLED      (4)
+#define FLAG_GROUP         (8)
+#define FLAG_NOTABSTOP     (16)
 
 // text box flags
-#define FLAG_PASSWORD      (8)
+#define FLAG_PASSWORD      (32)
 
 // listbox flags
-#define FLAG_MULTISELECT   (16)
+#define FLAG_MULTISELECT   (64)
 
 // combobox flags
-#define FLAG_DROPLIST      (32)
+#define FLAG_DROPLIST      (128)
 
 // bitmap flags
-#define FLAG_RESIZETOFIT   (64)
-
-// radio button flags
-#define FLAG_GROUP         (128)
+#define FLAG_RESIZETOFIT   (256)
 
 struct TableEntry {
   char *pszName;
@@ -521,6 +520,7 @@ bool ReadSettings(void) {
       { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
       { "GROUP",             FLAG_GROUP          },
       { "DISABLED",          FLAG_DISABLED       },
+      { "NOTABSTOP",         FLAG_NOTABSTOP      },
 /*
       { "NO_ALPHA",          0                   },
       { "NO_NUMBERS",        0                   },
@@ -834,7 +834,7 @@ int createCfgDlg()
 
   DeleteDC(memDC);
 
-#define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_GROUP)
+#define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
 
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
     static struct {
@@ -858,7 +858,7 @@ int createCfgDlg()
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX,
         0 },
       { "BUTTON",       // FIELD_RADIOBUTTON
-        (DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON) & ~WS_GROUP,
+        DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON,
         0 },
       { "EDIT",         // FIELD_TEXT
         DEFAULT_STYLES | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
@@ -914,8 +914,6 @@ int createCfgDlg()
       case FIELD_RADIOBUTTON:
         if (pFields[nIdx].nFlags & FLAG_RIGHT)
           dwStyle |= BS_RIGHTBUTTON;
-        if (pFields[nIdx].nFlags & FLAG_GROUP)
-          dwStyle |= WS_GROUP;
         break;
       case FIELD_FILEREQUEST:
       case FIELD_DIRREQUEST:
@@ -935,6 +933,8 @@ int createCfgDlg()
     }
 
     if (pFields[nIdx].nFlags & FLAG_DISABLED) dwStyle |= WS_DISABLED;
+    if (pFields[nIdx].nFlags & FLAG_GROUP) dwStyle |= WS_GROUP;
+    if (pFields[nIdx].nFlags & FLAG_NOTABSTOP) dwStyle &= ~WS_TABSTOP;
 
     HWND hwCtrl = pFields[nIdx].hwnd = CreateWindowEx(
       dwExStyle,
