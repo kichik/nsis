@@ -82,15 +82,14 @@ Replaces the default text ("Completed") that is printed at the end of the instal
 
 \c [text [subtext] [subtext2]]
 
-Specifies texts on the component page.
+Used to change the default text on the component page.
 
-text: Text above the controls
+text: Text above the controls, to the right of the installation icon.
 
-subtext: Text next to the installation type selection
+subtext: Text next to the installation type selection.
 
-subtext2: Text next to the components list.
+subtext2: Text to the left of the components list and below the installation type.
 
-The default will be used if a string is empty ("").
 
 \S2{acrccheck} CRCCheck
 
@@ -108,17 +107,16 @@ Replaces the default details button text of "Show details", if parameter is spec
 
 \c [text] [subtext] [browse_button_text] [browse_dlg_text]
 
-Specifies texts on the directory page.
+Used to change the default text on the directory page.
 
-text: Text above the controls
+text: Text above the controls, to the right of the installation icon.
 
-subtext: Text on the directory selection frame
+subtext: Text on the directory selection frame.
 
-browse_button_text: Text on the Browse button
+browse_button_text: Text on the Browse button.
 
-browse_dlg_text: Text on the "Browse For Folder" dialog.
+browse_dlg_text: Text on the "Browse For Folder" dialog, appears after clicking on "Browse" button.
 
-The default will be used if a string is empty ("").
 
 \S2{adirvar} DirVar
 
@@ -199,13 +197,12 @@ Specifies if the displayed license must be accept explicit or not. This can be d
 
 \c [text [button_text]]
 
-Specifies texts on the license page.
+Used to change the default text on the license page.
 
-text: Text above the controls.
+text: Text above the controls, to the right of the installation icon.
 
-browse_button_text: Text on the "I Agree" button.
+button_text: Text on the "I Agree" button.
 
-The default will be used if a string is empty ("").
 
 \S2{amiscbuttontext} MiscButtonText
 
