@@ -15,7 +15,7 @@ The page order is set simply by the order \R{page}{Page}, \R{uninstpage}{UninstP
 \c  Page directory
 \c  Page instfiles
 \c  UninstPage uninstConfirm
-\c  UninstPage isntfiles
+\c  UninstPage instfiles
 
 This code will tell NSIS to first show the license page, then the components selection page, then the directory selection page and finally the install log where sections are executed, just like in old installers. The uninstaller will first show the uninstall confirmation page and then the uninstallation log.
 
@@ -129,7 +129,7 @@ Example usage:
 \c    LicenseText "Readme"
 \c    LicenseData readme.rtf
 \c  PageExEnd
-\c 
+\c
 \c  PageEx license
 \c    LicenseData license.txt
 \c    LicenseForceSelection checkbox

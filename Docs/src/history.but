@@ -69,7 +69,7 @@
 
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
-\b Improved \R{aaddbrandingimage}{AddBrandingImage}: Doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value 
+\b Improved \R{aaddbrandingimage}{AddBrandingImage}: Doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value
 
 \b Added base_dir for \R{gettempfilename}{GetTempFileName}
 
@@ -85,7 +85,7 @@
 
 \\<b\\>Notes:\\</b\\>
 
-\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: Because of the new syntax for pages, settings etc., changed names names of settings and variable names, you have to make some changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
+\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: Because of the new syntax for pages, settings etc., changed names of settings and variable names, you have to make some changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
 \R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work. \\<br\\>
 \R{onselchange}{.onSelChange} is no longer called when the components page is created
 
@@ -100,7 +100,7 @@
 
 \b Added SectionSetInstTypes and SectionGetInstTypes
 
-\b Reboot commmand does not force a reboot anymore (allows the user to save work)
+\b Reboot command does not force a reboot anymore (allows the user to save work)
 
 \b !if[n]def/!else fixes
 
@@ -338,7 +338,7 @@
 
 \b Fixed a bug that caused RTF not to show on Windows 9x
 
-\b Added a dialog that shows up if compress whole is used and initial uncompressing lasts longer than a second
+\b Added a dialog that shows up if compress whole is used and initial decompressing lasts longer than a second
 
 \b Updated to InstallOptions 1.3
 
@@ -469,7 +469,7 @@
 
 \b Added expand node option to Section and SubSection
 
-\b Added preserv file attribute option to File command
+\b Added preserve file attribute option to File command
 
 \b Copy-All bug fix in Makensisw
 

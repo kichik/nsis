@@ -17,7 +17,7 @@ In a NSIS script every line is treated as a command. If your command is too long
 \c Messagebox MB_OK|MB_ICONINFORMATION \
 \c "This is a sample that shows how to use line breaks for larger commands in NSIS scripts"
 
-If you want to use a double-quote in a string you can either use \\$" to esapce the quote or quote the string with a different type of quote such as ` or '.
+If you want to use a double-quote in a string you can either use \\$" to escape the quote or quote the string with a different type of quote such as ` or '.
 
 For more details about the script format, see \R{fileformat}{Script File Format}.
 
@@ -46,7 +46,7 @@ An non-silent installer has a set of wizard pages to let the user configure the 
 \c Page directory
 \c Page instfiles
 \c UninstPage uninstConfirm
-\c UninstPage isntfiles
+\c UninstPage instfiles
 
 \S1{tut-sections} Sections
 
@@ -72,7 +72,7 @@ Functions, just like sections, can contain code. The difference between sections
 
 User functions are called by the user from within sections or other functions using the \R{call}{Call} instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
 
-Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recongnize this function as a callback function by the name and will call it when the installer starts.
+Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recognize this function as a callback function by the name and will call it when the installer starts.
 
 \c Function .onInit
 \c   MessageBox MB_YESNO "This will install My Program. Do you wish to continue?" IDYES gogogo
@@ -88,7 +88,7 @@ For more information about functions see \R{functions}{Functions}.
 
 \S2{tutVariables} Variables
 
-You can decalare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function. For shared code, there are also \R{varother}{20 registers avaibable} (like $0). These static variables don't have to be declared and you won't get any name conflics.
+You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function. For shared code, there are also \R{varother}{20 registers avaibable} (like $0). These static variables don't have to be declared and you won't get any name conflicts.
 
 Declaring and using a user variable:
 
@@ -130,7 +130,7 @@ After calling the function, the variables contain the same value as before. Note
 
 \S2{tutdebug} Debugging Scripts
 
-The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debuging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
+The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debugging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
 
 
 \S1{compilercommands} Compiler Commands
