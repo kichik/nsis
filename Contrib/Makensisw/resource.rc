@@ -94,6 +94,7 @@ BEGIN
     BEGIN
         MENUITEM "NSIS Homepage",               IDM_NSISHOME
         MENUITEM "NSIS Developer Site",         IDM_NSISDEV
+        MENUITEM "NSIS Forum",                  IDM_FORUM
         MENUITEM SEPARATOR
         MENUITEM "Documentation\tF1",           IDM_DOCS
         MENUITEM SEPARATOR
