@@ -1,4 +1,4 @@
-const char *NSIS_VERSION="v2.0b5 (CVS)";
+const char *NSIS_VERSION="v2.0rc1";
 
 /* 
   Nullsoft Scriptable Install System (NSIS)
