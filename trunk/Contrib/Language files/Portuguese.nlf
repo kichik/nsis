@@ -116,7 +116,7 @@ Escolha uma pasta de onde será desinstalado o $(^Name):
 # ^SpaceRequired
 "Espaço necessário: "
 # ^UninstallingText
-Este assistente irá proceder à desinstalação do $(^Name) do seu computador. $_CLICK
+$(^Name) será desinstalado da seguinte pasta. $_CLICK
 # ^UninstallingSubText
 Desinstalando de:
 # ^FileError
