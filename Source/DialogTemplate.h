@@ -96,7 +96,7 @@ public:
   short GetHeight();
   DialogItemTemplate* GetItem(WORD wId);
   DialogItemTemplate* GetItemByIdx(DWORD i);
-  void  RemoveItem(WORD wId);
+  int   RemoveItem(WORD wId);
   void  SetFont(char* szFaceName, WORD wFontSize);
   void  AddItem(DialogItemTemplate item);
   HWND  CreateDummyDialog();

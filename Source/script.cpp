@@ -1778,58 +1778,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_WINDOWICON:
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-      // Changed by Amir Szekely 30th July 2002
-      try {
-        int k=line.gettoken_enum(1,"on\0off\0");
-        if (k == -1) PRINTHELP();
-        SCRIPT_MSG("WindowIcon: %s\n",line.gettoken_str(1));
-
-        if (!k) return make_sure_not_in_secorfunc(line.gettoken_str(0));
-
-        init_res_editor();
-
-#define REMOVE_ICON(id) { \
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
-          if (!dlg) throw runtime_error(#id " doesn't exist!"); \
-          CDialogTemplate dt(dlg,uDefCodePage); \
-          free(dlg); \
-          dt.RemoveItem(IDC_ULICON); \
-          DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
-          DialogItemTemplate* prog = dt.GetItem(IDC_PROGRESS); \
-          if (text) { \
-            text->sWidth += text->sX; \
-            text->sX = 0; \
-          } \
-          if (prog) { \
-            prog->sWidth += prog->sX; \
-            prog->sX = 0; \
-          } \
-           \
-          DWORD dwSize; \
-          dlg = dt.Save(dwSize); \
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
-          free(dlg); \
-        }
-
-#ifdef NSIS_CONFIG_LICENSEPAGE
-        REMOVE_ICON(IDD_LICENSE);
-#endif
-        REMOVE_ICON(IDD_DIR);
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-        REMOVE_ICON(IDD_SELCOM);
-#endif
-        REMOVE_ICON(IDD_INSTFILES);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        REMOVE_ICON(IDD_UNINST);
-#endif
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-        REMOVE_ICON(IDD_VERIFY);
-#endif
-      }
-      catch (exception& err) {
-        ERROR_MSG("Error removing window icon: %s\n", err.what());
-        return PS_ERROR;
-      }
+      disable_window_icon=line.gettoken_enum(1,"on\0off\0");
+      if (disable_window_icon == -1) PRINTHELP();
+      SCRIPT_MSG("WindowIcon: %s\n",line.gettoken_str(1));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
@@ -2186,43 +2137,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_SETFONT:
-      SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
-      try {
-        init_res_editor();
+    {
+      if (!strnicmp(line.gettoken_str(1), "/LANG=", 6))
+      {
+        LANGID lang_id = atoi(line.gettoken_str(1) + 6);
+        LanguageTable *table = GetLangTable(lang_id);
+        table->nlf.m_szFont = (char*)malloc(strlen(line.gettoken_str(2))+1);
+        strcpy(table->nlf.m_szFont, line.gettoken_str(2));
+        table->nlf.m_iFontSize = line.gettoken_int(3);
 
-#define SET_FONT(id) { \
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
-          if (!dlg) throw runtime_error(#id " doesn't exist!"); \
-          CDialogTemplate td(dlg,uDefCodePage); \
-          free(dlg); \
-          td.SetFont(line.gettoken_str(1), line.gettoken_int(2)); \
-          DWORD dwSize; \
-          dlg = td.Save(dwSize); \
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
-          free(dlg); \
-        }
+        SCRIPT_MSG("SetFont: lang=%d \"%s\" %s\n", lang_id, line.gettoken_str(2), line.gettoken_str(3));
+      }
+      else
+      {
+        strncpy(build_font, line.gettoken_str(1), sizeof(build_font));
+        build_font_size = line.gettoken_int(2);
 
-#ifdef NSIS_CONFIG_LICENSEPAGE
-        SET_FONT(IDD_LICENSE);
-#endif
-        SET_FONT(IDD_DIR);
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-        SET_FONT(IDD_SELCOM);
-#endif
-        SET_FONT(IDD_INST);
-        SET_FONT(IDD_INSTFILES);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        SET_FONT(IDD_UNINST);
-#endif
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-        SET_FONT(IDD_VERIFY);
-#endif
-#undef SET_FONT
+        SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
       }
-      catch (exception& err) {
-        ERROR_MSG("Error while changing font: %s\n", err.what());
-        return PS_ERROR;
-      }
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
   case TOK_INSTCOLORS:
@@ -5204,9 +5137,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
           ent.offsets[0] |= ((build_allowskipfiles ? MB_ABORTRETRYIGNORE : MB_RETRYCANCEL) | MB_ICONSTOP) << 2;
           ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
-
-          if (uninstall_mode) m_uninst_fileused++;
-          else m_inst_fileused++;
         }
 
         CloseHandle(hFile);

@@ -292,6 +292,50 @@ int CEXEBuild::GenerateLangTables() {
     lt = (LanguageTable*)lang_tables.get();
   }
 
+  // Apply default font
+  if (*build_font)
+  {
+    try {
+      init_res_editor();
+
+#define ADD_FONT(id) { \
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+        if (dlg) { \
+          CDialogTemplate td(dlg); \
+          free(dlg); \
+          td.SetFont(build_font, build_font_size); \
+          DWORD dwSize; \
+          dlg = td.Save(dwSize); \
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+          free(dlg); \
+        } \
+      }
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+      ADD_FONT(IDD_LICENSE);
+      ADD_FONT(IDD_LICENSE_FSRB);
+      ADD_FONT(IDD_LICENSE_FSCB);
+#endif
+      ADD_FONT(IDD_DIR);
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+      ADD_FONT(IDD_SELCOM);
+#endif
+      ADD_FONT(IDD_INST);
+      ADD_FONT(IDD_INSTFILES);
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      ADD_FONT(IDD_UNINST);
+#endif
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+      ADD_FONT(IDD_VERIFY);
+#endif
+#undef ADD_FONT
+    }
+    catch (exception& err) {
+      ERROR_MSG("Error while applying font: %s\n", err.what());
+      return PS_ERROR;
+    }
+  }
+
   // Fill tables with defaults (if needed) and with instruction strings
   // Create language specific resources (currently only dialogs with different fonts)
   int num_lang_tables = lang_tables.getlen() / sizeof(LanguageTable);
@@ -299,11 +343,14 @@ int CEXEBuild::GenerateLangTables() {
   int cur_offset = num_lang_tables == 1 ? 0 : 100;
   for (i = 0; i < num_lang_tables; i++)
   {
-    if (lt[i].nlf.m_bLoaded && (lt[i].nlf.m_szFont || lt[i].nlf.m_bRTL))
+    if ((lt[i].nlf.m_szFont && !*build_font) || lt[i].nlf.m_bRTL)
     {
       lt[i].dlg_offset = cur_offset;
 
       char *font = lt[i].nlf.m_szFont;
+      if (*build_font) font = 0;
+
+      SCRIPT_MSG("setting %d to %s\n", lt[i].lang_id, font);
 
       try {
         init_res_editor();
@@ -342,7 +389,7 @@ int CEXEBuild::GenerateLangTables() {
 #undef ADD_FONT
       }
       catch (exception& err) {
-        ERROR_MSG("Error while applying NLF font/RTL for %s: %s\n", err.what());
+        ERROR_MSG("Error while applying NLF font/RTL: %s\n", err.what());
         return PS_ERROR;
       }
 
@@ -627,59 +674,56 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   char *p, *p2, t;
 
   p = strrchr(filename, '.');
-  if (p)
-  {
+  if (p) {
     t = *p;
     *p = 0;
   }
   p2 = strrchr(filename, '\\');
-  if (p2)
-  {
+  if (p2) {
     p2++;
     nlf->m_szName = (char*)malloc(strlen(p2)+1);
     strcpy(nlf->m_szName, p2);
   }
-  else
-  {
+  else {
     nlf->m_szName = (char*)malloc(strlen(filename)+1);
     strcpy(nlf->m_szName, filename);
   }
   if (p) *p = t;
 
-  if (nlf_version != NLF_VERSION)
-  {
+  if (nlf_version != NLF_VERSION) {
     warning_fl("%s language file version doesn't match. Using default English texts for missing strings.", nlf->m_szName);
   }
 
   int temp;
 
   // Get font
-  nlf->m_szFont = NULL;
-  nlf->m_iFontSize = 0;
+  buf[0] = SkipComments(f);
+  fgets(buf+1, NSIS_MAX_STRLEN, f);
+  if (!nlf->m_szFont) {
+    temp=strlen(buf);
+    while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
+      buf[temp-1] = 0;
+      temp--;
+    }
+    if (buf[0] != '-' || buf[1] != 0) {
+      nlf->m_szFont = (char*)malloc(strlen(buf)+1);
+      strcpy(nlf->m_szFont, buf);
+    }
+  }
 
   buf[0] = SkipComments(f);
   fgets(buf+1, NSIS_MAX_STRLEN, f);
-  temp=strlen(buf);
-  while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
-    buf[temp-1] = 0;
-    temp--;
-  }
-  if (buf[0] != '-' && buf [1] != 0) {
-    nlf->m_szFont = (char*)malloc(strlen(buf)+1);;
-    strcpy(nlf->m_szFont, buf);
-  }
-
-  buf[0] = SkipComments(f);
-  fgets(buf+1, NSIS_MAX_STRLEN, f);
-  if (buf[0] != '-' && buf [1] != 0) {
-    nlf->m_iFontSize = atoi(buf);
+  if (!nlf->m_iFontSize) {
+    if (buf[0] != '-' || buf[1] != 0) {
+      nlf->m_iFontSize = atoi(buf);
+    }
   }
 
   // Get code page
   nlf->m_uCodePage = CP_ACP;
   buf[0] = SkipComments(f);
   fgets(buf+1, NSIS_MAX_STRLEN, f);
-  if (buf[0] != '-' && buf [1] != 0) {
+  if (buf[0] != '-' || buf[1] != 0) {
     nlf->m_uCodePage = atoi(buf);
     if (!IsValidCodePage(nlf->m_uCodePage))
       nlf->m_uCodePage = CP_ACP;
