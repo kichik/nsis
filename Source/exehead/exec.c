@@ -1514,7 +1514,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             g_inst_section[x].flags=process_string_fromparm_toint(2);
             if (g_SectionHack)
             {
-              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].flags&SF_SELECTED));
+              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)(g_inst_section[x].flags&SF_SELECTED));
             }
           }
           else // get flags
