@@ -12,7 +12,7 @@ For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language
 
 \c name language_id string
 
-Defines a multilingual string. This means the its value will be different (or not, it's up to you) for every language. It allows you to easily make your installer multilingual without the need to add massive swithces to the script.
+Defines a multilingual string. This means the its value will be different (or not, it's up to you) for every language. It allows you to easily make your installer multilingual without the need to add massive switches to the script.
 
 Each LangString has a name that identifies it and a value for each language used by the installer. To use a LangString you must know its name. LangStrings can be used in any runtime string in the script. To use a LangString all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.
 
@@ -59,7 +59,7 @@ When the installer starts up it goes through these steps to select the interface
 
 \n If there is no perfect match, find a primary language match
 
-\n If there is no no match, use the first language defined in the script
+\n If there is no match, use the first language defined in the script
 
 \n If \R{varconstant}{$LANGUAGE} has changed during .onInit, go through steps 2 to 4 again
 

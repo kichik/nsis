@@ -104,4 +104,4 @@ Sets the installer
 
 \c hwnd show_state
 
-Sets the visibilty of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \W{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
+Sets the visability of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \W{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
