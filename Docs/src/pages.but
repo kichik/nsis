@@ -30,7 +30,7 @@ Use Abort (see \K{abort}) from a built-in page pre-function to skip the page.
 Examples:
 
 \c  Page license skipLicense
-\c  Page custom customPage
+\c  Page custom customPage ": custom page"
 \c  Page instfiles
 \c
 \c  Function skipLicense
@@ -53,12 +53,12 @@ Examples:
 
 \S{page} Page
 
-\c (custom function) | ((license|components|directory|instfiles) [pre_function] [post_function])
+\c (custom function [caption]) | ((license|components|directory|instfiles) [pre_function] [post_function])
 
 Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
 
 \S{uninstpage} UninstPage
 
-\c (custom function) | ((uninstConfirm|instfiles) [pre_function] [post_function])
+\c (custom function [caption]) | ((uninstConfirm|instfiles) [pre_function] [post_function])
 
 Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.
