@@ -2006,7 +2006,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             else PRINTHELP();
             a++;
           }
-          else PRINTHELP();
+          else break;
         }
         if (line.getnumtokens()!=a+1 && !trim) PRINTHELP();
         if (line.getnumtokens()==a+1) SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
