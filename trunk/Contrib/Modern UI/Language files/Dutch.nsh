@@ -62,7 +62,7 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Deïnstalleer ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Verwijder ${MUI_PRODUCT} van uw system."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Dit programma zal ${MUI_PRODUCT} verwijderen van uw systeem."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Deze wizard zal ${MUI_PRODUCT} verwijderen van uw systeem."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Bezig met deïnstalleren"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Een ogenblik gedult terwijl ${MUI_PRODUCT} van uw system wordt verwijderd."
