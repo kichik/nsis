@@ -1,5 +1,5 @@
-# Turkish NSIS Language File
-NLF v3
+# Header, don't edit
+NLF v5
 # Language ID
 1055
 # Font and size - dash (-) means default
@@ -7,61 +7,75 @@ NLF v3
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by Bertan Kodamanoglu (astoichen@soultrap.com)
-Nullsoft Install System %s
+# Translation by Fatih BOY (fatih@smartcoding.org)
+Nullsoft Kurulum Sistemi %s
 %s Kurulumu
 %s Uninstaller
-: Sözleþme
-: Kurulum Ayarlarý
+: Sözlesme
+: Kurulum Ayarlari
 : Kurulum Dizini
 : Kuruluyor
-: Tamamlandý
-: Kontrol
-: Kaldýrýlýyor
-: Tamamlandý
-< &Geri
+: Tamamlandi
+: Onaylama
+: Kaldiriliyor
+: Tamalandi
+< &Gri
 &Devam >
 &Kabul
-&KUR
-&Kaldýr
-Ý&ptal
+Sözlesme Kosullarini &Kabul Ediyorum
+Sözlesme Kosullarini Kabul Et&miyorum
+&Kur
+&Kaldir
+Iptal
 &Kapat
-&Farklý Dizin...
-Ayrýntýlarý &göster
-Ýsim
-Tamamlandý
+&Göz at...
+&Ayrintilari Göster
+Isim
+Tamamlandi
 Özel
-Kurulum þeklini seçiniz:
+Kurulum seklini seçiniz:
 Kurulacak paketleri seçiniz:
-Kurmak istediðiniz paketleri seçiniz:
+Veya, kurmak istediginiz paketleri seçiniz:
 %s kurulumu için bir dizin seçin:
-Kalan boþ alan: 
-Gerekli boþ alan: 
-Kaldýrýlýyor: 
-Dosya açýlamadý: \r\n\t"$0"\r\nKurulumdan çýkmak için ESC ye basýnýz,\r\nyeniden yazmayý denemek için retry'ý, or\r\ndosyayý atlamak için ignore'u týklayýn
-Yazýlamýyor: 
-Kopyalama iþlemi gerçekleþemedi
-Hedef
-Bulunamadý: 
-Yüklenemedi: 
-Dizin yarat: 
-Kýsayol yarat: 
-Uninstaller yaratýldý: 
-Dosya sil: 
-Reset atýnca dosyayý sil: 
-Kýsayol yaratýlýrken hata oluþtu: 
-Hata: 
-Dosya açýlýrken hata oluþtu!
-DLL kaydedilirken hata oluþtu!
+Kalan bos alan:
+Gerekli bos alan: 
+Kaldiriliyor:
+Dosya yazma için açilamadi: \r\n\t"$0"\r\nKurulumdan çikmak için abort'a basiniz,\r\nyeniden yazmayi denemek için retry'i, veya\r\ndosyayi atlamak için ignore'u tiklayin
+Dosya yazma için açilamadi: \r\n\t"$0"\r\nYeniden yazmayi denemek için retry'i, veya\r\nKurulumdan çikmak için abort'a basiniz
+Yazilamiyor: 
+Kopyalama gerçeklesemedi
+Hedef 
+Kaydediliyor: 
+Kayit Siliniyor: 
+Sembol bulunamadi:
+Yüklenemedi:
+Dizin olustur:
+Kisayol olustur:
+Uninstaller olusturuldu: 
+Dosya Sil: 
+Tekrar baslatinca dosyayi sil 
+Kisayol yaratilirken hata olustu: 
+Hata:
+Dosya açilirken hata ile karsilasildi! Bozuk Kurulum?
+Dll kayit ederken hata olustur
 ExecShell: 
-Çalýþtýr: 
-Kurulum: 
-Kurulum: dosyaya ulaþýlamadý
-Kurulum iptal edildi: geçersiz opcode
-OLE bulunamadý: 
+Çalistir
+Aç: 
+Aç: dosyaya yazarken hata olustu
+Bozuk Kurulum: geçersiz opcode
+OLE bulunamadi:
 Hedef dizin: 
-Dizini sil: 
-Reset atýnca yeniden adlandýr: 
-Yeniden adlandýr: 
-Atlandý: 
-Ayrýntýlarý clipboard'a at
+Dizini sil:
+Tekrar baslatinca yeniden adlandýr: 
+Yeniden adlandir: 
+Atlandi:
+Ayrintilari clipboard'a at
+Kurulum islemini kaydet
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
