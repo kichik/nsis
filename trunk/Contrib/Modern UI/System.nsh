@@ -960,7 +960,7 @@ Var MUI_TEMP2
 
   !ifdef MUI_PAGE_CUSTOMFUNCTION_${TYPE}
     Call "${MUI_PAGE_CUSTOMFUNCTION_${TYPE}}"
-    !undef "${MUI_PAGE_CUSTOMFUNCTION_${TYPE}}"
+    !undef MUI_PAGE_CUSTOMFUNCTION_${TYPE}
   !endif
   
 !macroend
