@@ -1126,7 +1126,9 @@ int CEXEBuild::write_output(void)
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstFailed",0),&build_uninst.common.code_onInstFailed)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUserAbort",0),&build_uninst.common.code_onUserAbort)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onNextPage",0),&build_uninst.common.code_onNextPage)) return PS_ERROR;
+    #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onInitDialog",0),&build_uninst.common.code_onInitDialog)) return PS_ERROR;
+    #endif
   #endif//NSIS_SUPPORT_CODECALLBACKS
       if (resolve_coderefs("uninstall")) return PS_ERROR;
       set_uninstall_mode(0);
@@ -1148,8 +1150,10 @@ int CEXEBuild::write_output(void)
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onVerifyInstDir",0),&build_header.code_onVerifyInstDir)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onNextPage",0),&build_header.common.code_onNextPage)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onPrevPage",0),&build_header.code_onPrevPage)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInitDialog",0),&build_header.common.code_onInitDialog)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onMouseOverSection",0),&build_header.code_onMouseOverSection)) return PS_ERROR;
+  #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInitDialog",0),&build_header.common.code_onInitDialog)) return PS_ERROR;
+    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onMouseOverSection",0),&build_header.code_onMouseOverSection)) return PS_ERROR;
+  #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onSelChange",0),&build_header.code_onSelChange)) return PS_ERROR;
 #endif//NSIS_CONFIG_COMPONENTPAGE
