@@ -551,6 +551,9 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         GlobalFree(szUrl);
       }
       else if (enlink->msg==WM_SETCURSOR) {
+#ifndef IDC_HAND
+#define IDC_HAND MAKEINTRESOURCE(32649)
+#endif
         SetCursor(LoadCursor(0,IDC_HAND));
       }
     }
@@ -631,6 +634,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       bi.lpfn=BrowseCallbackProc;
       bi.lParam=(LPARAM)hwndDlg;
       bi.lpszTitle = str;
+#ifndef BIF_NEWDIALOGSTYLE
+#define BIF_NEWDIALOGSTYLE 0x0040
+#endif
       bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
       idlist = SHBrowseForFolder( &bi );
       if (idlist)
