@@ -42,7 +42,9 @@
 installer_strings *install_strings_tables;
 common_strings *common_strings_tables;
 uninstall_strings *uninstall_strings_tables;
-int current_lang;
+installer_strings *cur_install_strings_table;
+common_strings *cur_common_strings_table;
+uninstall_strings *cur_uninstall_strings_table;
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
@@ -211,7 +213,6 @@ static void CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 int ui_doinstall(void)
 {
-  int size;
   g_autoclose=g_inst_cmnheader->misc_flags&1;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)
@@ -234,9 +235,9 @@ int ui_doinstall(void)
           char *e;
           if (p[0]=='\"')
           {
-            char *p2=*p?p+1:p;
+            char *p2=CharNext(p);
             p=p2;
-            while (*p2 && *p2 != '\"') if (*p2) p2++;
+            while (*p2 && *p2 != '\"') p2=CharNext(p2);
             *p2=0;
           }
           // p is the path now, check for .exe extension
@@ -266,22 +267,6 @@ int ui_doinstall(void)
       process_string_fromtab(state_install_directory,g_inst_header->install_directory_ptr);
     }
 
-    // Added by Amir Szekely 3rd August 2002
-    // Multilingual support
-    size=g_inst_header->common.str_tables_num*sizeof(common_strings);
-    common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
-    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
-    if (!g_is_uninstaller) {
-      size=g_inst_header->str_tables_num*sizeof(installer_strings);
-      install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
-    }
-    else {
-      size=g_inst_header->str_tables_num*sizeof(uninstall_strings);
-      uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)uninstall_strings_tables,size);
-    }
-
 #ifdef NSIS_CONFIG_LOG
     if (g_inst_cmnheader->silent_install==2)
     {
@@ -289,6 +274,33 @@ int ui_doinstall(void)
       log_dolog=1;
     }
 #endif
+  }
+
+  {
+    // Added by Amir Szekely 3rd August 2002
+    // Multilingual support
+    LANGID user_lang=GetUserDefaultLangID();
+    int size=g_inst_header->common.str_tables_num*sizeof(common_strings);
+    cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
+    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
+    if (!g_is_uninstaller) {
+      size=g_inst_header->str_tables_num*sizeof(installer_strings);
+      cur_install_strings_table=install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
+    }
+    else {
+      size=g_inst_header->str_tables_num*sizeof(uninstall_strings);
+      cur_uninstall_strings_table=uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)uninstall_strings_tables,size);
+    }
+    for (size=0; size<g_inst_header->str_tables_num; size++) {
+      if (user_lang == common_strings_tables[size].lang_id) {
+        cur_install_strings_table = &install_strings_tables[size];
+        cur_common_strings_table = &common_strings_tables[size];
+        cur_uninstall_strings_table = &uninstall_strings_tables[size];
+        break;
+      }
+    }
   }
 
   process_string_fromtab(g_caption,COMMON_STR(caption));

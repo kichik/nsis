@@ -15,12 +15,6 @@
 HWND g_SectionHack;
 #endif
 
-// Added by Amir Szekely 3rd August 2002
-extern installer_strings *install_strings_tables;
-extern common_strings *common_strings_tables;
-extern uninstall_strings *uninstall_strings_tables;
-extern int current_lang;
-
 #ifdef NSIS_SUPPORT_STACK
 typedef struct _stack_t {
   struct _stack_t *next;
@@ -399,7 +393,7 @@ static int ExecuteEntry(entry *entries, int pos)
           lstrcpy(buf3,g_usrvars[0]);//save $0
           lstrcpy(g_usrvars[0],buf); 
 
-          process_string(buf2,LANG_FILEERR);
+          process_string_fromtab(buf2,COMMON_STR(fileerrtext));
           lstrcpy(g_usrvars[0],buf3); // restore $0
 
           switch (MessageBox(g_hwnd,buf2,g_caption,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
@@ -1344,6 +1338,7 @@ static int ExecuteEntry(entry *entries, int pos)
     case EW_LOG:
       if (parms[0])
       {
+        if (!g_log_file && parms[1]) build_g_logfile();
         log_printf2("settings logging to %d",parms[1]);
         log_dolog=parms[1];
         log_printf2("logging set to %d",parms[1]);

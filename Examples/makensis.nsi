@@ -1,5 +1,5 @@
 !define VER_MAJOR 2
-!define VER_MINOR 0a2
+!define VER_MINOR 0a3
 
 !ifdef NO_COMPRESSION
 SetCompress off
@@ -142,6 +142,14 @@ Section "Extra UIs"
   SetOutPath $INSTDIR\Contrib\UIs
   SetOverwrite try
   File ..\Contrib\UIs\*.exe
+  SetOutPath $INSTDIR
+SectionEnd
+
+Section "Extra UIs"
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\Contrib\Language files"
+  SetOverwrite try
+  File "..\Contrib\Language files\*.nlf"
   SetOutPath $INSTDIR
 SectionEnd
 
