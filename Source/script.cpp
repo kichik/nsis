@@ -425,7 +425,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (p > str) p--;
           while (p >= str && (*p == '\r' || *p == '\n' || *p == ' ' || *p == '\t')) p--;
           *++p=0;
-          if (!strnicmp(str,"!macroend",sizeof("!macroend"))) break;
+          LineParser l2;
+          if (!l2.parse(str) && !stricmp(l2.gettoken_str(0),"!macroend")) break;
           if (str[0]) m_macros.add(str,strlen(str)+1);
           else m_macros.add(" ",2);
         }
@@ -2310,27 +2311,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
           a++;
         }
-        
+
         if (!strncmp(line.gettoken_str(a),"/TIMEOUT=",9))
         {
           ent.offsets[5]|=atoi(line.gettoken_str(a)+9)<<2;
           SCRIPT_MSG(" (timeout=%d)",ent.offsets[5]>>2);
           a++;
         }
-        
-        if (line.getnumtokens()>a) 
+
+        if (line.getnumtokens()>a)
         {
           PRINTHELP()
         }
       }
 
-      if (!strncmp(line.gettoken_str(3),"STR:",4)) 
+      if (!strncmp(line.gettoken_str(3),"STR:",4))
       {
         ent.offsets[5]|=1;
         ent.offsets[3]=add_string(line.gettoken_str(3)+4);
       }
       else ent.offsets[3]=add_string(line.gettoken_str(3));
-      if (!strncmp(line.gettoken_str(4),"STR:",4)) 
+      if (!strncmp(line.gettoken_str(4),"STR:",4))
       {
         ent.offsets[5]|=2;
         ent.offsets[4]=add_string(line.gettoken_str(4)+4);
