@@ -4,9 +4,9 @@ TODO
 
 NSIS
 
-* DATE, FILE, TIME, etc. defines
+* CreateDirectory error flag on files found instead of dirs
 
-* add named user variables
+* SetCurInstType should work without the components page
 
 * component page for uninstaller, multiple sections
 
@@ -14,7 +14,7 @@ NSIS
 
 * all installer strings should be language strings
 
-* make temp (for compress whole) creation better
+* make temp (for compress whole) creation better (and verify it exists)
 
 * move no custom to compiler (custom as just another inst type)
 
