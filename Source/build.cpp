@@ -763,7 +763,7 @@ int CEXEBuild::section_add_install_type(int inst_type)
     ERROR_MSG("Error: can't modify flags when no section is open\n");
     return PS_ERROR;
   }
-  if (build_cursection->install_types == ~(int)0)
+  if (build_cursection->install_types == ~0)
     build_cursection->install_types = 0;
   build_cursection->install_types|=inst_type;
   return PS_OK;
@@ -858,7 +858,7 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   build_cursection->code=cur_entries->getlen()/sizeof(entry);
   build_cursection->code_size=0;
   build_cursection->size_kb=0;
-  build_cursection->install_types=*name?0:~(int)0;
+  build_cursection->install_types=*name?0:~0;
 
   if (secname[0]=='-')
   {
