@@ -1,27 +1,44 @@
+/*
+
+NOTE:
+-----
+This macro is provided for backwards compatibility with NSIS 2.0 scripts.
+It's recommended you update your scripts to use the new Library.nsh macros.
+
+
+Macro - Upgrade DLL File
+Written by Joost Verburg
+------------------------
+
+Parameters:
+LOCALFILE		Location of the new DLL file (on the compiler system)
+DESTFILE		Location of the DLL file that should be upgraded (on the user's system)
+TEMPBASEDIR		Directory on the user's system to store a temporary file when the system has
+				to be rebooted.
+				For Win9x/ME support, this should be on the same volume as DESTFILE.
+				The Windows temp directory could be located on any volume, so you cannot use
+				this directory.
+
+Define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that does not have to be registered.
+
+Notes:
+
+* If you want to support Windows 9x/ME, you can only use short filenames (8.3).
+
+* This macro uses the GetDLLVersionLocal command to retrieve the version of local libraries.
+  This command is only supported when compiling on a Windows system.
+
+------------------------
+
+Example:
+
+!insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
+
+*/
+
 !ifndef UPGRADEDLL_INCLUDED
 
 !define UPGRADEDLL_INCLUDED
-
-; Macro - Upgrade DLL File
-; Written by Joost Verburg
-; ------------------------
-;
-; Parameters:
-; LOCALFILE   - Location of the new DLL file (on the compiler system)
-; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
-; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
-;               to be rebooted.
-;               For Win9x support, this should be on the same volume as the DESTFILE!
-;               The Windows temp directory could be located on any volume, so you cannot use
-;               this directory.
-;
-; Define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that does not have to be registered.
-;
-; Note: If you want to support Win9x, you can only use short filenames (8.3).
-;
-; Example of usage:
-; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
-;
 
 !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
 
@@ -32,10 +49,9 @@
   Push $R4
   Push $R5
 
-  ;------------------------
-  ;Unique number for labels
-
   !define UPGRADEDLL_UNIQUE ${__LINE__}
+
+  SetOverwrite try
 
   ;------------------------
   ;Copy the parameters used on run-time to a variable
@@ -45,7 +61,7 @@
   StrCpy $R5 "${TEMPBASEDIR}"
 
   ;------------------------
-  ;Check file and version
+  ;Get version information
 
   IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
 
@@ -59,9 +75,7 @@
     upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
-  ;Let's upgrade the DLL!
-
-  SetOverwrite try
+  ;Upgrade
 
   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
     !ifndef UPGRADEDLL_NOREGISTER
@@ -70,7 +84,7 @@
     !endif
 
   ;------------------------
-  ;Try to copy the DLL directly
+  ;Copy
 
   ClearErrors
     StrCpy $R0 $R4
@@ -78,31 +92,32 @@
   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
-  ;DLL is in use. Copy it to a temp file and Rename it on reboot.
+  ;Copy on reboot
 
   GetTempFileName $R0 $R5
     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
   Rename /REBOOTOK $R0 $R4
 
   ;------------------------
-  ;Register the DLL on reboot
+  ;Register on reboot
 
-  !ifndef UPGRADEDLL_NOREGISTER
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "Register $R4" 'rundll32.exe "$R4",DllRegisterServer'
-  !endif
+  GetTempFileName $R0 $R5
+  File /oname=$R0 "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
+   
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+    "$R4" '"$R0" D $R4'
 
   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
-  ;DLL does not exist - just extract
+  ;DLL does not exist
 
   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
     StrCpy $R0 $R4
     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
-  ;Register the DLL
+  ;Register
 
   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
     !ifndef UPGRADEDLL_NOREGISTER
@@ -127,7 +142,7 @@
   Goto upgradedll.end_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
-  ;Called to extract the DLL
+  ;Extract
 
   upgradedll.file_${UPGRADEDLL_UNIQUE}:
     File /oname=$R0 "${LOCALFILE}"
@@ -135,12 +150,9 @@
 
   upgradedll.end_${UPGRADEDLL_UNIQUE}:
 
- ;------------------------
- ;Restore settings
-
- SetOverwrite lastused
- 
- !undef UPGRADEDLL_UNIQUE
+  SetOverwrite lastused
+  
+  !undef UPGRADEDLL_UNIQUE
 
 !macroend
 
