@@ -521,16 +521,8 @@ nextPage:
       else if (g_autoclose) goto nextPage;
 
       mystrcpy(g_tmp,g_caption);
-
-      if (this_page->id==NSIS_PAGE_CUSTOM) // custom page
-      {
-        process_string_fromtab(
-          g_tmp+mystrlen(g_tmp),
-          this_page->caption
-        );
-
-        SetWindowText(hwndDlg,g_tmp);
-      }
+      process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
+      SetWindowText(hwndDlg,g_tmp);
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
@@ -538,13 +530,6 @@ nextPage:
 #endif //NSIS_SUPPORT_CODECALLBACKS
       if (this_page->id>=0) // NSIS page
       {
-        process_string_fromtab(
-          g_tmp+mystrlen(g_tmp),
-          LANG_SUBCAPTION(this_page->id-(g_is_uninstaller?NSIS_PAGE_INSTFILES:0))
-        );
-
-        SetWindowText(hwndDlg,g_tmp);
-
         gDontFookWithFocus = 0;
         m_curwnd=CreateDialog(g_hInstance,windows[this_page->id].id,hwndDlg,windows[this_page->id].proc);
         if (m_curwnd)
