@@ -39,7 +39,7 @@ void doRMDir(char *buf, int recurse)
 {
   if (recurse && is_valid_instpath(buf))
   {
-    int i=lstrlen(buf);
+    int i=mystrlen(buf);
     HANDLE h;
     WIN32_FIND_DATA fd;
     lstrcat(buf,"\\*.*");
@@ -51,7 +51,7 @@ void doRMDir(char *buf, int recurse)
         if (fd.cFileName[0] != '.' ||
             (fd.cFileName[1] != '.' && fd.cFileName[1]))
         {
-          lstrcpy(buf+i+1,fd.cFileName);
+          mystrcpy(buf+i+1,fd.cFileName);
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
           else
           {
@@ -79,7 +79,7 @@ void addtrailingslash(char *str)
 
 char lastchar(const char *str)
 {
-  return *CharPrev(str,str+lstrlen(str));
+  return *CharPrev(str,str+mystrlen(str));
 }
 
 void trimslashtoend(char *buf)
@@ -92,7 +92,7 @@ void trimslashtoend(char *buf)
 
 char *scanendslash(const char *str)
 {
-	char *s=CharPrev(str,str+lstrlen(str));
+  char *s=CharPrev(str,str+mystrlen(str));
 	if (!*str) return (char*)str-1;
 	for (;;)
 	{
@@ -145,8 +145,8 @@ int is_valid_instpath(char *s)
 
 static char *findinmem(char *a, char *b, int len_of_a)
 {
-  if (len_of_a<0) len_of_a=lstrlen(a);
-  len_of_a -= lstrlen(b);
+  if (len_of_a<0) len_of_a=mystrlen(a);
+  len_of_a -= mystrlen(b);
   while (*a && len_of_a >= 0)
   {
     char *t=a,*u=b;
@@ -235,7 +235,7 @@ BOOL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           LPSTR pszRenameSecInFile = findinmem(pszWinInit, szRenameSec,-1);
           if (pszRenameSecInFile == NULL)
           {
-            lstrcpy(pszWinInit+dwFileSize, szRenameSec);
+            mystrcpy(pszWinInit+dwFileSize, szRenameSec);
             dwFileSize += 10;
             dwRenameLinePos = dwFileSize;
             do_write++;
@@ -369,6 +369,7 @@ int GetLangString(langid_t id)
 }
 
 void myitoa(char *s, int d) { wsprintf(s,"%d",d); }
+
 int myatoi(char *s)
 {
   unsigned int v=0;
@@ -412,6 +413,19 @@ int myatoi(char *s)
     if (sign) return -(int) v;
   }
   return (int)v;
+}
+
+// Straight copies of selected shell functions.  Calling local functions
+// requires less code than DLL functions.  For the savings to outweigh the cost
+// of a new function there should be about a couple of dozen or so calls.
+char *mystrcpy(char *out, const char *in)
+{
+  return lstrcpy(out, in);
+}
+
+int mystrlen(const char *in)
+{
+  return lstrlen(in);
 }
 
 
@@ -468,13 +482,13 @@ void process_string(char *out, const char *in)
         case VAR_CODES_START + 22: // INSTDIR
         case VAR_CODES_START + 23: // OUTDIR
         case VAR_CODES_START + 24: // EXEDIR
-          lstrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
+          mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
         case VAR_CODES_START + 25: // PROGRAMFILES
           myRegGetStr(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", out);
           if (!*out)
-            lstrcpy(out, "C:\\Program Files");
+            mystrcpy(out, "C:\\Program Files");
           break;
 
         case VAR_CODES_START + 26: // SMPROGRAMS
@@ -516,7 +530,7 @@ void process_string(char *out, const char *in)
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
         case VAR_CODES_START + 35: // PLUGINSDIR
-          lstrcpy(out, plugins_temp_dir);
+          mystrcpy(out, plugins_temp_dir);
           break;
 
         #if VAR_CODES_START + 35 >= 255
@@ -558,7 +572,7 @@ void log_write(int close)
   {
     if (g_log_file[0] && fp==INVALID_HANDLE_VALUE)
     {
-      fp = CreateFile(g_log_file,GENERIC_WRITE,FILE_SHARE_READ,NULL,OPEN_ALWAYS,0,NULL);
+      fp = myOpenFile(g_log_file,GENERIC_WRITE,OPEN_ALWAYS);
       if (fp!=INVALID_HANDLE_VALUE)
         SetFilePointer(fp,0,NULL,FILE_END);
     }
@@ -566,7 +580,7 @@ void log_write(int close)
     {
       DWORD d;
       lstrcat(log_text,"\r\n");
-      WriteFile(fp,log_text,lstrlen(log_text),&d,NULL);
+      WriteFile(fp,log_text,mystrlen(log_text),&d,NULL);
     }
   }
 }

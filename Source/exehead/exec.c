@@ -62,6 +62,7 @@ static LONG myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 	int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ALL_ACCESS,&key);
 	if (retval==ERROR_SUCCESS)
 	{
+    // NB - don't change this to static (recursive function)
 		char buffer[MAX_PATH+1];
 		while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
     {
@@ -113,7 +114,7 @@ int ExecuteCodeSegment(entry *entries, int pos, HWND hwndProgress)
     {
       extern int progress_bar_pos, progress_bar_len;
       progress_bar_pos+=rv;
-      if (!progress_bar_len) progress_bar_len++;
+      progress_bar_len+=(!progress_bar_len);
       SendMessage(hwndProgress,PBM_SETPOS,MulDiv(progress_bar_pos,30000,progress_bar_len),0);
     }
   }
@@ -201,7 +202,7 @@ static int ExecuteEntry(entry *entries, int pos)
       if (parms[1])
       {
         update_status_text_from_lang(LANGID_OUTPUTDIR,buf2);
-        lstrcpy(state_output_directory,buf2);
+        mystrcpy(state_output_directory,buf2);
       }
       else update_status_text_from_lang(LANGID_CREATEDIR,buf2);
       recursive_create_directory(buf2);
@@ -230,8 +231,8 @@ static int ExecuteEntry(entry *entries, int pos)
       {
         process_string_fromtab(buf,parms[0]);
         process_string_fromtab(buf2,parms[1]);
-        lstrcpy(buf4,buf);
-        if (lstrlen(buf)+lstrlen(buf2) < NSIS_MAX_STRLEN-3)
+        mystrcpy(buf4,buf);
+        if (mystrlen(buf)+mystrlen(buf2) < NSIS_MAX_STRLEN-3)
         {
           lstrcat(buf4,"->");
           lstrcat(buf4,buf2);
@@ -279,7 +280,7 @@ static int ExecuteEntry(entry *entries, int pos)
           WIN32_FIND_DATA *fd=file_exists(buf);
           if (fd)
           {
-            lstrcpy(fp,fd->cFileName);
+            mystrcpy(fp,fd->cFileName);
           }
           else
           {
@@ -319,14 +320,13 @@ static int ExecuteEntry(entry *entries, int pos)
         HANDLE hOut;
         int ret;
         int overwriteflag=parms[0];
-        lstrcpy(buf,state_output_directory);
-        addtrailingslash(buf);
+        addtrailingslash(mystrcpy(buf,state_output_directory));
 
         process_string_fromtab(buf4,parms[1]);
         log_printf3("File: overwriteflag=%d, name=\"%s\"",overwriteflag,buf4);
         if (validpathspec(buf4))
         {
-          lstrcpy(buf,buf4);
+          mystrcpy(buf,buf4);
         }
         else lstrcat(buf,buf4);
       _tryagain:
@@ -356,11 +356,11 @@ static int ExecuteEntry(entry *entries, int pos)
             return 0;
           }
           log_printf2("File: error creating \"%s\"",buf);
-          lstrcpy(buf3,g_usrvars[0]);//save $0
-          lstrcpy(g_usrvars[0],buf);
+          mystrcpy(buf3,g_usrvars[0]);//save $0
+          mystrcpy(g_usrvars[0],buf);
 
           process_string_from_lang(buf2,LANGID_FILEERR);
-          lstrcpy(g_usrvars[0],buf3); // restore $0
+          mystrcpy(g_usrvars[0],buf3); // restore $0
 
           switch (my_MessageBox(buf2,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
           {
@@ -396,7 +396,7 @@ static int ExecuteEntry(entry *entries, int pos)
           }
           else
           {
-            lstrcpy(buf,STR(LANG_ERRORDECOMPRESSING));
+            mystrcpy(buf,STR(LANG_ERRORDECOMPRESSING));
           }
           log_printf2("%s",buf);
           my_MessageBox(buf,MB_OK|MB_ICONSTOP);
@@ -411,7 +411,7 @@ static int ExecuteEntry(entry *entries, int pos)
 		    HANDLE h;
 		    WIN32_FIND_DATA fd;
         process_string_fromtab(buf2,parms[0]);
-        lstrcpy(buf,buf2);
+        mystrcpy(buf,buf2);
         log_printf2("Delete: \"%s\"",buf);
         trimslashtoend(buf);
     		h=FindFirstFile(buf2,&fd);
@@ -492,7 +492,7 @@ static int ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_STROPTS
     case EW_STRLEN:
       process_string_fromtab(buf,parms[1]);
-      myitoa(g_usrvars[parms[0]],lstrlen(buf));
+      myitoa(g_usrvars[parms[0]],mystrlen(buf));
     return 0;
     case EW_ASSIGNVAR:
       {
@@ -504,16 +504,16 @@ static int ExecuteEntry(entry *entries, int pos)
         *p=0;
         if (parms[2] < 0 || newlen)
         {
-          l=lstrlen(buf);
+          l=mystrlen(buf);
 
           if (start<0) start=l+start;
           if (start>=0)
           {
             if (start>l) start=l;
-            lstrcpy(p,buf+start);
+            mystrcpy(p,buf+start);
             if (newlen)
             {
-              if (newlen<0) newlen=lstrlen(p)+newlen;
+              if (newlen<0) newlen=mystrlen(p)+newlen;
               if (newlen<0) newlen=0;
               if (newlen < NSIS_MAX_STRLEN) p[newlen]=0;
             }
@@ -611,9 +611,9 @@ static int ExecuteEntry(entry *entries, int pos)
             log_printf2("Exch: stack < %d elements",parms[2]);
             break;
           }
-          lstrcpy(buf,s->text);
-          lstrcpy(s->text,g_st->text);
-          lstrcpy(g_st->text,buf);
+          mystrcpy(buf,s->text);
+          mystrcpy(s->text,g_st->text);
+          mystrcpy(g_st->text,buf);
         }
         else if (parms[1])
         {
@@ -623,7 +623,7 @@ static int ExecuteEntry(entry *entries, int pos)
             exec_errorflag++;
             return 0;
           }
-          lstrcpy(g_usrvars[parms[0]],s->text);
+          mystrcpy(g_usrvars[parms[0]],s->text);
           g_st=s->next;
           GlobalFree((HGLOBAL)s);
         }
@@ -870,8 +870,8 @@ static int ExecuteEntry(entry *entries, int pos)
 			  log_printf3("CopyFiles \"%s\"->\"%s\"",buf,buf2);
 			  op.hwnd=g_hwnd;
 			  op.wFunc=FO_COPY;
-			  buf[lstrlen(buf)+1]=0;
-			  buf2[lstrlen(buf2)+1]=0;
+        buf[mystrlen(buf)+1]=0;
+        buf2[mystrlen(buf2)+1]=0;
 
         wsprintf(buf3,"%s%s",STR(LANG_COPYTO),buf2);
 
@@ -933,8 +933,8 @@ static int ExecuteEntry(entry *entries, int pos)
         char *sec, *ent;
         sec=ent=0;
 #ifdef NSIS_CONFIG_LOG
-        lstrcpy(buf2,"<RM>");
-        lstrcpy(buf3,buf2);
+        mystrcpy(buf2,"<RM>");
+        mystrcpy(buf3,buf2);
 #endif
         process_string_fromtab(buf,parms[0]);
         if (parms[1]>=0)
@@ -1005,7 +1005,7 @@ static int ExecuteEntry(entry *entries, int pos)
           if (type <= 1)
           {
             process_string_fromtab(buf3,parms[3]);
-            if (RegSetValueEx(hKey,buf2,0,type==1?REG_SZ:REG_EXPAND_SZ,buf3,lstrlen(buf3)+1) == ERROR_SUCCESS) exec_errorflag--;
+            if (RegSetValueEx(hKey,buf2,0,type==1?REG_SZ:REG_EXPAND_SZ,buf3,mystrlen(buf3)+1) == ERROR_SUCCESS) exec_errorflag--;
             log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf4,buf2,buf3);
           }
           else if (type == 2)
@@ -1120,7 +1120,7 @@ static int ExecuteEntry(entry *entries, int pos)
         else
         {
           process_string_fromtab(buf2,parms[1]);
-          l=lstrlen(buf2);
+          l=mystrlen(buf2);
         }
         if (!*t || !WriteFile((HANDLE)myatoi(t),buf2,l,&dw,NULL))
         {
@@ -1195,7 +1195,7 @@ static int ExecuteEntry(entry *entries, int pos)
         WIN32_FIND_DATA fd;
         if (*t && FindNextFile((HANDLE)myatoi(t),&fd))
         {
-          lstrcpy(textout,fd.cFileName);
+          mystrcpy(textout,fd.cFileName);
         }
         else
         {
@@ -1222,7 +1222,7 @@ static int ExecuteEntry(entry *entries, int pos)
         else
         {
           myitoa(handleout,(int)h);
-          lstrcpy(textout,fd.cFileName);
+          mystrcpy(textout,fd.cFileName);
         }
       }
     return 0;
@@ -1236,12 +1236,11 @@ static int ExecuteEntry(entry *entries, int pos)
 
         if (validpathspec(buf))
         {
-          lstrcpy(buf2,buf);
+          mystrcpy(buf2,buf);
         }
         else
         {
-          lstrcpy(buf2,state_install_directory);
-          addtrailingslash(buf2);
+          addtrailingslash(mystrcpy(buf2,state_install_directory));
           lstrcat(buf2,buf);
         }
 
@@ -1384,7 +1383,7 @@ static int ExecuteEntry(entry *entries, int pos)
     case EW_PLUGINCOMMANDPREP:
       // parms[0] = dll name
 
-      if (!*plugins_temp_dir) lstrcpy(plugins_temp_dir,g_usrvars[0]);
+      if (!*plugins_temp_dir) mystrcpy(plugins_temp_dir,g_usrvars[0]);
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }

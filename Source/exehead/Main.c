@@ -1,8 +1,8 @@
-/* 
+/*
   Nullsoft "SuperPimp" Installation System - main.c - executable header main code
 
   Copyright (C) 1999-2002 Nullsoft, Inc.
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -19,7 +19,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  This source distribution includes portions of zlib. see zlib/zlib.h for 
+  This source distribution includes portions of zlib. see zlib/zlib.h for
   its license and so forth. Note that this license is also borrowed from zlib.
 */
 
@@ -66,7 +66,7 @@ extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 static BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  if (uMsg == WM_INITDIALOG) 
+  if (uMsg == WM_INITDIALOG)
   {
     SetTimer(hwndDlg,1,250,NULL);
     uMsg = WM_TIMER;
@@ -142,19 +142,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         no_crc++;
         cmdline+=4;
       }
-      else 
+      else
 #endif//NSIS_CONFIG_CRC_SUPPORT
     if (cmdline[0] == 'D' && cmdline[1] == '=')
     {
       cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
-      lstrcpy(state_install_directory,cmdline+2);
-      cmdline+=lstrlen(cmdline);
+      mystrcpy(state_install_directory,cmdline+2);
+      cmdline+=mystrlen(cmdline);
     }
     else while (*cmdline && *cmdline != ' ') cmdline=CharNext(cmdline);
   }
   while (*cmdline);
 
-  lstrcpy(g_caption,_LANG_GENERIC_ERROR);
+  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
   g_hInstance=GetModuleHandle(NULL);
   GetModuleFileName(g_hInstance,state_exe_directory,NSIS_MAX_STRLEN);
@@ -167,7 +167,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
 
   // make state_exe_directory point to dir, not full exe.
-  
+
   trimslashtoend(state_exe_directory);
 
   left = m_length = GetFileSize(g_db_hFile,NULL);
@@ -210,11 +210,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
 #ifndef NSIS_CONFIG_CRC_ANAL
         left=dbl-4;
-        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.              
+        // end crc checking at crc :) this means you can tack shit on the end and it'll still work.
 #else //!NSIS_CONFIG_CRC_ANAL
         left-=4;
 #endif//NSIS_CONFIG_CRC_ANAL
-        // this is in case the end part is < 512 bytes. 
+        // this is in case the end part is < 512 bytes.
         if (l > (DWORD)left) l=(DWORD)left;
 
 #else//!NSIS_CONFIG_CRC_SUPPORT
@@ -235,13 +235,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         static MSG msg;
         while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
       }
-      else if (GetTickCount() > verify_time) 
+      else if (GetTickCount() > verify_time)
         hwnd=CreateDialog(g_hInstance,MAKEINTRESOURCE(IDD_VERIFY),GetDesktopWindow(),verProc);
     }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifndef NSIS_CONFIG_CRC_ANAL
-    if (left<m_length) 
+    if (left<m_length)
 #endif//NSIS_CONFIG_CRC_ANAL
       crc=CRC32(crc, temp, l);
 
@@ -255,7 +255,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
   if (!g_filehdrsize) m_Err=g_crcinvalid;
-  else 
+  else
   {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     if (do_crc)
@@ -270,7 +270,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       }
     }
 #endif//NSIS_CONFIG_CRC_SUPPORT
-    SetFilePointer(g_db_hFile,g_filehdrsize,NULL,FILE_BEGIN);    
+    SetFilePointer(g_db_hFile,g_filehdrsize,NULL,FILE_BEGIN);
 
     if (loadHeaders()) m_Err=g_crcinvalid;
   }
@@ -285,8 +285,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       cmdline+=2;
       if (is_valid_instpath(cmdline))
       {
-        lstrcpy(state_install_directory,cmdline);
-        lstrcpy(state_output_directory,cmdline);
+        mystrcpy(state_install_directory,cmdline);
+        mystrcpy(state_output_directory,cmdline);
       }
       else
       {
@@ -303,13 +303,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         static char s[]="A~NSISu_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
-      
+
         buf2[0]='\"';
         GetTempPath(sizeof(buf2)-1,buf2+1);
         lstrcat(buf2,s);
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
-        
+
         if (!done)
         {
           // get current name
@@ -324,7 +324,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
             MoveFileOnReboot(buf2+1,NULL);
 #endif
-            if (state_install_directory[0]) lstrcpy(ibuf,state_install_directory);
+            if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
             else trimslashtoend(ibuf);
             if (!is_valid_instpath(ibuf)) break;
             done++;
@@ -341,7 +341,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         s[0]++;
       }
       if (!done) m_Err=g_errorcopyinginstall;
-      goto end;      
+      goto end;
     }
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT

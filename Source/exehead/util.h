@@ -12,6 +12,8 @@ int process_string_fromtab_toint(int offs);
 void myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int myatoi(char *s);
 void myitoa(char *s, int d);
+char *mystrcpy(char *out, const char *in);
+int mystrlen(const char *in);
 
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];

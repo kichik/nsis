@@ -104,24 +104,24 @@ HWND m_curwnd;
 static int m_whichcfg;
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-BOOL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
+static BOOL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
   return SetDlgItemText(dlg,id,STR(GetLangString(lid)));
 }
 
-BOOL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid_t lid) {
+static BOOL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid_t lid) {
   return SetDlgItemTextFromLang(custom?g_hwnd:defhw,custom?custom:def,lid);
 }
 
 // no tab
-BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
+static BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
   return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
 }
 
-UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
+static UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
   return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
 }
 
-HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
+static HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
   return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
 }
 #endif
@@ -129,8 +129,7 @@ HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
 #ifdef NSIS_CONFIG_LOG
 static void build_g_logfile()
 {
-  lstrcpy(g_log_file,state_install_directory);
-  addtrailingslash(g_log_file);
+  addtrailingslash(mystrcpy(g_log_file,state_install_directory));
   lstrcat(g_log_file,"install.log");
 }
 #endif
@@ -259,7 +258,7 @@ int ui_doinstall(void)
           }
           // p is the path now, check for .exe extension
 
-          e=p+lstrlen(p)-4;
+          e=p+mystrlen(p)-4;
           if (e > p)
           {
             // if filename ends in .exe, and is not a directory, remove the filename
@@ -275,7 +274,7 @@ int ui_doinstall(void)
             }
           }
 
-          lstrcpy(state_install_directory,p);
+          mystrcpy(state_install_directory,p);
         }
       }
     }
@@ -296,7 +295,6 @@ int ui_doinstall(void)
   {
     // Added by Amir Szekely 3rd August 2002
     // Multilingual support
-    char pa=0;
     int num=g_inst_header->common.str_tables_num;
     LANGID user_lang=GetUserDefaultLangID(), lang_mask=~(LANGID)0;
     int size=num*sizeof(common_strings);
@@ -320,13 +318,11 @@ lang_again:
         else
 #endif
           (installer_strings *)cur_install_strings_table+=size;
-        pa++;
         break;
       }
     }
-    if (!pa) {
+    if ((size < num) && (lang_mask == ~(LANGID)0)) {
       lang_mask=0x3ff; // primary lang
-      pa++;
       goto lang_again;
     }
   }
@@ -441,19 +437,19 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
     {
-      islp=LANG_UNINST_TEXT>=0;
+      islp = (LANG_UNINST_TEXT>=0);
       iscp++;
     }
     else
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      if (LANG_LICENSE_DATA>=0) islp++;
+      islp = (LANG_LICENSE_DATA>=0);
 #endif//NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (LANG_COMP_TEXT>=0) iscp++;
+      iscp = (LANG_COMP_TEXT>=0);
 #endif//NSIS_CONFIG_COMPONENTPAGE
-      if (LANG_DIR_TEXT>=0) ispotentiallydp++;
+      ispotentiallydp = (LANG_DIR_TEXT>=0);
       if (ispotentiallydp &&
           !((g_inst_cmnheader->misc_flags&2) &&
             is_valid_instpath(state_install_directory)
@@ -512,8 +508,8 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         (m_page == 2 || (m_page == 1 && !isdp)) ? LANGID_BTN_INSTALL :
         LANGID_BTN_NEXT
       );
-      lstrcpy(g_tmp,g_caption);
-      process_string_from_lang(g_tmp+lstrlen(g_tmp),LANGID_SUBCAPTION(m_page));
+      mystrcpy(g_tmp,g_caption);
+      process_string_from_lang(g_tmp+mystrlen(g_tmp),LANGID_SUBCAPTION(m_page));
 
       SetWindowText(hwndDlg,g_tmp);
 
@@ -647,7 +643,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static void inttosizestr(int kb, char *str)
 {
-  while (*str) str++;
+  str += mystrlen(str);
   if (kb < 1024) wsprintf(str,"%dKB",kb);
   else if (kb < 1024*1024) wsprintf(str,"%d.%dMB",kb>>10,((kb*10)>>10)%10);
   else wsprintf(str,"%d.%dGB%s",kb>>20,((kb*10)>>20)%10,(GetVersion()&0x80000000) ? "+":"");
@@ -722,7 +718,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (p >= post_str && *++p)
         {
           post_str=p;
-          p=name+lstrlen(name)-lstrlen(post_str);
+          p=name+mystrlen(name)-mystrlen(post_str);
           if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
           {
             addtrailingslash(name);
@@ -773,13 +769,11 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Added by Amir Szekely 24th July 2002
     // Allows 'SpaceTexts none'
     if (LANG_SPACE_REQ >= 0) {
-      lstrcpy(s,STR(LANG_SPACE_REQ));
-      inttosizestr(total,s);
+      inttosizestr(total,mystrcpy(s,STR(LANG_SPACE_REQ)));
       SetUITextNT(hwndDlg,IDC_SPACEREQUIRED,g_inst_header->space_req_id,s);
       if (available != -1)
       {
-        lstrcpy(s,STR(LANG_SPACE_AVAIL));
-        inttosizestr(available,s);
+        inttosizestr(available,mystrcpy(s,STR(LANG_SPACE_AVAIL)));
         SetUITextNT(hwndDlg,IDC_SPACEAVAILABLE,g_inst_header->space_avail_id,s);
       }
       else
@@ -1124,8 +1118,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (g_inst_section[x].default_state&DFS_SET)
           total+=g_inst_section[x].size_kb;
       }
-      lstrcpy(s,STR(LANG_SPACE_REQ));
-      inttosizestr(total,s);
+      inttosizestr(total,mystrcpy(s,STR(LANG_SPACE_REQ)));
       SetUITextNT(hwndDlg,IDC_SPACEREQUIRED,g_inst_header->space_req_id,s);
     }
   }
@@ -1148,7 +1141,7 @@ void update_status_text(const char *text1, const char *text2)
   RECT r;
   if (insthwnd)
   {
-    if (lstrlen(text1)+lstrlen(text2) >= sizeof(ps_tmpbuf)) return;
+    if (mystrlen(text1)+mystrlen(text2) >= sizeof(ps_tmpbuf)) return;
     wsprintf(ps_tmpbuf,"%s%s",text1,text2);
     if ((ui_st_updateflag&1))
     {
@@ -1281,8 +1274,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       if (!g_autoclose)
       {
         ShowWindow(g_hwnd,SW_SHOWNA);
-        lstrcpy(g_tmp,g_caption);
-        process_string_from_lang(g_tmp+lstrlen(g_caption),LANGID_SUBCAPTION(g_max_page+1));
+        mystrcpy(g_tmp,g_caption);
+        process_string_from_lang(g_tmp+mystrlen(g_tmp),LANGID_SUBCAPTION(g_max_page+1));
         update_status_text_from_lang(LANGID_COMPLETED,"");
         SetWindowText(g_hwnd,g_tmp);
         SetFocus(h);
