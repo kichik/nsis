@@ -1,7 +1,7 @@
 /*
   Nullsoft "SuperPimp" Installation System - main.c - executable header main code
 
-  Copyright (C) 1999-2002 Nullsoft, Inc.
+  Copyright (C) 1999-2003 Nullsoft, Inc.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

@@ -2,9 +2,8 @@ const char *NSIS_VERSION="v2.0b1";
 
 /* 
   Nullsoft "SuperPimp" Installation System - makensis.cpp - installer compiler code
-  May 21st, 2002
 
-  Copyright (C) 1999-2002 Nullsoft, Inc.
+  Copyright (C) 1999-2003 Nullsoft, Inc.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -107,7 +106,7 @@ int main(int argc, char **argv)
       }
       outputtried=1;
     }
-    fprintf(g_output,"MakeNSIS %s - Copyright 1999-2002 Nullsoft, Inc.\n"
+    fprintf(g_output,"MakeNSIS %s - Copyright 1999-2003 Nullsoft, Inc.\n"
            "\n"
            "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
            "Includes portions derived from bzip2 (see documentation for details).\n"
