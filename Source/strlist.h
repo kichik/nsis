@@ -35,11 +35,10 @@ class SortedStringList
     virtual ~SortedStringList()
     {
       T *s=(T*)gr.get();
-      int num=gr.getlen()/sizeof(T);
+      size_t num=gr.getlen()/sizeof(T);
 
-      for (int i=0; i<num; i++) {
-        if (s[i].name)
-          free(s[i].name);
+      for (size_t i=0; i<num; i++) {
+        free(s[i].name);
       }
     }
 
