@@ -121,6 +121,7 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  if (tr.chrg.cpMin == lstrlen("Processing script file: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
 	tr.lpstrText = g_input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
@@ -131,6 +132,7 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  if (tr.chrg.cpMin == lstrlen("Output: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
 	tr.lpstrText = g_output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
