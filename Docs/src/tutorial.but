@@ -148,6 +148,7 @@ Another common use is macros. Macros are used to insert code on compile time, de
 \c   ReadRegStr $0 HKLM Software\MyProgram key
 \c   DetailPrint $0
 \c FunctionEnd
+\c !macroend
 \c
 \c !insertmacro MyFunc ""
 \c !insertmacro MyFunc "un."
@@ -162,7 +163,7 @@ The second thing you need to do in order to create your installer after you have
 
 To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.
 
-The compiler will check your script and give you warnings or an error. If an errors occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical error the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
+The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
 
 NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
@@ -192,7 +193,7 @@ The plug-ins that NSIS knows of are listed at the top of the output of the compi
 
 The NSIS distribution already included many plug-ins. \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Contrib/}{Contrib folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/archive/}{NSIS Archive}.
 
-You can also create a plug-in in yourself. C/C++ and Delphi header files are already available, see \L{../Contrib/ExDLL}{ExDLL} for a basic plug-in example. Source code of included plug-ins can also be found in the \L{../Contrib/}{Contrib folder}.
+You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see \L{../Contrib/ExDLL}{ExDLL} for a basic plug-in example. Source code of included plug-ins can also be found in the \L{../Contrib/}{Contrib folder}.
 
 \H{tutmore} More
 
