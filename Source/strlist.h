@@ -7,7 +7,7 @@ class IGrowBuf
 {
   public:
     virtual int add(const void *data, int len)=0;
-    virtual void resize(int newlen, int zero=0)=0;
+    virtual void resize(int newlen)=0;
     virtual int getlen()=0;
     virtual void *get()=0;
 };
@@ -15,8 +15,10 @@ class IGrowBuf
 class GrowBuf : public IGrowBuf
 {
   public:
-    GrowBuf() { m_alloc=m_used=0; m_s=NULL; }
+    GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; }
     ~GrowBuf() { free(m_s); }
+
+    void set_zeroing(int zero) { m_zero=zero; }
 
     int add(const void *data, int len) 
     { 
@@ -26,7 +28,7 @@ class GrowBuf : public IGrowBuf
       return m_used-len;
     }
 
-    void resize(int newlen, int zero=0)
+    void resize(int newlen)
     {
       int os=m_alloc;
       int ou=m_used;
@@ -61,7 +63,7 @@ class GrowBuf : public IGrowBuf
           free(m_s);
         }
         m_s=n;
-        if (zero) memset((char*)m_s+ou,0,m_used-ou);
+        if (m_zero) memset((char*)m_s+ou,0,m_alloc-ou);
       }
       if (!m_used && m_alloc > 65535) // only free if you resize to 0 and we're > 64k
       {
@@ -78,7 +80,7 @@ class GrowBuf : public IGrowBuf
     void *m_s;
     int m_alloc;
     int m_used;
-
+    int m_zero;
 };
 
 class StringList
@@ -229,7 +231,7 @@ class MMapBuf : public IGrowBuf
       return getlen()-len;
     }
 
-    void resize(int newlen, int zero=0)
+    void resize(int newlen)
     {
       if (!m_gb_u && newlen < (16<<20)) // still in db mode
       {
