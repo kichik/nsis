@@ -26,7 +26,7 @@
   !define TEMP2 $R1
   
   ;Language
-  !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  !insertmacro MUI_LANGUAGE "English"
 
   ;General
   OutFile "InstallOptions.exe"

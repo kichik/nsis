@@ -145,7 +145,7 @@ defines and define them again before you insert a language file.</p>
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages</pre>
   <p class="subheader">4. Insert language files</span></p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
-  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre>
+  <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">Note: The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
   <p class="subheader">5. Define interface settings (optional)</span></p>
