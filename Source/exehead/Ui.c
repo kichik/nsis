@@ -51,7 +51,7 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 #error invalid value for NSIS_MAX_INST_TYPES
 #endif
 
-int g_autoclose;
+//int g_autoclose;
 int progress_bar_pos, progress_bar_len;
 int g_is_uninstaller;
 
@@ -69,6 +69,9 @@ static int num_sections;
 
 // sent to the outer window to tell it to go to the next inner window
 #define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
+
+// sent to every child window to tell it it is closing soon
+#define WM_NOTIFY_INIGO_MONTOYA (WM_USER+0xb)
 
 // update message used by DirProc and SelProc for space display
 #define WM_IN_UPDATEMSG (WM_USER+0xf)
@@ -129,8 +132,9 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
   if (uMsg == WM_CTLCOLORSTATIC) {
     BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
     if (brush == -1) {
-      SetBkColor((HDC)wParam, GetSysColor(COLOR_BTNFACE));
-      SetTextColor((HDC)wParam, GetSysColor(COLOR_BTNFACE));
+      COLORREF dlgColor = GetSysColor(COLOR_BTNFACE);
+      SetBkColor((HDC)wParam, dlgColor);
+      SetTextColor((HDC)wParam, dlgColor);
       return (BOOL)GetStockObject(NULL_BRUSH);
     }
     SetBkMode((HDC)wParam, TRANSPARENT);
@@ -290,7 +294,7 @@ lang_again:
 int NSISCALL ui_doinstall(void)
 {
   num_sections=g_inst_header->num_sections;
-  g_autoclose=g_inst_cmnheader->misc_flags&1;
+  g_flags.autoclose=g_inst_cmnheader->misc_flags&1;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)
 #endif
@@ -549,6 +553,8 @@ nextPage:
       process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
       my_SetWindowText(hwndDlg,g_tmp);
 
+      SendMessage(m_curwnd, WM_NOTIFY_INIGO_MONTOYA, 0, 0);
+
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
@@ -556,7 +562,7 @@ nextPage:
 
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else {
-        if (g_autoclose) goto nextPage;
+        if (g_flags.autoclose) goto nextPage;
         return 0;
       }
 
@@ -708,9 +714,6 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     #undef enlink
     #undef msgfilter
   }
-  if (uMsg == WM_CLOSE) {
-    SendMessage(g_hwnd,WM_CLOSE,0,0);
-  }
   return HandleStaticBkColor();
 }
 #endif
@@ -743,9 +746,10 @@ static char * NSISCALL inttosizestr(int kb, char *str)
 
 static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  if (uMsg == WM_DESTROY)
+  if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
     GetUIText(IDC_DIR,state_install_directory,NSIS_MAX_STRLEN);
+    validate_filename(state_install_directory);
 #ifdef NSIS_CONFIG_LOG
     build_g_logfile();
     log_dolog = IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
@@ -808,7 +812,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         p=scanendslash(post_str);
         if (p >= post_str && *++p)
         {
-          post_str=process_string(ps_tmpbuf,p);
+          post_str=process_string(p);
           p=name+mystrlen(name)-mystrlen(post_str);
           if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
           {
@@ -1010,7 +1014,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.hInsertAfter=TVI_LAST;
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
-        tv.item.pszText=process_string_fromtab(ps_tmpbuf,sec->name_ptr);
+        process_string_fromtab(0,sec->name_ptr);
+        tv.item.pszText=ps_tmpbuf;
         tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
 
         {
@@ -1072,7 +1077,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       TVITEM tv;
       tv.hItem=hTreeItems[x];
       tv.mask=TVIF_TEXT;
-      tv.pszText=process_string_fromtab(ps_tmpbuf,ns);
+      process_string_fromtab(0,ns);
+      tv.pszText=ps_tmpbuf;
       TreeView_SetItem(hwndTree1,&tv);
     }
     uMsg = WM_USER+0x18;
@@ -1184,7 +1190,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       }
     }
   }
-  if (uMsg == WM_DESTROY)
+  if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
     if (hImageList) ImageList_Destroy(hImageList);
     if (hTreeItems) GlobalFree(hTreeItems);

@@ -515,8 +515,6 @@ int CEXEBuild::datablock_optimize(int start_offset)
 
 int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // returns offset
 {
-  // Changed by Amir Szekely 31st July 2002
-  // Ability to change compression methods from within the script
   build_compressor_set=true;
 
   int done=0;
@@ -1777,8 +1775,9 @@ int CEXEBuild::write_output(void)
     INFO_MSG("Datablock optimizer saved %d bytes (~%d.%d%%).\n",db_opt_save,
       pc/10,pc%10);
   }
+  
+  INFO_MSG("\nUsing %s%s compression.\n\n", compressor->GetName(), build_compress_whole?" (compress whole)":"");
 
-  INFO_MSG("\n");
   int total_usize=exeheader_size;
 
   INFO_MSG("EXE header size:          %10d / %d bytes\n",exeheader_size_new,exeheader_size);
@@ -1917,8 +1916,6 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
 {
-  // Changed by Amir Szekely 31st July 2002
-  // Ability to change compression methods from within the script
   build_compressor_set=true;
 
   char obuf[32768];
@@ -2073,7 +2070,7 @@ int CEXEBuild::uninstall_generate()
       firstheader *_fh=(firstheader *)udata.get();
       _fh->length_of_all_following_data=udata.getlen()+(build_crcchk?sizeof(int):0);
     }
-    else 
+    else
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     {
       udata.add(&fh,sizeof(fh));

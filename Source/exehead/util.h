@@ -1,17 +1,22 @@
 #include "config.h"
 
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
-char * NSISCALL process_string(char *out, const char *in);
+char * NSISCALL process_string(const char *in);
 char * NSISCALL process_string_fromtab(char *out, int offs);
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int NSISCALL myatoi(char *s);
 void NSISCALL myitoa(char *s, int d);
 char * NSISCALL mystrcpy(char *out, const char *in);
 int NSISCALL mystrlen(const char *in);
-BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
+char * NSISCALL mystrstr(char *a, char *b);
+
+//BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
+#define my_SetWindowText SetWindowText
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val);
-int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size);
-int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size);
+//int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size);
+#define my_GetWindowText GetWindowText
+//int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size);
+#define my_GetDialogItemText GetDlgItemText
 
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];
@@ -48,6 +53,7 @@ char NSISCALL lastchar(const char *str);
 void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL scanendslash(const char *str);
 int NSISCALL is_valid_instpath(char *s);
+char * NSISCALL validate_filename(char *fn);
 BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void * NSISCALL mini_memcpy(void *out, const void *in, int len);
 

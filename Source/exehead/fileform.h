@@ -39,15 +39,14 @@ enum
   EW_CALL,              // Call: 1 [new address+1]
   EW_UPDATETEXT,        // Update status text: 2 [update str, ui_st_updateflag=?ui_st_updateflag:this]
   EW_SLEEP,             // Sleep: 1 [sleep time in milliseconds]
-  EW_SETSFCONTEXT,      // SetShellVarContext: 1: [isAll]
   EW_HIDEWINDOW,        // HideWindow: 0
   EW_BRINGTOFRONT,      // BringToFront: 0
-  EW_SETWINDOWCLOSE,    // SetWindowClose: 1 [0: no window close at end, 1: window close at end]
   EW_CHDETAILSVIEW,     // SetDetailsView: 2 [listaction,buttonaction]
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
   EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
   EW_IFFILEEXISTS,      // IfFileExists: 3, [file name, jump amount if exists, jump amount if not exists]
-  EW_IFERRORS,           //a IfErrors: 3 [jump if error, jump if not error, new_erflag]
+  EW_IFERRORS,          // IfErrors: 2 [jump if error, jump if not error]
+  EW_SETFLAG,           // Sets a flag: 2 [id, data]
 #ifdef NSIS_SUPPORT_RENAME
   EW_RENAME,            // Rename: 3 [old, new, rebootok]
 #endif
@@ -132,7 +131,6 @@ enum
 #ifdef NSIS_SUPPORT_REBOOT
   EW_REBOOT,            // Reboot: 0
   EW_IFREBOOTFLAG,      // IfRebootFlag: 2 [if reboot flag set, if not reboot flag]
-  EW_SETREBOOTFLAG,     // SetRebootFlag: 1 [new value]
 #endif
 
 #ifdef NSIS_SUPPORT_INIFILES
@@ -181,8 +179,14 @@ enum
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
 
-  EW_PLUGINCOMMANDPREP
+  // Saves 56 bytes, don't ask me how
+  EW_DUMMY,
+  EW_DUMMY2,
+  EW_DUMMY3,
+  EW_DUMMY4,
+  EW_DUMMY5,
 
+  EW_PLUGINCOMMANDPREP,
 };
 
 #define FH_FLAGS_MASK 15
@@ -191,7 +195,6 @@ enum
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
 #define FH_FLAGS_SILENT 4
 #endif
-// Added by Amir Szekely 23rd July 2002
 #define FH_FLAGS_FORCE_CRC 8
 
 #define FH_SIG 0xDEADBEEF
