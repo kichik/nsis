@@ -763,7 +763,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       );
     return 0;
     case EW_SETWINDOWLONG:
-      SetWindowLong((HWND)process_string_fromparm_toint(0),parm1,process_string_fromparm_toint(2));
+      SetWindowLong(
+        (HWND)process_string_fromparm_toint(0),
+        process_string_fromparm_toint(1),
+        process_string_fromparm_toint(2)
+      );
     return 0;
     case EW_SETBRANDINGIMAGE:
     {
