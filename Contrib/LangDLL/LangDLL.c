@@ -72,7 +72,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
       for (i = 0; i < langs_num; i++) {
         if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
-          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, i, 0);
+          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, langs_num-i, 0);
           break;
         }
       }
