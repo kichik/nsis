@@ -4510,7 +4510,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             } words;
             long long ll;
           };
-          ll = (st.st_mtime * 10000000) + 116444736000000000LL;
+          ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
           high = words.h;
           low = words.l;
         }
@@ -5770,7 +5770,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                 } words;
                 long long ll;
               };
-              ll = (st.st_mtime * 10000000) + 116444736000000000LL;
+              ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
               ent.offsets[3] = words.l;
               ent.offsets[4] = words.h;
             }
