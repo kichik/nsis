@@ -112,22 +112,27 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
 #define GET_BIT(lll,uuu)                          \
    GET_BITS(lll,uuu,1)
 
+static int getmtf1(DState_save *sv,DState* s)
+{
+   if (sv->groupPos == 0) {
+      sv->groupNo++;
+      if (sv->groupNo >= sv->nSelectors) return 1;
+      sv->groupPos = BZ_G_SIZE;
+      sv->gSel = s->selector[sv->groupNo];
+      sv->gMinlen = s->minLens[sv->gSel];
+      sv->gLimit = &(s->limit[sv->gSel][0]);
+      sv->gPerm = &(s->perm[sv->gSel][0]);
+      sv->gBase = &(s->base[sv->gSel][0]);
+   }
+   sv->groupPos--;
+   sv->zn = sv->gMinlen;
+   return 0;
+}
+
 /*---------------------------------------------------*/
 #define GET_MTF_VAL(label1,label2,lval)           \
 {                                                 \
-   if (groupPos == 0) {                           \
-      groupNo++;                                  \
-      if (groupNo >= nSelectors)                  \
-         RETURN(BZ_DATA_ERROR);                   \
-      groupPos = BZ_G_SIZE;                       \
-      gSel = s->selector[groupNo];                \
-      gMinlen = s->minLens[gSel];                 \
-      gLimit = &(s->limit[gSel][0]);              \
-      gPerm = &(s->perm[gSel][0]);                \
-      gBase = &(s->base[gSel][0]);                \
-   }                                              \
-   groupPos--;                                    \
-   zn = gMinlen;                                  \
+   if (getmtf1(&sv,s)) RETURN(BZ_DATA_ERROR);  \
    GET_BITS(label1, zvec, zn);                    \
    for (;;)  {                                    \
       if (zn > 20 /* the longest code */) RETURN(BZ_DATA_ERROR);                   \
@@ -155,7 +160,7 @@ Int32 BZ2_decompress ( DState* s )
    DState_save sv;
 
    /*restore from the save area*/
-   mini_memcpy(&sv, &(s->save), sizeof(sv));
+   sv=s->save;//mini_memcpy(&sv, &(s->save), sizeof(sv));
 
    #define i (sv.i)
    #define j (sv.j)
@@ -508,7 +513,7 @@ Int32 BZ2_decompress ( DState* s )
 
    save_state_and_return:
 
-   mini_memcpy(&(s->save), &sv, sizeof(sv));
+   s->save=sv; //mini_memcpy(&(s->save), &sv, sizeof(sv));
 
    #undef i
    #undef j
