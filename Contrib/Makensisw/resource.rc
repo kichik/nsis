@@ -86,8 +86,9 @@ BEGIN
         MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
-        MENUITEM SEPARATOR
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
+        MENUITEM SEPARATOR
+        MENUITEM "Check for &Upgrade",          IDM_UPDATE
     END
     POPUP "&Help"
     BEGIN
