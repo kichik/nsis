@@ -37,15 +37,15 @@ Section "Components"
 
   ;Get Install Options dialog user input
 
-  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 1" "State"
-  MessageBox MB_OK "Install X=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 2" "State"
-  MessageBox MB_OK "Install Y=${TEMP1}"
+  MessageBox MB_OK "Install X=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 3" "State"
-  MessageBox MB_OK "Install Z=${TEMP1}"
+  MessageBox MB_OK "Install Y=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 4" "State"
-  MessageBox MB_OK "File=${TEMP1}"
+  MessageBox MB_OK "Install Z=${TEMP1}"
   ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 5" "State"
+  MessageBox MB_OK "File=${TEMP1}"
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 6" "State"
   MessageBox MB_OK "Dir=${TEMP1}"
   
 SectionEnd
