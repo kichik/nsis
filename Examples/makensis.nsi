@@ -204,6 +204,8 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
     File "..\Contrib\Icons\modern-wizard.bmp"
+	SetOutPath $INSTDIR\Include
+	File "..\Include\MUI.nsh"
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
