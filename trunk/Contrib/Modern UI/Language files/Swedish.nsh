@@ -3,6 +3,7 @@
 
 ;Language: Swedish (1053)
 ;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
+
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SWEDISH"
@@ -36,7 +37,7 @@
   !define MUI_TEXT_ABORT_TITLE "Installationen avbröts"
   !define MUI_TEXT_ABORT_SUBTITLE "Guiden genomfördes inte korrekt."
   
-  !define MUI_BUTTONTEXT_FINISH "&Avsluta"
+  !define MUI_BUTTONTEXT_FINISH "&Slutför"
   !define MUI_TEXT_FINISH_INFO_TITLE "Avslutar installationsguiden för $(^Name)."
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) har installerats på din dator.\r\n\r\nKlicka på Avsluta för att avsluta guiden."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Din dator måste startas om för att fullborda installationen av $(^Name). Vill du starta om nu?"
@@ -52,7 +53,7 @@
   
   !define MUI_TEXT_ABORTWARNING "Är du säker på att du vill avbryta installationen av $(^Name)?"  
   
-  
+
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Välkommen till avinstallationsguiden för $(^Name)."
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom avinstallationen av $(^Name).\r\n\r\nInnan du startar avinstallationen, försäkra dig om att $(^Name) inte körs.\r\n\r\n$_CLICK"
 
@@ -79,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Avinstallationen avbruten"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Avinstallationen genomfördes inte korrekt."
-  
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Avslutar avinstallationsguiden för $(^Name)."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) komponenter har avinstallerats från din dator.\r\n\r\nKlicka på Avsluta för att avsluta guiden."
+
+  !define MUI_UNTEXT_ABORTWARNING "Är du säker på att du vill avbryta avinstallationen av $(^Name)?"
+
 !insertmacro MUI_LANGUAGEFILE_END
