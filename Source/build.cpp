@@ -81,6 +81,9 @@ CEXEBuild::CEXEBuild()
   }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
+  extern const char *NSIS_VERSION;
+  definedlist.add("NSIS_VERSION", NSIS_VERSION);
+
 #define intdef2str_(x) #x
 #define intdef2str(x) intdef2str_(x)
   definedlist.add("NSIS_MAX_INST_TYPES", intdef2str(NSIS_MAX_INST_TYPES));

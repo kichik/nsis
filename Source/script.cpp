@@ -2277,7 +2277,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       // define LANG_LangName as "####" (lang id)
       // for example ${LANG_ENGLISH} = 1033
       char lang_id[16];
-      char lang_name[128];
+      char lang_name[1024];
       wsprintf(lang_name, "LANG_%s", table->nlf.m_szName);
       wsprintf(lang_id, "%u", table->lang_id);
       definedlist.add(lang_name, lang_id);
@@ -2846,6 +2846,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG("SpaceTexts: none\n");
         }
         else {
+          no_space_texts=false;
           SetInnerString(NLF_SPACE_REQ,line.gettoken_str(1));
           SetInnerString(NLF_SPACE_AVAIL,line.gettoken_str(2));
           SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));

@@ -586,6 +586,14 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
       continue;
 #endif
 
+    else if (i == NLF_SPACE_REQ || i == NLF_SPACE_AVAIL)
+    {
+      if (no_space_texts)
+      {
+        continue;
+      }
+    }
+
     int sn, index;
     int pos = build_langstrings.get(NLFStrings[i].szLangStringName, &sn, &index);
     if (pos >= 0) {
@@ -597,6 +605,8 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
         }
         else {
           char *dstr = table->nlf.m_szStrings[i] ? table->nlf.m_szStrings[i] : NLFStrings[i].szDefault;
+          if (!dstr)
+            continue;
           if (i == NLF_BRANDING) {
             char temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)];
             sprintf(temp, dstr, NSIS_VERSION);
