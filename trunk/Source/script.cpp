@@ -4599,9 +4599,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
 #else
     case TOK_VI_ADDKEY:
-    case TOK_VI_ADDTRANSLATION:
     case TOK_VI_SETPRODUCTVERSION:
-    case TOK_VI_SETVERSIONLANGUAGE:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_VERSION_INFO not defined.\n",line.gettoken_str(0));
       return PS_ERROR;
 #endif
