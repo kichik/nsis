@@ -72,7 +72,7 @@ int loadHeaders(void)
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE) 
     {
-      MessageBox(NULL,"Error writing temp file",g_caption,MB_OK);
+      my_MessageBox("Error writing temp file",MB_OK);
       return -1;
     }
   }
@@ -82,7 +82,7 @@ int loadHeaders(void)
 
   if (GetCompressedDataFromDataBlockToMemory(-1,data,h.length_of_header) != h.length_of_header)
   {
-    MessageBox(NULL,"Error reading installer info block",g_caption,MB_OK);
+    my_MessageBox("Error reading installer info block",MB_OK);
     GlobalFree((HGLOBAL)data);
     return -1;
   }

@@ -269,9 +269,23 @@
   #endif
 #endif
 
-
 #ifndef NSIS_COMPRESS_BZIP2_LEVEL
   #define NSIS_COMPRESS_BZIP2_LEVEL 9
+#endif
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  #ifndef NSIS_SUPPORT_RMDIR
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_RMDIR, but NSIS_SUPPORT_RMDIR is not defined
+  #endif
+  #ifndef NSIS_SUPPORT_FILE
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_FILE, but NSIS_SUPPORT_FILE is not defined
+  #endif
+  #ifndef NSIS_SUPPORT_ACTIVEXREG
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_ACTIVEXREG, but NSIS_SUPPORT_ACTIVEXREG is not defined
+  #endif
+  #ifndef NSIS_SUPPORT_STACK
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_STACK, but NSIS_SUPPORT_STACK is not defined
+  #endif
 #endif
 
 #if NSIS_MAX_INST_TYPES > 30

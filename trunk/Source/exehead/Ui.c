@@ -113,36 +113,20 @@ BOOL my_SetDlgItemText(HWND dlg, WORD id, int strtab) {
 }
 
 BOOL SetUIText(HWND defhw, WORD def, WORD custom, int strtab) {
-  if (custom)
-    return my_SetDlgItemText(g_hwnd,custom,strtab);
-  else
-    return my_SetDlgItemText(defhw,def,strtab);
-  //my_SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,strtab);
+  return my_SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,strtab);
 }
 
 // no tab
 BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
-  if (custom)
-    return SetDlgItemText(g_hwnd,custom,text);
-  else
-    return SetDlgItemText(defhw,def,text);
-  //return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
+  return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
 }
 
 UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
-  if (custom)
-    return GetDlgItemText(g_hwnd,custom,str,max_size);
-  else
-    return GetDlgItemText(m_curwnd,def,str,max_size);
-  //return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
+  return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
 }
 
 HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
-  if (custom)
-    return GetDlgItem(g_hwnd,custom);
-  else
-    return GetDlgItem(defhw,def);
-  //return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
+  return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
 }
 #endif
 
@@ -162,28 +146,28 @@ static void SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
 
   pItem->mask|=TVIF_PARAM;
 
-   TreeView_GetItem(hWnd, pItem);
-   if (pItem->state >> 12 == 0) 
-      return;
+  TreeView_GetItem(hWnd, pItem);
+  if (pItem->state >> 12 == 0) 
+    return;
 
-   if (iState < 3 && (g_inst_section[pItem->lParam].default_state & DFS_RO)) l=3;
+  if (iState < 3 && (g_inst_section[pItem->lParam].default_state & DFS_RO)) l=3;
 
-   pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
-   pItem->stateMask = TVIS_STATEIMAGEMASK;
+  pItem->state = INDEXTOSTATEIMAGEMASK(iState+l);
+  pItem->stateMask = TVIS_STATEIMAGEMASK;
 
-   if (!(g_inst_section[pItem->lParam].default_state & DFS_RO))
-   {
-     if (iState == 2) g_inst_section[pItem->lParam].default_state |= DFS_SET;
-     else g_inst_section[pItem->lParam].default_state &= ~DFS_SET;
-     TreeView_SetItem(hWnd, pItem);
-   }
+  if (!(g_inst_section[pItem->lParam].default_state & DFS_RO))
+  {
+    if (iState == 2) g_inst_section[pItem->lParam].default_state |= DFS_SET;
+    else g_inst_section[pItem->lParam].default_state &= ~DFS_SET;
+    TreeView_SetItem(hWnd, pItem);
+  }
 
-   hItem = TreeView_GetChild(hWnd, pItem->hItem);
-   while (hItem) {
-      pItem->hItem = hItem;
-      SetChildrenStates(hWnd, pItem, iState);
-      hItem = TreeView_GetNextSibling(hWnd, hItem);
-   }
+  hItem = TreeView_GetChild(hWnd, pItem->hItem);
+  while (hItem) {
+    pItem->hItem = hItem;
+    SetChildrenStates(hWnd, pItem, iState);
+    hItem = TreeView_GetNextSibling(hWnd, hItem);
+  }
 }
 
 static void SetParentState(HWND hWnd, TV_ITEM *pItem) {
@@ -191,63 +175,59 @@ static void SetParentState(HWND hWnd, TV_ITEM *pItem) {
   HTREEITEM hItem;
   int    iState = 0, iStatePrev = 0;
 
-   HTREEITEM hParent = TreeView_GetParent(hWnd, pItem->hItem);
-   if (!hParent)
-      return;
+  HTREEITEM hParent = TreeView_GetParent(hWnd, pItem->hItem);
+  if (!hParent)
+    return;
 
-   hItem = TreeView_GetChild(hWnd, hParent);
+  hItem = TreeView_GetChild(hWnd, hParent);
 
-   while (hItem) {
-
-      pItem->hItem = hItem;
-      pItem->mask|=TVIF_PARAM;
-      TreeView_GetItem(hWnd, pItem);
-      iState = pItem->state >> 12;      
-      if (iState && !(g_inst_section[pItem->lParam].default_state & DFS_RO)) 
-      {
-        if (iState==5) iState=2;
-        else if (iState==4) iState=1;
-
-         if (iStatePrev && (iStatePrev != iState)) {
-            iState = 3;
-            break;
-         }
-         iStatePrev = iState;
+  while (hItem) {
+    pItem->hItem = hItem;
+    pItem->mask|=TVIF_PARAM;
+    TreeView_GetItem(hWnd, pItem);
+    iState = pItem->state >> 12;      
+    if (iState && !(g_inst_section[pItem->lParam].default_state & DFS_RO)) 
+    {
+      if (iState==5) iState=2;
+      else if (iState==4) iState=1;
+      if (iStatePrev && (iStatePrev != iState)) {
+        iState = 3;
+        break;
       }
-      hItem = TreeView_GetNextSibling(hWnd, hItem);
-   }
+      iStatePrev = iState;
+    }
+    hItem = TreeView_GetNextSibling(hWnd, hItem);
+  }
 
-   pItem->hItem = hParent;
-   if (iState) {
-      pItem->state = INDEXTOSTATEIMAGEMASK(iState);
-      TreeView_SetItem(hWnd, pItem);
-   }
+  pItem->hItem = hParent;
+  if (iState) {
+    pItem->state = INDEXTOSTATEIMAGEMASK(iState);
+    TreeView_SetItem(hWnd, pItem);
+  }
 
-   SetParentState(hWnd, pItem);
-
+  SetParentState(hWnd, pItem);
 }
 
 
 static void CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
+  HTREEITEM hItem = pItem->hItem;
+  int l=0;
 
-   HTREEITEM hItem = pItem->hItem;
-   int l=0;
+  pItem->mask = TVIF_STATE|TVIF_PARAM;
+  TreeView_GetItem(hWnd, pItem);
+  if (pItem->state >> 12 == 0) 
+    return;
 
-   pItem->mask = TVIF_STATE|TVIF_PARAM;
-   TreeView_GetItem(hWnd, pItem);
-   if (pItem->state >> 12 == 0) 
-      return;
+  if (g_inst_section[pItem->lParam].default_state & DFS_RO) l=3;
 
-   if (g_inst_section[pItem->lParam].default_state & DFS_RO) l=3;
-   
-   pItem->state = INDEXTOSTATEIMAGEMASK(checked?2:1+l);
-   pItem->stateMask = TVIS_STATEIMAGEMASK;
+  pItem->state = INDEXTOSTATEIMAGEMASK(checked?2:1+l);
+  pItem->stateMask = TVIS_STATEIMAGEMASK;
 
-   TreeView_SetItem(hWnd, pItem);
+  TreeView_SetItem(hWnd, pItem);
 
-   SetChildrenStates(hWnd, pItem, checked?2:1);
-   pItem->hItem = hItem;
-   SetParentState(hWnd, pItem);
+  SetChildrenStates(hWnd, pItem, checked?2:1);
+  pItem->hItem = hItem;
+  SetParentState(hWnd, pItem);
 }
 
 #endif//NSIS_CONFIG_COMPONENTPAGE
@@ -320,42 +300,41 @@ int ui_doinstall(void)
   {
     // Added by Amir Szekely 3rd August 2002
     // Multilingual support
-    char pa=0;
+    char pa=1;
     int num=g_inst_header->str_tables_num;
     LANGID user_lang=GetUserDefaultLangID();
     int size=num*sizeof(common_strings);
     cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    if (!g_is_uninstaller) {
-#endif
-      size=num*sizeof(installer_strings);
-      cur_install_strings_table=install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    }
-    else {
+    if (g_is_uninstaller) {
       size=num*sizeof(uninstall_strings);
       cur_uninstall_strings_table=uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_uninstheader->str_tables,(char*)uninstall_strings_tables,size);
     }
+    else
 #endif
-    lang_again:
+    {
+      size=num*sizeof(installer_strings);
+      cur_install_strings_table=install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
+    }
+lang_again:
     for (size=0; size < num; size++) {
       if (user_lang == common_strings_tables[size].lang_id) {
-        cur_install_strings_table = &install_strings_tables[size];
-        cur_common_strings_table = &common_strings_tables[size];
+        cur_install_strings_table+=size;
+        cur_common_strings_table+=size;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        cur_uninstall_strings_table = &uninstall_strings_tables[size];
+        cur_uninstall_strings_table+=size;
 #endif
-        pa++;
+        pa--;
         break;
       }
       common_strings_tables[size].lang_id&=0x3ff; // primary lang
     }
-    if (!pa) {
+    if (pa) {
       user_lang&=0x3ff; // primary lang
-      pa++;
+      pa--;
       goto lang_again;
     }
   }
@@ -542,7 +521,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         LANG_BTN_NEXT
       );
       lstrcpy(g_tmp,g_caption);
-      process_string_fromtab(g_tmp+lstrlen(g_tmp),COMMON_STR(subcaptions[m_page]));
+      process_string_fromtab(g_tmp+lstrlen(g_tmp),LANG_SUBCAPTION(m_page));
 
       SetWindowText(hwndDlg,g_tmp);
 
@@ -604,11 +583,6 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       }
     }
   }
-  if (uMsg == WM_CTLCOLORSTATIC) {
-    SetTextColor((HDC)wParam, RGB(0,0,0));
-    SetBkMode((HDC)wParam, TRANSPARENT);
-    return (long)GetStockObject(NULL_BRUSH);
-  }
   if (uMsg == WM_CLOSE)
   {
     if (!IsWindowEnabled(GetDlgItem(hwndDlg,IDCANCEL)) && IsWindowEnabled(GetDlgItem(hwndDlg,IDOK)))
@@ -624,9 +598,9 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #undef _RICHEDIT_VER
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static HWND hwLicense = 0;
-  static HINSTANCE hRichEditDLL = 0;
-  if (!hRichEditDLL) hRichEditDLL= LoadLibrary("RichEd32.dll");
+  static HWND hwLicense;
+  static HINSTANCE hRichEditDLL;
+  if (!hRichEditDLL) hRichEditDLL=LoadLibrary("RichEd32.dll");
   if (uMsg == WM_INITDIALOG)
   {
     hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1);
@@ -641,8 +615,9 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     if (enlink->nmhdr.code==EN_LINK) {
       if (enlink->msg==WM_LBUTTONDOWN) {
         char *szUrl;
-        SendMessage(hwLicense,EM_SETSEL,enlink->chrg.cpMin,enlink->chrg.cpMax);
-        szUrl=(char *)GlobalAlloc(GPTR,enlink->chrg.cpMax-enlink->chrg.cpMin+1);
+        long min=enlink->chrg.cpMin, max=enlink->chrg.cpMax;
+        SendMessage(hwLicense,EM_SETSEL,min,max);
+        szUrl=(char *)GlobalAlloc(GPTR,max-min+1);
         SendMessage(hwLicense,EM_GETSELTEXT,0,(LPARAM)szUrl);
         SetCursor(LoadCursor(0,IDC_WAIT));
         ShellExecute(hwndDlg,"open",szUrl,NULL,NULL,SW_SHOWNORMAL);
@@ -658,8 +633,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     }
   }
   else if (uMsg == WM_CLOSE) {
-    FreeLibrary(hRichEditDLL);
-    SendMessage(GetParent(hwndDlg),WM_CLOSE,0,0);
+    SendMessage(g_hwnd,WM_CLOSE,0,0);
   }
   return 0;
 }
@@ -820,7 +794,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         SetUITextNT(hwndDlg,IDC_SPACEAVAILABLE,g_inst_header->space_avail_id,"");
     }
 
-    EnableWindow(GetDlgItem(GetParent(hwndDlg),IDOK),
+    EnableWindow(GetDlgItem(g_hwnd,IDOK),
       is_valid_path && (available >= total || available == -1)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onVerifyInstDir,NULL)
@@ -1183,8 +1157,7 @@ void update_status_text(const char *text1, const char *text2)
   if (insthwnd)
   {
     if (lstrlen(text1)+lstrlen(text2) >= sizeof(ps_tmpbuf)) return;
-    lstrcpy(ps_tmpbuf,text1);
-    lstrcat(ps_tmpbuf,text2);
+    wsprintf(ps_tmpbuf,"%s%s",text1,text2);
     if ((ui_st_updateflag&1))
     {
       // Changed by Amir Szekely 26th July 2002
@@ -1242,16 +1215,13 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static HBRUSH hBrush;
-  static int lb_bg,lb_fg;
-  if (uMsg == WM_DESTROY && hBrush) DeleteObject(hBrush);
   if (uMsg == WM_INITDIALOG)
   {
     DWORD id;
-    HWND hwnd;
     int num=0;
     int x=0;
     LVCOLUMN lvc = {0, 0, -1, 0, 0, -1};
+    int lb_bg=g_inst_cmnheader->lb_bg,lb_fg=g_inst_cmnheader->lb_fg;
 
     insthwndbutton=GetDlgItem(hwndDlg,IDC_SHOWDETAILS);
     insthwnd2=GetUIItem(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id);
@@ -1277,9 +1247,9 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     ListView_InsertColumn(insthwnd, 0, &lvc);
 #define LVS_EX_LABELTIP         0x00004000 // listview unfolds partly hidden labels if it does not have infotip text
     ListView_SetExtendedListViewStyleEx(insthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
-    ListView_SetBkColor(insthwnd, g_inst_cmnheader->lb_bg);
-    ListView_SetTextBkColor(insthwnd, g_inst_cmnheader->lb_bg);
-    ListView_SetTextColor(insthwnd, g_inst_cmnheader->lb_fg);
+    ListView_SetBkColor(insthwnd, lb_bg);
+    ListView_SetTextBkColor(insthwnd, lb_bg);
+    ListView_SetTextColor(insthwnd, lb_fg);
     SetWindowText(insthwndbutton,STR(LANG_BTN_DETAILS));
     if (g_inst_cmnheader->show_details)
     {
@@ -1292,16 +1262,14 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     g_progresswnd=GetDlgItem(hwndDlg,IDC_PROGRESS1+(g_inst_cmnheader->progress_flags&1));
     ShowWindow(g_progresswnd,SW_SHOWNA);
     SendMessage(g_progresswnd,PBM_SETRANGE,0,MAKELPARAM(0,30000));
-    SendMessage(g_progresswnd,PBM_SETPOS,0,0);
     if (g_inst_cmnheader->progress_flags&2)
     {
-      SendMessage(g_progresswnd,PBM_SETBARCOLOR,0,g_inst_cmnheader->lb_fg);
-      SendMessage(g_progresswnd,PBM_SETBKCOLOR,0,g_inst_cmnheader->lb_bg);
+      SendMessage(g_progresswnd,PBM_SETBARCOLOR,0,lb_fg);
+      SendMessage(g_progresswnd,PBM_SETBKCOLOR,0,lb_bg);
     }
 
-    hwnd=GetParent(hwndDlg);
-    EnableWindow(GetDlgItem(hwnd,IDOK),0);
-    EnableWindow(GetDlgItem(hwnd,IDCANCEL),0);
+    EnableWindow(GetDlgItem(g_hwnd,IDOK),0);
+    EnableWindow(GetDlgItem(g_hwnd,IDCANCEL),0);
 
     CloseHandle(CreateThread(NULL,0,install_thread,(LPVOID)hwndDlg,0,&id));
   }
@@ -1313,11 +1281,10 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
-    if (g_quit_flag) EndDialog(GetParent(hwndDlg),1);
+    if (g_quit_flag) EndDialog(g_hwnd,1);
     else if (!wParam)
     {
-      HWND h2=GetParent(hwndDlg);
-      HWND h=GetDlgItem(h2,IDOK);
+      HWND h=GetDlgItem(g_hwnd,IDOK);
       EnableWindow(h,1);
       if (!g_autoclose)
       {
@@ -1325,17 +1292,17 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         lstrcpy(g_tmp,g_caption);
         process_string_fromtab(g_tmp+lstrlen(g_caption),COMMON_STR(subcaptions[g_max_page+1]));
         update_status_text_from_tab(LANG_COMPLETED,"");
-        SetWindowText(h2,g_tmp);
+        SetWindowText(g_hwnd,g_tmp);
         SetFocus(h);
       }
       else
       {
-        SendMessage(GetParent(hwndDlg),WM_NOTIFY_OUTER_NEXT,1,0);
+        SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,1,0);
       }
     }
     else
     {
-      HWND h=GetDlgItem(GetParent(hwndDlg),IDCANCEL);
+      HWND h=GetDlgItem(g_hwnd,IDCANCEL);
       EnableWindow(h,1);
       SetFocus(h);
     }
