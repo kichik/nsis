@@ -1,22 +1,6 @@
-\S0{langs} Multiple Languages
+\S1{langsinstructions} Multiple Languages Instructions
 
-As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated, and so can script strings such as messages in a message box.
-
-For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
-
-\S1{langselection} Language Selection
-
-When the installer starts up it goes through these stages to select the interface language:
-
-\n Find a perfect match between the user default language (GetUserDefaultLangID())
-
-\n If there is no perfect match, find a primary language match
-
-\n If no match, take the first language defined in the script
-
-\n If $LANGUAGE (\K{var1}) has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
-
-\S1{loadlanguagefile} LoadLanguageFile
+\S2{loadlanguagefile} LoadLanguageFile
 
 \c language_file.nlf
 
@@ -24,30 +8,7 @@ Loads a language file for the construction of a language table. All of the langu
 
 For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language id. Use it with /LANG, LangString, LangStringUP, and LangDLL.
 
-\S1{/lang} The /LANG Parameter
-
-All of the installer (and uninstaller) attributes setting commands have an optional parameter /LANG. This parameter tells the script compiler in which language table to put the specified string.
-
-For example:
-
-\c  Caption /LANG=${LANG_ENGLISH} "English caption"
-\c  Caption /LANG=${LANG_FRENCH} "French caption"
-\c  Caption /LANG=${LANG_DUTCH} "Dutch caption"
-
-When the installer will select the English language the caption will be "English caption", when it selects French the caption will be "French caption" and when it selects Dutch the caption will be "Dutch caption".
-
-If no /LANG parameter is specified, the compiler will assume the last used language, or the last loaded language.
-
-\c  LoadLanguageFile "${NSISDIR}\Language files\English.nlf"
-\c  Name "English name"
-\c  LoadLanguageFile "${NSISDIR}\Language files\German.nlf"
-\c  Name "German name"
-\c  Caption "German caption"
-\c  Caption /LANG=${LANG_ENGLISH} "English caption"
-\c  ComponentText "English components text"
-\c  ComponentText /LANG=${LANG_GERMAN} "German components text"
-
-\S1{langstring} LangString and LangStringUP
+\S2{langstring} LangString and LangStringUP
 
 \c [un.]name language_id string
 
@@ -71,6 +32,49 @@ Use:
 \c  MessageBox MB_OK $(message)
 
 \\<b\\>Note:\\</b\\> If you see squares between letters in the string when you use LangString use LangStringUP (LangString for unprocessed string such as InstType)
+
+\S0{langs} Multiple Languages
+
+As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated, and so can script strings such as messages in a message box.
+
+Each installer has one or more language table which holds refernces to strings in the strings table. To create a language table all you need to do is use LoadLanguageFile (See \k{loadlanguagefile}), define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using LangString or LangStringUP (See \k{langstring}) and you have built your installer a language table.
+
+For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
+
+\S1{langselection} Language Selection
+
+When the installer starts up it goes through these stages to select the interface language:
+
+\n Find a perfect match between the user default language (GetUserDefaultLangID())
+
+\n If there is no perfect match, find a primary language match
+
+\n If no match, take the first language defined in the script
+
+\n If $LANGUAGE (\K{var1}) has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
+
+\S1{/lang} The /LANG Parameter
+
+All of the installer (and uninstaller) attributes setting commands have an optional parameter /LANG. This parameter tells the script compiler in which language table to put the specified string.
+
+For example:
+
+\c  Caption /LANG=${LANG_ENGLISH} "English caption"
+\c  Caption /LANG=${LANG_FRENCH} "French caption"
+\c  Caption /LANG=${LANG_DUTCH} "Dutch caption"
+
+When the installer will select the English language the caption will be "English caption", when it selects French the caption will be "French caption" and when it selects Dutch the caption will be "Dutch caption".
+
+If no /LANG parameter is specified, the compiler will assume the last used language, or the last loaded language.
+
+\c  LoadLanguageFile "${NSISDIR}\Language files\English.nlf"
+\c  Name "English name"
+\c  LoadLanguageFile "${NSISDIR}\Language files\German.nlf"
+\c  Name "German name"
+\c  Caption "German caption"
+\c  Caption /LANG=${LANG_ENGLISH} "English caption"
+\c  ComponentText "English components text"
+\c  ComponentText /LANG=${LANG_GERMAN} "German components text"
 
 \S1{langdll} LangDLL Plug-in
 
