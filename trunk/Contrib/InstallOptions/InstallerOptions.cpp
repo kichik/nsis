@@ -101,6 +101,7 @@ char *WINAPI STRDUP(const char *c)
 // LBS_MULTIPLESEL         0x00000008 // LISTBOX
 #define FLAG_READONLY      0x00000010 // TEXT/FILEREQUEST/DIRREQUEST
 // BS_LEFTTEXT             0x00000020 // CHECKBOX/RADIOBUTTON
+#define TRANSPARENT_BMP    0x00000020 // BITMAP
 #define FLAG_PASSWORD      0x00000040 // TEXT/FILEREQUEST/DIRREQUEST
 #define FLAG_ONLYNUMBERS   0x00000080 // TEXT/FILEREQUEST/DIRREQUEST
 #define FLAG_MULTILINE     0x00000100 // TEXT/FILEREQUEST/DIRREQUEST
@@ -476,6 +477,7 @@ int WINAPI ReadSettings(void) {
       { "HSCROLL",           WS_HSCROLL          },
       { "VSCROLL",           WS_VSCROLL          },
       { "DISABLED",          WS_DISABLED         },
+      { "TRANSPARENT",       TRANSPARENT_BMP     },
       { NULL,                0                   }
     };
     FieldType *pField = pFields + nIdx;
@@ -1191,6 +1193,7 @@ int WINAPI createCfgDlg()
         {
           WPARAM nImageType = pField->nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
           LPARAM nImage = 0;
+
           if (pField->pszText) {
             pField->hImage = LoadImage(
               m_hInstance,
@@ -1208,12 +1211,76 @@ int WINAPI createCfgDlg()
           }
           else
             nImage = (LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103));
+
+          if ((pField->nFlags & TRANSPARENT_BMP) && nImageType == IMAGE_BITMAP)
+          {
+            // based on AdvSplash's SetTransparentRegion
+            BITMAP bm;
+            HBITMAP hBitmap = (HBITMAP) nImage;
+
+            if (GetObject(hBitmap, sizeof(bm), &bm))
+            {
+              HDC dc;
+              int x, y;
+              HRGN region, cutrgn;
+              BITMAPINFO bmi;
+              int size = bm.bmWidth * bm.bmHeight * sizeof(int);
+              int *bmp = (int *) MALLOC(size);
+              if (bmp)
+              {
+                bmi.bmiHeader.biBitCount = 32;
+                bmi.bmiHeader.biCompression = BI_RGB;
+                bmi.bmiHeader.biHeight = bm.bmHeight;
+                bmi.bmiHeader.biPlanes = 1;
+                bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                bmi.bmiHeader.biWidth = bm.bmWidth;
+                bmi.bmiHeader.biClrUsed = 0;
+                bmi.bmiHeader.biClrImportant = 0;
+
+                dc = CreateCompatibleDC(NULL);
+                SelectObject(dc, hBitmap);
+
+                x = GetDIBits(dc, hBitmap, 0, bm.bmHeight, bmp, &bmi, DIB_RGB_COLORS);
+
+                region = CreateRectRgn(0, 0, bm.bmWidth, bm.bmHeight);
+
+                int keycolor = *bmp & 0xFFFFFF;
+
+                // Search for transparent pixels 
+                for (y = bm.bmHeight - 1; y >= 0; y--) {
+                  for (x = 0; x < bm.bmWidth;) {
+                    if ((*bmp & 0xFFFFFF) == keycolor) {
+                      int j = x;
+                      while ((x < bm.bmWidth) && ((*bmp & 0xFFFFFF) == keycolor)) {
+                        bmp++, x++;
+                      }
+
+                      // Cut transparent pixels from the original region
+                      cutrgn = CreateRectRgn(j, y, x, y + 1);
+                      CombineRgn(region, region, cutrgn, RGN_XOR);
+                      DeleteObject(cutrgn);
+                    } else {
+                      bmp++, x++;
+                    }
+                  }
+                }
+
+                // Set resulting region.
+                SetWindowRgn(hwCtrl, region, TRUE);
+                DeleteObject(region);
+                DeleteObject(dc);
+                FREE(bmp);
+              }
+            }
+          }
+
           mySendMessage(
             hwCtrl,
             STM_SETIMAGE,
             nImageType,
             nImage
           );
+
           if (pField->nType == FIELD_BITMAP)
           {
             // Centre the image in the requested space.
@@ -1226,6 +1293,7 @@ int WINAPI createCfgDlg()
             SetWindowPos(hwCtrl, NULL, bmp_rect.left, bmp_rect.top, 0, 0,
                          SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
           }
+
           break;
         }
 
