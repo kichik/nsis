@@ -329,8 +329,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         process_string_fromparm_tobuf(0x01);
         if (!SearchPath(NULL,buf0,NULL,NSIS_MAX_STRLEN,p,&fp))
         {
-          p[0]=0;
           exec_errorflag++;
+          p[0]=0;
         }
       }
     return 0;
@@ -339,8 +339,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *textout=var0;
         if (!GetTempPath(NSIS_MAX_STRLEN,buf0) || !GetTempFileName(buf0,"nst",0,textout))
         {
-          *textout=0;
           exec_errorflag++;
+          *textout=0;
         }
       }
     return 0;
@@ -567,8 +567,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           if (!GetEnvironmentVariable(buf0,p,NSIS_MAX_STRLEN))
           {
-            *p=0;
             exec_errorflag++;
+            *p=0;
           }
         }
         else
