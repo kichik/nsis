@@ -1291,7 +1291,6 @@ void NSISCALL update_status_text(const char *text1, const char *text2)
 {
   static char tmp[NSIS_MAX_STRLEN];
   static LVITEM new_item = {LVIF_TEXT,0,0,0,0,tmp};
-  RECT r;
   if (insthwnd)
   {
     if (mystrlen(text1)+mystrlen(text2) >= sizeof(tmp)) return;
@@ -1302,8 +1301,6 @@ void NSISCALL update_status_text(const char *text1, const char *text2)
       new_item.iItem=ListView_GetItemCount(insthwnd);
       ListView_InsertItem(insthwnd, &new_item);
       ListView_EnsureVisible(insthwnd, new_item.iItem, 0);
-      GetClientRect(insthwnd,&r);
-      ListView_SetColumnWidth(insthwnd, 0, r.right-r.left);
     }
     if ((ui_st_updateflag&2)) SetWindowText(insthwnd2,tmp);
   }
@@ -1355,6 +1352,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 {
   if (uMsg == WM_INITDIALOG)
   {
+    RECT r;
     DWORD id;
     int num=0;
     int x=0;
@@ -1383,6 +1381,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
     // Changed by Amir Szekely 26th July 2002
     ListView_InsertColumn(insthwnd, 0, &lvc);
+    GetClientRect(insthwnd,&r);
+    ListView_SetColumnWidth(insthwnd, 0, r.right-r.left);
 #define LVS_EX_LABELTIP         0x00004000 // listview unfolds partly hidden labels if it does not have infotip text
     ListView_SetExtendedListViewStyleEx(insthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
     if (lb_bg >= 0) {
