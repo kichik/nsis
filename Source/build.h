@@ -106,12 +106,14 @@ class CEXEBuild {
 
 #ifdef _WIN32
     HWND notify_hwnd;
-    void notify(notify_e code, char *data);
+    void notify(notify_e code, char *data) const;
 #else
-    void notify(notify_e code, char *data) { }
+    void notify(notify_e code, char *data) const { }
 #endif
 
   private:
+    int check_write_output_errors() const;
+
     // tokens.cpp
     int get_commandtoken(char *s, int *np, int *op, int *pos);
     int IsTokenPlacedRight(int pos, char *tok);
@@ -160,9 +162,9 @@ class CEXEBuild {
     bool inside_comment;
     int multiple_entries_instruction;
 
-    void ERROR_MSG(const char *s, ...);
-    void SCRIPT_MSG(const char *s, ...);
-    void INFO_MSG(const char *s, ...);
+    void ERROR_MSG(const char *s, ...) const;
+    void SCRIPT_MSG(const char *s, ...) const;
+    void INFO_MSG(const char *s, ...) const;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     int add_plugins_dir_initializer(void);
@@ -205,8 +207,8 @@ class CEXEBuild {
 
     int AddVersionInfo();
     int ProcessPages();
-    void PreperInstTypes();
-    void PreperHeaders(IGrowBuf *hdrbuf);
+    void PrepareInstTypes();
+    void PrepareHeaders(IGrowBuf *hdrbuf);
 
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);

@@ -11,23 +11,25 @@
 #  include <unistd.h>
 #endif
 
+#include <cassert> // for assert
+
 class IGrowBuf
 {
   public:
     virtual int add(const void *data, int len)=0;
     virtual void resize(int newlen)=0;
-    virtual int getlen()=0;
-    virtual void *get()=0;
+    virtual int getlen() const=0;
+    virtual void *get() const=0;
 };
 
 class IMMap
 {
   public:
     virtual void resize(int newlen)=0;
-    virtual int getsize()=0;
-    virtual void *get(int offset, int size)=0;
-    virtual void *get(int offset, int *size)=0;
-    virtual void *getmore(int offset, int *size)=0;
+    virtual int getsize() const=0;
+    virtual void *get(int offset, int size) const=0;
+    virtual void *get(int offset, int *size) const=0;
+    virtual void *getmore(int offset, int *size) const=0;
     virtual void release()=0;
     virtual void release(void *view, int size)=0;
     virtual void clear()=0;
@@ -97,8 +99,8 @@ class GrowBuf : public IGrowBuf
       }
     }
 
-    int getlen() { return m_used; }
-    void *get() { return m_s; }
+    int getlen() const { return m_used; }
+    void *get() const { return m_s; }
 
   private:
     void *m_s;
@@ -189,7 +191,7 @@ public:
   }
 
   char *get() { return (char*)gr.get(); }
-  int getlen() { return gr.getlen(); }
+  int getlen() const { return gr.getlen(); }
 private:
   GrowBuf gr;
 };
@@ -467,17 +469,17 @@ class FastStringList : public SortedStringListND<struct string_t>
       return ((struct string_t*)gr.get())[pos].name;
     }
 
-    char *get()
+    char *get() const
     {
       return (char*)strings.get();
     }
 
-    int getlen()
+    int getlen() const
     {
       return strings.getlen();
     }
 
-    int getnum()
+    int getnum() const
     {
       return gr.getlen()/sizeof(struct string_t);
     }
@@ -678,23 +680,22 @@ class MMapFile : public IMMap
       }
     }
 
-    int getsize()
+    int getsize() const
     {
       return m_iSize;
     }
 
-    void *get(int offset, int size)
+    void *get(int offset, int size) const
     {
       return get(offset, &size);
     }
 
-    void *get(int offset, int *sizep)
+    void *get(int offset, int *sizep) const
     {
       if (!sizep)
         return NULL;
 
-      if (m_pView)
-        release();
+      assert(!m_pView);
 
       int size = *sizep;
 
@@ -715,10 +716,12 @@ class MMapFile : public IMMap
       size += offset - alignedoffset;
 
 #ifdef _WIN32
-      m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
+      const_cast<MMapFile*>(this)->m_pView =
+        MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
 #else
-      m_pView = mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFileDesc, alignedoffset);
-      m_iMappedSize = *sizep = size;
+      const_cast<MMapFile*>(this)->m_pView =
+        mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFileDesc, alignedoffset);
+      const_cast<MMapFile*>(this)->m_iMappedSize = *sizep = size;
 #endif
 
 #ifdef _WIN32
@@ -740,18 +743,18 @@ class MMapFile : public IMMap
       return (void *)((char *)m_pView + offset - alignedoffset);
     }
 
-    void *getmore(int offset, int *size)
+    void *getmore(int offset, int *size) const
     {
       void *pView;
       void *pViewBackup = m_pView;
 #ifndef _WIN32
       int iMappedSizeBackup = m_iMappedSize;
 #endif
-      m_pView = 0;
+      const_cast<MMapFile*>(this)->m_pView = 0;
       pView = get(offset, size);
-      m_pView = pViewBackup;
+      const_cast<MMapFile*>(this)->m_pView = pViewBackup;
 #ifndef _WIN32
-      m_iMappedSize = iMappedSizeBackup;
+      const_cast<MMapFile*>(this)->m_iMappedSize = iMappedSizeBackup;
 #endif
       return pView;
     }
@@ -822,24 +825,24 @@ class MMapFake : public IMMap
       m_iSize = iSize;
     }
 
-    int getsize()
+    int getsize() const
     {
       return m_iSize;
     }
 
-    void *get(int offset, int size)
+    void *get(int offset, int size) const
     {
       return get(offset, &size);
     }
 
-    void *get(int offset, int *size)
+    void *get(int offset, int *size) const
     {
       if (!size || (offset + *size > m_iSize))
         return NULL;
       return (void *)(m_pMem + offset);
     }
 
-    void *getmore(int offset, int *size)
+    void *getmore(int offset, int *size) const
     {
       return get(offset, size);
     }
@@ -911,26 +914,26 @@ class MMapBuf : public IGrowBuf, public IMMap
       }
     }
 
-    int getsize()
+    int getsize() const
     {
       if (m_gb_u)
         return m_fm.getsize();
       return m_gb.getlen();
     }
 
-    int getlen()
+    int getlen() const
     {
       if (m_gb_u)
         return m_used;
       return m_gb.getlen();
     }
 
-    void *get()
+    void *get() const
     {
       return get(0, m_alloc);
     }
 
-    void *get(int offset, int *sizep)
+    void *get(int offset, int *sizep) const
     {
       if (!sizep)
         return NULL;
@@ -938,14 +941,14 @@ class MMapBuf : public IGrowBuf, public IMMap
       return get(offset, size);
     }
 
-    void *get(int offset, int size)
+    void *get(int offset, int size) const
     {
       if (m_gb_u)
         return m_fm.get(offset, size);
       return (void *) ((char *) m_gb.get() + offset);
     }
 
-    void *getmore(int offset, int *size)
+    void *getmore(int offset, int *size) const
     {
       if (m_gb_u)
         return m_fm.getmore(offset, size);
