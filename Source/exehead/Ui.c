@@ -649,8 +649,8 @@ static DWORD dwRead;
 DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
   lstrcpyn(pbBuff,(char*)dwCookie+dwRead,cb);
-  dwRead+=mystrlen(pbBuff);
   *pcb=mystrlen(pbBuff);
+  dwRead+=*pcb;
   return 0;
 }
 
@@ -665,6 +665,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS); //XGE 8th September 2002 Or'd in ENM_KEYEVENTS
     dwRead=0;
+    SendMessage(hwLicense,EM_EXLIMITTEXT,0,mystrlen((char*)es.dwCookie));
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(IDC_INTROTEXT,LANG_LICENSE_TEXT);
     //XGE 5th September 2002 - place the initial focus in the richedit control
