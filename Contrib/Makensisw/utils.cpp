@@ -36,15 +36,17 @@ void SetBranding(HWND hwnd) {
 }
 
 void CopyToClipboard(HWND hwnd) {
+	if (!hwnd||!OpenClipboard(hwnd)) return;
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-	HGLOBAL mem = GlobalAlloc(GHND,len);
+	HGLOBAL mem = GlobalAlloc(GMEM_MOVEABLE,len+1);
+	if (!mem) { CloseClipboard(); return; }
 	char *existing_text = (char *)GlobalLock(mem);
-	if (!hwnd||!OpenClipboard(hwnd)||!existing_text) return;
+	if (!existing_text) { CloseClipboard(); return; }
 	EmptyClipboard();
 	existing_text[0]=0;
-	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
+	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len+1);
 	GlobalUnlock(mem);
-	SetClipboardData(CF_TEXT,existing_text);
+	SetClipboardData(CF_TEXT,mem);
 	CloseClipboard();
 }
 
