@@ -4,6 +4,7 @@
 #include "fileform.h"
 #include "state.h"
 #include "ui.h"
+#include "util.h"
 
 #ifdef NSIS_SUPPORT_BGBG
 
@@ -52,7 +53,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             static char buf[256];
             r.left+=16;
             r.top+=8;
-            GetWindowText(hwnd,buf,sizeof(buf));
+            my_GetWindowText(hwnd,buf,sizeof(buf));
             SetBkMode(hdc,TRANSPARENT);
             SetTextColor(hdc,bg_textcolor);
             oldFont = SelectObject(hdc,newFont);

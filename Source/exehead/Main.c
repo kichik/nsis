@@ -69,7 +69,7 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     static char bt[64];
     wsprintf(bt,msg,MulDiv(m_pos,100,m_length));
 
-    SetWindowText(hwndDlg,bt);
+    my_SetWindowText(hwndDlg,bt);
     my_SetDialogItemText(hwndDlg,IDC_STR,bt);
   }
   return 0;

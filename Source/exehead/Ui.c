@@ -118,7 +118,7 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 
 #define SetUITextFromLang(it,la) SetDlgItemTextFromLang_(hwndDlg,(it)-1000,la)
 #define SetUITextNT(it,text) my_SetDialogItemText(hwndDlg,it,text)
-#define GetUIText(it,s,ss) GetDlgItemText(hwndDlg,it,s,ss)
+#define GetUIText(it,s,ss) my_GetDialogItemText(hwndDlg,it,s,ss)
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -279,7 +279,7 @@ lang_again:
 
   myitoa(state_language, *(LANGID*)language_table);
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  SetWindowText(m_bgwnd,process_string_fromtab(g_caption,LANG_CAPTION));
+  my_SetWindowText(m_bgwnd,process_string_fromtab(g_caption,LANG_CAPTION));
 #endif
 }
 
@@ -454,7 +454,7 @@ static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lPar
 {
   if (uMsg==BFFM_INITIALIZED)
   {
-    GetDlgItemText((HWND)lpData,IDC_DIR,g_tmp,sizeof(g_tmp));
+    my_GetDialogItemText((HWND)lpData,IDC_DIR,g_tmp,sizeof(g_tmp));
     SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,(LPARAM)g_tmp);
   }
   return 0;
@@ -543,7 +543,7 @@ nextPage:
 
       mystrcpy(g_tmp,g_caption);
       process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
-      SetWindowText(hwndDlg,g_tmp);
+      my_SetWindowText(hwndDlg,g_tmp);
 
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else {
@@ -749,7 +749,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (GetAsyncKeyState(VK_SHIFT)&0x8000)
     {
       HWND h=GetUIItem(IDC_CHECK1);
-      SetWindowText(h,"Log install process");
+      my_SetWindowText(h,"Log install process");
       ShowWindow(h,SW_SHOWNA);
     }
 #endif
@@ -1275,7 +1275,7 @@ void NSISCALL update_status_text(const char *text1, const char *text2)
       ListView_InsertItem(insthwnd, &new_item);
       ListView_EnsureVisible(insthwnd, new_item.iItem, 0);
     }
-    if ((ui_st_updateflag&2)) SetWindowText(insthwnd2,tmp);
+    if ((ui_st_updateflag&2)) my_SetWindowText(insthwnd2,tmp);
   }
 }
 
@@ -1359,7 +1359,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     if (lb_fg >= 0) {
       ListView_SetTextColor(insthwnd, lb_fg);
     }
-    SetWindowText(insthwndbutton,LANG_STR(LANG_BTN_DETAILS));
+    my_SetWindowText(insthwndbutton,LANG_STR(LANG_BTN_DETAILS));
     if (g_inst_cmnheader->show_details)
     {
       ShowWindow(insthwndbutton,SW_HIDE);
