@@ -58,12 +58,13 @@ char *STRDUP(const char *c)
 
 // listbox flags
 #define FLAG_MULTISELECT   (64)
+#define FLAG_EXTENDEDSEL   (128)
 
 // combobox flags
-#define FLAG_DROPLIST      (128)
+#define FLAG_DROPLIST      (256)
 
 // bitmap flags
-#define FLAG_RESIZETOFIT   (256)
+#define FLAG_RESIZETOFIT   (512)
 
 struct TableEntry {
   char *pszName;
@@ -460,6 +461,7 @@ bool ReadSettings(void) {
       { "PASSWORD",          FLAG_PASSWORD       },
       { "DROPLIST",          FLAG_DROPLIST       },
       { "MULTISELECT",       FLAG_MULTISELECT    },
+      { "EXTENDEDSELCT",     FLAG_EXTENDEDSEL    },
       { "FILE_EXPLORER",     OFN_EXPLORER        },
       { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
       { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
@@ -835,8 +837,10 @@ int createCfgDlg()
         title = pFields[nIdx].pszState;
         break;
       case FIELD_LISTBOX:
-        if (pFields[nIdx].nFlags & FLAG_MULTISELECT)
+        if (pFields[nIdx].nFlags & FLAG_EXTENDEDSEL)
           dwStyle |= LBS_EXTENDEDSEL;
+        if (pFields[nIdx].nFlags & FLAG_MULTISELECT)
+          dwStyle |= LBS_MULTIPLESEL;
         break;
     }
 
@@ -899,7 +903,7 @@ int createCfgDlg()
           pszEnd++;
         }
         if (pFields[nIdx].pszState) {
-          if (pFields[nIdx].nFlags & FLAG_MULTISELECT && nFindMsg == LB_FINDSTRINGEXACT) {
+          if (pFields[nIdx].nFlags & (FLAG_MULTISELECT|FLAG_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
             SendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
             pszStart = pszEnd = pFields[nIdx].pszState;
             while (*pszStart) {
