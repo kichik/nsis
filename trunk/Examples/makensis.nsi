@@ -298,7 +298,6 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\Makefile
   File ..\Source\makenssi.dsp
   File ..\Source\makenssi.dsw
-  File ..\Source\icon.ico
   SetOutPath $INSTDIR\Source\zlib
   File ..\Source\zlib\*.*
   SetOutPath $INSTDIR\Source\bzip2
@@ -531,7 +530,7 @@ Section Uninstall
   Delete $INSTDIR\Plugins\LangDLL.dll
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Examples\functions.htm
-  Delete $INSTDIR\makensis.rtf
+  Delete $INSTDIR\license.txt
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\Examples\makensis.nsi
