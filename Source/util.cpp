@@ -282,7 +282,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   DWORD dwNextSection;
   if (i == ntHeaders->FileHeader.NumberOfSections - 1)
-    dwNextSection = exeheader_size;
+    dwNextSection = ntHeaders->OptionalHeader.SizeOfImage;
   else
     dwNextSection = sectionHeadersArray[i+1].PointerToRawData;
 
