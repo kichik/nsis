@@ -40,6 +40,10 @@ INSTALLOPTIONS
 
 * add an option for LBS_MULTIPLESEL too, not just LBS_EXTENDEDSEL
 
+OTHER PLUGINS
+
+* BgImage - SetImage /RESIZETOFIT doesn't work
+
 -- Before NSIS 2 Final --
 
 NSIS
