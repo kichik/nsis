@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.5
+;NSIS Modern User Interface version 1.6
 ;Install Options Example Script
 ;Written by Joost Verburg
 
@@ -17,7 +17,6 @@
   
   !define MUI_UNINSTALLER
   
-  !define MUI_WINDOWTITLE
   !define MUI_CUSTOMPAGECOMMANDS
     
   !define TEMP1 $R0
@@ -62,7 +61,7 @@
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
   ;Use ReserveFile for your own Install Options ini files too!
-  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"

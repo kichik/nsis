@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.5
+;NSIS Modern User Interface version 1.6
 ;MultiLanguage Example Script
 ;Written by Joost Verburg
 

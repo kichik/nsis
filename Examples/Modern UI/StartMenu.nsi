@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.5
+;NSIS Modern User Interface version 1.6
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
@@ -58,13 +58,17 @@ Section "modern.exe" SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
-  ;Create shortcut
-  CreateDirectory "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}"
-  CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
-  CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN
+    
+    ;Create shortcuts
+    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}"
+    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
+    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
-  ;Write shortcut location to the registry (for Uninstaller)
-  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENU_VARIABLE}"
+    ;Write shortcut location to the registry (for Uninstaller)
+    WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENU_VARIABLE}"
+    
+  !insertmacro MUI_STARTMENU_WRITE_END
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -92,9 +96,14 @@ Section "Uninstall"
   
   ;Remove shortcut
   ReadRegStr ${TEMP1} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
-  Delete "$SMPROGRAMS\${TEMP1}\Modern UI.lnk"
-  Delete "$SMPROGRAMS\${TEMP1}\Uninstall.lnk"
-  RMDir "$SMPROGRAMS\${TEMP1}" ;Only if empty, so it won't delete other shortcuts
+  
+  StrCmp ${TEMP1} "" noshotcuts
+  
+    Delete "$SMPROGRAMS\${TEMP1}\Modern UI.lnk"
+    Delete "$SMPROGRAMS\${TEMP1}\Uninstall.lnk"
+    RMDir "$SMPROGRAMS\${TEMP1}" ;Only if empty, so it won't delete other shortcuts
+    
+  noshortcuts:
 
   RMDir "$INSTDIR"
   
