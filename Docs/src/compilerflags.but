@@ -26,6 +26,12 @@ This command sets the compress flag which is used by the installer to determine 
 
 This command sets the compression algorithm used to compress files/data in the installer. Options are ZLib or BZip2. ZLib (the default) uses deflate compression. This mode uses less memory at runtime and is faster. BZip2 compression is usually better for large installers, but it is slower and uses a lot more memory at runtime.
 
+\S2{asetcompressordictsize}{SetCompressorDictSize}
+
+\c dict_size_mb
+
+Sets the dictionary size in megabytes (MB) used by the LZMA compressor (default is 8 MB).
+
 \S2{asetdatablockoptimize} SetDatablockOptimize
 
 \c \\<b\\>on\\</b\\>|off
