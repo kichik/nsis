@@ -247,7 +247,7 @@ int main(int argc, char **argv)
         while (*p) p++;
         while (p > exepath && *p != '\\') p=CharPrev(exepath,p);
         if (p>exepath) p++;
-        strcpy(p,"nsisconf.nsi");
+        strcpy(p,"nsisconf.nsh");
         FILE *cfg=fopen(exepath,"rt");
         if (cfg)
         {
@@ -370,7 +370,7 @@ int main(int argc, char **argv)
              "    /Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n"
              "    /Ofile specifies a text file to log compiler output (default is stdout)\n"
              "    /PAUSE pauses after execution\n"
-             "    /NOCONFIG disables inclusion of <path to makensis.exe>\\nsisconf.nsi\n"
+             "    /NOCONFIG disables inclusion of <path to makensis.exe>\\nsisconf.nsh\n"
              "    /CD makes makensis change the current directory to that of the .nsi file\n"
              "    /Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
              "    /Xscriptcmd executes scriptcmd in script (i.e. \"/XOutFile poop.exe\")\n"

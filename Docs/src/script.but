@@ -32,4 +32,4 @@ A NSIS Script File (.nsi) is just a text file with a series of commands.
 \c                      you created that you want to keep, click No)" \
 \c                      IDNO NoRemoveLabel
 
-\b If a file named "nsisconf.nsi" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used.
+\b If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used.
