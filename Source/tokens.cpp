@@ -152,7 +152,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INSTTYPEGETTEXT,"InstTypeGetText",2,0,"insttype_index $(user_var: output flags)"},
 {TOK_SENDMESSAGE,"SendMessage",4,2,"hwnd message [wparam|STR:wParam] [lparam|STR:lParam] [$(user_var: return value)] [/TIMEOUT=X]"},
 {TOK_SETAUTOCLOSE,"SetAutoClose",1,0,"(false|true)"},
-{TOK_SETCTLCOLORS,"SetCtlColors",2,1,"hwnd (branding | (text_color (transparent|bg_color)))"},
+{TOK_SETCTLCOLORS,"SetCtlColors",2,2,"hwnd [/BRANDING] [text_color] [transparent|bg_color]"},
 {TOK_SETBRANDINGIMAGE,"SetBrandingImage",1,2,"[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp"},
 {TOK_SETCOMPRESS,"SetCompress",1,0,"(off|auto|force)"},
 {TOK_SETCOMPRESSOR,"SetCompressor",1,1,"[/FINAL] (zlib|bzip2)"},
