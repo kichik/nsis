@@ -6,6 +6,15 @@
 ; Written by Amir Szkeley 22nd July 2002
 ;
 
+!macro BIMAGE IMAGE PARMS
+	Push $0
+	GetTempFileName $0
+	File /oname=$0 "${IMAGE}"
+	SetBrandingImage ${PARMS} $0
+	Delete $0
+	Pop $0
+!macroend
+
 Name "Graphical effects"
 
 OutFile "gfx.exe"
@@ -26,37 +35,41 @@ LicenseText "Second page"
 LicenseData "gfx.nsi"
 DirText "Lets make a third page!"
 
+; Pages
+Page license licenseImage
+Page custom customPage
+Page directory dirImage
+Page instfiles instImage
+
+Function licenseImage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks1.bmp" /RESIZETOFIT
+	MessageBox MB_YESNO 'Would you like to skip the license page?' IDNO no
+		Abort
+	no:
+FunctionEnd
+
+Function customPage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\modern.bmp" /RESIZETOFIT
+	MessageBox MB_YESNO 'This is a nice custom "page" with yet another image :P$\r$\n$\r$\nWould you like to go to the next page now?' IDYES yes
+		Abort
+	yes:
+FunctionEnd
+
+Function dirImage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks2.bmp" /RESIZETOFIT
+FunctionEnd
+
+Function instImage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checks4.bmp" /RESIZETOFIT
+FunctionEnd
+
 ; Install dir
 InstallDir "${NSISDIR}\Examples"
-
-; Branding helper functions
-!include "branding.nsh"
-
-Function .onInit
-	!insertmacro BI_INIT $R0
-FunctionEnd
-
-Function .onNextPage
-	!insertmacro BI_NEXT
-FunctionEnd
-
-Function .onPrevPage
-	!insertmacro BI_PREV
-FunctionEnd
-
-!insertmacro BI_LIST
-!insertmacro BI_LIST_ADD "${NSISDIR}\Contrib\Icons\checks1.bmp" /RESIZETOFIT
-!insertmacro BI_LIST_ADD "${NSISDIR}\Contrib\Icons\checks2.bmp" /RESIZETOFIT
-!insertmacro BI_LIST_ADD "${NSISDIR}\Contrib\Icons\checks4.bmp" /RESIZETOFIT
-!insertmacro BI_LIST_END
 
 Section
 	; You can also use the BI_NEXT macro here...
 	MessageBox MB_YESNO "We can change the branding image from within a section too!$\nDo you want me to change it?" IDNO done
-		GetTempFileName $1
-		File /oname=$1 "${NSISDIR}\Contrib\Icons\checksX2.bmp"
-		SetBrandingImage $1
-		Delete $1
+		!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX2.bmp" ""
 	done:
 	WriteUninstaller uninst.exe
 SectionEnd
@@ -64,22 +77,17 @@ SectionEnd
 ; Another page for uninstaller
 UninstallText "Another page..."
 
-; Uninstall branding helper functions
-!define BI_UNINSTALL
-!include "branding.nsh"
+; Uninstall pages
+UninstPage uninstConfirm un.uninstImage
+UninstPage instfiles un.instImage
 
-Function un.onInit
-	!insertmacro BI_INIT $R0
+Function un.uninstImage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\checksX.bmp" /RESIZETOFIT
 FunctionEnd
 
-Function un.onNextPage
-	!insertmacro BI_NEXT
+Function un.instImage
+	!insertmacro BIMAGE "${NSISDIR}\Contrib\Icons\jarsonic-checks.bmp" /RESIZETOFIT
 FunctionEnd
-
-!insertmacro BI_LIST
-!insertmacro BI_LIST_ADD "${NSISDIR}\Contrib\Icons\checksX.bmp" /RESIZETOFIT
-!insertmacro BI_LIST_ADD "${NSISDIR}\Contrib\Icons\jarsonic-checks.bmp" /RESIZETOFIT
-!insertmacro BI_LIST_END
 
 Section uninstall
 	MessageBox MB_OK "Bla"

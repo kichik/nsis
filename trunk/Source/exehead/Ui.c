@@ -39,7 +39,7 @@
 #define LB_ICONHEIGHT 20
 
 HICON g_hIcon;
-static char gDontFookWithFocus = 0;
+static int gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
 char *language_tables;
@@ -51,9 +51,9 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 #error invalid value for NSIS_MAX_INST_TYPES
 #endif
 
-char g_autoclose;
-char g_noicon;
+int g_autoclose;
 int progress_bar_pos, progress_bar_len;
+int g_is_uninstaller;
 
 HWND g_progresswnd;
 
@@ -98,16 +98,9 @@ HWND NSISCALL bgWnd_Init();
 HWND insthwnd, insthwnd2,insthwndbutton;
 
 void *g_inst_combinedheader;
+page *g_inst_page;
 section *g_inst_section;
 entry *g_inst_entry;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-int g_is_uninstaller;
-static int g_max_page=1;
-static int g_page_offs=4;
-#else
-#define g_max_page 3
-#define g_page_offs 0
-#endif
 
 static int m_page=-1,m_abort;
 static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
@@ -272,8 +265,9 @@ lang_again:
   }
 
   myitoa(state_language, *(LANGID*)language_table);
-
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_fromtab(g_caption,LANG_CAPTION));
+#endif
 }
 
 int NSISCALL ui_doinstall(void)
@@ -282,12 +276,8 @@ int NSISCALL ui_doinstall(void)
   g_autoclose=g_inst_cmnheader->misc_flags&1;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)
-  {
-    g_max_page=3;
-    g_page_offs=0;
-#else
-  {
 #endif
+  {
     if (!is_valid_instpath(state_install_directory))
     {
       if (g_inst_header->install_reg_key_ptr)
@@ -443,9 +433,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
-    int iscp=0,islp=0,isdp=0,ispotentiallydp=0;
-    int delta=(uMsg == WM_NOTIFY_OUTER_NEXT)?wParam:0;
-    int prev_page=m_page;
+    #define delta wParam
     static struct
     {
       char *id;
@@ -455,19 +443,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
       {MAKEINTRESOURCE(IDD_LICENSE),LicenseProc},
-#else
-      {NULL,NULL},
 #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       {MAKEINTRESOURCE(IDD_SELCOM),SelProc},
-#else
-      {NULL,NULL},
 #endif
       {MAKEINTRESOURCE(IDD_DIR),DirProc},
       {MAKEINTRESOURCE(IDD_INSTFILES),InstProc},
+      {NULL,NULL}, // imaginary completed page
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      {MAKEINTRESOURCE(IDD_UNINST),UninstProc},
-      {MAKEINTRESOURCE(IDD_INSTFILES),InstProc},
+      {MAKEINTRESOURCE(IDD_UNINST),UninstProc}
 #endif
     };
 
@@ -479,126 +463,96 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANG_BRANDING);
       SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!g_is_uninstaller)
+      SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
+      ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL);
 #endif
-        SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
       ShowWindow(hwndDlg,SW_SHOW);
     }
 
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    if (g_is_uninstaller)
-    {
-      islp = LANG_STR_TAB(LANG_UNINST_TEXT);
-      iscp++;
-    }
-    else
-#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
-    {
-#ifdef NSIS_CONFIG_LICENSEPAGE
-      islp = LANG_STR_TAB(LANG_LICENSE_DATA);
-#endif//NSIS_CONFIG_LICENSEPAGE
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-      iscp = LANG_STR_TAB(LANG_COMP_TEXT);
-#endif//NSIS_CONFIG_COMPONENTPAGE
-      ispotentiallydp = LANG_STR_TAB(LANG_DIR_TEXT);
-      if (ispotentiallydp &&
-          !((g_inst_cmnheader->misc_flags&2) &&
-            is_valid_instpath(state_install_directory)
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-            && !ExecuteCodeSegment(g_inst_header->code_onVerifyInstDir,NULL)
-#endif//NSIS_SUPPORT_CODECALLBACKS
-            )) isdp++;
-    }
+nextPage:
 
-    if (m_page<=0) delta=1;
-    do
-    {
-      int count=1;  // Number of pages to move by
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      // Call onNext|PrevPage for every not-definitely-disabled page
-      if (ExecuteCodeSegment(delta>0?g_inst_cmnheader->code_onNextPage:g_inst_header->code_onPrevPage,NULL))
-      {
-        if (g_quit_flag)  // Quit instruction used?
-          m_page=count=-1;
-        // Mmm - relies on ps_tmpbuf still being set from the Abort command - safe?
-        else if ((count = myatoi(ps_tmpbuf)) != 0)
-          count /= (delta = (count>0?1:-1));
-      }
-#endif//NSIS_SUPPORT_CODECALLBACKS
-      // Skip any definitely-disabled pages, then the required number of pages
-      while ((m_page==0 && !islp) || (m_page==1 && !iscp) || (m_page==2 && !ispotentiallydp) || (--count>=0))
-        m_page+=delta;
-      // Skip any possibly-disabled pages
-    } while ((m_page >= 0) && (m_page <= g_max_page) && (m_page==2 && !isdp));
+    if (m_page<0) delta=1;
+    m_page+=delta;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    if (m_page>g_max_page) ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
+    if (m_page==g_inst_cmnheader->num_pages) ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
-    if (m_curwnd && (m_page!=prev_page))
+    if (g_quit_flag || m_page < 0 || m_page == g_inst_cmnheader->num_pages)
     {
       DestroyWindow(m_curwnd);
-      m_curwnd=0;
-    }
-
-    if (m_page < 0 || m_page > g_max_page)
       EndDialog(hwndDlg,0);
-    else if (!m_curwnd)
+    }
+    else
     {
       HWND hwndtmp;
-      int str =
-        (m_page == g_max_page) ? LANG_BTN_CLOSE :
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        g_is_uninstaller ? LANG_BTN_UNINST :
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-        (m_page == 0) ? LANG_BTN_LICENSE :
-#endif
-        (m_page == 2 || (m_page == 1 && !isdp)) ? LANG_BTN_INSTALL :
-        LANG_BTN_NEXT;
-      SetDlgItemTextFromLang(hwndDlg,IDOK,str);
-      mystrcpy(g_tmp,g_caption);
-      process_string_fromtab(g_tmp+mystrlen(g_tmp),LANG_SUBCAPTION(m_page));
+      int page_id=g_inst_page[m_page].id;
 
-      SetWindowText(hwndDlg,g_tmp);
+      SetDlgItemTextFromLang(hwndDlg,IDOK,g_inst_page[m_page].next);
+      
+      hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
+      ShowWindow(hwndtmp,g_inst_page[m_page].back?SW_SHOWNA:SW_HIDE);
+      EnableWindow(hwndtmp, g_inst_page[m_page].back&2);
 
-      gDontFookWithFocus = 0;
-      m_curwnd=CreateDialog(g_hInstance,windows[g_page_offs+m_page].id,hwndDlg,windows[g_page_offs+m_page].proc);
-      if (m_curwnd)
+      if (page_id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
+      else if (g_autoclose) goto nextPage;
+
+      if (page_id>=0) // NSIS page
       {
-        RECT r;
-        GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
-        ScreenToClient(hwndDlg,(LPPOINT)&r);
-        SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        ExecuteCodeSegment(g_inst_cmnheader->code_onInitDialog,NULL);
+        if (ExecuteCodeSegment(g_inst_page[m_page].prefunc,NULL))
+          goto nextPage;
+        else
 #endif //NSIS_SUPPORT_CODECALLBACKS
-        SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
-        ShowWindow(m_curwnd,SW_SHOWNA);
+        {
+          mystrcpy(g_tmp,g_caption);
+          process_string_fromtab(
+            g_tmp+mystrlen(g_tmp),
+            LANG_SUBCAPTION(page_id-(g_is_uninstaller?NSIS_PAGE_INSTFILES:0))
+          );
+
+          SetWindowText(hwndDlg,g_tmp);
+
+          gDontFookWithFocus = 0;
+          m_curwnd=CreateDialog(g_hInstance,windows[page_id].id,hwndDlg,windows[page_id].proc);
+          if (m_curwnd)
+          {
+            RECT r;
+            GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
+            ScreenToClient(hwndDlg,(LPPOINT)&r);
+            SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+            SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
+            ShowWindow(m_curwnd,SW_SHOWNA);
+          }
+
+          //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
+          //on the license page, instead we want the focus left alone because in
+          //WM_INITDIALOG it is given to the richedit control.
+          if (!gDontFookWithFocus)
+              SetFocus(m_hwndOK);
+          //XGE End
+        }
+      }
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      else // User custom page
+      {
+        if (ExecuteCodeSegment(g_inst_page[m_page].prefunc,NULL))
+          delta=-1;
+        else
+          delta=1;
+        goto nextPage;
       }
 
-      hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      ShowWindow(hwndtmp,(m_page&&!g_is_uninstaller)?SW_SHOWNA:SW_HIDE);
-      if (!g_is_uninstaller)
-#else
-      ShowWindow(hwndtmp,m_page?SW_SHOWNA:SW_HIDE);
-#endif
-      EnableWindow(hwndtmp, (m_page==1&&islp) || (m_page==2&&(islp||iscp)));
-//XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
-//on the license page, instead we want the focus left alone because in
-//WM_INITDIALOG it is given to the richedit control.
-      if (!gDontFookWithFocus)
-          SetFocus(m_hwndOK);
-//XGE End
+      ExecuteCodeSegment(g_inst_page[m_page].postfunc,NULL);
+#endif //NSIS_SUPPORT_CODECALLBACKS
     }
   }
   if (uMsg == WM_COMMAND)
   {
     int id=LOWORD(wParam);
 
-    if (id == IDOK && m_curwnd)
+    if (id == IDOK)
     {
       outernotify(1);
     }
@@ -606,9 +560,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       !g_is_uninstaller &&
 #endif
-      (id == IDC_BACK && m_curwnd && m_page>0))
+      (id == IDC_BACK && m_page>0))
     {
-      EnableWindow(m_hwndOK, TRUE);
       outernotify(-1);
     }
     if (id == IDCANCEL)
@@ -900,7 +853,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     SendMessage(m_curwnd,WM_TREEVIEW_KEYHACK,0,0);
     return 0;
   }
-#ifdef NSIS_SUPPORT_CODECALLBACKS
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
   if (uMsg == WM_DESTROY) {
     last_item=-1;
   }
@@ -927,12 +880,13 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
       mystrcpy(g_tmp, g_usrvars[0]);
 
       myitoa(g_usrvars[0], last_item);
+
       ExecuteCodeSegment(g_inst_header->code_onMouseOverSection,NULL);
 
       mystrcpy(g_usrvars[0], g_tmp);
     }
   }
-#endif//NSIS_SUPPORT_CODECALLBACKS
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
   return CallWindowProc((WNDPROC)oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
 
@@ -1166,11 +1120,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           } // not ro
         } // was valid click
       } // was click or hack
-#ifdef NSIS_SUPPORT_CODECALLBACKS
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
       else if (lpnmh->code == TVN_SELCHANGED) {
         SendMessage(hwndTree1, WM_USER+0x19, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
       }
-#endif//NSIS_SUPPORT_CODECALLBACKS
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
     }
   }
   if (uMsg == WM_COMMAND)
@@ -1403,19 +1357,10 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     {
       HWND h=m_hwndOK;
       EnableWindow(h,1);
-      if (!g_autoclose)
-      {
-        ShowWindow(g_hwnd,SW_SHOWNA);
-        mystrcpy(g_tmp,g_caption);
-        process_string_fromtab(g_tmp+mystrlen(g_tmp),LANG_SUBCAPTION(g_max_page+1));
-        update_status_text_from_lang(LANG_COMPLETED,"");
-        SetWindowText(g_hwnd,g_tmp);
-        SetFocus(h);
-      }
-      else
-      {
-        outernotify(1);
-      }
+      ShowWindow(g_hwnd,SW_SHOWNA);
+      update_status_text_from_lang(LANG_COMPLETED,"");
+      outernotify(1);
+      SetFocus(h);
     }
     else
     {

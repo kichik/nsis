@@ -87,6 +87,10 @@ enum
   TOK_FUNCTIONEND,
   TOK_ADDSIZE,
 
+  // Page oredering shit
+  TOK_PAGE,
+  TOK_UNINSTPAGE,
+
   // flag setters
   TOK_SETDATESAVE,
   TOK_SETOVERWRITE,

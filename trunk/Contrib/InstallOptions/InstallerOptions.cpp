@@ -44,6 +44,8 @@
  *
  *   - Added Icon and Bitmap controls (by Amir Szekely 4th September 2002)
  *
+ *   - Added initDialog and show for support with NSIS's new CreateFont and SetStaticBkColor
+ *
  *  Copyright (C) 2001 Michael Bishop
  *  Portions Copyright (C) 2001 Nullsoft, Inc.
  *
@@ -166,7 +168,7 @@ char *pszCancelButtonText = NULL;
 char *pszNextButtonText = NULL;
 char *pszBackButtonText = NULL;
 unsigned int nCancelConfirmFlags=0;
-BOOL bBackEnabled=FALSE;
+BOOL bBackDisabled=FALSE;
 
 BOOL bCancelEnabled=TRUE;  // by ORTIM: 13-August-2002
 int  bCancelShow=1;        // by ORTIM: 13-August-2002
@@ -309,7 +311,7 @@ bool ValidateFields() {
     // this if statement prevents a stupid bug where a min/max length is assigned to a label control
     //   where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
     if (pFields[nIdx].nType >= FIELD_TEXT) {
-      nLength = GetWindowTextLength(pFields[nIdx].hwnd);
+      nLength = SendMessage(pFields[nIdx].hwnd, WM_GETTEXTLENGTH, 0, 0);
 
       if (((pFields[nIdx].nMaxLength > 0) && (nLength > pFields[nIdx].nMaxLength)) ||
          ((pFields[nIdx].nMinLength > 0) && (nLength < pFields[nIdx].nMinLength))) {
@@ -374,7 +376,7 @@ bool SaveSettings(void) {
         }
       default:
         {
-          int nLength = GetWindowTextLength(pFields[nIdx].hwnd);
+          int nLength = SendMessage(pFields[nIdx].hwnd, WM_GETTEXTLENGTH, 0, 0);
           if (nLength > nBufLen) {
             FREE(pszBuffer);
             // add a bit extra so we do this less often
@@ -481,7 +483,7 @@ bool ReadSettings(void) {
   nCancelConfirmFlags = LookupTokens(MBFlagTable, szResult);
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
-  bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
+  bBackDisabled = GetPrivateProfileInt("Settings", "BackDisabled", 0, pszFilename);
 
   bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 1, pszFilename);  // by ORTIM: 13-August-2002
   bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 1, pszFilename);        // by ORTIM: 13-August-2002
@@ -702,66 +704,76 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         }
       }
     break;
+    case WM_CTLCOLORSTATIC:
+    {
+      COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
+      if (color) {
+        LOGBRUSH b={BS_SOLID, color-1, 0};
+        SetBkColor((HDC)wParam, b.lbColor);
+        return (BOOL)CreateBrushIndirect(&b);
+      }
+    }
   }
 	return 0;
 }
 
+int nIdx;
+HWND childwnd;
+int cw_vis;
+int was_cancel_enabled;
+int was_ok_enabled;
+char old_cancel[256];
+char old_ok[256];
+char old_back[256];
+int old_cancel_enabled;
+int old_cancel_visible;
+char old_title[1024];
 
-
-
-extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
-                                      char *variables, stack_t **stacktop)
+int createCfgDlg()
 {
-  hMainWindow=hwndParent;
-  EXDLL_INIT();
-
-  int nIdx;
   UINT nAddMsg;
+
+  g_is_back=0;
+  g_is_cancel=0;
 
   if (!hMainWindow)
   {
     popstring(NULL);
     pushstring("error finding mainwnd");
-    return; // cannot be used in silent mode unfortunately.
+    return 1; // cannot be used in silent mode unfortunately.
   }
-  HWND childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
+  childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
   if (!childwnd) childwnd=GetDlgItem(hMainWindow,1018);
   if (!childwnd)
   {
     popstring(NULL);
     pushstring("error finding childwnd");
-    return;
+    return 1;
   }
 
-  if (!stacktop || !*stacktop || !(pszFilename = (*stacktop)->text) || !pszFilename[0] || !ReadSettings())
+  if (!g_stacktop || !*g_stacktop || !(pszFilename = (*g_stacktop)->text) || !pszFilename[0] || !ReadSettings())
   {
     popstring(NULL);
     pushstring("error finding config");
-    return;
+    return 1;
   }
-  int cw_vis=IsWindowVisible(childwnd);
+  cw_vis=IsWindowVisible(childwnd);
   if (cw_vis) ShowWindow(childwnd,SW_HIDE);
 
-  int was_cancel_enabled=EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),1);
-  int was_ok_enabled=EnableWindow(GetDlgItem(hMainWindow,IDOK),1);
-  static char old_cancel[256];
+  was_cancel_enabled=EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),1);
+  was_ok_enabled=EnableWindow(GetDlgItem(hMainWindow,IDOK),1);
   GetDlgItemText(hMainWindow,IDCANCEL,old_cancel,sizeof(old_cancel));
   if (pszCancelButtonText) SetDlgItemText(hMainWindow,IDCANCEL,pszCancelButtonText);
-  static char old_ok[256];
   GetDlgItemText(hMainWindow,IDOK,old_ok,sizeof(old_ok));
   if (pszNextButtonText) SetDlgItemText(hMainWindow,IDOK,pszNextButtonText);
-  static char old_back[256];
   GetDlgItemText(hMainWindow,3,old_back,sizeof(old_back));
   if (pszBackButtonText) SetDlgItemText(hMainWindow,3,pszBackButtonText);
 
 
-  int old_back_enabled=!EnableWindow(GetDlgItem(hMainWindow,3),bBackEnabled);
-  int old_back_visible=IsWindowVisible(GetDlgItem(hMainWindow,3));
-  ShowWindow(GetDlgItem(hMainWindow,3),bBackEnabled?SW_SHOWNA:SW_HIDE);
+  EnableWindow(GetDlgItem(hMainWindow,3),!bBackDisabled);
 
-
-  int old_cancel_enabled=!EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled);  // by ORTIM: 13-August-2002
-  int old_cancel_visible=IsWindowVisible(GetDlgItem(hMainWindow,IDCANCEL));               // by ORTIM: 13-August-2002
+  old_cancel_enabled=!EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled);  // by ORTIM: 13-August-2002
+  old_cancel_visible=IsWindowVisible(GetDlgItem(hMainWindow,IDCANCEL));               // by ORTIM: 13-August-2002
   EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled?SW_SHOWNA:SW_HIDE);		  // by ORTIM: 13-August-2002
   ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelShow?SW_SHOWNA:SW_HIDE);             // by ORTIM: 13-August-2002
 
@@ -786,7 +798,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   {
     popstring(NULL);
     pushstring("error creating dialog");
-    return;
+    return 1;
   }
 
   // by ORTIM: 14-August-2002
@@ -972,15 +984,23 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
     }
   }
 
-  static char old_title[1024];
   if (pszTitle)
   {
     GetWindowText(hMainWindow,old_title,sizeof(old_title));
     SetWindowText(hMainWindow,pszTitle);
   }
+  char tmp[32];
+  wsprintf(tmp,"%d",hConfigWindow);
+  pushstring(tmp);
+  return 0;
+}
 
+void showCfgDlg()
+{
   ShowWindow(hConfigWindow, SW_SHOWNA);
 	SetFocus(GetDlgItem(hMainWindow,IDOK));
+
+  g_done=0;
 
 	while (!g_done) {
     MSG msg;
@@ -1002,12 +1022,9 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   SetDlgItemText(hMainWindow,IDOK,old_ok);
   SetDlgItemText(hMainWindow,3,old_back);
 
-  EnableWindow(GetDlgItem(hMainWindow,3),old_back_enabled);
-
   EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_enabled);                  // by ORTIM: 13-August-2002
   ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM: 13-August-2002
 
-  ShowWindow(GetDlgItem(hMainWindow,3),old_back_visible?SW_SHOWNA:SW_HIDE);
   if (pszTitle) SetWindowText(hMainWindow,old_title);
 
   if (cw_vis) ShowWindow(childwnd,SW_SHOWNA);
@@ -1031,7 +1048,48 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   pushstring(g_is_cancel?"cancel":g_is_back?"back":"success");
 }
 
+int initCalled;
 
+extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
+                                      char *variables, stack_t **stacktop)
+{
+  hMainWindow=hwndParent;
+  EXDLL_INIT();
+  if (initCalled) {
+    pushstring("error");
+    return;
+  }
+  if (createCfgDlg()) {
+    return;
+  }
+  popstring(NULL);
+  showCfgDlg();
+}
+
+extern "C" void __declspec(dllexport) initDialog(HWND hwndParent, int string_size,
+                                      char *variables, stack_t **stacktop)
+{
+  hMainWindow=hwndParent;
+  EXDLL_INIT();
+  if (initCalled) {
+    pushstring("error");
+    return;
+  }
+  initCalled++;
+  createCfgDlg();
+}
+
+extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
+                                      char *variables, stack_t **stacktop)
+{
+  EXDLL_INIT();
+  if (!initCalled) {
+    pushstring("error");
+    return;
+  }
+  initCalled--;
+  showCfgDlg();
+}
 
 extern "C" BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {

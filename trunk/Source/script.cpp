@@ -506,6 +506,176 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
 
     return PS_OK;
+    // page ordering shit
+    ///////////////////////////////////////////////////////////////////////////////
+    case TOK_PAGE:
+      {
+        SCRIPT_MSG("Page: %s", line.gettoken_str(1));
+
+        int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles");
+        page p = {
+          0,
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          -1,
+          -1
+#endif
+        };
+
+        if (line.getnumtokens()>2) {
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          if (*line.gettoken_str(2))
+            p.prefunc = ns_func.add(line.gettoken_str(2),0);
+          if (line.getnumtokens()>3) {
+            if (k==0) {
+              ERROR_MSG("\nError: custom page don't need post creation functions!\n");
+              PRINTHELP();
+            }
+            p.postfunc = ns_func.add(line.gettoken_str(3),0);
+          }
+#else
+          ERROR_MSG("Error: Page callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
+          return PS_ERROR;
+#endif
+        }
+        else if (k==0) {
+          ERROR_MSG("\nError: custom page must have a creator function!\n");
+          PRINTHELP();
+        }
+
+        switch (k) {
+        	case 0:
+            p.id = NSIS_PAGE_CUSTOM;
+            break;
+          case 1:
+#ifdef NSIS_CONFIG_LICENSEPAGE
+            p.id = NSIS_PAGE_LICENSE;
+            break;
+#else
+            ERROR_MSG("Error: %s specified, NSIS_CONFIG_LICENSEPAGE not defined.\n", line.gettoken_str(1));
+            return PS_ERROR;
+#endif
+          case 2:
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+            p.id = NSIS_PAGE_SELCOM;
+            break;
+#else
+            ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n", line.gettoken_str(1));
+            return PS_ERROR;
+#endif
+          case 3:
+            p.id = NSIS_PAGE_DIR;
+            break;
+          case 4:
+            p.id = NSIS_PAGE_INSTFILES;
+            break;
+          default:
+            PRINTHELP();
+        }
+
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+        if (p.prefunc>=0)
+          SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
+        if (p.postfunc>=0)
+          SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+#endif
+        SCRIPT_MSG("\n");
+
+        build_pages.add(&p,sizeof(page));
+        build_header.common.num_pages++;
+        if (p.id==NSIS_PAGE_INSTFILES) {
+          p.id=NSIS_PAGE_COMPLETED;
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          p.prefunc=-1;
+          p.postfunc=-1;
+#endif
+          build_pages.add(&p,sizeof(page));
+          build_header.common.num_pages++;
+        }
+      }
+    return PS_OK;
+    case TOK_UNINSTPAGE:
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      {
+        SCRIPT_MSG("UninstPage: %s", line.gettoken_str(1));
+
+        int k = line.gettoken_enum(1,"custom\0uninstConfirm\0instfiles");
+        page p = {
+          0,
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          -1,
+          -1
+#endif
+        };
+
+        if (line.getnumtokens()>2) {
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          if (*line.gettoken_str(2)) {
+            if (strnicmp(line.gettoken_str(2),"un.",3)) {
+              ERROR_MSG("\nError: function must have a un. prefix!\n");
+              return PS_ERROR;
+            }
+            p.prefunc = ns_func.add(line.gettoken_str(2),0);
+          }
+          if (line.getnumtokens()>3) {
+            if (k==0) {
+              ERROR_MSG("\nError: custom page don't need post creation functions!\n");
+              PRINTHELP();
+            }
+            if (strnicmp(line.gettoken_str(3),"un.",3)) {
+              ERROR_MSG("\nError: function must have a un. prefix!\n");
+              return PS_ERROR;
+            }
+            p.postfunc = ns_func.add(line.gettoken_str(3),0);
+          }
+#else
+          ERROR_MSG("Error: UninstPage callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
+          return PS_ERROR;
+#endif
+        }
+        else if (k==0) {
+          ERROR_MSG("\nError: custom page must have a creator function!\n");
+          PRINTHELP();
+        }
+
+        switch (k) {
+        	case 0:
+            p.id = NSIS_PAGE_CUSTOM;
+            break;
+          case 1:
+            p.id = NSIS_PAGE_UNINST;
+            break;
+          case 2:
+            p.id = NSIS_PAGE_INSTFILES;
+            break;
+          default:
+            PRINTHELP();
+        }
+
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+        if (p.prefunc>=0)
+          SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
+        if (p.postfunc>=0)
+          SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+#endif
+        SCRIPT_MSG("\n");
+
+        ubuild_pages.add(&p,sizeof(page));
+        build_uninst.common.num_pages++;
+        if (p.id==NSIS_PAGE_INSTFILES) {
+          p.id=NSIS_PAGE_COMPLETED;
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          p.prefunc=-1;
+          p.postfunc=-1;
+#endif
+          ubuild_pages.add(&p,sizeof(page));
+          build_uninst.common.num_pages++;
+        }
+      }
+    return PS_OK;
+#else
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n", line.gettoken_str(0));
+    return PS_ERROR;
+#endif
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_LANGSTRING:
@@ -1591,7 +1761,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_UNINSTICON:
     case TOK_UNINSTTEXT:
     case TOK_UNINSTSUBCAPTION:
-      ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n", line.gettoken_str(0));
     return PS_ERROR;
 #endif
 

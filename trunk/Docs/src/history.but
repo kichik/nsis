@@ -2,6 +2,12 @@
 
 \e{v2.0b0}
 
+\b New paging system
+
+\b Added Page and UninstPage
+
+\b Removed .onNextPage, .onPrevPage, .onInitDialog
+
 \b New easier version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
 
 \b Added accelerator keys
