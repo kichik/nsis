@@ -115,7 +115,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_RET,"Return",0,0,""},
 {TOK_RMDIR,"RMDir",1,1,"[/r] directory_name"},
 {TOK_SECTION,"Section",0,3,"[/e] [section_name|-section_name] [section index output]"},
-{TOK_SUBSECTION,"SubSection",1,1,"[/e] subsection_name"},
+{TOK_SUBSECTION,"SubSection",1,2,"[/e] subsection_name [section index output]"},
 {TOK_SUBSECTIONEND,"SubSectionEnd",0,0,""},
 {TOK_SEARCHPATH,"SearchPath",2,0,"$(user_var: result) filename"},
 {TOK_SECTIONSETFLAGS,"SectionSetFlags",2,0,"section_index flags"},
