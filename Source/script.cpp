@@ -157,7 +157,6 @@ parse_again:
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
   {
     if (wait_for_endif) {
-      ERROR_MSG("waiting for !endif\n");
       return PS_OK;
     }
     if (ignore) {
