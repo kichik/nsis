@@ -635,10 +635,11 @@ char * NSISCALL validate_filename(char *in) {
   }
   out = out_save = in;
   while (*(char*)&cur_char = *in) {
-    if (!mystrstr(nono, (char*)&cur_char))
+    if (!mystrstr(nono, (char*)&cur_char)) {
       mini_memcpy(out, in, CharNext(in) - in);
+      out = CharNext(out);
+    }
     in = CharNext(in);
-    out = CharNext(out);
   }
   do {
     *out = 0;
