@@ -4306,7 +4306,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[2]=0;
       ent.offsets[3]=0;
-      SCRIPT_MSG("GetCurrentAddress: %s %s",line.gettoken_str(1));
+      SCRIPT_MSG("GetCurrentAddress: %s",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
       ent.which=EW_STRCMP;
