@@ -96,43 +96,39 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
-static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  switch (uMsg) {
-    case WM_CTLCOLORSTATIC:
-    case WM_CTLCOLOREDIT:
-    case WM_CTLCOLORDLG:
-    case WM_CTLCOLORBTN:
-    {
-      ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
+static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+  if ((uMsg - WM_CTLCOLOREDIT) <= (WM_CTLCOLORSTATIC - WM_CTLCOLOREDIT))
+  {
+    ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
 
-      if (c) {
-        COLORREF text;
-        LOGBRUSH lh;
+    if (c) {
+      COLORREF text;
+      LOGBRUSH lh;
 
-        text = c->text;
-        if (c->flags & CC_TEXT_SYS)
-          text = GetSysColor(text);
-        if (c->flags & CC_TEXT)
-          SetTextColor((HDC)wParam, text);
+      text = c->text;
+      if (c->flags & CC_TEXT_SYS)
+        text = GetSysColor(text);
+      if (c->flags & CC_TEXT)
+        SetTextColor((HDC)wParam, text);
 
-        SetBkMode((HDC)wParam, c->bkmode);
+      SetBkMode((HDC)wParam, c->bkmode);
 
-        lh.lbColor = c->bkc;
-        if (c->flags & CC_BK_SYS)
-          lh.lbColor = GetSysColor(lh.lbColor);
-        if (c->flags & CC_BK)
-          SetBkColor((HDC)wParam, lh.lbColor);
+      lh.lbColor = c->bkc;
+      if (c->flags & CC_BK_SYS)
+        lh.lbColor = GetSysColor(lh.lbColor);
+      if (c->flags & CC_BK)
+        SetBkColor((HDC)wParam, lh.lbColor);
 
-        if (c->flags & CC_BKB)
-        {
-          lh.lbStyle = c->lbStyle;
-          if (c->bkb)
-            DeleteObject(c->bkb);
-          c->bkb = CreateBrushIndirect(&lh);
-        }
-
-        return (BOOL)c->bkb;
+      if (c->flags & CC_BKB)
+      {
+        lh.lbStyle = c->lbStyle;
+        if (c->bkb)
+          DeleteObject(c->bkb);
+        c->bkb = CreateBrushIndirect(&lh);
       }
+
+      return (BOOL)c->bkb;
     }
   }
   return 0;
@@ -553,7 +549,7 @@ skipPage:
   }
   if (uMsg == WM_CLOSE && m_page == g_blocks[NB_PAGES].num - 1)
   {
-    if (!IsWindowEnabled(m_hwndCancel) && IsWindowEnabled(m_hwndOK))
+    if (!IsWindowEnabled(m_hwndCancel))
     {
       uMsg = WM_COMMAND;
       wParam = IDOK;
@@ -561,7 +557,10 @@ skipPage:
   }
   if (uMsg == WM_COMMAND)
   {
-    int id=LOWORD(wParam);
+    int id = LOWORD(wParam);
+    HWND hCtl = GetDlgItem(hwndDlg, id);
+    if (hCtl && !IsWindowEnabled(hCtl))
+      return 0;
 
     if (id == IDOK)
     {
@@ -596,7 +595,7 @@ skipPage:
     {
       // Forward WM_COMMANDs to inner dialogs, can be custom ones.
       // Without this, enter on buttons in inner dialogs won't work.
-      SendMessage(m_curwnd, uMsg, wParam, lParam);
+      SendMessage(m_curwnd, WM_COMMAND, wParam, lParam);
     }
   }
   return HandleStaticBkColor();
@@ -700,8 +699,8 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     {
       if (msgfilter->msg==WM_KEYDOWN)
       {
-        if (msgfilter->wParam==VK_RETURN && IsWindowEnabled(m_hwndOK)) {
-          outernotify(1);
+        if (msgfilter->wParam==VK_RETURN) {
+          SendMessage(g_hwnd, WM_COMMAND, IDOK, 0);
         }
         if (msgfilter->wParam==VK_ESCAPE) {
           SendMessage(g_hwnd, WM_CLOSE, 0, 0);
