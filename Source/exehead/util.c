@@ -61,7 +61,7 @@ char *scanendslash(const char *str)
 
 int validpathspec(char *ubuf)
 {
-  return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *(ubuf+1)==':')); 
+  return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *CharNext(ubuf)==':')); 
 }
 
 int is_valid_instpath(char *s)
@@ -75,7 +75,7 @@ int is_valid_instpath(char *s)
     while (*s) 
     {
       if (*s == '\\') ivp++;
-      if (*s) s++;
+      s=CharNext(s);
     }
     ivp/=5-req;
   }
@@ -83,13 +83,13 @@ int is_valid_instpath(char *s)
   {
     if (*s)
     {
-      if (*s) s++;
+      s=CharNext(s);
       if (*s == ':')
       {
-        if (*s) s++;
+        s=CharNext(s);
         if (*s == '\\')
         {
-          if (*s) s++;
+          s=CharNext(s);
           if (req || (*s && *s != '\\')) ivp++;
         }
       }
@@ -237,24 +237,24 @@ void recursive_create_directory(char *directory)
   char *tp;
 	char *p;
   p=directory;
-  while (*p == ' ') if (*p) p++;
+  while (*p == ' ') p=CharNext(p);
   if (!*p) return;
-  tp=*p?p+1:p;
+  tp=CharNext(p);
   if (*tp == ':' && tp[1] == '\\') p=tp+2;
   else if (p[0] == '\\' && p[1] == '\\')
   {
     int x;
     for (x = 0; x < 2; x ++)
     {
-      while (*p != '\\' && *p) if (*p) p++; // skip host then share
-      if (*p) if (*p) p++;
+      while (*p != '\\' && *p) p=CharNext(p); // skip host then share
+      if (*p) p=CharNext(p);
     }
 
   }
   else return;
   while (*p)
   {
-    while (*p != '\\' && *p) if (*p) p++;
+    while (*p != '\\' && *p) CharNext(p);
     if (!*p) CreateDirectory(directory,NULL);
     else
     {
@@ -452,15 +452,19 @@ void process_string(char *out, const char *in)
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        #if VAR_CODES_START + 33 >= 255
+        case VAR_CODES_START + 34: // LANGUAGE
+          wsprintf(out, "%u", cur_common_strings_table->lang_id);
+          break;
+
+        #if VAR_CODES_START + 34 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
       } // switch
       // remove trailing slash
-      while (*out && *(out+1)) out++;
+      while (*out && *CharNext(out)) out++;
       if (nVarIdx > 21+VAR_CODES_START && *out == '\\') // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
         *out = 0;
-      if (*out) out++;
+      out=CharNext(out);
     } // >= VAR_CODES_START
   } // while
   *out = 0;
