@@ -152,8 +152,8 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Examples\Modern UI\ioA.ini"
     File "..\Examples\Modern UI\ioB.ini"
     File "..\Examples\Modern UI\ioC.ini"
-	File "..\Examples\Modern UI\StartMenu.nsi"
-	File "..\Examples\Modern UI\WelcomeFinish.nsi"
+  File "..\Examples\Modern UI\StartMenu.nsi"
+  File "..\Examples\Modern UI\WelcomeFinish.nsi"
     SetOutPath "$INSTDIR\Contrib\Modern UI"
     File "..\Contrib\Modern UI\System.nsh"
     File "..\Contrib\Modern UI\Readme.jpg"
@@ -162,7 +162,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot.png"
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
-	File "..\Contrib\Modern UI\ioSpecial.ini"
+  File "..\Contrib\Modern UI\ioSpecial.ini"
     SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
     File "..\Contrib\Modern UI\Language files\*.nsh"
     SetOutPath "$INSTDIR\Contrib\UIs"
@@ -171,7 +171,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath $INSTDIR\Contrib\Icons
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
-	File "..\Contrib\Icons\modern-wizard.bmp"
+  File "..\Contrib\Icons\modern-wizard.bmp"
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
@@ -221,6 +221,7 @@ Section "nsExec" SecContribnsExec
   File ..\Plugins\nsExec.dll
   SetOutPath $INSTDIR\Contrib\nsExec
   File ..\Contrib\nsExec\*.txt
+  File ..\Contrib\nsExec\*.nsi
 SectionEnd
 
 Section "Splash" SecContribSplash
@@ -338,13 +339,16 @@ Section "NSIS Source Code" SecSrcNSIS
 SectionEnd
 
 SubSection "Contrib" SecSrcContrib
-Section "ExDLL Source" SecSrcEx
+# required for other plugins sources
+# text changes in .onSelChange
+Section "ExDLL Source (required)" SecSrcEx
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
   File ..\Contrib\exdll\exdll.c
   File ..\Contrib\exdll\exdll.dpr
   File ..\Contrib\exdll\exdll.dsp
   File ..\Contrib\exdll\exdll.dsw
+  File ..\Contrib\exdll\exdll.h
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
@@ -357,7 +361,12 @@ Section "MakeNSISW Source" SecSrcMNW
   File ..\Contrib\Makensisw\*.dsp
   File ..\Contrib\Makensisw\*.rc
   File ..\Contrib\Makensisw\*.bmp
+  File ..\Contrib\Makensisw\*.ico
+  File ..\Contrib\Makensisw\*.psp
   #File ..\Contrib\Makensisw\Makefile
+  SetOutPath $INSTDIR\Contrib\Makensisw\jnetlib
+  File ..\Contrib\Makensisw\jnetlib\*.cpp
+  File ..\Contrib\Makensisw\jnetlib\*.h
 SectionEnd
 
 Section "UI Holder Source" SecContribUIHolderS
@@ -484,6 +493,7 @@ Section "Zip2Exe Source" SecContribZ2ES
   File ..\Contrib\zip2exe\*.rc
   File ..\Contrib\zip2exe\*.dsw
   File ..\Contrib\zip2exe\*.dsp
+  File ..\Contrib\zip2exe\*.xml
   SetOutPath $INSTDIR\Contrib\zip2exe\zlib
   File ..\Contrib\zip2exe\zlib\*.*
   SetDetailsPrint both
@@ -492,37 +502,69 @@ SectionEnd
 SubSectionEnd
 SubSectionEnd
 
+!define SF_SELECTED 1
+
+!macro secSelected SEC
+  SectionGetFlags ${SEC} $R7
+  IntOp $R7 $R7 & ${SF_SELECTED}
+  StrCmp $R7 ${SF_SELECTED} 0 +2
+    IntOp $R0 $R0 + 1
+!macroend
+
+Function .onSelChange
+  StrCpy $R0 0
+  !insertmacro secSelected ${SecContribSplashTS}
+  !insertmacro secSelected ${SecContribBannerS}
+  !insertmacro secSelected ${SecContribBgImageS}
+  !insertmacro secSelected ${SecContribIOS}
+  !insertmacro secSelected ${SecContribLangDLLS}
+  !insertmacro secSelected ${SecContribnsExecS}
+  !insertmacro secSelected ${SecContribNSISdlS}
+  !insertmacro secSelected ${SecContribSplashS}
+  !insertmacro secSelected ${SecContribStartMenuS}
+  !insertmacro secSelected ${SecContribUserInfoS}
+  SectionGetFlags ${SecSrcEx} $R7
+  StrCmp $R0 0 notRequired
+    IntOp $R7 $R7 | ${SF_SELECTED}
+    SectionSetFlags ${SecSrcEx} $R7
+    SectionSetText ${SecSrcEx} "ExDLL Source (required)"
+    Goto done
+  notRequired:
+    SectionSetText ${SecSrcEx} "ExDLL Source"
+  done:
+FunctionEnd
+
 Function .onInit
   !insertmacro MUI_WELCOMEFINISHPAGE_INIT
 FunctionEnd
 
 Function AddContribToStartMenu
-	Pop $0 ; link
-	Pop $1 ; file
-	IfFileExists $INSTDIR\Contrib\$1 0 +2
-		CreateShortCut $SMPROGRAMS\NSIS\Contrib\$0.lnk $INSTDIR\Contrib\$1
+  Pop $0 ; link
+  Pop $1 ; file
+  IfFileExists $INSTDIR\Contrib\$1 0 +2
+    CreateShortCut $SMPROGRAMS\NSIS\Contrib\$0.lnk $INSTDIR\Contrib\$1
 FunctionEnd
 
 Function AddWorkspaceToStartMenu
-	Pop $0
-	IfFileExists $INSTDIR\Contrib\$0\$0.dsw 0 done
-		Push $0\$0.dsw
-		Push "Source\$0 project workspace"
-		Call AddContribToStartMenu
-	done:
+  Pop $0
+  IfFileExists $INSTDIR\Contrib\$0\$0.dsw 0 done
+    Push $0\$0.dsw
+    Push "Source\$0 project workspace"
+    Call AddContribToStartMenu
+  done:
 FunctionEnd
 
 Function AddReadmeToStartMenu
-	Pop $0
-	IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
-		Push $0\$0.txt
-		Goto create
-	IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
-		Push $0\Readme.txt
-	create:
-		Push "$0 readme"
-		Call AddContribToStartMenu
-	done:
+  Pop $0
+  IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
+    Push $0\$0.txt
+    Goto create
+  IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
+    Push $0\Readme.txt
+  create:
+    Push "$0 readme"
+    Call AddContribToStartMenu
+  done:
 FunctionEnd
 
 Section -post
@@ -535,116 +577,116 @@ Section -post
     IfFileExists $INSTDIR\Examples 0 +2
       CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
 
-	IfFileExists "$INSTDIR\Source" 0 +2
+  IfFileExists "$INSTDIR\Source" 0 +2
       CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
 
-	CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+  CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
 
-	; MakeNSISW
-	CreateDirectory $SMPROGRAMS\NSIS\Contrib
+  ; MakeNSISW
+  CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
 
     Push "MakeNSISW"
-	Call AddWorkspaceToStartMenu
+  Call AddWorkspaceToStartMenu
 
-	; ExDLL
-	Push "ExDLL"
-	Call AddWorkspaceToStartMenu
+  ; ExDLL
+  Push "ExDLL"
+  Call AddWorkspaceToStartMenu
 
-	; InstallOptions
-	Push "InstallOptions\install options.html"
-	Push "InstallOptions readme"
-	Call AddContribToStartMenu
+  ; InstallOptions
+  Push "InstallOptions\install options.html"
+  Push "InstallOptions readme"
+  Call AddContribToStartMenu
 
-	Push "InstallOptions\io.dsw"
-	Push "Source\InstallOptions project workspace"
-	Call AddContribToStartMenu
+  Push "InstallOptions\io.dsw"
+  Push "Source\InstallOptions project workspace"
+  Call AddContribToStartMenu
 
-	; ZIP2EXE
+  ; ZIP2EXE
     IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
 
-	Push ZIP2EXE
-	Call AddWorkspaceToStartMenu
+  Push ZIP2EXE
+  Call AddWorkspaceToStartMenu
 
-	; Modern UI
-	Push "Modern UI\Readme.html"
-	Push "Modern UI readme"
-	Call AddContribToStartMenu
+  ; Modern UI
+  Push "Modern UI\Readme.html"
+  Push "Modern UI readme"
+  Call AddContribToStartMenu
 
-	; Splash
-	Push Splash
-	Call AddReadmeToStartMenu
+  ; Splash
+  Push Splash
+  Call AddReadmeToStartMenu
 
-	Push Splash
-	Call AddWorkspaceToStartMenu
+  Push Splash
+  Call AddWorkspaceToStartMenu
 
-	; Advanced splash
-	Push AdvSplash
-	Call AddReadmeToStartMenu
+  ; Advanced splash
+  Push AdvSplash
+  Call AddReadmeToStartMenu
 
-	Push AdvSplash
-	Call AddWorkspaceToStartMenu
+  Push AdvSplash
+  Call AddWorkspaceToStartMenu
 
-	; NSISdl
-	Push NSISdl
-	Call AddReadmeToStartMenu
+  ; NSISdl
+  Push NSISdl
+  Call AddReadmeToStartMenu
 
-	Push NSISdl
-	Call AddWorkspaceToStartMenu
+  Push NSISdl
+  Call AddWorkspaceToStartMenu
 
-	; UserInfo
-	Push UserInfo
-	Call AddWorkspaceToStartMenu
+  ; UserInfo
+  Push UserInfo
+  Call AddWorkspaceToStartMenu
 
-	; nsExec
-	Push nsExec
-	Call AddReadmeToStartMenu
+  ; nsExec
+  Push nsExec
+  Call AddReadmeToStartMenu
 
-	Push nsExec
-	Call AddWorkspaceToStartMenu
+  Push nsExec
+  Call AddWorkspaceToStartMenu
 
-	; LangDLL
-	Push LangDLL
-	Call AddWorkspaceToStartMenu
+  ; LangDLL
+  Push LangDLL
+  Call AddWorkspaceToStartMenu
 
-	; StartMenu
-	Push StartMenu
-	Call AddReadmeToStartMenu
+  ; StartMenu
+  Push StartMenu
+  Call AddReadmeToStartMenu
 
-	Push StartMenu
-	Call AddWorkspaceToStartMenu
+  Push StartMenu
+  Call AddWorkspaceToStartMenu
 
-	; BgImage
-	Push BgImage
-	Call AddReadmeToStartMenu
+  ; BgImage
+  Push BgImage
+  Call AddReadmeToStartMenu
 
-	Push BgImage
-	Call AddWorkspaceToStartMenu
+  Push BgImage
+  Call AddWorkspaceToStartMenu
 
-	; Banner
-	Push Banner
-	Call AddReadmeToStartMenu
+  ; Banner
+  Push Banner
+  Call AddReadmeToStartMenu
 
-	Push Banner
-	Call AddWorkspaceToStartMenu
+  Push Banner
+  Call AddWorkspaceToStartMenu
 
-	; System
-	Push System
-	Call AddReadmeToStartMenu
+  ; System
+  Push System
+  Call AddReadmeToStartMenu
 
-	Push System\Source\System.sln
-	Push "Source\System project workspace"
-	Call AddContribToStartMenu
+  Push System\Source\System.sln
+  Push "Source\System project workspace"
+  Call AddContribToStartMenu
 
-	; done
+  ; done
 
-	; will only be removed if empty
-	SetDetailsPrint none
-	RMDir $INSTDIR\Contrib\Source
-	SetDetailsPrint lastused
+  ; will only be removed if empty
+  SetDetailsPrint none
+  RMDir $INSTDIR\Contrib\Source
+  SetDetailsPrint lastused
 
-	; open sesame
+  ; open sesame
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
     BringToFront
