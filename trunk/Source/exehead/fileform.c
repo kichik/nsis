@@ -83,7 +83,7 @@ int NSISCALL loadHeaders(void)
 
   if (GetCompressedDataFromDataBlockToMemory(-1,data,h.length_of_header) != h.length_of_header)
   {
-    my_MessageBox("Error reading installer info block",MB_OK);
+    my_MessageBox(_LANG_CANTOPENSELF,MB_OK);
     GlobalFree((HGLOBAL)data);
     return -1;
   }
