@@ -1660,7 +1660,7 @@ Var MUI_TEMP2
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
       !endif
       SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-      !undef MUI_FINISHPAGE_LINK_COLO
+      !undef MUI_FINISHPAGE_LINK_COLOR
     !endif
      
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
