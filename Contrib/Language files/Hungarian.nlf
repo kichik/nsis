@@ -1,8 +1,9 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1038
-# Translation by Soft-Trans Bt.
+# Translation by Soft-Trans Bt. (V2)
+# Translation by Orfanik Kft.   (V3)
 Nullsoft Telepítõrendszer %s
 %s Telepítõ
 %s Eltávolító
@@ -17,6 +18,8 @@ Nullsoft Telepítõrendszer %s
 < &Vissza
 &Tovább >
 &Elfogadom
+Elfogadom a Licencszerzõdés feltételeit
+Nem fogaom el a Licencszerzõdés feltételeit
 &Telepítés
 &Eltávolítás
 &Mégse
