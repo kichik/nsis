@@ -1,0 +1,62 @@
+# Turkish NSIS Language File
+NLF v2
+# Language ID
+1055
+# Translation by Bertan Kodamanoglu (astoichen@soultrap.com)
+Nullsoft Install System %s
+%s Kurulumu
+%s Uninstaller
+: Sözleþme
+: Kurulum Ayarlarý
+: Kurulum Dizini
+: Kuruluyor
+: Tamamlandý
+: Kontrol
+: Kaldýrýlýyor
+: Tamamlandý
+< &Geri
+&Devam >
+&Kabul
+&KUR
+&Kaldýr
+Ý&ptal
+&Kapat
+&Farklý Dizin...
+Ayrýntýlarý &göster
+Ýsim
+Tamamlandý
+Özel
+Kurulum þeklini seçiniz:
+Kurulacak paketleri seçiniz:
+Kurmak istediðiniz paketleri seçiniz:
+%s kurulumu için bir dizin seçin:
+Kalan boþ alan: 
+Gerekli boþ alan: 
+Kaldýrýlýyor: 
+Dosya açýlamadý: \r\n\t"$0"\r\nKurulumdan çýkmak için ESC ye basýnýz,\r\nyeniden yazmayý denemek için retry'ý, or\r\ndosyayý atlamak için ignore'u týklayýn
+Yazýlamýyor: 
+Kopyalama iþlemi gerçekleþemedi
+Hedef
+Bulunamadý: 
+Yüklenemedi: 
+Dizin yarat: 
+Kýsayol yarat: 
+Uninstaller yaratýldý: 
+Dosya sil: 
+Reset atýnca dosyayý sil: 
+Kýsayol yaratýlýrken hata oluþtu: 
+Hata: 
+Dosya açýlýrken hata oluþtu!
+DLL kaydedilirken hata oluþtu!
+ExecShell: 
+Çalýþtýr: 
+Kurulum: 
+Kurulum: dosyaya ulaþýlamadý
+Kurulum iptal edildi: geçersiz opcode
+OLE bulunamadý: 
+Hedef dizin: 
+Dizini sil: 
+Reset atýnca yeniden adlandýr: 
+Yeniden adlandýr: 
+Atlandý: 
+Ayrýntýlarý clipboard'a at
