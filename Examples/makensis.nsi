@@ -205,14 +205,30 @@ Section "NSIS-DL" SecContribNSISDL
   File ..\contrib\NSISdl\ReadMe.txt
 
 SectionEnd
+
+Section "System" SecContribSystem
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\System.dll
+  SetOutPath $INSTDIR\contrib\ShowWin
+  File ..\contrib\ShowWin\ShowWin.txt
+
+SectionEnd
+
+Section "ShowWin" SecContribShowWin
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\ShowWin.dll
+SectionEnd
+
 SubSectionEnd
 
 Section "Zip2Exe" SecContribZ2E
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
-  SetDetailsPrint both
 SectionEnd
+
 
 SubSectionEnd
 
@@ -320,7 +336,6 @@ Section "InstallOptions Source" SecContribIOS
   File "..\contrib\installoptions\Install Options.html"
 SectionEnd
 
-
 Section "NSIS-DL Source" SecContribNSISDLS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\NSISdl
@@ -331,6 +346,29 @@ Section "NSIS-DL Source" SecContribNSISDLS
   File ..\contrib\NSISdl\*.rc
   File ..\contrib\NSISdl\ReadMe.txt
 SectionEnd
+
+Section "System Source" SecContribSystemS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\System
+  File ..\contrib\System\*.c
+  File ..\contrib\System\*.h
+  File ..\contrib\System\*.ncb
+  File ..\contrib\System\*.sln
+  File ..\contrib\System\*.txt
+  File ..\contrib\System\*.vcproj
+SectionEnd
+
+Section "ShowWin Source" SecContribShowWinS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\System
+  File ..\contrib\System\*.c
+  File ..\contrib\System\*.h
+  File ..\contrib\System\*.ncb
+  File ..\contrib\System\*.sln
+  File ..\contrib\System\*.txt
+  File ..\contrib\System\*.vcproj
+SectionEnd
+
 
 SubSectionEnd ; plugins
 
@@ -535,8 +573,8 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIcons} "Icon files contributed by other NSIS developers"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLang} "Language files used to support multiple languages in an installer"
-	!insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
-	!insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPluginsS} "Source code for plugins"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribPluginsS} "Source code for plugins"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribnsExec} "Plugin that executes DOS based programs and hides the output"
@@ -545,6 +583,11 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribShowWin} "Plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribShowWinS} "Source code to plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2E} "Zip2Exe utility that converts zip files into an NSIS installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribZ2ES} "Source code to Zip2Exe utility that converts zip files into an NSIS installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIO} "Plugin that lets you add user interface components to an installer"
