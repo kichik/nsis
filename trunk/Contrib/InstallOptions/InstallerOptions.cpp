@@ -71,7 +71,7 @@ char *STRDUP(const char *c)
 // text box flags
 #define FLAG_PASSWORD      0x00000040
 #define FLAG_ONLYNUMBERS   0x00000080
-//#define FLAG_MULTILINE     0x00000100
+#define FLAG_MULTILINE     0x00000100
 
 // listbox flags
 #define FLAG_MULTISELECT   0x00000200
@@ -88,6 +88,11 @@ char *STRDUP(const char *c)
 #define FLAG_RESIZETOFIT   0x00008000
 
 // OFN_EXPLORER            0x00080000
+
+// more text box flags
+#define FLAG_WANTRETURN    0x00100000
+#define FLAG_VSCROLL       0x00200000
+#define FLAG_HSCROLL       0x00400000
 
 struct TableEntry {
   char *pszName;
@@ -310,9 +315,13 @@ bool SaveSettings(void) {
   char *pszBuffer = (char*)MALLOC(nBufLen);
   if (!pszBuffer) return false;
 
+  int CurrField = 1;
   for(nIdx = 0; nIdx < nNumFields; nIdx++) {
+    if ( pFields[nIdx].nType == FIELD_BROWSEBUTTON )
+      continue;
+
     hwnd = pFields[nIdx].hwnd;
-    wsprintf(szField, "Field %d", nIdx + 1);
+    wsprintf(szField, "Field %d", CurrField);
     switch(pFields[nIdx].nType) {
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
@@ -363,11 +372,40 @@ bool SaveSettings(void) {
             pszBuffer = (char*)MALLOC(nBufLen);
             if (!pszBuffer) return false;
           }
-          GetWindowText(hwnd, pszBuffer, nBufLen);
+          *pszBuffer='"';
+          GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
+          pszBuffer[nLength+1]='"';
+          pszBuffer[nLength+2]='\0';
+          if ( pFields[nIdx].nType == FIELD_TEXT && pFields[nIdx].nFlags & FLAG_MULTILINE )
+          {
+            char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
+            char *p1, *p2;
+            for (p1=pszBuffer,p2=pszBuf2; *p1; p1++, p2++) {
+              if (*p1 == '\r') {
+                  *p2++ = '\\';
+                  *p2 = 'r';
+              }
+              else if (*p1 == '\n') {
+                  *p2++ = '\\';
+                  *p2 = 'n';
+              }
+              else if (*p1 == '\t') {
+                  *p2++ = '\\';
+                  *p2 = 't';
+              }
+              else
+                  *p2=*p1;
+            }
+            *p2 = 0;
+            nBufLen = nBufLen*2;
+            FREE(pszBuffer);
+            pszBuffer=pszBuf2;
+          }
           break;
         }
     }
     WritePrivateProfileString(szField, "STATE", pszBuffer, pszFilename);
+    CurrField++;
   }
 
   FREE(pszBuffer);
@@ -389,8 +427,20 @@ void AddBrowseButtons() {
     switch (pFields[nIdx].nType) {
       case FIELD_FILEREQUEST:
       case FIELD_DIRREQUEST:
-        pNewField = &pFields[nNumFields];
-        // nNumFields functions as the index of the new control, increment at *end* of loop
+        // Insert button after edit, tabstop depends in creation order,
+        // with this trick browse button get tabstop after parent edit
+        if ( nIdx < nNumFields - 1 )
+        {
+          CopyMemory(&pFields[nIdx+2], &pFields[nIdx+1], (nNumFields-nIdx-1)*sizeof(FieldType) );
+          for ( int i = nIdx+2; i < nNumFields; i++ )
+          {
+            if ( pFields[i].nType == FIELD_BROWSEBUTTON )
+              pFields[i].nParentIdx++; // Ohh! where is your dady :)
+          }          
+        }
+        // After moving controls 1 position, don't forget to increment nNumFields at *end* of loop
+        pNewField = &pFields[nIdx+1];
+        ZeroMemory(pNewField, sizeof(FieldType)); // don't use settings from other control
         pNewField->nControlID = 1200 + nNumFields;
         pNewField->nParentIdx = nIdx;
         pNewField->nType = FIELD_BROWSEBUTTON;
@@ -398,7 +448,7 @@ void AddBrowseButtons() {
         //pNewField->pszListItems = NULL;
         //pNewField->nMaxLength = 0;
         //pNewField->nMinLength = 0;
-        pNewField->pszText = szBrowseButtonCaption; //STRDUP("...");
+        pNewField->pszText = STRDUP(szBrowseButtonCaption); // needed for generic FREE
         //pNewField->pszValidateText = NULL;
 
         pNewField->rect.right  = pFields[nIdx].rect.right;
@@ -491,7 +541,10 @@ bool ReadSettings(void) {
       { "DISABLED",          FLAG_DISABLED       },
       { "NOTABSTOP",         FLAG_NOTABSTOP      },
       { "ONLY_NUMBERS",      FLAG_ONLYNUMBERS    },
-      //{ "MULTILINE",         FLAG_MULTILINE      },
+      { "MULTILINE",         FLAG_MULTILINE      },
+      { "VSCROLL",           FLAG_VSCROLL        },
+      { "HSCROLL",           FLAG_HSCROLL        },
+      { "WANTRETURN",        FLAG_WANTRETURN     },      
       { NULL,                0                   }
     };
 
@@ -858,8 +911,17 @@ int createCfgDlg()
           dwStyle |= ES_PASSWORD;
         if (pFields[nIdx].nFlags & FLAG_ONLYNUMBERS)
           dwStyle |= ES_NUMBER;
-        /*if (pFields[nIdx].nFlags & FLAG_MULTILINE)
-          dwStyle |= ES_WANTRETURN | ES_MULTILINE;*/
+        if (pFields[nIdx].nFlags & FLAG_MULTILINE)
+        {
+          dwStyle |= ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
+          ConvertNewLines(pFields[nIdx].pszState);
+        }
+        if ( pFields[nIdx].nFlags & FLAG_WANTRETURN )
+          dwStyle |= ES_WANTRETURN;
+        if (pFields[nIdx].nFlags & FLAG_VSCROLL)
+          dwStyle |= WS_VSCROLL;
+        if (pFields[nIdx].nFlags & FLAG_HSCROLL)
+          dwStyle |= WS_HSCROLL;
         title = pFields[nIdx].pszState;
         break;
       case FIELD_COMBOBOX:
