@@ -1471,6 +1471,9 @@
   !ifdef MUI_ABORTWARNING
     Function .onUserAbort
       !insertmacro MUI_ABORTWARNING
+      !ifdef MUI_CUSTOMFUNCTION_ABORT
+        Call "${MUI_CUSTOMFUNCTION_ABORT}"
+      !endif
     FunctionEnd
   !endif
 
