@@ -6,7 +6,7 @@ NLF v6
 -
 -
 # Codepage - dash (-) means ANSI code page
--
+1255
 # RTL - anything else than RTL means LTR
 RTL
 # Translation by Amir Szekely (aka KiCHiK), fixed by Yaron Shahrabani
