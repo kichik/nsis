@@ -315,12 +315,12 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "R7\0"            // 18
   "R8\0"            // 19
   "R9\0"            // 20
-  "LANGUAGE\0"      // 21
-  "CMDLINE\0"       // 22 everything before here doesn't have trailing slash removal
+  "CMDLINE\0"       // 21 everything before here doesn't have trailing slash removal
 
-  "INSTDIR\0"       // 23
-  "OUTDIR\0"        // 24
-  "EXEDIR\0"        // 25
+  "INSTDIR\0"       // 22
+  "OUTDIR\0"        // 23
+  "EXEDIR\0"        // 24
+  "LANGUAGE\0"      // 25
   "PROGRAMFILES\0"  // 26
   "SMPROGRAMS\0"    // 27
   "SMSTARTUP\0"     // 28
