@@ -499,9 +499,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL);
+      if (!ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL))
 #endif
-      ShowWindow(hwndDlg,SW_SHOW);
+        ShowWindow(hwndDlg,SW_SHOW);
+      else g_quit_flag = 1;
     }
 
     this_page=g_inst_page+m_page;
