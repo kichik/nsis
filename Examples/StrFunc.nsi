@@ -117,6 +117,70 @@ ioerror:
 strlocerror:
   DetailPrint "FAILED StrLoc test"
 
+  # Test string replacement
+  ${StrRep} $0 "This is just an example" "an" "one"
+  StrCmp $0 "This is just one example" 0 strreperror
+  ${StrRep} $0 "test... test... 1 2 3..." "test" "testing"
+  StrCmp $0 "testing... testing... 1 2 3..." 0 strreperror
+  ${StrRep} $0 "" "test" "testing"
+  StrCmp $0 "" 0 strreperror
+  ${StrRep} $0 "test" "test" "testing"
+  StrCmp $0 "testing" 0 strreperror
+  ${StrRep} $0 "test" "test" ""
+  StrCmp $0 "" 0 strreperror
+  ${StrRep} $0 "test" "" "abc"
+  StrCmp $0 "test" 0 strreperror
+  ${StrRep} $0 "test" "" ""
+  StrCmp $0 "test" 0 strreperror
+  DetailPrint "PASSED StrRep test"
+  Goto +2
+strreperror:
+  DetailPrint "FAILED StrRep test"
+
+  # Test sorting
+  ${StrSort} $0 "This is just an example" "" " just" "ple" "0" "0" "0"
+  StrCmp $0 "This is an exam" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "j" " " "0" "" "0"
+  StrCmp $0 "just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "" "j" "" "0" "1" "0"
+  StrCmp $0 "This is just an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "us" "" "0" "1" "0"
+  StrCmp $0 "just an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "" "u" " " "0" "1" "0"
+  StrCmp $0 "This is just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "just" " " "0" "1" "0"
+  StrCmp $0 "just" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "t" " " "0" "1" "0"
+  StrCmp $0 "This" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "le" " " "0" "1" "0"
+  StrCmp $0 "example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "le" " " "1" "0" "0"
+  StrCmp $0 " examp" 0 strsorterror
+  ${StrSort} $0 "an error has occured" " " "e" " " "0" "1" "0"
+  StrCmp $0 "error" 0 strsorterror
+  ${StrSort} $0 "" " " "something" " " "0" "1" "0"
+  StrCmp $0 "" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "j" " " "" "" ""
+  StrCmp $0 " just " 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "j" " " "1" "0" "1"
+  StrCmp $0 " ust " 0 strsorterror
+  ${StrSort} $0 "This is just an example" "" "j" "" "0" "0" "1"
+  StrCmp $0 "This is ust an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "us" "" "1" "0" "0"
+  StrCmp $0 " jt an example" 0 strsorterror
+  ${StrSort} $0 "This is just an example" "" "u" " " "0" "0" "1"
+  StrCmp $0 "This is jst " 0 strsorterror
+  ${StrSort} $0 "This is just an example" " " "just" " " "1" "0" "1"
+  StrCmp $0 "  " 0 strsorterror
+  ${StrSort} $0 "an error has occured" " " "e" "h" "1" "0" "0"
+  StrCmp $0 " rror " 0 strsorterror
+  ${StrSort} $0 "" " " "something" " " "1" "0" "1"
+  StrCmp $0 "" 0 strsorterror
+  DetailPrint "PASSED StrSort test"
+  Goto +2
+strsorterror:
+  DetailPrint "FAILED StrSort test"
+
   ${StrStr} $0 "abcefghijklmnopqrstuvwxyz" "g"
   StrCmp $0 "ghijklmnopqrstuvwxyz" 0 strstrerror
   ${StrStr} $0 "abcefghijklmnopqrstuvwxyz" "ga"
@@ -150,7 +214,7 @@ strstrerror:
   StrCmp $0 "" 0 strstradverror
   ${StrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1" "0"
   StrCmp $0 "abc" 0 strstradverror
-  
+
   ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "0" "1"
   StrCmp $0 "abcabc" 0 strstradverror
   ${StrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "1" "1"
@@ -176,82 +240,18 @@ strstrerror:
 strstradverror:
   DetailPrint "FAILED StrStrAdv test"
 
-  # Test string replacement
-  ${StrRep} $0 "This is just an example" "an" "one"
-  StrCmp $0 "This is just one example" 0 strreperror
-  ${StrRep} $0 "test... test... 1 2 3..." "test" "testing"
-  StrCmp $0 "testing... testing... 1 2 3..." 0 strreperror
-  ${StrRep} $0 "" "test" "testing"
-  StrCmp $0 "" 0 strreperror
-  ${StrRep} $0 "test" "test" "testing"
-  StrCmp $0 "testing" 0 strreperror
-  ${StrRep} $0 "test" "test" ""
-  StrCmp $0 "" 0 strreperror
-  ${StrRep} $0 "test" "" "abc"
-  StrCmp $0 "test" 0 strreperror
-  ${StrRep} $0 "test" "" ""
-  StrCmp $0 "test" 0 strreperror
-  DetailPrint "PASSED StrRep test"
-  Goto +2
-strreperror:
-  DetailPrint "FAILED StrRep test"
-
-  # Test sorting
-  ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
-  StrCmp $0 "This is an exam" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "j" " " " " "0" "1"
-  StrCmp $0 "just" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "j" "" "" "0" "1"
-  StrCmp $0 "This is just an example" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "us" " " "" "0" "1"
-  StrCmp $0 "just an example" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "u" "" " " "0" "1"
-  StrCmp $0 "This is just" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "just" " " " " "0" "1"
-  StrCmp $0 "just" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "t" " " " " "0" "1"
-  StrCmp $0 "This" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "le" " " " " "0" "1"
-  StrCmp $0 "example" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "le" " " " " "1" "0"
-  StrCmp $0 " examp" 0 strsorterror
-  ${StrSort} $0 "an error has occured" "e" " " " " "0" "1"
-  StrCmp $0 "error" 0 strsorterror
-  ${StrSort} $0 "" "something" " " " " "0" "1"
-  StrCmp $0 "" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "j" " " " " "1" "1"
-  StrCmp $0 " just " 0 strsorterror
-  ${StrSort} $0 "This is just an example" "j" " " " " "1" "0"
-  StrCmp $0 " ust " 0 strsorterror
-  ${StrSort} $0 "This is just an example" "j" "" "" "1" "0"
-  StrCmp $0 "This is ust an example" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "us" " " "" "1" "0"
-  StrCmp $0 " jt an example" 0 strsorterror
-  ${StrSort} $0 "This is just an example" "u" "" " " "1" "0"
-  StrCmp $0 "This is jst " 0 strsorterror
-  ${StrSort} $0 "This is just an example" "just" " " " " "1" "0"
-  StrCmp $0 "  " 0 strsorterror
-  ${StrSort} $0 "an error has occured" "e" " " " " "1" "0"
-  StrCmp $0 " rror " 0 strsorterror
-  ${StrSort} $0 "" "something" " " " " "1" "0"
-  StrCmp $0 "" 0 strsorterror
-  DetailPrint "PASSED StrSort test"
-  Goto +2
-strsorterror:
-  DetailPrint "FAILED StrSort test"
-
   # Test tokenizer
-  ${StrTok} $0 "This is, or is not, just an example" " ," "5" "1"
+  ${StrTok} $0 "This is, or is not, just an example" " ," "4" "1"
   StrCmp $0 "not" 0 strtokerror
-  ${StrTok} $0 "This is, or is not, just an example" " ," "5" "0"
+  ${StrTok} $0 "This is, or is not, just an example" " ," "4" "0"
   StrCmp $0 "is" 0 strtokerror
   ${StrTok} $0 "This is, or is not, just an example" " ," "152" "0"
   StrCmp $0 "" 0 strtokerror
+  ${StrTok} $0 "This is, or is not, just an example" " ," "" "0"
+  StrCmp $0 "example" 0 strtokerror
+  ${StrTok} $0 "This is, or is not, just an example" " ," "L" "0"
+  StrCmp $0 "example" 0 strtokerror
   ${StrTok} $0 "This is, or is not, just an example" " ," "0" "0"
-  StrCmp $0 "example" 0 strtokerror
-  ${StrTok} $0 "This is, or is not, just an example" " ," "-1" "0"
-  StrCmp $0 "example" 0 strtokerror
-  ${StrTok} $0 "This is, or is not, just an example" " ," "1" "0"
   StrCmp $0 "This" 0 strtokerror
   DetailPrint "PASSED StrTok test"
   Goto +2
@@ -357,6 +357,70 @@ ioerror:
 strlocerror:
   DetailPrint "FAILED StrLoc test"
 
+  # Test string replacement
+  ${UnStrRep} $0 "This is just an example" "an" "one"
+  StrCmp $0 "This is just one example" 0 strreperror
+  ${UnStrRep} $0 "test... test... 1 2 3..." "test" "testing"
+  StrCmp $0 "testing... testing... 1 2 3..." 0 strreperror
+  ${UnStrRep} $0 "" "test" "testing"
+  StrCmp $0 "" 0 strreperror
+  ${UnStrRep} $0 "test" "test" "testing"
+  StrCmp $0 "testing" 0 strreperror
+  ${UnStrRep} $0 "test" "test" ""
+  StrCmp $0 "" 0 strreperror
+  ${UnStrRep} $0 "test" "" "abc"
+  StrCmp $0 "test" 0 strreperror
+  ${UnStrRep} $0 "test" "" ""
+  StrCmp $0 "test" 0 strreperror
+  DetailPrint "PASSED StrRep test"
+  Goto +2
+strreperror:
+  DetailPrint "FAILED StrRep test"
+
+  # Test sorting
+  ${UnStrSort} $0 "This is just an example" "" " just" "ple" "0" "0" "0"
+  StrCmp $0 "This is an exam" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "j" " " "0" "" "0"
+  StrCmp $0 "just" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" "" "j" "" "0" "1" "0"
+  StrCmp $0 "This is just an example" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "us" "" "0" "1" "0"
+  StrCmp $0 "just an example" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" "" "u" " " "0" "1" "0"
+  StrCmp $0 "This is just" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "just" " " "0" "1" "0"
+  StrCmp $0 "just" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "t" " " "0" "1" "0"
+  StrCmp $0 "This" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "le" " " "0" "1" "0"
+  StrCmp $0 "example" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "le" " " "1" "0" "0"
+  StrCmp $0 " examp" 0 strsorterror
+  ${UnStrSort} $0 "an error has occured" " " "e" " " "0" "1" "0"
+  StrCmp $0 "error" 0 strsorterror
+  ${UnStrSort} $0 "" " " "something" " " "0" "1" "0"
+  StrCmp $0 "" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "j" " " "" "" ""
+  StrCmp $0 " just " 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "j" " " "1" "0" "1"
+  StrCmp $0 " ust " 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" "" "j" "" "0" "0" "1"
+  StrCmp $0 "This is ust an example" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "us" "" "1" "0" "0"
+  StrCmp $0 " jt an example" 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" "" "u" " " "0" "0" "1"
+  StrCmp $0 "This is jst " 0 strsorterror
+  ${UnStrSort} $0 "This is just an example" " " "just" " " "1" "0" "1"
+  StrCmp $0 "  " 0 strsorterror
+  ${UnStrSort} $0 "an error has occured" " " "e" "h" "1" "0" "0"
+  StrCmp $0 " rror " 0 strsorterror
+  ${UnStrSort} $0 "" " " "something" " " "1" "0" "1"
+  StrCmp $0 "" 0 strsorterror
+  DetailPrint "PASSED StrSort test"
+  Goto +2
+strsorterror:
+  DetailPrint "FAILED StrSort test"
+
   ${UnStrStr} $0 "abcefghijklmnopqrstuvwxyz" "g"
   StrCmp $0 "ghijklmnopqrstuvwxyz" 0 strstrerror
   ${UnStrStr} $0 "abcefghijklmnopqrstuvwxyz" "ga"
@@ -390,7 +454,7 @@ strstrerror:
   StrCmp $0 "" 0 strstradverror
   ${UnStrStrAdv} $0 "abcabcabc" "abc" "<" ">" "0" "1" "0"
   StrCmp $0 "abc" 0 strstradverror
-  
+
   ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "0" "1"
   StrCmp $0 "abcabc" 0 strstradverror
   ${UnStrStrAdv} $0 "ABCabcabc" "a" ">" ">" "1" "1" "1"
@@ -416,82 +480,18 @@ strstrerror:
 strstradverror:
   DetailPrint "FAILED StrStrAdv test"
 
-  # Test string replacement
-  ${UnStrRep} $0 "This is just an example" "an" "one"
-  StrCmp $0 "This is just one example" 0 strreperror
-  ${UnStrRep} $0 "test... test... 1 2 3..." "test" "testing"
-  StrCmp $0 "testing... testing... 1 2 3..." 0 strreperror
-  ${UnStrRep} $0 "" "test" "testing"
-  StrCmp $0 "" 0 strreperror
-  ${UnStrRep} $0 "test" "test" "testing"
-  StrCmp $0 "testing" 0 strreperror
-  ${UnStrRep} $0 "test" "test" ""
-  StrCmp $0 "" 0 strreperror
-  ${UnStrRep} $0 "test" "" "abc"
-  StrCmp $0 "test" 0 strreperror
-  ${UnStrRep} $0 "test" "" ""
-  StrCmp $0 "test" 0 strreperror
-  DetailPrint "PASSED StrRep test"
-  Goto +2
-strreperror:
-  DetailPrint "FAILED StrRep test"
-
-  # Test sorting
-  ${UnStrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
-  StrCmp $0 "This is an exam" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "j" " " " " "0" "1"
-  StrCmp $0 "just" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "j" "" "" "0" "1"
-  StrCmp $0 "This is just an example" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "us" " " "" "0" "1"
-  StrCmp $0 "just an example" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "u" "" " " "0" "1"
-  StrCmp $0 "This is just" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "just" " " " " "0" "1"
-  StrCmp $0 "just" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "t" " " " " "0" "1"
-  StrCmp $0 "This" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "le" " " " " "0" "1"
-  StrCmp $0 "example" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "le" " " " " "1" "0"
-  StrCmp $0 " examp" 0 strsorterror
-  ${UnStrSort} $0 "an error has occured" "e" " " " " "0" "1"
-  StrCmp $0 "error" 0 strsorterror
-  ${UnStrSort} $0 "" "something" " " " " "0" "1"
-  StrCmp $0 "" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "j" " " " " "1" "1"
-  StrCmp $0 " just " 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "j" " " " " "1" "0"
-  StrCmp $0 " ust " 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "j" "" "" "1" "0"
-  StrCmp $0 "This is ust an example" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "us" " " "" "1" "0"
-  StrCmp $0 " jt an example" 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "u" "" " " "1" "0"
-  StrCmp $0 "This is jst " 0 strsorterror
-  ${UnStrSort} $0 "This is just an example" "just" " " " " "1" "0"
-  StrCmp $0 "  " 0 strsorterror
-  ${UnStrSort} $0 "an error has occured" "e" " " " " "1" "0"
-  StrCmp $0 " rror " 0 strsorterror
-  ${UnStrSort} $0 "" "something" " " " " "1" "0"
-  StrCmp $0 "" 0 strsorterror
-  DetailPrint "PASSED StrSort test"
-  Goto +2
-strsorterror:
-  DetailPrint "FAILED StrSort test"
-
   # Test tokenizer
-  ${UnStrTok} $0 "This is, or is not, just an example" " ," "5" "1"
+  ${UnStrTok} $0 "This is, or is not, just an example" " ," "4" "1"
   StrCmp $0 "not" 0 strtokerror
-  ${UnStrTok} $0 "This is, or is not, just an example" " ," "5" "0"
+  ${UnStrTok} $0 "This is, or is not, just an example" " ," "4" "0"
   StrCmp $0 "is" 0 strtokerror
   ${UnStrTok} $0 "This is, or is not, just an example" " ," "152" "0"
   StrCmp $0 "" 0 strtokerror
+  ${UnStrTok} $0 "This is, or is not, just an example" " ," "" "0"
+  StrCmp $0 "example" 0 strtokerror
+  ${UnStrTok} $0 "This is, or is not, just an example" " ," "L" "0"
+  StrCmp $0 "example" 0 strtokerror
   ${UnStrTok} $0 "This is, or is not, just an example" " ," "0" "0"
-  StrCmp $0 "example" 0 strtokerror
-  ${UnStrTok} $0 "This is, or is not, just an example" " ," "-1" "0"
-  StrCmp $0 "example" 0 strtokerror
-  ${UnStrTok} $0 "This is, or is not, just an example" " ," "1" "0"
   StrCmp $0 "This" 0 strtokerror
   DetailPrint "PASSED StrTok test"
   Goto +2
