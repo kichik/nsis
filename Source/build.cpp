@@ -195,7 +195,9 @@ CEXEBuild::CEXEBuild()
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 
   // Added by Amir Szekely 31st July 2002
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   compressor = &zlib_compressor;
+#endif
   build_compressor_set = false;
 #ifdef NSIS_ZLIB_COMPRESS_WHOLE
   build_compress_whole = true;
@@ -869,11 +871,13 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
   {
     if (resolve_jump_int(fn,&w->offsets[0],offs,start,end)) return 1;
   }
+#ifdef NSIS_SUPPORT_MESSAGEBOX
   else if (w->which == EW_MESSAGEBOX)
   {
     if (resolve_jump_int(fn,&w->offsets[3],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[4],offs,start,end)) return 1;
   }
+#endif
   else if (w->which == EW_IFFILEEXISTS)
   {
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
@@ -884,27 +888,35 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
     if (resolve_jump_int(fn,&w->offsets[0],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
   }
+#ifdef NSIS_SUPPORT_REBOOT
   else if (w->which == EW_IFREBOOTFLAG)
   {
     if (resolve_jump_int(fn,&w->offsets[0],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
   }
+#endif
+#ifdef NSIS_SUPPORT_STROPTS
   else if (w->which == EW_STRCMP)
   {
     if (resolve_jump_int(fn,&w->offsets[2],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[3],offs,start,end)) return 1;
   }
+#endif
+#ifdef NSIS_SUPPORT_INTOPTS
   else if (w->which == EW_INTCMP || w->which == EW_INTCMPU)
   {
     if (resolve_jump_int(fn,&w->offsets[2],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[3],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[4],offs,start,end)) return 1;
   }
+#endif
+#ifdef NSIS_SUPPORT_HWNDS
   else if (w->which == EW_ISWINDOW)
   {
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[2],offs,start,end)) return 1;
   }
+#endif
   else if (w->which == EW_CALL)
   {
     if (w->offsets[0] >= 0 && w->offsets[1]) // get as jump
@@ -921,6 +933,7 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
       w->offsets[0]++;
     }
   }
+#ifdef NSIS_SUPPORT_STROPTS
   else if (w->which == EW_GETFUNCTIONADDR)
   {
     char buf[32];
@@ -944,6 +957,7 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
     wsprintf(buf,"%d",w->offsets[1]);
     w->offsets[1]=add_string(buf);
   }
+#endif
   return 0;
 }
 
@@ -1339,6 +1353,8 @@ int CEXEBuild::write_output(void)
 
   int installinfo_compressed;
   int fd_start;
+
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole)
   {
     if ((compressor->Init(9)) != C_OK)
@@ -1347,6 +1363,8 @@ int CEXEBuild::write_output(void)
       return PS_ERROR;
     }
   }
+#endif
+
   {
     GrowBuf ihd;
     {
@@ -1375,6 +1393,7 @@ int CEXEBuild::write_output(void)
       return PS_ERROR;
     }
 
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     if (build_compress_whole) {
       if (deflateToFile(fp,(char*)ihd.get(),ihd.getlen()))
       {
@@ -1382,7 +1401,9 @@ int CEXEBuild::write_output(void)
         return PS_ERROR;
       }
     }
-    else {
+    else 
+#endif
+    {
       if (fwrite(ihd.get(),1,ihd.getlen(),fp) != (unsigned int)ihd.getlen())
       {
         ERROR_MSG("Error: can't write %d bytes to output\n",ihd.getlen());
@@ -1487,6 +1508,7 @@ int CEXEBuild::write_output(void)
     {
       int l=dbl;
       if (l > 32768) l=32768;
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
       if (build_compress_whole) {
         if (deflateToFile(fp,dbptr,l))
         {
@@ -1494,7 +1516,9 @@ int CEXEBuild::write_output(void)
           return PS_ERROR;
         }
       }
-      else {
+      else 
+#endif
+      {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         crc=CRC32(crc,(unsigned char *)dbptr,l);
 #endif
@@ -1509,13 +1533,17 @@ int CEXEBuild::write_output(void)
       dbl-=l;
     }
   }
-  if (build_compress_whole) {
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+  if (build_compress_whole) 
+  {
     if (deflateToFile(fp,NULL,0))
     {
       fclose(fp);
       return PS_ERROR;
     }
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     compressor->End();
+#endif
 
     fh.length_of_all_following_data=(ftell(fp)-fd_start)+(build_crcchk?sizeof(int):0);
     INFO_MSG("%10d / %d bytes\n",(ftell(fp)-fd_start),build_datablock.getlen());
@@ -1539,6 +1567,7 @@ int CEXEBuild::write_output(void)
 #endif
     fseek(fp,0,SEEK_END); // reset eof flag
   }
+#endif
 
   if (build_crcchk)
   {
@@ -1562,6 +1591,7 @@ int CEXEBuild::write_output(void)
   return PS_OK;
 }
 
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
 {
   // Changed by Amir Szekely 31st July 2002
@@ -1599,6 +1629,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
   }
   return 0;
 }
+#endif
 
 int CEXEBuild::uninstall_generate()
 {

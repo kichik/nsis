@@ -686,6 +686,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_ISWINDOW:
         if (IsWindow((HWND)process_string_fromtab_toint(parm0))) return parm1;
     return parm2;
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case EW_GETDLGITEM:
       myitoa(
         var,
@@ -698,7 +699,43 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_SETWINDOWLONG:
       SetWindowLong((HWND)process_string_fromtab_toint(parm0),parm1,process_string_fromtab_toint(parm2));
     return 0;
-#endif
+    case EW_SETBRANDINGIMAGE:
+    {
+      RECT r;
+      HWND hwImage = GetDlgItem(g_hwnd, parm1);
+      GetWindowRect(hwImage, &r);
+      process_string_fromtab(buf, parm0);
+      if (g_hBrandingBitmap) DeleteObject(g_hBrandingBitmap);
+      g_hBrandingBitmap=LoadImage(
+        0,
+        buf,
+        IMAGE_BITMAP,
+        parm2?r.right-r.left:0,
+        parm2?r.bottom-r.top:0,
+        LR_LOADFROMFILE
+      );
+      SendMessage(
+        hwImage,
+        STM_SETIMAGE,
+        IMAGE_BITMAP,
+        (LPARAM)g_hBrandingBitmap
+      );
+    }
+    return 0;
+    case EW_CREATEFONT:
+    {
+      LOGFONT f={0,};
+      f.lfHeight=-MulDiv(process_string_fromtab_toint(parm2),GetDeviceCaps(GetDC(g_hwnd),LOGPIXELSY),72);
+      f.lfWeight=process_string_fromtab_toint(parm3);
+      f.lfItalic=parm4&1;
+      f.lfUnderline=parm4&2;
+      f.lfStrikeOut=parm4&4;
+      process_string_fromtab(f.lfFaceName,parm1);
+      myitoa(var,(int)CreateFontIndirect(&f));
+    }
+    return 0;
+#endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#endif//NSIS_SUPPORT_HWNDS
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
     case EW_SHELLEXEC: // this uses improvements of Andras Varga
       {
@@ -1387,51 +1424,14 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
       }
     return 0;
 #endif//NSIS_CONFIG_COMPONENTPAGE
-// Added by Amir Szekely 21st 2002
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-    case EW_SETBRANDINGIMAGE:
-    {
-      RECT r;
-      HWND hwImage = GetDlgItem(g_hwnd, parm1);
-      GetWindowRect(hwImage, &r);
-      process_string_fromtab(buf, parm0);
-      if (g_hBrandingBitmap) DeleteObject(g_hBrandingBitmap);
-      g_hBrandingBitmap=LoadImage(
-        0,
-        buf,
-        IMAGE_BITMAP,
-        parm2?r.right-r.left:0,
-        parm2?r.bottom-r.top:0,
-        LR_LOADFROMFILE
-      );
-      SendMessage(
-        hwImage,
-        STM_SETIMAGE,
-        IMAGE_BITMAP,
-        (LPARAM)g_hBrandingBitmap
-      );
-    }
-    return 0;
-#endif //NSIS_CONFIG_VISIBLE_SUPPORT
-// Added by Ximon Eighteen 5th August 2002
+
+    // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     case EW_PLUGINCOMMANDPREP:
       // $0 temp plug-ins dir
       if (!*plugins_temp_dir) mystrcpy(plugins_temp_dir,g_usrvars[0]);
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
-    case EW_CREATEFONT:
-    {
-      LOGFONT f={0,};
-      f.lfHeight=-MulDiv(process_string_fromtab_toint(parm2),GetDeviceCaps(GetDC(g_hwnd),LOGPIXELSY),72);
-      f.lfWeight=process_string_fromtab_toint(parm3);
-      f.lfItalic=parm4&1;
-      f.lfUnderline=parm4&2;
-      f.lfStrikeOut=parm4&4;
-      process_string_fromtab(f.lfFaceName,parm1);
-      myitoa(var,(int)CreateFontIndirect(&f));
-    }
-    return 0;
   }
   my_MessageBox(STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;
