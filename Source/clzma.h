@@ -45,6 +45,7 @@ public:
     hCompressionThread = NULL;
     compressor_finished = FALSE;
     finish = FALSE;
+    ct_locked = TRUE;
     End();
     InitializeCriticalSection(&cs);
   }
@@ -102,6 +103,22 @@ public:
 
   int End()
   {
+    if (!compressor_finished && !ct_locked)
+    {
+      // kill compression thread
+      avail_in = 0;
+      avail_out = 0;
+      finish = TRUE;
+      LeaveCriticalSection(&cs);
+      while (!ct_locked)
+        Sleep(0);
+      nt_locked = FALSE;
+      EnterCriticalSection(&cs);
+      while (ct_locked)
+        Sleep(0);
+      nt_locked = TRUE;
+      LeaveCriticalSection(&cs);
+    }
     if (hCompressionThread)
     {
       CloseHandle(hCompressionThread);
@@ -167,17 +184,18 @@ public:
         return -1;
     }
 
+    finish = flush;
+
     if (!hCompressionThread)
     {
       DWORD dwThreadId;
-      finish = flush;
+
       hCompressionThread = CreateThread(0, 0, lzmaCompressThread, (LPVOID) this, 0, &dwThreadId);
       if (!hCompressionThread)
         return -2;
     }
     else
     {
-      finish = flush;
       LeaveCriticalSection(&cs);
     }
 
@@ -189,14 +207,14 @@ public:
     EnterCriticalSection(&cs);
     nt_locked = TRUE;
 
+    while (ct_locked)
+      Sleep(0);
+
     if (compressor_finished)
     {
       LeaveCriticalSection(&cs);
       return res;
     }
-
-    while (ct_locked)
-      Sleep(0);
 
     return C_OK;
   }
