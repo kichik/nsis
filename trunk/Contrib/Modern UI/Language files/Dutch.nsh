@@ -70,7 +70,7 @@
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Kies de onderdelen die u wilt verwijderen."
   
   !define MUI_UNTEXT_DIRECTORY_TITLE "Kies De-installatie Locatie"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Kies de map waaruit u $(^NameDA) in wilt verwijderen."
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Kies de map waaruit u $(^NameDA) wilt verwijderen."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Bezig met verwijderen"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Een ogenblik geduld a.u.b. terwijl $(^NameDA) van uw systeem wordt verwijderd."
@@ -82,7 +82,7 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "$(^NameDA) is niet volledig verwijderd van uw systeem."
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Voltooien van de $(^NameDA) De-installatie Wizard"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zijn verwijderd van uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) is verwijderd van uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Uw systeem moet worden opnieuw opgestart om de de-installatie van $(^NameDA) te voltooien. Wilt u nu herstarten?"
   
   !define MUI_UNTEXT_ABORTWARNING "Weet u zeker dat u $(^Name) De-installatie wilt afsluiten?"
