@@ -402,8 +402,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      g_quit_flag = ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL);
+      if (!(g_quit_flag = ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL)))
 #endif
+        ShowWindow(hwndDlg,SW_SHOW);
     }
 
     this_page=g_inst_page+m_page;
