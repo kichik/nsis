@@ -16,7 +16,7 @@ Released on February 4th, 2005
 
 \b \R{sectionsetflags}{SectionSetFlags}, when used on a section group, toggles its children too
 
-\b \R{sectionsettext}{SectionSetText} works better with variables (parses immediately and treats an empty variable is an empty string)
+\b \R{sectionsettext}{SectionSetText} works better with variables (parses immediately and treats an empty variable as an empty string)
 
 \b \R{ssetcurinsttype}{SetCurInstType} works without the components page
 
@@ -28,7 +28,7 @@ Released on February 4th, 2005
 
 \b Documentation fixes and enhancements (including \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1098454&group_id=22049&atid=373087}{patch #1098454})
 
-\b Fixed case insensitive name comparison with \R{file}{File} /x, when not using wildcards
+\b Fixed case sensitive name comparison with \R{file}{File} /x, when not using wildcards
 
 \b Fixed extraction status ending prior to 100%
 
