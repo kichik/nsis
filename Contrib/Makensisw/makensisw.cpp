@@ -133,7 +133,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				CloseHandle(g_hThread);
 				g_hThread=0;
 			}
-			if (g_retcode==0) SetTitle(g_hwnd,"Finished Sucessfully");
+			if (g_retcode==0) {
+				Beep(500,250);
+				SetTitle(g_hwnd,"Finished Sucessfully");
+			}
 			else SetTitle(g_hwnd,"Compile Error: See Log for Details");
 			EnableItems(g_hwnd);
 			return TRUE;
