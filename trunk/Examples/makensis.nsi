@@ -1265,7 +1265,7 @@ Function PageReinstall
 
   new_version:
 
-   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A older version of NSIS is installed on your system. It's recommanded that you uninstall the curent version before installing. Select the operation you want to perform and click Next to continue."
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A older version of NSIS is installed on your system. It's recommanded that you uninstall the current version before installing. Select the operation you want to perform and click Next to continue."
    !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
    !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
    !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
