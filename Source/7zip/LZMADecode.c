@@ -6,7 +6,8 @@ LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
 Converted to a state machine by Amir Szekely
 */
 
-#include "LzmaDecode.h"
+#include <stdlib.h>
+#include "LZMADecode.h"
 
 #define LEAVE { goto saveStateAndReturn; }
 #define NEED_BYTE(c) case c: if (!avail_in) { mode = c; LEAVE; }

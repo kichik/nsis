@@ -85,7 +85,7 @@ typedef struct
   Byte *next_out;   /* next output byte should be put there */
   UInt32 avail_out; /* remaining free space at next_out */
 
-  UInt32 totalOut;  /* total output */
+  UInt32 totalOut;  /* total output - not always correct when lzmaDecode returns */
 
   /* saved state */
   Byte previousByte;
