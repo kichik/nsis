@@ -39,14 +39,13 @@
 #define LOCALDOCS    "\\NSIS.chm"
 #define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
 #define DLGERROR     "Unable to intialize MakeNSISW."
-#define DEFINESERROR "Symbol cannot contain whitespace characters"
+#define SYMBOLSERROR "Symbol cannot contain whitespace characters"
 #define NSISUPDATEPROMPT "Running NSIS Update will close MakeNSISW.\nContinue?"
 #define REGSEC       HKEY_LOCAL_MACHINE
 #define REGKEY       "Software\\NSIS"
 #define REGLOC       "MakeNSISWPlacement"
 #define REGCOMPRESSOR "MakeNSISWCompressor"
-#define REGDEFSUBKEY "Defines"
-#define REGDEFCOUNT  "MakeNSISWDefinesCount"
+#define REGSYMSUBKEY "Symbols"
 #define REGMRUSUBKEY "MRU"
 #define EXENAME      "makensis.exe"
 #define MAX_STRING   256
@@ -61,8 +60,15 @@
 #define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created the smallest installer which was restored."
 #define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
 #define TOTAL_SIZE_COMPRESSOR_STAT "Total size:"
+#define SYMBOL_SET_NAME_MAXLEN 40
+#define LOAD_SYMBOL_SET_DLG_NAME "Load Symbol Definitions Set"
+#define SAVE_SYMBOL_SET_DLG_NAME "Save Symbol Definitions Set"
+#define LOAD_SYMBOL_SET_MESSAGE "Please select a name for the Symbol Definitions Set to load."
+#define SAVE_SYMBOL_SET_MESSAGE "Please enter a name for the Symbol Definitions Set to save."
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
+#define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
+#define WM_MAKENSIS_SAVESYMBOLSET (WM_USER+1003)
 
 enum {
   MAKENSIS_NOTIFY_SCRIPT,
@@ -120,12 +126,16 @@ BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK  AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK  SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           CompileNSISScript();
-char*          BuildDefines();
+char*          BuildSymbols();
 void           SetCompressor(NCOMPRESSOR);
-void           RestoreDefines();
-void           SaveDefines();
+void           RestoreSymbols();
+void           SaveSymbols();
+void           DeleteSymbolSet(char *);
+char**         LoadSymbolSet(char *);
+void           SaveSymbolSet(char *, char **);
 void           RestoreMRUList();
 void           SaveMRUList();
 
@@ -136,7 +146,7 @@ typedef struct NSISScriptData {
   char *input_script;
   char *branding;
   char *brandingv;
-  char **defines;
+  char **symbols;
   int retcode;
   DWORD logLength;
   DWORD warnings;
