@@ -54,7 +54,7 @@ Rename source_file to dest_file. Functions just like the Win32 API MoveFile, whi
 
 \c [/r] directory
 
-Remove the directory (which should be a full path). If /r is specified, it will recursively remove the directory. The error flag is set if the directory exists and cannot be removed.
+Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the dictory will be removed recursively, so all directories and files in the specified directory will be removed. The error flag is set if the directory cannot be removed.
 
 \H{setoutpath} SetOutPath
 
