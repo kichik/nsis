@@ -226,6 +226,7 @@ static char _outbuffer[OBUFSIZE];
 extern int m_length;
 extern int m_pos;
 extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
+extern BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
   HWND hwnd=NULL;
@@ -259,7 +260,7 @@ static int NSISCALL __ensuredata(int amount)
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }
-            else if (g_hwnd && GetTickCount() > verify_time)
+            else if (GetWindowLong(g_hwnd,GWL_WNDPROC) != (long)DialogProc && GetTickCount() > verify_time)
               hwnd=CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
