@@ -489,95 +489,96 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       fldrs[2] = in[1]; // all users
       fldrs[3] = in[1] | CSIDL_FLAG_CREATE;
       in += 2;
+
+      if (nVarIdx == NS_SHELL_CODE)
+      {
+        // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
+        // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
+        // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
+        LPITEMIDLIST idl;
+        char *append = 0;
+
+        int x = 0;
+
+        *out = 0;
+
+        if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
+        {
+          append = "\\Microsoft\\Internet Explorer\\Quick Launch";
+          x = 2;
+        }
+        if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
+        {
+          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
+        }
+        if (fldrs[0] == CSIDL_PROGRAM_FILES)
+        {
+          myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
+          if (!*out)
+            mystrcpy(out, "C:\\Program Files");
+        }
+        if (fldrs[0] == CSIDL_SYSTEM)
+        {
+          GetSystemDirectory(out, NSIS_MAX_STRLEN);
+        }
+        if (fldrs[0] == CSIDL_WINDOWS)
+        {
+          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+        }
+
+        if (!*out)
+        {
+          x = 4;
+          if (!g_exec_flags.all_user_var)
+            x = 2;
+        }
+
+        while (x--)
+        {
+          if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
+          {
+            BOOL res = SHGetPathFromIDList(idl, out);
+            FreePIDL(idl);
+            if (res)
+            {
+              break;
+            }
+          }
+          else
+            *out=0;
+        }
+
+        if (*out && append)
+        {
+          lstrcat(out, append);
+        }
+
+        validate_filename(out);
+        out += mystrlen(out);
+      }
+      else if (nVarIdx == NS_VAR_CODE)
+      {
+        if (nData == 27) // HWNDPARENT
+          myitoa(out, (unsigned int) g_hwnd);
+        else
+          mystrcpy(out, g_usrvars[nData]);
+        // validate the directory name
+        if ((unsigned int)(nData - 21) < 6) {
+          // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP and $PLUGINSDIR
+          // $LANGUAGE is just a number anyway...
+          validate_filename(out);
+        }
+        out += mystrlen(out);
+      } // == VAR_CODES_START
+      else if (nVarIdx == NS_LANG_CODE)
+      {
+        GetNSISString(out, -nData-1);
+        out += mystrlen(out);
+      }
     }
-    if (nVarIdx == NS_SKIP_CODE)
+    else if (nVarIdx == NS_SKIP_CODE)
     {
       *out++ = *in++;
-    }
-    else if (nVarIdx == NS_SHELL_CODE)
-    {
-      // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
-      // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
-      // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
-      LPITEMIDLIST idl;
-      char *append = 0;
-
-      int x = 0;
-
-      *out = 0;
-
-      if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
-      {
-        append = "\\Microsoft\\Internet Explorer\\Quick Launch";
-        x = 2;
-      }
-      if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
-      {
-        myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
-      }
-      if (fldrs[0] == CSIDL_PROGRAM_FILES)
-      {
-        myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
-        if (!*out)
-          mystrcpy(out, "C:\\Program Files");
-      }
-      if (fldrs[0] == CSIDL_SYSTEM)
-      {
-        GetSystemDirectory(out, NSIS_MAX_STRLEN);
-      }
-      if (fldrs[0] == CSIDL_WINDOWS)
-      {
-        GetWindowsDirectory(out, NSIS_MAX_STRLEN);
-      }
-
-      if (!*out)
-      {
-        x = 4;
-        if (!g_exec_flags.all_user_var)
-          x = 2;
-      }
-
-      while (x--)
-      {
-        if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
-        {
-          BOOL res = SHGetPathFromIDList(idl, out);
-          FreePIDL(idl);
-          if (res)
-          {
-            break;
-          }
-        }
-        else
-          *out=0;
-      }
-
-      if (*out && append)
-      {
-        lstrcat(out, append);
-      }
-
-      validate_filename(out);
-      out += mystrlen(out);
-    }
-    else if (nVarIdx == NS_VAR_CODE)
-    {
-      if (nData == 27) // HWNDPARENT
-        myitoa(out, (unsigned int) g_hwnd);
-      else
-        mystrcpy(out, g_usrvars[nData]);
-      // validate the directory name
-      if ((unsigned int)(nData - 21) < 6) {
-        // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP and $PLUGINSDIR
-        // $LANGUAGE is just a number anyway...
-        validate_filename(out);
-      }
-      out += mystrlen(out);
-    } // == VAR_CODES_START
-    else if (nVarIdx == NS_LANG_CODE)
-    {
-      GetNSISString(out, -nData-1);
-      out += mystrlen(out);
     }
     else // Normal char
     {
