@@ -69,17 +69,17 @@ $(^Name) 解除安裝
 # ^Completed
 已完成
 # ^LicenseText
-在安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
 # ^LicenseTextCB
-在安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
 # ^LicenseTextRB
-在安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
+在安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
 # ^UnLicenseText
-在解除安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下 [我同意(I)] 。
 # ^UnLicenseTextCB
-在解除安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，按一下下方的勾選框。 $_CLICK
 # ^UnLicenseTextRB
-在解除安裝 $(^Name) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
+在解除安裝 $(^NameDA) 之前請檢閱授權協議。如果你接受協議中所有條款，選擇下方的第一個選項。 $_CLICK
 # ^Custom
 自訂
 # ^ComponentsText
@@ -99,23 +99,23 @@ $(^Name) 解除安裝
 # ^UnComponentsSubText2
 或是，選擇想要解除安裝的可選項元件: 
 # ^DirText
-Setup 將安裝 $(^Name) 在下列資料夾。要安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
+Setup 將安裝 $(^NameDA) 在下列資料夾。要安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
 # ^DirSubText
 目標資料夾
 # ^DirBrowseText
-選擇要安裝 $(^Name) 的資料夾位置: 
+選擇要安裝 $(^NameDA) 的資料夾位置: 
 # ^UnDirText
-Setup 將解除安裝 $(^Name) 在下列資料夾。要解除安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
+Setup 將解除安裝 $(^NameDA) 在下列資料夾。要解除安裝到不同資料夾，按一下 [瀏覽(B)] 並選擇其他的資料夾。 $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-選擇要解除安裝 $(^Name) 的資料夾位置: 
+選擇要解除安裝 $(^NameDA) 的資料夾位置: 
 # ^SpaceAvailable
 "可用空間: "
 # ^SpaceRequired
 "所需空間: "
 # ^UninstallingText
-這個精靈將從你的電腦解除安裝 $(^Name) 。 $_CLICK
+這個精靈將從你的電腦解除安裝 $(^NameDA) 。 $_CLICK
 # ^UninstallingSubText
 解除安裝目錄: 
 # ^FileError
