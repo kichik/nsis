@@ -1059,7 +1059,7 @@ int createCfgDlg()
     GetWindowText(hMainWindow,old_title,sizeof(old_title));
     SetWindowText(hMainWindow,pszTitle);
   }
-  popstring(NULL);
+  *g_stacktop = (*g_stacktop)->next;
   char tmp[32];
   wsprintf(tmp,"%d",hConfigWindow);
   pushstring(tmp);
@@ -1103,6 +1103,7 @@ void showCfgDlg()
 
   if (cw_vis) ShowWindow(childwnd,SW_SHOWNA);
 
+  FREE(pszFilename);
   FREE(pszTitle);
   FREE(pszCancelButtonText);
   FREE(pszNextButtonText);
