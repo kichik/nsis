@@ -161,7 +161,7 @@ typedef void *langid_t; // Just so compiler can warn if an ID is given to a
 #define LANGID_CREATEDUNINST          (COMMON_ID(created_uninst))
 #define LANG_INSTCORRUPTED            (COMMON_STR(inst_corrupted))
 #define LANGID_INSTCORRUPTED          (COMMON_ID(inst_corrupted))
-#define LANG_COPYDEATAILS             (COMMON_STR(copy_details))
-#define LANGID_COPYDEATAILS           (COMMON_ID(copy_details))
+#define LANG_COPYDETAILS              (COMMON_STR(copy_details))
+#define LANGID_COPYDETAILS            (COMMON_ID(copy_details))
 
 #endif//_NSIS_LANG_H_
