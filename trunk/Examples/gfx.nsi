@@ -1,7 +1,7 @@
 ; gfx.nsi
 ;
 ; This script shows some examples of using all of the new
-; graphic related additions made in NSIS 1.99
+; graphic related additions introduced in NSIS 2
 ;
 ; Written by Amir Szkeley 22nd July 2002
 ;
@@ -22,7 +22,10 @@ OutFile "gfx.exe"
 ; Adds an XP manifest to the installer
 XPStyle on
 
-; Add branding image to the installer (an image on the side)
+; Add branding image to the installer (an image placeholder on the side).
+; It is not enough to just add the placeholder, we must set the image too...
+; We will later set the image in every pre-page function.
+; We can also set just one persistent image in .onGUIInit
 AddBrandingImage left 100
 
 ; Sets the font of the installer
