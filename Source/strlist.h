@@ -527,13 +527,16 @@ class MMapFile : public IMMap
 #ifdef _WIN32
       if (m_hFileMap)
         CloseHandle(m_hFileMap);
-      if (m_bTempHandle && m_hFile)
+      if (m_bTempHandle && m_hFile != INVALID_HANDLE_VALUE)
         CloseHandle(m_hFile);
 
+      m_hFile = INVALID_HANDLE_VALUE;
       m_hFileMap = 0;
 #else
       if (m_bTempHandle && m_hFile)
         fclose(m_hFile);
+
+      m_hFile = NULL;
 #endif
     }
 
