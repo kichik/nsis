@@ -5,34 +5,19 @@
 #include <stdio.h>
 #include "halibut.h"
 
-static char *helptext[] = {
-  "FIXME: help text goes here",
-  NULL
-};
-
 static char *usagetext[] = {
-  "FIXME: usage text goes here",
-  NULL
+    "halibut.exe file1 [file2 ...]",
+    NULL
 };
 
-void
-help (void)
+void usage(void)
 {
-  char **p;
-  for (p = helptext; *p; p++)
-    puts (*p);
+    char **p;
+    for (p = usagetext; *p; p++)
+	puts(*p);
 }
 
-void
-usage (void)
+void showversion(void)
 {
-  char **p;
-  for (p = usagetext; *p; p++)
-    puts (*p);
-}
-
-void
-showversion (void)
-{
-  printf ("Halibut, %s\n", version);
+    printf("Halibut, %s\n", version);
 }
