@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1027
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by falanko
 Nullsoft Install System %s
 Instal·lació de %s

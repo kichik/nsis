@@ -154,13 +154,15 @@ class CEXEBuild {
     int GetUserString(char *name);
     int SetUserString(char *name, LANGID lang, char *string, int process=1);
     int WriteStringTables();
-    void FillDefaultsIfNeeded(StringTable *table, NLF *nlf=0);
+    void FillStringTable(StringTable *table, NLF *nlf=0);
     #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->s):0)
     bool _IsNotSet(int *str); // Checks if a string is not set in all of the string tables
     #define IsSet(s,lang) _IsSet(string_tables.size()?&(string_tables[0]->s):0,lang)
     bool _IsSet(int *str, LANGID lang); // Checks if a string is set in a given string table
 
-    bool next_used, install_used, comppage_used, license_force_radio_used;
+    unsigned int uDefCodePage;
+
+    bool next_used, install_used, comppage_used, license_force_radio_used, register_used, unregister_used;
 
     // a whole bunch O data.
 
@@ -205,21 +207,21 @@ class CEXEBuild {
         db_comp_save_u, db_full_size_u;
     int build_sections_req,build_sections_div;
 
-    StringList include_dirs;
+    FastStringList include_dirs;
 
     StringList ns_func; // function namespace
     StringList ns_label; // label namespace
 
     int build_cursection_isfunc;
     section *build_cursection;
-    GrowBuf build_sections;
+    TinyGrowBuf build_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
-    GrowBuf build_functions, ubuild_functions, *cur_functions;
-    GrowBuf build_labels, ubuild_labels, *cur_labels;
+    TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
+    TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
     StringList build_strlist, ubuild_strlist;
     GrowBuf build_langtables, ubuild_langtables;
     LangStringList build_userlangstrings, ubuild_userlangstrings;
-    GrowBuf build_pages, ubuild_pages;
+    TinyGrowBuf build_pages, ubuild_pages;
 
     char build_last_page_define[1024], ubuild_last_page_define[1024];
     int build_custom_used, ubuild_custom_used;

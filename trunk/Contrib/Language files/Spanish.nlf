@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1034
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by MoNKi
 Nullsoft Install System %s
 Instalación de %s

@@ -2,6 +2,11 @@
 NLF v2
 # Language ID
 1026
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Asparouh Kalyandjiev <acnapyx@computers.bg>
 Nullsoft инсталатор %s
 %s Инсталиране

@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1058
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Yuri Holubow, Our Soft <http://www.Nash-Soft.com/home>
 Nullsoft Install System %s
 %s Установка

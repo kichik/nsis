@@ -1,7 +1,13 @@
 # Header, don't edit
-NLF v3
+NLF v4
+# Start editing here
 # Language ID
 1033
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by ..... (any credits should go here)
 Nullsoft Install System %s
 %s Setup
@@ -39,6 +45,8 @@ Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r
 Can't write: 
 Copy failed
 Copy to 
+Registering: 
+Unregistering: 
 Could not find symbol: 
 Could not load: 
 Create folder: 
@@ -62,3 +70,12 @@ Rename on reboot:
 Rename: 
 Skipped: 
 Copy Details To Clipboard
+Log install process
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G

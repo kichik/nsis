@@ -1,7 +1,12 @@
 # Turkish NSIS Language File
-NLF v2
+NLF v3
 # Language ID
 1055
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Bertan Kodamanoglu (astoichen@soultrap.com)
 Nullsoft Install System %s
 %s Kurulumu

@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1037
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Amir Szekely (aka KiCHiK)
 Nullsoft Install System %s
 התקנת %s

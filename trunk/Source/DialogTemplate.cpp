@@ -36,7 +36,7 @@ inline DWORD WCStrLen(WCHAR* szwStr) {
 }
 
 // Reads a variany length array from seeker into readInto and advances seeker
-void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
+void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
 	WORD* arr = (WORD*)seeker;
 	switch (arr[0]) {
 	case 0x0000:
@@ -49,9 +49,9 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 		break;
 	default:
 		{
-			int iStrLen = WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
+			int iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
 			readInto = new char[iStrLen];
-			WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
+			WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
 			seeker += WCStrLen((WCHAR*)arr)*sizeof(WCHAR);
 		}
 		break;
@@ -68,7 +68,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 			seeker += sizeof(WORD); \
 		} \
 		else { \
-			int us = MultiByteToWideChar(CP_ACP, 0, x, -1, (WCHAR*)seeker, dwSize); \
+			int us = MultiByteToWideChar(m_uCodePage, 0, x, -1, (WCHAR*)seeker, dwSize); \
 			seeker += us*sizeof(WCHAR); \
 		} \
 	else \
@@ -81,7 +81,9 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CDialogTemplate::CDialogTemplate(BYTE* pbData) {
+CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
+  m_uCodePage = uCodePage;
+
 	m_szClass = 0;
 	m_szFont = 0;
 	m_szMenu = 0;
@@ -121,11 +123,11 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData) {
 	BYTE* seeker = pbData + (m_bExtended ? sizeof(DLGTEMPLATEEX) : sizeof(DLGTEMPLATE));
 
 	// Read menu variant length array
-	ReadVarLenArr(seeker, m_szMenu);
+	ReadVarLenArr(seeker, m_szMenu, m_uCodePage);
 	// Read class variant length array
-	ReadVarLenArr(seeker, m_szClass);
+	ReadVarLenArr(seeker, m_szClass, m_uCodePage);
 	// Read title variant length array
-	ReadVarLenArr(seeker, m_szTitle);
+	ReadVarLenArr(seeker, m_szTitle, m_uCodePage);
 	// Read font size and variant length array (only if style DS_SETFONT is used!)
 	if (m_dwStyle & DS_SETFONT) {
 		m_sFontSize = *(short*)seeker;
@@ -138,7 +140,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData) {
       m_bCharset = *(BYTE*)seeker;
       seeker += sizeof(BYTE);
 		}
-		ReadVarLenArr(seeker, m_szFont);
+		ReadVarLenArr(seeker, m_szFont, m_uCodePage);
 	}
 
   // Read items
@@ -179,9 +181,9 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData) {
 		}
 
 		// Read class variant length array
-		ReadVarLenArr(seeker, item->szClass);
+		ReadVarLenArr(seeker, item->szClass, m_uCodePage);
 		// Read title variant length array
-		ReadVarLenArr(seeker, item->szTitle);
+		ReadVarLenArr(seeker, item->szTitle, m_uCodePage);
 
 		// Read creation data variant length array
 		// First read the size of the array (no null termination)

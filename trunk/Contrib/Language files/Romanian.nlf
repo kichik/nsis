@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1048
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2  Updated by Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v0.3
 # v0.4 - small grammar corrections
 Nullsoft Install System %s
