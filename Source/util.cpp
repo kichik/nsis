@@ -360,7 +360,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     DWORD dwOffset = *(DWORD*)seeker;
     seeker += sizeof(DWORD);
     // offset isn't set which means we found no match for this one
-    MY_ASSERT(!dwOffset, "number of icons doesn't match");
+    MY_ASSERT(!dwOffset, "installer, uninstaller number of icons doesn't match - see the Icon instruction's documentation for more information");
     seeker += dwSize;
   }
 
