@@ -115,7 +115,7 @@ Seleccioni la carpeta des de la que desinstal·lar $(^Name):
 # ^SpaceRequired
 "Espai necessari: "
 # ^UninstallingText
-Aquest assistent desinstal·larà $(^Name) del seu ordinador. $_CLICK
+$(^Name) serà desinstal·lat de la següent carpeta. $_CLICK
 # ^UninstallingSubTex
 Desinstal·lant de:
 # ^FileError
