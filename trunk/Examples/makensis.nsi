@@ -152,15 +152,21 @@ Section "NSI Development Shell Extensions" SecExtention
   WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /X"SetCompressor bzip2" "%1"'
 SectionEnd
 
+!ifndef NO_STARTMENUSHORTCUTS
 Section "Start Menu + Desktop Shortcuts" SecIcons
+!else
+Section "Desktop Shortcut" SecIcons
+!endif
   SectionIn 1 2 3
   SetOutPath $INSTDIR
+!ifndef NO_STARTMENUSHORTCUTS
   CreateDirectory $SMPROGRAMS\NSIS
 
   CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS GUI.lnk" "$INSTDIR\Makensisw.exe" ""
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
+!endif
   
   CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" ""
 SectionEnd
@@ -541,6 +547,8 @@ Section -post
   WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "NSIS Development Kit (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
+
+!ifndef NO_STARTMENUSHORTCUTS
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
 
     IfFileExists $INSTDIR\Examples 0 +2
@@ -648,18 +656,18 @@ Section -post
   Push "Source\System project workspace"
   Call AddContribToStartMenu
 
-  ; done
-
-  ; will only be removed if empty
-  SetDetailsPrint none
-  RMDir $INSTDIR\Contrib\Source
-  SetDetailsPrint lastused
-
   ; open sesame
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
     BringToFront
   nofunshit:
+!endif
+  
+  ; will only be removed if empty
+  SetDetailsPrint none
+  RMDir $INSTDIR\Contrib\Source
+  SetDetailsPrint lastused
+
   Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
@@ -753,6 +761,7 @@ Function .onSelChange
   done:
 FunctionEnd
 
+!ifndef NO_STARTMENUSHORTCUTS
 Function AddContribToStartMenu
   Pop $0 ; link
   Pop $1 ; file
@@ -781,6 +790,7 @@ Function AddReadmeToStartMenu
     Call AddContribToStartMenu
   done:
 FunctionEnd
+!endif
 
 ;--------------------------------
 ;Uninstaller Section
