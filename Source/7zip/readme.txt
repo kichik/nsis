@@ -1,7 +1,7 @@
-LZMA library for NSIS 
----------------------
+Modified LZMA library for NSIS
+------------------------------
 
-    Copyright (c) 1999-2003 Igor Pavlov 
+    Copyright (c) 1999-2003 Igor Pavlov
 
     All files in this folder and it's subfolders are 
     licensed under GNU LGPL.
@@ -9,6 +9,9 @@ LZMA library for NSIS
     of 7-Zip compression program:
 
     http://www.7-zip.org
+
+    Some of the files were modified and are not a
+    exact replica of the original files.
     
     LZMA is default and general compression method of 7z format in 7-Zip. 
     The main features of LZMA method:
