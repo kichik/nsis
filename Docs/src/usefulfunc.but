@@ -385,7 +385,7 @@
 \c   Exch $R0
 \c  FunctionEnd
 
-\H{connectinternet} Connect to the internet
+\H{connectinternet} Connect to the Internet
 
 \c  ; ConnectInternet (uses Dialer plugin)
 \c  ; Written by Joost Verburg 
