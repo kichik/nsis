@@ -1,7 +1,7 @@
 /*********************************************************************************
  *
- *  InstallerOptions by Michael Bishop:
- *  InstallerOptions/DLL Version 1.2 beta
+ *  Original version by Michael Bishop:
+ *  InstallerOptions/DLL version 2.0
  *
  *  highly modified by justin frankel to go in as dll, subclass, be sexy, and whatnot.
  *
@@ -45,6 +45,12 @@
  *   - Added Icon and Bitmap controls (by Amir Szekely 4th September 2002)
  *
  *   - Added initDialog and show for support with NSIS's new CreateFont and SetStaticBkColor
+ *
+ *   Version 2.0 - Changes by Joost Verburg
+ *
+ *   - Works with custom font and DPI settings
+ *
+ *   - INI files should contain dialog units now, no pixels
  *
  *  Copyright (C) 2001 Michael Bishop
  *  Portions Copyright (C) 2001 Nullsoft, Inc.
@@ -806,8 +812,22 @@ int createCfgDlg()
     return 1;
   }
 
-  // by ORTIM: 14-August-2002
-  DWORD dwBaseUnits = GetDialogBaseUnits();
+  // By Joost Verburg 14th December 2002
+  // Works with custom font & DPI settings
+  // INI files should contain dialog units now
+
+  HDC memDC = CreateCompatibleDC(GetDC(hConfigWindow));
+  SelectObject(memDC, hFont);
+
+  TEXTMETRIC tm;
+  GetTextMetrics(memDC, &tm);
+  int baseUnitY = tm.tmHeight;
+      
+  SIZE size;
+  GetTextExtentPoint32(memDC,"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &size);
+  int baseUnitX = (size.cx / 26 + 1) / 2;
+
+  DeleteDC(memDC);
 
 #define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
 
@@ -860,21 +880,18 @@ int createCfgDlg()
     DWORD dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
     DWORD dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwExStyle;
 
-    // by ORTIM: 14-August-2002
-    //  transform the pixel sizes of the widget with dialog units
-    //  used example code from MS SDK
-
-    // Changed by Dave Laundon 9th September 2002
-    //  Scale to pixels /before/ adjusting for negative positions
-    //  NB - scaling /could/ turn a -1 into 0, so use the original rect for the -ve tests
-    //  NB - original rect used later on too
+    // By Joost Verburg 14th December 2002
+    // Works with custom font & DPI settings
+    // INI files should contain dialog units now
 
     RECT rect;
-    rect.left = (pFields[nIdx].rect.left * LOWORD(dwBaseUnits)) / 8;
-    rect.right = (pFields[nIdx].rect.right * LOWORD(dwBaseUnits)) / 8;
-    rect.top = (pFields[nIdx].rect.top * HIWORD(dwBaseUnits)) / 16;
-    rect.bottom = (pFields[nIdx].rect.bottom * HIWORD(dwBaseUnits)) / 16;
-    if (pFields[nIdx].rect.left < 0)
+
+    rect.left = MulDiv(pFields[nIdx].rect.left, baseUnitX, 4);
+    rect.right = MulDiv(pFields[nIdx].rect.right, baseUnitX, 4);
+    rect.top = MulDiv(pFields[nIdx].rect.top, baseUnitY, 8);
+    rect.bottom = MulDiv(pFields[nIdx].rect.bottom, baseUnitY, 8);
+
+	if (pFields[nIdx].rect.left < 0)
       rect.left += dialog_r.right - dialog_r.left;
     if (pFields[nIdx].rect.right < 0)
       rect.right += dialog_r.right - dialog_r.left;
