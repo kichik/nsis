@@ -11,15 +11,15 @@
 !echo "NSIS Modern User Interface version 1.67 - © 2002-2003 Joost Verburg"
 
 ;--------------------------------
-;DECLARES
 
-!ifndef MUI_MANUALVERBOSE
-  !verbose 3
-!endif
+!verbose 3
 
 !ifndef MUI_INCLUDED
 
 !define MUI_INCLUDED
+
+;--------------------------------
+;HEADER FILES, DECLARATIONS
 
 !include "WinMessages.nsh"
 
@@ -27,9 +27,37 @@ Var MUI_TEMP1
 Var MUI_TEMP2
 
 ;--------------------------------
-;INTERFACE
+;INSERT CODE
+
+!macro MUI_INSERT
+  
+  !ifdef MUI_PRODUCT | MUI_VERSION
+    !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
+  !endif
+  
+  !ifndef MUI_INSERT_INTERFACE
+    !insertmacro MUI_INTERFACE
+    !define MUI_INSERT_INTERFACE
+  !endif
+  
+  !insertmacro MUI_FUNCTION_GUIINIT
+  !insertmacro MUI_FUNCTION_ABORTWARNING
+  
+  !ifdef MUI_UNINSTALLER
+    !insertmacro MUI_UNFUNCTION_GUIINIT
+    !insertmacro MUI_FUNCTION_UNABORTWARNING
+  !endif
+  
+!macroend
+
+;--------------------------------
+;INTERFACE - COMPILE TIME SETTINGS
 
 !macro MUI_INTERFACE
+  
+  !ifdef MUI_INSERT_NSISCONF
+    !insertmacro MUI_NSISCONF
+  !endif
   
   !ifndef MUI_UI
     !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
@@ -107,6 +135,14 @@ Var MUI_TEMP2
     !ifndef MUI_HEADERIMAGE_BITMAP
       !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
     !endif
+    !ifndef MUI_HEADERIMAGE_UNBITMAP
+      !define MUI_HEADERIMAGE_UNBITMAP "${MUI_HEADERIMAGE_BITMAP}"
+      !ifdef MUI_HEADERIMAGE_NOSTRETCH
+        !ifndef MUI_HEADERIMAGE_UNNOSTRETCH
+          !define MUI_HEADERIMAGE_UNNOSTRETCH
+        !endif
+      !endif
+    !endif
   !endif
 
   XPStyle On
@@ -134,6 +170,9 @@ Var MUI_TEMP2
   InstProgressFlags ${MUI_INSTFILESPAGE_PROGRESSBAR}
   
 !macroend
+
+;--------------------------------
+;INTERFACE - RUN-TIME
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
@@ -288,8 +327,8 @@ Var MUI_TEMP2
 
 !macro MUI_GUIINIT
   
-  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-  !insertmacro MUI_HEADERIMAGE_INIT
+  !insertmacro MUI_WELCOMEFINISHPAGE_INIT ""
+  !insertmacro MUI_HEADERIMAGE_INIT ""
 
   !insertmacro MUI_GUIINIT_BASIC
   
@@ -297,10 +336,10 @@ Var MUI_TEMP2
 
 !macro MUI_UNGUIINIT
 
-  !insertmacro MUI_UNWELCOMEFINISHPAGE_INIT
-  !insertmacro MUI_HEADERIMAGE_INIT
+  !insertmacro MUI_WELCOMEFINISHPAGE_INIT "UN"
+  !insertmacro MUI_HEADERIMAGE_INIT "UN"
 
-  !insertmacro MUI_UNGUIINIT_BASIC
+  !insertmacro MUI_GUIINIT_BASIC
   
   !ifndef MUI_UNFINISHPAGE_NOAUTOCLOSE
     SetAutoClose true
@@ -332,44 +371,20 @@ Var MUI_TEMP2
 
 !macroend
 
-!macro MUI_UNGUIINIT_BASIC
+!macro MUI_WELCOMEFINISHPAGE_INIT UNINSTALLER
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  CreateFont $MUI_TEMP2 "$(MUI_FONT)" "$(MUI_FONTSIZE)" "700"
-  SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1034
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-  
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
-  SetCtlColors $MUI_TEMP1 /BRANDING
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
-  SetCtlColors $MUI_TEMP1 /BRANDING
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:$(^Branding) "
-
-!macroend
-
-!macro MUI_WELCOMEFINISHPAGE_INIT
-
-  !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
+  !ifdef MUI_${UNINSTALLER}WELCOMEPAGE | MUI_${UNINSTALLER}FINISHPAGE
   
     !ifndef MUI_WELCOMEFINISHPAGE_3LINES
-      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_WELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_${UNINSTALLER}WELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
     !else
-      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_WELCOMEFINISHPAGE_INI_3LINES}" "ioSpecial.ini"
+      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_${UNINSTALLER}WELCOMEFINISHPAGE_INI_3LINES}" "ioSpecial.ini"
     !endif
-    File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_WELCOMEFINISHPAGE_BITMAP}"
+    File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_${UNINSTALLER}WELCOMEFINISHPAGE_BITMAP}"
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
     
-    !ifdef MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
+    !ifdef MUI_${UNINSTALLER}WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Flags" ""
     !endif
     
@@ -377,53 +392,155 @@ Var MUI_TEMP2
 
 !macroend
 
-!macro MUI_UNWELCOMEFINISHPAGE_INIT
-
-  !ifdef MUI_UNWELCOMEPAGE | UNMUI_FINISHPAGE
-
-    !ifndef MUI_UNWELCOMEFINISHPAGE_3LINES
-      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_UNWELCOMEFINISHPAGE_INI}" "ioSpecial.ini"
-    !else
-      !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_UNWELCOMEFINISHPAGE_INI_3LINES}" "ioSpecial.ini"
-    !endif
-    File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_UNWELCOMEFINISHPAGE_BITMAP}"
-    
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
-    
-    !ifdef MUI_UNWELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Flags" ""
-    !endif
-    
-  !endif
-
-!macroend
-
-
-!macro MUI_HEADERIMAGE_INIT
+!macro MUI_HEADERIMAGE_INIT UNINSTALLER
 
   !ifdef MUI_HEADERIMAGE
+  
     InitPluginsDir
-    File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_BITMAP}"
-    !ifndef MUI_HEADERIMAGE_NOSTRETCH
+    File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UNINSTALLER}BITMAP}"
+    
+    !ifndef MUI_HEADERIMAGE_${UNINSTALLER}NOSTRETCH
       SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
     !else
       SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
     !endif
+    
   !endif
 
 !macroend
 
-!macro MUI_LANGUAGE LANGUAGE
+;--------------------------------
+;INTERFACE - FUNCTIONS
+
+!macro MUI_FUNCTION_GUIINIT
+
+  Function .onGUIInit
+     
+    !insertmacro MUI_GUIINIT
+    
+    !ifdef MUI_CUSTOMFUNCTION_GUIINIT
+      Call "${MUI_CUSTOMFUNCTION_GUIINIT}"
+    !endif
+
+  FunctionEnd
+
+!macroend
+
+!macro MUI_FUNCTION_DESCRIPTION_BEGIN
 
   !verbose push
   !verbose 3
   
-  !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
+  !ifndef MUI_VAR_TEXT
+    Var MUI_TEXT
+    !define MUI_VAR_TEXT
+  !endif
+
+  Function .onMouseOverSection
+    !insertmacro MUI_DESCRIPTION_BEGIN
   
   !verbose pop
   
 !macroend
 
+!macro MUI_FUNCTION_DESCRIPTION_END
+
+  !verbose push
+  !verbose 3
+
+    !insertmacro MUI_DESCRIPTION_END
+  FunctionEnd
+
+  !verbose pop
+  
+!macroend
+
+!macro MUI_UNFUNCTION_DESCRIPTION_BEGIN
+
+  !verbose push
+  !verbose 3
+
+  Function un.onMouseOverSection
+    !insertmacro MUI_DESCRIPTION_BEGIN
+  
+  !verbose pop
+  
+!macroend
+
+!macro MUI_UNFUNCTION_DESCRIPTION_END
+
+  !verbose push
+  !verbose 3
+
+    !insertmacro MUI_DESCRIPTION_END
+  FunctionEnd
+
+  !verbose pop
+  
+!macroend
+
+!macro MUI_FUNCTION_ABORTWARNING
+
+  Function .onUserAbort
+    !ifdef MUI_ABORTWARNING
+      !insertmacro MUI_ABORTWARNING
+    !endif
+    !ifdef MUI_CUSTOMFUNCTION_ABORT
+      Call "${MUI_CUSTOMFUNCTION_ABORT}"
+    !endif
+  FunctionEnd
+
+!macroend
+
+!macro MUI_FUNCTION_UNABORTWARNING
+
+  Function un.onUserAbort
+    !ifdef MUI_UNABORTWARNING
+      !insertmacro MUI_UNABORTWARNING
+    !endif
+    !ifdef MUI_CUSTOMFUNCTION_UNABORT
+      Call "${MUI_CUSTOMFUNCTION_UNABORT}"
+    !endif
+  FunctionEnd
+
+!macroend
+
+!macro MUI_UNFUNCTION_GUIINIT
+  
+  Function un.onGUIInit
+  
+  !insertmacro MUI_UNGUIINIT
+  
+  !ifdef MUI_CUSTOMFUNCTION_UNGUIINIT
+    Call "${MUI_CUSTOMFUNCTION_UNGUIINIT}"
+  !endif
+  
+  FunctionEnd
+
+!macroend
+
+!macro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+
+  ;1.65 compatibility
+
+  !warning "Modern UI macro name has changed. Please change MUI_FUNCTIONS_DESCRIPTION_BEGIN to MUI_FUNCTION_DESCRIPTION_BEGIN."
+
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  
+!macroend
+
+!macro MUI_FUNCTIONS_DESCRIPTION_END
+
+  ;1.65 compatibility
+
+  !warning "Modern UI macro name has changed. Please change MUI_FUNCTIONS_DESCRIPTION_END to MUI_FUNCTION_DESCRIPTION_END."
+
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+  
+!macroend
+
+;--------------------------------
+;START MENU FOLDER
 
 !macro MUI_STARTMENU_GETFOLDER VAR
 
@@ -483,89 +600,8 @@ Var MUI_TEMP2
 
 !macroend
 
-!macro MUI_LANGDLL_DISPLAY
-
-  !verbose push
-  !verbose 3
-
-  !ifdef NSIS_CONFIG_SILENT_SUPPORT
-    IfSilent mui.langdll_done
-  !endif
-
-  !ifndef MUI_LANGDLL_WINDOWTITLE
-    !define MUI_LANGDLL_WINDOWTITLE "Installer Language"
-  !endif
-
-  !ifndef MUI_LANGDLL_INFO
-    !define MUI_LANGDLL_INFO "Please select a language."
-  !endif
-  
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    
-    ReadRegStr $MUI_TEMP1 "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
-    StrCmp $MUI_TEMP1 "" mui.langdll_show
-      StrCpy $LANGUAGE $MUI_TEMP1
-      !ifndef MUI_LANGDLL_ALWAYSSHOW
-        Goto mui.langdll_done
-      !endif
-    mui.langdll_show:
-  
-  !endif
-  
-  LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_PUSHLIST} ""
-
-  Pop $LANGUAGE
-  StrCmp $LANGUAGE "cancel" 0 +2
-    Abort
-  
-  !ifdef NSIS_CONFIG_SILENT_SUPPORT
-    mui.langdll_done:
-  !else ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    mui.langdll_done:
-  !endif
-    
-  !verbose pop
-    
-!macroend
-
-!macro MUI_LANGDLL_SAVELANGUAGE
-
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
-  !endif
-  
-!macroend
-
-!macro MUI_UNGETLANGUAGE
-
-  !verbose pop
-
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-  
-    ReadRegStr $MUI_TEMP1 "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
-    StrCmp $MUI_TEMP1 "" 0 mui.ungetlanguage_setlang
-  
-  !endif
-    
-  !insertmacro MUI_LANGDLL_DISPLAY
-      
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-  
-    Goto mui.ungetlanguage_done
-   
-    mui.ungetlanguage_setlang:
-      StrCpy $LANGUAGE $MUI_TEMP1
-        
-    mui.ungetlanguage_done:
-
-  !endif
-  
-  !verbose pop
-
-!macroend
-
 ;--------------------------------
-;PAGE COMMANDS
+;PAGES
 
 !macro MUI_PAGE_INIT
 
@@ -967,141 +1003,15 @@ Var MUI_TEMP2
 !macroend
 
 ;--------------------------------
-;INSTALL OPTIONS
+;PAGE FUNCTIONS
 
-!macro MUI_INSTALLOPTIONS_EXTRACT FILE
-
-  !verbose push
-  !verbose 3
-
-  InitPluginsDir
-
-  File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
-  
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "$(^RTL)"
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
-
-  !verbose push
-  !verbose 3
-
-  InitPluginsDir
-
-  File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
-  
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
-  
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_DISPLAY FILE
-
-  !verbose push
-  !verbose 3
-  
-  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
-  Pop $MUI_TEMP1
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
-
-  !verbose push
-  !verbose 3
-  
-  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_INITDIALOG FILE
-
-  !verbose push
-  !verbose 3
-  
-  InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_SHOW
-
-  !verbose push
-  !verbose 3
-
-  InstallOptions::show
-  Pop $MUI_TEMP1
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_SHOW_RETURN
-
-  !verbose push
-  !verbose 3
-  
-  InstallOptions::show
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
-
-  !verbose push
-  !verbose 3
-
-  ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
-
-  !verbose pop
-
-!macroend
-
-!macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
-
-  !verbose push
-  !verbose 3
-
-  WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
-
-  !verbose pop
-
-!macroend
-
-;--------------------------------
-;FUNCTIONS
-
-!macro MUI_FUNCTION_CUSTOM TYPE
+!macro MUI_PAGE_FUNCTION_CUSTOM TYPE
 
   !ifdef MUI_PAGE_CUSTOMFUNCTION_${TYPE}
     Call "${MUI_PAGE_CUSTOMFUNCTION_${TYPE}}"
     !undef MUI_PAGE_CUSTOMFUNCTION_${TYPE}
   !endif
   
-!macroend
-
-!macro MUI_FUNCTION_GUIINIT
-
-  Function .onGUIInit
-     
-    !insertmacro MUI_GUIINIT
-    
-    !ifdef MUI_CUSTOMFUNCTION_GUIINIT
-      Call "${MUI_CUSTOMFUNCTION_GUIINIT}"
-    !endif
-
-  FunctionEnd
-
 !macroend
 
 !macro MUI_FUNCTION_WELCOMEPAGE PRE LEAVE
@@ -1130,7 +1040,7 @@ Var MUI_TEMP2
       !undef MUI_WELCOMEPAGE_TEXT
     !endif
 
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
@@ -1166,7 +1076,7 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
   
     !insertmacro MUI_INSTALLOPTIONS_SHOW
      
@@ -1192,7 +1102,7 @@ Var MUI_TEMP2
   
   Function "${LEAVE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
   
   FunctionEnd
   
@@ -1202,7 +1112,7 @@ Var MUI_TEMP2
 
   Function "${PRE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_LICENSE_TITLE) $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_LICENSE_SUBTITLE)
     
   FunctionEnd
@@ -1215,13 +1125,13 @@ Var MUI_TEMP2
       !insertmacro MUI_INNERDIALOG_TEXT 1040 "${MUI_LICENSEPAGE_TEXT_TOP}"
       !undef MUI_LICENSEPAGE_TEXT_TOP
     !endif
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
     
   FunctionEnd
   
   Function "${LEAVE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
     
   FunctionEnd
 
@@ -1235,7 +1145,7 @@ Var MUI_TEMP2
   !endif
 
   Function "${PRE}"
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_COMPONENTS_TITLE) $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_COMPONENTS_SUBTITLE)
   FunctionEnd
 
@@ -1260,13 +1170,13 @@ Var MUI_TEMP2
       !insertmacro MUI_INNERDIALOG_TEXT 1043 "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)"
       StrCpy $MUI_TEXT "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)"
     !endif
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
    
   FunctionEnd
 
   Function "${LEAVE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
     
   FunctionEnd
     
@@ -1275,16 +1185,16 @@ Var MUI_TEMP2
 !macro MUI_FUNCTION_DIRECTORYPAGE PRE SHOW LEAVE
 
   Function "${PRE}"
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_DIRECTORY_TITLE) $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_DIRECTORY_SUBTITLE)
   FunctionEnd
 
   Function "${SHOW}"
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
   FunctionEnd
   
   Function "${LEAVE}"
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
   FunctionEnd
 
 !macroend
@@ -1302,7 +1212,7 @@ Var MUI_TEMP2
   
   Function "${PRE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
 
      !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
 
@@ -1361,7 +1271,7 @@ Var MUI_TEMP2
 
   Function "${LEAVE}"
 
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
 
   FunctionEnd
 
@@ -1371,20 +1281,20 @@ Var MUI_TEMP2
 
   Function "${PRE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_${MUI_PAGE_UNINSTALLER}INSTALLING_TITLE) $(MUI_${MUI_PAGE_UNINSTALLER}TEXT_${MUI_PAGE_UNINSTALLER}INSTALLING_SUBTITLE)
     
   FunctionEnd
 
   Function "${SHOW}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
     
   FunctionEnd
 
   Function "${LEAVE}"
     
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
       
     !insertmacro MUI_FINISHHEADER
     !insertmacro MUI_LANGDLL_SAVELANGUAGE
@@ -1625,7 +1535,7 @@ Var MUI_TEMP2
        mui.finish_load:
     !endif
       
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
@@ -1688,7 +1598,7 @@ Var MUI_TEMP2
       mui.finish_show:
     !endif
 
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
     
     !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
       StrCpy $MUI_NOABORTWARNING "1"
@@ -1722,7 +1632,7 @@ Var MUI_TEMP2
   
   Function "${LEAVE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
     
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
@@ -1816,115 +1726,115 @@ Var MUI_TEMP2
   
 !macroend
 
-!macro MUI_FUNCTION_DESCRIPTION_BEGIN
+;--------------------------------
+;INSTALL OPTIONS (CUSTOM PAGES)
 
-  !verbose push
-  !verbose 3
-  
-  !ifndef MUI_VAR_TEXT
-    Var MUI_TEXT
-    !define MUI_VAR_TEXT
-  !endif
-
-  Function .onMouseOverSection
-    !insertmacro MUI_DESCRIPTION_BEGIN
-  
-  !verbose pop
-  
-!macroend
-
-!macro MUI_FUNCTION_DESCRIPTION_END
+!macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
   !verbose push
   !verbose 3
 
-    !insertmacro MUI_DESCRIPTION_END
-  FunctionEnd
+  InitPluginsDir
+
+  File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
+  
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "$(^RTL)"
 
   !verbose pop
-  
+
 !macroend
 
-!macro MUI_FUNCTIONS_DESCRIPTION_BEGIN
-
-  ;1.65 compatibility
-
-  !warning "Modern UI macro name has changed. Please change MUI_FUNCTIONS_DESCRIPTION_BEGIN to MUI_FUNCTION_DESCRIPTION_BEGIN."
-
-  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  
-!macroend
-
-!macro MUI_FUNCTIONS_DESCRIPTION_END
-
-  ;1.65 compatibility
-
-  !warning "Modern UI macro name has changed. Please change MUI_FUNCTIONS_DESCRIPTION_END to MUI_FUNCTION_DESCRIPTION_END."
-
-  !insertmacro MUI_FUNCTION_DESCRIPTION_END
-  
-!macroend
-
-!macro MUI_UNFUNCTION_DESCRIPTION_BEGIN
+!macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
 
   !verbose push
   !verbose 3
 
-  Function un.onMouseOverSection
-    !insertmacro MUI_DESCRIPTION_BEGIN
+  InitPluginsDir
+
+  File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
+  
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
   
   !verbose pop
-  
+
 !macroend
 
-!macro MUI_UNFUNCTION_DESCRIPTION_END
+!macro MUI_INSTALLOPTIONS_DISPLAY FILE
+
+  !verbose push
+  !verbose 3
+  
+  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
+  Pop $MUI_TEMP1
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
+
+  !verbose push
+  !verbose 3
+  
+  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_INITDIALOG FILE
+
+  !verbose push
+  !verbose 3
+  
+  InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_SHOW
 
   !verbose push
   !verbose 3
 
-    !insertmacro MUI_DESCRIPTION_END
-  FunctionEnd
+  InstallOptions::show
+  Pop $MUI_TEMP1
 
   !verbose pop
-  
-!macroend
-
-!macro MUI_FUNCTION_ABORTWARNING
-
-  Function .onUserAbort
-    !ifdef MUI_ABORTWARNING
-      !insertmacro MUI_ABORTWARNING
-    !endif
-    !ifdef MUI_CUSTOMFUNCTION_ABORT
-      Call "${MUI_CUSTOMFUNCTION_ABORT}"
-    !endif
-  FunctionEnd
 
 !macroend
 
-!macro MUI_FUNCTION_UNABORTWARNING
+!macro MUI_INSTALLOPTIONS_SHOW_RETURN
 
-  Function un.onUserAbort
-    !ifdef MUI_UNABORTWARNING
-      !insertmacro MUI_UNABORTWARNING
-    !endif
-    !ifdef MUI_CUSTOMFUNCTION_UNABORT
-      Call "${MUI_CUSTOMFUNCTION_UNABORT}"
-    !endif
-  FunctionEnd
+  !verbose push
+  !verbose 3
+  
+  InstallOptions::show
+
+  !verbose pop
 
 !macroend
-!macro MUI_UNFUNCTION_GUIINIT
-  
-  Function un.onGUIInit
-  
-  !insertmacro MUI_UNGUIINIT
-  
-  !ifdef MUI_CUSTOMFUNCTION_UNGUIINIT
-    Call "${MUI_CUSTOMFUNCTION_UNGUIINIT}"
-  !endif
-  
-  FunctionEnd
+
+!macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
+
+  !verbose push
+  !verbose 3
+
+  ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
+
+  !verbose pop
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
+
+  !verbose push
+  !verbose 3
+
+  WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
+
+  !verbose pop
 
 !macroend
 
@@ -1932,20 +1842,20 @@ Var MUI_TEMP2
 
   Function "${PRE}"
   
-   !insertmacro MUI_FUNCTION_CUSTOM PRE
+   !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
    !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_CONFIRM_TITLE) $(MUI_UNTEXT_CONFIRM_SUBTITLE)
   
   FunctionEnd
   
   Function "${SHOW}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM SHOW
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM SHOW
   
   FunctionEnd
   
   Function "${LEAVE}"
   
-    !insertmacro MUI_FUNCTION_CUSTOM LEAVE
+    !insertmacro MUI_PAGE_FUNCTION_CUSTOM LEAVE
     
   FunctionEnd
   
@@ -1977,31 +1887,101 @@ Var MUI_TEMP2
 !macroend
 
 ;--------------------------------
-;INSERT ALL CODE
+;LANGUAGES
 
-!macro MUI_INSERT
+!macro MUI_LANGUAGE LANGUAGE
+
+  !verbose push
+  !verbose 3
   
-  !ifdef MUI_INSERT_NSISCONF
-    !insertmacro MUI_NSISCONF
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
+  
+  !verbose pop
+  
+!macroend
+
+;--------------------------------
+;LANGUAGE SELECTION DIALOG
+
+!macro MUI_LANGDLL_DISPLAY
+
+  !verbose push
+  !verbose 3
+
+  !ifdef NSIS_CONFIG_SILENT_SUPPORT
+    IfSilent mui.langdll_done
+  !endif
+
+  !ifndef MUI_LANGDLL_WINDOWTITLE
+    !define MUI_LANGDLL_WINDOWTITLE "Installer Language"
+  !endif
+
+  !ifndef MUI_LANGDLL_INFO
+    !define MUI_LANGDLL_INFO "Please select a language."
   !endif
   
-  !ifdef MUI_PRODUCT | MUI_VERSION
-    !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    
+    ReadRegStr $MUI_TEMP1 "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+    StrCmp $MUI_TEMP1 "" mui.langdll_show
+      StrCpy $LANGUAGE $MUI_TEMP1
+      !ifndef MUI_LANGDLL_ALWAYSSHOW
+        Goto mui.langdll_done
+      !endif
+    mui.langdll_show:
+  
   !endif
   
-  !ifndef MUI_INSERT_INTERFACE
-    !insertmacro MUI_INTERFACE
-    !define MUI_INSERT_INTERFACE
+  LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_PUSHLIST} ""
+
+  Pop $LANGUAGE
+  StrCmp $LANGUAGE "cancel" 0 +2
+    Abort
+  
+  !ifdef NSIS_CONFIG_SILENT_SUPPORT
+    mui.langdll_done:
+  !else ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    mui.langdll_done:
+  !endif
+    
+  !verbose pop
+    
+!macroend
+
+!macro MUI_LANGDLL_SAVELANGUAGE
+
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
   !endif
   
-  !insertmacro MUI_FUNCTION_GUIINIT
-  !insertmacro MUI_FUNCTION_ABORTWARNING
+!macroend
+
+!macro MUI_UNGETLANGUAGE
+
+  !verbose pop
+
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
   
-  !ifdef MUI_UNINSTALLER
-    !insertmacro MUI_UNFUNCTION_GUIINIT
-    !insertmacro MUI_FUNCTION_UNABORTWARNING
+    ReadRegStr $MUI_TEMP1 "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+    StrCmp $MUI_TEMP1 "" 0 mui.ungetlanguage_setlang
+  
+  !endif
+    
+  !insertmacro MUI_LANGDLL_DISPLAY
+      
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+  
+    Goto mui.ungetlanguage_done
+   
+    mui.ungetlanguage_setlang:
+      StrCpy $LANGUAGE $MUI_TEMP1
+        
+    mui.ungetlanguage_done:
+
   !endif
   
+  !verbose pop
+
 !macroend
 
 ;--------------------------------
@@ -2226,6 +2206,4 @@ Var MUI_TEMP2
 
 !endif
 
-!ifndef MUI_MANUALVERBOSE
-  !verbose 4
-!endif
+!verbose 4
