@@ -40,6 +40,8 @@ OTHER PLUGINS
 
 NSIS
 
+* custom class names for IO so you can include whatever item you want
+
 * set resource's font at run-time by saving offsets at compile time
 
 * more powerful plug-ins (access to ExecFunc and flags and even more)
