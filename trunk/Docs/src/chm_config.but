@@ -16,9 +16,9 @@
 
 \cfg{chm-ind-file}{ind.hhk}
 
-\preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
+\preamble Check \W{http://nsis.sourceforge.net/}{http://nsis.sf.net} for news, information, support, examples, tutorials and more.
 
-\preamble To get all of the latest information about NSIS development: \W{http://nsis.sourceforge.net/}{NSIS Development Page}.\\<br\\>To talk with others in the NSIS community: \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{NSIS forum}.\\<br\\>For more useful functions, NSIS script editors and other software, example scripts, plug-ins and tutorials: \W{http://nsis.sourceforge.net/archive/}{NSIS Archive}.\\<br\\>This HTML Help was created with help of Nike \W{mailto:nike@sendmail.ru}{nike@sendmail.ru}
+\preamble Quick links:\\<br\\>\W{http://nsis.sourceforge.net/site/FAQ.15.0.html}{FAQ} - A list of frequently asked questions\\<br\\>\W{http://nsis.sourceforge.net/archive/}{NSIS Archive} - Examples, functions, tutorials, plug-ins, software, more\\<br\\>\W{http://forums.winamp.com/forumdisplay.php?forumid=65}{Forum} - Post questions or discuss NSIS features\\<br\\>This HTML Help was created with help of Nike \W{mailto:nike@sendmail.ru}{nike@sendmail.ru}
 
 \copyright Copyright (C) 1999-2003 Nullsoft, Inc.
 
