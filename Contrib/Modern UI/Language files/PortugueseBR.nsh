@@ -10,7 +10,7 @@
 
   !define MUI_LANGNAME "Português (do Brasil)" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Benvindo ao Assistente de Instalação do $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Bem-vindo ao Assistente de Instalação do $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a instalação do $(^NameDA).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto possibilitará fazer update dos arquivos do sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Contrato de Licença"  
@@ -54,7 +54,7 @@
   !define MUI_TEXT_ABORTWARNING "Você deseja realmente finalizar a instalação do $(^Name)?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvindo ao Assistente de Desinstalação do $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bem-vindo ao Assistente de Desinstalação do $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a desinstalação do $(^NameDA).\r\n\r\nAntes de iniciar a desinstalação, tenha certeza que o $(^NameDA) não está sendo executado.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstalar o $(^NameDA)"
