@@ -10,14 +10,14 @@
 ;$9 is being used to store the Start Menu Folder.
 ;Do not use this variable in your script (or Push/Pop it)!
 
-;To change this variable, use MUI_STARTMENU_VARIABLE.
+;To change this variable, use MUI_STARTMENUPAGE_VARIABLE.
 ;Have a look at the Readme for info about other options (default folder,
 ;registry).
 
 ;Remember the Start Menu Folder
-!define MUI_STARTMENU_REGISTRY_ROOT "HKCU" 
-!define MUI_STARTMENU_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
-!define MUI_STARTMENU_REGISTRY_VALUENAME "Start Menu Folder"
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 !define TEMP $R0
 
@@ -75,12 +75,12 @@ Section "modern.exe" SecCopyUI
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}"
-    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
-    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}"
+    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
+    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
     ;Write shortcut location to the registry (for Uninstaller)
-    WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENU_VARIABLE}"
+    WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENUPAGE_VARIABLE}"
     
   !insertmacro MUI_STARTMENU_WRITE_END
   
