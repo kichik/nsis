@@ -618,13 +618,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           // a custom page
           switch (line.getnumtokens() - enable_last_page_cancel) {
             case 7:
+              PRINTHELP();
             case 6:
-              ERROR_MSG("Error: custom page can not have more than the creator function.\n");
-              return PS_ERROR;
+              lstrcpy(build_last_page_define, line.gettoken_str(5));
             case 5:
-              lstrcpy(build_last_page_define, line.gettoken_str(4));
+              p.caption = add_string_main(line.gettoken_str(4));
             case 4:
-              p.caption = add_string_main(line.gettoken_str(3));
+              if (*line.gettoken_str(3))
+                p.leavefunc = ns_func.add(line.gettoken_str(3),0);
             case 3:
               if (*line.gettoken_str(2))
                 p.prefunc = ns_func.add(line.gettoken_str(2),0);
@@ -678,8 +679,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
         if (p.showfunc>=0 && k)
           SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
-        if (p.leavefunc>=0 && k)
-          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4));
+        if (p.leavefunc>=0)
+          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4-!k));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
@@ -776,13 +777,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           // a custom page
           switch (line.getnumtokens() - uenable_last_page_cancel) {
             case 7:
+              PRINTHELP();
             case 6:
-              ERROR_MSG("Error: custom page can not have more than the creator function.\n");
-              return PS_ERROR;
+              lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
             case 5:
-              lstrcpy(ubuild_last_page_define, line.gettoken_str(4));
+              p.caption = add_string_uninst(line.gettoken_str(4));
             case 4:
-              p.caption = add_string_uninst(line.gettoken_str(3));
+              if (*line.gettoken_str(3)) {
+                if (strnicmp(line.gettoken_str(3),"un.",3)) {
+                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
+                  return PS_ERROR;
+                }
+                p.leavefunc = ns_func.add(line.gettoken_str(3),0);
+              }
             case 3:
               if (*line.gettoken_str(2)) {
                 if (strnicmp(line.gettoken_str(2),"un.",3)) {
@@ -822,8 +829,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
         if (p.showfunc>=0 && k)
           SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
-        if (p.leavefunc>=0 && k)
-          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4));
+        if (p.leavefunc>=0)
+          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4-!k));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif

@@ -605,17 +605,27 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
 
 static void *lpWndProcOld;
 
-static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-  if (message == WM_NOTIFY_OUTER_NEXT)
-  {
-    PostMessage(hConfigWindow,WM_USER+666,wParam,0);
-  }
-  return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
-}
-
 int g_is_cancel,g_is_back;
 
+BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+  BOOL bRes;
+  if (message == WM_NOTIFY_OUTER_NEXT && wParam == 1)
+    // Get the settings ready for the leave function verification
+    SaveSettings();
+  bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
+  if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
+  {
+    // if leave function didn't abort (lRes != 0 in that case)
+    if (wParam == NOTIFY_BYE_BYE || wParam == -1 || ValidateFields()) {
+      if (wParam == -1) g_is_back++;
+      if (wParam == NOTIFY_BYE_BYE) g_is_cancel++;
+      g_done++;
+      PostMessage(hConfigWindow,WM_CLOSE,0,0);
+    }
+  }
+  return bRes;
+}
 
 BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 								 UINT   uMsg,
@@ -625,15 +635,6 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
   switch (uMsg)
   {
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
-    return 0;
-    case WM_USER+666:
-      if (wParam == NOTIFY_BYE_BYE || wParam == -1 || ValidateFields()) {
-        if (wParam == -1) g_is_back++;
-        if (wParam == NOTIFY_BYE_BYE) g_is_cancel++;
-        g_done++;
-        PostMessage(hwndDlg,WM_CLOSE,0,0);
-      }
-    break;
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLORDLG:
       SetBkMode((HDC)wParam, TRANSPARENT);
@@ -962,7 +963,7 @@ int createCfgDlg()
 
 void showCfgDlg()
 {
-  lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
+  lpWndProcOld = (void *) SetWindowLong(hMainWindow,DWL_DLGPROC,(long)ParentWndProc);
 
   SendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, 0, 0);
   ShowWindow(hConfigWindow, SW_SHOWNA);
@@ -982,7 +983,7 @@ void showCfgDlg()
   if (!g_is_cancel) SaveSettings();
 
   if (lpWndProcOld)
-    SetWindowLong(hMainWindow,GWL_WNDPROC,(long)lpWndProcOld);
+    SetWindowLong(hMainWindow,DWL_DLGPROC,(long)lpWndProcOld);
   DestroyWindow(hConfigWindow);
   if (was_ok_enabled) EnableWindow(hNextButton,0);
   SetWindowText(hCancelButton,old_cancel);
