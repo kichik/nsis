@@ -44,6 +44,10 @@ class CBzip2 : public ICompressor {
       return stream->avail_out;
     }
 
+    char* GetName() {
+      return "bzip2";
+    }
+
   private:
     bz_stream *stream;
 };
