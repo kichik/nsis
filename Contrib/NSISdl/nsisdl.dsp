@@ -125,6 +125,10 @@ SOURCE=.\connection.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\ExDLL\exdll.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\httpget.h
 # End Source File
 # Begin Source File

@@ -1,5 +1,5 @@
   NSIS-DL 1.1 - http downloading DLL for NSIS
-  Copyright (C) 2001 Yaroslav Faybishenko & Justin Frankel
+  Copyright (C) 2001-2002 Yaroslav Faybishenko & Justin Frankel
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,38 +24,19 @@ This dll can be used from NSIS to download files via http.
 
 How to use (for another example, see waplugin.nsi in the nsis directory):
 
-  Pass the url and filename on the stack
   You can also pass /TIMEOUT=### to set the timeout in milliseconds
   Result is returned in $0
 	"cancel" if cancelled
 	"success" if success
         otherwise, an error string describing the error
 
-Example:
-  ; pack the dll in the install file
-  File /oname=$TEMP\nsdtmp09.dll nsisdl.dll
+  NSISDLL::download http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
+or
+  NSISDLL::download /TIMEOUT=30000 http://www.nullsoft.com/free/nsis/nsis198.exe poo.exe
 
-  ; make the call to download
-  Push "http://www.xcf.berkeley.edu/~yaroslav/photos/mike/mike1-full.jpg"
-  Push "$INSTDIR\test.jpg"
-  ; Push /TIMEOUT=10000 ; 10 seconds timeout
-  CallInstDLL $TEMP\nsdtmp09.dll download ; for a quiet install, use download_quiet
 
-  ; delete DLL from temporary directory
-  Delete $TEMP\nsdtmp09.dll
+then, check $0 for errors:
 
-  ; check if download succeeded
-  StrCmp $0 "success" successful
-  StrCmp $0 "cancel" cancelled
-
-  ; we failed
-    DetailPrint "Download failed: $0"
-    goto done
-
-  cancelled:
-    DetailPrint "Download cancelled"
-    goto done
-  successful:
-    DetailPrint "Download successful"
-    ExecShell $INSTDIR\test.jpg
-    goto done
+  StrCmp $0 "success" yay
+    Abort "Error downloading file
+  yay:
