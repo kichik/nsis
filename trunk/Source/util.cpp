@@ -2,10 +2,15 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+#include <string.h>
 #include "exedata.h"
 #include "exehead/fileform.h"
 #include "util.h"
 #include "strlist.h"
+
+#ifndef _WIN32
+#  include <ctype.h>
+#endif
 
 int g_dopause=0;
 extern int g_display_errors;
@@ -28,7 +33,7 @@ void dopause(void)
 // Returns -3 if the size doesn't match
 // Returns -4 if the bpp doesn't match
 int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
-  FILE *f = fopen(filename, "rb");
+  FILE *f = FOPEN(filename, "rb");
   if (!f) return -1;
 
   if (fgetc(f) != 'B' || fgetc(f) != 'M') {
@@ -128,7 +133,7 @@ typedef struct {
 //   -1 - Bad icon file
 int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 {
-  FILE* f = fopen(filename, "rb");
+  FILE* f = FOPEN(filename, "rb");
   if (!f) return -1;
 
   IconGroupHeader igh;
@@ -204,7 +209,7 @@ unsigned char* generate_uninstall_icon_data(char* filename)
 {
   int i;
 
-  FILE* f = fopen(filename, "rb");
+  FILE* f = FOPEN(filename, "rb");
   if (!f) return 0;
 
   IconGroupHeader igh;
@@ -379,7 +384,7 @@ char *CharPrev(const char *s, const char *p) {
 char *CharNext(const char *s) {
   int l = 0;
   if (s && *s)
-    l = max(1, mblen(s, strlen(s)));
+    l = max(1, mblen(s, MB_CUR_MAX));
   return (char *) s + l;
 }
 
@@ -416,7 +421,76 @@ void my_free_realpath(char *path, char *buffer)
 #endif
 }
 
+#define MY_ERROR_MSG(x) {if (g_display_errors) {fprintf(g_output,"%s", x);}}
 
+char *my_convert(const char *path)
+{
+  char *converted_path = strdup(path);
+  size_t len = strlen(path);
+
+  if(!converted_path)
+  {
+    MY_ERROR_MSG("Error: could not allocate memory in my_convert()\n");
+    return (char*) path; /* dirty */
+  }
+
+  /* Replace drive letter X: by /X */
+  if(len >= 2)
+  {
+    if (path[1] == ':')
+    {
+      converted_path[0] = '/';
+      converted_path[1] = (char) tolower((int) path[0]);
+    }
+  }
+
+  char *p = converted_path;
+
+  do
+  {
+    if (*p == '\\')
+    {
+      *p = '/';
+    }
+    p = CharNext(p);
+  }
+  while (*p);
+
+  return converted_path;
+}
+
+void my_convert_free(char *converted_path)
+{
+  free(converted_path);
+}
+
+int my_open(const char *pathname, int flags)
+{
+  char *converted_pathname = my_convert(pathname);
+
+  int result = open(converted_pathname, flags);
+  my_convert_free(converted_pathname);
+  return result;
+}
+
+FILE *my_fopen(const char *path, const char *mode)
+{
+  char *converted_path = my_convert(path);
+
+  FILE *result = fopen(converted_path, mode);
+  my_convert_free(converted_path);
+  return result;
+}
+
+int my_glob(const char *pattern, int flags,
+         int errfunc(const char * epath, int eerrno), glob_t *pglob)
+{
+  char *converted_pattern = my_convert(pattern);
+
+  int result = glob(converted_pattern, flags, errfunc, pglob);
+  my_convert_free(converted_pattern);
+  return result;
+}
 #endif
 
 void *operator new(size_t size) {
