@@ -259,7 +259,7 @@ SubSection "Extra User Interfaces" SecContribUIs
 
     SetOutPath "$INSTDIR\Contrib\Modern UI"
     File "..\Contrib\Modern UI\System.nsh"
-    File "..\Contrib\Modern UI\Readme.jpg"
+    File "..\Contrib\Modern UI\Readme.gif"
     File "..\Contrib\Modern UI\Readme.html"
     File "..\Contrib\Modern UI\Changelog.txt"
     File "..\Contrib\Modern UI\Screenshot.png"
