@@ -102,13 +102,14 @@ a:hover
  <td><div class="margin">
 <p class="header">Introduction</p>
 <p class="text">NSIS 2 makes it is possible to create installers
-with a custom user interface.</p>
-<p class="text"> I made this interface with a modern wizard style, 
-  like the wizards of recent Windows versions. This new interface 
-  also features new graphics and a description area on the
-  component selection page.</p>
-<p class="text">To use this new interface for your installer, you need 
-  to add some code to your NSIS script. Read this document for more info!</p>
+  with a custom user interface. The Modern UI is an interface like
+  the wizards of recent Windows versions.</p>
+<p class="text">This new interface also features new pages
+(Welcome, Finish, Start Menu) and a description area on the component
+ selection page.</p>
+<p class="text">Because of the macro system with support for plugins
+and the special language files, writing scripts for the Modern UI is
+easy. Read this document for more info.</p>
 <p class="header">Screenshots</p>
 <p class="text"><img src="Screenshot.png" width="503" height="393" alt="" /></p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt="" /></p>
@@ -142,9 +143,8 @@ follow these steps:</p>
 !define MUI_WELCOMEPAGE
 !define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe"
 </pre>
-  <p class="text">All defines are optional, if you don't define
-  a page, the page won't be shown. If you don't define a value,
-  the Modern UI won't use that option.</p>
+  <p class="text">All defines are optional. If you don't define
+  a page or option, the page won't use or show it.</p>
   <p class="text"><span class="bold">MUI_WELCOMEPAGE</span><br />
   Show the welcome page.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE</span><br />
@@ -265,7 +265,7 @@ follow these steps:</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">8. Insert custom pages (optional)</p>
   <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
-  or MUI_UNCUSTOMPAGECOMMANDS!), insert them before inserting the language files.</p>
+  or MUI_UNCUSTOMPAGECOMMANDS), insert them before inserting the language files.</p>
   <p class="text"><a href="#customPages">More info...</a></p>
   <p class="subheader">9. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
@@ -285,7 +285,7 @@ follow these steps:</p>
   MultiLanguage.nsi</a> example) use MUI_LANGDLL_PUSH to add the name of the
   language (in the language itself) to the stack:</p>
 <pre class="margin">
-!insertmacro MUI_LANGDLL_PUSH "English" ;Language file name in English</pre>
+!insertmacro MUI_LANGDLL_PUSH "English" ;Parameter = Language file name in English</pre>
   <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
@@ -293,7 +293,7 @@ follow these steps:</p>
   after all the sections to display the finish header:</p>
 <pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
 <p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
-Uninstaller section:</p>
+Uninstall section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
@@ -324,7 +324,8 @@ insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
-own page commands to set the order of the pages and the names of the page functions:</p>
+own page commands to set the order of the pages and the names of the page functions.
+For the normal Modern UI pages, insert one of the PAGECOMMAND macro's:</p>
 <pre class="margin">
 LangString TEXT_IO_WINDOWTITLE ": Install Options Page Title"
 
@@ -336,7 +337,7 @@ Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 !insertmacro MUI_PAGECOMMAND_FINISH
 </pre>
-<p class="text">This is also possible in the uninstaller:</p>
+<p class="text">For the uninstaller:</p>
 <pre class="margin">
 LangString un.UNTEXT_IO_WINDOWTITLE ": Install Options Page Title"
 
@@ -345,13 +346,14 @@ UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
-MUI_UNCUSTOMPAGECOMMANDS and to insert the Page commands before
-on the right position.</p>
+MUI_UNCUSTOMPAGECOMMANDS and to insert the Page commands on the
+right position.</p>
 <p class="subheader">Call Install Options</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Readme.html">
 Install Options documentation</a> for info about creating Install Options INI Files.</p>
 <p class="text">First, you need to extract your InstallOptions INI
-File in the .onInit function (un.onInit for the uninstaller):</p>
+File in the .onInit function (un.onInit for the uninstaller) using
+the MUI_INSTALLOPTIONS_EXTRACT macro:</p>
 <pre class="margin">
 Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
@@ -367,12 +369,13 @@ Function .onInit
 FunctionEnd
 </pre>
 <p class="text">You can call Install Options in the function defined with the Page
-or UninstPage command:</p>
+or UninstPage command. Use the MUI_HEADER_TEXT macro to set the text in the
+white box:</p>
 <pre class="margin">
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
 
-Function FunctionName
+Function FunctionName ;FunctionName defined with Page command
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioFile.ini"
 FunctionEnd
@@ -425,7 +428,7 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 
 !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
 !insertmacro MUI_RESERVEFILE_INSTALLOPTION ;InstallOptions
-!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection page)
+!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
 </pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br />
@@ -524,9 +527,9 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="text">Example:</p>
 <pre class="text">
-!define MUI_CUSTOMFUNCTION_ONGUIINIT .ownGuiInit
+!define MUI_CUSTOMFUNCTION_ONGUIINIT myGuiInit
 
-Function .ownGUIInit
+Function .myGUIInit
   ...your own code...
 FunctionEnd
 </pre>
@@ -597,7 +600,7 @@ FunctionEnd
 <p class="text">Please post questions at the
 <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
 <p class="header">License</p>
-<pre class="margin">Copyright &copy; 2002 Joost Verburg
+<pre class="margin">Copyright &copy; 2002-2003 Joost Verburg
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
