@@ -37,6 +37,13 @@ ShowInstDetails nevershow
 
 ;--------------------------------
 
+;Pages
+
+Page directory
+Page instfiles
+
+;--------------------------------
+
 ; The stuff to install
 
 Section ""

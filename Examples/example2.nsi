@@ -18,13 +18,18 @@ InstallDir $PROGRAMFILES\Example2
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM SOFTWARE\NSIS_Example2 "Install_Dir"
+InstallDirRegKey HKLM "Software\NSIS_Example2" ""
 
-; The text to prompt the user to enter a directory
-ComponentText "This will install the less simple example2 on your computer. Select which optional things you want installed."
+;--------------------------------
 
-; The text to prompt the user to enter a directory
-DirText "Choose a directory to install in to:"
+; Pages
+
+Page components
+Page directory
+Page instfiles
+
+UninstPage uninstConfirm
+UninstPage instfiles
 
 ;--------------------------------
 
@@ -43,13 +48,15 @@ Section "Example2 (required)"
   WriteRegStr HKLM SOFTWARE\NSIS_Example2 "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "DisplayName" "NSIS Example2 (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "DisplayName" "NSIS Example2"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
 SectionEnd
 
-; optional section (can be disabled by the user)
+; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Example2"
@@ -62,24 +69,20 @@ SectionEnd
 
 ; Uninstaller
 
-UninstallText "This will uninstall example2. Hit next to continue."
-
-; Uninstall section
-
 Section "Uninstall"
   
-  ; remove registry keys
+  ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Example2"
   DeleteRegKey HKLM SOFTWARE\NSIS_Example2
 
-  ; remove files and uninstaller
+  ; Remove files and uninstaller
   Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\uninstall.exe
 
-  ; remove shortcuts, if any
+  ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\Example2\*.*"
 
-  ; remove directories used
+  ; Remove directories used
   RMDir "$SMPROGRAMS\Example2"
   RMDir "$INSTDIR"
 
