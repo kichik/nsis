@@ -19,8 +19,18 @@ LIBS = -lole32 -lgdi32 -lversion -luuid -lcomctl32 -lkernel32 -luser32 -lshell32
 
 # Detect if cross compiling. If so, set cross prefix and NATIVE EXE suffix
 ifeq "$(strip $(findstring i386pe,$(shell ld -V)))" ""
-   CROSS_PREFIX = mingw32-
+
+   # Helper functions. Why so many? So I can keep track.
+   ccsuffix=gcc
+   findexec = $(strip $(shell which $(1)))
+   checkprefix = $(call findexec, $(1)$(ccsuffix))
+   map = $(foreach x,$(2),$(call $(1),$(x)))
+   chooseexec = $(firstword $(call map,checkprefix,$(1)))
+   chooseprefix = $(subst $(ccsuffix),,$(notdir $(call chooseexec,$(1))))
+
    EXESUFF =
+   POSSIBLE_CROSS_PREFIXES = mingw32- i586-mingw32msvc-
+   CROSS_PREFIX := $(call chooseprefix,$(POSSIBLE_CROSS_PREFIXES))
 else
    CROSS_PREFIX =
    EXESUFF = .exe
