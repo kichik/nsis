@@ -125,7 +125,7 @@ with a custom user interface.</p>
   scripts, but you can also modify an existing script.</p>
 <p class="text"><span class="bold">Note:</span> If you want to add a double quote (&quot;) to a Modern UI string,
 you should always escape it ($\&quot;), because the Modern UI macro's use &quot; to separate parameters.</p>
-<p class="text">How to use the Modern UI in an existing script:</p>
+<p class="text">How to use the Modern UI in an existing scrip (in order, from the beginning of the script):</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
   <p class="subheader">2. Define the name and version of your software</p>
@@ -160,7 +160,7 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   You cannot use this variable in your script (or you should Push/Pop it)
   if you are using the Start Menu Folder selection page.</p>
   <p class="text"><span class="bold">MUI_STARTMENU_DEFAULTFOLDER</span><br>
-  The default start menu Folder. Define $(LANGSTRINGNAME) is you want
+  The default start menu Folder. Use $(LANGSTRINGNAME) as value is you want
   to use a language string.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE</span><br>
   Show the Finish page.</p>
@@ -172,7 +172,8 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   quotes ($\") in the value.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME</span><br>
   File which the user can select to view (using a checkbox).
-  You don't need to put quotes around the value when it contains spaces.</p>
+  You don't need to put quotes around the value when it contains spaces.
+  Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br>
   Do not automatically jump to the finish page, to allow the user to
   check the log.</p>
@@ -251,32 +252,30 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
   <p class="text">If you are not using a Finish page, you should insert the
   MUI_SECTIONS_FINISHHEADER after all the sections to display the finish-header.</p>
 <pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
-<p class="text">In the uninstaller, insert MUI_UNFINISHHEADER at the end of the
+<p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
 Unintaller section.</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
   <p class="subheader">8. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
-  for the sections. These descriptions will be displayed when the user
-  hovers the mouse over a component in the component-selection page:</p>
+  for the sections. These descriptions will be displayed on the component
+  selection page, when the users hovers the mouse over a section.
+  If you don't want to use descriptions, use the modern3.exe UI.</p>
 <pre class="margin">
-LangString DESC_SectionName1 ${LANG_ENGLISH} "Description of section 1."
-LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
+LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
+LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SectionName1} $(DESC_SectionName1)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SectionName2} $(DESC_SectionName2)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 </pre>
-<p class="text">Always set a name for a section:</p>
+<p class="text">Add an extra parameter to the Section command to
+set a define with the section number:</p>
 <pre class="margin">
-Section "Section Name 1" SectionName1
- ...
-SectionEnd
-
-Section "Section Name 2" SectionName2
- ...
+Section "Section Name 1" Section1
+  ...
 SectionEnd
 </pre>
 <p class="header">Custom pages</p>
@@ -306,20 +305,15 @@ UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
 MUI_UNCUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM macro.</p>
 <p class="subheader">Call Install Options</p>
+<p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
+Install Options documentation</a> for info about creating Install Options INI Files.</p>
 <p class="text">First, you need to extract your InstallOptions INI
 File in the .onInit function (un.onInit for the uninstaller):</p>
 <pre class="margin">
 Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
 FunctionEnd
-
-Function FunctionName
-  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
-  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
-FunctionEnd
 </pre>
-<p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
-Install Options documentation</a> for info about creating Install Options INI Files.</p>
 <p class="text">You can call Install Options in the function defined with the Page
 or UninstPage command:</p>
 <pre class="margin">
@@ -340,22 +334,21 @@ FunctionEnd
   </p>
 <p class="header">The interface</p>
 <p class="subheader">Different versions</p>
-  <p class="text">There are three different versions of the interface
-  available. Modern.exe contains the dialogs of the standard interface.
-  If you have an installer with a lot of subsections
-  or long section names, use modern2.exe, which has a different
-  component-selection page. Use modern3.exe if you are not using
-  descriptions.</p>
+  <p class="text">There are three different versions of the Modern UI.
+  Modern.exe contains the dialogs of the standard interface.
+  If you have an installer with a lot of subsections or long section
+  names, use modern2.exe, which has a different component-selection page.
+  Use modern3.exe if you are not using descriptions.</p>
 <p class="subheader">Customize the dialogs</p>
-  <p class="text">To change elements on the dialogs, modify modern.exe or
-  modern2.exe in the Contrib\UIs directory using a resource editor such as
+  <p class="text">To change elements on the dialogs, modify modern?.exe
+  in the Contrib\UIs directory using a resource editor such as
   <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
-  <p class="text">The 'Loading Setup' text on the splash screen which 
-  is being displayed when the installer is starting (Verifying 
-  installer, Unpacking data) cannot be changed by the script,
-  because the installer is not started yet when this dialog is being
-  displayed. If you want to change  this text, modify dialog 111 of
-  modern(2).exe.<br>
+  <p class="text">The 'Please wait while Setup is loading...' text
+  on the splash screen which  is being displayed when the installer
+  is starting (Verifying installer, Unpacking data) cannot be changed
+  by the script,  because the installer is not started yet when this
+  dialog is being displayed. If you want to change this text, modify
+  dialog 111 of modern?.exe.<br>
   The 'Verifying installer' and 'Unpacking data' texts are defined in
   the language header file of the NSIS exehead (Source\exehead\lang.h). 
   To change them, you need to edit this file and recompile NSIS.</p>
@@ -365,7 +358,7 @@ FunctionEnd
 <p class="text">If you want to insert your own code in the .onGUIInit function,
 define MUI_CUSTOMGUIINIT (MUI_UNCUSTOMGUIINIT for the uninstaller) before inserting
 MUI_SYSTEM and insert the MUI_GUIINIT (MUI_UNGUIINIT for the uninstaller) macro
-in your .onGUIInit or un.onGUInit function.</p>
+in your .onGUIInit or un.onGUInit function:</p>
 <pre class="text">
 !define MUI_CUSTOMGUIINIT
 
@@ -392,24 +385,6 @@ FunctionEnd
     <li>Create no shortcut option on Start Menu Folder selection page
     <li>Customizing GUIInit functions easier
     <li>Minor font / UI changes
-  </ul>
-<p class="text"></p>
-<li class="changelog">1.5 - November 11, 2002
-  <ul>
-    <li>New language file format
-    <li>Language strings can be changed in the script without editing
-    language files
-    <li>Start Menu Folder selection page
-    <li>'Click Next to continue' and 'Click Install to start the installation'
-    texts automatically change to the page order
-    <li>Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is
-    the standard macro now. Use MUI_INSTALLOPTIONS_INITDIALOG and
-    MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
-    <li>No more writing window titles & abort warnings to Install Options
-    INI Files
-    <li>Compatible with updated paging system
-    <li>Renamed macro's and defines
-    <li>Some small fixes
   </ul>
 </ul>  
 <p class="text"><a href="Changelog.txt">Complete version history</a></p>
