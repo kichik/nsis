@@ -227,7 +227,7 @@ DialogItemTemplate* CDialogTemplate::GetItem(WORD wId) {
 
 // Returns info about the item with the indexed i
 DialogItemTemplate* CDialogTemplate::GetItemByIdx(DWORD i) {
-	if (i > m_vItems.size()) return 0;
+	if (i >= m_vItems.size()) return 0;
 	return m_vItems[i];
 }
 
