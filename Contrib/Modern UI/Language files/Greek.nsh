@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "GREEK"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Greek" ;Ελληνικά Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Greek" ;(Ελληνικά) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
 
@@ -42,8 +42,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Ολοκληρώθηκε"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Τέλος"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "Το '${MUI_PRODUCT}' εγκαταστάθηκε στον υπολογιστή σας.\r\nΚάντε κλικ στο Τέλος για να κλείσετε αυτόν τον οδηγό."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Πρέπει να γίνει επανεκκίνηση του υπολογιστή σας για να ολοκληρωθεί η εγκατάσταση του ${MUI_PRODUCT}. Θέλετε να επανεκκινήσετε τον υπολογιστή σας τώρα;"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Επανεκκίνηση τώρα"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Πρέπει να γίνει επανεκκίνηση του υπολογιστή σας για να ολοκληρωθεί η εγκατάσταση του '${MUI_PRODUCT}'. Θέλετε να επανεκκινήσετε τον υπολογιστή σας τώρα;"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Να γίνει επανεκκίνηση τώρα"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Θα επανεκκινήσω τον υπολογιστή μου αργότερα"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Εκτέλεση του '${MUI_PRODUCT}'"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Εμφάνιση του αρχείου Readme"
@@ -64,7 +64,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Απεγκατάσταση Σε Εξέλιξη"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Παρακαλώ περιμένετε όσο το '${MUI_PRODUCT}' απεγκαθίσταται."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Ολοκληρώθηκε"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Η Απεγκατάσταση Ολοκληρώθηκε"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Η απεγκατάσταση ολοκληρώθηκε επιτυχώς."
   
 !insertmacro MUI_LANGUAGEFILE_END
