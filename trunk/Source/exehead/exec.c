@@ -120,7 +120,7 @@ int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
   return 0;
 }
 
-static char bufs[4][NSIS_MAX_STRLEN];
+static char bufs[5][NSIS_MAX_STRLEN];
 static int *parms;
 
 static int NSISCALL process_string_fromparm_toint(int id_)
@@ -144,6 +144,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   char *buf1 = bufs[1];
   char *buf2 = bufs[2];
   char *buf3 = bufs[3];
+  char *buf4 = bufs[4];
 
   // changed by Amir Szekely 28 August 2002
   // shaves off 0.5KB
@@ -385,7 +386,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HANDLE hOut;
         int ret;
         char *buf3=process_string_fromparm_tobuf(0x31);
-        #define overwriteflag parm0        
+        #define overwriteflag parm0
 
         log_printf3("File: overwriteflag=%d, name=\"%s\"",overwriteflag,buf3);
         if (validpathspec(buf3))
