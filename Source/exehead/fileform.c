@@ -41,7 +41,7 @@ int g_flags;
 int g_filehdrsize;
 int g_is_uninstaller;
 
-HANDLE g_db_hFile;
+HANDLE g_db_hFile=INVALID_HANDLE_VALUE;
 
 #if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(NSIS_COMPRESS_WHOLE)
 HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
