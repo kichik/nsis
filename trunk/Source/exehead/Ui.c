@@ -399,7 +399,7 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=m_bgwnd;
     // Select language
-    if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    if (ExecuteCodeSegment(g_inst_cmnheader->code_onInit,NULL)) return 1;
     set_language();
     g_hwnd=NULL;
     ShowWindow(m_bgwnd, SW_SHOW);
@@ -438,18 +438,18 @@ int NSISCALL ui_doinstall(void)
 #endif
   {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    if (ExecuteCodeSegment(g_inst_cmnheader->code_onInit,NULL)) return 1;
     set_language();
 #endif//NSIS_SUPPORT_CODECALLBACKS
     if (install_thread(NULL))
     {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (!g_quit_flag) ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstFailed,NULL);
+      if (!g_quit_flag) ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
       return 1;
     }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstSuccess,NULL);
+    ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
     return 0;
@@ -538,7 +538,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
           !((g_inst_cmnheader->misc_flags&2) &&
             is_valid_instpath(state_install_directory)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-            && !ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onVerifyInstDir,NULL)
+            && !ExecuteCodeSegment(g_inst_header->code_onVerifyInstDir,NULL)
 #endif//NSIS_SUPPORT_CODECALLBACKS
             )) isdp++;
     }
@@ -549,7 +549,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       int count=1;  // Number of pages to move by
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       // Call onNext|PrevPage for every not-definitely-disabled page
-      if (ExecuteCodeSegment(g_inst_entry,delta>0?g_inst_cmnheader->code_onNextPage:g_inst_header->code_onPrevPage,NULL))
+      if (ExecuteCodeSegment(delta>0?g_inst_cmnheader->code_onNextPage:g_inst_header->code_onPrevPage,NULL))
       {
         if (g_quit_flag)  // Quit instruction used?
           m_page=count=-1;
@@ -565,7 +565,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     } while ((m_page >= 0) && (m_page <= g_max_page) && (m_page==2 && !isdp));
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    if (m_page>g_max_page) ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstSuccess,NULL);
+    if (m_page>g_max_page) ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
     if (m_curwnd && (m_page!=prev_page))
@@ -604,7 +604,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
+        ExecuteCodeSegment(g_inst_cmnheader->code_onInitDialog,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
         SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
         ShowWindow(m_curwnd,SW_SHOWNA);
@@ -648,14 +648,14 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       if (m_abort)
       {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstFailed,NULL);
+        ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
         EndDialog(hwndDlg,2);
       }
       else
       {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        if (!ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onUserAbort,NULL))
+        if (!ExecuteCodeSegment(g_inst_cmnheader->code_onUserAbort,NULL))
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
           EndDialog(hwndDlg,1);
@@ -907,7 +907,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     EnableWindow(GetDlgItem(g_hwnd,IDOK),
       is_valid_path && (available >= total || available == -1)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      && !ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onVerifyInstDir,NULL)
+      && !ExecuteCodeSegment(g_inst_header->code_onVerifyInstDir,NULL)
 #endif
       );
   }
@@ -966,7 +966,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
       mystrcpy(g_tmp, g_usrvars[0]);
 
       myitoa(g_usrvars[0], last_item);
-      ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onMouseOverSection,NULL);
+      ExecuteCodeSegment(g_inst_header->code_onMouseOverSection,NULL);
 
       mystrcpy(g_usrvars[0], g_tmp);
     }
@@ -1175,7 +1175,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               {
                 extern HWND g_SectionHack;
                 g_SectionHack=hwndDlg;
-                ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onSelChange,NULL);
+                ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
                 g_SectionHack=0;
               }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
@@ -1332,7 +1332,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    if (ExecuteCodeSegment(g_inst_entry,g_inst_uninstheader->code,g_progresswnd)) m_abort++;
+    if (ExecuteCodeSegment(g_inst_uninstheader->code,g_progresswnd)) m_abort++;
   }
   else
   {
@@ -1349,7 +1349,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #endif
       {
         log_printf2("Section: \"%s\"",GetStringFromStringTab(g_inst_section[m_inst_sec].name_ptr));
-        if (ExecuteCodeSegment(g_inst_entry,g_inst_section[m_inst_sec].code,g_progresswnd)) m_abort++;
+        if (ExecuteCodeSegment(g_inst_section[m_inst_sec].code,g_progresswnd)) m_abort++;
       }
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       else

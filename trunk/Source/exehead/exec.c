@@ -82,7 +82,7 @@ static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyif
 
 extern char g_all_user_var_flag;
 
-static int NSISCALL ExecuteEntry(entry *entries, int pos);
+static int NSISCALL ExecuteEntry(entry *entry_);
 
 static int NSISCALL resolveaddr(int v)
 {
@@ -90,13 +90,13 @@ static int NSISCALL resolveaddr(int v)
   return v;
 }
 
-int NSISCALL ExecuteCodeSegment(entry *entries, int pos, HWND hwndProgress)
+int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
 {
   while (pos >= 0)
   {
     int rv;
-    if (entries[pos].which == EW_RET) return 0;
-    rv=ExecuteEntry(entries,pos);
+    if (g_inst_entry[pos].which == EW_RET) return 0;
+    rv=ExecuteEntry(g_inst_entry + pos);
     if (rv == EXEC_ERROR) return EXEC_ERROR;
 
     rv=resolveaddr(rv);
@@ -138,11 +138,11 @@ static void NSISCALL process_string_fromparm_tobuf(int id_)
 // returns EXEC_ERROR on error
 // returns 0, advance position by 1
 // otherwise, returns new_position+1
-static int NSISCALL ExecuteEntry(entry *entries, int pos)
+static int NSISCALL ExecuteEntry(entry *entry_)
 {
   // changed by Amir Szekely 28 August 2002
   // shaves off 0.5KB
-  int parm0 = (parms = entries[pos].offsets)[0];
+  int parm0 = (parms = entry_->offsets)[0];
   int parm1 = parms[1];
   int parm2 = parms[2];
   int parm3 = parms[3];
@@ -158,7 +158,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
   char *buf1 = bufs[1];
   char *buf2 = bufs[2];
   char *buf3 = bufs[3];
-  int which = entries[pos].which;
+  int which = entry_->which;
   switch (which)
   {
     case EW_NOP:
@@ -179,7 +179,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
       {
         int v=resolveaddr(parm0)-1;  // address is -1, since we encode it as +1
         log_printf2("Call: %d",v);
-        return ExecuteCodeSegment(entries,v,NULL);
+        return ExecuteCodeSegment(v,NULL);
       }
     case EW_UPDATETEXT:
       if (parm1) ui_st_updateflag=parm1;
