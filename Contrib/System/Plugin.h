@@ -36,18 +36,26 @@ __INST_LAST
 };
 
 #define PLUGINFUNCTION(name) void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) { \
-  g_hwndParent=hwndParent; \
+/*  g_hwndParent=hwndParent; */\
   g_stringsize=string_size; \
   g_stacktop=stacktop; \
-  g_variables=variables; {
-#define PLUGINFUNCTIONEND }}
+  g_variables=variables; 
+#define PLUGINFUNCTIONEND }
 
+#define PLUGINFUNCTIONSHORT(name) void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) { \
+  g_stringsize=string_size; \
+  g_stacktop=stacktop; 
+#define PLUGINFUNCTIONEND }
+
+extern char *AllocStr(char *str);
+extern void myitoa64(__int64 i, char *buffer);
+extern char *AllocString();
 extern char *getuservariable(int varnum);
 extern void setuservariable(int varnum, char *var);
-extern int popstring(char *str); // 0 on empty stack
-extern void pushstring(char *str);
-extern int myatoi(char *s);
-extern int popint(int *value); // 0 on empty stack
+extern char* popstring();  // NULL - stack empty
+extern char* pushstring(char *str);
+extern __int64 myatoi(char *s);
+extern int popint();  // -1 -> stack empty
 extern void pushint(int value);
 
 extern HWND g_hwndParent;
