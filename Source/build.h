@@ -263,6 +263,7 @@ class CEXEBuild {
     CBzip2 bzip2_compressor;
 #endif
     bool build_compressor_set;
+    bool build_compressor_final;
     bool build_compress_whole;
 
     bool no_space_texts;
@@ -270,9 +271,9 @@ class CEXEBuild {
     int has_called_write_output;
 
     char build_packname[1024], build_packcmd[1024];
-    int build_overwrite, build_compress, build_crcchk, 
-        build_datesave, build_optimize_datablock,
-    build_allowskipfiles; // Added by ramon 23 May 2003
+    int build_overwrite, build_last_overwrite, build_compress,
+        build_crcchk, build_datesave, build_optimize_datablock,
+        build_allowskipfiles; // Added by ramon 23 May 2003
 
     header build_header, build_uninst, *cur_header;
     int uninstall_mode;
