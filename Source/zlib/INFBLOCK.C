@@ -45,11 +45,9 @@ void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s)
   inflate_blocks_reset(s, z, Z_NULL);
 }
 
-int inflate_blocks(s, z, r)
-inflate_blocks_statef *s;
-z_streamp z;
-int r;
+int inflate(z_streamp z)
 {
+  inflate_blocks_statef *s=&z->state->blocks;
 
   // lousy two bytes saved by doing this
   struct
@@ -62,6 +60,8 @@ int r;
     Bytef *q;             /* output window write pointer */
     uInt m;               /* bytes to end of window or read pointer */
   } _state;
+
+int r=Z_OK;
 
 #define t _state.t
 #define b _state.b
