@@ -25,7 +25,7 @@ ComponentText "Choose components"
 
 ;Order of pages
 Page license
-Page custom SetCustom ;Custom page. Install Options gets called in SetCustom.
+Page custom SetCustom ": Testing Installer Options" ;Custom page. Install Options gets called in SetCustom.
 Page components
 Page directory
 Page instfiles
