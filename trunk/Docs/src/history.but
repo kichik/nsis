@@ -2,6 +2,8 @@
 
 \e{v2.0b0}
 
+\b SendMessage can send strings (put STR: before a param) and supports timeouts 
+
 \b Right mouse button "Copy to clipboard" context menu for the Details window 
 
 \b PluginDir is an attribute, not an instruction, corrected makensis.htm 
@@ -12,7 +14,7 @@
 
 \b Return key still works with initial focus licence text change ;) 
 
-\b EDIT ME - made win9x move/delete on reboot support proper and function like on win2k (in that shit is deleted in order) 
+\b Made win9x move/delete on reboot support proper and function like on win2k
 
 \b Now always loads RichEdit v2 if present (links work on Win9x) 
 
