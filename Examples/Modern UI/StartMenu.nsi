@@ -61,6 +61,7 @@ Section "modern.exe" SecCopyUI
   ;Create shortcut
   CreateDirectory "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}"
   CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
+  CreateShortCut "$SMPROGRAMS\${MUI_STARTMENU_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   ;Write shortcut location to the registry (for Uninstaller)
   WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENU_VARIABLE}"
@@ -92,6 +93,7 @@ Section "Uninstall"
   ;Remove shortcut
   ReadRegStr ${TEMP1} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
   Delete "$SMPROGRAMS\${TEMP1}\Modern UI.lnk"
+  Delete "$SMPROGRAMS\${TEMP1}\Uninstall.lnk"
   RMDir "$SMPROGRAMS\${TEMP1}" ;Only if empty, so it won't delete other shortcuts
 
   RMDir "$INSTDIR"
