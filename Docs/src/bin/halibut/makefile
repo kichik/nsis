@@ -14,4 +14,4 @@ halibut : $(OBJS)
 
 clean ::
 	$(RM) *.o
-	$(RM) ..\halibut.exe
+
