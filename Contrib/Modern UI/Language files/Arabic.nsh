@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Arabic (1025)
 ;By asdfuae@msn.com
@@ -39,7 +39,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "«·Õ„œ··Â  „ »‰Ã«Õ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " „ :"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&≈‰Â«¡"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Ì‰ÂÌ „‰’» »—‰«„Ã ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} »‰Ã«Õ  „  ‰’Ì»\r\n≈÷€ÿ ≈‰Â«¡ ·≈Œ—«Ãﬂ „‰ «·„‰’»"
@@ -49,7 +48,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "${MUI_PRODUCT} ‘€·"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "«⁄—÷ √ﬁ—√‰Ì"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": „Ã·œ ﬁ«∆„… «»œ«¡"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "«Œ — „Ã·œ ·ﬁ«∆„… «»œ«¡"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "«Œ — „Ã·œ ·ﬁ«∆„… «»œ«¡ ·«Œ ’«—«  «·»—«„Ã"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "«Œ — „Ã·œ ·ﬁ«∆„… «»œ«¡ «·–Ì ”Ì‰‘«¡ ›ÌÂ «Œ ’«—«  «·»—‰«„Ã. Ì„ﬂ‰ﬂ «Ì÷« ﬂ «»… «”„ ·≈‰‘«¡ „Ã·œ ÃœÌœ."

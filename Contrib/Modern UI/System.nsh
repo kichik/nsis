@@ -581,7 +581,7 @@
   !endif
 
   !ifdef MUI_STARTMENUPAGE
-    Page custom mui.Startmenu "$(MUI_TEXT_STARTMENU_WINDOWTITLE)" "MUI_INSTALLBUTTON_STARTMENU"
+    Page custom mui.Startmenu "" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
   !ifndef MUI_NOVERBOSE
@@ -620,9 +620,9 @@
 
   !ifdef MUI_FINISHPAGE
     !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME)
-      Page custom mui.Finish "$(MUI_TEXT_FINISH_WINDOWTITLE)" /ENABLECANCEL
+      Page custom mui.Finish "" /ENABLECANCEL
     !else
-      Page custom mui.Finish "$(MUI_TEXT_FINISH_WINDOWTITLE)"
+      Page custom mui.Finish ""
     !endif
   !endif
       
@@ -1976,6 +1976,12 @@
 
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "Name" "MUI_NAME"
   
+  SubCaption 0 " "
+  SubCaption 1 " "
+  SubCaption 2 " "
+  SubCaption 3 " "
+  SubCaption 4 " "
+  
   !ifndef MUI_BRANDINGTEXT
     !define MUI_BRANDINGTEXT ""
   !endif
@@ -2009,7 +2015,6 @@
   !endif
   
   !ifdef MUI_STARTMENUPAGE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_TITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_SUBTITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU_TOP" "MUI_INSTALLBUTTON_STARTMENU"
@@ -2029,7 +2034,6 @@
   
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_WINDOWTITLE"
     !ifdef MUI_TEXT_FINISH_INFO_TITLE
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TITLE"
     !else
