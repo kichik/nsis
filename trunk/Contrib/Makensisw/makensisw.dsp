@@ -159,6 +159,10 @@ SOURCE=.\resource.rc
 
 SOURCE=..\..\Source\rt_manif.bin
 # End Source File
+# Begin Source File
+
+SOURCE=.\shell.ico
+# End Source File
 # End Group
 # Begin Group "Documentation"
 
