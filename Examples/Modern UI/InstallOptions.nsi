@@ -76,7 +76,7 @@ SectionEnd
 Function .onInit
 
   ;Init InstallOptions
-  !insertmacro MUI_INSTALLOPTIONS_INIT ;Call this when using no plugins
+  !insertmacro MUI_INSTALLOPTIONS_INIT ;Call this when using no plugins before using Install Options (init plugin system)
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniB.ini"
 
