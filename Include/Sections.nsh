@@ -19,7 +19,7 @@
 !macro SelectSection SECTION
 	Push $0
 	SectionGetFlags "${SECTION}" $0
-	IntOp $0 $0 & ${SF_SELECTED}
+	IntOp $0 $0 | ${SF_SELECTED}
 	SectionSetFlags "${SECTION}" $0
 	Pop $0
 !macroend
