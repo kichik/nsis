@@ -80,7 +80,7 @@ int main(int argc, char **argv)
   int tmpargpos=1;
   int no_logo=0;
 
-  if (argc > 1 && !lstrcmpi(argv[1], "/version"))
+  if (argc > 1 && !stricmp(argv[1], "/VERSION"))
   {
     fprintf(g_output,NSIS_VERSION);
     fflush(g_output);
@@ -205,6 +205,7 @@ int main(int argc, char **argv)
         build.print_help(NULL);
       nousage++;
     }
+    else if (!stricmp(argv[argpos],"/NOTIFYHWND")) build.notify_hwnd=(HWND)atol(argv[++argpos]);
     else if (!stricmp(argv[argpos],"/HDRINFO"))
     {
       if (build.display_info) 
@@ -338,6 +339,7 @@ int main(int argc, char **argv)
 
         if (build.display_script) 
         {
+          build.notify(MAKENSIS_NOTIFY_SCRIPT,sfile);
           fprintf(g_output,"\n\nProcessing script file: \"%s\"\n",sfile);
           fflush(g_output);
         }
