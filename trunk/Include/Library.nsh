@@ -237,8 +237,8 @@ Example:
 
     !ifndef INSTALLLIB_LIBTYPE_TLB & INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      IntCmpU $R0 $R2 0 installlib.done_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-      IntCmpU $R1 $R3 installlib.done_${INSTALLLIB_UNIQUE} installlib.done_${INSTALLLIB_UNIQUE} \
+      IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
+      IntCmpU $R1 $R3 installlib.register_${INSTALLLIB_UNIQUE} installlib.register_${INSTALLLIB_UNIQUE} \
         installlib.upgrade_${INSTALLLIB_UNIQUE}
 
     !else
@@ -252,14 +252,14 @@ Example:
 
       !ifndef LIBRARY_VERSION_NONE
 
-        IntCmpU $R0 $R2 0 installlib.done_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-        IntCmpU $R1 $R3 0 installlib.done_${INSTALLLIB_UNIQUE} \
+        IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
+        IntCmpU $R1 $R3 0 installlib.register_${INSTALLLIB_UNIQUE} \
           installlib.upgrade_${INSTALLLIB_UNIQUE}
 
       !else
 
-        IntCmpU $R0 $R2 0 installlib.done_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-        IntCmpU $R1 $R3 installlib.done_${INSTALLLIB_UNIQUE} installlib.done_${INSTALLLIB_UNIQUE} \
+        IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
+        IntCmpU $R1 $R3 installlib.register_${INSTALLLIB_UNIQUE} installlib.register_${INSTALLLIB_UNIQUE} \
           installlib.upgrade_${INSTALLLIB_UNIQUE}
 
       !endif
@@ -353,23 +353,34 @@ Example:
     ;------------------------
     ;Register on reboot
 
-    !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_REGDLLTLB
+    !ifdef INSTALLLIB_LIBTYPE_REGDLL | INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      GetTempFileName $R0 $R5
-      File /oname=$R0 "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
+      ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool"
+      IfFileExists $R0 installlib.rebootreg_${INSTALLLIB_UNIQUE}
 
-      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-        "$R4" '"$R0" D $R4'
+        File /oname=$R5\NSIS.Library.RegTool.exe "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
+        WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+          "NSIS.Library.RegTool" '"$R5\NSIS.Library.RegTool.exe"'
+
+      installlib.rebootreg_${INSTALLLIB_UNIQUE}:
 
     !endif
 
-    !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
+    !ifdef INSTALLLIB_LIBTYPE_REGDLL
 
-      GetTempFileName $R0 $R5
-      File /oname=$R0 "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
+      WriteRegStr HKLM "Software\NSIS.Library.RegTool" "$R4" 'D'
 
-      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-        "$R4" '"$R0" T $R4'
+    !endif
+
+    !ifdef INSTALLLIB_LIBTYPE_TLB
+
+      WriteRegStr HKLM "Software\NSIS.Library.RegTool" "$R4" 'T'
+
+    !endif
+
+    !ifdef INSTALLLIB_LIBTYPE_REGDLLTLB
+
+      WriteRegStr HKLM "Software\NSIS.Library.RegTool" "$R4" 'DT'
 
     !endif
 
