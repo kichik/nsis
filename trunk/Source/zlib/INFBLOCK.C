@@ -367,7 +367,7 @@ int inflate(z_streamp z)
               static uIntf c[288];           /* length list for huft_build */
 
               /* literal table */
-              for (_k = 0; _k < 288; _k++) 
+              for (_k = 0; _k < 288; _k++)
               {
                 char v=8;
                 if (_k > 143)
@@ -491,7 +491,7 @@ int inflate(z_streamp z)
           if (c == 18)
           {
             i=7;
-            j=11;          
+            j=11;
           }
           else
           {
