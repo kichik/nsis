@@ -617,6 +617,15 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           }
           else if (i == NLF_FONT)
           {
+            char *font = *build_font ? build_font : table->nlf.m_szFont;
+            if (font)
+              table->lang_strings->set(sn, font);
+            else
+              table->lang_strings->set(sn, dstr);
+            continue;
+          }
+          else if (i == NLF_FONTSIZE)
+          {
             int font_size = *build_font ? build_font_size : table->nlf.m_iFontSize;
             if (font_size)
             {
@@ -624,15 +633,6 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
               sprintf(temp, "%d", font_size);
               table->lang_strings->set(sn, temp);
             }
-            else
-              table->lang_strings->set(sn, dstr);
-            continue;
-          }
-          else if (i == NLF_FONTSIZE)
-          {
-            char *font = *build_font ? build_font : table->nlf.m_szFont;
-            if (font)
-              table->lang_strings->set(sn, font);
             else
               table->lang_strings->set(sn, dstr);
             continue;
