@@ -692,7 +692,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           build_header.common.num_pages++;
         }
       }
-    return PS_OK;
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTPAGE:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       {
@@ -828,9 +828,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ubuild_pages.add(&p,sizeof(page));
           build_uninst.common.num_pages++;
         }
-        SCRIPT_MSG("number of pages: %d\n", build_uninst.common.num_pages);
       }
-    return PS_OK;
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n", line.gettoken_str(0));
     return PS_ERROR;
