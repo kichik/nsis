@@ -20,11 +20,11 @@ This command sets the size of the compiler's internal file buffers. This command
 
 This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will effect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).
 
-Note that this option has no effect when solid compression is used, which is enabled for BZIP2 and LZMA by default.
+Note that this option has no effect when solid compression is used.
 
 \S2{asetcompressor} SetCompressor
 
-\c [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
+\c [/SOLID] [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
 
 This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.
 
@@ -37,6 +37,8 @@ BZIP2 usually gives better compression ratios than ZLIB, but it is a bit slower 
 LZMA is a new compression method that gives very good compression ratios. The decompression speed is high (10-20 MB/s on a 2 GHz CPU), the compression speed is lower. The memory size that will be used for decompression is the dictionary size plus a few KBs, the default is 8 MB.
 
 If \e{/FINAL} is used, subsequent calls to SetCompressor will be ignored.
+
+If \e{/SOLID} is used, all of the installer data is compressed in one block. This results in greater compression ratios.
 
 \S2{asetcompressordictsize} SetCompressorDictSize
 
