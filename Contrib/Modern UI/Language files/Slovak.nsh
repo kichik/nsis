@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Slovak (1051)
 ;By Kypec (peter.dzugas@mahe.sk)
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Slovensky" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi inštalácie $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie inštaláciou $(^Name).\r\n\r\nPred zaèiatkom inštalácie je odporúèané zavrie všetky ostatné aplikácie. Tımto umoníte inštalátoru aktualizova prípadné systémové súbory bez nutnosti reštartova systém.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie inštaláciou $(^Name).\r\n\r\nPred zaèiatkom inštalácie je odporúèané zavrie všetky ostatné aplikácie. Tımto umoníte aktualizovanie prípadnıch systémovıch súborov bez potreby reštartova Váš poèítaè.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licenèná zmluva"
   !define MUI_TEXT_LICENSE_SUBTITLE "Pred inštaláciou $(^Name) si prosím preštudujte licenèné podmienky."
@@ -39,8 +39,8 @@
 
   !define MUI_BUTTONTEXT_FINISH "&Dokonèi"
   !define MUI_TEXT_FINISH_INFO_TITLE "Dokonèenie sprievodcu inštalácie $(^Name)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) bol nainštalovanı na Váš systém.\r\nKliknite na Dokonèi pre uzavretie tohto sprievodcu."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Pre úplné dokonèenie inštalácie $(^Name) je nutné vykona reštart Vášho systému. Chcete reštartova ihneï?"
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) bol nainštalovanı na Váš poèítaè.\r\nKliknite na Dokonèi pre uzavretie tohto sprievodcu."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Pre úplné dokonèenie inštalácie $(^Name) je nutné vykona reštart Vášho poèítaèa. Chcete reštartova ihneï?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Reštartova ihneï"
   !define MUI_TEXT_FINISH_REBOOTLATER "Chcem reštartova ruène neskôr"
   !define MUI_TEXT_FINISH_RUN "&Spusti $(^Name)"
@@ -58,7 +58,7 @@
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Tento sprievodca Vás prevedie odinštaláciou $(^Name).\r\n\r\nPred zaèiatkom odinštalácie sa uistite, e $(^Name) nie je práve teraz spustenı.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinštalovanie $(^Name)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odstránenie $(^Name) z Vášho systému."
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odstránenie $(^Name) z Vášho poèítaèa."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licenèná zmluva"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Pred odinštalovaním programu $(^Name) si prosím preštudujte licenèné podmienky."
@@ -82,7 +82,8 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinštalovanie nebolo úspešne dokonèené."
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèenie sprievodcu odinštalácie $(^Name)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) bol odinštalovanı z Vášho systému.\r\n\r\nKliknite na Dokonèi pre uzavretie tohto sprievodcu."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) bol odinštalovanı z Vášho poèítaèa.\r\n\r\nKliknite na Dokonèi pre uzavretie tohto sprievodcu."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Pre úplné dokonèenie odinštalácie $(^Name) je nutné vykona reštart Vášho poèítaèa. Chcete reštartova ihneï?"
   
   !define MUI_UNTEXT_ABORTWARNING "Naozaj chcete ukonèi odinštaláciu $(^Name)?"  
   
