@@ -34,7 +34,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \c command
 
-Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. e.g.: Exec '"$INSTDIR\\command.exe" parameters'.
+Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: Exec '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
 
 \S2{execshell} ExecShell
 
@@ -46,7 +46,7 @@ Execute the specified program using ShellExecute. Note that action is usually "o
 
 \c command [user_var(exit code)]
 
-Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. e.g.: ExecWait '"$INSTDIR\\command.exe" parameters'
+Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: ExecWait '"$INSTDIR\\command.exe" parameters'. If you don't put it in quotes it will \e{not} work on Windows 9x with or without parameters.
 
 \S2{rename} Rename
 
