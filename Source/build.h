@@ -198,7 +198,7 @@ class CEXEBuild {
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp
-    int datablock_optimize(int start_offset);
+    int datablock_optimize(int start_offset, int first_int);
     void printline(int l);
     int process_jump(LineParser &line, int wt, int *offs);
 
@@ -328,8 +328,16 @@ class CEXEBuild {
     TinyGrowBuf build_pages, ubuild_pages, *cur_pages;
     TinyGrowBuf build_ctlcolors, ubuild_ctlcolors, *cur_ctlcolors;
 
+    // don't forget to update the cache after updating the datablock
+    // see datablock_optimize for an example
     MMapBuf build_datablock, ubuild_datablock;
-    IGrowBuf *cur_datablock;
+    TinyGrowBuf build_datablock_cache, ubuild_datablock_cache;
+    IGrowBuf *cur_datablock, *cur_datablock_cache;
+    struct cached_db_size
+    {
+      int first_int; // size | (compressed ? 0x80000000 : 0)
+      int start_offset;
+    };
 
     int build_filebuflen;
 
