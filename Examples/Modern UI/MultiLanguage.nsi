@@ -37,6 +37,14 @@
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Spanish.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\Spanish.nsh"
     
+    ;Simplified Chinese
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\SimpChinese.nsh"
+
+    ;Traditional Chinese
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
+    
     ;Dutch
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\Dutch.nsh"
@@ -57,26 +65,24 @@
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\PortugueseBR.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\PortugueseBR.nsh"
     
-    ;Simplified Chinese
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\SimpChinese.nsh"
-
-    ;Traditional Chinese
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
+    ;Ukrainian
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Ukrainian.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\Ukrainian.nsh"
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GERMAN} "${NAME} ${VERSION}"
   Name /LANG=${LANG_SPANISH} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_SIMPCHINESE} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_TRADCHINESE} "${NAME} ${VERSION}"
   Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_POLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
   Name /LANG=${LANG_RUSSIAN} "${NAME} ${VERSION}"
   Name /LANG=${LANG_PORTUGUESEBR} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_SIMPCHINESE} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_TRADCHINESE} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_UKRAINIAN} "${NAME} ${VERSION}"
+  
   OutFile "MultiLanguage.exe"
 
   ;User interface - icons, ui file, check bitmap, progress bar etc.
@@ -87,13 +93,14 @@
   LicenseData /LANG=${LANG_FRENCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GERMAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_SPANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_RUSSIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-select dialog
     ;Titles
@@ -101,26 +108,28 @@
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GERMAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_SPANISH} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_POLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_RUSSIAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_UKRAINIAN} "modern.exe"
     
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
     LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
     LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
     LangString DESC_SecCopyUI ${LANG_SPANISH} "modern.exe: Spanish description"
+    LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
+    LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
     LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
     LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
     LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
     LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
     LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
-    LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
-    LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
+    LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
     
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\${NAME}"
@@ -166,6 +175,10 @@ Function .onInit
   Push "${MUI_GERMAN_LANGNAME}"
   Push ${LANG_SPANISH}
   Push "${MUI_SPANISH_LANGNAME}"
+  Push ${LANG_TRADCHINESE}
+  Push "${MUI_TRADCHINESE_LANGNAME}"
+  Push ${LANG_SIMPCHINESE}
+  Push "${MUI_SIMPCHINESE_LANGNAME}"
   Push ${LANG_DUTCH}
   Push "${MUI_DUTCH_LANGNAME}"
   Push ${LANG_POLISH}
@@ -176,12 +189,10 @@ Function .onInit
   Push "${MUI_RUSSIAN_LANGNAME}"
   Push ${LANG_PORTUGUESEBR}
   Push "${MUI_PORTUGUESEBR_LANGNAME}"
-  Push ${LANG_TRADCHINESE}
-  Push "${MUI_TRADCHINESE_LANGNAME}"
-  Push ${LANG_SIMPCHINESE}
-  Push "${MUI_SIMPCHINESE_LANGNAME}"
+  Push ${LANG_UKRAINIAN}
+  Push "${MUI_UKRAINIAN_LANGNAME}"
   
-  Push 11F ;11 = number of languages, F = change font
+  Push 12F ;12 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
