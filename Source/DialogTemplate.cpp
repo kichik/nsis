@@ -64,7 +64,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     if (IS_INTRESOURCE(x)) { \
       *(WORD*)seeker = 0xFFFF; \
       seeker += sizeof(WORD); \
-      *(WORD*)seeker = WORD(x); \
+      *(WORD*)seeker = WORD(DWORD(x)); \
       seeker += sizeof(WORD); \
     } \
     else { \

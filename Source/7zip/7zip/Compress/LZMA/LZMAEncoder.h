@@ -103,7 +103,10 @@ private:
 
   bool _fastMode;
   bool _maxMode;
+
   UINT32 _numFastBytes;
+  UINT32 _numFastBytesPrev;
+
   UINT32 _longestMatchLength;    
 
   UINT32 _additionalOffset;
@@ -120,17 +123,15 @@ private:
   UINT32 _alignPrices[kAlignTableSize];
   UINT32 _alignPriceCount;
 
+  UINT32 _dictionarySize;
+  UINT32 _dictionarySizePrev;
+
   UINT32 _distTableSize;
 
   UINT32 _posStateBits;
   UINT32 _posStateMask;
   UINT32 _numLiteralPosStateBits;
   UINT32 _numLiteralContextBits;
-
-  UINT32 _dictionarySize;
-
-  UINT32 _dictionarySizePrev;
-  UINT32 _numFastBytesPrev;
 
   UINT64 lastPosSlotFillingPos;
   UINT64 nowPos64;

@@ -49,7 +49,6 @@ extern HANDLE dbd_hFile;
 #endif
 
 char g_caption[NSIS_MAX_STRLEN*2];
-int g_filehdrsize;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HWND g_hwnd;
 HANDLE g_hInstance;
@@ -70,7 +69,7 @@ char *ValidateTempDir()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
-  int ret;
+  int ret = 2;
   const char *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;

@@ -472,7 +472,7 @@ static int NSISCALL __ensuredata(int amount)
         {
           return -3;
         }
-        r=g_inflate_stream.next_out-_outbuffer;
+        r=(DWORD)g_inflate_stream.next_out-(DWORD)_outbuffer;
         if (r)
         {
           if (!WriteFile(dbd_hFile,_outbuffer,r,&t,NULL) || r != t)

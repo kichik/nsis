@@ -57,14 +57,18 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
 
   // No check sum support yet...
   if (m_ntHeaders->OptionalHeader.CheckSum)
-    throw runtime_error("CResourceEditor doesn't yet support check sum");
+  {
+    // clear checksum (should be [re]calculated after all changes done)
+    m_ntHeaders->OptionalHeader.CheckSum = 0;
+    //throw runtime_error("CResourceEditor doesn't yet support check sum");
+  }
 
   // Get resource section virtual address
   m_dwResourceSectionVA = m_ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress;
   // Pointer to the sections headers array
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
 
-  m_dwResourceSectionIndex = -1;
+  m_dwResourceSectionIndex = 0xFFFFFFFF;
 
   // Find resource section index in the array
   for (int i = 0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
@@ -110,7 +114,7 @@ bool CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguag
   CResourceDirectory* langDir = 0;
   CResourceDataEntry* data = 0;
   IMAGE_RESOURCE_DIRECTORY rd = {0, /*time(0),*/};
-  int iTypeIdx, iNameIdx, iLangIdx;
+  int iTypeIdx = -1, iNameIdx = -1, iLangIdx = -1;
 
   iTypeIdx = m_cResDir->Find(szType);
   if (iTypeIdx > -1) {
@@ -265,7 +269,6 @@ DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size = sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize;
 
   // Set the new virtual size of the image
-  DWORD old = ntHeaders->OptionalHeader.SizeOfImage;
   ntHeaders->OptionalHeader.SizeOfImage = RALIGN(ntHeaders->OptionalHeader.SizeOfHeaders, ntHeaders->OptionalHeader.SectionAlignment);
   for (i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
     ntHeaders->OptionalHeader.SizeOfImage += RALIGN(sectionHeadersArray[i].Misc.VirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
@@ -340,16 +343,16 @@ bool CResourceEditor::AddExtraVirtualSize2PESection(const char* pszSectionName, 
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
 
   // Refresh the headers of the sections that come after the resource section, and the data directory
-  for (int i =0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
-    if ( !strcmp((LPCSTR)sectionHeadersArray[i].Name, pszSectionName) ) {
+  for (int i = 0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
+    if (!strcmp((LPCSTR)sectionHeadersArray[i].Name, pszSectionName)) {
       sectionHeadersArray[i].Misc.VirtualSize += addsize;
       sectionHeadersArray[i].Characteristics &= ~IMAGE_SCN_MEM_DISCARDABLE;
       sectionHeadersArray[i].Misc.VirtualSize = RALIGN(sectionHeadersArray[i].Misc.VirtualSize, m_ntHeaders->OptionalHeader.SectionAlignment);
       // now fix any section after
-      for (int k=i+1; k< m_ntHeaders->FileHeader.NumberOfSections; k++, i++) {
+      for (int k = i + 1; k < m_ntHeaders->FileHeader.NumberOfSections; k++, i++) {
         sectionHeadersArray[k].VirtualAddress = sectionHeadersArray[i].VirtualAddress + sectionHeadersArray[i].Misc.VirtualSize;
         sectionHeadersArray[k].VirtualAddress = RALIGN(sectionHeadersArray[k].VirtualAddress, m_ntHeaders->OptionalHeader.SectionAlignment);
-        if ( m_dwResourceSectionIndex == k )
+        if (m_dwResourceSectionIndex == (DWORD) k)
         {
           // fix the resources virtual address if it changed
           m_dwResourceSectionVA = m_ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress = sectionHeadersArray[k].VirtualAddress;
@@ -373,7 +376,7 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
   // Create CResourceDirectory from rdToScan
   CResourceDirectory* rdc = new CResourceDirectory(PIMAGE_RESOURCE_DIRECTORY(rdToScan));
   char* szName;
-  PIMAGE_RESOURCE_DATA_ENTRY rde;
+  PIMAGE_RESOURCE_DATA_ENTRY rde = NULL;
 
   // Go through all entries of this resource directory
   for (int i = 0; i < rdToScan->Header.NumberOfNamedEntries + rdToScan->Header.NumberOfIdEntries; i++) {
@@ -438,7 +441,9 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qDirs.empty()) {
     CResourceDirectory* crd = qDirs.front();
 
-    CopyMemory(seeker, &crd->GetInfo(), sizeof(IMAGE_RESOURCE_DIRECTORY));
+    IMAGE_RESOURCE_DIRECTORY rdDir = crd->GetInfo();
+
+    CopyMemory(seeker, &rdDir, sizeof(IMAGE_RESOURCE_DIRECTORY));
     crd->m_dwWrittenAt = DWORD(seeker);
     seeker += sizeof(IMAGE_RESOURCE_DIRECTORY);
 
@@ -452,7 +457,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
         qDataEntries2.push(crd->GetEntry(i)->GetDataEntry());
       }
 
-      IMAGE_RESOURCE_DIRECTORY_ENTRY rDirE = {0,};
+      IMAGE_RESOURCE_DIRECTORY_ENTRY rDirE = {{0}};
       rDirE.DataIsDirectory = crd->GetEntry(i)->IsDataDirectory();
       rDirE.Id = (crd->GetEntry(i)->HasName()) ? 0 : crd->GetEntry(i)->GetId();
       rDirE.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
@@ -624,10 +629,10 @@ int CResourceDirectory::CountEntries() {
 // Returns -1 if can not be found
 int CResourceDirectory::Find(char* szName) {
   if (IS_INTRESOURCE(szName))
-    return Find(WORD(szName));
+    return Find((WORD) (DWORD) szName);
   else
     if (szName[0] == '#')
-      return Find(WORD(atoi(szName+1)));
+      return Find(WORD(atoi(szName + 1)));
 
   for (unsigned int i = 0; i < m_vEntries.size(); i++) {
     if (!m_vEntries[i]->HasName())
@@ -702,7 +707,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDirector
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;
-    m_wId = WORD(szName);
+    m_wId = (WORD) (DWORD) szName;
   }
   else {
     m_bHasName = true;
@@ -717,7 +722,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDataEntr
   if (IS_INTRESOURCE(szName)) {
     m_bHasName = false;
     m_szName = 0;
-    m_wId = WORD(szName);
+    m_wId = (WORD) (DWORD) szName;
   }
   else {
     m_bHasName = true;

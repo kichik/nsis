@@ -1,3 +1,4 @@
+#include "Platform.h"
 #include "exehead/config.h"
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 

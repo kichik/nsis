@@ -1,3 +1,4 @@
+#include "../Platform.h"
 #include "config.h"
 #include <shlobj.h>
 

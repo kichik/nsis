@@ -88,10 +88,10 @@ const int kDefaultDictionaryLogSize = 20;
 const UINT32 kNumFastBytesDefault = 0x20;
 
 CEncoder::CEncoder():
-  _dictionarySize(1 << kDefaultDictionaryLogSize),
-  _dictionarySizePrev(UINT32(-1)),
   _numFastBytes(kNumFastBytesDefault),
   _numFastBytesPrev(UINT32(-1)),
+  _dictionarySize(1 << kDefaultDictionaryLogSize),
+  _dictionarySizePrev(UINT32(-1)),
   _distTableSize(kDefaultDictionaryLogSize * 2),
   _posStateBits(2),
   _posStateMask(4 - 1),
@@ -106,7 +106,7 @@ CEncoder::CEncoder():
   _maxMode = false;
   _fastMode = false;
   _posAlignEncoder.Create(kNumAlignBits);
-  for(int i = 0; i < kNumPosModels; i++)
+  for(unsigned int i = 0; i < kNumPosModels; i++)
     _posEncoders[i].Create(((kStartPosModelIndex + i) >> 1) - 1);
 }
 
@@ -181,7 +181,7 @@ HRESULT CEncoder::Create()
   return S_OK;
 }
 
-inline AreStringsEqual(const wchar_t *s, const wchar_t *testString)
+inline bool AreStringsEqual(const wchar_t *s, const wchar_t *testString)
 {
   while (true)
   {
@@ -231,8 +231,9 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
           return E_INVALIDARG;
         int matchFinderIndexPrev = _matchFinderIndex;
         _matchFinderIndex = 0;
-        const kNumMFs = sizeof(kMatchFinderIDs) / sizeof(kMatchFinderIDs[0]);
-        for (int m = 0; m < kNumMFs; m++)
+        const unsigned kNumMFs = sizeof(kMatchFinderIDs) / sizeof(kMatchFinderIDs[0]);
+        unsigned int m;
+        for (m = 0; m < kNumMFs; m++)
         {
           if (AreStringsEqual(kMatchFinderIDs[m], prop.bstrVal))
           {
@@ -257,7 +258,7 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
       #endif
       case NCoderPropID::kDictionarySize:
       {
-        const int kDicLogSizeMaxCompress = 28;
+        const unsigned int kDicLogSizeMaxCompress = 28;
         if (prop.vt != VT_UI4)
           return E_INVALIDARG;
         UINT32 dictionarySize = prop.ulVal;
@@ -277,7 +278,7 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
         if (prop.vt != VT_UI4)
           return E_INVALIDARG;
         UINT32 value = prop.ulVal;
-        if (value > NLength::kNumPosStatesBitsEncodingMax)
+        if (value > (UINT32) NLength::kNumPosStatesBitsEncodingMax)
           return E_INVALIDARG;
         _posStateBits = value;
         _posStateMask = (1 << _posStateBits) - 1;
@@ -288,7 +289,7 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
         if (prop.vt != VT_UI4)
           return E_INVALIDARG;
         UINT32 value = prop.ulVal;
-        if (value > kNumLitPosStatesBitsEncodingMax)
+        if (value > (unsigned) kNumLitPosStatesBitsEncodingMax)
           return E_INVALIDARG;
         _numLiteralPosStateBits = value;
         break;
@@ -298,7 +299,7 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
         if (prop.vt != VT_UI4)
           return E_INVALIDARG;
         UINT32 value = prop.ulVal;
-        if (value > kNumLitContextBitsMax)
+        if (value > (unsigned) kNumLitContextBitsMax)
           return E_INVALIDARG;
         _numLiteralContextBits = value;
         break;
@@ -325,7 +326,7 @@ STDMETHODIMP CEncoder::Init(
   // RINOK(_matchFinder->Init(inStream));
   _rangeEncoder.Init(outStream);
 
-  int i;
+  unsigned int i;
   for(i = 0; i < kNumStates; i++)
   {
     for (UINT32 j = 0; j <= _posStateMask; j++)
@@ -442,7 +443,7 @@ UINT32 CEncoder::GetOptimum(UINT32 &backRes, UINT32 position)
   UINT32 reps[kNumRepDistances];
   UINT32 repLens[kNumRepDistances];
   UINT32 repMaxIndex = 0;
-  int i;
+  unsigned int i;
   for(i = 0; i < kNumRepDistances; i++)
   {
     reps[i] = _repDistances[i];
@@ -526,7 +527,7 @@ UINT32 CEncoder::GetOptimum(UINT32 &backRes, UINT32 position)
   for (; len <= lenMain; len++)
     _optimum[len].Price = kIfinityPrice;
 
-  for(i = 0; i < kNumRepDistances; i++)
+  for(i = 0; i < (int) kNumRepDistances; i++)
   {
     UINT repLen = repLens[i];
     for(UINT32 lenTest = 2; lenTest <= repLen; lenTest++)
@@ -880,7 +881,7 @@ UINT32 CEncoder::GetOptimumFast(UINT32 &backRes, UINT32 position)
   }
   UINT32 repLens[kNumRepDistances];
   UINT32 repMaxIndex = 0;
-  for(int i = 0; i < kNumRepDistances; i++)
+  for(unsigned int i = 0; i < kNumRepDistances; i++)
   {
     repLens[i] = _matchFinder->GetMatchLen(0 - 1, _repDistances[i], kMatchMaxLen);
     if (i == 0 || repLens[i] > repLens[repMaxIndex])
@@ -939,7 +940,7 @@ UINT32 CEncoder::GetOptimumFast(UINT32 &backRes, UINT32 position)
       backRes = UINT32(-1);
       return 1;
     }
-    for(int i = 0; i < kNumRepDistances; i++)
+    for(unsigned int i = 0; i < kNumRepDistances; i++)
     {
       UINT32 repLen = _matchFinder->GetMatchLen(0 - 1, _repDistances[i], kMatchMaxLen);
       if (repLen >= 2 && repLen + 1 >= lenMain)
@@ -1096,11 +1097,11 @@ HRESULT CEncoder::CodeOneBlock(UINT64 *inSize, UINT64 *outSize, INT32 *finished)
     else
       len = GetOptimum(pos, UINT32(nowPos64));
 
-    if(len == 1 && pos == (-1))
+    if(len == 1 && pos == (UINT32)(-1))
     {
       _mainChoiceEncoders[_state.Index][posState].Encode(&_rangeEncoder, kMainChoiceLiteralIndex);
       _state.UpdateChar();
-      BYTE matchByte;
+      BYTE matchByte = 0;
       if(_peviousIsMatch)
         matchByte = _matchFinder->GetIndexByte(0 - _repDistances[0] - 1 - _additionalOffset);
       BYTE curByte = _matchFinder->GetIndexByte(0 - _additionalOffset);
@@ -1226,7 +1227,7 @@ STDMETHODIMP CEncoder::Code(ISequentialInStream *inStream,
   
 void CEncoder::FillPosSlotPrices()
 {
-  for (int lenToPosState = 0; lenToPosState < kNumLenToPosStates; lenToPosState++)
+  for (unsigned int lenToPosState = 0; lenToPosState < kNumLenToPosStates; lenToPosState++)
   {
 	  UINT32 posSlot;
     for (posSlot = 0; posSlot < kEndPosModelIndex && posSlot < _distTableSize; posSlot++)
@@ -1239,7 +1240,7 @@ void CEncoder::FillPosSlotPrices()
 
 void CEncoder::FillDistancesPrices()
 {
-  for (int lenToPosState = 0; lenToPosState < kNumLenToPosStates; lenToPosState++)
+  for (unsigned int lenToPosState = 0; lenToPosState < kNumLenToPosStates; lenToPosState++)
   {
 	  UINT32 i;
     for (i = 0; i < kStartPosModelIndex; i++)
@@ -1256,7 +1257,7 @@ void CEncoder::FillDistancesPrices()
 
 void CEncoder::FillAlignPrices()
 {
-  for (int i = 0; i < kAlignTableSize; i++)
+  for (int i = 0; i < (int) kAlignTableSize; i++)
     _alignPrices[i] = _posAlignEncoder.GetPrice(i);
   _alignPriceCount = kAlignTableSize;
 }
