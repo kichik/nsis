@@ -145,7 +145,7 @@ Section "Extra UIs"
   SetOutPath $INSTDIR
 SectionEnd
 
-Section "Extra UIs"
+Section "Language files"
   SectionIn 1 2
   SetOutPath "$INSTDIR\Contrib\Language files"
   SetOverwrite try
