@@ -111,14 +111,7 @@ int r=Z_OK;
       }
       break;
     case LENS:
-      NEEDBITS(32)
-      if ((((~b) >> 16) & 0xffff) != (b & 0xffff))
-      {
-        s->mode = BAD;
-//        z->msg = (char*)"err";//invalid stored block lengths";
-        r = Z_DATA_ERROR;
-        LEAVE
-      }
+      NEEDBITS(16)
       s->sub.left = (uInt)b & 0xffff;
       b = k = 0;                      /* dump bits */
       Tracev((stderr, "inflate:       stored length %u\n", s->sub.left));
@@ -144,15 +137,12 @@ int r=Z_OK;
     case TABLE:
       NEEDBITS(14)
       s->sub.trees.table = t = (uInt)b & 0x3fff;
-#ifndef PKZIP_BUG_WORKAROUND
       if ((t & 0x1f) > 29 || ((t >> 5) & 0x1f) > 29)
       {
         s->mode = BAD;
-//        z->msg = (char*)"err";//too many length or distance symbols";
         r = Z_DATA_ERROR;
         LEAVE
       }
-#endif
       t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
       if ((s->sub.trees.blens = (uIntf*)ZALLOC(z, t, sizeof(uInt))) == Z_NULL)
       {
@@ -216,7 +206,7 @@ int r=Z_OK;
           if (i + j > 258 + (t & 0x1f) + ((t >> 5) & 0x1f) ||
               (c == 16 && i < 1))
           {
-            ZFREE(z, s->sub.trees.blens);
+//            ZFREE(z, s->sub.trees.blens);
             s->mode = BAD;
 //            z->msg = (char*)"err";//invalid bit length repeat";
             r = Z_DATA_ERROR;
