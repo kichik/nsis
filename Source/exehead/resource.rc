@@ -84,7 +84,7 @@ BEGIN
     CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP | 
                     WS_GROUP,0,111,111,8
     LTEXT           "",IDC_INTROTEXT,25,0,241,25
-    CONTROL         "Tree1",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
+    CONTROL         "",IDC_TREE1,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
                     WS_BORDER | WS_TABSTOP,114,39,151,90
 END
