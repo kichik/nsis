@@ -121,7 +121,7 @@ char * NSISCALL scanendslash(const char *str)
 
 int NSISCALL validpathspec(char *ubuf)
 {
-  return ((ubuf[0]=='\\' && ubuf[1]=='\\') || (ubuf[0] && *CharNext(ubuf)==':'));
+  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (ubuf[0] && *CharNext(ubuf)==':'));
 }
 
 int NSISCALL is_valid_instpath(char *s)
@@ -129,7 +129,7 @@ int NSISCALL is_valid_instpath(char *s)
   int ivp=0;
   // if 8 is set, req is 0, which means rootdirs are not allowed.
   int req=!(g_inst_cmnheader->misc_flags&8);
-  if (s[0] == '\\' && s[1] == '\\') // \\ path
+  if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
   {
     if (lastchar(s)!='\\') ivp++;
     while (*s)
@@ -144,14 +144,10 @@ int NSISCALL is_valid_instpath(char *s)
     if (*s)
     {
       s=CharNext(s);
-      if (*s == ':')
+      if (*(WORD*)s == CHAR2_TO_WORD(':','\\'))
       {
-        s=CharNext(s);
-        if (*s == '\\')
-        {
-          s=CharNext(s);
-          if (req || (*s && *s != '\\')) ivp++;
-        }
+        s+=2;
+        if (req || (*s && *s != '\\')) ivp++;
       }
     }
   }
@@ -297,8 +293,8 @@ void NSISCALL recursive_create_directory(char *directory)
   while (*p == ' ') p=CharNext(p);
   if (!*p) return;
   tp=CharNext(p);
-  if (*tp == ':' && tp[1] == '\\') p=tp+2;
-  else if (p[0] == '\\' && p[1] == '\\')
+  if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
+  else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
   {
     int x;
     for (x = 0; x < 2; x ++)
@@ -399,14 +395,13 @@ int NSISCALL myatoi(char *s)
     {
       int c=*s++;
       if (c >= '0' && c <= '9') c-='0';
-      else if (c >= 'a' && c <= 'f') c-='a'-10;
-      else if (c >= 'A' && c <= 'F') c-='A'-10;
+      else if ((c & ~0x20) >= 'A' && (c & ~0x20) <= 'F') c = (c & 7) + 9;
       else break;
       v<<=4;
       v+=c;
     }
   }
-  else if (*s == '0' && s[1] <= '7' && s[1] >= '0')
+  else if (*s == '0' && s[1] >= '0' && s[1] <= '7')
   {
     s++;
     for (;;)
@@ -424,8 +419,9 @@ int NSISCALL myatoi(char *s)
     if (*s == '-') { s++; sign++; }
     for (;;)
     {
-      int c=*s++ - '0';
-      if (c < 0 || c > 9) break;
+      int c=*s++;
+      if (c >= '0' && c <= '9') c-='0';
+      else break;
       v*=10;
       v+=c;
     }

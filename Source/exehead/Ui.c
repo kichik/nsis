@@ -146,16 +146,15 @@ static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
-  BOOL ret=0;
   if (uMsg == WM_CTLCOLORSTATIC) {
     COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
     if (color) {
       LOGBRUSH b={BS_SOLID, color-1, 0};
       SetBkColor((HDC)wParam, b.lbColor);
-      ret=(BOOL)CreateBrushIndirect(&b);
+      return (BOOL)CreateBrushIndirect(&b);
     }
   }
-  return ret;
+  return 0;
 }
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #define HandleStaticBkColor() 0
@@ -405,9 +404,7 @@ int NSISCALL ui_doinstall(void)
       static char str2[]="RichEdit20A";
       if (!LoadLibrary(str1))
       {
-        ((short*)str1)[3]=*(short*)"32";
-        //str1[6]='3';
-        //str1[7]='2';
+        *(WORD*)(str1+6) = CHAR2_TO_WORD('3','2');
         LoadLibrary(str1);
       }
 
@@ -862,7 +859,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     mini_memcpy(s,state_install_directory,NSIS_MAX_STRLEN);
     s[sizeof(s)-1]=0;
     if (s[1] == ':') s[3]=0;
-    else if (s[0] == '\\' && s[1] == '\\') // \\ path
+    else if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
     {
       addtrailingslash(s);
     }
@@ -1046,7 +1043,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           tv.item.state=INDEXTOSTATEIMAGEMASK(l);
         }
 
-        if (ps_tmpbuf[0] == '!' || (ps_tmpbuf[0] == '-' && ps_tmpbuf[1] == '!'))
+        if (ps_tmpbuf[0] == '!' || *(WORD*)ps_tmpbuf == CHAR2_TO_WORD('-','!'))
         {
           tv.item.pszText++;
           tv.item.stateMask|=TVIS_BOLD;
@@ -1236,13 +1233,13 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               TVITEM tv;
               int l=1;
 
-              if (t->default_state & (1<<m_whichcfg)) 
+              if (t->default_state & (1<<m_whichcfg))
               {
                 l++;
                 t->default_state|=DFS_SET;
               }
               else t->default_state&=~DFS_SET;
-              
+
               // this can't happen because of the above if()
               //if (t->default_state & DFS_RO) l+=3;
 
@@ -1513,8 +1510,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
           // -2 to allow for CR/LF
           ListView_GetItemText(insthwnd,i,0,ptr,(endPtr-2)-ptr);
           while (*ptr) ptr++;
-          *ptr++ = '\r';
-          *ptr++ = '\n';
+          *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
+          ptr+=2;
         }
         *ptr++ = 0;
         GlobalUnlock(memory);
