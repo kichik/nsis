@@ -11,7 +11,8 @@ How to use
   ------------
 
   Parameters are specified in this format:
-  required (required) (option1 | option2) [optional]
+  required (required) (option1 | option2) [optional or add. options]
+  [option1 | option2]
 
   The stars in command titles (*****) are the function usefulness in my
   opinion. The more starts, the more useful it is. 5 stars (*****) is the
@@ -26,25 +27,7 @@ How to use
   If you want to add ` to a string, you should always escape it using $\`
   because the header file macro functions use ` to separate parameters.
 
-  1. Include LogicLib.nsh
-  ----------------------
-
-    !include "LogicLib.nsh"
-
-    LogicLib.nsh has to be inside Include directory, so you don't have to
-    specify a path.
-
-    You have to put this command before including the StrFunc.nsh header
-    file.
-
-    Some functions from this header file depend on LogicLib. This means that
-    functions are less likely to have bugs and easier to understand. Extra
-    options from LogicLib header file do not work as most of the functions
-    are still using the default coding.
-
-    Functions that use LogicLib are mentioned on their descriptions.  
-
-  2. Include Header file
+  1. Include Header file
   ----------------------
 
     !include "StrFunc.nsh"
@@ -53,6 +36,53 @@ How to use
     specify a path.
 
     You have to put this command before any command used in this header file.
+
+  2. Defines
+  ----------
+
+    This header file contains defines that automatizes the life of some who
+    fear of a lot of changes sometimes imposed in this header file or who have
+    applications that put it to work at maximum capacity. Before you try
+    these, give a look on the information below:
+
+      - Every item on a define value is separated by a "|", and every subitem
+        (items in an item) is separated by " ".
+
+      - Use ${StrTok} $var "${DefineName}" "|" "$counter" "0" to get every
+        item inside the define. For subitems, use ${StrTok} $var2 "$var" " "
+        "$counter2" "0" after getting the value for a desidered item.
+
+      - ${StrFunc_List} is automatically made by the header file. The rest
+        is manually added to the header.
+
+    2.1 Defines List:
+    -----------------
+
+    StrFunc_List - Lists all function names currently available on StrFunc
+                   header file.
+
+    *_List       - Lists all parameter names currently available for "*"
+                   function. (* = function name - i.e. StrTok_List).
+
+    *_TypeList   - Lists the types of all parameters on "*" function.
+                   (* = function name - i.e. StrTok_List). Possible types
+                   for each parameter:
+
+                   - Output - Needs a variable to output a function result.
+
+                   - Text   - Needs text or number to be inputed.
+
+                   - Mixed  - Needs text, number or option to be inputed.
+                              Each subitem following the "Mixed" word is an
+                              option. The first option is ever the default
+                              one. Two following spaces "  " means that
+                              that subitem is empty.
+
+                   - Option - Needs an option to be inputed. Each subitem
+                              following the "Option" word is an option.
+                              The first option is ever the default one. Two
+                              following spaces "  " means that that subitem
+                              is empty.
 
   3. Commands
   -----------
@@ -111,7 +141,7 @@ How to use
     =========================================================================
     **                                                             ${StrCase}
     -------------------------------------------------------------------------
-    ResultVar String Type(L|U|T|S|<>|"")
+    ResultVar String Type(|L|U|T|S|<>)
     =========================================================================
     Converts "String" to "Type" Case. Uses LogicLib.
 
@@ -126,12 +156,12 @@ How to use
       Type
       Type of string case to convert to:
 
+        - "" = Original Case (same as "String")
         - L = Lower Case (this is just an example. a very simple one.)
         - U = Upper Case (THIS IS JUST AN EXAMPLE. A VERY SIMPLE ONE.)
         - T = Title Case (This Is Just An Example. A Very Simple One.)
         - S = Sentence Case (This is just an example. A very simple one.)
         - <> = Switch Case (This is just an example. A very simple one.)
-        - "" = Original Case (same as "String")
         
       Default value is "" (Original Case).
 
@@ -142,13 +172,14 @@ How to use
     Example:
 
       ${StrCase} $0 '"Você" is "You" in English.' "U"
+                    [__(_)__()___()__()__(____)_]
 
       $0 = '"VOCÊ" IS "YOU" IN ENGLISH.'
 
     =========================================================================
     *                                                               ${StrClb}
     -------------------------------------------------------------------------
-    ResultVar String Action(>|<|<>|)
+    ResultVar String Action(|>|<|<>)
     =========================================================================
     Makes an action with the clipboard depending on value of parameter
     "Action". Uses LogicLib.
@@ -161,10 +192,10 @@ How to use
       Action
       Can be one of the following values:
 
+        - "" = Cleans the clipboard.
         - ">" = Set string to clipboard.
         - "<" = Get string from clipboard.
         - "<>" = Swap string with clipboard's.
-        - "" = Cleans the clipboard.
 
     Result Value -> ResultVar:
 
@@ -194,16 +225,17 @@ How to use
     Example:
 
       ${StrIOToNSIS} $0 "\r\n\t\\This is just an example\\"
+                        [()()()()_______________________()]
 
       $0 = "$\r$\n$\t\This is just an example\"
 
     =========================================================================
     *                                                               ${StrLoc}
     -------------------------------------------------------------------------
-    ResultVar String StrToSearchFor OffsetDirection(>|<)
+    ResultVar String StrToSearchFor CounterDirection(>|<)
     =========================================================================
     Searches for "StrToSearchFor" in "String" and returns its location,
-    according to "OffsetDirection".
+    according to "CounterDirection".
 
     Parameters:
 
@@ -216,9 +248,9 @@ How to use
       StrToSearchFor
       String to search in "String".
 
-      OffsetDirection(>|<)
-      Direction where the counter goes to. Default is ">".
-      (> = left to right, < = right to left)
+      CounterDirection(>|<)
+      Direction where the counter increases to. Default is ">".
+      (> = increases from left to right, < = increases from right to left)
 
     Result Value -> ResultVar:
 
@@ -227,6 +259,7 @@ How to use
     Example: 
 
       ${StrLoc} $0 "This is just an example" "just" "<"
+                            (__)<<<<<<<<<<<
 
       $0 = "11"
 
@@ -254,9 +287,103 @@ How to use
     Example:
 
       ${StrNSISToIO} $0 "$\r$\n$\t\This is just an example\"
+                        [(_)(_)(_)^_______________________^]
 
       $0 = "\r\n\t\\This is just an example\\"
-      
+
+    =========================================================================
+    *****                                                           ${StrRep}
+    -------------------------------------------------------------------------
+    ResultVar String StrToReplace ReplacementString
+    =========================================================================
+    Searches for all "StrToReplace" in "String" replacing those with
+    "ReplacementString".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String where to search "StrToReplace".
+
+      StrToReplaceFor
+      String to search in "String".
+
+      StringToBeReplacedWith
+      String to replace "StringToReplace" when it is found in "String".
+
+    Result Value -> ResultVar:
+
+      "String" with all occurences of "StringToReplace" replaced with
+      "ReplacementString".
+
+    Example: 
+
+      ${StrRep} $0 "This is just an example" "an" "one"
+                    [____________()_______]
+
+      $0 = "This is just one example"
+
+    =========================================================================
+    ***                                                            ${StrSort}
+    -------------------------------------------------------------------------
+    ResultVar String LeftStr CenterStr RightStr IncludeLeftStr(1|0)
+    IncludeCenterStr(1|0) IncludeRightStr(1|0)
+    =========================================================================
+    Searches for "CenterStr" in "String", and returns only the value
+    between "LeftStr" and "RightStr", including or not the "CenterStr" using
+    "IncludeCenterStr" and/or the "LeftStr" using "IncludeLeftStr" and
+    "RightStr" using "IncludeRightStr".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String where to search "CenterStr".
+
+      LeftStr
+      The first occurrence of "LeftStr" on the left of "CenterStr".
+      If it is an empty value, or was not found, will return
+      everything on the left of "CenterStr".
+
+      CenterStr
+      String to search in "String".
+
+      RightStr
+      The first occurrence of "RightStr" on the right of "CenterStr".
+      If it is an empty value, or was not found, will return
+      everything on the right of "CenterStr".
+
+      IncludeLeftStr(1|0)
+      Include or not the "LeftStr" in the result value. Default is 1
+      (True). (1 = True, 0 = False)
+
+      IncludeCenterStr(1|0)
+      Include or not the "CenterStr" in the result value. Default is 1
+      (True). (1 = True, 0 = False)
+
+      IncludeRightStr(1|0)
+      Include or not the "RightStr" in the result value. Default is 1
+      (True). (1 = True, 0 = False)
+
+    Result Value -> ResultVar:
+
+      String between "LeftStr" and "RightStr" of a found "CenterStr"
+      including or not the "LeftStr" and "RightStr" if
+      "IncludeLeftRightStr" is 1 and/or the "CenterStr" if
+      "IncludeCenterStr" is 1.
+
+    Example: 
+
+      ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
+                    [_______(___)_______]( )
+                              C           R
+
+      $0 = "This is an exam"
+
     =========================================================================
     *****                                                           ${StrStr}
     -------------------------------------------------------------------------
@@ -277,11 +404,13 @@ How to use
 
     Result Value -> ResultVar:
 
-      "StrToSearchFor" + the string after where it was found in "String".
+      "StrToSearchFor" + the string after where "StrToSearchFor" was found in
+      "String".
 
     Example: 
 
       ${StrStr} $0 "This is just an example" "just"
+                   >>>>>>>>>{_)____________]
 
       $0 = "just an example"
 
@@ -289,10 +418,10 @@ How to use
     *****                                                        ${StrStrAdv}
     -------------------------------------------------------------------------
     ResultVar String StrToSearchFor SearchDirection(>|<)
-    ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops CaseSensitive
+    ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops CaseSensitive(0|1)
     =========================================================================
     Searches for "StrToSearchFor" in "String" in the direction specified by
-    "SearchDirection" and looping "Loops" times. Uses LogicLib.
+    "SearchDirection" and looping "Loops" times.
 
     Parameters:
 
@@ -322,7 +451,7 @@ How to use
       Number of times the code will search "StrToSearchFor" in "String" not
       including the original execution. Default is "0" (1 code execution).
 
-      CaseSensitive
+      CaseSensitive(0|1)
       If "1" the search will be case-sensitive (diferenciates between cases).
       If "0" it is case-insensitive (does not diferenciate between cases).
       Default is "0" (Case-Insensitive).
@@ -343,122 +472,37 @@ How to use
       When you put nothing in "String", will return an empty string and set
       error flag.
 
-    Example (!define LOGICLIB_STRCMP activated): 
+    Example: 
 
-      ${StrStrAdv} $0 "This IS really just an example" "IS " ">" ">" "1" "0"
-      "1"
+      ${StrStrAdv} $0 "This IS really just an example" "IS " ">" ">" "1" "0" "1"
+                       >>>>>( )[____________________]                       
+
 
       $0 = "really just an example"
 
     =========================================================================
-    *****                                                           ${StrRep}
-    -------------------------------------------------------------------------
-    ResultVar String StrToReplace ReplacementString
-    =========================================================================
-    Searches for all "StrToReplaceFor" in "String" replacing those with
-    "ReplacementString".
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String where to search "StrToReplaceFor".
-
-      StrToReplaceFor
-      String to search in "String".
-
-      StringToBeReplacedWith
-      String to replace "StringToReplace" when it is found in "String".
-
-    Result Value -> ResultVar:
-
-      "String" with all occurences of "StringToReplace" replaced with
-      "ReplacementString".
-
-    Example: 
-
-      ${StrRep} $0 "This is just an example" "an" "one"
-
-      $0 = "This is just one example"
-
-    =========================================================================
-    ***                                                            ${StrSort}
-    -------------------------------------------------------------------------
-    ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr(1|0)
-    IncludeCenterStr(1|0)
-    =========================================================================
-    Searches for "CenterStr" in "String", and returns only the value
-    between "LeftStr" and "RightStr", including or not the "CenterStr" using
-    "IncludeCenterStr" and/or the "LeftStr" and "RightStr" using
-    "IncludeLeftRightStr".
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String where to search "CenterStr".
-
-      CenterStr
-      String to search in "String".
-
-      LeftStr
-      The first occurrence of "LeftStr" on the left of "CenterStr".
-      If it is an empty value, or was not found, will return
-      everything on the left of "CenterStr".
-
-      RightStr
-      The first occurrence of "RightStr" on the right of "CenterStr".
-      If it is an empty value, or was not found, will return
-      everything on the right of "CenterStr".
-
-      IncludeLeftRightStr(1|0)
-      Include or not the "LeftStr" and "RightStr" in the result value.
-      Default is 1 (True). (1 = True, 0 = False)
-
-      IncludeCenterStr(1|0)
-      Include or not the "CenterStr" in the result value. Default is 1
-      (True). (1 = True, 0 = False)
-
-    Result Value -> ResultVar:
-
-      String between "LeftStr" and "RightStr" of a found "CenterStr"
-      including or not the "LeftStr" and "RightStr" if
-      "IncludeLeftRightStr" is 1 and/or the "CenterStr" if
-      "IncludeCenterStr" is 1.
-
-    Example: 
-
-      ${StrSort} $0 "This is just an example" " just" "" "ple" "0" "0"
-
-      $0 = "This is an exam"
-
-    =========================================================================
     ****                                                            ${StrTok}
     -------------------------------------------------------------------------
-    ResultVar StrToTokenize Separators ResultPart SkipEmptyParts(1|0)
+    ResultVar String Separators ResultPart[L] SkipEmptyParts(1|0)
     =========================================================================
     Returns the part "ResultPart" between two "Separators" inside
-    "StrToTokenize".
+    "String".
 
     Parameters:
 
       ResultVar
       Destination where result is returned.
 
-      StrToTokenize
+      String
       String where to search for "Separators".
 
       Separators
-      Characters to find in "StrToTokenize".
+      Characters to find on "String".
 
-      ResultPart
-      The part want to be found in "StrToTokenize" between two "Separators".
-      Can be any number, starting at 1, and "L" that is the last part.
-      Default is L.
+      ResultPart[L]
+      The part want to be found on "StrToTokenize" between two "Separators".
+      Can be any number, starting at 0, and "L" that is the last part.
+      Default is L (Last part).
 
       SkipEmptyParts(1|0)
       Skips empty string parts between two "Separators". Default is 1 (True).
@@ -466,16 +510,18 @@ How to use
 
     Result Value -> ResultVar:
 
-      "StrToTokenize" part "Part" between two "Separators".
+      "String" part number "Part" between two "Separators".
 
     Examples: 
 
-      1) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "1"
-
+      1) ${StrTok} $0 "This is, or is not, just an example" " ," "4" "1"
+                       (  ) ()  () () [_]  (  ) () (     )
+                       0    1   2  3  4    5    6  7 
          $0 = "not"
 
-      2) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "0"
-
+      2) ${StrTok} $0 "This is, or is not, just an example" " ," "4" "0"
+                       (  ) () ^() [] ( ) ^(  ) () (     )
+                       0    1  23  4  5   67    8  9
          $0 = "is"
 
     =========================================================================
@@ -500,6 +546,7 @@ How to use
     Example:
 
       ${StrTrimNewLines} $0 "$\r$\nThis is just an example$\r$\n$\r$\n"
+                            [_____________________________(_)(_)(_)(_)]
 
       $0 = "$\r$\nThis is just an example"
 
@@ -507,18 +554,8 @@ Functions included and not included
 --------------------------------------------------
 
 11 functions have been included
-  3 were included as are in Archive
-  8 were not included in Archive
-    3 were made with LogicLib coding
-      StrClb
-      StrStrAdv (AdvStrStr)
-      StrCase
-    5 were made with normal NSIS coding
-      StrTok (AdvStrTok)
-      StrLoc
-      StrSort (AdvStrSort)
-      NSISToIO
-      IOToNSIS
+  They are not available on Archive
+  They are on LogicLib format
 
 15 functions have not been included
   12 were not included because of better functions
@@ -547,10 +584,19 @@ Functions included and not included
 Version History
 ---------------
 
+1.08 - 10/12/2004
+
+- Converted all the functions to LogicLib.
+- StrSort: Totally remade and it can break old scripts. See
+  documentation for details.
+- Added defines: StrFunc_List, *_List and *_TypeList.
+- Fixed StrStrAdv: Variables $R0-$R3 couldn't be used on scripts before
+  calling.
+- StrRep: Cut down some variables.
+- Arranged correctly the order of StrSort on the documentation.
+
 1.07 - 09/21/2004
 
-- LogicLib is required now, because of the remodelation of StrStrAdv,
-StrCase and StrClb functions.
 - Removed ${UnStrFunc} command. Now you can just include uninstall
 functions commands like ${UnStrStr} to be supported by uninstall functions
 and sections.
@@ -626,7 +672,7 @@ Made by Diego Pedroso (aka deguix).
 Functions Credits
 -----------------
 
-- StrCase, StrClb, StrLoc, StrSort, StrStrAdv and StrTok (Adv) made
+- StrCase, StrClb, StrLoc, StrSort, StrStrAdv and StrTok made
   by Diego Pedroso, some based on functions made by Dave Laundon,
   "Afrow UK" and "bigmac666".
 - StrRep made by Hendri Adriaens.
