@@ -296,7 +296,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_FIND:
 				{
 					if (!uFindReplaceMsg)
-					uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
+					  uFindReplaceMsg = RegisterWindowMessage(FINDMSGSTRING);
 					my_memset(&fr, 0, sizeof(FINDREPLACE));
 					fr.lStructSize = sizeof(FINDREPLACE);
 					fr.hwndOwner = hwndDlg;
@@ -310,7 +310,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 		}
 	}
-	if (msg == uFindReplaceMsg) {
+	if (uFindReplaceMsg && msg == uFindReplaceMsg) {
 		LPFINDREPLACE lpfr = (LPFINDREPLACE)lParam;
 		if (lpfr->Flags & FR_FINDNEXT) {
 			WPARAM flags = FR_DOWN;
