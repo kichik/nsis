@@ -157,7 +157,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		}
 		case WM_ENTERSIZEMOVE:
 		{
-			
 			GetClientRect(g_hwnd, &resizeRect);
 			return TRUE;
 		}
