@@ -542,6 +542,8 @@ Var MUI_TEMP2
   
     PageCallbacks mui.LicensePre_${MUI_UNIQUEID} mui.LicenseShow_${MUI_UNIQUEID} mui.LicenseLeave_${MUI_UNIQUEID}
     
+    Caption " "
+    
     LicenseData "${LICENSEDATA}"
     
     !ifdef MUI_LICENSEPAGE_TEXT
@@ -586,6 +588,8 @@ Var MUI_TEMP2
   
     PageCallbacks mui.ComponentsPre_${MUI_UNIQUEID} mui.ComponentsShow_${MUI_UNIQUEID} mui.ComponentsLeave_${MUI_UNIQUEID}
     
+    Caption " "
+    
     !ifdef MUI_COMPONENTSPAGE_TEXT
       LicenseText ${MUI_COMPONENTSPAGE_TEXT}
       !undef MUI_COMPONENTSPAGE_TEXT
@@ -613,6 +617,8 @@ Var MUI_TEMP2
   PageEx directory
   
     PageCallbacks mui.DirectoryPre_${MUI_UNIQUEID} mui.DirectoryShow_${MUI_UNIQUEID} mui.DirectoryLeave_${MUI_UNIQUEID}
+    
+    Caption " "
     
     !ifdef MUI_DIRECTORYPAGE_TEXT
       LicenseText ${MUI_DIRECTORYPAGE_TEXT}
@@ -656,6 +662,8 @@ Var MUI_TEMP2
   
     PageCallbacks mui.StartmenuPre_${MUI_UNIQUEID} mui.StartmenuLeave_${MUI_UNIQUEID}
     
+    Caption " "
+    
   PageExEnd
   
   !insertmacro MUI_FUNCTION_STARTMENUPAGE mui.StartmenuPre_${MUI_UNIQUEID} mui.StartmenuLeave_${MUI_UNIQUEID}
@@ -678,6 +686,8 @@ Var MUI_TEMP2
   PageEx instfiles
   
     PageCallbacks mui.InstFilesPre_${MUI_UNIQUEID} mui.InstFilesShow_${MUI_UNIQUEID} mui.InstFilesLeave_${MUI_UNIQUEID}
+    
+    Caption " "
     
   PageExEnd
   
@@ -712,6 +722,8 @@ Var MUI_TEMP2
   PageEx custom
   
     PageCallbacks mui.FinishPre_${MUI_UNIQUEID} mui.FinishLeave_${MUI_UNIQUEID}
+    
+    Caption " "
     
   PageExEnd
   
@@ -779,6 +791,8 @@ Var MUI_TEMP2
   
     PageCallbacks un.mui.ConfirmPre_${MUI_UNIQUEID} un.mui.ConfirmShow_${MUI_UNIQUEID} un.mui.ConfirmLeave_${MUI_UNIQUEID}
     
+    Caption " "
+    
   PageExEnd
   
   !insertmacro MUI_UNFUNCTION_CONFIRMPAGE un.mui.ConfirmPre_${MUI_UNIQUEID} un.mui.ConfirmShow_${MUI_UNIQUEID} un.mui.ConfirmLeave_${MUI_UNIQUEID}
@@ -806,6 +820,8 @@ Var MUI_TEMP2
   
     PageCallbacks un.mui.ComponentsPre_${MUI_UNIQUEID} un.mui.ComponentsShow_${MUI_UNIQUEID} un.mui.ComponentsLeave_${MUI_UNIQUEID}
     
+    Caption " "
+    
   PageExEnd
   
   !insertmacro MUI_UNFUNCTION_COMPONENTSPAGE un.mui.ComponentsPre_${MUI_UNIQUEID} un.mui.ComponentsShow_${MUI_UNIQUEID} un.mui.ComponentsLeave_${MUI_UNIQUEID}
@@ -832,6 +848,8 @@ Var MUI_TEMP2
   PageEx un.instfiles
   
     PageCallbacks un.mui.InstFilesPre_${MUI_UNIQUEID} un.mui.InstFilesShow_${MUI_UNIQUEID} un.mui.InstFilesLeave_${MUI_UNIQUEID}
+    
+    Caption " "
     
   PageExEnd
   
