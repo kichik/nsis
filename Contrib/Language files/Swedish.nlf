@@ -1,9 +1,9 @@
 # Header, don't edit
-NLF v1
+NLF v2
 # Language ID
 1053
 # Start editing here
-# Translated by Peter Gustafsson, sm5tri@passagen.se v1.2
+# Translated by Peter Gustafsson, sm5tri@passagen.se
 Nullsoft Install System %s
 %s Installation
 %s Avinstallation
@@ -60,3 +60,4 @@ Radera mapp:
 Ändra namn vid omstart: 
 Ändra namn: 
 Hoppar över: 
+Kopiera detaljer till klippboken
