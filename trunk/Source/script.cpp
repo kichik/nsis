@@ -3436,10 +3436,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (*s)
         {
           int c=0;
-          if (strstr(s,"ALT|")) ent.offsets[4]|=HOTKEYF_ALT << 24;
-          if (strstr(s,"CONTROL|")) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
-          if (strstr(s,"EXT|")) ent.offsets[4]|=HOTKEYF_EXT << 24;
-          if (strstr(s,"SHIFT|")) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
+          if (strstri(s,"ALT|")) ent.offsets[4]|=HOTKEYF_ALT << 24;
+          if (strstri(s,"CONTROL|")) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
+          if (strstri(s,"EXT|")) ent.offsets[4]|=HOTKEYF_EXT << 24;
+          if (strstri(s,"SHIFT|")) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
           while (strstr(s,"|"))
           {
             s=strstr(s,"|")+1;
