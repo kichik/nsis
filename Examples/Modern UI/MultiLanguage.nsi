@@ -82,10 +82,13 @@
   !insertmacro MUI_LANGUAGE "Catalan"
   !insertmacro MUI_LANGUAGE "Slovenian"
   !insertmacro MUI_LANGUAGE "Serbian"
+  !insertmacro MUI_LANGUAGE "SerbianLatin"
   !insertmacro MUI_LANGUAGE "Arabic"
   !insertmacro MUI_LANGUAGE "Farsi"
   !insertmacro MUI_LANGUAGE "Hebrew"
   !insertmacro MUI_LANGUAGE "Indonesian"
+  !insertmacro MUI_LANGUAGE "Mongolian"
+  !insertmacro MUI_LANGUAGE "Luxembourgish"
 
 ;--------------------------------
 ;Reserve Files
