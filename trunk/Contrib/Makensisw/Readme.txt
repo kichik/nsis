@@ -138,6 +138,8 @@ Version History
  - Contents of log window are now streamed in
  - Empty log window check (to prevent random crashes)
 
+1.9
+ - Text always scrolls to bottom (Kickik)
 
 Copyright Information
 ---------------------
