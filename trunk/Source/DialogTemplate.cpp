@@ -379,6 +379,31 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 	item->sHeight = size.cy;
 }
 
+// Moves every item right and gives it the WS_EX_RIGHT extended style
+void CDialogTemplate::ConvertToRTL() {
+  for (int i = 0; i < m_vItems.size(); i++) {
+    bool addExStyle = false;
+    if (m_vItems[i]->dwExtStyle & WS_EX_LEFT)
+      addExStyle = true;
+    // Button
+    else if (int(m_vItems[i]->szClass) == 0x80) {
+      if (m_vItems[i]->dwStyle & BS_LEFTTEXT) addExStyle = true;
+    }
+    // Edit
+    else if (int(m_vItems[i]->szClass) == 0x81) {
+      if (!(m_vItems[i]->dwStyle & ES_CENTER)) addExStyle = true;
+    }
+    // Static
+    else if (int(m_vItems[i]->szClass) == 0x82) {
+      if (m_vItems[i]->dwStyle & (SS_LEFT|SS_LEFTNOWORDWRAP)) addExStyle = true;
+    }
+    else addExStyle = true;
+    if (addExStyle)
+		  m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
+    m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
+	}
+}
+
 // Saves the dialog in the form of DLGTEMPLATE[EX]
 BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 	// We need the size first to know how much memory to allocate
