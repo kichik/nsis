@@ -20,7 +20,6 @@ InstType "Lite (w/o Source or Contrib)"
 
 ShowInstDetails show
 ShowUninstDetails show
-SetOverwrite on
 SetDateSave on
 
 InstallDir $PROGRAMFILES\NSIS
@@ -90,7 +89,7 @@ Section "NSIS Development System (required)" SecCore
   SetOutPath $INSTDIR
   RMDir /r $SMPROGRAMS\NSIS
 
-  SetOverwrite try
+  SetOverwrite on
   Delete $INSTDIR\makensis-bz2.exe
   File ..\makensis.exe
   File ..\makensisw.exe
@@ -100,7 +99,7 @@ Section "NSIS Development System (required)" SecCore
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
   SetOverwrite off
   File ..\nsisconf.nsh
-  SetOverwrite try
+  SetOverwrite on
 
   SetOutPath $INSTDIR\Include
   File ..\Include\WinMessages.nsh
@@ -789,8 +788,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialer} "Plugin with internet connection functions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin with internet connection functions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialer} "Plugin that provides internet connection functions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin that provides internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to a utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add user interface components to an installer"
