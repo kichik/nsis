@@ -66,9 +66,9 @@ See \R{file}{File} for more information about the parameters.
 
 \S2{rmdir} RMDir
 
-\c [/r|/REBOOTOK] directory_name
+\c [/r] [/REBOOTOK] directory_name
 
-Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, and the directory cannot be overwritten, then the directory will be deleted when the system reboots -- if the directory will be removed on a reboot, the reboot flag will be set. The error flag is set if the directory cannot be removed.
+Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, any file or directory which could not have been removed during the process will be removed on reboot -- if any file or directory will be removed on a reboot, the reboot flag will be set. The error flag is set if any file or directory cannot be removed.
 
 \S2{setoutpath} SetOutPath
 

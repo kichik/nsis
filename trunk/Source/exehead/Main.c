@@ -278,6 +278,6 @@ void NSISCALL CleanUp()
 #endif
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Clean up after plug-ins
-  doRMDir(state_plugins_dir, 1);
+  myDelete(state_plugins_dir, DEL_DIR | DEL_RECURSE | DEL_REBOOT);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
 }

@@ -432,6 +432,11 @@ typedef struct {
   int flags;
 } ctlcolors;
 
+// constants for myDelete (util.c)
+#define DEL_DIR 1
+#define DEL_RECURSE 2
+#define DEL_REBOOT 4
+
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 // Added by ramon 3 jun 2003
 #define NS_SKIP_CODE 252
