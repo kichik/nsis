@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "THAI"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "ภาษาไทย" ;Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Thai" ;(ภาษาไทย) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
