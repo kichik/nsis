@@ -2,12 +2,12 @@
 
 \H{LogSet} LogSet
 
-LogSet \e{on|off}
+\c on|off
 
-Sets whether install logging to $INSTDIR\\install.log will happen. Note that \e{NSIS_CONFIG_LOG} must be set in the installer configuration (it is not by default) to support this.  
+Sets whether install logging to $INSTDIR\\install.log will happen. Note that \e{NSIS_CONFIG_LOG} must be set in the installer configuration (it is not by default) to support this.
 
 \H{LogText} LogText
 
-LogText \e{text} 
+\c text
 
-If installer logging is enabled, inserts text "text" into the log file.  
+If installer logging is enabled, inserts text "text" into the log file.
