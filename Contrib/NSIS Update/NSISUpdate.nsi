@@ -26,7 +26,7 @@
 # Defines
 
 !define MISSINGFILES $0
-!define NSISPATH $1
+!define NSISBINPATH $1
 
 !define TEMP1 $R0
 !define TEMP2 $R1
@@ -109,7 +109,7 @@ Function .onInit
     # Create a temporary file, so NSIS Update can update itself
     
     CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$TEMP\NSISUpdate.bin"
-    Exec '"$TEMP\NSISUpdate.bin" $EXEDIR\..'
+    Exec '"$TEMP\NSISUpdate.bin" $EXEDIR'
     Quit
     
   temp:
@@ -125,7 +125,7 @@ Function .onInit
   # Get NSIS directory
   
   Call GetParameters
-  Pop ${NSISPATH}
+  Pop ${NSISBINPATH}
   
   # InstallOptions INI File for the "Update Method" dialog
   
@@ -137,13 +137,13 @@ FunctionEnd
 
 Function CheckCVSAccess
   
-  IfFileExists "${NSISPATH}\Cvs\Root" +2
+  IfFileExists "${NSISBINPATH}\..\Cvs\Root" +2
     Return
   
   Push ${TEMP1}
   Push ${TEMP2}
     
-    FileOpen ${TEMP1} "${NSISPATH}\CVS\Root" r
+    FileOpen ${TEMP1} "${NSISBINPATH}\..\CVS\Root" r
     FileRead ${TEMP1} ${TEMP2} 9
     FileClose ${TEMP1}
     
@@ -161,10 +161,10 @@ FunctionEnd
 
 Function CheckCVSFiles
 
-  !insertmacro checkFile "$EXEDIR" "cvs95.exe"
+  !insertmacro checkFile "${NSISBINPATH}" "cvs95.exe"
   !insertmacro checkFile "$SYSDIR" "msvcr70.dll"
   !insertmacro checkFile "$SYSDIR" "msvcp70.dll"
-  !insertmacro checkFile "$EXEDIR" "pserver_protocol.dll"
+  !insertmacro checkFile "${NSISBINPATH}" "pserver_protocol.dll"
   
   StrCmp ${MISSINGFILES} "" done
     MessageBox MB_YESNO|MB_ICONQUESTION "NSIS update has to download a few small CVS client files in order to be able to update your NSIS files.$\r$\nThese files only have to be download once. Do you want to download them now?$\r$\n$\r$\nRequired Files: ${MISSINGFILES}" IDYES Done
@@ -180,10 +180,10 @@ Function CheckCVSDownload
   
     SendMessage ${TEMP3} ${WM_SETTEXT} 0 "STR:Downloading CVS client files..."
   
-    !insertmacro checkFileDownload "$EXEDIR" "cvs95.exe"
+    !insertmacro checkFileDownload "${NSISBINPATH}" "cvs95.exe"
     !insertmacro checkFileDownload "$SYSDIR" "msvcr70.dll"
     !insertmacro checkFileDownload "$SYSDIR" "msvcp70.dll"
-    !insertmacro checkFileDownload "$EXEDIR" "pserver_protocol.dll"
+    !insertmacro checkFileDownload "${NSISBINPATH}" "pserver_protocol.dll"
     
   done:
   
@@ -191,16 +191,16 @@ FunctionEnd
 
 Function CheckCVSData
 
-  IfFileExists "${NSISPATH}\CVS\Root" datainstalled
+  IfFileExists "${NSISBINPATH}\..\CVS\Root" datainstalled
     
-    IfFileExists "$EXEDIR\InstallCVSData.exe" +3
+    IfFileExists "${NSISBINPATH}\InstallCVSData.exe" +3
       MessageBox MB_OK|MB_ICONSTOP "CVS Data Setup not found."
       Quit
     
     SetDetailsPrint listonly
     DetailPrint "Installing CVS data..."
     SetDetailsPrint none
-    Exec "$EXEDIR\Bin\InstallCVSData.exe"
+    Exec "${NSISBINPATH}\InstallCVSData.exe"
 
   datainstalled:
 
@@ -322,7 +322,7 @@ Section ""
     
     SendMessage ${TEMP3} ${WM_SETTEXT} 0 "STR:Checking for a new NSIS release..."
     
-    nsExec::ExecToStack '"${NSISPATH}\makensis.exe" "/version"'
+    nsExec::ExecToStack '"${NSISBINPATH}\..\makensis.exe" "/version"'
     Pop ${TEMP1}
     
     StrCmp ${TEMP1} "error" "" +3
@@ -402,7 +402,7 @@ Section ""
   
     # CVS Update
     
-    SetOutPath ${NSISPATH}
+    SetOutPath ${NSISBINPATH}\..
     
     Call CheckCVSAccess
     Call CheckCVSFiles
@@ -420,7 +420,7 @@ Section ""
       
       # Normal update
     
-      nsExec::ExecToLog '"$EXEDIR\cvs95.exe" -q -z3 update -d -P'
+      nsExec::ExecToLog '"${NSISBINPATH}\cvs95.exe" -q -z3 update -d -P'
       Pop ${TEMP1}
       Goto CheckCVSReturn
       
@@ -428,7 +428,7 @@ Section ""
       
       # Clean copy
       
-      nsExec::ExecToLog '"$EXEDIR\cvs95.exe" -q -z3 update -C -d -P'
+      nsExec::ExecToLog '"${NSISBINPATH}\cvs95.exe" -q -z3 update -C -d -P'
       Pop ${TEMP1}
     
     CheckCVSReturn:
