@@ -127,13 +127,21 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData) {
 	// Read title variant length array
 	ReadVarLenArr(seeker, m_szTitle);
 	// Read font size and variant length array (only if style DS_SETFONT is used!)
-	if (m_dwStyle & DS_SETFONT) {
+	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
 		m_sFontSize = *(short*)seeker;
 		seeker += sizeof(short);
+    if (m_bExtended) {
+			m_sFontWeight = *(short*)seeker;
+			seeker += sizeof(short);
+			m_bItalic = *(BYTE*)seeker;
+			seeker += sizeof(BYTE);
+      m_bCharset = *(BYTE*)seeker;
+      seeker += sizeof(BYTE);
+		}
 		ReadVarLenArr(seeker, m_szFont);
 	}
 
-	// Read items
+  // Read items
 	for (int i = 0; i < wItems; i++) {
 		// DLGITEMTEMPLATE[EX]s must be aligned on DWORD boundry
 		if (DWORD(seeker - pbData) % sizeof(DWORD))
@@ -457,15 +465,17 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 	WriteStringOrId(m_szTitle);
 
 	// Write font variant length array, size, and extended info (if needed)
-	if (m_dwStyle & DS_SETFONT) {
+	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
 		*(short*)seeker = m_sFontSize;
 		seeker += sizeof(short);
 		if (m_bExtended) {
 			*(short*)seeker = m_sFontWeight;
 			seeker += sizeof(short);
-			*(short*)seeker = m_bItalic ? TRUE : FALSE;
-			seeker += sizeof(short);
-		}
+			*(BYTE*)seeker = m_bItalic;
+			seeker += sizeof(BYTE);
+      *(BYTE*)seeker = m_bCharset;
+			seeker += sizeof(BYTE);
+    }
 		WriteStringOrId(m_szFont);
 	}
 
@@ -538,8 +548,8 @@ DWORD CDialogTemplate::GetSize() {
 	AddStringOrIdSize(m_szTitle);
 
 	// Font
-	if (m_dwStyle & DS_SETFONT) {
-		dwSize += sizeof(WORD) + (m_bExtended ? 2*sizeof(short) : 0);
+	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
+		dwSize += sizeof(WORD) + (m_bExtended ? sizeof(short) + 2*sizeof(BYTE) : 0);
 		AddStringOrIdSize(m_szFont);
 	}
 

@@ -58,6 +58,8 @@ struct DialogItemTemplate {
 	WORD	wCreateDataSize;
 };
 
+#pragma pack(push, 1)
+
 typedef struct {
 	WORD	dlgVer;
 	WORD	signature;
@@ -73,15 +75,17 @@ typedef struct {
 
 typedef struct {
 	DWORD	helpID;
-	DWORD	exStyle;
+  DWORD	exStyle;
 	DWORD	style;
 	short	x;
 	short	y;
 	short	cx;
 	short	cy;
 	WORD	id;
+  WORD  _miscrosoft_docs_are_wrong;
 } DLGITEMTEMPLATEEX;
 
+#pragma pack(pop)
 
 class CDialogTemplate {
 public:
@@ -124,7 +128,8 @@ private:
 	 // Only if DS_FONT style is set
 	short m_sFontSize;
 	short m_sFontWeight; // Extended only
-	bool m_bItalic; // Extended only
+	BYTE m_bItalic; // Extended only
+  BYTE m_bCharset; // Extended only
 	char* m_szFont;
 
 	// Items vector

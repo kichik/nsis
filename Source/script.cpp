@@ -1236,7 +1236,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         init_res_editor();
 
         // Search for required items
-        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return 0;}
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return PS_ERROR;}
         #define SAVE(x) if (rtl) {UIDlg.ConvertToRTL(); dlg = UIDlg.Save(dwSize);} else dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
 
         BYTE* dlg = 0;
