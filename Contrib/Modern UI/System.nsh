@@ -714,14 +714,16 @@ Var MUI_TEMP2
     !define MUI_FINISHPAGE
   !endif
   
-  !ifdef MUI_FINISHPAGE
-    !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
-      AutoCloseWindow true
-    !endif
-    !ifdef MUI_FINISHPAGE_LINK
-      !ifndef MUI_FINISHPAGE_LINK_COLOR
-        !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
-      !endif
+  !ifndef MUI_BGCOLOR
+    !define MUI_BGCOLOR "FFFFFF"
+  !endif
+  
+  !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
+    AutoCloseWindow true
+  !endif
+  !ifdef MUI_FINISHPAGE_LINK
+    !ifndef MUI_FINISHPAGE_LINK_COLOR
+      !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
     !endif
   !endif
   
@@ -2154,7 +2156,7 @@ Var MUI_TEMP2
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_COMPONENTS_SUBTITLE"
     !endif
     
-    !ifdef MUI_DIRECTORYPAGE
+    !ifdef MUI_UNDIRECTORYPAGE
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_DIRECTORY_TITLE"
       !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_UNTEXT_DIRECTORY_SUBTITLE"
     !endif
