@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.17
+;NSIS Modern Style UI version 1.18
 ;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
