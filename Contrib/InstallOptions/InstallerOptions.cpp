@@ -326,9 +326,6 @@ bool SaveSettings(void) {
             }
           }
 
-          wsprintf(pszItem, "%d %d %d\r\n%s\r\n%s", nLength, lstrlen(pszBuffer), nBufLen, pFields[nIdx].pszListItems, pszBuffer);
-          MessageBox(0, pszItem, "asd", MB_OK);
-
           FREE(pszItem);
           break;
         }
@@ -352,15 +349,7 @@ bool SaveSettings(void) {
     WritePrivateProfileString(szField, "STATE", pszBuffer, pszFilename);
   }
 
-  MessageBox(0, "settings saved", "sad", MB_OK);
-
-  char bla[452];
-  wsprintf(bla, "%d", pszBuffer);
-  MessageBox(0, bla, pszBuffer, MB_OK);
-
   FREE(pszBuffer);
-
-  MessageBox(0, "settings saved", "sad", MB_OK);
 
   return true;
 }
