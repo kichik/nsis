@@ -1187,12 +1187,13 @@ void NSISCALL update_status_text_from_lang(langid_t id, const char *text2)
 
 void NSISCALL update_status_text(const char *text1, const char *text2)
 {
-  static LVITEM new_item = {LVIF_TEXT,0,0,0,0,g_tmp};
+  static char tmp[NSIS_MAX_STRLEN];
+  static LVITEM new_item = {LVIF_TEXT,0,0,0,0,tmp};
   RECT r;
   if (insthwnd)
   {
-    if (mystrlen(text1)+mystrlen(text2) >= sizeof(g_tmp)) return;
-    wsprintf(g_tmp,"%s%s",text1,text2);
+    if (mystrlen(text1)+mystrlen(text2) >= sizeof(tmp)) return;
+    wsprintf(tmp,"%s%s",text1,text2);
     if ((ui_st_updateflag&1))
     {
       // Changed by Amir Szekely 26th July 2002
@@ -1202,7 +1203,7 @@ void NSISCALL update_status_text(const char *text1, const char *text2)
       GetClientRect(insthwnd,&r);
       ListView_SetColumnWidth(insthwnd, 0, r.right-r.left);
     }
-    if ((ui_st_updateflag&2)) SetWindowText(insthwnd2,ps_tmpbuf);
+    if ((ui_st_updateflag&2)) SetWindowText(insthwnd2,tmp);
   }
 }
 
