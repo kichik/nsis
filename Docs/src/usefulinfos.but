@@ -2,15 +2,17 @@
 
 \H{compiling_infos}Compiling NSIS Sources
 
-The NSIS source files are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly} development snapshots. The binary files distributed with the NSIS releases are compiled with the Microsoft Visual C++ 6.0 compiler. The source has also been tested to be compatible with the Microsoft Visual C++ .NET 2002/2003 compiler. The NSIS distribution includes Microsoft Visual C++ 6.0 project files, Microsoft Visual C++ .NET 2002/2003 automatically convert these files to a new format.
+The NSIS source files are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{development snapshots}. The binary files distributed with the NSIS releases are compiled with the Microsoft Visual C++ 6.0 compiler. The source has also been tested to be compatible with the Microsoft Visual C++ .NET 2002/2003 compiler. The NSIS distribution includes Microsoft Visual C++ 6.0 project files, Microsoft Visual C++ .NET 2002/2003 automatically convert these files to a new format.
 
-Previous versions of NSIS have been tested with the MinGW compiler, however we don't have an up-to-date makefile. If you are working with MinGW or another compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
+If you don't have Microsoft Visual C++, you can download the free \W{http://msdn.microsoft.com/downloads/list/netdevframework.asp}{.NET Framework SDK} (requires Windows 2000/XP/Server 2003), which includes the latest Microsoft compiler. This SDK does not include the Win32 API headers/libraries, so you should also download the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. See the Microsoft documenation for information about using the command line compiler and linker tools.
 
-\\<b\\>Note: If you are using Microsoft Visual C++ 6.0 you have install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the lib's distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{Click here} for more information. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} to decrease the size of the installer overhead.\\</b\\>
+Previous versions of NSIS have been reported to work with the MinGW compiler, however we don't have an up-to-date makefile. If you are working with MinGW or another compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
+
+\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command, see \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is also highly recommended to decrease the size of the installer overhead.
 
 \H{errorlevels}Error Levels
 
-Like any other program installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
+Like other applications installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
 
 Normal installers:
 
