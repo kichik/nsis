@@ -6,7 +6,7 @@
 
 class CZlib : public ICompressor {
   public:
-    int Init(int level) {
+    int Init(int level, unsigned int dict_size) {
       stream = new z_stream;
       if (!stream) return Z_MEM_ERROR;
       return deflateInit(stream, level);
