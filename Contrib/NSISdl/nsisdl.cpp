@@ -195,31 +195,53 @@ __declspec(dllexport) void download (HWND   parent,
                     DownloadDialogProc);
       if (dlg)
       {
+        int pbid = IDC_PROGRESS1;
+        HWND hwPb = GetDlgItem(childwnd, 1004);
+
+        // Set progress bar style
+        if (GetWindowLong(hwPb, GWL_STYLE) & PBS_SMOOTH)
+          pbid = IDC_PROGRESS2;
+
+        HWND pb = g_hwndProgressBar = GetDlgItem(dlg, pbid);
+
+        long c;
+
+        if (hwPb)
+        {
+          c = SendMessage(hwPb, PBM_SETBARCOLOR, 0, 0);
+          SendMessage(hwPb, PBM_SETBARCOLOR, 0, c);
+          SendMessage(pb, PBM_SETBARCOLOR, 0, c);
+
+          c = SendMessage(hwPb, PBM_SETBKCOLOR, 0, 0);
+          SendMessage(hwPb, PBM_SETBKCOLOR, 0, c);
+          SendMessage(pb, PBM_SETBKCOLOR, 0, c);
+        }
+
+        ShowWindow(pb, SW_SHOW);
+
         GetWindowRect(dlg,&cr);
         ScreenToClient(dlg,(LPPOINT)&cr);
         ScreenToClient(dlg,((LPPOINT)&cr)+1);
-        GetWindowRect(GetDlgItem(childwnd,1016),&r);
+        GetWindowRect(hwndL,&r);
         ScreenToClient(childwnd,(LPPOINT)&r);
         ScreenToClient(childwnd,((LPPOINT)&r)+1);
         SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
         AdjustSize(IDC_STATIC2);
-        AdjustSize(IDC_PROGRESS1);
+        AdjustSize(pbid);
         ShowWindow(dlg,SW_SHOWNA);
         char *p=filename;
         while (*p) p++;
         while (*p != '\\' && p != filename) p=CharPrev(filename,p);
         wsprintf(buf,szDownloading, p!=filename?p+1:p);
         SetDlgItemText(childwnd,1006,buf);
-        SetDlgItemText (dlg, IDC_STATIC2, szConnecting);
+        SetDlgItemText(dlg, IDC_STATIC2, szConnecting);
 
         // set font
         long hFont = SendMessage(parent, WM_GETFONT, 0, 0);
-        SendDlgItemMessage(dlg, IDC_PROGRESS1, WM_SETFONT, hFont, 0);
+        SendDlgItemMessage(dlg, pbid, WM_SETFONT, hFont, 0);
         SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
       }
     }
-
-    g_hwndProgressBar = GetDlgItem (dlg, IDC_PROGRESS1);
 
     JNL_HTTPGet *get = 0;
     
@@ -428,4 +450,3 @@ __declspec(dllexport) void download_quiet(HWND   parent,
 }
 
 } //extern "C"
-
