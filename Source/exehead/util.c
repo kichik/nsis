@@ -116,9 +116,6 @@ void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
     else if (!RemoveDirectory(buf) && flags&2) {
       log_printf2("Remove folder on reboot: %s",buf);
-#ifdef NSIS_SUPPORT_REBOOT
-      g_exec_flags.exec_reboot++;
-#endif
       MoveFileOnReboot(buf,0);
     }
 #else
@@ -307,15 +304,21 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     HANDLE hfile, hfilemap;
     DWORD dwFileSize, dwRenameLinePos;
 
+    int spn;
+
     *((int *)tmpbuf) = *((int *)"NUL");
 
     if (pszNew) {
       // create the file if it's not already there to prevent GetShortPathName from failing
       CloseHandle(myOpenFile(pszNew,0,CREATE_NEW));
-      GetShortPathName(pszNew,tmpbuf,1024);
+      spn = GetShortPathName(pszNew,tmpbuf,1024);
+      if (!spn || spn > 1024)
+        return;
     }
     // wininit is used as a temporary here
-    GetShortPathName(pszExisting,wininit,1024);
+    spn = GetShortPathName(pszExisting,wininit,1024);
+    if (!spn || spn > 1024)
+      return;
     cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);
 
     GetWindowsDirectory(wininit, 1024-16);
@@ -375,6 +378,10 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     }
   }
   //return fOk;
+
+#ifdef NSIS_SUPPORT_REBOOT
+  g_exec_flags.exec_reboot++;
+#endif
 }
 #endif
 
