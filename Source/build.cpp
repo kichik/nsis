@@ -209,7 +209,6 @@ CEXEBuild::CEXEBuild()
   cur_datablock=&build_datablock;
   cur_functions=&build_functions;
   cur_labels=&build_labels;
-  cur_userlangstrings=&build_userlangstrings;
 
   subsection_open_cnt=0;
   build_cursection_isfunc=0;
@@ -403,7 +402,7 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
     char *cp = strdup(string+2);
     strchr(cp, ')')[0] = 0;
     int idx;
-    if (cur_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    if (build_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
     free(cp);
     if (idx >= 0) return -(idx+1);
   }
@@ -422,7 +421,7 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
     char *cp = strdup(string+2);
     strchr(cp, ')')[0] = 0;
     int idx;
-    if (cur_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    if (ubuild_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
     free(cp);
     if (idx >= 0) return -(idx+1);
   }
@@ -1796,7 +1795,6 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_entries=&ubuild_entries;
       cur_functions=&ubuild_functions;
       cur_labels=&ubuild_labels;
-      cur_userlangstrings=&ubuild_userlangstrings;
     }
     else
     {
@@ -1804,7 +1802,6 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_entries=&build_entries;
       cur_functions=&build_functions;
       cur_labels=&build_labels;
-      cur_userlangstrings=&build_userlangstrings;
     }
 
     SWAP(db_opt_save_u,db_opt_save,int);
