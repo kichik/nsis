@@ -121,15 +121,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     if (cmdline[0] != '/') break;
     cmdline++;
 
+#define END_OF_ARG(c) (((c)|' ')==' ')
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-    if (cmdline[0] == 'S' && (cmdline[1] == ' ' || !cmdline[1])) silent++;
+    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) silent++;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (*(int*)cmdline == *(int*)"NCRC" && (cmdline[4] == ' ' || !cmdline[4])) no_crc++;
+    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) no_crc++;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-    if (*(short*)cmdline == *(short*)"D=")
+    if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
     {
       cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
       mystrcpy(state_install_directory,cmdline+2);
@@ -138,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     }
 
     // skip over our parm
-    while (*cmdline && *cmdline != ' ') cmdline=CharNext(cmdline);
+    while (!END_OF_ARG(*cmdline)) cmdline=CharNext(cmdline);
   }
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
@@ -273,7 +274,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (g_is_uninstaller)
   {
     char *p=cmdline;
-    while (*p) p++; 
+    while (*p) p++;
 
     while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
