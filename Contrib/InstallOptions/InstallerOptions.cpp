@@ -721,7 +721,6 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 int nIdx;
 HWND childwnd;
 int cw_vis;
-int was_cancel_enabled;
 int was_ok_enabled;
 char old_cancel[256];
 char old_ok[256];
@@ -1025,7 +1024,6 @@ void showCfgDlg()
   if (lpWndProcOld)
     SetWindowLong(hMainWindow,GWL_WNDPROC,(long)lpWndProcOld);
   DestroyWindow(hConfigWindow);
-  if (was_cancel_enabled) EnableWindow(hCancelButton,0);
   if (was_ok_enabled) EnableWindow(hNextButton,0);
   SetWindowText(hCancelButton,old_cancel);
   SetWindowText(hNextButton,old_ok);
