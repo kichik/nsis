@@ -86,7 +86,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INSTCOLORS,"InstallColors",1,1,"(/windows | (foreground_color background_color))"},
 {TOK_INSTDIR,"InstallDir",1,0,"default_install_directory"},
 {TOK_INSTPROGRESSFLAGS,"InstProgressFlags",0,-1,"[flag [...]]\n    flag={smooth|colored}"},
-{TOK_INSTTYPE,"InstType",1,1,"(/NOCUSTOM|[/LANG=lang_id] /CUSTOMSTRING=CustomStr|TypeName)"},
+{TOK_INSTTYPE,"InstType",1,1,"install_type_name | /NOCUSTOM | ([/LANG=lang_id] /CUSTOMSTRING=str) | /COMPONENTSONLYONCUSTOM"},
 {TOK_INTOP,"IntOp",3,1,"$(user_var: result) val1 OP [val2]\n    OP=(+ - * / % | & ^ ~ ! || &&)"},
 {TOK_INTCMP,"IntCmp",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"},
 {TOK_INTCMPU,"IntCmpU",3,2,"val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]"},
