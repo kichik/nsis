@@ -1,0 +1,82 @@
+# Header, don't edit
+NLF v5
+# Start editing here
+# Language ID
+0424
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# Translation by Janez Dolinar
+Nullsoft Install System %s
+%s Namestitev
+%s Odstranitev
+: Licenèna pogodba
+: Možnosti namestitve
+: Mapa namestitve
+: Namešèanje poteka
+: Dokonèano
+: Potrdilo
+: Odstranjujem
+: Dokonèano
+< &Nazaj
+N&aprej >
+Se &strinjam
+&Sprejmem pogoje v licenèni pogodbi
+&Ne sprejmem pogoje v licenèni pogodbi
+&Zaèni
+&Odstrani
+Preklièi
+&Zapri
+R&azišèi...
+&Prikaži podrobnosti
+Ime
+Dokonèano
+Po meri
+Izberite tip namestitve: 
+Izberite bloke namestitve: 
+Ali si izberite bloke namestitve, ki jih želite: 
+Izberi mapo za namestitev %s: 
+Prosto: 
+Zahtevano: 
+Odstranjujem iz: 
+Napaka med zapisovanjem: \r\n\t"$0"\r\nPritisnite Abort(Preklièi) za prekinitev,\r\nRetry(Ponovi) za ponovni poizkus ali \r\nIgnore(Prezri) za preskok te datoteke
+Napaka med zapisovanjem: \r\n\t"$0"\r\nPritisnite Retry(Ponovi) za ponovni poizkus ali \r\nAbort(Preklièi) za prekinitev
+Ne morem zapisati: 
+Kopiranje neuspešno
+Kopiram v 
+Registriram:
+Od-registriram:
+Ne najdem simbola: 
+Ne morem naložiti: 
+Ustvari mapo: 
+Ustvari bližnjico: 
+Ustvarjena odstranitev: 
+Zbrisana datoteka: 
+Zbriši ob zagonu: 
+Napaka brisanja bližnjice: 
+Napaka kreiranja: 
+Napaka pri odpakiranju podatkov! Unièena namestitev?
+Napaka registriranja DLL
+Zaganjam ExecShell: 
+Zaganjam Execute: 
+Razpakiram: 
+Napaka pri pisanju v datoteko
+Namestitev unièena: Napaèen ukaz
+Ni OLE za: 
+Cilnja mapa: 
+Zbriši mapo: 
+Preimenuj ob zagonu: 
+Preimenuj: 
+Prezrto: 
+Prenesi podrobnosti v odlagališèe 
+Shrani potek namesttve
+#byte
+B
+#kilo
+k
+#mega
+M
+#giga
+G
