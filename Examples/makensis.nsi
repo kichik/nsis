@@ -13,7 +13,7 @@
 
 ;Language
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-!include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+!include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
 
 Name "NSIS"
 Caption "Nullsoft Install System - Setup"
@@ -133,15 +133,19 @@ SubSection "Contrib" SecContrib
 Section "Modern User Interface" SecContribModernUI
   SectionIn 1 2
   SetOutPath "$INSTDIR\Examples\Modern UI"
-  File "..\Examples\Modern UI\Screenshot.png"
-  File "..\Examples\Modern UI\Readme.jpg"
-  File "..\Examples\Modern UI\Readme.html"
-  File "..\Examples\Modern UI\License.txt"
   File "..\Examples\Modern UI\Basic.nsi"
   File "..\Examples\Modern UI\MultiLanguage.nsi"
   File "..\Examples\Modern UI\InstallOptions.nsi"
+  File "..\Examples\Modern UI\ioA.ini"
+  File "..\Examples\Modern UI\ioB.ini"
+  File "..\Examples\Modern UI\ioC.ini"
   SetOutPath "$INSTDIR\Contrib\Modern UI"
-  File "..\Contrib\Modern UI\*.nsh"
+  File "..\Contrib\Modern UI\System.nsh"
+  File "..\Contrib\Modern UI\Language files\*.nsh"
+  File "..\Contrib\Modern UI\Readme.jpg"
+  File "..\Contrib\Modern UI\Readme.html"
+  File "..\Contrib\Modern UI\Screenshot.png"
+  File "..\Contrib\Modern UI\License.txt"
 SectionEnd
 
 Section "Extra Icons" SecContribIcons
