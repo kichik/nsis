@@ -1,0 +1,24 @@
+\title NSIS Users Manual
+
+\cfg{xhtml-leaf-level}{2}
+
+\cfg{xhtml-leaf-contains-contents}{false}
+
+\cfg{xhtml-contents-depth-0}{5}
+
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><script language="JavaScript" type="text/javascript" src="chmlink.js"></script>}
+
+\cfg{xhtml-rlink-prefix}{#" onclick="parser('}
+
+\cfg{xhtml-rlink-suffix}{')}
+
+\cfg{chm-toc-file}{toc.hhc}
+
+\cfg{chm-ind-file}{ind.hhk}
+
+\preamble Check \W{http://nsis.sourceforge.net/}{http://nsis.sf.net} for news, information, support, examples, tutorials and more.
+
+\preamble Quick links:\\<br\\>\W{http://nsis.sourceforge.net/support/faq/}{FAQ} - A list of frequently asked questions\\<br\\>\W{http://nsis.sourceforge.net/archive/}{NSIS Archive} - Examples, functions, tutorials, plug-ins, software, more\\<br\\>\W{http://forums.winamp.com/forumdisplay.php?forumid=65}{Forum} - Post questions or discuss NSIS features
+
+\copyright Copyright (C) 1999-2004 Nullsoft, Inc.
+

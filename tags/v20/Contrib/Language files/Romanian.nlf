@@ -1,0 +1,193 @@
+# Header, don't edit
+NLF v6
+# Language ID
+1048
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+1250
+# RTL - anything else than RTL means LTR
+-
+# Translation by Cristian Pirvu (pcristip@yahoo.com) v6
+# Revision by Sorin Sbarnea (sorin@intersol.ro)      v5.1
+# and Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
+#New revision by George Radu (georadu@hotmail.com)
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+Instalare $(^Name)
+# ^UninstallCaption
+Eliminare $(^Name)
+# ^LicenseSubCaption
+: Contract de licenta
+# ^ComponentsSubCaption
+: Optiuni de instalare
+# ^DirSubCaption
+: Directorul destinatie
+# ^InstallingSubCaption
+: In curs de instalare
+# ^CompletedSubCaption
+: Instalare terminata
+# ^UnComponentsSubCaption
+: Optiuni de eliminare
+# ^UnDirSubCaption
+: Directorul de eliminare
+# ^ConfirmSubCaption
+: Confirmare
+# ^UninstallingSubCaption
+: In curs de eliminare
+# ^UnCompletedSubCaption
+: Terminare
+# ^BackBtn
+< Ina&poi
+# ^NextBtn
+&Inainte >
+# ^AgreeBtn
+&De acord
+# ^AcceptBtn
+&Accept termenii contractului de licenta
+# ^DontAcceptBtn
+Nu accept termenii contractului de licenta
+# ^InstallBtn
+&Instalare
+# ^UninstallBtn
+&Eliminare
+# ^CancelBtn
+Anulare
+# ^CloseBtn
+&Inchidere
+# ^BrowseBtn
+&Rasfoire...
+# ^ShowDetailsBtn
+Afisare &detalii
+# ^ClickNext
+Apasati Inainte pentru a continua.
+# ^ClickInstall
+Apasati Instalare pentru a incepe instalarea.
+# ^ClickUninstall
+Apasati Eliminare pentru a incepe eliminarea.
+# ^Name
+Nume
+# ^Completed
+Terminat
+# ^LicenseText
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
+# ^LicenseTextCB
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
+# ^LicenseTextRB
+Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
+# ^UnLicenseText
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
+# ^UnLicenseTextCB
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
+# ^UnLicenseTextRB
+Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
+# ^Custom
+Nonstandard
+# ^ComponentsText
+Selectati componentele pe care doriti sa le instalati. $_CLICK
+# ^ComponentsSubText1
+Selectati tipul instalarii:
+# ^ComponentsSubText2_NoInstTypes
+Selectati componentele ce urmeaza a fi instalate:
+# ^ComponentsSubText2
+Sau, selectati componentele optionale pe care doriti sa le instalati:
+# ^UnComponentsText
+Selectati componentele pe care doriti sa le eliminati. $_CLICK
+# ^UnComponentsSubText1
+Selectati tipul de eliminare:
+# ^UnComponentsSubText2_NoInstTypes
+Selectati componentele ce urmeaza a fi eliminate:
+# ^UnComponentsSubText2
+Sau, selectati componentele optionale pe care doriti sa le eliminati:
+# ^DirText
+$(^NameDA) va fi instalat in urmatorul director. Pentru a selecta alta destinatie, apasati Rasfoire si selectati alt director. $_CLICK
+# ^DirSubText
+Director destinatie
+# ^DirBrowseText
+Selectati directorul In care doriti sa instalati $(^NameDA):
+# ^UnDirText
+$(^NameDA) va fi eliminat din urmatorul director. Pentru a elimina din alt director, apasati Rasfoire si selectati alt director. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Selectati directorul de eliminare al $(^NameDA):
+# ^SpaceAvailable
+"Spatiu disponibil: "
+# ^SpaceRequired
+"Spatiu necesar: "
+# ^UninstallingText
+Aceasta aplicatie va elimina $(^NameDA) din computerul dumneavoastra. $_CLICK
+# ^UninstallingSubText
+Eliminare din:
+# ^FileError
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Abanbonare pentru oprirea instalarii,\r\nReincercare pentru a mai Incerca o data scrierea fisierului, \r\nIgnorare pentru a trece peste acest fisier
+# ^FileError_NoIgnore
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincercare pentru a mai incerca, sau\r\nAbanbonare pentru oprirea instalarii
+# ^CantWrite
+"Scrierea nu a fost posibila: "
+# ^CopyFailed
+Copierea a esuat
+# ^CopyTo
+"Copiere in "
+# ^Registering
+"Se inregistreaza: "
+# ^Unregistering
+"Se elimina registrii: "
+# ^SymbolNotFound
+"Simbolul nu a fost gasit: "
+# ^CouldNotLoad
+"Incarcarea nu a avut loc: "
+# ^CreateFolder
+"Creare director: "
+# ^CreateShortcut
+"Creare comanda rapida: "
+# ^CreatedUninstaller
+"Crearea aplicatiei de eliminare este terminata: "
+# ^Delete
+"Stergere fisier: "
+# ^DeleteOnReboot
+"Stergere la repornire: "
+# ^ErrorCreatingShortcut
+"Eroare la creare comanda rapida: "
+# ^ErrorCreating
+"Eroare la creare: "
+# ^ErrorDecompressing
+Eroare la dezarhivarea datelor! Aplicatia de instalare este invalida?
+# ^ErrorRegistering
+Eroare la inregistrarea DLL-ului
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Executare: "
+# ^Extract
+"Extragere: "
+# ^ErrorWriting
+"Extragere: eroare la scriere in fisier "
+# ^InvalidOpcode
+Aplicatie de instalare invalida: opcode invalid
+# ^NoOLE
+"Nu exista OLE pentru: "
+# ^OutputFolder
+"Directorul destinatie: "
+# ^RemoveFolder
+"Stergere destinatia: "
+# ^RenameOnReboot
+"Redenumire la repornirea computerului: "
+# ^Rename
+"Redenumire: "
+# ^Skipped
+"Sarite: "
+# ^CopyDetails
+Copiere detalii in clipboard
+# ^LogInstall
+Jurnal proces de instalare
+# ^Byte
+O
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G

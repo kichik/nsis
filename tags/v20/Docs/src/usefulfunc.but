@@ -1,0 +1,629 @@
+\A{usefulfunctions} Useful Functions
+
+\H{getparent} Get parent directory
+
+\c  ; GetParent
+\c  ; input, top of stack  (e.g. C:\Program Files\Poop)
+\c  ; output, top of stack (replaces, with e.g. C:\Program Files)
+\c  ; modifies no other variables.
+\c  ;
+\c  ; Usage:
+\c  ;   Push "C:\Program Files\Directory\Whatever"
+\c  ;   Call GetParent
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 will equal "C:\Program Files\Directory"
+\c
+\c  Function GetParent
+\c  
+\c    Exch $R0
+\c    Push $R1
+\c    Push $R2
+\c    Push $R3
+\c    
+\c    StrCpy $R1 0
+\c    StrLen $R2 $R0
+\c    
+\c    loop:
+\c      IntOp $R1 $R1 + 1
+\c      IntCmp $R1 $R2 get 0 get
+\c      StrCpy $R3 $R0 1 -$R1
+\c      StrCmp $R3 "\" get
+\c      Goto loop
+\c    
+\c    get:
+\c      StrCpy $R0 $R0 -$R1
+\c      
+\c      Pop $R3
+\c      Pop $R2
+\c      Pop $R1
+\c      Exch $R0
+\c      
+\c  FunctionEnd
+
+\H{trimnewlines} Trim newlines
+
+\c  ; TrimNewlines
+\c  ; input, top of stack  (e.g. whatever$\r$\n)
+\c  ; output, top of stack (replaces, with e.g. whatever)
+\c  ; modifies no other variables.
+\c
+\c  Function TrimNewlines
+\c    Exch $R0
+\c    Push $R1
+\c    Push $R2
+\c    StrCpy $R1 0
+\c  
+\c  loop:
+\c    IntOp $R1 $R1 - 1
+\c    StrCpy $R2 $R0 1 $R1
+\c    StrCmp $R2 "$\r" loop
+\c    StrCmp $R2 "$\n" loop
+\c    IntOp $R1 $R1 + 1
+\c    IntCmp $R1 0 no_trim_needed
+\c    StrCpy $R0 $R0 $R1
+\c  
+\c  no_trim_needed:
+\c    Pop $R2
+\c    Pop $R1
+\c    Exch $R0
+\c  FunctionEnd
+
+
+\H{getparameters} Get command line parameters
+
+\c  ; GetParameters
+\c  ; input, none
+\c  ; output, top of stack (replaces, with e.g. whatever)
+\c  ; modifies no other variables.
+\c  
+\c  Function GetParameters
+\c  
+\c    Push $R0
+\c    Push $R1
+\c    Push $R2
+\c    Push $R3
+\c    
+\c    StrCpy $R2 1
+\c    StrLen $R3 $CMDLINE
+\c    
+\c    ;Check for quote or space
+\c    StrCpy $R0 $CMDLINE $R2
+\c    StrCmp $R0 '"' 0 +3
+\c      StrCpy $R1 '"'
+\c      Goto loop
+\c    StrCpy $R1 " "
+\c    
+\c    loop:
+\c      IntOp $R2 $R2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 $R1 get
+\c      StrCmp $R2 $R3 get
+\c      Goto loop
+\c    
+\c    get:
+\c      IntOp $R2 $R2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 " " get
+\c      StrCpy $R0 $CMDLINE "" $R2
+\c    
+\c    Pop $R3
+\c    Pop $R2
+\c    Pop $R1
+\c    Exch $R0
+\c  
+\c  FunctionEnd
+
+\H{strstr} Search in a string
+
+\c  ; StrStr
+\c  ; input, top of stack = string to search for
+\c  ;        top of stack-1 = string to search in
+\c  ; output, top of stack (replaces with the portion of the string remaining)
+\c  ; modifies no other variables.
+\c  ;
+\c  ; Usage:
+\c  ;   Push "this is a long ass string"
+\c  ;   Push "ass"
+\c  ;   Call StrStr
+\c  ;   Pop $R0
+\c  ;  ($R0 at this point is "ass string")
+\c
+\c  Function StrStr
+\c    Exch $R1 ; st=haystack,old$R1, $R1=needle
+\c    Exch    ; st=old$R1,haystack
+\c    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+\c    Push $R3
+\c    Push $R4
+\c    Push $R5
+\c    StrLen $R3 $R1
+\c    StrCpy $R4 0
+\c    ; $R1=needle
+\c    ; $R2=haystack
+\c    ; $R3=len(needle)
+\c    ; $R4=cnt
+\c    ; $R5=tmp
+\c    loop:
+\c      StrCpy $R5 $R2 $R3 $R4
+\c      StrCmp $R5 $R1 done
+\c      StrCmp $R5 "" done
+\c      IntOp $R4 $R4 + 1
+\c      Goto loop
+\c  done:
+\c    StrCpy $R1 $R2 "" $R4
+\c    Pop $R5
+\c    Pop $R4
+\c    Pop $R3
+\c    Pop $R2
+\c    Exch $R1
+\c  FunctionEnd
+
+\H{getwindowsversion} Get Windows version
+
+\c  ; GetWindowsVersion
+\c  ;
+\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Updated by Joost Verburg
+\c  ;
+\c  ; Returns on top of stack
+\c  ;
+\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+\c  ; or
+\c  ; '' (Unknown Windows Version)
+\c  ;
+\c  ; Usage:
+\c  ;   Call GetWindowsVersion
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 is "NT 4.0" or whatnot
+\c  
+\c  Function GetWindowsVersion
+\c  
+\c    Push $R0
+\c    Push $R1
+\c  
+\c    ReadRegStr $R0 HKLM \
+\c    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+\c
+\c    IfErrors 0 lbl_winnt
+\c    
+\c    ; we are not NT
+\c    ReadRegStr $R0 HKLM \
+\c    "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+\c  
+\c    StrCpy $R1 $R0 1
+\c    StrCmp $R1 '4' 0 lbl_error
+\c  
+\c    StrCpy $R1 $R0 3
+\c  
+\c    StrCmp $R1 '4.0' lbl_win32_95
+\c    StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
+\c  
+\c    lbl_win32_95:
+\c      StrCpy $R0 '95'
+\c    Goto lbl_done
+\c  
+\c    lbl_win32_98:
+\c      StrCpy $R0 '98'
+\c    Goto lbl_done
+\c  
+\c    lbl_win32_ME:
+\c      StrCpy $R0 'ME'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt:
+\c  
+\c    StrCpy $R1 $R0 1
+\c  
+\c    StrCmp $R1 '3' lbl_winnt_x
+\c    StrCmp $R1 '4' lbl_winnt_x
+\c  
+\c    StrCpy $R1 $R0 3
+\c  
+\c    StrCmp $R1 '5.0' lbl_winnt_2000
+\c    StrCmp $R1 '5.1' lbl_winnt_XP
+\c    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+\c  
+\c    lbl_winnt_x:
+\c      StrCpy $R0 "NT $R0" 6
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_2000:
+\c      Strcpy $R0 '2000'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_XP:
+\c      Strcpy $R0 'XP'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_2003:
+\c      Strcpy $R0 '2003'
+\c    Goto lbl_done
+\c  
+\c    lbl_error:
+\c      Strcpy $R0 ''
+\c    lbl_done:
+\c  
+\c    Pop $R1
+\c    Exch $R0
+\c  
+\c  FunctionEnd
+
+
+\H{getieversion} Get Internet Explorer version
+
+\c  ; GetIEVersion
+\c  ;
+\c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 1-6 (Installed IE Version)
+\c  ; or
+\c  ; '' (IE is not installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call GetIEVersion
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 is "5" or whatnot
+\c
+\c  Function GetIEVersion
+\c  Push $R0
+\c    ClearErrors
+\c    ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version"
+\c    IfErrors lbl_123 lbl_456
+\c
+\c    lbl_456: ; ie 4+
+\c      Strcpy $R0 $R0 1
+\c    Goto lbl_done
+\c
+\c    lbl_123: ; older ie version
+\c      ClearErrors
+\c      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
+\c      IfErrors lbl_error
+\c
+\c        StrCpy $R0 $R0 3
+\c        StrCmp $R0 '100' lbl_ie1
+\c        StrCmp $R0 '101' lbl_ie2
+\c        StrCmp $R0 '102' lbl_ie2
+\c
+\c        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
+\c        Goto lbl_done
+\c          lbl_ie1:
+\c            StrCpy $R0 '1'
+\c          Goto lbl_done
+\c          lbl_ie2:
+\c            StrCpy $R0 '2'
+\c          Goto lbl_done
+\c      lbl_error:
+\c        StrCpy $R0 ''
+\c    lbl_done:
+\c    Exch $R0
+\c  FunctionEnd
+
+\H{detect.netframework} Is .NET Framework installed?
+
+\c  ; IsDotNETInstalled
+\c  ;
+\c  ; Usage:
+\c  ;   Call IsDotNETInstalled
+\c  ;   Pop $0
+\c  ;   StrCmp $0 1 found.NETFramework no.NETFramework
+\c
+\c  Function IsDotNETInstalled
+\c    Push $0
+\c    Push $1
+\c    Push $2
+\c    Push $3
+\c    Push $4
+\c
+\c    ReadRegStr $4 HKEY_LOCAL_MACHINE \
+\c      "Software\Microsoft\.NETFramework" "InstallRoot"
+\c    # remove trailing back slash
+\c    Push $4
+\c    Exch $EXEDIR
+\c    Exch $EXEDIR
+\c    Pop $4
+\c    # if the root directory doesn't exist .NET is not installed
+\c    IfFileExists $4 0 noDotNET
+\c
+\c    StrCpy $0 0
+\c
+\c    EnumStart:
+\c
+\c      EnumRegKey $2 HKEY_LOCAL_MACHINE \
+\c        "Software\Microsoft\.NETFramework\Policy"  $0
+\c      IntOp $0 $0 + 1
+\c      StrCmp $2 "" noDotNET
+\c
+\c      StrCpy $1 0
+\c
+\c      EnumPolicy:
+\c
+\c        EnumRegValue $3 HKEY_LOCAL_MACHINE \
+\c          "Software\Microsoft\.NETFramework\Policy\$2" $1
+\c        IntOp $1 $1 + 1
+\c         StrCmp $3 "" EnumStart
+\c          IfFileExists "$4\$2.$3" foundDotNET EnumPolicy
+\c
+\c    noDotNET:
+\c      StrCpy $0 0
+\c      Goto done
+\c
+\c    foundDotNET:
+\c      StrCpy $0 1
+\c
+\c    done:
+\c      Pop $4
+\c      Pop $3
+\c      Pop $2
+\c      Pop $1
+\c      Exch $0
+\c  FunctionEnd
+
+\H{isflashinstalled} Is Macromedia Flash Player installed?
+
+\c  ; IsFlashInstalled
+\c  ;
+\c  ; By Yazno, http://yazno.tripod.com/powerpimpit/
+\c  ; Returns on top of stack
+\c  ; 0 (Flash is not installed)
+\c  ; or
+\c  ; 1 (Flash is installed)
+\c  ;
+\c  ; Usage:
+\c  ;   Call IsFlashInstalled
+\c  ;   Pop $R0
+\c  ;   ; $R0 at this point is "1" or "0"
+\c
+\c  Function IsFlashInstalled
+\c   Push $R0
+\c   ClearErrors
+\c   ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
+\c   IfErrors lbl_na
+\c     StrCpy $R0 1
+\c   Goto lbl_end
+\c   lbl_na:
+\c     StrCpy $R0 0
+\c   lbl_end:
+\c   Exch $R0
+\c  FunctionEnd
+
+\H{addshareddll} Add a shared DLL
+
+\c  ; AddSharedDLL
+\c  ;
+\c  ; Increments a shared DLLs reference count.
+\c  ; Use by passing one item on the stack (the full path of the DLL).
+\c  ;
+\c  ; Usage:
+\c  ;   Push $SYSDIR\myDll.dll
+\c  ;   Call AddSharedDLL
+\c  ;
+\c
+\c  Function AddSharedDLL
+\c    Exch $R1
+\c    Push $R0
+\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c    IntOp $R0 $R0 + 1
+\c    WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c    Pop $R0
+\c    Pop $R1
+\c  FunctionEnd
+
+\H{unremovesharedll} Remove a shared DLL
+
+\c  ; un.RemoveSharedDLL
+\c  ;
+\c  ; Decrements a shared DLLs reference count, and removes if necessary.
+\c  ; Use by passing one item on the stack (the full path of the DLL).
+\c  ; Note: for use in the main installer (not the uninstaller), rename the
+\c  ; function to RemoveSharedDLL.
+\c  ;
+\c  ; Usage:
+\c  ;   Push $SYSDIR\myDll.dll
+\c  ;   Call un.RemoveSharedDLL
+\c  ;
+\c
+\c  Function un.RemoveSharedDLL
+\c    Exch $R1
+\c    Push $R0
+\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c    StrCmp $R0 "" remove
+\c      IntOp $R0 $R0 - 1
+\c      IntCmp $R0 0 rk rk uk
+\c      rk:
+\c        DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c      goto Remove
+\c      uk:
+\c        WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c      Goto noremove
+\c    remove:
+\c      Delete /REBOOTOK $R1
+\c    noremove:
+\c    Pop $R0
+\c    Pop $R1
+\c  FunctionEnd
+
+\H{upgradedll} Upgrade a DLL (macro)
+
+There is also a copy of this macro in the Include folder, so you only have to include UpgradeDLL.nsh to use it.
+
+\c ; Macro - Upgrade DLL File
+\c ; Written by Joost Verburg
+\c ; ------------------------
+\c ;
+\c ; Parameters:
+\c ; LOCALFILE   - Location of the new DLL file (on the compiler system)
+\c ; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
+\c ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
+\c ;               to be rebooted.
+\c ;               For Win9x support, this should be on the same volume as the DESTFILE!
+\c ;               The Windows temp directory could be located on any volume, so you cannot use
+\c ;               this directory.
+\c ;
+\c ; Define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that does not have to be registered.
+\c ;
+\c ; Note: If you want to support Win9x, you can only use short filenames (8.3).
+\c ;
+\c ; Example of usage:
+\c ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
+\c ;
+\c
+\c !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
+\c
+\c   Push $R0
+\c   Push $R1
+\c   Push $R2
+\c   Push $R3
+\c   Push $R4
+\c   Push $R5
+\c
+\c   ;------------------------
+\c   ;Unique number for labels
+\c
+\c   !define UPGRADEDLL_UNIQUE ${__LINE__}
+\c
+\c   ;------------------------
+\c   ;Copy the parameters used on run-time to a variable
+\c   ;This allows the usage of variables as paramter
+\c
+\c   StrCpy $R4 "${DESTFILE}"
+\c   StrCpy $R5 "${TEMPBASEDIR}"
+\c
+\c   ;------------------------
+\c   ;Check file and version
+\c
+\c   IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
+\c
+\c   ClearErrors
+\c     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
+\c     GetDLLVersion $R4 $R2 $R3
+\c   IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c
+\c   IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c   IntCmpU $R1 $R3 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.done_${UPGRADEDLL_UNIQUE} \
+\c     upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Let's upgrade the DLL!
+\c
+\c   SetOverwrite try
+\c
+\c   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
+\c     !ifndef UPGRADEDLL_NOREGISTER
+\c       ;Unregister the DLL
+\c       UnRegDLL $R4
+\c     !endif
+\c
+\c   ;------------------------
+\c   ;Try to copy the DLL directly
+\c
+\c   ClearErrors
+\c     StrCpy $R0 $R4
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;DLL is in use. Copy it to a temp file and Rename it on reboot.
+\c
+\c   GetTempFileName $R0 $R5
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c   Rename /REBOOTOK $R0 $R4
+\c
+\c   ;------------------------
+\c   ;Register the DLL on reboot
+\c
+\c   !ifndef UPGRADEDLL_NOREGISTER
+\c     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+\c       "Register $R4" '"$SYSDIR\rundll32.exe" "$R4",DllRegisterServer'
+\c   !endif
+\c
+\c   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;DLL does not exist - just extract
+\c
+\c   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
+\c     StrCpy $R0 $R4
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Register the DLL
+\c
+\c   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
+\c     !ifndef UPGRADEDLL_NOREGISTER
+\c       RegDLL $R4
+\c     !endif
+\c
+\c   ;------------------------
+\c   ;Done
+\c
+\c   upgradedll.done_${UPGRADEDLL_UNIQUE}:
+\c
+\c   Pop $R5
+\c   Pop $R4
+\c   Pop $R3
+\c   Pop $R2
+\c   Pop $R1
+\c   Pop $R0
+\c
+\c   ;------------------------
+\c   ;End
+\c
+\c   Goto upgradedll.end_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Called to extract the DLL
+\c
+\c   upgradedll.file_${UPGRADEDLL_UNIQUE}:
+\c     File /oname=$R0 "${LOCALFILE}"
+\c     Return
+\c
+\c   upgradedll.end_${UPGRADEDLL_UNIQUE}:
+\c
+\c  ;------------------------
+\c  ;Restore settings
+\c
+\c  SetOverwrite lastused
+\c  
+\c  !undef UPGRADEDLL_UNIQUE
+\c
+\c !macroend
+
+\H{connectinternet} Connect to the internet
+
+\c  ; ConnectInternet (uses Dialer plugin)
+\c  ; Written by Joost Verburg 
+\c  ;
+\c  ; This function attempts to make a connection to the internet if there is no
+\c  ; connection available. If you are not sure that a system using the installer
+\c  ; has an active internet connection, call this function before downloading
+\c  ; files with NSISdl.
+\c  ; 
+\c  ; The function requires Internet Explorer 3, but asks to connect manually if
+\c  ; IE3 is not installed.
+\c  
+\c  Function ConnectInternet
+\c  
+\c    Push $R0
+\c      
+\c      ClearErrors
+\c      Dialer::AttemptConnect
+\c      IfErrors noie3
+\c      
+\c      Pop $R0
+\c      StrCmp $R0 "online" connected
+\c        MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
+\c        Quit ;This will quit the installer. You might want to add your own error handling.
+\c      
+\c      noie3:
+\c    
+\c      ; IE3 not installed
+\c      MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
+\c      
+\c      connected:
+\c    
+\c    Pop $R0
+\c    
+\c  FunctionEnd
+
+\H{morefuncs} More
+
+You can find more useful functions at \W{http://nsis.sourceforge.net/archive/}{the NSIS Archive}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
