@@ -217,6 +217,10 @@ SOURCE=.\lang.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\lineparse.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\makenssi.cpp
 # ADD CPP /G6
 # End Source File
