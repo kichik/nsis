@@ -534,11 +534,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (*line.gettoken_str(2))
             p.prefunc = ns_func.add(line.gettoken_str(2),0);
           if (line.getnumtokens()>3) {
-            if (k==0) {
-              ERROR_MSG("\nError: custom page don't need post creation functions!\n");
-              PRINTHELP();
-            }
-            p.postfunc = ns_func.add(line.gettoken_str(3),0);
+            if (k)
+              p.postfunc = ns_func.add(line.gettoken_str(3),0);
+            else
+              p.caption = add_string_main(line.gettoken_str(3),0);
           }
 #else
           ERROR_MSG("Error: Page callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
@@ -584,8 +583,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (p.prefunc>=0)
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.postfunc>=0)
+        if (p.postfunc>=0 && k)
           SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+        else if (p.caption && !k)
+          SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
         SCRIPT_MSG("\n");
 
@@ -626,15 +627,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             p.prefunc = ns_func.add(line.gettoken_str(2),0);
           }
           if (line.getnumtokens()>3) {
-            if (k==0) {
-              ERROR_MSG("\nError: custom page don't need post creation functions!\n");
-              PRINTHELP();
+            if (k) {
+              if (strnicmp(line.gettoken_str(3),"un.",3)) {
+                ERROR_MSG("\nError: function must have a un. prefix!\n");
+                return PS_ERROR;
+              }
+              p.postfunc = ns_func.add(line.gettoken_str(3),0);
             }
-            if (strnicmp(line.gettoken_str(3),"un.",3)) {
-              ERROR_MSG("\nError: function must have a un. prefix!\n");
-              return PS_ERROR;
-            }
-            p.postfunc = ns_func.add(line.gettoken_str(3),0);
+            else
+              p.caption = add_string_uninst(line.gettoken_str(3),0);
           }
 #else
           ERROR_MSG("Error: UninstPage callback specified, NSIS_CONFIG_LICENSEPAGE not defined.\n");
@@ -664,8 +665,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         if (p.prefunc>=0)
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.postfunc>=0)
+        if (p.postfunc>=0 && k)
           SCRIPT_MSG(" (post:%s)", line.gettoken_str(3));
+        else if (p.caption && !k)
+          SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
         SCRIPT_MSG("\n");
 
