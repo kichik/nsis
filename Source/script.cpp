@@ -49,6 +49,7 @@ int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
 int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr)
 {
   static int ignore;
+  static int last_line_had_slash;
   static int ignored_if_count;
   static int wait_for_endif;
 
@@ -58,14 +59,18 @@ int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *
   while (*str == ' ' || *str == '\t') str++;
 
   // if ignoring, ignore all lines that don't begin with !.
-  if (ignore && *str!='!') return PS_OK;
+  if (ignore && *str!='!' && !last_line_had_slash) return PS_OK;
 
   if (m_linebuild.getlen()>1) m_linebuild.resize(m_linebuild.getlen()-2);
 
   m_linebuild.add(str,strlen(str)+1);
 
   // remove trailing slash and null
-  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\') return PS_OK;
+  if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\') {
+    last_line_had_slash = 1;
+    return PS_OK;
+  }
+  else last_line_had_slash = 0;
 
   res=line.parse((char*)m_linebuild.get(),!strnicmp(str,"!define",7));
 
@@ -128,8 +133,9 @@ parse_again:
 
   if (tkid == TOK_P_ELSE)
   {
-    if (ignored_if_count)
+    if (ignored_if_count) {
       return PS_OK;
+    }
 
     if (line.getnumtokens() == 1) {
       ignore=!ignore;
@@ -1304,7 +1310,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
         init_res_editor();
-        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b2 (CVS)</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
+        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0b2</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
         res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
       }
       catch (exception& err) {
