@@ -125,6 +125,7 @@ Section "NSIS Development System (required)" SecCore
   SetOutPath $INSTDIR\Menu\images
   File ..\Menu\images\*.gif
   
+  Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Docs\*.html
   Delete $INSTDIR\Docs\style.css
   RMDir $INSTDIR\Docs
@@ -1372,7 +1373,6 @@ Section Uninstall
   Delete "$DESKTOP\Nullsoft Install System.lnk"
   Delete $INSTDIR\makensis.exe
   Delete $INSTDIR\makensisw.exe
-  Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\NSIS.exe
   Delete $INSTDIR\license.txt
   Delete $INSTDIR\uninst-nsis.exe
