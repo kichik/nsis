@@ -18,10 +18,6 @@ NSIS
 
 * move no custom to compiler (custom as just another inst type)
 
-PLUGINS
-
-* Banner doesn't refresh and doesn't stay on top
-
 -- Before NSIS 2 Final --
 
 EXAMPLES
