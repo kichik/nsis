@@ -16,9 +16,11 @@
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: New settings for extra space for title and text on Welcome page and Finish page, improved handling of verbose settings, language file string for uninstaller reboot information, more
 
-\b Added \R{adirverify}{DirVerify} and \R{getinstdirerror}{GetInstDirError} to allow custom error checking when the installation directory is invalid or the drive does not have enough space
+\b Shell folders are now detected using shell API functions and not the registry. This is the recommended method by Microsoft. New constants have been added in the process ($FONTS, $SENDTO and more...). See \k{varconstant} for more details.
 
-\b Added LogicLib to distribution (easier conditional execution etc.)
+\b Added \L{../Examples/LogicLib.nsi}{LogicLib} to distribution (easier conditional execution etc.)
+
+\b Added \R{adirverify}{DirVerify} and \R{getinstdirerror}{GetInstDirError} to allow custom error checking when the installation directory is invalid or the drive does not have enough space
 
 \b Support for reading environmental variables on compile time: \R{compenvvar}{$%envVarName%}
 
