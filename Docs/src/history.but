@@ -1,5 +1,57 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0} 2.0
+
+\S1{v2.0-cl-198} Changelog from 1.98
+
+\b \R{langs}{Multiple languages in one installer support} (with RTL support)
+
+\b \R{plugindlls}{Easier plug-in system}
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface} (optional)
+
+\b \W{http://www.7-zip.org/}{LZMA} compression which provides installers 20% smaller than bzip2
+
+\b \R{pages}{Easier paging system} (no more .onNextPage, .onPrevPage)
+
+\b Components are presented as a tree which allows sub components
+
+\b \R{varuser}{User variables} ($VARNAME)
+
+\b \R{aicon}{Icon} and \R{auninstallicon}{UninstallIcon} support any color depth and sizes, not just 32x32x16
+
+\b \R{acheckbitmap}{CheckBitmap} supports any color depth
+
+\b Improved large files handling
+
+\b License data can be RTF
+
+\b CHM documentation for easy browsing
+
+\b \R{silent}{Better silent support}
+
+\b Improved plug-ins: \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl} and \L{../Contrib/Splash/splash.txt}{Splash}
+
+\b New plug-ins: \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}, \L{../Contrib/Banner/Readme.txt}{Banner}, \L{../Contrib/BgImage/BgImage.txt}{BgImage}, \L{../Contrib/Dialer/Dialer.txt}{Dialer}, \L{../Examples/languages.nsi}{LangDLL}, \L{../Contrib/Math/Math.txt}{Math}, \L{../Contrib/nsExec/nsExec.txt}{nsExec}, \L{../Contrib/StartMenu/Readme.txt}{StartMenu}, \L{../Contrib/System/System.txt}{System}, \L{../Contrib/UserInfo/UserInfo.nsi}{UserInfo} and \L{../Contrib/VPatch/Readme.html}{VPatch}
+
+\b New and improved utilities: \L{../Contrib/Makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
+
+\b New commands: \R{addplugindir}{!AddPluginDir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, \R{setpluginunload}{SetPluginUnload}, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, \R{ssubsection}{SubSection}, \R{ssubsectionend}{SubSectionEnd}, \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
+
+\b Removed commands: DisabledBitmap, EnabledBitmap and SectionDivider
+
+\b All this and a smaller overhead! =)
+
+\b A lot more... See below for more information
+
+\S1{v2.0-cl} Changelog from rc4
+
+\b Command line parser ignored any switches after tokens that are not switches
+
+\b Updated and fixed language files
+
+\b Updated, fixed and improved documentation
+
 \H{v2.0rc4} 2.0 Release Candidate 4
 
 Released on February 2nd, 2004

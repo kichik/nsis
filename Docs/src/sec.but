@@ -36,7 +36,7 @@ Sets the install types the section specified by section_index defaults to the en
 
 because the binary value for 5 is "00000101". The error flag will be set if the section index specified is out of range.
 
-\S2{SectionGetInstTypes} SectionGetInstTypes
+\S2{sectiongetinsttypes} SectionGetInstTypes
 
 \c section_index user_var(output)
 

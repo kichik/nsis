@@ -129,7 +129,7 @@
 \c  ;  ($R0 at this point is "ass string")
 \c
 \c  Function StrStr
-\c  Exch $R1 ; st=haystack,old$R1, $R1=needle
+\c    Exch $R1 ; st=haystack,old$R1, $R1=needle
 \c    Exch    ; st=old$R1,haystack
 \c    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
 \c    Push $R3

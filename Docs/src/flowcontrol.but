@@ -145,7 +145,7 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 
 If the return value of the MessageBox is return_check, the installer will Goto jumpto.
 
-Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent.
+Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent. See \k{silent} for more information.
 
 \S2{return} Return
 
