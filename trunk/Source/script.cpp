@@ -444,7 +444,6 @@ int CEXEBuild::parseScript()
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
     // Added by Sunil Kamath 11 June 2003
     restore_line_predefine(oldline);
-    if (oldline) free(oldline);
 #endif
     
     if (ret != PS_OK) return ret;
