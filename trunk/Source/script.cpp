@@ -1733,6 +1733,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETCOMPRESS:
       build_compress=line.gettoken_enum(1,"off\0auto\0force\0");
       if (build_compress==-1) PRINTHELP()
+      if (build_compress == 0 && build_compress_whole)
+      {
+        warning("'SetCompress off' encountered, and in whole compression mode. Effectively ignored.\n");
+      }
       SCRIPT_MSG("SetCompress: %s\n",line.gettoken_str(1));
     return PS_OK;
     case TOK_DBOPTIMIZE:
