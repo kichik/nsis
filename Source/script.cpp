@@ -4124,6 +4124,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else if (line.gettoken_str(a)[0]=='/') PRINTHELP()
           else break;
         }
+        if (line.getnumtokens() < a+2) PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
         int s;
