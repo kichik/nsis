@@ -23,7 +23,7 @@
 # This program uses CVSNT software, http://www.cvsnt.org/
 #
 #####################################################################
-# Defines
+# Defines / Includes
 
 !define MISSINGFILES $0
 !define NSISBINPATH $1
@@ -32,33 +32,26 @@
 !define TEMP2 $R1
 !define TEMP3 $R2
 
-#####################################################################
-# Modern UI
-
-!define MUI_PRODUCT "NSIS Update"
-!define MUI_VERSION ""
-!define MUI_BRANDINGTEXT " "
-!define MUI_UI "Resources\GUI\NSISUpdate.exe"
-!define MUI_ICON "${NSISDIR}\Contrib\Icons\yi-simple2_install.ico"
-
-!define MUI_CUSTOMPAGECOMMANDS
-
-!include "MUI.nsh"
-
-!insertmacro MUI_SYSTEM
-
-!insertmacro MUI_LANGUAGE "English"
-
-Page custom UpdateMethod ": Update Method"
-!insertmacro MUI_PAGECOMMAND_INSTFILES
+!include "WinMessages.nsh"
 
 #####################################################################
 # Configuration
 
-Caption /LANG=${LANG_ENGLISH} "${MUI_PRODUCT}"
+Name "NSIS Update"
 OutFile "..\..\Bin\NSISUpdate.exe"
+BrandingText " "
+
 InstallButtonText "Update"
 ShowInstDetails show
+InstallColors /windows
+
+ChangeUI IDD_INST "Resources\GUI\NSISUpdate.exe"
+ChangeUI IDD_INSTFILES "Resources\GUI\NSISUpdate.exe"
+
+Icon "${NSISDIR}\Contrib\Icons\yi-simple2_install.ico"
+
+Page custom UpdateMethod ": Update Method"
+Page instfiles
 
 #####################################################################
 # Macros
@@ -129,9 +122,8 @@ Function .onInit
   
   # InstallOptions INI File for the "Update Method" dialog
   
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "Resources\GUI\io.ini" "io.ini"
-  
-  # InitPluginsDir called by Modern UI InstallOptions extract macro
+  InitPluginsdir
+  File "/oname=$PLUGINSDIR\io.ini" "Resources\GUI\io.ini"
 
 FunctionEnd
 
@@ -208,7 +200,12 @@ FunctionEnd
 
 Function UpdateMethod
 
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "io.ini"
+  Push ${TEMP1}
+
+    InstallOptions::dialog "$PLUGINSDIR\io.ini"
+    Push ${TEMP1}
+  
+  Pop ${TEMP1}
   
 FunctionEnd
 
@@ -313,7 +310,7 @@ Section ""
   
   Call ConnectInternet
 
-  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "io.ini" "Field 2" "State"
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\io.ini" "Field 2" "State"
   StrCmp ${TEMP1} "1" "" CVS
   
     # Check for a new release
@@ -383,7 +380,7 @@ Section ""
       Goto UpdateMsg
     
     StrCmp ${TEMP1} "2" "" +3
-      DetailPrint "A new preview release is available: ${TEMP2}"
+      DetailPrint "A new pre-release is available: ${TEMP2}"
       Goto UpdateMsg
       
     DetailPrint "No new release is available. Check again later."
@@ -415,7 +412,7 @@ Section ""
     
     DetailPrint "Initializing CVS Update..."
     
-    !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "io.ini" "Field 3" "State"
+    ReadINIStr ${TEMP1} "$PLUGINSDIR\io.ini" "Field 3" "State"
     StrCmp ${TEMP1} "1" "" CleanCVSUpdate
       
       # Normal update
