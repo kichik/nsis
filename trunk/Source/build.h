@@ -253,7 +253,6 @@ class CEXEBuild {
 
     int db_opt_save, db_comp_save, db_full_size, db_opt_save_u, 
         db_comp_save_u, db_full_size_u;
-    int build_sections_req,build_sections_div;
 
     FastStringList include_dirs;
 
@@ -280,7 +279,6 @@ class CEXEBuild {
 
     unsigned char *header_data_new;
     int exeheader_size_new;
-    int enabled_bitmap_offset;
     int icon_offset;
     int m_inst_fileused;
     int m_uninst_fileused;
