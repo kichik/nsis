@@ -251,7 +251,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           while (c)
           {
             WIN32_FIND_DATA *fd;
-            while (*p != '\\' && *p) p=CharNext(p);
+            p = findchar(p, '\\');
             c=*p;
             *p=0;
             fd = file_exists(buf1);

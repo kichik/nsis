@@ -60,6 +60,7 @@ int NSISCALL validpathspec(char *ubuf);
 char * NSISCALL addtrailingslash(char *str);
 //char NSISCALL lastchar(const char *str);
 #define lastchar(str) *CharPrev(str,str+mystrlen(str))
+char * NSISCALL findchar(char *str, char c);
 void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL skip_root(char *path);
 int NSISCALL is_valid_instpath(char *s);
