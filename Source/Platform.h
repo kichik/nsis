@@ -30,7 +30,7 @@ typedef long LONG;
 typedef unsigned long ULONG;
 typedef long long INT64, LARGE_INTEGER;
 typedef unsigned long long UINT64, ULARGE_INTEGER;
-typedef int BOOL;
+typedef int BOOL, *LPBOOL;
 typedef void VOID;
 typedef void *LPVOID;
 typedef char CHAR, *PCHAR, *LPCH, *PCH, *NPSTR, *LPSTR, *PSTR;
