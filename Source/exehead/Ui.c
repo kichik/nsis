@@ -530,7 +530,7 @@ nextPage:
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       // lock display for custom pages to prevent flickering
       // the custom page must unlock the display
-      if (this_page->id<0 && uMsg != WM_INITDIALOG) LockWindowUpdate(hwndDlg);
+      if (this_page->id<0 && uMsg != WM_INITDIALOG) LockWindowUpdate(m_curwnd);
       else LockWindowUpdate(0);
 #endif
 
