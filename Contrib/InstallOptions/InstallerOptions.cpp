@@ -157,7 +157,8 @@ HWND hConfigWindow    = NULL;
 HWND hMainWindow      = NULL;
 HINSTANCE m_hInstance = NULL;
 
-char *pszTitle      = NULL;
+char *pszFilename = NULL;
+char *pszTitle = NULL;
 char *pszCancelQuestion = NULL;
 char *pszCancelQuestionCaption = NULL;
 char *pszCancelButtonText = NULL;
@@ -323,7 +324,7 @@ bool ValidateFields() {
   return true;
 }
 
-bool SaveSettings(LPSTR pszFilename) {
+bool SaveSettings(void) {
   static char szField[25];
   int nIdx;
   HWND hwnd;
@@ -429,9 +430,23 @@ void AddBrowseButtons() {
   }
 }
 
-bool ReadSettings(LPSTR pszFilename) {
-  int nResult;
-  static char szResult[1000];
+static char szResult[1000];
+
+DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
+{
+  *szResult = '\0';
+  return GetPrivateProfileString(lpAppName, lpKeyName, "", szResult, sizeof(szResult), pszFilename);
+}
+
+char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
+{
+  if (myGetProfileString(lpAppName, lpKeyName))
+    return strdup(szResult);
+  else
+    return NULL;
+}
+
+bool ReadSettings(void) {
   static char szField[25];
   int nIdx;
   // Messagebox icon types
@@ -447,22 +462,15 @@ bool ReadSettings(LPSTR pszFilename) {
     { NULL,                 0                  }
   };
 
-  nResult = GetPrivateProfileString("Settings", "Title", "", szResult, sizeof(szResult), pszFilename);
-  pszTitle = (nResult > 0) ? strdup(szResult) : NULL;
+  pszTitle = myGetProfileStringDup("Settings", "Title");
+  pszCancelQuestion = myGetProfileStringDup("Settings", "CancelConfirm");
+  pszCancelQuestionCaption = myGetProfileStringDup("Settings", "CancelConfirmCaption");
+  pszCancelButtonText = myGetProfileStringDup("Settings", "CancelButtonText");
+  pszNextButtonText = myGetProfileStringDup("Settings", "NextButtonText");
+  pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
 
-  nResult = GetPrivateProfileString("Settings", "CancelConfirm", "", szResult, sizeof(szResult), pszFilename);
-  pszCancelQuestion = (nResult > 0) ? strdup(szResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "CancelConfirmCaption", "", szResult, sizeof(szResult), pszFilename);
-  pszCancelQuestionCaption = (nResult > 0) ? strdup(szResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "CancelConfirmIcon", "", szResult, sizeof(szResult), pszFilename);
+  myGetProfileString("Settings", "CancelConfirmIcon");
   nCancelQuestionIcon = LookupToken(IconTable, szResult);
-
-  nResult = GetPrivateProfileString("Settings", "CancelButtonText", "", szResult, sizeof(szResult), pszFilename);
-  pszCancelButtonText = (nResult > 0) ? strdup(szResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "NextButtonText", "", szResult, sizeof(szResult), pszFilename);
-  pszNextButtonText = (nResult > 0) ? strdup(szResult) : NULL;
-  nResult = GetPrivateProfileString("Settings", "BackButtonText", "", szResult, sizeof(szResult), pszFilename);
-  pszBackButtonText = (nResult > 0) ? strdup(szResult) : NULL;
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0, pszFilename);
@@ -516,8 +524,7 @@ bool ReadSettings(LPSTR pszFilename) {
     };
 
     wsprintf(szField, "Field %d", nIdx + 1);
-    *szResult = '\0';
-    nResult = GetPrivateProfileString(szField, "TYPE", "", szResult, sizeof(szResult), pszFilename);
+    myGetProfileString(szField, "TYPE");
 
     // Get the control type
     pFields[nIdx].nType = LookupToken(TypeTable, szResult);
@@ -527,30 +534,27 @@ bool ReadSettings(LPSTR pszFilename) {
     // Lookup flags associated with the control type
     pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
-    nResult = GetPrivateProfileString(szField, "TEXT", "", szResult, sizeof(szResult), pszFilename);
-    if (nResult) {
-      pFields[nIdx].pszText = STRDUP(szResult);
-    }
-    nResult = GetPrivateProfileString(szField, "STATE", "", szResult, sizeof(szResult), pszFilename);
+    pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
+
+    // pszState cannot be NULL (?)
+    myGetProfileString(szField, "STATE");
     pFields[nIdx].pszState = STRDUP(szResult);
 
-    nResult = GetPrivateProfileString(szField, "ROOT", "", szResult, sizeof(szResult), pszFilename);
-    if (nResult) {
-      pFields[nIdx].pszRoot = STRDUP(szResult);
-    }
+    pFields[nIdx].pszRoot = myGetProfileStringDup(szField, "ROOT");
 
-    nResult = GetPrivateProfileString(szField, "ListItems", "", szResult, sizeof(szResult), pszFilename);
-    if (nResult) {
-      // add an extra | character to the end to simplify the loop where we add the items.
-      pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
-      wsprintf(pFields[nIdx].pszListItems, "%s|", szResult);
+    {
+      int nResult = myGetProfileString(szField, "ListItems");
+      if (nResult) {
+        // add an extra | character to the end to simplify the loop where we add the items.
+        pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
+        wsprintf(pFields[nIdx].pszListItems, "%s|", szResult);
+      }
     }
     pFields[nIdx].nMaxLength = GetPrivateProfileInt(szField, "MaxLen", 0, pszFilename);
     pFields[nIdx].nMinLength = GetPrivateProfileInt(szField, "MinLen", 0, pszFilename);
 
-    nResult = GetPrivateProfileString(szField, "ValidateText", "", szResult, sizeof(szResult), pszFilename);
-    if (nResult) {
-      pFields[nIdx].pszValidateText = STRDUP(szResult);
+    pFields[nIdx].pszValidateText = myGetProfileStringDup(szField, "ValidateText");
+    if (pFields[nIdx].pszValidateText) {
       // translate backslash-n in the input into actual carriage-return/line-feed characters.
       for (char *pPos = pFields[nIdx].pszValidateText; *pPos; pPos++) {
         if (*pPos == '\\') {
@@ -567,15 +571,17 @@ bool ReadSettings(LPSTR pszFilename) {
       }
     }
 
-    nResult = GetPrivateProfileString(szField, "Filter", "All Files|*.*", szResult, sizeof(szResult), pszFilename);
-    if (nResult) {
-      // add an extra | character to the end to simplify the loop where we add the items.
-      pFields[nIdx].pszFilter = (char*)MALLOC(nResult + 2);
-      strcpy(pFields[nIdx].pszFilter, szResult);
-      char *pszPos = pFields[nIdx].pszFilter;
-      while (*pszPos) {
-        if (*pszPos == '|') *pszPos = '\0';
-        pszPos++;
+    {
+      int nResult = GetPrivateProfileString(szField, "Filter", "All Files|*.*", szResult, sizeof(szResult), pszFilename);
+      if (nResult) {
+        // add an extra | character to the end to simplify the loop where we add the items.
+        pFields[nIdx].pszFilter = (char*)MALLOC(nResult + 2);
+        strcpy(pFields[nIdx].pszFilter, szResult);
+        char *pszPos = pFields[nIdx].pszFilter;
+        while (*pszPos) {
+          if (*pszPos == '|') *pszPos = '\0';
+          pszPos++;
+        }
       }
     }
 
@@ -584,8 +590,7 @@ bool ReadSettings(LPSTR pszFilename) {
     pFields[nIdx].rect.top = GetPrivateProfileInt(szField, "TOP", 0, pszFilename);
     pFields[nIdx].rect.bottom = GetPrivateProfileInt(szField, "BOTTOM", 0, pszFilename);
 
-    nResult = GetPrivateProfileString(szField, "Flags", "", szResult, sizeof(szResult), pszFilename);
-    if (nResult > 0) {
+    if (myGetProfileString(szField, "Flags")) {
       // append the | to make parsing a bit easier
       if (lstrlen(szResult)<sizeof(szResult)-1) lstrcat(szResult, "|");
       // parse the flags text
@@ -658,6 +663,11 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 		PostMessage(hConfigWindow,WM_USER+666,0,LOWORD(wParam));
     return 0;
   }
+  if (message == WM_CLOSE)
+  {
+    PostMessage(hConfigWindow,WM_USER+666,0,IDCANCEL);
+    return 0;
+  }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
 }
 
@@ -684,7 +694,6 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         }
       }
     break;
-    case WM_CLOSE: break;
   }
 	return 0;
 }
@@ -716,7 +725,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
     return;
   }
 
-  if (!*stacktop || !(*stacktop)->text[0] || !ReadSettings((*stacktop)->text))
+  if (!stacktop || !*stacktop || !(pszFilename = (*stacktop)->text) || !pszFilename[0] || !ReadSettings())
   {
     popstring(NULL);
     pushstring("error finding config");
@@ -748,8 +757,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
   EnableWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelEnabled?SW_SHOWNA:SW_HIDE);		  // by ORTIM: 13-August-2002
   ShowWindow(GetDlgItem(hMainWindow,IDCANCEL),bCancelShow?SW_SHOWNA:SW_HIDE);             // by ORTIM: 13-August-2002
 
-	lpWndProcOld = (void *) GetWindowLong(hMainWindow,GWL_WNDPROC);
-	SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
+  lpWndProcOld = (void *) SetWindowLong(hMainWindow,GWL_WNDPROC,(long)ParentWndProc);
 
   // Added by Amir Szekely 22nd July 2002
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
@@ -975,10 +983,7 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
 
   // we don't save settings on cancel since that means your installer will likely
   // quit soon, which means the ini might get flushed late and cause crap. :) anwyay.
-  if (!g_is_cancel) SaveSettings((*stacktop)->text);
-  popstring(NULL);
-
-  pushstring(g_is_cancel?"cancel":g_is_back?"back":"success");
+  if (!g_is_cancel) SaveSettings();
 
   if (lpWndProcOld)
     SetWindowLong(hMainWindow,GWL_WNDPROC,(long)lpWndProcOld);
@@ -1013,6 +1018,9 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
     FREE(pFields[nIdx].pszRoot);
   }
   FREE(pFields);
+
+  popstring(NULL);
+  pushstring(g_is_cancel?"cancel":g_is_back?"back":"success");
 }
 
 
