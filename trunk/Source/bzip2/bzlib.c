@@ -439,7 +439,7 @@ int BZ2_bzCompressEnd( bz_stream *strm )
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
 /*---------------------------------------------------*/
 
-Int32 BZ2_indexIntoF ( Int32 indx, Int32 *cftab )   
+Int32 NSISCALL BZ2_indexIntoF ( Int32 indx, Int32 *cftab )   
 {      
   Int32 nb, na, mid;
   nb = 0;
@@ -454,7 +454,7 @@ Int32 BZ2_indexIntoF ( Int32 indx, Int32 *cftab )
 
 
 static
-void unRLE_obuf_to_output_SMALL ( DState* s )
+void NSISCALL unRLE_obuf_to_output_SMALL ( DState* s )
 {
    UChar k1;
   while (True) {
@@ -493,7 +493,7 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
   }
 }
 #else//!small, fast
-static void unRLE_obuf_to_output_FAST ( DState* s )
+static void NSISCALL unRLE_obuf_to_output_FAST ( DState* s )
 {
    UChar k1;
 

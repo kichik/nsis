@@ -67,7 +67,7 @@
    { retVal = rrr; goto save_state_and_return; };
 
 
-static int __mygetbits(int *vtmp, int nnn, DState* s)
+static int NSISCALL __mygetbits(int *vtmp, int nnn, DState* s)
 {
    for (;;) {
       if (s->bsLive >= nnn) {
@@ -96,7 +96,7 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
 #define GET_BIT(lll,uuu)                          \
    GET_BITS(lll,uuu,1)
 
-static int getmtf1(DState_save *sv,DState* s)
+static int NSISCALL getmtf1(DState_save *sv,DState* s)
 {
    if (sv->groupPos == 0) {
       sv->groupNo++;
@@ -133,7 +133,7 @@ static int getmtf1(DState_save *sv,DState* s)
 
 
 /*---------------------------------------------------*/
-Int32 BZ2_decompress ( DState* s )
+Int32 NSISCALL BZ2_decompress ( DState* s )
 {
    Int32 uc;
    Int32      retVal;
