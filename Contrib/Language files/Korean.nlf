@@ -1,5 +1,6 @@
 # Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1042
 # Font and size - dash (-) means default
@@ -9,7 +10,7 @@ NLF v6
 949
 # RTL - anything else than RTL means LTR
 -
-# Translation by dTomoyo dtomoyo@empal.com ( ~V2.0 BETA2 ) / By koder@popdesk.co.kr (V2.0 BETA3 ~ )
+# Translation by dTomoyo dtomoyo@empal.com ( ~V2.0 BETA2 ) / By hardkoder@gmail.com (V2.0 BETA3 ~ )
 # ^Branding
 널소프트 설치 시스템 %s
 # ^SetupCaption
