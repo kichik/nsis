@@ -1406,25 +1406,16 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
     case EW_CREATEFONT:
-      myitoa(
-        g_usrvars[parm0],
-        (int)CreateFont(
-          process_string_fromtab_toint(parm2),
-          0,
-          0,
-          0,
-          process_string_fromtab_toint(parm3),
-          parm4&1,
-          parm4&2,
-          parm4&4,
-          0,
-          0,
-          0,
-          0,
-          0,
-          GetStringFromStringTab(parm1)
-        )
-      );
+    {
+      LOGFONT f={0,};
+      f.lfHeight=-MulDiv(process_string_fromtab_toint(parm2),GetDeviceCaps(GetDC(g_hwnd),LOGPIXELSY),72);
+      f.lfWeight=process_string_fromtab_toint(parm3);
+      f.lfItalic=parm4&1;
+      f.lfUnderline=parm4&2;
+      f.lfStrikeOut=parm4&4;
+      process_string_fromtab(f.lfFaceName,parm1);
+      myitoa(g_usrvars[parm0],(int)CreateFontIndirect(&f));
+    }
     return 0;
   }
   my_MessageBox(STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
