@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1032
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Makidis N. Mike
 Nullsoft Install System %s
 Εγκατάσταση του '%s'

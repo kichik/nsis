@@ -89,7 +89,7 @@ typedef struct {
 
 class CDialogTemplate {
 public:
-	CDialogTemplate(BYTE* pbData);
+	CDialogTemplate(BYTE* pbData, unsigned int uCodePage=CP_ACP);
 	virtual ~CDialogTemplate();
 
 	short GetWidth();
@@ -134,6 +134,9 @@ private:
 	BYTE m_bItalic; // Extended only
 	BYTE m_bCharset; // Extended only
 	char* m_szFont;
+
+  // For (en/de)coding Unicode
+  unsigned int m_uCodePage;
 
 	// Items vector
 	vector<DialogItemTemplate*> m_vItems;

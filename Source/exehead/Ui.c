@@ -43,6 +43,7 @@ HICON g_hIcon;
 // Added by Amir Szekely 3rd August 2002
 char *language_tables;
 int *cur_language_table;
+int dlg_offset;
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
@@ -170,7 +171,8 @@ lang_again:
   for (i = 0; i < lang_num; i++) {
     language_table=language_tables+i*g_inst_cmnheader->language_table_size;
     if (!((lang ^ *(LANGID*)language_table) & lang_mask)) {
-      cur_language_table=(int*)(language_table+sizeof(LANGID));
+      dlg_offset=*(int*)(language_table+sizeof(LANGID));
+      cur_language_table=(int*)(language_table+sizeof(LANGID)+sizeof(int));
       break;
     }
   }
@@ -323,7 +325,7 @@ int NSISCALL ui_doinstall(void)
     }
 #endif
 
-    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),0,DialogProc);
+    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
   }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -371,22 +373,22 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     page *this_page;
     static struct
     {
-      char *id;
+      unsigned int id;
       DLGPROC proc;
     }
     windows[]=
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      {MAKEINTRESOURCE(IDD_LICENSE),LicenseProc},
+      {IDD_LICENSE,LicenseProc},
 #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      {MAKEINTRESOURCE(IDD_SELCOM),SelProc},
+      {IDD_SELCOM,SelProc},
 #endif
-      {MAKEINTRESOURCE(IDD_DIR),DirProc},
-      {MAKEINTRESOURCE(IDD_INSTFILES),InstProc},
-      {NULL,NULL}, // imaginary completed page
+      {IDD_DIR,DirProc},
+      {IDD_INSTFILES,InstProc},
+      {0,NULL}, // imaginary completed page
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      {MAKEINTRESOURCE(IDD_UNINST),UninstProc}
+      {IDD_UNINST,UninstProc}
 #endif
     };
 
@@ -400,9 +402,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      if (!(g_quit_flag = ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL)))
+      g_quit_flag = ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL);
 #endif
-        ShowWindow(hwndDlg,SW_SHOW);
     }
 
     this_page=g_inst_page+m_page;
@@ -470,7 +471,11 @@ nextPage:
 
       if (this_page->id>=0) // NSIS page
       {
-        m_curwnd=CreateDialog(g_hInstance,windows[this_page->id].id,hwndDlg,windows[this_page->id].proc);
+        m_curwnd=CreateDialog(
+          g_hInstance,
+          MAKEINTRESOURCE(windows[this_page->id].id+dlg_offset),
+          hwndDlg,windows[this_page->id].proc
+        );
         if (m_curwnd)
         {
           RECT r;
@@ -669,12 +674,12 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 static char * NSISCALL inttosizestr(int kb, char *str)
 {
   char sh=20;
-  char c='G';
-  char s=0;;
-  if (kb < 1024) { sh=0; c='K'; }
-  else if (kb < 1024*1024) { sh=10; c='M'; }
+  char s=0;
+  int scale=LANG_GIGA;
+  if (kb < 1024) { sh=0; scale=LANG_KILO; }
+  else if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
   else if (GetVersion()&0x80000000) s='+';//only display the + on GB shown on win9x.
-  wsprintf(str+mystrlen(str),"%d.%d%cB%c",kb>>sh,((kb*10)>>sh)%10,c,s);
+  wsprintf(str+mystrlen(str),"%d.%d%s%s%c",kb>>sh,((kb*10)>>sh)%10,LANG_STR(scale),LANG_STR(LANG_BYTE),s);
   return str;
 }
 
@@ -695,7 +700,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (GetAsyncKeyState(VK_SHIFT)&0x8000)
     {
       HWND h=GetUIItem(IDC_CHECK1);
-      my_SetWindowText(h,"Log install process");
+      my_SetWindowText(h,LANG_STR(LANG_LOG_INSTALL_PROCESS));
       ShowWindow(h,SW_SHOWNA);
     }
 #endif

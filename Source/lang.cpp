@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "build.h"
+#include "DialogTemplate.h"
+#include "exehead\resource.h"
 
 extern const char *NSIS_VERSION;
 
@@ -44,6 +46,8 @@ char *english_strings[] = {
   "Can't write: ",
   "Copy failed",
   "Copy to ",
+  "Registering: ",
+  "Unregistering: ",
   "Could not find symbol: ",
   "Could not load: ",
   "Create folder: ",
@@ -66,7 +70,12 @@ char *english_strings[] = {
   "Rename on reboot: ",
   "Rename: ",
   "Skipped: ",
-  "Copy Details To Clipboard"
+  "Copy Details To Clipboard",
+  "Log install process",
+  "B",
+  "K",
+  "M",
+  "G"
 };
 
 StringTable* CEXEBuild::GetTable(LANGID &lang) {
@@ -85,13 +94,15 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
       ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
       return 0;
     }
-    memset(table, 0, sizeof(StringTable)-sizeof(GrowBuf)*2);
+    memset(table, 0, sizeof(LANGID) + sizeof(int) + sizeof(common_strings)*2 + sizeof(installer_strings) + sizeof(uninstall_strings));
+    table->nlf = 0;
+
     table->lang_id = lang;
 
     table->user_strings.set_zeroing(1);
-    table->user_ustrings.set_zeroing(1);
-
     table->user_strings.resize(build_userlangstrings.getnum()*sizeof(int));
+
+    table->user_ustrings.set_zeroing(1);
     table->user_ustrings.resize(ubuild_userlangstrings.getnum()*sizeof(int));
 
     string_tables.push_back(table);
@@ -205,7 +216,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
     if (!table) return PS_ERROR;
   }
 
-  GrowBuf *user_strings = 0;
+  TinyGrowBuf *user_strings = 0;
   LangStringList *user_strings_list = 0;
   bool uninst;
   if (!(uninst = !strnicmp(name,"un.",3))) {
@@ -236,7 +247,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
 
 bool CEXEBuild::_IsSet(int *str, LANGID lang) {
   if (!str) return false;
-  lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
+  lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->m_wLangId:0;
   lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
   unsigned int i;
   for (i = 0; i < string_tables.size(); i++) {
@@ -262,9 +273,58 @@ int CEXEBuild::WriteStringTables() {
   }
 
   // Fill tables with defaults (if needed) and with instruction strings
+  // Create language specific resources (currently only dialogs with different fonts)
   int st_num = string_tables.size();
+  // if there is one string table then there is no need for two sets of dialogs
+  int cur_offset = st_num == 1 ? 0 : 100;
   for (i = 0; i < st_num; i++)
-    FillDefaultsIfNeeded(string_tables[i]);
+  {
+    FillStringTable(string_tables[i]);
+    if (string_tables[i]->nlf && string_tables[i]->nlf->m_szFont)
+    {
+      string_tables[i]->dlg_offset = cur_offset;
+
+      try {
+        init_res_editor();
+
+#define ADD_FONT(id) { \
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+          if (dlg) { \
+            CDialogTemplate td(dlg,string_tables[i]->nlf->m_uCodePage); \
+            free(dlg); \
+            td.SetFont(string_tables[i]->nlf->m_szFont, string_tables[i]->nlf->m_iFontSize); \
+            DWORD dwSize; \
+            dlg = td.Save(dwSize); \
+            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), string_tables[i]->lang_id, dlg, dwSize); \
+            free(dlg); \
+          } \
+        }
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+        ADD_FONT(IDD_LICENSE);
+#endif
+        ADD_FONT(IDD_DIR);
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+        ADD_FONT(IDD_SELCOM);
+#endif
+        ADD_FONT(IDD_INST);
+        ADD_FONT(IDD_INSTFILES);
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+        ADD_FONT(IDD_UNINST);
+#endif
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+        ADD_FONT(IDD_VERIFY);
+#endif
+#undef SET_FONT
+      }
+      catch (exception& err) {
+        ERROR_MSG("Error while applying NLF font for %s: %s\n", err.what());
+        return PS_ERROR;
+      }
+
+      cur_offset += 100;
+    }
+  }
 
   // check for missing LangStrings
   int userstrings_num = build_userlangstrings.getnum();
@@ -296,6 +356,7 @@ int CEXEBuild::WriteStringTables() {
   // Add string tables into their datablock
   for (i = 0; i < st_num; i++) {
     build_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
+    build_langtables.add(&string_tables[i]->dlg_offset, sizeof(int));
     build_langtables.add(&string_tables[i]->common, sizeof(common_strings));
     build_langtables.add(&string_tables[i]->installer, sizeof(installer_strings));
     if (build_userlangstrings.getnum())
@@ -306,6 +367,7 @@ int CEXEBuild::WriteStringTables() {
 
   for (i = 0; i < st_num; i++) {
     ubuild_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
+    ubuild_langtables.add(&string_tables[i]->dlg_offset, sizeof(int));
     ubuild_langtables.add(&string_tables[i]->ucommon, sizeof(common_strings));
     ubuild_langtables.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
     if (ubuild_userlangstrings.getnum())
@@ -318,12 +380,12 @@ int CEXEBuild::WriteStringTables() {
   return PS_OK;
 }
 
-void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
+void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
   if (!nlf) {
     for (unsigned int i = 0; i < build_nlfs.size(); i++) {
-      if (build_nlfs[i]->GetLang() == table->lang_id) {
-          nlf = build_nlfs[i];
-          break;
+      if (build_nlfs[i]->m_wLangId == table->lang_id) {
+        nlf = table->nlf = build_nlfs[i];
+        break;
       }
     }
   }
@@ -378,6 +440,22 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     table->ucommon.name=add_string_uninst(str(NLF_DEF_NAME),0);
   }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  table->common.byte=add_string_main(str(NLF_BYTE));
+  table->common.kilo=add_string_main(str(NLF_KILO));
+  table->common.mega=add_string_main(str(NLF_MEGA));
+  table->common.giga=add_string_main(str(NLF_GIGA));
+
+  /* not yet needed
+  
+  table->ucommon.byte=add_string_uninst(str(NLF_BYTE));
+  table->ucommon.kilo=add_string_uninst(str(NLF_KILO));
+  table->ucommon.mega=add_string_uninst(str(NLF_MEGA));
+  table->ucommon.giga=add_string_uninst(str(NLF_GIGA));*/
+
+#ifdef NSIS_CONFIG_LOG
+  table->common.log_install_process=add_string_main(str(NLF_LOG_INSTALL_PROCESS));
+  table->ucommon.log_install_process=add_string_uninst(str(NLF_LOG_INSTALL_PROCESS));
+#endif
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
   if (!table->installer.licensedata || !table->installer.licensetext)
@@ -522,6 +600,14 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     SET_INSTRUCTION(NLF_COPY_TO, copy_to);
   #endif
   #ifdef NSIS_SUPPORT_ACTIVEXREG
+    if (register_used)
+    {
+      SET_INSTRUCTION(NLF_REGISTERING, registering);
+    }
+    if (unregister_used)
+    {
+      SET_INSTRUCTION(NLF_UNREGISTERING, unregistering);
+    }
     SET_INSTRUCTION(NLF_SYMBOL_NOT_FOUND, symbol_not_found);
     SET_INSTRUCTION(NLF_COULD_NOT_LOAD, could_not_load);
     SET_INSTRUCTION(NLF_NO_OLE, no_ole);
@@ -601,15 +687,38 @@ NLF::NLF(char *filename) {
   FILE *f = fopen(filename, "r");
   if (!f) throw runtime_error("Can't open language file!");
 
+  // Generate language name
+  char *p, *p2, t;
+
+  p = strrchr(filename, '.');
+  if (p)
+  {
+    t = *p;
+    *p = 0;
+  }
+  p2 = strrchr(filename, '\\');
+  if (p2)
+  {
+    p2++;
+    m_szName = new char[strlen(p2)+1];
+    strcpy(m_szName, p2);
+  }
+  else
+  {
+    m_szName = new char[strlen(filename)+1];
+    strcpy(m_szName, filename);
+  }
+  if (p) *p = t;
+
+  // Check header
   char buf[1024];
   buf[0] = SkipComments(f);
   fgets(buf+1, 1024, f);
 
-  // Check header
   if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
   int nlf_version = atoi(buf+5);
   if (nlf_version != NLF_VERSION) {
-    if (nlf_version != 2)
+    if (nlf_version != 2 && nlf_version != 3)
       throw runtime_error("Language file version doesn't match NSIS version!");
   }
 
@@ -618,25 +727,77 @@ NLF::NLF(char *filename) {
   fgets(buf+1, 1024, f);
   m_wLangId = atoi(buf);
 
+  int temp;
+
+  // Get font
+  m_szFont = NULL;
+  m_iFontSize = 0;
+
+  buf[0] = SkipComments(f);
+  fgets(buf+1, 1024, f);
+  temp=strlen(buf);
+  while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
+    buf[temp-1] = 0;
+    temp--;
+  }
+  if (buf[0] != '-' && buf [1] != 0) {
+    m_szFont = new char[strlen(buf) + 1];
+    strcpy(m_szFont, buf);
+  }
+
+  buf[0] = SkipComments(f);
+  fgets(buf+1, 1024, f);
+  if (buf[0] != '-' && buf [1] != 0) {
+    m_iFontSize = atoi(buf);
+  }
+
+  // Get code page
+  m_uCodePage = CP_ACP;
+  buf[0] = SkipComments(f);
+  fgets(buf+1, 1024, f);
+  if (buf[0] != '-' && buf [1] != 0) {
+    m_uCodePage = atoi(buf);
+    if (!IsValidCodePage(m_uCodePage))
+      m_uCodePage = CP_ACP;
+  }
+
   // Read strings
   for (int i = 0; i < NLF_STRINGS; i++) {
-    buf[0] = SkipComments(f);
-
-    if ((i == NLF_BTN_LICENSE_AGREE || i == NLF_BTN_LICENSE_DISAGREE) && nlf_version == 2) {
+    if (nlf_version < 3 && (i == NLF_BTN_LICENSE_AGREE || i == NLF_BTN_LICENSE_DISAGREE)) {
       m_szStrings[i] = new char[1];
       m_szStrings[i][0] = 0;
       continue;
     }
 
+    if (nlf_version < 4) {
+      switch (i) {
+      	case NLF_LOG_INSTALL_PROCESS:
+        case NLF_BYTE:
+        case NLF_KILO:
+        case NLF_MEGA:
+        case NLF_GIGA:
+        case NLF_REGISTERING:
+        case NLF_UNREGISTERING:
+          m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
+          strcpy(m_szStrings[i], english_strings[i]);
+          continue;
+          break;
+      }
+    }
+
+    buf[0] = SkipComments(f);
+
     fgets(buf+1, NSIS_MAX_STRLEN, f);
-    if (lstrlen(buf) == NSIS_MAX_STRLEN-1) {
+    if (strlen(buf) == NSIS_MAX_STRLEN-1) {
       wsprintf(buf, "String too long (string #%d)!", i);
       throw runtime_error(buf);
     }
-    while (buf[lstrlen(buf)-1] == '\n' || buf[lstrlen(buf)-1] == '\r') {
-      buf[lstrlen(buf)-1] = 0;
+    temp=strlen(buf);
+    while (buf[temp-1] == '\n' || buf[temp-1] == '\r') {
+      buf[temp-1] = 0;
+      temp--;
     }
-    m_szStrings[i] = new char[lstrlen(buf)+1];
+    m_szStrings[i] = new char[strlen(buf)+1];
     for (char *out = m_szStrings[i], *in = buf; *in; in++, out++) {
       if (*in == '\\') {
         in++;
@@ -663,13 +824,11 @@ NLF::NLF(char *filename) {
 }
 
 NLF::~NLF() {
+  delete [] m_szName;
+  delete [] m_szFont;
   for (int i = 0; i < NLF_STRINGS; i++) {
     delete [] m_szStrings[i];
   }
-}
-
-LANGID NLF::GetLang() {
-  return m_wLangId;
 }
 
 char* NLF::GetString(int idx) {

@@ -233,6 +233,13 @@ typedef struct
   int closebutton;   // "Close"
   int completed;
 
+  int copy_details;
+
+  int byte;
+  int kilo;
+  int mega;
+  int giga;
+
   // processed strings
   int subcaptions[5];
 #endif
@@ -253,6 +260,8 @@ typedef struct
   int copy_to;
 #endif
 #ifdef NSIS_SUPPORT_ACTIVEXREG
+  int registering;
+  int unregistering;
   int symbol_not_found;
   int could_not_load;
   int no_ole;
@@ -293,7 +302,9 @@ typedef struct
   int inst_corrupted;
   int output_dir;
   int create_dir;
-  int copy_details;
+#ifdef NSIS_CONFIG_LOG
+  int log_install_process;
+#endif
 } common_strings;
 
 // Flags for common_header.flags

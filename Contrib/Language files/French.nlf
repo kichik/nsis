@@ -2,7 +2,13 @@
 NLF v3
 # Language ID
 1036
-# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis. Updated by Sébastien Delahaye <seb@delahaye.net>.
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis
+# Updated by Sébastien Delahaye <seb@delahaye.net>
 Nullsoft Install System %s
 Installation de %s
 Désinstallation de %s

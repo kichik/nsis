@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1042
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx    # Modified by koder@popdesk.co.kr
 널소프트 설치 시스템 %s
 %s 설치

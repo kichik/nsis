@@ -2,6 +2,11 @@
 NLF v2
 # Language ID
 1053
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Peter Gustafsson <sm5tri@passagen.se>
 Nullsoft Install System %s
 %s Installation

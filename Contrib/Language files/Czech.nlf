@@ -2,6 +2,11 @@
 NLF v2
 # Language ID
 1029
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by T.V. Zuggy (http://zuggy.wz.cz/)
 Nullsoft Install System %s
 Instalace programu %s

@@ -938,8 +938,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               g_flags.exec_error--;
               if (parm2)
               {
-                char *buf2=process_string_fromparm_tobuf(0x22);
-                update_status_text(buf2,buf1);
+                update_status_text_from_lang(parm2,buf1);
                 if (funke()) g_flags.exec_error++;
               }
               else
