@@ -113,6 +113,23 @@ Section "NSIS Development System (required)" SecCore
   File ..\contrib\makensisw\*.txt
 SectionEnd
 
+Section "Script Examples" SecExample
+  SectionIn 1 2 3
+  SetOutPath $INSTDIR\Examples
+  Delete $INSTDIR\functions.htm
+  File ..\Examples\makensis.nsi
+  File ..\Examples\example1.nsi
+  File ..\Examples\example2.nsi
+  File ..\Examples\viewhtml.nsi
+  File ..\Examples\waplugin.nsi
+  File ..\Examples\bigtest.nsi
+  File ..\Examples\primes.nsi
+  File ..\Examples\rtest.nsi
+  File ..\Examples\gfx.nsi
+  File ..\Examples\one-section.nsi
+  File ..\Examples\languages.nsi
+SectionEnd
+
 Section "NSIS Menu" SecMenu
   SectionIn 1 2 3
   SetOutPath $INSTDIR
@@ -128,24 +145,6 @@ Section "NSIS Update" SecUpdate
   SetOutPath $INSTDIR\Bin
   File ..\Bin\NSISUpdate.exe
   File ..\Bin\InstallCVSData.exe
-SectionEnd
-
-Section "NSIS Script Examples" SecExample
-  SectionIn 1 2 3
-  SetOutPath $INSTDIR\Examples
-  Delete $INSTDIR\primes.nsi
-  Delete $INSTDIR\functions.htm
-  File ..\Examples\makensis.nsi
-  File ..\Examples\example1.nsi
-  File ..\Examples\example2.nsi
-  File ..\Examples\viewhtml.nsi
-  File ..\Examples\waplugin.nsi
-  File ..\Examples\bigtest.nsi
-  File ..\Examples\primes.nsi
-  File ..\Examples\rtest.nsi
-  File ..\Examples\gfx.nsi
-  File ..\Examples\one-section.nsi
-  File ..\Examples\languages.nsi
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
@@ -233,11 +232,6 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\UIs\modern.exe"
     File "..\Contrib\UIs\modern2.exe"
 	File "..\Contrib\UIs\modern3.exe"
-	
-    SetOutPath $INSTDIR\Contrib\Icons
-    File "..\Contrib\Icons\modern-install.ico"
-    File "..\Contrib\Icons\modern-uninstall.ico"
-    File "..\Contrib\Icons\modern-wizard.bmp"
     
 	SetOutPath $INSTDIR\Include
 	File "..\Include\MUI.nsh"
@@ -258,7 +252,7 @@ SubSection "Extra User Interfaces" SecContribUIs
   
 SubSectionEnd
 
-Section "Extra Icons" SecContribIcons
+Section "Graphics" SecContribGraphics
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Icons
   Delete $INSTDIR\Contrib\*.ico
@@ -349,12 +343,13 @@ Section "InstallOptions" SecContribIO
   File ..\contrib\installoptions\test.nsi
 SectionEnd
 
-Section "NSIS-DL" SecContribNSISDL
+Section "NSISdl" SecContribNSISDL
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\ReadMe.txt
+  File ..\contrib\NSISdl\License.txt
 SectionEnd
 
 Section "System" SecContribSystem
@@ -537,7 +532,7 @@ Section "InstallOptions Source" SecContribIOS
   File ..\contrib\installoptions\*.h
 SectionEnd
 
-Section "NSIS-DL Source" SecContribNSISDLS
+Section "NSISdl Source" SecContribNSISDLS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\nsisdl.dsw
@@ -608,18 +603,36 @@ SubSectionEnd
 
 Section -post
 
-  ;Always install the Modern UI English language file
+  ; When Modern UI is installed:
+  ; * Always install the English language file
+  ; * Always install default icons / bitmaps
 
-  SectionGetFlags ${SecContribLang} $R0
+  SectionGetFlags ${SecContribModernUI} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
-  IntCmp $R0 ${SF_SELECTED} langfiles
-	SectionGetFlags ${SecContribModernUI} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
 	IntCmp $R0 ${SF_SELECTED} "" nomui nomui
+
+    SectionGetFlags ${SecContribLang} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    IntCmp $R0 ${SF_SELECTED} langfiles
+	
 	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\English.nsh"
-    nomui:
-  langfiles:
+    
+    langfiles:
+    
+    SectionGetFlags ${SecContribGraphics} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    IntCmp $R0 ${SF_SELECTED} graphics
+    
+      SetOutPath $INSTDIR\Contrib\Icons
+      File "..\Contrib\Icons\modern-install.ico"
+      File "..\Contrib\Icons\modern-uninstall.ico"
+      File "..\Contrib\Icons\modern-wizard.bmp"
+      
+    graphics:
+    
+  nomui:
+  
 
   SetOutPath $INSTDIR
   
@@ -761,18 +774,18 @@ SectionEnd
 !ifndef CLASSIC_UI
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "A menu that contains links to NSIS information, utilities and websites"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "User interfaces, tools, graphics, files, and other utilities contributed by other NSIS developers"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "User interfaces, plugins, graphics, and utilities contributed by other NSIS developers"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface like the wizards of recent Windows versions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribTinyUI} "A tiny version of the default UI"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "Icon files contributed by other NSIS developers"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribTinyUI} "A tiny version of the default user interface"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribGraphics} "Icons, checkbox images and other graphics"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
@@ -792,8 +805,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin that provides internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to a utility that converts zip files into an NSIS installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add user interface components to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add custom pages to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add custom pages to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenu} "Plugin that lets the user select the start menu folder"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenuS} "Source code to plugin that lets the user select the start menu folder"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
@@ -802,12 +815,12 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUserInfoS} "Source code to plugin that that gives you the user name and the user account type"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your UI recources in to preview your UI"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your recources in to preview your user interface"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Source code to NSIS and all related files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL source in C"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "MakeNSIS Wrapper source code"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL plugin source in C and plugin function header"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "Source code to MakeNSIS Wrapper"
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
 !endif
