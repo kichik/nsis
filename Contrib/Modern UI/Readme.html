@@ -184,9 +184,10 @@ follow these steps:</p>
   shortcuts.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT,
   MUI_STARTMENUPAGE_REGISTRY_KEY, MUI_STARTMENUPAGE_REGISTRY_VALUENAME</span><br />
-  If your installer saves the Start Menu folder of a previous installation
-  in a registry, define these values and the Modern UI will use the saved
-  value as default folder.</p>  
+  The registry key to store the Start Menu folder. The page will use it to
+  remember the users preference. You should also use it in the uninstaller to
+  remove the Start Menu folders. Don't forget to remove this key in the
+  uninstaller.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE</span><br />
   Show the finish page. The finish page tells that the installation is succesful.
@@ -306,12 +307,23 @@ follow these steps:</p>
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
-  <p class="text">If you are using the LangDLL for a language selection dialog
+  <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
-  MultiLanguage.nsi</a> example) use MUI_LANGDLL_PUSH to add the name of the
-  language (in the language itself) to the stack:</p>
+  MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit:</p>
 <pre class="margin">
-!insertmacro MUI_LANGDLL_PUSH "English" ;Parameter = Language file name in English</pre>
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
+</pre>
+  <p class="text">To customize the texts on the language selection dialog, define
+  MUI_TEXT_LANGDLL_WINDOWTITLE and MUI_TEXT_LANGDLL_INFO before inserting the macro.</p>
+  <p class="text">If you want the installer to remember the users language
+  preference, define MUI_STARTMENUPAGE_REGISTRY_ROOT, MUI_STARTMENUPAGE_REGISTRY_KEY
+  and MUI_STARTMENUPAGE_REGISTRY_VALUENAME to set a registry key to store the
+  language. You can also use it in the uninstaller to display the right language.
+  Don't forget to remove this key in the uninstaller.</p>
   <p class="subheader">9. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
@@ -564,9 +576,11 @@ FunctionEnd
     <li>Support for a bitmap in the wizard header</li>
     <li>New defines to change the description area</li>
     <li>MUI_SYSTEM inserted automatically</li>
+    <li>Single macro for language selection dialog</li>
     <li>Removed page description in window title</li>
     <li>Easier to customize resource files</li>
     <li>New system for custom functions</li>
+    <li>Start Menu folder registry key automatically written</li>
     <li>New InstallOptions macro's that do not remove the return value from
     the stack</li>
     <li>Support for custom pages before the finish page</li>

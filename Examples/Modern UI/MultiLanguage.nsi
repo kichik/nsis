@@ -15,6 +15,14 @@
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  
+  ;Remember install folder
+  InstallDirRegKey HKCU "Softare\${MUI_PRODUCT}" ""
+  
+  ;Remember the installer language
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -133,8 +141,8 @@ Section "modern.exe" SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
-  ;Write language to the registry (for the uninstaller)
-  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Installer Language" $LANGUAGE
+  ;Store install folder
+  WriteRegStr HKCU "Softare\${MUI_PRODUCT}" "" $INSTDIR
   
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
@@ -149,46 +157,7 @@ SectionEnd
 
 Function .onInit
 
-  ;Language selection
-
-  ;Font
-  Push Tahoma
-  Push 8
-
-  ;Languages
-  !insertmacro MUI_LANGDLL_PUSH "English"
-  !insertmacro MUI_LANGDLL_PUSH "French"
-  !insertmacro MUI_LANGDLL_PUSH "German"
-  !insertmacro MUI_LANGDLL_PUSH "Spanish"
-  !insertmacro MUI_LANGDLL_PUSH "SimpChinese"
-  !insertmacro MUI_LANGDLL_PUSH "TradChinese"    
-  !insertmacro MUI_LANGDLL_PUSH "Japanese" 
-  !insertmacro MUI_LANGDLL_PUSH "Korean"
-  !insertmacro MUI_LANGDLL_PUSH "Italian"
-  !insertmacro MUI_LANGDLL_PUSH "Dutch"
-  !insertmacro MUI_LANGDLL_PUSH "Danish"
-  !insertmacro MUI_LANGDLL_PUSH "Greek"
-  !insertmacro MUI_LANGDLL_PUSH "Russian"
-  !insertmacro MUI_LANGDLL_PUSH "PortugueseBR"
-  !insertmacro MUI_LANGDLL_PUSH "Polish"
-  !insertmacro MUI_LANGDLL_PUSH "Ukrainian"
-  !insertmacro MUI_LANGDLL_PUSH "Czech"
-  !insertmacro MUI_LANGDLL_PUSH "Slovak"
-  !insertmacro MUI_LANGDLL_PUSH "Croatian"
-  !insertmacro MUI_LANGDLL_PUSH "Bulgarian"
-  !insertmacro MUI_LANGDLL_PUSH "Hungarian"
-  !insertmacro MUI_LANGDLL_PUSH "Thai"
-  !insertmacro MUI_LANGDLL_PUSH "Romanian"
-  !insertmacro MUI_LANGDLL_PUSH "Macedonian"
-  !insertmacro MUI_LANGDLL_PUSH "Turkish"
-  
-  Push 25F ;25 = number of languages, F = change font
-
-  LangDLL::LangDialog "Installer Language" "Please select a language."
-
-  Pop $LANGUAGE
-  StrCmp $LANGUAGE "cancel" 0 +2
-    Abort
+  !insertmacro MUI_LANGDLL_DISPLAY
 
 FunctionEnd
 
@@ -210,8 +179,8 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
-  
-  DeleteRegValue HKCU "Software\${MUI_PRODUCT}" "Installer Language"
+
+  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
   ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER

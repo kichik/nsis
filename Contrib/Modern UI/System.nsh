@@ -2,8 +2,7 @@
 ;Macro System
 ;Written by Joost Verburg
 
-;Have a look the scripts in the 'Examples\Modern UI'
-;directory for examples of usage.
+;Have a look the scripts in the 'Examples\Modern UI' directory for examples of usage.
 
 ;--------------------------------
 
@@ -15,7 +14,7 @@
 
 !define MUI_MACROS_USED
 
-!include "${NSISDIR}\Include\WinMessages.nsh"
+!include "WinMessages.nsh"
 
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
@@ -254,7 +253,7 @@
 
   StrCmp $0 ${VAR} "" +3
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-    Goto done
+    Goto description_done
 
   !ifndef MUI_NOVERBOSE
     !ifndef MUI_MANUALVERBOSE
@@ -272,7 +271,7 @@
     !endif
   !endif
 
-  done:
+  description_done:
   Pop ${MUI_TEMP1}
 
   !ifndef MUI_NOVERBOSE
@@ -439,16 +438,9 @@
 
 !macro MUI_LANGDLL_PUSH LANGUAGE
 
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
+  ;1.62 compatibility
 
-  Push "${LANG_${LANGUAGE}}"
-  Push "${MUI_${LANGUAGE}_LANGNAME}"
-  
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
+  !error "To use the language selection dialog, you only have to add '!insertmacro MUI_LANGDLL_DISPLAY' to .onInit now. You should remove all the other code and Push commands."
   
 !macroend
 
@@ -470,11 +462,58 @@
 !macro MUI_STARTMENU_WRITE_END
 
   !verbose 3
+  
+  !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
+    WriteRegStr "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}" "${MUI_STARTMENUPAGE_VARIABLE}"
+  !endif
 
   no_startmenu_shortcuts:
   
   !verbose 4
 
+!macroend
+
+!macro MUI_LANGDLL_DISPLAY
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+
+  !ifndef MUI_TEXT_LANGDLL_WINDOWTITLE
+    !define MUI_TEXT_LANGDLL_WINDOWTITLE "Installer Language"
+  !endif
+
+  !ifndef MUI_TEXT_LANGDLL_INFO
+    !define MUI_TEXT_LANGDLL_INFO "Please select a language."
+  !endif
+  
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    Push ${MUI_TEMP1}
+    
+      ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+      StrCmp ${MUI_TEMP1} "" showlangdialog
+        StrCpy $LANGUAGE ${MUI_TEMP1}
+        Goto langdll_done
+      showlangdialog:
+      
+    Pop ${MUI_TEMP1}
+  !endif
+  
+  LangDLL::LangDialog "${MUI_TEXT_LANGDLL_WINDOWTITLE}" "${MUI_TEXT_LANGDLL_INFO}" AF ${MUI_LANGDLL_PUSHLIST} "" 8 "${MUI_FONT}"
+
+  Pop $LANGUAGE
+  StrCmp $LANGUAGE "cancel" 0 +2
+    Abort
+    
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
+    langdll_done:
+  !endif
+    
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+    
 !macroend
 
 ;--------------------------------
@@ -1201,7 +1240,7 @@
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
     
     !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
-        
+      
       StrCmp "${MUI_STARTMENUPAGE_VARIABLE}" "" "" +4
 
         ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
@@ -1796,8 +1835,10 @@
 
 !macro MUI_SYSTEM
 
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 3
+    !endif
   !endif
   
   !ifndef MUI_SYSTEM_INSERTED
@@ -1806,25 +1847,24 @@
   
     ;1.62 compatibility
     !ifdef MUI_STARTMENU_VARIABLE || MUI_STARTMENU_DEFAULTFOLDER || MUI_STARTMENU_REGISTRY_ROOT
-      !error "The Start Menu Folder page defines have been renamed from MUI_STARTMENU_??? to MUI_STARTMENUPAGE_???. Please change this in your script."
+      !error "The Start Menu Folder page defines have been renamed from MUI_STARTMENU_??? to MUI_STARTMENUPAGE_???. Please rename these defines in your script."
     !endif
   
-    !define MUI_NOVERBOSE
-
     !insertmacro MUI_INTERFACE  
     !insertmacro MUI_BASIC
     !insertmacro MUI_UNBASIC
-  
-    !undef MUI_NOVERBOSE
     
   !else
   
+    ;1.62 compatibility
     !warning "The MUI_SYSTEM macro is now being inserted automatically. You can remove '!insertmacro MUI_SYSTEM' from your script."
   
   !endif
   
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 4
+    !endif
   !endif
   
 !macroend
@@ -1882,7 +1922,10 @@
   !ifndef MUI_SYSTEM_INSERT
   
     !define MUI_SYSTEM_INSERT
-    !insertmacro MUI_SYSTEM
+    
+    !define MUI_NOVERBOSE
+       !insertmacro MUI_SYSTEM
+    !undef MUI_NOVERBOSE
     
   !endif
   
@@ -1989,7 +2032,18 @@
 !macro MUI_LANGUAGEFILE_END
 
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
-
+    
+  !ifndef MUI_LANGDLL_PUSHLIST
+    !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} "
+  !else
+    !ifdef MUI_LANGDLL_PUSHLIST_TEMP
+      !undef MUI_LANGDLL_PUSHLIST_TEMP
+    !endif
+    !define MUI_LANGDLL_PUSHLIST_TEMP "${MUI_LANGDLL_PUSHLIST}"
+    !undef MUI_LANGDLL_PUSHLIST
+    !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} ${MUI_LANGDLL_PUSHLIST_TEMP}"
+  !endif
+  
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "Name" "MUI_NAME"
   
   SubCaption 0 " "
