@@ -25,7 +25,6 @@
 
 #define TOOLBAR_ID                   10001
 
-#define IMAGECOUNT      16
 #define BUTTONCOUNT     15
 
 #define TBB_LOADSCRIPT                   0
@@ -33,16 +32,18 @@
 #define TBB_SEP1                         2
 #define TBB_COPY                         3
 #define TBB_FIND                         4
-#define TBB_SEP2                         5
-#define TBB_RECOMPILE                    6
-#define TBB_TEST                         7
-#define TBB_COMPRESSOR                   8
-#define TBB_EDITSCRIPT                   9
-#define TBB_BROWSESCR                    10
-#define TBB_CLEARLOG                     11
+#define TBB_CLEARLOG                     5
+#define TBB_SEP2                         6
+#define TBB_RECOMPILE                    7
+#define TBB_TEST                         8
+#define TBB_COMPRESSOR                   9
+#define TBB_EDITSCRIPT                   10
+#define TBB_BROWSESCR                    11
 #define TBB_SEP3                         12
 #define TBB_NSISHOME                     13
 #define TBB_DOCS                         14
+
+#define IMAGECOUNT      16
 
 #define IDB_LOADSCRIPT                   0
 #define IDB_SAVE                         1

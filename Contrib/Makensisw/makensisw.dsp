@@ -163,6 +163,18 @@ SOURCE=.\shell.ico
 
 SOURCE=.\toolbar.bmp
 # End Source File
+# Begin Source File
+
+SOURCE=.\toolbar24.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\toolbar24d.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\toolbar24h.bmp
+# End Source File
 # End Group
 # Begin Group "Documentation"
 
