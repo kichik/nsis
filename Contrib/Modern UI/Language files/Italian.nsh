@@ -18,8 +18,8 @@
   !define MUI_TEXT_LICENSE_SUBTITLE "Prego leggere le condizioni della licenza d'uso prima di installare $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "Premere Page Down per vedere il resto della licenza d'uso."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. É necessario accettare i termini della licenza d'uso per installare $(^Name)."  
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "Selezione dei componenti"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Selezionare i componenti di $(^Name) che si desidera installare."
@@ -58,8 +58,17 @@
   !define MUI_UNTEXT_CONFIRM_TITLE "Disintalla $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Rimuove $(^Name) dal computer."
   
+  !define MUI_UNTEXT_LICENSE_TITLE "Licenza d'uso"  
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Prego leggere le condizioni della licenza d'uso prima di disinstallare $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
+  
   !define MUI_UNTEXT_COMPONENTS_TITLE "Selezione componenti"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Scegliere i componenti di $(^Name) che si desidera disinstallare."
+  
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Scelta della cartella da cui disinstallare"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Scegliere la cartella dalla quale disinstallare $(^Name)."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Disinstallazione in corso"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prego attendere mentre $(^Name) viene disinstallato."
