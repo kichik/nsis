@@ -13,7 +13,7 @@
 #endif
 
 #ifdef NSIS_COMPRESS_USE_LZMA
-#include "../7zip/lzmaNSIS.h"
+#include "../7zip/LZMADecode.h"
 #define z_stream CLZMAState
 #define inflateInit(x) lzmaInit(x)
 #define inflateReset(x) lzmaInit(x)
@@ -351,12 +351,6 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
       for (;;)
       {
         int u;
-
-#ifdef NSIS_COMPRESS_USE_LZMA
-        // lzma decompressor doesn't like to stay dry
-        if (!g_inflate_stream.avail_in && input_len)
-          break;
-#endif
 
         g_inflate_stream.next_out = outbuffer;
         g_inflate_stream.avail_out = (unsigned int)outbuffer_len;

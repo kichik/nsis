@@ -1,8 +1,33 @@
 #ifndef ___PLATFORM__H___
 #define ___PLATFORM__H___
 
-#include <Windows.h>
-#include <commctrl.h>
+// includes
+
+#ifdef _WIN32
+#  include <Windows.h>
+#  include <commctrl.h>
+#else
+#  define WORD unsigned short
+#  define DWORD unsigned long
+#endif
+
+// attributes
+
+#ifdef _MSC_VER
+#  define FORCE_INLINE __forceinline
+#else
+#  ifdef __GNUC__
+#    if __GNUC__ < 3
+#      define FORCE_INLINE inline
+#    else
+#      define FORCE_INLINE inline __attribute__ ((always_inline))
+#    endif
+#  else
+#    define FORCE_INLINE inline
+#  endif
+#endif
+
+// defines
 
 #ifndef FOF_NOERRORUI
 #define FOF_NOERRORUI 0x0400
