@@ -216,9 +216,6 @@
 // NSIS_FIX_DEFINES_IN_STRINGS fixes defines inside defines and handles chars $ perfectly
 // #define NSIS_FIX_DEFINES_IN_STRINGS
 
-// NSIS_SUPPORT_SHELLFOLDERS_CONST enable support for common shell folder codes
-#define NSIS_SUPPORT_SHELLFOLDERS_CONST
-
 // NSIS_SUPPORT_STANDARD_PREDEFINES enables standard predefines in NSIS.
 // The defines enabled are:
 //   __FILE__ - current script name

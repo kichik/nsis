@@ -14,10 +14,10 @@ int NSISCALL mystrlen(const char *in);
 char * NSISCALL mystrstr(char *a, char *b);
 WIN32_FIND_DATA * NSISCALL file_exists(char *buf);
 char * NSISCALL my_GetTempFileName(char *buf, const char *dir);
-int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree);
+int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl);
 
-//BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
-#define my_SetWindowText SetWindowText
+BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
+//#define my_SetWindowText SetWindowText
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val);
 //int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size);
 #define my_GetWindowText GetWindowText

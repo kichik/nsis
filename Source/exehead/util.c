@@ -31,14 +31,15 @@ NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree)
+int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl)
 {
   int Res;
   IMalloc *m;
   SHGetMalloc(&m);
   Res = SHGetPathFromIDList(idl, out);
-  if (m && bFree)
+  if (m)
   {
+    m->lpVtbl->Free(m, idl);
     m->lpVtbl->Release(m);
   }
   return Res;
@@ -57,10 +58,10 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
-/*BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
+BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
 {
   return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);
-}*/
+}
 
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
 {
@@ -457,24 +458,18 @@ int NSISCALL mystrlen(const char *in)
 
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
+#define SYSREGKEY "Software\\Microsoft\\Windows\\CurrentVersion"
+
 // Based on Dave Laundon's simplified process_string
 char * NSISCALL GetNSISString(char *outbuf, int strtab)
 {
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
-    static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion";
-#else
-    static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
-#endif
-
   char *in = (char*)GetNSISStringNP(GetNSISTab(strtab));
-  char *out;
-  if (outbuf >= ps_tmpbuf && outbuf < ps_tmpbuf+sizeof(ps_tmpbuf))
+  char *out = ps_tmpbuf;
+  if ((unsigned int) (outbuf - ps_tmpbuf) < sizeof(ps_tmpbuf))
   {
     out = outbuf;
     outbuf = 0;
   }
-  else
-    out = ps_tmpbuf;
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     int nVarIdx = (unsigned char)*in++;
@@ -482,180 +477,101 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
     {
       *out++ = *in++;
     }
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
     else if (nVarIdx == SHELL_CODES_START)
     {
-      // NOTE 1: the code CSIDL_DESKTOP, is used for QUICKLAUNCH
+      // NOTE 1: the code CSIDL_PRINTERS, is used for QUICKLAUNCH
       // NOTE 2: the code CSIDL_BITBUCKET is used for COMMONFILES
       // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
       LPITEMIDLIST idl;
-      int qLaunch=0;
-      int nCreateFlag = CSIDL_FLAG_CREATE;
-      int nFolderCurUser;
+      char *append = 0;
 
-      nFolderCurUser = (*(WORD*)in & 0x0FFF)-1; // Read code for current user
-      in+=sizeof(WORD);
-      nVarIdx = nFolderCurUser;
-      if ( g_exec_flags.all_user_var )
+      int fldrs[4] = {
+        in[0], // current user
+        in[0] | CSIDL_FLAG_CREATE,
+        in[1], // all users
+        in[1] | CSIDL_FLAG_CREATE
+      };
+
+      int x = 0;
+
+      *out = 0;
+
+      in += 2;
+
+      if (fldrs[2] == CSIDL_PRINTERS) // QUICKLAUNCH
       {
-        nVarIdx = (*(WORD*)in & 0x0FFF)-1; // Use code for All users instead
+        append = "\\Microsoft\\Internet Explorer\\Quick Launch";
+        x = 2;
       }
-      else
-        nFolderCurUser=-1; // Already using current user
-
-      in+=sizeof(WORD);
-
-      *out=0;
-      
-      while (TRUE)
+      if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
       {
-        switch ( nVarIdx )
+        myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
+      }
+      if (fldrs[0] == CSIDL_PROGRAM_FILES)
+      {
+        myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
+        if (!*out)
+          mystrcpy(out, "C:\\Program Files");
+      }
+      if (fldrs[0] == CSIDL_SYSTEM)
+      {
+        GetSystemDirectory(out, NSIS_MAX_STRLEN);
+      }
+      if (fldrs[0] == CSIDL_WINDOWS)
+      {
+        GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+      }
+
+      if (!*out)
+      {
+        x = 4;
+        if (!g_exec_flags.all_user_var)
+          x = 2;
+      }
+
+      while (x--)
+      {
+        if (!SHGetSpecialFolderLocation(g_hwnd, fldrs[x], &idl))
         {
-        case CSIDL_BITBUCKET: // COMMONFILES
-          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "CommonFilesDir", out);
-          break;
-        case CSIDL_CONTROLS: // PROGRAMFILES
-          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
-          if (!*out)
-            mystrcpy(out, "C:\\Program Files");
-          break;
-        case CSIDL_DESKTOP: // QUICKLAUNCH
-          nVarIdx = CSIDL_APPDATA;
-          qLaunch = 1;
-          // dont break
-        default:
-          // Get and force path creation
-          if ( !SHGetSpecialFolderLocation(g_hwnd, nVarIdx | nCreateFlag, &idl) )
+          if (my_PIDL2Path(out, idl))
           {
-            if (my_PIDL2Path(out, idl, 1))
-            {
-              if (qLaunch) 
-                lstrcat(out,"\\Microsoft\\Internet Explorer\\Quick Launch");
-            }
-          }
-          break;
-        }
-
-        if ( *out )
-          break; // Found something
-
-        if ( nCreateFlag == 0 )
-        {
-          if ( nFolderCurUser == -1 ) // Already dropped to current user???
             break;
-          else
-          {
-            nVarIdx = nFolderCurUser; // Drop to current user if fail
-            nFolderCurUser = -1;
           }
         }
         else
-          nCreateFlag = 0; // remove create flag if it fails
+          *out=0;
+      }
+
+      if (*out && append)
+      {
+        lstrcat(out, append);
       }
 
       validate_filename(out);
-      out+=mystrlen(out);
+      out += mystrlen(out);
     }
-#endif
     else if (nVarIdx == VAR_CODES_START)
     {
-      nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD);
-      switch (nVarIdx) // The order of this list must match that in ..\strlist.cpp (err, build.cpp -J)
-      {
-#ifndef NSIS_SUPPORT_SHELLFOLDERS_CONST
-        case 28: // PROGRAMFILES
-          smwcvesf[41]=0;
-          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
-          if (!*out)
-            mystrcpy(out, "C:\\Program Files");
-          break;
-
-        case 29: // SMPROGRAMS
-        case 30: // SMSTARTUP
-        case 31: // DESKTOP
-        case 32: // STARTMENU
-        case 33: // QUICKLAUNCH
-          {
-            DWORD f;
-            static const char *tab[]={
-              "Programs",
-              "Startup",
-              "Desktop",
-              "Start Menu",
-              "AppData"
-            };
-            static char name[20]="Common ";
-            const char *name_=tab[nVarIdx-29];
-            mystrcpy(name+7,name_);
-            f=g_exec_flags.all_user_var & (nVarIdx != 33);
-
-            again:
-
-              smwcvesf[41]='\\';
-              myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
-                smwcvesf,
-                f?name:name_,out);
-              if (!out[0])
-              {
-                if (f)
-                {
-                  f=0; goto again;
-                }
-                mystrcpy(out,state_temp_dir);
-              }
-
-            if (nVarIdx == 33) {
-              lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
-              f = GetFileAttributes(out);
-              if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
-                break;
-            }
-            else break;
-          }
-
-        case 34: // WINDIR
-          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-        case 35: // SYSDIR
-          GetSystemDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-        case 36: // HWNDPARENT
-          myitoa(out, (unsigned int)g_hwnd);
-          break;
-
-#else // when NSIS_SUPPORT_SHELLFOLDERS_CONST is defined
-
-        case 28: // WINDIR
-          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-        case 29: // SYSDIR
-          GetSystemDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-        case 30: // HWNDPARENT
-          myitoa(out, (unsigned int)g_hwnd);
-          break;
-
-#endif
-        default:
-          mystrcpy(out, g_usrvars[nVarIdx]);
-      } // switch
+      nVarIdx = (*(WORD*)in  - 1) & 0x7FFF;
+      in += sizeof(WORD);
+      if (nVarIdx == 27) // HWNDPARENT
+        myitoa(out, (unsigned int) g_hwnd);
+      else
+        mystrcpy(out, g_usrvars[nVarIdx]);
       // validate the directory name
-      if (nVarIdx > 20 && nVarIdx < TOTAL_COMPATIBLE_STATIC_VARS_COUNT && nVarIdx != 26) {
-        // only if not $0 to $R9, $CMDLINE or $_CLICK and not great than $HWNDPARENT
-        // ($LANGUAGE can't have trailing backslash anyway...)
+      if ((unsigned int)(nVarIdx - 21) < 6) {
+        // validate paths for $INSTDIR, $OUTDIR, $EXEDIR, $LANGUAGE, $TEMP and $PLUGINSDIR
+        // $LANGUAGE is just a number anyway...
         validate_filename(out);
       }
-      out+=mystrlen(out);
+      out += mystrlen(out);
     } // == VAR_CODES_START
     else if (nVarIdx == LANG_CODES_START)
     {
-      nVarIdx = *(short*)in; in+=sizeof(short);
+      nVarIdx = *(short*)in;
+      in += sizeof(short);
       GetNSISString(out, nVarIdx);
-      out+=mystrlen(out);
+      out += mystrlen(out);
     }
     else // Normal char
     {

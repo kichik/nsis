@@ -258,9 +258,7 @@ class CEXEBuild {
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
     ConstantsStringList m_ShellConstants;
-#endif
 
     // a whole bunch O data.
 
