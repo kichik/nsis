@@ -25,6 +25,7 @@ This dll can be used from NSIS to download files via http.
 How to use (for another example, see waplugin.nsi in the nsis directory):
 
   Pass the url and filename on the stack
+  You can also pass /TIMEOUT=### to set the timeout in milliseconds
   Result is returned in $0
 	"cancel" if cancelled
 	"success" if success
@@ -37,6 +38,7 @@ Example:
   ; make the call to download
   Push "http://www.xcf.berkeley.edu/~yaroslav/photos/mike/mike1-full.jpg"
   Push "$INSTDIR\test.jpg"
+  ; Push /TIMEOUT=10000 ; 10 seconds timeout
   CallInstDLL $TEMP\nsdtmp09.dll download ; for a quiet install, use download_quiet
 
   ; delete DLL from temporary directory
