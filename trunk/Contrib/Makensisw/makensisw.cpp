@@ -76,6 +76,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static HINSTANCE hRichEditDLL = 0;
+	static HMENU hmnu = 0;
 	if (!hRichEditDLL) hRichEditDLL= LoadLibrary("RichEd32.dll");
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -122,15 +123,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_CONTEXTMENU:
 		{
 			if ((HWND)wParam==GetDlgItem(g_hwnd,IDC_LOGWIN)) {
-				HMENU m = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_LOGWIN));
-				if (m) {
-					HMENU s = GetSubMenu(m,0);
-					if (s) {
-						int xPos,yPos;
-						xPos = (int)(short)LOWORD(lParam); 
-						yPos = (int)(short)HIWORD(lParam);
-						TrackPopupMenu(s,NULL,xPos,yPos,0,g_hwnd,0);
-					}
+				if (!hmnu) {
+					hmnu = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_LOGWIN));
+					if (hmnu) hmnu = GetSubMenu(hmnu,0);
+				}
+				if (hmnu) {
+					int xPos,yPos;
+					xPos = (int)(short)LOWORD(lParam); 
+					yPos = (int)(short)HIWORD(lParam);
+					TrackPopupMenu(hmnu,NULL,xPos,yPos,0,g_hwnd,0);
 				}
 			}
 			return TRUE;
