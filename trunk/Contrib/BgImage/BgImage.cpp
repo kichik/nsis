@@ -2,12 +2,28 @@
 #include <Mmsystem.h>
 #include "../exdll/exdll.h"
 
+#undef EXDLL_INIT
+
+#define EXDLL_INIT() {  \
+        g_stringsize=string_size; \
+        g_stacktop=stacktop; }
+
 #define NSISFunc(name) extern "C" void __declspec(dllexport) name(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 
 char szTemp[2048];
 HWND hWndImage, hWndParent;
 
 HINSTANCE g_hInstance;
+
+CRITICAL_SECTION CriticalSection;
+
+void ECS() {
+  EnterCriticalSection(&CriticalSection);
+}
+
+void LCS() {
+  LeaveCriticalSection(&CriticalSection);
+}
 
 enum {
   MIL_DUMMY,
@@ -43,6 +59,7 @@ void *oldProc;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 int myatoi(char *s);
 COLORREF GetColor();
+void GetXY(LPPOINT lpPoint);
 
 BOOL bReturn;
 
@@ -66,7 +83,7 @@ static void my_pushstring(char *str)
 NSISFunc(SetBg) {
   EXDLL_INIT();
 
-  bgBitmap.bReady = FALSE;
+  ECS();
 
   if (!hWndImage) {
     hWndParent = hwndParent;
@@ -90,14 +107,15 @@ NSISFunc(SetBg) {
       "NSISBGImage",
       0
     };
-    if (!RegisterClassEx(&wc)) {
-      my_pushstring("can't register class");
+    ATOM atomClass = RegisterClassEx(&wc);
+    if (!atomClass) {
+      my_pushstring("can't create window");
       return;
     }
 
     hWndImage = CreateWindowEx(
       WS_EX_TOOLWINDOW,
-      "NSISBGImage",
+      (LPSTR)atomClass,
       0,
       WS_CLIPSIBLINGS|WS_POPUP,
       0,
@@ -159,7 +177,7 @@ NSISFunc(SetBg) {
   }
 
   if (!GetObject(bgBitmap.hBitmap, sizeof(bBitmap), (void *)&bBitmap)) {
-    my_pushstring("can't query bitmap size");
+    my_pushstring("can't load bitmap");
     return;
   }
   if (!bgBitmap.rPos.right) {
@@ -174,6 +192,8 @@ NSISFunc(SetBg) {
 done:
 
   bgBitmap.bReady = TRUE;
+
+  LCS();
 
   if (hWndImage) {
     SetWindowPos(
@@ -191,6 +211,8 @@ done:
 }
 
 NSISFunc(AddImage) {
+  ECS();
+
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
     my_pushstring("memory allocation error");
@@ -213,34 +235,29 @@ NSISFunc(AddImage) {
     return;
   }
 
-  popstring(szTemp);
-  int iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndWidth;
-  newImg->rPos.left = newImg->rPos.right = (unsigned int)iPosTemp;
-  popstring(szTemp);
-  iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndHeight;
-  newImg->rPos.top = newImg->rPos.bottom = (unsigned int)iPosTemp;
+  GetXY(LPPOINT(&newImg->rPos));
 
   BITMAP bBitmap;
 
   if (!GetObject(newImg->hBitmap, sizeof(bBitmap), (void *)&bBitmap)) {
-    my_pushstring("can't query bitmap size");
+    my_pushstring("can't load bitmap");
     return;
   }
-  newImg->rPos.right += bBitmap.bmWidth;
-  newImg->rPos.bottom += bBitmap.bmHeight;
-
-  newImg->bReady = TRUE;
+  newImg->rPos.right = newImg->rPos.left + bBitmap.bmWidth;
+  newImg->rPos.bottom = newImg->rPos.top + bBitmap.bmHeight;
 
   myImageList *img = &bgBitmap;
   while (img->next) img = img->next;
   img->next = newImg;
 
   my_pushstring("success");
+
+  LCS();
 }
 
 NSISFunc(AddText) {
+  ECS();
+
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
     my_pushstring("memory allocation error");
@@ -260,30 +277,17 @@ NSISFunc(AddText) {
   popstring(szTemp);
   newImg->hFont = (HFONT)myatoi(szTemp);
   newImg->cTextColor = GetColor();
-  popstring(szTemp);
-  int iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndWidth;
-  newImg->rPos.left = (unsigned int)iPosTemp;
-  popstring(szTemp);
-  iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndHeight;
-  newImg->rPos.top = (unsigned int)iPosTemp;
-  popstring(szTemp);
-  iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndWidth;
-  newImg->rPos.right = (unsigned int)iPosTemp;
-  popstring(szTemp);
-  iPosTemp = myatoi(szTemp);
-  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndHeight;
-  newImg->rPos.bottom = (unsigned int)iPosTemp;
-
-  newImg->bReady = TRUE;
+  
+  GetXY(LPPOINT(&newImg->rPos));
+  GetXY(LPPOINT(&newImg->rPos) + 1);
 
   myImageList *img = &bgBitmap;
   while (img->next) img = img->next;
   img->next = newImg;
 
   my_pushstring("success");
+
+  LCS();
 }
 
 NSISFunc(Redraw) {
@@ -292,7 +296,9 @@ NSISFunc(Redraw) {
 }
 
 NSISFunc(Clear) {
-  bgBitmap.bReady = FALSE;
+  ECS();
+
+  BOOL bIsFirst = TRUE;
 
   myImageList *img = &bgBitmap;
   while (img) {
@@ -306,12 +312,20 @@ NSISFunc(Clear) {
         break;
     }
 
+    myImageList *thisImg = img;
+
     img = img->next;
 
-    if (img) GlobalFree(img);
+    if (!bIsFirst)
+      GlobalFree(thisImg);
+    else
+      bIsFirst = FALSE;
   }
 
   bgBitmap.next = 0;
+  bgBitmap.bReady = FALSE;
+
+  LCS();
 }
 
 NSISFunc(Destroy) {
@@ -324,11 +338,13 @@ NSISFunc(Destroy) {
 
 NSISFunc(Sound) {
   char szLoop[] = {'/', 'L', 'O', 'O', 'P', 0};
+  char szWait[] = {'/', 'W', 'A', 'I', 'T', 0};
+  char szStop[] = {'/', 'S', 'T', 'O', 'P', 0};
 
   DWORD flags = SND_FILENAME | SND_NODEFAULT;
   g_stacktop=stacktop;
   popstring(szTemp);
-  if (lstrcmpi(szTemp, "/WAIT"))
+  if (lstrcmpi(szTemp, szWait))
     flags |= SND_ASYNC;
   else
     popstring(szTemp);
@@ -336,7 +352,7 @@ NSISFunc(Sound) {
     flags |= SND_LOOP;
     popstring(szTemp);
   }
-  PlaySound(lstrcmpi(szTemp, "/STOP") ? szTemp : 0, 0, flags);
+  PlaySound(lstrcmpi(szTemp, szStop) ? szTemp : 0, 0, flags);
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -358,6 +374,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
   switch (message) {
     case WM_PAINT:
     if (bgBitmap.bReady) {
+      ECS();
+
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
 
@@ -398,7 +416,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
       myImageList *img = bgBitmap.next;
       while (img) {
-        if (!img->bReady) break;
         if (img->iType == MIL_TEXT) {
           SetBkMode(hdc, TRANSPARENT);
 
@@ -511,6 +528,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         img = img->next;
       }
 
+      LCS();
+
       EndPaint(hwnd, &ps);
     }
     break;
@@ -522,7 +541,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         break;
       }
     case WM_CLOSE:
-      DestroyWindow(hWndImage);
+      DestroyWindow(hwnd);
     break;
     default:
       return DefWindowProc(hwnd, message, wParam, lParam);
@@ -539,6 +558,18 @@ COLORREF GetColor() {
   popstring(szTemp);
   iBlue = myatoi(szTemp);
   return RGB(iRed, iGreen, iBlue);
+}
+
+void GetXY(LPPOINT lpPoint) {
+  popstring(szTemp);
+  int iPosTemp = myatoi(szTemp);
+  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndWidth;
+  lpPoint->x = (unsigned int)iPosTemp;
+
+  popstring(szTemp);
+  iPosTemp = myatoi(szTemp);
+  if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndHeight;
+  lpPoint->y = (unsigned int)iPosTemp;
 }
 
 int myatoi(char *s)
@@ -588,5 +619,13 @@ int myatoi(char *s)
 
 BOOL WINAPI _DllMainCRTStartup(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
   g_hInstance=hInst;
+  switch (ul_reason_for_call) {
+  	case DLL_PROCESS_ATTACH:
+      InitializeCriticalSection(&CriticalSection);
+      break;
+    case DLL_PROCESS_DETACH:
+      DeleteCriticalSection(&CriticalSection);
+      break;
+  }
   return TRUE;
 }
