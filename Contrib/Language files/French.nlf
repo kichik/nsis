@@ -152,7 +152,7 @@ Erreur lors de l'ouverture du fichier en écriture : \r\n\t\"$0\"\r\nAppuyez sur 
 # ^ErrorCreating
 "Erreur de la création : "
 # ^ErrorDecompressing
-Erreur lors de la décompression des données ! Installation corrompue ? 
+Erreur lors de la décompression des données ! Installation corrompue ?
 # ^ErrorRegistering
 Erreur lors de l'enregistrement de la DLL
 # ^ExecShell

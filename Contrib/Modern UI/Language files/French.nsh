@@ -52,7 +52,7 @@
 
   !define MUI_TEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^Name)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de desinstaller $(^Name) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^Name) de votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
 
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^Name)"
