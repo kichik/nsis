@@ -14,7 +14,7 @@
 
 !system '"${NSISDIR}\Bin\InstallCVSData.exe" nooverwrite'
 !echo "Compiling CVS Data Setup..."
-!system '"${NSISDIR}\makensis.exe" /V1 cvsdata.nsi' = 0
+!system '"${NSISDIR}\makensis" /V1 cvsdata.nsi' = 0
 
 ;--------------------------------
 ;Configuration
@@ -123,7 +123,7 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\Colors.nsh
 
   SetOutPath $INSTDIR\Contrib\Makensisw
-  File ..\contrib\makensisw\*.txt
+  File ..\Contrib\Makensisw\*.txt
 
   SetOutPath $INSTDIR\Menu
   File ..\Menu\*.html
@@ -455,8 +455,8 @@ Section "Splash" SecPluginsSplash
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\splash.dll
   SetOutPath $INSTDIR\Contrib\Splash
-  File ..\Contrib\splash\splash.txt
-  File ..\Contrib\splash\Example.nsi
+  File ..\Contrib\Splash\splash.txt
+  File ..\Contrib\Splash\Example.nsi
 SectionEnd
 
 Section "AdvSplash" SecPluginsSplashT
@@ -502,12 +502,12 @@ Section "InstallOptions" SecPluginsIO
   SetOutPath $INSTDIR\Contrib\InstallOptions
   File ..\Contrib\InstallOptions\Readme.html
   File ..\Contrib\InstallOptions\Changelog.txt
-  File ..\contrib\installoptions\test.ini
-  File ..\contrib\installoptions\test.nsi
-  File ..\contrib\installoptions\testlink.ini
-  File ..\contrib\installoptions\testlink.nsi
-  File ..\contrib\installoptions\testnotify.ini
-  File ..\contrib\installoptions\testnotify.nsi
+  File ..\Contrib\InstallOptions\test.ini
+  File ..\Contrib\InstallOptions\test.nsi
+  File ..\Contrib\InstallOptions\testlink.ini
+  File ..\Contrib\InstallOptions\testlink.nsi
+  File ..\Contrib\InstallOptions\testnotify.ini
+  File ..\Contrib\InstallOptions\testnotify.nsi
 SectionEnd
 
 Section "Math" SecPluginsMath
@@ -522,10 +522,10 @@ Section "Math" SecPluginsMath
   File ..\Plugins\Math.dll
   SetOutPath $INSTDIR\Contrib\Math
   File ..\Contrib\Math\Math.txt
-  File ..\Contrib\Math\Math.nsi
-  File ..\Contrib\Math\MathTest.txt
-  File ..\Contrib\Math\MathTest.nsi
-  File ..\Contrib\Math\MathTest.ini
+  File ..\Contrib\Math\math.nsi
+  File ..\Contrib\Math\mathtest.txt
+  File ..\Contrib\Math\mathtest.nsi
+  File ..\Contrib\Math\mathtest.ini
 
 SectionEnd
 
@@ -540,8 +540,8 @@ Section "NSISdl" SecPluginsNSISDL
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
   SetOutPath $INSTDIR\Contrib\NSISdl
-  File ..\contrib\NSISdl\ReadMe.txt
-  File ..\contrib\NSISdl\License.txt
+  File ..\Contrib\NSISdl\ReadMe.txt
+  File ..\Contrib\NSISdl\License.txt
 SectionEnd
 
 Section "System" SecPluginsSystem
@@ -692,14 +692,14 @@ Section "ExDLL Source (required)" SecSrcEx
   SectionIn 1
 
   SetOutPath $INSTDIR\Contrib\ExDLL
-  File ..\Contrib\exdll\exdll.c
-  File ..\Contrib\exdll\exdll.h
-  File ..\Contrib\exdll\exdll.dsp
-  File ..\Contrib\exdll\exdll.dsw
-  File ..\Contrib\exdll\exdll.dpr
-  File ..\Contrib\exdll\exdll_with_unit.dpr
-  File ..\Contrib\exdll\nsis.pas
-  File ..\Contrib\exdll\extdll.inc
+  File ..\Contrib\ExDLL\exdll.c
+  File ..\Contrib\ExDLL\exdll.h
+  File ..\Contrib\ExDLL\exdll.dsp
+  File ..\Contrib\ExDLL\exdll.dsw
+  File ..\Contrib\ExDLL\exdll.dpr
+  File ..\Contrib\ExDLL\exdll_with_unit.dpr
+  File ..\Contrib\ExDLL\nsis.pas
+  File ..\Contrib\ExDLL\extdll.inc
 
 SectionEnd
 
@@ -862,11 +862,11 @@ Section "InstallOptions Source" SecPluginsIOS
   SectionIn 1
 
   SetOutPath $INSTDIR\Contrib\InstallOptions
-  File ..\contrib\installoptions\io.dsp
-  File ..\contrib\installoptions\io.dsw
-  File ..\contrib\installoptions\InstallerOptions.cpp
-  File ..\contrib\installoptions\*.rc
-  File ..\contrib\installoptions\*.h
+  File ..\Contrib\InstallOptions\io.dsp
+  File ..\Contrib\InstallOptions\io.dsw
+  File ..\Contrib\InstallOptions\InstallerOptions.cpp
+  File ..\Contrib\InstallOptions\*.rc
+  File ..\Contrib\InstallOptions\*.h
 SectionEnd
 
 Section "Math Source" SecPluginsMathS
@@ -878,11 +878,11 @@ Section "Math Source" SecPluginsMathS
   SectionIn 1
 
   SetOutPath $INSTDIR\Contrib\Math\Source
-  File ..\contrib\Math\Source\*.c
-  File ..\contrib\Math\Source\*.h
-  File ..\contrib\Math\Source\*.sln
-  File ..\contrib\Math\Source\*.lib
-  File ..\contrib\Math\Source\*.vcproj
+  File ..\Contrib\Math\Source\*.c
+  File ..\Contrib\Math\Source\*.h
+  File ..\Contrib\Math\Source\*.sln
+  File ..\Contrib\Math\Source\*.lib
+  File ..\Contrib\Math\Source\*.vcproj
 SectionEnd
 
 Section "NSISdl Source" SecPluginsNSISDLS
@@ -894,10 +894,10 @@ Section "NSISdl Source" SecPluginsNSISDLS
   SectionIn 1
 
   SetOutPath $INSTDIR\Contrib\NSISdl
-  File ..\contrib\NSISdl\nsisdl.dsw
-  File ..\contrib\NSISdl\nsisdl.dsp
-  File ..\contrib\NSISdl\*.cpp
-  File ..\contrib\NSISdl\*.h
+  File ..\Contrib\NSISdl\nsisdl.dsw
+  File ..\Contrib\NSISdl\nsisdl.dsp
+  File ..\Contrib\NSISdl\*.cpp
+  File ..\Contrib\NSISdl\*.h
 SectionEnd
 
 Section "System Source" SecPluginsSystemS
@@ -909,11 +909,11 @@ Section "System Source" SecPluginsSystemS
   SectionIn 1
 
   SetOutPath $INSTDIR\Contrib\System\Source
-  File ..\contrib\System\Source\*.c
-  File ..\contrib\System\Source\*.h
-  File ..\contrib\System\Source\*.sln
-  File ..\contrib\System\Source\*.obj
-  File ..\contrib\System\Source\*.vcproj
+  File ..\Contrib\System\Source\*.c
+  File ..\Contrib\System\Source\*.h
+  File ..\Contrib\System\Source\*.sln
+  File ..\Contrib\System\Source\*.obj
+  File ..\Contrib\System\Source\*.vcproj
 SectionEnd
 
 Section "StartMenu Source" SecPluginsStartMenuS
