@@ -28,8 +28,6 @@ EXAMPLES
 
 OTHER PLUGINS
 
-* BgImage - SetImage /RESIZETOFIT doesn't work
-
 * nsExec - live output
 
 -- Before NSIS 2 Final --

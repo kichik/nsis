@@ -1,7 +1,3 @@
-/* I modified the window styles to eliminate the annoying title bar.
-   8th February 2003 Ximon Eighteen aka Sunjammer */
-
-
 #include <Windows.h>
 #include <Mmsystem.h>
 #include "../exdll/exdll.h"
@@ -26,8 +22,6 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
     return;
   }
 
-  SetImage(hwndParent, string_size, variables, stacktop);
-
   WNDCLASSEX wc = {
     sizeof(WNDCLASSEX),
     CS_VREDRAW|CS_HREDRAW,
@@ -48,14 +42,14 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
   }
 
   hWndImage = CreateWindowEx(
-    WS_EX_TOOLWINDOW|WS_EX_LEFT|WS_EX_LTRREADING|WS_EX_RIGHTSCROLLBAR,
+    WS_EX_TOOLWINDOW,
     "NSISBGImage",
     0,
-    WS_POPUPWINDOW|WS_VISIBLE|WS_CLIPSIBLINGS|WS_OVERLAPPED,
-    (GetSystemMetrics(SM_CXSCREEN)-x)/2,
-    (GetSystemMetrics(SM_CYSCREEN)-y)/2,
-    x,
-    y,
+    WS_CLIPSIBLINGS|WS_POPUP,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     g_hInstance,
@@ -66,7 +60,9 @@ extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, cha
     return;
   }
 
-  SetWindowLong(hWndImage, GWL_STYLE, WS_VISIBLE);
+  ShowWindow(hWndImage, SW_SHOW);
+
+  SetImage(hwndParent, string_size, variables, stacktop);
 
   oldProc = (void *)SetWindowLong(hwndParent, GWL_WNDPROC, (long)WndProc);
 }
@@ -184,7 +180,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
       SetWindowPos(hWndImage, hWndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
     return CallWindowProc(
-      (long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))oldProc,
+      (long (__stdcall *)(HWND,unsigned int,unsigned int,long))oldProc,
       hwnd,
       message,
       wParam,
