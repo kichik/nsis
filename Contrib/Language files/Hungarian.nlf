@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1038
 # Font and size - dash (-) means default
@@ -8,7 +8,7 @@ NLF v4
 # Codepage - dash (-) means ANSI code page
 -
 # Translation by Soft-Trans Bt. (V2)
-# Translation by Orfanik Kft.   (V3-V4)
+# Translation by Orfanik Kft.   (V3-V5)
 Nullsoft Telepítõrendszer %s
 %s Telepítõ
 %s Eltávolító
@@ -42,7 +42,8 @@ Szabad terület:
 Helyigény: 
 Eltávolítás helye:
 Hiba történt a fájl írásra történõ megnyitásakor: \r\n\t"$0"\r\nA Mégse gomb megnyomásával megszakíthatja a telepítést,\r\naz Ismét gombbal megismételheti a fájl írását,\r\na Kihagyás gombbal kihagyhatja ezt a fájlt.
-Nem írható: 
+Hiba történt a fájl írásra történõ megnyitásakor:  \r\n\t"$0"\r\nAz Újra gomb megnyomásával megismételheti a mûveletet, vagy \r\na Mégse gombbal megszakíthatja a telepítést.
+Nem írható:
 A másolás megszakadt
 Másolás ide: 
 Bejegyzés: 
