@@ -42,9 +42,4 @@ int ZEXPORT inflateInit(z_streamp z)
 }
 
 
-int ZEXPORT inflate(z_streamp z)
-{
-  return inflate_blocks(&z->state->blocks, z, Z_OK);
-}
-
 #endif
