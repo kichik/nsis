@@ -13,6 +13,8 @@
 #include "DialogTemplate.h"
 #include "ResourceVersionInfo.h"
 
+int MMapFile::m_iAllocationGranularity = 0;
+
 bool isSimpleChar(char ch)
 {
   return (ch == '.' ) || (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
@@ -268,6 +270,8 @@ CEXEBuild::CEXEBuild()
   cur_pages=&build_pages;
   cur_page=0;
   cur_page_type=-1;
+
+  build_filebuflen=32<<20; // 32mb
 
   subsection_open_cnt=0;
   build_cursection_isfunc=0;
@@ -678,26 +682,203 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 
 int CEXEBuild::datablock_optimize(int start_offset)
 {
-  int this_len = cur_datablock->getlen()-start_offset;
-  int pos=0;
+  int this_len = cur_datablock->getlen() - start_offset;
+  int pos = 0;
 
-  if (!build_optimize_datablock) return start_offset;
+  if (!build_optimize_datablock || this_len < sizeof(int))
+    return start_offset;
 
-  char *db=(char*)cur_datablock->get();
-  int first_int=*(int*)(db+start_offset);
-  if (this_len >= 4) while (pos < start_offset)
+  MMapBuf *db = (MMapBuf *) cur_datablock;
+  db->setro(TRUE);
+
+  int first_int = *(int *) db->get(start_offset, sizeof(int));
+  db->release();
+
+  while (pos < start_offset)
   {
-    int this_int = *(int*)(db+pos);
-    if (this_int == first_int && !memcmp(db+pos,db+start_offset,this_len))
+    int this_int = *(int *) db->get(pos, sizeof(int));
+    db->release();
+
+    if (this_int == first_int)
     {
-      db_opt_save+=this_len;
-      cur_datablock->resize(max(start_offset,pos+this_len));
-      return pos;
+      int left = this_len;
+      while (left > 0)
+      {
+        int l = min(left, build_filebuflen);
+        void *newstuff = db->get(start_offset + this_len - left, l);
+        void *oldstuff = db->getmore(pos + this_len - left, l);
+
+        int res = memcmp(newstuff, oldstuff, l);
+
+        db->release(oldstuff);
+        db->release();
+
+        if (res)
+        {
+          break;
+        }
+
+        left -= l;
+      }
+
+      if (!left)
+      {
+        db_opt_save += this_len;
+        db->resize(max(start_offset, pos + this_len));
+        return pos;
+      }
     }
-    pos += 4 + (this_int&0x7fffffff);
+
+    pos += sizeof(int) + (this_int & 0x7fffffff);
   }
 
+  db->setro(FALSE);
+
   return start_offset;
+}
+
+int CEXEBuild::add_db_data(IMMap *map) // returns offset
+{
+  build_compressor_set = true;
+
+  int done = 0;
+
+  if (!map)
+  {
+    ERROR_MSG("Error: add_db_data() called with invalid mapped file\n");
+    return -1;
+  }
+
+  int length = map->getsize();
+
+  if (length < 0)
+  {
+    ERROR_MSG("Error: add_db_data() called with length=%d\n", length);
+    return -1;
+  }
+
+  MMapBuf *db = (MMapBuf *) cur_datablock;
+
+  int st = db->getlen();
+
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+  if (!build_compress_whole && build_compress)
+  {
+    // grow datablock so that there is room to compress into
+    int bufferlen = length + 1024 + length / 4; // give a nice 25% extra space
+    db->resize(st + bufferlen + sizeof(int));
+
+    int n;
+    if ((n = compressor->Init(9)) != C_OK)
+    {
+      ERROR_MSG("Internal compiler error #12345: deflateInit() failed(%d).\n", n);
+      extern void quit(); quit();
+    }
+
+    int avail_in = length;
+    int avail_out = bufferlen;
+    int ret;
+    while (avail_in > 0)
+    {
+      int in_len = min(build_filebuflen, avail_in);
+      int out_len = min(build_filebuflen, avail_out);
+      
+      compressor->SetNextIn((char *) map->get(length - avail_in, in_len), in_len);
+      compressor->SetNextOut((char *) db->get(st + sizeof(int) + bufferlen - avail_out, out_len), out_len);
+      if ((ret = compressor->Compress(0)) < 0)
+      {
+        ERROR_MSG("Error: add_db_data() - compress() failed - %d\n", ret);
+        return -1;
+      }
+      map->release();
+      db->flush(out_len);
+      db->release();
+      avail_in -= in_len - compressor->GetAvailIn();
+      avail_out -= out_len - compressor->GetAvailOut();
+
+      if (!avail_out)
+        // not enough space in the output buffer - no compression is better
+        break;
+    }
+
+    // if not enough space in the output buffer - no compression is better
+    if (avail_out)
+    {
+      char *out;
+
+      do
+      {
+        int out_len = min(build_filebuflen, avail_out);
+
+        out = (char *) db->get(st + sizeof(int) + bufferlen - avail_out, out_len);
+
+        compressor->SetNextOut(out, out_len);
+        if ((ret = compressor->Compress(C_FINISH)) < 0)
+        {
+          ERROR_MSG("Error: add_db_data() - compress() failed - %d\n", ret);
+          return -1;
+        }
+
+        db->flush(out_len);
+        db->release();
+
+        avail_out -= out_len - compressor->GetAvailOut();
+      }
+      while (compressor->GetNextOut() - out > 0);
+
+      int used = bufferlen - avail_out;
+
+      // never store compressed if output buffer is full (compression increased the size...)
+      if (avail_out && (build_compress == 2 || used < length))
+      {
+        done=1;
+        db->resize(st + used + sizeof(int));
+
+        *(int*)db->get(st, sizeof(int)) = used | 0x80000000;
+        db->release();
+
+        int nst = datablock_optimize(st);
+        if (nst == st) db_comp_save += length - used;
+        else st = nst;
+      }
+    }
+
+    compressor->End();
+  }
+#endif // NSIS_CONFIG_COMPRESSION_SUPPORT
+
+  if (!done)
+  {
+    db->resize(st + length + sizeof(int));
+    int *plen = (int *) db->get(st, sizeof(int));
+    *plen = length;
+    db->release();
+
+    int left = length;
+    while (left > 0)
+    {
+      int l = min(build_filebuflen, left);
+      int *p = (int *) db->get(st + sizeof(int) + length - left, l);
+      memcpy(p, map->get(length - left, l), l);
+      db->flush(l);
+      db->release();
+      map->release();
+      left -= l;
+    }
+
+    st = datablock_optimize(st);
+  }
+
+  db_full_size += length + sizeof(int);
+
+  return st;
+}
+
+int CEXEBuild::add_db_data(const char *data, int length) // returns offset
+{
+  MMapFake fakemap;
+  fakemap.set(data, length);
+  return add_db_data(&fakemap);
 }
 
 int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // returns offset
@@ -711,8 +892,6 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     ERROR_MSG("Error: add_data() called with length=%d\n",length);
     return -1;
   }
-
-  if (!dblock) dblock=cur_datablock;
 
   int st=dblock->getlen();
 
@@ -744,12 +923,6 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
       dblock->resize(st+used+sizeof(int));
 
       *((int*)((char *)dblock->get()+st)) = used|0x80000000;
-      if (dblock == cur_datablock)
-      {
-        int nst=datablock_optimize(st);
-        if (nst == st) db_comp_save+=length-used;
-        else st=nst;
-      }
     }
     compressor->End();
   }
@@ -760,15 +933,6 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
     dblock->resize(st);
     dblock->add(&length,sizeof(int));
     dblock->add(data,length);
-    if (dblock == cur_datablock)
-    {
-      st=datablock_optimize(st);
-    }
-  }
-
-  if (dblock == cur_datablock)
-  {
-    db_full_size += length + sizeof(int);
   }
 
   return st;
@@ -2143,18 +2307,6 @@ int CEXEBuild::write_output(void)
     // update the header info
   }
 
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  // Get offsets of icons to replace for uninstall
-  // Also makes sure that the icons are there and in the right size.
-  if (uninstaller_writes_used) {
-    SCRIPT_MSG("Finding icons offsets for uninstaller... ");
-    icon_offset = generate_unicons_offsets(header_data_new, m_unicon_data);
-    if (icon_offset == 0)
-      return PS_ERROR;
-    SCRIPT_MSG("Done!\n");
-  }
-#endif //NSIS_CONFIG_UNINSTALL_SUPPORT
-
   build_optimize_datablock=0;
 
   int data_block_size_before_uninst = build_datablock.getlen();
@@ -2405,12 +2557,13 @@ int CEXEBuild::write_output(void)
 
   if (build_datablock.getlen())
   {
-    char *dbptr=(char *)build_datablock.get();
-    int dbl=build_datablock.getlen();
-    while (dbl > 0)
+    build_datablock.setro(TRUE);
+    int dbl = build_datablock.getlen();
+    int left = dbl;
+    while (left > 0)
     {
-      int l=dbl;
-      if (l > 32768) l=32768;
+      int l = min(build_filebuflen, left);
+      char *dbptr = (char *) build_datablock.get(dbl - left, l);
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
       if (build_compress_whole) {
         if (deflateToFile(fp,dbptr,l))
@@ -2431,10 +2584,13 @@ int CEXEBuild::write_output(void)
           fclose(fp);
           return PS_ERROR;
         }
+        fflush(fp);
       }
-      dbptr+=l;
-      dbl-=l;
+      build_datablock.release();
+      left -= l;
     }
+    build_datablock.setro(FALSE);
+    build_datablock.clear();
   }
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole) 
@@ -2501,7 +2657,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
 {
   build_compressor_set=true;
 
-  char obuf[32768];
+  char obuf[65536];
   int flush=0;
   compressor->SetNextIn(buf,len);
   if (!buf||!len)
@@ -2527,6 +2683,7 @@ int CEXEBuild::deflateToFile(FILE *fp, char *buf, int len) // len==0 to flush
         ERROR_MSG("Error: deflateToFile fwrite(%d) failed\n",l);
         return 1;
       }
+      fflush(fp);
     }
     if (!compressor->GetAvailIn() && (!flush || !l)) break;
   }
@@ -2539,6 +2696,8 @@ int CEXEBuild::uninstall_generate()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen() && uninstaller_writes_used)
   {
+    SCRIPT_MSG("Generating uninstaller... ");
+
     firstheader fh={0,};
 
     GrowBuf uhd;
@@ -2557,10 +2716,16 @@ int CEXEBuild::uninstall_generate()
 
     int crc=0;
 
+    // Get offsets of icons to replace for uninstall
+    // Also makes sure that the icons are there and in the right size.
+    icon_offset = generate_unicons_offsets(header_data_new, m_unicon_data);
+    if (icon_offset == 0)
+      return PS_ERROR;
+
     build_header.uninstdata_offset=build_datablock.getlen();
     build_header.uninsticon_size=unicondata_size;
 
-    if (add_data((char *)m_unicon_data,unicondata_size) < 0)
+    if (add_db_data((char *)m_unicon_data,unicondata_size) < 0)
       return PS_ERROR;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     #ifdef NSIS_CONFIG_CRC_ANAL
@@ -2602,40 +2767,75 @@ int CEXEBuild::uninstall_generate()
     fh.length_of_all_following_data=
       uhd.getlen()+ubuild_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(int):0);
 
-    GrowBuf udata;
+    MMapBuf udata;
+
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+    if (build_crcchk)
+      crc = CRC32(crc, (unsigned char *) &fh, sizeof(fh));
+#endif
+    udata.add(&fh, sizeof(fh));
+
+    ubuild_datablock.setro(TRUE);
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     if (build_compress_whole) {
       // compress uninstaller too
-      udata.add(&fh,sizeof(fh));
       {
-        char obuf[32768];
+        char obuf[65536];
         if ((compressor->Init(9)) != C_OK)
         {
           ERROR_MSG("Error: deflateInit() returned < 0\n");
           return PS_ERROR;
         }
-        int x;
-        for (x = 0; x < 2; x ++)
+
+        compressor->SetNextIn((char*)uhd.get(), uhd.getlen());
+        while (compressor->GetAvailIn())
         {
-          if (!x)
-            compressor->SetNextIn((char*)uhd.get(),uhd.getlen());
-          else
-            compressor->SetNextIn((char*)ubuild_datablock.get(),ubuild_datablock.getlen());
-          while (compressor->GetAvailIn())
+          compressor->SetNextOut(obuf, sizeof(obuf));
+          compressor->Compress(0);
+          if (compressor->GetNextOut() - obuf > 0)
           {
-            compressor->SetNextOut(obuf,sizeof(obuf));
-            compressor->Compress(0);
-            if (compressor->GetNextOut()-obuf > 0)
-              udata.add(obuf,compressor->GetNextOut()-obuf);
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+            if (build_crcchk)
+              crc=CRC32(crc, (unsigned char *)obuf, compressor->GetNextOut() - obuf);
+#endif
+            udata.add(obuf, compressor->GetNextOut() - obuf);
           }
         }
+
+        int avail_in = ubuild_datablock.getlen();
+        int in_pos = 0;
+        while (avail_in > 0) {
+          int l = min(avail_in, build_filebuflen);
+
+          char *p = (char*)ubuild_datablock.get(in_pos, l);
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+          if (build_crcchk)
+            crc=CRC32(crc, (unsigned char *)p, l);
+#endif
+
+          compressor->SetNextIn(p, l);
+
+          while (compressor->GetAvailIn())
+          {
+            compressor->SetNextOut(obuf, sizeof(obuf));
+            compressor->Compress(0);
+            if (compressor->GetNextOut() - obuf > 0)
+              udata.add(obuf, compressor->GetNextOut() - obuf);
+          }
+
+          ubuild_datablock.release();
+
+          avail_in -= l;
+          in_pos += l;
+        }
+
         for (;;)
         {
-          compressor->SetNextOut(obuf,sizeof(obuf));
+          compressor->SetNextOut(obuf, sizeof(obuf));
           compressor->Compress(C_FINISH);
-          if (compressor->GetNextOut()-obuf > 0)
-            udata.add(obuf,compressor->GetNextOut()-obuf);
+          if (compressor->GetNextOut() - obuf > 0)
+            udata.add(obuf, compressor->GetNextOut() - obuf);
           else break;
         }
         compressor->End();
@@ -2647,26 +2847,51 @@ int CEXEBuild::uninstall_generate()
     else
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     {
-      udata.add(&fh,sizeof(fh));
-      udata.add(uhd.get(),uhd.getlen());
-      udata.add(ubuild_datablock.get(),ubuild_datablock.getlen());
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+      if (build_crcchk)
+        crc = CRC32(crc, (unsigned char *)uhd.get(), uhd.getlen());
+#endif
+      udata.add(uhd.get(), uhd.getlen());
+
+      int st = udata.getlen();
+      int length = ubuild_datablock.getlen();
+      int left = length;
+      udata.resize(st + left);
+      while (left > 0)
+      {
+        int l = min(build_filebuflen, left);
+        void *p = ubuild_datablock.get(length - left, l);
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+        if (build_crcchk)
+          crc = CRC32(crc, (unsigned char *)p, l);
+#endif
+        memcpy(udata.get(st + length - left, l), p, l);
+        udata.flush(l);
+        udata.release();
+        ubuild_datablock.release();
+        left -= l;
+      }
     }
+
+    ubuild_datablock.clear();
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     if (build_crcchk)
-    {
-      int s=CRC32(crc,(unsigned char *)udata.get(),udata.getlen());
-      udata.add(&s,sizeof(int));
-    }
+      udata.add(&crc, sizeof(crc));
 #endif
 
-    if (add_data((char*)udata.get(),udata.getlen()) < 0)
+    if (add_db_data(&udata) < 0)
       return PS_ERROR;
+
+    udata.clear();
 
     //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
     uninstall_size_full=fh.length_of_all_following_data+unicondata_size;
 
     // compressed size
     uninstall_size=build_datablock.getlen()-build_header.uninstdata_offset;
+
+    SCRIPT_MSG("Done!\n");
   }
 #endif
   return PS_OK;

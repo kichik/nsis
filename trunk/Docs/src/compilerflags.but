@@ -8,6 +8,12 @@ The following commands change how the compiler generates code and compresses dat
 
 This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not show and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
 
+\S2{afilebufsize} FileBufSize
+
+\c buffer_size_in_mb
+
+This command sets the size of the compiler's internal file buffers. This command allows you to control the compiler's memory usage by limiting how much of a given file it will load into memory at once. Since the compiler needs both input and output, twice the memory size specified could be used at any given time for file buffers. This command does not limit the compression buffers which could take another couple of MB, neither does it limit the compiler's other internal buffers, but those shouldn't normally top 1MB anyway. Specifying a very small number could decrease performance. Specifying a very large number could exhaust system resources and force the compiler to cancel the compilation process. The default value is 32MB.
+
 \S2{asetcompress} SetCompress
 
 \c \\<b\\>auto\\</b\\>|force|off

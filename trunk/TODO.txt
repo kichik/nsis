@@ -6,10 +6,6 @@ NSIS
 
 * empty subsections should not show
 
-* start optimizing datablock after file mapping was released
-
-* map files part by part to save memory
-
 * skip plugin calls, file instructions that add more than one file with +1 with goto
 
 * more powerful plug-ins (access to ExecFunc and flags and even more)

@@ -335,8 +335,12 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
 {
   if (uMsg==BFFM_INITIALIZED)
   {
-    my_GetDialogItemText((HWND)lpData,IDC_DIR,g_tmp,sizeof(g_tmp));
-    SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,(LPARAM)g_tmp);
+    my_GetDialogItemText(m_curwnd,IDC_DIR,(char*)lpData,sizeof(g_tmp));
+    SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,lpData);
+  }
+  if (uMsg==BFFM_SELCHANGED)
+  {
+    SendMessage(hwnd,BFFM_ENABLEOK,0,SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData));
   }
   return 0;
 }
@@ -738,15 +742,13 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (id == IDC_BROWSE)
     {
       char name[MAX_PATH];
-      BROWSEINFO bi={0,};
+      BROWSEINFO bi = {0,};
       ITEMIDLIST *idlist;
-      GetUIText(IDC_DIR,name,MAX_PATH);
-      //GetUIText(IDC_SELDIRTEXT,str,256);
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = name;
-      bi.lpfn=BrowseCallbackProc;
-      bi.lParam=(LPARAM)hwndDlg;
-      bi.lpszTitle=GetNSISStringTT(browse_text);
+      bi.lpfn = BrowseCallbackProc;
+      bi.lParam = (LPARAM)g_tmp;
+      bi.lpszTitle = GetNSISStringTT(browse_text);
 #ifndef BIF_NEWDIALOGSTYLE
 #define BIF_NEWDIALOGSTYLE 0x0040
 #endif
@@ -755,7 +757,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (idlist)
       {
         IMalloc *m;
-        SHGetPathFromIDList(idlist, name);
         SHGetMalloc(&m);
         if (m)
         {
@@ -765,16 +766,16 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         if (g_header->install_directory_auto_append)
         {
-          const char *p, *post_str=ps_tmpbuf;
+          const char *post_str=ps_tmpbuf;
           GetNSISStringTT(g_header->install_directory_auto_append);
-          p=name+mystrlen(name)-mystrlen(post_str);
-          if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
+          // name gives just the folder name
+          if (lstrcmpi(post_str,name))
           {
-            lstrcat(addtrailingslash(name),post_str);
+            lstrcat(addtrailingslash(g_tmp),post_str);
           }
         }
 
-        SetUITextNT(IDC_DIR,name);
+        SetUITextNT(IDC_DIR,g_tmp);
       }
     }
   }
