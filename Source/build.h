@@ -148,7 +148,7 @@ class CEXEBuild {
     int do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char 
       *name_override=0, int generatecode=1, int *data_handle=0, 
       const std::set<std::string>& excluded=std::set<std::string>(), 
-      const std::string& basedir=std::string(""));
+      const std::string& basedir=std::string(""), bool dir_created=false);
     int add_file(const std::string& dir, const std::string& file, int attrib, const char 
       *name_override, int generatecode, int *data_handle);
     int do_add_file_create_dir(const std::string& local_dir, const std::string& dir, int attrib=0);

@@ -82,8 +82,8 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
     FileTimeToLocalFileTime(&fd.ftLastWriteTime, &floctime);
     FileTimeToSystemTime(&floctime, &stime);
 
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
+    GetDateFormat(LOCALE_USER_DEFAULT, DATE_LONGDATE, &stime, NULL, datebuf, sizeof(datebuf));
+    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf));
     wsprintf(timestampbuf,"%s %s",datebuf,timebuf);
 
     definedlist.add("__TIMESTAMP__",timestampbuf);
@@ -388,7 +388,7 @@ parse_again:
     }
 
     int istrue=0;
-    
+
     int mod=0;
     int p;
 
@@ -501,9 +501,9 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
           if (*t == '}' && bn-- == 0) break;
           t=CharNext(t);
         }
-        if (*t && t!=s 
+        if (*t && t!=s
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
-          && !bIgnoreDefines 
+          && !bIgnoreDefines
 #endif
           )
         {
@@ -629,7 +629,7 @@ int CEXEBuild::parseScript()
     // Added by Sunil Kamath 11 June 2003
     restore_line_predefine(oldline);
 #endif
-    
+
     if (ret != PS_OK) return ret;
   }
 
@@ -648,7 +648,7 @@ int CEXEBuild::includeScript(char *f)
 
   // auto-fclose(3) incfp
   MANAGE_WITH(incfp, fclose);
-  
+
   if (build_include_depth >= MAX_INCLUDEDEPTH)
   {
     ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
@@ -728,7 +728,7 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
 
   StringList hist;
   GrowBuf linedata;
-  
+
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   char *oldfilename = NULL;
@@ -1286,7 +1286,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           }
         }
       }
-      
+
       int custom = cur_page_type == PAGE_CUSTOM ? 1 : 0;
 
       if (cur_page->prefunc>=0)
@@ -2363,7 +2363,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             brandingCtl.sX += dt.GetWidth();
           else // left
             dt.MoveAll(brandingCtl.sWidth + (padding * 2), 0);
-          
+
           dt.Resize(brandingCtl.sWidth + (padding * 2), 0);
 
           brandingCtl.sHeight = dt.GetHeight() - (padding * 2);
@@ -2549,7 +2549,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         datebuf[0]=0;
         size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
-        
+
         if (s < 0)
           datebuf[0]=0;
         else
@@ -2646,7 +2646,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef _WIN32
         WIN32_FIND_DATA fd;
         unsigned int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
-        
+
         char *incfile = (char *) malloc(malloced);
 
         strcpy(incfile, f);
@@ -2935,7 +2935,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       else ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
       if (ret != PS_OK) return ret;
-      
+
       if (unselected)
         build_cursection->flags &= ~SF_SELECTED;
 
@@ -3757,7 +3757,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       if (!strcmpi(line.gettoken_str(2),"/BRANDING"))
         a++;
-      
+
       {
         char *p;
 
@@ -3984,7 +3984,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             if (a == 3) PRINTHELP();
             a++;
             ent.offsets[1]|=DEL_REBOOT;
-          }          
+          }
           else PRINTHELP();
         }
         if (a < line.getnumtokens() - 1) PRINTHELP();
@@ -5340,7 +5340,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("VAR \"%s\"\n",line.gettoken_str(1));
         int res = DeclaredUserVar(line.gettoken_str(1));
         if (res != PS_OK)
-          return res;        
+          return res;
     }
     return PS_OK;
 
@@ -5466,7 +5466,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else
         {
           ent.which=EW_EXTRACTFILE;
-          
+
           DefineInnerLangString(NLF_SKIPPED);
           DefineInnerLangString(NLF_ERR_DECOMPRESSING);
           DefineInnerLangString(NLF_ERR_WRITING);
@@ -5600,7 +5600,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, const set<string>& excluded, const string& basedir)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, const set<string>& excluded, const string& basedir, bool dir_created)
 {
   assert(!name_override || !recurse);
 
@@ -5625,8 +5625,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
   dir_reader::iterator files_itr = dr->files().begin();
   dir_reader::iterator files_end = dr->files().end();
 
-  bool dir_created = false;
-
   if (basedir == "") {
     dir_created = true;
 
@@ -5639,6 +5637,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     }
   }
 
+  // add files in the current directory
   for (; files_itr != files_end; files_itr++) {
     if (!dir_reader::matches(*files_itr, spec))
       continue;
@@ -5662,12 +5661,14 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     (*total_files)++;
   }
 
+  // recurse into directories
   if (recurse) {
     dir_reader::iterator dirs_itr = dr->dirs().begin();
     dir_reader::iterator dirs_end = dr->dirs().end();
 
     for (; dirs_itr != dirs_end; dirs_itr++) {
       string new_dir;
+      bool created = false;
 
       if (basedir == "") {
         new_dir = *dirs_itr;
@@ -5679,11 +5680,20 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
 
       if (!dir_reader::matches(*dirs_itr, spec)) {
         new_spec += spec;
+      } else if (generatecode) {
+        // always create directories that match
+        if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
+          delete dr;
+          return PS_ERROR;
+        }
+
+        created = true;
       }
 
       const char *new_spec_c = new_spec.c_str();
-      
-      if (do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir) != PS_OK) {
+
+      int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
+      if (res != PS_OK) {
         delete dr;
         return PS_ERROR;
       }
