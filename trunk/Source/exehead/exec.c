@@ -1539,6 +1539,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       SendMessage(g_hwnd, WM_SETREDRAW, parm0 & ui_dlg_visible, 0);
       if ( parm0 )
         InvalidateRect(g_hwnd, NULL, FALSE);
+      break;
     }
 #endif //NSIS_LOCKWINDOW_SUPPORT
   }
