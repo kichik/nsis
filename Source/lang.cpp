@@ -214,27 +214,19 @@ int CEXEBuild::WriteStringTables() {
     FillDefaultsIfNeeded(string_tables[i]);
 
   // Add string tables into datablock
-  GrowBuf cst;
   for (i = 0; i < st_num; i++)
-    cst.add(&string_tables[i]->common, sizeof(common_strings));
+    build_langtables.add(&string_tables[i]->common, sizeof(common_strings));
   build_header.common.str_tables_num = st_num;
-  build_header.common.str_tables = add_data((char*)cst.get(), st_num*sizeof(common_strings), &build_datablock);
 
-  GrowBuf ist;
   for (i = 0; i < st_num; i++)
-    ist.add(&string_tables[i]->installer, sizeof(installer_strings));
-  build_header.common.inst_str_tables = add_data((char*)ist.get(), st_num*sizeof(installer_strings), &build_datablock);
+    build_langtables.add(&string_tables[i]->installer, sizeof(installer_strings));
 
-  GrowBuf ucst;
   for (i = 0; i < st_num; i++)
-    ucst.add(&string_tables[i]->ucommon, sizeof(common_strings));
+    ubuild_langtables.add(&string_tables[i]->ucommon, sizeof(common_strings));
   build_uninst.common.str_tables_num = st_num;
-  build_uninst.common.str_tables = add_data((char*)ucst.get(), st_num*sizeof(common_strings), &ubuild_datablock);
 
-  GrowBuf ust;
   for (i = 0; i < st_num; i++)
-    ust.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
-  build_uninst.common.inst_str_tables = add_data((char*)ust.get(), st_num*sizeof(uninstall_strings), &ubuild_datablock);
+    ubuild_langtables.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
 
   return PS_OK;
 }
