@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v4
+NLF v5
+# Start editing here
 # Language ID
 1042
 # Font and size - dash (-) means default
@@ -7,7 +8,7 @@ NLF v4
 9
 # Codepage - dash (-) means ANSI code page
 949
-# Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx - Modified by koder@popdesk.co.kr
+# Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx  /  Modified by koder@popdesk.co.kr
 널소프트 설치 시스템 %s
 %s 설치
 %s 제거
@@ -40,7 +41,8 @@ NLF v4
 남은 디스크 공간: 
 필요한 디스크 공간: 
 제거 대상:
-다음 파일을 열 수 없습니다.: \r\n\t"$0"\r\n취소를 눌러 설치를 종료하거나,\r재시도를 눌러 다시 시도해 보거나,\r무시를 눌러 이 파일을 건너 뛰세요.
+다음 파일을 열 수 없습니다.: \r\n\t"$0"\r\n'중단'을 눌러 설치를 종료하거나,\r'다시 시도'를 눌러 다시 시도해 보거나,\r'무시'를 눌러 이 파일을 건너 뛰세요.
+다음 파일을 열 수 없습니다.: \r\n\t"$0"\r\n'다시 시도'를 눌러 다시 시도해 보거나,\r'취소'를 눌러 설치를 종료하세요.
 기록할 수 없음: 
 복사 실패
 파일 복사 
@@ -55,7 +57,7 @@ NLF v4
 재부팅시 삭제: 
 바로가기 생성 오류: 
 생성 오류: 
-압축 해제중 오류 발생! 인스톨러가 손상되었습니다.
+압축 해제중 오류 발생! 설치 파일이 손상되었습니다.
 DLL 등록 오류
 쉘 실행: 
 실행: 

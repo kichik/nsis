@@ -1,5 +1,6 @@
 # Header, don't edit
-NLF v4
+NLF v5
+# Start editing here
 # Language ID
 1053
 # Font and size - dash (-) means default
@@ -8,69 +9,69 @@ NLF v4
 # Codepage - dash (-) means ANSI code page
 -
 # Translation by Magnus Bonnevier (magnus.bonnevier@telia.com)
-# Updated by Rickard Angbratt (r.angbratt@home.se)
 Nullsoft Install System %s
-Installation av %s
-Avinstallation av %s 
-: Licensavtal
-: Installationsval
-: Installationskatalog
+%s Setup
+%s Avinstallation
+: Licens Avtal
+: Installations Val
+: Installations Katalog
 : Installerar
-: Genomförd
+: Slutförd
 : Bekräftelse
 : Avinstallerar
-: Genomförd
+: Slutförd
 < &Tillbaka
 &Nästa >
-Jag &Godkänner
-Jag &godkänner vilkoren i licensavtalet
-Jag godkänner &inte vilkoren i licensavtalet
+Jag &Accepterar
+Jag &Accepterar vilkoren i licens avtalet
+Jag &Accepterar inte vilkoren i licens avtalet
 &Installera
 &Avinstallera
 Avbryt
 &Stäng
-B&läddra
+B&läddra...
 Visa &detaljer
 Namn
-Genomförd
-Special
+Slutförd
+Custom
 Välj typ av installation:
 Välj komponenter att installera:
-Eller, välj valfria komponenter att installera:
-Välj katalog att installera %s till:
-Diskutrymme tillgängligt: 
-Diskutrymme som behövs: 
+Eller, välj alternativa komponenter du önskar installera:
+Välj katalog att installera %s i:
+Ytrymme tillgängligt: 
+Ytrymme som behövs: 
 Avinstallerar från:
-Fel: Öppna fil för skrivning: \r\n\t"$0"\r\nKlicka abort för att avbryta installationen,\r\nKlicka retry för att försöka igen, or\r\nKlicka ignore för att hoppa över denna fil
+Error Vid Öppning av fil för skrivning: \r\n\t"$0"\r\nKlicka på avbryt för att avbryta installationen,\r\nförsök igen för att försöka skriva till filen igen, eller\r\nIgnorera för att skippa denna fil
+Error Vid Öppning av fil för skrivning: \r\n\t"$0"\r\nKlicka på försök igen för att skriva till filen igen, eller\r\navbryt för att avbryta installationen
 Kan inte skriva: 
 Kopiering misslyckades
 Kopiera till 
 Registrerar: 
 Avregistrerar: 
-Kan inte hitta symbol: 
-Kan inte ladda: 
+Kunde inte hitta symbol: 
+Kunde inte ladda: 
 Skapa katalog: 
 Skapa genväg: 
-Skapa avinstallerare: 
+Skapade avinstallation: 
 Radera fil: 
 Radera vid omstart: 
 Fel vid skapande av genväg: 
 Fel vid skapande: 
-Fel vid upp-packning av data! Korrupt installerare?
+Fel vid de-komprimering av data! Korrupt installation?
 Fel vid registrering av DLL
 ExecShell: 
 Kör: 
 Extrahera: 
 Extrahera: fel vid skrivning till fil 
-Korrupt installerare : ogiltig opcode
+Installation korrupt: ogiltig opcode
 Ingen OLE för: 
-Utkatalog: 
+Ut katalog: 
 Ta bort katalog: 
 Döp om vid omstart: 
 Döp om: 
-Ignorerade: 
+Ignorerad: 
 Kopiera detaljer till klippbordet
-Logga installationsprocessen
+Logga installations process
 # byte
 B
 # kilo

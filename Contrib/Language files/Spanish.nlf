@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1034
 # Font and size - dash (-) means default
@@ -40,7 +40,8 @@ Seleccione el directorio en el que instalar %s:
 Espacio disponible: 
 Espacio requerido: 
 Desinstalando desde:
-Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para abortar la instalación,\r\nreintentar para reintentar escribir el archivo, o\r\nignorar para saltarse este archivo
+Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione abortar para anular la instalación,\r\nreintentar para volver a intentar escribir el archivo, u\r\nomitir para ignorar este archivo
+Error abriendo archivo para escritura: \r\n\t"$0"\r\nPresione reintentar para volver a intentar escribir el archivo, o\r\ncancelar para anular la instalación
 No pudo escribirse: 
 Falló la copia 
 Copiar a 
