@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by AKX <akx@theakx.tk> - Modifications by Eclipser <Eclipser@pilvikaupunki.net>
 Nullsoft Asennusjärjestelmä %s
-%s Asennus
-%s Poisto
+$(^Name) Asennus
+$(^Name) Poisto
 : Lisenssisopimus
 : Asennusvaihtoehdot
 : Asennushakemisto
@@ -36,7 +38,7 @@ Oma
 Valitse asennustyyppi:
 Valitse asennettavat komponentit:
 Tai, valitse valinnaiset komponentit:
-Valitse hakemisto, johon %s asennetaan:
+Valitse hakemisto, johon $(^Name) asennetaan:
 Tilaa vapaana:
 Tarvittava tila:
 Poistetaan hakemistosta:

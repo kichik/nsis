@@ -27,15 +27,26 @@ The default extension for a script file is .nsi. Header files have the .nsh exte
 
 \H{tutstructure} Scripting structure
 
-A NSIS script can contain Installer Attributes and Sections/Functions. You can also use Compiler Commands for compile-time operations. The minimum is \R{aoutfile}{OutFile}, which tells NSIS where to write the installer, and one section.
+A NSIS script can contain Installer Attributes and Sections/Functions. You can also use Compiler Commands for compile-time operations. Required is the \R{aoutfile}{OutFile} instruction, which tells NSIS where to write the installer, and one section.
 
 \S1{installerattributes} Installer Attributes
 
-Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can define what pages are shown in which order, texts that will be shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
+Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can change texts that will be shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
 
-The most basic attributes are \R{aname}{Name}, \R{ainstalldir}{InstallDir} and \R{adirtext}{DirText}.
+Other basic instructions are \R{aname}{Name} and \R{ainstalldir}{InstallDir}.
 
 For more information about installer attributes, have a look at \R{instattribs}{Installer Attributes}.
+
+\S1{tut-pages} Pages
+
+An non-silent installer has a set of wizard pages to let the user configure the installer. You can set which pages to display using the \R{page}{Page} command (or \R{pageex}{PageEx} for more advanced settings). A typical set of pages looks like this:
+
+\c Page license
+\c Page components
+\c Page directory
+\c Page instfiles
+\c UninstPage uninstConfirm
+\c UninstPage isntfiles
 
 \S1{tut-sections} Sections
 
@@ -119,7 +130,7 @@ After calling the function, the variables contain the same value as before. Note
 
 \S2{tutdebug} Debugging Scripts
 
-The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debuging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file. See \R{dumplogtofile}{here}. Very useful if you force to close the installer automatically using \R{setautoclose}{SetAutoClose}.
+The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debuging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
 
 
 \S1{compilercommands} Compiler Commands

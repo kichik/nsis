@@ -1,12 +1,10 @@
 #include "config.h"
 
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-char * NSISCALL process_string(const char *in, int iStartIdx);
-#else
-char * NSISCALL process_string(const char *in);
-#endif
-char * NSISCALL process_string_fromtab(char *out, int offs);
+char * NSISCALL GetNSISString(char *outbuf, int strtab);
+#define GetNSISStringTT(strtab) GetNSISString(0, (strtab))
+#define GetNSISStringNP(strtab) ((const char *)g_blocks[NB_STRINGS].offset+(strtab))
+#define GetNSISTab(strtab) (strtab < 0 ? LANG_STR_TAB(strtab) : strtab)
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int NSISCALL myatoi(char *s);
 void NSISCALL myitoa(char *s, int d);

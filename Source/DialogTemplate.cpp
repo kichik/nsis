@@ -423,26 +423,45 @@ void CDialogTemplate::ConvertToRTL() {
       addExStyle = true;
     // Button
     else if (int(m_vItems[i]->szClass) == 0x80) {
-      if (m_vItems[i]->dwStyle & BS_LEFTTEXT) addExStyle = true;
+      m_vItems[i]->dwStyle ^= BS_LEFTTEXT;
+      m_vItems[i]->dwStyle ^= BS_RIGHT;
+      m_vItems[i]->dwStyle ^= BS_LEFT;
+
+      if ((m_vItems[i]->dwStyle & (BS_LEFT|BS_RIGHT)) == (BS_LEFT|BS_RIGHT)) {
+        m_vItems[i]->dwStyle ^= BS_LEFT;
+        m_vItems[i]->dwStyle ^= BS_RIGHT;
+        if (m_vItems[i]->dwStyle & (BS_RADIOBUTTON|BS_CHECKBOX|BS_USERBUTTON))
+          m_vItems[i]->dwStyle |= BS_RIGHT;
+      }
     }
     // Edit
     else if (int(m_vItems[i]->szClass) == 0x81) {
-      if (!(m_vItems[i]->dwStyle & ES_CENTER)) addExStyle = true;
+      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0)
+        m_vItems[i]->dwStyle ^= ES_RIGHT;
     }
     // Static
     else if (int(m_vItems[i]->szClass) == 0x82) {
-      if (!(m_vItems[i]->dwStyle & (SS_CENTER|SS_RIGHT))) {
-        m_vItems[i]->dwStyle &= ~SS_LEFT;
-        m_vItems[i]->dwStyle &= ~SS_LEFTNOWORDWRAP;
+      if ((m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFT || (m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFTNOWORDWRAP)
+      {
+        m_vItems[i]->dwStyle &= ~SS_TYPEMASK;
         m_vItems[i]->dwStyle |= SS_RIGHT;
       }
+      else if ((m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_ICON) {
+        m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
+      }
+    }
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && strcmpi(m_vItems[i]->szClass, "RichEdit20A")) {
+      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0)
+        m_vItems[i]->dwStyle ^= ES_RIGHT;
     }
     else addExStyle = true;
+
     if (addExStyle)
-      m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
+      m_vItems[i]->dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING;
+
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
   }
-  m_dwExtStyle |= WS_EX_RIGHT;
+  m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING;
 }
 
 // Saves the dialog in the form of DLGTEMPLATE[EX]

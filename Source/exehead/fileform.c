@@ -4,6 +4,8 @@
 #include "state.h"
 #include "resource.h"
 #include "lang.h"
+#include "ui.h"
+#include "exec.h"
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
@@ -23,11 +25,12 @@
 #endif//NSIS_COMPRESS_USE_BZIP2
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
-#include "ui.h"
+struct block_header g_blocks[BLOCKS_NUM];
+header *g_header;
+int g_flags;
+int g_filehdrsize;
+int g_is_uninstaller;
 
-char *g_db_strtab;
-
-static int g_db_offset;
 HANDLE g_db_hFile;
 
 #if defined(NSIS_CONFIG_COMPRESSION_SUPPORT) && defined(NSIS_COMPRESS_WHOLE)
@@ -46,23 +49,41 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   if (uMsg == WM_INITDIALOG)
   {
     SetTimer(hwndDlg,1,250,NULL);
-    msg = (char*)lParam;
+    msg = (char *) lParam;
     uMsg = WM_TIMER;
   }
-  if (uMsg == WM_TIMER)
+  if (uMsg == WM_TIMER
+#ifdef NSIS_COMPRESS_WHOLE
+    || uMsg == WM_DESTROY
+#endif
+    )
   {
     static char bt[64];
-    wsprintf(bt,msg,MulDiv(m_pos,100,m_length));
+    int percent=MulDiv(m_pos,100,m_length);
+#ifdef NSIS_COMPRESS_WHOLE
+    if (msg)
+#endif
+    {
+      wsprintf(bt,msg,percent);
 
-    my_SetWindowText(hwndDlg,bt);
-    my_SetDialogItemText(hwndDlg,IDC_STR,bt);
+      my_SetWindowText(hwndDlg,bt);
+      my_SetDialogItemText(hwndDlg,IDC_STR,bt);
+
+      ShowWindow(hwndDlg, SW_SHOW);
+    }
+
+#ifdef NSIS_COMPRESS_WHOLE
+    if (ui_st_updateflag & 1)
+    {
+      wsprintf(bt, "... %d%%", percent);
+      update_status_text(0, bt);
+    }
+#endif
   }
   return 0;
 }
 #endif//NSIS_CONFIG_CRC_SUPPORT || NSIS_COMPRESS_WHOLE
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-
-int inst_flags;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 static z_stream g_inflate_stream;
@@ -84,11 +105,14 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   void *data;
   firstheader h;
+  header *header;
+
+  HANDLE db_hFile;
 
   GetModuleFileName(g_hInstance, state_exe_directory, NSIS_MAX_STRLEN);
 
-  g_db_hFile = myOpenFile(state_exe_directory, GENERIC_READ, OPEN_EXISTING);
-  if (g_db_hFile == INVALID_HANDLE_VALUE)
+  g_db_hFile = db_hFile = myOpenFile(state_exe_directory, GENERIC_READ, OPEN_EXISTING);
+  if (db_hFile == INVALID_HANDLE_VALUE)
   {
     return _LANG_CANTOPENSELF;
   }
@@ -97,7 +121,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 
   trimslashtoend(state_exe_directory);
 
-  left = m_length = GetFileSize(g_db_hFile,NULL);
+  left = m_length = GetFileSize(db_hFile,NULL);
   while (left > 0)
   {
     static char temp[512];
@@ -160,7 +184,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-    else if (cl_flags & FH_FLAGS_SILENT == 0)
+    else if ((cl_flags & FH_FLAGS_SILENT) == 0)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
     {
       if (hwnd)
@@ -200,7 +224,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   if (do_crc)
   {
     int fcrc;
-    SetSelfFilePointer(m_pos, FILE_BEGIN);
+    SetSelfFilePointer(m_pos);
     if (!ReadSelfFile(&fcrc, sizeof(int)) || crc != fcrc)
       return _LANG_INVALIDCRC;
   }
@@ -218,10 +242,10 @@ const char * NSISCALL loadHeaders(int cl_flags)
     if (dbd_hFile == INVALID_HANDLE_VALUE)
       return _LANG_ERRORWRITINGTEMP;
   }
-  dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader), FILE_BEGIN);
+  dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
   dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((cl_flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
 #else
-  SetSelfFilePointer(g_filehdrsize + sizeof(firstheader), FILE_BEGIN);
+  SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
 #endif
 
   if (GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header) != h.length_of_header)
@@ -230,40 +254,35 @@ const char * NSISCALL loadHeaders(int cl_flags)
     return _LANG_INVALIDCRC;
   }
 
-#if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
-  g_db_offset = SetSelfFilePointer(0,FILE_CURRENT);
-#else
-  g_db_offset = dbd_pos;
-#endif
+  header = g_header = data;
 
-  g_inst_combinedheader = data;
-
-  inst_flags = g_inst_cmnheader->flags;
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (cl_flags & FH_FLAGS_SILENT) inst_flags |= CH_FLAGS_SILENT;
+  if (cl_flags & FH_FLAGS_SILENT)
+    header->flags |= CH_FLAGS_SILENT;
+
+  g_exec_flags.silent = header->flags & (CH_FLAGS_SILENT | CH_FLAGS_SILENT_LOG);
 #endif
+
+  g_flags = header->flags;
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (h.flags & FH_FLAGS_UNINSTALL)
-  {
     g_is_uninstaller++;
-    g_inst_page = (page *) (g_inst_uninstheader + 1);
-  }
-  else
 #endif
-  {
-    g_inst_section=(section *) (g_inst_header + 1);
-    num_sections=g_inst_header->num_sections;
-    g_inst_page=(page *) (g_inst_section + num_sections);
-  }
-  g_inst_entry = (entry *) (g_inst_page + g_inst_cmnheader->num_pages);
-  g_db_strtab = (char *) (g_inst_entry + g_inst_cmnheader->num_entries);
-  return 0;
-}
 
-const char * NSISCALL GetStringFromStringTab(int offs)
-{
-  return g_db_strtab+(offs < 0 ? LANG_STR_TAB(offs) : offs);
+  crc = BLOCKS_NUM;
+  while (crc--)
+    header->blocks[crc].offset += (int)data;
+
+#ifdef NSIS_COMPRESS_WHOLE
+  header->blocks[NB_DATA].offset = dbd_pos;
+#else
+  header->blocks[NB_DATA].offset = SetFilePointer(db_hFile,0,NULL,FILE_CURRENT);
+#endif
+
+  mini_memcpy(&g_blocks, &header->blocks, sizeof(g_blocks));
+
+  return 0;
 }
 
 #define IBUFSIZE 16384
@@ -285,16 +304,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 
   if (offset>=0)
   {
-    /*
-    int lp=SetSelfFilePointer(0,FILE_CURRENT);
-    if (lp > g_db_offset+offset)
-    {
-      char buf[1023];
-      wsprintf(buf,"going from %d to %d",lp,g_db_offset+offset);
-      MessageBox(NULL,buf,"seeking back",MB_OK);
-    }
-    */
-    SetSelfFilePointer(g_db_offset+offset,FILE_BEGIN);
+    SetSelfFilePointer(g_blocks[NB_DATA].offset+offset);
   }
 
   if (!ReadSelfFile((LPVOID)&input_len,sizeof(int))) return -3;
@@ -302,8 +312,12 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (input_len & 0x80000000) // compressed
   {
+    char progress[64];
+    int input_len_total;
+    DWORD ltc = GetTickCount(), tc;
+
     inflateReset(&g_inflate_stream);
-    input_len &= 0x7fffffff; // take off top bit.
+    input_len_total = input_len &= 0x7fffffff; // take off top bit.
 
     while (input_len > 0)
     {
@@ -327,6 +341,14 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
         if (err<0) return -4;
 
         u=(char*)g_inflate_stream.next_out - outbuffer;
+
+        tc = GetTickCount();
+        if (tc - ltc > 200 || !input_len)
+        {
+          wsprintf(progress, "... %d%%", MulDiv(input_len_total - input_len, 100, input_len_total));
+          update_status_text(0, progress);
+          ltc = tc;
+        }
 
         if (!u) break;
 
@@ -386,7 +408,7 @@ static int NSISCALL __ensuredata(int amount)
   int needed=amount-(dbd_size-dbd_pos);
   if (needed>0)
   {
-    SetSelfFilePointer(dbd_srcpos,FILE_BEGIN);
+    SetSelfFilePointer(dbd_srcpos);
     SetFilePointer(dbd_hFile,dbd_size,NULL,FILE_BEGIN);
     m_length=needed;
     m_pos=0;
@@ -402,9 +424,9 @@ static int NSISCALL __ensuredata(int amount)
       {
         DWORD r,t;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-        if (g_inst_cmnheader)
+        if (g_header)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-          if (!(inst_flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)))
+          if (!g_exec_flags.silent)
 #endif
           {
             if (hwnd) {
@@ -412,13 +434,13 @@ static int NSISCALL __ensuredata(int amount)
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }
-            else if (g_hwnd && GetTickCount() > verify_time)
+            else if (GetTickCount() > verify_time)
               hwnd = CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
                 0,
                 verProc,
-                (LPARAM)_LANG_UNPACKING
+                g_hwnd ? 0 : (LPARAM)_LANG_UNPACKING
               );
           }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
@@ -458,7 +480,7 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
   int retval;
   if (offset>=0)
   {
-    dbd_pos=g_db_offset+offset;
+    dbd_pos=g_blocks[NB_DATA].offset+offset;
     SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
   }
   retval=__ensuredata(sizeof(int));
@@ -499,7 +521,7 @@ BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead)
   return ReadFile(g_db_hFile,lpBuffer,nNumberOfBytesToRead,&rd,NULL) && (rd == nNumberOfBytesToRead);
 }
 
-DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod)
+DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove)
 {
-  return SetFilePointer(g_db_hFile,lDistanceToMove,NULL,dwMoveMethod);
+  return SetFilePointer(g_db_hFile,lDistanceToMove,NULL,FILE_BEGIN);
 }

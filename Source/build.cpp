@@ -10,7 +10,6 @@
 
 #include "ResourceEditor.h"
 #include "exehead/resource.h"
-#include "exehead/lang.h"
 #include "ResourceVersionInfo.h"
 
 bool isSimpleChar(char ch)
@@ -27,15 +26,17 @@ CEXEBuild::~CEXEBuild()
 {
   free(header_data_new);
   free(m_unicon_data);
-  for (unsigned int i = 0; i < build_nlfs.size(); i++)
-    delete build_nlfs[i];
+  
+  int nlt = lang_tables.getlen() / sizeof(LanguageTable);
+  LanguageTable *nla = (LanguageTable*)lang_tables.get();
+
+  for (int i = 0; i < nlt; i++) {
+    DeleteLangTable(nla+i);
+  }
 }
 
 CEXEBuild::CEXEBuild()
 {
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  b_abort_compile=false;
-#endif
   linecnt = 0;
   fp = 0;
   curfilename = 0;
@@ -44,6 +45,10 @@ CEXEBuild::CEXEBuild()
   display_script=1;
   display_errors=1;
   display_warnings=1;
+
+  cur_ifblock=NULL;
+  last_line_had_slash=0;
+  inside_comment=false;
 
   has_called_write_output=0;
 
@@ -73,19 +78,20 @@ CEXEBuild::CEXEBuild()
   }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
-  strcpy(cur_out_path,"$INSTDIR");
-
+#define intdef2str_(x) #x
+#define intdef2str(x) intdef2str_(x)
+  definedlist.add("NSIS_MAX_INST_TYPES", intdef2str(NSIS_MAX_INST_TYPES));
+  definedlist.add("NSIS_MAX_STRLEN", intdef2str(NSIS_MAX_STRLEN));
+  definedlist.add("NSIS_DEFAULT_LANG", intdef2str(NSIS_DEFAULT_LANG));
+  definedlist.add("NSIS_COMPRESS_BZIP2_LEVEL", intdef2str(NSIS_COMPRESS_BZIP2_LEVEL));
+#undef intdef2str
+#undef intdef2str_
 #ifdef NSIS_BZIP2_COMPRESS_WHOLE
   definedlist.add("NSIS_BZIP2_COMPRESS_WHOLE");
 #endif
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
   definedlist.add("NSIS_COMPRESS_BZIP2_SMALLMODE");
 #endif
-  {
-    char bzip_level[32];
-    wsprintf(bzip_level, "%d", NSIS_COMPRESS_BZIP2_LEVEL);
-    definedlist.add("NSIS_COMPRESS_BZIP2_LEVEL", bzip_level);
-  }
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   definedlist.add("NSIS_CONFIG_COMPONENTPAGE");
 #endif
@@ -119,16 +125,6 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   definedlist.add("NSIS_CONFIG_VISIBLE_SUPPORT");
 #endif
-  {
-    char max_inst_types[32];
-    wsprintf(max_inst_types, "%d", NSIS_MAX_INST_TYPES);
-    definedlist.add("NSIS_MAX_INST_TYPES", max_inst_types);
-  }
-  {
-    char max_strlen[32];
-    wsprintf(max_strlen, "%d", NSIS_MAX_STRLEN);
-    definedlist.add("NSIS_MAX_STRLEN", max_strlen);
-  }
 #ifdef NSIS_SUPPORT_ACTIVEXREG
   definedlist.add("NSIS_SUPPORT_ACTIVEXREG");
 #endif
@@ -257,6 +253,14 @@ CEXEBuild::CEXEBuild()
   cur_datablock=&build_datablock;
   cur_functions=&build_functions;
   cur_labels=&build_labels;
+  cur_sections=&build_sections;
+  cur_header=&build_header;
+  cur_strlist=&build_strlist;
+  cur_langtables=&build_langtables;
+  cur_ctlcolors=&build_ctlcolors;
+  cur_pages=&build_pages;
+  cur_page=0;
+  cur_page_type=-1;
 
   subsection_open_cnt=0;
   build_cursection_isfunc=0;
@@ -281,37 +285,55 @@ CEXEBuild::CEXEBuild()
   memset(&build_header,-1,sizeof(build_header));
 
   build_header.install_reg_rootkey=0;
-  build_header.num_sections=0;
-  build_header.common.num_entries=0;
-  build_header.common.flags=CH_FLAGS_NO_ROOT_DIR;
-  build_header.common.lb_bg=RGB(0,0,0);
-  build_header.common.lb_fg=RGB(0,255,0);
+  build_header.flags=CH_FLAGS_NO_ROOT_DIR;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  build_header.lb_bg=RGB(0,0,0);
+  build_header.lb_fg=RGB(0,255,0);
+#endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  build_header.license_bg=-COLOR_BTNFACE;
+#endif
+  build_header.install_directory_ptr=0;
+  build_header.install_directory_auto_append=0;
+  build_header.install_reg_key_ptr=0;
+  build_header.install_reg_value_ptr=0;
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  memset(build_header.install_types,0,sizeof(build_header.install_types));
+#endif
+  memset(&build_header.blocks,0,sizeof(build_header.blocks));
 
   uninstall_mode=0;
   uninstall_size_full=0;
   uninstall_size=-1;
 
   memset(&build_uninst,-1,sizeof(build_uninst));
-  build_uninst.common.lb_bg=RGB(0,0,0);
-  build_uninst.common.lb_fg=RGB(0,255,0);
-  build_uninst.common.num_entries=0;
-  build_uninst.code=0;
-  build_uninst.code_size=-1;
-  build_uninst.common.flags=0;
+
+  build_header.install_reg_rootkey=0;
+  build_uninst.flags=0;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  build_uninst.lb_bg=RGB(0,0,0);
+  build_uninst.lb_fg=RGB(0,255,0);
+#endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  build_uninst.license_bg=-COLOR_BTNFACE;
+#endif
+  build_uninst.install_directory_ptr=0;
+  build_uninst.install_directory_auto_append=0;
+  build_uninst.install_reg_key_ptr=0;
+  build_uninst.install_reg_value_ptr=0;
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  memset(build_uninst.install_types,0,sizeof(build_uninst.install_types));
+#endif
+  memset(&build_uninst.blocks,0,sizeof(build_uninst.blocks));
 
   uninstaller_writes_used=0;
 
   build_strlist.add("",0);
   ubuild_strlist.add("",0);
-  build_header.install_directory_ptr=0;
-  build_header.install_directory_auto_append=0;
-  build_header.install_reg_key_ptr=0;
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  memset(build_header.install_types,0,sizeof(build_header.install_types));
-#endif
 
-  // Changed by Amir Szekely 11th July 2002
-  // Changed to fit the new format in which uninstaller icons are saved
+  build_langstring_num=0;
+  ubuild_langstring_num=0;
+
   m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
   memcpy(m_unicon_data+2*sizeof(DWORD),unicon_data+22,unicondata_size);
   *(DWORD*)(m_unicon_data) = unicondata_size;
@@ -332,35 +354,19 @@ CEXEBuild::CEXEBuild()
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 
-  build_header.common.num_pages=0;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  build_uninst.common.num_pages=0;
-#endif
-
-  build_custom_used=0;
-  ubuild_custom_used=0;
-
   res_editor=0;
 
-  build_last_page_define[0]=0;
-  ubuild_last_page_define[0]=0;
   enable_last_page_cancel=0;
   uenable_last_page_cancel=0;
 
-  next_used=false;
-  install_used=false;
-  comppage_used=false;
-  license_force_radio_used=false;
-  register_used=false;
-  unregister_used=false;
+  license_res_id=IDD_LICENSE;
 
   notify_hwnd=0;
 
+  defcodepage_set=false;
   uDefCodePage=CP_ACP;
 
-  use_first_insttype=true;
-
-  build_header.license_bg=-COLOR_BTNFACE;
+  InitLangTables();
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
   // Register static user variables $0, $1 and so one
@@ -381,26 +387,52 @@ CEXEBuild::CEXEBuild()
   m_UserVarNames.add("OUTDIR",1);        // 22
   m_UserVarNames.add("EXEDIR",1);        // 23
   m_UserVarNames.add("LANGUAGE",1);      // 24
-  m_UserVarNames.add("PLUGINSDIR",1);    // 25
-  m_UserVarNames.add("PROGRAMFILES",1);  // 26
-  m_UserVarNames.add("SMPROGRAMS",1);    // 27
-  m_UserVarNames.add("SMSTARTUP",1);     // 28
-  m_UserVarNames.add("DESKTOP",1);       // 29
-  m_UserVarNames.add("STARTMENU",1);     // 30
-  m_UserVarNames.add("QUICKLAUNCH",1);   // 31
-  m_UserVarNames.add("TEMP",1);          // 32
-  m_UserVarNames.add("WINDIR",1);        // 33
-  m_UserVarNames.add("SYSDIR",1);        // 34 everything after here doesn't have trailing slash removal
-  m_UserVarNames.add("HWNDPARENT",1);    // 35 
+  m_UserVarNames.add("TEMP",-1);         // 25
+  m_UserVarNames.add("_CLICK",-1);       // 26
+  m_UserVarNames.add("PLUGINSDIR",-1);   // 27
+  m_UserVarNames.add("PROGRAMFILES",-1); // 28
+  m_UserVarNames.add("SMPROGRAMS",-1);   // 29
+  m_UserVarNames.add("SMSTARTUP",-1);    // 30
+  m_UserVarNames.add("DESKTOP",-1);      // 31
+  m_UserVarNames.add("STARTMENU",-1);    // 32
+  m_UserVarNames.add("QUICKLAUNCH",-1);  // 33
+  m_UserVarNames.add("WINDIR",-1);       // 34
+  m_UserVarNames.add("SYSDIR",-1);       // 35 everything after here doesn't have trailing slash removal
+  m_UserVarNames.add("HWNDPARENT",-1);   // 36
 #endif
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 
-int CEXEBuild::add_string(const char *string) // returns offset in stringblock
+int CEXEBuild::add_string(const char *string, int process/*=1*/) // returns offset in stringblock
 {
-  if (uninstall_mode) return add_string_uninst(string,1);
-  return add_string_main(string,1);
+  if (!*string) return 0;
+
+  if (process && *string == '$' && *(string+1) == '(') {
+    int idx = 0;
+    char *cp = strdup(string+2);
+    char *p = strchr(cp, ')');
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+    if (p && p[1] == '\0' ) { // if string is only a language str identifier
+#else
+    if (p) {
+#endif
+      *p = 0;
+      idx = DefineLangString(cp, process);
+    }
+    free(cp);
+    if (idx < 0) return idx;
+  }
+
+  if (!process) return cur_strlist->add(string,2);
+
+  char buf[4096];
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  preprocess_string(buf,string,false);
+#else
+  preprocess_string(buf,string);
+#endif
+  return cur_strlist->add(buf,2);
 }
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
@@ -446,16 +478,17 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     "OUTDIR\0"        // 23
     "EXEDIR\0"        // 24
     "LANGUAGE\0"      // 25
-    "PLUGINSDIR\0"    // 26
-    "PROGRAMFILES\0"  // 27
-    "SMPROGRAMS\0"    // 28
-    "SMSTARTUP\0"     // 29
-    "DESKTOP\0"       // 30
-    "STARTMENU\0"     // 31
-    "QUICKLAUNCH\0"   // 32
-    "TEMP\0"          // 33
-    "WINDIR\0"        // 34
-    "SYSDIR\0"        // 35
+    "TEMP\0"          // 26
+    "_CLICK\0"        // 27
+    "PLUGINSDIR\0"    // 28
+    "PROGRAMFILES\0"  // 29
+    "SMPROGRAMS\0"    // 30
+    "SMSTARTUP\0"     // 31
+    "DESKTOP\0"       // 32
+    "STARTMENU\0"     // 33
+    "QUICKLAUNCH\0"   // 34
+    "WINDIR\0"        // 35
+    "SYSDIR\0"        // 36
     ;
 #endif
   
@@ -556,40 +589,26 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
               *pos = 0;
               if ( !bUninstall )
               {
-                if (!strnicmp(cp,"un.",3)) {
-                  warning("Installer language strings can't start with un. (%s)! (%s:%d)", p, curfilename, linecnt);
-                }
-                else
-                {                
-                  idx = GetUserString(cp);
-                  if ( idx >= 0 )
-                  {
-                    idx = -((int)(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)));
-                    *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                    *(WORD*)out=(WORD)idx;
-                    out += sizeof(WORD);
-                    p += strlen(cp)+2;
-                    bProceced = true;
-                  }
+                idx = DefineLangString(cp);
+                if ( idx < 0 )
+                {
+                  *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                  *(WORD*)out=(WORD)idx;
+                  out += sizeof(WORD);
+                  p += strlen(cp)+2;
+                  bProceced = true;
                 }
               }
               else
-              {
-                if (strnicmp(cp,"un.",3)) {
-                  warning("Uninstaller language strings must start with un. (%s)! (%s:%d)", p, curfilename, linecnt);
-                }
-                else
-                {                
-                  idx = GetUserString(cp);
-                  if ( idx >= 0 )
-                  {
-                    idx = -((int)(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int)));
-                    *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                    *(WORD*)out=(WORD)idx;
-                    out += sizeof(WORD);
-                    p += strlen(cp)+2;
-                    bProceced = true;
-                  }
+              {                
+                idx = DefineLangString(cp);
+                if ( idx < 0 )
+                {
+                  *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                  *(WORD*)out=(WORD)idx;
+                  out += sizeof(WORD);
+                  p += strlen(cp)+2;
+                  bProceced = true;
                 }
               }
             }
@@ -631,7 +650,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
               if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
             }
             if ( bDoWarning )
-              warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
+              warning_fl("unknown variable \"%s\" detected, ignoring",tbuf);
             i = '$';
           }
         }
@@ -641,78 +660,6 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   }
   *out=0;
   return 0;
-}
-
-int CEXEBuild::add_string_main(const char *string, int process) // returns offset (in string block)
-{
-  if (!*string) return 0;
-
-  if (*string == '$' && *(string+1) == '(') {
-    int idx = -1;
-    char *cp = strdup(string+2);
-    char *p = strchr(cp, ')');
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-    if (p && p[1] == '\0' ) { // if string is only a language str identifier
-#else
-    if (p) {
-#endif
-      *p = 0;
-      if (!strnicmp(cp,"un.",3)) {
-        warning("Installer language strings can't start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
-        free(cp);
-        return 0;
-      }
-      idx = GetUserString(cp);
-    }
-    free(cp);
-    if (idx >= 0) return -((int)(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)));
-  }
-
-  if (!process) return build_strlist.add(string,2);
-
-  char buf[4096];
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  preprocess_string(buf,string, false);
-#else
-  preprocess_string(buf,string);
-#endif
-  return build_strlist.add(buf,2);
-}
-
-int CEXEBuild::add_string_uninst(const char *string, int process) // returns offset (in string block)
-{
-  if (!*string) return 0;
-
-  if (*string == '$' && *(string+1) == '(') {
-    int idx = -1;
-    char *cp = strdup(string+2);
-    char *p = strchr(cp, ')');
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-    if (p && p[1] == '\0' ) { // if string is only a language str identifier
-#else
-    if (p) {
-#endif
-      *p = 0;
-      if (strnicmp(cp,"un.",3)) {
-        warning("Uninstaller language strings must start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
-        free(cp);
-        return 0;
-      }
-      idx = GetUserString(cp);
-    }
-    free(cp);
-    if (idx >= 0) return -((int)(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int)));
-  }
-
-  if (!process) return ubuild_strlist.add(string,2);
-
-  char buf[4096];
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  preprocess_string(buf,string, true);
-#else
-  preprocess_string(buf,string);
-#endif
-  return ubuild_strlist.add(buf,2);
 }
 
 // what it does is, when you pass it the offset of the last item added, it will determine if
@@ -820,7 +767,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
 
 int CEXEBuild::add_label(const char *name)
 {
-  if (!build_cursection && !uninstall_mode)
+  if (!build_cursection)
   {
     ERROR_MSG("Error: Label declaration not valid outside of function/section\n");
     return PS_ERROR;
@@ -830,18 +777,9 @@ int CEXEBuild::add_label(const char *name)
     ERROR_MSG("Error: labels must not begin with 0-9, -, :, or a space.\n");
     return PS_ERROR;
   }
-  int cs;
-  int ce;
-  if (build_cursection)
-  {
-    cs=build_cursection->code;
-    ce=cs+build_cursection->code_size;
-  }
-  else
-  {
-    cs=build_uninst.code;
-    ce=cs+build_uninst.code_size;
-  }
+
+  int cs=build_cursection->code;
+  int ce=cs+build_cursection->code_size;
 
   char *p=strdup(name);
   if (p[strlen(p)-1] == ':') p[strlen(p)-1]=0;
@@ -885,16 +823,18 @@ int CEXEBuild::add_function(const char *funname)
     ERROR_MSG("Error: Section open when creating function (use SectionEnd first)\n");
     return PS_ERROR;
   }
+  if (cur_page)
+  {
+    ERROR_MSG("Error: PageEx open when creating function (use PageExEnd first)\n");
+    return PS_ERROR;
+  }
   if (!funname[0])
   {
     ERROR_MSG("Error: Function must have a name\n");
     return PS_ERROR;
   }
 
-  if (!strnicmp(funname,"un.",3))
-  {
-    set_uninstall_mode(1);
-  }
+  set_uninstall_mode(!strnicmp(funname,"un.",3));
 
   int addr=ns_func.add(funname,0);
   int x;
@@ -928,14 +868,11 @@ int CEXEBuild::function_end()
     ERROR_MSG("Error: No function open, FunctionEnd called\n");
     return PS_ERROR;
   }
+  // add ret.
+  add_entry_indirect(EW_RET);
+
   build_cursection_isfunc=0;
   build_cursection=NULL;
-
-  // add ret.
-  entry ent={EW_RET,};
-  cur_entries->add(&ent,sizeof(entry));
-  if (!uninstall_mode) build_header.common.num_entries++;
-  else build_uninst.common.num_entries++;
 
   set_uninstall_mode(0);
   return PS_OK;
@@ -944,27 +881,17 @@ int CEXEBuild::function_end()
 
 int CEXEBuild::section_add_flags(int flags)
 {
-  if (uninstall_mode)
-  {
-    ERROR_MSG("Error: can't modify flags of uninstall section\n");
-    return PS_ERROR;
-  }
   if (!build_cursection || build_cursection_isfunc)
   {
     ERROR_MSG("Error: can't modify flags when no section is open\n");
     return PS_ERROR;
   }
-  build_cursection->flags|=flags;
+  build_cursection->flags |= flags;
   return PS_OK;
 }
 
 int CEXEBuild::section_add_install_type(int inst_type)
 {
-  if (uninstall_mode)
-  {
-    ERROR_MSG("Error: can't modify flags of uninstall section\n");
-    return PS_ERROR;
-  }
   if (!build_cursection || build_cursection_isfunc)
   {
     ERROR_MSG("Error: can't modify flags when no section is open\n");
@@ -972,7 +899,7 @@ int CEXEBuild::section_add_install_type(int inst_type)
   }
   if (build_cursection->install_types == ~0)
     build_cursection->install_types = 0;
-  build_cursection->install_types|=inst_type;
+  build_cursection->install_types |= inst_type;
   return PS_OK;
 }
 
@@ -991,25 +918,16 @@ int CEXEBuild::section_end()
     ERROR_MSG("Error: SectionEnd specified in function (not section)\n");
     return PS_ERROR;
   }
-  else if (uninstall_mode)
-  {
-    entry ent={EW_RET,};
-    cur_entries->add(&ent,sizeof(entry));
-    build_uninst.common.num_entries++;
-    set_uninstall_mode(0);
-  }
-  else if (!build_cursection)
+  if (!build_cursection)
   {
     ERROR_MSG("Error: SectionEnd specified and no sections open\n");
     return PS_ERROR;
   }
-  else
-  {
-    entry ent={EW_RET,};
-    cur_entries->add(&ent,sizeof(entry));
-    build_header.common.num_entries++;
-  }
+  add_entry_indirect(EW_RET);
+  build_cursection->code_size--;
   build_cursection=NULL;
+  if (!subsection_open_cnt)
+    set_uninstall_mode(0);
   return PS_OK;
 }
 
@@ -1020,83 +938,118 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     ERROR_MSG("Error: Section can't create section (already in function, use FunctionEnd first)\n");
     return PS_ERROR;
   }
-  if (build_cursection || uninstall_mode)
+  if (cur_page) {
+    ERROR_MSG("Error: PageEx already open, call PageExEnd first\n");
+    return PS_ERROR;
+  }
+  if (build_cursection)
   {
     ERROR_MSG("Error: Section already open, call SectionEnd first\n");
     return PS_ERROR;
   }
-  if (!stricmp(secname,"uninstall"))
-  {
-    if (defname[0])
-    {
-      ERROR_MSG("Error: Uninstall section cannot have index output define\n");
-      return PS_ERROR;
-    }
-    if (build_uninst.code_size >= 0)
-    {
-      ERROR_MSG("Error: Uninstall section already specified\n");
-      return PS_ERROR;
-    }
-    if (subsection_open_cnt)
-    {
-      ERROR_MSG("Error: Uninstall section specified inside SubSection\n");
-      return PS_ERROR;
-    }
-    build_uninst.code=ubuild_entries.getlen()/sizeof(entry);
-    build_uninst.code_size=0;
-    set_uninstall_mode(1);
-    build_cursection=NULL;
-    return PS_OK;
-  }
+
+  section new_section;
+  new_section.flags = SF_SELECTED;
+  new_section.flags |= expand ? SF_EXPAND : 0;
+  new_section.code_size = 0;
+  new_section.size_kb = 0;
 
   char *name = (char*)secname;
 
-  int n=(build_sections.getlen()/sizeof(section));
-  build_sections.resize(build_sections.getlen()+sizeof(section));
-  build_cursection=((section*)build_sections.get()) + n;
-  build_cursection->flags=SF_SELECTED;
-  build_cursection->flags|=expand?SF_EXPAND:0;
-  if (secname[0]=='!' || (secname[0]=='-' && secname[1]=='!')) {
-    name++;
-    build_cursection->flags|=SF_BOLD;
-  }
-  build_cursection->flags|=expand?SF_EXPAND:0;
-  build_cursection->name_ptr=add_string(secname[0]=='-'&&secname[1]?++name:name);
-  build_cursection->code=cur_entries->getlen()/sizeof(entry);
-  build_cursection->code_size=0;
-  build_cursection->size_kb=0;
-  build_cursection->install_types=*name?0:~0;
-
-  if (secname[0]=='-')
+  if (secname[0] == '-')
   {
-    build_cursection->flags|=secname[1]?SF_SUBSEC:SF_SUBSECEND;
-    build_cursection=NULL;
-    entry ent={EW_RET,};
-    cur_entries->add(&ent,sizeof(entry));
-    build_header.common.num_entries++;
+    if (secname[1])
+    {
+      new_section.flags |= SF_SUBSEC;
+      name++;
+    }
+    else
+      new_section.flags |= SF_SUBSECEND;
+  }
+
+  if (name[0] == '!')
+  {
+    name++;
+    new_section.flags |= SF_BOLD;
+  }
+
+  int old_uninstall_mode = uninstall_mode;
+
+  set_uninstall_mode(0);
+
+  if (!strnicmp(name, "un.", 3))
+  {
+    set_uninstall_mode(1);
+    name += 3;
+  }
+
+  if (!stricmp(name, "uninstall"))
+  {
+    set_uninstall_mode(1);
+  }
+
+  if (subsection_open_cnt && !(new_section.flags & SF_SUBSECEND))
+  {
+    if (uninstall_mode != old_uninstall_mode)
+    {
+      ERROR_MSG("Error: Can't create %s section in %s subsection (use SubSectionEnd first)\n", uninstall_mode ? "uninstaller" : "installer", old_uninstall_mode ? "uninstaller" : "installer");
+      return PS_ERROR;
+    }
+  }
+
+  new_section.code = cur_entries->getlen() / sizeof(entry);
+
+  new_section.install_types = *name ? 0 : ~0;
+  new_section.name_ptr = add_string(name);
+
+  cur_sections->add(&new_section, sizeof(section));
+  build_cursection = (section *) cur_sections->get() + cur_header->blocks[NB_SECTIONS].num;
+
+  if (new_section.flags & (SF_SUBSEC | SF_SUBSECEND))
+  {
+    if (new_section.flags & SF_SUBSECEND)
+    {
+      subsection_open_cnt--;
+      if (subsection_open_cnt < 0)
+      {
+        ERROR_MSG("SubSectionEnd: no SubSections are open\n");
+        return PS_ERROR;
+      }
+      if (!subsection_open_cnt)
+        set_uninstall_mode(0);
+    }
+    else
+      subsection_open_cnt++;
+
+    add_entry_indirect(EW_RET);
+    build_cursection = 0;
   }
 
   if (defname[0])
   {
     char buf[32];
-    wsprintf(buf,"%d",build_header.num_sections);
-    if (definedlist.add(defname,buf))
+    wsprintf(buf, "%d", cur_header->blocks[NB_SECTIONS].num);
+    if (definedlist.add(defname, buf))
     {
-      ERROR_MSG("Error: \"%s\" already defined, can't assign section index!\n",defname);
+      ERROR_MSG("Error: \"%s\" already defined, can't assign section index!\n", defname);
       return PS_ERROR;
     }
   }
 
-  build_header.num_sections++;
+  cur_header->blocks[NB_SECTIONS].num++;
 
   return PS_OK;
 }
 
-int CEXEBuild::make_sure_not_in_secorfunc(const char *str)
+int CEXEBuild::make_sure_not_in_secorfunc(const char *str, int page_ok/*=0*/)
 {
-  if (build_cursection || uninstall_mode)
+  if (build_cursection)
   {
     ERROR_MSG("Error: command %s not valid in %s\n",str,build_cursection_isfunc?"function":"section");
+    return PS_ERROR;
+  }
+  if (cur_page && !page_ok) {
+    ERROR_MSG("Error: command %s not valid in PageEx\n",str);
     return PS_ERROR;
   }
   return PS_OK;
@@ -1111,28 +1064,13 @@ int CEXEBuild::add_entry(const entry *ent)
   }
 
   cur_entries->add(ent,sizeof(entry));
-
-  if (!uninstall_mode)
-  {
-    if (!build_cursection_isfunc && build_cursection->name_ptr >=0 && build_strlist.get()[build_cursection->name_ptr] == '-')
-    {
-      ERROR_MSG("Error: cannot add entry to divider section\n");
-      return PS_ERROR;
-    }
-    build_cursection->code_size++;
-    build_header.common.num_entries++;
-  }
-  else
-  {
-    build_uninst.common.num_entries++;
-    if (build_cursection) build_cursection->code_size++;
-    else build_uninst.code_size++;
-  }
+  build_cursection->code_size++;
+  cur_header->blocks[NB_ENTRIES].num++;
 
   return PS_OK;
 }
 
-int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
+int CEXEBuild::add_entry_indirect(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
 {
   entry ent;
   ent.which = which;
@@ -1196,11 +1134,9 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
     sec++;
   }
   ERROR_MSG("Error: resolving %s function \"%s\" in %s\n",str,(char*)ns_func.get()+fptr,fn);
-    ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
-    return 1;
-  }
-
-
+  ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
+  return 1;
+}
 
 int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end)
 {
@@ -1309,60 +1245,91 @@ int CEXEBuild::resolve_coderefs(const char *str)
       }
       sec++;
     }
-    if (uninstall_mode)
+
+    int cnt=0;
+    sec=(section *)cur_sections->get();
+    l=cur_sections->getlen()/sizeof(section);
+    while (l-- > 0)
     {
-      int x;
-      for (x = build_uninst.code; x < build_uninst.code+build_uninst.code_size; x ++)
-        if (resolve_instruction("\"uninstall section\"",str,w+x,x,build_uninst.code,build_uninst.code+build_uninst.code_size)) return 1;
+      int x=sec->name_ptr;
+      char fname[1024];
+      char *secname;
+      if (x < 0)
+      {
+        // lang string
+        secname = "$(lang string)";
+      }
+      else
+      {
+        // normal string
+        secname = cur_strlist->get() + x;
+      }
+      if (x) wsprintf(fname,"%s section \"%s\" (%d)",str,secname,cnt);
+      else wsprintf(fname,"unnamed %s section (%d)",str,cnt);
+      for (x = sec->code; x < sec->code+sec->code_size; x ++)
+      {
+        if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size))
+          return 1;
+      }
+      sec++;
+      cnt++;
+    }
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+    if (cur_pages->getlen()) {
+      page *p=(page *)cur_pages->get();
+      int i = 0;
+      while (i < cur_header->blocks[NB_PAGES].num) {
+        char pagestr[1024];
+        wsprintf(pagestr, "%s pages", str);
+        if (resolve_call_int(pagestr,"pre-page",p->prefunc,&p->prefunc)) return 1;
+        if (resolve_call_int(pagestr,p->dlg_id?"show-page":"leave-page",p->showfunc,&p->showfunc)) return 1;
+        if (resolve_call_int(pagestr,"leave-page",p->leavefunc,&p->leavefunc)) return 1;
+        p++;
+        i++;
+      }
+    }
+#endif
+#endif
+  }
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (ubuild_pages.getlen()) {
-        page *p=(page *)ubuild_pages.get();
-        int i = 0;
-        while (i < build_uninst.common.num_pages) {
-          if (resolve_call_int("uninstall pages","pre-page",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("uninstall pages",p->id?"show-page":"leave-page",p->showfunc,&p->showfunc)) return 1;
-          if (resolve_call_int("uninstall pages","leave-page",p->leavefunc,&p->leavefunc)) return 1;
-          p++;
-          i++;
-        }
-      }
+  // resolve callbacks
+  {
+    struct {
+      char *name;
+      int *p;
+    } callbacks[] = {
+      {"%s.onInit", &cur_header->code_onInit},
+      {"%s.on%sInstSuccess", &cur_header->code_onInstSuccess},
+      {"%s.on%sInstFailed", &cur_header->code_onInstFailed},
+      {"%s.onUserAbort", &cur_header->code_onUserAbort},
+      {"%s.onVerifyInstDir", &cur_header->code_onVerifyInstDir},
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+      {"%s.onGUIInit", &cur_header->code_onGUIInit},
+      {"%s.onGUIEnd", &cur_header->code_onGUIEnd},
+      {"%s.onMouseOverSection", &cur_header->code_onMouseOverSection},
 #endif
-    }
-    else
-    {
-      int cnt=0;
-      sec=(section *)build_sections.get();
-      l=build_sections.getlen()/sizeof(section);
-      while (l-- > 0)
-      {
-        int x;
-        for (x = sec->code; x < sec->code+sec->code_size; x ++)
-        {
-          char fname[1024];
-          char *secname = (sec->name_ptr < 0) ? build_userlangstrings.idx2name(-sec->name_ptr-1-(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int)) : build_strlist.get()+sec->name_ptr;
-          if (sec->name_ptr) wsprintf(fname,"section \"%s\" (%d)",secname,cnt);
-          else wsprintf(fname,"unnamed section (%d)",cnt);
-          if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
-        }
-        sec++;
-        cnt++;
-      }
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (build_pages.getlen()) {
-        page *p=(page *)build_pages.get();
-        int i = 0;
-        while (i < build_header.common.num_pages) {
-          if (resolve_call_int("pages","pre-page",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("pages",p->id?"show-page":"leave-page",p->showfunc,&p->showfunc)) return 1;
-          if (resolve_call_int("pages","leave-page",p->leavefunc,&p->leavefunc)) return 1;
-          p++;
-          i++;
-        }
-      }
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+      {"%s.onSelChange", &cur_header->code_onSelChange},
 #endif
+      {0, 0}
+    };
+
+    for (int i = 0; callbacks[i].name; i++) {
+      char *un = uninstall_mode ? "un" : "";
+      char fname[1024];
+      wsprintf(fname, callbacks[i].name, un, un);
+      char cbstr[1024];
+      wsprintf(cbstr, "%s callback", str);
+      char cbstr2[1024];
+      wsprintf(cbstr2, "%s.callbacks", un);
+
+      if (resolve_call_int(cbstr,cbstr2,ns_func.find(fname,0),callbacks[i].p))
+        return PS_ERROR;
     }
   }
+#endif//NSIS_SUPPORT_CODECALLBACKS
 
   // optimize unused functions
   {
@@ -1407,16 +1374,97 @@ int CEXEBuild::resolve_coderefs(const char *str)
   return 0;
 }
 
-int CEXEBuild::write_output(void)
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+int CEXEBuild::add_page(int type)
 {
+  page pg = {
+    0,
+    0,
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+    -1,
+    -1,
+    -1,
+#endif
+    0,
+  };
+
+#ifndef NSIS_CONFIG_LICENSEPAGE
+  if (type == PAGE_LICENSE)
+  {
+    ERROR_MSG("Error: can't add license page, NSIS_CONFIG_LICENSEPAGE not defined.\n");
+    return PS_ERROR;
+  }
+#endif
+#ifndef NSIS_CONFIG_COMPONENTPAGE
+  if (type == PAGE_COMPONENTS)
+  {
+    ERROR_MSG("Error: can't add components page, NSIS_CONFIG_COMPONENTPAGE not defined.\n");
+    return PS_ERROR;
+  }
+#endif
+#ifndef NSIS_CONFIG_UNINSTALL_SUPPORT
+  if (type == PAGE_COMPONENTS)
+  {
+    ERROR_MSG("Error: can't add uninstConfirm page, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n");
+    return PS_ERROR;
+  }
+#endif
+
+  struct {
+    int wndproc_id;
+    int dlg_id;
+  } ids[] = {
+    {PWP_CUSTOM, 0}, // custom
+#ifdef NSIS_CONFIG_LICENSEPAGE
+    {PWP_LICENSE, IDD_LICENSE}, // license
+#else
+    {0, IDD_LICENSE}, // license
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+    {PWP_SELCOM, IDD_SELCOM}, // components
+#else
+    {0, IDD_SELCOM}, // components
+#endif
+    {PWP_DIR, IDD_DIR}, // directory
+    {PWP_INSTFILES, IDD_INSTFILES}, // instfiles
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    {PWP_UNINST, IDD_UNINST}, // uninstConfirm
+#else
+    {0, IDD_UNINST}, // uninstConfirm
+#endif
+    {PWP_COMPLETED, -1} // completed
+  };
+
+  pg.wndproc_id = ids[type].wndproc_id;
+  pg.dlg_id = ids[type].dlg_id;
+
+  cur_pages->add(&pg,sizeof(page));
+
+  cur_page = (page *)cur_pages->get() + cur_header->blocks[NB_PAGES].num++;
+
+  cur_page_type = type;
+
+  return PS_OK;
+}
+
+int CEXEBuild::page_end()
+{
+  cur_page = 0;
+
+  return PS_OK;
+}
+#endif
+
 #ifdef NSIS_SUPPORT_VERSION_INFO
-  GrowBuf VerInfoStream;  
+int CEXEBuild::AddVersionInfo()
+{
+  GrowBuf VerInfoStream;
   bool bNeedVInfo = false;
 
   if ( rVersionInfo.GetStringTablesCount() > 0 )
   {
     if ( !version_product_v[0] )
-    { 
+    {
       ERROR_MSG("Error: VIProductVersion is required when other version information functions are used.\n");
       return PS_ERROR;
     }
@@ -1436,23 +1484,440 @@ int CEXEBuild::write_output(void)
       {
         LANGID lang_id = rVersionInfo.GetLangID(i);
         int code_page = rVersionInfo.GetCodePage(i);
-        StringTable * Table = GetTable(lang_id);
-        
+        LanguageTable *Table = GetLangTable(lang_id);
+
         if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
+          warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
         if ( !rVersionInfo.FindKey(lang_id, code_page, "FileDescription") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
+          warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
         if ( !rVersionInfo.FindKey(lang_id, code_page, "LegalCopyright") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
+          warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
 
         rVersionInfo.ExportToStream(VerInfoStream, i);
-        res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());        
+        res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
       }
     }
   }
-
+  
+  return PS_OK;
+}
 #endif // NSIS_SUPPORT_VERSION_INFO
 
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+int CEXEBuild::ProcessPages()
+{
+  SCRIPT_MSG("Processing pages... ");
+
+  int license_normal=0;
+  int license_fsrb=0;
+  int license_fscb=0;
+  int selcom=0;
+  int dir=0, dir_used;
+  int uninstconfirm=0;
+  int instlog=0, instlog_used;
+  int main=0;
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+again:
+#endif
+
+  dir_used = 0;
+  instlog_used = 0;
+
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+  if ((cur_header->flags & (CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) == 0)
+#endif
+  {
+    main++;
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+#define LS(inst, uninst) (uninstall_mode ? uninst : inst)
+#else
+#define LS(inst, uninst) inst
+#endif
+
+    DefineInnerLangString(LS(NLF_CAPTION, NLF_UCAPTION));
+    DefineInnerLangString(NLF_BRANDING);
+
+    if (!cur_pages->getlen()) {
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (uninstall_mode) {
+        if (HasUserDefined(NLF_UNINST_TEXT)) {
+          add_page(PAGE_UNINSTCONFIRM);
+          page_end();
+        }
+        add_page(PAGE_INSTFILES);
+        page_end();
+        add_page(PAGE_COMPLETED);
+        page_end();
+      }
+      else
+#endif
+      {
+#ifdef NSIS_CONFIG_LICENSEPAGE
+        if (HasUserDefined(NLF_LICENSE_TEXT) && HasUserDefined(NLF_LICENSE_DATA)) {
+          add_page(PAGE_LICENSE);
+          page_end();
+        }
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+        if (HasUserDefined(NLF_COMP_TEXT)) {
+          add_page(PAGE_COMPONENTS);
+          page_end();
+        }
+#endif
+        if (HasUserDefined(NLF_DIR_TEXT)) {
+          add_page(PAGE_DIRECTORY);
+          page_end();
+        }
+        add_page(PAGE_INSTFILES);
+        page_end();
+        add_page(PAGE_COMPLETED);
+        page_end();
+      }
+    }
+    // start processing the pages
+    {
+      int i = 0;
+      page *p = (page *) cur_pages->get();
+      
+      for (i = 0; i < cur_header->blocks[NB_PAGES].num; i++, p++) {
+        page *pp = 0;
+
+        if (i) {
+          pp = p - 1;
+
+          // set back button
+          p->flags |= PF_BACK_SHOW;
+          if (pp->wndproc_id != PWP_COMPLETED && p->wndproc_id != PWP_COMPLETED && p->wndproc_id != PWP_INSTFILES)
+            p->flags |= PF_BACK_ENABLE;
+          if (!p->back)
+            p->back = DefineInnerLangString(NLF_BTN_BACK);
+
+          // set previous page's next button
+          if (!pp->next) {
+            int str = 0;
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+            if (pp->wndproc_id == PWP_LICENSE && (!(pp->flags & PF_LICENSE_FORCE_SELECTION) || HasUserDefined(NLF_BTN_LICENSE)))
+              str = NLF_BTN_LICENSE;
+            else
+#endif
+            if (p->wndproc_id == PWP_INSTFILES)
+              str = LS(NLF_BTN_INSTALL, NLF_BTN_UNINSTALL);
+            else
+              str = NLF_BTN_NEXT;
+
+            pp->next = DefineInnerLangString(str);
+          }
+
+          // set previous page's click next text
+          if (!pp->clicknext) {
+            int str = 0;
+
+            if (p->wndproc_id == PWP_INSTFILES)
+              str = LS(NLF_CLICK_INSTALL, NLF_CLICK_UNINSTALL);
+            else
+              str = NLF_CLICK_NEXT;
+
+            pp->clicknext = DefineInnerLangString(str);
+          }
+        }
+
+        // enable next button
+        if (p->wndproc_id != PWP_INSTFILES)
+          p->flags |= PF_NEXT_ENABLE;
+
+        // set cancel button
+        if (!p->cancel)
+          p->cancel = DefineInnerLangString(NLF_BTN_CANCEL);
+        if (p->wndproc_id != PWP_INSTFILES && p->wndproc_id != PWP_COMPLETED)
+          p->flags |= PF_CANCEL_ENABLE;
+
+        // set caption
+        struct {
+          int caption;
+          int ucaption;
+        } captions[] = {
+#ifdef NSIS_CONFIG_LICENSEPAGE
+          {NLF_SUBCAPTION_LICENSE, NLF_SUBCAPTION_LICENSE},
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+          {NLF_SUBCAPTION_OPTIONS, NLF_SUBCAPTION_OPTIONS},
+#endif
+          {NLF_SUBCAPTION_DIR, NLF_SUBCAPTION_DIR},
+          {NLF_SUBCAPTION_INSTFILES, NLF_USUBCAPTION_INSTFILES},
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+          {NLF_USUBCAPTION_CONFIRM, NLF_USUBCAPTION_CONFIRM},
+#endif
+          {NLF_SUBCAPTION_COMPLETED, NLF_USUBCAPTION_COMPLETED}
+        };
+
+        if (!p->caption && p->wndproc_id != PWP_CUSTOM) {
+          p->caption = DefineInnerLangString(LS(captions[p->wndproc_id].caption, captions[p->wndproc_id].ucaption));
+        }
+
+        // set texts
+        switch (p->dlg_id) {
+#ifdef NSIS_CONFIG_LICENSEPAGE
+          case IDD_LICENSE:
+          case IDD_LICENSE_FSRB:
+          case IDD_LICENSE_FSCB:
+          {
+            if (!(p->flags & PF_PAGE_EX))
+              p->dlg_id = license_res_id;
+            if (!(p->flags & (PF_LICENSE_FORCE_SELECTION | PF_LICENSE_NO_FORCE_SELECTION)))
+              p->dlg_id = license_res_id;
+
+            p->flags |= PF_NO_NEXT_FOCUS;
+
+            if (!p->parms[1])
+              p->parms[1] = DefineInnerLangString(NLF_LICENSE_DATA, 0);
+
+            if (p->dlg_id == IDD_LICENSE) {
+              if (!p->parms[0])
+                p->parms[0] = DefineInnerLangString(LS(NLF_LICENSE_TEXT, NLF_ULICENSE_TEXT));
+
+              license_normal++;
+            }
+            else if (p->dlg_id == IDD_LICENSE_FSCB) {
+              p->flags |= PF_LICENSE_FORCE_SELECTION;
+
+              if (!p->parms[0])
+                p->parms[0] = DefineInnerLangString(LS(NLF_LICENSE_TEXT_FSCB, NLF_ULICENSE_TEXT_FSCB));
+              if (!p->parms[2])
+                p->parms[2] = DefineInnerLangString(NLF_BTN_LICENSE_AGREE);
+
+              license_fscb++;
+            }
+            else if (p->dlg_id == IDD_LICENSE_FSRB) {
+              p->flags |= PF_LICENSE_FORCE_SELECTION;
+
+              if (!p->parms[0])
+                p->parms[0] = DefineInnerLangString(LS(NLF_LICENSE_TEXT_FSRB, NLF_ULICENSE_TEXT_FSRB));
+              if (!p->parms[2])
+                p->parms[2] = DefineInnerLangString(NLF_BTN_LICENSE_AGREE);
+              if (!p->parms[3])
+                p->parms[3] = DefineInnerLangString(NLF_BTN_LICENSE_DISAGREE);
+
+              license_fsrb++;
+            }
+            break;
+          }
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+          case IDD_SELCOM:
+          {
+            if (!p->parms[0])
+              p->parms[0] = DefineInnerLangString(LS(NLF_COMP_TEXT, NLF_UCOMP_TEXT));
+            if (!p->parms[1])
+              p->parms[1] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT1, NLF_UCOMP_SUBTEXT1));
+            if (!p->parms[2])
+              p->parms[2] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT2, NLF_UCOMP_SUBTEXT2));
+            if (!p->parms[4])
+              p->parms[4] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT1_NO_INST_TYPES, NLF_UCOMP_SUBTEXT1_NO_INST_TYPES));
+
+            DefineInnerLangString(NLF_SPACE_REQ);
+            DefineInnerLangString(NLF_BYTE);
+            DefineInnerLangString(NLF_KILO);
+            DefineInnerLangString(NLF_MEGA);
+            DefineInnerLangString(NLF_GIGA);
+
+            selcom++;
+            break;
+          }
+#endif
+          case IDD_DIR:
+          {
+            if (!p->parms[0])
+              p->parms[0] = DefineInnerLangString(LS(NLF_DIR_TEXT, NLF_UDIR_TEXT));
+            if (!p->parms[1])
+              p->parms[1] = DefineInnerLangString(LS(NLF_DIR_SUBTEXT, NLF_UDIR_SUBTEXT));
+            if (!p->parms[2])
+              p->parms[2] = DefineInnerLangString(NLF_BTN_BROWSE);
+            if (!p->parms[3])
+              p->parms[3] = DefineInnerLangString(LS(NLF_DIR_BROWSETEXT, NLF_UDIR_BROWSETEXT));
+            if (!p->parms[4])
+              p->parms[4] = m_UserVarNames.get("INSTDIR");
+            else
+              p->parms[4]--;
+
+            DefineInnerLangString(NLF_SPACE_AVAIL, 0);
+            DefineInnerLangString(NLF_SPACE_REQ, 0);
+            DefineInnerLangString(NLF_BYTE, 0);
+            DefineInnerLangString(NLF_KILO, 0);
+            DefineInnerLangString(NLF_MEGA, 0);
+            DefineInnerLangString(NLF_GIGA);
+#ifdef NSIS_CONFIG_LOG
+            DefineInnerLangString(NLF_LOG_INSTALL_PROCESS);
+#endif
+
+            dir++;
+            break;
+          }
+          case IDD_INSTFILES:
+          {
+            if (!p->parms[1])
+              p->parms[1] = DefineInnerLangString(NLF_BTN_DETAILS);
+            if (!p->parms[2])
+              p->parms[2] = DefineInnerLangString(NLF_COMPLETED);
+
+            DefineInnerLangString(NLF_COPY_DETAILS);
+
+            instlog++;
+            instlog_used++;
+            break;
+          }
+          case IDD_UNINST:
+          {
+            if (!p->parms[0])
+              p->parms[0] = DefineInnerLangString(NLF_UNINST_TEXT);
+            if (!p->parms[1])
+              p->parms[1] = DefineInnerLangString(NLF_UNINST_SUBTEXT);
+            if (!p->parms[4])
+              p->parms[4] = m_UserVarNames.get("INSTDIR");
+            else
+              p->parms[4]--;
+
+            uninstconfirm++;
+            break;
+          }
+        }
+
+        p->flags &= ~PF_PAGE_EX;
+      }
+
+      p--;
+
+      if (!p->next)
+        p->next = DefineInnerLangString(NLF_BTN_CLOSE);
+      if (p->wndproc_id == PWP_COMPLETED)
+        (p-1)->next = DefineInnerLangString(NLF_BTN_CLOSE);
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (uninstall_mode) {
+        if (!uenable_last_page_cancel && instlog_used)
+          p->flags &= ~PF_CANCEL_ENABLE;
+      }
+      else
+#endif
+      {
+        if (!enable_last_page_cancel && instlog_used)
+          p->flags &= ~PF_CANCEL_ENABLE;
+      }
+
+      if (!instlog_used) {
+        warning("%sage instfiles not used, no sections will be executed!", uninstall_mode ? "Uninstall p" : "P");
+      }
+    }
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (!uninstall_mode) {
+      set_uninstall_mode(1);
+      goto again;
+    }
+    else
+      set_uninstall_mode(0);
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
+  }
+
+  SCRIPT_MSG("Done!\n");
+
+  try {
+    SCRIPT_MSG("Removing unused resources... ");
+    init_res_editor();
+#ifdef NSIS_CONFIG_LICENSEPAGE
+    if (!license_normal) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+    if (!license_fsrb) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSRB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+    if (!license_fscb) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSCB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+#endif // NSIS_CONFIG_LICENSEPAGE
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+    if (!selcom) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+#endif // NSIS_CONFIG_COMPONENTPAGE
+    if (!dir) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (!uninstconfirm) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (!instlog) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+    if (!main) {
+      res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      if (!build_compress_whole && !build_crcchk)
+        res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+    }
+
+    SCRIPT_MSG("Done!\n");
+  }
+  catch (exception& err) {
+    ERROR_MSG("\nError: %s\n", err.what());
+    return PS_ERROR;
+  }
+
+  return PS_OK;
+}
+#endif // NSIS_CONFIG_VISIBLE_SUPPORT
+
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+void CEXEBuild::PreperInstTypes()
+{
+  if (!(cur_header->flags & CH_FLAGS_NO_CUSTOM))
+    cur_header->install_types[NSIS_MAX_INST_TYPES] = DefineInnerLangString(NLF_COMP_CUSTOM);
+
+  if (cur_header->install_types[0])
+  {
+    int i = cur_header->blocks[NB_SECTIONS].num;
+    section *sections = (section *) cur_sections->get();
+
+    while (i--)
+      if ((sections[i].flags & SF_SELECTED) == 0)
+        return;
+
+    i = cur_header->blocks[NB_SECTIONS].num;
+
+    while (i--)
+      if ((sections[i].install_types & 1) == 0)
+        sections[i].flags &= ~SF_SELECTED;
+  }
+}
+#endif
+
+void CEXEBuild::PreperHeaders(IGrowBuf *hdrbuf)
+{
+  hdrbuf->add(cur_header,sizeof(header));
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  cur_header->blocks[NB_PAGES].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_pages->get(),cur_pages->getlen());
+#endif
+  cur_header->blocks[NB_SECTIONS].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_sections->get(),cur_sections->getlen());
+  cur_header->blocks[NB_ENTRIES].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_entries->get(),cur_entries->getlen());
+  cur_header->blocks[NB_STRINGS].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_strlist->get(),cur_strlist->getlen());
+  cur_header->blocks[NB_LANGTABLES].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_langtables->get(),cur_langtables->getlen());
+  cur_header->blocks[NB_CTLCOLORS].offset = hdrbuf->getlen();
+  hdrbuf->add(cur_ctlcolors->get(),cur_ctlcolors->getlen());
+
+  memcpy(hdrbuf->get(),cur_header,sizeof(header));
+}
+
+int CEXEBuild::write_output(void)
+{
 #ifndef NSIS_CONFIG_CRC_SUPPORT
   build_crcchk=0;
 #endif
@@ -1483,7 +1948,7 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 
-  if (build_cursection || uninstall_mode)
+  if (build_cursection)
   {
     ERROR_MSG("Error: Section left open at EOF\n");
     return PS_ERROR;
@@ -1495,6 +1960,12 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 
+  if (cur_page)
+  {
+    ERROR_MSG("Error: PageEx still open at EOF, cannot proceed\n");
+    return 1;
+  }
+
   // deal with functions, for both install and uninstall modes.
   if (build_cursection_isfunc)
   {
@@ -1502,11 +1973,19 @@ int CEXEBuild::write_output(void)
     return 1;
   }
 
+  int err;
+
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  int err=add_plugins_dir_initializer();
+  err = add_plugins_dir_initializer();
   if (err != PS_OK)
     return err;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
+
+#ifdef NSIS_SUPPORT_VERSION_INFO
+  err = AddVersionInfo();
+  if (err != PS_OK)
+    return err;
+#endif //NSIS_SUPPORT_VERSION_INFO
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen())
@@ -1517,21 +1996,15 @@ int CEXEBuild::write_output(void)
     }
     else
     {
-      build_uninst.common.flags|=build_header.common.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
+      build_uninst.flags|=build_header.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
 
       set_uninstall_mode(1);
-  #ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onInit",0),&build_uninst.common.code_onInit)) return PS_ERROR;
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstSuccess",0),&build_uninst.common.code_onInstSuccess)) return PS_ERROR;
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstFailed",0),&build_uninst.common.code_onInstFailed)) return PS_ERROR;
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUserAbort",0),&build_uninst.common.code_onUserAbort)) return PS_ERROR;
-    #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onGUIInit",0),&build_uninst.common.code_onGUIInit)) return PS_ERROR;
-      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onGUIEnd",0),&build_uninst.common.code_onGUIEnd)) return PS_ERROR;
-    #endif
-  #endif//NSIS_SUPPORT_CODECALLBACKS
-
-      if (resolve_coderefs("uninstall")) return PS_ERROR;
+      if (resolve_coderefs("uninstall"))
+        return PS_ERROR;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT 
+      // set sections to the first insttype
+      PreperInstTypes();
+#endif
       set_uninstall_mode(0);
     }
   }
@@ -1542,321 +2015,27 @@ int CEXEBuild::write_output(void)
   }
 #endif
 
-
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInit",0),&build_header.common.code_onInit)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInstSuccess",0),&build_header.common.code_onInstSuccess)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onInstFailed",0),&build_header.common.code_onInstFailed)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onUserAbort",0),&build_header.common.code_onUserAbort)) return PS_ERROR;
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onVerifyInstDir",0),&build_header.code_onVerifyInstDir)) return PS_ERROR;
-  #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onGUIInit",0),&build_header.common.code_onGUIInit)) return PS_ERROR;
-    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onGUIEnd",0),&build_header.common.code_onGUIEnd)) return PS_ERROR;
-    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onMouseOverSection",0),&build_header.code_onMouseOverSection)) return PS_ERROR;
-  #endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onSelChange",0),&build_header.code_onSelChange)) return PS_ERROR;
-#endif//NSIS_CONFIG_COMPONENTPAGE
-#endif//NSIS_SUPPORT_CODECALLBACKS
-
-  if (resolve_coderefs("install")) return PS_ERROR;
-
-  // set sections to the first insttype
-  if (use_first_insttype && build_header.install_types[0])
-  {
-    int n = build_sections.getlen()/sizeof(section);
-    section *sections = (section *) build_sections.get();
-    for (int i = 0; i < n; i++)
-    {
-      if ((sections[i].install_types & 1) == 0)
-        sections[i].flags &= ~SF_SELECTED;
-    }
-  }
+  if (resolve_coderefs("install"))
+    return PS_ERROR;
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  {
-    SCRIPT_MSG("Processing pages... ");
-    page pg = {
-      0,
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      -1,
-      -1,
-      -1,
-#endif
-      0
-    };
-    int add_pages=!build_pages.getlen();
-    int add_uninst_pages=!ubuild_pages.getlen();
-
-    int license=0;
-    int selcom=0;
-    int dir=0;
-    int uninst=0;
-    int instlog=0;
-    int main=2;
-
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (!(build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)))
-#endif
-    {
-#ifdef NSIS_CONFIG_LICENSEPAGE
-      if (!IsNotSet(installer.licensedata)) license++;
-#endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (!IsNotSet(installer.componenttext)) selcom++;
-#endif
-      if (!IsNotSet(installer.text)) dir++;
-
-      if (!add_pages) {
-        int i=0;
-        page *p=(page *) build_pages.get();
-        while (i!=build_header.common.num_pages) {
-          switch (p->id) {
-#ifdef NSIS_CONFIG_LICENSEPAGE
-            case NSIS_PAGE_LICENSE:
-              license++;
-              break;
-#endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-            case NSIS_PAGE_SELCOM:
-              selcom++;
-              break;
-#endif
-            case NSIS_PAGE_DIR:
-              dir++;
-              break;
-            case NSIS_PAGE_INSTFILES:
-              instlog++;
-              break;
-          }
-          p++;
-          i++;
-        }
-
-        if (license==1) {
-          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "license", "LicenseData");
-          return PS_ERROR;
-        }
-        if (selcom==1) {
-          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "components", "ComponentText");
-          return PS_ERROR;
-        }
-        if (dir==1) {
-          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "directory selection", "DirText");
-          return PS_ERROR;
-        }
-        if (!instlog) {
-          warning("Page instfiles not specefied, no sections will be executed!");
-        }
-      }
-      else {
-#ifdef NSIS_CONFIG_LICENSEPAGE
-        if (license) {
-          pg.id=NSIS_PAGE_LICENSE;
-          pg.caption=LANG_SUBCAPTION(0);
-          build_pages.add(&pg,sizeof(page));
-          build_header.common.num_pages++;
-        }
-#endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-        if (selcom) {
-          pg.id=NSIS_PAGE_SELCOM;
-          pg.caption=LANG_SUBCAPTION(1);
-          build_pages.add(&pg,sizeof(page));
-          build_header.common.num_pages++;
-        }
-#endif
-        if (dir) {
-          pg.id=NSIS_PAGE_DIR;
-          pg.caption=LANG_SUBCAPTION(2);
-          build_pages.add(&pg,sizeof(page));
-          build_header.common.num_pages++;
-        }
-        instlog++;
-        pg.id=NSIS_PAGE_INSTFILES;
-        pg.caption=LANG_SUBCAPTION(3);
-        build_pages.add(&pg,sizeof(page));
-        build_header.common.num_pages++;
-        pg.id=NSIS_PAGE_COMPLETED;
-        pg.caption=LANG_SUBCAPTION(4);
-        build_pages.add(&pg,sizeof(page));
-        build_header.common.num_pages++;
-      }
-
-      page *p=(page *) build_pages.get();
-      for (int i=0; i<build_header.common.num_pages; i++, p++) {
-        // 2 - back enabled
-        // 4 - cancel enabled
-        // SW_SHOWNA (8) - back visible
-        if (i) p->button_states=SW_SHOWNA|2|4;
-        else p->button_states=4;
-
-        p->next=LANG_BTN_NEXT;
-
-        if (i<build_header.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES) {
-          p->next=LANG_BTN_INSTALL;
-          install_used = true;
-        }
-        #ifdef NSIS_CONFIG_LICENSEPAGE
-        if (p->id==NSIS_PAGE_LICENSE) {
-          if (build_header.common.flags&CH_FLAGS_LICENSE_FORCE_SELECTION)
-            p->button_states|=16;
-          else
-            p->next=LANG_BTN_LICENSE;
-        }
-        #endif
-        if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->button_states&=~6;
-        if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
-          p->button_states&=~2;
-
-        if (p->next == LANG_BTN_NEXT) next_used = true;
-      }
-      (--p)->next=LANG_BTN_CLOSE;
-      if (!enable_last_page_cancel && instlog) {
-        p->button_states&=~4;
-      }
-      if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
-    }
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    else main--;
+  // set sections to the first insttype
+  PreperInstTypes();
 #endif
 
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (!(build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) && uninstaller_writes_used)
-#endif
-    {
-      if (!IsNotSet(uninstall.uninstalltext)) uninst++;
-
-      int uninstlog = 0;
-
-      if (!add_uninst_pages) {
-        int i=0;
-        page *p=(page *) ubuild_pages.get();
-        while (i!=build_header.common.num_pages) {
-          switch (p->id) {
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-            case NSIS_PAGE_UNINST:
-              uninst++;
-              break;
-#endif
-            case NSIS_PAGE_INSTFILES:
-              instlog++;
-              uninstlog++;
-              break;
-          }
-          p++;
-          i++;
-        }
-
-        if (uninst==1) {
-          ERROR_MSG("\nError: %s page and %s depend on each other, both must be in the script!\n", "uninstConfirm", "UninstallText");
-          return PS_ERROR;
-        }
-        if (!instlog) {
-          warning("UninstPage instfiles not specefied, no sections will be executed!");
-        }
-      }
-      else {
-        if (uninst) {
-          pg.id=NSIS_PAGE_UNINST;
-          pg.caption=LANG_SUBCAPTION(0);
-          ubuild_pages.add(&pg,sizeof(page));
-          build_uninst.common.num_pages++;
-        }
-        instlog++;
-        pg.id=NSIS_PAGE_INSTFILES;
-        pg.caption=LANG_SUBCAPTION(1);
-        ubuild_pages.add(&pg,sizeof(page));
-        build_uninst.common.num_pages++;
-        pg.id=NSIS_PAGE_COMPLETED;
-        pg.caption=LANG_SUBCAPTION(2);
-        ubuild_pages.add(&pg,sizeof(page));
-        build_uninst.common.num_pages++;
-      }
-
-      page *p=(page *) ubuild_pages.get();
-      int noinstlogback=0;
-      for (int i=0; i<build_uninst.common.num_pages; i++, p++) {
-        // 2 - back enabled
-        // 4 - cancel enabled
-        // SW_SHOWNA (8) - back visible
-        if (i) p->button_states=SW_SHOWNA|2|4;
-        else p->button_states=4;
-
-        p->next=LANG_BTN_NEXT;
-
-        if (i<build_uninst.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES) {
-          if (p->id==NSIS_PAGE_UNINST)
-            noinstlogback=1;
-          p->next=LANG_BTN_UNINST;
-        }
-        if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->button_states=noinstlogback?0:SW_SHOWNA;
-        if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
-          p->button_states&=~2;
-
-        if (p->next == LANG_BTN_NEXT) next_used = true;
-      }
-      (--p)->next=LANG_BTN_CLOSE;
-      if (!uenable_last_page_cancel && uninstlog) {
-        p->button_states&=~4;
-      }
-      if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
-    }
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    else
-#endif
-#endif
-      main--;
-
-    SCRIPT_MSG("Done!\n");
-  
-    try {
-      SCRIPT_MSG("Removing unused resources... ");
-      init_res_editor();
-#ifdef NSIS_CONFIG_LICENSEPAGE
-      if (!license) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-#endif // NSIS_CONFIG_LICENSEPAGE
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (!selcom) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-        res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-#endif // NSIS_CONFIG_COMPONENTPAGE
-      if (!dir) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!uninst) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (!instlog) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-      if (!main) {
-        res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-        if (!build_compress_whole && !build_crcchk)
-          res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      }
-
-      SCRIPT_MSG("Done!\n");
-    }
-    catch (exception& err) {
-      ERROR_MSG("\nError: %s\n", err.what());
-      return PS_ERROR;
-    }
-  }
-#endif // NSIS_CONFIG_VISIBLE_SUPPORT
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  err = ProcessPages();
+  if (err != PS_OK)
+    return err;
+#endif //NSIS_CONFIG_VISIBLE_SUPPORT
 
   // Generate language tables
-  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
+  err = GenerateLangTables();
+  if (err != PS_OK)
+    return err;
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
+  init_res_editor();
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
   int MaxUserVars = m_UserVarNames.getnum();
   if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars-TOTAL_COMPATIBLE_STATIC_VARS_COUNT) * sizeof(NSIS_STRING)))
@@ -1901,8 +2080,6 @@ int CEXEBuild::write_output(void)
     }
     fseek(tmpfile,0,SEEK_END);
     exeheader_size_new=ftell(tmpfile);
-    exeheader_size_new+=511;
-    exeheader_size_new&=~511; // align to 512.
     fseek(tmpfile,0,SEEK_SET);
     unsigned char *header_data_older=header_data_new;
     header_data_new=(unsigned char *)malloc(exeheader_size_new);
@@ -1964,6 +2141,7 @@ int CEXEBuild::write_output(void)
     fclose(fp);
     return PS_ERROR;
   }
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   #ifdef NSIS_CONFIG_CRC_ANAL
     crc=CRC32(crc,header_data_new,exeheader_size_new);
@@ -1972,6 +2150,23 @@ int CEXEBuild::write_output(void)
   #endif
 #endif
 
+  int exeheader_size_new_aligned = (exeheader_size_new + 511) & ~511;
+  if (exeheader_size_new_aligned != exeheader_size_new) {
+    // align to 512
+    const unsigned char z = 0;
+    int write_size = exeheader_size_new_aligned - exeheader_size_new;
+    for (int i=0; i<write_size; i++) {
+      if ((int)fwrite(&z,1,1,fp) != 1)
+      {
+        ERROR_MSG("Error: can't write %d bytes to output\n",write_size);
+        fclose(fp);
+        return PS_ERROR;
+      }
+      crc=CRC32(crc,&z,1);
+    }
+    exeheader_size_new = exeheader_size_new_aligned;
+  }
+
   firstheader fh={0,};
   fh.nsinst[0]=FH_INT1;
   fh.nsinst[1]=FH_INT2;
@@ -1979,7 +2174,7 @@ int CEXEBuild::write_output(void)
 
   fh.flags=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
+  if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
   fh.siginfo=FH_SIG;
 
@@ -1997,27 +2192,19 @@ int CEXEBuild::write_output(void)
   }
 #endif
 
-  build_header.common.num_string_bytes=build_strlist.getlen();
-
   {
     GrowBuf ihd;
     {
       GrowBuf hdrcomp;
-      hdrcomp.add(&build_header,sizeof(build_header));
-      hdrcomp.add(build_sections.get(),build_sections.getlen());
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-      hdrcomp.add(build_pages.get(),build_pages.getlen());
-#endif
-      hdrcomp.add(build_entries.get(),build_entries.getlen());
-      hdrcomp.add(build_strlist.get(),build_strlist.getlen());
-      hdrcomp.add(build_langtables.get(),build_langtables.getlen());
 
-      if (add_data((char*)hdrcomp.get(),hdrcomp.getlen(),&ihd) < 0) return PS_ERROR;
+      PreperHeaders(&hdrcomp);
 
-      installinfo_compressed=ihd.getlen();
+      if (add_data((char*)hdrcomp.get(),hdrcomp.getlen(),&ihd) < 0)
+        return PS_ERROR;
+
       fh.length_of_header=hdrcomp.getlen();
+      installinfo_compressed=ihd.getlen();
     }
-
 
     if (!build_compress_whole)
       fh.length_of_all_following_data=ihd.getlen()+build_datablock.getlen()+(int)sizeof(firstheader)+(build_crcchk?sizeof(int):0);
@@ -2056,6 +2243,10 @@ int CEXEBuild::write_output(void)
   }
 
   INFO_MSG("Install: ");
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  int np=build_header.blocks[NB_PAGES].num;
+  INFO_MSG("%d page%s (%d bytes), ",np,np==1?"":"s",np*sizeof(page));
+#endif
   {
     int ns=build_sections.getlen()/sizeof(section);
     section *s=(section*)build_sections.get();
@@ -2072,24 +2263,41 @@ int CEXEBuild::write_output(void)
     }
     INFO_MSG(" (%d bytes), ", build_sections.getlen());
   }
-  int ne=build_entries.getlen()/sizeof(entry);
+  int ne=build_header.blocks[NB_ENTRIES].num;
   INFO_MSG("%d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
   int ns=build_strlist.getnum();
   INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",build_strlist.getlen());
-  int nlt=string_tables.size();
-  INFO_MSG("%d language table%s (%d bytes), ",nlt,nlt==1?"":"s",build_langtables.getlen());
-  int np=build_pages.getlen()/sizeof(page);
-  INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",np*sizeof(page));
+  int nlt=build_header.blocks[NB_LANGTABLES].num;
+  INFO_MSG("%d language table%s (%d bytes).\n",nlt,nlt==1?"":"s",build_langtables.getlen());
   if (ubuild_entries.getlen())
   {
-    ne=ubuild_entries.getlen()/sizeof(entry);
-    INFO_MSG("Uninstall: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ubuild_entries.getlen());
+    INFO_MSG("Uninstall: ");
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+    np=build_uninst.blocks[NB_PAGES].num;
+    INFO_MSG("%d page%s (%d bytes), \n",np,np==1?"":"s",ubuild_pages.getlen());
+#endif
+    {
+      int ns=ubuild_sections.getlen()/sizeof(section);
+      section *s=(section*)ubuild_sections.get();
+      int x;
+      int req=0;
+      for (x = 1; x < ns; x ++)
+      {
+        if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
+      }
+      INFO_MSG("%d section%s",ns,ns==1?"":"s");
+      if (req)
+      {
+        INFO_MSG(" (%d required)",req);
+      }
+      INFO_MSG(" (%d bytes), ", ubuild_sections.getlen());
+    }
+    ne=build_uninst.blocks[NB_ENTRIES].num;
+    INFO_MSG("%d instruction%s (%d bytes), ",ne,ne==1?"":"s",ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
     INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",ubuild_strlist.getlen());
-    nlt=string_tables.size();
-    INFO_MSG("%d language table%s (%d bytes), ",nlt,nlt==1?"":"s",ubuild_langtables.getlen());
-    np=ubuild_pages.getlen()/sizeof(page);
-    INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",ubuild_pages.getlen());
+    nlt=build_uninst.blocks[NB_LANGTABLES].num;
+    INFO_MSG("%d language table%s (%d bytes).\n",nlt,nlt==1?"":"s",ubuild_langtables.getlen());
   }
 
 
@@ -2289,22 +2497,14 @@ int CEXEBuild::uninstall_generate()
   {
     firstheader fh={0,};
 
-    build_uninst.common.num_string_bytes=ubuild_strlist.getlen();
-
     GrowBuf uhd;
-    // add one more bit (the code+strtabs) to the uninstall datablock
     {
       GrowBuf udata;
 
-      udata.add(&build_uninst,sizeof(build_uninst));
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-      udata.add(ubuild_pages.get(),ubuild_pages.getlen());
-#endif
-      udata.add(ubuild_entries.get(),ubuild_entries.getlen());
-      udata.add(ubuild_strlist.get(),ubuild_strlist.getlen());
-      udata.add(ubuild_langtables.get(),ubuild_langtables.getlen());
-
       set_uninstall_mode(1);
+
+      PreperHeaders(&udata);
+
       fh.length_of_header=udata.getlen();
       int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
       set_uninstall_mode(0);
@@ -2349,10 +2549,10 @@ int CEXEBuild::uninstall_generate()
     fh.nsinst[0]=FH_INT1;
     fh.nsinst[1]=FH_INT2;
     fh.nsinst[2]=FH_INT3;
-    fh.flags = FH_FLAGS_UNINSTALL;
-    fh.flags |= (build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
+    fh.flags=FH_FLAGS_UNINSTALL;
+    fh.flags|=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (build_uninst.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
+    if (build_uninst.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
     fh.siginfo=FH_SIG;
     fh.length_of_all_following_data=
@@ -2442,6 +2642,12 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_entries=&ubuild_entries;
       cur_functions=&ubuild_functions;
       cur_labels=&ubuild_labels;
+      cur_pages=&ubuild_pages;
+      cur_sections=&ubuild_sections;
+      cur_header=&build_uninst;
+      cur_strlist=&ubuild_strlist;
+      cur_langtables=&ubuild_langtables;
+      cur_ctlcolors=&ubuild_ctlcolors;
     }
     else
     {
@@ -2449,6 +2655,12 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_entries=&build_entries;
       cur_functions=&build_functions;
       cur_labels=&build_labels;
+      cur_pages=&build_pages;
+      cur_sections=&build_sections;
+      cur_header=&build_header;
+      cur_strlist=&build_strlist;
+      cur_langtables=&build_langtables;
+      cur_ctlcolors=&build_ctlcolors;
     }
 
     SWAP(db_opt_save_u,db_opt_save,int);
@@ -2466,7 +2678,24 @@ void CEXEBuild::warning(const char *s, ...)
   va_start(val,s);
   vsprintf(buf,s,val);
   va_end(val);
-  m_warnings.add(buf,-1);
+  m_warnings.add(buf,0);
+  notify(MAKENSIS_NOTIFY_WARNING,buf);
+  if (display_warnings)
+  {
+    fprintf(g_output,"warning: %s\n",buf);
+    fflush(g_output);
+  }
+}
+
+void CEXEBuild::warning_fl(const char *s, ...)
+{
+  char buf[NSIS_MAX_STRLEN*4];
+  va_list val;
+  va_start(val,s);
+  vsprintf(buf,s,val);
+  va_end(val);
+  sprintf(buf+strlen(buf)," (%s:%d)",curfilename,linecnt);
+  m_warnings.add(buf,0);
   notify(MAKENSIS_NOTIFY_WARNING,buf);
   if (display_warnings)
   {
@@ -2565,7 +2794,7 @@ void CEXEBuild::build_plugin_table(void)
   }
 }
 
-#define FLAG_OFFSET(flag) (FIELD_OFFSET(installer_flags, flag)/sizeof(int))
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))
 
 int CEXEBuild::add_plugins_dir_initializer(void)
 {
@@ -2592,62 +2821,62 @@ again:
   zero_offset=add_string("$0");
 
   // SetDetailsPrint none
-  ret=add_entry_direct(EW_UPDATETEXT, 0, 4);
+  ret=add_entry_indirect(EW_UPDATETEXT, 0, 16);
   if (ret != PS_OK) return ret;
 
   // StrCmp $PLUGINSDIR ""
-  ret=add_entry_direct(EW_STRCMP, add_string("$PLUGINSDIR"), 0, 0, ns_label.add("Initialize_____Plugins_done",0));
+  ret=add_entry_indirect(EW_STRCMP, add_string("$PLUGINSDIR"), 0, 0, ns_label.add("Initialize_____Plugins_done",0));
   if (ret != PS_OK) return ret;
   // Push $0
-  ret=add_entry_direct(EW_PUSHPOP, zero_offset);
+  ret=add_entry_indirect(EW_PUSHPOP, zero_offset);
   if (ret != PS_OK) return ret;
   // ClearErrors
-  ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
+  ret=add_entry_indirect(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
+  ret=add_entry_indirect(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
 #else
-  ret=add_entry_direct(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
+  ret=add_entry_indirect(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
 #endif
   if (ret != PS_OK) return ret;
   // Delete $0 - the temp file created
-  ret=add_entry_direct(EW_DELETEFILE, zero_offset);
+  ret=add_entry_indirect(EW_DELETEFILE, zero_offset);
   if (ret != PS_OK) return ret;
   // CraeteDirectory $0 - a dir instead of that temp file
-  ret=add_entry_direct(EW_CREATEDIR, zero_offset);
+  ret=add_entry_indirect(EW_CREATEDIR, zero_offset);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
-  ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error)/sizeof(int));
+  ret=add_entry_indirect(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
+  ret=add_entry_indirect(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
 #else
-  ret=add_entry_direct(EW_ASSIGNVAR, 25, zero_offset);
+  ret=add_entry_indirect(EW_ASSIGNVAR, 25, zero_offset);
 #endif
   if (ret != PS_OK) return ret;
   // Pop $0
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_direct(EW_PUSHPOP, var_zero, 1);
+  ret=add_entry_indirect(EW_PUSHPOP, var_zero, 1);
 #else
-  ret=add_entry_direct(EW_PUSHPOP, 0, 1);
+  ret=add_entry_indirect(EW_PUSHPOP, 0, 1);
 #endif
   if (ret != PS_OK) return ret;
 
   // done
   if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
   // Return
-  ret=add_entry_direct(EW_RET);
+  ret=add_entry_indirect(EW_RET);
   if (ret != PS_OK) return ret;
 
   // error
   if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
   // error message box
-  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
+  ret=add_entry_indirect(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
   if (ret != PS_OK) return ret;
   // Quit
-  ret=add_entry_direct(EW_QUIT);
+  ret=add_entry_indirect(EW_QUIT);
   if (ret != PS_OK) return ret;
 
   // FunctionEnd
@@ -2730,21 +2959,18 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-
-    char *p = line.gettoken_str(token);
-    if ( *p == '$' && *(p+1) )
+  char *p = line.gettoken_str(token);
+  if ( *p == '$' && *(p+1) )
+  {
+    int idxUserVar = m_UserVarNames.get((char *)p+1);
+    if (idxUserVar >= 0 && m_UserVarNames.get_reference(idxUserVar) >= 0)
     {
-      int idxUserVar = m_UserVarNames.get((char *)p+1);
-      if ( idxUserVar >= 0 )
-      {
-        m_UserVarNames.inc_reference(idxUserVar);
-        return idxUserVar;
-      }
+      m_UserVarNames.inc_reference(idxUserVar);
+      return idxUserVar;
     }
-    return -1;
-
+  }
+  return -1;
 #else
-
   static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
                              "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";

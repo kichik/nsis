@@ -7,10 +7,12 @@ NLF v3
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by trace & Kypec
 Nullsoft Install System %s
-Inštalácia %s
-Odinštalácia %s
+Inštalácia $(^Name)
+Odinštalácia $(^Name)
 : Licenèná zmluva
 : Monosti inštalácie
 : Adresár inštalácie
@@ -36,7 +38,7 @@ Vlastná
 Zvo¾te typ inštalácie:
 Zvo¾te komponenty, ktoré sa majú nainštalova:
 Alebo, vyberte volite¾né komponenty, ktoré sa majú nainštalova:
-Zvo¾te adresár do ktorého sa má %s nainštalova:
+Zvo¾te adresár do ktorého sa má $(^Name) nainštalova:
 Vo¾nı priestor: 
 Potrebnı priestor: 
 Odinštalovávam z:

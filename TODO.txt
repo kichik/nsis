@@ -1,41 +1,29 @@
 TODO
 
--- NSIS 2 Beta 4 --
-
 NSIS
 
 * SetCurInstType should work without the components page
 
-* component page for uninstaller, multiple sections
-
-* more default texts in NLF language files
-
-* all installer strings should be language strings
-
-* move no custom to compiler (custom as just another inst type)
-
 * empty subsections should not show
 
--- Before NSIS 2 Final --
+* start optimizing datablock after file mapping was released
+
+* map files part by part to save memory
+
+* compressor from command line
+
+* skip plugin calls, file instructions that add more than one file with +1 with goto
+
+* more powerful plug-ins (access to ExecFunc and flags and even more)
+
+* LZMA compression
+
+* stop using static variables so CEXEBuild can be used as a real class
 
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple
   instfiles pages
-
-NSIS
-
-* skip plugin calls, file instructions that add more than one file with +1 with goto
-
-* different color for the drive space when there is not enough space
-
-* more powerful plug-ins (access to ExecFunc and flags and even more)
-
-* ChangeUI RTL full support
-
-* LZMA compression
-
-* stop using static variables so CEXEBuild can be used as a real class
 
 PLUGINS
 

@@ -7,10 +7,12 @@ NLF v2
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Casper Bergenstoff
 Nullsoft Installerings System %s
-%s Setup
-%s Afinstaller
+$(^Name) Setup
+$(^Name) Afinstaller
 : Licens Aftale
 : Installations egenskaber
 : Installation mappe
@@ -34,7 +36,7 @@ Tilpasset
 Vælg hvilken type du vil installere:
 Vælg komponenter du vil installere:
 Eller, Vælg de udvalgte komponenter som du vil installere:
-Vælg mappe du vil installere %s i:
+Vælg mappe du vil installere $(^Name) i:
 Plads til rådighed: 
 Krævet plads: 
 Afinstallerer fra:

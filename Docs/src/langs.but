@@ -6,19 +6,17 @@
 
 Loads a language file for the construction of a language table. All of the language files that come with NSIS are in \W{../Contrib/Language files}{Contrib\\Language Files}
 
-For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language id. Use it with /LANG, LangString, LangStringUP, and LangDLL.
+For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language id. Use it with \R{langstring}{LangString}, LangDLL and \R{viaddversionkey}{VIAddVersionKey}.
 
-\S2{langstring} LangString and LangStringUP
+\S2{langstring} LangString
 
-\c [un.]name language_id string
+\c name language_id string
 
-Defines a multilingual string and spares the comparing of $LANGUAGE to every language you have in your installer for every string you use. This also allows you to make section names and install types multilingual. To use in the uninstaller make sure you name the string with the un. prefix before.
+Defines a multilingual string. This means the its value will be different (or not, it's up to you) for every language. It allows you to easily make your installer multilingual without the need to add massive swithces to the script.
 
-LangStrings can you only be used on their own. You can't include them in other strings. "look at my $(string)! isn't it beautiful?" will be seen exactly as written, $(string) will not be expanded. If you want to use LangStrings in other strings you can first copy the LangString to a variable and then use the variable wherever you want. This is a temporary situation, it will be changed before NSIS 2 final.
+Each LangString has a name that identifies it and a value for each language used by the installer. To use a LangString you must know its name. LangStrings can be used in any runtime string in the script. To use a LangString all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.
 
-\\<b\\>Note #1:\\</b\\> Unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
-
-\\<b\\>Note #2:\\</b\\> If you see weird characters between letters in the string when you use LangString, use LangStringUP (LangString for unprocessed string such as InstType)
+\\<b\\>Note:\\</b\\> Unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
 
 For example, instead of:
 
@@ -35,53 +33,42 @@ Use:
 \c  LangString message ${LANG_FRENCH} "French message"
 \c  LangString message ${LANG_KOREAN} "Korean message"
 \c
-\c  MessageBox MB_OK $(message)
+\c  MessageBox MB_OK "A translated message: $(message)"
+
+\S2{licenselangstring} LicenseLangString
+
+\c name lang_id license_path
+
+Does the same as \R{langstring}{LangString} only it loads the string from a text/RTF file and defines a special LangString that can be used only by \R{alicensedata}{LicenseData}.
 
 \S0{langs} Multiple Languages
 
-As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated, and so can script strings such as messages in a message box.
+As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated using \R{langstring}{LangStrings}.
 
-Each installer has one or more language table which holds references to strings in the strings table. To create a language table all you need to do is use \R{loadlanguagefile}{LoadLanguageFile}, define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using \R{langstring}{LangString} or \R{langstring}{LangStringUP} and you have built your installer a language table.
+Each installer has one or more language tables which hold references to strings in the strings table. To create a language table all you need to do is use that language. Either use \R{loadlanguagefile}{LoadLanguageFile} or define a \R{langstring}{LangString} and you have built your installer a language table. To make sure all of the inner strings NSIS uses are there you should load a language file using use \R{loadlanguagefile}{LoadLanguageFile}. The strings from the language file will be used as defaults in case you don't define some strings in the script. The language file strings can be used by the script too, not just internally by NSIS. Each string in the language file is assigned to a specific LangString. That LangString's name is listed as a comment just above the string in the English language file for your convenience. The language file is located in \W{../Contrib/Language files}{Contrib\\Language Files}.
 
 For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{langselection} Language Selection
 
-When the installer starts up it goes through these stages to select the interface language:
+When the installer starts up it goes through these steps to select the interface language:
 
-\n Find a perfect match between the user default language (GetUserDefaultLangID())
+\n Get user's default language (GetUserDefaultLangID()) into \R{varconstant}{$LANGUAGE}
+
+\n Find a perfect match for the language id in \R{varconstant}{$LANGUAGE}
 
 \n If there is no perfect match, find a primary language match
 
-\n If no match, take the first language defined in the script
+\n If there is no no match, use the first language defined in the script
 
-\n If \R{varconstant}{$LANGUAGE} has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
-
-\S1{/lang} The /LANG Parameter
-
-All of the installer (and uninstaller) attributes setting commands have an optional parameter /LANG. This parameter tells the script compiler in which language table to put the specified string.
-
-For example:
-
-\c  Caption /LANG=${LANG_ENGLISH} "English caption"
-\c  Caption /LANG=${LANG_FRENCH} "French caption"
-\c  Caption /LANG=${LANG_DUTCH} "Dutch caption"
-
-When the installer will select the English language the caption will be "English caption", when it selects French the caption will be "French caption" and when it selects Dutch the caption will be "Dutch caption".
-
-If no /LANG parameter is specified, the compiler will assume the last used language, or the last loaded language.
-
-\c  LoadLanguageFile "${NSISDIR}\Language files\English.nlf"
-\c  Name "English name"
-\c  LoadLanguageFile "${NSISDIR}\Language files\German.nlf"
-\c  Name "German name"
-\c  Caption "German caption"
-\c  Caption /LANG=${LANG_ENGLISH} "English caption"
-\c  ComponentText "English components text"
-\c  ComponentText /LANG=${LANG_GERMAN} "German components text"
+\n If \R{varconstant}{$LANGUAGE} has changed during .onInit, go through steps 2 to 4 again
 
 \S1{langdll} LangDLL Plug-in
 
-The LangDLL plug-in lets you give the user the option to choose the language of the installer. Just push the language id ($\{LANG_*\}) and its name for every language in your installer, then the number of languages pushed, the caption, and the text that tells the user to select the language, call the plug-in function named LangDialog, pop the returned value into $LANGUAGE and you're good to go. If the user click on the cancel button the return value will be "cancel".
+The LangDLL plug-in allows you to give the user an option to choose the language of the installer. Just push the language id ($\{LANG_*\}) and its name for every language in your installer, then the number of languages pushed, the caption, and the text that tells the user to select the language, call the plug-in function named LangDialog, pop the returned value into $LANGUAGE and you're good to go. If the user clicks on the cancel button the return value will be "cancel".
 
 For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
+
+\S1{rtl} RTL Languages
+
+RTL languages are languages that are written from right to left. NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. If it is, NSIS will create another set of dialogs for the language that will be RTL. To find out on runtime if the language you're currently using is RTL or not check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise.

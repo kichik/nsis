@@ -26,6 +26,7 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <shlobj.h>
 #include "resource.h"
 #include "util.h"
 #include "fileform.h"
@@ -57,6 +58,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   char *cmdline;
 
   InitCommonControls();
+
+#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
+  {
+    extern HRESULT g_hres;
+    g_hres=OleInitialize(NULL);
+  }
+#endif
 
   GetTempPath(sizeof(state_temp_dir), state_temp_dir);
   validate_filename(state_temp_dir);
@@ -127,7 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     while (*p) p++;
 
     while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;    
-    
+
     if (p >= cmdline)
     {
       *(p-1)=0; // terminate before the " _?="
@@ -200,6 +208,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   log_write(1);
 #endif//NSIS_CONFIG_LOG
 end:
+
+#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
+  OleUninitialize();
+#endif
+
   if (g_db_hFile != INVALID_HANDLE_VALUE) CloseHandle(g_db_hFile);
 #ifdef NSIS_COMPRESS_WHOLE
   if (dbd_hFile != INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);

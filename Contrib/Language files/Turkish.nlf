@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Fatih BOY (fatih@smartcoding.org)
 Nullsoft Kurulum Sistemi %s
-%s Kurulumu
-%s Uninstaller
+$(^Name) Kurulumu
+$(^Name) Uninstaller
 : Sözlesme
 : Kurulum Ayarlari
 : Kurulum Dizini
@@ -36,7 +38,7 @@ Tamamlandi
 Kurulum seklini seçiniz:
 Kurulacak paketleri seçiniz:
 Veya, kurmak istediginiz paketleri seçiniz:
-%s kurulumu için bir dizin seçin:
+$(^Name) kurulumu için bir dizin seçin:
 Kalan bos alan:
 Gerekli bos alan: 
 Kaldiriliyor:

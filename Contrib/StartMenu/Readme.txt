@@ -2,7 +2,7 @@ StartMenu.dll shows a custom page that lets the user select a start menu program
 folder to put shortcuts in.
 
 To show the dialog use the Select function. This function has one required parameter 
-which is the program group default name, and some more optional parameters:
+which is the program group default name, and some more optional switches:
   /autoadd - automatically adds the program name to the selected folder
   /noicon - doesn't show the icon in the top left corner
   /text [please select...] - sets the top text to something else than
@@ -14,13 +14,20 @@ which is the program group default name, and some more optional parameters:
                            the user checks this box, the return value
                            will have > as its first character and you
                            should not create the program group.
+  /rtl - sets the direction of every control on the selection dialog
+         to RTL. This means every text shown on the page will be
+	 justified to the right.
+
+The order of the switches doesn't matter but the required parameter must come after
+all of them. Every switch after the required parameter will be ignored and left
+on the stack.
 
 The function pushes "success", "cancel" or an error to the stack. If there was no
 error and the user didn't press on cancel it will push the selected folder name
-after "success". If the user checked the no shortcuts checkbox the '>' will be
-appended to the folder name. The function does not push the full path but only the
-selected sub-folder. It's up to you to decide if to put it in the current user or
-all users start menu.
+after "success". If the user checked the no shortcuts checkbox the result will be
+prefixed with '>'. The function does not push the full path but only the selected
+sub-folder. It's up to you to decide if to put it in the current user or all
+users start menu.
 
 Look at Example.nsi for an example.
 

@@ -24,99 +24,43 @@
 
 #define _LANG_GENERIC_ERROR "NSIS ERROR"
 
+#define LANG_STR_TAB(x)             cur_langtable[-((int)x+1)]
 
-// Changed by Amir Szekely 3rd August 2002
-// Now supports more than one language in each installer
-
-// Modified by Dave Laundon 10th August 2002
-// In many places, these strings are now referenced by an ID (just their offsets
-// into the (common|installer|uninstall)_strings structures) through *_from_lang
-// and *FromLang functions - removing code-costly references to the
-// cur_(common|install|uninstall)_strings_table globals.  Common strings are
-// identified by IDs >=0 and install/uninstall strings by IDs <0.  What's more,
-// these IDs fall between -128 to +127 and compile to tiny 2-byte PUSH <8-bit>
-// instructions when being passed to the functions.
-
-// Please note that all LANG_* define the offset not the string itself.
-// To get the string itself use process_string_fromtab, GetStringFromStringTab or LANG_STR().
-
-#define LANG_STR(x)                   GetStringFromStringTab(x)
-#define LANG_STR_TAB(x)               cur_language_table[-((int)x+1)]
-
-#define INSTALL_STR(x)                (~((sizeof(common_strings) + FIELD_OFFSET(installer_strings, x)) / sizeof(int)))
-
-// Installer specific strings
-#define LANG_BTN_BROWSE               (INSTALL_STR(browse))
-#define LANG_BTN_INSTALL              (INSTALL_STR(installbutton))
-#define LANG_SPACE_REQ                (INSTALL_STR(spacerequired))
-#define LANG_SPACE_AVAIL              (INSTALL_STR(spaceavailable))
-#define LANG_COMP_CUSTOM              (INSTALL_STR(custom))
-#define LANG_DIR_TEXT                 (INSTALL_STR(text))
-#define LANG_DIR_SUBTEXT              (INSTALL_STR(dirsubtext))
-#define LANG_COMP_TEXT                (INSTALL_STR(componenttext))
-#define LANG_COMP_SUBTEXT(x)          (INSTALL_STR(componentsubtext[x]))
-#define LANG_LICENSE_TEXT             (INSTALL_STR(licensetext))
-#define LANG_LICENSE_DATA             (INSTALL_STR(licensedata))
-#define LANG_BTN_LICENSE              (INSTALL_STR(licensebutton))
-#define LANG_BTN_LICENSE_AGREE        (INSTALL_STR(licensebuttonagree))
-#define LANG_BTN_LICENSE_DISAGREE     (INSTALL_STR(licensebuttondisagree))
-
-#define UNINSTALL_STR(x)              (~((sizeof(common_strings) + FIELD_OFFSET(uninstall_strings, x)) / sizeof(int)))
-
-// Uninstall specific strings
-#define LANG_BTN_UNINST               (UNINSTALL_STR(uninstbutton))
-#define LANG_UNINST_TEXT              (UNINSTALL_STR(uninstalltext))
-#define LANG_UNINST_SUBTEXT           (UNINSTALL_STR(uninstalltext2))
-
-#define COMMON_STR(x)                 (~(FIELD_OFFSET(common_strings, x) / sizeof(int)))
-
-// Common strings
-#define LANG_BTN_NEXT                 (COMMON_STR(nextbutton))
-#define LANG_BTN_BACK                 (COMMON_STR(backbutton))
-#define LANG_BRANDING                 (COMMON_STR(branding))
-#define LANG_BTN_CANCEL               (COMMON_STR(cancelbutton))
-#define LANG_BTN_DETAILS              (COMMON_STR(showdetailsbutton))
-#define LANG_COMPLETED                (COMMON_STR(completed))
-#define LANG_BTN_CLOSE                (COMMON_STR(closebutton))
-#define LANG_NAME                     (COMMON_STR(name))
-#define LANG_CAPTION                  (COMMON_STR(caption))
-#define LANG_SUBCAPTION(x)            (COMMON_STR(subcaptions[x]))
-#define LANG_INSTCORRUPTED            (COMMON_STR(inst_corrupted))
-#define LANG_COPYDETAILS              (COMMON_STR(copy_details))
-#define LANG_LOG_INSTALL_PROCESS      (COMMON_STR(log_install_process))
-#define LANG_BYTE                     (COMMON_STR(byte))
-#define LANG_KILO                     (COMMON_STR(kilo))
-#define LANG_MEGA                     (COMMON_STR(mega))
-#define LANG_GIGA                     (COMMON_STR(giga))
-
-// instruction strings
-#define LANG_FILEERR                  (COMMON_STR(fileerrtext))
-#define LANG_FILEERR_NOIGNORE         (COMMON_STR(fileerrtext_noignore))
-#define LANG_DELETEFILE               (COMMON_STR(del_file))
-#define LANG_DLLREGERROR              (COMMON_STR(err_reg_dll))
-#define LANG_REMOVEDIR                (COMMON_STR(remove_dir))
-#define LANG_OUTPUTDIR                (COMMON_STR(output_dir))
-#define LANG_CREATEDIR                (COMMON_STR(create_dir))
-#define LANG_RENAME                   (COMMON_STR(rename))
-#define LANG_RENAMEONREBOOT           (COMMON_STR(rename_on_reboot))
-#define LANG_SKIPPED                  (COMMON_STR(skipped))
-#define LANG_CANTWRITE                (COMMON_STR(cant_write))
-#define LANG_EXTRACT                  (COMMON_STR(extract))
-#define LANG_ERRORWRITING             (COMMON_STR(err_writing))
-#define LANG_ERRORDECOMPRESSING       (COMMON_STR(err_decompressing))
-#define LANG_DELETEONREBOOT           (COMMON_STR(del_on_reboot))
-#define LANG_EXECSHELL                (COMMON_STR(exec_shell))
-#define LANG_EXECUTE                  (COMMON_STR(exec))
-#define LANG_CANNOTFINDSYMBOL         (COMMON_STR(symbol_not_found))
-#define LANG_COULDNOTLOAD             (COMMON_STR(could_not_load))
-#define LANG_NOOLE                    (COMMON_STR(no_ole))
-#define LANG_ERRORCREATINGSHORTCUT    (COMMON_STR(err_creating_shortcut))
-#define LANG_CREATESHORTCUT           (COMMON_STR(create_shortcut))
-#define LANG_COPYTO                   (COMMON_STR(copy_to))
-#define LANG_COPYFAILED               (COMMON_STR(copy_failed))
-#define LANG_ERRORCREATING            (COMMON_STR(err_creating))
-#define LANG_CREATEDUNINST            (COMMON_STR(created_uninst))
-#define LANG_REGISTERING              (COMMON_STR(registering))
-#define LANG_UNREGISTERING            (COMMON_STR(unregistering))
+#define LANG_BRANDING               -1
+#define LANG_CAPTION                -2
+#define LANG_NAME                   -3
+#define LANG_SPACE_AVAIL            -4
+#define LANG_SPACE_REQ              -5
+#define LANG_CANTWRITE              -6
+#define LANG_COPYFAILED             -7
+#define LANG_COPYTO                 -8
+#define LANG_CANNOTFINDSYMBOL       -9
+#define LANG_COULDNOTLOAD           -10
+#define LANG_CREATEDIR              -11
+#define LANG_CREATESHORTCUT         -12
+#define LANG_CREATEDUNINST          -13
+#define LANG_DELETEFILE             -14
+#define LANG_DELETEONREBOOT         -15
+#define LANG_ERRORCREATINGSHORTCUT  -16
+#define LANG_ERRORCREATING          -17
+#define LANG_ERRORDECOMPRESSING     -18
+#define LANG_DLLREGERROR            -19
+#define LANG_EXECSHELL              -20
+#define LANG_EXECUTE                -21
+#define LANG_EXTRACT                -22
+#define LANG_ERRORWRITING           -23
+#define LANG_INSTCORRUPTED          -24
+#define LANG_NOOLE                  -25
+#define LANG_OUTPUTDIR              -26
+#define LANG_REMOVEDIR              -27
+#define LANG_RENAMEONREBOOT         -28
+#define LANG_RENAME                 -29
+#define LANG_SKIPPED                -30
+#define LANG_COPYDETAILS            -31
+#define LANG_LOG_INSTALL_PROCESS    -32
+#define LANG_BYTE                   -33
+#define LANG_KILO                   -34
+#define LANG_MEGA                   -35
+#define LANG_GIGA                   -36
 
 #endif//_NSIS_LANG_H_

@@ -86,11 +86,19 @@ Shows or hides the details, depending on which parameter you pass. Overrides the
 
 Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).
 
-\S2{setbkcolor} SetBkColor
+\S2{setctlcolors} SetCtlColors
 
-\c hwnd color
+\c hwnd (branding | (text_color (transparent|bg_color)))
 
-Sets a background color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the color value. \e{Do not} use this on branding image controls!
+Sets a background color and the text color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the background color value. You can also specify branding instead of text color and background color to make the control completely gray. This is used by the branding text control in the MUI.
+
+\S2{setsilent} SetSilent
+
+\c silent | normal
+
+Sets the installer to silent mode or normal mode. See \R{asilentinstall}{SilentInstall} for more information about silent installations. Can only be used in \R{oninit}{.onInit}.
+
+Sets the installer
 
 \S2{showwindow} ShowWindow
 

@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Hendri Adriaens & Joost Verburg
 Nullsoft Install System %s
-%s Installatie
-%s Deïnstallatie
+$(^Name) Installatie
+$(^Name) Deïnstallatie
 : Licentie Overeenkomst
 : Installatie Opties
 : Installatie Map
@@ -36,7 +38,7 @@ Handmatig
 Selecteer het installatietype:
 Selecteer de installatieonderdelen:
 Of selecteer de onderdelen die geïnstalleerd moeten worden:
-Selecteer de map om %s in te installeren:
+Selecteer de map om $(^Name) in te installeren:
 Beschikbare ruimte: 
 Vereiste ruimte: 
 Uninstallatie vanuit:

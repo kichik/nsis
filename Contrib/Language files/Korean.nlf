@@ -8,10 +8,12 @@ NLF v5
 9
 # Codepage - dash (-) means ANSI code page
 949
+# RTL - anything else than RTL means LTR
+-
 # Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx  /  Modified by koder@popdesk.co.kr
 널소프트 설치 시스템 %s
-%s 설치
-%s 제거
+$(^Name) 설치
+$(^Name) 제거
 : 사용 계약 동의
 : 설치 옵션
 : 폴더 지정
@@ -37,7 +39,7 @@ NLF v5
 설치 형태를 선택하세요:
 설치하려는 구성 요소를 선택하세요:
 구성요소 직접 선택:
-%s (을)를 다음 폴더에 설치합니다:
+$(^Name) (을)를 다음 폴더에 설치합니다:
 남은 디스크 공간: 
 필요한 디스크 공간: 
 제거 대상:

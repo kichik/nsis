@@ -26,14 +26,18 @@
 // really a big deal, but not usually needed).
 #define NSIS_MAX_STRLEN 1024
 
-// NSIS_MAX_INST_TYPES specified the  maximum install types.
+// NSIS_MAX_INST_TYPES define the maximum install types.
 // note that this should not exceed 32, ever.
 #define NSIS_MAX_INST_TYPES 32
+
+// NSIS_DEFAULT_LANG defines the default language id NSIS will use if nothing
+// else is defined in the script. Default value is 1033 which is English.
+#define NSIS_DEFAULT_LANG 1033
 
 // NSIS_CONFIG_UNINSTALL_SUPPORT enables the uninstaller
 // support. Comment it out if your installers don't need
 // uninstallers
-// adds approximately 2kb.
+// adds less than 1kb.
 #define NSIS_CONFIG_UNINSTALL_SUPPORT
 
 // NSIS_CONFIG_LICENSEPAGE enables support for the installer to
@@ -54,7 +58,7 @@
 #define NSIS_CONFIG_VISIBLE_SUPPORT
 
 // NSIS_CONFIG_ENHANCEDUI_SUPPORT enables support for CreateFont, 
-// SetBkColor (used by some UIs), SetBrandingImage, .onInitDialog, etc
+// SetCtlColors (used by some UIs), SetBrandingImage, .onGUIInit, etc
 #define NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 // NSIS_CONFIG_COMPRESSION_SUPPORT enables support for making installers
@@ -103,9 +107,9 @@
 
 // NSIS_CONFIG_LOG enables the logging facility.
 // turning this on (by uncommenting it) adds about
-// 3kb, but can be useful in debugging your installers.
+// 4kb, but can be useful in debugging your installers.
 // NOT ENABLED BY DEFAULT.
-// #define NSIS_CONFIG_LOG
+//#define NSIS_CONFIG_LOG
 
 // NSIS_SUPPORT_BGBG enables support for the blue (well, whatever
 // color you want) gradient background window.
@@ -253,7 +257,7 @@
     #undef NSIS_SUPPORT_BGBG
   #endif
   #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-  #undef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+    #undef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   #endif
 #endif
 
@@ -354,18 +358,22 @@
   #error NSIS_MAX_INST_TYPES > 32
 #endif
 
+#ifndef NSIS_DEFAULT_LANG
+  #define NSIS_DEFAULT_LANG 1033
+#endif
+
 #ifndef INVALID_FILE_ATTRIBUTES
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
 // This is the old static var count that occupies memory
-// From $0 to $PLUGINSDIR
-#define USER_VARS_COUNT 26
+// From $0 to $PLUGINSDIR, $_CLICK
+#define USER_VARS_COUNT 28
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
 // This is the total number of old static var
 // From $0 to $HWNDPARENT
-#define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 36
+#define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 37
 
 #define VARS_SECTION_NAME ".ndata"
 

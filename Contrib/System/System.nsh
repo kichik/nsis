@@ -93,6 +93,10 @@
 ;       HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop);
 !define sysBitBlt "gdi32::BitBlt(i, i, i, i, i, i, i, i, i) i"
 
+; proposed by abgandar
+; int AddFontResource(LPCTSTR lpszFilename);
+!define sysAddFontResource "gdi32::AddFontResourceA(t) i"
+
 ; HDC BeginPaint(HWND hwnd, LPPAINTSTRUCT lpPaint);
 !define sysBeginPaint "user32::BeginPaint(i, i) i"
 

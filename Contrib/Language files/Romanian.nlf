@@ -7,12 +7,14 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 1250
+# RTL - anything else than RTL means LTR
+-
 # Revision by Sorin Sbarnea (sorin@intersol.ro)      v5.1
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v5
 # and Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
 Sistem de instalare Nullsoft %s
-Instalare %s
-Dezinstalare %s
+Instalare $(^Name)
+Dezinstalare $(^Name)
 : Licenta de utilizare
 : Optiuni de instalare
 : Directorul de instalare
@@ -38,7 +40,7 @@ Nestandard
 Alegeti tipul instalarii:
 Alegeti componentele de instalat:
 Sau alegeti componentele optionale pe care vreti sa le instalati:
-Selectati directorul In care vreti sa instalati %s:
+Selectati directorul In care vreti sa instalati $(^Name):
 Spatiu disponibil:
 Spatiu necesar:
 Dezinstaleaza din:

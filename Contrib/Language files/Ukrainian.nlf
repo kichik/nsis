@@ -7,10 +7,12 @@ NLF v4
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Yuri Holubow, Nash-Soft.com <http://www.Nash-Soft.com/home>
 Nullsoft Install System %s
-%s Установка
-%s Видалення
+$(^Name) Установка
+$(^Name) Видалення
 : Лiцензiйна угода
 : Опцiї установки
 : Директорiя установки
@@ -36,7 +38,7 @@ Iм'я
 Виберiть тип установки: 
 Виберiть компоненти для установки: 
 Чи, виберiть вручну компоненти, якi Ви хочете встановити: 
-Виберiть директорiю для установки %s в: 
+Виберiть директорiю для установки $(^Name) в: 
 Доступно мiсця: 
 Необхiдно мiсця: 
 Видалення з: 

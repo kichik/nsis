@@ -17,11 +17,12 @@
 #define PCD_PARAMS  2
 #define PCD_DONE    3   // Just Continue
 
-int ParamSizeByType[6] = {0, // PAT_VOID (Size will be equal to 1)
+int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_INT
     2, // PAT_LONG
     1, // PAT_STRING
-    1, // PAT_BOOLEAN
+    1, // PAT_WSTRING
+    1, // PAT_GUID
     0}; // PAT_CALLBACK (Size will be equal to 1)
 
 int z1, z2; // I've made them static for easier use at callback procs
@@ -35,7 +36,6 @@ HINSTANCE g_hInstance;
 // Return to callback caller with stack restore
 char retexpr[3] = {0xC2, 0x00, 0x00};
 HANDLE retaddr;
-
 
 char *GetResultStr(SystemProc *proc)
 {
@@ -180,6 +180,7 @@ PLUGINFUNCTION(Call)
                 proc = CallBack(proc);
             break;
         case PT_PROC:
+        case PT_VTABLEPROC:
             proc = CallProc(proc); break;
         case PT_STRUCT:
             CallStruct(proc); break;
@@ -253,7 +254,8 @@ PLUGINFUNCTIONSHORT(Int64Op)
     case '%': 
         // It's unclear, but in this case compiler will use DivMod rountine
         // instead of two separate Div and Mod rountines.
-        i3 = i1 / i2; i4 = i1 % i2;
+        if (i2 == 0) { i3 = 0; i4 = i1; }
+        else {i3 = i1 / i2; i4 = i1 % i2; }
         if (*op == '/') i1 = i3; else i1 = i4; 
         break;
     case '|': if (op[1] == '|') i1 = i1 || i2; else i1 |= i2; break;
@@ -306,7 +308,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         {
         case 0x0: SectionType = -1; break;
         case '#': SectionType = PST_PROC; ProcType = PT_NOTHING; break;
-        case '(': SectionType = PST_PARAMS; ParamIndex = 1; temp3 = temp = 0; break;
+        case '(': 
+            SectionType = PST_PARAMS; 
+            // fake-real parameter: for COM interfaces first param is Interface Pointer
+            ParamIndex = ((ProcType == PT_VTABLEPROC)?(2):(1)); 
+            temp3 = temp = 0; 
+            break;
         case ')': SectionType = PST_RETURN; temp3 = temp = 0; break;
         case '?': SectionType = PST_OPTIONS; temp = 1; break;
         }
@@ -364,6 +371,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     }
                     break;
                 case PT_PROC:
+                case PT_VTABLEPROC:
                     lstrcpy(proc->ProcName, cbuf);
                     lstrcpy(proc->DllName, sbuf);
                     break;
@@ -389,8 +397,16 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             switch (*ib)
             {
             case ':':
+            case '-':
                 // Is it '::'
-                if (*(ib+1) != ':') break;
+                if ((*(ib) == '-') && (*(ib+1) == '>'))
+                {
+                    ProcType = PT_VTABLEPROC;    
+                } else
+                {
+                    if ((*(ib+1) != ':') || (*(ib) == '-')) break;
+                    ProcType = PT_PROC;
+                }
                 ib++; // Skip next ':'
 
                 if (cb > cbuf)
@@ -400,7 +416,6 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 } else  *sbuf = 0; // No dll - system proc
                 
                 // Ok
-                ProcType = PT_PROC;
                 ChangesDone = PCD_DONE;
                 break;
             case '*':
@@ -442,8 +457,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case 'L': temp2 = PAT_LONG; break;
             case 't':
             case 'T': temp2 = PAT_STRING; break;
-            case 'b':
-            case 'B': temp2 = PAT_BOOLEAN; break;
+            case 'g':
+            case 'G': temp2 = PAT_GUID; break;
+            case 'w':
+            case 'W': temp2 = PAT_WSTRING; break;
             case 'k':
             case 'K': temp2 = PAT_CALLBACK; break;
 
@@ -589,6 +606,32 @@ SystemProc *PrepareProc(BOOL NeedForCall)
         switch (proc->ProcType)
         {
         case PT_NOTHING: break;
+        case PT_VTABLEPROC:
+            {
+                // Use direct system proc address
+                int addr;
+  
+                if ((proc->Dll = addr = (HANDLE) myatoi(proc->DllName)) == 0)
+                {
+                    proc->ProcResult = PR_ERROR;
+                    break;
+                }
+
+                // fake-real parameter: for COM interfaces first param is Interface Pointer
+                proc->Params[1].Output = IOT_NONE;
+                proc->Params[1].Input = AllocStr(proc->DllName);
+                proc->Params[1].Size = 1;
+                proc->Params[1].Type = PAT_INT;
+                proc->Params[1].Option = 0;
+
+                // addr - pointer to interface vtable
+                addr = *((int *)addr);
+                // now addr contains the pointer to first item at VTABLE
+                // add the index of proc
+                addr = addr + (myatoi(proc->ProcName)*4);
+                proc->Proc = *((HANDLE*)addr);
+            }
+            break;
         case PT_PROC:
             if (*proc->DllName == 0)
             {
@@ -607,7 +650,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
 
                 // Get proc address
                 if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
-                    proc->ProcResult = PR_ERROR;
+                {
+                    // automatic A discover
+                    lstrcat(proc->ProcName, "A");
+                    if ((proc->Proc = GetProcAddress(proc->Dll, proc->ProcName)) == NULL)
+                        proc->ProcResult = PR_ERROR;                            
+                }                    
             }
             break;
         case PT_STRUCT:
@@ -634,6 +682,7 @@ void ParamsIn(SystemProc *proc)
 {
     int i, *place;
     char *realbuf;
+    LPWSTR wstr;
 
     i = (proc->ParamCount > 0)?(1):(0);
     while (TRUE)
@@ -654,7 +703,10 @@ void ParamsIn(SystemProc *proc)
         // Retreive pointer to place
         if (proc->Params[i].Option == -1) place = (int*) proc->Params[i].Value;
         else place = (int*) &(proc->Params[i].Value);
-    
+
+        // by default no blocks are allocated
+        proc->Params[i].allocatedBlock = NULL;
+
         // Step 2: place it
         switch (proc->Params[i].Type)
         {
@@ -671,10 +723,19 @@ void ParamsIn(SystemProc *proc)
 /*            if (proc->Params[i].Input == IOT_NONE) 
                 *((int*) place) = (int) NULL;
             else*/
-                *((int*) place) = (int) AllocStr(realbuf);
+            *((int*) place) = (int) (proc->Params[i].allocatedBlock = AllocStr(realbuf));
             break;
-        case PAT_BOOLEAN:
-            *((int*) place) = lstrcmpi(realbuf, "true");
+        case PAT_WSTRING:
+        case PAT_GUID:
+            wstr = (LPWSTR) (proc->Params[i].allocatedBlock = GlobalAlloc(GPTR, g_stringsize*2));
+            MultiByteToWideChar(CP_ACP, 0, realbuf, g_stringsize, wstr, g_stringsize);
+            if (proc->Params[i].Type == PAT_GUID)
+            {
+                *((HGLOBAL*)place) = (proc->Params[i].allocatedBlock = GlobalAlloc(GPTR, 16));
+                CLSIDFromString(wstr, *((LPCLSID*)place));
+                GlobalFree((HGLOBAL) wstr);
+            } else
+                *((LPWSTR*)place) = wstr;
             break;
         case PAT_CALLBACK:
             // Generate new or use old callback
@@ -718,6 +779,7 @@ void ParamsOut(SystemProc *proc)
 {
     int i, *place;
     char *realbuf;
+    LPWSTR wstr;
 
     i = proc->ParamCount;
     do
@@ -745,16 +807,28 @@ void ParamsOut(SystemProc *proc)
                 int num = lstrlen(*((char**) place));
                 if (num >= g_stringsize) num = g_stringsize-1;
                 lstrcpyn(realbuf,*((char**) place), num+1);
-                realbuf[num] = 0;
+                realbuf[num] = 0;                
             }
             break;
-        case PAT_BOOLEAN:
-            lstrcpy(realbuf,(*((int*) place))?("true"):("false"));
+        case PAT_GUID:
+            wstr = (LPWSTR) GlobalAlloc(GPTR, g_stringsize*2);
+            StringFromGUID2(*((REFGUID*)place), wstr, g_stringsize*2);
+            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL); 
+            GlobalFree((HGLOBAL)wstr);
+            break;
+        case PAT_WSTRING:
+            wstr = *((LPWSTR*)place);
+            WideCharToMultiByte(CP_ACP, 0, wstr, g_stringsize, realbuf, g_stringsize, NULL, NULL);             
             break;
         case PAT_CALLBACK:
             wsprintf(realbuf, "%d", proc->Params[i].Value);
             break;
         }
+
+        // memory cleanup
+        if ((proc->Params[i].allocatedBlock != NULL) && ((proc->ProcType != PT_STRUCT)
+            || (proc->Params[i].Option > 0)))
+            GlobalFree(proc->Params[i].allocatedBlock);
 
         // Step 2: place it
         if (proc->Params[i].Output == IOT_NONE);
@@ -1160,7 +1234,11 @@ void CallStruct(SystemProc *proc)
                 // pointer
                 ptr = (char*) &(proc->Params[i].Value); 
                 break;
-            case PAT_STRING: ptr = (char*) proc->Params[i].Value; break;
+
+            case PAT_STRING: 
+            case PAT_GUID: 
+            case PAT_WSTRING: 
+                ptr = (char*) proc->Params[i].Value; break;
             }
         }
 

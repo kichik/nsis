@@ -7,11 +7,13 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 1250
+# RTL - anything else than RTL means LTR
+-
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
 # corrections, additions, updates by cube cube(at)lp.net.pl
 Nullsoft Install System %s
-%s Instalator
-%s Odinstaluj
+$(^Name) Instalator
+$(^Name) Odinstaluj
 : Warunki licencji
 : Opcje instalacji
 : Folder instalacji
@@ -37,7 +39,7 @@ U¿ytkownika
 Wybierz typ instalacji:
 Wybierz komponenty do zainstalowania:
 lub wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
-Wybierz folder instalacji %s:
+Wybierz folder instalacji $(^Name):
 Dostêpne miejsce: 
 Wymagane miejsce:  
 Odinstalowuje z: 
