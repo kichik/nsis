@@ -191,6 +191,8 @@
 
 !macro MUI_GUIINIT
 
+  !verbose 3
+
   Push ${MUI_TEMP1}
   Push ${MUI_TEMP2}
 
@@ -211,6 +213,98 @@
   Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
   
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMANDS
+ 
+  !verbose 3
+
+  !insertmacro MUI_PAGECOMMAND_LICENSE
+  !insertmacro MUI_PAGECOMMAND_COMPONENTS
+  !insertmacro MUI_PAGECOMMAND_DIRECTORY
+  !insertmacro MUI_PAGECOMMAND_INSTFILES
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_LICENSE
+
+  !verbose 3
+
+  !ifdef MUI_LICENSEPAGE
+    Page license SetLicense SetLicenseDialog
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_COMPONENTS
+
+  !verbose 3
+
+  !ifdef MUI_COMPONENTSPAGE
+    Page components SetComponents SetComponentsDialog
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_DIRECTORY
+
+  !verbose 3
+
+  !ifdef MUI_DIRECTORYPAGE
+    Page directory SetDirectory SetDirectoryDialog
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_INSTFILES
+
+  !verbose 3
+
+  Page instfiles SetInstFiles
+   
+  !verbose 4
+   
+!macroend
+
+!macro MUI_UNPAGECOMMANDS
+ 
+  !verbose 3
+
+  !insertmacro MUI_UNPAGECOMMAND_CONFIRM
+  !insertmacro MUI_UNPAGECOMMAND_INSTFILES
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_UNPAGECOMMAND_CONFIRM
+
+  !verbose 3
+
+  UninstPage uninstConfirm un.SetUninstConfirm
+   
+  !verbose 4
+   
+!macroend
+
+!macro MUI_UNPAGECOMMAND_INSTFILES
+
+  !verbose 3
+
+  UninstPage instfiles un.SetInstFiles
+   
+  !verbose 4
+   
 !macroend
 
 ;--------------------------------
@@ -307,6 +401,28 @@
 
 !macroend
 
+!macro MUI_FUNCTIONS_PAGES
+
+  !verbose 3
+
+  !ifdef MUI_LICENSEPAGE
+    !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
+  !endif
+  
+  !ifdef MUI_COMPONENTSPAGE
+    !insertmacro MUI_FUNCTIONS_COMPONENTSPAGE SetComponents SetComponentsDialog
+  !endif
+  
+  !ifdef MUI_DIRECTORYPAGE
+    !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
+  !endif
+  
+  !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
+
+  !verbose 4
+
+!macroend
+
 !macro MUI_FUNCTIONS_LICENSEPAGE SETLICENSE SETLICENSEDIALOG
 
   !verbose 3
@@ -394,9 +510,11 @@
 
   !verbose 3
 
-  Function .onUserAbort
-    !insertmacro MUI_ABORTWARNING
-  FunctionEnd
+  !ifdef MUI_ABORTWARNING
+    Function .onUserAbort
+      !insertmacro MUI_ABORTWARNING
+    FunctionEnd
+  !endif
 
   !verbose 4
 
@@ -412,6 +530,13 @@
 
   !verbose 4
 
+!macroend
+
+!macro MUI_UNFUNCTIONS_PAGES
+  
+  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
+  !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
+  
 !macroend
 
 !macro MUI_UNFUNCTIONS_CONFIRMPAGE UNSETUNINSTCONFIRM
@@ -445,30 +570,22 @@
 
   !verbose 3
 
-  !ifdef MUI_LICENSEPAGE
-    Page license SetLicense SetLicenseDialog
-    !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
-  !endif
-
-  !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog
-    !insertmacro MUI_FUNCTIONS_COMPONENTSPAGE SetComponents SetComponentsDialog
-  !endif
-
-  !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog
-    !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
-  !endif
-
-  Page instfiles SetInstFiles
-
-  !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
-
+  !insertmacro MUI_PAGECOMMANDS
+  !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
+  !insertmacro MUI_FUNCTIONS_ABORTWARNING
   
-  !ifdef MUI_ABORTWARNING
-    !insertmacro MUI_FUNCTIONS_ABORTWARNING
-  !endif
+  !verbose 4
+
+!macroend
+
+!macro MUI_FUNCTIONS_CUSTOMPAGE_BASIC
+
+  !verbose 3
+ 
+  !insertmacro MUI_FUNCTIONS_PAGES
+  !insertmacro MUI_FUNCTIONS_GUIINIT
+  !insertmacro MUI_FUNCTIONS_ABORTWARNING
   
   !verbose 4
 
@@ -478,12 +595,19 @@
 
   !verbose 3
 
-  UninstPage uninstConfirm un.SetUninstConfirm
-  UninstPage instfiles un.SetInstFiles
+  !insertmacro MUI_UNPAGECOMMANDS
+  !insertmacro MUI_UNFUNCTIONS_PAGES
+  !insertmacro MUI_UNFUNCTIONS_GUIINIT
 
-  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
-  !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
+  !verbose 4
 
+!macroend
+
+!macro MUI_UNFUNCTIONS_CUSTOMPAGE_BASIC
+
+  !verbose 3
+
+  !insertmacro MUI_UNFUNCTIONS_PAGES
   !insertmacro MUI_UNFUNCTIONS_GUIINIT
 
   !verbose 4
