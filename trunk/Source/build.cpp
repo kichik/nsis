@@ -897,6 +897,19 @@ int CEXEBuild::add_entry(const entry *ent)
   return PS_OK;
 }
 
+int CEXEBuild::add_entry_direct(int which, int o0, int o1, int o2, int o3, int o4, int o5 /*o#=0*/)
+{
+  entry ent;
+  ent.which = which;
+  ent.offsets[0] = o0;
+  ent.offsets[1] = o1;
+  ent.offsets[2] = o2;
+  ent.offsets[3] = o3;
+  ent.offsets[4] = o4;
+  ent.offsets[5] = o5;
+  return add_entry(&ent);
+}
+
 int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int end)
 {
   if (*a > 0)
@@ -2260,91 +2273,67 @@ int CEXEBuild::add_plugins_dir_initializer(void)
   bool uninstall = !plugin_used;
 
   int ret;
-  entry ent;
   int zero_offset;
 
 again:
+  // Function [un.]Initialize_____Plugins
+  int old_display_script=display_script;
+  display_script=0;
   ret=add_function(uninstall?"un.Initialize_____Plugins":"Initialize_____Plugins");
+  display_script=old_display_script;
   if (ret != PS_OK) return ret;
-  // SetDetailsPrint none
-  /*ent.which=EW_UPDATETEXT;
-  ent.offsets[1]=4; // none
-  ret=add_entry(&ent);
-  if (ret != PS_OK) return ret;*/
 
+  // don't move this, depends on [un.]
   zero_offset=add_string("$0");
+
+  // SetDetailsPrint none
+  ret=add_entry_direct(EW_UPDATETEXT, 0, 4);
+  if (ret != PS_OK) return ret;
+
   // StrCmp $PLUGINSDIR ""
-  ent.which=EW_STRCMP;
-  ent.offsets[0]=add_string("$PLUGINSDIR");
-  ent.offsets[1]=0;
-  ent.offsets[2]=0;
-  ent.offsets[3]=ns_label.add("Initialize_____Plugins_done",0);
-  ret=add_entry(&ent);
+  ret=add_entry_direct(EW_STRCMP, add_string("$PLUGINSDIR"), 0, 0, ns_label.add("Initialize_____Plugins_done",0));
   if (ret != PS_OK) return ret;
   // Push $0
-  ent.which=EW_PUSHPOP;
-  ent.offsets[0]=zero_offset;
-  ent.offsets[1]=0;
-  ent.offsets[3]=0;
-  ret=add_entry(&ent);
+  ret=add_entry_direct(EW_PUSHPOP, zero_offset);
   if (ret != PS_OK) return ret;
-  // Get temp file name
-  ent.which=EW_GETTEMPFILENAME;
-  ent.offsets[0]=0; // $0
-  ret=add_entry(&ent);
-  // Delete the temp file created
-  ent.which=EW_DELETEFILE;
-  ent.offsets[0]=zero_offset;
-  ent.offsets[1]=0;
-  ret=add_entry(&ent);
+  // ClearErrors
+  ret=add_entry_direct(EW_SETFLAG, 2);
   if (ret != PS_OK) return ret;
-  // Craete a dir instead of that temp file
-  ent.which=EW_CREATEDIR;
-  ent.offsets[0]=zero_offset;
-  ent.offsets[1]=0;
-  ret=add_entry(&ent);
+  // GetTempFileName $0
+  ret=add_entry_direct(EW_GETTEMPFILENAME);
   if (ret != PS_OK) return ret;
-  // Detect errors
+  // Delete $0 - the temp file created
+  ret=add_entry_direct(EW_DELETEFILE, zero_offset);
   if (ret != PS_OK) return ret;
-  ent.which=EW_IFERRORS;
-  ent.offsets[0]=ns_label.add("Initialize_____Plugins_error",0);
-  ret=add_entry(&ent);
+  // CraeteDirectory $0 - a dir instead of that temp file
+  ret=add_entry_direct(EW_CREATEDIR, zero_offset);
+  if (ret != PS_OK) return ret;
+  // IfErrors Initialize_____Plugins_error - detect errors
+  ret=add_entry_direct(EW_IFERRORS, ns_label.add("Initialize_____Plugins_error",0));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
-  ent.which=EW_PLUGINCOMMANDPREP;
-  ent.offsets[0]=0;
-  ret=add_entry(&ent);
+  ret=add_entry_direct(EW_PLUGINCOMMANDPREP);
   if (ret != PS_OK) return ret;
   // Pop $0
-  ent.which=EW_PUSHPOP;
-  ent.offsets[0]=0; // $0
-  ent.offsets[1]=1;
-  ent.offsets[2]=0;
-  ret=add_entry(&ent);
+  ret=add_entry_direct(EW_PUSHPOP, 0, 1);
   if (ret != PS_OK) return ret;
 
   // done
   if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
-  ent.which=EW_RET;
-  ent.offsets[1]=0;
-  ret=add_entry(&ent);
+  // Return
+  ret=add_entry_direct(EW_RET);
   if (ret != PS_OK) return ret;
 
   // error
   if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
   // error message box
-  ent.which=EW_MESSAGEBOX;
-  ent.offsets[0]=MB_OK|MB_ICONSTOP;
-  ent.offsets[1]=add_string("Error! Can't initialize plug-ins directory. Please try again later.");
-  ret=add_entry(&ent);
+  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
   if (ret != PS_OK) return ret;
-  // quit
-  ent.which=EW_QUIT;
-  ent.offsets[0]=0;
-  ent.offsets[1]=0;
-  ret=add_entry(&ent);
+  // Quit
+  ret=add_entry_direct(EW_QUIT);
   if (ret != PS_OK) return ret;
 
+  // FunctionEnd
   ret=function_end();
   if (ret != PS_OK) return ret;
 
