@@ -119,6 +119,7 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\LogicLib.nsh
   File ..\Include\StrFunc.nsh
   File ..\Include\StrFunc.txt
+  File ..\Include\Colors.nsh
 
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\contrib\makensisw\*.txt
