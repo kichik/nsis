@@ -66,7 +66,7 @@ BEGIN
     POPUP "&File"
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
-        MENUITEM "&Test\tCtrl+T",               IDM_TEST
+        MENUITEM "&Test Installer\tCtrl+T",               IDM_TEST
         MENUITEM "&Save Output...",             IDM_SAVE
         MENUITEM SEPARATOR
         MENUITEM "&Load Script...",             IDM_LOADSCRIPT
@@ -142,7 +142,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,202,346,1
     LTEXT           "",IDC_VERSION,7,212,200,12,WS_DISABLED
     DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,296,208,49,15
-    PUSHBUTTON      "&Test",IDC_TEST,240,208,50,15,WS_DISABLED
+    PUSHBUTTON      "&Test Installer",IDC_TEST,230,208,60,15,WS_DISABLED
 END
 
 DLG_ABOUT DIALOG DISCARDABLE  0, 0, 235, 86
