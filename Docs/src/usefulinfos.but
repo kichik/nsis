@@ -44,7 +44,7 @@ Write a value using the WriteRegStr command (for strings) or WriteRegDWORD comma
 \\<b\\>Required values\\</b\\>
 
 \e{DisplayName} (string) - Name of the application \\<br\\>
-\e{UninstallString} (string) - Path and filename of the uninstaller
+\e{UninstallString} (string) - Path and filename of the uninstaller. You should \\<b\\>always\\</b\\> quote the path to make sure spaces in the path will not disrupt Windows to find the uninstaller.
 
 \\<b\\>Optional values\\</b\\>
 
