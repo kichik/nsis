@@ -293,6 +293,7 @@ Section "MakeNSISW Source" SecSrcMNW
   File ..\contrib\makensisw\*.ds?
   File ..\contrib\makensisw\*.rc
   File ..\contrib\makensisw\*.txt
+  File ..\contrib\makensisw\*.bmp
   #File ..\contrib\makensisw\Makefile
 
 SectionEnd

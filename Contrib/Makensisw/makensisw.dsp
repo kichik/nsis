@@ -149,6 +149,10 @@ SOURCE=..\Icons\lama3.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\logo.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=..\Icons\new_nsis.ico
 # End Source File
 # Begin Source File
