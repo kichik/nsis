@@ -7,65 +7,65 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by Vedran "RIV@NVX" Miletic
+# Translation by Igor Ostriz
 Nullsoft Install System %s
 %s Instalacija
 %s Deinstalacija
-: Licenencni Uvjeti
-: Installacijske Opcije
-: Installacijski Direktorij
-: Installiram
+: Licenenèni uvjeti
+: Instalacijske opcije
+: Instalacijska mapa
+: Instaliranje
 : Završeno
 : Potvrda
-: Deinstaliram
+: Uklanjanje
 : Završeno
 < &Nazad
 &Dalje >
-Ja &Prihvaæam
-Ja &prihvaæam uvjete u licenci
-Ja &ne prihvaæam uvjete u licenci
+&Prihvaæam
+&Prihvaæam uvjete licenènog ugovora
+&Ne prihvaæam uvjete licenènog ugovora
 &Instaliraj
-&Deinstaliraj
-Odbaci
+&Uklanjanje
+Odustani
 &Zatvori
-T&raži...
-Pokaži &detalje
+&Pregledaj...
+Prikaži &detalje
 Ime
 Završeno
-Posebno
-Odaberi tip instalacije:
-Odaberi komponente koje želiš instalirati:
-Ili, odaberi opcionalne komponente koje želiš instalirati:
-Odaberi direktorij da u koji želiš instalirati %s:
-Slobodnog prostora na disku: 
-Prostora na disku potrebno:
-Deinstaliram iz:
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš zapisivati u datoteku, ili\r\nignore da preskoèiš tu datoteku
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni retry da ponovno pokušaš zapisivati u datoteku, ili\r\ncancel da prekineš instalaciju
+Posebna
+Izaberite tip instalacije:
+Odaberite komponente za instalaciju:
+Ili po izboru oznaèite komponente koje želite instalirati:
+Odaberite mapu u koju želite instalirati program %s:
+Slobodno prostora na disku: 
+Potrebno prostora na disku:
+Uklanjam iz:
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Abort\" za prekid instalacije,\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Ignore\" za zanemarenje te datoteke
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Cancel\" za prekid instalacije
 Ne mogu zapisati:
 Greška prilikom kopiranja
 Kopiraj u
-Registriranje:
-Unregistriranje:
+Prijava:
+Odjava:
 Ne mogu naæi simbol:
 Ne mogu uèitati:
-Napravi direktorij:
-Napravi shortcut: 
-Created uninstaller: 
+Stvori mapu:
+Stvori preèac: 
+Program za uklanjanje: 
 Obriši datoteku: 
 Obriši prilikom ponovnog pokretanja: 
-Greška prilikom kreiranja shortcuta: 
-Greška prilikom kreiranja: 
-Greška prilikom dekompresije podataka! Uništena instalacijska datoteka?
-Greška prilikom registriranja DLLa
-Pokreni iz Shella: 
-Pokreni: 
+Greška prilikom stvaranja preèaca: 
+Greška prilikom stvaranja: 
+Greška dekompresije podataka! Ošteæena instalacijska datoteka?
+Greška prilikom prijavljivanja DLLa
+ExecShell: 
+Izvrši: 
 Odpakiraj: 
 Odpakiravanje: greška prilikom zapisivanja u datoteku 
-Uništena instalacijska datoteka: nevaljali opkod
+Ošteæena instalacijska datoteka: neispravni opkod
 Nema OLE za: 
-Izlazni direktorij: 
-Obriši direktorij: 
+Izlazna mapa: 
+Obriši mapu: 
 Preimenuj prilikom ponovnog pokretanja: 
 Preimenuj: 
 Preskoèeno: 
