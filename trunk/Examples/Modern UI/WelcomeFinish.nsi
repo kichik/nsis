@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.6
+;NSIS Modern User Interface version 1.61
 ;Welcome/Finish Page Example Script
 ;Written by Joost Verburg
 
@@ -85,5 +85,3 @@ Section "Uninstall"
   !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
-
-;eof

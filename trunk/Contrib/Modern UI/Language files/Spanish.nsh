@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: Spanish (1034)
 ;By MoNKi

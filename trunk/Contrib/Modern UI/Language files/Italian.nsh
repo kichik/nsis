@@ -1,5 +1,5 @@
 ;Modern UI Language File
-;Compatible with Modern UI 1.6
+;Compatible with Modern UI 1.61
 
 ;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com>

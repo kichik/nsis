@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.6
+;NSIS Modern User Interface version 1.61
 ;Macro System
 ;Written by Joost Verburg
 
