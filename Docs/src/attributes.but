@@ -157,9 +157,9 @@ n if the "Custom" install type is selected.
 
 \S2{alicensebkcolor} LicenseBkColor
 
-\c color
+\c color | \\<b\\>/gray\\</b\\> | /windows
 
-Sets the background color of the license data. Color is specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments).
+Sets the background color of the license data. Color is specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). Default is '/gray'. You can also use the Windows OS defined color by using '/windows'.
 
 \S2{alicensedata} LicenseData
 
