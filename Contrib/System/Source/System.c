@@ -316,6 +316,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
     while (SectionType != -1)
     {
         // Check for Section Change
+        BOOL changed = TRUE;
         ChangesDone = SectionType;
         switch (*ib)
         {
@@ -329,10 +330,12 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             break;
         case ')': SectionType = PST_RETURN; temp3 = temp = 0; break;
         case '?': SectionType = PST_OPTIONS; temp = 1; break;
+        default:
+            changed = FALSE;
         }
 
         // Check for changes
-        if (ChangesDone != SectionType)
+        if (changed)
         {
             switch (ChangesDone)
             {
@@ -366,9 +369,10 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                         if (proc != NULL) GlobalFree(proc);
                         // Get already defined proc                                      
                         proc = (SystemProc *) myatoi(cbuf);
+                        if (!proc) break;
 
                         // Find the last clone at proc queue
-                        while (proc->Clone != NULL) proc = (pr = proc)->Clone;
+                        while (proc && (proc->Clone != NULL)) proc = (pr = proc)->Clone;
 
                         // Clear parents record for child callback proc
                         if (pr != NULL) pr->Clone = NULL;
@@ -385,20 +389,21 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                     break;
                 case PT_PROC:
                 case PT_VTABLEPROC:
-                    lstrcpy(proc->ProcName, cbuf);
                     lstrcpy(proc->DllName, sbuf);
-                    break;
                 case PT_STRUCT:
                     lstrcpy(proc->ProcName, cbuf);
                     break;
                 }
-                continue;
+                break;
             case PST_PARAMS:
                 proc->ParamCount = ParamIndex;
             case PST_RETURN:
             case PST_OPTIONS:
-                continue;
-            }            
+                break;
+            }        
+            ib++;
+            cb = cbuf;
+            continue;
         }
 
         // Parse the section
@@ -703,31 +708,32 @@ void ParamsIn(SystemProc *proc)
     i = (proc->ParamCount > 0)?(1):(0);
     while (TRUE)
     {
+        ProcParameter *par = &proc->Params[i];
         // Step 1: retrive value
-        if ((proc->Params[i].Input == IOT_NONE) || (proc->Params[i].Input == IOT_INLINE)) 
+        if ((par->Input == IOT_NONE) || (par->Input == IOT_INLINE)) 
             realbuf = AllocStr("");
-        else if (proc->Params[i].Input == IOT_STACK) realbuf = popstring();
-        else if ((proc->Params[i].Input > 0) && (proc->Params[i].Input <= __INST_LAST)) 
-            realbuf = getuservariable(proc->Params[i].Input - 1);
+        else if (par->Input == IOT_STACK) realbuf = popstring();
+        else if ((par->Input > 0) && (par->Input <= __INST_LAST)) 
+            realbuf = getuservariable(par->Input - 1);
         else 
         {
             // Inline input, will be freed as realbuf
-            realbuf = (char*) proc->Params[i].Input;
-            proc->Params[i].Input = IOT_INLINE;
+            realbuf = (char*) par->Input;
+            par->Input = IOT_INLINE;
         }
 
         // Retreive pointer to place
-        if (proc->Params[i].Option == -1) place = (int*) proc->Params[i].Value;
-        else place = (int*) &(proc->Params[i].Value);
+        if (par->Option == -1) place = (int*) par->Value;
+        else place = (int*) &(par->Value);
 
         // by default no blocks are allocated
-        proc->Params[i].allocatedBlock = NULL;
+        par->allocatedBlock = NULL;
 
         // Step 2: place it
-        switch (proc->Params[i].Type)
+        switch (par->Type)
         {
         case PAT_VOID:
-            proc->Params[i].Value = 0;
+            par->Value = 0;
             break;
         case PAT_INT:
             *((int*) place) = (int) myatoi(realbuf);
@@ -736,18 +742,18 @@ void ParamsIn(SystemProc *proc)
             *((__int64*) place) = myatoi(realbuf);
             break;
         case PAT_STRING:
-/*            if (proc->Params[i].Input == IOT_NONE) 
+/*            if (par->Input == IOT_NONE) 
                 *((int*) place) = (int) NULL;
             else*/
-            *((int*) place) = (int) (proc->Params[i].allocatedBlock = AllocStr(realbuf));
+            *((int*) place) = (int) (par->allocatedBlock = AllocStr(realbuf));
             break;
         case PAT_WSTRING:
         case PAT_GUID:
-            wstr = (LPWSTR) (proc->Params[i].allocatedBlock = GlobalAlloc(GPTR, g_stringsize*2));
+            wstr = (LPWSTR) (par->allocatedBlock = GlobalAlloc(GPTR, g_stringsize*2));
             MultiByteToWideChar(CP_ACP, 0, realbuf, g_stringsize, wstr, g_stringsize);
-            if (proc->Params[i].Type == PAT_GUID)
+            if (par->Type == PAT_GUID)
             {
-                *((HGLOBAL*)place) = (proc->Params[i].allocatedBlock = GlobalAlloc(GPTR, 16));
+                *((HGLOBAL*)place) = (par->allocatedBlock = GlobalAlloc(GPTR, 16));
                 CLSIDFromString(wstr, *((LPCLSID*)place));
                 GlobalFree((HGLOBAL) wstr);
             } else
@@ -756,7 +762,7 @@ void ParamsIn(SystemProc *proc)
         case PAT_CALLBACK:
             // Generate new or use old callback
             if (lstrlen(realbuf) > 0)
-                proc->Params[i].Value = (int) CreateCallback((SystemProc*) myatoi(realbuf));
+                par->Value = (int) CreateCallback((SystemProc*) myatoi(realbuf));
             break;
         }
         GlobalFree(realbuf);
@@ -765,7 +771,7 @@ void ParamsIn(SystemProc *proc)
         {
             char buf[1024];
             wsprintf(buf, "\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X\n", i, 
-                proc->Params[i].Type, proc->Params[i].Value, proc->Params[i]._value);
+                par->Type, par->Value, par->_value);
             SYSTEM_LOG_ADD(buf);
         }
 #endif
@@ -1218,7 +1224,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
         cbproc->CallbackIndex = ++(CallbackIndex);
         cbproc->Options |= POPT_PERMANENT;
 
-        mem = (char *) (cbproc->Proc = GlobalAlloc(GPTR, 10));
+        mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, 10, MEM_COMMIT, PAGE_EXECUTE_READWRITE));
         *(mem++) = 0xB8; // Mov eax, const
         *(((int *)mem)++) = (int) cbproc;
         *(mem++) = 0xe9; // Jmp relative
@@ -1323,6 +1329,9 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
         
         if (ul_reason_for_call == DLL_PROCESS_ATTACH)
         {
+            // change the protection of return command
+            VirtualProtect(&retexpr, sizeof(retexpr), PAGE_EXECUTE_READWRITE, &LastStackPlace);
+
             // initialize some variables
             LastStackPlace = 0;
             LastStackReal = 0;
