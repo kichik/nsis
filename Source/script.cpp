@@ -233,22 +233,28 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
       {
         char *s=strdup(in+1);
         char *t=s;
+        unsigned int bn = 0;
         while (*t)
         {
-          if (*t == '}') break;
+          if (*t == '{') bn++;
+          if (*t == '}' && bn-- == 0) break;
           t=CharNext(t);
         }
         if (*t && t!=s)
         {
           *t=0;
-          t=definedlist.find(s);
-          if (t && hist.find(s,0)<0)
+          // check for defines inside the define name - ${bla${blo}}
+          GrowBuf defname;
+          ps_addtoline(s,defname,hist);
+          defname.add("",1);
+          t=definedlist.find((char*)defname.get());
+          if (t && hist.find((char*)defname.get(),0)<0)
           {
             in+=strlen(s)+2;
             add=0;
-            hist.add(s,0);
+            hist.add((char*)defname.get(),0);
             ps_addtoline(t,linedata,hist);
-            hist.delbypos(hist.find(s,0));
+            hist.delbypos(hist.find((char*)defname.get(),0));
           }
         }
         free(s);
