@@ -138,7 +138,7 @@ class CEXEBuild {
 
     // lang.cpp by Amir Szekely 3rd August 2002
     StringTable *GetTable(LANGID &lang);
-    int SetString(char *string, int id, int process, WORD lang=0);
+    int SetString(char *string, int id, int process, LANGID lang=0);
     int SetString(char *string, int id, int process, StringTable *table);
     int SetUserString(char *name, LANGID lang, char *string, int process=1);
     int WriteStringTables();
@@ -146,7 +146,7 @@ class CEXEBuild {
     #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->s):0)
     bool _IsNotSet(int *str); // Checks if a string is not set in all of the string tables
     #define IsSet(s,lang) _IsSet(string_tables.size()?&(string_tables[0]->s):0,lang)
-    bool _IsSet(int *str, WORD lang); // Checks if a string is set in a given string table
+    bool _IsSet(int *str, LANGID lang); // Checks if a string is set in a given string table
 
     // a whole bunch O data.
 

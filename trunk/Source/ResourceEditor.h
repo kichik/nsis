@@ -62,11 +62,11 @@ public:
 	CResourceEditor(BYTE* pbPE, int iSize);
 	virtual ~CResourceEditor();
 
-	void UpdateResource(char* szType, char* szName, WORD wLanguage, BYTE* lpData, DWORD dwSize);
-	void UpdateResource(WORD szType, char* szName, WORD wLanguage, BYTE* lpData, DWORD dwSize);
-	void UpdateResource(char* szType, WORD szName, WORD wLanguage, BYTE* lpData, DWORD dwSize);
-	void UpdateResource(WORD szType, WORD szName, WORD wLanguage, BYTE* lpData, DWORD dwSize);
-	BYTE* GetResource(char* szType, char* szName, WORD wLanguage);
+	void UpdateResource(char* szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+	void UpdateResource(WORD szType, char* szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+	void UpdateResource(char* szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+	void UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
+	BYTE* GetResource(char* szType, char* szName, LANGID wLanguage);
 
 	BYTE* Save(DWORD &dwSize);
 
