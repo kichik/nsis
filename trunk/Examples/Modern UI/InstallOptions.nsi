@@ -32,7 +32,7 @@
   !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
 
   ;License dialog
-  LicenseData "License.txt"
+  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-select dialog
     ;Descriptions
