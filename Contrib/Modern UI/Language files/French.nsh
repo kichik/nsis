@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Cliquez sur Installer pour démarrer l'installation."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer ${MUI_PRODUCT} sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommander de fermer toutes les autres applications. Cela permettra au programme d'installation de mettre à jour certains fichiers système sans avoir besoin de redémarrer votre ordinateur.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer ${MUI_PRODUCT} sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra au programme d'installation de mettre à jour certains fichiers système sans avoir besoin de redémarrer votre ordinateur.\r\n\r\n"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licence utilisateur"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer ${MUI_PRODUCT}."
@@ -40,8 +40,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Installation terminée"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "L'installation s'est terminée avec succès."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " : Installation terminée"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Terminer"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} a été installé sur votre ordinateur.\r\n\r\nCliquez sur Terminer pour quitter le programme d'installation."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Fermer"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} a été installé sur votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré afin de compléter l'installation de ${MUI_PRODUCT}. Souhaitez-vous redémarrer maintenant ?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Redémarrer maintenant"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Je souhaite redémarrer moi-même plus tard"
@@ -55,6 +55,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Ne pas créer de raccourcis"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de ${MUI_PRODUCT} ?"
+
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Désinstaller ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Supprimer ${MUI_PRODUCT} de votre ordinateur."
