@@ -393,13 +393,13 @@ __declspec(dllexport) void download (HWND   parent,
     }
 
     if (g_cancelled) {
-      setuservariable(INST_0, "cancel");
+      pushstring("cancel");
       DeleteFile(filename);
     } else if (error == NULL) {
-      setuservariable(INST_0, "success");
+      pushstring("success");
     } else {
       DeleteFile(filename);
-      setuservariable(INST_0, error);
+      pushstring(error);
     }
     
     delete get;
