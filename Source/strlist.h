@@ -15,7 +15,7 @@ class IGrowBuf
 class GrowBuf : public IGrowBuf
 {
   public:
-    GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; }
+    GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; m_bs=32768; }
     ~GrowBuf() { free(m_s); }
 
     void set_zeroing(int zero) { m_zero=zero; }
@@ -36,7 +36,7 @@ class GrowBuf : public IGrowBuf
       if (newlen > m_alloc)
       {
         void *n;
-        m_alloc = newlen*2 + 32768;
+        m_alloc = newlen*2 + m_bs;
         n = realloc(m_s, m_alloc);
         if (!n)
         {
@@ -65,7 +65,7 @@ class GrowBuf : public IGrowBuf
         m_s=n;
         if (m_zero) memset((char*)m_s+ou,0,m_alloc-ou);
       }
-      if (!m_used && m_alloc > 65535) // only free if you resize to 0 and we're > 64k
+      if (!m_used && m_alloc > 2*m_bs) // only free if you resize to 0 and we're > 64k
       {
         m_alloc=0;
         free(m_s);
@@ -81,6 +81,14 @@ class GrowBuf : public IGrowBuf
     int m_alloc;
     int m_used;
     int m_zero;
+
+  protected:
+    int m_bs;
+};
+
+class TinyGrowBuf : public GrowBuf {
+  public:
+    TinyGrowBuf() : GrowBuf() { m_bs=1024; }
 };
 
 class StringList
@@ -255,7 +263,7 @@ class SortedStringList
     }
 
   protected:
-    GrowBuf gr;
+    TinyGrowBuf gr;
 };
 
 template <class T>
@@ -312,7 +320,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     }
 
   protected:
-    GrowBuf gr;
+    TinyGrowBuf gr;
     GrowBuf strings;
 };
 
@@ -404,11 +412,11 @@ class DefineList : public SortedStringList<struct define>
     }
 };
 
-struct string {
+struct string_t {
   int name;
 };
 
-class FastStringList : public SortedStringListND<struct string>
+class FastStringList : public SortedStringListND<struct string_t>
 {
   public:
     FastStringList() { }
@@ -416,9 +424,9 @@ class FastStringList : public SortedStringListND<struct string>
 
     int add(const char *name, int case_sensitive=0)
     {
-      int pos = SortedStringListND<struct string>::add(name, case_sensitive);
+      int pos = SortedStringListND<struct string_t>::add(name, case_sensitive);
       if (pos == -1) return -1;
-      return ((struct string*)gr.get())[pos].name;
+      return ((struct string_t*)gr.get())[pos].name;
     }
 
     char *get()
@@ -433,7 +441,7 @@ class FastStringList : public SortedStringListND<struct string>
 
     int getnum()
     {
-      return gr.getlen()/sizeof(struct string);
+      return gr.getlen()/sizeof(struct string_t);
     }
 };
 
