@@ -18,6 +18,8 @@ NSIS
 
 * move no custom to compiler (custom as just another inst type)
 
+* empty subsections should not show
+
 -- Before NSIS 2 Final --
 
 EXAMPLES
