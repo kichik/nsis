@@ -29,13 +29,16 @@
 
 ;--------------------------------
 ;Version Information
+  VISetVersionLanguage 2057 1200 ; English UK
+  VIAddTranslation 2057 1200     ; English UK
   VIProductVersion "1.2.3.4"
-  VIProductName "NSIS"
-  VIComments "visit us at nsis.sourceforge.net"
-  VICompanyName "NSIS Team"
-  VILegalTrademarks "NullSoft Installer System"
-  VILegalCopyrights "NullSoft Installer System"
-  VIDescription "NSIS Self-extracting Setup"
+  VIAddVersionKey "ProductName" "NSIS"
+  VIAddVersionKey "Comments" "visit us at nsis.sourceforge.net"
+  VIAddVersionKey "CompanyName" "NSIS Team"
+  VIAddVersionKey "LegalTrademarks" "Nullsoft Installer System"
+  VIAddVersionKey "LegalCopyright" "© Nullsoft Installer System"
+  VIAddVersionKey "FileDescription" "NSIS Self-extracting Setup"
+  VIAddVersionKey "FileVersion" "1.2.3"
 
 ;--------------------------------
 ;Pages
