@@ -278,7 +278,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     {
       int where;
       T newstruct={0,};
-      int pos=find(name,case_sensitive,1,&where);
+      int pos=find(name,-1,case_sensitive,1,&where);
       if (pos==-1) return alwaysreturnpos ? where : -1;
       newstruct.name=strings.add(name,strlen(name)+1);
       
@@ -292,7 +292,8 @@ class SortedStringListND // no delete - can be placed in GrowBuf
 
     // returns -1 if not found, position if found
     // if returnbestpos=1 returns -1 if found, best pos to insert if not found
-    int find(const char *str, int case_sensitive=0, int returnbestpos=0, int *where=0)
+    // if n_chars equal to -1 all string is tested
+    int find(const char *str, size_t n_chars=-1, int case_sensitive=0, int returnbestpos=0, int *where=0)
     {
       T *data=(T *)gr.get();
       int ul=gr.getlen()/sizeof(T);
@@ -302,10 +303,22 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       while (ul > ll)
       {
         int res;
-        if (case_sensitive)
-          res=strcmp(str, (char*)strings.get() + data[nextpos].name);
+        const char *pCurr = (char*)strings.get() + data[nextpos].name;
+        if (n_chars == -1 || n_chars != strlen(pCurr) )
+        {
+          if (case_sensitive)
+            res=strcmp(str, pCurr);
+          else
+            res=stricmp(str, pCurr);
+        }
         else
-          res=stricmp(str, (char*)strings.get() + data[nextpos].name);
+        {
+          if (case_sensitive)
+            res=strncmp(str, pCurr, n_chars);
+          else
+            res=strnicmp(str, pCurr, n_chars);
+        }
+
         if (res==0)
         {
           if (where) *where = nextpos;
