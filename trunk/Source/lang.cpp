@@ -47,7 +47,7 @@ extern char *english_strings[] = {
   "Create folder: ",
   "Create shortcut: ",
   "Created uninstaller: ",
-  "Delete file:",
+  "Delete file: ",
   "Delete on reboot: ",
   "Error creating shortcut: ",
   "Error creating: ",
