@@ -2,17 +2,15 @@
 !define VER_MINOR 0b0
 !define NAME "NSIS"
 
-!ifdef CLASSIC_UI ;Modern UI already includes WinMessages
-  !verbose 3
-    !include "${NSISDIR}\Examples\WinMessages.nsh"
-  !verbose 4
-!endif
+Name "NSIS"
+Caption "Nullsoft Install System - Setup"
+OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
+SetCompressor bzip2
 
 !ifndef CLASSIC_UI
+
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-!endif
 
-!ifndef CLASSIC_UI
   !insertmacro MUI_BASICFUNCTIONS_INIT
 
   !define MUI_LICENSEPAGE
@@ -21,19 +19,11 @@
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
 
-  ;Language
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
   !include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
-!endif
 
-Name "NSIS"
-Caption "Nullsoft Install System - Setup"
-OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
-SetCompressor bzip2
-
-!ifndef CLASSIC_UI
   !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
   !insertmacro MUI_INTERFACE
+  
 !endif
 
 LicenseData ..\license.txt
