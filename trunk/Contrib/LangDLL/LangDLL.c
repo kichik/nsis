@@ -51,14 +51,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         size = myatoi(temp);
         if (!popstring(temp)) {
           LOGFONT f = {0,};
-          f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
-          lstrcpy(f.lfFaceName, temp);
-          font = CreateFontIndirect(&f);
-          SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
-          SendDlgItemMessage(hwndDlg, IDOK, WM_SETFONT, (WPARAM)font, 1);
-          SendDlgItemMessage(hwndDlg, IDCANCEL, WM_SETFONT, (WPARAM)font, 1);
-          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, WM_SETFONT, (WPARAM)font, 1);
-          SendDlgItemMessage(hwndDlg, IDC_TEXT, WM_SETFONT, (WPARAM)font, 1);
+          if (lstrcmp(temp, "MS Shell Dlg")) {
+            f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
+            lstrcpy(f.lfFaceName, temp);
+            font = CreateFontIndirect(&f);
+            SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
+            SendDlgItemMessage(hwndDlg, IDOK, WM_SETFONT, (WPARAM)font, 1);
+            SendDlgItemMessage(hwndDlg, IDCANCEL, WM_SETFONT, (WPARAM)font, 1);
+            SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, WM_SETFONT, (WPARAM)font, 1);
+            SendDlgItemMessage(hwndDlg, IDC_TEXT, WM_SETFONT, (WPARAM)font, 1);
+          }
         }
       }
       ShowWindow(hwndDlg, SW_SHOW);
