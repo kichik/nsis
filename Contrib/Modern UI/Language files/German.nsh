@@ -1,9 +1,8 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: German (1031)
-;By L.King, some changes by K. Windszus
-;changes by R. Bisswanger
+;By L.King, changes by K. Windszus & R. Bisswanger
 
 ;--------------------------------
 

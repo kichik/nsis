@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: Japanese (1041)
 ;By Dnanako
@@ -30,7 +30,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "${MUI_PRODUCT} をインストールする前に、ライセンス条件を確認してください。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "[Page Down]を押して契約書をすべてお読みください。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "契約書のすべての条件に同意するならば、[同意する] を選んでインストールを続けてください。${MUI_PRODUCT} をインストールするには、契約書に同意する必要があります。"
-  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "契約書のすべての条件に同意するならば、下のチェックボックスをクリックしてください。${MUI_PRODUCT} をインストールするには、契約書に同意する必要があります。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "契約書のすべての条件に同意するならば、下に表示されているオプションのうち、最初のものを選んで下さい。${MUI_PRODUCT} をインストールするには、契約書に同意する必要があります。"
 
