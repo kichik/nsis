@@ -1050,9 +1050,10 @@ static LONG oldTreeWndProc;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static LPARAM last_item=-1;
-  if (uMsg == WM_CHAR && wParam == VK_SPACE)
+  if (uMsg == WM_CHAR && wParam == (WPARAM)' ')
   {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
+    return 0;
   }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
   if (uMsg == WM_DESTROY) {
