@@ -18,7 +18,7 @@ How to use
   useful.
 
   Any time when is mentioned "Default is" means that you can use the value
-  mentioned or keep blank, the result is the same.
+  mentioned or keep it blank, the result is the same.
 
   If you want a certain value (e.g. a text) to be language-specific, set a
   language string (using LangString) and define $(STRINGNAME) as value.
@@ -509,7 +509,7 @@ Comments about functions included and not included
     NSISToIO
     IOToNSIS
 
-14 functions have not been included
+13 functions have not been included
   10 were not included because of better functions
     6 were not included because of AdvStrTok (called here as StrTok)
       First String Part Function
@@ -524,8 +524,6 @@ Comments about functions included and not included
     1 was not included because of original String Replace Function (called
       here as StrRep)
       Another String Replace Function
-    1 was not included because of Number To Text Converter.
-      Number To String Convertor (Archive original)
   2 were not included because isn't useful anymore
     Slash <-> Backslash Converter Function
     Trim Function
@@ -600,10 +598,9 @@ Version History
 
 1.06 - 03/26/2004
 
-- Fixed lots of bugs from faulty basic header file structure relating to
-  StrNumToStr command.
+- StrNumToStr removed due to complex number handling on some languages.
 - Fixed the bug where the old string was attached to string returned by
-StrCase when $R5 variable was used.
+  StrCase when $R5 variable was used.
 
 1.05 - 03/17/2004
 
@@ -662,8 +659,7 @@ Functions Credits
 -----------------
 
 - Advanced Search in String, Advanced Token String, Localize in String,
-String Case, Advanced Sort String, Number To String Convertor made by
-Diego Pedroso.
+String Case, Advanced Sort String, made by Diego Pedroso.
 - Copy to/from clipboard made by Nik Medved.
 - StrReplace made by Hendri Adriaens.
 - Search in a string, Trim newlines made by Ximon Eighteen.
