@@ -257,13 +257,13 @@ void NSISCALL set_language(LANGID lang)
 lang_again:
   for (i = 0; i < lang_num; i++) {
     if (!((lang ^ common_strings_tables[i].lang_id) & lang_mask)) {
-      cur_common_strings_table+=i;
+      cur_common_strings_table=common_strings_tables+i;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (g_is_uninstaller)
-        (uninstall_strings *)cur_install_strings_table+=i;
+        (uninstall_strings *)cur_install_strings_table=(uninstall_strings *)install_strings_tables+i;
       else
 #endif
-        (installer_strings *)cur_install_strings_table+=i;
+        (installer_strings *)cur_install_strings_table=(installer_strings *)install_strings_tables+i;
       break;
     }
   }
