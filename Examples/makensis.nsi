@@ -180,10 +180,9 @@ SectionEnd
 
 Section "Splash w/transparency"
   SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\MagicLime
-  SetOverwrite try
-  File ..\Contrib\MagicLime\splash.c
   SetOutPath $INSTDIR\Bin
+  SetOverwrite try
+  File ..\Bin\magiclime.txt
   File ..\Bin\magiclime.exe
 SectionEnd
 
@@ -401,6 +400,7 @@ Section Uninstall
   Delete $INSTDIR\Bin\splash.txt
   Delete $INSTDIR\Bin\splash.exe
   Delete $INSTDIR\Bin\magiclime.exe
+  Delete $INSTDIR\Bin\magiclime.txt
   Delete $INSTDIR\Bin\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
   Delete $INSTDIR\makensis.htm
