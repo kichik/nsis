@@ -1,9 +1,9 @@
 body {
-	font-family: Verdana,Arial,Tahoma;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 }
 pre {
-	font-family: Courier New;
+	font-family: Courier New, Courier, mono;
 	background-color: #F7F7F7;
 	padding: 1px;
 }
