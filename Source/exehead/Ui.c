@@ -737,7 +737,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       ShowWindow(h,SW_SHOWNA);
     }
 #endif
-    SetUITextNT(IDC_DIR,dir);
+    SetUITextNT(IDC_DIR,addtrailingslash(dir));
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
   }
