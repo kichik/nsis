@@ -123,8 +123,6 @@ SectionEnd
 
 !ifndef NO_CONTRIB
 
-SubSection "Additional utilities"
-
 SubSection "Contrib"
 
 Section "Extra Icons"
@@ -246,8 +244,6 @@ Section "NSIS-DL"
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
   NoShortCuts:
 SectionEnd
-
-SubSectionEnd
 
 SubSectionEnd
 
