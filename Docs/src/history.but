@@ -1,5 +1,25 @@
 \A{history} Release History
 
+\e{v2.0b2}
+
+\b NSIS Menu: links to all NSIS utitlies, documentation and websites
+
+\b NSIS Update: check for new releases, download latest development files
+
+\b Dialer plugin to connect to the internet
+
+\b Improved filename validation
+
+\b VC7 compiler compatibility issues fixed
+
+\b CreateDirectory sets error flag
+
+\b InstallOptions: INI File State value fixed
+
+\b Updated translations
+
+\b Minor fixes
+
 \e{v2.0b1}
 
 \b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
