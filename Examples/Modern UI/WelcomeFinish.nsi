@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.66
+;NSIS Modern User Interface version 1.67
 ;Welcome/Finish Page Example Script
 ;Written by Joost Verburg
 
@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  Name "Modern UI Test 1.66"
+  Name "Modern UI Test 1.67"
   OutFile "WelcomeFinish.exe"
 
   ;Folder selection page
@@ -35,8 +35,10 @@
   !insertmacro MUI_PAGE_INSTFILES
   !insertmacro MUI_PAGE_FINISH
   
+  !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
+  !insertmacro MUI_UNPAGE_FINISH
   
 ;--------------------------------
 ;Languages

@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Setup?"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Welcome to the $(^Name) Uninstall Wizard"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^Name).\r\n\r\nBefore starting the uninstallation, make sure $(^Name) is not running.\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Uninstall $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Remove $(^Name) from your computer."
   
@@ -77,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Uninstallation Aborted"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Uninstall was not completed successfully."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Completing the $(^Name) Uninstall Wizard"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) has been uninstalled from your computer.\r\n\r\nClick Finish to close this wizard."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Uninstall?"  
   
 !insertmacro MUI_LANGUAGEFILE_END

@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.66
+;NSIS Modern User Interface version 1.67
 ;Header Bitmap Example Script
 ;Written by Joost Verburg
 
@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  Name "Modern UI Test 1.66"
+  Name "Modern UI Test 1.67"
   OutFile "HeaderBitmap.exe"
 
   ;Folder selection page
@@ -23,7 +23,7 @@
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+  !define MUI_HEADERIMAGE
   !define MUI_ABORTWARNING
 
 ;--------------------------------
