@@ -577,6 +577,10 @@ Section "Zip2Exe" SecContribZ2E
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
+  SetOutPath $INSTDIR\Contrib\zip2exe
+  File ..\Contrib\zip2exe\Base.nsh
+  File ..\Contrib\zip2exe\Modern.nsh
+  File ..\Contrib\zip2exe\Classic.nsh
 SectionEnd
 
 
