@@ -613,7 +613,10 @@ NLF::NLF(char *filename) {
   // Check header
   if (strncmp(buf, "NLF v", 5)) throw runtime_error("Invalid language file!");
   int nlf_version = atoi(buf+5);
-  if (atoi(buf+5) != NLF_VERSION) throw runtime_error("Language file version doesn't match NSIS version!");
+  if (nlf_version != NLF_VERSION) {
+    if (nlf_version != 2)
+      throw runtime_error("Language file version doesn't match NSIS version!");
+  }
 
   // Get language ID
   buf[0] = SkipComments(f);
@@ -623,6 +626,13 @@ NLF::NLF(char *filename) {
   // Read strings
   for (int i = 0; i < NLF_STRINGS; i++) {
     buf[0] = SkipComments(f);
+
+    if ((i == NLF_BTN_LICENSE_AGREE || i == NLF_BTN_LICENSE_DISAGREE) && nlf_version == 2) {
+      m_szStrings[i] = new char[1];
+      m_szStrings[i][0] = 0;
+      continue;
+    }
+
     fgets(buf+1, NSIS_MAX_STRLEN, f);
     if (lstrlen(buf) == NSIS_MAX_STRLEN-1) {
       wsprintf(buf, "String too long (string #%d)!", i);
