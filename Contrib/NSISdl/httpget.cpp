@@ -228,7 +228,7 @@ void JNL_HTTPGet::connect(char *url)
 
 }
 
-static int _strnicmp(char *b1, char *b2, int l)
+static int my_strnicmp(char *b1, char *b2, int l)
 {
   while (l-- && *b1 && *b2)
   {
@@ -323,7 +323,7 @@ char *JNL_HTTPGet::getheader(char *headername)
   char *p=m_recvheaders;
   while (*p)
   {
-    if (!_strnicmp(headername,p,strlen(headername)))
+    if (!my_strnicmp(headername,p,strlen(headername)))
     {
       ret=p+strlen(headername);
       while (*ret == ' ') ret++;
@@ -386,7 +386,7 @@ run_again:
         m_http_state=-1;
         return -1;
       }
-      if (!_strnicmp(buf,"Location:",9))
+      if (!my_strnicmp(buf,"Location:",9))
       {
         char *p=buf+9; while (*p== ' ') p++;
         if (*p)
