@@ -22,4 +22,4 @@ EXAMPLES
 
 PLUGINS
 
-* make plugin size count only once
+* IO should have no defaults, it should only do what it is ordered to do, nothing more, nothing less
