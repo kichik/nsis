@@ -66,30 +66,28 @@ Section " " sec2
 SectionEnd
 
 Function .onInit
-	Push "Installer Language" ; caption
-	Push "Please select the language of the installer" ; text
-	Push English
 	Push ${LANG_ENGLISH}
-	Push Dutch
+	Push English
 	Push ${LANG_DUTCH}
-	Push French
+	Push Dutch
 	Push ${LANG_FRENCH}
-	Push German
+	Push French
 	Push ${LANG_GERMAN}
-	Push Korean
+	Push German
 	Push ${LANG_KOREAN}
-	Push Russian
+	Push Korean
 	Push ${LANG_RUSSIAN}
-	Push Spanish
+	Push Russian
 	Push ${LANG_SPANISH}
-	Push Swedish
+	Push Spanish
 	Push ${LANG_SWEDISH}
-	Push "Traditional Chinese"
+	Push Swedish
 	Push ${LANG_TRADCHINESE}
-	Push "Simplified Chinese"
+	Push "Traditional Chinese"
 	Push ${LANG_SIMPCHINESE}
-
-	LangDLL::LangDialog 10 ; 10 is the number of languages
+	Push "Simplified Chinese"
+	Push 10 ; 10 is the number of languages
+	LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
 
 	Pop $LANGUAGE
 	StrCmp $LANGUAGE "cancel" 0 +2
