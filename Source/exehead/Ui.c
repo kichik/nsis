@@ -59,7 +59,7 @@ HWND g_progresswnd;
 
 static char g_tmp[4096];
 
-static int num_sections;
+int num_sections;
 
 // sent to the last child window to tell it that the install thread is done
 #define WM_NOTIFY_INSTPROC_DONE (WM_USER+0x4)
@@ -1069,7 +1069,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     uMsg=WM_IN_UPDATEMSG;
   }
-  if (uMsg == WM_USER+0x17)
+  if (uMsg == WM_USER+0x17) // update text
   {
     int x=wParam;
     int ns=lParam;

@@ -30,8 +30,6 @@ union flags g_flags;
 char plugins_temp_dir[NSIS_MAX_STRLEN]="";
 #endif
 
-extern HWND m_curwnd;
-
 static WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
   HANDLE h;
@@ -1494,31 +1492,42 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SECTIONSET:
       {
         int x=process_string_fromparm_toint(0);
-        if (g_inst_section && x >= 0 && x < g_inst_header->num_sections)
+        if ((unsigned int)x < (unsigned int)num_sections)
         {
-          if (parm1==0) //set text
+          section *sec=g_inst_section+x;
+          if (parm1>=0) // get something
           {
-            if (g_SectionHack)
+            int res=((int*)sec)[parm1];
+            if (!parm1)
             {
+              // getting text
+              process_string_fromtab(var2,res);
+            }
+            else
+            {
+              // getting number
+              myitoa(var2,res);
+            }
+          }
+          else // set something
+          {
+            parm1=-parm1-1;
+            if (parm1)
+            {
+              // not setting text, get int
+              parm2=process_string_fromparm_toint(2);
+            }
+            else
+            {
+              // setting text, send the message to do it
               SendMessage(g_SectionHack,WM_USER+0x17,x,parm2);
             }
-            g_inst_section[x].name_ptr=parm2;
-          }
-          else if (parm1==1) // get text
-          {
-            process_string_fromtab(var2,g_inst_section[x].name_ptr);
-          }
-          else if (parm1==2) // set flags
-          {
-            g_inst_section[x].flags=process_string_fromparm_toint(2);
-            if (g_SectionHack)
+            ((int*)sec)[parm1]=parm2;
+            if (parm1)
             {
-              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)(g_inst_section[x].flags&SF_SELECTED));
+              // update tree view
+              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)(sec->flags&SF_SELECTED));
             }
-          }
-          else // get flags
-          {
-            myitoa(var2,g_inst_section[x].flags);
           }
         }
         else g_flags.exec_error++;
