@@ -1,0 +1,64 @@
+# Header, don't edit
+NLF v3
+# Language ID
+1027
+# Translation by falanko
+Nullsoft Install System %s
+Instal·lació de %s
+Desinstal·lació de %s
+: Acord de Llicència
+: Opciones d'Instal·lació
+: Carpeta d'Instal·lació
+: Instal·lant Arxius
+: Finalitzat
+: Confirmació
+: Desinstal·lant
+: Finalitzat
+< T&ornar
+&Següent >
+&Accepto
+A&ccepto els termes de la llicència
+&No accepto els termes de la llicència
+&Instal·lar
+&Desinstal·lar
+&Cancel·lar
+&Tancar
+&Examinar...
+&Veure Detalls
+Nom
+Finalitzat
+Personalitzada
+Indiqui el tipus d'instal·lació:
+Seleccioni els components:
+O seleccioni els components opcionals a instal·lar:
+Seleccioni la carpeta on instal·lar %s:
+Espai lliure: 
+Espai necessari: 
+Desinstal·lant de:
+Error obrint arxiu per escriptura: \r\n\t"$0"\r\nPremi abortar per abortar l'instal·lació,\r\nreintentar per reintentar escriure l'arxiu, o\r\nignorar per saltar aquest arxiu
+No s'ha pogut escriure: 
+Ha fallat la còpia
+Copiar a
+No s'ha trobat el símbol: 
+No s'ha pogut carregar: 
+Crear directori: 
+Crear accés directe: 
+Crear desinstal·lador: 
+Esborrar arxiu: 
+Esborrar al reiniciar: 
+Error creant accés directe: 
+Error creant: 
+Error descomprimint dades! Instal·lador corrupte?
+Error registrant DLL
+Executar comanda: 
+Executar: 
+Extraure: 
+Extraure: error escrivint l'arxiu 
+Instal·lador corrupte: codi d'operació no vàlid
+No OLE per: 
+Directori de sortida: 
+Eliminar directori: 
+Eliminar al reiniciar: 
+Renombrar: 
+Saltat: 
+Copiar Detalls al Portapapers
