@@ -102,6 +102,8 @@ Released on October 23rd, 2004
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.71}: Made the selected language only be saved if the installation was successful
 
+\b nsisconf.nsh was not always parsed when compiling using MakeNSISw
+
 \b Some code refactoring
 
 \b \L{../Include/StrFunc.txt}{StrFunc}: Rewrote StrSort and fixed StrStrAdv. See the \L{../Include/StrFunc.txt}{readme} for a complete changelog
