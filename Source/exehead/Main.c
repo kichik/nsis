@@ -223,10 +223,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_LOG
 end:
 
-#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
-  OleUninitialize();
-#endif
-
   if (g_db_hFile != INVALID_HANDLE_VALUE) CloseHandle(g_db_hFile);
 #ifdef NSIS_COMPRESS_WHOLE
   if (dbd_hFile != INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
@@ -238,6 +234,10 @@ end:
   if (state_plugins_dir[0]) doRMDir(state_plugins_dir, 1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   if (g_hIcon) DeleteObject(g_hIcon);
+
+#if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
+  OleUninitialize();
+#endif
 
   ExitProcess(ret);
 }

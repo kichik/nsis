@@ -335,12 +335,20 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
 {
   if (uMsg==BFFM_INITIALIZED)
   {
-    my_GetDialogItemText(m_curwnd,IDC_DIR,(char*)lpData,sizeof(g_tmp));
+    my_GetDialogItemText(m_curwnd,IDC_DIR,(char*)lpData,NSIS_MAX_STRLEN);
     SendMessage(hwnd,BFFM_SETSELECTION,(WPARAM)1,lpData);
   }
   if (uMsg==BFFM_SELCHANGED)
   {
-    SendMessage(hwnd,BFFM_ENABLEOK,0,SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData));
+    SendMessage(
+      hwnd,
+      BFFM_ENABLEOK,
+      0,
+      SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData)
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
+#endif
+    );
   }
   return 0;
 }
@@ -747,7 +755,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = name;
       bi.lpfn = BrowseCallbackProc;
-      bi.lParam = (LPARAM)g_tmp;
+      bi.lParam = (LPARAM)dir;
       bi.lpszTitle = GetNSISStringTT(browse_text);
 #ifndef BIF_NEWDIALOGSTYLE
 #define BIF_NEWDIALOGSTYLE 0x0040
@@ -771,11 +779,11 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           // name gives just the folder name
           if (lstrcmpi(post_str,name))
           {
-            lstrcat(addtrailingslash(g_tmp),post_str);
+            lstrcat(addtrailingslash(dir),post_str);
           }
         }
 
-        SetUITextNT(IDC_DIR,g_tmp);
+        SetUITextNT(IDC_DIR,dir);
       }
     }
   }
@@ -829,7 +837,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
 #endif
-      );
+    );
   }
   return HandleStaticBkColor();
 }
