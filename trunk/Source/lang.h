@@ -76,7 +76,7 @@ class LangStringList : public SortedStringListND<struct langstring>
     const char *pos2name(int pos)
     {
       struct langstring *data=(struct langstring *)gr.get();
-      
+
       if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
         return 0;
 
@@ -167,9 +167,9 @@ class StringsArray
         resize(idx+1);
 
       int old = ((int*)offsets.get())[idx];
-      
+
       ((int*)offsets.get())[idx] = strings.add(str, strlen(str) + 1);
-      
+
       return old;
     }
 
@@ -299,8 +299,6 @@ struct LanguageTable {
   LANGID lang_id;
 
   int dlg_offset;
-
-  GrowBuf *strlist;
 
   StringsArray *lang_strings;
 
