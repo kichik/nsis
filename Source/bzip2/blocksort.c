@@ -1,5 +1,6 @@
-#include "../exehead/config.h"
-#if (defined(EXEHEAD) && defined(NSIS_COMPRESS_USE_BZIP2)) || !defined(EXEHEAD)
+#include "bzlib.h"
+
+#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Block sorting machinery                               ---*/
 /*---                                           blocksort.c ---*/
@@ -66,18 +67,13 @@
   file implements the algorithm called  cache  in the paper.
 --*/
 
-
-#include "bzlib.h"
-
 /*---------------------------------------------*/
 /*--- Fallback O(N log(N)^2) sorting        ---*/
 /*--- algorithm, for repetitive blocks      ---*/
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
-static 
-__inline__
-void fallbackSimpleSort ( UInt32* fmap, 
+static void fallbackSimpleSort ( UInt32* fmap, 
                           UInt32* eclass, 
                           Int32   lo, 
                           Int32   hi )
@@ -379,9 +375,7 @@ void fallbackSort ( UInt32* fmap,
 /*---------------------------------------------*/
 
 /*---------------------------------------------*/
-static
-__inline__
-Bool mainGtU ( UInt32  i1, 
+static Bool mainGtU ( UInt32  i1, 
                UInt32  i2,
                UChar*  block, 
                UInt16* quadrant,
@@ -616,7 +610,6 @@ void mainSimpleSort ( UInt32* ptr,
 }
 
 static 
-__inline__
 UChar mmed3 ( UChar a, UChar b, UChar c )
 {
    UChar t;

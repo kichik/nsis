@@ -1,5 +1,6 @@
-#include "../exehead/config.h"
-#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
+#include "bzlib.h"
+
+#if defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
 
 /*-------------------------------------------------------------*/
 /*--- Decompression machinery                               ---*/
@@ -59,10 +60,6 @@
 
   For more information on these sources, see the manual.
 --*/
-
-
-#include "bzlib.h"
-
 
 
 /*---------------------------------------------------*/
