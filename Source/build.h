@@ -85,6 +85,11 @@ class CEXEBuild {
     int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0);
     GrowBuf m_linebuild; // used for concatenating lines
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    // Added by Amir Szekely 9th August 2002
+    int add_plugin_initializer(void);
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+
     void ERROR_MSG(const char *s, ...);
     void SCRIPT_MSG(const char *s, ...);
     void INFO_MSG(const char *s, ...);

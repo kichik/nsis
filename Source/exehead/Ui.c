@@ -300,7 +300,7 @@ int ui_doinstall(void)
   {
     // Added by Amir Szekely 3rd August 2002
     // Multilingual support
-    char pa=1;
+    char pa=0;
     int num=g_inst_header->str_tables_num;
     LANGID user_lang=GetUserDefaultLangID();
     int size=num*sizeof(common_strings);
@@ -327,14 +327,14 @@ lang_again:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         cur_uninstall_strings_table+=size;
 #endif
-        pa--;
+        pa++;
         break;
       }
       common_strings_tables[size].lang_id&=0x3ff; // primary lang
     }
-    if (pa) {
+    if (!pa) {
       user_lang&=0x3ff; // primary lang
-      pa--;
+      pa++;
       goto lang_again;
     }
   }
