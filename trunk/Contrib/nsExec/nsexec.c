@@ -9,6 +9,7 @@
 #define false FALSE
 #endif
 #define TIMEOUT 100000
+#define LOOPTIMEOUT 100
 
 HINSTANCE	g_hInstance;
 HWND		g_hwndParent;
@@ -19,7 +20,9 @@ char *		g_szto;
 BOOL		g_foundto;
 int			g_to;
 
+
 void ExecScript(BOOL log);
+int LogMessages(const char *pStr);
 int LogMessage(const char *pStr);
 char *my_strstr(const char *string, const char *strCharSet);
 int my_atoi(char *s);
@@ -81,9 +84,10 @@ void ExecScript(BOOL log) {
 		OSVERSIONINFO osv={sizeof(osv)};
 		HANDLE newstdout=0,read_stdout=0;
 		DWORD dwRead = 1;
-		DWORD dwExit;
-		HGLOBAL memory;
-		char *szBuf;
+		DWORD dwExit = !STILL_ACTIVE;
+		char szBuf[1024];
+		char szBufTmp[1024];
+		szBufTmp[0]=0;
 		GetVersionEx(&osv);
 		if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
 			InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
@@ -106,35 +110,22 @@ void ExecScript(BOOL log) {
 			CloseHandle(read_stdout);
 			pushstring("error");
 		}
-		if (WaitForSingleObject(pi.hProcess,INFINITE)==WAIT_TIMEOUT) {
-			TerminateProcess(pi.hProcess,GetExitCodeProcess(pi.hProcess,&dwExit));
-		}
-		PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-		memory = GlobalAlloc(GMEM_MOVEABLE,dwRead+1);
-		szBuf = (char *)GlobalLock(memory);
-		ReadFile(read_stdout, szBuf, dwRead, &dwRead, NULL);
-		pushstring("success");
-		if (log) {
-			if (my_strstr(szBuf,"\r")) {
-				while (*szBuf) {
-					char *i = my_strstr(szBuf,"\r");
-					if (i==0) {
-						LogMessage(szBuf);
-						break;
-					}
-					*i=0;
-					if (*(i+1)=='\n') *(i+1)=0;
-					LogMessage(szBuf);
-					if (!*(i+1)) szBuf = i+2;
-					else szBuf = i+1;
+		while (dwExit == STILL_ACTIVE || dwRead) {
+			PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+			if (dwRead) {
+				ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+				szBuf[dwRead] = 0;
+				if (log) {
+					lstrcat(szBufTmp,szBuf);
+					LogMessages(szBufTmp);
 				}
 			}
-			else {
-				LogMessage(szBuf);
+			else Sleep(LOOPTIMEOUT);
+			GetExitCodeProcess(pi.hProcess, &dwExit);
+			if (dwExit != STILL_ACTIVE) {
+				PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
 			}
 		}
-    GlobalUnlock(memory);
-		GlobalFree(memory);
 		CloseHandle(pi.hThread);
 		CloseHandle(pi.hProcess);
 		CloseHandle(newstdout);
@@ -143,12 +134,31 @@ void ExecScript(BOOL log) {
 	
 }
 
+int LogMessages(const char *pStr) {
+	if (my_strstr(pStr,"\r")) {
+		while (*pStr) {
+			char *i = my_strstr(pStr,"\r");
+			if (i==0) {
+				LogMessage(pStr);
+				break;
+			}
+			*i=0;
+			if (*(i+1)=='\n') *(i+1)=0;
+			LogMessage(pStr);
+			if (!*(i+1)) pStr = i+2;
+			else pStr = i+1;
+		}
+	}
+	return 1;
+}
+
 // code I stole (err borrowed) from Tim Kosse
 // all credits/problems are his
 int LogMessage(const char *pStr) {
 	LVITEM item={0};
 	int nItemCount;
 	if (!g_hwndList) return -1;
+	if (lstrlen(pStr)==0) return -1;
 	nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
 	item.mask=LVIF_TEXT;
 	item.pszText=(char *)pStr;
