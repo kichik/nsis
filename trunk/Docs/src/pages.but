@@ -57,12 +57,12 @@ Examples:
 
 \H{page} Page
 
-\c custom function | (license|components|directory|instfiles) [pre_function] [post_function]
+\c (custom function) | ((license|components|directory|instfiles) [pre_function] [post_function])
 
 Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
 
 \H{uninstpage} UninstPage
 
-\c custom function | (uninstConfirm|instfiles) [pre_function] [post_function]
+\c (custom function) | ((uninstConfirm|instfiles) [pre_function] [post_function])
 
 Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.
