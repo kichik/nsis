@@ -71,7 +71,7 @@
         do a bit better on small files
 --*/
 
-#include "bzlib_private.h"
+#include "bzlib.h"
 
 
 /*---------------------------------------------------*/
