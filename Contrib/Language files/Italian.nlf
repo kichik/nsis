@@ -100,13 +100,13 @@ Seleziona i componenti da disinstallare:
 # ^UnComponentsSubText2
 Oppure, seleziona i componenti opzionali che vuoi disinstallare :
 # ^DirText
-Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
+Questa procedura installerà $(^NameDA) nella cartella seguente. Per installare in una cartella diversa, selezionare Sfoglia e scegliere un'altra cartella. $_CLICK
 # ^DirSubText
 Cartella di destinazione
 # ^DirBrowseText
 Seleziona la cartella dove installare $(^NameDA):
 # ^UnDirText
-Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e scegliere un altra cartella. $_CLICK
+Questa procedura disinstallerà $(^NameDA) nella cartella seguente. Per disinstallare da una cartella diversa, selezionare Sfoglia e scegliere un'altra cartella. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
