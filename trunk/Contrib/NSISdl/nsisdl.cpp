@@ -177,14 +177,14 @@ __declspec(dllexport) void download (HWND   parent,
 
   char *error=NULL;
 
-  char szDownloading[32];//= "Downloading %s";
-  char szConnecting[32];//= "Connecting ...";
-  char szSecond[32];//= "second";
-  char szMinute[32];//= "minute";
-  char szHour[32];//= "hour";
-  char szPlural[32];//= "s";
-  char szProgress[128];//= "%dkB (%d%%) of %dkB @ %d.%01dkB/s";
-  char szRemaining[128];//= " (%d %s%s remaining)";
+  static char szDownloading[1024];//= "Downloading %s";
+  static char szConnecting[1024];//= "Connecting ...";
+  static char szSecond[1024];//= "second";
+  static char szMinute[1024];//= "minute";
+  static char szHour[1024];//= "hour";
+  static char szPlural[1024];//= "s";
+  static char szProgress[1024];//= "%dkB (%d%%) of %dkB @ %d.%01dkB/s";
+  static char szRemaining[1024];//= " (%d %s%s remaining)";
 
   EXDLL_INIT();
 
