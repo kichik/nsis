@@ -43,6 +43,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !define MUI_WELCOMEPAGE
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
+    !define MUI_COMPONENTSPAGE_SMALLDESC
   !define MUI_DIRECTORYPAGE
   !define MUI_FINISHPAGE
     !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
@@ -53,11 +54,8 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
 
+  !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
   !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
-  !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
-  
-  ;Modern UI System
-  !insertmacro MUI_SYSTEM
 
   ;--------------------------------
   ;Languages
