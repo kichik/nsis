@@ -24,6 +24,7 @@
 ;Variables
 
   Var MUI_TEMP
+  Var STARTMENU_FOLDER
 
 ;--------------------------------
 ;Interface Settings
@@ -38,11 +39,12 @@
   !insertmacro MUI_PAGE_DIRECTORY
   
   ;Start Menu Folder Page Configuration
+  !define MUI_STARTMENUPAGE_VARIABLE "$STARTMENU_FOLDER"
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Modern UI Test" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
-  !insertmacro MUI_PAGE_STARTMENU
+  !insertmacro MUI_PAGE_STARTMENU Application
   
   !insertmacro MUI_PAGE_INSTFILES
   
@@ -69,11 +71,11 @@ Section "Dummy Section" SecDummy
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}"
-    CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -99,7 +101,7 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  !insertmacro MUI_STARTMENU_GETFOLDER $MUI_TEMP
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
     
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   
