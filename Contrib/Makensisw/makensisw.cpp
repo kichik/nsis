@@ -107,6 +107,22 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			return TRUE;
 		}
+		case WM_CONTEXTMENU:
+		{
+			if ((HWND)wParam==GetDlgItem(g_hwnd,IDC_LOGWIN)) {
+				HMENU m = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_LOGWIN));
+				if (m) {
+					HMENU s = GetSubMenu(m,0);
+					if (s) {
+						int xPos,yPos;
+						xPos = (int)(short)LOWORD(lParam); 
+						yPos = (int)(short)HIWORD(lParam);
+						TrackPopupMenu(s,NULL,xPos,yPos,0,g_hwnd,0);
+					}
+				}
+			}
+			return TRUE;
+		}
 		case WM_DROPFILES: {
 			int num;
 			char szTmp[MAX_PATH];

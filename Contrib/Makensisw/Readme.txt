@@ -152,6 +152,7 @@ Version History
  - Branding text now reflects NSIS version
  - Bunch of other stuff not worth mentioning
  - Added some simple tool tips
+ - Added Context Menu in log window
 
 
 Copyright Information
