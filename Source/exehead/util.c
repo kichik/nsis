@@ -153,7 +153,7 @@ int NSISCALL validpathspec(char *ubuf)
 int NSISCALL is_valid_instpath(char *s)
 {
   int ivp=0;
-  // if 8 is set, req is 0, which means rootdirs are not allowed.
+  // if CH_FLAGS_NO_ROOT_DIR is set, req is 0, which means rootdirs are not allowed.
   int req=!(inst_flags&CH_FLAGS_NO_ROOT_DIR);
   if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
   {
