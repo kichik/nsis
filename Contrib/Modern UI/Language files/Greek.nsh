@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "GREEK"
 
-  !define MUI_LANGNAME "Greek" ;(Ελληνικά) Name of the language in the language itself
+  !define MUI_LANGNAME "Greek" ;(Ελληνικά) Use only ASCII characters (if this is not possible, use the English name)
     
   !define MUI_TEXT_WELCOME_INFO_TITLE "Καλώς ήλθατε στην Εγκατάσταση του '$(^Name)'"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Ο οδηγός αυτός θα σας καθοδηγήσει κατά τη διάρκεια της εγκατάστασης του '$(^Name)'.\r\n\r\nΣυνιστάται να κλείσετε όλες τις άλλες εφαρμογές πριν ξεκινήσετε την Εγκατάσταση. Αυτό θα επιτρέψει στην Εγκατάσταση να ενημερώσει ορισμένα αρχεία συστήματος χωρίς την επανεκκίνηση του υπολογιστή σας.\r\n\r\n$_CLICK"

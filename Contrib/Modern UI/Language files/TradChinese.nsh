@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
-  !define MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Name of the language in the language itself
+  !define MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_FONT "新細明體"
   !define MUI_FONTSIZE "9"

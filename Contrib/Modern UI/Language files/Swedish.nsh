@@ -1,14 +1,13 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.65
 
 ;Language: Swedish (1053)
 ;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
-
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SWEDISH"
 
-  !define MUI_LANGNAME "Svenska" ;Name of the language in the language itself
+  !define MUI_LANGNAME "Svenska" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Välkommen till installationsguiden för $(^Name)."
   !define MUI_TEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom installationen av $(^Name).\r\n\r\nDet är rekomenderat att du avslutar alla program innan du fortsätter installationen. Detta tillåter att installationen kan uppdatera vissa systemfiler utan att starta om din dator.\r\n\r\n$_CLICK"
@@ -56,19 +55,7 @@
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Avinstallera $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Ta bort $(^Name) från din dator."
-  
-  !define MUI_UNTEXT_LICENSE_TITLE "Licensavtal"  
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Please review the license terms before uninstalling $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to uninstall $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "If you accept the terms of the agreement, click the check box below. You must accept the agreement to uninstall $(^Name). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "If you accept the terms of the agreement, select the first option below. You must accept the agreement to uninstall $(^Name). $_CLICK"
-  
-  !define MUI_UNTEXT_COMPONENTS_TITLE "Choose Components"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Choose which features of $(^Name) you want to uninstall."
-  
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Choose Uninstall Location"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Choose the folder from which to uninstall $(^Name)."
-  
+
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Avinstallerar"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Var vänlig vänta medan $(^Name) avinstalleras."
     
