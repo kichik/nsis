@@ -23,9 +23,9 @@ LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
 
 ComponentText "This will install the Nullsoft Install System v${VER_MAJOR}.${VER_MINOR} on your computer:"
-InstType "Full"
-InstType "Normal"
-InstType "Lite"
+InstType "Full (w/ Source and Contrib)"
+InstType "Normal (w/ Contrib, w/o Source)"
+InstType "Lite (w/o Source or Contrib)"
 
 AutoCloseWindow false
 ShowInstDetails show
