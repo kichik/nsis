@@ -32,6 +32,8 @@
 !include "WinMessages.nsh"
 !verbose pop
 
+!define MUI_SYSVERSION "1.68"
+
 Var MUI_TEMP1
 Var MUI_TEMP2
 
