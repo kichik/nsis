@@ -21,7 +21,7 @@
 ;Configuration
 
   ;General
-  OutFile "Basic.exe"
+  OutFile "StartMenu.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
