@@ -152,8 +152,8 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Examples\Modern UI\ioA.ini"
     File "..\Examples\Modern UI\ioB.ini"
     File "..\Examples\Modern UI\ioC.ini"
-  File "..\Examples\Modern UI\StartMenu.nsi"
-  File "..\Examples\Modern UI\WelcomeFinish.nsi"
+    File "..\Examples\Modern UI\StartMenu.nsi"
+    File "..\Examples\Modern UI\WelcomeFinish.nsi"
     SetOutPath "$INSTDIR\Contrib\Modern UI"
     File "..\Contrib\Modern UI\System.nsh"
     File "..\Contrib\Modern UI\Readme.jpg"
@@ -162,7 +162,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot.png"
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
-  File "..\Contrib\Modern UI\ioSpecial.ini"
+    File "..\Contrib\Modern UI\ioSpecial.ini"
     SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
     File "..\Contrib\Modern UI\Language files\*.nsh"
     SetOutPath "$INSTDIR\Contrib\UIs"
@@ -171,7 +171,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath $INSTDIR\Contrib\Icons
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
-  File "..\Contrib\Icons\modern-wizard.bmp"
+    File "..\Contrib\Icons\modern-wizard.bmp"
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
@@ -518,6 +518,10 @@ SubSectionEnd
     IntOp $R0 $R0 + 1
 !macroend
 
+Function .onInit
+  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
+FunctionEnd
+
 Function .onSelChange
   StrCpy $R0 0
   !insertmacro secSelected ${SecContribSplashTS}
@@ -539,10 +543,6 @@ Function .onSelChange
   notRequired:
     SectionSetText ${SecSrcEx} "ExDLL Source"
   done:
-FunctionEnd
-
-Function .onInit
-  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
 FunctionEnd
 
 Function AddContribToStartMenu
