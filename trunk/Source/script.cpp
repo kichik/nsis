@@ -8,6 +8,7 @@
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
+#include "nlf.h"
 
 #ifndef FOF_NOERRORUI
 #define FOF_NOERRORUI 0x0400
@@ -1039,7 +1040,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
           i++;
         }
-        
+
         build_compressor_set=true;
         CResourceEditor re(header_data_new, exeheader_size_new);
         re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), pbUIData, UIDlg.GetSize());
@@ -1211,6 +1212,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         SCRIPT_MSG("SetCompressor: %s\n", line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    case TOK_LOADNLF:
+    {
+      SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
+      NLF *lang = new NLF(line.gettoken_str(1));
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));  
 
     // preprocessor-ish (ifdef/ifndef/else/endif are handled one step out from here)
     ///////////////////////////////////////////////////////////////////////////////
