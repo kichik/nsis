@@ -45,9 +45,7 @@ void operator delete( void *p ) { if (p) GlobalFree(p); }
 
 
 HANDLE    hModule;
-HWND      g_parent;
 HWND      g_dialog;
-HWND      g_childwnd;
 HWND      g_hwndProgressBar;
 static int       g_cancelled;
 
@@ -119,6 +117,8 @@ __declspec(dllexport) void download (HWND   parent,
   int wasen=0;
   HWND hwndL=0;
   HWND hwndB=0;
+  HWND dlg=0;
+  HWND childwnd=0;
 
   static char szDownloading[32];//= "Downloading %s";
   static char szConnecting[32];//= "Connecting ...";
@@ -129,7 +129,6 @@ __declspec(dllexport) void download (HWND   parent,
   static char szProgress[128];//= "%dkB (%d%%) of %dkB @ %d.%01dkB/s";
   static char szRemaining[128];//= " (%d %s%s remaining)";
 
-  g_parent     = parent;
   EXDLL_INIT();
 
   popstring(url);
@@ -167,47 +166,51 @@ __declspec(dllexport) void download (HWND   parent,
     wsprintf (buf, "Unable to open %s", filename);
     setuservariable(INST_0, buf);
   } else {  
-    if (g_parent)
+    if (parent)
     {
-      g_childwnd=FindWindowEx(g_parent,NULL,"#32770",NULL);
-      hwndL=GetDlgItem(g_childwnd,1016);
-      hwndB=GetDlgItem(g_childwnd,1027);
+      childwnd=FindWindowEx(parent,NULL,"#32770",NULL);
+      hwndL=GetDlgItem(childwnd,1016);
+      hwndB=GetDlgItem(childwnd,1027);
       if (hwndL && IsWindowVisible(hwndL)) ShowWindow(hwndL,SW_HIDE);
       else hwndL=NULL;
       if (hwndB && IsWindowVisible(hwndB)) ShowWindow(hwndB,SW_HIDE);
       else hwndB=NULL;
 
-      wasen=EnableWindow(GetDlgItem(g_parent,IDCANCEL),1);
-      lpWndProcOld = (void *) GetWindowLong(g_parent,GWL_WNDPROC);
-      SetWindowLong(g_parent,GWL_WNDPROC,(long)ParentWndProc);
+      wasen=EnableWindow(GetDlgItem(parent,IDCANCEL),1);
+      lpWndProcOld = (void *) GetWindowLong(parent,GWL_WNDPROC);
+      SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
 
-      g_dialog = CreateDialog((HINSTANCE)hModule, 
+      dlg = g_dialog = CreateDialog((HINSTANCE)hModule, 
                     MAKEINTRESOURCE(IDD_DIALOG1),
-                    g_childwnd,
+                    childwnd,
                     DownloadDialogProc);
-      if (g_dialog)
+      if (dlg)
       {
-        GetWindowRect(g_dialog,&cr);
-        ScreenToClient(g_dialog,(LPPOINT)&cr);
-        ScreenToClient(g_dialog,((LPPOINT)&cr)+1);
-        GetWindowRect(GetDlgItem(g_childwnd,1016),&r);
-        ScreenToClient(g_childwnd,(LPPOINT)&r);
-        ScreenToClient(g_childwnd,((LPPOINT)&r)+1);
-        SetWindowPos(g_dialog,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
+        GetWindowRect(dlg,&cr);
+        ScreenToClient(dlg,(LPPOINT)&cr);
+        ScreenToClient(dlg,((LPPOINT)&cr)+1);
+        GetWindowRect(GetDlgItem(childwnd,1016),&r);
+        ScreenToClient(childwnd,(LPPOINT)&r);
+        ScreenToClient(childwnd,((LPPOINT)&r)+1);
+        SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
         AdjustSize(IDC_STATIC2);
         AdjustSize(IDC_PROGRESS1);
-        ShowWindow(g_dialog,SW_SHOWNA);
+        ShowWindow(dlg,SW_SHOWNA);
         char *p=filename;
         while (*p) p++;
         while (*p != '\\' && p != filename) p=CharPrev(filename,p);
         wsprintf(buf,szDownloading, p!=filename?p+1:p);
-        SetDlgItemText(g_childwnd,1006,buf);
+        SetDlgItemText(childwnd,1006,buf);
+        SetDlgItemText (dlg, IDC_STATIC2, szConnecting);
 
-        SetDlgItemText (g_dialog, IDC_STATIC2, szConnecting);
+        // set font
+        long hFont = SendMessage(parent, WM_GETFONT, 0, 0);
+        SendDlgItemMessage(dlg, IDC_PROGRESS1, WM_SETFONT, hFont, 0);
+        SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
       }
     }
 
-    g_hwndProgressBar = GetDlgItem (g_dialog, IDC_PROGRESS1);
+    g_hwndProgressBar = GetDlgItem (dlg, IDC_PROGRESS1);
 
     JNL_HTTPGet *get;
     char *error=NULL;
@@ -260,10 +263,10 @@ __declspec(dllexport) void download (HWND   parent,
       get->connect (url);
 
       while (1) {
-        if (g_dialog)
+        if (dlg)
         {
           MSG msg;
-          while (PeekMessage(&msg,g_dialog,0,0,PM_REMOVE))
+          while (PeekMessage(&msg,dlg,0,0,PM_REMOVE))
           {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -312,7 +315,7 @@ __declspec(dllexport) void download (HWND   parent,
               if (cl == 0) {
                 error = "Server did not specify content length.";
                 break;
-              } else if (g_dialog) {
+              } else if (dlg) {
                   SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
                   g_file_size=cl;
               }
@@ -379,17 +382,17 @@ __declspec(dllexport) void download (HWND   parent,
     }
 
     CloseHandle(hFile);
-    if (g_parent)
+    if (parent)
     {
-      if (g_dialog) DestroyWindow(g_dialog);
+      if (dlg) DestroyWindow(dlg);
       if (lpWndProcOld)
-        SetWindowLong(g_parent,GWL_WNDPROC,(long)lpWndProcOld);
-      if (g_childwnd)
+        SetWindowLong(parent,GWL_WNDPROC,(long)lpWndProcOld);
+      if (childwnd)
       {
         if (hwndB) ShowWindow(hwndB,SW_SHOWNA);
         if (hwndL) ShowWindow(hwndL,SW_SHOWNA);
       }
-      if (wasen) EnableWindow(GetDlgItem(g_parent,IDCANCEL),0);
+      if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),0);
     }
 
     if (g_cancelled) {
