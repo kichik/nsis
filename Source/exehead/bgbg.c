@@ -1,6 +1,9 @@
 #include <windows.h>
 #include "resource.h"
 #include "config.h"
+#include "fileform.h"
+#include "state.h"
+#include "ui.h"
 
 #ifdef NSIS_SUPPORT_BGBG
 
@@ -13,14 +16,13 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
     case WM_PAINT:
       {
         static PAINTSTRUCT ps;
-        HFONT newFont, oldFont;
         HDC hdc=BeginPaint(hwnd,&ps);
         RECT r;
         int y,ry;
         GetClientRect(hwnd,&r);
-    // this portion by Drew Davidson, drewdavidson@mindspring.com
+        // this portion by Drew Davidson, drewdavidson@mindspring.com
         ry=r.bottom;
-        y=r.top;
+        y=0; //r.top
 
         // JF: made slower, reduced to 4 pixels high, because I like how it looks better/
         while (y < r.bottom)
@@ -32,7 +34,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
           gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * ry) / r.bottom;
           bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * ry) / r.bottom;
 		      brush = CreateSolidBrush(RGB(rv,gv,bv));
-		      SetRect(&rect, r.left, y, r.right, y+4);
+		      SetRect(&rect, 0 /*r.left*/, y, r.right, y+4);
 		      // note that we don't need to do "SelectObject(hdc, brush)"
 		      // because FillRect lets us specify the brush as a parameter.
 		      FillRect(hdc, &rect, brush);
@@ -43,6 +45,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
         if (m_textcolor != -1)
         {
+          HFONT newFont, oldFont;
           newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
           if (newFont)
           {
@@ -66,28 +69,27 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 }
 
 
-HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, int color1, int color2, int color3)
+HWND NSISCALL bgWnd_Init()
 {
   RECT vp;
-  static char classname[4]="_Nb";
   static WNDCLASS wc;
 	wc.style = CS_VREDRAW | CS_HREDRAW;
 	wc.lpfnWndProc = BG_WndProc;
-	wc.hInstance = hInstance;
-	wc.hIcon = LoadIcon(hInstance,MAKEINTRESOURCE(IDI_ICON2));
+	wc.hInstance = g_hInstance;
+	wc.hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
 	wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-	wc.lpszClassName = classname;
+	wc.lpszClassName = "_Nb";
 
   if (!RegisterClass(&wc)) return 0;
 
-  m_color1=color1;
-  m_color2=color2;
-  m_textcolor=color3;
+  m_color1=g_inst_cmnheader->bg_color1;
+  m_color2=g_inst_cmnheader->bg_color2;
+  m_textcolor=g_inst_cmnheader->bg_textcolor;
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-  return CreateWindow(classname,"",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
-    vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,hInstance,NULL);
+  return CreateWindow("_Nb","",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
+    vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,g_hInstance,NULL);
 }
 
 

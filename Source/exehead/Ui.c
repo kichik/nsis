@@ -94,7 +94,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static DWORD WINAPI install_thread(LPVOID p);
 
-HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, int color1, int color2, int);
+HWND NSISCALL bgWnd_Init();
 
 HWND insthwnd, insthwnd2,insthwndbutton;
 
@@ -386,7 +386,7 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
     {
-      m_bgwnd=bgWnd_Init(g_hInstance,g_inst_cmnheader->bg_color1,g_inst_cmnheader->bg_color2,g_inst_cmnheader->bg_textcolor);
+      m_bgwnd=bgWnd_Init();
     }
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -400,7 +400,7 @@ int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      WNDCLASS wc={0,};
+      static WNDCLASS wc;
       static char str1[]="RichEd20.dll";
       static char str2[]="RichEdit20A";
       if (!LoadLibrary(str1))
@@ -911,7 +911,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 TVHITTESTINFO NSISCALL hit_test(HWND tree)
 {
-  TVHITTESTINFO ht = {0};
+  static TVHITTESTINFO ht;
   DWORD dwpos = GetMessagePos();
 
   ht.pt.x = GET_X_LPARAM(dwpos);
