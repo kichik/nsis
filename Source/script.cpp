@@ -4389,54 +4389,81 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
-    case TOK_VI_PRODUCTVERSION:
-    case TOK_VI_PRODUCTNAME:
-    case TOK_VI_COMPANY:
-    case TOK_VI_COMMENTS:
-    case TOK_VI_LEGALTRADEMARKS:
-    case TOK_VI_LEGALCOPYRIGHTS:
-    case TOK_VI_DESCRIPTION:
+    case TOK_VI_ADDKEY:
     {
-        char *pVI;
-        switch (which_token)
-        {    
-          case TOK_VI_PRODUCTVERSION:
-            pVI = szVIProductVersion; break;
-          case TOK_VI_PRODUCTNAME:
-            pVI = szVIProductName; break;
-          case TOK_VI_COMPANY:
-            pVI = szVICompanyName; break;
-          case TOK_VI_COMMENTS:
-            pVI = szVIComments; break;
-          case TOK_VI_LEGALTRADEMARKS:
-            pVI = szVILegalTrademarks; break;
-          case TOK_VI_LEGALCOPYRIGHTS:
-            pVI = szVILegalCopyrights; break;
-          case TOK_VI_DESCRIPTION:
-            pVI = szVIDescription; break;
-        }
-        
-        if ( pVI[0] )
+        char *pKey = line.gettoken_str(1);
+        char *pValue = line.gettoken_str(2);        
+        if ( !(*pKey) )
         {
-           ERROR_MSG("Error: %s already defined.\n",line.gettoken_str(0));
+           ERROR_MSG("Error: empty name for version info key!\n");
            return PS_ERROR;
         }
         else
         {
-           SCRIPT_MSG("%s = \"%s\"\n",line.gettoken_str(0), line.gettoken_str(1));
-           strcpy(pVI, line.gettoken_str(1));
+           SCRIPT_MSG("%s = \"%s\"=\"%s\" \n",line.gettoken_str(0), line.gettoken_str(1), line.gettoken_str(2));
+           rVersionInfo.SetKeyValue(pKey, pValue);
            return PS_OK;
         }
     }
+    case TOK_VI_ADDTRANSLATION:
+    {
+      int s1, s2; 
+      int language = line.gettoken_int(1, &s1);
+      int codepage = line.gettoken_int(2, &s2);
+      if ( !s1 || !s2 ) 
+        PRINTHELP()
+      else
+      {
+        if ( !rVersionInfo.IsValidCodePage(codepage) )
+        {
+           ERROR_MSG("Error: invalid codepage id %d!\n", codepage);
+           return PS_ERROR;
+        }
+        if ( !IsValidLocale(language, LCID_SUPPORTED) )
+        {
+           ERROR_MSG("Error: invalid language id %d!\n", language);
+           return PS_ERROR;
+        }
+        rVersionInfo.AddTranslation(codepage, language);
+        return PS_OK;
+      }
+    }
+
+    case TOK_VI_SETPRODUCTVERSION:
+      strcpy(version_product_v, line.gettoken_str(1));
+      return PS_OK;
+
+    case TOK_VI_SETVERSIONLANGUAGE:
+    {
+      int s1, s2; 
+      int language = line.gettoken_int(1, &s1);
+      int codepage = line.gettoken_int(2, &s2);
+      if ( !s1 || !s2 ) 
+        PRINTHELP()
+      else
+      {
+        if ( !rVersionInfo.IsValidCodePage(codepage) )
+        {
+           ERROR_MSG("Error: invalid codepage id %d!\n", codepage);
+           return PS_ERROR;
+        }
+        if ( !IsValidLocale(language, LCID_SUPPORTED) )
+        {
+           ERROR_MSG("Error: invalid language id %d!\n", language);
+           return PS_ERROR;
+        }
+        char Buf[10];
+        sprintf(Buf, "%04x%04x", language, codepage);
+        rVersionInfo.SetVersionInfoLang(Buf);
+        return PS_OK;
+      }
+    }
 
 #else
-    case TOK_VI_PRODUCTVERSION:
-    case TOK_VI_PRODUCTNAME:
-    case TOK_VI_COMPANY:
-    case TOK_VI_COMMENTS:
-    case TOK_VI_LEGALTRADEMARKS:
-    case TOK_VI_LEGALCOPYRIGHTS:
-    case TOK_VI_DESCRIPTION:
+    case TOK_VI_ADDKEY:
+    case TOK_VI_ADDTRANSLATION:
+    case TOK_VI_SETPRODUCTVERSION:
+    case TOK_VI_SETVERSIONLANGUAGE:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_VERSION_INFO not defined.\n",line.gettoken_str(0));
       return PS_ERROR;
 #endif
