@@ -14,13 +14,13 @@ Adds a branding image on the top of the installer or on the left. Its size will 
 
 AllowRootDirInstall \e{true|false}
 
-Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the default (safe) behavior, which prevents users from selecting C:\\ or \\\\server\\share as an install (and lataer on, uninstall) directory. For additional directory selection page customizability, see .onVerifyInstDir 
+Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the default (safe) behavior, which prevents users from selecting C:\\ or \\\\server\\share as an install (and lataer on, uninstall) directory. For additional directory selection page customizability, see .onVerifyInstDir
 
 \S{aautoclosewindow} AutoCloseWindow
 
 AutoCloseWindow \e{true|false}
 
-Sets whether or not the install window automatically closes when completed. Can be 'false' or 'true'. This is overrideable from a section using SetAutoClose. 
+Sets whether or not the install window automatically closes when completed. Can be 'false' or 'true'. This is overrideable from a section using SetAutoClose.
 
 \S{abggradient} BGGradient
 
@@ -192,6 +192,12 @@ OutFile \e{install.exe}
 
 Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't effect the contents of the installer.
 
+\S{aplugindir} PluginDir
+
+PluginDir \e{directory}
+
+Causes the NSIS compiler to scan the given directory for Plugin DLLs.  
+
 \S{asetfont} SetFont
 
 SetFont \e{font_face_name font_size}
@@ -262,7 +268,7 @@ Overrides the subcaptions for each of the uninstaller pages (0=": Confirmation",
 
 UninstallText text \e{[/LANG=lang_id] [subtext]}
 
-Specifies the text on the first page of the uninstaller. If subtext is specified and not empty, it will replace the default secondary text on that page, "Uninstall from:". 
+Specifies the text on the first page of the uninstaller. If subtext is specified and not empty, it will replace the default secondary text on that page, "Uninstall from:".
 
 \S{awindowicon} WindowIcon
 
