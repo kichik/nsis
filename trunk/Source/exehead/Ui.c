@@ -358,7 +358,7 @@ int NSISCALL ui_doinstall(void)
     int size;
     lang_num=g_inst_header->common.str_tables_num;
     size=lang_num*sizeof(common_strings);
-    cur_common_strings_table=common_strings_tables=(common_strings*)my_alloc(size);
+    cur_common_strings_table=common_strings_tables=(common_strings*)my_GlobalAlloc(size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
   #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
@@ -366,7 +366,7 @@ int NSISCALL ui_doinstall(void)
     else
   #endif
       size=lang_num*sizeof(installer_strings);
-    cur_install_strings_table=install_strings_tables=(char *)my_alloc(size);
+    cur_install_strings_table=install_strings_tables=(char *)my_GlobalAlloc(size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
 
     myitoa(state_language, GetUserDefaultLangID());
@@ -690,7 +690,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         char *szUrl;
         long min=enlink->chrg.cpMin, max=enlink->chrg.cpMax;
         SendMessage(hwLicense,EM_SETSEL,min,max);
-        szUrl=(char *)my_alloc(max-min+1);
+        szUrl=(char *)my_GlobalAlloc(max-min+1);
         SendMessage(hwLicense,EM_GETSELTEXT,0,(LPARAM)szUrl);
         SetCursor(LoadCursor(0,IDC_WAIT));
         ShellExecute(hwndDlg,"open",szUrl,NULL,NULL,SW_SHOWNORMAL);
@@ -951,7 +951,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     HBITMAP hBMcheck1;
     int x;
     if (hTreeItems) GlobalFree(hTreeItems);
-    hTreeItems=(HTREEITEM*)my_alloc(sizeof(HTREEITEM)*num_sections);
+    hTreeItems=(HTREEITEM*)my_GlobalAlloc(sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_COMP_TEXT);
