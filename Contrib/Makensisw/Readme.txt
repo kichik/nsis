@@ -125,7 +125,7 @@ Version History
  - Fixed Copy All function
 
 1.6
- - Reduced size from 44k to 12k (kickik)
+ - Reduced size from 44k to 12k (kichik)
  - Editbox not limited to 32k (now using richedit control)
  - Made the log window font-size smaller.
 
