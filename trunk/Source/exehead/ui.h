@@ -10,7 +10,7 @@ void NSISCALL update_status_text_from_lang(int id, const char *text2);
 void NSISCALL update_status_text(const char *text1, const char *text2);
 extern int ui_st_updateflag;
 
-extern int g_autoclose;
+//extern int g_autoclose;
 extern void *g_inst_combinedheader;
 extern page *g_inst_page;
 extern section *g_inst_section;

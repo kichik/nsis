@@ -5,6 +5,7 @@
 #include "state.h"
 #include "config.h"
 #include "lang.h"
+#include "exec.h"
 
 #include "fileform.h"
 #include "ui.h"
@@ -42,17 +43,18 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
-BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
+/*BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val)
 {
   return SendMessage(hWnd,WM_SETTEXT,0,(LPARAM)val);
-}
+}*/
 
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
 {
-  return my_SetWindowText(GetDlgItem(dlg,idx),val);
+  return SetDlgItemText(dlg,idx,val);
+  //return my_SetWindowText(GetDlgItem(dlg,idx),val);
 }
 
-int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size)
+/*int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size)
 {
   return SendMessage(hWnd,WM_GETTEXT,size,(LPARAM)val);
 }
@@ -60,7 +62,7 @@ int NSISCALL my_GetWindowText(HWND hWnd, char *val, int size)
 int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size)
 {
   return my_GetWindowText(GetDlgItem(dlg,idx),val,size);
-}
+}*/
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, type);
@@ -163,10 +165,9 @@ int NSISCALL is_valid_instpath(char *s)
   return ivp;
 }
 
-static char * NSISCALL findinmem(char *a, char *b, int len_of_a)
+char * NSISCALL mystrstr(char *a, char *b)
 {
-  if (len_of_a<0) len_of_a=mystrlen(a);
-  len_of_a -= mystrlen(b);
+  int len_of_a = mystrlen(a) - mystrlen(b);
   while (*a && len_of_a >= 0)
   {
     char *t=a,*u=b;
@@ -255,7 +256,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
         if (pszWinInit != NULL)
         {
-          LPSTR pszRenameSecInFile = findinmem(pszWinInit, szRenameSec,-1);
+          LPSTR pszRenameSecInFile = mystrstr(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
           {
             mystrcpy(pszWinInit+dwFileSize, szRenameSec);
@@ -265,7 +266,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           else
           {
             char *pszFirstRenameLine = pszRenameSecInFile+10;
-            char *pszNextSec = findinmem(pszFirstRenameLine,"\n[",-1);
+            char *pszNextSec = mystrstr(pszFirstRenameLine,"\n[");
             if (pszNextSec)
             {
               int l=dwFileSize - (pszNextSec - pszWinInit);
@@ -314,14 +315,14 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
 
 
 static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
-char g_all_user_var_flag;
+//int g_all_user_var_flag;
 
 static void NSISCALL queryShellFolders(const char *name_, char *out)
 {
   static char name[20] = "Common ";
   mystrcpy(name + 7, name_);
   {
-    char f=g_all_user_var_flag;
+    char f=g_flags.all_user_var;
 
   again:
 
@@ -345,7 +346,7 @@ char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 char * NSISCALL process_string_fromtab(char *out, int offs)
 {
-  return lstrcpyn(out,process_string(ps_tmpbuf,GetStringFromStringTab(offs)),NSIS_MAX_STRLEN);
+  return lstrcpyn(out,process_string(GetStringFromStringTab(offs)),NSIS_MAX_STRLEN);
 }
 
 void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
@@ -405,10 +406,10 @@ int NSISCALL mystrlen(const char *in)
 }
 
 // Dave Laundon's simplified process_string
-char * NSISCALL process_string(char *out, const char *in)
+char * NSISCALL process_string(const char *in)
 {
-  char *outsave = out;
-  while (*in && out - outsave < NSIS_MAX_STRLEN)
+  char *out = ps_tmpbuf;
+  while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     int nVarIdx = (unsigned char)*in++;
     if (nVarIdx < VAR_CODES_START)
@@ -426,7 +427,7 @@ char * NSISCALL process_string(char *out, const char *in)
       {
         case VAR_CODES_START + 0: // HWNDPARENT
           myitoa(out, (unsigned int)g_hwnd);
-        break;
+          break;
         case VAR_CODES_START + 1:  // 0
         case VAR_CODES_START + 2:  // 1
         case VAR_CODES_START + 3:  // 2
@@ -511,18 +512,40 @@ char * NSISCALL process_string(char *out, const char *in)
         #endif
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
       } // switch
-      // remove trailing slash
-      while (*out && *CharNext(out)) out++;
-      if (nVarIdx > 21+VAR_CODES_START && nVarIdx != VAR_CODES_START+25 && *out == '\\') // only if not $0 to $R9, $CMDLINE, $LANGUAGE, or $HWNDPARENT
-        *out = 0;
-      out=CharNext(out);
+      // validate the directory name
+      if (nVarIdx > 21+VAR_CODES_START) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
+        // ($LANGUAGE can't have trailing backslash anyway...)
+        validate_filename(out);
+      }
+      out+=mystrlen(out);
     } // >= VAR_CODES_START
   } // while
   *out = 0;
-  return outsave;
+  return ps_tmpbuf;
+;
 }
-#ifdef NSIS_CONFIG_LOG
 
+char * NSISCALL validate_filename(char *in) {
+  char *nono = "*?|<>/\":";
+  char *cur_char = " ";
+  char *out = in;
+  char *out_save = out;
+  int i = 0;
+  while (*cur_char = *in++) {
+    if (!mystrstr(nono, cur_char) ||
+        (i == 1 && *(WORD*)out == CHAR2_TO_WORD(':','\\')) ||
+        (i == 2 && *cur_char == '?' && *(DWORD*)in == CHAR4_TO_DWORD('\\','\\','?','\\'))
+       )
+      *out++ = *cur_char;
+    i++;
+  }
+  do {
+    *out = 0;
+  } while (i && (*(--out) == ' ' || *out == '\\'));
+  return out_save;
+}
+
+#ifdef NSIS_CONFIG_LOG
 char log_text[4096];
 int log_dolog;
 void NSISCALL log_write(int close)
@@ -554,6 +577,4 @@ void NSISCALL log_write(int close)
     }
   }
 }
-
-
 #endif

@@ -49,7 +49,7 @@ enum {
 };
 
 class CEXEBuild {
-  public: 
+  public:
     CEXEBuild();
     ~CEXEBuild();
 

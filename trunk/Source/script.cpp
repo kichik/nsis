@@ -784,7 +784,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
         if (p.showfunc>=0 && k)
           SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
-        if (p.showfunc>=0 && k)
+        if (p.leavefunc>=0 && k)
           SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4));
         else if (p.caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
@@ -2241,9 +2241,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("Goto: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETSHELLVARCONTEXT:
-      ent.which=EW_SETSFCONTEXT;
-      ent.offsets[0]=line.gettoken_enum(1,"current\0all\0");
-      if (ent.offsets[0]<0) PRINTHELP()
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=1;
+      ent.offsets[1]=line.gettoken_enum(1,"current\0all\0");
+      if (ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SetShellVarContext: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_RET:
@@ -2989,9 +2990,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
-      ent.which=EW_SETWINDOWCLOSE;
-      ent.offsets[0] = line.gettoken_enum(1,"false\0true\0");
-      if (ent.offsets[0] < 0) PRINTHELP()
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=0;
+      ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
+      if (ent.offsets[1] < 0) PRINTHELP()
       SCRIPT_MSG("SetAutoClose: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_IFERRORS:
@@ -3001,12 +3003,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("IfErrors ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_CLEARERRORS:
-      ent.which=EW_IFERRORS;
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=2;
+      ent.offsets[1]=0;
       SCRIPT_MSG("ClearErrors\n");
     return add_entry(&ent);
     case TOK_SETERRORS:
-      ent.which=EW_IFERRORS;
-      ent.offsets[2]=1;
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=2;
+      ent.offsets[1]=1;
       SCRIPT_MSG("SetErrors\n");
     return add_entry(&ent);
 #ifdef NSIS_SUPPORT_STROPTS
@@ -3726,9 +3731,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETREBOOTFLAG:
-      ent.which=EW_SETREBOOTFLAG;
-      ent.offsets[0]=line.gettoken_enum(1,"false\0true\0");
-      if (ent.offsets[0] < 0) PRINTHELP()
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=3;
+      ent.offsets[1]=line.gettoken_enum(1,"false\0true\0");
+      if (ent.offsets[1] < 0) PRINTHELP()
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_REBOOT
     case TOK_REBOOT:

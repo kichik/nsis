@@ -4,11 +4,17 @@ TODO
 
 NSIS
 
-* check for invalid chars/spaces in folder input
+* fix $QUICKLAUNCH with all context
+
+* avaiable size not showing when directory doesn't exist
 
 -- NSIS 2 Beta 2 --
 
 NSIS
+
+* move more ui changes to compile time.
+  make progress bar flags be written directly in the UI (PBS_SMOOTH)
+  inst details could be changed in compile time too
 
 * component page for uninstaller, multiple sections
 
@@ -17,6 +23,8 @@ NSIS
 * current working directory changes
 
 * different color for the drive space when there is not enough space
+
+* all installer strings should be language strings
 
 DOCUMENTATION
 
