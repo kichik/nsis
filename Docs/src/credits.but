@@ -26,13 +26,17 @@
 
 \b Modern User Interface
 
+\b NSIS website
+
 \b NSIS Menu
+
+\b System for DLL/TLB library setup
 
 \b NSIS Update for NSIS distribution (original version by Nathan Purciful)
 
 \e{Robert Rainwater}
 
-\b MakeNSISw
+\b MakeNSISW
 
 \b New documentation format
 
@@ -61,6 +65,8 @@
 \b Lots of UI fixes
 
 \b InstallOptions improvements
+
+\H{contributors} Contributors
 
 \e{nnop@newmail.ru}
 
@@ -96,11 +102,11 @@
 
 Arabic - \e{asdfuae, Rami Kattan}
 
-Bulgarian - \e{Asparouh Kalyandjiev}
+Bulgarian - \e{Asparouh Kalyandjiev, Plamen Penkov}
 
 Catalan - \e{falanko}
 
-Croatian - \e{Vedran "RIV@NVX" Miletic, Igor Ostriz}
+Croatian - \e{Igor Ostriz, Vedran "RIV@NVX" Miletic}
 
 Czech - \e{T.V. Zuggy, SELiCE}
 
@@ -132,6 +138,8 @@ Korean - \e{dTomoyo, linak, koder}
 
 Lithuanian - \e{NorCis, Vytautas Krivickas, Danielius Scepanskis}
 
+Luxembourgish - \e{Jo Hoeser}
+
 Macedonian - \e{Sasko Zdravkin}
 
 Norwegian - \e{Jonas Christoffer Lindstrøm, Jan Ivar Beddari}
@@ -140,7 +148,7 @@ Polish - \e{Piotr Murawski, Rafa³ Lampe, cube}
 
 Portuguese - \e{DragonSoull, Dre', Ramon}
 
-Portuguese Brasil - \e{Layout do Brasil, Diego Marcos}
+Portuguese Brasil - \e{Layout do Brasil, deguix}
 
 Romanian - \e{Sorin Sbarnea, Cristian Pirvu, George Radu}
 
@@ -162,7 +170,7 @@ Traditional & Simplified Chinese - \e{Kii Ali}
 
 Turkish - \e{Bertan Kodamanoglu, Çagatay Dilsiz, Fatih BOY}
 
-Ukrainian - \e{Yuri Holubow - Nash-Soft}
+Ukrainian - \e{Yuri Holubow, Nash-Soft}
 
 \H{writers} Writers
 

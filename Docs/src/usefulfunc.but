@@ -1,4 +1,4 @@
-\A{usefulfunctions} Useful Functions
+\A{usefulfunctions} Useful Scripts
 
 \H{getparent} Get parent directory
 
@@ -385,208 +385,6 @@
 \c   Exch $R0
 \c  FunctionEnd
 
-\H{addshareddll} Add a shared DLL
-
-\c  ; AddSharedDLL
-\c  ;
-\c  ; Increments a shared DLLs reference count.
-\c  ; Use by passing one item on the stack (the full path of the DLL).
-\c  ;
-\c  ; Usage:
-\c  ;   Push $SYSDIR\myDll.dll
-\c  ;   Call AddSharedDLL
-\c  ;
-\c
-\c  Function AddSharedDLL
-\c    Exch $R1
-\c    Push $R0
-\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
-\c    IntOp $R0 $R0 + 1
-\c    WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
-\c    Pop $R0
-\c    Pop $R1
-\c  FunctionEnd
-
-\H{unremovesharedll} Remove a shared DLL
-
-\c  ; un.RemoveSharedDLL
-\c  ;
-\c  ; Decrements a shared DLLs reference count, and removes if necessary.
-\c  ; Use by passing one item on the stack (the full path of the DLL).
-\c  ; Note: for use in the main installer (not the uninstaller), rename the
-\c  ; function to RemoveSharedDLL.
-\c  ;
-\c  ; Usage:
-\c  ;   Push $SYSDIR\myDll.dll
-\c  ;   Call un.RemoveSharedDLL
-\c  ;
-\c
-\c  Function un.RemoveSharedDLL
-\c    Exch $R1
-\c    Push $R0
-\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
-\c    StrCmp $R0 "" remove
-\c      IntOp $R0 $R0 - 1
-\c      IntCmp $R0 0 rk rk uk
-\c      rk:
-\c        DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
-\c      goto Remove
-\c      uk:
-\c        WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
-\c      Goto noremove
-\c    remove:
-\c      Delete /REBOOTOK $R1
-\c    noremove:
-\c    Pop $R0
-\c    Pop $R1
-\c  FunctionEnd
-
-\H{upgradedll} Upgrade a DLL (macro)
-
-There is also a copy of this macro in the Include folder, so you only have to include UpgradeDLL.nsh to use it.
-
-\c ; Macro - Upgrade DLL File
-\c ; Written by Joost Verburg
-\c ; ------------------------
-\c ;
-\c ; Parameters:
-\c ; LOCALFILE   - Location of the new DLL file (on the compiler system)
-\c ; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
-\c ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
-\c ;               to be rebooted.
-\c ;               For Win9x support, this should be on the same volume as the DESTFILE!
-\c ;               The Windows temp directory could be located on any volume, so you cannot use
-\c ;               this directory.
-\c ;
-\c ; Define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that does not have to be registered.
-\c ;
-\c ; Note: If you want to support Win9x, you can only use short filenames (8.3).
-\c ;
-\c ; Example of usage:
-\c ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
-\c ;
-\c
-\c !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
-\c
-\c   Push $R0
-\c   Push $R1
-\c   Push $R2
-\c   Push $R3
-\c   Push $R4
-\c   Push $R5
-\c
-\c   ;------------------------
-\c   ;Unique number for labels
-\c
-\c   !define UPGRADEDLL_UNIQUE ${__LINE__}
-\c
-\c   ;------------------------
-\c   ;Copy the parameters used on run-time to a variable
-\c   ;This allows the usage of variables as paramter
-\c
-\c   StrCpy $R4 "${DESTFILE}"
-\c   StrCpy $R5 "${TEMPBASEDIR}"
-\c
-\c   ;------------------------
-\c   ;Check file and version
-\c
-\c   IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
-\c
-\c   ClearErrors
-\c     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
-\c     GetDLLVersion $R4 $R2 $R3
-\c   IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
-\c
-\c   IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
-\c   IntCmpU $R1 $R3 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.done_${UPGRADEDLL_UNIQUE} \
-\c     upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
-\c
-\c   ;------------------------
-\c   ;Let's upgrade the DLL!
-\c
-\c   SetOverwrite try
-\c
-\c   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
-\c     !ifndef UPGRADEDLL_NOREGISTER
-\c       ;Unregister the DLL
-\c       UnRegDLL $R4
-\c     !endif
-\c
-\c   ;------------------------
-\c   ;Try to copy the DLL directly
-\c
-\c   ClearErrors
-\c     StrCpy $R0 $R4
-\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-\c   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
-\c
-\c   ;------------------------
-\c   ;DLL is in use. Copy it to a temp file and Rename it on reboot.
-\c
-\c   GetTempFileName $R0 $R5
-\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-\c   Rename /REBOOTOK $R0 $R4
-\c
-\c   ;------------------------
-\c   ;Register the DLL on reboot
-\c
-\c   !ifndef UPGRADEDLL_NOREGISTER
-\c     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-\c       "Register $R4" 'rundll32.exe "$R4",DllRegisterServer'
-\c   !endif
-\c
-\c   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
-\c
-\c   ;------------------------
-\c   ;DLL does not exist - just extract
-\c
-\c   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
-\c     StrCpy $R0 $R4
-\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-\c
-\c   ;------------------------
-\c   ;Register the DLL
-\c
-\c   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
-\c     !ifndef UPGRADEDLL_NOREGISTER
-\c       RegDLL $R4
-\c     !endif
-\c
-\c   ;------------------------
-\c   ;Done
-\c
-\c   upgradedll.done_${UPGRADEDLL_UNIQUE}:
-\c
-\c   Pop $R5
-\c   Pop $R4
-\c   Pop $R3
-\c   Pop $R2
-\c   Pop $R1
-\c   Pop $R0
-\c
-\c   ;------------------------
-\c   ;End
-\c
-\c   Goto upgradedll.end_${UPGRADEDLL_UNIQUE}
-\c
-\c   ;------------------------
-\c   ;Called to extract the DLL
-\c
-\c   upgradedll.file_${UPGRADEDLL_UNIQUE}:
-\c     File /oname=$R0 "${LOCALFILE}"
-\c     Return
-\c
-\c   upgradedll.end_${UPGRADEDLL_UNIQUE}:
-\c
-\c  ;------------------------
-\c  ;Restore settings
-\c
-\c  SetOverwrite lastused
-\c  
-\c  !undef UPGRADEDLL_UNIQUE
-\c
-\c !macroend
-
 \H{connectinternet} Connect to the internet
 
 \c  ; ConnectInternet (uses Dialer plugin)
@@ -624,6 +422,24 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c    
 \c  FunctionEnd
 
+\H{installerfilename} Get Installer Filename
+
+\c  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
+\c  ;$R0 will contain the installer filename
+
+\H{multipleinstances} Prevent Multiple Instances
+
+Put the following code in your \R{oninit}{.onInit function}:
+
+\c  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "myMutex") i .r1 ?e'
+\c  Pop $R0
+\c  
+\c  StrCmp $R0 0 +3
+\c    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
+\c    Abort
+
+'myMutex' should be replaced by a unique value. 
+
 \H{morefuncs} More
 
-You can find more useful functions at \W{http://nsis.sourceforge.net/archive/}{the NSIS Archive}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
+You can find more useful scripts at \W{http://nsis.sourceforge.net/archive/}{the NSIS Archive}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.

@@ -216,7 +216,7 @@ The decimal HWND of the parent window.
 
 The path to a temporary folder created upon the first usage of a plugin or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plugin, or any other file that a plugin needs to work.
 
-\S1{varstrings} Variables Used in Strings
+\S1{varstrings} Constants Used in Strings
 
 \e{$$}
 
@@ -233,19 +233,3 @@ Use to represent a newline (\\n).
 \e{$\\t}
 
 Use to represent a tab (\\t).
-
-\e{$\{SYMBOL\}}
-
-Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. The order of calling Symbols in the script is important.
-
-\c Name "Test Program ${VERSION}"
-\c !define VERSION "V.1.0"
-
-This code will set the name of the installer to "Test Program $\{VERSION\}". The Same happens if the Symbol has not been defined.
-
-\c !define VERSION "V.1.0"
-\c Name "Test Program ${VERSION}"
-
-This code sets the name of the installer to "Test Program V.1.0"
-
-For more info, see \R{compdefines}{Conditional Compilation}.

@@ -6,19 +6,37 @@
 
 \b See \R{compiling_infos}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
 
-\b NSIS doesn't create installers for Linux, it can only compile installers for Windows on Linux
+\b NSIS doesn't create installers for Linux/Mac OS X etc., but you can compile Window installers on these platforms
+
+\b UpgradeDLL is still provided in UpgradeDLL.nsh for backwards compatibility
 
 \S1{v2.01-cl} Changelog
 
-\b makensis compiles on POSIX platforms (Linux, *BSD, Mac OS X, etc.)
+\S2{} Major Changes
 
-\b \L{../Contrib/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
+\b Compiler (makensis) supports POSIX platforms (Linux, *BSD, Mac OS X, etc.)
 
-\b Language files fixes and improvements
+\b \R{library}{New system} for DLL/TLB library setup
+
+\S2{} New/Changed Commands
+
+\b Added \R{abgfont}{BGFont} that allows setting the background text font
+
+\b Added SW_HIDE to \R{execshell}{ExecShell}'s accepted show modes
+
+\S2{} Minor Changes
+
+\b LZMA exehead is now 34KB and should also decompress faster
 
 \b Windows 95 (OSR2)/98/ME no longer see drive free space capped to 2GB
 
-\b LZMA exehead is now 34kb and should also decompress faster
+\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
+
+\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, added StrCase, some fixes
+
+\b The plug-ins folder is properly removed when the system is rebooted
+
+\b \R{setoutpath}{SetOutPath} "-" works again
 
 \b Fixed a bug which made plug-ins that didn't have lower case extension not be found
 
@@ -28,29 +46,25 @@
 
 \b makensis shows meaningful errors for compression errors instead of just magic numbers
 
-\b Added SW_HIDE to \R{execshell}{ExecShell}'s accepted show modes
-
 \b Fixed a bug with \R{aallowrootdirinstall}{AllowRootDirInstall} used along with \R{ainstalldirregkey}{InstallDirRegKey} that caused the directory in the registry to be ignored
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
-
-\b \R{upgradedll}{UpgradeDLL}: rundll32 not always in $SYSDIR
-
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages, bitmaps are now automatically centered, fixed a rare freeze
-
-\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, added StrCase, some fixes
-
-\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
-
-\b \R{setoutpath}{SetOutPath} "-" works again
-
-\b Added \R{abgfont}{BGFont} that allows setting the background text font
+\b \R{file}{File} paths relative to the root folder work again
 
 \b Made Times New Roman default font for the background text because it should always have support for the locale's language
 
-\b Zip2Exe 0.32: Fixed codepage problems
+\b Language file fixes and improvements
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
 
 \b \L{../Contrib/Banner/Readme.txt}{Banner}: Added getWindow to allow greater control over the banner window
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.41}: Bitmaps are now automatically centered, fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages, fixed a rare freeze
+
+\b Zip2Exe 0.32: Fixed codepage problems
+
+\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
 
 \H{v2.0} 2.0
 
@@ -98,9 +112,9 @@ Released on February 7th, 2004
 
 \b New and improved utilities: \L{../Contrib/Makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
 
-\b New commands: \R{addplugindir}{!AddPluginDir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, \R{setpluginunload}{SetPluginUnload}, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, \R{ssubsection}{SubSection}, \R{ssubsectionend}{SubSectionEnd}, \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
+\b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, \R{setpluginunload}{SetPluginUnload}, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, \R{ssubsection}{SubSection}, \R{ssubsectionend}{SubSectionEnd}, \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
 
-\b Removed commands: DisabledBitmap, EnabledBitmap and SectionDivider
+\b Removed commands: DirShow, DisabledBitmap, EnabledBitmap and SectionDivider
 
 \b All this and a smaller overhead! =)
 
@@ -274,7 +288,7 @@ Released on November 19th, 2003
 
 \b The icons folder has been renamed to Graphics and was reorganized. If you were using any files from Contrib\\Icons in your script, you should update it to point to the new image or icon path.
 
-\b \R{upgradedll}{UpgradeDLL} has been changed, it's \e{highly recommend} that you include the new version in your script using \c{!include "UpgradeDLL.nsh"} instead of the old one.
+\b UpgradeDLL has been changed, it's \e{highly recommend} that you include the new version in your script using \c{!include "UpgradeDLL.nsh"} instead of the old one.
 
 \S1{v2.0b4-cl} Changelog
 
@@ -288,35 +302,19 @@ Released on November 19th, 2003
 
 \b Improved large files handling (way lower requirements to compile a 2GB installer now)
 
-\b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
-
 \b Full support for RTL languages, including support for LTR and RTL languages in one installer
 
 \b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Extraction progress
 
-\b Better installation directory verification
-
-\b Fixed all known problems with temporary files and directoroes
-
 \b No more unprocessed strings, variables can be used everywhere
 
 \b Leave function for custom \R{pages}{pages}: Input on InstallOptions pages can be validated using script code
 
-\b Better ClearType support
-
-\b No more flickering
+\b Interface improvements: Better ClearType support, no more flickering
 
 \b \R{onmouseoversection}{OnMouseOver text} is only displayed when mouse over section
-
-\b RO sections can now be in \R{ainsttype}{InstTypes} too (defaults to old behavior)
-
-\b Improved \R{aaddbrandingimage}{AddBrandingImage}: doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value
-
-\b Increased limit of InstTypes to 32
-
-\b Improved macros & functions: \R{upgradedll}{UpgradeDLL}, GetParent, GetParameters. Using the new versions is recommended.
 
 \b NLF language files (v6): language specific fonts, RTL and more strings
 
@@ -325,18 +323,6 @@ Released on November 19th, 2003
 \b No more /LANG, only LangStrings - easier to set one string to all languages
 
 \b LangStrings are no longer installer/uninstaller specific (no un.)
-
-\b Fixed SetOutPath not setting current directory if the directory didn't exist before
-
-\b Components tree: fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree and added SF_PSELECTED for partially selected sub-sections
-
-\b Documentation fixes
-
-\b Minor bug fixes
-
-\b Code clean-ups and some more comments
-
-\b More...
 
 \S2{} New/Changed Commands
 
@@ -354,6 +340,8 @@ Released on November 19th, 2003
 
 \b Replaced SetBkColor with \R{setctlcolors}{SetCtlColors} which can set text color too
 
+\b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
+
 \b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
 
 \b Added ifdiff and lastusd for \R{asetoverwrite}{SetOverwrite}
@@ -367,6 +355,32 @@ Released on November 19th, 2003
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
 \b Added base_dir for \R{gettempfilename}{GetTempFileName}
+
+\S2{} Minor Changes
+
+\b RO sections can now be in \R{ainsttype}{InstTypes} too (defaults to old behavior)
+
+\b Increased limit of InstTypes to 32
+
+\b Improved macros & functions: UpgradeDLL, GetParent, GetParameters. Using the new versions is recommended.
+
+\b Fixed SetOutPath not setting current directory if the directory didn't exist before
+
+\b Components tree: fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree and added SF_PSELECTED for partially selected sub-sections
+
+\b Improved \R{aaddbrandingimage}{AddBrandingImage}: doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value
+
+\b Better installation directory verification
+
+\b Fixed all known problems with temporary files and directories
+
+\b Documentation fixes
+
+\b Minor bug fixes
+
+\b Code clean-ups and some more comments
+
+\b More...
 
 \S2{} Utilities and Plug-ins
 
@@ -812,4 +826,4 @@ Released on May 22nd, 2002
 
 \H{cl-older} Older Versions
 
-\W{http://nsis.sourceforge.net/download/nsis_1/}{NSIS 1.x version history}
+\W{http://nsis.sourceforge.net/download/nsis1/}{NSIS 1.x version history}
