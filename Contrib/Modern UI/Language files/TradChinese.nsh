@@ -43,7 +43,7 @@
   !define MUI_TEXT_ABORT_TITLE "安裝己中止"
   !define MUI_TEXT_ABORT_SUBTITLE "安裝程式並未成功地執行完成。"
   
-  !define MUI_TEXT_FINISH_BUTTON "完成(&F)"
+  !define MUI_BUTTONTEXT_FINISH "完成(&F)"
   !define MUI_TEXT_FINISH_INFO_TITLE "完成 $(^Name) 安裝精靈"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) 已在你的系統安裝。\r\n按一下 [完成(F)] 關閉此精靈。"
   !define MUI_TEXT_FINISH_INFO_REBOOT "你的系統需要重新啟動，以便完成 $(^Name) 的安裝。現在要重新啟動嗎？"
