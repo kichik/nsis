@@ -241,8 +241,9 @@ CEXEBuild::CEXEBuild()
 
   // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
-  szVIProductVersion[0]=szVIProductName[0]=szVICompanyName[0]=0;
-  szVIComments[0]=szVILegalTrademarks[0]=szVILegalCopyrights[0]=szVIDescription[0]=0;
+  version_codePage=0;
+  version_lang=0;
+  version_product_v[0]=0;
 #endif
 
   build_overwrite=0;
@@ -1269,51 +1270,12 @@ int CEXEBuild::resolve_coderefs(const char *str)
 int CEXEBuild::write_output(void)
 {
 #ifdef NSIS_SUPPORT_VERSION_INFO
-  CResourceVersionInfo ResourceVersionInfo;
   GrowBuf VerInfoStream;  
   bool bNeedVInfo = false;
 
-  ResourceVersionInfo.SetFileFlags(VS_FF_DEBUG);
-
-  if ( szVIProductVersion[0] ) {
-     ResourceVersionInfo.SetKeyValue("ProductVersion", szVIProductVersion);
-     ResourceVersionInfo.SetKeyValue("FileVersion", szVIProductVersion); // this is needed to explorer show version tab with some info
-     bNeedVInfo = true;
-  }
-
-  if ( szVIProductName[0] ) {
-     ResourceVersionInfo.SetKeyValue("ProductName", szVIProductName);
-     bNeedVInfo = true;
-  }
-
-  if ( szVICompanyName[0] ) {
-     ResourceVersionInfo.SetKeyValue("CompanyName", szVICompanyName);
-     bNeedVInfo = true;
-  }
-
-  if ( szVIComments[0] ) {
-     ResourceVersionInfo.SetKeyValue("Comments", szVIComments);
-     bNeedVInfo = true;
-  }
-
-  if ( szVILegalTrademarks[0] ) {
-     ResourceVersionInfo.SetKeyValue("LegalTrademarks", szVILegalTrademarks);
-     bNeedVInfo = true;
-  }
-  
-  if ( szVILegalCopyrights[0] ) {
-     ResourceVersionInfo.SetKeyValue("LegalCopyright", szVILegalCopyrights);
-     bNeedVInfo = true;
-  }
-
-  if ( szVIDescription[0] ) {
-     ResourceVersionInfo.SetKeyValue("FileDescription", szVIDescription);
-     bNeedVInfo = true;
-  }
-
-  if ( bNeedVInfo )
+  if ( rVersionInfo.GetKeyCount() > 0 )
   {
-    if ( !szVIProductVersion[0] )
+    if ( !version_product_v[0] )
     { 
       ERROR_MSG("Error: VIProductVersion is required when other version information functions are used.\n");
       return PS_ERROR;
@@ -1321,18 +1283,27 @@ int CEXEBuild::write_output(void)
     else
     {
       int imm, iml, ilm, ill;
-      if ( sscanf(szVIProductVersion, "%d.%d.%d.%d", &imm, &iml, &ilm, &ill) != 4 )
+      if ( sscanf(version_product_v, "%d.%d.%d.%d", &imm, &iml, &ilm, &ill) != 4 )
       { 
         ERROR_MSG("Error: invalid VIProductVersion format, should be X.X.X.X\n");
         return PS_ERROR;
       }
-      ResourceVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
-      ResourceVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
-      ResourceVersionInfo.SetKeyValue("InternalName", build_output_filename);
-      ResourceVersionInfo.AddTranslation(0x0,0x0409);
-      ResourceVersionInfo.ExportToStream(VerInfoStream);
+      rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+      rVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+
+      //rVersionInfo.AddTranslation(0x0,0x0409);
+      rVersionInfo.ExportToStream(VerInfoStream);
       init_res_editor();
       res_editor->UpdateResource(RT_VERSION, 1, 0, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+
+      if ( !rVersionInfo.GetTranslationCount() )
+        warning("Generating version information without any language/codepage defined.");
+      if ( !rVersionInfo.FindKey("FileVersion") )
+        warning("Generating version information without standard key \"FileVersion\"");
+      if ( !rVersionInfo.FindKey("FileDescription") )
+        warning("Generating version information without standard key \"FileDescription\"");
+      if ( !rVersionInfo.FindKey("LegalCopyright") )
+        warning("Generating version information without standard key \"LegalCopyright\"");
     }
   }
 

@@ -14,14 +14,14 @@
 #include <algorithm>
 using namespace std;
 
-#define VERINFO_LANGUAGE     L"040904b0"  // English language and codepage
-#define VERINFO_TRANSLATION  0x04B00409   // English language and codepage
 /////////////////////////////////////////////////////////////////////////////////////////////
 class CResourceVersionInfo 
 {
     VS_FIXEDFILEINFO m_FixedInfo;
     DefineList m_ChildStrings;
     vector< DWORD > m_Translations;
+    string m_VersionInfoLang;
+    bool b_CustomTranslations;
     
 public:
     CResourceVersionInfo();
@@ -32,6 +32,11 @@ public:
     void SetFileVersion(int HighPart, int LowPart);
     void SetProductVersion(int HighPart, int LowPart);
     void ExportToStream(GrowBuf &strm);
+    int GetKeyCount();
+    int GetTranslationCount();
+    char *FindKey(char *pKeyName);
+    void SetVersionInfoLang(char *pLandCp);
+    bool IsValidCodePage(WORD codePage );
 };
 
 #endif

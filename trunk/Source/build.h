@@ -9,6 +9,7 @@ using namespace std;
 #include "lineparse.h"
 #include "lang.h"
 #include "ResourceEditor.h"
+#include "ResourceVersionInfo.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -212,13 +213,9 @@ class CEXEBuild {
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
-    char szVIProductVersion[1024];
-    char szVIProductName[1024];
-    char szVICompanyName[1024];
-    char szVIComments[1024];
-    char szVILegalTrademarks[1024];
-    char szVILegalCopyrights[1024];
-    char szVIDescription[1024];
+    CResourceVersionInfo rVersionInfo;
+    int version_codePage, version_lang;
+    char version_product_v[1024];
 #endif
 
     int subsection_open_cnt;
