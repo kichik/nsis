@@ -139,6 +139,19 @@ public:
     return -1;
   }
 
+  int getnum() {
+    char *s=(char*)gr.get();
+    int ml=gr.getlen();
+    int offs=0;
+    int idx=0;
+    while (offs < ml)
+    {
+      offs+=strlen(s+offs)+1;
+      idx++;
+    }
+    return idx;
+  }
+
   char *get() { return (char*)gr.get(); }
   int getlen() { return gr.getlen(); }
 private:

@@ -531,6 +531,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_OK;
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
+    case TOK_LANGSTRING:
+      SCRIPT_MSG("LangString: \"%s\" %s \"%s\"\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
+      if (SetUserString(line.gettoken_str(1), line.gettoken_int(2), line.gettoken_str(3)) != PS_OK)
+      {
+        ERROR_MSG("Error: LangString: can't add user string!\n");
+        return PS_ERROR;
+      }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_NAME:
       {
         int a = 1;
@@ -659,7 +667,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
         else
         {
-          for (x = 0; x < NSIS_MAX_INST_TYPES && build_header.install_types_ptr[x]>=0; x ++);
+          for (x = 0; x < NSIS_MAX_INST_TYPES && build_header.install_types_ptr[x]; x ++);
           if (x==NSIS_MAX_INST_TYPES)
           {
             ERROR_MSG("InstType: no more than %d install types allowed. %d specified\n",NSIS_MAX_INST_TYPES,NSIS_MAX_INST_TYPES+1);
@@ -786,7 +794,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("OutFile: \"%s\"\n",build_output_filename);
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTDIR:
-      if (build_header.install_directory_ptr >= 0)
+      if (build_header.install_directory_ptr)
       {
         warning("%s: specified multiple times. wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
       }
@@ -795,7 +803,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTALLDIRREGKEY: // InstallDirRegKey
       {
-        if (build_header.install_reg_key_ptr>= 0)
+        if (build_header.install_reg_key_ptr)
         {
           warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
         }
@@ -1398,17 +1406,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             return PS_ERROR;
           }
         build_nlfs.push_back(newNLF);
-        for (i = 0; i < string_tables.size(); i++) {
-          if (newNLF->GetLang() == string_tables[i]->common.lang_id) {
-            break;
-          }
-        }
-        if (i == string_tables.size()) {
-          StringTable *table = (StringTable*)malloc(sizeof(StringTable));
-          memset(table, -1, sizeof(StringTable));
-          table->common.lang_id=table->ucommon.lang_id=newNLF->GetLang();
-          string_tables.push_back(table);
-        }
+        LANGID lang = newNLF->GetLang();
+        GetTable(lang);
         last_used_lang=newNLF->GetLang();
         // define LANG_LangName as "####" (lang id)
         // for example ${LANG_ENGLISH} = 1033
@@ -1607,7 +1606,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[0]=add_string_main(line.gettoken_str(1));
       ent.offsets[1]=0; // uninstall section 0
       ent.offsets[2]=0;
-      if (ent.offsets[0]<0) PRINTHELP()
+      if (!ent.offsets[0]) PRINTHELP()
       SCRIPT_MSG("WriteUninstaller: \"%s\"\n",line.gettoken_str(1));
     return add_entry(&ent);
 #else//!NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -2084,13 +2083,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         if (a+1 != line.getnumtokens()) PRINTHELP();
         ent.offsets[1]=add_string(line.gettoken_str(a));
-        if (ent.offsets[1]<0) PRINTHELP()
-        ent.offsets[2]=-1;
+        if (!ent.offsets[1]) PRINTHELP()
+        ent.offsets[2]=0;
       }
       else // register
       {
         ent.offsets[1] = add_string(line.gettoken_str(2));
-        if (ent.offsets[1]<0) ent.offsets[1]=add_string("DllRegisterServer");
+        if (!ent.offsets[1]) ent.offsets[1]=add_string("DllRegisterServer");
         ent.offsets[2]=add_string("Registering: ");
       }
 
@@ -2613,7 +2612,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SETDETAILSPRINT:
       ent.which=EW_UPDATETEXT;
-      ent.offsets[0] = -1;
+      ent.offsets[0] = 0;
       ent.offsets[1] = line.gettoken_enum(1,"none\0listonly\0textonly\0both\0");
       if (ent.offsets[1] < 0) PRINTHELP()
       if (!ent.offsets[1]) ent.offsets[1]=4;
@@ -2662,8 +2661,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.which=EW_GETFUNCTIONADDR;
       ent.offsets[0]=line.gettoken_enum(1,usrvars);
       ent.offsets[1]=ns_func.add(line.gettoken_str(2),0);
-      ent.offsets[2]=-1;
-      ent.offsets[3]=-1;
+      ent.offsets[2]=0;
+      ent.offsets[3]=0;
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG("GetFunctionAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -2671,8 +2670,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.which=EW_GETLABELADDR;
       ent.offsets[0]=line.gettoken_enum(1,usrvars);
       if (ent.offsets[0] < 0 || process_jump(line,2,&ent.offsets[1])) PRINTHELP()
-      ent.offsets[2]=-1;
-      ent.offsets[3]=-1;
+      ent.offsets[2]=0;
+      ent.offsets[3]=0;
       SCRIPT_MSG("GetLabelAddress: %s %s",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_GETCURRENTADDR:
@@ -2684,8 +2683,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[1]=add_string(buf);
       }
       if (ent.offsets[0] < 0) PRINTHELP()
-      ent.offsets[2]=-1;
-      ent.offsets[3]=-1;
+      ent.offsets[2]=0;
+      ent.offsets[3]=0;
       SCRIPT_MSG("GetCurrentAddress: %s %s",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
@@ -2729,16 +2728,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=line.gettoken_enum(2,usrvars);
         wsprintf(buf,"%u",high);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=-1;
-        ent.offsets[3]=-1;
+        ent.offsets[2]=0;
+        ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
         add_entry(&ent);
 
         ent.offsets[0]=line.gettoken_enum(3,usrvars);
         wsprintf(buf,"%u",low);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=-1;
-        ent.offsets[3]=-1;
+        ent.offsets[2]=0;
+        ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
@@ -2771,16 +2770,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=line.gettoken_enum(2,usrvars);
         wsprintf(buf,"%u",high);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=-1;
-        ent.offsets[3]=-1;
+        ent.offsets[2]=0;
+        ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
         add_entry(&ent);
 
         ent.offsets[0]=line.gettoken_enum(3,usrvars);
         wsprintf(buf,"%u",low);
         ent.offsets[1]=add_string(buf);
-        ent.offsets[2]=-1;
-        ent.offsets[3]=-1;
+        ent.offsets[2]=0;
+        ent.offsets[3]=0;
         if (ent.offsets[0]<0) PRINTHELP()
         SCRIPT_MSG("GetFileTimeLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
@@ -2811,8 +2810,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           vname=line.gettoken_str(3);
           ent.offsets[1]=add_string(vname); // value name
         }
-        else ent.offsets[1]=-1;
-        ent.offsets[2]=-1;
+        else ent.offsets[1]=0;
+        ent.offsets[2]=0;
         ent.offsets[3]=add_string(line.gettoken_str(1));
         SCRIPT_MSG("DeleteINI%s: [%s] %s in %s\n",vname?"Str":"Sec",
           line.gettoken_str(2),vname,line.gettoken_str(1));
@@ -2958,7 +2957,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=line.gettoken_enum(1,usrvars);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] < 0 || k == -1) PRINTHELP()
+        if (!ent.offsets[0] || k == -1) PRINTHELP()
         ent.offsets[1]=(int)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
@@ -2991,7 +2990,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.which=EW_DELREG;
         ent.offsets[0]=(int)rootkey_tab[k];
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
-        ent.offsets[2]=(which_token==TOK_DELETEREGKEY)?-1:add_string(line.gettoken_str(a+2));
+        ent.offsets[2]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
         if (which_token==TOK_DELETEREGKEY)
           SCRIPT_MSG("DeleteRegKey: %s\\%s\n",line.gettoken_str(a),line.gettoken_str(a+1));
@@ -3075,7 +3074,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=line.gettoken_enum(1,usrvars);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
-        if (ent.offsets[0] < 0 || k == -1) PRINTHELP()
+        if (!ent.offsets[0] || k == -1) PRINTHELP()
         ent.offsets[1]=(int)rootkey_tab[k];
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
@@ -3463,8 +3462,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
       {
-        int height=-1;
-        int weight=-1;
+        int height=0;
+        int weight=0;
         int flags=0;
         for (int i = 3; i < line.getnumtokens(); i++) {
           char *tok=line.gettoken_str(i);
@@ -3487,11 +3486,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             }
           }
           else {
-            if (height==-1) {
+            if (!height) {
               SCRIPT_MSG(" height=%s",tok);
               height=add_string(tok);
             }
-            else if (weight==-1) {
+            else if (!weight) {
               SCRIPT_MSG(" weight=%s",tok);
               weight=add_string(tok);
             }
@@ -3501,8 +3500,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             }
           }
         }
-        if (height==-1) height=add_string("0");
-        if (weight==-1) weight=add_string("0");
         ent.offsets[2]=height;
         ent.offsets[3]=weight;
         ent.offsets[4]=flags;
@@ -3588,7 +3585,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.which=EW_REGISTERDLL;
         ent.offsets[0]=add_string(tempDLL);;
         ent.offsets[1]=add_string(command);
-        ent.offsets[2]=-1;
+        ent.offsets[2]=0;
         ent.offsets[3]=nounload;
         ret=add_entry(&ent);
         if (ret != PS_OK) return ret;

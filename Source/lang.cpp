@@ -67,27 +67,33 @@ extern char *english_strings[] = {
   "Copy Details To Clipboard"
 };
 
-int CEXEBuild::SetString(char *string, int id, int process, LANGID lang/*=0*/) {
+StringTable* CEXEBuild::GetTable(LANGID &lang) {
   lang=lang?lang:last_used_lang;
   last_used_lang=lang;
   StringTable *table = 0;
   for (int i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->common.lang_id) {
+    if (lang == string_tables[i]->lang_id) {
       table = string_tables[i];
       break;
     }
   }
   if (!table) {
-    table = (StringTable*)malloc(sizeof(StringTable));
+    table = new StringTable;
     if (!table) {
       ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
-      return PS_ERROR;
+      return 0;
     }
-    memset(table, -1, sizeof(StringTable));
-    table->common.lang_id = table->ucommon.lang_id = lang;
+    memset(table, 0, sizeof(StringTable)-sizeof(GrowBuf)*2);
+    table->lang_id = table->lang_id = lang;
     string_tables.push_back(table);
   }
 
+  return table;
+}
+
+int CEXEBuild::SetString(char *string, int id, int process, LANGID lang/*=0*/) {
+  StringTable *table = GetTable(lang);
+  if (!table) return PS_ERROR;
   return SetString(string, id, process, table);
 }
 
@@ -178,55 +184,103 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
   return PS_OK;
 }
 
+int CEXEBuild::SetUserString(char *name, LANGID lang, char *string) {
+  StringTable *table = GetTable(lang);
+  if (!table) return PS_ERROR;
+
+  GrowBuf *user_strings;
+  StringList *user_strings_list;
+  bool uninst;
+  if (!(uninst = !strnicmp(name,"un.",3))) {
+    name += 3;
+    user_strings=&table->user_strings;
+    user_strings_list=&build_userlangstrings;
+  }
+  else {
+    user_strings=&table->user_ustrings;
+    user_strings_list=&ubuild_userlangstrings;
+  }
+
+  int idx;
+  if (user_strings_list->find(name, 0, &idx) < 0) {
+    user_strings_list->add(name, 0);
+    user_strings_list->find(name, 0, &idx);
+  }
+
+  user_strings->resize((idx+1)*sizeof(int));
+  ((int*)user_strings->get())[idx] = uninst ? add_string_uninst(string,1) : add_string_main(string,1);
+
+  for (int j = 0; j < string_tables.size(); j++) {
+    if (j == idx) continue;
+    if (uninst) {
+      if (string_tables[j]->user_ustrings.getlen() < (idx+1)*sizeof(int)) {
+        string_tables[j]->user_ustrings.resize((idx+1)*sizeof(int));
+        ((int*)string_tables[j]->user_ustrings.get())[idx] = 0;
+      }
+    }
+    else {
+      if (string_tables[j]->user_strings.getlen() < (idx+1)*sizeof(int)) {
+        string_tables[j]->user_strings.resize((idx+1)*sizeof(int));
+        ((int*)string_tables[j]->user_strings.get())[idx] = 0;
+      }
+    }
+  }
+
+  return PS_OK;
+}
+
 bool CEXEBuild::_IsSet(int *str, WORD lang) {
   if (!str) return false;
   lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
-  lang = lang?lang:string_tables.size()?string_tables[0]->common.lang_id:1033; // Default is English (1033)
+  lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
   int i;
   for (i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->common.lang_id) {
+    if (lang == string_tables[i]->lang_id) {
       break;
     }
   }
   if (i == string_tables.size()) return false;
-  if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))>=0) return true;
+  if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))) return true;
   return false;
 }
 
 int CEXEBuild::WriteStringTables() {
   int i;
 
+  SCRIPT_MSG("Generating language tables... ");
+
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
-  if (string_tables.size() == 0) {
-    StringTable *table = (StringTable*)malloc(sizeof(StringTable));
-    if (!table) {
-      ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
-      return PS_ERROR;
-    }
-    memset(table, -1, sizeof(StringTable));
-    table->common.lang_id=table->ucommon.lang_id=1033; // English
-    string_tables.push_back(table);
-  }
+  LANGID lang = 1033;
+  StringTable *table = GetTable(lang);
+  if (!table) return PS_ERROR;
 
   // Fill tables with defaults (if needed) and with instruction strings
   int st_num = string_tables.size();
   for (i = 0; i < st_num; i++)
     FillDefaultsIfNeeded(string_tables[i]);
 
-  // Add string tables into datablock
-  for (i = 0; i < st_num; i++)
+  // Add string tables into their datablock
+  for (i = 0; i < st_num; i++) {
+    build_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
     build_langtables.add(&string_tables[i]->common, sizeof(common_strings));
-  build_header.common.str_tables_num = st_num;
-
-  for (i = 0; i < st_num; i++)
     build_langtables.add(&string_tables[i]->installer, sizeof(installer_strings));
+    if (build_userlangstrings.getnum())
+      build_langtables.add(string_tables[i]->user_strings.get(), string_tables[i]->user_strings.getlen());
+  }
+  build_header.common.str_tables_num = st_num;
+  build_header.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(installer_strings) + (build_userlangstrings.getnum() * sizeof(int));
 
-  for (i = 0; i < st_num; i++)
+  for (i = 0; i < st_num; i++) {
+    ubuild_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
     ubuild_langtables.add(&string_tables[i]->ucommon, sizeof(common_strings));
-  build_uninst.common.str_tables_num = st_num;
-
-  for (i = 0; i < st_num; i++)
     ubuild_langtables.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
+    if (ubuild_userlangstrings.getnum())
+      ubuild_langtables.add(string_tables[i]->user_ustrings.get(), string_tables[i]->user_ustrings.getlen());
+  }
+  build_uninst.common.str_tables_num = st_num;
+  build_uninst.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(uninstall_strings) + (ubuild_userlangstrings.getnum() * sizeof(int));
+
+  SCRIPT_MSG("Done!\n");
 
   return PS_OK;
 }
@@ -234,7 +288,7 @@ int CEXEBuild::WriteStringTables() {
 void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   if (!nlf) {
     for (int i = 0; i < build_nlfs.size(); i++) {
-      if (build_nlfs[i]->GetLang() == table->common.lang_id) {
+      if (build_nlfs[i]->GetLang() == table->lang_id) {
           nlf = build_nlfs[i];
           break;
       }
@@ -245,7 +299,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   // if component page, do component strings:
-  if (table->installer.componenttext>=0)
+  if (table->installer.componenttext)
   {
     int x;
     int iscp=0;
@@ -256,29 +310,29 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     }
     if (iscp)
     {
-      if (table->installer.custom<0) table->installer.custom=add_string_main(str(NLF_COMP_CUSTOM),0);
-      if (table->common.subcaptions[1]<0)
+      if (!table->installer.custom) table->installer.custom=add_string_main(str(NLF_COMP_CUSTOM),0);
+      if (!table->common.subcaptions[1])
         table->common.subcaptions[1]=add_string_main(str(NLF_SUBCAPTION_OPTIONS));
 
-      if (build_header.install_types_ptr[0] < 0)
+      if (!build_header.install_types_ptr[0])
       {
-        if (table->installer.componentsubtext[1]<0)
+        if (!table->installer.componentsubtext[1])
           table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT1_NO_INST_TYPES),0);
       }
       else
       {
-        if (table->installer.componentsubtext[0]<0)
+        if (!table->installer.componentsubtext[0])
           table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
-        if (build_header.no_custom_instmode_flag!=1 && table->installer.componentsubtext[1]<0)
+        if (build_header.no_custom_instmode_flag!=1 && !table->installer.componentsubtext[1])
           table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
       }
     }
-    else table->installer.componenttext=-1;
+    else table->installer.componenttext=0;
   }
 #endif
 
   static bool nameWarned = false;
-  if (table->common.name < 0)
+  if (!table->common.name)
   {
     if (!nameWarned) {
       warning("Name command not specified. Assuming default.");
@@ -290,69 +344,69 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
-  if (table->installer.licensedata<0 || table->installer.licensetext<0)
+  if (!table->installer.licensedata || !table->installer.licensetext)
   {
-    table->installer.licensedata=-1;
-    table->installer.licensetext=-1;
+    table->installer.licensedata=0;
+    table->installer.licensetext=0;
   }
 
-  if (table->installer.licensedata>=0)
+  if (table->installer.licensedata)
   {
-    if (table->common.subcaptions[0]<0)
+    if (!table->common.subcaptions[0])
       table->common.subcaptions[0]=add_string_main(str(NLF_SUBCAPTION_LICENSE));
-    if (table->installer.licensebutton<0)
+    if (!table->installer.licensebutton)
       table->installer.licensebutton=add_string_main(str(NLF_BTN_LICENSE),0);
   }
 #endif //NSIS_CONFIG_LICENSEPAGE
 
-  if (table->installer.text >= 0)
+  if (table->installer.text)
   {
-    if (table->installer.dirsubtext<0)
+    if (!table->installer.dirsubtext)
     {
       char buf[2048];
       wsprintf(buf,str(NLF_DIR_SUBTEXT),build_strlist.get()+table->common.name);
       table->installer.dirsubtext=add_string_main(buf,0);
     }
-    if (table->common.subcaptions[2]<0)
+    if (!table->common.subcaptions[2])
       table->common.subcaptions[2]=add_string_main(str(NLF_SUBCAPTION_DIR));
-    if (table->installer.browse<0) table->installer.browse=add_string_main(str(NLF_BTN_BROWSE),0);
-    if (table->installer.spaceavailable<0 && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_AVAIL),0);
+    if (!table->installer.browse) table->installer.browse=add_string_main(str(NLF_BTN_BROWSE),0);
+    if (!table->installer.spaceavailable && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_AVAIL),0);
   }
 
-  if (table->installer.text >= 0
+  if (table->installer.text
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    || table->installer.componenttext>=0
+    || table->installer.componenttext
 #endif
     )
   {
     // Changed by Amir Szekely 22nd July 2002
     // Adds the ability to disable space texts
-    if (table->installer.spacerequired<0 && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
-    if (table->installer.nextbutton<0) table->installer.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
-    if (table->installer.installbutton<0) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
+    if (!table->installer.spacerequired && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
+    if (!table->installer.nextbutton) table->installer.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
+    if (!table->installer.installbutton) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
   }
 
-  if (table->common.subcaptions[3]<0)
+  if (!table->common.subcaptions[3])
     table->common.subcaptions[3]=add_string_main(str(NLF_SUBCAPTION_INSTFILES));
-  if (table->common.subcaptions[4]<0)
+  if (!table->common.subcaptions[4])
     table->common.subcaptions[4]=add_string_main(str(NLF_USUBCAPTION_COMPLETED));
 
-  if (table->common.branding<0)
+  if (!table->common.branding)
   {
     char buf[256];
     wsprintf(buf,str(NLF_BRANDING),NSIS_VERSION);
     table->common.branding=add_string_main(buf,0);
   }
-  if (table->installer.backbutton<0) table->installer.backbutton=add_string_main(str(NLF_BTN_BACK),0);
-  if (table->common.cancelbutton<0) table->common.cancelbutton=add_string_main(str(NLF_BTN_CANCEL),0);
-  if (table->common.showdetailsbutton<0) table->common.showdetailsbutton=add_string_main(str(NLF_BTN_DETAILS),0);
+  if (!table->installer.backbutton) table->installer.backbutton=add_string_main(str(NLF_BTN_BACK),0);
+  if (!table->common.cancelbutton) table->common.cancelbutton=add_string_main(str(NLF_BTN_CANCEL),0);
+  if (!table->common.showdetailsbutton) table->common.showdetailsbutton=add_string_main(str(NLF_BTN_DETAILS),0);
 
-  if (table->common.closebutton<0) table->common.closebutton=add_string_main(str(NLF_BTN_CLOSE),0);
-  if (table->common.completed<0) table->common.completed=add_string_main(str(NLF_COMPLETED),0);
+  if (!table->common.closebutton) table->common.closebutton=add_string_main(str(NLF_BTN_CLOSE),0);
+  if (!table->common.completed) table->common.completed=add_string_main(str(NLF_COMPLETED),0);
 #endif
 
 #ifdef NSIS_SUPPORT_FILE
-  if (m_inst_fileused && table->common.fileerrtext<0)
+  if (m_inst_fileused && !table->common.fileerrtext)
   {
     table->common.fileerrtext=add_string_main(str(NLF_FILE_ERROR));
   }
@@ -362,15 +416,15 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   if (ubuild_entries.getlen())
   {
     if (uninstaller_writes_used) {
-      if (table->uninstall.uninstalltext2<0)
+      if (!table->uninstall.uninstalltext2)
         table->uninstall.uninstalltext2=add_string_uninst(str(NLF_UNINST_SUBTEXT),0);
-      if (table->ucommon.subcaptions[0]<0)
+      if (!table->ucommon.subcaptions[0])
         table->ucommon.subcaptions[0]=add_string_uninst(str(NLF_USUBCAPTION_CONFIRM));
-      if (table->ucommon.subcaptions[1]<0)
+      if (!table->ucommon.subcaptions[1])
         table->ucommon.subcaptions[1]=add_string_uninst(str(NLF_USUBCAPTION_INSTFILES));
-      if (table->ucommon.subcaptions[2]<0)
+      if (!table->ucommon.subcaptions[2])
         table->ucommon.subcaptions[2]=add_string_uninst(str(NLF_USUBCAPTION_COMPLETED));
-      if (table->ucommon.caption < 0)
+      if (!table->ucommon.caption)
       {
         char buf[1024];
         wsprintf(buf,str(NLF_UCAPTION),ubuild_strlist.get()+table->ucommon.name);
@@ -382,12 +436,12 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       table->ucommon.closebutton=add_string_uninst(build_strlist.get() + table->common.closebutton,0);
       table->ucommon.completed=add_string_uninst(build_strlist.get() + table->common.completed,0);
 
-      if (table->uninstall.uninstbutton<0) table->uninstall.uninstbutton=add_string_uninst(str(NLF_BTN_UNINSTALL),0);
+      if (!table->uninstall.uninstbutton) table->uninstall.uninstbutton=add_string_uninst(str(NLF_BTN_UNINSTALL),0);
     }
   }
 
 #ifdef NSIS_SUPPORT_FILE
-  if (m_uninst_fileused && table->ucommon.fileerrtext<0)
+  if (m_uninst_fileused && !table->ucommon.fileerrtext)
   {
     table->ucommon.fileerrtext=add_string_uninst(build_strlist.get() + table->common.fileerrtext);
   }
@@ -395,7 +449,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 
 #endif
 
-  if (table->common.caption < 0)
+  if (!table->common.caption)
   {
     char buf[1024];
     wsprintf(buf,str(NLF_CAPTION),build_strlist.get()+table->common.name);
@@ -467,7 +521,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 bool CEXEBuild::_IsNotSet(int *str) {
   if (!str) return true;
   for (int i = 0; i < string_tables.size(); i++) {
-    if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i])) >= 0) {
+    if (*(int*)(int(str)-int(string_tables[0])+int(string_tables[i]))) {
       return false;
     }
   }

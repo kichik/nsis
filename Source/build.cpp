@@ -209,6 +209,7 @@ CEXEBuild::CEXEBuild()
   cur_datablock=&build_datablock;
   cur_functions=&build_functions;
   cur_labels=&build_labels;
+  cur_userlangstrings=&build_userlangstrings;
 
   subsection_open_cnt=0;
   build_cursection_isfunc=0;
@@ -229,13 +230,6 @@ CEXEBuild::CEXEBuild()
   build_header.no_custom_instmode_flag=0;
 #endif
   build_header.num_sections=0;
-  /* Useless
-  build_header.space_avail_id=0;
-  build_header.space_req_id=0;
-  build_header.dir_subtext_id=0;
-  build_header.com_subtext1_id=0;
-  build_header.com_subtext2_id=0;
-  build_header.common.intro_text_id=0;*/
   build_header.common.num_entries=0;
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   build_header.common.silent_install=0;
@@ -251,9 +245,6 @@ CEXEBuild::CEXEBuild()
   uninstall_size=-1;
 
   memset(&build_uninst,-1,sizeof(build_uninst));
-  /* Useless
-  build_uninst.uninst_subtext_id=0;
-  build_uninst.common.intro_text_id=0;*/
   build_uninst.common.lb_bg=RGB(0,0,0);
   build_uninst.common.lb_fg=RGB(0,255,0);
   build_uninst.common.num_entries=0;
@@ -266,6 +257,12 @@ CEXEBuild::CEXEBuild()
   build_uninst.common.misc_flags=0;
 
   uninstaller_writes_used=0;
+
+  build_strlist.add("",0);
+  ubuild_strlist.add("",0);
+  build_header.install_directory_ptr=0;
+  build_header.install_reg_key_ptr=0;
+  memset(build_header.install_types_ptr,0,sizeof(build_header.install_types_ptr));
 
   // Changed by Amir Szekely 11th July 2002
   // Changed to fit the new format in which uninstaller icons are saved
@@ -399,8 +396,17 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 
 int CEXEBuild::add_string_main(const char *string, int process) // returns offset (in string block)
 {
-  if (!*string) return -1;
+  if (!*string) return 0;
   if (!process) return build_strlist.add(string,2);
+
+  if (*string == '$' && *(string+1) == '(') {
+    char *cp = strdup(string+2);
+    strchr(cp, ')')[0] = 0;
+    int idx;
+    if (cur_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    free(cp);
+    if (idx >= 0) return -(idx+1);
+  }
 
   char buf[4096];
   preprocess_string(buf,string);
@@ -409,8 +415,17 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
 
 int CEXEBuild::add_string_uninst(const char *string, int process) // returns offset (in string block)
 {
-  if (!*string) return -1;
+  if (!*string) return 0;
   if (!process) return ubuild_strlist.add(string,2);
+
+  if (*string == '$' && *(string+1) == '(') {
+    char *cp = strdup(string+2);
+    strchr(cp, ')')[0] = 0;
+    int idx;
+    if (cur_userlangstrings->find(cp, 0, &idx) < 0) idx = -1;
+    free(cp);
+    if (idx >= 0) return -(idx+1);
+  }
 
   char buf[4096];
   preprocess_string(buf,string);
@@ -996,7 +1011,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
         for (x = sec->code; x < sec->code+sec->code_size; x ++)
         {
           char fname[1024];
-          if (sec->name_ptr>=0) wsprintf(fname,"section \"%s\" (%d)",build_strlist.get()+sec->name_ptr,cnt);
+          if (sec->name_ptr) wsprintf(fname,"section \"%s\" (%d)",build_strlist.get()+sec->name_ptr,cnt);
           else wsprintf(fname,"unnamed section (%d)",cnt);
           if (resolve_instruction(fname,str,w+x,x,sec->code,sec->code+sec->code_size)) return 1;
         }
@@ -1073,6 +1088,7 @@ int CEXEBuild::write_output(void)
       ERROR_MSG("Error: invalid script: no sections specified\n");
       return PS_ERROR;
     }
+  }
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Added by Amir Szekely 9th August 2002
@@ -1082,19 +1098,6 @@ int CEXEBuild::write_output(void)
 
   // Added by Amir Szekely 3rd August 2002
   if (WriteStringTables() == PS_ERROR) return PS_ERROR;
-
-/*#ifdef NSIS_CONFIG_COMPONENTPAGE
-    if (build_header.componenttext_ptr < 0 &&
-        ns > 1
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-        && !build_header.common.silent_install
-#endif
-        )
-    {
-      build_header.componenttext_ptr=-1;
-    }
-#endif*/
-  }
 
   if (!build_entries.getlen())
   {
@@ -1427,7 +1430,7 @@ int CEXEBuild::write_output(void)
     int req=0;
     for (x = 1; x < ns; x ++)
     {
-      if (s[x].name_ptr == -1 || s[x].default_state & DFS_RO) req++;
+      if (!s[x].name_ptr || s[x].default_state & DFS_RO) req++;
     }
     INFO_MSG("Install: %d section%s",ns,ns==1?"":"s");
     if (req)
@@ -1787,14 +1790,22 @@ void CEXEBuild::set_uninstall_mode(int un)
   if (un != uninstall_mode)
   {
     uninstall_mode=un;
-    if (un) cur_datablock=&ubuild_datablock;
-    else cur_datablock=&build_datablock;
-    if (un) cur_entries=&ubuild_entries;
-    else cur_entries=&build_entries;
-    if (un) cur_functions=&ubuild_functions;
-    else cur_functions=&build_functions;
-    if (un) cur_labels=&ubuild_labels;
-    else cur_labels=&build_labels;
+    if (un)
+    {
+      cur_datablock=&ubuild_datablock;
+      cur_entries=&ubuild_entries;
+      cur_functions=&ubuild_functions;
+      cur_labels=&ubuild_labels;
+      cur_userlangstrings=&ubuild_userlangstrings;
+    }
+    else
+    {
+      cur_datablock=&build_datablock;
+      cur_entries=&build_entries;
+      cur_functions=&build_functions;
+      cur_labels=&build_labels;
+      cur_userlangstrings=&build_userlangstrings;
+    }
 
     SWAP(db_opt_save_u,db_opt_save,int);
     SWAP(db_comp_save_u,db_comp_save,int);
@@ -1915,7 +1926,7 @@ again:
   // StrCmp $PLUGINSDIR ""
   ent.which=EW_STRCMP;
   ent.offsets[0]=add_string("$PLUGINSDIR");
-  ent.offsets[1]=add_string("");
+  ent.offsets[1]=0;
   ent.offsets[2]=0;
   ent.offsets[3]=ns_label.add("Initialize_____Plugins_done",0);
   ret=add_entry(&ent);

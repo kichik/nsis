@@ -8,10 +8,13 @@
 using namespace std;
 
 struct StringTable {
+  LANGID lang_id;
   common_strings common;
   common_strings ucommon;
   installer_strings installer;
   uninstall_strings uninstall;
+  GrowBuf user_strings;
+  GrowBuf user_ustrings;
 };
 
 #define NLF_VERSION 2
