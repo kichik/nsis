@@ -942,19 +942,22 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   }
   if (uMsg == WM_MOUSEMOVE) {
     TVITEM tvItem;
-    tvItem.hItem = TreeHitTest(hwnd);
-    
-    lParam = -1;
 
-    if (tvItem.hItem)
-    {
-      tvItem.mask = TVIF_PARAM;
-
-      TreeView_GetItem(hwnd, &tvItem);
+    if (GetWindowLong(hwnd, GWL_STYLE) & WS_VISIBLE) {
+      tvItem.hItem = TreeHitTest(hwnd);
       
-      lParam = tvItem.lParam;
+      lParam = -1;
+
+      if (tvItem.hItem)
+      {
+        tvItem.mask = TVIF_PARAM;
+
+        TreeView_GetItem(hwnd, &tvItem);
+        
+        lParam = tvItem.lParam;
+      }
+      uMsg = WM_USER+0x19;
     }
-    uMsg = WM_USER+0x19;
   }
   if (uMsg == WM_USER+0x19) {
     if (last_item != lParam)
