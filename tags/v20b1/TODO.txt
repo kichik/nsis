@@ -1,0 +1,60 @@
+TODO
+
+-- NSIS 2 Beta 2 --
+
+NSIS
+
+* skip plugin calls, file instructions that add more than one file with +1 with goto
+
+* move more ui changes to compile time.
+  make progress bar flags be written directly in the UI (PBS_SMOOTH)
+  inst details could be changed in compile time too
+
+* component page for uninstaller, multiple sections
+
+* more default texts in NLF language files
+
+* current working directory changes
+
+* different color for the drive space when there is not enough space
+
+* all installer strings should be language strings
+
+DOCUMENTATION
+
+* user_vars should link to the user_vars section as in the old docs callbacks and
+  other stuff should be linked too
+
+* go over everything and search for mistakes :)
+
+EXAMPLES
+
+* write an advanced paging example showing multiple components page with multiple
+  instfiles pages
+
+* language files auto updater
+
+INSTALLOPTIONS
+
+* manual validation
+
+* add an option for LBS_MULTIPLESEL too, not just LBS_EXTENDEDSEL
+
+OTHER PLUGINS
+
+* BgImage - SetImage /RESIZETOFIT doesn't work
+
+-- Before NSIS 2 Final --
+
+NSIS
+
+* ChangeUI RTL support
+
+* LZMA compression
+
+* multiple directory pages
+
+DOCUMENTATION
+
+* not so important but could be nice, links to examples in the examples directory
+  for every function every function will link to the example file that containts it

@@ -1,0 +1,27 @@
+body {
+	font-family: Verdana,Arial,Tahoma;
+	font-size: 11px;
+}
+pre {
+	font-family: Courier New;
+	background-color: #F7F7F7;
+	padding: 1px;
+}
+a,a:visisted {
+	color: #656CA3;
+	text-decoration: underline;
+}
+a:hover {
+	background-color: #656CA3;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.btitle {
+	color: #000000;
+	text-decoration: underline;
+}
+.btitle:hover {
+	background-color: #F4F4F4;
+	color: #000000;
+	text-decoration: underline;
+}

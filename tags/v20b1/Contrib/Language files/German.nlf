@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1031
+# Translation by L.King
+Nullsoft Install System %s
+%s Installation
+%s Deinstallation
+: Lizenzabkommen
+: Installations-Optionen
+: Zielverzeichnis
+: Installiere
+: Fertig
+: Bestätigung
+: Deinstalliere
+: Fertig
+< &Zurück
+&Weiter >
+&Annehmen
+&Installieren
+&Deinstallieren
+Abbrechen
+&Beenden
+&Durchsuchen...
+&Details anzeigen
+Name
+Fertig
+Benutzerdefiniert
+Installations-Typ bestimmen:
+Wählen Sie die Komponenten aus, die Sie installieren möchten:
+oder wählen Sie zusätzliche Komponenten aus:
+Wählen Sie das Verzeichnis aus, in das Sie %s installieren möchten:
+Verfügbarer Speicher: 
+Benötigter Speicher: 
+Deinstalliere aus:
+Fehler beim Überschreiben der Datei: \r\n\t"$0"\r\nKlicken Sie Abbrechen um abzubrechen,\r\nWiederholen um den Schreibvorgang erneut zu versuchen\r\noder Ignorieren um diese Datei zu überspringen.
+Fehler beim Schreiben:  
+Kopieren fehlgeschlagen
+Kopiere nach 
+Symbol ist nicht vorhanden: 
+Fehler beim Laden von 
+Erstelle Verzeichnis: 
+Erstelle Verknüpfung: 
+Erstelle Deinstallations-Programm: 
+Lösche Datei: 
+Lösche Datei nach Neustart: 
+Fehler beim Erstellen der Verknüpfung: 
+Fehler beim Erstellen: 
+Fehler beim Dekomprimieren. Beschädigtes Installions-Programm?
+Fehler beim Registrieren der DLL
+ExecShell: 
+Starte: 
+Dekomprimiere: 
+Dekomprimierung: Fehler beim Schreiben der Datei 
+Beschädigtes Installions-Programm: ungültiger Befehlscode
+Kein OLE für: 
+Zielverzeichnis: 
+Entferne Verzeichnis: 
+Umbenennen nach Neustart: 
+Umbenennen: 
+Übersprungen: 
+Details in die Zwischenablage kopieren

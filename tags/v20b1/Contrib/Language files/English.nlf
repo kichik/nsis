@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1033
+# Translation by ..... (any credits should go here)
+Nullsoft Install System %s
+%s Setup
+%s Uninstall
+: License Agreement
+: Installation Options
+: Installation Folder
+: Installing
+: Completed
+: Confirmation
+: Uninstalling
+: Completed
+< &Back
+&Next >
+I &Agree
+&Install
+&Uninstall
+Cancel
+&Close
+B&rowse...
+Show &details
+Name
+Completed
+Custom
+Select the type of install:
+Select components to install:
+Or, select the optional components you wish to install:
+Select the folder to install %s in:
+Space available: 
+Space required: 
+Uninstalling from:
+Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file
+Can't write: 
+Copy failed
+Copy to 
+Could not find symbol: 
+Could not load: 
+Create folder: 
+Create shortcut: 
+Created uninstaller: 
+Delete file: 
+Delete on reboot: 
+Error creating shortcut: 
+Error creating: 
+Error decompressing data! Corrupted installer?
+Error registering DLL
+ExecShell: 
+Execute: 
+Extract: 
+Extract: error writing to file 
+Install corrupted: invalid opcode
+No OLE for: 
+Output folder: 
+Remove folder: 
+Rename on reboot: 
+Rename: 
+Skipped: 
+Copy Details To Clipboard

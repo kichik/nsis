@@ -1,0 +1,63 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1045
+# Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
+# spelling corrected by cube cube(at)lp.net.pl
+Nullsoft Install System %s
+%s Instalator
+%s Odinstaluj
+: Warunki licencji
+: Opcje instalacji
+: Folder instalacji
+: Instaluje pliki
+: Zakoñczono
+: Potwierdzenie
+: Odinstalowuje pliki
+: Zakoñczono
+< &Cofnij
+&Dalej >
+&Zgadzam siê
+&Instaluj
+&Odinstaluj
+&Anuluj
+&Zamknij
+&Przegl¹daj...
+Poka¿ &szczegó³y
+Nazwa
+Zakoñczono
+U¿ytkownika
+Wybierz typ instalacji:
+Wybierz komponenty do zainstalowania:
+lub wybierz opcjonalne komponenty, które chcesz zainstalowaæ:
+Wybierz folder instalacji %s:
+Dostêpne miejsce: 
+Wymagane miejsce: 
+Odinstalowuje z:
+B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby anulowaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
+Nie mo¿na zapisaæ: 
+B³¹d kopiowania
+Kopiuj do
+Nie mo¿na by³o znaleŸæ symbolu:
+Nie mo¿na by³o wczytaæ: 
+Twórz folder: 
+Twórz skrót klawiszowy: 
+Utworzone odinstalowanie: 
+Usuñ plik:
+Usuñ przy restarcie: 
+B³¹d tworzenia skrótu klawiszowego:
+B³¹d tworzenia: 
+B³¹d dekompresji danych! Czy przerwaæ instalacjê?
+B³¹d zapisu DLL
+ExecShell: 
+Uruchom: 
+Rozpakuj: 
+Rozpakuj: b³¹d zapisu do pliku 
+Instalacja przerwana: z³y kod operacji
+Brak OLE dla: 
+Folder wyjœciowy: 
+Usuñ folder: 
+Zmieñ nazwê przy restarcie: 
+Zmieñ nazwê: 
+Pominiête: 
+Kopiuj szczegó³y do schowka

@@ -1,0 +1,20 @@
+\S0{jumps} Relative Jumps
+
+Unlike labels, relative jumps are, as the name suggests, relative to the place they are called from. You can use relative jumps wherever you can use labels. Relative jumps are marked by numbers. +1 jumps to the next instruction (the default advancement), +2 will skip one instruction and go to the second instruction from the current instruction, -2 will jump two instructions backward, and +10 will skip 9 instructions, jumping to the tenth instruction from the current instruction.
+
+An instruction is every command that is executed at run-time, when the installer is running. MessageBox, Goto, GetDLLVersion, FileRead, SetShellVarContext are all instructions. AddSize, Section, SubSection, SectionEnd, SetOverwrite (and everything under Compiler Flags), Name, SetFont, LangString, are not instructions because they are executed at compile time.
+
+Examples:
+
+\c  Goto +2
+\c    MessageBox MB_OK "You will never ever see this message box"
+\c  MessageBox MB_OK "The last message was skipped, this one should be shown"
+
+\c  Goto +4
+\c  MessageBox MB_OK "The following message will be skipped"
+\c  Goto +3
+\c  MessageBox MB_OK "You will never ever see this message box"
+\c  Goto -3
+\c  MessageBox MB_OK "Done"
+
+\\<b\\>Note:\\</b\\> relative jumps don't work with Exch, File, plug-ins (Plugin::Function), InitPluginsDir, GetFileTimeLocal or GetDLLVersionLocal. Do \e{not} try to jump over them using relative jumps, you will not get the result you were expecting.

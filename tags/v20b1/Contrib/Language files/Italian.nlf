@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1040
+# Translation by Orfanik - http://www.orfanik.hu
+Nullsoft Install System %s
+Installazione di %s
+Disinstallazione di %s
+: Licenza d'uso
+: Opzioni di installazione
+: Cartella di installazione
+: Installazione dei file
+: Completata
+: Conferma
+: Rimozione dei file
+: Completata
+< &Precedente
+&Seguente >
+&Accetto
+&Installa
+&Disinstalla
+Annulla
+&Chiudi
+&Sfoglia...
+Mostra &dettagli
+Nome
+Completata
+Personalizzata
+Seleziona il tipo d'installazione :
+Seleziona i componenti da installare :
+Oppure, seleziona i componenti opzionali che vuoi installare :
+Seleziona la cartella dove installare %s :
+Spazio disponibile : 
+Spazio necessario : 
+Rimozione da :
+Errore nell'apertura del file in fase di scrittura: \r\n\t"$0"\r\nClicca su Annulla per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
+Scrittura impossibile : 
+Copia fallita
+Copia in 
+Impossibile trovare il simbolo : 
+Impossibile caricare : 
+Crea cartella : 
+Crea collegamento : 
+Creato tool di rimozione : 
+Elimina file : 
+Elimina al riavvio : 
+Errore nella creazione del collegamento : 
+Errore nella creazione : 
+Errore nella decompressione dei dati! Installazione corrotta?
+Errore nella registrazione della DLL
+ExecShell : 
+Esecuzione : 
+Estrazione : 
+Estrazione : errore nella scrittura sul file 
+Installazione corrotta : opcode non valido
+Nessuna OLE per : 
+Destinazione : 
+Rimuovi cartella : 
+Rinomina al riavvio : 
+Rinomina : 
+Saltato : 
+Copia i dettagli in memoria

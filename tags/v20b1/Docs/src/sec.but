@@ -1,0 +1,27 @@
+\S1{secmanage} Section Management
+
+\S2{sectionsetflags} SectionSetFlags
+
+\c section_index section_flags
+
+Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently enabled, the second bit represents whether the section is a subsection (don't modify this unless you really know what you are doing), the third bit represents whether the section is a subsection end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only and the sixth bit represents whether the sub-section is to be automatically expanded. The error flag will be set if an out of range section is specified.
+
+For an example of usage please see the \W{../Examples/one-section.nsi}{one-section.nsi} example.
+
+\S2{sectiongetflags} SectionGetFlags
+
+\c section_index user_var(output)
+
+Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.
+
+\S2{sectionsettext} SectionSetText
+
+\c section_index section_text
+
+Sets the description for the section section_index. To set a subsection, you must use - at the beginning of the text.  The error flag will be set if an out of range section is specified.
+
+\S2{sectiongettext} SectionGetText
+
+\c section_index user_var(output)
+
+Stores the text description of the section section_index into the output. If the section is hidden, stores an empty string. The error flag will be set if an out of range section is specified.

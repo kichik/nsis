@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1030
+# Translation by Casper Bergenstoff
+Nullsoft Installerings System %s
+%s Setup
+%s afinstaller
+: Licens Aftale
+: Installations egenskaber
+: Installation mappe
+: Installing Filer
+: Færdig
+: Bekræft
+: Afinstallerer Filer
+: Færdig
+< &Tilbage
+&Næste >
+Jeg &Accepterer
+&Installer
+&afinstaller
+Afbryd
+&Luk
+G&ennemse...
+Vis &detaljer
+Navn
+Færdig
+Tilpasset
+Vælg hvilken type du vil installere:
+Vælg komponenter du vil installere:
+Eller, Vælg de udvalgte komponenter som du vil installere:
+Vælg mappe du vil installere %s i:
+Plads til rådighed: 
+Krævet plads: 
+Afinstallerer fra:
+Fejl under åbning af fil til skrivning: \r\n\t"$0"\r\nTryk afbryd for at afbryde installationen,\r\nPrøv igen for at prøve at skrive til filen, eller\r\nignorer for at droppe denne fil
+Kan ikke skrive: 
+Kopiering mislykkedes
+Kopier til
+Kunne ikke finde symbol: 
+Kunne ikke læse: 
+Opret mappe: 
+Opret genvej: 
+Oprettet afinstallerer: 
+Slet fil: 
+Slet ved genstart: 
+Fejl under oprettelse af genvej: 
+Fejl under oprettelse: 
+Fejl under dekomprimering af data! Beskadiget installer?
+Fejl under registrering af DLL
+ExecShell: 
+Execute: 
+Extract: 
+Extract: fejl under skrivning til fil 
+Installering beskadiget: invalid opcode
+Ingen OLE til: 
+Installations mappe: 
+Slet mappe: 
+Omdøb efter genstart: 
+Omdøb: 
+Ignoreret: 
+Kopier Detaljer Til Skrivebord

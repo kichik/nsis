@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1051
+# Translation by trace
+Nullsoft Install System %s
+Inštalácia %s
+Odinštalácia %s
+: Licenèné podmienky
+: Monosti inštalácie
+: Adresár inštalácie
+: Inštalujem súbory
+: Dokonèené
+: Potvrdenie
+: Odinštalovávam súbory
+: Dokonèené
+< Naspä
+Ïalej >
+Súhlasím
+Inštalova
+Odinštalova
+Storno
+Zavrie
+Prehliada...
+Zobraz detaily
+Názov
+Dokonèené
+Vlastná
+Zvo¾te typ inštalácie:
+Zvo¾te komponenty, ktoré sa majú nainštalova:
+Alebo zvo¾te komponenty, ktoré sa majú nainštalova:
+Zvo¾te adresár do ktorého sa má %s nainštalova:
+Vo¾nı priestor: 
+Potrebnı priestor: 
+Odinštalovávam z:
+Chyba pri otváraní súboru pre zápis: \r\n\t"$0"\r\nStlaète ukonèi, pre ukonèenie inštalácie,\r\nopakova, pre opakovanie zápisu súboru, alebo\r\nignorova, pre preskoèenie súboru
+Nemoné zapísa: 
+Kopírovanie neúspešné
+Kopírova do 
+Nedá sa nájs symbol: 
+Nedá sa naèíta: 
+Vytvori adresár: 
+Vytvori zástupcu: 
+Vytvori odinštalátor: 
+Vymaza súbor: 
+Vymaza po reštarte: 
+Chyba pri vytváraní zástupcu: 
+Chyba pri vytváraní: 
+Chyba pri dekompresii dát! Chyba programu?
+Chyba pri registrácii DLL
+ExecShell: 
+Spúšam: 
+Extrahujem: 
+Extrahujem: chyba pri zápise súboru 
+Chybná inštalácia: nesprávny opcode
+iadny OLE pre: 
+Vıstupnı adresár: 
+Zmaza adresár: 
+Premenova po reštarte: 
+Premenované: 
+Preskoèené: 
+Skopírova detaily do schránky

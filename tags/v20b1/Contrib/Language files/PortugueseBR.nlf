@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1046
+# Translation by Diego Marcos <jump@osite.com.br>
+Sistema de Instalação Nullsoft %s
+Instalação do %s
+Desinstalação do %s
+: Contrato de Licença
+: Opções de instalação
+: Diretório de instalação
+: Instalando arquivos
+: Concluído
+: Confirmação
+: Desinstalando
+: Concluído
+< &Voltar
+&Avançar >
+&Concordo
+&Instalar
+&Desinstalar
+Cancelar
+&Fechar
+&Procurar...
+Ver &Detalhes
+Nome
+Concluído
+Personalizado
+Escolha o tipo de instalação:
+Escolha os componentes para instalar:
+Ou, selecione os componentes opcionais que deseja instalar:
+Escolha o diretório para instalar %s:
+Espaço disponível: 
+Espaço necessário: 
+Desinstalando de:
+Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para Abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nignorar para ignorar este arquivo.
+Não foi possível gravar: 
+Falha ao copiar
+Copiar para 
+Não foi encontrado símbolo: 
+Não foi possível carregar: 
+Criando diretório: 
+Criando atalho: 
+Criando desinstalador: 
+Excluindo arquivo: 
+Excluir ao reiniciar: 
+Erro ao criar atalho: 
+Erro ao criar: 
+Erro ao descomprimir dados! Instalador corrompido?
+Erro ao registar DLL
+ExecShell: 
+Executando: 
+Extraindo: 
+Extraindo: erro ao gravar para o arquivo 
+Instalação corrompida: opcode inválido
+Sem OLE para: 
+Diretório de saída: 
+Removendo diretório: 
+Renomear ao reiniciar: 
+Renomeando: 
+Ignorado: 
+Copiar detalhes para a Área de Transfêrencia

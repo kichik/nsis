@@ -1,0 +1,119 @@
+/* 
+  Copyright (c) 2002 Robert Rainwater
+  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+*/
+#ifndef MAKENSIS_H
+#define MAKENSIS_H
+
+#include <commctrl.h>
+#include "utils.h"
+#include "jnetlib/util.h"
+#include "jnetlib/netinc.h"
+#include "jnetlib/httpget.h"
+#define _RICHEDIT_VER 0x0200
+#include <richedit.h>
+#undef _RICHEDIT_VER
+
+// Defines
+#define NSIS_DEV    "http://nsis.sourceforge.net/"
+#define NSIS_URL	"http://www.nullsoft.com/free/nsis/"
+#define NSIS_UPDATE	"http://nsis.sourceforge.net/update.php?version="
+#define NSIS_DDL    "http://sourceforge.net/project/showfiles.php?group_id=22049"
+#define NSIS_FOR	"http://forums.winamp.com/forumdisplay.php?forumid=65"
+#define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
+#define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
+#define CONTRIB     "Fritz Elfert, Justin Frankel, Amir Szekely"
+#define DOCPATH		"http://nsis.sourceforge.net/Docs/"
+#define LOCALDOCS	"\\docs\\index.html"
+#define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
+#define DLGERROR	"Unable to intialize MakeNSISW."
+#define REGSEC		HKEY_LOCAL_MACHINE
+#define REGKEY		"Software\\NSIS"
+#define REGLOC		"MakeNSISWPlacement"
+#define EXENAME		"makensis.exe"
+#define MAX_STRING	256
+#define TIMEOUT		100
+#define MINWIDTH	350
+#define MINHEIGHT	180
+#define REGSEC		HKEY_LOCAL_MACHINE 
+#define REGKEY		"Software\\NSIS"
+#define REGLOC		"MakeNSISWPlacement"
+
+#define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
+
+enum {
+  MAKENSIS_NOTIFY_SCRIPT,
+  MAKENSIS_NOTIFY_WARNING,
+  MAKENSIS_NOTIFY_ERROR,
+  MAKENSIS_NOTIFY_OUTPUT
+};
+
+// Extern Variables
+extern const char*	NSISW_VERSION;
+
+int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
+static BOOL		CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+DWORD WINAPI	MakeNSISProc(LPVOID p);
+BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
+BOOL CALLBACK	AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+void			CompileNSISScript();
+DWORD CALLBACK  UpdateThread(LPVOID v);
+
+typedef struct NSISScriptData {
+    bool script_alloced;
+    char *script;
+    char *output_exe;
+    char *input_script;
+    char *branding;
+    char *brandingv;
+    int retcode;
+    DWORD logLength;
+    DWORD warnings;
+    BOOL appended;
+    HINSTANCE hInstance;
+    HWND hwnd;
+    HMENU menu;
+    HMENU submenu;
+    HANDLE thread;
+    HWND focused_hwnd;
+    CHARRANGE textrange;
+} NSCRIPTDATA;
+
+typedef struct ResizeData {
+    RECT resizeRect;
+    RECT griprect;
+    int dx;
+    int dy;
+} NRESIZEDATA;
+
+typedef struct FindReplaceDialog {
+    FINDREPLACE fr;
+    UINT uFindReplaceMsg;
+    HWND hwndFind;
+} NFINDREPLACE;
+
+typedef struct ToolTipStruct {
+    HWND tip;
+    HWND tip_p;
+    HHOOK hook;
+} NTOOLTIP;
+
+#endif
