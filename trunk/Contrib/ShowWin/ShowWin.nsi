@@ -3,7 +3,7 @@
 Name "ShowWin Example"
 OutFile "ShowWin.exe"
 
-LicenseText "Hide Richedit Control and disable the cancel button."
+LicenseText "Hide Richedit Control and disable the 'I agree' button."
 LicenseData "ShowWin.txt"
 
 Section ""
