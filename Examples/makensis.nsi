@@ -73,13 +73,6 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
-;Reserve Files
-    
-  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
-  ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
-  ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
-
-;--------------------------------
 ;Installer Sections
 
 !define SF_SELECTED 1

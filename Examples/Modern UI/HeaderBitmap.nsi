@@ -43,14 +43,6 @@
   !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
-;Reserve Files
-  
-  ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only for BZIP2 compression
-  
-  ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
-
-;--------------------------------
 ;Installer Sections
 
 Section "Dummy Section" SecDummy

@@ -520,7 +520,21 @@ FunctionEnd
   Always show the language selection dialog, even if a language has been stored in the registry.
   The language stored in the registry will be selected by default.</p>
   </div>
-  <p class="subheader">6. Set the descriptions for the sections</p>
+  <p class="subheader">6. Reserve files</p>
+  <p class="text">If you are using BZIP2 (solid) compression, it's important that
+files which are being extracted in init- or page functions function are located
+before other files in the data block, because this will make your installer faster.</p>
+<p class="text">If there are File commands in your sections or functions above
+the init- or page functions, add the reserve file macros above your sections and
+functions.</p>
+<pre class="margin">ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions plug-in
+!insertmacro MUI_RESERVEFILE_LANGDLL ;Language selection dialog
+</pre>
+  <p class="subheader">7. Your own sections and functions</p>
+  <p class="text">Add your installer sections and functions.
+  See the NSIS Users Manual for details.</p>
+  <p class="subheader">8. Set the descriptions for the sections</p>
   <p class="text">The descriptions of sections will be displayed on the
   components page, when the user hovers the mouse over a section.
   If you don't want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
@@ -545,9 +559,15 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 </pre>
 <p class="text">For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN
 and MUI_UNFUNCTIONS_DESCRIPTION_END macros</p>
-<p class="subheader">7. Reserve Files</p>
-<p class="text">If you are using BZIP2 (solid) compression, you might need to
-insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
+<pre class="margin">
+ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
+
+!insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
+!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
+!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu Folder page
+</pre>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
@@ -634,23 +654,6 @@ to get the user input:</p>
 <pre class="margin">!insertmacro MUI_INSTALLOPTIONS_READ $R0 "ioFile.ini" "Field 1" "State"</pre>
 <p class="text">For more details about InstallOptions, validation of user input etc., check the
 <a href="..\InstallOptions\Readme.html">InstallOptions documentation</a>.</p>
-<p class="header"><a name="ReserveFile">Reserve files</a></p>
-
-<p class="text">If you are using BZIP2 compression, it's important that
-files which are being extracted in init- or page functions functions are first in
-the data block, because this will make your installer start faster.</p>
-<p class="text">If there are File commands in your script above Modern UI settings
-or above your own init- or page functions, you have to reserve files.</p>
-<pre class="margin">
-ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
-ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
-ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp" ;Special bitmap
-
-!insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
-!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
-!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
-!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu Folder page
-</pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br />
   Welcome/Finish page: <a href="../../Examples/Modern UI/WelcomeFinish.nsi">WelcomeFinish.nsi</a><br />
