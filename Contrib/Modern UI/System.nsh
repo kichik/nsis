@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!echo "NSIS Modern User Interface version 1.63 - © 2002-2003 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.64 - © 2002-2003 Joost Verburg"
 
 !ifndef MUI_MANUALVERBOSE
   !verbose 3
@@ -821,7 +821,8 @@
 !macro MUI_SECTIONS_FINISHHEADER
 
   ;1.63 compatibility
-  !error "Remove '!insertmacro MUI_SECTIONS_FINISHHEADER' from your script."
+  
+  !error "Remove '!insertmacro MUI_SECTIONS_FINISHHEADER' and '!insertmacro MUI_UNFINISHHEADER from your script. These macro's are being inserted automatically now."
   
 !macroend
 
