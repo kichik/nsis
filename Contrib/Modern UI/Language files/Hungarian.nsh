@@ -57,6 +57,9 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Biztos, hogy ki akar lépni a(z) ${MUI_PRODUCT} Telepítõbõl?"  
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "A telepítés megszakadt" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "A telepítés sikertelen volt." 
+
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Az ltávolításhoz nyomja meg az Eltávolítás gombot."
 
@@ -67,7 +70,10 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Eltávolítási folyamat"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Kis türelmet a(z) ${MUI_PRODUCT} eltávolításáig."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Befejezés"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Az eltávolítás sikeresen befejezõdött."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Az eltávolítás befejezõdött"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Az eltávolítás sikeresen befejezõdött."
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Az eltávolítás megszakadt" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Az eltávolítás sikertelen volt." 
+ 
 !insertmacro MUI_LANGUAGEFILE_END
