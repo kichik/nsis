@@ -2342,8 +2342,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         init_res_editor();
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
 
-        CDialogTemplate dt(dlg,uDefCodePage);
-        delete [] dlg;
+        CDialogTemplate dt(dlg, uDefCodePage);
+
+        res_editor->FreeResource(dlg);
 
         DialogItemTemplate brandingCtl = {0,};
 
@@ -2389,7 +2390,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
 
-        res_editor->FreeResource(dlg);
+        delete [] dlg;
 
         dt.DlgUnitsToPixels(brandingCtl.sWidth, brandingCtl.sHeight);
         SCRIPT_MSG("AddBrandingImage: %s %ux%u\n", line.gettoken_str(1), brandingCtl.sWidth, brandingCtl.sHeight);
