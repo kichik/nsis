@@ -917,8 +917,7 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_TEXT_REBOOTLATER "$(MUI_TEXT_FINISH_REBOOTLATER)"
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_RUN_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_RUN)"
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_SHOWREADME_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_SHOWREADME)"
-
-  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_LINK_COLOR "0x800000"
+  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_LINK_COLOR "000080"
 
   !ifndef MUI_VAR_HWND
     Var MUI_HWND
@@ -1383,7 +1382,11 @@ Var MUI_TEMP2
         !endif
       !endif
     !else
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "185"
+      !ifndef MUI_FINISHPAGE_LINK
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "185"
+      !else
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "175"
+      !endif
     !endif
     
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -1558,7 +1561,6 @@ Var MUI_TEMP2
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Top" "175"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Bottom" "185"
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "State" "${MUI_FINISHPAGE_LINK_LOCATION}"
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "TxtColor" "${MUI_FINISHPAGE_LINK_COLOR}"
             
     !endif
     
@@ -1654,7 +1656,7 @@ Var MUI_TEMP2
       !else
         GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
       !endif
-      SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+      SetCtlColors $MUI_TEMP1 "${MUI_FINISHPAGE_LINK_COLOR}" "${MUI_BGCOLOR}"
     !endif
      
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
