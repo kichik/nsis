@@ -33,31 +33,23 @@
   ;License dialog
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-select dialog
-    ;Descriptions
-    LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
+  ;Descriptions
+  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\${NAME}"
-
 
 ;--------------------------------
 ;Installer Sections
 
 Section "modern.exe" SecCopyUI
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
-
-SectionEnd
-
-Section "Create uninstaller" SecCreateUninst
-
-  ;Add your stuff here
-
+  
+  ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
@@ -72,96 +64,27 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-Function .onInitDialog
+!insertmacro MUI_BASICFUNCTIONS
 
-    !insertmacro MUI_INNERDIALOG_INIT
-
-    !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    !insertmacro MUI_INNERDIALOG_STOP 1
-
-    !insertmacro MUI_INNERDIALOG_START 2
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 2
-
-    !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    !insertmacro MUI_INNERDIALOG_STOP 3
-
-  !insertmacro MUI_INNERDIALOG_END
-  
-FunctionEnd
-
-Function .onNextPage
-
-  !insertmacro MUI_NEXTPAGE SetPage
-  
-FunctionEnd
-
-Function .onPrevPage
-
-  !insertmacro MUI_PREVPAGE SetPage
-  
-FunctionEnd
-
-Function SetPage
-
-  !insertmacro MUI_PAGE_INIT
-
-    !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 5
-
- !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-Function .onMouseOverSection
-
-  !insertmacro MUI_DESCRIPTION_INIT
-
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
-
- !insertmacro MUI_DESCRIPTION_END
-
-FunctionEnd
-
-Function .onUserAbort
-
-  !insertmacro MUI_ABORTWARNING
-
-FunctionEnd
+!insertmacro MUI_FUNCTION_DESCRIPTION_START
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+ 
+!insertmacro MUI_FUNCTION_ABORTWARNING
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
 
+  ;Display the Finish header
   !insertmacro MUI_FINISHHEADER un.SetPage
 
 SectionEnd
@@ -169,30 +92,4 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
-Function un.onNextPage
-
-  !insertmacro MUI_NEXTPAGE un.SetPage
-  
-FunctionEnd
-
-Function un.SetPage
-  
-  !insertmacro MUI_PAGE_INIT
-    
-    !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-  !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-;eof
+!insertmacro MUI_UNBASICFUNCTIONS
