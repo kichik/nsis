@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Macedonian (1071)
 ;By Sasko Zdravkin [vardarce@mail.com]
@@ -10,7 +10,7 @@
 
   !define MUI_LANGNAME "Македонски" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Добро дојдовте во инсталациониот програм на $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Добро дојдовте во инсталацијата на $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Овој програм ќе ве води низ инсталацијата на $(^NameDA).\r\n\r\nПрепорачано е да ги затворите сите програми пред да инсталирате. Ова ќе дозволи инсталациониот програм да обнови некои системски датотеки без да го рестартира компјутерот.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Лиценцен Договор"  
@@ -54,7 +54,7 @@
   !define MUI_TEXT_ABORTWARNING "Сигурни ли сте дека сакате да се откажете од инсталацијата на $(^Name)?" 
  
   
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добро дојдовте во деинсталациониот програм на $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добро дојдовте во деинсталацијата на $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Овој програм ќе ве води низ деинсталацијата на $(^NameDA).\r\n\r\nПред да ја почнете деинсталацијата на $(^NameDA) проверете дали е исклучена програмата.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталирај го $(^NameDA)"
@@ -83,7 +83,8 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Завршува деинсталирањето на $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) е деинсталиран од вашиот компјутер.\r\n\r\nПритиснете 'Крај' за да го затворите деинсталациониот програм."
-
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Вашиот компјутер мора да се рестартира за да заврши деинсталацијата на $(^NameDA). Дали сакате да се рестартира сега?"
+  
   !define MUI_UNTEXT_ABORTWARNING "Сигурни ли сте дека сакате да се откажете од деинсталацијата на $(^Name)?"
   
 !insertmacro MUI_LANGUAGEFILE_END
