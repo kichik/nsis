@@ -4,6 +4,10 @@
 #include "Platform.h"
 #include "growbuf.h"
 
+#ifndef _WIN32
+#include <cstdio> // for FILE*
+#endif
+
 class IMMap
 {
   public:
