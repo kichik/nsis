@@ -3741,7 +3741,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     {
       int ret, data_handle;
 
-      char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0), &data_handle);
+      char* dllPath = m_plugins.GetPluginDll(uninstall_mode, line.gettoken_str(0), &data_handle);
       if (dllPath)
       {
         if (uninstall_mode) uninst_plugin_used = true;
@@ -3767,7 +3767,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           build_datesave=0; // off
           ret=do_add_file(dllPath,0,0,linecnt,&files_added,tempDLL,2,&data_handle); // 2 means no size add
           if (ret != PS_OK) return ret;
-          m_plugins.SetDllDataHandle(line.gettoken_str(0),data_handle);
+          m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0),data_handle);
           build_overwrite=old_build_overwrite;
           build_datesave=old_build_datesave;
         }
