@@ -33,6 +33,7 @@
 #include "util.h"
 #include "resource.h"
 #include "httpget.h"
+#include "../exdll/exdll.h"
 
 int g_timeout_ms=30000;
 
@@ -42,51 +43,11 @@ void *operator new( unsigned int num_bytes )
 }
 void operator delete( void *p ) { if (p) GlobalFree(p); }
 
-typedef struct _stack_t {
-  struct _stack_t *next;
-  char             text[1]; // this should be the length of string_size
-} stack_t;
-
-static int  popstring(char *str); // 0 on success, 1 on empty stack
-static void setuservariable(int varnum, char *var);
-
-enum
-{
-INST_0,         // $0
-INST_1,         // $1
-INST_2,         // $2
-INST_3,         // $3
-INST_4,         // $4
-INST_5,         // $5
-INST_6,         // $6
-INST_7,         // $7
-INST_8,         // $8
-INST_9,         // $9
-INST_R0,        // $R0
-INST_R1,        // $R1
-INST_R2,        // $R2
-INST_R3,        // $R3
-INST_R4,        // $R4
-INST_R5,        // $R5
-INST_R6,        // $R6
-INST_R7,        // $R7
-INST_R8,        // $R8
-INST_R9,        // $R9
-INST_CMDLINE,   // $CMDLINE
-INST_INSTDIR,   // $INSTDIR
-INST_OUTDIR,    // $OUTDIR
-INST_EXEDIR,    // $EXEDIR
-__INST_LAST
-};
-
 
 HANDLE    hModule;
 HWND      g_parent;
 HWND      g_dialog;
 HWND      g_childwnd;
-int       g_stringsize;
-stack_t **g_stacktop;
-char     *g_variables;
 static int       g_cancelled;
 
 BOOL CALLBACK DownloadDialogProc(HWND   hwndDlg, 
@@ -338,7 +299,7 @@ extern "C"
 {
 
 __declspec(dllexport) void download (HWND   parent,
-						  int    stringsize, 
+						  int    string_size, 
 						  char   *variables, 
 						  stack_t **stacktop)
 {
@@ -350,17 +311,15 @@ __declspec(dllexport) void download (HWND   parent,
   HWND hwndB=0;
 
 	g_parent     = parent;
-	g_stringsize = stringsize;
-	g_variables  = variables;
-	g_stacktop   = stacktop;
+  EXDLL_INIT();
 
-	popstring (filename);
-  lstrcpyn(buf, filename, 10);
+	popstring(url);
+  lstrcpyn(buf, url, 10);
   if (!lstrcmp(buf, "/TIMEOUT=")) {
-    g_timeout_ms=my_atoi(filename+9);
-    popstring (filename);
+    g_timeout_ms=my_atoi(url+9);
+    popstring(url);
   }
-	popstring (url);
+	popstring(filename);
 
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
@@ -449,24 +408,3 @@ __declspec(dllexport) void download_quiet(HWND   parent,
 
 }
 
-// utility functions (not required but often useful)
-static
-int popstring(char *str)
-{
-  stack_t *th;
-  if (!g_stacktop || !*g_stacktop) return 1;
-  th=(*g_stacktop);
-  lstrcpy(str,th->text);
-  *g_stacktop = th->next;
-  GlobalFree((HGLOBAL)th);
-  return 0;
-}
-
-static
-void setuservariable(int varnum, char *var)
-{
-	if (var != NULL && varnum >= 0 && varnum < __INST_LAST) {
-		lstrcpy (g_variables + varnum*g_stringsize, var);
-
-	}
-}
