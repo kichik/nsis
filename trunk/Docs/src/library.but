@@ -104,6 +104,8 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \b If you want to support Windows 9x/ME, you can only use short filenames (8.3).
 
+\b \\<b\\>Warning:\\</b\\> when deploying DLLs, always use redistributable files. Never copy files from your system directory.
+
 \S1{} Example
 
 \c  ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is
