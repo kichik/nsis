@@ -4,6 +4,8 @@ TODO
 
 NSIS
 
+* skip plugin calls, file instructions that add more than one file with +1 with goto
+
 * move more ui changes to compile time.
   make progress bar flags be written directly in the UI (PBS_SMOOTH)
   inst details could be changed in compile time too
