@@ -46,6 +46,7 @@ SetBg /GRADIENT R G B R G B
 
 AddImage [/TRANSPARENT R G B] path_to_bitmap X Y
    Adds an image to the background window at (X,Y)
+     X and Y can be negative to specify distance from right/bottom
    Use /TRANSPARENT to make BgImage draw the image transparently
      Define the transparent color using R G B
 
@@ -58,6 +59,7 @@ AddText text font_handle R G B X Y X Y
   Use R G B to set the text color
   The first X Y is for the top left corner of the text box
   The second X Y is for the bottom right corner of the text box
+  X and Y can be negative to specify distance from right/bottoms
 
   If SetReturn on was called returns "success" on the stack
      or an error string if there was an error
