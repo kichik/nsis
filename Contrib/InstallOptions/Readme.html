@@ -492,6 +492,13 @@ resize the image to the size of the control. Also useful to support
 custom DPI settings. Without this, the image will be centered
 within the specified area.</td>
 </tr>
+<td class="righttable">TRANSPARENT</td>
+<td class="righttable">Used by "<em>Bitmap</em>" controls. Hides
+every pixel with the same color as of the top left pixel. This
+allows to see-through to controls behind it. This flag doesn't
+work well with a combination of the RESIZETOFIT flag and bitmaps
+with more than 256 colors.</td>
+</tr>
 <tr>
 <td class="righttable">GROUP</td>
 <td class="righttable">Add this flag to the first control of a
