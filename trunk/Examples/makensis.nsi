@@ -52,8 +52,8 @@ InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-!insertmacro MUI_RESERVEFILE_WIZARDINI
-!insertmacro MUI_RESERVEFILE_WIZARDBITMAP
+!insertmacro MUI_RESERVEFILE_SPECIALINI
+!insertmacro MUI_RESERVEFILE_SPECIALBITMAP
 
 Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
@@ -152,7 +152,6 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Examples\Modern UI\ioA.ini"
     File "..\Examples\Modern UI\ioB.ini"
     File "..\Examples\Modern UI\ioC.ini"
-	File "..\Examples\Modern UI\ioC.ini"
 	File "..\Examples\Modern UI\StartMenu.nsi"
 	File "..\Examples\Modern UI\WelcomeFinish.nsi"
     SetOutPath "$INSTDIR\Contrib\Modern UI"
@@ -162,7 +161,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Changelog.txt"
     File "..\Contrib\Modern UI\Screenshot.png"
     File "..\Contrib\Modern UI\License.txt"
-	File "..\Contrib\Modern UI\ioWizard.ini"
+	File "..\Contrib\Modern UI\ioSpecial.ini"
     SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
     File "..\Contrib\Modern UI\Language files\*.nsh"
     SetOutPath "$INSTDIR\Contrib\UIs"
