@@ -3815,7 +3815,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       char* dllPath = m_plugins.GetPluginDll(uninstall_mode, &command, &data_handle);
       if (dllPath)
       {
-        SCRIPT_MSG(command);
         if (uninstall_mode) uninst_plugin_used = true;
         else plugin_used = true;
 
