@@ -202,7 +202,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         hwText,
         noicon ? 0 : icon_r.right,
         dialog_r.right - dialog_r.left - (noicon ? 0 : icon_r.right),
-        icon_r.bottom
+        icon_r.bottom + 2
       );
 
       SendMessage(hwText, WM_SETTEXT, 0, (LPARAM) text);
