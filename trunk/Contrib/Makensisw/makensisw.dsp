@@ -160,49 +160,5 @@ SOURCE=.\shell.ico
 SOURCE=.\Readme.txt
 # End Source File
 # End Group
-# Begin Group "JNetLib"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\jnetlib\asyncdns.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\asyncdns.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\connection.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\connection.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\httpget.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\httpget.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\netinc.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\util.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\jnetlib\util.h
-# End Source File
-# End Group
-# Begin Source File
-
-SOURCE=.\makensisw.xml
-# End Source File
 # End Target
 # End Project

@@ -456,9 +456,6 @@ Section "MakeNSISW Source" SecSrcMNW
   File ..\Contrib\Makensisw\*.ico
   File ..\Contrib\Makensisw\*.psp
   #File ..\Contrib\Makensisw\Makefile
-  SetOutPath $INSTDIR\Contrib\Makensisw\jnetlib
-  File ..\Contrib\Makensisw\jnetlib\*.cpp
-  File ..\Contrib\Makensisw\jnetlib\*.h
 SectionEnd
 
 Section "UI Holder Source" SecContribUIHolderS
