@@ -22,7 +22,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_ADDSIZE,"AddSize",1,0,"size_to_add_to_section_in_kb"},
 {TOK_AUTOCLOSE,"AutoCloseWindow",1,0,"(false|true)"},
 {TOK_BGGRADIENT,"BGGradient",0,3,"(off | [top_color [bottom_color [text_color]]])"},
-{TOK_BRANDINGTEXT,"BrandingText",1,1,"[/LANG=lang_id] installer_text"},
+{TOK_BRANDINGTEXT,"BrandingText",1,2,"[/LANG=lang_id] [/TRIM(LEFT|RIGHT|CENTER)] installer_text"},
 {TOK_BRINGTOFRONT,"BringToFront",0,0,""},
 {TOK_CALL,"Call",1,0,"function_name | [:label_name]"},
 {TOK_CALLINSTDLL,"CallInstDLL",2,0,"dll_path_on_target.dll function"},
