@@ -78,7 +78,7 @@ void gen_citations(paragraph * source, keywordlist * kl)
 	 * Scan for keyword references.
 	 */
 	for (ptr = para->words; ptr; ptr = ptr->next) {
-	    if (ptr->type == word_UpperXref || ptr->type == word_LowerXref)
+	    if (ptr->type == word_UpperXref || ptr->type == word_LowerXref || ptr->type == word_FreeTextXref)
 		cite_biblio(kl, ptr->text, ptr->fpos);
 	}
     }
