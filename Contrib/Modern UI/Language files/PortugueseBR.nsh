@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.65
+;Compatible with Modern UI 1.66
 
 ;Language: Brazilian Portuguese (1046)
 ;By Diego Marcos <jump@osite.com.br>
@@ -11,9 +11,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Português (do Brasil)" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Clique em Avançar para continuar."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Clique em Instalar para iniciar a instalação."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Este assistente te guiará durante a instalação do ${MUI_PRODUCT}.\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n"
@@ -22,19 +19,16 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Tecle Page Down para ver o restante da licença."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Se você aceitar os termos da licença, clique em Concordo para continuar. Você deve aceitar o contrato para instalar o ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se você aceitar os termos da licença, clique na caixa de seleção abaixo. Você deve aceitar o contrato para instalar o ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se você aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para instalar o ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se você aceitar os termos da licença, clique na caixa de seleção abaixo. Você deve aceitar o contrato para instalar o ${MUI_PRODUCT}. $_CLICK"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se você aceitar os termos da licença, selecione a primeira opção abaixo. Você deve aceitar o contrato para instalar o ${MUI_PRODUCT}. $_CLICK"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Escolha de Componentes"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Escolha quais características do ${MUI_PRODUCT} que você deseja instalar."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Marque os componentes que você deseja instalar e desmarque os componentes que você não deseja instalar."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descrição"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passe o ponteiro do mouse sobre um componente para ver sua descrição."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Escolha do Local da Instalação"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Escolha a pasta na qual deseja instalar o ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "O instalador instalará o ${MUI_PRODUCT} na pasta abaixo.$\r$\n$\r$\nPara instalar em uma pasta diferente, clique em Procurar e selecione outra pasta."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Pasta de destino"
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Instalando"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Por favor, aguarde enquanto o ${MUI_PRODUCT} está sendo instalado."
@@ -45,7 +39,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Instalação Abortada"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "A instalação não foi concluída com sucesso."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Terminar"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_BUTTONTEXT_FINISH "&Terminar"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Concluindo o Assistente de Instalação do ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} foi instalado no seu computador.\r\n\r\nClique em Terminar para fechar este assistente."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Seu computador deve ser reiniciado para concluír a instalação do ${MUI_PRODUCT}. Você quer reiniciar agora?"
@@ -66,7 +60,9 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Desinstalar o ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Remover o ${MUI_PRODUCT} do seu computador."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Este assistente desinstalará o ${MUI_PRODUCT} do seu computador."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_TITLE "Escolher Componentes"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_SUBTITLE "Escolha quais qualidades do ${MUI_PRODUCT} quer desinstalar."
     
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Desinstalando"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Por favor, aguarde enquanto o ${MUI_PRODUCT} está sendo desinstalado."
