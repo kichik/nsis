@@ -32,6 +32,8 @@ Released on Decemeber 27th, 2003
 
 \b New sections macros for mutually exclusive section selection
 
+\b Improved RTL support by adding WS_EX_RTLREADING wherever possible
+
 \S2{} Utilities and Plug-ins
 
 \b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.3}: Added new control type "Button", added new flag "NOTIFY", added new flag "NOWORDWRAP" for multi-line text boxes, reduced size down to 12K
