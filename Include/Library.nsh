@@ -16,46 +16,56 @@ Usage:
 
 Parameters:
 
-libtype         The type of the library
+libtype			The type of the library
 
-                DLL                 Dynamic link library (DLL)
-                REGDLL              DLL that has to be registered
-                TLB                 Type library or DLL that contains a type LIBRARY
-                REGDLLTLB           DLL that has to be registered and contains a type library
+				DLL				Dynamic link library (DLL)
+				REGDLL			DLL that has to be registered
+				TLB 			Type library or DLL that contains a type LIBRARY
+				REGDLLTLB		DLL that has to be registered and contains a type library
 
-shared          Specify whether the library is shared with other applications
+shared			Specify whether the library is shared with other applications
 
-                NOTSHARED       The library is not shared
-                $VARNAME        Variable that is empty when the application is installed for the first time,
-                                which is when the shared library count will be increased.
+				NOTSHARED		The library is not shared
+				$VARNAME		Variable that is empty when the application is installed for the first time,
+								which is when the shared library count will be increased.
 
-install         Specify the installation method
+install			Specify the installation method
 
-                REBOOT_PROTECTED        * Upgrade the library on reboot when in use (required for system files).
-                                        * Upgrade the library if the file is not protected by Windows File Protection.
+				REBOOT_PROTECTED		* Upgrade the library on reboot when in use (required for system files).
+										* Upgrade the library if the file is not protected by Windows File Protection.
 
-                NOREBOOT_PROTECTED      * Warns the user when the library is in use. The user will have to close
-                                          applications using the library.
-                                        * Upgrade the library if the file is not protected by Windows File Protection.
+				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
+										  applications using the library.
+										* Upgrade the library if the file is not protected by Windows File Protection.
 
-                REBOOT_NOTPROTECTED     * Upgrade the library on reboot when in use (required for system files).
-                                        * Upgrade the library without checking for Windows File Protection.
+				REBOOT_NOTPROTECTED		* Upgrade the library on reboot when in use (required for system files).
+										* Upgrade the library without checking for Windows File Protection.
 
-                NOREBOOT_NOTPROTECTED   * Warns the user when the library is in use. The user will have to close
-                                          applications using the library.
-                                        * Upgrade the library without checking for Windows File Protection.
+				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
+										  applications using the library.
+										* Upgrade the library without checking for Windows File Protection.
 
-localfile       Location of the library on the compiler system
+localfile		Location of the library on the compiler system
 
-destfile        Location to store the library on the user's system
+destfile		Location to store the library on the user's system
 
-tempbasedir     Directory on the user's system to store a temporary file when the system has
-                to be rebooted.
+tempbasedir		Directory on the user's system to store a temporary file when the system has
+				to be rebooted.
 
-                For Windows 9x/ME support, this directory should be on the same volume as the
-                destination file (destfile).
-                The Windows temp directory could be located on any volume, so you cannot use
-                this directory.
+				For Windows 9x/ME support, this directory should be on the same volume as the
+				destination file (destfile).
+				The Windows temp directory could be located on any volume, so you cannot use
+				this directory.
+
+Options:
+
+LIBRARY_SHELL_EXTENSION
+
+		Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration. Use this to refresh the shell when installing a shell extension or when changing file associations.
+
+LIBRARY_COM
+
+		Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration. Use this for unloading all unnecessary libraries from memory when installing COM libraries.
 
 Notes:
 
@@ -86,40 +96,50 @@ Usage:
 
 Parameters:
 
-libtype         The type of the library
+libtype			The type of the library
 
-                DLL             Dynamic link library (DLL)
-                REGDLL          DLL that has to be registered
-                TLB             Type library or DLL that contains a type LIBRARY
-                REGTLB          DLL that has to be registered and contains a type library
+				DLL				Dynamic link library (DLL)
+				REGDLL			DLL that has to be registered
+				TLB				Type library or DLL that contains a type LIBRARY
+				REGTLB			DLL that has to be registered and contains a type library
 
-shared          Specify whether the library is shared with other applications
+shared			Specify whether the library is shared with other applications
 
-                NOTSHARED       The library is not shared
-                SHARE           The library is shared and should be removed if the shared library count
-                                indicates that the file is not in use anymore.
+				NOTSHARED		The library is not shared
+				SHARE			The library is shared and should be removed if the shared library count
+								indicates that the file is not in use anymore.
 
-uninstall       Specify the uninstallation method
+uninstall		Specify the uninstallation method
 
-                NOREMOVE                The library should not be removed.
-                                        You should use this option for common or important system files such as the
-                                        Visual Basic/C++/MFC runtimes.
+				NOREMOVE				The library should not be removed.
+										You should use this option for common or important system files such as the
+										Visual Basic/C++/MFC runtimes.
 
-                REBOOT_PROTECTED        * Remove the library on reboot when in use (required for system files).
-                                        * Remove the library if the file is not protected by Windows File Protection.
+				REBOOT_PROTECTED		* Remove the library on reboot when in use (required for system files).
+										* Remove the library if the file is not protected by Windows File Protection.
 
-                NOREBOOT_PROTECTED      * Warns the user when the library is in use. The user will have to close
-                                          applications using the library.
-                                        * Remove the library if the file is not protected by Windows File Protection.
+				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
+										  applications using the library.
+										* Remove the library if the file is not protected by Windows File Protection.
 
-                REBOOT_NOTPROTECTED     * Remove the library on reboot when in use (required for system files).
-                                        * Remove the library without checking for Windows File Protection.
+				REBOOT_NOTPROTECTED		* Remove the library on reboot when in use (required for system files).
+										* Remove the library without checking for Windows File Protection.
 
-                NOREBOOT_NOTPROTECTED   * Warns the user when the library is in use. The user will have to close
-                                          applications using the library.
-                                        * Remove the library without checking for Windows File Protection.
+				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
+										  applications using the library.
+										* Remove the library without checking for Windows File Protection.
 
-file            Location of the library
+file			Location of the library
+
+Options:
+
+LIBRARY_SHELL_EXTENSION
+
+		Define this before inserting UninstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after unregistration. Use this to refresh the shell when uninstalling a shell extension or when changing file associations.
+
+LIBRARY_COM
+
+		Define this before inserting UninstallLib macro to call CoFreeUnusedLibraries after unregistration. Use this for unloading all unnecessary libraries from memory when uninstalling COM libraries.
 
 ------------------------
 
@@ -132,6 +152,13 @@ Example:
 !ifndef LIB_INCLUDED
 
 !define LIB_INCLUDED
+
+!ifndef SHCNE_ASSOCCHANGED
+  !define SHCNE_ASSOCCHANGED 0x08000000
+!endif
+!ifndef SHCNF_IDLIST
+  !define SHCNF_IDLIST 0x0000
+!endif
 
 !macro InstallLib libtype shared install localfile destfile tempbasedir
 
@@ -409,6 +436,18 @@ Example:
 
   !endif
 
+  !ifdef LIBRARY_SHELL_EXTENSION
+
+    System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
+
+  !endif
+
+  !ifdef LIBRARY_COM
+
+    System::Call 'Ole32::CoFreeUnusedLibraries()'
+
+  !endif
+
   ;------------------------
   ;Done
 
@@ -537,7 +576,7 @@ Example:
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
       Goto uninstalllib.done_${UNINSTALLLIB_UNIQUE}
 
-	uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:
+  uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:
 
   !endif
 
@@ -574,6 +613,18 @@ Example:
     !ifdef UNINSTALLLIB_LIBTYPE_TLB | UNINSTALLLIB_LIBTYPE_REGDLLTLB
 
       TypeLib::UnRegister $R1
+
+    !endif
+
+    !ifdef LIBRARY_SHELL_EXTENSION
+
+      System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
+
+    !endif
+
+    !ifdef LIBRARY_COM
+
+      System::Call 'Ole32::CoFreeUnusedLibraries()'
 
     !endif
 
