@@ -15,19 +15,18 @@ char g_log_file[1024];
 #endif
 
 char temp_directory[NSIS_MAX_STRLEN];
-
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-char g_usrvars[MAX_NAMED_USER_VARS+USER_VARS_COUNT][NSIS_MAX_STRLEN];
+  NSIS_STRING *g_usrvars;
 #else
-char g_usrvars[USER_VARS_COUNT][NSIS_MAX_STRLEN];
-#endif
-char *state_command_line=g_usrvars[20];
-char *state_install_directory=g_usrvars[21];
-char *state_output_directory=g_usrvars[22];
-char *state_exe_directory=g_usrvars[23];
-char *state_language=g_usrvars[24];
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-char *state_plugins_dir=g_usrvars[25];
+  char g_usrvars[USER_VARS_COUNT][NSIS_MAX_STRLEN];
+  char *state_command_line=g_usrvars[20];
+  char *state_install_directory=g_usrvars[21];
+  char *state_output_directory=g_usrvars[22];
+  char *state_exe_directory=g_usrvars[23];
+  char *state_language=g_usrvars[24];
+  #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+    char *state_plugins_dir=g_usrvars[25];
+  #endif
 #endif
 
 HANDLE g_hInstance;
@@ -611,8 +610,6 @@ char * NSISCALL process_string(const char *in)
 
         default:
           mystrcpy(out, g_usrvars[nVarIdx]);
-          break;
-
       } // switch
       // validate the directory name
       if (nVarIdx > 21 && nVarIdx < 36 ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT and not great than $SYSDIR
@@ -624,9 +621,8 @@ char * NSISCALL process_string(const char *in)
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
     else if ( nVarIdx == LANG_CODES_START )
     {
-      char *p;
       nVarIdx = *(short*)in; in+=sizeof(WORD);
-      p = process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
+      process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
       out+=mystrlen(out);
     }
 #endif
