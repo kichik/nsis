@@ -271,9 +271,9 @@ CEXEBuild::CEXEBuild()
   // Changed to fit the new format in which uninstaller icons are saved
   m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
   memcpy(m_unicon_data+2*sizeof(DWORD),unicon_data+22,unicondata_size);
-  *(DWORD*)(DWORD(m_unicon_data) + sizeof(DWORD)) = unicondata_size;
-  *(DWORD*)(DWORD(m_unicon_data) + 2*sizeof(DWORD)) = 0;
-  *(DWORD*)(DWORD(m_unicon_data) + 3*sizeof(DWORD)) = 0;
+  *(DWORD*)(DWORD(m_unicon_data) = unicondata_size;
+  *(DWORD*)(DWORD(m_unicon_data) + sizeof(DWORD)) = 0;
+  *(DWORD*)(DWORD(m_unicon_data) + 2*sizeof(DWORD) + unicondata_size) = 0;
   unicondata_size += 3*sizeof(DWORD);
 
   m_inst_fileused=0;
