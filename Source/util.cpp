@@ -280,13 +280,13 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   PRESOURCE_DIRECTORY rdRoot = PRESOURCE_DIRECTORY(exeHeader + sectionHeadersArray[i].PointerToRawData);
 
-  DWORD dwNextSection;
+  int iNextSection;
   if (i == ntHeaders->FileHeader.NumberOfSections - 1)
-    dwNextSection = ntHeaders->OptionalHeader.SizeOfImage;
+    iNextSection = (int)ntHeaders->OptionalHeader.SizeOfImage;
   else
-    dwNextSection = sectionHeadersArray[i+1].PointerToRawData;
+    iNextSection = (int)sectionHeadersArray[i+1].PointerToRawData;
 
-  MY_ASSERT((int)rdRoot - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((int)rdRoot - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
   int idx = find_in_dir(rdRoot, WORD(RT_ICON));
   MY_ASSERT(idx == -1, "no icons?!");
@@ -294,7 +294,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].OffsetToDirectory + DWORD(rdRoot));
 
-  MY_ASSERT((int)rdIcons - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((int)rdIcons - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
   unsigned char* seeker = uninstIconData;
 
@@ -302,12 +302,12 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     MY_ASSERT(!rdIcons->Entries[i].DataIsDirectory, "bad resource directory");
     PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].OffsetToDirectory + DWORD(rdRoot));
     
-    MY_ASSERT((int)rd - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+    MY_ASSERT((int)rd - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
     MY_ASSERT(rd->Entries[0].DataIsDirectory, "bad resource directory");
     
     PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
 
-    MY_ASSERT((int)rde - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+    MY_ASSERT((int)rde - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
     DWORD dwSize = *(DWORD*)seeker;
     seeker += sizeof(DWORD);
@@ -315,7 +315,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     // Set offset
     *(DWORD*)seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 
-    MY_ASSERT(*(int*)seeker > dwNextSection || *(int*)seeker < (int)rdRoot - (int)exeHeader, "invalid data offset - icon resource probably compressed");
+    MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (int)rdRoot - (int)exeHeader, "invalid data offset - icon resource probably compressed");
     
     seeker += sizeof(DWORD) + dwSize;
   }
