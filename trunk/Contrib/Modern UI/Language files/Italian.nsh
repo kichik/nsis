@@ -1,7 +1,7 @@
 ;Modern UI Language File
 ;version 1 - Compatible with Modern UI 1.3
 
-;Language: Italian (1036)
+;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com>
 
 ;--------------------------------
@@ -10,7 +10,7 @@
 
 !define MUI_ITALIAN_USED
 
-  !define MUI_ITALIAN_LANGNAME "Italiano" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+  !define MUI_ITALIAN_LANGNAME "Italiano" ;Name of the language in the language itself (English, Deutsch, Français, Italiano etc.)
 
   ;INSTALLER
   
@@ -30,7 +30,7 @@
   !endif
   
   !ifdef MUI_DIRSELECTPAGE
-    DirText /LANG=${LANG_ITALIAN} "Il programma d'installazione installerà ${NAME} nella seguente cartella.$\r$\n$\r$\nPer installare nella seguente direttori clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella." " "
+    DirText /LANG=${LANG_ITALIAN} "Il programma d'installazione installerà ${NAME} nella seguente cartella.$\r$\n$\r$\nPer installare nella seguente cartella clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_ITALIAN} "Scegli la cartella di installazione"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_ITALIAN} "Scegli la cartella dove installare ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_ITALIAN} "Cartella d'installazione"
@@ -57,11 +57,10 @@
     LangString MUI_BUTTONTEXT_INSTALL ${LANG_ITALIAN} "&Installa"
   !endif
   
-  
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_FRENCH} "uesto programma rimuoverà ${NAME} dal
+    UninstallText /LANG=${LANG_FRENCH} "Questo programma rimuoverà ${NAME} dal
     vosto computer."
     LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_ITALIAN} "Disinstalla ${NAME}"
     LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_ITALIAN} "Rimuovi ${NAME} dal vostro computer."
