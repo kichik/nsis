@@ -178,7 +178,7 @@ void CompileNSISScript() {
 		g_script = s;
 		g_appended = TRUE;
 	}
-  g_dwLength = 0;
+    g_dwLength = 0;
 	// Disable buttons during compile
 	DisableItems(g_hwnd);
 	DWORD id;
