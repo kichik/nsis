@@ -1,52 +1,72 @@
-;NSIS Modern Style UI version 1.21
-;InstallOptions Example Script
+;NSIS Modern UI version 1.3
+;Install Options Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
 !define VERSION "1.0" ;Define your own software version here
 
 !verbose 3
-  !include "ModernUI.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 !verbose 4
 
 ;--------------------------------
 ;Configuration
 
+  ;Language
+    ;English
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+
   ;General
   Name "${NAME} ${VERSION}"
   OutFile "InstallOptions.exe"
-  SetOverwrite on
 
-  ;User interface
+  ;User interface - icons, ui file, check bitmap, progress bar etc.
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
   !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
 
   ;License dialog
-  LicenseText "Press Page Down to see the rest of the agreement."
+  !insertmacro MUI_ENGLISH_LICENSETEXT
   LicenseData "License.txt"
 
   ;Component-select dialog
-  ComponentText "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
+  !insertmacro MUI_ENGLISH_COMPONENTTEXT
+    ;Descriptions
+    LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
+    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
 
   ;Folder-select dialog
+  !insertmacro MUI_ENGLISH_DIRTEXT
   InstallDir "$PROGRAMFILES\${NAME}"
-  DirText "Setup will install ${NAME} in the following folder.$\r$\n$\r$\nTo install in this folder, click Install. To install in a different folder, click Browse and select another folder." " "
   InstallButtonText "Next >" ;Install Options dialog has 'Install' button
+  
+  ;Install Options dialogs
+  LangString MUI_TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
+  LangString MUI_TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
 
   ;Uninstaller
-  UninstallText "This will uninstall ${NAME} from your system."
-
+  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
+  
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Use ReserveFile for your own Install Options ini files too!
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
-  ReserveFile "iniA.ini"
-  ReserveFile "iniB.ini"
-  ReserveFile "iniC.ini"
+  ReserveFile "ioA.ini"
+  ReserveFile "ioB.ini"
+  ReserveFile "ioC.ini"
 
 ;--------------------------------
 ;Installer Sections
 
-Section "Modern.exe" SecCopyUI
+Function .onInit
+
+  ;Init InstallOptions
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
+
+FunctionEnd
+
+Section "modern.exe" SecCopyUI
 
   ;Add your stuff here
 
@@ -73,48 +93,33 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-Function .onInit
-
-  ;Init InstallOptions
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniA.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniB.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniC.ini"
-
-FunctionEnd
-
 Function .onInitDialog
-
-  !insertmacro MUI_INNERDIALOG_INIT
+    !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
     !insertmacro MUI_INNERDIALOG_STOP 1
 
     !insertmacro MUI_INNERDIALOG_START 4
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
     !insertmacro MUI_INNERDIALOG_STOP 4
 
     !insertmacro MUI_INNERDIALOG_START 5
-      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
-      !insertmacro MUI_INNERDIALOG_STOP 5
+      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+    !insertmacro MUI_INNERDIALOG_STOP 5
 
   !insertmacro MUI_INNERDIALOG_END
-
 FunctionEnd
 
 Function .onNextPage
-
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
   !insertmacro MUI_NEXTPAGE SetPage
-
 FunctionEnd
 
 Function .onPrevPage
-
   !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
   !insertmacro MUI_PREVPAGE SetPage
-
 FunctionEnd
 
 Function SetPage
@@ -122,53 +127,59 @@ Function SetPage
   !insertmacro MUI_PAGE_INIT
 
     !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-       !insertmacro MUI_HEADER_TEXT 1033 "Install Options A" "Create your own dialog!"
-       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
-       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "iniA.ini" "" "IO" ;Next page is an IO page
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      WriteIniStr "$PLUGINSDIR\ioA.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "ioA.ini" "" "IO" ;Next page is an IO page
     !insertmacro MUI_PAGE_STOP 2
-
+    
     !insertmacro MUI_PAGE_START 3
-       !insertmacro MUI_HEADER_TEXT 1033 "Install Options B" "Create your own dialog!"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "iniB.ini" "IO" "" ;Previous page is an IO page
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      WriteIniStr "$PLUGINSDIR\ioB.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_NEXT)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "ioB.ini" "IO" "" ;Previous page is an IO page
     !insertmacro MUI_PAGE_STOP 3
 
     !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 4
 
     !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
-       !insertmacro MUI_HEADER_TEXT 1033 "Install Options C" "Create your own dialog!"
-       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
-       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "iniC.ini" "" "" ;Next/previous page is no IO page
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_IO_TITLE) $(MUI_TEXT_IO_SUBTITLE)
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "BackButtonText" $(MUI_BUTTONTEXT_BACK)
+      WriteIniStr "$PLUGINSDIR\ioC.ini" "Settings" "NextButtonText" $(MUI_BUTTONTEXT_INSTALL)
+      !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "ioC.ini" "" "" ;Next/previous pages are NO IO pages
     !insertmacro MUI_PAGE_STOP 6
 
     !insertmacro MUI_PAGE_START 7
-      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 7
 
     !insertmacro MUI_PAGE_START 8
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 8
 
-  !insertmacro MUI_PAGE_END
+ !insertmacro MUI_PAGE_END
 
 FunctionEnd
 
@@ -176,8 +187,8 @@ Function .onMouseOverSection
 
   !insertmacro MUI_DESCRIPTION_INIT
 
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCopyUI} "Copy the modern.exe file to the application folder."
-    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCreateUninst} "Create a uninstaller which can automatically delete ${NAME}."
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
 
  !insertmacro MUI_DESCRIPTION_END
 
@@ -185,8 +196,7 @@ FunctionEnd
 
 Function .onUserAbort
 
-  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
-  !insertmacro MUI_ABORTWARNING_END
+  !insertmacro MUI_ABORTWARNING
 
 FunctionEnd
 
@@ -210,25 +220,24 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onNextPage
-
-  !insertmacro MUI_NEXTPAGE un.SetPage
-
+  !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
+  !insertmacro MUI_NEXTPAGE un.onNextPage
 FunctionEnd
 
 Function un.SetPage
-
+  
   !insertmacro MUI_PAGE_INIT
-
+    
     !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
     !insertmacro MUI_PAGE_STOP 3
 
   !insertmacro MUI_PAGE_END
