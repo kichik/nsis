@@ -169,6 +169,7 @@ public:
 
 #else
 
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -182,10 +183,15 @@ public:
     if (dip) {
       dirent *dit;
       while ((dit = ::readdir(dip))) {
-        if (dit->d_type == DT_DIR) {
-          dir_reader::add_dir(dit->d_name);
-        } else {
-          dir_reader::add_file(dit->d_name);
+        struct stat st;
+        string file = dir + PLATFORM_PATH_SEPARATOR_STR + dit->d_name;
+
+        if (!stat(file.c_str(), &st)) {
+          if (S_ISDIR(st.st_mode)) {
+            dir_reader::add_dir(dit->d_name);
+          } else {
+            dir_reader::add_file(dit->d_name);
+          }
         }
       }
       ::closedir(dip);
