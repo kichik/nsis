@@ -113,20 +113,23 @@ char *STRDUP(const char *c)
 #define FIELD_GROUPBOX     (12)
 
 // general flags
-#define FLAG_BOLD          (0x1)
-#define FLAG_RIGHT         (0x2)
+#define FLAG_BOLD          (1)
+#define FLAG_RIGHT         (2)
 
 // text box flags
-#define FLAG_PASSWORD      (0x100)
+#define FLAG_PASSWORD      (4)
 
 // listbox flags
-#define FLAG_MULTISELECT   (0x200)
+#define FLAG_MULTISELECT   (8)
 
 // combobox flags
-#define FLAG_DROPLIST      (0x400)
+#define FLAG_DROPLIST      (16)
 
 // bitmap flags
-#define FLAG_RESIZETOFIT   (0x800)
+#define FLAG_RESIZETOFIT   (32)
+
+// radio button flags
+#define FLAG_GROUP         (64)
 
 struct TableEntry {
   char *pszName;
@@ -515,6 +518,7 @@ bool ReadSettings(void) {
       { "FILE_EXPLORER",     OFN_EXPLORER        },
       { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
       { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
+      { "GROUP",             FLAG_GROUP          },
 /*
       { "NO_ALPHA",          0                   },
       { "NO_NUMBERS",        0                   },
@@ -828,7 +832,7 @@ int createCfgDlg()
 
   DeleteDC(memDC);
 
-#define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS)
+#define DEFAULT_STYLES (WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_GROUP)
 
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
     static struct {
@@ -837,22 +841,22 @@ int createCfgDlg()
       DWORD dwExStyle;
     } ClassTable[] = {
       { "STATIC",       // FIELD_LABEL
-        DEFAULT_STYLES | WS_GROUP /*| WS_TABSTOP*/,
+        DEFAULT_STYLES /*| WS_TABSTOP*/,
         WS_EX_TRANSPARENT },
       { "STATIC",       // FIELD_ICON
-        DEFAULT_STYLES | WS_GROUP /*| WS_TABSTOP*/ | SS_ICON,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
         0 },
       { "STATIC",       // FIELD_BITMAP
-        DEFAULT_STYLES | WS_GROUP /*| WS_TABSTOP*/ | SS_BITMAP,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP,
         0 },
       { "BUTTON",       // FIELD_BROWSEBUTTON
-        DEFAULT_STYLES | WS_GROUP | WS_TABSTOP,
+        DEFAULT_STYLES | WS_TABSTOP,
         0 },
       { "BUTTON",       // FIELD_CHECKBOX
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX,
         0 },
       { "BUTTON",       // FIELD_RADIOBUTTON
-        DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON,
+        (DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON) & ~WS_GROUP,
         0 },
       { "EDIT",         // FIELD_TEXT
         DEFAULT_STYLES | WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL,
@@ -867,7 +871,7 @@ int createCfgDlg()
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "LISTBOX",      // FIELD_LISTBOX
-        DEFAULT_STYLES | WS_GROUP | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
+        DEFAULT_STYLES | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "BUTTON",       // FIELD_GROUPBOX
         DEFAULT_STYLES | BS_GROUPBOX,
@@ -908,6 +912,8 @@ int createCfgDlg()
       case FIELD_RADIOBUTTON:
         if (pFields[nIdx].nFlags & FLAG_RIGHT)
           dwStyle |= BS_RIGHTBUTTON;
+        if (pFields[nIdx].nFlags & FLAG_GROUP)
+          dwStyle |= WS_GROUP;
         break;
       case FIELD_FILEREQUEST:
       case FIELD_DIRREQUEST:
