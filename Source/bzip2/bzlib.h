@@ -147,18 +147,6 @@ BZ_EXTERN int BZ_API(BZ2_bzCompressEnd) (
       bz_stream* strm 
    );
 
-BZ_EXTERN int BZ_API(BZ2_bzDecompressInit) ( 
-      bz_stream *strm
-   );
-
-BZ_EXTERN int BZ_API(BZ2_bzDecompress) ( 
-      bz_stream* strm 
-   );
-
-BZ_EXTERN int BZ_API(BZ2_bzDecompressEnd) ( 
-      bz_stream *strm 
-   );
-
 /*-- General stuff. --*/
 
 #define BZ_VERSION  "1.0.1, 23-June-2000"
@@ -236,7 +224,7 @@ typedef unsigned short  UInt16;
 typedef
    struct {
       /* pointer back to the struct bz_stream */
-      bz_stream* strm;
+      bz_stream *strm;
 
       /* mode this stream is in, and whether inputting */
       /* or outputting data */
@@ -386,10 +374,14 @@ typedef struct {
 typedef
    struct {
       /* pointer back to the struct bz_stream */
-      bz_stream* strm;
+      char *next_in;
+      unsigned int avail_in;
+
+      char *next_out;
+      unsigned int avail_out;
 
       /* state indicator for this stream */
-      Int32    state;
+      char state;
 
       /* for doing the final run-length decoding */
       UChar    state_out_ch;
@@ -500,7 +492,17 @@ BZ2_hbCreateDecodeTables ( Int32*, Int32*, Int32*, UChar*,
                            Int32,  Int32, Int32 );
 
 
+
+BZ_EXTERN int BZ_API(BZ2_bzDecompressInit) ( 
+      DState *s
+   );
+
+BZ_EXTERN int BZ_API(BZ2_bzDecompress) ( 
+      DState * s
+   );
+
 #endif
+
 
 
 /*-- BZ_NO_STDIO seems to make NULL disappear on some platforms. --*/
