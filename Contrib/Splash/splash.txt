@@ -1,4 +1,4 @@
-Splash.exe - small (4k), simple plugin that lets you throw 
+Splash.dll - small (4k), simple plugin that lets you throw 
 up a splash screen in NSIS installers.
 
 --- UPDATED in 2.0b0 - will break old scripts ---
