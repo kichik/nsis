@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1050
 # Font and size - dash (-) means default
@@ -38,17 +38,18 @@ Odaberi komponente koje želiš instalirati:
 Ili, odaberi opcionalne komponente koje želiš instalirati:
 Odaberi direktorij da u koji želiš instalirati %s:
 Slobodnog prostora na disku: 
-Prostora na disku potrebno: 
+Prostora na disku potrebno:
 Deinstaliram iz:
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš zapisivati u datoteku, or\r\nignore da preskoèiš tu datoteku
-Ne mogu zapisati: 
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš zapisivati u datoteku, ili\r\nignore da preskoèiš tu datoteku
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\nPritisni retry da ponovno pokušaš zapisivati u datoteku, ili\r\ncancel da prekineš instalaciju
+Ne mogu zapisati:
 Greška prilikom kopiranja
-Kopiraj u 
-Registriranje:  
-Unregistriranje:  
-Ne mogu naæi simbol: 
-Ne mogu uèitati: 
-Napravi direktorij: 
+Kopiraj u
+Registriranje:
+Unregistriranje:
+Ne mogu naæi simbol:
+Ne mogu uèitati:
+Napravi direktorij:
 Napravi shortcut: 
 Created uninstaller: 
 Obriši datoteku: 
