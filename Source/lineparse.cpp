@@ -1,4 +1,5 @@
 #include "lineparse.h"
+#include "Platform.h"
 
 #include <cstdlib>
 #include <cstring>
