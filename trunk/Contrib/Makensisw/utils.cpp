@@ -56,6 +56,8 @@ void ClearLog(HWND hwnd) {
 char g_output_exe[1024];
 char g_input_script[1024];
 BOOL g_input_found;
+extern BOOL g_warnings;
+
 void LogMessage(HWND hwnd,const char *str) {
 	if (!str || !*str) return;
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
@@ -76,6 +78,9 @@ void LogMessage(HWND hwnd,const char *str) {
 			lstrcpyn(g_input_script,p1,p2-p1);
 			g_input_found=TRUE;
 		}
+	}
+	if (my_strstr(existing_text," warning:")||my_strstr(existing_text," warnings:")) {
+		g_warnings = TRUE;
 	}
 	SetDlgItemText(hwnd, IDC_LOGWIN, existing_text);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN,EM_SETSEL,lstrlen(existing_text),lstrlen(existing_text));
