@@ -3,12 +3,13 @@
 
 ;Language: Romanian (1048)
 ;Translated by Cristian Pirvu (pcristip@yahoo.com)
-;Updated by Sorin Sbarnea - INTERSOL SRL (sbarneasorin@intersol.ro)
+;Updates by Sorin Sbarnea - INTERSOL SRL (sbarneasorin@intersol.ro) - ROBO Design (www.robodesign.ro)
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ROMANIAN"
 
-  !define MUI_LANGNAME "Romana" ;Use only ASCII characters (if this is not possible, use the English name)
+  ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Romana"
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bine ati venit la instalarea produsului $(^Name)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "$(^Name) incepe instalarea.\r\n\r\nE recomandat sa inchideti toate aplicatiile inainte. Aceasta va permite programului sa modifice anumite fisiere de sistem fara repornirea calculatorului.\r\n\r\n$_CLICK"
@@ -16,20 +17,20 @@
   !define MUI_TEXT_LICENSE_TITLE "Licenta de utilizare"
   !define MUI_TEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii licentei inaintea instalarii $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "Apasati Page Down pentru a vedea restul licentei."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, alegeti De Acord pentru a continua. Trebuie sa acceptati licenta ca sa instalati $(^Name)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a instala $(^Name) trebuie sa accesptati termenii din acordul de licenta."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, alegeti De Acord pentru a continua. Trebuie sa acceptati licenta pentru a instala $(^Name)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a instala $(^Name) trebuie sa acceptati termenii din acordul de licenta."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii acordului, alegeti prima optiune de mai jos. Pentru a instala $(^Name) trebuie sa accesati acordul."
 
   !define MUI_TEXT_COMPONENTS_TITLE "Alegeti componente"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "Alegeti componentele produsului $(^Name) pe care vreti sa le instalati."
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "Alegeti componentele produsului $(^Name) pe care doriti sa le instalati."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descriere"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Miscati mausul deasupra unei componente pentru a vedea descrierea."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Mutati mouse-ul deasupra unei componente pentru a vedea descrierea."
 
   !define MUI_TEXT_DIRECTORY_TITLE "Alegeti locatia instalarii"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Alegeti directorul de instalat al produsului $(^Name)."
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Alegeti directorul de instalare al produsului $(^Name)."
 
-  !define MUI_TEXT_INSTALLING_TITLE "In process de instalare"
-  !define MUI_TEXT_INSTALLING_SUBTITLE "Asteaptati, $(^Name) se instaleaza."
+  !define MUI_TEXT_INSTALLING_TITLE "In proces de instalare"
+  !define MUI_TEXT_INSTALLING_SUBTITLE "Va rugam sa asteptati, $(^Name) se instaleaza."
 
   !define MUI_TEXT_FINISH_TITLE "Instalare completa"
   !define MUI_TEXT_FINISH_SUBTITLE "Instalarea s-a terminat cu succes."
@@ -40,18 +41,18 @@
   !define MUI_BUTTONTEXT_FINISH "&Terminare"
   !define MUI_TEXT_FINISH_INFO_TITLE "Terminarea instalarii pentru $(^Name)"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) a fost instalat.\r\n\r\nApasati Termina pentru a incheia instalarea."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Trebuie sa restartati calculatorul pentru a termina instalarea. Vreti sa restartati acum?"
-  !define MUI_TEXT_FINISH_REBOOTNOW "Restarteaza acum"
-  !define MUI_TEXT_FINISH_REBOOTLATER "Vreau sa restartez ulterior"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Trebuie sa reporniti calculatorul pentru a termina instalarea. Doriti sa-l reporniti acum?"
+  !define MUI_TEXT_FINISH_REBOOTNOW "Reporneste acum"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Repornesc eu mai tarziu"
   !define MUI_TEXT_FINISH_RUN "Executa $(^Name)"
-  !define MUI_TEXT_FINISH_SHOWREADME "Arata fisierul citeste.ma"
+  !define MUI_TEXT_FINISH_SHOWREADME "Arata fisierul citeste.ma (readme.txt)"
 
   !define MUI_TEXT_STARTMENU_TITLE "Alegeti directorul din Start Menu"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Alegeti un director din Start Menu pentru comenzi rapide la aplicati."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Selectati directorul din Start Menu in care sa creez comenzi rapide programului. Puteti de asemenea sa creati un director nou daca tastati un nume nou."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu crea comenzi rapide"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Alegeti un director din Start Menu pentru comenzi rapide la aplicatii."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Selectati directorul din Start Menu in care sa creez comenzi rapide programului. Puteti de asemenea sa creati un director nou daca scrieti un nume nou."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu doresc comenzi rapide"
 
-  !define MUI_TEXT_ABORTWARNING "Sunteti sigur(a) ca vreti sa opriti instalarea pentru $(^Name) ?"
+  !define MUI_TEXT_ABORTWARNING "Sunteti sigur(a) ca doriti sa opriti instalarea pentru $(^Name) ?"
   
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Dezinstaleaza $(^Name)"
@@ -60,17 +61,17 @@
   !define MUI_UNTEXT_LICENSE_TITLE "Licenta de utilizare"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Va rugam sa revedeti termenii din licenta inainte de dezinstalarea $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, apasati De acord. Trebuie sa acceptati termenii pentru a dezinstala $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a dezinstala $(^Name) trebuie sa accesptati termenii din acordul de licenta."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a dezinstala $(^Name) trebuie sa acceptati termenii din acordul de licenta."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii acordului, alegeti prima optiune de mai jos. Pentru a instala $(^Name) trebuie sa accesati acordul. $_CLICK"
   
   !define MUI_UNTEXT_COMPONENTS_TITLE "Alegeti componentele"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Alegeti caracteristicile $(^Name) pentru dezinstalare."
   
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Alegeti locatiza pentru dezisntalare"
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Alegeti locatiza pentru dezinstalare"
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Alegeti dosarul din care sa dezinstalati $(^Name)."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "In proces de dezinstalare"
-  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Asteaptati pana $(^Name) este dezinstalat."
+  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Va rugam sa asteptati, $(^Name) se dezinstaleaza."
     
   !define MUI_UNTEXT_FINISH_TITLE "Dezinstalare finalizata"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Dezinstalarea a fost finalizata cu succes."
