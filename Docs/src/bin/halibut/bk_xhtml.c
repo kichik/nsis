@@ -76,6 +76,8 @@ typedef struct {
   wchar_t *author, *description;
   wchar_t *head_end, *body, *body_start, *body_end, *address_start,
       *address_end, *nav_attrs;
+  wchar_t *rlink_prefix, *rlink_suffix;
+  wchar_t *chm_toc_file, *chm_ind_file;
   int suppress_address;
   xhtmlheadfmt fchapter, *fsect;
   int nfsect;
@@ -101,6 +103,8 @@ static void xhtml_para(FILE *, word *);
 static void xhtml_codepara(FILE *, word *);
 static void xhtml_heading(FILE *, paragraph *);
 
+static void chm_doheader(FILE *, word *);
+static void chm_dofooter(FILE *);
 /* File-global variables are much easier than passing these things
  * all over the place. Evil, but easier. We can replace this with a single
  * structure at some point.
@@ -115,6 +119,9 @@ static xhtmlfile *lastfile;
 static xhtmlfile *xhtml_last_file = NULL;
 static int last_level = -1;
 static xhtmlsection *currentsection;
+static FILE* chm_toc = NULL;
+static FILE* chm_ind = NULL;
+
 
 static xhtmlconfig xhtml_configure(paragraph * source)
 {
@@ -143,7 +150,10 @@ static xhtmlconfig xhtml_configure(paragraph * source)
   ret.address_end = NULL;
   ret.nav_attrs = NULL;
   ret.suppress_address = FALSE;
-
+  ret.chm_toc_file = NULL;
+  ret.chm_ind_file = NULL;
+  chm_toc = NULL;
+  chm_ind = NULL;
   ret.fchapter.just_numbers = FALSE;
   ret.fchapter.number_suffix = ustrdup(L": ");
   ret.nfsect = 2;
@@ -152,6 +162,8 @@ static xhtmlconfig xhtml_configure(paragraph * source)
   ret.fsect[0].number_suffix = ustrdup(L": ");
   ret.fsect[1].just_numbers = TRUE;
   ret.fsect[1].number_suffix = ustrdup(L" ");
+  ret.rlink_prefix = NULL;
+  ret.rlink_suffix = NULL;
 
   for (; source; source = source->next)
   {
@@ -195,6 +207,12 @@ static xhtmlconfig xhtml_configure(paragraph * source)
       } else if (!ustricmp(source->keyword, L"xhtml-author"))
       {
         ret.author = uadv(source->keyword);
+      } else if (!ustricmp(source->keyword, L"chm-toc-file"))
+      {
+        ret.chm_toc_file = uadv(source->keyword);
+      } else if (!ustricmp(source->keyword, L"chm-ind-file"))
+      {
+        ret.chm_ind_file = uadv(source->keyword);
       } else if (!ustricmp(source->keyword, L"xhtml-description"))
       {
         ret.description = uadv(source->keyword);
@@ -226,6 +244,12 @@ static xhtmlconfig xhtml_configure(paragraph * source)
       } else if (!ustricmp(source->keyword, L"xhtml-chapter-suffix"))
       {
         ret.fchapter.number_suffix = ustrdup(uadv(source->keyword));
+      } else if (!ustricmp(source->keyword, L"xhtml-rlink-prefix"))
+      {
+        ret.rlink_prefix = uadv(source->keyword);
+      } else if (!ustricmp(source->keyword, L"xhtml-rlink-suffix"))
+      {
+        ret.rlink_suffix = uadv(source->keyword);
       } else if (!ustricmp(source->keyword, L"xhtml-section-numeric"))
       {
         wchar_t *p = uadv(source->keyword);
@@ -646,11 +670,8 @@ static void xhtml_do_file(xhtmlfile * file);
 static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform);
 static void xhtml_do_paras(FILE * fp, paragraph * p);
 static int xhtml_do_contents_limit(FILE * fp, xhtmlfile * file, int limit);
-static int xhtml_do_contents_section_limit(FILE * fp,
-                                           xhtmlsection * section,
-                                           int limit);
-static int xhtml_add_contents_entry(FILE * fp, xhtmlsection * section,
-                                    int limit);
+static int xhtml_do_contents_section_limit(FILE * fp, xhtmlsection * section, int limit);
+static int xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit);
 static int xhtml_do_contents(FILE * fp, xhtmlfile * file);
 static int xhtml_do_naked_contents(FILE * fp, xhtmlfile * file);
 static void xhtml_do_sections(FILE * fp, xhtmlsection * sections);
@@ -945,10 +966,30 @@ static void xhtml_do_file(xhtmlfile * file)
 static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
 {
   paragraph *p;
+  char fname[_MAX_PATH];
   int done = FALSE;
   FILE *fp = fopen(file->filename, "w");
+  ustrtoa(conf.chm_toc_file, fname, _MAX_PATH);
+  if(*fname)
+  {
+    chm_toc = fopen(fname, "w");
+    if (chm_toc == NULL)
+    fatal(err_cantopenw, fname);
+  }
+  else
+    chm_toc = NULL;
+
+  ustrtoa(conf.chm_ind_file, fname, _MAX_PATH);
+  if(*fname){
+    chm_ind = fopen(fname, "w");
+    if (chm_ind == NULL)
+    fatal(err_cantopenw, fname);
+  }
+  else
+    chm_ind = NULL;
   if (fp == NULL)
     fatal(err_cantopenw, file->filename);
+
 
   /* Do the title -- only one allowed */
   for (p = sourceform; p && !done; p = p->next)
@@ -956,6 +997,8 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
     if (p->type == para_Title)
     {
       xhtml_doheader(fp, p->words);
+      if(chm_toc)chm_doheader(chm_toc, p->words);
+      if(chm_ind)chm_doheader(chm_ind, p->words);
       done = TRUE;
     }
   }
@@ -1008,7 +1051,11 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
   }
 
   xhtml_dofooter(fp);
+  if(chm_toc)chm_dofooter(chm_toc);
+  if(chm_ind)chm_dofooter(chm_ind);
   fclose(fp);
+  if(chm_toc)fclose(chm_toc);
+  if(chm_ind)fclose(chm_ind);
 }
 
 /* Convert a Unicode string to an ASCII one. '?' is
@@ -1053,6 +1100,7 @@ static int xhtml_do_contents(FILE * fp, xhtmlfile * file)
     {
       last_level--;
       fprintf(fp, "</ul>\n");
+      if(chm_toc)fprintf(chm_toc, "</ul>\n");
     }
   }
   return count;
@@ -1077,6 +1125,7 @@ static int xhtml_do_naked_contents(FILE * fp, xhtmlfile * file)
     {
       last_level--;
       fprintf(fp, "</ul>\n");
+      if(chm_toc)fprintf(chm_toc, "</ul>\n");
     }
   }
   return count;
@@ -1125,8 +1174,7 @@ xhtml_do_contents_section_deep_limit(FILE * fp, xhtmlsection * section,
  * limit contents depth.
  */
 static int
-xhtml_do_contents_section_limit(FILE * fp, xhtmlsection * section,
-                                int limit)
+xhtml_do_contents_section_limit(FILE * fp, xhtmlsection * section, int limit)
 {
   int count = 0;
   if (!section)
@@ -1156,19 +1204,26 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
   {
     last_level--;
     fprintf(fp, "</ul>\n");
+    if(chm_toc)fprintf(chm_toc, "</ul>\n");
   }
   while (last_level < section->level)
   {
     last_level++;
     fprintf(fp, "<ul>\n");
+    if(chm_toc)fprintf(chm_toc, "<ul>\n");
   }
   fprintf(fp, "<li>");
   fprintf(fp, "<a %shref=\"%s#%s\">",
-          (section->para->type == para_Chapter
-           || section->para->type ==
-           para_Appendix) ? "class=\"btitle\" " : "",
+          (section->para->type == para_Chapter|| section->para->type == para_Appendix) ? "class=\"btitle\" " : "",
           section->file->filename,
           (section->para->type == para_Chapter) ? "" : section->fragment);
+  if(chm_toc)fprintf(chm_toc, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
+          section->file->filename,
+          (section->para->type == para_Chapter) ? "" : section->fragment);
+  if(chm_ind)fprintf(chm_ind, "<li><OBJECT type=\"text/sitemap\"><param name=\"Local\" value=\"%s#%s\"><param name=\"Name\" value=\"",
+          section->file->filename,
+          (section->para->type == para_Chapter) ? "" : section->fragment);
+          //%s
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
     fprintf(fp, "<b>");
@@ -1178,8 +1233,11 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
                                                    words))
   {
     xhtml_para(fp, section->para->kwtext);
-    if (section->para->words)
+    if(chm_toc)xhtml_para(chm_toc, section->para->kwtext);
+    if (section->para->words){
       fprintf(fp, ": ");
+      if(chm_toc)fprintf(chm_toc, ": ");
+    }
   }
   if (section->para->type == para_Chapter
       || section->para->type == para_Appendix)
@@ -1187,8 +1245,12 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
   if (section->para->words)
   {
     xhtml_para(fp, section->para->words);
+    if(chm_toc)xhtml_para(chm_toc, section->para->words);
+    if(chm_ind)xhtml_para(chm_ind, section->para->words);
   }
   fprintf(fp, "</a></li>\n");
+  if(chm_toc)fprintf(chm_toc,"\"></OBJECT></li>\n");
+  if(chm_ind)fprintf(chm_ind,"\"></OBJECT></li>\n");
   return TRUE;
 }
 
@@ -1365,6 +1427,13 @@ static void xhtml_doheader(FILE * fp, word * title)
     fprintf(fp, "%ls\n", conf.body_start);
 }
 
+static void chm_doheader(FILE * fp, word * title)
+{
+	fprintf(fp, "<HTML><BODY><UL><LI><OBJECT type=\"text/sitemap\"><param name=\"Name\" value=\"");
+	xhtml_para(fp, title);
+	fprintf(fp,"\"><param name=\"Local\" value=\"Contents.html\"></OBJECT></li>\n");
+}
+
 /*
  * Output a footer for this XHTML file.
  */
@@ -1395,6 +1464,10 @@ static void xhtml_dofooter(FILE * fp)
     fprintf(fp, "</address>\n");
   }
   fprintf(fp, "</body>\n\n</html>\n");
+}
+static void chm_dofooter(FILE * fp)
+{
+	fprintf(fp, "</ul></BODY></HTML>\n");
 }
 
 /*
@@ -1545,6 +1618,7 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
   xhtmlsection *sect;
   indextag *itag;
   int ti;
+  wchar_t *s;
 
   for (; text && text != end; text = text->next)
   {
@@ -1553,7 +1627,32 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
     case word_HyperLink:
       xhtml_utostr(text->text, &c);
       rdaddsc(rs, "<a href=\"");
-      rdaddsc(rs, c);
+      if(chm_toc && *c == '.' && *(c+1) == '.')
+        rdaddsc(rs, c + 1);
+      else
+	      rdaddsc(rs, c);
+      rdaddsc(rs, "\">");
+      sfree(c);
+      break;
+
+    case word_LocalHyperLink:
+      xhtml_utostr(text->text, &c);
+      rdaddsc(rs, "<a href=\"");
+      if (conf.rlink_prefix)
+      {
+        char *c2;
+        xhtml_utostr(conf.rlink_prefix, &c2);
+        rdaddsc(rs, c2);
+        sfree(c2);
+      }
+	    rdaddsc(rs, c);
+      if (conf.rlink_suffix)
+      {
+        char *c2;
+        xhtml_utostr(conf.rlink_suffix, &c2);
+        rdaddsc(rs, c2);
+        sfree(c2);
+      }
       rdaddsc(rs, "\">");
       sfree(c);
       break;
@@ -1698,7 +1797,7 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
         {
           char buf[2] = " ";
           dont_convert = 0;
-          wchar_t *s = text->text;
+          s = text->text;
           for (; *s; s++)
           {
             buf[0] = (char) *s;

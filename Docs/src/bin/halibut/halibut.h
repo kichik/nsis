@@ -146,6 +146,7 @@ enum {
   word_IndexRef,                /* (always an invisible one) */
   word_HyperLink,               /* (invisible) */
   word_HyperEnd,                /* (also invisible; no text) */
+  word_LocalHyperLink,          /* (invisible) */
   word_FreeTextXref             /* \R */
 };
 /* aux values for attributed words */
@@ -396,6 +397,7 @@ void gen_citations(paragraph *, keywordlist *);
  * style.c
  */
 struct userstyle_Tag {
+	void* empty;
 };
 
 /*

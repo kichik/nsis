@@ -1329,7 +1329,7 @@ static node234 *split234_internal(tree234 * t, int index)
 {
   node234 *halves[2], *n, *sib, *sub;
   node234 *lparent, *rparent;
-  int ki, pki, i, half, lcount, rcount;
+  int ki, pki=0, i, half, lcount, rcount;
 
   n = t->root;
   LOG(("splitting tree %p at point %d\n", t, index));

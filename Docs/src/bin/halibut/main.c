@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "halibut.h"
 
 static void dbg_prtsource(paragraph * sourceform);
@@ -216,6 +217,7 @@ int main(int argc, char **argv)
         index_merge(idx, TRUE, p->keyword, p->words);
 
     build_index(idx);
+
 
     if (debug)
     {

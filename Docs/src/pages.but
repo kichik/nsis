@@ -1,6 +1,6 @@
 \H{pages} Pages
 
-Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with \W{../Contrib/InstallOptions/Readme.html}{InstallOptions} for example).
+Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} for example).
 
 Using the script you can control the pages' order, appearance, and behavior. You can skip pages, paint them white, force the user to stay in a certain page until a certain condition is met, show a readme page, show custom designed pages for input and more. In this section, you will learn how to control all of the above.
 
