@@ -210,6 +210,26 @@ Section ""
 
   FindWindow ${TEMP3} "#32770" "" $HWNDPARENT
   GetDlgItem ${TEMP3} ${TEMP3} 1111
+  
+  SetDetailsPrint none
+  
+  # Connect to the internet
+    
+  ClearErrors
+  Dialer::AttemptConnect
+  IfErrors noie3
+    
+  Pop $R0
+  StrCmp $R0 "online" connected
+    MessageBox MB_OK|MB_ICONSTOP "Cannot connect to the internet."
+    Quit
+  
+  noie3:
+  
+  # IE3 not installed
+  MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
+  
+  connected:
 
   !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "io.ini" "Field 2" "State"
   StrCmp ${TEMP1} "1" "" CVS
@@ -299,11 +319,9 @@ Section ""
   CVS:
   
     # CVS Update
-
-    SetDetailsPrint none
     
     SetOutPath ${NSISPATH}
-
+    
     Call CheckCVSAccess
     Call CheckCVSFiles
     Call CheckCVSDownload
