@@ -31,10 +31,10 @@ NFINDREPLACE g_find;
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	MSG	msg;
 	int status;
-	HACCEL haccel; 
-    ZeroMemory(&g_sdata,sizeof(NSCRIPTDATA));
-    ZeroMemory(&g_resize,sizeof(NRESIZEDATA));
-    ZeroMemory(&g_find,sizeof(NFINDREPLACE));
+	HACCEL haccel;
+    my_memset(&g_sdata,0,sizeof(NSCRIPTDATA));
+    my_memset(&g_resize,0,sizeof(NRESIZEDATA));
+    my_memset(&g_find,0,sizeof(NFINDREPLACE));
 	g_sdata.hInstance=GetModuleHandle(0);
 	g_sdata.script=GetCommandLine();
     if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
@@ -203,20 +203,46 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                     if (g_sdata.input_script) {
                         char str[MAX_PATH],*str2;
                         lstrcpy(str,g_sdata.input_script);
-		                str2=strrchr(str,'\\');
+		                str2=my_strrchr(str,'\\');
 		                if(str2!=NULL) *str2=0;
                         ShellExecute(g_sdata.hwnd,"open",str,NULL,NULL,SW_SHOWNORMAL);
                     }
                     return TRUE;
                 }
 				case IDM_UPDATE:
-				{
-					char b[100];
-					lstrcpy(b,NSIS_UPDATE);
-					lstrcat(b,g_sdata.brandingv);
-                    ShellExecute(g_sdata.hwnd,"open",b,NULL,NULL,SW_SHOWNORMAL);
-					break;
-				}
+                {
+                    #define RSZ 5
+                    int len;
+                    char *response = (char *)GlobalAlloc(GPTR,RSZ);
+                    char url[300];
+                    JNL_HTTPGet get;
+                    JNL::open_socketlib();
+                    lstrcpy(url,NSIS_UPDATE);
+                    lstrcat(url,g_sdata.brandingv);
+                    lstrcpy(response,"0");
+                    get.addheader("User-Agent:Nullsoft Sex (Mozilla)");
+                    get.addheader("Accept:*/*");
+                    get.connect(url);
+                    while (1) {
+                        int st=get.run();
+                        if (st<0) break; //error
+                        if (get.get_status()==2) {
+                            if(len=get.bytes_available()) {
+                                if (len>RSZ) len=RSZ;
+                                len=get.get_bytes(response,len);
+                            }
+                        }
+                        if (st==1) break; //closed
+                    }
+                    JNL::close_socketlib();
+                    if (*response=='1') { 
+                        if (MessageBox(0,"A new version of NSIS is now available.  Would you like to download it now?","NSIS Update",MB_YESNO|MB_ICONINFORMATION)==IDYES) {
+                            ShellExecute(g_sdata.hwnd,"open",NSIS_URL,NULL,NULL,SW_SHOWNORMAL);
+                        }
+                    }
+                    else MessageBox(0,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
+                    break;
+                }
 				case IDM_ABOUT:
 				{
 					DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_ABOUT),g_sdata.hwnd,(DLGPROC)AboutProc);

@@ -262,7 +262,7 @@ int InitBranding() {
 
 void InitTooltips(HWND h) {
 	if (h == NULL)	return;
-    ZeroMemory(&g_tip,sizeof(NTOOLTIP));
+    my_memset(&g_tip,0,sizeof(NTOOLTIP));
 	g_tip.tip_p = h;
 	INITCOMMONCONTROLSEX icx;
 	icx.dwSize	= sizeof(icx);
