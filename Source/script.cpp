@@ -1766,8 +1766,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
           else PRINTHELP();
         }
-        if (line.getnumtokens()!=a+1) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
+        if (line.getnumtokens()!=a+1 && !trim) PRINTHELP();
+        if (line.getnumtokens()==a+1) SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
         if (trim) try {
           build_compressor_set=true;
           CResourceEditor re(header_data_new, exeheader_size_new);
@@ -1776,10 +1776,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           CDialogTemplate td(dlg);
           free(dlg);
 
+          char str[512];
+          extern const char *NSIS_VERSION;
+          if (line.getnumtokens()==a+1)
+            lstrcpy(str, line.gettoken_str(a));
+          else
+            wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
+
           switch (trim) {
-          	case 1: td.LTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
-            case 2: td.RTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
-            case 3: td.CTrimToString(IDC_VERSTR, line.gettoken_str(a), 1); break;
+          	case 1: td.LTrimToString(IDC_VERSTR, str, 1); break;
+            case 2: td.RTrimToString(IDC_VERSTR, str, 1); break;
+            case 3: td.CTrimToString(IDC_VERSTR, str, 1); break;
           }
 
           DWORD dwSize;
