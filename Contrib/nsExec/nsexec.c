@@ -109,6 +109,8 @@ void ExecScript(int log) {
       szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
     }
 
+    #define TEST(x) if (!x) MessageBox(g_hwndParent, #x, "failed", MB_OK|MB_ICONERROR);
+
     GetVersionEx(&osv);
     if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
       InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
@@ -125,6 +127,7 @@ void ExecScript(int log) {
     GetStartupInfo(&si);
     si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
     si.wShowWindow = SW_HIDE;
+    si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
     si.hStdOutput = newstdout;
     si.hStdError = newstdout;
     if (!CreateProcess(NULL,g_exec,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
