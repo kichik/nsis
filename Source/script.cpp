@@ -3226,13 +3226,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
 
         // Create the runtime command to execute the custom instruction
+        // Strip any dllname.dll:: signature part off the command
+        char* command = strstr(line.gettoken_str(0),"::");
+        if (command) command += 2;
+        else         command  = line.gettoken_str(0);
+
         ent.which      = EW_PLUGINCOMMANDPREP;
         ent.offsets[0] = add_string(dllPath);
-        ent.offsets[1] = add_string(line.gettoken_str(0));
+        ent.offsets[1] = add_string(command);
         ent.offsets[2] = dataHandle;
         add_entry(&ent);
 
-        SCRIPT_MSG("Plugin Command: %s",line.gettoken_str(0));
+        SCRIPT_MSG("Plugin Command: %s",command);
         ent.which = EW_PLUGINCOMMAND;
 
         for (int i = 0; i < MAX_ENTRY_OFFSETS && i+1 < line.getnumtokens(); i++)
