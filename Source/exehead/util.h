@@ -67,7 +67,7 @@ char * NSISCALL skip_root(char *path);
 int NSISCALL is_valid_instpath(char *s);
 char * NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
-void * NSISCALL mini_memcpy(void *out, const void *in, int len);
+void NSISCALL mini_memcpy(void *out, const void *in, int len);
 
 // Turn a pair of chars into a word
 // Turn four chars into a dword

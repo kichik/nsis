@@ -243,7 +243,7 @@ char * NSISCALL mystrstri(char *a, char *b)
   return NULL;
 }
 
-void * NSISCALL mini_memcpy(void *out, const void *in, int len)
+void NSISCALL mini_memcpy(void *out, const void *in, int len)
 {
   char *c_out=(char*)out;
   char *c_in=(char *)in;
@@ -251,7 +251,6 @@ void * NSISCALL mini_memcpy(void *out, const void *in, int len)
   {
     *c_out++=*c_in++;
   }
-  return out;
 }
 
 

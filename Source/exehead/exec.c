@@ -146,8 +146,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
   int exec_error = 0;
 
-  entry lent;
-  mini_memcpy(&lent, entry_, sizeof(entry));
+  entry lent = *entry_;
 
 #define which (lent.which)
 #define parm0 (lent.offsets[0])
