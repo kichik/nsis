@@ -41,11 +41,11 @@ $(^Name) Kaldýrma
 # ^NextBtn
 &Devam >
 # ^AgreeBtn
-I &Kabul Ediyorum
+&Kabul Ediyorum
 # ^AcceptBtn
-I Sözleþme Koþullarýný &Kabul Ediyorum
+Sözleþme Koþullarýný &Kabul Ediyorum
 # ^DontAcceptBtn
-I Sözleþme Koþullarýný Kabul Et&miyorum
+Sözleþme Koþullarýný Kabul Et&miyorum
 # ^InstallBtn
 &Kur
 # ^UninstallBtn
@@ -83,29 +83,29 @@ Lütfen $(^NameDA) Programýný sisteminizden kaldýrmadan önce lisans sözleþmesini 
 # ^Custom
 Özel
 # ^ComponentsText
-Kurmak istediðiniz bileþenleri seçiniz yada kurulmasýný istemediðiniz bileþenlerdeki 'check' iþaretini  kaldýrýnýz. $_CLICK
+Kurmak istediðiniz bileþenleri seçiniz ya da kurulmasýný istemediðiniz bileþenlerdeki 'check' iþaretini  kaldýrýnýz. $_CLICK
 # ^ComponentsSubText1
 Kurulum þeklini seçiniz:
 # ^ComponentsSubText2_NoInstTypes
 Kurulacak bileþenleri seçiniz:
 # ^ComponentsSubText2
-yada, kurulmasýný istediðiniz bileþenleri seçiniz:
+ya da, kurulmasýný istediðiniz bileþenleri seçiniz:
 # ^UnComponentsText
-Kaldýrmak istediðiniz bileþenleri seçiniz yada kaldýrýlmasýný istemediðiniz bileþenlerdeki 'check' iþaretini  kaldýrýnýz. $_CLICK
+Kaldýrmak istediðiniz bileþenleri seçiniz ya da kaldýrýlmasýný istemediðiniz bileþenlerdeki 'check' iþaretini kaldýrýnýz. $_CLICK
 # ^UnComponentsSubText1
 Kaldýrma þeklini seçiniz:
 # ^UnComponentsSubText2_NoInstTypes
 Kaldýrýlacak bileþenleri seçiniz:
 # ^UnComponentsSubText2
-yada, kaldýrýlmasýný istediðiniz bileþenleri seçiniz:
+ya da, kaldýrýlmasýný istediðiniz bileþenleri seçiniz:
 # ^DirText
-$(^NameDA) kurulum tarafýndan aþaðýdaki dizine kurulacaktýr. Farklý bir dizine kurmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) kurulum tarafýndan aþaðýdaki dizine kurulacaktýr. Farklý bir dizine kurmak için 'Göz at'a týklayýnýz ve farklý bir dizin seçiniz. $_CLICK
 # ^DirSubText
 Hedef Dizin
 # ^DirBrowseText
 $(^NameDA) programýnýn kurulmasýný istediðiniz dizini seçiniz:
 # ^UnDirText
-$(^NameDA) kurulum tarafýndan aþaðýdaki dizinden kaldýrýlacaktýr. Farklý bir dizinden kaldýrmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) kurulum tarafýndan aþaðýdaki dizinden kaldýrýlacaktýr. Farklý bir dizinden kaldýrmak için 'Göz at'a týklayýnýz ve farklý bir dizin seçiniz. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
