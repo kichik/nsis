@@ -18,8 +18,7 @@
 #define ITC_FLOAT   0x000200
 #define ITC_INT     0x000400
 #define ITC_ARRAY   0x000800
-#define ITC_VARPTR  0x001000
-#define ITC_UNKNOWN 0x002000
+#define ITC_UNKNOWN 0x001000
 
 // type function
 #define FTT_FLOATF  (ITC_UNKNOWN << 0)
@@ -72,34 +71,37 @@
 #define ITF_USER    0x000400
 
 // array items sub-types
-#define ITA_DEFINE  0x000100
-#define ITA_ACCESS  0x000200
+#define ITA_ACCESS  0x000000
 
 #define ITEMOPTIONS 0x0000FF
 
 // 16 bytes structure
 typedef struct __ExpressionItem ExpressionItem;
+//#define EIPARAM int
+#define EIPARAM ExpressionItem*
 typedef struct __ExpressionItem
 {
     int type;
-    int param1;
-    int param2;
+    EIPARAM param1;
+    EIPARAM param2;
     ExpressionItem *next;
 } ExpressionItem;
 
 typedef struct __ParseInfo
 {
-int SetupNewRoot;
-ExpressionItem *item;
-ExpressionItem *OpsStack;
-ExpressionItem* &place;
-ExpressionItem **root;
+    int SetupNewRoot;
+    ExpressionItem *item;
+    ExpressionItem *OpsStack;
+    ExpressionItem *&place;
+    ExpressionItem **root;
 char valbuf[108];
 } ParseInfo;
 
+#define OPERATOR_SET_PRECEDENCE 14
 typedef struct __OpStruct
 {
-    char name[4];
+    char name[3];
+    unsigned char precedence;
     unsigned short int type;
 } OpStruct;
 
@@ -148,9 +150,6 @@ typedef struct __MathFunction
 #define FF_NOEXP     0x10     // uses noexp mode
 #define FF_EXP       0x20     // uses exp mode (small e)
 #define FF_LEXP      0x40     // uses exp mode (large E)
-
-// parsestring options
-#define PSO_STOPATDELIMETER 0x1
 
 // RunTree options
 #define RTO_NEEDCONST   0x0001

@@ -1,7 +1,5 @@
 Math::Script NSIS plugin.
 
-Another huge, undocumented, bug-full, but "might be useful" plugin.
-
 C-like style scripting (operators at least).
 Tip1: plugin watches the case of the letters.
 Tip2: plugin makes almost no error checks. So YOU should check your script
@@ -79,11 +77,15 @@ Operators (some binary, some unary):
 >>= <<= -= += /= *= |= &= ^= %= -- ++ >> << && || <= =< >= => != ==
 = + - * / % < > & | ^ ~ !
 Only some are applicable to float (logic & arithmetic) and string (+ and logic) 
-of course.
+of course. 
+Additional case: reference/de-reference operators (& and *). & will
+give you the reference to argument which should be a variable (NSIS, user, array
+item, stack), and * will convert it back to original variable. For example 
+(a=&b; *a=10) will set b to 10. Expression (*&a) is equal to simple (a).
 
 Script is set of expressions (mathematical in general) delimeted with ';'.
-Processing is not mathematicaly right (2+2*2 will give 8, not 6), so use round
-brakes (for ex: 2+(2*2) ).
+Processing is mathematicaly right (2+2*2 will give 6), operations are performed
+in a C like order (precedence).
 
 Flow control:
         if-then-else like:      #[if-expression, then-expr, else-expr]
@@ -159,9 +161,8 @@ Functions:
 
 User-defined functions.
 It's very simple. Example:
-        test(a,b)a+b;
-After that test(1,2) will give you 3. If you need more than one expression, use
-round brakes:
+        test(a,b) (a+b);
+After that test(1,2) will give you 3. 
         test2(a,b) (a=a+b; b *= a);
 The result of function is always the result of last expression.
 As said before it better not to use stack (S) in between function calls.
@@ -169,8 +170,8 @@ It will be better to develop variable-safe functions, i.e. functions which will
 not corrupt variables. For this you should either push/pop them to stack, or
 declare as additional arguments, which will never be used. Example:
         test3(a,b,c) (c=10; #{--c > 0, a=sqrt(a*b)}; a)
-No matter how many arguments will be passed to function all three vars will be
-saved. 
+No matter how many arguments will be passed to function, the values of all three 
+vars (a,b,c) will be saved. 
 Such variable-safe functions could be recursive:
         Math::Script /NOUNLOAD 'rec(a) (#[a > 0, rec(a-1), 0]+a);'
         Math::Script 'R1 = rec(10)'
@@ -184,7 +185,15 @@ at example *b. CAUTION: never use the same variable as function internal referen
 variable and external argument variable (for example test4(a,b)). It will surely 
 fail. Also: if you declared argument as reference - you should never supply
 a constant expression to it. It could be either array item (array[1]), NSIS
-register R0, any of the user variables (beside the variable with the same name:)
-, but never the constant.
+register R0, any of the user variables (beside the variable with the same name:), 
+but never the constant.
+
+Another may-be-useful posibility is to redeclare the function (the usual 
+declaration at the time when function already defined will simply call that
+function). For such task you could use "#name", like "func()(1); #func()(2);".
+But beware, function declaration occurs at time of parsing, so it's not possible
+to perform flow controlled declaration. 
+SUCH IS NOT POSSIBLE: "#[a<0, #func()(1), #func()(2)]"
+IT WILL SIMPLY DEFINE #func as (2), as the latest variant.
         
 (c) Nik Medved (brainsucker)
