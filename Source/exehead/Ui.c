@@ -992,48 +992,50 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     for (x = 0; x < num_sections; x ++)
     {
-      if (g_inst_section[x].name_ptr)
+      section *sec=g_inst_section+x;
+
+      if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(sec->flags&SF_RO))
+      {
+        if ((sec->install_types>>m_whichcfg) & 1)
+          sec->flags|=SF_SELECTED;
+        else
+          sec->flags&=~SF_SELECTED;
+      }
+
+      if (sec->name_ptr)
       {
         TVINSERTSTRUCT tv;
         tv.hParent=Par;
         tv.hInsertAfter=TVI_LAST;
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
-        tv.item.pszText=process_string_fromtab(ps_tmpbuf,g_inst_section[x].name_ptr);
+        tv.item.pszText=process_string_fromtab(ps_tmpbuf,sec->name_ptr);
         tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
-
-        if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(g_inst_section[x].flags&SF_RO))
-        {
-          if ((g_inst_section[x].install_types>>m_whichcfg) & 1)
-            g_inst_section[x].flags|=SF_SELECTED;
-          else
-            g_inst_section[x].flags&=~SF_SELECTED;
-        }
 
         {
           int l=1;
-          if (g_inst_section[x].flags & SF_SELECTED) l++;
-          if (g_inst_section[x].flags & SF_RO) l+=3;
+          if (sec->flags & SF_SELECTED) l++;
+          if (sec->flags & SF_RO) l+=3;
 
           tv.item.state=INDEXTOSTATEIMAGEMASK(l);
         }
 
-        if (g_inst_section[x].flags&SF_BOLD)
+        if (sec->flags&SF_BOLD)
         {
           tv.item.stateMask|=TVIS_BOLD;
           tv.item.state|=TVIS_BOLD;
         }
 
-        if (g_inst_section[x].flags&SF_SUBSEC)
+        if (sec->flags&SF_SUBSEC)
         {
           tv.item.mask|=TVIF_CHILDREN;
           tv.item.cChildren=1;
-          if (g_inst_section[x].flags&SF_EXPAND)
+          if (sec->flags&SF_EXPAND)
             tv.item.state|=TVIS_EXPANDED;
           Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
           doLines=1;
         }
-        else if (g_inst_section[x].flags&SF_SUBSECEND)
+        else if (sec->flags&SF_SUBSECEND)
         {
           TV_ITEM it;
           it.hItem = hTreeItems[x-1];
@@ -1187,7 +1189,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           HTREEITEM *ht=hTreeItems;
           while (x--)
           {
-            if (t->name_ptr && !(t->flags & SF_RO))
+            if (!(t->flags & SF_RO))
             {
               TVITEM tv;
               int l=1;
@@ -1199,16 +1201,15 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               }
               else t->flags&=~SF_SELECTED;
 
-              // this can't happen because of the above if()
-              //if (t->flags & SF_RO) l+=3;
+              if (t->name_ptr) {
+                tv.hItem=*ht;
+                tv.mask=TVIF_STATE;
+                tv.state=INDEXTOSTATEIMAGEMASK(l);
+                tv.stateMask = TVIS_STATEIMAGEMASK;
 
-              tv.hItem=*ht;
-              tv.mask=TVIF_STATE;
-              tv.state=INDEXTOSTATEIMAGEMASK(l);
-              tv.stateMask = TVIS_STATEIMAGEMASK;
-
-              TreeView_SetItem(hwndTree1,&tv);
-              SetParentState(hwndTree1,&tv);
+                TreeView_SetItem(hwndTree1,&tv);
+                SetParentState(hwndTree1,&tv);
+              }
             }
             t++;
             ht++;
