@@ -49,7 +49,7 @@
   
   ;These files should be inserted before other files in the data block
   ;Keep these lines before any File command
-  ;Only for BZIP2 (solid) compression
+  ;Only for solid compression (by default, solid compression is enabled for BZip2 and LZMA)
   
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
