@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Dutch (1043)
 ;By Joost Verburg
@@ -83,6 +83,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Voltooien van de $(^Name) Deïnstallatie Wizard"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) zijn verwijderd van uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Uw system moet worden opnieuw opgestart om de deïnstallatie van $(^Name) te voltooien. Wilt u nu herstarten?"
   
   !define MUI_UNTEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Deïnstallatie wilt afsluiten?"
   
