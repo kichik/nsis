@@ -15,6 +15,9 @@
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  
+  ;Remember install folder
+  InstallDirRegKey HKCU "Softare\${MUI_PRODUCT}" ""
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -56,6 +59,9 @@ Section "modern.exe" SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
+  ;Store install folder
+  WriteRegStr HKCU "Softare\${MUI_PRODUCT}" "" $INSTDIR
+  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -83,6 +89,8 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
+
+  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
   ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER

@@ -4,9 +4,11 @@ NSIS Modern User Interface - VERSION HISTORY
 * Support for a bitmap in the wizard header
 * New defines to change the description area
 * MUI_SYSTEM inserted automatically
+* Single macro for language selection dialog
 * Removed page description in window title
 * Easier to customize resource files
 * New system for custom functions
+* Start Menu folder registry key automatically written
 * New InstallOptions macro's that do not remove the return value from
   the stack
 * Support for custom pages before the finish page
