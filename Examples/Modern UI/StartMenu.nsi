@@ -14,6 +14,11 @@
 ;Have a look at the Readme for info about other options (default folder,
 ;registry).
 
+;Remember the Start Menu Folder
+!define MUI_STARTMENU_REGISTRY_ROOT "HKCU" 
+!define MUI_STARTMENU_REGISTRY_KEY "Software\${MUI_PRODUCT}" 
+!define MUI_STARTMENU_REGISTRY_VALUENAME "Start Menu Folder"
+
 !define TEMP $R0
 
 ;--------------------------------
