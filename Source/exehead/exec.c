@@ -1120,7 +1120,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         if (parm1)
         {
-          sec=process_string_fromparm_tobuf(0x11);
+          key=process_string_fromparm_tobuf(0x11);
         }
         if (parm2)
         {
