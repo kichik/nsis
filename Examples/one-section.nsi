@@ -3,6 +3,15 @@ OutFile setup.exe
 
 ComponentText "please choose just one but the default"
 
+!define SF_SELECTED   1
+!define SF_SUBSEC     2
+!define SF_SUBSECEND  4
+!define SF_BOLD       8
+!define SF_RO         16
+!define SF_EXPAND     32
+
+!define SECTION_OFF   0xFFFFFFFE
+
 Section !Required
 	SectionIn RO
 SectionEnd
@@ -19,15 +28,12 @@ SectionEnd
 Section "optional #4" sec4
 SectionEnd
 
-!define SECTION_ON 0x80000000
-!define SECTION_OFF 0x7FFFFFFF
-
 Function .onInit
 	Push $0
 
 	StrCpy $1 ${sec1} ; Gotta remember which section we are at now...
 	SectionGetFlags ${sec1} $0
-	IntOp $0 $0 | ${SECTION_ON}
+	IntOp $0 $0 | ${SF_SELECTED}
 	SectionSetFlags ${sec1} $0
 
 	SectionGetFlags ${sec2} $0
@@ -58,25 +64,25 @@ Function .onSelChange
 	StrCpy $2 $1
 
 	SectionGetFlags ${sec1} $0
-	IntOp $0 $0 & ${SECTION_ON}
-	IntCmp $0 ${SECTION_ON} 0 +2 +2
+	IntOp $0 $0 & ${SF_SELECTED}
+	IntCmp $0 ${SF_SELECTED} 0 +2 +2
 		StrCpy $1 ${sec1}
 	SectionGetFlags ${sec2} $0
-	IntOp $0 $0 & ${SECTION_ON}
-	IntCmp $0 ${SECTION_ON} 0 +2 +2
+	IntOp $0 $0 & ${SF_SELECTED}
+	IntCmp $0 ${SF_SELECTED} 0 +2 +2
 		StrCpy $1 ${sec2}
 	SectionGetFlags ${sec3} $0
-	IntOp $0 $0 & ${SECTION_ON}
-	IntCmp $0 ${SECTION_ON} 0 +2 +2
+	IntOp $0 $0 & ${SF_SELECTED}
+	IntCmp $0 ${SF_SELECTED} 0 +2 +2
 		StrCpy $1 ${sec3}
 	SectionGetFlags ${sec4} $0
-	IntOp $0 $0 & ${SECTION_ON}
-	IntCmp $0 ${SECTION_ON} 0 +2 +2
+	IntOp $0 $0 & ${SF_SELECTED}
+	IntCmp $0 ${SF_SELECTED} 0 +2 +2
 		StrCpy $1 ${sec4}
 
 	StrCmp $2 $1 0 +4 ; selection hasn't changed
 		SectionGetFlags $1 $0
-		IntOp $0 $0 | ${SECTION_ON}
+		IntOp $0 $0 | ${SF_SELECTED}
 		SectionSetFlags $1 $0
 	Pop $2
 	Pop $0
