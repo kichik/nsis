@@ -66,11 +66,11 @@
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Panaikinama"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prašome palaukti, kol $(^Name) bus panaikintas."
 
-  !define MUI_TEXT_COMPONENTS_TITLE "Pasirinkite"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "Pasirinkite kokias $(^Name) galimybes jus norite ištrinti."
+  !define MUI_UNTEXT_COMPONENTS_TITLE "Pasirinkite"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Pasirinkite kokias $(^Name) galimybes jus norite ištrinti."
 
-  !define MUI_TEXT_DIRECTORY_TITLE "Pasirinkite ištrinimo vieta"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Pasirinkite kataloga iš kurio ištrinsite $(^Name)."
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Pasirinkite ištrinimo vieta"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Pasirinkite kataloga iš kurio ištrinsite $(^Name)."
     
   !define MUI_UNTEXT_FINISH_TITLE "Programos ištrynimas baigtas"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Ištrynimas baigtas sekmingai."

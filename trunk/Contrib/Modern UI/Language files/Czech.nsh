@@ -8,73 +8,62 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "CZECH"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Cesky" ;Name of the language in the language itself
+  !define MUI_LANGNAME "Cesky" ;Use only ASCII characters (if this is not possible, use the English name)
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu $(^Name)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Chystáte se nainstalovat $(^Name) na svùj poèítaè.\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Tímto umožníte instalátoru aktualizovat pøípadné systémové soubory bez nutnosti restartovat systém.\r\n\r\n$_CLICK"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Kliknìte na Další pro pokraèování."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Kliknìte na Instalovat pro spuštìní instalace."
+  !define MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"
+  !define MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu $(^Name), prosím, prostudujte licenèní podmínky."
+  !define MUI_INNERTEXT_LICENSE_TOP "Stisknutím klávesy Page Down posunete text licenèního ujednání."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte Souhlasím pro pokraèování. Je nutné souhlasit s licenèním ujednáním pro instalaci programu $(^Name)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jestliže souhlasíte se všemi podmínkami ujednání, zaškrtnìte níže uvedenou volbu. Je nutné souhlasit s licenèním ujednáním pro instalaci programu $(^Name)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte první z možností uvedených níže. Je nutné souhlasit s licenèním ujednáním pro instalaci programu $(^Name)."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chystáte se nainstalovat ${MUI_PRODUCT} na svùj poèítaè.\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny ostatní aplikace. Tímto umožníte instalátoru aktualizovat pøípadné systémové soubory bez nutnosti restartovat systém.\r\n\r\n"
+  !define MUI_TEXT_COMPONENTS_TITLE "Volba souèástí"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu $(^Name), které chcete nainstalovat."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popisek"
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pøi pohybu myší nad souèástí programu se zde zobrazí její popisek."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu ${MUI_PRODUCT}, prosím, prostudujte licenèní podmínky."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Stisknutím klávesy Page Down posunete text licenèního ujednání."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte Souhlasím pro pokraèování. Je nutné souhlasit s licenèním ujednáním pro instalaci programu ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Jestliže souhlasíte se všemi podmínkami ujednání, zaškrtnìte níže uvedenou volbu. Je nutné souhlasit s licenèním ujednáním pro instalaci programu ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Jestliže souhlasíte se všemi podmínkami ujednání, zvolte první z možností uvedených níže. Je nutné souhlasit s licenèním ujednáním pro instalaci programu ${MUI_PRODUCT}."
+  !define MUI_TEXT_DIRECTORY_TITLE "Volba umístìní instalace"
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Zvolte adresáø, do kterého chcete nainstalovat program $(^Name)."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Volba souèástí"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Zvolte souèásti programu ${MUI_PRODUCT}, které chcete nainstalovat."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Zaškrtnìte ty souèásti, které chcete nainstalovat a odškrtnìte ty, které nechcete."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popisek"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pøi pohybu myší nad souèástí programu se zde zobrazí její popisek."
+  !define MUI_TEXT_INSTALLING_TITLE "Instalace"
+  !define MUI_TEXT_INSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení instalace programu $(^Name)."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Volba umístìní instalace"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Zvolte adresáø, do kterého chcete nainstalovat program ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT} bude nainstalován do následujícího adresáøe.$\r$\n$\r$\nKliknìte na Procházet, pokud chcete tento adresáø zmìnit."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Cílový adresáø"
+  !define MUI_TEXT_FINISH_TITLE "Dokonèení instalace"
+  !define MUI_TEXT_FINISH_SUBTITLE "Instalace probìhla v poøádku."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Instalace"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení instalace programu ${MUI_PRODUCT}."
+  !define MUI_TEXT_ABORT_TITLE "Instalace pøerušena"
+  !define MUI_TEXT_ABORT_SUBTITLE "UPOZORNÌNÍ: Instalace nebyla dokonèena."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Dokonèení instalace"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Instalace probìhla v poøádku."
+  !define MUI_BUTTONTEXT_FINISH "&Dokonèit"
+  !define MUI_TEXT_FINISH_INFO_TITLE "Dokonèení prùvodce instalace programu $(^Name)"
+  !define MUI_TEXT_FINISH_INFO_TEXT "Právì jste nainstalovali program $(^Name) do svého systému.\r\nKliknìte na Dokonèit pro uzavøení tohoto prùvodce."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Pro úplné dokonèení instalace programu $(^Name) je nutné provést restart Vašeho systému. Chcete restartovat ihned?"
+  !define MUI_TEXT_FINISH_REBOOTNOW "Restartovat ihned"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Restartovat ruènì pozdìji"
+  !define MUI_TEXT_FINISH_RUN "&Spustit $(^Name)"
+  !define MUI_TEXT_FINISH_SHOWREADME "&Ukázat Èti-mì"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Instalace pøerušena"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "UPOZORNÌNÍ: Instalace nebyla dokonèena."
+  !define MUI_TEXT_STARTMENU_TITLE "Volba umístìní v nabídce Start"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Zvolte položku v nabídce Start pro umístìní zástupcù programu."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Vyberte položku v nabídce Start, ve které chcete vytvoøit zástupce programu. Pokud zadáte neexistující položku, bude vytvoøena nová s Vámi zadaným jménem."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nevytváøet zástupce"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Dokonèit"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Dokonèení prùvodce instalace programu ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "Právì jste nainstalovali program ${MUI_PRODUCT} do svého systému.\r\nKliknìte na Dokonèit pro uzavøení tohoto prùvodce."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Pro úplné dokonèení instalace programu ${MUI_PRODUCT} je nutné provést restart Vašeho systému. Chcete restartovat ihned?"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Restartovat ihned"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Restartovat ruènì pozdìji"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "&Spustit ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "&Ukázat Èti-mì"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Volba umístìní v nabídce Start"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Zvolte položku v nabídce Start pro umístìní zástupcù programu."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Vyberte položku v nabídce Start, ve které chcete vytvoøit zástupce programu. Pokud zadáte neexistující položku, bude vytvoøena nová s Vámi zadaným jménem."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Nevytváøet zástupce"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu ${MUI_PRODUCT}?"
+  !define MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu $(^Name)?"
 
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Kliknìte na Odinstalovat pro spuštìní odinstalace."
+  !define MUI_UNTEXT_CONFIRM_TITLE "Odinstalování programu $(^Name)"
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odstranìní programu $(^Name) z Vašeho systému."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Odinstalování programu ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Odstranìní programu ${MUI_PRODUCT} z Vašeho systému."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Tímto odinstalujete program ${MUI_PRODUCT} z Vašeho systému."
+  !define MUI_UNTEXT_UNINSTALLING_TITLE "Odinstalování"
+  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení odinstalování programu $(^Name)."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Odinstalování"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vyèkejte, prosím, na dokonèení odinstalování programu ${MUI_PRODUCT}."
+  !define MUI_UNTEXT_FINISH_TITLE "Dokonèení odinstalace"
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Odinstalování probìhlo v poøádku."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Dokonèení odinstalace"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Odinstalování probìhlo v poøádku."
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Odinstalování pøerušeno"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "UPOZORNÌNÍ: Odinstalování nebylo dokonèeno."
+  !define MUI_UNTEXT_ABORT_TITLE "Odinstalování pøerušeno"
+  !define MUI_UNTEXT_ABORT_SUBTITLE "UPOZORNÌNÍ: Odinstalování nebylo dokonèeno."
 
 !insertmacro MUI_LANGUAGEFILE_END

@@ -8,73 +8,62 @@
 
   !insertmacro MUI_LANGUAGEFILE_BEGIN "ESTONIAN"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Eesti keel" ;Name of the language in the language itself
+  !define MUI_LANGNAME "Eesti keel" ;Use only ASCII characters (if this is not possible, use the English name)
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Tere tulemast $(^Name) paigaldamisele!"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "See abiline aitab paigaldada programmi: $(^Name).\r\n\r\nEnne paigaldamise alustamist on soovitatav kõik teised programmid sulgeda, see võimaldab teatud süsteemifaile uuendada ilma arvutit taaskäivitamata.\r\n\r\n$_CLICK"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Jätkamiseks vajuta 'Edasi'."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Programmi paigaldamiseks vajuta nuppu 'Paigalda'."
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Tere tulemast ${MUI_PRODUCT} paigaldamisele!"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "See abiline aitab paigaldada programmi: ${MUI_PRODUCT}.\r\n\r\nEnne paigaldamise alustamist on soovitatav kõik teised programmid sulgeda, see võimaldab teatud süsteemifaile uuendada ilma arvutit taaskäivitamata.\r\n\r\n"
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Litsentsileping"  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Enne ${MUI_PRODUCT} paigaldamist vaata palun litsentsileping üle."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Vajuta Page Down, et näha ülejäänud teksti."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Kui sa oled lepingu tingimustega nõus, vali jätkamiseks 'Nõustun'. ${MUI_PRODUCT} paigaldamiseks pead sa tingimustega nõustuma."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustute lepingu tingimustega, valige allolev märkeruut. ${MUI_PRODUCT} paigaldamiseks peate lepinguga nõustuma."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustute lepingu tingimustega, märkige alpool esimene valik. ${MUI_PRODUCT} paigaldamiseks peate lepinguga nõustuma."
+  !define MUI_TEXT_LICENSE_TITLE "Litsentsileping"  
+  !define MUI_TEXT_LICENSE_SUBTITLE "Enne $(^Name) paigaldamist vaata palun litsentsileping üle."
+  !define MUI_INNERTEXT_LICENSE_TOP "Vajuta Page Down, et näha ülejäänud teksti."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Kui sa oled lepingu tingimustega nõus, vali jätkamiseks 'Nõustun'. $(^Name) paigaldamiseks pead sa tingimustega nõustuma."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Kui nõustute lepingu tingimustega, valige allolev märkeruut. $(^Name) paigaldamiseks peate lepinguga nõustuma. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Kui nõustute lepingu tingimustega, märkige alpool esimene valik. $(^Name) paigaldamiseks peate lepinguga nõustuma. $_CLICK"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Vali komponendid"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Vali millised ${MUI_PRODUCT} osad sa soovid paigaldada."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Märgista komponendid mida soovid paigaldada."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Kirjeldus"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Nihuta hiir komponendile, et näha selle kirjeldust."
+  !define MUI_TEXT_COMPONENTS_TITLE "Vali komponendid"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "Vali millised $(^Name) osad sa soovid paigaldada."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Kirjeldus"
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Nihuta hiir komponendile, et näha selle kirjeldust."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Vali asukoht"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Vali kaust kuhu paigaldada ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "${MUI_PRODUCT} paigaldatakse järgnevasse kausta.$\r$\n$\r$\nEt mujale paigaldada vajuta 'Sirvi' ja vali teine kaust."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Sihtkaust"
+  !define MUI_TEXT_DIRECTORY_TITLE "Vali asukoht"
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Vali kaust kuhu paigaldada $(^Name)."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Paigaldan..."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Palun oota kuni ${MUI_PRODUCT} on paigaldatud."
+  !define MUI_TEXT_INSTALLING_TITLE "Paigaldan..."
+  !define MUI_TEXT_INSTALLING_SUBTITLE "Palun oota kuni $(^Name) on paigaldatud."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Programm paigaldatud"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Paigaldus edukalt sooritatud."
+  !define MUI_TEXT_FINISH_TITLE "Programm paigaldatud"
+  !define MUI_TEXT_FINISH_SUBTITLE "Paigaldus edukalt sooritatud."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Paigaldus katkestatud"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Paigaldamine ebaõnnestus."
+  !define MUI_TEXT_ABORT_TITLE "Paigaldus katkestatud"
+  !define MUI_TEXT_ABORT_SUBTITLE "Paigaldamine ebaõnnestus."
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Lõpeta"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "${MUI_PRODUCT} paigalduse lõpule viimine"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} on sinu arvutisse paigaldatud.\r\n\r\nAbilise sulgemiseks vajuta Lõpeta."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT} paigaldamise lõpetamiseks tuleb arvuti taaskäivitada. Kas tahad arvuti kohe taaskäivitada ?"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Taaskäivita kohe"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Taaskäivitan hiljem käsitsi"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Käivita ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Kuva 'Loe mind'"
+  !define MUI_BUTTONTEXT_FINISH "&Lõpeta"
+  !define MUI_TEXT_FINISH_INFO_TITLE "$(^Name) paigalduse lõpule viimine"
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) on sinu arvutisse paigaldatud.\r\n\r\nAbilise sulgemiseks vajuta Lõpeta."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "$(^Name) paigaldamise lõpetamiseks tuleb arvuti taaskäivitada. Kas tahad arvuti kohe taaskäivitada ?"
+  !define MUI_TEXT_FINISH_REBOOTNOW "Taaskäivita kohe"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Taaskäivitan hiljem käsitsi"
+  !define MUI_TEXT_FINISH_RUN "Käivita $(^Name)"
+  !define MUI_TEXT_FINISH_SHOWREADME "Kuva 'Loe mind'"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Vali Start-menüü kaust"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Vali Start-menüü kaust, kust teha otsetee programmi juurde."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Vali Start-menüü kaust, kuhu sulle meeldiks paigutada programmi otseteed. Võid ka sisestada nime, et luua uus kaust."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Ära loo otseteid"
+  !define MUI_TEXT_STARTMENU_TITLE "Vali Start-menüü kaust"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Vali Start-menüü kaust, kust teha otsetee programmi juurde."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Vali Start-menüü kaust, kuhu sulle meeldiks paigutada programmi otseteed. Võid ka sisestada nime, et luua uus kaust."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ära loo otseteid"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Oled sa kindel et soovid ${MUI_PRODUCT} paigaldamise katkestada?"  
+  !define MUI_TEXT_ABORTWARNING "Oled sa kindel et soovid $(^Name) paigaldamise katkestada?"  
   
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Eemaldamise alustamiseks vajuta 'Eemalda'."
+  !define MUI_UNTEXT_CONFIRM_TITLE "Eemalda $(^Name)"
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Eemalda $(^Name) oma arvutist."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Eemalda ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Eemalda ${MUI_PRODUCT} oma arvutist."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "See abiline eemaldab ${MUI_PRODUCT} sinu arvutist."
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Eemaldan..."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Palun oota kuni ${MUI_PRODUCT} eemaldatakse."
+  !define MUI_UNTEXT_UNINSTALLING_TITLE "Eemaldan..."
+  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Palun oota kuni $(^Name) eemaldatakse."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Eemaldamine lõpetatud"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Eemaldamine edukalt lõpule viidud."
+  !define MUI_UNTEXT_FINISH_TITLE "Eemaldamine lõpetatud"
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Eemaldamine edukalt lõpule viidud."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Eemaldamine katkestatud"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Eemaldamine ebaõnestus."
+  !define MUI_UNTEXT_ABORT_TITLE "Eemaldamine katkestatud"
+  !define MUI_UNTEXT_ABORT_SUBTITLE "Eemaldamine ebaõnestus."
 
 !insertmacro MUI_LANGUAGEFILE_END
