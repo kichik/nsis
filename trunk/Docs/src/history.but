@@ -1,5 +1,69 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.02} 2.02
+
+Released on October 22nd, 2004
+
+\S1{v2.02-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added lots of small usage examples to the documentation
+
+\b Made \R{jumps}{relative jumps} work with instructions that add multiple entries
+
+\b Made the datablock optimizer much faster
+
+\b Made the installer deny reboots while running (\W{http://msdn.microsoft.com/library/en-us/sysinfo/base/wm_queryendsession.asp}{WM_QUERYENDSESSION})
+
+\b Made the \R{reboot}{Reboot} command first quit and then reboot so everything is always cleaned-up
+
+\S2{} New/Changed Commands
+
+\b Added << and >> to \R{intop}{IntOp}
+
+\b Added \R{geterrorlevel}{GetErrorLevel} and \R{seterrorlevel}{SetErrorLevel}
+
+\b Fixed \R{copyfiles}{CopyFiles} usage checking problem
+
+\b Made \R{reboot}{Reboot} call \R{onrebootfailed}{.onRebootFailed} and quit on failure instead of setting the error flag
+
+\S2{} Minor Changes
+
+\b Added Albanian language files
+
+\b Added NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE configuration option which makes components only be toggled when the user clicks on the checkbox and makes .onMouseOverSection only be called when the user selects a component
+
+\b Added some CppUnit tests
+
+\b Both _=? and /D= now require a space before them so they can safely remove the space from $CMDLINE
+
+\b Fixed a bug that caused the uninstaller CRC-check to fail if \R{packhdr}{!packhdr} created a non-512-bytes-aligned exehead
+
+\b Fixed a compiler crash caused by using \R{getcurrentaddress}{GetCurrentAddress}
+
+\b Fixed errors when using '\R{file}{File} /r .' on Windows
+
+\b Fixed gcc 3.4 compile errors
+
+\b Fixed inconsistencies between error levels and the \R{errorlevels}{documentation}
+
+\b Fixed some minor memory leaks
+
+\b Language file fixes
+
+\b Makefile improvements
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.71}: Made the selected language only be saved if the installation was successful
+
+\b Some code refactoring
+
+\b \L{../Include/StrFunc.txt}{StrFunc}: Rewrote StrSort and fixed StrStrAdv. See the \L{../Include/StrFunc.txt}{readme} for a complete changelog
+
+\S2{} Utilities and Plug-ins
+
+\b \L{../Contrib/Banner/Readme.txt}{Banner}: Fixed some cases where the banner would not show on the foreground
+
 \H{v2.01} 2.01
 
 Released on September 24th, 2004
