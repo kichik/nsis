@@ -52,6 +52,14 @@ An non-silent installer has a set of wizard pages to let the user configure the 
 
 In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is in sections. Each visible section is a component for the user to choose from. We will not discuss invisible sections in this tutorial. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install you'll have to use more than one section.
 
+Uninstallers can also have multiple sections. Uninstaller section names are prefixed with 'un.'. For example:
+
+\c Section "Installer Section"
+\c SectionEnd
+\c
+\c Section "un.Uninstaller Section"
+\c SectionEnd
+
 The instructions that can be used in sections are very different from the installer attributes instructions, they are executed at runtime on the user's computer. Those instructions can extract files, read from and write to the registry, INI files or normal files, create directories, create shortcuts and a lot more. You can find out more in \R{instr}{Instructions}.
 
 The most basic instructions are \R{setoutpath}{SetOutPath} which tells the installer where to extract files and \R{file}{File} which extracts files.
