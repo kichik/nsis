@@ -1,4 +1,4 @@
-\C Script File Format
+\C{fileformat} Script File Format
 
 A NSIS Script File (.nsi) is just a text file with a series of commands.
 
