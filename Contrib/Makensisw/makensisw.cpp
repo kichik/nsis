@@ -25,6 +25,7 @@
 #include "noclib.h"
 
 static RECT resizeRect;
+static RECT g_griprect;
 static int dx;
 static int dy;
 
@@ -89,6 +90,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
 			RestoreWindowPos(g_hwnd);
 			CompileNSISScript();
+			return TRUE;
+		}
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			GetClientRect(g_hwnd, &g_griprect);
+			HDC hdc = BeginPaint(g_hwnd, &ps);
+			g_griprect.left = g_griprect.right - GetSystemMetrics(SM_CXVSCROLL);
+			g_griprect.top = g_griprect.bottom - GetSystemMetrics(SM_CYVSCROLL);
+			DrawFrameControl(hdc, &g_griprect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+			EndPaint(g_hwnd,&ps);
 			return TRUE;
 		}
 		case WM_DESTROY:
@@ -158,12 +170,15 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			RECT rSize;
 			if (hwndDlg == g_hwnd) {
 				GetClientRect(g_hwnd, &rSize);
-				if (((rSize.right==0)&&(rSize.bottom==0))||((resizeRect.right==0)&&(resizeRect.bottom==0)))
-					return TRUE;
+				if (((rSize.right==0)&&(rSize.bottom==0))||((resizeRect.right==0)&&(resizeRect.bottom==0)))	return TRUE;
 				dx = rSize.right - resizeRect.right;
 				dy = rSize.bottom - resizeRect.bottom;
 				EnumChildWindows(g_hwnd, DialogResize, (LPARAM)0);
 				resizeRect = rSize;
+				GetClientRect(g_hwnd, &g_griprect);
+				g_griprect.left = g_griprect.right - GetSystemMetrics(SM_CXVSCROLL);
+				g_griprect.top = g_griprect.bottom - GetSystemMetrics(SM_CYVSCROLL);
+				InvalidateRect(g_hwnd,&g_griprect,TRUE);
 			}
 			 return TRUE;
 		 }
