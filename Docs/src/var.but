@@ -24,6 +24,8 @@ Registers. These variables can be used just like user variables, but are usually
 
 The installation directory ($INSTDIR is modifiable using \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc. - This could be used, for example, in the \R{oninit}{.onInit} function to do a more advanced detection of install location).
 
+Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does \\<b\\>not\\</b\\> necessarily contain the same value it contained in the installer. For example, if you write the uninstaller to $WINDIR and the user doesn't move it, $INSTDIR will be $WINDIR in the uninstaller. If you write the uninstaller to another location, you should keep the installer's $INSTDIR in the registry or an alternative storing facility and read it in the uninstaller.
+
 \e{$OUTDIR}
 
 The current output directory (set implicitly via \R{setoutpath}{SetOutPath} or explicitly via \R{StrCpy}{StrCpy}, \R{readregstr}{ReadRegStr}, \R{readinistr}{ReadINIStr}, etc)
