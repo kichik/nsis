@@ -3314,22 +3314,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           0,IDABORT,IDCANCEL,IDIGNORE,IDNO,IDOK,IDRETRY,IDYES
         };
         const char *retstr="0\0IDABORT\0IDCANCEL\0IDIGNORE\0IDNO\0IDOK\0IDRETRY\0IDYES\0";
+        int a=3;
         if (line.getnumtokens() > 3)
         {
-          ent.offsets[2]=line.gettoken_enum(3,retstr);
-          if (ent.offsets[2] < 0) PRINTHELP()
-          ent.offsets[2] = rettab[ent.offsets[2]];
-          if (process_jump(line,4,&ent.offsets[3])) PRINTHELP()
-          if (line.getnumtokens() > 5)
+          if (!strcmpi(line.gettoken_str(3),"/SD"))
           {
-            int v=line.gettoken_enum(5,retstr);
-            if (v < 0) PRINTHELP()
-            ent.offsets[4] = rettab[v];
-            if (process_jump(line,6,&ent.offsets[5])) PRINTHELP()
+            int k=line.gettoken_enum(4,retstr);
+            if (k <= 0) PRINTHELP();
+            ent.offsets[0]|=rettab[k]<<20;
+            a=5;
+          }
+          else if (line.getnumtokens() > 7)
+            PRINTHELP();
+
+          if (line.getnumtokens() > a)
+          {
+            ent.offsets[2]=line.gettoken_enum(a,retstr);
+            if (ent.offsets[2] < 0)
+              PRINTHELP();
+            ent.offsets[2] = rettab[ent.offsets[2]];
+            if (process_jump(line,a+1,&ent.offsets[3]))
+              PRINTHELP();
+            if (line.getnumtokens() > a+2)
+            {
+              int v=line.gettoken_enum(a+2,retstr);
+              if (v < 0)
+                PRINTHELP();
+              ent.offsets[4] = rettab[v];
+              if (process_jump(line,a+3,&ent.offsets[5]))
+                PRINTHELP();
+            }
           }
         }
         SCRIPT_MSG("MessageBox: %d: \"%s\"",r,line.gettoken_str(2));
-        if (line.getnumtokens()>4) SCRIPT_MSG(" (on %s goto %s)",line.gettoken_str(3),line.gettoken_str(4));
+        if (line.getnumtokens()>a+1) SCRIPT_MSG(" (on %s goto %s)",line.gettoken_str(a),line.gettoken_str(a+1));
         SCRIPT_MSG("\n");
       }
     return add_entry(&ent);
@@ -5057,12 +5075,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DefineInnerLangString(NLF_CANT_WRITE);
 
           ent.offsets[0]=1; // overwrite off
-          ent.offsets[0]|=(MB_ABORTRETRYIGNORE|MB_ICONSTOP)<<3;
+          ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<20))<<3;
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
           ent.offsets[3]=0xffffffff;
           ent.offsets[4]=0xffffffff;
-          ent.offsets[5]=MB_ABORTRETRYIGNORE | MB_ICONSTOP;
           ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
           ret=add_entry(&ent);
           if (ret != PS_OK) {
@@ -5321,7 +5338,21 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           }
 
           // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
-          ent.offsets[0] |= ((build_allowskipfiles ? MB_ABORTRETRYIGNORE : MB_RETRYCANCEL) | MB_ICONSTOP) << 3;
+          int mb = 0;
+          if (build_allowskipfiles)
+          {
+            mb = MB_ABORTRETRYIGNORE | MB_ICONSTOP;
+            // default for silent installers
+            mb |= IDIGNORE << 20;
+          }
+          else
+          {
+            mb = MB_RETRYCANCEL | MB_ICONSTOP;
+            // default for silent installers
+            mb |= IDCANCEL << 20;
+          }
+          ent.offsets[0] |= mb << 3;
+
           ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
         }
 

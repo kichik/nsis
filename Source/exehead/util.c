@@ -81,7 +81,11 @@ int NSISCALL my_GetDialogItemText(HWND dlg, UINT idx, char *val, int size)
 }*/
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {
-  return MessageBox(g_hwnd, text, g_caption, type);
+  // default for silent installers
+  if (g_exec_flags.silent && type >> 20)
+    return type >> 20;
+  // no silent or no default, just show
+  return MessageBox(g_hwnd, text, g_caption, type & 0x000FFFFF);
 }
 
 void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
@@ -135,7 +139,7 @@ char *NSISCALL addtrailingslash(char *str)
 
 void NSISCALL trimslashtoend(char *buf)
 {
-  char *p = CharPrev(buf, buf + mystrlen(buf));
+  char *p = buf + mystrlen(buf);
   do
   {
     if (*p == '\\')
@@ -148,7 +152,8 @@ void NSISCALL trimslashtoend(char *buf)
 
 int NSISCALL validpathspec(char *ubuf)
 {
-  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (ubuf[0] && *CharNext(ubuf)==':'));
+  char dl = ubuf[0] | 0x20; // convert drive letter to lower case
+  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (dl >= 'a' && dl <= 'z' && *CharNext(ubuf)==':'));
 }
 
 char * NSISCALL skip_root(char *path)
@@ -710,7 +715,7 @@ char * NSISCALL validate_filename(char *in) {
   }
   out = out_save = in;
   while (*(char*)&cur_char = *in) {
-    if (!mystrstr(nono, (char*)&cur_char)) {
+    if (cur_char > 31 && !mystrstr(nono, (char*)&cur_char)) {
       mini_memcpy(out, in, CharNext(in) - in);
       out = CharNext(out);
     }
