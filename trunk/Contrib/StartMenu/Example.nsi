@@ -22,17 +22,18 @@ Function StartMenuGroupSelect
 	SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:StartMenu.dll test Setup: Start Menu Folder"
 
 	StartMenu::Select /autoadd "StartMenu.dll test"
-	Pop $R0
+	Pop $R1
 
-	StrCpy $1 $R0 5
-	StrCmp $1 "error" 0 +3
+	StrCpy $R2 $R1 5
+	StrCmp $R2 "error" 0 +3
 		; error
-		MessageBox MB_OK $R0
+		MessageBox MB_OK $R1
 		Return
-	StrCmp $R0 "cancel" 0 +2
+	StrCmp $R1 "cancel" 0 +2
 		Quit
-	StrCmp $R0 "back" 0 +2
+	StrCmp $R1 "back" 0 +2
 		Abort
+	StrCpy $R0 $R1 ; got the dir
 FunctionEnd
 
 Page instfiles
