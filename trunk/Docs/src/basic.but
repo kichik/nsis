@@ -40,7 +40,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b Wildcards are supported.
 
-\b If the /r switch is used, files and directories are added recursively. If is no trailing wildcard (e.g. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.*
+\b If the /r switch is used, files and directories are added recursively. If there is no trailing wildcard (e.g. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.*
 
 \b If the /a switch is used, the attributes of the file(s) added will be preserved.
 
