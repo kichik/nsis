@@ -218,8 +218,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         items in the list.<br />A "<span class="italic">listbox</span>" shows multiple items and can
         optionally allow the user to select more than one item.<br />A
         "<span class="italic">CheckBox</span>" control displays a check box with label.<br />
-        A "<span class="italic">RadioButton</span>" control displays a radio button with label.
-        Always add a GROUP flag the first control in a group of radio buttons!<br />
+        A "<span class="italic">RadioButton</span>" control displays a radio button with label.<br />
         A "<span class="italic">FileRequest</span>" control displays
         a textbox and a browse button. Clicking the browse button will display a
         file requester where the user can browse for a file.<br />A
@@ -388,11 +387,18 @@ numbers from 1 to NumFields. Each Field section can contain the following values
             Also useful to support custom DPI settings.</td></tr>
           <tr>
             <td class="righttable">GROUP</td>
-            <td class="righttable">Always add this flag to the first control in a group
-            of "<span class="italic">RadioButton</span>" controls.</td></tr>
+            <td class="righttable">Add this flag to the first control of a group
+            of controls to group them. Grouping controls allows you to create multiple
+            groups of radio button and makes keyboard navigation using arrow keys
+            easier.</td></tr>
           <tr>
-            <td class="righttable">DISABLED</td>
-            <td class="righttable">Causes a control to be disabled.</tr>
+            <td class="righttable">NOTABSTOP</td>
+            <td class="righttable">Do not stop on the control when the user pressed
+            the Tab key. Add NOTABSTOP to all controls of a group except the first
+            one to allow navigation between groups with the Tab key.</td></tr>
+          <tr>
+          <td class="righttable">DISABLED</td>
+            <td class="righttable">Causes a control to be disabled.</</td></tr>
         </table></td></tr></table>
 <p class="header">How to use</p>
 <p class="subheader">Modern UI</p>
@@ -503,12 +509,13 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>DLL version 2.0 (12/14/2002)
+<li>DLL version 2.0 (1/4/2003)
   <ul>
     <li>Supports custom font and DPI settings (by Joost Verburg)</li>
     <li>INI files should contain dialog units now, no pixels (by Joost Verburg)</li>
     <li>RESIZETOFIT flag for Bitmap control (by Amir Szekely)</li>
     <li>New documentation (by Joost Verburg)</li>
+    <li>New GROUP/NOTABSTOP/DISABLED flags</li>
   </ul>
 </li>
 </ul>
