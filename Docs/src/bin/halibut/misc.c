@@ -1,7 +1,7 @@
 /*
  * misc.c: miscellaneous useful items
  */
-
+#include <string.h>
 #include "halibut.h"
 
 struct stackTag {

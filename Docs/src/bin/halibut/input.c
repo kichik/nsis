@@ -191,6 +191,7 @@ enum {
   c_S,                          /* aux field is 0, 1, 2, ... */
   c_U,                          /* unnumbered-chapter heading */
   c_W,                          /* Web hyperlink */
+  c_L,                          /* Relative/local hyperlink */
   c_b,                          /* bulletted list */
   c_c,                          /* code */
   c_cfg,                        /* configuration directive */
@@ -245,6 +246,8 @@ static void match_kw(token * tok)
   /*
    * FIXME. The ids are explicit in here so as to allow long-name
    * equivalents to the various very short keywords.
+   *
+   * This list must be sorted, it's searched using binary search.
    */
   static const struct {
     char const *name;
@@ -280,6 +283,9 @@ static void match_kw(token * tok)
     {
     "K", c_K}
     ,                           /* capitalised cross-reference */
+    {
+    "L", c_L}
+    ,                           /* Relative/local hyperlink */
     {
     "R", c_R}
     ,                           /* free text cross-reference */
@@ -468,13 +474,13 @@ token get_token(input * in)
         c == '#' || c == '{' || c == '}')
     {
       /* single-char command */
-      rdadd(&rs, c);
+      rdadd(&rs, (wchar_t)c);
     } else if (c == 'u')
     {
       int len = 0;
       do
       {
-        rdadd(&rs, c);
+        rdadd(&rs, (wchar_t)c);
         len++;
         c = get(in, &cpos);
       }
@@ -484,7 +490,7 @@ token get_token(input * in)
     {
       do
       {
-        rdadd(&rs, c);
+        rdadd(&rs, (wchar_t)c);
         c = get(in, &cpos);
       }
       while (iscmd(c));
@@ -527,7 +533,7 @@ token get_token(input * in)
         break;
       } else
       {
-        rdadd(&rs, c);
+        rdadd(&rs, (wchar_t)c);
         if (c == '-')
         {
           ret.aux = TRUE;
@@ -583,7 +589,7 @@ token get_codepar_token(input * in)
     c = get(in, &cpos);
     /* Discard \r just before \n. */
     if (c2 != 13 || !isnl(c))
-      rdadd(&rs, c2);
+      rdadd(&rs, (wchar_t)c2);
   }
   unget(in, c, &cpos);
   ret.text = ustrdup(rs.text);
@@ -653,10 +659,10 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
     word **idximplicit;         /* to restore from \u alternatives */
   } *sitem;
   stack parsestk;
-  word *indexword, *uword, *iword;
+  word *indexword=NULL, *uword=NULL, *iword=NULL;
   word *idxwordlist;
   rdstring indexstr;
-  int index_downcase, index_visible, indexing;
+  int index_downcase=0, index_visible=0, indexing=0;
   const rdstring nullrs = { 0, 0, NULL };
   wchar_t uchr;
 
@@ -735,7 +741,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
     par.type = para_Normal;
     if (t.type == tok_cmd)
     {
-      int needkw;
+      int needkw=0;
       int is_macro = FALSE;
 
       par.fpos = t.pos;
@@ -1065,8 +1071,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
             style = word_Normal;
             spcstyle = word_WhiteSpace;
           }
-          if (sitem->type & stack_idx)
-          {
+          if (sitem->type & stack_idx )          {
             indexword->text = ustrdup(indexstr.text);
             if (index_downcase)
               ustrlow(indexword->text);
@@ -1179,6 +1184,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
         case c_k:
         case c_R:
         case c_W:
+        case c_L:
         case c_date:
           /*
            * Keyword, hyperlink, or \date. We expect a
@@ -1195,6 +1201,8 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
             wd.type = word_FreeTextXref;
           else if (t.cmd == c_W)
             wd.type = word_HyperLink;
+          else if (t.cmd == c_L)
+            wd.type = word_LocalHyperLink;
           else
             wd.type = word_Normal;
           dtor(t), t = get_token(in);
@@ -1252,7 +1260,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
             addword(wd, &idximplicit);
           }
           sfree(wdtext);
-          if (wd.type == word_FreeTextXref || wd.type == word_HyperLink)
+          if (wd.type == word_FreeTextXref || wd.type == word_HyperLink || wd.type == word_LocalHyperLink)
           {
             /*
              * Hyperlinks are different: they then

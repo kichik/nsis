@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include "halibut.h"
 
 #ifdef LOGALLOC

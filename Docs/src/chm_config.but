@@ -1,0 +1,24 @@
+\title NSIS Users Manual
+
+\cfg{xhtml-leaf-level}{2}
+
+\cfg{xhtml-leaf-contains-contents}{false}
+
+\cfg{xhtml-contents-depth-0}{5}
+
+\cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' /><script language="JScript" src="chmlink.js"></script>}
+
+\cfg{xhtml-rlink-prefix}{#" onclick="parser('}
+
+\cfg{xhtml-rlink-suffix}{')}
+
+\cfg{chm-toc-file}{toc.hhc}
+
+\cfg{chm-ind-file}{ind.hhk}
+
+\preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
+
+\preamble To get all of the latest information about NSIS development: \W{http://nsis.sourceforge.net/}{NSIS Development Page}.\\<br\\>To talk with others in the NSIS community: \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{NSIS forum}.\\<br\\>For more useful functions, NSIS script editors and other software, example scripts, plug-ins and tutorials: \W{http://nsis.sourceforge.net/archive/}{NSIS Archive}.\\<br\\>This HTML Help was created with help of Nike \W{mailto:nike@sendmail.ru}{nike@sendmail.ru}
+
+\copyright Copyright (C) 1999-2003 Nullsoft, Inc.
+
