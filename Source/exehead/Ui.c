@@ -555,10 +555,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     }
 
     if (m_page < 0 || m_page > g_max_page)
-    {
       EndDialog(hwndDlg,0);
-      gDontFookWithFocus = FALSE;
-    }
     else if (!m_curwnd)
     {
       HWND hwndtmp;
@@ -578,6 +575,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
       SetWindowText(hwndDlg,g_tmp);
 
+      gDontFookWithFocus = FALSE;
       m_curwnd=CreateDialog(g_hInstance,windows[g_page_offs+m_page].id,hwndDlg,windows[g_page_offs+m_page].proc);
       if (m_curwnd)
       {
@@ -632,7 +630,6 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
         EndDialog(hwndDlg,2);
-        gDontFookWithFocus = FALSE;
       }
       else
       {
@@ -641,7 +638,6 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
           EndDialog(hwndDlg,1);
-          gDontFookWithFocus = FALSE;
         }
       }
     }
@@ -1408,10 +1404,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
     if (g_quit_flag) 
-    {
         EndDialog(g_hwnd,1);
-        gDontFookWithFocus = FALSE;
-    }
     else if (!wParam)
     {
       HWND h=GetDlgItem(g_hwnd,IDOK);
