@@ -1,0 +1,604 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+
+<title>NSIS Modern User Interface</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<style type="text/css">
+
+body
+	{
+	padding: 10px;
+	background-color: #F0F0F0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	}
+
+center
+	{
+	text-align: center;
+	}
+
+table
+	{
+	margin: auto;
+	text-align: left;
+	background-color: #FFFFFF;
+	}
+
+.maintable
+	{
+	border: 2px solid #376EAB;
+	}
+	
+.margin
+	{
+	margin: 20px;
+	}
+
+.text
+	{
+	margin: 20px;
+	}
+
+.bold
+	{
+	font-weight: bold;
+	color: #303030;
+	}
+
+.header
+	{
+	font-size: 14pt;
+	color: #7A7272;
+	}
+	
+.subheader
+	{
+	margin: 20px;
+	font-size: 11pt;
+	font-weight: bold;
+	color: #303030;
+	}
+
+.footer
+	{
+    margin: 5px 5px 5px 5px;
+    text-align: right;
+    font-size: 8pt;
+	color: #909090;
+	}
+	
+a:link, a:visited, a:active
+	{
+	color: #294F75;
+	text-decoration: none;
+	}
+	
+a:hover
+	{
+	color: #182634;
+	text-decoration: none;
+	}
+	
+</style>
+
+</head>
+
+<body>
+
+<div class="center">
+<table width="750" class="maintable" cellspacing="0" cellpadding="0">
+<tr><td>
+<table cellspacing="0" cellpadding="0">
+<tr>
+  <td><img src="Readme.jpg" width="750" height="80" alt="" /></td>
+</tr>
+
+<tr>
+ <td><div class="margin">
+<p class="header">Introduction</p>
+<p class="text">NSIS 2 makes it is possible to create installers
+with a custom user interface.</p>
+<p class="text"> I made this interface with a modern wizard style, 
+  like the wizards of recent Windows versions. This new interface 
+  also features new graphics and a description area on the
+  component selection page.</p>
+<p class="text">To use this new interface for your installer, you need 
+  to add some code to your NSIS script. Read this document for more info!</p>
+<p class="header">Screenshots</p>
+<p class="text"><img src="Screenshot.png" width="503" height="393" alt="" /></p>
+<p class="text"><img src="Screenshot2.png" width="503" height="393" alt="" /></p>
+<p class="header">How to use</p>
+<p class="text">The Modern UI has a macro system, so most of the code
+  has already been written for you!</p>
+<p class="text">The easiest way to use the Modern UI is to customize
+one of the <a href="#examples">example</a> scripts, but you can also
+modify an existing script.</p>
+<p class="text"><span class="bold">Note:</span> If you want to add a
+double quote (&quot;) to a Modern UI string, you should always escape
+it ($\&quot;), because the Modern UI macro's use &quot; to separate
+parameters.</p>
+<p class="text">To use the Modern UI in an existing script, you should
+follow these steps:</p>
+  <p class="subheader">1. Include the header file</p>
+  <pre class="margin">!include "MUI.nsh"</pre>
+  <p class="text">MUI.nsh is in the Include directory, so you don't have
+  to specify a path.
+  <p class="subheader">2. Define the name and version of your software</p>
+<pre class="margin">
+!define MUI_PRODUCT "Test Software" ;Define your own software name here
+!define MUI_VERSION "1.0" ;Define your own software version here
+</pre>
+  <p class="subheader">3. Define settings</p>
+  <p class="text">Use defines to let the Modern UI know what it
+  should insert. Most defines (i.e. MUI_WELCOMEPAGE) don't need
+  a value, but others should be used to define a value for the
+  Modern UI (i.e. MUI_FINISHPAGE_RUN):</p>
+<pre class="margin">
+!define MUI_WELCOMEPAGE
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe"
+</pre>
+  <p class="text">All defines are optional, if you don't define
+  a page, the page won't be shown. If you don't define a value,
+  the Modern UI won't use that option.</p>
+  <p class="text"><span class="bold">MUI_WELCOMEPAGE</span><br />
+  Show the welcome page.</p>
+  <p class="text"><span class="bold">MUI_LICENSEPAGE</span><br />
+  Show the license page.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE</span><br />
+  Show the component selection page.</p>
+  <p class="text"><span class="bold">MUI_DIRECTORYPAGE</span><br />
+  Show the directory selection page.</p>
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br />
+  Show the Start Menu Folder selection page.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_STARTMENU_VARIABLE</span><br />
+  Variable to store the current Start Menu Folder. Default is $9.
+  You cannot use this variable in your script (or you should Push/Pop it).e.</p>
+  <p class="text"><span class="bold">MUI_STARTMENU_DEFAULTFOLDER</span><br />
+  The default Start Menu Folder. Use $(LANGSTRINGNAME) as value is you want
+  to use a language string.</p>
+  <p class="text"><span class="bold">MUI_STARTMENU_REGISTRY_ROOT, MUI_STARTMENU_REGISTRY_KEY,
+  MUI_STARTMENU_REGISTRY_VALUENAME</span><br />
+  If your installer saves the Start Menu folder of a previous installation
+  in a registry, define these values and the Modern UI will use the saved
+  value as default folder.</p>  
+  </div>
+  <p class="text"><span class="bold">MUI_FINISHPAGE</span><br />
+  Show the Finish page.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN</span><br />
+  Application which the user can select to run (using a checkbox).
+  You don't need to put quotes around the filename when it contains spaces.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS</span><br />
+  Parameters for the application to run. Don't forget to escape double
+  quotes ($\") in the value.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br />
+  Do not check the 'Run program' checkbox by default</p>
+  </div>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME</span><br />
+  File which the user can select to view (using a checkbox).
+  You don't need to put quotes around the filename when it contains spaces.
+  Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br />
+  Do not check the 'Show Readme' checkbox by default</p>
+  </div>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
+  Do not automatically jump to the finish page, to allow the user to
+  check the log.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_NOREBOOTSUPPORT</span><br />
+  Disables support for a reboot option. Use this to save some space if
+  you are not using /REBOOTOK or SetRebootFlag.</p>
+  </div>
+  <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
+  Show a message box with a warning (are you sure?) when the user closes
+  the installation.</p>
+  <p class="text"><span class="bold">MUI_CUSTOMPAGECOMMANDS</span><br />
+  Don't insert Page commands. Use this if you are using custom Page
+  commands to add your own pages.</p>
+  <p class="text"><span class="bold">MUI_UNINSTALLER</span><br />
+  Define if you are using an uninstaller.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNCONFIRMPAGE</span><br />
+  Show the uninstall confirm page.</p>
+  <p class="text"><span class="bold">MUI_UNCUSTOMPAGECOMMANDS</span><br />
+  Don't insert UninstPage commands. Use this if you are using custom
+  UninstPage commands to add your own pages.</p>
+  </div>
+    <p class="subheader">4. Define interface settings (optional)</p>
+  <p class="text">You can also change the settings of the interface by using defines:</p>
+  <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
+  <p class="text">If you don't define a setting, the default will be used.</p>
+  <p class="text">The following settings are available: <i>(default values)</i></p>
+  <p class="text"><span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
+  The interface file with the dialog resources.</p>
+  <p class="text"><span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
+  The icon of the installer.</p>
+  <p class="text"><span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
+  The icon of the uninstaller.</p>
+  <p class="text"><span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br />
+  The bitmap with images for the checks of the component select treeview.</p>
+  <p class="text"><span class="bold">MUI_FONT, MUI_FONTSIZE</span> <i>(MS Shell Dlg, 8)</i><br />
+  The font for the normal texts.</p>
+  <p class="text"><span class="bold">MUI_FONT_HEADER, MUI_FONTSIZE_HEADER, MUI_FONTSTYLE_HEADER</span>
+  <i>(MS Sans Serif, 8, 700)</i><br />
+  The font for the title in the header. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
+  <p class="text"><span class="bold">MUI_FONT_TITLE, MUI_FONTSIZE_TITLE, MUI_FONTSTYLE_TITLE</span>
+  <i>(Verdana, 12, 700)</i><br />
+  The font for the title on the Welcome and Finish page. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br />
+  The colors of the details screen, hexadecimal RRGGBB. (&quot;foreground&quot; &quot;background&quot;)</p>
+  <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br />
+  The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look).</p>
+  <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br />
+  Install Options INI File for the Welcome and Finish page.</p>
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br />
+  Bitmap for the Welcome and Finish page.</p>
+  <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br />
+  Background color for the header, Welcome page and Finish page, hexadecimal. (0xBBGGRR)</p>
+  <p class="text"><span class="bold">MUI_RTL_UI</span> <i>(not defined)</i><br />
+  Right-to-left interface.</p>
+  <p class="subheader">6. Define custom functions (optional)</p>
+  <p class="text">If you want add your own code to functions inserted by the
+  Modern UI, such as the .onGUIInit function and the Page function, create your
+  own function and let the Modern UI functions call them..</p>
+  <p class="text"><a href="#customFunctions">More info...</a></p>
+  <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
+  <pre class="margin">!insertmacro MUI_SYSTEM</pre>
+  <p class="subheader">8. Insert custom pages (optional)</p>
+  <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
+  or MUI_UNCUSTOMPAGECOMMANDS!), insert them before inserting the language files.</p>
+  <p class="text"><a href="#customPages">More info...</a></p>
+  <p class="subheader">9. Insert language files</p>
+  <p class="text">Insert the Modern UI language files for the languages you are using:</p>
+  <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
+  <p class="text">The Modern UI language files load the NLF language files,
+  so you should not use LoadLanguageFile.</p>
+  <p class="text">You don't need to edit the language files if you want to customize
+  some strings. Use defines before you insert the language file:</p>
+<pre class="margin">
+!define MUI_BRANDINGTEXT "French Branding Text"
+!insertmacro MUI_LANGUAGE "French"
+</pre>
+  <p class="text">Have a look at the language files for a complete list of all the
+  string names.</p>
+  <p class="text">If you are using the LangDLL for a language selection dialog
+  (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
+  MultiLanguage.nsi</a> example) use MUI_LANGDLL_PUSH to add the name of the
+  language (in the language itself) to the stack:</p>
+<pre class="margin">
+!insertmacro MUI_LANGDLL_PUSH "English" ;Language file name in English</pre>
+  <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
+  <p class="text">If you are not using a Finish page without defining
+  MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
+  to true, you should insert the MUI_SECTIONS_FINISHHEADER
+  after all the sections to display the finish header:</p>
+<pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
+<p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
+Uninstaller section:</p>
+<pre class="margin">
+!insertmacro MUI_UNFINISHHEADER
+</pre>
+  <p class="subheader">10. Set the descriptions for the sections</p>
+  <p class="text">Insert the description macro's to set the descriptions
+  for the sections. These descriptions will be displayed on the component
+  selection page, when the users hovers the mouse over a section.
+  If you don't want to use descriptions, use the modern3.exe UI.</p>
+<pre class="margin">
+LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
+LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
+
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+</pre>
+<p class="text">Add an extra parameter to the Section command to
+set the define with the section number:</p>
+<pre class="margin">
+Section "Section Name 1" Section1
+  ...
+SectionEnd
+</pre>
+<p class="subheader">10. Reserve Files</p>
+<p class="text">If you are using BZIP2 compression, you might need to
+insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
+<p class="header"><a name="customPages">Custom pages</a></p>
+<p class="subheader">Custom page commands</p>
+<p class="text">If you want add custom pages to your installer, you should insert your
+own page commands to set the order of the pages and the names of the page functions:</p>
+<pre class="margin">
+LangString TEXT_IO_WINDOWTITLE ": Install Options Page Title"
+
+!insertmacro MUI_PAGECOMMAND_WELCOME
+!insertmacro MUI_PAGECOMMAND_LICENSE
+!insertmacro MUI_PAGECOMMAND_COMPONENTS
+!insertmacro MUI_PAGECOMMAND_DIRECTORY
+Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
+!insertmacro MUI_PAGECOMMAND_INSTFILES
+!insertmacro MUI_PAGECOMMAND_FINISH
+</pre>
+<p class="text">This is also possible in the uninstaller:</p>
+<pre class="margin">
+LangString un.UNTEXT_IO_WINDOWTITLE ": Install Options Page Title"
+
+!insertmacro MUI_UNPAGECOMMAND_CONFIRM
+UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
+!insertmacro MUI_UNPAGECOMMAND_INSTFILES
+</pre>
+<p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
+MUI_UNCUSTOMPAGECOMMANDS and to insert the Page commands before
+on the right position.</p>
+<p class="subheader">Call Install Options</p>
+<p class="text">Have a look at the <a href="..\InstallOptions\Readme.html">
+Install Options documentation</a> for info about creating Install Options INI Files.</p>
+<p class="text">First, you need to extract your InstallOptions INI
+File in the .onInit function (un.onInit for the uninstaller):</p>
+<pre class="margin">
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
+FunctionEnd
+</pre>
+<p class="text">If your INI File is located in another directory, use
+MUI_INSTALLOPTIONS_EXTRACT_AS. The second parameter is the filename for
+the Plugins directory. Use this name when inserting the other InstallOptions
+macro's:</p>
+<pre class="margin">
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
+FunctionEnd
+</pre>
+<p class="text">You can call Install Options in the function defined with the Page
+or UninstPage command:</p>
+<pre class="margin">
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
+
+Function FunctionName
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioFile.ini"
+FunctionEnd
+</pre>
+<p class="text">For custom fonts and colors, macro's for the initDialog and show
+functions of InstallOptions are also available:</p>
+<pre class="margin">
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
+
+Function FunctionName ;FunctionName defined with Page command
+
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+
+  Push $R0
+  Push $R1
+  Push $R2
+
+    !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
+    Pop $R0
+    
+    GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
+    
+    ;$R1 contains the HWND of the first field
+    CreateFont $R2 "Tahoma" 10 700 
+    SendMessage $R1 ${WM_SETFONT} $R2 0
+	
+    !insertmacro MUI_INSTALLOPTIONS_SHOW
+	
+  Pop $R1
+  Pop $R1
+  Pop $R0
+
+FunctionEnd
+</pre>
+<p class="text">To read or write values to the INI Files on runtime, use these macro's:</p>
+<pre class="margin">
+!insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
+!insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
+</pre>
+<p class="header"><a name="ReserveFile">Reserve files</a></p>
+<p class="text">If you are using BZIP2 compression, it's important that
+files which are being extracted in the .onInit function or in Page
+functions are first in the data block, because this will make your installer
+start faster.</p>
+<p class="text">If these functions are not above any other File command,
+insert the ReserveFile commands or macro's above other File commands:</p>
+<pre class="margin">
+ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+
+!insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
+!insertmacro MUI_RESERVEFILE_INSTALLOPTION ;InstallOptions
+!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection page)
+</pre>
+<p class="header"><a name="examples">Examples</a></p>
+<p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br />
+  Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br />
+  Custom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">InstallOptions.nsi</a><br />
+  Start Menu Folder selection: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br />
+  Welcome/Finish page: <a href="../../Examples/Modern UI/WelcomeFinish.nsi">WelcomeFinish.nsi</a><br />
+  </p>
+<p class="header">The interface</p>
+<p class="subheader">Different versions</p>
+  <p class="text">There are three different versions of the Modern UI.
+  Modern.exe contains the dialogs of the standard interface.
+  If you have an installer with a lot of subsections or long section
+  names, use modern2.exe, which has a different component selection page.
+  Use modern3.exe if you are not using descriptions.</p>
+<p class="subheader">Customize the dialogs</p>
+  <p class="text">To change elements on the dialogs, modify modern?.exe
+  in the Contrib\UIs directory using a resource editor such as
+  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
+  <p class="text">The 'Please wait while Setup is loading...' text
+  on the splash screen which  is being displayed when the installer
+  is starting (Verifying installer, Unpacking data) cannot be changed
+  by the script,  because the installer is not started yet when this
+  dialog is being displayed. If you want to change this text, modify
+  dialog 111 of modern?.exe.<br />
+  The 'Verifying installer' and 'Unpacking data' texts are defined in
+  the language header file of the NSIS exehead (Source\exehead\lang.h). 
+  To change them, you need to edit this file and recompile NSIS.</p>
+  <p class="text">To modify the Welcome and Finish dialog, edit the Install
+  Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.</p>
+<p class="header">Customize Modern UI Functions</p>
+<a name="customFunctions"><p class="text">If you want add your own code to functions inserted by the
+Modern UI, such as the .onGUIInit function and the Page function, create your
+own function and let the Modern UI functions call them. Use these
+defines to define the name of your functions:</p>
+<p class="text">
+<span class="bold">GUI Init</span><br>
+MUI_CUSTOMFUNCTION_GUIINIT<br>
+MUI_CUSTOMFUNCTION_UNGUIINIT
+</p>
+<p class="text">
+<span class="bold">Welcome Page</span><br>
+MUI_CUSTOMFUNCTION_WELCOME_PRE<br>
+MUI_CUSTOMFUNCTION_WELCOME_SHOW - ${MUI_TEMP1} contains HWND of Welcome dialog
+</p>
+<p class="text">
+<span class="bold">License Page</span><br>
+MUI_CUSTOMFUNCTION_LICENSE_PRE<br>
+MUI_CUSTOMFUNCTION_LICENSE_SHOW<br>
+MUI_CUSTOMFUNCTION_LICENSE_LEAVE
+</p>
+<p class="text">
+<span class="bold">Components Page</span><br>
+MUI_CUSTOMFUNCTION_COMPONENTS_PRE<br>
+MUI_CUSTOMFUNCTION_COMPONENTS_SHOW<br>
+MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE
+</p>
+<p class="text">
+<span class="bold">Directory Page</span><br>
+MUI_CUSTOMFUNCTION_DIRECTORY_PRE<br>
+MUI_CUSTOMFUNCTION_DIRECTORY_SHOW<br>
+MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
+</p>
+<p class="text">
+<span class="bold">Start Menu Folder Page</span><br>
+MUI_CUSTOMFUNCTION_STARTMENU
+</p>
+<p class="text">
+<span class="bold">Install Files Page</span><br>
+MUI_CUSTOMFUNCTION_INSTFILES_PRE<br>
+MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br>
+MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
+</p>
+<p class="text">
+<span class="bold">Finish Page</span><br>
+MUI_CUSTOMFUNCTION_FINISH_PRE<br>
+MUI_CUSTOMFUNCTION_FINISH_SHOW - ${MUI_TEMP1} contains HWND of Finish dialog
+</p>
+</p>
+<p class="text">
+<span class="bold">Installer Abort</span><br>
+MUI_CUSTOMFUNCTION_ABORT
+</p>
+<p class="text">
+<span class="bold">Uninstaller - Confirm Page</span><br>
+MUI_UNCUSTOMFUNCTION_CONFIRM_PRE<br>
+MUI_UNCUSTOMFUNCTION_CONFIRM_SHOW<br>
+MUI_UNCUSTOMFUNCTION_CONFIRM_LEAVE
+</p>
+<p class="text">
+<span class="bold">Uninstaller - Uninstall Files Page</span><br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
+</p>
+<p class="text">Example:</p>
+<pre class="text">
+!define MUI_CUSTOMFUNCTION_ONGUIINIT .ownGuiInit
+
+Function .ownGUIInit
+  ...your own code...
+FunctionEnd
+</pre>
+<p class="header">Version history</p>
+<ul>
+<li>1.62 - February 2, 2003
+  <ul>
+    <li>Final version for NSIS 2 beta 1</li>
+    <li>Possibility to let a Modern UI Function call your own function</li>
+    <li>No problems anymore when using both 'Run program' and 'Show Readme'
+    on the finish page</li>
+    <li>Default state of checkboxes on the finish page can be changed</li>
+    <li>Welcome / Finish page compatible with custom DPI settings</li>
+    <li>Converted Install Options INI files to use dialog units</li>
+    <li>More ReserveFile macro's</li>
+    <li>Background color can be changed with a define</li>
+    <li>Support for multilingual branding texts</li>
+    <li>Start Menu / Finish page window titles also work when using
+    custom page commands</li>
+    <li>Language files should be inserted after inserting the MUI_SYSTEM
+    macro</li>
+    <li>Define MUI_MANUALVERBOSE if you don't want the Modern UI to change
+    the verbose settings during compilation</li>
+  </ul></li>
+</ul>
+<p class="text"></p>
+<ul>
+<li>1.61 - December 5, 2002
+  <ul>
+    <li>Final version for NSIS 2 beta 0</li>
+    <li>modern3.exe UI without description area</li>
+    <li>Added define to show uninstall confirm page</li>
+    <li>Added language string for finish page title and continue to uninstall</li>
+    <li>Define for parameters for the application to run on the finish page</li>
+    <li>Bugfixes</li>
+  </ul></li>
+</ul>
+<p class="text"></p>
+<ul>
+<li>1.6 - November 18, 2002
+  <ul>
+    <li>Welcome / Finish page</li>
+    <li>Automatic ask for reboot on the finish page</li>
+    <li>Create no shortcut option on the Start Menu Folder selection page</li>
+    <li>Customizing GUIInit functions easier</li>
+    <li>Minor font / UI changes</li>
+  </ul></li>
+</ul>
+<p class="text"><a href="Changelog.txt">Complete version history</a></p>
+<p class="header">Credits</p>
+<p class="text">Made by Joost Verburg.<br />
+  Icons designed by Nikos Adamamas, aka adni18.<br />
+  Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS 
+  to make this possible.</p>
+<p class="header">Help</p>
+<p class="text">Please post questions at the
+<a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
+<p class="header">License</p>
+<pre class="margin">Copyright &copy; 2002 Joost Verburg
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute
+it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; 
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgment in the
+   product documentation would be appreciated but is not required.
+2. Altered versions must be plainly marked as such,
+   and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any distribution.
+</pre>
+  </div></td>
+  </tr>
+  <tr>
+    <td><div class="footer">&copy;2002 Joost Verburg</div></td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1036
+# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis. Updated by Sébastien Delahaye <seb@delahaye.net>.
+Nullsoft Install System %s
+Installation de %s
+Désinstallation de %s
+ : Licence
+ : Options d'installation
+ : Dossier d'installation
+ : Installation des fichiers
+ : Terminé
+ : Confirmation
+ : Désinstallation des fichiers
+ : Terminé
+< &Précédent
+&Suivant >
+J'a&ccepte
+&Installer
+&Désinstaller
+Annuler
+&Fermer
+&Parcourir...
+P&lus d'infos
+Nom
+Terminé
+Personnalisée
+Sélectionnez le type d'installation :
+Sélectionnez les composants à installer :
+Ou, sélectionnez les composants optionnels que vous voulez installer :
+Sélectionnez le dossier d'installation de %s :
+Espace disponible : 
+Espace requis : 
+Désinstallation de :
+Erreur lors de l'ouverture du fichier en écriture : \r\n\t"$0"\r\nAppuyez sur Abandonner pour annuler l'installation,\r\nRéessayer pour réessayer l'écriture du fichier, ou\r\nIgnorer pour passer ce fichier.
+Impossible d'écrire : 
+Échec de la copie
+Copier vers 
+Impossible de trouver un symbole : 
+Impossible de charger : 
+Création du dossier : 
+Création du raccourci : 
+Création de la désinstallation : 
+Suppression : 
+Suppression au redémarrage : 
+Erreur lors de la création du dossier : 
+Erreur de la création : 
+Erreur lors de la décompression des données ! Installation corrompue ? 
+Erreur lors de l'enregistrement de la DLL
+ExeSys : 
+Exécution : 
+Extraction : 
+Extraction : erreur d'ouverture du fichier 
+Installation corrompue : opcode incorrect
+Pas de OLE pour : 
+Destination : 
+Suppression du dossier : 
+Renommer au redémarrage : 
+Renommer : 
+Passer : 
+Copier les Détails dans le Presse-papier
