@@ -42,8 +42,8 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /Ob2 /D "NDEBUG" /D "_CONSOLE" /D "WIN32" /D "_MBCS" /FD /c
-# SUBTRACT CPP /Fr /YX /Yc /Yu
+# ADD CPP /nologo /W3 /GX /O2 /Ob2 /D "NDEBUG" /D "_CONSOLE" /D "WIN32" /D "_MBCS" /YX"Platform.h" /FD /c
+# SUBTRACT CPP /Fr
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -282,6 +282,10 @@ SOURCE=.\lang.h
 # Begin Source File
 
 SOURCE=.\lineparse.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Platform.h
 # End Source File
 # Begin Source File
 
