@@ -3432,19 +3432,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       if (line.getnumtokens() > 7)
       {
-        char *s=line.gettoken_str(7);
+        char *s=(line.gettoken_str(7));
+
+        char b[255];
+        for (unsigned int spos=0; (spos <= strlen(s)) && (spos <= 255); spos++)
+          b[spos]=toupper(*(s+spos));
+		strcpy(s,b);
+		
         if (*s)
         {
           int c=0;
-          if (strstri(s,"ALT|")) ent.offsets[4]|=HOTKEYF_ALT << 24;
-          if (strstri(s,"CONTROL|")) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
-          if (strstri(s,"EXT|")) ent.offsets[4]|=HOTKEYF_EXT << 24;
-          if (strstri(s,"SHIFT|")) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
+          if (strstr(s,"ALT|")) ent.offsets[4]|=HOTKEYF_ALT << 24;
+          if (strstr(s,"CONTROL|")) ent.offsets[4]|=HOTKEYF_CONTROL << 24;
+          if (strstr(s,"EXT|")) ent.offsets[4]|=HOTKEYF_EXT << 24;
+          if (strstr(s,"SHIFT|")) ent.offsets[4]|=HOTKEYF_SHIFT << 24;
           while (strstr(s,"|"))
           {
             s=strstr(s,"|")+1;
           }
-          if ((s[0] == 'f' || s[0] == 'F') && (s[1] >= '1' && s[1] <= '9'))
+          if ((s[0] == 'F') && (s[1] >= '1' && s[1] <= '9'))
           {
             c=VK_F1-1+atoi(s+1);
             if (atoi(s+1) < 1 || atoi(s+1) > 24)
@@ -3452,8 +3458,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               warning_fl("CreateShortCut: F-key \"%s\" out of range",s);
             }
           }
-          else if (s[0] >= 'a' && s[0] <= 'z' && !s[1])
-            c=s[0]+'A'-'a';
           else if (((s[0] >= 'A' && s[0] <= 'Z') || (s[0] >= '0' && s[0] <= '9')) && !s[1])
             c=s[0];
           else
