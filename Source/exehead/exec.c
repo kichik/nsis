@@ -114,8 +114,7 @@ int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
     {
       extern int progress_bar_pos, progress_bar_len;
       progress_bar_pos+=rv;
-      progress_bar_len+=(!progress_bar_len);
-      SendMessage(hwndProgress,PBM_SETPOS,MulDiv(progress_bar_pos,30000,progress_bar_len),0);
+      SendMessage(hwndProgress,PBM_SETPOS,MulDiv(progress_bar_pos,30000,progress_bar_len+!progress_bar_len),0);
     }
   }
   return 0;
