@@ -54,12 +54,12 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   }
   if (uMsg == WM_TIMER
 #ifdef NSIS_COMPRESS_WHOLE
-    || uMsg == WM_DESTROY
+    || (!msg && uMsg == WM_DESTROY)
 #endif
     )
   {
     static char bt[64];
-    int percent=MulDiv(m_pos,100,m_length);
+    int percent=MulDiv(min(m_pos,m_length),100,m_length);
 #ifdef NSIS_COMPRESS_WHOLE
     if (msg)
 #endif
@@ -214,7 +214,10 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-  if (hwnd) DestroyWindow(hwnd);
+  if (hwnd)
+  {
+    DestroyWindow(hwnd);
+  }
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
   if (!g_filehdrsize)
