@@ -188,8 +188,8 @@ bool CResourceEditor::UpdateResource(WORD szType, WORD szName, LANGID wLanguage,
   return UpdateResource(MAKEINTRESOURCE(szType), MAKEINTRESOURCE(szName), wLanguage, lpData, dwSize);
 }
 
-// Returns a copy of the resource requested
-// Returns 0 if resource can't be found
+// Returns a copy of the requested resource
+// Returns 0 if the requested resource can't be found
 BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage) {
   CResourceDirectory* nameDir = 0;
   CResourceDirectory* langDir = 0;
@@ -217,6 +217,34 @@ BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage)
   }
   else
     return NULL;
+}
+
+// Returns the size of the requested resource
+// Returns -1 if the requested resource can't be found
+int CResourceEditor::GetResourceSize(char* szType, char* szName, LANGID wLanguage) {
+  CResourceDirectory* nameDir = 0;
+  CResourceDirectory* langDir = 0;
+  CResourceDataEntry* data = 0;
+
+  int i = m_cResDir->Find(szType);
+  if (i > -1) {
+    nameDir = m_cResDir->GetEntry(i)->GetSubDirectory();
+    i = nameDir->Find(szName);
+    if (i > -1) {
+      langDir = nameDir->GetEntry(i)->GetSubDirectory();
+      i = 0;
+      if (wLanguage)
+        i = langDir->Find(wLanguage);
+      if (i > -1) {
+        data = langDir->GetEntry(i)->GetDataEntry();
+      }
+    }
+  }
+
+  if (data)
+    return (int) data->GetSize();
+  else
+    return -1;
 }
 
 void CResourceEditor::FreeResource(BYTE* pbResource)
