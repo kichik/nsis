@@ -127,7 +127,7 @@ a:hover
 (Welcome, Finish, Start Menu) and a description area on the components
  page. The interface and the graphics can be customized using the
  provided settings.</p>
-<p class="text">Using the Modern UI macro's and language files,
+<p class="text">Using the Modern UI macros and language files,
 writing scripts with a modern interface is easy. This document contains
 information about writing Modern UI scripts and a reference of all
 settings.</p>
@@ -139,7 +139,7 @@ should not use commands like Icon, BrandingText etc.</p>
 <p class="text"><img src="Screenshot.png" width="503" height="393" alt="" /></p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt="" /></p>
 <p class="header">How to use</p>
-<p class="text">The Modern UI has a macro system, so all the code the
+<p class="text">The Modern UI has a macro system, so all the code to
 control the interface has already been written for you.</p>
 <p class="text">If you want to start a new Modern UI script or upgrade
 an older script with the Classic UI, follow the steps below.</p>
@@ -147,7 +147,7 @@ an older script with the Classic UI, follow the steps below.</p>
 will also help you to learn more about the Modern UI.</p>
 <p class="text"><span class="bold">Note:</span> If you want to add a
 double quote (&quot;) to a Modern UI string, you should always escape
-it ($\&quot;), because the Modern UI macro's use &quot; to separate
+it ($\&quot;), because the Modern UI macros use &quot; to separate
 parameters.</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
@@ -161,9 +161,9 @@ parameters.</p>
   <p class="text">This information will be used inside the texts for the installer
   interface.</p>
   <p class="subheader">3. Pages</p>
-  <p class="text">Insert the following macro's to set the pages you want to use.
+  <p class="text">Insert the following macros to set the pages you want to use.
   The pages will appear in the order you insert them in your script.
-  You can also insert custom Page commmands between the macro's to add custom pages.<br />
+  You can also insert custom Page commands between the macros to add custom pages.<br />
   <a href="#customPages">More info about custom pages...</a></p>
   <p class="text">Example:</p>
   <pre class="margin">!insertmacro MUI_PAGE_COMPONENTS</pre>
@@ -218,7 +218,7 @@ parameters.</p>
   <p class="sub2header">Start Menu Folder Page Settings</p>
   <div class="margin">
   <p class="text">If you did not disable the 'Do not create shortcuts' checkbox,
-  put the script code to write the shortcuts between these macro's,
+  put the script code to write the shortcuts between these macros,
   because the creation can be disabled by the user:</p>
 <pre class="margin">
 !insertmacro MUI_STARTMENU_WRITE_BEGIN
@@ -436,7 +436,7 @@ FunctionEnd
   </div>
   <p class="subheader">7. Set the descriptions for the sections</p>
   <p class="text">The descriptions of sections will be displayed on the
-  componens page, when the users hovers the mouse over a section.
+  components page, when the user hovers the mouse over a section.
   If you don't want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
   setting.</p>
   <p class="text">To set a description for a section, you have to add an
@@ -447,7 +447,7 @@ Section "Section Name 1" Section1
    ...
 SectionEnd
 </pre>
-<p class="text">Use these macro's to set the descriptions:</p>
+<p class="text">Use these macros to set the descriptions:</p>
 <pre class="margin">
 LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
 LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
@@ -463,7 +463,7 @@ insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
-own page commands between the page macro's:</p>
+own page commands between the page macros:</p>
 <pre class="margin">
 !insertmacro MUI_PAGE_WELCOME
 Page custom FunctionName ;Custom page
@@ -491,7 +491,7 @@ FunctionEnd
 <p class="text">If your INI File is located in another directory, use
 MUI_INSTALLOPTIONS_EXTRACT_AS. The second parameter is the filename for
 the Plugins directory. Use this name when inserting the other InstallOptions
-macro's:</p>
+macros:</p>
 <pre class="margin">
 Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
@@ -509,7 +509,7 @@ Function FunctionName ;FunctionName defined with Page command
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioFile.ini"
 FunctionEnd
 </pre>
-<p class="text">For custom fonts and colors, macro's for the initDialog and show
+<p class="text">For custom fonts and colors, macros for the initDialog and show
 functions of InstallOptions are also available:</p>
 <pre class="margin">
 Var HWND
@@ -539,7 +539,7 @@ FunctionEnd
 <p class="text">If you need the InstallOptions return value (success, back, cancel, error),
 use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The
 return value will be added to the stack, so you can use the Pop command to get it.</p>
-<p class="text">To read or write INI file values use these macro's:</p>
+<p class="text">To read or write INI file values use these macros:</p>
 <pre class="margin">
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
@@ -556,7 +556,7 @@ files which are being extracted in the .onInit function or in Page
 functions are first in the data block, because this will make your installer
 start faster.</p>
 <p class="text">If these functions are not above any other File command,
-insert the ReserveFile commands or macro's above other File commands:</p>
+insert the ReserveFile commands or macros above other File commands:</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
@@ -594,7 +594,7 @@ ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
 <a name="customFunctions"></a><p class="text">If you want add your own code to functions
 inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
 create your own function and let the Modern UI functions call them. Use the defines
-to define the name of your functions. Add the defines before the MUI_LANGUAGE macro's.</p>
+to define the name of your functions. Add the defines before the MUI_LANGUAGE macros.</p>
 <p class="text">Example:</p>
 <pre class="text">
 !define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
@@ -693,11 +693,11 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
     let the user accept the agreement or not</li>
-    <li>Macro's for finish headers don't have to be inserted anymore</li>
+    <li>Macros for finish headers don't have to be inserted anymore</li>
     <li>Language preference stored when installation has completed,
     no problems anymore when the users selects the wrong language</li>
     <li>Header text for aborted installation</li>
-    <li>New macro's: get language for uninstaller, delete shortcuts</li>
+    <li>New macros: get language for uninstaller, delete shortcuts</li>
     <li>Language specific fonts</li>
     <li>Welcome/Finish page INI files can be modified in pre functions</li>
     <li>More texts can be customized</li>
