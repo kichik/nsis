@@ -1,5 +1,5 @@
 Name example
-OutFile setup.exe
+OutFile one-section.exe
 
 ComponentText "please choose just one but the default"
 
