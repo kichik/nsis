@@ -130,7 +130,7 @@ Function SetPage
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
+       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
        !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "iniA.ini" "" "IO" ;Next page is an IO page
     !insertmacro MUI_PAGE_STOP 2
 
@@ -139,7 +139,7 @@ Function SetPage
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
        !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "iniB.ini" "IO" "" ;Previous page is an IO page
     !insertmacro MUI_PAGE_STOP 3
 
@@ -153,10 +153,10 @@ Function SetPage
 
     !insertmacro MUI_PAGE_START 6
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options C" "Create your own dialog!"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
-       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
+       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
+       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+       WriteIniStr "$PLUGINSDIR\iniC.ini" "Settings" "CancelConfirmFlags" "MB_ICONEXCLAMATION"
        !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "iniC.ini" "" "" ;Next/previous page is no IO page
     !insertmacro MUI_PAGE_STOP 6
 
