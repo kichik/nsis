@@ -1,12 +1,12 @@
-\H{stringinst} String Manipulation Instructions
+\S1{stringinst} String Manipulation Instructions
 
-\S{StrCpy} StrCpy
+\S2{StrCpy} StrCpy
 
 \c user_var(destination) str [maxlen] [start_offset]
 
 Sets the user variable $x with str. Note that str can contain other variables, or the user variable being set (concatenating strings this way is possible, etc). If maxlen is specified, the string will be a maximum of maxlen characters (if maxlen is negative, the string will be truncated abs(maxlen) characters from the end). If start_offset is specified, the source is offset by it (if start_offset is negative, it will start abs(start_offset) from the end of the string).
 
-\S{StrLen} StrLen
+\S2{StrLen} StrLen
 
 \c user_var(length output) str
 

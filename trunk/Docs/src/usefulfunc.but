@@ -3,8 +3,8 @@
 \H{getparent} Get parent directory
 
 \c  ; GetParent
-\c  ; input, top of stack  (i.e. C:\Program Files\Poop)
-\c  ; output, top of stack (replaces, with i.e. C:\Program Files)
+\c  ; input, top of stack  (e.g. C:\Program Files\Poop)
+\c  ; output, top of stack (replaces, with e.g. C:\Program Files)
 \c  ; modifies no other variables.
 \c  ;
 \c  ; Usage:
@@ -34,8 +34,8 @@
 \H{trimnewlines} Trim newlines
 
 \c  ; TrimNewlines
-\c  ; input, top of stack  (i.e. whatever$\r$\n)
-\c  ; output, top of stack (replaces, with i.e. whatever)
+\c  ; input, top of stack  (e.g. whatever$\r$\n)
+\c  ; output, top of stack (replaces, with e.g. whatever)
 \c  ; modifies no other variables.
 \c
 \c  Function TrimNewlines
@@ -60,7 +60,7 @@
 
 \c  ; GetParameters
 \c  ; input, none
-\c  ; output, top of stack (replaces, with i.e. whatever)
+\c  ; output, top of stack (replaces, with e.g. whatever)
 \c  ; modifies no other variables.
 \c
 \c  Function GetParameters

@@ -6,7 +6,7 @@
 
 \cfg{xhtml-leaf-contains-contents}{true}
 
-\cfg{xhtml-contents-depth-0}{1}
+\cfg{xhtml-contents-depth-0}{3}
 
 \cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' />}
 

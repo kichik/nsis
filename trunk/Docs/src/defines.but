@@ -1,4 +1,4 @@
-\C{compdefines} Conditional Compilation
+\S0{compdefines} Conditional Compilation
 
 The compiler maintains a list of defined symbols, which can be defined using !define or the /D command line switch. These defined symbols can be used for conditional compilation (using !ifdef) or for symbol replacement (a simple form of macros). To replace a symbol with its value, use $\{SYMBOL\} (if SYMBOL is not defined, no translation will occur). The translation is first-come-first-served, meaning if you do:
 
@@ -22,7 +22,7 @@ This command closes a block started with !ifdef or !ifndef.
 
 \e{!else [ifdef|ifndef [...]]}
 
-This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. I.e. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".
+This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. e.g. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".
 
 \e{!endif}
 
@@ -34,7 +34,7 @@ Inserts the contents of a macro that was created with !macro. If the macro was c
 
 \e{!macro macro_name [parameter][...]}
 
-Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. Note that macros cannot contain other macro definitions (though they can insert other macros), or !ifdef/!else/!endif. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (i.e. $\{PARMNAME\}) from inside the macro.
+Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. Note that macros cannot contain other macro definitions (though they can insert other macros), or !ifdef/!else/!endif. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (e.g. $\{PARMNAME\}) from inside the macro.
 
 \e{!macroend}
 
