@@ -40,19 +40,25 @@ The command line of the installer. The format of the command line can be one of 
 
 \e{$LANGUAGE}
 
-The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
+The identifier of the language that is currently used. For example, English is 1033. You can change this variable in \R{oninit}{.onInit}.
 
-\S1{varconstant} Constant Variables
+\S1{varconstant} Constants
 
-Constant variables can also be used in the \R{ainstalldir}{InstallDir} attribute.
+Constants can also be used in the \R{ainstalldir}{InstallDir} attribute.
+
+Note that some of the new constants will not work on every OS. For example, $CDBURN_AREA will only work on Windows XP and above. If it's used on Windows 98, it'll be empty. We will try to gather a compatibility list before NSIS 2 final, but for now it's recommended you check your installer on all of the OSes you plan to support if you're using one of the new constants.
 
 \e{$PROGRAMFILES}
 
 The program files directory (usually C:\\Program Files but detected at runtime).
 
+\e{$COMMONFILES}
+
+The common files directory. This is a directory for components that are shared across applications (usually C:\\Program Files\\Common Files but detected at runtime).
+
 \e{$DESKTOP}
 
-The windows desktop directory (usually C:\\windows\\desktop but detected at runtime). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The windows desktop directory (usually C:\\windows\\desktop but detected at runtime). The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 \e{$EXEDIR}
 
@@ -60,7 +66,7 @@ The location of the installer executable. (technically you can modify this varia
 
 \e{$\{NSISDIR\}}
 
-A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UI's...
+A symbol that contains the path where NSIS is installed. Detected at compile time. Useful if you want to call resources that are in NSIS directory e.g. Icons, UIs...
 
 \e{$WINDIR}
 
@@ -76,19 +82,99 @@ The system temporary directory (usually C:\\windows\\temp but detected at runtim
 
 \e{$STARTMENU}
 
-The start menu folder (useful in adding start menu items using \R{createshortcut}{CreateShortCut}). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The start menu folder (useful in adding start menu items using \R{createshortcut}{CreateShortCut}). The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 \e{$SMPROGRAMS}
 
-The start menu programs folder (use this whenever you want $STARTMENU\\Programs). The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The start menu programs folder (use this whenever you want $STARTMENU\\Programs). The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 \e{$SMSTARTUP}
 
-The start menu programs / startup folder. The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The start menu programs / startup folder. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
 
 \e{$QUICKLAUNCH}
 
 The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP.
+
+\e{$DOCUMENTS}
+
+The documents directory. A typical path for the current user is C:\\Documents and Settings\\Foo\\My Documents. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$SENDTO}
+
+The directory that contains Send To menu shorcut items.
+
+\e{$RECENT}
+
+The directory that contains shortcuts to the user's recently used documents.
+
+\e{$FAVORITES}
+
+The directory that contains shortcuts to the user's favorite websites, documents, etc. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$MUSIC}
+
+The user's music files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$PICTURES}
+
+The user's picture files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$VIDEOS}
+
+The user's video files directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$NETHOOD}
+
+The directory that contains link objects that may exist in the My Network Places/Network Neighborhood folder.
+
+\e{$FONTS}
+
+The system's fonts directory.
+
+\e{$TEMPLATES}
+
+The document templates directory. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$APPDATA}
+
+The application data directory. Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$PRINTHOOD}
+
+The directory that contains link objects that may exist in the Printers folder.
+
+\e{$INTERNET_CACHE}
+
+Internet Explorer's temporary internet files directory.
+
+\e{$COOKIES}
+
+Internet Explorer's cookies directory.
+
+\e{$HISTORY}
+
+Internet Explorer's history directory.
+
+\e{$PROFILE}
+
+The user's profile directory. A typical path is C:\\Documents and Settings\\Foo.
+
+\e{$ADMINTOOLS}
+
+A directory where administrative tools are kept. The context of this constant (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+
+\e{$RESOURCES}
+
+The resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources but detected at runtime)
+
+\e{$RESOURCES_LOCALIZED}
+
+The localized resources directory that stores themes and other Windows resources (usually C:\\Windows\\Resources\\1033 but detected at runtime)
+
+\e{$CDBURN_AREA}
+
+A directory where files awaiting to be burned to CD are stored.
 
 \e{$HWNDPARENT}
 
