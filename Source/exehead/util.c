@@ -505,11 +505,15 @@ void process_string(char *out, const char *in)
         case VAR_CODES_START + 35: // PLUGINSDIR
           lstrcpy(out, plugins_temp_dir);
           break;
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
+        #if VAR_CODES_START + 35 >= 255
+          #error "Too many variables!  Extend VAR_CODES_START!"
+        #endif
+#else
         #if VAR_CODES_START + 34 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
+#endif //NSIS_CONFIG_PLUGIN_SUPPORT
       } // switch
       // remove trailing slash
       while (*out && *CharNext(out)) out++;
