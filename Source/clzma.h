@@ -6,152 +6,83 @@
 #include "7zip/7zip/Compress/LZMA/LZMAEncoder.h"
 #include "7zip/Common/MyCom.h"
 
-class CCyclicBuffer
-{
-  BYTE *Buffer;
-  UINT32 BufferSize;
-  UINT32 Pos;
-  UINT32 UsedSize;
-public:
-  void Free()
-  {
-    if (Buffer != 0)
-    {
-      delete []Buffer;
-      Buffer = 0;
-    }
-  }
-  CCyclicBuffer(): Buffer(0) {}
-  ~CCyclicBuffer() { Free(); }
-  bool Create(UINT32 bufferSize)
-  {
-    if (Buffer != 0 && bufferSize == bufferSize)
-      return true;
-    Free();
-    BufferSize = bufferSize;
-    Buffer = new BYTE[bufferSize];
-    return (Buffer != 0);
-  }
-  void Init()
-  {
-    Pos = 0;
-    UsedSize = 0;
-  }
-  UINT32 GetUsedSize() const { return UsedSize; }
-  UINT32 GetAvailSize() const { return BufferSize - UsedSize; }
-  UINT32 Write(const BYTE *data, UINT32 size)
-  {
-    if (size > GetAvailSize())
-      size = GetAvailSize();
-    UINT32 size1 = size;
-    while(size1 > 0)
-    {
-      UINT32 writePos = Pos + UsedSize;
-      if (writePos >= BufferSize)
-        writePos -= BufferSize;
-      UINT32 size2 = size1;
-      if (size2 > BufferSize - writePos)
-        size2 = BufferSize - writePos;
-      memmove(Buffer + writePos, data, size2);
-      data += size2;
-      size1 -= size2;
-      UsedSize += size2;
-    }
-    return size;
-  }
-  UINT32 Read(BYTE *data, UINT32 size)
-  {
-    if (size > UsedSize)
-      size = UsedSize;
-    UINT32 size1 = size;
-    while (size1 > 0)
-    {
-      UINT32 size2 = size1;
-      if (size2 > BufferSize - Pos)
-        size2 = BufferSize - Pos;
-      memmove(data, Buffer + Pos, size2);
-      Pos += size2;
-      if (Pos >= BufferSize)
-        Pos -= BufferSize;
-      data += size2;
-      size1 -= size2;
-      UsedSize -= size2;
-    }
-    return size;
-  }
-};
+// implemented in build.cpp - simply calls CompressReal
+DWORD WINAPI lzmaCompressThread(LPVOID lpParameter);
 
-class CBufferInStream: 
+class CLZMA:
+  public ICompressor,
   public ISequentialInStream,
-  public CMyUnknownImp,
-  public CCyclicBuffer
-{
-public:
-  MY_UNKNOWN_IMP
-  STDMETHOD(Read)(void *data, UINT32 size, UINT32 *processedSize)
-  {
-    return ReadPart(data, size, processedSize);
-  }
-  STDMETHOD(ReadPart)(void *data, UINT32 size, UINT32 *processedSize)
-  {
-    UINT32 temp = CCyclicBuffer::Read((BYTE *)data, size);
-    if (processedSize != 0)
-      *processedSize = temp;
-    return S_OK;
-  }
-};
-
-class CBufferOutStream: 
   public ISequentialOutStream,
-  public CMyUnknownImp,
-  public CCyclicBuffer
+  public CMyUnknownImp
 {
+private:
+  NCompress::NLZMA::CEncoder *_encoder;
+
+  HANDLE hCompressionThread;
+
+  BYTE *next_in; /* next input byte */
+  UINT avail_in; /* number of bytes available at next_in */
+
+  BYTE *next_out; /* next output byte should be put there */
+  UINT avail_out; /* remaining free space at next_out */
+
+  int res;
+
+  BOOL finish;
+
+  CRITICAL_SECTION cs;
+  BOOL cs_initialized;
+  BOOL nt_locked; /* nsis thread locked */
+  BOOL ct_locked; /* compression thread locked */
+  BOOL compressor_finished;
+
 public:
   MY_UNKNOWN_IMP
 
-  STDMETHOD(Write)(const void *data, UINT32 size, UINT32 *processedSize)
-  {
-    return WritePart(data, size, processedSize);
-  }
-  STDMETHOD(WritePart)(const void *data, UINT32 size, UINT32 *processedSize)
-  {
-    UINT32 temp = CCyclicBuffer::Write((const BYTE *)data, size);
-    if (processedSize != 0)
-      *processedSize = temp;
-    return S_OK;
-  }
-};
-
-class CLZMA : public ICompressor 
-{
-public:
-  CLZMA(): _encoder(0) 
+  CLZMA(): _encoder(NULL)
   {
     _encoder = new NCompress::NLZMA::CEncoder();
     _encoder->SetWriteEndMarkerMode(true);
+    cs_initialized = FALSE;
+    hCompressionThread = NULL;
+    compressor_finished = FALSE;
+    finish = FALSE;
+    End();
   }
+
   ~CLZMA()
   {
-    if (_encoder != 0)
+    End();
+    if (cs_initialized)
+    {
+      DeleteCriticalSection(&cs);
+    }
+    if (_encoder)
     {
       delete _encoder;
-      _encoder = 0;
+      _encoder = NULL;
     }
   }
-  
-  int Init(int level, UINT32 dicSize) 
+
+  int Init(int level, UINT32 dicSize)
   {
-    _inStream.Create(dicSize * 2 + (1 << 21));
-    
-    // you must set it at least 1 MB and add 2 sizes of buffer from OutBuffer.h: 
-    // COutBuffer::COutBuffer(UINT32 bufferSize = (1 << 20));
-    _outStream.Create(3 << 20);
+    End();
 
-    _needWriteProperties = true;
-    _inStream.Init();
-    _outStream.Init();
+    if (!cs_initialized)
+    {
+      InitializeCriticalSection(&cs);
+      cs_initialized = TRUE;
+    }
 
-    PROPID propdIDs [] = 
+    nt_locked = TRUE;
+    ct_locked = FALSE;
+
+    compressor_finished = FALSE;
+    finish = FALSE;
+
+    res = C_OK;
+
+    PROPID propdIDs [] =
     {
       NCoderPropID::kAlgorithm,
       NCoderPropID::kDictionarySize,
@@ -170,90 +101,200 @@ public:
     props[2].ulVal = 64;
     if (_encoder->SetCoderProperties(propdIDs, props, kNumProps) != 0)
       return -1;
-    return _encoder->SetStreams(&_inStream, &_outStream, 0, 0);
+    return _encoder->SetStreams(this, this, 0, 0);
   }
 
-  int Init(int level) 
+  int Init(int level)
   {
     // default dictionary size is 8MB
-    return Init(level, 1 << 23);
+    return Init(level, 8 << 20);
   }
-  
+
   int End()
   {
-    _next_in = NULL;
-    _avail_in = 0;
-    _next_out = NULL;
-    _avail_out = 0;
-    _inStream.Free();
-    _outStream.Free();
+    if (hCompressionThread)
+    {
+      CloseHandle(hCompressionThread);
+      hCompressionThread = NULL;
+    }
+    SetNextOut(NULL, 0);
+    SetNextIn(NULL, 0);
     return C_OK;
   }
-  
-  int Compress(BOOL finish) 
-  {
-    WriteToOutStream();
-    if (_avail_in)
-    {
-      UINT32 written = _inStream.Write((const LPBYTE)_next_in, _avail_in);
-      _next_in += written;
-      _avail_in -= written;
-    }
-    while ((_inStream.GetAvailSize() == 0 || finish) && 
-          _outStream.GetUsedSize() == 0)
-    {
-      UINT64 inSize, outSize;
-      INT32 finished;
-      if (_needWriteProperties)
-      {
-        if (_encoder->WriteCoderProperties(&_outStream) != 0)
-          return 1;
-        _needWriteProperties = false;
-      }
-      if (_encoder->CodeOneBlock(&inSize, &outSize, &finished) != 0)
-        return 1;
-      WriteToOutStream();
-      if (finished != 0)
-        return C_OK;
-      if (_avail_out == 0)
-        return C_OK;
-    }
-    return C_OK;
-  }
-  
-  void SetNextIn(char *in, unsigned int size) 
-  {
-    _next_in = in;
-    _avail_in = size;
-  }
-  
-  void SetNextOut(char *out, unsigned int size) 
-  {
-    _next_out = out;
-    _avail_out = size;
-  }
-  
-  virtual char* GetNextOut() { return _next_out; }
-  virtual unsigned int GetAvailIn() { return _avail_in; }
-  virtual unsigned int GetAvailOut() { return _avail_out; }
-  const char* GetName() { return "lzma"; }
-  
-private:
-  NCompress::NLZMA::CEncoder *_encoder;
-  CBufferInStream _inStream;
-  CBufferOutStream _outStream;
-  char *_next_in;
-  UINT32 _avail_in;
-  char *_next_out;
-  UINT32 _avail_out;
-  bool _needWriteProperties;
 
-  void WriteToOutStream() 
+  int CompressReal()
   {
-    UINT32 temp = _outStream.Read((BYTE *)_next_out, _avail_out);
-    _next_out += temp;
-    _avail_out -= temp;
+    EnterCriticalSection(&cs);
+    ct_locked = TRUE;
+
+    while (nt_locked)
+      Sleep(0);
+
+    if (_encoder->WriteCoderProperties(this) == S_OK)
+    {
+      while (true)
+      {
+        UINT64 inSize, outSize;
+        INT32 finished;
+        if (_encoder->CodeOneBlock(&inSize, &outSize, &finished))
+        {
+          res = -2;
+          break;
+        }
+        if (finished)
+        {
+          res = C_OK;
+          break;
+        }
+      }
+    }
+    else
+    {
+      res = -2;
+    }
+
+    compressor_finished = TRUE;
+    LeaveCriticalSection(&cs);
+    ct_locked = FALSE;
+    return C_OK;
   }
+
+  int Compress(BOOL flush)
+  {
+    if (compressor_finished)
+      return -1;
+
+    if (!hCompressionThread)
+    {
+      DWORD dwThreadId;
+      hCompressionThread = CreateThread(0, 0, lzmaCompressThread, (LPVOID) this, 0, &dwThreadId);
+      if (!hCompressionThread)
+        return -2;
+    }
+    else
+    {
+      finish = flush;
+      LeaveCriticalSection(&cs);
+    }
+
+    while (!ct_locked)
+      Sleep(0);
+
+    nt_locked = FALSE;
+
+    EnterCriticalSection(&cs);
+    nt_locked = TRUE;
+
+    while (ct_locked)
+    {
+      if (compressor_finished)
+      {
+        LeaveCriticalSection(&cs);
+        return res;
+      }
+      Sleep(0);
+    }
+
+    return C_OK;
+  }
+
+  void GetMoreIO()
+  {
+    LeaveCriticalSection(&cs);
+    while (!nt_locked)
+      Sleep(0);
+
+    ct_locked = FALSE;
+
+    EnterCriticalSection(&cs);
+    ct_locked = TRUE;
+
+    while (nt_locked)
+      Sleep(0);
+  }
+
+  STDMETHOD(Read)(void *data, UINT32 size, UINT32 *processedSize)
+  {
+    return ReadPart(data, size, processedSize);
+  }
+
+  STDMETHOD(ReadPart)(void *data, UINT32 size, UINT32 *processedSize)
+  {
+    if (processedSize)
+      *processedSize = 0;
+    while (size)
+    {
+      if (!avail_in)
+      {
+        if (finish)
+        {
+          return S_OK;
+        }
+        GetMoreIO();
+        if (!avail_in && finish)
+        {
+          return S_OK;
+        }
+        if (!avail_in)
+          return E_ABORT;
+      }
+      UINT32 l = min(size, avail_in);
+      memcpy(data, next_in, l);
+      avail_in -= l;
+      size -= l;
+      next_in += l;
+      data = LPBYTE(data) + l;
+      if (processedSize)
+        *processedSize += l;
+    }
+    return S_OK;
+  }
+
+  STDMETHOD(Write)(const void *data, UINT32 size, UINT32 *processedSize)
+  {
+    return WritePart(data, size, processedSize);
+  }
+
+  STDMETHOD(WritePart)(const void *data, UINT32 size, UINT32 *processedSize)
+  {
+    if (processedSize)
+      *processedSize = 0;
+    while (size)
+    {
+      if (!avail_out)
+      {
+        GetMoreIO();
+        if (!avail_out)
+          return E_ABORT;
+      }
+      UINT32 l = min(size, avail_out);
+      memcpy(next_out, data, l);
+      avail_out -= l;
+      size -= l;
+      next_out += l;
+      data = LPBYTE(data) + l;
+      if (processedSize)
+        *processedSize += l;
+    }
+    return S_OK;
+  }
+
+  void SetNextIn(char *in, unsigned int size)
+  {
+    next_in = (LPBYTE) in;
+    avail_in = size;
+  }
+
+  void SetNextOut(char *out, unsigned int size)
+  {
+    next_out = (LPBYTE) out;
+    avail_out = size;
+  }
+
+  virtual char *GetNextOut() { return (char *) next_out; }
+  virtual unsigned int GetAvailIn() { return avail_in; }
+  virtual unsigned int GetAvailOut() { return avail_out; }
+  const char *GetName() { return "lzma"; }
 };
 
 #endif
