@@ -68,7 +68,7 @@ For more information about sections see \R{sections}{Sections}.
 
 \S1{tut-functions} Functions
 
-Functions, just like sections, can contain code. The difference between sections and functions is the way they are called. There are two types of functions, user functions and callback functions.
+Functions can contain script code, just like sections. The difference between sections and functions is the way they are called. There are two types of functions, user functions and callback functions.
 
 User functions are called by the user from within sections or other functions using the \R{call}{Call} instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
 
@@ -88,7 +88,7 @@ For more information about functions see \R{functions}{Functions}.
 
 \S2{tutVariables} Variables
 
-You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function. For shared code, there are also \R{varother}{20 registers avaibable} (like $0). These static variables don't have to be declared and you won't get any name conflicts.
+You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function.
 
 Declaring and using a user variable:
 
@@ -102,36 +102,25 @@ Declaring and using a user variable:
 
 In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable.
 
-For example, the value of $0 is 123. Now you are going to call the function bla:
-
-\c Function bla
-\c
-\c   Push $0 ;123 added to the stack
-\c
-\c     ...the function can use $0...
-\c
-\c   Pop $0 ;Remove 123 from the stack and set $0 back to 123
-\c
-\c FunctionEnd
+For shared code, there are \R{varother}{20 registers avaibable} (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.
 
 After calling the function, the variables contain the same value as before. Note the order when using multiple variables (last-in first-out):
 
 \c Function bla
 \c
-\c   Push $0
-\c   Push $1
+\c   Push $R0
+\c   Push $R1
 \c
 \c     ...code...
 \c
-\c   Pop $1
-\c   Pop $0
+\c   Pop $R1
+\c   Pop $R0
 \c
 \c FunctionEnd
 
 \S2{tutdebug} Debugging Scripts
 
 The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debugging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plugin \W{http://nsis.sourceforge.net/archive/viewpage.php?pageid=140}{Dumpstate}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
-
 
 \S1{compilercommands} Compiler Commands
 
@@ -169,28 +158,32 @@ The compiler will check your script and give you warnings or an error. If an err
 
 NSIS supports different compression methods zlib and bzip2. zlib is fast and is very efficient in resources consumption. bzip2 usually gives better results for large installers, but requires a bit more memory and is a little slower. To set the compressor use \R{asetcompressor}{SetCompressor}.
 
-\H{tutenhancing} Enhancing NSIS
+\H{tutmodernui} Modern UI
 
-NSIS scripts support plug-in calls. Plug-ins are DLL files written in C, C++, Delphi or another programming language. Plug-ins provide a more powerful code base to NSIS as they can contain anything from a code that calculates 1 + 1 to a code that communicates with another computer through FireWire.
+A popular user interface for NSIS is the Modern User Interface, it has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
 
-To call a plug-in function in your script you need to add a line as follows:
+For more information, check the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} and the \W{../Examples/Modern UI/}{Modern UI Examples}.
+
+\H{tutplugin} Plug-ins
+
+NSIS support plug-ins that can be called from the script. Plug-ins are DLL files written in C, C++, Delphi or another programming language and therefore provide a more powerful code base to NSIS.
+
+A plug-in call looks like this:
 
 \c DLLName::FunctionName "parameter number 1" "parameter number 2" "parameter number 3"
 
-Every plug-in's function has its own requirements when it comes to parameters, some will require none, some will accept as many parameters as you want to send. For example:
+Every plug-in's function has its own requirements when it comes to parameters, some will require none, some will accept as many parameters as you want to send. Examples:
 
 \c nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
 \c InstallOptions::dialog "$PLUGINSDIR\test.ini"
 \c NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
 
-The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins directory} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addPluginDir} to tell NSIS to search in other directories too.
+The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addPluginDir} to tell NSIS to search in other directories too.
 
-There are several plug-ins that come with the NSIS distribution. \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to add custom pages to your installer, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Contrib/}{Contrib directory} for help files and examples. You can find additional plug-ins at the on-line \W{http://nsis.sf.net/archive/}{NSIS Archive}.
+The NSIS distribution already included many plug-ins. \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Contrib/}{Contrib folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/archive/}{NSIS Archive}.
 
-You can also create a plug-in of your own if you know programming. \L{../Contrib/ExDLL}{ExDLL} is the basic plug-in example. As all of the plug-ins packed with NSIS and most of the plug-ins in the archive come with source code you can have a look at the \L{../Contrib/}{Contrib directory} and the on-line \W{http://nsis.sf.net/archive/}{NSIS Archive} for more examples.
+You can also create a plug-in in yourself. C/C++ and Delphi header files are already available, see \L{../Contrib/ExDLL}{ExDLL} for a basic plug-in example. Source code of included plug-ins can also be found in the \L{../Contrib/}{Contrib folder}.
 
-You can also customize the dialog resources without modifying or recompiling the source code. Use a resource editor to customize one of the \L{../Contrib/UIs/}{UI files} and use the \R{achangeui}{ChangeUI} command to use the customized resources.
+\H{tutmore} More
 
-A popular user interface for NSIS is the Modern User Interface, with an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a Finish page that allows you to run the application or reboot the system and more. The Modern UI language files make it easy to create a multilingual installer, because they contain translations for every label in the installer.
-
-The Modern UI has a macro system that inserts the code to handle all the new UI elements, so you only have to insert a few lines of code to use it. For more information, check the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} and the \W{../Examples/Modern UI/}{Modern UI Examples}.
+This tutorial has described the basic NSIS features, to learn more about everything NSIS can do, take some time to read this manual.
