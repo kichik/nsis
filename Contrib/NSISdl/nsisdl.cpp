@@ -233,8 +233,6 @@ __declspec(dllexport) void download (HWND   parent,
       if (IsWindowVisible(hwndB)) ShowWindow(hwndB,SW_HIDE);
       else hwndB=NULL;
 
-      wasen=EnableWindow(GetDlgItem(parent,IDCANCEL),1);
-
       lpWndProcOld = (void *)SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
 
       dlg = CreateDialog((HINSTANCE)hModule, 
@@ -307,6 +305,13 @@ __declspec(dllexport) void download (HWND   parent,
         SendDlgItemMessage(dlg, pbid, WM_SETFONT, hFont, 0);
         SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
       }
+
+      // enable the cancel button
+      wasen=EnableWindow(GetDlgItem(parent,IDCANCEL),TRUE);
+      SendMessage(parent, DM_SETDEFID, IDCANCEL, 0);
+      // remove the BS_DEFPUSHBUTTON style from IDOK
+      SendMessage(GetDlgItem(parent, IDOK), BM_SETSTYLE, BS_PUSHBUTTON, TRUE);
+      SetFocus(GetDlgItem(parent,IDCANCEL));
     }
     {
       WSADATA wsaData;
@@ -385,7 +390,7 @@ __declspec(dllexport) void download (HWND   parent,
             
             SetWindowPos(childwnd,0,0,0,orig_childRc.right-orig_childRc.left,orig_childRc.bottom-orig_childRc.top,SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE);
             
-            if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),0);
+            if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),FALSE);
           }
           if ( !error )
             error = "cancel";
