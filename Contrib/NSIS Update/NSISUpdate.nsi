@@ -114,6 +114,10 @@ Function .onInit
     
   temp:
 
+  # Close the NSIS Menu (files in use cannot be updated)
+  
+  Call CloseMenu
+
   # Remove temporary file on next reboot
   
   Delete /REBOOTOK "$TEMP\NSISUpdate.bin"
@@ -265,17 +269,19 @@ Function GetParameters
   
 FunctionEnd
 
-#####################################################################
-# Update (Installer Section)
+Function CloseMenu
 
-Section ""
+  Push $R0
 
-  FindWindow ${TEMP3} "#32770" "" $HWNDPARENT
-  GetDlgItem ${TEMP3} ${TEMP3} 1111
+    FindWindow $R0 "NSIS Menu"
+    IntCmp $R0 0 +2
+      SendMessage $R0 ${WM_CLOSE} 0 0
+
+  Pop $R0
   
-  SetDetailsPrint none
-  
-  # Connect to the internet
+FunctionEnd
+
+Function ConnectInternet
     
   ClearErrors
   Dialer::AttemptConnect
@@ -292,6 +298,20 @@ Section ""
   MessageBox MB_OK|MB_ICONINFORMATION "Please connect to the internet now."
   
   connected:
+  
+FunctionEnd
+
+#####################################################################
+# Update (Installer Section)
+
+Section ""
+
+  FindWindow ${TEMP3} "#32770" "" $HWNDPARENT
+  GetDlgItem ${TEMP3} ${TEMP3} 1111
+  
+  SetDetailsPrint none
+  
+  Call ConnectInternet
 
   !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP1} "io.ini" "Field 2" "State"
   StrCmp ${TEMP1} "1" "" CVS
