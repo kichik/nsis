@@ -73,13 +73,13 @@ Completed
 Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.
 # ^LicenseTextCB
 Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
-# ^LicesnseTextRB
+# ^LicenseTextRB
 Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
 # ^UnLicenseText
 Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.
 # ^UnLicenseTextCB
 Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK
-# ^UnLicesnseTextRB
+# ^UnLicenseTextRB
 Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK
 # ^Custom
 Custom
