@@ -70,13 +70,6 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
   !insertmacro MUI_LANGUAGE "English"
   
-  ;--------------------------------
-  ;Reserve Files
-  
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_SPECIALINI
-  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
-  
 !endif
 
 ;--------------------------------
