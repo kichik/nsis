@@ -110,7 +110,7 @@ Function .onInitDialog
 
     !insertmacro MUI_INNERDIALOG_START 3
        !insertmacro MUI_INNERDIALOG_TEXT ${LANG_ENGLISH} 1041 "Destination Folder"
-       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_ENGLISH} 1041 "Installatie Map"
+       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_DUTCH} 1041 "Installatie Map"
     !insertmacro MUI_INNERDIALOG_STOP 3
 
   !insertmacro MUI_INNERDIALOG_END
