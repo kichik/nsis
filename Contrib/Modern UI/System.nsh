@@ -635,7 +635,7 @@ Var MUI_TEMP2
     
     !ifdef MUI_DIRECTORYPAGE_VARIABLE
       DirVar "${MUI_DIRECTORYPAGE_VARIABLE}"
-      !undef "MUI_DIRECTORYPAGE_VARAIBLE"
+      !undef "MUI_DIRECTORYPAGE_VARIABLE"
     !endif
     
   PageExEnd
