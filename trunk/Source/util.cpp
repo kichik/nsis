@@ -23,14 +23,17 @@ void dopause(void)
 }
 
 // Returns 0 if everything is OK
-// Returns -1 the bitmap file is invalid or has the wrong size
-int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/, int height/*=0*/) {
+// Returns -1 if can't find the file
+// Returns -2 if the file is an invalid bitmap
+// Returns -3 if the size doesn't match
+// Returns -4 if the bpp doesn't match
+int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
   FILE *f = fopen(filename, "rb");
   if (!f) return -1;
 
   if (fgetc(f) != 'B' || fgetc(f) != 'M') {
     fclose(f);
-    return -1;
+    return -2;
   }
 
   if (width != 0) {
@@ -39,7 +42,7 @@ int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/,
     fread(&biWidth, sizeof(LONG), 1, f);
     if (width != biWidth) {
       fclose(f);
-      return -1;
+      return -3;
     }
   }
 
@@ -47,9 +50,20 @@ int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/,
     LONG biHeight;
     fseek(f, 22, SEEK_SET); // Seek to the height member of the header
     fread(&biHeight, sizeof(LONG), 1, f);
+    // Bitmap height can be negative too...
     if (height != abs(biHeight)) {
       fclose(f);
-      return -1; // Bitmap height can be negative too...
+      return -3;
+    }
+  }
+
+  if (maxbpp != 0) {
+    WORD biBitCount;
+    fseek(f, 28, SEEK_SET); // Seek to the height member of the header
+    fread(&biBitCount, sizeof(WORD), 1, f);
+    if (biBitCount > maxbpp) {
+      fclose(f);
+      return -4;
     }
   }
 
@@ -64,7 +78,7 @@ int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/,
   fseek(f, 14, SEEK_SET);
   if (fread(bitmap, 1, dwSize, f) != dwSize) {
     fclose(f);
-    return -1;
+    return -2;
   }
   fclose(f);
 
@@ -316,16 +330,16 @@ BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename) {
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
 
 void *operator new(size_t size) {
-	void *p = malloc(size);
-	if (!p)
-		throw bad_alloc();
-	return p;
+  void *p = malloc(size);
+  if (!p)
+    throw bad_alloc();
+  return p;
 }
 
 void operator delete(void *p) {
-	if (p) free(p);
+  if (p) free(p);
 }
 
 void operator delete [](void *p) {
-	if (p) free(p);
+  if (p) free(p);
 }
