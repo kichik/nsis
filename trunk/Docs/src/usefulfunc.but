@@ -497,7 +497,7 @@
 \c    ;Register the DLL on reboot
 \c
 \c    !ifndef UPGRADEDLL_NOREGISTER
-\c      WriteRegStr HKLM "Software\Microsoft\WindowsurrentVersion\RunOnce" \
+\c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
 \c      "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
 \c    !endif
 \c
