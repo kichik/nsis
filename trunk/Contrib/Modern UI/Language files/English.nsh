@@ -46,7 +46,9 @@
   LangString MUI_TEXT_FINISHED_TITLE ${LANG_ENGLISH} "Finished"
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_ENGLISH} "Setup was completed successfully."
   
-  LangString MUI_MSGTEXT_ABORTWARNING ${LANG_ENGLISH} "Are you sure you want to quit ${NAME} Setup?"
+  !ifdef MUI_ABORTWARNING
+    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_ENGLISH} "Are you sure you want to quit ${NAME} Setup?"
+  !endif
   
   !ifdef MUI_INSTALLOPTIONS
     LangString MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
