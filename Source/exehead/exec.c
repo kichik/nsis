@@ -52,7 +52,7 @@ static WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 {
 	HKEY key;
-	int retval=RegOpenKeyEx(thiskey,lpSubKey,0,0,&key);
+	int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
 	if (retval==ERROR_SUCCESS)
 	{
     // NB - don't change this to static (recursive function)
