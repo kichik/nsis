@@ -33,9 +33,9 @@
 ;--------------------------------
 ; Declaration of User Variables with command DIM, allowed charaters for variables names : [a-z][A-Z][0-9] and '_'
 
-  DIM "un.Info" ; this one can only be used in uninstaller methods
-  DIM "Name"
-  DIM "Serial"
+  Var "un.Info" ; this one can only be used in uninstaller methods
+  Var "Name"
+  Var "Serial"
 
 ;--------------------------------
 ;Installer Sections
