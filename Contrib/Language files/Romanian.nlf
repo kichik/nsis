@@ -12,9 +12,9 @@ NLF v6
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v6
 # Revision by Sorin Sbarnea (sorin@intersol.ro)      v5.1
 # and Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
-# New revision by George Radu (georadu@hotmail.com)
+#New revision by George Radu (georadu@hotmail.com)
 # ^Branding
-NSIS %s
+Nullsoft Install System %s
 # ^SetupCaption
 Instalare $(^Name)
 # ^UninstallCaption
@@ -75,13 +75,13 @@ Terminat
 Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
 # ^LicenseTextCB
 Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
-# ^LicesnseTextRB
+# ^LicenseTextRB
 Cititi cu atentie contractul de licenta inainte de a instala $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
 # ^UnLicenseText
 Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, apasati butonul De acord.
 # ^UnLicenseTextCB
 Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati casuta de mai jos. $_CLICK
-# ^UnLicesnseTextRB
+# ^UnLicenseTextRB
 Cititi cu atentie contractul de licenta inainte de a elimina $(^NameDA). Daca acceptati termenii contractului de licenta, selectati prima optiune de mai jos. $_CLICK
 # ^Custom
 Nonstandard
@@ -122,9 +122,9 @@ Aceasta aplicatie va elimina $(^NameDA) din computerul dumneavoastra. $_CLICK
 # ^UninstallingSubText
 Eliminare din:
 # ^FileError
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Anulare pentru oprirea instalarii,\r\nReincercare pentru a mai Incerca o data scrierea fisierului, \r\nIgnorare pentru a trece peste acest fisier
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Abanbonare pentru oprirea instalarii,\r\nReincercare pentru a mai Incerca o data scrierea fisierului, \r\nIgnorare pentru a trece peste acest fisier
 # ^FileError_NoIgnore
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincercare pentru a mai incerca, sau\r\nAnulare pentru oprirea instalarii
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincercare pentru a mai incerca, sau\r\nAbanbonare pentru oprirea instalarii
 # ^CantWrite
 "Scrierea nu a fost posibila: "
 # ^CopyFailed
@@ -184,7 +184,7 @@ Copiere detalii in clipboard
 # ^LogInstall
 Jurnal proces de instalare
 # ^Byte
-B
+O
 # ^Kilo
 K
 # ^Mega
