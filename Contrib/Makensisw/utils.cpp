@@ -55,39 +55,11 @@ void ClearLog(HWND hwnd) {
 
 char g_output_exe[1024];
 char g_input_script[1024];
-BOOL g_input_found;
 extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
-	if (!str || !*str) return;
-	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-	char *existing_text=(char*)GlobalAlloc(GPTR,len+lstrlen(str)+3);//3=\r\n\0
-	if (!existing_text) return;
-	existing_text[0]=0;
-	GETTEXTEX gt={0};
-	gt.cb = len;
-	gt.codepage = CP_ACP;
-	gt.flags = GT_DEFAULT;
-	SendDlgItemMessage(hwnd,IDC_LOGWIN,EM_GETTEXTEX,(WPARAM)&gt,(LPARAM)existing_text);
-	lstrcat(existing_text,str);
-	if (!g_input_found) {
-		char *p1=my_strstr(existing_text,"\r\nProcessing script file: \"");
-		if (p1) {
-			while (*p1++ != '"');
-			char *p2=my_strstr(p1,"\r\n");
-			lstrcpyn(g_input_script,p1,p2-p1);
-			g_input_found=TRUE;
-		}
-	}
-	if (my_strstr(existing_text," warning:")||my_strstr(existing_text," warnings:")) {
-		g_warnings = TRUE;
-	}
-	SetDlgItemText(hwnd, IDC_LOGWIN, existing_text);
-	SendDlgItemMessage(hwnd, IDC_LOGWIN,EM_SETSEL,lstrlen(existing_text),lstrlen(existing_text));
-	SendDlgItemMessage(hwnd, IDC_LOGWIN,EM_SCROLLCARET,0,0);
-	GlobalFree(existing_text);
+	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 }
-
 
 void ErrorMessage(HWND hwnd,const char *str) {
 	if (!str) return;
@@ -99,7 +71,6 @@ void ErrorMessage(HWND hwnd,const char *str) {
 void DisableItems(HWND hwnd) {
 	g_output_exe[0]=0;
 	g_input_script[0]=0;
-	g_input_found=FALSE;
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
 	EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
 	HMENU m = GetMenu(hwnd);
@@ -129,11 +100,20 @@ void EnableItems(HWND hwnd) {
 			lstrcpy(g_output_exe,p2);
 		}
 	}
+	p=my_strstr(existing_text,"\r\nProcessing script file: \"");
+	if (p) {
+		while (*p++ != '"');
+		char *p2=my_strstr(p,"\r\n");
+		lstrcpyn(g_input_script,p,p2-p);
+	}
+	if (my_strstr(existing_text, " warning:") || my_strstr(existing_text, " warnings:")) {
+		g_warnings = TRUE;
+	}
 
 	HMENU m = GetMenu(hwnd);
 	if (g_output_exe[0]) {
-  		EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
-  		EnableMenuItem(m,IDM_TEST,MF_ENABLED);
+			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
+			EnableMenuItem(m,IDM_TEST,MF_ENABLED);
 	}
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),1);
 	EnableMenuItem(m,IDM_SAVE,MF_ENABLED);
@@ -183,7 +163,7 @@ void SaveWindowPos(HWND hwnd) {
 	p.length = sizeof(p);
 	GetWindowPlacement(hwnd, &p);
 	if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-        RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
+				RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
 		RegCloseKey(hKey);
 	}
 }
