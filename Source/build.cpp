@@ -1715,7 +1715,6 @@ again:
 #define LS(inst, uninst) inst
 #endif
 
-    DefineInnerLangString(LS(NLF_CAPTION, NLF_UCAPTION));
     DefineInnerLangString(NLF_BRANDING);
 
     if (!cur_pages->getlen()) {
@@ -2211,6 +2210,7 @@ int CEXEBuild::write_output(void)
       build_uninst.flags|=build_header.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
 
       set_uninstall_mode(1);
+      DefineInnerLangString(NLF_UCAPTION);
       if (resolve_coderefs("uninstall"))
         return PS_ERROR;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT 
@@ -2227,6 +2227,7 @@ int CEXEBuild::write_output(void)
   }
 #endif
 
+  DefineInnerLangString(NLF_CAPTION);
   if (resolve_coderefs("install"))
     return PS_ERROR;
 
