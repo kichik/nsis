@@ -163,7 +163,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETFILEATTRIBUTES,"SetFileAttributes",2,0,"file attribute[|attribute[...]]\n    attribute=(NORMAL|ARCHIVE|HIDDEN|OFFLINE|READONLY|SYSTEM|TEMPORARY|0)"},
 {TOK_SETFONT,"SetFont",2,1,"[/LANG=lang_id] font_face_name font_size"},
 {TOK_SETOUTPATH,"SetOutPath",1,0,"output_path"},
-{TOK_SETOVERWRITE,"SetOverwrite",1,0,"(on|off|try|ifnewer)"},
+{TOK_SETOVERWRITE,"SetOverwrite",1,0,"on|off|try|ifnewer|ifdiff"},
 {TOK_SETPLUGINUNLOAD,"SetPluginUnload",1,0,"(manual|alwaysoff)"},
 {TOK_SETREBOOTFLAG,"SetRebootFlag",1,0,"true|false"},
 {TOK_SETSHELLVARCONTEXT,"SetShellVarContext",1,0,"all|current"},
