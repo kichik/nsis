@@ -120,9 +120,9 @@ $(^NameDA) verrà disinstallato dalla cartella seguente. $_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Annulla per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Termina per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
 # ^FileError_NoIgnore
-Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Riprova per riprovare a scrivere il file, oppure\r\nsu Annulla per interrompere l'installazione
+Errore nell'apertura del file per la scrittura: \r\n\t"$0"\r\nSeleziona Riprova per riprovare a scrivere il file, oppure\r\nsu Termina per interrompere l'installazione
 # ^CantWrite
 "Impossibile scrivere: "
 # ^CopyFailed
