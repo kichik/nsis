@@ -21,14 +21,18 @@
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+       
+    ;French
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\French.nsh"
+    
+    ;German
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\German.nsh"
     
     ;Dutch
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Dutch.nsh"
-    
-    ;French
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\French.nsh"
     
     ;Greek
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
@@ -36,8 +40,9 @@
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
-  Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_GERMAN} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
   OutFile "MultiLanguage.exe"
 
@@ -46,28 +51,33 @@
 
   ;License dialog
   LicenseData /LANG=${LANG_ENGLISH} "License.txt"
-  LicenseData /LANG=${LANG_DUTCH} "License.txt"
   LicenseData /LANG=${LANG_FRENCH} "License.txt"
+  LicenseData /LANG=${LANG_GERMAN} "License.txt"
+  LicenseData /LANG=${LANG_DUTCH} "License.txt"
   LicenseData /LANG=${LANG_GREEK} "License.txt"
 
   ;Component-select dialog
     ;Titles
     LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
-    LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_GERMAN} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
     LangString TITLE_SecCreateUninst ${LANG_ENGLISH} "Uninstaller (English)"
-    LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Uninstaller (Dutch)"
     LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Uninstaller (French)"
+    LangString TITLE_SecCreateUninst ${LANG_GERMAN} "Uninstaller (German)"
+    LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Uninstaller (Dutch)"
     LangString TITLE_SecCreateUninst ${LANG_GREEK} "Uninstaller (Greek)"
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
-    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
     LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
+    LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
+    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
     LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
     LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Uninstaller: English description"
-    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Uninstaller: Dutch description"
     LangString DESC_SecCreateUninst ${LANG_FRENCH} "Uninstaller: French description"
+    LangString DESC_SecCreateUninst ${LANG_GERMAN} "Uninstaller: German description"
+    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Uninstaller: Dutch description"
     LangString DESC_SecCreateUninst ${LANG_GREEK} "Uninstaller: Greek description"
 
   ;Folder-select dialog
@@ -108,7 +118,7 @@ SectionEnd
 
 Function .onInit
 
-  LangDLL::LangDialog "Installer Language" "Please select a language." "4F" "English" "${LANG_ENGLISH}" "French" "${LANG_FRENCH}" "Dutch" "${LANG_DUTCH}" "Greek" "${LANG_GREEK}" "8" "Tahoma" ;4 is the number of lanugages, F means change font
+  LangDLL::LangDialog "Installer Language" "Please select a language." "5F" "English" "${LANG_ENGLISH}" "French" "${LANG_FRENCH}" "German" "${LANG_GERMAN}" "Dutch" "${LANG_DUTCH}" "Greek" "${LANG_GREEK}" "8" "Tahoma" ;5 is the number of lanugages, F means change font
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
