@@ -210,7 +210,7 @@
 
   Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
-
+  
 !macroend
 
 ;--------------------------------
@@ -293,62 +293,82 @@
 !macroend
 
 ;--------------------------------
-;BASIC FUNCTIONS
+;FUNCTIONS
 
-!macro MUI_BASICFUNCTIONS
+!macro MUI_FUNCTIONS_GUIINIT
 
-  !ifdef MUI_LICENSEPAGE
-    Page license SetLicense SetLicenseDialog
-
-    Function SetLicense
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    FunctionEnd
-
-    Function SetLicenseDialog
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    FunctionEnd
-  !endif
-
-  !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog
-
-    Function SetComponents
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    FunctionEnd
-
-    Function SetComponentsDialog
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    FunctionEnd
-  !endif
-
-  !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog
-
-    Function SetDirectory
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-    FunctionEnd
-
-    Function SetDirectoryDialog
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    FunctionEnd
-  !endif
-
-  Page instfiles SetInstFiles
-
-  Function SetInstFiles
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-  FunctionEnd
+  !verbose 3
 
   Function .onGUIInit
     !insertmacro MUI_GUIINIT
   FunctionEnd
 
-!verbose 4
+  !verbose 4
 
 !macroend
 
-!macro MUI_FUNCTION_DESCRIPTION_START
+!macro MUI_FUNCTIONS_LICENSEPAGE SETLICENSE SETLICENSEDIALOG
+
+  !verbose 3
+
+  Function "${SETLICENSE}"
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
+  FunctionEnd
+
+  Function "${SETLICENSEDIALOG}"
+    !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
+  FunctionEnd
+  
+  !verbose 4
+    
+!macroend
+
+!macro MUI_FUNCTIONS_COMPONENTSPAGE SETCOMPONENTS SETCOMPONENTSDIALOG
+
+  !verbose 3
+
+  Function "${SETCOMPONENTS}"
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+  FunctionEnd
+
+  Function "${SETCOMPONENTSDIALOG}"
+    !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+    !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
+  FunctionEnd
+  
+  !verbose 4
+    
+!macroend
+
+!macro MUI_FUNCTIONS_DIRECTORYPAGE SETDIRECTORYPAGE SETDIRECTORYDIALOGPAGE
+
+  !verbose 3
+
+  Function "${SETDIRECTORYPAGE}"
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+  FunctionEnd
+
+  Function "${SETDIRECTORYDIALOGPAGE}"
+    !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+  FunctionEnd
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_FUNCTIONS_INSTFILESPAGE SETINSTFILES
+
+  !verbose 3
+
+  Function "${SETINSTFILES}"
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
+  FunctionEnd
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_FUNCTIONS_DESCRIPTION_START
 
   !verbose 3
 
@@ -359,7 +379,7 @@
 
 !macroend
 
-!macro MUI_FUNCTION_DESCRIPTION_END
+!macro MUI_FUNCTIONS_DESCRIPTION_END
 
   !verbose 3
 
@@ -370,7 +390,7 @@
 
 !macroend
 
-!macro MUI_FUNCTION_ABORTWARNING
+!macro MUI_FUNCTIONS_ABORTWARNING
 
   !verbose 3
 
@@ -382,26 +402,87 @@
 
 !macroend
 
-!macro MUI_UNBASICFUNCTIONS
+!macro MUI_UNFUNCTIONS_GUIINIT
 
-!verbose 3
-
-UninstPage uninstConfirm un.SetUninstConfirm
-UninstPage instfiles un.SetInstFiles
-
-  Function un.SetUninstConfirm
-    !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-  FunctionEnd
-
-  Function un.SetInstFiles
-    !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-  FunctionEnd
+  !verbose 3
 
   Function un.onGUIInit
     !insertmacro MUI_GUIINIT
   FunctionEnd
 
-!verbose 4
+  !verbose 4
+
+!macroend
+
+!macro MUI_UNFUNCTIONS_CONFIRMPAGE UNSETUNINSTCONFIRM
+
+  !verbose 3
+
+  Function "${UNSETUNINSTCONFIRM}"
+    !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
+  FunctionEnd
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_UNFUNCTIONS_INSTFILESPAGE UNSETINSTFILES
+
+  !verbose 3
+
+  Function ${UNSETINSTFILES}
+    !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
+  FunctionEnd
+  
+  !verbose 4
+  
+!macroend
+
+;--------------------------------
+;BASIC FUNCTIONS
+
+!macro MUI_FUNCTIONS_BASIC
+
+  !verbose 3
+
+  !ifdef MUI_LICENSEPAGE
+    Page license SetLicense SetLicenseDialog
+    !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
+  !endif
+
+  !ifdef MUI_COMPONENTSPAGE
+    Page components SetComponents SetComponentsDialog
+    !insertmacro MUI_FUNCTIONS_COMPONENTSPAGE SetComponents SetComponentsDialog
+  !endif
+
+  !ifdef MUI_DIRECTORYPAGE
+    Page directory SetDirectory SetDirectoryDialog
+    !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
+  !endif
+
+  Page instfiles SetInstFiles
+
+  !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
+
+  !insertmacro MUI_FUNCTIONS_GUIINIT
+  
+  !verbose 4
+
+!macroend
+
+!macro MUI_UNFUNCTIONS_BASIC
+
+  !verbose 3
+
+  UninstPage uninstConfirm un.SetUninstConfirm
+  UninstPage instfiles un.SetInstFiles
+
+  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
+  !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
+
+  !insertmacro MUI_UNFUNCTIONS_GUIINIT
+
+  !verbose 4
 
 !macroend
 

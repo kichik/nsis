@@ -217,13 +217,13 @@ Function .onInit
 
 FunctionEnd
 
-!insertmacro MUI_BASICFUNCTIONS
+!insertmacro MUI_FUNCTIONS_BASIC
 
-!insertmacro MUI_FUNCTION_DESCRIPTION_START
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
-!insertmacro MUI_FUNCTION_ABORTWARNING
+!insertmacro MUI_FUNCTIONS_ABORTWARNING
 
 ;--------------------------------
 ;Uninstaller Section
@@ -251,4 +251,4 @@ Function un.onInit
   ReadRegStr $LANGUAGE HKCU "Software\${NAME}" "Installer Language"
 FunctionEnd
 
-!insertmacro MUI_UNBASICFUNCTIONS
+!insertmacro MUI_UNFUNCTIONS_BASIC

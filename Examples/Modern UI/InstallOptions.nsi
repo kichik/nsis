@@ -29,6 +29,7 @@
   OutFile "InstallOptions.exe"
   Name "${NAME} ${VERSION}"
   
+  ;Page order
   !ifdef MUI_LICENSEPAGE
     Page license SetLicense SetLicenseDialog
   !endif
@@ -128,9 +129,7 @@ SectionEnd
 ;Installer Functions
 
 !ifdef MUI_LICENSEPAGE
-  Function SetLicense
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-  FunctionEnd
+  !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
 !endif
 
 Function SetCustomA
@@ -144,15 +143,11 @@ Function SetCustomB
 FunctionEnd
   
 !ifdef MUI_COMPONENTSPAGE
-  Function SetComponents
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-  FunctionEnd
+  !insertmacro MUI_FUNCTIONS_COMPONENTSPAGE SetComponents SetComponentsDialog
 !endif
   
 !ifdef MUI_DIRECTORYPAGE
-  Function SetDirectory
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-  FunctionEnd
+  !insertmacro MUI_FUNCTIONS_DIRECTORYPAGE SetDirectory SetDirectoryDialog
 !endif
 
 Function SetCustomC
@@ -160,37 +155,16 @@ Function SetCustomC
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
 
-Function SetInstFiles
-  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-FunctionEnd
-          
-Function SetLicenseDialog
-  !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-FunctionEnd
- 
-Function SetComponentsDialog
-  !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-  !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-FunctionEnd
-  
-Function SetDirectoryDialog
-  !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-FunctionEnd
-  
-Function .onGUIInit
-  !insertmacro MUI_GUIINIT
-FunctionEnd
+!insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
 
-Function .onMouseOverSection
-  !insertmacro MUI_DESCRIPTION_INIT
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
- !insertmacro MUI_DESCRIPTION_END
-FunctionEnd
+!insertmacro MUI_FUNCTIONS_GUIINIT
 
-Function .onUserAbort
-  !insertmacro MUI_ABORTWARNING
-FunctionEnd
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+
+!insertmacro MUI_FUNCTIONS_ABORTWARNING
 
 ;--------------------------------
 ;Uninstaller
@@ -211,16 +185,12 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
-Function un.SetUninstConfirm
-  !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-FunctionEnd
- 
-Function un.SetInstFiles
-  !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-FunctionEnd
+  UninstPage uninstConfirm un.SetUninstConfirm
+  UninstPage instfiles un.SetInstFiles
 
-Function un.onGUIInit
-  !insertmacro MUI_GUIINIT 
-FunctionEnd
+  !insertmacro MUI_UNFUNCTIONS_CONFIRMPAGE un.SetUninstConfirm
+  !insertmacro MUI_UNFUNCTIONS_INSTFILESPAGE un.SetInstFiles
+
+  !insertmacro MUI_UNFUNCTIONS_GUIINIT
 
 ;eof
