@@ -282,12 +282,10 @@ void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   if (strcmp(szFaceName, "MS Shell Dlg")) {
      // not MS Shell Dlg
     m_dwStyle &= ~DS_SHELLFONT;
-    m_bExtended = false;
   }
   else {
     // MS Shell Dlg
     m_dwStyle |= DS_SHELLFONT;
-    m_bExtended = true;
   }
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) delete [] m_szFont;
