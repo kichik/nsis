@@ -539,6 +539,7 @@ Section "System" SecPluginsSystem
   File ..\Contrib\System\*.nsh
   File ..\Contrib\System\*.nsi
   File ..\Contrib\System\*.txt
+  File ..\Contrib\System\*.html
 SectionEnd
 
 Section "StartMenu" SecPluginsStartMenu
@@ -1058,17 +1059,16 @@ Section -post
   CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
 
-  Push "MakeNSISW"
+  Push MakeNSISW
   Call AddWorkspaceToStartMenu
 
   ; ExDLL
-  Push "ExDLL"
+  Push ExDLL
   Call AddWorkspaceToStartMenu
 
   ; InstallOptions
-  Push "InstallOptions\Readme.html"
-  Push "InstallOptions Readme"
-  Call AddContribToStartMenu
+  Push InstallOptions
+  Call AddReadmeToStartMenu
 
   Push "InstallOptions\io.dsw"
   Push "Source\InstallOptions project workspace"
@@ -1082,9 +1082,8 @@ Section -post
   Call AddWorkspaceToStartMenu
 
   ; Modern UI
-  Push "Modern UI\Readme.html"
-  Push "Modern UI Readme"
-  Call AddContribToStartMenu
+  Push "Modern UI"
+  Call AddReadmeToStartMenu
 
   ; Splash
   Push Splash
@@ -1160,9 +1159,8 @@ Section -post
   Call AddContribToStartMenu
 
   ; VPatch
-  Push "VPatch\Readme.html"
-  Push "VPatch Readme"
-  Call AddContribToStartMenu
+  Push VPatch
+  Call AddReadmeToStartMenu
 
   no_startshortcuts:
 !endif
@@ -1384,8 +1382,14 @@ Function AddReadmeToStartMenu
   IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
     Push $0\$0.txt
     Goto create
-  IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
+  IfFileExists $INSTDIR\Contrib\$0\$0.html 0 +3
+    Push $0\$0.html
+    Goto create
+  IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 +3
     Push $0\Readme.txt
+    Goto create
+  IfFileExists $INSTDIR\Contrib\$0\Readme.html 0 done
+    Push $0\Readme.html
   create:
     Push "$0 Readme"
     Call AddContribToStartMenu
