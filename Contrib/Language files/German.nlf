@@ -97,7 +97,7 @@ Deinstallations-Typ bestimmen:
 # ^UnComponentsSubText2_NoInstTypes
 Wählen Sie die Komponenten aus, die Sie entfernen möchten:
 # ^UnComponentsSubText2
-oder wählen Sie zusätzliche Komponenten aus die Sie entfernen möchten:
+oder wählen Sie zusätzliche Komponenten aus, die Sie entfernen möchten:
 # ^DirText
 $(^Name) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
 # ^DirSubText
