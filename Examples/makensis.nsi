@@ -117,6 +117,7 @@ Section "Script Examples" SecExample
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
   Delete $INSTDIR\functions.htm
+  File ..\Examples\cvsdata.nsi
   File ..\Examples\makensis.nsi
   File ..\Examples\example1.nsi
   File ..\Examples\example2.nsi
