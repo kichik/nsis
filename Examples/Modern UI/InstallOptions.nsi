@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.19
+;NSIS Modern Style UI version 1.20
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
@@ -18,6 +18,7 @@
 !define TEMP2 $R1
 
 ;--------------------------------
+;Configuration
 
   ;General
   Name "${NAME} ${VERSION}"
@@ -41,6 +42,13 @@
 
   ;Uninstaller
   UninstallText "This will uninstall ${NAME} from your system."
+
+  ;Things that need to be extracted on startup (keep these lines before any File command!)
+  ;Use ReserveFile for your own Install Options ini files too!
+  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+  ReserveFile "iniA.ini"
+  ReserveFile "iniB.ini"
+  ReserveFile "iniC.ini"
 
 ;--------------------------------
 ;Installer Sections

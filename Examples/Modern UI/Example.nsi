@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.19
+;NSIS Modern Style UI version 1.20
 ;Example Script
 ;Written by Joost Verburg
 
@@ -16,6 +16,7 @@
 !define TEMP2 $R1
 
 ;--------------------------------
+;Configuration
 
   ;General
   Name "${NAME} ${VERSION}"
