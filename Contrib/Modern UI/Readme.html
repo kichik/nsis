@@ -115,7 +115,12 @@ a:hover
  selection page.</p>
 <p class="text">Because of the macro system with support for plugins
 and the special language files, writing scripts for the Modern UI is
-easy. Read this document for more info.</p>
+easy.</p>
+<p class="text"><span class="bold">Important: </span>Because the Modern
+UI has its own macro system, its own default settings and a lot of
+new features, the interface configuration works differently. So you
+should not use commands like Icon, BrandingText etc. Read this document
+for more info.</p>
 <p class="header">Screenshots</p>
 <p class="text"><img src="Screenshot.png" width="503" height="393" alt="" /></p>
 <p class="text"><img src="Screenshot2.png" width="503" height="393" alt="" /></p>
@@ -542,8 +547,8 @@ MUI_CUSTOMFUNCTION_UNGUIINIT
 </p>
 <p class="text">
 <span class="bold">Welcome Page</span><br />
-MUI_CUSTOMFUNCTION_WELCOME_PRE<br />
-MUI_CUSTOMFUNCTION_WELCOME_SHOW - ${MUI_TEMP1} contains HWND of Welcome dialog
+MUI_CUSTOMFUNCTION_WELCOME_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
+MUI_CUSTOMFUNCTION_WELCOME_SHOW - ${MUI_HWND} contains HWND of Welcome dialog
 </p>
 <p class="text">
 <span class="bold">License Page</span><br />
@@ -565,7 +570,7 @@ MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
 </p>
 <p class="text">
 <span class="bold">Start Menu Folder Page</span><br />
-MUI_CUSTOMFUNCTION_STARTMENU_PRE
+MUI_CUSTOMFUNCTION_STARTMENU_PRE<br />
 MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
 </p>
 <p class="text">
@@ -576,8 +581,8 @@ MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="text">
 <span class="bold">Finish Page</span><br />
-MUI_CUSTOMFUNCTION_FINISH_PRE<br />
-MUI_CUSTOMFUNCTION_FINISH_SHOW - ${MUI_TEMP1} contains HWND of Finish dialog
+MUI_CUSTOMFUNCTION_FINISH_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
+MUI_CUSTOMFUNCTION_FINISH_SHOW - ${MUI_HWND} contains HWND of Finish dialog
 </p>
 <p class="text">
 <span class="bold">Installer Abort</span><br />
@@ -597,7 +602,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.64 - April 21, 2003
+<li>1.64 - April 25, 2003
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
     let the user accept the agreement or not</li>
@@ -607,6 +612,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>Header text for aborted installation</li>
     <li>New macro's: get language for uninstaller, delete shortcuts</li>
     <li>Language specific fonts</li>
+    <li>Welcome/Finish page INI files can be modified in pre functions</li>
     <li>Language files have to be updated</li>
   </ul></li>
 </ul>
