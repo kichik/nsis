@@ -3,6 +3,7 @@ nsExec
 nsExec will execute command-line based programs and capture the output
 without opening a dos box.
 
+
 Usage
 -----
 nsExec::Exec [/TIMEOUT=x] path
@@ -15,13 +16,18 @@ Both functions are the same except ExecToLog will print the output
 to the logwindow.
 
 The timeout value is optional and is used to set the time in 
-milliseconds for the dll to wait for the process to return
+milliseconds for the plugin to wait for the process to return
 before it quits.
+
 
 Return Value
 ------------
 If nsExec is unable to execute the process, it will return "error"
-on the top of the stack, else it returns "success".
+on the top of the stack, else it returns the return code from the
+executed process.
 
 
+Copyright Info
+--------------
 Copyright (c) 2002 Robert Rainwater
+Thanks to Justin Frankel and Amir Szekely
