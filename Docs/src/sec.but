@@ -58,21 +58,21 @@ Gets the Size of the section specified by section_index and stores the value in 
 
 \c inst_type_idx
 
-Sets the current InstType. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
+Sets the current InstType. inst_type_idx should be between 0 and 31. The Error Flag is \\<b\\>not\\</b\\> set if an out of range InstType was used.
 
-SetCurInstType currently only works when the there is a components page.
+SetCurInstType currently only works when the components page is active (\R{pagecallbacks_explain}{show function}, \R{pagecallbacks_explain}{leave function}, \R{onselchange}{.onSelChange} and \R{onmouseoversection}{.onMouseOverSection}).
 
 \S2{sgetcurinsttype} GetCurInstType
 
 \c user_var
 
-Get the current InstType and stores the Value in the given User Variable. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the custom installation type was selected.
+Get the current InstType and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of $\{NSIS_MAX_INST_TYPES\} (32 by default) means that the custom install type was selected.
 
 \S2{sinsttypesettext} InstTypeSetText
 
 \c inst_type_idx text
 
-Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first installation type's index is 0.
+Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first install type's index is 0.
 
 \S2{sinsttypegettext} InstTypeGetText
 
