@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.68
+;NSIS Modern User Interface version 1.69
 ;Basic Example Script
 ;Written by Joost Verburg
 
@@ -11,13 +11,13 @@
 ;Configuration
 
   ;General
-  Name "Modern UI Test 1.68"
+  Name "Modern UI Test 1.69"
   OutFile "Basic.exe"
 
-  ;Folder selection page
+  ;Default installation folder
   InstallDir "$PROGRAMFILES\Modern UI Test"
   
-  ;Get install folder from registry if available
+  ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
@@ -50,7 +50,7 @@ Section "Dummy Section" SecDummy
   
   ;ADD YOUR OWN STUFF HERE!
   
-  ;Store install folder
+  ;Store installation folder
   WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
   
   ;Create uninstaller
@@ -61,12 +61,14 @@ SectionEnd
 ;--------------------------------
 ;Descriptions
 
+  ;Language strings
   LangString DESC_SecDummy ${LANG_ENGLISH} "A test section."
 
+  ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
- 
+
 ;--------------------------------
 ;Uninstaller Section
 

@@ -632,7 +632,7 @@ language stored in the registry will be selected by default.</p>
 </div>
 </div>
 <h2>6. Reserve files</h2>
-<p>If you are using solid compression (by default, solid compression is enabled for BZip2 and
+<p>If you are using solid compression (by default, solid compression is enabled for BZIP2 and
 LZMA), it's important that files which are being extracted in init- or page functions function are
 located before other files in the data block, because this will make your installer faster.</p>
 <p>If there are File commands in your sections or functions above the init- or page functions, add
@@ -668,15 +668,7 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 </pre>
 <p>For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN and
-MUI_UNFUNCTIONS_DESCRIPTION_END macros:</p>
-<pre>
-ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
-ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
-
-!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
-!insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
-!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu Folder page
-</pre>
+MUI_UNFUNCTIONS_DESCRIPTION_END macros.</p>
 <h1><a name="customPages" id="customPages">Custom pages</a></h1>
 <h2>Custom page commands</h2>
 <p>If you want add custom pages to your installer, you should insert your own page commands between
@@ -823,14 +815,10 @@ inner dialog</li>
 </div>
 <h1>Version history</h1>
 <ul>
-<li>1.68 - November 24, 2003
+<li>1.69 - January 7, 2004
 <ul>
-<li>New settings for extra space for title and text on Welcome page and Finish page</li>
-<li>Improved handling of verbose settings. Define MUI_VERBOSE the set the Modern UI verbose level
-(1-4).</li>
-<li>Language file string for uninstaller reboot information</li>
-<li>Setting for folder validation in leave function</li>
-<li>Fixed finish page text settings for multiple pages</li>
+<li>Fixed top text on uninstaller license page</li>
+<li>All uninstaller pages work without installer pages</li>
 </ul>
 </li>
 </ul>
@@ -844,7 +832,7 @@ Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS to make this possible.<
 Forum</a>.</p>
 <h1>License</h1>
 <pre>
-Copyright &copy; 2002-2003 Joost Verburg
+Copyright &copy; 2002-2004 Joost Verburg
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages

@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.68
+;NSIS Modern User Interface version 1.69
 ;Multilingual Example Script
 ;Written by Joost Verburg
 
@@ -11,13 +11,13 @@
 ;Configuration
 
   ;General
-  Name "Modern UI Test 1.68"
+  Name "Modern UI Test 1.69"
   OutFile "MultiLanguage.exe"
 
-  ;Folder selection page
+  ;Default installation folder
   InstallDir "$PROGRAMFILES\Modern UI Test"
   
-  ;Get install folder from registry if available
+  ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
@@ -89,7 +89,8 @@
   
   ;These files should be inserted before other files in the data block
   ;Keep these lines before any File command
-  ;Only for BZIP2 (solid) compression
+  ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
+  
   !insertmacro MUI_RESERVEFILE_LANGDLL
 
 ;--------------------------------
@@ -101,7 +102,7 @@ Section "Dummy Section" SecDummy
   
   ;ADD YOUR OWN STUFF HERE!
   
-  ;Store install folder
+  ;Store installation folder
   WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
   
   ;Create uninstaller
@@ -121,11 +122,13 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-  ;USE A LANGSTRING IF YOU WANT A DESCRIPTION TO BE LANGUAGE SPECIFIC
+  ;USE A LANGUAGE STRING IF YOU WANT YOUR DESCRIPTIONS TO BE LANGAUGE SPECIFIC
 
+  ;Assign descriptions to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} "A test section."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
  
 ;--------------------------------
 ;Uninstaller Section
