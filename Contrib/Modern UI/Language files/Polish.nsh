@@ -1,78 +1,54 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.4
+;Compatible with Modern UI 1.5
 
 ;Language: Polish (1045)
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
 
 ;--------------------------------
-!verbose 3
 
-!ifndef MUI_POLISH_USED
+!insertmacro MUI_LANGUAGEFILE_BEGIN "POLISH"
 
-!define MUI_POLISH_USED
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Polski" ;Name of the language in the language itself
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
-
-  !define MUI_POLISH_LANGNAME "Polski" ;Name of the language in the language itself (English, Deutsch, Français etc.)
-
-  ;INSTALLER
-  Name /LANG=${LANG_POLISH} "${MUI_NAME}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
-  !ifdef MUI_LICENSEPAGE
-    LicenseText /LANG=${LANG_POLISH} "Proszê naduœ klawisz Page Down, aby zobaczyæ resztê umowy."
-    LangString MUI_TEXT_LICENSE_TITLE ${LANG_POLISH} "Umowa licencyjna"  
-    LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_POLISH} "Proszê przejrzy warunki licencji przed instalacj¹ ${MUI_PRODUCT}."
-    LangString MUI_INNERTEXT_LICENSE ${LANG_POLISH} "Je¿eli akceptujesz wszystkie warunki umnowy wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ ${MUI_PRODUCT}."
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Umowa licencyjna"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Proszê przejrzy warunki licencji przed instalacj¹ ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Proszê naduœ klawisz Page Down, aby zobaczyæ resztê umowy."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Je¿eli akceptujesz wszystkie warunki umnowy wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ ${MUI_PRODUCT}."
   
-  !ifdef MUI_COMPONENTSPAGE
-    ComponentText /LANG=${LANG_POLISH} "Zaznacz komponenty, które chcesz zainstalowaæ oraz odznacz komponenty, które nie maj¹ byæ zainstalowane. Kliknij przycisk Dalej, aby kontynuowaæ."
-    LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_POLISH} "Wybór komponentów"
-    LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_POLISH} "Wybierz komponenty ${MUI_PRODUCT}, które chcesz zainstalowaæ."
-    LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_POLISH} "Opis"
-    LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_POLISH} "Przesuñ kursor myszy nad komponent, aby zobaczyæ jego opis."
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Wybór komponentów"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Wybierz komponenty ${MUI_PRODUCT}, które chcesz zainstalowaæ."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "Zaznacz komponenty, które chcesz zainstalowaæ oraz odznacz komponenty, które nie maj¹ byæ zainstalowane. Kliknij przycisk Dalej, aby kontynuowaæ."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Opis"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Przesuñ kursor myszy nad komponent, aby zobaczyæ jego opis."
   
-  !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_POLISH} "Instalator zainstaluje ${MUI_PRODUCT} do nastêpuj¹cego folderu.$\r$\n$\r$\nAby zainstalowaæ w tym folderze kliknij Instaluj. Aby zainstalowaæ w innym folderze kliknij Przegl¹daj i wybierz inny folder."
-    LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_POLISH} "Wybór miejsca instalacji"
-    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_POLISH} "Wybierz folder, w którym ma byæ zainstalowany ${MUI_PRODUCT}."
-    LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_POLISH} "Folder docelowy"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Wybór miejsca instalacji"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Wybierz folder, w którym ma byæ zainstalowany ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Instalator zainstaluje ${MUI_PRODUCT} do nastêpuj¹cego folderu.$\r$\n$\r$\nAby zainstalowaæ w tym folderze kliknij Instaluj. Aby zainstalowaæ w innym folderze kliknij Przegl¹daj i wybierz inny folder."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Folder docelowy"
   
-  LangString MUI_TEXT_INSTALLING_TITLE ${LANG_POLISH} "Instaluje"
-  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_POLISH} "Proszê czekaæ, kiedy ${MUI_PRODUCT} jest instalowany."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Instaluje"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Proszê czekaæ, kiedy ${MUI_PRODUCT} jest instalowany."
   
-  LangString MUI_TEXT_FINISHED_TITLE ${LANG_POLISH} "Zakoñczono"
-  LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_POLISH} "Instalacja zakoñczona powodzeniem."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "Zakoñczono"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "Instalacja zakoñczona powodzeniem."
   
-  !ifdef MUI_ABORTWARNING
-    LangString MUI_TEXT_ABORTWARNING ${LANG_POLISH} "Czy na pewno chcesz wyjœæ z instalatora ${MUI_PRODUCT}?"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Czy na pewno chcesz wyjœæ z instalatora ${MUI_PRODUCT}?"
   
-  !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_TEXT_SETUPCAPTION ${LANG_POLISH} "${MUI_PRODUCT} ${MUI_VERSION} Instalator"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "${MUI_NAME} Instalator"
   
   
-  ;UNINSTALLER
-  
-  !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_POLISH} "Deinstalator odinstaluje ${MUI_PRODUCT} z twojego systemu."
-    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_POLISH} "Odinstaluj ${MUI_PRODUCT}"
-    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_POLISH} "Usuñ ${MUI_PRODUCT} z twojego systemu."
-  
-    LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_POLISH} "Odinstalowuje"
-    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_POLISH} "Proszê czekaæ, kiedy ${MUI_PRODUCT} jest odinstalowywany."
-  
-    LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_POLISH} "Zakoñczono"
-    LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_POLISH} "Odinstalowanie zakoñczone powodzeniem."
-  !endif
-  
-  !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_POLISH} "${MUI_PRODUCT} ${MUI_VERSION} Instalator"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Odinstaluj ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Usuñ ${MUI_PRODUCT} z twojego systemu."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Deinstalator odinstaluje ${MUI_PRODUCT} z twojego systemu."
     
-!endif
-
-!verbose 4
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Odinstalowuje"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Proszê czekaæ, kiedy ${MUI_PRODUCT} jest odinstalowywany."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Zakoñczono"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Odinstalowanie zakoñczone powodzeniem."
+   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "${MUI_NAME} Odinstaluj"
+    
+!insertmacro MUI_LANGUAGEFILE_END

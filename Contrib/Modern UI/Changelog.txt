@@ -1,8 +1,16 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.5 - Novermber 8, 2002
+* New language file format
+* Language strings can be changed in the script without editing language files
+* Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is the standard macro now.
+  Use MUI_INSTALLOPTIONS_INITDIALOG and MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
+* Renamed macro's and defines
+* Some small fixes
+
 1.4 - November 4, 2002
 * Uses new NSIS Page command
-* Macro system updates (smaller)
+* Macro System updates (smaller)
 * Macro System a lot easier
 * Modern UI Language Files load NLF language files
 * Renamed macro's and defines
