@@ -480,17 +480,11 @@ BZ2_hbCreateDecodeTables ( Int32*, Int32*, Int32*, UChar*,
                            Int32,  Int32, Int32 );
 
 
+#define BZ2_bzDecompressInit(s) { (s)->state = BZ_X_BLKHDR_1; }
 
-BZ_EXTERN int BZ_API(BZ2_bzDecompressInit) ( 
-      DState *s
-   );
-
-BZ_EXTERN int BZ_API(BZ2_bzDecompress) ( 
-      DState * s
-   );
+BZ_EXTERN int BZ_API(BZ2_bzDecompress) (  DState * s );
 
 #endif
-
 
 
 /*-- BZ_NO_STDIO seems to make NULL disappear on some platforms. --*/
