@@ -35,7 +35,7 @@ const char *NSIS_VERSION="v2.0b0";
 #include "exedata.h"
 
 
-int g_noconfig;
+int g_noconfig=0;
 int g_display_errors=1;
 FILE *g_output=stdout;
 
@@ -241,7 +241,8 @@ int main(int argc, char **argv)
       {
         g_noconfig=1;
         char exepath[1024];
-        strncpy(exepath,argv[0],1023);
+        GetModuleFileName(NULL,exepath,sizeof(exepath)-1);
+        //strncpy(exepath,argv[0],1023);
         exepath[1023]=0;
         char *p=exepath;
         while (*p) p++;
