@@ -38,6 +38,8 @@ const char *NSIS_VERSION="v2.02";
 #include <signal.h>
 #ifdef _WIN32
 #  include <direct.h>
+#else
+#  include <unistd.h>
 #endif
 
 #include "build.h"
