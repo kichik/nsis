@@ -74,7 +74,7 @@ This bitmap should have a size of 96x16 pixels, no more than 8bpp (256 colors) a
 
 \S2{acompletedtext} CompletedText
 
-\c Completed text
+\c text
 
 Replaces the default text ("Completed") that is printed at the end of the install if parameter is specified. Otherwise, the default is used.
 
@@ -106,7 +106,7 @@ Specifies whether or not the user will see the directory selection page. Note th
 
 \c [text] [subtext] [browse_button_text] [browse_dlg_text]
 
-Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). If subtext is specified and not empty, it overrides the default text above the path entry box ("Select the directory to install MyApp in:"). If browse button text is specified but not empty, it overrides the default browse button text ("Browse...").
+Atleast the first parameter is required.  Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). Subtext overrides the default text above the path entry box ("Select the directory to install MyApp in:"). Browse_button_text overrides the default browse button text ("Browse...").
 
 \S2{adirvar} DirVar
 
@@ -134,7 +134,7 @@ If parameter is specified, overrides the default install button text (of "Instal
 
 \S2{ainstallcolors} InstallColors
 
-\c /windows | foreground background
+\c /windows | (foreground_color background_color)
 
 Sets the colors to use for the install info screen (the default is 00FF00 000000. Use the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). Note that if "/windows" is specified as the only parameter, the default windows colors will be used.
 
@@ -251,7 +251,7 @@ Overrides the subcaptions for each of the installer pages (0=": License Agreemen
 
 \S2{auninstallbuttontext} UninstallButtonText
 
-\c button text
+\c text
 
 Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{WriteUninstaller}{WriteUninstaller} (replaces UninstallEXEName).
 
