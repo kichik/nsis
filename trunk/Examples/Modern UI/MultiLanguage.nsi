@@ -163,7 +163,7 @@ Function .onInit
   Push ${LANG_POLISH}
   Push Polish
   Push ${LANG_GREEK}
-  Push Greek
+  Push ${MUI_GREEK_LANGNAME}
   Push ${LANG_TRADCHINESE}
   Push "Traditional Chinese"
   Push ${LANG_SIMPCHINESE}
