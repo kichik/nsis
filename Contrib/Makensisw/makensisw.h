@@ -29,11 +29,11 @@
 #undef _RICHEDIT_VER
 
 // Defines
-#define NSIS_URL	"http://sourceforge.net/projects/nsis2k/"
+#define NSIS_URL	"http://sourceforge.net/projects/nsis/"
 #define USAGE		"Usage:\r\n  [options] [script.nsi | - [...]]\r\n"
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
 #define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel, Fritz Elfert, and Amir Szekely"
-#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis2k/NSIS/docs/index.html?rev=HEAD"
+#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
 #define LOCALDOCS	"\\docs\\index.html"
 #define REGSEC		HKEY_LOCAL_MACHINE
 #define REGKEY		"Software\\NSIS"
