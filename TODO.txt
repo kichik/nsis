@@ -21,8 +21,6 @@ NSIS
 
 * all installer strings should be language strings
 
-* RMDir /REBOOTOK
-
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple
