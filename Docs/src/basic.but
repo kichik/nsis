@@ -52,7 +52,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \c [/REBOOTOK] source_file dest_file
 
-Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. It also means the destination file must not exist or the move will fail . If /REBOOTOK is specified, and the file cannot be moved, then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.
+Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. It also means the destination file must not exist or the move will fail for regular Rename operation (no /REBOOTOK). If /REBOOTOK is specified, and the file cannot be moved (if, for example, the destination exists), then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.
 
 \S2{reservefile} ReserveFile
 
