@@ -7,7 +7,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "TURKISH"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Turkish"
 
   !define MUI_LANGNAME "Türkçe" ;Use only ASCII characters (if this is not possible, use the English name)
   

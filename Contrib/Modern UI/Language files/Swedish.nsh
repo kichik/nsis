@@ -6,7 +6,7 @@
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "SWEDISH"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Swedish"
 
   !define MUI_LANGNAME "Svenska" ;Use only ASCII characters (if this is not possible, use the English name)
 

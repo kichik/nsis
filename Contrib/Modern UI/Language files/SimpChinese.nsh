@@ -6,7 +6,7 @@
 ;Revision date: 2003-12-29
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "SimpChinese"
 
   !define MUI_LANGNAME "Chinese (Simplified)" ;(以语言本身的方式，写下语言名称) Use only ASCII characters (if this is not possible, use the English name)
   
