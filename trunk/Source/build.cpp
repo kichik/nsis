@@ -2776,32 +2776,33 @@ int CEXEBuild::uninstall_generate()
     if (add_db_data((char *)m_unicon_data,unicondata_size) < 0)
       return PS_ERROR;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-    #ifdef NSIS_CONFIG_CRC_ANAL
-      crc=CRC32(crc,header_data_new,icon_offset);
-    #else
-      crc=CRC32(crc,header_data_new+512,icon_offset-512);
-    #endif
-    // This bunch of lines do CRC for the uninstaller icon data
-    unsigned char* seeker = m_unicon_data;
-    DWORD dwEndOfIcons = 0;
-    while (*seeker) {
-      DWORD dwSize = *(DWORD*)seeker;
-      seeker += sizeof(DWORD);
-      DWORD dwOffset = *(DWORD*)seeker;
-      seeker += sizeof(DWORD);
-      // Do CRC for icon data
-      crc=CRC32(crc,seeker,dwSize);
-      seeker += dwSize;
-      if (*seeker) {
-        // Do CRC for data between icons
-        crc=CRC32(crc,header_data_new+dwOffset+dwSize,(*(DWORD*)(seeker+sizeof(DWORD)))-dwOffset-dwSize);
+    {
+      // "create" the uninstaller
+      LPBYTE uninst_header = (LPBYTE) malloc(exeheader_size_new);
+      if (!uninst_header)
+        return PS_ERROR;
+
+      memcpy(uninst_header, header_data_new, exeheader_size_new);
+
+      // patch the icons
+      LPBYTE seeker = m_unicon_data;
+      while (*seeker) {
+        DWORD dwSize = *(LPDWORD) seeker;
+        seeker += sizeof(DWORD);
+        DWORD dwOffset = *(LPDWORD) seeker;
+        seeker += sizeof(DWORD);
+        memcpy(uninst_header + dwOffset, seeker, dwSize);
+        seeker += dwSize;
       }
-      else {
-        dwEndOfIcons = dwOffset+dwSize;
-      }
+
+#ifdef NSIS_CONFIG_CRC_ANAL
+      crc=CRC32(crc, uninst_header, exeheader_size_new);
+#else
+      crc=CRC32(crc, uninst_header + 512, exeheader_size_new - 512);
+#endif
+
+      free(uninst_header);
     }
-    // Done with icons, carry on
-    crc=CRC32(crc,header_data_new+dwEndOfIcons,exeheader_size_new-dwEndOfIcons);
 #endif
     fh.nsinst[0]=FH_INT1;
     fh.nsinst[1]=FH_INT2;
