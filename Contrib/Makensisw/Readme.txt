@@ -24,10 +24,9 @@ all that is required is that you choose 'Compile NSI' from the right-
 click menu on a NSIS script.  This will invoke MakeNSISW.
 
 The format of the parameters when calling MakeNSISW from the commandline is:
-  makensisw full_path_of_makensis.exe [options] [script.nsi | - [...]]
+  makensisw [options] [script.nsi | - [...]]
 
-Where full_path_of_makensis.exe is the full name including the path of the 
-compiler.  For the options, please see the MakeNSIS documentation.
+For the options, please see the MakeNSIS documentation.
 
 
 Shortcut Keys
@@ -167,7 +166,7 @@ Version History
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater
-Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
