@@ -2109,11 +2109,23 @@ void CEXEBuild::PreperInstTypes()
   if (!(cur_header->flags & CH_FLAGS_NO_CUSTOM))
     cur_header->install_types[NSIS_MAX_INST_TYPES] = DefineInnerLangString(NLF_COMP_CUSTOM);
 
+  // set insttype list for RO sections that didn't use SectionIn
+  int i = cur_header->blocks[NB_SECTIONS].num;
+  section *sections = (section *) cur_sections->get();
+
+  while (i--)
+  {
+    if (sections[i].flags & SF_RO && !sections[i].install_types)
+      sections[i].install_types = ~0;
+  }
+
+  // set selection to first insttype
   if (cur_header->install_types[0])
   {
     int i = cur_header->blocks[NB_SECTIONS].num;
     section *sections = (section *) cur_sections->get();
 
+    // if /o was used abort since the user did his manual choice
     while (i--)
       if ((sections[i].flags & SF_SELECTED) == 0)
         return;
