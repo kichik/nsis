@@ -26,7 +26,7 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
 
   ;License dialog
-  LicenseText "Scroll down to see the rest of the agreement."
+  LicenseText "Press Page Down to see the rest of the agreement."
   LicenseData "License.txt"
 
   ;Component-select dialog

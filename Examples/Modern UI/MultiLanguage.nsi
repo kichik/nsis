@@ -31,8 +31,8 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
 
   ;License dialog
-  LicenseText /LANG=1033 "Scroll down to see the rest of the agreement."
-  LicenseText /LANG=1043 "Blader naar beneden om de rest van de overeenkomt te zien."
+  LicenseText /LANG=1033 "Press Page Down to see the rest of the agreement."
+  LicenseText /LANG=1043 "Druk op Page Down om de rest van de overeenkomt te zien."
   LicenseData /LANG=1033 "License.txt"
   LicenseData /LANG=1043 "License.txt"
 
