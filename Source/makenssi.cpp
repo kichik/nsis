@@ -1,7 +1,8 @@
 const char *NSIS_VERSION="v2.0b3";
 
 /* 
-  Nullsoft "SuperPimp" Installation System - makensis.cpp - installer compiler code
+  Nullsoft Scriptable Install System (NSIS)
+  makensis.cpp - installer compiler code
 
   Copyright (C) 1999-2003 Nullsoft, Inc.
 
@@ -21,8 +22,10 @@ const char *NSIS_VERSION="v2.0b3";
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  This source distribution includes portions of zlib. see zlib/zlib.h for 
-  its license and so forth. Note that this license is also borrowed from zlib.
+  This is the zlib/libpng license, which is approved by opensource.org.
+
+  Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).
+  Includes portions derived from bzip2 (see documentation for details).
 */
 
 #include <windows.h>
