@@ -46,26 +46,26 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	g_retcode = -1; // return code is always false unless set to true by GetExitCodeProcess
 	g_warnings = FALSE;
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
-    if (!hDialog) {
-        char buf [MAX_STRING];
-        wsprintf(buf, "Error creating dialog box.\n\nError: %x", GetLastError ());
-        MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_OK);
-        return 1;
-    }
+		if (!hDialog) {
+				char buf [MAX_STRING];
+				wsprintf(buf, "Error creating dialog box.\n\nError: %x", GetLastError ());
+				MessageBox(0, buf, "Error", MB_ICONEXCLAMATION | MB_OK);
+				return 1;
+		}
 	haccel = LoadAccelerators(g_hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
-    MSG  msg;
-    int status;
-    while ((status=GetMessage(&msg,0,0,0))!=0) {
-        if (status==-1) return -1;
+		MSG	msg;
+		int status;
+		while ((status=GetMessage(&msg,0,0,0))!=0) {
+				if (status==-1) return -1;
 		if (!TranslateAccelerator(hDialog,haccel,&msg)) {
 			if (!IsDialogMessage(hDialog,&msg)) {
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
 		}
-    }
+		}
 	ExitProcess(msg.wParam);
-    return msg.wParam;
+		return msg.wParam;
 }
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -125,8 +125,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				EnumChildWindows(g_hwnd, DialogResize, (LPARAM)0);
 				resizeRect = rSize;
 			}
- 			return TRUE;
- 		}
+			 return TRUE;
+		 }
 		case WM_MAKENSIS_PROCESSCOMPLETE:
 		{
 			if (g_hThread) {
@@ -240,12 +240,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 			}
 		}
-    }
+		}
 	return 0;
 }
 
 DWORD WINAPI MakeNSISProc(LPVOID p) {
-	char buf[1024];
 	STARTUPINFO si={sizeof(si),};
 	SECURITY_ATTRIBUTES sa={sizeof(sa),};
 	SECURITY_DESCRIPTOR sd={0,};
@@ -280,29 +279,27 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
 		PostMessage(g_hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
 		return 1;
 	}
-	unsigned long exit=0,read,avail;
-	my_memset(buf,0,sizeof(buf));
-	while(1) {
-		PeekNamedPipe(read_stdout,buf,sizeof(buf)-1,&read,&avail,NULL);
-		if (read != 0) {
-			my_memset(buf,0,sizeof(buf));
-			if (avail > sizeof(buf)-1) 	{
-				while (read >= sizeof(buf)-1) {
-					ReadFile(read_stdout,buf,sizeof(buf)-1,&read,NULL);
-					LogMessage(g_hwnd,buf);
-					my_memset(buf,0,sizeof(buf));
-				}
-			}
-			else {
-				ReadFile(read_stdout,buf,sizeof(buf),&read,NULL);
-				LogMessage(g_hwnd,buf);
-			}			
+
+	char szBuf[1024];
+	DWORD dwRead = 1;
+	DWORD dwExit = !STILL_ACTIVE;
+
+	while (dwExit == STILL_ACTIVE || dwRead) {
+		PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+		if (dwRead) {
+			ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+			szBuf[dwRead] = 0;
+			LogMessage(g_hwnd, szBuf);
 		}
-		GetExitCodeProcess(pi.hProcess,&exit);
-		if (exit != STILL_ACTIVE) break;
-		Sleep(TIMEOUT);
+		else Sleep(TIMEOUT);
+		GetExitCodeProcess(pi.hProcess, &dwExit);
+		// Make sure we have no data before killing getting out of the loop
+		if (dwExit != STILL_ACTIVE) {
+			PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+		}
 	}
-	g_retcode = exit;
+
+	g_retcode = dwExit;
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
 	CloseHandle(newstdout);
