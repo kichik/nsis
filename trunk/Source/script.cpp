@@ -630,6 +630,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_INSTTYPE:
       {
         int x;
+        if (strnicmp(line.gettoken_str(1),"/LANG=",6) && line.getnumtokens() > 2) PRINTHELP();
         if (!stricmp(line.gettoken_str(1),"/NOCUSTOM"))
         {
           build_header.no_custom_instmode_flag=1;
@@ -642,15 +643,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         else if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
           if (!strnicmp(line.gettoken_str(2),"/CUSTOMSTRING=",14)) {
-            SetString(line.gettoken_str(2)+14,NLF_COMP_CUSTOM,0,atoi(line.gettoken_str(1)+6));
             SCRIPT_MSG("InstType: setting custom text to: /LANG=%d \"%s\"\n",line.gettoken_str(1)+6,line.gettoken_str(2)+14);
+            SetString(line.gettoken_str(2)+14,NLF_COMP_CUSTOM,0,atoi(line.gettoken_str(1)+6));
           }
           else PRINTHELP()
         }
         else if (!strnicmp(line.gettoken_str(1),"/CUSTOMSTRING=",14))
         {
-          SetString(line.gettoken_str(1)+14,NLF_COMP_CUSTOM,0);
           SCRIPT_MSG("InstType: setting custom text to: \"%s\"\n",line.gettoken_str(1)+14);
+          SetString(line.gettoken_str(1)+14,NLF_COMP_CUSTOM,0);
         }
         else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
         else
