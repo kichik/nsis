@@ -10,9 +10,6 @@ Name "InstallOptions Test"
 ;The file to write
 OutFile "Test.exe"
 
-;The default installation directory
-InstallDir "$PROGRAMFILES\IOTest"
-
 ;Things that need to be extracted on startup (keep these lines before any File command!)
 ;Only useful for BZIP2 compression
 ;Use ReserveFile for your own InstallOptions INI files too!
@@ -20,17 +17,8 @@ InstallDir "$PROGRAMFILES\IOTest"
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "test.ini"
 
-;Texts on the dialogs
-DirText "Choose a directory"
-LicenseText "A license"
-LicenseData "..\..\License.txt"
-ComponentText "Choose components"
-
 ;Order of pages
-Page license
 Page custom SetCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
-Page components
-Page directory
 Page instfiles
 
 Section "Components"
