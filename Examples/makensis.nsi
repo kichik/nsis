@@ -4,7 +4,9 @@
 
 !verbose 3
 !include "${NSISDIR}\Examples\WinMessages.nsh"
+!ifndef CLASSIC_UI
 !include "${NSISDIR}\Examples\Modern UI\ModernUI.nsh"
+!endif
 !verbose 4
 
 !define CURRENTPAGE $9
@@ -17,7 +19,9 @@ Caption "Nullsoft Install System - Setup"
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 SetCompressor bzip2
 
+!ifndef CLASSIC_UI
 !insertmacro MUI_INTERFACE "modern2.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
+!endif
 
 LicenseText "Scroll down to see the rest of the agreement."
 LicenseData ..\license.txt
@@ -366,7 +370,9 @@ Section -post
   nofunshit:
   Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
+!ifndef CLASSIC_UI
   !insertmacro MUI_FINISHHEADER SetPage
+!endif
 SectionEnd
 
 Function .onInstSuccess
@@ -375,6 +381,7 @@ Function .onInstSuccess
   NoReadme:
 FunctionEnd
 
+!ifndef CLASSIC_UI
 Function .onInitDialog
 
   !insertmacro MUI_INNERDIALOG_INIT
@@ -472,6 +479,7 @@ Function .onMouseOverSection
  !insertmacro MUI_DESCRIPTION_END
 
 FunctionEnd
+!endif
 
 UninstallText "This will uninstall NSIS from your system:"
 
@@ -571,8 +579,13 @@ Section Uninstall
     IfFileExists $INSTDIR 0 Removed
       MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
   Removed:
+!ifndef CLASSIC_UI
   !insertmacro MUI_FINISHHEADER un.SetPage
+!endif
 SectionEnd
+
+
+!ifndef CLASSIC_UI
 
 Function un.onNextPage
 
@@ -600,3 +613,4 @@ Function un.SetPage
   !insertmacro MUI_PAGE_END
 
 FunctionEnd
+!endif
