@@ -22,6 +22,8 @@ The return value is pushed to the stack:
   "success" if success
   otherwise, an error string describing the error
 
+If you don't want the progess window to appear use NSISdl::download_quiet.
+
 Example of usage:
 
 NSISdl::download http://www.domain.com/file localfile.exe
@@ -30,7 +32,7 @@ Pop $R0 ;Get the return value
     MessageBox MB_OK "Download failed: $R0"
     Quit
 
-For another example, see waplugin.nsi in the nsis directory.
+For another example, see waplugin.nsi in the examples directory.
 
 TRANSLATE
 ---------
