@@ -2,7 +2,10 @@ NSIS Modern User Interface - VERSION HISTORY
 
 1.64 - March 26, 2003
 * Support for license page with checkbox or radiobuttons to let the
-user accept the agreement or not
+  user accept the agreement or not
+* Macro's for finish headers don't have to be inserted anymore
+* Language preference stored when installation has completed,
+  no problems anymore when the users selects the wrong language
 * Language files have to be updated
 
 1.63 - March 9, 2003

@@ -89,10 +89,6 @@ Section "modern.exe" SecCopyUI
 
 SectionEnd
 
-;Display the Finish header
-;Insert this macro after the sections if you are not using a finish page
-!insertmacro MUI_SECTIONS_FINISHHEADER
-
 ;--------------------------------
 ;Descriptions
 
@@ -124,8 +120,5 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
-
-  ;Display the Finish header
-  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
