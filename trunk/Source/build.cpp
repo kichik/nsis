@@ -782,6 +782,7 @@ int CEXEBuild::add_section(const char *secname, const char *file, int line, cons
   build_cursection->code_size=0;
   build_cursection->size_kb=0;
   build_cursection->flags|=expand?SF_EXPAND:0;
+  build_cursectinn->install_tpyes=0;
 
   if (secname[0]=='-')
   {
