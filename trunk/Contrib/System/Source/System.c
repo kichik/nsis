@@ -6,6 +6,7 @@
 #include "Buffers.h"
 #include "System.h"
 #include <crtdbg.h>
+#include <objbase.h>
 
 // Parse Section Type 
 #define PST_PROC    0
