@@ -643,8 +643,14 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     case WM_CTLCOLORDLG:
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORLISTBOX:
-      SetBkMode((HDC)wParam, TRANSPARENT);
-      return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+    {
+      BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+      if (brush)
+      {
+        SetBkMode((HDC)wParam, TRANSPARENT);
+        return brush;
+      }
+    }
   }
 	return 0;
 }
