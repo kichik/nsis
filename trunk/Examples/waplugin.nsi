@@ -27,7 +27,7 @@ InstallDirRegKey HKLM \
 
 ; The text to prompt the user to enter a directory
 DirText "Please select your Winamp path below (you will be able to proceed when Winamp is detected):"
-DirShow hide
+# currently doesn't work - DirShow hide
 
 ; automatically close the installer when done.
 AutoCloseWindow true

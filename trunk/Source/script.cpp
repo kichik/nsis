@@ -267,8 +267,8 @@ int CEXEBuild::doParse(const char *str)
 parse_again:
   if (line.getnumtokens() < 1) return PS_OK;
 
-  int np,op;
-  int tkid=get_commandtoken(line.gettoken_str(0),&np,&op);
+  int np,op,pos;
+  int tkid=get_commandtoken(line.gettoken_str(0),&np,&op,&pos);
   if (tkid == -1)
   {
     char *p=line.gettoken_str(0);
@@ -292,6 +292,7 @@ parse_again:
     {
       np   = 0;   // parameters are optional
       op   = -1;  // unlimited number of optional parameters
+      pos  = -1;  // placement will tested later
       tkid = TOK__PLUGINCOMMAND;
     }
     else
@@ -301,6 +302,9 @@ parse_again:
       return PS_ERROR;
     }
   }
+
+  if (IsTokenPlacedRight(pos, line.gettoken_str(0)) != PS_OK)
+    return PS_ERROR;
 
   int v=line.getnumtokens()-(np+1);
   if (v < 0 || (op >= 0 && v > op)) // opt_parms is -1 for unlimited
@@ -1063,7 +1067,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         set_uninstall_mode(0);
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 
     // extended page setting
     case TOK_PAGEEX:
@@ -1082,16 +1086,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       cur_page->flags |= PF_PAGE_EX;
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
 
     case TOK_PAGEEXEND:
     {
       SCRIPT_MSG("PageExEnd\n");
-
-      if (!cur_page) {
-        ERROR_MSG("Error: no PageEx open!\n");
-        return PS_ERROR;
-      }
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (cur_page_type == PAGE_CUSTOM && !cur_page->prefunc) {
@@ -1109,15 +1108,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       set_uninstall_mode(0);
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_PAGECALLBACKS:
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     {
       SCRIPT_MSG("PageCallbacks:");
-      if (!cur_page) {
-        ERROR_MSG("\nPageCallbacks must be used inside PageEx!\n");
-        return PS_ERROR;
-      }
+
       if (cur_page_type == PAGE_CUSTOM)
       {
         switch (line.getnumtokens())
@@ -1261,7 +1257,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       SCRIPT_MSG("\n");
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
 #else
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -1291,7 +1287,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG("LangString: \"%s\" %d \"%s\"\n", name, lang, str);
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_LANGSTRINGUP:
       SCRIPT_MSG("Error: LangStringUP is obsolete, there are no more unprocessed strings. Use LangString.\n");
     return PS_ERROR;
@@ -1356,7 +1352,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       SCRIPT_MSG("LicenseLangString: \"%s\" %d \"%s\"\n", name, lang, file);
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_NAME:
       {
         if (SetInnerString(NLF_NAME,line.gettoken_str(1)) == PS_WARNING)
@@ -1367,7 +1363,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG(" \"%s\"",line.gettoken_str(2));
         SCRIPT_MSG("\n");
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_CAPTION:
       {
         if (!cur_page)
@@ -1381,7 +1377,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("Caption: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_ICON:
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
@@ -1395,7 +1391,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while replacing icon: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_CHECKBITMAP:
       SCRIPT_MSG("CheckBitmap: \"%s\"\n",line.gettoken_str(1));
@@ -1424,7 +1420,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while replacing bitmap: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else//NSIS_CONFIG_COMPONENTPAGE
     case TOK_CHECKBITMAP:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n",  line.gettoken_str(0));
@@ -1458,14 +1454,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
 #else//NSIS_CONFIG_VISIBLE_SUPPORT
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_DIRVAR:
     {
-      if (!cur_page || (cur_page_type != PAGE_DIRECTORY && cur_page_type != PAGE_UNINSTCONFIRM)) {
+      if (cur_page_type != PAGE_DIRECTORY && cur_page_type != PAGE_UNINSTCONFIRM) {
         ERROR_MSG("Error: can't use DirVar outside of PageEx directory|uninstConfirm.\n");
         return PS_ERROR;
       }
@@ -1473,10 +1469,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (cur_page->parms[4] <= 0) PRINTHELP();
       SCRIPT_MSG("DirVar: %s\n", line.gettoken_str(1));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_DIRVERIFY:
     {
-      if (!cur_page || cur_page_type != PAGE_DIRECTORY) {
+      if (cur_page_type != PAGE_DIRECTORY) {
         ERROR_MSG("Error: can't use DirVerify outside of PageEx directory.\n");
         return PS_ERROR;
       }
@@ -1488,7 +1484,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         cur_page->flags |= PF_DIR_NO_BTN_DISABLE;
       SCRIPT_MSG("DirVerify: %s\n", line.gettoken_str(1));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_GETINSTDIRERROR:
       ent.which = EW_GETFLAG;
       ent.offsets[0] = GetUserVarIndex(line, 1);
@@ -1518,7 +1514,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_INSTTYPE:
       {
         int x;
@@ -1567,7 +1563,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           set_uninstall_mode(0);
         }
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else//NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
     case TOK_INSTTYPE:
@@ -1595,7 +1591,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_LICENSEDATA:
       {
         int idx = 0;
@@ -1671,7 +1667,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         SCRIPT_MSG("LicenseData: \"%s\"\n",file);
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_LICENSEFORCESELECTION:
     {
       int k=line.gettoken_enum(1,"off\0checkbox\0radiobuttons\0");
@@ -1732,7 +1728,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       SCRIPT_MSG("LicenseForceSelection: %s \"%s\" \"%s\"\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_LICENSEBKCOLOR:
       {
         char *p = line.gettoken_str(1);
@@ -1754,7 +1750,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("LicenseBkColor: %06X\n",v);
       }
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else//!NSIS_CONFIG_LICENSEPAGE
     case TOK_LICENSETEXT:
     case TOK_LICENSEDATA:
@@ -1791,7 +1787,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 #endif//NSIS_CONFIG_LICENSEPAGE
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_SILENTUNINST:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     {
@@ -1803,7 +1799,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_uninst.flags&=~CH_FLAGS_SILENT;
       SCRIPT_MSG("SilentUnInstall: %s\n",line.gettoken_str(1));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -1837,7 +1833,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_OUTFILE:
       strncpy(build_output_filename,line.gettoken_str(1),1024-1);
       SCRIPT_MSG("OutFile: \"%s\"\n",build_output_filename);
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_INSTDIR:
     {
       char *p = line.gettoken_str(1);
@@ -1859,7 +1855,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG("InstallDir: \"%s\"\n",line.gettoken_str(1));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_INSTALLDIRREGKEY: // InstallDirRegKey
       {
         if (build_header.install_reg_key_ptr)
@@ -1876,12 +1872,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         build_header.install_reg_value_ptr = add_string(line.gettoken_str(3),0);
         SCRIPT_MSG("InstallRegKey: \"%s\\%s\\%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_CRCCHECK:
       build_crcchk=line.gettoken_enum(1,"off\0on\0force\0");
       if (build_crcchk==-1) PRINTHELP()
       SCRIPT_MSG("CRCCheck: %s\n",line.gettoken_str(1));
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_INSTPROGRESSFLAGS:
       {
         int x;
@@ -1922,7 +1918,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("InstProgressFlags: smooth=%d, colored=%d\n",smooth,
           !!(build_header.flags&CH_FLAGS_PROGRESS_COLORED));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_AUTOCLOSE:
       {
         int k=line.gettoken_enum(1,"false\0true\0");
@@ -1933,13 +1929,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           build_header.flags&=~CH_FLAGS_AUTO_CLOSE;
         SCRIPT_MSG("AutoCloseWindow: %s\n",k?"true":"false");
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_WINDOWICON:
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
       disable_window_icon=line.gettoken_enum(1,"on\0off\0");
       if (disable_window_icon == -1) PRINTHELP();
       SCRIPT_MSG("WindowIcon: %s\n",line.gettoken_str(1));
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
     return PS_ERROR;
@@ -1973,9 +1969,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("%s: %s\n",line.gettoken_str(0),line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_DIRSHOW:
-      {
+      /*{
         int k=line.gettoken_enum(1,"show\0hide\0");
         if (k == -1) PRINTHELP();
         if (k)
@@ -1983,8 +1979,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else
           build_header.flags&=~CH_FLAGS_DIR_NO_SHOW;
         SCRIPT_MSG("DirShow: %s\n",k?"hide":"show");
-      }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+      }*/
+      ERROR_MSG("Error: DirShow doesn't currently work\n");
+    return PS_ERROR;
     case TOK_ROOTDIRINST:
       {
         int k=line.gettoken_enum(1,"true\0false\0");
@@ -1995,7 +1992,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           build_header.flags&=~CH_FLAGS_NO_ROOT_DIR;
         SCRIPT_MSG("AllowRootDirInstall: %s\n",k?"false":"true");
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_BGGRADIENT:
 #ifndef NSIS_SUPPORT_BGBG
       ERROR_MSG("Error: BGGradient specified but NSIS_SUPPORT_BGBG not defined\n");
@@ -2043,7 +2040,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       build_uninst.bg_textcolor=build_header.bg_textcolor;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #endif//NSIS_SUPPORT_BGBG
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_INSTCOLORS:
     {
@@ -2071,7 +2068,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       build_uninst.lb_bg=build_header.lb_bg;
 #endif
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_XPSTYLE:
       try {
         int k=line.gettoken_enum(1,"on\0off\0");
@@ -2085,7 +2082,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while adding XP style: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_CHANGEUI:
       try {
         DWORD dwSize;
@@ -2220,7 +2217,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while changing UI: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_ADDBRANDINGIMAGE:
       try {
         int k=line.gettoken_enum(1,"top\0left\0bottom\0right\0");
@@ -2293,7 +2290,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while adding image branding support: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_SETFONT:
     {
       if (!strnicmp(line.gettoken_str(1), "/LANG=", 6))
@@ -2314,7 +2311,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
       }
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else
   case TOK_INSTCOLORS:
   case TOK_XPSTYLE:
@@ -2417,7 +2414,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         warning_fl("SetCompressor ignored due to previous call with the /FINAL switch");
       }
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else//NSIS_CONFIG_COMPRESSION_SUPPORT
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -2446,7 +2443,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       wsprintf(lang_id, "%u", table->lang_id);
       definedlist.add(lang_name, lang_id);
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 
     // preprocessor-ish (ifdef/ifndef/else/endif are handled one step out from here)
     ///////////////////////////////////////////////////////////////////////////////
@@ -2662,7 +2659,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
         SCRIPT_MSG("UninstCaption: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_UNINSTICON:
       SCRIPT_MSG("UninstallIcon: \"%s\"\n",line.gettoken_str(1));
       try {
@@ -2677,7 +2674,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error while replacing icon: %s\n", err.what());
         return PS_ERROR;
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_UNINSTTEXT:
       {
         if (!cur_page) {
@@ -2695,7 +2692,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+    return PS_OK;
     case TOK_UNINSTSUBCAPTION:
       {
         int s;
@@ -2704,7 +2701,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SetInnerString(NLF_USUBCAPTION_CONFIRM+w,line.gettoken_str(2));
         SCRIPT_MSG("UninstSubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_WRITEUNINSTALLER:
       if (uninstall_mode)
       {
@@ -2963,7 +2960,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SetInnerString(NLF_SUBCAPTION_LICENSE+w,line.gettoken_str(2));
         SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_FILEERRORTEXT:
 #ifdef NSIS_SUPPORT_FILE
       {
@@ -2971,7 +2968,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SetInnerString(NLF_FILE_ERROR_NOIGNORE,line.gettoken_str(2));
         SCRIPT_MSG("FileErrorText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_FILE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -3026,7 +3023,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("BrandingText: \"%s\"\n",line.gettoken_str(a));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_MISCBUTTONTEXT:
       {
         SetInnerString(NLF_BTN_BACK,line.gettoken_str(1));
@@ -3035,7 +3032,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SetInnerString(NLF_BTN_CLOSE,line.gettoken_str(4));
         SCRIPT_MSG("MiscButtonText: back=\"%s\" next=\"%s\" cancel=\"%s\" close=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_SPACETEXTS:
       {
         if (!lstrcmpi(line.gettoken_str(1), "none")) {
@@ -3049,13 +3046,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
         }
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_INSTBUTTONTEXT:
       {
         SetInnerString(NLF_BTN_INSTALL,line.gettoken_str(1));
         SCRIPT_MSG("InstallButtonText: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_DETAILSBUTTONTEXT:
       {
         if (!cur_page) {
@@ -3071,7 +3068,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("DetailsButtonText: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0),1);
+    return PS_OK;
     case TOK_COMPLETEDTEXT:
       {
         if (!cur_page) {
@@ -3087,14 +3084,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("CompletedText: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
     case TOK_UNINSTBUTTONTEXT:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       {
         SetInnerString(NLF_BTN_UNINSTALL,line.gettoken_str(1));
         SCRIPT_MSG("UninstButtonText: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return PS_OK;
 #else
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
@@ -4991,7 +4988,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if ( res != PS_OK )
           return res;        
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));    
+    return PS_OK;
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
@@ -5022,7 +5019,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
              return PS_ERROR;
            }
 
-           return make_sure_not_in_secorfunc(line.gettoken_str(0));
+           return PS_OK;
         }
     }
     case TOK_VI_SETPRODUCTVERSION:
@@ -5032,7 +5029,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
            return PS_ERROR;
       }
       strcpy(version_product_v, line.gettoken_str(1));
-      return make_sure_not_in_secorfunc(line.gettoken_str(0));
+      return PS_OK;
 
 #else
     case TOK_VI_ADDKEY:

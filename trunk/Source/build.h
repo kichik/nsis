@@ -109,7 +109,8 @@ class CEXEBuild {
 
   private:
     // tokens.cpp
-    int get_commandtoken(char *s, int *np, int *op);
+    int get_commandtoken(char *s, int *np, int *op, int *pos);
+    int IsTokenPlacedRight(int pos, char *tok);
 
     // script.cpp
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
@@ -183,8 +184,6 @@ class CEXEBuild {
     int add_intstring(const int i); // returns offset in stringblock
 
     int preprocess_string(char *out, const char *in, WORD codepage=CP_ACP);
-
-    int make_sure_not_in_secorfunc(const char *str, int page_ok=0);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
