@@ -226,7 +226,7 @@ Section "InstallOptions"
   File ..\contrib\installoptions\*.h
   File "..\contrib\installoptions\Install Options.html"
   SetOutPath $INSTDIR\Plugins
-  File ..\Bin\InstallOptions.dll
+  File ..\Plugins\InstallOptions.dll
   IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
     CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions Readme.lnk" "$INSTDIR\contrib\InstallOptions\install options.html"
@@ -245,7 +245,7 @@ Section "NSIS-DL"
   File ..\contrib\NSISdl\*.rc
   File ..\contrib\NSISdl\ReadMe.txt
   SetOutPath $INSTDIR\Plugins
-  File ..\Bin\nsisdl.dll
+  File ..\Plugins\nsisdl.dll
   IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
     CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL Readme.lnk" "$INSTDIR\contrib\NSISDL\ReadMe.txt"
