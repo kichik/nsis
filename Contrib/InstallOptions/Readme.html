@@ -54,14 +54,14 @@ h1
         text-align: center;
         margin: 20px;
         }
-        
+
 h2
         {
         font-size: 165%;
         color: #7A7272;
         font-weight: normal;
         }
-        
+
 h3
         {
         font-size: 150%;
@@ -85,13 +85,13 @@ a:link, a:visited, a:active
         color: #294F75;
         text-decoration: none;
         }
-        
+
 a:hover
         {
         color: #182634;
         text-decoration: underline;
         }
-        
+
 .subtable
         {
         border: 0px;
@@ -199,6 +199,14 @@ according to a different rect than NSIS's dialogs rect.</td>
 <td class="righttable">If 1 is specified the dialog will be mirrored and all texts will be aligned
 to the right. Use NSIS's $(^RTL) to fill this field, it's the easiest way.</td>
 </tr>
+<tr>
+<td class="lefttable"><strong>State</strong></td>
+<td class="lefttable"><em>(output)</em></td>
+<td class="righttable">This is not something you have to supply yourself but is set by
+InstallOptions, before calling your custom page validation function, to the field
+number of the custom Button control (or other control having the Notify flag) the
+user pressed, if any.
+</tr>
 </table>
 <p>Each field section has the heading "Field #" where # must be sequential numbers from 1 to
 NumFields. Each Field section can contain the following values:</p>
@@ -209,14 +217,14 @@ NumFields. Each Field section can contain the following values:</p>
 <td class="righttable">Type of control to be created. Valid values are "<em>Label</em>",
 "<em>Text</em>", "<em>Password</em>", "<em>Combobox</em>", "<em>DropList</em>", "<em>Listbox</em>",
 "<em>CheckBox</em>", "<em>RadioButton</em>", "<em>FileRequest</em>", "<em>DirRequest</em>"
-"<em>Icon</em>", "<em>Bitmap</em>" or "<em>GroupBox</em>".<br />
+"<em>Icon</em>", "<em>Bitmap</em>", "<em>GroupBox</em>", "<em>Link</em>" or "<em>Button</em>".<br />
 <br />
 A "<em>Label</em>" is used to display static text. (i.e. a caption for a textbox)<br />
 A "<em>Text</em>" and "<em>Password</em>" accept text input from the user. "<em>Password</em>"
 masks the input with * characters.<br />
 A "<em>Combobox</em>" allows the user to type text not in the popup list, a "<em>Droplist</em>"
 only allows selection of items in the list.<br />
-A "<em>listbox</em>" shows multiple items and can optionally allow the user to select more than one
+A "<em>Listbox</em>" shows multiple items and can optionally allow the user to select more than one
 item.<br />
 A "<em>CheckBox</em>" control displays a check box with label.<br />
 A "<em>RadioButton</em>" control displays a radio button with label.<br />
@@ -228,7 +236,9 @@ An "<em>Icon</em>" control displays an icon. Use no Text to use the installer ic
 A "<em>Bitmap</em>" control displays a bitmap.<br />
 A "<em>GroupBox</em>" control displays a frame to group controls.<br />
 A "<em>Link</em>" control displays a static hot text, when the user click the control the contents
-of <strong>State</strong> (e.g. http://...) will be executed using ShellExecute<br /></td>
+of <strong>State</strong> (e.g. http://...) will be executed using ShellExecute<br />
+A "<em>Button</em>" control displays a push button that your NSIS script can act on
+when pressed. See the "<em>NOTIFY</em>" flag for more information.</td>
 </tr>
 <tr>
 <td class="lefttable"><strong>Text</strong></td>
@@ -271,7 +281,7 @@ You should not use this on a "<em>combobox</em>" since the user can not control 
 selected.<br />
 This should be set to a maximum of 260 for "<em>FileRequest</em>" and "<em>DirRequest</em>"
 controls.<br />
-Ignored on "<em>label</em>" controls.</td>
+Ignored on "<em>Label</em>" controls.</td>
 </tr>
 <tr>
 <td class="lefttable"><strong>MinLen</strong></td>
@@ -444,9 +454,16 @@ carriage return be inserted when the user presses the ENTER key while entering t
 box.</td>
 </tr>
 <tr>
+<td class="righttable">NOWORDWRAP</td>
+<td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Disables the
+word-wrap that occurs when long lines are entered. Long lines instead scroll off to the
+side. Specifying the HSCROLL flag also has this effect.
+</td>
+</tr>
+<tr>
 <td class="righttable">HSCROLL</td>
 <td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Show a horizontal
-scrollbar.</td>
+scrollbar and disable word-wrap.</td>
 </tr>
 <tr>
 <td class="righttable">VSCROLL</td>
@@ -457,6 +474,16 @@ scrollbar.</td>
 <td class="righttable">READONLY</td>
 <td class="righttable">Used by "<em>Text</em>" controls. Prevents the user from entering or editing
 text in the edit control, but allow the user to select and copy the text.</td>
+</tr>
+<tr>
+<td class="righttable">NOTIFY</td>
+<td class="righttable">Used by "<em>Button</em>", "<em>CheckBox</em>" and "<em>RadioButton</em>"
+controls. Causes InstallOptions to call your NSIS custom page validation/leave function
+whenever the button is pressed. Your validation/leave function can read the "<em>State</em>"
+value from the "<em>Settings</em>" section to determine which custom button has been
+pressed, if any, and perform some appropriate action followed by an Abort instruction
+(to tell NSIS to return to the page). The Contrib\InstallOptions folder contains an
+example script showing how this might be used.</td>
 </tr>
 </table>
 </td>
@@ -690,6 +717,16 @@ Function FunctionName ;FunctionName defined with Page command
 FunctionEnd
 </pre>
 <h2>Version history</h2>
+<ul>
+<li>DLL version 2.3 (12/4/2003)
+<ul>
+<li>Added new control type "Button"</li>
+<li>Added new flag "NOTIFY"</li>
+<li>Added new flag "NOWORDWRAP" for multi-line text boxes</li>
+<li>Reduced size down to 12K</li>
+</ul>
+</li>
+</ul>
 <ul>
 <li>DLL version 2.2 (4/9/2003)
 <ul>

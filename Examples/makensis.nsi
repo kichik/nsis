@@ -79,9 +79,9 @@ Page custom PageReinstall PageLeaveReinstall
 
 ;--------------------------------
 ;Reserve Files
-  
+
   ;These files should be inserted before other files in the data block
-  
+
   ReserveFile "makensis.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
@@ -104,7 +104,7 @@ Section "NSIS Core Files (required)" SecCore
   File ..\makensisw.exe
   File ..\license.txt
   File ..\NSIS.chm
-  
+
   File ..\NSIS.exe
   IfFileExists $INSTDIR\nsisconf.nsi "" +2
   Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
@@ -119,23 +119,23 @@ Section "NSIS Core Files (required)" SecCore
 
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\contrib\makensisw\*.txt
-  
+
   SetOutPath $INSTDIR\Menu
   File ..\Menu\*.html
   SetOutPath $INSTDIR\Menu\images
   File ..\Menu\images\*.gif
-  
+
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Docs\*.html
   Delete $INSTDIR\Docs\style.css
   RMDir $INSTDIR\Docs
-  
+
   ReadRegStr $R0 HKCR ".nsi" ""
   StrCmp $R0 "NSISFile" 0 no_nsioldassoc
     DeleteRegKey HKCR "NSISFile"
     Goto nsi
   no_nsioldassoc:
-  
+
   StrCmp $R0 "NSIS.Script" 0 no_nsi
     nsi:
     WriteRegStr HKCR ".nsi" "" "NSIS.Script"
@@ -144,20 +144,20 @@ Section "NSIS Core Files (required)" SecCore
     ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
     StrCmp $R0 "" 0 no_nsiopen
       WriteRegStr HKCR "NSIS.Script\shell" "" "open"
-      WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'   
+      WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'
     no_nsiopen:
     WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
     WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
     WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
     WriteRegStr HKCR "NSIS.Script\shell\compile-compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
   no_nsi:
-  
+
   ReadRegStr $R0 HKCR ".nsh" ""
   StrCmp $R0 "NSHFile" 0 no_nsholdassoc
     DeleteRegKey HKCR "NSHFile"
     Goto nsh
   no_nsholdassoc:
-  
+
   StrCmp ".nsh" "NSIS.Header" 0 no_nsh
     nsh:
     WriteRegStr HKCR ".nsh" "" "NSIS.Header"
@@ -166,7 +166,7 @@ Section "NSIS Core Files (required)" SecCore
     ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
     StrCmp $R0 "" 0 no_nshopen
       WriteRegStr HKCR "NSIS.Header\shell" "" "open"
-      WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'   
+      WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
     no_nshopen:
   no_nsh:
 
@@ -228,11 +228,11 @@ Section "Desktop Shortcut" SecShortcuts
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\NSIS.chm"
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
-  
+
 !endif
 
   CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
-  
+
 SectionEnd
 
 SubSection "User Interfaces" SecInterfaces
@@ -280,7 +280,7 @@ Section "Modern User Interface" SecInterfacesModernUI
 
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
-  
+
 SectionEnd
 
 Section "Default User Interface" SecInterfacesDefaultUI
@@ -362,10 +362,10 @@ Section "NSIS Update" SecToolsUpdate
   SetOutPath $INSTDIR\Bin
   File ..\Bin\NSISUpdate.exe
   File ..\Bin\InstallCVSData.exe
-  
+
   IfFileExists "$INSTDIR\CVS\Root" 0 +2
     Exec '"$INSTDIR\Bin\InstallCVSData.exe"'
-    
+
 SectionEnd
 
 Section "Zip2Exe" SecToolsZ2E
@@ -478,7 +478,7 @@ SectionEnd
 Section "InstallOptions" SecPluginsIO
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Plug-inss | InstallOptions..."
+  DetailPrint "Installing Plug-ins | InstallOptions..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -492,6 +492,8 @@ Section "InstallOptions" SecPluginsIO
   File ..\contrib\installoptions\test.nsi
   File ..\contrib\installoptions\testlink.ini
   File ..\contrib\installoptions\testlink.nsi
+  File ..\contrib\installoptions\testnotify.ini
+  File ..\contrib\installoptions\testnotify.nsi
 SectionEnd
 
 Section "Math" SecPluginsMath
@@ -983,17 +985,17 @@ Section -post
   ; * Always install default icons / bitmaps
 
   !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
-  
-    mui: 
+
+    mui:
 
     SetDetailsPrint textonly
     DetailPrint "Configurating Modern UI..."
     SetDetailsPrint listonly
 
     !insertmacro SectionFlagIsSet ${SecLangFiles} ${SF_SELECTED} langfiles nolangfiles
-    
+
       nolangfiles:
-      
+
       SetOutPath "$INSTDIR\Contrib\Language files"
       File "..\Contrib\Language files\English.nlf"
       SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
@@ -1003,9 +1005,9 @@ Section -post
     langfiles:
 
     !insertmacro SectionFlagIsSet ${SecGraphics} ${SF_SELECTED} graphics nographics
-      
+
       nographics:
-      
+
       SetOutPath $INSTDIR\Contrib\Graphics
       SetOutPath $INSTDIR\Contrib\Graphics\Checks
       File "..\Contrib\Graphics\Checks\modern.bmp"
@@ -1176,7 +1178,7 @@ Section -post
   SetDetailsPrint none
   RMDir $INSTDIR\Contrib\Source
   SetDetailsPrint lastused
-  
+
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
   SetDetailsPrint both
@@ -1250,10 +1252,10 @@ FunctionEnd
 Function PageReinstall
 
   ReadRegStr $R0 HKLM "Software\NSIS" ""
-  
+
   StrCmp $R0 "" 0 +2
     Abort
-  
+
   ;Detect version
     ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMajor"
     IntCmp $R0 ${VER_MAJOR} minor_check new_version older_version
@@ -1296,43 +1298,43 @@ Function PageReinstall
   reinst_start:
 
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "makensis.ini"
-  
+
 FunctionEnd
 
 Function PageLeaveReinstall
-   
+
   !insertmacro MUI_INSTALLOPTIONS_READ $R1 "makensis.ini" "Field 2" "State"
 
   StrCmp $R0 "1" 0 +2
     StrCmp $R1 "1" reinst_uninstall reinst_done
-  
+
   StrCmp $R0 "2" 0 +3
     StrCmp $R1 "1" reinst_done reinst_uninstall
 
   reinst_uninstall:
   ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString"
- 
+
   ;Run uninstaller
   HideWindow
-  
+
     ClearErrors
     ExecWait '$R1 _?=$INSTDIR'
-    
+
     IfErrors no_remove_uninstaller
     IfFileExists "$INSTDIR\makensis.exe" no_remove_uninstaller
-    
+
       Delete $R1
       RMDir $INSTDIR
-      
+
     no_remove_uninstaller:
-    
+
   StrCmp $R0 "2" 0 +2
     Quit
-    
+
   BringToFront
 
   reinst_done:
-  
+
 FunctionEnd
 
 !macro secSelected SEC
@@ -1415,18 +1417,18 @@ Section Uninstall
   SetDetailsPrint textonly
   DetailPrint "Deleting Registry Keys..."
   SetDetailsPrint listonly
-  
+
   ReadRegStr $R0 HKCR ".nsi" ""
   StrCmp $R0 "NSIS.Script" 0 +2
     DeleteRegKey HKCR ".nsi"
-    
+
   ReadRegStr $R0 HKCR ".nsh" ""
   StrCmp $R0 "NSIS.Header" 0 +2
     DeleteRegKey HKCR ".nsh"
 
   DeleteRegKey HKCR "NSIS.Script"
   DeleteRegKey HKCR "NSIS.Header"
-  
+
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
   DeleteRegKey HKLM "Software\NSIS"
 
@@ -1444,7 +1446,7 @@ Section Uninstall
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh
   Delete $INSTDIR\NSIS.chm
-  RMDIR /r $INSTDIR\CVS 
+  RMDIR /r $INSTDIR\CVS
   RMDir /r $INSTDIR\Contrib
   RMDir /r $INSTDIR\Menu
   RMDir /r $INSTDIR\Source
