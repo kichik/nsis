@@ -4,7 +4,6 @@
 #include "tokens.h"
 #include "build.h"
 #include "util.h"
-#include "exedata.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "lang.h"
@@ -12,6 +11,8 @@
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
 #include <time.h>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -1421,7 +1422,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
         init_res_editor();
-        if (replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1))) {
+        if (replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1)) < 0) {
           ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
           return PS_ERROR;
         }
@@ -2445,60 +2446,65 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Error: can't change compressor after data already got compressed or header already changed!\n");
         return PS_ERROR;
       }
-      if (!build_compressor_final)
+
+      if (build_compressor_final)
       {
-        int a = 1;
+        warning_fl("SetCompressor ignored due to previous call with the /FINAL switch");
+        return PS_OK;
+      }
+
+      int a = 1;
+
+      build_compress_whole = false;
+
+      while (line.gettoken_str(a)[0] == '/')
+      {
         if (!strcmpi(line.gettoken_str(1),"/FINAL"))
         {
           build_compressor_final = true;
           a++;
         }
-        else if (line.getnumtokens() == 3)
+        else if (!strcmpi(line.gettoken_str(1),"/SOLID"))
         {
-          ERROR_MSG("%s expects 2 parameters, got 3.\n",line.gettoken_str(0));
-          PRINTHELP();
+          build_compress_whole = true;
+          a++;
         }
-        int k=line.gettoken_enum(a,"zlib\0bzip2\0lzma\0");
-        switch (k) {
-          case 0: // JF> should handle the state of going from bzip2 back to zlib:
-            compressor = &zlib_compressor;
-            update_exehead(zlib_exehead, zlib_exehead_size);
-#ifdef NSIS_ZLIB_COMPRESS_WHOLE
-            build_compress_whole=true;
-#else
-            build_compress_whole=false;
-#endif
-          break;
-
-          case 1:
-            compressor=&bzip2_compressor;
-            update_exehead(bzip2_exehead, bzip2_exehead_size);
-#ifdef NSIS_BZIP2_COMPRESS_WHOLE
-            build_compress_whole=true;
-#else
-            build_compress_whole=false;
-#endif
-            break;
-
-          case 2:
-            compressor = &lzma_compressor;
-            update_exehead(lzma_exehead, lzma_exehead_size);
-#ifdef NSIS_LZMA_COMPRESS_WHOLE
-            build_compress_whole=true;
-#else
-            build_compress_whole=false;
-#endif
-          break;
-
-          default:
-            PRINTHELP();
-        }
-        SCRIPT_MSG("SetCompressor: %s%s\n", build_compressor_final? "/FINAL " : "", line.gettoken_str(a));
       }
-      else
+
+      if (a != line.getnumtokens() - 1)
       {
-        warning_fl("SetCompressor ignored due to previous call with the /FINAL switch");
+        ERROR_MSG("%s expects %d parameters, got %d.\n", line.gettoken_str(0), a + 1, line.getnumtokens());
+        PRINTHELP();
       }
+
+      int k=line.gettoken_enum(a, "zlib\0bzip2\0lzma\0");
+      switch (k) {
+        case 0:
+          compressor = &zlib_compressor;
+        break;
+
+        case 1:
+          compressor = &bzip2_compressor;
+          break;
+
+        case 2:
+          compressor = &lzma_compressor;
+        break;
+
+        default:
+          PRINTHELP();
+      }
+
+      string compressor_name = line.gettoken_str(a);
+      transform(compressor_name.begin(), compressor_name.end(), compressor_name.begin(), tolower);
+
+      if (set_compressor(compressor_name, build_compress_whole) != PS_OK)
+      {
+        SCRIPT_MSG("SetCompressor: error loading stub for \"%s\" compressor.\n", compressor_name.c_str());
+        return PS_ERROR;
+      }
+
+      SCRIPT_MSG("SetCompressor: %s%s%s\n", build_compressor_final ? "/FINAL " : "", build_compress_whole ? "/SOLID " : "", line.gettoken_str(a));
     }
     return PS_OK;
 #else//NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -2837,7 +2843,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("UninstallIcon: \"%s\"\n",line.gettoken_str(1));
       try {
         free(m_unicon_data);
-        m_unicon_data = generate_uninstall_icon_data(line.gettoken_str(1));
+        m_unicon_data = generate_uninstall_icon_data(line.gettoken_str(1), m_unicon_size);
         if (!m_unicon_data) {
           ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
           return PS_ERROR;

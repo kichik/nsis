@@ -3,8 +3,6 @@
 #include "exehead/config.h"
 #include "exehead/fileform.h"
 
-#include "exedata.h"
-
 #include "build.h"
 #include "util.h"
 
@@ -85,19 +83,6 @@ CEXEBuild::CEXEBuild() :
 
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
   ns_label.add("",0);
-
-  exehead_original_size = zlib_exehead_size;
-  update_exehead(zlib_exehead, zlib_exehead_size);
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  // Changed by Amir Szekely 11th July 2002
-  // No need to check for uninstaller icon if uninstall support is disabled.
-  if (unicondata_size != icondata_size)
-  {
-    ERROR_MSG("Internal compiler error #12345: installer,uninstaller icon size mismatch (%d,%d)\n",icondata_size,unicondata_size);
-    extern void quit(); quit();
-  }
-#endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
   extern const char *NSIS_VERSION;
   definedlist.add("NSIS_VERSION", NSIS_VERSION);
@@ -363,12 +348,8 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   build_font[0]=0;
   build_font_size=0;
 
-  m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
-  memcpy(m_unicon_data+2*sizeof(DWORD),unicon_data+22,unicondata_size);
-  *(DWORD*)(m_unicon_data) = unicondata_size;
-  *(DWORD*)(m_unicon_data + sizeof(DWORD)) = 0;
-  *(DWORD*)(m_unicon_data + 2*sizeof(DWORD) + unicondata_size) = 0;
-  unicondata_size += 3*sizeof(DWORD);
+  m_unicon_data=NULL;
+  m_unicon_size=0;
 
   branding_image_found=false;
 
@@ -476,15 +457,32 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 }
 
-void CEXEBuild::setdirs(const char *argv0)
+void CEXEBuild::initialize(const char *makensis_path)
 {
-  string nsis_dir = get_executable_dir(argv0);
+  string nsis_dir = get_executable_dir(makensis_path);
 
   definedlist.add("NSISDIR",nsis_dir.c_str());
 
-  nsis_dir += PLATFORM_PATH_SEPARATOR_STR;
-  nsis_dir += "Include";
-  include_dirs.add(nsis_dir.c_str(),0);
+  string includes_dir = nsis_dir;
+  includes_dir += PLATFORM_PATH_SEPARATOR_STR;
+  includes_dir += "Include";
+  include_dirs.add(includes_dir.c_str(),0);
+
+  stubs_dir = nsis_dir;
+  stubs_dir += PLATFORM_PATH_SEPARATOR_STR;
+  stubs_dir += "Stubs";
+
+  if (set_compressor("zlib", false) != PS_OK)
+  {
+    throw runtime_error("error setting default stub");
+  }
+
+  string uninst = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + "uninst";
+  m_unicon_data = generate_uninstall_icon_data(uninst.c_str(), m_unicon_size);
+  if (!m_unicon_data)
+  {
+    throw runtime_error("invalid default uninstall icon");
+  }
 }
 
 
@@ -2301,30 +2299,15 @@ int CEXEBuild::pack_exe_header()
     ERROR_MSG("Error: calling packer on \"%s\"\n",build_packname);
     return PS_ERROR;
   }
-  tmpfile=FOPEN(build_packname,"rb");
-  if (!tmpfile)
-  {
-    remove(build_packname);
-    ERROR_MSG("Error: reading temporary file \"%s\" after pack\n",build_packname);
-    return PS_ERROR;
-  }
 
-  // read header from file
-
-  fseek(tmpfile,0,SEEK_END);
-  size_t exehead_size = ftell(tmpfile);
-
-  unsigned char *exehead = new unsigned char[exehead_size];
-  fseek(tmpfile,0,SEEK_SET);
-  fread(exehead,1,exehead_size,tmpfile);
-  fclose(tmpfile);
-
-  update_exehead(exehead, exehead_size);
-
-  // cleanup
-  // TODO: use resource-controlling classes (e.g. Boost)
-  delete [] exehead;
+  int result = update_exehead(build_packname);
   remove(build_packname);
+
+  if (result != PS_OK)
+  {
+    ERROR_MSG("Error: reading temporary file \"%s\" after pack\n",build_packname);
+    return result;
+  }
 
   return PS_OK;
 }
@@ -2579,9 +2562,9 @@ int CEXEBuild::write_output(void)
   INFO_MSG("\nUsing %s%s compression.\n\n", compressor->GetName(), build_compress_whole?" (compress whole)":"");
 #endif
 
-  int total_usize=exehead_original_size;
+  int total_usize=m_exehead_original_size;
 
-  INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,exehead_original_size);
+  INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,m_exehead_original_size);
 
   if (build_compress_whole) {
     INFO_MSG("Install code:                          (%d bytes)\n",
@@ -2795,8 +2778,7 @@ int CEXEBuild::uninstall_generate()
     // Get offsets of icons to replace for uninstall
     // Also makes sure that the icons are there and in the right size.
     // TODO: fix generate_unicons_offsets to check ranges (!)
-    icon_offset = generate_unicons_offsets(m_exehead, m_unicon_data);
-    if (icon_offset == 0)
+    if (generate_unicons_offsets(m_exehead, m_unicon_data) == 0)
       return PS_ERROR;
 
     entry *ent = (entry *) build_entries.get();
@@ -2810,7 +2792,7 @@ int CEXEBuild::uninstall_generate()
       if (ent->which == EW_WRITEUNINSTALLER)
       {
         ent->offsets[1] = uninstdata_offset;
-        ent->offsets[2] = unicondata_size;
+        ent->offsets[2] = m_unicon_size;
         uns--;
         if (!uns)
           break;
@@ -2818,7 +2800,7 @@ int CEXEBuild::uninstall_generate()
       ent++;
     }
 
-    if (add_db_data((char *)m_unicon_data,unicondata_size) < 0)
+    if (add_db_data((char *)m_unicon_data,m_unicon_size) < 0)
       return PS_ERROR;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -2980,7 +2962,7 @@ int CEXEBuild::uninstall_generate()
     udata.clear();
 
     //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
-    uninstall_size_full=fh.length_of_all_following_data+unicondata_size;
+    uninstall_size_full=fh.length_of_all_following_data+m_unicon_size;
 
     // compressed size
     uninstall_size=build_datablock.getlen()-uninstdata_offset;
@@ -2990,7 +2972,6 @@ int CEXEBuild::uninstall_generate()
 #endif
   return PS_OK;
 }
-
 
 #define SWAP(x,y,i) { i _ii; _ii=x; x=y; y=_ii; }
 
@@ -3379,6 +3360,46 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   }
 }
 
+int CEXEBuild::set_compressor(const string& compressor, const bool solid) {
+  string stub = stubs_dir + PLATFORM_PATH_SEPARATOR_STR + compressor;
+  if (solid)
+    stub += "_solid";
+
+  return update_exehead(stub, &m_exehead_original_size);
+}
+
+int CEXEBuild::update_exehead(const string& file, size_t *size/*=NULL*/) {
+  FILE *tmpfile = fopen(file.c_str(), "rb");
+  if (!tmpfile)
+  {
+    ERROR_MSG("Error: opening stub \"%s\"\n", file.c_str());
+    return PS_ERROR;
+  }
+
+  fseek(tmpfile, 0, SEEK_END);
+  size_t exehead_size = ftell(tmpfile);
+
+  unsigned char *exehead = new unsigned char[exehead_size];
+  fseek(tmpfile, 0, SEEK_SET);
+  if (fread(exehead, 1, exehead_size, tmpfile) != exehead_size)
+  {
+    ERROR_MSG("Error: reading stub \"%s\"\n", file.c_str());
+    fclose(tmpfile);
+    delete [] exehead;
+    return PS_ERROR;
+  }
+  fclose(tmpfile);
+
+  update_exehead(exehead, exehead_size);
+
+  if (size)
+    *size = exehead_size;
+
+  delete [] exehead;
+
+  return PS_OK;
+}
+
 void CEXEBuild::update_exehead(const unsigned char *new_exehead, size_t new_size) {
   assert(m_exehead != new_exehead);
 
@@ -3394,3 +3415,4 @@ void CEXEBuild::update_exehead(const unsigned char *new_exehead, size_t new_size
   // zero rest of exehead
   memset(m_exehead + new_size, 0, m_exehead_size - new_size);
 }
+

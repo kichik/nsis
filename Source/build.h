@@ -65,7 +65,7 @@ enum notify_e {
 class CEXEBuild {
   public:
     CEXEBuild();
-    void setdirs(const char *argv0);
+    void initialize(const char *makensis_path);
     ~CEXEBuild();
 
     // to add a warning to the compiler's warning list.
@@ -116,6 +116,8 @@ class CEXEBuild {
     int prepare_uninstaller();
     int pack_exe_header();
 
+    int set_compressor(const std::string& compressor, const bool solid);
+    int update_exehead(const std::string& file, size_t *size=NULL);
     void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
@@ -281,6 +283,8 @@ class CEXEBuild {
 
     // a whole bunch O data.
 
+    std::string stubs_dir;
+
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     ICompressor *compressor;
     CZlib zlib_compressor;
@@ -361,11 +365,12 @@ class CEXEBuild {
 
     unsigned char *m_exehead;
     size_t m_exehead_size;
+    size_t m_exehead_original_size;
 
-    int icon_offset;
     bool branding_image_found;
     WORD branding_image_id;
     unsigned char *m_unicon_data;
+    size_t m_unicon_size;
 
 #ifdef NSIS_SUPPORT_BGBG
     LOGFONT bg_font;

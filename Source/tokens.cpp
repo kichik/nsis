@@ -172,7 +172,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETCTLCOLORS,"SetCtlColors",2,2,"hwnd [/BRANDING] [text_color] [transparent|bg_color]",TP_CODE},
 {TOK_SETBRANDINGIMAGE,"SetBrandingImage",1,2,"[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp",TP_CODE},
 {TOK_SETCOMPRESS,"SetCompress",1,0,"(off|auto|force)",TP_ALL},
-{TOK_SETCOMPRESSOR,"SetCompressor",1,1,"[/FINAL] (zlib|bzip2|lzma)",TP_GLOBAL},
+{TOK_SETCOMPRESSOR,"SetCompressor",1,2,"[/FINAL] [/SOLID] (zlib|bzip2|lzma)",TP_GLOBAL},
 {TOK_SETCOMPRESSORDICTSIZE,"SetCompressorDictSize",1,0,"dict_size_mb",TP_ALL},
 {TOK_SETCOMPRESSIONLEVEL,"SetCompressionLevel",1,0,"level_0-9",TP_ALL},
 {TOK_SETDATESAVE,"SetDateSave",1,0,"(off|on)",TP_ALL},
