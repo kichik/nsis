@@ -1088,6 +1088,8 @@
   !endif
   
   Function "${SETSTARTMENU}"
+
+	Push ${MUI_TEMP1}
   
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
     
@@ -1095,21 +1097,23 @@
       !ifdef MUI_STARTMENU_REGISTRY_KEY
         !ifdef MUI_STARTMENU_REGISTRY_VALUENAME
         
-          StrCmp "${MUI_STARTMENU_VARIABLE}" "" "" +6
-          
-          Push ${MUI_TEMP1}
+          StrCmp "${MUI_STARTMENU_VARIABLE}" "" "" +4
+
             ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENU_REGISTRY_ROOT}" "${MUI_STARTMENU_REGISTRY_KEY}" "${MUI_STARTMENU_REGISTRY_VALUENAME}"
             StrCmp ${MUI_TEMP1} "" +2
               StrCpy "${MUI_STARTMENU_VARIABLE}" ${MUI_TEMP1}
-          Pop ${MUI_TEMP1}
-        
+
         !endif
       !endif
     !endif
 
     StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENU_VARIABLE}" /checknoshortcuts "$(MUI_INNERTEXT_STARTMENU_CHECKBOX)" "${MUI_STARTMENU_DEFAULTFOLDER}"
-    Pop "${MUI_STARTMENU_VARIABLE}"
-    
+	Pop ${MUI_TEMP1}
+	StrCmp ${MUI_TEMP1} "success" 0 +2
+		Pop "${MUI_STARTMENU_VARIABLE}"
+
+	Pop ${MUI_TEMP1}
+
   FunctionEnd
 
   !ifndef MUI_NOVERBOSE
