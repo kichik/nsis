@@ -439,9 +439,7 @@ int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
 /*---------------------------------------------------*/
 /*--- Decompression stuff                         ---*/
 /*---------------------------------------------------*/
-static DState local_state;
 
-/*---------------------------------------------------*/
 int BZ_API(BZ2_bzDecompressInit)
                      ( DState * s)
 {
@@ -451,22 +449,6 @@ int BZ_API(BZ2_bzDecompressInit)
 }
 
 
-/*---------------------------------------------------*/
-
-
-/*---------------------------------------------------*/
-__inline__ Int32 BZ2_indexIntoF ( Int32 indx, Int32 *cftab )
-{
-   Int32 nb, na, mid;
-   nb = 0;
-   na = 256;
-   do {
-      mid = (nb + na) >> 1;
-      if (indx >= cftab[mid]) nb = mid; else na = mid;
-   }
-   while (na - nb != 1);
-   return nb;
-}
 
 
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
@@ -519,18 +501,17 @@ void unRLE_obuf_to_output_FAST ( DState* s )
    UChar k1;
 
       /* restore */
-//      UInt32        c_calculatedBlockCRC = s->calculatedBlockCRC;
       UChar         c_state_out_ch       = s->state_out_ch;
       Int32         c_state_out_len      = s->state_out_len;
       Int32         c_nblock_used        = s->nblock_used;
       Int32         c_k0                 = s->k0;
-      UInt32*       c_tt                 = s->tt;
       UInt32        c_tPos               = s->tPos;
+
       char*         cs_next_out          = s->next_out;
       unsigned int  cs_avail_out         = s->avail_out;
       /* end restore */
 
-      UInt32       avail_out_INIT = cs_avail_out;
+      UInt32*       c_tt                 = s->tt;
       Int32        s_save_nblockPP = s->save.nblock+1;
 //      unsigned int total_out_lo32_old;
 
@@ -588,7 +569,6 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       s->state_out_len      = c_state_out_len;
       s->nblock_used        = c_nblock_used;
       s->k0                 = c_k0;
-   //   s->tt                 = c_tt;
       s->tPos               = c_tPos;
       s->next_out     = cs_next_out;
       s->avail_out    = cs_avail_out;
