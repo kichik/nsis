@@ -2,13 +2,13 @@
 ;Macro System
 ;Written by Joost Verburg
 
-;Copyright © 2002-2004 Joost Verburg
+;Copyright © 2002-2005 Joost Verburg
 
 ;Documentation: Readme.html
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.72 - © 2002-2004 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.72 - © 2002-2005 Joost Verburg"
 
 ;--------------------------------
 

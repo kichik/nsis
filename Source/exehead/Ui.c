@@ -1,5 +1,5 @@
 /*
-*  Copyright (C) 1999-2004 Nullsoft, Inc.
+*  Copyright (C) 1999-2005 Nullsoft, Inc.
 *  Portions Copyright (C) 2002 Jeff Doozan
 *
 *  This software is provided 'as-is', without any express or implied warranty.
