@@ -104,13 +104,32 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
     case WM_CTLCOLORBTN:
     {
       ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
-      
+
       if (c) {
-        SetBkMode((HDC)wParam, c->bkmode);
-        if (c->flags & CC_BK)
-          SetBkColor((HDC)wParam, c->bk.lbColor);
+        COLORREF text;
+        LOGBRUSH lh;
+
+        text = c->text;
+        if (c->flags & CC_TEXT_SYS)
+          text = GetSysColor(text);
         if (c->flags & CC_TEXT)
-          SetTextColor((HDC)wParam, c->text);
+          SetTextColor((HDC)wParam, text);
+
+        SetBkMode((HDC)wParam, c->bkmode);
+
+        lh.lbColor = c->bkc;
+        if (c->flags & CC_BK_SYS)
+          lh.lbColor = GetSysColor(lh.lbColor);
+        if (c->flags & CC_BK)
+          SetBkColor((HDC)wParam, lh.lbColor);
+
+        if (c->flags & CC_BKB)
+        {
+          lh.lbStyle = c->lbStyle;
+          if (c->bkb)
+            DeleteObject(c->bkb);
+          c->bkb = CreateBrushIndirect(&lh);
+        }
 
         return (BOOL)c->bkb;
       }
@@ -364,7 +383,6 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  BOOL bNextPage=FALSE;
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
     page *this_page;
@@ -414,7 +432,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     SendMessage(m_curwnd, WM_NOTIFY_INIGO_MONTOYA, 0, 0);
 
 nextPage:
-    bNextPage=FALSE;
     m_page+=m_delta;
     this_page+=m_delta;
 
@@ -459,8 +476,8 @@ nextPage:
       my_SetWindowText(hwndDlg,g_tmp);
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
+      // custom page or user used abort in prefunc
       if (ExecuteCodeSegment(this_page->prefunc, NULL) || !this_page->dlg_id) {
-        bNextPage=TRUE;
         goto nextPage;
       }
 #endif //NSIS_SUPPORT_CODECALLBACKS
@@ -515,9 +532,6 @@ skipPage:
       ShowWindow(hwndDlg, SW_SHOW);
       ui_dlg_visible = 1;
     }
-
-    if (bNextPage)
-      goto nextPage;
 
     return FALSE;
   }

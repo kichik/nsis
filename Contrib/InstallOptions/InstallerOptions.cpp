@@ -32,17 +32,6 @@ static int WINAPI popstring(char *str)
   return 0;
 }
 
-#define CC_TEXT 1
-#define CC_BK 4
-
-typedef struct {
-  COLORREF text;
-  LOGBRUSH bk;
-  HBRUSH bkb;
-  int bkmode;
-  int flags;
-} ctlcolors;
-
 #define strcpy(x,y) lstrcpy(x,y)
 //#define strncpy(x,y,z) lstrcpyn(x,y,z)
 #define strdup(x) STRDUP(x)
@@ -761,19 +750,8 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CTLCOLORDLG:
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORLISTBOX:
-    {
-      ctlcolors *c = (ctlcolors *) GetWindowLong((HWND) lParam, GWL_USERDATA);
-
-      if (c) {
-        SetBkMode((HDC)wParam, c->bkmode);
-        if (c->flags & CC_BK)
-          SetBkColor((HDC)wParam, c->bk.lbColor);
-        if (c->flags & CC_TEXT)
-          SetTextColor((HDC)wParam, c->text);
-
-        return (BOOL)c->bkb;
-      }
-    }
+      // let the NSIS window handle colors, it knows best
+      return mySendMessage(hMainWindow, WM_CTLCOLORSTATIC, wParam, lParam);
   }
   return 0;
 }
