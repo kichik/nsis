@@ -54,6 +54,7 @@ enum
   TOK_COMPLETEDTEXT,
 
   TOK_LANGSTRING,
+  TOK_LANGSTRINGUP,
   
   // system "preprocessor"ish tokens
   TOK_P_IFDEF,
