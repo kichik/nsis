@@ -7,6 +7,7 @@ extern common_strings *cur_common_strings_table;
 extern uninstall_strings *cur_uninstall_strings_table;
 
 int ui_doinstall(void);
+void update_status_text_from_tab(int texttab, const char *text2);
 void update_status_text(const char *text1, const char *text2);
 extern int ui_st_updateflag;
 

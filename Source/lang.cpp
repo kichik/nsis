@@ -202,7 +202,6 @@ int CEXEBuild::WriteStringTables() {
   GrowBuf cst;
   for (i = 0; i < st_num; i++)
     cst.add(&string_tables[i]->common, sizeof(common_strings));
-  build_header.common.str_tables_num = st_num;
   build_header.common.str_tables = add_data((char*)cst.get(), st_num*sizeof(common_strings), &build_datablock);
 
   GrowBuf ust;
@@ -214,7 +213,6 @@ int CEXEBuild::WriteStringTables() {
   GrowBuf ucst;
   for (i = 0; i < st_num; i++)
     ucst.add(&string_tables[i]->ucommon, sizeof(common_strings));
-  build_uninst.common.str_tables_num = st_num;
   build_uninst.common.str_tables = add_data((char*)ucst.get(), st_num*sizeof(common_strings), &ubuild_datablock);
 
   return PS_OK;

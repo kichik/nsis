@@ -9,10 +9,6 @@
 #include "lang.h"
 #include "resource.h"
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-#include "dllpaths.h"
-#endif // NSIS_CONFIG_PLUGIN_SUPPORT
-
 #define EXEC_ERROR 0x7FFFFFFF
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -37,6 +33,11 @@ static int exec_rebootflag;
 HBITMAP g_hBrandingBitmap = 0;
 #endif
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+char plugins_temp_dir[NSIS_MAX_STRLEN]="";
+char plugin[NSIS_MAX_STRLEN]="";
+#endif
+
 extern HWND m_curwnd;
 
 static WIN32_FIND_DATA *file_exists(char *buf)
@@ -51,46 +52,6 @@ static WIN32_FIND_DATA *file_exists(char *buf)
   }
   return NULL;
 }
-
-#ifdef NSIS_SUPPORT_RMDIR
-static void doRMDir(char *buf, int recurse)
-{
-  if (recurse && is_valid_instpath(buf))
-  {
-    int i=lstrlen(buf);
-    HANDLE h;
-    WIN32_FIND_DATA fd;
-    lstrcat(buf,"\\*.*");
-    h = FindFirstFile(buf,&fd);
-    if (h != INVALID_HANDLE_VALUE) 
-    {
-      do
-      {
-        if (fd.cFileName[0] != '.' ||
-            (fd.cFileName[1] != '.' && fd.cFileName[1]))
-        {
-          lstrcpy(buf+i+1,fd.cFileName);
-          if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
-          else 
-          {
-            update_status_text(STR(LANG_DELETEFILE),buf);
-            if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) 
-              SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
-            DeleteFile(buf);
-          }
-        }
-      } while (FindNextFile(h,&fd));
-      FindClose(h);
-    }
-    buf[i]=0; // fix buffer
-  }
-  log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-  update_status_text(STR(LANG_REMOVEDIR),buf);
-  RemoveDirectory(buf);
-}
-#endif//NSIS_SUPPORT_RMDIR
-
-
 
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
 // based loosely on code from Tim Kosse
@@ -240,10 +201,10 @@ static int ExecuteEntry(entry *entries, int pos)
       log_printf3("CreateDirectory: \"%s\" (%d)",buf2,parms[1]);
       if (parms[1]) 
       {
-        update_status_text(STR(LANG_OUTPUTDIR),buf2);
+        update_status_text_from_tab(LANG_OUTPUTDIR,buf2);
         lstrcpy(state_output_directory,buf2);
       }
-      else update_status_text(STR(LANG_CREATEDIR),buf2);
+      else update_status_text_from_tab(LANG_CREATEDIR,buf2);
       recursive_create_directory(buf2);
     return 0;
     case EW_IFFILEEXISTS:
@@ -279,7 +240,7 @@ static int ExecuteEntry(entry *entries, int pos)
         log_printf2("Rename: %s",buf4);
         if (MoveFile(buf,buf2))
         {
-          update_status_text(STR(LANG_RENAME),buf4);
+          update_status_text_from_tab(LANG_RENAME,buf4);
         }
         else
         {
@@ -290,7 +251,7 @@ static int ExecuteEntry(entry *entries, int pos)
             exec_rebootflag++;
 #endif
             MoveFileOnReboot(buf,buf2);
-            update_status_text(STR(LANG_RENAMEONREBOOT),buf4);
+            update_status_text_from_tab(LANG_RENAMEONREBOOT,buf4);
             log_printf2("Rename on reboot: %s",buf4);
           }
           else
@@ -390,7 +351,7 @@ static int ExecuteEntry(entry *entries, int pos)
         {
           if (overwriteflag) 
           {
-            update_status_text(STR(LANG_SKIPPED),buf4);
+            update_status_text_from_tab(LANG_SKIPPED,buf4);
             if (overwriteflag==2) exec_errorflag++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf,overwriteflag); 
             return 0;
@@ -413,12 +374,12 @@ static int ExecuteEntry(entry *entries, int pos)
               return 0;
             default:
               log_printf("File: error, user abort"); 
-              update_status_text(STR(LANG_CANTWRITE),buf);
+              update_status_text_from_tab(LANG_CANTWRITE,buf);
             return EXEC_ERROR;
           }
         }
 
-        update_status_text(STR(LANG_EXTRACT),buf4);
+        update_status_text_from_tab(LANG_EXTRACT,buf4);
         ret=GetCompressedDataFromDataBlock(parms[2],hOut);
 
         log_printf3("File: wrote %d to \"%s\"",ret,buf);
@@ -468,7 +429,7 @@ static int ExecuteEntry(entry *entries, int pos)
               if (DeleteFile(buf2))
               {
                 log_printf2("Delete: DeleteFile(\"%s\")",buf2); 
-                update_status_text(STR(LANG_DELETEFILE),buf2);
+                update_status_text_from_tab(LANG_DELETEFILE,buf2);
               }
               else
               {
@@ -479,7 +440,7 @@ static int ExecuteEntry(entry *entries, int pos)
                   exec_rebootflag++;
 #endif
                   log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf2); 
-                  update_status_text(STR(LANG_DELETEONREBOOT),buf2);
+                  update_status_text_from_tab(LANG_DELETEONREBOOT,buf2);
                   MoveFileOnReboot(buf2,NULL);
                 }
                 else
@@ -714,7 +675,7 @@ static int ExecuteEntry(entry *entries, int pos)
         lstrcpy(buf4,buf);
         lstrcat(buf4," ");
         lstrcat(buf4,buf2);
-        update_status_text(STR(LANG_EXECSHELL), buf4);
+        update_status_text_from_tab(LANG_EXECSHELL, buf4);
         x=(int)ShellExecute(g_hwnd,buf[0]?buf:NULL,buf2,buf3[0]?buf3:NULL,state_output_directory,parms[3]);
         if (x < 33)
         {
@@ -734,7 +695,7 @@ static int ExecuteEntry(entry *entries, int pos)
         HANDLE hProc;
         process_string_fromtab(buf,parms[0]);
         log_printf2("Exec: command=\"%s\"",buf);
-        update_status_text(STR(LANG_EXECUTE),buf);
+        update_status_text_from_tab(LANG_EXECUTE,buf);
 
         hProc=myCreateProcess(buf,*state_output_directory?state_output_directory:NULL);
 
@@ -831,6 +792,10 @@ static int ExecuteEntry(entry *entries, int pos)
         if (hres == S_FALSE || hres == S_OK)
         {
           HANDLE h;
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+          if (!parms[0]) lstrcpy(buf,plugin);
+          else
+#endif
           process_string_fromtab(buf,parms[0]);
           process_string_fromtab(buf2,parms[1]);
           
@@ -861,21 +826,21 @@ static int ExecuteEntry(entry *entries, int pos)
             }
             else
             {
-              update_status_text(STR(LANG_CANNOTFINDSYMBOL),buf2); 
+              update_status_text_from_tab(LANG_CANNOTFINDSYMBOL,buf2); 
               log_printf3("Error registering DLL: %s not found in %s",buf2,buf);
             }
             FreeLibrary(h);
           }
           else
           {
-            update_status_text(STR(LANG_COULDNOTLOAD),buf); 
+            update_status_text_from_tab(LANG_COULDNOTLOAD,buf); 
             log_printf2("Error registering DLL: Could not load %s",buf);
           }
           OleUninitialize();
         }
         else
         {
-          update_status_text(STR(LANG_NOOLE),buf); 
+          update_status_text_from_tab(LANG_NOOLE,buf); 
           log_printf("Error registering DLL: Could not initialize OLE");
         }
       }
@@ -895,11 +860,11 @@ static int ExecuteEntry(entry *entries, int pos)
           state_output_directory,(parms[4]&0xff00)>>8,parms[4]>>16))
       {
         exec_errorflag++;
-        update_status_text(STR(LANG_ERRORCREATINGSHORTCUT),buf3);
+        update_status_text_from_tab(LANG_ERRORCREATINGSHORTCUT,buf3);
       }
       else
       {
-        update_status_text(STR(LANG_CREATESHORTCUT),buf3);
+        update_status_text_from_tab(LANG_CREATESHORTCUT,buf3);
       }
     return 0;
 #endif//NSIS_SUPPORT_CREATESHORTCUT
@@ -927,7 +892,7 @@ static int ExecuteEntry(entry *entries, int pos)
 			  res=SHFileOperation(&op);
 			  if (res) 
         { // some of these changes were from Edgewise (wiked_edge@yahoo.com)
-          update_status_text(STR(LANG_COPYFAILED),"");
+          update_status_text_from_tab(LANG_COPYFAILED,"");
           exec_errorflag++;
 			  }
     	}
@@ -1332,11 +1297,11 @@ static int ExecuteEntry(entry *entries, int pos)
         log_printf3("created uninstaller: %d, \"%s\"",ret,buf2);
         if (ret < 0)
         {
-          update_status_text(STR(LANG_ERRORCREATING),buf);
+          update_status_text_from_tab(LANG_ERRORCREATING,buf);
           DeleteFile(buf2);
         }
         else
-          update_status_text(STR(LANG_CREATEDUNINST),buf);
+          update_status_text_from_tab(LANG_CREATEDUNINST,buf);
       }
     return 0;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -1427,68 +1392,11 @@ static int ExecuteEntry(entry *entries, int pos)
 // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     case EW_PLUGINCOMMANDPREP:
-    {
-      // parms[0] - dll name
-      // parms[1] - function name
-      // parms[2] - compressed data handle
-      char* dllPath = DllPathsDetermined(parms[0]);
-      if (!dllPath)
-      {
-        HANDLE hOut;
+      // parms[0] = dll name
 
-        if (!GetTempPath(NSIS_MAX_STRLEN,buf2) ||
-            !GetTempFileName(buf2,"nst",0,buf))
-        {
-          exec_errorflag++;
-          return 0;
-        }
-
-        hOut = myOpenFile(buf,GENERIC_WRITE,CREATE_ALWAYS);
-        GetCompressedDataFromDataBlock(parms[2],hOut);
-        CloseHandle(hOut);
-
-        DllPathsAdd(parms[0],buf);
-      }
-      else
-        lstrcpy(buf,dllPath);
-
-      // leave buf containing the dll path
-      // and buf2 containing the function name
-      process_string_fromtab(buf2,parms[1]);
-    }
-    return 0;
-    case EW_PLUGINCOMMAND:
-    {
-      // parms contain command arguments
-      FARPROC funke;
-      HANDLE h;
-      int i;
-
-      // Place the command arguments on the stack, then invoke a CallInstDLL
-      // command on behalf of the user. Error handling needs improving, this
-      // won't fail gracefully, instead it could leave the stack in a state
-      // the user script won't expect.
-      for (i = 0; parms[i] != -1 && i < MAX_ENTRY_OFFSETS; i++)
-      {
-          stack_t* s = (stack_t*)GlobalAlloc(GPTR,sizeof(stack_t));
-          process_string_fromtab(s->text,parms[i]);
-          s->next = g_st;
-          g_st = s;
-      }
-
-      h = LoadLibrary(buf);
-      if (h)
-      {
-        funke = GetProcAddress(h,buf2);
-        if (funke)
-        {
-          void (*func)(HWND,int,char*,void*);
-          func = (void*)funke;
-          func(g_hwnd,NSIS_MAX_STRLEN,(char*)g_usrvars,(void*)&g_st);
-        }
-        FreeLibrary(h);
-      }
-    }
+      if (!*plugins_temp_dir) lstrcpy(plugins_temp_dir,g_usrvars[0]);
+      lstrcpy(plugin,plugins_temp_dir);
+      process_string_fromtab(plugin+lstrlen(plugins_temp_dir),parms[0]);
     return 0;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
   }

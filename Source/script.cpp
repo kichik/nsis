@@ -3296,20 +3296,53 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
     case TOK__PLUGINCOMMAND:
     {
-      if (line.getnumtokens()-1 > MAX_ENTRY_OFFSETS)
-      {
-        ERROR_MSG("Error: Too many arguments (%d max) to command %s!\n",MAX_ENTRY_OFFSETS,line.gettoken_str(0));
-        return PS_ERROR;
-      }
+      static int zero_offset;
+      if (!zero_offset) zero_offset=add_string("$0");
+      int ret;
 
       char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0));
       if (dllPath)
       {
+        if (!plugin_used) {
+          // If no plugin was called up until now init the plugin stuff
+          // Push $0
+          ent.which=EW_PUSHPOP;
+          ent.offsets[0]=zero_offset;
+          ent.offsets[1]=0;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+          // Get temp file name
+          ent.which=EW_GETTEMPFILENAME;
+          ent.offsets[0]=0; // $0
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+          // Delete the temp file created
+          ent.which=EW_DELETEFILE;
+          ent.offsets[0]=zero_offset;
+          ent.offsets[1]=0;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+          // Craete a dir instead of that temp file
+          ent.which=EW_CREATEDIR;
+          ent.offsets[0]=zero_offset;
+          ent.offsets[1]=0;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+        }
+        // Make DLL name (on user machine)
+        ent.which=EW_PLUGINCOMMANDPREP;
+        ent.offsets[0]=add_string(strrchr(dllPath,'\\'));
+        ret=add_entry(&ent);
+        if (ret != PS_OK) return ret;
+
+        // Add the DLL if not already added
         int dataHandle = m_plugins.GetDllDataHandle(dllPath);
         if (dataHandle == -1)
         {
           int error;
-          if (PS_OK != (error = do_add_file(dllPath,0,0,-1,&dataHandle,0)))
+          char file[NSIS_MAX_STRLEN];
+          wsprintf(file,"$0\\%s",strrchr(dllPath,'\\')+1);
+          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&dataHandle,file)))
           {
             ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
             return error;
@@ -3318,35 +3351,43 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           m_plugins.StoreDllDataHandle(line.gettoken_str(0),dataHandle);
         }
 
-        // Create the runtime command to execute the custom instruction
-        // Strip any dllname.dll:: signature part off the command
+        if (!plugin_used) {
+          // Pop $0
+          ent.which=EW_PUSHPOP;
+          ent.offsets[0]=0; // $0
+          ent.offsets[1]=1;
+          ent.offsets[2]=0;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+        }
+        plugin_used = true;
+
+        // Finally call the DLL
         char* command = strstr(line.gettoken_str(0),"::");
         if (command) command += 2;
         else         command  = line.gettoken_str(0);
-
-        ent.which      = EW_PLUGINCOMMANDPREP;
-        ent.offsets[0] = add_string(dllPath);
-        ent.offsets[1] = add_string(command);
-        ent.offsets[2] = dataHandle;
-        add_entry(&ent);
-
         SCRIPT_MSG("Plugin Command: %s",command);
-        ent.which = EW_PLUGINCOMMAND;
 
-        for (int i = 0; i < MAX_ENTRY_OFFSETS && i+1 < line.getnumtokens(); i++)
-        {
-          ent.offsets[i] = add_string(line.gettoken_str(i+1));
-          SCRIPT_MSG(" %s",line.gettoken_str(i+1));
+        // First push dll args
+        for (int i = 1; i < line.getnumtokens(); i++) {
+          ent.which=EW_PUSHPOP;
+          ent.offsets[0]=add_string(line.gettoken_str(i));
+          ent.offsets[1]=0;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+          SCRIPT_MSG(" %s",line.gettoken_str(i));
         }
         SCRIPT_MSG("\n");
 
-        // since the runtime code won't know how many arguments to expect (why
-        // should it, an arbitrary command is being executed so it has no way
-        // of knowing) if it's less than the max 
-        if (i < MAX_ENTRY_OFFSETS)
-          ent.offsets[i] = -1;
+        // next, call it
+        ent.which=EW_REGISTERDLL;
+        ent.offsets[0]=0;
+        ent.offsets[1]=add_string(command);
+        ent.offsets[2]=-1;
+        ret=add_entry(&ent);
+        if (ret != PS_OK) return ret;
 
-        return add_entry(&ent);
+        return PS_OK;
       }
       else
         ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
@@ -3368,9 +3409,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
   return PS_ERROR;
 }
 
-// If linecnt == -1 no decompress command will be created in the installer,
-// instead some action during execution of the installer should cause the file
-// to be decompressed manually - Ximon Eighteen 5th August 2002
 int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override)
 {
   char dir[1024];
@@ -3503,9 +3541,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         section_add_size_kb((len+1023)/1024);
         if (name_override) SCRIPT_MSG("File: \"%s\"->\"%s\"",d.cFileName,name_override);
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-        else if (linecnt == -1) SCRIPT_MSG("File: Auto included \"%s\"",d.cFileName);
-#endif // NSIS_CONFIG_PLUGIN_SUPPORT
         else SCRIPT_MSG("File: \"%s\"",d.cFileName);
         if (!build_compress_whole)
           if (build_compress) SCRIPT_MSG(" [compress]");
@@ -3574,23 +3609,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         CloseHandle(hFile);
 
-        int a;
-        // Only insert a EW_EXTRACTFILE command into the installer for this
-        // file if linecnt is NOT -1. This has nothing to do with line counts
-        // - linecnt was just a handy value to use since this function doesn't
-        // appear to be using it anywhere else for anything :-)
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-        if (-1 == linecnt)
-          *total_files = ent.offsets[2];
-        else
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
+        int a=add_entry(&ent);
+        if (a != PS_OK) 
         {
-          a=add_entry(&ent);
-          if (a != PS_OK) 
-          {
-            FindClose(h);
-            return a;
-          }
+          FindClose(h);
+          return a;
         }
         if (attrib)
         {

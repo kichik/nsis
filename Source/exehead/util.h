@@ -10,7 +10,6 @@ void myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int myatoi(char *s);
 void myitoa(char *s, int d);
 
-
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];
 void log_write(int close);
@@ -34,6 +33,8 @@ extern char g_log_file[1024];
 #endif
 
 HANDLE myCreateProcess(char *cmd, char *dir);
+
+void doRMDir(char *buf, int recurse);
                        
 HANDLE myOpenFile(const char *fn, DWORD da, DWORD cd);
 int CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey);
