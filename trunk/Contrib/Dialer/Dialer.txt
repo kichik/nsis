@@ -1,0 +1,81 @@
+DIALER PLUGIN
+-------------
+
+Written by Amir Szekely aka KiCHiK
+Readme by Joost Verburg
+
+USAGE
+-----
+
+The DialerDLL plugin for NSIS provides five functions related to internet connections.
+
+Example of usage:
+
+ClearErrors           ;Clear the error flag
+Dialer::FunctionName  ;Call Dialer function
+IfErrors "" +3        ;Check for errors
+  MessageBox "Function not available"
+  Quit
+Pop $R0               ;Get the return value from the stack
+MessageBox MB_OK $R0  ;Display the return value
+
+FUNCTIONS
+---------
+
+If a function is not available on the system, the error flag will be set.
+
+* AttemptConnect
+
+  Attempts to make a connection to the Internet if the system is not connected.
+  
+  online - already connected / connection successful
+  offline - connection failed
+  
+  Requires Internet Explorer 3 or later
+
+* AutodialOnline
+
+  Causes the modem to automatically dial the default Internet connection if the system
+  is not connected to the internet. If the system is not set up to automatically
+  connect, it will prompt the user.
+  
+  Return values:
+  
+  online - already connected / connection successful
+  offline - connection failed
+  
+  Requires Internet Explorer 4 or later
+
+* AutodialUnattended
+
+  Causes the modem to automatically dial the default Internet connection if the system
+  is not connected to the internet. The user will not be prompted.
+  
+  Return values:
+  
+  online - already connected / connection successful
+  offline - connection failed
+  
+  Requires Internet Explorer 4 or later
+
+* AutodialHangup
+
+  Disconnects an automatic dial-up connection.
+  
+  Return values:
+
+  success - disconnection successful
+  failure - disconnection failed
+  
+  Requires Internet Explorer 4 or later
+
+* GetConnectedState
+
+  Checks whether the system is connected to the internet.
+  
+  Return values:
+
+  online - system is online
+  offline - system is offline
+  
+  Requires Internet Explorer 4 or later
