@@ -27,7 +27,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#ifdef RESOURCE_EDITOR_NO_API
+#ifdef RESOURCE_EDITOR_NOT_API
 
 #include <Windows.h>
 #include <WinNT.h>
@@ -35,7 +35,7 @@
 #include <Vector>
 #include <Queue>
 
-#endif // #ifdef RESOURCE_EDITOR_NO_API
+#endif // #ifdef RESOURCE_EDITOR_NOT_API
 
 #include <StdExcept>
 using namespace std;
@@ -89,7 +89,7 @@ private:
   void SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt);
 };
 
-#ifdef RESOURCE_EDITOR_NO_API
+#ifdef RESOURCE_EDITOR_NOT_API
 
 class CResourceDirectory {
 public:
@@ -170,6 +170,6 @@ private:
   DWORD m_dwCodePage;
 };
 
-#endif // #ifdef RESOURCE_EDITOR_NO_API
+#endif // #ifdef RESOURCE_EDITOR_NOT_API
 
 #endif // !defined(AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_)
