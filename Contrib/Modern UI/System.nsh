@@ -69,7 +69,7 @@
   !endif
 
   !ifndef MUI_FONT_HEADER
-    !define MUI_FONT_HEADER "MS Sans Serif"
+    !define MUI_FONT_HEADER "MS Shell Dlg"
   !endif
     
   !ifndef MUI_FONTSIZE_HEADER
@@ -466,7 +466,7 @@
     Pop ${MUI_TEMP1}
   !endif
   
-  LangDLL::LangDialog "${MUI_TEXT_LANGDLL_WINDOWTITLE}" "${MUI_TEXT_LANGDLL_INFO}" AF ${MUI_LANGDLL_PUSHLIST} "" 8 "${MUI_FONT}"
+  LangDLL::LangDialog "${MUI_TEXT_LANGDLL_WINDOWTITLE}" "${MUI_TEXT_LANGDLL_INFO}" A ${MUI_LANGDLL_PUSHLIST} ""
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
