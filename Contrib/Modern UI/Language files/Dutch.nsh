@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Kies Onderdelen"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Kies de onderdelen die u wilt installeren."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschrijving"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beweeg uw muis over een onderdeel om een beschrijving te zien."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beweeg uw muis over een onderdeel om de beschrijving te zien."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selecteer een onderdeel om de beschrijving te zien."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Kies Installatie Locatie"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Kies de map waarin u $(^NameDA) wilt installeren."
