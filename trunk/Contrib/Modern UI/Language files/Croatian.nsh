@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Croatian (1050)
 ;By Igor Ostriz
@@ -17,8 +17,8 @@
   !define MUI_TEXT_LICENSE_SUBTITLE "Molim proèitajte licencu prije instalacije programa $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "'Page Down' za ostatak licence."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Ukoliko prihvaæate uvjete licence, odaberite 'Prihvaæam' za nastavak. Morate prihvatiti licencu za instalaciju programa $(^Name)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaæate uvjete licence, oznaèite ispod kvadratiæ. Morate prihvatiti licencu za instalaciju programa $(^Name). $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaæate uvjete licence, odaberite ispod prvu opciju. Morate prihvatiti licencu za instalaciju programa $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaæate uvjete licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za instalaciju programa $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaæate uvjete licence, odaberite prvu donju opciju. Morate prihvatiti licencu za instalaciju programa $(^Name). $_CLICK"
   
   !define MUI_TEXT_COMPONENTS_TITLE "Izbor komponenti"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Odaberite komponente programa $(^Name) koje želite instalirati."
@@ -40,7 +40,7 @@
   !define MUI_BUTTONTEXT_FINISH "&Kraj"
   !define MUI_TEXT_FINISH_INFO_TITLE "Dovršenje instalacije programa $(^Name)"
   !define MUI_TEXT_FINISH_INFO_TEXT "Program $(^Name) je instaliran na Vaše raèunalo.\r\n\r\nOdaberite 'Kraj' za završetak."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Vaše raèunalo treba ponovno pokrenuti za završetak instalacije programa $(^Name). Želite li to uèiniti sada?"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Vaše raèunalo treba ponovno pokrenuti za dovršenje instalacije programa $(^Name). Želite li to uèiniti sada?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Ponovno pokreni raèunalo sada"
   !define MUI_TEXT_FINISH_REBOOTLATER "Ponovno æu pokrenuti raèunalo kasnije"
   !define MUI_TEXT_FINISH_RUN "&Pokreni program $(^Name)"
@@ -54,14 +54,17 @@
   !define MUI_TEXT_ABORTWARNING "Jeste li sigurni da želite prekinuti instalaciju programa $(^Name)?"
 
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli u postupak uklanjanja programa $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj æe Vas èarobnjak provesti kroz postupak uklanjanja programa $(^Name).\r\n\r\nPrije samog poèetka, molim zatvorite program $(^Name) ukoliko je sluèajno otvoren.\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Uklanjanje programa $(^Name)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^Name) æe biti uklonjen s ovog raèunala."
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^Name) æe biti uklonjen s Vašeg raèunala."
 
   !define MUI_UNTEXT_LICENSE_TITLE "Licenèni ugovor"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Molim proèitajte licencu prije uklanjanja programa $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Ukoliko prihvaæate uvjete licence, odaberite 'Prihvaæam' za nastavak. Morate prihvatiti licencu za uklanjanje programa $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaæate uvjete licence, oznaèite kvadratiæ ispod. Morate prihvatiti licencu za uklanjanje programa $(^Name). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaæate uvjete licence, odaberite prvu opciju ispod. Morate prihvatiti licencu za uklanjanje programa $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ukoliko prihvaæate uvjete licence, oznaèite donji kvadratiæ. Morate prihvatiti licencu za uklanjanje programa $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ukoliko prihvaæate uvjete licence, odaberite prvu donju opciju. Morate prihvatiti licencu za uklanjanje programa $(^Name). $_CLICK"
 
   !define MUI_UNTEXT_COMPONENTS_TITLE "Izbor komponenti"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Odaberite koje komponente programa $(^Name) želite ukloniti."
@@ -72,10 +75,15 @@
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Uklanjanje"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Molim prièekajte na završetak uklanjanja programa $(^Name)."
 
-  !define MUI_UNTEXT_FINISH_TITLE "Završeno"
+  !define MUI_UNTEXT_FINISH_TITLE "Uklanjanje završeno"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Uklanjanje je u potpunosti završilo uspješno."
   
   !define MUI_UNTEXT_ABORT_TITLE "Uklanjanje je prekinuto"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Uklanjanje nije završilo uspješno."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Završetak uklanjanja programa $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^Name) je uklonjen s Vašeg raèunala.\r\n\r\nOdaberite 'Kraj' za zatvaranje ovog èarobnjaka."
+
+  !define MUI_UNTEXT_ABORTWARNING "Jeste li sigurni da želite prekinuti uklanjanje programa $(^Name)?"  
 
 !insertmacro MUI_LANGUAGEFILE_END
