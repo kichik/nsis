@@ -233,7 +233,10 @@ numbers from 1 to NumFields. Each Field section can contain the following values
         An "<span class="italic">Icon</span>" control displays an icon.
         Use no Text to use the installer icon.<br />
         A "<span class="italic">Bitmap</span>" control displays a bitmap.<br />
-        A "<span class="italic">GroupBox</span>" control displays a frame to group controls.<br />
+        A "<span class="italic">GroupBox</span>" control displays a frame to group
+        controls.<br />
+        A "<span class="italic">Link</span>" control displays a static hot text and when user click the
+        control the contents of the <span class="bold">state</span> is shellexecuted. eg: Http://... or mailto:...<br />
         </td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Text</span></td>
@@ -411,6 +414,22 @@ numbers from 1 to NumFields. Each Field section can contain the following values
           <tr>
           <td class="righttable">ONLY_NUMBERS</td>
              <td class="righttable">Used by "<span class="italic">Text</span>" controls. Forces the user to enter only numbers into the edit box.</td></tr>
+          <tr>
+            <td class="righttable">MULTILINE</td>
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Causes the control to accept multiple-lines.</td></tr>             
+          <tr>
+            <td class="righttable">WANTRETURN</td>
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Specifies that a carriage return be inserted when the user presses the ENTER key 
+            while entering text into the text box.</td></tr>             
+          <tr>
+            <td class="righttable">HSCROLL</td>
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a horizontal scrollbar.</td></tr>             
+          <tr>
+            <td class="righttable">VSCROLL</td>
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls with multiple-line. Show a vertical scrollbar.</td></tr>             
+          <tr>
+            <td class="righttable">READONLY</td>
+            <td class="righttable">Used by "<span class="italic">Text</span>" controls. Prevents the user from entering or editing text in the edit control, but allow the user to select and copy the text.</td></tr>             
         </table></td></tr></table>
 <p class="header">How to use</p>
 <p class="subheader">Modern UI</p>
