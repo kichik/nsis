@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>
+// version 0.3 (based on header files, improved interface, Modern UI support, new script code, improved folder detection) by Joost Verburg
+
 // portions Copyright © 1999-2001 Miguel Garrido (mgarrido01@hotmail.com)
 
 extern "C"
@@ -9,7 +11,7 @@ extern "C"
 };
 #include "resource.h"
 
-const char *g_errcaption="ZIP2EXE Error";
+const char *g_errcaption="Zip2Exe Error";
 
 HINSTANCE g_hInstance;
 HWND g_hwnd;
@@ -17,6 +19,7 @@ HANDLE g_hThread;
 char g_cmdline[1024];
 int g_extracting;
 int g_bzip2;
+int g_mui;
 int g_zipfile_size;
 
 char *g_options="";//"/V3";
@@ -424,13 +427,10 @@ void makeEXE(HWND hwndDlg)
     return;
   }
   GetDlgItemText(hwndDlg,IDC_INSTNAME,buf,sizeof(buf));
-  fprintf(fp,"SetCompressor %s\n",g_bzip2?"bzip2":"zlib");
-  fprintf(fp,"AllowRootDirInstall true\n");
-  fprintf(fp,"Name `%s`\n",buf);
-  fprintf(fp,"Caption `%s Self Extractor`\n",buf);
-  fprintf(fp,"InstallButtonText Extract\n");
+  fprintf(fp,"!define ZIP2EXE_NAME `%s`\n",buf);
   GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
-  fprintf(fp,"OutFile `%s`\n",buf);
+  fprintf(fp,"!define ZIP2EXE_OUTFILE `%s`\n",buf);
+  fprintf(fp,"!define ZIP2EXE_COMPRESSOR_%s\n",g_bzip2?"BZIP2":"ZLIB");
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
   char *outpath = "$INSTDIR";
   int iswinamp=0;
@@ -440,16 +440,11 @@ void makeEXE(HWND hwndDlg)
   if (!strcmp(buf,gp_winamp))
   {
     iswinamp=1;
-    fprintf(fp,"Function SetMyOutPath\n"
-               "  SetOutPath $INSTDIR\n"
-               "FunctionEnd\n");
   }
   if (!strcmp(buf,gp_winamp_plugins))
   {
     iswinamp=1;
-    fprintf(fp,"Function SetMyOutPath\n"
-               "  SetOutPath $INSTDIR\\Plugins\n"
-               "FunctionEnd\n");
+	fprintf(fp,"!define ZIP2EXE_INSTALLDIR_PLUGINS\n");
   }
   if (!strcmp(buf,gp_winamp_vis))
   {
@@ -465,49 +460,31 @@ void makeEXE(HWND hwndDlg)
   {
     iswinamp=1;
     iswinampmode="SkinDir";
+	fprintf(fp,"!define ZIP2EXE_INSTALLDIR_SKINS\n");
   }
 
   if (iswinamp)
   {
-    fprintf(fp,"InstallDir `$PROGRAMFILES\\Winamp`\n");
-    fprintf(fp,"InstallDirRegKey HKEY_LOCAL_MACHINE `Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Winamp` `UninstallString`\n");
-
-    fprintf(fp,"Function .onVerifyInstDir\n"
-               "  IfFileExists $INSTDIR\\winamp.exe WinampInstalled\n"
-               "    Abort\n"
-               "  WinampInstalled:\n"
-               "FunctionEnd\n");
+    fprintf(fp,"!define ZIP2EXE_INSTALLDIR_WINAMP\n");
 
     if (iswinampmode)
     {
-      fprintf(fp,"Function SetMyOutPath\n"
-                 "  StrCpy $1 $INSTDIR\\Plugins\n"
-                 "  ReadINIStr $9 $INSTDIR\\winamp.ini Winamp %s\n"
-                 "  StrCmp $9 '' End\n"
-                 "    IfFileExists $9 0 End\n"
-                 "      StrCpy $1 $9\n"
-                 "  End:\n"
-                 "  SetOutPath $1\n"
-                 "FunctionEnd\n",iswinampmode);
+      fprintf(fp,"!define ZIP2EXE_INSTALLDIR_WINAMPMODE `%s`\n",iswinampmode);
     }
   }
   else  // set out path to $INSTDIR
   {
-    fprintf(fp,"InstallDir `%s`\n",buf);
-    fprintf(fp,"Function SetMyOutPath\n"
-               "  SetOutPath $INSTDIR\n"
-               "FunctionEnd\n");
+	  fprintf(fp,"!define ZIP2EXE_INSTALLDIR `%s`\n",buf);
   }
 
-  GetDlgItemText(hwndDlg,IDC_DESCTEXT,buf,sizeof(buf));
-  fprintf(fp,"DirText `%s`\n",buf);
+  fprintf(fp,"!include `${NSISDIR}\\Contrib\\zip2exe\\Base.nsh`\n");
+  fprintf(fp,"!include `${NSISDIR}\\Contrib\\zip2exe\\%s.nsh`\n",g_mui?"Modern":"Classic");
 
-  fprintf(fp,"Section\n");
-  fprintf(fp,"Call SetMyOutPath\n");
+  fprintf(fp,"!insertmacro SECTION_BEGIN\n");
   fprintf(fp,"File /r `%s\\*.*`\n",tempzip_path);
-  fprintf(fp,"SectionEnd\n");
-  fclose(fp);
+  fprintf(fp,"!insertmacro SECTION_END\n");
 
+  fclose(fp);
 
   char g_makensis_path[MAX_PATH];
   char *p=g_makensis_path;
@@ -547,8 +524,8 @@ void makeEXE(HWND hwndDlg)
 
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static int ids[]={IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_DTEXTST,IDC_DESCTEXT,IDC_DEPST,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_RADIO1,IDC_RADIO2};
+  static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
+                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
   static HICON hIcon;
   static HFONT hFont;
   if (uMsg == WM_DESTROY) { if (hIcon) DeleteObject(hIcon); hIcon=0; if (hFont) DeleteObject(hFont); hFont=0; }
@@ -556,14 +533,15 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
-      CheckDlgButton(hwndDlg,IDC_RADIO2,BST_CHECKED);
+      CheckDlgButton(hwndDlg,IDC_BZIP2,BST_CHECKED);
+	  CheckDlgButton(hwndDlg,IDC_MODERNUI,BST_CHECKED);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_poi);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$TEMP");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$SYSDIR");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$WINDIR");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$DESKTOP");
-      SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$DESKTOP\\Poop");
-      SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$PROGRAMFILES\\Poop");
+      SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$DESKTOP\\YourNameHere");
+      SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$PROGRAMFILES\\YourNameHere");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$STARTMENU");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$SMPROGRAMS");
 
@@ -572,11 +550,11 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_vis);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_dsp);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_winamp_skins);
+    
+	  SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
      
-      SetDlgItemText(hwndDlg,IDC_INSTPATH,gp_poi);
-      SetDlgItemText(hwndDlg,IDC_DESCTEXT,"Select the folder where you would like to extract the files to:");
-		  hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
-		  SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);      
+	  hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON1));
+	  SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);      
 
       hFont=CreateFont(15,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,
               OUT_CHARACTER_PRECIS,
@@ -613,10 +591,10 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             OPENFILENAME l={sizeof(l),};
             char buf[1024];
             l.hwndOwner = hwndDlg;
-            l.lpstrFilter = "ZIP files\0*.zip\0All files\0*.*\0";
+            l.lpstrFilter = "ZIP Files\0*.zip\0All Files\0*.*\0";
             l.lpstrFile = buf;
             l.nMaxFile = 1023;
-            l.lpstrTitle = "Open ZIP file";
+            l.lpstrTitle = "Open ZIP File";
             l.lpstrDefExt = "zip";
             l.lpstrInitialDir = NULL;
             l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST;  	        
@@ -651,10 +629,10 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             OPENFILENAME l={sizeof(l),};
             char buf[1024];
             l.hwndOwner = hwndDlg;
-            l.lpstrFilter = "EXE files\0*.exe\0All files\0*.*\0";
+            l.lpstrFilter = "Executables\0*.exe\0All Files\0*.*\0";
             l.lpstrFile = buf;
             l.nMaxFile = 1023;
-            l.lpstrTitle = "Select output EXE file";
+            l.lpstrTitle = "Select Output EXE File";
             l.lpstrDefExt = "exe";
             l.lpstrInitialDir = NULL;
             l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER;  	        
@@ -676,7 +654,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_SHOWNA);            
-              SetDlgItemText(hwndDlg,IDOK,"Convert");
+              SetDlgItemText(hwndDlg,IDOK,"&Generate");
               EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
             }
           }
@@ -693,14 +671,15 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           {
             if (!made)
             {
-              g_bzip2=!IsDlgButtonChecked(hwndDlg,IDC_RADIO1);
+              g_bzip2=!IsDlgButtonChecked(hwndDlg,IDC_ZLIB);
+			  g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
 
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
                 ShowWindow(GetDlgItem(hwndDlg,ids[x]),SW_HIDE);            
               ShowWindow(GetDlgItem(hwndDlg,IDC_OUTPUTTEXT),SW_SHOWNA);
-              SetDlgItemText(hwndDlg,IDOK,"Close");
+              SetDlgItemText(hwndDlg,IDOK,"&Close");
               EnableWindow(GetDlgItem(hwndDlg,IDOK),0);
 
               makeEXE(hwndDlg);

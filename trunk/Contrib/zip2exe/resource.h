@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by res.rc
 //
 #define IDD_DIALOG1                     101
@@ -7,7 +7,6 @@
 #define IDC_ZIPFILE                     1000
 #define IDC_BROWSE                      1001
 #define IDC_ZIPINFO_SUMMARY             1002
-#define IDC_BROWSE3                     1003
 #define IDC_ZIPINFO_FILES               1004
 #define IDC_INSTPATH                    1005
 #define IDC_DESCTEXT                    1006
@@ -17,16 +16,20 @@
 #define IDC_SZIPFRAME                   1010
 #define IDC_OFRAME                      1011
 #define IDC_INAMEST                     1012
-#define IDC_DTEXTST                     1013
 #define IDC_DEPST                       1014
 #define IDC_OEFST                       1015
 #define IDC_OUTPUTTEXT                  1016
 #define IDC_TEST                        1017
 #define IDC_BACK                        1018
 #define IDC_COMPILER                    1019
-#define IDC_RADIO1                      1020
-#define IDC_RADIO2                      1021
+#define IDC_ZLIB                        1020
+#define IDC_MODERNUI                    1021
 #define IDC_COMPRESSOR                  1022
+#define IDC_INTERFACE                   1023
+#define IDC_BZIP2                       1024
+#define IDC_CLASSICUI                   1025
+#define IDC_INFO                        1026
+#define IDC_NSISICON                    1027
 
 // Next default values for new objects
 // 
@@ -34,7 +37,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1023
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
