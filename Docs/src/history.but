@@ -9,7 +9,7 @@
 
 \b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
 
-\b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+\b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Full support for RTL languages, including support for LTR and RTL languages in one installer
 
@@ -85,7 +85,7 @@
 
 \\<b\\>Notes:\\</b\\>
 
-\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: Because of the new syntax for pages, settings etc., changed names of settings and variable names, you have to make some changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
+\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: Because of the new syntax for pages, remamed of settings and variable names etc., you have to make some changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
 \R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work. \\<br\\>
 \R{onselchange}{.onSelChange} is no longer called when the components page is created
 
