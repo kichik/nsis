@@ -176,12 +176,12 @@ class posix_dir_reader : public dir_reader {
 public:
 
   virtual void read(const string& dir) {
-    //string converted_dir = convert(dir);
+    //convert(dir);
 
-    DIR *dip = ::diropen(dir.c_str());
+    DIR *dip = ::opendir(dir.c_str());
     if (dip) {
       dirent *dit;
-      while (dit = ::dirread(dip)) {
+      while ((dit = ::readdir(dip))) {
         if (dit->d_type == DT_DIR) {
           dir_reader::add_dir(dit->d_name);
         } else {
@@ -194,22 +194,18 @@ public:
 
 private:
 
-  string& convert(string& path) {
-    string converted = path;
-
-    string::size_type pos = converted.find('\\');
+  void convert(string& path) {
+    string::size_type pos = path.find('\\');
     while (pos != string::npos) {
-      converted[pos] = '/';
-      pos = converted.find('\\');
+      path[pos] = '/';
+      pos = path.find('\\');
     }
 
     /* Replace drive letter X: by /x */
-    if (converted[1] == ':') {
-      converted[1] = ::tolower(converted[0]);
-      converted[0] = '/';
+    if (path[1] == ':') {
+      path[1] = ::tolower(path[0]);
+      path[0] = '/';
     }
-
-    return converted;
   }
 
 };
