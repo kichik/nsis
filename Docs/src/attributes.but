@@ -58,6 +58,12 @@ Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{
 
 \b \e{IDD_VERIFY} must contain \e{IDC_STR} (static).
 
+\H{acheckbitmap} CheckBitmap
+
+Specifies the bitmap with the images used for the checks of the component-selection page treeview.
+
+This bitmap should have a size of 96x16 pixels and contain six 16x16 images for the different states (in order: selection mask, not checked, checked, greyed out, unchecked & read-only, checked & read-only). Use magenta as mask color (this area will be transparent).
+
 \H{acompletedtext} CompletedText
 
 \c [/LANG=lang_id] [Completed text]
