@@ -58,6 +58,8 @@ HWND g_progresswnd;
 
 static char g_tmp[4096];
 
+static int num_sections;
+
 // sent to the last child window to tell it that the install thread is done
 #define WM_NOTIFY_INSTPROC_DONE (WM_USER+0x4)
 
@@ -284,6 +286,7 @@ lang_again:
 
 int NSISCALL ui_doinstall(void)
 {
+  num_sections=g_inst_header->num_sections;
   g_autoclose=g_inst_cmnheader->misc_flags&1;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)
@@ -815,7 +818,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (r > v) r=v;
       available=(int)r;
     }
-    for (x = 0; x < g_inst_header->num_sections; x ++)
+    for (x = 0; x < num_sections; x ++)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       if (g_inst_section[x].default_state&DFS_SET)
@@ -923,7 +926,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     HBITMAP hBMcheck1;
     int x;
     if (hTreeItems) GlobalFree(hTreeItems);
-    hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*g_inst_header->num_sections);
+    hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_COMP_TEXT);
@@ -960,7 +963,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     Par=NULL;
 
-    for (x = 0; x < g_inst_header->num_sections; x ++)
+    for (x = 0; x < num_sections; x ++)
     {
       if (g_inst_section[x].name_ptr>=0)
       {
@@ -1024,7 +1027,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
       }
     }
-    for (x = 0; x < g_inst_header->num_sections; x ++)
+    for (x = 0; x < num_sections; x ++)
     {
       if (g_inst_section[x].name_ptr>=0 && g_inst_section[x].expand==1)
       {
@@ -1117,7 +1120,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                 // check to see which install type we are
                 for (r = 0; r < m_num_insttypes; r ++)
                 {
-                  for (x = 0; x < g_inst_header->num_sections; x ++)
+                  for (x = 0; x < num_sections; x ++)
                   {
                     char c=GetStringFromStringTab(g_inst_section[x].name_ptr)[0];
                     if (c && c!='-')
@@ -1137,7 +1140,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                       }
                     }
                   }
-                  if (x == g_inst_header->num_sections) break;
+                  if (x == num_sections) break;
                 }
 
                 if (!g_inst_header->no_custom_instmode_flag)
@@ -1169,7 +1172,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (m_whichcfg != m_num_insttypes)
         {
           int x;
-          for (x = 0; x < g_inst_header->num_sections; x ++)
+          for (x = 0; x < num_sections; x ++)
           {
             if (g_inst_section[x].name_ptr>=0)
             {
@@ -1217,7 +1220,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (LANG_SPACE_REQ >= 0) {
       int x,total;
       char s[128];
-      for (total=x=0; x < g_inst_header->num_sections; x ++)
+      for (total=x=0; x < num_sections; x ++)
       {
         if (g_inst_section[x].default_state&DFS_SET)
           total+=g_inst_section[x].size_kb;
@@ -1274,7 +1277,7 @@ static DWORD WINAPI install_thread(LPVOID p)
   {
 #endif
     int m_inst_sec=0;
-    while (m_inst_sec<g_inst_header->num_sections && !m_abort)
+    while (m_inst_sec<num_sections && !m_abort)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
       if (g_inst_section[m_inst_sec].default_state&DFS_SET
@@ -1325,7 +1328,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 #endif
     {
       log_printf3("New install of \"%s\" to \"%s\"",STR(LANG_NAME),state_install_directory);
-      for (; x < g_inst_header->num_sections; x ++)
+      for (; x < num_sections; x ++)
       {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
         if (g_inst_section[x].default_state&DFS_SET)
