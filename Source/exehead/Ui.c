@@ -324,14 +324,14 @@ int NSISCALL ui_doinstall(void)
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=h;
-    wsprintf(g_usrvars[20], "%u", GetUserDefaultLangID());
+    wsprintf(state_language, "%u", GetUserDefaultLangID());
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
     g_hwnd=NULL;
     {
       // Added by Amir Szekely 3rd August 2002
       // Multilingual support
       int num=g_inst_header->common.str_tables_num;
-      LANGID user_lang=myatoi(g_usrvars[20]), lang_mask=~(LANGID)0;
+      LANGID user_lang=myatoi(state_language), lang_mask=~(LANGID)0;
       int size=num*sizeof(common_strings);
       cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
@@ -361,6 +361,7 @@ lang_again:
         goto lang_again;
       }
     }
+    wsprintf(state_language, "%u", cur_common_strings_table->lang_id);
     process_string_from_lang(g_caption,LANGID_CAPTION);
     if (h != GetDesktopWindow()) {
       SendMessage(h, WM_SETTEXT, 0, (LPARAM)g_caption);
