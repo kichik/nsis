@@ -896,11 +896,11 @@ int WINAPI createCfgDlg()
   // Prevent WM_COMMANDs from being processed while we are building
   g_done = 1;
 
-  RECT dialog_r;
   int mainWndWidth, mainWndHeight;
   hConfigWindow=CreateDialog(m_hInstance,MAKEINTRESOURCE(IDD_DIALOG1),mainwnd,cfgDlgProc);
   if (hConfigWindow)
   {
+    RECT dialog_r;
     GetWindowRect(childwnd,&dialog_r);
     MapWindowPoints(0, mainwnd, (LPPOINT) &dialog_r, 2);
     mainWndWidth = dialog_r.right - dialog_r.left;
@@ -923,21 +923,6 @@ int WINAPI createCfgDlg()
     pushstring("error creating dialog");
     return 1;
   }
-
-  // Init dialog unit conversion
-
-  HDC memDC = CreateCompatibleDC(GetDC(hConfigWindow));
-  SelectObject(memDC, hFont);
-
-  TEXTMETRIC tm;
-  GetTextMetrics(memDC, &tm);
-  int baseUnitY = tm.tmHeight;
-
-  SIZE size;
-  GetTextExtentPoint32(memDC,"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &size);
-  int baseUnitX = (size.cx / 26 + 1) / 2;
-
-  DeleteDC(memDC);
 
   BOOL fFocused = FALSE;
 
@@ -962,8 +947,8 @@ int WINAPI createCfgDlg()
         0,
         WS_EX_RTLREADING },
       { "STATIC",       // FIELD_BITMAP
-        DEFAULT_STYLES | SS_BITMAP | SS_CENTERIMAGE,
-        DEFAULT_STYLES | SS_BITMAP | SS_CENTERIMAGE,
+        DEFAULT_STYLES | SS_BITMAP,
+        DEFAULT_STYLES | SS_BITMAP,
         0,
         WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_BROWSEBUTTON
@@ -1042,12 +1027,11 @@ int WINAPI createCfgDlg()
 
     // Convert from dialog units
 
-    RECT rect;
-
-    rect.left = MulDiv(pField->rect.left, baseUnitX, 4);
-    rect.right = MulDiv(pField->rect.right, baseUnitX, 4);
-    rect.top = MulDiv(pField->rect.top, baseUnitY, 8);
-    rect.bottom = MulDiv(pField->rect.bottom, baseUnitY, 8);
+    RECT rect = pField->rect;
+    // MapDialogRect uses the font used when a dialog is created, and ignores
+    // any subsequent WM_SETFONT messages (like we used above); so use the main
+    // NSIS window for the conversion, instead of this one.
+    MapDialogRect(mainwnd, &rect);
 
     if (pField->rect.left < 0)
       rect.left += mainWndWidth;
@@ -1234,6 +1218,18 @@ int WINAPI createCfgDlg()
             nImageType,
             nImage
           );
+          if (pField->nType == FIELD_BITMAP)
+          {
+            // Centre the image in the requested space.
+            // Cannot use SS_CENTERIMAGE because it behaves differently on XP to
+            // everything else.  (Thank you Microsoft.)
+            RECT  bmp_rect;
+            GetClientRect(hwCtrl, &bmp_rect);
+            bmp_rect.left = (rect.left + rect.right - bmp_rect.right) / 2;
+            bmp_rect.top = (rect.top + rect.bottom - bmp_rect.bottom) / 2;
+            SetWindowPos(hwCtrl, NULL, bmp_rect.left, bmp_rect.top, 0, 0,
+                         SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
+          }
           break;
         }
 
@@ -1283,8 +1279,11 @@ void WINAPI showCfgDlg()
   while (!g_done) {
     MSG msg;
     int nResult = GetMessage(&msg, NULL, 0, 0);
-    if (!IsDialogMessage(hConfigWindow,&msg) && !IsDialogMessage(hMainWindow,&msg) && !TranslateMessage(&msg))
+    if (!IsDialogMessage(hConfigWindow,&msg) && !IsDialogMessage(hMainWindow,&msg))
+    {
+      TranslateMessage(&msg);
       DispatchMessage(&msg);
+    }
   }
 
   // we don't save settings on cancel since that means your installer will likely
