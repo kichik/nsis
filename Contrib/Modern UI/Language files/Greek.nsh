@@ -34,6 +34,11 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "Ολοκληρώθηκε"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "Η εγκατάσταση ολοκληρώθηκε επιτυχώς."
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE "Φάκελος στο μενού Έναρξη"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Επιλογή φακέλου για το μενού Έναρξη"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του προγράμματος."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU "Επιλέξτε το φάκελο του μενού Έναρξη στον οποίο θέλετε να δημιουργήσετε τις συντομεύσεις του προγράμματος. Μπορείτε επίσης να εισάγετε ένα όνομα για να δημιουργήσετε ένα νέο φάκελο. Κάντε κλικ στο Εγκατάσταση για να ξεκινήσετε την εγκατάσταση."
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '${MUI_PRODUCT}';"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "Εγκατάσταση του '${MUI_NAME}'"
