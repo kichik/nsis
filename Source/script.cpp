@@ -3309,6 +3309,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_DELETEREGKEY:
       {
         int a=1;
+        ent.offsets[3]=0;
         if (which_token==TOK_DELETEREGKEY)
         {
           ent.offsets[3]=1;

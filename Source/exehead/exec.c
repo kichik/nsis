@@ -1168,7 +1168,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rootkey=parm0;
         char *buf3=process_string_fromparm_tobuf(0x31);
         exec_errorflag++;
-        if (parm3)
+        if (!parm3)
         {
           HKEY hKey;
           if (RegOpenKeyEx((HKEY)rootkey,buf3,0,KEY_ALL_ACCESS,&hKey) == ERROR_SUCCESS)
