@@ -243,9 +243,16 @@ Specifies the output file that the MakeNSIS should write the installer to. This 
 
 \S2{asetfont} SetFont
 
-\c font_face_name font_size
+\c [/LANG=lang_id] font_face_name font_size
 
 Sets the installer font. Please remember that the font you choose must be present on the user's machine as well. Don't use rare fonts that only you have.
+
+Use the /LANG switch if you wish to set a different font for each language. For example:
+
+\c  SetFont /LANG=${LANG_ENGLISH} "English Font" 9
+\c  SetFont /LANG=${LANG_FRENCH} "French Font" 10
+
+There are two \R{langstring}{LangString}s named ^Font and ^FontSize which contain the font and font size for every language.
 
 \S2{ashowinstdetails} ShowInstDetails
 
