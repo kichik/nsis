@@ -500,7 +500,7 @@ Section ""
     MessageBox MB_YESNO|MB_ICONQUESTION "A new release is available. Would you like to go to the download page?" IDNO done
     
       SetDetailsPrint none
-      ExecShell "open" "http://nsis.sourceforge.net/site/Download.6.0.html"
+      ExecShell "open" "http://nsis.sourceforge.net/download/"
       Goto done
     
   CVS:
