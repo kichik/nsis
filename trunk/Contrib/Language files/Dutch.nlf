@@ -44,6 +44,8 @@ Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik abort om de installatie 
 Kon niet schrijven: 
 Kopiëren mislukt
 Kopiëren naar 
+Registreren: 
+Deregistreren: 
 Kon symbool niet vinden: 
 Kon niet laden: 
 Map maken: 
@@ -59,7 +61,7 @@ ExecShell:
 Uitvoeren: 
 Uitpakken: 
 Uitpakken: fout bij schrijven naar bestand 
-Installatie beschadigd: ongeldige opcode
+Installatie programma beschadigd: ongeldige opcode
 Geen OLE voor: 
 Uitvoer map: 
 Verwijder map: 
@@ -67,6 +69,7 @@ Hernoem na opstarten:
 Hernoem: 
 Overgeslagen: 
 Kopieer Details naar Klembord
+Gegevens over installatie bewaren
 # byte
 B
 # kilo
