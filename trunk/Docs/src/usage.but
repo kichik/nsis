@@ -22,7 +22,7 @@ If you want to use MakeNSIS on the command line, the syntax of the makensis comm
 
 \b /HDRINFO prints out information on what options Makensis was compiled with.
 
-\b /CD tells the compiler to switch to the directory of the script it is currently compiling.
+\b /NOCD disabled the current directory change to that of the .nsi file
 
 \b Using the /D switch one or more times will add to symbols to the globally defined list (See !define).
 

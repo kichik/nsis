@@ -69,7 +69,7 @@ static void sigint(int sig)
 int main(int argc, char **argv)
 {
   CEXEBuild build;
-  int do_cd=0;
+  int do_cd=1;
   int outputtried=0;
   int argpos=1;
   int nousage=0;
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
         outputtried=1;
       }
     }
-    else if (!stricmp(argv[argpos],"/CD")) do_cd=1;
+    else if (!stricmp(argv[argpos],"/NOCD")) do_cd=0;
     else if (argv[argpos][0] == '/' && (argv[argpos][1] == 'V' || argv[argpos][1] == 'v') && 
              argv[argpos][2] >= '0' && argv[argpos][2] <= '4' && !argv[argpos][3])
     {
@@ -316,7 +316,7 @@ int main(int argc, char **argv)
               {
                 if (build.display_errors)
                 {
-                  fprintf(g_output,"Error changing directory to \"%s\" (/CD specified)\n",dirbuf);
+                  fprintf(g_output,"Error changing directory to \"%s\"\n",dirbuf);
                   fflush(g_output);
                 }
                 return 1;
@@ -371,7 +371,7 @@ int main(int argc, char **argv)
              "    /Ofile specifies a text file to log compiler output (default is stdout)\n"
              "    /PAUSE pauses after execution\n"
              "    /NOCONFIG disables inclusion of <path to makensis.exe>\\nsisconf.nsh\n"
-             "    /CD makes makensis change the current directory to that of the .nsi file\n"
+             "    /NOCD disabled the current directory change to that of the .nsi file\n"
              "    /Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
              "    /Xscriptcmd executes scriptcmd in script (i.e. \"/XOutFile poop.exe\")\n"
              "   for script file name, you can use - to read from the standard input\n");
