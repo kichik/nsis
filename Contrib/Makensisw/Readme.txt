@@ -132,6 +132,7 @@ Version History
 1.7
  - Added check for warnings
  - Added sound for sucessfull compilations
+ - Update home page and documentation menu items to Sourceforge page
 
 
 Copyright Information
