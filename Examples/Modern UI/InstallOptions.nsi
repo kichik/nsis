@@ -10,13 +10,13 @@
 ;--------------------------------
 ;Configuration
   
-  !define MUI_INSTALLOPTIONS
-  
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
+  
+  !define MUI_WINDOWTITLE
     
   !define TEMP1 $R0
   !define TEMP2 $R1
@@ -114,25 +114,20 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioB.ini" "$(TEXT_IO_PAGETITLE_B)"
   !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioC.ini" "$(TEXT_IO_PAGETITLE_C)"
   
-  ;Abort warnings for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioA.ini"
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioB.ini"
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioC.ini"
-  
 FunctionEnd
 
 Function SetCustomA
-  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioA.ini"
 FunctionEnd
 
 Function SetCustomB
-  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioB.ini"
 FunctionEnd
 
 Function SetCustomC
-  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioC.ini"
 
 FunctionEnd
