@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Choisissez les composants"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Choisissez les composants de $(^NameDA) que vous souhaitez installer."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Description"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passer le curseur de votre souris sur un composant pour voir sa description."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passer le curseur de votre souris sur un composant pour voir sa description."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Sélectionnez un composant pour voir sa description."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Choisissez le dossier d'installation"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Choisissez le dossier dans lequel installer $(^NameDA)."
