@@ -528,6 +528,7 @@ nextPage:
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
 #endif //NSIS_SUPPORT_CODECALLBACKS
+      LockWindowUpdate(0);
       if (this_page->id>=0) // NSIS page
       {
         gDontFookWithFocus = 0;
@@ -538,6 +539,9 @@ nextPage:
           GetWindowRect(GetDlgItem(hwndDlg,IDC_CHILDRECT),&r);
           ScreenToClient(hwndDlg,(LPPOINT)&r);
           SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+          ExecuteCodeSegment(this_page->postfunc,NULL);
+#endif //NSIS_SUPPORT_CODECALLBACKS
           SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
           ShowWindow(m_curwnd,SW_SHOWNA);
         }
@@ -549,12 +553,6 @@ nextPage:
             SetFocus(m_hwndOK);
         //XGE End
       }
-
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-      ExecuteCodeSegment(this_page->postfunc,NULL);
-#endif //NSIS_SUPPORT_CODECALLBACKS
-
-      LockWindowUpdate(0);
     }
   }
   if (uMsg == WM_COMMAND)
