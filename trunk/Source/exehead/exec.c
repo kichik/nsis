@@ -26,6 +26,14 @@ static stack_t *g_st;
 
 exec_flags g_exec_flags;
 
+struct {
+  exec_flags *flags;
+  void *ExecuteCodeSegment;
+} plugin_extra_parameters = {
+  &g_exec_flags,
+  &ExecuteCodeSegment
+};
+
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
 HRESULT g_hres;
 #endif
@@ -924,17 +932,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               }
               else
               {
-                void (*func)(HWND,int,char*,void*);
+                void (*func)(HWND,int,char*,void*,void*);
                 func=(void*)funke;
                 func(
                   g_hwnd,
                   NSIS_MAX_STRLEN,
                   (char*)g_usrvars,
 #ifdef NSIS_SUPPORT_STACK
-                  (void*)&g_st
+                  (void*)&g_st,
 #else
-                  NULL
+                  NULL,
 #endif//NSIS_SUPPORT_STACK
+                  &plugin_extra_parameters
                 );
               }
             }
