@@ -101,14 +101,10 @@ Section $(TITLE_SecCopyUI) SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
-
-SectionEnd
-
-Section ""
-
-  ;Invisible section to write the language to the registry
+  ;Write language to the registry (for the uninstaller)
   WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Installer Language" $LANGUAGE
+  
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
   
 SectionEnd
   
