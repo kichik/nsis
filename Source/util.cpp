@@ -309,3 +309,18 @@ BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename) {
   return pbUIData;
 }
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
+
+void *operator new(size_t size) {
+	void *p = malloc(size);
+	if (!p)
+		throw bad_alloc();
+	return p;
+}
+
+void operator delete(void *p) {
+	if (p) free(p);
+}
+
+void operator delete [](void *p) {
+	if (p) free(p);
+}
