@@ -190,7 +190,7 @@ Sets the name of the installer. The name is usually simply the product name such
 
 \c path_to_icon.ico
 
-Sets the icon of the installer.
+Sets the icon of the installer. Every icon in the icon file will be included in the installer.
 
 \S2{aoutfile} OutFile
 
@@ -262,7 +262,7 @@ Sets what the titlebars of the uninstaller will display. By default, it is 'Name
 
 \c path_to_icon.ico
 
-Sets the icon of the uninstaller.
+Sets the icon of the uninstaller. This icon file \e{must} have the exact same structure as the installer icon file.
 
 \S2{auninstallsubcaption} UninstallSubCaption
 
