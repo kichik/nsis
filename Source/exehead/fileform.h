@@ -85,7 +85,7 @@ enum
 
   EW_COPYFILES,         // CopyFiles: 3 [source mask, destination location, flags]
 
-  EW_REBOOT,            // Reboot: 1 [0xbadf00d]
+  EW_REBOOT,            // Reboot: 0
   EW_IFREBOOTFLAG,      // IfRebootFlag: 2 [if reboot flag set, if not reboot flag]
   EW_SETREBOOTFLAG,     // SetRebootFlag: 1 [new value]
 
