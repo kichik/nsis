@@ -1,5 +1,5 @@
 DLL version 2.42 (1/21/2005)
-* Added TRANSPARENT flag for BITMAP fields
+* Added TRANSPARENT flag for BITMAP fields (funded by Chris Morgan)
 
 DLL version 2.41 (8/5/2004)
 * Bitmaps are now automatically centered
