@@ -1165,7 +1165,12 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
     set_uninstall_mode(1);
   }
 
-  if (subsection_open_cnt && !(new_section.flags & SF_SUBSECEND))
+  if ((new_section.flags & SF_SUBSECEND) && subsection_open_cnt && old_uninstall_mode)
+  {
+    set_uninstall_mode(1);
+  }
+
+  if (subsection_open_cnt)
   {
     if (uninstall_mode != old_uninstall_mode)
     {
@@ -1182,28 +1187,6 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   cur_sections->add(&new_section, sizeof(section));
   build_cursection = (section *) cur_sections->get() + cur_header->blocks[NB_SECTIONS].num;
 
-  if (new_section.flags & (SF_SUBSEC | SF_SUBSECEND))
-  {
-    if (new_section.flags & SF_SUBSECEND)
-    {
-      subsection_open_cnt--;
-      if (subsection_open_cnt < 0)
-      {
-        ERROR_MSG("SubSectionEnd: no SubSections are open\n");
-        return PS_ERROR;
-      }
-      if (!subsection_open_cnt)
-        set_uninstall_mode(0);
-    }
-    else
-      subsection_open_cnt++;
-
-    add_entry_direct(EW_RET);
-    build_cursection->code_size = 0;
-
-    build_cursection = 0;
-  }
-
   if (defname[0])
   {
     char buf[32];
@@ -1216,6 +1199,30 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
   }
 
   cur_header->blocks[NB_SECTIONS].num++;
+
+  if (new_section.flags & (SF_SUBSEC | SF_SUBSECEND))
+  {
+    add_entry_direct(EW_RET);
+    build_cursection->code_size = 0;
+
+    build_cursection = 0;
+
+    if (new_section.flags & SF_SUBSECEND)
+    {
+      subsection_open_cnt--;
+      if (subsection_open_cnt < 0)
+      {
+        ERROR_MSG("SubSectionEnd: no SubSections are open\n");
+        return PS_ERROR;
+      }
+      if (!subsection_open_cnt)
+      {
+        set_uninstall_mode(0);
+      }
+    }
+    else
+      subsection_open_cnt++;
+  }
 
   return PS_OK;
 }
