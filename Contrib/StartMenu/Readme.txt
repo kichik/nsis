@@ -7,6 +7,8 @@ which is the program group default name, and some more optional parameters:
   /noicon - doesn't show the icon in the top left corner
   /text [please select...] - sets the top text to something else than "Select 
                              the Start Menu folder in which..."
+  /cancelconfirm [text] [caption] [flags] - displays a cancel confirmation 
+              message box when the user click on the cancel button
 
 The function pushes the folder selection back to the stack. It does not push the 
 full path but only the selected sub-folder. It's up to you to decide if to put 
