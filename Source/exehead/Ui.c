@@ -1006,7 +1006,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
         tv.item.pszText=process_string_fromtab(ps_tmpbuf,g_inst_section[x].name_ptr);
-        tv.item.stateMask=TVIS_STATEIMAGEMASK;
+        tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
 
         if (m_num_insttypes && m_whichcfg != m_num_insttypes && !(g_inst_section[x].default_state&DFS_RO))
         {
@@ -1038,6 +1038,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             tv.item.pszText++;
             tv.item.mask|=TVIF_CHILDREN;
             tv.item.cChildren=1;
+            if (g_inst_section[x].name_ptr>=0 && g_inst_section[x].expand)
+              tv.item.state|=TVIS_EXPANDED;
             Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
             doLines=1;
           }
@@ -1057,13 +1059,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         {
           hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
         }
-      }
-    }
-    for (x = 0; x < num_sections; x ++)
-    {
-      if (g_inst_section[x].name_ptr>=0 && g_inst_section[x].expand==1)
-      {
-        SendMessage(hwndTree1,TVM_EXPAND,(WPARAM) TVE_TOGGLE,(LPARAM) hTreeItems[x]);
       }
     }
     if (!doLines)
