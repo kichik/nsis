@@ -69,9 +69,12 @@ Destroy
    Destroys the current background window
    Destroy calls Clear automatically
 
-Sound [/WAIT] path_to_wav
+Sound [/WAIT|/LOOP] path_to_wav
+Sound /STOP
    Plays a wave file
    Use /WAIT to wait for the sound to finish playing
+   Use /LOOP to loop the sound
+   Use Sound /STOP to stop the loop
 
 SetReturn on|off
    Enable return values from SetBg, AddImage and AddText

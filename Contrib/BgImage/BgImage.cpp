@@ -323,14 +323,20 @@ NSISFunc(Destroy) {
 }
 
 NSISFunc(Sound) {
-  DWORD flags = SND_FILENAME|SND_NODEFAULT|SND_NOWAIT;
+  char szLoop[] = {'/', 'L', 'O', 'O', 'P', 0};
+
+  DWORD flags = SND_FILENAME | SND_NODEFAULT;
   g_stacktop=stacktop;
   popstring(szTemp);
   if (lstrcmpi(szTemp, "/WAIT"))
     flags |= SND_ASYNC;
   else
     popstring(szTemp);
-  PlaySound(szTemp, 0, flags);
+  if (!lstrcmpi(szTemp, szLoop)) {
+    flags |= SND_LOOP;
+    popstring(szTemp);
+  }
+  PlaySound(lstrcmpi(szTemp, "/STOP") ? szTemp : 0, 0, flags);
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -396,11 +402,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
         if (img->iType == MIL_TEXT) {
           SetBkMode(hdc, TRANSPARENT);
 
-          HFONT hOldFont;
           SetTextColor(hdc, img->cTextColor);
-          hOldFont = (HFONT)SelectObject(hdc, img->hFont);
+          SelectObject(hdc, img->hFont);
           DrawText(hdc, img->szText, -1, &img->rPos, DT_TOP | DT_LEFT | DT_NOPREFIX | DT_WORDBREAK);
-          SelectObject(hdc, hOldFont);
         }
         else if (img->iType == MIL_BITMAP) {
           HDC cdc = CreateCompatibleDC(hdc);
