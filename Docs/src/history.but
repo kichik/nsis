@@ -16,6 +16,8 @@
 
 \b Added support for transparent check marks
 
+\b Added InitPluginsDir
+
 \b Renamed nsisconf.nsi to nsisconf.nsh
 
 \b Added CreateShortcut comment/description parameter
