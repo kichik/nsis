@@ -119,9 +119,9 @@ Denne veivise vil avinsatllere $(^Name) fra din datamaskin. $_CLICK
 # ^UninstallingSubText
 Avinsatallerer fra:
 # ^FileError
-Feil under åpning av fil å skrive til: \r\n\t\"$0\"\r\nTrykk Avbryt for å avbryte installasjonen,\r\nPrøv igjen for å prøve igjen, eller\r\nignorer for åå hoppe over denne filen
+Feil under åpning av fil å skrive til: \r\n\t"$0"\r\nTrykk Avbryt for å avbryte installasjonen,\r\nPrøv igjen for å prøve igjen, eller\r\nignorer for åå hoppe over denne filen
 # ^FileError_NoIgnore
-Feil under åpning av fil å skrive til: \r\n\t\"$0\"\r\nTrykk Prøv igjen for å prøve igjen, or\r\neller Avbryt for å avbryte installasjonen
+Feil under åpning av fil å skrive til: \r\n\t"$0"\r\nTrykk Prøv igjen for å prøve igjen, or\r\neller Avbryt for å avbryte installasjonen
 # ^CantWrite
 "Kan ikke skrive: "
 # ^CopyFailed
