@@ -2,9 +2,15 @@
 
 \H{v2.01} 2.01
 
-\S1{v2.01-cl}
+\S1{v2.01-rn} Release Notes
 
-\b makensis compiles on POSIX platforms (Linux, *BSD, Mac OS X)
+\b See \R{compiling_infos}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
+
+\b NSIS doesn't create installers for Linux, it can only compile installers for Windows on Linux
+
+\S1{v2.01-cl} Changelog
+
+\b makensis compiles on POSIX platforms (Linux, *BSD, Mac OS X, etc.)
 
 \b \L{../Contrib/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
 
@@ -17,6 +23,8 @@
 \b Fixed a bug which made plug-ins that didn't have lower case extension not be found
 
 \b Fixed a bug that caused directories with drives that had their current directory set to an invalid directory to not be accepted in the directory selection page
+
+\b Fixed a crash in makensis caused by defining a macro in a file included by another macro
 
 \b makensis shows meaningful errors for compression errors instead of just magic numbers
 
@@ -32,13 +40,17 @@
 
 \b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, added StrCase, some fixes
 
-\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle
+\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
 
 \b \R{setoutpath}{SetOutPath} "-" works again
 
 \b Added \R{abgfont}{BGFont} that allows setting the background text font
 
 \b Made Times New Roman default font for the background text because it should always have support for the locale's language
+
+\b Zip2Exe 0.32: Fixed codepage problems
+
+\b \L{../Contrib/Banner/Readme.txt}{Banner}: Added getWindow to allow greater control over the banner window
 
 \H{v2.0} 2.0
 
