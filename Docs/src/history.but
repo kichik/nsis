@@ -2,11 +2,33 @@
 
 \e{v2.0b3}
 
+\b Modern UI 1.63: Header bitmap support, new defines to change the description area, single macro for language selection dialog, more!
+
+\b New tutorial in the documentation
+
 \b define_if_last in Page command also works when a define has not been specified for all Page commands.\\<br\\>This fixes the problem with the Modern UI "Click Next" / "Click Install" texts.
+
+\b Added SectionSetInstTypes and SectionGetInstTypes
+
+\b Reboot commmand does not force a reboot anymore (allows the user to save work)
+
+\b !if[n]def/!else fixes
 
 \b LogSet fixed
 
-\b Modern UI version 1.62b: Start Menu page changes: 'Do not create shortcuts' checkbox can be removed, renamed defines. Documentation updates.
+\b Cancel button available on all pages after the instfiles page but the last page unless /ENABLECANCEL was used in its Page command
+
+\b License page: No more limit on RTF size
+
+\b LangDLL: Option to auto-count number of languages, shell font support
+
+\b Page and UninstPage can not be used inside sesctions/functions
+
+\b CreateDirectory can now set errorflag
+
+\b EnumRegKey/Value output_var check fixed
+
+\b Updated translations
 
 \e{v2.0b2}
 
