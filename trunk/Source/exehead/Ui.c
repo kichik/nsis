@@ -807,7 +807,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (idlist)
       {
         // Get and free idlist
-        my_PIDL2Path(name, idlist, 1);
+        my_PIDL2Path(name, idlist);
 
         if (g_header->install_directory_auto_append)
         {

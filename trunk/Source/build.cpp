@@ -415,43 +415,32 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_UserVarNames.add("EXEDIR",1);        // 23
   m_UserVarNames.add("LANGUAGE",1);      // 24
   m_UserVarNames.add("TEMP",-1);         // 25
-  m_UserVarNames.add("_CLICK",-1);       // 26
-  m_UserVarNames.add("PLUGINSDIR",-1);   // 27
+  m_UserVarNames.add("PLUGINSDIR",-1);   // 26
+  m_UserVarNames.add("HWNDPARENT",-1);   // 27
+  m_UserVarNames.add("_CLICK",-1);       // 28
 
-#ifndef NSIS_SUPPORT_SHELLFOLDERS_CONST
-  m_UserVarNames.add("PROGRAMFILES",-1); // 28
-  m_UserVarNames.add("SMPROGRAMS",-1);   // 29
-  m_UserVarNames.add("SMSTARTUP",-1);    // 30
-  m_UserVarNames.add("DESKTOP",-1);      // 31
-  m_UserVarNames.add("STARTMENU",-1);    // 32
-  m_UserVarNames.add("QUICKLAUNCH",-1);  // 33
-#endif
-                                         //        (if not using shell codes)
-  m_UserVarNames.add("WINDIR",-1);       // 34     (28)
-  m_UserVarNames.add("SYSDIR",-1);       // 35     (29) everything after here doesn't have trailing slash removal
-  m_UserVarNames.add("HWNDPARENT",-1);   // 36     (30)
-
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
-  m_ShellConstants.add("PROGRAMFILES",CSIDL_CONTROLS, CSIDL_CONTROLS); // Special for virtual "Program Files"
-  m_ShellConstants.add("SMPROGRAMS",CSIDL_PROGRAMS, CSIDL_COMMON_PROGRAMS );
-  m_ShellConstants.add("SMSTARTUP",CSIDL_STARTUP, CSIDL_COMMON_STARTUP );
+  m_ShellConstants.add("WINDIR",CSIDL_WINDOWS,CSIDL_WINDOWS);
+  m_ShellConstants.add("SYSDIR",CSIDL_SYSTEM,CSIDL_SYSTEM);
+  m_ShellConstants.add("PROGRAMFILES",CSIDL_PROGRAM_FILES, CSIDL_PROGRAM_FILES);
+  m_ShellConstants.add("SMPROGRAMS",CSIDL_PROGRAMS, CSIDL_COMMON_PROGRAMS);
+  m_ShellConstants.add("SMSTARTUP",CSIDL_STARTUP, CSIDL_COMMON_STARTUP);
   m_ShellConstants.add("DESKTOP",CSIDL_DESKTOPDIRECTORY, CSIDL_COMMON_DESKTOPDIRECTORY);
-  m_ShellConstants.add("STARTMENU",CSIDL_STARTMENU, CSIDL_COMMON_STARTMENU );
-  m_ShellConstants.add("QUICKLAUNCH", CSIDL_DESKTOP, CSIDL_DESKTOP ); // Special for virtual quick launch (needed for compatibility)
-  m_ShellConstants.add("COMMONFILES",CSIDL_BITBUCKET, CSIDL_BITBUCKET ); // Special for virtual "Commmon Files"
-  m_ShellConstants.add("DOCUMENTS",CSIDL_PERSONAL, CSIDL_COMMON_DOCUMENTS );
-  m_ShellConstants.add("SENDTO",CSIDL_SENDTO, CSIDL_SENDTO );
-  m_ShellConstants.add("RECENT",CSIDL_RECENT, CSIDL_RECENT );
-  m_ShellConstants.add("FAVORITES",CSIDL_FAVORITES, CSIDL_COMMON_FAVORITES );
-  m_ShellConstants.add("MUSIC",CSIDL_MYMUSIC, CSIDL_COMMON_MUSIC );
-  m_ShellConstants.add("PICTURES",CSIDL_MYPICTURES, CSIDL_COMMON_PICTURES );
-  m_ShellConstants.add("VIDEOS",CSIDL_MYVIDEO, CSIDL_COMMON_VIDEO );
-  m_ShellConstants.add("NETHOOD", CSIDL_NETHOOD, CSIDL_NETHOOD );
-  m_ShellConstants.add("FONTS", CSIDL_FONTS, CSIDL_FONTS );
-  m_ShellConstants.add("TEMPLATES", CSIDL_TEMPLATES, CSIDL_COMMON_TEMPLATES );
-  m_ShellConstants.add("APPDATA", CSIDL_APPDATA, CSIDL_COMMON_APPDATA );
-  m_ShellConstants.add("PRINTHOOD", CSIDL_PRINTHOOD, CSIDL_PRINTHOOD );
-  //m_ShellConstants.add("ALTSTARTUP", CSIDL_ALTSTARTUP, CSIDL_COMMON_ALTSTARTUP );
+  m_ShellConstants.add("STARTMENU",CSIDL_STARTMENU, CSIDL_COMMON_STARTMENU);
+  m_ShellConstants.add("QUICKLAUNCH", CSIDL_APPDATA, CSIDL_PRINTERS);
+  m_ShellConstants.add("COMMONFILES",CSIDL_PROGRAM_FILES_COMMON, CSIDL_PROGRAM_FILES_COMMON);
+  m_ShellConstants.add("DOCUMENTS",CSIDL_PERSONAL, CSIDL_COMMON_DOCUMENTS);
+  m_ShellConstants.add("SENDTO",CSIDL_SENDTO, CSIDL_SENDTO);
+  m_ShellConstants.add("RECENT",CSIDL_RECENT, CSIDL_RECENT);
+  m_ShellConstants.add("FAVORITES",CSIDL_FAVORITES, CSIDL_COMMON_FAVORITES);
+  m_ShellConstants.add("MUSIC",CSIDL_MYMUSIC, CSIDL_COMMON_MUSIC);
+  m_ShellConstants.add("PICTURES",CSIDL_MYPICTURES, CSIDL_COMMON_PICTURES);
+  m_ShellConstants.add("VIDEOS",CSIDL_MYVIDEO, CSIDL_COMMON_VIDEO);
+  m_ShellConstants.add("NETHOOD", CSIDL_NETHOOD, CSIDL_NETHOOD);
+  m_ShellConstants.add("FONTS", CSIDL_FONTS, CSIDL_FONTS);
+  m_ShellConstants.add("TEMPLATES", CSIDL_TEMPLATES, CSIDL_COMMON_TEMPLATES);
+  m_ShellConstants.add("APPDATA", CSIDL_APPDATA, CSIDL_COMMON_APPDATA);
+  m_ShellConstants.add("PRINTHOOD", CSIDL_PRINTHOOD, CSIDL_PRINTHOOD);
+  //m_ShellConstants.add("ALTSTARTUP", CSIDL_ALTSTARTUP, CSIDL_COMMON_ALTSTARTUP);
   m_ShellConstants.add("INTERNET_CACHE", CSIDL_INTERNET_CACHE, CSIDL_INTERNET_CACHE);
   m_ShellConstants.add("COOKIES", CSIDL_COOKIES, CSIDL_COOKIES);
   m_ShellConstants.add("HISTORY", CSIDL_HISTORY, CSIDL_HISTORY);
@@ -460,7 +449,6 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_ShellConstants.add("RESOURCES", CSIDL_RESOURCES, CSIDL_RESOURCES);
   m_ShellConstants.add("RESOURCES_LOCALIZED", CSIDL_RESOURCES_LOCALIZED, CSIDL_RESOURCES_LOCALIZED);
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
-#endif
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -537,61 +525,55 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
           if ( *p )
           {
             const char *pUserVarName = p;
-            while ( isSimpleChar(*pUserVarName) )
+            while (isSimpleChar(*pUserVarName))
               pUserVarName++;
 
-            while ( pUserVarName > p )
+            while (pUserVarName > p)
             {
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
-                if ( m_ShellConstants.get((char*)p, pUserVarName-p) >= 0 )
-                  break; // Upps it's a shell constant
-#endif
+              if (m_ShellConstants.get((char*)p, pUserVarName-p) >= 0)
+                break; // Upps it's a shell constant
 
-                int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
-                if ( idxUserVar >= 0 )
-                {
-                  // Well, using variables inside string formating doens't mean 
-                  // using the variable, beacuse it will be always an empty string
-                  // which is also memory wasting
-                  // So the line below must be commented !??
-                  //m_UserVarNames.inc_reference(idxUserVar);
-                  *out++=(unsigned int)VAR_CODES_START; // Named user variable;
-                  *(WORD*)out=((WORD)idxUserVar+1) | 0xF000;
-                  out += sizeof(WORD);
-                  p += pUserVarName-p;
-                  bProceced = true;
-                  break;
-                }
-                pUserVarName--;
+              int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
+              if (idxUserVar >= 0)
+              {
+                // Well, using variables inside string formating doens't mean 
+                // using the variable, beacuse it will be always an empty string
+                // which is also memory wasting
+                // So the line below must be commented !??
+                //m_UserVarNames.inc_reference(idxUserVar);
+                *out++ = (unsigned int) VAR_CODES_START; // Named user variable;
+                *(WORD*)out = (WORD) ((idxUserVar + 1) | 0x8000);
+                out += sizeof(WORD);
+                p += pUserVarName-p;
+                bProceced = true;
+                break;
+              }
+              pUserVarName--;
             }
           }
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
-          if ( !bProceced && *p )
+          if (!bProceced && *p)
           {
             const char *pShellConstName = p;
-            while ( isSimpleChar(*pShellConstName) )
+            while (isSimpleChar(*pShellConstName))
               pShellConstName++;
 
-            while ( pShellConstName > p )
+            while (pShellConstName > p)
             {
-                int idxConst = m_ShellConstants.get((char*)p, pShellConstName-p);
-                if ( idxConst >= 0 )
-                {
-                  int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
-                  int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
-                  *out++=(unsigned int)SHELL_CODES_START; // Constant code identifier
-                  *(WORD*)out=((WORD)CSIDL_Value_current+1) | 0xF000;
-                  out += sizeof(WORD);
-                  *(WORD*)out=((WORD)CSIDL_Value_all+1) | 0xF000;
-                  out += sizeof(WORD);
-                  p += pShellConstName-p;
-                  bProceced = true;
-                  break;
-                }
-                pShellConstName--;
+              int idxConst = m_ShellConstants.get((char*)p, pShellConstName - p);
+              if (idxConst >= 0)
+              {
+                int CSIDL_Value_current = m_ShellConstants.get_value1(idxConst);
+                int CSIDL_Value_all = m_ShellConstants.get_value2(idxConst);
+                *out++=(unsigned int)SHELL_CODES_START; // Constant code identifier
+                *out++=(char)CSIDL_Value_current;
+                *out++=(char)CSIDL_Value_all;
+                p = pShellConstName;
+                bProceced = true;
+                break;
+              }
+              pShellConstName--;
             }
           }
-#endif //NSIS_SUPPORT_SHELLFOLDERS_CONST
           if ( !bProceced && *p == '(' )
           {
             int idx = -1;
@@ -601,12 +583,12 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
             {
               *pos = 0;
               idx = DefineLangString(cp);
-              if ( idx < 0 )
+              if (idx < 0)
               {
-                *out++=(unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
-                *(WORD*)out=(WORD)idx;
+                *out++ = (unsigned int)LANG_CODES_START; // Next word is lang-string Identifier
+                *(WORD*)out= (WORD) idx;
                 out += sizeof(WORD);
-                p += strlen(cp)+2;
+                p += strlen(cp) + 2;
                 bProceced = true;
               }
             }
@@ -3211,13 +3193,11 @@ void CEXEBuild::close_res_editor()
 
 int CEXEBuild::DeclaredUserVar(const char *szVarName)
 {
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
   if ( m_ShellConstants.get((char*)szVarName) >= 0 )
   {
     ERROR_MSG("Error: name \"%s\" in use by constant\n", szVarName);
     return PS_ERROR;  
   }
-#endif
 
   int idxUserVar = m_UserVarNames.get((char*)szVarName);
   if ( idxUserVar >= 0 )
@@ -3272,7 +3252,6 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
       m_UserVarNames.inc_reference(idxUserVar);
       return idxUserVar;
     }
-#ifdef NSIS_SUPPORT_SHELLFOLDERS_CONST
     else
     {
         int idxConst = m_ShellConstants.get((char *)p+1);
@@ -3281,7 +3260,6 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
             ERROR_MSG("Error: cannot change constants : %s\n", p);
         }
     }
-#endif
   }
   return -1;
 }
