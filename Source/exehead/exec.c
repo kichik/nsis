@@ -537,7 +537,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (lastchar(buf0)=='\\') trimslashtoend(buf0);
 
         doRMDir(buf0,parm1);
-        if (file_exists(buf0)) g_flags.exec_error++;
+        if (file_exists(buf0) && parm1!=2) g_flags.exec_error++;
       }
     return 0;
 #endif//NSIS_SUPPORT_RMDIR

@@ -124,7 +124,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_REGDLL,"RegDLL",1,1,"dll_path_on_target.dll [entrypoint_symbol]"},
 {TOK_RENAME,"Rename",2,1,"[/REBOOTOK] source_file destination_file"},
 {TOK_RET,"Return",0,0,""},
-{TOK_RMDIR,"RMDir",1,1,"[/r] directory_name"},
+{TOK_RMDIR,"RMDir",1,1,"[/r|/REBOOTOK] directory_name"},
 {TOK_SECTION,"Section",0,3,"[/e] [section_name|-section_name] [section index output]"},
 {TOK_SUBSECTION,"SubSection",1,2,"[/e] subsection_name [section index output]"},
 {TOK_SUBSECTIONEND,"SubSectionEnd",0,0,""},
