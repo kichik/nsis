@@ -3,11 +3,11 @@
 
 !define VER_MAJOR 2
 !define VER_MINOR 0
-!define VER_REVISION 2
-!define VER_BUILD 20
+!define VER_REVISION 3
+!define VER_BUILD 21
 
-!define VER_FILE "202"
-!define VER_DISPLAY "2.02"
+!define VER_FILE "203"
+!define VER_DISPLAY "2.03"
 
 ;--------------------------------
 ;Compile CVS Data Setup

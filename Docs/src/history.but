@@ -1,5 +1,51 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.03} 2.03
+
+Released on December 3rd, 2004
+
+\S1{v2.03-rn} Release Notes
+
+\b Command line switches prefix on POSIX has changed to a dash
+
+\b The plug-in API change is backward compatible
+
+\S1{v2.03-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added another parameter to plug-in functions with a pointer to exec_flags and ExecuteCodeSegment
+
+\b Fixed handling of absolute paths on POSIX
+
+\b Made RegDLL load and unload a DLL exactly once to fix crashes with COM DLLs registration
+
+\S2{} New/Changed Commands
+
+\b Added /date switch to !define for definition of date and time constants
+
+\b Added /x switch for \R{file}{File} and \R{reservefile}{ReserveFile} to exclude files and directories
+
+\S2{} Minor Changes
+
+\b Added LIBRARY_SHELL_EXTENSION and LIBRARY_COM to \R{library}{Library}
+
+\b Added missing #include
+
+\b Added NSIS_LZMA_COMPRESS_WHOLE to the script define list
+
+\b Documentation fixes and improvements
+
+\b Fixed an access violation in case of a script jump beyond the last entry
+
+\b Fixed keyboard navigation in the instfiles page while installing
+
+\b Fixed unpacking window not showing when \R{abggradient}{BGGradient} is used
+
+\b Fixed unused label warning in \R{library}{Library.nsh}
+
+\b Language file fixes
+
 \H{v2.02} 2.02
 
 Released on October 23rd, 2004
