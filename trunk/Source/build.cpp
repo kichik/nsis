@@ -13,6 +13,11 @@
 #include "exehead/lang.h"
 #include "ResourceVersionInfo.h"
 
+bool isSimpleChar(char ch)
+{
+  return (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+}
+
 void CEXEBuild::define(const char *p, const char *v)
 {
   definedlist.add(p,v);
@@ -241,8 +246,6 @@ CEXEBuild::CEXEBuild()
 
   // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
-  version_codePage=0;
-  version_lang=0;
   version_product_v[0]=0;
 #endif
 
@@ -305,6 +308,9 @@ CEXEBuild::CEXEBuild()
 #endif
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+  char lang_id[16];
+  wsprintf(lang_id, "%u", last_used_lang);
+  definedlist.add("LANG_ENGLISH",lang_id);
 
   build_header.common.num_pages=0;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -335,6 +341,37 @@ CEXEBuild::CEXEBuild()
   use_first_insttype=true;
 
   build_header.license_bg=-COLOR_BTNFACE;
+
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  // Register user variables $0, $1 and so one
+  char Aux[3];
+  for ( int i = 0; i < 10; i++ )    // 0 - 9
+  {
+    sprintf(Aux, "%d", i);    
+    DeclaredUserVar(Aux);
+  }
+  for ( i = 0; i < 10; i++ )        // 10 - 19
+  {
+    sprintf(Aux, "R%d", i);    
+    DeclaredUserVar(Aux);
+  }
+  DeclaredUserVar("CMDLINE");       // 20 everything before here doesn't have trailing slash removal
+  DeclaredUserVar("INSTDIR");       // 21
+  DeclaredUserVar("OUTDIR");        // 22
+  DeclaredUserVar("EXEDIR");        // 23
+  DeclaredUserVar("LANGUAGE");      // 24
+  DeclaredUserVar("PLUGINSDIR");    // 25
+  DeclaredUserVar("PROGRAMFILES");  // 26
+  DeclaredUserVar("SMPROGRAMS");    // 27
+  DeclaredUserVar("SMSTARTUP");     // 28
+  DeclaredUserVar("DESKTOP");       // 29
+  DeclaredUserVar("STARTMENU");     // 30
+  DeclaredUserVar("QUICKLAUNCH");   // 31
+  DeclaredUserVar("TEMP");          // 32
+  DeclaredUserVar("WINDIR");        // 33
+  DeclaredUserVar("SYSDIR");        // 34 everything after here doesn't have trailing slash removal
+  DeclaredUserVar("HWNDPARENT");    // 35 
+#endif
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -355,6 +392,7 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 // based on Dave Laundon's code
 int CEXEBuild::preprocess_string(char *out, const char *in)
 {
+#ifndef NSIS_SUPPORT_NAMED_USERVARS
     static const char VarNames[] =
     "HWNDPARENT\0"    // 0
     "0\0"             // 1
@@ -394,7 +432,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     "WINDIR\0"        // 34
     "SYSDIR\0"        // 35
     ;
-  
+#endif
+    
   const char *p=in;
   while (*p)
   {
@@ -406,9 +445,15 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
       while (l--)
       {
         int i = (unsigned char)*p++;
+#ifndef NSIS_SUPPORT_NAMED_USERVARS
         if (i >= VAR_CODES_START) {
           *out++ = (char)255;
         }
+#else
+        if (i == VAR_CODES_START || i == 255 ) {
+          *out++ = (char)255;
+        }
+#endif
         *out++=i;
       }
       continue;
@@ -418,16 +463,25 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     
     p=np;
     
+#ifndef NSIS_SUPPORT_NAMED_USERVARS
     // Test for characters extending into the variable codes
     if (i >= VAR_CODES_START) {
       *out++ = (char)255;
     }
+#else
+    // Test for characters that equals to control char of variable codes
+    if (i == VAR_CODES_START || i == 255 ) {
+      *out++ = (char)255;
+    }
+#endif
     else if (i == '$')
     {
       if (*p == '$')
         p++; // Can simply convert $$ to $ now
       else
       {
+#ifndef NSIS_SUPPORT_NAMED_USERVARS
+
         const char *pVarName;
         for (
           pVarName = VarNames, i = VAR_CODES_START;
@@ -444,43 +498,30 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
           p += strlen(pVarName);
         }
         else  // warning should go here
+#endif // not NSIS_SUPPORT_NAMED_USERVARS
         {
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
           bool bProceced=false;
-          if ( *p == '[' )
+          if ( *p )
           {
-            char *pUserVarName = (char *)p+1;
-            while ( *pUserVarName )
+            const char *pUserVarName = p;
+            while ( isSimpleChar(*pUserVarName) )
+              pUserVarName++;
+
+            while ( pUserVarName > p )
             {
-              if ( *pUserVarName == ']' )
-              {
-                *pUserVarName='\0';
-                int idxUserVar = m_UserVarNames.get((char*)p+1);
-                int varLen = strlen(p)+1;
-                *pUserVarName=']'; // restore
+                const char * Debug = p-(pUserVarName-p);
+                int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
                 if ( idxUserVar >= 0 )
                 {
-                  *out++=(unsigned int)VAR_CODES_START + 36; // Named user variable;
-                  *(WORD*)out=((WORD)idxUserVar+USER_VARS_COUNT) | 0xF000;
+                  *out++=(unsigned int)VAR_CODES_START; // Named user variable;
+                  *(WORD*)out=((WORD)idxUserVar+1) | 0xF000;
                   out += sizeof(WORD);
-                  p += varLen;                  
+                  p += pUserVarName-p;
                   bProceced = true;
-                  {
-                    for ( WORD i = 0; i < 0x0FFF; i++ )
-                    {
-                      WORD bb = i | 0xF000;
-                      WORD ok = bb & 0x0FFF;
-                      if ( ok != i )
-                      {
-                        warning("Problems with %d",i);
-                      }
-                    
-                    }                  
-                  }
+                  break;
                 }
-                break;
-              }
-              pUserVarName++;
+                pUserVarName--;
             }
           }
           if ( bProceced )
@@ -1273,7 +1314,7 @@ int CEXEBuild::write_output(void)
   GrowBuf VerInfoStream;  
   bool bNeedVInfo = false;
 
-  if ( rVersionInfo.GetKeyCount() > 0 )
+  if ( rVersionInfo.GetStringTablesCount() > 0 )
   {
     if ( !version_product_v[0] )
     { 
@@ -1291,19 +1332,23 @@ int CEXEBuild::write_output(void)
       rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
       rVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
 
-      //rVersionInfo.AddTranslation(0x0,0x0409);
-      rVersionInfo.ExportToStream(VerInfoStream);
       init_res_editor();
-      res_editor->UpdateResource(RT_VERSION, 1, 0, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+      for ( int i = 0; i < rVersionInfo.GetStringTablesCount(); i++ )
+      {
+        LANGID lang_id = rVersionInfo.GetLangID(i);
+        int code_page = rVersionInfo.GetCodePage(i);
+        StringTable * Table = GetTable(lang_id);
+        
+        if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
+          warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
+        if ( !rVersionInfo.FindKey(lang_id, code_page, "FileDescription") )
+          warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
+        if ( !rVersionInfo.FindKey(lang_id, code_page, "LegalCopyright") )
+          warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf ? Table->nlf->m_szName : lang_id == 1033 ? "English" : "???");
 
-      if ( !rVersionInfo.GetTranslationCount() )
-        warning("Generating version information without any language/codepage defined.");
-      if ( !rVersionInfo.FindKey("FileVersion") )
-        warning("Generating version information without standard key \"FileVersion\"");
-      if ( !rVersionInfo.FindKey("FileDescription") )
-        warning("Generating version information without standard key \"FileDescription\"");
-      if ( !rVersionInfo.FindKey("LegalCopyright") )
-        warning("Generating version information without standard key \"LegalCopyright\"");
+        rVersionInfo.ExportToStream(VerInfoStream, i);
+        res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());        
+      }
     }
   }
 
@@ -2419,6 +2464,11 @@ int CEXEBuild::add_plugins_dir_initializer(void)
   int ret;
   int zero_offset;
 
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  int var_zero;
+  var_zero=m_UserVarNames.get("0");
+#endif
+
 again:
   // Function [un.]Initialize_____Plugins
   ret=add_function(uninstall?"un.Initialize_____Plugins":"Initialize_____Plugins");
@@ -2441,7 +2491,11 @@ again:
   ret=add_entry_direct(EW_SETFLAG, FLAG_OFFSET(exec_error));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero);
+#else
   ret=add_entry_direct(EW_GETTEMPFILENAME);
+#endif
   if (ret != PS_OK) return ret;
   // Delete $0 - the temp file created
   ret=add_entry_direct(EW_DELETEFILE, zero_offset);
@@ -2453,10 +2507,18 @@ again:
   ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error)/sizeof(int));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  ret=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("PLUGINSDIR"), zero_offset);
+#else
   ret=add_entry_direct(EW_ASSIGNVAR, 25, zero_offset);
+#endif
   if (ret != PS_OK) return ret;
   // Pop $0
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  ret=add_entry_direct(EW_PUSHPOP, var_zero, 1);
+#else
   ret=add_entry_direct(EW_PUSHPOP, 0, 1);
+#endif
   if (ret != PS_OK) return ret;
 
   // done
@@ -2532,12 +2594,9 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
 	{
 		while ( *pVarName )
 		{
-			if ((*pVarName < '0') || 
-				(*pVarName > '9' && *pVarName < 'A' ) || 
-				(*pVarName > 'Z' && *pVarName < 'a' && *pVarName != '_' ) ||  
-				(*pVarName > 'z') )
+			if ( !isSimpleChar(*pVarName) )
 			{
-				ERROR_MSG("Error: invalid charaters in variable name \"%s\"\n", szVarName);
+				ERROR_MSG("Error: invalid charaters in variable name \"%s\", use only charaters [a-z][A-Z][0-9] and '_'\n", szVarName);
 				return PS_ERROR;
 			}
 			pVarName++;
@@ -2556,35 +2615,23 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
 
 int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 {
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+
+    char *p = line.gettoken_str(token);
+    if ( *p == '$' && *(p+1) )
+    {
+      int idxUserVar = m_UserVarNames.get((char *)p+1);
+      if ( idxUserVar >= 0 )
+      {
+         return idxUserVar;
+      }
+    }
+    return -1;
+#else
+
   static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
                              "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
-  int res = line.gettoken_enum(token, usrvars);
-// Added by ramon 3 jun 2003
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  if ( res < 0 )
-  {
-    char *p = line.gettoken_str(token);
-    if ( *p == '$' && *(p+1) == '[' )
-    {
-      char *pUserVarName = (char *)p+2;
-      while ( *pUserVarName )
-      {
-        if ( *pUserVarName == ']' )
-        {
-          *pUserVarName='\0';
-          int idxUserVar = m_UserVarNames.get((char*)p+2);
-          *pUserVarName=']'; // restore
-          if ( idxUserVar >= 0 )
-          {
-            res=idxUserVar+USER_VARS_COUNT; // User named variable;
-          }
-          break;
-        }
-        pUserVarName++;
-      }
-    }
-  }
+  return line.gettoken_enum(token, usrvars);
 #endif
-  return res;
 }

@@ -69,8 +69,8 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
 # SUBTRACT BASE CPP /Fr /YX /Yc /Yu
-# ADD CPP /nologo /MLd /W3 /GX /ZI /Od /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
-# SUBTRACT CPP /Fr /YX /Yc /Yu
+# ADD CPP /nologo /MLd /W3 /GX /ZI /Od /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /Fr /FD /c
+# SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -257,6 +257,10 @@ SOURCE=.\strlist.h
 # Begin Source File
 
 SOURCE=.\tokens.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\uservars.h
 # End Source File
 # Begin Source File
 

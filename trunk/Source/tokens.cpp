@@ -230,9 +230,7 @@ static tokenType tokenlist[TOK__LAST] =
 // Added by ramon 3 jun 2003
 {TOK_DEFVAR,"dim",1,0,"VarName"},
 // Added by ramon 6 jun 2003
-{TOK_VI_ADDKEY,"VIAddVersionKey", 2, 0, "[keyname] [value]"},
-{TOK_VI_ADDTRANSLATION,"VIAddTranslation", 2, 0, "[short language id] [short codepage id]"},
-{TOK_VI_SETVERSIONLANGUAGE,"VISetVersionLanguage", 2, 0, "[short language id] [short codepage id]"},
+{TOK_VI_ADDKEY,"VIAddVersionKey", 3, 0, "lang_id keyname value"},
 {TOK_VI_SETPRODUCTVERSION,"VIProductVersion", 1, 0, "[version string X.X.X.X]"},
 };
 

@@ -1968,8 +1968,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           uDefCodePage = newNLF->m_uCodePage;
         }
         build_nlfs.push_back(newNLF);
-        LANGID lang = newNLF->m_wLangId;
-        GetTable(lang);
+        StringTable * Table = GetTable(newNLF->m_wLangId);
+
+        for (i = 0; i < build_nlfs.size(); i++) {
+          if (build_nlfs[i]->m_wLangId == Table->lang_id) {
+            Table->nlf = build_nlfs[i];
+            break;
+          }
+        }
+
         last_used_lang = newNLF->m_wLangId;
         // define LANG_LangName as "####" (lang id)
         // for example ${LANG_ENGLISH} = 1033
@@ -4391,8 +4398,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
-        char *pKey = line.gettoken_str(1);
-        char *pValue = line.gettoken_str(2);        
+        LANGID LangID = line.gettoken_int(1);
+        char *pKey = line.gettoken_str(2);
+        char *pValue = line.gettoken_str(3);
         if ( !(*pKey) )
         {
            ERROR_MSG("Error: empty name for version info key!\n");
@@ -4400,64 +4408,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else
         {
-           SCRIPT_MSG("%s = \"%s\"=\"%s\" \n",line.gettoken_str(0), line.gettoken_str(1), line.gettoken_str(2));
-           rVersionInfo.SetKeyValue(pKey, pValue);
-           return PS_OK;
-        }
-    }
-    case TOK_VI_ADDTRANSLATION:
-    {
-      int s1, s2; 
-      int language = line.gettoken_int(1, &s1);
-      int codepage = line.gettoken_int(2, &s2);
-      if ( !s1 || !s2 ) 
-        PRINTHELP()
-      else
-      {
-        if ( !rVersionInfo.IsValidCodePage(codepage) )
-        {
-           ERROR_MSG("Error: invalid codepage id %d!\n", codepage);
-           return PS_ERROR;
-        }
-        if ( !IsValidLocale(language, LCID_SUPPORTED) )
-        {
-           ERROR_MSG("Error: invalid language id %d!\n", language);
-           return PS_ERROR;
-        }
-        rVersionInfo.AddTranslation(codepage, language);
-        return PS_OK;
-      }
-    }
+           SCRIPT_MSG("%s: \"%s\" \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
+           StringTable *strTable = GetTable(LangID);
+           if ( line.gettoken_int(1) == 0 && !strTable->nlf )
+             warning("%s: \"%s\" language not loaded, using default \"1033-English\". (%s:%d)", line.gettoken_str(0), line.gettoken_str(1), curfilename,linecnt);
+           if ( rVersionInfo.SetKeyValue(LangID, strTable->nlf ? strTable->nlf->m_uCodePage : 1252 /*English US*/, pKey, pValue) )
+           {
+             ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, strTable->nlf ? strTable->nlf->m_szName : LangID == 1033 ? "English" : "???");
+             return PS_ERROR;
+           }
 
+           return make_sure_not_in_secorfunc(line.gettoken_str(0));
+        }
+    }
     case TOK_VI_SETPRODUCTVERSION:
-      strcpy(version_product_v, line.gettoken_str(1));
-      return PS_OK;
-
-    case TOK_VI_SETVERSIONLANGUAGE:
-    {
-      int s1, s2; 
-      int language = line.gettoken_int(1, &s1);
-      int codepage = line.gettoken_int(2, &s2);
-      if ( !s1 || !s2 ) 
-        PRINTHELP()
-      else
+      if ( version_product_v[0] )
       {
-        if ( !rVersionInfo.IsValidCodePage(codepage) )
-        {
-           ERROR_MSG("Error: invalid codepage id %d!\n", codepage);
+           ERROR_MSG("Error: %s already defined!\n", line.gettoken_str(0));
            return PS_ERROR;
-        }
-        if ( !IsValidLocale(language, LCID_SUPPORTED) )
-        {
-           ERROR_MSG("Error: invalid language id %d!\n", language);
-           return PS_ERROR;
-        }
-        char Buf[10];
-        sprintf(Buf, "%04x%04x", language, codepage);
-        rVersionInfo.SetVersionInfoLang(Buf);
-        return PS_OK;
       }
-    }
+      strcpy(version_product_v, line.gettoken_str(1));
+      return make_sure_not_in_secorfunc(line.gettoken_str(0));
 
 #else
     case TOK_VI_ADDKEY:
