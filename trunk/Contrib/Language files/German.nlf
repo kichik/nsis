@@ -1,0 +1,61 @@
+# Header, don't edit
+NLF v1
+# Language ID
+1031
+# Start editing here
+Nullsoft Install System %s
+%s Installation
+%s Deinstallation
+: Lizenz-Vereinbarung
+: Installations-Optionen
+: Installations-Verzeichnis
+: Installiere Dateien
+: Abgeschlossen
+: Bestätigen
+: Deinstalliere Dateien
+: Abgeschlossen
+< Zurück
+Weiter >
+Ich stimme zu
+Installation
+Deinstallation
+Abbruch
+Schließen
+Durchsuchen...
+Zeige Details
+Name
+Abgeschlossen
+Eigene
+Selektieren Sie den Installation-Typ:
+Selektieren Sie die zu installierenden Komponenten:
+Oder selektieren Sie die zu installierenden optionalen Komponenten:
+Wählen Sie das Verzeichnis, in dem Sie %s installieren wollen:
+Vorhandener Speicher: 
+Benötigter Speicher: 
+Deinstallieren von:
+Fehler beim Öffnen der Datei: $\r$\n$\t"$0"$\r$\nKlicken Sie Abbruch, um die Installation abzubrechen,$\r$\nWiederholen, um das Schreiben der Datei erneut zu versuchen, oder$\r$\nIgnorieren, um die Datei zu überspringen
+Fehler beim Schreiben: 
+Kopieren fehlgeschlagen
+Kopieren nach 
+Kann Symbol nicht finden: 
+Laden fehlgeschlagen: 
+Erzeuge Verzeichnis: 
+Erzeuge Link: 
+Deinstallations-Programm erzeugt: 
+Lösche Datei:
+Lösche beim Neustart: 
+Fehler beim Erzeugen des Links: 
+Fehler beim Erzeugen: 
+Fehler beim Entpacken der Daten! Defekter Installer?
+Fehler beim Registrieren der DLL
+ExecShell: 
+Ausführen: 
+Entpacke: 
+Entpacker: Fehler beim Schreiben in Datei 
+Installer defekt: ungültiger opcode
+Kein OLE für: 
+Ausgabe-Verzeichnis: 
+Verzeichnis löschen: 
+Umbenennen beim Neustart: 
+Umbenennen: 
+Übersprungen: 
