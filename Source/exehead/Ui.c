@@ -228,10 +228,10 @@ __forceinline int NSISCALL ui_doinstall(void)
         char *e;
         if (p[0]=='\"')
         {
-          char *p2=CharNext(p);
-          p=p2;
-          p2 = findchar(p2, '"');
-          *p2=0;
+          char *p2;
+          p++;
+          p2 = findchar(p, '"');
+          *p2 = 0;
         }
         // p is the path now, check for .exe extension
 
@@ -252,7 +252,7 @@ __forceinline int NSISCALL ui_doinstall(void)
           }
         }
 
-        mystrcpy(state_install_directory,p);
+        mystrcpy(state_install_directory,addtrailingslash(p));
       }
     }
   }
