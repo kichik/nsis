@@ -1,78 +1,54 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.4
+;Compatible with Modern UI 1.5
 
 ;Language: Arabic (1025)
 ;By asdfuae@msn.com
 
 ;--------------------------------
-!verbose 3
 
-!ifndef MUI_ARABIC_USED
+!insertmacro MUI_LANGUAGEFILE_BEGIN "ARABIC"
 
-!define MUI_ARABIC_USED
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Arabic" ;⁄—»Ì
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\Arabic.nlf"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "« ›«ﬁÌ…˛ «· —ŒÌ’"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "«·—Ã«¡ „—«Ã⁄… « ›«ﬁÌ…˛ «· —ŒÌ’ ﬁ»·  ‰’Ì» ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "≈÷€ÿ «”›· «·’›Õ… ·ﬁ—¬Â « ›«ﬁÌ…˛ «· —ŒÌ’"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "≈÷€ÿ „Ê«›ﬁ · ﬂ„·… «· ‰’Ì» ≈‰ Ê«›ﬁ  ⁄·Ï ﬂ«„· « ›«ﬁÌ…˛ «· —ŒÌ’° ·«  ” ÿÌ⁄ «· ‰’Ì» »œÊ‰ «·„Ê«›ﬁ… ⁄·Ï « ›«ﬁÌ…˛  —ŒÌ’ ${MUI_PRODUCT}."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "√Œ — «·⁄‰«’— ·· ‰’Ì»"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "√Œ — «·„Ì“ «·„—«œ  ‰’Ì»Â« „‰ ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "√Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»…° À„ √÷€ÿ «· «·Ì · ﬂ„·… «· ‰’Ì»"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "√‘— »›√—ﬂ ⁄·Ï √Õœ «·⁄‰«’— ·„⁄—›… „Ì“ Â √Ê Ê’›Â"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "√Œ — „Êﬁ⁄ «· ‰’Ì»"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "√Œ — «·„Ã·œ «·„—«œ  ‰’Ì» ›ÌÂ «·»—‰«„Ã ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "”Ì „  ‰’Ì» «·»—‰«„Ã ${MUI_PRODUCT} ›Ì «·„Ã·œ «· «·Ì$\r$\n$\r$\n≈÷€ÿ  ‰’Ì» · ‰’Ì»Â ›Ì Â–« «·„Ã·œ. · ‰’Ì»Â ›Ì „Ã·œ ¬Œ—° ≈÷€ÿ  ’›Õ Ê √Œ — «·„Ã·œ «·¬Œ—."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "«·„Ã·œ «·„Œ’’"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Ìı‰’¯ˆ»˛"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "«·—Ã«¡ «·«‰ Ÿ«— ·ÕÌ‰  ‰’Ì» ${MUI_PRODUCT}."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "«·Õ„œ··Â  „ »‰Ã«Õ"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» ${MUI_PRODUCT}ø"
 
-  !define MUI_ARABIC_LANGNAME "Arabic" ;⁄—»Ì (English, Deutsch, FranÁais etc.)
-
-  ;INSTALLER
-  Name /LANG=${LANG_ARABIC} "${MUI_NAME}"
-  
-  !ifdef MUI_LICENSEPAGE
-     LicenseText /LANG=${LANG_ARABIC} "≈÷€ÿ «”›· «·’›Õ… ·ﬁ—¬Â « ›«ﬁÌ…˛ «· —ŒÌ’"
-     LangString MUI_TEXT_LICENSE_TITLE ${LANG_ARABIC} "« ›«ﬁÌ…˛ «· —ŒÌ’"  
-     LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_ARABIC} "«·—Ã«¡ „—«Ã⁄… « ›«ﬁÌ…˛ «· —ŒÌ’ ﬁ»·  ‰’Ì» ${MUI_PRODUCT}."
-     LangString MUI_INNERTEXT_LICENSE ${LANG_ARABIC} "≈÷€ÿ „Ê«›ﬁ · ﬂ„·… «· ‰’Ì» ≈‰ Ê«›ﬁ  ⁄·Ï ﬂ«„· « ›«ﬁÌ…˛ «· —ŒÌ’° ·«  ” ÿÌ⁄ «· ‰’Ì» »œÊ‰ «·„Ê«›ﬁ… ⁄·Ï « ›«ﬁÌ…˛  —ŒÌ’ ${MUI_PRODUCT}."
-  !endif
-  
-  !ifdef MUI_COMPONENTSPAGE
-    ComponentText /LANG=${LANG_ARABIC} "√Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»…° À„ √÷€ÿ «· «·Ì · ﬂ„·… «· ‰’Ì»"
-    LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_ARABIC} "√Œ — «·⁄‰«’— ·· ‰’Ì»"
-    LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_ARABIC} "√Œ — «·„Ì“ «·„—«œ  ‰’Ì»Â« „‰ ${MUI_PRODUCT}."
-    LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_ARABIC} "«·Ê’›"
-    LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_ARABIC} "√‘— »›√—ﬂ ⁄·Ï √Õœ «·⁄‰«’— ·„⁄—›… „Ì“ Â √Ê Ê’›Â"
-  !endif
-  
-  !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_ARABIC} "”Ì „  ‰’Ì» «·»—‰«„Ã ${MUI_PRODUCT} ›Ì «·„Ã·œ «· «·Ì$\r$\n$\r$\n≈÷€ÿ  ‰’Ì» · ‰’Ì»Â ›Ì Â–« «·„Ã·œ. · ‰’Ì»Â ›Ì „Ã·œ ¬Œ—° ≈÷€ÿ  ’›Õ Ê √Œ — «·„Ã·œ «·¬Œ—."
-    LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_ARABIC} "√Œ — „Êﬁ⁄ «· ‰’Ì»"
-    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_ARABIC} "√Œ — «·„Ã·œ «·„—«œ  ‰’Ì» ›ÌÂ «·»—‰«„Ã ${MUI_PRODUCT}."
-    LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_ARABIC} "«·„Ã·œ «·„Œ’’"
-  !endif
-  
-  LangString MUI_TEXT_INSTALLING_TITLE ${LANG_ARABIC} "Ìı‰’¯ˆ»˛"
-  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_ARABIC} "«·—Ã«¡ «·«‰ Ÿ«— ·ÕÌ‰  ‰’Ì» ${MUI_PRODUCT}."
-  
-  LangString MUI_TEXT_FINISHED_TITLE ${LANG_ARABIC} "«·Õ„œ··Â  „ »‰Ã«Õ"
-  LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_ARABIC} "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
-  
-  !ifdef MUI_ABORTWARNING
-    LangString MUI_TEXT_ABORTWARNING ${LANG_ARABIC} "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» ${MUI_PRODUCT}ø"
-  !endif
-
-  !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_TEXT_SETUPCAPTION ${LANG_ARABIC} " ‰’Ì» ${MUI_PRODUCT} ${MUI_VERSION}"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE " ‰’Ì» ${MUI_NAME}"
   
 
-  ;UNINSTALLER
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "„“Ì· ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "≈“«·… ${MUI_PRODUCT} „‰ ‰Ÿ«„ﬂ"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Â–« ”Ì“Ì· „‰ ‰Ÿ«„ﬂ «·»—‰«„Ã ${MUI_PRODUCT}"
+    
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "≈“«·…"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "«·—Ã«¡ «·«‰ Ÿ«— ·ÕÌ‰ ≈“«·… ${MUI_PRODUCT}."
   
-  !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_ARABIC} "Â–« ”Ì“Ì· „‰ ‰Ÿ«„ﬂ «·»—‰«„Ã ${MUI_PRODUCT}"
-    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_ARABIC} "„“Ì· ${MUI_PRODUCT}"
-    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_ARABIC} "≈“«·… ${MUI_PRODUCT} „‰ ‰Ÿ«„ﬂ"
-  
-    LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_ARABIC} "≈“«·…"
-    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_ARABIC} "«·—Ã«¡ «·«‰ Ÿ«— ·ÕÌ‰ ≈“«·… ${MUI_PRODUCT}."
-  
-    LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_ARABIC} " „ "
-    LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_ARABIC} " „  «·≈“«·… »‰Ã«Õ Ê «·Õ„œ··Â"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE " „ "
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE " „  «·≈“«·… »‰Ã«Õ Ê «·Õ„œ··Â"
 
-  !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_ARABIC} " ‰’Ì» ${MUI_PRODUCT} ${MUI_VERSION}"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "„“Ì· ${MUI_NAME}"
 
-!endif
-
-!verbose 4
+!insertmacro MUI_LANGUAGEFILE_END

@@ -1,11 +1,9 @@
-;NSIS Modern User Interface version 1.4
-;Basic Macro System Example Script
+;NSIS Modern User Interface version 1.5
+;Basic Example Script
 ;Written by Joost Verburg
 
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
-
-!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}" ;Installer name
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
@@ -58,7 +56,7 @@ SectionEnd
 ;--------------------------------
 ;Descriptions
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  

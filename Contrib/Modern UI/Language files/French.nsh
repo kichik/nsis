@@ -1,78 +1,54 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.4
+;Compatible with Modern UI 1.5
 
 ;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>
 
 ;--------------------------------
-!verbose 3
 
-!ifndef MUI_FRENCH_USED
+!insertmacro MUI_LANGUAGEFILE_BEGIN "FRENCH"
 
-!define MUI_FRENCH_USED
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Français" ;Name of the language in the language itself
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Licence utilisateur"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Appuyez sur Page Down pour lire le reste de la licence utilisateur."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Si vous acceptez tous les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour installer ${MUI_PRODUCT}."  
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Choisissez les composants"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Choisissez les composants que vous souhaitez installer."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "Cochez les composants que vous souhaitez installer, et décochez ceux que vous ne voulez pas installer. Cliquez sur Suivant pour continuer."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Description"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Passer le curseur de votre souris sur un composant pour voir sa description."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "Choisissez le dossier d'installation"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Choisissez le dossier dans lequel installer ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "Le programme d'installation va maintenant installer ${MUI_PRODUCT} dans le dossier suivant.$\r$\n$\r$\nPour l'installer dans ce dossier, cliquez sur Installer. Pour l'installer dans un autre dossier, cliquez sur Parcourir et choisissez un autre dossier."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Dossier d'installation"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Installation en cours"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Veuillez patienter pendant que ${MUI_PRODUCT} est en train d'être installé sur votre ordinateur."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "Installation terminée"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "L'installation s'est terminée avec succès."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de ${MUI_PRODUCT} ?"
 
-  !define MUI_FRENCH_LANGNAME "Français" ;Name of the language in the language itself (English, Deutsch, Français etc.)
-
-  ;INSTALLER
-  Name /LANG=${LANG_FRENCH} "${MUI_NAME}"
-  
-  !ifdef MUI_LICENSEPAGE
-     LicenseText /LANG=${LANG_FRENCH} "Appuyez sur Page Down pour lire le reste de la licence utilisateur."
-     LangString MUI_TEXT_LICENSE_TITLE ${LANG_FRENCH} "Licence utilisateur"  
-     LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_FRENCH} "Veuillez examiner les termes de la licence avant d'installer ${MUI_PRODUCT}."
-     LangString MUI_INNERTEXT_LICENSE ${LANG_FRENCH} "Si vous acceptez tous les termes de la licence utilisateur, cliquez sur J'accepte pour continuer. Vous devez accepter la licence utilisateur pour installer ${MUI_PRODUCT}."  
-  !endif
-  
-  !ifdef MUI_COMPONENTSPAGE
-    ComponentText /LANG=${LANG_FRENCH} "Cochez les composants que vous souhaitez installer, et décochez ceux que vous ne voulez pas installer. Cliquez sur Suivant pour continuer."
-    LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_FRENCH} "Choisissez les composants"
-    LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_FRENCH} "Choisissez les composants que vous souhaitez installer."
-    LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_FRENCH} "Description"
-    LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_FRENCH} "Passer le curseur de votre souris sur un composant pour voir sa description."
-  !endif
-  
-  !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_FRENCH} "Le programme d'installation va maintenant installer ${MUI_PRODUCT} dans le dossier suivant.$\r$\n$\r$\nPour l'installer dans ce dossier, cliquez sur Installer. Pour l'installer dans un autre dossier, cliquez sur Parcourir et choisissez un autre dossier."
-    LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_FRENCH} "Choisissez le dossier d'installation"
-    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_FRENCH} "Choisissez le dossier dans lequel installer ${MUI_PRODUCT}."
-    LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_FRENCH} "Dossier d'installation"
-  !endif
-  
-  LangString MUI_TEXT_INSTALLING_TITLE ${LANG_FRENCH} "Installation en cours"
-  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_FRENCH} "Veuillez patienter pendant que ${MUI_PRODUCT} est en train d'être installé sur votre ordinateur."
-  
-  LangString MUI_TEXT_FINISHED_TITLE ${LANG_FRENCH} "Installation terminée"
-  LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_FRENCH} "L'installation s'est terminée avec succès."
-  
-  !ifdef MUI_ABORTWARNING
-    LangString MUI_TEXT_ABORTWARNING ${LANG_FRENCH} "Êtes-vous sûr de vouloir quitter l'installation de ${MUI_PRODUCT} ?"
-  !endif
-
-  !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_TEXT_SETUPCAPTION ${LANG_FRENCH} "Installation de ${MUI_PRODUCT} ${MUI_VERSION}"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "Installation de ${MUI_NAME}"
   
   
-  ;UNINSTALLER
-  
-  !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_FRENCH} "Ce programme va supprimer ${MUI_PRODUCT} de votre ordinateur."
-    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_FRENCH} "Désinstaller ${MUI_PRODUCT}"
-    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_FRENCH} "Supprimer ${MUI_PRODUCT} de votre ordinateur."
-  
-    LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_FRENCH} "Désinstallation en cours"
-    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_FRENCH} "Veuillez patienter pendant que ${MUI_PRODUCT} est en train d'être supprimé de votre ordinateur."
-  
-    LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_FRENCH} "Désinstallation terminée"
-    LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_FRENCH} "La désinstallation s'est terminée avec succès."
-  !endif
-  
-  !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_FRENCH} "Installation de ${MUI_PRODUCT} ${MUI_VERSION}"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Désinstaller ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Supprimer ${MUI_PRODUCT} de votre ordinateur."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Ce programme va supprimer ${MUI_PRODUCT} de votre ordinateur."
     
-!endif
-
-!verbose 4
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Désinstallation en cours"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Veuillez patienter pendant que ${MUI_PRODUCT} est en train d'être supprimé de votre ordinateur."
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Désinstallation terminée"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "La désinstallation s'est terminée avec succès."
+   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "Désinstallation de ${MUI_NAME}"
+    
+!insertmacro MUI_LANGUAGEFILE_END
