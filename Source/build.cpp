@@ -1349,15 +1349,15 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
- 
-  // Pack exe header if asked for
+
   if (build_header.common.caption_ptr < 0)
   {
     char buf[1024];
     wsprintf(buf,"%s Setup",build_strlist.get()+build_header.common.name_ptr);
     build_header.common.caption_ptr=add_string_main(buf,0);
   }
- 
+
+  // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
   {
     FILE *tmpfile=fopen(build_packname,"wb");
