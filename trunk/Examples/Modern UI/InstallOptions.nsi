@@ -1,13 +1,19 @@
-;NSIS Modern User Interface version 1.64
+;NSIS Modern User Interface version 1.65
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
-!define MUI_PRODUCT "Modern UI Test" ;Define your own software name here
-!define MUI_VERSION "1.0" ;Define your own software version here
+!define TEMP $R0
+  
+;--------------------------------
+;Include Modern UI
 
 !include "MUI.nsh"
 
-!define TEMP $R0
+;--------------------------------
+;Product Info
+
+!define MUI_PRODUCT "Modern UI Test"
+!define MUI_VERSION "1.65"
 
 ;--------------------------------
 ;Configuration
@@ -22,44 +28,28 @@
   InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
 
 ;--------------------------------
+;Pages
+
+  !insertmacro MUI_PAGE_LICENSE
+  Page custom CustomPageA
+  !insertmacro MUI_PAGE_COMPONENTS
+  Page custom CustomPageB
+  !insertmacro MUI_PAGE_DIRECTORY
+  Page custom CustomPageC
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_CUSTOMPAGECOMMANDS
-
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-  !define MUI_DIRECTORYPAGE
-  
   !define MUI_ABORTWARNING
   
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
-
-;--------------------------------
-;Pages
-  
-  !insertmacro MUI_PAGECOMMAND_LICENSE
-  Page custom SetCustomA
-  Page custom SetCustomB
-  !insertmacro MUI_PAGECOMMAND_COMPONENTS
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetCustomC
-  !insertmacro MUI_PAGECOMMAND_INSTFILES
-
 ;--------------------------------
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-  
-;--------------------------------
-;Language Strings
-
-  ;Description
-  LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-  
-  ;Header
-  LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions Page"
-  LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
 
 ;--------------------------------
 ;Data
@@ -70,7 +60,7 @@
 ;Reserve Files
   
   ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only useful for BZIP2 compression
+  ;Only for BZIP2 compression
   
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
@@ -80,9 +70,9 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "modern.exe" SecCopyUI
+Section "Dummy Test File" SecCopyUI
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
@@ -90,57 +80,69 @@ Section "modern.exe" SecCopyUI
   ;Store install folder
   WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
   
-  ;Read a value from an InstallOptions INI File
-  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP} "ioC.ini" "Field 2" "State"
-  StrCmp ${TEMP} "1" "" +2
-    ;Checked
-    MessageBox MB_OK "A MessageBox..."
-    
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+  
+  ;Read a value from an InstallOptions INI file
+  !insertmacro MUI_INSTALLOPTIONS_READ ${TEMP} "ioC.ini" "Field 2" "State"
+  
+  ;Display a messagebox if check box was checked
+  StrCmp ${TEMP} "1" "" +2
+    MessageBox MB_OK "You checked the check box, here is the MessageBox..."
 
 SectionEnd
-
-;--------------------------------
-;Descriptions
-
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 
 ;--------------------------------
 ;Installer Functions
 
 Function .onInit
 
-  ;Extract InstallOptions INI Files
+  ;Extract InstallOptions INI files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
   
 FunctionEnd
 
-Function SetCustomA
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions page"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "This is a page created using the InstallOptions plug-in."
+
+Function CustomPageA
+
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioA.ini"
+
 FunctionEnd
 
-Function SetCustomB
+Function CustomPageB
+
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioB.ini"
+
 FunctionEnd
 
-Function SetCustomC
+Function CustomPageC
+
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioC.ini"
+
 FunctionEnd
+
+;--------------------------------
+;Descriptions
+
+LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy modern.exe to the application folder."
+
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
@@ -148,5 +150,5 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
-  
+
 SectionEnd
