@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: German (1031)
 ;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^Name) wird abgeschlossen"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Beenden, um den Assistenten zu schließen."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Windows muss neu gestartet werden, um die Deinstallation von $(^Name) zu vervollständigen. Möchten Sie Windows jetzt neu starten?"
 
   !define MUI_UNTEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Deinstallation von $(^Name) abbrechen möchten?"
 
