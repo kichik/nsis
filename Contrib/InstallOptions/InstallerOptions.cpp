@@ -446,7 +446,7 @@ void AddBrowseButtons() {
   }
 }
 
-static char szResult[1000];
+static char szResult[4096];
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 {
