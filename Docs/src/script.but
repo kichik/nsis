@@ -1,4 +1,6 @@
-\C{fileformat} Script File Format
+\C{scriptref} Scripting Reference
+
+\H{fileformat} Script File Format
 
 A NSIS Script File (.nsi) is just a text file with a series of commands.
 
