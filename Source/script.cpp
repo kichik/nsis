@@ -4280,6 +4280,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=add_intstring(1);
       SCRIPT_MSG("SetErrors\n");
     return add_entry(&ent);
+    case TOK_SETERRORLEVEL:
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=FLAG_OFFSET(errlvl);
+      ent.offsets[1]=add_string(line.gettoken_str(1));
+      SCRIPT_MSG("SetErrorLevel: %s\n",line.gettoken_str(1));
+    return add_entry(&ent);
+    case TOK_GETERRORLEVEL:
+      ent.which=EW_GETFLAG;
+      ent.offsets[0]=GetUserVarIndex(line, 1);
+      ent.offsets[1]=FLAG_OFFSET(errlvl);
+      if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
+      SCRIPT_MSG("GetErrorLevel: %s\n",line.gettoken_str(1));
+    return add_entry(&ent);
 #ifdef NSIS_SUPPORT_STROPTS
     case TOK_STRLEN:
       ent.which=EW_STRLEN;

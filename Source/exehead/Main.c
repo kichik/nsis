@@ -70,7 +70,7 @@ char *ValidateTempDir()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
-  static int ret;
+  int ret;
   const char *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
@@ -80,6 +80,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   char *cmdline;
 
   InitCommonControls();
+
+  g_exec_flags.errlvl=-1;
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   {
@@ -243,6 +245,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
   ret = ui_doinstall();
+  if (g_exec_flags.errlvl == -1)
+    g_exec_flags.errlvl = ret;
 
 #ifdef NSIS_CONFIG_LOG
 #ifndef NSIS_CONFIG_LOG_ODS
@@ -254,13 +258,16 @@ end:
   CleanUp();
 
   if (m_Err)
+  {
     my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
+    g_exec_flags.errlvl = 2;
+  }
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   OleUninitialize();
 #endif
 
-  ExitProcess(ret);
+  ExitProcess(g_exec_flags.errlvl);
 }
 
 void NSISCALL CleanUp()

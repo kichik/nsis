@@ -302,7 +302,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
   // Select language
-  if (ExecuteCallbackFunction(CB_ONINIT)) return 1;
+  if (ExecuteCallbackFunction(CB_ONINIT)) return 2;
   set_language();
 #endif
 
@@ -363,7 +363,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (!g_quit_flag) ExecuteCallbackFunction(CB_ONINSTFAILED);
 #endif//NSIS_SUPPORT_CODECALLBACKS
-      return 1;
+      return 2;
     }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     ExecuteCallbackFunction(CB_ONINSTSUCCESS);
@@ -1596,7 +1596,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   {
     if (g_quit_flag)
     {
-      m_retcode=1;
+      m_retcode=2;
       outernotify(NOTIFY_BYE_BYE);
     }
     else

@@ -467,6 +467,7 @@ typedef struct
 #endif
   int instdir_error;
   int rtl;
+  int errlvl;
 } exec_flags;
 
 #define FIELDN(x, y) (((int *)&x)[y])
