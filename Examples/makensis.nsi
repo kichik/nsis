@@ -12,6 +12,7 @@
 ;Compile CVS Data Setup
 
 !system '"${NSISDIR}\Bin\InstallCVSData.exe" nooverwrite'
+!echo "Compiling CVS Data Setup..."
 !system '"${NSISDIR}\makensis.exe" /V1 cvsdata.nsi' = 0
 
 ;--------------------------------
