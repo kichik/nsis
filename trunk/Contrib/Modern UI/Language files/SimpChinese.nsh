@@ -43,7 +43,7 @@
   !define MUI_TEXT_ABORT_TITLE "安装己中止"
   !define MUI_TEXT_ABORT_SUBTITLE "安装程序并未成功地运行完成。"
   
-  !define MUI_TEXT_FINISH_BUTTON "完成(&F)"
+  !define MUI_BUTTONTEXT_FINISH "完成(&F)"
   !define MUI_TEXT_FINISH_INFO_TITLE "完成 $(^Name) 安装向导"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^Name) 已在你的系统安装。\r\n单击 [完成(F)] 关闭此向导。"
   !define MUI_TEXT_FINISH_INFO_REBOOT "你的系统需要重新启动，以便完成 $(^Name) 的安装。现在要重新启动吗？"
