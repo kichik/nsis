@@ -800,8 +800,7 @@ static void xhtml_do_index_body(FILE * fp)
 	    for (i = 0; i < xi->nsection; i++) {
 		xhtmlsection *sect = xi->sections[i];
 		if (sect) {
-		    fprintf(fp, "<a href='%s#%s'>", sect->file->filename,
-			    sect->fragment);
+		    fprintf(fp, "<a href='%s#%s'>", sect->file->filename,sect->fragment);
 		    if (sect->para->kwtext) {
 			xhtml_para(fp, sect->para->kwtext);
 		    } else if (sect->para->words) {
@@ -1074,16 +1073,19 @@ xhtml_add_contents_entry(FILE * fp, xhtmlsection * section, int limit)
 	last_level++;
 	fprintf(fp, "<ul>\n");
     }
-    fprintf(fp, "<li><a href=\"%s#%s\">", section->file->filename,
-	    section->fragment);
-    if (section->para->kwtext) {
-	xhtml_para(fp, section->para->kwtext);
-	if (section->para->words) {
-	    fprintf(fp, ": ");
-	}
+    fprintf(fp, "<li>");
+    if ((section->para->type==para_Heading||section->para->type==para_Chapter)&&section->para->kwtext&&section->para->words) {
+        xhtml_para(fp, section->para->kwtext);
+        fprintf(fp,": ");
+    }
+    fprintf(fp, "<a href=\"%s#%s\">", section->file->filename,section->fragment);
+    if ((section->para->type!=para_Heading&&section->para->type!=para_Chapter)||(section->para->kwtext&&!section->para->words)) {
+	    xhtml_para(fp, section->para->kwtext);
+        if (section->para->words)
+            fprintf(fp, ": ");
     }
     if (section->para->words) {
-	xhtml_para(fp, section->para->words);
+	    xhtml_para(fp, section->para->words);
     }
     fprintf(fp, "</a></li>\n");
     return TRUE;
