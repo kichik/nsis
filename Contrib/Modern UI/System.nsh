@@ -409,6 +409,48 @@
   
 !macroend
 
+!macro MUI_STARTMENU_INITDEFINES
+
+  ;Check defines
+  !ifndef MUI_STARTMENUPAGE_VARIABLE
+    !define MUI_STARTMENUPAGE_VARIABLE "$9"
+  !endif
+  
+  !ifndef MUI_STARTMENUPAGE_DEFAULTFOLDER
+    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "${MUI_PRODUCT}"
+  !endif
+
+!macroend
+
+!macro MUI_STARTMENU_GETFOLDER VAR
+
+  !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
+
+    ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
+      StrCmp ${MUI_TEMP1} "" +3
+        StrCpy "${VAR}" ${MUI_TEMP1}
+        Goto +2
+      
+        StrCpy "${VAR}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+ 
+   !else
+   
+     StrCpy "${VAR}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+  
+   !endif
+  
+!macroend
+
+!macro MUI_STARTMENU_GETFOLDER_IFEMPTY VAR
+  
+  StrCmp ${VAR} "" 0 mui.startmenu_writebegin_notempty
+
+    !insertmacro MUI_STARTMENU_GETFOLDER ${VAR}
+    
+  mui.startmenu_writebegin_notempty:
+  
+!macroend
+
 !macro MUI_STARTMENU_WRITE_BEGIN
 
   !ifndef MUI_MANUALVERBOSE
@@ -420,28 +462,7 @@
     StrCpy ${MUI_TEMP1} ${MUI_STARTMENUPAGE_VARIABLE} 1
     StrCmp ${MUI_TEMP1} ">" mui.startmenu_write_done
     
-    StrCmp ${MUI_STARTMENUPAGE_VARIABLE} "" 0 mui.startmenu_writebegin_notempty
-
-    !ifdef MUI_STARTMENUPAGE_REGISTRY_ROOT & MUI_STARTMENUPAGE_REGISTRY_KEY & MUI_STARTMENUPAGE_REGISTRY_VALUENAME
-      
-      StrCmp "${MUI_STARTMENUPAGE_VARIABLE}" "" 0 +6
-
-        ReadRegStr ${MUI_TEMP1} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
-          StrCmp ${MUI_TEMP1} "" +3
-            StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" ${MUI_TEMP1}
-            Goto +2
-          
-          StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
-
-    !else
-    
-      StrCpy "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
-      
-    !endif
-    
-    mui.startmenu_writebegin_notempty:
-
-  Pop ${MUI_TEMP1}
+    !insertmacro MUI_STARTMENU_GETFOLDER_IFEMPTY ${MUI_STARTMENUPAGE_VARIABLE}
   
   !ifndef MUI_MANUALVERBOSE
     !verbose 4
@@ -461,6 +482,8 @@
 
   mui.startmenu_write_done:
   
+  Pop ${MUI_TEMP1}
+  
   !ifndef MUI_MANUALVERBOSE
     !verbose 4
   !endif
@@ -469,31 +492,16 @@
 
 !macro MUI_STARTMENU_DELETE_BEGIN VAR
 
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
+  Push ${MUI_TEMP1}
   
-    ReadRegStr "${VAR}" "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
-    StrCmp "${VAR}" "" mui.startmenu_delete_done
+  !insertmacro MUI_STARTMENU_GETFOLDER ${VAR}
   
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_STARTMENU_DELETE_END
 
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
+  Pop ${MUI_TEMP1}
   
-  mui.startmenu_delete_done:
-  
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
 !macroend
 
 !macro MUI_LANGDLL_DISPLAY
@@ -516,7 +524,9 @@
       ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
       StrCmp ${MUI_TEMP1} "" showlangdialog
         StrCpy $LANGUAGE ${MUI_TEMP1}
-        Goto mui.langdll_done
+        !ifndef MUI_LANGDLL_ALWAYSSHOW
+          Goto mui.langdll_done
+        !endif
       showlangdialog:
       
     Pop ${MUI_TEMP1}
@@ -527,9 +537,11 @@
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
     Abort
-    
-  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    mui.langdll_done:
+  
+  !ifndef MUI_LANGDLL_ALWAYSSHOW
+    !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+      mui.langdll_done:
+    !endif
   !endif
     
   !ifndef MUI_MANUALVERBOSE
@@ -879,19 +891,6 @@
 
   !ifndef MUI_MANUALVERBOSE
     !verbose 4
-  !endif
-
-!macroend
-
-!macro MUI_STARTMENU_INITDEFINES
-
-  ;Check defines
-  !ifndef MUI_STARTMENUPAGE_VARIABLE
-    !define MUI_STARTMENUPAGE_VARIABLE "$9"
-  !endif
-  
-  !ifndef MUI_STARTMENUPAGE_DEFAULTFOLDER
-    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "${MUI_PRODUCT}"
   !endif
 
 !macroend
@@ -1356,33 +1355,40 @@
       
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
           
-           StrCmp ${MUI_TEMP1} "1" "" +3
-             !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
-               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\""
+           StrCmp ${MUI_TEMP1} "1" 0 mui.finish_norun
+             !ifndef MUI_FINISHPAGE_RUN_FUNCTION
+               !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
+                 StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\""
+               !else
+                 StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\" ${MUI_FINISHPAGE_RUN_PARAMETERS}"
+               !endif
+               Exec "${MUI_TEMP1}"
              !else
-               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\" ${MUI_FINISHPAGE_RUN_PARAMETERS}"
+               Call "${MUI_FINISHPAGE_RUN_FUNCTION}"
              !endif
-             Exec "${MUI_TEMP1}"
              
-           !ifdef MUI_FINISHPAGE_SHOWREADME
+           mui.finish_norun:
+           
+         !endif
+             
+         !ifdef MUI_FINISHPAGE_SHOWREADME
           
+           !ifdef MUI_FINISHPAGE_RUN
              !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 5" "State"
-            
-             StrCmp ${MUI_TEMP1} "1" "" +2
-               ExecShell "open" "${MUI_FINISHPAGE_SHOWREADME}"
-               
+           !else
+             !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
            !endif
-             
-        !else ifdef MUI_FINISHPAGE_SHOWREADME
-          
-            !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
             
-             StrCmp ${MUI_TEMP1} "1" "" +2
+           StrCmp ${MUI_TEMP1} "1" 0 mui.finish_noshowreadme
+            !ifndef MUI_FINISHPAGE_SHOWREADME_FUNCTION
                ExecShell "open" "${MUI_FINISHPAGE_SHOWREADME}"
-                              
-          !endif
-          
-        !endif
+             !else
+               Call "${MUI_FINISHPAGE_SHOWREADME_FUNCTION}"
+             !endif
+               
+           mui.finish_noshowreadme:
+               
+         !endif
         
       mui.finish_done:
       
@@ -1588,6 +1594,20 @@
   !endif
   
   ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
+  
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+  
+!macroend
+
+!macro MUI_RESERVEFILE_STARTMENU
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 3
+  !endif
+  
+  ReserveFile "${NSISDIR}\Plugins\StartMenu.dll"
   
   !ifndef MUI_MANUALVERBOSE
     !verbose 4

@@ -238,7 +238,7 @@ follow these steps:</p>
   remember the users preference. You should also use it in the uninstaller to
   remove the Start Menu folders. Don't forget to remove this key in the
   uninstaller.</p>
-  <p class="text">In the uninstaller, use these macro's to remove the shortcuts:</p>
+  <p class="text">In the uninstaller, these macro to get the Start Menu folder:</p>
 <pre class="margin">
 !insertmacro MUI_STARTMENU_DELETE_BEGIN $R0 ;You can also use another variable
   Delete "$SMPROGRAMS\$R0\Your Shortcut.lnk"
@@ -256,6 +256,10 @@ follow these steps:</p>
   quotes in the value (use $\&quot;).</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br />
   Do not check the 'Run program' checkbox by default</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_FUNCTION </span><span class="parameter">function_name</span><br />
+  Call a function instead of executing an application (define MUI_FINISHPAGE_RUN without parameters).
+  You can use the function to exectute multiple applications or you can change the checkbox name and
+  use it for other things.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME </span><span class="parameter">file/url</span><br />
   File or website which the user can select to view (using a checkbox).
@@ -264,6 +268,10 @@ follow these steps:</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br />
   Do not check the 'Show Readme' checkbox by default</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_FUNCTION </span><span class="parameter">function_name</span><br />
+  Call a function instead of showing a file (define MUI_FINISHPAGE_SHOWREADME without parameters).
+  You can use the function to show multiple files or you can change the checkbox name and
+  use it for other things.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
   Do not automatically jump to the finish page, to allow the user to
@@ -399,6 +407,9 @@ Function un.onInit
 
 FunctionEnd
 </pre>
+  <p class="text"><span class="bold">MUI_LANGDLL_ALWAYSSHOW</span><br />
+  Always show the language selection dialog, even if a language has been stored in the registry.
+  The language stored in the registry will be selected by default.</p>
   <p class="subheader">7. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
@@ -526,10 +537,12 @@ start faster.</p>
 insert the ReserveFile commands or macro's above other File commands:</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
 
 !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
-!insertmacro MUI_RESERVEFILE_INSTALLOPTION ;InstallOptions
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
 !insertmacro MUI_RESERVEFILE_LANGDLL ;LangDLL (language selection dialog)
+!insertmacro MUI_RESERVEFILE_STARTMENU ;Start Menu folder selection page
 </pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br />
@@ -630,12 +643,16 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.65 - May 25, 2003
+<li>1.65 - June 14, 2003
   <ul>
     <li>New page configuration system, no different system for installers
     with custom pages</li>
     <li>Default windows color for the license text background</li>
     <li>New format for example scripts</li>
+    <li>Improved registry storage for Start Menu folder</li>
+    <li>ReserveFile macro for StartMenu plug-in</li>
+    <li>Added MUI_LANGDLL_ALWAYSSHOW option</li>
+    <li>Checkboxes on Finish page can be used to call a function</li>
   </ul></li>
 </ul>
 <p class="text"></p>
