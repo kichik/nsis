@@ -35,28 +35,34 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;--------------------------------
   ;Modern UI Configuration
 
+  ;Names
   !define MUI_PRODUCT "NSIS"
   !define MUI_VERSION "2.0b4 (CVS)"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
-  !define MUI_WELCOMEPAGE
-  !define MUI_LICENSEPAGE
-  !define MUI_COMPONENTSPAGE
-    !define MUI_COMPONENTSPAGE_SMALLDESC
-  !define MUI_DIRECTORYPAGE
-  !define MUI_FINISHPAGE
-    !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
-    !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  ;Pages
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  !insertmacro MUI_PAGE_FINISH
   
-  !define MUI_ABORTWARNING
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
   
-  !define MUI_UNINSTALLER
-  !define MUI_UNCONFIRMPAGE
-
+  ;Settings
+  !define MUI_ABORTWARNING  
+  
   !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
   !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
 
+  !define MUI_COMPONENTSPAGE_SMALLDESC
+
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Docs\index.html"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
   ;--------------------------------
   ;Languages
 
