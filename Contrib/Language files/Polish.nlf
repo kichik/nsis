@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1045
 # Font and size - dash (-) means default
@@ -8,7 +8,7 @@ NLF v3
 # Codepage - dash (-) means ANSI code page
 -
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
-# corrections, additions by cube cube(at)lp.net.pl
+# corrections, additions, updates by cube cube(at)lp.net.pl
 Nullsoft Install System %s
 %s Instalator
 %s Odinstaluj
@@ -45,6 +45,8 @@ B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby anulowaæ instal
 Nie mo¿na zapisaæ:  
 B³¹d kopiowania
 Kopiuj do 
+Rejestrowanie: 
+Odrejestrowanie: 
 Nie mo¿na by³o znaleŸæ symbolu: 
 Nie mo¿na by³o wczytaæ: 
 Twórz folder: 
@@ -60,7 +62,7 @@ ExecShell:
 Uruchom: 
 Rozpakuj: 
 Rozpakuj: b³¹d zapisu do pliku 
-Instalacja przerwana: z³y kod operacji
+Instalator uszkodzony: z³y kod operacji
 Brak OLE dla: 
 Folder wyjœciowy: 
 Usuñ folder: 
@@ -68,3 +70,12 @@ Zmieñ nazwê przy restarcie:
 Zmieñ nazwê: 
 Pominiête: 
 Kopiuj szczegó³y do schowka
+Loguj przebieg instalacji
+# bajt
+B
+# kilo
+K
+# mega
+M
+# giga
+G
