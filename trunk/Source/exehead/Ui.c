@@ -292,10 +292,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,0,NULL,g_hInstance,NULL);
   }
 
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-  g_hwnd=m_bgwnd;
-#endif//NSIS_SUPPORT_CODECALLBACKS
-
 #endif//NSIS_SUPPORT_BGBG
 
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
@@ -307,12 +303,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-#ifdef NSIS_SUPPORT_BGBG
-  g_hwnd=NULL;
-#endif//NSIS_SUPPORT_BGBG
-#endif//NSIS_SUPPORT_CODECALLBACKS
 
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   if (!g_exec_flags.silent)
