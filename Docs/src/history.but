@@ -20,7 +20,7 @@
 
 \b Splash.exe is now a plugin (splash.dll)
 
-\b Prevent multiple inclusion of !defines 
+\b Prevent multiple inclusion of !defines
 
 \b [InstallOptions] Clicking [x] behaves the same as Cancel.
 
@@ -38,9 +38,9 @@
 
 \b Made win9x move/delete on reboot support proper and function like on win2k
 
-\b Now always loads RichEdit v2 if present (links work on Win9x) 
+\b Now always loads RichEdit v2 if present (links work on Win9x)
 
-\b DeleteRegKey now complains if given a third parameter (other than /ifempty) 
+\b DeleteRegKey now complains if given a third parameter (other than /ifempty)
 
 \b Included makensisw 1.9 (lots of changes)
 

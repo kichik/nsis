@@ -4,6 +4,6 @@ Functions are like similar to Sections in that they contain zero or more instruc
 
 \b Functions must be declared outside of Sections or other Functions.
 
-\b Function names beginning with "." (e.g. ".Whatever") are generally reserved for callback functions. 
+\b Function names beginning with "." (e.g. ".Whatever") are generally reserved for callback functions.
 
-\b Function names beginning with "un." are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions. 
+\b Function names beginning with "un." are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions.

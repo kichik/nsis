@@ -1,7 +1,7 @@
 \C{UninstallSection} Uninstall Section
 
 A special Section named 'Uninstall' must be created in order to generate an uninstaller. This section should remove all files, registry keys, etc that were installed by the installer, from the system. Here is an example of a simple uninstall section:
-        
+
 \c Section "Uninstall"
 \c   Delete $INSTDIR\Uninst.exe ; delete self (see explanation below why this works)
 \c   Delete $INSTDIR\myApp.exe
@@ -9,4 +9,4 @@ A special Section named 'Uninstall' must be created in order to generate an unin
 \c   DeleteRegKey HKLM SOFTWARE\myApp
 \c SectionEnd
 
-The first Delete instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall. 
+The first Delete instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall.
