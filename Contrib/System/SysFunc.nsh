@@ -83,22 +83,17 @@ Function systemGetFileSysTime
     ; close file search
     System::Call '${sysFindClose}(r3)'
 
-    ; Create systemtime struct for system time
-    System::Call '*${stSYSTEMTIME} .R1'
     ; Create systemtime struct for local time
     System::Call '*${stSYSTEMTIME} .R0'
 
     ; Get File time
     System::Call '*$2${stWIN32_FIND_DATA} (,,, .r3)'
 
+    ; Convert file time (UTC) to local file time
+    System::Call '${sysFileTimeToLocalFileTime}(r3, .r1)'
+
     ; Convert file time to system time
-    System::Call '${sysFileTimeToSystemTime}(r3, R1)'
-
-    ; Convert system time to local time
-    System::Call '${sysSystemTimeToTzSpecificLocalTime}(0, R1, R0)'
-
-    ; that's all, just clear used memory 
-    System::Free $R1
+    System::Call '${sysFileTimeToSystemTime}(r1, R0)'
 
 sgfst_exit:
     ; free used memory for WIN32_FIND_DATA struct
@@ -138,22 +133,25 @@ Function systemMessageBox
 
      ; Load module and get handle
      System::Call '${sysLoadLibrary}($2) .r1'
-     IntCmp $1 0 "0" smbnext smbnext
+     IntCmp $1 0 0 smbnext smbnext
 
      ; Get module handle. This may look stupid (to call GetModuleHandle in case
      ; when the LoadLibrary doesn't works, but LoadLibrary couldn't return 
      ; a handle to starting process (for 'i 0').
      System::Call '${sysGetModuleHandle}($2) .r1'
-smbnext:
 
+     ; Indicate that LoadLibrary wasn't used
+     StrCpy $2 1
+smbnext:
      ; Create MSGBOXPARAMS structure
      System::Call '*${stMSGBOXPARAMS}(, $HWNDPARENT, r1, r3, r4, "$5|${MB_USERICON}", $6, _) .r0'
      ; call MessageBoxIndirect
      System::Call '${sysMessageBoxIndirect}(r0) .R0'
      ; free MSGBOXPARAMS structure
+
      System::Free $0
 
-     ; have we got ready module handle at start?
+     ; have we used load library at start?
      IntCmp $2 0 0 smbskipfree smbskipfree
      ; No, then free the module
      System::Call '${sysFreeLibrary}(r1)'
@@ -331,7 +329,7 @@ Function systemSplash
    Pop $3
 
    ; Create window class
-   System::Call "*${stWNDCLASS} (,r3,,,r7,,R9,,,s) .R9" "_sp"
+   System::Call "*${stWNDCLASS} (0,r3,0,0,r7,0,R9,0,i 0,'_sp') .R9"
 
    ; Register window class
    System::Call "${sysRegisterClass} (R9) .R9"
@@ -373,8 +371,8 @@ repeat:
 
 finish:
    ; Stop the sound
-   System::Call "${sysPlaySound}"
-   
+   System::Call "${sysPlaySound} (i 0, i 0, i 0)"
+
    ; Delete bitmap object
    System::Call "${sysDeleteObject} (r6)"
 

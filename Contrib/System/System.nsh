@@ -120,6 +120,11 @@
 ; LPSYSTEMTIME lpSystemTime);
 !define sysFileTimeToSystemTime 'kernel32::FileTimeToSystemTime(*l, i) i'
 
+; BOOL FileTimeToLocalFileTime(
+;       CONST FILETIME *lpFileTime, 
+;       LPFILETIME lpLocalFileTime);
+!define sysFileTimeToLocalFileTime 'kernel32::FileTimeToLocalFileTime(*l, *l) i'
+
 ; BOOL SystemTimeToTzSpecificLocalTime(LPTIME_ZONE_INFORMATION lpTimeZone, 
 ; LPSYSTEMTIME lpUniversalTime, LPSYSTEMTIME lpLocalTime);
 !define sysSystemTimeToTzSpecificLocalTime 'kernel32::SystemTimeToTzSpecificLocalTime(i, i, i) i'
