@@ -657,9 +657,9 @@ int r=Z_OK;
         h = s->sub.trees.tb + ((uInt)b & (uInt)inflate_mask[t]);
         t = h->bits;
         c = h->base;
-        DUMPBITS(t)
         if (c < 16)
         {
+          DUMPBITS(t)
           s->sub.trees.t_blens[s->sub.trees.index++] = c;
         }
         else /* c == 16..18 */
@@ -674,7 +674,8 @@ int r=Z_OK;
             i=c-14;
             j=3;
           }
-          NEEDBITS(i)
+          NEEDBITS(t+i)
+          DUMPBITS(t)
           j += (uInt)b & (uInt)inflate_mask[i];
           DUMPBITS(i)
           i = s->sub.trees.index;
