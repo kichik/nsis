@@ -93,6 +93,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_LICENSEDATA,"LicenseData",1,0,"local_file_that_has_license_text.txt"},
 {TOK_LICENSETEXT,"LicenseText",1,1,"license_page_description [license_button_text]"},
 {TOK_LICENSEBKCOLOR,"LicenseBkColor",1,0,"background_color"},
+{TOK_LOADNLF,"LoadLanguageFile",1,0,"language.nlf"},
 {TOK_LOGSET,"LogSet",1,0,"on|off"},
 {TOK_LOGTEXT,"LogText",1,0,"text"},
 {TOK_MESSAGEBOX,"MessageBox",2,4,"mode messagebox_text [return_check label_to_goto_if_equal [return_check2 label2]]\n    mode=modeflag[|modeflag[|modeflag[...]]]\n    "
