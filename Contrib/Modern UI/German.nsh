@@ -17,7 +17,7 @@
   !endif
 
   !ifdef MUI_COMPONENTPAGE
-    ComponentText /LANG=${LANG_GERMAN} "Wählen Sie die Komponenten aus, die Sie installieren möchten und wählen Sie diejenigen ab, die Sie nicht installieren wollen. Klicken Sie auf Weiter um fortzufahren." " "
+    ComponentText /LANG=${LANG_GERMAN} "Wählen Sie die Komponenten aus, die Sie installieren möchten und wählen Sie diejenigen ab, die Sie nicht installieren wollen. Klicken Sie auf Weiter um fortzufahren."
   !endif
 
   !ifdef MUI_DIRSELECTPAGE
