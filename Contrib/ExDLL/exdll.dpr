@@ -78,7 +78,7 @@ begin
   end;
 end;
 
-function GetUserVariable(varnum: TVariableList): string;
+function GetUserVariable(const varnum: TVariableList): string;
 begin
   if (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
     Result := g_variables + integer(varnum) * g_stringsize
@@ -86,30 +86,30 @@ begin
     Result := '';
 end;
 
-procedure SetUserVariable(varnum: TVariableList; value: string);
+procedure SetUserVariable(const varnum: TVariableList; const value: string);
 begin
   if (value <> '') and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
     lstrcpy(g_variables + integer(varnum) * g_stringsize, PChar(value))
 end;
 
-procedure NSISDialog(text, caption: string; buttons: integer);
+procedure NSISDialog(const text, caption: string; const buttons: integer);
 begin
   MessageBox(g_hwndParent, PChar(text), PChar(caption), buttons);
 end;
 
-procedure ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer); cdecl;
+procedure ex_dll(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer); cdecl;
 begin
-  // set up global variables
+  // setup global variables
   g_stringsize := string_size;
   g_hwndParent := hwndParent;
-  g_stringsize := string_size;
   g_stacktop := stacktop;
   g_variables := variables;
+  // end global variable setup
 
   NSISDialog(GetUserVariable(INST_0), 'The value of $0', MB_OK);
   NSISDialog(PopString, 'pop', MB_OK);
   PushString('Hello, this is a push');
-  SetUserVariable(INST_0, 'This is 0');
+  SetUserVariable(INST_0, 'This is user var $0');
 end;
 
 exports ex_dll;
