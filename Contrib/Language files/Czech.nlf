@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v4
 # Language ID
 1029
 # Font and size - dash (-) means default
@@ -22,6 +22,8 @@ Odinstalování programu %s
 < &Zpìt
 &Další >
 &Souhlasím
+&Souhlasím s podmínkami licenèního ujednání
+&Nesouhlasím s podmínkami licenèního ujednání
 &Instalovat
 &Odinstalovat
 Storno
@@ -42,6 +44,8 @@ Chyba pøi pokusu o zápis souboru: \r\n\t"$0"\r\nStiskni 'Pøerušit' pro pøerušení
 Nelze zapsat: 
 Kopírování selhalo
 Kopírování do 
+Zaregistrován: 
+Odregistrován: 
 Nelze najít symbol: 
 Nelze pøeèíst: 
 Vytvoøen adresáø: 
@@ -64,4 +68,13 @@ Smazán adresáø:
 Pøejmenovat po restartu: 
 Pøejmenován: 
 Pøeskoèen: 
-Zkopírovat detaily do schránky
+Zkopírovat podrobnosti do schránky
+Zaznamenávat prùbìh instalace
+# byte
+B
+# kilo
+k
+# mega
+M
+# giga
+G
