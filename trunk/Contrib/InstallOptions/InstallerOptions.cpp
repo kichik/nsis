@@ -537,9 +537,9 @@ bool ReadSettings(void) {
             case 'r':
               pFields[nIdx].pszText[j] = '\r';
               break;
-            case 't':
-              pFields[nIdx].pszText[j] = '\t';
-              break;
+            //case 't':
+            //  pFields[nIdx].pszText[j] = '\t';
+            //  break;
             case '\\':
               pFields[nIdx].pszText[j] = '\\';
               break;
