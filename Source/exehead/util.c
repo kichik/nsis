@@ -101,9 +101,10 @@ void NSISCALL myDelete(char *buf, int flags)
   HANDLE h;
   WIN32_FIND_DATA fd;
   char *fn;
+  int valid_dir=is_valid_instpath(buf);
 
 #ifdef NSIS_SUPPORT_RMDIR
-  if (!(flags & DEL_DIR) || (is_valid_instpath(buf) && (flags & DEL_RECURSE)))
+  if (!(flags & DEL_DIR) || (valid_dir && (flags & DEL_RECURSE)))
 #endif//NSIS_SUPPORT_RMDIR
   {
     mystrcpy(lbuf,buf);
@@ -173,7 +174,7 @@ void NSISCALL myDelete(char *buf, int flags)
   }
 
 #ifdef NSIS_SUPPORT_RMDIR
-  if (flags & DEL_DIR)
+  if (valid_dir && (flags & DEL_DIR))
   {
     addtrailingslash(buf);
     log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
