@@ -45,10 +45,97 @@ char *GetResultStr(SystemProc *proc)
     return buf;
 }
 
+#ifdef SYSTEM_LOG_DEBUG
+
+// System log debuggin turned on
+#define SYSTEM_EVENT(a)  { _asm { mov logespsave, esp }; LogEvent(a); }
+#define SYSTEM_LOG_ADD(a)  { lstrcat(syslogbuf, a); }
+#define SYSTEM_LOG_POST     { lstrcat(syslogbuf, "\n"); WriteToLog(syslogbuf); *syslogbuf = 0; }
+
+HANDLE logfile = NULL;
+char syslogbuf[4096] = "";
+int logop = 0, logespsave;
+
+void WriteToLog(char *buffer)
+{
+    DWORD written;
+    char timebuffer[128];
+
+    if (logfile == NULL) return;
+
+    SetFilePointer(logfile, 0, 0, FILE_END);
+
+    wsprintf(timebuffer, "%04d  %04d.%03d    ", (++logop)%10000, (GetTickCount() / 1000) % 10000,
+        GetTickCount() % 1000);
+    WriteFile(logfile, timebuffer, lstrlen(timebuffer), &written, NULL);
+    WriteFile(logfile, buffer, lstrlen(buffer), &written, NULL);
+//    FlushFileBuffers(logfile);
+}
+
+void LogEvent(char *a)
+{
+    char buffer[1024];
+    wsprintf(buffer, "%s  ESP = 0x%08X  Stack = 0x%08X  Real = 0x%08X", a, 
+        logespsave, LastStackPlace, LastStackReal);
+    SYSTEM_LOG_ADD(buffer);
+}
+
+PLUGINFUNCTION(Debug)
+{
+    char *o1;
+    o1 = popstring();
+
+    if (logfile == NULL)
+        if (lstrlen(o1) > 0)
+        {
+            SYSTEMTIME t;
+            char buffer[1024], buftime[1024], bufdate[1024];
+
+            // Init debugging
+            logfile = CreateFile(o1, GENERIC_READ|GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, 
+                OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+            SetFilePointer(logfile, 0, 0, FILE_END);
+
+            logop = 0;
+            GetLocalTime(&t);
+            GetTimeFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, buftime, 1024);
+            GetDateFormat(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &t, NULL, bufdate, 1024);
+            wsprintf(buffer, "System, %s %s [build "__TIME__" "__DATE__"]\n", buftime, bufdate);
+            WriteToLog(buffer);
+        } else ;
+    else
+    if (lstrlen(o1) > 0)
+    {
+        // Log in to log file
+        WriteToLog(o1);
+    } else
+    {
+        // Stop debugging
+        WriteToLog("Debug stopped.\n\n\n");
+        CloseHandle(logfile);
+        logfile = NULL;
+    }
+} PLUGINFUNCTIONEND
+
+#else
+
+// System log debugging turned off
+#define SYSTEM_EVENT(a)
+#define SYSTEM_LOG_ADD(a)
+#define SYSTEM_LOG_POST
+
+#endif
 
 PLUGINFUNCTION(Get)
 {
     SystemProc *proc = PrepareProc(FALSE);
+    SYSTEM_LOG_ADD("Get ");
+    SYSTEM_LOG_ADD(proc->DllName);
+    SYSTEM_LOG_ADD("::");
+    SYSTEM_LOG_ADD(proc->ProcName);
+    SYSTEM_LOG_ADD("\n");
+    SYSTEM_LOG_POST;
     if ((proc->Options & POPT_ALWRETURN) != 0)
     {
         // Always return flag set -> return separate proc and result
@@ -73,6 +160,11 @@ PLUGINFUNCTION(Call)
 {
     // Prepare input
     SystemProc *proc = PrepareProc(TRUE);
+    SYSTEM_LOG_ADD("Call ");
+    SYSTEM_LOG_ADD(proc->DllName);
+    SYSTEM_LOG_ADD("::");
+    SYSTEM_LOG_ADD(proc->ProcName);
+    SYSTEM_LOG_ADD("\n");
     if (proc->ProcResult != PR_CALLBACK)
         ParamAllocate(proc);
     ParamsIn(proc);
@@ -583,6 +675,15 @@ void ParamsIn(SystemProc *proc)
         }
         GlobalFree(realbuf);
 
+#ifdef SYSTEM_LOG_DEBUG
+        {
+            char buf[1024];
+            wsprintf(buf, "\t\t\tParam In %d:    type %d value 0x%08X value2 0x%08X\n", i, 
+                proc->Params[i].Type, proc->Params[i].Value, proc->Params[i]._value);
+            SYSTEM_LOG_ADD(buf);
+        }
+#endif
+
         if (i == proc->ParamCount) i = 0;
         else i++;
     } 
@@ -631,7 +732,12 @@ void ParamsOut(SystemProc *proc)
             myitoa64(*((__int64*) place), realbuf);
             break;
         case PAT_STRING:
-            lstrcpy(realbuf,*((char**) place));
+            {
+                int num = lstrlen(*((char**) place));
+                if (num >= g_stringsize) num = g_stringsize-1;
+                lstrcpyn(realbuf,*((char**) place), num+1);
+                realbuf[num] = 0;
+            }
             break;
         case PAT_BOOLEAN:
             lstrcpy(realbuf,(*((int*) place))?("true"):("false"));
@@ -671,6 +777,9 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
         push    edi
         push    esi
     }
+
+    SYSTEM_LOG_ADD("\t\tCall:\n");
+    SYSTEM_EVENT("\t\t\tBefore call        ")
 
     if ((CallbackIndex > 0) && ((proc->Options & POPT_GENSTACK) == 0))
     {
@@ -719,6 +828,9 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     proc->Clone = LastProc;
     LastProc = proc;
 
+    SYSTEM_EVENT("\n\t\t\tNear call          ")
+    SYSTEM_LOG_POST;
+
     _asm
     {
         // Call
@@ -727,6 +839,10 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
         mov     z1, eax
         mov     z2, edx
     }
+
+    SYSTEM_LOG_ADD("Back from ");
+    SYSTEM_LOG_ADD(LastProc->ProcName);
+    SYSTEM_EVENT("\n\t\t\tShort-After call   ")
 
     if ((CallbackIndex > 0) && ((LastProc->Options & POPT_GENSTACK) == 0))
     {
@@ -773,6 +889,16 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     // Proc result: OK
     proc->ProcResult = PR_OK;
 
+    SYSTEM_EVENT("\n\t\t\tAfter call         ")
+#ifdef SYSTEM_LOG_DEBUG
+    {
+        char buf[1024];
+        wsprintf(buf, "\n\t\t\tReturn              0x%08X    0x%08X", z1, z2);
+        SYSTEM_LOG_ADD(buf);
+    }
+#endif
+    SYSTEM_LOG_POST;
+
     _asm 
     {
         // Return
@@ -813,6 +939,11 @@ SystemProc __declspec(naked) *RealCallBack()
         mov     proc, eax
     }
 
+    SYSTEM_LOG_ADD("Called callback from ");
+    SYSTEM_LOG_ADD(LastProc->ProcName);
+    SYSTEM_EVENT("\n\t\t\tShort-After call   ")
+    SYSTEM_LOG_POST;
+
     // Find last unused clone
     while ((proc->Clone != NULL)) proc = proc->Clone;
     // 2. Create new clone
@@ -849,7 +980,10 @@ SystemProc __declspec(naked) *RealCallBack()
         mov     esp, LastStackReal
         pop     ebp
 //        pop     LastStackReal
+    }
 
+    _asm
+    {
         // Fake return from System::Call
 
         // Restore registers
@@ -879,6 +1013,9 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
         push    edi
         push    esi
     }
+
+    SYSTEM_LOG_ADD("\t\tReturn from callback:\n");
+    SYSTEM_EVENT("\t\t\tBefore call-back   ");
 
     z1 = proc->Params[0].Value;
     z2 = proc->Params[0]._value;
@@ -910,9 +1047,13 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
         mov     esp, LastStackPlace
 //        pop     LastStackPlace
         pop     ebp        
+    }
         
-        // Fake return from Callback
+    SYSTEM_EVENT("\n\t\t\tSh-Before call-back");
+    SYSTEM_LOG_POST;
 
+        // Fake return from Callback
+    _asm {
         // Restore registers
         pop     esi
         pop     edi
@@ -953,13 +1094,15 @@ void CallStruct(SystemProc *proc)
     int i, structsize = 0, size = 0;
     char *st, *ptr;
 
+    SYSTEM_LOG_ADD("\t\tStruct...");
+
     // Calculate the structure size 
     for (i = 1; i <= proc->ParamCount; i++)
         if (proc->Params[i].Option < 1)
             structsize += proc->Params[i].Size * 4;
         else
             structsize += proc->Params[i].Option-1;
-
+    
     // Struct exists?
     if (proc->Proc == NULL)
         // No. Allocate struct memory
@@ -1019,6 +1162,8 @@ void CallStruct(SystemProc *proc)
         // Skip to next data block
         st += size;
     }
+
+    SYSTEM_LOG_POST;
 
     // Proc virtual return - pointer to memory struct
     proc->Params[0].Value = (int) proc->Proc;
