@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Brazilian Portuguese (1046)
 ;By Diego Marcos <jump@osite.com.br>
@@ -11,8 +11,8 @@
   !define MUI_LANGNAME "Português (do Brasil)" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Benvindo ao Assistente de Instalação do $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a instalação do $(^NameDA).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
-  
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a instalação do $(^NameDA).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto possibilitará fazer update dos arquivos do sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
+
   !define MUI_TEXT_LICENSE_TITLE "Contrato de Licença"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_TOP "Tecle Page Down para ver o restante da licença."
@@ -83,7 +83,8 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Concluindo o Assistente de Desinstalação do $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) foi desinstalado do seu computador.\r\n\r\nClique em Terminar para fechar este assistente."
-    
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Seu computador tem que ser reiniciado para completar a desinstalação do $(^NameDA). Quer reiniciar agora?"
+
   !define MUI_UNTEXT_ABORTWARNING "Você deseja realmente finalizar a desinstalação do $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
