@@ -1,5 +1,5 @@
 ; NSIS LOGIC LIBRARY - logiclib.nsh
-; Version 2.1 - 10/05/2003
+; Version 2.2 - 10/07/2003
 ; Questions/Comments - dselkirk@hotmail.com
 ; Special thanks to eccles for Push/Pop Logic!
 ;
@@ -18,7 +18,7 @@
 ;       ifcmd..||..|
 ;         - Conditionally executes an inline statement, depending on a True value of the provided NSIS function.
 ;       select..case..case2..case3..case4..case5..case_else..endselect
-;         - Executes one of several groups of statements, depending on the value of an expression. 
+;         - Executes one of several groups of statements, depending on the value of an expression.
 ;       for..exitfor..next
 ;         - Repeats a group of statements a specified number of times.
 ;       foreach..exitfor..continue..break..next
@@ -44,8 +44,13 @@
 ;		1.3 - 09/22/2003 - Fixed maximum allow statements.
 ;                    			- Now allows 10 statement depth.
 ;                    			- Condensed code.
-;   2.0 - 10/03/2003 - Inital release 2, see notes.
-;   2.1 - 10/05/2003 - Added continue and break labels to repeat type statements.
+;		2.0 - 10/03/2003 - Inital release 2, see notes.
+;		2.1 - 10/05/2003 - Added continue and break labels to repeat type statements.
+;		2.2 - 10/07/2003 - Updates by eccles
+;                    			- Simplified IfThen by utilising If and EndIf.
+;                    			- Simplified For by utilising ForEach.
+;                    			- Fixed ForEach missing the final iteration.
+;                    			- Fixed a couple of Break/Continue bugs.
 
 !verbose 3
 
@@ -139,20 +144,6 @@
     !insertmacro _> "${_a}" "${_b}" "${_f}" "${_t}"
   !macroend
 
-  !macro IfThen _a _o _b _t
-    !verbose 3
-    !insertmacro _PushLogic
-    !define ${_Logic}IfThen _${__LINE__}       ; Get a label for the (provisional) EndIf (it might turn out to be Else)
-    !insertmacro _${_o} "${_a}" "${_b}" "" ${${_Logic}IfThen}
-    ${_t}
-    Goto ${${_Logic}IfThen}
-    ${${_Logic}IfThen}:                        ; Place the EndIf
-    !undef ${_Logic}IfThen
-    !insertmacro _PopLogic
-    !verbose 4
-  !macroend
-  !define IfThen "!insertmacro IfThen"
-
   !macro IfCmd _a _t
     !verbose 3
     !insertmacro _PushLogic
@@ -226,23 +217,14 @@
   !macroend
   !define EndIf "!insertmacro EndIf"
 
-  !macro For _v _f _t
+  !macro IfThen _a _o _b _t
     !verbose 3
-    StrCpy ${_v} ${_f}
-    !insertmacro _PushLogic
-    !define ${_Logic}For _${__LINE__}       ; Get a label for the start of the loop
-    !define ${_Logic}For2 _${__LINE__}       ; Get a label for the start of the loop
-    !define ${_Logic}Next _${__LINE__}    ; Get a label for the end of the loop
-    !insertmacro _PushCustom "ExitFor" ${${_Logic}Next}
-    Goto ${${_Logic}For2}
-    ${${_Logic}For}:                        ; Insert the loop condition
-      IntOp ${_v} ${_v} + 1
-    ${${_Logic}For2}:                        ; Insert the loop condition
-    !insertmacro _> ${_v} ${_t} ${${_Logic}Next} ""
-    !undef ${_Logic}For2
+    ${If} "${_a}" "${_o}" "${_b}"
+      ${_t}
+    ${EndIf}
     !verbose 4
   !macroend
-  !define For "!insertmacro For"
+  !define IfThen "!insertmacro IfThen"
 
   !macro ForEach _v _f _t _o _s
     !verbose 3
@@ -256,13 +238,28 @@
     !insertmacro _PushCustom "Continue" ${${_Logic}For}
     Goto ${${_Logic}For2}
     ${${_Logic}For}:                        ; Insert the loop condition
-      IntOp ${_v} ${_v} ${_o} ${_s}
+    IntOp ${_v} ${_v} ${_o} ${_s}
     ${${_Logic}For2}:                        ; Insert the loop condition
-    IntCmp ${_v} ${_t} ${${_Logic}Next}
+    !define _o=${_o}
+    !ifdef _o=+
+      !insertmacro _> ${_v} ${_t} ${${_Logic}Next} ""
+    !else ifdef _o=-
+      !insertmacro _< ${_v} ${_t} ${${_Logic}Next} ""
+    !else
+      !error "Unsupported ForEach step operator"
+    !endif
+    !undef _o=${_o}
     !undef ${_Logic}For2
     !verbose 4
   !macroend
   !define ForEach "!insertmacro ForEach"
+
+  !macro For _v _f _t
+    !verbose 3
+    ${ForEach} "${_v}" "${_f}" "${_t}" + 1
+    !verbose 4
+  !macroend
+  !define For "!insertmacro For"
 
   !define ExitFor "Goto ${_ExitFor}"
 
@@ -277,8 +274,8 @@
     !undef ${_Logic}Next
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitFor"
-    !insertmacro _PushCustom "Break" ${${_Logic}Next}
-    !insertmacro _PushCustom "Continue" ${${_Logic}For}
+    !insertmacro _PopCustom "Break"
+    !insertmacro _PopCustom "Continue"
     !verbose 4
   !macroend
   !define Next "!insertmacro Next"
@@ -310,8 +307,8 @@
     !undef ${_Logic}EndWhile
     !insertmacro _PopLogic
     !insertmacro _PopCustom "ExitWhile"
-    !insertmacro _PushCustom "Break" ${${_Logic}ExitWhile}
-    !insertmacro _PushCustom "Continue" ${${_Logic}While}
+    !insertmacro _PopCustom "Break"
+    !insertmacro _PopCustom "Continue"
     !verbose 4
   !macroend
   !define EndWhile "!insertmacro EndWhile"
