@@ -16,7 +16,7 @@
 !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Нажмите Установить для начала процесса установки."
   
 !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Добро пожаловать в мастер установки ${MUI_PRODUCT}"
-!insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Этот мастер поможет Вам установить ${MUI_PRODUCT}.\r\n\r\nПожалуйста, закройте все открытые приложения перед началом установки. Это позволит программе установки обновить системные и используемые файлы без перезагрузки.\r\n\r\n"
+!insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Эта программа установит ${MUI_PRODUCT} на Ваш компьютер.\r\n\r\nРекомендуется закрыть все остальные приложения перед началом установки. Это позволит програме Установки обновить системные файлы без перезагрузки.\r\n\r\n"
   
 !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лицензионное соглашение"  
 !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Просмотрите условия лицензионного соглашения перед установкой ${MUI_PRODUCT}."
