@@ -1480,6 +1480,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           update_status_text_from_lang(LANG_ERRORCREATING,buf0);
           DeleteFile(buf1);
+          exec_errorflag++;
         }
         else
           update_status_text_from_lang(LANG_CREATEDUNINST,buf0);
