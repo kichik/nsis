@@ -258,6 +258,8 @@ Var MUI_TEMP2
 
 !macro MUI_ABORTWARNING
 
+  StrCmp $MUI_NOABORTWARNING "1" mui.quit
+
   !ifdef MUI_ABORTWARNING_TEXT
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "${MUI_ABORTWARNING_TEXT}" IDYES mui.quit
   !else
@@ -1380,6 +1382,11 @@ Var MUI_TEMP2
     Var MUI_HWND
     !define MUI_VAR_HWND
   !endif
+  
+  !ifndef MUI_VAR_NOABORTWARNING
+    Var MUI_NOABORTWARNING
+    !define MUI_VAR_NOABORTWARNING
+  !endif
 
   !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
     AutoCloseWindow true
@@ -1659,8 +1666,12 @@ Var MUI_TEMP2
     !endif
 
     !insertmacro MUI_FUNCTION_CUSTOM SHOW
-
+    
+    StrCpy $MUI_NOABORTWARNING "1"
+    
     !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
+    
+    StrCpy $MUI_NOABORTWARNING ""
     
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
