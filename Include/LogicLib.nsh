@@ -262,15 +262,22 @@
   ; "Any instruction" test
   !macro _Cmd _a _b _t _f
     !define _t=${_t}
-    !ifdef _t=
-      !define __t +2                                      ; If no jump then make sure we skip the Goto below
+    !ifdef _t=                                            ; If no true label then make one
+      !define __t _${__LINE__}
     !else
       !define __t ${_t}
     !endif
-    !undef _t=${_t}
     ${_b} ${__t}
+    !define _f=${_f}
+    !ifndef _f=                                           ; If a false label then go there
+      Goto ${_f}
+    !endif
+    !undef _f=${_f}
+    !ifdef _t=                                            ; If we made our own true label then place it
+      ${__t}:
+    !endif
     !undef __t
-    Goto ${_f}
+    !undef _t=${_t}
   !macroend
   !define Cmd `"" Cmd`
 
