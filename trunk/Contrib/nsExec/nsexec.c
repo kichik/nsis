@@ -109,8 +109,6 @@ void ExecScript(int log) {
       szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
     }
 
-    #define TEST(x) if (!x) MessageBox(g_hwndParent, #x, "failed", MB_OK|MB_ICONERROR);
-
     GetVersionEx(&osv);
     if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
       InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
@@ -198,7 +196,7 @@ done:
     CloseHandle(pi.hProcess);
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
-	GlobalFree(g_exec);
+    GlobalFree(g_exec);
     if (log) {
       GlobalUnlock(hUnusedBuf);
       GlobalFree(hUnusedBuf);
