@@ -254,7 +254,7 @@ follow these steps:</p>
   <i>(Verdana, 12, 700)</i><br>
   The font for the title on the Welcome and Finish page. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br>
-  The colors of the details screen, hexadecimal (&quot;foreground&quot; &quot;background&quot;).
+  The colors of the details screen, hexadecimal RRGGBB. (&quot;foreground&quot; &quot;background&quot;)
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br>
   The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look).</p>
   <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br>
@@ -262,7 +262,7 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
   Bitmap for the Welcome and Finish page.</p>
   <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br>
-  Background color for the header, Welcome page and Finish page.</p>
+  Background color for the header, Welcome page and Finish page, hexadecimal. (0xBBGGRR)</p>
   <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro
