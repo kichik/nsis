@@ -10,7 +10,7 @@ Modified LZMA library for NSIS
 
     http://www.7-zip.org
 
-    Some of the files were modified and are not a
+    Some of the files were modified and are not an
     exact replica of the original files.
     
     LZMA is default and general compression method of 7z format in 7-Zip. 
