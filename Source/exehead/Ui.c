@@ -1125,24 +1125,28 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         {
           int l=1;
-          if (sec->flags & SF_SELECTED) l++;
+          // Sf_SELECTED == 1
+          l += sec->flags & SF_SELECTED;
+          //if (sec->flags & SF_SELECTED) l++;
           if (sec->flags & SF_RO) l+=3;
 
           tv.item.state=INDEXTOSTATEIMAGEMASK(l);
         }
 
-        if (sec->flags&SF_BOLD)
+        //if (sec->flags&SF_BOLD)
         {
-          tv.item.stateMask|=TVIS_BOLD;
-          tv.item.state|=TVIS_BOLD;
+          // SF_BOLD << 1 == 16 == TVIS_BOLD
+          tv.item.stateMask|=(sec->flags&SF_BOLD)<<1;
+          tv.item.state|=(sec->flags&SF_BOLD)<<1;
         }
 
         if (sec->flags&SF_SUBSEC)
         {
           tv.item.mask|=TVIF_CHILDREN;
           tv.item.cChildren=1;
-          if (sec->flags&SF_EXPAND)
-            tv.item.state|=TVIS_EXPANDED;
+          //if (sec->flags&SF_EXPAND)
+            // TVIS_EXPANDED == SF_EXPAND
+            tv.item.state|=sec->flags&SF_EXPAND;
           Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
           doLines=1;
         }
@@ -1188,7 +1192,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     tvItem.mask = TVIF_STATE;
     tvItem.stateMask = TVIS_BOLD;
     tvItem.state = 0;
-    if (flags&SF_BOLD) tvItem.state |= TVIS_BOLD;
+    //if (flags&SF_BOLD) tvItem.state |= TVIS_BOLD;
+    // SF_BOLD << 1 == 16 == TVIS_BOLD
+    tvItem.state|=(flags&SF_BOLD)<<1;
     TreeView_SetItem(hwndTree1, &tvItem);
 
     TreeView_Expand(hwndTree1, tvItem.hItem, flags & SF_EXPAND ? TVE_EXPAND : TVE_COLLAPSE);

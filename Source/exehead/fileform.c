@@ -134,9 +134,8 @@ const char * NSISCALL loadHeaders(int cl_flags)
   left = m_length = GetFileSize(db_hFile,NULL);
   while (left > 0)
   {
-    static char temp[512];
-    DWORD l = left;
-    l = min(l, 512);
+    static char temp[32768];
+    DWORD l = min(left, (g_filehdrsize ? 32768 : 512));
     if (!ReadSelfFile(temp, l))
     {
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
