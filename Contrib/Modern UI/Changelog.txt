@@ -1,5 +1,9 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.69 - January 7, 2004
+* All uninstaller pages work without installer pages
+* Fixed top text on uninstaller license page
+
 1.68 - November 24, 2003
 * New settings for extra space for title and text on Welcome page and Finish page.
 * Improved handling of verbose settings. Define MUI_VERBOSE the set the Modern UI verbose level (1-4).
