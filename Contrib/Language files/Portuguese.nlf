@@ -1,0 +1,63 @@
+# Header, don't edit
+NLF v2
+# Language ID
+2070
+# Start editing here
+# By DragonSoull [dragonsoull@madalien.tk] version 0.91
+Sistema de Instalação Nullsoft %s
+Instalação de %s
+Desinstalação de %s
+: Acordo de Licença
+: Opções de instalação
+: Directoria de instalação
+: Instalando Ficheiros
+: Concluído
+: Confirmação
+: Desinstalado Ficheiros
+: Concluído
+< Recuar
+Próximo >
+Aceito
+Instalar
+Desinstalar
+Cancelar
+Fechar
+Procurar...
+Ver Detalhes
+Nome
+Concluído
+Personalizado
+Escolha o tipo de instalação:
+Escolha os componentes a instalar:
+Ou, escolha os componentes opcionais que deseja instalar:
+Escolha a directoria a instalar %s:
+Espaço disponível: 
+Espaço necessário: 
+Desinstalando de:
+Erro ao abrir ficheiro para escrita: \r\n\t"$0"\r\nHCarregue Abort para Abortar instalação,\r\nretry para retentar a escrita do ficheiro, ou\r\nignore para Saltar este  ficheiro
+Não e possível Escrever: 
+Copia Falhada
+Copiar para 
+Não foi encontrado símbolo: 
+Não foi possível carregar: 
+Criando directoria: 
+Criando atalho: 
+Criando desinstalador: 
+Apagando ficheiro:
+Apagar ao reiniciar: 
+Erro criando atalho: 
+Erro criando: 
+Erro descomprimindo informação? Instalador corrupto?
+Erro a registar DLL
+ExecShell: 
+Executar: 
+Extrair: 
+Extrair: erro ao escrever para o ficheiro 
+Instalação corrupta: opcode invalido
+Sem OLE para: 
+Directoria de Saída: 
+Remover directoria: 
+Renomear ao Reiniciar: 
+Renomear: 
+Saltado:
+Copiar Detalhes para a Área de Transferencia
