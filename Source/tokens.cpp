@@ -215,7 +215,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETLABELADDR,"GetLabelAddress",2,0,"output label"},
 {TOK_GETCURRENTADDR,"GetCurrentAddress",1,0,"output"},
 
-{TOK_PLUGINDIR,"PluginDir",1,0,"new_plugin_directory"},
+{TOK_PLUGINDIR,"!AddPluginDir",1,0,"new_plugin_directory"},
 {TOK_INITPLUGINSDIR,"InitPluginsDir",0,0,""}
 };
 
