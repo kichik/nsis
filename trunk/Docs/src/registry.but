@@ -18,7 +18,7 @@ Deletes the string str_name from section [section_name] from ini_filename. If th
 
 \c [/ifempty] root_key subkey
 
-Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under WriteRegStr. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
+Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under \R{writeregstr}{WriteRegStr}. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
 
 \S2{deleteregvalue} DeleteRegValue
 
@@ -96,7 +96,11 @@ This command writes a dword (32 bit integer) to the registry (a user variable ca
 
 \c root_key subkey key_name value
 
-WriteRegExpandStr \e{root_key subkey key_name value}
+Write a string to the registry. See \R{writeregexpandstr}{WriteRegExpandStr} for more details.
+
+\S2{writeregexpandstr} WriteRegExpandStr
+
+\c root_key subkey key_name value
 
 Write a string to the registry. root_key must be one of:
 
