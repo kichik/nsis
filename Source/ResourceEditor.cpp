@@ -98,7 +98,7 @@ bool CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguag
 	CResourceDirectory* nameDir = 0;
 	CResourceDirectory* langDir = 0;
 	CResourceDataEntry* data = 0;
-	IMAGE_RESOURCE_DIRECTORY rd = {0, time(0),};
+	IMAGE_RESOURCE_DIRECTORY rd = {0, /*time(0),*/};
 	int iTypeIdx, iNameIdx, iLangIdx;
 
 	iTypeIdx = m_cResDir->Find(szType);
