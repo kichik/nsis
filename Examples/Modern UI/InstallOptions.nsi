@@ -20,6 +20,9 @@
   !define MUI_INSTALLBUTTONTEXT_NEXT
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
+  
+  !define MUI_SETPAGE_FUNCTIONNAME "SetPage"
+  !define MUI_UNSETPAGE_FUNCTIONNAME "un.SetPage"
 
   ;Language
     ;English
@@ -88,7 +91,7 @@ SectionEnd
 Section ""
 
   ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER SetPage
+  !insertmacro MUI_FINISHHEADER
 
 SectionEnd
 
@@ -119,14 +122,14 @@ FunctionEnd
 Function .onNextPage
 
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_NEXTPAGE SetPage
+  !insertmacro MUI_NEXTPAGE
   
 FunctionEnd
 
 Function .onPrevPage
 
   !insertmacro MUI_INSTALLOPTIONS_PREVPAGE
-  !insertmacro MUI_PREVPAGE SetPage
+  !insertmacro MUI_PREVPAGE
   
 FunctionEnd
 
@@ -220,7 +223,7 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
-  !insertmacro MUI_FINISHHEADER un.SetPage
+  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
 
@@ -228,8 +231,10 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onNextPage
+
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
-  !insertmacro MUI_NEXTPAGE un.SetPage
+  !insertmacro MUI_UNNEXTPAGE
+  
 FunctionEnd
 
 Function un.SetPage

@@ -12,6 +12,8 @@
 ;--------------------------------
 ;Configuration
 
+  !insertmacro MUI_BASICFUNCTIONS_INIT
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
@@ -57,7 +59,7 @@ SectionEnd
 Section ""
 
   ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER SetPage
+  !insertmacro MUI_FINISHHEADER
 
 SectionEnd
 
@@ -85,7 +87,7 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   ;Display the Finish header
-  !insertmacro MUI_FINISHHEADER un.SetPage
+  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
 
