@@ -5,8 +5,8 @@
 #
 
 # -- Objects and source files --
-SRCS = zlib/deflate.c zlib/trees.c bzip2/blocksort.c bzip2/bzlib.c bzip2/compress.c bzip2/huffman.c 7zip/7zGuids.cpp 7zip/Common/CRC.cpp 7zip/7zip/Compress/LZ/LZInWindow.cpp 7zip/7zip/Compress/LZMA/LZMAEncoder.cpp 7zip/7zip/Common/OutBuffer.cpp 7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp 7zip/Common/Alloc.cpp build.cpp crc32.c DialogTemplate.cpp exedata.cpp lang.cpp makenssi.cpp Plugins.cpp ResourceEditor.cpp ResourceVersionInfo.cpp script.cpp tokens.cpp util.cpp strlist.cpp growbuf.cpp mmap.cpp clzma.cpp
-OBJS = 7zGuids.o blocksort.o build.o bzlib.o compress.o CRC.o crc32.o deflate.o DialogTemplate.o exedata.o huffman.o lang.o LZInWindow.o LZMAEncoder.o Alloc.o makenssi.o OutBuffer.o Plugins.o RangeCoderBit.o ResourceEditor.o ResourceVersionInfo.o script.o tokens.o trees.o util.o strlist.o growbuf.o mmap.o clzma.o
+SRCS = zlib/deflate.c zlib/trees.c bzip2/blocksort.c bzip2/bzlib.c bzip2/compress.c bzip2/huffman.c 7zip/7zGuids.cpp 7zip/Common/CRC.cpp 7zip/7zip/Compress/LZ/LZInWindow.cpp 7zip/7zip/Compress/LZMA/LZMAEncoder.cpp 7zip/7zip/Common/OutBuffer.cpp 7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp 7zip/Common/Alloc.cpp build.cpp crc32.c DialogTemplate.cpp exedata.cpp lang.cpp makenssi.cpp Plugins.cpp ResourceEditor.cpp ResourceVersionInfo.cpp script.cpp tokens.cpp util.cpp strlist.cpp growbuf.cpp mmap.cpp clzma.cpp lineparse.cpp
+OBJS = 7zGuids.o blocksort.o build.o bzlib.o compress.o CRC.o crc32.o deflate.o DialogTemplate.o exedata.o huffman.o lang.o LZInWindow.o LZMAEncoder.o Alloc.o makenssi.o OutBuffer.o Plugins.o RangeCoderBit.o ResourceEditor.o ResourceVersionInfo.o script.o tokens.o trees.o util.o strlist.o growbuf.o mmap.o clzma.o lineparse.o
 ifeq "$(strip $(findstring i386pe,$(shell ld -V)))" ""
 LIBS = -lstdc++ -lpthread
 EXESUFF =
