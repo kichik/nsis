@@ -100,13 +100,13 @@ During the uninstallation, use \R{unremovesharedll}{un.RemoveSharedDLL} to decre
 \c #!define VBFILESDIR C:\Path\to\where\vbrun60sp5.exe\extracted
 \c
 \c Section "Install VB DLLs"
-\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Asycfilt.dll $SYSDIR\Asycfilt.dll
-\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Comcat.dll $SYSDIR\Comcat.dll
-\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Msvbvm60.dll $SYSDIR\Msvbvm60.dll
-\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Oleaut32.dll $SYSDIR\Oleaut32.dll
-\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Olepro32.dll $SYSDIR\Olepro32.dll
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Asycfilt.dll $SYSDIR\Asycfilt.dll $SYSDIR
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Comcat.dll $SYSDIR\Comcat.dll $SYSDIR
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Msvbvm60.dll $SYSDIR\Msvbvm60.dll $SYSDIR
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Oleaut32.dll $SYSDIR\Oleaut32.dll $SYSDIR
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Olepro32.dll $SYSDIR\Olepro32.dll $SYSDIR
 \c   !define UPGRADEDLL_NOREGISTER
-\c     !insertmacro UpgradeDLL ${VBFILESDIR}\Stdole2.tlb $SYSDIR\Stdole2.tlb
+\c     !insertmacro UpgradeDLL ${VBFILESDIR}\Stdole2.tlb $SYSDIR\Stdole2.tlb $SYSDIR
 \c   !undef UPGRADEDLL_NOREGISTER
 \c   # skip shared count increasing if already done once for this application
 \c   IfFileExists $INSTDIR\myprog.exe skipAddShared
