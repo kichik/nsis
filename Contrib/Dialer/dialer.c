@@ -4,13 +4,9 @@
 
 #include "../exdll/exdll.h"
 
-HWND g_hwndParent;
-int g_stringsize;
-stack_t **g_stacktop;
-char *g_variables;
-
 #define NSISFunction(funcname) void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
-#define NSISGetVars g_hwndParent=hwndParent;g_stringsize=string_size;g_stacktop=stacktop;g_variables=variables
+
+HMODULE hWinInet;
 
 BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
 	return TRUE;
@@ -21,7 +17,7 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 \*************/
 
 NSISFunction(AutodialOnline) {
-	NSISGetVars;
+	EXDLL_INIT();
 	if (InternetAutodial(INTERNET_AUTODIAL_FORCE_ONLINE, 0))
 		pushstring("online");
 	else
@@ -29,7 +25,7 @@ NSISFunction(AutodialOnline) {
 }
 
 NSISFunction(AutodialUnattended) {
-	NSISGetVars;
+	EXDLL_INIT();
 	if (InternetAutodial(INTERNET_AUTODIAL_FORCE_UNATTENDED , 0))
 		pushstring("online");
 	else
@@ -37,7 +33,7 @@ NSISFunction(AutodialUnattended) {
 }
 
 NSISFunction(AttemptConnect) {
-	NSISGetVars;
+	EXDLL_INIT();
 	if (InternetAttemptConnect(0) == ERROR_SUCCESS)
 		pushstring("online");
 	else
@@ -46,7 +42,7 @@ NSISFunction(AttemptConnect) {
 
 NSISFunction(GetConnectedState) {
 	DWORD dwState;
-	NSISGetVars;
+	EXDLL_INIT();
 
 	if (InternetGetConnectedState(&dwState, 0))
 		pushstring("online");
@@ -55,7 +51,7 @@ NSISFunction(GetConnectedState) {
 }
 
 NSISFunction(AutodialHangup) {
-	NSISGetVars;
+	EXDLL_INIT();
 	if (InternetAutodialHangup(0))
 		pushstring("success");
 	else
