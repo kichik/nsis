@@ -3045,10 +3045,14 @@ extern FILE *g_output;
 
 void CEXEBuild::warning(const char *s, ...)
 {
-  char buf[NSIS_MAX_STRLEN*4];
+  char buf[NSIS_MAX_STRLEN*10];
   va_list val;
   va_start(val,s);
+#ifdef _WIN32
   vsprintf(buf,s,val);
+#else
+  vsnprintf(buf,NSIS_MAX_STRLEN*10,s,val);
+#endif
   va_end(val);
   m_warnings.add(buf,0);
   notify(MAKENSIS_NOTIFY_WARNING,buf);
@@ -3061,10 +3065,14 @@ void CEXEBuild::warning(const char *s, ...)
 
 void CEXEBuild::warning_fl(const char *s, ...)
 {
-  char buf[NSIS_MAX_STRLEN*4];
+  char buf[NSIS_MAX_STRLEN*10];
   va_list val;
   va_start(val,s);
+#ifdef _WIN32
   vsprintf(buf,s,val);
+#else
+  vsnprintf(buf,NSIS_MAX_STRLEN*10,s,val);
+#endif
   va_end(val);
   sprintf(buf+strlen(buf)," (%s:%d)",curfilename,linecnt);
   m_warnings.add(buf,0);
@@ -3084,10 +3092,14 @@ void CEXEBuild::ERROR_MSG(const char *s, ...)
   if (display_errors)
 #endif
   {
-    char buf[NSIS_MAX_STRLEN*4];
+    char buf[NSIS_MAX_STRLEN*10];
     va_list val;
     va_start(val,s);
+#ifdef _WIN32
     vsprintf(buf,s,val);
+#else
+    vsnprintf(buf,NSIS_MAX_STRLEN*10,s,val);
+#endif
     va_end(val);
     notify(MAKENSIS_NOTIFY_ERROR,buf);
     if (display_errors)
@@ -3102,12 +3114,10 @@ void CEXEBuild::SCRIPT_MSG(const char *s, ...)
 {
   if (display_script)
   {
-    char buf[NSIS_MAX_STRLEN*4];
     va_list val;
     va_start(val,s);
-    vsprintf(buf,s,val);
+    vfprintf(g_output,s,val);
     va_end(val);
-    fprintf(g_output,"%s",buf);
     fflush(g_output);
   }
 }
@@ -3116,12 +3126,10 @@ void CEXEBuild::INFO_MSG(const char *s, ...)
 {
   if (display_info)
   {
-    char buf[NSIS_MAX_STRLEN*4];
     va_list val;
     va_start(val,s);
-    vsprintf(buf,s,val);
+    vfprintf(g_output,s,val);
     va_end(val);
-    fprintf(g_output,"%s",buf);
     fflush(g_output);
   }
 }

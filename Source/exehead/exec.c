@@ -30,34 +30,6 @@ exec_flags g_exec_flags;
 HRESULT g_hres;
 #endif
 
-#ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
-// based loosely on code from Tim Kosse
-// in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
-// but in win2k you need to do this manually.
-static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
-{
-  HKEY key;
-  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
-  if (retval==ERROR_SUCCESS)
-  {
-    // NB - don't change this to static (recursive function)
-    char buffer[MAX_PATH+1];
-    while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
-    {
-      if (onlyifempty)
-      {
-        RegCloseKey(key);
-        return !ERROR_SUCCESS;
-      }
-      if ((retval=myRegDeleteKeyEx(key,buffer,0)) != ERROR_SUCCESS) break;
-    }
-    RegCloseKey(key);
-    retval=RegDeleteKey(thiskey,lpSubKey);
-  }
-  return retval;
-}
-#endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
-
 static int NSISCALL ExecuteEntry(entry *entry_);
 
 #define resolveaddr(v) ((v<0) ? myatoi(g_usrvars[-(v+1)]) : v)
@@ -115,6 +87,44 @@ static char * NSISCALL GetStringFromParm(int id_)
   if (id_ < 0) validate_filename(result);
   return result;
 }
+
+#ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
+// based loosely on code from Tim Kosse
+// in win9x this isn't necessary (RegDeleteKey() can delete a tree of keys),
+// but in win2k you need to do this manually.
+static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
+{
+  HKEY key;
+  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
+  if (retval==ERROR_SUCCESS)
+  {
+    // NB - don't change this to static (recursive function)
+    char buffer[MAX_PATH+1];
+    while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
+    {
+      if (onlyifempty)
+      {
+        RegCloseKey(key);
+        return !ERROR_SUCCESS;
+      }
+      if ((retval=myRegDeleteKeyEx(key,buffer,0)) != ERROR_SUCCESS) break;
+    }
+    RegCloseKey(key);
+    retval=RegDeleteKey(thiskey,lpSubKey);
+  }
+  return retval;
+}
+
+static HKEY NSISCALL myRegOpenKey(REGSAM samDesired)
+{
+  HKEY hKey;
+  if (RegOpenKeyEx((HKEY) parms[1], GetStringFromParm(0x22), 0, samDesired, &hKey) == ERROR_SUCCESS)
+  {
+    return hKey;
+  }
+  return NULL;
+}
+#endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
 
 // returns EXEC_ERROR on error
 // returns 0, advance position by 1
@@ -788,11 +798,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     }
     break;
     case EW_SHOWWINDOW:
+    {
+      HWND hw=(HWND)GetIntFromParm(0);
+      int a=GetIntFromParm(1);
       if (parm2) log_printf("HideWindow");
       if (!parm3)
-        ShowWindow((HWND)GetIntFromParm(0),GetIntFromParm(1));
+        ShowWindow(hw,a);
       else
-        EnableWindow((HWND)GetIntFromParm(0),GetIntFromParm(1));
+        EnableWindow(hw,a);
+    }
     break;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #endif//NSIS_SUPPORT_HWNDS
@@ -1151,25 +1165,25 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
     case EW_DELREG:
       {
-        int rootkey=parm0;
-        char *buf3=GetStringFromParm(0x31);
-        exec_error++;
-        if (!parm3)
+        long res=!ERROR_SUCCESS;
+        if (!parm4)
         {
-          HKEY hKey;
-          if (RegOpenKeyEx((HKEY)rootkey,buf3,0,KEY_SET_VALUE,&hKey) == ERROR_SUCCESS)
+          HKEY hKey=myRegOpenKey(KEY_SET_VALUE);
+          if (hKey)
           {
-            char *buf0=GetStringFromParm(0x02);
-            log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf3,buf0);
-            if (RegDeleteValue(hKey,buf0) == ERROR_SUCCESS) exec_error--;
+            char *buf3=GetStringFromParm(0x33);
+            log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf2,buf3);
+            res = RegDeleteValue(hKey,buf3);
             RegCloseKey(hKey);
           }
         }
         else
         {
-          log_printf3("DeleteRegKey: %d\\%s",rootkey,buf3);
-          if (myRegDeleteKeyEx((HKEY)rootkey,buf3,parm3&2) == ERROR_SUCCESS) exec_error--;
+          log_printf3("DeleteRegKey: %d\\%s",rootkey,buf2);
+          res = myRegDeleteKeyEx((HKEY)parm1,buf2,parm4&2);
         }
+        if (res != ERROR_SUCCESS)
+          exec_error++;
       }
     break;
     case EW_WRITEREG: // write registry value
@@ -1178,10 +1192,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rootkey=parm0;
         int type=parm4;
         int rtype=parm5;
-        char *buf1=GetStringFromParm(0x12);
-        char *buf3=GetStringFromParm(0x31);
+        char *buf0=GetStringFromParm(0x02);
+        char *buf1=GetStringFromParm(0x11);
         exec_error++;
-        if (RegCreateKey((HKEY)rootkey,buf3,&hKey) == ERROR_SUCCESS)
+        if (RegCreateKey((HKEY)rootkey,buf1,&hKey) == ERROR_SUCCESS)
         {
           LPBYTE data = (LPBYTE) buf2;
           DWORD size = 0;
@@ -1189,40 +1203,39 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             GetStringFromParm(0x23);
             size = mystrlen((char *) data) + 1;
-            log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf3,buf1,buf2);
+            log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf1,buf0,data);
           }
           if (type == REG_DWORD)
           {
             *(LPDWORD) data = GetIntFromParm(3);
             size = sizeof(DWORD);
-            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf3,buf1,*(LPDWORD)data);
+            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf1,buf0,*(LPDWORD)data);
           }
           if (type == REG_BINARY)
           {
-            size = GetCompressedDataFromDataBlockToMemory(parm3, data, NSIS_MAX_STRLEN);
-            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf3,buf1,size);
+            // use buf2, buf3 and buf4
+            size = GetCompressedDataFromDataBlockToMemory(parm3, data, 3 * NSIS_MAX_STRLEN);
+            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf1,buf0,size);
           }
-          if (size >= 0 && RegSetValueEx(hKey,buf1,0,rtype,data,size) == ERROR_SUCCESS)
+          if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
             exec_error--;
           RegCloseKey(hKey);
         }
-        else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf3); }
+        else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf1); }
       }
     break;
     case EW_READREGSTR: // read registry string
       {
-        HKEY hKey;
+        HKEY hKey=myRegOpenKey(KEY_READ);
         char *p=var0;
-        int rootkey=parm1;
-        char *buf0=GetStringFromParm(0x02); // buf0 == subkey
-        char *buf1=GetStringFromParm(0x13); // buf1 == key name
+        char *buf3=GetStringFromParm(0x33); // buf3 == key name
         p[0]=0;
-        if (RegOpenKeyEx((HKEY)rootkey,buf0,0,KEY_READ,&hKey) == ERROR_SUCCESS)
+        if (hKey)
         {
           DWORD l = NSIS_MAX_STRLEN;
           DWORD t;
 
-          if (RegQueryValueEx(hKey,buf1,NULL,&t,p,&l ) != ERROR_SUCCESS ||
+          if (RegQueryValueEx(hKey,buf3,NULL,&t,p,&l) != ERROR_SUCCESS ||
               (t != REG_DWORD && t != REG_SZ && t != REG_EXPAND_SZ))
           {
             p[0]=0;
@@ -1244,12 +1257,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_REGENUM:
       {
-        HKEY key;
+        HKEY key=myRegOpenKey(KEY_READ);
         char *p=var0;
         int b=GetIntFromParm(3);
-        char *buf1=GetStringFromParm(0x12);
         p[0]=0;
-        if (RegOpenKeyEx((HKEY)parm1,buf1,0,KEY_READ,&key) == ERROR_SUCCESS)
+        if (key)
         {
           DWORD d=NSIS_MAX_STRLEN-1;
           if (parm4) RegEnumKey(key,b,p,d);
@@ -1328,7 +1340,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               myitoa(textout,(unsigned int)(unsigned char)c);
               return 0;
             }
-            if (!c) break;
             if (lc == '\r' || lc == '\n')
             {
               if (lc == c || (c != '\r' && c != '\n')) SetFilePointer(h,-1,NULL,FILE_CURRENT);
@@ -1337,6 +1348,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             }
             textout[rpos++]=c;
             lc=c;
+            if (!c) break;
           }
         }
         textout[rpos]=0;
