@@ -260,7 +260,7 @@ static int NSISCALL __ensuredata(int amount)
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }
-            else if (GetWindowLong(g_hwnd,GWL_WNDPROC) != (long)DialogProc && GetTickCount() > verify_time)
+            else if (GetWindowLong(g_hwnd,DWL_DLGPROC) != (long)DialogProc && GetTickCount() > verify_time)
               hwnd=CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
