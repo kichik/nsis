@@ -10,7 +10,7 @@
 
   !define MUI_LANGNAME "Deutsch" ;Use only ASCII characters (if this is not possible, use the English name)
 
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-\r\n\Assistenten für $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Willkommen beim Installations-\r\nAssistenten für $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Dieser Assistent wird Sie durch die Installation von $(^NameDA) begleiten.\r\n\r\nEs wird empfohlen vor der Installation alle anderen Programme zu schließen, damit bestimmte Systemdateien ohne Neustart ersetzt werden können.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Lizenzabkommen"
