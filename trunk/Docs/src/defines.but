@@ -34,7 +34,7 @@ Inserts the contents of a macro that was created with !macro. If the macro was c
 
 \e{!macro macro_name [parameter][...]}
 
-Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. Note that macros cannot contain other macro definitions (though they can insert other macros), or !ifdef/!else/!endif. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (e.g. $\{PARMNAME\}) from inside the macro.
+Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (e.g. $\{PARMNAME\}) from inside the macro.
 
 \e{!macroend}
 
