@@ -1,16 +1,19 @@
 #ifndef _EXEDATA_H_
 #define _EXEDATA_H_
 
-extern int zlib_exeheader_size;
-extern int bzip2_exeheader_size;
-extern int lzma_exeheader_size;
-extern int exeheader_size;
-extern int icondata_size;
-extern int unicondata_size;
+#include <cstddef>
 
-extern unsigned char zlib_header_data[];
-extern unsigned char bzip2_header_data[];
-extern unsigned char lzma_header_data[];
+// TODO: these should live in a singleton
+extern size_t zlib_exehead_size;
+extern size_t bzip2_exehead_size;
+extern size_t lzma_exehead_size;
+extern size_t exeheader_size;
+extern size_t icondata_size;
+extern size_t unicondata_size;
+
+extern unsigned char zlib_exehead[];
+extern unsigned char bzip2_exehead[];
+extern unsigned char lzma_exehead[];
 extern unsigned char icon_data[];
 extern unsigned char unicon_data[];
 extern unsigned char bitmap1_data[630];

@@ -2451,64 +2451,34 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         switch (k) {
           case 0: // JF> should handle the state of going from bzip2 back to zlib:
             compressor = &zlib_compressor;
-            free(header_data_new);
-            header_data_new=(unsigned char*)malloc(zlib_exeheader_size);
-            exeheader_size_new=zlib_exeheader_size;
-            exeheader_size=zlib_exeheader_size;
-
-            if (!header_data_new)
-            {
-              ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
-              extern void quit(); quit();
-            }
-
-            memcpy(header_data_new,zlib_header_data,zlib_exeheader_size);
+            update_exehead(zlib_exehead, zlib_exehead_size);
 #ifdef NSIS_ZLIB_COMPRESS_WHOLE
             build_compress_whole=true;
 #else
             build_compress_whole=false;
 #endif
           break;
+
           case 1:
             compressor=&bzip2_compressor;
-            free(header_data_new);
-            header_data_new=(unsigned char*)malloc(bzip2_exeheader_size);
-            exeheader_size_new=bzip2_exeheader_size;
-            exeheader_size=bzip2_exeheader_size;
-
-            if (!header_data_new)
-            {
-              ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
-              extern void quit(); quit();
-            }
-
-            memcpy(header_data_new,bzip2_header_data,bzip2_exeheader_size);
+            update_exehead(bzip2_exehead, bzip2_exehead_size);
 #ifdef NSIS_BZIP2_COMPRESS_WHOLE
             build_compress_whole=true;
 #else
             build_compress_whole=false;
 #endif
             break;
+
           case 2:
             compressor = &lzma_compressor;
-            free(header_data_new);
-            header_data_new=(unsigned char*)malloc(lzma_exeheader_size);
-            exeheader_size_new=lzma_exeheader_size;
-            exeheader_size=lzma_exeheader_size;
-
-            if (!header_data_new)
-            {
-              ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
-              extern void quit(); quit();
-            }
-
-            memcpy(header_data_new, lzma_header_data, lzma_exeheader_size);
+            update_exehead(lzma_exehead, lzma_exehead_size);
 #ifdef NSIS_LZMA_COMPRESS_WHOLE
             build_compress_whole=true;
 #else
             build_compress_whole=false;
 #endif
           break;
+
           default:
             PRINTHELP();
         }

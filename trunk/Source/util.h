@@ -79,4 +79,9 @@ int my_glob(const char *pattern, int flags,
 #define OPEN(a, b) open(a, b)
 #endif
 
+template <class T>
+inline T align_to_512(const T x) {
+  return (x+511) & ~511;
+}
+
 #endif //_UTIL_H_

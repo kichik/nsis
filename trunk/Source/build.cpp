@@ -8,6 +8,10 @@
 #include "build.h"
 #include "util.h"
 
+#include <stdexcept>
+
+using namespace std;
+
 #include "exehead/resource.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
@@ -61,8 +65,9 @@ void CEXEBuild::define(const char *p, const char *v)
 
 CEXEBuild::~CEXEBuild()
 {
-  free(header_data_new);
   free(m_unicon_data);
+
+  delete [] m_exehead;
   
   int nlt = lang_tables.getlen() / sizeof(LanguageTable);
   LanguageTable *nla = (LanguageTable*)lang_tables.get();
@@ -72,7 +77,9 @@ CEXEBuild::~CEXEBuild()
   }
 }
 
-CEXEBuild::CEXEBuild()
+CEXEBuild::CEXEBuild() :
+    m_exehead(0),
+    m_exehead_size(0)
 {
   linecnt = 0;
   fp = 0;
@@ -95,18 +102,8 @@ CEXEBuild::CEXEBuild()
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
   ns_label.add("",0);
 
-  header_data_new=(unsigned char*)malloc(zlib_exeheader_size);
-  exeheader_size_new=zlib_exeheader_size;
-  exeheader_size=zlib_exeheader_size;
-
-  if (!header_data_new)
-  {
-    ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",exeheader_size_new);
-    extern void quit(); quit();
-  }
-
-  // Changed by Amir Szekely 31st July 2002
-  memcpy(header_data_new,zlib_header_data,zlib_exeheader_size);
+  exeheader_size = zlib_exehead_size;
+  update_exehead(zlib_exehead, zlib_exehead_size);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   // Changed by Amir Szekely 11th July 2002
@@ -2318,7 +2315,7 @@ int CEXEBuild::pack_exe_header()
     return PS_OK;
   }
 
-  // write out exe header, pack, read back in, align to 512, and
+  // write out exe header, pack, read back in, and
   // update the header info
   FILE *tmpfile=FOPEN(build_packname,"wb");
   if (!tmpfile)
@@ -2326,7 +2323,7 @@ int CEXEBuild::pack_exe_header()
     ERROR_MSG("Error: writing temporary file \"%s\" for pack\n",build_packname);
     return PS_ERROR;
   }
-  fwrite(header_data_new,1,exeheader_size_new,tmpfile);
+  fwrite(m_exehead,1,m_exehead_size,tmpfile);
   fclose(tmpfile);
   if (system(build_packcmd) == -1)
   {
@@ -2341,21 +2338,22 @@ int CEXEBuild::pack_exe_header()
     ERROR_MSG("Error: reading temporary file \"%s\" after pack\n",build_packname);
     return PS_ERROR;
   }
+
+  // read header from file
+
   fseek(tmpfile,0,SEEK_END);
-  exeheader_size_new=ftell(tmpfile);
+  size_t exehead_size = ftell(tmpfile);
+
+  unsigned char *exehead = new unsigned char[exehead_size];
   fseek(tmpfile,0,SEEK_SET);
-  unsigned char *header_data_older=header_data_new;
-  header_data_new=(unsigned char *)malloc(exeheader_size_new);
-  if (!header_data_new)
-  {
-    free(header_data_older);
-    fclose(tmpfile);
-    ERROR_MSG("Error: malloc(%d) failed (exepack)\n",exeheader_size_new);
-    return PS_ERROR;
-  }
-  memset(header_data_new,0,exeheader_size_new);
-  fread(header_data_new,1,exeheader_size_new,tmpfile);
+  fread(exehead,1,exehead_size,tmpfile);
   fclose(tmpfile);
+
+  update_exehead(exehead, exehead_size);
+
+  // cleanup
+  // TODO: use resource-controlling classes (e.g. Boost)
+  delete [] exehead;
   remove(build_packname);
 
   return PS_OK;
@@ -2440,39 +2438,20 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 
-  if ((int)fwrite(header_data_new,1,exeheader_size_new,fp) != exeheader_size_new)
+  if (fwrite(m_exehead,1,m_exehead_size,fp) != m_exehead_size)
   {
-    ERROR_MSG("Error: can't write %d bytes to output\n",exeheader_size_new);
+    ERROR_MSG("Error: can't write %d bytes to output\n",m_exehead_size);
     fclose(fp);
     return PS_ERROR;
   }
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   #ifdef NSIS_CONFIG_CRC_ANAL
-    crc=CRC32(crc,header_data_new,exeheader_size_new);
+    crc=CRC32(crc,m_exehead,m_exehead_size);
   #else
-    crc=CRC32(crc,header_data_new+512,exeheader_size_new-512);
+    crc=CRC32(crc,m_exehead+512,m_exehead_size-512);
   #endif
 #endif
-
-  int exeheader_size_new_aligned = (exeheader_size_new + 511) & ~511;
-  if (exeheader_size_new_aligned != exeheader_size_new) {
-    // align to 512
-    const unsigned char z = 0;
-    int write_size = exeheader_size_new_aligned - exeheader_size_new;
-    for (int i=0; i<write_size; i++) {
-      if ((int)fwrite(&z,1,1,fp) != 1)
-      {
-        ERROR_MSG("Error: can't write %d bytes to output\n",write_size);
-        fclose(fp);
-        return PS_ERROR;
-      }
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-      crc=CRC32(crc,&z,1);
-#endif
-    }
-    exeheader_size_new = exeheader_size_new_aligned;
-  }
 
   firstheader fh={0,};
   fh.nsinst[0]=FH_INT1;
@@ -2620,7 +2599,7 @@ int CEXEBuild::write_output(void)
   if (db_opt_save)
   {
     int total_out_size_estimate=
-      exeheader_size_new+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(int):0);
+      m_exehead_size+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(int):0);
 #ifdef _WIN32
     int pc=MulDiv(db_opt_save,1000,db_opt_save+total_out_size_estimate);
 #else
@@ -2636,7 +2615,7 @@ int CEXEBuild::write_output(void)
 
   int total_usize=exeheader_size;
 
-  INFO_MSG("EXE header size:          %10d / %d bytes\n",exeheader_size_new,exeheader_size);
+  INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,exeheader_size);
 
   if (build_compress_whole) {
     INFO_MSG("Install code:                          (%d bytes)\n",
@@ -2849,7 +2828,8 @@ int CEXEBuild::uninstall_generate()
 
     // Get offsets of icons to replace for uninstall
     // Also makes sure that the icons are there and in the right size.
-    icon_offset = generate_unicons_offsets(header_data_new, m_unicon_data);
+    // TODO: fix generate_unicons_offsets to check ranges (!)
+    icon_offset = generate_unicons_offsets(m_exehead, m_unicon_data);
     if (icon_offset == 0)
       return PS_ERROR;
 
@@ -2874,14 +2854,15 @@ int CEXEBuild::uninstall_generate()
 
     if (add_db_data((char *)m_unicon_data,unicondata_size) < 0)
       return PS_ERROR;
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     {
       // "create" the uninstaller
-      LPBYTE uninst_header = (LPBYTE) malloc(exeheader_size_new);
+      LPBYTE uninst_header = (LPBYTE) malloc(m_exehead_size);
       if (!uninst_header)
         return PS_ERROR;
 
-      memcpy(uninst_header, header_data_new, exeheader_size_new);
+      memcpy(uninst_header, m_exehead, m_exehead_size);
 
       // patch the icons
       LPBYTE seeker = m_unicon_data;
@@ -2895,9 +2876,9 @@ int CEXEBuild::uninstall_generate()
       }
 
 #ifdef NSIS_CONFIG_CRC_ANAL
-      crc=CRC32(crc, uninst_header, exeheader_size_new);
+      crc=CRC32(crc, uninst_header, m_exehead_size);
 #else
-      crc=CRC32(crc, uninst_header + 512, exeheader_size_new - 512);
+      crc=CRC32(crc, uninst_header + 512, m_exehead_size - 512);
 #endif
 
       free(uninst_header);
@@ -3323,21 +3304,27 @@ void CEXEBuild::init_res_editor()
 {
   build_compressor_set = true;
   if (!res_editor)
-    res_editor = new CResourceEditor(header_data_new, exeheader_size_new);
+    res_editor = new CResourceEditor(m_exehead, m_exehead_size);
 }
 
 void CEXEBuild::close_res_editor()
 {
   if (!res_editor) return;
   DWORD newsize;
-  // query size
+
+  // get size
   newsize = res_editor->Save(NULL, newsize);
-  unsigned char *new_header = (unsigned char *) malloc(newsize);
+  unsigned char *new_header = new unsigned char[newsize];
+
   // save
-  res_editor->Save(new_header, newsize);
-  free(header_data_new);
-  header_data_new = new_header;
-  exeheader_size_new = (int) newsize;
+  int rc = res_editor->Save(new_header, newsize);
+  assert(rc == 0);
+
+  update_exehead(new_header, newsize);
+
+  // TODO: resource-controlling class
+  delete [] new_header;
+
   delete res_editor;
   res_editor=0;
 }
@@ -3424,4 +3411,20 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
       warning("Variable \"%s\" not referenced, wasting memory!", pVarsStringList->idx2name(i));
     }  
   }
+}
+
+void CEXEBuild::update_exehead(const unsigned char *new_exehead, size_t new_size) {
+  assert(m_exehead != new_exehead);
+
+  // align exehead to 512
+  m_exehead_size = align_to_512(new_size);
+
+  delete [] m_exehead;
+  m_exehead = new unsigned char[m_exehead_size];
+
+  // copy exehead
+  memcpy(m_exehead, new_exehead, new_size);
+
+  // zero rest of exehead
+  memset(m_exehead + new_size, 0, m_exehead_size - new_size);
 }
