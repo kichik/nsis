@@ -25,7 +25,7 @@ static stack_t **g_stacktop;
 static char *g_variables;
 
 static int __stdcall popstring(char *str); // 0 on success, 1 on empty stack
-static void __stdcall pushstring(char *str);
+static void __stdcall pushstring(const char *str);
 
 enum
 {
@@ -89,7 +89,7 @@ static int __stdcall popstring(char *str)
   return 0;
 }
 
-static void __stdcall pushstring(char *str)
+static void __stdcall pushstring(const char *str)
 {
   stack_t *th;
   if (!g_stacktop) return;
@@ -99,13 +99,13 @@ static void __stdcall pushstring(char *str)
   *g_stacktop=th;
 }
 
-static char * __stdcall getuservariable(int varnum)
+static char * __stdcall getuservariable(const int varnum)
 {
   if (varnum < 0 || varnum >= __INST_LAST) return NULL;
   return g_variables+varnum*g_stringsize;
 }
 
-static void __stdcall setuservariable(int varnum, char *var)
+static void __stdcall setuservariable(const int varnum, const char *var)
 {
 	if (var != NULL && varnum >= 0 && varnum < __INST_LAST) 
 		lstrcpy(g_variables + varnum*g_stringsize, var);
