@@ -306,7 +306,7 @@ Var MUI_TEMP2
 !macro MUI_GUIINIT_BASIC
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  CreateFont $MUI_TEMP2 "$(MUI_FONT_HEADER)" "$(MUI_FONTSIZE_HEADER)" "$(MUI_FONTSTYLE_HEADER)"
+  CreateFont $MUI_TEMP2 "$(MUI_FONT)" "$(MUI_FONTSIZE)" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
@@ -330,7 +330,7 @@ Var MUI_TEMP2
 !macro MUI_UNGUIINIT_BASIC
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  CreateFont $MUI_TEMP2 "$(MUI_FONT_HEADER)" "$(MUI_FONTSIZE_HEADER)" "$(MUI_FONTSTYLE_HEADER)"
+  CreateFont $MUI_TEMP2 "$(MUI_FONT)" "$(MUI_FONTSIZE)" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
@@ -802,40 +802,6 @@ Var MUI_TEMP2
   !endif
   
   !insertmacro MUI_FUNCTION_FINISHPAGE mui.FinishPre_${MUI_UNIQUEID} mui.FinishLeave_${MUI_UNIQUEID}
-  
-  !ifdef MUI_FINISHPAGE_RUN
-    !undef MUI_FINISHPAGE_RUN
-  !endif
-    !ifdef MUI_FINISHPAGE_RUN_PARAMETERS
-      !undef MUI_FINISHPAGE_RUN_PARAMETERS
-    !endif
-    !ifdef MUI_FINISHPAGE_RUN_NOTCHECKED
-      !undef MUI_FINISHPAGE_RUN_NOTCHECKED
-    !endif
-    !ifdef MUI_FINISHPAGE_RUN_FUNCTION
-      !undef MUI_FINISHPAGE_RUN_FUNCTION
-    !endif
-  !ifdef MUI_FINISHPAGE_SHOWREADME
-    !undef MUI_FINISHPAGE_SHOWREADME
-  !endif
-    !ifdef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-      !undef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-    !endif
-    !ifdef MUI_FINISHPAGE_SHOWREADME_FUNCTION
-      !undef MUI_FINISHPAGE_SHOWREADME_FUNCTION
-    !endif
-  !ifdef MUI_FINISHPAGE_LINK
-    !undef MUI_FINISHPAGE_LINK
-  !endif
-    !ifdef MUI_FINISHPAGE_LINK_LOCATION
-      !undef MUI_FINISHPAGE_LINK_LOCATION
-    !endif
-     !ifdef MUI_FINISHPAGE_LINK_COLOR
-      !undef MUI_FINISHPAGE_LINK_COLOR
-    !endif
-  !ifdef MUI_FINISHPAGE_NOREBOOTSUPPORT
-    !undef MUI_FINISHPAGE_NOREBOOTSUPPORT
-  !endif
 
   !verbose pop
   
@@ -1203,12 +1169,13 @@ Var MUI_TEMP2
       
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-    CreateFont $MUI_TEMP2 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
+    
+    CreateFont $MUI_TEMP2 "$(MUI_FONT)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
         
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-        
+    
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
@@ -1616,7 +1583,11 @@ Var MUI_TEMP2
     
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
-    CreateFont $MUI_TEMP2 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
+    
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
+    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+    
+    CreateFont $MUI_TEMP2 "$(MUI_FONT)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
     
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
@@ -1755,6 +1726,40 @@ Var MUI_TEMP2
     !insertmacro MUI_FUNCTION_CUSTOM LEAVE
   
   FunctionEnd
+  
+  !ifdef MUI_FINISHPAGE_RUN
+    !undef MUI_FINISHPAGE_RUN
+  !endif
+    !ifdef MUI_FINISHPAGE_RUN_PARAMETERS
+      !undef MUI_FINISHPAGE_RUN_PARAMETERS
+    !endif
+    !ifdef MUI_FINISHPAGE_RUN_NOTCHECKED
+      !undef MUI_FINISHPAGE_RUN_NOTCHECKED
+    !endif
+    !ifdef MUI_FINISHPAGE_RUN_FUNCTION
+      !undef MUI_FINISHPAGE_RUN_FUNCTION
+    !endif
+  !ifdef MUI_FINISHPAGE_SHOWREADME
+    !undef MUI_FINISHPAGE_SHOWREADME
+  !endif
+    !ifdef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+      !undef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+    !endif
+    !ifdef MUI_FINISHPAGE_SHOWREADME_FUNCTION
+      !undef MUI_FINISHPAGE_SHOWREADME_FUNCTION
+    !endif
+  !ifdef MUI_FINISHPAGE_LINK
+    !undef MUI_FINISHPAGE_LINK
+  !endif
+    !ifdef MUI_FINISHPAGE_LINK_LOCATION
+      !undef MUI_FINISHPAGE_LINK_LOCATION
+    !endif
+     !ifdef MUI_FINISHPAGE_LINK_COLOR
+      !undef MUI_FINISHPAGE_LINK_COLOR
+    !endif
+  !ifdef MUI_FINISHPAGE_NOREBOOTSUPPORT
+    !undef MUI_FINISHPAGE_NOREBOOTSUPPORT
+  !endif
   
 !macroend
 
@@ -2136,17 +2141,6 @@ Var MUI_TEMP2
   
 !macroend
 
-!macro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT NAME DEFAULT
-
-  !ifdef "${NAME}"
-    Langstring "${NAME}" 0 "${${NAME}}"
-    !undef "${NAME}"
-  !else
-    Langstring "${NAME}" 0 "${DEFAULT}"
-  !endif
-  
-!macroend
-
 !macro MUI_LANGUAGEFILE_LANGSTRING_FONT NAME DEFAULT
 
   !ifdef "${NAME}"
@@ -2172,15 +2166,10 @@ Var MUI_TEMP2
     !undef MUI_LANGDLL_PUSHLIST
     !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} ${MUI_LANGDLL_PUSHLIST_TEMP}"
   !endif
-  
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONT_HEADER" "MS Shell Dlg"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSIZE_HEADER" "8"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSTYLE_HEADER" "700"
-  
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONT_TITLE" "MS Shell Dlg"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONTSIZE_TITLE" "12"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_INSTFONT "MUI_FONTSTYLE_TITLE" "700"
-  
+ 
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONT" "MS Shell Dlg"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSIZE" "8"
+ 
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_NOUNDEF "MUI_BGCOLOR"
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_PAGE WELCOME "MUI_TEXT_WELCOME_INFO_TITLE"
@@ -2271,4 +2260,4 @@ Var MUI_TEMP2
 
 !ifndef MUI_MANUALVERBOSE
   !verbose 4
-!endif
+!endif                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
