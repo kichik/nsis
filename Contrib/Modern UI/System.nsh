@@ -642,7 +642,9 @@
   
   !insertmacro MUI_INTERFACE
   !insertmacro MUI_BASIC
-  !insertmacro MUI_UNBASIC
+  !ifdef MUI_UNINSTALLER
+	!insertmacro MUI_UNBASIC
+  !endif
   
   !verbose 4
   
