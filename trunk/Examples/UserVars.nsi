@@ -1,46 +1,27 @@
-; VersionInfo.nsi
+; UserVars.nsi
 ;
-; This script shows you how to declare and user VARIABLES.
+; This script shows you how to declare and user variables.
 
 ;--------------------------------
-!include "MUI.nsh"
 
-!define MUI_PRODUCT "User Variables"
-!define MUI_VERSION "1.0"
-
-;--------------------------------
-;Configuration
-
-  ;General
+  Name "User Variables Text"
   OutFile "UserVars.exe"
-  ShowInstDetails nevershow
-  InstallDir "$PROGRAMFILES\Test UserVars"
+  
+  InstallDir "$PROGRAMFILES\User Variables Test"
+  DirText "Choose a folder to install in which to install the test:" " "
 
 ;--------------------------------
-;Pages
+; Declaration of user variables (Var command), allowed charaters for variables names : [a-z][A-Z][0-9] and '_'
 
-  !insertmacro MUI_PAGE_DIRECTORY
-  !insertmacro MUI_PAGE_INSTFILES
-
-  !insertmacro MUI_UNPAGE_CONFIRM
-  !insertmacro MUI_UNPAGE_INSTFILES
-
-;--------------------------------
-;Languages
-
-  !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-; Declaration of User Variables with command DIM, allowed charaters for variables names : [a-z][A-Z][0-9] and '_'
-
-  Var "un.Info" ; this one can only be used in uninstaller methods
   Var "Name"
   Var "Serial"
+  
+  Var "un.Info" ; this one can only be used in the uninstaller
 
 ;--------------------------------
-;Installer Sections
+; Installer
 
-Section "Dummy Section" SecCopyUI
+Section "Dummy Section" SecDummy
 
      StrCpy $0 "Admin"
      StrCpy "$Name" $0
@@ -49,18 +30,23 @@ Section "Dummy Section" SecCopyUI
 
      CreateDirectory $INSTDIR
      WriteUninstaller "$INSTDIR\Uninst.exe"
+     
 SectionEnd
 
-
-Function un.OnUninstSuccess
-     HideWindow
-     MessageBox MB_OK "$un.Info"
-FunctionEnd
+;--------------------------------
+; Uninstaller
 
 Section "Uninstall"
 
-     StrCpy $un.Info "${MUI_PRODUCT} ${MUI_VERSION} uninstalled successfully."
+     StrCpy $un.Info "User variables test uninstalled successfully."
      Delete "$INSTDIR\Uninst.exe"
      RmDir $INSTDIR
 
 SectionEnd
+
+Function un.OnUninstSuccess
+
+     HideWindow
+     MessageBox MB_OK "$un.Info"
+     
+FunctionEnd
