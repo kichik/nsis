@@ -15,66 +15,19 @@
 #define exop word.what.Exop
 #define bits word.what.Bits
 
-typedef enum {        /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
-      START,    /* x: set up for LEN */
-      LEN,      /* i: get length/literal/eob next */
-      LENEXT,   /* i: getting length extra (have base) */
-      DIST,     /* i: get distance next */
-      DISTEXT,  /* i: getting distance extra */
-      COPY,     /* o: copying bytes in window, waiting for space */
-      LIT,      /* o: got literal, waiting for output space */
-      WASH,     /* o: got eob, possibly still output waiting */
-      END,      /* x: got eob and all data flushed */
-      BADCODE}  /* x: got error */
-inflate_codes_mode;
-
-/* inflate codes private state */
-struct inflate_codes_state {
-
-  /* mode */
-  inflate_codes_mode mode;      /* current inflate_codes mode */
-
-  /* mode dependent information */
-  uInt len;
-  union {
-    struct {
-      inflate_huft *tree;       /* pointer into tree */
-      uInt need;                /* bits needed */
-    } code;             /* if LEN or DIST, where in tree */
-    uInt lit;           /* if LIT, literal */
-    struct {
-      uInt get;                 /* bits to get for extra */
-      uInt dist;                /* distance back to copy from */
-    } copy;             /* if EXT or COPY, where and how much */
-  } sub;                /* submode */
-
-  /* mode independent information */
-  Byte lbits;           /* ltree bits decoded per branch */
-  Byte dbits;           /* dtree bits decoder per branch */
-  inflate_huft *ltree;          /* literal/length/eob tree */
-  inflate_huft *dtree;          /* distance tree */
-
-};
 
 
-inflate_codes_statef *inflate_codes_new(bl, bd, tl, td)
+void inflate_codes_new(c,bl, bd, tl, td)
+inflate_codes_statef *c;
 uInt bl, bd;
 inflate_huft *tl;
 inflate_huft *td; /* need separate declaration for Borland C++ */
 {
-  inflate_codes_statef *c;
-
-  if ((c = (inflate_codes_statef *)
-       ZALLOC(0,1,sizeof(struct inflate_codes_state))) != Z_NULL)
-  {
-    c->mode = START;
-    c->lbits = (Byte)bl;
-    c->dbits = (Byte)bd;
-    c->ltree = tl;
-    c->dtree = td;
-    Tracev((stderr, "inflate:       codes new\n"));
-  }
-  return c;
+  c->mode = START;
+  c->lbits = (Byte)bl;
+  c->dbits = (Byte)bd;
+  c->ltree = tl;
+  c->dtree = td;
 }
 
 
@@ -93,7 +46,7 @@ int r;
   Bytef *q;             /* output window write pointer */
   uInt m;               /* bytes to end of window or read pointer */
   Bytef *f;             /* pointer to copy strings from */
-  inflate_codes_statef *c = s->sub.decode.codes;  /* codes state */
+  inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */
 
   /* copy input/output information to locals (UPDATE macro restores) */
   LOAD

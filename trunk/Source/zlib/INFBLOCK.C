@@ -22,10 +22,6 @@ local const char border[] = { /* Order of the bit length code lengths */
 void inflateReset(z_streamp z)
 {
   inflate_blocks_statef *s=&z->blocks;
-  if (s->mode == BTREE || s->mode == DTREE)
-    ZFREE(z, s->sub.trees.blens);
-  if (s->mode == CODES)
-    inflate_codes_free(s->sub.decode.codes, z);
   s->mode = TYPE;
   s->bitk = s->bitb = 0;
   s->read = s->write = s->window;
@@ -86,12 +82,7 @@ int r=Z_OK;
             inflate_huft *tl, *td;
 
             inflate_trees_fixed(&bl, &bd, &tl, &td);
-            s->sub.decode.codes = inflate_codes_new(bl, bd, tl, td);
-            if (s->sub.decode.codes == Z_NULL)
-            {
-              r = Z_MEM_ERROR;
-              LEAVE
-            }
+            inflate_codes_new(&s->sub.decode.t_codes,bl, bd, tl, td);
           }
           DUMPBITS(3)
           s->mode = CODES;
@@ -143,12 +134,7 @@ int r=Z_OK;
         r = Z_DATA_ERROR;
         LEAVE
       }
-      t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
-      if ((s->sub.trees.blens = (uIntf*)ZALLOC(z, t, sizeof(uInt))) == Z_NULL)
-      {
-        r = Z_MEM_ERROR;
-        LEAVE
-      }
+//      t = 258 + (t & 0x1f) + ((t >> 5) & 0x1f);
       DUMPBITS(14)
       s->sub.trees.index = 0;
       Tracev((stderr, "inflate:       table sizes ok\n"));
@@ -157,17 +143,16 @@ int r=Z_OK;
       while (s->sub.trees.index < 4 + (s->sub.trees.table >> 10))
       {
         NEEDBITS(3)
-        s->sub.trees.blens[border[s->sub.trees.index++]] = (uInt)b & 7;
+        s->sub.trees.t_blens[border[s->sub.trees.index++]] = (uInt)b & 7;
         DUMPBITS(3)
       }
       while (s->sub.trees.index < 19)
-        s->sub.trees.blens[border[s->sub.trees.index++]] = 0;
+        s->sub.trees.t_blens[border[s->sub.trees.index++]] = 0;
       s->sub.trees.bb = 7;
-      t = inflate_trees_bits(s->sub.trees.blens, &s->sub.trees.bb,
+      t = inflate_trees_bits(s->sub.trees.t_blens, &s->sub.trees.bb,
                              &s->sub.trees.tb, s->hufts);
       if (t != Z_OK)
       {
-        ZFREE(z, s->sub.trees.blens);
         r = t;
         if (r == Z_DATA_ERROR)
           s->mode = BAD;
@@ -191,7 +176,7 @@ int r=Z_OK;
         if (c < 16)
         {
           DUMPBITS(t)
-          s->sub.trees.blens[s->sub.trees.index++] = c;
+          s->sub.trees.t_blens[s->sub.trees.index++] = c;
         }
         else /* c == 16..18 */
         {
@@ -206,15 +191,13 @@ int r=Z_OK;
           if (i + j > 258 + (t & 0x1f) + ((t >> 5) & 0x1f) ||
               (c == 16 && i < 1))
           {
-//            ZFREE(z, s->sub.trees.blens);
             s->mode = BAD;
-//            z->msg = (char*)"err";//invalid bit length repeat";
             r = Z_DATA_ERROR;
             LEAVE
           }
-          c = c == 16 ? s->sub.trees.blens[i - 1] : 0;
+          c = c == 16 ? s->sub.trees.t_blens[i - 1] : 0;
           do {
-            s->sub.trees.blens[i++] = c;
+            s->sub.trees.t_blens[i++] = c;
           } while (--j);
           s->sub.trees.index = i;
         }
@@ -223,15 +206,13 @@ int r=Z_OK;
       {
         uInt bl, bd;
         inflate_huft *tl, *td;
-        inflate_codes_statef *c;
 
         bl = 9;         /* must be <= 9 for lookahead assumptions */
         bd = 6;         /* must be <= 9 for lookahead assumptions */
         t = s->sub.trees.table;
         t = inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f),
-                                  s->sub.trees.blens, &bl, &bd, &tl, &td,
+                                  s->sub.trees.t_blens, &bl, &bd, &tl, &td,
                                   s->hufts);
-        ZFREE(z, s->sub.trees.blens);
         if (t != Z_OK)
         {
           if (t == (uInt)Z_DATA_ERROR)
@@ -240,12 +221,7 @@ int r=Z_OK;
           LEAVE
         }
         Tracev((stderr, "inflate:       trees ok\n"));
-        if ((c = inflate_codes_new(bl, bd, tl, td)) == Z_NULL)
-        {
-          r = Z_MEM_ERROR;
-          LEAVE
-        }
-        s->sub.decode.codes = c;
+        inflate_codes_new(&s->sub.decode.t_codes,bl, bd, tl, td);
       }
       s->mode = CODES;
     case CODES:
@@ -253,7 +229,6 @@ int r=Z_OK;
       if ((r = inflate_codes(z, r)) != Z_STREAM_END)
         return inflate_flush(z, r);
       r = Z_OK;
-      inflate_codes_free(s->sub.decode.codes, z);
       LOAD
       Tracev((stderr, "inflate:       codes end, %lu total out\n",
               z->total_out + (q >= s->read ? q - s->read :
