@@ -5,7 +5,13 @@
 
 \b User variables ($VARNAME) that can be declared with the \R{var}{Var} command
 
+\b Support for all pages in both installer and uninstaller, components, directory and license pages can be used for the uninstaller
+
 \b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
+
+\b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+
+\b Full support for RTL languages, including support for LTR and RTL languages in one installer
 
 \b Extraction progress
 
@@ -13,7 +19,7 @@
 
 \b Added \R{afilebufsize}{FileBufSize}
 
-\b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Easier page macro system, language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+\b Added \R{viaddversionkey}{VIAddVersionKey}: Add version information resource to the installer
 
 \b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed
 
@@ -21,7 +27,7 @@
 
 \b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
 
-\b \W{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, toolbar, more
+\b \W{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar, more
 
 \b NLF language files (v6): language specific fonts, RTL and more strings
 
@@ -47,8 +53,6 @@
 
 \b Better ClearType support
 
-\b System Plug-in: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
-
 \b Components Tree: Fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree, Added SF_PSELECTED for partially selected sub-sections
 
 \b \R{onmouseoversection}{OnMouseOver Text} is only displayed when mouse over section else nothing is displayed
@@ -69,7 +73,9 @@
 
 \b Added base_dir for \R{gettempfilename}{GetTempFileName}
 
-\b Fixed a problem regarding borders in Plug-ins BgImage and InstallOptions
+\b Fixed a problem regarding borders in plug-ins BgImage and InstallOptions
+
+\b Improved System plug-in
 
 \b Minor bug fixes
 
@@ -77,7 +83,7 @@
 
 \\<b\\>Notes:\\</b\\>
 
-\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Because of the new page macro's and changed define and variable names, you have to make some small changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
+\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.66}: Because of the new syntax for pages, settings etc., changed names names of settings and variable names, you have to make some changes to your scripts, see the \W{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
 \R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work. \\<br\\>
 \R{onselchange}{.onSelChange} is no longer called when the components page is created
 
