@@ -164,9 +164,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_SIZE:
 		{
 			if ((wParam == SIZE_MAXHIDE)||(wParam == SIZE_MAXSHOW)) return TRUE;
-		}
-		case WM_SIZING:
-		{
 			RECT rSize;
 			if (hwndDlg == g_hwnd) {
 				GetClientRect(g_hwnd, &rSize);
@@ -175,13 +172,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				dy = rSize.bottom - resizeRect.bottom;
 				EnumChildWindows(g_hwnd, DialogResize, (LPARAM)0);
 				resizeRect = rSize;
-				GetClientRect(g_hwnd, &g_griprect);
-				g_griprect.left = g_griprect.right - GetSystemMetrics(SM_CXVSCROLL);
-				g_griprect.top = g_griprect.bottom - GetSystemMetrics(SM_CYVSCROLL);
-				InvalidateRect(g_hwnd,&g_griprect,TRUE);
 			}
-			 return TRUE;
-		 }
+			return TRUE;
+		}
+		case WM_SIZING:
+		{
+			InvalidateRect(g_hwnd,&g_griprect,TRUE);
+			GetClientRect(g_hwnd, &g_griprect);
+			g_griprect.left = g_griprect.right - GetSystemMetrics(SM_CXVSCROLL);
+			g_griprect.top = g_griprect.bottom - GetSystemMetrics(SM_CYVSCROLL);
+			return TRUE;
+		}
 		case WM_MAKENSIS_PROCESSCOMPLETE:
 		{
 			if (g_hThread) {
