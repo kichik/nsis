@@ -4,7 +4,7 @@
 !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
 !define VER_MAJOR 2
-!define VER_MINOR 0b0
+!define VER_MINOR 0b1
 
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
 
@@ -267,7 +267,8 @@ Section "InstallOptions" SecContribIO
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\InstallOptions.dll
   SetOutPath $INSTDIR\Contrib\InstallOptions
-  File "..\contrib\installoptions\Install Options.html"
+  File ..\Contrib\InstallOptions\Readme.html
+  File ..\Contrib\InstallOptions\Changelog.txt
   File ..\contrib\installoptions\test.ini
   File ..\contrib\installoptions\test.nsi
 SectionEnd
