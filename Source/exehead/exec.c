@@ -810,7 +810,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int x;
         char *buf0=process_string_fromparm_tobuf(0x00);
-        char *buf1=process_string_fromparm_tobuf(-0x11);
+        char *buf1=process_string_fromparm_tobuf(0x11);
         char *buf2=process_string_fromparm_tobuf(0x22);
         wsprintf(buf3,"%s %s",buf0,buf1);
         update_status_text_from_lang(LANG_EXECSHELL, buf3);
