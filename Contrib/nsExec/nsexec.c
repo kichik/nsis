@@ -230,14 +230,13 @@ void ExecScript(int log) {
             
             p = szUnusedBuf; // get the old left overs
             for (p2 = p; *p2; p2++) {
-              if (*p == '\r' || *p == '\n')
-                p++;
               if (*p2 == '\r') {
                 *p2 = 0;
                 continue;
               }
               if (*p2 == '\n') {
                 *p2 = 0;
+                while (!*p && p != p2) p++;
                 LogMessage(p);
                 p = p2 + 1;
               }
