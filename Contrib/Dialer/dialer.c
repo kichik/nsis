@@ -2,13 +2,7 @@
 #include <windows.h>
 #include <WinInet.h>
 
-typedef struct _stack_t {
-	struct _stack_t *next;
-	char text[1]; // this should be the length of string_size
-} stack_t;
-
-int popstring(char *str); // 0 on success, 1 on empty stack
-void pushstring(char *str);
+#include "../exdll/exdll.h"
 
 HWND g_hwndParent;
 int g_stringsize;
@@ -18,9 +12,13 @@ char *g_variables;
 #define NSISFunction(funcname) void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 #define NSISGetVars g_hwndParent=hwndParent;g_stringsize=string_size;g_stacktop=stacktop;g_variables=variables
 
-/****************\
- * LOOK HERE    *
-\****************/
+BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
+	return TRUE;
+}
+
+/*************\
+ * FUNCTIONS *
+\*************/
 
 NSISFunction(AutodialOnline) {
 	NSISGetVars;
@@ -63,31 +61,4 @@ NSISFunction(AutodialHangup) {
 	else
 		pushstring("failure");
 
-}
-
-/****************\
- * STOP LOOKING *
-\****************/
-
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
-	return TRUE;
-}
-
-int popstring(char *str) {
-	stack_t *th;
-	if (!g_stacktop || !*g_stacktop) return 1;
-	th=(*g_stacktop);
-	lstrcpy(str,th->text);
-	*g_stacktop = th->next;
-	GlobalFree((HGLOBAL)th);
-	return 0;
-}
-
-void pushstring(char *str) {
-	stack_t *th;
-	if (!g_stacktop) return;
-	th=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize);
-	lstrcpyn(th->text,str,g_stringsize);
-	th->next=*g_stacktop;
-	*g_stacktop=th;
 }
