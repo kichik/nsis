@@ -80,13 +80,13 @@ Examples:
 \c  Page instfiles
 \c
 \c  Function skipLicense
-\c    MessageBox MB_YES "Do you want to skip the license page?" IDNO no
+\c    MessageBox MB_YESNO "Do you want to skip the license page?" IDNO no
 \c      Abort
 \c    no:
 \c  FunctionEnd
 \c
 \c  Function stayInLicense
-\c    MessageBox MB_YES "Do you want to stay in the license page?" IDNO no
+\c    MessageBox MB_YESNO "Do you want to stay in the license page?" IDNO no
 \c      Abort
 \c    no:
 \c  FunctionEnd
