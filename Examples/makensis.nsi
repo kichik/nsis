@@ -214,6 +214,14 @@ Section "AdvSplash w/transparency" SecContribSplashT
   File ..\Contrib\AdvSplash\advsplash.txt
 SectionEnd
 
+Section "BgImage" SecContribBgImage
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\BgImage.dll
+  SetOutPath $INSTDIR\Contrib\BgImage
+  File ..\Contrib\BgImage\BgImage.txt
+SectionEnd
+
 Section "InstallOptions" SecContribIO
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
@@ -236,20 +244,28 @@ Section "System" SecContribSystem
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\System.dll
-  SetOutPath $INSTDIR\contrib\System
-  File ..\contrib\System\*.dll
-  File ..\contrib\System\*.nsh
-  File ..\contrib\System\*.nsi
-  File ..\contrib\System\*.txt
+  SetOutPath $INSTDIR\Contrib\System
+  File ..\Contrib\System\*.dll
+  File ..\Contrib\System\*.nsh
+  File ..\Contrib\System\*.nsi
+  File ..\Contrib\System\*.txt
 SectionEnd
 
-Section "ShowWin" SecContribShowWin
+Section "StartMenu" SecContribStartMenu
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
-  File ..\Plugins\ShowWin.dll
-  SetOutPath $INSTDIR\contrib\ShowWin
-  File ..\contrib\ShowWin\ShowWin.txt
-  File ..\contrib\ShowWin\ShowWin.nsi
+  File ..\Plugins\StartMenu.dll
+  SetOutPath $INSTDIR\Contrib\StartMenu
+  File ..\Contrib\StartMenu\Example.nsi
+  File ..\Contrib\StartMenu\Readme.txt
+SectionEnd
+
+Section "UserInfo" SecContribUserInfo
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\UserInfo.dll
+  SetOutPath $INSTDIR\Contrib\UserInfo
+  File ..\Contrib\UserInfo\UserInfo.nsi
 SectionEnd
 
 SubSectionEnd
@@ -313,7 +329,6 @@ Section "MakeNSISW Source" SecSrcMNW
   File ..\Contrib\Makensisw\*.dsw
   File ..\Contrib\Makensisw\*.dsp
   File ..\Contrib\Makensisw\*.rc
-  File ..\Contrib\Makensisw\*.txt
   File ..\Contrib\Makensisw\*.bmp
   #File ..\Contrib\Makensisw\Makefile
 SectionEnd
@@ -344,7 +359,6 @@ Section "nsExec Source" SecContribnsExecS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\nsExec
   File ..\Contrib\nsExec\*.c
-  File ..\Contrib\nsExec\*.txt
   File ..\Contrib\nsExec\*.dsw
   File ..\Contrib\nsExec\*.dsp
 SectionEnd
@@ -355,7 +369,6 @@ Section "Splash Source" SecContribSplashS
   File ..\Contrib\Splash\splash.c
   File ..\Contrib\Splash\splash.dsp
   File ..\Contrib\Splash\splash.dsw
-  File ..\Contrib\splash\splash.txt
 SectionEnd
 
 Section "AdvSplash Source" SecContribSplashTS
@@ -364,7 +377,15 @@ Section "AdvSplash Source" SecContribSplashTS
   File ..\Contrib\AdvSplash\*.c
   File ..\Contrib\AdvSplash\*.dsw
   File ..\Contrib\AdvSplash\*.dsp
-  File ..\Contrib\AdvSplash\*.txt
+SectionEnd
+
+Section "BgImage Source" SecContribBgImageS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\BgImage
+  File ..\Contrib\BgImage\BgImage.cpp
+  File ..\Contrib\BgImage\ExDLL.h
+  File ..\Contrib\BgImage\BgImage.dsw
+  File ..\Contrib\BgImage\BgImage.dsp
 SectionEnd
 
 Section "InstallOptions Source" SecContribIOS
@@ -388,7 +409,6 @@ Section "NSIS-DL Source" SecContribNSISDLS
   File ..\contrib\NSISdl\*.cpp
   File ..\contrib\NSISdl\*.h
   File ..\contrib\NSISdl\*.rc
-  File ..\contrib\NSISdl\ReadMe.txt
 SectionEnd
 
 Section "System Source" SecContribSystemS
@@ -401,16 +421,24 @@ Section "System Source" SecContribSystemS
   File ..\contrib\System\Source\*.vcproj
 SectionEnd
 
-Section "ShowWin Source" SecContribShowWinS
+Section "StartMenu Source" SecContribStartMenuS
   SectionIn 1
-  SetOutPath $INSTDIR\Contrib\ShowWin
-  File ..\contrib\ShowWin\*.c
-  File ..\contrib\ShowWin\*.dsp
-  File ..\contrib\ShowWin\*.dsw
-  File ..\contrib\ShowWin\ShowWin.txt
-  File ..\contrib\ShowWin\ShowWin.nsi
+  SetOutPath $INSTDIR\Contrib\StartMenu
+  File ..\Contrib\StartMenu\StartMenu.c
+  File ..\Contrib\StartMenu\StartMenu.dsp
+  File ..\Contrib\StartMenu\StartMenu.dsw
+  File ..\Contrib\StartMenu\StartMenu.rc
+  File ..\Contrib\StartMenu\resource.h
+  File ..\Contrib\StartMenu\ExDLL.h
 SectionEnd
 
+Section "UserInfo Source" SecContribUserInfoS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\UserInfo
+  File ..\Contrib\UserInfo\UserInfo.c
+  File ..\Contrib\UserInfo\UserInfo.dsp
+  File ..\Contrib\UserInfo\UserInfo.dsw
+SectionEnd
 
 SubSectionEnd ; plugins
 
@@ -434,6 +462,35 @@ SectionEnd
 SubSectionEnd
 SubSectionEnd
 
+Function AddContribToStartMenu
+	Pop $0 ; link
+	Pop $1 ; file
+	IfFileExists $INSTDIR\Contrib\$1 0 +2
+		CreateShortCut $SMPROGRAMS\NSIS\Contrib\$0.lnk $INSTDIR\Contrib\$1
+FunctionEnd
+
+Function AddWorkspaceToStartMenu
+	Pop $0
+	IfFileExists $INSTDIR\Contrib\$0\$0.dsw 0 done
+		Push $0\$0.dsw
+		Push "Source\$0 project workspace"
+		Call AddContribToStartMenu
+	done:
+FunctionEnd
+
+Function AddReadmeToStartMenu
+	Pop $0
+	IfFileExists $INSTDIR\Contrib\$0\$0.txt 0 +3
+		Push $0\$0.txt
+		Goto create
+	IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
+		Push $0\Readme.txt
+	create:
+		Push "$0 readme"
+		Call AddContribToStartMenu
+	done:
+FunctionEnd
+
 Section -post
   SetOutPath $INSTDIR
   WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
@@ -441,82 +498,112 @@ Section -post
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
 
-    IfFileExists $INSTDIR\Examples 0 NoExShortCuts
+    IfFileExists $INSTDIR\Examples 0 +2
       CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
-    NoExShortCuts:
 
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
+	IfFileExists "$INSTDIR\Source" 0 +2
+      CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
+
+	CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+
+	; MakeNSISW
+	CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
 
-    IfFileExists $INSTDIR\Contrib\Makensisw\*.dsw 0 NoMNWShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\MakeNSISW project workspace.lnk" "$INSTDIR\contrib\MakeNsisw\makensisw.dsw"
-    NoMNWShortCuts:
-    IfFileExists "$INSTDIR\Contrib\ExDll" 0 NoExDLLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\ExDLL project workspace.lnk" "$INSTDIR\contrib\ExDLL\exdll.dsw"
-    NoExDLLShortCuts:
-    IfFileExists "$INSTDIR\Source" 0 NoSourceShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Source
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
-    NoSourceShortCuts:
+    Push "MakeNSISW"
+	Call AddWorkspaceToStartMenu
 
-    IfFileExists "$INSTDIR\Plugins\installoptions.dll" 0 NoIOShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions Readme.lnk" "$INSTDIR\contrib\InstallOptions\install options.html"
-    NoIOShortCuts:
-    
-    IfFileExists "$INSTDIR\Contrib\InstallOptions\io.dsw" 0 NoIOShortCutsS
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\InstallOptions project workspace.lnk" "$INSTDIR\contrib\InstallOptions\io.dsw"
-    NoIOShortCutsS:
+	; ExDLL
+	Push "ExDLL"
+	Call AddWorkspaceToStartMenu
 
-    IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 Noz2eShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
+	; InstallOptions
+	Push "InstallOptions\install options.html"
+	Push "InstallOptions readme"
+	Call AddContribToStartMenu
+
+	Push "InstallOptions\io.dsw"
+	Push "Source\InstallOptions project workspace"
+	Call AddContribToStartMenu
+
+	; ZIP2EXE
+    IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
-    Noz2eShortCuts:
 
-    IfFileExists "$INSTDIR\Contrib\ZIP2EXE\*.dsw" 0 Noz2eShortCutsS
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\ZIP2EXE project workspace.lnk" "$INSTDIR\source\zip2exe\zip2exe.dsw"
-    Noz2eShortCutsS:
+	Push ZIP2EXE
+	Call AddWorkspaceToStartMenu
 
-    IfFileExists "$INSTDIR\Examples\Modern UI\Readme.html" 0 NoMUIShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
-    NoMUIShortCuts:
+	; Modern UI
+	Push "Modern UI\Readme.html"
+	Push "Modern UI readme"
+	Call AddContribToStartMenu
 
-    IfFileExists "$INSTDIR\Plugins\splash.dll" 0 NoSPLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
-    NoSPLShortCuts:
+	; Splash
+	Push Splash
+	Call AddReadmeToStartMenu
 
-    IfFileExists "$INSTDIR\Contrib\Splash\*.dsw" 0 NoSPLShortCutsS
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\Splash project workspace.lnk" "$INSTDIR\Contrib\splash\splash.dsw"
-    NoSPLShortCutsS:
+	Push Splash
+	Call AddWorkspaceToStartMenu
 
-    IfFileExists "$INSTDIR\Plugins\advsplash.dll" 0 NoUSPLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\AdvSplash Help.lnk" "$INSTDIR\contrib\advsplash\advsplash.txt"
-    NoUSPLShortCuts:
+	; Advanced splash
+	Push AdvSplash
+	Call AddReadmeToStartMenu
 
-    IfFileExists "$INSTDIR\Contrib\AdvSplash\*.dsw" 0 NoUSPLShortCutsS
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\AdvSplash project directory.lnk" "$INSTDIR\Contrib\advsplash"
-    NoUSPLShortCutsS:
+	Push AdvSplash
+	Call AddWorkspaceToStartMenu
 
+	; NSISdl
+	Push NSISdl
+	Call AddReadmeToStartMenu
 
-    IfFileExists "$INSTDIR\Plugins\nsisdl.dll" 0 NoDLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL Readme.lnk" "$INSTDIR\contrib\NSISDL\ReadMe.txt"
-    NoDLShortCuts:
+	Push NSISdl
+	Call AddWorkspaceToStartMenu
 
-    IfFileExists "$INSTDIR\Contrib\NSISDL\*.dsw" 0 NoDLSShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
-    NoDLSShortCuts:
+	; UserInfo
+	Push UserInfo
+	Call AddWorkspaceToStartMenu
 
+	; nsExec
+	Push nsExec
+	Call AddReadmeToStartMenu
+
+	Push nsExec
+	Call AddWorkspaceToStartMenu
+
+	; LangDLL
+	Push LangDLL
+	Call AddWorkspaceToStartMenu
+
+	; StartMenu
+	Push StartMenu
+	Call AddReadmeToStartMenu
+
+	Push StartMenu
+	Call AddWorkspaceToStartMenu
+
+	; BgImage
+	Push BgImage
+	Call AddReadmeToStartMenu
+
+	Push BgImage
+	Call AddWorkspaceToStartMenu
+
+	; System
+	Push System
+	Call AddReadmeToStartMenu
+
+	Push System\Source\System.sln
+	Push "Source\System project workspace"
+	Call AddContribToStartMenu
+
+	; done
+
+	; will only be removed if empty
+	SetDetailsPrint none
+	RMDir $INSTDIR\Contrib\Source
+	SetDetailsPrint lastused
+
+	; open sesame
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
     BringToFront
@@ -551,21 +638,24 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExec} "Plugin that executes console programs and prints its output in the NSIS log window or just hides it"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExecS} "Source code to plugin that executes console programs and prints its output in the NSIS log window or just hides it"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExec} "Plugin that executes console programs and prints its output in the NSIS log window or hides it"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExecS} "Source code to plugin that executes console programs and prints its output in the NSIS log window or hides it"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribShowWin} "Plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribShowWinS} "Source code to plugin that lets you hide/show/enable/disable controls on NSIS dialogs"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to a utility that converts zip files into an NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add user interface components to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add user interface components to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenu} "Plugin that lets the user select the start menu folder"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenuS} "Source code to plugin that lets the user select the start menu folder"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBgImageS} "Source code to plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUserInfo} "Plugin that that gives you the user name and the user account type"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUserInfoS} "Source code to plugin that that gives you the user name and the user account type"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your UI recources in to preview your UI"
