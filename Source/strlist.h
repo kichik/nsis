@@ -492,7 +492,8 @@ class MMapFile : public IMMap
       m_hFile = INVALID_HANDLE_VALUE;
       m_hFileMap = NULL;
 #else
-      m_hFile = -1;
+      m_hFile = NULL;
+      m_hFileDesc = -1;
 #endif
 
       m_pView = NULL;
@@ -530,7 +531,7 @@ class MMapFile : public IMMap
       m_hFileMap = 0;
 #else
       if (m_bTempHandle && m_hFile)
-        close(m_hFile);
+        fclose(m_hFile);
 #endif
     }
 
@@ -547,13 +548,17 @@ class MMapFile : public IMMap
     {
       clear();
 
+#ifdef _WIN32
       m_hFile = hFile;
+#else
+      m_hFileDesc = hFile;
+#endif
       m_bTempHandle = FALSE;
 
 #ifdef _WIN32
       if (m_hFile == INVALID_HANDLE_VALUE)
 #else
-      if (m_hFile == -1)
+      if (m_hFileDesc == -1)
 #endif
         return 0;
 
@@ -621,8 +626,42 @@ class MMapFile : public IMMap
             NULL
           );
         }
+#else
+        if (m_hFile == NULL)
+        {
+          m_hFile = tmpfile();
+          if (m_hFile != NULL)
+          {
+            m_hFileDesc = fileno(m_hFile);
+            m_bTempHandle = TRUE;
+          }
 
+          // resize
+          if (m_hFileDesc != -1)
+          {
+            char c;
+
+            if (lseek(m_hFileDesc, m_iSize, SEEK_SET) != (off_t)-1)
+            {
+              if (read(m_hFileDesc, &c, 1) != -1)
+              {
+                if (write(m_hFileDesc, &c, 1) != -1)
+                {
+                  return; // no errors
+                }
+              }
+            }
+          }
+
+          m_hFileDesc = -1; // some error occured, bail
+        }
+#endif
+
+#ifdef _WIN32
         if (!m_hFileMap)
+#else
+        if (m_hFileDesc == -1)
+#endif
         {
           extern FILE *g_output;
           extern void quit(); extern int g_display_errors;
@@ -633,14 +672,6 @@ class MMapFile : public IMMap
           }
           quit();
         }
-#else
-        if (m_hFile == -1)
-        {
-          char tmp[] = "/tmp/makensisXXXXXX";
-          m_hFile = mkstemp(tmp);
-          m_bTempHandle = TRUE;
-        }
-#endif
       }
     }
 
@@ -683,7 +714,7 @@ class MMapFile : public IMMap
 #ifdef _WIN32
       m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
 #else
-      m_pView = mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFile, alignedoffset);
+      m_pView = mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFileDesc, alignedoffset);
       m_iMappedSize = *sizep = size;
 #endif
 
@@ -765,7 +796,8 @@ class MMapFile : public IMMap
 #ifdef _WIN32
     HANDLE m_hFile, m_hFileMap;
 #else
-    int m_hFile;
+    FILE *m_hFile;
+    int m_hFileDesc;
     int m_iMappedSize;
 #endif
     void *m_pView;
