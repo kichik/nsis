@@ -205,8 +205,17 @@
 // NSIS_SUPPORT_LANG_IN_STRINGS enables support for language strings inside other strings
 #define NSIS_SUPPORT_LANG_IN_STRINGS
 
-// NSIS_FIX_DEFINES_IN_STRINGS fix defines inside defines and handles chars $ perfectly
-//#define NSIS_FIX_DEFINES_IN_STRINGS
+// NSIS_FIX_DEFINES_IN_STRINGS fixes defines inside defines and handles chars $ perfectly
+// #define NSIS_FIX_DEFINES_IN_STRINGS
+
+// NSIS_SUPPORT_STANDARD_PREDEFINES enables standard predefines in NSIS.
+// The defines enabled are:
+//   __FILE__ - current script name
+//   __LINE__ - current line number
+//   __DATE__ - date according to the current locale
+//   __TIME__ - time according to the current locale
+//   __TIMESTAMP__ - date & time according to the current locale
+#define NSIS_SUPPORT_STANDARD_PREDEFINES
 
 // Added by Ximon Eighteen 5th August 2002
 // If this is uncommented the following changes/new features are
@@ -347,11 +356,6 @@
 
 #ifndef INVALID_FILE_ATTRIBUTES
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
-#endif
-
-// Added by Sunil Kamath 11 June 2003
-#ifndef NSIS_SUPPORT_STANDARD_PREDEFINES
-#define NSIS_SUPPORT_STANDARD_PREDEFINES
 #endif
 
 // This is the old static var count that occupies memory

@@ -78,6 +78,9 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_BZIP2_COMPRESS_WHOLE
   definedlist.add("NSIS_BZIP2_COMPRESS_WHOLE");
 #endif
+#ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
+  definedlist.add("NSIS_COMPRESS_BZIP2_SMALLMODE");
+#endif
   {
     char bzip_level[32];
     wsprintf(bzip_level, "%d", NSIS_COMPRESS_BZIP2_LEVEL);
@@ -223,6 +226,18 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
+#endif
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  definedlist.add("NSIS_SUPPORT_NAMED_USERVARS");
+#endif
+#ifdef NSIS_SUPPORT_VERSION_INFO
+  definedlist.add("NSIS_SUPPORT_VERSION_INFO");
+#endif
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
+#endif
+#ifdef NSIS_FIX_DEFINES_IN_STRINGS
+  definedlist.add("NSIS_FIX_DEFINES_IN_STRINGS");
 #endif
 
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
