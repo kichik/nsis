@@ -105,8 +105,7 @@ Function .onInit
  
   Push ${TEMP1}
  
-  Call GetInstallerFile
-  Pop ${TEMP1}
+  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
   
   StrCpy ${TEMP1} ${TEMP1} "" -14
     StrCmp ${TEMP1} "NSISUpdate.bin" temp
@@ -223,61 +222,41 @@ Function UpdateMethod
   
 FunctionEnd
 
-Function GetInstallerFile
-
-  Push $R0
-  Push $R1
-  Push $R2
-  
-  StrCpy $R0 $CMDLINE 1
-  StrCpy $R1 '"'
-  StrCpy $R2 1
-  StrCmp $R0 '"' loop
-    StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
- 
-  loop:
-    StrCpy $R0 $CMDLINE 1 $R2
-    StrCmp $R0 $R1 done
-    StrCmp $R0 "" done
-    IntOp $R2 $R2 + 1
-    Goto loop
-    
-  done:
-    StrCpy $R0 $CMDLINE $R2
-  
-  Pop $R2
-  Pop $R1
-  Exch $R0
-  
-FunctionEnd
-
 Function GetParameters
 
-  Push $R0
-  Push $R1
-  Push $R2
-  
-  StrCpy $R0 $CMDLINE 1
-  StrCpy $R1 '"'
-  StrCpy $R2 1
-  StrCmp $R0 '"' loop
-    StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
-  loop:
-    StrCpy $R0 $CMDLINE 1 $R2
-    StrCmp $R0 $R1 loop2
-    StrCmp $R0 "" loop2
-    IntOp $R2 $R2 + 1
-    Goto loop
-  loop2:
-    IntOp $R2 $R2 + 1
-    StrCpy $R0 $CMDLINE 1 $R2
-    StrCmp $R0 " " loop2
-  StrCpy $R0 $CMDLINE "" $R2
-  
-  Pop $R2
-  Pop $R1
-  Exch $R0
-  
+ Push $R0
+ Push $R1
+ Push $R2
+ Push $R3
+ 
+ StrCpy $R2 1
+ StrLen $R3 $CMDLINE
+ 
+ ;Check for quote or space
+ StrCpy $R0 $CMDLINE $R2
+ StrCmp $R0 '"' 0 +3
+   StrCpy $R1 '"'
+   Goto loop
+ StrCpy $R1 " "
+ 
+ loop:
+   IntOp $R2 $R2 + 1
+   StrCpy $R0 $CMDLINE 1 $R2
+   StrCmp $R0 $R1 get
+   StrCmp $R2 $R3 get
+   Goto loop
+ 
+ get:
+   IntOp $R2 $R2 + 1
+   StrCpy $R0 $CMDLINE 1 $R2
+   StrCmp $R0 " " get
+   StrCpy $R0 $CMDLINE "" $R2
+ 
+ Pop $R3
+ Pop $R2
+ Pop $R1
+ Exch $R0
+
 FunctionEnd
 
 Function CloseMenu
@@ -462,7 +441,7 @@ Section ""
       StrCpy ${TEMP2} 1
       
       DetailPrint "NOTE: You are using a development version of NSIS."
-      DetailPrint "To get the latest files, use NSIS Update to download the development files."
+      DetailPrint "You can also use NSIS Update to get the latest development files."
       DetailPrint ""
       
       Goto CheckUpdate
@@ -515,7 +494,7 @@ Section ""
     MessageBox MB_YESNO|MB_ICONQUESTION "A new release is available. Would you like to go to the download page?" IDNO done
     
       SetDetailsPrint none
-      ExecShell "open" "http://sourceforge.net/project/showfiles.php?group_id=22049"
+      ExecShell "open" "http://nsis.sourceforge.net/site/Download.6.0.html"
       Goto done
     
   CVS:
