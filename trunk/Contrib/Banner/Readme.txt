@@ -10,6 +10,8 @@ Usage
 
 Banner::show /NOUNLOAD "Text to show"
 
+[optional] Banner::getWindow /NOUNLOAD
+
 Banner::destroy
 
 See Example.nsi for an example.
