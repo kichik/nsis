@@ -2,7 +2,7 @@
 ;Compatible with Modern UI 1.67
 
 ;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger
+;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack
 
 ;--------------------------------
 
@@ -16,9 +16,9 @@
   !define MUI_TEXT_LICENSE_TITLE "Lizenzabkommen"
   !define MUI_TEXT_LICENSE_SUBTITLE "Bitte lesen Sie die Lizenzbedingungen durch, bevor Sie mit der Installation fortfahren."
   !define MUI_INNERTEXT_LICENSE_TOP "Drücken Sie die Bild-nach-unten Taste um den Rest des Abkommens zu sehen."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können. $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen um $(^Name) installieren zu können. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Falls Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Falls Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kästchen. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Falls Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. Sie müssen die Lizenzvereinbarungen anerkennen, um $(^Name) installieren zu können. $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "Komponenten auswählen"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Wählen Sie die Komponenten aus, die Sie installieren möchten."
@@ -46,9 +46,9 @@
   !define MUI_TEXT_FINISH_RUN "$(^Name) ausführen"
   !define MUI_TEXT_FINISH_SHOWREADME "Liesmich anzeigen"
 
-  !define MUI_TEXT_STARTMENU_TITLE "Startmenü Ordner bestimmen"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Bestimmen Sie einen Startmenü Ordner für die Programmverknüpfungen."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Wählen Sie den Startmenü Ordner für die Programmverknüpfungen aus. Falls Sie einen neuen Ordner erstellen möchten, geben Sie dessen Namen ein."
+  !define MUI_TEXT_STARTMENU_TITLE "Startmenü-Ordner bestimmen"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Bestimmen Sie einen Startmenü-Ordner für die Programmverknüpfungen."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Wählen Sie den Startmenü-Ordner für die Programmverknüpfungen aus. Falls Sie einen neuen Ordner erstellen möchten, geben Sie dessen Namen ein."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Keine Verknüpfungen erstellen"
 
   !define MUI_TEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Installation von $(^Name) abbrechen wollen?"
@@ -81,9 +81,9 @@
   !define MUI_UNTEXT_ABORT_TITLE "Abbruch der Deinstallation"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Die Deinstallation wurde nicht vollständig abgeschlossen."
 
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fertig Stellen des Deinstallations-\r\n\Assistenten von $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Die Deinstallation von $(^Name) wird abgeschlossen"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ist von ihrem Computer entfernt worden.\r\n\r\nKlicken Sie auf Beenden um den Assistenten zu schließen."
 
-  !define MUI_UNTEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Deinstallation von $(^Name) abbrechen möchten?"  
+  !define MUI_UNTEXT_ABORTWARNING "Sind Sie sicher, dass Sie die Deinstallation von $(^Name) abbrechen möchten?"
 
 !insertmacro MUI_LANGUAGEFILE_END
