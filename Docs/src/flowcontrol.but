@@ -1,0 +1,185 @@
+\H{flowcontrol} Flow Control Instructions
+
+\S{goto} Goto
+
+Goto \e{label_to_jump_to | +offset| -offset| user_var(target)}
+
+If label is specified, goto the label 'label_to_jump_to:'. 
+If +offset or -offset is specified, jump is relative by offset instructions. Goto +1 goes to the next instruction, Goto -1 goes to the previous instruction, etc.
+If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. I Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.  
+
+\S{Call} Call
+
+Call \e{function_name | :label_name}
+
+Calls the function named function_name. If in the Uninstall section, Call can only be used with function names beginning with "un.". If the parameter starts with a ':' it will be treated as a label (so you can call to a label in your function - this is probably not going to be used most of the time).  
+
+\S{Return} Return
+
+Return  
+
+Returns from a function or section.  
+
+\S{IfErrors} IfErrors
+
+IfErrors \e{jumpto_iferror [jumpto_ifnoerror]}
+
+Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.  
+
+\S{ClearErrors} ClearErrors
+
+ClearErrors  
+
+Clears the error flag.  
+
+\S{SetErrors} SetErrors
+
+SetErrors  
+
+Sets the error flag.  
+
+\S{FindWindow} FindWindow
+
+FindWindow \e{user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]}
+
+Searches for a window. Behaves like the win32 FindWindowEx(). Seaches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as "", they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style FindWindow behavior, use FindWindow with SendMessage.  
+
+\S{SendMessage} SendMessage
+
+SendMessage \e{HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]}
+
+Sends a message to HWND. If a user variable $x is specified as the last parameter, the return value of SendMessage will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. Here are a few example messages and their values:
+
+\b WM_CLOSE 16 
+
+\b WM_COMMAND 273 
+
+\b WM_USER 1024 
+
+Include $\{NSISDIR\}\\Examples\\WinMessages.nsh to have all of Windows messages defined in your script.
+To send a string param, put STR: before the parameter, for example: "STR:Some string".
+Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.  
+
+\S{IsWindow} IsWindow
+
+IsWindow \e{HWND jump_if_window [jump_if_not_window]}
+
+If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).  
+
+\S{GetDlgItem} GetDlgItem
+
+GetDlgItem \e{user_var(output) dialog item_id}
+
+Retrieves the handle of a control identified by item_id in the specified dialog box dialog.  
+
+\S{IfFileExists} IfFileExists
+
+IfFileExists \e{file_to_check_for jump_if_present [jump_otherwise]} 
+
+Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*  
+
+\S{MessageBox} MessageBox
+
+MessageBox \e{mb_option_list messagebox_text [return_check jumpto] [return_check_2 jumpto_2]}
+
+Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (i.e. MB_YESNO|MB_ICONSTOP). 
+
+\b MB_OK - Display with an OK button 
+
+\b MB_OKCANCEL - Display with an OK and a cancel button 
+
+\b MB_ABORTRETRYIGNORE - Display with abort, retry, ignore buttons 
+
+\b MB_RETRYCANCEL - Display with retry and cancel buttons 
+
+\b MB_YESNO - Display with yes and no buttons 
+
+\b MB_YESNOCANCEL - Display with yes, no, cancel buttons 
+
+\b MB_ICONEXCLAMATION - Display with exclamation icon 
+
+\b MB_ICONINFORMATION - Display with information icon 
+
+\b MB_ICONQUESTION - Display with question mark icon 
+
+\b MB_ICONSTOP - Display with stop icon 
+
+\b MB_TOPMOST - Make messagebox topmost 
+
+\b MB_SETFOREGROUND - Set foreground 
+
+\b MB_RIGHT - Right align text 
+
+\b MB_DEFBUTTON1 - Button 1 is default 
+
+\b MB_DEFBUTTON2 - Button 2 is default 
+
+\b MB_DEFBUTTON3 - Button 3 is default 
+
+\b MB_DEFBUTTON4 - Button 4 is default 
+
+Return_check can be 0 (or empty, or left off), or one of the following: 
+
+\b IDABORT - Abort button 
+
+\b IDCANCEL - Cancel button 
+
+\b IDIGNORE - Ignore button 
+
+\b IDNO - No button 
+
+\b IDOK - OK button 
+
+\b IDRETRY - Retry button 
+
+\b IDYES - Yes button 
+
+If the return value of the MessageBox is return_check, the installer will Goto jumpto.  
+
+\S{StrCmp} StrCmp
+
+StrCmp \e{str1 str2 jump_if_equal [jump_if_not_equal]}
+
+Compares (case insensitively) str1 to str2. If str1 and str2 are equal, Gotos jump_if_equal, otherwise Gotos jump_if_not_equal.  
+
+\S{IntCmp} IntCmp
+
+IntCmp \e{val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]}
+
+Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more.  
+
+\S{IntCmpU} IntCmpU
+
+IntCmpU \e{val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]} 
+
+Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.  
+
+\S{Abort} Abort
+
+Abort \e{user_message}
+
+Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions to do special things. Note 2: When using from .onNextPage or .onPrevPage, the parameter to Abort can be an integer that specifies how many pages to skip.  
+
+\S{Quit} Quit
+
+Quit
+
+Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).  
+
+\S{GetFunctionAddress} GetFunctionAddress
+
+GetFunctionAddress \e{user_var(output) function_name}
+
+Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).  
+
+\S{getlabeladdress} GetLabelAddress
+
+GetLabelAddress \e{user_var(output) label}
+
+Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.  
+
+\S{getcurrentaddress} GetCurrentAddress
+
+GetCurrentAddress \e{user_var(output)}
+
+Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.  
