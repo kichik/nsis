@@ -7,7 +7,7 @@
 !define VER_BUILD 18
 
 !define VER_FILE "20"
-!define VER_DISPLAY "2.0"
+!define VER_DISPLAY "2.01"
 
 ;--------------------------------
 ;Compile CVS Data Setup
