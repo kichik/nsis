@@ -1544,11 +1544,15 @@
   
     !define MUI_LANGUAGEFILE_INSERTED
     
+    !define MUI_NOVERBOSE
+    
     !insertmacro MUI_PAGECOMMANDS
     
     !ifdef MUI_UNINSTALLER
       !insertmacro MUI_UNPAGECOMMANDS
     !endif
+    
+    !undef MUI_NOVERBOSE
     
   !endif
 
