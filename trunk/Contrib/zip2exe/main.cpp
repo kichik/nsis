@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
-
+#include <commctrl.h>
 // portions Copyright © 1999-2001 Miguel Garrido (mgarrido01@hotmail.com)
 
 extern "C"
@@ -29,7 +29,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,
 {
   g_hInstance=hInstance;
 
-
+  InitCommonControls();
   return DialogBox(hInstance,MAKEINTRESOURCE(IDD_DIALOG1),GetDesktopWindow(),DlgProc);
 }
 char tempzip_path[1024];
