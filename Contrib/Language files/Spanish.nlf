@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1034
 # Translation by MoNKi
@@ -17,6 +17,8 @@ Desinstalación de %s
 < &Atrás
 &Siguiente >
 A&cepto
+Acepto los términos de la licencia
+No acepto los términos de la licencia
 &Instalar
 &Desinstalar
 Cancelar
