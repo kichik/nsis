@@ -228,7 +228,11 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     DWORD dwFileSize, dwRenameLinePos;
     static const char nulint[4]="NUL";
 
-    if (pszNew) GetShortPathName(pszNew,tmpbuf,1024);
+    if (pszNew) {
+      // create the file if it's not already there to prevent GetShortPathName from failing
+      CloseHandle(myOpenFile(pszNew, 0, CREATE_NEW));
+      GetShortPathName(pszNew,tmpbuf,1024);
+    }
     else *((int *)tmpbuf) = *((int *)nulint);
     // wininit is used as a temporary here
     GetShortPathName(pszExisting,wininit,1024);
