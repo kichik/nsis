@@ -302,7 +302,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
   // Select language
-  if (ExecuteCodeSegment(header->code_onInit,NULL)) return 1;
+  if (ExecuteCallbackFunction(CB_ONINIT)) return 1;
   set_language();
 #endif
 
@@ -347,7 +347,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     {
       int ret=DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      ExecuteCodeSegment(header->code_onGUIEnd,NULL);
+      ExecuteCallbackFunction(CB_ONGUIEND);
 #endif
       return ret;
     }
@@ -361,12 +361,12 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
     if (install_thread(NULL))
     {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (!g_quit_flag) ExecuteCodeSegment(header->code_onInstFailed,NULL);
+      if (!g_quit_flag) ExecuteCallbackFunction(CB_ONINSTFAILED);
 #endif//NSIS_SUPPORT_CODECALLBACKS
       return 1;
     }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    ExecuteCodeSegment(header->code_onInstSuccess,NULL);
+    ExecuteCallbackFunction(CB_ONINSTSUCCESS);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
     return 0;
@@ -391,7 +391,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
       0,
       SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
+      && !ExecuteCallbackFunction(CB_ONVERIFYINSTDIR)
 #endif
     );
   }
@@ -428,7 +428,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANG_BRANDING);
       SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL);
+      g_quit_flag = ExecuteCallbackFunction(CB_ONGUIINIT);
 #endif
         //ShowWindow(hwndDlg, SW_SHOW);
       m_delta = 1;
@@ -456,7 +456,7 @@ nextPage:
     this_page+=m_delta;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    if (m_page==g_blocks[NB_PAGES].num) ExecuteCodeSegment(g_header->code_onInstSuccess,NULL);
+    if (m_page==g_blocks[NB_PAGES].num) ExecuteCallbackFunction(CB_ONINSTSUCCESS);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
     if (g_quit_flag || (unsigned int)m_page >= (unsigned int)g_blocks[NB_PAGES].num)
@@ -609,7 +609,7 @@ skipPage:
       if (g_exec_flags.abort)
       {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        ExecuteCodeSegment(g_header->code_onInstFailed,NULL);
+        ExecuteCallbackFunction(CB_ONINSTFAILED);
 #endif//NSIS_SUPPORT_CODECALLBACKS
         m_retcode=2;
         outernotify(NOTIFY_BYE_BYE);
@@ -617,7 +617,7 @@ skipPage:
       else
       {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        if (!ExecuteCodeSegment(g_header->code_onUserAbort,NULL))
+        if (!ExecuteCallbackFunction(CB_ONUSERABORT))
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
           m_retcode=1;
@@ -935,7 +935,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     if (!error)
-      error = ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL);
+      error = ExecuteCallbackFunction(CB_ONVERIFYINSTDIR);
 #endif
 
     if (thispage->flags & PF_DIR_NO_BTN_DISABLE)
@@ -1101,7 +1101,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 
       myitoa(g_usrvars[0], lParam);
 
-      ExecuteCodeSegment(g_header->code_onMouseOverSection,NULL);
+      ExecuteCallbackFunction(CB_ONMOUSEOVERSECTION);
 
       mystrcpy(g_usrvars[0], g_tmp);
     }
@@ -1400,7 +1400,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   {
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
   if ( wParam )
-    ExecuteCodeSegment(g_header->code_onSelChange,NULL);
+    ExecuteCallbackFunction(CB_ONSELCHANGE);
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
 
     if (g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)

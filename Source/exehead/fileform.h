@@ -309,6 +309,28 @@ typedef struct
   int install_directory_auto_append; // auto append part
 } header;
 
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+// callback indices
+enum
+{
+  CB_ONINIT,
+  CB_ONINSTSUCCESS,
+  CB_ONINSTFAILED,
+  CB_ONUSERABORT,
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  CB_ONGUIINIT,
+  CB_ONGUIEND,
+#endif
+  CB_ONVERIFYINSTDIR,
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  CB_ONMOUSEOVERSECTION,
+#endif
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  CB_ONSELCHANGE
+#endif//NSIS_CONFIG_COMPONENTPAGE
+};
+#endif//NSIS_SUPPORT_CODECALLBACKS
+
 // used for section->flags
 #define SF_SELECTED   1
 #define SF_SUBSEC     2
