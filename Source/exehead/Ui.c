@@ -675,14 +675,15 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static HWND hwLicense;
+  static unsigned int uLastAcceptState;
   if (uMsg == WM_INITDIALOG)
   {
     EDITSTREAM es={(DWORD)LANG_STR(LANG_LICENSE_DATA),0,StreamLicense};
 
     SetUITextFromLang(IDC_LICENSEAGREE,LANG_BTN_LICENSE_AGREE);
     SetUITextFromLang(IDC_LICENSEDISAGREE,LANG_BTN_LICENSE_DISAGREE);
-    SendMessage(GetUIItem(IDC_LICENSEAGREE+!hwLicense), BM_SETCHECK, BST_CHECKED, 0);
-    EnableWindow(m_hwndOK, (BOOL)hwLicense | !(inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION));
+    SendMessage(GetUIItem(IDC_LICENSEAGREE+!uLastAcceptState), BM_SETCHECK, BST_CHECKED, 0);
+    EnableWindow(m_hwndOK, uLastAcceptState | !(inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION));
 
     hwLicense=GetUIItem(IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
@@ -700,7 +701,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   }
   if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED) {
     if (inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION)
-      EnableWindow(m_hwndOK, IsDlgButtonChecked(hwndDlg, IDC_LICENSEAGREE) & BST_CHECKED);
+      EnableWindow(m_hwndOK, uLastAcceptState = IsDlgButtonChecked(hwndDlg, IDC_LICENSEAGREE) & BST_CHECKED);
   }
   if (uMsg == WM_NOTIFY) {
     #define nmhdr ((NMHDR *)lParam)
