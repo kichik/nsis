@@ -42,7 +42,7 @@ Execute the specified program and wait for the executed process to quit. See Exe
 
 \S2{file} File
 
-\c [/nonfatal] [/a] ([/r] (file|wildcard) [...] | /oname=file.dat infile.dat)
+\c [/nonfatal] [/a] ([/r] [/x file|wildcard [...]] (file|wildcard) [...] | /oname=file.dat infile.dat)
 
 Adds file(s) to be extracted to the current output path ($OUTDIR).
 
@@ -53,6 +53,8 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \b Wildcards are supported.
 
 \b If the /r switch is used, files and directories are added recursively. If there is no trailing wildcard (e.g. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.*
+
+\b Use the /x switch to exclude files or directories.
 
 \b If the /a switch is used, the attributes of the file(s) added will be preserved.
 
@@ -67,6 +69,8 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /r data
 \c File /oname=$TEMP\temp.dat somefile.ext
 \c File /nonfatal "a file that might not exist"
+\c File /r /x CVS myproject
+\c File /r /x *.res /x *.obj /x *.pch source
 
 \S2{rename} Rename
 
@@ -80,7 +84,7 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \S2{reservefile} ReserveFile
 
-\c [/nonfatal] [/r] file [file...]
+\c [/nonfatal] [/r] [/x file|wildcard [...]] file [file...]
 
 Reserves a file in the data block for later use. Files are added to the compressed data block in the order they appear in the script. Functions, however, are not necessarily called in the order they appear in the script. Therefore, if you add a file in a function called early but put the function at the end of the script, all of the files added earlier will have to be decompressed to get to the required file. This process can take a long time if there a lot of files. \R{oninit}{.onInit} is one such function. It is called at the very beginning, before anything else appears. If you put it at the very end of the script, extract some files in it and have lots of files added before it, the installer might take a very long time to load. This is where this command comes useful, allowing you to speed up the loading process by including the file at the top of the data block instead of letting NSIS seek all the way down to the bottom of the \e{compressed} data block.
 
