@@ -15,7 +15,7 @@ Nullsoft Install System %s
 # ^SetupCaption
 $(^Name) Installatie
 # ^UninstallCaption
-$(^Name) Deïnstallatie
+$(^Name) De-installatie
 # ^LicenseSubCaption
 : Licentie Overeenkomst
 # ^ComponentsSubCaption
@@ -27,9 +27,9 @@ $(^Name) Deïnstallatie
 # ^CompletedSubCaption
 : Voltooid
 # ^UnComponentsSubCaption
-: Deïnstallatie Opties
+: De-installatie Opties
 # ^UnDirSubCaption
-: Deïnstallatie Map
+: De-installatie Map
 # ^ConfirmSubCaption
 : Bevestiging
 # ^UninstallingSubCaption
@@ -141,7 +141,7 @@ Kopiëren mislukt
 # ^CreateShortcut
 "Snelkoppeling maken: "
 # ^CreatedUninstaller
-"Deïnstallatie programma maken: "
+"De-installatie programma maken: "
 # ^Delete
 "Bestand verwijderen: "
 # ^DeleteOnReboot

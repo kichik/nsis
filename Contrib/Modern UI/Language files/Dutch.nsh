@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Nederlands" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Welkom bij de $(^NameDA) Setup Wizard"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^NameDA) op uw systeem installeren.\r\n\r\nHet is aanbevolen dat u alle andere programma's afsluit voordat u Setup start. Dit zorgt ervoor dat Setup bepaalde systeembestanden kan bijwerken zonder uw system opniew op te starten.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^NameDA) op uw systeem installeren.\r\n\r\nHet is aanbevolen dat u alle andere programma's afsluit voordat u Setup start. Dit zorgt ervoor dat Setup bepaalde systeembestanden kan bijwerken zonder uw systeem opniew op te starten.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licentie Overeenkomst"
   !define MUI_TEXT_LICENSE_SUBTITLE "Lees de licentie overeenkomst voordat u $(^NameDA) installeert."
@@ -40,7 +40,7 @@
   !define MUI_BUTTONTEXT_FINISH "&Voltooien"
   !define MUI_TEXT_FINISH_INFO_TITLE "Voltooien van de $(^NameDA) Setup Wizard"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) is geinstalleerd op uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Uw system moet worden opnieuw opgestart om de installatie van $(^NameDA) te voltooien. Wilt u nu herstarten?"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Uw systeem moet worden opnieuw opgestart om de installatie van $(^NameDA) te voltooien. Wilt u nu herstarten?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Nu herstarten"
   !define MUI_TEXT_FINISH_REBOOTLATER "Ik wil later handmatig herstarten"
   !define MUI_TEXT_FINISH_RUN "Start $(^NameDA)"
@@ -54,11 +54,11 @@
   !define MUI_TEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Setup wilt afsluiten?"
   
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Welkom bij de $(^NameDA) Deïnstallatie Wizard"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Welkom bij de $(^NameDA) De-installatie Wizard"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Deze wizard zal $(^NameDA) van uw syteem verwijderen.\r\n\r\nControleer voordat u begint met verwijderen dat $(^NameDA) is afgesloten.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Verwijder $(^NameDA)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Verwijder $(^NameDA) van uw system."
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Verwijder $(^NameDA) van uw systeem."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licentie Overeenkomst"
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Lees de licentie overeenkomst voordat u $(^NameDA) verwijdert."
@@ -69,22 +69,22 @@
   !define MUI_UNTEXT_COMPONENTS_TITLE "Kies Onderdelen"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Kies de onderdelen die u wilt verwijderen."
   
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Kies Deïnstallatie Locatie"
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Kies De-installatie Locatie"
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Kies de map waaruit u $(^NameDA) in wilt verwijderen."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Bezig met verwijderen"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Een ogenblik geduld a.u.b. terwijl $(^NameDA) van uw systeem wordt verwijderd."
   
-  !define MUI_UNTEXT_FINISH_TITLE "Deïnstallatie Gereed"
+  !define MUI_UNTEXT_FINISH_TITLE "De-installatie Gereed"
   !define MUI_UNTEXT_FINISH_SUBTITLE "$(^NameDA) is verwijderd van uw systeem."
   
-  !define MUI_UNTEXT_ABORT_TITLE "Deïnstallatie Afgebroken"
+  !define MUI_UNTEXT_ABORT_TITLE "De-installatie Afgebroken"
   !define MUI_UNTEXT_ABORT_SUBTITLE "$(^NameDA) is niet volledig verwijderd van uw systeem."
   
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Voltooien van de $(^NameDA) Deïnstallatie Wizard"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Voltooien van de $(^NameDA) De-installatie Wizard"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) zijn verwijderd van uw systeem.\r\n\r\nKlik op Voltooien om deze wizard te sluiten."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Uw system moet worden opnieuw opgestart om de deïnstallatie van $(^NameDA) te voltooien. Wilt u nu herstarten?"
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Uw systeem moet worden opnieuw opgestart om de de-installatie van $(^NameDA) te voltooien. Wilt u nu herstarten?"
   
-  !define MUI_UNTEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Deïnstallatie wilt afsluiten?"
+  !define MUI_UNTEXT_ABORTWARNING "Weet u zeker dat u $(^Name) De-installatie wilt afsluiten?"
   
 !insertmacro MUI_LANGUAGEFILE_END
