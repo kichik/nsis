@@ -16,7 +16,7 @@ CRCCheck on
 SilentInstall normal
 BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
-
+XPStyle on
 
 Name "BigNSISTest"
 Caption "NSIS Big Test"
