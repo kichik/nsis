@@ -11,7 +11,7 @@
 
 !define MUI_POLISH_USED
 
-  !define MUI_POLISH_LANGNAME "Polysk" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+  !define MUI_POLISH_LANGNAME "Polski" ;Name of the language in the language itself (English, Deutsch, Français etc.)
 
   ;INSTALLER
   
