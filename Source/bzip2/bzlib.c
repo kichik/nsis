@@ -18,16 +18,16 @@
   1. Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
 
-  2. The origin of this software must not be misrepresented; you must 
-     not claim that you wrote the original software.  If you use this 
-     software in a product, an acknowledgment in the product 
+  2. The origin of this software must not be misrepresented; you must
+     not claim that you wrote the original software.  If you use this
+     software in a product, an acknowledgment in the product
      documentation would be appreciated but is not required.
 
   3. Altered source versions must be plainly marked as such, and must
      not be misrepresented as being the original software.
 
-  4. The name of the author may not be used to endorse or promote 
-     products derived from this software without specific prior written 
+  4. The name of the author may not be used to endorse or promote
+     products derived from this software without specific prior written
      permission.
 
   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
@@ -114,8 +114,8 @@ Bool isempty_RL ( EState* s )
 }
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzCompressInit) 
-                    ( bz_stream* strm, 
+int BZ_API(BZ2_bzCompressInit)
+                    ( bz_stream* strm,
                      int        blockSize100k,
                      int        verbosity,
                      int        workFactor )
@@ -123,7 +123,7 @@ int BZ_API(BZ2_bzCompressInit)
    Int32   n;
    EState* s;
 
-   if (strm == NULL || 
+   if (strm == NULL ||
        workFactor < 0 || workFactor > 250)
      return BZ_PARAM_ERROR;
 
@@ -255,7 +255,7 @@ Bool copy_input_until_stop ( EState* s )
          /*-- no input? --*/
          if (s->strm->avail_in == 0) break;
          progress_in = True;
-         ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) ); 
+         ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) );
          s->strm->next_in++;
          s->strm->avail_in--;
   //       s->strm->total_in_lo32++;
@@ -273,7 +273,7 @@ Bool copy_input_until_stop ( EState* s )
          /*-- flush/finish end? --*/
          if (s->avail_in_expect == 0) break;
          progress_in = True;
-         ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) ); 
+         ADD_CHAR_TO_BLOCK ( s, (UInt32)(*((UChar*)(s->strm->next_in))) );
          s->strm->next_in++;
          s->strm->avail_in--;
   //       s->strm->total_in_lo32++;
@@ -319,18 +319,18 @@ Bool handle_compress ( bz_stream* strm )
    Bool progress_in  = False;
    Bool progress_out = False;
    EState* s = strm->state;
-   
+
    while (True) {
 
       if (s->state == BZ_S_OUTPUT) {
          progress_out |= copy_output_until_stop ( s );
          if (s->state_out_pos < s->numZ) break;
-         if (s->mode == BZ_M_FINISHING && 
+         if (s->mode == BZ_M_FINISHING &&
              s->avail_in_expect == 0 &&
              isempty_RL(s)) break;
          prepare_new_block ( s );
          s->state = BZ_S_INPUT;
-         if (s->mode == BZ_M_FLUSHING && 
+         if (s->mode == BZ_M_FLUSHING &&
              s->avail_in_expect == 0 &&
              isempty_RL(s)) break;
       }
@@ -379,7 +379,7 @@ int BZ_API(BZ2_bzCompress) ( bz_stream *strm, int action )
          if (action == BZ_RUN) {
             progress = handle_compress ( strm );
             return progress ? BZ_RUN_OK : BZ_PARAM_ERROR;
-         } 
+         }
          else
 	 if (action == BZ_FLUSH) {
             s->avail_in_expect = strm->avail_in;
@@ -392,12 +392,12 @@ int BZ_API(BZ2_bzCompress) ( bz_stream *strm, int action )
             s->mode = BZ_M_FINISHING;
             goto preswitch;
          }
-         else 
+         else
             return BZ_PARAM_ERROR;
 
       case BZ_M_FLUSHING:
          if (action != BZ_FLUSH) return BZ_SEQUENCE_ERROR;
-         if (s->avail_in_expect != s->strm->avail_in) 
+         if (s->avail_in_expect != s->strm->avail_in)
             return BZ_SEQUENCE_ERROR;
          progress = handle_compress ( strm );
          if (s->avail_in_expect > 0 || !isempty_RL(s) ||
@@ -407,7 +407,7 @@ int BZ_API(BZ2_bzCompress) ( bz_stream *strm, int action )
 
       case BZ_M_FINISHING:
          if (action != BZ_FINISH) return BZ_SEQUENCE_ERROR;
-         if (s->avail_in_expect != s->strm->avail_in) 
+         if (s->avail_in_expect != s->strm->avail_in)
             return BZ_SEQUENCE_ERROR;
          progress = handle_compress ( strm );
          if (!progress) return BZ_SEQUENCE_ERROR;
@@ -434,7 +434,7 @@ int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
    BZFREE(s->ftab);
    BZFREE(strm->state);
 
-   strm->state = NULL;   
+   strm->state = NULL;
 
    return BZ_OK;
 }
@@ -446,7 +446,7 @@ int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
 static DState local_state;
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzDecompressInit) 
+int BZ_API(BZ2_bzDecompressInit)
                      ( bz_stream* strm)
 {
    DState* s=&local_state;
@@ -464,8 +464,8 @@ int BZ_API(BZ2_bzDecompressInit)
  //  strm->total_out_hi32     = 0;
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
 //         s->ll16 = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL*100000 * sizeof(UInt16) );
-  //       s->ll4  = BZALLOC( 
-    //                  ((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) * sizeof(UChar) 
+  //       s->ll4  = BZALLOC(
+    //                  ((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) * sizeof(UChar)
       //             );
         // if (s->ll16 == NULL || s->ll4 == NULL) return (BZ_MEM_ERROR);
 #else
@@ -517,34 +517,34 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
 //            s->strm->total_out_lo32++;
 //            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
-   
+
          /* can a new run be started? */
-         if (s->nblock_used == s->save_nblock+1) return;
-               
-   
+         if (s->nblock_used == s->save.nblock+1) return;
+
+
          s->state_out_len = 1;
          s->state_out_ch = s->k0;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 2;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 3;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK; 
+
+         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
          s->state_out_len = ((Int32)k1) + 4;
-         BZ_GET_SMALL(s->k0); BZ_RAND_UPD_MASK; 
+         BZ_GET_SMALL(s->k0); BZ_RAND_UPD_MASK;
          s->k0 ^= BZ_RAND_MASK; s->nblock_used++;
       }
 
@@ -562,26 +562,26 @@ void unRLE_obuf_to_output_SMALL ( DState* s )
 //            s->strm->total_out_lo32++;
   //          if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
-   
+
          /* can a new run be started? */
-         if (s->nblock_used == s->save_nblock+1) return;
-   
+         if (s->nblock_used == s->save.nblock+1) return;
+
          s->state_out_len = 1;
          s->state_out_ch = s->k0;
          BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 2;
          BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 3;
          BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          BZ_GET_SMALL(k1); s->nblock_used++;
          s->state_out_len = ((Int32)k1) + 4;
          BZ_GET_SMALL(s->k0); s->nblock_used++;
@@ -610,34 +610,34 @@ void unRLE_obuf_to_output_FAST ( DState* s )
 //            s->strm->total_out_lo32++;
 //            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
          }
-   
+
          /* can a new run be started? */
-         if (s->nblock_used == s->save_nblock+1) return;
-               
-   
+         if (s->nblock_used == s->save.nblock+1) return;
+
+
          s->state_out_len = 1;
          s->state_out_ch = s->k0;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 2;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
+
          s->state_out_len = 3;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK; 
+         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save_nblock+1) continue;
+         if (s->nblock_used == s->save.nblock+1) continue;
          if (k1 != s->k0) { s->k0 = k1; continue; };
-   
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK; 
+
+         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
          k1 ^= BZ_RAND_MASK; s->nblock_used++;
          s->state_out_len = ((Int32)k1) + 4;
-         BZ_GET_FAST(s->k0); BZ_RAND_UPD_MASK; 
+         BZ_GET_FAST(s->k0); BZ_RAND_UPD_MASK;
          s->k0 ^= BZ_RAND_MASK; s->nblock_used++;
       }
 
@@ -656,7 +656,7 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       /* end restore */
 
       UInt32       avail_out_INIT = cs_avail_out;
-      Int32        s_save_nblockPP = s->save_nblock+1;
+      Int32        s_save_nblockPP = s->save.nblock+1;
 //      unsigned int total_out_lo32_old;
 
       while (True) {
@@ -674,7 +674,7 @@ void unRLE_obuf_to_output_FAST ( DState* s )
             }
             s_state_out_len_eq_one:
             {
-               if (cs_avail_out == 0) { 
+               if (cs_avail_out == 0) {
                   c_state_out_len = 1; goto return_notr;
                };
                *( (UChar*)(cs_next_out) ) = c_state_out_ch;
@@ -682,29 +682,29 @@ void unRLE_obuf_to_output_FAST ( DState* s )
                cs_next_out++;
                cs_avail_out--;
             }
-         }   
+         }
          /* can a new run be started? */
          if (c_nblock_used == s_save_nblockPP) {
             c_state_out_len = 0; goto return_notr;
-         };   
+         };
          c_state_out_ch = c_k0;
          BZ_GET_FAST_C(k1); c_nblock_used++;
-         if (k1 != c_k0) { 
-            c_k0 = k1; goto s_state_out_len_eq_one; 
+         if (k1 != c_k0) {
+            c_k0 = k1; goto s_state_out_len_eq_one;
          };
-         if (c_nblock_used == s_save_nblockPP) 
+         if (c_nblock_used == s_save_nblockPP)
             goto s_state_out_len_eq_one;
-   
+
          c_state_out_len = 2;
          BZ_GET_FAST_C(k1); c_nblock_used++;
          if (c_nblock_used == s_save_nblockPP) continue;
          if (k1 != c_k0) { c_k0 = k1; continue; };
-   
+
          c_state_out_len = 3;
          BZ_GET_FAST_C(k1); c_nblock_used++;
          if (c_nblock_used == s_save_nblockPP) continue;
          if (k1 != c_k0) { c_k0 = k1; continue; };
-   
+
          BZ_GET_FAST_C(k1); c_nblock_used++;
          c_state_out_len = ((Int32)k1) + 4;
          BZ_GET_FAST_C(c_k0); c_nblock_used++;
@@ -747,7 +747,7 @@ int BZ_API(BZ2_bzDecompress) ( bz_stream *strm )
 #else
         unRLE_obuf_to_output_FAST ( s );
 #endif
-         if (s->nblock_used == s->save_nblock+1 && s->state_out_len == 0) {
+         if (s->nblock_used == s->save.nblock+1 && s->state_out_len == 0) {
             s->state = BZ_X_BLKHDR_1;
          } else {
             return BZ_OK;
