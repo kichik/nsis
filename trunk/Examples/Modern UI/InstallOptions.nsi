@@ -75,7 +75,6 @@ SectionEnd
 Function .onInit
 
   ;Init InstallOptions
-  !insertmacro MUI_INSTALLOPTIONS_INIT ;Call this when using no plugins before using Install Options (init plugin system)
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniC.ini"
@@ -105,7 +104,6 @@ FunctionEnd
 
 Function .onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_INSTALLOPTIONS_NEXTPAGE
   !insertmacro MUI_NEXTPAGE SetPage
 
@@ -158,7 +156,7 @@ Function SetPage
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "iniC.ini" "" ""
+       !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "iniC.ini" "" "" ;Next/previous page is no IO page
     !insertmacro MUI_PAGE_STOP 6
 
     !insertmacro MUI_PAGE_START 7
@@ -212,7 +210,6 @@ SectionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetPage
 
 FunctionEnd

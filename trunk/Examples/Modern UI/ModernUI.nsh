@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19h
+;Modern UI Header File version 1.19i
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -9,6 +9,9 @@
 
 !define IO_DIRECTION_NEXT 1
 !define IO_DIRECTION_PREV 2
+
+!define IO_INITPLUGINS "Call Initialize_____Plugins"
+!define IO_UNINITPLUGINS "Call un.Initialize_____Plugins"
 
 !macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR
 
@@ -72,14 +75,14 @@
 
 !macroend
 
-!macro MUI_NEXTPAGE_OUTER
-
-  Push ${TEMP1}
-  Push ${TEMP2}  
+!macro MUI_NEXTPAGE CALL
 
   ;Set backgrounds & fonts for the outer dialog (only once)
   StrCmp ${CURRENTPAGE} "" "" no_first_run
-   
+
+  Push ${TEMP1}
+  Push ${TEMP2}
+
     GetDlgItem ${TEMP1} $HWNDPARENT 1037
     CreateFont ${TEMP2} "Tahoma" 10 700
     SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
@@ -93,20 +96,16 @@
 
     GetDlgItem ${TEMP1} $HWNDPARENT 1039
     SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    no_first_run:
     
   Pop ${TEMP2}  
   Pop ${TEMP1}
-  
-!macroend
 
-!macro MUI_NEXTPAGE CALL
+  no_first_run:
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
 
   Call "${CALL}"
-
+   
 !macroend
 
 !macro MUI_PREVPAGE CALL
@@ -200,24 +199,24 @@
 
 ;INSTALL OPTIONS
 
-!macro MUI_INSTALLOPTIONS_INIT
-
-  ;Init plugin system (call this when using no plugins before using InstallOptions)
-
-  Call Initialize_____Plugins
-  
-!macroend
-
-!macro MUI_INSTALLOPTIONS_UNINIT
-
-  ;Init plugin system (call this when using no plugins before using InstallOptions)
-
-  Call un.Initialize_____Plugins
-  
-!macroend
-
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
+  ;Init plugin system
+  ${IO_INITPLUGINS}
+  !undef IO_INITPLUGINS
+  !define IO_INITPLUGINS ""
+  
+  File /oname=$PLUGINSDIR\${FILE} "${FILE}"
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNEXTRACT FILE
+
+  ;Init plugin system
+  ${IO_UNINITPLUGINS}
+  !undef IO_UNINITPLUGINS
+  !define IO_UNINITPLUGINS ""
+  
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
   
 !macroend
