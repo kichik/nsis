@@ -22,10 +22,8 @@
 
 !macro MUI_INTERFACE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;User interface
@@ -161,20 +159,16 @@
   InstallColors ${MUI_INSTALLCOLORS}
   InstProgressFlags ${MUI_PROGRESSBAR}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INNERDIALOG_TEXT CONTROL TEXT
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Set text on inner dialogs component
@@ -186,20 +180,16 @@
 
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Set text on the white rectangle
@@ -212,20 +202,16 @@
 
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_DESCRIPTION_BEGIN
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Push ${MUI_TEMP1}
@@ -233,20 +219,16 @@
   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_DESCRIPTION_TEXT VAR TEXT
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Set text on the Description frame
@@ -255,48 +237,38 @@
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     Goto description_done
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_DESCRIPTION_END
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   description_done:
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_FINISHHEADER
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Finish text on the header (white rectangle)
   !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
@@ -322,10 +294,8 @@
 
 !macro MUI_ABORTWARNING
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Warning when Cancel button is pressed
@@ -334,22 +304,15 @@
     Abort
     quit:
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_GUIINIT
   
-  !ifdef MUI_WELCOMEPAGE
-    !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-  !else ifdef MUI_FINISHPAGE
-    !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-  !endif
-  
+  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
   !insertmacro MUI_HEADERBITMAP_INIT
 
   !insertmacro MUI_GUIINIT_BASIC
@@ -397,17 +360,21 @@
 
 !macro MUI_WELCOMEFINISHPAGE_INIT
 
-  ;Extract InstallOptions INI Files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALINI}" "ioSpecial.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
+  !ifdef MUI_WELCOMEPAGE || MUI_FINISHPAGE
 
-  ;Write bitmap location
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
+    ;Extract InstallOptions INI Files
+    !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALINI}" "ioSpecial.ini"
+    !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
 
-  ;Write Welcome text
-  !ifdef MUI_WELCOMEPAGE
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
+    ;Write bitmap location
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
+
+    ;Write Welcome text
+    !ifdef MUI_WELCOMEPAGE
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
+    !endif
+    
   !endif
 
 !macroend
@@ -521,10 +488,8 @@
 
 !macro MUI_PAGECOMMANDS
  
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   !ifndef MUI_CUSTOMPAGECOMMANDS
@@ -539,138 +504,110 @@
   
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_WELCOME
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_WELCOMEPAGE
     Page custom mui.Welcome "" "MUI_INSTALLBUTTON_WELCOME"
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_LICENSE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_LICENSEPAGE
     Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_COMPONENTS
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_COMPONENTSPAGE
     Page components mui.ComponentsPre mui.ComponentsShow mui.ComponentsLeave "MUI_INSTALLBUTTON_COMPONENTS"
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_DIRECTORY
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_DIRECTORYPAGE
     Page directory mui.DirectoryPre mui.DirectoryShow mui.DirectoryLeave "MUI_INSTALLBUTTON_DIRECTORY"
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_STARTMENU
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_STARTMENUPAGE
     Page custom mui.Startmenu "" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_PAGECOMMAND_INSTFILES
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Page instfiles mui.InstFilesPre mui.InstFilesShow mui.InstFilesLeave
    
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
    
 !macroend
 
 !macro MUI_PAGECOMMAND_FINISH
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_FINISHPAGE
@@ -683,20 +620,16 @@
       
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_UNPAGECOMMANDS
  
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   !ifndef MUI_UNCUSTOMPAGECOMMANDS
@@ -704,48 +637,38 @@
     !insertmacro MUI_UNPAGECOMMAND_INSTFILES
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_UNPAGECOMMAND_CONFIRM
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_UNCONFIRMPAGE
     UninstPage uninstConfirm un.mui.ConfirmPre un.mui.ConfirmShow un.mui.ConfirmLeave "MUI_UNINSTALLBUTTON_CONFIRM"
   !endif
    
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
    
 !macroend
 
 !macro MUI_UNPAGECOMMAND_INSTFILES
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   UninstPage instfiles un.mui.InstFilesPre un.mui.InstFilesShow un.mui.InstFilesLeave
    
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
    
 !macroend
@@ -755,10 +678,8 @@
 
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Init plugin system
@@ -766,20 +687,16 @@
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_EXTRACT_AS FILE FILENAME
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ;Init plugin system
@@ -787,20 +704,16 @@
 
   File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_DISPLAY FILE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   Push ${MUI_TEMP1}
@@ -810,56 +723,44 @@
   
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_INITDIALOG FILE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SHOW
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   Push ${MUI_TEMP1}
@@ -869,64 +770,50 @@
   
   Pop ${MUI_TEMP1}
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_SHOW_RETURN
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   InstallOptions::show
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_READ VAR FILE SECTION KEY
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ReadIniStr ${VAR} "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_INSTALLOPTIONS_WRITE FILE SECTION KEY VALUE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   WriteIniStr "$PLUGINSDIR\${FILE}" "${SECTION}" "${KEY}" "${VALUE}"
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
@@ -962,10 +849,8 @@
 
 !macro MUI_FUNCTIONS_GUIINIT
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   Function .onGUIInit
@@ -978,20 +863,16 @@
 
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_FUNCTIONS_PAGES
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_WELCOMEPAGE
@@ -1020,20 +901,16 @@
     !insertmacro MUI_FUNCTIONS_FINISHPAGE mui.Finish
   !endif
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_FUNCTIONS_WELCOMEPAGE FUNCTION
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${FUNCTION}"
@@ -1096,20 +973,16 @@
     
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_FUNCTIONS_LICENSEPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${PRE}"
@@ -1132,20 +1005,16 @@
     !endif
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
     
 !macroend
 
 !macro MUI_FUNCTIONS_COMPONENTSPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${PRE}"
@@ -1169,20 +1038,16 @@
     !endif
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
     
 !macroend
 
 !macro MUI_FUNCTIONS_DIRECTORYPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${PRE}"
@@ -1205,20 +1070,16 @@
     !endif
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_FUNCTIONS_STARTMENUPAGE FUNCTION
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   ;Check defines
@@ -1268,20 +1129,16 @@
 
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_FUNCTIONS_INSTFILESPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${PRE}"
@@ -1303,20 +1160,16 @@
     !endif
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_FUNCTIONS_FINISHPAGE FUNCTION
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${FUNCTION}"
@@ -1562,10 +1415,8 @@
     
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
@@ -1606,10 +1457,8 @@
 
 !macro MUI_FUNCTIONS_ABORTWARNING
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !ifdef MUI_ABORTWARNING
@@ -1621,36 +1470,28 @@
     FunctionEnd
   !endif
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_UNFUNCTION_GUIINIT
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   Function un.onGUIInit
     
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !insertmacro MUI_UNGUIINIT
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
   !ifdef MUI_CUSTOMFUNCTION_UNGUIINIT
@@ -1659,10 +1500,8 @@
   
   FunctionEnd
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
@@ -1679,10 +1518,8 @@
 
 !macro MUI_UNFUNCTION_CONFIRMPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function "${PRE}"
@@ -1704,20 +1541,16 @@
     !endif
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_UNFUNCTION_INSTFILESPAGE PRE SHOW LEAVE
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   Function ${PRE}
@@ -1739,10 +1572,8 @@
     !endif
   FunctionEnd
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
@@ -1768,54 +1599,42 @@
 
 !macro MUI_RESERVEFILE_INSTALLOPTIONS
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_RESERVEFILE_SPECIALINI
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_RESERVEFILE_SPECIALBITMAP
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   ReserveFile "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
@@ -1835,10 +1654,8 @@
 
 !macro MUI_SYSTEM
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   !ifndef MUI_SYSTEM_INSERTED
@@ -1861,20 +1678,16 @@
   
   !endif
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
   
 !macroend
 
 !macro MUI_BASIC
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
 
   !insertmacro MUI_PAGECOMMANDS
@@ -1882,20 +1695,16 @@
   !insertmacro MUI_FUNCTIONS_GUIINIT
   !insertmacro MUI_FUNCTIONS_ABORTWARNING
   
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
 
 !macro MUI_UNBASIC
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 3
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 3
   !endif
   
   !ifdef MUI_UNINSTALLER
@@ -1906,10 +1715,8 @@
   
   !endif
 
-  !ifndef MUI_NOVERBOSE
-    !ifndef MUI_MANUALVERBOSE
-      !verbose 4
-    !endif
+  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
+    !verbose 4
   !endif
 
 !macroend
