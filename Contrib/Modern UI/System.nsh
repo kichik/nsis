@@ -256,7 +256,7 @@ Var MUI_TEMP2
     !ifdef MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT
       !insertmacro MUI_HEADER_TEXT "${MUI_INSTFILESPAGE_ABORTHEADER_TEXT}" "${MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT}"
     !else
-      !insertmacro MUI_HEADER_TEXT "${MUI_INSTFILESPAGE_ABORTHEADER_TEXT}" "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_SUBTITLE)"
+      !insertmacro MUI_HEADER_TEXT "${MUI_INSTFILESPAGE_ABORTHEADER_TEXT}" "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_ABORT_SUBTITLE)"
     !endif
   !else
       !insertmacro MUI_HEADER_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_ABORT_TITLE)" "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_SUBTITLE)"
@@ -315,7 +315,7 @@ Var MUI_TEMP2
 !macro MUI_GUIINIT_BASIC
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  CreateFont $MUI_TEMP2 "$(MUI_FONT)" "$(MUI_FONTSIZE)" "700"
+  CreateFont $MUI_TEMP2 "$(^Font)" "$(^FontSize))" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
@@ -1100,7 +1100,7 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
     
-    CreateFont $MUI_TEMP2 "$(MUI_FONT)" "12" "700"
+    CreateFont $MUI_TEMP2 "$(^Font)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
         
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
@@ -1474,7 +1474,7 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
     SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
     
-    CreateFont $MUI_TEMP2 "$(MUI_FONT)" "12" "700"
+    CreateFont $MUI_TEMP2 "$(^Font)" "12" "700"
     SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
     
     GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
@@ -1969,17 +1969,6 @@ Var MUI_TEMP2
 
 !macroend
 
-!macro MUI_LANGUAGEFILE_LANGSTRING_FONT NAME DEFAULT
-
-  !ifdef "${NAME}"
-    Langstring "${NAME}" 0 "${${NAME}}"
-    !undef "${NAME}"
-  !else
-    Langstring "${NAME}" 0 "${DEFAULT}"
-  !endif
-
-!macroend
-
 !macro MUI_LANGUAGEFILE_END
 
   !include "${NSISDIR}\Contrib\Modern UI\Language files\Default.nsh"
@@ -1996,9 +1985,6 @@ Var MUI_TEMP2
     !undef MUI_LANGDLL_PUSHLIST
     !define MUI_LANGDLL_PUSHLIST "'${MUI_${LANGUAGE}_LANGNAME}' ${LANG_${LANGUAGE}} ${MUI_LANGDLL_PUSHLIST_TEMP}"
   !endif
- 
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONT" "MS Shell Dlg"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING_FONT "MUI_FONTSIZE" "8"
  
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING_NOUNDEF "MUI_BGCOLOR"
   

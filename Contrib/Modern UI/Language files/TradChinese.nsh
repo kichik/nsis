@@ -9,9 +9,6 @@
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
   !define MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Use only ASCII characters (if this is not possible, use the English name)
-
-  !define MUI_FONT "新細明體"
-  !define MUI_FONTSIZE "9"
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "歡迎使用 $(^Name) 安裝精靈"
   !define MUI_TEXT_WELCOME_INFO_TEXT "這將會在你的電腦，安裝 $(^Name) 。\r\n\r\n在開始安裝之前，建議先關閉其他所有應用程式。這將允許\「安裝程式」更新指定的系統檔案，而不需要重新啟動你的電腦。\r\n\r\n$_CLICK"
