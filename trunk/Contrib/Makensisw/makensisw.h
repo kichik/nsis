@@ -32,7 +32,7 @@
 #define NSIS_URL     "http://nsis.sourceforge.net/"
 #define NSIS_FOR     "http://forums.winamp.com/forumdisplay.php?forumid=65"
 #define NSIS_UPDATE  "\\Bin\\NSISUpdate.exe"
-#define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
+#define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSIS Script\""
 #define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
 #define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg"
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"

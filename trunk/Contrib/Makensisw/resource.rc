@@ -189,9 +189,9 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,180,192,48,14
     PUSHBUTTON      "Cancel",IDCANCEL,234,192,48,14
-    GROUPBOX        "Compressor Setting",IDC_STATIC,6,6,282,41
-    LTEXT           "Compressor:",IDC_STATIC,18,25,41,8
-    COMBOBOX        IDC_COMPRESSOR,72,24,204,94,CBS_DROPDOWNLIST | 
+    GROUPBOX        "Default Compressor (overrides script setting)",
+                    IDC_STATIC,6,6,282,41
+    COMBOBOX        IDC_COMPRESSOR,18,24,258,94,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Symbol Definitions",IDC_STATIC,6,54,282,132
     LTEXT           "Symbol &Name",IDC_STATIC,18,84,44,8
@@ -326,7 +326,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_NSISUPDATE          "NSIS Update"
-    IDS_DOCS                "Documentation"
+    IDS_DOCS                "NSIS Users Manual"
     IDS_SCRIPT              "Defined in Script/Compiler Default"
     IDS_ZLIB                "ZLIB"
     IDS_BZIP2               "BZIP2"
