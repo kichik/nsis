@@ -454,23 +454,25 @@ char * NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 28: // SMSTARTUP
         case VAR_CODES_START + 29: // DESKTOP
         case VAR_CODES_START + 30: // STARTMENU
+        case VAR_CODES_START + 31: // QUICKLAUNCH
           {
             static const char *tab[]={
               "Programs",
               "Startup",
               "Desktop",
-              "Start Menu"
+              "Start Menu",
+              "AppData"
             };
             queryShellFolders(tab[nVarIdx-(VAR_CODES_START+27)], out);
+            if (nVarIdx == VAR_CODES_START + 31) {
+              lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
+              f = GetFileAttributes(out);
+              if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
+                break;
+            }
+            else break;
           }
-        break;
 
-        case VAR_CODES_START + 31: // QUICKLAUNCH
-          queryShellFolders("AppData", out);
-          lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
-          f = GetFileAttributes(out);
-          if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
-            break;
         case VAR_CODES_START + 32: // TEMP
           GetTempPath(NSIS_MAX_STRLEN, out);
           break;

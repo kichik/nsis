@@ -77,8 +77,10 @@ static int num_sections;
 
 static int m_page=-1,m_abort,m_retcode,m_delta=1;
 
-static void NSISCALL outernotify(int num) {
-  if (num==0xD1E)
+#define NOTIFY_BYE_BYE 'x'
+
+static void NSISCALL outernotify(char num) {
+  if (num==NOTIFY_BYE_BYE)
     g_quit_flag=1;
   m_delta=num;
   SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0); // it sends num again for plugins - DON'T REMOVE!
@@ -97,8 +99,6 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
 static DWORD WINAPI install_thread(LPVOID p);
-
-HWND NSISCALL bgWnd_Init();
 
 HWND insthwnd, insthwnd2,insthwndbutton;
 
@@ -366,7 +366,26 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
     {
-      m_bgwnd=bgWnd_Init();
+      RECT vp;
+      static WNDCLASS wc;
+      extern int bg_color1, bg_color2, bg_textcolor;
+      extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
+      wc.lpfnWndProc = BG_WndProc;
+      wc.hInstance = g_hInstance;
+      wc.hIcon = g_hIcon;
+      wc.hCursor = LoadCursor(NULL,IDC_ARROW);
+      wc.lpszClassName = "_Nb";
+
+      if (!RegisterClass(&wc)) return 0;
+
+      bg_color1=g_inst_cmnheader->bg_color1;
+      bg_color2=g_inst_cmnheader->bg_color2;
+      bg_textcolor=g_inst_cmnheader->bg_textcolor;
+
+      SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
+
+      m_bgwnd = CreateWindow("_Nb","",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
+        vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,g_hInstance,NULL);
     }
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -515,6 +534,7 @@ nextPage:
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
       ShowWindow(hwndtmp,this_page->back&SW_SHOWNA);// SW_HIDE = 0
       EnableWindow(hwndtmp,this_page->back&2);
+      EnableWindow(m_hwndOK,1);
 
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else if (g_autoclose) goto nextPage;
@@ -549,7 +569,7 @@ nextPage:
         //on the license page, instead we want the focus left alone because in
         //WM_INITDIALOG it is given to the richedit control.
         if (!gDontFookWithFocus)
-            SetFocus(m_hwndOK);
+          SetFocus(m_hwndOK);
         //XGE End
       }
     }
@@ -578,7 +598,7 @@ nextPage:
         ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
         m_retcode=2;
-        outernotify(0xD1E);
+        outernotify(NOTIFY_BYE_BYE);
       }
       else
       {
@@ -587,7 +607,7 @@ nextPage:
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
           m_retcode=1;
-          outernotify(0xD1E);
+          outernotify(NOTIFY_BYE_BYE);
         }
       }
     }
@@ -820,6 +840,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Allows 'SpaceTexts none'
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ))));
+      //if (available < total)
+        //SetTextColor(GetDC(GetDlgItem(hwndDlg,IDC_SPACEREQUIRED)), RGB(255,0,0));
       if (available != -1)
         SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,mystrcpy(s,LANG_STR(LANG_SPACE_AVAIL))));
       else
@@ -1363,7 +1385,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     if (g_quit_flag)
     {
       m_retcode=1;
-      outernotify(0xD1E);
+      outernotify(NOTIFY_BYE_BYE);
     }
     else if (!wParam)
     {
