@@ -104,12 +104,12 @@ Section "NSI Development Shell Extensions" SecExtention
   WriteRegStr HKCR ".nsh" "" "NSHFile"
   WriteRegStr HKCR "NSHFile" "" "NSI Script File"
   WriteRegStr HKCR "NSHFile\shell" "" "open"
-  WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensis.exe,0
+  WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
   WriteRegStr HKCR "NSHFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR ".nsi" "" "NSISFile"
   WriteRegStr HKCR "NSISFile" "" "NSI Script File"
   WriteRegStr HKCR "NSISFile\shell" "" "open"
-  WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensis.exe,0
+  WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
   WriteRegStr HKCR "NSISFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile" "" "Compile NSI"
   WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" /CD "%1"'
