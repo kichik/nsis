@@ -7,14 +7,14 @@
 
 #include "ResourceVersionInfo.h"
 #ifdef NSIS_SUPPORT_VERSION_INFO
-
+/*
 int ValidCodePages[] = {
 437, 708, 709, 710, 720, 737, 775, 850, 852, 855, 85, 86, 86, 86, 86, 864,
 865, 866, 869, 874, 932, 936, 949, 950, 1200, 1250, 1251, 1252, 1253, 1254,
 1255, 1256, 1257, 1258, 20000, 20001, 20002, 20003, 20004, 20005, 20127, 20261,
 20269, 20866, 21027, 21866, 28591, 28592, 28593, 28594, 28595, 28596, 28597, 28598,
 28599, 29001, 1361, 0 };
-
+*/
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ char *CResourceVersionInfo::FindKey(LANGID LangID, int codepage, char *pKeyName)
   DefineList *pStrings = m_ChildStringLists.get_strings(pos);
   return pStrings->find(pKeyName);
 }
-
+/*
 bool CResourceVersionInfo::IsValidCodePage(WORD codePage )
 {
   int *pCP = ValidCodePages;
@@ -266,4 +266,5 @@ bool CResourceVersionInfo::IsValidCodePage(WORD codePage )
   }
   return false;
 }
+*/
 #endif

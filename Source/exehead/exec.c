@@ -106,7 +106,11 @@ static int *parms;
 
 static int NSISCALL process_string_fromparm_toint(int id_)
 {
+#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
+  return myatoi(process_string(GetStringFromStringTab(parms[id_]), 0));
+#else
   return myatoi(process_string(GetStringFromStringTab(parms[id_])));
+#endif
 }
 
 // NB - USE CAUTION when rearranging code to make use of the new return value of
