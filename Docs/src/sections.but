@@ -20,6 +20,29 @@ SectionIn \e{insttype_index [insttype_index] [RO]}
 
 This command specifies which Install Types (see InstType) the current section defaults to the enabled state in. Multiple SectionIn commands can be specified (they are combined). If you specify RO as a parameter, then the section will be Read-Only, meaning it will always be set to install.
 
+\S{ssectionend} SectionEnd
+
+SectionEnd  
+
+This command closes the current open section.  
+
+\S{ssubsection} SubSection
+
+SubSection \e{[/e] Caption}
+
+This command inserts a subsection. The subsection must be close with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default.  
+
+\S{ssubsectionend} SubSectionEnd
+
+SubSectionEnd  
+
+Closes a subsection opened with SubSection.  
+
+\S{saddsize} AddSize
+
+AddSize \e{size_kb}
+
+Tells the installer that the current section needs an additional "size_kb" kilobytes of disk space. Only valid within a section (will have no effect outside of a section or in a function).  
 
 
 
