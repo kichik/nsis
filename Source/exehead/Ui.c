@@ -356,7 +356,7 @@ int NSISCALL ui_doinstall(void)
     int size;
     lang_num=g_inst_header->common.str_tables_num;
     size=lang_num*sizeof(common_strings);
-    cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
+    cur_common_strings_table=common_strings_tables=(common_strings*)my_alloc(size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
   #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
@@ -364,7 +364,7 @@ int NSISCALL ui_doinstall(void)
     else
   #endif
       size=lang_num*sizeof(installer_strings);
-    cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
+    cur_install_strings_table=install_strings_tables=(char *)my_alloc(size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
 
     myitoa(state_language, GetUserDefaultLangID());
@@ -665,7 +665,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         char *szUrl;
         long min=enlink->chrg.cpMin, max=enlink->chrg.cpMax;
         SendMessage(hwLicense,EM_SETSEL,min,max);
-        szUrl=(char *)GlobalAlloc(GPTR,max-min+1);
+        szUrl=(char *)my_alloc(max-min+1);
         SendMessage(hwLicense,EM_GETSELTEXT,0,(LPARAM)szUrl);
         SetCursor(LoadCursor(0,IDC_WAIT));
         ShellExecute(hwndDlg,"open",szUrl,NULL,NULL,SW_SHOWNORMAL);
@@ -926,7 +926,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     HBITMAP hBMcheck1;
     int x;
     if (hTreeItems) GlobalFree(hTreeItems);
-    hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*num_sections);
+    hTreeItems=(HTREEITEM*)my_alloc(sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_COMP_TEXT);
@@ -1405,50 +1405,59 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
   }
   //>>>Ximon Eighteen aka Sunjammer 30th August 2002
-  //+++If CTRL-C is pressed (yeah I know this has got to be the most stupid
-  //+++way to test for this) copy the DetailPrint'd strings to the clipboard.
-  if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == LVN_KEYDOWN &&
-     ((VK_CONTROL == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState('C')        != 0) ||
-      ('C'        == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState(VK_CONTROL) != 0)))
+  //+++Popup "Copy Details To Clipboard" menu when RMB clicked in DetailView
+  //+++Currently this has no language support for the popup menu tex
+  if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == NM_RCLICK)
   {
     int count = ListView_GetItemCount(insthwnd);
     if (count > 0)
     {
-      char textBuf[1024];
-      int i,total = 0;
-      LVITEM item;
-      HGLOBAL memory;
-      LPTSTR ptr,endPtr;
-
-      // 1st pass - determine clipboard memory required.
-      item.iSubItem   = 0;
-      item.pszText    = textBuf;
-      item.cchTextMax = 1023;
-      for (i = 0; i < count; i++)
+      DWORD pos  = GetMessagePos();
+      HMENU menu = CreatePopupMenu();
+      AppendMenu(menu,MF_STRING,1,"Copy Details To Clipboard");
+    	if (1==TrackPopupMenu(
+        menu,
+        TPM_NONOTIFY|TPM_RETURNCMD,
+        GET_X_LPARAM(pos),
+        GET_Y_LPARAM(pos),
+        0,insthwnd,0))
       {
-        // Add 2 for the CR/LF combination that must follow every line.
-        total += 2+SendMessage(insthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
-      }
+        char textBuf[1024];
+        int i,total = 0;
+        LVITEM item;
+        HGLOBAL memory;
+        LPTSTR ptr,endPtr;
 
-      // 2nd pass - store detail view strings on the clipboard
-      // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
-      OpenClipboard(0);
-      EmptyClipboard();
-      memory = GlobalAlloc(GMEM_MOVEABLE,total+1);
-      ptr = GlobalLock(memory);
-      endPtr = ptr+total;
-      for (i = 0; i < count; i++)
-      {
-        // -2 to allow for CR/LF
-        ListView_GetItemText(insthwnd,i,0,ptr,(endPtr-2)-ptr);
-        while (*ptr) ptr++;
-        *ptr++ = '\r';
-        *ptr++ = '\n';
+        // 1st pass - determine clipboard memory required.
+        item.iSubItem   = 0;
+        item.pszText    = textBuf;
+        item.cchTextMax = 1023;
+        for (i = 0; i < count; i++)
+        {
+          // Add 2 for the CR/LF combination that must follow every line.
+          total += 2+SendMessage(insthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
+        }
+
+        // 2nd pass - store detail view strings on the clipboard
+        // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
+        OpenClipboard(0);
+        EmptyClipboard();
+        memory = GlobalAlloc(GMEM_MOVEABLE,total+1);
+        ptr = GlobalLock(memory);
+        endPtr = ptr+total;
+        for (i = 0; i < count; i++)
+        {
+          // -2 to allow for CR/LF
+          ListView_GetItemText(insthwnd,i,0,ptr,(endPtr-2)-ptr);
+          while (*ptr) ptr++;
+          *ptr++ = '\r';
+          *ptr++ = '\n';
+        }
+        *ptr++ = 0;
+        GlobalUnlock(memory);
+        SetClipboardData(CF_TEXT,memory);
+        CloseClipboard();
       }
-      *ptr++ = 0;
-      GlobalUnlock(memory);
-      SetClipboardData(CF_TEXT,memory);
-      CloseClipboard();
     }
   }
   //<<<
