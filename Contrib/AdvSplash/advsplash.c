@@ -76,6 +76,7 @@ void SetTransparentRegion(HWND myWnd)
   BITMAPINFO bmi;
   int size = bm.bmWidth * bm.bmHeight * 4;
   int *bmp = GlobalAlloc(GPTR, size);
+  int *bmp_orig = bmp;
   bmi.bmiHeader.biBitCount = 32;
   bmi.bmiHeader.biCompression = BI_RGB;
   bmi.bmiHeader.biHeight = bm.bmHeight;
@@ -115,7 +116,7 @@ void SetTransparentRegion(HWND myWnd)
   SetWindowRgn(myWnd, region, TRUE);
   DeleteObject(region);
   DeleteObject(dc);
-  GlobalFree(bmp);
+  GlobalFree(bmp_orig);
 }
 
 BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call,
