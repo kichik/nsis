@@ -32,6 +32,7 @@ For the options, please see the MakeNSIS documentation.
 Shortcut Keys
 -------------
 Ctrl+A: Select All text
+Ctrl+B: Browse Script
 Ctrl+C: Copy selected text
 Ctrl+E: Edits the script
 Ctrl+F: Find text
@@ -160,6 +161,7 @@ Version History
  - Added resize gripper
  - Ctrl+L loads a script
  - Added Clear Log (Ctrl+W)
+ - Browse Script (Ctrl+B) launches explorer in script directory
  - Bunch of other stuff not worth mentioning
 
 

@@ -210,6 +210,16 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_COMMAND:
 		{
 			switch (LOWORD(wParam)) {
+                case IDM_BROWSESCR: {
+                    if (g_input_script) {
+                        char str[MAX_PATH],*str2;
+                        lstrcpy(str,g_input_script);
+		                str2=strrchr(str,'\\');
+		                if(str2!=NULL) *str2=0;
+                        ShellExecute(g_hwnd,"open",str,NULL,NULL,SW_SHOWNORMAL);
+                    }
+                    return TRUE;
+                }
 				case IDM_ABOUT:
 				{
 					DialogBox(g_hInstance,MAKEINTRESOURCE(DLG_ABOUT),g_hwnd,(DLGPROC)AboutProc);
