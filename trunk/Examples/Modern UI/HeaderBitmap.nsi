@@ -24,6 +24,7 @@
 ;Interface Configuration
 
   !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ; optional
   !define MUI_ABORTWARNING
 
 ;--------------------------------
