@@ -200,6 +200,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   if (do_crc)
   {
     int fcrc;
+    SetSelfFilePointer(m_pos, FILE_BEGIN);
     if (!ReadSelfFile(&fcrc, sizeof(int)) || crc != fcrc)
       return _LANG_INVALIDCRC;
   }
