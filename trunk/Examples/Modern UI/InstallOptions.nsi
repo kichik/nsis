@@ -1,5 +1,3 @@
-;STILL WORKING ON INSTALLOPTIONS INTEGRATION
-
 ;NSIS Modern Style UI version 1.19
 ;InstallOptions Example Script
 ;Written by Joost Verburg
@@ -12,6 +10,7 @@
 !include "ModernUI.nsh"
 !verbose 4
 
+!define IO_NOSETDIRECTION $7
 !define IO_DIRECTION $8
 !define CURRENTPAGE $9
 
@@ -79,6 +78,7 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_INIT ;Call this when using no plugins before using Install Options (init plugin system)
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniB.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "iniC.ini"
 
 FunctionEnd
 
@@ -90,14 +90,14 @@ Function .onInitDialog
       !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
     !insertmacro MUI_INNERDIALOG_STOP 1
 
-    !insertmacro MUI_INNERDIALOG_START 3
+    !insertmacro MUI_INNERDIALOG_START 4
       !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
       !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
-    !insertmacro MUI_INNERDIALOG_STOP 3
+    !insertmacro MUI_INNERDIALOG_STOP 4
 
-    !insertmacro MUI_INNERDIALOG_START 4
+    !insertmacro MUI_INNERDIALOG_START 5
       !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
-      !insertmacro MUI_INNERDIALOG_STOP 4
+      !insertmacro MUI_INNERDIALOG_STOP 5
 
   !insertmacro MUI_INNERDIALOG_END
 
@@ -106,14 +106,20 @@ FunctionEnd
 Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
-  !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_NEXT}
+  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_NEXT}
+  no_setdirection:
+  StrCpy ${IO_NOSETDIRECTION} "0"
   !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
 
 Function .onPrevPage
 
-  !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_PREV}
+  StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_PREV}
+  no_setdirection:
+  StrCpy ${IO_NOSETDIRECTION} "0"
   !insertmacro MUI_PREVPAGE SetPage
 
 FunctionEnd
@@ -132,33 +138,42 @@ Function SetPage
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
        WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW "iniA.ini"
+       !insertmacro MUI_INSTALLOPTIONS_SHOW 2 "iniA.ini" "" "IO" ;Next page is an IO page
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options B" "Create your own dialog!"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
        WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
-       !insertmacro MUI_INSTALLOPTIONS_SHOW "iniB.ini"
+       !insertmacro MUI_INSTALLOPTIONS_SHOW 3 "iniB.ini" "IO" "" ;Previous page is an IO page
+    !insertmacro MUI_PAGE_STOP 3
+
+    !insertmacro MUI_PAGE_START 4
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+    !insertmacro MUI_PAGE_STOP 4
+
+    !insertmacro MUI_PAGE_START 5
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
-      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+       !insertmacro MUI_HEADER_TEXT 1033 "Install Options C" "Create your own dialog!"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options C"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
+       !insertmacro MUI_INSTALLOPTIONS_SHOW 6 "iniC.ini" "" ""
     !insertmacro MUI_PAGE_STOP 6
 
     !insertmacro MUI_PAGE_START 7
-      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
     !insertmacro MUI_PAGE_STOP 7
+
+    !insertmacro MUI_PAGE_START 8
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+    !insertmacro MUI_PAGE_STOP 8
 
   !insertmacro MUI_PAGE_END
 
