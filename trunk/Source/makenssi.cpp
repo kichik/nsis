@@ -80,6 +80,12 @@ int main(int argc, char **argv)
   int tmpargpos=1;
   int no_logo=0;
 
+  if (argc > 1 && !lstrcmpi(argv[1], "/version"))
+  {
+    fprintf(g_output,NSIS_VERSION);
+    fflush(g_output);
+    return 0;
+  }
   if (argc > 1 && argv[1][0]=='/' && (argv[1][1]=='v' || argv[1][1]=='V'))
   {
     tmpargpos++;
