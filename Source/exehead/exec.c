@@ -762,12 +762,19 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         )
       );
     return 0;
+    case EW_GETWINTEXT:
+      my_GetWindowText(
+        (HWND)process_string_fromparm_toint(1),
+        var0,
+        NSIS_MAX_STRLEN
+      );
+    return 0;
     case EW_SETSTATICBKCOLOR:
       DeleteObject(
         (HGDIOBJ)SetWindowLong(
           (HWND)process_string_fromparm_toint(0),
           GWL_USERDATA,
-          (LONG)CreateSolidBrush(parm1)
+          parm1==-1?parm1:(LONG)CreateSolidBrush(parm1)
         )
       );
     return 0;

@@ -93,8 +93,9 @@ enum
 #endif
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-  EW_GETDLGITEM,        // GetDlgItem:        3 [outputvar, dialog, item_id]
-  EW_SETSTATICBKCOLOR,  // SerStaticBkColor:  3 [hwnd, color]
+  EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
+  EW_GETWINTEXT,        // GetWindowText:     2: [outputvar, hwnd]
+  EW_SETSTATICBKCOLOR,  // SerStaticBkColor:  3: [hwnd, color]
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]

@@ -127,6 +127,11 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
   if (uMsg == WM_CTLCOLORSTATIC) {
+    BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+    if (brush == -1) {
+      SetBkColor((HDC)wParam, GetSysColor(COLOR_BTNFACE));
+      return (BOOL)GetStockObject(NULL_BRUSH);
+    }
     SetBkMode((HDC)wParam, TRANSPARENT);
     return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
   }
