@@ -794,7 +794,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         p=scanendslash(post_str);
         if (p >= post_str && *++p)
         {
-          post_str=p;
+          post_str=process_string(ps_tmpbuf,p);
           p=name+mystrlen(name)-mystrlen(post_str);
           if (p <= name || *CharPrev(name,p)!='\\' || lstrcmpi(p,post_str))
           {
