@@ -6,13 +6,13 @@ In all of the below registry instructions use an empty string (just two quotes w
 
 \c ini_filename section_name
 
-Deletes the entire section [section_name] from ini_filename. The error flag is \e{not} set if the section could not be removed from the ini file
+Deletes the entire section [section_name] from ini_filename. If the section could not be removed from the ini file, the error flag is set. It does not set the error flag if the section could not be found.
 
 \S2{deleteinistr} DeleteINIStr
 
 \c ini_filename section_name str_name
 
-Deletes the string str_name from section [section_name] from ini_filename. The error flag is \e{not} set If the string could not be removed from the ini file.
+Deletes the string str_name from section [section_name] from ini_filename. If the string could not be removed from the ini file, the error flag is set. It does not set the error flag if the string could not be found.
 
 \S2{deleteregkey} DeleteRegKey
 
