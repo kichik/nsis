@@ -253,7 +253,8 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       AddFolderFromReg(HKEY_LOCAL_MACHINE);
       AddFolderFromReg(HKEY_CURRENT_USER);
 
-      SendMessage(hwParent, WM_NOTIFY_CUSTOM_READY, 0, 0);
+      // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
+      SendMessage(hwParent, WM_NOTIFY_CUSTOM_READY, (WPARAM)hwndDlg, 0);
       ShowWindow(hwndDlg, SW_SHOWNA);
       SetFocus(GetDlgItem(hwParent, IDOK));
     }

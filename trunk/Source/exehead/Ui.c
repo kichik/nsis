@@ -453,6 +453,7 @@ nextPage:
       else {
         if (g_flags.abort) SetFocus(m_hwndCancel);
         else if (g_flags.autoclose) goto nextPage;
+        else SetFocus(m_hwndOK); // without focus button, the system Beeps every time user press one key
         return 0;
       }
 
@@ -499,6 +500,7 @@ nextPage:
 
   if (uMsg == WM_NOTIFY_CUSTOM_READY) {
     DestroyWindow(m_curwnd);
+    m_curwnd = (HWND)wParam;
   }
   if (uMsg == WM_CLOSE)
   {
@@ -540,6 +542,11 @@ nextPage:
           outernotify(NOTIFY_BYE_BYE);
         }
       }
+    }
+    else
+    {
+      // Forward WM_COMMANDs to inner dialogs, can be custom ones
+      SendMessage(m_curwnd, uMsg, wParam, lParam);
     }
   }
   return HandleStaticBkColor();
