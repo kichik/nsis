@@ -55,30 +55,18 @@ following values:
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
       <TD vAlign=top bgColor=#eeeeee>If specified, gives the text to set the
         titlebar to. Otherwise, the titlebar text is not changed.</TD></TR>
-    <TR>
-      <TD vAlign=top bgColor=#cccccc><B>CancelConfirm</B></TD>
-      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>If specified, prompts the user (With text) whether or not to cancel if they select the cancel button.</TD></TR>
-	<TR>
-      <TD vAlign=top bgColor=#cccccc><B>CancelConfirmCaption</B></TD>
-      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>If specified, replaces the default "Question" caption by a user specified value.</TD></TR>
-	<TR>
-      <TD vAlign=top bgColor=#cccccc><B>CancelConfirmFlags</B></TD>
-      <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>If specified, can add an icon to the cancel confirmation message box (MB_ICONEXCLAMATION, MB_ICONINFORMATION, MB_ICONQUESTION, MB_ICONSTOP) or effect the behaviour of it in other ways (MB_TOPMOST, MB_SETFOREGROUND, MB_RIGHT, MB_DEFBUTTON1, MB_DEFBUTTON2). To specify multiple flags, separate using the pipe '|' symbol.</TD></TR>
 	<TR>
       <TD vAlign=top bgColor=#cccccc><B>CancelEnabled</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>Controls whether or not the cancel button in the NSIS window is enabled. If set to 1 or omitted, the cancel button will be enabled. If set to 0, the cancel button will be disabled.</TD></TR>
+      <TD vAlign=top bgColor=#eeeeee>If specified, overrides NSIS settings and enables or disables the cancel button.  If set to 1, the cancel button will be enabled. If set to 0, the cancel button will be disabled.</TD></TR>
 	<TR>
       <TD vAlign=top bgColor=#cccccc><B>CancelShow</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>Controls whether or not the cancel button in the NSIS window is shown. If set to 1 or omitted, the cancel button will be shown. If set to 0, the cancel button will be hidden.</TD></TR>
+      <TD vAlign=top bgColor=#eeeeee>If specified, overrides NSIS settings and shows or hides the cancel button. If set to 1, the cancel button will be shown. If set to 0, the cancel button will be hidden.</TD></TR>
     <TR>
-      <TD vAlign=top bgColor=#cccccc><B>BackDisabled</B></TD>
+      <TD vAlign=top bgColor=#cccccc><B>BackEnabled</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>Controls whether or not the back button in the NSIS window is disabled. If set to 0 or omitted, the back button will be enabled. If set to 1, the back button will be disabled.</TD></TR>
+      <TD vAlign=top bgColor=#eeeeee>If specified, overrides NSIS settings and enables or disables the back button. If set to 1, the back button will be enabled. If set to 0, the back button will be disabled.</TD></TR>
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>CancelButtonText</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
@@ -294,7 +282,6 @@ Here is a little example:
 <UL>
   <LI><a name=DLL1.7>DLL version 1.7 beta (11/2/2002)
   <UL>
-     <li>BackEnabled -> BackDisabled
      <li>Added initDialog and show DLL functions
   </UL>
   <LI><a name=DLL1.6>DLL version 1.6 beta (9/30/2002)
