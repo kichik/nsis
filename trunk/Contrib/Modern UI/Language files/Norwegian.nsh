@@ -76,10 +76,10 @@
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Vennligst vent mens $(^NameDA) blir avinstallert."
 
   !define MUI_UNTEXT_FINISH_TITLE "Avinstallasjon ferdig"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "Avinstallasjoen ble utført uten feil."
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Avinstallasjonen ble utført uten feil."
   
   !define MUI_UNTEXT_ABORT_TITLE "Avinstallasjon avbrutt"
-  !define MUI_UNTEXT_ABORT_SUBTITLE "Avinstallajonen ble ikke utført riktig."
+  !define MUI_UNTEXT_ABORT_SUBTITLE "Avinstallasjonen ble ikke utført riktig."
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Fullfører avinstallasjonen av $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) har blitt avinstallert fra din datamaskin.\r\n\r\nTrykk på ferdig for å avslutte denne veiviseren."
