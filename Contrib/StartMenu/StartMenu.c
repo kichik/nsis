@@ -15,6 +15,10 @@ HWND hwDirList;
 char buf[MAX_PATH];
 char text[1024];
 char progname[1024];
+char cancelconfirm[1024];
+char cancelconfirmcaption[1024];
+
+unsigned int cancelconfirmflags = 0;
 
 int autoadd = 0;
 int g_done = 0;
@@ -22,10 +26,17 @@ int noicon = 0;
 
 void *lpWndProcOld;
 
+typedef struct {
+  char *pszName;
+  int   nValue;
+} TableEntry;
+
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(char *name, HKEY rootKey);
 void PopulateListWithDir(char *dir);
+int LookupToken(TableEntry*, char*);
+int LookupTokens(TableEntry*, char*);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
@@ -49,11 +60,36 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
     while (buf[0] == '/')
     {
       if (!lstrcmpi(buf+1, "noicon"))
+      {
         noicon = 1;
+      }
       else if (!lstrcmpi(buf+1, "text"))
+      {
         popstring(text);
+      }
       else if (!lstrcmpi(buf+1, "autoadd"))
+      {
         autoadd = 1;
+      }
+      else if (!lstrcmpi(buf+1, "cancelconfirm"))
+      {
+        static TableEntry MBFlagTable[] = {
+          { "MB_ICONEXCLAMATION", MB_ICONEXCLAMATION },
+          { "MB_ICONINFORMATION", MB_ICONINFORMATION },
+          { "MB_ICONQUESTION",    MB_ICONQUESTION    },
+          { "MB_ICONSTOP",        MB_ICONSTOP        },
+          { "MB_TOPMOST",         MB_TOPMOST         },
+          { "MB_SETFOREGROUND",   MB_SETFOREGROUND   },
+          { "MB_RIGHT",           MB_RIGHT           },
+          { "MB_DEFBUTTON1",      MB_DEFBUTTON1      },
+          { "MB_DEFBUTTON2",      MB_DEFBUTTON2      },
+          { NULL,                 0                  }
+        };
+        popstring(cancelconfirm);
+        popstring(cancelconfirmcaption);
+        popstring(buf);
+        cancelconfirmflags = LookupTokens(MBFlagTable, buf);
+      }
       if (popstring(buf))
         *buf = 0;
     }
@@ -85,6 +121,7 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       if (!IsDialogMessage(hwStartMenuSelect,&msg) && !IsDialogMessage(hwndParent,&msg) && !TranslateMessage(&msg))
         DispatchMessage(&msg);
     }
+    DestroyWindow(hwStartMenuSelect);
 
     SetWindowLong(hwndParent, GWL_WNDPROC, (long) lpWndProcOld);
 
@@ -92,16 +129,16 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
   }
 }
 
-LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message == WM_COMMAND && (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK || LOWORD(wParam) == 3))
-  {
-		PostMessage(hwStartMenuSelect, WM_USER+666, 0, LOWORD(wParam));
-    return 0;
-  }
   if (message == WM_CLOSE)
   {
-    PostMessage(hwStartMenuSelect, WM_USER+666, 0, IDCANCEL);
+    message = WM_COMMAND;
+    wParam = IDCANCEL;
+  }
+	if (message == WM_COMMAND && (LOWORD(wParam) == IDCANCEL || LOWORD(wParam) == IDOK || LOWORD(wParam) == 3))
+  {
+		PostMessage(hwStartMenuSelect,WM_USER+666,0,LOWORD(wParam));
     return 0;
   }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
@@ -237,13 +274,15 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           pushstring(buf);
           break;
         case IDCANCEL:
-          pushstring("cancel");
+          if (*cancelconfirm && MessageBox(hwStartMenuSelect, cancelconfirm, cancelconfirmcaption, MB_YESNO|cancelconfirmflags) == IDNO)
+            g_done = 0;
+          else
+            pushstring("cancel");
           break;
         case 3:
           pushstring("back");
           break;
       }
-      DestroyWindow(hwndDlg);
     break;
   }
 	return 0;
@@ -312,4 +351,34 @@ void PopulateListWithDir(char *dir)
       }
     }
   } while (FindNextFile(hSearch, &FileData));
+}
+
+int LookupToken(TableEntry* psTable_, char* pszToken_)
+{
+  int i;
+  for (i = 0; psTable_[i].pszName; i++)
+    if (!lstrcmpi(pszToken_, psTable_[i].pszName))
+      return psTable_[i].nValue;
+  return 0;
+}
+
+int LookupTokens(TableEntry* psTable_, char* pszTokens_)
+{
+  int n = 0;
+  char *pszStart = pszTokens_;
+  char *pszEnd = pszTokens_;
+  for (;;) {
+    if (*pszEnd == '\0') {
+      n |= LookupToken(psTable_, pszStart);
+      break;
+    }
+    if (*pszEnd == '|') {
+      *pszEnd = '\0';
+      n |= LookupToken(psTable_, pszStart);
+      *pszEnd = '|';
+      pszStart = pszEnd + 1;
+    }
+    pszEnd++;
+  }
+  return n;
 }
