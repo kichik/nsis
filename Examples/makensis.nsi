@@ -190,16 +190,20 @@ Section "Desktop Shortcut" SecIcons
   IfFileExists "$INSTDIR\NSIS.exe" "" +2
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
     
-  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW.lnk" "$INSTDIR\makensisw.exe"
+  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW (Compiler GUI).lnk" "$INSTDIR\makensisw.exe"
+  
+  IfFileExists "$INSTDIR\Bin\NSISUpdate.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\NSIS\NSIS Update.lnk" "$INSTDIR\Bin\NSISUpdate.exe"
+  
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
 !endif
   
   IfFileExists "$INSTDIR\NSIS.exe" "" +3
-    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe" ""
+    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
     Goto +2
-  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe" ""
+  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe"
   
 SectionEnd
 
