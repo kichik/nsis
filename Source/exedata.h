@@ -7,7 +7,7 @@
 extern size_t zlib_exehead_size;
 extern size_t bzip2_exehead_size;
 extern size_t lzma_exehead_size;
-extern size_t exeheader_size;
+extern size_t exehead_original_size;
 extern size_t icondata_size;
 extern size_t unicondata_size;
 
