@@ -216,6 +216,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_XPSTYLE, "XPStyle",1,0,"(on|off)",TP_GLOBAL},
 {TOK_P_PACKEXEHEADER,"!packhdr",2,0,"temp_file_name command_line_to_compress_that_temp_file",TP_ALL},
 {TOK_P_SYSTEMEXEC,"!system",1,2,"command [<|>|<>|=) retval]",TP_ALL},
+{TOK_P_EXECUTE,"!execute",1,0,"command",TP_ALL},
 {TOK_P_ADDINCLUDEDIR,"!AddIncludeDir",1,0,"dir",TP_ALL},
 {TOK_P_INCLUDE,"!include",1,0,"filename.nsi",TP_ALL},
 {TOK_P_CD,"!cd",1,0,"absolute_or_relative_new_directory",TP_ALL},
