@@ -18,7 +18,7 @@ typedef struct
 static tokenType tokenlist[TOK__LAST] =
 {
 {TOK_ABORT,"Abort",0,1,"[message]"},
-{TOK_ADDBRANDINGIMAGE,"AddBrandingImage",2,0,"(top|left) (height|width)"},
+{TOK_ADDBRANDINGIMAGE,"AddBrandingImage",2,1,"(top|left|bottom|right) (height|width) [padding]"},
 {TOK_ADDSIZE,"AddSize",1,0,"size_to_add_to_section_in_kb"},
 {TOK_AUTOCLOSE,"AutoCloseWindow",1,0,"(false|true)"},
 {TOK_BGGRADIENT,"BGGradient",0,3,"(off | [top_color [bottom_color [text_color]]])"},

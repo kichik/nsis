@@ -224,6 +224,16 @@ CDialogTemplate::~CDialogTemplate() {
 // Methods
 //////////////////////////////////////////////////////////////////////
 
+// Returns the width of the dialog
+short CDialogTemplate::GetWidth() {
+	return m_sWidth;
+}
+
+// Returns the height of the dialog
+short CDialogTemplate::GetHeight() {
+	return m_sHeight;
+}
+
 // Returns info about the item with the id wId
 DialogItemTemplate* CDialogTemplate::GetItem(WORD wId) {
 	for (unsigned int i = 0; i < m_vItems.size(); i++)
@@ -288,14 +298,16 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
 	m_vItems.push_back(newItem);
 }
 
-// Moves all of the items in the dialog by (x,y) and resizes the dialog by (x,y)
-void CDialogTemplate::MoveAllAndResize(short x, short y) {
-	// Move all items
+// Moves all of the items in the dialog by (x,y)
+void CDialogTemplate::MoveAll(short x, short y) {
 	for (unsigned int i = 0; i < m_vItems.size(); i++) {
 		m_vItems[i]->sX += x;
 		m_vItems[i]->sY += y;
 	}
-	// Resize
+}
+
+// Resizes the dialog by (x,y)
+void CDialogTemplate::Resize(short x, short y) {
 	m_sWidth += x;
 	m_sHeight += y;
 }
