@@ -14,9 +14,9 @@ NLF v6
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
-$(^Name) Instalator
+Instalator $(^Name)
 # ^UninstallCaption
-$(^Name) Odinstaluj
+Deinstalator $(^Name) 
 # ^LicenseSubCaption
 : Warunki licencji
 # ^ComponentsSubCaption
@@ -34,7 +34,7 @@ $(^Name) Odinstaluj
 # ^ConfirmSubCaption
 : Potwierdzenie
 # ^UnDirSubCaption
-: Odinstalowuje pliki
+: Deinstaluje pliki
 # ^UnCompletedSubCaption
 : Zakoñczono
 # ^BackBtn
@@ -118,7 +118,7 @@ Wymagane miejsce:
 # ^UninstallingText
 Ten kreator odinstaluje  $(^Name) z twojego komputera. $_CLICK
 # ^UninstallingSubText
-Odinstalowuje z: 
+Deinstaluje z: 
 # ^FileError
 B³¹d otwarcia pliku do zapisu: \r\n\t"$0"\r\nWybierz anuluj, aby przerwaæ instalacjê,\r\nponów, aby ponowiæ zapis do pliku lub\r\nignoruj, aby pomin¹æ ten plik
 # ^FileError_NoIgnore
@@ -152,7 +152,7 @@ B³¹d kopiowania
 # ^ErrorCreating
 "B³¹d tworzenia: "
 # ^ErrorDecompressing
-B³¹d dekompresji danych! Uszkodzony instalator?
+B³¹d rozpakowania danych! Uszkodzony instalator?
 # ^ErrorRegistering
 B³¹d rejestracji DLL
 # ^ExecShell
