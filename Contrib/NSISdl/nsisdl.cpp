@@ -209,6 +209,7 @@ __declspec(dllexport) void download (HWND   parent,
 
     g_hwndProgressBar = GetDlgItem (g_dialog, IDC_PROGRESS1);
 
+    JNL_HTTPGet *get;
     char *error=NULL;
     
     {
@@ -245,7 +246,7 @@ __declspec(dllexport) void download (HWND   parent,
       }
 
       DWORD start_time=GetTickCount();
-      JNL_HTTPGet *get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
+      get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
       int         st;
       int         has_printed_headers = 0;
       int         cl;
@@ -374,8 +375,6 @@ __declspec(dllexport) void download (HWND   parent,
         
       }
 
-      delete get;
-
       WSACleanup();
     }
 
@@ -394,7 +393,7 @@ __declspec(dllexport) void download (HWND   parent,
     }
 
     if (g_cancelled) {
-       setuservariable(INST_0, "cancel");
+      setuservariable(INST_0, "cancel");
       DeleteFile(filename);
     } else if (error == NULL) {
       setuservariable(INST_0, "success");
@@ -402,7 +401,8 @@ __declspec(dllexport) void download (HWND   parent,
       DeleteFile(filename);
       setuservariable(INST_0, error);
     }
-    if (error) GlobalFree(error);
+    
+    delete get;
   }
 }
 
