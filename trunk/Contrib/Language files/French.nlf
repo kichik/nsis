@@ -2,9 +2,7 @@
 NLF v2
 # Language ID
 1036
-# Start editing here
-# from french NSIS team - http://www.winampfr.com/nsis - veekee@winampfr.com
-# updated by Sébastien Delahaye <seb@delahaye.net>
+# Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis. Updated by Sébastien Delahaye <seb@delahaye.net>.
 Nullsoft Install System %s
 Installation de %s
 Désinstallation de %s

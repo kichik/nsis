@@ -2,8 +2,7 @@
 NLF v2
 # Language ID
 1051
-# Start editing here
-# Slovak translation by trace
+# Translation by trace
 Nullsoft Install System %s
 Inštalácia %s
 Odinštalácia %s
@@ -52,7 +51,7 @@ Chyba pri registrácii DLL
 ExecShell: 
 Spúšam: 
 Extrahujem: 
-Extrahujem: chyba pri zápise súboru
+Extrahujem: chyba pri zápise súboru 
 Chybná inštalácia: nesprávny opcode
 iadny OLE pre: 
 Vıstupnı adresár: 
