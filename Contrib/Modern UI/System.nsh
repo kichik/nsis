@@ -312,6 +312,8 @@ Var MUI_TEMP2
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
+	
+	!insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "RTL" "$(^RTL)"
     
     !ifdef MUI_SPECIALBITMAP_NOSTRETCH
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Flags" ""
