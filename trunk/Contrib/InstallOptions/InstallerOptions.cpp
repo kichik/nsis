@@ -390,6 +390,9 @@ bool SaveSettings(void) {
           FREE(pszItem);
           break;
         }
+      case FIELD_LABEL:
+        *pszBuffer=0;
+        break;
       default:
         {
           int nLength = SendMessage(pFields[nIdx].hwnd, WM_GETTEXTLENGTH, 0, 0);
