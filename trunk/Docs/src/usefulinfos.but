@@ -20,21 +20,15 @@ When building with precompiled exehead .h files, you should set the USE_PRECOMPI
 
 Like other applications installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
 
-Normal installers:
-
 \b 0 - Normal execution (no error)
 
-\b 1 - Installation aborted by user
+\b 1 - Installation aborted by user (cancel button)
 
 \b 2 - Installation aborted by script
 
-Silent installers:
+As of NSIS 2.01, you can set the error level to other values using \R{seterrorlevel}{SetErrorLevel}.
 
-\b 0 - Normal execution (no error)
-
-\b 1 - Installation aborted by user
-
-\b 1 - Installation aborted by script
+All of the above information applies both to installers and uninstallers.
 
 \H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 

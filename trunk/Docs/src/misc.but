@@ -1,5 +1,11 @@
 \S1{miscinst} Miscellaneous Instructions
 
+\S2{geterrorlevel} GetErrorLevel
+
+\c user_var(error level output)
+
+Returns the last error level set by \R{seterrorlevel}{SetErrorLevel} or -1 if it was never used.
+
 \S2{getinstdirerror} GetInstDirError
 
 \c user_var(error output)
@@ -15,6 +21,12 @@ Use in the leave function of a directory page. Reads the flag set if '\R{adirver
 \S2{initpluginsdir} InitPluginsDir
 
 Initializes the plugins dir (\R{varconstant}{$PLUGINSDIR}) if not already initialized.
+
+\S2{seterrorlevel} SetErrorLevel
+
+\c error_level
+
+Sets the error level of the installer or uninstaller to \e{error_level}. See \R{errorlevels}{Error Levels} for more information.
 
 \S2{setshellvarcontext} SetShellVarContext
 
