@@ -436,7 +436,7 @@
   Push ${MUI_TEMP1}
   
     StrCpy ${MUI_TEMP1} ${MUI_STARTMENUPAGE_VARIABLE} 1
-    StrCmp ${MUI_TEMP1} ">" no_startmenu_shortcuts
+    StrCmp ${MUI_TEMP1} ">" mui.startmenu_write_done
 
   Pop ${MUI_TEMP1}
   
@@ -452,7 +452,28 @@
     WriteRegStr "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}" "${MUI_STARTMENUPAGE_VARIABLE}"
   !endif
 
-  no_startmenu_shortcuts:
+  mui.startmenu_write_done:
+  
+  !verbose 4
+
+!macroend
+
+!macro MUI_STARTMENU_DELETE_BEGIN VAR
+
+  !verbose 3
+  
+    ReadRegStr "${VAR}" "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
+    StrCmp "${VAR}" "" mui.startmenu_delete_done
+  
+  !verbose 4
+
+!macroend
+
+!macro MUI_STARTMENU_DELETE_END
+
+  !verbose 3
+  
+  mui.startmenu_delete_done:
   
   !verbose 4
 
@@ -506,6 +527,33 @@
     WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
   !endif
   
+!macroend
+
+!macro MUI_UNGETLANGUAGE
+
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+
+  Push ${MUI_TEMP1}
+  
+    ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
+    
+    StrCmp ${MUI_TEMP1} "" 0 mui.ungetlanguage_setlang
+      !insertmacro MUI_LANGDLL_DISPLAY
+      Goto mui.ungetlanguage_done
+  
+    mui.ungetlanguage_setlang:
+      StrCpy $LANGUAGE ${MUI_TEMP1}
+  
+    mui.ungetlanguage_done:
+    
+  Pop ${MUI_TEMP1}
+  
+  !ifndef MUI_MANUALVERBOSE
+    !verbose 4
+  !endif
+
 !macroend
 
 ;--------------------------------
