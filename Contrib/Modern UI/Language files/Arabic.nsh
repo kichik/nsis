@@ -19,7 +19,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "√Œ — «·⁄‰«’— ·· ‰’Ì»"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "√Œ — «·„Ì“ «·„—«œ  ‰’Ì»Â« „‰ ${MUI_PRODUCT}."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "√Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»…° À„ √÷€ÿ «· «·Ì · ﬂ„·… «· ‰’Ì»"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "√Œ — «·⁄‰«’— «·„—«œ  ‰’Ì»Â« Ê √“· «·⁄‰«’— «·€Ì— „—€Ê»…° À„ √÷€ÿ «· «·Ì · ﬂ„·… «· ‰’Ì»"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "«·Ê’›"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "√‘— »›√—ﬂ ⁄·Ï √Õœ «·⁄‰«’— ·„⁄—›… „Ì“ Â √Ê Ê’›Â"
   
@@ -31,8 +31,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Ìı‰’¯ˆ»˛"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "«·—Ã«¡ «·«‰ Ÿ«— ·ÕÌ‰  ‰’Ì» ${MUI_PRODUCT}."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "«·Õ„œ··Â  „ »‰Ã«Õ"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "«·Õ„œ··Â  „ »‰Ã«Õ"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» ${MUI_PRODUCT}ø"
   

@@ -19,7 +19,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Seleziona i componenti"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Seleziona i componenti che vuoi installare."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "Seleziona i componenti che vuoi installare e deseleziona i componenti che non vuoi installare. Per continuare clicca su Sucessivo."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Seleziona i componenti che vuoi installare e deseleziona i componenti che non vuoi installare. Per continuare clicca su Sucessivo."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descrizione"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Per leggere una descrizione più approfondita dei componenti posiziona il puntatore del mouse sul componente di tuo interesse."
   
@@ -31,8 +31,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Installazione in corso"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Per favore attendi che ${MUI_PRODUCT} sia completamente installato."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "Installazione completata"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "L'installazione è stata completata con successo."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Installazione completata"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "L'installazione è stata completata con successo."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Sei sicuro di voler terminare l'installazione di ${MUI_PRODUCT} ?"
 
