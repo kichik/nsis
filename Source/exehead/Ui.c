@@ -85,7 +85,7 @@ static int m_page=-1,m_abort,m_retcode,m_delta=1;
 
 static void NSISCALL outernotify(char num) {
   if (num==NOTIFY_BYE_BYE)
-    g_quit_flag=1;
+    g_quit_flag++;
   m_delta=num;
   SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0); // it sends num again for plugins - DON'T REMOVE!
 }
@@ -297,6 +297,7 @@ lang_again:
 
 int NSISCALL ui_doinstall(void)
 {
+  common_header *inst_cmnheader=g_inst_cmnheader;
   static WNDCLASS wc; // richedit subclassing and bgbg creation
   g_flags.autoclose=inst_flags&CH_FLAGS_AUTO_CLOSE;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -361,7 +362,7 @@ int NSISCALL ui_doinstall(void)
   // Multilingual support
   {
     extern char *g_db_strtab;
-    language_tables=(void*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
+    language_tables=(void*)(g_db_strtab+inst_cmnheader->num_string_bytes);
 
     myitoa(state_language, GetUserDefaultLangID());
     set_language();
@@ -375,7 +376,7 @@ int NSISCALL ui_doinstall(void)
     g_hIcon=LoadImage(g_hInstance,MAKEINTRESOURCE(IDI_ICON2),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_SHARED);
     m_bgwnd=0;
 #ifdef NSIS_SUPPORT_BGBG
-    if (g_inst_cmnheader->bg_color1 != -1)
+    if (inst_cmnheader->bg_color1 != -1)
     {
       RECT vp;
       extern int bg_color1, bg_color2, bg_textcolor;
@@ -388,9 +389,9 @@ int NSISCALL ui_doinstall(void)
 
       if (!RegisterClass(&wc)) return 0;
 
-      bg_color1=g_inst_cmnheader->bg_color1;
-      bg_color2=g_inst_cmnheader->bg_color2;
-      bg_textcolor=g_inst_cmnheader->bg_textcolor;
+      bg_color1=inst_cmnheader->bg_color1;
+      bg_color2=inst_cmnheader->bg_color2;
+      bg_textcolor=inst_cmnheader->bg_textcolor;
 
       SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
@@ -401,7 +402,7 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=m_bgwnd;
     // Select language
-    if (ExecuteCodeSegment(g_inst_cmnheader->code_onInit,NULL)) return 1;
+    if (ExecuteCodeSegment(inst_cmnheader->code_onInit,NULL)) return 1;
     set_language();
     g_hwnd=NULL;
     ShowWindow(m_bgwnd, SW_SHOW);
@@ -438,18 +439,18 @@ int NSISCALL ui_doinstall(void)
 #endif
   {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    if (ExecuteCodeSegment(g_inst_cmnheader->code_onInit,NULL)) return 1;
+    if (ExecuteCodeSegment(inst_cmnheader->code_onInit,NULL)) return 1;
     set_language();
 #endif//NSIS_SUPPORT_CODECALLBACKS
     if (install_thread(NULL))
     {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-      if (!g_quit_flag) ExecuteCodeSegment(g_inst_cmnheader->code_onInstFailed,NULL);
+      if (!g_quit_flag) ExecuteCodeSegment(inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
       return 1;
     }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    ExecuteCodeSegment(g_inst_cmnheader->code_onInstSuccess,NULL);
+    ExecuteCodeSegment(inst_cmnheader->code_onInstSuccess,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
     return 0;

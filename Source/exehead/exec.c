@@ -192,7 +192,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("detailprint: %s",buf3);
         update_status_text(buf3,"");
       }
-    return 0;
+    break;
     case EW_SLEEP:
       {
         int x=process_string_fromparm_toint(0);
@@ -200,18 +200,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf2("Sleep(%d)",x);
         Sleep(x);
       }
-    return 0;
+    break;
     case EW_BRINGTOFRONT:
       log_printf("BringToFront");
       SetForegroundWindow(g_hwnd);
-    return 0;
+    break;
     case EW_SETFLAG:
       g_flags.flags[parm0]=parm1;
-    return 0;
+    break;
     case EW_CHDETAILSVIEW:
       if (insthwndbutton) ShowWindow(insthwndbutton,parm1);
       if (insthwnd) ShowWindow(insthwnd,parm0);
-    return 0;
+    break;
     case EW_SETFILEATTRIBUTES: {
       char *buf1=process_string_fromparm_tobuf(-0x10);
       log_printf3("SetFileAttributes: \"%s\":%08X",buf1,parm1);
@@ -221,7 +221,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf("SetFileAttributes failed.");
       }
     }
-    return 0;
+    break;
     case EW_CREATEDIR: {
       char *buf1=process_string_fromparm_tobuf(-0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
@@ -248,7 +248,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             }
 
           }
-          else return 0;
+          else break;
           while (c)
           {
             while (*p != '\\' && *p) p=CharNext(p);
@@ -262,7 +262,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
       }
     }
-    return 0;
+    break;
     case EW_IFFILEEXISTS:
     {
       char *buf0=process_string_fromparm_tobuf(0x00);
@@ -316,7 +316,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_RENAME
 #ifdef NSIS_SUPPORT_FNUTIL
     case EW_GETFULLPATHNAME:
@@ -344,7 +344,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         if (!parm2) GetShortPathName(p,p,NSIS_MAX_STRLEN);
       }
-    return 0;
+    break;
     case EW_SEARCHPATH:
       {
         char *fp;
@@ -356,17 +356,20 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           p[0]=0;
         }
       }
-    return 0;
+    break;
     case EW_GETTEMPFILENAME:
       {
         char *textout=var0;
-        if (!GetTempFileName(temp_directory,"nst",0,textout))
+        int n=100;
+        while (n--)
         {
-          g_flags.exec_error++;
-          *textout=0;
+          if (GetTempFileName(temp_directory,"nst",0,textout))
+            return 0;
         }
+        g_flags.exec_error++;
+        *textout=0;
       }
-    return 0;
+    break;
 #endif
 #ifdef NSIS_SUPPORT_FILE
     case EW_EXTRACTFILE:
@@ -407,7 +410,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             update_status_text_from_lang(LANG_SKIPPED,buf3);
             if (overwriteflag==2) g_flags.exec_error++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf0,overwriteflag);
-            return 0;
+            break;
           }
           log_printf2("File: error creating \"%s\"",buf0);
           mystrcpy(buf2,g_usrvars[0]);//save $0
@@ -459,7 +462,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
         #undef overwriteflag
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_FILE
 #ifdef NSIS_SUPPORT_DELETE
     case EW_DELETEFILE:
@@ -508,7 +511,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 			    FindClose(h);
     		}
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_DELETE
 #ifdef NSIS_SUPPORT_MESSAGEBOX
     case EW_MESSAGEBOX: // MessageBox
@@ -530,7 +533,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else g_flags.exec_error++;
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_MESSAGEBOX
 #ifdef NSIS_SUPPORT_RMDIR
     case EW_RMDIR:
@@ -543,14 +546,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         doRMDir(buf0,parm1);
         if (file_exists(buf0) && parm1!=2) g_flags.exec_error++;
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_RMDIR
 #ifdef NSIS_SUPPORT_STROPTS
     case EW_STRLEN: {
       char *buf0=process_string_fromparm_tobuf(0x01);
       myitoa(var0,mystrlen(buf0));
     }
-    return 0;
+    break;
     case EW_ASSIGNVAR:
       {
         int newlen=process_string_fromparm_toint(2);
@@ -577,7 +580,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
       }
-    return 0;
+    break;
     case EW_STRCMP: {
       char *buf2=process_string_fromparm_tobuf(0x20);
       char *buf3=process_string_fromparm_tobuf(0x31);
@@ -604,7 +607,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         p[NSIS_MAX_STRLEN-1]=0;
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_ENVIRONMENT
 #ifdef NSIS_SUPPORT_INTOPTS
     case EW_INTCMP:
@@ -646,14 +649,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         myitoa(p,v);
       }
-    return 0;
+    break;
     case EW_INTFMT: {
       char *buf0=process_string_fromparm_tobuf(0x01);
       wsprintf(var0,
                buf0,
                process_string_fromparm_toint(2));
     }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_INTOPTS
 #ifdef NSIS_SUPPORT_STACK
     case EW_PUSHPOP:
@@ -666,7 +669,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!s)
           {
             log_printf2("Exch: stack < %d elements",parm2);
-            break;
+            my_MessageBox(LANG_STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
+            return EXEC_ERROR;
           }
           mystrcpy(buf0,s->text);
           mystrcpy(s->text,g_st->text);
@@ -678,7 +682,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             log_printf("Pop: stack empty");
             g_flags.exec_error++;
-            return 0;
+            break;
           }
           mystrcpy(var0,s->text);
           g_st=s->next;
@@ -692,7 +696,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           g_st=s;
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_STACK
 #ifdef NSIS_SUPPORT_HWNDS
     case EW_FINDWINDOW:
@@ -722,7 +726,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (parm0>=0)
           myitoa(var0,v);
       }
-    return 0;
+    break;
     case EW_ISWINDOW:
         if (IsWindow((HWND)process_string_fromparm_toint(0))) return parm1;
     return parm2;
@@ -735,14 +739,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           process_string_fromparm_toint(2)
         )
       );
-    return 0;
+    break;
     case EW_GETWINTEXT:
       my_GetWindowText(
         (HWND)process_string_fromparm_toint(1),
         var0,
         NSIS_MAX_STRLEN
       );
-    return 0;
+    break;
     case EW_SETBKCOLOR:
     {
       DeleteObject(
@@ -754,7 +758,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         )
       );
     }
-    return 0;
+    break;
     case EW_SETBRANDINGIMAGE:
     {
       RECT r;
@@ -777,7 +781,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         (LPARAM)hImage
       );
     }
-    return 0;
+    break;
     case EW_CREATEFONT:
     {
       static LOGFONT f;
@@ -790,11 +794,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       process_string_fromtab(f.lfFaceName,parm1);
       myitoa(var0,(int)CreateFontIndirect(&f));
     }
-    return 0;
+    break;
     case EW_SHOWWINDOW:
       if (parm2) log_printf("HideWindow");
       ShowWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
-    return 0;
+    break;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #endif//NSIS_SUPPORT_HWNDS
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
@@ -817,7 +821,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           log_printf4("ExecShell: success (\"%s\": file:\"%s\" params:\"%s\")",buf0,buf1,buf2);
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_SHELLEXECUTE
 #ifdef NSIS_SUPPORT_EXECUTE
     case EW_EXECUTE:
@@ -854,7 +858,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           log_printf2("Exec: failed createprocess (\"%s\")",buf0);
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_EXECUTE
 #ifdef NSIS_SUPPORT_GETFILETIME
     case EW_GETFILETIME:
@@ -879,7 +883,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           g_flags.exec_error++;
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_GETFILETIME
 #ifdef NSIS_SUPPORT_GETDLLVERSION
     case EW_GETDLLVERSION:
@@ -912,7 +916,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
       }
-      return 0;
+      break;
 #endif//NSIS_SUPPORT_GETDLLVERSION
 #ifdef NSIS_SUPPORT_ACTIVEXREG
     case EW_REGISTERDLL:
@@ -971,7 +975,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           log_printf("Error registering DLL: Could not initialize OLE");
         }
       }
-    return 0;
+    break;
 #endif
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
     case EW_CREATESHORTCUT: {
@@ -1033,7 +1037,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         update_status_text_from_lang(LANG_CREATESHORTCUT,buf2);
       }
     }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_CREATESHORTCUT
 #ifdef NSIS_SUPPORT_COPYFILES
     case EW_COPYFILES: // CopyFile (added by NOP)
@@ -1062,10 +1066,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           g_flags.exec_error++;
 			  }
     	}
-		return 0;
+		break;
 #endif//NSIS_SUPPORT_COPYFILES
 #ifdef NSIS_SUPPORT_REBOOT
     case EW_REBOOT:
+      if (parm0!=0xbadf00d)
+      {
+        my_MessageBox(LANG_STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
+        return EXEC_ERROR;
+      }
       g_flags.exec_error++;
       {
         HANDLE h=LoadLibrary("advapi32.dll");
@@ -1091,11 +1100,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
 
-        if (ExitWindowsEx(EWX_REBOOT,0)) ExitProcess(0);
+        if (ExitWindowsEx(EWX_REBOOT,0))
+        {
+          g_quit_flag++;
+          PostQuitMessage(0);
+          return EXEC_ERROR;
+        }
 
         FreeLibrary(h);
-
-        return 0;
       }
     break;
     case EW_IFREBOOTFLAG: return entry_->offsets[!g_flags.exec_reboot];
@@ -1124,7 +1136,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf5("WriteINIStr: wrote [%s] %s=%s in %s",buf0,buf1,buf2,buf3);
         if (!WritePrivateProfileString(sec,key,str,buf3)) g_flags.exec_error++;
       }
-    return 0;
+    break;
     case EW_READINISTR:
       {
         const char *errstr="!N~";
@@ -1139,7 +1151,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           p[0]=0;
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_INIFILES
 #ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
     case EW_DELREG:
@@ -1164,7 +1176,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (myRegDeleteKeyEx((HKEY)rootkey,buf3,parm3&2) == ERROR_SUCCESS) g_flags.exec_error--;
         }
       }
-    return 0;
+    break;
     case EW_WRITEREG: // write registry value
       {
         HKEY hKey;
@@ -1202,7 +1214,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf3); }
       }
-    return 0;
+    break;
     case EW_READREGSTR: // read registry string
       {
         HKEY hKey;
@@ -1235,7 +1247,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else g_flags.exec_error++;
      }
-    return 0;
+    break;
     case EW_REGENUM:
       {
         HKEY key;
@@ -1254,7 +1266,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         else g_flags.exec_error++;
       }
 
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case EW_FCLOSE:
@@ -1262,7 +1274,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *t=var0;
         if (*t) CloseHandle((HANDLE)myatoi(t));
       }
-    return 0;
+    break;
     case EW_FOPEN:
       {
         HANDLE h;
@@ -1279,7 +1291,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           myitoa(handleout,(int)h);
         }
       }
-    return 0;
+    break;
     case EW_FPUTS:
       {
         DWORD dw;
@@ -1299,7 +1311,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           g_flags.exec_error++;
         }
       }
-    return 0;
+    break;
     case EW_FGETS:
       {
         char *textout=var1;
@@ -1307,7 +1319,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rpos=0;
         char *hptr=var0;
         int maxlen=process_string_fromparm_toint(2);
-        if (maxlen<1) return 0;
+        if (maxlen<1) break;
         if (maxlen > NSIS_MAX_STRLEN-1) maxlen=NSIS_MAX_STRLEN-1;
         if (*hptr)
         {
@@ -1337,7 +1349,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         textout[rpos]=0;
         if (!rpos) g_flags.exec_error++;
       }
-    return 0;
+    break;
     case EW_FSEEK:
       {
         char *t=var0;
@@ -1351,7 +1363,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_FILEFUNCTIONS
 #ifdef NSIS_SUPPORT_FINDFIRST
     case EW_FINDCLOSE:
@@ -1359,7 +1371,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *t=var0;
         if (*t) FindClose((HANDLE)myatoi(t));
       }
-    return 0;
+    break;
     case EW_FINDNEXT:
       {
         char *textout=var0;
@@ -1376,7 +1388,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
 
       }
-    return 0;
+    break;
     case EW_FINDFIRST:
       {
         char *textout=var1;
@@ -1397,7 +1409,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           mystrcpy(textout,fd.cFileName);
         }
       }
-    return 0;
+    break;
 #endif//NSIS_SUPPORT_FINDFIRST
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     case EW_WRITEUNINSTALLER:
@@ -1463,7 +1475,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         else
           update_status_text_from_lang(LANG_CREATEDUNINST,buf0);
       }
-    return 0;
+    break;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_CONFIG_LOG
     case EW_LOG:
@@ -1479,14 +1491,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf0=process_string_fromparm_tobuf(0x01);
         log_printf2("%s",buf0);
       }
-    return 0;
+    break;
 #endif//NSIS_CONFIG_LOG
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
     case EW_PLUGINCOMMANDPREP:
       // $0 temp plug-ins dir
       if (!*plugins_temp_dir) mystrcpy(plugins_temp_dir,g_usrvars[0]);
-    return 0;
+    break;
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case EW_SECTIONSET:
@@ -1532,9 +1544,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else g_flags.exec_error++;
       }
-    return 0;
+    break;
 #endif//NSIS_CONFIG_COMPONENTPAGE
   }
-  my_MessageBox(LANG_STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
-  return EXEC_ERROR;
+  return 0;
 }
