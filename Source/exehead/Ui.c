@@ -1408,8 +1408,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   //+++If CTRL-C is pressed (yeah I know this has got to be the most stupid
   //+++way to test for this) copy the DetailPrint'd strings to the clipboard.
   if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == LVN_KEYDOWN &&
-     ((VK_CONTROL == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState('C')        == -127) ||
-      ('C'        == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState(VK_CONTROL) == -127)))
+     ((VK_CONTROL == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState('C')        != 0) ||
+      ('C'        == ((NMLVKEYDOWN*)lParam)->wVKey && GetKeyState(VK_CONTROL) != 0)))
   {
     int count = ListView_GetItemCount(insthwnd);
     if (count > 0)
