@@ -61,8 +61,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     if (!IsDialogMessage(g_find.hwndFind, &msg)) {
       if (!TranslateAccelerator(hDialog,haccel,&msg)) {
         if (!IsDialogMessage(hDialog,&msg)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+          TranslateMessage(&msg);
+          DispatchMessage(&msg);
         }
       }
     }
@@ -85,7 +85,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
       g_sdata.submenu = GetSubMenu(g_sdata.menu,1);
-	  CreateToolBar();
+      CreateToolBar();
       InitTooltips(g_sdata.hwnd);
 #ifdef COMPRESSOR_OPTION
       SetCompressor(IDM_DEFAULT);
@@ -204,27 +204,26 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       switch (((NMHDR*)lParam)->code ) {
         case EN_SELCHANGE: 
           SendDlgItemMessage(hwndDlg,IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM) &g_sdata.textrange);
-		  {
-			  BOOL enabled = (g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?FALSE:TRUE);
-			  EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
-			  EnableToolBarButton(IDM_COPY,enabled);
-		  }
+          {
+            BOOL enabled = (g_sdata.textrange.cpMax-g_sdata.textrange.cpMin<=0?FALSE:TRUE);
+            EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,(enabled?MF_ENABLED:MF_GRAYED));
+            EnableToolBarButton(IDM_COPY,enabled);
+          }
 #ifdef COMPRESSOR_OPTION
         case TBN_DROPDOWN:
         {
-            LPNMTOOLBAR pToolBar = (LPNMTOOLBAR) lParam;
-            if(pToolBar->hdr.hwndFrom == g_toolbar.hwnd &&
-               pToolBar->iItem == IDM_COMPRESSOR) {
-                ShowToolbarDropdownMenu();
-                return TBDDRET_DEFAULT;
-            }
-            else {
-                return TBDDRET_NODEFAULT;
-            }
+          LPNMTOOLBAR pToolBar = (LPNMTOOLBAR) lParam;
+          if(pToolBar->hdr.hwndFrom == g_toolbar.hwnd && pToolBar->iItem == IDM_COMPRESSOR) {
+            ShowToolbarDropdownMenu();
+            return TBDDRET_DEFAULT;
+          }
+          else {
+            return TBDDRET_NODEFAULT;
+          }
         }
 #endif
       }
-	  return TRUE;
+      return TRUE;
     case WM_COPYDATA:
     {
       PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
@@ -285,13 +284,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           int rv;
           rv = MessageBox(g_sdata.hwnd,NSISUPDATEPROMPT,"Question",MB_YESNO|MB_ICONQUESTION);
           if(rv == IDYES) {
-		      char pathf[MAX_PATH],*path;
-		      GetModuleFileName(NULL,pathf,sizeof(pathf));
-		      path=my_strrchr(pathf,'\\');
-		      if(path!=NULL) *path=0;
-		      lstrcat(pathf,NSIS_UPDATE);
-              ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL);
-              PostMessage(g_sdata.hwnd,WM_COMMAND, IDM_EXIT, 0);
+            char pathf[MAX_PATH],*path;
+            GetModuleFileName(NULL,pathf,sizeof(pathf));
+            path=my_strrchr(pathf,'\\');
+            if(path!=NULL) *path=0;
+            lstrcat(pathf,NSIS_UPDATE);
+            ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL);
+            PostMessage(g_sdata.hwnd,WM_COMMAND, IDM_EXIT, 0);
           }
           return TRUE;
         }
@@ -332,18 +331,18 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 #ifdef COMPRESSOR_OPTION
         case IDM_COMPRESSOR:
         {
-			switch(g_sdata.compressor) {
-			case COMPRESSOR_DEFAULT:
-				SetCompressor(IDM_ZLIB);
-				break;
-			case COMPRESSOR_ZLIB:
-				SetCompressor(IDM_GZIP);
-				break;
-			case COMPRESSOR_GZIP:
-				SetCompressor(IDM_DEFAULT);
-				break;
-			}
-            return TRUE;
+          switch(g_sdata.compressor) {
+          case COMPRESSOR_DEFAULT:
+            SetCompressor(IDM_ZLIB);
+            break;
+          case COMPRESSOR_ZLIB:
+            SetCompressor(IDM_GZIP);
+            break;
+          case COMPRESSOR_GZIP:
+            SetCompressor(IDM_DEFAULT);
+            break;
+          }
+          return TRUE;
         }
 #endif
         case IDM_CLEARLOG:
@@ -447,7 +446,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         case IDM_DEFAULT:
         case IDM_ZLIB:
         case IDM_GZIP:
-            return SetCompressor(LOWORD(wParam));
+          return SetCompressor(LOWORD(wParam));
 #endif
       }
     }
@@ -564,7 +563,7 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       HFONT bfont = CreateFont(13,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
               OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
               FIXED_PITCH|FF_DONTCARE, "Tahoma");
-       HFONT bfontb = CreateFont(13,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
+      HFONT bfontb = CreateFont(13,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
               OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
               FIXED_PITCH|FF_DONTCARE, "Tahoma");
       HFONT rfont = CreateFont(12,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
@@ -626,7 +625,7 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
       switch (LOWORD(wParam)) {
         case IDOK:
         {
-		  ResetObjects();
+          ResetObjects();
           ResetDefines();
           if(g_sdata.input_script) {
             g_sdata.script_alloced = true;
@@ -734,19 +733,19 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
 BOOL SetCompressor(WORD command)
 {
     switch(command) {
-        case IDM_DEFAULT:
-            g_sdata.compressor = COMPRESSOR_DEFAULT;
-            break;
-        case IDM_ZLIB:
-            g_sdata.compressor = COMPRESSOR_ZLIB;
-            break;
-        case IDM_GZIP:
-            g_sdata.compressor = COMPRESSOR_GZIP;
-            break;
-        default:
-            return FALSE;
+      case IDM_DEFAULT:
+        g_sdata.compressor = COMPRESSOR_DEFAULT;
+        break;
+      case IDM_ZLIB:
+        g_sdata.compressor = COMPRESSOR_ZLIB;
+        break;
+      case IDM_GZIP:
+        g_sdata.compressor = COMPRESSOR_GZIP;
+        break;
+      default:
+        return FALSE;
     }
-	UpdateToolBarCompressorButton();
+    UpdateToolBarCompressorButton();
     CheckMenuItem(g_sdata.menu, IDM_DEFAULT, MF_BYCOMMAND | MF_UNCHECKED);
     CheckMenuItem(g_sdata.menu, IDM_ZLIB, MF_BYCOMMAND | MF_UNCHECKED);
     CheckMenuItem(g_sdata.menu, IDM_GZIP, MF_BYCOMMAND | MF_UNCHECKED);
