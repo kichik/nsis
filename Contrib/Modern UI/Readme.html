@@ -134,17 +134,22 @@ follow these steps:</p>
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
 </pre>
-  <p class="subheader">3. Define settings</p>
+  <p class="subheader">3. Defines</p>
   <p class="text">Use defines to let the Modern UI know what it
   should insert. Most defines (i.e. MUI_WELCOMEPAGE) don't need
-  a value, but others should be used to define a value for the
-  Modern UI (i.e. MUI_FINISHPAGE_RUN):</p>
+  a value, there are true/false settings. Others
+  (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
+  value, the value type is given next to the define name:
+  MUI_FINISHPAGE_RUN [exe_file].
+  When there multiple values or optional flags, put them all
+  between the quotes.</p>
 <pre class="margin">
-!define MUI_WELCOMEPAGE
-!define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe"
+!define MUI_WELCOMEPAGE ;No value
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
+!define MUI_FONTSTYLE_HEADER "700 /ITALIC"
 </pre>
-  <p class="text">All defines are optional. If you don't define
-  a page or option, the page won't use or show it.</p>
+  <p class="text">All defines are optional.</p>
+  <p class="subheader">3a. General settings</p>
   <p class="text"><span class="bold">MUI_WELCOMEPAGE</span><br />
   Show the welcome page. The welcome page is an introduction
   and shows information for the user.</p>
@@ -173,17 +178,17 @@ follow these steps:</p>
 </pre>
   </p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE [variable]</span><br />
   Variable to store the current Start Menu Folder. Default is $9.
   You cannot use this variable in your script (or you should Push/Pop it).e.</p>
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER [folder]</span><br />
   The default Start Menu Folder. Use $(LANGSTRINGNAME) as value is you want
   to use a language string.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_NODISABLE</span><br />
   Do not display the checkbox to disable the creation of Start Menu
   shortcuts.</p>
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT,
-  MUI_STARTMENUPAGE_REGISTRY_KEY, MUI_STARTMENUPAGE_REGISTRY_VALUENAME</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT [root],
+  MUI_STARTMENUPAGE_REGISTRY_KEY [key], MUI_STARTMENUPAGE_REGISTRY_VALUENAME [value_name]</span><br />
   The registry key to store the Start Menu folder. The page will use it to
   remember the users preference. You should also use it in the uninstaller to
   remove the Start Menu folders. Don't forget to remove this key in the
@@ -195,18 +200,18 @@ follow these steps:</p>
   If the reboot flag is set, a page that allows the user to reboot the system
   will be displayed (this option can be disabled).</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN</span><br />
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN [exe_file]</span><br />
   Application which the user can select to run (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS</span><br />
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS [parameters]</span><br />
   Parameters for the application to run. Don't forget to escape double
   quotes in the value (use $\&quot;).</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br />
   Do not check the 'Run program' checkbox by default</p>
   </div>
-  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME</span><br />
-  File which the user can select to view (using a checkbox).
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME [file/url]</span><br />
+  File or website which the user can select to view (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.
   Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
   <div class="margin">
@@ -236,65 +241,67 @@ follow these steps:</p>
   Don't insert UninstPage commands. Use this if you are using custom
   UninstPage commands to add your own pages.</p>
   </div>
-    <p class="subheader">4. Define interface settings (optional)</p>
-  <p class="text">You can also change the settings of the interface by using defines:</p>
-  <pre class="margin">!define MUI_ICON "myicon.ico"</pre>
-  <p class="text">If you don't define a setting, the default will be used.</p>
-  <p class="text">The following settings are available: <i>(default values)</i></p>
-  <p class="text"><span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
+  <p class="subheader">3b. Interface settings</p>
+  <p class="text">If a defualt value is specified after the define name and values, the default will
+  be used when the value has not been defined.</p>
+  <p class="text"><span class="bold">MUI_UI [ui_file]</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
   The interface file with the dialog resources. Change this if you have made your own customized UI.</p>
-  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP, MUI_UI_HEADERBITMAP_RIGHT</span>
+  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP [ui_file], MUI_UI_HEADERBITMAP_RIGHT [ui_file]</span>
   <i>(${NSISDIR}\Contrib\UIs\modern-headerbmp(r).exe)</i><br />
   The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
   the header bitmap.</p>
   <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION, MUI_UI_NODESCRIPTION</span>
   <i>(${NSISDIR}\Contrib\UIs\modern-(small/no)desc.exe)</i><br />
   The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.</p>
-  <p class="text"><span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
+  <p class="text"><span class="bold">MUI_ICON [icon_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
   The icon of the installer.</p>
-  <p class="text"><span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
+  <p class="text"><span class="bold">MUI_UNICON [icon_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
   The icon of the uninstaller.</p>
-  <p class="text"><span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br />
+  <p class="text"><span class="bold">MUI_CHECKBITMAP [bitmap_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br />
   The bitmap with images for the checks of the component select treeview.</p>
-  <p class="text"><span class="bold">MUI_FONT, MUI_FONTSIZE</span> <i>(MS Shell Dlg, 8)</i><br />
+  <p class="text"><span class="bold">MUI_FONT [font_name], MUI_FONTSIZE [font_size]</span> <i>(MS Shell Dlg, 8)</i><br />
   The font for the normal texts.</p>
-  <p class="text"><span class="bold">MUI_FONT_HEADER, MUI_FONTSIZE_HEADER, MUI_FONTSTYLE_HEADER</span>
+  <p class="text"><span class="bold">MUI_FONT_HEADER [font_name], MUI_FONTSIZE_HEADER [font_size], MUI_FONTSTYLE_HEADER
+  [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</span>
   <i>(MS Shell Dlg, 8, 700)</i><br />
-  The font for the title in the header. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
-  <p class="text"><span class="bold">MUI_FONT_TITLE, MUI_FONTSIZE_TITLE, MUI_FONTSTYLE_TITLE</span>
+  The font for the title in the header.</p>
+  <p class="text"><span class="bold">MUI_FONT_TITLE [font_name], MUI_FONTSIZE_TITLE [font_size], MUI_FONTSTYLE_TITLE
+  [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</span>
   <i>(Verdana, 12, 700)</i><br />
-  The font for the title on the Welcome and Finish page. Fontstyle: [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</p>
-  <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br />
-  The colors of the details screen, hexadecimal RRGGBB. (&quot;foreground&quot; &quot;background&quot;)</p>
+  The font for the title on the Welcome and Finish page.</p>
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS [foreground color, RRBBGG] [background color, RRGGBB]</span>
+  <i>(/windows)</i><br />The colors of the details screen. Use /windows instead of the colors to use the Windows
+  colors (the default).</p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br />
   The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for an old-school
   windows look).</p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP</span> <i>(not defined)</i><br />
+  <p class="text"><span class="bold">MUI_HEADERBITMAP [bmp_file]</span> <i>(not defined)</i><br />
   Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57 won't have to be resized.
   An example of a header bitmap is ${NSISDIR}\Contrib\Icons\modern-header.bmp, but can also make one with your own
   logo.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span> <i>(not defined)</i><br />
-  Put the header bitmap on the right side of the header instead of the left side.</p>
+  If you have defines MUI_HEADERBITMAP, define this setting if you want the header image to be displayed on the right
+  side of the header instead of the left side.</p>
   </div>
-  <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br />
+  <p class="text"><span class="bold">MUI_SPECIALINI [ini_file]</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br />
   Install Options INI File for the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br />
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP [bmp_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br />
   Bitmap for the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br />
-  Background color for the header, Welcome page and Finish page, hexadecimal. (0xBBGGRR)</p>
+  <p class="text"><span class="bold">MUI_BGCOLOR [color 0xBBGGRR]</span> <i>(0xFFFFFF)</i><br />
+  Background color for the header, Welcome page and Finish page.</p>
   <p class="text"><span class="bold">MUI_RTL_UI</span> <i>(not defined)</i><br />
   Right-to-left interface.</p>
-  <p class="subheader">6. Define custom functions (optional)</p>
+  <p class="subheader">4. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI, such as the .onGUIInit function and the Page function, create your
   own function and let the Modern UI functions call them..</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
-  <p class="subheader">7. Insert custom pages (optional)</p>
+  <p class="subheader">5. Insert custom pages (optional)</p>
   <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
   or MUI_UNCUSTOMPAGECOMMANDS), insert them before inserting the language files.</p>
   <p class="text"><a href="#customPages">More info...</a></p>
-  <p class="subheader">8. Insert language files</p>
+  <p class="subheader">6. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -324,8 +331,8 @@ FunctionEnd
   and MUI_STARTMENUPAGE_REGISTRY_VALUENAME to set a registry key to store the
   language. You can also use it in the uninstaller to display the right language.
   Don't forget to remove this key in the uninstaller.</p>
-  <p class="subheader">9. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
-  <p class="text">If you are not using a Finish page without defining
+  <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
+  <p class="text">If you are not using a Finish page without
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
   to true, you should insert the MUI_SECTIONS_FINISHHEADER
   after all the sections to display the finish header:</p>
@@ -335,7 +342,7 @@ Uninstall section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
-  <p class="subheader">10. Set the descriptions for the sections</p>
+  <p class="subheader">8. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
   selection page, when the users hovers the mouse over a section.
@@ -356,7 +363,7 @@ Section "Section Name 1" Section1
   ...
 SectionEnd
 </pre>
-<p class="subheader">10. Reserve Files</p>
+<p class="subheader">9. Reserve Files</p>
 <p class="text">If you are using BZIP2 compression, you might need to
 insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
@@ -369,14 +376,14 @@ For the normal Modern UI pages, insert one of the PAGECOMMAND macro's:</p>
 !insertmacro MUI_PAGECOMMAND_LICENSE
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
 !insertmacro MUI_PAGECOMMAND_DIRECTORY
-Page custom FunctionName ;A custom page
+Page custom FunctionName ;Custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 !insertmacro MUI_PAGECOMMAND_FINISH
 </pre>
 <p class="text">For the uninstaller:</p>
 <pre class="margin">
 !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-UninstPage custom un.FunctionName ;A custom page
+UninstPage custom un.FunctionName ;Custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
@@ -492,10 +499,18 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
   <p class="text">To modify the Welcome and Finish dialog, edit the Install
   Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.</p>
 <p class="header">Customize Modern UI Functions</p>
-<a name="customFunctions"><p class="text">If you want add your own code to functions inserted by the
-Modern UI, such as the .onGUIInit function and the Page function, create your
-own function and let the Modern UI functions call them. Use these
-defines to define the name of your functions:</p>
+<a name="customFunctions"><p class="text">If you want add your own code to functions
+inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
+create your own function and let the Modern UI functions call them. Use the defines
+to define the name of your functions.</p>
+<p class="text">Example:</p>
+<pre class="text">
+!define MUI_CUSTOMFUNCTION_ONGUIINIT myGuiInit
+
+Function myGUIInit
+  ...your own code...
+FunctionEnd
+</pre>
 <p class="text">
 <span class="bold">GUI Init</span><br>
 MUI_CUSTOMFUNCTION_GUIINIT<br>
@@ -557,14 +572,6 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br>
 MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br>
 MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
-<p class="text">Example:</p>
-<pre class="text">
-!define MUI_CUSTOMFUNCTION_ONGUIINIT myGuiInit
-
-Function .myGUIInit
-  ...your own code...
-FunctionEnd
-</pre>
 <p class="header">Version history</p>
 <ul>
 <li>1.63 - March 9, 2003
