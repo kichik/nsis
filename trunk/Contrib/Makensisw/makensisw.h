@@ -38,7 +38,7 @@
 #define REGKEY		"Software\\NSIS"
 #define REGLOC		"MakeNSISWPlacement"
 #define MAX_STRING	256
-#define TIMEOUT		800
+#define TIMEOUT		150
 #define MINWIDTH	350
 #define MINHEIGHT	180
 
