@@ -396,7 +396,6 @@ nextPage:
 
     m_page+=m_delta;
     this_page+=m_delta;
-    g_this_page=this_page;
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     if (m_page==g_blocks[NB_PAGES].num) ExecuteCodeSegment(g_header->code_onInstSuccess,NULL);
@@ -451,6 +450,9 @@ nextPage:
         else SetFocus(m_hwndOK); // without focus button, the system Beeps every time user press one key
         return 0;
       }
+
+      // update g_this_page for the dialog proc
+      g_this_page=this_page;
 
       if (this_page->dlg_id > 0) // NSIS page
       {
