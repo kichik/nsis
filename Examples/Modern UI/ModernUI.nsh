@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.18
+;Modern UI Header File version 1.19
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -59,12 +59,14 @@
 
 !macro MUI_INNERDIALOG_STOP PAGE
 
+  Goto done
   done_${PAGE}:
   
 !macroend
 
 !macro MUI_INNERDIALOG_END
 
+  done:
   Pop ${TEMP2}
   Pop ${TEMP1}
 
@@ -111,11 +113,11 @@
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
 
-  Call SetHeader
+  Call SetPage
   
 !macroend
 
-!macro MUI_HEADER_INIT
+!macro MUI_PAGE_INIT
 
   Push ${TEMP1}
   Push ${TEMP2}
@@ -125,7 +127,7 @@
   
 !macroend
 
-!macro MUI_HEADER_START PAGE
+!macro MUI_PAGE_START PAGE
 
    StrCmp ${CURRENTPAGE} ${PAGE} "" done_${PAGE}
   
@@ -135,20 +137,20 @@
 
   ;Text on the white rectangle
 
-  StrCmp $LANGUAGE ${LANGID} "" +4
+  StrCmp $LANGUAGE ${LANGID} "" +3
     SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     SendMessage ${TEMP2} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
-    Goto done
 
 !macroend
 
-!macro MUI_HEADER_STOP PAGE
+!macro MUI_PAGE_STOP PAGE
 
+  Goto done
   done_${PAGE}:
   
 !macroend
 
-!macro MUI_HEADER_END
+!macro MUI_PAGE_END
   
   done:
   
