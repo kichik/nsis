@@ -49,7 +49,8 @@ void NSISCALL doRMDir(char *buf, int recurse);
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd);
 int NSISCALL validpathspec(char *ubuf);
 char * NSISCALL addtrailingslash(char *str);
-char NSISCALL lastchar(const char *str);
+//char NSISCALL lastchar(const char *str);
+#define lastchar(str) *CharPrev(str,str+mystrlen(str))
 void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL scanendslash(const char *str);
 int NSISCALL is_valid_instpath(char *s);

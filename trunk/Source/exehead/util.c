@@ -103,10 +103,10 @@ char *NSISCALL addtrailingslash(char *str)
   return str;
 }
 
-char NSISCALL lastchar(const char *str)
+/*char NSISCALL lastchar(const char *str)
 {
   return *CharPrev(str,str+mystrlen(str));
-}
+}*/
 
 void NSISCALL trimslashtoend(char *buf)
 {
