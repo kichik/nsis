@@ -315,18 +315,14 @@ typedef struct
 #define SF_EXPAND     32
 #define SF_PSELECTED  64
 
-typedef union
+typedef struct
 {
-  struct
-  {
-    int name_ptr; // '' for non-optional components
-    int install_types; // bits set for each of the different install_types, if any.
-    int flags; // SF_* - defined above
-    int code;
-    int code_size;
-    int size_kb;
-  };
-  int fields[1];
+  int name_ptr; // '' for non-optional components
+  int install_types; // bits set for each of the different install_types, if any.
+  int flags; // SF_* - defined above
+  int code;
+  int code_size;
+  int size_kb;
 } section;
 
 #define SECTION_OFFSET(field) (FIELD_OFFSET(section, field)/sizeof(int))
@@ -395,6 +391,7 @@ typedef struct
   int parms[5];
 } page;
 
+// text/bg color
 #define CC_TEXT 1
 #define CC_TEXT_SYS 2
 #define CC_BK 4
@@ -409,6 +406,42 @@ typedef struct {
   int bkmode;
   int flags;
 } ctlcolors;
+
+// $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
+// Added by ramon 3 jun 2003
+#define NS_SKIP_CODE 252
+#define NS_VAR_CODE 253
+#define NS_SHELL_CODE 254
+#define NS_LANG_CODE 255
+#define NS_CODES_START NS_SKIP_CODE
+
+#define CODE_SHORT(x) (WORD)((((WORD)x & 0x7F) | (((WORD)x & 0x3F80) << 1) | 0x8080))
+#define MAX_CODED 16383
+
+#define NSIS_INSTDIR_INVALID 1
+#define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
+
+typedef struct
+{
+  int autoclose;
+  int all_user_var;
+  int exec_error;
+  int abort;
+#ifdef NSIS_SUPPORT_REBOOT
+  int exec_reboot;
+#endif
+  int cur_insttype;
+  int insttype_changed;
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+  int silent;
+#endif
+  int instdir_error;
+  int rtl;
+} exec_flags;
+
+#define FIELDN(x, y) (((int *)&x)[y])
+
+#ifdef EXEHEAD
 
 // the following are only used/implemented in exehead, not makensis.
 
@@ -431,41 +464,6 @@ extern int g_quit_flag;
 BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead);
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove);
 
-// $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
-// Added by ramon 3 jun 2003
-#define NS_SKIP_CODE 252
-#define NS_VAR_CODE 253
-#define NS_SHELL_CODE 254
-#define NS_LANG_CODE 255
-#define NS_CODES_START NS_SKIP_CODE
-
-#define CODE_SHORT(x) (WORD)((((WORD)x & 0x7F) | (((WORD)x & 0x3F80) << 1) | 0x8080))
-#define MAX_CODED 16383
-
-#define NSIS_INSTDIR_INVALID 1
-#define NSIS_INSTDIR_NOT_ENOUGH_SPACE 2
-
-union exec_flags {
-  struct {
-    int autoclose;
-    int all_user_var;
-    int exec_error;
-    int abort;
-#ifdef NSIS_SUPPORT_REBOOT
-    int exec_reboot;
-#endif
-    int cur_insttype;
-    int insttype_changed;
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-    int silent;
-#endif
-    int instdir_error;
-    int rtl;
-  };
-  int flags[1];
-};
-
-#ifdef EXEHEAD
 extern struct block_header g_blocks[BLOCKS_NUM];
 extern header *g_header;
 extern int g_flags;

@@ -1,7 +1,7 @@
 #ifndef _BUILD_H_
 #define _BUILD_H_
 
-#include <StdExcept>
+#include <stdexcept>
 
 using namespace std;
 
@@ -18,9 +18,8 @@ using namespace std;
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
 // Added by Sunil Kamath 11 June 2003
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#  include <time.h>
+#  include <sys/stat.h>
 #endif
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -33,7 +32,7 @@ using namespace std;
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-#include "Plugins.h"
+#  include "Plugins.h"
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -48,7 +47,7 @@ extern "C"
 #define PS_ERROR 50
 #define PS_WARNING 100
 
-enum {
+enum notify_e {
   MAKENSIS_NOTIFY_SCRIPT,
   MAKENSIS_NOTIFY_WARNING,
   MAKENSIS_NOTIFY_ERROR,
@@ -66,6 +65,7 @@ enum {
 class CEXEBuild {
   public:
     CEXEBuild();
+    void CEXEBuild::setdirs(char *argv0);
     ~CEXEBuild();
 
     // to add a warning to the compiler's warning list.
@@ -104,8 +104,12 @@ class CEXEBuild {
     char *curfilename;
     FILE *fp;
 
+#ifdef _WIN32
     HWND notify_hwnd;
-    void notify(int code, char *data);
+    void notify(notify_e code, char *data);
+#else
+    void notify(notify_e code, char *data) { }
+#endif
 
   private:
     // tokens.cpp

@@ -3,12 +3,18 @@
 
 #include "Plugins.h"
 #include "Platform.h"
-#include <WinNT.h>
+#include "util.h"
 
+#ifdef _WIN32
+#  include <WinNT.h>
+#else
+#  include <sys/stat.h>
+#  include <glob.h>
+#endif
 
 extern FILE *g_output;
 
-void Plugins::FindCommands(char* path,bool displayInfo)
+void Plugins::FindCommands(char* path, bool displayInfo)
 {
   if (path)
   {
@@ -16,11 +22,8 @@ void Plugins::FindCommands(char* path,bool displayInfo)
 
     if (length > 0)
     {
-      WIN32_FIND_DATA data;
-      HANDLE handle;
-      
-      if (path[length-1] == '\\' ||
-          path[length-1] == '/')
+      char *lc = CharPrev(path, path + strlen(path));
+      if (*lc == '\\' || *lc == '/')
       {
         length--;
       }
@@ -31,21 +34,49 @@ void Plugins::FindCommands(char* path,bool displayInfo)
 
       char* pathAndWildcard = new char [length+7];
       strcpy(pathAndWildcard,basePath);
-      strcat(pathAndWildcard,"\\*.dll");
+      strcat(pathAndWildcard,PATH_SEPARATOR_STR "*.dll");
+
+#ifdef _WIN32
+      WIN32_FIND_DATA data;
+      HANDLE handle;
 
       handle = FindFirstFile(pathAndWildcard,&data);
       if (handle != INVALID_HANDLE_VALUE)
       {
         do
+#else
+      glob_t globbuf;
+      globbuf.gl_offs = 0;
+      globbuf.gl_pathc = 0;
+      if (!glob(pathAndWildcard, 0, NULL, &globbuf))
+      {
+        struct stat s;
+        for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
+        {
+          if (stat(globbuf.gl_pathv[i], &s) || !S_ISREG(s.st_mode))
+            continue;
+#endif
+#ifdef _WIN32
         {
           char* dllPath = new char [length+strlen(data.cFileName)+2];
-          wsprintf(dllPath,"%s\\%s",basePath,data.cFileName);
+          wsprintf(dllPath,"%s" PATH_SEPARATOR_STR "%s",basePath,data.cFileName);
+#else
+          char *dllPath = new char [strlen(globbuf.gl_pathv[i])+1];
+          strcpy(dllPath,globbuf.gl_pathv[i]);
+#endif
           GetExports(dllPath,displayInfo);
           delete[] dllPath;
-        } while (FindNextFile(handle,&data));
+        }
+#ifdef _WIN32
+        while (FindNextFile(handle,&data));
+#else
+        globfree(&globbuf);
+#endif
       }
 
+#ifdef _WIN32
       delete[] pathAndWildcard;
+#endif
       delete[] basePath;
     }
   }
@@ -58,24 +89,19 @@ void Plugins::GetExports(char* pathToDll, bool displayInfo)
     unsigned char* dlldata    = 0;
     long           dlldatalen = 0;
     bool           loaded     = false;
-    char           dllName[100];
-    char           signature[256];
+    char           dllName[1024];
+    char           signature[1024];
 
     dllName[0] = 0;
-    char* ptr = strrchr(pathToDll,'\\');
+    char* ptr = strrchr(pathToDll,PATH_SEPARATOR_C);
     if (ptr && *ptr && *(ptr+1)) strcpy(dllName,ptr+1);
 
     // find .dll
-    char *dllName2 = strdup(dllName);
-    for (ptr = dllName2; *ptr; ptr = CharNext(ptr))
+    int len = strlen(dllName);
+    if (len > 4 && !stricmp(dllName + len - 4, ".dll"))
     {
-      if (!strcmpi(ptr, ".dll"))
-      {
-        *(dllName + (ptr - dllName2)) = 0;
-        break;
-      }
+      dllName[len - 4] = 0;
     }
-    free(dllName2);
 
     FILE* dll = fopen(pathToDll,"rb");
     if (dll)

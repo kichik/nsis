@@ -4,7 +4,7 @@
  */
 
 
-#include "deflate.h"
+#include "DEFLATE.H"
 
 const char deflate_copyright[] =
    " deflate 1.1.3 Copyright 1995-1998 Jean-loup Gailly ";
@@ -728,7 +728,7 @@ local void fill_window(s)
             s->ins_h = s->window[s->strstart];
             UPDATE_HASH(s, s->ins_h, s->window[s->strstart+1]);
 #if MIN_MATCH != 3
-            Call UPDATE_HASH() MIN_MATCH-3 more times
+#  error Call UPDATE_HASH() MIN_MATCH-3 more times
 #endif
         }
 

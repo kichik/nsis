@@ -1,6 +1,9 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#ifndef _WIN32
+#  include <iconv.h>
+#endif
 #include "ResourceEditor.h"
 
 // these are the standard pause-before-quit shit.
@@ -21,9 +24,22 @@ unsigned char* generate_uninstall_icon_data(char* filename);
 int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-// Returns dialog's raw data from a given loaded module
-BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename);
+// returns the number of WCHARs in str including null charcter
+int WCStrLen(const WCHAR* szwStr);
+
+#ifndef _WIN32
+char *CharPrev(const char *s, const char *p);
+char *CharNext(const char *s);
+int wsprintf(char *s, const char *format, ...);
+// iconv const inconsistency workaround by Alexandre Oliva
+template <typename T>
+inline size_t __iconv_adaptor
+  (size_t (*iconv_func)(iconv_t, T, size_t *, char**,size_t*),
+  iconv_t cd, char **inbuf, size_t *inbytesleft,
+  char **outbuf, size_t *outbytesleft)
+{
+  return iconv_func (cd, (T)inbuf, inbytesleft, outbuf, outbytesleft);
+}
 #endif
 
 #endif //_UTIL_H_

@@ -7,7 +7,7 @@
 #ifndef _DEFLATE_H
 #define _DEFLATE_H
 
-#include "zutil.h"
+#include "ZUTIL.H"
 
 /* ===========================================================================
  * Internal compression state.

@@ -9,10 +9,29 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "exehead/config.h"
 #ifdef NSIS_SUPPORT_VERSION_INFO
 
-#include <algorithm>
-using namespace std;
+#include "Platform.h"
+#include "strlist.h"
+#ifndef _WIN32
+// all definitions for non Win32 platforms were taken from MinGW's free Win32 library
+typedef struct tagVS_FIXEDFILEINFO {
+	DWORD dwSignature;
+	DWORD dwStrucVersion;
+	DWORD dwFileVersionMS;
+	DWORD dwFileVersionLS;
+	DWORD dwProductVersionMS;
+	DWORD dwProductVersionLS;
+	DWORD dwFileFlagsMask;
+	DWORD dwFileFlags;
+	DWORD dwFileOS;
+	DWORD dwFileType;
+	DWORD dwFileSubtype;
+	DWORD dwFileDateMS;
+	DWORD dwFileDateLS;
+} VS_FIXEDFILEINFO;
+#endif
 
 struct version_string_list {
   int codepage;

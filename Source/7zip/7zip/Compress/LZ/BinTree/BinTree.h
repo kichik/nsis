@@ -15,7 +15,8 @@ namespace BT_NAMESPACE {
 
 #ifdef __USE_3_BYTES
 
-#pragma pack(push, PragmaBinTree, 1)
+//#pragma pack(push, PragmaBinTree, 1)
+#pragma pack(1)
 
 struct CIndex
 {
@@ -31,7 +32,8 @@ struct CIndex
 };
 const UINT32 kMaxValForNormalize = CIndex(-1);
 
-#pragma pack(pop, PragmaBinTree)
+//#pragma pack(pop, PragmaBinTree)
+#pragma pack()
 
 #else
 
@@ -54,7 +56,8 @@ const UINT32 kMaxValForNormalize = (UINT32(1) << 31) - 1;
 
 // #endif
 
-#pragma pack(push, PragmaBinTreePair, 1)
+//#pragma pack(push, PragmaBinTreePair, 1)
+#pragma pack(1)
 // #pragma pack(push, 1)
 
 struct CPair
@@ -64,7 +67,8 @@ struct CPair
 };
 
 // #pragma pack(pop)
-#pragma pack(pop, PragmaBinTreePair)
+//#pragma pack(pop, PragmaBinTreePair)
+#pragma pack()
 
 class CInTree: public CLZInWindow
 {

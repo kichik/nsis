@@ -2,11 +2,13 @@
 
 // #include "StdAfx.h"
 
-#ifndef INITGUID
-#define INITGUID
+#ifdef WIN32
+#  include <objbase.h>
+#  include <initguid.h>
 #endif
-#include <objbase.h>
-#include <initguid.h>
+
 #include "../Platform.h"
+
+#define INITGUID
 #include "7zip/ICoder.h"
 #include "7zip/Compress/LZ/IMatchFinder.h"

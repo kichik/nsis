@@ -4,9 +4,8 @@
 #include "state.h"
 #include "config.h"
 #include "lang.h"
-#include "exec.h"
-
 #include "fileform.h"
+#include "exec.h"
 #include "ui.h"
 
 #ifdef NSIS_CONFIG_LOG

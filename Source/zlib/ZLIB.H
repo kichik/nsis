@@ -42,8 +42,8 @@
 #ifndef _ZLIB_H
 #define _ZLIB_H
 
-#include "zconf.h"
-#include "zutil.h"
+#include "ZCONF.H"
+#include "ZUTIL.H"
 
 #ifdef __cplusplus
 extern "C" {

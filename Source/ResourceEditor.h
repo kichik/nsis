@@ -27,17 +27,61 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#ifdef RESOURCE_EDITOR_NOT_API
-
 #include "Platform.h"
-#include <WinNT.h>
-#include <Time.h>
-#include <Vector>
-#include <Queue>
+#include <vector>
+#ifdef _WIN32
+#  include <WinNT.h>
+#else
+// all definitions for non Win32 platforms were taken from MinGW's free Win32 library
+#  define IMAGE_DIRECTORY_ENTRY_RESOURCE	2
+#  define IMAGE_SCN_MEM_DISCARDABLE 0x2000000
+#  pragma pack(4)
+typedef struct _IMAGE_RESOURCE_DIRECTORY {
+	DWORD Characteristics;
+	DWORD TimeDateStamp;
+	WORD MajorVersion;
+	WORD MinorVersion;
+	WORD NumberOfNamedEntries;
+	WORD NumberOfIdEntries;
+} IMAGE_RESOURCE_DIRECTORY,*PIMAGE_RESOURCE_DIRECTORY;
+typedef struct _IMAGE_RESOURCE_DATA_ENTRY {
+	DWORD OffsetToData;
+	DWORD Size;
+	DWORD CodePage;
+	DWORD Reserved;
+} IMAGE_RESOURCE_DATA_ENTRY,*PIMAGE_RESOURCE_DATA_ENTRY;
+typedef struct _IMAGE_RESOURCE_DIRECTORY_STRING {
+	WORD Length;
+	CHAR NameString[1];
+} IMAGE_RESOURCE_DIRECTORY_STRING,*PIMAGE_RESOURCE_DIRECTORY_STRING;
+typedef struct _IMAGE_RESOURCE_DIR_STRING_U {
+	WORD Length;
+	WCHAR NameString[1];
+} IMAGE_RESOURCE_DIR_STRING_U,*PIMAGE_RESOURCE_DIR_STRING_U;
+#endif
 
-#endif // #ifdef RESOURCE_EDITOR_NOT_API
+#pragma pack(4)
+typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
+	union {
+		struct {
+			DWORD NameOffset:31;
+			DWORD NameIsString:1;
+		} NameString;
+		DWORD Name;
+		WORD Id;
+	};
+	union {
+		DWORD OffsetToData;
+		struct {
+			DWORD OffsetToDirectory:31;
+			DWORD DataIsDirectory:1;
+		} DirectoryOffset;
+	};
+} MY_IMAGE_RESOURCE_DIRECTORY_ENTRY,*PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY;
 
-#include <StdExcept>
+#pragma pack()
+
+#include <stdexcept>
 using namespace std;
 
 class CResourceDirectory;
@@ -47,7 +91,7 @@ class CResourceDataEntry;
 // Resource directory with entries
 typedef struct RESOURCE_DIRECTORY {
   IMAGE_RESOURCE_DIRECTORY Header;
-  IMAGE_RESOURCE_DIRECTORY_ENTRY Entries[1];
+  MY_IMAGE_RESOURCE_DIRECTORY_ENTRY Entries[1];
 } *PRESOURCE_DIRECTORY;
 
 class CResourceEditor {
@@ -82,8 +126,6 @@ private:
   void WriteRsrcSec(BYTE* pbRsrcSec);
   void SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt);
 };
-
-#ifdef RESOURCE_EDITOR_NOT_API
 
 class CResourceDirectory {
 public:
@@ -163,7 +205,5 @@ private:
   DWORD m_dwSize;
   DWORD m_dwCodePage;
 };
-
-#endif // #ifdef RESOURCE_EDITOR_NOT_API
 
 #endif // !defined(AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_)

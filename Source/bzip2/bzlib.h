@@ -71,7 +71,7 @@ extern "C" {
 #endif
 
 #include "../exehead/config.h"
-#include <windows.h>
+#include "../Platform.h"
 
 #define BZ_RUN               0
 #define BZ_FLUSH             1
@@ -129,8 +129,8 @@ typedef unsigned short  UInt16;
 
 #ifndef EXEHEAD
 
-#define BZALLOC(items) GlobalAlloc(GPTR,items)
-#define BZFREE(addr)  { if (addr) GlobalFree(addr); }
+#define BZALLOC(items) malloc(items)
+#define BZFREE(addr)  { if (addr) free(addr); }
 #define mini_memcpy memcpy
 
 typedef struct {

@@ -1,9 +1,6 @@
 #include "Platform.h"
 #include <stdio.h>
-#include <shlobj.h>
-#define _RICHEDIT_VER 0x0200
-#include <RichEdit.h>
-#undef _RICHEDIT_VER
+#include <ctype.h>
 #include "tokens.h"
 #include "build.h"
 #include "util.h"
@@ -12,6 +9,12 @@
 #include "DialogTemplate.h"
 #include "lang.h"
 #include "exehead/resource.h"
+
+#ifndef _WIN32
+#  include <sys/stat.h>
+#  include <time.h>
+#  include <glob.h>
+#endif
 
 #define MAX_INCLUDEDEPTH 10
 #define MAX_LINELENGTH 4096
@@ -56,6 +59,7 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
   }
 
   char timestampbuf[256] = "";
+#ifdef _WIN32
   char datebuf[128] = "";
   char timebuf[128] = "";
   WIN32_FIND_DATA fd;
@@ -76,6 +80,17 @@ char *CEXEBuild::set_timestamp_predefine(char *filename)
 
     definedlist.add("__TIMESTAMP__",timestampbuf);
   }
+#else
+  struct stat st;
+  if (!stat(filename, &st))
+  {
+    ctime_r(&st.st_mtime, timestampbuf);
+    char *p = timestampbuf + strlen(timestampbuf);
+    while (!*p || *p == '\n')
+      *p-- = 0;
+    definedlist.add("__TIMESTAMP__",timestampbuf);
+  }
+#endif
 
   return oldtimestamp;
 }
@@ -92,8 +107,8 @@ void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
 char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
 {
   char* linebuf = NULL;
-  char temp[8] = "";
-  wsprintf(temp,"%d",linecnt);
+  char temp[128] = "";
+  sprintf(temp,"%d",linecnt);
 
   char *oldline = definedlist.find("__LINE__");
   if(oldline) {
@@ -102,7 +117,7 @@ char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
   }
   if(is_macro && oldline) {
     linebuf = (char *)malloc(strlen(oldline)+strlen(temp)+2);
-    wsprintf(linebuf,"%s.%s",oldline,temp);
+    sprintf(linebuf,"%s.%s",oldline,temp);
   }
   else {
     linebuf = strdup(temp);
@@ -126,23 +141,30 @@ void CEXEBuild::set_date_time_predefines()
 {
   time_t etime;
   struct tm * ltime;
-  SYSTEMTIME stime;
-  char datebuf[32];
-  char timebuf[32];
+  char datebuf[128];
+  char timebuf[128];
 
   time(&etime);
   ltime = localtime(&etime);
+#ifdef _WIN32
+  SYSTEMTIME stime;
   stime.wYear = ltime->tm_year+1900;
   stime.wMonth = ltime->tm_mon + 1;
   stime.wDay = ltime->tm_mday;
-  stime.wHour= ltime->tm_hour; 
-  stime.wMinute= ltime->tm_min; 
-  stime.wSecond= ltime->tm_sec; 
-  stime.wMilliseconds= 0; 
-  GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
+  stime.wHour= ltime->tm_hour;
+  stime.wMinute= ltime->tm_min;
+  stime.wSecond= ltime->tm_sec;
+  stime.wMilliseconds= 0;
+  GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stime, NULL, datebuf, sizeof(datebuf));
   definedlist.add("__DATE__",(char *)datebuf);
-  GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
+  GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf));
   definedlist.add("__TIME__",(char *)timebuf);
+#else
+  strftime(datebuf, sizeof(datebuf), "%x", ltime);
+  definedlist.add("__DATE__",(char *)datebuf);
+  strftime(timebuf, sizeof(timebuf), "%X", ltime);
+  definedlist.add("__TIME__",(char *)timebuf);
+#endif
 }
 
 void CEXEBuild::del_date_time_predefines()
@@ -841,7 +863,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char *p=str;
           str[0]=0;
           fgets(str,MAX_LINELENGTH,fp);
-          //SCRIPT_MSG("%s%s", str, str[lstrlen(str)-1]=='\n'?"":"\n");
+          //SCRIPT_MSG("%s%s", str, str[strlen(str)-1]=='\n'?"":"\n");
           if (feof(fp) && !str[0])
           {
             ERROR_MSG("!macro \"%s\": unterminated (no !macroend found in file)!\n",line.gettoken_str(1));
@@ -1892,7 +1914,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG);
           if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
           CDialogTemplate dt(dlg,uDefCodePage);
           free(dlg);
@@ -1908,7 +1930,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           DWORD dwSize;
           dlg = dt.Save(dwSize);
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG, dlg, dwSize);
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
@@ -2076,7 +2098,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
         init_res_editor();
         const char *szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
-        res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
+        res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), NSIS_DEFAULT_LANG, (unsigned char*)szXPManifest, k ? 0 : strlen(szXPManifest));
       }
       catch (exception& err) {
         ERROR_MSG("Error while adding XP style: %s\n", err.what());
@@ -2089,32 +2111,47 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0IDD_LICENSE_FSRB\0IDD_LICENSE_FSCB\0");
         if (k<0) PRINTHELP();
 
-        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
-        if (!hUIFile) {
-          ERROR_MSG("Error: Can't find \"%s\" in \"%s\"!\n", line.gettoken_str(1), line.gettoken_str(2));
+        FILE *fui = fopen(line.gettoken_str(2), "rb");
+        if (!fui) {
+          ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
         }
+
+        fseek(fui, 0, SEEK_END);
+        unsigned int len = ftell(fui);
+        fseek(fui, 0, SEEK_SET);
+        LPBYTE ui = (LPBYTE) malloc(len);
+        if (!ui) {
+          ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", len);
+          extern void quit(); quit();
+        }
+        if (fread(ui, 1, len, fui) != len) {
+          fclose(fui);
+          free(ui);
+          ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(2));
+          return PS_ERROR;
+        }
+        fclose(fui);
+
+        CResourceEditor *uire = new CResourceEditor(ui, len);
 
         init_res_editor();
 
         // Search for required items
-        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return PS_ERROR;}
-        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+        #define GET(x) dlg = uire->GetResource(RT_DIALOG, MAKEINTRESOURCE(x), 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);delete [] dlg;free(ui);delete uire;return PS_ERROR;}
+        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
-        BYTE* dlg = 0;
+        LPBYTE dlg = NULL;
 
         if (k == 0 || k == 1) {
-          dlg = get_dlg(hUIFile, IDD_LICENSE, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_LICENSE);
           SEARCH(IDC_EDIT1);
           SAVE(IDD_LICENSE);
         }
 
         if (k == 0 || k == 2) {
-          dlg = get_dlg(hUIFile, IDD_DIR, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_DIR);
           SEARCH(IDC_DIR);
           SEARCH(IDC_BROWSE);
 #ifdef NSIS_CONFIG_LOG
@@ -2124,18 +2161,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         if (k == 0 || k == 3) {
-          dlg = get_dlg(hUIFile, IDD_SELCOM, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_SELCOM);
           SEARCH(IDC_TREE1);
           SEARCH(IDC_COMBO1);
           SAVE(IDD_SELCOM);
         }
 
         if (k == 0 || k == 4) {
-          dlg = get_dlg(hUIFile, IDD_INST, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_INST);
           SEARCH(IDC_BACK);
           SEARCH(IDC_CHILDRECT);
           SEARCH(IDC_VERSTR);
@@ -2161,9 +2194,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         if (k == 0 || k == 5) {
-          dlg = get_dlg(hUIFile, IDD_INSTFILES, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_INSTFILES);
           SEARCH(IDC_LIST1);
           SEARCH(IDC_PROGRESS);
           SEARCH(IDC_SHOWDETAILS);
@@ -2171,27 +2202,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         if (k == 0 || k == 6) {
-          dlg = get_dlg(hUIFile, IDD_UNINST, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_UNINST);
           SEARCH(IDC_EDIT1);
           SAVE(IDD_UNINST);
         }
 
         if (k == 0 || k == 7) {
-          dlg = get_dlg(hUIFile, IDD_VERIFY, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_VERIFY);
           SEARCH(IDC_STR);
-          // No RTL here, pure English goes here.
-          //SAVE(IDD_VERIFY);
-          res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+          SAVE(IDD_VERIFY);
         }
 
         if (k == 0 || k == 8) {
-          dlg = get_dlg(hUIFile, IDD_LICENSE_FSRB, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_LICENSE_FSRB);
           SEARCH(IDC_EDIT1);
           SEARCH(IDC_LICENSEAGREE);
           SEARCH(IDC_LICENSEDISAGREE);
@@ -2199,17 +2222,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         if (k == 0 || k == 9) {
-          dlg = get_dlg(hUIFile, IDD_LICENSE_FSCB, line.gettoken_str(2));
-          if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          GET(IDD_LICENSE_FSCB);
           SEARCH(IDC_EDIT1);
           SEARCH(IDC_LICENSEAGREE);
           SAVE(IDD_LICENSE_FSCB);
         }
 
-        if (!FreeLibrary(hUIFile)) {
-          ERROR_MSG("can't free library!\n");
-        }
+        delete uire;
+        free(ui);
 
         SCRIPT_MSG("ChangeUI: %s %s%s\n", line.gettoken_str(1), line.gettoken_str(2), branding_image_found?" (branding image holder found)":"");
       }
@@ -2219,6 +2239,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_ADDBRANDINGIMAGE:
+#ifdef _WIN32
       try {
         int k=line.gettoken_enum(1,"top\0left\0bottom\0right\0");
         int wh=line.gettoken_int(2);
@@ -2228,7 +2249,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           padding = line.gettoken_int(3);
 
         init_res_editor();
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
 
         CDialogTemplate dt(dlg,uDefCodePage);
         delete [] dlg;
@@ -2275,7 +2296,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         DWORD dwDlgSize;
         dlg = dt.Save(dwDlgSize);
 
-        res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwDlgSize);
+        res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, dlg, dwDlgSize);
 
         res_editor->FreeResource(dlg);
 
@@ -2290,6 +2311,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
     return PS_OK;
+#else
+      ERROR_MSG("Error: AddBrandingImage is disabled for non Win32 platforms.\n");
+    return PS_ERROR;
+#endif
     case TOK_SETFONT:
     {
       if (!strnicmp(line.gettoken_str(1), "/LANG=", 6))
@@ -2498,15 +2523,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_INCLUDE:
       {
-        WIN32_FIND_DATA fd;
         char *f = line.gettoken_str(1);
+        int included = 0;
+#ifdef _WIN32
+        WIN32_FIND_DATA fd;
         unsigned int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
+        
         char *incfile = (char *) malloc(malloced);
 
-        int included = 0;
-
         strcpy(incfile, f);
-        char *slash = strrchr(incfile, '\\');
+        char *slash = strrchr(incfile, PATH_SEPARATOR_C);
 
         HANDLE search = FindFirstFile(f, &fd);
         if (search != INVALID_HANDLE_VALUE)
@@ -2519,11 +2545,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               incfile[0] = 0;
             strcat(incfile, fd.cFileName);
             if (includeScript(incfile) != PS_OK)
+#else
+        unsigned int malloced = strlen(f) + 100;
+        char *incfile = (char *) malloc(malloced);
+        glob_t globbuf;
+        if (!glob(incfile, GLOB_NOSORT, NULL, &globbuf))
+        {
+          for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
+          {
+            if (includeScript(globbuf.gl_pathv[i]) != PS_OK)
+#endif
               return PS_ERROR;
             included++;
           }
+#ifdef _WIN32
           while (FindNextFile(search, &fd));
           FindClose(search);
+#else
+          globfree(&globbuf);
+#endif
         }
         else
         {
@@ -2538,11 +2578,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
               incfile = (char *) malloc(malloced);
             }
             strcpy(incfile, dir);
-            if (*f != '\\')
-              strcat(incfile, "\\");
+            if (*f != PATH_SEPARATOR_C)
+              strcat(incfile, PATH_SEPARATOR_STR);
             strcat(incfile, f);
-            slash = strrchr(incfile, '\\');
-            
+#ifdef _WIN32
+            slash = strrchr(incfile, PATH_SEPARATOR_C);
+
             search = FindFirstFile(incfile, &fd);
             if (search != INVALID_HANDLE_VALUE)
             {
@@ -2553,12 +2594,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
                 else
                   incfile[0] = 0;
                 strcat(incfile, fd.cFileName);
+
                 if (includeScript(incfile) != PS_OK)
+#else
+            if (!glob(incfile, GLOB_NOSORT, NULL, &globbuf))
+            {
+              for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
+              {
+                if (includeScript(globbuf.gl_pathv[i]) != PS_OK)
+#endif
                   return PS_ERROR;
                 included++;
               }
+#ifdef _WIN32
               while (FindNextFile(search, &fd));
               FindClose(search);
+#else
+              globfree(&globbuf);
+#endif
               break;
             }
             else
@@ -2578,7 +2631,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_P_CD:
+#ifdef _WIN32
       if (!line.gettoken_str(1)[0] || !SetCurrentDirectory(line.gettoken_str(1)))
+#else
+      if (!line.gettoken_str(1)[0] || chdir(line.gettoken_str(1)))
+#endif
       {
         ERROR_MSG("!cd: error changing to: \"%s\"\n",line.gettoken_str(1));
         return PS_ERROR;
@@ -2996,10 +3053,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens()!=a+1 && !trim) PRINTHELP();
         if (line.getnumtokens()==a+1)
           SetInnerString(NLF_BRANDING,line.gettoken_str(a));
+#ifdef _WIN32
         if (trim) try {
           init_res_editor();
 
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG);
           CDialogTemplate td(dlg,uDefCodePage);
           free(dlg);
 
@@ -3007,7 +3065,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             char str[512];
             extern const char *NSIS_VERSION;
             if (line.getnumtokens()==a+1 && line.gettoken_str(a)[0])
-              lstrcpy(str, line.gettoken_str(a));
+              strcpy(str, line.gettoken_str(a));
             else
               wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
 
@@ -3020,13 +3078,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           DWORD dwSize;
           dlg = td.Save(dwSize);
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), NSIS_DEFAULT_LANG, dlg, dwSize);
           res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
           ERROR_MSG("Error while triming branding text control: %s\n", err.what());
           return PS_ERROR;
         }
+#else
+        if (trim)
+        {
+          ERROR_MSG("Error: BrandingText /TRIM* disabled for non Win32 platforms.\n");
+          return PS_ERROR;
+        }
+#endif
         SCRIPT_MSG("BrandingText: \"%s\"\n",line.gettoken_str(a));
       }
     return PS_OK;
@@ -3041,7 +3106,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_SPACETEXTS:
       {
-        if (!lstrcmpi(line.gettoken_str(1), "none")) {
+        if (!strcmpi(line.gettoken_str(1), "none")) {
           no_space_texts=true;
           SCRIPT_MSG("SpaceTexts: none\n");
         }
@@ -3221,8 +3286,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[3]=SW_SHOWNORMAL;
       if (line.getnumtokens() > 4)
       {
-        int tab[3]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED};
-        int a=line.gettoken_enum(4,"SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0");
+        int tab[4]={SW_SHOWNORMAL,SW_SHOWMAXIMIZED,SW_SHOWMINIMIZED,SW_HIDE};
+        int a=line.gettoken_enum(4,"SW_SHOWNORMAL\0SW_SHOWMAXIMIZED\0SW_SHOWMINIMIZED\0SW_HIDE\0");
         if (a < 0) PRINTHELP()
         ent.offsets[3]=tab[a];
       }
@@ -3651,15 +3716,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (int i = 3; i < line.getnumtokens(); i++) {
           char *tok=line.gettoken_str(i);
           if (tok[0]=='/') {
-            if (!lstrcmpi(tok,"/ITALIC")) {
+            if (!strcmpi(tok,"/ITALIC")) {
               SCRIPT_MSG(" /ITALIC");
               flags|=1;
             }
-            else if (!lstrcmpi(tok,"/UNDERLINE")) {
+            else if (!strcmpi(tok,"/UNDERLINE")) {
               SCRIPT_MSG(" /UNDERLINE");
               flags|=2;
             }
-            else if (!lstrcmpi(tok,"/STRIKE")) {
+            else if (!strcmpi(tok,"/STRIKE")) {
               SCRIPT_MSG(" /STRIKE");
               flags|=4;
             }
@@ -4120,6 +4185,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
+#ifdef _WIN32
         char buf[128];
         DWORD low=0, high=0;
         DWORD s,d;
@@ -4127,7 +4193,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int alloced=0;
         char *path=line.gettoken_str(1);
         if (!((*path == '\\' && path[1] == '\\') || (*path && path[1] == ':'))) {
-          size_t pathlen=lstrlen(path)+GetCurrentDirectory(0, buf)+2;
+          size_t pathlen=strlen(path)+GetCurrentDirectory(0, buf)+2;
           char *nrpath=(char *)malloc(pathlen);
           alloced=1;
           GetCurrentDirectory(pathlen, nrpath);
@@ -4193,12 +4259,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ent.offsets[0]<0) PRINTHELP()
         SCRIPT_MSG("GetDLLVersionLocal: %s (%u,%u)->(%s,%s)\n",
           line.gettoken_str(1),high,low,line.gettoken_str(2),line.gettoken_str(3));
+#else
+        ERROR_MSG("Error: GetDLLVersionLocal is disabled for non Win32 platforms.\n");
+        return PS_ERROR;
+#endif
       }
     return add_entry(&ent);
     case TOK_GETFILETIMELOCAL:
       {
         char buf[129];
         DWORD high=0,low=0;
+#ifdef _WIN32
         int flag=0;
         HANDLE hFile=CreateFile(line.gettoken_str(1),0,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
         if (hFile != INVALID_HANDLE_VALUE)
@@ -4217,6 +4288,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("GetFileTimeLocal: error reading date from \"%s\"\n",line.gettoken_str(1));
           return PS_ERROR;
         }
+#else
+        struct stat st;
+        if (!stat(line.gettoken_str(1), &st))
+        {
+          union
+          {
+            struct
+            {
+              long l;
+              long h;
+            } words;
+            long long ll;
+          };
+          ll = (st.st_mtime * 10000000) + 116444736000000000LL;
+          high = words.h;
+          low = words.l;
+        }
+        else
+        {
+          ERROR_MSG("GetFileTimeLocal: error reading date from \"%s\"\n",line.gettoken_str(1));
+          return PS_ERROR;
+        }
+#endif
 
         ent.which=EW_ASSIGNVAR;
         ent.offsets[0]=GetUserVarIndex(line, 2);
@@ -5153,7 +5247,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         int i = 1;
         int nounload = 0;
-        if (!lstrcmpi(line.gettoken_str(i), "/NOUNLOAD")) {
+        if (!strcmpi(line.gettoken_str(i), "/NOUNLOAD")) {
           i++;
           nounload++;
         }
@@ -5166,7 +5260,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           int w=parmst + (line.getnumtokens()-i - 1);
           ent.which=EW_PUSHPOP;
           ent.offsets[0]=add_string(line.gettoken_str(w));
-          if (!lstrcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
+          if (!strcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
           ent.offsets[1]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) {
@@ -5257,15 +5351,25 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 {
   char dir[1024];
   char newfn[1024];
+#ifdef _WIN32
   HANDLE h;
   WIN32_FIND_DATA d;
+#else
+  glob_t globbuf;
+#endif
   strcpy(dir,lgss);
   {
     char *s=dir+strlen(dir);
-    while (s > dir && *s != '\\') s=CharPrev(dir,s);
+    while (s > dir && *s != PATH_SEPARATOR_C) s=CharPrev(dir,s);
     *s=0;
+    if (!*dir)
+    {
+      dir[0] = '.';
+      dir[1] = 0;
+    }
   }
 
+#ifdef _WIN32
   h = FindFirstFile(lgss,&d);
   if (h != INVALID_HANDLE_VALUE)
   {
@@ -5273,12 +5377,29 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     {
       if ((d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
       {
+#else
+  glob(lgss, GLOB_NOSORT, NULL, &globbuf);
+  {
+    for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
+    {
+      struct stat s;
+      if (!stat(globbuf.gl_pathv[i], &s) && S_ISREG(s.st_mode))
+      {
+        char *filename = strrchr(globbuf.gl_pathv[i], PATH_SEPARATOR_C);
+        if (filename)
+          filename++;
+        else
+          filename = globbuf.gl_pathv[i];
+#endif
         MMapFile mmap;
-        HANDLE hFile;
         DWORD len;
         (*total_files)++;
-        sprintf(newfn,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
-        hFile=CreateFile(
+
+#ifdef _WIN32
+        HANDLE hFile;
+        
+        sprintf(newfn,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",d.cFileName);
+        hFile = CreateFile(
           newfn,
           GENERIC_READ,
           FILE_SHARE_READ,
@@ -5289,21 +5410,49 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         );
         if (hFile == INVALID_HANDLE_VALUE)
         {
+          FindClose(h);
           ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
         len = GetFileSize(hFile, NULL);
         if (len && !mmap.setfile(hFile, len))
         {
+          FindClose(h);
           CloseHandle(hFile);
           ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
+#else
+        int fd;
+
+        sprintf(newfn,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",filename);
+        len = (DWORD) s.st_size;
+
+        fd = open(newfn, O_RDONLY);
+        if (fd == -1)
+        {
+          globfree(&globbuf);
+          ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
+          return PS_ERROR;
+        }
+        if (len && !mmap.setfile(fd, len))
+        {
+          globfree(&globbuf);
+          close(fd);
+          ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
+          return PS_ERROR;
+        }
+#endif
 
         if (generatecode&1)
           section_add_size_kb((len+1023)/1024);
+#ifdef _WIN32
         if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",d.cFileName,name_override);
         else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",d.cFileName);
+#else
+        if (name_override) SCRIPT_MSG("%sFile: \"%s\"->\"%s\"",generatecode?"":"Reserve",filename,name_override);
+        else SCRIPT_MSG("%sFile: \"%s\"",generatecode?"":"Reserve",filename);
+#endif
         if (!build_compress_whole)
           if (build_compress) SCRIPT_MSG(" [compress]");
         fflush(stdout);
@@ -5327,7 +5476,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           }
           else
           {
+#ifdef _WIN32
             char *i=d.cFileName,*o=buf;
+#else
+            char *i=filename,*o=buf;
+#endif
             while (*i)
             {
               char c=*i++;
@@ -5344,7 +5497,13 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         if (ent.offsets[2] < 0)
         {
+#ifdef _WIN32
           CloseHandle(hFile);
+          FindClose(h);
+#else
+          close(fd);
+          globfree(&globbuf);
+#endif
           return PS_ERROR;
         }
 
@@ -5364,6 +5523,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         {
           if (build_datesave || build_overwrite>=0x3 /*ifnewer or ifdiff*/)
           {
+#ifdef _WIN32
             FILETIME ft;
             if (GetFileTime(hFile,NULL,NULL,&ft))
             {
@@ -5373,6 +5533,29 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             else
             {
               CloseHandle(hFile);
+              FindClose(h);
+#else
+            struct stat st;
+            if (!fstat(fd, &st))
+            {
+              union
+              {
+                struct
+                {
+                  long l;
+                  long h;
+                } words;
+                long long ll;
+              };
+              ll = (st.st_mtime * 10000000) + 116444736000000000LL;
+              ent.offsets[3] = words.l;
+              ent.offsets[4] = words.h;
+            }
+            else
+            {
+              close(fd);
+              globfree(&globbuf);
+#endif
               ERROR_MSG("%sFile: failed getting file date from \"%s\"\n",generatecode?"":"Reserve",newfn);
               return PS_ERROR;
             }
@@ -5402,18 +5585,27 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
         }
 
+#ifdef _WIN32
         CloseHandle(hFile);
+#else
+        close(fd);
+#endif
 
         if (generatecode)
         {
           int a=add_entry(&ent);
           if (a != PS_OK)
           {
+#ifdef _WIN32
             FindClose(h);
+#else
+            globfree(&globbuf);
+#endif
             return a;
           }
           if (attrib)
           {
+#ifdef _WIN32
             ent.which=EW_SETFILEATTRIBUTES;
             // $OUTDIR is the working directory
             ent.offsets[0]=add_string(name_override?name_override:buf);
@@ -5429,32 +5621,65 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
               FindClose(h);
               return a;
             }
+#else
+            warning_fl("File /a is disabled for non Win32 platforms.");
+#endif
           }
         }
       }
-    } while (FindNextFile(h,&d));
+    }
+#ifdef _WIN32
+    while (FindNextFile(h,&d));
     FindClose(h);
+#else
+    globfree(&globbuf);
+#endif
   }
 
   if (recurse)
   {
 #ifdef NSIS_SUPPORT_STACK
+#ifdef _WIN32
     WIN32_FIND_DATA temp;
+#endif
 
-    DWORD a=GetFileAttributes(lgss);
+#ifdef _WIN32
     const char *fspec=lgss+strlen(dir)+!!dir[0];
+#else
+    const char *fspec;
+    if (!strcmp(dir,".") && strncmp(lgss,".",1))
+      fspec=lgss;
+    else
+      fspec=lgss+strlen(dir)+!!dir[0];
+#endif
     strcpy(newfn,lgss);
+#ifdef _WIN32
+    DWORD a=GetFileAttributes(lgss);
     if (a==INVALID_FILE_ATTRIBUTES)
     {
       a=GetFileAttributes(dir);
-      sprintf(newfn,"%s%s*.*",dir,dir[0]?"\\":"");
+      sprintf(newfn,"%s%s*.*",dir,dir[0]?PATH_SEPARATOR_STR:"");
     }
+#else
+    int a;
+    struct stat st;
+    if (stat(lgss, &st))
+    {
+      stat(dir, &st);
+      sprintf(newfn,"%s%s*",dir,dir[0]?PATH_SEPARATOR_STR:"");
+    }
+#endif
     else
     {
       // we don't want to include a whole directory if it's not the first call
       if (rec_depth) return PS_OK;
+#ifdef _WIN32
       fspec="*.*";
+#else
+      fspec="*";
+#endif
     }
+#ifdef _WIN32
     if (a&FILE_ATTRIBUTE_DIRECTORY)
     {
       h=FindFirstFile(newfn,&d);
@@ -5466,10 +5691,33 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           {
             if (strcmp(d.cFileName,"..") && strcmp(d.cFileName,"."))
             {
+#else
+    if (S_ISDIR(st.st_mode))
+    {
+      if (!glob(newfn, GLOB_NOSORT, NULL, &globbuf))
+      {
+        for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
+        {
+          struct stat s;
+          if (!stat(globbuf.gl_pathv[i], &s) && S_ISDIR(s.st_mode))
+          {
+            char *dirname = strrchr(globbuf.gl_pathv[i], PATH_SEPARATOR_C);
+            if (dirname)
+              dirname++;
+            else
+              dirname = globbuf.gl_pathv[i];
+            if (strcmp(dirname, "..") && strcmp(dirname, "."))
+            {
+#endif
               char out_path[1024] = "$OUTDIR\\";
 
               {
-                char *i = d.cFileName, *o=out_path+strlen(out_path);
+#ifdef _WIN32
+                char *i = d.cFileName;
+#else
+                char *i = dirname;
+#endif
+                char *o=out_path+strlen(out_path);
 
                 while (*i)
                 {
@@ -5493,35 +5741,58 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
               }
 
               char spec[1024];
-              sprintf(spec,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
+#ifdef _WIN32
+              wsprintf(spec,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",d.cFileName);
+#else
+              wsprintf(spec,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",dirname);
+#endif
               SCRIPT_MSG("%sFile: Descending to: \"%s\"\n",generatecode?"":"Reserve",spec);
-              strcat(spec,"\\");
+              strcat(spec,PATH_SEPARATOR_STR);
               strcat(spec,fspec);
               if (generatecode)
               {
                 a=add_entry_direct(EW_PUSHPOP, add_string("$OUTDIR"));
                 if (a != PS_OK)
                 {
+#ifdef _WIN32
                   FindClose(h);
+#else
+                  globfree(&globbuf);
+#endif
                   return a;
                 }
 
                 a=add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("OUTDIR"), add_string(out_path));
                 if (a != PS_OK)
                 {
+#ifdef _WIN32
                   FindClose(h);
+#else
+                  globfree(&globbuf);
+#endif
                   return a;
                 }
 
+#ifdef _WIN32
                 HANDLE htemp = FindFirstFile(spec,&temp);
                 if (htemp != INVALID_HANDLE_VALUE)
                 {
                   FindClose(htemp);
+#else
+                glob_t globbuf2;
+                glob(spec, GLOB_NOSORT, NULL, &globbuf2);
+                if (globbuf2.gl_pathc)
+                {
+#endif
 
                   a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
                   if (a != PS_OK)
                   {
+#ifdef _WIN32
                     FindClose(h);
+#else
+                    globfree(&globbuf2);
+#endif
                     return a;
                   }
                 }
@@ -5529,7 +5800,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
               a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode,data_handle,rec_depth+1);
               if (a != PS_OK)
               {
+#ifdef _WIN32
                 FindClose(h);
+#else
+                globfree(&globbuf);
+#endif
                 return a;
               }
 
@@ -5538,25 +5813,38 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                 a=add_entry_direct(EW_PUSHPOP, m_UserVarNames.get("OUTDIR"), 1);
                 if (a != PS_OK)
                 {
+#ifdef _WIN32
                   FindClose(h);
+#else
+                  globfree(&globbuf);
+#endif
                   return a;
                 }
 
                 if (attrib)
                 {
+#ifdef _WIN32
                   a=add_entry_direct(EW_SETFILEATTRIBUTES, add_string(out_path), d.dwFileAttributes);
                   if (a != PS_OK)
                   {
                     FindClose(h);
                     return a;
                   }
+#else
+                  warning_fl("File /a is disabled for non Win32 platforms.");
+#endif
                 }
               }
               SCRIPT_MSG("%sFile: Returning to: \"%s\"\n",generatecode?"":"Reserve",dir);
             }
           }
-        } while (FindNextFile(h,&d));
+        }
+#ifdef _WIN32
+        while (FindNextFile(h,&d));
         FindClose(h);
+#else
+        globfree(&globbuf);
+#endif
 
         if (!rec_depth)
         {
@@ -5564,7 +5852,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           a=add_entry_direct(EW_CREATEDIR, add_string("$OUTDIR"), 1);
           if (a != PS_OK)
           {
-            FindClose(h);
             return a;
           }
         }
