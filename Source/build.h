@@ -139,7 +139,7 @@ class CEXEBuild {
     StringTable *GetTable(LANGID &lang);
     int SetString(char *string, int id, int process, WORD lang=0);
     int SetString(char *string, int id, int process, StringTable *table);
-    int SetUserString(char *name, LANGID lang, char *string);
+    int SetUserString(char *name, LANGID lang, char *string, int process=1);
     int WriteStringTables();
     void FillDefaultsIfNeeded(StringTable *table, NLF *nlf=0);
     #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->s):0)
