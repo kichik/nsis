@@ -2,15 +2,15 @@ OBJS = biblio.o bk_xhtml.o contents.o error.o help.o index.o input.o keywords.o 
 LIBS = 
 
 CC	= gcc
-RM	= del
+RM	= rm -f
 DEFINES = -DVERSION="\"1.0 (NSIS Custom Build)\""
-CFLAGS	= -Wall -W $(DEFINES)
+CFLAGS	= -Wall -W $(DEFINES) -mno-cygwin
 LFLAGS	= -s
 
 all : halibut
 
 halibut : $(OBJS)
-	$(CC) $(CFLAGS) $(LFLAGS) -o ..\halibut.exe $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(LFLAGS) -o ../halibut.exe $(OBJS) $(LIBS)
 
 clean ::
 	$(RM) *.o

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include "halibut.h"
 
 /*
@@ -20,7 +21,7 @@ static void do_error(int code, va_list ap)
   char *sp, *sp2;
   wchar_t *wsp;
   filepos fpos, fpos2;
-  int flags;
+  int flags=0;
 
   switch (code)
   {

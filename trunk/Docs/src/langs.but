@@ -4,7 +4,7 @@
 
 \c language_file.nlf
 
-Loads a language file for the construction of a language table. All of the language files that come with NSIS are in \W{../Contrib/Language files}{Contrib\\Language Files}
+Loads a language file for the construction of a language table. All of the language files that come with NSIS are in \L{../Contrib/Language files}{Contrib\\Language Files}
 
 For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language id. Use it with \R{langstring}{LangString}, LangDLL and \R{viaddversionkey}{VIAddVersionKey}.
 
@@ -45,9 +45,9 @@ Does the same as \R{langstring}{LangString} only it loads the string from a text
 
 As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated using \R{langstring}{LangStrings}.
 
-Each installer has one or more language tables which hold references to strings in the strings table. To create a language table all you need to do is use that language. Either use \R{loadlanguagefile}{LoadLanguageFile} or define a \R{langstring}{LangString} and you have built your installer a language table. To make sure all of the inner strings NSIS uses are there you should load a language file using use \R{loadlanguagefile}{LoadLanguageFile}. The strings from the language file will be used as defaults in case you don't define some strings in the script. The language file strings can be used by the script too, not just internally by NSIS. Each string in the language file is assigned to a specific LangString. That LangString's name is listed as a comment just above the string in the English language file for your convenience. The language file is located in \W{../Contrib/Language files}{Contrib\\Language Files}.
+Each installer has one or more language tables which hold references to strings in the strings table. To create a language table all you need to do is use that language. Either use \R{loadlanguagefile}{LoadLanguageFile} or define a \R{langstring}{LangString} and you have built your installer a language table. To make sure all of the inner strings NSIS uses are there you should load a language file using use \R{loadlanguagefile}{LoadLanguageFile}. The strings from the language file will be used as defaults in case you don't define some strings in the script. The language file strings can be used by the script too, not just internally by NSIS. Each string in the language file is assigned to a specific LangString. That LangString's name is listed as a comment just above the string in the English language file for your convenience. The language file is located in \L{../Contrib/Language files}{Contrib\\Language Files}.
 
-For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
+For an example of usage see \L{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{langselection} Language Selection
 
@@ -67,7 +67,7 @@ When the installer starts up it goes through these steps to select the interface
 
 The LangDLL plug-in allows you to give the user an option to choose the language of the installer. Just push the language id ($\{LANG_*\}) and its name for every language in your installer, then the number of languages pushed, the caption, and the text that tells the user to select the language, call the plug-in function named LangDialog, pop the returned value into $LANGUAGE and you're good to go. If the user clicks on the cancel button the return value will be "cancel".
 
-For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
+For an example of usage see \L{../Examples/languages.nsi}{languages.nsi}.
 
 \S1{rtl} RTL Languages
 

@@ -30,7 +30,7 @@ char *ustrtoa(wchar_t * s, char *outbuf, int size)
     return outbuf;
   }
   for (p = outbuf; *s && p < outbuf + size; p++, s++)
-    *p = *s;
+    *p = *(char*)s;
   if (p < outbuf + size)
     *p = '\0';
   else
