@@ -325,14 +325,14 @@ void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
 int NSISCALL myatoi(char *s)
 {
   unsigned int v=0;
-  int sign=0; // sign of positive
+  int sign=1; // sign of positive
   char m=10; // base of 0
   char t='9'; // cap top of numbers at 9
 
   if (*s == '-') 
   { 
     s++;  //skip over -
-    sign++; // sign flip
+    sign=-1; // sign flip
   }
 
   if (*s == '0')
@@ -359,8 +359,7 @@ int NSISCALL myatoi(char *s)
     v*=m;
     v+=c;
   }
-  if (sign) return -(int) v;
-  return (int)v;
+  return ((int)v)*sign;
 }
 
 // Straight copies of selected shell functions.  Calling local functions
