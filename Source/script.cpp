@@ -25,14 +25,18 @@ static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
 
 
-int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
+int CEXEBuild::process_script(FILE *filepointer, char *filename)
 {
+  linecnt = 0;
+  fp = filepointer;
+  curfilename = filename;
+
   if (has_called_write_output)
   {
     ERROR_MSG("Error (process_script): write_output already called, can't continue\n");
     return PS_ERROR;
   }
-  int ret=parseScript(fp,curfilename,lineptr);
+  int ret=parseScript();
   if (ret == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
   if (IS_PS_ELSE(ret)) ERROR_MSG("!else: stray !else\n");
   if (m_linebuild.getlen())
@@ -46,7 +50,7 @@ int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
 #define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
 
 
-int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr)
+int CEXEBuild::doParse(const char *str)
 {
   static int ignore;
   static int last_line_had_slash;
@@ -78,8 +82,8 @@ int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *
 
   if (res)
   {
-    if (res==-2) ERROR_MSG("Error: unterminated string parsing line at %s:%d\n",curfilename,*lineptr);
-    else ERROR_MSG("Error: error parsing line (%s:%d)\n",curfilename,*lineptr);
+    if (res==-2) ERROR_MSG("Error: unterminated string parsing line at %s:%d\n",curfilename,linecnt);
+    else ERROR_MSG("Error: error parsing line (%s:%d)\n",curfilename,linecnt);
     return PS_ERROR;
   }
 
@@ -215,7 +219,7 @@ parse_again:
   }
   if (!ignore)
   {
-    return doCommand(tkid,line,fp,curfilename,lineptr);
+    return doCommand(tkid,line);
   }
   return PS_OK;
 }
@@ -296,7 +300,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
   }
 }
 
-int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr)
+int CEXEBuild::parseScript()
 {
   char str[MAX_LINELENGTH];
 
@@ -305,7 +309,7 @@ int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr)
     char *p=str;
     *p=0;
     fgets(str,MAX_LINELENGTH,fp);
-    (*lineptr)++;
+    linecnt++;
     if (feof(fp)&&!str[0]) break;
 
     // remove trailing whitespace
@@ -318,20 +322,30 @@ int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr)
     GrowBuf linedata;
     ps_addtoline(str,linedata,hist);
     linedata.add((void*)"",1);
-    int ret=doParse((char*)linedata.get(),fp,curfilename,lineptr);
+    int ret=doParse((char*)linedata.get());
     if (ret != PS_OK) return ret;
   }
 
   return PS_EOF;
 }
 
-int CEXEBuild::process_oneline(char *line, char *curfilename, int lineptr)
+int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
 {
+  char *last_filename=curfilename;
+  curfilename=filename;
+  int last_linecnt=linecnt;
+  linecnt=linenum;
+
   StringList hist;
   GrowBuf linedata;
   ps_addtoline(line,linedata,hist);
   linedata.add((void*)"",1);
-  return doParse((char*)linedata.get(),NULL,curfilename,&lineptr);
+  int ret=doParse((char*)linedata.get());
+
+  linecnt=last_linecnt;
+  curfilename=last_filename;
+
+  return ret;
 }
 
 int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
@@ -365,10 +379,8 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
-int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int *lineptr)
+int CEXEBuild::doCommand(int which_token, LineParser &line)
 {
-  int linecnt = *lineptr;
-
   static const char *rootkeys[2] = {
     "HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0",
     "HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0"
@@ -452,7 +464,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           {
             if (!stricmp(l2.gettoken_str(0),"!macroend"))
             {
-              (*lineptr)++;
+              linecnt++;
               break;
             }
             if (!stricmp(l2.gettoken_str(0),"!macro"))
@@ -463,7 +475,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
           if (str[0]) m_macros.add(str,strlen(str)+1);
           else m_macros.add(" ",2);
-          (*lineptr)++;
+          linecnt++;
         }
         m_macros.add("",1);
       }
@@ -2074,15 +2086,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           return PS_ERROR;
         }
         depth++;
-        int lc=0;
-        int r=parseScript(incfp,f,&lc);
+
+        int last_linecnt=linecnt;
+        linecnt=0;
+        char *last_filename=curfilename;
+        curfilename=f;
+        FILE *last_fp=fp;
+        fp=incfp;
+
+        int r=parseScript();
+
+        int errlinecnt=linecnt;
+
+        linecnt=last_linecnt;
+        curfilename=last_filename;
+        fp=last_fp;
+
         depth--;
         fclose(incfp);
         if (r != PS_EOF && r != PS_OK)
         {
           if (r == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
           if (IS_PS_ELSE(r)) ERROR_MSG("!else: stray !else\n");
-          ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,lc);
+          ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,errlinecnt);
           if (malloced) free(f);
           return PS_ERROR;
         }
@@ -2228,8 +2254,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
       int ret;
 
-      if (line.gettoken_str(a)[0]=='-') ret=add_section("",curfilename,linecnt,line.gettoken_str(a+1));
-      else ret=add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1));
+      if (line.gettoken_str(a)[0]=='-') ret=add_section("",line.gettoken_str(a+1));
+      else ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
       if (ret != PS_OK) return ret;
       
       if (unselected)
@@ -2306,7 +2332,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("%s %s",line.gettoken_str(0),line.gettoken_str(a));
       if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(" ->(%s)",line.gettoken_str(a+1));
       SCRIPT_MSG("\n");
-      return add_section(buf,curfilename,linecnt,line.gettoken_str(a+1),ex);
+      return add_section(buf,line.gettoken_str(a+1),ex);
     }
     case TOK_FUNCTION:
       if (!line.gettoken_str(1)[0]) PRINTHELP()
@@ -2358,9 +2384,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETCOMPRESS:
       build_compress=line.gettoken_enum(1,"off\0auto\0force\0");
       if (build_compress==-1) PRINTHELP()
-      if (build_compress == 0 && build_compress_whole)
+      if (build_compress==0 && build_compress_whole)
       {
-        warning("'SetCompress off' encountered, and in whole compression mode. Effectively ignored.\n");
+        warning("'SetCompress off' encountered, and in whole compression mode. Effectively ignored. (%s:%d)",curfilename,linecnt);
       }
       SCRIPT_MSG("SetCompress: %s\n",line.gettoken_str(1));
     return PS_OK;
@@ -4465,7 +4491,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         SCRIPT_MSG("\n");
         if (nounloadmisused)
-          warning("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong.");
+          warning("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong. (%s:%d)",curfilename,linecnt);
 
         // next, call it
         ent.which=EW_REGISTERDLL;
