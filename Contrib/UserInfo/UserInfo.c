@@ -72,8 +72,9 @@ void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size,
               DWORD auth_id;
               char *name;
             } groups[] = {
-              {DOMAIN_ALIAS_RID_GUESTS, "Guest"},
               {DOMAIN_ALIAS_RID_USERS, "User"},
+              // every user belongs to the users group, hence users comes before guests
+              {DOMAIN_ALIAS_RID_GUESTS, "Guest"},
               {DOMAIN_ALIAS_RID_POWER_USERS, "Power"},
               {DOMAIN_ALIAS_RID_ADMINS, "Admin"}
             };
