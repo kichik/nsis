@@ -137,9 +137,11 @@
 \c  ; GetWindowsVersion
 \c  ;
 \c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+\c  ; Updated by Joost Verburg
+\c  ;
 \c  ; Returns on top of stack
 \c  ;
-\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, .NET Server)
+\c  ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
 \c  ; or
 \c  ; '' (Unknown Windows Version)
 \c  ;
@@ -147,70 +149,78 @@
 \c  ;   Call GetWindowsVersion
 \c  ;   Pop $R0
 \c  ;   ; at this point $R0 is "NT 4.0" or whatnot
-\c
+\c  
 \c  Function GetWindowsVersion
+\c  
 \c    Push $R0
 \c    Push $R1
-\c    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+\c  
+\c    ReadRegStr $R0 HKLM \
+\c    "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
 \c    StrCmp $R0 "" 0 lbl_winnt
-\c    ; we are not NT.
-\c    ReadRegStr $R0 HKLM SOFTWARE\Microsoft\Windows\CurrentVersion VersionNumber
-\c
+\c    
+\c    ; we are not NT
+\c    ReadRegStr $R0 HKLM \
+\c    "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+\c  
 \c    StrCpy $R1 $R0 1
 \c    StrCmp $R1 '4' 0 lbl_error
-\c
+\c  
 \c    StrCpy $R1 $R0 3
-\c
+\c  
 \c    StrCmp $R1 '4.0' lbl_win32_95
 \c    StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
-\c
+\c  
 \c    lbl_win32_95:
 \c      StrCpy $R0 '95'
 \c    Goto lbl_done
-\c
+\c  
 \c    lbl_win32_98:
 \c      StrCpy $R0 '98'
 \c    Goto lbl_done
-\c
+\c  
 \c    lbl_win32_ME:
 \c      StrCpy $R0 'ME'
 \c    Goto lbl_done
-\c
+\c  
 \c    lbl_winnt:
-\c
-\c      StrCpy $R1 $R0 1
-\c
-\c      StrCmp $R1 '3' lbl_winnt_x
-\c      StrCmp $R1 '4' lbl_winnt_x
-\c
-\c      StrCpy $R1 $R0 3
-\c
-\c      StrCmp $R1 '5.0' lbl_winnt_2000
-\c      StrCmp $R1 '5.1' lbl_winnt_XP
-\c      StrCmp $R1 '5.2' lbl_winnt_dotNET lbl_error
-\c
-\c      lbl_winnt_x:
-\c        StrCpy $R0 "NT $R0" 6
-\c      Goto lbl_done
-\c
-\c      lbl_winnt_2000:
-\c        Strcpy $R0 '2000'
-\c      Goto lbl_done
-\c
-\c      lbl_winnt_XP:
-\c        Strcpy $R0 'XP'
-\c      Goto lbl_done
-\c
-\c      lbl_winnt_dotNET:
-\c        Strcpy $R0 '.NET Server'
-\c      Goto lbl_done
-\c
+\c  
+\c    StrCpy $R1 $R0 1
+\c  
+\c    StrCmp $R1 '3' lbl_winnt_x
+\c    StrCmp $R1 '4' lbl_winnt_x
+\c  
+\c    StrCpy $R1 $R0 3
+\c  
+\c    StrCmp $R1 '5.0' lbl_winnt_2000
+\c    StrCmp $R1 '5.1' lbl_winnt_XP
+\c    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+\c  
+\c    lbl_winnt_x:
+\c      StrCpy $R0 "NT $R0" 6
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_2000:
+\c      Strcpy $R0 '2000'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_XP:
+\c      Strcpy $R0 'XP'
+\c    Goto lbl_done
+\c  
+\c    lbl_winnt_2003:
+\c      Strcpy $R0 '2003'
+\c    Goto lbl_done
+\c  
 \c    lbl_error:
 \c      Strcpy $R0 ''
 \c    lbl_done:
+\c  
 \c    Pop $R1
 \c    Exch $R0
+\c  
 \c  FunctionEnd
+
 
 \H{getieversion} Get Internet Explorer version
 
