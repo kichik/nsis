@@ -3,6 +3,7 @@
 
 ;Language: Arabic (1025)
 ;Translation by asdfuae@msn.com
+;updated by Rami Kattan
 
 ;--------------------------------
 
@@ -10,81 +11,81 @@
 
   !define MUI_LANGNAME "Arabic" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) ใัอศว ศ฿ Ýํ ใไีศ ศัไวใฬ"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "ลไ ิวม วแแๅ ำํสใ สไีํศ วแศัไวใฬ $(^NameDA).\r\n\r\nใไ วแใÝึแ ลÛแวÞ ฬใํฺ วแศัวใฬ Þศแ วแสไีํศ.ๅะว ำํำวฺฯ Ýํ สฬฯํฯ ใแÝวส วแไูวใ ใไ ฯๆไ วแอวฬษ แลฺวฯษ สิÛํแ วแไูวใ ใไ ฬฯํฯ.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "ใัอศว ศ฿ Ýํ ใัิฯ ลฺฯวฯ $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "ำํำวฺฯ฿ ๅะว วแใัิฯ Ýํ สไีํศ $(^NameDA).\r\n\r\nใไ วแใÝึแ ลÛแวÞ ฬใํฺ วแศัวใฬ Þศแ วแสไีํศ. ำํำวฺฯ ๅะว Ýํ สฬฯํฯ ใแÝวส วแไูวใ ฯๆไ วแอวฬษ แลฺวฯษ สิÛํแ วแฬๅวา.\r\n\r\n$_CLICK"
   
-  !define MUI_TEXT_LICENSE_TITLE "วสÝวÞํษþ วแสัฮํี"  
-  !define MUI_TEXT_LICENSE_SUBTITLE "วแัฬวม ใัวฬฺษ วสÝวÞํษþ วแสัฮํี Þศแ สไีํศ $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_TOP "วÞัร วสÝวÞํษþ วแสัฮํี ศวแ฿วใแ"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "ลึÛุ รๆวÝÞ แส฿ใแษ วแสไีํศก ๅะว ลไ ๆวÝÞส ฺแ์ ฿วใแ วสÝวÞํษþ วแสัฮํี, แว สำสุํฺ วแสไีํศ ศฯๆไ วแใๆวÝÞษ ฺแ์ วสÝวÞํษþ สัฮํี $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "ลึÛุ รๆวÝÞ แส฿ใแษ วแสไีํศ ลไ ๆวÝÞส ฺแ์ ฿วใแ วสÝวÞํษþ วแสัฮํี, แว สำสุํฺ วแสไีํศ ศฯๆไ วแใๆวÝÞษ ฺแ์ วสÝวÞํษþ สัฮํี $(^NameDA). $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "วฮสั วแฮํวั วแรๆแ ใไ วแสวแํ กลไ ๆวÝÞส ฺแ์ ลสÝวÞํษ วแสัฮํี ๆ วฺแใ วไ฿ แไ สำสุํฺ สไีํศ วแศัไวใฬ ลไ แใ สๆวÝÞ ฺแ์ วสÝวÞํษ สัฮํี $(^NameDA). $_CLICK"
+  !define MUI_TEXT_LICENSE_TITLE "ลสÝวÞํษþ วแสัฮํี"  
+  !define MUI_TEXT_LICENSE_SUBTITLE "วแัฬวม ใัวฬฺษ ลสÝวÞํษþ วแสัฮํี Þศแ สไีํศ $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_TOP "ลึฺุ ใÝสวอ ีÝอษ แแรำÝแ แัฤํษ ศวÞํ วแลสÝวÞํษ"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษþก ลึÛุ รๆวÝÞ แแใสวศฺษ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษþ แสไีํศ $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษþก ฺแ๘ใ ใัศฺ วแฺแวใษ วแสวแํ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษþ แสไีํศ $(^NameDA). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษก ลฮสั วแฮํวั วแรๆแ ใไ วแสวแํ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษ แสไีํศ $(^NameDA). $_CLICK"
   
-  !define MUI_TEXT_COMPONENTS_TITLE "วฮสั วแฺไวีั"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "รฮสั วแฺไวีั วแใุแๆศษ ใไ ศัไวใฬ $(^NameDA)"
+  !define MUI_TEXT_COMPONENTS_TITLE "ลฮสั วแใ฿ๆไวส"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "ลฮสั ใําวส $(^NameDA) วแใัวฯ สไีํศๅว."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "วแๆีÝ"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ริั ศÝรั฿ ฺแ์ รอฯ วแฺไวีั แใฺัÝษ ใําสๅ รๆ ๆีÝๅ"
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "ริั ศวแÝรัษ ÝๆÞ รอฯ วแใ฿ๆไวส แัฤํษ วแๆีÝ"
   
-  !define MUI_TEXT_DIRECTORY_TITLE "วฮสั ใๆÞฺ ใฬแฯ วแศัไวใฬ"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "วฮสั วแใฬแฯ วแใัวฯ สไีํศ Ýํๅ ศัไวใฬ $(^NameDA)."
+  !define MUI_TEXT_DIRECTORY_TITLE "ลฮสั ใๆÞฺ วแสไีํศ"
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "ลฮสั วแใฬแฯ วแใัวฯ สไีํศ $(^NameDA) Ýํๅ."
   
-  !define MUI_TEXT_INSTALLING_TITLE "ํ๕ไี๘๖ศ"
-  !define MUI_TEXT_INSTALLING_SUBTITLE "วแัฬวม วแวไสูวั แอํไ สไีํศ $(^NameDA)."
+  !define MUI_TEXT_INSTALLING_TITLE "สไีํศ"
+  !define MUI_TEXT_INSTALLING_SUBTITLE "วแัฬวม วแลไสูวั รหไวม สไีํศ $(^NameDA)."
   
-  !define MUI_TEXT_FINISH_TITLE "วแอใฯแแๅ สใ ศไฬวอ"
-  !define MUI_TEXT_FINISH_SUBTITLE "วแอใฯแแๅ สใ ศไฬวอ สไีํศ วแศัไวใฬ"
+  !define MUI_TEXT_FINISH_TITLE "ลไสๅ์ วแสไีํศ"
+  !define MUI_TEXT_FINISH_SUBTITLE "ลไสๅส ฺใแํษ วแสไีํศ ศไฬวอ."
   
   !define MUI_TEXT_ABORT_TITLE "ลแÛวม วแสไีํศ"
-  !define MUI_TEXT_ABORT_SUBTITLE "แใ ํ฿สใแ สไีํศ วแศัไวใฬ ศไฬวอ"
+  !define MUI_TEXT_ABORT_SUBTITLE "แใ ํไสๅํ วแสไีํศ ศไฬวอ."
   
   !define MUI_BUTTONTEXT_FINISH "&ลไๅวม"
-  !define MUI_TEXT_FINISH_INFO_TITLE "ลไๅวม ใไีศ ศัไวใฬ $(^NameDA)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) ศไฬวอ, สใ สไีํศ\r\n\r\nลึÛุ ลไๅวม แลฮัวฬ฿ ใไ วแใไีศ"
-  !define MUI_TEXT_FINISH_INFO_REBOOT "$(^NameDA)ํฬศ ลฺวฯษ สิÛํแ วแไูวใ แํ฿สใแ สไีํศ วแศัไวใฬ . ๅแ สัํฯ วแลฺวฯษ วแยไฟ"
+  !define MUI_TEXT_FINISH_INFO_TITLE "ลไๅวม ใัิฯ ลฺฯวฯ $(^NameDA)"
+  !define MUI_TEXT_FINISH_INFO_TEXT "แÞฯ สใ สไีํศ $(^NameDA) ฺแ์ วแฬๅวา\r\n\r\nลึÛุ ลไๅวม แลÛแวÞ ใัิฯ วแลฺฯวฯ."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "ํฬศ ลฺวฯษ สิÛํแ วแฬๅวา แลไๅวม สไีํศ $(^NameDA). ๅแ สัํฯ ลฺวฯษ วแสิÛํแ วแยไฟ"
   !define MUI_TEXT_FINISH_REBOOTNOW "รฺฯ วแสิÛํแ วแยไ"
-  !define MUI_TEXT_FINISH_REBOOTLATER "รัÛศ Ýํ ลฺวฯษ สิÛํแ วแไูวใ Ýํ ๆÞส ยฮั."
+  !define MUI_TEXT_FINISH_REBOOTLATER "รัÛศ Ýํ ลฺวฯษ สิÛํแ วแฬๅวา Ýํ ๆÞส แวอÞ"
   !define MUI_TEXT_FINISH_RUN "&ิÛแ $(^NameDA)"
   !define MUI_TEXT_FINISH_SHOWREADME "วฺัึ& รÞัรไํ"
   
-  !define MUI_TEXT_STARTMENU_TITLE "วฮสั ใฬแฯ แÞวฦใษ วศฯวม"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "วฮสั ใฬแฯ แลฮสีวัวส $(^NameDA)."
-  !define MUI_INNERTEXT_STARTMENU_TOP "วฮสั ใฬแฯ แÞวฦใษ วศฯวม วแะํ ำํไิวม Ýํๅ วฮสีวัวส วแศัไวใฬ. ํใ฿ไ฿ วํึว ฿สวศษ วำใ แลไิวม ใฬแฯ ฬฯํฯ."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "แว สไิร วฮสีวัวส"
+  !define MUI_TEXT_STARTMENU_TITLE "ลฮสั ใฬแฯ Þวฦใษ วศฯร"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "ลฮสั ใฬแฯ Þวฦใษ วศฯร แลฮสีวัวส $(^NameDA)."
+  !define MUI_INNERTEXT_STARTMENU_TOP "ลฮสั วแใฬแฯ Ýํ Þวฦใษ วศฯร วแะํ ำสไิร Ýํๅ ลฮสีวัวส วแศัไวใฬ. ํใ฿ไ รํึว ฿สวศษ ลำใ แลไิวม ใฬแฯ ฬฯํฯ."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "แว สไิฦ ลฮสีวัวส"
   
-  !define MUI_TEXT_ABORTWARNING "ๅแ รไส ใสร฿ฯ ใไ ลÛแวÞ ใไีศ ศัไวใฬ $(^Name)ฟ"  
+  !define MUI_TEXT_ABORTWARNING "ๅแ รไส ใสร฿ฯ ใไ ลÛแวÞ ใไี๘ศ $(^Name)ฟ"  
   
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "ใัอศว ศ฿ Ýํ ใาํแ ศัไวใฬ $(^NameDA) "  
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "ๅะว วแใาํแ ำํัิฯ฿ ฺแ์ ลาวแษ ศัไวใฬ $(^NameDADA).\r\n\r\n Þศแ วแศฯม ศวแลาวแษก ํัฬว วแสร฿ฯ ใไ ฺฯใ ลิสÛวแ ศัไวใฬ $(^NameDADA).\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "ใัอศว ศ฿ Ýํ ใัิฯ ลาวแษ $(^NameDA) "  
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "ๅะว วแใัิฯ ำํฯแ๘฿ รหไวม ลาวแษ $(^NameDA).\r\n\r\n Þศแ วแศฯม ศวแลาวแษก ํัฬ์ วแสร฿ฯ ใไ รไ $(^NameDA) Ûํั ิÛ๘วแ.\r\n\r\n$_CLICK"
   
-  !define MUI_UNTEXT_CONFIRM_TITLE "ใาํแ $(^NameDA)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "ำํสใ ลาวแษ ใไ ฬๅวา฿ ศัไวใฬ $(^NameDA)"
+  !define MUI_UNTEXT_CONFIRM_TITLE "ลาวแษ $(^NameDA)"
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "ลาวแษ $(^NameDA) ใไ วแฬๅวา."
   
-  !define MUI_UNTEXT_LICENSE_TITLE "วสÝวÞํษ วแสัฮํี"  
+  !define MUI_UNTEXT_LICENSE_TITLE "ลสÝวÞํษ วแสัฮํี"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "วแัฬวม ใัวฬฺษ ิัๆุ วแสัฮํี Þศแ ลาวแษ $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "ละว ๆวÝÞส ฺแ์ ิัๆุ ๅะๅ วแลสÝวÞํษก ลึÛุ ฺแ์ ใๆวÝÞ. ํฬศ ฺแํ฿ วแใๆวÝÞษ ฺแ์ ๅะว วแลสÝวÞ แลาวแษ $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "ละว ๆวÝÞส ฺแ์ ิัๆุ ๅะๅ วแลสÝวÞํษก ลึÛุ ฺแ์ ใัศฺ วแฺแวใษ. ํฬศ ฺแํ฿ วแใๆวÝÞษ ฺแ์ ๅะว วแลสÝวÞ แลาวแษ $(^NameDA). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ละว ๆวÝÞส ฺแ์ ิัๆุ วแลสÝวÞํษก วฮสั วแฮํวั วแรๆแ ใไ วแสวแํ. ํฬศ วแใๆวÝÞษ ฺแ์ ๅะๅ วแิัๆุ แลาวแษ $(^NameDA). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษก ลึÛุ ฺแ์ ใๆวÝÞ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษ แลาวแษ $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษก ฺแ๘ใ วแใัศฺ วแฺแวใษ วแสวแํ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษ แลาวแษ $(^NameDA). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "ฺไฯ วแใๆวÝÞษ ฺแ์ ิัๆุ วแลสÝวÞํษก ลฮสั วแฮํวั วแรๆแ ใไ วแสวแํ. ํฬศ วแใๆวÝÞษ ฺแ์ วแลสÝวÞํษ แลาวแษ $(^NameDA). $_CLICK"
 
-  !define MUI_UNTEXT_COMPONENTS_TITLE "วฮสั วแฺไวีั แแสไีํศ"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "รฮสั วแฺไวีั วแใัวฯ สไีํศๅว ใไ ใไีศ $(^NameDA)."
+  !define MUI_UNTEXT_COMPONENTS_TITLE "ลฮสั วแใ฿ๆไวส"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "ลฮสั ใําวส $(^NameDA) วแใัวฯ ลาวแสๅว."
   
-  !define MUI_UNTEXT_DIRECTORY_TITLE "วฮสั ใๆÞฺ วแใาํแ"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "วฮสั วแใฬแฯ วแะํ ใไๅ ำําวแ ศัไวใฬ $(^NameDA)."  
+  !define MUI_UNTEXT_DIRECTORY_TITLE "ลฮสั ใๆÞฺ วแใาํแ"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "ลฮสั วแใฬแฯ วแะํ ำําวแ ใไๅ $(^NameDA)."  
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "ลาวแษ"
-  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "วแัฬวม วแวไสูวั แอํไ ลาวแษ $(^NameDA)."
+  !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "วแัฬวม วแลไสูวั รหไวม ลาวแษ $(^NameDA)."
   
-  !define MUI_UNTEXT_FINISH_TITLE "วไสๅ์"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "สใส วแลาวแษ ศไฬวอ ๆ วแอใฯแแๅ"
+  !define MUI_UNTEXT_FINISH_TITLE "ลไสๅ์"
+  !define MUI_UNTEXT_FINISH_SUBTITLE "ลไสๅส ฺใแํษ วแลาวแษ ศไฬวอ."
   
-  !define MUI_UNTEXT_ABORT_TITLE "วแลาวแษ รแÛํส"
-  !define MUI_UNTEXT_ABORT_SUBTITLE "แใ สสใ วแลาวแษ ศไฬวอ"
+  !define MUI_UNTEXT_ABORT_TITLE "ลแÛวม วแลาวแษ"
+  !define MUI_UNTEXT_ABORT_SUBTITLE "แใ สไสๅํ วแลาวแษ ศไฬวอ."
   
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "ลไๅวม ใาํแ ศัไวใฬ $(^NameDA)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "สใ ลาวแษ ศัไวใฬ $(^NameDA) ใไ อวำๆศ฿.\r\n\r\n วึÛุ ลไๅวม แลÛแวÞ วแใาํแ."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "ํฬศ ลฺวฯษ สิÛํแ อวำๆศ฿ แลสใวใ ลาวแษ ศัไวใฬ $(^NameDA). ๅแ สัํฯ ลฺวฯษ วแสิÛํแ วแยไฟ"
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "ลไๅวม ใัิฯ ลาวแษ $(^NameDA)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "แÞฯ สใ ลาวแษ $(^NameDA) ใไ วแฬๅวา.\r\n\r\n ลึÛุ ลไๅวม แลÛแวÞ วแใัิฯ."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "ํฬศ ลฺวฯษ สิÛํแ วแฬๅวา แลไๅวม ลาวแษ $(^NameDA). ๅแ สัํฯ ลฺวฯษ วแสิÛํแ วแยไฟ"
   
-  !define MUI_UNTEXT_ABORTWARNING "ๅแ รไส ใสร฿ฯ Ýํ ฮัๆฬ฿ ใไ ใาํแ ศัไวใฬ $(^Name)ฟ"
+  !define MUI_UNTEXT_ABORTWARNING "ๅแ รไส ใสร฿ฯ ใไ รไ฿ วแฮัๆฬ ใไ ใาํแ $(^Name)ฟ"
   
 !insertmacro MUI_LANGUAGEFILE_END
