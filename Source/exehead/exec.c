@@ -938,7 +938,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           char *buf1=process_string_fromparm_tobuf(0x11);
 
           // suggested by Kevin Gadd (janusfury)
-          lstrcpy(buf3, buf0);
+          mystrcpy(buf3, buf0);
           trimslashtoend(buf3);
           SetCurrentDirectory(buf3);
 
@@ -980,6 +980,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             update_status_text_from_lang(LANG_COULDNOTLOAD,buf0);
             log_printf2("Error registering DLL: Could not load %s",buf0);
           }
+          SetCurrentDirectory(state_exe_directory);
           OleUninitialize();
         }
         else
