@@ -2238,7 +2238,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *p=line.gettoken_str(wt);
           if (p[0]=='R' && p[1]=='O')
           {
-            if (section_add_flags(SF_SELECTED|SF_RO) != PS_OK) return PS_ERROR;
+            if (section_add_flags(SF_RO) != PS_OK) return PS_ERROR;
             SCRIPT_MSG("[RO] ");
           }
           else
