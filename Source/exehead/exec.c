@@ -140,24 +140,25 @@ static void NSISCALL process_string_fromparm_tobuf(int id_)
 // otherwise, returns new_position+1
 static int NSISCALL ExecuteEntry(entry *entry_)
 {
-  // changed by Amir Szekely 28 August 2002
-  // shaves off 0.5KB
-  int parm0 = (parms = entry_->offsets)[0];
-  int parm1 = parms[1];
-  int parm2 = parms[2];
-  int parm3 = parms[3];
-  int parm4 = parms[4];
-  int parm5 = parms[5];
-  char *var0 = g_usrvars[parm0];
-  char *var1 = g_usrvars[parm1];
-  char *var2 = g_usrvars[parm2];
-  char *var3 = g_usrvars[parm3];
-//char *var4 = g_usrvars[parm4];  // not used yet
-//char *var5 = g_usrvars[parm5];
   char *buf0 = bufs[0];
   char *buf1 = bufs[1];
   char *buf2 = bufs[2];
   char *buf3 = bufs[3];
+
+  // changed by Amir Szekely 28 August 2002
+  // shaves off 0.5KB
+  int parm0 = (parms = entry_->offsets)[0]; // the ordering of these makes a size diff (4 bytes) -Justin
+  char *var0 = g_usrvars[parm0];
+  int parm1 = parms[1];
+  char *var1 = g_usrvars[parm1];
+  int parm2 = parms[2];
+  char *var2 = g_usrvars[parm2];
+  int parm3 = parms[3];
+  char *var3 = g_usrvars[parm3];
+  int parm4 = parms[4];
+  int parm5 = parms[5];
+//char *var4 = g_usrvars[parm4];  // not used yet
+//char *var5 = g_usrvars[parm5];
   int which = entry_->which;
   switch (which)
   {
