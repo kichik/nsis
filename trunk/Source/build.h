@@ -84,7 +84,7 @@ class CEXEBuild {
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist);
     int doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr);
     int doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int linecnt);
-    int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1);
+    int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1, int *data_handle=0);
     GrowBuf m_linebuild; // used for concatenating lines
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT

@@ -14,17 +14,13 @@ class Plugins
   public:
     void  FindCommands(char*,bool);
     bool  IsPluginCommand(char*);
-    char* GetPluginDll(char*);
-    void  StoreInstDLL(char*);
-    void  StoreUninstDLL(char*);
-    char* GetInstDLL(int);
-    char* GetUninstDLL(int);
+    char* GetPluginDll(char*, int*);
+    void  SetDllDataHandle(char*, int);
 
   protected:
-    DefineList         m_commands;
-    std::vector<char*> m_storedDLLs;
-    std::vector<char*> m_installDLLs;
-    std::vector<char*> m_uninstallDLLs;
+    DefineList m_commands;
+    GrowBuf    m_dataHandles;
+    int        m_funcsCount;
 
     void GetExports(char*,bool);
 };
