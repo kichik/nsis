@@ -14,18 +14,11 @@ NSIS
 
 * more default texts in NLF language files
 
-* current working directory changes
-
 * different color for the drive space when there is not enough space
 
 * all installer strings should be language strings
 
 DOCUMENTATION
-
-* user_vars should link to the user_vars section as in the old docs callbacks and
-  other stuff should be linked too
-
-* go over everything and search for mistakes :)
 
 * links should have alternative text instead of Section 1.2.3.4
 
@@ -55,8 +48,3 @@ NSIS
 * LZMA compression
 
 * multiple directory pages
-
-DOCUMENTATION
-
-* not so important but could be nice, links to examples in the examples directory
-  for every function every function will link to the example file that containts it
