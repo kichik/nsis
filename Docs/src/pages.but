@@ -141,10 +141,14 @@ Example usage:
 
 \S{pageexend} PageExEnd
 
-Ends a PageEx block.
+Ends a \R{pageex}{PageEx} block.
 
 \S{pagecallbacks} PageCallbacks
 
 \c ([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])
 
 Sets the callback functions for a page defined using \R{pageex}{PageEx}. Can only be used inside a \R{pageex}{PageEx} block. See the above sections for more information about callback functions.
+
+\c PageEx license
+\c   PageCallbacks licensePre licenseShow licenseLeave
+\c PageExEnd

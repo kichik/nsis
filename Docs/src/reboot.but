@@ -1,11 +1,18 @@
 \S{rebootinst} Reboot Instructions
 
-\S2{Reboot} Reboot
+\S2{reboot} Reboot
 
 Reboots the computer. Be careful with this one. If there is an error rebooting, this function sets the error flag and continues. If the reboot is successful, this instruction does not return.
 
-\S2{SetRebootFlag} SetRebootFlag
+\c MessageBox MB_YESNO|MB_ICONQUESTION "Do you wish to reboot the system?" IDNO +2
+\c   Reboot
+
+\S2{setrebootflag} SetRebootFlag
 
 \c true|false
 
-Sets the reboot flag to either true or false.
+Sets the reboot flag to either true or false. The flag's value can be read using \R{ifrebootflag}{IfRebootFlag}.
+
+\c SetRebootFlag true
+\c IfRebootFlag 0 +2
+\c   MessageBox MB_OK "this message box will always show"

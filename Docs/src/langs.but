@@ -40,6 +40,12 @@ Each language string has a name that identifies it and a value for each language
 
 Does the same as \R{langstring}{LangString} only it loads the string from a text/RTF file and defines a special LangString that can be used only by \R{alicensedata}{LicenseData}.
 
+\c LicenseLangString license ${LANG_ENGLISH} license-english.txt
+\c LicenseLangString license ${LANG_FRENCH} license-french.txt
+\c LicenseLangString license ${LANG_GERMAN} license-german.txt
+
+\c LicenseData $(license)
+
 \S0{langs} Multiple Languages
 
 As of version 2 NSIS fully supports multiple languages. The interface of one installer can support multiple languages.

@@ -6,6 +6,10 @@
 
 Returns the last error level set by \R{seterrorlevel}{SetErrorLevel} or -1 if it was never used.
 
+\c GetErrorLevel $0
+\c IntOp $0 $0 + 1
+\c SetErrorLevel $0
+
 \S2{getinstdirerror} GetInstDirError
 
 \c user_var(error output)
@@ -18,9 +22,35 @@ Use in the leave function of a directory page. Reads the flag set if '\R{adirver
 
 2: Not enough space on installation drive
 
+\c !include LogicLib.nsh
+\c PageEx directory
+\c   DirVerify leave
+\c   PageCallbacks "" "" dirLeave
+\c PageExEnd
+\c
+\c Function dirLeave
+\c   GetInstDirError $0
+\c   ${Switch} $0
+\c     ${Case} 0
+\c       MessageBox MB_OK "valid installation directory"
+\c       ${Break}
+\c     ${Case} 1
+\c       MessageBox MB_OK "invalid installation directory!"
+\c       Abort
+\c       ${Break}
+\c     ${Case} 2
+\c       MessageBox MB_OK "not enough free space!"
+\c       Abort
+\c       ${Break}
+\c   ${EndSwitch}
+\c FunctionEnd
+
 \S2{initpluginsdir} InitPluginsDir
 
 Initializes the plugins dir (\R{varconstant}{$PLUGINSDIR}) if not already initialized.
+
+\c InitPluginsDir
+\c File /oname=$PLUGINSDIR\image.bmp image.bmp
 
 \S2{seterrorlevel} SetErrorLevel
 
@@ -28,14 +58,27 @@ Initializes the plugins dir (\R{varconstant}{$PLUGINSDIR}) if not already initia
 
 Sets the error level of the installer or uninstaller to \e{error_level}. See \R{errorlevels}{Error Levels} for more information.
 
+\c IfRebootFlag 0 +2
+\c   SetErrorLevel 4
+
 \S2{setshellvarcontext} SetShellVarContext
 
 \c \\<b\\>current\\</b\\>|all
 
 Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used. Please take into consideration that a "normal user" has no rights to write in the all users area. Only admins have full access rights to the all users area. You can check this by using the UserInfo Plugin. See Contrib\\UserInfo\\UserInfo.nsi for an example.
 
+\c SetShellVarContext current
+\c StrCpy $0 $DESKTOP
+\c SetShellVarContext all
+\c StrCpy $1 $DESKTOP
+\c MessageBox MB_OK $0$\n$1
+
 \S2{sleep} Sleep
 
 \c sleeptime_in_ms
 
 Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, e.g. "$0" or a number, i.e. "666".
+
+\c DetailPrint "sleeping..."
+\c Sleep 3000
+\c DetailPrint "back to work"

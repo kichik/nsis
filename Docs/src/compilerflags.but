@@ -60,6 +60,10 @@ This command sets the file date/time saving flag which is used by the File comma
 
 This command sets the overwrite flag which is used by the File command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file. If overwriteflag is 'ifdiff', then files are only overwritten if the existing file is older or newer than the new file. Note that when in 'ifnewer' or 'ifdiff' mode, the destination file's date is set, regardless of what SetDateSave is set to.
 
+\c SetOverwrite off
+\c File program.cfg # config file we don't want to overwrite
+\c SetOverwrite on
+
 \S2{setpluginunload} SetPluginUnload
 
 \c \\<b\\>manual\\</b\\>|alwaysoff
@@ -101,8 +105,18 @@ The following fields are provided by the System:
 
 The name of these fields are translated on the target system, whereas user defined fields remain untranslated.
 
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Test Application"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2.3"
+
 \S2{viproductversion} VIProductVersion
 
 \c [version_string_X.X.X.X]
 
 Adds the Product Version on top of the Version Tab in the Properties of the file.
+
+\c VIProductVersion "1.2.3.4"
