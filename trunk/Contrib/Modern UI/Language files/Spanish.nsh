@@ -38,7 +38,7 @@
   !define MUI_TEXT_ABORT_SUBTITLE "La instalación no se completó correctamente."
 
   !define MUI_BUTTONTEXT_FINISH "&Terminar"
-  !define MUI_TEXT_FINISH_INFO_TITLE "Completando el asistente de instalación de $(^NameDA)"
+  !define MUI_TEXT_FINISH_INFO_TITLE "Completando el Asistente de Instalación de $(^NameDA)"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) ha sido instalado en su sistema.\r\n\r\nPresione Terminar para cerrar este asistente."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Su sistema debe ser reiniciado para que pueda completarse la instalación de $(^NameDA). ¿Desea reiniciar ahora?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Reiniciar ahora"
@@ -54,7 +54,7 @@
   !define MUI_TEXT_ABORTWARNING "¿Está seguro de que desea salir de la instalación de $(^Name)?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenido al asistente de desinstalación de $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenido al Asistente de Desinstalación de $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este asistente le guiará durante la desinstalación de $(^NameDA).\r\n\r\nAntes de comenzar la desinstalación, asegúrese de que $(^NameDA) no se está ejecutando.\r\n\r\n$_CLICK"
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstalar $(^NameDA)"
