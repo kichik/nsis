@@ -196,7 +196,7 @@ class CEXEBuild {
     char cur_out_path[1024];
 
     int subsection_open_cnt;
-    StringList m_warnings;
+    FastStringList m_warnings;
     GrowBuf m_macros;
 
     StringList m_macro_entry;
@@ -207,7 +207,8 @@ class CEXEBuild {
 
     StringList include_dirs;
 
-    StringList ns_func, ns_label; // function and label namespaces
+    StringList ns_func; // function namespace
+    StringList ns_label; // label namespace
 
     int build_cursection_isfunc;
     section *build_cursection;
@@ -215,9 +216,9 @@ class CEXEBuild {
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     GrowBuf build_functions, ubuild_functions, *cur_functions;
     GrowBuf build_labels, ubuild_labels, *cur_labels;
-    StringList build_strlist,ubuild_strlist;
+    StringList build_strlist, ubuild_strlist;
     GrowBuf build_langtables, ubuild_langtables;
-    StringList build_userlangstrings, ubuild_userlangstrings;
+    LangStringList build_userlangstrings, ubuild_userlangstrings;
     GrowBuf build_pages, ubuild_pages;
 
     char build_last_page_define[1024], ubuild_last_page_define[1024];

@@ -657,7 +657,6 @@ int CEXEBuild::add_function(const char *funname)
 
   if (!strnicmp(funname,"un.",3))
   {
-    SCRIPT_MSG("setting uninstall mode to true\n");
     set_uninstall_mode(1);
   }
 
@@ -668,10 +667,10 @@ int CEXEBuild::add_function(const char *funname)
   for (x = 0; x < n; x ++)
   {
     if (tmp[x].name_ptr == addr)
-    {
-      ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
-      return PS_ERROR;
-    }
+  {
+    ERROR_MSG("Error: Function named \"%s\" already exists.\n",funname);
+    return PS_ERROR;
+  }
   }
 
   cur_functions->resize((n+1)*sizeof(section));
@@ -961,9 +960,9 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
     sec++;
   }
   ERROR_MSG("Error: resolving %s function \"%s\" in %s\n",str,(char*)ns_func.get()+fptr,fn);
-  ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
-  return 1;
-}
+    ERROR_MSG("Note: uninstall functions must begin with \"un.\", and install functions must not\n");
+    return 1;
+  }
 
 
 
@@ -2270,10 +2269,7 @@ int CEXEBuild::add_plugins_dir_initializer(void)
 
 again:
   // Function [un.]Initialize_____Plugins
-  int old_display_script=display_script;
-  display_script=0;
   ret=add_function(uninstall?"un.Initialize_____Plugins":"Initialize_____Plugins");
-  display_script=old_display_script;
   if (ret != PS_OK) return ret;
 
   // don't move this, depends on [un.]

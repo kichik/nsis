@@ -184,10 +184,9 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
 }
 
 int CEXEBuild::GetUserString(char *name) {
-  StringList *user_strings_list = 0;
-  bool uninst;
+  LangStringList *user_strings_list = 0;
 
-  if (!(uninst = !strnicmp(name,"un.",3))) {
+  if (strnicmp(name,"un.",3)) {
     user_strings_list=&build_userlangstrings;
   }
   else {
@@ -196,10 +195,7 @@ int CEXEBuild::GetUserString(char *name) {
 
   SetUserString(name, 0, 0, 0);
 
-  int idx = -1;
-  user_strings_list->find(name, 0, &idx);
-
-  return idx;  
+  return user_strings_list->get(name);
 }
 
 int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/*=1*/) {
@@ -210,7 +206,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
   }
 
   GrowBuf *user_strings = 0;
-  StringList *user_strings_list = 0;
+  LangStringList *user_strings_list = 0;
   bool uninst;
   if (!(uninst = !strnicmp(name,"un.",3))) {
     if (string) user_strings=&table->user_strings;
@@ -221,11 +217,10 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
     user_strings_list=&ubuild_userlangstrings;
   }
 
-  int idx;
-  if (user_strings_list->find(name, 0, &idx) < 0) {
+  int idx = user_strings_list->get(name);
+  if (idx < 0) {
     // if lang string doesn't exist yet
-    user_strings_list->add(name, 0);
-    if (string) user_strings_list->find(name, 0, &idx);
+    idx = user_strings_list->add(name);
     unsigned int new_size = user_strings_list->getnum() * sizeof(int);
     for (unsigned int i = 0; i < string_tables.size(); i++) {
       if (uninst) string_tables[i]->user_ustrings.resize(new_size);
@@ -279,22 +274,22 @@ int CEXEBuild::WriteStringTables() {
       counter += !((int*)string_tables[j]->user_strings.get())[i];
     }
     if (counter) {
-      int offset=build_userlangstrings.idx2pos(i);
-      if (offset<0) continue;
-      warning("LangString \"%s\" is not present in all language tables!", build_userlangstrings.get()+offset);
+      char *name=build_userlangstrings.idx2name(i);
+      if (!name) continue;
+      warning("LangString \"%s\" is not present in all language tables!", name);
     }
   }
 
-  int userustrings_num = ubuild_userlangstrings.getlen();
+  int userustrings_num = ubuild_userlangstrings.getnum();
   for (i = 0; i < userustrings_num; i++) {
     int counter = 0;
     for (int j = 0; j < st_num; j++) {
       counter += !((int*)string_tables[j]->user_ustrings.get())[i];
     }
     if (counter) {
-      int offset=ubuild_userlangstrings.idx2pos(i);
-      if (offset<0) continue;
-      warning("LangString \"%s\" is not present in all language tables!", ubuild_userlangstrings.get()+offset);
+      char *name=ubuild_userlangstrings.idx2name(i);
+      if (!name) continue;
+      warning("LangString \"%s\" is not present in all language tables!", name);
     }
   }
 

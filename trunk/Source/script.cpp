@@ -4308,6 +4308,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       else
         ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
+      free(command);
     }
     return PS_ERROR;
     case TOK_INITPLUGINSDIR:
