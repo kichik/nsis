@@ -116,7 +116,7 @@ Seleziona la cartella dalla quale disinstallare $(^Name):
 # ^SpaceRequired
 "Spazio richiesto: "
 # ^UninstallingText
-Questa procedura disinstallerà $(^Name) dal vostro computer. $_CLICK
+$(^Name) verrà disinstallato dalla cartella seguente. $_CLICK
 # ^UninstallingSubText
 Rimozione da:
 # ^FileError
