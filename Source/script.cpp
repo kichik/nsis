@@ -450,21 +450,30 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   char *oldfilename = NULL;
   char *oldtimestamp = NULL;
   char *oldline = NULL;
+  BOOL is_commandline = !lstrcmp(filename,"command line");
+  BOOL is_macro = !strncmp(filename,"macro:",lstrlen("macro:"));
 
-  if(lstrcmp(filename,"command line")) { // Don't set the predefines for command line /X option
-    oldfilename = set_file_predefine(curfilename);
-    oldtimestamp = set_timestamp_predefine(curfilename);
-    oldline = set_line_predefine(last_linecnt+linecnt-1); // This is done so that line numbers are 
-  }                                                         //handled properly when macros are inserted.
+  if(!is_commandline) { // Don't set the predefines for command line /X option
+    if(is_macro) {
+      oldline = set_line_predefine(last_linecnt+linecnt-1); // This is done so that line numbers are 
+    }                                                       //handled properly when macros are inserted.
+    else {
+      oldfilename = set_file_predefine(curfilename);
+      oldtimestamp = set_timestamp_predefine(curfilename);
+      oldline = set_line_predefine(linecnt);
+    }
+  }
 #endif
 
   ps_addtoline(line,linedata,hist);
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-  if(lstrcmp(filename,"command line")) { // Don't set the predefines for command line /X option
-    restore_file_predefine(oldfilename);
-    restore_timestamp_predefine(oldtimestamp);
+  if(!is_commandline) { // Don't set the predefines for command line /X option
+    if(!is_macro) {
+      restore_file_predefine(oldfilename);
+      restore_timestamp_predefine(oldtimestamp);
+    }
     restore_line_predefine(oldline);
   }
 #endif
