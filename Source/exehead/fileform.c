@@ -51,11 +51,10 @@ static z_stream g_inflate_stream;
 
 const char * NSISCALL loadHeaders(void)
 {
-  DWORD r;
   void *data;
   firstheader h;
 
-  if (!ReadSelfFile((LPVOID)&h,sizeof(h),&r) || r != sizeof(h) || !isheader(&h)) return _LANG_INVALIDCRC;
+  if (!ReadSelfFile((LPVOID)&h,sizeof(h)) || !isheader(&h)) return _LANG_INVALIDCRC;
 
   data=(void*)my_GlobalAlloc(h.length_of_header);
 
@@ -130,7 +129,6 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
   int outbuffer_len=outbuf?outbuflen:OBUFSIZE;
   int retval=0;
   int input_len;
-  DWORD r;
 
   outbuffer = outbuf?outbuf:(inbuffer+IBUFSIZE);
 
@@ -148,24 +146,24 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
     SetSelfFilePointer(g_db_offset+offset,FILE_BEGIN);
   }
 
-  if (!ReadSelfFile((LPVOID)&input_len,sizeof(int),&r)) return -3;
+  if (!ReadSelfFile((LPVOID)&input_len,sizeof(int))) return -3;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  else if (input_len & 0x80000000) // compressed
+  if (input_len & 0x80000000) // compressed
   {
     inflateReset(&g_inflate_stream);
     input_len &= 0x7fffffff; // take off top bit.
 
     while (input_len > 0)
     {
-      DWORD r;
+      int l=min(input_len,IBUFSIZE);
       int err;
 
-      if (!ReadSelfFile((LPVOID)inbuffer,min(input_len,IBUFSIZE),&r)) return -3;
+      if (!ReadSelfFile((LPVOID)inbuffer,l)) return -3;
 
       g_inflate_stream.next_in = inbuffer;
-      g_inflate_stream.avail_in = r;
-      input_len-=r;
+      g_inflate_stream.avail_in = l;
+      input_len-=l;
 
       for (;;)
       {
@@ -183,6 +181,7 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
 
         if (!outbuf)
         {
+          DWORD r;
           if (!WriteFile(hFileOut,outbuffer,u,&r,NULL) || (int)r != u) return -2;
           retval+=u;
         }
@@ -197,24 +196,26 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
       }
     }
   }
-#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
   else
+#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
   {
     if (!outbuf)
     {
       while (input_len > 0)
       {
+        DWORD l=min(input_len,outbuffer_len);
         DWORD t;
-        if (!ReadSelfFile((LPVOID)inbuffer,min(input_len,outbuffer_len),&r)) return -3;
-        if (!WriteFile(hFileOut,inbuffer,r,&t,NULL) || r!=t) return -2;
-        retval+=r;
-        input_len-=r;
+        if (!ReadSelfFile((LPVOID)inbuffer,l)) return -3;
+        if (!WriteFile(hFileOut,inbuffer,l,&t,NULL) || l!=t) return -2;
+        retval+=l;
+        input_len-=l;
       }
     }
     else
     {
-      if (!ReadSelfFile((LPVOID)outbuf,min(input_len,outbuflen),&r)) return -3;
-      retval=r;
+      int l=min(input_len,outbuflen);
+      if (!ReadSelfFile((LPVOID)outbuf,l)) return -3;
+      retval=l;
     }
   }
   return retval;
@@ -241,11 +242,11 @@ static int NSISCALL __ensuredata(int amount)
     for (;;)
     {
       int err;
-      DWORD or;
-      if (!ReadSelfFile((LPVOID)_inbuffer,min(IBUFSIZE,dbd_fulllen-dbd_srcpos),&or)) return -1;
-      dbd_srcpos+=or;
+      int l=min(IBUFSIZE,dbd_fulllen-dbd_srcpos);
+      if (!ReadSelfFile((LPVOID)_inbuffer,l)) return -1;
+      dbd_srcpos+=l;
       g_inflate_stream.next_in=_inbuffer;
-      g_inflate_stream.avail_in=or;
+      g_inflate_stream.avail_in=l;
       do
       {
         DWORD r,t;
@@ -286,7 +287,7 @@ static int NSISCALL __ensuredata(int amount)
           }
           dbd_size+=r;
         }
-        else if (g_inflate_stream.avail_in || !or) return -3;
+        else if (g_inflate_stream.avail_in || !l) return -3;
         else break;
       }
       while (g_inflate_stream.avail_in);
@@ -351,9 +352,10 @@ int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int o
   return _dodecomp(offset,NULL,out,out_len);
 }
 
-BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead)
+BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead)
 {
-  return ReadFile(g_db_hFile,lpBuffer,nNumberOfBytesToRead,lpNumberOfBytesRead,NULL);
+  DWORD rd;
+  return ReadFile(g_db_hFile,lpBuffer,nNumberOfBytesToRead,&rd,NULL) && (rd == nNumberOfBytesToRead);
 }
 
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod)

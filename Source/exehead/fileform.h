@@ -478,7 +478,7 @@ extern int g_quit_flag;
 const char * NSISCALL GetStringFromStringTab(int offs);
 int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
 int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
-BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead);
+BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead);
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
