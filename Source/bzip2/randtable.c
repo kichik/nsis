@@ -63,7 +63,10 @@
 
 #include "bzlib_private.h"
 
-#if 1
+
+// smaller data mode that saves 336 bytes of data, but adds 60 bytes of code.
+// currently saving code is more important to reach our targets. this may change tho.
+#if 0
 
 #define PACK3(x,y,z) ((z) << 20)|((y) << 10)|(x)
 
@@ -264,8 +267,7 @@ void NSISCALL genrtable()
 
 #else
 
-Int16 BZ2_rNums[512]
- = { 
+Int16 BZ2_rNums[512] = { 
    619, 720, 127, 481, 931, 816, 813, 233, 566, 247, 
    985, 724, 205, 454, 863, 491, 741, 242, 949, 214, 
    733, 859, 335, 708, 621, 574, 73 , 654, 730, 472, 
