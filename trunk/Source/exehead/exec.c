@@ -95,6 +95,11 @@ int NSISCALL ExecuteCodeSegment(int pos, HWND hwndProgress)
 static char bufs[5][NSIS_MAX_STRLEN];
 static int *parms;
 
+void NSISCALL update_status_text_buf1(int strtab)
+{
+  update_status_text(strtab, bufs[1]);
+}
+
 static int NSISCALL GetIntFromParm(int id_)
 {
   return myatoi(GetNSISStringTT(parms[id_]));
@@ -266,11 +271,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
       if (parm1)
       {
-        update_status_text(LANG_OUTPUTDIR,buf1);
+        update_status_text_buf1(LANG_OUTPUTDIR);
         mystrcpy(state_output_directory,buf1);
         SetCurrentDirectory(buf1);
       }
-      else update_status_text(LANG_CREATEDIR,buf1);
+      else update_status_text_buf1(LANG_CREATEDIR);
     }
     break;
     case EW_IFFILEEXISTS:
@@ -287,33 +292,33 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_RENAME
     case EW_RENAME:
       {
-        char *buf1=GetStringFromParm(-0x10);
+        char *buf3=GetStringFromParm(-0x30);
         char *buf2=GetStringFromParm(-0x21);
-        mystrcpy(buf3,buf1);
-        if (mystrlen(buf1)+mystrlen(buf2) < NSIS_MAX_STRLEN-3)
+        mystrcpy(buf1,buf3);
+        if (mystrlen(buf3)+mystrlen(buf2) < NSIS_MAX_STRLEN-3)
         {
-          lstrcat(buf3,"->");
-          lstrcat(buf3,buf2);
+          lstrcat(buf1,"->");
+          lstrcat(buf1,buf2);
         }
-        log_printf2("Rename: %s",buf3);
-        if (MoveFile(buf1,buf2))
+        log_printf2("Rename: %s",buf1);
+        if (MoveFile(buf3,buf2))
         {
-          update_status_text(LANG_RENAME,buf3);
+          update_status_text_buf1(LANG_RENAME);
         }
         else
         {
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
-          if (parm2 && file_exists(buf1))
+          if (parm2 && file_exists(buf3))
           {
-            MoveFileOnReboot(buf1,buf2);
-            update_status_text(LANG_RENAMEONREBOOT,buf3);
-            log_printf2("Rename on reboot: %s",buf3);
+            MoveFileOnReboot(buf3,buf2);
+            update_status_text_buf1(LANG_RENAMEONREBOOT);
+            log_printf2("Rename on reboot: %s",buf1);
           }
           else
 #endif
           {
             exec_error++;
-            log_printf2("Rename failed: %s",buf3);
+            log_printf2("Rename failed: %s",buf1);
           }
         }
       }
@@ -487,7 +492,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               if (DeleteFile(buf1))
               {
                 log_printf2("Delete: DeleteFile(\"%s\")",buf1);
-                update_status_text(LANG_DELETEFILE,buf1);
+                update_status_text_buf1(LANG_DELETEFILE);
               }
               else
               {
@@ -495,7 +500,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 if (parm1)
                 {
                   log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf1);
-                  update_status_text(LANG_DELETEONREBOOT,buf1);
+                  update_status_text_buf1(LANG_DELETEONREBOOT);
                   MoveFileOnReboot(buf1,NULL);
                 }
                 else
@@ -541,7 +546,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
         doRMDir(buf1,parm1);
         if (file_exists(buf1) && parm1!=2) exec_error++;
-        else update_status_text(LANG_REMOVEDIR, buf1);
+        else update_status_text_buf1(LANG_REMOVEDIR);
       }
     break;
 #endif//NSIS_SUPPORT_RMDIR
@@ -795,19 +800,19 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int x;
         char *buf0=GetStringFromParm(0x00);
-        char *buf1=GetStringFromParm(0x11);
+        char *buf3=GetStringFromParm(0x31);
         char *buf2=GetStringFromParm(0x22);
-        wsprintf(buf3,"%s %s",buf0,buf1);
-        update_status_text(LANG_EXECSHELL, buf3);
-        x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf1,buf2[0]?buf2:NULL,state_output_directory,parm3);
+        wsprintf(buf1,"%s %s",buf0,buf3);
+        update_status_text_buf1(LANG_EXECSHELL);
+        x=(int)ShellExecute(g_hwnd,buf0[0]?buf0:NULL,buf3,buf2[0]?buf2:NULL,state_output_directory,parm3);
         if (x < 33)
         {
-          log_printf5("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d",buf0,buf1,buf2,x);
+          log_printf5("ExecShell: warning: error (\"%s\": file:\"%s\" params:\"%s\")=%d",buf0,buf3,buf2,x);
           exec_error++;
         }
         else
         {
-          log_printf4("ExecShell: success (\"%s\": file:\"%s\" params:\"%s\")",buf0,buf1,buf2);
+          log_printf4("ExecShell: success (\"%s\": file:\"%s\" params:\"%s\")",buf0,buf3,buf2);
         }
       }
     break;
@@ -929,7 +934,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               exec_error--;
               if (parm2)
               {
-                update_status_text(parm2,buf1);
+                update_status_text_buf1(parm2);
                 if (funke()) exec_error++;
               }
               else
@@ -957,13 +962,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           else
           {
-            update_status_text(LANG_COULDNOTLOAD,buf1);
+            update_status_text_buf1(LANG_COULDNOTLOAD);
             log_printf2("Error registering DLL: Could not load %s",buf1);
           }
         }
         else
         {
-          update_status_text(LANG_NOOLE,buf1);
+          update_status_text_buf1(LANG_NOOLE);
           log_printf("Error registering DLL: Could not initialize OLE");
         }
         SetErrorMode(0);
@@ -973,8 +978,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
     case EW_CREATESHORTCUT:
     {
-      char *buf2=GetStringFromParm(-0x20);
-      char *buf1=GetStringFromParm(-0x11);
+      char *buf1=GetStringFromParm(-0x10);
+      char *buf2=GetStringFromParm(-0x21);
       char *buf0=GetStringFromParm(0x02);
       char *buf3=GetStringFromParm(-0x33);
       char *buf4=GetStringFromParm(0x45);
@@ -982,11 +987,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       HRESULT hres;
       IShellLink* psl;
 
-      if (!validpathspec(buf1))
+      if (!validpathspec(buf2))
         GetStringFromParm(0x11);
 
       log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
-        buf2,buf1,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
+        buf1,buf2,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
 
       hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
                                 &IID_IShellLink, (void **) &psl);
@@ -997,7 +1002,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         hres = psl->lpVtbl->QueryInterface(psl,&IID_IPersistFile, (void **) &ppf);
         if (SUCCEEDED(hres))
         {
-          hres = psl->lpVtbl->SetPath(psl,buf1);
+          hres = psl->lpVtbl->SetPath(psl,buf2);
           psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
           if ((parm4&0xff00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0xff00)>>8);
           psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
@@ -1009,7 +1014,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
              static WCHAR wsz[1024];
              wsz[0]=0;
-             MultiByteToWideChar(CP_ACP, 0, buf2, -1, wsz, 1024);
+             MultiByteToWideChar(CP_ACP, 0, buf1, -1, wsz, 1024);
              hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
           }
           ppf->lpVtbl->Release(ppf);
@@ -1020,11 +1025,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (FAILED(hres))
       {
         exec_error++;
-        update_status_text(LANG_ERRORCREATINGSHORTCUT,buf2);
+        update_status_text_buf1(LANG_ERRORCREATINGSHORTCUT);
       }
       else
       {
-        update_status_text(LANG_CREATESHORTCUT,buf2);
+        update_status_text_buf1(LANG_CREATESHORTCUT);
       }
     }
     break;
@@ -1458,7 +1463,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             DeleteFile(buf1);
             exec_error++;
           }
-          update_status_text(str,buf1);
+          update_status_text_buf1(str);
         }
       }
     break;
