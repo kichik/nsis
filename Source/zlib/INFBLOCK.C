@@ -63,15 +63,14 @@ int r=Z_OK;
     case TYPE:
       NEEDBITS(3)
       t = (uInt)b & 7;
+      DUMPBITS(3)
       s->last = t & 1;
       switch (t >> 1)
       {
         case 0:                         /* stored */
           Tracev((stderr, "inflate:     stored block%s\n",
                  s->last ? " (last)" : ""));
-          DUMPBITS(3)
-          t = k & 7;                    /* go to byte boundary */
-          DUMPBITS(t)
+          DUMPBITS(k&7)
           s->mode = LENS;               /* get length of stored block */
           break;
         case 1:                         /* fixed */
@@ -84,17 +83,14 @@ int r=Z_OK;
             inflate_trees_fixed(&bl, &bd, &tl, &td);
             inflate_codes_new(&s->sub.decode.t_codes,bl, bd, tl, td);
           }
-          DUMPBITS(3)
           s->mode = CODES;
           break;
         case 2:                         /* dynamic */
           Tracev((stderr, "inflate:     dynamic codes block%s\n",
                  s->last ? " (last)" : ""));
-          DUMPBITS(3)
           s->mode = TABLE;
           break;
-        case 3:                         /* illegal */
-          DUMPBITS(3)
+        default:                         /* illegal */
           s->mode = BAD;
 //          z->msg = (char*)"err";//invalid block type";
           r = Z_DATA_ERROR;
@@ -118,12 +114,8 @@ int r=Z_OK;
       zmemcpy(q, p, t);
       p += t;  n -= t;
       q += t;  m -= t;
-      if ((s->sub.left -= t) != 0)
-        break;
-      Tracev((stderr, "inflate:       stored end, %lu total out\n",
-              z->total_out + (q >= s->read ? q - s->read :
-              (s->end - s->read) + (q - s->window))));
-      s->mode = s->last ? DRY : TYPE;
+      if (!(s->sub.left -= t))
+        s->mode = s->last ? DRY : TYPE;
       break;
     case TABLE:
       NEEDBITS(14)
@@ -173,17 +165,24 @@ int r=Z_OK;
         h = s->sub.trees.tb + ((uInt)b & (uInt)inflate_mask[t]);
         t = h->bits;
         c = h->base;
+        DUMPBITS(t)
         if (c < 16)
         {
-          DUMPBITS(t)
           s->sub.trees.t_blens[s->sub.trees.index++] = c;
         }
         else /* c == 16..18 */
         {
-          i = c == 18 ? 7 : c - 14;
-          j = c == 18 ? 11 : 3;
-          NEEDBITS(t + i)
-          DUMPBITS(t)
+          if (c == 18)
+          {
+            i=7;
+            j=11;          
+          }
+          else
+          {
+            i=c-14;
+            j=3;
+          }
+          NEEDBITS(i)
           j += (uInt)b & (uInt)inflate_mask[i];
           DUMPBITS(i)
           i = s->sub.trees.index;
@@ -247,10 +246,10 @@ int r=Z_OK;
     case DONE:
       r = Z_STREAM_END;
       LEAVE
-    case BAD:
-      r = Z_DATA_ERROR;
-      LEAVE
-    default:
+//    case BAD:
+  //    r = Z_DATA_ERROR;
+    //  LEAVE
+    default: // we'll call Z_STREAM_ERROR if BAD anyway
       r = Z_STREAM_ERROR;
       LEAVE
   }
