@@ -25,7 +25,7 @@ Function .onInit
 
         MessageBox MB_OK "Transparency/Fading"
         File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Graphics\Wizard\llama.bmp"
-        advsplash::show 1000 600 400 0x00005B $PLUGINSDIR\splash
+        advsplash::show 1000 600 400 0x04025C $PLUGINSDIR\splash
         Pop $0 
 
         Delete $PLUGINSDIR\splash.bmp
