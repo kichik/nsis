@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Portuguese (2070)
 ;By Ramon <ramon@netcabo.pt>
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Português" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a instalação do $(^Name).\r\n\r\nÉ recomendado que feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador actualize ficheiros de sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a instalação do $(^Name).\r\n\r\nÉ recomendado que feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador actualize ficheiros relacionados com o sistema sem necessidade de reiniciar o computador.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Contrato de Licença"
   !define MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o $(^Name)."
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Concluíndo o assistente de desisntalação do $(^Name)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) foi removido do seu computador.\r\n\r\nClique em Terminar para fechar este assistente."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "O seu computador deve ser reiniciado para concluír a desinstalação do $(^Name). Deseja reiniciar agora?"
   
   !define MUI_UNTEXT_ABORTWARNING "Deseja realmente cancelar a desinstalação do $(^Name)?"
 
