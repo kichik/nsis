@@ -39,17 +39,17 @@ ComponentText /LANG=${LANG_TRADCHINESE} "Traditional Chinese component page"
 ComponentText /LANG=${LANG_SIMPCHINESE} "Simplified Chinese component page"
 ComponentText /LANG=${LANG_SLOVAK} "Slovak component page"
 
-LangString Sec1Name ${LANG_ENGLISH} "!English section #1"
-LangString Sec1Name ${LANG_DUTCH} "!Dutch section #1"
-LangString Sec1Name ${LANG_FRENCH} "!French section #1"
-LangString Sec1Name ${LANG_GERMAN} "!German section #1"
-LangString Sec1Name ${LANG_KOREAN} "!Korean section #1"
-LangString Sec1Name ${LANG_RUSSIAN} "!Russian section #1"
-LangString Sec1Name ${LANG_SPANISH} "!Spanish section #1"
-LangString Sec1Name ${LANG_SWEDISH} "!Swedish section #1"
-LangString Sec1Name ${LANG_TRADCHINESE} "!Trandional Chinese section #1"
-LangString Sec1Name ${LANG_SIMPCHINESE} "!Simplified Chinese section #1"
-LangString Sec1Name ${LANG_SLOVAK} "!Slovak section #1"
+LangString Sec1Name ${LANG_ENGLISH} "English section #1"
+LangString Sec1Name ${LANG_DUTCH} "Dutch section #1"
+LangString Sec1Name ${LANG_FRENCH} "French section #1"
+LangString Sec1Name ${LANG_GERMAN} "German section #1"
+LangString Sec1Name ${LANG_KOREAN} "Korean section #1"
+LangString Sec1Name ${LANG_RUSSIAN} "Russian section #1"
+LangString Sec1Name ${LANG_SPANISH} "Spanish section #1"
+LangString Sec1Name ${LANG_SWEDISH} "Swedish section #1"
+LangString Sec1Name ${LANG_TRADCHINESE} "Trandional Chinese section #1"
+LangString Sec1Name ${LANG_SIMPCHINESE} "Simplified Chinese section #1"
+LangString Sec1Name ${LANG_SLOVAK} "Slovak section #1"
 
 LangString Message ${LANG_ENGLISH} "English message"
 LangString Message ${LANG_DUTCH} "Dutch message"
@@ -64,7 +64,8 @@ LangString Message ${LANG_SIMPCHINESE} "Simplified Chinese message"
 LangString Message ${LANG_SLOVAK} "Slovak message"
 
 ;Section names set by Language strings
-Section $(Sec1Name) sec1
+;It works with ! too
+Section !$(Sec1Name) sec1
 	MessageBox MB_OK $(Message)
 SectionEnd
 
