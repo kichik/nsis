@@ -12,6 +12,8 @@ Recent Windows versions restrict the setting of foreground windows. If the user 
 
 Creates a font and puts its handle into user_var. For more information about the different parameters have a look at \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp}{MSDN's page about the Win32 API function CreateFont()}.
 
+You can get the current font used by NSIS using the ^Font and ^FontSize \R{langstring}{LangString}s.
+
 \S2{detailprint} DetailPrint
 
 \c user_message
