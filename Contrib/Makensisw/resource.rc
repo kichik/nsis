@@ -93,6 +93,9 @@ BEGIN
             MENUITEM "Defa&ult",                    IDM_DEFAULT
             MENUITEM "&zlib",                       IDM_ZLIB
             MENUITEM "bzi&p2",                      IDM_BZIP2
+#ifdef LZMA_COMPRESSOR_SUPPORT
+            MENUITEM "&lzma",                       IDM_LZMA
+#endif
             MENUITEM "&Best",                       IDM_BEST
         END
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
@@ -128,14 +131,11 @@ BEGIN
     "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
     "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
-    "P",            IDM_BZIP2,              VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
     "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
-    "U",            IDM_DEFAULT,            VIRTKEY, CONTROL, NOINVERT
     VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
     "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
     "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
-    "Z",            IDM_ZLIB,               VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -273,6 +273,9 @@ BEGIN
     IDS_BZIP2               "bzip2"
     IDS_RECOMPILE_TEST      "Recompile and run"
     IDS_BEST                "Best"
+#ifdef LZMA_COMPRESSOR_SUPPORT
+    IDS_LZMA                "lzma"
+#endif
 END
 
 #endif    // English (U.S.) resources

@@ -18,6 +18,8 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
+#define TOOLBAR_CPP
+
 #include <windows.h>
 #include "resource.h"
 #include "makensisw.h"
@@ -99,25 +101,12 @@ void UpdateToolBarCompressorButton()
 
   my_memset(&ti, 0, sizeof(TOOLINFO));
 
-  switch(g_sdata.compressor) {
-    case COMPRESSOR_DEFAULT:
-      iBitmap = IDB_COMPRESSOR;
-      iString = IDS_DEFAULT;
-      break;
-    case COMPRESSOR_ZLIB:
-      iBitmap = IDB_COMPRESSOR_ZLIB;
-      iString = IDS_ZLIB;
-      break;
-    case COMPRESSOR_BZIP2:
-      iBitmap = IDB_COMPRESSOR_BZIP2;
-      iString = IDS_BZIP2;
-      break;
-    case COMPRESSOR_BEST:
-      iBitmap = IDB_COMPRESSOR_BEST;
-      iString = IDS_BEST;
-      break;
-    default:
-      return;
+  if(g_sdata.compressor >= COMPRESSOR_DEFAULT && g_sdata.compressor <= COMPRESSOR_BEST) {
+    iBitmap = compressor_bitmaps[(int)g_sdata.compressor];
+    iString = compressor_strings[(int)g_sdata.compressor];
+  }
+  else {
+    return;
   }
   LoadString(g_sdata.hInstance,
              IDS_COMPRESSOR,

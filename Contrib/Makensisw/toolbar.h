@@ -24,7 +24,7 @@
 
 #define TOOLBAR_ID                   10001
 
-#define NUMIMAGES       21
+#define NUMIMAGES       22
 #define IMAGEWIDTH      16
 #define IMAGEHEIGHT     16
 #define BUTTONWIDTH     0
@@ -64,6 +64,7 @@
 #define IDB_RECOMPILE                    5
 #define IDB_DEFINES                      6
 #define IDB_COMPRESSOR                   7
+#define IDB_COMPRESSOR_DEFAULT           7
 #define IDB_TEST                         8
 #define IDB_EDITSCRIPT                   9
 #define IDB_BROWSESCR                    10
@@ -77,6 +78,7 @@
 // Added by Darren Owen (DrO) on 1/10/2003
 #define IDB_RECOMPILE_TEST               19
 #define IDB_COMPRESSOR_BEST              20
+#define IDB_COMPRESSOR_LZMA              21
 
 typedef struct ToolBarStruct {
   HWND hwnd;
