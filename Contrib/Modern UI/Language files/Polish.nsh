@@ -6,7 +6,7 @@
 ;Updated by cube, cube(at)lp.net.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "POLISH"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Polish"
 
   !define MUI_LANGNAME "Polski" ;Use only ASCII characters (if this is not possible, use the English name)
   
