@@ -1,9 +1,9 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1045
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
-# spelling corrected by cube cube(at)lp.net.pl
+# corrections, additions by cube cube(at)lp.net.pl
 Nullsoft Install System %s
 %s Instalator
 %s Odinstaluj
@@ -18,6 +18,8 @@ Nullsoft Install System %s
 < &Cofnij
 &Dalej >
 &Zgadzam siê
+&Akceptujê warunki licencji
+&Nie akceptujê warunków licencji
 &Instaluj
 &Odinstaluj
 &Anuluj
@@ -41,14 +43,14 @@ Kopiuj do
 Nie mo¿na by³o znaleŸæ symbolu: 
 Nie mo¿na by³o wczytaæ: 
 Twórz folder: 
-Twórz skrót klawiszowy: 
-Utworzone odinstalowanie: 
+Twórz skrót: 
+Utworzono deinstalator: 
 Usuñ plik: 
 Usuñ przy restarcie: 
-B³¹d tworzenia skrótu klawiszowego: 
+B³¹d tworzenia skrótu: 
 B³¹d tworzenia: 
-B³¹d dekompresji danych! Czy przerwaæ instalacjê?
-B³¹d zapisu DLL
+B³¹d dekompresji danych! Uszkodzony instalator?
+B³¹d rejestracji DLL
 ExecShell: 
 Uruchom: 
 Rozpakuj: 
