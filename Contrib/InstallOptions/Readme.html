@@ -235,10 +235,12 @@ will display a directory requester where the user can browse for a directory.<br
 An "<em>Icon</em>" control displays an icon. Use no Text to use the installer icon.<br />
 A "<em>Bitmap</em>" control displays a bitmap.<br />
 A "<em>GroupBox</em>" control displays a frame to group controls.<br />
-A "<em>Link</em>" control displays a static hot text, when the user click the control the contents
-of <strong>State</strong> (e.g. http://...) will be executed using ShellExecute<br />
-A "<em>Button</em>" control displays a push button that your NSIS script can act on when pressed.
-See the "<em>NOTIFY</em>" flag for more information.</td>
+A "<em>Link</em>" control displays a static hot text. When the user clicks the control the contents
+of <strong>State</strong> (e.g. http://...) will be executed using ShellExecute. Alternatively
+<strong>State</strong> can be omitted and the <em>NOTIFY</em> flag used to have your NSIS script
+called. See the "<em>NOTIFY</em>" flag below for more information.<br />
+A "<em>Button</em>" control displays a push button that can be used in the same way as the
+"<em>Link</em>" control above.</td>
 </tr>
 <tr>
 <td class="lefttable"><strong>Text</strong></td>
@@ -257,7 +259,8 @@ are NSIS functions for converting text to/from this format.</td>
 window, so you can read from it from NSIS. For edit texts and dir and file request boxes, this is
 the string that is specified. For radio button and check boxes, this can be '0' or '1' (for
 unchecked or checked). For list boxes, combo boxes and drop lists this is the selected items
-separated by pipes ('|').<br />
+separated by pipes ('|'). For Links and Buttons this can specify something to be executed or opened
+(using ShellExecute).<br />
 <br />
 <strong>Note:</strong> For Text fields with the MULTILINE flag, \r\n will be converted to a
 newline. To use a back-slash in your text you have to escape it using another back-slash - \\.
@@ -314,16 +317,19 @@ Bottom</strong></td>
 set in dialog units. To get the right dimensions for your controls, design your dialog using a
 resource editor and copy the dimensions to the INI file.<br />
 <br />
-<strong>Note:</strong> For combobox or droplist, the "<em>bottom</em>" value is not used in the
+<strong>Note:</strong> You can specify negative coordinates to specify the distance from the right
+or bottom edge.<br />
+<br />
+<strong>Note (2):</strong> For combobox or droplist, the "<em>bottom</em>" value is not used in the
 same way.<br />
 In this case, the bottom value is the maximum size of the window when the pop-up list is being
 displayed. All other times, the combobox is automatically sized to be one element tall. If you have
 trouble where you can not see the combobox drop-down, then check the bottom value and ensure it is
-large enough.<br />
+large enough. A rough guide for the height required is the number of items in the list multiplied
+by 8, plus 20.<br />
 <br />
-<strong>Note (2):</strong> FileRequest and DirRequest controls will allocate 15 dialog units to the
-browse button. Make this control wide enough the contents of the textbox can be seen. Note that you
-can specify negative coordinates to specify the distance from the right or bottom edge.</td>
+<strong>Note (3):</strong> FileRequest and DirRequest controls will allocate 15 dialog units to the
+browse button. Make this control wide enough the contents of the textbox can be seen.</td>
 </tr>
 <tr>
 <td class="lefttable"><strong>Filter</strong></td>
@@ -461,13 +467,12 @@ HSCROLL flag also has this effect.</td>
 </tr>
 <tr>
 <td class="righttable">HSCROLL</td>
-<td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Show a horizontal
-scrollbar and disable word-wrap.</td>
+<td class="righttable">Show a horizontal scrollbar. When used by "<em>Text</em>" controls with
+multiple-lines this also disables word-wrap.</td>
 </tr>
 <tr>
 <td class="righttable">VSCROLL</td>
-<td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Show a vertical
-scrollbar.</td>
+<td class="righttable">Show a vertical scrollbar.</td>
 </tr>
 <tr>
 <td class="righttable">READONLY</td>
@@ -476,11 +481,12 @@ text in the edit control, but allow the user to select and copy the text.</td>
 </tr>
 <tr>
 <td class="righttable">NOTIFY</td>
-<td class="righttable">Used by "<em>Button</em>", "<em>CheckBox</em>" and "<em>RadioButton</em>"
-controls. Causes InstallOptions to call your NSIS custom page validation/leave function whenever
-the button is pressed. Your validation/leave function can read the "<em>State</em>" value from the
-"<em>Settings</em>" section to determine which custom button has been pressed, if any, and perform
-some appropriate action followed by an Abort instruction (to tell NSIS to return to the page). The
+<td class="righttable">Used by "<em>Button</em>", "<em>Link</em>", "<em>CheckBox</em>",
+"<em>RadioButton</em>", "<em>ListBox</em>" and "<em>DropList</em>" controls. Causes InstallOptions
+to call your NSIS custom page validation/leave function whenever the control's selection changes.
+Your validation/leave function can read the "<em>State</em>" value from the "<em>Settings</em>"
+section to determine which control caused the notification, if any, and perform some appropriate
+action followed by an Abort instruction (to tell NSIS to return to the page). The
 Contrib\InstallOptions folder contains an example script showing how this might be used.</td>
 </tr>
 </table>
@@ -718,12 +724,32 @@ FunctionEnd
 </pre>
 <h2>Version history</h2>
 <ul>
+<li>DLL version 2.4 (1/4/2004)
+<ul>
+<li>Initial focus is set in "initDialog" making it possible to override it from NSIS prior to
+calling "show"</li>
+<li>When initial focus is to a Text field InstallOptions now follows standard Windows behaviour by
+having the text selected</li>
+<li>Label and other static fields no longer have State= written to the INI file when leaving the
+dialog</li>
+<li>NOTIFY flag can now be used with Link fields (State should be omitted in this case)</li>
+<li>Likewise, State can now be used with Button fields (behaves the same as with Link fields)</li>
+<li>NOTIFY flag can also now be used with ListBox and DropList fields to have NSIS notified when
+the selection changes</li>
+<li>Meaning of RIGHT flag is now reversed in right-to-left language mode</li>
+<li>HSCROLL and VSCROLL flags are no longer restricted to Text fields</li>
+<li>Various Link field fixes</li>
+</ul>
+</li>
+</ul>
+<ul>
 <li>DLL version 2.3 (12/4/2003)
 <ul>
 <li>Added new control type "Button"</li>
 <li>Added new flag "NOTIFY"</li>
 <li>Added new flag "NOWORDWRAP" for multi-line text boxes</li>
 <li>Reduced size down to 12K</li>
+<li>Better RTL support</li>
 </ul>
 </li>
 </ul>

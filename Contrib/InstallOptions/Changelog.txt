@@ -1,8 +1,20 @@
+DLL version 2.4 (1/4/2004)
+* Initial focus is set in "initDialog" making it possible to override it from NSIS prior to calling "show"
+* When initial focus is to a Text field InstallOptions now follows standard Windows behaviour by having the text selected
+* Label and other static fields no longer have State= written to the INI file when leaving the dialog
+* NOTIFY flag can now be used with Link fields (State should be omitted in this case)
+* Likewise, State can now be used with Button fields (behaves the same as with Link fields)
+* NOTIFY flag can also now be used with ListBox and DropList fields to have NSIS notified when the selection changes
+* Meaning of RIGHT flag is now reversed in right-to-left language mode
+* HSCROLL and VSCROLL flags are no longer restricted to Text fields
+* Various Link field fixes
+
 DLL version 2.3 (12/4/2003)
 * Added new control type "Button"
 * Added new flag "NOTIFY"
 * Added new flag "NOWORDWRAP" for multi-line text boxes
 * Reduced size down to 12K
+* Better RTL support
 
 DLL version 2.2 (6/10/2003)
 * Added New control type LINK
