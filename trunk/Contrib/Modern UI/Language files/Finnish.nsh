@@ -73,5 +73,4 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Poisto lopetettu" 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Ohjelmaa ei poistettu onnistuneesti." 
 
-  
 !insertmacro MUI_LANGUAGEFILE_END

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.64
+;Compatible with Modern UI 1.65
 
 ;Language: Hungarian (1038)
 ;Translation by Jozsef Tamas Herczeg, Lajos Molnar (Orfanik) <orfanik@axelero.hu>
