@@ -235,7 +235,7 @@ static int ExecuteEntry(entry *entries, int pos)
       if (parms[1]) 
       {
         update_status_text(LANG_OUTPUTDIR,buf2);
-        lstrcpy(state_output_directory,buf2);     
+        lstrcpy(state_output_directory,buf2);
       }
       else update_status_text(LANG_CREATEDIR,buf2);
       recursive_create_directory(buf2);
