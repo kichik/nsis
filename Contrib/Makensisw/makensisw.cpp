@@ -525,14 +525,17 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     static char pbuf[8192];
     char *p=NULL;
     *response = 0;
-    if (getProxyInfo(pbuf)) {
-        p=my_strstr(pbuf,"http=");
-        if (!p) p=pbuf;
-        else {
-            p+=5;
-            char *tp=my_strstr(p,";");
-            if (tp) *tp=0;
-        }
+    if (getProxyInfo(pbuf))
+    {
+      p=my_strstr(pbuf,"http=");
+      if (!p) p=pbuf;
+      else {
+        p+=5;
+      }
+      char *tp=my_strstr(p,";");
+      if (tp) *tp=0;
+      char *p2=my_strstr(p,"=");
+      if (p2) p=0; // we found the wrong proxy
     }
     if (!g_dns) {
         g_dns = new JNL_AsyncDNS();
