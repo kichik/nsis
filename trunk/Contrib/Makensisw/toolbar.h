@@ -30,7 +30,7 @@
 #define BUTTONWIDTH     0
 #define BUTTONHEIGHT    0
 
-#define BUTTONCOUNT     21
+#define BUTTONCOUNT     20
 
 #define TBB_LOADSCRIPT                   0
 #define TBB_SAVE                         1
@@ -48,10 +48,10 @@
 #define TBB_CLEARLOG                     13
 #define TBB_SEP3                         14
 #define TBB_NSISHOME                     15
-#define TBB_FORUM                        17
-#define TBB_NSISUPDATE                   18
-#define TBB_SEP4                         19
-#define TBB_DOCS                         20
+#define TBB_FORUM                        16
+#define TBB_NSISUPDATE                   17
+#define TBB_SEP4                         18
+#define TBB_DOCS                         19
 
 #define IDB_LOADSCRIPT                   0
 #define IDB_SAVE                         1
