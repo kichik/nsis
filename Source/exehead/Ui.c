@@ -509,6 +509,8 @@ nextPage:
     {
       HWND hwndtmp;
 
+      LockWindowUpdate(g_hwnd);
+
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
       hwndtmp=GetDlgItem(hwndDlg,IDC_BACK);
@@ -518,9 +520,10 @@ nextPage:
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else if (g_autoclose) goto nextPage;
 
+      mystrcpy(g_tmp,g_caption);
+
       if (this_page->id==NSIS_PAGE_CUSTOM) // custom page
       {
-        mystrcpy(g_tmp,g_caption);
         process_string_fromtab(
           g_tmp+mystrlen(g_tmp),
           this_page->caption // post_func contains the caption for custom functions
@@ -535,7 +538,6 @@ nextPage:
 #endif //NSIS_SUPPORT_CODECALLBACKS
       if (this_page->id>=0) // NSIS page
       {
-        mystrcpy(g_tmp,g_caption);
         process_string_fromtab(
           g_tmp+mystrlen(g_tmp),
           LANG_SUBCAPTION(this_page->id-(g_is_uninstaller?NSIS_PAGE_INSTFILES:0))
@@ -553,6 +555,7 @@ nextPage:
           SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
           SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
           ShowWindow(m_curwnd,SW_SHOWNA);
+          LockWindowUpdate(0);
         }
 
         //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
