@@ -257,7 +257,7 @@ Section "Desktop Shortcut" SecShortcuts
 
 SectionEnd
 
-SubSection "User Interfaces" SecInterfaces
+SectionGroup "User Interfaces" SecInterfaces
 
 Section "Modern User Interface" SecInterfacesModernUI
 
@@ -330,7 +330,7 @@ Section "Tiny User Interface" SecInterfacesTinyUI
 
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
 Section "Graphics" SecGraphics
 
@@ -370,7 +370,7 @@ Section "Language Files" SecLangFiles
 
 SectionEnd
 
-SubSection "Tools" SecTools
+SectionGroup "Tools" SecTools
 
 Section "NSIS Update" SecToolsUpdate
 
@@ -406,9 +406,9 @@ Section "Zip2Exe" SecToolsZ2E
 
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
-SubSection "Plug-ins" SecPluginsPlugins
+SectionGroup "Plug-ins" SecPluginsPlugins
 
 Section "Banner" SecPluginsBanner
 
@@ -631,9 +631,9 @@ Section "VPatch" SecPluginsVPatch
   File ..\Contrib\VPatch\patch.pat
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
-SubSection "Source code" SecSrc
+SectionGroup "Source code" SecSrc
 
 Section "NSIS Source Code" SecSrcNSIS
 
@@ -740,7 +740,7 @@ Section "Zip2Exe Source" SecToolsZ2ES
   File ..\Contrib\zip2exe\zlib\*.*
 SectionEnd
 
-SubSection "Tools" SecToolsS
+SectionGroup "Tools" SecToolsS
 
 Section "MakeNSISW Source" SecSrcMNW
 
@@ -779,9 +779,9 @@ Section "UI Holder Source" SecSrcUIHolder
   File "..\Contrib\UIs\UI Holder\*.dsp"
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
-SubSection "Plug-ins" SecPluginsPluginsS
+SectionGroup "Plug-ins" SecPluginsPluginsS
 
 Section "Banner Source" SecPluginsBannerS
 
@@ -1004,9 +1004,9 @@ Section "VPatch Source" SecPluginsVPatchS
 
 SectionEnd
 
-SubSectionEnd ; plugins
+SectionGroupEnd ; plugins
 
-SubSectionEnd
+SectionGroupEnd
 
 Section -post
 

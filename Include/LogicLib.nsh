@@ -60,8 +60,8 @@
 ;       Any conditional NSIS instruction test:
 ;         ${Cmd} a
 ;       Section flag tests:
-;         ${SectionIsSelected} a; ${SectionIsSubSection} a;
-;         ${SectionIsSubSectionEnd} a; ${SectionIsBold} a;
+;         ${SectionIsSelected} a; ${SectionIsSectionGroup} a;
+;         ${SectionIsSectionGroupEnd} a; ${SectionIsBold} a;
 ;         ${SectionIsReadOnly} a; ${SectionIsExpanded} a;
 ;         ${SectionIsPartiallySelected} a
 ;           - Requires a !define LOGICLIB_SECTIONCMP above !include LogicLib.nsh
@@ -320,6 +320,8 @@
   !define SectionIsSelected `${SF_SELECTED} SectionFlagIsSet`
   !define SectionIsSubSection `${SF_SUBSEC} SectionFlagIsSet`
   !define SectionIsSubSectionEnd `${SF_SUBSECEND} SectionFlagIsSet`
+  !define SectionIsSectionGroup `${SF_SECGRP} SectionFlagIsSet`
+  !define SectionIsSectionGroupEnd `${SF_SECGRPEND} SectionFlagIsSet`
   !define SectionIsBold `${SF_BOLD} SectionFlagIsSet`
   !define SectionIsReadOnly `${SF_RO} SectionFlagIsSet`
   !define SectionIsExpanded `${SF_EXPAND} SectionFlagIsSet`

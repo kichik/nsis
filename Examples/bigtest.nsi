@@ -98,7 +98,7 @@ SectionIn 1 2 3
 
 SectionEnd
 
-SubSection /e SubSection1
+SectionGroup /e SectionGroup1
 
 Section "Test Registry/INI functions"
 
@@ -144,7 +144,7 @@ Section "Test CreateShortCut"
 
 SectionEnd
 
-SubSection Sub2
+SectionGroup Group2
 
 Section "Test Branching" 
   
@@ -192,7 +192,7 @@ Section "Test Branching"
 
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
 Section "Test CopyFiles"
 
@@ -203,7 +203,7 @@ Section "Test CopyFiles"
 
 SectionEnd
 
-SubSectionEnd
+SectionGroupEnd
 
 Section "Test Exec functions" CRAPIDX
 
