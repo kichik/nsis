@@ -482,21 +482,6 @@ extern int g_is_uninstaller;
 #define g_sections ((section*)g_blocks[NB_SECTIONS].offset)
 #define num_sections (g_blocks[NB_SECTIONS].num)
 #define g_entries ((entry*)g_blocks[NB_ENTRIES].offset)
-/*extern int num_sections;
-
-//extern int g_autoclose;
-extern void *g_inst_combinedheader;
-extern page *g_inst_page;
-extern section *g_inst_section;
-extern entry *g_inst_entry;
-
-#define g_inst_header ((header *)g_inst_combinedheader)
-#define g_inst_cmnheader ((common_header *)g_inst_combinedheader)
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-#define g_inst_uninstheader ((uninstall_header *)g_inst_combinedheader)
-extern int g_is_uninstaller;
-#endif*/
 #endif
 
 #endif //_FILEFORM_H_
