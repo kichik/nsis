@@ -1,5 +1,13 @@
 \A{history} Release History
 
+\e{v2.0b3}
+
+\b define_if_last in Page command also works when a define has not been specified for all Page commands.\\<br\\>This fixes the problem with the Modern UI "Click Next" / "Click Install" texts.
+
+\b LogSet fixed
+
+\b Modern UI version 1.62b: Start Menu page changes: 'Do not create shortcuts' checkbox can be removed, renamed defines. Documentation updates.
+
 \e{v2.0b2}
 
 \b NSIS Menu: links to all NSIS utitlies, documentation and websites
