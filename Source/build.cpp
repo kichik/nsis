@@ -2754,8 +2754,24 @@ int CEXEBuild::uninstall_generate()
     if (icon_offset == 0)
       return PS_ERROR;
 
-    build_header.uninstdata_offset=build_datablock.getlen();
-    build_header.uninsticon_size=unicondata_size;
+    entry *ent = (entry *) build_entries.get();
+    if (!ent)
+      return PS_ERROR;
+    int ents = build_header.blocks[NB_ENTRIES].num;
+    int uns = uninstaller_writes_used;
+    int uninstdata_offset = build_datablock.getlen();
+    while (ents--)
+    {
+      if (ent->which == EW_WRITEUNINSTALLER)
+      {
+        ent->offsets[1] = uninstdata_offset;
+        ent->offsets[2] = unicondata_size;
+        uns--;
+        if (!uns)
+          break;
+      }
+      ent++;
+    }
 
     if (add_db_data((char *)m_unicon_data,unicondata_size) < 0)
       return PS_ERROR;
@@ -2920,7 +2936,7 @@ int CEXEBuild::uninstall_generate()
     uninstall_size_full=fh.length_of_all_following_data+unicondata_size;
 
     // compressed size
-    uninstall_size=build_datablock.getlen()-build_header.uninstdata_offset;
+    uninstall_size=build_datablock.getlen()-uninstdata_offset;
 
     SCRIPT_MSG("Done!\n");
   }
