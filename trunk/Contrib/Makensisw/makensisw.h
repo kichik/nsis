@@ -48,11 +48,12 @@
 
 // Extern Variables
 extern const char	*NSISW_VERSION;
-extern char			*g_script;
-extern HWND			g_hwnd;
-extern HANDLE		g_hThread;
-extern char			*g_output_exe;
-extern char			*g_input_script;
+extern char			  *g_script;
+extern HWND		  	g_hwnd;
+extern HANDLE	  	g_hThread;
+extern char		  	*g_output_exe;
+extern char			  *g_input_script;
+extern int	      g_retcode;
 
 // makensisw
 int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
