@@ -118,6 +118,9 @@ char *STRDUP(const char *c)
 // combobox flags
 #define FLAG_DROPLIST      (0x400)
 
+// bitmap flags
+#define FLAG_RESIZETOFIT   (0x800)
+
 struct TableEntry {
   char *pszName;
   int   nValue;
@@ -253,19 +256,19 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
 
 
 bool BrowseForFolder(int nControlIdx) {
-  BROWSEINFO bi={0,};
+  BROWSEINFO bi;
   HWND hControl;
 
   hControl = pFields[nControlIdx].hwnd;
 
   bi.hwndOwner = hConfigWindow;
-  // bi.pidlRoot = NULL;
+  bi.pidlRoot = NULL;
   bi.pszDisplayName = (char*)MALLOC(MAX_PATH);
-  //LPCTSTR lpszTitle = NULL;
+  LPCTSTR lpszTitle = NULL;
   bi.ulFlags = BIF_STATUSTEXT;
   bi.lpfn = BrowseCallbackProc;
   bi.lParam = nControlIdx;
-  //bi.iImage = 0;
+  bi.iImage = 0;
 
   if (pFields[nControlIdx].pszRoot) {
 	  LPSHELLFOLDER sf;
@@ -506,6 +509,7 @@ bool ReadSettings(void) {
       { "MULTISELECT",       FLAG_MULTISELECT    },
       { "FILE_EXPLORER",     OFN_EXPLORER        },
       { "FILE_HIDEREADONLY", OFN_HIDEREADONLY    },
+      { "RESIZETOFIT",       FLAG_RESIZETOFIT    },
 /*
       { "NO_ALPHA",          0                   },
       { "NO_NUMBERS",        0                   },
@@ -976,10 +980,10 @@ int createCfgDlg()
             // Scaling an icon/bitmap in relation to dialog units usually looks crap, so
             // take the size originally specified as pixels, *unless* it seems likely the
             // image is required to span the whole dialog.
-            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0)
+            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0 && !(pFields[nIdx].nFlags & FLAG_RESIZETOFIT))
               ? (pFields[nIdx].rect.right - pFields[nIdx].rect.left)
               : (rect.right - rect.left),
-            (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top > 0)
+            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0 && !(pFields[nIdx].nFlags & FLAG_RESIZETOFIT))
               ? (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top)
               : (rect.bottom - rect.top),
             LR_LOADFROMFILE
