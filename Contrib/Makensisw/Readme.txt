@@ -154,6 +154,7 @@ Version History
  - Added some simple tool tips
  - Added Context Menu in log window
  - Added resize gripper
+ - Ctrl+L loads a script
 
 
 Copyright Information

@@ -110,11 +110,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			PostQuitMessage(0);
 			return TRUE;
 		}
-		case WM_HELP: 
-		{
-			ShowDocs(); 
-			return TRUE;
-		}
 		case WM_CLOSE:
 		{
 			if (!g_hThread) {
