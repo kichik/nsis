@@ -119,9 +119,9 @@ Tento prùvodce z Vašeho poèítaèe odinstaluje $(^Name). $_CLICK
 # ^UninstallingSubText
 Odinstalovat z:
 # ^FileError
-Nelze otevøít soubor pro zápis: \r\n\t\"$0\"\r\nStisknìte 'Pøerušit' pro ukonèení instalace\r\nnebo 'Znovu' pro další pokus nebo\r\n'Ignorovat' pro pøeskoèení souboru
+Nelze otevøít soubor pro zápis: \r\n\t"$0"\r\nStisknìte 'Pøerušit' pro ukonèení instalace\r\nnebo 'Znovu' pro další pokus nebo\r\n'Ignorovat' pro pøeskoèení souboru
 # ^FileError_NoIgnore
-Nelze otevøít soubor pro zápis: \r\n\t\"$0\"\r\nStisknìte 'Znovu' pro další pokus nebo\r\n*Storno* pro ukonèení instalace
+Nelze otevøít soubor pro zápis: \r\n\t"$0"\r\nStisknìte 'Znovu' pro další pokus nebo\r\n*Storno* pro ukonèení instalace
 # ^CantWrite
 "Nelze zapsat: "
 # ^CopyFailed

@@ -120,9 +120,9 @@ A(z) $(^Name) eltávolítása következik a számítógéprõl. $_CLICK
 # ^UninstallingSubText
 Eltávolítás helye:
 # ^FileError
-Hiba történt a fájl írásra történõ megnyitásakor: \r\n\t\"$0\"\r\nA Mégse gomb megnyomásával megszakíthatja a telepítést,\r\naz Ismét gombbal megismételheti a fájl írását,\r\na Kihagyás gombbal kihagyhatja ezt a fájlt.
+Hiba történt a fájl írásra történõ megnyitásakor: \r\n\t"$0"\r\nA Mégse gomb megnyomásával megszakíthatja a telepítést,\r\naz Ismét gombbal megismételheti a fájl írását,\r\na Kihagyás gombbal kihagyhatja ezt a fájlt.
 # ^FileError_NoIgnore
-Hiba történt a fájl írásra történõ megnyitásakor:  \r\n\t\"$0\"\r\nAz Újra gomb megnyomásával megismételheti a mûveletet, vagy \r\na Mégse gombbal megszakíthatja a telepítést.
+Hiba történt a fájl írásra történõ megnyitásakor:  \r\n\t"$0"\r\nAz Újra gomb megnyomásával megismételheti a mûveletet, vagy \r\na Mégse gombbal megszakíthatja a telepítést.
 # ^CantWrite
 "Nem írható: "
 # ^CopyFailed
