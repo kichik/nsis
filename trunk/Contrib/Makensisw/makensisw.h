@@ -75,9 +75,7 @@ typedef enum {
   COMPRESSOR_DEFAULT,
   COMPRESSOR_ZLIB,
   COMPRESSOR_BZIP2,
-#ifdef LZMA_COMPRESSOR_SUPPORT
   COMPRESSOR_LZMA,
-#endif
   COMPRESSOR_BEST,
 } NCOMPRESSOR;
 
@@ -85,16 +83,12 @@ typedef enum {
 char *compressor_names[] = {"",
                             "zlib",
                             "bzip2",
-#ifdef LZMA_COMPRESSOR_SUPPORT
                             "lzma",
-#endif
                             "Best"};
 WORD compressor_commands[] = {IDM_DEFAULT,
                               IDM_ZLIB,
                               IDM_BZIP2,
-#ifdef LZMA_COMPRESSOR_SUPPORT
                               IDM_LZMA,
-#endif
                               IDM_BEST};
 #endif
 
@@ -102,16 +96,12 @@ WORD compressor_commands[] = {IDM_DEFAULT,
 int compressor_bitmaps[] = {IDB_COMPRESSOR_DEFAULT, 
                             IDB_COMPRESSOR_ZLIB, 
                             IDB_COMPRESSOR_BZIP2, 
-#ifdef LZMA_COMPRESSOR_SUPPORT
                             IDB_COMPRESSOR_LZMA, 
-#endif
                             IDB_COMPRESSOR_BEST};
 int compressor_strings[] = {IDS_DEFAULT, 
                             IDS_ZLIB, 
                             IDS_BZIP2, 
-#ifdef LZMA_COMPRESSOR_SUPPORT
                             IDS_LZMA, 
-#endif
                             IDS_BEST};
 #endif
 
