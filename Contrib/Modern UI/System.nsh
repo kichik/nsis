@@ -28,7 +28,6 @@ Var MUI_TEMP2
 !macro MUI_DEFINEVARS
 
   !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
-    Var MUI_TEMP3
     Var MUI_HWND
   !endif
 
@@ -924,16 +923,16 @@ Var MUI_TEMP2
         
     SetBkColor $MUI_HWND "${MUI_BGCOLOR}"
       
-    GetDlgItem $MUI_TEMP2 $MUI_HWND 1201
-    SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
-    CreateFont $MUI_TEMP3 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
-    SendMessage $MUI_TEMP2 ${WM_SETFONT} $MUI_TEMP3 0
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
+    SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
+    CreateFont $MUI_TEMP2 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
+    SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
         
-    GetDlgItem $MUI_TEMP2 $MUI_HWND 1202
-    SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
+    SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
         
-    GetDlgItem $MUI_TEMP2 $MUI_HWND 1200
-    SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1200
+    SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
 
     !ifdef MUI_CUSTOMFUNCTION_WELCOME_SHOW
       Call "${MUI_CUSTOMFUNCTION_WELCOME_SHOW}"
@@ -1248,23 +1247,23 @@ Var MUI_TEMP2
     
     SetBkColor $MUI_HWND "${MUI_BGCOLOR}"
     
-    GetDlgItem $MUI_TEMP2 $MUI_HWND 1201
-    SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
-    CreateFont $MUI_TEMP3 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
-    SendMessage $MUI_TEMP2 ${WM_SETFONT} $MUI_TEMP3 0
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1201
+    SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
+    CreateFont $MUI_TEMP2 "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
+    SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
     
-    GetDlgItem $MUI_TEMP2 $MUI_HWND 1202
-    SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+    GetDlgItem $MUI_TEMP1 $MUI_HWND 1202
+    SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
     
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
-      IfRebootFlag "" mui.finish_noreboot_show
-    
-        GetDlgItem $MUI_TEMP2 $MUI_TEMP1 1203
-        SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+      IfRebootFlag 0 mui.finish_noreboot_show
         
-        GetDlgItem $MUI_TEMP2 $MUI_TEMP1 1204
-        SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
+        SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
+        
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
+        SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
           
         Goto mui.finish_show
         
@@ -1273,17 +1272,17 @@ Var MUI_TEMP2
     !endif
     
     !ifdef MUI_FINISHPAGE_RUN
-      GetDlgItem $MUI_TEMP2 $MUI_HWND 1203
-      SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"
+      GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
+      SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"
     !endif
            
     !ifdef MUI_FINISHPAGE_SHOWREADME
       !ifndef MUI_FINISHPAGE_RUN
-        GetDlgItem $MUI_TEMP2 $MUI_HWND 1203
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1203
       !else
-        GetDlgItem $MUI_TEMP2 $MUI_HWND 1204
+        GetDlgItem $MUI_TEMP1 $MUI_HWND 1204
       !endif
-      SetBkColor $MUI_TEMP2 "${MUI_BGCOLOR}"  
+      SetBkColor $MUI_TEMP1 "${MUI_BGCOLOR}"  
     !endif
      
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
