@@ -410,9 +410,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     this_page=g_inst_page+m_page;
 
     if (m_page>=0) {
+#ifdef NSIS_SUPPORT_CODECALLBACKS
       // Call leave function. If Abort used don't move to the next page.
       if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return 1;
-      
+#endif
+
       // if the last page was a custom page, wait for it to finish by itself.
       // if it doesn't, it's a BAD plugin.
       // plugins should react to WM_NOTIFY_OUTER_NEXT.
