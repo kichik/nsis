@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1046
 # Font and size - dash (-) means default
@@ -44,6 +44,8 @@ Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para Aborta
 Não foi possível gravar: 
 Falha ao copiar
 Copiar para 
+Registrando: 
+Desregistrando: 
 Não foi encontrado símbolo: 
 Não foi possível carregar: 
 Criando diretório: 
@@ -67,3 +69,12 @@ Renomear ao reiniciar:
 Renomeando: 
 Ignorado: 
 Copiar detalhes para a Área de Transfêrencia
+Registrar processo de instalação
+# byte 
+B
+# kilo 
+K
+# mega 
+M
+# giga 
+G
