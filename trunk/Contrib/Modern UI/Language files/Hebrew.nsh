@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "בחר רכיבים"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "בחר אילו רכיבים של $(^NameDA) ברצונך להתקין."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "תיאור"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "העבר את העכבר מעל רכיב כלשהו בכדי לצפות בתיאורו."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "העבר את העכבר מעל רכיב כלשהו בכדי לצפות בתיאורו."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "בחר רכיב כלשהו בכדי לצפות בתיאורו."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "בחר מיקום להתקנה"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "בחר את התיקייה בה אתה מעוניין להתקין את $(^NameDA)."
