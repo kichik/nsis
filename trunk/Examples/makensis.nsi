@@ -1004,6 +1004,14 @@ Section -post
   Push AdvSplash
   Call AddWorkspaceToStartMenu
 
+  ; Math
+  Push Math
+  Call AddReadmeToStartMenu
+
+  Push "Math\Source\Math.sln"
+  Push "Source\Math project workspace"
+  Call AddContribToStartMenu
+
   ; NSISdl
   Push NSISdl
   Call AddReadmeToStartMenu
