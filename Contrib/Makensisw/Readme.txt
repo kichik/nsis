@@ -176,6 +176,7 @@ Version History
  - Added option for compile & run
  - Added compressor setting option
  - Added support for lzma compression
+ - Added named Symbols sets.
  
 Copyright Information
 ---------------------

@@ -31,6 +31,7 @@ NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
 NFINDREPLACE g_find;
 extern NTOOLBAR g_toolbar;
+int g_symbol_set_mode;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
   MSG  msg;
@@ -42,8 +43,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   my_memset(&g_find,0,sizeof(NFINDREPLACE));
   g_sdata.hInstance=GetModuleHandle(0);
   g_sdata.script_alloced=false;
-  g_sdata.defines = NULL;
-  RestoreDefines();
+  g_sdata.symbols = NULL;
+  RestoreSymbols();
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
@@ -180,7 +181,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
     case WM_DESTROY:
     {
-      SaveDefines();
+      SaveSymbols();
       SaveCompressor();
       SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
@@ -798,6 +799,53 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   return FALSE;
 }
 
+void EnableSymbolSetButtons(HWND hwndDlg)
+{
+  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
+  if(n > 0) {
+    EnableWindow(GetDlgItem(hwndDlg, IDCLEAR), TRUE);
+    EnableWindow(GetDlgItem(hwndDlg, IDSAVE), TRUE);
+  }
+  else {
+    EnableWindow(GetDlgItem(hwndDlg, IDCLEAR), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDSAVE), FALSE);
+  }
+}
+
+void SetSymbols(HWND hwndDlg, char **symbols)
+{
+    int i = 0;
+    SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_RESETCONTENT , 0, 0);
+    if (symbols) {
+      while (symbols[i]) {
+        SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)symbols[i]);
+        i++;
+      }
+    }
+    EnableSymbolSetButtons(hwndDlg);
+    EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+}
+
+char **GetSymbols(HWND hwndDlg)
+{
+  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCOUNT, 0, 0);
+  char **symbols = NULL;
+  if(n > 0) {
+    HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (n+1)*sizeof(char *));
+    symbols = (char **)GlobalLock(hMem);
+    for (int i = 0; i < n; i++) {
+      int len = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)i, 0);
+      symbols[i] = (char *)GlobalAlloc(GPTR, (len+1)*sizeof(char));
+      SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)i, (LPARAM)symbols[i]);
+    }
+    symbols[n] = NULL;
+  }
+
+  return symbols;
+}
+
 BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch(msg) {
     case WM_INITDIALOG:
@@ -810,16 +858,36 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
       }
       rv = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_SETCURSEL, (WPARAM)g_sdata.default_compressor, (LPARAM)0);
 
-      i = 0;
-      if (g_sdata.defines) {
-        while (g_sdata.defines[i]) {
-          SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_ADDSTRING, 0, (LPARAM)g_sdata.defines[i]);
-          i++;
-        }
-      }
-      EnableWindow(GetDlgItem(hwndDlg, IDRIGHT), FALSE);
-      EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+      SetSymbols(hwndDlg, g_sdata.symbols);
       SetFocus(GetDlgItem(hwndDlg, IDC_SYMBOL));
+      break;
+    }
+    case WM_MAKENSIS_LOADSYMBOLSET:
+    {
+      char *name = (char *)wParam;
+      char **symbols = LoadSymbolSet(name);
+      HGLOBAL hMem;
+
+      SetSymbols(hwndDlg, symbols);
+      if(symbols) {
+        hMem = GlobalHandle(symbols);
+        GlobalUnlock(hMem);
+        GlobalFree(hMem);
+      }
+      break;
+    }
+    case WM_MAKENSIS_SAVESYMBOLSET:
+    {
+      char *name = (char *)wParam;
+      char **symbols = GetSymbols(hwndDlg);
+      HGLOBAL hMem;
+
+      if(symbols) {
+        SaveSymbolSet(name, symbols);
+        hMem = GlobalHandle(symbols);
+        GlobalUnlock(hMem);
+        GlobalFree(hMem);
+      }
       break;
     }
     case WM_COMMAND:
@@ -829,19 +897,10 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           ResetObjects();
           ResetInputScript();
-          ResetDefines();
-          int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCOUNT, 0, 0);
-          if(n > 0) {
-            g_sdata.defines = (char **)GlobalAlloc(GPTR, (n+1)*sizeof(char *));
-            for (int i = 0; i < n; i++) {
-              int len = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXTLEN, (WPARAM)i, 0);
-              g_sdata.defines[i] = (char *)GlobalAlloc(GPTR, (len+1)*sizeof(char));
-              SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXT, (WPARAM)i, (LPARAM)g_sdata.defines[i]);
-            }
-            g_sdata.defines[n] = NULL;
-          }
+          ResetSymbols();
+          g_sdata.symbols = GetSymbols(hwndDlg);
 
-          n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+          int n = SendDlgItemMessage(hwndDlg, IDC_COMPRESSOR, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
           if (n >= (int)COMPRESSOR_SCRIPT && n <= (int)COMPRESSOR_BEST) {
             g_sdata.default_compressor = (NCOMPRESSOR)n;
           }
@@ -862,7 +921,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             char *buf = (char *)GlobalAlloc(GPTR, (n+1)*sizeof(char));
             SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_GETTEXT, n+1, (LPARAM)buf);
             if(my_strstr(buf," ") || my_strstr(buf,"\t")) {
-              MessageBox(hwndDlg,DEFINESERROR,"Error",MB_OK|MB_ICONSTOP);
+              MessageBox(hwndDlg,SYMBOLSERROR,"Error",MB_OK|MB_ICONSTOP);
               GlobalFree(buf);
               break;
             }
@@ -877,21 +936,22 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               buf = buf3;
               GlobalFree(buf2);
             }
-            SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_ADDSTRING, 0, (LPARAM)buf);
+            SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)buf);
             SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, 0);
             SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, 0);
             GlobalFree(buf);
+            EnableSymbolSetButtons(hwndDlg);
           }
         }
         break;
         case IDLEFT:
         {
-          int index = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
+          int index = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCURSEL, 0, 0);
           if(index != LB_ERR) {
-            int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXTLEN, (WPARAM)index, 0);
+            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)index, 0);
             if(n > 0) {
               char *buf = (char *)GlobalAlloc(GPTR, (n+1)*sizeof(char));
-              SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
+              SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXT, (WPARAM)index, (LPARAM)buf);
               char *p = my_strstr(buf,"=");
               if(p) {
                 SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, (LPARAM)(p+1));
@@ -899,10 +959,42 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               }
               SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, (LPARAM)buf);
               GlobalFree(buf);
-              SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_DELETESTRING, (WPARAM)index, (LPARAM)buf);
+              SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_DELETESTRING, (WPARAM)index, 0);
               EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+              EnableSymbolSetButtons(hwndDlg);
             }
           }
+        }
+        break;
+        case IDCLEAR:
+        {
+          SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_RESETCONTENT , 0, 0);
+          EnableSymbolSetButtons(hwndDlg);
+        }
+        break;
+        case IDLOAD:
+        {
+          g_symbol_set_mode=1;
+          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SYMBOLSET),hwndDlg,(DLGPROC)SymbolSetProc);
+        }
+        break;
+        case IDSAVE:
+        {
+          g_symbol_set_mode=2;
+          DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_SYMBOLSET),hwndDlg,(DLGPROC)SymbolSetProc);
+        }
+        break;
+        case IDDEL:
+        {
+          int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
+          int *items = (int *)GlobalAlloc(GPTR, n*sizeof(int));
+          int rv = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, (WPARAM)n, (LPARAM)items);
+          int i;
+          for(i=n-1;i>=0;i--) {
+            SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_DELETESTRING, (WPARAM)items[i], 0);
+          }
+          EnableSymbolSetButtons(hwndDlg);
         }
         break;
         case IDC_SYMBOL:
@@ -917,15 +1009,21 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
             }
           }
           break;
-        case IDC_DEFINES:
+        case IDC_SYMBOLS:
           if(HIWORD(wParam) == LBN_SELCHANGE)
           {
-            int n = SendDlgItemMessage(hwndDlg, IDC_DEFINES, LB_GETCURSEL, 0, 0);
-            if(n != LB_ERR) {
-              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
-            }
-            else {
+            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
+            if(n == 0) {
               EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+            }
+            else if(n == 1) {
+              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
+            }
+            else if(n > 1) {
+              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
             }
           }
           break;
@@ -971,6 +1069,114 @@ BOOL CALLBACK CompressorProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lPara
         case IDCANCEL:
         {
           EndDialog(hwndDlg, 1);
+          break;
+        }
+      }
+      break;
+    }
+  }
+  return FALSE;
+}
+
+BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+  switch(msg) {
+    case WM_INITDIALOG:
+    {
+      HWND hwndEdit;
+      HKEY hKey;
+
+      EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+      if (RegOpenKeyEx(REGSEC,REGKEY,0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+        HKEY hSubKey;
+
+        if (RegCreateKey(hKey,REGSYMSUBKEY,&hSubKey) == ERROR_SUCCESS) {
+          char subkey[1024];
+          int i=0;
+
+          while (RegEnumKey(hSubKey,i,subkey,sizeof(subkey)) == ERROR_SUCCESS) {
+            SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_ADDSTRING, 0, (LPARAM)subkey);
+            i++;
+          }
+          RegCloseKey(hSubKey);
+        }
+        RegCloseKey(hKey);
+      }
+
+      hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
+      hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
+      SendMessage(hwndEdit, EM_LIMITTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN, 0);
+      if(g_symbol_set_mode == 1) { //Load
+        SetWindowText(hwndDlg, LOAD_SYMBOL_SET_DLG_NAME);
+        SendMessage(hwndEdit, EM_SETREADONLY, (WPARAM)TRUE, 0);
+      }
+      else {
+        SetWindowText(hwndDlg, SAVE_SYMBOL_SET_DLG_NAME);
+      }
+      break;
+    }
+    case WM_COMMAND:
+    {
+      switch (LOWORD(wParam)) {
+        case IDOK:
+        {
+          HWND hwndEdit;
+          char name[SYMBOL_SET_NAME_MAXLEN+1];
+
+          hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), 0, 0, 0); // Handle of list
+          hwndEdit = FindWindowEx(GetDlgItem(hwndDlg, IDC_NAMES), hwndEdit, 0, 0); //Handle of edit box
+          SendMessage(hwndEdit, WM_GETTEXT, (WPARAM)SYMBOL_SET_NAME_MAXLEN+1, (LPARAM)name);
+          if(!lstrlen(name)) {
+            if(g_symbol_set_mode == 1) { //Load
+              MessageBox(hwndDlg,LOAD_SYMBOL_SET_MESSAGE,LOAD_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);
+            }
+            else {
+              MessageBox(hwndDlg,SAVE_SYMBOL_SET_MESSAGE,SAVE_SYMBOL_SET_DLG_NAME,MB_OK|MB_ICONEXCLAMATION);
+            }
+          }
+          else {
+            HWND hwndParent = GetParent(hwndDlg);
+            if(g_symbol_set_mode == 1) { //Load
+              SendMessage(hwndParent, WM_MAKENSIS_LOADSYMBOLSET, (WPARAM)name, NULL);
+            }
+            else {
+              SendMessage(hwndParent, WM_MAKENSIS_SAVESYMBOLSET, (WPARAM)name, NULL);
+            }
+            EndDialog(hwndDlg, TRUE);
+          }
+          break;
+        }
+        case IDCANCEL:
+        {
+          EndDialog(hwndDlg, TRUE);
+          break;
+        }
+        case IDDEL:
+        {
+          int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+          if(n != CB_ERR) {
+            long len = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETLBTEXTLEN, (WPARAM)n, 0);
+            char *buf = (char *)GlobalAlloc(GPTR, (len+1)*sizeof(char));
+            if(SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETLBTEXT, (WPARAM)n, (LPARAM)buf) != CB_ERR) {
+              SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_DELETESTRING, n, 0);
+              DeleteSymbolSet(buf);
+            }
+            GlobalFree(buf);
+          }
+          EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+          break;
+        }
+        case IDC_NAMES:
+        {
+          if(HIWORD(wParam) == CBN_SELCHANGE)
+          {
+            int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+            if(n == CB_ERR) {
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+            }
+            else {
+              EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
+            }
+          }
           break;
         }
       }

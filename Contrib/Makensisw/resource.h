@@ -5,8 +5,11 @@
 #define IDS_LOADSCRIPT                  1
 #define IDS_SAVE                        2
 #define IDS_EXIT                        3
+#define IDLOAD                          3
 #define IDS_COPY                        4
+#define IDSAVE                          4
 #define IDS_FIND                        5
+#define IDCLEAR                         5
 #define IDS_RECOMPILE                   6
 #define IDS_SETTINGS                    7
 #define IDS_COMPRESSOR                  8
@@ -35,6 +38,7 @@
 #define IDB_BITMAP1                     120
 #define IDB_TOOLBAR                     122
 #define DLG_COMPRESSOR                  124
+#define DLG_SYMBOLSET                   125
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -56,9 +60,11 @@
 #define IDC_VALUE                       1018
 #define IDRIGHT                         1019
 #define IDLEFT                          1020
-#define IDC_DEFINES                     1021
+#define IDC_SYMBOLS                     1021
 #define IDC_RECOMPILE_TEST              1022
 #define IDC_COMPRESSOR                  1025
+#define IDC_NAMES                       1027
+#define IDDEL                           1028
 #define IDM_COMPRESSOR                  40001
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
@@ -81,12 +87,12 @@
 #define IDM_SETTINGS                    40033
 
 // Next default values for new objects
-//
+// 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        125
+#define _APS_NEXT_RESOURCE_VALUE        126
 #define _APS_NEXT_COMMAND_VALUE         40034
-#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_CONTROL_VALUE         1029
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
