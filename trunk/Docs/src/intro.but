@@ -4,8 +4,6 @@ NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck a
 
 \B{intro-about} About NSIS
 
-NSIS tries to be a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
-
 NSIS exists largely because of the need to distribute Winamp.
 
 In the beginning, Winamp was distributed as a simple .ZIP file (see Winamp 1.0).

@@ -17,3 +17,19 @@ This command will change the compiler to the new directory, new_path. new_path c
 \e{!packhdr tempfile command}
 
 This option makes the compiler an external EXE packer (such as Petite or UPX) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.  
+
+\e{!echo message} 
+
+This command will echo a message to the user compiling the script.  
+
+\e{!warning [message]} 
+
+This command will issue a warning to the script compiler. You can also add a message to this warning.  
+
+\e{!error [message]}
+
+This commnd will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.  
+
+\e{!verbose level} 
+
+This command will set the level of verbosity. 4=all, 3=no script, 2=no info, 1=no warnings, 0=none  
