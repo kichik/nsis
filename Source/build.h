@@ -111,6 +111,8 @@ class CEXEBuild {
     void restore_timestamp_predefine(char *);
     char* set_line_predefine(int, BOOL);
     void restore_line_predefine(char *);
+    void set_date_time_predefines();
+    void del_date_time_predefines();
 #endif
     int parseScript();
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
