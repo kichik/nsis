@@ -38,7 +38,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_CRCCHECK,"CRCCheck",1,0,"(on|force|off)"},
 {TOK_CREATEDIR,"CreateDirectory",1,0,"directory_name"},
 {TOK_CREATEFONT,"CreateFont",2,5,"$(user_var: handle output) face_name [height wieght /ITALIC /UNDERLINE /STRIKE]"},
-{TOK_CREATESHORTCUT,"CreateShortCut",2,5,"shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)"},
+{TOK_CREATESHORTCUT,"CreateShortCut",2,6,"shortcut_name.lnk shortcut_target [parameters [icon_file [icon index [showmode [hotkey [comment]]]]]]\n    showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)\n    hotkey=(ALT|CONTROL|EXT|SHIFT)|(F1-F24|A-Z)"},
 {TOK_DBOPTIMIZE,"SetDatablockOptimize",1,0,"(off|on)"},
 {TOK_DELETEINISEC,"DeleteINISec",2,0,"ini_file section_name"},
 {TOK_DELETEINISTR,"DeleteINIStr",3,0,"ini_file section_name entry_name"},
