@@ -324,7 +324,7 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c !define REG_MULTI_SZ             7
 \c
 \c !define RegOpenKeyEx     "Advapi32::RegOpenKeyExA(i, t, i, i, i) i"
-\c !define RegQueryValueEx  "Advapi32::RegQueryValueExA(i, t, i, i, i, i, i) i"
+\c !define RegQueryValueEx  "Advapi32::RegQueryValueExA(i, t, i, i, i, i) i"
 \c !define RegCloseKey      "Advapi32::RegCloseKeyA(i) i"
 \c
 \c ####### Edit this!
