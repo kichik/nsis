@@ -62,11 +62,7 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     msg = (char *) lParam;
     uMsg = WM_TIMER;
   }
-  if (uMsg == WM_TIMER
-#ifdef NSIS_COMPRESS_WHOLE
-    || (!msg && uMsg == WM_DESTROY)
-#endif
-    )
+  if (uMsg == WM_TIMER)
   {
     static char bt[64];
     int percent=MulDiv(min(m_pos,m_length),100,m_length);
@@ -424,8 +420,10 @@ extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
 extern BOOL CALLBACK DialogProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   HWND hwnd=NULL;
   unsigned int verify_time=GetTickCount()+500;
+#endif
   int needed=amount-(dbd_size-dbd_pos);
   if (needed>0)
   {
@@ -450,12 +448,14 @@ static int NSISCALL __ensuredata(int amount)
           if (!g_exec_flags.silent)
 #endif
           {
-            if (hwnd) {
+            if (hwnd)
+            {
               MSG msg;
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }
             else if (GetTickCount() > verify_time)
+            {
               hwnd = CreateDialogParam(
                 g_hInstance,
                 MAKEINTRESOURCE(IDD_VERIFY),
@@ -463,6 +463,7 @@ static int NSISCALL __ensuredata(int amount)
                 verProc,
                 g_hwnd ? 0 : (LPARAM)_LANG_UNPACKING
               );
+            }
           }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
         g_inflate_stream.next_out=_outbuffer;
@@ -489,7 +490,14 @@ static int NSISCALL __ensuredata(int amount)
     }
     SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
   }
-  if (hwnd) DestroyWindow(hwnd);
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  if (hwnd)
+  {
+    m_pos=m_length;
+    SendMessage(hwnd,WM_TIMER,0,0);
+    DestroyWindow(hwnd);
+  }
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
   return 0;
 }
 
