@@ -54,8 +54,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Naozaj chcete ukonËiù inötal·ciu programu $(^Name)?"  
   
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Kliknite na Odinötalovaù pre spustenie odinötal·cie."
-  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_TITLE "Odinötalovanie programu $(^Name)"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_SUBTITLE "Odstr·nenie programu $(^Name) z V·öho systÈmu."
   
