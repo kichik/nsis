@@ -119,11 +119,10 @@ end;
 
 procedure SetUserVariable(varnum: TVariableList; value: PChar);
 begin
-  if (value = nil) or (integer(varnum) < 0) or (integer(varnum) >= integer(__INST_LAST)) then
+  if (value <> nil) and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
     begin
-    Exit;
+      lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
     end;
-  lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
 end;
 
 begin
