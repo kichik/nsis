@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1036
 # Translation by the French NSIS team <veekee@winampfr.com> - http://www.winampfr.com/nsis. Updated by Sébastien Delahaye <seb@delahaye.net>.
@@ -17,6 +17,8 @@ Désinstallation de %s
 < &Précédent
 &Suivant >
 J'a&ccepte
+J'a&ccepte les termes de la licence
+Je &n'accepte pas les termes de la licence
 &Installer
 &Désinstaller
 Annuler
