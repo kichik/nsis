@@ -28,8 +28,8 @@
 
 
 // NSIS_MAX_INST_TYPES specified the  maximum install types.
-// note that this should not exceed 30, ever.
-#define NSIS_MAX_INST_TYPES 8
+// note that this should not exceed 32, ever.
+#define NSIS_MAX_INST_TYPES 32
 
 // NSIS_CONFIG_UNINSTALL_SUPPORT enables the uninstaller
 // support. Comment it out if your installers don't need
@@ -329,8 +329,8 @@
   #endif
 #endif
 
-#if NSIS_MAX_INST_TYPES > 30
-  #error NSIS_MAX_INST_TYPES > 30
+#if NSIS_MAX_INST_TYPES > 32
+  #error NSIS_MAX_INST_TYPES > 32
 #endif
 
 #endif//!APSTUDIO_INVOKED

@@ -107,7 +107,7 @@ class CEXEBuild {
 
     // build.cpp functions used mostly by script.cpp
     int getcurdbsize();
-    int add_section(const char *secname, const char *file, int line, const char *defname,  int expand);
+    int add_section(const char *secname, const char *file, int line, const char *defname,  int expand=0);
     int section_end();
     int add_function(const char *funname);
     int function_end();
@@ -119,6 +119,7 @@ class CEXEBuild {
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
     int add_string(const char *string); // returns offset (in string table)
+    int add_intstring(const int i); // returns offset in stringblock
     int add_string_main(const char *string, int process=1); // returns offset (in string table)
     int add_string_uninst(const char *string, int process=1); // returns offset (in string table)
     int preprocess_string(char *out, const char *in);
@@ -166,7 +167,6 @@ class CEXEBuild {
 
     // a whole bunch O data.
 
-    // Added by Amir Szekely 31st July 2002
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     ICompressor *compressor;
     CZlib zlib_compressor;
@@ -175,7 +175,8 @@ class CEXEBuild {
     bool build_compressor_set;
     bool build_compress_whole;
 
-    // Added by Amir Szekely 2nd August 2002
+    bool use_first_insttype;
+
     vector<NLF*> build_nlfs;
     vector<StringTable*> string_tables;
     LANGID last_used_lang;

@@ -16,12 +16,15 @@ char g_log_file[1024];
 
 char temp_directory[NSIS_MAX_STRLEN];
 
-char g_usrvars[25][NSIS_MAX_STRLEN];
+char g_usrvars[26][NSIS_MAX_STRLEN];
 char *state_command_line=g_usrvars[20];
 char *state_install_directory=g_usrvars[21];
 char *state_output_directory=g_usrvars[22];
 char *state_exe_directory=g_usrvars[23];
 char *state_language=g_usrvars[24];
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+char *state_plugins_dir=g_usrvars[25];
+#endif
 
 HANDLE g_hInstance;
 
@@ -433,21 +436,22 @@ char * NSISCALL process_string(const char *in)
         case VAR_CODES_START + 23: // OUTDIR
         case VAR_CODES_START + 24: // EXEDIR
         case VAR_CODES_START + 25: // LANGUAGE
+        case VAR_CODES_START + 26: // PLUGINSDIR
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
-        case VAR_CODES_START + 26: // PROGRAMFILES
+        case VAR_CODES_START + 27: // PROGRAMFILES
           smwcvesf[41]=0;
           myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
 
-        case VAR_CODES_START + 27: // SMPROGRAMS
-        case VAR_CODES_START + 28: // SMSTARTUP
-        case VAR_CODES_START + 29: // DESKTOP
-        case VAR_CODES_START + 30: // STARTMENU
-        case VAR_CODES_START + 31: // QUICKLAUNCH
+        case VAR_CODES_START + 28: // SMPROGRAMS
+        case VAR_CODES_START + 29: // SMSTARTUP
+        case VAR_CODES_START + 30: // DESKTOP
+        case VAR_CODES_START + 31: // STARTMENU
+        case VAR_CODES_START + 32: // QUICKLAUNCH
           {
             static const char *tab[]={
               "Programs",
@@ -485,31 +489,21 @@ char * NSISCALL process_string(const char *in)
             else break;
           }
 
-        case VAR_CODES_START + 32: // TEMP
+        case VAR_CODES_START + 33: // TEMP
           mystrcpy(out,temp_directory);
           break;
 
-        case VAR_CODES_START + 33: // WINDIR
+        case VAR_CODES_START + 34: // WINDIR
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        case VAR_CODES_START + 34: // SYSDIR
+        case VAR_CODES_START + 35: // SYSDIR
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-        case VAR_CODES_START + 35: // PLUGINSDIR
-          mystrcpy(out, plugins_temp_dir);
           break;
 
         #if VAR_CODES_START + 35 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
-#else
-        #if VAR_CODES_START + 34 >= 255
-          #error "Too many variables!  Extend VAR_CODES_START!"
-        #endif
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
       } // switch
       // validate the directory name
       if (nVarIdx > 21+VAR_CODES_START) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
@@ -521,7 +515,6 @@ char * NSISCALL process_string(const char *in)
   } // while
   *out = 0;
   return ps_tmpbuf;
-;
 }
 
 char * NSISCALL validate_filename(char *in) {

@@ -265,7 +265,7 @@ CEXEBuild::CEXEBuild()
   build_header.install_directory_ptr=0;
   build_header.install_reg_key_ptr=0;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-  memset(build_header.install_types_ptr,0,sizeof(build_header.install_types_ptr));
+  memset(build_header.install_types,0,sizeof(build_header.install_types));
 #endif
 
   // Changed by Amir Szekely 11th July 2002
@@ -315,6 +315,8 @@ CEXEBuild::CEXEBuild()
   notify_hwnd=0;
 
   uDefCodePage=CP_ACP;
+
+  use_first_insttype=true;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -323,6 +325,13 @@ int CEXEBuild::add_string(const char *string) // returns offset in stringblock
 {
   if (uninstall_mode) return add_string_uninst(string,1);
   return add_string_main(string,1);
+}
+
+int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
+{
+  char i_str[64];
+  wsprintf(i_str, "%d", i);
+  return add_string(i_str);
 }
 
 // based on Dave Laundon's code
@@ -356,6 +365,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "OUTDIR\0"        // 23
   "EXEDIR\0"        // 24
   "LANGUAGE\0"      // 25
+  "PLUGINSDIR\0"    // 26
   "PROGRAMFILES\0"  // 26
   "SMPROGRAMS\0"    // 27
   "SMSTARTUP\0"     // 28
@@ -365,9 +375,6 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "TEMP\0"          // 32
   "WINDIR\0"        // 33
   "SYSDIR\0"        // 34
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  "PLUGINSDIR\0"    // 35
-#endif
   ;
 
   const char *p=in;
@@ -410,7 +417,14 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
           pVarName += strlen(pVarName) + 1, i++
         );
         // Found?
-        if (*pVarName) p += strlen(pVarName);
+        if (*pVarName
+#ifndef NSIS_CONFIG_PLUGIN_SUPPORT
+            && i != VAR_CODES_START + 26
+#endif
+           )
+        {
+          p += strlen(pVarName);
+        }
         else  // warning should go here
         {
           char tbuf[64];
@@ -782,7 +796,7 @@ int CEXEBuild::section_end()
   return PS_OK;
 }
 
-int CEXEBuild::add_section(const char *secname, const char *file, int line, const char *defname, int expand=0)
+int CEXEBuild::add_section(const char *secname, const char *file, int line, const char *defname, int expand/*=0*/)
 {
   if (build_cursection_isfunc)
   {
@@ -1227,7 +1241,6 @@ int CEXEBuild::write_output(void)
   }
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  // Added by Amir Szekely 9th August 2002
   int err=add_plugins_dir_initializer();
   if (err != PS_OK)
     return err;
@@ -1285,6 +1298,18 @@ int CEXEBuild::write_output(void)
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
   if (resolve_coderefs("install")) return PS_ERROR;
+
+  // set sections to the first insttype
+  if (use_first_insttype && build_header.install_types[0])
+  {
+    int n = build_sections.getlen()/sizeof(section);
+    section *sections = (section *) build_sections.get();
+    for (int i = 0; i < n; i++)
+    {
+      if ((sections[i].install_types & 1) == 0)
+        sections[i].flags &= ~SF_SELECTED;
+    }
+  }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   {
@@ -2263,6 +2288,8 @@ void CEXEBuild::build_plugin_table(void)
   }
 }
 
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(installer_flags, flag)/sizeof(int))
+
 int CEXEBuild::add_plugins_dir_initializer(void)
 {
   if (!plugin_used && !uninst_plugin_used) return PS_OK;
@@ -2293,7 +2320,7 @@ again:
   ret=add_entry_direct(EW_PUSHPOP, zero_offset);
   if (ret != PS_OK) return ret;
   // ClearErrors
-  ret=add_entry_direct(EW_SETFLAG, 2);
+  ret=add_entry_direct(EW_SETFLAG, add_intstring(FLAG_OFFSET(exec_error)));
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
   ret=add_entry_direct(EW_GETTEMPFILENAME);
@@ -2308,7 +2335,7 @@ again:
   ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error)/sizeof(int));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
-  ret=add_entry_direct(EW_PLUGINCOMMANDPREP);
+  ret=add_entry_direct(EW_ASSIGNVAR,25,zero_offset);
   if (ret != PS_OK) return ret;
   // Pop $0
   ret=add_entry_direct(EW_PUSHPOP, 0, 1);
