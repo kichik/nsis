@@ -5,6 +5,7 @@
 ;By asdfuae@msn.com
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_ARABIC_USED
 
@@ -84,3 +85,5 @@
   !endif  
     
 !endif
+
+!verbose 4

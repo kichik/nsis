@@ -2,9 +2,10 @@
 ;version 1 - Compatible with Modern UI 1.3
 
 ;Language: Russian (1049)
-;By Nik Medved (brainsucker)
-;Fixed by Scam
+;By Nik Medved (brainsucker). Fixed by Scam.
+
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_RUSSIAN_USED
 
@@ -84,3 +85,5 @@
   !endif  
     
 !endif
+
+!verbose 4

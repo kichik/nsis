@@ -5,6 +5,7 @@
 ;By Sébastien Delahaye <seb@delahaye.net>
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_FRENCH_USED
 
@@ -57,6 +58,7 @@
     LangString MUI_BUTTONTEXT_INSTALL ${LANG_FRENCH} "&Installer"
   !endif
   
+  
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
@@ -83,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4

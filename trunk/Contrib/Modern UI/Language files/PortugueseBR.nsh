@@ -5,6 +5,7 @@
 ;By Layout do Brasil www.layoutdobrasil.com
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_PORTUGUESEBR_USED
 
@@ -84,3 +85,5 @@
   !endif  
     
 !endif
+
+!verbose 4
