@@ -48,6 +48,9 @@ void Plugins::FindCommands(char* path,bool displayInfo)
       delete[] pathAndWildcard;
       delete[] basePath;
     }
+
+    m_dataHandles.resize(m_funcsCount*sizeof(int));
+    memset(m_dataHandles.get(), -1, m_funcsCount*sizeof(int));
   }
 }
 
@@ -115,9 +118,7 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
               char *name = (char*)exports + names[j] - ExportDirVA;
               wsprintf(signature, "%s::%s", dllName, name);
               m_commands.add(signature, pathToDll);
-              char *dll = new char[lstrlen(dllName)];
-              lstrcpy(dll, dllName);
-              m_storedDLLs.push_back(dll);
+              m_funcsCount++;
               if (displayInfo)
                 fprintf(g_output, " - %s\n", signature);
             }
@@ -133,12 +134,23 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
 
 bool Plugins::IsPluginCommand(char* token)
 {
-  return GetPluginDll(token) ? true : false;
+  return GetPluginDll(token, 0) ? true : false;
 }
 
-char* Plugins::GetPluginDll(char* command)
+char* Plugins::GetPluginDll(char* command, int* dataHandle)
 {
-  return m_commands.find(command);
+  char* ret = m_commands.find(command, dataHandle);
+  if (dataHandle && ret)
+    *dataHandle = ((int*)m_dataHandles.get())[*dataHandle];
+  return ret;
+}
+
+void Plugins::SetDllDataHandle(char* command, int dataHandle)
+{
+  int idx = -1;
+  m_commands.find(command, &idx);
+  if (idx == -1) return;
+  ((int*)m_dataHandles.get())[idx] = dataHandle;
 }
 
 #endif
