@@ -2717,8 +2717,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           {
             int v=line.gettoken_enum(5,retstr);
             if (v < 0) PRINTHELP()
-            ent.offsets[2] |= rettab[v]<<16;
-            if (process_jump(line,6,&ent.offsets[4])) PRINTHELP()
+            ent.offsets[4] = rettab[v];
+            if (process_jump(line,6,&ent.offsets[5])) PRINTHELP()
           }
         }
         SCRIPT_MSG("MessageBox: %d: \"%s\"",r,line.gettoken_str(2));
@@ -2962,10 +2962,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[2]=1;
       SCRIPT_MSG("HideWindow\n");
     return add_entry(&ent);
+    case TOK_BRINGTOFRONT:
+    {
+      int ret;
+      ent.which=EW_SHOWWINDOW;
+      ent.offsets[0]=add_string("$HWNDPARENT");
+      ent.offsets[1]=add_string("5"/*SW_SHOW*/);
+      ret = add_entry(&ent);
+      if (ret != PS_OK) return ret;
+      ent.which=EW_BRINGTOFRONT;
+      ent.offsets[0]=0;
+      ent.offsets[1]=0;
+      SCRIPT_MSG("BringToFront\n");
+    }
+    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
     case TOK_SETBKCOLOR:
     case TOK_SHOWWINDOW:
+    case TOK_BRINGTOFRONT:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",  line.gettoken_str(0));
@@ -2980,6 +2995,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
+    case TOK_BRINGTOFRONT:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_HWNDS
@@ -3195,10 +3211,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ent.offsets[0]=add_string(line.gettoken_str(1));
         SCRIPT_MSG("Sleep: %s ms\n",line.gettoken_str(1));
       }
-    return add_entry(&ent);
-    case TOK_BRINGTOFRONT:
-      ent.which=EW_BRINGTOFRONT;
-      SCRIPT_MSG("BringToFront\n");
     return add_entry(&ent);
     case TOK_IFFILEEXISTS:
       ent.which=EW_IFFILEEXISTS;

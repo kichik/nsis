@@ -179,11 +179,12 @@ enum
   EW_GETFUNCTIONADDR,
 
   // Saves 56 bytes, don't ask me how
-  EW_DUMMY,
+  // Hmm... now it doesn't =/
+  /*EW_DUMMY,
   EW_DUMMY2,
   EW_DUMMY3,
   EW_DUMMY4,
-  EW_DUMMY5,
+  EW_DUMMY5,*/
 
   EW_PLUGINCOMMANDPREP,
 };
