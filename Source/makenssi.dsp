@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
 # SUBTRACT BASE CPP /Fr /YX /Yc /Yu
-# ADD CPP /nologo /MLd /W3 /Gi- /GX /ZI /Od /Ob0 /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
+# ADD CPP /nologo /MLd /W3 /GX /ZI /Od /D "_CONSOLE" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /FD /c
 # SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
@@ -99,22 +99,6 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\zlib\Deflate.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\Infblock.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\Infcodes.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\Inftrees.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\zlib\Infutil.h
 # End Source File
 # Begin Source File
 
