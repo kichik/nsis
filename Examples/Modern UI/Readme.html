@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<title>NSIS Modern Style UI</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<style type="text/css">
+
+body
+	{
+	padding: 10px;
+	background-color: #F0F0F0;
+	color: #000000;
+	}
+
+center
+	{
+	text-align: center;
+	}
+
+table
+	{
+	margin: auto;
+	text-align: left;
+	background-color: #FFFFFF;
+	color: #000000;
+	}
+
+.maintable
+	{
+    border: 2px solid #53607B;
+	}
+
+.margin
+	{
+	margin: 20px;
+	}
+
+.text
+	{
+	margin: 20px;
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #000000;
+	background-color: #FFFFFF;
+	}
+
+.header
+	{
+	font-size: 14pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #7A7272;
+	background-color: #FFFFFF;
+	}
+
+.footer
+	{
+    margin: 5px 5px 5px 5px;
+    text-align: right;
+    font-size: 8pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: #909090;
+	background-color: #FFFFFF;
+	}
+	
+</style>
+
+</head>
+
+<body>
+
+<div class="center">
+<table width="750" cellpadding="0" cellspacing="0" class="maintable">
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr class="header">
+            <td><img src="Readme.png" width="750" height="80" alt=""></td>
+</tr>
+
+  <tr>
+    <td><div class="margin">
+                <p class="header">Introduction</p>
+                <p class="text">Using KiCHiK's NSIS 2 modifications, it is possible 
+                  to create new user interfaces for the Nullsoft Installer System.</p>
+                <p class="text"> I made this interface with a modern wizard style, 
+                  like the wizards of recent Windows versions. This new interface 
+                  also features new icons (designed by adni18) and a description 
+                  area on the component select dialog.</p>
+                <p class="text">To use this new UI for for installer, you need 
+                  to add some code to your NSIS script, which you can see in Example.nsi.</p>
+                <p class="header">Requirements</p>
+                <p class="text"><a href="http://sourceforge.net/projects/nsis2k">KiCHiK's 
+                  NSIS 2 modifications, version 2.0 alpha 7 (or later)</a><strong> 
+                  </strong></p>
+                <p class="header">Screenshot</p>
+                <p class="text"><img src="Screenshot.png" width="504" height="391" alt=""></p>
+                <p class="header">How to use</p>
+                <p class="text">Have a look at the example script, Example.nsi. 
+                  This is an example of how the use this interface for your NSIS 
+                  installer.</p>
+                <p class="text">To change elements on the dialogs, modify modern.exe
+                  in the Contrib\UIs folder  using a a resource editor such as
+                  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
+                <p class="text">This new interface uses some additional texts 
+                  which are not included in the standard NSIS language files. 
+                  If you want to create a multilanguage installer, you need to 
+                  control this texts by your script.</p>
+                <p class="text">The 'Loading Setup' text on the slash screen 
+                  which is being displayed when the installer is starting (Verifying 
+                  installer, Unpacking data when using COMPRESS_WHOLE) cannot 
+                  be changed by the script, because the installer is not started 
+                  yet when this dialog is being displayed. If you want to change 
+                  this text, modify dialog 111 of modern.exe.</p>
+                <p class="text">To 'verifying installer' and 'unpacking data' 
+                  texts are defined in the language header file of the NSIS exehead 
+                  (Source\exehead\lang.h). To change them, you need to edit this 
+                  file and recompile NSIS.</p>
+                <p class="header">Version history</p>
+                <ul>
+                <li class="text">1.0 - August 26th, 2002
+                  <ul>
+                    <li>Initial release
+                  </ul>
+                </ul>  
+                <p class="header">Credits</p>
+                <p class="text">Made by Joost Verburg.<br>
+                  Icons designed by Nikos Adamamas, aka adni18.<br>
+                  Thanks to Amir Szekely, aka KiCHiK for his NSIS modifications 
+                  to make this possible.</p>
+                <p class="header">Help</p>
+                <p class="text">Please post questions at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS 
+                  Forum</a>.</p>
+                <p class="header">License</p>
+                <p class="text">Copyright &copy; 2002 Joost Verburg</p>
+                <p class="text"> This software is provided 'as-is', without any 
+                  express or implied warranty. In no event will the authors be 
+                  held liable for any damages arising from the use of this software.</p>
+                <p class="text"> Permission is granted to anyone to use this software for any 
+                  purpose, including commercial applications, and to alter it 
+                  and redistribute it freely, subject to the following restrictions:</p>
+                <p class="text"> 1. The origin of this software must not be misrepresented; 
+                  you must not claim that you wrote the original software. If 
+                  you use this software in a product, an acknowledgment in the 
+                  product documentation would be appreciated but is not required.<br>
+                  2. Altered versions must be plainly marked as such, and 
+                  must not be misrepresented as being the original software.<br>
+                  3. This notice may not be removed or altered from any distribution.</p>
+              </div></td>
+  </tr>
+  <tr>
+    <td><div class="footer">&copy;2002 Joost Verburg</div></td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</div>
+
+</body>
+</html>
