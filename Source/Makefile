@@ -6,7 +6,7 @@
 
 BUILDDIR=../build
 # -- Objects and source files --
-SRCS = zlib/deflate.c zlib/trees.c bzip2/blocksort.c bzip2/bzlib.c bzip2/compress.c bzip2/huffman.c 7zip/7zGuids.cpp 7zip/Common/CRC.cpp 7zip/7zip/Compress/LZ/LZInWindow.cpp 7zip/7zip/Compress/LZMA/LZMAEncoder.cpp 7zip/7zip/Common/OutBuffer.cpp 7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp 7zip/Common/Alloc.cpp build.cpp crc32.c DialogTemplate.cpp exedata.cpp lang.cpp makenssi.cpp Plugins.cpp ResourceEditor.cpp ResourceVersionInfo.cpp script.cpp tokens.cpp util.cpp strlist.cpp growbuf.cpp mmap.cpp clzma.cpp lineparse.cpp ShConstants.cpp
+SRCS = zlib/deflate.c zlib/trees.c bzip2/blocksort.c bzip2/bzlib.c bzip2/compress.c bzip2/huffman.c 7zip/7zGuids.cpp 7zip/Common/CRC.cpp 7zip/7zip/Compress/LZ/LZInWindow.cpp 7zip/7zip/Compress/LZMA/LZMAEncoder.cpp 7zip/7zip/Common/OutBuffer.cpp 7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp 7zip/Common/Alloc.cpp build.cpp crc32.c DialogTemplate.cpp exedata.cpp lang.cpp makenssi.cpp Plugins.cpp ResourceEditor.cpp ResourceVersionInfo.cpp script.cpp tokens.cpp util.cpp strlist.cpp growbuf.cpp mmap.cpp clzma.cpp lineparse.cpp ShConstants.cpp dirreader.cpp
 OBJS = $(addprefix $(BUILDDIR)/,$(addsuffix .o,$(basename $(SRCS))))
 ifeq "$(strip $(findstring i386pe,$(shell ld -V)))" ""
 LIBS = -lstdc++ -lpthread
@@ -172,10 +172,10 @@ depend :
 ../build/7zip/Common/Alloc.o: 7zip/Common/StdAfx.h Platform.h
 ../build/7zip/Common/Alloc.o: 7zip/Common/Alloc.h
 ../build/build.o: Platform.h exehead/config.h exehead/fileform.h
-../build/build.o: exehead/config.h exedata.h build.h strlist.h growbuf.h
-../build/build.o: lineparse.h lang.h ResourceEditor.h ResourceVersionInfo.h
-../build/build.o: uservars.h ShConstants.h mmap.h compressor.h czlib.h
-../build/build.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H Platform.h
+../build/build.o: exehead/config.h Platform.h exedata.h build.h strlist.h
+../build/build.o: growbuf.h lineparse.h lang.h ResourceEditor.h
+../build/build.o: ResourceVersionInfo.h uservars.h ShConstants.h mmap.h
+../build/build.o: compressor.h czlib.h zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H
 ../build/build.o: zlib/ZLIB.H cbzip2.h bzip2/bzlib.h exehead/config.h clzma.h
 ../build/build.o: 7zip/7zip/IStream.h 7zip/Common/MyUnknown.h
 ../build/build.o: 7zip/Common/MyWindows.h Platform.h 7zip/Common/Types.h
@@ -189,21 +189,24 @@ depend :
 ../build/build.o: 7zip/7zip/Common/OutBuffer.h
 ../build/build.o: 7zip/7zip/Compress/RangeCoder/RangeCoderOpt.h
 ../build/build.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
-../build/build.o: 7zip/Common/Defs.h Plugins.h util.h exehead/resource.h
-../build/build.o: DialogTemplate.h
+../build/build.o: 7zip/Common/Defs.h Plugins.h util.h boost/scoped_ptr.hpp
+../build/build.o: boost/checked_delete.hpp boost/detail/workaround.hpp
+../build/build.o: exehead/resource.h DialogTemplate.h
 ../build/crc32.o: Platform.h exehead/config.h
 ../build/DialogTemplate.o: DialogTemplate.h Platform.h util.h
-../build/DialogTemplate.o: ResourceEditor.h
+../build/DialogTemplate.o: ResourceEditor.h boost/scoped_ptr.hpp
+../build/DialogTemplate.o: boost/checked_delete.hpp
+../build/DialogTemplate.o: boost/detail/workaround.hpp
 ../build/exedata.o: exedata.h exehead/Release-zlib/icon.h
 ../build/exedata.o: exehead/Release-zlib/unicon.h
 ../build/exedata.o: exehead/Release-zlib/exehead_zlib.h
 ../build/exedata.o: exehead/Release-bzip2/exehead_bzip2.h
 ../build/exedata.o: exehead/Release-lzma/exehead_lzma.h
 ../build/lang.o: Platform.h build.h strlist.h growbuf.h lineparse.h lang.h
-../build/lang.o: exehead/fileform.h exehead/config.h ResourceEditor.h
-../build/lang.o: ResourceVersionInfo.h exehead/config.h uservars.h
-../build/lang.o: ShConstants.h mmap.h compressor.h czlib.h zlib/ZLIB.H
-../build/lang.o: zlib/ZCONF.H zlib/ZUTIL.H Platform.h zlib/ZLIB.H cbzip2.h
+../build/lang.o: exehead/fileform.h exehead/config.h Platform.h
+../build/lang.o: ResourceEditor.h ResourceVersionInfo.h exehead/config.h
+../build/lang.o: uservars.h ShConstants.h mmap.h compressor.h czlib.h
+../build/lang.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H zlib/ZLIB.H cbzip2.h
 ../build/lang.o: bzip2/bzlib.h exehead/config.h clzma.h 7zip/7zip/IStream.h
 ../build/lang.o: 7zip/Common/MyUnknown.h 7zip/Common/MyWindows.h Platform.h
 ../build/lang.o: 7zip/Common/Types.h 7zip/Common/Types.h
@@ -217,15 +220,16 @@ depend :
 ../build/lang.o: 7zip/7zip/Common/OutBuffer.h
 ../build/lang.o: 7zip/7zip/Compress/RangeCoder/RangeCoderOpt.h
 ../build/lang.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
-../build/lang.o: 7zip/Common/Defs.h Plugins.h util.h DialogTemplate.h
-../build/lang.o: exehead/resource.h
+../build/lang.o: 7zip/Common/Defs.h Plugins.h util.h boost/scoped_ptr.hpp
+../build/lang.o: boost/checked_delete.hpp boost/detail/workaround.hpp
+../build/lang.o: DialogTemplate.h exehead/resource.h
 ../build/makenssi.o: Platform.h build.h strlist.h growbuf.h lineparse.h
-../build/makenssi.o: lang.h exehead/fileform.h exehead/config.h
+../build/makenssi.o: lang.h exehead/fileform.h exehead/config.h Platform.h
 ../build/makenssi.o: ResourceEditor.h ResourceVersionInfo.h exehead/config.h
 ../build/makenssi.o: uservars.h ShConstants.h mmap.h compressor.h czlib.h
-../build/makenssi.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H Platform.h
-../build/makenssi.o: zlib/ZLIB.H cbzip2.h bzip2/bzlib.h exehead/config.h
-../build/makenssi.o: clzma.h 7zip/7zip/IStream.h 7zip/Common/MyUnknown.h
+../build/makenssi.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H zlib/ZLIB.H
+../build/makenssi.o: cbzip2.h bzip2/bzlib.h exehead/config.h clzma.h
+../build/makenssi.o: 7zip/7zip/IStream.h 7zip/Common/MyUnknown.h
 ../build/makenssi.o: 7zip/Common/MyWindows.h Platform.h 7zip/Common/Types.h
 ../build/makenssi.o: 7zip/Common/Types.h
 ../build/makenssi.o: 7zip/7zip/Compress/LZMA/LZMAEncoder.h
@@ -239,18 +243,25 @@ depend :
 ../build/makenssi.o: 7zip/7zip/Common/OutBuffer.h
 ../build/makenssi.o: 7zip/7zip/Compress/RangeCoder/RangeCoderOpt.h
 ../build/makenssi.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
-../build/makenssi.o: 7zip/Common/Defs.h Plugins.h util.h exedata.h
+../build/makenssi.o: 7zip/Common/Defs.h Plugins.h util.h boost/scoped_ptr.hpp
+../build/makenssi.o: boost/checked_delete.hpp boost/detail/workaround.hpp
+../build/makenssi.o: exedata.h
 ../build/Plugins.o: exehead/config.h Plugins.h Platform.h strlist.h growbuf.h
-../build/Plugins.o: util.h ResourceEditor.h
+../build/Plugins.o: util.h ResourceEditor.h boost/scoped_ptr.hpp
+../build/Plugins.o: boost/checked_delete.hpp boost/detail/workaround.hpp
 ../build/ResourceEditor.o: ResourceEditor.h Platform.h util.h
+../build/ResourceEditor.o: boost/scoped_ptr.hpp boost/checked_delete.hpp
+../build/ResourceEditor.o: boost/detail/workaround.hpp
 ../build/ResourceVersionInfo.o: ResourceVersionInfo.h exehead/config.h
 ../build/ResourceVersionInfo.o: Platform.h strlist.h growbuf.h util.h
-../build/ResourceVersionInfo.o: ResourceEditor.h
+../build/ResourceVersionInfo.o: ResourceEditor.h boost/scoped_ptr.hpp
+../build/ResourceVersionInfo.o: boost/checked_delete.hpp
+../build/ResourceVersionInfo.o: boost/detail/workaround.hpp
 ../build/script.o: Platform.h tokens.h build.h strlist.h growbuf.h
 ../build/script.o: lineparse.h lang.h exehead/fileform.h exehead/config.h
-../build/script.o: ResourceEditor.h ResourceVersionInfo.h exehead/config.h
-../build/script.o: uservars.h ShConstants.h mmap.h compressor.h czlib.h
-../build/script.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H Platform.h
+../build/script.o: Platform.h ResourceEditor.h ResourceVersionInfo.h
+../build/script.o: exehead/config.h uservars.h ShConstants.h mmap.h
+../build/script.o: compressor.h czlib.h zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H
 ../build/script.o: zlib/ZLIB.H cbzip2.h bzip2/bzlib.h exehead/config.h
 ../build/script.o: clzma.h 7zip/7zip/IStream.h 7zip/Common/MyUnknown.h
 ../build/script.o: 7zip/Common/MyWindows.h Platform.h 7zip/Common/Types.h
@@ -264,13 +275,14 @@ depend :
 ../build/script.o: 7zip/7zip/Common/OutBuffer.h
 ../build/script.o: 7zip/7zip/Compress/RangeCoder/RangeCoderOpt.h
 ../build/script.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
-../build/script.o: 7zip/Common/Defs.h Plugins.h util.h exedata.h
-../build/script.o: DialogTemplate.h exehead/resource.h
+../build/script.o: 7zip/Common/Defs.h Plugins.h util.h boost/scoped_ptr.hpp
+../build/script.o: boost/checked_delete.hpp boost/detail/workaround.hpp
+../build/script.o: exedata.h DialogTemplate.h dirreader.h exehead/resource.h
 ../build/tokens.o: Platform.h build.h strlist.h growbuf.h lineparse.h lang.h
-../build/tokens.o: exehead/fileform.h exehead/config.h ResourceEditor.h
-../build/tokens.o: ResourceVersionInfo.h exehead/config.h uservars.h
-../build/tokens.o: ShConstants.h mmap.h compressor.h czlib.h zlib/ZLIB.H
-../build/tokens.o: zlib/ZCONF.H zlib/ZUTIL.H Platform.h zlib/ZLIB.H cbzip2.h
+../build/tokens.o: exehead/fileform.h exehead/config.h Platform.h
+../build/tokens.o: ResourceEditor.h ResourceVersionInfo.h exehead/config.h
+../build/tokens.o: uservars.h ShConstants.h mmap.h compressor.h czlib.h
+../build/tokens.o: zlib/ZLIB.H zlib/ZCONF.H zlib/ZUTIL.H zlib/ZLIB.H cbzip2.h
 ../build/tokens.o: bzip2/bzlib.h exehead/config.h clzma.h 7zip/7zip/IStream.h
 ../build/tokens.o: 7zip/Common/MyUnknown.h 7zip/Common/MyWindows.h Platform.h
 ../build/tokens.o: 7zip/Common/Types.h 7zip/Common/Types.h
@@ -286,7 +298,26 @@ depend :
 ../build/tokens.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
 ../build/tokens.o: 7zip/Common/Defs.h Plugins.h tokens.h
 ../build/util.o: Platform.h exedata.h exehead/fileform.h exehead/config.h
-../build/util.o: util.h ResourceEditor.h strlist.h growbuf.h
+../build/util.o: Platform.h util.h ResourceEditor.h boost/scoped_ptr.hpp
+../build/util.o: boost/checked_delete.hpp boost/detail/workaround.hpp
+../build/util.o: strlist.h growbuf.h
 ../build/strlist.o: strlist.h Platform.h growbuf.h
 ../build/growbuf.o: growbuf.h Platform.h
 ../build/mmap.o: mmap.h Platform.h growbuf.h
+../build/clzma.o: clzma.h Platform.h compressor.h 7zip/7zip/IStream.h
+../build/clzma.o: 7zip/Common/MyUnknown.h 7zip/Common/MyWindows.h Platform.h
+../build/clzma.o: 7zip/Common/Types.h 7zip/Common/Types.h
+../build/clzma.o: 7zip/7zip/Compress/LZMA/LZMAEncoder.h 7zip/Common/MyCom.h
+../build/clzma.o: 7zip/Common/Alloc.h 7zip/7zip/ICoder.h 7zip/7zip/IStream.h
+../build/clzma.o: 7zip/7zip/Compress/LZ/IMatchFinder.h
+../build/clzma.o: 7zip/7zip/Compress/RangeCoder/RangeCoderBitTree.h
+../build/clzma.o: 7zip/7zip/Compress/RangeCoder/RangeCoderBit.h
+../build/clzma.o: 7zip/7zip/Compress/RangeCoder/RangeCoder.h
+../build/clzma.o: 7zip/7zip/Common/InBuffer.h 7zip/7zip/IStream.h
+../build/clzma.o: 7zip/7zip/Common/OutBuffer.h
+../build/clzma.o: 7zip/7zip/Compress/RangeCoder/RangeCoderOpt.h
+../build/clzma.o: 7zip/7zip/Compress/LZMA/LZMA.h 7zip/Common/MyCom.h
+../build/clzma.o: 7zip/Common/Defs.h
+../build/lineparse.o: lineparse.h Platform.h
+../build/ShConstants.o: ShConstants.h strlist.h Platform.h growbuf.h
+../build/dirreader.o: Platform.h dirreader.h
