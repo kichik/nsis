@@ -18,7 +18,7 @@ This command, when paired with an !endif command, will tell the compiler whether
 
 \e{!ifndef gflag [bcheck [gflag [...]]]}
 
-This command closes a block started with !ifdef or !ifndef.
+This command is the logical lovemonkey to !ifdef and !endif. !ifdef/!else/!endif, !ifdef/!else ifdef/!endif, !ifdef/!else ifdef/!else ifndef/!endif, etc. If ifdef or ifndef is specified as the first parameter, it behaves as expected.
 
 \e{!else [ifdef|ifndef [...]]}
 
@@ -26,7 +26,7 @@ This command is the opposite of !ifdef (If 'gflag' is not globally defined, the 
 
 \e{!endif}
 
-This command is the logical lovemonkey to !ifdef and !endif. !ifdef/!else/!endif, !ifdef/!else ifdef/!endif, !ifdef/!else ifdef/!else ifndef/!endif, etc. If ifdef or ifndef is specified as the first parameter, it behaves as expected.
+This command closes a block started with !ifdef or !ifndef.
 
 \e{!insertmacro macro_name [parameter] [...]}
 
