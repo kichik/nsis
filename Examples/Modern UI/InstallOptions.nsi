@@ -127,10 +127,12 @@ Function SetPage
     !insertmacro MUI_PAGE_STOP 1
 
     !insertmacro MUI_PAGE_START 2
-
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options A" "Create your own dialog!"
+       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options A"
+       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+       WriteIniStr "$PLUGINSDIR\iniA.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
        !insertmacro MUI_INSTALLOPTIONS_SHOW "iniA.ini"
-
     !insertmacro MUI_PAGE_STOP 2
 
     !insertmacro MUI_PAGE_START 3
@@ -142,10 +144,12 @@ Function SetPage
     !insertmacro MUI_PAGE_STOP 4
 
     !insertmacro MUI_PAGE_START 5
-
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options B" "Create your own dialog!"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "Title" "${NAME} ${VERSION} Setup: Install Options B"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirm" "Are you sure you want to quit ${NAME} Setup?"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmCaption" "${NAME} ${VERSION} Setup"
+       WriteIniStr "$PLUGINSDIR\iniB.ini" "Settings" "CancelConfirmIcon" "MB_ICONWARNING"
        !insertmacro MUI_INSTALLOPTIONS_SHOW "iniB.ini"
-
     !insertmacro MUI_PAGE_STOP 5
 
     !insertmacro MUI_PAGE_START 6
