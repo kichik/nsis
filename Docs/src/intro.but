@@ -33,7 +33,7 @@ Here's a short list of some of NSIS' features.
 
 \b Compression choices of zlib or bzip2 based compression. The installer can compress everything together, or individually.
 
-\b Approximately 20-40k overhead over compressed data size (depending on features enabled, compression algorithm, and so on - the default options are ~35k).
+\b Approximately 20-40k overhead over compressed data size (depending on features enabled, compression algorithm, and so on - the default options are ~34k).
 
 \b Ability to display a license agreement.
 
@@ -45,11 +45,15 @@ Here's a short list of some of NSIS' features.
 
 \b Plug-in system (includes plug-ins for generic dialog construction and user interaction, as well as HTTP downloading)
 
-\b Fully multilingual. 20 translations available including Dutch, French, Chinese and more...
+\b Fully multilingual. 20 translations available including German, French, Spanish, Italian, Dutch, Chinese and more...
 
 \b Installers can be as large as 2GB (theoretically -- when building on Win9x the limit seems to be around 500MB, however building on NT then installing on Win9x works with larger sizes)
 
 \b Optional Silent mode for automated installations
+
+\b A primitive preprocessor
+
+\b A lovely coding experience with elements of PHP and assembly (includes 20 general purpose variables, a stack, real flow control, etc)
 
 \b Installers have their own VMs that let you write code that can support:
 
@@ -93,12 +97,8 @@ Here's a short list of some of NSIS' features.
 
 \b Macros in script
 
-\b A primitive preprocessor
-
-\b A lovely coding experience with elements of PHP and assembly (includes 20 general purpose variables, a stack, real flow control, etc)
-
-\b More
-
 \\</ul\\>
 
 \b Completely free for any use. See license (\k{license}).
+
+\b More
