@@ -77,6 +77,6 @@
   LangString un.MUI_BUTTONTEXT_BACK ${LANG_ENGLISH} "< Back"
   LangString un.MUI_BUTTONTEXT_NEXT ${LANG_ENGLISH} "Next >"
   LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_ENGLISH} "Cancel"
-  LangString un.MUI_BUTTONTEXT_INSTALL ${LANG_ENGLISH} "Install"
+  LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_ENGLISH} "Uninstall"
     
 !endif
