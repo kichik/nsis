@@ -198,7 +198,7 @@
   FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
   GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
 
-  StrCmp $0 -1 "" +3
+  StrCmp $0 -1 0 +3
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:"
     Goto mui.description_done
 
@@ -212,7 +212,7 @@
 
   ;Set text on the Description frame
 
-  StrCmp $0 ${VAR} "" +3
+  StrCmp $0 ${VAR} 0 +3
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
     Goto mui.description_done
 
@@ -1175,145 +1175,166 @@
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Top" "45"
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Bottom" "85"
     
-      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+    !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
+      IfRebootFlag "" mui.finish_noreboot_init
     
-        IfRebootFlag "" mui.finish_noreboot_init
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
+    
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
+        
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "RadioButton"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "321"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "90"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "100"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
+        
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Type" "RadioButton"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Left" "120"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Right" "321"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
+    
+        Goto mui.finish_load
+     
+      mui.finish_noreboot_init:
       
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
+    !endif
+       
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_TEXT)"
       
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
+    !ifdef MUI_FINISHPAGE_RUN
+              
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "CheckBox"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_RUN)"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "315"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "90"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "100"
+      !ifndef MUI_FINISHPAGE_RUN_NOTCHECKED
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
+      !endif
+    
+    !endif
           
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "RadioButton"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "321"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "90"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "100"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
+    !ifdef MUI_FINISHPAGE_SHOWREADME
+    
+      !ifndef MUI_FINISHPAGE_RUN
+        !define MUI_FINISHPAGE_CURFIELD_NO 4
+        !define MUI_FINISHPAGE_CURFIELD_TOP 90
+        !define MUI_FINISHPAGE_CURFIELD_BOTTOM 100
+      !else
+        !define MUI_FINISHPAGE_CURFIELD_NO 5
+        !define MUI_FINISHPAGE_CURFIELD_TOP 110
+        !define MUI_FINISHPAGE_CURFIELD_BOTTOM 120
+      !endif
+      
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Type" "CheckBox"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Left" "120"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Right" "315"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Top" "${MUI_FINISHPAGE_CURFIELD_TOP}"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Bottom" "${MUI_FINISHPAGE_CURFIELD_BOTTOM}"
+      !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "State" "1"
+      !endif
+            
+    !endif
+
+    !ifdef MUI_FINISHPAGE_LINK
+    
+      !ifdef MUI_FINISHPAGE_CURFIELD_NO
+        !undef MUI_FINISHPAGE_CURFIELD_NO
+      !endif
+    
+      !ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
+        !define MUI_FINISHPAGE_CURFIELD_NO 6
+      !else ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
+        !define MUI_FINISHPAGE_CURFIELD_NO 5
+      !else
+        !define MUI_FINISHPAGE_CURFIELD_NO 4
+      !endif
+    
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Type" "Link"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Text" "${MUI_FINISHPAGE_LINK}"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Left" "120"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Right" "315"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Top" "175"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "Bottom" "185"
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field ${MUI_FINISHPAGE_CURFIELD_NO}" "State" "${MUI_FINISHPAGE_LINK_LOCATION}"
+            
+    !endif
+    
+    !ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME & MUI_FINISHPAGE_LINK
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "6"
+    !else ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_SHOWREADME
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
+    !else ifdef MUI_FINISHPAGE_RUN & MUI_FINISHPAGE_LINK
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
+    !else ifdef MUI_FINISHPAGE_SHOWREADME & MUI_FINISHPAGE_LINK
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
+    !else ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME | MUI_FINISHPAGE_LINK
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "4"
+    !endif
+    
+    !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+       mui.finish_load:
+    !endif
+      
+    !ifdef MUI_CUSTOMFUNCTION_FINISH_PRE
+       Call "${MUI_CUSTOMFUNCTION_FINISH_PRE}"
+    !endif
+      
+    !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
+      
+      Pop ${MUI_TEMP1}
+      
+      SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+    
+      GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
+      SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+      CreateFont ${MUI_TEMP3} "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
+      SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
+      
+      GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
+      SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+      
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+        
+        IfRebootFlag "" mui.finish_noreboot_show
+      
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+          SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
           
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Type" "RadioButton"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Left" "120"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Right" "321"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
-      
-          Goto mui.finish_load
-      
-        mui.finish_noreboot_init:
-      
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
+          SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+            
+          Goto mui.finish_show
+        
+        mui.finish_noreboot_show:
+          
+      !endif
+        
+      !ifdef MUI_FINISHPAGE_RUN
+         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+         SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+      !endif
+           
+      !ifdef MUI_FINISHPAGE_SHOWREADME
+        !ifndef MUI_FINISHPAGE_RUN
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+        !else
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
+        !endif
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"  
       !endif
        
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_TEXT)"
-      
-      !ifdef MUI_FINISHPAGE_RUN
-        
-        !ifndef MUI_FINISHPAGE_SHOWREADME
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "4"
-        !endif
-        
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "CheckBox"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_RUN)"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "315"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "90"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "100"
-        !ifndef MUI_FINISHPAGE_RUN_NOTCHECKED
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
-        !endif
-          
-        !ifdef MUI_FINISHPAGE_SHOWREADME
-          
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "5"
-            
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Type" "CheckBox"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Left" "120"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Right" "315"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
-          !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
-          !endif
-            
-        !endif
-
-      !else ifdef MUI_FINISHPAGE_SHOWREADME
-      
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "Numfields" "4"
-            
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Type" "CheckBox"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Left" "120"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Right" "315"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Top" "90"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "Bottom" "100"
-        !ifndef MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
-        !endif
-          
-      !endif
-      
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
-        mui.finish_load:
+        mui.finish_show:
       !endif
-      
-      !ifdef MUI_CUSTOMFUNCTION_FINISH_PRE
-        Call "${MUI_CUSTOMFUNCTION_FINISH_PRE}"
-      !endif
-      
-      !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
-      
-        Pop ${MUI_TEMP1}
-        
-        SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
-      
-        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
-        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-        CreateFont ${MUI_TEMP3} "$(MUI_FONT_TITLE)" "$(MUI_FONTSIZE_TITLE)" "$(MUI_FONTSTYLE_TITLE)"
-        SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
-        
-        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
-        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-        
-        !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
-        
-          IfRebootFlag "" mui.finish_noreboot_show
-        
-            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-            
-            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-            
-            Goto mui.finish_show
-        
-          mui.finish_noreboot_show:
-          
-        !endif
-        
-          !ifdef MUI_FINISHPAGE_RUN
-          
-            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-            
-            !ifdef MUI_FINISHPAGE_SHOWREADME
-            
-              GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-              SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-              
-            !endif
-          
-          !else ifdef MUI_FINISHPAGE_SHOWREADME
-            
-              GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-              SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
-            
-          !endif
-        
-        !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
-          mui.finish_show:
-        !endif
 
       !ifdef MUI_CUSTOMFUNCTION_FINISH_SHOW
         Call "${MUI_CUSTOMFUNCTION_FINISH_SHOW}"
@@ -1334,7 +1355,7 @@
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
       
       Pop ${MUI_TEMP1}
-      StrCmp ${MUI_TEMP1} "success" "" mui.finish_done
+      StrCmp ${MUI_TEMP1} "success" 0 mui.finish_done
       
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       
@@ -1342,7 +1363,7 @@
       
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
         
-            StrCmp ${MUI_TEMP1} "1" "" +2
+            StrCmp ${MUI_TEMP1} "1" 0 +2
               Reboot
             
             Goto mui.finish_done
@@ -1351,44 +1372,44 @@
         
       !endif
       
-        !ifdef MUI_FINISHPAGE_RUN
-      
-          !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
-          
-           StrCmp ${MUI_TEMP1} "1" 0 mui.finish_norun
-             !ifndef MUI_FINISHPAGE_RUN_FUNCTION
-               !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
-                 StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\""
-               !else
-                 StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\" ${MUI_FINISHPAGE_RUN_PARAMETERS}"
-               !endif
-               Exec "${MUI_TEMP1}"
+      !ifdef MUI_FINISHPAGE_RUN
+    
+        !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
+        
+         StrCmp ${MUI_TEMP1} "1" 0 mui.finish_norun
+           !ifndef MUI_FINISHPAGE_RUN_FUNCTION
+             !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
+               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\""
              !else
-               Call "${MUI_FINISHPAGE_RUN_FUNCTION}"
+               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\" ${MUI_FINISHPAGE_RUN_PARAMETERS}"
              !endif
+             Exec "${MUI_TEMP1}"
+           !else
+             Call "${MUI_FINISHPAGE_RUN_FUNCTION}"
+           !endif
              
            mui.finish_norun:
            
-         !endif
+      !endif
              
-         !ifdef MUI_FINISHPAGE_SHOWREADME
-          
-           !ifdef MUI_FINISHPAGE_RUN
-             !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 5" "State"
-           !else
-             !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
-           !endif
-            
-           StrCmp ${MUI_TEMP1} "1" 0 mui.finish_noshowreadme
-            !ifndef MUI_FINISHPAGE_SHOWREADME_FUNCTION
-               ExecShell "open" "${MUI_FINISHPAGE_SHOWREADME}"
-             !else
-               Call "${MUI_FINISHPAGE_SHOWREADME_FUNCTION}"
-             !endif
+      !ifdef MUI_FINISHPAGE_SHOWREADME
+         
+        !ifndef MUI_FINISHPAGE_RUN
+          !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
+        !else
+          !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 5" "State"
+        !endif
+
+        StrCmp ${MUI_TEMP1} "1" 0 mui.finish_noshowreadme
+          !ifndef MUI_FINISHPAGE_SHOWREADME_FUNCTION
+             ExecShell "open" "${MUI_FINISHPAGE_SHOWREADME}"
+          !else
+            Call "${MUI_FINISHPAGE_SHOWREADME_FUNCTION}"
+          !endif
                
-           mui.finish_noshowreadme:
+          mui.finish_noshowreadme:
                
-         !endif
+       !endif
         
       mui.finish_done:
       
