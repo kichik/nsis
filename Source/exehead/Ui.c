@@ -115,7 +115,7 @@ static HWND m_curwnd, m_bgwnd;
 static int m_whichcfg;
 
 static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
-  return SetDlgItemText(dlg,id,STR(GetLangString(lid)));
+  return my_SetDialogItemText(dlg,id,STR(GetLangString(lid)));
 }
 
 /*
@@ -127,7 +127,7 @@ static BOOL NSISCALL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid
 
 // no tab
 static BOOL NSISCALL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
-  return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
+  return my_SetDialogItemText(custom?g_hwnd:defhw,custom?custom:def,text);
 }
 
 static UINT NSISCALL GetUIText(WORD def, WORD custom, char *str, int max_size) {
@@ -139,7 +139,7 @@ static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
 }*/
 
 #define SetUITextFromLang(hw,it,a,la) SetDlgItemTextFromLang(hw,it,la)
-#define SetUITextNT(hw,it,a,text) SetDlgItemText(hw,it,text)
+#define SetUITextNT(hw,it,a,text) my_SetDialogItemText(hw,it,text)
 #define GetUIText(it,a,s,ss) GetDlgItemText(hwndDlg,it,s,ss)
 #define GetUIItem(hw,it,a) GetDlgItem(hw,it)
 
@@ -749,7 +749,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
   {
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_UNINST_TEXT);
     SetUITextFromLang(hwndDlg,IDC_UNINSTFROM,g_inst_uninstheader->uninst_subtext_id,LANGID_UNINST_SUBTEXT);
-    SetDlgItemText(hwndDlg,IDC_EDIT1,state_install_directory);
+    my_SetDialogItemText(hwndDlg,IDC_EDIT1,state_install_directory);
   }
   return HandleStaticBkColor();
 }
@@ -787,7 +787,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       ShowWindow(h,SW_SHOWNA);
     }
 #endif
-    SetDlgItemText(hwndDlg,IDC_DIR,state_install_directory);
+    my_SetDialogItemText(hwndDlg,IDC_DIR,state_install_directory);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_DIR_TEXT);
     SetDlgItemTextFromLang(hwndDlg,IDC_BROWSE,LANGID_BTN_BROWSE);
     SetUITextFromLang(hwndDlg,IDC_SELDIRTEXT,g_inst_header->dir_subtext_id,LANGID_DIR_SUBTEXT);
@@ -843,7 +843,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           }
         }
 
-        SetDlgItemText(hwndDlg,IDC_DIR,name);
+        my_SetDialogItemText(hwndDlg,IDC_DIR,name);
       }
     }
   }
