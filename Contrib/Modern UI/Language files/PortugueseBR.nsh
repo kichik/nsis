@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Brazilian Portuguese (1046)
 ;By Diego Marcos <jump@osite.com.br>
@@ -10,8 +10,8 @@
 
   !define MUI_LANGNAME "Português (do Brasil)" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de Instalação do $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente te guiará durante a instalação do $(^Name).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Benvindo ao Assistente de Instalação do $(^Name)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a instalação do $(^Name).\r\n\r\nÉ recomendado que você feche todas as outras aplicações antes de iniciar a Instalação. Isto permitirá que o Instalador faça update dos arquivos de sistema sem reiniciar o computador.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Contrato de Licença"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Por favor, verifique os termos da licença antes de instalar o $(^Name)."
@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Você deseja realmente finalizar a instalação do $(^Name)?"
 
 
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvindo ao Assistente de Desinstalação do $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente o guiará durante a desinstalação do $(^Name).\r\n\r\nAntes de iniciar a desinstalação, tenha certeza que o $(^Name) não está sendo executado.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstalar o $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Remover o $(^Name) do seu computador."
   
@@ -78,5 +81,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Desinstalação Abortada"
   !define MUI_UNTEXT_ABORT_SUBTITLE "A desinstalação não foi concluída com sucesso"
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Concluindo o Assistente de Desinstalação do $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) foi desinstalado do seu computador.\r\n\r\nClique em Terminar para fechar este assistente."
+    
+  !define MUI_UNTEXT_ABORTWARNING "Você deseja realmente finalizar a desinstalação do $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
