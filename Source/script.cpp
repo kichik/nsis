@@ -37,6 +37,10 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
     return PS_ERROR;
   }
   int ret=parseScript();
+
+  fp = 0;
+  curfilename = 0;
+
   if (ret == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
   if (IS_PS_ELSE(ret)) ERROR_MSG("!else: stray !else\n");
   if (m_linebuild.getlen())
