@@ -3442,8 +3442,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         char b[255];
         for (unsigned int spos=0; (spos <= strlen(s)) && (spos <= 255); spos++)
           b[spos]=toupper(*(s+spos));
-		strcpy(s,b);
-		
+        strcpy(s,b);
+
         if (*s)
         {
           int c=0;
