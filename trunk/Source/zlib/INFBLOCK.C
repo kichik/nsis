@@ -31,16 +31,13 @@
 /*   load local pointers */
 #define LOAD {LOADIN LOADOUT}
 
+#define FIXEDH 544      /* number of hufts used by fixed tables */
 
 
 
 typedef struct inflate_blocks_state FAR inflate_blocks_statef;
 #define exop word.what.Exop
 #define bits word.what.Bits
-
-
-local int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q);
-local int inflate_flush(z_streamp z, int r);
 
 /* And'ing with mask[n] masks the lower n bits */
 local unsigned short inflate_mask[17] = {
@@ -68,6 +65,14 @@ local const unsigned short  cpdext[30] = { /* Extra bits for distance codes */
         7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
         12, 12, 13, 13};
 
+        /* build fixed tables only once--keep them here */
+local char fixed_built = 0;
+local inflate_huft fixed_mem[FIXEDH];
+local uInt fixed_bl=9;
+local uInt fixed_bd=5;
+local inflate_huft *fixed_tl;
+local inflate_huft *fixed_td;
+
 
 local void inflate_codes_new(c,bl, bd, tl, td)
 inflate_codes_statef *c;
@@ -80,6 +85,73 @@ inflate_huft *td; /* need separate declaration for Borland C++ */
   c->dbits = (Byte)bd;
   c->ltree = tl;
   c->dtree = td;
+}
+
+
+/* copy as much as possible from the sliding window to the output area */
+local int inflate_flush(z, r)
+z_streamp z;
+int r;
+{
+  inflate_blocks_statef *s=&z->blocks;
+  uInt n;
+  Bytef *p;
+  Bytef *q;
+
+  /* local copies of source and destination pointers */
+  p = z->next_out;
+  q = s->read;
+
+  /* compute number of bytes to copy as far as end of window */
+  n = (uInt)((q <= s->write ? s->write : s->end) - q);
+  if (n > z->avail_out) n = z->avail_out;
+  if (n && r == Z_BUF_ERROR) r = Z_OK;
+
+  /* update counters */
+  z->avail_out -= n;
+//  z->total_out += n;
+
+  /* copy as far as end of window */
+  zmemcpy(p, q, n);
+  p += n;
+  q += n;
+
+  /* see if more to copy at beginning of window */
+  if (q == s->end)
+  {
+    /* wrap pointers */
+    q = s->window;
+    if (s->write == s->end)
+      s->write = s->window;
+
+    /* compute bytes to copy */
+    n = (uInt)(s->write - q);
+    if (n > z->avail_out) n = z->avail_out;
+    if (n && r == Z_BUF_ERROR) r = Z_OK;
+
+    /* update counters */
+    z->avail_out -= n;
+    //z->total_out += n;
+
+    /* copy */
+    zmemcpy(p, q, n);
+    p += n;
+    q += n;
+  }
+
+  /* update pointers */
+  z->next_out = p;
+  s->read = q;
+
+  /* done */
+  return r;
+}
+
+local int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
+{
+  inflate_blocks_statef *s = &z->blocks;
+  UPDATE 
+  return inflate_flush(z,r);
 }
 
 
@@ -409,16 +481,6 @@ uInt *hn)               /* working area: values in order of bit length */
   return (y != 0 && g != 1) ? Z_BUF_ERROR : Z_OK;
 }
 
-
-/* build fixed tables only once--keep them here */
-local char fixed_built = 0;
-#define FIXEDH 544      /* number of hufts used by fixed tables */
-local inflate_huft fixed_mem[FIXEDH];
-local uInt fixed_bl=9;
-local uInt fixed_bd=5;
-local inflate_huft *fixed_tl;
-local inflate_huft *fixed_td;
-
 void inflateReset(z_streamp z)
 {
   inflate_blocks_statef *s=&z->blocks;
@@ -705,72 +767,6 @@ int r=Z_OK;
 #undef n
 #undef q
 #undef m
-
-local int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
-{
-  inflate_blocks_statef *s = &z->blocks;
-  UPDATE 
-  return inflate_flush(z,r);
-}
-
-/* copy as much as possible from the sliding window to the output area */
-local int inflate_flush(z, r)
-z_streamp z;
-int r;
-{
-  inflate_blocks_statef *s=&z->blocks;
-  uInt n;
-  Bytef *p;
-  Bytef *q;
-
-  /* local copies of source and destination pointers */
-  p = z->next_out;
-  q = s->read;
-
-  /* compute number of bytes to copy as far as end of window */
-  n = (uInt)((q <= s->write ? s->write : s->end) - q);
-  if (n > z->avail_out) n = z->avail_out;
-  if (n && r == Z_BUF_ERROR) r = Z_OK;
-
-  /* update counters */
-  z->avail_out -= n;
-//  z->total_out += n;
-
-  /* copy as far as end of window */
-  zmemcpy(p, q, n);
-  p += n;
-  q += n;
-
-  /* see if more to copy at beginning of window */
-  if (q == s->end)
-  {
-    /* wrap pointers */
-    q = s->window;
-    if (s->write == s->end)
-      s->write = s->window;
-
-    /* compute bytes to copy */
-    n = (uInt)(s->write - q);
-    if (n > z->avail_out) n = z->avail_out;
-    if (n && r == Z_BUF_ERROR) r = Z_OK;
-
-    /* update counters */
-    z->avail_out -= n;
-    //z->total_out += n;
-
-    /* copy */
-    zmemcpy(p, q, n);
-    p += n;
-    q += n;
-  }
-
-  /* update pointers */
-  z->next_out = p;
-  s->read = q;
-
-  /* done */
-  return r;
-}
 
 
 #endif
