@@ -1,4 +1,5 @@
 ;NSIS Setup Script
+;--------------------------------
 
 !define VER_MAJOR 2
 !define VER_MINOR 0
@@ -21,12 +22,12 @@
 OutFile ..\nsis${VER_FILE}.exe
 SetCompressor lzma
 
-InstType "Full (w/ Source and Contrib)"
-InstType "Normal (w/ Contrib, w/o Source)"
-InstType "Lite (w/o Source or Contrib)"
+InstType "Full"
+InstType "Standard"
+InstType "Lite"
 
 InstallDir $PROGRAMFILES\NSIS
-InstallDirRegKey HKLM SOFTWARE\NSIS ""
+InstallDirRegKey HKLM Software\NSIS ""
 
 ;--------------------------------
 
@@ -78,8 +79,6 @@ Page custom PageReinstall PageLeaveReinstall
 ;Reserve Files
   
   ;These files should be inserted before other files in the data block
-  ;Keep these lines before any File command
-  ;Only for BZIP2 (solid) compression
   
   ReserveFile "makensis.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -89,10 +88,10 @@ Page custom PageReinstall PageLeaveReinstall
 
 !define SF_SELECTED 1
 
-Section "NSIS Development System (required)" SecCore
+Section "NSIS Core Files (required)" SecCore
 
   SetDetailsPrint textonly
-  DetailPrint "Installing NSIS Development System..."
+  DetailPrint "Installing NSIS Core Files..."
   SetDetailsPrint listonly
 
   SectionIn 1 2 3 RO
@@ -131,6 +130,46 @@ Section "NSIS Development System (required)" SecCore
   Delete $INSTDIR\Docs\style.css
   RMDir $INSTDIR\Docs
   
+  ReadRegStr $R0 HKCR ".nsi" ""
+  StrCmp $R0 "NSISFile" 0 no_nsioldassoc
+    DeleteRegKey HKCR "NSISFile"
+    Goto nsi
+  no_nsioldassoc:
+  
+  StrCmp $R0 "NSIS.Script" 0 no_nsi
+    nsi:
+    WriteRegStr HKCR ".nsi" "" "NSIS.Script"
+    WriteRegStr HKCR "NSIS.Script" "" "NSIS Script File"
+    WriteRegStr HKCR "NSIS.Script\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
+    ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
+    StrCmp $R0 "" 0 no_nsiopen
+      WriteRegStr HKCR "NSIS.Script\shell" "" "open"
+      WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'   
+    no_nsiopen:
+    WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
+    WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
+    WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
+    WriteRegStr HKCR "NSIS.Script\shell\compile-compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
+  no_nsi:
+  
+  ReadRegStr $R0 HKCR ".nsh" ""
+  StrCmp $R0 "NSHFile" 0 no_nsholdassoc
+    DeleteRegKey HKCR "NSHFile"
+    Goto nsh
+  no_nsholdassoc:
+  
+  StrCmp ".nsh" "NSIS.Header" 0 no_nsh
+    nsh:
+    WriteRegStr HKCR ".nsh" "" "NSIS.Header"
+    WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
+    WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
+    ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
+    StrCmp $R0 "" 0 no_nshopen
+      WriteRegStr HKCR "NSIS.Header\shell" "" "open"
+      WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'   
+    no_nshopen:
+  no_nsh:
+
 SectionEnd
 
 Section "Script Examples" SecExample
@@ -159,64 +198,15 @@ Section "Script Examples" SecExample
   File ..\Examples\UserVars.nsi
 SectionEnd
 
-Section "NSIS Update" SecUpdate
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing NSIS Update..."
-  SetDetailsPrint listonly
-
-  SectionIn 1 2 3
-  SetOutPath $INSTDIR\Bin
-  File ..\Bin\NSISUpdate.exe
-  File ..\Bin\InstallCVSData.exe
-SectionEnd
-
-Section "NSI Development Shell Extensions" SecExtention
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing NSI Development Shell Extensions..."
-  SetDetailsPrint listonly
-
-  SectionIn 1 2 3
-  ; back up old value of .nsi
-  ReadRegStr $1 HKCR ".nsi" ""
-  StrCmp $1 "" Label1
-    StrCmp $1 "NSISFile" Label1
-    WriteRegStr HKCR ".nsi" "backup_val" $1
-  Label1:
-  WriteRegStr HKCR ".nsh" "" "NSHFile"
-  ReadRegStr $0 HKCR "NSHFile" ""
-  StrCmp $0 "" 0 skipNSHAssoc
-    WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
-    WriteRegStr HKCR "NSHFile\shell" "" "open"
-    WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
-  skipNSHAssoc:
-  WriteRegStr HKCR "NSHFile\shell\open\command" "" 'notepad.exe "%1"'
-  WriteRegStr HKCR ".nsi" "" "NSISFile"
-  ReadRegStr $0 HKCR "NSISFile" ""
-  StrCmp $0 "" 0 skipNSIAssoc
-    WriteRegStr HKCR "NSISFile" "" "NSIS Script File"
-    WriteRegStr HKCR "NSISFile\shell" "" "open"
-    WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
-  skipNSIAssoc:
-  WriteRegStr HKCR "NSISFile\shell\open\command" "" 'notepad.exe "%1"'
-  WriteRegStr HKCR "NSISFile\shell\compile" "" "Compile NSI"
-  WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
-  WriteRegStr HKCR "NSISFile\shell\compile-bz2" "" "Compile NSI (with bz2)"
-  WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /X"SetCompressor bzip2" "%1"'
-  WriteRegStr HKCR "NSISFile\shell\compile-choose compressor" "" "Compile NSI (Choose Compressor)"
-  WriteRegStr HKCR "NSISFile\shell\compile-choose compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
-SectionEnd
-
 !ifndef NO_STARTMENUSHORTCUTS
-Section "Start Menu + Desktop Shortcuts" SecIcons
+Section "Start Menu and Desktop Shortcuts" SecShortcuts
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Start Menu + Desktop Shortcuts..."
+  DetailPrint "Installing Start Menu and Desktop Shortcuts..."
   SetDetailsPrint listonly
 
 !else
-Section "Desktop Shortcut" SecIcons
+Section "Desktop Shortcut" SecShortcuts
 
   SetDetailsPrint textonly
   DetailPrint "Installing Desktop Shortcut..."
@@ -245,82 +235,83 @@ Section "Desktop Shortcut" SecIcons
   
 SectionEnd
 
-SubSection "Contrib" SecContrib
+SubSection "User Interfaces" SecInterfaces
 
-SubSection "Extra User Interfaces" SecContribUIs
-  Section "Modern User Interface" SecContribModernUI
+Section "Modern User Interface" SecInterfacesModernUI
 
-  SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Extra User Interfaces | Modern User Interface..."
-  SetDetailsPrint listonly
+SetDetailsPrint textonly
+DetailPrint "Installing Interfaces | Modern User Interface..."
+SetDetailsPrint listonly
 
-    SectionIn 1 2
-    SetOutPath "$INSTDIR\Examples\Modern UI"
-    File "..\Examples\Modern UI\Basic.nsi"
-    File "..\Examples\Modern UI\HeaderBitmap.nsi"
-    File "..\Examples\Modern UI\MultiLanguage.nsi"
-    File "..\Examples\Modern UI\InstallOptions.nsi"
-    File "..\Examples\Modern UI\ioA.ini"
-    File "..\Examples\Modern UI\ioB.ini"
-    File "..\Examples\Modern UI\ioC.ini"
-    File "..\Examples\Modern UI\StartMenu.nsi"
-    File "..\Examples\Modern UI\WelcomeFinish.nsi"
+  SectionIn 1 2 3
+  SetOutPath "$INSTDIR\Examples\Modern UI"
+  File "..\Examples\Modern UI\Basic.nsi"
+  File "..\Examples\Modern UI\HeaderBitmap.nsi"
+  File "..\Examples\Modern UI\MultiLanguage.nsi"
+  File "..\Examples\Modern UI\InstallOptions.nsi"
+  File "..\Examples\Modern UI\ioA.ini"
+  File "..\Examples\Modern UI\ioB.ini"
+  File "..\Examples\Modern UI\ioC.ini"
+  File "..\Examples\Modern UI\StartMenu.nsi"
+  File "..\Examples\Modern UI\WelcomeFinish.nsi"
 
-    SetOutPath "$INSTDIR\Contrib\Modern UI"
-    File "..\Contrib\Modern UI\System.nsh"
-    File "..\Contrib\Modern UI\Readme.gif"
-    File "..\Contrib\Modern UI\Readme.html"
-    File "..\Contrib\Modern UI\Changelog.txt"
-    File "..\Contrib\Modern UI\Screenshot.png"
-    File "..\Contrib\Modern UI\Screenshot2.png"
-    File "..\Contrib\Modern UI\License.txt"
-    File "..\Contrib\Modern UI\ioSpecial.ini"
+  SetOutPath "$INSTDIR\Contrib\Modern UI"
+  File "..\Contrib\Modern UI\System.nsh"
+  File "..\Contrib\Modern UI\Readme.gif"
+  File "..\Contrib\Modern UI\Readme.html"
+  File "..\Contrib\Modern UI\Changelog.txt"
+  File "..\Contrib\Modern UI\Screenshot.png"
+  File "..\Contrib\Modern UI\Screenshot2.png"
+  File "..\Contrib\Modern UI\License.txt"
+  File "..\Contrib\Modern UI\ioSpecial.ini"
 
-    SetOutPath $INSTDIR\Contrib\UIs
-    File "..\Contrib\UIs\modern.exe"
-    File "..\Contrib\UIs\modern_headerbmp.exe"
-    File "..\Contrib\UIs\modern_headerbmpr.exe"
-    File "..\Contrib\UIs\modern_nodesc.exe"
-    File "..\Contrib\UIs\modern_smalldesc.exe"
+  SetOutPath $INSTDIR\Contrib\UIs
+  File "..\Contrib\UIs\modern.exe"
+  File "..\Contrib\UIs\modern_headerbmp.exe"
+  File "..\Contrib\UIs\modern_headerbmpr.exe"
+  File "..\Contrib\UIs\modern_nodesc.exe"
+  File "..\Contrib\UIs\modern_smalldesc.exe"
 
-    Delete "$INSTDIR\Contrib\Modern UI\Readme.jpg"
-    Delete "$INSTDIR\Contrib\Modern UI\ioSpecial3.ini"
-    Delete "$INSTDIR\Contrib\UIs\modern2.exe"
-    Delete "$INSTDIR\Contrib\UIs\modern3.exe"
+  Delete "$INSTDIR\Contrib\Modern UI\Readme.jpg"
+  Delete "$INSTDIR\Contrib\Modern UI\ioSpecial3.ini"
+  Delete "$INSTDIR\Contrib\UIs\modern2.exe"
+  Delete "$INSTDIR\Contrib\UIs\modern3.exe"
 
-    SetOutPath $INSTDIR\Include
-    File "..\Include\MUI.nsh"
-    
-  SectionEnd
+  SetOutPath $INSTDIR\Include
+  File "..\Include\MUI.nsh"
+  
+SectionEnd
 
-  Section "Default User Interface" SecContribDefaultUI
+Section "Default User Interface" SecInterfacesDefaultUI
 
-  SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Extra User Interfaces | Default User Interface..."
-  SetDetailsPrint listonly
+SetDetailsPrint textonly
+DetailPrint "Installing Interfaces | Default User Interface..."
+SetDetailsPrint listonly
 
-    SectionIn 1 2
-    SetOutPath "$INSTDIR\Contrib\UIs"
-    File "..\Contrib\UIs\default.exe"
-  SectionEnd
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\Contrib\UIs"
+  File "..\Contrib\UIs\default.exe"
 
-  Section "Tiny User Interface" SecContribTinyUI
+SectionEnd
 
-  SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Extra User Interfaces | Tiny User Interface..."
-  SetDetailsPrint listonly
+Section "Tiny User Interface" SecInterfacesTinyUI
 
-    SectionIn 1 2
-    SetOutPath "$INSTDIR\Contrib\UIs"
-    File "..\Contrib\UIs\sdbarker_tiny.exe"
-  SectionEnd
+SetDetailsPrint textonly
+DetailPrint "Installing Interfaces | Tiny User Interface..."
+SetDetailsPrint listonly
+
+  SectionIn 1 2
+  SetOutPath "$INSTDIR\Contrib\UIs"
+  File "..\Contrib\UIs\sdbarker_tiny.exe"
+
+SectionEnd
 
 SubSectionEnd
 
-Section "Graphics" SecContribGraphics
+Section "Graphics" SecPluginsGraphics
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Graphics..."
+  DetailPrint "Installing Graphics..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -332,10 +323,10 @@ Section "Graphics" SecContribGraphics
   File /r "..\Contrib\Graphics\*.bmp"
 SectionEnd
 
-Section "Language files" SecContribLang
+Section "Language files" SecPluginsLang
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Language Files..."
+  DetailPrint "Installing Language files..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -346,7 +337,7 @@ Section "Language files" SecContribLang
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
 
-  SectionGetFlags ${SecContribModernUI} $R0
+  SectionGetFlags ${SecInterfacesModernUI} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
       SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
@@ -355,12 +346,44 @@ Section "Language files" SecContribLang
 
 SectionEnd
 
-SubSection "Plugins" SecContribPlugins
+SubSection "Tools" SecTools
 
-Section "Banner" SecContribBanner
+Section "NSIS Update" SecToolsUpdate
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | Banner..."
+  DetailPrint "Installing Tools | NSIS Update..."
+  SetDetailsPrint listonly
+
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\NSISUpdate.exe
+  File ..\Bin\InstallCVSData.exe
+SectionEnd
+
+Section "Zip2Exe" SecToolsZ2E
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Tools | Zip2Exe..."
+  SetDetailsPrint listonly
+
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\zip2exe.exe
+  SetOutPath $INSTDIR\Contrib\zip2exe
+  File ..\Contrib\zip2exe\Base.nsh
+  File ..\Contrib\zip2exe\Modern.nsh
+  File ..\Contrib\zip2exe\Classic.nsh
+
+SectionEnd
+
+SubSectionEnd
+
+SubSection "Plug-ins" SecPluginsPlugins
+
+Section "Banner" SecPluginsBanner
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Plug-ins | Banner..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -371,10 +394,10 @@ Section "Banner" SecContribBanner
   File ..\Contrib\Banner\Example.nsi
 SectionEnd
 
-Section "Language DLL" SecContribLangDLL
+Section "Language DLL" SecPluginsLangDLL
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | Language DLL..."
+  DetailPrint "Installing Plug-ins | Language DLL..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -382,10 +405,10 @@ Section "Language DLL" SecContribLangDLL
   File ..\Plugins\LangDLL.dll
 SectionEnd
 
-Section "nsExec" SecContribnsExec
+Section "nsExec" SecPluginsnsExec
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | nsExec..."
+  DetailPrint "Installing Plug-ins | nsExec..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -396,10 +419,10 @@ Section "nsExec" SecContribnsExec
   File ..\Contrib\nsExec\*.nsi
 SectionEnd
 
-Section "Splash" SecContribSplash
+Section "Splash" SecPluginsSplash
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | Splash..."
+  DetailPrint "Installing Plug-ins | Splash..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -410,10 +433,10 @@ Section "Splash" SecContribSplash
   File ..\Contrib\splash\Example.nsi
 SectionEnd
 
-Section "AdvSplash w/transparency" SecContribSplashT
+Section "AdvSplash" SecPluginsSplashT
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | AdvSplash w/transparency..."
+  DetailPrint "Installing Plug-ins | AdvSplash..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -424,10 +447,10 @@ Section "AdvSplash w/transparency" SecContribSplashT
   File ..\Contrib\AdvSplash\Example.nsi
 SectionEnd
 
-Section "BgImage" SecContribBgImage
+Section "BgImage" SecPluginsBgImage
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | BgImage..."
+  DetailPrint "Installing Plug-ins | BgImage..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -438,10 +461,10 @@ Section "BgImage" SecContribBgImage
   File ..\Contrib\BgImage\Example.nsi
 SectionEnd
 
-Section "InstallOptions" SecContribIO
+Section "InstallOptions" SecPluginsIO
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | InstallOptions..."
+  DetailPrint "Installing Plug-inss | InstallOptions..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -456,10 +479,10 @@ Section "InstallOptions" SecContribIO
   File ..\contrib\installoptions\testlink.nsi
 SectionEnd
 
-Section "Math" SecContribMath
+Section "Math" SecPluginsMath
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | Math..."
+  DetailPrint "Installing Plug-ins | Math..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -474,10 +497,10 @@ Section "Math" SecContribMath
 
 SectionEnd
 
-Section "NSISdl" SecContribNSISDL
+Section "NSISdl" SecPluginsNSISDL
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | NSISdl..."
+  DetailPrint "Installing Plug-ins | NSISdl..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -488,10 +511,10 @@ Section "NSISdl" SecContribNSISDL
   File ..\contrib\NSISdl\License.txt
 SectionEnd
 
-Section "System" SecContribSystem
+Section "System" SecPluginsSystem
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | System..."
+  DetailPrint "Installing Plug-ins | System..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -504,10 +527,10 @@ Section "System" SecContribSystem
   File ..\Contrib\System\*.txt
 SectionEnd
 
-Section "StartMenu" SecContribStartMenu
+Section "StartMenu" SecPluginsStartMenu
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | StartMenu..."
+  DetailPrint "Installing Plug-ins | StartMenu..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -518,10 +541,10 @@ Section "StartMenu" SecContribStartMenu
   File ..\Contrib\StartMenu\Readme.txt
 SectionEnd
 
-Section "UserInfo" SecContribUserInfo
+Section "UserInfo" SecPluginsUserInfo
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | UserInfo..."
+  DetailPrint "Installing Plug-ins | UserInfo..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -531,10 +554,10 @@ Section "UserInfo" SecContribUserInfo
   File ..\Contrib\UserInfo\UserInfo.nsi
 SectionEnd
 
-Section "Dialer" SecContribDialer
+Section "Dialer" SecPluginsDialer
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | Dialer..."
+  DetailPrint "Installing Plug-ins | Dialer..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -544,10 +567,10 @@ Section "Dialer" SecContribDialer
   File ..\Contrib\Dialer\Dialer.txt
 SectionEnd
 
-Section "VPatch" SecContribVPatch
+Section "VPatch" SecPluginsVPatch
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Plugins | VPatch..."
+  DetailPrint "Installing Plug-ins | VPatch..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -564,26 +587,8 @@ SectionEnd
 
 SubSectionEnd
 
-Section "Zip2Exe" SecContribZ2E
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing Contrib | Zip2Exe..."
-  SetDetailsPrint listonly
-
-  SectionIn 1 2
-  SetOutPath $INSTDIR\Bin
-  File ..\Bin\zip2exe.exe
-  SetOutPath $INSTDIR\Contrib\zip2exe
-  File ..\Contrib\zip2exe\Base.nsh
-  File ..\Contrib\zip2exe\Modern.nsh
-  File ..\Contrib\zip2exe\Classic.nsh
-SectionEnd
-
-
-SubSectionEnd
-
-
 SubSection "Source code" SecSrc
+
 Section "NSIS Source Code" SecSrcNSIS
 
   SetDetailsPrint textonly
@@ -614,13 +619,13 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\exehead\bin2h.exe
 SectionEnd
 
-SubSection "Contrib" SecSrcContrib
-# required for other plugins sources
-# text changes in .onSelChange
 Section "ExDLL Source (required)" SecSrcEx
 
+  ;required for other plugins sources
+  ;text changes in .onSelChange
+
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | ExDLL Source..."
+  DetailPrint "Installing Source Code | ExDLL Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -633,12 +638,35 @@ Section "ExDLL Source (required)" SecSrcEx
   File ..\Contrib\exdll\exdll_with_unit.dpr
   File ..\Contrib\exdll\nsis.pas
   File ..\Contrib\exdll\extdll.inc
+
 SectionEnd
+
+Section "Zip2Exe Source" SecToolsZ2ES
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Zip2exe Source..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+  RMDir /r $INSTDIR\Source\Zip2Exe
+  SetOutPath $INSTDIR\Contrib\zip2exe
+  File ..\Contrib\zip2exe\*.cpp
+  File ..\Contrib\zip2exe\*.ico
+  File ..\Contrib\zip2exe\*.h
+  File ..\Contrib\zip2exe\*.rc
+  File ..\Contrib\zip2exe\*.dsw
+  File ..\Contrib\zip2exe\*.dsp
+  File ..\Contrib\zip2exe\*.xml
+  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
+  File ..\Contrib\zip2exe\zlib\*.*
+SectionEnd
+
+SubSection "Tools" SecToolsS
 
 Section "MakeNSISW Source" SecSrcMNW
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | MakeNSISW Source..."
+  DetailPrint "Installing Source Code | MakeNSISW Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -655,10 +683,10 @@ Section "MakeNSISW Source" SecSrcMNW
   #File ..\Contrib\Makensisw\Makefile
 SectionEnd
 
-Section "UI Holder Source" SecContribUIHolderS
+Section "UI Holder Source" SecSrcUIHolder
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | UI Holder..."
+  DetailPrint "Installing Source Code | UI Holder..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -670,12 +698,14 @@ Section "UI Holder Source" SecContribUIHolderS
   File "..\Contrib\UIs\UI Holder\*.dsp"
 SectionEnd
 
-SubSection "Plugins" SecContribPluginsS
+SubSectionEnd
 
-Section "Banner Source" SecContribBannerS
+SubSection "Plug-ins" SecPluginsPluginsS
+
+Section "Banner Source" SecPluginsBannerS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | Banner Source..."
+  DetailPrint "Installing Source Code | Plug-ins | Banner Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -685,10 +715,10 @@ Section "Banner Source" SecContribBannerS
   File ..\Contrib\Banner\Banner.c
 SectionEnd
 
-Section "Language DLL Source" SecContribLangDLLS
+Section "Language DLL Source" SecPluginsLangDLLS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | Language DLL Source..."
+  DetailPrint "Installing Source Code | Plug-ins | Language DLL Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -700,10 +730,10 @@ Section "Language DLL Source" SecContribLangDLLS
   File ..\Contrib\LangDLL\LangDLL.dsp
 SectionEnd
 
-Section "nsExec Source" SecContribnsExecS
+Section "nsExec Source" SecPluginsnsExecS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | nsExec Source..."
+  DetailPrint "Installing Source Code | Plug-ins | nsExec Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -713,10 +743,10 @@ Section "nsExec Source" SecContribnsExecS
   File ..\Contrib\nsExec\*.dsp
 SectionEnd
 
-Section "Splash Source" SecContribSplashS
+Section "Splash Source" SecPluginsSplashS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | Splash Source..."
+  DetailPrint "Installing Source Code | Plug-ins | Splash Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -726,10 +756,10 @@ Section "Splash Source" SecContribSplashS
   File ..\Contrib\Splash\splash.dsw
 SectionEnd
 
-Section "AdvSplash Source" SecContribSplashTS
+Section "AdvSplash Source" SecPluginsSplashTS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | AdvSplash Source..."
+  DetailPrint "Installing Source Code | Plug-ins | AdvSplash Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -739,10 +769,10 @@ Section "AdvSplash Source" SecContribSplashTS
   File ..\Contrib\AdvSplash\*.dsp
 SectionEnd
 
-Section "BgImage Source" SecContribBgImageS
+Section "BgImage Source" SecPluginsBgImageS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | BgImage Source..."
+  DetailPrint "Installing Source Code | Plug-ins | BgImage Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -752,10 +782,10 @@ Section "BgImage Source" SecContribBgImageS
   File ..\Contrib\BgImage\BgImage.dsp
 SectionEnd
 
-Section "InstallOptions Source" SecContribIOS
+Section "InstallOptions Source" SecPluginsIOS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | InstallOptions Source..."
+  DetailPrint "Installing Source Code | Plug-ins | InstallOptions Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -767,10 +797,10 @@ Section "InstallOptions Source" SecContribIOS
   File ..\contrib\installoptions\*.h
 SectionEnd
 
-Section "Math Source" SecContribMathS
+Section "Math Source" SecPluginsMathS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | Math Source..."
+  DetailPrint "Installing Source Code | Plug-ins | Math Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -782,10 +812,10 @@ Section "Math Source" SecContribMathS
   File ..\contrib\Math\Source\*.vcproj
 SectionEnd
 
-Section "NSISdl Source" SecContribNSISDLS
+Section "NSISdl Source" SecPluginsNSISDLS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | NSISdl Source..."
+  DetailPrint "Installing Source Code | Plug-ins | NSISdl Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -797,10 +827,10 @@ Section "NSISdl Source" SecContribNSISDLS
   File ..\contrib\NSISdl\*.rc
 SectionEnd
 
-Section "System Source" SecContribSystemS
+Section "System Source" SecPluginsSystemS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | System Source..."
+  DetailPrint "Installing Source Code | Plug-ins | System Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -812,10 +842,10 @@ Section "System Source" SecContribSystemS
   File ..\contrib\System\Source\*.vcproj
 SectionEnd
 
-Section "StartMenu Source" SecContribStartMenuS
+Section "StartMenu Source" SecPluginsStartMenuS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | StartMenu Source..."
+  DetailPrint "Installing Source Code | Plug-ins | StartMenu Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -827,10 +857,10 @@ Section "StartMenu Source" SecContribStartMenuS
   File ..\Contrib\StartMenu\resource.h
 SectionEnd
 
-Section "UserInfo Source" SecContribUserInfoS
+Section "UserInfo Source" SecPluginsUserInfoS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | UserInfo Source..."
+  DetailPrint "Installing Source Code | Plug-ins | UserInfo Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -840,10 +870,10 @@ Section "UserInfo Source" SecContribUserInfoS
   File ..\Contrib\UserInfo\UserInfo.dsw
 SectionEnd
 
-Section "Dialer Source" SecContribDialerS
+Section "Dialer Source" SecPluginsDialerS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | Dialer Source..."
+  DetailPrint "Installing Source Code | Plug-ins | Dialer Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -853,10 +883,10 @@ Section "Dialer Source" SecContribDialerS
   File ..\Contrib\Dialer\dialer.dsw
 SectionEnd
 
-Section "VPatch Source" SecContribVPatchS
+Section "VPatch Source" SecPluginsVPatchS
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Plugins | VPatch Source..."
+  DetailPrint "Installing Source Code | Plug-ins | VPatch Source..."
   SetDetailsPrint listonly
 
   SectionIn 1
@@ -883,27 +913,6 @@ SectionEnd
 
 SubSectionEnd ; plugins
 
-Section "Zip2Exe Source" SecContribZ2ES
-
-  SetDetailsPrint textonly
-  DetailPrint "Installing Source Code | Contrib | Zip2exe Source..."
-  SetDetailsPrint listonly
-
-  SectionIn 1
-  RMDir /r $INSTDIR\Source\Zip2Exe
-  SetOutPath $INSTDIR\Contrib\zip2exe
-  File ..\Contrib\zip2exe\*.cpp
-  File ..\Contrib\zip2exe\*.ico
-  File ..\Contrib\zip2exe\*.h
-  File ..\Contrib\zip2exe\*.rc
-  File ..\Contrib\zip2exe\*.dsw
-  File ..\Contrib\zip2exe\*.dsp
-  File ..\Contrib\zip2exe\*.xml
-  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
-  File ..\Contrib\zip2exe\zlib\*.*
-SectionEnd
-
-SubSectionEnd
 SubSectionEnd
 
 Section -post
@@ -912,7 +921,7 @@ Section -post
   ; * Always install the English language file
   ; * Always install default icons / bitmaps
 
-  SectionGetFlags ${SecContribModernUI} $R0
+  SectionGetFlags ${SecInterfacesModernUI} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} "" nomui nomui
 
@@ -921,7 +930,7 @@ Section -post
       SetDetailsPrint listonly
 
 
-    SectionGetFlags ${SecContribLang} $R0
+    SectionGetFlags ${SecPluginsLang} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} langfiles
     
@@ -930,7 +939,7 @@ Section -post
 
     langfiles:
 
-    SectionGetFlags ${SecContribGraphics} $R0
+    SectionGetFlags ${SecPluginsGraphics} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} graphics
 
@@ -964,7 +973,7 @@ Section -post
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${VER_DISPLAY}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sf.net/"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sourceforge.net/"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
 
@@ -1005,7 +1014,7 @@ Section -post
 
   ; ZIP2EXE
   IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
+    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Zip2Exe (create SFX).lnk" "$INSTDIR\Bin\zip2exe.exe"
 
   Push ZIP2EXE
   Call AddWorkspaceToStartMenu
@@ -1114,54 +1123,53 @@ SectionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The core files required to use NSIS (compiler etc.)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "User interfaces, plugins, graphics, and utilities contributed by other NSIS developers"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface like the wizards of recent Windows versions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribTinyUI} "A tiny version of the default user interface"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribGraphics} "Icons, checkbox images and other graphics"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPluginsS} "Source code for plugins"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBanner} "Plugin that lets you show a banner before installation starts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBannerS} "Source code to plugin that lets you show a banner before installation starts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLL} "Plugin that lets you add a language select dialog to your installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExec} "Plugin that executes console programs and prints its output in the NSIS log window or hides it"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribnsExecS} "Source code to plugin that executes console programs and prints its output in the NSIS log window or hides it"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplash} "Splash screen add-on that lets you add a splash screen to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribMath} "Plugin that lets you evaluate complicated mathematical expressions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribMathS} "Source code to plugin that lets you evaluate complicated mathematical expressions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialer} "Plugin that provides internet connection functions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin that provides internet connection functions"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2ES} "Source code to a utility that converts zip files into an NSIS installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIO} "Plugin that lets you add custom pages to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIOS} "Source code to plugin that lets you add custom pages to an installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenu} "Plugin that lets the user select the start menu folder"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribStartMenuS} "Source code to plugin that lets the user select the start menu folder"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribBgImageS} "Source code to plugin that lets you show a persistent background image plugin and play sounds"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUserInfo} "Plugin that that gives you the user name and the user account type"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUserInfoS} "Source code to plugin that that gives you the user name and the user account type"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your recources in to preview your user interface"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribVPatch} "Plugin that lets you create patches to upgrade older files"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribVPatchS} "Source code to plugin that lets you create patches to upgrade older files"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} "Adds icons to your start menu and your desktop for easy access"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfaces} "User interface designs that can be used to change the installer look and feel"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfacesModernUI} "A modern user interface like the wizards of recent Windows versions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfacesDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecInterfacesTinyUI} "A tiny version of the default user interface"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecTools} "Tools that help you with NSIS development"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsS} "Source code to tools that help you with NSIS development"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsZ2E} "A utility that converts a ZIP file to a NSIS installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsZ2ES} "Source code to a utility that converts a ZIP file to a NSIS installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsGraphics} "Icons, checkbox images and other graphics"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsLang} "Language files used to support multiple languages in an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsPlugins} "Useful plugins that extend NSIS's functionality"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsPluginsS} "Source code for plugins"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBanner} "Plugin that lets you show a banner before installation starts"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBannerS} "Source code to plugin that lets you show a banner before installation starts"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsLangDLL} "Plugin that lets you add a language select dialog to your installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsLangDLLS} "Source code to plugin that lets you add a language select dialog to your installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsnsExec} "Plugin that executes console programs and prints its output in the NSIS log window or hides it"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsnsExecS} "Source code to plugin that executes console programs and prints its output in the NSIS log window or hides it"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSplash} "Splash screen add-on that lets you add a splash screen to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSplashS} "Source code to splash screen add-on that lets you add a splash screen to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSplashT} "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSystem} "Plugin that lets you call Win32 API or external DLLs"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsSystemS} "Source code to plugin that lets you call Win32 API or external DLLs"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsMath} "Plugin that lets you evaluate complicated mathematical expressions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsMathS} "Source code to plugin that lets you evaluate complicated mathematical expressions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialer} "Plugin that provides internet connection functions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsDialerS} "Source code to plugin that provides internet connection functions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsIO} "Plugin that lets you add custom pages to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsIOS} "Source code to plugin that lets you add custom pages to an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsStartMenu} "Plugin that lets the user select the start menu folder"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsStartMenuS} "Source code to plugin that lets the user select the start menu folder"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBgImage} "Plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBgImageS} "Source code to plugin that lets you show a persistent background image plugin and play sounds"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfo} "Plugin that that gives you the user name and the user account type"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsUserInfoS} "Source code to plugin that that gives you the user name and the user account type"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSISDL} "Plugin that lets you create a web based installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsNSISDLS} "Source code to plugin that lets you create a web based installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsVPatch} "Plugin that lets you create patches to upgrade older files"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsVPatchS} "Source code to plugin that lets you create patches to upgrade older files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Source code to NSIS and all related files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcEx} "Example DLL plugin source in C and plugin function header"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "Source code to MakeNSIS Wrapper"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcUIHolder} "Source code to the UI Holder where you can put your recources in to preview your user interface"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcMNW} "Source code to MakeNSISW (compiler interface)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -1271,17 +1279,17 @@ FunctionEnd
 Function .onSelChange
   ;Plugins are linked to ExDLL
   StrCpy $R0 0
-  !insertmacro secSelected ${SecContribSplashTS}
-  !insertmacro secSelected ${SecContribBannerS}
-  !insertmacro secSelected ${SecContribBgImageS}
-  !insertmacro secSelected ${SecContribIOS}
-  !insertmacro secSelected ${SecContribLangDLLS}
-  !insertmacro secSelected ${SecContribnsExecS}
-  !insertmacro secSelected ${SecContribNSISdlS}
-  !insertmacro secSelected ${SecContribSplashS}
-  !insertmacro secSelected ${SecContribStartMenuS}
-  !insertmacro secSelected ${SecContribUserInfoS}
-  !insertmacro secSelected ${SecContribDialerS}
+  !insertmacro secSelected ${SecPluginsSplashTS}
+  !insertmacro secSelected ${SecPluginsBannerS}
+  !insertmacro secSelected ${SecPluginsBgImageS}
+  !insertmacro secSelected ${SecPluginsIOS}
+  !insertmacro secSelected ${SecPluginsLangDLLS}
+  !insertmacro secSelected ${SecPluginsnsExecS}
+  !insertmacro secSelected ${SecPluginsNSISdlS}
+  !insertmacro secSelected ${SecPluginsSplashS}
+  !insertmacro secSelected ${SecPluginsStartMenuS}
+  !insertmacro secSelected ${SecPluginsUserInfoS}
+  !insertmacro secSelected ${SecPluginsDialerS}
   SectionGetFlags ${SecSrcEx} $R7
   StrCmp $R0 0 notRequired
     IntOp $R7 $R7 | ${SF_SELECTED}
