@@ -197,7 +197,7 @@ void ExecScript(int log) {
         ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
         szBuf[dwRead] = 0;
         if (log) {
-          char *p, *lineBreak;
+          char *p, *p2;
           SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf);
           if (GlobalSize(hUnusedBuf) < iReqLen && (iReqLen < g_stringsize || !(log & 2))) {
             GlobalUnlock(hUnusedBuf);
@@ -215,13 +215,11 @@ void ExecScript(int log) {
           }
 
           if (!(log & 2)) {
-            while ( p = my_strstr(p, "\t") ) 
-            {
+            while (p = my_strstr(p, "\t")) {
               int len = lstrlen(p);
-              char *c_out=(char*)p+TAB_REPLACE_SIZE+(len-1);
-              char *c_in=(char *)p+1+(len-1);
-              while (len-- > 0)
-              {
+              char *c_out=(char*)p+TAB_REPLACE_SIZE+len;
+              char *c_in=(char *)p+len;
+              while (len-- > 0) {
                 *c_out--=*c_in--;
               }
 
@@ -231,10 +229,18 @@ void ExecScript(int log) {
             }
             
             p = szUnusedBuf; // get the old left overs
-            while (lineBreak = my_strstr(p, "\r\n")) {
-              *lineBreak = 0;
-              LogMessage(p);
-              p = lineBreak + 2;
+            for (p2 = p; *p2; p2++) {
+              if (*p == '\r' || *p == '\n')
+                p++;
+              if (*p2 == '\r') {
+                *p2 = 0;
+                continue;
+              }
+              if (*p2 == '\n') {
+                *p2 = 0;
+                LogMessage(p);
+                p = p2 + 1;
+              }
             }
             
             // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
@@ -284,7 +290,7 @@ void LogMessage(const char *pStr) {
   LVITEM item={0};
   int nItemCount;
   if (!g_hwndList) return;
-  if (!lstrlen(pStr)) return;
+  //if (!lstrlen(pStr)) return;
   nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
   item.mask=LVIF_TEXT;
   item.pszText=(char *)pStr;
