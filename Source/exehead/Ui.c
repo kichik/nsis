@@ -329,7 +329,7 @@ int NSISCALL ui_doinstall(void)
       // Added by Amir Szekely 3rd August 2002
       // Multilingual support
       int num=g_inst_header->common.str_tables_num;
-      LANGID user_lang=myatoi(state_language), lang_mask=~(LANGID)0;
+      LANGID user_lang, lang_mask=~(LANGID)0;
       int size=num*sizeof(common_strings);
       cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
@@ -347,6 +347,8 @@ int NSISCALL ui_doinstall(void)
       wsprintf(state_language, "%u", GetUserDefaultLangID());
       if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
       g_hwnd=NULL;
+
+      user_lang=myatoi(state_language);
 
 lang_again:
       for (size = 0; size < num; size++) {
