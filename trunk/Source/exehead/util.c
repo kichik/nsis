@@ -140,7 +140,7 @@ void NSISCALL trimslashtoend(char *buf)
       break;
     p = CharPrev(buf, p);
   } while (p > buf);
-  
+
   *p = 0;
 }
 
@@ -375,8 +375,8 @@ int NSISCALL myatoi(char *s)
   char m=10; // base of 0
   char t='9'; // cap top of numbers at 9
 
-  if (*s == '-') 
-  { 
+  if (*s == '-')
+  {
     s++;  //skip over -
     sign=-1; // sign flip
   }
@@ -571,7 +571,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 #else
 
     if (nVarIdx == 255)
-    {      
+    {
       *out++ = *in++;
     }
     else if (nVarIdx == VAR_CODES_START)
@@ -637,7 +637,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         case 35: // SYSDIR
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
-        
+
         case 36: // HWNDPARENT
           myitoa(out, (unsigned int)g_hwnd);
           break;
@@ -740,7 +740,10 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
 {
   HANDLE h;
   static WIN32_FIND_DATA fd;
+  // Avoid a "There is no disk in the drive" error box on empty removable drives
+  SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
   h = FindFirstFile(buf,&fd);
+  SetErrorMode(0);
   if (h != INVALID_HANDLE_VALUE)
   {
     FindClose(h);
