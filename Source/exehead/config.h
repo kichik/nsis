@@ -328,6 +328,9 @@
   #ifndef NSIS_SUPPORT_STACK
     #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_STACK, but NSIS_SUPPORT_STACK is not defined
   #endif
+  #ifndef NSIS_SUPPORT_FNUTIL
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_FNUTIL, but NSIS_SUPPORT_FNUTIL is not defined
+  #endif
 #endif
 
 #if NSIS_MAX_INST_TYPES > 30
