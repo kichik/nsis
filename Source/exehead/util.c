@@ -400,6 +400,7 @@ char * NSISCALL process_string(const char *in)
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     int nVarIdx = (unsigned char)*in++;
+#ifndef NSIS_SUPPORT_NAMED_USERVARS
     if (nVarIdx < VAR_CODES_START)
     {
 	    *out++ = nVarIdx;
@@ -443,24 +444,9 @@ char * NSISCALL process_string(const char *in)
         case VAR_CODES_START + 24: // EXEDIR
         case VAR_CODES_START + 25: // LANGUAGE
         case VAR_CODES_START + 26: // PLUGINSDIR
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-        case VAR_CODES_START + 36: // NAMED USER VARS
-        {
-          if ( nVarIdx == (VAR_CODES_START + 36) )
-          {
-            //char Buf[200];
-            nVarIdx = *(WORD*)in & 0x0FFF; in+=sizeof(WORD);
-            //wsprintf(Buf, "Request var index %d", nVarIdx);
-            //MessageBox(0,Buf,0,0);
-          }
-          else
-            nVarIdx = nVarIdx - (VAR_CODES_START + 1);
-          mystrcpy(out, g_usrvars[nVarIdx]);
-        }
-#else
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
-#endif
+
         case VAR_CODES_START + 27: // PROGRAMFILES
           smwcvesf[41]=0;
           myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
@@ -522,27 +508,112 @@ char * NSISCALL process_string(const char *in)
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-        #if USER_VARS_COUNT + MAX_NAMED_USER_VARS > 0x0FFF
-          #error "Too many named variables! Decrease MAX_NAMED_USER_VARS"
-        #endif
-
-        #if VAR_CODES_START + 36 >= 255
-          #error "Too many variables!  Extend VAR_CODES_START!"
-        #endif
-#else
         #if VAR_CODES_START + 35 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
-#endif
       } // switch
       // validate the directory name
-      if (nVarIdx > 21+VAR_CODES_START && nVarIdx < VAR_CODES_START + 36 ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
+      if (nVarIdx > 21+VAR_CODES_START ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
         // ($LANGUAGE can't have trailing backslash anyway...)
         validate_filename(out);
       }
       out+=mystrlen(out);
     } // >= VAR_CODES_START
+#else
+
+    if (nVarIdx == 255)
+    {      
+      *out++ = *in++;      
+    }
+    else if (nVarIdx != VAR_CODES_START)
+    {
+	    *out++ = nVarIdx;
+    }
+    else
+    {
+      DWORD f;
+      static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
+      nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD);
+      switch (nVarIdx) // The order of this list must match that in ..\strlist.cpp (err, build.cpp -J)
+      {
+        case 26: // PROGRAMFILES
+          smwcvesf[41]=0;
+          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
+          if (!*out)
+            mystrcpy(out, "C:\\Program Files");
+          break;
+
+        case 27: // SMPROGRAMS
+        case 28: // SMSTARTUP
+        case 29: // DESKTOP
+        case 30: // STARTMENU
+        case 31: // QUICKLAUNCH
+          {
+            static const char *tab[]={
+              "Programs",
+              "Startup",
+              "Desktop",
+              "Start Menu",
+              "AppData"
+            };
+            static char name[20]="Common ";
+            const char *name_=tab[nVarIdx-27];
+            mystrcpy(name+7,name_);
+            f=g_flags.all_user_var & (nVarIdx != 31);
+
+            again:
+
+              smwcvesf[41]='\\';
+              myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
+                smwcvesf,
+                f?name:name_,out);
+              if (!out[0])
+              {
+                if (f)
+                {
+                  f=0; goto again;
+                }
+                mystrcpy(out,temp_directory);
+              }
+
+            if (nVarIdx == 31) {
+              lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
+              f = GetFileAttributes(out);
+              if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
+                break;
+            }
+            else break;
+          }
+
+        case 32: // TEMP
+          mystrcpy(out,temp_directory);
+          break;
+
+        case 33: // WINDIR
+          GetWindowsDirectory(out, NSIS_MAX_STRLEN);
+          break;
+
+        case 34: // SYSDIR
+          GetSystemDirectory(out, NSIS_MAX_STRLEN);
+          break;
+        
+        case 35: // HWNDPARENT
+          myitoa(out, (unsigned int)g_hwnd);
+          break;
+
+        default:
+          mystrcpy(out, g_usrvars[nVarIdx]);
+          break;
+
+      } // switch
+      // validate the directory name
+      if (nVarIdx > 21 && nVarIdx < 36 ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT and not great than $SYSDIR
+        // ($LANGUAGE can't have trailing backslash anyway...)
+        validate_filename(out);
+      }
+      out+=mystrlen(out);
+    } // == VAR_CODES_START
+#endif
   } // while
   *out = 0;
   return ps_tmpbuf;

@@ -14,28 +14,83 @@
 #include <algorithm>
 using namespace std;
 
+struct version_string_list {
+  int codepage;
+  LANGID lang_id;
+  int name;
+  DefineList *pChildStrings;
+};
+
+class CVersionStrigList : public SortedStringListND<struct version_string_list>
+{
+public:
+    int add(LANGID langid, int codepage)
+    {
+      char Buff[10];
+      sprintf(Buff, "%04x", langid);
+      int pos = SortedStringListND<struct version_string_list>::add(Buff);
+      if (pos == -1) return false;
+      ((struct version_string_list*)gr.get())[pos].pChildStrings = new DefineList;
+      ((struct version_string_list*)gr.get())[pos].codepage = codepage;
+      ((struct version_string_list*)gr.get())[pos].lang_id = langid;
+      return pos;
+    }
+
+    LANGID get_lang(int idx)
+    {
+      version_string_list *data=(version_string_list *)gr.get();
+      return data[idx].lang_id;
+    }
+
+    int get_codepage(int idx)
+    {
+      version_string_list *data=(version_string_list *)gr.get();
+      return data[idx].codepage;
+    }
+
+    DefineList* get_strings(int idx)
+    {
+      version_string_list *data=(version_string_list *)gr.get();
+      return data[idx].pChildStrings;
+    }
+
+    int find(LANGID lang_id, int codepage)
+    {
+      char Buff[10];
+      sprintf(Buff, "%04x", lang_id);
+      return SortedStringListND<struct version_string_list>::find(Buff);
+    }
+
+    int getlen()
+    {
+      return strings.getlen();
+    }
+
+    int getnum()
+    {
+      return gr.getlen()/sizeof(struct version_string_list);
+    }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 class CResourceVersionInfo 
 {
     VS_FIXEDFILEINFO m_FixedInfo;
-    DefineList m_ChildStrings;
-    vector< DWORD > m_Translations;
-    string m_VersionInfoLang;
-    bool b_CustomTranslations;
+    CVersionStrigList m_ChildStringLists;
+    char m_VersionInfoLang[10];
     
 public:
     CResourceVersionInfo();
     virtual ~CResourceVersionInfo();
-    void SetKeyValue (char *AKeyName, char *AValue);
-    void AddTranslation(WORD CodePage, WORD LangID );
+    int SetKeyValue(LANGID lang_id, int codepage, char* AKeyName, char* AValue);
     void SetFileFlags(int Value);
     void SetFileVersion(int HighPart, int LowPart);
     void SetProductVersion(int HighPart, int LowPart);
-    void ExportToStream(GrowBuf &strm);
-    int GetKeyCount();
-    int GetTranslationCount();
-    char *FindKey(char *pKeyName);
-    void SetVersionInfoLang(char *pLandCp);
+    void ExportToStream(GrowBuf &strm, int Index);
+    int GetStringTablesCount();
+    LANGID GetLangID(int Index);
+    int GetCodePage(int Index);
+    char *FindKey(LANGID LangID, int codepage, char *pKeyName);
     bool IsValidCodePage(WORD codePage );
 };
 

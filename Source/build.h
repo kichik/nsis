@@ -10,6 +10,7 @@ using namespace std;
 #include "lang.h"
 #include "ResourceEditor.h"
 #include "ResourceVersionInfo.h"
+#include "uservars.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -173,7 +174,7 @@ class CEXEBuild {
     int GetUserVarIndex(LineParser &line, int token);
 // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-    LangStringList m_UserVarNames;
+    UserVarsStringList m_UserVarNames;
     int DeclaredUserVar(const char *VarName);
 #endif
 
@@ -214,7 +215,6 @@ class CEXEBuild {
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
     CResourceVersionInfo rVersionInfo;
-    int version_codePage, version_lang;
     char version_product_v[1024];
 #endif
 

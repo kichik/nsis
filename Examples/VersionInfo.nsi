@@ -12,16 +12,14 @@ OutFile "VersionInfo.exe"
 ;--------------------------------
 ;Version Information
 
-  VISetVersionLanguage 2057 1200 ; English UK
-  VIAddTranslation 2057 1200     ; English UK
   VIProductVersion "1.2.3.4"
-  VIAddVersionKey "ProductName" "Test Application"
-  VIAddVersionKey "Comments" "A test comment"
-  VIAddVersionKey "CompanyName" "Fake company"
-  VIAddVersionKey "LegalTrademarks" "Test Application is a trademark of Fake company"
-  VIAddVersionKey "LegalCopyright" "© Fake company"
-  VIAddVersionKey "FileDescription" "Test Application"
-  VIAddVersionKey "FileVersion" "1.2.3"
+  VIAddVersionKey ${LANG_ENGLISH} "ProductName" "Test Application"
+  VIAddVersionKey ${LANG_ENGLISH} "Comments" "A test comment"
+  VIAddVersionKey ${LANG_ENGLISH} "CompanyName" "Fake company"
+  VIAddVersionKey ${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
+  VIAddVersionKey ${LANG_ENGLISH} "LegalCopyright" "© Fake company"
+  VIAddVersionKey ${LANG_ENGLISH} "FileDescription" "Test Application"
+  VIAddVersionKey ${LANG_ENGLISH} "FileVersion" "1.2.3"
 
 ;--------------------------------
 
