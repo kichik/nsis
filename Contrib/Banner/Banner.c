@@ -75,15 +75,15 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
 
   while (IsWindow(lhwBanner))
   {
-	  if (PeekMessage(&msg, lhwBanner, 0, 0, PM_REMOVE))
-	  {
-		  DispatchMessage(&msg);
-	  }
-	  else
-	  {
-		  hwBanner = lhwBanner;
-		  WaitMessage();
-	  }
+    if (PeekMessage(&msg, lhwBanner, 0, 0, PM_REMOVE))
+    {
+      DispatchMessage(&msg);
+    }
+    else
+    {
+      hwBanner = lhwBanner;
+      WaitMessage();
+    }
   }
 
   hwBanner = NULL;
@@ -97,7 +97,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
   {
     DWORD dwThreadId;
-	  DWORD dwMainThreadId = GetCurrentThreadId();;
+    DWORD dwMainThreadId = GetCurrentThreadId();
 
     hwBanner = NULL;
 
@@ -118,9 +118,9 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
     if (AttachThreadInput(dwMainThreadId, dwThreadId, TRUE))
     {
-	    // Activates and displays a window
-	    ShowWindow(hwBanner, SW_SHOW);
-	    AttachThreadInput(dwMainThreadId, dwThreadId, FALSE);
+      // Activates and displays a window
+      ShowWindow(hwBanner, SW_SHOW);
+      AttachThreadInput(dwMainThreadId, dwThreadId, FALSE);
     }
     else
       ShowWindow(hwBanner, SW_SHOW);
@@ -140,33 +140,6 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
 
   PostMessage(hwBanner, WM_CLOSE, 0, 0);
 
-  // The code below is not needed I think
-/*
-  if (!hwndParent)
-  {
-    // reset the thread that called banner::Show to be the foreground thread.
-    // if banner was called from .onInit, this will make sure the NSIS dialog
-    // will still be created on the foreground
-    HWND hwTemp;
-
-    hwTemp = CreateWindowEx(
-      WS_EX_TOOLWINDOW,
-      "STATIC",
-      "",
-      WS_VISIBLE | WS_POPUP,
-      -1,
-      -1,
-      1,
-      1,
-      0,
-      0,
-      hInstance,
-      0
-    );
-    SetForegroundWindow(hwTemp);
-    DestroyWindow(hwTemp);
-  }
-*/
   // Wait for the thread to finish
   while (hwBanner)
     Sleep(25);
@@ -179,7 +152,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
   {
     destroy(0, 0, 0, 0);
   }
-	return TRUE;
+  return TRUE;
 }
 
 unsigned int myatoi(char *s)
