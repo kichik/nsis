@@ -584,7 +584,6 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
       gDontFookWithFocus = FALSE;
       m_curwnd=CreateDialog(g_hInstance,windows[g_page_offs+m_page].id,hwndDlg,windows[g_page_offs+m_page].proc);
-      my_MessageBox("after CreateDialog", MB_OK);
       if (m_curwnd)
       {
         RECT r;
