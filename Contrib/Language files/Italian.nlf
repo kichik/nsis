@@ -2,7 +2,6 @@
 NLF v2
 # Language ID
 1040
-# Start editing here
 # from Orfanik - http://www.orfanik.hu
 Installazione Nullsoft %s
 %s - Setup
@@ -15,15 +14,15 @@ Installazione Nullsoft %s
 : conferma
 : rimozione file
 : completata
-< Indietro
-Avanti >
-Accetto
-Installa
-Rimuovi
+< &Precedente
+&Seguente >
+&Accetto
+&Installa
+&Rimuovi
 Annulla
-Chiudi
-Sfoglia...
-Mostra dettagli
+&Chiudi
+&Sfoglia...
+Mostra &dettagli
 Nome
 Completata
 Personalizzata
