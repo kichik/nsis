@@ -329,7 +329,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif
             if (state_install_directory[0]) mystrcpy(ibuf,state_install_directory);
             else trimslashtoend(ibuf);
-            if (!is_valid_instpath(ibuf)) break;
             done++;
             lstrcat(buf2,"\" ");
             lstrcat(buf2,realcmds);
@@ -373,4 +372,3 @@ end:
 
   ExitProcess(ret);
 }
-
