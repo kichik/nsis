@@ -58,16 +58,16 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	haccel = LoadAccelerators(g_hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
 	MSG	msg;
 	int status;
-	while ((status=GetMessage(&msg,0,0,0))!=0) {
-	if (status==-1) return -1;
-    if (!IsDialogMessage(hwndFind, &msg)) {
-      if (!TranslateAccelerator(hDialog,haccel,&msg)) {
-        if (!IsDialogMessage(hDialog,&msg)) {
-          TranslateMessage(&msg);
-          DispatchMessage(&msg);
-        }
-      }
-    }
+		while ((status=GetMessage(&msg,0,0,0))!=0) {
+		if (status==-1) return -1;
+		if (!IsDialogMessage(hwndFind, &msg)) {
+			if (!TranslateAccelerator(hDialog,haccel,&msg)) {
+				if (!IsDialogMessage(hDialog,&msg)) {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				}
+			}
+		}
 	}
 	ExitProcess(msg.wParam);
 	return msg.wParam;
