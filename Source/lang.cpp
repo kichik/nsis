@@ -413,7 +413,7 @@ int CEXEBuild::GenerateLangTables() {
     TinyGrowBuf rec;
     for (j = 0; j < build_langstring_num; j++) {
       while (lst[j] < 0) {
-        for (int k = 0; k < rec.getlen() / sizeof(int); k++) {
+        for (int k = 0; (unsigned int)k < rec.getlen() / sizeof(int); k++) {
           if (((int*)rec.get())[k] == lst[j]) {
             const char *name = "(unnamed)";
             for (k = 0; k < l; k++) {
@@ -502,7 +502,7 @@ int CEXEBuild::GenerateLangTables() {
     TinyGrowBuf rec;
     for (j = 0; j < ubuild_langstring_num; j++) {
       while (lst[j] < 0) {
-        for (int k = 0; k < rec.getlen() / sizeof(int); k++) {
+        for (int k = 0; (unsigned int)k < rec.getlen() / sizeof(int); k++) {
           if (((int*)rec.get())[k] == lst[j]) {
             const char *name = "(unnamed)";
             for (k = 0; k < l; k++) {
