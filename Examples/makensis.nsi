@@ -175,8 +175,8 @@ SectionEnd
 
 Section "Splash" SecContribSplash
   SectionIn 1 2
-  SetOutPath $INSTDIR\Bin
-  File ..\Bin\splash.exe
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\splash.dll
   SetOutPath $INSTDIR\Contrib\Splash
   File ..\Contrib\splash\splash.txt
 SectionEnd
@@ -484,7 +484,7 @@ FunctionEnd
 
 Function .onPrevPage
 
-  !insertmacro MUI_PREVPAGE
+  !insertmacro MUI_PREVPAGE SetPage
 
 FunctionEnd
 
