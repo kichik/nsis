@@ -3,10 +3,11 @@ NLF v5
 # Language ID
 1048
 # Font and size - dash (-) means default
-Verdana
-9
+-
+-
 # Codepage - dash (-) means ANSI code page
 1250
+# Revision by Sorin Sbarnea (sorin@intersol.ro)      v5.1
 # Translation by Cristian Pirvu (pcristip@yahoo.com) v5
 # and Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
 Sistem de instalare Nullsoft %s
@@ -39,7 +40,7 @@ Alegeti componentele de instalat:
 Sau alegeti componentele optionale pe care vreti sa le instalati:
 Selectati directorul In care vreti sa instalati %s:
 Spatiu disponibil:
-Spattiu necesar:
+Spatiu necesar:
 Dezinstaleaza din:
 Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti Anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai Incerca o data scrierea fisierului, \r\nignora pentru a trece peste acest fisier
 Eroare la scrierea fisierului: \r\n\t"$0"\r\nApasati Reincearca pentru a mai incerca, sau\r\nAnuleaza pentru oprirea instalarii
