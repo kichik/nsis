@@ -1709,7 +1709,12 @@
   !ifndef "${INSTALLBUTTON}"
     ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
   !else
-    ${COMMAND} "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
+    !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
+      ${COMMAND} "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
+    !else
+      ;Modern UI 1.61 Language File compatibility
+      ${COMMAND} "${${NAME}}"
+    !endif
   !endif
   
   !undef "${NAME}"
@@ -1820,13 +1825,8 @@
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_SUBTITLE"
   !endif
   
-  !ifdef MUI_TEXT_CONTINUE_NEXT
-    !undef MUI_TEXT_CONTINUE_NEXT
-  !endif
-
-  !ifdef MUI_TEXT_CONTINUE_INSTALL
-    !undef MUI_TEXT_CONTINUE_INSTALL
-  !endif
+  !undef MUI_TEXT_CONTINUE_NEXT
+  !undef MUI_TEXT_CONTINUE_INSTALL
   
   !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
     !undef MUI_UNTEXT_CONTINUE_UNINSTALL
