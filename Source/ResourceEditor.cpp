@@ -445,8 +445,9 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 		char* szName = cRDirE->GetName();
 		WORD iLen = lstrlen(szName);
 		WCHAR* szwName = new WCHAR[iLen];
-		MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen);
-		CopyMemory(seeker, &iLen, sizeof(WORD));
+    // MultiByteToWideChar return value includes the null char, so -1
+		iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
+    *(WORD*)seeker = iLen;
 		seeker += sizeof(WORD);
 		CopyMemory(seeker, szwName, iLen*sizeof(WCHAR));
 		seeker += iLen*sizeof(WCHAR);
