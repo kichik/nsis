@@ -361,6 +361,12 @@
   #ifndef NSIS_SUPPORT_FNUTIL
     #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_FNUTIL, but NSIS_SUPPORT_FNUTIL is not defined
   #endif
+  #ifndef NSIS_SUPPORT_DELETE
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_DELETE, but NSIS_SUPPORT_DELETE is not defined
+  #endif
+  #ifndef NSIS_SUPPORT_MESSAGEBOX
+    #error NSIS_CONFIG_PLUGIN_SUPPORT relies on NSIS_SUPPORT_MESSAGEBOX, but NSIS_SUPPORT_MESSAGEBOX is not defined
+  #endif
 #endif
 
 #if NSIS_MAX_INST_TYPES > 32
