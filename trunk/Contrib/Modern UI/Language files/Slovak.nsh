@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Slovak (1051)
 ;By Kypec (peter.kysucky@mahe.sk)
@@ -19,13 +19,15 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Chyst·te sa nainötalovaù ${MUI_PRODUCT} na svoj poËÌtaË.\r\n\r\nPred zaËiatkom inötal·cie je odpor˙ËanÈ zavrieù vöetky ostatnÈ aplik·cie. T˝mto umoûnÌte inötal·toru aktualizovaù prÌpadnÈ systÈmovÈ s˙bory bez nutnosti reötartovaù systÈm.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "LicenËn· zmluva"  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Pred inötal·ciou programu ${MUI_PRODUCT}, prosÌm, preötudujte licenËnÈ podmienky."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Pred inötal·ciou programu ${MUI_PRODUCT} si prosÌm preötudujte licenËnÈ podmienky."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "StlaËenÌm kl·vesy Page Down posuniete text licenËnej zmluvy."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ak s˙hlasÌte so vöetk˝mi podmienkami zmluvy, zvoæte S˙hlasÌm pre pokraËovanie. Je nutnÈ s˙hlasiù s licenËnou zmluvou pre inötal·ciu programu ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ak s˙hlasÌte s podmienkami zmluvy, zvoæte S˙hlasÌm pre pokraËovanie. Je nutnÈ s˙hlasiù s licenËnou zmluvou, ak chcete pokraËovaù v inötal·cii ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ak s˙hlasÌte s podmienkami zmluvy, zaökrtnite niûöie uvedenÈ polÌËko. Je nutnÈ s˙hlasiù s licenËnou zmluvou, ak chcete pokraËovaù v inötal·cii ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ak s˙hlasÌte s podmienkami zmluvy, oznaËte prv˙ z niûöie uveden˝ch moûnostÌ. Je nutnÈ s˙hlasiù s licenËnou zmluvou, ak chcete pokraËovaù v inötal·cii ${MUI_PRODUCT}."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Voæba komponentov"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Zvoæte komponenty programu ${MUI_PRODUCT}, ktorÈ chcete nainötalovaù."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Zaökrtnite tie komponenty, ktorÈ chcete nainötalovaù a odökrtnite tie, ktorÈ nechcete."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Zaökrtnite tie komponenty, ktorÈ chcete nainötalovaù a odökrtnite tie, ktorÈ nechcete nainötalovaù."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Popis"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pri pohybe myöou nad komponentom programu sa tu zobrazÌ jeho popis."
   
@@ -45,8 +47,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Pre ˙plnÈ dokonËenie inötal·cie programu ${MUI_PRODUCT} je nutnÈ vykonaù reötart V·öho systÈmu. Chcete reötartovaù ihneÔ?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Reötartovaù ihneÔ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "Reötartovaù ruËne neskÙr"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Spustiù ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Uk·zaù »Ìtaj-ma"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "&Spusti ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "&Uk·û »Ìtaj-ma"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Voæba umiestnenia v ponuke ätart"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Zvoæte poloûku v ponuke ätart pre umiestnenie z·stupcov programu."
