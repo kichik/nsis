@@ -1,5 +1,5 @@
 !define VER_MAJOR 2
-!define VER_MINOR 0a3
+!define VER_MINOR 0a4
 
 !ifdef NO_COMPRESSION
 SetCompress off
@@ -168,6 +168,15 @@ Section "Splash"
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash project workspace.lnk" "$INSTDIR\source\splash\splash.dsw"
   NoShortCuts:
+SectionEnd
+
+Section "Splash w/transparency"
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Contrib\MagicLime
+  SetOverwrite try
+  File ..\Contrib\MagicLime\splash.c
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\magiclime.exe
 SectionEnd
 
 Section "Zip2Exe"
