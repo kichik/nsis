@@ -29,13 +29,13 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val);
 extern char log_text[NSIS_MAX_STRLEN*4];
 void NSISCALL log_write(int close);
 void log_printf(char *format, ...);
-#define log_printf2(x1,x2) wsprintf(log_text,x1,x2);
-#define log_printf3(x1,x2,x3) wsprintf(log_text,x1,x2,x3);
-#define log_printf4(x1,x2,x3,x4) wsprintf(log_text,x1,x2,x3,x4);
-#define log_printf5(x1,x2,x3,x4,x5) wsprintf(log_text,x1,x2,x3,x4,x5);
-#define log_printf6(x1,x2,x3,x4,x5,x6) wsprintf(log_text,x1,x2,x3,x4,x5,x6);
-#define log_printf6(x1,x2,x3,x4,x5,x6,x7) wsprintf(log_text,x1,x2,x3,x4,x5,x6,x7);
-#define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8) wsprintf(log_text,x1,x2,x3,x4,x5,x6,x7,x8);
+#define log_printf2(x1,x2) log_printf(x1,x2);
+#define log_printf3(x1,x2,x3) log_printf(x1,x2,x3);
+#define log_printf4(x1,x2,x3,x4) log_printf(x1,x2,x3,x4);
+#define log_printf5(x1,x2,x3,x4,x5) log_printf(x1,x2,x3,x4,x5);
+#define log_printf6(x1,x2,x3,x4,x5,x6) log_printf(x1,x2,x3,x4,x5,x6);
+#define log_printf7(x1,x2,x3,x4,x5,x6,x7) log_printf(x1,x2,x3,x4,x5,x6,x7);
+#define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8) log_printf(x1,x2,x3,x4,x5,x6,x7,x8);
 extern int log_dolog;
 extern char g_log_file[1024];
 #else
@@ -45,6 +45,7 @@ extern char g_log_file[1024];
 #define log_printf4(x1,x2,x3,x4)
 #define log_printf5(x1,x2,x3,x4,x5)
 #define log_printf6(x1,x2,x3,x4,x5,x6)
+#define log_printf7(x1,x2,x3,x4,x5,x6,x7)
 #define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8)
 #endif
 
