@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <shlobj.h>
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 #include "resource.h"
 
 HINSTANCE g_hInstance;

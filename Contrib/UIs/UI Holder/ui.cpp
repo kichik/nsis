@@ -1,8 +1,8 @@
 // ui.cpp : Defines the entry point for the application.
 //
 
-#include <Windows.h>
-#include <CommCtrl.h>
+#include <windows.h>
+#include <commctrl.h>
 #include "resource.h"
 
 HINSTANCE g_hInstance;

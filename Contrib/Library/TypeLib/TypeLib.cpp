@@ -6,7 +6,7 @@
 */
 
 #include <windows.h>
-#include "../../exdll/exdll.h"
+#include "../../ExDLL/exdll.h"
 
 #define NSISFunction(funcname) extern "C" void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 

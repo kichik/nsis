@@ -12,10 +12,10 @@
 #include <commdlg.h>
 #include <cderr.h>
 #include "resource.h"
-#include "Shellapi.h"
+#include "shellapi.h"
 
 #define popstring dontuseme
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 #undef popstring
 
 // Use for functions only called from one place to possibly reduce some code

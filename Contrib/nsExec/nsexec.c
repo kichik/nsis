@@ -20,8 +20,8 @@ freely, subject to the following restrictions:
 */
 #include <windows.h>
 #include <commctrl.h>
-#include <Winnt.h>
-#include "../exdll/exdll.h"
+#include <winnt.h>
+#include "../ExDLL/exdll.h"
 
 #ifndef true
 #define true TRUE
