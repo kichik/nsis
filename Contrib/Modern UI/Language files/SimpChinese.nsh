@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-05-01
+;Revision date: 2003-05-02
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
@@ -12,6 +12,12 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONT_HEADER "宋体"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONTSIZE_HEADER "9"
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONT_TITLE "宋体"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_FONTSIZE_TITLE "9"
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "单击 [下一步(N)] 继续。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "单击 [安装(I)] 开始安装。"
   
