@@ -1233,6 +1233,8 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
     
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" "$(MUI_BUTTONTEXT_FINISH)"
+    
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_FINISH_INFO_TITLE)"
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Top" "45"
@@ -1934,7 +1936,7 @@ Var MUI_TEMP2
     
   !ifdef MUI_FINISHPAGE
     !ifdef MUI_BUTTONTEXT_FINISH
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMSTRING "MUI_BUTTONTEXT_FINISH" "^CloseBtn"
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_BUTTONTEXT_FINISH"
     !endif
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TEXT"
