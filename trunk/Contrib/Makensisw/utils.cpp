@@ -129,6 +129,7 @@ void EnableItems(HWND hwnd) {
 }
 
 void CompileNSISScript() {
+	char s[MAX_PATH];
 	ClearLog(g_hwnd);
 	SetTitle(g_hwnd,NULL);
 	SetBranding(g_hwnd);
@@ -141,6 +142,8 @@ void CompileNSISScript() {
 		EnableWindow(GetDlgItem(g_hwnd,IDC_TEST),0);
 		return;
 	}
+	wsprintf(s,"%s %s",EXENAME,g_script);
+	lstrcpy(g_script,s);
 	// Disable buttons during compile
 	DisableItems(g_hwnd);
 	DWORD id;
