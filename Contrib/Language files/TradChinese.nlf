@@ -1,13 +1,13 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1028
-# Font and size - dash (-) means default
--
--
-# Codepage - dash (-) means ANSI code page
--
-# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-03-29
+# Font and size - dash (-) means default 字型名稱與大小
+新細明體
+9
+# Codepage - dash (-) means ANSI code page ANSI 字碼頁
+950
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-04-30
 Nullsoft Install System %s
 %s 安裝
 %s 解除安裝
@@ -28,42 +28,53 @@ Nullsoft Install System %s
 移除(&U)
 取消(&C)
 關閉(&L)
-瀏覽(&B)...
+瀏覽(&R)...
 顯示細節(&D)
 名稱
 已完成
 自訂
-選取安裝的類型: 
-選取安裝的元件: 
-或者，自訂選取想安裝的元件: 
-選取要安裝 %s 的目錄: 
+選取安裝的類型:
+選取安裝的元件:
+或者，自訂選取想安裝的元件:
+選取要安裝 %s 的目錄:
 可用空間: 
 所需空間: 
-解除安裝目錄: 
+解除安裝目錄:
 無法開啟目的檔案: \r\n\r\n"$0"\r\n\r\n按一下 [Abort] 放棄安裝，[Retry] 重試寫入檔案，或\r\n [Ignore] 略過這個檔案。
 無法寫入: 
 複製失敗 
 複製到: 
+正在註冊: 
+正在解除註冊: 
 無法找到符號: 
 無法載入: 
 建立目錄: 
 建立捷徑: 
-輸出解除安裝程式: 
+建立解除安裝程式: 
 刪除檔案: 
 重新啟動後刪除: 
 正在建立捷徑時發生錯誤: 
 正在建立時發生錯誤: 
-解壓縮資料發生錯誤！安裝程式損毀？
+正在解壓縮資料發生錯誤！已損壞的安裝程式？
 正在註冊 DLL 時發生錯誤
 執行外部程式: 
 執行: 
 解壓縮: 
 解壓縮: 無法寫入檔案 
 安裝損毀: 無效的作業代碼
-無 OLE 用於: 
+沒有 OLE 用於: 
 輸出目錄: 
 移除目錄: 
 重新啟動後重新命名: 
 重新命名: 
 已略過: 
 複製細節到剪貼簿 
+日誌安裝進程
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
