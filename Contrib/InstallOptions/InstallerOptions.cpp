@@ -54,6 +54,16 @@ char *WINAPI STRDUP(const char *c)
   return lstrcpy(t,c);
 }
 
+// Turn a pair of chars into a word
+// Turn four chars into a dword
+#ifdef __BIG_ENDIAN__ // Not very likely, but, still...
+#define CHAR2_TO_WORD(a,b) (((WORD)(b))|((a)<<8))
+#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(c,d))|(CHAR2_TO_WORD(a,b)<<16))
+#else
+#define CHAR2_TO_WORD(a,b) (((WORD)(a))|((b)<<8))
+#define CHAR4_TO_DWORD(a,b,c,d) (((DWORD)CHAR2_TO_WORD(a,b))|(CHAR2_TO_WORD(c,d)<<16))
+#endif
+
 // Field types
 // NB - the order of this list is important - see below
 
@@ -120,6 +130,9 @@ int WINAPI LookupTokens(TableEntry*, char*);
 
 void WINAPI ConvertNewLines(char *str);
 
+// all allocated buffers must be first in the struct
+// when adding more allocated buffers to FieldType, don't forget to change this define
+#define FIELD_BUFFERS 6
 struct FieldType {
   char  *pszText;
   char  *pszState;
@@ -128,12 +141,12 @@ struct FieldType {
   char  *pszListItems;
   char  *pszFilter;
 
-  int    nType;
-  RECT   rect;
-
+  char   *pszValidateText;
   int    nMinLength;
   int    nMaxLength;
-  char   *pszValidateText;
+
+  int    nType;
+  RECT   rect;
 
   int    nFlags;
 
@@ -313,28 +326,30 @@ bool WINAPI SaveSettings(void) {
         pszBuffer[nLength+1]='"';
         pszBuffer[nLength+2]='\0';
 
-        if ( pField->nType == FIELD_TEXT && (pField->nFlags & FLAG_MULTILINE) )
+        if (pField->nType == FIELD_TEXT && (pField->nFlags & FLAG_MULTILINE))
         {
           char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
           char *p1, *p2;
-          for (p1=pszBuffer,p2=pszBuf2; *p1; p1++, p2++) {
+          for (p1 = pszBuffer, p2 = pszBuf2; *p1; p1 = CharNext(p1), p2 = CharNext(p2))
+          {
             switch (*p1) {
               case '\t':
-                *p2++ = '\\';
-                *p2 = 't';
+                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 't');
+                p2++;
                 break;
               case '\n':
-                *p2++ = '\\';
-                *p2 = 'n';
+                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'n');
+                p2++;
                 break;
               case '\r':
-                *p2++ = '\\';
-                *p2 = 'r';
+                *(LPWORD)p2 = CHAR2_TO_WORD('\\', 'r');
+                p2++;
                 break;
               case '\\':
                 *p2++ = '\\';
               default:
-                *p2=*p1;
+                lstrcpyn(p2, p1, CharNext(p1) - p1 + 1);
+                break;
             }
           }
           *p2 = 0;
@@ -361,46 +376,48 @@ bool WINAPI SaveSettings(void) {
 #define BROWSE_WIDTH 15
 
 static char szResult[BUFFER_SIZE];
+char *pszAppName;
 
-DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
+DWORD WINAPI myGetProfileString(LPCTSTR lpKeyName)
 {
   *szResult = '\0';
-  return GetPrivateProfileString(lpAppName, lpKeyName, "", szResult, BUFFER_SIZE, pszFilename);
+  return GetPrivateProfileString(pszAppName, lpKeyName, "", szResult, BUFFER_SIZE, pszFilename);
 }
 
-char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
+char * WINAPI myGetProfileStringDup(LPCTSTR lpKeyName)
 {
-  int nSize = myGetProfileString(lpAppName, lpKeyName);
-  if ( nSize )
+  int nSize = myGetProfileString(lpKeyName);
+  if (nSize)
     return strdup(szResult);
   else
     return NULL;
 }
 
-UINT WINAPI myGetProfileInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nDefault)
+UINT WINAPI myGetProfileInt(LPCTSTR lpKeyName, INT nDefault)
 {
-  return GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, pszFilename);
+  return GetPrivateProfileInt(pszAppName, lpKeyName, nDefault, pszFilename);
 }
 
 int WINAPI ReadSettings(void) {
   static char szField[25];
   int nIdx, nCtrlIdx;
 
-  pszTitle = myGetProfileStringDup("Settings", "Title");
-  pszCancelButtonText = myGetProfileStringDup("Settings", "CancelButtonText");
-  pszNextButtonText = myGetProfileStringDup("Settings", "NextButtonText");
-  pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
+  pszAppName = "Settings";
+  pszTitle = myGetProfileStringDup("Title");
+  pszCancelButtonText = myGetProfileStringDup("CancelButtonText");
+  pszNextButtonText = myGetProfileStringDup("NextButtonText");
+  pszBackButtonText = myGetProfileStringDup("BackButtonText");
 
-  nNumFields = myGetProfileInt("Settings", "NumFields", 0);
+  nNumFields = myGetProfileInt("NumFields", 0);
 
-  nRectId = myGetProfileInt("Settings", "Rect", DEFAULT_RECT);
+  nRectId = myGetProfileInt("Rect", DEFAULT_RECT);
 
-  bBackEnabled = myGetProfileInt("Settings", "BackEnabled", -1);
+  bBackEnabled = myGetProfileInt("BackEnabled", -1);
   // by ORTIM: 13-August-2002
-  bCancelEnabled = myGetProfileInt("Settings", "CancelEnabled", -1);
-  bCancelShow = myGetProfileInt("Settings", "CancelShow", -1);
+  bCancelEnabled = myGetProfileInt("CancelEnabled", -1);
+  bCancelShow = myGetProfileInt("CancelShow", -1);
 
-  bRTL = myGetProfileInt("Settings", "RTL", 0);
+  bRTL = myGetProfileInt("RTL", 0);
 
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
@@ -464,25 +481,26 @@ int WINAPI ReadSettings(void) {
     FieldType *pField = pFields + nIdx;
 
     wsprintf(szField, "Field %d", nCtrlIdx + 1);
+    pszAppName = szField;
 
     // Get the control type
-    myGetProfileString(szField, "TYPE");
+    myGetProfileString("TYPE");
     pField->nType = LookupToken(TypeTable, szResult);
     if (pField->nType == FIELD_INVALID)
       continue;
 
     // Lookup flags associated with the control type
     pField->nFlags = LookupToken(FlagTable, szResult);
-    myGetProfileString(szField, "Flags");
+    myGetProfileString("Flags");
     pField->nFlags |= LookupTokens(FlagTable, szResult);
 
     // pszState must not be NULL!
-    myGetProfileString(szField, "State");
+    myGetProfileString("State");
     pField->pszState = strdup(szResult);
 
     // ListBox items list
     {
-      int nResult = myGetProfileString(szField, "ListItems");
+      int nResult = myGetProfileString("ListItems");
       if (nResult) {
         // add an extra | character to the end to simplify the loop where we add the items.
         pField->pszListItems = (char*)MALLOC(nResult + 2);
@@ -493,15 +511,15 @@ int WINAPI ReadSettings(void) {
     }
 
     // Label Text - convert newline
-    pField->pszText = myGetProfileStringDup(szField, "TEXT");
+    pField->pszText = myGetProfileStringDup("TEXT");
     if (pField->nType == FIELD_LABEL)
       ConvertNewLines(pField->pszText);
 
     // Dir request - root folder
-    pField->pszRoot = myGetProfileStringDup(szField, "ROOT");
+    pField->pszRoot = myGetProfileStringDup("ROOT");
 
     // ValidateText - convert newline
-    pField->pszValidateText = myGetProfileStringDup(szField, "ValidateText");
+    pField->pszValidateText = myGetProfileStringDup("ValidateText");
     ConvertNewLines(pField->pszValidateText);
 
     {
@@ -512,22 +530,25 @@ int WINAPI ReadSettings(void) {
         pField->pszFilter = (char*)MALLOC(nResult + 2);
         strcpy(pField->pszFilter, szResult);
         char *pszPos = pField->pszFilter;
-        while (*pszPos) {
-          if (*pszPos == '|') *pszPos = '\0';
-          pszPos++;
+        while (*pszPos)
+        {
+          if (*pszPos == '|')
+            *pszPos++ = 0;
+          else
+            pszPos = CharNext(pszPos);
         }
       }
     }
 
-    pField->rect.left = myGetProfileInt(szField, "LEFT", 0);
-    pField->rect.top = myGetProfileInt(szField, "TOP", 0);
-    pField->rect.right = myGetProfileInt(szField, "RIGHT", 0);
-    pField->rect.bottom = myGetProfileInt(szField, "BOTTOM", 0);
-    pField->nMinLength = myGetProfileInt(szField, "MinLen", 0);
-    pField->nMaxLength = myGetProfileInt(szField, "MaxLen", 0);
+    pField->rect.left = myGetProfileInt("LEFT", 0);
+    pField->rect.top = myGetProfileInt("TOP", 0);
+    pField->rect.right = myGetProfileInt("RIGHT", 0);
+    pField->rect.bottom = myGetProfileInt("BOTTOM", 0);
+    pField->nMinLength = myGetProfileInt("MinLen", 0);
+    pField->nMaxLength = myGetProfileInt("MaxLen", 0);
 
     // Text color for LINK control, default is pure blue
-    pField->hImage = (HANDLE)myGetProfileInt(szField, "TxtColor", RGB(0,0,255));
+    pField->hImage = (HANDLE)myGetProfileInt("TxtColor", RGB(0,0,255));
 
     pField->nControlID = 1200 + nIdx;
     if (pField->nType == FIELD_FILEREQUEST || pField->nType == FIELD_DIRREQUEST)
@@ -1141,42 +1162,38 @@ int WINAPI createCfgDlg()
             }
             char *pszStart, *pszEnd, *pszList;
             pszStart = pszEnd = pszList = STRDUP(pField->pszListItems);
-            while ((*pszEnd) && (*pszStart)) {
+            // pszListItems has a trailing pipe
+            while (*pszEnd) {
               if (*pszEnd == '|') {
                 *pszEnd = '\0';
-                if (pszEnd > pszStart) {
-                  mySendMessage(hwCtrl, nAddMsg, 0, (LPARAM)pszStart);
-                }
-                // jump to the next item, skip any redundant | characters
-                do { pszEnd++; } while (*pszEnd == '|');
-                pszStart = pszEnd;
+                if (*pszStart)
+                  mySendMessage(hwCtrl, nAddMsg, 0, (LPARAM) pszStart);
+                pszStart = ++pszEnd;
               }
               else
-                pszEnd++;
+                pszEnd = CharNext(pszEnd);
             }
             FREE(pszList);
             if (pField->pszState) {
               if (pField->nFlags & (LBS_MULTIPLESEL|LBS_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
                 mySendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
                 pszStart = pszEnd = pField->pszState;
-                while (*pszStart) {
-                  char cLast = *pszEnd;
-                  if (*pszEnd == '|') *pszEnd = '\0';
-                  if (!*pszEnd) {
-                    if (pszEnd > pszStart) {
-                      int nItem = mySendMessage(hwCtrl, nFindMsg, -1, (LPARAM)pszStart);
-                      if (nItem != CB_ERR) { // CB_ERR == LB_ERR == -1
+                for (;;) {
+                  char c = *pszEnd;
+                  if (c == '|' || c == '\0') {
+                    *pszEnd = '\0';
+                    if (*pszStart)
+                    {
+                      int nItem = mySendMessage(hwCtrl, LB_FINDSTRINGEXACT, -1, (LPARAM)pszStart);
+                      if (nItem != LB_ERR)
                         mySendMessage(hwCtrl, LB_SETSEL, TRUE, nItem);
-                      }
                     }
-                    if (cLast) {
-                      do {
-                        pszEnd++;
-                      } while (*pszEnd == '|');
-                    }
-                    pszStart = pszEnd;
+                    if (!c)
+                      break;
+                    pszStart = ++pszEnd;
                   }
-                  pszEnd++;
+                  else
+                    pszEnd = CharNext(pszEnd);
                 }
               }
               else {
@@ -1289,11 +1306,11 @@ void WINAPI showCfgDlg()
   int i = nNumFields;
   while (i--) {
     FieldType *pField = pFields + i;
-    FREE(pField->pszText);
-    FREE(pField->pszState);
-    FREE(pField->pszListItems);
-    FREE(pField->pszFilter);
-    FREE(pField->pszRoot);
+    
+    int j = FIELD_BUFFERS;
+    while (j--)
+      FREE(((char **) pField)[j]);
+
     if (pField->nType == FIELD_BITMAP) {
       DeleteObject(pField->hImage);
     }
@@ -1352,8 +1369,6 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
 extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
   m_hInstance=(HINSTANCE) hInst;
-  if (ul_reason_for_call == DLL_THREAD_DETACH || ul_reason_for_call == DLL_PROCESS_DETACH)
-    DestroyWindow(hConfigWindow);
   return TRUE;
 }
 
@@ -1372,48 +1387,60 @@ int WINAPI LookupTokens(TableEntry* psTable_, char* pszTokens_)
   char *pszStart = pszTokens_;
   char *pszEnd = pszTokens_;
   for (;;) {
-    if (*pszEnd == '\0') {
-      n |= LookupToken(psTable_, pszStart);
-      break;
-    }
-    if (*pszEnd == '|') {
+    char c = *pszEnd;
+    if (c == '|' || c == '\0') {
       *pszEnd = '\0';
       n |= LookupToken(psTable_, pszStart);
-      *pszEnd = '|';
-      pszStart = pszEnd + 1;
+      *pszEnd = c;
+      if (!c)
+        break;
+      pszStart = ++pszEnd;
     }
-    pszEnd++;
+    else
+      pszEnd = CharNext(pszEnd);
   }
   return n;
 }
 
 void WINAPI ConvertNewLines(char *str) {
-  char *p1, *p2;
-  if (!str) return;
-  for (p1=p2=str; *p1; p1++, p2++) {
-    if (*p1 == '\\') {
-      switch (p1[1]) {
-        case 't':
-          *p2 = '\t';
-          break;
-        case 'n':
-          *p2 = '\n';
-          break;
-        case 'r':
-          *p2 = '\r';
-          break;
-        case '\\':
-          *p2 = '\\';
-          break;
-        default:
-          p1--;
-          p2--;
-          break;
-      }
-      p1++;
+  char *p1, *p2, *p3;
+
+  if (!str)
+    return;
+
+  p1 = p2 = str;
+
+  while (*p1)
+  {
+    switch (*(LPWORD)p1)
+    {
+    case CHAR2_TO_WORD('\\', 't'):
+      *p2 = '\t';
+      p1 += 2;
+      p2++;
+      break;
+    case CHAR2_TO_WORD('\\', 'n'):
+      *p2 = '\n';
+      p1 += 2;
+      p2++;
+      break;
+    case CHAR2_TO_WORD('\\', 'r'):
+      *p2 = '\r';
+      p1 += 2;
+      p2++;
+      break;
+    case CHAR2_TO_WORD('\\', '\\'):
+      *p2 = '\\';
+      p1 += 2;
+      p2++;
+      break;
+    default:
+      p3 = CharNext(p1);
+      while (p1 < p3)
+        *p2++ = *p1++;
+      break;
     }
-    else *p2 = *p1;
   }
+
   *p2 = 0;
 }
-
