@@ -9,6 +9,7 @@ int NSISCALL ui_doinstall(void);
 void NSISCALL update_status_text_from_lang(int id, const char *text2);
 void NSISCALL update_status_text(const char *text1, const char *text2);
 extern int ui_st_updateflag;
+extern int num_sections;
 
 //extern int g_autoclose;
 extern void *g_inst_combinedheader;
