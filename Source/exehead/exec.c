@@ -201,7 +201,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         int x=process_string_fromparm_toint(0);
         log_printf2("Sleep(%d)",x);
-        Sleep(min(x,1));
+        Sleep(max(x,1));
       }
     break;
     case EW_BRINGTOFRONT:
@@ -238,7 +238,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         update_status_text_from_lang(LANG_OUTPUTDIR,buf1);
         mystrcpy(state_output_directory,buf1);
-        SetCurrentDirectory(state_output_directory);
+        SetCurrentDirectory(buf1);
       }
       else update_status_text_from_lang(LANG_CREATEDIR,buf1);
       {
@@ -1503,48 +1503,48 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case EW_SECTIONSET:
+    {
+      int x=process_string_fromparm_toint(0);
+      if ((unsigned int)x < (unsigned int)num_sections)
       {
-        int x=process_string_fromparm_toint(0);
-        if ((unsigned int)x < (unsigned int)num_sections)
+        section *sec=g_inst_section+x;
+        if (parm1>=0) // get something
         {
-          section *sec=g_inst_section+x;
-          if (parm1>=0) // get something
+          int res=((int*)sec)[parm1];
+          if (!parm1)
           {
-            int res=((int*)sec)[parm1];
-            if (!parm1)
-            {
-              // getting text
-              process_string_fromtab(var2,res);
-            }
-            else
-            {
-              // getting number
-              myitoa(var2,res);
-            }
+            // getting text
+            process_string_fromtab(var2,res);
           }
-          else // set something
+          else
           {
-            parm1=-parm1-1;
-            if (parm1)
-            {
-              // not setting text, get int
-              parm2=process_string_fromparm_toint(2);
-            }
-            else
-            {
-              // setting text, send the message to do it
-              SendMessage(g_SectionHack,WM_USER+0x17,x,parm2);
-            }
-            ((int*)sec)[parm1]=parm2;
-            if (parm1)
-            {
-              // update tree view
-              SendMessage(g_SectionHack,WM_USER+0x18,x,0);
-            }
+            // getting number
+            myitoa(var2,res);
           }
         }
-        else g_flags.exec_error++;
+        else // set something
+        {
+          parm1=-parm1-1;
+          if (parm1)
+          {
+            // not setting text, get int
+            parm2=process_string_fromparm_toint(2);
+          }
+          else
+          {
+            // setting text, send the message to do it
+            SendMessage(g_SectionHack,WM_USER+0x17,x,parm2);
+          }
+          ((int*)sec)[parm1]=parm2;
+          if (parm1)
+          {
+            // update tree view
+            SendMessage(g_SectionHack,WM_USER+0x18,x,0);
+          }
+        }
       }
+      else g_flags.exec_error++;
+    }
     break;
 #endif//NSIS_CONFIG_COMPONENTPAGE
   }
