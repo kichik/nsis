@@ -479,10 +479,7 @@
   !verbose 3
 
   ;Init plugin system
-  !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
-    !define MUI_INSTALLOPTIONS_INITPLUGINS
-    InitPluginsDir
-  !endif
+  InitPluginsDir
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
 
@@ -495,10 +492,7 @@
   !verbose 3
 
   ;Init plugin system
-  !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
-    !define MUI_INSTALLOPTIONS_INITPLUGINS
-    InitPluginsDir
-  !endif
+  InitPluginsDir
 
   File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
 
@@ -511,10 +505,7 @@
   !verbose 3
 
   ;Init plugin system
-  !ifndef MUI_INSTALLOPTIONS_UNINITPLUGINS
-    !define MUI_INSTALLOPTIONS_UNINITPLUGINS
-    InitPluginsDir
-  !endif
+  InitPluginsDir
 
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
 
