@@ -276,6 +276,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 
   cur_entries=&build_entries;
   cur_datablock=&build_datablock;
+  cur_datablock_cache=&build_datablock_cache;
   cur_functions=&build_functions;
   cur_labels=&build_labels;
   cur_sections=&build_sections;
@@ -706,10 +707,12 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
 // the datablock as necessary). Reduces overhead if you want to add files to a couple places.
 // Woo, an optimizing installer generator, now we're styling.
 
-int CEXEBuild::datablock_optimize(int start_offset)
+int CEXEBuild::datablock_optimize(int start_offset, int first_int)
 {
   int this_len = cur_datablock->getlen() - start_offset;
-  int pos = 0;
+
+  cached_db_size this_size = {first_int, start_offset};
+  cur_datablock_cache->add(&this_size, sizeof(cached_db_size));
 
   if (!build_optimize_datablock || this_len < (int) sizeof(int))
     return start_offset;
@@ -717,16 +720,15 @@ int CEXEBuild::datablock_optimize(int start_offset)
   MMapBuf *db = (MMapBuf *) cur_datablock;
   db->setro(TRUE);
 
-  int first_int = *(int *) db->get(start_offset, sizeof(int));
-  db->release();
+  cached_db_size *db_sizes = (cached_db_size *) cur_datablock_cache->get();
+  int db_sizes_num = cur_datablock_cache->getlen() / sizeof(cached_db_size);
+  db_sizes_num--; // don't compare with the one we just added
 
-  while (pos < start_offset)
+  for (int i = 0; i < db_sizes_num; i++)
   {
-    int this_int = *(int *) db->get(pos, sizeof(int));
-    db->release();
-
-    if (this_int == first_int)
+    if (db_sizes[i].first_int == first_int)
     {
+      int pos = db_sizes[i].start_offset;
       int left = this_len;
       while (left > 0)
       {
@@ -753,11 +755,10 @@ int CEXEBuild::datablock_optimize(int start_offset)
         db_opt_save += this_len;
         db->resize(max(start_offset, pos + this_len));
         db->setro(FALSE);
+        cur_datablock_cache->resize(cur_datablock_cache->getlen() - sizeof(cached_db_size));
         return pos;
       }
     }
-
-    pos += sizeof(int) + (this_int & 0x7fffffff);
   }
 
   db->setro(FALSE);
@@ -874,7 +875,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
         *(int*)db->get(st, sizeof(int)) = used | 0x80000000;
         db->release();
 
-        int nst = datablock_optimize(st);
+        int nst = datablock_optimize(st, used | 0x80000000);
         if (nst == st) db_comp_save += length - used;
         else st = nst;
       }
@@ -903,7 +904,7 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
       left -= l;
     }
 
-    st = datablock_optimize(st);
+    st = datablock_optimize(st, length);
   }
 
   db_full_size += length + sizeof(int);
@@ -3011,6 +3012,7 @@ void CEXEBuild::set_uninstall_mode(int un)
     if (un)
     {
       cur_datablock=&ubuild_datablock;
+      cur_datablock_cache=&ubuild_datablock_cache;
       cur_entries=&ubuild_entries;
       cur_functions=&ubuild_functions;
       cur_labels=&ubuild_labels;
@@ -3024,6 +3026,7 @@ void CEXEBuild::set_uninstall_mode(int un)
     else
     {
       cur_datablock=&build_datablock;
+      cur_datablock_cache=&build_datablock_cache;
       cur_entries=&build_entries;
       cur_functions=&build_functions;
       cur_labels=&build_labels;
