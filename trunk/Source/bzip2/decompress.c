@@ -81,13 +81,11 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
          *vtmp = v;
         return 0;
       }
-      if (s->strm->avail_in == 0) return 1;
-      s->bsBuff = (s->bsBuff << 8) | ((UInt32) (*((UChar*)(s->strm->next_in))));
+      if (s->avail_in == 0) return 1;
+      s->bsBuff = (s->bsBuff << 8) | ((UInt32) (*((UChar*)(s->next_in))));
       s->bsLive += 8;
-      s->strm->next_in++;
-      s->strm->avail_in--;
-//      s->strm->total_in_lo32++;
-  //    if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
+      s->next_in++;
+      s->avail_in--;
    }
 }
 
@@ -143,7 +141,6 @@ Int32 BZ2_decompress ( DState* s )
    Int32 uc;
    Int32      retVal;
    Int32      minLen, maxLen;
-   bz_stream* strm = s->strm;
 
    /* stuff that needs to be saved/restored */
    DState_save sv;

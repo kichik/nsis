@@ -13,7 +13,7 @@
 #include "../bzip2/bzlib.h"
 static char bz2_needreinit;
 
-#define z_stream bz_stream
+#define z_stream DState
 #define inflateInit(x) { if (BZ2_bzDecompressInit(x)<0) return _LANG_INVALIDCRC; }
 #define inflate(x) BZ2_bzDecompress(x)
 #define inflateReset(x) { if (bz2_needreinit) { inflateInit(x); } else bz2_needreinit++; }

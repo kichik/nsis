@@ -443,12 +443,8 @@ static DState local_state;
 
 /*---------------------------------------------------*/
 int BZ_API(BZ2_bzDecompressInit)
-                     ( bz_stream* strm)
+                     ( DState * s)
 {
-   DState* s=&local_state;
-
-   s->strm                  = strm;
-   strm->state              = s;
    s->state                 = BZ_X_BLKHDR_1;
 
    return BZ_OK;
@@ -530,8 +526,8 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       Int32         c_k0                 = s->k0;
       UInt32*       c_tt                 = s->tt;
       UInt32        c_tPos               = s->tPos;
-      char*         cs_next_out          = s->strm->next_out;
-      unsigned int  cs_avail_out         = s->strm->avail_out;
+      char*         cs_next_out          = s->next_out;
+      unsigned int  cs_avail_out         = s->avail_out;
       /* end restore */
 
       UInt32       avail_out_INIT = cs_avail_out;
@@ -594,8 +590,8 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       s->k0                 = c_k0;
    //   s->tt                 = c_tt;
       s->tPos               = c_tPos;
-      s->strm->next_out     = cs_next_out;
-      s->strm->avail_out    = cs_avail_out;
+      s->next_out     = cs_next_out;
+      s->avail_out    = cs_avail_out;
       /* end save */
 }
 
@@ -603,10 +599,8 @@ void unRLE_obuf_to_output_FAST ( DState* s )
 
 
 /*---------------------------------------------------*/
-int BZ_API(BZ2_bzDecompress) ( bz_stream *strm )
+int BZ_API(BZ2_bzDecompress) ( DState *s )
 {
-   DState* s;
-   s = strm->state;
 
    while (True) {
       if (s->state == BZ_X_IDLE) return BZ_SEQUENCE_ERROR;
