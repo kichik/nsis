@@ -3,7 +3,7 @@ NLF v1
 # Language ID
 1034
 # Start editing here
-Sistema de Instalación Nullsoft %s
+Nullsoft Install System %s
 Instalación de %s
 Desinstalación de %s
 : Acuerdo de Licencia
@@ -16,7 +16,7 @@ Desinstalación de %s
 : Completado
 < Atrás
 Siguiente >
-De acuerdo
+Acepto
 Instalar
 Desinstalar
 Cancelar
@@ -26,9 +26,9 @@ Ver detalles
 Nombre
 Completado
 Personalizada
-Seleccione el tipo de instalación:
+Indique el tipo de instalación:
 Seleccione los componentes:
-O seleccione los componentes opcionales que desea instalar:
+O seleccione los componentes opcionales a instalar:
 Seleccione el directorio en el que instalar %s:
 Espacio disponible: 
 Espacio requerido: 
