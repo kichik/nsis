@@ -57,7 +57,7 @@ extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
-  SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_VSCROLL, SB_BOTTOM, 0);
+	SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_VSCROLL, SB_BOTTOM, 0);
 }
 
 void ErrorMessage(HWND hwnd,const char *str) {
@@ -85,7 +85,10 @@ void DisableItems(HWND hwnd) {
 void EnableItems(HWND hwnd) {
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
 	if (len>0) {
-		char *existing_text=(char*)GlobalAlloc(GPTR,len+1);
+		HGLOBAL memory;
+		char *existing_text;
+		memory = GlobalAlloc(GMEM_MOVEABLE,len+1);
+        existing_text = (char *)GlobalLock(memory);
 		if (!existing_text) return;
 		existing_text[0]=0;
 		GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
@@ -109,6 +112,7 @@ void EnableItems(HWND hwnd) {
 		if (my_strstr(existing_text, " warning:") || my_strstr(existing_text, " warnings:")) {
 			g_warnings = TRUE;
 		}
+		GlobalUnlock(memory);
 	}
 	HMENU m = GetMenu(hwnd);
 	if (g_output_exe[0]) {
