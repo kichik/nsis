@@ -131,44 +131,34 @@ Section "NSIS Core Files (required)" SecCore
   RMDir $INSTDIR\Docs
 
   ReadRegStr $R0 HKCR ".nsi" ""
-  StrCmp $R0 "NSISFile" 0 no_nsioldassoc
+  StrCmp $R0 "NSISFile" 0 +2
     DeleteRegKey HKCR "NSISFile"
-    Goto nsi
-  no_nsioldassoc:
 
-  StrCmp $R0 "NSIS.Script" 0 no_nsi
-    nsi:
-    WriteRegStr HKCR ".nsi" "" "NSIS.Script"
-    WriteRegStr HKCR "NSIS.Script" "" "NSIS Script File"
-    WriteRegStr HKCR "NSIS.Script\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
-    ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
-    StrCmp $R0 "" 0 no_nsiopen
-      WriteRegStr HKCR "NSIS.Script\shell" "" "open"
-      WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'
-    no_nsiopen:
-    WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
-    WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
-    WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
-    WriteRegStr HKCR "NSIS.Script\shell\compile-compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
-  no_nsi:
+  WriteRegStr HKCR ".nsi" "" "NSIS.Script"
+  WriteRegStr HKCR "NSIS.Script" "" "NSIS Script File"
+  WriteRegStr HKCR "NSIS.Script\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
+  ReadRegStr $R0 HKCR "NSIS.Script\shell\open\command" ""
+  StrCmp $R0 "" 0 no_nsiopen
+    WriteRegStr HKCR "NSIS.Script\shell" "" "open"
+    WriteRegStr HKCR "NSIS.Script\shell\open\command" "" 'notepad.exe "%1"'
+  no_nsiopen:
+  WriteRegStr HKCR "NSIS.Script\shell\compile" "" "Compile NSIS Script"
+  WriteRegStr HKCR "NSIS.Script\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
+  WriteRegStr HKCR "NSIS.Script\shell\compile-compressor" "" "Compile NSIS Script (Choose Compressor)"
+  WriteRegStr HKCR "NSIS.Script\shell\compile-compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
 
   ReadRegStr $R0 HKCR ".nsh" ""
-  StrCmp $R0 "NSHFile" 0 no_nsholdassoc
+  StrCmp $R0 "NSHFile" 0 +2
     DeleteRegKey HKCR "NSHFile"
-    Goto nsh
-  no_nsholdassoc:
 
-  StrCmp ".nsh" "NSIS.Header" 0 no_nsh
-    nsh:
-    WriteRegStr HKCR ".nsh" "" "NSIS.Header"
-    WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
-    WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
-    ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
-    StrCmp $R0 "" 0 no_nshopen
-      WriteRegStr HKCR "NSIS.Header\shell" "" "open"
-      WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
-    no_nshopen:
-  no_nsh:
+  WriteRegStr HKCR ".nsh" "" "NSIS.Header"
+  WriteRegStr HKCR "NSIS.Header" "" "NSIS Header File"
+  WriteRegStr HKCR "NSIS.Header\DefaultIcon" "" "$INSTDIR\makensisw.exe,1"
+  ReadRegStr $R0 HKCR "NSIS.Header\shell\open\command" ""
+  StrCmp $R0 "" 0 no_nshopen
+    WriteRegStr HKCR "NSIS.Header\shell" "" "open"
+    WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
+  no_nshopen:
 
 SectionEnd
 
