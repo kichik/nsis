@@ -99,24 +99,29 @@ ShowInstDetails show
 # Functions
 
 Function .onInit
-
-  StrCpy ${NSISPATH} "$EXEDIR\.."
   
-  StrCpy $R0 $CMDLINE "" -15
+  Call GetInstallerFile
+  Pop $R0
   
-    StrCmp $R0 'NSISUpdate.bin"' temp
+  StrCpy $R0 $R0 "" -14
+    StrCmp $R0 "NSISUpdate.bin" temp
     
     # Create a temporary file, so NSIS Update can update itself
     
-    CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$EXEDIR\NSISUpdate.bin"
-    Exec '"$EXEDIR\NSISUpdate.bin"'
+    CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$TEMP\NSISUpdate.bin"
+    Exec '"$TEMP\NSISUpdate.bin" $EXEDIR\..'
     Quit
     
   temp:
 
   # Remove temporary file on next reboot
   
-  Delete /REBOOTOK "$EXEDIR\NSISUpdate.bin"
+  Delete /REBOOTOK "$TEMP\NSISUpdate.bin"
+  
+  # Get NSIS directory
+  
+  Call GetParameters
+  Pop ${NSISPATH}
   
   # InstallOptions INI File for the "Update Method" dialog
   
@@ -200,6 +205,63 @@ FunctionEnd
 Function UpdateMethod
 
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "io.ini"
+  
+FunctionEnd
+
+Function GetInstallerFile
+
+  Push $R0
+  Push $R1
+  Push $R2
+  
+  StrCpy $R0 $CMDLINE 1
+  StrCpy $R1 '"'
+  StrCpy $R2 1
+  StrCmp $R0 '"' loop
+    StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
+ 
+  loop:
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 $R1 done
+    StrCmp $R0 "" done
+    IntOp $R2 $R2 + 1
+    Goto loop
+    
+  done:
+    StrCpy $R0 $CMDLINE $R2
+  
+  Pop $R2
+  Pop $R1
+  Exch $R0
+  
+FunctionEnd
+
+Function GetParameters
+
+  Push $R0
+  Push $R1
+  Push $R2
+  
+  StrCpy $R0 $CMDLINE 1
+  StrCpy $R1 '"'
+  StrCpy $R2 1
+  StrCmp $R0 '"' loop
+    StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
+  loop:
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 $R1 loop2
+    StrCmp $R0 "" loop2
+    IntOp $R2 $R2 + 1
+    Goto loop
+  loop2:
+    IntOp $R2 $R2 + 1
+    StrCpy $R0 $CMDLINE 1 $R2
+    StrCmp $R0 " " loop2
+  StrCpy $R0 $CMDLINE "" $R2
+  
+  Pop $R2
+  Pop $R1
+  Exch $R0
   
 FunctionEnd
 
