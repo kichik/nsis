@@ -118,15 +118,20 @@ table
                   texts are defined in the language header file of the NSIS exehead 
                   (Source\exehead\lang.h). To change them, you need to edit this 
                   file and recompile NSIS.</p>
+                <p class="text">If you have an installer with a lot of subsections or long
+                  section names, use the modern2.exe ui, which has a larger treeview for
+                  the component selection. To use modern2.exe, change the first parameter
+                  of the MUI_INTERFACE macro.</p>
                 <p class="header">Version history</p>
                 <ul>
                 <li class="text">1.1 - August 29th, 2002
                   <ul>
-                    <li>You need the latest NSIS 2 CVS version for this to work!
                     <li>Header file with macros, it's now very easy to use the UI in your scripts :)
+                    <li>Added the modern2.exe UI, with an other location of the Description frame,
+                    for installers with a lot of subsections (thanks rainwater)
                     <li>Updated example scripts
-                      <li>Added Multilanguage.nsi example (Multilanguage & LangDLL) 
-                      <li>Fixed background color issue with some custom XP themes
+                    <li>Added Multilanguage.nsi example (Multilanguage & LangDLL) 
+                    <li>Fixed background color issue with some custom XP themes
                     <li>Removed WS_VISIBLE from black rect for inner dialog (fixes display issues)
                     <li>Changed size of description area
                     <li>Example script: Added instructions for the user on the Description frame
@@ -134,7 +139,7 @@ table
                     <li>Used modern.bmp for the checks (thanks rainwater)
                     <li>Using the new NSIS version, descriptions work using the keyboard and you can give
                     descriptions to subsections
-					<li>Correct font size using High-DPI fonts
+		    <li>Correct font size using High-DPI fonts
                   </ul>
                 <li class="text">1.0 - August 26th, 2002
                   <ul>
