@@ -389,6 +389,33 @@ int wsprintf(char *s, const char *format, ...) {
   va_end(val);
   return res;
 }
+
+char *my_realpath(char *path)
+{
+#ifdef PATH_MAX
+  static char buffer[PATH_MAX];
+#else
+  int path_max = pathconf(path, _PC_PATH_MAX);
+  if (path_max <= 0)
+    path_max = 4096;
+  char *buffer = (char *) malloc(path_max);
+  if (!buffer)
+    return path;
+#endif
+  if (!realpath(path, buffer))
+    strcpy(buffer, path);
+  return buffer;
+}
+
+void my_free_realpath(char *path, char *buffer)
+{
+#if !defined(_WIN32) && !defined(PATH_MAX)
+  if (buffer != path)
+    free(buffer);
+#endif
+}
+
+
 #endif
 
 void *operator new(size_t size) {
