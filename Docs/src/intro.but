@@ -46,7 +46,7 @@ Here's a short list of some of NSIS' features:
 
 \b Easy to use plug-in system (lots of plug-ins for creation of custom dialogs, internet connections, HTTP downloading, file patching, Win32 API calls etc. are included)
 
-\b Installers can be as large as 2GB (theoretically -- when building on Win9x the limit seems to be around 500MB, however building on NT then installing on Win9x works with larger sizes)
+\b Installers can be as large as 2GB
 
 \b Optional silent mode for automated installations
 
