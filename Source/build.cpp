@@ -222,27 +222,7 @@ CEXEBuild::CEXEBuild()
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-  {
-    time_t etime;
-    struct tm * ltime;
-    SYSTEMTIME stime;
-    char datebuf[32];
-    char timebuf[32];
-    
-    time(&etime);
-    ltime = localtime(&etime);
-    stime.wYear = ltime->tm_year+1900;
-    stime.wMonth = ltime->tm_mon + 1;
-    stime.wDay = ltime->tm_mday;
-    stime.wHour= ltime->tm_hour; 
-    stime.wMinute= ltime->tm_min; 
-    stime.wSecond= ltime->tm_sec; 
-    stime.wMilliseconds= 0; 
-    GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
-    definedlist.add("__DATE__",(char *)datebuf);
-    GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
-    definedlist.add("__TIME__",(char *)timebuf);
-  }
+  definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
 #endif
 
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
