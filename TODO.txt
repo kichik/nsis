@@ -10,8 +10,6 @@ DOCUMENTATION
 
 * go over everything and search for mistakes :)
 
-* write something about me and nsis 2 in the intro
-
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple instfiles pages
