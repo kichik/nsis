@@ -304,7 +304,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       {
         int res;
         const char *pCurr = (char*)strings.get() + data[nextpos].name;
-        if (n_chars == -1 || n_chars != strlen(pCurr) )
+        if (n_chars == -1 )
         {
           if (case_sensitive)
             res=strcmp(str, pCurr);
@@ -314,9 +314,11 @@ class SortedStringListND // no delete - can be placed in GrowBuf
         else
         {
           if (case_sensitive)
-            res=strncmp(str, pCurr, n_chars);
+            res=strncmp(str, pCurr, min(n_chars, strlen(pCurr)));
           else
-            res=strnicmp(str, pCurr, n_chars);
+            res=strnicmp(str, pCurr, min(n_chars, strlen(pCurr)));
+          if ( res == 0 && n_chars != -1 && n_chars != strlen(pCurr) )
+            res = n_chars - strlen(pCurr);
         }
 
         if (res==0)
