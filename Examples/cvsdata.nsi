@@ -108,6 +108,7 @@ Section
   !insertmacro CVSDATA "Contrib\Math"
   !insertmacro CVSDATA "Contrib\Math\Source"
   !insertmacro CVSDATA "Contrib\Modern UI"
+  !insertmacro CVSDATA "Contrib\Modern UI\images"
   !insertmacro CVSDATA "Contrib\Modern UI\Language files"
   !insertmacro CVSDATA "Contrib\nsExec"
   !insertmacro CVSDATA "Contrib\NSISdl"
