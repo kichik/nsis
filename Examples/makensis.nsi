@@ -101,7 +101,6 @@ Section "NSIS Examples (recommended)" SecExample
   File ..\Examples\one-section.nsi
   File ..\Examples\languages.nsi
   File ..\Examples\WinMessages.nsh
-  File ..\Examples\branding.nsh
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
