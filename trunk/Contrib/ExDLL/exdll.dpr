@@ -96,6 +96,15 @@ begin
   Result:=g_variables+integer(varnum)*g_stringsize;
 end;
 
+procedure SetUserVariable(varnum: TVariableList; value: PChar);
+begin
+  if (value = nil) or (integer(varnum) < 0) or (integer(varnum) >= integer(__INST_LAST)) then
+    begin
+    Exit;
+    end;
+  lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
+end;
+
 function ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer):integer; cdecl;
 var
   c: PChar;
