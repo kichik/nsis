@@ -1,9 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-10-20
+;Revision date: 2003-10-23
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
@@ -56,7 +56,10 @@
   
   !define MUI_TEXT_ABORTWARNING "你確定要離開 $(^Name) 安裝程式？"
   
-  
+
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "歡迎使用 $(^Name) 解除安裝精靈"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "這個精靈將全程指引你 $(^Name) 的解除安裝進程。\r\n\r\n在開始解除安裝之前，確認 $(^Name) 並未執行當中。\r\n\r\n$_CLICK"
+ 
   !define MUI_UNTEXT_CONFIRM_TITLE "解除安裝 $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "從你的電腦解除安裝 $(^Name) 。"
   
@@ -80,5 +83,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "解除安裝已中止"
   !define MUI_UNTEXT_ABORT_SUBTITLE "解除安裝程式並未成功地執行完成。"
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "正在完成 $(^Name) 解除安裝精靈"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) 已從你的電腦解除安裝。\r\n\r\n按一下 [完成] 關閉這個精靈。"
+  
+  !define MUI_UNTEXT_ABORTWARNING "你確定要離開 $(^Name) 解除安裝嗎？"  
   
 !insertmacro MUI_LANGUAGEFILE_END

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Greek (1032)
 ;By Makidis N. Michael - http://dias.aueb.gr/~p3010094/
@@ -53,7 +53,10 @@
   
   !define MUI_TEXT_ABORTWARNING "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '$(^Name)';"
 
-  
+
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Καλώς ήλθατε στον οδηγό απεγκατ. του '$(^Name)'"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ο οδηγός αυτός θα σας καθοδηγήσει κατά τη διάρκεια της απεγκατάστασης του '$(^Name)'.\r\n\r\nΠριν ξεκινήσετε την απεγκατάσταση, βεβαιωθείτε ότι το '$(^Name)' δεν τρέχει.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Απεγκατάσταση του '$(^Name)'"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Αφαίρεση του '$(^Name)' από τον υπολογιστή σας."
 
@@ -77,5 +80,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Η Απεγκατάσταση Διακόπηκε"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Η απεγκατάσταση δεν ολοκληρώθηκε επιτυχώς."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Ολοκλήρωση της Απεγκατάστασης του '$(^Name)'"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "Το '$(^Name)' απεγκαταστάθηκε από τον υπολογιστή σας.\r\n\r\nΚάντε κλικ στο Τέλος για να κλείσετε αυτόν τον οδηγό."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Είστε σίγουροι πως θέλετε να τερματίσετε την απεγκατάσταση του '$(^Name)';" 
   
 !insertmacro MUI_LANGUAGEFILE_END
