@@ -44,8 +44,8 @@ bool dir_reader::matches(const string& name, const string& spec) {
   string::const_iterator spec_itr = spec.begin();
   string::const_iterator spec_end = spec.end();
 
-  string::const_iterator last_good_spec = NULL;
-  string::const_iterator last_good_name = NULL;
+  string::const_iterator last_good_spec = spec_end;
+  string::const_iterator last_good_name = name_end;
 
   while (name_itr != name_end && spec_itr != spec_end) {
     switch (*spec_itr) {
@@ -72,7 +72,7 @@ bool dir_reader::matches(const string& name, const string& spec) {
 
       default:
         if (::tolower(*name_itr) != ::tolower(*spec_itr)) {
-          if (last_good_spec != NULL) {
+          if (last_good_spec != spec_end) {
             // matched wrong part of the name, try again
             spec_itr = last_good_spec;
             name_itr = ++last_good_name;
@@ -87,7 +87,7 @@ bool dir_reader::matches(const string& name, const string& spec) {
           spec_itr++;
           name_itr++;
 
-          if (spec_itr == spec_end && name_itr != name_end && last_good_spec != NULL) {
+          if (spec_itr == spec_end && name_itr != name_end && last_good_spec != spec_end) {
             // asterisk hasn't matched enough, keep matching
             spec_itr = last_good_spec;
           }
