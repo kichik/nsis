@@ -4,7 +4,7 @@
 
 \c user_message
 
-Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions (\k{callbacks}) to do special things. Pages callbacks (\K{pages}) also uses Abort for special purposes.
+Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses Abort for special purposes.
 
 \S2{call} Call
 

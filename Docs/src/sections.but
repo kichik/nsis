@@ -30,7 +30,7 @@ This command closes the current open section.
 
 \c insttype_index [insttype_index] [RO]
 
-This command specifies which install types (see InstType - \k{ainsttype}) the current section defaults to the enabled state in. Multiple SectionIn commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state.
+This command specifies which install types (see \R{ainsttype}{InstType}) the current section defaults to the enabled state in. Multiple SectionIn commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state.
 
 \S2{ssubsection} SubSection
 

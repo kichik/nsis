@@ -16,7 +16,7 @@ Adds a branding image on the top of the installer or on the left. Its size will 
 
 \c true|\\<b\\>false\\</b\\>
 
-Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\\ or \\\\Server\\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see .onVerifyInstDir (\k{onverifyinstdir}).
+Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\\ or \\\\Server\\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see \R{onverifyinstdir}{.onVerifyInstDir}.
 
 \S2{aautoclosewindow} AutoCloseWindow
 
@@ -40,7 +40,7 @@ Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') i
 
 \c [/LANG=lang_id] caption
 
-Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the Name command (See \k{aname}). You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name command}. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
 
 \S2{achangeui} ChangeUI
 
@@ -140,7 +140,7 @@ This attribute tells the installer to check a string in the registry, and use it
 
 \c [flag [...]]
 
-Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with XPStyle on (see \k{axpstyle}) when the installer runs on Windows XP with a modern theme.
+Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with \R{axpstyle}{XPStyle} on when the installer runs on Windows XP with a modern theme.
 
 \S2{ainsttype} InstType
 
@@ -220,13 +220,13 @@ Sets whether or not the details of the uninstall are shown. Can be 'hide' to hid
 
 \c \\<b\\>normal\\</b\\>|silent|silentlog
 
-Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using SectionSetFlags [see \k{sectionsetflags}]), with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also LogSet (\k{logset}).
+Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using see \R{sectionsetflags}{SectionSetFlags}), with no screen output from the installer itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the installer with /S on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
 
 \S2{asilentuninstall} SilentUnInstall
 
 \c \\<b\\>normal\\</b\\>|silent
 
-Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also LogSet (\k{logset}).
+Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (MessageBoxes are still displayed on error, and the script can still display whatever it wants). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also \R{logset}{LogSet}.
 
 \S2{aspacetexts} SpaceTexts
 
@@ -244,7 +244,7 @@ Overrides the subcaptions for each of the installer pages (0=": License Agreemen
 
 \c [/LANG=lang_id] button text
 
-Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also WriteUninstaller in \k{WriteUninstaller} (replaces UninstallEXEName).
+Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also \R{WriteUninstaller}{WriteUninstaller} (replaces UninstallEXEName).
 
 \S2{auninstallcaption} UninstallCaption
 
