@@ -132,11 +132,11 @@ with a custom user interface.</p>
 </pre>
   <p class="subheader">3. Define which elements you are using</p>
   <p class="text">The Modern UI should know which things it should insert. Use the following defines:</p>
-<pre class="margin">!define MUI_LICENSEPAGE ;License page
+<pre class="margin">
 !define MUI_WELCOMEPAGE ;Welcome page
+!define MUI_LICENSEPAGE ;License page
 !define MUI_COMPONENTSPAGE ;Component-selection page
 !define MUI_DIRECTORYPAGE ;Directory-selection page
-!define MUI_LICENSEPAGE ;License page
 !define MUI_STARTMENUPAGE ;Start Menu Folder selection page
 !define MUI_FINISHPAGE ;Finish page with options to run the program or reboot
   !define MUI_FINISHPAGE_RUN "$INSTDIR\File.exe" ;Option to run a file
@@ -230,30 +230,22 @@ Section "Section Name 2" SectionName2
  ...
 SectionEnd
 </pre>
-  <p class="subheader">9. Insert MUI_WELCOMEFINISHPAGE_INIT (for Welcome/Finish page)</p>
-  <p class="text">If you are using a Welcome or Finish page, you should insert MUI_WELCOMEFINISHPAGE_INIT
-  in your .onInit function:</p>
-<pre class="margin">
-Function .onInit
-
-  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-  
-FunctionEnd
-</pre>
 <p class="header">Custom pages</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
 Install Options documentation</a> for info about creating Install Options INI Files.</p>
 <p class="subheader">Custom page commands</p>
-<p class="text">If you want add custom pages to your installer, you should insert you
+<p class="text">If you want add custom pages to your installer, you should insert your
 own page commands to set the order of the pages and the names of the page functions.</p>
 <pre class="margin">
 LangString TEXT_IO_WINDOWTITLE ": Install Options Page Title"
 
+!insertmacro MUI_PAGECOMMAND_WELCOME
 !insertmacro MUI_PAGECOMMAND_LICENSE
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
 !insertmacro MUI_PAGECOMMAND_DIRECTORY
 Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
+!insertmacro MUI_PAGECOMMAND_FINISH
 </pre>
 <p class="text">This is also possible in the uninstaller:</p>
 <pre class="margin">
@@ -307,8 +299,9 @@ FunctionEnd
   Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.
 <p class="subheader">Customize the GUIInit function</p>
 <p class="text">If you want to insert your own code in the .onGUIInit function,
-define MUI_CUSTOMGUIINIT before inserting MUI_SYSTEM and insert the MUI_GUIINIT
-macro in your .onGUIInit function.</p>
+define MUI_CUSTOMGUIINIT (MUI_UNCUSTOMGUIINIT for the uninstaller) before inserting
+MUI_SYSTEM and insert the MUI_GUIINIT (MUI_UNGUIINIT for the uninstaller) macro
+in your .onGUIInit or un.onGUInit function.</p>
 <pre class="text">
 !define MUI_CUSTOMGUIINIT
 
@@ -317,10 +310,9 @@ Function .onGUIInit
   ...your own code...
 FunctionEnd
 </pre>
-<p class="text">For the uninstaller, define MUI_UNCUSTOMGUIINIT.</p>
 <p class="header">Version history</p>
 <ul>
-<li class="changelog">1.6 - November 15, 2002
+<li class="changelog">1.6 - November 16, 2002
   <ul>
     <li>Welcome / Finish pages
     <li>Automatic ask for reboot on finish page
