@@ -55,7 +55,7 @@
 
 
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bem vindo ao Assistente de desinstalação do $(^Name)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a desinstalação do $(^Name).\r\n\r\nAntes de iniciar a desinstalação, certifique-se de que o $(^Name) não está em execução.\r\n\r\n$_CLICK
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Este assistente ajudá-lo-á durante a desinstalação do $(^Name).\r\n\r\nAntes de iniciar a desinstalação, certifique-se de que o $(^Name) não está em execução.\r\n\r\n$_CLICK"
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Desinstalar $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Remover o $(^Name) do seu computador."
