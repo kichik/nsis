@@ -2029,8 +2029,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       else if (which_token == TOK_CALLINSTDLL)
       {
         int a = 2;
-        if (!stricmp(line.gettoken_str(a++), "/NOUNLOAD"))
+        if (!stricmp(line.gettoken_str(a), "/NOUNLOAD")) {
           ent.offsets[3]=1;
+          a++;
+        }
         if (a+1 != line.getnumtokens()) PRINTHELP();
         ent.offsets[1]=add_string(line.gettoken_str(a));
         if (ent.offsets[1]<0) PRINTHELP()
