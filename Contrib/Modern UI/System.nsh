@@ -337,22 +337,22 @@
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
     CreateFont ${MUI_TEMP2} "${MUI_FONT_HEADER}" "${MUI_FONTSIZE_HEADER}" "${MUI_FONTSTYLE_HEADER}"
     SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
-    SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+    SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
-    SetStaticBkColor ${MUI_TEMP1} -1
+    SetBkColor ${MUI_TEMP1} -1
     GetWindowText ${MUI_TEMP2} ${MUI_TEMP1}
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
-    SetStaticBkColor ${MUI_TEMP1} -1
+    SetBkColor ${MUI_TEMP1} -1
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} ${NSIS_MAX_STRLEN} "STR:${MUI_TEMP2}"
 
   Pop ${MUI_TEMP2}
@@ -941,15 +941,15 @@
       
         Pop ${MUI_TEMP1}
         
-        SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
-        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
-        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
 
 	!ifdef MUI_CUSTOMFUNCTION_WELCOME_SHOW
           Call "${MUI_CUSTOMFUNCTION_WELCOME_SHOW}"
@@ -1289,25 +1289,25 @@
       
         Pop ${MUI_TEMP1}
         
-        SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
-        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
-        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+        SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         
         !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
           IfRebootFlag "" noreboot_show
         
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             Goto show
         
@@ -1318,19 +1318,19 @@
           !ifdef MUI_FINISHPAGE_RUN
           
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+            SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             !ifdef MUI_FINISHPAGE_SHOWREADME
             
               GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-              SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+              SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
               
             !endif
           
           !else ifdef MUI_FINISHPAGE_SHOWREADME
             
               GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-              SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+              SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
           !endif
         

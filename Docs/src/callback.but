@@ -17,7 +17,7 @@ Example:
 \c    GetDlgItem $R0 $HWNDPARENT 1028
 \c    CreateFont $R1 "Tahoma" 10 700
 \c    SendMessage $R0 ${WM_SETFONT} $R1 0
-\c    SetStaticBkColor $R0 0x00FFFFFF
+\c    SetBkColor $R0 0x00FFFFFF
 \c  FunctionEnd
 
 \S3{oninit} .onInit

@@ -80,17 +80,11 @@ Shows or hides the details, depending on which parameter you pass. Overrides the
 
 Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).
 
-\S2{setstaticbkcolor} SetStaticBkColor
+\S2{setbkcolor} SetBkColor
 
 \c hwnd color
 
-Sets a background color for a static control. Use GetDlgItem to get the handle (HWND) of the static control.
-
-\S2{setwindowlong} SetWindowLong
-
-\c hwnd index new_long
-
-Same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windowclasses/windowclassreference/windowclassfunctions/setwindowlong.asp}{Windows SetWindowLong}.
+Sets a background color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. \e{Do not} use this on branding image controls!
 
 \S2{showwindow} ShowWindow
 

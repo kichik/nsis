@@ -77,8 +77,7 @@ enum
   EW_READENVSTR,        // ReadEnvStr/ExpandEnvStrings: 3 [output, string_with_env_variables, IsRead]
 #endif
 #ifdef NSIS_SUPPORT_INTOPTS
-  EW_INTCMP,            // IntCmp: 5 [val1, val2, equal, val1<val2, val1>val2]
-  EW_INTCMPU,           // IntCmpU: 5 [val1, val2, equal, val1<val2, val1>val2]
+  EW_INTCMP,            // IntCmp: 6 [val1, val2, equal, val1<val2, val1>val2, unsigned?]
   EW_INTOP,             // IntOp: 4 [output, input1, input2, op] where op: 0=add, 1=sub, 2=mul, 3=div, 4=bor, 5=band, 6=bxor, 7=bnot input1, 8=lnot input1, 9=lor, 10=land], 11=1%2
   EW_INTFMT,            // IntFmt: [output, format, input]
 #endif
@@ -94,7 +93,7 @@ enum
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
   EW_GETWINTEXT,        // GetWindowText:     2: [outputvar, hwnd]
-  EW_SETSTATICBKCOLOR,  // SerStaticBkColor:  3: [hwnd, color]
+  EW_SETBKCOLOR,        // SerBkColor:        2: [hwnd, color]
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
