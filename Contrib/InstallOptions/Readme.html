@@ -235,7 +235,7 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="italic">(optional)</span></td>
       <td class="righttable">Specifies the caption of a label, checkbox, or radio button control.
       For icon and bitmaps control this specifies the path to the image.<br /><br />
-      <span class="bold">Note:</span> For labels, \r\n will be converted to a newline.
+      <span class="bold">Note:</span> For labels, \r\n will be converted to a newline. To use a back-slash in your text you have to escape it using another back-slash - \\.
       </td></tr>
     <tr>
       <td class="lefttable"><span class="bold">State</span></td>
@@ -277,10 +277,10 @@ numbers from 1 to NumFields. Each Field section can contain the following values
     <tr>
       <td class="lefttable"><span class="bold">ValidateText</span></td>
       <td class="lefttable"><span class="italic">(optional)</span></td>
-      <td class="righttable">If a particular field fails the test for
+      <td class="righttable">If the field fails the test for
         "<span class="italic">MinLen</span>" or "<span class="italic">MaxLen</span>",
         a messagebox will be displayed with this text.<br /><br /><span class="bold">
-        Note:</span> \r\n will be converted to a newline.</td></tr>
+        Note:</span> \r\n will be converted to a newline, two back-slashes will be converted to one - \\.</td></tr>
     <tr>
       <td class="lefttable"><span class="bold">Left<br />Right<br />Top<br />Bottom</span></td>
       <td class="lefttable"><span class="italic">(required)</span></td>
