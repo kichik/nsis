@@ -1799,7 +1799,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SECTION:
     {
       int a=1,ex = 0;
-      if (!strcmp(line.gettoken_str(1),"/e"))
+      if (!strcmpi(line.gettoken_str(1),"/e"))
       {
         ex = 1;
         a++;
@@ -1861,7 +1861,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     {
       char buf[1024];
       int a=1,ex = 0;
-      if (!strcmp(line.gettoken_str(1),"/e"))
+      if (!strcmpi(line.gettoken_str(1),"/e"))
       {
         ex = 1;
         a++;
@@ -2049,7 +2049,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
         if (line.getnumtokens()==a) PRINTHELP();
 
-        if (!lstrcmp(line.gettoken_str(a), "none")) {
+        if (!lstrcmpi(line.gettoken_str(a), "none")) {
           no_space_texts=true;
           SCRIPT_MSG("SpaceTexts: none\n");
         }
@@ -2339,7 +2339,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *np=p;
           while (*np && *np != '|') np++;
           if (*np) *np++=0;
-          for (x  =0 ; x < sizeof(list)/sizeof(list[0]) && strcmp(list[x].str,p); x ++);
+          for (x  =0 ; x < sizeof(list)/sizeof(list[0]) && strcmpi(list[x].str,p); x ++);
           if (x < sizeof(list)/sizeof(list[0]))
           {
             r|=list[x].id;
