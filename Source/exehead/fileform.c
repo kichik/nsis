@@ -324,8 +324,9 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
     while (input_len > 0)
     {
       DWORD t;
-      if (!ReadFile(dbd_hFile,(LPVOID)_inbuffer,min(input_len,IBUFSIZE),&r,NULL)) return -3;
-      if (!WriteFile(hFileOut,_inbuffer,r,&t,NULL) || r!=t) return -2;
+      DWORD l=min(input_len,IBUFSIZE);
+      if (!ReadFile(dbd_hFile,(LPVOID)_inbuffer,l,&r,NULL) || l != r) return -3;
+      if (!WriteFile(hFileOut,_inbuffer,r,&t,NULL) || t != l) return -2;
       retval+=r;
       input_len-=r;
       dbd_pos+=r;
