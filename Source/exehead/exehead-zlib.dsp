@@ -40,7 +40,7 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_ZLIB" /FD /c
-# SUBTRACT CPP /YX /Yc /Yu
+# SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -149,6 +149,10 @@ SOURCE=.\bgbg.c
 # Begin Source File
 
 SOURCE=..\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\dllpaths.c
 # End Source File
 # Begin Source File
 

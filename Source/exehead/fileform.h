@@ -122,6 +122,8 @@ enum
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
 
+  EW_EXTERNALCOMMANDPREP,
+  EW_EXTERNALCOMMAND
 
 };
 
