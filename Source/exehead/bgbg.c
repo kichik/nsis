@@ -73,10 +73,9 @@ HWND NSISCALL bgWnd_Init()
 {
   RECT vp;
   static WNDCLASS wc;
-	wc.style = CS_VREDRAW | CS_HREDRAW;
 	wc.lpfnWndProc = BG_WndProc;
 	wc.hInstance = g_hInstance;
-	wc.hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
+	wc.hIcon = g_hIcon;
 	wc.hCursor = LoadCursor(NULL,IDC_ARROW);
 	wc.lpszClassName = "_Nb";
 

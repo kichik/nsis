@@ -38,6 +38,7 @@
 #define LB_ICONWIDTH 20
 #define LB_ICONHEIGHT 20
 
+HICON g_hIcon;
 static char gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
@@ -360,6 +361,7 @@ int NSISCALL ui_doinstall(void)
   if (!g_inst_cmnheader->silent_install)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   {
+    g_hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
     m_bgwnd=GetDesktopWindow();
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
@@ -442,8 +444,6 @@ static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lPar
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static HICON hIcon;
-  if (uMsg == WM_DESTROY && hIcon) { DeleteObject(hIcon); hIcon=0; }
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
     int iscp=0,islp=0,isdp=0,ispotentiallydp=0;
@@ -480,8 +480,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       m_hwndOK=GetDlgItem(hwndDlg,IDOK);
       m_hwndCancel=GetDlgItem(hwndDlg,IDCANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANGID_BRANDING);
-      hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
-      SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
+      SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANGID_BTN_CANCEL);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (!g_is_uninstaller)

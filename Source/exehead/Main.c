@@ -366,6 +366,7 @@ end:
   // Clean up after plug-ins
   if (plugins_temp_dir[0]) doRMDir(plugins_temp_dir,1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
+  if (g_hIcon) DeleteObject(g_hIcon);
 
   ExitProcess(ret);
 }
