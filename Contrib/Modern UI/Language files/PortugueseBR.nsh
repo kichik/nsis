@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "PORTUGUESEBR"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Brazilian Portuguese" ;Name of the language in the language itself
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Português (do Brasil)" ;Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
 
@@ -57,6 +57,8 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Você deseja realmente finalizar a instalação do ${MUI_PRODUCT}?"
 
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Clique em Desinstalar para começar a desinstalação."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Desinstalar o ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Remover o ${MUI_PRODUCT} do seu computador."
