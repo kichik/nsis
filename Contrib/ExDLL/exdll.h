@@ -57,6 +57,25 @@ INST_LANG,      // $LANGUAGE
 __INST_LAST
 };
 
+typedef struct {
+  int autoclose;
+  int all_user_var;
+  int exec_error;
+  int abort;
+  int exec_reboot;
+  int reboot_called;
+  int cur_insttype;
+  int insttype_changed;
+  int silent;
+  int instdir_error;
+  int rtl;
+  int errlvl;
+} exec_flags;
+
+typedef struct {
+  exec_flags *exec_flags;
+  int (__stdcall *ExecuteCodeSegment)(int, HWND);
+} extra_parameters;
 
 // utility functions (not required but often useful)
 static int __stdcall popstring(char *str)

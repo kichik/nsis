@@ -9,8 +9,6 @@ NSIS
 
 * Empty subsections should not show
 
-* More powerful plug-ins (access to ExecFunc and flags and even more)
-
 * Option to cancel the installation process
 
 * DirShow back
