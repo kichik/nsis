@@ -244,9 +244,6 @@ The interface files with a customized dialog resource IDD_SELCOM without a descr
 </div>
 <h3>Welcome/Finish Page Interface Settings</h3>
 <div>
-<p><strong>MUI_WELCOMEFINISHPAGE_3LINES</strong><br />
-Create a bigger area for the title on the Welcome page and the Finish page, to allow displaying 3
-lines of text (with the default font).</p>
 <p><strong>MUI_WELCOMEFINISHPAGE_BITMAP</strong> <span class="parameter">bmp_file</span><br />
 Bitmap for the Welcome page and the Finish page (recommended size: 164x314 pixels).<br />
 <em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
@@ -263,16 +260,9 @@ if the user has a custom DPI setting.</p>
 <p><strong>MUI_WELCOMEFINISHPAGE_INI</strong> <span class="parameter">ini_file</span><br />
 InstallOptions INI file for the Welcome page and the Finish page.<br />
 <em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</em></p>
-<p><strong>MUI_WELCOMEFINISHPAGE_INI_3LINES</strong> <span class="parameter">ini_file</span><br />
-InstallOptions INI file for the Welcome page and the Finish page with space for 3 lines of title
-text (with the default font).<br />
-<em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini</em></p>
 </div>
 <h3>Uninstaller Welcome/Finish Page Settings</h3>
 <div>
-<p><strong>MUI_UNWELCOMEFINISHPAGE_3LINES</strong><br />
-Create a bigger area for the title on the uninstaller Welcome page and the Finish page, to allow
-displaying 3 lines of text (with the default font).</p>
 <p><strong>MUI_UNWELCOMEFINISHPAGE_BITMAP</strong> <span class="parameter">bmp_file</span><br />
 Bitmap for the Welcome page and the Finish page (recommended size: 164x314 pixels).<br />
 <em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
@@ -289,10 +279,6 @@ if the user has a custom DPI setting.</p>
 <p><strong>MUI_UNWELCOMEFINISHPAGE_INI</strong> <span class="parameter">ini_file</span><br />
 InstallOptions INI file for the uninstaller Welcome page and the Finish page.<br />
 <em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</em></p>
-<p><strong>MUI_WELCOMEFINISHPAGE_INI_3LINES</strong> <span class="parameter">ini_file</span><br />
-InstallOptions INI file for the Welcome page and the Finish page with space for 3 lines of title
-text (with the default font).<br />
-<em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial3.ini</em></p>
 </div>
 <h3>License Page Interface Settings</h3>
 <div>
@@ -407,6 +393,8 @@ Subtext to display on the header of the page.</p>
 <div>
 <p><strong>MUI_WELCOMEPAGE_TITLE</strong> <span class="parameter">title</span><br />
 Title to display on the top of the page.</p>
+<p><strong>MUI_WELCOMEPAGE_TITLE_3LINES</strong><br />
+Extra space for the title area.</p>
 <p><strong>MUI_WELCOMEPAGE_TEXT</strong> <span class="parameter">text</span><br />
 Text to display on the page. Use \r\n for a newline.</p>
 </div>
@@ -460,7 +448,11 @@ Text to display on the destination folder frame.</p>
 <p><strong>MUI_DIRECTORYPAGE_VARIABLE</strong> <span class="parameter">variable</span><br />
 Variable in which to store the selected folder.<br />
 <em>Default: $INSTDIR</em></p>
+<p><strong>MUI_DIRECTORYPAGE_VERIFYONLEAVE</strong><br />
+Does not disable the Next button when a folder is invalid but allows you to use GetInstDirError in
+the leave function to handle an invalid folder.</p>
 </div>
+<br />
 <h3>Start Menu Folder Page Settings</h3>
 <div>
 <p>Put the code to write the shortcuts (using CreateShortcut) between the MUI_STARTMENU_WRITE_BEGIN
@@ -511,8 +503,12 @@ aborted.</p>
 <div>
 <p><strong>MUI_FINISHPAGE_TITLE</strong> <span class="parameter">title</span><br />
 Title to display on the top of the page.</p>
+<p><strong>MUI_FINISHPAGE_TITLE_3LINES</strong><br />
+Extra space for the title area.</p>
 <p><strong>MUI_FINISHPAGE_TEXT</strong> <span class="parameter">text</span><br />
 Text to display on the page. Use \r\n for a newline.</p>
+<p><strong>MUI_FINISHPAGE_TEXT_LARGE</strong><br />
+Extra space for the text area (if using checkboxes).</p>
 <p><strong>MUI_FINISHPAGE_BUTTON</strong> <span class="parameter">text</span><br />
 Text to display on the Finish button.</p>
 <p><strong>MUI_FINISHPAGE_TEXT_REBOOT</strong> <span class="parameter">text</span><br />
@@ -828,69 +824,14 @@ inner dialog</li>
 </div>
 <h1>Version history</h1>
 <ul>
-<li>1.67 - November 9, 2003
+<li>1.68 - November 24, 2003
 <ul>
-<li>Support for uninstaller Welcome/Finish pages</li>
-<li>Improved and changed text settings</li>
-<li>ID for Start Menu Folder pages, easier to use multiple pages</li>
-<li>Renamed a few settings</li>
-<li>Default header image</li>
-<li>Support for uninstaller abort warning</li>
-<li>Setting for 3 line text on Welcome/Finish page</li>
-<li>Langauge file backwards compatibility: English for missing strings</li>
-<li>Support for different uninstaller header image</li>
-<li>Language selection dialog not displayed if installer is silent</li>
-<li>Cancel button on Finish page when there are options</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>1.66 - October 7, 2003
-<ul>
-<li>New system for page settings and custom pages</li>
-<li>Support for uninstaller components page</li>
-<li>Support for multiple pages of the same type</li>
-<li>New possition for interface settings</li>
-<li>Changed macro, setting names</li>
-<li>Updated langauge system, new language files and settings</li>
-<li>Removed MUI_PRODUCT and MUI VERSION. Use Name command now.</li>
-<li>Removed MUI_BRANDINGTEXT. Use BrandingText command now.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>1.65 - August 12, 2003
-<ul>
-<li>New page configuration system, no different system for installers with custom pages</li>
-<li>Default windows color for the license text background</li>
-<li>Example script updates (new format, user variables)</li>
-<li>Improved registry storage for Start Menu folder</li>
-<li>ReserveFile macro for StartMenu plug-in</li>
-<li>Option to always show the language selection dialog (even if a language has been stored in the
-registry)</li>
-<li>Checkboxes on Finish page can be used to call a function</li>
-<li>Support for custom leave functions for Start Menu Folder, Welcome and Finish pages</li>
-<li>Support for a link on the Finish page</li>
-<li>New macro to get Start Menu folder in uninstaller</li>
-<li>Options to disable bitmap stretching</li>
-<li>Components page description box info text: always displayed when mouse is outside box, disabled
-style</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>1.64 - April 27, 2003
-<ul>
-<li>Support for license page with checkbox or radiobuttons to let the user accept the agreement or
-not</li>
-<li>Macros for finish headers don't have to be inserted anymore</li>
-<li>Language preference stored when installation has completed, no problems anymore when the users
-selects the wrong language</li>
-<li>Header text for aborted installation</li>
-<li>New macros: get language for uninstaller, delete shortcuts</li>
-<li>Language specific fonts</li>
-<li>Welcome/Finish page INI files can be modified in pre functions</li>
-<li>More texts can be customized</li>
+<li>New settings for extra space for title and text on Welcome page and Finish page</li>
+<li>Improved handling of verbose settings. Define MUI_VERBOSE the set the Modern UI verbose level
+(1-4).</li>
+<li>Language file string for uninstaller reboot information</li>
+<li>Setting for folder validation in leave function</li>
+<li>Fixed finish page text settings for multiple pages</li>
 </ul>
 </li>
 </ul>

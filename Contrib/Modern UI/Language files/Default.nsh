@@ -4,7 +4,7 @@
 ;--------------------------------
 
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_WELCOME_INFO_TITLE "Welcome to the $(^Name) Setup Wizard"
-  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of $(^Name).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will allow Setup to update certain system files without rebooting your computer.\r\n\r\n$_CLICK"
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of $(^Name).\r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without having to reboot your computer.\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_LICENSE_TITLE "License Agreement"  
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_LICENSE_SUBTITLE "Please review the license terms before installing $(^Name)."
@@ -48,7 +48,7 @@
   
   
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_WELCOME_INFO_TITLE "Welcome to the $(^Name) Uninstall Wizard"
-  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^Name) components.\r\n\r\nBefore starting the uninstallation, make sure $(^Name) is not running.\r\n\r\n$_CLICK"
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^Name).\r\n\r\nBefore starting the uninstallation, make sure $(^Name) is not running.\r\n\r\n$_CLICK"
   
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_CONFIRM_TITLE "Uninstall $(^Name)"
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_CONFIRM_SUBTITLE "Remove $(^Name) from your computer."
@@ -75,6 +75,7 @@
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORT_SUBTITLE "Uninstall was not completed successfully."
   
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_TITLE "Completing the $(^Name) Uninstall Wizard"
-  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) components have been uninstalled from your computer.\r\n\r\nClick Finish to close this wizard."
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) has been uninstalled from your computer.\r\n\r\nClick Finish to close this wizard."
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_REBOOT "Your computer must be restarted in order to complete the uninstallation of $(^Name). Do you want to reboot now?"
   
-  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Uninstall?"  
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Uninstall?"
