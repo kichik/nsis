@@ -16,7 +16,7 @@ char g_log_file[1024];
 extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #endif
 
-char g_usrvars[24][NSIS_MAX_STRLEN];
+char g_usrvars[25][NSIS_MAX_STRLEN];
 
 HANDLE g_hInstance;
 
@@ -482,23 +482,24 @@ void NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 18: // R7
         case VAR_CODES_START + 19: // R8
         case VAR_CODES_START + 20: // R9
-        case VAR_CODES_START + 21: // CMDLINE
-        case VAR_CODES_START + 22: // INSTDIR
-        case VAR_CODES_START + 23: // OUTDIR
-        case VAR_CODES_START + 24: // EXEDIR
+        case VAR_CODES_START + 21: // LANGUAGE
+        case VAR_CODES_START + 22: // CMDLINE
+        case VAR_CODES_START + 23: // INSTDIR
+        case VAR_CODES_START + 24: // OUTDIR
+        case VAR_CODES_START + 25: // EXEDIR
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
-        case VAR_CODES_START + 25: // PROGRAMFILES
+        case VAR_CODES_START + 26: // PROGRAMFILES
           myRegGetStr(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
 
-        case VAR_CODES_START + 26: // SMPROGRAMS
-        case VAR_CODES_START + 27: // SMSTARTUP
-        case VAR_CODES_START + 28: // DESKTOP
-        case VAR_CODES_START + 29: // STARTMENU
+        case VAR_CODES_START + 27: // SMPROGRAMS
+        case VAR_CODES_START + 28: // SMSTARTUP
+        case VAR_CODES_START + 29: // DESKTOP
+        case VAR_CODES_START + 30: // STARTMENU
           {
             static const char *tab[]={
               "Programs",
@@ -510,26 +511,22 @@ void NSISCALL process_string(char *out, const char *in)
           }
         break;
 
-        case VAR_CODES_START + 30: // QUICKLAUNCH
+        case VAR_CODES_START + 31: // QUICKLAUNCH
           queryShellFolders("AppData", out);
           lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
           f = GetFileAttributes(out);
           if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
             break;
-        case VAR_CODES_START + 31: // TEMP
+        case VAR_CODES_START + 32: // TEMP
           GetTempPath(NSIS_MAX_STRLEN, out);
           break;
 
-        case VAR_CODES_START + 32: // WINDIR
+        case VAR_CODES_START + 33: // WINDIR
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        case VAR_CODES_START + 33: // SYSDIR
+        case VAR_CODES_START + 34: // SYSDIR
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
-          break;
-
-        case VAR_CODES_START + 34: // LANGUAGE
-          wsprintf(out, "%u", cur_common_strings_table->lang_id);
           break;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -548,7 +545,7 @@ void NSISCALL process_string(char *out, const char *in)
       } // switch
       // remove trailing slash
       while (*out && *CharNext(out)) out++;
-      if (nVarIdx > 21+VAR_CODES_START && *out == '\\') // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
+      if (nVarIdx > 22+VAR_CODES_START && *out == '\\') // only if not $0 to $R9, $CMDLINE, $LANGUAGE, or $HWNDPARENT
         *out = 0;
       out=CharNext(out);
     } // >= VAR_CODES_START
