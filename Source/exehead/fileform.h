@@ -146,24 +146,85 @@ typedef struct
   int length_of_all_following_data;
 } firstheader;
 
+// Strings common to both installers and uninstallers
+typedef struct
+{
+  WORD lang_id;
+
+  // unprocessed strings
+  int branding;
+  int cancelbutton;
+  int showdetailsbutton;
+  int completed;
+  int closebutton;   // "Close"
+  int name; // name of installer
+
+  // processed strings
+  int caption; // name of installer + " Setup" or whatever.
+  int subcaptions[5];
+
+#ifdef NSIS_SUPPORT_FILE
+  int fileerrtext;
+#endif
+
+#if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)
+  int cant_write;
+#endif
+#ifdef NSIS_SUPPORT_RMDIR
+  int remove_dir;
+#endif
+#ifdef NSIS_SUPPORT_COPYFILES
+  int copy_failed;
+  int copy_to;
+#endif
+#ifdef NSIS_SUPPORT_ACTIVEXREG
+  int symbol_not_found;
+  int could_not_load;
+  int no_ole;
+  // not used anywhere - int err_reg_dll;
+#endif
+#ifdef NSIS_SUPPORT_CREATESHORTCUT
+  int create_shortcut;
+  int err_creating_shortcut;
+#endif
+#ifdef NSIS_SUPPORT_DELETE
+  int del_file;
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+  int del_on_reboot;
+#endif
+#endif
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  int created_uninst;
+  int err_creating;
+#endif
+#ifdef NSIS_SUPPORT_SHELLEXECUTE
+  int exec_shell;
+#endif
+#ifdef NSIS_SUPPORT_EXECUTE
+  int exec;
+#endif
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+  int rename_on_reboot;
+#endif
+#ifdef NSIS_SUPPORT_RENAME
+  int rename;
+#endif
+#ifdef NSIS_SUPPORT_FILE
+  int extract;
+  int err_writing;
+  int err_decompressing;
+  int skipped;
+#endif
+  int inst_corrupted;
+  int output_dir;
+  int create_dir;
+} common_strings;
+
 // Settings common to both installers and uninstallers
 typedef struct
 {
-  // unprocessed strings
-  int branding_ptr;
-  int cancelbutton_ptr;
-  int showdetailsbutton_ptr;
-  int completed_ptr;
-  int closebutton_ptr;   // "Close"
-  int name_ptr; // name of installer
-
-  // processed strings
-  int caption_ptr; // name of installer + " Setup" or whatever.
-  int subcaption_ptrs[5];
-
-#ifdef NSIS_SUPPORT_FILE
-  int fileerrtext_ptr;
-#endif
+  int str_tables_num; // number of strings tables in array
+  int str_tables; // offset to tables array
 
   int num_entries; // total number of entries
 
@@ -191,38 +252,50 @@ typedef struct
 
 } common_header;
 
+// Strings specific to installers
+typedef struct
+{
+  WORD lang_id;
+
+  // these first strings are literals (should not be encoded)
+  int backbutton;
+  int nextbutton;
+  int browse; // "Browse..."
+  int installbutton; // "Install"
+  int spacerequired; // "Space required: "
+  int spaceavailable; // "Space available: "
+  int custom;  // Custom
+  int text; // directory page text
+  int dirsubtext; // directory text2
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  int componenttext; // component page text
+  int componentsubtext[2];
+#endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  int licensetext; // license page text
+  int licensedata; // license text
+  int licensebutton; // license button text
+#endif//NSIS_CONFIG_LICENSEPAGE
+} installer_strings;
+
 // Settings specific to installers
 typedef struct
 {
   // common settings
   common_header common;
 
-  // these first strings are literals (should not be encoded)
-  int backbutton_ptr;
-  int nextbutton_ptr;
-  int browse_ptr; // "Browse..."
-  int installbutton_ptr; // "Install"
-  int spacerequired_ptr; // "Space required: "
-  int spaceavailable_ptr; // "Space available: "
-  int custom_ptr;  // Custom
-  int text_ptr; // directory page text
-  int dirsubtext_ptr; // directory text2
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  int componenttext_ptr; // component page text
-  int componentsubtext_ptr[2];
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  int licensetext_ptr; // license page text
-  int licensedata_ptr; // license text
-  int licensebutton_ptr; // license button text
-  int license_bg; // license background color
-#endif//NSIS_CONFIG_LICENSEPAGE
+  int str_tables_num; // number of strings tables in array
+  int str_tables; // offset to tables array
 
   int install_reg_rootkey, install_reg_key_ptr, install_reg_value_ptr;
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int install_types_ptr[NSIS_MAX_INST_TYPES]; // -1 if not used. can describe as lite, normal, full, etc.
 #endif
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  int license_bg; // license background color
+#endif//NSIS_CONFIG_LICENSEPAGE
 
   // below here, the strings are processed (can have variables etc)
   int install_directory_ptr; // default install dir.
@@ -249,16 +322,25 @@ typedef struct
 
 } header;
 
+// Strings specific to uninstallers
+typedef struct
+{
+  WORD lang_id;
+
+  // unprocessed strings
+  int uninstbutton;
+  int uninstalltext;
+  int uninstalltext2;
+} uninstall_strings;
+
 // Settings specific to uninstallers
 typedef struct
 {
   // common settings
   common_header common;
 
-	// unprocessed strings
-  int uninstbutton_ptr;
-  int uninstalltext_ptr;
-  int uninstalltext2_ptr;
+  int str_tables_num; // number of strings tables in array
+  int str_tables; // offset to tables array
 
   int code;
   int code_size;

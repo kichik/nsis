@@ -152,6 +152,10 @@ SOURCE=.\exedata.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\lang.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\makenssi.cpp
 # ADD CPP /G6
 # End Source File
@@ -201,6 +205,10 @@ SOURCE=.\DialogTemplate.h
 # Begin Source File
 
 SOURCE=.\exedata.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lang.h
 # End Source File
 # Begin Source File
 

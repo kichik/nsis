@@ -1,5 +1,6 @@
-# DON'T EVER EDIT THIS TWO LINES!
+# Header, don't edit
 NLF v1
+# Language ID
 1033
 # Start editing here
 Nullsoft Install System %s
@@ -33,7 +34,6 @@ Space available:
 Space required: 
 Uninstalling from:
 Error opening file for writing: $\r$\n$\t"$0"$\r$\nHit abort to abort installation,$\r$\nretry to retry writing the file, or$\r$\nignore to skip this file
-verifying installer: %d%%
 Can't write: 
 Copy failed
 Copy to 
