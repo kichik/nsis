@@ -642,9 +642,7 @@
   
   !insertmacro MUI_INTERFACE
   !insertmacro MUI_BASIC
-  !ifdef MUI_UNINSTALLER
-	!insertmacro MUI_UNBASIC
-  !endif
+  !insertmacro MUI_UNBASIC
   
   !verbose 4
   
@@ -666,10 +664,14 @@
 !macro MUI_UNBASIC
 
   !verbose 3
+  
+  !ifdef MUI_UNINSTALLER
 
-  !insertmacro MUI_UNPAGECOMMANDS
-  !insertmacro MUI_UNFUNCTIONS_PAGES
-  !insertmacro MUI_UNFUNCTIONS_GUIINIT
+    !insertmacro MUI_UNPAGECOMMANDS
+    !insertmacro MUI_UNFUNCTIONS_PAGES
+    !insertmacro MUI_UNFUNCTIONS_GUIINIT
+  
+  !endif
 
   !verbose 4
 
