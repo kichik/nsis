@@ -92,6 +92,10 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\dirreader.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\growbuf.cpp
 # End Source File
 # Begin Source File
@@ -120,12 +124,20 @@ SOURCE=.\mmap.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\specmatch.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\textrunner.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\dirreader.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\mmap.h
