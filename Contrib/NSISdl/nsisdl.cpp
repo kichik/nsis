@@ -84,9 +84,16 @@ static int g_file_size;
 
 static void progress_callback(char *msg, int read_bytes)
 {
+  // flicker reduction by A. Schiffler
+  static DWORD dwLastTick = 0;
+  DWORD dwThisTick = GetTickCount();
   if (g_dialog)
   {
-    SetDlgItemText (g_dialog, IDC_STATIC2, msg);
+    if (dwThisTick - dwLastTick > 500)
+    {
+      SetDlgItemText (g_dialog, IDC_STATIC2, msg);
+      dwLastTick = dwThisTick;
+    }
     if (g_file_size) SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM)MulDiv(read_bytes,30000,g_file_size), 0);
   }
 }
@@ -167,7 +174,6 @@ __declspec(dllexport) void download (HWND   parent,
   if (hFile == INVALID_HANDLE_VALUE) {
     wsprintf (buf, "Unable to open %s", filename);
     error=buf;
-    goto done;
   } else {
     if (parent)
     {
@@ -215,7 +221,7 @@ __declspec(dllexport) void download (HWND   parent,
 
     g_hwndProgressBar = GetDlgItem (dlg, IDC_PROGRESS1);
 
-    JNL_HTTPGet *get;
+    JNL_HTTPGet *get = 0;
     
     {
       WSADATA wsaData;
@@ -397,19 +403,17 @@ __declspec(dllexport) void download (HWND   parent,
       if (wasen) EnableWindow(GetDlgItem(parent,IDCANCEL),0);
     }
 
-done:
-
-    if (g_cancelled) {
-      pushstring("cancel");
-      DeleteFile(filename);
-    } else if (error == NULL) {
-      pushstring("success");
-    } else {
-      DeleteFile(filename);
-      pushstring(error);
-    }
-    
     if (get) delete get;
+  }
+  
+  if (g_cancelled) {
+    pushstring("cancel");
+    DeleteFile(filename);
+  } else if (error == NULL) {
+    pushstring("success");
+  } else {
+    DeleteFile(filename);
+    pushstring(error);
   }
 }
 
