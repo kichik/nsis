@@ -600,7 +600,7 @@ Section -post
   IntCmp $R0 ${SF_SELECTED} langfiles
 	SectionGetFlags ${SecContribModernUI} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
-	IntCmp $R0 ${SF_SELECTED} "" nomui
+	IntCmp $R0 ${SF_SELECTED} "" nomui nomui
 	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\English.nsh"
     nomui:
@@ -801,7 +801,7 @@ SectionEnd
 !macro secSelected SEC
   SectionGetFlags ${SEC} $R7
   IntOp $R7 $R7 & ${SF_SELECTED}
-  IntCmp $R7 ${SF_SELECTED} 0 +2
+  IntCmp $R7 ${SF_SELECTED} 0 +2 +2
     IntOp $R0 $R0 + 1
 !macroend
 
