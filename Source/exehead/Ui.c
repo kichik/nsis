@@ -33,6 +33,7 @@
 #include "ui.h"
 #include "exec.h"
 #include "lang.h"
+#include "components.h"
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 HICON g_hIcon;
@@ -943,97 +944,43 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
 
-static int NSISCALL SetChildrenStates(HWND hwTree, HTREEITEM hItem, int iChecked)
+static void NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *items)
 {
-  int iCheckedChildren = 0, iChildren = 0, *pFlags, iState = 1;
-  HTREEITEM hItrItem;
-  TVITEM tvItem;
+  TVITEM item;
+  int i, flags, state;
 
-  hItrItem = TreeView_GetChild(hwTree, hItem);
-  while (hItrItem)
+  item.mask = TVIF_STATE;
+  item.stateMask = TVIS_STATEIMAGEMASK | TVIS_EXPANDED | TVIS_BOLD;
+
+  for (i = 0; i < num_sections; i++)
   {
-    iCheckedChildren += SetChildrenStates(hwTree, hItrItem, iChecked);
-    iChildren++;
-    hItrItem = TreeView_GetNextSibling(hwTree, hItrItem);
-  }
-
-  tvItem.hItem = hItem;
-  tvItem.mask = TVIF_PARAM | TVIF_STATE;
-  tvItem.stateMask = TVIS_STATEIMAGEMASK;
-  TreeView_GetItem(hwTree, &tvItem);
-
-  pFlags = &(g_sections[tvItem.lParam].flags);
-
-  if (*pFlags & SF_RO)
-  {
-    iState = 4;
-    iChecked = *pFlags & SF_SELECTED;
-  }
-
-  *pFlags &= ~(SF_SELECTED|SF_PSELECTED);
-
-  if (iCheckedChildren || iChecked)
-  {
-    iState++;
-    if (iChildren == iCheckedChildren)
+    if (!items[i])
     {
-      *pFlags |= SF_SELECTED;
+      continue;
+    }
+
+    flags = g_sections[i].flags;
+
+    item.hItem = items[i];
+    item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
+    item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
+
+    if (flags & SF_PSELECTED)
+    {
+      state = 3;
     }
     else
     {
-      iState++;
-      *pFlags |= SF_PSELECTED;
+      state = 1 + (flags & SF_SELECTED); // SF_SELECTED == 1
+      if (flags & SF_RO) state += 3;
     }
-    iChecked = 1;
+
+    item.state |= INDEXTOSTATEIMAGEMASK(state);
+
+    TreeView_Expand(hwTree, item.hItem, (flags & SF_EXPAND) ? TVE_EXPAND : TVE_COLLAPSE);
+    TreeView_SetItem(hwTree, &item);
   }
-
-  tvItem.state = INDEXTOSTATEIMAGEMASK(iState);
-
-  TreeView_SetItem(hwTree, &tvItem);
-
-  return iChecked;
 }
-
-static void NSISCALL SetParentState(HWND hwTree, HTREEITEM hItem)
-{
-  TVITEM tvItem;
-  int iState = 0, iItrState, *iFlags;
-
-  HTREEITEM hParent = TreeView_GetParent(hwTree, hItem);
-  if (!hParent)
-    return;
-
-  hItem = TreeView_GetChild(hwTree, hParent);
-
-  tvItem.mask = TVIF_STATE | TVIF_PARAM;
-  tvItem.stateMask = TVIS_STATEIMAGEMASK;
-
-  while (hItem) {
-    tvItem.hItem = hItem;
-    TreeView_GetItem(hwTree, &tvItem);
-    iItrState = tvItem.state >> 12;
-    iState |= iItrState % 3 ? iItrState % 3 : 3;
-    hItem = TreeView_GetNextSibling(hwTree, hItem);
-  }
-
-  tvItem.hItem = hParent;
-  TreeView_GetItem(hwTree, &tvItem);
-
-  iFlags = &(g_sections[tvItem.lParam].flags);
-  *iFlags &= ~(SF_SELECTED|SF_PSELECTED);
-
-  if (iState == 2)
-    *iFlags |= SF_SELECTED;
-  if (iState == 3)
-    *iFlags |= SF_PSELECTED;
-
-  tvItem.state = INDEXTOSTATEIMAGEMASK(iState);
-  TreeView_SetItem(hwTree, &tvItem);
-
-  SetParentState(hwTree, hParent);
-}
-
-#define CheckTreeItem(h, i, c) { SetChildrenStates(h, i, c); SetParentState(h, i); }
 
 HTREEITEM NSISCALL TreeHitTest(HWND tree)
 {
@@ -1060,8 +1007,7 @@ static LONG oldTreeWndProc;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static LPARAM last_item=-1;
-  if (uMsg == WM_CHAR && wParam == (WPARAM)' ')
-  {
+  if (uMsg == WM_CHAR && wParam == VK_SPACE) {
     NotifyCurWnd(WM_TREEVIEW_KEYHACK);
     return 0;
   }
@@ -1150,8 +1096,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (i != NSIS_MAX_INST_TYPES) noCombo = 0;
         j=SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetNSISStringTT(install_types[i]));
         SendMessage(hwndCombo1,CB_SETITEMDATA,j,i);
-        if (i == g_exec_flags.cur_insttype)
-          SendMessage(hwndCombo1, CB_SETCURSEL, j, 0);
       }
     }
 
@@ -1167,51 +1111,35 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (sec->name_ptr)
       {
         TVINSERTSTRUCT tv;
-        tv.hParent=Par;
-        tv.hInsertAfter=TVI_LAST;
-        tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
-        tv.item.lParam=x;
-        tv.item.pszText=GetNSISStringTT(sec->name_ptr);
-        tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED|TVIS_BOLD;
 
+        tv.hParent = Par;
+        tv.hInsertAfter = TVI_LAST;
+        tv.item.mask = TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
+        tv.item.stateMask = TVIS_EXPANDED;
+        tv.item.lParam = x;
+        tv.item.pszText = GetNSISStringTT(sec->name_ptr);
+
+        tv.item.state = sec->flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
+
+        if (sec->flags & SF_SECGRP)
         {
-          int l=1;
-          // SF_SELECTED == 1
-          l += sec->flags & SF_SELECTED;
-          //if (sec->flags & SF_SELECTED) l++;
-          if (sec->flags & SF_RO) l+=3;
-
-          tv.item.state=INDEXTOSTATEIMAGEMASK(l);
+          tv.item.mask |= TVIF_CHILDREN;
+          tv.item.cChildren = 1;
+          Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1, &tv);
+          doLines = 1;
         }
-
-        //if (sec->flags&SF_BOLD)
+        else if (sec->flags & SF_SECGRPEND)
         {
-          // SF_BOLD << 1 == 16 == TVIS_BOLD
-          tv.item.state|=(sec->flags&SF_BOLD)<<1;
-        }
-
-        if (sec->flags&SF_SECGRP)
-        {
-          tv.item.mask|=TVIF_CHILDREN;
-          tv.item.cChildren=1;
-          //if (sec->flags&SF_EXPAND)
-            // TVIS_EXPANDED == SF_EXPAND
-            tv.item.state|=sec->flags&SF_EXPAND;
-          Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
-          doLines=1;
-        }
-        else if (sec->flags&SF_SECGRPEND)
-        {
-          SetParentState(hwndTree1,hTreeItems[lastGoodX]);
-          Par=TreeView_GetParent(hwndTree1,Par);
+          Par = TreeView_GetParent(hwndTree1, Par);
         }
         else
         {
           lastGoodX = x;
-          hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
+          hTreeItems[x] = TreeView_InsertItem(hwndTree1, &tv);
         }
       }
     }
+
     if (!doLines)
     {
       SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
@@ -1225,45 +1153,31 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     else
       SetActiveCtl(hwndTree1);
-
-    uMsg = g_exec_flags.insttype_changed ? WM_NOTIFY_INSTTYPE_CHANGE : WM_IN_UPDATEMSG;
   }
+
+  if (uMsg == WM_NOTIFY_START)
+  {
+    wParam = 0;
+    lParam = 1;
+    uMsg = WM_IN_UPDATEMSG;
+  }
+
   if (uMsg == WM_NOTIFY_SECTEXT) // update text
   {
-    int x=wParam;
-    int ns=lParam;
+    int x = wParam;
+    int ns = lParam;
     TVITEM tv;
 
-    tv.hItem=hTreeItems[x];
+    tv.hItem = hTreeItems[x];
 
     if (tv.hItem)
     {
-      tv.mask=TVIF_TEXT;
-      tv.pszText=GetNSISStringTT(ns);
-      TreeView_SetItem(hwndTree1,&tv);
+      tv.mask = TVIF_TEXT;
+      tv.pszText = GetNSISStringTT(ns);
+      TreeView_SetItem(hwndTree1, &tv);
     }
   }
-  if (uMsg == WM_NOTIFY_SECFLAGS) // change flags
-  {
-    int flags = sections[wParam].flags;
-    TVITEM tvItem;
 
-    if (!(tvItem.hItem = hTreeItems[wParam])) return 0;
-    tvItem.mask = TVIF_STATE;
-    tvItem.stateMask = TVIS_BOLD;
-    tvItem.state = 0;
-    //if (flags&SF_BOLD) tvItem.state |= TVIS_BOLD;
-    // SF_BOLD << 1 == 16 == TVIS_BOLD
-    tvItem.state|=(flags&SF_BOLD)<<1;
-    TreeView_SetItem(hwndTree1, &tvItem);
-
-    TreeView_Expand(hwndTree1, tvItem.hItem, flags & SF_EXPAND ? TVE_EXPAND : TVE_COLLAPSE);
-
-    if ((flags & (SF_PSELECTED | SF_SELECTED)) != SF_PSELECTED)
-    {
-      CheckTreeItem(hwndTree1, tvItem.hItem, flags & SF_SELECTED);
-    }
-  }
   if (uMsg == WM_NOTIFY || uMsg == WM_TREEVIEW_KEYHACK)
   {
     LPNMHDR lpnmh = (LPNMHDR) lParam;
@@ -1280,29 +1194,40 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         if (tvItem.hItem)
         {
-          int iState;
-
-          tvItem.mask = TVIF_STATE|TVIF_PARAM;
-          TreeView_GetItem(hwndTree1, &tvItem);
-
-          iState = tvItem.state >> 12;
-
-          if (iState < 4) // not RO
+          tvItem.mask = TVIF_PARAM;
+          if (TreeView_GetItem(hwndTree1, &tvItem))
           {
-            if (iState == 2) // already checked
+            int flags = sections[tvItem.lParam].flags;
+
+            if ((flags & SF_RO) == 0)
             {
-              sections[tvItem.lParam].flags&=~SF_SELECTED;
-              CheckTreeItem(hwndTree1,tvItem.hItem,0);
+              if ((flags & SF_PSELECTED))
+              {
+                flags ^= SF_TOGGLED;
+
+                if (flags & SF_TOGGLED)
+                {
+                  flags |= SF_SELECTED;
+                }
+                else
+                {
+                  flags &= ~SF_SELECTED;
+                }
+              }
+              else
+              {
+                flags ^= SF_SELECTED;
+              }
+
+              sections[tvItem.lParam].flags = flags;
+
+              SectionFlagsChanged(tvItem.lParam);
+
+              wParam = 1;
+              lParam = 1;
+              uMsg = WM_IN_UPDATEMSG;
             }
-            else
-            {
-              sections[tvItem.lParam].flags|=SF_SELECTED;
-              CheckTreeItem(hwndTree1,tvItem.hItem,1);
-            }
-            lParam = 0;
-            wParam = 1;
-            uMsg = WM_IN_UPDATEMSG;
-          } // not ro
+          }
         } // was valid click
       } // was click or hack
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
@@ -1324,125 +1249,91 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
     }
   }
+
+  if (uMsg == WM_COMMAND && LOWORD(wParam) == IDC_COMBO1 && HIWORD(wParam) == CBN_SELCHANGE)
+  {
+    int t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+    if (t != CB_ERR)
+    {
+      int whichcfg = SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
+
+      if (whichcfg == CB_ERR || !install_types[whichcfg])
+        whichcfg = NSIS_MAX_INST_TYPES;
+
+      SetInstType(whichcfg);
+
+      wParam = 1;
+      lParam = 0;
+      uMsg = WM_IN_UPDATEMSG;
+    }
+  }
+
   if (uMsg == WM_MOUSEMOVE)
   {
     SendMessage(hwndTree1, WM_MOUSEMOVE, 0, 0);
   }
-  if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE ||
-     (uMsg == WM_COMMAND && LOWORD(wParam)==IDC_COMBO1 && HIWORD(wParam)==CBN_SELCHANGE))
-  {
-    int t=SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
-    if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE || t != CB_ERR)
-    {
-      int whichcfg=SendMessage(hwndCombo1,CB_GETITEMDATA,t,0);
-      if (uMsg == WM_NOTIFY_INSTTYPE_CHANGE)
-      {
-        whichcfg = g_exec_flags.cur_insttype;
-        g_exec_flags.insttype_changed = 0;
-      }
-      else lParam = 1;
 
-      if (whichcfg == CB_ERR || !(install_types[whichcfg]))
-        whichcfg = NSIS_MAX_INST_TYPES;
-
-      if (whichcfg != NSIS_MAX_INST_TYPES) // not custom
-      {
-        int x=num_sections;
-        section *t=sections;
-        HTREEITEM *ht=hTreeItems;
-        while (x--)
-        {
-          TVITEM tv;
-          int l=1;
-
-          if (t->install_types & (1<<whichcfg))
-          {
-            l++;
-            t->flags|=SF_SELECTED;
-          }
-          else t->flags&=~SF_SELECTED;
-
-          if (t->flags&SF_RO) l+=3;
-
-          tv.hItem=*ht;
-
-          if (tv.hItem) {
-            tv.mask=TVIF_STATE;
-            tv.state=INDEXTOSTATEIMAGEMASK(l);
-            tv.stateMask=TVIS_STATEIMAGEMASK;
-
-            TreeView_SetItem(hwndTree1,&tv);
-            SetParentState(hwndTree1,tv.hItem);
-          }
-          t++;
-          ht++;
-        }
-        SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
-      }
-
-      g_exec_flags.cur_insttype=whichcfg;
-
-      uMsg = WM_IN_UPDATEMSG;
-    }
-  }
   if (uMsg == WM_NOTIFY_INIGO_MONTOYA)
   {
     if (hImageList) ImageList_Destroy(hImageList);
     if (hTreeItems) GlobalFree(hTreeItems);
-    hImageList=NULL;
-    hTreeItems=NULL;
-    g_SectionHack=NULL;
+    hImageList = NULL;
+    hTreeItems = NULL;
+    g_SectionHack = NULL;
   }
+
   if (uMsg == WM_IN_UPDATEMSG)
   {
+    RefreshSectionGroups(0);
+
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-  if ( wParam )
-    ExecuteCallbackFunction(CB_ONSELCHANGE);
+    if (wParam)
+    {
+      ExecuteCallbackFunction(CB_ONSELCHANGE);
+    }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
 
-    if (g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)
+    if (lParam)
     {
-      int c = (g_exec_flags.cur_insttype == NSIS_MAX_INST_TYPES) << 3;// SW_SHOWNA=8, SW_HIDE=0
-      ShowWindow(hwndTree1, c);
-      ShowWindow(GetUIItem(IDC_TEXT2), c);
-    }
-    else if (!lParam)
-    {
-      int r,x,cbi;
-      // check to see which install type we are
-      for (r = 0, cbi = 0; r < NSIS_MAX_INST_TYPES; r ++)
+      if (g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)
       {
-        HTREEITEM *ht=hTreeItems;
-        section *t=sections;
-        x=num_sections;
+        int c = SW_SHOWNA;
 
-        if (!install_types[r]) continue;
-
-        while (x--)
+        int t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
+        if (t != CB_ERR)
         {
-          if (*ht && !(t->flags&(SF_SECGRP|SF_SECGRPEND)))
-          {
-            TVITEM tvItem;
-            tvItem.hItem=*ht;
-            tvItem.mask=TVIF_STATE;
-            TreeView_GetItem(hwndTree1,&tvItem);
-            if (!(t->install_types&(1<<r)) != !((tvItem.state>>12 != 1 && (tvItem.state>>12 != 4)))) break;
-          }
-          t++;
-          ht++;
+          int whichcfg = SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
+
+          if (whichcfg != CB_ERR && install_types[whichcfg] && whichcfg != NSIS_MAX_INST_TYPES)
+            c = SW_HIDE;
         }
-        if (x < 0) break;
 
-        cbi++;
+        ShowWindow(hwndTree1, c);
+        ShowWindow(GetUIItem(IDC_TEXT2), c);
       }
+      else
+      {
+        int i, cbi;
+        int inst_type = GetInstType(hTreeItems);
+        SetInstType(inst_type);
 
-      g_exec_flags.cur_insttype=r;
-      SendMessage(hwndCombo1,CB_SETCURSEL,cbi,0);
-    } // end of typecheckshit
+        for (i = 0, cbi = 0; i < inst_type; i++)
+        {
+          if (install_types[i])
+          {
+            cbi++;
+          }
+        }
+
+        SendMessage(hwndCombo1, CB_SETCURSEL, cbi, 0);
+      } // end of typecheckshit
+    }
+
+    RefreshSectionGroups(0);
+    RefreshComponents(hwndTree1, hTreeItems);
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(sumsecsfield(size_kb),GetNSISString(g_tmp,LANG_SPACE_REQ)));
-
     }
   }
 
