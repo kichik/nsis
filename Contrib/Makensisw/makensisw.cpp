@@ -41,7 +41,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.script_alloced=false;
   g_sdata.defines = NULL;
   RestoreDefines();
-  RestoreMRUList();
   g_sdata.script=GetCommandLine();
   if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
   else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
@@ -107,29 +106,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE);  
       DragAcceptFiles(g_sdata.hwnd,FALSE);
       g_sdata.menu = GetMenu(g_sdata.hwnd);
-      g_sdata.submenu = GetSubMenu(g_sdata.menu,1);
-      {
-        OSVERSIONINFO osvi;
-        my_memset(&osvi, 0, sizeof(osvi));
-        osvi.dwOSVersionInfoSize = sizeof(osvi);
-        GetVersionEx(&osvi);
-        if(osvi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS) {
-          // This is a hack because Win9x & WinNT/2000/XP behave differently for WM_MENUSELECT
-          MENUITEMINFO mii;
-          my_memset(&mii, 0, sizeof(mii));
-          mii.cbSize = sizeof(mii);
-          mii.fMask = MIIM_ID;
-
-          GetMenuItemInfo(g_sdata.menu, FILE_MENU_INDEX, TRUE, &mii);
-          g_sdata.fileMenuId = mii.wID;
-          GetMenuItemInfo(g_sdata.menu, TOOLS_MENU_INDEX, TRUE, &mii);
-          g_sdata.toolsMenuId = mii.wID;
-        }
-        else {
-          g_sdata.fileMenuId = FILE_MENU_INDEX;
-          g_sdata.toolsMenuId = TOOLS_MENU_INDEX;
-        }
-      }
+      g_sdata.fileSubmenu = GetSubMenu(g_sdata.menu, FILE_MENU_INDEX);
+      g_sdata.editSubmenu = GetSubMenu(g_sdata.menu, EDIT_MENU_INDEX);
+      g_sdata.toolsSubmenu = GetSubMenu(g_sdata.menu, TOOLS_MENU_INDEX);
+      RestoreMRUList();
       CreateToolBar();
       InitTooltips(g_sdata.hwnd);
 #ifdef COMPRESSOR_OPTION
@@ -174,8 +154,10 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
     case WM_CONTEXTMENU:
     {
+      // This does not work on Windows versions < Windows 2000
+      // See http://support.microsoft.com:80/support/kb/articles/Q245/7/54.asp
       if ((HWND)wParam==GetDlgItem(g_sdata.hwnd,IDC_LOGWIN)) {
-        TrackPopupMenu(g_sdata.submenu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_sdata.hwnd,0);
+        TrackPopupMenu(g_sdata.editSubmenu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_sdata.hwnd,0);
       }
       return TRUE;
     }
@@ -290,22 +272,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           g_sdata.output_exe = (char *)GlobalAlloc(GPTR, cds->cbData);
           lstrcpy(g_sdata.output_exe, (char *)cds->lpData);
           break;
-      }
-      return TRUE;
-    }
-    case WM_MENUSELECT:
-    {
-      HMENU hMenu = (HMENU)lParam;
-      UINT id = (UINT)LOWORD(wParam);
-      UINT flags = (UINT)HIWORD(wParam);
-
-      if(hMenu == g_sdata.menu && (flags & MF_POPUP) == MF_POPUP) {
-        if(id == g_sdata.fileMenuId) { // File menu
-          BuildMRUMenu(GetSubMenu(hMenu, id));
-        }
-        else if (id == g_sdata.toolsMenuId) { // Tools menu
-          SetClearMRUListMenuitemState(GetSubMenu(hMenu, id));
-        }
       }
       return TRUE;
     }

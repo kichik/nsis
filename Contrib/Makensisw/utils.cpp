@@ -464,10 +464,12 @@ void PushMRUFile(char* fname)
     lstrcpy(g_mru_list[i+1], g_mru_list[i]);
   }
   lstrcpy(g_mru_list[0],full_file_name);
+  BuildMRUMenus();
 }
 
-void BuildMRUMenu(HMENU hMenu)
+void BuildMRUMenus()
 {
+  HMENU hMenu = g_sdata.fileSubmenu;
   int i;
   MENUITEMINFO mii;
   char buf[MRU_DISPLAY_LENGTH+1];
@@ -526,6 +528,20 @@ void BuildMRUMenu(HMENU hMenu)
       break;
     }
   }
+
+  hMenu = g_sdata.toolsSubmenu;
+  my_memset(&mii, 0, sizeof(mii));
+  mii.cbSize = sizeof(mii);
+  mii.fMask = MIIM_STATE;
+
+  if(g_mru_list[0][0]) {
+    mii.fState = MFS_ENABLED;
+  }
+  else {
+    mii.fState = MFS_GRAYED;
+  }
+
+  SetMenuItemInfo(hMenu, IDM_CLEAR_MRU_LIST,FALSE,&mii);
 }
 
 void LoadMRUFile(int position)
@@ -543,6 +559,7 @@ void LoadMRUFile(int position)
     }
     else {
       PopMRUFile(g_mru_list[position]);
+      BuildMRUMenus();
     }
     ResetObjects();
     CompileNSISScript();
@@ -574,6 +591,8 @@ void RestoreMRUList()
     for(i = n; i < MRU_LIST_SIZE; i++) {
       g_mru_list[i][0] = '\0';
     }
+
+    BuildMRUMenus();
 }
 
 void SaveMRUList()
@@ -600,21 +619,6 @@ void ClearMRUList()
   for(i=0; i<MRU_LIST_SIZE; i++) {
     g_mru_list[i][0] = '\0';
   }
-}
 
-void SetClearMRUListMenuitemState(HMENU hMenu)
-{
-  MENUITEMINFO mii;
-  my_memset(&mii, 0, sizeof(mii));
-  mii.cbSize = sizeof(mii);
-  mii.fMask = MIIM_STATE;
-
-  if(g_mru_list[0][0]) {
-    mii.fState = MFS_ENABLED;
-  }
-  else {
-    mii.fState = MFS_GRAYED;
-  }
-
-  SetMenuItemInfo(hMenu, IDM_CLEAR_MRU_LIST,FALSE,&mii);
+  BuildMRUMenus();
 }

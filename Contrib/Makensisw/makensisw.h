@@ -53,7 +53,8 @@
 #define MINWIDTH     350
 #define MINHEIGHT    180
 #define FILE_MENU_INDEX 0
-#define TOOLS_MENU_INDEX  2
+#define EDIT_MENU_INDEX 1
+#define TOOLS_MENU_INDEX 2
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
@@ -106,9 +107,9 @@ typedef struct NSISScriptData {
   HINSTANCE hInstance;
   HWND hwnd;
   HMENU menu;
-  UINT fileMenuId;
-  UINT toolsMenuId;
-  HMENU submenu;
+  HMENU fileSubmenu;
+  HMENU editSubmenu;
+  HMENU toolsSubmenu;
   HANDLE thread;
   HWND focused_hwnd;
   CHARRANGE textrange;
