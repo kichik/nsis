@@ -18,31 +18,31 @@ Here's a short list of some of NSIS' features:
 
 \b SuperPiMP\\&trade; technology (so advanced, so amazing, we won't even tell you what it is)
 
-\b Generates self contained, win32 executable installers
+\b Generates self contained executable installers
 
-\b Support for zlib or bzip2 data compression. The installer can compress everything together, or individually.
+\b Support for ZLib, BZip2 and LZMA data compression (files can be compressed individually or together) 
 
-\b Uninstall support (installer can automagically generate an uninstaller)
+\b Uninstall support (installer can generate an uninstaller) 
 
 \b Customizable user interface (dialogs, fonts, backgrounds, icons, text, checkmarks, images etc.)
 
 \b Classic and Modern wizard interface
 
-\b Fully multilingual, support for multiple languages in one installer. More than 35 translations are available.
+\b Fully multilingual, support for multiple languages in one installer. More than 35 translations are available, but you can also create your own 
 
-\b Page system that lets you configure the wizard pages and add custom pages
+\b Page system: You can add standard wizard pages or custom pages 
 
-\b User selection of installation components, treeview for component selection
+\b User selection of installation components, tree for component selection
 
 \b Multiple install configurations (usually Minimal, Typical, Full), and custom configuration
 
-\b Installer self-verification using a CRC32
+\b Installer self-verification using a CRC32 checksum
 
-\b Approximately 20-40k overhead over compressed data size (depending on features enabled, compression algorithm, and so on - the default options are ~34k).
+\b Small overhead over compressed data size (34 KB with default options)
 
-\b Ability to display a license agreement, text or RTF
+\b Ability to display a license agreement in text or RTF format
 
-\b Ability to detect destination directory from the registry, and let the user override (or not let them)
+\b Ability to detect destination directory from the registry
 
 \b Easy to use plug-in system (lots of plug-ins for creation of custom dialogs, internet connections, HTTP downloading, file patching, Win32 API calls etc. are included)
 
