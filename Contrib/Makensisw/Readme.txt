@@ -167,13 +167,11 @@ Version History
  - Bunch of other stuff not worth mentioning
  - Define Symbols menu (Ctrl+D)
 
-1.10
+2.0
  - Define Symbols is available even if a script is not loaded.
  - Defined Symbols are saved on exit and reloaded on start.
  - Added NSIS Update menu.
  - Added toolbar for commonly used menus.
-
-1.11
  - Made the Toolbar style flat
  
 Copyright Information
