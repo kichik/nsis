@@ -179,6 +179,13 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\default.exe"
   SectionEnd
+  
+  Section "Tiny User Interface" SecContribTinyUI
+    SectionIn 1 2
+    SetOutPath "$INSTDIR\Contrib\UIs"
+    File "..\Contrib\UIs\sdbarker_tiny.exe"
+  SectionEnd
+  
 SubSectionEnd
 
 Section "Extra Icons" SecContribIcons
@@ -707,6 +714,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribTinyUI} "A tiny version of the default UI"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribIcons} "Icon files contributed by other NSIS developers"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribLang} "Language files used to support multiple languages in an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribPlugins} "Useful plugins that extend NSIS's functionality"
