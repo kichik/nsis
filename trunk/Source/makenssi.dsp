@@ -248,6 +248,10 @@ SOURCE=.\script.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ShConstants.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\strlist.cpp
 # End Source File
 # Begin Source File
