@@ -30,14 +30,14 @@
   !endif
   
   !ifdef MUI_DIRSELECTPAGE
-    DirText /LANG=${LANG_SPANISH} "Se instalará ${NAME} en el siguiente directorio.$\r$\n$\r$\nPara instalar en este directorio, presione Instalar. Para instalar en un directorio distinto, presione Buscar y seleccione otro directorio." " "
+    DirText /LANG=${LANG_SPANISH} "Se instalará ${NAME} en el siguiente directorio.$\r$\n$\r$\nPara instalar en este directorio, presione Instalar. Para instalar en un directorio distinto, presione Examinar y seleccione otro directorio." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_SPANISH} "Elegir lugar de instalación"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_SPANISH} "Elija el directorio en el que instalar ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_SPANISH} "Directorio de destino"
   !endif
   
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_SPANISH} "Siguiente >"
+    InstallButtonText /LANG=${LANG_SPANISH} "&Siguiente >"
   !endif
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_SPANISH} "Instalando"
@@ -51,10 +51,10 @@
   !endif
 
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_SPANISH} "< Atrás"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_SPANISH} "Siguiente >"
+    LangString MUI_BUTTONTEXT_BACK ${LANG_SPANISH} "< &Atrás"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_SPANISH} "&Siguiente >"
     LangString MUI_BUTTONTEXT_CANCEL ${LANG_SPANISH} "Cancelar"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_SPANISH} "Instalar"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_SPANISH} "&Instalar"
   !endif
   
   
@@ -73,14 +73,14 @@
   !endif
   
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_SPANISH} "Siguiente >"
+    InstallButtonText /LANG=${LANG_SPANISH} "&Siguiente >"
   !endif
   
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_SPANISH} "< Atrás"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_SPANISH} "Siguiente >"
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_SPANISH} "< &Atrás"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_SPANISH} "&Siguiente >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_SPANISH} "Cancelar"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_SPANISH} "Desinstalar"
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_SPANISH} "&Desinstalar"
   !endif
     
 !endif
