@@ -12,6 +12,20 @@ class IGrowBuf
     virtual void *get()=0;
 };
 
+class IMMap
+{
+  public:
+    virtual void resize(int newlen)=0;
+    virtual int getsize()=0;
+    virtual void *get(int offset, int size)=0;
+    virtual void *getmore(int offset, int size)=0;
+    virtual void release()=0;
+    virtual void release(void *view)=0;
+    virtual void clear()=0;
+    virtual void setro(BOOL bRO)=0;
+    virtual void flush(int num)=0;
+};
+
 class GrowBuf : public IGrowBuf
 {
   public:
@@ -461,87 +475,387 @@ class FastStringList : public SortedStringListND<struct string_t>
     }
 };
 
-class MMapBuf : public IGrowBuf
+class MMapFile : public IMMap
 {
   public:
-    MMapBuf() 
-    { 
-      m_hFile = INVALID_HANDLE_VALUE;
-      m_hFileMap = 0;
-      m_mapping=NULL;
-      m_gb_u=0;
-      m_alloc=m_used=0;
-    }
-    ~MMapBuf() 
-    { 
-      if (m_mapping) UnmapViewOfFile(m_mapping);
-      if (m_hFileMap) CloseHandle(m_hFileMap);
-      if (m_hFile != INVALID_HANDLE_VALUE) CloseHandle(m_hFile);
-    }
-
-    int add(const void *data, int len) 
-    { 
-      if (len<=0) return 0;
-      resize(getlen()+len);
-      memcpy((char*)get()+getlen()-len,data,len);
-      return getlen()-len;
-    }
-
-    void resize(int newlen)
+    MMapFile()
     {
-      if (!m_gb_u && newlen < (16<<20)) // still in db mode
+      m_hFile = INVALID_HANDLE_VALUE;
+      m_hFileMap = NULL;
+      m_pView = NULL;
+      m_iSize = 0;
+      m_bReadOnly = FALSE;
+      m_bTempHandle = FALSE;
+
+      if (!m_iAllocationGranularity)
       {
-        m_gb.resize(newlen);
-        return;
+        SYSTEM_INFO si;
+        GetSystemInfo(&si);
+        m_iAllocationGranularity = (int) si.dwAllocationGranularity;
       }
-      m_gb_u=1;
-      m_used=newlen;
-      if (newlen > m_alloc)
+    }
+
+    ~MMapFile()
+    {
+      clear();
+    }
+
+    void clear()
+    {
+      release();
+
+      if (m_hFileMap)
+        CloseHandle(m_hFileMap);
+      if (m_bTempHandle && m_hFile)
+        CloseHandle(m_hFile);
+
+      m_hFileMap = 0;
+    }
+
+    void setro(BOOL bRO)
+    {
+      m_bReadOnly = bRO;
+    }
+
+    int setfile(HANDLE hFile, DWORD dwSize)
+    {
+      release();
+
+      if (m_hFileMap)
+        CloseHandle(m_hFileMap);
+      if (m_bTempHandle && m_hFile)
+        CloseHandle(m_hFile);
+
+      m_hFileMap = 0;
+
+      m_hFile = hFile;
+      m_bTempHandle = FALSE;
+
+      if (m_hFile == INVALID_HANDLE_VALUE)
+        return 0;
+
+      m_iSize = (int) dwSize;
+
+      if (m_iSize <= 0)
+        return 0;
+
+      m_hFileMap = CreateFileMapping(m_hFile, NULL, PAGE_READONLY, 0, m_iSize, NULL);
+
+      if (!m_hFileMap)
+        return 0;
+
+      m_bReadOnly = TRUE;
+
+      return 1;
+    }
+
+    void resize(int newsize)
+    {
+      release();
+
+      if (newsize > m_iSize)
       {
-        if (m_mapping) UnmapViewOfFile(m_mapping);
-        if (m_hFileMap) CloseHandle(m_hFileMap);
-        m_hFileMap=0;
-        m_mapping=NULL;
-        m_alloc = newlen + (16<<20); // add 16mb to top of mapping
+        if (m_hFileMap)
+          CloseHandle(m_hFileMap);
+
+        m_hFileMap = 0;
+
+        m_iSize = newsize;
+
         if (m_hFile == INVALID_HANDLE_VALUE)
         {
-          char buf[MAX_PATH],buf2[MAX_PATH];
-          GetTempPath(MAX_PATH,buf);
-          GetTempFileName(buf,"nsd",0,buf2);
-          m_hFile=CreateFile(buf2,GENERIC_READ|GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE|FILE_FLAG_SEQUENTIAL_SCAN,NULL);
+          char buf[MAX_PATH], buf2[MAX_PATH];
+
+          GetTempPath(MAX_PATH, buf);
+          GetTempFileName(buf, "nsd", 0, buf2);
+
+          m_hFile = CreateFile(
+            buf2,
+            GENERIC_READ | GENERIC_WRITE,
+            0,
+            NULL,
+            CREATE_ALWAYS,
+            FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE | FILE_FLAG_SEQUENTIAL_SCAN,
+            NULL
+          );
+
+          m_bTempHandle = TRUE;
         }
+
         if (m_hFile != INVALID_HANDLE_VALUE)
-          m_hFileMap=CreateFileMapping(m_hFile,NULL,PAGE_READWRITE,0,m_alloc,NULL);
-        if (m_hFileMap) 
-          m_mapping=MapViewOfFile(m_hFileMap,FILE_MAP_WRITE,0,0,m_alloc);
-        if (!m_mapping)
         {
+          m_hFileMap = CreateFileMapping(
+            m_hFile,
+            NULL,
+            m_bReadOnly ? PAGE_READONLY : PAGE_READWRITE,
+            0,
+            m_iSize,
+            NULL
+          );
+        }
+
+        if (!m_hFileMap)
+        {
+          MessageBox(0, "failed", "asd", MB_OK);
           extern FILE *g_output;
           extern void quit(); extern int g_display_errors;
-          if (g_display_errors) 
+          if (g_display_errors)
           {
-            fprintf(g_output,"\nInternal compiler error #12345: error mmapping datablock to %d.\n",m_alloc);
+            fprintf(g_output,"\nInternal compiler error #12345: error creating mmap the size of %d.\n", m_iSize);
             fflush(g_output);
           }
           quit();
         }
+      }
+    }
+
+    int getsize()
+    {
+      return m_iSize;
+    }
+
+    void *get(int offset, int size)
+    {
+      if (m_pView)
+        release();
+
+      if (!m_iSize || offset + size > m_iSize)
+      {
+        extern FILE *g_output;
+        extern void quit(); extern int g_display_errors;
+        if (g_display_errors) 
+        {
+          fprintf(g_output,"\nInternal compiler error #12345: error mmapping file (%d, %d) is out of range.\n", offset, size);
+          fflush(g_output);
+        }
+        quit();
+      }
+
+      // fix offset
+      int alignedoffset = offset - (offset % m_iAllocationGranularity);
+      size += offset - alignedoffset;
+
+      m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
+      
+      if (!m_pView)
+      {
+        extern FILE *g_output;
+        extern void quit(); extern int g_display_errors;
+        if (g_display_errors) 
+        {
+          fprintf(g_output,"\nInternal compiler error #12345: error mmapping datablock to %d.\n", size);
+          fflush(g_output);
+        }
+        quit();
+      }
+
+      return (void *)((char *)m_pView + offset - alignedoffset);
+    }
+
+    void *getmore(int offset, int size)
+    {
+      void *pView;
+      void *pViewBackup = m_pView;
+      m_pView = 0;
+      pView = get(offset, size);
+      m_pView = pViewBackup;
+      return pView;
+    }
+
+    void release()
+    {
+      if (!m_pView)
+        return;
+
+      UnmapViewOfFile(m_pView);
+      m_pView = NULL;
+    }
+
+    void release(void *pView)
+    {
+      if (!pView)
+        return;
+
+      UnmapViewOfFile(pView);
+    }
+
+    void flush(int num)
+    {
+      if (m_pView)
+        FlushViewOfFile(m_pView, num);
+    }
+
+  private:
+    HANDLE m_hFile, m_hFileMap;
+    void *m_pView;
+    int m_iSize;
+    BOOL m_bReadOnly;
+    BOOL m_bTempHandle;
+
+    static int m_iAllocationGranularity;
+};
+
+class MMapFake : public IMMap
+{
+  public:
+    MMapFake()
+    {
+      m_pMem = NULL;
+      m_iSize = 0;
+    }
+
+    void set(const char *pMem, int iSize)
+    {
+      m_pMem = pMem;
+      m_iSize = iSize;
+    }
+
+    int getsize()
+    {
+      return m_iSize;
+    }
+
+    void *get(int offset, int size)
+    {
+      if (offset + size > m_iSize)
+        return NULL;
+      return (void *)(m_pMem + offset);
+    }
+
+    void *getmore(int offset, int size)
+    {
+      return get(offset, size);
+    }
+
+    void resize(int n) {}
+    void release() {}
+    void release(void *p) {}
+    void clear() {}
+    void setro(BOOL b) {}
+    void flush(BOOL b) {}
+
+  private:
+    const char *m_pMem;
+    int m_iSize;
+};
+
+class MMapBuf : public IGrowBuf, public IMMap
+{
+  public:
+    MMapBuf() 
+    { 
+      m_gb_u=0;
+      m_alloc=m_used=0;
+    }
+
+    ~MMapBuf() 
+    { 
+      m_fm.release();
+    }
+
+    int add(const void *data, int len) 
+    { 
+      if (len <= 0) return 0;
+      resize(getlen() + len);
+      memcpy((char*)get(getlen() - len, len), data, len);
+      return getlen() - len;
+    }
+
+    void setro(BOOL bRO)
+    {
+      m_fm.setro(bRO);
+    }
+
+    void resize(int newlen)
+    {
+      if (!m_gb_u && newlen < (16 << 20)) // still in db mode
+      {
+        m_gb.resize(newlen);
+        return;
+      }
+
+      // not in db mode
+      m_gb_u = 1;
+      m_used = newlen;
+
+      if (newlen > m_alloc)
+      {
+        m_alloc = newlen + (16 << 20); // add 16mb to top of mapping
+
+        m_fm.resize(m_alloc);
+
         if (m_gb.getlen())
         {
-          memcpy(m_mapping,m_gb.get(),m_gb.getlen());
+          memcpy(m_fm.get(0, m_gb.getlen()), m_gb.get(), m_gb.getlen());
+          m_fm.flush(m_gb.getlen());
+          m_fm.release();
           m_gb.resize(0);
         }
       }
     }
 
-    int getlen() { if (m_gb_u) return m_used; return m_gb.getlen(); }
-    void *get() { if (m_gb_u) return m_mapping; return m_gb.get(); }
+    int getsize()
+    {
+      if (m_gb_u)
+        return m_fm.getsize();
+      return m_gb.getlen();
+    }
+
+    int getlen()
+    {
+      if (m_gb_u)
+        return m_used;
+      return m_gb.getlen();
+    }
+
+    void *get()
+    {
+      return get(0, m_alloc);
+    }
+
+    void *get(int offset, int size)
+    {
+      if (m_gb_u)
+        return m_fm.get(offset, size);
+      return (void *) ((char *) m_gb.get() + offset);
+    }
+
+    void *getmore(int offset, int size)
+    {
+      if (m_gb_u)
+        return m_fm.getmore(offset, size);
+      return (void *) ((char *) m_gb.get() + offset);
+    }
+
+    void release()
+    {
+      if (m_gb_u)
+        m_fm.release();
+    }
+
+    void release(void *pView)
+    {
+      if (m_gb_u)
+        m_fm.release(pView);
+    }
+
+    void clear()
+    {
+      if (m_gb_u)
+        m_fm.clear();
+    }
+
+    void flush(int num)
+    {
+      if (m_gb_u)
+        m_fm.flush(num);
+    }
 
   private:
     GrowBuf m_gb;
-    int m_gb_u;
+    MMapFile m_fm;
 
-    HANDLE m_hFile, m_hFileMap;
-    void *m_mapping;
+    int m_gb_u;
     int m_alloc, m_used;
 };
 

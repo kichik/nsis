@@ -170,7 +170,9 @@ class CEXEBuild {
     int add_label(const char *name);
     int add_entry(const entry *ent);
     int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
-    int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
+    int add_db_data(IMMap *map); // returns offset
+    int add_db_data(const char *data, int length); // returns offset
+    int add_data(const char *data, int length, IGrowBuf *dblock); // returns offset
     int add_string(const char *string, int process=1); // returns offset (in string table)
     int add_intstring(const int i); // returns offset in stringblock
 
@@ -249,7 +251,7 @@ class CEXEBuild {
 
     // User variables stuff
     int GetUserVarIndex(LineParser &line, int token);
-// Added by ramon 3 jun 2003
+    // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
     UserVarsStringList m_UserVarNames;
     int DeclaredUserVar(const char *VarName);
@@ -316,16 +318,18 @@ class CEXEBuild {
     TinyGrowBuf build_pages, ubuild_pages, *cur_pages;
     TinyGrowBuf build_ctlcolors, ubuild_ctlcolors, *cur_ctlcolors;
 
-    MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
+    MMapBuf build_datablock, ubuild_datablock;
     IGrowBuf *cur_datablock;
+
+    int build_filebuflen;
 
     TinyGrowBuf verbose_stack;
 
     unsigned char *header_data_new;
     int exeheader_size_new;
     int icon_offset;
-    bool branding_image_found; // Added by Amir Szekely 29nd July 2002
-    WORD branding_image_id; // Added by Amir Szekely 29nd July 2002
+    bool branding_image_found;
+    WORD branding_image_id;
     unsigned char *m_unicon_data;
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
