@@ -85,7 +85,10 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   if (g_exec_flags.silent && type >> 20)
     return type >> 20;
   // no silent or no default, just show
-  return MessageBox(g_hwnd, text, g_caption, type & 0x000FFFFF);
+  if (!g_exec_flags.rtl)
+    return MessageBox(g_hwnd, text, g_caption, type & 0x000FFFFF);
+  else
+    return MessageBox(g_hwnd, text, g_caption, (type & 0x000FFFFF) ^ (MB_RIGHT | MB_RTLREADING));
 }
 
 void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {

@@ -467,6 +467,7 @@ union exec_flags {
     int silent;
 #endif
     int instdir_error;
+    int rtl;
   };
   int flags[1];
 };
