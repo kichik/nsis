@@ -2141,7 +2141,7 @@ again:
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-void CEXEBuild::PreperInstTypes()
+void CEXEBuild::PrepareInstTypes()
 {
   if (!(cur_header->flags & CH_FLAGS_NO_CUSTOM))
     cur_header->install_types[NSIS_MAX_INST_TYPES] = DefineInnerLangString(NLF_COMP_CUSTOM);
@@ -2176,7 +2176,7 @@ void CEXEBuild::PreperInstTypes()
 }
 #endif
 
-void CEXEBuild::PreperHeaders(IGrowBuf *hdrbuf)
+void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
 {
   hdrbuf->add(cur_header,sizeof(header));
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -2205,17 +2205,14 @@ void CEXEBuild::PreperHeaders(IGrowBuf *hdrbuf)
   memcpy(hdrbuf->get(),cur_header,sizeof(header));
 }
 
-int CEXEBuild::write_output(void)
+int CEXEBuild::check_write_output_errors() const
 {
-#ifndef NSIS_CONFIG_CRC_SUPPORT
-  build_crcchk=0;
-#endif
   if (has_called_write_output)
   {
     ERROR_MSG("Error (write_output): write_output already called, can't continue\n");
     return PS_ERROR;
   }
-  has_called_write_output++;
+
   if (!build_output_filename[0])
   {
     ERROR_MSG("Error: invalid script: never had OutFile command\n");
@@ -2252,17 +2249,32 @@ int CEXEBuild::write_output(void)
   if (cur_page)
   {
     ERROR_MSG("Error: PageEx still open at EOF, cannot proceed\n");
-    return 1;
+    return PS_ERROR;
   }
 
   // deal with functions, for both install and uninstall modes.
   if (build_cursection_isfunc)
   {
     ERROR_MSG("Error: Function still open at EOF, cannot proceed\n");
-    return 1;
+    return PS_ERROR;
   }
 
+  return PS_OK;
+}
+
+int CEXEBuild::write_output(void)
+{
+#ifndef NSIS_CONFIG_CRC_SUPPORT
+  build_crcchk=0;
+#endif
+
   int err;
+
+  err = check_write_output_errors();
+  if (err != PS_OK)
+    return err;
+
+  has_called_write_output++;
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   err = add_plugins_dir_initializer();
@@ -2293,7 +2305,7 @@ int CEXEBuild::write_output(void)
         return PS_ERROR;
 #ifdef NSIS_CONFIG_COMPONENTPAGE 
       // set sections to the first insttype
-      PreperInstTypes();
+      PrepareInstTypes();
 #endif
       set_uninstall_mode(0);
     }
@@ -2311,7 +2323,7 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   // set sections to the first insttype
-  PreperInstTypes();
+  PrepareInstTypes();
 #endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -2494,7 +2506,7 @@ int CEXEBuild::write_output(void)
     {
       GrowBuf hdrcomp;
 
-      PreperHeaders(&hdrcomp);
+      PrepareHeaders(&hdrcomp);
 
       if (add_data((char*)hdrcomp.get(),hdrcomp.getlen(),&ihd) < 0)
         return PS_ERROR;
@@ -2818,7 +2830,7 @@ int CEXEBuild::uninstall_generate()
 
       set_uninstall_mode(1);
 
-      PreperHeaders(&udata);
+      PrepareHeaders(&udata);
 
       fh.length_of_header=udata.getlen();
       int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
@@ -3113,7 +3125,7 @@ void CEXEBuild::warning_fl(const char *s, ...)
   }
 }
 
-void CEXEBuild::ERROR_MSG(const char *s, ...)
+void CEXEBuild::ERROR_MSG(const char *s, ...) const
 {
 #ifdef _WIN32
   if (display_errors || notify_hwnd)
@@ -3139,7 +3151,7 @@ void CEXEBuild::ERROR_MSG(const char *s, ...)
   }
 }
 
-void CEXEBuild::SCRIPT_MSG(const char *s, ...)
+void CEXEBuild::SCRIPT_MSG(const char *s, ...) const
 {
   if (display_script)
   {
@@ -3151,7 +3163,7 @@ void CEXEBuild::SCRIPT_MSG(const char *s, ...)
   }
 }
 
-void CEXEBuild::INFO_MSG(const char *s, ...)
+void CEXEBuild::INFO_MSG(const char *s, ...) const
 {
   if (display_info)
   {
@@ -3179,7 +3191,7 @@ void CEXEBuild::print_warnings()
 }
 
 #ifdef _WIN32
-void CEXEBuild::notify(notify_e code, char *data)
+void CEXEBuild::notify(notify_e code, char *data) const
 {
   if (notify_hwnd)
   {
