@@ -43,8 +43,7 @@
 #define LANG_STR(x)                   GetStringFromStringTab(x)
 #define LANG_STR_TAB(x)               cur_language_table[-((int)x+1)]
 
-#define INSTALL_STR(x)                (0 - ((sizeof(common_strings) + FIELD_OFFSET(installer_strings, x)) / sizeof(int) + 1))
-//#define INSTALL_STR(x)                (-(int)((FIELD_OFFSET(installer_strings, x) / sizeof(int)) + (sizeof(common_strings) / sizeof(int))))
+#define INSTALL_STR(x)                (~((sizeof(common_strings) + FIELD_OFFSET(installer_strings, x)) / sizeof(int)))
 
 // Installer specific strings
 #define LANG_BTN_BACK                 (INSTALL_STR(backbutton))
@@ -62,14 +61,14 @@
 #define LANG_LICENSE_DATA             (INSTALL_STR(licensedata))
 #define LANG_BTN_LICENSE              (INSTALL_STR(licensebutton))
 
-#define UNINSTALL_STR(x)              (0 - ((sizeof(common_strings) + FIELD_OFFSET(uninstall_strings, x)) / sizeof(int) + 1))
+#define UNINSTALL_STR(x)              (~((sizeof(common_strings) + FIELD_OFFSET(uninstall_strings, x)) / sizeof(int)))
 
 // Uninstall specific strings
 #define LANG_BTN_UNINST               (UNINSTALL_STR(uninstbutton))
 #define LANG_UNINST_TEXT              (UNINSTALL_STR(uninstalltext))
 #define LANG_UNINST_SUBTEXT           (UNINSTALL_STR(uninstalltext2))
 
-#define COMMON_STR(x)                 (-1 - (int)(FIELD_OFFSET(common_strings, x) / sizeof(int)))
+#define COMMON_STR(x)                 (~(FIELD_OFFSET(common_strings, x) / sizeof(int)))
 
 // Common strings
 #define LANG_BRANDING                 (COMMON_STR(branding))
