@@ -27,6 +27,9 @@
 ; HMODULE LoadLibrary(LPCTSTR lpFileName);
 !define sysLoadLibrary "kernel32::LoadLibraryA(t) i"
 
+; BOOL FreeLibrary(HMODULE hModule);
+!define sysFreeLibrary "kernel32::FreeLibrary(i) i"
+
 ; HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName);
 !define sysLoadCursor "user32::LoadCursorA(i, t) i"
 

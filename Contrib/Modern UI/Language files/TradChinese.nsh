@@ -1,4 +1,4 @@
-;NSIS Modern User Interface - 語言檔案
+;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.6
 
 ; Language: "Chinese (Traditional)" (1028)
@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;以語言本身的方式，寫下語言名稱
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;(以語言本身的方式，寫下語言名稱) Name of the language in the language itself
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
@@ -16,7 +16,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "按一下 [安裝(I)] 開始安裝過程。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "歡迎使用 ${MUI_PRODUCT} 安裝精靈"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "這將在你的電腦安裝 ${MUI_PRODUCT} 。\r\n\r\n在開始安裝之前，建議您先關閉其他所有應用程式。這將允許安裝程式更新特定的系統檔案，而不需要重新啟動你的系統。\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "這將在你的電腦安裝 ${MUI_PRODUCT} 。\r\n\r\n在開始安裝之前，建議您先關閉其他所有應用程式。這將允許\安裝程式更新特定的系統檔案，而不需要重新啟動你的系統。\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授權合約"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安裝 ${MUI_PRODUCT} 之前，請檢閱授權條款。"

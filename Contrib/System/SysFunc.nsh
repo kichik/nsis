@@ -96,14 +96,16 @@ Function systemMessageBox
 
      ; may be Module is module handle?
      StrCpy $1 $2
-     IntCmp $1 0 "0" smbnext smbnext
-
-     ; Get module handle
-     System::Call '${sysGetModuleHandle}($2) .r1'
-     IntCmp $1 0 "0" smbnext smbnext
+     IntCmp $1 0 0 smbnext smbnext
 
      ; Load module and get handle
      System::Call '${sysLoadLibrary}($2) .r1'
+     IntCmp $1 0 "0" smbnext smbnext
+
+     ; Get module handle. This may look stupid (to call GetModuleHandle in case
+     ; when the LoadLibrary doesn't works, but LoadLibrary couldn't return 
+     ; a handle to starting process (for 'i 0').
+     System::Call '${sysGetModuleHandle}($2) .r1'
 smbnext:
 
      ; Create MSGBOXPARAMS structure
@@ -113,6 +115,12 @@ smbnext:
      ; free MSGBOXPARAMS structure
      System::Free $0
 
+     ; have we got ready module handle at start?
+     IntCmp $2 0 0 smbskipfree smbskipfree
+     ; No, then free the module
+     System::Call '${sysFreeLibrary}(r1)'
+
+smbskipfree:
      System::Store "P0 l"   
 FunctionEnd
 
