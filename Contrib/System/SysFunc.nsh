@@ -44,7 +44,7 @@ Function GetInstallerExeName
    IntOp $R2 $R2 - $R1
    StrCpy $R0 $CMDLINE $R2 $R1  
 
-   GetFullPathName $R0 $R0      ; expand file name to full path
+   SearchPath $R0 $R0      ; expand file name to full path
 
    Pop $R2
    Pop $R1
