@@ -47,8 +47,10 @@ Section "NSIS Development System (required)" SecCore
   File ..\makensisw.exe
   File ..\makensis.htm
   File ..\license.txt
+  IfFileExists $INSTDIR\nsisconf.nsi "" +2
+  Rename $INSTDIR\nsisconf.nsi $INSTDIR\nsisconf.nsh
   SetOverwrite off
-  File ..\nsisconf.nsi
+  File ..\nsisconf.nsh
   SetOverwrite try
 
   SetOutPath $INSTDIR\Docs
@@ -62,7 +64,6 @@ SectionEnd
 Section "NSIS Examples (recommended)" SecExample
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
-  Delete $INSTDIR\*.nsh
   Delete $INSTDIR\viewhtml.nsi
   Delete $INSTDIR\waplugin.nsi
   Delete $INSTDIR\example*.nsi
@@ -657,6 +658,7 @@ Section Uninstall
   Delete $INSTDIR\license.txt
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
+  Delete $INSTDIR\nsisconf.nsh
   Delete $INSTDIR\Examples\makensis.nsi
   Delete $INSTDIR\Examples\example1.nsi
   Delete $INSTDIR\Examples\example2.nsi
