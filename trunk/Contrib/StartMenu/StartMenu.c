@@ -285,6 +285,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         else *buf = 0;
         GetWindowText(hwLocation, buf + (*buf ? 1 : 0), MAX_PATH);
         pushstring(buf);
+        pushstring("success");
       }
     break;
   }

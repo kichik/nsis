@@ -15,9 +15,12 @@ which is the program group default name, and some more optional parameters:
                            will have > as its first character and you
                            should not create the program group.
 
-The function pushes the folder selection back to the stack. It does not push the 
-full path but only the selected sub-folder. It's up to you to decide if to put 
-it in the current user or all users start menu.
+The function pushes "success", "cancel" or an error to the stack. If there was no
+error and the user didn't press on cancel it will push the selected folder name
+after "success". If the user checked the no shortcuts checkbox the '>' will be
+appended to the folder name. The function does not push the full path but only the
+selected sub-folder. It's up to you to decide if to put it in the current user or
+all users start menu.
 
 Look at Example.nsi for an example.
 
