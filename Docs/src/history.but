@@ -9,6 +9,10 @@
 
 \b Extraction progress
 
+\b Improved large files handling (way lower requirements to compile a 2GB installer now)
+
+\b Added \R{afilebufsize}{FileBufSize}
+
 \b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Easier page macro system, language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed

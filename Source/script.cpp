@@ -2749,6 +2749,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (build_optimize_datablock==-1) PRINTHELP()
       SCRIPT_MSG("SetDatablockOptimize: %s\n",line.gettoken_str(1));
     return PS_OK;
+    case TOK_FILEBUFSIZE:
+      build_filebuflen=line.gettoken_int(1);
+      build_filebuflen<<=20;
+      if (build_filebuflen<=0)
+      {
+        ERROR_MSG("Error: FileBufSize: invalid buffer size -- %d\n",build_filebuflen);
+        return PS_ERROR;
+      }
+      SCRIPT_MSG("FileBufSize: %smb (%d bytes)\n",line.gettoken_str(1),build_filebuflen);
+    return PS_OK;
     case TOK_ADDSIZE:
       {
         int s;
@@ -4298,7 +4308,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (*p) PRINTHELP()
           SCRIPT_MSG("WriteRegBin: %s\\%s\\%s=%s\n",
             line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
-          ent.offsets[3]=add_data(data,data_len);
+          ent.offsets[3]=add_db_data(data,data_len);
           if (ent.offsets[3] < 0) return PS_ERROR;
           ent.offsets[4]=3;
         }
@@ -5036,7 +5046,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     {
       if ((d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
       {
-        HANDLE hFile,hFileMap;
+        MMapFile mmap;
+        HANDLE hFile;
         DWORD len;
         (*total_files)++;
         sprintf(newfn,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
@@ -5054,25 +5065,12 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
-        hFileMap=NULL;
         len = GetFileSize(hFile, NULL);
-        if (len && !(hFileMap = CreateFileMapping(hFile, NULL, PAGE_READONLY, 0, 0, NULL)))
+        if (len && !mmap.setfile(hFile, len))
         {
           CloseHandle(hFile);
           ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
-        }
-        char *filedata=NULL;
-        if (len)
-        {
-          filedata=(char*)MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
-          if (!filedata)
-          {
-            if (hFileMap) CloseHandle(hFileMap);
-            CloseHandle(hFile);
-            ERROR_MSG("%sFile: failed mmapping file \"%s\"\n",generatecode?"":"Reserve",newfn);
-            return PS_ERROR;
-          }
         }
 
         if (generatecode&1)
@@ -5113,10 +5111,9 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             ent.offsets[1]=add_string(buf);
           }
         }
-        ent.offsets[2]=add_data(filedata?filedata:"",len);
+        ent.offsets[2]=add_db_data(&mmap);
 
-        if (filedata) UnmapViewOfFile(filedata);
-        if (hFileMap) CloseHandle(hFileMap);
+        mmap.clear();
 
         if (ent.offsets[2] < 0)
         {
