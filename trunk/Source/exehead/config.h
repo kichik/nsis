@@ -26,16 +26,6 @@
 // really a big deal, but not usually needed).
 #define NSIS_MAX_STRLEN 1024
 
-#define USER_VARS_COUNT 26
-
-typedef char NSIS_STRING[NSIS_MAX_STRLEN];
-
-// MAX_NAMED_USER_VARS defines the maximum of named user variables
-// the complier also use this value to abort if exceded
-// The real maximum is (0x0FFF - USER_VARS_COUNT) = 4069
-// But 500 variables are a more than enough (and only consume more 512kb of memory)
-#define MAX_NAMED_USER_VARS 500
-
 // NSIS_MAX_INST_TYPES specified the  maximum install types.
 // note that this should not exceed 32, ever.
 #define NSIS_MAX_INST_TYPES 32
@@ -363,6 +353,26 @@ typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 #ifndef NSIS_SUPPORT_STANDARD_PREDEFINES
 #define NSIS_SUPPORT_STANDARD_PREDEFINES
 #endif
+
+// This is the old static var count that occupies memory
+// From $0 to $PLUGINSDIR
+#define USER_VARS_COUNT 26
+
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+// This is the total number of old static var
+// From $0 to $HWNDPARENT
+#define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 36
+
+#define VARS_SECTION_NAME ".ndata"
+
+typedef char NSIS_STRING[NSIS_MAX_STRLEN];
+
+// MAX_NAMED_USER_VARS defines the maximum of named user variables
+// the complier also use this value to abort if exceded
+// The real maximum is (0x0FFF - USER_VARS_COUNT) = 4068
+#define MAX_NAMED_USER_VARS (0x0FFF - USER_VARS_COUNT)
+
+#endif //NSIS_SUPPORT_NAMED_USERVARS
 
 #endif//!APSTUDIO_INVOKED
 
