@@ -97,6 +97,11 @@ Section "NSI Development Shell Extensions" SecExtention
     StrCmp $1 "NSISFile" Label1
     WriteRegStr HKCR ".nsi" "backup_val" $1
   Label1:
+  WriteRegStr HKCR ".nsh" "" "NSHFile"
+  WriteRegStr HKCR "NSHFile" "" "NSI Script File"
+  WriteRegStr HKCR "NSHFile\shell" "" "open"
+  WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensis.exe,0
+  WriteRegStr HKCR "NSHFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR ".nsi" "" "NSISFile"
   WriteRegStr HKCR "NSISFile" "" "NSI Script File"
   WriteRegStr HKCR "NSISFile\shell" "" "open"
@@ -483,7 +488,19 @@ Section Uninstall
       DeleteRegValue HKCR ".nsi" "backup_val"
   NoOwn:
 
+  ReadRegStr $1 HKCR ".nsh" ""
+  StrCmp $1 "NSHFile" 0 NoOwn2 ; only do this if we own it
+    ReadRegStr $1 HKCR ".nsh" "backup_val"
+    StrCmp $1 "" 0 RestoreBackup2 ; if backup == "" then delete the whole key
+      DeleteRegKey HKCR ".nsh"
+    Goto NoOwn
+    RestoreBackup2:
+      WriteRegStr HKCR ".nsh" "" $1
+      DeleteRegValue HKCR ".nsh" "backup_val"
+  NoOwn2:
+
   DeleteRegKey HKCR "NSISFile"
+  DeleteRegKey HKCR "NSHFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
   DeleteRegKey HKLM SOFTWARE\NSIS
 
