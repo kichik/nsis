@@ -111,7 +111,7 @@ with a custom user interface.</p>
   like the wizards of recent Windows versions. This new interface 
   also features new graphics and a description area on the
   component selection page.</p>
-<p class="text">To use this new interface for for installer, you need 
+<p class="text">To use this new interface for your installer, you need 
   to add some code to your NSIS script. Read this document for more info!</p>
 <p class="header">Requirements</p>
 <p class="text"><a href="http://nsis.sourceforge.net">NSIS 2 beta 0 (or later)</a></p>
@@ -158,7 +158,7 @@ add the following things (in order, from the beginning of the script):</p>
   <p class="text"><span class="bold">MUI_DIRECTORYPAGE</span><br>
   Show the directory selection page.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br>
-  Show the Start Menu Folder selection page page.</p>
+  Show the Start Menu Folder selection page.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_STARTMENU_VARIABLE</span><br>
   Variable to store the current Start Menu Folder. Default is $9.
@@ -171,15 +171,23 @@ add the following things (in order, from the beginning of the script):</p>
   Show the Finish page.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN</span><br>
-  Applcation which the user can select to run (using a checkbox).
+  Application which the user can select to run (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS</span><br>
   Parameters for the application to run. Don't forget to escape double
   quotes ($\") in the value.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br>
+  Do not check the 'Run program' checkbox by default</p>
+  </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME</span><br>
   File which the user can select to view (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.
   Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br>
+  Do not check the 'Show Readme' checkbox by default</p>
+  </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br>
   Do not automatically jump to the finish page, to allow the user to
   check the log.</p>
@@ -227,7 +235,7 @@ add the following things (in order, from the beginning of the script):</p>
   Please help to translate the new strings and post them at the
   <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
   <p class="subheader">5. Define interface settings (optional)</p>
-  <p class="text">You can also change the settings of the interface by usings defines:</p>
+  <p class="text">You can also change the settings of the interface by using defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
   <p class="text">The following settings are available: <i>(default values)</i></p>
@@ -266,7 +274,7 @@ add the following things (in order, from the beginning of the script):</p>
   after all the sections to display the finish-header:</p>
 <pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
 <p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
-Unintaller section:</p>
+Uninstaller section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
@@ -338,6 +346,11 @@ Function FunctionName
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
 FunctionEnd
 </pre>
+<p class="text">To read or write values to the INI Files on runtime, use these macro's:</p>
+<pre class="margin">
+!insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
+!insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
+</pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
   Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br>
@@ -382,21 +395,30 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
+<li class="changelog">1.62 - December 14, 2002
+  <ul>
+    <li>No problems anymore when using both 'Run program' and 'Show Readme'
+    on the finish page
+    <li>Default state of checkboxes on the finish page can be changed
+    <li>Welcome / Finish pages compatible with custom DPI settings
+    <li>Converted Install Options INI files to use dialog units
+  </ul>
+<p class="text"></p>
 <li class="changelog">1.61 - December 5, 2002
   <ul>
     <li>Final version for NSIS 2 beta 0
     <li>modern3.exe UI without description area
     <li>Added define to show uninstall confirm page
     <li>Added language string for finish page title and continue to uninstall
-    <li>Define for parameters for the application to run on the finishpage
+    <li>Define for parameters for the application to run on the finish page
     <li>Bugfixes
   </ul>
 <p class="text"></p>
 <li class="changelog">1.6 - November 18, 2002
   <ul>
     <li>Welcome / Finish pages
-    <li>Automatic ask for reboot on finish page
-    <li>Create no shortcut option on Start Menu Folder selection page
+    <li>Automatic ask for reboot on the finish page
+    <li>Create no shortcut option on the Start Menu Folder selection page
     <li>Customizing GUIInit functions easier
     <li>Minor font / UI changes
   </ul>
