@@ -22,24 +22,27 @@ href="http://www.nullsoft.com/free/nsis/">NSIS</A> installer. Installer Options 
 dialog box which will be displayed inside of the NSIS window. The dialog box is
 defined by an INI file, which allows you to define the layout of controls by
 changing the INI file.
-<P>To use the DLL, you should include it as part of your installation.
-Extract it to known location (probably $TEMP), and then load it using CallInstDLL, passing one parameter on the stack.
-The one parameter is a name of an .ini file that defines the window.
+<P>Using the new NSIS 2 plugin system, you don't have to worry about extracting and removing
+the DLL anymore. You can also use the Plugins directory to store the INI files. The contents
+of the directory will be removed when the installer is being closed.
+
 Example: <PRE>
-	GetTempFileName $R0
-	File /oname=$R0 inst.ini
-	InstallOptions::dialog $R0
+	;Extract INI File to Plugins directory
+	InitPluginsDir
+	File /oname=$PLUGINSDIR\test.ini test.ini
+	
+	InstallOptions::dialog $PLUGINSDIR\test.ini
 	Pop $0
-	; ($0 would be "success" "cancel" "back" or some other value on error.
+	; ($0 would be "success" "cancel" "back" or some other value on error)
 
-	ReadINIStr $1 $R0 "Field 1" State ; $1 = field #1's state
-
-	Delete $R0
+	ReadINIStr $1 $R0 "Field 1" State ; $1 = Field #1's state
 </PRE>
 It is often very useful to call InstallOptions from a NSIS custom page callback function.
 <HR>
 <A name=ini><B>INI File Settings:</B>
-<P>The INI file has one required section. This section includes the number of controls to be created as well as general window attributes. The INI file also includes a variable number of Field sections which are used to create the controls to be displayed.
+<P>The INI file has one required section. This section includes the number of controls to
+be created as well as general window attributes. The INI file also includes a variable number
+of Field sections which are used to create the controls to be displayed.
 <P>The required section is named "<I>Settings</I>". It will contain the
 following values:
 <UL>
@@ -117,7 +120,8 @@ numbers from 1 to NumFields. Each Field section contains the following values:
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>Text</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>Specifies the caption of a label, checkbox, or radio button control. For icon and bitmaps control this specifies the path to the image.
+      <TD vAlign=top bgColor=#eeeeee>Specifies the caption of a label, checkbox, or radio button control.
+      For icon and bitmaps control this specifies the path to the image.
         </TD></TR>
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>State</B></TD>
@@ -175,7 +179,8 @@ numbers from 1 to NumFields. Each Field section contains the following values:
         the bottom value and ensure it is large enough. <BR>NOTE (2):
         FileRequest and DirRequest controls will allocate 20 pixels to the
         browse button. Make this control wide enough the contents of the textbox
-        can be seen. Note that you can specify negative coordinates to specify the distance from the right or bottom edge.</FONT></TD></TR>
+        can be seen. Note that you can specify negative coordinates to specify the
+        distance from the right or bottom edge.</FONT></TD></TR>
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>Filter</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
@@ -256,7 +261,10 @@ numbers from 1 to NumFields. Each Field section contains the following values:
         list.</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></UL>
 <HR>
 <A name="ui"><B>Fonts and colors:</B>
-<P>InstallOptions supports the new UI enhancements in the new NSIS 2. To support them, InstallOptions now has two new functions, initDialog, and show. The first creates the dialog but doesn't show it. It pushes the HWND of the custom dialog to the stack. To get the HWND of any of the controls use:<BR><BR>
+<P>InstallOptions supports the new UI enhancements in the new NSIS 2. To support them,
+InstallOptions now has two new functions, initDialog, and show.
+The first creates the dialog but doesn't show it. It pushes the HWND of the custom dialog to the stack.
+To get the HWND of any of the controls use:<BR><BR>
 <PRE>	GetDlgItem (output var) (hwnd of the custom dialog) (1200 + field number - 1)</PRE>
 To finally show the tweaked dialog use the show function.
 
@@ -286,6 +294,11 @@ Here is a little example:
 <A name=history><A name=top><B>History:</B>
 <P>
 <UL>
+  <LI><a name=DLL2.0>DLL version 2.0 (12/14/2002) Changes by Joost Verburg
+  <UL>
+     <li>Works with custom font and DPI settings
+     <li>INI files should contain dialog units now, no pixels
+  </UL>
   <LI><a name=DLL1.7>DLL version 1.7 beta (11/2/2002)
   <UL>
      <li>Added initDialog and show DLL functions
