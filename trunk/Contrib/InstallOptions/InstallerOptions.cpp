@@ -15,7 +15,20 @@
 #include <cderr.h>
 #include "resource.h"
 
+#define popstring dontuseme
 #include "../exdll/exdll.h"
+#undef popstring
+
+static int popstring(char *str)
+{
+  stack_t *th;
+  if (!g_stacktop || !*g_stacktop) return 1;
+  th=(*g_stacktop);
+  if (str) lstrcpy(str,th->text);
+  *g_stacktop = th->next;
+  GlobalFree((HGLOBAL)th);
+  return 0;
+}
 
 #define strcpy(x,y) lstrcpy(x,y)
 #define strncpy(x,y,z) lstrcpyn(x,y,z)
@@ -31,7 +44,6 @@ char *STRDUP(const char *c)
   char *t=(char*)MALLOC(lstrlen(c)+1);
   return lstrcpy(t,c);
 }
-
 
 #define FIELD_LABEL        (1)
 #define FIELD_ICON         (2)

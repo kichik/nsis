@@ -1042,8 +1042,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.hInsertAfter=TVI_LAST;
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
-        process_string_fromtab(0,sec->name_ptr);
-        tv.item.pszText=ps_tmpbuf;
+        tv.item.pszText=process_string_fromtab(0,sec->name_ptr);
         tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
 
         {
@@ -1098,8 +1097,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (tv.hItem=hTreeItems[x])
     {
       tv.mask=TVIF_TEXT;
-      process_string_fromtab(0,ns);
-      tv.pszText=ps_tmpbuf;
+      tv.pszText=process_string_fromtab(0,ns);
       TreeView_SetItem(hwndTree1,&tv);
     }
   }
@@ -1421,6 +1419,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       if (!(inst_flags&CH_FLAGS_DETAILS_NEVERSHOW)) ShowWindow(insthwnd,SW_SHOWNA);
       else insthwndbutton=NULL;
     }
+    progress_bar_pos=0;
     progress_bar_len=num;
 
     g_progresswnd=GetUIItem(IDC_PROGRESS);
