@@ -11,25 +11,10 @@
 
 #include "zutil.h"
 #include "infblock.h"
+#include "inftrees.h"
+#include "infcodes.h"
+#include "infutil.h"
 
-struct inflate_blocks_state { int dummy; }; /* for buggy compilers */
-
-
-/* inflate private state */
-struct internal_state {
-
-  /* mode dependent information */
-  union {
-    uInt method;        /* if FLAGS, method byte */
-    struct {
-      uLong was;                /* computed check value */
-      uLong need;               /* stream check value */
-    } check;            /* if CHECK, check values to compare */
-    uInt marker;        /* if BAD, inflateSync's marker bytes count */
-  } sub;        /* submode */
-
-  inflate_blocks_statef blocks;            /* current inflate_blocks state */
-};
 
 
 int ZEXPORT inflateReset(z_streamp z)
@@ -41,15 +26,16 @@ int ZEXPORT inflateReset(z_streamp z)
   return Z_OK;
 }
 
+static struct internal_state __mstate;
 
 int ZEXPORT inflateInit(z_streamp z)
 {
-  int inflate_blocks_getssize(void);
-  void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s);
+  void inflate_blocks_init(z_streamp z,struct inflate_blocks_state *s);
 
-  if ((z->state =
-    (struct internal_state FAR *) ZALLOC(z,1,sizeof(struct internal_state)+inflate_blocks_getssize())) == Z_NULL)
-    return Z_MEM_ERROR;
+  z->state=&__mstate;
+//  if ((z->state =
+  //  (struct internal_state FAR *) ZALLOC(z,1,sizeof(struct internal_state))) == Z_NULL)
+    //return Z_MEM_ERROR;
 
   inflate_blocks_init(z,&z->state->blocks);
 

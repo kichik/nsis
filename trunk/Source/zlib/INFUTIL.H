@@ -92,6 +92,19 @@ extern int inflate_flush OF((
     z_streamp ,
     int));
 
-struct internal_state      {int dummy;}; /* for buggy compilers */
+struct internal_state {
+
+  /* mode dependent information */
+  union {
+    uInt method;        /* if FLAGS, method byte */
+    struct {
+      uLong was;                /* computed check value */
+      uLong need;               /* stream check value */
+    } check;            /* if CHECK, check values to compare */
+    uInt marker;        /* if BAD, inflateSync's marker bytes count */
+  } sub;        /* submode */
+
+  struct inflate_blocks_state blocks;            /* current inflate_blocks state */
+};
 
 #endif
