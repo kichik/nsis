@@ -63,8 +63,10 @@
 #define SYMBOL_SET_NAME_MAXLEN 40
 #define LOAD_SYMBOL_SET_DLG_NAME "Load Symbol Definitions Set"
 #define SAVE_SYMBOL_SET_DLG_NAME "Save Symbol Definitions Set"
+#define LOAD_BUTTON_TEXT "Load"
+#define SAVE_BUTTON_TEXT "Save"
 #define LOAD_SYMBOL_SET_MESSAGE "Please select a name for the Symbol Definitions Set to load."
-#define SAVE_SYMBOL_SET_MESSAGE "Please enter a name for the Symbol Definitions Set to save."
+#define SAVE_SYMBOL_SET_MESSAGE "Please enter or select a name for the Symbol Definitions Set to save."
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 #define WM_MAKENSIS_LOADSYMBOLSET (WM_USER+1002)
