@@ -105,17 +105,17 @@ Zielverzeichnis
 # ^DirBrowseText
 Wählen Sie das Verzeichnis aus, in das Sie $(^Name) installieren möchten:
 # ^UnDirText
-$(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. Um $(^Name) aus einem anderen Verzeichnis zu entfernen, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
+$(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. Falls sich $(^Name) in einem anderen Verzeichnis befindet, klicken Sie auf Durchsuchen und wählen Sie das richtige Verzeichnis aus. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Wählen Sie das Verzeichnis aus, aus dem $(^Name) entfernt werden soll:
+Wählen Sie das Verzeichnis aus, in dem sich $(^Name) befindet:
 # ^SpaceAvailable
 "Verfügbarer Speicher: "
 # ^SpaceRequired
 "Benötigter Speicher: "
 # ^UninstallingText
-Dieser Assistent entfernt $(^Name) von Ihrem Computer. $_CLICK
+$(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. $_CLICK
 # ^UninstallingSubText
 Entferne aus:
 # ^FileError
