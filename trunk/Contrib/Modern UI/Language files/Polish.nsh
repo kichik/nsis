@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Polish (1045)
 ;By Piotr Murawski & Rafa³ Lampe; www.lomsel.prv.pl mailto:ppiter@skrzynka.pl
@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Czy na pewno chcesz wyjœæ z instalatora $(^Name)?"
 
     
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Witamy w Kreatorze Odinstalowania $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Kreator poprowadzi Ciê przez proces odinstalowania (usuniêcia z dysku) $(^Name).\r\n\r\nPrzed rozpoczêciem odinstalowania programu, upewnij siê, i¿ $(^Name) NIE jest w³aœnie uruchomiony.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinstaluj $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Usuñ $(^Name) z twojego systemu."
 
@@ -77,5 +80,10 @@
    
   !define MUI_UNTEXT_ABORT_TITLE "Odinstalowanie przerwane"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinstalowanie nie zosta³o zakoñczone pomyœlnie."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Koñczenie pracy Kreatora Odinstalowania $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) zosta³ odinstalowany z dysku Twojego komputera.\r\n\r\nKliknij na przycisku „Finish” (Zakoñcz), aby zakoñczyæ dzia³nie Kreatora."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Czy na pewno chcesz zakoñczyæ proces odinstalowywania $(^Name)?"
      
 !insertmacro MUI_LANGUAGEFILE_END
