@@ -111,14 +111,16 @@ static int g_page_offs=4;
 #endif
 
 static int m_page=-1,m_abort;
-static HWND m_curwnd, m_bgwnd;
+static HWND m_curwnd, m_bgwnd, m_hwndOK, m_hwndCancel;
 static int m_whichcfg;
 
-static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
-  return my_SetDialogItemText(dlg,id,STR(GetLangString(lid)));
+static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, langid_t lid) {
+  return my_SetDialogItemText(dlg,id+1000,STR(GetLangString(lid)));
 }
 
-#define SetUITextFromLang(it,la) SetDlgItemTextFromLang(hwndDlg,it,la)
+#define SetDlgItemTextFromLang(dlg,id,lid) SetDlgItemTextFromLang_(dlg,(id)-1000,lid)
+
+#define SetUITextFromLang(it,la) SetDlgItemTextFromLang_(hwndDlg,(it)-1000,la)
 #define SetUITextNT(it,text) my_SetDialogItemText(hwndDlg,it,text)
 #define GetUIText(it,s,ss) GetDlgItemText(hwndDlg,it,s,ss)
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
@@ -478,6 +480,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (uMsg == WM_INITDIALOG)
     {
       g_hwnd=hwndDlg;
+      m_hwndOK=GetDlgItem(hwndDlg,IDOK);
+      m_hwndCancel=GetDlgItem(hwndDlg,IDCANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANGID_BRANDING);
       hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
@@ -550,8 +554,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     else if (!m_curwnd)
     {
       HWND hwndtmp;
-      SetDlgItemTextFromLang(hwndDlg,IDOK,
-       (m_page == g_max_page) ? LANGID_BTN_CLOSE :
+      langid_t langid =
+        (m_page == g_max_page) ? LANGID_BTN_CLOSE :
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         g_is_uninstaller ? LANGID_BTN_UNINST :
 #endif
@@ -559,8 +563,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         (m_page == 0) ? LANGID_BTN_LICENSE :
 #endif
         (m_page == 2 || (m_page == 1 && !isdp)) ? LANGID_BTN_INSTALL :
-        LANGID_BTN_NEXT
-      );
+        LANGID_BTN_NEXT;
+      SetDlgItemTextFromLang(hwndDlg,IDOK,langid);
       mystrcpy(g_tmp,g_caption);
       process_string_from_lang(g_tmp+mystrlen(g_tmp),LANGID_SUBCAPTION(m_page));
 
@@ -593,7 +597,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //on the license page, instead we want the focus left alone because in
 //WM_INITDIALOG it is given to the richedit control.
       if (!gDontFookWithFocus)
-          SetFocus(GetDlgItem(hwndDlg,IDOK));
+          SetFocus(m_hwndOK);
 //XGE End
     }
   }
@@ -611,7 +615,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
       (id == IDC_BACK && m_curwnd && m_page>0))
     {
-      EnableWindow(GetDlgItem(hwndDlg, IDOK), TRUE);
+      EnableWindow(m_hwndOK, TRUE);
       outernotify(-1);
     }
     if (id == IDCANCEL)
@@ -636,7 +640,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   }
   if (uMsg == WM_CLOSE)
   {
-    if (!IsWindowEnabled(GetDlgItem(hwndDlg,IDCANCEL)) && IsWindowEnabled(GetDlgItem(hwndDlg,IDOK)))
+    if (!IsWindowEnabled(m_hwndCancel) && IsWindowEnabled(m_hwndOK))
       SendMessage(hwndDlg,WM_COMMAND,IDOK,0);
   }
   return HandleStaticBkColor();
@@ -872,7 +876,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
 
-    EnableWindow(GetDlgItem(g_hwnd,IDOK),
+    EnableWindow(m_hwndOK,
       is_valid_path && (available >= total || available == -1)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCodeSegment(g_inst_header->code_onVerifyInstDir,NULL)
@@ -904,7 +908,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   static LPARAM last_item=-1;
   if (uMsg == WM_KEYDOWN && wParam == VK_SPACE)
   {
-    SendMessage(GetParent(hwnd),WM_TREEVIEW_KEYHACK,0,0);
+    SendMessage(m_curwnd,WM_TREEVIEW_KEYHACK,0,0);
     return 0;
   }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -1402,8 +1406,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       SendMessage(g_progresswnd,PBM_SETBKCOLOR,0,lb_bg);
     }
 
-    EnableWindow(GetDlgItem(g_hwnd,IDOK),0);
-    EnableWindow(GetDlgItem(g_hwnd,IDCANCEL),0);
+    EnableWindow(m_hwndOK,0);
+    EnableWindow(m_hwndCancel,0);
   }
   if (uMsg == WM_NOTIFY_START) {
     DWORD id;
@@ -1421,7 +1425,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         EndDialog(g_hwnd,1);
     else if (!wParam)
     {
-      HWND h=GetDlgItem(g_hwnd,IDOK);
+      HWND h=m_hwndOK;
       EnableWindow(h,1);
       if (!g_autoclose)
       {
@@ -1439,7 +1443,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
     else
     {
-      HWND h=GetDlgItem(g_hwnd,IDCANCEL);
+      HWND h=m_hwndCancel;
       EnableWindow(h,1);
       SetFocus(h);
     }
