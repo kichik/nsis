@@ -110,6 +110,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			PostQuitMessage(0);
 			return TRUE;
 		}
+		case WM_HELP: 
+		{
+			ShowDocs(); 
+			return TRUE;
+		}
 		case WM_CLOSE:
 		{
 			if (!g_hThread) {
@@ -227,13 +232,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 				case IDM_DOCS:
 				{
-					char pathf[MAX_PATH],*path;
-					GetModuleFileName(NULL,pathf,sizeof(pathf));
-					path=my_strrchr(pathf,'\\');
-					if(path!=NULL) *path=0;
-					lstrcat(pathf,LOCALDOCS);
-					if ((int)ShellExecute(g_hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
-						ShellExecute(g_hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+					ShowDocs();
 					return TRUE;
 				}
 				case IDM_LOADSCRIPT:

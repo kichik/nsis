@@ -37,5 +37,6 @@ int InitBranding();
 void InitTooltips(HWND h);
 void DestroyTooltips();
 void AddTip(HWND hWnd,LPSTR lpszToolTip);
+void ShowDocs();
 
 #endif
