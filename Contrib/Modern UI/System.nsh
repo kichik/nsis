@@ -291,7 +291,7 @@
   Push ${MUI_TEMP1}
   
     StrCpy ${MUI_TEMP1} ${MUI_STARTMENU_VARIABLE} 1
-    StrCmp ${MUI_TEMP1} "^" no_startmenu_shortcuts
+    StrCmp ${MUI_TEMP1} ">" no_startmenu_shortcuts
 
   Pop ${MUI_TEMP1}
 
