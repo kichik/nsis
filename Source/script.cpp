@@ -2427,7 +2427,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[4] |= (c) << 16;
         }
       }
-      SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s  icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
+      SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
         line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
     return add_entry(&ent);
