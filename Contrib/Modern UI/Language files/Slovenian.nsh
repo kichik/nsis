@@ -1,14 +1,14 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.65
+;Compatible with Modern UI 1.67
 
-;Language: Slovenian (0424)
+;Language: Slovenian (1060)
 ;By Janez Dolinar
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SLOVENIAN"
 
-  !define MUI_LANGNAME "Slovenšèina" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Slovenscina" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli v $(^Name) èarovniku"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Ta program bo na vaš raèunalnik namestil $(^Name).\r\n\r\nPriporoèamo vam, da zaprete vsa ostala okna in programe pred namestitvijo. To bo omogoèalo nemoteno namestitev programa in njegovih delov brez ponovnega zagona raèunalnika.\r\n\r\n$_CLICK"
@@ -54,8 +54,23 @@
   !define MUI_TEXT_ABORTWARNING "Ste preprièani, da želite prekiniti namestitev $(^Name)?"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli v èarovniku za odstranitev $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ta èarovnik vas bo vodil skozi odstranitev $(^Name).\r\n\r\nPreden priènete z odstranitvijo, se preprièajte, da $(^Name) ni zagnan.\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Odstrani $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odstrani $(^Name) iz vašega raèunalnika."
+  
+  !define MUI_UNTEXT_LICENSE_TITLE "Licenèna pogodba"  
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Prosimo vas, da pregledate pogoje licenène pogodbe pred odstranitvijo $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Èe se strinjate z pogoji licenène pogodbe, kliknite na Se strinjam. Za odstranitev $(^Name) se morate strinjati s pogoji."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Èe se strinjate z pogoji licenène pogodbe, kliknite na okence spodaj. Za odstranitev $(^Name) se morate strinjati s pogoji. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Èe se strinjate z pogoji licenène pogodbe, izberite spodaj prvo podano možnost. Za odstranitev $(^Name) se morate strinjati s pogoji. $_CLICK"
+
+  !define MUI_UNTEXT_COMPONENTS_TITLE "Izberite bloke"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Izberite si bloke $(^Name), ki jih želite odstraniti."
+  
+  !define MUI_UNTEXT_DIRECTORY_TITLE "Izberite mapo"
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Izberite mapo, iz katere želite odstraniti $(^Name)."
   
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Odstranjevanje poteka"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prosimo poèakajte, dokler se paket $(^Name) odstranjuje."
@@ -65,5 +80,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Odstranitev je bila prekinjena"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odstranitev ni bila konèana uspešno."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Èarovnik za odstranitev $(^Name) se zakljuèuje"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) je bil odstranjen iz vašega raèunalnika.\r\n\r\nKliknite na Dokonèaj, da konèate z èarovnikom."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Ste preprièani, da želite zapustiti odstranitev $(^Name)?"  
 
 !insertmacro MUI_LANGUAGEFILE_END
