@@ -251,7 +251,7 @@ int CEXEBuild::doParse(const char *str)
   }
   else last_line_had_slash = 0;
 
-  res=line.parse((char*)m_linebuild.get(),!strnicmp(str,"!define",7));
+  res=line.parse((char*)m_linebuild.get(),!strnicmp((char*)m_linebuild.get(),"!define",7));
 
   inside_comment = line.InCommentBlock();
 
