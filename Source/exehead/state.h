@@ -16,9 +16,7 @@ extern char g_caption[NSIS_MAX_STRLEN*2];
 extern HWND g_hwnd;
 extern HANDLE g_hInstance;
 extern HWND insthwnd,insthwndbutton;
-extern HICON g_hIcon;
 #else
 #define g_hwnd 0
 #define g_hInstance 0
-#define g_hIcon 0
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT

@@ -79,6 +79,8 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static DWORD WINAPI install_thread(LPVOID p);
 
+void NSISCALL CleanUp();
+
 HWND insthwnd, insthwnd2, insthwndbutton;
 
 HWND m_curwnd;
@@ -629,6 +631,11 @@ skipPage:
       // Without this, enter on buttons in inner dialogs won't work.
       SendMessage(m_curwnd, WM_COMMAND, wParam, lParam);
     }
+  }
+  if (uMsg == WM_ENDSESSION && wParam)
+  {
+    // the session can end any time after we process this message so we better clean up now
+    CleanUp();
   }
   return HandleStaticBkColor();
 }

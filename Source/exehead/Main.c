@@ -49,6 +49,8 @@ HWND g_hwnd;
 HANDLE g_hInstance;
 #endif
 
+void NSISCALL CleanUp();
+
 char *ValidateTempDir()
 {
   validate_filename(state_temp_dir);
@@ -230,21 +232,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_LOG
 end:
 
-  if (g_db_hFile != INVALID_HANDLE_VALUE) CloseHandle(g_db_hFile);
-#ifdef NSIS_COMPRESS_WHOLE
-  if (dbd_hFile != INVALID_HANDLE_VALUE) CloseHandle(dbd_hFile);
-#endif
-  if (m_Err) my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
+  CleanUp();
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  // Clean up after plug-ins
-  if (state_plugins_dir[0]) doRMDir(state_plugins_dir, 1);
-#endif // NSIS_CONFIG_PLUGIN_SUPPORT
-  if (g_hIcon) DeleteObject(g_hIcon);
+  if (m_Err)
+    my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   OleUninitialize();
 #endif
 
   ExitProcess(ret);
+}
+
+void NSISCALL CleanUp()
+{
+  if (g_db_hFile != INVALID_HANDLE_VALUE)
+  {
+    CloseHandle(g_db_hFile);
+    g_db_hFile = INVALID_HANDLE_VALUE;
+  }
+#ifdef NSIS_COMPRESS_WHOLE
+  if (dbd_hFile != INVALID_HANDLE_VALUE)
+  {
+    CloseHandle(dbd_hFile);
+    dbd_hFile = INVALID_HANDLE_VALUE;
+  }
+#endif
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  // Clean up after plug-ins
+  doRMDir(state_plugins_dir, 1);
+#endif // NSIS_CONFIG_PLUGIN_SUPPORT
 }
