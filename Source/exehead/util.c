@@ -61,13 +61,14 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 BOOL NSISCALL my_SetDialogItemText(HWND dlg, UINT idx, const char *val)
 {
   return SetDlgItemText(dlg,idx,val);
-  //return my_SetWindowText(GetDlgItem(dlg,idx),val);
+//  return my_SetWindowText(GetDlgItem(dlg, idx), val);
 }
 
 int NSISCALL my_GetDialogItemText(UINT idx, char *val)
 {
   extern HWND m_curwnd;
   return GetDlgItemText(m_curwnd, idx, val, NSIS_MAX_STRLEN);
+//  return my_GetWindowText(GetDlgItem(m_curwnd, idx), val, NSIS_MAX_STRLEN);
 }
 
 int NSISCALL my_MessageBox(const char *text, UINT type) {
@@ -188,7 +189,7 @@ int NSISCALL is_valid_instpath(char *s)
 {
   static char tmp[NSIS_MAX_STRLEN];
   char *root;
-  
+
   mystrcpy(tmp, s);
 
   root = skip_root(tmp);
@@ -280,7 +281,7 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
-  HMODULE hLib=GetModuleHandle("kernel32.dll");
+  HMODULE hLib=GetModuleHandle("KERNEL32.dll");
   if (hLib)
   {
     typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
@@ -304,7 +305,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
     int spn;
 
-    *((int *)tmpbuf) = *((int *)"NUL");
+    *(DWORD*)tmpbuf = CHAR4_TO_DWORD('N', 'U', 'L', 0);
 
     if (pszNew) {
       // create the file if it's not already there to prevent GetShortPathName from failing

@@ -1068,7 +1068,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
       g_exec_flags.exec_error++;
       {
-        HANDLE h=LoadLibrary("advapi32.dll");
+        HANDLE h=LoadLibrary("ADVAPI32.dll");
         if (h)
         {
           BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
@@ -1089,6 +1089,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               ATP(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
             }
           }
+          FreeLibrary(h);
         }
 
         if (ExitWindowsEx(EWX_REBOOT,0))
@@ -1097,8 +1098,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           PostQuitMessage(0);
           return EXEC_ERROR;
         }
-
-        FreeLibrary(h);
       }
     break;
 #endif//NSIS_SUPPORT_REBOOT
@@ -1129,13 +1128,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_READINISTR:
       {
-        const char *errstr="!N~";
+        DWORD errstr = CHAR4_TO_DWORD('!', 'N', '~', 0);
         char *p=var0;
         char *buf0=GetStringFromParm(0x01);
         char *buf1=GetStringFromParm(0x12);
         char *buf2=GetStringFromParm(-0x23);
-        GetPrivateProfileString(buf0,buf1,errstr,p,NSIS_MAX_STRLEN-1,buf2);
-        if (*((int*)errstr) == *((int*)p))
+        GetPrivateProfileString(buf0,buf1,(LPCSTR)&errstr,p,NSIS_MAX_STRLEN-1,buf2);
+        if (*(DWORD*)p == errstr)
         {
           exec_error++;
           p[0]=0;
