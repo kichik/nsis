@@ -525,6 +525,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     static char pbuf[8192];
     char *p=NULL;
     *response = 0;
+	EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_GRAYED);
     if (getProxyInfo(pbuf))
     {
       p=my_strstr(pbuf,"http=");
@@ -591,5 +592,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
     GlobalFree(response);
     delete get;
+	EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_ENABLED);
     return 0;
 }
