@@ -1,5 +1,7 @@
 ; KiCHiK put together this list of WM_ messages.
 
+!define HWND_BROADCAST 0xFFFF
+
 !define WM_NULL 0x0
 !define WM_CREATE 0x1
 !define WM_DESTROY 0x2
