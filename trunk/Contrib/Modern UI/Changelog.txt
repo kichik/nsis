@@ -14,6 +14,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Support for custom pages before the finish page
 * Renamed Start Menu page defines
 * 'Do not create shortcuts' checkbox can be removed
+* 'MS Shell Dlg' font for header title
 * RTL support
 * Documentation updates
 * Minor fixes
