@@ -69,17 +69,17 @@ Name
 # ^Completed
 Fertig
 # ^LicenseText
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^LicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
 # ^LicenseTextRB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^UnLicenseText
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^UnLicenseTextCB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren Sie das Kontrollkästchen. $_CLICK
 # ^UnLicenseTextRB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^NameDA) entfernen. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^Custom
 Benutzerdefiniert
 # ^ComponentsText
@@ -99,23 +99,23 @@ Wählen Sie die Komponenten aus, die Sie entfernen möchten:
 # ^UnComponentsSubText2
 oder wählen Sie zusätzliche Komponenten aus, die Sie entfernen möchten:
 # ^DirText
-$(^Name) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
+$(^NameDA) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
 # ^DirSubText
 Zielverzeichnis
 # ^DirBrowseText
-Wählen Sie das Verzeichnis aus, in das Sie $(^Name) installieren möchten:
+Wählen Sie das Verzeichnis aus, in das Sie $(^NameDA) installieren möchten:
 # ^UnDirText
-$(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. Falls sich $(^Name) in einem anderen Verzeichnis befindet, klicken Sie auf Durchsuchen und wählen Sie das richtige Verzeichnis aus. $_CLICK
+$(^NameDA) wird aus dem unten angegebenen Verzeichnis entfernt. Falls sich $(^NameDA) in einem anderen Verzeichnis befindet, klicken Sie auf Durchsuchen und wählen Sie das richtige Verzeichnis aus. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Wählen Sie das Verzeichnis aus, in dem sich $(^Name) befindet:
+Wählen Sie das Verzeichnis aus, in dem sich $(^NameDA) befindet:
 # ^SpaceAvailable
 "Verfügbarer Speicher: "
 # ^SpaceRequired
 "Benötigter Speicher: "
 # ^UninstallingText
-$(^Name) wird aus dem unten angegebenen Verzeichnis entfernt. $_CLICK
+$(^NameDA) wird aus dem unten angegebenen Verzeichnis entfernt. $_CLICK
 # ^UninstallingSubText
 Entferne aus:
 # ^FileError

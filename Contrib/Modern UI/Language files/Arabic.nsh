@@ -17,10 +17,10 @@
   !define MUI_INNERTEXT_LICENSE_TOP "≈÷€ÿ “— ’›Õ… ··√œ‰Ï ·„‘«Âœ… »«ﬁÌ «·« ›«ﬁÌ…"
   !define MUI_INNERTEXT_LICENSE_BOTTOM "›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ «· À»Ì "
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ «· À»Ì "
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "≈–« Ê«›ﬁ  ⁄·Ï »‰Êœ « ›«ﬁÌ… «·—Œ’… ≈Œ — «·≈Œ Ì«— «·√Ê· „‰ «··«∆Õ… √œ‰«Â . Ì·“„ ﬁ»Ê· «·≈ ›«ﬁÌ… · À»Ì  $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "≈–« Ê«›ﬁ  ⁄·Ï »‰Êœ « ›«ﬁÌ… «·—Œ’… ≈Œ — «·≈Œ Ì«— «·√Ê· „‰ «··«∆Õ… √œ‰«Â . Ì·“„ ﬁ»Ê· «·≈ ›«ﬁÌ… · À»Ì  $(^NameDA). $_CLICK"
   
   !define MUI_TEXT_COMPONENTS_TITLE "«Œ — «·„ﬂÊ‰« "
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "≈Œ — «·„Ì“«  «· Ì  —€» » À»Ì Â« ·»—‰«„Ã  $(^Name) ."
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "≈Œ — «·„Ì“«  «· Ì  —€» » À»Ì Â« ·»—‰«„Ã  $(^NameDA) ."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE " Ê’Ì›"
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Õ—ﬂ „ƒ‘— «·›√—… ›Êﬁ «·„ﬂÊ‰ ·„‘«Âœ…  Ê’Ì›Â"
   
@@ -60,10 +60,10 @@
   !define MUI_UNTEXT_LICENSE_SUBTITLE "«·—Ã«¡ «·«ÿ·«⁄ ⁄·Ï »‰Êœ «·« ›«ﬁÌ… ﬁ»· ≈“«·… «· À»Ì "
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ «· À»Ì "
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ «· À»Ì "
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "·· ›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ ≈“«·… «· À»Ì  $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "·· ›Ì Õ«· ﬁ»Ê· »‰Êœ «·« ›«ﬁÌ… «÷€ÿ ÷„‰ «·’‰œÊﬁ √œ‰«Â. Ì·“„ ﬁ»Ê· «·« ›«ﬁÌ… ·≈ „«„ ≈“«·… «· À»Ì  $(^NameDA). $_CLICK"
   
   !define MUI_UNTEXT_COMPONENTS_TITLE "«Œ — «·„ﬂÊ‰« "
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "≈Œ — «·„Ì“«  «· Ì  —€» »≈“«· Â« „‰ «·»—‰«„Ã  $(^Name) ."
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "≈Œ — «·„Ì“«  «· Ì  —€» »≈“«· Â« „‰ «·»—‰«„Ã  $(^NameDA) ."
   
   !define MUI_UNTEXT_DIRECTORY_TITLE "≈Œ — „ﬂ«‰ ≈“«·… «· À»Ì "
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "≈Œ — «·„Ã·œ «·–Ì ”Ì „ ›ÌÂ ≈“«·… «· À»Ì "

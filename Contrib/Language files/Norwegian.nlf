@@ -69,17 +69,17 @@ Navn
 # ^Completed
 Ferdig
 # ^LicenseText
-Vennligst les gjennom Lisens Avtalen før du installerer $(^Name). Hvis du godtar alle vilkårene i avtalen, trykk på Godta.
+Vennligst les gjennom Lisens Avtalen før du installerer $(^NameDA). Hvis du godtar alle vilkårene i avtalen, trykk på Godta.
 # ^LicenseTextCB
-Vennligst les gjennom Lisens Avtalen før du installerer $(^Name). Hvis du godtar alle vilkårene i avtalen, mrek av under. $_CLICK
+Vennligst les gjennom Lisens Avtalen før du installerer $(^NameDA). Hvis du godtar alle vilkårene i avtalen, mrek av under. $_CLICK
 # ^LicenseTextRB
-Vennligst les gjennom Lisens Avtalen før du installerer $(^Name). Hvis du godtar alle vilkårene i avtalen, velg det første alternativet. $_CLICK
+Vennligst les gjennom Lisens Avtalen før du installerer $(^NameDA). Hvis du godtar alle vilkårene i avtalen, velg det første alternativet. $_CLICK
 # ^UnLicenseText
-Vennligst les gjennom Lisens Avtalen før du avinstallerer $(^Name). Hvis du godtar alle vilkårene i avtalen, trykk på Godta.
+Vennligst les gjennom Lisens Avtalen før du avinstallerer $(^NameDA). Hvis du godtar alle vilkårene i avtalen, trykk på Godta.
 # ^UnLicenseTextCB
-Vennligst les gjennom Lisens Avtalen før du avinstallerer $(^Name). Hvis du godtar alle vilkårene i avtalen, mrek av under. $_CLICK
+Vennligst les gjennom Lisens Avtalen før du avinstallerer $(^NameDA). Hvis du godtar alle vilkårene i avtalen, mrek av under. $_CLICK
 # ^UnLicenseTextRB
-Please review the license agreement before uninstalling $(^Name). Hvis du godtar alle vilkårene i avtalen, velg det første alternative. $_CLICK
+Please review the license agreement before uninstalling $(^NameDA). Hvis du godtar alle vilkårene i avtalen, velg det første alternative. $_CLICK
 # ^Custom
 Egendefinert
 # ^ComponentsText
@@ -99,23 +99,23 @@ Velg komponenter du vil avinstallere.
 # ^UnComponentsSubText2
 Eller velg de valgfrie komponentene du ønsker å avintallere:
 # ^DirText
-Setupen vil installere $(^Name) i følgende mappe. for å installere i en annen mappe, trykk Bla gjennom og velg en annen mappe. $_CLICK
+Setupen vil installere $(^NameDA) i følgende mappe. for å installere i en annen mappe, trykk Bla gjennom og velg en annen mappe. $_CLICK
 # ^DirSubText
 Målmappe
 # ^DirBrowseText
-Velg mappe du vil installere $(^Name) i:
+Velg mappe du vil installere $(^NameDA) i:
 # ^UnDirText
-Setupen vil avinstallere $(^Name) i følgende mappe. for å avinstallere i en annen mappe, trykk Bla gjennom og velg en annen mappe. $_CLICK
+Setupen vil avinstallere $(^NameDA) i følgende mappe. for å avinstallere i en annen mappe, trykk Bla gjennom og velg en annen mappe. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Velg mappe du vil avinstallere $(^Name) fra:
+Velg mappe du vil avinstallere $(^NameDA) fra:
 # ^SpaceAvailable
 "Ledig plass: "
 # ^SpaceRequired
 "Nødvendig plass: "
 # ^UninstallingText
-Denne veivise vil avinsatllere $(^Name) fra din datamaskin. $_CLICK
+Denne veivise vil avinsatllere $(^NameDA) fra din datamaskin. $_CLICK
 # ^UninstallingSubText
 Avinsatallerer fra:
 # ^FileError

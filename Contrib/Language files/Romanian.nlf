@@ -71,17 +71,17 @@ Nume
 # ^Completed
 Complet
 # ^LicenseText
-Cititi cu atentie licenta inainte de a instala $(^Name). Daca acceptati termenii licentei, apasati butonul De acord.
+Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, apasati butonul De acord.
 # ^LicenseTextCB
-Cititi cu atentie licenta inainte de a instala $(^Name). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
+Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
 # ^LicesnseTextRB
-Cititi cu atentie licenta inainte de a instala $(^Name). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
+Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
 # ^UnLicenseText
-Cititi cu atentie licenta inainte de a dezinstala $(^Name). Daca acceptati termenii licentei, apasati butonul De acord.
+Cititi cu atentie licenta inainte de a dezinstala $(^NameDA). Daca acceptati termenii licentei, apasati butonul De acord.
 # ^UnLicenseTextCB
-Cititi cu atentie licenta inainte de a dezinstala $(^Name). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
+Cititi cu atentie licenta inainte de a dezinstala $(^NameDA). Daca acceptati termenii licentei, selectati casuta de mai jos. $_CLICK
 # ^UnLicesnseTextRB
-Cititi cu atentie licenta inainte de a instala $(^Name). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
+Cititi cu atentie licenta inainte de a instala $(^NameDA). Daca acceptati termenii licentei, selectati prima optiune de mai jos. $_CLICK
 # ^Custom
 Nestandard
 # ^ComponentsText
@@ -101,23 +101,23 @@ Alegeti componentele pe care vreti sa le dezinstalati:
 # ^UnComponentsSubText2
 Sau, alegeti componentele optionale pe care vreti sa le dezinstalati:
 # ^DirText
-$(^Name) va fi instalat in urmatorul director. Pentru a instala in alt director, apasati Alegeti si selectati alt director. $_CLICK
+$(^NameDA) va fi instalat in urmatorul director. Pentru a instala in alt director, apasati Alegeti si selectati alt director. $_CLICK
 # ^DirSubText
 Director destinatie
 # ^DirBrowseText
-Selectati directorul In care vreti sa instalati $(^Name):
+Selectati directorul In care vreti sa instalati $(^NameDA):
 # ^UnDirText
-$(^Name) va fi dezinstalat din urmatorul director. Pentru a dezinstala din alt director, apasati Alegeti si selectati alt director. $_CLICK
+$(^NameDA) va fi dezinstalat din urmatorul director. Pentru a dezinstala din alt director, apasati Alegeti si selectati alt director. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Selectati directorul de dezinstalare al $(^Name):
+Selectati directorul de dezinstalare al $(^NameDA):
 # ^SpaceAvailable
 "Spatiu disponibil: "
 # ^SpaceRequired
 "Spatiu necesar: "
 # ^UninstallingText
-Acest vrajitor va dezinstala $(^Name) din calculatorul dumneavoastra. $_CLICK
+Acest vrajitor va dezinstala $(^NameDA) din calculatorul dumneavoastra. $_CLICK
 # ^UninstallingSubText
 Dezinstaleaza din:
 # ^FileError

@@ -100,23 +100,23 @@ Valitse poistettavat komponentit:
 # ^UnComponentsSubText2
 Tai, valitse valinnaiset komponentit, jotka haluat poistaa
 # ^DirText
-Asennus asentaa ohjelman $(^Name) seuraavaan hakemistoon. Asentaaksesi johonkin muuhun hakemistoon, valitse selaa ja valitse toinen hakemisto. $_CLICK
+Asennus asentaa ohjelman $(^NameDA) seuraavaan hakemistoon. Asentaaksesi johonkin muuhun hakemistoon, valitse selaa ja valitse toinen hakemisto. $_CLICK
 # ^DirSubText
 Kohdehakemisto
 # ^DirBrowseText
-Valitse hakemisto, johon haluat asentaa ohjelman $(^Name):
+Valitse hakemisto, johon haluat asentaa ohjelman $(^NameDA):
 # ^UnDirText
-Asennus poistaa ohjelman $(^Name) seuraavasta hakemistosta. Poistaaksesi jostakin muusta hakemistosta, valitse selaa ja valitse toinen hakemisto. $_CLICK
+Asennus poistaa ohjelman $(^NameDA) seuraavasta hakemistosta. Poistaaksesi jostakin muusta hakemistosta, valitse selaa ja valitse toinen hakemisto. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Valitse hakemisto, josta haluat poistaa ohjelman $(^Name):
+Valitse hakemisto, josta haluat poistaa ohjelman $(^NameDA):
 # ^SpaceAvailable
 "Tilaa vapaana: "
 # ^SpaceRequired
 "Tarvittava tila: "
 # ^UninstallingText
-Tämä ohjelma poistaa ohjelman $(^Name) koneeltasi. $_CLICK
+Tämä ohjelma poistaa ohjelman $(^NameDA) koneeltasi. $_CLICK
 # ^UninstallingSubText
 Poistetaan hakemistosta:
 # ^FileError

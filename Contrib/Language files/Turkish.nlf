@@ -69,17 +69,17 @@ isim
 # ^Completed
 Tamamlandý
 # ^LicenseText
-Lütfen $(^Name) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
+Lütfen $(^NameDA) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
 # ^LicenseTextCB
-Lütfen $(^Name) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
 # ^LicenseTextRB
-Lütfen $(^Name) Programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) Programýný kurmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
 # ^UnLicenseText
-Lütfen $(^Name) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
+Lütfen $(^NameDA) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz,'Kabul Ediyorum'a basýnýz.
 # ^UnLicenseTextCB
-Lütfen $(^Name) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki onay kutusunu doldurunuz. $_CLICK
 # ^UnLicenseTextRB
-Lütfen $(^Name) Programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
+Lütfen $(^NameDA) Programýný sisteminizden kaldýrmadan önce lisans sözleþmesini gözden geçiriniz. Eðer sözleþmenin tüm koþullarýný kabul ediyorsanýz, aþaðýdaki seçenek kutusunu doldurunuz. $_CLICK
 # ^Custom
 Özel
 # ^ComponentsText
@@ -99,23 +99,23 @@ Kaldýrýlacak bileþenleri seçiniz:
 # ^UnComponentsSubText2
 yada, kaldýrýlmasýný istediðiniz bileþenleri seçiniz:
 # ^DirText
-$(^Name) kurulum tarafýndan aþaðýdaki dizine kurulacaktýr. Farklý bir dizine kurmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) kurulum tarafýndan aþaðýdaki dizine kurulacaktýr. Farklý bir dizine kurmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
 # ^DirSubText
 Hedef Dizin
 # ^DirBrowseText
-$(^Name) programýnýn kurulmasýný istediðiniz dizini seçiniz:
+$(^NameDA) programýnýn kurulmasýný istediðiniz dizini seçiniz:
 # ^UnDirText
-$(^Name) kurulum tarafýndan aþaðýdaki dizinden kaldýrýlacaktýr. Farklý bir dizinden kaldýrmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
+$(^NameDA) kurulum tarafýndan aþaðýdaki dizinden kaldýrýlacaktýr. Farklý bir dizinden kaldýrmak için 'Göz at'a týklayýn ve farklý bir dizin seçiniz. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-$(^Name) programýnýn kaldýrýlmasýný istediðiniz dizini seçiniz:
+$(^NameDA) programýnýn kaldýrýlmasýný istediðiniz dizini seçiniz:
 # ^SpaceAvailable
 "Kullanýlabilir boþ alan: "
 # ^SpaceRequired
 "Gerekli boþ alan: "
 # ^UninstallingText
-$(^Name) programý aþaðýdaki dizinden kaldýrýlacaktýr. $_CLICK
+$(^NameDA) programý aþaðýdaki dizinden kaldýrýlacaktýr. $_CLICK
 # ^UninstallingSubText
 kaldýrýlýyor:
 # ^FileError

@@ -51,13 +51,14 @@ struct {
   {"^ClickInstall", "Click Install to start the installation.", NONE_STATIC},
   {"^ClickUninstall", "Click Uninstall to start the uninstallation.", NONE_STATIC},
   {"^Name", "Name", BOTH_STATIC},
+  {"^NameDA", 0, NONE_STATIC}, // virtual
   {"^Completed", "Completed", NONE_STATIC},
-  {"^LicenseText", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
-  {"^LicenseTextCB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
-  {"^LicenseTextRB", "Please review the license agreement before installing $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
-  {"^UnLicenseText", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
-  {"^UnLicenseTextCB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
-  {"^UnLicenseTextRB", "Please review the license agreement before uninstalling $(^Name). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^LicenseText", "Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
+  {"^LicenseTextCB", "Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
+  {"^LicenseTextRB", "Please review the license agreement before installing $(^NameDA). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
+  {"^UnLicenseText", "Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, click I Agree.", NONE_STATIC},
+  {"^UnLicenseTextCB", "Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, click the check box below. $_CLICK", NONE_STATIC},
+  {"^UnLicenseTextRB", "Please review the license agreement before uninstalling $(^NameDA). If you accept all terms of the agreement, select the first option below. $_CLICK", NONE_STATIC},
   {"^LicenseData", 0, NONE_STATIC}, // virtual - not processed
   {"^Custom", "Custom", NONE_STATIC},
   {"^ComponentsText", "Check the components you want to install and uncheck the components you don't want to install. $_CLICK", NONE_STATIC},
@@ -68,15 +69,15 @@ struct {
   {"^UnComponentsSubText1", "Select the type of uninstall:", NONE_STATIC},
   {"^UnComponentsSubText2_NoInstTypes", "Select components to uninstall:", NONE_STATIC},
   {"^UnComponentsSubText2", "Or, select the optional components you wish to uninstall:", NONE_STATIC},
-  {"^DirText", "Setup will install $(^Name) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
+  {"^DirText", "Setup will install $(^NameDA) in the following folder. To install in a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
   {"^DirSubText", "Destination Folder", NONE_STATIC},
-  {"^DirBrowseText", "Select the folder to install $(^Name) in:", NONE_STATIC},
-  {"^UnDirText", "Setup will uninstall $(^Name) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
+  {"^DirBrowseText", "Select the folder to install $(^NameDA) in:", NONE_STATIC},
+  {"^UnDirText", "Setup will uninstall $(^NameDA) from the following folder. To uninstall from a different folder, click Browse and select another folder. $_CLICK", NONE_STATIC},
   {"^UnDirSubText", "", NONE_STATIC},
-  {"^UnDirBrowseText", "Select the folder to uninstall $(^Name) from:", NONE_STATIC},
+  {"^UnDirBrowseText", "Select the folder to uninstall $(^NameDA) from:", NONE_STATIC},
   {"^SpaceAvailable", "Space available: ", BOTH_STATIC},
   {"^SpaceRequired", "Space required: ", BOTH_STATIC},
-  {"^UninstallingText", "This wizard will uninstall $(^Name) from your computer. $_CLICK", NONE_STATIC},
+  {"^UninstallingText", "This wizard will uninstall $(^NameDA) from your computer. $_CLICK", NONE_STATIC},
   {"^UninstallingSubText", "Uninstalling from:", NONE_STATIC},
   {"^FileError", "Error opening file for writing: \r\n\t\"$0\"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file", NONE_STATIC},
   {"^FileError_NoIgnore", "Error opening file for writing: \r\n\t\"$0\"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation", NONE_STATIC},
@@ -501,8 +502,6 @@ int CEXEBuild::GenerateLangTables() {
     cnt = 0;
     tabsset = 1;
 
-    int h = 0;
-
     // write langstrings
     while (tabsset) {
       FillLanguageTable(&lt[i]);
@@ -510,10 +509,6 @@ int CEXEBuild::GenerateLangTables() {
       int lastcnt = cnt;
       cnt = 0;
       tabsset = 0;
-
-      if (h++ > 10) {
-        return PS_ERROR;
-      }
 
       lang_strings = build_langstrings.sort_uindex(&l);
 
@@ -610,6 +605,11 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
       const char *str = table->lang_strings->get(sn);
       if (!str || !*str) {
         const char *us = UserInnerStrings.get(i);
+        if (i == NLF_NAME_DA && (!us || !*us))
+        {
+          // if the user didn't set NLF_NAME_DA we set it to $(^Name)
+          table->lang_strings->set(sn, "$(^Name)");
+        }
         if (us && *us) {
           table->lang_strings->set(sn, (char *) us);
         }
