@@ -426,16 +426,27 @@
 \c  ; Written by Joost Verburg
 \c  ; ------------------------
 \c  ;
-\c  ; Example of usage:
-\c  ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll"
+\c  ; Parameters:
+\c  ; LOCALFILE   - Location of the new DLL file (on the compiler system)
+\c  ; DESTFILE    - Location of the file that shouuld be upgrade (on the user's system)
+\c  ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
+\c  ;               to be rebooted.
+\c  ;               For Win9x support, this should be on the same volume as the DESTFILE!
+\c  ;               The Windows temp directory could be located on any volume, so you cannot use
+\c  ;               this directory.
 \c  ;
-\c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL which cannot be registered
+\c  ; Note: If you want to support Win9x, you can only use short filenames (8.3).
+\c  ;
+\c  ; Example of usage:
+\c  ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
+\c  ;
+\c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that cannot be registered
 \c  ;
 \c  ; Note that this macro sets overwrite to ON (the default) when it has been inserted.
 \c  ; If you are using another setting, set it again after inserting the macro.
 \c
 \c
-\c  !macro UpgradeDLL LOCALFILE DESTFILE
+\c  !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
 \c
 \c    Push $R0
 \c    Push $R1
@@ -477,7 +488,7 @@
 \c    ;------------------------
 \c    ;DLL is in use. Copy it to a temp file and Rename it on reboot.
 \c
-\c    GetTempFileName $R0
+\c    GetTempFileName $R0 "${TEMPBASEDIR}"
 \c      Call ":file_${LOCALFILE}"
 \c    Rename /REBOOTOK $R0 "${DESTFILE}"
 \c
