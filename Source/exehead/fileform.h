@@ -220,6 +220,7 @@ typedef struct
   int inst_corrupted;
   int output_dir;
   int create_dir;
+  int copy_details;
 
   // Note - should be at the end (everything before here should be just ints)
   WORD lang_id;
