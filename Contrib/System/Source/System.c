@@ -5,6 +5,7 @@
 #include "Plugin.h"
 #include "Buffers.h"
 #include "System.h"
+#include <crtdbg.h>
 
 // Parse Section Type 
 #define PST_PROC    0
@@ -17,7 +18,7 @@
 #define PCD_PARAMS  2
 #define PCD_DONE    3   // Just Continue
 
-int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
+const int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
     1, // PAT_INT
     2, // PAT_LONG
     1, // PAT_STRING
@@ -26,15 +27,15 @@ int ParamSizeByType[7] = {0, // PAT_VOID (Size will be equal to 1)
     0}; // PAT_CALLBACK (Size will be equal to 1)
 
 int z1, z2; // I've made them static for easier use at callback procs
-int LastStackPlace = 0;
-int LastStackReal = 0;
-DWORD LastError = 0;
-SystemProc *LastProc = NULL;
-int CallbackIndex = 0;
+int LastStackPlace;
+int LastStackReal;
+DWORD LastError;
+volatile SystemProc *LastProc;
+int CallbackIndex;
 HINSTANCE g_hInstance;
 
 // Return to callback caller with stack restore
-char retexpr[3] = {0xC2, 0x00, 0x00};
+char retexpr[4];
 HANDLE retaddr;
 
 char *GetResultStr(SystemProc *proc)
@@ -62,12 +63,18 @@ void WriteToLog(char *buffer)
     DWORD written;
     char timebuffer[128];
 
+    GetTickCount();
+
     if (logfile == NULL) return;
 
     SetFilePointer(logfile, 0, 0, FILE_END);
 
     wsprintf(timebuffer, "%04d  %04d.%03d    ", (++logop)%10000, (GetTickCount() / 1000) % 10000,
         GetTickCount() % 1000);
+
+    _RPT0(_CRT_WARN, timebuffer);
+    _RPT0(_CRT_WARN, buffer);
+
     WriteFile(logfile, timebuffer, lstrlen(timebuffer), &written, NULL);
     WriteFile(logfile, buffer, lstrlen(buffer), &written, NULL);
 //    FlushFileBuffers(logfile);
@@ -217,6 +224,12 @@ PLUGINFUNCTION(Call)
     {
         // Deallocate params if not callback
         ParamsDeAllocate(proc);
+
+        // if not callback - check for unload library option
+        if ((proc->Options & POPT_UNLOAD) 
+            && (proc->ProcType == PT_PROC) 
+            && (proc->Dll != NULL)) 
+            FreeLibrary(proc->Dll); // and unload it :)
 
         // In case of POPT_ERROR - first pop will be proc error
         if ((proc->Options & POPT_ERROR) != 0) pushint(LastError);
@@ -572,6 +585,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case 'e':
                 temp2 = POPT_ERROR;
                 break;
+            case 'u':
+                temp2 = POPT_UNLOAD;
+                break;
             }
 
             // New Options
@@ -864,7 +880,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     SYSTEM_LOG_ADD("\t\tCall:\n");
     SYSTEM_EVENT("\t\t\tBefore call        ")
 
-    if ((CallbackIndex > 0) && ((proc->Options & POPT_GENSTACK) == 0))
+    if (CallbackIndex && (!(proc->Options & POPT_GENSTACK)))
     {
         _asm
         {
@@ -909,7 +925,12 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
 
     // Save proc
     proc->Clone = LastProc;
-    LastProc = proc;
+    _asm 
+    {
+        mov eax, proc
+        mov LastProc, eax
+    }
+    //LastProc = proc;
 
     SYSTEM_EVENT("\n\t\t\tNear call          ")
     SYSTEM_LOG_POST;
@@ -927,7 +948,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     SYSTEM_LOG_ADD(LastProc->ProcName);
     SYSTEM_EVENT("\n\t\t\tShort-After call   ")
 
-    if ((CallbackIndex > 0) && ((LastProc->Options & POPT_GENSTACK) == 0))
+    if ((CallbackIndex) && (!(LastProc->Options & POPT_GENSTACK)))
     {
         _asm
         {
@@ -939,7 +960,12 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     }
 
     // Restore proc
-    proc = LastProc;
+    _asm 
+    {
+       mov eax, LastProc
+       mov proc, eax
+    }
+//    proc = LastProc;
     LastProc = proc->Clone;
 
     // In case of cdecl convention we should clear stack
@@ -1103,11 +1129,22 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
         push    esi
     }
 
+  // MessageBox(NULL, "cool1", "Cool", MB_OK);
+
     SYSTEM_LOG_ADD("\t\tReturn from callback:\n");
     SYSTEM_EVENT("\t\t\tBefore call-back   ");
+    SYSTEM_LOG_POST;
 
-    z1 = proc->Params[0].Value;
-    z2 = proc->Params[0]._value;
+    //z1 = proc->Params[0].Value;
+    //z2 = proc->Params[0]._value;
+    //z1 = &(proc->Params[0].Value);
+    _asm
+    {
+        mov eax, proc
+        add eax, SYSTEM_ZERO_PARAM_VALUE_OFFSET
+        push [eax]
+        push [eax+4]
+    }
     
     // Adjust return statement
     if ((proc->Options & POPT_CDECL) == 0) retexpr[1] = proc->ArgsSize;
@@ -1119,11 +1156,13 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
     // Remove unneeded callback proc
     GlobalFree((HANDLE) proc);
 
+//    MessageBox(NULL, "cool2", "Cool", MB_OK);
+
     _asm
     {
         // Prepare return
-        mov    eax, z1
-        mov    edx, z2
+//        mov    eax, z1
+        //mov    edx, z2
 
         // Restore temporary stack and return
 
@@ -1138,11 +1177,17 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
         pop     ebp        
     }
         
+#ifdef SYSTEM_LOG_DEBUG
     SYSTEM_EVENT("\n\t\t\tSh-Before call-back");
-    SYSTEM_LOG_POST;
+    SYSTEM_LOG_POST;        
+#endif
 
-        // Fake return from Callback
+    // Fake return from Callback
     _asm {
+        // callback proc result
+        pop edx
+        pop eax
+
         // Restore registers
         pop     esi
         pop     edi
@@ -1267,6 +1312,18 @@ void CallStruct(SystemProc *proc)
 BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
         g_hInstance=hInst;
+        
+        if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+        {
+            // initialize some variables
+            LastStackPlace = 0;
+            LastStackReal = 0;
+            LastError = 0;
+            LastProc = NULL;
+            CallbackIndex = 0;
+            retexpr[0] = 0xC2;
+            retexpr[2] = 0x00;
+        }
 
         return TRUE;
 }

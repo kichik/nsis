@@ -115,10 +115,10 @@ enumex: ; End of drives or user cancel
 
      ; Logo
      File /oname=spltmp.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
-;     File /oname=spltmp.wav "${WINDIR}\media\Windows XP Startup.wav"
+;     File /oname=spltmp.wav "d:\Windows\Media\tada.wav"
 
      ; I. systemSplash variant
-     !insertmacro smSystemSplash 500 "$TEMP\spltmp"
+     !insertmacro smSystemSplash 2000 "$TEMP\spltmp"
 
      ; II. Splash Plugin variant
 ;    splash::show 2000 $TEMP\spltmp
