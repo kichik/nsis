@@ -1428,7 +1428,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     else
     {
-      log_printf2("Skipping section: \"%s\"",name);
+      log_printf2("Skipping section: \"%s\"",s->name);
     }
 #endif
     s++;
