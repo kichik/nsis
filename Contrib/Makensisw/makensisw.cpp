@@ -37,8 +37,8 @@ HANDLE g_hThread;
 BOOL g_warnings;
 
 FINDREPLACE fr;
-UINT uFindReplaceMsg;  // message identifier for FINDMSGSTRING 
-HWND hwndFind;
+UINT uFindReplaceMsg=0;
+HWND hwndFind=0;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	HACCEL haccel; 
