@@ -460,8 +460,9 @@ typedef struct
 {
   int id; // index in the pages array
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-  int prefunc; // function to use Abort in, or show the custom page if id == NSIS_PAGE_CUSTOM
-  int postfunc; // function to do stuff after the page is shown
+  int prefunc; // called before the page is created, or if custom to show the it. Allows to skip the page using Abort.
+  int showfunc; // function to do stuff right before page is shown
+  int leavefunc; // function to do stuff after the page is shown
 #endif //NSIS_SUPPORT_CODECALLBACKS
   int caption; // caption tab
   int next;
