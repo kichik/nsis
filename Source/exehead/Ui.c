@@ -38,6 +38,8 @@
 #define LB_ICONWIDTH 20
 #define LB_ICONHEIGHT 20
 
+static BOOL gDontFookWithFocus = FALSE;
+
 // Added by Amir Szekely 3rd August 2002
 common_strings *common_strings_tables;
 common_strings *cur_common_strings_table;
@@ -555,6 +557,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     if (m_page < 0 || m_page > g_max_page)
     {
       EndDialog(hwndDlg,0);
+      gDontFookWithFocus = FALSE;
     }
     else if (!m_curwnd)
     {
@@ -599,12 +602,8 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
 //on the license page, instead we want the focus left alone because in
 //WM_INITDIALOG it is given to the richedit control.
-#ifdef NSIS_CONFIG_LICENSEPAGE
-      if (m_page != 0)
+      if (!gDontFookWithFocus)
           SetFocus(GetDlgItem(hwndDlg,IDOK));
-#else
-      SetFocus(GetDlgItem(hwndDlg,IDOK));
-#endif
 //XGE End
     }
   }
@@ -633,6 +632,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstFailed,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
         EndDialog(hwndDlg,2);
+        gDontFookWithFocus = FALSE;
       }
       else
       {
@@ -641,6 +641,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif//NSIS_SUPPORT_CODECALLBACKS
         {
           EndDialog(hwndDlg,1);
+          gDontFookWithFocus = FALSE;
         }
       }
     }
@@ -681,6 +682,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_LICENSE_TEXT);
     //XGE 5th September 2002 - place the initial focus in the richedit control
+    gDontFookWithFocus = TRUE;
     SetFocus(hwLicense);
     return FALSE;
     //End Xge
@@ -1405,7 +1407,11 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   if (uMsg == WM_NOTIFY_INSTPROC_DONE)
   {
-    if (g_quit_flag) EndDialog(g_hwnd,1);
+    if (g_quit_flag) 
+    {
+        EndDialog(g_hwnd,1);
+        gDontFookWithFocus = FALSE;
+    }
     else if (!wParam)
     {
       HWND h=GetDlgItem(g_hwnd,IDOK);
