@@ -12,6 +12,8 @@
 #  include <ctype.h>
 #endif
 
+#include <cassert> // for assert
+
 using std::string;
 
 int g_dopause=0;
