@@ -1171,7 +1171,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       if (lpnmh)
       {
         if (lpnmh->code == TVN_SELCHANGED)
+        {
           SendMessage(hwndTree1, WM_NOTIFY_SELCHANGE, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
+        }
         if (lpnmh->code == TVN_ITEMEXPANDED)
         {
           LPNMTREEVIEW pnmtv = (LPNMTREEVIEW) lpnmh;
