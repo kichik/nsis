@@ -38,11 +38,6 @@ uLongf *c;
   Tracev((stderr, "inflate:   blocks reset\n"));
 }
 
-int inflate_blocks_getssize()
-{
-  return sizeof(struct inflate_blocks_state);
-}
-
 void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s)
 {
   s->end = s->window + (1 << DEF_WBITS);
@@ -297,7 +292,7 @@ int r;
 }
 
 
-int inflate_blocks_free(s, z)
+/*int inflate_blocks_free(s, z)
 inflate_blocks_statef *s;
 z_streamp z;
 {
@@ -306,4 +301,5 @@ z_streamp z;
   Tracev((stderr, "inflate:   blocks freed\n"));
   return Z_OK;
 }
+*/
 #endif
