@@ -366,19 +366,12 @@ int NSISCALL ui_doinstall(void)
   // Added by Amir Szekely 3rd August 2002
   // Multilingual support
   {
-    int size;
-    lang_num=g_inst_header->common.str_tables_num;
-    size=lang_num*sizeof(common_strings);
-    cur_common_strings_table=common_strings_tables=(common_strings*)my_GlobalAlloc(size);
-    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
-  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    if (g_is_uninstaller)
-      size=lang_num*sizeof(uninstall_strings);
-    else
-  #endif
-      size=lang_num*sizeof(installer_strings);
-    cur_install_strings_table=install_strings_tables=(char *)my_GlobalAlloc(size);
-    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
+    extern char *g_db_strtab;
+    lang_num=g_inst_cmnheader->str_tables_num;
+    cur_common_strings_table=common_strings_tables=
+      (common_strings*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
+    cur_install_strings_table=install_strings_tables=
+      (char*)((unsigned long)common_strings_tables+lang_num*sizeof(common_strings));
 
     myitoa(state_language, GetUserDefaultLangID());
     set_language();
