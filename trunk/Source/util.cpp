@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
-#include "exedata.h"
 #include "exehead/fileform.h"
 #include "util.h"
 #include "strlist.h"
@@ -39,7 +38,7 @@ void dopause(void)
 // Returns -2 if the file is an invalid bitmap
 // Returns -3 if the size doesn't match
 // Returns -4 if the bpp doesn't match
-int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
+int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/*=0*/, int height/*=0*/, int maxbpp/*=0*/) {
   FILE *f = FOPEN(filename, "rb");
   if (!f) return -1;
 
@@ -138,7 +137,7 @@ typedef struct {
 // return values:
 //   0  - All OK
 //   -1 - Bad icon file
-int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
+int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 {
   FILE* f = FOPEN(filename, "rb");
   if (!f) return -1;
@@ -201,8 +200,6 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 
   free(rsrcIconGroup);
 
-  icondata_size = iNewIconSize;
-
   return 0;
 }
 
@@ -212,7 +209,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 // return values:
 //   0  - Bad icon file
 //   Anything else - Pointer to the uninstaller icon data
-unsigned char* generate_uninstall_icon_data(char* filename)
+unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 {
   int i;
 
@@ -263,7 +260,7 @@ unsigned char* generate_uninstall_icon_data(char* filename)
   free(offsets);
   free(rawSizes);
 
-  unicondata_size = iNewIconSize;
+  size = iNewIconSize;
 
   return pbUninstIcon;
 }
@@ -281,7 +278,7 @@ int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
 }
 
 // Fill the array of icons for uninstall with their offsets
-// Returns 0 if failed, anything else is icon_offset.
+// Returns 0 if failed, anything else is the icon offset in the PE.
 int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData) {
   int i;
 

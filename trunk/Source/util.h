@@ -18,14 +18,14 @@ extern void dopause(void);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
-int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width=0, int height=0, int maxbpp=0);
+int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width=0, int height=0, int maxbpp=0);
 
-// reads icon file filename and places its icons in the resource wIconId using resource editor re. Also updates icondata_size.
-int replace_icon(CResourceEditor* re, WORD wIconId, char* filename);
+// reads icon file filename and places its icons in the resource wIconId using resource editor re
+int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon (inside filename) that should replace the installer icon data
-unsigned char* generate_uninstall_icon_data(char* filename);
+unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size);
 // Fill the array of icons for uninstall with their offsets
 int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
