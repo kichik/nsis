@@ -137,17 +137,13 @@ with a custom user interface.</p>
 !define MUI_COMPONENTSPAGE ;Component-selection page
 !define MUI_DIRECTORYPAGE ;Directory-selection page
 !define MUI_LICENSEPAGE ;License page
-!define MUI_STARTMENUPAGE ;Start Menu-selection page
-
+!define MUI_STARTMENUPAGE ;Start Menu Folder selection page
 !define MUI_ABORTWARNING ;Abort warning messagebox
-
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
-!define MUI_WINDOWTITLE ;Insert string for the window title
 
 !define MUI_UNINSTALLER ;Uninstaller
 !define MUI_UNCUSTOMPAGECOMMANDS ;Use customized uninstaller pages
 </pre>
- <p class="text">MUI_WINDOWTITLE is required by MUI_(UN)INSTALLOPTIONS_WRITETITLE.
   <p class="subheader">4. Insert language files</span></p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
@@ -162,10 +158,9 @@ with a custom user interface.</p>
   <p class="text">Have a look at the language files for a complete list of all the
   names.
   <p class="text"><span class="bold">NOTE:</span> Not all language files contain strings for the
-  new Start Menu-selection page yet. If you are using a language file which does not contain
+  new Start Menu Folder selection page yet. If you are using a language file which does not contain
   these strings, you should always define them.<br>Please help to translate the new strings and
-  post them at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS 
-  Forum</a>.</p>
+  post them at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
   <p class="subheader">5. Define interface settings (optional)</span></p>
   <p class="text">You can change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
@@ -228,49 +223,40 @@ Install Options documentation</a> for info about creating Install Options INI Fi
 <p class="text">If you want add custom pages to your installer, you should insert you
 own page commands to set the order of the pages and the names of the page functions.</p>
 <pre class="margin">
+LangString TEXT_IO_WINDOWTITLE ": Install Options Page"
+
 !insertmacro MUI_PAGECOMMAND_LICENSE
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
 !insertmacro MUI_PAGECOMMAND_DIRECTORY
-Page custom [function name] ;A custom page
+Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 </pre>
-<p class="text">This is also possible the uninstaller:</p>
+<p class="text">This is also possible in the uninstaller:</p>
 <pre class="margin">
+LangString UNTEXT_IO_WINDOWTITLE ": Install Options Page"
+
 !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-UninstPage custom [function name] ;A custom page
+UninstPage custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
 MUI_UNCUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM macro.</p>
 <p class="subheader">Call Install Options</p>
-<p class="text">You can call Install Options in [function name]:</p>
+<p class="text">You can call Install Options in FunctionName:</p>
 <pre class="margin">
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
 
-Function [function name]
+Function FunctionName
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
 FunctionEnd
 </pre>
-<p class="subheader">Write title to Install Options INI Files</p>
-<p class="text">Use these macro's in .onInit to write the page
-title to an Install Options INI File.</p>
-<pre class="margin">
-LangString TEXT_IO_PAGETITLE ${LANG_ENGLISH} "Page Title"
-
-!insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioFile.ini" "$(TEXT_IO_PAGETITLE)"
-</pre>
-<p class="text">For the uninstaller, use:</p>
-<pre class="margin">
-LangString UNTEXT_IO_PAGETITLE ${LANG_ENGLISH} "Uninstaller Page Title"
-
-!insertmacro MUI_UNINSTALLOPTIONS_WRITETITLE "ioFile.ini" "$(UNTEXT_IO_PAGETITLE)"
-</pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
   Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br>
-  Cutom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">InstallOptions.nsi</a><br>
+  Custom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">InstallOptions.nsi</a><br>
+  Start Menu Folder selection: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br>
   </p>
 <p class="header">The interface</p>
 <p class="subheader">Modern.exe and modern2.exe</span></p>
@@ -285,24 +271,28 @@ LangString UNTEXT_IO_PAGETITLE ${LANG_ENGLISH} "Uninstaller Page Title"
   <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.<br><br>
 The 'Loading Setup' text on the splash screen which 
   is being displayed when the installer is starting (Verifying 
-  installer, Unpacking data when using COMPRESS_WHOLE) cannot 
-  be changed by the script, because the installer is not started 
-  yet when this dialog is being displayed. If you want to change 
-  this text, modify dialog 111 of modern(2).exe.<br>
-The 'verifying installer' and 'unpacking data' texts are defined in
+  installer, Unpacking data) cannot be changed by the script,
+  because the installer is not started yet when this dialog is being
+  displayed. If you want to change  this text, modify dialog 111 of
+  modern(2).exe.<br>
+The 'Verifying installer' and 'Unpacking data' texts are defined in
   the language header file of the NSIS exehead (Source\exehead\lang.h). 
   To change them, you need to edit this file and recompile NSIS.</p>
 <p class="header">Version history</p>
 <ul>
-<li class="changelog">1.5 - November 9, 2002
+<li class="changelog">1.5 - November 11, 2002
   <ul>
     <li>New language file format
     <li>Language strings can be changed in the script without editing
     language files
+    <li>Start Menu Folder selection page
+    <li>'Click Next to continue' and 'Click Install to start the installation'
+    texts automatically change to the page order
     <li>Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is
     the standard macro now. Use MUI_INSTALLOPTIONS_INITDIALOG and
     MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
-    <li>Start Menu Folder selection page
+    <li>No more writing window titles & abort warnings to Install Options
+    INI Files
     <li>Compatible with new paging system
     <li>Renamed macro's and defines
     <li>Some small fixes

@@ -1,11 +1,14 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.5 - Novermber 9, 2002
+1.5 - Novermber 11, 2002
 * New language file format
 * Language strings can be changed in the script without editing language files
+* Start Menu Folder selection page
+* 'Click Next to continue' and 'Click Install to start the installation'
+  texts automatically change to the page order
 * Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is the standard macro now.
   Use MUI_INSTALLOPTIONS_INITDIALOG and MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
-* Start Menu Folder selection page
+* No more writing window titles & abort warnings to Install Options INI Files
 * Compatible with new paging system
 * Renamed macro's and defines
 * Some small fixes
