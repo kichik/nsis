@@ -1,0 +1,1272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>NSIS Modern User Interface - Documentation</title>
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii" />
+<style type="text/css">
+/*<![CDATA[*/
+
+body
+        {
+        padding: 10px;
+        background-color: #F0F0F0;
+        font-size: 13px;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-weight: normal;
+        text-align: left;
+        }
+
+p, li
+        {
+        font-size: 13px;
+        }
+
+table
+        {
+        margin: auto;
+        background-color: #FFFFFF;
+        }
+
+.maintable
+        {
+        border: 2px solid #376EAB;
+        }
+        
+.parameter
+        {
+        font-weight: bold;
+        color: #6586AC;
+        }
+
+h1
+        {
+        font-size: 20px;
+        color: #7A7272;
+        font-weight: normal;
+        }
+        
+h2
+        {
+        font-size: 17px;
+        font-weight: bold;
+        color: #303030;
+        }
+
+h3
+        {
+        font-size: 14px;
+        font-weight: bold;
+        color: #2B5885;
+        }
+
+pre     {
+        font-size: 13px;
+        }
+
+div
+        {
+        margin: 20px;
+        }
+
+.footer
+        {
+        font-size: 10px;
+        text-align: right;
+        color: #909090;
+        margin: 5px;
+        }
+        
+a:link, a:visited, a:active
+        {
+        color: #294F75;
+        text-decoration: none;
+        }
+        
+a:hover
+        {
+        color: #182634;
+        text-decoration: underline;
+        }
+
+.trigger {
+        cursor: pointer;
+        cursor: hand;
+}
+
+.toggle
+        {
+        display: none;
+        }
+        
+.options
+	{
+	text-align: center;
+	cursor: pointer;
+        cursor: hand;
+        color: #294F75;
+	}
+        
+/*]]>*/
+</style>
+
+<script type="text/javascript">
+//<![CDATA[
+
+   var image_open = new Image();
+   image_open.src = "images/open.gif";
+   var image_closed = new Image();
+   image_closed.src = "images/closed.gif";
+   
+   function toggle(image, section) {
+   
+      if(document.all) {
+        if(document.all[section].style.display == "block") {
+           document.all[section].style.display = "none";
+           document.all[image].src = image_closed.src;
+        }
+        else
+        {              
+           document.all[section].style.display = "block";
+           document.all[image].src = image_open.src;
+        }
+      }
+      else
+      {
+      if(document.getElementById(section).style.display == "block") {
+         document.getElementById(section).style.display = "none";
+         document.getElementById(image).src = image_closed.src;
+         }
+      else
+         {              
+         document.getElementById(section).style.display = "block";
+         document.getElementById(image).src = image_open.src;
+         }
+      }
+   
+   }
+
+   function expandall() {
+
+     var divNodeList = document.getElementsByTagName('div'); 
+     for (i = 0; i < divNodeList.length; i++) { 
+        if(divNodeList[i].id) {
+           divNodeList[i].style.display = "block";
+           document.getElementById('trigger_' + divNodeList[i].id.substr(7)).src = "images/open.gif";
+        }
+     }
+     
+   }
+
+   function collapseall() {
+
+     var divNodeList = document.getElementsByTagName('div'); 
+     for (i = 0; i < divNodeList.length; i++) { 
+        if(divNodeList[i].id) {
+           divNodeList[i].style.display = "none";
+           document.getElementById('trigger_' + divNodeList[i].id.substr(7)).src = "images/closed.gif";
+        }
+     }
+
+   }
+
+//]]>
+</script>
+</head>
+<body>
+<table width="750" class="maintable" cellspacing="0" cellpadding="0" align="center">
+<tr><td>
+<img src="images/header.gif" width="750" height="80" alt=
+"" />
+<p class="options"><a onclick="expandall()">[Expand all]</a>&nbsp;
+&nbsp;<a onclick="collapseall()">[Collapse all]</a></p>
+<div>
+<h1>Introduction</h1>
+<div>
+<p>NSIS 2 makes it is possible to create installers with a custom
+user interface. The Modern UI is an interface with a style like the
+wizards of recent Windows versions.</p>
+<p>This new interface also features new pages (Welcome, Finish,
+Start Menu) and a description area on the components page. The
+interface and the graphics can be customized using the provided
+settings.</p>
+<p>Using the Modern UI macros and language files, writing scripts
+with a modern interface is easy. This document contains information
+about writing Modern UI scripts and a reference of all
+settings.</p>
+<p><strong>Important:</strong> Because the Modern UI has its own
+macro system, its own default settings and a lot of new features,
+the interface configuration works differently. So you should not
+use commands like LicenseText, Icon, CheckBitmap, InstallColors
+etc.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_scr"
+src="images/closed.gif" onclick=
+"toggle('trigger_scr', 'toggle_scr');" /> Screenshots</h3>
+<div class="toggle" id="toggle_scr">
+<p><img src="images/screen1.png" width="503" height="393" alt=
+"" /></p>
+<p><img src="images/screen2.png" width="503" height="393" alt=
+"" /></p>
+</div>
+</div>
+<h1>How to use</h1>
+<div>
+<p>The Modern UI has a macro system, so all the code to control the
+interface has already been written for you.</p>
+<p>If you want to start a new Modern UI script or upgrade an older
+script with the Classic UI, follow the steps below.</p>
+<p>Taking a look at the <a href="#examples">example</a> scripts
+will also help you to learn more about the Modern UI.</p>
+<h2>Syntax</h2>
+<div>
+<p>Some defines (e.g. MUI_COMPONENTSPAGE_SMALLDESC) don't need a
+value, they are true/false settings. Others (e.g. MUI_UI) can be
+used to define a specific value.</p>
+<p>Parameters are specified in this format: <span class=
+"parameter">required (option1 | option2) [optional]</span></p>
+<p>Parameters for defined settings should be in one string:</p>
+<pre>
+!define MUI_COMPONENTSPAGE_SMALLDESC ;No value
+!define MUI_UI "myUI.exe" ;Value
+!define MUI_INSTFILESPAGE_COLORS "FFFFFF 000000" ;Multiple settings
+</pre>
+<p>If you want a certain value (e.g. a text) to be
+language-specific, set a language string (using LangString) and
+define $(STRINGNAME) as value. Use a license language string
+(LicenseLangString) for the license text.</p>
+<p>If you want to add " to a Modern UI string, you should always
+escape it using $\" because the Modern UI macros use " to separate
+parameters.</p>
+</div>
+<h2>1. Header file</h2>
+<div>
+<pre>
+!include "MUI.nsh"
+</pre>
+<p>MUI.nsh is in the Include directory, so you don't have to
+specify a path.</p>
+</div>
+<h2><a name="interfaceConf" id="interfaceConf">2. Interface
+Configuration</a></h2>
+<div>
+<p>Interface settings should be set before inserting page macros.
+Page interface settings apply to all pages of a certain type.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_in"
+src="images/closed.gif" onclick=
+"toggle('trigger_in', 'toggle_in');" /> Interface Settings</h3>
+<div class="toggle" id="toggle_in">
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_ingen" src="images/closed.gif" onclick=
+"toggle('trigger_ingen', 'toggle_ingen');" /> General Interface
+Settings</h3>
+<div class="toggle" id="toggle_ingen">
+<p><strong>MUI_ICON</strong> <span class=
+"parameter">icon_file</span><br />
+The icon for the installer.<br />
+<em>Default:
+${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico</em></p>
+<p><strong>MUI_UNICON</strong> <span class=
+"parameter">icon_file</span><br />
+The icon for the uninstaller.<br />
+<em>Default:
+${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico</em></p>
+<p><strong>MUI_HEADERIMAGE</strong><br />
+Display an image on the header of the page.</p>
+<div>
+<p><strong>MUI_HEADERIMAGE_BITMAP</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap image to display on the header of installers pages
+(recommended size: 150x57 pixels).<br />
+<em>Default: ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp</em></p>
+<div>
+<p><strong>MUI_HEADERIMAGE_BITMAP_NOSTRETCH</strong><br />
+Do not stretch the installer header bitmap to fit the size of the
+field. Use this option only if you have an image that does not use
+the whole space. If you have a full size bitmap that fits exactly,
+you should not use this option because the size of the field will
+be different if the user has a custom DPI setting.</p>
+<p><strong>MUI_HEADERIMAGE_BITMAP_RTL</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap image to display on the header of installers pages when
+using a RTL language (recommended size: 150x57 pixels).<br />
+<em>Default: Non-RTL bitmap</em></p>
+<div>
+<p><strong>MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH</strong><br />
+Do not stretch the installer header bitmap when using a RTL
+language to fit the size of the field. Use this option only if you
+have an image that does not use the whole space. If you have a full
+size bitmap that fits exactly, you should not use this option
+because the size of the field will be different if the user has a
+custom DPI setting.</p>
+</div>
+</div>
+<p><strong>MUI_HEADERIMAGE_UNBITMAP</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap image to display on the header of uninstaller pages
+(recommended size: 150x57 pixels).<br />
+<em>Default: Installer header bitmap</em></p>
+<div>
+<p><strong>MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH</strong><br />
+Do not stretch the uninstaller header bitmap to fit the size of the
+field. Use this option only if you have an image that does not use
+the whole space. If you have a full size bitmap that fits exactly,
+you should not use this option because the size of the field will
+be different if the user has a custom DPI setting.</p>
+<p><strong>MUI_HEADERIMAGE_UNBITMAP_RTL</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap image to display on the header of uninstallers pages when
+using a RTL language (recommended size: 150x57 pixels).<br />
+<em>Default: Installer RTL header bitmap</em></p>
+<div>
+<p><strong>MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH</strong><br />
+Do not stretch the uninstaller header bitmap when using a RTL
+language to fit the size of the field. Use this option only if you
+have an image that does not use the whole space. If you have a full
+size bitmap that fits exactly, you should not use this option
+because the size of the field will be different if the user has a
+custom DPI setting.</p>
+</div>
+</div>
+<p><strong>MUI_HEADERIMAGE_RIGHT</strong><br />
+Display the header image on the right side instead of the left side
+(when using a RTL language it will be displayed on the left side
+instead of the right side).</p>
+</div>
+<p><strong>MUI_BGCOLOR</strong> <span class="parameter">(color:
+RRGGBBR hexadecimal)</span><br />
+Background color for the header, the Welcome page and the Finish
+page.<br />
+<em>Default: FFFFFF</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_inres" src="images/closed.gif" onclick=
+"toggle('trigger_inres', 'toggle_inres');" /> Interface Resource
+Settings</h3>
+<div class="toggle" id="toggle_inres">
+<p><strong>MUI_UI</strong> <span class=
+"parameter">ui_file</span><br />
+The interface file with the dialog resources. Change this if you
+have made your own customized UI.<br />
+<em>Default: ${NSISDIR}\Contrib\UIs\modern.exe</em></p>
+<p><strong>MUI_UI_HEADERIMAGE</strong> <span class=
+"parameter">ui_file</span><br />
+The interface files with the dialog resource IDD_INST that contains
+a bitmap control and space for the header bitmap.<br />
+<em>Default: ${NSISDIR}\Contrib\UIs\modern_headerbmp.exe</em></p>
+<p><strong>MUI_UI_HEADERIMAGE_RIGHT</strong> <span class=
+"parameter">ui_file</span><br />
+The interface files with the dialog resource IDD_INST that contains
+a bitmap control and space for the header bitmap on the right
+side.<br />
+<em>Default: ${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe</em></p>
+<p><strong>MUI_UI_COMPONENTSPAGE_SMALLDESC</strong> <span class=
+"parameter">ui_file</span><br />
+The interface files with a customized dialog resource IDD_SELCOM
+with a small description area.<br />
+<em>Default: {NSISDIR}\Contrib\UIs\modern_smalldesc.exe</em></p>
+<p><strong>MUI_UI_COMPONENTSPAGE_NODESC</strong> <span class=
+"parameter">ui_file</span><br />
+The interface files with a customized dialog resource IDD_SELCOM
+without a description area.<br />
+<em>Default: {NSISDIR}\Contrib\UIs\modern_nodesc.exe</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_inwf"
+src="images/closed.gif" onclick=
+"toggle('trigger_inwf', 'toggle_inwf');" /> Welcome/Finish Page
+Interface Settings</h3>
+<div class="toggle" id="toggle_inwf">
+<p><strong>MUI_WELCOMEFINISHPAGE_BITMAP</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap for the Welcome page and the Finish page (recommended size:
+164x314 pixels).<br />
+<em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
+<div>
+<p><strong>MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH</strong><br />
+Do not stretch the bitmap for the Welcome and Finish page to fit
+the size of the field. Use this option only if you have an image
+that does not use the whole space. If you have a full size bitmap
+that fits exactly, you should not use this option because the size
+of the field will be different if the user has a custom DPI
+setting.</p>
+</div>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_inwfi" src="images/closed.gif" onclick=
+"toggle('trigger_inwfi', 'toggle_inwfi');" /> Welcome/Finish Page
+InstallOptions INI Settings</h3>
+<div class="toggle" id="toggle_inwfi">
+<p><strong>MUI_WELCOMEFINISHPAGE_INI</strong> <span class=
+"parameter">ini_file</span><br />
+InstallOptions INI file for the Welcome page and the Finish
+page.<br />
+<em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_inuwf" src="images/closed.gif" onclick=
+"toggle('trigger_inuwf', 'toggle_inuwf');" /> Uninstaller
+Welcome/Finish Page Settings</h3>
+<div class="toggle" id="toggle_inuwf">
+<p><strong>MUI_UNWELCOMEFINISHPAGE_BITMAP</strong> <span class=
+"parameter">bmp_file</span><br />
+Bitmap for the Welcome page and the Finish page (recommended size:
+164x314 pixels).<br />
+<em>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</em></p>
+<div>
+<p><strong>MUI_UNWELCOMEFINISHPAGE_BITMAP_NOSTRETCH</strong><br />
+Do not stretch the bitmap for the Welcome and Finish page to fit
+the size of the field. Use this option only if you have an image
+that does not use the whole space. If you have a full size bitmap
+that fits exactly, you should not use this option because the size
+of the field will be different if the user has a custom DPI
+setting.</p>
+</div>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_inuwfi" src="images/closed.gif" onclick=
+"toggle('trigger_inuwfi', 'toggle_inuwfi');" /> Uninstaller
+Welcome/Finish Page Interface INI Settings</h3>
+<div class="toggle" id="toggle_inuwfi">
+<p><strong>MUI_UNWELCOMEFINISHPAGE_INI</strong> <span class=
+"parameter">ini_file</span><br />
+InstallOptions INI file for the uninstaller Welcome page and the
+Finish page.<br />
+<em>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_inl"
+src="images/closed.gif" onclick=
+"toggle('trigger_inl', 'toggle_inl');" /> License Page Interface
+Settings</h3>
+<div class="toggle" id="toggle_inl">
+<p><strong>MUI_LICENSEPAGE_BGCOLOR</strong> <span class=
+"parameter">(/windows | /grey | (color: RRGGBB
+hexadecimal))</span><br />
+The background color for the license textbox. Use /windows for the
+Windows text background color (usually white). Use the /grey for
+the window background color (usually grey).<br />
+<em>Default: /windows</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_inc"
+src="images/closed.gif" onclick=
+"toggle('trigger_inc', 'toggle_inc');" /> Components Page Interface
+Settings</h3>
+<div class="toggle" id="toggle_inc">
+<p><strong>MUI_COMPONENTSPAGE_CHECKBITMAP</strong> <span class=
+"parameter">bitmap_file</span><br />
+The bitmap with images for the checks of the component select
+treeview.<br />
+<em>Default: ${NSISDIR}\Contrib\Graphics\Checks\modern.bmp</em></p>
+<p><strong>MUI_COMPONENTSPAGE_SMALLDESC</strong><br />
+A small description area on the bottom of the page. Use this layout
+if you have a lot of sections and don't need large
+descriptions.</p>
+<p><strong>MUI_COMPONENTSPAGE_NODESC</strong><br />
+No description area.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_ini"
+src="images/closed.gif" onclick=
+"toggle('trigger_ini', 'toggle_ini');" /> Installation Page
+Interface Settings</h3>
+<div class="toggle" id="toggle_ini">
+<p><strong>MUI_INSTFILESPAGE_COLORS</strong> <span class=
+"parameter">(/windows | (foreground color: RRGGBB hexadecimal)
+(background color: RRGGBB hexadecimal))</span><br />
+The colors of the details screen. Use /windows for the default
+Windows colors.<br />
+<em>Default: /windows</em></p>
+<p><strong>MUI_INSTFILESPAGE_PROGRESSBAR</strong> <span class=
+"parameter">("" | colored | smooth)</span><br />
+The style of the progress bar. Colored makes it use the
+MUI_INSTALLCOLORS.<br />
+<em>Default: smooth</em></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_inf"
+src="images/closed.gif" onclick=
+"toggle('trigger_inf', 'toggle_inf');" /> Installer Finish Page
+Interface Settings</h3>
+<div class="toggle" id="toggle_inf">
+<p><strong>MUI_FINISHPAGE_NOAUTOCLOSE</strong><br />
+Do not automatically jump to the finish page, to allow the user to
+check the install log.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_uinf"
+src="images/closed.gif" onclick=
+"toggle('trigger_uinf', 'toggle_uinf');" /> Uninstaller Finish Page
+Interface Settings</h3>
+<div class="toggle" id="toggle_uinf">
+<p><strong>MUI_UNFINISHPAGE_NOAUTOCLOSE</strong><br />
+Do not automatically jump to the finish page, to allow the user to
+check the uninstall log.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_inaw"
+src="images/closed.gif" onclick=
+"toggle('trigger_inaw', 'toggle_inaw');" /> Abort Warning
+Settings</h3>
+<div class="toggle" id="toggle_inaw">
+<p><strong>MUI_ABORTWARNING</strong><br />
+Show a message box with a warning when the user wants to close the
+installer.</p>
+<div>
+<p><strong>MUI_ABORTWARNING_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the abort warning messagebox.</p>
+</div>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id=
+"trigger_inuaw" src="images/closed.gif" onclick=
+"toggle('trigger_inuaw', 'toggle_inuaw');" /> Uninstaller Abort
+Warning Settings</h3>
+<div class="toggle" id="toggle_inuaw">
+<p><strong>MUI_UNABORTWARNING</strong><br />
+Show a message box with a warning when the user wants to close the
+uninstaller.</p>
+<div>
+<p><strong>MUI_UNABORTWARNING_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the abort warning messagebox.</p>
+</div>
+</div>
+</div>
+</div>
+<h2>3. Pages</h2>
+<div>
+<p>Insert the following macros to set the pages you want to use.
+The pages will appear in the order you insert them in your script.
+You can also insert custom Page commands between the macros to add
+custom pages. <a href="#customPages">More info about custom
+pages...</a></p>
+<p>You can add multiple pages of certain types (for example, if you
+want the user to specify multiple folders).</p>
+<p>Examples:</p>
+<pre>
+!insertmacro MUI_PAGE_LICENSE "License.rtf"
+!insertmacro MUI_PAGE_COMPONENTS
+
+Var STARTMENU_FOLDER
+!insertmacro MUI_PAGE_STARTMENU "Application" $STARTMENU_FOLDER
+</pre>
+<p>You will need the page ID for the Start Menu Folder page when
+using the Start Menu Folder macros. The Start Menu Folder will be
+stored in the specified variable.</p>
+<p><strong>Installer Pages</strong><br />
+MUI_PAGE_WELCOME<br />
+MUI_PAGE_LICENSE <span class="parameter">text/rtf_file</span><br />
+MUI_PAGE_COMPONENTS<br />
+MUI_PAGE_DIRECTORY<br />
+MUI_PAGE_STARTMENU <span class="parameter">page_id
+variable</span><br />
+MUI_PAGE_INSTFILES<br />
+MUI_PAGE_FINISH</p>
+<p><strong>Uninstaller Pages</strong><br />
+MUI_UNPAGE_WELCOME<br />
+MUI_UNPAGE_CONFIRM<br />
+MUI_UNPAGE_LICENSE <span class=
+"parameter">text/rtf_file</span><br />
+MUI_UNPAGE_COMPONENTS<br />
+MUI_UNPAGE_DIRECTORY<br />
+MUI_UNPAGE_INSTFILES<br />
+MUI_UNPAGE_FINISH</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pg"
+src="images/closed.gif" onclick=
+"toggle('trigger_pg', 'toggle_pg');" /> Page Settings</h3>
+<div class="toggle" id="toggle_pg">
+<p>Page Settings apply to a single page and should be set before
+inserting a page macro. If you have multiple pages of one type and
+you want to set a setting for all them, put the setting before each
+page macro. Example:</p>
+<pre>
+;Add a directory page to let the user specify a plug-ins folder
+;Store the folder in $PLUGINS_FOLDER
+
+Var PLUGINS_FOLDER
+!define MUI_DIRECTORYPAGE_VARIABLE $PLUGINS_FOLDER
+!insertmacro MUI_PAGE_DIRECTORY
+</pre>
+<p><b>Note:</b> There is no diference between installer and
+uninstaller page settings.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgg"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgg', 'toggle_pgg');" /> General Page
+Settings</h3>
+<div class="toggle" id="toggle_pgg">
+<p><strong>MUI_PAGE_HEADER_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the header of the page.</p>
+<p><strong>MUI_PAGE_HEADER_SUBTEXT</strong> <span class=
+"parameter">text</span><br />
+Subtext to display on the header of the page.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgw"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgw', 'toggle_pgw');" /> Welcome Page
+Settings</h3>
+<div class="toggle" id="toggle_pgw">
+<p><strong>MUI_WELCOMEPAGE_TITLE</strong> <span class=
+"parameter">title</span><br />
+Title to display on the top of the page.</p>
+<p><strong>MUI_WELCOMEPAGE_TITLE_3LINES</strong><br />
+Extra space for the title area.</p>
+<p><strong>MUI_WELCOMEPAGE_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the page. Use \r\n for a newline.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgl"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgl', 'toggle_pgl');" /> License Page
+Settings</h3>
+<div class="toggle" id="toggle_pgl">
+<p><strong>MUI_LICENSEPAGE_TEXT_TOP</strong> <span class=
+"parameter">text</span><br />
+Text to display on the top of the page.</p>
+<p><strong>MUI_LICENSEPAGE_TEXT_BOTTOM</strong> <span class=
+"parameter">text</span><br />
+Text to display on the bottom of the page.</p>
+<p><strong>MUI_LICENSEPAGE_BUTTON</strong> <span class=
+"parameter">button_text</span><br />
+Text to display on the 'I Agree' button.</p>
+<p><strong>MUI_LICENSEPAGE_CHECKBOX</strong><br />
+Display a checkbox the user has to check to agree with the license
+terms.</p>
+<div>
+<p><strong>MUI_LICENSEPAGE_CHECKBOX_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display next to the checkbox to agree with the license
+terms.</p>
+</div>
+<p><strong>MUI_LICENSEPAGE_RADIOBUTTONS</strong><br />
+Display two radio buttons to allow the user to choose between
+accepting the license terms or not.</p>
+<div>
+<p><strong>MUI_LICENSEPAGE_RADIOBUTTONS_TEXT_ACCEPT</strong>
+<span class="parameter">text</span><br />
+Text to display next to the checkbox to accept the license
+terms.</p>
+<p><strong>MUI_LICENSEPAGE_RADIOBUTTONS_TEXT_DECLINE</strong>
+<span class="parameter">text</span><br />
+Text to display next to the checkbox to decline the license
+terms.</p>
+</div>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgc"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgc', 'toggle_pgc');" /> Components Page
+Settings</h3>
+<div class="toggle" id="toggle_pgc">
+<p><strong>MUI_COMPONENTSPAGE_TEXT_TOP</strong> <span class=
+"parameter">text</span><br />
+Text to display on the top of the page.</p>
+<p><strong>MUI_COMPONENTSPAGE_TEXT_COMPLIST</strong> <span class=
+"parameter">text</span><br />
+Text to display on next to the components list.</p>
+<p><strong>MUI_COMPONENTSPAGE_TEXT_INSTTYPE</strong> <span class=
+"parameter">text</span><br />
+Text to display on next to the installation type combo box.</p>
+<p><strong>MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE</strong>
+<span class="parameter">text</span><br />
+Text to display on the of the top of the description box.</p>
+<p><strong>MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO</strong>
+<span class="parameter">text</span><br />
+Text to display inside the description box when no section is
+selected.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgd"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgd', 'toggle_pgd');" /> Directory Page
+Settings</h3>
+<div class="toggle" id="toggle_pgd">
+<p><strong>MUI_DIRECTORYPAGE_TEXT_TOP</strong> <span class=
+"parameter">text</span><br />
+Text to display on top of the page.</p>
+<p><strong>MUI_DIRECTORYPAGE_TEXT_DESTINATION</strong> <span class=
+"parameter">text</span><br />
+Text to display on the destination folder frame.</p>
+<p><strong>MUI_DIRECTORYPAGE_VARIABLE</strong> <span class=
+"parameter">variable</span><br />
+Variable in which to store the selected folder.<br />
+<em>Default: $INSTDIR</em></p>
+<p><strong>MUI_DIRECTORYPAGE_VERIFYONLEAVE</strong><br />
+Does not disable the Next button when a folder is invalid but
+allows you to use GetInstDirError in the leave function to handle
+an invalid folder.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgs"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgs', 'toggle_pgs');" /> Start Menu Folder Page
+Settings</h3>
+<div class="toggle" id="toggle_pgs">
+<p>Put the code to write the shortcuts (using CreateShortcut)
+between the MUI_STARTMENU_WRITE_BEGIN and MUI_STARTMENU_WRITE_END
+macros:</p>
+<pre>
+!insertmacro MUI_STARTMENU_WRITE_BEGIN page_id
+  ...create shortcuts...
+!insertmacro MUI_STARTMENU_WRITE_END
+</pre>
+<p>The page ID should be the ID of the page on which the user has
+selected the folder for the shortcuts you want to write.</p>
+<p><strong>MUI_STARTMENUPAGE_TEXT_TOP</strong> <span class=
+"parameter">text</span><br />
+Text to display on the top of the page.</p>
+<p><strong>MUI_STARTMENUPAGE_TEXT_CHECKBOX</strong> <span class=
+"parameter">text</span><br />
+Text to display next to the checkbox to disable the Start Menu
+folder creation.</p>
+<p><strong>MUI_STARTMENUPAGE_DEFAULTFOLDER</strong> <span class=
+"parameter">folder</span><br />
+The default Start Menu Folder.</p>
+<p><strong>MUI_STARTMENUPAGE_NODISABLE</strong><br />
+Do not display the checkbox to disable the creation of Start Menu
+shortcuts.</p>
+<p><strong>MUI_STARTMENUPAGE_REGISTRY_ROOT</strong> <span class=
+"parameter">root</span><br />
+<strong>MUI_STARTMENUPAGE_REGISTRY_KEY</strong> <span class=
+"parameter">key</span><br />
+<strong>MUI_STARTMENUPAGE_REGISTRY_VALUENAME</strong> <span class=
+"parameter">value_name</span><br />
+The registry key to store the Start Menu folder. The page will use
+it to remember the users preference. You should also use for the
+uninstaller to remove the Start Menu folders. Don't forget to
+remove this key during uninstallation.</p>
+<p>For the uninstaller, use the MUI_STARTMENU_GETFOLDER macro to
+get the Start Menu folder:</p>
+<pre>
+!insertmacro MUI_STARTMENU_GETFOLDER page_id $R0
+  Delete "$SMPROGRAMS\$R0\Your Shortcut.lnk"
+</pre></div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgi"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgi', 'toggle_pgi');" /> Installation Page
+Settings</h3>
+<div class="toggle" id="toggle_pgi">
+<p><strong>MUI_INSTFILESPAGE_FINISHHEADER_TEXT</strong>
+<span class="parameter">text</span><br />
+Text to display on the header of the installation page when the
+installation has been completed (won't be displayed when using a
+Finish page without MUI_(UN)FINISHPAGE_NOAUTOCLOSE).</p>
+<p><strong>MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT</strong>
+<span class="parameter">text</span><br />
+Subext to display on the header of the installation page when the
+installation has been completed (won't be displayed when using a
+Finish page without MUI_(UN)FINISHPAGE_NOAUTOCLOSE).</p>
+<p><strong>MUI_INSTFILESPAGE_ABORTHEADER_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the header of the installation page when the
+installation has been aborted.</p>
+<p><strong>MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT</strong>
+<span class="parameter">text</span><br />
+Subext to display on the header of the installation page when the
+installation has been aborted.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgf"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgf', 'toggle_pgf');" /> Finish Page Settings</h3>
+<div class="toggle" id="toggle_pgf">
+<p><strong>MUI_FINISHPAGE_TITLE</strong> <span class=
+"parameter">title</span><br />
+Title to display on the top of the page.</p>
+<p><strong>MUI_FINISHPAGE_TITLE_3LINES</strong><br />
+Extra space for the title area.</p>
+<p><strong>MUI_FINISHPAGE_TEXT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the page. Use \r\n for a newline.</p>
+<p><strong>MUI_FINISHPAGE_TEXT_LARGE</strong><br />
+Extra space for the text area (if using checkboxes).</p>
+<p><strong>MUI_FINISHPAGE_BUTTON</strong> <span class=
+"parameter">text</span><br />
+Text to display on the Finish button.</p>
+<p><strong>MUI_FINISHPAGE_TEXT_REBOOT</strong> <span class=
+"parameter">text</span><br />
+Text to display on the finish page when asking for a system reboot.
+Use \r\n for a newline.</p>
+<p><strong>MUI_FINISHPAGE_TEXT_REBOOTNOW</strong> <span class=
+"parameter">text</span><br />
+Text to display next to the 'Reboot now' option button.</p>
+<p><strong>MUI_FINISHPAGE_TEXT_REBOOTLATER</strong> <span class=
+"parameter">text</span><br />
+Text to display next to the 'Reboot later' option button.</p>
+<p><strong>MUI_FINISHPAGE_RUN</strong> <span class=
+"parameter">exe_file</span><br />
+Application which the user can select to run using a checkbox. You
+don't need to put quotes around the filename when it contains
+spaces.</p>
+<div>
+<p><strong>MUI_FINISHPAGE_RUN_TEXT</strong> <span class=
+"parameter">text</span><br />
+Texts to display next to the 'Run program' checkbox.</p>
+<p><strong>MUI_FINISHPAGE_RUN_PARAMETERS</strong> <span class=
+"parameter">parameters</span><br />
+Parameters for the application to run. Don't forget to escape
+double quotes in the value (use $\").</p>
+<p><strong>MUI_FINISHPAGE_RUN_NOTCHECKED</strong><br />
+Do not check the 'Run program' checkbox by default</p>
+<p><strong>MUI_FINISHPAGE_RUN_FUNCTION</strong> <span class=
+"parameter">function_name</span><br />
+Call a function instead of executing an application (define
+MUI_FINISHPAGE_RUN without parameters). You can use the function to
+exectute multiple applications or you can change the checkbox name
+and use it for other things.</p>
+</div>
+<p><strong>MUI_FINISHPAGE_SHOWREADME</strong> <span class=
+"parameter">file/url</span><br />
+File or website which the user can select to view using a checkbox.
+You don't need to put quotes around the filename when it contains
+spaces.</p>
+<div>
+<p><strong>MUI_FINISHPAGE_SHOWREADME_TEXT</strong> <span class=
+"parameter">text</span><br />
+Texts to display next to the 'Show Readme' checkbox.</p>
+<p><strong>MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</strong><br />
+Do not check the 'Show Readme' checkbox by default</p>
+<p><strong>MUI_FINISHPAGE_SHOWREADME_FUNCTION</strong> <span class=
+"parameter">function_name</span><br />
+Call a function instead of showing a file (define
+MUI_FINISHPAGE_SHOWREADME without parameters). You can use the
+function to show multiple files or you can change the checkbox name
+and use it for other things.</p>
+</div>
+<p><strong>MUI_FINISHPAGE_LINK</strong> <span class=
+"parameter">link_text</span><br />
+Text for a link on the which the user can click to view a website
+or file.</p>
+<div>
+<p><strong>MUI_FINISHPAGE_LINK_LOCATION</strong> <span class=
+"parameter">file/url</span><br />
+Website or file which the user can select to view using the link.
+You don't need to put quotes around the filename when it contains
+spaces.</p>
+<p><strong>MUI_FINISHPAGE_LINK_COLOR</strong> <span class=
+"parameter">(color: RRGGBB hexadecimal)</span><br />
+Text color for the link on the Finish page.<br />
+<em>Default: 000080</em></p>
+</div>
+<p><strong>MUI_FINISHPAGE_NOREBOOTSUPPORT</strong><br />
+Disables support for the page that allows the user to reboot the
+system. Define this option to save some space if you are not using
+the /REBOOTOK flag or SetRebootFlag.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pgu"
+src="images/closed.gif" onclick=
+"toggle('trigger_pgu', 'toggle_pgu');" /> Uninstall Confirm Page
+Settings</h3>
+<div class="toggle" id="toggle_pgu">
+<p><strong>MUI_UNCONFIRMPAGE_TEXT_TOP</strong> <span class=
+"parameter">text</span><br />
+Text to display on the top of the page.</p>
+<p><strong>MUI_UNCONFIRMPAGE_TEXT_LOCATION</strong> <span class=
+"parameter">text</span><br />
+Text to display next to the uninstall location text box.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_pga"
+src="images/closed.gif" onclick=
+"toggle('trigger_pga', 'toggle_pga');" /> Advanced Page
+Settings</h3>
+<div class="toggle" id="toggle_pga">
+<p>You can add custom code to the page functions of your Modern UI
+pages. <a href="#customFunctions">More info...</a></p>
+</div>
+</div>
+</div>
+<h2>4. Custom functions</h2>
+<div>
+<p>If you want add your own code to functions inserted by the
+Modern UI (e.g. the .onGUIInit function and the page functions),
+create your own function and let the Modern UI functions call
+them.</p>
+<p><a href="#customFunctions">More info...</a></p>
+</div>
+<h2>5. Language files</h2>
+<div>
+<p>Insert the Modern UI language files for the languages to want to
+include.</p>
+<pre>
+!insertmacro MUI_LANGUAGE "English"
+</pre>
+<p>The Modern UI language files load the NLF language files, so you
+should not use LoadLanguageFile.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_ls"
+src="images/closed.gif" onclick=
+"toggle('trigger_ls', 'toggle_ls');" /> Language Selection
+Dialog</h3>
+<div class="toggle" id="toggle_ls">
+<p>If you want the installer to display a language selection dialog
+(have a look at the <a href=
+"../../Examples/Modern%20UI/MultiLanguage.nsi">MultiLanguage.nsi</a>
+example), insert the MUI_LANGDLL_DISPLAY macro in the .onInit
+function:</p>
+<pre>
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
+</pre>
+<p>You can also use this macro for the uninstaller, in the
+un.onInit function.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_lss"
+src="images/closed.gif" onclick=
+"toggle('trigger_lss', 'toggle_lss');" /> Language Selection Dialog
+Settings</h3>
+<div class="toggle" id="toggle_lss">
+<p>To remember to users preference, you can define a registry
+key.<br />
+<strong>Note:</strong> These defines should be set before inserting
+the installation page macro.</p>
+<p><strong>MUI_LANGDLL_REGISTRY_ROOT</strong> <span class=
+"parameter">root</span><br />
+<strong>MUI_LANGDLL_REGISTRY_KEY</strong> <span class=
+"parameter">key</span><br />
+<strong>MUI_LANGDLL_REGISTRY_VALUENAME</strong> <span class=
+"parameter">value_name</span><br />
+The registry key to store the language. The users preference will
+be remembered. You can also use it for the uninstaller to display
+the right language. Don't forget to remove this key in the
+uninstaller.</p>
+<p>For the uninstaller, insert the MUI_UNGETLANGUAGE macro in
+un.onInit to get the stored language preference:</p>
+<pre>
+Function un.onInit
+
+  !insertmacro MUI_UNGETLANGUAGE
+
+FunctionEnd
+</pre></div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_lsin"
+src="images/closed.gif" onclick=
+"toggle('trigger_lsin', 'toggle_lsin');" /> Language Selection
+Dialog Interface Settings</h3>
+<div class="toggle" id="toggle_lsin">
+<p>To customize the language selection dialog interface, use these
+defines before inserting the MUI_LANGDLL_DISPLAY macro.</p>
+<p><strong>MUI_LANGDLL_WINDOWTITLE</strong> <span class=
+"parameter">text</span><br />
+The window title of the language selection dialog.</p>
+<p><strong>MUI_LANGDLL_INFO</strong> <span class=
+"parameter">text</span><br />
+The text to display on the language selection dialog.</p>
+<p><strong>MUI_LANGDLL_ALWAYSSHOW</strong><br />
+Always show the language selection dialog, even if a language has
+been stored in the registry. The language stored in the registry
+will be selected by default.</p>
+</div>
+</div>
+</div>
+<h2>6. Reserve files</h2>
+<div>
+<p>If you are using solid compression (by default, solid
+compression is enabled for BZIP2 and LZMA), it's important that
+files which are being extracted in init- or page functions function
+are located before other files in the data block, because this will
+make your installer faster.</p>
+<p>If there are File commands in your sections or functions above
+the init- or page functions, add the reserve file macros above your
+sections and functions.</p>
+<pre>
+ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions plug-in
+!insertmacro MUI_RESERVEFILE_LANGDLL ;Language selection dialog
+</pre></div>
+<h2>7. Your own sections and functions</h2>
+<div>
+<p>Add your installer sections and functions. See the NSIS Users
+Manual for details.</p>
+<p>Information about section code and function code for Start Menu
+shortcut creation and language selection can be found above.</p>
+</div>
+<h2>8. Section descriptions</h2>
+<div>
+<p>The descriptions of sections will be displayed on the components
+page, when the user hovers the mouse over a section. If you don't
+want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
+interface setting.</p>
+<p>To set a description for a section, you have to add an
+additional parameter to the Section commmand with a name for the
+define that should contain the section number.</p>
+<pre>
+Section "Section Name 1" Section1
+   ...
+SectionEnd
+</pre>
+<p>Use these macros to set the descriptions:</p>
+<pre>
+LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
+LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+</pre>
+<p>For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN
+and MUI_UNFUNCTIONS_DESCRIPTION_END macros.</p>
+</div>
+</div>
+<h1><a name="customPages" id="customPages">Custom pages</a></h1>
+<div>
+<p>If you want add your custom pages to your installer, you should
+insert your own page commands between the page macros.</p>
+<pre>
+!insertmacro MUI_PAGE_WELCOME
+Page custom FunctionName ;Custom page
+!insertmacro MUI_PAGE_COMPONENTS
+
+;Uninstaller
+!insertmacro MUI_UNPAGE_CONFIRM
+UninstPage custom un.FunctionName ;Custom page
+!insertmacro MUI_UNPAGE_INSTFILES
+</pre>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_io"
+src="images/closed.gif" onclick=
+"toggle('trigger_io', 'toggle_io');" /> Using InstallOptions for
+custom pages</h3>
+<div class="toggle" id="toggle_io">
+<p>InstallOptions is a plug-in that displays custom pages that you
+can create using INI files.</p>
+<p>Have a look at the <a href=
+"../InstallOptions/Readme.html">InstallOptions documentation</a>
+for info about creating InstallOptions INI files.</p>
+<p>First, you have to extract your InstallOptions INI File in the
+.onInit function (un.onInit for the uninstaller) using the
+MUI_INSTALLOPTIONS_EXTRACT macro:</p>
+<pre>
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
+FunctionEnd
+</pre>
+<p>If your INI File is located in another directory, use
+MUI_INSTALLOPTIONS_EXTRACT_AS. The second parameter is the filename
+for the temporary plug-ins directory, use this filename as
+parameter for the other InstallOptions macros.</p>
+<pre>
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
+FunctionEnd
+</pre>
+<p>You can call Instal Options in the function defined with the
+Page or UninstPage command using the MUI_INSTALLOPTIONS_DISPLAY
+macro. Use the MUI_HEADER_TEXT macro to set the text on the page
+header:</p>
+<pre>
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
+
+Function FunctionName ;FunctionName defined with Page command
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "ioFile.ini"
+FunctionEnd
+</pre>
+<p>For custom fonts and colors, macros for the initDialog and show
+functions of InstallOptions are also available:</p>
+<pre>
+Var HWND
+Var DLGITEM
+Var FONT
+
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
+
+Function FunctionName ;FunctionName defined with Page command
+
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+
+  !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
+  Pop $HWND ;HWND of dialog
+    
+  GetDlgItem $DLGITEM $HWND 1200 ;1200 + Field number - 1
+    
+  ;$DLGITEM contains the HWND of the first field
+  CreateFont $FONT "Tahoma" 10 700 
+  SendMessage $DLGITEM ${WM_SETFONT} $FONT 0
+        
+  !insertmacro MUI_INSTALLOPTIONS_SHOW
+
+FunctionEnd
+</pre>
+<p>If you need the InstallOptions return value (success, back,
+cancel, error), use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or
+MUI_INSTALLOPTIONS_SHOW_RETURN macro. The return value will be
+added to the stack, so you can use the Pop command to get it.</p>
+<p>Use these macros to read or write INI file values:</p>
+<pre>
+!insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Name"
+!insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Name" "Value"
+</pre>
+<p>For example, you can use the MUI_INSTALLOPTIONS_READ macro in a
+section to get the user input:</p>
+<pre>
+!insertmacro MUI_INSTALLOPTIONS_READ $R0 "ioFile.ini" "Field 1" "State"
+</pre>
+<p>For more details about InstallOptions, validation of user input
+etc., check the <a href=
+"../InstallOptions/Readme.html">InstallOptions
+documentation</a>.</p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_dlg"
+src="images/closed.gif" onclick=
+"toggle('trigger_dlg', 'toggle_dlg');" /> Customize standard
+dialogs</h3>
+<div class="toggle" id="toggle_dlg">
+<p>To change elements on the dialogs, use customized UI resource
+files (see <a href="#interfaceConf">Interface Configuration</a>).
+You can change your copies of the original files (in the
+Contrib\UIs folder) by using an application such as <a href=
+"http://www.users.on.net/johnson/resourcehacker/">Resource
+Hacker</a>.</p>
+<p>The 'Please wait while Setup is loading...' text on the splash
+screen that is being displayed while the installer is starting
+(Verifying installer, Unpacking data) can be changed by using a
+customized UI resource file (MUI_UI setting) with a modified dialog
+111.<br />
+The 'Verifying installer' and 'Unpacking data' texts are defined in
+the language header file of the NSIS exehead
+(Source\exehead\lang.h). To change them, you have to edit this file
+and recompile NSIS.</p>
+<p>To modify the Welcome dialog and Finish dialog, use a custom INI
+file (MUI_SPECIALINI setting) or write to the INI file in the
+custom page functions.</p>
+</div>
+</div>
+<h1><a name="customFunctions" id="customFunctions">Customize Modern
+UI Functions</a></h1>
+<div>
+<p>If you want add your own code to functions inserted by the
+Modern UI, such as the .onGUIInit function and the Page functions,
+create your own function and let the Modern UI functions call them.
+Use the defines to define the name of your functions.</p>
+<p>Example:</p>
+<pre class="text">
+!define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
+
+Function myGUIInit
+  ...your own code...
+FunctionEnd
+</pre>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_cfg"
+src="images/closed.gif" onclick=
+"toggle('trigger_cfg', 'toggle_cfg');" /> General Custom
+Functions</h3>
+<div class="toggle" id="toggle_cfg">
+<p>These defines should be set before inserting the language
+macros.</p>
+<p><strong>MUI_CUSTOMFUNCTION_GUIINIT</strong> <span class=
+"parameter">function</span><br />
+<strong>MUI_CUSTOMFUNCTION_UNGUIINIT</strong> <span class=
+"parameter">function</span><br />
+<strong>MUI_CUSTOMFUNCTION_ABORT</strong> <span class=
+"parameter">function</span><br />
+<strong>MUI_CUSTOMFUNCTION_UNABORT</strong> <span class=
+"parameter">function</span></p>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_cfpg"
+src="images/closed.gif" onclick=
+"toggle('trigger_cfpg', 'toggle_cfpg');" /> Page Custom
+Functions</h3>
+<div class="toggle" id="toggle_cfpg">
+<p>These defines should be set before inserting a page macro.</p>
+<p><strong>MUI_PAGE_CUSTOMFUNCTION_PRE</strong> <span class=
+"parameter">function</span><br />
+<strong>MUI_PAGE_CUSTOMFUNCTION_SHOW</strong> <span class=
+"parameter">function</span><br />
+<strong>MUI_PAGE_CUSTOMFUNCTION_LEAVE</strong> <span class=
+"parameter">function</span></p>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>The StartMenu page does not have a Show function</li>
+<li>In the Pre function of the Welcome page and the Finish page,
+you can write to the InstallOptions INI file of the page
+(ioSpecial.ini)</li>
+<li>In the Show function of Welcome page and the Finish page,
+$MUI_HWND contains the HWND of the inner dialog</li>
+</ul>
+</div>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_cfwf"
+src="images/closed.gif" onclick=
+"toggle('trigger_cfwf', 'toggle_cfwf');" /> Welcome/Finish Page
+Custom Functions</h3>
+<div class="toggle" id="toggle_cfwf">
+<p>This define should be inserted before a single Welcome or Finish
+page.</p>
+<p><strong>MUI_WELCOMEFINISHPAGE_CUSTOMFUNCTION_INIT</strong>
+<span class="parameter">function</span></p>
+<p>This Init function is called before the InstallOptions INI file
+for the page is written, so you can use it to initialize any
+variables used in the page settings.</p>
+</div>
+</div>
+<h1><a name="examples" id="examples">Examples</a></h1>
+<div>
+<p>Basic: <a href=
+"../../Examples/Modern%20UI/Basic.nsi">Basic.nsi</a><br />
+Welcome/Finish page: <a href=
+"../../Examples/Modern%20UI/WelcomeFinish.nsi">WelcomeFinish.nsi</a><br />
+
+Multiple languages: <a href=
+"../../Examples/Modern%20UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br />
+
+Header image: <a href=
+"../../Examples/Modern%20UI/HeaderBitmap.nsi">HeaderBitmap.nsi</a><br />
+
+Custom pages: <a href=
+"../../Examples/Modern%20UI/InstallOptions.nsi">InstallOptions.nsi</a><br />
+
+Start Menu Folder page: <a href=
+"../../Examples/Modern%20UI/StartMenu.nsi">StartMenu.nsi</a></p>
+</div>
+<h1>Version history</h1>
+<div>
+<ul>
+<li>1.72 - November 27, 2004
+<ul>
+<li>Fixed state of Finish page Cancel button when both an installer and
+uninstaller page is included</li>
+</ul>
+</li>
+</ul>
+<p><a href="Changelog.txt">Complete version history</a></p>
+</div>
+<h1>Credits</h1>
+<div>
+<p>Made by Joost Verburg.<br />
+Icons designed by Nikos Adamamas, aka adni18.<br />
+Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS to make
+this possible.</p>
+</div>
+<h1>Help</h1>
+<div>
+<p>Please post questions at the <a href=
+"http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS
+Forum</a>.</p>
+</div>
+<h1>License</h1>
+<div>
+<p>The zlib/libpng license applies to the Modern UI.</p>
+<h3><img class="trigger" alt="Open/Close section" id="trigger_lic"
+src="images/closed.gif" onclick=
+"toggle('trigger_lic', 'toggle_lic');" /> License Terms</h3>
+<div class="toggle" id="toggle_lic">
+<pre>
+Copyright &copy; 2002-2004 Joost Verburg
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute
+it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; 
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgment in the
+   product documentation would be appreciated but is not required.
+2. Altered versions must be plainly marked as such,
+   and must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any distribution.
+</pre></div>
+</div>
+</div>
+<div class="footer">&copy;2002-2004 Joost Verburg</div>
+</td>
+</tr>
+</table>
+</body>
+</html>
