@@ -127,7 +127,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData) {
 	// Read title variant length array
 	ReadVarLenArr(seeker, m_szTitle);
 	// Read font size and variant length array (only if style DS_SETFONT is used!)
-	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
+	if (m_dwStyle & DS_SETFONT) {
 		m_sFontSize = *(short*)seeker;
 		seeker += sizeof(short);
     if (m_bExtended) {
@@ -245,10 +245,13 @@ void CDialogTemplate::RemoveItem(WORD wId) {
       m_vItems.erase(m_vItems.begin() + i);
 }
 
+#ifndef DS_SHELLFONT
+#define DS_SHELLFONT (DS_SETFONT | DS_FIXEDSYS)
+#endif
+
 // Sets the font of the dialog
 void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   m_dwStyle &= ~DS_SHELLFONT;
-  m_dwStyle &= ~DS_FIXEDSYS;
   m_dwStyle |= DS_SETFONT;
 	if (m_szFont) delete [] m_szFont;
 	m_szFont = new char[lstrlen(szFaceName)];
@@ -468,7 +471,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 	WriteStringOrId(m_szTitle);
 
 	// Write font variant length array, size, and extended info (if needed)
-	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
+	if (m_dwStyle & DS_SETFONT) {
 		*(short*)seeker = m_sFontSize;
 		seeker += sizeof(short);
 		if (m_bExtended) {
@@ -551,7 +554,7 @@ DWORD CDialogTemplate::GetSize() {
 	AddStringOrIdSize(m_szTitle);
 
 	// Font
-	if (m_dwStyle & DS_SETFONT || m_dwStyle & DS_SHELLFONT) {
+	if (m_dwStyle & DS_SETFONT) {
 		dwSize += sizeof(WORD) + (m_bExtended ? sizeof(short) + 2*sizeof(BYTE) : 0);
 		AddStringOrIdSize(m_szFont);
 	}
