@@ -45,7 +45,7 @@ Here's a short list of some of NSIS' features.
 
 \b Easy to use plug-in system (includes plug-ins for generic dialog construction and user interaction, as well as HTTP downloading)
 
-\b Fully multilingual. 25 translations available including German, French, Spanish, Italian, Dutch, Chinese and more...
+\b Fully multilingual. 28 translations available including German, French, Spanish, Italian, Dutch, Chinese and more...
 
 \b Installers can be as large as 2GB (theoretically -- when building on Win9x the limit seems to be around 500MB, however building on NT then installing on Win9x works with larger sizes)
 

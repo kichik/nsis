@@ -8,7 +8,13 @@ These commands are similar to the C preprocessor in terms of purpose and functio
 
 \c file
 
-This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides).
+This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See !addincludedir for more information.
+
+\S1{addincludedir} !addincludedir
+
+\c directory
+
+Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include alone.
 
 \S1{cd} !cd
 
