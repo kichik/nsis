@@ -248,7 +248,7 @@ follow these steps:</p>
   <p class="sub2header">Finish Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN </span><span class="parameter">exe_file</span><br />
-  Application which the user can select to run (using a checkbox).
+  Application which the user can select to run using a checkbox.
   You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS </span><span class="parameter">parameters</span><br />
@@ -262,9 +262,9 @@ follow these steps:</p>
   use it for other things.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME </span><span class="parameter">file/url</span><br />
-  File or website which the user can select to view (using a checkbox).
+  File or website which the user can select to view using a checkbox.
   You don't need to put quotes around the filename when it contains spaces.
-  Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
+  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br />
   Do not check the 'Show Readme' checkbox by default</p>
@@ -272,6 +272,15 @@ follow these steps:</p>
   Call a function instead of showing a file (define MUI_FINISHPAGE_SHOWREADME without parameters).
   You can use the function to show multiple files or you can change the checkbox name and
   use it for other things.</p>
+  </div>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_LINK </span><span class="parameter">link_text</span><br />
+  Text for a link on the which the user can click to view a website or file.
+  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_LOCATION </span><span class="parameter">file/url</span><br />
+  Website or file which the user can select to view using the link.
+  You don't need to put quotes around the filename when it contains spaces.
+  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
   Do not automatically jump to the finish page, to allow the user to
@@ -284,8 +293,7 @@ follow these steps:</p>
   <p class="sub2header">Other settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
-  Show a message box with a warning (are you sure?) when the user closes
-  the installation.</p>
+  Show a message box with a warning when the user wants to close the installer.</p>
   </div>
   <p class="subheader">4b. Interface settings</p>
   <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
@@ -643,7 +651,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.65 - June 14, 2003
+<li>1.65 - June 17, 2003
   <ul>
     <li>New page configuration system, no different system for installers
     with custom pages</li>
@@ -653,6 +661,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>ReserveFile macro for StartMenu plug-in</li>
     <li>Added MUI_LANGDLL_ALWAYSSHOW option</li>
     <li>Checkboxes on Finish page can be used to call a function</li>
+    <li>Support for a link on the Finish page</li>
   </ul></li>
 </ul>
 <p class="text"></p>
