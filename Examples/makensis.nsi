@@ -204,6 +204,7 @@ Section "Splash" SecContribSplash
   File ..\Plugins\splash.dll
   SetOutPath $INSTDIR\Contrib\Splash
   File ..\Contrib\splash\splash.txt
+  File ..\Contrib\splash\Example.nsi
 SectionEnd
 
 Section "AdvSplash w/transparency" SecContribSplashT
@@ -212,6 +213,7 @@ Section "AdvSplash w/transparency" SecContribSplashT
   File ..\Plugins\advsplash.dll
   SetOutPath $INSTDIR\Contrib\AdvSplash
   File ..\Contrib\AdvSplash\advsplash.txt
+  File ..\Contrib\AdvSplash\Example.nsi
 SectionEnd
 
 Section "BgImage" SecContribBgImage
@@ -220,6 +222,7 @@ Section "BgImage" SecContribBgImage
   File ..\Plugins\BgImage.dll
   SetOutPath $INSTDIR\Contrib\BgImage
   File ..\Contrib\BgImage\BgImage.txt
+  File ..\Contrib\BgImage\Example.nsi
 SectionEnd
 
 Section "InstallOptions" SecContribIO
@@ -391,12 +394,9 @@ Section "InstallOptions Source" SecContribIOS
   SetOutPath $INSTDIR\Contrib\InstallOptions
   File ..\contrib\installoptions\io.dsp
   File ..\contrib\installoptions\io.dsw
-  File ..\contrib\installoptions\test.ini
-  File ..\contrib\installoptions\test.nsi
   File ..\contrib\installoptions\InstallerOptions.cpp
   File ..\contrib\installoptions\*.rc
   File ..\contrib\installoptions\*.h
-  File "..\contrib\installoptions\Install Options.html"
 SectionEnd
 
 Section "NSIS-DL Source" SecContribNSISDLS
