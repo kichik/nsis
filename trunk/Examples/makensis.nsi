@@ -651,6 +651,11 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\Makefile
   File ..\Source\makenssi.dsp
   File ..\Source\makenssi.dsw
+  # boost
+  SetOutPath $INSTDIR\Source\boost
+  File ..\Source\boost\*.hpp
+  SetOutPath $INSTDIR\Source\boost\detail
+  File ..\Source\boost\detail\*.hpp
   # zlib
   SetOutPath $INSTDIR\Source\zlib
   File ..\Source\zlib\*.*
