@@ -3540,6 +3540,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (uninstall_mode) uninst_plugin_used = true;
         else plugin_used = true;
 
+        // Initialize $PLUGINSDIR
         ent.which=EW_CALL;
         ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
         ret=add_entry(&ent);
@@ -3548,13 +3549,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         // DLL name on the user machine
         char tempDLL[NSIS_MAX_STRLEN];
         wsprintf(tempDLL, "$PLUGINSDIR%s", strrchr(dllPath,'\\'));
-        int tempDLLtab = add_string(tempDLL);
 
-        // Store the DLL
-        if (uninstall_mode) m_plugins.StoreUninstDLL(dllPath);
-        else m_plugins.StoreInstDLL(dllPath);
+        // Add the DLL to the installer
+        int files_added;
+        int old_build_overwrite=build_overwrite;
+        build_overwrite=1;
+        ret=do_add_file(dllPath,0,0,0,&files_added,tempDLL);
+        if (ret != PS_OK) return ret;
+        build_overwrite=old_build_overwrite;
 
-        // Finally call the DLL
+        // Call the DLL
         char* command = strstr(line.gettoken_str(0),"::");
         if (command) command += 2;
         else         command  = line.gettoken_str(0);
@@ -3580,7 +3584,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         // next, call it
         ent.which=EW_REGISTERDLL;
-        ent.offsets[0]=tempDLLtab;
+        ent.offsets[0]=add_string(tempDLL);;
         ent.offsets[1]=add_string(command);
         ent.offsets[2]=-1;
         ent.offsets[3]=nounload;
