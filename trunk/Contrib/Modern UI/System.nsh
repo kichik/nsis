@@ -1982,18 +1982,6 @@ Var MUI_TEMP2
 ;--------------------------------
 ;RESERVE FILES
 
-!macro MUI_RESERVEFILE_WELCOMEFINISHPAGE
-
-  !verbose push
-  !verbose 3
-
-  !insertmacro MUI_RESERVEFILE_SPECIALINI
-  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-    
-  !verbose pop
-    
-!macroend
-
 !macro MUI_RESERVEFILE_INSTALLOPTIONS
 
   !verbose push
@@ -2005,34 +1993,12 @@ Var MUI_TEMP2
   
 !macroend
 
-!macro MUI_RESERVEFILE_SPECIALINI
-
-  !verbose push
-  !verbose 3
-
-  ReserveFile "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
-  
-  !verbose pop
-  
-!macroend
-
 !macro MUI_RESERVEFILE_LANGDLL
 
   !verbose push
   !verbose 3
   
   ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
-  
-  !verbose pop
-  
-!macroend
-
-!macro MUI_RESERVEFILE_STARTMENU
-
-  !verbose push
-  !verbose 3
-  
-  ReserveFile "${NSISDIR}\Plugins\StartMenu.dll"
   
   !verbose pop
   

@@ -21,7 +21,7 @@
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
-;Modern UI Configuration
+;Interface Settings
 
   !define MUI_ABORTWARNING
 
@@ -42,15 +42,6 @@
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-;Reserve Files
-  
-  ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only for BZIP2 compression
-  
-  !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE
-  ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
 
 ;--------------------------------
 ;Installer Sections
