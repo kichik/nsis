@@ -21,7 +21,7 @@
 
 static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
                              "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
-                             "$LANGUAGE\0$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0";
+                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
 
 
 int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
