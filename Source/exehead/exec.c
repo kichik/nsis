@@ -978,13 +978,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_CREATESHORTCUT:
     {
       char *buf2=GetStringFromParm(-0x20);
-      char *buf1=GetStringFromParm(0x11);
+      char *buf1=GetStringFromParm(-0x11);
       char *buf0=GetStringFromParm(0x02);
       char *buf3=GetStringFromParm(-0x33);
       char *buf4=GetStringFromParm(0x45);
 
       HRESULT hres;
       IShellLink* psl;
+
+      if (!validpathspec(buf1))
+        GetStringFromParm(0x11);
 
       log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
         buf2,buf1,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
@@ -1009,7 +1012,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
            if (SUCCEEDED(hres))
            {
-              WCHAR wsz[1024];
+              static WCHAR wsz[1024];
+              wsz[0]=0;
               MultiByteToWideChar(CP_ACP, 0, buf2, -1, wsz, 1024);
               hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
            }
