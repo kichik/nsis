@@ -2548,6 +2548,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
         unsigned int malloced = strlen(f) + 100;
         char *incfile = (char *) malloc(malloced);
+        strcpy(incfile, f);
         glob_t globbuf;
         if (!glob(incfile, GLOB_NOSORT, NULL, &globbuf))
         {
