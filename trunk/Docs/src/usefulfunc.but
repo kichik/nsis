@@ -10,25 +10,25 @@
 \c  ; Usage:
 \c  ;   Push "C:\Program Files\Directory\Whatever"
 \c  ;   Call GetParent
-\c  ;   Pop $0
-\c  ;   ; at this point $0 will equal "C:\Program Files\Directory"
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 will equal "C:\Program Files\Directory"
 \c
 \c  Function GetParent 
-\c    Exch $0 ; old $0 is on top of stack
-\c    Push $1
-\c    Push $2
-\c    StrCpy $1 -1
+\c    Exch $R0 ; old $R0 is on top of stack
+\c    Push $R1
+\c    Push $R2
+\c    StrCpy $R1 -1
 \c    loop:
-\c      StrCpy $2 $0 1 $1
-\c      StrCmp $2 "" exit
-\c      StrCmp $2 "\" exit
-\c      IntOp $1 $1 - 1
+\c      StrCpy $R2 $R0 1 $R1
+\c      StrCmp $R2 "" exit
+\c      StrCmp $R2 "\" exit
+\c      IntOp $R1 $R1 - 1
 \c    Goto loop
 \c    exit:
-\c      StrCpy $0 $0 $1
-\c      Pop $2
-\c      Pop $1
-\c      Exch $0 ; put $0 on top of stack, restore $0 to original value
+\c      StrCpy $R0 $R0 $R1
+\c      Pop $R2
+\c      Pop $R1
+\c      Exch $R0 ; put $R0 on top of stack, restore $R0 to original value
 \c  FunctionEnd
 
 \H{trimnewlines} Trim newlines
@@ -39,21 +39,21 @@
 \c  ; modifies no other variables.
 \c
 \c  Function TrimNewlines
-\c    Exch $0
-\c    Push $1
-\c    Push $2
-\c      StrCpy $1 0
+\c    Exch $R0
+\c    Push $R1
+\c    Push $R2
+\c      StrCpy $R1 0
 \c      loop:
-\c        IntOp $1 $1 - 1
-\c        StrCpy $2 $0 1 $1
-\c        StrCmp $2 "$\r" loop
-\c        StrCmp $2 "$\n" loop
-\c    IntOp $1 $1 + 1
+\c        IntOp $R1 $R1 - 1
+\c        StrCpy $R2 $R0 1 $R1
+\c        StrCmp $R2 "$\r" loop
+\c        StrCmp $R2 "$\n" loop
+\c    IntOp $R1 $R1 + 1
 \c      
-\c    StrCpy $0 $0 $1
-\c    Pop $2
-\c    Pop $1
-\c  Exch $0
+\c    StrCpy $R0 $R0 $R1
+\c    Pop $R2
+\c    Pop $R1
+\c  Exch $R0
 \c  FunctionEnd
 
 \H{getparameters} Get command line parameters
@@ -64,28 +64,28 @@
 \c  ; modifies no other variables.
 \c
 \c  Function GetParameters
-\c    Push $0
-\c    Push $1
-\c    Push $2
-\c    StrCpy $0 $CMDLINE 1
-\c    StrCpy $1 '"'
-\c    StrCpy $2 1
-\c    StrCmp $0 '"' loop
-\c      StrCpy $1 ' ' ; we're scanning for a space instead of a quote
+\c    Push $R0
+\c    Push $R1
+\c    Push $R2
+\c    StrCpy $R0 $CMDLINE 1
+\c    StrCpy $R1 '"'
+\c    StrCpy $R2 1
+\c    StrCmp $R0 '"' loop
+\c      StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
 \c    loop:
-\c      StrCpy $0 $CMDLINE 1 $2
-\c      StrCmp $0 $1 loop2
-\c      StrCmp $0 "" loop2
-\c      IntOp $2 $2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 $R1 loop2
+\c      StrCmp $R0 "" loop2
+\c      IntOp $R2 $R2 + 1
 \c      Goto loop
 \c    loop2:
-\c      IntOp $2 $2 + 1
-\c      StrCpy $0 $CMDLINE 1 $2
-\c      StrCmp $0 " " loop2
-\c    StrCpy $0 $CMDLINE "" $2
-\c    Pop $2
-\c    Pop $1
-\c    Exch $0
+\c      IntOp $R2 $R2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 " " loop2
+\c    StrCpy $R0 $CMDLINE "" $R2
+\c    Pop $R2
+\c    Pop $R1
+\c    Exch $R0
 \c  FunctionEnd
 
 \H{strstr} Search in a string
@@ -100,36 +100,36 @@
 \c  ;   Push "this is a long ass string"
 \c  ;   Push "ass"
 \c  ;   Call StrStr
-\c  ;   Pop $0
-\c  ;  ($0 at this point is "ass string")
+\c  ;   Pop $R0
+\c  ;  ($R0 at this point is "ass string")
 \c
 \c  Function StrStr
-\c  Exch $1 ; st=haystack,old$1, $1=needle
-\c    Exch    ; st=old$1,haystack
-\c    Exch $2 ; st=old$1,old$2, $2=haystack
-\c    Push $3
-\c    Push $4
-\c    Push $5
-\c    StrLen $3 $1
-\c    StrCpy $4 0
-\c    ; $1=needle
-\c    ; $2=haystack
-\c    ; $3=len(needle)
-\c    ; $4=cnt
-\c    ; $5=tmp
+\c  Exch $R1 ; st=haystack,old$R1, $R1=needle
+\c    Exch    ; st=old$R1,haystack
+\c    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+\c    Push $R3
+\c    Push $R4
+\c    Push $R5
+\c    StrLen $R3 $R1
+\c    StrCpy $R4 0
+\c    ; $R1=needle
+\c    ; $R2=haystack
+\c    ; $R3=len(needle)
+\c    ; $R4=cnt
+\c    ; $R5=tmp
 \c    loop:
-\c      StrCpy $5 $2 $3 $4
-\c      StrCmp $5 $1 done
-\c      StrCmp $5 "" done
-\c      IntOp $4 $4 + 1
+\c      StrCpy $R5 $R2 $R3 $R4
+\c      StrCmp $R5 $R1 done
+\c      StrCmp $R5 "" done
+\c      IntOp $R4 $R4 + 1
 \c      Goto loop
 \c  done:
-\c    StrCpy $1 $2 "" $4
-\c    Pop $5
-\c    Pop $4
-\c    Pop $3
-\c    Pop $2
-\c    Exch $1
+\c    StrCpy $R1 $R2 "" $R4
+\c    Pop $R5
+\c    Pop $R4
+\c    Pop $R3
+\c    Pop $R2
+\c    Exch $R1
 \c  FunctionEnd
 
 \H{getwindowsversion} Get Windows version
@@ -145,71 +145,71 @@
 \c  ;
 \c  ; Usage:
 \c  ;   Call GetWindowsVersion
-\c  ;   Pop $0
-\c  ;   ; at this point $0 is "NT 4.0" or whatnot
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 is "NT 4.0" or whatnot
 \c
 \c  Function GetWindowsVersion
-\c    Push $0
-\c    Push $9
-\c    ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-\c    StrCmp $0 "" 0 lbl_winnt
+\c    Push $R0
+\c    Push $R1
+\c    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+\c    StrCmp $R0 "" 0 lbl_winnt
 \c    ; we are not NT.
-\c    ReadRegStr $0 HKLM SOFTWARE\Microsoft\Windows\CurrentVersion VersionNumber
+\c    ReadRegStr $R0 HKLM SOFTWARE\Microsoft\Windows\CurrentVersion VersionNumber
 \c 
-\c    StrCpy $9 $0 1
-\c    StrCmp $9 '4' 0 lbl_error
+\c    StrCpy $R1 $R0 1
+\c    StrCmp $R1 '4' 0 lbl_error
 \c
-\c    StrCpy $9 $0 3
+\c    StrCpy $R1 $R0 3
 \c
-\c    StrCmp $9 '4.0' lbl_win32_95
-\c    StrCmp $9 '4.9' lbl_win32_ME lbl_win32_98
+\c    StrCmp $R1 '4.0' lbl_win32_95
+\c    StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
 \c
 \c    lbl_win32_95:
-\c      StrCpy $0 '95'
+\c      StrCpy $R0 '95'
 \c    Goto lbl_done
 \c
 \c    lbl_win32_98:
-\c      StrCpy $0 '98'
+\c      StrCpy $R0 '98'
 \c    Goto lbl_done
 \c
 \c    lbl_win32_ME:
-\c      StrCpy $0 'ME'
+\c      StrCpy $R0 'ME'
 \c    Goto lbl_done
 \c
 \c    lbl_winnt: 
 \c
-\c      StrCpy $9 $0 1
+\c      StrCpy $R1 $R0 1
 \c    
-\c      StrCmp $9 '3' lbl_winnt_x
-\c      StrCmp $9 '4' lbl_winnt_x
+\c      StrCmp $R1 '3' lbl_winnt_x
+\c      StrCmp $R1 '4' lbl_winnt_x
 \c    
-\c      StrCpy $9 $0 3
+\c      StrCpy $R1 $R0 3
 \c    
-\c      StrCmp $9 '5.0' lbl_winnt_2000 lbl_error
-\c      StrCmp $9 '5.1' lbl_winnt_XP lbl_error
-\c      StrCmp $9 '5.2' lbl_winnt_dotNET lbl_error
+\c      StrCmp $R1 '5.0' lbl_winnt_2000 lbl_error
+\c      StrCmp $R1 '5.1' lbl_winnt_XP lbl_error
+\c      StrCmp $R1 '5.2' lbl_winnt_dotNET lbl_error
 \c
 \c      lbl_winnt_x:
-\c        StrCpy $0 "NT $0" 6
+\c        StrCpy $R0 "NT $R0" 6
 \c      Goto lbl_done
 \c
 \c      lbl_winnt_2000:
-\c        Strcpy $0 '2000'
+\c        Strcpy $R0 '2000'
 \c      Goto lbl_done
 \c    
 \c      lbl_winnt_XP:
-\c        Strcpy $0 'XP'
+\c        Strcpy $R0 'XP'
 \c      Goto lbl_done
 \c    
 \c      lbl_winnt_dotNET:
-\c        Strcpy $0 '.NET Server'
+\c        Strcpy $R0 '.NET Server'
 \c      Goto lbl_done
 \c
 \c    lbl_error:
-\c      Strcpy $0 ''
+\c      Strcpy $R0 ''
 \c    lbl_done:
-\c    Pop $9
-\c    Exch $0
+\c    Pop $R1
+\c    Exch $R0
 \c  FunctionEnd
 
 \H{getieversion} Get Internet Explorer version
@@ -224,41 +224,41 @@
 \c  ;
 \c  ; Usage:
 \c  ;   Call GetIEVersion
-\c  ;   Pop $0
-\c  ;   ; at this point $0 is "5" or whatnot
+\c  ;   Pop $R0
+\c  ;   ; at this point $R0 is "5" or whatnot
 \c
 \c  Function GetIEVersion
-\c  Push $0
+\c  Push $R0
 \c    ClearErrors
-\c    ReadRegStr $0 HKLM "Software\Microsoft\Internet Explorer" "Version"
+\c    ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "Version"
 \c    IfErrors lbl_123 lbl_456
 \c
 \c    lbl_456: ; ie 4+
-\c      Strcpy $0 $0 1
+\c      Strcpy $R0 $R0 1
 \c    Goto lbl_done
 \c
 \c    lbl_123: ; older ie version
 \c      ClearErrors
-\c      ReadRegStr $0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
+\c      ReadRegStr $R0 HKLM "Software\Microsoft\Internet Explorer" "IVer"
 \c      IfErrors lbl_error
 \c
-\c        StrCpy $0 $0 3
-\c        StrCmp $0 '100' lbl_ie1
-\c        StrCmp $0 '101' lbl_ie2
-\c        StrCmp $0 '102' lbl_ie2
+\c        StrCpy $R0 $R0 3
+\c        StrCmp $R0 '100' lbl_ie1
+\c        StrCmp $R0 '101' lbl_ie2
+\c        StrCmp $R0 '102' lbl_ie2
 \c
-\c        StrCpy $0 '3' ; default to ie3 if not 100, 101, or 102.
+\c        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
 \c        Goto lbl_done
 \c          lbl_ie1: 
-\c            StrCpy $0 '1'
+\c            StrCpy $R0 '1'
 \c          Goto lbl_done
 \c          lbl_ie2:
-\c            StrCpy $0 '2'
+\c            StrCpy $R0 '2'
 \c          Goto lbl_done
 \c      lbl_error:
-\c        StrCpy $0 ''
+\c        StrCpy $R0 ''
 \c    lbl_done:
-\c    Exch $0
+\c    Exch $R0
 \c  FunctionEnd
 
 \H{isflashinstalled} Is Macromedia Flash Player installed?
@@ -273,21 +273,187 @@
 \c  ;
 \c  ; Usage:
 \c  ;   Call IsFlashInstalled
-\c  ;   Pop $0
-\c  ;   ; $0 at this point is "1" or "0"
+\c  ;   Pop $R0
+\c  ;   ; $R0 at this point is "1" or "0"
 \c
 \c  Function IsFlashInstalled
-\c   Push $0
+\c   Push $R0
 \c   ClearErrors
-\c   ReadRegStr $0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
+\c   ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
 \c   IfErrors lbl_na 
-\c     StrCpy $0 1
+\c     StrCpy $R0 1
 \c   Goto lbl_end
 \c   lbl_na:
-\c     StrCpy $0 0
+\c     StrCpy $R0 0
 \c   lbl_end:
-\c   Exch $0
+\c   Exch $R0
 \c  FunctionEnd
+
+\H{addshareddll} Add a shared DLL
+
+\c  ; AddSharedDLL
+\c  ;
+\c  ; Increments a shared DLLs reference count.
+\c  ; Use by passing one item on the stack (the full path of the DLL).
+\c  ;
+\c  ; Usage: 
+\c  ;   Push $SYSDIR\myDll.dll
+\c  ;   Call AddSharedDLL
+\c  ;
+\c
+\c  Function AddSharedDLL
+\c    Exch $R1
+\c    Push $R0
+\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c    IntOp $R0 $R0 + 1
+\c    WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c    Pop $R0
+\c    Pop $R1
+\c  FunctionEnd
+
+\H{unremovesharedll} Remove a shared DLL
+
+\c  ; un.RemoveSharedDLL
+\c  ;
+\c  ; Decrements a shared DLLs reference count, and removes if necessary.
+\c  ; Use by passing one item on the stack (the full path of the DLL).
+\c  ; Note: for use in the main installer (not the uninstaller), rename the
+\c  ; function to RemoveSharedDLL.
+\c  ; 
+\c  ; Usage:
+\c  ;   Push $SYSDIR\myDll.dll
+\c  ;   Call un.RemoveShareDLL
+\c  ;
+\c
+\c  Function un.RemoveSharedDLL
+\c    Exch $R1
+\c    Push $R0
+\c    ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c    StrCmp $R0 "" remove
+\c      IntOp $R0 $R0 - 1
+\c      IntCmp $R0 0 rk rk uk
+\c      rk:
+\c        DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
+\c      goto Remove
+\c      uk:
+\c        WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
+\c      Goto noremove
+\c    remove:
+\c      Delete /REBOOTOK $R1
+\c    noremove:
+\c    Pop $R0
+\c    Pop $R1
+\c  FunctionEnd
+
+\H{upgradedll} Upgrade a DLL (macro)
+
+\c  ; Macro - Upgrade DLL File
+\c  ; Written by Joost Verburg
+\c  ; ------------------------
+\c  ;
+\c  ; Example of usage:
+\c  ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll"
+\c  ;
+\c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL which cannot be registered
+\c  ;
+\c  ; Note that this macro sets overwrite to TRY. Change it back to whatever you want after
+\c  ; you insert the macro.
+\c
+\c  !macro UpgradeDLL LOCALFILE DESTFILE
+\c   
+\c    Push $R0
+\c    Push $R1
+\c    Push $R2
+\c    Push $R3
+\c
+\c    ;------------------------
+\c    ;Check file and version
+\c
+\c    IfFileExists "${DESTFILE}" "" copy_${LOCALFILE}
+\c
+\c    ClearErrors
+\c      GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
+\c      GetDLLVersion "${DESTFILE}" $R2 $R3
+\c    IfErrors upgrade_${LOCALFILE}
+\c
+\c    IntCmpU $R0 $R2 "" done_${LOCALFILE} upgrade_${LOCALFILE}
+\c    IntCmpU $R1 $R3 done_${LOCALFILE} done_${LOCALFILE} upgrade_${LOCALFILE}    
+\c
+\c    ;------------------------
+\c    ;Let's upgrade the DLL!
+\c  
+\c    SetOverwrite try
+\c
+\c    "upgrade_${LOCALFILE}:"
+\c      !ifndef UPGRADEDLL_NOREGISTER
+\c        ;Unregister the DLL
+\c        UnRegDLL "${DESTFILE}"
+\c      !endif
+\c
+\c    ;------------------------
+\c    ;Try to copy the DLL directly
+\c  
+\c    ClearErrors
+\c      StrCpy $R0 "${DESTFILE}"
+\c      Call ":file_${LOCALFILE}"
+\c    IfErrors "" noreboot_${LOCALFILE}
+\c  
+\c    ;------------------------
+\c    ;DLL is in use. Copy it to a temp file and Rename it on reboot.
+\c  
+\c    GetTempFileName $R0
+\c      Call ":file_${LOCALFILE}"
+\c    Rename /REBOOTOK $R0 "${DESTFILE}"
+\c
+\c    ;------------------------
+\c    ;Register the DLL on reboot
+\c  
+\c    !ifndef UPGRADEDLL_NOREGISTER
+\c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "Register ${DESTFILE}" '"$SYSDIR\regsvr32.exe" /s "${DESTFILE}"'
+\c    !endif
+\c
+\c    Goto done_${LOCALFILE}
+\c
+\c    ;------------------------
+\c    ;DLL does not exist - just extract
+\c
+\c    "copy_${LOCALFILE}:"
+\c      StrCpy $R0 "${DESTFILE}"
+\c      Call ":file_${LOCALFILE}"
+\c
+\c    ;------------------------
+\c    ;Register the DLL
+\c
+\c    "noreboot_${LOCALFILE}:"
+\c      !ifndef UPGRADEDLL_NOREGISTER
+\c        RegDLL "${DESTFILE}"
+\c      !endif
+\c
+\c    ;------------------------
+\c    ;Done
+\c
+\c    "done_${LOCALFILE}:"
+\c
+\c    Pop $R3
+\c    Pop $R2
+\c    Pop $R1
+\c    Pop $R0
+\c
+\c    ;------------------------
+\c    ;End
+\c
+\c    Goto end_${LOCALFILE}
+\c
+\c    ;------------------------
+\c    ;Called to extract the DLL
+\c
+\c    "file_${LOCALFILE}:"
+\c      File /oname=$R0 "${LOCALFILE}"  
+\c      Return
+\c
+\c    end_${LOCALFILE}:
+\c	
+\c  !macroend
 
 \H{morefuncs} More
 
