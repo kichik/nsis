@@ -76,7 +76,7 @@ static int num_sections;
 
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
-void NSISCALL notify(char num) {
+static void NSISCALL outernotify(char num) {
   SendMessage(g_hwnd,WM_NOTIFY_OUTER_NEXT,(WPARAM)num,0);
 }
 
@@ -625,7 +625,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
     if (id == IDOK && m_curwnd)
     {
-      notify(1);
+      outernotify(1);
     }
     if (
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -634,7 +634,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
       (id == IDC_BACK && m_curwnd && m_page>0))
     {
       EnableWindow(GetDlgItem(hwndDlg, IDOK), TRUE);
-      notify(-1);
+      outernotify(-1);
     }
     if (id == IDCANCEL)
     {
@@ -730,7 +730,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
       if (msgfilter->msg==WM_KEYDOWN &&
           msgfilter->wParam==VK_RETURN)
       {
-        notify(1);
+        outernotify(1);
         return 1;
       }
     }
@@ -1452,7 +1452,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       }
       else
       {
-        notify(1);
+        outernotify(1);
       }
     }
     else
