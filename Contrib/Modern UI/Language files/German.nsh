@@ -5,6 +5,7 @@
 ;By L.King
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_GERMAN_USED
 
@@ -84,3 +85,5 @@
   !endif
 
 !endif
+
+!verbose 4

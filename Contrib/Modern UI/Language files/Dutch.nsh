@@ -5,6 +5,7 @@
 ;By Joost Verburg
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_DUTCH_USED
 
@@ -84,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4

@@ -5,6 +5,7 @@
 ;By SANFACE Software <sanface@sanface.com>
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_ITALIAN_USED
 
@@ -84,3 +85,5 @@
   !endif
     
 !endif
+
+!verbose 4
