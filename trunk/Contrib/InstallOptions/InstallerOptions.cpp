@@ -543,11 +543,9 @@ int ReadSettings(void) {
       ConvertNewLines(pFields[nIdx].pszText);
     }
 
-    // pszState cannot be NULL (?)
+    // pszState must not be NULL!
     myGetProfileString(szField, "STATE");
-    pFields[nIdx].pszState = myGetProfileStringDup(szField, "STATE");
-    if (!pFields[nIdx].pszState)
-      pFields[nIdx].pszState = STRDUP(szResult);
+    pFields[nIdx].pszState = strdup(szResult);
 
     pFields[nIdx].pszRoot = myGetProfileStringDup(szField, "ROOT");
 
