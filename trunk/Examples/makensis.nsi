@@ -57,7 +57,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;--------------------------------
   ;Languages
 
-  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of the ${MUI_PRODUCT}, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of ${MUI_PRODUCT}, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
 
   !insertmacro MUI_LANGUAGE "English"
   
@@ -687,7 +687,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "Tools, graphics, files, and other utilities contributed by other NSIS developers"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "User interfaces, tools, graphics, files, and other utilities contributed by other NSIS developers"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUIs} "User interface designs that can be used to change the installer look and feel"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribModernUI} "A modern user interface for NSIS installers like the wizards of recent Windows versions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDefaultUI} "The default NSIS user interface which you can customize to make your own UI"
