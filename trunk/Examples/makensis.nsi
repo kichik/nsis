@@ -312,11 +312,11 @@ Section "Graphics" SecContribGraphics
   SetDetailsPrint listonly
 
   SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\Icons
-  Delete $INSTDIR\Contrib\*.ico
-  Delete $INSTDIR\Contrib\*.bmp
-  File ..\Contrib\Icons\*.ico
-  File ..\Contrib\Icons\*.bmp
+  Delete $INSTDIR\Contrib\Icons\*.ico
+  Delete $INSTDIR\Contrib\Icons\*.bmp
+  SetOutPath $INSTDIR\Contrib\Graphics
+  File /r "..\Contrib\Graphics\*.ico"
+  File /r "..\Contrib\Graphics\*.bmp"
 SectionEnd
 
 Section "Language files" SecContribLang
@@ -917,10 +917,11 @@ Section -post
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} graphics
 
-      SetOutPath $INSTDIR\Contrib\Icons
-      File "..\Contrib\Icons\modern-install.ico"
-      File "..\Contrib\Icons\modern-uninstall.ico"
-      File "..\Contrib\Icons\modern-wizard.bmp"
+      SetOutPath $INSTDIR\Contrib\Graphics
+      SetOutPath $INSTDIR\Contrib\Graphics\Icons
+      File "..\Contrib\Graphics\Icons\modern-install.ico"
+      File "..\Contrib\Graphics\Icons\modern-uninstall.ico"
+      File "..\Contrib\Graphics\Wizard\win.bmp"
 
     graphics:
 
