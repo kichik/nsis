@@ -255,6 +255,11 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
           in+=2;
           c='\n';
         }
+        else if (in[1] == 't')
+        {
+          in+=2;
+          c='\t';
+        }
       }
       else if (in[0] == '{')
       {
@@ -1089,7 +1094,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_LICENSE), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
         if (!dlg) throw runtime_error("IDD_LICENSE doesn't exist!");
-        CDialogTemplate dt(dlg);
+        CDialogTemplate dt(dlg,uDefCodePage);
         free(dlg);
 
         switch (k) {
@@ -1292,7 +1297,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
           if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
-          CDialogTemplate dt(dlg);
+          CDialogTemplate dt(dlg,uDefCodePage);
           free(dlg);
           DialogItemTemplate* progress = dt.GetItem(IDC_PROGRESS);
           if (!progress) {
@@ -1343,7 +1348,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #define REMOVE_ICON(id) { \
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
           if (!dlg) throw runtime_error(#id " doesn't exist!"); \
-          CDialogTemplate dt(dlg); \
+          CDialogTemplate dt(dlg,uDefCodePage); \
           free(dlg); \
           dt.RemoveItem(IDC_ULICON); \
           DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
@@ -1560,7 +1565,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 1) {
           dlg = get_dlg(hUIFile, IDD_LICENSE, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_EDIT1);
           SAVE(IDD_LICENSE);
         }
@@ -1568,7 +1573,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 2) {
           dlg = get_dlg(hUIFile, IDD_DIR, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_DIR);
           SEARCH(IDC_BROWSE);
 #ifdef NSIS_CONFIG_LOG
@@ -1580,7 +1585,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 3) {
           dlg = get_dlg(hUIFile, IDD_SELCOM, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_TREE1);
           SEARCH(IDC_COMBO1);
           SAVE(IDD_SELCOM);
@@ -1589,7 +1594,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 4) {
           dlg = get_dlg(hUIFile, IDD_INST, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_BACK);
           SEARCH(IDC_CHILDRECT);
           SEARCH(IDC_VERSTR);
@@ -1617,7 +1622,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 5) {
           dlg = get_dlg(hUIFile, IDD_INSTFILES, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_LIST1);
           SEARCH(IDC_PROGRESS);
           SEARCH(IDC_SHOWDETAILS);
@@ -1627,7 +1632,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 6) {
           dlg = get_dlg(hUIFile, IDD_UNINST, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_EDIT1);
           SAVE(IDD_UNINST);
         }
@@ -1635,7 +1640,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k == 0 || k == 7) {
           dlg = get_dlg(hUIFile, IDD_VERIFY, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
-          CDialogTemplate UIDlg(dlg);
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
           SEARCH(IDC_STR);
           // No RTL here, pure English goes here.
           //SAVE(IDD_VERIFY);
@@ -1711,7 +1716,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         init_res_editor();
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
 
-        CDialogTemplate dt(dlg);
+        CDialogTemplate dt(dlg,uDefCodePage);
         delete [] dlg;
 
         DialogItemTemplate *childRect = dt.GetItem(IDC_CHILDRECT);
@@ -1785,7 +1790,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #define SET_FONT(id) { \
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
           if (!dlg) throw runtime_error(#id " doesn't exist!"); \
-          CDialogTemplate td(dlg); \
+          CDialogTemplate td(dlg,uDefCodePage); \
           free(dlg); \
           td.SetFont(line.gettoken_str(1), line.gettoken_int(2)); \
           DWORD dwSize; \
@@ -1809,6 +1814,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         SET_FONT(IDD_VERIFY);
 #endif
+#undef SET_FONT
       }
       catch (exception& err) {
         ERROR_MSG("Error while changing font: %s\n", err.what());
@@ -1887,24 +1893,27 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         NLF *newNLF = new NLF(line.gettoken_str(1));
         unsigned int i;
         for (i = 0; i < build_nlfs.size(); i++)
-          if (build_nlfs[i]->GetLang() == newNLF->GetLang()) {
+        {
+          if (build_nlfs[i]->m_wLangId == newNLF->m_wLangId)
+          {
             ERROR_MSG("Error: Can't add same language twice!\n");
             return PS_ERROR;
           }
+        }
+        if (!build_nlfs.size())
+        {
+          uDefCodePage = newNLF->m_uCodePage;
+        }
         build_nlfs.push_back(newNLF);
-        LANGID lang = newNLF->GetLang();
+        LANGID lang = newNLF->m_wLangId;
         GetTable(lang);
-        last_used_lang=newNLF->GetLang();
+        last_used_lang = newNLF->m_wLangId;
         // define LANG_LangName as "####" (lang id)
         // for example ${LANG_ENGLISH} = 1033
         char lang_id[16];
         char lang_name[128];
-        char *nlf = line.gettoken_str(1);
-        char *tmp = strrchr(nlf, '.');
-        if (tmp) *tmp = 0;
-        tmp = strrchr(nlf, '\\');
-        wsprintf(lang_name, "LANG_%s", tmp?tmp+1:nlf);
-        wsprintf(lang_id, "%u", newNLF->GetLang());
+        wsprintf(lang_name, "LANG_%s", newNLF->m_szName);
+        wsprintf(lang_id, "%u", newNLF->m_wLangId);
         definedlist.add(lang_name,lang_id);
       }
       catch (exception &err) {
@@ -2352,7 +2361,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           init_res_editor();
 
           BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
-          CDialogTemplate td(dlg);
+          CDialogTemplate td(dlg,uDefCodePage);
           free(dlg);
 
           if (trim) {
@@ -2603,7 +2612,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       if (which_token == TOK_UNREGDLL)
       {
         ent.offsets[1]=add_string("DllUnregisterServer");
-        ent.offsets[2]=add_string("Unregistering: ");
+        ent.offsets[2]=LANG_UNREGISTERING;
+        unregister_used=true;
       }
       else if (which_token == TOK_CALLINSTDLL)
       {
@@ -2621,7 +2631,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         ent.offsets[1] = add_string(line.gettoken_str(2));
         if (!ent.offsets[1]) ent.offsets[1]=add_string("DllRegisterServer");
-        ent.offsets[2]=add_string("Registering: ");
+        ent.offsets[2]=LANG_REGISTERING;
+        register_used=true;
       }
 
       SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(ent.offsets[3]?3:2));

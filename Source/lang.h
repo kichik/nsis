@@ -65,18 +65,22 @@ class LangStringList : public SortedStringListND<struct langstring>
     int index;
 };
 
+class NLF;
+
 struct StringTable {
   LANGID lang_id;
+  int dlg_offset;
   common_strings common;
   common_strings ucommon;
   installer_strings installer;
   uninstall_strings uninstall;
-  GrowBuf user_strings;
-  GrowBuf user_ustrings;
+  TinyGrowBuf user_strings;
+  TinyGrowBuf user_ustrings;
+
+  NLF *nlf;
 };
 
-#define NLF_VERSION 3
-#define NLF_STRINGS 59
+#define NLF_VERSION 4
 
 enum {
   NLF_BRANDING,
@@ -115,6 +119,8 @@ enum {
   NLF_CANT_WRITE,
   NLF_COPY_FAILED,
   NLF_COPY_TO,
+  NLF_REGISTERING,
+  NLF_UNREGISTERING,
   NLF_SYMBOL_NOT_FOUND,
   NLF_COULD_NOT_LOAD,
   NLF_CREATE_DIR,
@@ -138,6 +144,13 @@ enum {
   NLF_RENAME,
   NLF_SKIPPED,
   NLF_COPY_DETAILS,
+  NLF_LOG_INSTALL_PROCESS,
+  NLF_BYTE,
+  NLF_KILO,
+  NLF_MEGA,
+  NLF_GIGA,
+
+  NLF_STRINGS,
 
   SLANG_NAME,
   SLANG_COMP_TEXT,
@@ -155,12 +168,17 @@ class NLF {
     NLF(char *filename);
     ~NLF();
 
-    LANGID GetLang();
-    char* GetString(int idx);
+    char         *GetString(int idx);
 
+    char         *m_szName;
+
+    LANGID        m_wLangId;
+    char         *m_szFont;
+    int           m_iFontSize;
+    unsigned int  m_uCodePage;
+  
   private:
-    LANGID m_wLangId;
-    char *m_szStrings[NLF_STRINGS];
+    char         *m_szStrings[NLF_STRINGS];
 };
 
 #endif

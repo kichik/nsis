@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1051
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by trace & Kypec
 Nullsoft Install System %s
 Inštalácia %s

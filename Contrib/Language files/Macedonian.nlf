@@ -2,6 +2,11 @@
 NLF v2
 # Language ID
 1071
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Sasko Zdravkin [vardarce@mail.com]
 Nullsoft Install System %s
 %s Инсталирање

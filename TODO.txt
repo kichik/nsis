@@ -6,6 +6,8 @@ NSIS
 
 * Section switch for defaulting to unselected mode
 
+* DATE, FILE, TIME, etc. defines
+
 * different font and code page for every language
 
 * MB and friends translatable

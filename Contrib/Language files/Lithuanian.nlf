@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1063
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by NorCis
 Nullsoft Install System %s
 %s Idiegimas

@@ -81,6 +81,13 @@
 #define LANG_NAME                     (COMMON_STR(name))
 #define LANG_CAPTION                  (COMMON_STR(caption))
 #define LANG_SUBCAPTION(x)            (COMMON_STR(subcaptions[x]))
+#define LANG_INSTCORRUPTED            (COMMON_STR(inst_corrupted))
+#define LANG_COPYDETAILS              (COMMON_STR(copy_details))
+#define LANG_LOG_INSTALL_PROCESS      (COMMON_STR(log_install_process))
+#define LANG_BYTE                     (COMMON_STR(byte))
+#define LANG_KILO                     (COMMON_STR(kilo))
+#define LANG_MEGA                     (COMMON_STR(mega))
+#define LANG_GIGA                     (COMMON_STR(giga))
 
 // instruction strings
 #define LANG_FILEERR                  (COMMON_STR(fileerrtext))
@@ -108,7 +115,7 @@
 #define LANG_COPYFAILED               (COMMON_STR(copy_failed))
 #define LANG_ERRORCREATING            (COMMON_STR(err_creating))
 #define LANG_CREATEDUNINST            (COMMON_STR(created_uninst))
-#define LANG_INSTCORRUPTED            (COMMON_STR(inst_corrupted))
-#define LANG_COPYDETAILS              (COMMON_STR(copy_details))
+#define LANG_REGISTERING              (COMMON_STR(registering))
+#define LANG_UNREGISTERING            (COMMON_STR(unregistering))
 
 #endif//_NSIS_LANG_H_

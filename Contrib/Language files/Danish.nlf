@@ -2,6 +2,11 @@
 NLF v2
 # Language ID
 1030
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Casper Bergenstoff
 Nullsoft Installerings System %s
 %s Setup

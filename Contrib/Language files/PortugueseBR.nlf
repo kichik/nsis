@@ -2,6 +2,11 @@
 NLF v3
 # Language ID
 1046
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
 # Translation by Diego Marcos <jump@osite.com.br>
 Sistema de Instalação Nullsoft %s
 Instalação do %s

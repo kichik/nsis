@@ -17,11 +17,12 @@ void CEXEBuild::define(const char *p, const char *v)
   definedlist.add(p,v);
 }
 
-
 CEXEBuild::~CEXEBuild()
 {
   free(header_data_new);
   free(m_unicon_data);
+  for (unsigned int i = 0; i < build_nlfs.size(); i++)
+    delete build_nlfs[i];
 }
 
 CEXEBuild::CEXEBuild()
@@ -308,8 +309,12 @@ CEXEBuild::CEXEBuild()
   install_used=false;
   comppage_used=false;
   license_force_radio_used=false;
+  register_used=false;
+  unregister_used=false;
 
   notify_hwnd=0;
+
+  uDefCodePage=CP_ACP;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -1559,6 +1564,9 @@ int CEXEBuild::write_output(void)
   }
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
 
+  // Generate language tables
+  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
+
   // Save all changes to the exe header
   try {
     close_res_editor();	
@@ -1567,9 +1575,6 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("\nError: %s\n", err.what());
     return PS_ERROR;
   }
-
-  // Generate language tables
-  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
 
   // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
