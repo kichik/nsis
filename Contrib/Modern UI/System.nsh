@@ -241,13 +241,6 @@
     Call un.Initialize_____Plugins
     SetDetailsPrint both
   !endif
-
-  ${IO_UNINITPLUGINS_1}
-  ${IO_UNINITPLUGINS_2}
-  !undef IO_UNINITPLUGINS_1
-  !undef IO_UNINITPLUGINS_2
-  !define IO_UNINITPLUGINS_1 ""
-  !define IO_UNINITPLUGINS_2 ""
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
   
