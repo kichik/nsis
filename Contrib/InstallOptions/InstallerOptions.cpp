@@ -969,6 +969,8 @@ void showCfgDlg()
   ShowWindow(hConfigWindow, SW_SHOWNA);
 	SetFocus(hNextButton);
 
+  LockWindowUpdate(0);
+
   g_done=0;
 
 	while (!g_done) {
