@@ -260,11 +260,13 @@ add the following things (in order, from the beginning of the script):</p>
   <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro
-  <p class="text">If you are not using a Finish page, you should insert the
-  MUI_SECTIONS_FINISHHEADER after all the sections to display the finish-header.</p>
+  <p class="text">If you are not using a Finish page without defining
+  MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
+  to true, you should insert the MUI_SECTIONS_FINISHHEADER
+  after all the sections to display the finish-header:</p>
 <pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
 <p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
-Unintaller section.</p>
+Unintaller section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
