@@ -15,3 +15,7 @@ DOCUMENTATION
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple instfiles pages
+
+PLUGINS
+
+* make plugin size count only once
