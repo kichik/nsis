@@ -27,5 +27,7 @@ char *my_strstr(char *i, char *s);
 char *my_strrchr(const char *string, int c);
 void *my_memset(void *dest, int c, size_t count);
 
-int lstrcmpn(char *s1, const char *s2, int chars);
+// iceman_k's clib methods
+int lstrncmp(char *s1, const char *s2, int chars);
+int lstrncmpi(char *s1, const char *s2, int chars);
 #endif

@@ -32,6 +32,85 @@ char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { NULL, NULL, NULL, NULL, NULL };
 
 extern NSCRIPTDATA g_sdata;
 
+int SetArgv(char *cmdLine, int *argc, char ***argv)
+{
+	char *p, *arg, *argSpace;
+	int size, argSpaceSize, inquote, copy, slashes;
+
+	size = 2;
+	for (p = cmdLine; *p != '\0'; p++) {
+		if ((*p == ' ') || (*p == '\t')) {
+			size++;
+			while ((*p == ' ') || (*p == '\t')) {
+				p++;
+			}
+			if (*p == '\0') {
+				break;
+			}
+		}
+	}
+
+  argSpaceSize = size * sizeof(char *) + lstrlen(cmdLine) + 1;
+	argSpace = (char *) LocalAlloc(GMEM_FIXED, argSpaceSize);
+	*argv = (char **) argSpace;
+	argSpace += size * sizeof(char *);
+	size--;
+
+	p = cmdLine;
+	for (*argc = 0; *argc < size; (*argc)++) {
+		(*argv)[*argc] = arg = argSpace;
+		while ((*p == ' ') || (*p == '\t')) {
+			p++;
+		}
+		if (*p == '\0') {
+			break;
+		}
+
+		inquote = 0;
+		slashes = 0;
+		while (1) {
+			copy = 1;
+			while (*p == '\\') {
+				slashes++;
+				p++;
+			}
+			if (*p == '"') {
+				if ((slashes & 1) == 0) {
+					copy = 0;
+					if ((inquote) && (p[1] == '"')) {
+						p++;
+						copy = 1;
+					}
+					else {
+						inquote = !inquote;
+					}
+				}
+				slashes >>= 1;
+			}
+
+			while (slashes) {
+				*arg = '\\';
+				arg++;
+				slashes--;
+			}
+
+			if ((*p == '\0') || (!inquote && ((*p == ' ') || (*p == '\t')))) {
+				break;
+			}
+			if (copy != 0) {
+				*arg = *p;
+				arg++;
+			}
+			p++;
+		}
+		*arg = '\0';
+		argSpace = arg + 1;
+	}
+	(*argv)[*argc] = NULL;
+
+  return argSpaceSize;
+}
+
 void SetTitle(HWND hwnd,char *substr) {
   char title[64];
   if (substr==NULL) wsprintf(title,"MakeNSISW");
@@ -143,13 +222,13 @@ void SetCompressorStats()
       DWORD len = lstrlen(TOTAL_SIZE_COMPRESSOR_STAT);
       lstrcat(g_sdata.compressor_stats,buf);
 
-      if(!lstrcmpn(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
+      if(!lstrncmp(buf,TOTAL_SIZE_COMPRESSOR_STAT,len)) {
         break;
       }
     }
     else {
       DWORD len = lstrlen(EXE_HEADER_COMPRESSOR_STAT);
-      if(!lstrcmpn(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
+      if(!lstrncmp(buf,EXE_HEADER_COMPRESSOR_STAT,len)) {
         found = true;
         lstrcpy(g_sdata.compressor_stats,"\n\n");
         lstrcat(g_sdata.compressor_stats,buf);
@@ -474,6 +553,19 @@ BOOL PopMRUFile(char* fname)
   }
 }
 
+BOOL IsValidFile(char *fname)
+{
+  WIN32_FIND_DATA wfd;
+  HANDLE h;
+
+  h = FindFirstFile(fname,&wfd);
+  if(h != INVALID_HANDLE_VALUE) {
+    FindClose(h);
+    return true;
+  }
+  return false;
+}
+
 void PushMRUFile(char* fname)
 {
   int i;
@@ -500,12 +592,14 @@ void PushMRUFile(char* fname)
     return;
   }
 
-  PopMRUFile(full_file_name);
-  for(i = MRU_LIST_SIZE - 2; i >= 0; i--) {
-    lstrcpy(g_mru_list[i+1], g_mru_list[i]);
+  if(IsValidFile(full_file_name)) {
+    PopMRUFile(full_file_name);
+    for(i = MRU_LIST_SIZE - 2; i >= 0; i--) {
+      lstrcpy(g_mru_list[i+1], g_mru_list[i]);
+    }
+    lstrcpy(g_mru_list[0],full_file_name);
+    BuildMRUMenus();
   }
-  lstrcpy(g_mru_list[0],full_file_name);
-  BuildMRUMenus();
 }
 
 void BuildMRUMenus()
@@ -587,16 +681,11 @@ void BuildMRUMenus()
 
 void LoadMRUFile(int position)
 {
-  WIN32_FIND_DATA wfd;
-  HANDLE h;
-
   if (!g_sdata.thread && position >=0 && position < MRU_LIST_SIZE && g_mru_list[position][0]) {
     g_sdata.script = (char *)GlobalAlloc(GPTR,lstrlen(g_mru_list[position])+3);
     wsprintf(g_sdata.script,"\"%s\"",g_mru_list[position]);
-    h = FindFirstFile(g_mru_list[position],&wfd);
-    if(h != INVALID_HANDLE_VALUE) {
+    if(IsValidFile(g_mru_list[position])) {
       PushMRUFile(g_mru_list[position]);
-      FindClose(h);
     }
     else {
       PopMRUFile(g_mru_list[position]);
