@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1028
 # Font and size - dash (-) means default 字型名稱與大小
@@ -7,17 +7,17 @@ NLF v4
 9
 # Codepage - dash (-) means ANSI code page ANSI 字碼頁
 950
-# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-01
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-30
 Nullsoft Install System %s
 %s 安裝
 %s 解除安裝
  : 授權條款
  : 安裝選項
- : 安裝目錄
- : 正在安裝檔案
- : 完成
+ : 安裝資料夾
+ : 正在安裝
+ : 已完成
  : 確認
- : 正在移除檔案
+ : 正在解除安裝
  : 完成
 < 上一步(&P)
 下一步(&N) >
@@ -33,14 +33,15 @@ Nullsoft Install System %s
 名稱
 已完成
 自訂
-選取安裝的類型:
-選取安裝的元件:
-或者，自訂選取想安裝的元件:
-選取要安裝 %s 的目錄:
+選取安裝的類型: 
+選取安裝的元件: 
+或者，自訂選取想安裝的元件: 
+選取要安裝 %s 的資料夾: 
 可用空間: 
 所需空間: 
-解除安裝目錄:
-無法開啟目的檔案: \r\n\r\n"$0"\r\n\r\n按一下 [Abort] 放棄安裝，[Retry] 重試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
+解除安裝目錄: 
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Abort] 放棄安裝，\r\n [Retry] 重新嘗試寫入檔案，或\r\n [Ignore] 忽略這個檔案。
+無法開啟要寫入的檔案: \r\n\t"$0"\r\n按一下 [Retry] 重新嘗試寫入檔案，或\r\n [Cancel] 取消安裝。
 無法寫入: 
 複製失敗 
 複製到: 
@@ -48,7 +49,7 @@ Nullsoft Install System %s
 正在解除註冊: 
 無法找到符號: 
 無法載入: 
-建立目錄: 
+建立資料夾: 
 建立捷徑: 
 建立解除安裝程式: 
 刪除檔案: 
