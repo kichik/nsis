@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.63
+;NSIS Modern User Interface version 1.64
 ;Macro System
 ;Written by Joost Verburg
 
@@ -151,6 +151,14 @@
   !endif
   
   Icon "${MUI_ICON}"
+  
+  !ifdef MUI_LICENSEPAGE
+    !ifdef MUI_LICENSEPAGE_CHECKBOX
+      LicenseForceSelection checkbox
+    !else ifdef MUI_LICENSEPAGE_RADIOBUTTONS
+      LicenseForceSelection radiobuttons
+    !endif
+  !endif
   
   !ifdef MUI_UNINSTALLER
     UninstallIcon "${MUI_UNICON}"
@@ -535,7 +543,7 @@
   !endif
 
   !ifdef MUI_LICENSEPAGE
-    Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave
+    Page license mui.LicensePre mui.LicenseShow mui.LicenseLeave "MUI_INSTALLBUTTON_LICENSE"
   !endif
   
   !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
@@ -1771,12 +1779,24 @@
 !macro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE NAME INSTALLBUTTON
 
   !ifndef "${INSTALLBUTTON}"
-    LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_NEXT}"
+    LangString "${NAME}" 0 "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
   !else
-    LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_INSTALL}"
+    LangString "${NAME}" 0 "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
   !endif
 
   !undef "${NAME}"
+  
+!macroend
+
+!macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_CONTINUE NAME DEFINE INSTALLBUTTON
+
+  !ifndef "${INSTALLBUTTON}"
+    LangString "${NAME}" 0 "${${DEFINE}} ${MUI_TEXT_CONTINUE_NEXT}"
+  !else
+    LangString "${NAME}" 0 "${${DEFINE}} ${MUI_TEXT_CONTINUE_INSTALL}"
+  !endif
+
+  !undef "${DEFINE}"
   
 !macroend
 
@@ -1875,7 +1895,18 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_TITLE"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_SUBTITLE"
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "LicenseText" "MUI_INNERTEXT_LICENSE_TOP"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_BOTTOM"
+    !ifndef MUI_LICENSEPAGE_CHECKBOX && MUI_LICENSEPAGE_RADIOBUTTONS
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_LICENSE_BOTTOM"
+    !else
+      !ifndef MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX || MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS
+        !error "The ${LANGUAGE} Modern UI language file does not contain a bottom text for a license pages with a checkbox or radiobuttons. Please update this file and post your language file on the NSIS Project Page, http://nsis.sf.net."
+      !endif
+      !ifdef MUI_LICENSEPAGE_CHECKBOX
+        !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_CONTINUE "MUI_INNERTEXT_LICENSE_BOTTOM" "MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX" "MUI_INSTALLBUTTON_LICENSE"
+      !else ifdef MUI_LICENSEPAGE_RADIOBUTTONS
+        !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_CONTINUE "MUI_INNERTEXT_LICENSE_BOTTOM" "MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS" "MUI_INSTALLBUTTON_LICENSE"
+      !endif
+    !endif
   !endif
   
   !ifdef MUI_COMPONENTSPAGE
