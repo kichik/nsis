@@ -37,11 +37,13 @@ void SetBranding(HWND hwnd) {
 
 void CopyToClipboard(HWND hwnd) {
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-	char *existing_text=(char*)GlobalAlloc(GPTR,len);
+  HGLOBAL mem = GlobalAlloc(GHND,len);
+	char *existing_text = (char *)GlobalLock(mem);
 	if (!hwnd||!OpenClipboard(hwnd)||!existing_text) return;
 	EmptyClipboard();
 	existing_text[0]=0;
 	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
+  GlobalUnlock(mem);
 	SetClipboardData(CF_TEXT,existing_text);
 	CloseClipboard();
 }
