@@ -64,8 +64,8 @@ typedef struct {
   int abort;
   int exec_reboot;
   int reboot_called;
-  int cur_insttype;
-  int insttype_changed;
+  int XXX_cur_insttype; // deprecated
+  int XXX_insttype_changed; // deprecated
   int silent;
   int instdir_error;
   int rtl;
