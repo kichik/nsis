@@ -365,15 +365,14 @@ static void NSISCALL queryShellFolders(const char *name_, char *out)
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 
-void NSISCALL process_string_fromtab(char *out, int offs)
+char * NSISCALL process_string_fromtab(char *out, int offs)
 {
-  process_string(ps_tmpbuf,GetStringFromStringTab(offs));
-  lstrcpyn(out,ps_tmpbuf,NSIS_MAX_STRLEN);
+  return lstrcpyn(out,process_string(ps_tmpbuf,GetStringFromStringTab(offs)),NSIS_MAX_STRLEN);
 }
 
-void NSISCALL process_string_from_lang(char *out, langid_t id)
+char * NSISCALL process_string_from_lang(char *out, langid_t id)
 {
-  process_string_fromtab(out, GetLangString(id));
+  return process_string_fromtab(out, GetLangString(id));
 }
 
 // Retrieve the string offset associated with the language string ID given
@@ -389,45 +388,41 @@ void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
 int NSISCALL myatoi(char *s)
 {
   unsigned int v=0;
-  if (*s == '0' && (s[1] == 'x' || s[1] == 'X'))
+  int sign=0; // sign of positive
+  char m=10; // base of 0
+  char t='9'; // cap top of numbers at 9
+
+  if (*s == '-') 
+  { 
+    s++;  //skip over -
+    sign++; // sign flip
+  }
+
+  if (*s == '0')
   {
-    s+=2;
-    for (;;)
+    s++; // skip over 0
+    if (s[0] >= '0' && s[0] <= '7')
     {
-      int c=*s++;
-      if (c >= '0' && c <= '9') c-='0';
-      else if ((c & ~0x20) >= 'A' && (c & ~0x20) <= 'F') c = (c & 7) + 9;
-      else break;
-      v<<=4;
-      v+=c;
+      m=8; // base of 8
+      t='7'; // cap top at 7
+    }
+    if (s[0] == 'x' || s[0] == 'X')
+    {
+      m=16; // base of 16
+      s++; // advance over 'x'
     }
   }
-  else if (*s == '0' && s[1] >= '0' && s[1] <= '7')
+
+  for (;;)
   {
-    s++;
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '7') c-='0';
-      else break;
-      v<<=3;
-      v+=c;
-    }
+    int c=*s++;
+    if (c >= '0' && c <= t) c-='0';
+    else if (m==16 && (c & ~0x20) >= 'A' && (c & ~0x20) <= 'F') c = (c & 7) + 9;
+    else break;
+    v*=m;
+    v+=c;
   }
-  else
-  {
-    int sign=0;
-    if (*s == '-') { s++; sign++; }
-    for (;;)
-    {
-      int c=*s++;
-      if (c >= '0' && c <= '9') c-='0';
-      else break;
-      v*=10;
-      v+=c;
-    }
-    if (sign) return -(int) v;
-  }
+  if (sign) return -(int) v;
   return (int)v;
 }
 
@@ -445,7 +440,7 @@ int NSISCALL mystrlen(const char *in)
 }
 
 // Dave Laundon's simplified process_string
-void NSISCALL process_string(char *out, const char *in)
+char * NSISCALL process_string(char *out, const char *in)
 {
   char *outsave = out;
   while (*in && out - outsave < NSIS_MAX_STRLEN)
@@ -557,6 +552,7 @@ void NSISCALL process_string(char *out, const char *in)
     } // >= VAR_CODES_START
   } // while
   *out = 0;
+  return outsave;
 }
 #ifdef NSIS_CONFIG_LOG
 

@@ -4,9 +4,9 @@
 void NSISCALL recursive_create_directory(char *directory);
 
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
-void NSISCALL process_string(char *out, const char *in);
-void NSISCALL process_string_fromtab(char *out, int offs);
-void NSISCALL process_string_from_lang(char *out, langid_t id);
+char * NSISCALL process_string(char *out, const char *in);
+char * NSISCALL process_string_fromtab(char *out, int offs);
+char * NSISCALL process_string_from_lang(char *out, langid_t id);
 int NSISCALL GetLangString(langid_t id);
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int NSISCALL myatoi(char *s);

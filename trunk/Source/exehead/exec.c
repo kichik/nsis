@@ -126,16 +126,14 @@ static int *parms;
 
 static int NSISCALL process_string_fromparm_toint(int id_)
 {
-  process_string(ps_tmpbuf,GetStringFromStringTab(parms[id_]));
-  return myatoi(ps_tmpbuf);
+  return myatoi(process_string(ps_tmpbuf,GetStringFromStringTab(parms[id_])));
 }
 
 // NB - USE CAUTION when rearranging code to make use of the new return value of
 // this function - be sure the parm being accessed is not modified before the call.
 static char * NSISCALL process_string_fromparm_tobuf(int id_)
 {
-  process_string_fromtab(bufs[id_ >> 4], parms[id_ & 0xF]);
-  return bufs[id_ >> 4];
+  return process_string_fromtab(bufs[id_ >> 4], parms[id_ & 0xF]);
 }
 
 // returns EXEC_ERROR on error
