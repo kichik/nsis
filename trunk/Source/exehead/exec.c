@@ -137,6 +137,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
   int parm4=parms[4];
   int parm5=parms[5];
   int which=entries[pos].which;
+  char *var=g_usrvars[parm0];
   switch (which)
   {
     case EW_NOP: 
@@ -275,7 +276,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_FNUTIL
     case EW_GETFULLPATHNAME:
       {
-        char *p=g_usrvars[parm0];
+        char *p=var;
         char *fp;
         process_string_fromtab(buf,parm1);
         if (!GetFullPathName(buf,NSIS_MAX_STRLEN,p,&fp)) 
@@ -302,7 +303,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_SEARCHPATH:
       {
         char *fp;
-        char *p=g_usrvars[parm0];
+        char *p=var;
         process_string_fromtab(buf,parm1);          
         if (!SearchPath(NULL,buf,NULL,NSIS_MAX_STRLEN,p,&fp))
         {
@@ -313,7 +314,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     return 0;
     case EW_GETTEMPFILENAME:
       {
-        char *textout=g_usrvars[parm0];
+        char *textout=var;
         if (!GetTempPath(NSIS_MAX_STRLEN,buf) || !GetTempFileName(buf,"nst",0,textout))
         {
           *textout=0;
@@ -500,14 +501,14 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_STROPTS
     case EW_STRLEN:
       process_string_fromtab(buf,parm1);
-      myitoa(g_usrvars[parm0],mystrlen(buf));
+      myitoa(var,mystrlen(buf));
     return 0;
     case EW_ASSIGNVAR:
       {
         int newlen=process_string_fromtab_toint(parm2);
         int start=process_string_fromtab_toint(parm3);
         int l;
-        char *p=g_usrvars[parm0];
+        char *p=var;
         process_string_fromtab(buf,parm1);
         *p=0;
         if (parm2 < 0 || newlen)
@@ -538,7 +539,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_ENVIRONMENT
     case EW_READENVSTR:
       {
-        char *p=g_usrvars[parm0];
+        char *p=var;
         process_string_fromtab(buf,parm1);
         if (parm2)
         {
@@ -578,7 +579,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_INTOP:
       {
         int v,v2;
-        char *p=g_usrvars[parm0];
+        char *p=var;
         v=process_string_fromtab_toint(parm1);
         v2=process_string_fromtab_toint(parm2);
         switch (parm3)
@@ -601,7 +602,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     return 0;
     case EW_INTFMT:
       process_string_fromtab(buf,parm1);
-      wsprintf(g_usrvars[parm0],
+      wsprintf(var,
                buf,
                process_string_fromtab_toint(parm2));
     return 0;
@@ -631,7 +632,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
             exec_errorflag++;
             return 0;
           }
-          mystrcpy(g_usrvars[parm0],s->text);
+          mystrcpy(var,s->text);
           g_st=s->next; 
           GlobalFree((HGLOBAL)s);
         }
@@ -668,7 +669,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
             b4=(int)buf2;
           }
 
-          if (parm5>>2) exec_errorflag += !SendMessageTimeout(hwnd,msg,b3,b4, SMTO_BLOCK, (parm5>>2), (LPDWORD)&v);
+          if (parm5>>2) exec_errorflag += !SendMessageTimeout(hwnd,msg,b3,b4,SMTO_NORMAL,parm5>>2,(LPDWORD)&v);
           else v=SendMessage(hwnd,msg,b3,b4);
         }
         else
@@ -679,7 +680,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         }
         
         if (parm0>=0)
-          myitoa(g_usrvars[parm0],v);
+          myitoa(var,v);
       }
     return 0;
     case EW_ISWINDOW:
@@ -687,7 +688,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     return parm2;
     case EW_GETDLGITEM:
       myitoa(
-        g_usrvars[parm0],
+        var,
         (int)GetDlgItem(
           (HWND)process_string_fromtab_toint(parm1),
           process_string_fromtab_toint(parm2)
@@ -989,7 +990,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_READINISTR:
       {
         static const char *errstr="!N~";
-        char *p=g_usrvars[parm0];
+        char *p=var;
         process_string_fromtab(buf,parm1);
         process_string_fromtab(buf2,parm2);
         process_string_fromtab(buf3,parm3);
@@ -1067,7 +1068,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_READREGSTR: // read registry string
       {
         HKEY hKey;
-        char *p=g_usrvars[parm0];
+        char *p=var;
         int rootkey=parm1;
         process_string_fromtab(buf,parm2); // buf == subkey
         process_string_fromtab(buf2,parm3); // buf == key name
@@ -1100,7 +1101,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     case EW_REGENUM:
       {
         HKEY key;
-        char *p=g_usrvars[parm0];
+        char *p=var;
         int b=process_string_fromtab_toint(parm3);
         process_string_fromtab(buf2,parm2);
         p[0]=0;
@@ -1120,7 +1121,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
     case EW_FCLOSE:      
       {
-        char *t=g_usrvars[parm0];
+        char *t=var;
         if (*t) CloseHandle((HANDLE)myatoi(t));
       }
     return 0;
@@ -1145,7 +1146,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
       {
         DWORD dw;
         int l;
-        char *t=g_usrvars[parm0];
+        char *t=var;
         if (parm2)
         {
           ((unsigned char *)buf2)[0]=process_string_fromtab_toint(parm1)&0xff;
@@ -1167,7 +1168,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         char *textout=g_usrvars[parm1];
         DWORD dw;
         int rpos=0;
-        char *hptr=g_usrvars[parm0];
+        char *hptr=var;
         int maxlen=process_string_fromtab_toint(parm2);
         if (maxlen<1) return 0;
         if (maxlen > NSIS_MAX_STRLEN-1) maxlen=NSIS_MAX_STRLEN-1;
@@ -1202,7 +1203,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
     return 0;
     case EW_FSEEK:
       {
-        char *t=g_usrvars[parm0];
+        char *t=var;
         if (*t)
         {
           DWORD v=SetFilePointer((HANDLE)myatoi(t),process_string_fromtab_toint(parm1),NULL,parm2);
@@ -1218,13 +1219,13 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
 #ifdef NSIS_SUPPORT_FINDFIRST
     case EW_FINDCLOSE:
       {
-        char *t=g_usrvars[parm0];
+        char *t=var;
         if (*t) FindClose((HANDLE)myatoi(t));
       }
     return 0;
     case EW_FINDNEXT:
       {
-        char *textout=g_usrvars[parm0];
+        char *textout=var;
         char *t=g_usrvars[parm1];
         WIN32_FIND_DATA fd;
         if (*t && FindNextFile((HANDLE)myatoi(t),&fd))
@@ -1428,7 +1429,7 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
       f.lfUnderline=parm4&2;
       f.lfStrikeOut=parm4&4;
       process_string_fromtab(f.lfFaceName,parm1);
-      myitoa(g_usrvars[parm0],(int)CreateFontIndirect(&f));
+      myitoa(var,(int)CreateFontIndirect(&f));
     }
     return 0;
   }
