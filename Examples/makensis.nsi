@@ -210,6 +210,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SectionIn 1 2
     SetOutPath "$INSTDIR\Examples\Modern UI"
     File "..\Examples\Modern UI\Basic.nsi"
+    File "..\Examples\Modern UI\HeaderBitmap.nsi"
     File "..\Examples\Modern UI\MultiLanguage.nsi"
     File "..\Examples\Modern UI\InstallOptions.nsi"
     File "..\Examples\Modern UI\ioA.ini"
@@ -230,11 +231,13 @@ SubSection "Extra User Interfaces" SecContribUIs
     
     SetOutPath $INSTDIR\Contrib\UIs
     File "..\Contrib\UIs\modern.exe"
-    File "..\Contrib\UIs\modern2.exe"
-	File "..\Contrib\UIs\modern3.exe"
+    File "..\Contrib\UIs\modern_headerbmp.exe"
+    File "..\Contrib\UIs\modern_headerbmpr.exe"
+    File "..\Contrib\UIs\modern_nodesc.exe"
+    File "..\Contrib\UIs\modern_smalldesc.exe"
     
-	SetOutPath $INSTDIR\Include
-	File "..\Include\MUI.nsh"
+    SetOutPath $INSTDIR\Include
+    File "..\Include\MUI.nsh"
 	
   SectionEnd
   
