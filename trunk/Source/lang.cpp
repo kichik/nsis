@@ -68,10 +68,10 @@ extern char *english_strings[] = {
 
 int CEXEBuild::SetString(char *string, int id, int process, WORD lang/*=0*/) {
   lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
-  lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
+  lang = lang?lang:string_tables.size()?string_tables[0]->common.lang_id:1033; // Default is English (1033)
   StringTable *table = 0;
   for (int i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->lang_id) {
+    if (lang == string_tables[i]->common.lang_id) {
       table = string_tables[i];
       break;
     }
@@ -83,7 +83,7 @@ int CEXEBuild::SetString(char *string, int id, int process, WORD lang/*=0*/) {
       return PS_ERROR;
     }
     memset(table, -1, sizeof(StringTable));
-    table->lang_id = table->ucommon.lang_id = table->installer.lang_id = table->uninstall.lang_id = lang;
+    table->common.lang_id = table->ucommon.lang_id = lang;
     string_tables.push_back(table);
   }
 
@@ -159,10 +159,10 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
 bool CEXEBuild::_IsSet(int *str, WORD lang) {
   if (!str) return false;
   lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
-  lang = lang?lang:string_tables.size()?string_tables[0]->lang_id:1033; // Default is English (1033)
+  lang = lang?lang:string_tables.size()?string_tables[0]->common.lang_id:1033; // Default is English (1033)
   int i;
   for (i = 0; i < string_tables.size(); i++) {
-    if (lang == string_tables[i]->lang_id) {
+    if (lang == string_tables[i]->common.lang_id) {
       break;
     }
   }
@@ -176,14 +176,14 @@ int CEXEBuild::WriteStringTables() {
 
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
   if (string_tables.size() == 0) {
-    build_header.str_tables_num = 1;
+    build_header.common.str_tables_num = 1;
     StringTable *table = (StringTable*)malloc(sizeof(StringTable));
     if (!table) {
       ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
       return PS_ERROR;
     }
     memset(table, -1, sizeof(StringTable));
-    table->lang_id=table->ucommon.lang_id=table->installer.lang_id=table->uninstall.lang_id=1033; // English
+    table->common.lang_id=table->ucommon.lang_id=1033; // English
     string_tables.push_back(table);
   }
 
@@ -193,27 +193,27 @@ int CEXEBuild::WriteStringTables() {
     FillDefaultsIfNeeded(string_tables[i]);
 
   // Add string tables into datablock
-  GrowBuf ist;
-  for (i = 0; i < st_num; i++)
-    ist.add(&string_tables[i]->installer, sizeof(installer_strings));
-  build_header.str_tables_num = st_num;
-  build_header.str_tables = add_data((char*)ist.get(), st_num*sizeof(installer_strings), &build_datablock);
-
   GrowBuf cst;
   for (i = 0; i < st_num; i++)
     cst.add(&string_tables[i]->common, sizeof(common_strings));
+  build_header.common.str_tables_num = st_num;
   build_header.common.str_tables = add_data((char*)cst.get(), st_num*sizeof(common_strings), &build_datablock);
 
-  GrowBuf ust;
+  GrowBuf ist;
   for (i = 0; i < st_num; i++)
-    ust.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
-  build_uninst.str_tables_num = st_num;
-  build_uninst.str_tables = add_data((char*)ust.get(), st_num*sizeof(uninstall_strings), &ubuild_datablock);
+    ist.add(&string_tables[i]->installer, sizeof(installer_strings));
+  build_header.common.inst_str_tables = add_data((char*)ist.get(), st_num*sizeof(installer_strings), &build_datablock);
 
   GrowBuf ucst;
   for (i = 0; i < st_num; i++)
     ucst.add(&string_tables[i]->ucommon, sizeof(common_strings));
+  build_uninst.common.str_tables_num = st_num;
   build_uninst.common.str_tables = add_data((char*)ucst.get(), st_num*sizeof(common_strings), &ubuild_datablock);
+
+  GrowBuf ust;
+  for (i = 0; i < st_num; i++)
+    ust.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
+  build_uninst.common.inst_str_tables = add_data((char*)ust.get(), st_num*sizeof(uninstall_strings), &ubuild_datablock);
 
   return PS_OK;
 }
@@ -221,7 +221,7 @@ int CEXEBuild::WriteStringTables() {
 void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   if (!nlf) {
     for (int i = 0; i < build_nlfs.size(); i++) {
-      if (build_nlfs[i]->GetLang() == table->lang_id) {
+      if (build_nlfs[i]->GetLang() == table->common.lang_id) {
           nlf = build_nlfs[i];
           break;
       }
@@ -263,7 +263,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     else table->installer.componenttext=-1;
   }
 #endif
-  
+
   static bool nameWarned = false;
   if (table->common.name < 0)
   {
@@ -305,11 +305,11 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     if (table->installer.spaceavailable<0 && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_AVAIL),0);
   }
 
-  if (table->installer.text >= 0 
+  if (table->installer.text >= 0
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     || table->installer.componenttext>=0
 #endif
-    )  
+    )
   {
     // Changed by Amir Szekely 22nd July 2002
     // Adds the ability to disable space texts
