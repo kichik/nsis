@@ -65,10 +65,10 @@ enum
   EW_INTFMT,            // IntFmt: [output, format, input]
   EW_PUSHPOP,           // Push/Pop/Exchange: 3 [variable/string, ?pop:push, ?exch]
 
-  EW_FINDWINDOW,        // FindWindow: 5, [outputvar,window class,window name, window_parent, window_after]
+  EW_FINDWINDOW,        // FindWindow: 5, [outputvar, window class,window name, window_parent, window_after]
   EW_SENDMESSAGE,       // SendMessage: 5 [output, hwnd, msg, lparam, wparam]
   EW_ISWINDOW,          // IsWindow: 3 [hwnd, jump_if_window, jump_if_notwindow]
-  EW_SETDLGITEMTEXT,    // SetDlgItemText: 3 [outer? item_id, text]
+  EW_GETDLGITEM,        // GetDlgItem: 3 [outputvar, dialog, item_id]
 
   EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
 
@@ -118,6 +118,8 @@ enum
 
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
 
+  EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
+
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
@@ -125,6 +127,7 @@ enum
   EW_PLUGINCOMMANDPREP
 
 };
+
 
 // used for section->default_state
 #define DFS_SET 0x80000000
@@ -243,6 +246,7 @@ typedef struct
   int code_onInstFailed;
   int code_onUserAbort;
   int code_onNextPage;
+  int code_onStaticCtlBkColor;
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
   char show_details;
