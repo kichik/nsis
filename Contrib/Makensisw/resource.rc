@@ -70,6 +70,8 @@ BEGIN
         MENUITEM "&Load Script...\tCtrl+L",     IDM_LOADSCRIPT
         MENUITEM SEPARATOR
         MENUITEM "E&xit\tAlt+X",                IDM_EXIT
+        MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MRU_FILE
     END
     POPUP "&Edit"
     BEGIN
