@@ -1,8 +1,8 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1028
-# Translation by Kii Ali <kiiali@cpatch.org>
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-03-29
 Nullsoft Install System %s
 %s 安裝
 %s 解除安裝
@@ -17,6 +17,8 @@ Nullsoft Install System %s
 < 上一步(&P)
 下一步(&N) >
 我同意(&I)
+我同意「授權合約」中的條款(&A)
+我不同意「授權合約」中的條款(&A)
 安裝(&I)
 移除(&U)
 取消(&C)

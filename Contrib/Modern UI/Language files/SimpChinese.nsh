@@ -1,9 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-01-09
+;Revision date: 2003-03-29
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
@@ -22,12 +22,14 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安装 ${MUI_PRODUCT} 之前，请检阅授权条款。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "检阅授权合约的其余部分，请按 [PgDn] 往下卷动页面。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合约中的条款，单击 [我同意(I)] 继续安装。如果你选定 [取消(C)] ，安装程序将会关闭。必须要接受授权合约才能安装 ${MUI_PRODUCT} 。"
-  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受授权合约中的条款，单击下方的复选框。必须要接受授权合约才能安装 ${MUI_PRODUCT}。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受授权合约中的条款，选择下方第一个选项。必须要接受授权合约才能安装 ${MUI_PRODUCT}。"
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "选定组件"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "选定 ${MUI_PRODUCT} 当中你想要安装的功能。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "核取想要安装的组件，并把不想安装的组件解除核取。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指标到组件之上，便可见到它的描述。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指针到组件之上，便可见到它的描述。"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "选定安装位置" 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "选定 ${MUI_PRODUCT} 要安装的文件夹。"
