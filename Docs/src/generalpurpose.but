@@ -1,0 +1,105 @@
+\H{generalpurpose} General Purpose Instructions
+
+\S{createdirectory} CreateDirectory
+
+CreateDirectory \e{path_to_create}
+
+Creates (recursively if necessary) the specified directory.  
+
+\S{copyfiles} CopyFiles
+
+CopyFiles \e{[/SILENT] [/FILESONLY] filespec_on_destsys destination_path [size_of_files_in_kb]}
+
+Copies files from the source to the destination on the installing system. Useful with $EXEDIR if you want to copy from installation media, or to copy from one place to another on the system. Uses SHFileOperation, so the user might see a status window of the copy operation if it is large (to disable this, use /SILENT). The last parameter specifies how big the copy is (in kilobytes), so that the installer can approximate the disk space requirements. On error, or if the user cancels the copy (only possible when /SILENT was omitted), the error flag is set. If /FILESONLY is specified, only files are copied.  
+
+\S{setfileattributes} SetFileAttributes
+
+SetFileAttributes \e{filename attribute1|attribute2|...}
+
+Sets the file attributes of 'filename'. Valid attributes can be combined with | and are:
+
+\b NORMAL or FILE_ATTRIBUTE_NORMAL (you can use 0 to abbreviate this) 
+
+\b ARCHIVE or FILE_ATTRIBUTE_ARCHIVE 
+
+\b HIDDEN or FILE_ATTRIBUTE_HIDDEN 
+
+\b OFFLINE or FILE_ATTRIBUTE_OFFLINE 
+
+\b READONLY or FILE_ATTRIBUTE_READONLY 
+
+\b SYSTEM or FILE_ATTRIBUTE_SYSTEM 
+
+\b TEMPORARY or FILE_ATTRIBUTE_TEMPORARY 
+
+The error flag will be set if the file's attributes cannot be set (i.e. the file doesn't exist, or you don't have the right permissions)  
+
+\S{createshortcut} CreateShortCut
+
+CreateShortCut \e{link.lnk target.file [parameters] [icon.file] [icon_index_number] [start_options] [keyboard_shortcut]}
+
+Creates a shortcut 'link.lnk' that links to 'target.file', with optional parameters 'parameters'. 
+The icon used for the shortcut is 'icon.file,icon_index_number'; for default icon settings use empty strings for both icon.file and icon_index_number. 
+start_options should be one of: SW_SHOWNORMAL, SW_SHOWMAXIMIZED, SW_SHOWMINIMIZED, or an empty string. 
+keyboard_shortcut should be in the form of 'flag|c' where flag can be a combination (using |) of: ALT, CONTROL, EXT, or SHIFT. c is the character to use (a-z, A-Z, 0-9, F1-F24, etc). Note that no spaces are allowed in this string. A good example is "ALT|CONTROL|F8". $OUTDIR is used for the working directory. 
+The error flag is set if the shortcut cannot be created (i.e. the path does not exist, or some other error).  
+
+\S{getfullpathname} GetFullPathName
+
+GetFullPathName \e{[/SHORT] user_var(output) path_or_file}
+
+Assign to the user variable $x, the full path of the file specified. If the path portion of the parameter is not found, the error flag will be set and $x will be empty. If /SHORT is specified, the path is converted to the short filename form.  
+
+\S{searchpath} SearchPath
+
+SearchPath \e{user_var(output) filename}
+
+Assign to the user variable $x, the full path of the file named by the second parameter. The error flag will be set and $x will be empty if the file cannot be found. Uses SearchPath() to search the system paths for the file.  
+
+\S{gettempfilename} GetTempFileName
+
+GetTempFileName \e{user_var(output)}
+
+Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. Delete the file when done with it.  
+
+\S{callinstdll} CallInstDLL
+
+CallInstDLL \e{dllfile [/NOUNLOAD]}
+
+Function Calls a NSIS extension DLL. See Contrib\\ExDLL for an example of how to make one. Extension DLLs can access the stack and variables. Use /NOUNLOAD to force the installer to leave the DLL loaded.  
+
+\S{regdll} RegDLL
+
+RegDLL \e{dllfile [entrypoint_name]}
+
+Loads the specified DLL and calls DllRegisterServer (or entrypoint_name if specified). The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, or find the entry point).  
+
+\S{unregdll} UnRegDLL
+
+UnRegDLL \e{dllfile}
+
+Loads the specified DLL and calls DllUnregisterServer. The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, or find the entry point).  
+
+\S{getdllversion} GetDLLVersion
+
+GetDLLVersion \e{filename user_var(high dword output) user_var(low dword output)}
+
+Gets the version information from the DLL in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set.  
+
+\S{getdllversionlocal} GetDLLVersionLocal
+
+GetDLLVersionLocal \e{localfilename user_var(high dword output) user_var(low dword output)}
+
+This is similar to GetDLLVersion, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the DLL version information of the DLL on the build system.  
+
+\S{getfiletime} GetFileTime
+
+GetFileTime \e{filename user_var(high dword output) user_var(low dword output)}
+
+Gets the last write time of "filename". Sets the user output variables with the high and low dwords of the timestamp on success; on failure the outputs are empty and the error flag is set.  
+
+\S{getfiletimelocal} GetFileTimeLocal
+
+GetFileTimeLocal \e{localfilename user_var(high dword output) user_var(low dword output)}
+
+This is similar to GetFileTime, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the file timestamp of the file on the build system.  
