@@ -221,13 +221,15 @@ int CLZMA::CompressReal()
   try
   {
     HRESULT hResult = _encoder->WriteCoderProperties(this);
-    if (res == S_OK)
+    if (hResult == S_OK)
     {
       while (true)
       {
         UINT64 inSize, outSize;
         INT32 finished;
-        res = ConvertError(_encoder->CodeOneBlock(&inSize, &outSize, &finished));
+        hResult = _encoder->CodeOneBlock(&inSize, &outSize, &finished);
+        if (hResult != S_OK && res == C_OK)
+          res = ConvertError(hResult);
         if (res != C_OK)
           break;
         if (finished)
@@ -239,12 +241,14 @@ int CLZMA::CompressReal()
     }
     else
     {
-      res = ConvertError(hResult);
+      if (res == C_OK)
+        res = ConvertError(hResult);
     }
   }
   catch (...)
   {
-    res = LZMA_IO_ERROR;
+    if (res == C_OK)
+      res = LZMA_IO_ERROR;
   }
 
   compressor_finished = TRUE;
