@@ -241,11 +241,13 @@ follow these steps:</p>
   Bitmap for the Welcome and Finish page.</p>
   <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br />
   Background color for the header, Welcome page and Finish page, hexadecimal. (0xBBGGRR)</p>
-  <p class="subheader">5. Insert custom pages (optional)</p>
+  <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
+  <pre class="margin">!insertmacro MUI_SYSTEM</pre>
+  <p class="subheader">7. Insert custom pages (optional)</p>
   <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
-  or MUI_UNCUSTOMPAGECOMMANDS!), you should insert them now.</p>
+  or MUI_UNCUSTOMPAGECOMMANDS!), insert them before inserting the language files.</p>
   <p class="text"><a href="#customPages">More info...</a></p>
-  <p class="subheader">6. Insert language files</p>
+  <p class="subheader">7. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -263,8 +265,6 @@ follow these steps:</p>
   pages and the language file does not contain these strings, you should always define them.<br />
   Please help to translate the new strings and post them at the
   <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
-  <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
-  <pre class="margin">!insertmacro MUI_SYSTEM</pre>
   <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
@@ -441,18 +441,22 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>1.62 - December 17, 2002
+<li>1.62 - December 20, 2002
   <ul>
     <li>No problems anymore when using both 'Run program' and 'Show Readme'
     on the finish page</li>
     <li>Default state of checkboxes on the finish page can be changed</li>
     <li>Welcome / Finish page compatible with custom DPI settings</li>
     <li>Converted Install Options INI files to use dialog units</li>
-    <li>Support for multilingual branding texts</li>
     <li>More ReserveFile macro's</li>
     <li>Background color can be changed with a define</li>
-    <li>Interface settings should be defined before inserting the langauge
-    files</li>
+    <li>Support for multilingual branding texts</li>
+    <li>Start Menu / Finish page window titles also work when using
+    custom page commands</li>
+    <li>Language files should be inserted after inserting the MUI_SYSTEM
+    macro</li>
+    <li>Define MUI_MANUALVERBOSE if you don't want the Modern UI to change
+    the verbose settings during compilation</li>
   </ul></li>
 </ul>
 <p class="text"></p>
