@@ -11,8 +11,6 @@
 #include "ResourceEditor.h"
 #include "exehead/resource.h"
 
-extern const char *NSIS_VERSION;
-
 void CEXEBuild::define(const char *p, const char *v) 
 { 
   definedlist.add(p,v); 
@@ -270,6 +268,8 @@ CEXEBuild::CEXEBuild()
   m_uninst_fileused=0;
 
   branding_image_found=false; // Added by Amir Szekely 22nd July 2002
+  
+  no_space_texts=false;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -1047,7 +1047,10 @@ int CEXEBuild::write_output(void)
       return PS_ERROR;
     }
 
-#ifdef NSIS_CONFIG_COMPONENTPAGE
+  // Added by Amir Szekely 3rd August 2002
+  if (WriteStringTables() == PS_ERROR) return PS_ERROR;
+
+/*#ifdef NSIS_CONFIG_COMPONENTPAGE
     if (build_header.componenttext_ptr < 0 &&
         ns > 1
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -1057,55 +1060,13 @@ int CEXEBuild::write_output(void)
     {
       build_header.componenttext_ptr=-1;
     }
-#endif
+#endif*/
   }
-
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  // if component page, do component strings:
-  if (build_header.componenttext_ptr>=0)
-  {
-    int x;
-    int iscp=0;
-    for (x = 1; x < build_header.num_sections&&!iscp; x ++)
-    {
-      char c=build_strlist.get()[((section*)build_sections.get())[x].name_ptr];
-      if (c && c != '-') iscp++;
-    }
-    if (iscp)
-    {
-      if (build_header.custom_ptr<0) build_header.custom_ptr=add_string_main("Custom",0);
-      if (build_header.common.subcaption_ptrs[1]<0)
-        build_header.common.subcaption_ptrs[1]=add_string_main(": Installation Options",0);
-
-      if (build_header.install_types_ptr[0] < 0)
-      {
-        if (build_header.componentsubtext_ptr[1]<0)
-          build_header.componentsubtext_ptr[1]=add_string_main("Select components to install:",0);
-      }
-      else
-      {
-        if (build_header.componentsubtext_ptr[0]<0)
-          build_header.componentsubtext_ptr[0]=add_string_main("Select the type of install:",0);
-        if (build_header.no_custom_instmode_flag!=1 && build_header.componentsubtext_ptr[1]<0)
-          build_header.componentsubtext_ptr[1]=add_string_main("Or, select the optional components you wish to install:",0);
-      }
-    }
-    else build_header.componenttext_ptr=-1;
-  }
-#endif
-
 
   if (!build_entries.getlen())
   {
     ERROR_MSG("Error: invalid script: no entries specified\n");
     return PS_ERROR;
-  }
-
-  if (build_header.common.name_ptr < 0)
-  {
-    warning("Name command not specified. Assuming default.");
-    build_header.common.name_ptr=add_string_main("Name",0);
-    build_uninst.common.name_ptr=add_string_uninst("Name",0);
   }
 
   if (build_cursection || uninstall_mode)
@@ -1128,79 +1089,9 @@ int CEXEBuild::write_output(void)
   }
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
-  if (build_header.licensedata_ptr<0 || build_header.licensetext_ptr<0)
-  {
-    build_header.licensedata_ptr=-1;
-    build_header.licensetext_ptr=-1;
-  }
-
-  if (build_header.licensedata_ptr>=0)
-  {
-    if (build_header.common.subcaption_ptrs[0]<0)
-      build_header.common.subcaption_ptrs[0]=add_string_main(": License Agreement",0);
-    if (build_header.licensebutton_ptr<0)
-      build_header.licensebutton_ptr=add_string_main("I Agree",0);
-  }
-
   if (build_header.license_bg<0)
     build_header.license_bg=GetSysColor(COLOR_BTNFACE);
 #endif
-
-  if (build_header.text_ptr >= 0)
-  {
-    if (build_header.dirsubtext_ptr<0)
-    {
-      char buf[2048];
-      wsprintf(buf,"Select the directory to install %s in:",build_strlist.get()+build_header.common.name_ptr);
-      build_header.dirsubtext_ptr=add_string_main(buf,0);
-    }
-    if (build_header.common.subcaption_ptrs[2]<0)
-      build_header.common.subcaption_ptrs[2]=add_string_main(": Installation Directory",0);
-    if (build_header.browse_ptr<0) build_header.browse_ptr=add_string_main("Browse...",0);
-    if (build_header.spaceavailable_ptr<0) build_header.spaceavailable_ptr=add_string_main("Space available: ",0);
-  }
-
-  if (build_header.text_ptr >= 0 
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-    || build_header.componenttext_ptr>=0
-#endif
-    )  
-  {
-    // Changed by Amir Szekely 22nd July 2002
-    // Adds the ability to disable space texts
-    if (build_header.spacerequired_ptr==-1) build_header.spacerequired_ptr=add_string_main("Space required: ",0);
-    if (build_header.nextbutton_ptr<0) build_header.nextbutton_ptr=add_string_main("Next >",0);
-    if (build_header.installbutton_ptr<0) build_header.installbutton_ptr=add_string_main("Install",0);
-  }
-
-  if (build_header.common.subcaption_ptrs[3]<0)
-    build_header.common.subcaption_ptrs[3]=add_string_main(": Installing Files",0);
-  if (build_header.common.subcaption_ptrs[4]<0)
-    build_header.common.subcaption_ptrs[4]=add_string_main(": Completed",0);
-
-  if (build_header.common.branding_ptr<0)
-  {
-    char buf[256];
-    wsprintf(buf,"Nullsoft Install System %s",NSIS_VERSION);
-    build_header.common.branding_ptr=add_string_main(buf,0);
-  }
-  if (build_header.backbutton_ptr<0) build_header.backbutton_ptr=add_string_main("< Back",0);
-  if (build_header.common.cancelbutton_ptr<0) build_header.common.cancelbutton_ptr=add_string_main("Cancel",0);
-  if (build_header.common.showdetailsbutton_ptr<0) build_header.common.showdetailsbutton_ptr=add_string_main("Show details",0);
-
-  if (build_header.common.closebutton_ptr<0) build_header.common.closebutton_ptr=add_string_main("Close",0);
-  if (build_header.common.completed_ptr<0) build_header.common.completed_ptr=add_string_main("Completed",0);
-#ifdef NSIS_SUPPORT_FILE
-  if (m_inst_fileused && build_header.common.fileerrtext_ptr<0)
-  {
-    build_header.common.fileerrtext_ptr=add_string_main(
-      "Error opening file for writing: \r\n\t\"$0\"\r\n"
-      "Hit abort to abort installation,\r\n"
-      "retry to retry writing the file, or\r\n"
-      "ignore to skip this file");
-  }
-#endif
-
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (ubuild_entries.getlen())
@@ -1211,30 +1102,8 @@ int CEXEBuild::write_output(void)
     }
     else
     {
-      if (build_uninst.uninstalltext2_ptr<0)
-        build_uninst.uninstalltext2_ptr=add_string_uninst("Uninstalling from:",0);
-      if (build_uninst.common.subcaption_ptrs[0]<0)
-        build_uninst.common.subcaption_ptrs[0]=add_string_uninst(": Confirmation",0);
-      if (build_uninst.common.subcaption_ptrs[1]<0)
-        build_uninst.common.subcaption_ptrs[1]=add_string_uninst(": Uninstalling Files",0);
-      if (build_uninst.common.subcaption_ptrs[2]<0)
-        build_uninst.common.subcaption_ptrs[2]=add_string_uninst(": Completed",0);
-      if (build_uninst.common.caption_ptr < 0)
-      {
-        char buf[1024];
-        wsprintf(buf,"%s Uninstall",ubuild_strlist.get()+build_uninst.common.name_ptr);
-        build_uninst.common.caption_ptr=add_string_uninst(buf,0);
-      }
-      build_uninst.common.branding_ptr=add_string_uninst(build_strlist.get() + build_header.common.branding_ptr,0);
-      build_uninst.common.cancelbutton_ptr=add_string_uninst(build_strlist.get() + build_header.common.cancelbutton_ptr,0);
-      build_uninst.common.showdetailsbutton_ptr=add_string_uninst(build_strlist.get() + build_header.common.showdetailsbutton_ptr,0);
-      build_uninst.common.closebutton_ptr=add_string_uninst(build_strlist.get() + build_header.common.closebutton_ptr,0);
-      build_uninst.common.completed_ptr=add_string_uninst(build_strlist.get() + build_header.common.completed_ptr,0);
-
       build_uninst.common.progress_flags=build_header.common.progress_flags;
       build_uninst.common.misc_flags|=build_header.common.misc_flags&(4|8);
-
-      if (build_uninst.uninstbutton_ptr<0) build_uninst.uninstbutton_ptr=add_string_uninst("Uninstall",0);
       
       set_uninstall_mode(1);
   #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -1253,14 +1122,6 @@ int CEXEBuild::write_output(void)
     ERROR_MSG("Error: no Uninstall section specified, but WriteUninstaller used %d time(s)\n",uninstaller_writes_used);
     return PS_ERROR;
   }
-
-#ifdef NSIS_SUPPORT_FILE
-  if (m_uninst_fileused && build_uninst.common.fileerrtext_ptr<0)
-  {
-    build_uninst.common.fileerrtext_ptr=add_string_uninst(build_strlist.get() + build_header.common.fileerrtext_ptr,0);
-  }
-#endif
-
 #endif
 
 
@@ -1286,7 +1147,7 @@ int CEXEBuild::write_output(void)
   	SCRIPT_MSG("Removing unused resources... ");
     CResourceEditor re(header_data_new, exeheader_size_new);
 #ifdef NSIS_CONFIG_LICENSEPAGE
-    if (build_header.licensedata_ptr < 0
+    if (IsNotSet(installer.licensedata)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       || build_header.common.silent_install
 #endif // NSIS_CONFIG_SILENT_SUPPORT
@@ -1296,7 +1157,7 @@ int CEXEBuild::write_output(void)
     }
 #endif // NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    if (build_header.componenttext_ptr < 0
+    if (IsNotSet(installer.componenttext)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       || build_header.common.silent_install
 #endif // NSIS_CONFIG_SILENT_SUPPORT
@@ -1306,7 +1167,7 @@ int CEXEBuild::write_output(void)
       re.UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
 #endif // NSIS_CONFIG_COMPONENTPAGE
-    if (build_header.text_ptr < 0
+    if (IsNotSet(installer.text)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       || build_header.common.silent_install
 #endif // NSIS_CONFIG_SILENT_SUPPORT
@@ -1349,13 +1210,6 @@ int CEXEBuild::write_output(void)
     return PS_ERROR;
   }
 #endif // NSIS_CONFIG_VISIBLE_SUPPORT
-
-  if (build_header.common.caption_ptr < 0)
-  {
-    char buf[1024];
-    wsprintf(buf,"%s Setup",build_strlist.get()+build_header.common.name_ptr);
-    build_header.common.caption_ptr=add_string_main(buf,0);
-  }
 
   // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
