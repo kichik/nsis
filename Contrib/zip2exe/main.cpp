@@ -555,6 +555,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         GetModuleFileName(g_hInstance,g_makensis_path,sizeof(g_makensis_path));
         while (*p) p++;
         while (p >= g_makensis_path && *p != '\\') p--;
+		if ((p-g_makensis_path>4)&&(tolower(*(p-1))=='n')&&(tolower(*(p-2))=='i')&&(tolower(*(p-3))=='b')&&(*(p-4)=='\\')) p -= 4;
         strcpy(++p,"makensis.exe");
       }
       SetDlgItemText(hwndDlg,IDC_COMPILER,g_makensis_path);
