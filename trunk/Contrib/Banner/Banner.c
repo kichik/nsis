@@ -73,19 +73,17 @@ DWORD WINAPI BannerThread(LPVOID lpParameter)
     return 0;
   }
 
-  SetForegroundWindow(lhwBanner);
-
   while (IsWindow(lhwBanner))
   {
-    if (PeekMessage(&msg, lhwBanner, 0, 0, PM_REMOVE))
-    {
-      DispatchMessage(&msg);
-    }
-    else
-    {
-      hwBanner = lhwBanner;
-      WaitMessage();
-    }
+	  if (PeekMessage(&msg, lhwBanner, 0, 0, PM_REMOVE))
+	  {
+		  DispatchMessage(&msg);
+	  }
+	  else
+	  {
+		  hwBanner = lhwBanner;
+		  WaitMessage();
+	  }
   }
 
   hwBanner = NULL;
@@ -99,6 +97,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
   {
     DWORD dwThreadId;
+	  DWORD dwMainThreadId = GetCurrentThreadId();;
 
     hwBanner = NULL;
 
@@ -117,7 +116,14 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
     CloseHandle(hThread);
 
-    ShowWindow(hwBanner, SW_SHOW);
+    if (AttachThreadInput(dwMainThreadId, dwThreadId, TRUE))
+    {
+	    // Activates and displays a window
+	    ShowWindow(hwBanner, SW_SHOW);
+	    AttachThreadInput(dwMainThreadId, dwThreadId, FALSE);
+    }
+    else
+      ShowWindow(hwBanner, SW_SHOW);
   }
 }
 
@@ -134,6 +140,8 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
 
   PostMessage(hwBanner, WM_CLOSE, 0, 0);
 
+  // The code below is not needed I think
+/*
   if (!hwndParent)
   {
     // reset the thread that called banner::Show to be the foreground thread.
@@ -158,7 +166,7 @@ void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *varia
     SetForegroundWindow(hwTemp);
     DestroyWindow(hwTemp);
   }
-
+*/
   // Wait for the thread to finish
   while (hwBanner)
     Sleep(25);
