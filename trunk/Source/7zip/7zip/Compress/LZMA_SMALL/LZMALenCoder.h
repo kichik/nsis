@@ -19,12 +19,14 @@ const int kLenNumMidSymbols = 1 << kLenNumMidBits;
 const int kLenNumHighBits = 8;
 const int kLenNumSymbolsTotal = kLenNumLowSymbols + kLenNumMidSymbols + (1 << kLenNumHighBits);
 
+#define LOW 0
+#define HIGH 1
+
 class CLZMALenDecoder
 {
   CBitDecoder m_Choice;
   CBitDecoder m_Choice2;
-  CBitTreeDecoder3 m_LowCoder[kLenNumPosStatesMax];
-  CBitTreeDecoder3 m_MidCoder[kLenNumPosStatesMax];
+  CBitTreeDecoder3 m_Coder[2][kLenNumPosStatesMax];
   CBitTreeDecoder8 m_HighCoder; 
 public:
   // void Init(int numPosStates)
@@ -32,20 +34,18 @@ public:
   {
     m_Choice.Init();
     m_Choice2.Init();
-    // for (int posState = 0; posState < numPosStates; posState++)
-    for (int posState = 0; posState < kLenNumPosStatesMax; posState++)
+    for (int posState = 0; posState < kLenNumPosStatesMax * 2; posState++)
     {
-      m_LowCoder[posState].Init();
-      m_MidCoder[posState].Init();
+      ((CBitTreeDecoder3 *) m_Coder)[posState].Init();
     }
     m_HighCoder.Init();
   }
   int Decode(CRangeDecoder *rangeDecoder, int posState)
   {
     if(m_Choice.Decode(rangeDecoder) == 0)
-      return m_LowCoder[posState].Decode(rangeDecoder);
+      return m_Coder[LOW][posState].Decode(rangeDecoder);
     if(m_Choice2.Decode(rangeDecoder) == 0)
-      return kLenNumLowSymbols + m_MidCoder[posState].Decode(rangeDecoder);
+      return kLenNumLowSymbols + m_Coder[HIGH][posState].Decode(rangeDecoder);
     return kLenNumLowSymbols + kLenNumMidSymbols + m_HighCoder.Decode(rangeDecoder);
   }
 };

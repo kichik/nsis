@@ -2,7 +2,7 @@
 
 #include "LZMADecoder.h"
 
-UINT32 CLZMADecoder::Create(BYTE *memoryPointer,
+void CLZMADecoder::Create(BYTE *memoryPointer,
     int numLiteralContextBits,
     int numLiteralPosStateBits,
     int numPosStateBits)
@@ -10,7 +10,7 @@ UINT32 CLZMADecoder::Create(BYTE *memoryPointer,
 
   int numPosStates = 1 << numPosStateBits;
   m_PosStateMask = numPosStates - 1;
-  return m_LiteralDecoder.Create(memoryPointer, numLiteralPosStateBits, numLiteralContextBits);
+  m_LiteralDecoder.Create(memoryPointer, numLiteralPosStateBits, numLiteralContextBits);
 }
 
 UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
@@ -19,17 +19,9 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
   m_OutWindowStream.Init(lzmaState);
 
   int i;
-  for(i = 0; i < kNumStates; i++)
+  for (i = 0; i < sizeof(m_Decoders) / sizeof(CBitDecoder); i++)
   {
-    for (int j = 0; j <= m_PosStateMask; j++)
-    {
-      m_MainChoiceDecoders[i][j].Init();
-      m_MatchRepShortChoiceDecoders[i][j].Init();
-    }
-    m_MatchChoiceDecoders[i].Init();
-    m_MatchRepChoiceDecoders[i].Init();
-    m_MatchRep1ChoiceDecoders[i].Init();
-    m_MatchRep2ChoiceDecoders[i].Init();
+    ((CBitDecoder *) &m_Decoders)[i].Init();
   }
 
   m_LiteralDecoder.Init();
@@ -62,16 +54,12 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
   while(nowPos < 0xFFFFFFFF)
   {
     int posState = nowPos & m_PosStateMask;
-    if (m_MainChoiceDecoders[state.Index][posState].Decode(&m_RangeDecoder) == 0)
+    if (!m_Decoders.MainChoiceDecoders[state.Index][posState].Decode(&m_RangeDecoder))
     {
       state.UpdateChar();
       if(peviousIsMatch)
       {
-        #ifdef __STREAM_VERSION
         BYTE matchByte = m_OutWindowStream.GetOneByte(0 - repDistances[0]);
-        #else
-        BYTE matchByte = *(outStream - repDistances[0]);
-        #endif
         previousByte = m_LiteralDecoder.DecodeWithMatchByte(&m_RangeDecoder,
             nowPos, previousByte, matchByte);
         peviousIsMatch = false;
@@ -80,11 +68,7 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
         previousByte = m_LiteralDecoder.DecodeNormal(&m_RangeDecoder,
           nowPos, previousByte);
 
-      #ifdef __STREAM_VERSION
       m_OutWindowStream.PutOneByte(previousByte);
-      #else
-      *outStream++ = previousByte;
-      #endif
 
       nowPos++;
     }
@@ -93,21 +77,16 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
       peviousIsMatch = true;
       UINT32 distance;
       int len;
-      if(m_MatchChoiceDecoders[state.Index].Decode(&m_RangeDecoder) == 1)
+      if(m_Decoders.MatchChoiceDecoders[state.Index].Decode(&m_RangeDecoder))
       {
-        if(m_MatchRepChoiceDecoders[state.Index].Decode(&m_RangeDecoder) == 0)
+        if(!m_Decoders.MatchRepChoiceDecoders[state.Index].Decode(&m_RangeDecoder))
         {
-          if(m_MatchRepShortChoiceDecoders[state.Index][posState].Decode(&m_RangeDecoder) == 0)
+          if(!m_Decoders.MatchRepShortChoiceDecoders[state.Index][posState].Decode(&m_RangeDecoder))
           {
             state.UpdateShortRep();
 
-            #ifdef __STREAM_VERSION
             previousByte = m_OutWindowStream.GetOneByte(0 - repDistances[0]);
             m_OutWindowStream.PutOneByte(previousByte);
-            #else
-            previousByte = *(outStream - repDistances[0]);
-            *outStream++ = previousByte;
-            #endif
 
             nowPos++;
             continue;
@@ -116,11 +95,11 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
         }
         else
         {
-          if(m_MatchRep1ChoiceDecoders[state.Index].Decode(&m_RangeDecoder) == 0)
+          if(!m_Decoders.MatchRep1ChoiceDecoders[state.Index].Decode(&m_RangeDecoder))
             distance = repDistances[1];
           else
           {
-            if (m_MatchRep2ChoiceDecoders[state.Index].Decode(&m_RangeDecoder) == 0)
+            if (!m_Decoders.MatchRep2ChoiceDecoders[state.Index].Decode(&m_RangeDecoder))
               distance = repDistances[2];
             else
             {
@@ -171,10 +150,21 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
       }
 
       len += kMatchMinLen;
-      m_OutWindowStream.CopyBackBlock(m_OutWindowStream._pos - distance, len);
-      previousByte = m_OutWindowStream.GetOneByte((UINT32)(-1));
-
       nowPos += len;
+      // CopyBackBlock
+      {
+        UINT32 fromPos = m_OutWindowStream._pos - distance;
+        if (fromPos >= m_OutWindowStream._windowSize)
+          fromPos += m_OutWindowStream._windowSize;
+        while (len--)
+        {
+          m_OutWindowStream._buffer[m_OutWindowStream._pos++] = m_OutWindowStream._buffer[fromPos++];
+          if (fromPos >= m_OutWindowStream._windowSize)
+            fromPos = 0;
+          m_OutWindowStream.Flush();
+        }
+      }
+      previousByte = m_OutWindowStream.GetOneByte((UINT32)(-1));
     }
   }
   m_OutWindowStream._windowSize = 0;

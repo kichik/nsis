@@ -82,9 +82,7 @@ DWORD WINAPI lzmaDecompressThread(LPVOID lpParameter)
     firstByte %= 9;
     int numLiteralContextBits = firstByte;
     
-    int memSize = 
-      ((1 << (numLiteralContextBits + numLiteralPosStateBits))* 
-      256 * 3) * sizeof(CBitDecoder);
+    int memSize = (1 << (numLiteralContextBits + numLiteralPosStateBits)) * sizeof(CLZMALiteralDecoder2);
 
     if (lzmaState->DynamicData == 0 || firstByte != lzmaState->FirstProp)
     {
@@ -94,13 +92,8 @@ DWORD WINAPI lzmaDecompressThread(LPVOID lpParameter)
       lzmaState->FirstProp = firstByte;
     }
 
-    int memSizeReal = lzmaDecodeder->Create((BYTE *) lzmaState->DynamicData, 
+    lzmaDecodeder->Create((LPBYTE) lzmaState->DynamicData, 
       numLiteralContextBits, numLiteralPosStateBits, numPosStateBits);
-    
-    if (memSizeReal != memSize)
-    {
-      goto finished;
-    }
 
     UINT32 dictionarySize = 0;
     for (int i = 0; i < 4; i++)
