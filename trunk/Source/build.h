@@ -134,8 +134,10 @@ class CEXEBuild {
     void set_uninstall_mode(int un);
 
     // lang.cpp by Amir Szekely 3rd August 2002
+    StringTable *GetTable(LANGID &lang);
     int SetString(char *string, int id, int process, WORD lang=0);
     int SetString(char *string, int id, int process, StringTable *table);
+    int SetUserString(char *name, LANGID lang, char *string);
     int WriteStringTables();
     void FillDefaultsIfNeeded(StringTable *table, NLF *nlf=0);
     #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->s):0)
@@ -196,6 +198,7 @@ class CEXEBuild {
     GrowBuf build_labels, ubuild_labels, *cur_labels;
     StringList build_strlist,ubuild_strlist;
     GrowBuf build_langtables, ubuild_langtables;
+    StringList build_userlangstrings, ubuild_userlangstrings, *cur_userlangstrings;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
     IGrowBuf *cur_datablock; 
