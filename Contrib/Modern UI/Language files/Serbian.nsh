@@ -1,7 +1,7 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.65
 
-;Language: Serbian (1050)
+;Language: Serbian (2074)
 ;Translation by Vladan "vladano@EUnet.yu" Obradovic
 
 ;--------------------------------
