@@ -232,6 +232,11 @@ Section "System" SecContribSystem
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\System.dll
+  SetOutPath $INSTDIR\contrib\System
+  File ..\contrib\System\*.dll
+  File ..\contrib\System\*.nsh
+  File ..\contrib\System\*.nsi
+  File ..\contrib\System\*.txt
 SectionEnd
 
 Section "ShowWin" SecContribShowWin
@@ -384,14 +389,12 @@ SectionEnd
 
 Section "System Source" SecContribSystemS
   SectionIn 1
-  SetOutPath $INSTDIR\Contrib\System
-  File ..\contrib\System\*.c
-  File ..\contrib\System\*.h
-  File ..\contrib\System\*.sln
-  File ..\contrib\System\*.obj
-  File ..\contrib\System\*.vcproj
-  File ..\contrib\System\*.txt
-  File ..\contrib\System\*.nsh
+  SetOutPath $INSTDIR\Contrib\System\Source
+  File ..\contrib\System\Source\*.c
+  File ..\contrib\System\Source\*.h
+  File ..\contrib\System\Source\*.sln
+  File ..\contrib\System\Source\*.obj
+  File ..\contrib\System\Source\*.vcproj
 SectionEnd
 
 Section "ShowWin Source" SecContribShowWinS
