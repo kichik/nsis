@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19f - WORKING ON INSTALLOPTIONS INTEGRATION
+;Modern UI Header File version 1.19g
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -228,7 +228,7 @@
 
 !macroend
 
-!macro MUI_INSTALLOPTIONS_SHOW FILE
+!macro MUI_INSTALLOPTIONS_SHOW PAGE FILE IOBACK IONEXT
         
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
   Pop ${TEMP1}
@@ -236,14 +236,15 @@
   StrCmp ${TEMP1} "cancel" "" +2
     Quit
 
-  StrCmp ${TEMP1} "back" "" +7
-    !insertmacro MUI_INSTALLOPTIONS_BACK
+  StrCmp ${TEMP1} "back" "" noback_${PAGE}
+    !insertmacro MUI_INSTALLOPTIONS_${IOBACK}BACK
+  noback_${PAGE}:
 
-  !insertmacro MUI_INSTALLOPTIONS_NEXT
+  !insertmacro MUI_INSTALLOPTIONS_${IONEXT}NEXT
 		
 !macroend
 
-!macro MUI_INSTALLOPTIONS_UNSHOW FILE
+!macro MUI_INSTALLOPTIONS_UNSHOW PAGE FILE IOBACK IONEXT
         
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
   Pop ${TEMP1}
@@ -251,10 +252,11 @@
   StrCmp ${TEMP1} "cancel" "" +2
     Quit
 
-  StrCmp ${TEMP1} "back" "" +7
-    !insertmacro MUI_INSTALLOPTIONS_UNBACK
+  StrCmp ${TEMP1} "back" "" noback_${PAGE}
+    !insertmacro MUI_INSTALLOPTIONS_UN${IOBACK}BACK
+  noback_${PAGE}:
 
-  !insertmacro MUI_INSTALLOPTIONS_UNNEXT
+  !insertmacro MUI_INSTALLOPTIONS_UN${IONEXT}NEXT
 		
 !macroend
 
@@ -280,6 +282,22 @@
    
 !macroend
 
+!macro MUI_INSTALLOPTIONS_IOBACK
+  
+  StrCpy ${IO_NOSETDIRECTION} "1"
+  Call .onPrevPage
+  Goto done
+            
+!macroend
+
+!macro MUI_INSTALLOPTIONS_IONEXT
+
+  StrCpy ${IO_NOSETDIRECTION} "1"
+  Call .onNextPage
+  Goto done
+	
+!macroend
+
 !macro MUI_INSTALLOPTIONS_UNBACK
 
   StrCmp ${IO_DIRECTION} "${IO_DIRECTION_NEXT}" "" +3
@@ -300,6 +318,22 @@
     Call un.onNextPage
     Abort
    
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNIOBACK
+  
+  StrCpy ${IO_NOSETDIRECTION} "1"
+  Call .onPrevPage
+  Goto done
+            
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNIONEXT
+
+  StrCpy ${IO_NOSETDIRECTION} "1"
+  Call .onNextPage
+  Goto done
+	
 !macroend
 
 !endif
