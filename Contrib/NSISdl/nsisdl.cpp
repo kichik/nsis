@@ -48,14 +48,15 @@ HANDLE    hModule;
 HWND      g_parent;
 HWND      g_dialog;
 HWND      g_childwnd;
+HWND      g_hwndProgressBar;
 static int       g_cancelled;
 
 BOOL CALLBACK DownloadDialogProc(HWND   hwndDlg, 
-								 UINT   uMsg,    
-								 WPARAM wParam,
-								 LPARAM lParam)
+                 UINT   uMsg,    
+                 WPARAM wParam,
+                 LPARAM lParam)
 {
-	return 0;
+  return 0;
 }
 
 
@@ -63,37 +64,21 @@ static void *lpWndProcOld;
 
 static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
+  if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
   {
-		g_cancelled = 1;
+    g_cancelled = 1;
     return 0;
   }
   return CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
 }
 
-
 BOOL APIENTRY DllMain( HANDLE _hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
-					 )
+           )
 {
-
-  switch (ul_reason_for_call)
-	{
-		case DLL_PROCESS_ATTACH:
-		case DLL_THREAD_ATTACH:
-			hModule = _hModule;
-			JNL::open_socketlib ();
-			break;
-
-		case DLL_THREAD_DETACH:
-		case DLL_PROCESS_DETACH:
-			JNL::close_socketlib ();
-			break;
-
-    }
-	
-	return TRUE;
+  hModule = _hModule;
+  return TRUE;
 }
 
 
@@ -103,75 +88,66 @@ static void progress_callback(char *msg, int read_bytes)
 {
   if (g_dialog)
   {
-	  HWND hwndProgressBar = GetDlgItem (g_dialog, IDC_PROGRESS1);
-
-	  SetDlgItemText (g_dialog, IDC_STATIC2, msg);
-	  if (g_file_size) SendMessage(hwndProgressBar, PBM_SETPOS, (WPARAM)MulDiv(read_bytes,30000,g_file_size), 0);
+    SetDlgItemText (g_dialog, IDC_STATIC2, msg);
+    if (g_file_size) SendMessage(g_hwndProgressBar, PBM_SETPOS, (WPARAM)MulDiv(read_bytes,30000,g_file_size), 0);
   }
 }
-
-static int getProxyInfo(char *out)
-{
-  DWORD v=0;
-	HKEY hKey;
-  if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
-  {
-		DWORD l = 4;
-		DWORD t;
-    if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD)
-    {
-      l=8192;
-      if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) 
-      { 
-        v=0; 
-        *out=0; 
-      }
-    }
-    else v=0;
-    out[8192-1]=0;
-    RegCloseKey(hKey);
-  }
-  return v;
-}
-
 
 extern char *_strstr(char *i, char *s);
 #define strstr _strstr
 
 static
 void downloadFile(char         *url, 
-				   HANDLE hFile, 
-				   char         **error)
+           HANDLE hFile, 
+           char         **error)
 {
-	static char buf[8192];
+  WSADATA wsaData;
+  WSAStartup(MAKEWORD(1, 1), &wsaData);
+
+  static char buf[8192]="";
   char *p=NULL;
-  if (getProxyInfo(buf))
+  
+  HKEY hKey;
+  if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
   {
-    p=strstr(buf,"http=");
-    if (!p) p=buf;
-    else {
-      p+=5;
+    DWORD l = 4;
+    DWORD t;
+    DWORD v;
+    if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD && v)
+    {
+      l=8192;
+      if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)buf,&l ) == ERROR_SUCCESS && t == REG_SZ)
+      {
+        p=strstr(buf,"http=");
+        if (!p) p=buf;
+        else {
+          p+=5;
+        }
+        char *tp=strstr(p,";");
+        if (tp) *tp=0;
+        char *p2=strstr(p,"=");
+        if (p2) p=0; // we found the wrong proxy
+      }
     }
-    char *tp=strstr(p,";");
-    if (tp) *tp=0;
-    char *p2=strstr(p,"=");
-    if (p2) p=0; // we found the wrong proxy
+    buf[8192-1]=0;
+    RegCloseKey(hKey);
   }
+
   DWORD start_time=GetTickCount();
   JNL_HTTPGet *get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
-	int         st;
-	int         has_printed_headers = 0;
-	int         cl;
-	int         len;
-	int         sofar = 0;
+  int         st;
+  int         has_printed_headers = 0;
+  int         cl;
+  int         len;
+  int         sofar = 0;
   DWORD last_recv_time=start_time;
 
-	get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
-	get->addheader ("Accept: */*");
+  get->addheader ("User-Agent: NSISDL/1.2 (Mozilla)");
+  get->addheader ("Accept: */*");
 
-	get->connect (url);
+  get->connect (url);
 
-	while (1) {
+  while (1) {
     if (g_dialog)
     {
       MSG msg;
@@ -181,65 +157,64 @@ void downloadFile(char         *url,
         DispatchMessage(&msg);
       } 
     }
-	
+  
     Sleep(25);
 
-		if (g_cancelled) break;
+    if (g_cancelled) break;
 
-		st = get->run ();
+    st = get->run ();
 
-		if (st == -1) {
+    if (st == -1) {
       *error=get->geterrorstr();
-			break;
-		} else if (st == 1) {
-			if (sofar < cl)
+      break;
+    } else if (st == 1) {
+      if (sofar < cl)
         *error="download incomplete";
-			break;
-		} else {
+      break;
+    } else {
 
-			if (get->get_status () == 0) {
-				// progressFunc ("Connecting ...", 0);
+      if (get->get_status () == 0) {
+        // progressFunc ("Connecting ...", 0);
         if (last_recv_time+g_timeout_ms < GetTickCount())
         {
-				  *error = "Timed out on connecting.";
-				  break;
+          *error = "Timed out on connecting.";
+          break;
         }
 
-			} else if (get->get_status () == 1) {
+      } else if (get->get_status () == 1) {
 
-				progress_callback("Reading headers", 0);
+        progress_callback("Reading headers", 0);
         if (last_recv_time+g_timeout_ms < GetTickCount())
         {
-				  *error = "Timed out on getting headers.";
-				  break;
+          *error = "Timed out on getting headers.";
+          break;
         }
 
-			} else if (get->get_status () == 2) {
+      } else if (get->get_status () == 2) {
 
-				if (! has_printed_headers) {
-					has_printed_headers = 1;
+        if (! has_printed_headers) {
+          has_printed_headers = 1;
           last_recv_time=GetTickCount();
 
-					cl = get->content_length ();
-					if (cl == 0) {
-						*error = "Server did not specify content length.";
-						break;
-					} else if (g_dialog) {
-            	HWND hwndProgressBar = GetDlgItem (g_dialog, IDC_PROGRESS1);
-            	SendMessage(hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
+          cl = get->content_length ();
+          if (cl == 0) {
+            *error = "Server did not specify content length.";
+            break;
+          } else if (g_dialog) {
+              SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
               g_file_size=cl;
-					}
-				}
+          }
+        }
 
-				while ((len = get->bytes_available ()) > 0) {
-					if (len > 8192)
-						len = 8192;
-					len = get->get_bytes (buf, len);
-					if (len > 0) {
+        while ((len = get->bytes_available ()) > 0) {
+          if (len > 8192)
+            len = 8192;
+          len = get->get_bytes (buf, len);
+          if (len > 0) {
             last_recv_time=GetTickCount();
             DWORD dw;
             WriteFile(hFile,buf,len,&dw,NULL);
-						sofar += len;
+            sofar += len;
             int time_sofar=(GetTickCount()-start_time)/1000;
             int bps=sofar/(time_sofar?time_sofar:1);
             int remain=MulDiv(time_sofar,cl,sofar) - time_sofar;
@@ -254,47 +229,49 @@ void downloadFile(char         *url,
                 rtext="hour";
               }
             }
-						wsprintf (buf, 
-								  "%dkB (%d%%) of %dkB @ %d.%01dkB/s", 
+            wsprintf (buf, 
+                  "%dkB (%d%%) of %dkB @ %d.%01dkB/s", 
                   sofar/1024,
-								  MulDiv(100,sofar,cl),
-								  cl/1024,
-								  bps/1024,((bps*10)/1024)%10
+                  MulDiv(100,sofar,cl),
+                  cl/1024,
+                  bps/1024,((bps*10)/1024)%10
                   );
             if (remain) wsprintf(buf+lstrlen(buf)," (%d %s%s remaining)",
                   remain,
                   rtext,
                   remain==1?"":"s"
                   );
-						progress_callback(buf, sofar);
-					} else {
-						if (sofar < cl)
-							*error = "Server aborted.";
+            progress_callback(buf, sofar);
+          } else {
+            if (sofar < cl)
+              *error = "Server aborted.";
 
-						break;
-					}
-				}
+            break;
+          }
+        }
         if (GetTickCount() > last_recv_time+g_timeout_ms)
         {
-				  *error = "Downloading timed out.";
-				  break;
+          *error = "Downloading timed out.";
+          break;
         }
 
-			} else {
-				*error = "Bad response status.";
-				break;
-			}
-		}
-		
-	}
+      } else {
+        *error = "Bad response status.";
+        break;
+      }
+    }
+    
+  }
 
   if (*error)
   {
     char *t=*error;
-		*error = (char *)GlobalAlloc(GPTR,strlen(t)+1);
+    *error = new char[lstrlen(t)+1];
     lstrcpy(*error,t);
   }
   delete get;
+
+  WSACleanup();
 }
 
 RECT r, cr;
@@ -310,34 +287,34 @@ extern "C"
 {
 
 __declspec(dllexport) void download (HWND   parent,
-						  int    string_size, 
-						  char   *variables, 
-						  stack_t **stacktop)
+              int    string_size, 
+              char   *variables, 
+              stack_t **stacktop)
 {
-	static char buf[1024];
-	static char url[1024];
-	static char filename[1024];
+  static char buf[1024];
+  static char url[1024];
+  static char filename[1024];
   int wasen=0;
   HWND hwndL=0;
   HWND hwndB=0;
 
-	g_parent     = parent;
+  g_parent     = parent;
   EXDLL_INIT();
 
-	popstring(url);
+  popstring(url);
   lstrcpyn(buf, url, 10);
   if (!lstrcmp(buf, "/TIMEOUT=")) {
     g_timeout_ms=my_atoi(url+9);
     popstring(url);
   }
-	popstring(filename);
+  popstring(filename);
 
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
-	if (hFile == INVALID_HANDLE_VALUE) {
- 		wsprintf (buf, "Unable to open %s", filename);
-  	setuservariable(INST_0, buf);
-	} else {  
+  if (hFile == INVALID_HANDLE_VALUE) {
+     wsprintf (buf, "Unable to open %s", filename);
+    setuservariable(INST_0, buf);
+  } else {  
     if (g_parent)
     {
       g_childwnd=FindWindowEx(g_parent,NULL,"#32770",NULL);
@@ -349,13 +326,13 @@ __declspec(dllexport) void download (HWND   parent,
       else hwndB=NULL;
 
       wasen=EnableWindow(GetDlgItem(g_parent,IDCANCEL),1);
-	    lpWndProcOld = (void *) GetWindowLong(g_parent,GWL_WNDPROC);
-	    SetWindowLong(g_parent,GWL_WNDPROC,(long)ParentWndProc);
+      lpWndProcOld = (void *) GetWindowLong(g_parent,GWL_WNDPROC);
+      SetWindowLong(g_parent,GWL_WNDPROC,(long)ParentWndProc);
 
-	    g_dialog = CreateDialog((HINSTANCE)hModule, 
-							      MAKEINTRESOURCE(IDD_DIALOG1),
-							      g_childwnd,
-							      DownloadDialogProc);
+      g_dialog = CreateDialog((HINSTANCE)hModule, 
+                    MAKEINTRESOURCE(IDD_DIALOG1),
+                    g_childwnd,
+                    DownloadDialogProc);
       if (g_dialog)
       {
         GetWindowRect(g_dialog,&cr);
@@ -371,18 +348,19 @@ __declspec(dllexport) void download (HWND   parent,
         char *p=filename;
         while (*p) p++;
         while (*p != '\\' && p != filename) p=CharPrev(filename,p);
-	      wsprintf(buf,"Downloading %s", p+1);
+        wsprintf(buf,"Downloading %s", p+1);
         SetDlgItemText(g_childwnd,1006,buf);
 
-	      wsprintf(buf,"Connecting ...");
-	      SetDlgItemText (g_dialog, IDC_STATIC2, buf);
+        wsprintf(buf,"Connecting ...");
+        SetDlgItemText (g_dialog, IDC_STATIC2, buf);
       }
     }
 
+    g_hwndProgressBar = GetDlgItem (g_dialog, IDC_PROGRESS1);
 
-		char *error=NULL;
-		
-		downloadFile(url, hFile, &error);
+    char *error=NULL;
+    
+    downloadFile(url, hFile, &error);
 
     CloseHandle(hFile);
     if (g_parent)
@@ -398,29 +376,28 @@ __declspec(dllexport) void download (HWND   parent,
       if (wasen) EnableWindow(GetDlgItem(g_parent,IDCANCEL),0);
     }
 
-
-
     if (g_cancelled) {
-   		setuservariable(INST_0, "cancel");
-			DeleteFile(filename);
-		} else if (error == NULL) {
-			setuservariable(INST_0, "success");
-		} else {
-			DeleteFile(filename);
-			setuservariable(INST_0, error);
-		}
+       setuservariable(INST_0, "cancel");
+      DeleteFile(filename);
+    } else if (error == NULL) {
+      setuservariable(INST_0, "success");
+    } else {
+      DeleteFile(filename);
+      setuservariable(INST_0, error);
+    }
     if (error) GlobalFree(error);
   }
 }
 
 
 __declspec(dllexport) void download_quiet(HWND   parent,
-						  int    stringsize, 
-						  char   *variables, 
-						  stack_t **stacktop)
+              int    stringsize, 
+              char   *variables, 
+              stack_t **stacktop)
 {
+  g_hwndProgressBar=0;
   download(NULL,stringsize,variables,stacktop);
 }
 
-}
+} //extern "C"
 
