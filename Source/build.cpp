@@ -1466,8 +1466,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
       while (i < cur_header->blocks[NB_PAGES].num) {
         char pagestr[1024];
         wsprintf(pagestr, "%s pages", str);
-        if (resolve_call_int(pagestr,"pre-page",p->prefunc,&p->prefunc)) return 1;
-        if (resolve_call_int(pagestr,p->dlg_id?"show-page":"leave-page",p->showfunc,&p->showfunc)) return 1;
+        if (resolve_call_int(pagestr,p->dlg_id?"pre-page":"create-page",p->prefunc,&p->prefunc)) return 1;
+        if (resolve_call_int(pagestr,"show-page",p->showfunc,&p->showfunc)) return 1;
         if (resolve_call_int(pagestr,"leave-page",p->leavefunc,&p->leavefunc)) return 1;
         p++;
         i++;
