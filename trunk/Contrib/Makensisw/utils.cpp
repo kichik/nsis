@@ -11,11 +11,11 @@
   freely, subject to the following restrictions:
 
   1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
+	 claim that you wrote the original software. If you use this software
+	 in a product, an acknowledgment in the product documentation would be
+	 appreciated but is not required.
   2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
+	 misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
 */
@@ -89,9 +89,10 @@ void DisableItems(HWND hwnd) {
 }
 
 void EnableItems(HWND hwnd) {
-	#define MSG(a) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,0,0)
-	#define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
-	#define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
+  HWND hwLog = GetDlgItem(hwnd, IDC_LOGWIN);
+	#define MSG(a) SendMessage(hwLog,a,0,0)
+	#define MSG1(a,b) SendMessage(hwLog,a,b,0)
+	#define MSG2(a,b,c) SendMessage(hwLog,a,b,c)
 	if (g_sdata.input_script) {
 		GlobalFree(g_sdata.input_script);
 		g_sdata.input_script = 0;
@@ -110,7 +111,7 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-    if (tr.chrg.cpMin == lstrlen("Processing script file: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
+	if (tr.chrg.cpMin == lstrlen("Processing script file: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
 	tr.lpstrText = g_sdata.input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
@@ -121,7 +122,7 @@ void EnableItems(HWND hwnd) {
 	ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
 	ft.lpstrText = "\"";
 	tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-    if (tr.chrg.cpMin == lstrlen("Output: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
+	if (tr.chrg.cpMin == lstrlen("Output: \"") - 1) tr.chrg.cpMax = tr.chrg.cpMin = 0;
 	tr.lpstrText = g_sdata.output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
 	MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
@@ -145,7 +146,7 @@ void EnableItems(HWND hwnd) {
 	EnableMenuItem(g_sdata.menu,IDM_COPYSELECTED,MF_ENABLED);
 	EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
 	EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_ENABLED);
-    EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
+	EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
 }
 
 void CompileNSISScript() {
@@ -167,12 +168,12 @@ void CompileNSISScript() {
 		if (s) GlobalFree(s);
 		s = (char *)GlobalAlloc(GPTR, lstrlen(g_sdata.script)+sizeof(EXENAME)+2);
 		wsprintf(s,"%s %s",EXENAME,g_sdata.script);
-    if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
-    g_sdata.script_alloced = true;
+	if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
+	g_sdata.script_alloced = true;
 		g_sdata.script = s;
 		g_sdata.appended = TRUE;
 	}
-    g_sdata.logLength = 0;
+	g_sdata.logLength = 0;
 	// Disable buttons during compile
 	DisableItems(g_sdata.hwnd);
 	DWORD id;
@@ -264,7 +265,7 @@ int InitBranding() {
 
 void InitTooltips(HWND h) {
 	if (h == NULL)	return;
-    my_memset(&g_tip,0,sizeof(NTOOLTIP));
+	my_memset(&g_tip,0,sizeof(NTOOLTIP));
 	g_tip.tip_p = h;
 	INITCOMMONCONTROLSEX icx;
 	icx.dwSize	= sizeof(icx);
@@ -302,8 +303,8 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
 			break; 
 		default: 
 			break; 
-    } 
-    return CallNextHookEx(g_tip.hook, nCode, wParam, lParam); 
+	} 
+	return CallNextHookEx(g_tip.hook, nCode, wParam, lParam); 
 }
 
 void ShowDocs() {
@@ -317,21 +318,21 @@ void ShowDocs() {
 }
 
 int getProxyInfo(char *out) {
-    DWORD v=0;
+	DWORD v=0;
 	HKEY hKey;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
+	if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
 		DWORD l = 4;
 		DWORD t;
-        if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
-            l=8192;
-            if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
-                v=0; 
-                *out=0; 
-            }
-        }
-        else v=0;
-        out[8192-1]=0;
-        RegCloseKey(hKey);
-    }
-    return v;
+		if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
+			l=8192;
+			if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
+				v=0; 
+				*out=0; 
+			}
+		}
+		else v=0;
+		out[8192-1]=0;
+		RegCloseKey(hKey);
+	}
+	return v;
 }

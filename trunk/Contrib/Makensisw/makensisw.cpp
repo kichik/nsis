@@ -547,6 +547,11 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     JNL_HTTPGet *get = new JNL_HTTPGet(g_dns,8192,(p&&p[0])?p:NULL);;
     lstrcpy(url,NSIS_UPDATE);
     lstrcat(url,g_sdata.brandingv);
+    p=my_strstr(url," (CVS)");
+    if (p) {
+      *p=0;
+      lstrcat(url,"&cvs=1");
+    }
     lstrcpy(response,"");
     get->addheader("User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 4.0)");
     get->addheader("Accept:*/*");
