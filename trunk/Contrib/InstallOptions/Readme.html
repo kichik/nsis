@@ -379,8 +379,11 @@ numbers from 1 to NumFields. Each Field section can contain the following values
           <tr>
             <td class="righttable">MULTISELECT</td>
             <td class="righttable">Used by "<span class="italic">Listbox</span>"
-              controls to specify if more than item may be selected. If this flag
-              is not specified,only one item may be selected from the list.</td></tr>
+              controls. Turns string selection on or off each time the user clicks or double-clicks a string in the list box. The user can select any number of strings. If this flag and EXTENDEDSELCT are not specified, only one item can be selected from the the list.</td></tr>
+          <tr>
+            <td class="righttable">EXTENDEDSELCT</td>
+            <td class="righttable">Used by "<span class="italic">Listbox</span>"
+              controls. Allows multiple items to be selected by using the SHIFT key and the mouse or special key combinations. If this flag and MULTISELECT are not specified, only one item can be selected from the the list.</td></tr>
           <tr>
             <td class="righttable">RESIZETOFIT</td>
             <td class="righttable">This causes "<span class="italic">Bitmap</span>"
