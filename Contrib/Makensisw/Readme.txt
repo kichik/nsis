@@ -162,6 +162,7 @@ Version History
  - Added Clear Log (Ctrl+W)
  - Browse Script (Ctrl+B) launches explorer in script directory
  - Check for Update command
+ - Added link to the NSIS Forum under Help menu
  - Bunch of other stuff not worth mentioning
 
 
