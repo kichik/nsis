@@ -3,7 +3,7 @@
 
 ;Language: Hungarian (1038)
 ;Compatible with Modern UI 1.62 - By Jozsef Tamas Herczeg
-;Compatible with Modern UI 1.62 - Lajos Molnar (Orfanik)
+;Compatible with Modern UI 1.62 - Lajos Molnar (Orfanik) <orfanik@axelero.hu>
 
 ;--------------------------------
 
