@@ -27,15 +27,8 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-class JNL
-{
-  public:
-    static int open_socketlib();
-    static void close_socketlib();
-    static unsigned long ipstr_to_addr(const char *cp);
-    static void addr_to_ipstr(unsigned long addr, char *host, int maxhostlen);
-};
-
 int my_atoi(char *p);
+void mini_memset(void *,char,int);
+void mini_memcpy(void *,void*,int);
 
 #endif //_UTIL_H_
