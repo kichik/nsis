@@ -1,0 +1,23 @@
+I'm just finished and going to sleep, so a few words only.
+This is alpha release, just for testing. Report bugs please.
+
+That version limits:
+
+0. I've not noticed the NSIS team inverted the 'calling convention', arguments
+are passing to stack from left to right during d::p call, so you should invert
+system.txt arguments order. See SystemEx.nsi for examples.
+
+1. PT_VOID and PT_BOOLEAN are unsupported.
+2. PT_LONG without Pointer specifier is not allowed. 
+3. NSIS->Call PT_LONG converts as 32 bits. Back conversion bit-width is unknown.
+By the way NSIS doesn't support int64 operations, so you can process received 
+long values as strings only...
+4. Generaly untested :)
+5. Requires MSVC++ 7.0 to compile :) Sorry....
+
+Todo (will be done in a few days):
+1. Structures work (thru functions).
+2. Callbacks.
+3. Arg-lists
+4. Cdecl convention
+5. Optimizations and so on...

@@ -1,0 +1,163 @@
+        System: NSIS Plugin
+
+* - I'm a lazy bitch, for *(N) - see comment N at the end of the file.
+
+I. Introduction.
+----------------
+
+        That plugin will make you virtually unstopable. Now you could call any 
+DLL procedure or function, i.e. you gain full control over the system.
+
+        If you want to call some proc, you should prepare two proc IDs: the 
+ProcId and ParamID. Since the System plugin couldn't know the dll proc 
+parameters and return type, you should find the proc description somewhere (the 
+best will be .h files, for example from Platform SDK in case of system dlls). 
+After that you should specify the ProcID: it contains the DLL and proc name, 
+proc parameters, and proc calling options.
+        Since the parameters format of proc in DLL never changes (in general),
+that ProcID can be defined ones for all times (in include file for example, and
+I'm thinking about automatic conversion of some windows headers (winbase.h, 
+winuser.h ...) to ProcID defines).
+
+        When you want to call the proc, you should prepare the second id, 
+ParamID. It specifies where the System plugin should find your input values 
+(registers, stack, etc) and where it should place proc output values. You can 
+define this id once for installation, or you can use separate declaration at 
+each call.
+
+II. ProcID.
+-----------
+
+        Ok. Let's learn how to convert function declaration to ProcID. Below
+the ProcID format is specified (You can read here *(1) why I'm using '?' as 
+delimeter):
+
+"dll?proc?params?options", where:
+
+        - dll - the path (or name) of DLL containing proc (for ex: "kernel32", 
+"c:\test\super.dll", etc.).
+        - proc - the proc name itself (warning: the proc name must be specified
+in the way it mentioned at dll, for example it may look like "_MyFunction@16".
+Other examples: "GetDiskFreeSpaceExA", "GetProcAddress", etc.).
+        - params - the proc parameters, described below.
+        - options - the proc options *(2) (for those, who don't want to read my
+comments - Currently Unavailable). At least two will be defined later: 'c' & 's'
+-> CDECL and STDCALL calling conventions. Should be completly (including 
+question mark) ommited now. 
+
+        Ok, each proc parameter (and return) is presented by single chararacter 
+(there is only one exception - p character), these character are:
+      
+        v - void (generaly for return)
+        i - int (includes char, byte, short, handles, pointers and so on)
+        l - long & large integer (know as int64)
+        s - string (LPCSTR, pointer to first character)
+        b - boolean (needs/returns 'true':'false') - by the fact this type is 
+                senseless -> usual integer can be used ('0':'1')
+
+        p - pointer specifier -> the proc needs the pointer to type, affects
+            next char (parameter) [ex: 'pi' - pointer to int]
+
+        Huh, I think that is easily understandable, but there is one IMPORTANT
+HINT: the first parameter is RETURN type! 
+        And at last: the pointers. You should remember that if you specify 
+pointer parameter with 'p' specifier, the System Plugin waits from you and will 
+return to you BASE TYPE, i.e. for 'pi' it will wait for and return to you 
+INTEGER. 
+        As I wrote above the options (including calling conventions are 
+unsupported now), the System Plugin will always call DLL function with STDCALL
+(this convention is default for windows procs, for example for procs specified
+with WINAPI. CDECL is usually used with WINAPIV declared procs. This V char 
+stands for variable, or arguments-list -> with CDECL convention the stack after
+the function call is cleared by caller, and with STDCALL it is cleared by called 
+proc ('calee') -> all procs with arguments-lists (such as wsprintf) must use 
+CDECL).
+
+IIa. ProcID examples.
+---------------------
+
+        Let's transform some real procs defenitions to ProcIDs:
+
+1) WINBASEAPI FARPROC WINAPI GetProcAddress(IN HMODULE hModule, 
+        IN LPCSTR lpProcName);
+        For the start: proc defined with WINAPI - stdcall and thats allright. 
+Proc return type FARPROC is just another name for proc handle (or address), so 
+we could use integer type. This proc defined at kernel32.dll, but '.dll' could 
+be ommited. So...
+
+"kernel32?GetProcAddress?iis"
+
+        Params: i - return, i - hModule, s - lpProcName.
+        Simple, huh? 
+  
+2) WINBASEAPI BOOL WINAPI GetDiskFreeSpaceExA( IN LPCSTR lpDirectoryName,
+    OUT PULARGE_INTEGER lpFreeBytesAvailableToCaller,
+    OUT PULARGE_INTEGER lpTotalNumberOfBytes,
+    OUT PULARGE_INTEGER lpTotalNumberOfFreeBytes
+    );
+
+        At first, If you'll look at MSDN, you will find GetDiskFreeSpaceEx 
+function, but not with trailing 'A'. This is default Microsoft behaviour for 
+functions, which have two variants: for ANSI (trailing 'A') and UNICODE 
+(trailing 'W') respectively. You can meet such functions sometimes, and since 
+neither NSIS or System Plugin support unicode you should always use version with 
+trailing 'A'. PULARGE_INTEGER can be represented as (int64*) [pointer to long], 
+so we will code this ProcID as:
+
+"kernel32.dll?GetDiskFreeSpaceExA?bsplplpl"
+
+        Params: b - return (boolean); pl, pl, pl - three pointer to long.
+
+        See other examples at System.nsh.
+
+III. ParamID.
+-------------
+
+        Ok, here is ParamID format:
+
+"input?output"
+
+Input/Output -> describes places (from where to take and where to put), encoded
+by single character too. The first character of output describes the place for 
+function return.
+
+Input sources / Output destinations:
+        Registers $0-$9 -> 0..9
+        Registers $R0-$R9 -> a(0) b(1) c(2) d(3) e(4) f(5) g(6) h(7) i(8) j(9)
+        Additional regs -> k(CmdLine) l(InstDir) m(OutDir) n(ExeDir) o(Lang)
+        Stack -> s (parameters are poped/pushed in default, right-to-left order)
+        None -> n (0 (null) for input / specifies no output is required)
+
+VI. Functions.
+--------------
+
+Default return - on stack.
+
+handle = Alloc(bytes)
+ok? = Free(handle)
+handle = AllocCopy(handle)       -> creates a copy
+
+----------
+
+addr = FullAddr(ProcID, ParamID)        -> retrieve address for use with Call
+Call = FullCall(ProcID, ParamID)        -> Direct call
+
+addr = PartAddr(ProcID)
+Call = Call(addr)       
+
+----------
+
+Hint: These two change the passed proc, so if you want to preserve original 
+proc use AllocCopy...
+
+addr = ShortAddr(addr, ParamID)         -> For use if you half defined the proc 
+Call = ShortCall(addr, ParamID)         -> by PartAddr
+
+----------
+
+Comments (don't forget the * meaning :):
+        1. I'm using '?' as delimiter just because I need some character to use
+as :). The other reason: '?' can't be spotted at dll paths and proc names.
+        2. Currently unsupported. Some features, like buffers/structures, 
+callbacks, different calling conventions, arg-lists, etc should become available
+at future releases.
