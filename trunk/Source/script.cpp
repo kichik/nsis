@@ -1807,17 +1807,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           CDialogTemplate td(dlg);
           free(dlg);
 
-          char str[512];
-          extern const char *NSIS_VERSION;
-          if (line.getnumtokens()==a+1)
-            lstrcpy(str, line.gettoken_str(a));
-          else
-            wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
+          if (trim) {
+            char str[512];
+            extern const char *NSIS_VERSION;
+            if (line.getnumtokens()==a+1 && line.gettoken_str(a)[0])
+              lstrcpy(str, line.gettoken_str(a));
+            else
+              wsprintf(str, "Nullsoft Install System %s", NSIS_VERSION);
 
-          switch (trim) {
-          	case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
-            case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
-            case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
+            switch (trim) {
+              case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
+              case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
+              case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
+            }
           }
 
           DWORD dwSize;
