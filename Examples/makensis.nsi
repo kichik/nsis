@@ -55,7 +55,7 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ;Settings
-!define MUI_ABORTWARNING  
+!define MUI_ABORTWARNING
 
 !define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Icons\modern-header.bmp"
 !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard nsis llama.bmp"
@@ -214,25 +214,25 @@ Section "Desktop Shortcut" SecIcons
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
   CreateDirectory $SMPROGRAMS\NSIS
-  
+
   IfFileExists "$INSTDIR\NSIS.exe" "" +2
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
-    
+
   CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW (Compiler GUI).lnk" "$INSTDIR\makensisw.exe"
-  
+
   IfFileExists "$INSTDIR\Bin\NSISUpdate.exe" "" +2
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Update.lnk" "$INSTDIR\Bin\NSISUpdate.exe"
-  
+
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
 !endif
-  
+
   IfFileExists "$INSTDIR\NSIS.exe" "" +3
     CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
     Goto +2
   CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe"
-  
+
 SectionEnd
 
 SubSection "Contrib" SecContrib
@@ -255,7 +255,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Examples\Modern UI\ioC.ini"
     File "..\Examples\Modern UI\StartMenu.nsi"
     File "..\Examples\Modern UI\WelcomeFinish.nsi"
-    
+
     SetOutPath "$INSTDIR\Contrib\Modern UI"
     File "..\Contrib\Modern UI\System.nsh"
     File "..\Contrib\Modern UI\Readme.jpg"
@@ -265,22 +265,22 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
     File "..\Contrib\Modern UI\ioSpecial.ini"
-    
+
     SetOutPath $INSTDIR\Contrib\UIs
     File "..\Contrib\UIs\modern.exe"
     File "..\Contrib\UIs\modern_headerbmp.exe"
     File "..\Contrib\UIs\modern_headerbmpr.exe"
     File "..\Contrib\UIs\modern_nodesc.exe"
     File "..\Contrib\UIs\modern_smalldesc.exe"
-    
+
     Delete "$INSTDIR\Contrib\UIs\modern2.exe"
     Delete "$INSTDIR\Contrib\UIs\modern3.exe"
-    
+
     SetOutPath $INSTDIR\Include
     File "..\Include\MUI.nsh"
 	
   SectionEnd
-  
+
   Section "Default User Interface" SecContribDefaultUI
 
   SetDetailsPrint textonly
@@ -291,7 +291,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\default.exe"
   SectionEnd
-  
+
   Section "Tiny User Interface" SecContribTinyUI
 
   SetDetailsPrint textonly
@@ -302,7 +302,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\sdbarker_tiny.exe"
   SectionEnd
-  
+
 SubSectionEnd
 
 Section "Graphics" SecContribGraphics
@@ -326,20 +326,20 @@ Section "Language files" SecContribLang
   SetDetailsPrint listonly
 
   SectionIn 1 2
-  
+
   SetOutPath "$INSTDIR\Contrib\Language files"
   File "..\Contrib\Language files\*.nlf"
-  
+
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
-  
+
   SectionGetFlags ${SecContribModernUI} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
 	IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
 	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\*.nsh"
   nomui:
-    
+
 SectionEnd
 
 SubSection "Plugins" SecContribPlugins
@@ -443,6 +443,24 @@ Section "InstallOptions" SecContribIO
   File ..\contrib\installoptions\testlink.nsi
 SectionEnd
 
+Section "Math" SecContribMath
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | Math..."
+  SetDetailsPrint listonly
+
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\Math.dll
+  SetOutPath $INSTDIR\Contrib\Math
+  File ..\Contrib\Math\Math.txt
+  File ..\Contrib\Math\Math.nsi
+  File ..\Contrib\Math\MathTest.txt
+  File ..\Contrib\Math\MathTest.nsi
+  File ..\Contrib\Math\MathTest.ini
+
+SectionEnd
+
 Section "NSISdl" SecContribNSISDL
 
   SetDetailsPrint textonly
@@ -523,6 +541,7 @@ Section "VPatch" SecContribVPatch
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\VPatch.dll
   SetOutPath $INSTDIR\Contrib\VPatch
+  File ..\Contrib\VPatch\GenPat.exe
   File ..\Contrib\VPatch\Readme.html
   File ..\Contrib\VPatch\example.nsi
   File ..\Contrib\VPatch\oldfile.txt
@@ -590,10 +609,13 @@ Section "ExDLL Source (required)" SecSrcEx
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
   File ..\Contrib\exdll\exdll.c
-  File ..\Contrib\exdll\exdll.dpr
+  File ..\Contrib\exdll\exdll.h
   File ..\Contrib\exdll\exdll.dsp
   File ..\Contrib\exdll\exdll.dsw
-  File ..\Contrib\exdll\exdll.h
+  File ..\Contrib\exdll\exdll.dpr
+  File ..\Contrib\exdll\exdll_with_unit.dpr
+  File ..\Contrib\exdll\nsis.pas
+  File ..\Contrib\exdll\extdll.inc
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
@@ -728,6 +750,21 @@ Section "InstallOptions Source" SecContribIOS
   File ..\contrib\installoptions\*.h
 SectionEnd
 
+Section "Math Source" SecContribMathS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | Math Source..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\Math\Source
+  File ..\contrib\Math\Source\*.c
+  File ..\contrib\Math\Source\*.h
+  File ..\contrib\Math\Source\*.sln
+  File ..\contrib\Math\Source\*.lib
+  File ..\contrib\Math\Source\*.vcproj
+SectionEnd
+
 Section "NSISdl Source" SecContribNSISDLS
 
   SetDetailsPrint textonly
@@ -808,23 +845,23 @@ Section "VPatch Source" SecContribVPatchS
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\VPatch\Source
   File ..\Contrib\VPatch\Source\*.bpg
-  
+
   SetOutPath $INSTDIR\Contrib\VPatch\Source\GenPat
   File ..\Contrib\VPatch\Source\GenPat\*.pas
   File ..\Contrib\VPatch\Source\GenPat\*.dpr
-  
+
   SetOutPath $INSTDIR\Contrib\VPatch\Source\Plugin
   File ..\Contrib\VPatch\Source\Plugin\*.c
   File ..\Contrib\VPatch\Source\Plugin\*.dsw
   File ..\Contrib\VPatch\Source\Plugin\*.dsp
-  
+
   SetOutPath $INSTDIR\Contrib\VPatch\Source\GUI
   File ..\Contrib\VPatch\Source\GUI\*.pas
   File ..\Contrib\VPatch\Source\GUI\*.dpr
   File ..\Contrib\VPatch\Source\GUI\*.dfm
   File ..\Contrib\VPatch\Source\GUI\*.dof
   File ..\Contrib\VPatch\Source\GUI\*.res
-  
+
 SectionEnd
 
 SubSectionEnd ; plugins
@@ -873,28 +910,28 @@ Section -post
 	
 	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\English.nsh"
-    
+
     langfiles:
-    
+
     SectionGetFlags ${SecContribGraphics} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} graphics
-    
+
       SetOutPath $INSTDIR\Contrib\Icons
       File "..\Contrib\Icons\modern-install.ico"
       File "..\Contrib\Icons\modern-uninstall.ico"
       File "..\Contrib\Icons\modern-wizard.bmp"
-      
+
     graphics:
-    
+
   nomui:
-  
+
   SetDetailsPrint textonly
   DetailPrint "Creating Registry Keys..."
   SetDetailsPrint listonly
 
   SetOutPath $INSTDIR
-  
+
   WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" "$INSTDIR\uninst-nsis.exe"
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
@@ -905,7 +942,7 @@ Section -post
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
-  
+
 !ifndef NO_STARTMENUSHORTCUTS
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
 
@@ -1017,7 +1054,7 @@ Section -post
   Push System\Source\System.sln
   Push "Source\System project workspace"
   Call AddContribToStartMenu
-  
+
   ; VPatch
   Push "VPatch\Readme.html"
   Push "VPatch Readme"
@@ -1025,7 +1062,7 @@ Section -post
 
   nofunshit:
 !endif
-  
+
   ; will only be removed if empty
   SetDetailsPrint none
   RMDir $INSTDIR\Contrib\Source
@@ -1069,6 +1106,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSplashTS} "Source code to splash screen add-on with transparency support that lets you add a splash screen to an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystem} "Plugin that lets you call Win32 API from NSIS scripts"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribSystemS} "Source code to plugin that lets you call Win32 API from NSIS scripts"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribMath} "Plugin that lets you evaluate complicated mathematical expressions"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribMathS} "Source code to plugin that lets you evaluate complicated mathematical expressions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialer} "Plugin that provides internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribDialerS} "Source code to plugin that provides internet connection functions"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribZ2E} "A utility that converts zip files into an NSIS installer"
