@@ -12,6 +12,11 @@
 ;--------------------------------
 ;Configuration
 
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTPAGE
+  !define MUI_DIRSELECTPAGE
+  !define MUI_UNINSTALLER
+
   ;Language
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -25,21 +30,16 @@
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
-  !insertmacro MUI_ENGLISH_LICENSETEXT
   LicenseData "License.txt"
 
   ;Component-select dialog
-  !insertmacro MUI_ENGLISH_COMPONENTTEXT
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
     LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
 
   ;Folder-select dialog
-  !insertmacro MUI_ENGLISH_DIRTEXT
   InstallDir "$PROGRAMFILES\${NAME}"
 
-  ;Uninstaller
-  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
 
 ;--------------------------------
 ;Installer Sections

@@ -12,21 +12,21 @@
 
   ;INSTALLER
   
-  !macro MUI_FRENCH_LICENSETEXT
+  !ifdef MUI_LICENSEPAGE
      LicenseText /LANG=${LANG_FRENCH} "Appuyez sur Page Down pour lire le reste de la licence utilisateur."
-  !macroend
+  !endif
   
-  !macro MUI_FRENCH_COMPONENTTEXT
+  !ifdef MUI_COMPONENTPAGE
     ComponentText /LANG=${LANG_FRENCH} "Cochez les composants que vous souhaitez installer, et décochez ceux que vous ne voulez pas installer. Cliquez sur Suivant pour continuer." " "
-  !macroend
+  !endif
   
-  !macro MUI_FRENCH_DIRTEXT
+  !ifdef MUI_DIRSELECTPAGE
     DirText /LANG=${LANG_FRENCH} "Le programme d'installation va maintenant installer ${NAME} dans le dossier suivant.$\r$\n$\r$\nPour l'installer dans ce dossier, cliquez sur Installer. Pour l'installer dans un autre dossier, cliquez sur Parcourir et choisissez un autre dossier." " "
-  !macroend
+  !endif
   
-  !macro MUI_FRENCH_INSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_FRENCH} "Suivant >"
-  !macroend
+  !endif
    
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_FRENCH} "Licence utilisateur"  
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_FRENCH} "Veuillez examiner les termes de la licence avant d'installer ${NAME}."
@@ -57,13 +57,13 @@
   
   ;UNINSTALLER
   
-  !macro MUI_FRENCH_UNINSTALLTEXT
+  !ifdef MUI_UNINSTALLER
     UninstallText /LANG=${LANG_FRENCH} "Ce programme va supprimer ${NAME} de votre ordinateur."
-  !macroend
+  !endif
   
-  !macro MUI_FRENCH_UNINSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_FRENCH} "Suivant >"
-  !macroend
+  !endif
   
   LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_FRENCH} "Désinstaller ${NAME}"
   LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_FRENCH} "Supprimer ${NAME} de votre ordinateur."
