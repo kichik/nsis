@@ -85,14 +85,6 @@
     LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
-    LangString TITLE_SecCreateUninst ${LANG_ENGLISH} "Uninstaller (English)"
-    LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Uninstaller (French)"
-    LangString TITLE_SecCreateUninst ${LANG_GERMAN} "Uninstaller (German)"
-    LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Uninstaller (Dutch)"
-    LangString TITLE_SecCreateUninst ${LANG_POLISH} "Uninstaller (Polish)"
-    LangString TITLE_SecCreateUninst ${LANG_GREEK} "Uninstaller (Greek)"
-    LangString TITLE_SecCreateUninst ${LANG_SIMPCHINESE} "Uninstaller (Simp Chinese)"
-    LangString TITLE_SecCreateUninst ${LANG_TRADCHINESE} "Uninstaller (Trad Chinese)"
     
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
@@ -103,15 +95,7 @@
     LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
     LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
     LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
-    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Uninstaller: English description"
-    LangString DESC_SecCreateUninst ${LANG_FRENCH} "Uninstaller: French description"
-    LangString DESC_SecCreateUninst ${LANG_GERMAN} "Uninstaller: German description"
-    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Uninstaller: Dutch description"
-    LangString DESC_SecCreateUninst ${LANG_POLISH} "Uninstaller: Polish description"
-    LangString DESC_SecCreateUninst ${LANG_GREEK} "Uninstaller: Greek description"
-    LangString DESC_SecCreateUninst ${LANG_SIMPCHINESE} "Uninstaller: Simplified Chinese description"
-    LangString DESC_SecCreateUninst ${LANG_TRADCHINESE} "Uninstaller: Traditional Chinese description"
-
+    
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\${NAME}"
   
@@ -120,17 +104,11 @@
 
 Section $(TITLE_SecCopyUI) SecCopyUI
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
-
-SectionEnd
-
-Section $(TITLE_SecCreateUninst) SecCreateUninst
-
-  ;Add your stuff here
-
+  
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 SectionEnd
@@ -140,7 +118,6 @@ Section ""
   ;Invisible section to display the Finish header & write the language to the registry
   
   WriteRegStr HKCU "Software\${NAME}" "Installer Language" $LANGUAGE
-  
   !insertmacro MUI_FINISHHEADER SetPage
 
 SectionEnd
@@ -149,6 +126,8 @@ SectionEnd
 ;Installer Functions
 
 Function .onInit
+
+  ;Language selection
 
   Push Tahoma
   Push 8
@@ -180,90 +159,20 @@ Function .onInit
 
 FunctionEnd
 
-Function .onInitDialog
+!insertmacro MUI_BASICFUNCTIONS
 
-    !insertmacro MUI_INNERDIALOG_INIT
-
-    !insertmacro MUI_INNERDIALOG_START 1
-      !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
-    !insertmacro MUI_INNERDIALOG_STOP 1
-
-    !insertmacro MUI_INNERDIALOG_START 2
-      !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
-      !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
-    !insertmacro MUI_INNERDIALOG_STOP 2
-
-    !insertmacro MUI_INNERDIALOG_START 3
-      !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
-    !insertmacro MUI_INNERDIALOG_STOP 3
-
-  !insertmacro MUI_INNERDIALOG_END
-  
-FunctionEnd
-
-Function .onNextPage
-
-  !insertmacro MUI_NEXTPAGE SetPage
-  
-FunctionEnd
-
-Function .onPrevPage
-
-  !insertmacro MUI_PREVPAGE SetPage
-  
-FunctionEnd
-
-Function SetPage
-
-  !insertmacro MUI_PAGE_INIT
-
-    !insertmacro MUI_PAGE_START 1
-       !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-    !insertmacro MUI_PAGE_START 4
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 4
-
-    !insertmacro MUI_PAGE_START 5
-      !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 5
-
- !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-Function .onMouseOverSection
-
-  !insertmacro MUI_DESCRIPTION_INIT
-
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecCreateUninst} $(DESC_SecCreateUninst)
-
- !insertmacro MUI_DESCRIPTION_END
-
-FunctionEnd
-
-Function .onUserAbort
-
-  !insertmacro MUI_ABORTWARNING
-
-FunctionEnd
+!insertmacro MUI_FUNCTION_DESCRIPTION_START
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+ 
+!insertmacro MUI_FUNCTION_ABORTWARNING
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
 
-  ;Add your stuff here
+  ;ADD YOUR OWN STUFF HERE!
 
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
@@ -272,6 +181,7 @@ Section "Uninstall"
   
   DeleteRegValue HKCU "Software\${NAME}" "Installer Language"
 
+  ;Display the Finish header
   !insertmacro MUI_FINISHHEADER un.SetPage
 
 SectionEnd
@@ -280,35 +190,7 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onInit
-
   ReadRegStr $LANGUAGE HKCU "Software\${NAME}" "Installer Language"
-  
 FunctionEnd
 
-Function un.onNextPage
-
-  !insertmacro MUI_NEXTPAGE un.SetPage
-  
-FunctionEnd
-
-Function un.SetPage
-  
-  !insertmacro MUI_PAGE_INIT
-    
-    !insertmacro MUI_PAGE_START 1
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 1
-
-    !insertmacro MUI_PAGE_START 2
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 2
-
-    !insertmacro MUI_PAGE_START 3
-      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
-    !insertmacro MUI_PAGE_STOP 3
-
-  !insertmacro MUI_PAGE_END
-
-FunctionEnd
-
-;eof
+!insertmacro MUI_UNBASICFUNCTIONS
