@@ -75,7 +75,7 @@ static int num_sections;
 
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
-static int m_page,m_abort,m_retcode,m_delta;
+static int m_page=-1,m_abort,m_retcode,m_delta=1;
 
 static void NSISCALL outernotify(int num) {
   if (num==0xD1E)
@@ -483,13 +483,12 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       ShowWindow(hwndDlg,SW_SHOW);
     }
 
-    // initial m_page is zero, m_pages grows and checked after this line so no memory misread
     this_page=g_inst_page+m_page;
 
     // if the last page was a custom page, wait for it to finish by itself.
     // if it doesn't, it's a bad plugin.
     // plugins should react to WM_NOTIFY_OUTER_NEXT.
-    if (m_delta&&this_page->id<0) return 0;
+    if (m_page>=0&&this_page->id<0) return 0;
 
 nextPage:
 
