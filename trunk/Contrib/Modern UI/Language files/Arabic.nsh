@@ -31,7 +31,7 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_ARABIC} "”Ì „  ‰’Ì» «·»—‰«„Ã ${NAME} ›Ì «·„Ã·œ «· «·Ì$\r$\n$\r$\n≈÷€ÿ  ‰’Ì» · ‰’Ì»Â ›Ì Â–« «·„Ã·œ. · ‰’Ì»Â ›Ì „Ã·œ ¬Œ—° ≈÷€ÿ  ’›Õ Ê √Œ — «·„Ã·œ «·¬Œ—." " "
+    DirText /LANG=${LANG_ARABIC} "”Ì „  ‰’Ì» «·»—‰«„Ã ${NAME} ›Ì «·„Ã·œ «· «·Ì$\r$\n$\r$\n≈÷€ÿ  ‰’Ì» · ‰’Ì»Â ›Ì Â–« «·„Ã·œ. · ‰’Ì»Â ›Ì „Ã·œ ¬Œ—° ≈÷€ÿ  ’›Õ Ê √Œ — «·„Ã·œ «·¬Œ—."
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_ARABIC} "√Œ — „Êﬁ⁄ «· ‰’Ì»"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_ARABIC} "√Œ — «·„Ã·œ «·„—«œ  ‰’Ì» ›ÌÂ «·»—‰«„Ã ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_ARABIC} "«·„Ã·œ «·„Œ’’"
