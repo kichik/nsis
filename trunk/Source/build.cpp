@@ -501,15 +501,8 @@ string get_executable_path(const char* argv0) {
 #endif
 }
 
-string get_dirname(const string& path) {
-  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
-  if (last_separator_pos == string::npos)
-    return path;
-  return path.substr(0, last_separator_pos);
-}
-
 string get_executable_dir(const char *argv0) {
-  return get_dirname(get_executable_path(argv0));
+  return get_dir_name(get_executable_path(argv0));
 }
 
 } // end anonymous namespace
@@ -2247,13 +2240,10 @@ int CEXEBuild::check_write_output_errors() const
     return PS_ERROR;
   }
 
+  if (!build_sections.getlen())
   {
-    int ns=build_sections.getlen()/sizeof(section);
-    if (!ns)
-    {
-      ERROR_MSG("Error: invalid script: no sections specified\n");
-      return PS_ERROR;
-    }
+    ERROR_MSG("Error: invalid script: no sections specified\n");
+    return PS_ERROR;
   }
 
   if (!build_entries.getlen())
