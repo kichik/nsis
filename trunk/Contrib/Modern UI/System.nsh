@@ -106,15 +106,25 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_UNWELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
 
   !ifdef MUI_HEADERIMAGE
+  
     !insertmacro MUI_DEFAULT MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+    
     !ifndef MUI_HEADERIMAGE_UNBITMAP
       !define MUI_HEADERIMAGE_UNBITMAP "${MUI_HEADERIMAGE_BITMAP}"
-      !ifdef MUI_HEADERIMAGE_NOSTRETCH
-        !ifndef MUI_HEADERIMAGE_UNNOSTRETCH
-          !define MUI_HEADERIMAGE_UNNOSTRETCH
+      !ifdef MUI_HEADERIMAGE_BITMAP_NOSTRETCH
+        !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH
+      !endif
+    !endif
+    
+    !ifdef MUI_HEADERIMAGE_BITMAP_RTL
+      !ifndef MUI_HEADERIMAGE_UNBITMAP_RTL
+        !define MUI_HEADERIMAGE_UNBITMAP_RTL "${MUI_HEADERIMAGE_BITMAP_RTL}"
+        !ifdef MUI_HEADERIMAGE_BITMAP_RTL_NOSTRETCH
+          !insertmacro MUI_SET MUI_HEADERIMAGE_UNBITMAP_RTL_NOSTRETCH
         !endif
       !endif
     !endif
+  
   !endif
 
   XPStyle On
@@ -362,12 +372,37 @@ Var MUI_TEMP2
   !ifdef MUI_HEADERIMAGE
   
     InitPluginsDir
-    File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UNINSTALLER}BITMAP}"
     
-    !ifndef MUI_HEADERIMAGE_${UNINSTALLER}NOSTRETCH
-      SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
-    !else
-      SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
+    !ifdef MUI_HEADERIMAGE_${UNINSTALLER}BITMAP_RTL
+    
+    StrCmp $(^RTL) 0 mui.headerimageinit_nortl
+      
+        File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UNINSTALLER}BITMAP_RTL}"
+        
+        !ifndef MUI_HEADERIMAGE_${UNINSTALLER}BITMAP_RTL_NOSTRETCH
+          SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
+        !else
+          SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
+        !endif
+        
+        Goto mui.headerimageinit_done
+      
+      mui.headerimageinit_nortl:
+      
+    !endif
+      
+        File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERIMAGE_${UNINSTALLER}BITMAP}"
+        
+        !ifndef MUI_HEADERIMAGE_${UNINSTALLER}BITMAP_NOSTRETCH
+          SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
+        !else
+          SetBrandingImage /IMGID=1046 "$PLUGINSDIR\modern-header.bmp"
+        !endif
+        
+    !ifdef MUI_HEADERIMAGE_${UNINSTALLER}BITMAP_RTL
+    
+    mui.headerimageinit_done:
+    
     !endif
     
   !endif
