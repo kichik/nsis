@@ -917,8 +917,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("CheckBitmap: \"%s\"\n",line.gettoken_str(1));
       try {
         init_res_editor();
-        if (update_bitmap(res_editor, IDB_BITMAP1, line.gettoken_str(1), 96, 16)) {
-          ERROR_MSG("Error: File doesn't exist, is an invalid bitmap, or has the wrong size\n");
+        int err = update_bitmap(res_editor, IDB_BITMAP1, line.gettoken_str(1), 96, 16, 8);
+        if (err) {
+          switch (err) {
+          	case -1:
+              ERROR_MSG("Error: can't find bitmap\n");
+              break;
+            case -2:
+              ERROR_MSG("Error: invalid bitmap file - corrupted or not a bitmap\n");
+              break;
+            case -3:
+              ERROR_MSG("Error: bitmap isn't 96x16 in size\n");
+              break;
+            case -4:
+              ERROR_MSG("Error: bitmap has more than 8bpp\n");
+              break;
+          }
           return PS_ERROR;
         }
       }
