@@ -49,6 +49,7 @@
   !insertmacro MUI_LANGUAGE "Ukrainian"
   !insertmacro MUI_LANGUAGE "Czech"
   !insertmacro MUI_LANGUAGE "Slovak"
+  !insertmacro MUI_LANGUAGE "Croatian"
   !insertmacro MUI_LANGUAGE "Bulgarian"
   !insertmacro MUI_LANGUAGE "Hungarian"
   !insertmacro MUI_LANGUAGE "Thai"
@@ -67,7 +68,7 @@
   LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
   LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
   LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
-  LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Korean description"
+  LangString DESC_SecCopyUI ${LANG_KOREAN} "modern.exe: Korean description"
   LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
   LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
   LangString DESC_SecCopyUI ${LANG_DANISH} "modern.exe: Danish description"
@@ -78,6 +79,7 @@
   LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
   LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
   LangString DESC_SecCopyUI ${LANG_SLOVAK} "modern.exe: Slovakian description"
+  LangString DESC_SecCopyUI ${LANG_CROATIAN} "modern.exe: Slovakian description"
   LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
   LangString DESC_SecCopyUI ${LANG_HUNGARIAN} "modern.exe: Hungarian description"
   LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
@@ -106,6 +108,7 @@
   LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_CZECH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_SLOVAK} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_CROATIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_BULGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_HUNGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_THAI} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -171,6 +174,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Ukrainian"
   !insertmacro MUI_LANGDLL_PUSH "Czech"
   !insertmacro MUI_LANGDLL_PUSH "Slovak"
+  !insertmacro MUI_LANGDLL_PUSH "Croatian"
   !insertmacro MUI_LANGDLL_PUSH "Bulgarian"
   !insertmacro MUI_LANGDLL_PUSH "Hungarian"
   !insertmacro MUI_LANGDLL_PUSH "Thai"
@@ -178,7 +182,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Macedonian"
   !insertmacro MUI_LANGDLL_PUSH "Turkish"
   
-  Push 24F ;24 = number of languages, F = change font
+  Push 25F ;25 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
