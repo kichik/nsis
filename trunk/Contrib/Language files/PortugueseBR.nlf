@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1046
 # Translation by Diego Marcos <jump@osite.com.br>
@@ -17,6 +17,8 @@ Desinstalação do %s
 < &Voltar
 &Avançar >
 &Concordo
+Eu &aceito os termos do Contrato de Licença
+Eu &não aceito os termos do Contrato de Licença
 &Instalar
 &Desinstalar
 Cancelar

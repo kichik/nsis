@@ -1,9 +1,8 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1042
-# Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx
-# Modified by koder@popdesk.co.kr
+# Translation by dTomoyo <dtomoyo@empal.com> - http://user.chol.com/~ckgfx    # Modified by koder@popdesk.co.kr
 널소프트 설치 시스템 %s
 %s 설치
 %s 제거
@@ -18,6 +17,8 @@ NLF v2
 < 뒤로
 다음 >
 동의함
+위 사항에 동의 합니다.
+동의 하지 않습니다.
 설치
 제거
 취소
