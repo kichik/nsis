@@ -25,6 +25,7 @@ DirText "Choose a directory to install in to:"
 
 ; The stuff to install
 Section "Example2 (required)"
+  SectionIn RO
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
@@ -41,7 +42,7 @@ SectionEnd
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\Example2"
   CreateShortCut "$SMPROGRAMS\Example2\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Example2\Example2 (notepad).lnk" "$INSTDIR\notepad.exe" "" "$INSTDIR\makensisw.exe" 0
+  CreateShortCut "$SMPROGRAMS\Example2\Example2 (notepad).lnk" "$WINDIR\notepad.exe" "" "$INSTDIR\makensisw.exe" 0
 SectionEnd
 
 ; uninstall stuff
