@@ -438,7 +438,7 @@ int CEXEBuild::GenerateLangTables() {
               curfilename = fn;
               linecnt = lt[i].lang_id;
 
-              tab = add_string(str, lang_strings[j].process);
+              tab = add_string(str, lang_strings[j].process, lt[i].nlf.m_uCodePage);
               tabsset++;
 
               curfilename = 0;
@@ -527,7 +527,7 @@ int CEXEBuild::GenerateLangTables() {
               curfilename = fn;
               linecnt = lt[i].lang_id;
 
-              tab = add_string(str, lang_strings[j].process);
+              tab = add_string(str, lang_strings[j].process, lt[i].nlf.m_uCodePage);
               tabsset++;
 
               curfilename = 0;
