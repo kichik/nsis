@@ -21,7 +21,7 @@ ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "test.ini"
 
 ;Order of pages
-Page custom SetCustom VerifyCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
+Page custom SetCustom ValidateCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
 Page instfiles
 
 Section "Components"
@@ -64,14 +64,19 @@ Function SetCustom
 
 FunctionEnd
 
-Function VerifyCustom
-	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 2" "State"
-	StrCmp ${TEMP1} 1 done
-	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 3" "State"
-	StrCmp ${TEMP1} 1 done
-	ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 4" "State"
-	StrCmp ${TEMP1} 1 done
-		MessageBox MB_ICONSTOP|MB_OK "You must select at least one install option!"
-		Abort
-	done:
+Function ValidateCustom
+
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 2" "State"
+  StrCmp ${TEMP1} 1 done
+  
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 3" "State"
+  StrCmp ${TEMP1} 1 done
+
+  ReadINIStr ${TEMP1} "$PLUGINSDIR\test.ini" "Field 4" "State"
+  StrCmp ${TEMP1} 1 done
+    MessageBox MB_ICONEXCLAMATION|MB_OK "You must select at least one install option!"
+    Abort
+
+  done:
+  
 FunctionEnd
