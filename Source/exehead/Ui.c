@@ -324,9 +324,6 @@ int NSISCALL ui_doinstall(void)
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=h;
-    wsprintf(state_language, "%u", GetUserDefaultLangID());
-    if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
-    g_hwnd=NULL;
     {
       // Added by Amir Szekely 3rd August 2002
       // Multilingual support
@@ -343,6 +340,13 @@ int NSISCALL ui_doinstall(void)
         size=num*sizeof(installer_strings);
       cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
+
+      process_string_from_lang(g_caption,LANGID_CAPTION);
+
+      wsprintf(state_language, "%u", GetUserDefaultLangID());
+      if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+      g_hwnd=NULL;
+
 lang_again:
       for (size = 0; size < num; size++) {
         if (!((user_lang ^ common_strings_tables[size].lang_id) & lang_mask)) {
