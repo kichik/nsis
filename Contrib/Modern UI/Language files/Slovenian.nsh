@@ -8,25 +8,29 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Slovenian"
 
-  !define MUI_LANGNAME "Slovenscina" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Slovenski jezik" ;Use only ASCII characters (if this is not possible, use the English name)
 
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli v $(^NameDA) èarovniku"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Ta èarovnik vam bo pomagal pri namestitvi $(^NameDA).\r\n\r\nPriporoèamo vam, da zaprete vsa ostala okna in programe pred namestitvijo. To bo omogoèilo nemoteno namestitev programa in njegovih delov brez ponovnega zagona raèunalnika.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli v èarovniku $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Ta èarovnik vam bo pomagal pri namestitvi programa $(^NameDA).\r\n\r\nPriporoèamo vam, da zaprete vsa ostala okna in programe pred namestitvijo. To bo omogoèilo nemoteno namestitev programa in njegovih delov brez ponovnega zagona raèunalnika.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licenèna pogodba"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Prosimo, preglejte pogoje pogodbe pred namestitvijo $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_TOP "Prisnite tipko 'Page Down', za preostali del pogodbe."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Èe se strinjate s pogoji, pritisnite Se strinjam. S pogodbo se morate strinjati, da bi lahko namestili $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Èe se strinjate z pogoji licenènimi pogoji pogodbe, spodaj obkljukajte primerno okence. Za namestitev $(^NameDA) se morate strinjati s pogoji pogodbe. $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Èe se strinjate z pogoji licenènimi pogoji pogodbe, spodaj izberite prvo možnost. Za namestitev $(^NameDA) se morate strinjati s pogoji pogodbe. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_TOP "Za preostali del pogodbe pritisnite tipko 'Page Down'."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Èe se strinjate s pogoji, pritisnite Se strinjam. Da bi lahko namestili $(^NameDA), se morate s pogodbo strinjati."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Èe se strinjate z licenènimi pogoji pogodbe, spodaj obkljukajte ustrezno okence. Za namestitev $(^NameDA) se morate strinjati s pogoji pogodbe. $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Èe se strinjate z licenènimi pogoji pogodbe, spodaj izberite prvo možnost. Za namestitev $(^NameDA) se morate strinjati s pogoji pogodbe. $_CLICK"
   
   !define MUI_TEXT_COMPONENTS_TITLE "Izberite bloke"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Izberite si, katere bloke izdelka $(^NameDA) želite namestiti."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Opis"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Povlecite miško nad blok, da vidite njegov opis."
-  
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Povlecite miško nad blok, da vidite njegov opis."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Izberite blok za prikaz njegovega opisa."
+  !endif
+
   !define MUI_TEXT_DIRECTORY_TITLE "Izberite si pot namestive"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Izberite si mapo, v katero boste namestili $(^NameDA)."
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Izberite si mapo, v katero boste $(^NameDA) namestili."
   
   !define MUI_TEXT_INSTALLING_TITLE "Namešèanje poteka"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Prosimo poèakajte, $(^NameDA) se namešèa."
@@ -38,18 +42,18 @@
   !define MUI_TEXT_ABORT_SUBTITLE "Namestitev ni bila konèana uspešno."
   
   !define MUI_BUTTONTEXT_FINISH "&Konèaj"
-  !define MUI_TEXT_FINISH_INFO_TITLE "Zakljuèujem namestitev $(^NameDA)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "Paket $(^NameDA) je bil namešèen na vaš raèunalnik..\r\n\r\nPritisnite na Konèaj za zakljuèitev programa."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Vaš raèunalnik mora biti ponovno zagnan, da bi se $(^NameDA) namestitev lahko dokonèala. Želite raèunalnik ponovno zagnati sedaj?"
+  !define MUI_TEXT_FINISH_INFO_TITLE "Zakljuèevanje namestitve $(^NameDA)"
+  !define MUI_TEXT_FINISH_INFO_TEXT "Paket $(^NameDA) je bil namešèen na vaš raèunalnik.\r\n\r\nPritisnite Konèaj za zakljuèek programa."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Za dokonèanje namestitve $(^NameDA) morate  ponovno zagnati raèunalnik. Želite zdaj  ponovno zagnati raèunalnik?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Ponovni zagon"
-  !define MUI_TEXT_FINISH_REBOOTLATER "Raèunalnik bom ponovno zagnal kasneje"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Raèunalnik želim ponovno zagnati kasneje"
   !define MUI_TEXT_FINISH_RUN "Zaženi $(^NameDA)"
   !define MUI_TEXT_FINISH_SHOWREADME "Prikaži informacije"
   
-  !define MUI_TEXT_STARTMENU_TITLE "Izberite mapo Start menija"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Izberite mapo Start menija, kjer bodo bližnjice do programa."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Izberite mapo Start menija, kjer bi želeli ustvariti bližnjico do programa. Èe vpišete poljubno ime, se bo ustvarila mapa s tem imenom."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ne naredi bližnjice"
+  !define MUI_TEXT_STARTMENU_TITLE "Izberite mapo menija Start"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Izberite mapo menija Start, kjer bodo bližnjice do programa."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Izberite mapo menija Start, kjer bi želeli ustvariti bližnjico do programa. Èe vpišete poljubno ime, se bo ustvarila mapa s tem imenom."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ne ustvari bližnjice"
   
   !define MUI_TEXT_ABORTWARNING "Ste preprièani, da želite prekiniti namestitev $(^Name)?"  
   
@@ -62,9 +66,9 @@
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licenèna pogodba"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Prosimo vas, da pregledate pogoje licenène pogodbe pred odstranitvijo $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Èe se strinjate z pogoji licenène pogodbe, kliknite na Se strinjam. Za odstranitev $(^NameDA) se morate strinjati s pogoji."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Èe se strinjate z pogoji licenène pogodbe, kliknite na okence spodaj. Za odstranitev $(^NameDA) se morate strinjati s pogoji. $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Èe se strinjate z pogoji licenène pogodbe, izberite spodaj prvo podano možnost. Za odstranitev $(^NameDA) se morate strinjati s pogoji. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Èe se strinjate s pogoji licenène pogodbe, kliknite na Se strinjam. Za odstranitev $(^NameDA) se morate strinjati s pogoji."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Èe se strinjate s pogoji licenène pogodbe, kliknite na okence spodaj. Za odstranitev $(^NameDA) se morate strinjati s pogoji. $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Èe se strinjate s pogoji licenène pogodbe, spodaj izberite prvo podano možnost. Za odstranitev $(^NameDA) se morate strinjati s pogoji. $_CLICK"
 
   !define MUI_UNTEXT_COMPONENTS_TITLE "Izberite bloke"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Izberite si bloke $(^NameDA), ki jih želite odstraniti."
@@ -76,14 +80,14 @@
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prosimo poèakajte, dokler se paket $(^NameDA) odstranjuje."
     
   !define MUI_UNTEXT_FINISH_TITLE "Uninstallation Complete"
-  !define MUI_UNTEXT_FINISH_SUBTITLE "Uninstall was completed successfully."
+  !define MUI_UNTEXT_FINISH_SUBTITLE "Odstranitev je uspešno konèana."
 
   !define MUI_UNTEXT_ABORT_TITLE "Odstranitev je bila prekinjena"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odstranitev ni bila konèana uspešno."
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Èarovnik za odstranitev $(^NameDA) se zakljuèuje"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) je bil odstranjen iz vašega raèunalnika.\r\n\r\nKliknite na Dokonèaj, da konèate z èarovnikom."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Vaš raèunalnik se mora ponovno zagnati, da bi se lahko $(^NameDA) namestitev dokonèala. Želite sedaj ponovno zagnati vaš raèunalnik?"  
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) je bil odstranjen iz vašega raèunalnika.\r\n\r\nKliknite na Dokonèaj, da konèate delo s èarovnikom."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Da bi se $(^NameDA) namestitev dokonèala, morate ponovno zagnati raèunalnik. Želite sedaj ponovno zagnati vaš raèunalnik?"
   
   !define MUI_UNTEXT_ABORTWARNING "Ste preprièani, da želite zapustiti odstranitev $(^Name)?"  
 
