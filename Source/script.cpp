@@ -2202,7 +2202,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       int ret;
 
       if (line.gettoken_str(a)[0]=='-') ret=add_section("",curfilename,linecnt,line.gettoken_str(a+1));
-      ret=add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1));
+      else ret=add_section(line.gettoken_str(a),curfilename,linecnt,line.gettoken_str(a+1));
       if (ret != PS_OK) return ret;
       
       if (unselected)
