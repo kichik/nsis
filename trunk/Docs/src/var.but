@@ -1,12 +1,12 @@
 \H{variables} Variables
 
-All variables are global and can be used in Sections or Functions. Variables are case sensitive.
+All variables are global and can be used in Sections or Functions.
 
 \S1{varuser} User Variables
 
 \e{$VARNAME}
 
-User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with string manipulation etc.
+User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with string manipulation etc. Unlike constants these variables are case-sensitive.
 
 \S2{var} Var
 
