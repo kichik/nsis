@@ -32,6 +32,7 @@
 #include "state.h"
 #include "ui.h"
 #include "lang.h"
+#include "state.h"
 
 extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
 
@@ -343,7 +344,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (!g_inst_cmnheader->silent_install) g_inst_cmnheader->silent_install=silent;
+  if (silent) inst_flags |= CH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 

@@ -206,7 +206,7 @@ enum
 
 typedef struct
 {
-  int flags; // &1=CRC, &2=uninstall, &4=silent, &8=force CRC
+  int flags; // FH_FLAGS_*
   int siginfo;  // FH_SIG
 
   int nsinst[3]; // FH_INT1,FH_INT2,FH_INT3
@@ -296,6 +296,22 @@ typedef struct
   int copy_details;
 } common_strings;
 
+// Flags for common_header.flags
+#define CH_FLAGS_DETAILS_SHOWDETAILS 1
+#define CH_FLAGS_DETAILS_NEVERSHOW 2
+#define CH_FLAGS_PROGRESS_COLORED 4
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+  #define CH_FLAGS_SILENT 8
+  #define CH_FLAGS_SILENT_LOG 16
+#endif
+#define CH_FLAGS_AUTO_CLOSE 32
+#define CH_FLAGS_DIR_NO_SHOW 64
+#define CH_FLAGS_NO_ROOT_DIR 128
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  #define CH_FLAGS_COMP_ONLY_ON_CUSTOM 256
+  #define CH_FLAGS_NO_CUSTOM 512
+#endif
+
 // Settings common to both installers and uninstallers
 typedef struct
 {
@@ -323,13 +339,7 @@ typedef struct
 #endif
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
-  char show_details;
-  char progress_flags;
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  char silent_install;
-#endif//NSIS_CONFIG_SILENT_SUPPORT
-  // additional flags
-  char misc_flags; // auto_close=&1, no_show_dirpage=&2, no_show_icon&4, no_rootdir&8;
+  int flags; // CH_FLAGS_*
 } common_header;
 
 // Strings specific to installers
@@ -380,10 +390,6 @@ typedef struct
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   int uninstdata_offset; // -1 if no uninst data.
   int uninsticon_size;
-#endif
-
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  int no_custom_instmode_flag;
 #endif
 
   int num_sections; // total number of sections

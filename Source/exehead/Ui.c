@@ -294,7 +294,7 @@ lang_again:
 int NSISCALL ui_doinstall(void)
 {
   num_sections=g_inst_header->num_sections;
-  g_flags.autoclose=g_inst_cmnheader->misc_flags&1;
+  g_flags.autoclose=inst_flags&CH_FLAGS_AUTO_CLOSE;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)
 #endif
@@ -345,7 +345,7 @@ int NSISCALL ui_doinstall(void)
     }
 
 #ifdef NSIS_CONFIG_LOG
-    if (g_inst_cmnheader->silent_install==2)
+    if (inst_flags&CH_FLAGS_SILENT_LOG)
     {
       build_g_logfile();
       log_dolog=1;
@@ -366,7 +366,7 @@ int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (!g_inst_cmnheader->silent_install)
+  if (!(inst_flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)))
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   {
     g_hIcon=LoadImage(g_hInstance,MAKEINTRESOURCE(IDI_ICON2),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_SHARED);
@@ -1002,7 +1002,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetStringFromStringTab(g_inst_header->install_types_ptr[m_num_insttypes]));
       }
-      if (g_inst_header->no_custom_instmode_flag!=1) SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
+      if (!(inst_flags&CH_FLAGS_NO_CUSTOM))
+        SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_STR(LANG_COMP_CUSTOM));
       SendMessage(hwndCombo1,CB_SETCURSEL,m_whichcfg,0);
     }
 
@@ -1228,7 +1229,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           {
             TV_ITEM hItem;
             hItem.hItem=*ht;
-            if (g_inst_header->no_custom_instmode_flag==1)
+            if (inst_flags&CH_FLAGS_NO_CUSTOM)
             {
               CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
             }
@@ -1245,14 +1246,14 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (x < 0) break;
       }
 
-      if (!g_inst_header->no_custom_instmode_flag)
+      if (!(inst_flags&(CH_FLAGS_COMP_ONLY_ON_CUSTOM|CH_FLAGS_NO_CUSTOM)))
       {
         SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
         m_whichcfg=r;
       }
     } // end of typecheckshit
 
-    if (g_inst_header->no_custom_instmode_flag==2)
+    if (inst_flags&CH_FLAGS_COMP_ONLY_ON_CUSTOM)
     {
       int c=(m_whichcfg == m_num_insttypes && m_num_insttypes)<<3;// SW_SHOWNA=8, SW_HIDE=0
       ShowWindow(hwndTree1,c);
@@ -1383,18 +1384,17 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       ListView_SetTextColor(insthwnd, lb_fg);
     }
     my_SetWindowText(insthwndbutton,LANG_STR(LANG_BTN_DETAILS));
-    if (g_inst_cmnheader->show_details)
+    if (inst_flags&(CH_FLAGS_DETAILS_SHOWDETAILS|CH_FLAGS_DETAILS_NEVERSHOW))
     {
       ShowWindow(insthwndbutton,SW_HIDE);
-      if (g_inst_cmnheader->show_details != 2) ShowWindow(insthwnd,SW_SHOWNA);
+      if (!(inst_flags&CH_FLAGS_DETAILS_NEVERSHOW)) ShowWindow(insthwnd,SW_SHOWNA);
       else insthwndbutton=NULL;
     }
     progress_bar_len=num;
 
-    g_progresswnd=GetUIItem(IDC_PROGRESS1+(g_inst_cmnheader->progress_flags&1));
-    ShowWindow(g_progresswnd,SW_SHOWNA);
+    g_progresswnd=GetUIItem(IDC_PROGRESS);
     SendMessage(g_progresswnd,PBM_SETRANGE,0,MAKELPARAM(0,30000));
-    if (g_inst_cmnheader->progress_flags&2)
+    if (inst_flags&CH_FLAGS_PROGRESS_COLORED)
     {
       SendMessage(g_progresswnd,PBM_SETBARCOLOR,0,lb_fg);
       SendMessage(g_progresswnd,PBM_SETBKCOLOR,0,lb_bg);

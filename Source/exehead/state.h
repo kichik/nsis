@@ -4,8 +4,6 @@ extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 extern char temp_directory[NSIS_MAX_STRLEN];
 
 extern char g_usrvars[25][NSIS_MAX_STRLEN];
-// changed by Amir Szekely 28th August 2002
-// smaller exehead
 extern char *state_command_line;
 extern char *state_install_directory;
 extern char *state_output_directory;
@@ -18,3 +16,5 @@ extern int g_filehdrsize;
 extern HANDLE g_hInstance;
 extern HWND insthwnd,insthwndbutton;
 extern HICON g_hIcon;
+
+extern int inst_flags;

@@ -375,7 +375,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       {
         if (!table->installer.componentsubtext[0])
           table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
-        if (build_header.no_custom_instmode_flag!=1 && !table->installer.componentsubtext[1])
+        if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM) && !table->installer.componentsubtext[1])
           table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
       }
     }

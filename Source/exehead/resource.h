@@ -18,8 +18,7 @@
 #define IDB_BITMAP1                     109
 #define IDC_EDIT1                       1000
 #define IDC_BROWSE                      1001
-#define IDC_PROGRESS1                   1004
-#define IDC_PROGRESS2                   1005
+#define IDC_PROGRESS                    1004
 #define IDC_INTROTEXT                   1006
 #define IDC_CHECK1                      1008
 #define IDC_LIST1                       1016

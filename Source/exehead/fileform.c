@@ -36,6 +36,8 @@ HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
 static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 #endif//NSIS_COMPRESS_WHOLE
 
+int inst_flags;
+
 int NSISCALL isheader(firstheader *h)
 {
   if ((h->flags & (~FH_FLAGS_MASK)) ||
@@ -93,6 +95,8 @@ const char * NSISCALL loadHeaders(void)
 #endif
 
   g_inst_combinedheader=data;
+
+  inst_flags=((common_header *)data)->flags;
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (h.flags&FH_FLAGS_UNINSTALL)
@@ -254,7 +258,7 @@ static int NSISCALL __ensuredata(int amount)
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
         if (g_inst_cmnheader)
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-          if (!g_inst_cmnheader->silent_install)
+          if (!(inst_flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)))
 #endif
           {
             if (hwnd) {

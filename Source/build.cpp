@@ -239,19 +239,20 @@ CEXEBuild::CEXEBuild()
   memset(&build_header,-1,sizeof(build_header));
 
   build_header.install_reg_rootkey=0;
-#ifdef NSIS_CONFIG_COMPONENTPAGE
+/*#ifdef NSIS_CONFIG_COMPONENTPAGE
   build_header.no_custom_instmode_flag=0;
-#endif
+#endif*/
   build_header.num_sections=0;
   build_header.common.num_entries=0;
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
+/*#ifdef NSIS_CONFIG_SILENT_SUPPORT
   build_header.common.silent_install=0;
-#endif
-  build_header.common.misc_flags=8;
-  build_header.common.show_details=0;
+#endif*/
+  build_header.common.flags=CH_FLAGS_NO_ROOT_DIR;
+  /*build_header.common.misc_flags=8;
+  build_header.common.show_details=0;*/
   build_header.common.lb_bg=RGB(0,0,0);
   build_header.common.lb_fg=RGB(0,255,0);
-  build_header.common.progress_flags=0;
+  /*build_header.common.progress_flags=0;*/
 
   uninstall_mode=0;
   uninstall_size_full=0;
@@ -261,13 +262,14 @@ CEXEBuild::CEXEBuild()
   build_uninst.common.lb_bg=RGB(0,0,0);
   build_uninst.common.lb_fg=RGB(0,255,0);
   build_uninst.common.num_entries=0;
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
+/*#ifdef NSIS_CONFIG_SILENT_SUPPORT
   build_uninst.common.silent_install=0;
-#endif
+#endif*/
   build_uninst.code=0;
   build_uninst.code_size=-1;
-  build_uninst.common.show_details=0;
-  build_uninst.common.misc_flags=0;
+  /*build_uninst.common.show_details=0;
+  build_uninst.common.misc_flags=0;*/
+  build_header.common.flags=0;
 
   uninstaller_writes_used=0;
 
@@ -1239,8 +1241,7 @@ int CEXEBuild::write_output(void)
     }
     else
     {
-      build_uninst.common.progress_flags=build_header.common.progress_flags;
-      build_uninst.common.misc_flags|=build_header.common.misc_flags&(4|8);
+      build_uninst.common.flags|=build_header.common.flags&(CH_FLAGS_PROGRESS_COLORED|CH_FLAGS_NO_ROOT_DIR);
 
       set_uninstall_mode(1);
   #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -1305,7 +1306,7 @@ int CEXEBuild::write_output(void)
     int main=2;
 
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (!build_header.common.silent_install)
+    if (!(build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)))
 #endif
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -1429,7 +1430,7 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (!build_uninst.common.silent_install && uninstaller_writes_used)
+    if (!(build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) && uninstaller_writes_used)
 #endif
     {
       if (!IsNotSet(uninstall.uninstalltext)) uninst++;
@@ -1670,7 +1671,7 @@ int CEXEBuild::write_output(void)
   fh.flags=(build_crcchk?FH_FLAGS_CRC:0);
   fh.flags|=(build_crcchk==2?FH_FLAGS_FORCE_CRC:0);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-  if (build_header.common.silent_install) fh.flags |= FH_FLAGS_SILENT;
+  if (build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
   fh.siginfo=FH_SIG;
 
@@ -2040,7 +2041,7 @@ int CEXEBuild::uninstall_generate()
     fh.flags = FH_FLAGS_UNINSTALL | (build_crcchk?FH_FLAGS_CRC:0);
     fh.flags |= (build_crcchk==2?FH_FLAGS_FORCE_CRC:0);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-    if (build_uninst.common.silent_install) fh.flags |= FH_FLAGS_SILENT;
+    if (build_uninst.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
     fh.siginfo=FH_SIG;
     fh.length_of_all_following_data=
