@@ -333,6 +333,7 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
 }
 
 
+static char smwcvesf[]="Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders";
 char g_all_user_var_flag;
 
 static void NSISCALL queryShellFolders(const char *name_, char *out)
@@ -341,13 +342,12 @@ static void NSISCALL queryShellFolders(const char *name_, char *out)
   mystrcpy(name + 7, name_);
   {
     char f=g_all_user_var_flag;
-    static char buf[65];
-    wsprintf(buf,"%s\\Explorer\\Shell Folders","Software\\Microsoft\\Windows\\CurrentVersion");
 
   again:
 
+    smwcvesf[41]='\\';
     myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
-      buf,
+      smwcvesf,
       f?name:name_,out);
     if (!out[0])
     {
@@ -501,7 +501,8 @@ void NSISCALL process_string(char *out, const char *in)
           break;
 
         case VAR_CODES_START + 26: // PROGRAMFILES
-          myRegGetStr(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", out);
+          smwcvesf[41]=0;
+          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
