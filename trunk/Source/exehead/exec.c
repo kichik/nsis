@@ -1424,7 +1424,7 @@ static int ExecuteEntry(entry *entries, int pos)
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
 // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-    case EW_EXTERNALCOMMANDPREP:
+    case EW_PLUGINCOMMANDPREP:
     {
       // parms[0] - dll name
       // parms[1] - function name
@@ -1447,13 +1447,15 @@ static int ExecuteEntry(entry *entries, int pos)
 
         DllPathsAdd(parms[0],buf);
       }
+      else
+        lstrcpy(buf,dllPath);
 
       // leave buf containing the dll path
       // and buf2 containing the function name
       process_string_fromtab(buf2,parms[1]);
     }
     return 0;
-    case EW_EXTERNALCOMMAND:
+    case EW_PLUGINCOMMAND:
     {
       // parms contain command arguments
       FARPROC funke;

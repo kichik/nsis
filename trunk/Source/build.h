@@ -20,7 +20,7 @@ using namespace std;
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-#include "ExternalCommands.h"
+#include "Plugins.h"
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -52,7 +52,7 @@ class CEXEBuild {
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
-    void build_external_command_table(void);
+    void build_plugin_table(void);
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // process a script (you can process as many scripts as you want,
@@ -108,7 +108,7 @@ class CEXEBuild {
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
-    ExternalCommands m_externalCommands;
+    Plugins m_plugins;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp
