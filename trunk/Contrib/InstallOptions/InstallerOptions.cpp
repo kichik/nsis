@@ -673,20 +673,24 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
   BOOL bRes;
   if (message == WM_NOTIFY_OUTER_NEXT && wParam == 1)
   {
+    // Don't call leave function if fields aren't valid
+    if (!ValidateFields())
+      return 0;
     // Get the settings ready for the leave function verification
     SaveSettings();
-    g_NotifyField = 0;  // Reset the record of activated control
+    // Reset the record of activated control
+    g_NotifyField = 0;
   }
   bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
-    // if leave function didn't abort (lRes != 0 in that case)
-    if (wParam == NOTIFY_BYE_BYE || wParam == -1 || ValidateFields()) {
-      if (wParam == -1) g_is_back++;
-      if (wParam == NOTIFY_BYE_BYE) g_is_cancel++;
-      g_done++;
-      PostMessage(hConfigWindow,WM_CLOSE,0,0);
-    }
+    // if leave function didn't abort (bRes != 0 in that case)
+    if (wParam == -1)
+      g_is_back++;
+    if (wParam == NOTIFY_BYE_BYE)
+      g_is_cancel++;
+    g_done++;
+    PostMessage(hConfigWindow,WM_CLOSE,0,0);
   }
   return bRes;
 }
