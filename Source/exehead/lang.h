@@ -16,6 +16,8 @@
 
 #define _LANG_VERIFYINGINST "verifying installer: %d%%"
 
+#define _LANG_UNPACKING "unpacking data: %d%%"
+
 #define _LANG_CANTOPENSELF "Can't open self"
 
 #define _LANG_GENERIC_ERROR "NSIS ERROR"
