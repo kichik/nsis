@@ -414,9 +414,9 @@ extern Int32 BZ2_indexIntoF( Int32, Int32* );
 #endif//smallmode
 
 /*-- externs for decompression. --*/
-extern Int32 BZ2_decompress ( DState* );
+extern Int32 NSISCALL BZ2_decompress ( DState* );
 
-extern void BZ2_hbCreateDecodeTables ( Int32*, Int32*, Int32*, UChar*,
+extern void NSISCALL BZ2_hbCreateDecodeTables ( Int32*, Int32*, Int32*, UChar*,
                            Int32,  Int32, Int32 );
 
 
