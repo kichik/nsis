@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.01
+;Modern UI Header File version 1.18
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -53,7 +53,7 @@
 
   StrCmp $LANGUAGE ${LANGID} "" +3
     GetDlgItem ${TEMP2} ${TEMP1} ${ELEMENT}
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "${TEXT}"
+    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "STR:${TEXT}"
 	
 !macroend
 
@@ -136,8 +136,8 @@
   ;Text on the white rectangle
 
   StrCmp $LANGUAGE ${LANGID} "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "${TEXT}"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "${SUBTEXT}"
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
     Goto done
 
 !macroend
@@ -172,7 +172,7 @@
 
   StrCmp $LANGUAGE ${LANGID} "" +4
     StrCmp $0 ${VAR} "" +3
-      SendMessage ${TEMP1} ${WM_SETTEXT} 0 "${TEXT}"
+      SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
       Goto done
     
 !macroend
