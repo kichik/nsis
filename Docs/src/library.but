@@ -70,7 +70,7 @@ REBOOT_PROTECTED
 NOREBOOT_PROTECTED
 
 \b Warns the user when the library is in use. The user will have to close applications using the library.
-						  
+
 \b Upgrade the library if the file is not protected by Windows File Protection.
 
 REBOOT_NOTPROTECTED
@@ -82,7 +82,7 @@ REBOOT_NOTPROTECTED
 NOREBOOT_NOTPROTECTED
 
 \b Warns the user when the library is in use. The user will have to close  applications using the library.
-						  
+						
 \b Upgrade the library without checking for Windows File Protection.	
 
 \\<b\\>localfile\\</b\\>
@@ -100,6 +100,16 @@ Directory on the user's system to store a temporary file when the system has to 
 For Windows 9x/ME support, this directory should be on the same volume as the destination file (destfile).
 The Windows temp directory could be located on any volume, so you cannot use this directory.
 
+\S1{} Options
+
+LIBRARY_SHELL_EXTENSION
+
+\b Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration. Use this to refresh the shell when installing a shell extension or when changing file associations.
+
+LIBRARY_COM
+
+\b Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration. Use this for unloading all unnecessary libraries from memory when installing COM libraries.
+
 \S1{} Notes
 
 \b If you want to support Windows 9x/ME, you can only use short filenames (8.3).
@@ -110,7 +120,7 @@ The Windows temp directory could be located on any volume, so you cannot use thi
 
 \c  ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is
 \c  ;already installed. For example:
-\c  
+\c
 \c  IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
 \c    StrCpy $ALREADY_INSTALLED 1
 \c  new_installation:
@@ -177,12 +187,22 @@ NOREBOOT_NOTPROTECTED
 
 \b Warns the user when the library is in use. The user will have to close applications using the library.
 
-\b Remove the library without checking for Windows File Protection.	
+\b Remove the library without checking for Windows File Protection.
 
 
 \\<b\\>file\\</b\\>
 
-Location of the library 
+Location of the library
+
+\S1{} Options
+
+LIBRARY_SHELL_EXTENSION
+
+\b Define this before inserting UninstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after unregistration. Use this to refresh the shell when uninstalling a shell extension or when changing file associations.
+
+LIBRARY_COM
+
+\b Define this before inserting UninstallLib macro to call CoFreeUnusedLibraries after unregistration. Use this for unloading all unnecessary libraries from memory when uninstalling COM libraries.
 
 \S1{} Example
 
@@ -217,9 +237,9 @@ To ask the user for a reboot if required, use the Modern UI with a Finish page o
 \c  !include Library.nsh
 \c
 \c  Var ALREADY_INSTALLED
-\c  
+\c
 \c  Section "-Install VB6 runtimes"
-\c  
+\c
 \c    ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is already installed. For example:
 \c
 \c    IfFileExists "$INSTDIR\MyApp.exe" 0 new_installation ;Replace MyApp.exe with your application filename
@@ -232,18 +252,18 @@ To ask the user for a reboot if required, use the Modern UI with a Finish page o
 \c    !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_PROTECTED    "comcat.dll"   "$SYSDIR\comcat.dll"   "$SYSDIR"
 \c    !insertmacro InstallLib DLL    $ALREADY_INSTALLED REBOOT_PROTECTED    "asycfilt.dll" "$SYSDIR\asycfilt.dll" "$SYSDIR"
 \c    !insertmacro InstallLib TLB    $ALREADY_INSTALLED REBOOT_PROTECTED    "stdole2.tlb"  "$SYSDIR\stdole2.tlb"  "$SYSDIR"
-\c  
+\c
 \c  SectionEnd
 \c
 \c  Section "-un.Uninstall VB6 runtimes"
-\c  
+\c
 \c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\msvbvm60.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\oleaut32.dll" 
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\oleaut32.dll"
 \c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\olepro32.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat32.dll" 
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat32.dll"
 \c    !insertmacro UnInstallLib DLL    SHARED NOREMOVE "$SYSDIR\asycfilt.dll"
 \c    !insertmacro UnInstallLib TLB    SHARED NOREMOVE "$SYSDIR\stdole2.tlb"
-\c  
+\c
 \c  SectionEnd
 
 You can use similar code to install common VB6 ActiveX controls (such as the controls for Windows Common Controls).
