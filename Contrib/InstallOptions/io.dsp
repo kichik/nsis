@@ -100,6 +100,10 @@ SOURCE=.\InstallerOptions.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\ExDLL\exdll.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource.h
 # End Source File
 # End Group
