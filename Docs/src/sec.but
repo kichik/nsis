@@ -16,7 +16,7 @@ Retrieves the section's flags. See above for a description of the flag. The erro
 
 SectionSetText \e{section_index section_text} 
 
-Sets the description for the section section_index. The error flag will be set if an out of range section is specified.  
+Sets the description for the section section_index. To set a subsection, you must use - at the beginning of the text.  The error flag will be set if an out of range section is specified.  
 
 \S{SectionGetText} SectionGetText
 

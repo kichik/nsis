@@ -42,6 +42,10 @@ The windows desktop directory (usually C:\\windows\\desktop but detected at runt
 
 The location of the installer executable. (technically you can modify this variable, but it is probably not a good idea)  
 
+\e{$\{NSISDIR\}} 
+
+A symbol that contains the path where NSIS is installed.  
+
 \e{$WINDIR} 
 
 The windows directory (usually C:\\windows or C:\\winnt but detected at runtime)  
@@ -92,6 +96,3 @@ Use to represent a newline (\\n).
 
 Where SYMBOL is the name of something globally defined, this will be replaced with the value of that symbol. If the symbol is not defined, no replace occurs (i.e. if $\{POOP\} is encountered, and POOP is not defined, $\{POOP\} is output).  
 
-\e{$\{NSISDIR\}} 
-
-A symbol contains the path where NSIS is installed.  

@@ -74,9 +74,9 @@ Specifies a string that is above the component list. This can be something that 
 
 \S{acrccheck} CRCCheck
 
-CRCCheck \e{on|off}
+CRCCheck \e{on|off|force}
 
-Specifies whether or not the installer will perform a CRC on itself before allowing an install. Valid options are 'on' and 'off'. Note that if the user uses /NCRC on the command line when executing the installer, the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.
+Specifies whether or not the installer will perform a CRC on itself before allowing an install. Valid options are 'on','off', and 'force'. Note that if the user uses /NCRC on the command line when executing the installer, the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.
 
 \S{adetailsbuttontext} DetailsButtonText
 
@@ -95,12 +95,6 @@ Specifies whether or not the user will see the directory selection page. Note th
 DirText \e{[/LANG=lang_id] [text] [subtext] [browse text]}
 
 Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). If subtext is specified and not empty, it overrides the default text above the path entry box ("Select the directory to install MyApp in:"). If browse button text is specified but not empty, it overrides the default browse button text ("Browse..."). 
-
-\S{aenabledbitmap} EnabledBitmap
-
-EnabledBitmap \e{bitmap.bmp}
-
-Sets the enabled state of the listbox for the component page. It MUST be a 16 color bitmap (it can be any size, but 20x20 is preferred -- all others will be resized down... poorly). DisabledBitmap bitmap.bmp Sets the disabled state of the listbox for the component page. It MUST be a 16 color bitmap (it can be any size, but 20x20 is preferred -- all others will be resized down... poorly). 
 
 \S{a} FileErrorText
 
@@ -184,7 +178,7 @@ Sets the name of the installer. The name is usually simply the product name such
 
 Icon \e{path_to_icon.ico}
 
-Sets the icon of the installer. The icon MUST contain a 32x32 color icon resource (it can also contain other icons, but they will be discarded).
+Sets the icon of the installer. 
 
 \S{aoutfile} OutFile
 
@@ -256,7 +250,7 @@ Sets what the titlebars of the uninstaller will display. By default, it is 'Name
 
 UninstallIcon \e{path_to_icon.ico}
 
-Sets the icon of the uninstaller. Again, the icon MUST contain a 32x32x16 color icon resource (it can also contain other icons, but they will be discarded). 
+Sets the icon of the uninstaller. 
 
 \S{auninstallsubcaption} UninstallSubCaption
 
