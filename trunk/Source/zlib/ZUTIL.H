@@ -8,7 +8,7 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id$ */
+/* @(#) $Id: ZUTIL.H,v 1.1.1.1 2002/08/02 10:01:35 kichik Exp $ */
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
@@ -60,7 +60,12 @@ typedef unsigned long  ulg;
 #  define Tracec(c,x)
 #  define Tracecv(c,x)
 
+#ifdef EXEHEAD
+#include "../exehead/util.h"
+#define ZALLOC(strm, items, size) my_GlobalAlloc((items)*(size))
+#else   // def EXEHEAD
 #define ZALLOC(strm, items, size) GlobalAlloc(GPTR,(items)*(size))
+#endif  // def EXEHEAD
 #define ZFREE(strm, addr)  { if (addr) GlobalFree(addr); }
 #define TRY_FREE(s, p) { ZFREE(s, p); }
 #define ERR_RETURN(strm,err) return (err)
