@@ -8,7 +8,7 @@ NLF v6
 # Codepage - dash (-) means ANSI code page
 -
 # RTL - anything else than RTL means LTR
--
+RTL
 # Translation by ..... (any credits should go here)
 # ^Branding
 Nullsoft Install System %s
