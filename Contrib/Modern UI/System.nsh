@@ -1100,6 +1100,22 @@ Var MUI_TEMP2
 
   Function "${PRE}"
   
+    !ifndef MUI_WELCOMEPAGE_TITLE
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
+    !else
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "${MUI_WELCOMEPAGE_TITLE}"
+      !undef MUI_WELCOMEPAGE_TITLE
+    !endif
+    
+    !ifndef MUI_WELCOMEPAGE_TEXT
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
+    !else
+      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "${MUI_WELCOMEPAGE_TEXT}"
+      !undef MUI_WELCOMEPAGE_TEXT
+    !endif
+
+    !insertmacro MUI_FUNCTION_CUSTOM PRE
+    
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
@@ -1118,22 +1134,6 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
-    !ifndef MUI_WELCOMEPAGE_TITLE
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
-    !else
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "${MUI_WELCOMEPAGE_TITLE}"
-      !undef MUI_WELCOMEPAGE_TITLE
-    !endif
-    
-    !ifndef MUI_WELCOMEPAGE_TEXT
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
-    !else
-      !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "${MUI_WELCOMEPAGE_TEXT}"
-      !undef MUI_WELCOMEPAGE_TEXT
-    !endif
-
-    !insertmacro MUI_FUNCTION_CUSTOM PRE
-    
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
     SetCtlColors $MUI_HWND "" "${MUI_BGCOLOR}"
