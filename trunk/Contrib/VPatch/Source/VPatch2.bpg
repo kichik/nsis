@@ -14,10 +14,10 @@ PROJECTS = GenPat2.exe VAppend.exe VPatchGUI.exe
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
 
-GenPat2.exe: GenPat2.dpr
+GenPat2.exe: GenPat\GenPat2.dpr
   $(DCC)
 
-VAppend.exe: VAppend.dpr
+VAppend.exe: GenPat\VAppend.dpr
   $(DCC)
 
 VPatchGUI.exe: gui\VPatchGUI.dpr
