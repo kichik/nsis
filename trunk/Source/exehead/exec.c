@@ -1109,24 +1109,26 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_INIFILES
     case EW_WRITEINI:
       {
-        char *sec=0, *ent=0;
-        char *buf0=process_string_fromparm_tobuf(0x00);
-        char *buf3;
+        char *sec=0, *key=0, *str=0;
 #ifdef NSIS_CONFIG_LOG
         mystrcpy(buf1,"<RM>");
         mystrcpy(buf2,buf1);
 #endif
+        if (parm0)
+        {
+          sec=process_string_fromparm_tobuf(0x00);
+        }
         if (parm1)
         {
           sec=process_string_fromparm_tobuf(0x11);
         }
         if (parm2)
         {
-          ent=process_string_fromparm_tobuf(0x22);
+          str=process_string_fromparm_tobuf(0x22);
         }
         buf3=process_string_fromparm_tobuf(0x33);
         log_printf5("WriteINIStr: wrote [%s] %s=%s in %s",buf0,buf1,buf2,buf3);
-        if (!WritePrivateProfileString(buf0,sec,ent,buf3)) exec_errorflag++;
+        if (!WritePrivateProfileString(sec,key,str,buf3)) exec_errorflag++;
       }
     return 0;
     case EW_READINISTR:
