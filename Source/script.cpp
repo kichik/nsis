@@ -2651,6 +2651,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[2]=add_string(line.gettoken_str(3));
       SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
+    case TOK_GETWINTEXT:
+      ent.which=EW_GETWINTEXT;
+      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      if (ent.offsets[0]<0) PRINTHELP();
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("GetWindowText: output=%s hwnd=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_SETSTATICBKCOLOR:
       ent.which=EW_SETSTATICBKCOLOR;
       ent.offsets[0]=add_string(line.gettoken_str(1));
