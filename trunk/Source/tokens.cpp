@@ -80,6 +80,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_GETWINTEXT,"GetWindowText",2,0,"$(user_var: handle output) hwnd"},
 {TOK_HIDEWINDOW,"HideWindow",0,0,""},
 {TOK_ICON,"Icon",1,0,"local_icon.ico"},
+{TOK_IFABORT,"IfAbort",1,1,"label_to_goto_if_abort [label_to_goto_if_no_abort]"},
 {TOK_IFERRORS,"IfErrors",1,1,"label_to_goto_if_errors [label_to_goto_if_no_errors]"},
 {TOK_IFFILEEXISTS,"IfFileExists",2,1,"filename label_to_goto_if_file_exists [label_to_goto_otherwise]"},
 {TOK_IFREBOOTFLAG,"IfRebootFlag",1,1,"jump_if_set [jump_if_not_set]"},

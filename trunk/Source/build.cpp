@@ -985,18 +985,11 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[2],offs,start,end)) return 1;
   }
-  else if (w->which == EW_IFERRORS)
+  else if (w->which == EW_IFFLAG)
   {
     if (resolve_jump_int(fn,&w->offsets[0],offs,start,end)) return 1;
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
   }
-#ifdef NSIS_SUPPORT_REBOOT
-  else if (w->which == EW_IFREBOOTFLAG)
-  {
-    if (resolve_jump_int(fn,&w->offsets[0],offs,start,end)) return 1;
-    if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
-  }
-#endif
 #ifdef NSIS_SUPPORT_STROPTS
   else if (w->which == EW_STRCMP)
   {
@@ -2309,7 +2302,7 @@ again:
   ret=add_entry_direct(EW_CREATEDIR, zero_offset);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
-  ret=add_entry_direct(EW_IFERRORS, ns_label.add("Initialize_____Plugins_error",0));
+  ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
   ret=add_entry_direct(EW_PLUGINCOMMANDPREP);
