@@ -19,6 +19,8 @@
 
 !define sysMessageBox "user32::MessageBoxA(i, t, t, i) i"
 
+!define sysMessageBeep "user32::MessageBeep(i) i"
+
 !define sysMessageBoxIndirect 'user32::MessageBoxIndirectA(i) i'
 
 ; HMODULE GetModuleHandle(LPCTSTR lpModuleName); 

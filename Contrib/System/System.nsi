@@ -14,6 +14,8 @@ Section "ThisNameIsIgnoredSoWhyBother?"
 
      ; ----- Sample 1 ----- Message box with custom icon -----
 
+     ; there are no default beeps for custom message boxes, use sysMessageBeep
+     ; in case you need it (see next message box example)
      !insertmacro smMessageBox "i 0" "Message box with custom icon!" "System Example 1a" ${MB_OK} "i 103"
      ; i 0 - installer exe as module
      ; i 103 - icon ID
@@ -22,7 +24,8 @@ Section "ThisNameIsIgnoredSoWhyBother?"
      ; You could use this dll for storing your resources, just replace FAR icon
      ; with something you really need.   
      File "${NSISDIR}\Contrib\System\Resource.dll"
-     !insertmacro smMessageBox "`$TEMP\resource.dll`" "Message box with custom icon from resource.dll!" "System Example 1b" ${MB_OK} "i 103"
+     System::Call '${sysMessageBeep} (${MB_ICONHAND})'  ; custom beep
+     !insertmacro smMessageBox "`$TEMP\resource.dll`" "Message box with custom icon from resource.dll!" "System Example 1b" ${MB_OKCANCEL} "i 103"
      Delete $TEMP\resource.dll
 
      ; ----- Sample 2 ----- Fixed disks size/space -----
@@ -65,12 +68,12 @@ enumex: ; End of drives or user cancel
      System::Free $1   
 
      ; Message box      
-     System::Call '${sysMessageBox}($HWNDPARENT, s, "System Example 2", 33)' "$7"
+     System::Call '${sysMessageBox}($HWNDPARENT, s, "System Example 2", ${MB_OKCANCEL})' "$7"
 
      ; ----- Sample 3 ----- Direct proc defenition -----
 
      ; Direct specification demo
-     System::Call 'user32::MessageBoxA(i $HWNDPARENT, t "Just direct MessageBoxA specification demo ;)", t "System Example 3", i 33) i.s'
+     System::Call 'user32::MessageBoxA(i $HWNDPARENT, t "Just direct MessageBoxA specification demo ;)", t "System Example 3", i ${MB_OK}) i.s'
      Pop $0
 
      ; ----- Sample 4 ----- Int64, mixed definition demo -----
@@ -83,7 +86,7 @@ enumex: ; End of drives or user cancel
 
      ; Cdecl demo (uses 3 defenitions (simple example))
      System::Call "${syswsprintf}(.R1, s,,, t, ir0) .R0 (,,tr2,tr3,$4_)" "Int64 ops and strange defenition demo, %s x %s == %s, and previous msgbox result = %d"
-     MessageBox MB_OK "Cool: '$R1'"
+     MessageBox MB_OKCANCEL "Cool: '$R1'"
 
      ; ----- Sample 5 ----- Small structure example -----
 
