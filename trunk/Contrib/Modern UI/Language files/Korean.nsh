@@ -41,7 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "설치가 성공적으로 이루어졌습니다."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": 마침"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&마침"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO "${MUI_PRODUCT}의 설치가 완료 되었습니다. 설치 마법사를 마치려면 마침 버튼을 눌러주세요."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT}의 설치가 완료 되었습니다. 설치 마법사를 마치려면 마침 버튼을 눌러주세요."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_PRODUCT}의 설치를 완전히 하기 위해서는 시스템을 다시 시작해야 합니다. 지금 재부팅 할까요?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "지금 재부팅 하겠습니다."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTLATER "나중에 재부팅 하겠습니다."
