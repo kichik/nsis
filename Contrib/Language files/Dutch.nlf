@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1043
 # Font and size - dash (-) means default
@@ -40,7 +40,8 @@ Selecteer de map om %s in te installeren:
 Beschikbare ruimte: 
 Vereiste ruimte: 
 Uninstallatie vanuit:
-Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik abort om de installatie te stoppen,\r\nretry om het opnieuw te proberen of\r\nignore om dit bestand over te slaan
+Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik afbreken om de installatie te stoppen,\r\nopnieuw om het opnieuw te proberen, of\r\nnegeren om dit bestand over te slaan
+Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik opnieuw om het opnieuw te proberen, of \r\nafbreken de installatie te stoppen
 Kon niet schrijven: 
 Kopiëren mislukt
 Kopiëren naar 
