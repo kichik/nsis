@@ -5482,6 +5482,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[1]=add_string(funcname);
         ent.offsets[2]=0;
         ent.offsets[3]=nounload|build_plugin_unload;
+        ent.offsets[4]=1;
         ret=add_entry(&ent);
         if (ret != PS_OK) {
           return ret;
