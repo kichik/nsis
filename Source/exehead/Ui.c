@@ -134,6 +134,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
     case WM_CTLCOLORBTN:
     {
       BOOL brush = (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
+      if (!brush) return 0;
       if (brush == -1) {
         COLORREF dlgColor = GetSysColor(COLOR_BTNFACE);
         SetBkColor((HDC)wParam, dlgColor);
