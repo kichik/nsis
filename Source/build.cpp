@@ -1985,8 +1985,7 @@ int CEXEBuild::write_output(void)
   fh.nsinst[1]=FH_INT2;
   fh.nsinst[2]=FH_INT3;
 
-  fh.flags=(build_crcchk?FH_FLAGS_CRC:0);
-  fh.flags|=(build_crcchk==2?FH_FLAGS_FORCE_CRC:0);
+  fh.flags=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   if (build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
@@ -2355,8 +2354,7 @@ int CEXEBuild::uninstall_generate()
     fh.nsinst[0]=FH_INT1;
     fh.nsinst[1]=FH_INT2;
     fh.nsinst[2]=FH_INT3;
-    fh.flags = FH_FLAGS_UNINSTALL | (build_crcchk?FH_FLAGS_CRC:0);
-    fh.flags |= (build_crcchk==2?FH_FLAGS_FORCE_CRC:0);
+    fh.flags=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     if (build_uninst.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
@@ -2611,9 +2609,9 @@ again:
   if (ret != PS_OK) return ret;
   // GetTempFileName $0
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero);
+  ret=add_entry_direct(EW_GETTEMPFILENAME, var_zero, add_string("$TEMP"));
 #else
-  ret=add_entry_direct(EW_GETTEMPFILENAME);
+  ret=add_entry_direct(EW_GETTEMPFILENAME, 0, add_string("$TEMP"));
 #endif
   if (ret != PS_OK) return ret;
   // Delete $0 - the temp file created

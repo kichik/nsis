@@ -77,7 +77,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_FUNCTIONEND,"FunctionEnd",0,0,""},
 {TOK_GETDLGITEM,"GetDlgItem",3,0,"$(user_var: handle output) dialog item_id"},
 {TOK_GETFULLPATHNAME,"GetFullPathName",2,1,"[/SHORT] $(user_var: result) path_or_file"},
-{TOK_GETTEMPFILENAME,"GetTempFileName",1,0,"$(user_var: name output)"},
+{TOK_GETTEMPFILENAME,"GetTempFileName",1,1,"$(user_var: name output) [base_dir]"},
 {TOK_GETWINTEXT,"GetWindowText",2,0,"$(user_var: handle output) hwnd"},
 {TOK_HIDEWINDOW,"HideWindow",0,0,""},
 {TOK_ICON,"Icon",1,0,"local_icon.ico"},

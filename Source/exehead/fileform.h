@@ -53,7 +53,7 @@ enum
 #ifdef NSIS_SUPPORT_FNUTIL
   EW_GETFULLPATHNAME,   // GetFullPathName: 2 [output, input, ?lfn:sfn]
   EW_SEARCHPATH,        // SearchPath: 2 [output, filename]
-  EW_GETTEMPFILENAME,   // GetTempFileName: 1 [output]
+  EW_GETTEMPFILENAME,   // GetTempFileName: 2 [output, base_dir]
 #endif
 #ifdef NSIS_SUPPORT_FILE
   EW_EXTRACTFILE,       // File to extract: 6 [overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh, allow ignore]
@@ -181,12 +181,14 @@ enum
 };
 
 #define FH_FLAGS_MASK 15
-#define FH_FLAGS_CRC 1
-#define FH_FLAGS_UNINSTALL 2
+#define FH_FLAGS_UNINSTALL 1
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-#define FH_FLAGS_SILENT 4
+#  define FH_FLAGS_SILENT 2
 #endif
-#define FH_FLAGS_FORCE_CRC 8
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+#  define FH_FLAGS_NO_CRC 4
+#  define FH_FLAGS_FORCE_CRC 8
+#endif
 
 #define FH_SIG 0xDEADBEEF
 
@@ -498,7 +500,7 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // returns 0 on success
 // on success, m_header will be set to a pointer that should eventually be GlobalFree()'d.
 // (or m_uninstheader)
-const char * NSISCALL loadHeaders(void);
+const char * NSISCALL loadHeaders(int cl_flags);
 
 int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen);
 

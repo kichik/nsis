@@ -355,14 +355,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_GETTEMPFILENAME:
       {
         char *textout=var0;
-        int n=100;
-        while (n--)
-        {
-          if (GetTempFileName(state_temp_dir,"nst",0,textout))
-            return 0;
-        }
-        g_flags.exec_error++;
-        *textout=0;
+        if (!my_GetTempFileName(textout, process_string_fromparm_tobuf(-0x11)))
+          g_flags.exec_error++;
       }
     break;
 #endif
@@ -544,6 +538,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
         doRMDir(buf0,parm1);
         if (file_exists(buf0) && parm1!=2) g_flags.exec_error++;
+        else update_status_text_from_lang(LANG_REMOVEDIR, buf0);
       }
     break;
 #endif//NSIS_SUPPORT_RMDIR
@@ -1434,13 +1429,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (hFile != INVALID_HANDLE_VALUE)
         {
           unsigned char *filebuf;
-          filebuf=(unsigned char *)my_GlobalAlloc(g_filehdrsize);
+          int filehdrsize = g_filehdrsize;
+          filebuf=(unsigned char *)my_GlobalAlloc(filehdrsize);
           if (filebuf)
           {
             //int fixoffs=0;
             DWORD lout;
             SetSelfFilePointer(0,FILE_BEGIN);
-            ReadSelfFile((char*)filebuf,g_filehdrsize);
+            ReadSelfFile((char*)filebuf,filehdrsize);
             if (g_inst_header->uninstdata_offset != -1)
             {
               unsigned char* seeker;
@@ -1460,7 +1456,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
                 GlobalFree(unicon_data);
               }
             }
-            WriteFile(hFile,(char*)filebuf,g_filehdrsize,&lout,NULL);
+            WriteFile(hFile,(char*)filebuf,filehdrsize,&lout,NULL);
             GlobalFree(filebuf);
             ret=GetCompressedDataFromDataBlock(-1,hFile);
           }
