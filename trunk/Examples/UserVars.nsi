@@ -33,7 +33,7 @@ Section "Dummy Section" SecDummy
      StrCpy $0 "Admin"
      StrCpy "$Name" $0
      StrCpy "$Serial" "12345"
-     MessageBox MB_OK "User Name: $Name$\n$\nSerial Number: $Serial"
+     MessageBox MB_OK "User Name: $Name $\n$\nSerial Number: $Serial"
 
      CreateDirectory $INSTDIR
      WriteUninstaller "$INSTDIR\Uninst.exe"
