@@ -5643,7 +5643,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
       continue;
 
     if (!dir_created && generatecode) {
-      SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode? "" : "Reserve", dir.c_str());
+      SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
 
       if (do_add_file_create_dir(dir, basedir, attrib) != PS_OK) {
         delete dr;
@@ -5682,6 +5682,9 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
         new_spec += spec;
       } else if (generatecode) {
         // always create directories that match
+
+        SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
+
         if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
           delete dr;
           return PS_ERROR;
