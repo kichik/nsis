@@ -1663,20 +1663,56 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         SCRIPT_MSG("!system: returned %d\n",ret);
       }
     return PS_OK;
+    case TOK_P_ADDINCLUDEDIR:
+      include_dirs.add(line.gettoken_str(1),0);
+    return PS_OK;
     case TOK_P_INCLUDE:
       {
+        bool malloced=false;
         char *f=line.gettoken_str(1);
         SCRIPT_MSG("!include: \"%s\"\n",f);
         FILE *incfp=fopen(f,"rt");
         if (!incfp)
         {
+          char *dir=include_dirs.get();
+          unsigned int dirs=include_dirs.getnum();
+          unsigned int size=lstrlen(f)+lstrlen(dir)+100;
+          char *incfile=(char*)malloc(size);
+
+          for (unsigned int i=0; i<dirs; i++) {
+            if (size < lstrlen(f)+lstrlen(dir))
+            {
+              free(incfile);
+              size+=lstrlen(dir);
+              incfile=(char*)malloc(size);
+            }
+            strcpy(incfile,dir);
+            if (*f != '\\')
+              strcat(incfile,"\\");
+            strcat(incfile,f);
+            incfp=fopen(incfile,"rt");
+            if (!incfp)
+              dir+=strlen(dir)+1;
+            else
+            {
+              malloced=true;
+              f=incfile;
+              break;
+            }
+          }
+          if (!malloced) free(incfile);
+        }
+        if (!incfp)
+        {
           ERROR_MSG("!include: could not open file: \"%s\"\n",f);
+          if (malloced) free(f);
           return PS_ERROR;
         }
         static int depth;
         if (depth >= MAX_INCLUDEDEPTH)
         {
           ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
+          if (malloced) free(f);
           return PS_ERROR;
         }
         depth++;
@@ -1689,9 +1725,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (r == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
           if (IS_PS_ELSE(r)) ERROR_MSG("!else: stray !else\n");
           ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,lc);
+          if (malloced) free(f);
           return PS_ERROR;
         }
         SCRIPT_MSG("!include: closed: \"%s\"\n",f);
+        if (malloced) free(f);
       }
     return PS_OK;
     case TOK_P_CD:
@@ -2546,8 +2584,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETSTATICBKCOLOR:
       ent.which=EW_SETWINDOWLONG;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=add_string("-21"/*GWL_USERDATA*/);
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      char temp[64];
+      wsprintf(temp, "%d", GWL_USERDATA);
+      ent.offsets[1]=add_string(temp);
+      wsprintf(temp, "%d", line.gettoken_int(2)+1);
+      ent.offsets[2]=add_string(temp);
       SCRIPT_MSG("SetStaticBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETWINDOWLONG:

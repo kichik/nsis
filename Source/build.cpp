@@ -198,10 +198,12 @@ CEXEBuild::CEXEBuild()
   // Coded by Robert Rainwater
   {
     char szNSISDir[NSIS_MAX_STRLEN],*fn2;
-    GetModuleFileName(NULL,szNSISDir,sizeof(szNSISDir));
+    GetModuleFileName(NULL,szNSISDir,sizeof(szNSISDir)-sizeof("\\Include"));
     fn2=strrchr(szNSISDir,'\\');
     if(fn2!=NULL) *fn2=0;
     definedlist.add("NSISDIR",(char*)szNSISDir);
+    lstrcat(szNSISDir, "\\Include");
+    include_dirs.add(szNSISDir,0);
   }
 
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
