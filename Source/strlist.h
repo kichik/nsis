@@ -635,15 +635,18 @@ class MMapFile : public IMMap
             m_hFileDesc = fileno(m_hFile);
             m_bTempHandle = TRUE;
           }
+        }
 
-          // resize
-          if (m_hFileDesc != -1)
+        // resize
+        if (m_hFileDesc != -1)
+        {
+          unsigned char c = 0;
+
+          if (lseek(m_hFileDesc, m_iSize, SEEK_SET) != (off_t)-1)
           {
-            char c;
-
-            if (lseek(m_hFileDesc, m_iSize, SEEK_SET) != (off_t)-1)
+            if (read(m_hFileDesc, &c, 1) != -1)
             {
-              if (read(m_hFileDesc, &c, 1) != -1)
+              if (lseek(m_hFileDesc, m_iSize, SEEK_SET) != (off_t)-1)
               {
                 if (write(m_hFileDesc, &c, 1) != -1)
                 {
@@ -652,9 +655,9 @@ class MMapFile : public IMMap
               }
             }
           }
-
-          m_hFileDesc = -1; // some error occured, bail
         }
+
+        m_hFileDesc = -1; // some error occured, bail
 #endif
 
 #ifdef _WIN32
@@ -734,11 +737,7 @@ class MMapFile : public IMMap
         quit();
       }
 
-#ifdef _WIN32
       return (void *)((char *)m_pView + offset - alignedoffset);
-#else
-      return m_pView;
-#endif
     }
 
     void *getmore(int offset, int *size)
