@@ -15,6 +15,8 @@ unit TreeCode;
 
   What's new
   ----------
+  2.1   20031219    Koen            Fixed bug in TreeFind: when tree was a nil
+                                    pointer, now returns instead of AVing
   2.0   20030811    Koen            Initial documentation
 }
 
@@ -179,6 +181,10 @@ var
   lo,mid,hi,m: Integer;
   tmp: Cardinal;
 begin
+  if not Assigned(ABlockTree) then begin
+    FoundCount:=0; Result:=nil;
+    Exit;
+  end;
   lo:=0;
   hi:=ABlockTreeNodeCount-1;
   while true do begin
