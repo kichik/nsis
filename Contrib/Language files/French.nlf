@@ -122,7 +122,7 @@ Désinstallation à partir de :
 # ^FileError
 Erreur lors de l'ouverture du fichier en écriture : \r\n\t"$0"\r\nAppuyez sur Abandonner pour annuler l'installation,\r\nRéessayer pour réessayer l'écriture du fichier, ou\r\nIgnorer pour passer ce fichier
 # ^FileError_NoIgnore
-Erreur lors de l'ouverture du fichier en écriture : \r\n\t\"$0\"\r\nAppuyez sur Réessayez pour re-écrire le fichier, ou\r\nAnnuler pour abandonner l'installation
+Erreur lors de l'ouverture du fichier en écriture : \r\n\t"$0"\r\nAppuyez sur Réessayez pour re-écrire le fichier, ou\r\nAnnuler pour abandonner l'installation
 # ^CantWrite
 "Impossible d'écrire : "
 # ^CopyFailed

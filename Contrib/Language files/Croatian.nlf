@@ -119,9 +119,9 @@ Program $(^Name) æe biti uklonjen iz slijedeæe mape. $_CLICK
 # ^UninstallingSubText
 Uklanjam iz:
 # ^FileError
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t\"$0\"\r\n\"Abort\" za prekid instalacije,\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Ignore\" za zanemarenje te datoteke
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Abort\" za prekid instalacije,\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Ignore\" za zanemarenje te datoteke
 # ^FileError_NoIgnore
-Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t\"$0\"\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Cancel\" za prekid instalacije
+Greška prilikom otvaranja datoteke za zapisivanje: \r\n\t"$0"\r\n\"Retry\" za ponovni pokušaj zapisivanja, ili\r\n\"Cancel\" za prekid instalacije
 # ^CantWrite
 "Ne mogu zapisati: "
 # ^CopyFailed
