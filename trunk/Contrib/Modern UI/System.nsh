@@ -1132,7 +1132,7 @@
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
           
            StrCmp ${MUI_TEMP1} "1" "" +3
-             StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_RUN}
+             StrCpy ${MUI_TEMP1} "${MUI_FINISHPAGE_RUN}"
              ExecShell "open" '"${MUI_TEMP1}"'
              
            !ifdef MUI_FINISHPAGE_SHOWREADME
