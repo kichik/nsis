@@ -2,6 +2,14 @@
 
 \e{v2.0b0}
 
+\b Unprocessed strings (such as InstType) can now use LangString/$(name) too.
+
+\b Fixed a bug with ReadRegStr and $0
+
+\b Added multilanguage strings (LangString)
+
+\b Renamed nsisconf.nsi to nsisconf.nsh
+
 \b Added user defined multilingual strings. 
 
 \b Added CreateShortcut comment/description parameter
