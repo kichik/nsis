@@ -24,7 +24,7 @@ Notes
 
 * This plugin requires NSIS 2.0b4 and above.
 
-* Do not call SetBg (which creates the window) from a section unless you're going to destroy it from a section.
+* Do not call SetBg (which creates the window) from a section or a function called by a section.
 
 * Never use /NOUNLOAD in .onInstSuccess and .onInstFailed. Failing to do so will cause the installer to crash.
   This means you should not call Destroy from .onInstSuccess or .onInstFailed.
