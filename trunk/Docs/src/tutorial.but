@@ -82,7 +82,7 @@ Callback functions are called by the installer upon certain defined events such 
 
 \R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \R{callbacks}{Callback Functions} for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.
 
-For more information about sections see \R{functions}{Functions}.
+For more information about functions see \R{functions}{Functions}.
 
 \S1{tut-working-with-scripts} Working with Scripts
 
