@@ -2,7 +2,7 @@
 // Name:        m_links.cpp
 // Purpose:     wxHtml module for links & anchors
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id: m_links.cpp,v 1.8.2.3 2002/11/09 00:07:34 VS Exp $
+// RCS-ID:      $Id: m_links.cpp,v 1.1 2003/05/26 17:53:58 joostverburg Exp $
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ TAG_HANDLER_BEGIN(A, "A")
             wxString name(tag.GetParam( wxT("HREF") )), target;
 
 			wxColor LinkColor;
-			LinkColor.Set(0x19, 0x56, 0xB1);
+			LinkColor.Set(0x6A, 0x80, 0x98);
 
 			char apppath[MAX_PATH],*temp;
 			GetModuleFileName(NULL,apppath,sizeof(apppath));
