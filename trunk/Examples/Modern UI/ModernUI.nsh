@@ -79,7 +79,7 @@
   StrCmp ${CURRENTPAGE} "" "" no_first_run
    
     GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 16 1000
+    CreateFont ${TEMP2} "Tahoma" 10 1000
     SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
     SetStaticBkColor ${TEMP1} 0x00FFFFFF
  
