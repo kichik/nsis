@@ -1,5 +1,5 @@
 ;NSIS Modern Style UI
-;Example Script version 1.0
+;Example Script version 1.1
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -7,6 +7,7 @@
 
 !verbose 3
 !include "${NSISDIR}\Examples\WinMessages.nsh"
+!include "ModernUI.nsh"
 !verbose 4
 
 !define CURRENTPAGE $9
@@ -22,12 +23,7 @@
   SetOverwrite on
 
   ;User interface
-  Icon "${NSISDIR}\Contrib\Icons\adni18-installer-C-no48xp.ico"
-  UninstallIcon "${NSISDIR}\Contrib\Icons\adni18-uninstall-C-no48xp.ico"
-  XPStyle On
-  ChangeUI all "${NSISDIR}\Contrib\UIs\modern.exe"
-  SetFont Tahoma 8
-  CheckBitmap "${NSISDIR}\Contrib\Icons\checks4-aa.bmp"
+  !insertmacro MUI_INTERFACE "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth"
 
   ;License dialog
   LicenseText "Scroll down to see the rest of the agreement."
@@ -40,17 +36,13 @@
   InstallDir "$PROGRAMFILES\${NAME}"
   DirText "Setup will install ${NAME} in the following folder.$\r$\n$\r$\nTo install in this folder, click Install. To install in a different folder, click Browse and select another folder." " "
 
-  ;Install dialog
-  InstallColors /windows ;Default Windows colors for details list
-  InstProgressFlags smooth
-
   ;Uninstaller
   UninstallText "This will uninstall ${NAME} from your system."
 
 ;--------------------------------
 ;Installer Sections
 
-Section "Copy modern.exe" SecCopyUI
+Section "Modern.exe" SecCopyUI
 
   ;Add your stuff here
 
@@ -70,10 +62,8 @@ SectionEnd
 Section ""
 
   ;Invisible section to display the Finish header
-
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-  Call SetHeader
- 
+  !insertmacro MUI_FINISHHEADER
+  
 SectionEnd
 
 ;--------------------------------
@@ -81,144 +71,82 @@ SectionEnd
 
 Function .onInitDialog
 
-  ;Set texts on inner dialogs
+  !insertmacro MUI_INNERDIALOG_INIT
 
-  Push ${TEMP1}
+    !insertmacro MUI_INNERDIALOG_START 1
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1040 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
+    !insertmacro MUI_INNERDIALOG_STOP 1
 
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
+    !insertmacro MUI_INNERDIALOG_START 2
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1042 "Description"
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1043 "Hover your mouse over a component to see it's description."
+    !insertmacro MUI_INNERDIALOG_STOP 2
 
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    GetDlgItem ${TEMP1} ${TEMP1} 1040
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "If you accept all the terms of the agreement, choose I Agree to continue. If you choose Cancel, Setup will close. You must accept the agreement to install ${NAME}."
-    Goto done
+    !insertmacro MUI_INNERDIALOG_START 3
+      !insertmacro MUI_INNERDIALOG_TEXT 1033 1041 "Destination Folder"
+      !insertmacro MUI_INNERDIALOG_STOP 3
 
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    GetDlgItem ${TEMP1} ${TEMP1} 1042
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Description"
-    Goto done
-   
-  StrCmp ${CURRENTPAGE} 3 "" +3
-    GetDlgItem ${TEMP1} ${TEMP1} 1041
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Destination Folder"
-
-  done:
-
-  Pop ${TEMP1}
+  !insertmacro MUI_INNERDIALOG_END
 
 FunctionEnd
 
 Function .onNextPage
 
-  Push ${TEMP1}
-  Push ${TEMP2}  
-
-  ;Set backgrounds & fonts for the outer dialog (only once)
-  StrCmp ${CURRENTPAGE} "" "" no_set_outer
-   
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 16 1000
-    SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
- 
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    no_set_outer:
-
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-
-  Call SetHeader
-
-  Pop ${TEMP2}  
-  Pop ${TEMP1}
-
+  !insertmacro MUI_NEXTPAGE_OUTER
+  !insertmacro MUI_NEXTPAGE SetHeader
+  
 FunctionEnd
 
 Function .onPrevPage
 
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
-
-  Call SetHeader
+  !insertmacro MUI_PREVPAGE
 
 FunctionEnd
 
 Function SetHeader
 
-  ;Set the texts on the header (white rectangle)
+  !insertmacro MUI_HEADER_INIT
 
-  Push ${TEMP1}
-  Push ${TEMP2}
+    !insertmacro MUI_HEADER_START 1
+       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
+    !insertmacro MUI_HEADER_STOP 1
 
-  GetDlgItem ${TEMP1} $HWNDPARENT 1037
-  GetDlgItem ${TEMP2} $HWNDPARENT 1038
+    !insertmacro MUI_HEADER_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
+    !insertmacro MUI_HEADER_STOP 2
 
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "License Agreement"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please review the license terms before installing ${NAME}."
-    Goto done
+    !insertmacro MUI_HEADER_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME} in."
+    !insertmacro MUI_HEADER_STOP 3
 
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Choose Components"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Choose the components you want to install."
-    Goto done
+    !insertmacro MUI_HEADER_START 4
+      !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
+    !insertmacro MUI_HEADER_STOP 4
 
-  StrCmp ${CURRENTPAGE} 3 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Choose Install Location"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Choose the folder in which to install ${NAME} in."
-    Goto done
+    !insertmacro MUI_HEADER_START 5
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
+    !insertmacro MUI_HEADER_STOP 5
 
-  StrCmp ${CURRENTPAGE} 4 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Installing"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please wait while ${NAME} is being installed."
-    Goto done
-
-  StrCmp ${CURRENTPAGE} 5 "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Finished"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Setup was completed successfully."
-
-  done:
-
-  Pop ${TEMP1}
-  Pop ${TEMP2}
+  !insertmacro MUI_HEADER_END
 
 FunctionEnd
 
 Function .onMouseOverSection
 
-  ;Set text in Description area
+  !insertmacro MUI_DESCRIPTION_INIT
 
-  Push ${TEMP1}
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCopyUI} "Copy the modern.exe file to the application folder."
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCreateUninst} "Create a uninstaller which can automatically delete ${NAME}."
+ 
+ !insertmacro MUI_DESCRIPTION_END
 
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
-  GetDlgItem ${TEMP1} ${TEMP1} 1043
-
-  StrCmp $0 ${SecCopyUI} "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Copy the modern.exe file to the application folder."
-    Goto done
-  
-  StrCmp $0 ${SecCreateUninst} "" +2
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Create an uninstaller which can automatically remove ${NAME}."
-
-  done:
-
-  Pop ${TEMP1}
-  
 FunctionEnd
 
 Function .onUserAbort
 
-  ;Warning when 'Cancel' button is pressed
-
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION "Are you sure you want to quit ${NAME} Setup?" IDYES quit
-    Abort
-  quit:
-
+  !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
+  !insertmacro MUI_ABORTWARNING_END
+  
 FunctionEnd
 
 ;--------------------------------
@@ -244,65 +172,28 @@ SectionEnd
 
 Function un.onNextPage
 
-  Push ${TEMP1}
-  Push ${TEMP2}
-
-  ;Set backgrounds & fonts for the outer dialog (only once)
-  StrCmp ${CURRENTPAGE} "" "" no_set_outer
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 16 1000
-    SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    GetDlgItem ${TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
-
-    no_set_outer:
-
-  IntOp ${CURRENTPAGE} ${CURRENTPAGE} + 1
-
-  Call un.SetHeader
-
-  Pop ${TEMP2}
-  Pop ${TEMP1}
-
+  !insertmacro MUI_NEXTPAGE_OUTER
+  !insertmacro MUI_NEXTPAGE un.SetHeader
+  
 FunctionEnd
 
 Function un.SetHeader
 
-  ;Set the texts on the header (white rectangle)
+  !insertmacro MUI_HEADER_INIT
 
-  Push ${TEMP1}
-  Push ${TEMP2}
+    !insertmacro MUI_HEADER_START 1
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
+    !insertmacro MUI_HEADER_STOP 1
 
-  GetDlgItem ${TEMP1} $HWNDPARENT 1037
-  GetDlgItem ${TEMP2} $HWNDPARENT 1038
+    !insertmacro MUI_HEADER_START 2
+      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
+    !insertmacro MUI_HEADER_STOP 2
 
-  StrCmp ${CURRENTPAGE} 1 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Uninstall ${NAME}"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Remove ${NAME} from your system."
-    Goto done
+    !insertmacro MUI_HEADER_START 3
+      !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
+    !insertmacro MUI_HEADER_STOP 3
 
-  StrCmp ${CURRENTPAGE} 2 "" +4
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Uninstalling"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "Please wait while ${NAME} is being uninstalled."
-    Goto done
-
-  StrCmp ${CURRENTPAGE} 3 "" +3
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Finished"
-    SendMessage ${TEMP2} ${WM_SETTEXT} 0 "${NAME} has been removed from your system."
-
-  done:
-
-  Pop ${TEMP2}
-  Pop ${TEMP1}
+  !insertmacro MUI_HEADER_END
 
 FunctionEnd
 
