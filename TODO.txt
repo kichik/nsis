@@ -1,4 +1,16 @@
-TODO
+-- TODO for Beta 1 ---
+
+NSIS
+
+* fix button selection bug
+* transparent BrandingText control
+* check for invalid chars/spaces in folder input
+
+BANNER
+
+* compatible with Modern UI
+
+-- Later ---
 
 DOCUMENTATION
 
