@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-12-29
+;Revision date: 2004-12-15
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TradChinese"
@@ -19,11 +19,15 @@
   !define MUI_INNERTEXT_LICENSE_BOTTOM "如果你接受協議中的條款，按一下 [我同意(I)] 繼續安裝。如果你選取 [取消(C)] ，安裝程式將會關閉。必須要接受協議才能安裝 $(^NameDA) 。"
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受協議中的條款，按一下下方的勾選框。必須要接受協議才能安裝 $(^NameDA)。$_CLICK"
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受協議中的條款，選擇下方第一個選項。必須要接受協議才能安裝 $(^NameDA)。$_CLICK"
-
-  !define MUI_TEXT_COMPONENTS_TITLE "選取元件"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "選取 $(^NameDA) 當中你想要安裝的功能。"
+  
+  !define MUI_TEXT_COMPONENTS_TITLE "選擇元件"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "選擇你想要安裝 $(^NameDA) 的那些功能。"
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "選擇一個元件，便可見到它的描述。"
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "選取安裝位置" 
   !define MUI_TEXT_DIRECTORY_SUBTITLE "選取 $(^NameDA) 要安裝的資料夾。"
@@ -38,8 +42,8 @@
   !define MUI_TEXT_ABORT_SUBTITLE "安裝程式並未成功地執行完成。"
   
   !define MUI_BUTTONTEXT_FINISH "完成(&F)"
-  !define MUI_TEXT_FINISH_INFO_TITLE "完成 $(^NameDA) 安裝精靈"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) 已在你的系統安裝。\r\n按一下 [完成(F)] 關閉此精靈。"
+  !define MUI_TEXT_FINISH_INFO_TITLE "正在完成 $(^NameDA) 安裝精靈"
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) 已安裝在你的系統。\r\n按一下 [完成(F)] 關閉此精靈。"
   !define MUI_TEXT_FINISH_INFO_REBOOT "你的系統需要重新啟動，以便完成 $(^NameDA) 的安裝。現在要重新啟動嗎？"
   !define MUI_TEXT_FINISH_REBOOTNOW "是，現在重新啟動(&Y)"
   !define MUI_TEXT_FINISH_REBOOTLATER "否，我稍後再自行重新啟動(&N)"
