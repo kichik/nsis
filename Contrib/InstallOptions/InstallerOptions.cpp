@@ -1306,7 +1306,7 @@ void WINAPI showCfgDlg()
   int i = nNumFields;
   while (i--) {
     FieldType *pField = pFields + i;
-    
+
     int j = FIELD_BUFFERS;
     while (j--)
       FREE(((char **) pField)[j]);
@@ -1334,9 +1334,8 @@ extern "C" void __declspec(dllexport) dialog(HWND hwndParent, int string_size,
     pushstring("error");
     return;
   }
-  if (createCfgDlg()) {
+  if (createCfgDlg())
     return;
-  }
   popstring(NULL);
   showCfgDlg();
 }
@@ -1350,8 +1349,9 @@ extern "C" void __declspec(dllexport) initDialog(HWND hwndParent, int string_siz
     pushstring("error");
     return;
   }
+  if (createCfgDlg())
+    return;
   initCalled++;
-  createCfgDlg();
 }
 
 extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
