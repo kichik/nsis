@@ -2,6 +2,18 @@
 
 \e{v2.0b0}
 
+\b Added user defined multilingual strings. 
+
+\b Added CreateShortcut comment/description parameter
+
+\b Added new plugins: ShowWin, System
+
+\b Splash.exe is now a plugin (splash.dll)
+
+\b Prevent multiple inclusion of !defines 
+
+\b [InstallOptions] Clicking [x] behaves the same as Cancel. 
+
 \b SendMessage can send strings (put STR: before a param) and supports timeouts 
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window 
@@ -20,7 +32,7 @@
 
 \b DeleteRegKey now complains if given a third parameter (other than /ifempty) 
 
-\b Included makensisw 1.9 
+\b Included makensisw 1.9 (lots of changes)
 
 \b New InstallOptions 
 
