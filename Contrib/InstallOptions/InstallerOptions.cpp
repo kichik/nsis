@@ -175,6 +175,13 @@ int nRectId          = 0;
 int nNumFields       = 0;
 int g_done;
 
+int FindControlIdx(UINT id)
+{
+  for (int nIdx = 0; nIdx < nNumFields; nIdx++)
+    if (id == pFields[nIdx].nControlID)
+      return nIdx;
+  return -1;
+}
 
 // array of HWNDs and window styles used to make the main NSIS controls invisible while this program runs.
 
@@ -675,23 +682,20 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
 	switch (codeNotify) {
 		case BN_CLICKED:
       {
-        for (int nIdx = 0; nIdx < nNumFields; nIdx++) {
-          if (id == pFields[nIdx].nControlID) {
-            if (pFields[nIdx].nType == FIELD_BROWSEBUTTON) {
-              int nParentIdx = pFields[nIdx].nParentIdx;
-              switch(pFields[nParentIdx].nType) {
-                case FIELD_FILEREQUEST:
-                  BrowseForFile(nParentIdx);
-                  break;
-                case FIELD_DIRREQUEST:
-                  BrowseForFolder(nParentIdx);
-                  break;
-              }
-              break;
-            } else if (pFields[nIdx].nType == FIELD_LINK) {
-              ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);	            
-            }
+        int nIdx = FindControlIdx(id);
+        if (pFields[nIdx].nType == FIELD_BROWSEBUTTON) {
+          int nParentIdx = pFields[nIdx].nParentIdx;
+          switch(pFields[nParentIdx].nType) {
+          case FIELD_FILEREQUEST:
+            BrowseForFile(nParentIdx);
+            break;
+          case FIELD_DIRREQUEST:
+            BrowseForFolder(nParentIdx);
+            break;
           }
+          break;
+        } else if (pFields[nIdx].nType == FIELD_LINK) {
+          ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);	            
         }
       }
 			break;
@@ -737,53 +741,48 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     case WM_DRAWITEM:
     {
         DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
-        for (int nIdx = 0; nIdx < nNumFields; nIdx++) 
-        {
-          if (pFields[nIdx].nControlID == lpdis->CtlID ) 
-          {
+        int nIdx = FindControlIdx(lpdis->CtlID);
 #ifdef IO_LINK_UNDERLINED
-            HFONT OldFont;
-            LOGFONT lf;
+        HFONT OldFont;
+        LOGFONT lf;
 #endif
-            if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
-               (lpdis->itemAction & ODA_SELECT))
-               DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
-
+        if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
+          (lpdis->itemAction & ODA_SELECT))
+          DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
+        
 #ifdef IO_LINK_UNDERLINED
-            GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
-            lf.lfUnderline = TRUE;
-            OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
+        GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
+        lf.lfUnderline = TRUE;
+        OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
 #endif
-            // Set up tranparent background
-            SetBkMode(lpdis->hDC, TRANSPARENT);
-            
-            if ( GetSysColorBrush(COLOR_HOTLIGHT) )
-              SetTextColor(lpdis->hDC, GetSysColor(COLOR_HOTLIGHT));
-            else
-              SetTextColor(lpdis->hDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
-                        
-            GetClientRect(lpdis->hwndItem, &pFields[nIdx].rect);
-            // Calculate needed size of the control
-            DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &pFields[nIdx].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
-            pFields[nIdx].rect.right += 4;
-            pFields[nIdx].rect.bottom = lpdis->rcItem.bottom;
-            // Resize but don't move
-            SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pFields[nIdx].rect.right - pFields[nIdx].rect.left, 
-              pFields[nIdx].rect.bottom - pFields[nIdx].rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-            // Draw the text
-            lpdis->rcItem = pFields[nIdx].rect;
-            // Add little margin to avoid focus rect over text
-            lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
-
-            if ( lpdis->itemState & ODS_HOTLIGHT )
-              OutputDebugString("Hot");
-
-            DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
+        // Set up tranparent background
+        SetBkMode(lpdis->hDC, TRANSPARENT);
+        
+        if ( GetSysColorBrush(COLOR_HOTLIGHT) )
+          SetTextColor(lpdis->hDC, GetSysColor(COLOR_HOTLIGHT));
+        else
+          SetTextColor(lpdis->hDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
+        
+        pFields[nIdx].rect = lpdis->rcItem;
+        // Calculate needed size of the control
+        DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &pFields[nIdx].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+        pFields[nIdx].rect.right += 4;
+        pFields[nIdx].rect.bottom = lpdis->rcItem.bottom;
+        // Resize but don't move
+        SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pFields[nIdx].rect.right - pFields[nIdx].rect.left, 
+          pFields[nIdx].rect.bottom - pFields[nIdx].rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+        // Draw the text
+        lpdis->rcItem = pFields[nIdx].rect;
+        // Add little margin to avoid focus rect over text
+        lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
+        
+        if ( lpdis->itemState & ODS_HOTLIGHT )
+          OutputDebugString("Hot");
+        
+        DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
 #ifdef IO_LINK_UNDERLINED
-            DeleteObject(SelectObject(lpdis->hDC, OldFont));
+        DeleteObject(SelectObject(lpdis->hDC, OldFont));
 #endif
-          }
-        }
         break;
     }
     case WM_CTLCOLORSTATIC:
@@ -807,31 +806,35 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 // pFields[nIdx].nParentIdx is used to store original windowproc
 int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
-  for (int StaticField = 0; StaticField < nNumFields; StaticField++) 
+  int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
+  switch(uMsg)
   {
-    if (pFields[StaticField].nType == FIELD_LINK && hWin == pFields[StaticField].hwnd ) 
+  case WM_ERASEBKGND:
+    return 0;
+  case WM_GETDLGCODE:
+    return DLGC_BUTTON|DLGC_WANTALLKEYS;
+  case WM_KEYDOWN:
     {
-      switch(uMsg)
+      if ( wParam == VK_RETURN )
+        WMCommandProc(hMainWindow, pFields[StaticField].nControlID, pFields[StaticField].hwnd, BN_CLICKED);
+      else if ( wParam == VK_TAB )
+        SendMessage(hMainWindow, WM_NEXTDLGCTL, GetKeyState(VK_SHIFT) & 0x8000, FALSE);
+    }
+    break;
+  case WM_SETCURSOR:
+    {
+      if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
       {
-      case WM_ERASEBKGND:
-          return 0;
-      case WM_SETCURSOR:
+        HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
+        if ( hCur )
         {
-          if ( (HWND)wParam == hWin && LOWORD(lParam) == HTCLIENT )
-          {
-            HCURSOR hCur = LoadCursor(NULL, IDC_HAND);
-            if ( hCur )
-            {
-              SetCursor(hCur);
-              return 1; // halt further processing
-            }
-          }
+          SetCursor(hCur);
+          return 1; // halt further processing
         }
       }
-      return CallWindowProc((WNDPROC)pFields[StaticField].nParentIdx, hWin, uMsg, wParam, lParam);
     }
   }
-  return 0;
+  return CallWindowProc((WNDPROC)pFields[StaticField].nParentIdx, hWin, uMsg, wParam, lParam);
 }
 #endif
 
@@ -1190,7 +1193,8 @@ void showCfgDlg()
 {
   lpWndProcOld = (void *) SetWindowLong(hMainWindow,DWL_DLGPROC,(long)ParentWndProc);
 
-  SendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, 0, 0);
+  // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
+  SendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, (WPARAM)hConfigWindow, 0);
   ShowWindow(hConfigWindow, SW_SHOWNA);
   SetFocus(hNextButton);
 
