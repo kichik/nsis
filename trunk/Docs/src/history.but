@@ -2,7 +2,15 @@
 
 \H{v2.0} 2.0
 
-\S1{v2.0-cl-198} Changelog from 1.98
+Released on February 7th, 2004
+
+\S1{v2.0-rn} Release Notes
+
+\b Finnish, Bulgarian and Thai language files are outdated and do not contain all needed translations
+
+\S1{v2.0-cl} Changelog
+
+\S2{} Changes from 1.98
 
 \b \R{langs}{Multiple languages in one installer support} (with RTL support)
 
@@ -24,11 +32,13 @@
 
 \b Improved large files handling
 
-\b License data can be RTF
+\b \R{alicensedata}{License data} can be RTF
 
 \b CHM documentation for easy browsing
 
 \b \R{silent}{Better silent support}
+
+\b New include files for easier scripting: \L{../Examples/LogicLib.nsi}{LogicLib}, \L{../Include/StrFunc.txt}{StrFunc} and \L{../Include/Sections.nsh}{Sections}
 
 \b Improved plug-ins: \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl} and \L{../Contrib/Splash/splash.txt}{Splash}
 
@@ -44,9 +54,15 @@
 
 \b A lot more... See below for more information
 
-\S1{v2.0-cl} Changelog from rc4
+\S2{} Changes from RC4
 
 \b Command line parser ignored any switches after tokens that are not switches
+
+\b Last part of the path specified in \R{ainstalldir}{InstallDir} was appended even if selected folder name was the same
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.79}: Improved documentation, new Init custom function for Welcome and Finish page
+
+\b Added \L{../Include/StrFunc.txt}{StrFunc} by deguix
 
 \b Updated and fixed language files
 
