@@ -169,6 +169,13 @@ class CEXEBuild {
 
     bool next_used, install_used, comppage_used, license_force_radio_used, register_used, unregister_used;
 
+    int GetUserVarIndex(LineParser &line, int token);
+// Added by ramon 3 jun 2003
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+    LangStringList m_UserVarNames;
+    int DeclaredUserVar(const char *VarName);
+#endif
+
     // a whole bunch O data.
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -202,6 +209,17 @@ class CEXEBuild {
 
     char build_output_filename[1024];
     char cur_out_path[1024];
+
+    // Added by ramon 6 jun 2003
+#ifdef NSIS_SUPPORT_VERSION_INFO
+    char szVIProductVersion[1024];
+    char szVIProductName[1024];
+    char szVICompanyName[1024];
+    char szVIComments[1024];
+    char szVILegalTrademarks[1024];
+    char szVILegalCopyrights[1024];
+    char szVIDescription[1024];
+#endif
 
     int subsection_open_cnt;
     FastStringList m_warnings;
