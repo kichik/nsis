@@ -11,7 +11,7 @@
 ;Product Info
 
   !define MUI_PRODUCT "Modern UI Test"
-  !define MUI_VERSION "1.65"
+  !define MUI_VERSION "1.66"
 
 ;--------------------------------
 ;Configuration
