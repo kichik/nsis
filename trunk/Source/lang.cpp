@@ -304,7 +304,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
     if (table->common.subcaptions[2]<0)
       table->common.subcaptions[2]=add_string_main(str(NLF_SUBCAPTION_DIR));
     if (table->installer.browse<0) table->installer.browse=add_string_main(str(NLF_BTN_BROWSE),0);
-    if (table->installer.spaceavailable<0 && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_REQ),0);
+    if (table->installer.spaceavailable<0 && !no_space_texts) table->installer.spaceavailable=add_string_main(str(NLF_SPACE_AVAIL),0);
   }
 
   if (table->installer.text >= 0 
@@ -315,7 +315,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   {
     // Changed by Amir Szekely 22nd July 2002
     // Adds the ability to disable space texts
-    if (table->installer.spacerequired<0 && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_AVAIL),0);
+    if (table->installer.spacerequired<0 && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
     if (table->installer.nextbutton<0) table->installer.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
     if (table->installer.installbutton<0) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
   }
@@ -489,8 +489,8 @@ NLF::NLF(char *filename) {
   // Read strings
   for (int i = 0; i < NLF_STRINGS; i++) {
     buf[0] = SkipComments(f);
-    fgets(buf+1, 1024, f);
-    if (lstrlen(buf) == 1023) {
+    fgets(buf+1, NSIS_MAX_STRLEN, f);
+    if (lstrlen(buf) == NSIS_MAX_STRLEN-1) {
       wsprintf(buf, "String too long (string #%d)!", i);
       throw runtime_error(buf);
     }
@@ -498,14 +498,32 @@ NLF::NLF(char *filename) {
       buf[lstrlen(buf)-1] = 0;
     }
     m_szStrings[i] = new char[lstrlen(buf)+1];
-    lstrcpy(m_szStrings[i], buf);
+    for (char *out = m_szStrings[i], *in = buf; *in; in++, out++) {
+      if (*in == '\\') {
+        in++;
+        switch (*in) {
+        	case 'n':
+            *out = '\n';
+            break;
+          case 'r':
+            *out = '\r';
+            break;
+          case 't':
+            *out = '\t';
+            break;
+          default:
+            *out++ = '\\';
+            *out = *in;
+        }
+      }
+      else *out = *in;
+    }
+    *out = 0;
   }
-
   fclose(f);
 }
 
 NLF::~NLF() {
-  MessageBox(0, "destructor", "info", MB_OK);
   for (int i = 0; i < NLF_STRINGS; i++) {
     delete [] m_szStrings[i];
   }
