@@ -45,7 +45,8 @@
 #define POPT_ALWRETURN  0x4    // Always return
 #define POPT_NEVERREDEF 0x8    // Never redefine
 #define POPT_GENSTACK   0x10   // Use general stack (non temporary for callback)
-#define POPT_CLONE      0x20   // This is clone callback
+#define POPT_ERROR      0x20   // Call GetLastError after proc and push it to stack
+#define POPT_CLONE      0x40   // This is clone callback
 
 // Our single proc parameter
 typedef struct

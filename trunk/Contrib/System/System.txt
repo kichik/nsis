@@ -159,6 +159,7 @@ return place.
 redefined either by GET or CALL. This options is never inherited to childs.
         s - use general Stack. Whenever the first callback defined the system
 starts using the temporary stacks for function calls. 
+        e - call GetLastError() after procedure end and push result on stack,
 
 ----------------------------------
 Callback:
