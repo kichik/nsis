@@ -85,7 +85,7 @@ char *compressor_names[] = {"",
                             "bzip2",
                             "lzma",
                             "Best"};
-char *compressor_display_names[] = {"Defined in Script/MakeNSIS Default",
+char *compressor_display_names[] = {"Defined in Script/Compiler Default",
                             "ZLIB",
                             "BZIP2",
                             "LZMA (7-Zip)",
