@@ -1,12 +1,12 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Macedonian (1071)
 ;By Sasko Zdravkin [vardarce@mail.com]
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "MACEDONIAN"
+!define MUI_LANGUAGEFILE_BEGIN "MACEDONIAN"
 
   !define MUI_LANGNAME "Македонски" ;Use only ASCII characters (if this is not possible, use the English name)
   
@@ -51,9 +51,12 @@
   !define MUI_INNERTEXT_STARTMENU_TOP "Одберете го директориумот во Старт Менито во кој сакате да се креира скратеница за програмата. Исто така можете да внесете друго име за да се креира нов директориум."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Не креирај скратеница"
   
-  !define MUI_TEXT_ABORTWARNING "Сигурни ли сте дека сакате да се откажете од инсталацијата на $(^Name)?"  
+  !define MUI_TEXT_ABORTWARNING "Сигурни ли сте дека сакате да се откажете од инсталацијата на $(^Name)?" 
+ 
   
-  
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добро дојдовте во деинсталациониот програм на $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Овој програм ќе ве води низ деинсталацијата на $(^Name).\r\n\r\nПред да ја почнете деинсталацијата на $(^Name) проверете дали е исклучена програмата.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталирај го $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Одстранете го $(^Name) од вашиот компјутер."
   
@@ -77,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Деинсталацијата е откажана"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Деинсталирањето не беше успешно завршено."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Завршува деинсталирањето на $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) е деинсталиран од вашиот компјутер.\r\n\r\nПритиснете 'Крај' за да го затворите деинсталациониот програм."
+
+  !define MUI_UNTEXT_ABORTWARNING "Сигурни ли сте дека сакате да се откажете од деинсталацијата на $(^Name)?"
   
 !insertmacro MUI_LANGUAGEFILE_END
