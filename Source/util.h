@@ -95,14 +95,14 @@ inline T align_to_512(const T x) {
 template <typename _RESOURCE, typename _FREE_RESOURCE>
 class ResourceManager {
 public:
-	ResourceManager(_RESOURCE& resource) : m_resource(resource) {}
-	~ResourceManager() { m_free_resource(m_resource); };
+  ResourceManager(_RESOURCE& resource) : m_resource(resource) {}
+  ~ResourceManager() { m_free_resource(m_resource); };
 private: // members
-	_RESOURCE& m_resource;
+  _RESOURCE& m_resource;
   _FREE_RESOURCE m_free_resource;
 private: // don't copy instances
-	ResourceManager(const ResourceManager&);
-	void operator=(const ResourceManager&);
+  ResourceManager(const ResourceManager&);
+  void operator=(const ResourceManager&);
 };
 
 #define DEFINE_FREEFUNC(freefunc) \
