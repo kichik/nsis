@@ -11,7 +11,7 @@
 
 !define MUI_UKRAINIAN_USED
 
-  !define MUI_UKRAINIAN_LANGNAME "Ukainian" ;Name of the language in the language itself (English, Deutsch, Français etc.)
+  !define MUI_UKRAINIAN_LANGNAME "Ukrainian" ;Name of the language in the language itself (English, Deutsch, Français etc.)
 
   ;INSTALLER
   
