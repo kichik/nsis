@@ -156,7 +156,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    char *p=cmdline;
+    char *p=realcmds;
+    while (*p) p++;
 
     while (p >= realcmds && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
