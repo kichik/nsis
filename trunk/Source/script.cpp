@@ -2731,7 +2731,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("!error: %s\n",line.gettoken_str(1));
     return PS_ERROR;
     case TOK_P_WARNING:
-      warning_fl("!warning: %s\n",line.gettoken_str(1));
+      warning_fl("!warning: %s",line.gettoken_str(1));
     return PS_OK;
     case TOK_P_ECHO:
       SCRIPT_MSG("%s (%s:%d)\n", line.gettoken_str(1),curfilename,linecnt);
@@ -4026,8 +4026,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (v != PS_OK) return v;
           if (!tf)
           {
-            ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",t);
-            if (fatal) PRINTHELP()
+            if (fatal)
+            {
+              ERROR_MSG("%sFile: \"%s\" -> no files found.\n",(which_token == TOK_FILE)?"":"Reserve",t);
+              PRINTHELP();
+            }
+            else
+            {
+              warning_fl("%sFile: \"%s\" -> no files found.",(which_token == TOK_FILE)?"":"Reserve",t);
+            }
           }
         }
       }
@@ -4633,13 +4640,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int a=1;
         if (which_token==TOK_DELETEREGKEY)
         {
-          ent.offsets[3]=1;
+          ent.offsets[4]=1;
           char *s=line.gettoken_str(a);
           if (s[0] == '/')
           {
             if (stricmp(s,"/ifempty")) PRINTHELP()
             a++;
-            ent.offsets[3]=3;
+            ent.offsets[4]=3;
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
@@ -4647,9 +4654,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
         if (k == -1) PRINTHELP()
         ent.which=EW_DELREG;
-        ent.offsets[0]=(int)rootkey_tab[k];
-        ent.offsets[1]=add_string(line.gettoken_str(a+1));
-        ent.offsets[2]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
+        ent.offsets[1]=(int)rootkey_tab[k];
+        ent.offsets[2]=add_string(line.gettoken_str(a+1));
+        ent.offsets[3]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
         if (line.gettoken_str(a+1)[0] == '\\')
           warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         if (which_token==TOK_DELETEREGKEY)
@@ -4685,7 +4692,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         if (which_token == TOK_WRITEREGBIN)
         {
-          char data[NSIS_MAX_STRLEN];
+          char data[3*NSIS_MAX_STRLEN];
           char *p=line.gettoken_str(4);
           int data_len=0;
           while (*p)
@@ -4704,9 +4711,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             else break;
             p++;
             c=(a<<4)|b;
-            if (data_len >= NSIS_MAX_STRLEN)
+            if (data_len >= 3*NSIS_MAX_STRLEN)
             {
-              ERROR_MSG("WriteRegBin: %d bytes of data exceeded\n",NSIS_MAX_STRLEN);
+              ERROR_MSG("WriteRegBin: %d bytes of data exceeded\n",3*NSIS_MAX_STRLEN);
               return PS_ERROR;
             }
             data[data_len++]=c;
