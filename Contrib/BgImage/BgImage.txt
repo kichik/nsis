@@ -12,12 +12,12 @@ All but the last used function (which should be Destroy) must use /NOUNLOAD so t
 Available functions
 ~~~~~~~~~~~~~~
 
-Init path_to_bitmap [/FILLSCREEN]
+Init [/FILLSCREEN] path_to_bitmap
    Create a new image window
    Use /FILLSCREEN to make the image fill the screen
    Do not use in .onInit!
 
-SetImage path_to_bitmap [/FILLSCREEN]
+SetImage [/FILLSCREEN] path_to_bitmap
    Sets a new image to the current timage window
    Use /FILLSCREEN to make the image fill the screen
    Do not use in .onInit!
@@ -25,7 +25,7 @@ SetImage path_to_bitmap [/FILLSCREEN]
 Destroy
    Destroys the current image window
 
-Sound path_to_wav [/WAIT]
+Sound [/WAIT] path_to_wav
    Plays a wave file
    Use /WAIT to wait for the sound to finish playing
 
