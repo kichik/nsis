@@ -325,18 +325,18 @@ parse_again:
       return PS_ERROR;
     }
 
+    if (cur_ifblock->hasexeced)
+    {
+      cur_ifblock->ignore++;
+      return PS_OK;
+    }
+
     if (line.getnumtokens() == 1)
     {
       cur_ifblock->ignore = !cur_ifblock->ignore;
       // if not executed up until now, it will now
       cur_ifblock->hasexeced++;
       cur_ifblock->elseused++;
-      return PS_OK;
-    }
-
-    if (cur_ifblock->hasexeced)
-    {
-      cur_ifblock->ignore++;
       return PS_OK;
     }
 
@@ -348,8 +348,6 @@ parse_again:
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
     if_from_else++;
-
-    SCRIPT_MSG("!else on line %d - %s\n", linecnt, line.gettoken_str(0));
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
