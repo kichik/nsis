@@ -2520,9 +2520,67 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[2]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SetStaticBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
+    case TOK_CREATEFONT:
+      ent.which=EW_CREATEFONT;
+      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
+      {
+        int height=0;
+        int weight=0;
+        int flags=0;
+        for (int i = 3; i < line.getnumtokens(); i++) {
+          char *tok=line.gettoken_str(i);
+          if (tok[0]=='/') {
+            if (!lstrcmpi(tok,"/ITALIC")) {
+              SCRIPT_MSG(" /ITALIC");
+              flags|=1;
+            }
+            else if (!lstrcmpi(tok,"/UNDERLINE")) {
+              SCRIPT_MSG(" /UNDERLINE");
+              flags|=2;
+            }
+            else if (!lstrcmpi(tok,"/STRIKE")) {
+              SCRIPT_MSG(" /STRIKE");
+              flags|=4;
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+          else {
+            if (!height) {
+              SCRIPT_MSG(" height=%s",tok);
+              height=add_string(tok);
+            }
+            else if (!weight) {
+              SCRIPT_MSG(" weight=%s",tok);
+              weight=add_string(tok);
+            }
+            else {
+              SCRIPT_MSG("\n");
+              PRINTHELP();
+            }
+          }
+        }
+        ent.offsets[2]=height;
+        ent.offsets[3]=weight;
+        ent.offsets[4]=flags;
+      }
+      SCRIPT_MSG("\n");
+    return add_entry(&ent);
+    case TOK_SHOWWINDOW:
+      ent.which=EW_SHOWWINDOW;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      SCRIPT_MSG("ShowWindow: handle=%s show state=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
     case TOK_SETSTATICBKCOLOR:
+    case TOK_SHOWWINDOW:
+    case TOK_CREATEFONT:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -2532,6 +2590,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_FINDWINDOW:
     case TOK_GETDLGITEM:
     case TOK_SETSTATICBKCOLOR:
+    case TOK_SHOWWINDOW:
+    case TOK_CREATEFONT:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_HWNDS
@@ -3646,58 +3706,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("\n");
     }
     return add_entry(&ent);
-    case TOK_CREATEFONT:
-      ent.which=EW_CREATEFONT;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
-      {
-        int height=0;
-        int weight=0;
-        int flags=0;
-        for (int i = 3; i < line.getnumtokens(); i++) {
-          char *tok=line.gettoken_str(i);
-          if (tok[0]=='/') {
-            if (!lstrcmpi(tok,"/ITALIC")) {
-              SCRIPT_MSG(" /ITALIC");
-              flags|=1;
-            }
-            else if (!lstrcmpi(tok,"/UNDERLINE")) {
-              SCRIPT_MSG(" /UNDERLINE");
-              flags|=2;
-            }
-            else if (!lstrcmpi(tok,"/STRIKE")) {
-              SCRIPT_MSG(" /STRIKE");
-              flags|=4;
-            }
-            else {
-              SCRIPT_MSG("\n");
-              PRINTHELP();
-            }
-          }
-          else {
-            if (!height) {
-              SCRIPT_MSG(" height=%s",tok);
-              height=add_string(tok);
-            }
-            else if (!weight) {
-              SCRIPT_MSG(" weight=%s",tok);
-              weight=add_string(tok);
-            }
-            else {
-              SCRIPT_MSG("\n");
-              PRINTHELP();
-            }
-          }
-        }
-        ent.offsets[2]=height;
-        ent.offsets[3]=weight;
-        ent.offsets[4]=flags;
-      }
-      SCRIPT_MSG("\n");
-    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
-    case TOK_CREATEFONT:
     case TOK_SETBRANDINGIMAGE:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",line.gettoken_str(0));
       return PS_ERROR;

@@ -147,6 +147,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETSTATICBKCOLOR,"SetStaticBkColor",2,0,"hwnd color"},
 {TOK_SHOWDETAILS,"ShowInstDetails",1,0,"(hide|show|nevershow)"},
 {TOK_SHOWDETAILSUNINST,"ShowUninstDetails",1,0,"(hide|show|nevershow)"},
+{TOK_SHOWWINDOW,"ShowWindow",2,0,"hwnd show_state"},
 {TOK_SILENTINST,"SilentInstall",1,0,"(normal|silent|silentlog)"},
 {TOK_SILENTUNINST,"SilentUnInstall",1,0,"(normal|silent)"},
 {TOK_SLEEP,"Sleep",1,0,"sleep_time_in_ms"},
