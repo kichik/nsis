@@ -63,8 +63,6 @@ Section "modern.exe" SecCopyUI
 
 SectionEnd
 
-!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
-
 ;--------------------------------
 ;Descriptions
 
