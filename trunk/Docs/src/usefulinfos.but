@@ -6,7 +6,7 @@ The NSIS source files are shipped with every official \W{http://sourceforge.net/
 
 Previous versions of NSIS have been tested with the MinGW compiler, however we don't have an up-to-date makefile. If you are working with MinGW or another compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
 
-\\<b\\>Note: If you are using Microsoft Visual C++ 6.0 you have install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the lib's distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{Click here} for more information. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/ppack/default.asp}{Processor Pack} to decrease the size of the installer overhead.\\</b\\>
+\\<b\\>Note: If you are using Microsoft Visual C++ 6.0 you have install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the lib's distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{Click here} for more information. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} to decrease the size of the installer overhead.\\</b\\>
 
 \H{errorlevels}Error Levels
 
