@@ -1,6 +1,6 @@
 \H{var} Variables
 
-\S1{var1} Modifiable variables used in Instructions
+\S1{var1} Modifiable Variables Used in Instructions
 
 \e{$INSTDIR}
 
@@ -28,7 +28,7 @@ The command line of the installer. The format of the command line can be one of 
 
 The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
 
-\S1{var2} Constant Variables used in Instructions and InstallDir
+\S1{var2} Constant Variables Used in Instructions and InstallDir
 
 \e{$PROGRAMFILES}
 
@@ -86,7 +86,7 @@ The path to a temporary folder created upon the first usage of a plugin or a cal
 
 Use to represent $.
 
-\S1{var3} Variables used Strings
+\S1{var3} Variables Used in Strings
 
 \e{$\\r}
 
