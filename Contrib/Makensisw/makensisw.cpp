@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	HACCEL haccel; 
 	g_hInstance=GetModuleHandle(0);
 	g_script=GetCommandLine();
-  if (*g_script=='"') { g_script++; while (*g_script!='"' && *g_script) g_script++; }
+    if (*g_script=='"') { g_script++; while (*g_script && *g_script++!='"' ); }
 	else while (*g_script!=' ' && *g_script) g_script++;
 	while (*g_script==' ') g_script++;
 	if (!InitBranding()) {
