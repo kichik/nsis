@@ -73,9 +73,9 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 // Util function - must be freeded
 WCHAR* StrToWstrAlloc(const char* istr, int codepage)
 {
-  int strSize = strlen(istr);
-  WCHAR* wstr = new WCHAR[(strSize*2)+1];
-  MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize*2);
+  int strSize = MultiByteToWideChar(codepage, 0, istr, -1, 0, 0);
+  WCHAR* wstr = new WCHAR[strSize];
+  MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize);
   return wstr;
 }
 
