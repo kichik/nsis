@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com>
@@ -22,6 +22,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Per favore esamina i termini della licenza d'uso prima di installare ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Seleziona Page Down per vedere il resto della licenza d'uso."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Se accetti i termini della licenza d'uso seleziona Accetto per continuare. Devi accettare i termini della licenza d'uso per installare ${MUI_PRODUCT}."  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se accetti i termini della licenza d'uso, seleziona il check box sottostante. Deviaccettare i termini della licenza d'uso per installare ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se accetti i termini della licenza d'uso, seleziona la prima opzione sottostante. Deviaccettare i termini della licenza d'uso per installare ${MUI_PRODUCT}."
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Seleziona i componenti"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Seleziona i componenti di ${MUI_PRODUCT} che vuoi installare."
