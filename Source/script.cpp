@@ -5492,14 +5492,15 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
   {
     char *s=dir+strlen(dir);
     while (s > dir && *s != PATH_SEPARATOR_C) s=CharPrev(dir,s);
-    *s=0;
-#ifndef _WIN32
-    if (!*dir)
+    if (s == dir)
     {
-      dir[0] = '.';
-      dir[1] = 0;
+      if (*s == PATH_SEPARATOR_C)
+        sprintf(dir,"%c.",PATH_SEPARATOR_C);
+      else
+        strcpy(dir,".");
     }
-#endif
+    else
+      s[0]=0;
   }
 
 #ifdef _WIN32
