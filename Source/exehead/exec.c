@@ -487,46 +487,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_DELETE
     case EW_DELETEFILE:
       {
-        HANDLE h;
-        WIN32_FIND_DATA fd;
-        char *buf1=GetStringFromParm(0x10);
-        mystrcpy(buf0,buf1);
+        char *buf0=GetStringFromParm(0x00);
         log_printf2("Delete: \"%s\"",buf0);
-        trimslashtoend(buf0);
-        h=FindFirstFile(buf1,&fd);
-        if (h != INVALID_HANDLE_VALUE)
-        {
-          do
-          {
-            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-            {
-              wsprintf(buf1,"%s\\%s",buf0,fd.cFileName);
-              if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
-                SetFileAttributes(buf1,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
-              if (DeleteFile(buf1))
-              {
-                log_printf2("Delete: DeleteFile(\"%s\")",buf1);
-                update_status_text_buf1(LANG_DELETEFILE);
-              }
-              else
-              {
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-                if (parm1)
-                {
-                  log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf1);
-                  update_status_text_buf1(LANG_DELETEONREBOOT);
-                  MoveFileOnReboot(buf1,NULL);
-                }
-                else
-#endif
-                {
-                  exec_error++;
-                }
-              }
-            }
-          } while (FindNextFile(h,&fd));
-          FindClose(h);
-        }
+        myDelete(buf0,parm1);
       }
     break;
 #endif//NSIS_SUPPORT_DELETE
@@ -558,9 +521,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *buf1=GetStringFromParm(-0x10);
         log_printf2("RMDir: \"%s\"",buf1);
 
-        doRMDir(buf1,parm1);
-        if (file_exists(buf1) && parm1!=2) exec_error++;
-        else update_status_text_buf1(LANG_REMOVEDIR);
+        myDelete(buf1,parm1);
       }
     break;
 #endif//NSIS_SUPPORT_RMDIR
@@ -1178,7 +1139,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             char *buf3=GetStringFromParm(0x33);
             res = RegDeleteValue(hKey,buf3);
-            log_printf4("DeleteRegValue: %d\\%s\\%s",rootkey,buf2,buf3);
+            log_printf4("DeleteRegValue: %d\\%s\\%s",parm1,buf2,buf3);
             RegCloseKey(hKey);
           }
         }
