@@ -4,8 +4,6 @@ TODO
 
 NSIS
 
-* Section switch for defaulting to unselected mode
-
 * DATE, FILE, TIME, etc. defines
 
 * add version numbers for the installer
