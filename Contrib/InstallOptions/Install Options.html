@@ -125,11 +125,13 @@ numbers from 1 to NumFields. Each Field section contains the following values:
         file requester where the user can browse for a file.<BR>A 
         "<I>DirRequest</I>" control displays a textbox and a browse button. 
         Clicking the browse button will display a directory requester where the 
-        user can browse for a directory.<BR></FONT></TD></TR>
+        user can browse for a directory.<BR>
+		"<I>Icon</I>" control displays an icon. Use no Text to use the installer icon.<BR>
+		"<I>Bitmap</I>" control displays a bitmap.<BR></FONT></TD></TR>
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>Text</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>Specifies the caption of a label, checkbox, or radio button control. 
+      <TD vAlign=top bgColor=#eeeeee>Specifies the caption of a label, checkbox, or radio button control. For icon and bitmaps control this specifies the path to the image.
         </TD></TR>
     <TR>
       <TD vAlign=top bgColor=#cccccc><B>State</B></TD>
@@ -270,6 +272,10 @@ numbers from 1 to NumFields. Each Field section contains the following values:
 <A name=history><A name=top><B>History:</B>
 <P>
 <UL>
+  <LI><a name=DLL1.4>DLL version 1.3 beta (9/4/2002)
+  <UL>
+     <li>Added Icon and Bitmap controls (by Amir Szekely)
+  </UL>
   <LI><a name=DLL1.3>DLL version 1.3 beta (8/15/2002)
   <UL>
      <li>Added CancelShow (by ORTIM)
