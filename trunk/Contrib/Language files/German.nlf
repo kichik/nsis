@@ -14,15 +14,15 @@ Nullsoft Install System %s
 : Bestätigung
 : Deinstalliere Dateien...
 : Fertig
-< Zurück
-Weiter >
-Annehmen
-Installieren
-Deinstallieren
+< &Zurück
+&Weiter >
+&Annehmen
+&Installieren
+&Deinstallieren
 Abbrechen
-Beenden
-Durchsuchen...
-Details anzeigen
+&Beenden
+&Durchsuchen...
+&Details anzeigen
 Name
 Fertig
 Benutzerdefiniert

@@ -37,7 +37,7 @@
   !endif
 
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GERMAN} "Weiter >"
+    InstallButtonText /LANG=${LANG_GERMAN} "&Weiter >"
   !endif
 
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_GERMAN} "Installiere..."
@@ -51,10 +51,10 @@
   !endif
 
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< Zurück"
-    LangString MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "Weiter >"
+    LangString MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< &Zurück"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "&Weiter >"
     LangString MUI_BUTTONTEXT_CANCEL ${LANG_GERMAN} "Abbrechen"
-    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GERMAN} "Installieren"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_GERMAN} "&Installieren"
   !endif
 
 
@@ -73,14 +73,14 @@
   !endif
 
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
-    InstallButtonText /LANG=${LANG_GERMAN} "Weiter >"
+    InstallButtonText /LANG=${LANG_GERMAN} "&Weiter >"
   !endif
 
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< Zurück"
-    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "Weiter >"
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_GERMAN} "< &Zurück"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_GERMAN} "&Weiter >"
     LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_GERMAN} "Abbrechen"
-    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GERMAN} "Deinstallieren"
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_GERMAN} "&Deinstallieren"
   !endif
 
 !endif
