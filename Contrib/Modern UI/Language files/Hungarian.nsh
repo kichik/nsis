@@ -1,8 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Hungarian (1038)
-;By Jozsef Tamas Herczeg
+;Compatible with Modern UI 1.62 - By Jozsef Tamas Herczeg
+;Compatible with Modern UI 1.62 - Lajos Molnar (Orfanik)
 
 ;--------------------------------
 
@@ -33,14 +34,15 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "Válassza ki a(z) ${MUI_PRODUCT} telepítésének mappáját."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "A(z) ${MUI_PRODUCT} telepítése a következõ mappába történik.$\r$\n$\r$\nEltérõ mappába történõ telepítéshez a Tallózás gombbal jelölhet ki másik mappát."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "Célmappa"
-  
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "Telepítési folyamat"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "Kis türelmet a(z) ${MUI_PRODUCT} telepítéséig."
-  
+ 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Elkészült telepítés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "A telepítés sikeresen befejezõdött."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Befejezés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Befejezés"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "A(z) ${MUI_PRODUCT} telepítése megtörtént."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "A(z) ${MUI_PRODUCT} telepítése megtörtént.\r\n\r\nA Befejezés gomb megnyomásával zárja be a varázslót."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "A(z) ${MUI_PRODUCT} telepítésének befejezéséhez újra kell indítani a rendszert. Most akarja újraindítani?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Most indítom újra"
@@ -57,6 +59,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Biztos, hogy ki akar lépni a(z) ${MUI_PRODUCT} Telepítõbõl?"  
   
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Az ltávolításhoz nyomja meg az Eltávolítás gombot."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Eltávolítás: ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "A(z) ${MUI_PRODUCT} eltávolítása a rendszerbõl."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "A(z) ${MUI_PRODUCT} programot távolítja el a rendszerbõl."

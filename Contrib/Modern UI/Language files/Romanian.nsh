@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Romanian (1048)
 ;Translated by Cristian Pirvu (pcristip@yahoo.com)
