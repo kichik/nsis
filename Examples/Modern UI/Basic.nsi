@@ -15,6 +15,7 @@
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
+  !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
 
   ;Language
