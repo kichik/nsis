@@ -16,11 +16,12 @@ char g_log_file[1024];
 extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #endif
 
-char g_usrvars[24][NSIS_MAX_STRLEN];
+char g_usrvars[25][NSIS_MAX_STRLEN];
 char *state_command_line=g_usrvars[20];
 char *state_install_directory=g_usrvars[21];
 char *state_output_directory=g_usrvars[22];
 char *state_exe_directory=g_usrvars[23];
+char *state_language=g_usrvars[24];
 
 HANDLE g_hInstance;
 
@@ -490,11 +491,8 @@ void NSISCALL process_string(char *out, const char *in)
         case VAR_CODES_START + 22: // INSTDIR
         case VAR_CODES_START + 23: // OUTDIR
         case VAR_CODES_START + 24: // EXEDIR
-          mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
-          break;
-
         case VAR_CODES_START + 25: // LANGUAGE
-          myitoa(out, cur_common_strings_table->lang_id);
+          mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
         case VAR_CODES_START + 26: // PROGRAMFILES
