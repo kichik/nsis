@@ -5,8 +5,8 @@ NLF v2
 # Translation by Orfanik - http://www.orfanik.hu
 Nullsoft Install System %s
 Installazione di %s
-Rimozione di %s
-: Licenza
+Disinstallazione di %s
+: Licenza d'uso
 : Opzioni di installazione
 : Cartella di installazione
 : Installazione dei file
@@ -26,13 +26,13 @@ Mostra &dettagli
 Nome
 Completata
 Personalizzata
-Seleziona il tipo d'installazionei : 
-Seleziona i componenti da installare : 
-Oppure, seleziona i componenti opzionali che vuoi installare : 
-Seleziona la cartella dove installare %s : 
+Seleziona il tipo d'installazione :
+Seleziona i componenti da installare :
+Oppure, seleziona i componenti opzionali che vuoi installare :
+Seleziona la cartella dove installare %s :
 Spazio disponibile : 
 Spazio necessario : 
-Rimozione da : 
+Rimozione da :
 Errore nell'apertura del file in fase di scrittura: \r\n\t"$0"\r\nClicca su Annulla per interrompere l'installazione,\r\nsu Riprova per riprovare, oppure\r\nsu Ignora per saltare questo file.
 Scrittura impossibile : 
 Copia fallita
@@ -41,7 +41,7 @@ Impossibile trovare il simbolo :
 Impossibile caricare : 
 Crea cartella : 
 Crea collegamento : 
-Crea rimozione : 
+Creato tool di rimozione : 
 Elimina file : 
 Elimina al riavvio : 
 Errore nella creazione del collegamento : 
