@@ -1403,6 +1403,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           string_tables.push_back(table);
         }
         last_used_lang=newNLF->GetLang();
+        // define LANG_LangName as "####" (lang id)
+        // for example ${LANG_ENGLISH} = 1033
+        char lang_id[16];
+        char lang_name[128];
+        char *nlf = line.gettoken_str(1);
+        char *tmp = strrchr(nlf, '.');
+        if (tmp) *tmp = 0;
+        tmp = strrchr(nlf, '\\');
+        wsprintf(lang_name, "LANG_%s", tmp?tmp+1:nlf);
+        wsprintf(lang_id, "%u", newNLF->GetLang());
+        definedlist.add(lang_name,lang_id);
       }
       catch (exception &err) {
         ERROR_MSG("Error while loading language file: %s\n", err.what());
