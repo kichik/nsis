@@ -258,14 +258,13 @@ int main(int argc, char **argv)
             fprintf(g_output,"\n\nProcessing config: \n");
             fflush(g_output);
           }
-          int lc=0;
-          int ret=build.process_script(cfg,exepath,&lc);
+          int ret=build.process_script(cfg,exepath);
           fclose(cfg);
           if (ret != PS_OK && ret != PS_EOF)
           {
             if (build.display_errors) 
             {
-              fprintf(g_output,"Error in config on line %d -- aborting creation process\n",lc);
+              fprintf(g_output,"Error in config on line %d -- aborting creation process\n",build.linecnt);
               fflush(g_output);
             }
             return 1;
@@ -341,15 +340,14 @@ int main(int argc, char **argv)
           fprintf(g_output,"\n\nProcessing script file: \"%s\"\n",sfile);
           fflush(g_output);
         }
-        int lc=0;
-        int ret=build.process_script(fp,sfile,&lc);
+        int ret=build.process_script(fp,sfile);
         if (fp != stdin) fclose(fp);
 
         if (ret != PS_EOF && ret != PS_OK)
         {
           if (build.display_errors) 
           {
-            fprintf(g_output,"Error in script \"%s\" on line %d -- aborting creation process\n",sfile,lc);
+            fprintf(g_output,"Error in script \"%s\" on line %d -- aborting creation process\n",sfile,build.linecnt);
             fflush(g_output);
           }
           return 1;

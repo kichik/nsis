@@ -67,7 +67,7 @@ class CEXEBuild {
 
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
-    int process_script(FILE *fp, char *curfilename, int *lineptr);
+    int process_script(FILE *fp, char *curfilename);
     int process_oneline(char *line, char *curfilename, int lineptr);
     
     // you only get to call write_output once, so use it wisely.
@@ -82,6 +82,10 @@ class CEXEBuild {
     int display_warnings;
     int display_info;
 
+    int linecnt;
+    char *curfilename;
+    FILE *fp;
+
     HWND notify_hwnd;
     void notify(int code, char *data);
 
@@ -90,10 +94,10 @@ class CEXEBuild {
     int get_commandtoken(char *s, int *np, int *op);
 
     // script.cpp
-    int parseScript(FILE *fp, const char *curfilename, int *lineptr);
+    int parseScript();
     void ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist);
-    int doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr);
-    int doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int *lineptr);
+    int doParse(const char *str);
+    int doCommand(int which_token, LineParser &line);
     int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1, int *data_handle=0, int rec_depth=0);
     GrowBuf m_linebuild; // used for concatenating lines
 
@@ -107,7 +111,7 @@ class CEXEBuild {
 
     // build.cpp functions used mostly by script.cpp
     int getcurdbsize();
-    int add_section(const char *secname, const char *file, int line, const char *defname,  int expand=0);
+    int add_section(const char *secname, const char *defname, int expand=0);
     int section_end();
     int add_function(const char *funname);
     int function_end();

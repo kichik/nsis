@@ -1,5 +1,3 @@
-// Lang.cpp by Amir Szekely 3rd August 2002
-
 #include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>

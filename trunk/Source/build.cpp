@@ -437,7 +437,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
           strncpy(tbuf,p,63);
           tbuf[63]=0;
           if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
-          warning("unknown variable \"%s\" detected, ignoring",tbuf);
+          warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
           i = '$';
         }
       }
@@ -459,7 +459,7 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
     if (p) {
       *p = 0;
       if (!strnicmp(cp,"un.",3)) {
-        warning("Installer language strings can't start with un. (%s)!", string);
+        warning("Installer language strings can't start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
         free(cp);
         return 0;
       }
@@ -487,7 +487,7 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
     if (p) {
       *p = 0;
       if (strnicmp(cp,"un.",3)) {
-        warning("Uninstaller language strings must start with un. (%s)!", string);
+        warning("Uninstaller language strings must start with un. (%s)! (%s:%d)", string, curfilename, linecnt);
         free(cp);
         return 0;
       }
@@ -802,7 +802,7 @@ int CEXEBuild::section_end()
   return PS_OK;
 }
 
-int CEXEBuild::add_section(const char *secname, const char *file, int line, const char *defname, int expand/*=0*/)
+int CEXEBuild::add_section(const char *secname, const char *defname, int expand/*=0*/)
 {
   if (build_cursection_isfunc)
   {
