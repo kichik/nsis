@@ -965,7 +965,7 @@ Section -post
   WriteRegDword HKLM "Software\NSIS" "VersionRevision" "${VER_REVISION}"
   WriteRegDword HKLM "Software\NSIS" "VersionBuild" "${VER_BUILD}"
 
-  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" "$INSTDIR\uninst-nsis.exe"
+  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
   IfFileExists "$INSTDIR\NSIS.exe" 0 +2
@@ -1252,7 +1252,7 @@ Function PageLeaveReinstall
   HideWindow
   
     ClearErrors
-    ExecWait '"$R1" _?=$INSTDIR'
+    ExecWait '$R1 _?=$INSTDIR'
     
     IfErrors no_remove_uninstaller
     IfFileExists "$INSTDIR\makensis.exe" no_remove_uninstaller
