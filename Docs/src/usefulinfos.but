@@ -1,5 +1,12 @@
 \A{usefulinfos} Useful Information
 
+\H{compiling_infos}Compiling NSIS Sources
+
+If you want to compile NSIS by yourself you have to install the Sources. The Sources are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly} development Snapshots. NSIS is programmed in Microsoft Visual C 6.0. Therefore it contains all necessary files including the Project Files. You can also use the current Version 7.0 of Visual C but the output is a few KB larger. The Sources also include a makefile for the famous Open Source Compiler GCC but unfortunately it is a little bit outdated. If you are working with GCC and want to provide a updated working makefile or your using an other Compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
+
+\\<b\\>Note: If your using Visual C 6.0 you have to update the \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK} to avoid crashes when using CopyFiles. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{here} for further informations. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/ppack/default.asp}{Processor Pack} for decreasing the excutable Size.\\</b\\>
+
+
 \H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 
 Create a key with your product name under \\<b\\>HKLM/Software/Microsoft/Windows/CurrentVersion/Uninstall\\</b\\> to add entries to the "Add/Remove Programs" section in the Control Panel.
@@ -313,11 +320,11 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 
 
 \c OutFile "REG_MULTI_SZ Reader.exe"
-\c 
+\c
 \c Name "REG_MULTI_SZ Reader"
-\c 
+\c
 \c ShowInstDetails show
-\c 
+\c
 \c !define HKEY_CLASSES_ROOT        0x80000000
 \c !define HKEY_CURRENT_USER        0x80000001
 \c !define HKEY_LOCAL_MACHINE       0x80000002
@@ -327,10 +334,10 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c !define HKEY_PERFORMANCE_NLSTEXT 0x80000060
 \c !define HKEY_CURRENT_CONFIG      0x80000005
 \c !define HKEY_DYN_DATA            0x80000006
-\c 
+\c
 \c !define KEY_QUERY_VALUE          0x0001
 \c !define KEY_ENUMERATE_SUB_KEYS   0x0008
-\c 
+\c
 \c !define REG_NONE                 0
 \c !define REG_SZ                   1
 \c !define REG_EXPAND_SZ            2
@@ -340,19 +347,19 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c !define REG_DWORD_BIG_ENDIAN     5
 \c !define REG_LINK                 6
 \c !define REG_MULTI_SZ             7
-\c 
+\c
 \c !define RegOpenKeyEx     "Advapi32::RegOpenKeyExA(i, t, i, i, i) i"
 \c !define RegQueryValueEx  "Advapi32::RegQueryValueExA(i, t, i, i, i, i, i) i"
 \c !define RegCloseKey      "Advapi32::RegCloseKeyA(i) i"
-\c 
+\c
 \c ####### Edit this!
-\c 
+\c
 \c !define ROOT_KEY         ${HKEY_CURRENT_USER}
 \c !define SUB_KEY          "Software\Joe Software"
 \c !define VALUE            "Strings"
-\c 
+\c
 \c ####### Stop editing
-\c 
+\c
 \c Section "Read"
 \c   StrCpy $0 ""
 \c   StrCpy $1 ""
@@ -364,59 +371,59 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c   System::Call "*(i) i (0) .r2"
 \c   System::Call "${RegOpenKeyEx}(${ROOT_KEY}, '${SUB_KEY}', \
 \c     0, ${KEY_QUERY_VALUE}|${KEY_ENUMERATE_SUB_KEYS}, r0) .r3"
-\c   
+\c
 \c   StrCmp $3 0 goon
 \c     MessageBox MB_OK|MB_ICONSTOP "Can't open registry key! ($3)"
 \c     Goto done
 \c goon:
-\c 
+\c
 \c   System::Call "*$0(&i4 .r4)"
 \c   System::Call "${RegQueryValueEx}(r4, '${VALUE}', 0, r1, 0, r2) .r3"
-\c 
+\c
 \c   StrCmp $3 0 read
 \c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)"
 \c     Goto done
-\c 
+\c
 \c read:
-\c 
+\c
 \c   System::Call "*$1(&i4 .r3)"
-\c 
+\c
 \c   StrCmp $3 ${REG_MULTI_SZ} multisz
 \c     MessageBox MB_OK|MB_ICONSTOP "Registry value no SZ_MULTI_SZ! ($3)"
 \c     Goto done
-\c 
+\c
 \c multisz:
-\c 
+\c
 \c   System::Call "*$2(&i4 .r3)"
-\c 
+\c
 \c   StrCmp $3 0 0 multiszalloc
 \c     MessageBox MB_OK|MB_ICONSTOP "Registry value empty! ($3)"
 \c     Goto done
-\c 
+\c
 \c multiszalloc:
-\c 
+\c
 \c   System::Free $1
 \c   System::Alloc $3
 \c   Pop $1
-\c 
+\c
 \c   StrCmp $1 0 0 multiszget
 \c     MessageBox MB_OK|MB_ICONSTOP "Can't allocate enough memory! ($3)"
 \c     Goto done
-\c 
+\c
 \c multiszget:
-\c 
+\c
 \c   System::Call "${RegQueryValueEx}(r4, 'bla', 0, 0, r1, r2) .r3"
-\c 
+\c
 \c   StrCmp $3 0 multiszprocess
 \c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)[2]"
 \c     Goto done
-\c 
+\c
 \c multiszprocess:
-\c 
+\c
 \c   StrCpy $4 $1
-\c 
+\c
 \c   loop:
-\c 
+\c
 \c     System::Call "*$4(&t${NSIS_MAX_STRLEN} .r3)"
 \c     StrCmp $3 "" done
 \c     DetailPrint $3
@@ -424,17 +431,17 @@ I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.ph
 \c     IntOp $4 $4 + $5
 \c     IntOp $4 $4 + 1
 \c     Goto loop
-\c 
+\c
 \c done:
-\c 
+\c
 \c   System::Free $2
 \c   System::Free $1
-\c 
+\c
 \c   StrCmp $0 0 noClose
 \c     System::Call "${RegCloseKey}(r0)"
-\c 
+\c
 \c noClose:
-\c 
+\c
 \c   SetPluginUnload manual
 \c   System::Free $0
 \c SectionEnd
