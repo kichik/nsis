@@ -1742,11 +1742,11 @@ again:
             else
               p->parms[4]--;
 
-            DefineInnerLangString(NLF_SPACE_AVAIL, 0);
-            DefineInnerLangString(NLF_SPACE_REQ, 0);
-            DefineInnerLangString(NLF_BYTE, 0);
-            DefineInnerLangString(NLF_KILO, 0);
-            DefineInnerLangString(NLF_MEGA, 0);
+            DefineInnerLangString(NLF_SPACE_AVAIL);
+            DefineInnerLangString(NLF_SPACE_REQ);
+            DefineInnerLangString(NLF_BYTE);
+            DefineInnerLangString(NLF_KILO);
+            DefineInnerLangString(NLF_MEGA);
             DefineInnerLangString(NLF_GIGA);
 #ifdef NSIS_CONFIG_LOG
             DefineInnerLangString(NLF_LOG_INSTALL_PROCESS);
