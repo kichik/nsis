@@ -115,7 +115,7 @@ $(^Name)をアンインストールするフォルダを選択してください：
 # ^SpaceRequired
 必要なディスクスペース： 
 # ^UninstallingText
-このウィザードは、このコンピュータから$(^Name)をアンインストールします。 $_CLICK
+$(^Name)は、以下のフォルダからアンインストールされます。 $_CLICK
 # ^UninstallingSubText
 アンインストール元：
 # ^FileError
