@@ -2302,7 +2302,7 @@ again:
   ret=add_entry_direct(EW_CREATEDIR, zero_offset);
   if (ret != PS_OK) return ret;
   // IfErrors Initialize_____Plugins_error - detect errors
-  ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error));
+  ret=add_entry_direct(EW_IFFLAG, ns_label.add("Initialize_____Plugins_error",0), 0, FIELD_OFFSET(installer_flags, exec_error)/sizeof(int));
   if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
   ret=add_entry_direct(EW_PLUGINCOMMANDPREP);
