@@ -394,6 +394,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   notify_hwnd=0;
 #endif
 
+#ifdef NSIS_SUPPORT_BGBG
   bg_default_font.lfHeight=40;
   bg_default_font.lfWidth=0;
   bg_default_font.lfEscapement=0;
@@ -409,6 +410,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   bg_default_font.lfPitchAndFamily=DEFAULT_PITCH;
   strncpy(bg_default_font.lfFaceName,"Times New Roman",LF_FACESIZE);
   memcpy(&bg_font,&bg_default_font,sizeof(LOGFONT));
+#endif
 
   defcodepage_set=false;
   uDefCodePage=CP_ACP;
