@@ -50,6 +50,9 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 {
   if (uMsgCreate && message == uMsgCreate)
   {
+    static HWND hwndPrevFocus;
+    static BOOL fCancelDisabled;
+
     if (wParam)
     {
       childwnd = FindWindowEx((HWND) lParam, NULL, "#32770", NULL);
@@ -59,6 +62,11 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
       HWND hwndS = GetDlgItem(childwnd, 1006);
       if (childwnd && hwndP && hwndS)
       {
+        // Where to restore focus to before we disable the cancel button
+        hwndPrevFocus = GetFocus();
+        if (!hwndPrevFocus)
+          hwndPrevFocus = hwndP;
+
         if (IsWindowVisible(hwndL))
           ShowWindow(hwndL, SW_HIDE);
         else
@@ -90,7 +98,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 
         DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS;
         dwStyle |= GetWindowLong(hwndP, GWL_STYLE) & PBS_SMOOTH;
-        
+
         GetWindowRect(hwndP, &ctlRect);
 
         HWND pb = g_hwndProgressBar = CreateWindow(
@@ -124,22 +132,15 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 
         ShowWindow(pb, SW_SHOWNA);
         ShowWindow(s, SW_SHOWNA);
+
+        fCancelDisabled = EnableWindow(GetDlgItem(hwnd, IDCANCEL), TRUE);
+        SendMessage(hwnd, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(hwnd, IDCANCEL), TRUE);
       }
       else
         childwnd = NULL;
     }
     else if (childwnd)
     {
-      if (g_hwndStatic)
-      {
-        DestroyWindow(g_hwndStatic);
-        g_hwndStatic = NULL;
-      }
-      if (g_hwndProgressBar)
-      {
-        DestroyWindow(g_hwndProgressBar);
-        g_hwndProgressBar = NULL;
-      }
       if (hwndB)
       {
         ShowWindow(hwndB, SW_SHOWNA);
@@ -151,6 +152,24 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
         hwndL = NULL;
       }
 
+      // Prevent wierd stuff happening if the cancel button happens to be
+      // pressed at the moment we are finishing and restore the previous focus
+      // and cancel button states
+      SendMessage(hwnd, WM_NEXTDLGCTL, (WPARAM)hwndPrevFocus, TRUE);
+      SendMessage(GetDlgItem(hwnd, IDCANCEL), BM_SETSTATE, FALSE, 0);
+      if (fCancelDisabled)
+        EnableWindow(GetDlgItem(hwnd, IDCANCEL), FALSE);
+
+      if (g_hwndStatic)
+      {
+        DestroyWindow(g_hwndStatic);
+        g_hwndStatic = NULL;
+      }
+      if (g_hwndProgressBar)
+      {
+        DestroyWindow(g_hwndProgressBar);
+        g_hwndProgressBar = NULL;
+      }
       childwnd = NULL;
     }
   }
@@ -265,9 +284,6 @@ __declspec(dllexport) void download (HWND   parent,
   }
   else
   {
-    HWND hwndPrevFocus;
-    BOOL fCancelDisabled;
-
     if (parent)
     {
       uMsgCreate = RegisterWindowMessage("nsisdl create");
@@ -283,11 +299,6 @@ __declspec(dllexport) void download (HWND   parent,
       wsprintf(buf, szDownloading, p != filename ? p + 1 : p);
       SetDlgItemText(childwnd, 1006, buf);
       SetWindowText(g_hwndStatic, szConnecting);
-
-      // enable the cancel button
-      hwndPrevFocus = GetFocus();
-      fCancelDisabled = EnableWindow(GetDlgItem(parent, IDCANCEL), TRUE);
-      SendMessage(parent, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(parent, IDCANCEL), TRUE);
     }
     {
       WSADATA wsaData;
@@ -349,14 +360,6 @@ __declspec(dllexport) void download (HWND   parent,
           {
             SendMessage(parent, uMsgCreate, FALSE, (LPARAM) parent);
             SetWindowLong(parent, GWL_WNDPROC, (long)lpWndProcOld);
-
-            // Prevent wierd stuff happening if the cancel button happens to be
-            // pressed at the moment we are finishing
-            SendMessage(GetDlgItem(parent, IDCANCEL), BM_SETSTATE, FALSE, 0);
-            // Restore the previous focus and cancel button states
-            SendMessage(parent, WM_NEXTDLGCTL, (WPARAM)hwndPrevFocus, TRUE);
-            if (fCancelDisabled)
-              EnableWindow(GetDlgItem(parent, IDCANCEL), FALSE);
           }
           break;
         }
