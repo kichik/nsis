@@ -33,7 +33,7 @@
 #include "ui.h"
 #include "lang.h"
 
-extern unsigned long CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
+extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
 
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
 #error One of NSIS_CONFIG_SILENT_SUPPORT or NSIS_CONFIG_VISIBLE_SUPPORT must be defined.

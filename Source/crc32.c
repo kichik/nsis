@@ -2,7 +2,7 @@
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 
 // this is based on the (slow,small) CRC32 implementation from zlib.
-unsigned long CRC32(unsigned long crc, const unsigned char *buf, unsigned int len)
+unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf, unsigned int len)
 {
     static unsigned long crc_table[256];
 

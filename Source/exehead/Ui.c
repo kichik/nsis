@@ -83,7 +83,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static DWORD WINAPI install_thread(LPVOID p);
 
-HWND bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int);
+HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int);
 
 HWND insthwnd, insthwnd2,insthwndbutton;
 
@@ -104,30 +104,30 @@ HWND m_curwnd;
 static int m_whichcfg;
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-static BOOL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
+static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
   return SetDlgItemText(dlg,id,STR(GetLangString(lid)));
 }
 
-static BOOL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid_t lid) {
-  return SetDlgItemTextFromLang(custom?g_hwnd:defhw,custom?custom:def,lid);
+static BOOL NSISCALL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid_t lid) {
+  return SetDlgItemTextFromLang(custom?g_hwnd:defhw,(WORD)(custom?custom:def),lid);
 }
 
 // no tab
-static BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
+static BOOL NSISCALL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
   return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
 }
 
-static UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
+static UINT NSISCALL GetUIText(WORD def, WORD custom, char *str, int max_size) {
   return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
 }
 
-static HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
+static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
   return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
 }
 #endif
 
 #ifdef NSIS_CONFIG_LOG
-static void build_g_logfile()
+void NSISCALL build_g_logfile()
 {
   addtrailingslash(mystrcpy(g_log_file,state_install_directory));
   lstrcat(g_log_file,"install.log");
@@ -135,7 +135,7 @@ static void build_g_logfile()
 #endif
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-static void SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
+static void NSISCALL SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   HTREEITEM hItem;
   int l=0;
 
@@ -165,7 +165,7 @@ static void SetChildrenStates(HWND hWnd, TV_ITEM *pItem, int iState) {
   }
 }
 
-static void SetParentState(HWND hWnd, TV_ITEM *pItem) {
+static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
 
   HTREEITEM hItem;
   int    iState = 0, iStatePrev = 0;
@@ -204,7 +204,7 @@ static void SetParentState(HWND hWnd, TV_ITEM *pItem) {
 }
 
 
-static void CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
+static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
   HTREEITEM hItem = pItem->hItem;
   int l=0;
 
@@ -227,7 +227,7 @@ static void CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
-int ui_doinstall(void)
+int NSISCALL ui_doinstall(void)
 {
   g_autoclose=g_inst_cmnheader->misc_flags&1;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -641,7 +641,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static void inttosizestr(int kb, char *str)
+static void NSISCALL inttosizestr(int kb, char *str)
 {
   str += mystrlen(str);
   if (kb < 1024) wsprintf(str,"%dKB",kb);
@@ -1130,12 +1130,12 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 int ui_st_updateflag=0x3;
 
-void update_status_text_from_lang(langid_t id, const char *text2)
+void NSISCALL update_status_text_from_lang(langid_t id, const char *text2)
 {
   update_status_text(STR(GetLangString(id)), text2);
 }
 
-void update_status_text(const char *text1, const char *text2)
+void NSISCALL update_status_text(const char *text1, const char *text2)
 {
   static LVITEM new_item = {LVIF_TEXT,0,0,0,0,ps_tmpbuf};
   RECT r;

@@ -39,7 +39,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /Gd /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_BZIP2" /FD /c
+# ADD CPP /nologo /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_BZIP2" /FD /c
 # SUBTRACT CPP /Fr /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -96,22 +96,27 @@ SOURCE=..\zlib\Zlib.h
 # Begin Source File
 
 SOURCE=..\zlib\INFBLOCK.C
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\zlib\INFCODES.C
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\zlib\INFLATE.C
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\zlib\INFTREES.C
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\zlib\INFUTIL.C
+# ADD CPP /Gz
 # End Source File
 # End Group
 # Begin Group "bzip2"
@@ -120,6 +125,7 @@ SOURCE=..\zlib\INFUTIL.C
 # Begin Source File
 
 SOURCE=..\bzip2\bzlib.c
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
@@ -132,14 +138,17 @@ SOURCE=..\bzip2\bzlib_private.h
 # Begin Source File
 
 SOURCE=..\bzip2\decompress.c
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\bzip2\huffman.c
+# ADD CPP /Gz
 # End Source File
 # Begin Source File
 
 SOURCE=..\bzip2\randtable.c
+# ADD CPP /Gz
 # End Source File
 # End Group
 # Begin Source File

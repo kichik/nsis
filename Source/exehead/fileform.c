@@ -33,7 +33,7 @@ HANDLE dbd_hFile=INVALID_HANDLE_VALUE;
 static int dbd_size, dbd_pos, dbd_srcpos, dbd_fulllen;
 #endif//NSIS_COMPRESS_WHOLE
 
-int isheader(firstheader *h)
+int NSISCALL isheader(firstheader *h)
 {
   if ((h->flags & (~FH_FLAGS_MASK)) ||
       h->siginfo != FH_SIG ||
@@ -48,7 +48,7 @@ int isheader(firstheader *h)
 static z_stream g_inflate_stream;
 #endif
 
-int loadHeaders(void)
+int NSISCALL loadHeaders(void)
 {
   DWORD r;
   void *data;
@@ -70,7 +70,7 @@ int loadHeaders(void)
     GetTempPath(sizeof(fn),fn);
     GetTempFileName(fn,"nsi",0,fno);
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
-    if (dbd_hFile == INVALID_HANDLE_VALUE) 
+    if (dbd_hFile == INVALID_HANDLE_VALUE)
     {
       my_MessageBox("Error writing temp file",MB_OK);
       return -1;
@@ -111,7 +111,7 @@ int loadHeaders(void)
   return 0;
 }
 
-const char *GetStringFromStringTab(int offs)
+const char * NSISCALL GetStringFromStringTab(int offs)
 {
   if (offs < 0) return "";
   return g_db_strtab+offs;
@@ -124,7 +124,7 @@ const char *GetStringFromStringTab(int offs)
 
 #ifndef NSIS_COMPRESS_WHOLE
 
-static int _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
   static char inbuffer[IBUFSIZE+OBUFSIZE];
   char *outbuffer;
@@ -135,7 +135,7 @@ static int _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 
   outbuffer = outbuf?outbuf:(inbuffer+IBUFSIZE);
 
-  if (offset>=0) 
+  if (offset>=0)
   {
     /*
     int lp=SetFilePointer(g_db_hFile,0,NULL,FILE_CURRENT);
@@ -224,7 +224,7 @@ static int _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 
 static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
-static int __ensuredata(int amount)
+static int NSISCALL __ensuredata(int amount)
 {
   int needed=amount-(dbd_size-dbd_pos);
   if (needed>0)
@@ -270,7 +270,7 @@ static int __ensuredata(int amount)
 }
 
 
-static int _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
+static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 {
   DWORD r;
   int input_len;
@@ -312,12 +312,12 @@ static int _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 #endif//NSIS_COMPRESS_WHOLE
 
 
-int GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut)
+int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut)
 {
   return _dodecomp(offset,hFileOut,NULL,0);
 }
 
-int GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len)
+int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len)
 {
   return _dodecomp(offset,NULL,out,out_len);
 }

@@ -1,6 +1,6 @@
 /*
-  Note: this version of zlib has been hacked up quite a bit in order to reduce 
-  the size of the EXE header and to remove what we didn't need. 
+  Note: this version of zlib has been hacked up quite a bit in order to reduce
+  the size of the EXE header and to remove what we didn't need.
   For the complete real thing, go to:
 
   http://www.info-zip.org/pub/infozip/zlib/
@@ -115,7 +115,7 @@ ZEXTERN int ZEXPORT deflate OF((z_streamp strm, int flush));
 ZEXTERN int ZEXPORT deflateEnd OF((z_streamp strm));
 ZEXTERN int ZEXPORT inflateInit OF((z_streamp strm));
 
-int inflate(z_streamp z);
+int ZEXPORT inflate(z_streamp z);
 ZEXTERN int ZEXPORT inflateEnd OF((z_streamp strm));
 ZEXTERN int ZEXPORT deflateInit2 OF((z_streamp strm,
                                      int  level,
@@ -126,7 +126,7 @@ ZEXTERN int ZEXPORT deflateInit2 OF((z_streamp strm,
 
 
 ZEXTERN int ZEXPORT deflateReset OF((z_streamp strm));
-int inflateReset(z_streamp z);
+int ZEXPORT inflateReset(z_streamp z);
 
 
                         /* various hacks, don't look :) */
@@ -146,8 +146,6 @@ ZEXTERN int ZEXPORT inflateInit2_ OF((z_streamp strm, int  windowBits,
                                       const char *version, int stream_size));
 #define deflateInit(strm, level) \
         deflateInit_((strm), (level),       "", sizeof(z_stream))
-
-extern int inflateInit(z_streamp z);
 
 
 #ifdef __cplusplus
