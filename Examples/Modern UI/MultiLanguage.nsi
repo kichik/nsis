@@ -1,5 +1,5 @@
-;NSIS Modern UI version 1.3
-;MultiLanguage & LangDLL Example Script
+;NSIS Modern User Interface version 1.3
+;Basic Macro System & MultiLanguage Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -8,6 +8,8 @@
 !verbose 3
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 !verbose 4
+
+;$9 is the variable used to store the current page, do not use this var!
 
 ;--------------------------------
 ;Configuration
@@ -68,8 +70,12 @@
     ;Ukrainian
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Ukrainian.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\Ukrainian.nsh"
+  
+  OutFile "MultiLanguage.exe"
 
-  ;General
+  !insertmacro MUI_INTERFACE
+  
+  ;Name
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GERMAN} "${NAME} ${VERSION}"
@@ -82,13 +88,8 @@
   Name /LANG=${LANG_RUSSIAN} "${NAME} ${VERSION}"
   Name /LANG=${LANG_PORTUGUESEBR} "${NAME} ${VERSION}"
   Name /LANG=${LANG_UKRAINIAN} "${NAME} ${VERSION}"
-  
-  OutFile "MultiLanguage.exe"
 
-  ;User interface - icons, ui file, check bitmap, progress bar etc.
-  !insertmacro MUI_INTERFACE "modern.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9" ;$9 is the variable used to store the current page, do not use this var!
-
-  ;License dialog
+  ;License page
   LicenseData /LANG=${LANG_ENGLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_FRENCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GERMAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -102,7 +103,7 @@
   LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-select dialog
+  ;Component-selection page
     ;Titles
     LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
@@ -131,7 +132,7 @@
     LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
     LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
     
-  ;Folder-select dialog
+  ;Folder-selection page
   InstallDir "$PROGRAMFILES\${NAME}"
   
 ;--------------------------------

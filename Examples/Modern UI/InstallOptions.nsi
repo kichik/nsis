@@ -1,5 +1,5 @@
-;NSIS Modern UI version 1.3
-;Install Options Example Script
+;NSIS Modern User Interface version 1.3
+;Advanced Macro System & Install Options Example Script
 ;Written by Joost Verburg
 
 !define NAME "Test Software" ;Define your own software name here
@@ -33,22 +33,21 @@
   Name "${NAME} ${VERSION}"
   OutFile "InstallOptions.exe"
 
-  ;User interface - icons, ui file, check bitmap, progress bar etc.
-  !insertmacro MUI_INTERFACE "modern.exe" "modern-install.ico" "modern-uninstall.ico" "modern.bmp" "smooth" "Tahoma" "$9" ;$9 is the variable used to store the current page, do not use this var!
+  !insertmacro MUI_INTERFACE
   !insertmacro MUI_INSTALLOPTIONS "$7" "$8" ;Variables for the Install Options system. Do not use them in .onNext/PrevPage and SetPage
 
-  ;License dialog
+  ;License page
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
-  ;Component-select dialog
+  ;Component-selection page
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
     LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
 
-  ;Folder-select dialog
+  ;Folder-selection page
   InstallDir "$PROGRAMFILES\${NAME}"
   
-  ;Install Options dialogs
+  ;Install Options pages
   LangString MUI_TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
   LangString MUI_TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
   
