@@ -106,6 +106,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			if (num==1) {
 				DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
 				if (lstrlen(szTmp)>0) {
+					GlobalFree(g_script);
 					g_script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
 					wsprintf(g_script,"/CD \"%s\"",szTmp);
 					ResetObjects();
