@@ -110,15 +110,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   if (*cmdline == '\"') seekchar = *cmdline++;
 
-  while (*cmdline && *cmdline != seekchar) if (*cmdline) cmdline++;
-  if (*cmdline) cmdline++;
+  while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
+  if (*cmdline) cmdline=CharNext(cmdline);
   realcmds=cmdline;
 
   do
   {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_CRC_SUPPORT
-    while (*cmdline == ' ') if (*cmdline) cmdline++;
+    while (*cmdline == ' ') cmdline=CharNext(cmdline);
     if (cmdline[0] != '/') break;
     cmdline++;
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
@@ -147,7 +147,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       lstrcpy(state_install_directory,cmdline+2);
       cmdline+=lstrlen(cmdline);
     }
-    else while (*cmdline && *cmdline != ' ') if (*cmdline) cmdline++;
+    else while (*cmdline && *cmdline != ' ') cmdline=CharNext(cmdline);
   }
   while (*cmdline);
 

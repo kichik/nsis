@@ -27,7 +27,7 @@
 // Please note that all of these define the offset not the string itself.
 // To get the string it self use process_string_fromtab or GetStringFromStringTab.
 
-#define INSTALL_STR(x) (install_strings_tables[current_lang].x)
+#define INSTALL_STR(x) (cur_install_strings_table->x)
 
 // Installer specific strings
 #define LANG_BTN_BACK GetStringFromStringTab(INSTALL_STR(backbutton))
@@ -45,14 +45,14 @@
 #define LANG_LICENSE_DATA GetStringFromStringTab(INSTALL_STR(licensedata))
 #define LANG_BTN_LICENSE GetStringFromStringTab(INSTALL_STR(licensebutton))
 
-#define UNINSTALL_STR(x) (uninstall_strings_tables[current_lang].x)
+#define UNINSTALL_STR(x) (cur_uninstall_strings_table->x)
 
 // Uninstall specific strings
 #define LANG_BTN_UNINST GetStringFromStringTab(UNINSTALL_STR(uninstbutton))
 #define LANG_UNINST_TEXT GetStringFromStringTab(UNINSTALL_STR(uninstalltext))
 #define LANG_UNINST_SUBTEXT GetStringFromStringTab(UNINSTALL_STR(uninstalltext2))
 
-#define COMMON_STR(x) (common_strings_tables[current_lang].x)
+#define COMMON_STR(x) (cur_common_strings_table->x)
 
 // Common strings
 #define LANG_BRANDING GetStringFromStringTab(COMMON_STR(branding))

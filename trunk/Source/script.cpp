@@ -517,20 +517,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_NAME:
-      if (!IsNotSet(common.name))
       {
-        warning("Name: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+1) PRINTHELP();
+        if (IsSet(common.name,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),LANG_NAME,0,lang);
+        SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(a));
       }
-      SetString(line.gettoken_str(1),LANG_NAME,0);
-      SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(1));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_CAPTION:
-      if (!IsNotSet(common.caption))
       {
-        warning("Caption: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+1) PRINTHELP();
+        if (IsSet(common.caption,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),NLF_CAPTION,1,lang);
+        SCRIPT_MSG("Caption: \"%s\"\n",line.gettoken_str(a));
       }
-      SetString(line.gettoken_str(1),NLF_CAPTION,1);
-      SCRIPT_MSG("Caption: \"%s\"\n",line.gettoken_str(1));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_ICON:
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
@@ -575,25 +583,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
 #endif//!NSIS_CONFIG_COMPONENTPAGE
     case TOK_DIRTEXT:
-      if (!IsNotSet(installer.text) && line.gettoken_str(1)[0])
       {
-        warning("DirText: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(installer.text,lang) && line.gettoken_str(a)[0])
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),LANG_DIR_TEXT,0,lang);
+        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_DIR_SUBTEXT,0,lang);
+        if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_BTN_BROWSE,0,lang);
+        SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
       }
-      SetString(line.gettoken_str(1),LANG_DIR_TEXT,0);
-      if (line.getnumtokens()>2) SetString(line.gettoken_str(2),NLF_DIR_SUBTEXT,0);
-      if (line.getnumtokens()>3) SetString(line.gettoken_str(3),NLF_BTN_BROWSE,0);
-      SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
-      if (!IsNotSet(installer.componenttext) && line.gettoken_str(1)[0])
       {
-        warning("ComponentText: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(installer.componenttext,lang) && line.gettoken_str(a)[0])
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),LANG_COMP_TEXT,0,lang);
+        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_COMP_SUBTEXT1,0,lang);
+        if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_COMP_SUBTEXT2,0,lang);
+        SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
       }
-      SetString(line.gettoken_str(1),LANG_COMP_TEXT,0);
-      if (line.getnumtokens()>2) SetString(line.gettoken_str(2),NLF_COMP_SUBTEXT1,0);
-      if (line.getnumtokens()>3) SetString(line.gettoken_str(3),NLF_COMP_SUBTEXT2,0);
-      SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTTYPE:
       {
@@ -607,6 +623,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         {
           build_header.no_custom_instmode_flag=2;
           SCRIPT_MSG("InstType: making components viewable only on custom install type\n");
+        }
+        else if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
+          if (!strnicmp(line.gettoken_str(2),"/CUSTOMSTRING=",14)) {
+            SetString(line.gettoken_str(2)+14,NLF_COMP_CUSTOM,0,atoi(line.gettoken_str(1)+6));
+            SCRIPT_MSG("InstType: setting custom text to: /LANG=%d \"%s\"\n",line.gettoken_str(1)+6,line.gettoken_str(2)+14);
+          }
+          else PRINTHELP()
         }
         else if (!strnicmp(line.gettoken_str(1),"/CUSTOMSTRING=",14))
         {
@@ -638,19 +661,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif//!NSIS_CONFIG_COMPONENTPAGE
 #ifdef NSIS_CONFIG_LICENSEPAGE
     case TOK_LICENSETEXT:
-      if (!IsNotSet(installer.licensetext))
       {
-        warning("LicenseText: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(installer.licensetext,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),LANG_LICENSE_TEXT,0,lang);
+        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_BTN_LICENSE,0,lang);
+        SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }
-      SetString(line.gettoken_str(1),LANG_LICENSE_TEXT,0);
-      if (line.getnumtokens()>2) SetString(line.gettoken_str(2),NLF_BTN_LICENSE,0);
-      SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_LICENSEDATA:
-      if (!IsNotSet(installer.licensedata))
-      {
-        warning("LicenseData: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
-      }
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
       if (build_header.common.silent_install)
       {
@@ -658,12 +681,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
 #endif
       {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(installer.licensedata,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
         FILE *fp;
         int datalen;
-        fp=fopen(line.gettoken_str(1),"rb");
+        fp=fopen(line.gettoken_str(a),"rb");
         if (!fp)
         {
-          ERROR_MSG("LicenseData: open failed \"%s\"\n",line.gettoken_str(1));
+          ERROR_MSG("LicenseData: open failed \"%s\"\n",line.gettoken_str(a));
           PRINTHELP()
         }
         fseek(fp,0,SEEK_END);
@@ -677,8 +706,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         fclose(fp);
         data[datalen]=0;
-        SetString(data,LANG_LICENSE_DATA,0);
-        SCRIPT_MSG("LicenseData: \"%s\"\n",line.gettoken_str(1));
+        SetString(data,LANG_LICENSE_DATA,0,lang);
+        SCRIPT_MSG("LicenseData: \"%s\"\n",line.gettoken_str(a));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     // Added by Amir Szekely 30th July 2002
@@ -849,7 +878,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         header_data_new = re.Save((DWORD&)exeheader_size_new);
       }
       catch (exception& err) {
-        ERROR_MSG("Error while changing font: %s\n", err.what());
+        ERROR_MSG("Error removing window icon: %s\n", err.what());
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1213,16 +1242,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     {
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
       try {
-      	NLF *newLang = new NLF(line.gettoken_str(1));
+      	NLF *newNLF = new NLF(line.gettoken_str(1));
         for (int i = 0; i < build_nlfs.size(); i++)
-          if (build_nlfs[i]->GetLang() == newLang->GetLang()) {
+          if (build_nlfs[i]->GetLang() == newNLF->GetLang()) {
             ERROR_MSG("Error: Can't add same language twice!\n");
             return PS_ERROR;
           }
-        build_nlfs.push_back(newLang);
+        build_nlfs.push_back(newNLF);
+        StringTable *table = (StringTable*)malloc(sizeof(StringTable));
+        memset(table, -1, sizeof(StringTable));
+        table->lang_id=table->ucommon.lang_id=table->installer.lang_id=table->uninstall.lang_id=newNLF->GetLang();
+        string_tables.push_back(table);
       }
       catch (exception &err) {
-        ERROR_MSG("Error while adding language file: %s", err.what());
+        ERROR_MSG("Error while loading language file: %s\n", err.what());
         return PS_ERROR;
       }
     }
@@ -1343,12 +1376,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_UNINSTCAPTION:
-      if (!IsNotSet(ucommon.caption))
       {
-        warning("UninstCaption: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(ucommon.caption,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),NLF_UCAPTION,1,lang);
+        SCRIPT_MSG("UninstCaption: \"%s\"\n",line.gettoken_str(a));
       }
-      SetString(line.gettoken_str(1),NLF_UCAPTION,1);
-      SCRIPT_MSG("UninstCaption: \"%s\"\n",line.gettoken_str(1));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTICON:
       SCRIPT_MSG("UninstallIcon: \"%s\"\n",line.gettoken_str(1));
@@ -1366,21 +1403,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTTEXT:
-      if (!IsNotSet(uninstall.uninstalltext))
       {
-        warning("UninstallText: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        if (IsSet(uninstall.uninstalltext,lang))
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        SetString(line.gettoken_str(a),LANG_UNINST_TEXT,1,lang);
+        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_UNINST_SUBTEXT,0,lang);
+        SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
       }
-      SetString(line.gettoken_str(1),LANG_UNINST_TEXT,0);
-      if (line.getnumtokens()>2) SetString(line.gettoken_str(2),NLF_UNINST_SUBTEXT,0);
-      SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTSUBCAPTION:
       {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+2) PRINTHELP();
         int s;
-        int w=line.gettoken_int(1,&s);
+        int w=line.gettoken_int(a,&s);
         if (!s || w < 0 || w > 2) PRINTHELP()
-        SetString(line.gettoken_str(2),NLF_USUBCAPTION_CONFIRM+w,1);
-        SCRIPT_MSG("UninstSubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
+        SetString(line.gettoken_str(a+1),NLF_USUBCAPTION_CONFIRM+w,1,lang);
+        SCRIPT_MSG("UninstSubCaption: page:%d, text=%s\n",w,line.gettoken_str(a+1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_WRITEUNINSTALLER:
@@ -1554,60 +1599,113 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_OK;
     case TOK_SUBCAPTION:
       {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+2) PRINTHELP();
         int s;
-        int w=line.gettoken_int(1,&s);
-        if (!s || w < 0 || w > 4) PRINTHELP()
-        SetString(line.gettoken_str(2),NLF_SUBCAPTION_LICENSE+w,1);
-        SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
+        int w=line.gettoken_int(a,&s);
+        if (!s || w < 0 || w > 2) PRINTHELP()
+        SetString(line.gettoken_str(a+1),NLF_SUBCAPTION_LICENSE+w,1,lang);
+        SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(a+1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_FILEERRORTEXT:
 #ifdef NSIS_SUPPORT_FILE
-      SetString(line.gettoken_str(1),NLF_FILE_ERROR,1);
-      SCRIPT_MSG("FileErrorText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+1) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_FILE_ERROR,1,lang);
+        SCRIPT_MSG("FileErrorText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_FILE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif
     case TOK_BRANDINGTEXT:
-      SetString(line.gettoken_str(1),NLF_BRANDING,0);
-      SCRIPT_MSG("BrandingText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()!=a+1) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
+        SCRIPT_MSG("BrandingText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_MISCBUTTONTEXT:
-      SetString(line.gettoken_str(1),NLF_BTN_BACK,0);
-      SetString(line.gettoken_str(2),NLF_BTN_NEXT,0);
-      SetString(line.gettoken_str(3),NLF_BTN_CANCEL,0);
-      SetString(line.gettoken_str(4),NLF_BTN_CLOSE,0);
-      SCRIPT_MSG("MiscButtonText: back=\"%s\" next=\"%s\" cancel=\"%s\" close=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_BTN_BACK,0,lang);
+        SetString(line.gettoken_str(a+1),NLF_BTN_NEXT,0,lang);
+        SetString(line.gettoken_str(a+2),NLF_BTN_CANCEL,0,lang);
+        SetString(line.gettoken_str(a+3),NLF_BTN_CLOSE,0,lang);
+        SCRIPT_MSG("MiscButtonText: back=\"%s\" next=\"%s\" cancel=\"%s\" close=\"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2),line.gettoken_str(a+3));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_SPACETEXTS:
-      if (!lstrcmp(line.gettoken_str(1), "none")) {
-        no_space_texts=true;
-        SCRIPT_MSG("SpaceTexts: none\n");
-      }
-      else {
-        SetString(line.gettoken_str(1),NLF_SPACE_REQ,0);
-        SetString(line.gettoken_str(2),NLF_SPACE_AVAIL,0);
-        SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+
+        if (!lstrcmp(line.gettoken_str(a), "none")) {
+          no_space_texts=true;
+          SCRIPT_MSG("SpaceTexts: none\n");
+        }
+        else {
+          SetString(line.gettoken_str(a),NLF_SPACE_REQ,0);
+          SetString(line.gettoken_str(a+1),NLF_SPACE_AVAIL,0);
+          SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
+        }
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTBUTTONTEXT:
-      SetString(line.gettoken_str(1),NLF_BTN_INSTALL,0);
-      SCRIPT_MSG("InstallButtonText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_BTN_INSTALL,0,lang);
+        SCRIPT_MSG("InstallButtonText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_DETAILSBUTTONTEXT:
-      SetString(line.gettoken_str(1),NLF_BTN_DETAILS,0);
-      SCRIPT_MSG("DetailsButtonText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_BTN_DETAILS,0,lang);
+        SCRIPT_MSG("DetailsButtonText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_COMPLETEDTEXT:
-      SetString(line.gettoken_str(1),NLF_COMPLETED,0);
-      SCRIPT_MSG("CompletedText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_COMPLETED,0,lang);
+        SCRIPT_MSG("CompletedText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTBUTTONTEXT:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      SetString(line.gettoken_str(1),NLF_BTN_UNINSTALL,0);
-      SCRIPT_MSG("UninstButtonText: \"%s\"\n",line.gettoken_str(1));
+      {
+        int a = 1;
+        WORD lang = 0;
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
+        if (line.getnumtokens()==a) PRINTHELP();
+        SetString(line.gettoken_str(a),NLF_BTN_UNINSTALL,0,lang);
+        SCRIPT_MSG("UninstButtonText: \"%s\"\n",line.gettoken_str(a));
+      }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
