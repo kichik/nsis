@@ -134,6 +134,7 @@ Section "Script Examples" SecExample
   File ..\Examples\gfx.nsi
   File ..\Examples\one-section.nsi
   File ..\Examples\languages.nsi
+  File ..\Examples\VersionInfo.nsi
 SectionEnd
 
 Section "NSIS Menu" SecMenu
