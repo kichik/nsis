@@ -433,7 +433,6 @@ typedef WORD LANGID;
 
 #  define DS_FIXEDSYS 8
 #  define DS_SETFONT 64
-#  define DS_SHELLFONT (DS_SETFONT | DS_FIXEDSYS)
 
 #  define WS_EX_RIGHT 0x1000
 #  define WS_EX_RIGHTSCROLLBAR 0
@@ -442,6 +441,10 @@ typedef WORD LANGID;
 #  define TVS_RTLREADING 64
 
 #  define PBS_SMOOTH 1
+#endif
+
+#ifndef DS_SHELLFONT
+#  define DS_SHELLFONT (DS_SETFONT | DS_FIXEDSYS)
 #endif
 
 // brush styles
