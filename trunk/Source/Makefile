@@ -23,13 +23,34 @@ RM = rm
 
 # -- Compilers and linker flags --
 DEFINES = -DCOMPRESS_MF_BT
-CFLAGS = -Wall -O3
-CXXFLAGS = -Wall -O3
+CFLAGS += -Wall
+CXXFLAGS += -Wall
 CPPFLAGS = $(DEFINES)
+RELEASE = 1
 ifneq ($(EXESUFF),)
-  LDFLAGS = -s -Wl,-Map,$(subst $(EXESUFF),.map,$@)
+  LDFLAGS += -Wl,-Map,$(subst $(EXESUFF),.map,$@)
 else
-  LDFLAGS = -s -Wl,-Map,$@.map
+  LDFLAGS += -Wl,-Map,$@.map
+endif
+
+ifeq ($(PROFILING),1)
+  CFLAGS += -g -pg -O3
+  CXXFLAGS += -g -pg -O3
+  LDFLAGS += -g -pg
+  RELEASE = 0
+endif
+
+ifeq ($(DEBUG),1)
+  CFLAGS += -g -O0
+  CXXFLAGS += -g -O0
+  LDFLAGS += -g
+  RELEASE = 0
+endif
+
+ifeq ($(RELEASE),1)
+  CFLAGS += -O3
+  CXXFLAGS += -O3
+  LDFLAGS += -s
 endif
 
 all : exehead makensis
