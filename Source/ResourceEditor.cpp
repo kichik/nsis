@@ -484,7 +484,7 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 
     char* szName = cRDirE->GetName();
     WORD iLen = lstrlen(szName);
-    WCHAR* szwName = new WCHAR[iLen];
+    WCHAR* szwName = new WCHAR[iLen+1];
     // MultiByteToWideChar return value includes the null char, so -1
     iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
     *(WORD*)seeker = iLen;
@@ -658,7 +658,7 @@ DWORD CResourceDirectory::GetSize() {
   for (unsigned int i = 0; i < m_vEntries.size(); i++) {
     dwSize += sizeof(IMAGE_RESOURCE_DIRECTORY_ENTRY);
     if (m_vEntries[i]->HasName())
-      dwSize += sizeof(IMAGE_RESOURCE_DIR_STRING_U) + m_vEntries[i]->GetNameLength()*sizeof(WCHAR);
+      dwSize += sizeof(IMAGE_RESOURCE_DIR_STRING_U) + (m_vEntries[i]->GetNameLength()+1)*sizeof(WCHAR);
     if (m_vEntries[i]->IsDataDirectory())
       dwSize += m_vEntries[i]->GetSubDirectory()->GetSize();
     else {
@@ -700,7 +700,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDirector
   }
   else {
     m_bHasName = true;
-    m_szName = new char[lstrlen(szName)];
+    m_szName = new char[lstrlen(szName)+1];
     lstrcpy(m_szName, szName);
   }
   m_bIsDataDirectory = true;
@@ -715,7 +715,7 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDataEntr
   }
   else {
     m_bHasName = true;
-    m_szName = new char[lstrlen(szName)];
+    m_szName = new char[lstrlen(szName)+1];
     lstrcpy(m_szName, szName);
   }
   m_bIsDataDirectory = false;
@@ -740,7 +740,7 @@ char* CResourceDirectoryEntry::GetName() {
   if (!m_bHasName)
     return 0;
   char* szName = 0;
-  szName = new char[lstrlen(m_szName)];
+  szName = new char[lstrlen(m_szName)+1];
   lstrcpy(szName, m_szName);
   return szName;
 }
