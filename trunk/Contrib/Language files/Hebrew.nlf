@@ -9,7 +9,7 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 RTL
-# Translation by Amir Szekely (aka KiCHiK)
+# Translation by Amir Szekely (aka KiCHiK), fixed by Yaron Shahrabani
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -61,7 +61,7 @@ Nullsoft Install System %s
 # ^ClickNext
 לחץ על הבא כדי להמשיך.
 # ^ClickInstall
-לחץ על התקן כדי להתקחיל את ההתקנה.
+לחץ על התקן כדי להתחיל את ההתקנה.
 # ^ClickUninstall
 לחך על הסר כדי להתחיל את ההסרה.
 # ^Name
@@ -69,11 +69,11 @@ Nullsoft Install System %s
 # ^Completed
 הפעולה הושלמה
 # ^LicenseText
-אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מסכים לכל תנאי ההסכם, לחץ 'אני מסכים'.
+אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מקבל את כל תנאי ההסכם, לחץ 'אני מסכים'.
 # ^LicenseTextCB
-אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מסכים לכל תנאי ההסכם, סמן את תיבת הסימון שלהלן. $_CLICK
+אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מקבל את כל תנאי ההסכם, סמן את תיבת הסימון שלהלן. $_CLICK
 # ^LicenseTextRB
-אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מסכים לכל תנאי ההסכם, בחר באפשרות הראשונה שלהלן. $_CLICK
+אנא סקור את הסכם הרישוי לפני התקנת $(^NameDA). אם הינך מקבל את כל תנאי ההסכם, בחר באפשרות הראשונה שלהלן. $_CLICK
 # ^UnLicenseText
 אנא סקור את הסכם הרישוי לפני הסרת $(^NameDA). אם הינך מסכים לכל תנאי ההסכם, לחץ 'אני מסכים'.
 # ^UnLicenseTextCB
