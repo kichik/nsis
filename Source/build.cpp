@@ -227,12 +227,13 @@ CEXEBuild::CEXEBuild()
   build_header.no_custom_instmode_flag=0;
 #endif
   build_header.num_sections=0;
+  /* Useless
   build_header.space_avail_id=0;
   build_header.space_req_id=0;
   build_header.dir_subtext_id=0;
   build_header.com_subtext1_id=0;
   build_header.com_subtext2_id=0;
-  build_header.common.intro_text_id=0;
+  build_header.common.intro_text_id=0;*/
   build_header.common.num_entries=0;
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   build_header.common.silent_install=0;
@@ -248,8 +249,9 @@ CEXEBuild::CEXEBuild()
   uninstall_size=-1;
 
   memset(&build_uninst,-1,sizeof(build_uninst));
+  /* Useless
   build_uninst.uninst_subtext_id=0;
-  build_uninst.common.intro_text_id=0;
+  build_uninst.common.intro_text_id=0;*/
   build_uninst.common.lb_bg=RGB(0,0,0);
   build_uninst.common.lb_fg=RGB(0,255,0);
   build_uninst.common.num_entries=0;

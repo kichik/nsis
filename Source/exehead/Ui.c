@@ -107,6 +107,9 @@ static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
   return SetDlgItemText(dlg,id,STR(GetLangString(lid)));
 }
 
+/*
+Useless functions
+
 static BOOL NSISCALL SetUITextFromLang(HWND defhw, WORD def, WORD custom, langid_t lid) {
   return SetDlgItemTextFromLang(custom?g_hwnd:defhw,(WORD)(custom?custom:def),lid);
 }
@@ -122,7 +125,12 @@ static UINT NSISCALL GetUIText(WORD def, WORD custom, char *str, int max_size) {
 
 static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
   return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
-}
+}*/
+
+#define SetUITextFromLang(hw,it,a,la) SetDlgItemTextFromLang(hw,it,la)
+#define SetUITextNT(hw,it,a,text) SetDlgItemText(hw,it,text)
+#define GetUIText(it,a,s,ss) GetDlgItemText(hwndDlg,it,s,ss)
+#define GetUIItem(hw,it,a) GetDlgItem(hw,it)
 
 #define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
 static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -735,7 +743,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       bi.pszDisplayName = name;
       bi.lpfn=BrowseCallbackProc;
       bi.lParam=(LPARAM)hwndDlg;
-      bi.lpszTitle = str;
+      bi.lpszTitle=str;
 #ifndef BIF_NEWDIALOGSTYLE
 #define BIF_NEWDIALOGSTYLE 0x0040
 #endif
@@ -833,27 +841,36 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
 
+TVHITTESTINFO NSISCALL hit_test(HWND tree)
+{
+  TVHITTESTINFO ht = {0};
+  DWORD dwpos = GetMessagePos();
+
+  ht.pt.x = GET_X_LPARAM(dwpos);
+  ht.pt.y = GET_Y_LPARAM(dwpos);
+  MapWindowPoints(HWND_DESKTOP, tree, &ht.pt, 1);
+
+  TreeView_HitTest(tree, &ht);
+
+  return ht;
+}
+
 static LONG oldTreeWndProc;
 static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  static LPARAM last_item=-1;
   if (uMsg == WM_KEYDOWN && wParam == VK_SPACE)
   {
     SendMessage(GetParent(hwnd),WM_TREEVIEW_KEYHACK,0,0);
     return 0;
   }
+  if (uMsg == WM_DESTROY) {
+    last_item=-1;
+  }
   if (uMsg == WM_MOUSEMOVE) {
-    TVHITTESTINFO ht = {0};
-    DWORD dwpos = GetMessagePos();
-
-    ht.pt.x = GET_X_LPARAM(dwpos);
-    ht.pt.y = GET_Y_LPARAM(dwpos);
-    MapWindowPoints(HWND_DESKTOP, hwnd, &ht.pt, 1);
-
-    TreeView_HitTest(hwnd, &ht);
-
+    TVHITTESTINFO ht = hit_test(hwnd);
     if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
     {
-      static LPARAM last_item;
       TVITEM hItem;
 
       hItem.hItem = ht.hItem;
@@ -1041,13 +1058,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         TVHITTESTINFO ht = {0};
         if (uMsg != WM_TREEVIEW_KEYHACK)
         {
-           DWORD dwpos = GetMessagePos();
-
-           ht.pt.x = GET_X_LPARAM(dwpos);
-           ht.pt.y = GET_Y_LPARAM(dwpos);
-           MapWindowPoints(HWND_DESKTOP, hwndTree1, &ht.pt, 1);
-
-           TreeView_HitTest(hwndTree1, &ht);
+           ht=hit_test(hwndTree1);
         }
         else
         {
