@@ -53,7 +53,7 @@
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Spanish"
   !insertmacro MUI_LANGUAGE "SimpChinese"
-  !insertmacro MUI_LANGUAGE "TradChinese"    
+  !insertmacro MUI_LANGUAGE "TradChinese"
   !insertmacro MUI_LANGUAGE "Japanese"
   !insertmacro MUI_LANGUAGE "Korean"
   !insertmacro MUI_LANGUAGE "Italian"
@@ -77,6 +77,7 @@
   !insertmacro MUI_LANGUAGE "Turkish"
   !insertmacro MUI_LANGUAGE "Lithuanian"
   !insertmacro MUI_LANGUAGE "Catalan"
+  !insertmacro MUI_LANGUAGE "Serbian"
 
 ;--------------------------------
 ;Reserve Files
@@ -143,6 +144,7 @@ FunctionEnd
   LangString DESC_SecDummy ${LANG_TURKISH} "Test section: Turkish description"
   LangString DESC_SecDummy ${LANG_LITHUANIAN} "Test section: Lithuanian description"
   LangString DESC_SecDummy ${LANG_CATALAN} "Test section: Catalan description"
+  LangString DESC_SecDummy ${LANG_SERBIAN} "Test section: Serbian description"
 
   !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
