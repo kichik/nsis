@@ -2773,10 +2773,6 @@ int CEXEBuild::uninstall_generate()
 
     MMapBuf udata;
 
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (build_crcchk)
-      crc = CRC32(crc, (unsigned char *) &fh, sizeof(fh));
-#endif
     udata.add(&fh, sizeof(fh));
 
     ubuild_datablock.setro(TRUE);
@@ -2799,10 +2795,6 @@ int CEXEBuild::uninstall_generate()
           compressor->Compress(0);
           if (compressor->GetNextOut() - obuf > 0)
           {
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-            if (build_crcchk)
-              crc=CRC32(crc, (unsigned char *)obuf, compressor->GetNextOut() - obuf);
-#endif
             udata.add(obuf, compressor->GetNextOut() - obuf);
           }
         }
@@ -2813,11 +2805,6 @@ int CEXEBuild::uninstall_generate()
           int l = min(avail_in, build_filebuflen);
 
           char *p = (char*)ubuild_datablock.get(in_pos, l);
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-          if (build_crcchk)
-            crc=CRC32(crc, (unsigned char *)p, l);
-#endif
-
           compressor->SetNextIn(p, l);
 
           while (compressor->GetAvailIn())
@@ -2845,16 +2832,13 @@ int CEXEBuild::uninstall_generate()
         compressor->End();
       }
 
-      firstheader *_fh=(firstheader *)udata.get();
+      firstheader *_fh=(firstheader *)udata.get(0, sizeof(firstheader));
       _fh->length_of_all_following_data=udata.getlen()+(build_crcchk?sizeof(int):0);
+      udata.release();
     }
     else
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
     {
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-      if (build_crcchk)
-        crc = CRC32(crc, (unsigned char *)uhd.get(), uhd.getlen());
-#endif
       udata.add(uhd.get(), uhd.getlen());
 
       int st = udata.getlen();
@@ -2865,10 +2849,6 @@ int CEXEBuild::uninstall_generate()
       {
         int l = min(build_filebuflen, left);
         void *p = ubuild_datablock.get(length - left, l);
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-        if (build_crcchk)
-          crc = CRC32(crc, (unsigned char *)p, l);
-#endif
         memcpy(udata.get(st + length - left, l), p, l);
         udata.flush(l);
         udata.release();
@@ -2879,9 +2859,23 @@ int CEXEBuild::uninstall_generate()
 
     ubuild_datablock.clear();
 
+    udata.setro(TRUE);
+
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     if (build_crcchk)
+    {
+      int pos = 0;
+      int left = udata.getlen();
+      while (left > 0)
+      {
+        int l = min(build_filebuflen, left);
+        crc = CRC32(crc, (unsigned char *) udata.get(pos, l), l);
+        udata.release();
+        pos += l;
+        left -= l;
+      }
       udata.add(&crc, sizeof(crc));
+    }
 #endif
 
     if (add_db_data(&udata) < 0)
