@@ -1,10 +1,11 @@
-;Install Options Test Script
+;InstallOptions Test Script
 ;Written by Joost Verburg
+;--------------------------
 
 !define TEMP1 $R0 ;Temp variable
 
 ;The name of the installer
-Name "Install Options Test"
+Name "InstallOptions Test"
 
 ;The file to write
 OutFile "Test.exe"
@@ -14,7 +15,7 @@ InstallDir "$PROGRAMFILES\IOTest"
 
 ;Things that need to be extracted on startup (keep these lines before any File command!)
 ;Only useful for BZIP2 compression
-;Use ReserveFile for your own Install Options ini files too!
+;Use ReserveFile for your own InstallOptions INI files too!
 
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "test.ini"
@@ -27,7 +28,7 @@ ComponentText "Choose components"
 
 ;Order of pages
 Page license
-Page custom SetCustom ": Testing Installer Options" ;Custom page. Install Options gets called in SetCustom.
+Page custom SetCustom ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
 Page components
 Page directory
 Page instfiles
@@ -51,22 +52,23 @@ SectionEnd
 
 Function .onInit
 
-  ;Extract Install Options files
+  ;Extract InstallOptions files
   ;$PLUGINSDIR will automatically be removed when the installer closes
   
   InitPluginsDir
-  
   File /oname=$PLUGINSDIR\test.ini "test.ini"
   
 FunctionEnd
 
 Function SetCustom
 
-  ;Display the Install Options dialog
-
+  ;Display the InstallOptions dialog
+  
   Push ${TEMP1}
 
-  InstallOptions::dialog "$PLUGINSDIR\test.ini"
+    InstallOptions::dialog "$PLUGINSDIR\test.ini"
+    Pop ${TEMP1}
+  
   Pop ${TEMP1}
 
 FunctionEnd
