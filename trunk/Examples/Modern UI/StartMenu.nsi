@@ -87,7 +87,7 @@ Section "Dummy Section" SecDummy
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
     ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\$MUI_TEMP"
+    CreateDirectory "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}"
     CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
