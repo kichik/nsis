@@ -19,7 +19,7 @@ typedef struct _stack_t {
 } stack_t;
 
 
-static int g_stringsize;
+static unsigned int g_stringsize;
 static stack_t **g_stacktop;
 static char *g_variables;
 
