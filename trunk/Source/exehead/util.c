@@ -12,6 +12,10 @@
 char g_log_file[1024];
 #endif
 
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+extern char plugins_temp_dir[NSIS_MAX_STRLEN];
+#endif
+
 char g_usrvars[24][NSIS_MAX_STRLEN];
 
 HANDLE g_hInstance;
@@ -495,6 +499,10 @@ void process_string(char *out, const char *in)
 
         case VAR_CODES_START + 34: // LANGUAGE
           wsprintf(out, "%u", cur_install_strings_table->lang_id);
+          break;
+
+        case VAR_CODES_START + 35: // PLUGINSDIR
+          lstrcpy(out, plugins_temp_dir);
           break;
 
         #if VAR_CODES_START + 34 >= 255

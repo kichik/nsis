@@ -3328,30 +3328,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[1]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) return ret;
-        }
-        // Make DLL name (on user machine)
-        ent.which=EW_PLUGINCOMMANDPREP;
-        ent.offsets[0]=add_string(strrchr(dllPath,'\\'));
-        ret=add_entry(&ent);
-        if (ret != PS_OK) return ret;
-
-        // Add the DLL if not already added
-        if (!m_plugins.IsDLLStored(strrchr(dllPath,'\\')+1))
-        {
-          int error;
-          int files_added;
-          char file[NSIS_MAX_STRLEN];
-          wsprintf(file,"$0\\%s",strrchr(dllPath,'\\')+1);
-          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&files_added,file)))
-          {
-            ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
-            return error;
-          }
-
-          m_plugins.DLLStored(strrchr(dllPath,'\\')+1);
-        }
-
-        if (!plugin_used) {
+          // Copy $0 to $PLUGINSDIR
+          ent.which=EW_PLUGINCOMMANDPREP;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
           // Pop $0
           ent.which=EW_PUSHPOP;
           ent.offsets[0]=0; // $0
@@ -3359,8 +3339,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[2]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) return ret;
+          // We need to do all of this only once
+          plugin_used = true;
         }
-        plugin_used = true;
+
+        // DLL name on the user machine
+        char tempDLL[NSIS_MAX_STRLEN];
+        wsprintf(tempDLL, "$PLUGINSDIR%s", strrchr(dllPath,'\\'));
+        int tempDLLtab = add_string(tempDLL);
+
+        // Add the DLL if not already added
+        if (!m_plugins.IsDLLStored(strrchr(dllPath,'\\')+1))
+        {
+          int error;
+          int files_added;
+          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&files_added,tempDLL)))
+          {
+            ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
+            return error;
+          }
+
+          m_plugins.DLLStored(strrchr(dllPath,'\\')+1);
+        }
 
         // Finally call the DLL
         char* command = strstr(line.gettoken_str(0),"::");
@@ -3381,7 +3381,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 
         // next, call it
         ent.which=EW_REGISTERDLL;
-        ent.offsets[0]=0;
+        ent.offsets[0]=tempDLLtab;
         ent.offsets[1]=add_string(command);
         ent.offsets[2]=-1;
         ret=add_entry(&ent);

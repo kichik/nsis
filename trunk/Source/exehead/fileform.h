@@ -416,7 +416,7 @@ int GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
 int GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
-#define VAR_CODES_START (256 - 36)
+#define VAR_CODES_START (256 - 37)
 
 
 #endif //_FILEFORM_H_
