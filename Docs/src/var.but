@@ -12,13 +12,13 @@ User variables can be declared with the \R{var}{Var} command. You can use these 
 
 \c var_name
 
-Declare a user variable. Allowed charaters for variables names: [a-z][A-Z][0-9] and '_'.
+Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'.
 
 \S1{varother} Other Writable Variables
 
 \e{$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9}
 
-Registers. These variables can be used just like user variables, but are usually used in shared functions or macro's. You don't have to declare these variables, so you won't get any name conflics when using them in shared code. When using these variables in shared code, it's recommended that you use the stack to save and restore their original values. These variables can also be used for communication with plug-ins, because they can be read and written by the plug-in DLL's.
+Registers. These variables can be used just like user variables, but are usually used in shared functions or macro's. You don't have to declare these variables, so you won't get any name conflicts when using them in shared code. When using these variables in shared code, it's recommended that you use the stack to save and restore their original values. These variables can also be used for communication with plug-ins, because they can be read and written by the plug-in DLL's.
 
 \e{$INSTDIR}
 
