@@ -6,6 +6,8 @@ Released on December 3rd, 2004
 
 \S1{v2.03-rn} Release Notes
 
+\b If you're using \c{File /r folder} in your script, it's recommended you replace it with \c{File /r folder\\*} for faster compilation and so no other folders named \e{folder} will be included
+
 \b Command line switches prefix on POSIX has changed to a dash
 
 \b The plug-in API change is backward compatible
@@ -25,6 +27,8 @@ Released on December 3rd, 2004
 \b Added /date switch to !define for definition of date and time constants
 
 \b Added /x switch for \R{file}{File} and \R{reservefile}{ReserveFile} to exclude files and directories
+
+\b Made \R{file}{File}'s /r switch always search in subdirectories, even if the given path points to an existing directory
 
 \S2{} Minor Changes
 
