@@ -10,7 +10,7 @@
 
 !define MUI_GREEK_USED
 
-  !define MUI_GREEK_LANGNAME "Ελληνικά" ;Name of the language in the language itself (English, Deutsch, Franηais etc.)
+  !define MUI_GREEK_LANGNAME "Greek" ;Ελληνικά (English, Deutsch, Franηais etc.)
 
   ;INSTALLER
   
