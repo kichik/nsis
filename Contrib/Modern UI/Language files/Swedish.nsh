@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Swedish (1053)
 ;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Svenska" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Välkommen till installationsguiden för $(^NameDA)."
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom installationen av $(^NameDA).\r\n\r\nDet är rekomenderat att du avslutar alla program innan du fortsätter installationen. Detta tillåter att installationen kan uppdatera vissa systemfiler utan att starta om din dator.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Denna guide tar dig igenom installationen av $(^NameDA).\r\n\r\nDet rekommenderas att du avslutar alla andra program innan du fortsätter installationen. Detta tillåter att installationen uppdaterar nödvändiga systemfiler utan att behöva starta om din dator.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licensavtal"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Var vänlig läs igenom licensvillkoren innan du installerar $(^NameDA)."
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Avslutar avinstallationsguiden för $(^NameDA)."
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) komponenter har avinstallerats från din dator.\r\n\r\nKlicka på Avsluta för att avsluta guiden."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Din dator måste startas om för att fullborda avinstallationen av $(^NameDA). Vill du starta om nu?"
 
   !define MUI_UNTEXT_ABORTWARNING "Är du säker på att du vill avbryta avinstallationen av $(^Name)?"
 
