@@ -7,7 +7,7 @@ class IGrowBuf
 {
   public:
     virtual int add(const void *data, int len)=0;
-    virtual void resize(int newlen)=0;
+    virtual void resize(int newlen, int zero=0)=0;
     virtual int getlen()=0;
     virtual void *get()=0;
 };
@@ -26,9 +26,10 @@ class GrowBuf : public IGrowBuf
       return m_used-len;
     }
 
-    void resize(int newlen)
+    void resize(int newlen, int zero=0)
     {
       int os=m_alloc;
+      int ou=m_used;
       m_used=newlen;
       if (newlen > m_alloc)
       {
@@ -60,6 +61,7 @@ class GrowBuf : public IGrowBuf
           free(m_s);
         }
         m_s=n;
+        if (zero) memset((char*)m_s+ou,0,m_used-ou);
       }
       if (!m_used && m_alloc > 65535) // only free if you resize to 0 and we're > 64k
       {
@@ -227,7 +229,7 @@ class MMapBuf : public IGrowBuf
       return getlen()-len;
     }
 
-    void resize(int newlen)
+    void resize(int newlen, int zero=0)
     {
       if (!m_gb_u && newlen < (16<<20)) // still in db mode
       {
