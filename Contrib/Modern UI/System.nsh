@@ -317,6 +317,16 @@
    
 !macroend
 
+!macro MUI_LANGUAGE LANGUAGE
+
+  !verbose 3
+
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
+  
+  !verbose 4
+  
+!macroend
+
 ;--------------------------------
 ;INSTALL OPTIONS
 
