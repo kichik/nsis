@@ -27,7 +27,17 @@ Section ""
   File /oname=$R0 "..\Docs\Chapter1.html"
   
   ; View file
+  ExecWait '"$PROGRAMFILES\Internet Explorer\iexplore.exe" "$R0"'
+
+  ; Note: another way of doing this would be to use ExecShell, but then you
+  ; really couldn't get away with deleting the files. Here is the ExecShell
+  ; line that you would want to use:
+  ;
   ; ExecShell "open" '"$R0"'
+  ;
+  ; The advantage of this way is that it would use the default browser to
+  ; open the HTML.
+  ;
   
   ; Delete the files (on reboot if file is in use)
   Delete /REBOOTOK $R0
