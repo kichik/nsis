@@ -28,11 +28,7 @@ EXAMPLES
 * write an advanced paging example showing multiple components page with multiple
   instfiles pages
 
-* language files auto updater
-
 INSTALLOPTIONS
-
-* manual validation
 
 * add an option for LBS_MULTIPLESEL too, not just LBS_EXTENDEDSEL
 
