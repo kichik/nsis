@@ -7,7 +7,6 @@ void CLZMADecoder::Create(BYTE *memoryPointer,
     int numLiteralPosStateBits,
     int numPosStateBits)
 {
-
   int numPosStates = 1 << numPosStateBits;
   m_PosStateMask = numPosStates - 1;
   m_LiteralDecoder.Create(memoryPointer, numLiteralPosStateBits, numLiteralContextBits);
@@ -139,15 +138,14 @@ UINT32 CLZMADecoder::Code(CLZMAStateP lzmaState)
         repDistances[2] = repDistances[1];
         repDistances[1] = repDistances[0];
         repDistances[0] = distance;
+        //LZMAMemCopy(repDistances, repDistances + 1, kNumRepDistances * sizeof(UINT32));
       }
-      if (distance > nowPos || distance == 0)
-      {
-        // it's for stream version (without knowing uncompressed size)
-        // if (distance >= _dictionarySizeCheck)
-        if (distance == (UINT32)(0))
-          break;
+      // it's for stream version (without knowing uncompressed size)
+      //if (distance >= _dictionarySizeCheck)
+      if (!distance)
+        break;
+      if (distance > nowPos)
         return (-1);
-      }
 
       len += kMatchMinLen;
       nowPos += len;

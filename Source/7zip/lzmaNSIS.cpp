@@ -95,12 +95,10 @@ DWORD WINAPI lzmaDecompressThread(LPVOID lpParameter)
     lzmaDecodeder->Create((LPBYTE) lzmaState->DynamicData, 
       numLiteralContextBits, numLiteralPosStateBits, numPosStateBits);
 
-    UINT32 dictionarySize = 0;
-    for (int i = 0; i < 4; i++)
-      dictionarySize += ((UINT32)properties[1 + i]) << (i * 8);
-    if (lzmaState->Dictionary == 0 || dictionarySize != lzmaState->DictionarySize)
+    UINT32 dictionarySize = *(UINT32 *)(properties + 1);
+    if (dictionarySize != lzmaState->DictionarySize)
     {
-      if (lzmaState->Dictionary != 0)
+      if (lzmaState->Dictionary)
         LZMAFree(lzmaState->Dictionary);
       lzmaState->Dictionary = LZMAAlloc(dictionarySize);
       lzmaState->DictionarySize = dictionarySize;

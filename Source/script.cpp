@@ -3148,14 +3148,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_EXECUTE
       ent.which=EW_EXECUTE;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1] = 0;
+      ent.offsets[2]=0;
       if (which_token == TOK_EXECWAIT)
       {
-        ent.offsets[1]=1;
-        ent.offsets[2]=GetUserVarIndex(line, 2);
-        if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+        ent.offsets[2]=1;
+        ent.offsets[1]=GetUserVarIndex(line, 2);
+        if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
       }
-      SCRIPT_MSG("%s: \"%s\" (->%s)\n",ent.offsets[1]?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("%s: \"%s\" (->%s)\n",ent.offsets[2]?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
 
       DefineInnerLangString(NLF_EXEC);
     return add_entry(&ent);
@@ -4274,8 +4274,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.which=EW_GETFULLPATHNAME;
         if (line.getnumtokens()==4 && !stricmp(line.gettoken_str(1),"/SHORT")) a++;
         else if (line.getnumtokens()==4 || *line.gettoken_str(1)=='/') PRINTHELP()
-        ent.offsets[0]=GetUserVarIndex(line, 1+a);
-        ent.offsets[1]=add_string(line.gettoken_str(2+a));
+        ent.offsets[0]=add_string(line.gettoken_str(2+a));
+        ent.offsets[1]=GetUserVarIndex(line, 1+a);
         ent.offsets[2]=!a;
         if (ent.offsets[0]<0) PRINTHELP()
         SCRIPT_MSG("GetFullPathName: %s->%s (%d)\n",
@@ -4299,10 +4299,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSION:
 #ifdef NSIS_SUPPORT_GETDLLVERSION
       ent.which=EW_GETDLLVERSION;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=GetUserVarIndex(line, 3);
-      if (ent.offsets[1]<0 || ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[0]=GetUserVarIndex(line, 2);
+      ent.offsets[1]=GetUserVarIndex(line, 3);
+      ent.offsets[2]=add_string(line.gettoken_str(1));
+      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("GetDLLVersion: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
@@ -4313,10 +4313,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETFILETIME:
 #ifdef NSIS_SUPPORT_GETFILETIME
       ent.which=EW_GETFILETIME;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GetUserVarIndex(line, 2);
-      ent.offsets[2]=GetUserVarIndex(line, 3);
-      if (ent.offsets[1]<0 || ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[0]=GetUserVarIndex(line, 2);
+      ent.offsets[1]=GetUserVarIndex(line, 3);
+      ent.offsets[2]=add_string(line.gettoken_str(1));
+      if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("GetFileTime: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
@@ -4604,10 +4604,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_FINDFIRST
     case TOK_FINDFIRST:
       ent.which=EW_FINDFIRST;
-      ent.offsets[0]=add_string(line.gettoken_str(3)); // filespec
-      ent.offsets[1]=GetUserVarIndex(line, 2); // out
-      ent.offsets[2]=GetUserVarIndex(line, 1); // handleout
-      if (ent.offsets[1] < 0 || ent.offsets[2] < 0) PRINTHELP()
+      ent.offsets[0]=GetUserVarIndex(line, 2); // out
+      ent.offsets[1]=GetUserVarIndex(line, 1); // handleout
+      ent.offsets[2]=add_string(line.gettoken_str(3)); // filespec
+      if (ent.offsets[0] < 0 || ent.offsets[1] < 0) PRINTHELP()
       SCRIPT_MSG("FindFirst: spec=\"%s\" handle=%s output=%s\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_FINDNEXT:
@@ -4637,8 +4637,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILEOPEN:
       {
         ent.which=EW_FOPEN;
-        ent.offsets[3]=GetUserVarIndex(line, 1); // file handle
-        ent.offsets[0]=add_string(line.gettoken_str(2));
+        ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+        ent.offsets[3]=add_string(line.gettoken_str(2));
         ent.offsets[1]=0; //openmode
         if (!stricmp(line.gettoken_str(3),"r"))
         {
@@ -4705,8 +4705,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
         ent.which=EW_FSEEK;
         ent.offsets[0]=GetUserVarIndex(line, 1);
-        ent.offsets[1]=add_string(line.gettoken_str(2));
-        ent.offsets[3]=GetUserVarIndex(line, 4);
+        ent.offsets[1]=GetUserVarIndex(line, 4);
+        ent.offsets[2]=add_string(line.gettoken_str(2));
 
         if (mode<0 && !line.gettoken_str(3)[0])
         {
@@ -4715,8 +4715,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         else modestr=line.gettoken_str(3);
 
-        if (mode<0 || ent.offsets[0] < 0 || (ent.offsets[3]<0 && line.gettoken_str(4)[0])) PRINTHELP()
-        ent.offsets[2]=tab[mode];
+        if (mode<0 || ent.offsets[0] < 0 || (ent.offsets[1]<0 && line.gettoken_str(4)[0])) PRINTHELP()
+        ent.offsets[3]=tab[mode];
         SCRIPT_MSG("FileSeek: fp=%s, ofs=%s, mode=%s, output=%s\n",
           line.gettoken_str(1),
           line.gettoken_str(2),
@@ -4795,31 +4795,31 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTIONSETTEXT:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_SET(name_ptr);
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=SECTION_FIELD_SET(name_ptr);
       SCRIPT_MSG("SectionSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_GET(name_ptr);
-      ent.offsets[2]=GetUserVarIndex(line, 2);
-      if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=SECTION_FIELD_GET(name_ptr);
+      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETFLAGS:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_SET(flags);
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=SECTION_FIELD_SET(flags);
       SCRIPT_MSG("SectionSetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETFLAGS:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_GET(flags);
-      ent.offsets[2]=GetUserVarIndex(line, 2);
-      if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=SECTION_FIELD_GET(flags);
+      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INSTTYPESETTEXT:
@@ -4840,31 +4840,31 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SECTIONSETINSTTYPES:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_SET(install_types);
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=SECTION_FIELD_SET(install_types);
       SCRIPT_MSG("SectionSetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETINSTTYPES:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_GET(install_types);
-      ent.offsets[2]=GetUserVarIndex(line, 2);
-      if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=SECTION_FIELD_GET(install_types);
+      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETSIZE:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_SET(size_kb);
-      ent.offsets[2]=add_string(line.gettoken_str(2));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=SECTION_FIELD_SET(size_kb);
       SCRIPT_MSG("SectionSetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETSIZE:
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=SECTION_FIELD_GET(size_kb);
-      ent.offsets[2]=GetUserVarIndex(line, 2);
-      if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=SECTION_FIELD_GET(size_kb);
+      if (line.gettoken_str(2)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETCURINSTTYPE:

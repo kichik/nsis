@@ -124,8 +124,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
   char *var0;
   char *var1;
-  char *var2;
-  char *var3;
+  //char *var2;
+  //char *var3;
   //char *var4;
   //char *var5;
 
@@ -152,9 +152,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
   var0 = g_usrvars[parm0];
   var1 = g_usrvars[parm1];
-  var2 = g_usrvars[parm2];
-  var3 = g_usrvars[parm3];
   // not used yet
+  //var2 = g_usrvars[parm2];
+  //var3 = g_usrvars[parm3];
   //var4 = g_usrvars[parm4];
   //var5 = g_usrvars[parm5];
 
@@ -227,7 +227,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if (insthwnd) ShowWindow(insthwnd,parm0);
     break;
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-    case EW_SETFILEATTRIBUTES: {
+    case EW_SETFILEATTRIBUTES:
+    {
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("SetFileAttributes: \"%s\":%08X",buf1,parm1);
       if (!SetFileAttributes(buf1,parm1))
@@ -323,8 +324,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_GETFULLPATHNAME:
       {
         char *fp;
-        char *p=var0;
-        char *buf0=GetStringFromParm(0x01);
+        char *p=var1;
+        char *buf0=GetStringFromParm(0x00);
         if (!GetFullPathName(buf0,NSIS_MAX_STRLEN,p,&fp))
         {
           exec_error++;
@@ -459,7 +460,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             GetNSISString(buf0,LANG_ERRORDECOMPRESSING);
           }
           log_printf2("%s",buf0);
-          my_MessageBox(buf0,MB_OK|MB_ICONSTOP);
+          my_MessageBox(buf0,MB_OK|MB_ICONSTOP|(IDOK<<20));
           return EXEC_ERROR;
         }
       }
@@ -670,7 +671,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!s)
           {
             log_printf2("Exch: stack < %d elements",parm2);
-            my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
+            my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<20));
             return EXEC_ERROR;
           }
           mystrcpy(buf0,s->text);
@@ -838,7 +839,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (hProc)
         {
           log_printf2("Exec: success (\"%s\")",buf0);
-          if (parm1)
+          if (parm2)
           {
             DWORD lExitCode;
             while (WaitForSingleObject(hProc,100) == WAIT_TIMEOUT)
@@ -849,7 +850,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             }
             GetExitCodeProcess(hProc, &lExitCode);
 
-            if (parm2>=0) myitoa(var2,lExitCode);
+            if (parm1>=0) myitoa(var1,lExitCode);
             else if (lExitCode) exec_error++;
           }
           CloseHandle( hProc );
@@ -869,9 +870,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       // also allows GetFileTime to be passed a wildcard.
       {
         WIN32_FIND_DATA *ffd;
-        char *highout=var1;
-        char *lowout=var2;
-        char *buf0=GetStringFromParm(0x00);
+        char *highout=var0;
+        char *lowout=var1;
+        char *buf0=GetStringFromParm(0x02);
 
         ffd=file_exists(buf0);
         if (ffd)
@@ -890,13 +891,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_GETDLLVERSION
     case EW_GETDLLVERSION:
       {
-        char *highout=var1;
-        char *lowout=var2;
+        char *highout=var0;
+        char *lowout=var1;
         DWORD s1;
         DWORD t[4]; // our two members are the 3rd and 4th..
         VS_FIXEDFILEINFO *pvsf1=(VS_FIXEDFILEINFO*)t;
         DWORD d;
-        char *buf1=GetStringFromParm(-0x10);
+        char *buf1=GetStringFromParm(-0x12);
         s1=GetFileVersionInfoSize(buf1,&d);
         *lowout=*highout=0;
         exec_error++;
@@ -1077,7 +1078,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_REBOOT:
       if (parm0!=0xbadf00d)
       {
-        my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
+        my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<20));
         return EXEC_ERROR;
       }
       g_exec_flags.exec_error++;
@@ -1282,8 +1283,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_FOPEN:
       {
         HANDLE h;
-        char *handleout=var3;
-        char *buf1=GetStringFromParm(-0x10);
+        char *handleout=var0;
+        char *buf1=GetStringFromParm(-0x13);
         h=myOpenFile(buf1,parm1,parm2);
         if (h == INVALID_HANDLE_VALUE)
         {
@@ -1359,11 +1360,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *t=var0;
         if (*t)
         {
-          DWORD v=SetFilePointer((HANDLE)myatoi(t),GetIntFromParm(1),NULL,parm2);
+          DWORD v=SetFilePointer((HANDLE)myatoi(t),GetIntFromParm(2),NULL,parm3);
 
-          if (parm3>=0)
+          if (parm1>=0)
           {
-            myitoa(var3,v);
+            myitoa(var1,v);
           }
         }
       }
@@ -1395,11 +1396,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_FINDFIRST:
       {
-        char *textout=var1;
-        char *handleout=var2;
+        char *textout=var0;
+        char *handleout=var1;
         HANDLE h;
         WIN32_FIND_DATA fd;
-        char *buf0=GetStringFromParm(0x00);
+        char *buf0=GetStringFromParm(0x02);
         h=FindFirstFile(buf0,&fd);
         if (h == INVALID_HANDLE_VALUE)
         {
@@ -1505,35 +1506,35 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       if ((unsigned int)x < (unsigned int)num_sections)
       {
         section *sec=g_sections+x;
-        if (parm1>=0) // get something
+        if (parm2>=0) // get something
         {
-          int res=((int*)sec)[parm1];
-          if (!parm1)
+          int res=((int*)sec)[parm2];
+          if (!parm2)
           {
             // getting text
-            GetNSISString(var2,res);
+            GetNSISString(var1,res);
           }
           else
           {
             // getting number
-            myitoa(var2,res);
+            myitoa(var1,res);
           }
         }
         else // set something
         {
-          parm1=-parm1-1;
-          if (parm1)
+          parm2=-parm2-1;
+          if (parm2)
           {
             // not setting text, get int
-            parm2=GetIntFromParm(2);
+            parm1=GetIntFromParm(1);
           }
           else
           {
             // setting text, send the message to do it
-            SendMessage(hwSectionHack,WM_NOTIFY_SECTEXT,x,parm2);
+            SendMessage(hwSectionHack,WM_NOTIFY_SECTEXT,x,parm1);
           }
-          ((int*)sec)[parm1]=parm2;
-          if (parm1)
+          ((int*)sec)[parm2]=parm1;
+          if (parm2)
           {
             // update tree view
             SendMessage(hwSectionHack,WM_NOTIFY_SECFLAGS,x,0);

@@ -22,7 +22,7 @@ public:
       Range <<= 8;
     }
   }
-  
+
   void Init(CLZMAStateP state)
   {
     Stream.Init(state);
@@ -40,18 +40,18 @@ public:
     for (int i = numTotalBits; i > 0; i--)
     {
       range >>= 1;
-      /*
+
       result <<= 1;
       if (code >= range)
       {
         code -= range;
         result |= 1;
       }
-      */
-      UINT32 t = (code - range) >> 31;
+
+      /*UINT32 t = (code - range) >> 31;
       code -= range & (t - 1);
       // range = aRangeTmp + ((range & 1) & (1 - t));
-      result = (result + result) | (1 - t);
+      result = (result + result) | (1 - t);*/
 
       if (range < kTopValue)
       {
