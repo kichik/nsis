@@ -1,6 +1,6 @@
-\C{uninst} Uninstaller Instructions
+\H{uninst} Uninstaller Instructions
 
-\H{WriteUninstaller} WriteUninstaller
+\S{WriteUninstaller} WriteUninstaller
 
 \c [Path\\]exename.exe
 

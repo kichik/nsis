@@ -1,24 +1,24 @@
-\C{generalpurpose} General Purpose Instructions
+\H{generalpurpose} General Purpose Instructions
 
-\H{callinstdll} CallInstDLL
+\S{callinstdll} CallInstDLL
 
 \c dllfile [/NOUNLOAD]
 
 Function Calls a NSIS extension DLL. See Contrib\\ExDLL for an example of how to make one. Extension DLLs can access the stack and variables. Use /NOUNLOAD to force the installer to leave the DLL loaded.
 
-\H{copyfiles} CopyFiles
+\S{copyfiles} CopyFiles
 
 \c [/SILENT] [/FILESONLY] filespec_on_destsys destination_path [size_of_files_in_kb]
 
 Copies files from the source to the destination on the installing system. Useful with $EXEDIR if you want to copy from installation media, or to copy from one place to another on the system. Uses SHFileOperation, so the user might see a status window of the copy operation if it is large (to disable this, use /SILENT). The last parameter specifies how big the copy is (in kilobytes), so that the installer can approximate the disk space requirements. On error, or if the user cancels the copy (only possible when /SILENT was omitted), the error flag is set. If /FILESONLY is specified, only files are copied.
 
-\H{createdirectory} CreateDirectory
+\S{createdirectory} CreateDirectory
 
 \c path_to_create
 
 Creates (recursively if necessary) the specified directory.
 
-\H{createshortcut} CreateShortCut
+\S{createshortcut} CreateShortCut
 
 \c link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
 
@@ -29,49 +29,49 @@ keyboard_shortcut should be in the form of 'flag|c' where flag can be a combinat
 description should be the description of the shortcut, or comment as it is called under XP.
 The error flag is set if the shortcut cannot be created (i.e. the path does not exist, or some other error).
 
-\H{getdllversion} GetDLLVersion
+\S{getdllversion} GetDLLVersion
 
 \c filename user_var(high dword output) user_var(low dword output)
 
 Gets the version information from the DLL in "filename". Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set.
 
-\H{getdllversionlocal} GetDLLVersionLocal
+\S{getdllversionlocal} GetDLLVersionLocal
 
 \c localfilename user_var(high dword output) user_var(low dword output)
 
 This is similar to GetDLLVersion, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the DLL version information of the DLL on the build system.
 
-\H{getfiletime} GetFileTime
+\S{getfiletime} GetFileTime
 
 \c filename user_var(high dword output) user_var(low dword output)
 
 Gets the last write time of "filename". Sets the user output variables with the high and low dwords of the timestamp on success; on failure the outputs are empty and the error flag is set.
 
-\H{getfiletimelocal} GetFileTimeLocal
+\S{getfiletimelocal} GetFileTimeLocal
 
 \c localfilename user_var(high dword output) user_var(low dword output)
 
 This is similar to GetFileTime, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the file timestamp of the file on the build system.
 
-\H{getfullpathname} GetFullPathName
+\S{getfullpathname} GetFullPathName
 
 \c [/SHORT] user_var(output) path_or_file
 
 Assign to the user variable $x, the full path of the file specified. If the path portion of the parameter is not found, the error flag will be set and $x will be empty. If /SHORT is specified, the path is converted to the short filename form.
 
-\H{gettempfilename} GetTempFileName
+\S{gettempfilename} GetTempFileName
 
 \c user_var(output)
 
 Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. Delete the file when done with it.
 
-\H{searchpath} SearchPath
+\S{searchpath} SearchPath
 
 \c user_var(output) filename
 
 Assign to the user variable $x, the full path of the file named by the second parameter. The error flag will be set and $x will be empty if the file cannot be found. Uses SearchPath() to search the system paths for the file.
 
-\H{setfileattributes} SetFileAttributes
+\S{setfileattributes} SetFileAttributes
 
 \c filename attribute1|attribute2|...
 
@@ -93,13 +93,13 @@ Sets the file attributes of 'filename'. Valid attributes can be combined with | 
 
 The error flag will be set if the file's attributes cannot be set (i.e. the file doesn't exist, or you don't have the right permissions)
 
-\H{regdll} RegDLL
+\S{regdll} RegDLL
 
 \c dllfile [entrypoint_name]
 
 Loads the specified DLL and calls DllRegisterServer (or entrypoint_name if specified). The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, find the entry point, or the function returned anything other than ERROR_SUCCESS (=0)).
 
-\H{unregdll} UnRegDLL
+\S{unregdll} UnRegDLL
 
 \c dllfile
 

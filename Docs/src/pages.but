@@ -1,8 +1,8 @@
-\C{pages} Pages
+\H{pages} Pages
 
 Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with InstallOptions for example).
 
-\H{pageoreder} Ordering
+\S{pageoreder} Ordering
 
 The page order is set simply by the order they are in the script. For example:
 
@@ -19,7 +19,7 @@ Please note that you must still use LicenseText and LicenseData for the license 
 
 If you don't use any Page command the installer pages order will be just as in older version: license (if LicenseText and LicenseData were specified), components (if ComponentText was specified and there is more than one visible section), directory (if DirText was specified), instfiles.
 
-\H{pagecallbacks} Callbacks
+\S{pagecallbacks} Callbacks
 
 Each built-in page has two callback functions. The pre-function and the post-creation function. The pre-function is called right before the page is created and the post-function is called right after it is created and before it is showed so you can tweak its user interface with CreateFont (\K{createfont}), SetStaticBkColor (\K{setstaticbkcolor}) and SendMessage (\K{sendmessage}).
 
@@ -57,13 +57,13 @@ Examples:
 \c    noback:
 \c  FunctionEnd
 
-\H{page} Page
+\S{page} Page
 
 \c (custom function) | ((license|components|directory|instfiles) [pre_function] [post_function])
 
 Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
 
-\H{uninstpage} UninstPage
+\S{uninstpage} UninstPage
 
 \c (custom function) | ((uninstConfirm|instfiles) [pre_function] [post_function])
 
