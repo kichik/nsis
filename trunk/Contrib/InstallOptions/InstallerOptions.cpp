@@ -527,32 +527,32 @@ bool ReadSettings(void) {
 
     pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
     if (pFields[nIdx].nType == FIELD_LABEL) {
-      int j = 0;
-      for (int i = 0; pFields[nIdx].pszText[i]; i++, j++) {
-        if (pFields[nIdx].pszText[i] == '\\') {
-          switch (pFields[nIdx].pszText[i+1]) {
+      char *p1, *p2;
+      for (p1=p2=pFields[nIdx].pszText; *p1; p1++, p2++) {
+        if (*p1 == '\\') {
+          switch (p1[1]) {
             case 'n':
-              pFields[nIdx].pszText[j] = '\n';
+              *p2 = '\n';
               break;
             case 'r':
-              pFields[nIdx].pszText[j] = '\r';
+              *p2 = '\r';
               break;
-            //case 't':
-            //  pFields[nIdx].pszText[j] = '\t';
-            //  break;
+            case 't':
+              *p2 = '\t';
+              break;
             case '\\':
-              pFields[nIdx].pszText[j] = '\\';
+              *p2 = '\\';
               break;
             default:
-              i--;
-              j--;
+              p1--;
+              p2--;
               break;
           }
-          i++;
+          p1++;
         }
-        else pFields[nIdx].pszText[j] = pFields[nIdx].pszText[i];
+        else *p2 = *p1;
       }
-      pFields[nIdx].pszText[j] = 0;
+      *p2 = 0;
     }
 
     // pszState cannot be NULL (?)
