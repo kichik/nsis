@@ -22,7 +22,7 @@ uses
 
 type
   VarConstants = (
-    INST_0,
+    INST_0,       // $0
     INST_1,       // $1
     INST_2,       // $2
     INST_3,       // $3
@@ -62,21 +62,21 @@ var
   g_variables: PChar;
   g_hwndParent: HWND;
 
-procedure Init(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer);
+procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer);
 function PopString(): string;
 procedure PushString(const str: string='');
-function GetUserVariable(varnum: TVariableList): string;
-procedure SetUserVariable(varnum: TVariableList; value: string);
-procedure NSISDialog(text, caption: string; buttons: integer);
+function GetUserVariable(const varnum: TVariableList): string;
+procedure SetUserVariable(const varnum: TVariableList; const value: string);
+procedure NSISDialog(const text, caption: string; const buttons: integer);
 
 implementation
 
-procedure Init(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer);
+procedure Init(const hwndParent: HWND; const string_size: integer; const variables: PChar; const stacktop: pointer);
 begin
-  g_stringsize:=string_size;
-  g_hwndParent:=hwndParent;
-  g_stacktop:=stacktop;
-  g_variables:=variables;
+  g_stringsize := string_size;
+  g_hwndParent := hwndParent;
+  g_stacktop   := stacktop;
+  g_variables  := variables;
 end;
 
 function PopString(): string;
@@ -103,7 +103,7 @@ begin
   end;
 end;
 
-function GetUserVariable(varnum: TVariableList): string;
+function GetUserVariable(const varnum: TVariableList): string;
 begin
   if (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
     Result := g_variables + integer(varnum) * g_stringsize
@@ -111,13 +111,13 @@ begin
     Result := '';
 end;
 
-procedure SetUserVariable(varnum: TVariableList; value: string);
+procedure SetUserVariable(const varnum: TVariableList; const value: string);
 begin
   if (value <> '') and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
     lstrcpy(g_variables + integer(varnum) * g_stringsize, PChar(value))
 end;
 
-procedure NSISDialog(text, caption: string; buttons: integer);
+procedure NSISDialog(const text, caption: string; const buttons: integer);
 begin
   MessageBox(g_hwndParent, PChar(text), PChar(caption), buttons);
 end;
