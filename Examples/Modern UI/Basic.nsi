@@ -20,7 +20,7 @@
   ;Language
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
 
   ;General
   Name "${NAME} ${VERSION}"
