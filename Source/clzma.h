@@ -1,6 +1,10 @@
 #ifndef __CLZMA_H__
 #define __CLZMA_H__
 
+#ifndef _WIN32
+# include <pthread.h>
+#endif
+
 #include "compressor.h"
 #include "7zip/7zip/IStream.h"
 #include "7zip/7zip/Compress/LZMA/LZMAEncoder.h"
