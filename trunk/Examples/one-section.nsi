@@ -30,7 +30,7 @@ Section !Required
 SectionEnd
 
 !ifdef USE_SUBSECTION
-	SubSection /e choose one
+	SubSection /e "choose one"
 !endif
 
 Section "optional #1" sec1
