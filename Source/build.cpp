@@ -281,6 +281,8 @@ CEXEBuild::CEXEBuild()
 
   no_space_texts=false;
 
+  build_plugin_unload=0;
+
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 }
 
