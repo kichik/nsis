@@ -1121,7 +1121,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.item.mask=TVIF_PARAM|TVIF_TEXT|TVIF_STATE;
         tv.item.lParam=x;
         tv.item.pszText=GetNSISStringTT(sec->name_ptr);
-        tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED;
+        tv.item.stateMask=TVIS_STATEIMAGEMASK|TVIS_EXPANDED|TVIS_BOLD;
 
         {
           int l=1;
@@ -1136,7 +1136,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         //if (sec->flags&SF_BOLD)
         {
           // SF_BOLD << 1 == 16 == TVIS_BOLD
-          tv.item.stateMask|=(sec->flags&SF_BOLD)<<1;
           tv.item.state|=(sec->flags&SF_BOLD)<<1;
         }
 
