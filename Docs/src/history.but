@@ -77,6 +77,8 @@
 
 \b Improved System plug-in
 
+\b Improved macros & functions: UpgradeDLL, GetParent, GetParameters. Using the new versions is recommended.
+
 \b Minor bug fixes
 
 \b Code clean-ups and some more comments
