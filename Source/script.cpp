@@ -3848,7 +3848,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         case 1:
         case 2:
         case 3:
-          ent.offsets[1]<<=2;
+          ent.offsets[1]<<=1;
         break;
         case 4:
           ent.offsets[1]=16;
