@@ -1475,11 +1475,11 @@ int CEXEBuild::write_output(void)
   INFO_MSG("EXE header size:          %10d / %d bytes\n",exeheader_size_new,exeheader_size);
 
   if (build_compress_whole) {
-    INFO_MSG("Install code+strings:                  (%d bytes)\n",
+    INFO_MSG("Install code:                          (%d bytes)\n",
       sizeof(fh)+fh.length_of_header+sizeof(int));
   }
   else {
-    INFO_MSG("Install code+strings:     %10d / %d bytes\n",
+    INFO_MSG("Install code:             %10d / %d bytes\n",
       sizeof(fh)+installinfo_compressed,
       sizeof(fh)+fh.length_of_header+sizeof(int));
   }
@@ -1505,9 +1505,9 @@ int CEXEBuild::write_output(void)
   if (uninstall_size>=0)
   {
     if (build_compress_whole)
-      INFO_MSG("Uninstall code+data+strings:           (%d bytes)\n",uninstall_size_full);
+      INFO_MSG("Uninstall code+data:                   (%d bytes)\n",uninstall_size_full);
     else
-      INFO_MSG("Uninstall code+data+strings:  %6d / %d bytes\n",uninstall_size,uninstall_size_full);
+      INFO_MSG("Uninstall code+data:          %6d / %d bytes\n",uninstall_size,uninstall_size_full);
     total_usize+=uninstall_size_full;
   }
 
@@ -1517,7 +1517,6 @@ int CEXEBuild::write_output(void)
     int dbl=build_datablock.getlen();
     if (build_compress_whole) {
       INFO_MSG("Compressed data:          ");
-//    INFO_MSG("[compress]");
     }
     while (dbl > 0)
     {
