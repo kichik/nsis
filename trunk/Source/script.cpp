@@ -9,11 +9,13 @@
 #include "DialogTemplate.h"
 #include "lang.h"
 #include "exehead/resource.h"
+#include <cassert> // for assert(3)
 
 #ifndef _WIN32
 #  include <sys/stat.h>
 #  include <time.h>
 #  include <glob.h>
+#  include <fcntl.h> // for O_RDONLY
 #endif
 
 #define MAX_INCLUDEDEPTH 10
@@ -101,6 +103,8 @@ void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
 char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
 {
   char* linebuf = NULL;
+  ResourceManager<char*, __free_with_free> linebufManager(linebuf);
+
   char temp[128] = "";
   sprintf(temp,"%d",linecnt);
 
@@ -117,7 +121,6 @@ char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
     linebuf = strdup(temp);
   }
   definedlist.add("__LINE__",linebuf);
-  free(linebuf);
 
   return oldline;
 }
@@ -242,6 +245,7 @@ int CEXEBuild::num_ifblock()
   return build_preprocessor_data.getlen() / sizeof(ifblock);
 }
 
+// Func size: just under 200 lines (orip)
 int CEXEBuild::doParse(const char *str)
 {
   LineParser line(inside_comment);
@@ -433,6 +437,7 @@ parse_again:
   return PS_OK;
 }
 
+// Func size: about 140 lines (orip)
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
 void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &hist, bool bIgnoreDefines /*= false*/)
 #else
@@ -481,6 +486,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
       else if (in[0] == '{')
       {
         char *s=strdup(in+1);
+		ResourceManager<char*, __free_with_free> sManager(s);
         char *t=s;
         unsigned int bn = 0;
         while (*t)
@@ -514,11 +520,11 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             hist.delbypos(hist.find((char*)defname.get(),0));
           }
         }
-        free(s);
       }
       else if (in[0] == '%')
       {
         char *s=strdup(in+1);
+		ResourceManager<char*, __free_with_free> sManager(s);
         char *t=s;
         while (*t)
         {
@@ -546,7 +552,6 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             hist.delbypos(hist.find((char*)defname.get(),0));
           }
         }
-        free(s);
       }
 #ifdef NSIS_FIX_DEFINES_IN_STRINGS
       else if (in[0] == '$')
@@ -554,6 +559,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
         if (in[1] == '{') // Found $$ before - Don't replace this define
         {
           char *s=strdup(in+2);
+		  ResourceManager<char*, __free_with_free> sManager(s);
           char *t=s;
           unsigned int bn = 0;
           while (*t)
@@ -570,7 +576,6 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
             ps_addtoline(s,defname,hist);
             in++;
           }
-          free(s);
         }
         else
         {
@@ -634,6 +639,10 @@ int CEXEBuild::includeScript(char *f)
     ERROR_MSG("!include: could not open file: \"%s\"\n",f);
     return PS_ERROR;
   }
+
+  // auto-fclose(3) incfp
+  ResourceManager<FILE*, __free_with_fclose> incfpManager(incfp);
+  
   if (build_include_depth >= MAX_INCLUDEDEPTH)
   {
     ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
@@ -669,7 +678,6 @@ int CEXEBuild::includeScript(char *f)
   fp=last_fp;
 
   build_include_depth--;
-  fclose(incfp);
   if (r != PS_EOF && r != PS_OK)
   {
     ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,errlinecnt);
@@ -784,6 +792,7 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
+// Func size: about 5000 lines (orip)
 int CEXEBuild::doCommand(int which_token, LineParser &line)
 {
   static const char *rootkeys[2] = {
@@ -1337,12 +1346,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("LicenseLangString: open failed \"%s\"\n",file);
         PRINTHELP()
       }
+	  ResourceManager<FILE*, __free_with_fclose> fpManager(fp);
       fseek(fp,0,SEEK_END);
       datalen=ftell(fp);
       if (!datalen)
       {
         ERROR_MSG("LicenseLangString: empty license file \"%s\"\n",file);
-        fclose(fp);
         return PS_ERROR;
       }
       rewind(fp);
@@ -1352,14 +1361,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
         return PS_ERROR;
       }
+	  ResourceManager<char*, __free_with_free> dataManager(data);
       char *ldata=data+1;
       if (fread(ldata,1,datalen,fp) != datalen)
       {
         ERROR_MSG("LicenseLangString: can't read file.\n");
-        fclose(fp);
         return PS_ERROR;
       }
-      fclose(fp);
       ldata[datalen]=0;
       if (!strncmp(ldata,"{\\rtf",sizeof("{\\rtf")-1))
         *data = SF_RTF;
@@ -1367,7 +1375,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         *data = SF_TEXT;
 
       int ret = SetLangString(name, lang, data);
-      free(data);
       if (ret == PS_WARNING)
         warning_fl("LicenseLangString \"%s\" set multiple times for %d, wasting space", name, lang);
       else if (ret == PS_ERROR)
@@ -1627,12 +1634,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (file[0] == '$' && file[1] == '(')
         {
           char *cp = strdup(file+2);
+		  ResourceManager<char*, __free_with_free> cpManager(cp);
           char *p = strchr(cp, ')');
           if (p && p[1] == 0) { // if string is only a language str identifier
             *p = 0;
             idx = DefineLangString(cp, 0);
           }
-          free(cp);
           data = file;
         }
 
@@ -1645,12 +1652,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG("LicenseData: open failed \"%s\"\n",file);
             PRINTHELP()
           }
+		  ResourceManager<FILE*, __free_with_fclose> fpManager(fp);
           fseek(fp,0,SEEK_END);
           datalen=ftell(fp);
           if (!datalen)
           {
             ERROR_MSG("LicenseData: empty license file \"%s\"\n",file);
-            fclose(fp);
             return PS_ERROR;
           }
           rewind(fp);
@@ -1660,14 +1667,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             ERROR_MSG("Internal compiler error #12345: LicenseData malloc(%d) failed.\n", datalen+2);
             return PS_ERROR;
           }
+		  //ResourceManager<char*, __free_with_free> dataManager(data);
           char *ldata=data+1;
           if (fread(ldata,1,datalen,fp) != datalen) {
             ERROR_MSG("LicenseData: can't read file.\n");
-            fclose(fp);
-            free(data);
+			free(data); // TODO: fix later (orip)
             return PS_ERROR;
           }
-          fclose(fp);
           ldata[datalen]=0;
           if (!strncmp(ldata,"{\\rtf",sizeof("{\\rtf")-1))
             *data = SF_RTF;
@@ -1688,8 +1694,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           cur_page->parms[1] = add_string(data, 0);
         }
 
-        if (!idx)
-          free(data);
+		if (!idx) free(data); // TODO: fix later (orip)
 
         SCRIPT_MSG("LicenseData: \"%s\"\n",file);
       }
@@ -2197,6 +2202,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
         }
+		ResourceManager<FILE*, __free_with_fclose> fuiManager(fui);
 
         fseek(fui, 0, SEEK_END);
         unsigned int len = ftell(fui);
@@ -2206,13 +2212,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", len);
           extern void quit(); quit();
         }
+		ResourceManager<LPBYTE, __free_with_free> uiManager(ui);
         if (fread(ui, 1, len, fui) != len) {
-          fclose(fui);
-          free(ui);
           ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
         }
-        fclose(fui);
 
         CResourceEditor *uire = new CResourceEditor(ui, len);
 
@@ -2220,7 +2224,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         // Search for required items
         #define GET(x) dlg = uire->GetResource(RT_DIALOG, MAKEINTRESOURCE(x), 0); if (!dlg) return PS_ERROR; CDialogTemplate UIDlg(dlg, uDefCodePage);
-        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);delete [] dlg;free(ui);delete uire;return PS_ERROR;}
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);delete [] dlg;delete uire;return PS_ERROR;}
         #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, NSIS_DEFAULT_LANG, dlg, dwSize); delete [] dlg;
 
         LPBYTE dlg = NULL;
@@ -2310,7 +2314,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         delete uire;
-        free(ui);
 
         SCRIPT_MSG("ChangeUI: %s %s%s\n", line.gettoken_str(1), line.gettoken_str(2), branding_image_found?" (branding image holder found)":"");
       }
@@ -2624,6 +2627,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
         unsigned int malloced = strlen(f) + 100;
         char *incfile = (char *) malloc(malloced);
+		assert(incfile != 0);
+		ResourceManager<char*, __free_with_free> incfileManager(incfile);
         strcpy(incfile, f);
         glob_t globbuf;
         if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
@@ -2697,8 +2702,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
           }
         }
-
-        free(incfile);
 
         if (!included)
         {
@@ -4376,6 +4379,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(1));
           return PS_ERROR;
         }
+		ResourceManager<FILE*, __free_with_fclose> fdllManager(fdll);
 
         fseek(fdll, 0, SEEK_END);
         unsigned int len = ftell(fdll);
@@ -4385,13 +4389,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n", dll);
           extern void quit(); quit();
         }
+		ResourceManager<LPBYTE, __free_with_free> dllManager(dll);
         if (fread(dll, 1, len, fdll) != len) {
-          fclose(fdll);
-          free(dll);
           ERROR_MSG("Error: Can't read \"%s\"!\n", line.gettoken_str(1));
           return PS_ERROR;
         }
-        fclose(fdll);
 
         try
         {
@@ -4421,7 +4423,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           delete dllre;
         }
         catch (exception& err) {
-          free(dll);
           ERROR_MSG(
             "GetDLLVersionLocal: error reading version info from \"%s\": %s\n",
             line.gettoken_str(1),
@@ -5358,6 +5359,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     {
       int ret, data_handle;
       char* command = strdup(line.gettoken_str(0));
+	  assert(command != 0);
+	  ResourceManager<char*, __free_with_free> commandManager(command);
 
       char* dllPath = m_plugins.GetPluginDll(uninstall_mode, &command, &data_handle);
       if (dllPath)
@@ -5370,7 +5373,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
         ret=add_entry(&ent);
         if (ret != PS_OK) {
-          free(command);
           return ret;
         }
 
@@ -5395,7 +5397,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           build_datesave=0; // off
           ret=do_add_file(dllPath,0,0,linecnt,&files_added,tempDLL,2,&data_handle); // 2 means no size add
           if (ret != PS_OK) {
-            free(command);
             return ret;
           }
           m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0),data_handle);
@@ -5423,7 +5424,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
           ret=add_entry(&ent);
           if (ret != PS_OK) {
-            free(command);
             return ret;
           }
         }
@@ -5435,7 +5435,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[2]=0;
         ret=add_entry(&ent);
         if (ret != PS_OK) {
-          free(command);
           return ret;
         }
 
@@ -5464,7 +5463,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[1]=0;
           ret=add_entry(&ent);
           if (ret != PS_OK) {
-            free(command);
             return ret;
           }
           SCRIPT_MSG(" %s",line.gettoken_str(i));
@@ -5481,17 +5479,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[3]=nounload|build_plugin_unload;
         ret=add_entry(&ent);
         if (ret != PS_OK) {
-          free(command);
           return ret;
         }
-
-        free(command);
 
         return PS_OK;
       }
       else
         ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
-      free(command);
     }
     return PS_ERROR;
     case TOK_INITPLUGINSDIR:
@@ -5599,10 +5593,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         (*total_files)++;
 
 #ifdef _WIN32
-        HANDLE hFile;
-        
         sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",d.cFileName);
-        hFile = CreateFile(
+        HANDLE hFile = CreateFile(
           newfn,
           GENERIC_READ,
           FILE_SHARE_READ,
@@ -5617,31 +5609,35 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
+
+		// Will auto-CloseHandle hFile
+		ResourceManager<HANDLE, __free_with_CloseHandle> hFileManager(fd);
+
         len = GetFileSize(hFile, NULL);
         if (len && !mmap.setfile(hFile, len))
         {
           FindClose(h);
-          CloseHandle(hFile);
           ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
 #else
-        int fd;
-
         sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",filename);
         len = (DWORD) s.st_size;
 
-        fd = OPEN(newfn, O_RDONLY);
+        int fd = OPEN(newfn, O_RDONLY);
         if (fd == -1)
         {
           globfree(&globbuf);
           ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
+
+		// Will auto-close(2) fd
+		ResourceManager<int, __free_with_close> fdManager(fd);
+
         if (len && !mmap.setfile(fd, len))
         {
           globfree(&globbuf);
-          close(fd);
           ERROR_MSG("%sFile: failed creating mmap of \"%s\"\n",generatecode?"":"Reserve",newfn);
           return PS_ERROR;
         }
@@ -5701,10 +5697,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         if (ent.offsets[2] < 0)
         {
 #ifdef _WIN32
-          CloseHandle(hFile);
           FindClose(h);
 #else
-          close(fd);
           globfree(&globbuf);
 #endif
           return PS_ERROR;
@@ -5735,7 +5729,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             }
             else
             {
-              CloseHandle(hFile);
               FindClose(h);
 #else
             struct stat st;
@@ -5756,7 +5749,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             }
             else
             {
-              close(fd);
               globfree(&globbuf);
 #endif
               ERROR_MSG("%sFile: failed getting file date from \"%s\"\n",generatecode?"":"Reserve",newfn);
@@ -5787,12 +5779,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
           ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
         }
-
-#ifdef _WIN32
-        CloseHandle(hFile);
-#else
-        close(fd);
-#endif
 
         if (generatecode)
         {
