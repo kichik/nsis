@@ -4,7 +4,7 @@
 
 The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a Section or Function.  With the exception of InstallDir, none of these attributes allow use of Variables other than $\\r and $\\n in their strings.
 
-\\<b\\>Defaults are bold\\</b\\>
+\\<span style='color: red;'\\>Defaults are red\\</span\\>
 
 \S2{aaddbrandingimage} AddBrandingImage
 
@@ -40,9 +40,9 @@ Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') i
 
 \c caption
 
-Sets what the titlebars of the installer will display. By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name command}. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+When used outside a \R{pageex}{PageEx} block: Sets the text for the titlebar of the installer. the By default, it is 'Name Setup', where Name is specified with the \R{aname}{Name} instruction. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
 
-If used inside a \R{pageex}{PageEx} block, it sets the caption for the page.
+When used inside a \R{pageex}{PageEx} block: Sets the subcaption of the current page.
 
 \S2{achangeui} ChangeUI
 
@@ -82,7 +82,15 @@ Replaces the default text ("Completed") that is printed at the end of the instal
 
 \c [text [subtext] [subtext2]]
 
-Specifies a string that is above the component list. This can be something that notifies the user what it is they are actually installing. Note that if no parameter is specified, or if the ComponentText command is omitted, then the component page will not be visible, and all of the sections will be installed. Note: if text is specified and non-empty and you leave subtext or subtext2 empty, the defaults will be used (to set one to blank, use a string like " "). empty strings mean default on subtext and subtext2. Likewise, if you wish to enable the component page, but don't want any text on the top line, set text to " ".
+Specifies texts on the component page.
+
+text: Text above the controls
+
+subtext: Text next to the installation type selection
+
+subtext2: Text next to the components list.
+
+The default will be used if a string is empty ("").
 
 \S2{acrccheck} CRCCheck
 
@@ -96,17 +104,21 @@ Specifies whether or not the installer will perform a CRC on itself before allow
 
 Replaces the default details button text of "Show details", if parameter is specified (otherwise the default is used).
 
-\S2{adirshow} DirShow
-
-\c \\<b\\>show\\</b\\>|hide
-
-Specifies whether or not the user will see the directory selection page. Note that if 'hide' is specified, the installer will still check the validity of the installation path (using internal logic and .onVerifyInstDir if it is declared). If the path is deemed invalid, the directory page will be shown. To completely disable the Directory page (and install without prompting, even if a valid installation path is not available), specify DirText with no parameter (this might be useful if the installer installs everything into $SYSDIR or something like that).
-
 \S2{adirtext} DirText
 
 \c [text] [subtext] [browse_button_text] [browse_dlg_text]
 
-Atleast the first parameter is required.  Specifies a string that is above the directory selection area. If this command is not specified, or no parameter is specified, then the directory page is never visible to the user (even if DirShow show is specified). Subtext overrides the default text above the path entry box ("Select the directory to install MyApp in:"). Browse_button_text overrides the default browse button text ("Browse...").
+Specifies texts on the directory page.
+
+text: Text above the controls
+
+subtext: Text on the directory selection frame
+
+browse_button_text: Text on the Browse button
+
+browse_dlg_text: Text on the "Browse For Folder" dialog.
+
+The default will be used if a string is empty ("").
 
 \S2{adirvar} DirVar
 
@@ -187,7 +199,13 @@ Specifies if the displayed license must be accept explicit or not. This can be d
 
 \c [text [button_text]]
 
-Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
+Specifies texts on the license page.
+
+text: Text above the controls.
+
+browse_button_text: Text on the "I Agree" button.
+
+The default will be used if a string is empty ("").
 
 \S2{amiscbuttontext} MiscButtonText
 
@@ -247,7 +265,9 @@ If parameters are specified, overrides the space required and space available te
 
 \c [page_number subcaption]
 
-Overrides the subcaptions for each of the installer pages (0=": License Agreement",1=": Installation Options",2=": Installation Directory", 3=": Installing Files", 4=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+Overrides the subcaptions for each of the installer pages (0=": License Agreement",1=": Installation Options",2=": Installation Directory", 3=": Installing Files", 4=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+
+You can also set a subcaption (or override the default) using \R{acaption}{Caption} inside a \R{pageex}{PageEx} block.
 
 \S2{auninstallbuttontext} UninstallButtonText
 
@@ -271,13 +291,19 @@ Sets the icon of the uninstaller. This icon file \e{must} have the exact same st
 
 \c page_number subcaption
 
-Overrides the subcaptions for each of the uninstaller pages (0=": Confirmation",1=": Uninstalling Files",2=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string)
+Sets the default subcaptions for the uninstaller pages (0=": Confirmation",1=": Uninstalling Files",2=": Completed"). If you specify an empty string (""), the default will be used (you can however specify " " to achieve a blank string).
+
+You can also set a subcaption (or override the default) using \R{acaption}{Caption} inside a \R{pageex}{PageEx} block.
 
 \S2{auninstalltext} UninstallText
 
 \c text [subtext]
 
-Specifies the text on the first page of the uninstaller. If subtext is specified and not empty, it will replace the default secondary text on that page, "Uninstall from:".
+Specifies the texts on the uninstaller confirm page.
+
+text: Text above the controls
+
+subtext: Text next to the uninstall location
 
 \S2{awindowicon} WindowIcon
 
@@ -289,5 +315,5 @@ Sets whether or not the installer's icon is being displayed.
 
 \c on|\\<b\\>off\\</b\\>
 
-Sets whether or not an XP manifest will be added to the installer. This affects the uninstaller too.
+Sets whether or not an XP manifest will be added to the installer. An XP manifest makes the installer controls use the new XP style when running on Windows XP. This affects the uninstaller too.
 
