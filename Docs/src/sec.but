@@ -70,7 +70,7 @@ Get the current InstType and stores the Value in the given User Variable. The va
 
 \c inst_type_idx text
 
-Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{sectionin}{SectionIn} the index is zero based, which means the first installation type's index is 0.
+Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see \R{sectionsetinsttypes}{SectionSetInstTypes}. Unlike \R{ssectionin}{SectionIn} the index is zero based, which means the first installation type's index is 0.
 
 \S2{sinsttypegettext} InstTypeGetText
 
