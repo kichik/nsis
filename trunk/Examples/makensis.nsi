@@ -182,12 +182,15 @@ Section "Splash" SecContribSplash
   NoShortCuts:
 SectionEnd
 
-Section "Splash w/transparency" SecContribSplashT
+Section "UberSplash w/transparency" SecContribSplashT
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
   SetOverwrite try
-  File ..\Bin\magiclime.txt
-  File ..\Bin\magiclime.exe
+  File ..\Bin\UberSplash.exe
+  SetOutPath $INSTDIR\Contrib\UberSplash
+  SetOverwrite try
+  File ..\Contrib\UberSplash\splash.*
+  File ..\Contrib\UberSplash\*.txt
 SectionEnd
 
 Section "Zip2Exe" SecContribZ2E
@@ -485,8 +488,7 @@ Section Uninstall
   Delete $INSTDIR\Plugins\installoptions.dll
   Delete $INSTDIR\Bin\splash.txt
   Delete $INSTDIR\Bin\splash.exe
-  Delete $INSTDIR\Bin\magiclime.exe
-  Delete $INSTDIR\Bin\magiclime.txt
+  Delete $INSTDIR\Bin\UberSplash.exe
   Delete $INSTDIR\Plugins\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
   Delete $INSTDIR\Plugins\LangDLL.dll
