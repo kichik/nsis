@@ -251,10 +251,15 @@ DialogItemTemplate* CDialogTemplate::GetItemByIdx(DWORD i) {
 }
 
 // Removes an item
-void CDialogTemplate::RemoveItem(WORD wId) {
-  for (unsigned int i = 0; i < m_vItems.size(); i++)
-    if (m_vItems[i]->wId == wId)
+// Returns 1 if removed, 0 otherwise
+int CDialogTemplate::RemoveItem(WORD wId) {
+  for (unsigned int i = 0; i < m_vItems.size(); i++) {
+    if (m_vItems[i]->wId == wId) {
       m_vItems.erase(m_vItems.begin() + i);
+      return 1;
+    }
+  }
+  return 0;
 }
 
 #ifndef DS_SHELLFONT

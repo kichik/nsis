@@ -234,6 +234,8 @@ class CEXEBuild {
     LANGID last_used_lang;
     LangStringList build_langstrings;
     int build_langstring_num, ubuild_langstring_num;
+    char build_font[1024];
+    int build_font_size;
 
     unsigned int uDefCodePage;
 
@@ -242,6 +244,8 @@ class CEXEBuild {
     page *cur_page;
     int cur_page_type;
     int enable_last_page_cancel, uenable_last_page_cancel;
+
+    int disable_window_icon;
 
     // User variables stuff
     int GetUserVarIndex(LineParser &line, int token);
@@ -320,8 +324,6 @@ class CEXEBuild {
     unsigned char *header_data_new;
     int exeheader_size_new;
     int icon_offset;
-    int m_inst_fileused;
-    int m_uninst_fileused;
     bool branding_image_found; // Added by Amir Szekely 29nd July 2002
     WORD branding_image_id; // Added by Amir Szekely 29nd July 2002
     unsigned char *m_unicon_data;

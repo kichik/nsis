@@ -8,8 +8,9 @@
 #include "build.h"
 #include "util.h"
 
-#include "ResourceEditor.h"
 #include "exehead/resource.h"
+#include "ResourceEditor.h"
+#include "DialogTemplate.h"
 #include "ResourceVersionInfo.h"
 
 bool isSimpleChar(char ch)
@@ -337,15 +338,15 @@ CEXEBuild::CEXEBuild()
   build_langstring_num=0;
   ubuild_langstring_num=0;
 
+  build_font[0]=NULL;
+  build_font_size=0;
+
   m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
   memcpy(m_unicon_data+2*sizeof(DWORD),unicon_data+22,unicondata_size);
   *(DWORD*)(m_unicon_data) = unicondata_size;
   *(DWORD*)(m_unicon_data + sizeof(DWORD)) = 0;
   *(DWORD*)(m_unicon_data + 2*sizeof(DWORD) + unicondata_size) = 0;
   unicondata_size += 3*sizeof(DWORD);
-
-  m_inst_fileused=0;
-  m_uninst_fileused=0;
 
   branding_image_found=false;
 
@@ -363,6 +364,8 @@ CEXEBuild::CEXEBuild()
   uenable_last_page_cancel=0;
 
   license_res_id=IDD_LICENSE;
+
+  disable_window_icon=0;
 
   notify_hwnd=0;
 
@@ -1828,6 +1831,31 @@ again:
 
   SCRIPT_MSG("Done!\n");
 
+#define REMOVE_ICON(id) if (disable_window_icon) { \
+    BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+    if (dlg) { \
+      CDialogTemplate dt(dlg,uDefCodePage); \
+      free(dlg); \
+      if (dt.RemoveItem(IDC_ULICON)) { \
+        DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
+        DialogItemTemplate* prog = dt.GetItem(IDC_PROGRESS); \
+        if (text) { \
+          text->sWidth += text->sX; \
+          text->sX = 0; \
+        } \
+        if (prog) { \
+          prog->sWidth += prog->sX; \
+          prog->sX = 0; \
+        } \
+         \
+        DWORD dwSize; \
+        dlg = dt.Save(dwSize); \
+        res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+      } \
+      free(dlg); \
+    } \
+  }
+
   try {
     SCRIPT_MSG("Removing unused resources... ");
     init_res_editor();
@@ -1835,30 +1863,37 @@ again:
     if (!license_normal) {
       res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_LICENSE);
     if (!license_fsrb) {
       res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSRB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_LICENSE_FSRB);
     if (!license_fscb) {
       res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSCB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_LICENSE_FSCB);
 #endif // NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (!selcom) {
       res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_SELCOM);
 #endif // NSIS_CONFIG_COMPONENTPAGE
     if (!dir) {
       res_editor->UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_DIR);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!uninstconfirm) {
       res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_UNINST);
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!instlog) {
       res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
+    else REMOVE_ICON(IDD_INSTFILES);
     if (!main) {
       res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       if (!build_compress_whole && !build_crcchk)
