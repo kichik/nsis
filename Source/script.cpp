@@ -666,7 +666,6 @@ int CEXEBuild::includeScript(char *f)
 // !ifmacro[n]def based on Anders Kjersem's code
 int CEXEBuild::MacroExists(const char *macroname)
 {
-  bool mdefined = false;
   char *m = (char *) m_macros.get();
 
   while (m && *m)
