@@ -34,6 +34,10 @@
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Dutch.nsh"
     
+    ;Polish
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Polish.nsh"
+    
     ;Greek
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Greek.nsh"
@@ -44,13 +48,14 @@
 
     ;Traditional Chinese
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\TradChinese.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\TradChinese.nsh"    
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GERMAN} "${NAME} ${VERSION}"
   Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_POLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
   Name /LANG=${LANG_SIMPCHINESE} "${NAME} ${VERSION}"
   Name /LANG=${LANG_TRADCHINESE} "${NAME} ${VERSION}"
@@ -64,6 +69,7 @@
   LicenseData /LANG=${LANG_FRENCH} "License.txt"
   LicenseData /LANG=${LANG_GERMAN} "License.txt"
   LicenseData /LANG=${LANG_DUTCH} "License.txt"
+  LicenseData /LANG=${LANG_POLISH} "License.txt"
   LicenseData /LANG=${LANG_GREEK} "License.txt"
   LicenseData /LANG=${LANG_SIMPCHINESE} "License.txt"
   LicenseData /LANG=${LANG_TRADCHINESE} "License.txt"
@@ -74,6 +80,7 @@
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GERMAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_POLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
@@ -81,14 +88,17 @@
     LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Uninstaller (French)"
     LangString TITLE_SecCreateUninst ${LANG_GERMAN} "Uninstaller (German)"
     LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Uninstaller (Dutch)"
+    LangString TITLE_SecCreateUninst ${LANG_POLISH} "Uninstaller (Polish)"
     LangString TITLE_SecCreateUninst ${LANG_GREEK} "Uninstaller (Greek)"
     LangString TITLE_SecCreateUninst ${LANG_SIMPCHINESE} "Uninstaller (Simp Chinese)"
     LangString TITLE_SecCreateUninst ${LANG_TRADCHINESE} "Uninstaller (Trad Chinese)"
+    
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
     LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
     LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
     LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
+    LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
     LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
     LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
     LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
@@ -96,6 +106,7 @@
     LangString DESC_SecCreateUninst ${LANG_FRENCH} "Uninstaller: French description"
     LangString DESC_SecCreateUninst ${LANG_GERMAN} "Uninstaller: German description"
     LangString DESC_SecCreateUninst ${LANG_DUTCH} "Uninstaller: Dutch description"
+    LangString DESC_SecCreateUninst ${LANG_POLISH} "Uninstaller: Polish description"
     LangString DESC_SecCreateUninst ${LANG_GREEK} "Uninstaller: Greek description"
     LangString DESC_SecCreateUninst ${LANG_SIMPCHINESE} "Uninstaller: Simplified Chinese description"
     LangString DESC_SecCreateUninst ${LANG_TRADCHINESE} "Uninstaller: Traditional Chinese description"
@@ -144,11 +155,13 @@ Function .onInit
   Push ${LANG_ENGLISH}
   Push English
   Push ${LANG_FRENCH}
-  Push French
+  Push Français
   Push ${LANG_GERMAN}
-  Push German
+  Push Deutsch
   Push ${LANG_DUTCH}
-  Push Dutch
+  Push Nederlands
+  Push ${LANG_POLISH}
+  Push Polish
   Push ${LANG_GREEK}
   Push Greek
   Push ${LANG_TRADCHINESE}
@@ -156,7 +169,7 @@ Function .onInit
   Push ${LANG_SIMPCHINESE}
   Push "Simplified Chinese"
   
-  Push 7F ; 7 is the number of languages, F = change font
+  Push 8F ; 8 is the number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
