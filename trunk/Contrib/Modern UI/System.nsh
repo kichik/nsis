@@ -273,9 +273,9 @@ Var MUI_TEMP2
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
   
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
-  SetCtlColors $MUI_TEMP1 "branding"
+  SetCtlColors $MUI_TEMP1 /BRANDING
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
-  SetCtlColors $MUI_TEMP1 "branding"
+  SetCtlColors $MUI_TEMP1 /BRANDING
   SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:$(^Branding) "
 
 !macroend
@@ -297,9 +297,9 @@ Var MUI_TEMP2
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
   
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
-  SetCtlColors $MUI_TEMP1 "" "transparent"
+  SetCtlColors $MUI_TEMP1 /BRANDING
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
-  SetCtlColors $MUI_TEMP1 "branding"
+  SetCtlColors $MUI_TEMP1 /BRANDING
   SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:$(^Branding) "
 
 !macroend

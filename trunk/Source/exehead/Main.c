@@ -108,10 +108,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #define END_OF_ARG(c) (((c)|' ')==' ')
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) cl_flags |= FH_FLAGS_SILENT;
+    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1]))
+      cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) cl_flags |= FH_FLAGS_NO_CRC;
+    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
+      cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
     if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
@@ -135,7 +137,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     char *p=cmdline;
     while (*p) p++;
 
-    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;    
+    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
     if (p >= cmdline)
     {
