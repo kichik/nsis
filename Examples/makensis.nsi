@@ -187,23 +187,25 @@ Section "NSI Development Shell Extensions" SecExtention
   WriteRegStr HKCR ".nsh" "" "NSHFile"
   ReadRegStr $0 HKCR "NSHFile" ""
   StrCmp $0 "" 0 skipNSHAssoc
-	WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
-	WriteRegStr HKCR "NSHFile\shell" "" "open"
-	WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+    WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
+    WriteRegStr HKCR "NSHFile\shell" "" "open"
+    WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
   skipNSHAssoc:
   WriteRegStr HKCR "NSHFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR ".nsi" "" "NSISFile"
   ReadRegStr $0 HKCR "NSISFile" ""
   StrCmp $0 "" 0 skipNSIAssoc
-	WriteRegStr HKCR "NSISFile" "" "NSIS Script File"
-	WriteRegStr HKCR "NSISFile\shell" "" "open"
-	WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+    WriteRegStr HKCR "NSISFile" "" "NSIS Script File"
+    WriteRegStr HKCR "NSISFile\shell" "" "open"
+    WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
   skipNSIAssoc:
   WriteRegStr HKCR "NSISFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile" "" "Compile NSI"
   WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile-bz2" "" "Compile NSI (with bz2)"
   WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /X"SetCompressor bzip2" "%1"'
+  WriteRegStr HKCR "NSISFile\shell\compile-choose compressor" "" "Compile NSI (Choose Compressor)"
+  WriteRegStr HKCR "NSISFile\shell\compile-choose compressor\command" "" '"$INSTDIR\makensisw.exe" /ChooseCompressor "%1"'
 SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
@@ -288,7 +290,7 @@ SubSection "Extra User Interfaces" SecContribUIs
 
     SetOutPath $INSTDIR\Include
     File "..\Include\MUI.nsh"
-	
+    
   SectionEnd
 
   Section "Default User Interface" SecContribDefaultUI
@@ -346,8 +348,8 @@ Section "Language files" SecContribLang
 
   SectionGetFlags ${SecContribModernUI} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
-	IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
-	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+    IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
+      SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\*.nsh"
   nomui:
 
@@ -912,7 +914,7 @@ Section -post
 
   SectionGetFlags ${SecContribModernUI} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
-	IntCmp $R0 ${SF_SELECTED} "" nomui nomui
+    IntCmp $R0 ${SF_SELECTED} "" nomui nomui
 
       SetDetailsPrint textonly
       DetailPrint "Configurating Modern UI..."
@@ -922,8 +924,8 @@ Section -post
     SectionGetFlags ${SecContribLang} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     IntCmp $R0 ${SF_SELECTED} langfiles
-	
-	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+    
+      SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
       File "..\Contrib\Modern UI\Language files\English.nsh"
 
     langfiles:
