@@ -353,7 +353,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
       hwnd,
       BFFM_ENABLEOK,
       0,
-      SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData)
+      my_PIDL2Path((char*)lpData, (LPITEMIDLIST)lParam, 0)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
 #endif
@@ -806,13 +806,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       idlist = SHBrowseForFolder(&bi);
       if (idlist)
       {
-        IMalloc *m;
-        SHGetMalloc(&m);
-        if (m)
-        {
-          m->lpVtbl->Free(m,idlist);
-          m->lpVtbl->Release(m);
-        }
+        // Get and free idlist
+        my_PIDL2Path(name, idlist, 1);
 
         if (g_header->install_directory_auto_append)
         {
