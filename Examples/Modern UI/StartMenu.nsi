@@ -67,6 +67,13 @@
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
+;Reserve Files
+  
+  ;Things that need to be extracted on first (keep these lines before any File command!)
+  ;Only for BZIP2 compression
+  !insertmacro MUI_RESERVEFILE_STARTMENU
+
+;--------------------------------
 ;Installer Sections
 
 Section "Dummy Section" SecDummy
@@ -110,15 +117,12 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
-
-  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
   
   !insertmacro MUI_STARTMENU_DELETE_BEGIN ${TEMP}
-  
-    Delete "$SMPROGRAMS\${TEMP}\Modern UI.lnk"
     Delete "$SMPROGRAMS\${TEMP}\Uninstall.lnk"
     RMDir "$SMPROGRAMS\${TEMP}" ;Only if empty, so it won't delete other shortcuts
-    
   !insertmacro MUI_STARTMENU_DELETE_END
+
+  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
 SectionEnd
