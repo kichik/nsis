@@ -83,7 +83,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 
 static DWORD WINAPI install_thread(LPVOID p);
 
-HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int);
+HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, int color1, int color2, int);
 
 HWND insthwnd, insthwnd2,insthwndbutton;
 
@@ -123,6 +123,24 @@ static UINT NSISCALL GetUIText(WORD def, WORD custom, char *str, int max_size) {
 
 static HWND NSISCALL GetUIItem(HWND defhw, WORD def, WORD custom) {
   return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
+}
+
+#define HandleStaticBkColor() _HandleStaticBkColor(uMsg, wParam, lParam)
+static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+  BOOL ret=0;
+  if (uMsg == WM_CTLCOLORSTATIC) {
+    if (g_inst_cmnheader->code_onStaticCtlBkColor >= 0) {
+      mystrcpy(g_tmp,g_usrvars[0]);
+      myitoa(g_usrvars[0],lParam);
+      ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onStaticCtlBkColor,NULL);
+      if (myatoi(g_usrvars[0]) != -1) {
+        SetBkColor((HDC)wParam, myatoi(g_usrvars[0]));
+        ret=(BOOL)GetStockObject(HOLLOW_BRUSH);
+      }
+      mystrcpy(g_usrvars[0],g_tmp);
+    }
+  }
+  return ret;
 }
 #endif
 
@@ -292,43 +310,6 @@ int NSISCALL ui_doinstall(void)
 #endif
   }
 
-  {
-    // Added by Amir Szekely 3rd August 2002
-    // Multilingual support
-    int num=g_inst_header->common.str_tables_num;
-    LANGID user_lang=GetUserDefaultLangID(), lang_mask=~(LANGID)0;
-    int size=num*sizeof(common_strings);
-    cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
-    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-    if (g_is_uninstaller)
-      size=num*sizeof(uninstall_strings);
-    else
-#endif
-      size=num*sizeof(installer_strings);
-    cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
-    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
-lang_again:
-    for (size=0; size < num; size++) {
-      if (!((user_lang ^ common_strings_tables[size].lang_id) & lang_mask)) {
-        cur_common_strings_table+=size;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        if (g_is_uninstaller)
-          (uninstall_strings *)cur_install_strings_table+=size;
-        else
-#endif
-          (installer_strings *)cur_install_strings_table+=size;
-        break;
-      }
-    }
-    if ((size < num) && (lang_mask == ~(LANGID)0)) {
-      lang_mask=0x3ff; // primary lang
-      goto lang_again;
-    }
-  }
-
-  process_string_from_lang(g_caption,LANGID_CAPTION);
-
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   if (!g_inst_cmnheader->silent_install)
@@ -338,13 +319,53 @@ lang_again:
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
     {
-      h=bgWnd_Init(g_hInstance,g_caption,g_inst_cmnheader->bg_color1,g_inst_cmnheader->bg_color2,g_inst_cmnheader->bg_textcolor);
+      h=bgWnd_Init(g_hInstance,g_inst_cmnheader->bg_color1,g_inst_cmnheader->bg_color2,g_inst_cmnheader->bg_textcolor);
     }
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=h;
+    wsprintf(g_usrvars[20], "%u", GetUserDefaultLangID());
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
     g_hwnd=NULL;
+    {
+      // Added by Amir Szekely 3rd August 2002
+      // Multilingual support
+      int num=g_inst_header->common.str_tables_num;
+      LANGID user_lang=myatoi(g_usrvars[20]), lang_mask=~(LANGID)0;
+      int size=num*sizeof(common_strings);
+      cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (g_is_uninstaller)
+        size=num*sizeof(uninstall_strings);
+      else
+#endif
+        size=num*sizeof(installer_strings);
+      cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
+lang_again:
+      for (size = 0; size < num; size++) {
+        if (!((user_lang ^ common_strings_tables[size].lang_id) & lang_mask)) {
+          cur_common_strings_table+=size;
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+          if (g_is_uninstaller)
+            (uninstall_strings *)cur_install_strings_table+=size;
+          else
+#endif
+            (installer_strings *)cur_install_strings_table+=size;
+          break;
+        }
+      }
+      if ((size == num) && (lang_mask == ~(LANGID)0)) {
+        lang_mask=0x3ff; // primary lang
+        goto lang_again;
+      }
+    }
+    process_string_from_lang(g_caption,LANGID_CAPTION);
+    if (h != GetDesktopWindow()) {
+      SendMessage(h, WM_SETTEXT, 0, (LPARAM)g_caption);
+      ShowWindow(h, SW_SHOW);
+    }
 #endif//NSIS_SUPPORT_CODECALLBACKS
     return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),h,DialogProc);
   }
@@ -576,7 +597,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     if (!IsWindowEnabled(GetDlgItem(hwndDlg,IDCANCEL)) && IsWindowEnabled(GetDlgItem(hwndDlg,IDOK)))
       SendMessage(hwndDlg,WM_COMMAND,IDOK,0);
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
@@ -584,6 +605,15 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #define _RICHEDIT_VER 0x0200
 #include <RichEdit.h>
 #undef _RICHEDIT_VER
+static DWORD dwRead;
+DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
+{
+  lstrcpyn(pbBuff,(char*)dwCookie+dwRead,cb);
+  dwRead+=lstrlen(pbBuff);
+  *pcb=lstrlen(pbBuff);
+  return 0;
+}
+
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static HWND hwLicense;
@@ -591,11 +621,14 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   if (!hRichEditDLL) hRichEditDLL=LoadLibrary("RichEd32.dll");
   if (uMsg == WM_INITDIALOG)
   {
+    EDITSTREAM es={(DWORD)STR(LANG_LICENSE_DATA),0,StreamLicense};
     hwLicense=GetDlgItem(hwndDlg,IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg);
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK);
-    SetWindowText(hwLicense,STR(LANG_LICENSE_DATA));
+    SendMessage(hwLicense,EM_SETLIMITTEXT,lstrlen((char*)es.dwCookie)+1,0);
+    dwRead=0;
+    SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANGID_LICENSE_TEXT);
   }
   else if (uMsg == WM_NOTIFY) {
@@ -623,7 +656,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   else if (uMsg == WM_CLOSE) {
     SendMessage(g_hwnd,WM_CLOSE,0,0);
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 #endif
 
@@ -636,7 +669,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     SetUITextFromLang(hwndDlg,IDC_UNINSTFROM,g_inst_uninstheader->uninst_subtext_id,LANGID_UNINST_SUBTEXT);
     SetDlgItemText(hwndDlg,IDC_EDIT1,state_install_directory);
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 #endif
 
@@ -787,7 +820,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
       );
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -1122,7 +1155,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       SetUITextNT(hwndDlg,IDC_SPACEREQUIRED,g_inst_header->space_req_id,s);
     }
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
@@ -1292,6 +1325,6 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       SetFocus(h);
     }
   }
-  return 0;
+  return HandleStaticBkColor();
 }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
