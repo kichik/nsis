@@ -2,33 +2,49 @@
 
 These commands are similar to the C preprocessor in terms of purpose and functionality. They allow file inclusion, conditional compilation, executable header packing, and processes execution during the build process. Note: none of these commands allow use of variables. 
 
-\e{!system}
-
-command [compare comparevalue] This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '=' or 'ignore'.  
+\H{include} !include
 
 \e{!include file}
 
 This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides).  
 
+\H{cd} !cd
+
 \e{!cd new_path}
 
 This command will change the compiler to the new directory, new_path. new_path can be relative or absolute.  
 
-\e{!packhdr tempfile command}
-
-This option makes the compiler an external EXE packer (such as Petite or UPX) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.  
+\H{echo} !echo
 
 \e{!echo message} 
 
 This command will echo a message to the user compiling the script.  
 
-\e{!warning [message]} 
-
-This command will issue a warning to the script compiler. You can also add a message to this warning.  
+\H{error} !error
 
 \e{!error [message]}
 
 This commnd will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.  
+
+\H{packhdr} !packhdr
+
+\e{!packhdr tempfile command}
+
+This option makes the compiler an external EXE packer (such as Petite or UPX) to compress the executable header. Specify a temporary file name (such as "temp.dat") and a command line (such as "C:\\program files\\upx\\upx -9 temp.dat") to compress the header.  
+
+\H{system} !system
+
+\e{!system command [compare comparevalue]}
+
+This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '=' or 'ignore'.  
+
+\H{warning} !warning
+
+\e{!warning [message]} 
+
+This command will issue a warning to the script compiler. You can also add a message to this warning.  
+
+\H{verbose} !verbose
 
 \e{!verbose level} 
 

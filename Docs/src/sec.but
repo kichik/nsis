@@ -1,24 +1,24 @@
-\H{secmanage} Section Management
+\C{secmanage} Section Management
 
-\S{SectionSetFlags} SectionSetFlags
+\H{SectionSetFlags} SectionSetFlags
 
 SectionSetFlags \e{section_index section_flags}
 
 Sets the section's flags. The flag is a 32 bit integer. The low 30 bits represent whether the section is in the (as many as) 30 install types. The top bit (0x80000000) represents whether the section is currently enabled, and the second to top bit (0x40000000) represents whether or not the section is read-only. The error flag will be set if an out of range section is specified.  
 
-\S{SectionGetFlags} SectionGetFlags
+\H{SectionGetFlags} SectionGetFlags
 
 SectionGetFlags \e{section_index user_var(output)} 
 
 Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.  
 
-\S{SectionSetText} SectionSetText
+\H{SectionSetText} SectionSetText
 
 SectionSetText \e{section_index section_text} 
 
 Sets the description for the section section_index. To set a subsection, you must use - at the beginning of the text.  The error flag will be set if an out of range section is specified.  
 
-\S{SectionGetText} SectionGetText
+\H{SectionGetText} SectionGetText
 
 SectionGetText \e{section_index user_var(output)} 
 
