@@ -31,14 +31,14 @@ shared			Specify whether the library is shared with other applications
 
 install			Specify the installation method
 
-				REBOOT_PROTECTED		* Upgrade the libary on reboot when in use (required for system files).
+				REBOOT_PROTECTED		* Upgrade the library on reboot when in use (required for system files).
 										* Upgrade the library if the file is not protected by Windows File Protection.
 										
 				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
 										  applications using the library.
 										* Upgrade the library if the file is not protected by Windows File Protection.
 										
-				REBOOT_NOTPROTECTED		* Upgrade the libary on reboot when in use (required for system files).
+				REBOOT_NOTPROTECTED		* Upgrade the library on reboot when in use (required for system files).
 										* Upgrade the library without checking for Windows File Protection.
 										
 				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
@@ -105,14 +105,14 @@ uninstall		Specify the uninstallation method
 										You should use this option for common or important system files such as the
 										Visual Basic/C++/MFC runtimes.
 										
-				REBOOT_PROTECTED		* Remove the libary on reboot when in use (required for system files).
+				REBOOT_PROTECTED		* Remove the library on reboot when in use (required for system files).
 										* Remove the library if the file is not protected by Windows File Protection.
 										
 				NOREBOOT_PROTECTED		* Warns the user when the library is in use. The user will have to close
 										  applications using the library.
 										* Remove the library if the file is not protected by Windows File Protection.
 										
-				REBOOT_NOTPROTECTED		* Remove the libary on reboot when in use (required for system files).
+				REBOOT_NOTPROTECTED		* Remove the library on reboot when in use (required for system files).
 										* Remove the library without checking for Windows File Protection.
 										
 				NOREBOOT_NOTPROTECTED	* Warns the user when the library is in use. The user will have to close
