@@ -18,6 +18,8 @@
    misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#define MAKENSISW_CPP
+
 #include <windows.h>
 #include <stdio.h>
 #include "makensisw.h"
@@ -87,7 +89,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     {
 	    int argc;
 	    char **argv;
-      int i;
+      int i, j;
       int argSpaceSize;
 
       g_sdata.hwnd=hwndDlg;
@@ -125,11 +127,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
               p += lstrlen("/FINAL ");
             }
             while(*p == ' ') p++;
-            if(!lstrcmpi(p,"zlib")) {
-              SetCompressor(COMPRESSOR_ZLIB);
-            }
-            else if(!lstrcmpi(p,"bzip2")) {
-              SetCompressor(COMPRESSOR_BZIP2);
+            if(p && lstrlen(p)) {
+              for(j=(int)COMPRESSOR_DEFAULT+1; j < (int)COMPRESSOR_BEST; j++) {
+                if(!lstrcmpi(p,compressor_names[j])) {
+                  g_sdata.command_line_compressor = true;
+                  SetCompressor((NCOMPRESSOR)j);
+                }
+              }
             }
           }
           else {
@@ -239,11 +243,13 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
       if(g_sdata.compressor == COMPRESSOR_BEST) {
         if (g_sdata.retcode==0 && FileExists(g_sdata.output_exe)) {
-          char zlib_file_name[MAX_PATH];
-          wsprintf(zlib_file_name,"%s_makensisw_zlib",g_sdata.output_exe);
-          if(!lstrcmpi(g_sdata.compressor_name,ZLIB_COMPRESSOR_NAME)) {
-            CopyFile(g_sdata.output_exe,zlib_file_name,false);
-            g_sdata.compressor_name = BZIP2_COMPRESSOR_NAME;
+          char temp_file_name[MAX_PATH];
+          wsprintf(temp_file_name,"%s_makensisw_temp",g_sdata.output_exe);
+          if(!lstrcmpi(g_sdata.compressor_name,compressor_names[(int)COMPRESSOR_DEFAULT+1])) {
+            SetCompressorStats();
+            CopyFile(g_sdata.output_exe,temp_file_name,false);
+            g_sdata.best_compressor_name = g_sdata.compressor_name;
+            g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+2];
             ResetObjects();
             ResetInputScript();
 
@@ -251,48 +257,76 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             return TRUE;
           }
           else {
-            g_sdata.compressor_name = ZLIB_COMPRESSOR_NAME;
-            g_sdata.appended = false;
-            ResetInputScript();
+            int this_compressor;
+            int last_compressor;
+            int i;
+            HANDLE hPrev, hThis;
+            DWORD prevSize, thisSize;
 
-            if(FileExists(zlib_file_name)) {
-              HANDLE hZlib, hBzip2;
-              DWORD zlibSize, bzip2Size;
 
-              hZlib = CreateFile(zlib_file_name,GENERIC_READ, FILE_SHARE_READ,
+            for(i=(int)COMPRESSOR_DEFAULT+2; i<(int)COMPRESSOR_BEST; i++) {
+              if(!lstrcmpi(g_sdata.compressor_name,compressor_names[i])) {
+                this_compressor = i;
+                last_compressor = i-1;
+                break;
+              }
+            }
+
+            if(FileExists(temp_file_name)) {
+              hPrev = CreateFile(temp_file_name,GENERIC_READ, FILE_SHARE_READ,
                                  NULL, OPEN_EXISTING, NULL, NULL);
-              if(hZlib != INVALID_HANDLE_VALUE) {
-                zlibSize = GetFileSize(hZlib, 0);
-                CloseHandle(hZlib);
+              if(hPrev != INVALID_HANDLE_VALUE) {
+                prevSize = GetFileSize(hPrev, 0);
+                CloseHandle(hPrev);
 
-                if(zlibSize != INVALID_FILE_SIZE) {
-                  hBzip2 = CreateFile(g_sdata.output_exe,GENERIC_READ, FILE_SHARE_READ,
+                if(prevSize != INVALID_FILE_SIZE) {
+                  hThis = CreateFile(g_sdata.output_exe,GENERIC_READ, FILE_SHARE_READ,
                                      NULL, OPEN_EXISTING, NULL, NULL);
-                  if(hBzip2 != INVALID_HANDLE_VALUE) {
-                    bzip2Size = GetFileSize(hBzip2, 0);
-                    CloseHandle(hBzip2);
+                  if(hThis != INVALID_HANDLE_VALUE) {
+                    thisSize = GetFileSize(hThis, 0);
+                    CloseHandle(hThis);
 
-                    char buf[1024];
-
-                    if(bzip2Size != INVALID_FILE_SIZE) {
-                      if(zlibSize < bzip2Size) {
-                        CopyFile(zlib_file_name,g_sdata.output_exe,false);
-                        wsprintf(buf,COMPRESSOR_MESSAGE,ZLIB_COMPRESSOR_NAME,zlibSize,
-                                 BZIP2_COMPRESSOR_NAME,bzip2Size);
-                        LogMessage(g_sdata.hwnd,buf);
-                        LogMessage(g_sdata.hwnd,ZLIB_COMPRESSOR_MESSAGE);
-                        LogMessage(g_sdata.hwnd, g_sdata.compressor_stats);
-                      }
-                      else {
-                        wsprintf(buf,COMPRESSOR_MESSAGE,BZIP2_COMPRESSOR_NAME,bzip2Size,
-                                 ZLIB_COMPRESSOR_NAME,zlibSize);
-                        LogMessage(g_sdata.hwnd,buf);
+                    if(thisSize != INVALID_FILE_SIZE) {
+                      if(prevSize > thisSize) {
+                        CopyFile(temp_file_name,g_sdata.output_exe,false);
+                        SetCompressorStats();
+                        g_sdata.best_compressor_name = g_sdata.compressor_name;
                       }
                     }
                   }
                 }
               }
-              DeleteFile(zlib_file_name);
+            }
+
+            if(this_compressor == ((int)COMPRESSOR_BEST - 1)) {
+              char buf[1024];
+
+              g_sdata.compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+1];
+              g_sdata.appended = false;
+              ResetInputScript();
+
+              if(!lstrcmpi(g_sdata.best_compressor_name,compressor_names[this_compressor])) {
+                wsprintf(buf,COMPRESSOR_MESSAGE,g_sdata.best_compressor_name,thisSize);
+                LogMessage(g_sdata.hwnd,buf);
+              }
+              else {
+                CopyFile(temp_file_name,g_sdata.output_exe,false);
+                wsprintf(buf,RESTORED_COMPRESSOR_MESSAGE,g_sdata.best_compressor_name,prevSize);
+                LogMessage(g_sdata.hwnd,buf);
+                LogMessage(g_sdata.hwnd, g_sdata.compressor_stats);
+              }
+              DeleteFile(temp_file_name);
+              ResetObjects();
+              ResetInputScript();
+              lstrcpy(g_sdata.compressor_stats,"");
+            }
+            else {
+              g_sdata.compressor_name = compressor_names[this_compressor+1];
+              ResetObjects();
+              ResetInputScript();
+
+              CompileNSISScript();
+              return TRUE;
             }
           }
         }
@@ -477,6 +511,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           return TRUE;
         case IDM_COMPRESSOR:
         {
+          g_sdata.command_line_compressor = false;
           SetCompressor((NCOMPRESSOR)(g_sdata.compressor+1));
           return TRUE;
         }
@@ -585,18 +620,18 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           g_find.hwndFind = FindText(&g_find.fr);
           return TRUE;
         }
-        case IDM_DEFAULT:
-          SetCompressor(COMPRESSOR_DEFAULT);
-          return TRUE;
-        case IDM_ZLIB:
-          SetCompressor(COMPRESSOR_ZLIB);
-          return TRUE;
-        case IDM_BZIP2:
-          SetCompressor(COMPRESSOR_BZIP2);
-          return TRUE;
-        case IDM_BEST:
-          SetCompressor(COMPRESSOR_BEST);
-          return TRUE;
+        default:
+          {
+            int i;
+            DWORD command = LOWORD(wParam);
+            for(i=(int)COMPRESSOR_DEFAULT; i<=(int)COMPRESSOR_BEST; i++) {
+              if(command == compressor_commands[i]) {
+                g_sdata.command_line_compressor = false;
+                SetCompressor((NCOMPRESSOR)i);
+                return TRUE;
+              }
+            }
+          }
       }
     }
   }
@@ -878,35 +913,31 @@ BOOL CALLBACK DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) 
 
 void SetCompressor(NCOMPRESSOR compressor)
 {
+  int i;
+
   if(g_sdata.compressor != compressor) {
     WORD command;
     char *compressor_name;
 
-    switch(compressor) {
-      case COMPRESSOR_ZLIB:
-        command = IDM_ZLIB;
-        compressor_name = ZLIB_COMPRESSOR_NAME;
-        break;
-      case COMPRESSOR_BZIP2:
-        command = IDM_BZIP2;
-        compressor_name = BZIP2_COMPRESSOR_NAME;
-        break;
-      case COMPRESSOR_BEST:
-        command = IDM_BEST;
-        compressor_name = ZLIB_COMPRESSOR_NAME;
-        break;
-      default:
-        compressor = COMPRESSOR_DEFAULT;
-        command = IDM_DEFAULT;
-        compressor_name = "";
+    if(compressor > COMPRESSOR_DEFAULT && compressor < COMPRESSOR_BEST) {
+      command = compressor_commands[(int)compressor];
+      compressor_name = compressor_names[(int)compressor];
+    }
+    else if(compressor == COMPRESSOR_BEST) {
+      command = compressor_commands[(int)compressor];
+      compressor_name = compressor_names[(int)COMPRESSOR_DEFAULT+1];
+    }
+    else {
+      compressor = COMPRESSOR_DEFAULT;
+      command = IDM_DEFAULT;
+      compressor_name = "";
     }
     g_sdata.compressor = compressor;
     g_sdata.compressor_name = compressor_name;
     UpdateToolBarCompressorButton();
-    CheckMenuItem(g_sdata.menu, IDM_DEFAULT, MF_BYCOMMAND | MF_UNCHECKED);
-    CheckMenuItem(g_sdata.menu, IDM_ZLIB, MF_BYCOMMAND | MF_UNCHECKED);
-    CheckMenuItem(g_sdata.menu, IDM_BZIP2, MF_BYCOMMAND | MF_UNCHECKED);
-    CheckMenuItem(g_sdata.menu, IDM_BEST, MF_BYCOMMAND | MF_UNCHECKED);
+    for(i=(int)COMPRESSOR_DEFAULT; i<= (int)COMPRESSOR_BEST; i++) {
+      CheckMenuItem(g_sdata.menu, compressor_commands[i], MF_BYCOMMAND | MF_UNCHECKED);
+    }
     CheckMenuItem(g_sdata.menu, command, MF_BYCOMMAND | MF_CHECKED);
     ResetObjects();
     ResetInputScript();

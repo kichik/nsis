@@ -57,10 +57,8 @@
 #define EDIT_MENU_INDEX 1
 #define TOOLS_MENU_INDEX 2
 #define COMPRESSOR_MENU_INDEX 4
-#define BZIP2_COMPRESSOR_NAME "bzip2"
-#define ZLIB_COMPRESSOR_NAME "zlib"
-#define COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created a smaller file than the %s compressor (%d bytes)."
-#define ZLIB_COMPRESSOR_MESSAGE "\nThe bzip2 compressed version was replaced with zlib compressed version."
+#define COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created the smallest installer."
+#define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created the smallest installer which was restored."
 #define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
 #define TOTAL_SIZE_COMPRESSOR_STAT "Total size:"
 
@@ -77,8 +75,45 @@ typedef enum {
   COMPRESSOR_DEFAULT,
   COMPRESSOR_ZLIB,
   COMPRESSOR_BZIP2,
+#ifdef LZMA_COMPRESSOR_SUPPORT
+  COMPRESSOR_LZMA,
+#endif
   COMPRESSOR_BEST,
 } NCOMPRESSOR;
+
+#ifdef MAKENSISW_CPP
+char *compressor_names[] = {"",
+                            "zlib",
+                            "bzip2",
+#ifdef LZMA_COMPRESSOR_SUPPORT
+                            "lzma",
+#endif
+                            "Best"};
+WORD compressor_commands[] = {IDM_DEFAULT,
+                              IDM_ZLIB,
+                              IDM_BZIP2,
+#ifdef LZMA_COMPRESSOR_SUPPORT
+                              IDM_LZMA,
+#endif
+                              IDM_BEST};
+#endif
+
+#ifdef TOOLBAR_CPP
+int compressor_bitmaps[] = {IDB_COMPRESSOR_DEFAULT, 
+                            IDB_COMPRESSOR_ZLIB, 
+                            IDB_COMPRESSOR_BZIP2, 
+#ifdef LZMA_COMPRESSOR_SUPPORT
+                            IDB_COMPRESSOR_LZMA, 
+#endif
+                            IDB_COMPRESSOR_BEST};
+int compressor_strings[] = {IDS_DEFAULT, 
+                            IDS_ZLIB, 
+                            IDS_BZIP2, 
+#ifdef LZMA_COMPRESSOR_SUPPORT
+                            IDS_LZMA, 
+#endif
+                            IDS_BEST};
+#endif
 
 // Extern Variables
 extern const char* NSISW_VERSION;
@@ -122,6 +157,8 @@ typedef struct NSISScriptData {
   NCOMPRESSOR compressor;
   char *compressor_name;
   char compressor_stats[512];
+  char *best_compressor_name;
+  BOOL command_line_compressor;
   // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
 } NSCRIPTDATA;
