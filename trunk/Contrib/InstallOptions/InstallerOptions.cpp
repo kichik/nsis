@@ -76,27 +76,28 @@ int LookupTokens(TableEntry*, char*);
 void ConvertNewLines(char *str);
 
 struct FieldType {
-  char *pszText;
-  char *pszState;
-  char *pszRoot;
+  char  *pszText;
+  char  *pszState;
+  char  *pszRoot;
 
-  char *pszListItems;
-  char *pszFilter;
+  char  *pszListItems;
+  char  *pszFilter;
 
-  int   nType;
-  RECT  rect;
+  int    nType;
+  RECT   rect;
 
-  int   nMinLength;
-  int   nMaxLength;
-  char  *pszValidateText;
+  int    nMinLength;
+  int    nMaxLength;
+  char   *pszValidateText;
 
-  int   nFlags;
-  bool  bSaveDlg;
+  int    nFlags;
+  bool   bSaveDlg;
 
-  HWND  hwnd;
-  UINT  nControlID;
+  HWND   hwnd;
+  UINT   nControlID;
 
-  int   nParentIdx;  // this is used by the filerequest and dirrequest controls
+  int    nParentIdx;  // this is used by the filerequest and dirrequest controls
+  HANDLE hImage; // this is used by image/icon field to save the handle to the image
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -930,12 +931,9 @@ int createCfgDlg()
         }
       } else if (nType == FIELD_BITMAP || nType == FIELD_ICON) {
         WPARAM nImageType = nType == FIELD_BITMAP ? IMAGE_BITMAP : IMAGE_ICON;
-        SendMessage(
-          hwCtrl,
-          STM_SETIMAGE,
-          nImageType,
-          pFields[nIdx].pszText?
-          (LPARAM)LoadImage(
+        LPARAM nImage = 0;
+        if (nImageType == IMAGE_BITMAP) {
+          pFields[nIdx].hImage = LoadImage(
             0,
             pFields[nIdx].pszText,
             nImageType,
@@ -946,7 +944,16 @@ int createCfgDlg()
               ? (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top)
               : (rect.bottom - rect.top),
             LR_LOADFROMFILE
-          ):(LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103))
+          );
+          nImage = (LPARAM)pFields[nIdx].hImage;
+        }
+        else
+          nImage = (LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103));
+        SendMessage(
+          hwCtrl,
+          STM_SETIMAGE,
+          nImageType,
+          nImage
         );
       }
     }
@@ -1012,6 +1019,7 @@ void showCfgDlg()
     FREE(pFields[nIdx].pszListItems);
     FREE(pFields[nIdx].pszFilter);
     FREE(pFields[nIdx].pszRoot);
+    DeleteObject(pFields[nIdx].hImage);
   }
   FREE(pFields);
 
