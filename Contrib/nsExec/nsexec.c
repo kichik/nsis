@@ -33,8 +33,6 @@ freely, subject to the following restrictions:
 
 HWND          g_hwndParent;
 HWND          g_hwndList;
-char *        g_exec;
-unsigned int  g_to;
 
 void ExecScript(BOOL log);
 void LogMessage(const char *pStr);
@@ -90,10 +88,15 @@ void ExecScript(int log) {
   int nComSpecSize;
   char meDLLPath[MAX_PATH];    
   char *p;
+  char *executor;
+  char *g_exec;
+  unsigned int g_to;
 
-  nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH);
-  p = meDLLPath + nComSpecSize - 1;
-  g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+1);
+  nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH) + 2; // 2 chars for quotes
+  p = meDLLPath + nComSpecSize - 2; // point p at null char of meDLLPath
+  g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+2); // 1 for space, 1 for null
+  *g_exec = '"';
+  executor = g_exec + 1;
 
   do
   {
@@ -110,14 +113,14 @@ void ExecScript(int log) {
   }
 
   *p = 0;
-  GetTempFileName(meDLLPath, "ns", 0, g_exec);
+  GetTempFileName(meDLLPath, "ns", 0, executor);
   *p = '\\';
-  if (CopyFile(meDLLPath, g_exec, FALSE))
+  if (CopyFile(meDLLPath, executor, FALSE))
   {
     HANDLE hFile, hMapping;
     LPBYTE pMapView;
     PIMAGE_NT_HEADERS pNTHeaders;
-    hFile = CreateFile(g_exec, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
+    hFile = CreateFile(executor, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
     hMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
     pMapView = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
     if (pMapView)
@@ -133,18 +136,24 @@ void ExecScript(int log) {
     CloseHandle(hFile);
   }
 
+  lstrcat(g_exec, "\"");
+
   g_to = 0; // default is no timeout
+
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
-  pExec = g_exec + nComSpecSize;
-  while ( !*(pExec-1) ) pExec--;
-  *pExec = ' '; 
+
+  // add space
+  pExec = g_exec + lstrlen(g_exec);
+  *pExec = ' ';
   pExec++;
+  
   popstring(pExec);
   if (my_strstr(pExec, "/TIMEOUT=")) {
     char *szTimeout = pExec + 9;
     g_to = my_atoi(szTimeout);
     popstring(pExec);
   }
+
   if (!g_exec[0]) 
   {
     lstrcpy(szRet, "error");
@@ -301,8 +310,8 @@ done:
     CloseHandle(read_stdout);
     CloseHandle(newstdin);
     CloseHandle(read_stdin);
-    *(pExec-1) = '\0';
-    DeleteFile(g_exec);
+    *(pExec-2) = '\0'; // skip space and quote
+    DeleteFile(executor);
     GlobalFree(g_exec);
     if (log) {
       GlobalUnlock(hUnusedBuf);
@@ -402,6 +411,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
   while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
   cmdline=CharNext(cmdline);
+  // skip any spaces before the arguments
+  while (*cmdline && *cmdline == ' ') cmdline++;
 
   Ret = CreateProcess (NULL, cmdline,
     NULL, NULL,
