@@ -757,7 +757,7 @@ FunctionEnd
 </pre></div>
 <h3>Return value</h3>
 <div>
-<p>After you have called the DLL, InstallOptions adds one value to
+<p>After you have called the DLL, InstallOptions adds one string to
 the stack, with one of the following values:</p>
 <ul>
 <li>success - The user has pressed the Next button</li>
@@ -768,9 +768,9 @@ displayed.</li>
 </ul>
 <p>Usually, you don't need to check this value, but you still have
 to remove it from the stack (have a look at the example above).</p>
-<p>If you want to check the user input immediately, for example, to
-display a warning when the input is invalid, you should check
-whether the user has pressed the Back or Next button.</p>
+<p>You only have to check this value if you need something really
+special, such as doing something when the user pressed the Back
+button.</p>
 </div>
 </div>
 <h2>Reserve files</h2>
