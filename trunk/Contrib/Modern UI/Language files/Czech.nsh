@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Czech (1029)
 ;By SELiCE (ls@selice.cz - http://ls.selice.cz)
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Cesky" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Vítejte v prùvodci instalace programu $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás provede instalací programu $(^NameDA).\r\n\r\nPøed zaèátkem instalace je doporuèeno zavøít všechny aplikace. Tímto umožníte instalátoru aktualizovat pøípadné systémové soubory bez nutnosti restartovat poèítaè.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Tento prùvodce Vás bude provázet skrz instalaci $(^NameDA).\r\n\r\nJe doporuèeno, aby jste zavøeli všechny ostatní aplikace pøed spuštìním instalace. Toto umožní aktualizovat dùležité systémové soubory bez restartování vašeho poèítaèe.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licenèní ujednání"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Pøed instalací programu $(^NameDA) si prosím prostudujte licenèní podmínky."
@@ -83,6 +83,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Dokonèuji $(^NameDA) odinstalaèního prùvodce"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) byl odinstalován z vašeho poèítaèe.\r\n\r\nKliknìte na Dokonèit pro ukonèení tohoto prùvodce."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Váš poèítaè musí být restartován pro dokonèení odinstalace $(^NameDA). Chcete nyní restartovat?"
 
   !define MUI_UNTEXT_ABORTWARNING "Jste si jistý, že chcete ukonèit $(^Name) odinstalaci?"  
   
