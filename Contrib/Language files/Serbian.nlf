@@ -69,17 +69,17 @@ Ime
 # ^Completed
 Završeno
 # ^LicenseText
-Proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvatam'.
+Proèitajte licencu pre instalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvatam'.
 # ^LicenseTextCB
-Proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, obeležite ispod kvadratiæ. $_CLICK
+Proèitajte licencu pre instalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, obeležite kvadratiæ ispod. $_CLICK
 # ^LicenseTextRB
 Proèitajte licencu pre instalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, odaberite ispod prvu opciju. $_CLICK
 # ^UnLicenseText
-Proèitajte licencu prije deinstalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvaæam'.
+Proèitajte licencu pre deinstalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, odaberite 'Prihvaæam'.
 # ^UnLicenseTextCB
-Proèitajte licencu prije deinstalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, oznaèite ispod kvadratiæ. $_CLICK
+Proèitajte licencu pre deinstalacije programa $(^Name). Ukoliko prihvatate sve uslove licence, oznaèite kvadratiæ ispod. $_CLICK
 # ^UnLicenseTextRB
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite ispod prvu opciju. $_CLICK
+Molim proèitajte licencu pre uklanjanja programa $(^Name). Ukoliko prihvaæate sve uslove ugovora, odaberite prvu opciju ispod. $_CLICK
 # ^Custom
 Posebno
 # ^ComponentsText
@@ -91,7 +91,7 @@ Odaberite komponente koje želite da instalirate:
 # ^ComponentsSubText2
 Ili, odaberite opcione komponente koje želite da instalirate:
 # ^UnComponentsText
-Oznaèite komponente koje želite deinstalirati i uklonite oznaku s onih koje ne želite deinstalirati. $_CLICK
+Oznaèite komponente koje želite da deinstalirate i uklonite oznaku s onih koje ne želite deinstalirati. $_CLICK
 # ^UnComponentsSubText1
 Izaberite tip deinstalacije:
 # ^UnComponentsSubText2_NoInstTypes
@@ -115,7 +115,7 @@ Slobodno na disku:
 # ^SpaceRequired
 Potrebno na disku:
 # ^UninstallingText
-Ovaj program æe deinstalirati program $(^Name) s Vašeg raèunara. $_CLICK
+Program $(^Name) æe biti deinstalirati iz sledeæe programske grupe. $_CLICK
 # ^UninstallingSubText
 Deinstalacija iz:
 # ^FileError

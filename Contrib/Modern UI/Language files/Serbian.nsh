@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Serbian (2074)
 ;Translation by Vladan Obradovic
@@ -54,8 +54,11 @@
   !define MUI_TEXT_ABORTWARNING "Da li ste sigurni da želite prekinuti $(^Name) Instalaciju?"
 
 
-  !define MUI_UNTEXT_CONFIRM_TITLE "Uklanjanje programa $(^Name)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^Name) æe biti uklonjen s ovog raèunara."
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Dobrodošli u postupak deinstalacije programa $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Ovaj èarobnjak æe Vas provesti kroz postupak deinstalacije programa $(^Name).\r\n\r\nPre samog poèetka, molim Vas zatvorite program $(^Name) ukoliko je otvoren.\r\n\r\n$_CLICK"
+
+  !define MUI_UNTEXT_CONFIRM_TITLE "Deinstalacija programa $(^Name)"
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Program $(^Name) æe biti deinstaliran s Vašeg raèunara."
 
   !define MUI_UNTEXT_LICENSE_TITLE "Licenca"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Proèitajte licencu pre deinstalacije programa $(^Name)."
@@ -77,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Deinstalacija prekinuta"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Deinstalacija nije uspešno završena."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Kraj deinstalacije programa $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^Name) je deinstaliran s Vašeg raèunara.\r\n\r\nOdaberite 'Kraj' za zatvaranje ove deinstalacije."
+
+  !define MUI_UNTEXT_ABORTWARNING "Jeste li sigurni da želite prekinuti deinstalaciju programa $(^Name)?"  
 
 !insertmacro MUI_LANGUAGEFILE_END
