@@ -802,11 +802,11 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 int CEXEBuild::doCommand(int which_token, LineParser &line)
 {
   static const char *rootkeys[2] = {
-    "HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0",
-    "HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0"
+    "HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0SHCTX\0",
+    "HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0SHELL_CONTEXT\0"
   };
   static HKEY rootkey_tab[] = {
-    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA
+    HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA,0
   };
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -1905,6 +1905,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
         build_header.install_reg_rootkey=(int)rootkey_tab[k];
+        if (!build_header.install_reg_rootkey) PRINTHELP() // SHCTX is invalid here
         build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
         if (line.gettoken_str(2)[0] == '\\')
           warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));

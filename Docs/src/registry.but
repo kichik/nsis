@@ -161,7 +161,7 @@ Write a string to the registry. See \R{writeregexpandstr}{WriteRegExpandStr} for
 
 \c root_key subkey key_name value
 
-Write a string to the registry. root_key must be one of:
+Write a string to the registry. \e{root_key} must be one of:
 
 \b \e{HKCR} or \e{HKEY_CLASSES_ROOT}
 
@@ -176,6 +176,10 @@ Write a string to the registry. root_key must be one of:
 \b \e{HKDD} or \e{HKEY_DYN_DATA}
 
 \b \e{HKPD} or \e{HKEY_PERFORMANCE_DATA}
+
+\b \e{SHCTX} or \e{SHELL_CONTEXT}
+
+If \e{root_key} is \e{SHCTX} or \e{SHELL_CONTEXT}, it will be replaced with \e{HKLM} if \R{setshellvarcontext}{SetShellVarContext} is set to \e{all} and with \e{HKCU} if \R{setshellvarcontext}{SetShellVarContext} is set to \e{current}.
 
 The error flag is set if the string could not be written to the registry. The type of the string will be REG_SZ for WriteRegStr, or REG_EXPAND_STR for WriteRegExpandStr. If the registry key doesn't exist it will be created.
 
