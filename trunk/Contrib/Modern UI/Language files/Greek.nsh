@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Greek (1032)
 ;By Makidis N. Mike
@@ -39,7 +39,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Η Εγκατάσταση Ολοκληρώθηκε"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Η εγκατάσταση ολοκληρώθηκε επιτυχώς."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Ολοκλήρωση"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Τέλος"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Ολοκλήρωση της Εγκατάστασης του '${MUI_PRODUCT}'"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "Το '${MUI_PRODUCT}' εγκαταστάθηκε στον υπολογιστή σας.\r\n\r\nΚάντε κλικ στο Τέλος για να κλείσετε αυτόν τον οδηγό."
@@ -49,7 +48,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Εκτέλεση του '${MUI_PRODUCT}'"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Εμφάνιση του αρχείου Readme"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Φάκελος στο Μενού Έναρξη"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Επιλογή Φακέλου για το Μενού Έναρξη"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του προγράμματος."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του προγράμματος. Μπορείτε επίσης να εισάγετε ένα όνομα για να δημιουργήσετε ένα νέο φάκελο."

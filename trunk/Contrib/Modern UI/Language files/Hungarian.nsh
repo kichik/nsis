@@ -1,9 +1,8 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Hungarian (1038)
-;Compatible with Modern UI 1.62 - By Jozsef Tamas Herczeg
-;Compatible with Modern UI 1.62 - Lajos Molnar (Orfanik) <orfanik@axelero.hu>
+;Translation by Jozsef Tamas Herczeg, Lajos Molnar (Orfanik) <orfanik@axelero.hu>
 
 ;--------------------------------
 
@@ -40,7 +39,6 @@
  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Elkészült telepítés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "A telepítés sikeresen befejezõdött."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Befejezés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Befejezés"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "A(z) ${MUI_PRODUCT} telepítése megtörtént."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "A(z) ${MUI_PRODUCT} telepítése megtörtént.\r\n\r\nA Befejezés gomb megnyomásával zárja be a varázslót."
@@ -50,7 +48,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "${MUI_PRODUCT} futtatása"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "OlvassEl fájl megjelenítése"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Start menü mappa"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Start menü mappa kijelölése"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Start menü mappa kijelölése a program parancsikonjaihoz."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Jelöljön ki egy mappát a Start menüben, melybe a program parancsikonjait fogja elhelyezni. Beírhatja új mappa nevét is."

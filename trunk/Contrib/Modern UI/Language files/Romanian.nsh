@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Romanian (1048)
 ;Translated by Cristian Pirvu (pcristip@yahoo.com)
@@ -41,7 +41,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Instalare completa"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Instalarea s-a completat cu succes."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": In curs de terminare"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Termina"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Terminarea instalarii pentru ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} a fost instalat.\r\n\r\nApasa Termina pentru a incheia instalarea."
@@ -51,7 +50,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Executa ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Arata Readme-ul"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Directorul Start Menu"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Alege directorul din Start Menu"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Alege un director din Start Menu pentru shortcut-urile aplicatiei."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Selecteaza directorul din Start Menu in care sa creez shortcut-urile programului. Poti de asemenea sa creezi un director nou scriind un nume nou."
