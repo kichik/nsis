@@ -1466,13 +1466,17 @@ static DWORD WINAPI install_thread(LPVOID p)
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+
+// listview unfolds partly hidden labels if it does not have infotip text
+#define LVS_EX_LABELTIP 0x00004000
+
 static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   HWND linsthwnd=insthwnd;
   if (uMsg == WM_INITDIALOG)
   {
     RECT r;
-    LVCOLUMN lvc = {0, 0, -1, 0, 0, -1};
+    LVCOLUMN lvc = {LVCF_WIDTH, 0, -1, 0, 0, -1};
     int lb_bg=g_header->lb_bg,lb_fg=g_header->lb_fg;
     int x=num_sections;
 
@@ -1490,10 +1494,10 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         progress_bar_len+=g_sections[x].code_size;
     }
 
+    GetClientRect(linsthwnd, &r);
+    lvc.cx = r.right - GetSystemMetrics(SM_CXHSCROLL);
     ListView_InsertColumn(linsthwnd, 0, &lvc);
-    GetClientRect(linsthwnd,&r);
-    ListView_SetColumnWidth(linsthwnd, 0, r.right-r.left-GetSystemMetrics(SM_CXHSCROLL));
-#define LVS_EX_LABELTIP         0x00004000 // listview unfolds partly hidden labels if it does not have infotip text
+
     ListView_SetExtendedListViewStyleEx(linsthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
     if (lb_bg >= 0) {
       ListView_SetBkColor(linsthwnd, lb_bg);
@@ -1588,8 +1592,11 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         //endPtr = ptr+total-2; // -2 to allow for CR/LF
         i = 0;
         do {
-          ListView_GetItemText(linsthwnd,i,0,ptr,total);
-          while (*ptr) ptr++;
+          item.pszText = ptr;
+          item.cchTextMax = total;
+          SendMessage(linsthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
+          //while (*ptr) ptr++;
+          ptr += mystrlen(ptr);
           *(WORD*)ptr = CHAR2_TO_WORD('\r','\n');
           ptr+=2;
         } while (++i < count);
