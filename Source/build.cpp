@@ -830,6 +830,8 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
       }
       while (compressor->GetNextOut() - out > 0);
 
+      compressor->End();
+
       int used = bufferlen - avail_out;
 
       // never store compressed if output buffer is full (compression increased the size...)
@@ -846,8 +848,6 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
         else st = nst;
       }
     }
-
-    compressor->End();
   }
 #endif // NSIS_CONFIG_COMPRESSION_SUPPORT
 
