@@ -6,7 +6,7 @@ bin\halibut.exe chm_config.but intro.but tutorial.but usage.but script.but var.b
 @del /F *.html *.hhc *.hhk *.css
 @if not "x%OS%x" == "xWindows_NTx" goto CHMCopy
 @fc /B nsis.chm ..\..\nsis.chm > nul
-@if errorlevel 0 goto SkipCHMCopy
+@if %errorlevel% == 0 goto SkipCHMCopy
 :CHMCopy
   @copy nsis.chm ..\..\
 :SkipCHMCopy
