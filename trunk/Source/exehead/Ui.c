@@ -1414,7 +1414,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     {
       DWORD pos  = GetMessagePos();
       HMENU menu = CreatePopupMenu();
-      AppendMenu(menu,MF_STRING,1,"Copy Details To Clipboard");
+      AppendMenu(menu,MF_STRING,1,GetStringFromStringTab(GetLangString(LANGID_COPYDEATAILS)));
     	if (1==TrackPopupMenu(
         menu,
         TPM_NONOTIFY|TPM_RETURNCMD,
