@@ -1,6 +1,5 @@
 # Header, don't edit
 NLF v6
-# Start editing here
 # Language ID
 1028
 # Font and size - dash (-) means default 字型名稱與大小
@@ -10,7 +9,7 @@ NLF v6
 950
 # RTL - anything else than RTL means LTR 由右至左書寫
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-09-11
+# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-10-20
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -18,7 +17,7 @@ $(^Name) 安裝
 # ^UninstallCaption
 $(^Name) 解除安裝
 # ^LicenseSubCaption
-: 授權條款
+: 授權協議
 # ^ComponentsSubCaption
 : 安裝選項
 # ^DirSubCaption

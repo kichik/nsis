@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;Translator: Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-09-11
+;Revision date: 2003-10-20
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
