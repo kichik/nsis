@@ -4,6 +4,11 @@
 !define VER_MINOR 0b2
 
 ;--------------------------------
+;Compile CVS Data Setup
+
+!system '"${NSISDIR}\makensis.exe" cvsdata.nsi'
+
+;--------------------------------
 ;Configuration
 
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
@@ -57,7 +62,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;--------------------------------
   ;Languages
 
-  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of ${MUI_PRODUCT}, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "This wizard will guide you through the installation of NSIS, a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.\r\n\r\n\r\n"
 
   !insertmacro MUI_LANGUAGE "English"
   
@@ -77,6 +82,8 @@ LicenseData ..\license.txt
 
 ;--------------------------------
 ;Installer Sections
+
+!define SF_SELECTED 1
 
 Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
@@ -107,13 +114,26 @@ Section "NSIS Development System (required)" SecCore
   File ..\contrib\makensisw\*.txt
 SectionEnd
 
-Section "NSIS Examples (recommended)" SecExample
+Section "NSIS Menu" SecMenu
+  SectionIn 1 2 3
+  SetOutPath $INSTDIR
+  File ..\NSIS.exe
+  SetOutPath $INSTDIR\Menu
+  File ..\Menu\*.html
+  SetOutPath $INSTDIR\Menu\images
+  File ..\Menu\images\*.gif
+SectionEnd
+
+Section "NSIS Update" SecUpdate
+  SectionIn 1 2 3
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\NSISUpdate.exe
+  File ..\Bin\InstallCVSData.exe
+SectionEnd
+
+Section "NSIS Script Examples" SecExample
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
-  Delete $INSTDIR\viewhtml.nsi
-  Delete $INSTDIR\waplugin.nsi
-  Delete $INSTDIR\example*.nsi
-  Delete $INSTDIR\*test.nsi
   Delete $INSTDIR\primes.nsi
   Delete $INSTDIR\functions.htm
   File ..\Examples\makensis.nsi
@@ -168,14 +188,21 @@ Section "Desktop Shortcut" SecIcons
   SetOutPath $INSTDIR
 !ifndef NO_STARTMENUSHORTCUTS
   CreateDirectory $SMPROGRAMS\NSIS
-
-  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS GUI.lnk" "$INSTDIR\Makensisw.exe" ""
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
+  
+  IfFileExists "$INSTDIR\NSIS.exe" "" +2
+    CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
+    
+  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW.lnk" "$INSTDIR\makensisw.exe"
+  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://www.nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
 !endif
   
-  CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" ""
+  IfFileExists "$INSTDIR\NSIS.exe" "" +3
+    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe" ""
+    Goto +2
+  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe" ""
+  
 SectionEnd
 
 SubSection "Contrib" SecContrib
@@ -192,6 +219,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Examples\Modern UI\ioC.ini"
     File "..\Examples\Modern UI\StartMenu.nsi"
     File "..\Examples\Modern UI\WelcomeFinish.nsi"
+    
     SetOutPath "$INSTDIR\Contrib\Modern UI"
     File "..\Contrib\Modern UI\System.nsh"
     File "..\Contrib\Modern UI\Readme.jpg"
@@ -201,18 +229,20 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\Modern UI\Screenshot2.png"
     File "..\Contrib\Modern UI\License.txt"
     File "..\Contrib\Modern UI\ioSpecial.ini"
-    SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
-    File "..\Contrib\Modern UI\Language files\*.nsh"
-    SetOutPath "$INSTDIR\Contrib\UIs"
+    
+    SetOutPath $INSTDIR\Contrib\UIs
     File "..\Contrib\UIs\modern.exe"
     File "..\Contrib\UIs\modern2.exe"
 	File "..\Contrib\UIs\modern3.exe"
+	
     SetOutPath $INSTDIR\Contrib\Icons
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
     File "..\Contrib\Icons\modern-wizard.bmp"
+    
 	SetOutPath $INSTDIR\Include
 	File "..\Include\MUI.nsh"
+	
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
@@ -240,10 +270,20 @@ SectionEnd
 
 Section "Language files" SecContribLang
   SectionIn 1 2
+  
   SetOutPath "$INSTDIR\Contrib\Language files"
   File "..\Contrib\Language files\*.nlf"
+  
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
+  
+  SectionGetFlags ${SecContribModernUI} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+	IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
+	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+      File "..\Contrib\Modern UI\Language files\*.nsh"
+  nomui:
+    
 SectionEnd
 
 SubSection "Plugins" SecContribPlugins
@@ -552,19 +592,41 @@ SubSectionEnd
 SubSectionEnd
 
 Section -post
-  SetOutPath $INSTDIR
-  WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "NSIS Development Kit (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
 
+  ;Always install the Modern UI English language file
+
+  SectionGetFlags ${SecContribLang} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  IntCmp $R0 ${SF_SELECTED} langfiles
+	SectionGetFlags ${SecContribModernUI} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+	IntCmp $R0 ${SF_SELECTED} "" nomui
+	  SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+      File "..\Contrib\Modern UI\Language files\English.nsh"
+    nomui:
+  langfiles:
+
+  SetOutPath $INSTDIR
+  
+  WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
+  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" "$INSTDIR\uninst-nsis.exe"
+  WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${MUI_VERSION}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
+  
 !ifndef NO_STARTMENUSHORTCUTS
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
 
-    IfFileExists $INSTDIR\Examples 0 +2
-      CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
+  IfFileExists $INSTDIR\Examples 0 +2
+    CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
 
   IfFileExists "$INSTDIR\Source" 0 +2
-      CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
+    CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
 
   CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
 
@@ -572,7 +634,7 @@ Section -post
   CreateDirectory $SMPROGRAMS\NSIS\Contrib
     CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
 
-    Push "MakeNSISW"
+  Push "MakeNSISW"
   Call AddWorkspaceToStartMenu
 
   ; ExDLL
@@ -589,8 +651,8 @@ Section -post
   Call AddContribToStartMenu
 
   ; ZIP2EXE
-    IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
+  IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 +2
+    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
 
   Push ZIP2EXE
   Call AddWorkspaceToStartMenu
@@ -665,12 +727,6 @@ Section -post
   Push "Source\System project workspace"
   Call AddContribToStartMenu
 
-!ifndef DONTSHOWSHORTCUTS
-  ; open sesame
-    ExecShell open '$SMPROGRAMS\NSIS'
-    Sleep 500
-    BringToFront
-!endif
   nofunshit:
 !endif
   
@@ -692,6 +748,8 @@ SectionEnd
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExample} "Example installation scripts that show you how to use NSIS"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMenu} "A menu that contains links to NSIS information, utilities and websites"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExtention} "Adds right mouse click integration to nsi files so you can compile scripts easily"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecIcons} "Adds icons to your start menu and your desktop for easy access"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContrib} "User interfaces, tools, graphics, files, and other utilities contributed by other NSIS developers"
@@ -740,12 +798,10 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-!define SF_SELECTED 1
-
 !macro secSelected SEC
   SectionGetFlags ${SEC} $R7
   IntOp $R7 $R7 & ${SF_SELECTED}
-  StrCmp $R7 ${SF_SELECTED} 0 +2
+  IntCmp $R7 ${SF_SELECTED} 0 +2
     IntOp $R0 $R0 + 1
 !macroend
 
