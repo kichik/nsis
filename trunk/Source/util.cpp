@@ -10,6 +10,8 @@
 
 #ifndef _WIN32
 #  include <ctype.h>
+#  include <unistd.h> // for close(2)
+#  include <fcntl.h> // for open(2)
 #endif
 
 #include <cassert> // for assert
@@ -404,6 +406,7 @@ int wsprintf(char *s, const char *format, ...) {
 
 char *my_convert(const char *path)
 {
+  // TODO: (orip) ref. this func. to use std::string?
   char *converted_path = strdup(path);
   size_t len = strlen(path);
 
@@ -526,3 +529,4 @@ string get_dir_name(const string& path) {
     return path;
   return path.substr(0, last_separator_pos);
 }
+
