@@ -25,6 +25,7 @@ SetCompressor bzip2
   
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
+  !define MUI_UNCONFIRMPAGE
 
   ;NSIS updates no system files
   !define MUI_TEXT_WELCOME_INFO "\r\n\r\nThis will install ${MUI_PRODUCT} on your computer.\r\n\r\n\r\n\r\n"
