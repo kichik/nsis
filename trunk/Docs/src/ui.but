@@ -50,7 +50,7 @@ Sends a message to HWND. If a user variable $x is specified as the last paramete
 
 \b \e{WM_USER} 1024
 
-Include $\{NSISDIR\}\\Include\\WinMessages.nsh to have all of Windows messages defined in your script.
+Include WinMessages.nsh to have all of Windows messages defined in your script.
 
 To send a string param, put STR: before the parameter, for example: "STR:Some string".
 
