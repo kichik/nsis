@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2002 Amir Szekely <kichik@netvision.net.il>
+  Copyright (C) 2002-2004 Amir Szekely <kichik@netvision.net.il>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,10 +24,6 @@
 #include "util.h"
 #include <time.h>
 #include <queue>
-
-#ifndef _WIN32
-#  include <iconv.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // Utilities
@@ -424,28 +420,12 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
     if (rdToScan->Entries[i].NameString.NameIsString) {
       PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rdToScan->Entries[i].NameString.NameOffset + (char*)rdRoot);
 
-#ifdef _WIN32
       int mbsSize = WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, 0, 0, 0, 0);
       szName = new char[mbsSize+1];
-      WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, mbsSize, 0, 0);
-      szName[mbsSize] = 0;
-#else
-      {
-        iconv_t cd = iconv_open("CP1252", "UCS-2");
-        if (cd != (iconv_t) -1)
-        {
-          char *in = (char *) rds->NameString;
-          char *out = szName = new char[(rds->Length + 1) * sizeof(WCHAR)];
-          size_t insize = rds->Length;
-          size_t outsize = (rds->Length + 1) * sizeof(WCHAR);
-          if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
-            throw runtime_error("Unicode conversion failed");
-          iconv_close(cd);
-        }
-        else
-          throw runtime_error("Unicode conversion failed");
+      if (!WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, mbsSize, 0, 0)) {
+        throw runtime_error("Unicode conversion failed");
       }
-#endif
+      szName[mbsSize] = 0;
     }
     // Else, set the name to this entry's id
     else
@@ -549,30 +529,11 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
     PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->NameString.NameOffset = DWORD(seeker) - DWORD(pbRsrcSec);
 
     char* szName = cRDirE->GetName();
-    WORD iLen = strlen(szName);
-    WCHAR *szwName = new WCHAR[iLen + 1];
-#ifdef _WIN32
+    WORD iLen = strlen(szName) + 1;
+    WCHAR *szwName = new WCHAR[iLen];
+
     // MultiByteToWideChar return value includes the null char, so -1
     iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
-#else
-    {
-      iconv_t cd = iconv_open("UCS-2", "CP1252");
-      if (cd != (iconv_t) -1)
-      {
-        char *in = szName;
-        char *out = (char *) szwName;
-        size_t insize = iLen + 1;
-        size_t outsize = insize * sizeof(WCHAR);
-        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
-          iLen = (WORD) -1;
-        else
-          iLen = (WORD) (((int) out - (int) szwName - 2) / 2);
-        iconv_close(cd);
-      }
-      else
-        iLen = (WORD) -1;
-    }
-#endif
     if (iLen == (WORD) -1)
       throw runtime_error("Unicode conversion failed");
 
