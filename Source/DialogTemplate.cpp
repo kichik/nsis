@@ -52,7 +52,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 			DWORD dwStrLen = WCStrLen((WCHAR*)arr);
 			readInto = new char[dwStrLen];
 			WideCharToMultiByte(CP_ACP, 0, (WCHAR*)arr, dwStrLen, readInto, dwStrLen, 0, 0);
-			seeker += (dwStrLen)*sizeof(WORD);
+			seeker += (dwStrLen)*sizeof(WCHAR);
 		}
 		break;
 	}
@@ -68,8 +68,8 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 			seeker += sizeof(WORD); \
 		} \
 		else { \
-			MultiByteToWideChar(CP_ACP, 0, x, -1, (WCHAR*)seeker, dwSize); \
-			seeker += (lstrlen(x)+1)*sizeof(WCHAR); \
+			int us = MultiByteToWideChar(CP_ACP, 0, x, -1, (WCHAR*)seeker, dwSize); \
+			seeker += us*sizeof(WCHAR); \
 		} \
 	else \
 		seeker += sizeof(WORD);
