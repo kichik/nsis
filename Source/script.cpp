@@ -138,8 +138,14 @@ parse_again:
     }
 
     if (line.getnumtokens() == 1) {
-      ignore=!ignore;
-      return PS_OK;
+      if (!wait_for_endif) {
+        ignore=!ignore;
+        return PS_OK;
+      }
+      else {
+        ignore=1;
+        return PS_OK;
+      }
     }
 
     line.eattoken();
@@ -2739,11 +2745,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("ShowWindow: handle=%s show state=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
+    case TOK_HIDEWINDOW:
+      ent.which=EW_SHOWWINDOW;
+      ent.offsets[0]=add_string("$HWNDPARENT");
+      ent.offsets[1]=add_string("0"/*SW_HIDE*/);
+      ent.offsets[2]=1;
+      SCRIPT_MSG("HideWindow\n");
+    return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
     case TOK_SETSTATICBKCOLOR:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
+    case TOK_HIDEWINDOW:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -2755,6 +2769,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETSTATICBKCOLOR:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
+    case TOK_HIDEWINDOW:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_HWNDS
@@ -2968,10 +2983,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_BRINGTOFRONT:
       ent.which=EW_BRINGTOFRONT;
       SCRIPT_MSG("BringToFront\n");
-    return add_entry(&ent);
-    case TOK_HIDEWINDOW:
-      ent.which=EW_HIDEWINDOW;
-      SCRIPT_MSG("HideWindow\n");
     return add_entry(&ent);
     case TOK_IFFILEEXISTS:
       ent.which=EW_IFFILEEXISTS;
