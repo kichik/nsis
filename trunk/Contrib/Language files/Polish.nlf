@@ -166,17 +166,17 @@ B³¹d rejestracji DLL
 # ^InvalidOpcode
 Instalator uszkodzony: z³y kod operacji
 # ^NoOLE
-"Brak OLE dla: 
+"Brak OLE dla: "
 # ^OutputFolder
-"Folder wyjœciowy: 
+"Folder wyjœciowy: "
 # ^RemoveFolder
-"Usuñ folder: 
+"Usuñ folder: "
 # ^RenameOnReboot
-"Zmieñ nazwê przy restarcie: 
+"Zmieñ nazwê przy restarcie: "
 # ^Rename
-"Zmieñ nazwê: 
+"Zmieñ nazwê: "
 # ^Skipped
-"Pominiête: 
+"Pominiête: "
 # ^CopyDetails
 Kopiuj szczegó³y do schowka
 # ^LogInstall
