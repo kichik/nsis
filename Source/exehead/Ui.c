@@ -573,7 +573,9 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
 
     hwLicense=GetUIItem(IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
-    SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
+#define lbg g_inst_header->license_bg
+    SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,lbg>=0?lbg:GetSysColor(-lbg));
+#undef lbg
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK|ENM_KEYEVENTS); //XGE 8th September 2002 Or'd in ENM_KEYEVENTS
     dwRead=0;
     SendMessage(hwLicense,EM_EXLIMITTEXT,0,mystrlen((char*)es.dwCookie));
