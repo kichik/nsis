@@ -92,7 +92,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_INTFMT,"IntFmt",3,0,"$(user_var: output) format_string input"},
 {TOK_ISWINDOW,"IsWindow",2,1,"hwnd jump_if_window [jump_if_not_window]"},
 {TOK_GOTO,"Goto",1,0,"label"},
-{TOK_LANGSTRING,"LangString",3,0,"name lang_id string"},
+{TOK_LANGSTRING,"LangString",3,0,"[un.]name lang_id string"},
 {TOK_LICENSEDATA,"LicenseData",1,1,"[/LANG=lang_id] local_file_that_has_license_text.txt"},
 {TOK_LICENSETEXT,"LicenseText",1,2,"[/LANG=lang_id] license_page_description [license_button_text]"},
 {TOK_LICENSEBKCOLOR,"LicenseBkColor",1,0,"background_color"},
