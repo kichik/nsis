@@ -22,6 +22,8 @@
 */
 #ifndef UTILS_H
 #define UTILS_H
+#include "resource.h"
+#include "toolbar.h"
 
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
@@ -49,6 +51,7 @@ void AddTip(HWND hWnd,LPSTR lpszToolTip);
 void ShowDocs();
 void RestoreCompressor();
 void SaveCompressor();
+void SetCompressorStats();
 
 BOOL PopMRUFile(char* fname);
 void PushMRUFile(char* fname);

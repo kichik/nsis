@@ -240,10 +240,6 @@ void SetCompressorStats()
 void CompileNSISScript() {
   static char *s;
   DragAcceptFiles(g_sdata.hwnd,FALSE);
-  if(((g_sdata.compressor == COMPRESSOR_BEST) &&
-      (!lstrcmpi(g_sdata.compressor_name,BZIP2_COMPRESSOR_NAME)))) {
-    SetCompressorStats();
-  }
   ClearLog(g_sdata.hwnd);
   SetTitle(g_sdata.hwnd,NULL);
   if (lstrlen(g_sdata.script)==0) {
@@ -381,7 +377,6 @@ void ResetObjects() {
   g_sdata.warnings = FALSE;
   g_sdata.retcode = -1;
   g_sdata.thread = NULL;
-  lstrcpy(g_sdata.compressor_stats,"");
 }
 
 void ResetDefines() {
@@ -766,16 +761,19 @@ void RestoreCompressor()
     }
     RegCloseKey(hKey);
   }
+  g_sdata.command_line_compressor = false;
   SetCompressor(v);
 }
 
 void SaveCompressor()
 {
-  HKEY hKey;
-  NCOMPRESSOR v = g_sdata.compressor;
-  if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-    RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_DWORD,(unsigned char*)&v,sizeof(v));
-    RegCloseKey(hKey);
+  if(!g_sdata.command_line_compressor) {
+    HKEY hKey;
+    NCOMPRESSOR v = g_sdata.compressor;
+    if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
+      RegSetValueEx(hKey,REGCOMPRESSOR,0,REG_DWORD,(unsigned char*)&v,sizeof(v));
+      RegCloseKey(hKey);
+    }
   }
 }
 

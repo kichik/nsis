@@ -175,6 +175,7 @@ Version History
  - Made the Toolbar style flat
  - Added option for compile & run
  - Added compressor setting option
+ - Added support for lzma compression
  
 Copyright Information
 ---------------------
