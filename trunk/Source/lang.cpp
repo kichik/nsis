@@ -66,9 +66,9 @@ extern char *english_strings[] = {
   "Skipped: "
 };
 
-int CEXEBuild::SetString(char *string, int id, int process, WORD lang/*=0*/) {
-  lang = lang?lang:build_nlfs.size()?build_nlfs[build_nlfs.size()-1]->GetLang():0;
-  lang = lang?lang:string_tables.size()?string_tables[0]->common.lang_id:1033; // Default is English (1033)
+int CEXEBuild::SetString(char *string, int id, int process, LANGID lang/*=0*/) {
+  lang=lang?lang:last_used_lang;
+  last_used_lang=lang;
   StringTable *table = 0;
   for (int i = 0; i < string_tables.size(); i++) {
     if (lang == string_tables[i]->common.lang_id) {
@@ -176,7 +176,6 @@ int CEXEBuild::WriteStringTables() {
 
   // If we have no tables (user didn't set any string and didn't load any NLF) create the default one
   if (string_tables.size() == 0) {
-    build_header.common.str_tables_num = 1;
     StringTable *table = (StringTable*)malloc(sizeof(StringTable));
     if (!table) {
       ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
