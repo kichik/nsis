@@ -204,10 +204,6 @@ typedef struct
 
   // these point to the header+sections+entries+stringtable in the datablock
   int length_of_header;
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  // this store the sized needed to store all user vars
-  int length_of_uservars;
-#endif
 
   // this specifies the length of all the data (including the firstheader and CRC)
   int length_of_all_following_data;

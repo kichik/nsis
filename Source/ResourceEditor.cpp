@@ -274,8 +274,10 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
 
 	// Refresh the headers of the sections that come after the resource section, and the data directory
 	for (i++; i < ntHeaders->FileHeader.NumberOfSections; i++) {
-		sectionHeadersArray[i].PointerToRawData -= IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData;
-		sectionHeadersArray[i].PointerToRawData += dwRsrcSizeAligned;
+    if ( sectionHeadersArray[i].PointerToRawData ) {
+      sectionHeadersArray[i].PointerToRawData -= IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData;
+      sectionHeadersArray[i].PointerToRawData += dwRsrcSizeAligned;
+    }
 		int secInDataDir = 0;
 		for (unsigned int j = 0; j < ntHeaders->OptionalHeader.NumberOfRvaAndSizes; j++)
 			if (ntHeaders->OptionalHeader.DataDirectory[j].VirtualAddress == sectionHeadersArray[i].VirtualAddress)
@@ -323,6 +325,36 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   // we didn't move the resources section
 
 	return pbNewPE;
+}
+
+// This function scans exe sections and after find a match with given name
+// increments it's virtual size (auto fixes image size based on section alignment, etc)
+bool CResourceEditor::AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize)
+{
+  PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
+
+	// Refresh the headers of the sections that come after the resource section, and the data directory
+	for (int i =0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
+    if ( !strcmp((LPCSTR)sectionHeadersArray[i].Name, pszSectionName) ) {
+      sectionHeadersArray[i].Misc.VirtualSize += addsize;
+      sectionHeadersArray[i].Characteristics &= ~IMAGE_SCN_MEM_DISCARDABLE;
+      sectionHeadersArray[i].Misc.VirtualSize = RALIGN(sectionHeadersArray[i].Misc.VirtualSize, m_ntHeaders->OptionalHeader.SectionAlignment);
+      // now fix any section after
+      for (int k=i+1; k< m_ntHeaders->FileHeader.NumberOfSections; k++, i++) {
+        sectionHeadersArray[k].VirtualAddress = sectionHeadersArray[i].VirtualAddress + sectionHeadersArray[i].Misc.VirtualSize;
+        sectionHeadersArray[k].VirtualAddress = RALIGN(sectionHeadersArray[k].VirtualAddress, m_ntHeaders->OptionalHeader.SectionAlignment);
+        if ( m_dwResourceSectionIndex == k )
+        {
+          // fix the resources virtual address if it changed
+          m_dwResourceSectionVA = m_ntHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress = sectionHeadersArray[k].VirtualAddress;
+        }
+      }
+
+      return true;
+    }
+	}
+
+  return false;
 }
 
 //////////////////////////////////////////////////////////////////////
