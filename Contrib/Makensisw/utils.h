@@ -23,6 +23,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define MRU_SIZE 5
+
 void SetTitle(HWND hwnd,char *substr);
 void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);
@@ -41,4 +43,7 @@ void DestroyTooltips();
 void AddTip(HWND hWnd,LPSTR lpszToolTip);
 void ShowDocs();
 
+void PushMRUFile(char* fname);
+void BuildMRUMenu(HMENU hMenu);
+void LoadMRUFile(int position);
 #endif

@@ -46,6 +46,7 @@
 #define REGLOC       "MakeNSISWPlacement"
 #define REGDEFSUBKEY "Defines"
 #define REGDEFCOUNT  "MakeNSISWDefinesCount"
+#define REGMRUSUBKEY "MRU"
 #define EXENAME      "makensis.exe"
 #define MAX_STRING   256
 #define TIMEOUT      100
@@ -85,6 +86,8 @@ BOOL           SetCompressor(WORD);
 #endif
 void           RestoreDefines();
 void           SaveDefines();
+void           RestoreMRUList();
+void           SaveMRUList();
 
 typedef struct NSISScriptData {
   bool script_alloced;

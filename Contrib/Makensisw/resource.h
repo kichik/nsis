@@ -9,9 +9,6 @@
 #define IDS_FIND                        5
 #define IDS_RECOMPILE                   6
 #define IDS_DEFINES                     7
-#ifdef COMPRESSOR_OPTION
-#define IDS_COMPRESSOR                  8
-#endif
 #define IDS_TEST                        9
 #define IDS_EDITSCRIPT                  10
 #define IDS_BROWSESCR                   11
@@ -55,9 +52,6 @@
 #define IDRIGHT                         1019
 #define IDLEFT                          1020
 #define IDC_DEFINES                     1021
-#ifdef COMPRESSOR_OPTION
-#define IDM_COMPRESSOR                  40001
-#endif
 #define IDM_TEST                        40002
 #define IDM_EDITSCRIPT                  40003
 #define IDM_DOCS                        40004
@@ -72,13 +66,14 @@
 #define IDM_DEFAULT                     40020
 #define IDM_ZLIB                        40021
 #define IDM_GZIP                        40022
+#define IDM_MRU_FILE                    40023
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        124
-#define _APS_NEXT_COMMAND_VALUE         40023
+#define _APS_NEXT_COMMAND_VALUE         40029
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

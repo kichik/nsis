@@ -41,10 +41,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.script_alloced=false;
   g_sdata.defines = NULL;
   RestoreDefines();
+  RestoreMRUList();
   g_sdata.script=GetCommandLine();
   if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
   else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
   while (*g_sdata.script==' ') g_sdata.script++;
+  PushMRUFile(g_sdata.script);
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
     return 1;
@@ -112,6 +114,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_DESTROY:
     {
       SaveDefines();
+      SaveMRUList();
       SaveWindowPos(g_sdata.hwnd);
       DestroyTooltips();
       PostQuitMessage(0);
@@ -143,6 +146,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           g_sdata.script_alloced = true;
           g_sdata.script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
           wsprintf(g_sdata.script,"\"%s\"",szTmp);
+          PushMRUFile(g_sdata.script);
           ResetObjects();
           CompileNSISScript();
         }
@@ -246,6 +250,17 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
       return TRUE;
     }
+    case WM_MENUSELECT:
+    {
+      HMENU hMenu = (HMENU)lParam;
+      UINT id = (UINT)LOWORD(wParam);
+      UINT flags = (UINT)HIWORD(wParam);
+      if(hMenu == g_sdata.menu && id == 0 && (flags & MF_POPUP) == MF_POPUP) {
+        hMenu = GetSubMenu(hMenu, id);
+        BuildMRUMenu(hMenu);
+      }
+      return TRUE;
+    }
     case WM_COMMAND:
     {
       switch (LOWORD(wParam)) {
@@ -317,12 +332,20 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (GetOpenFileName(&l)) {
               g_sdata.script = (char *)GlobalAlloc(GPTR,lstrlen(buf)+3);
               wsprintf(g_sdata.script,"\"%s\"",buf);
+              PushMRUFile(g_sdata.script);
               ResetObjects();
               CompileNSISScript();
             }
           }
           return TRUE;
         }
+        case IDM_MRU_FILE:
+        case IDM_MRU_FILE+1:
+        case IDM_MRU_FILE+2:
+        case IDM_MRU_FILE+3:
+        case IDM_MRU_FILE+4:
+          LoadMRUFile(LOWORD(wParam)-IDM_MRU_FILE);
+          return TRUE;
 #ifdef COMPRESSOR_OPTION
         case IDM_COMPRESSOR:
         {
