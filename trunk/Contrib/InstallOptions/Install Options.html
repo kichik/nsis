@@ -70,9 +70,9 @@ following values:
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
       <TD vAlign=top bgColor=#eeeeee>If specified, replaces the default "Question" caption by a user specified value.</TD></TR>
 	<TR>
-      <TD vAlign=top bgColor=#cccccc><B>CancelConfirmIcon</B></TD>
+      <TD vAlign=top bgColor=#cccccc><B>CancelConfirmFlags</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
-      <TD vAlign=top bgColor=#eeeeee>If specified, adds an icon to the cancel confirmation message box (MB_ICONEXCLAMATION, MB_ICONWARNING, MB_ICONINFORMATION, MB_ICONASTERISK, MB_ICONQUESTION, MB_ICONSTOP, MB_ICONERROR, or MB_ICONHAND).</TD></TR>
+      <TD vAlign=top bgColor=#eeeeee>If specified, can add an icon to the cancel confirmation message box (MB_ICONEXCLAMATION, MB_ICONINFORMATION, MB_ICONQUESTION, MB_ICONSTOP) or effect the behaviour of it in other ways (MB_TOPMOST, MB_SETFOREGROUND, MB_RIGHT, MB_DEFBUTTON1, MB_DEFBUTTON2). To specify multiple flags, separate using the pipe '|' symbol.</TD></TR>
 	<TR>
       <TD vAlign=top bgColor=#cccccc><B>CancelEnabled</B></TD>
       <TD vAlign=top bgColor=#cccccc><I>(optional)</I></TD>
@@ -272,6 +272,10 @@ numbers from 1 to NumFields. Each Field section contains the following values:
 <A name=history><A name=top><B>History:</B>
 <P>
 <UL>
+  <LI><a name=DLL1.4>DLL version 1.6 beta (9/30/2002)
+  <UL>
+     <li>CancelConfirmIcon becomes CancelConfirmFlags and can now take the other common MessageBox flags
+  </UL>
   <LI><a name=DLL1.4>DLL version 1.5 beta (9/26/2002)
   <UL>
      <li>Made close [x] button behave like Cancel (thanks brainsucker)
