@@ -145,10 +145,24 @@ control the interface has already been written for you.</p>
 an older script with the Classic UI, follow the steps below.</p>
 <p class="text">Taking a look at the <a href="#examples">example</a> scripts
 will also help you to learn more about the Modern UI.</p>
-<p class="text"><span class="bold">Note:</span> If you want to add a
-double quote (&quot;) to a Modern UI string, you should always escape
-it ($\&quot;), because the Modern UI macros use &quot; to separate
-parameters.</p>
+  <p class="subheader">Syntax</p>
+  <p class="text">Most defines (i.e. MUI_COMPONENTSPAGE_SMALLDESC) don't need a value, they are true/false settings.
+  Others (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
+  value.</p>
+  <p class="text">Parameters are specified in this format:
+  <span class="parameter">required (option1 | option2)
+  [optional]</span></p>
+  <p class="text">You should put all parameters in one string for the define:</p>
+<pre class="margin">
+!define MUI_STARTMENUPAGE_NODISABLE ;No value
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
+!define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple parameters
+!define MUI_LICENSEPAGE_TEXT "$\"Text$\" $\"Buttontext$\"" ;Multiple texts
+</pre>
+  <p class="text">If you want a certain value (i.e. a text) to be language-specific, set a language string and define
+  $(LANGUAGESTRINGNAME) as value.</p>
+  <p class="text">When adding a double quote (&quot;) to a Modern UI string, you should always  escape it ($\&quot;),
+  because the Modern UI macros use &quot; to separate parameters.</p>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
     <p class="text">MUI.nsh is in the Include directory, so you don't have
@@ -163,14 +177,18 @@ parameters.</p>
   <p class="subheader">3. Pages</p>
   <p class="text">Insert the following macros to set the pages you want to use.
   The pages will appear in the order you insert them in your script.
-  You can also insert custom Page commands between the macros to add custom pages.<br />
+  You can also insert custom Page commands between the macros to add custom pages.
   <a href="#customPages">More info about custom pages...</a></p>
-  <p class="text">Example:</p>
-  <pre class="margin">!insertmacro MUI_PAGE_COMPONENTS</pre>
+  <p class="text">You can add multiple pages of certain types (for example, if you
+  want the user to specify multiple folders).</p>
+  <p class="text">Examples:</p>
+  <pre class="margin">
+!insertmacro MUI_PAGE_LICENSE "License.rtf"
+!insertmacro MUI_PAGE_COMPONENTS</pre>
   <p class="text">
   <span class="bold">Installer Pages</span><br />
   MUI_PAGE_WELCOME<br />
-  MUI_PAGE_LICENSE<br />
+  MUI_PAGE_LICENSE <span class="parameter">text/rtf_file</span><br />
   MUI_PAGE_COMPONENTS<br />
   MUI_PAGE_DIRECTORY<br />
   MUI_PAGE_STARTMENU<br />
@@ -180,27 +198,32 @@ parameters.</p>
   <p class="text">
   <span class="bold">Uninstaller Pages</span><br />
   MUI_UNPAGE_CONFIRM<br />
+  MUI_UNPAGE_COMPONENTS<br />
   MUI_UNPAGE_INSTFILES<br />
   </p>
-  <p class="subheader">4. Defines</p>
-  <p class="text">You can use defines to configure the Modern UI.
-  Most defines (i.e. MUI_COMPONENTSPAGE_SMALLDESC)
-  don't need a value, they are true/false settings. Others
-  (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
-  value.</p>
-  <p class="text">Parameters are specified in this format:
-  <span class="parameter">required (option1 | option2)
-  [optional]</span>.</p>
-  <p class="text">You should put all parameters in one string for the define:</p>
-<pre class="margin">
-!define MUI_STARTMENUPAGE_NODISABLE ;No value
-!define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
-!define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple parameters
-</pre>
-  <p class="text">All defines are optional.</p>
-  <p class="subheader">4a. General settings</p>
+  <p class="sub2header">Page Settings</p>
+  <div class="margin">
+  <p class="text">To configure a page, you can define the page settings before inserting a page macro.</p>
+  <p class="sub2header">General Page Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_PAGE_HEADER_TEXT </span><br />
+  Custom text to display on the header of the page.</p>
+  <p class="text"><span class="bold">MUI_PAGE_HEADER_SUBTEXT </span><br />
+  Custom subtext to display on the header of the page.</p>
+  </div>
+  <p class="sub2header">Welcome Page Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_WELCOMEPAGE_TITLE </span><span class="parameter">title </span><br />
+  Title to display on the welcome page.</p>
+  <p class="text"><span class="bold">MUI_WELCOMEPAGE_TEXT </span><span class="parameter">text </span><br />
+  Texts to display on the welcome page. Use \r\n for a newline.</p>
+  </div>
   <p class="sub2header">License Page Settings</p>
   <div class="margin">
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_TEXT </span><span class="parameter">text [buttontext]</span><br />
+  Texts to display on the inner dialog of the license page. Put quotes around the different texts ($\").</p>
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_TEXT_TOP </span><span class="parameter">text</span><br />
+  Text to display on the top of the inner dialog of the license page.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_CHECKBOX</span><br />
   Display a checkbox the user has to check to agree with the license terms.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_RADIOBUTTONS</span><br />
@@ -209,27 +232,33 @@ parameters.</p>
   </div>
   <p class="sub2header">Components Page Settings</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
-  A small description area on the bottom of the page. Use this layout
-  if you have a lot of sections and don't need large descriptions.</p>
-  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
-  No description area.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_TEXT </span><span class="parameter">text [subtext] [subtext2]</span><br />
+  Texts to display on the inner dialog of the components page. Put quotes around the different texts ($\").</p>
   </div>
-  <p class="sub2header">Start Menu Folder Page Settings</p>
+  <p class="sub2header">Directory Page Settings</p>
   <div class="margin">
-  <p class="text">If you did not disable the 'Do not create shortcuts' checkbox,
-  put the script code to write the shortcuts between these macros,
-  because the creation can be disabled by the user:</p>
+  <p class="text"><span class="bold">MUI_DIRECTORYPAGE_TEXT </span><span class="parameter">text [subtext]</span><br />
+  Texts to display on the inner dialog of the directory page. Put quotes around the different texts ($\").</p>
+  <p class="text"><span class="bold">MUI_DIRECTORYPAGE_VARIABLE </span><span class="parameter">variable</span><br />
+  Variable in which to store the selected folder<br />
+  <i>Default: $INSTDIR</i></p>
+  </div>
+    <p class="sub2header">Start Menu Folder Page Settings</p>
+  <div class="margin">
+  <p class="text">Put the code to write the shortcuts (using CreateShortcut) between this macros:</p>
 <pre class="margin">
 !insertmacro MUI_STARTMENU_WRITE_BEGIN
   ...create the shortcuts...
 !insertmacro MUI_STARTMENU_WRITE_END
 </pre>
+  <p class="text">When using multiple Start Menu Folder pages, you should also undefine previous StartMenu page
+  defines and define the values of the page of which you want to write the value, before inserting the
+  MUI_STARTMENU_WRITE_BEGIN macro.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE </span><span class="parameter">variable</span><br />
   Variable to store the current Start Menu Folder. Default is $MUI_STARTMENU_FOLDER.
   You cannot use this variable in your script (or you should Push/Pop it).</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER </span><span class="parameter">folder</span><br />
-  The default Start Menu Folder. For installers with multiple languages, you can use a language string as value.</p>
+  The default Start Menu Folder.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_NODISABLE</span><br />
   Do not display the checkbox to disable the creation of Start Menu
   shortcuts.</p>
@@ -242,9 +271,12 @@ parameters.</p>
   uninstaller.</p>
   <p class="text">In the uninstaller, use the MUI_STARTMENU_GETFOLDER macro to get the Start Menu folder:</p>
 <pre class="margin">
-!insertmacro MUI_STARTMENU_GETFOLDER $R0 ;You can also use another variable
+!insertmacro MUI_STARTMENU_GETFOLDER $R0 ;You can also use another var
   Delete "$SMPROGRAMS\$R0\Your Shortcut.lnk"
 </pre>
+  <p class="text">When using multiple Start Menu Folder pages, you should also undefine previous StartMenu page
+  defines and define the values of the page of which you want to get the value, before inserting the
+  MUI_STARTMENU_GETFOLDER macro.</p>
   </div>
   <p class="sub2header">Finish Page Settings</p>
   <div class="margin">
@@ -264,8 +296,7 @@ parameters.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME </span><span class="parameter">file/url</span><br />
   File or website which the user can select to view using a checkbox.
-  You don't need to put quotes around the filename when it contains spaces.
-  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
+  You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br />
   Do not check the 'Show Readme' checkbox by default</p>
@@ -275,13 +306,11 @@ parameters.</p>
   use it for other things.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_LINK </span><span class="parameter">link_text</span><br />
-  Text for a link on the which the user can click to view a website or file.
-  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
+  Text for a link on the which the user can click to view a website or file.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_LOCATION </span><span class="parameter">file/url</span><br />
   Website or file which the user can select to view using the link.
-  You don't need to put quotes around the filename when it contains spaces.
-  Use $(LANGSTRINGNAME) as value if you want to use a language string.</p>
+  You don't need to put quotes around the filename when it contains spaces.</p>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
   Do not automatically jump to the finish page, to allow the user to
@@ -291,12 +320,16 @@ parameters.</p>
   Define this option to save some space if you are not using the /REBOOTOK
   flag or SetRebootFlag.</p>
   </div>
-  <p class="sub2header">Other settings</p>
+  <p class="sub2header">Advanced Page Settings</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
-  Show a message box with a warning when the user wants to close the installer.</p>
+  <p class="text">You can add your custom code to the page functions of Modern UI pages.
+  <a href="#customFunctions">More info...</a></p>
   </div>
-  <p class="subheader">4b. Interface settings</p>
+  </div>
+  <p class="subheader">4. Interface Settings</p>
+  <p class="text">Page interface settings apply to all pages of a certain type.</p>
+  <p class="sub2header">General Interface Settings</p>
+  <div class="margin">
   <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
   has not been defined.</p>
   <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
@@ -323,8 +356,7 @@ parameters.</p>
   <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows |
   (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
-  The colors of the details screen. Use /windows for the default colors.<br />
-  <i>Default: /windows</i></p>
+  The colors of the details screen. Use /windows for the default colors.</p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
   The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
   <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
@@ -351,12 +383,26 @@ parameters.</p>
   bitmap that fits exactly, you should not use this option because the size of the field will be different
   if the user has a custom DPI setting.</p>
   </div>
-  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: 0xBBGGRR hexadecimal)</span><br />
-  Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
+  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
+  Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_LINK_COLOR </span><span class="parameter">(color: 0xBBGGRR hexadecimal)</span><br />
   Text color for the link on the Finish page.<br /><i>Default: 0x800000</i></p>
   <p class="text"><span class="bold">MUI_RTL_UI</span><br />
   Right-to-left interface.</p>
+  </div>
+  <p class="sub2header">Components Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
+  A small description area on the bottom of the page. Use this layout
+  if you have a lot of sections and don't need large descriptions.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
+  No description area.</p>
+  </div>
+  <p class="sub2header">Message Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
+  Show a message box with a warning when the user wants to close the installer.</p>
+  </div>
   <p class="subheader">5. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
@@ -367,33 +413,24 @@ parameters.</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
+  <p class="sub2header">Customize Modern UI text</p>
+  <div class="margin">
   <p class="text">You don't need to edit the language files if you want to customize
   some strings. Use defines before you insert the language file:</p>
 <pre class="margin">
-!define MUI_BRANDINGTEXT "French Branding Text"
-!insertmacro MUI_LANGUAGE "French"
+!define MUI_TEXT_COMPONENTS_TITLE "Your text"
+!insertmacro MUI_LANGUAGE "English"
 </pre>
-  <p class="text"><span class="bold">Note: </span>When using different product name (MUI_PRODUCT)
-  for different languges, !undef MUI_PRODUCT after inserting a language file.</p>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
-  <p class="text">You can customize texts that can be set in the Classic UI using the LicenseText,
-  ComponentText, DirText and MiscButtonText commands but are not being changed by the Modern UI using
-  these defines:</p>
-  <p class="text">
-  <span class="bold">MUI_BUTTONTEXT_LICENSE </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_BUTTONTEXT_BACK </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_BUTTONTEXT_NEXT </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_BUTTONTEXT_CANCEL </span><span class="parameter">text</span>
-  </p>
-  <p class="text">
-  <span class="bold">MUI_INNERTEXT_COMPONENTS_SUB1 </span><span class="parameter">text</span><br />
-  <span class="bold">MUI_INNERTEXT_COMPONENTS_SUB2 </span><span class="parameter">text</span>
-  </p>
-  <p class="text">
-  <span class="bold">MUI_TEXT_DIRECTORY_BROWSE </span><span class="parameter">text</span>
-  </p>
-  <p class="text">You can also customize the fonts for a language using the following defines:</p>
+  <p class="text"><span class="bold">Note: </span>When using different product name (MUI_PRODUCT)
+  for different languges, !undef MUI_PRODUCT after inserting a language file (or use a language
+  string).</p>
+  </div>
+  <p class="sub2header">Customize fonts</p>
+  <div class="margin">
+  <p class="text">You can customize the fonts for a language using the following defines before inserting
+  a language:</p>
   <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
   <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
@@ -402,6 +439,16 @@ parameters.</p>
   <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title on the Welcome and Finish page.</p>
+  </div>
+  <p class="sub2header">Customize other texts</p>
+  <div class="margin">
+  <p class="text">To customize button texts, use the following defines.</p>
+  <p class="text">
+  <span class="bold">MUI_BUTTONTEXT_BACK </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_BUTTONTEXT_NEXT </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_BUTTONTEXT_CANCEL </span><span class="parameter">text</span>
+  </p>
+  </div>
   <p class="sub2header">Language selection dialog</p>
   <div class="margin">
   <p class="text">If you want the installer to display a  language selection dialog
@@ -456,11 +503,13 @@ SectionEnd
 LangString DESC_Section1 ${LANG_ENGLISH} "Description of section 1."
 LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section2} $(DESC_Section2)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 </pre>
+<p class="text">For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN
+and MUI_UNFUNCTIONS_DESCRIPTION_END macros</p>
 <p class="subheader">8. Reserve Files</p>
 <p class="text">If you are using BZIP2 compression, you might need to
 insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
@@ -593,12 +642,12 @@ ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
   To change them, you need to edit this file and recompile NSIS.</p>
   <p class="text">To modify the Welcome and Finish dialog, edit the Install
   Options INI File ioSpecial.ini in the 'Contrib\Modern UI' directory.</p>
-<p class="header">Customize Modern UI Functions</p>
-<a name="customFunctions"></a><p class="text">If you want add your own code to functions
-inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
-create your own function and let the Modern UI functions call them. Use the defines
-to define the name of your functions. Add the defines before the MUI_LANGUAGE macros.</p>
-<p class="text">Example:</p>
+  <p class="header"><a name="customFunctions">Customize Modern UI Functions</a></p>
+  <p class="text">If you want add your own code to functions
+  inserted by the Modern UI, such as the .onGUIInit function and the Page functions,
+  create your own function and let the Modern UI functions call them. Use the defines
+  to define the name of your functions. Add the defines before the MUI_LANGUAGE macros.</p>
+ <p class="text">Example:</p>
 <pre class="text">
 !define MUI_CUSTOMFUNCTION_GUIINIT myGuiInit
 
@@ -606,71 +655,39 @@ Function myGUIInit
   ...your own code...
 FunctionEnd
 </pre>
-<p class="text">
-<span class="bold">GUI Init</span><br />
-MUI_CUSTOMFUNCTION_GUIINIT<br />
-MUI_CUSTOMFUNCTION_UNGUIINIT
-</p>
-<p class="text">
-<span class="bold">Welcome Page</span><br />
-MUI_CUSTOMFUNCTION_WELCOME_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_WELCOME_SHOW - $MUI_HWND contains the HWND of the Welcome dialog
-MUI_CUSTOMFUNCTION_WELCOME_LEAVE
-</p>
-<p class="text">
-<span class="bold">License Page</span><br />
-MUI_CUSTOMFUNCTION_LICENSE_PRE<br />
-MUI_CUSTOMFUNCTION_LICENSE_SHOW<br />
-MUI_CUSTOMFUNCTION_LICENSE_LEAVE
-</p>
-<p class="text">
-<span class="bold">Components Page</span><br />
-MUI_CUSTOMFUNCTION_COMPONENTS_PRE<br />
-MUI_CUSTOMFUNCTION_COMPONENTS_SHOW<br />
-MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE
-</p>
-<p class="text">
-<span class="bold">Directory Page</span><br />
-MUI_CUSTOMFUNCTION_DIRECTORY_PRE<br />
-MUI_CUSTOMFUNCTION_DIRECTORY_SHOW<br />
-MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
-</p>
-<p class="text">
-<span class="bold">Start Menu Folder Page</span><br />
-MUI_CUSTOMFUNCTION_STARTMENU_PRE<br />
-MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
-</p>
-<p class="text">
-<span class="bold">Install Page</span><br />
-MUI_CUSTOMFUNCTION_INSTFILES_PRE<br />
-MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br />
-MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
-</p>
-<p class="text">
-<span class="bold">Finish Page</span><br />
-MUI_CUSTOMFUNCTION_FINISH_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_FINISH_SHOW - $MUI_HWND contains the HWND of the Finish dialog
-MUI_CUSTOMFUNCTION_FINISH_LEAVE
-</p>
-<p class="text">
-<span class="bold">Installer Abort</span><br />
-MUI_CUSTOMFUNCTION_ABORT
-</p>
-<p class="text">
-<span class="bold">Uninstaller - Confirm Page</span><br />
-MUI_UNCUSTOMFUNCTION_CONFIRM_PRE<br />
-MUI_UNCUSTOMFUNCTION_CONFIRM_SHOW<br />
-MUI_UNCUSTOMFUNCTION_CONFIRM_LEAVE
-</p>
-<p class="text">
-<span class="bold">Uninstaller - Uninstall Page</span><br />
-MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br />
-MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br />
-MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
-</p>
+  <p class="sub2header">General Custom Functions</p>
+  <div class="margin">
+  <p class="text">MUI_CUSTOMFUNCTION_GUIINIT<br />
+  MUI_CUSTOMFUNCTION_UNGUIINIT<br />
+  MUI_CUSTOMFUNCTION_ABORT</p>
+  </div>
+  <p class="sub2header">Page Custom Functions</p>
+  <div class="margin">
+  <p class="text">These defines should be set before inserting a page macro.</p>
+  <p class="text">MUI_PAGE_CUSTOMFUNCTION_PRE<br />
+  MUI_PAGE_CUSTOMFUNCTION_SHOW<br />
+  MUI_PAGE_CUSTOMFUNCTION_LEAVE</p>
+  <p class="text"><span class="bold">Notes:</span></p>
+  <ul>
+  <li>The StartMenu page does not have a Show function</li>
+  <li>In the Pre function of the Welcome- and Finish page, you can write to the InstallOptions INI file
+  of the page (ioSpecial.ini)</li>
+  <li>In the Show function of Welcome- and Finish page, $MUI_HWND contains the HWND of the inner dialog.</li>
+  </ul>
+  </div>
 <p class="header">Version history</p>
 <ul>
-<li>1.65 - July 16, 2003
+<li>1.66 - September 4
+  <ul>
+    <li>New system for page settings and custom pages</li>
+    <li>Support for uninstaller components page</li>
+    <li>Support for multiple pages of the same type</li>
+    <li>Changed macro names</li>
+    <li>Updated langauge system, new language files</li>
+  </ul></li>
+</ul>
+<ul>
+<li>1.65 - August 12, 2003
   <ul>
     <li>New page configuration system, no different system for installers
     with custom pages</li>
@@ -707,16 +724,16 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>Language files have to be updated</li>
   </ul></li>
 </ul>
-<p class="text"><a href="Changelog.txt">Complete version history</a></p>
-<p class="header">Credits</p>
-<p class="text">Made by Joost Verburg.<br />
-  Icons designed by Nikos Adamamas, aka adni18.<br />
-  Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS 
-  to make this possible.</p>
-<p class="header">Help</p>
-<p class="text">Please post questions at the
-<a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
-<p class="header">License</p>
+  <p class="text"><a href="Changelog.txt">Complete version history</a></p>
+  <p class="header">Credits</p>
+  <p class="text">Made by Joost Verburg.<br />
+    Icons designed by Nikos Adamamas, aka adni18.<br />
+    Thanks to Amir Szekely, aka KiCHiK, for his work on NSIS 
+    to make this possible.</p>
+  <p class="header">Help</p>
+  <p class="text">Please post questions at the
+  <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
+  <p class="header">License</p>
 <pre class="margin">Copyright &copy; 2002-2003 Joost Verburg
 
 This software is provided 'as-is', without any express or implied

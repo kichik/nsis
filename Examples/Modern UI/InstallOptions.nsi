@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.65
+;NSIS Modern User Interface version 1.66
 ;InstallOptions Example Script
 ;Written by Joost Verburg
 
@@ -33,7 +33,7 @@
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Contrib\Modern UI\License.txt"
   Page custom CustomPageA
   !insertmacro MUI_PAGE_COMPONENTS
   Page custom CustomPageB
@@ -53,11 +53,6 @@
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-
-;--------------------------------
-;Data
-  
-  LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
 
 ;--------------------------------
 ;Reserve Files
@@ -135,9 +130,9 @@ FunctionEnd
 
   LangString DESC_SecDummy ${LANG_ENGLISH} "A test section."
 
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
-  !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
