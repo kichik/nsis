@@ -48,11 +48,11 @@ Function .onInit
 FunctionEnd
 
 Function .onSelChange
-	Push $0
-
 !ifdef USE_SUBSECTION
 ; Check if the user have selected all of the sections using the sub-section
 ; This piece of code is not needed when there are only two sections
+	Push $0
+	
 	SectionGetFlags ${subsec} $0
 	IntOp $0 $0 & ${SF_SELECTED}
 	StrCmp $0 0 skip
@@ -61,40 +61,14 @@ Function .onSelChange
 		SectionSetFlags ${sec3} 0
 		SectionSetFlags ${sec4} 0
 	skip:
+	
+	Pop $0
 !endif
 
-	; Turn off old selected section
-	SectionGetFlags $1 $0
-	IntOp $0 $0 & ${SECTION_OFF}
-	SectionSetFlags $1 $0
-	# !insertmacro UnselectSection $1
-
-	; Now remember the current selection
-	Push $2
-	StrCpy $2 $1
-
-	SectionGetFlags ${sec1} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	IntCmp $0 ${SF_SELECTED} 0 +2 +2
-		StrCpy $1 ${sec1}
-	SectionGetFlags ${sec2} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	IntCmp $0 ${SF_SELECTED} 0 +2 +2
-		StrCpy $1 ${sec2}
-	SectionGetFlags ${sec3} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	IntCmp $0 ${SF_SELECTED} 0 +2 +2
-		StrCpy $1 ${sec3}
-	SectionGetFlags ${sec4} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	IntCmp $0 ${SF_SELECTED} 0 +2 +2
-		StrCpy $1 ${sec4}
-
-	StrCmp $2 $1 0 +4 ; selection hasn't changed
-		SectionGetFlags $1 $0
-		IntOp $0 $0 | ${SF_SELECTED}
-		SectionSetFlags $1 $0
-		# !insertmacro SelectSection $1
-	Pop $2
-	Pop $0
+	!insertmacro StartRadioButtons $1
+	!insertmacro RadioButton ${sec1}
+	!insertmacro RadioButton ${sec2}
+	!insertmacro RadioButton ${sec3}
+	!insertmacro RadioButton ${sec4}
+	!insertmacro EndRadioButtons
 FunctionEnd
