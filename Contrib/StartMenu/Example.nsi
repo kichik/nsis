@@ -1,7 +1,3 @@
-!verbose 3
-!include "${NSISDIR}\Examples\WinMessages.nsh"
-!verbose 4
-
 Name "StartMenu.dll test"
 
 OutFile "StartMenu Test.exe"
