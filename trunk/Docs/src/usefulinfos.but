@@ -7,6 +7,27 @@ If you want to compile NSIS by yourself you have to install the Sources. The Sou
 \\<b\\>Note: If your using Visual C 6.0 you have to update the \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK} to avoid crashes when using CopyFiles. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{here} for further informations. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/ppack/default.asp}{Processor Pack} for decreasing the excutable Size.\\</b\\>
 
 
+\H{errorlevels}Errorlevels
+
+Like any other program installers made by NSIS return errorlevels as a result of their execution. Very useful if you call an NSIS Installer from within an other installer with \R{execwait}{Execwait}.
+
+On normal Installers:
+
+\b 0 for normal execution
+
+\b 1 for User Abort
+
+\b 2 for Script Abort
+
+On silent Installers:
+
+\b 0 for normal execution
+
+\b 1 for User Abort
+
+\b 1 for Script Abort
+
+
 \H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 
 Create a key with your product name under \\<b\\>HKLM/Software/Microsoft/Windows/CurrentVersion/Uninstall\\</b\\> to add entries to the "Add/Remove Programs" section in the Control Panel.
