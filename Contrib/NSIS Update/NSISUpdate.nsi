@@ -38,6 +38,7 @@
 # Configuration
 
 Name "NSIS Update"
+Caption "NSIS Update"
 OutFile "..\..\Bin\NSISUpdate.exe"
 BrandingText " "
 
