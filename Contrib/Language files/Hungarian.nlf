@@ -39,36 +39,36 @@ Válassza ki a telepítendõ összetevõket:
 vagy, jelölje ki a választható összetevõk közül a telepíteni kívánta(ka)t:
 Melyik mappába telepíti a(z) %s fájlt:
 Szabad terület: 
-Helyigény:
-Eltávolítás helye: 
+Helyigény: 
+Eltávolítás helye:
 Hiba történt a fájl írásra történõ megnyitásakor: \r\n\t"$0"\r\nA Mégse gomb megnyomásával megszakíthatja a telepítést,\r\naz Ismét gombbal megismételheti a fájl írását,\r\na Kihagyás gombbal kihagyhatja ezt a fájlt.
 Nem írható: 
 A másolás megszakadt
 Másolás ide: 
-Bejegyzés:
-Eltávolítás:
-A következõ szimbólum nem található:
-Nem tölthetõ be:
-Mappa létrehozás:
-Parancsikon létrehozása:
-Létrehozott eltávolító:
-Törölt fájl:
-Rendszerindításkor törlendõ:
-Hiba a parancsikon létrehozásakor:
-Hiba a létrehozáskor:
+Bejegyzés: 
+Eltávolítás: 
+A következõ szimbólum nem található: 
+Nem tölthetõ be: 
+Mappa létrehozás: 
+Parancsikon létrehozása: 
+Létrehozott eltávolító: 
+Törölt fájl: 
+Rendszerindításkor törlendõ: 
+Hiba a parancsikon létrehozásakor: 
+Hiba a létrehozáskor: 
 Hiba az adatok kibontásakor! Megsérült a Telepítõ?
 Hiba a DLL regisztrálásakor
-Végrehajtás a hozzárendeléseken keresztül:
-Végrehajtás:
-Kibontás:
-Kibontás: Hiba a fájl írásakor
+Végrehajtás a hozzárendeléseken keresztül: 
+Végrehajtás: 
+Kibontás: 
+Kibontás: Hiba a fájl írásakor 
 Sérült a telepítõ: hibás utasítás
-Nincs OLE:
-Kimeneti mappa:
-Mappa eltávolítása:
-Átnevezés rendszerindításkor:
-Átnevezés:
-Kihagyott:
+Nincs OLE: 
+Kimeneti mappa: 
+Mappa eltávolítása: 
+Átnevezés rendszerindításkor: 
+Átnevezés: 
+Kihagyott: 
 Adatok vágólapra másolása
 Telepítõ ellenõrzõlista
 # byte
