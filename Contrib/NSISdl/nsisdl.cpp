@@ -136,6 +136,7 @@ static int getProxyInfo(char *out)
 
 
 extern char *_strstr(char *i, char *s);
+#define strstr _strstr
 
 static
 void downloadFile(char         *url, 
@@ -296,6 +297,15 @@ void downloadFile(char         *url,
   delete get;
 }
 
+RECT r, cr;
+void AdjustSize(int id)
+{
+  GetWindowRect(GetDlgItem(g_dialog,id),&cr);
+  ScreenToClient(g_dialog,(LPPOINT)&cr);
+  ScreenToClient(g_dialog,((LPPOINT)&cr)+1);
+  SetWindowPos(GetDlgItem(g_dialog,id),0,0,0,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOZORDER);
+}
+
 extern "C" 
 {
 
@@ -348,10 +358,15 @@ __declspec(dllexport) void download (HWND   parent,
 							      DownloadDialogProc);
       if (g_dialog)
       {
-        RECT r;
+        GetWindowRect(g_dialog,&cr);
+        ScreenToClient(g_dialog,(LPPOINT)&cr);
+        ScreenToClient(g_dialog,((LPPOINT)&cr)+1);
         GetWindowRect(GetDlgItem(g_childwnd,1016),&r);
         ScreenToClient(g_childwnd,(LPPOINT)&r);
-        SetWindowPos(g_dialog,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
+        ScreenToClient(g_childwnd,((LPPOINT)&r)+1);
+        SetWindowPos(g_dialog,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
+        AdjustSize(IDC_STATIC2);
+        AdjustSize(IDC_PROGRESS1);
         ShowWindow(g_dialog,SW_SHOWNA);
         char *p=filename;
         while (*p) p++;
