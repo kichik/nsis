@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "MACEDONIAN"
 
-  !define MUI_LANGNAME "Македонски" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Macedonian" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Добро дојдовте во инсталацијата на $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Овој програм ќе ве води низ инсталацијата на $(^NameDA).\r\n\r\nПрепорачано е да ги затворите сите програми пред да инсталирате. Ова ќе дозволи инсталациониот програм да обнови некои системски датотеки без да го рестартира компјутерот.\r\n\r\n$_CLICK"
