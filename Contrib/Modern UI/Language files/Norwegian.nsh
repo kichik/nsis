@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Norwegian (2068)
 ;By Jonas Lindsrøm (jonasc_88@hotmail.com)
@@ -83,7 +83,8 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Fullfører avistallasjonen av $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) har blitt avistallert fra din datamaskin.\r\n\r\nTrykk på ferdig for å avslutte denne veiviseren."
-  
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Datamaskinen må restarte for å fullføre installasjonen av $(^NameDA). Vil du restarte nå?"  
+
   !define MUI_UNTEXT_ABORTWARNING "Er du sikker på at du vil avbryte avistalleringen av $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END

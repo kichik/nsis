@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Français" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme d'installation de $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra au programme d'installation de mettre à jour certains fichiers système sans avoir besoin de redémarrer votre ordinateur.\r\n\r\n"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Vous êtes sur le point d'installer $(^NameDA) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications. Cela permettra de mettre à jour certains fichiers système sans redémarrer votre ordinateur.\r\n\r\n"
 
   !define MUI_TEXT_LICENSE_TITLE "Licence utilisateur"
   !define MUI_TEXT_LICENSE_SUBTITLE "Veuillez examiner les termes de la licence avant d'installer $(^NameDA)."
@@ -27,6 +27,7 @@
 
   !define MUI_TEXT_DIRECTORY_TITLE "Choisissez le dossier d'installation"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Choisissez le dossier dans lequel installer $(^NameDA)."
+  
   !define MUI_TEXT_INSTALLING_TITLE "Installation en cours"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Veuillez patienter pendant que $(^NameDA) est en train d'être installé."
 
@@ -51,9 +52,10 @@
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ne pas créer de raccourcis"
 
   !define MUI_TEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
+  
+  
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de désinstaller $(^NameDA) de votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
-
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Supprimer $(^NameDA) de votre ordinateur."
@@ -81,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la déinstallation de $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) a été supprimé de votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer l'installation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
 
   !define MUI_UNTEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
 
