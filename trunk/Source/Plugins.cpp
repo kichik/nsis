@@ -111,8 +111,11 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
             for (unsigned long j = 0; j < exports->NumberOfNames; j++)
             {
               char *name = (char*)exports + names[j] - ExportDirVA;
-              wsprintf(signature,"%s::%s", dllName, name);
+              wsprintf(signature, "%s::%s", dllName, name);
               m_commands.add(signature, pathToDll);
+              DLL newDll = {new char[lstrlen(dllName)], false};
+              lstrcpy(newDll.name, dllName);
+              m_storedDLLs.push_back(newDll);
               if (displayInfo)
                 fprintf(g_output, " - %s\n", signature);
             }
@@ -153,23 +156,22 @@ char* Plugins::GetPluginDll(char* command)
   return 0;
 }
 
-void Plugins::StoreDllDataHandle(char* signature,int handle)
+void Plugins::DLLStored(char* dllName)
 {
-  int idx = -1;
-  m_commands.defines.find(signature,0,&idx);
-  if (idx > -1)
-  {
-    m_dataHandles.reserve(idx+1);
-    m_dataHandles[idx] = handle;
+  for (int i = 0; i < m_storedDLLs.size(); i++) {
+    if (!strcmp(m_storedDLLs[i].name, dllName)) {
+      m_storedDLLs[i].stored = true;
+      return;
+    }
   }
 }
 
-int Plugins::GetDllDataHandle(char* signature)
+bool Plugins::IsDLLStored(char* dllName)
 {
-  int idx = -1;
-  if (-1 != m_commands.defines.find(signature,0,&idx))
-    return m_dataHandles[idx];
-  return -1;
+  for (int i = 0; i < m_storedDLLs.size(); i++)
+    if (!strcmp(m_storedDLLs[i].name, dllName))
+      return m_storedDLLs[i].stored;
+  return false;
 }
 
 #endif
