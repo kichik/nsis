@@ -66,8 +66,6 @@
   InstProgressFlags "${MUI_PROGRESSBAR}"
   BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
 
-  !define CURRENTPAGE ${MUI_CURRENTPAGEVAR}
-
   !verbose 4
 
 !macroend
