@@ -362,6 +362,8 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
 }
 
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(installer_flags, flag)/sizeof(int))
+#define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
+#define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
 int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int *lineptr)
 {
@@ -4091,7 +4093,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=-1;
+      ent.offsets[1]=SECTION_FIELD_SET(name_ptr);
       ent.offsets[2]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SectionSetText: %s=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4103,7 +4105,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=0;
+      ent.offsets[1]=SECTION_FIELD_GET(name_ptr);
       ent.offsets[2]=line.gettoken_enum(2,usrvars);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4116,7 +4118,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=-3;
+      ent.offsets[1]=SECTION_FIELD_SET(flags);
       ent.offsets[2]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SectionSetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4128,7 +4130,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=2;
+      ent.offsets[1]=SECTION_FIELD_GET(flags);
       ent.offsets[2]=line.gettoken_enum(2,usrvars);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4141,7 +4143,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=-2;
+      ent.offsets[1]=SECTION_FIELD_SET(install_types);
       ent.offsets[2]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SectionSetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4153,7 +4155,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=1;
+      ent.offsets[1]=SECTION_FIELD_GET(install_types);
       ent.offsets[2]=line.gettoken_enum(2,usrvars);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
