@@ -16,6 +16,9 @@
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
+  ;Remember install folder
+  InstallDirRegKey HKCU "Softare\${MUI_PRODUCT}" ""
+  
   ;$9 is being used to store the Start Menu Folder.
   ;Do not use this variable in your script (or Push/Pop it)!
 
@@ -69,6 +72,9 @@ Section "modern.exe" SecCopyUI
   SetOutPath "$INSTDIR"
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
+  ;Store install folder
+  WriteRegStr HKCU "Softare\${MUI_PRODUCT}" "" $INSTDIR
+  
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
     ;Create shortcuts
@@ -76,9 +82,6 @@ Section "modern.exe" SecCopyUI
     CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Modern UI.lnk" "$INSTDIR\modern.exe"
     CreateShortCut "$SMPROGRAMS\${MUI_STARTMENUPAGE_VARIABLE}\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   
-    ;Write shortcut location to the registry (for Uninstaller)
-    WriteRegStr HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder" "${MUI_STARTMENUPAGE_VARIABLE}"
-    
   !insertmacro MUI_STARTMENU_WRITE_END
   
   ;Create uninstaller
@@ -108,7 +111,7 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   
   ;Remove shortcut
-  ReadRegStr ${TEMP} HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
+  ReadRegStr ${TEMP} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
   
   StrCmp ${TEMP} "" noshortcuts
   
@@ -119,8 +122,8 @@ Section "Uninstall"
   noshortcuts:
 
   RMDir "$INSTDIR"
-  
-  DeleteRegValue HKCU "Software\${MUI_PRODUCT}" "Start Menu Folder"
+
+  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
   ;Display the Finish header
   !insertmacro MUI_UNFINISHHEADER
