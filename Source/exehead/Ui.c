@@ -241,16 +241,14 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 int lang_num;
 
-void NSISCALL select_lang()
+void NSISCALL set_language(LANGID lang)
 {
   int i;
-  LANGID user_lang, lang_mask=~(LANGID)0;
-
-  user_lang=myatoi(state_language);
+  LANGID lang_mask=~(LANGID)0;
 
 lang_again:
   for (i = 0; i < lang_num; i++) {
-    if (!((user_lang ^ common_strings_tables[i].lang_id) & lang_mask)) {
+    if (!((lang ^ common_strings_tables[i].lang_id) & lang_mask)) {
       cur_common_strings_table+=i;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (g_is_uninstaller)
@@ -266,7 +264,6 @@ lang_again:
     goto lang_again;
   }
 
-  wsprintf(state_language, "%u", cur_common_strings_table->lang_id);
   process_string_from_lang(g_caption,LANGID_CAPTION);
 }
 
@@ -352,7 +349,7 @@ int NSISCALL ui_doinstall(void)
     cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
 
-    process_string_from_lang(g_caption,LANGID_CAPTION);
+    set_language(GetUserDefaultLangID());
   }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
@@ -370,12 +367,8 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=h;
     // Select language
-    wsprintf(state_language, "%u", GetUserDefaultLangID());
-    // in onInit
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
     g_hwnd=NULL;
-    // Make the selection from the tables
-    select_lang();
     if (h != GetDesktopWindow()) {
       SendMessage(h, WM_SETTEXT, 0, (LPARAM)g_caption);
       ShowWindow(h, SW_SHOW);
@@ -390,9 +383,7 @@ int NSISCALL ui_doinstall(void)
 #endif
   {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-    wsprintf(state_language, "%u", GetUserDefaultLangID());
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
-    select_lang();
 #endif//NSIS_SUPPORT_CODECALLBACKS
     if (install_thread(NULL))
     {
@@ -849,6 +840,39 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   {
     SendMessage(GetParent(hwnd),WM_TREEVIEW_KEYHACK,0,0);
     return 0;
+  }
+  if (uMsg == WM_MOUSEMOVE) {
+    TVHITTESTINFO ht = {0};
+    DWORD dwpos = GetMessagePos();
+
+    ht.pt.x = GET_X_LPARAM(dwpos);
+    ht.pt.y = GET_Y_LPARAM(dwpos);
+    MapWindowPoints(HWND_DESKTOP, hwnd, &ht.pt, 1);
+
+    TreeView_HitTest(hwnd, &ht);
+
+    if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
+    {
+      static LPARAM last_item;
+      TVITEM hItem;
+
+      hItem.hItem = ht.hItem;
+      hItem.mask = TVIF_PARAM;
+      
+      TreeView_GetItem(hwnd, &hItem);
+      
+      if (last_item != hItem.lParam)
+      {
+        last_item = hItem.lParam;
+
+        mystrcpy(g_tmp, g_usrvars[0]);
+
+        wsprintf(g_usrvars[0], "%u", last_item); 
+        ExecuteCodeSegment(g_inst_entry,g_inst_header->code_onMouseOverSection,NULL);
+        
+        mystrcpy(g_usrvars[0], g_tmp);
+      }
+    }
   }
   return CallWindowProc((WNDPROC)oldTreeWndProc,hwnd,uMsg,wParam,lParam);
 }
