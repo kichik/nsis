@@ -447,18 +447,26 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-  char *oldfilename = set_file_predefine(curfilename);
-  char *oldtimestamp = set_timestamp_predefine(curfilename);
-  char *oldline = set_line_predefine(linecnt);
+  char *oldfilename = NULL;
+  char *oldtimestamp = NULL;
+  char *oldline = NULL;
+
+  if(lstrcmp(filename,"command line")) { // Don't set the predefines for command line /X option
+    oldfilename = set_file_predefine(curfilename);
+    oldtimestamp = set_timestamp_predefine(curfilename);
+    oldline = set_line_predefine(last_linecnt+linecnt-1); // This is done so that line numbers are 
+  }                                                         //handled properly when macros are inserted.
 #endif
 
   ps_addtoline(line,linedata,hist);
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-  restore_file_predefine(oldfilename);
-  restore_timestamp_predefine(oldtimestamp);
-  restore_line_predefine(oldline);
+  if(lstrcmp(filename,"command line")) { // Don't set the predefines for command line /X option
+    restore_file_predefine(oldfilename);
+    restore_timestamp_predefine(oldtimestamp);
+    restore_line_predefine(oldline);
+  }
 #endif
 
   linedata.add((void*)"",1);
