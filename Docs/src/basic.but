@@ -66,7 +66,7 @@ See \R{file}{File} for more information about the parameters.
 
 \c [/r|/REBOOTOK] directory_name
 
-Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. IF /REBOOTOK is specified, and the directory cannot be overwritten, then the directory will be deleted when the system reboots -- if the directory will be removed on a reboot, the reboot flag will be set. The error flag is set if the directory cannot be removed.
+Remove the specified directory (which should be a full path). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, and the directory cannot be overwritten, then the directory will be deleted when the system reboots -- if the directory will be removed on a reboot, the reboot flag will be set. The error flag is set if the directory cannot be removed.
 
 \S2{setoutpath} SetOutPath
 
