@@ -134,7 +134,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (num==1) {
                 DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
                 if (lstrlen(szTmp)>0) {
-					g_sdata.script_alloced = true;
+                    g_sdata.script_alloced = true;
                     g_sdata.script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
                     wsprintf(g_sdata.script,"\"%s\"",szTmp);
                     ResetObjects();
@@ -202,6 +202,28 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                     break;  
             }
             return TRUE;
+        case WM_COPYDATA:
+        {
+            PCOPYDATASTRUCT cds = PCOPYDATASTRUCT(lParam);
+            switch (cds->dwData) {
+                case MAKENSIS_NOTIFY_SCRIPT:
+                    if (g_sdata.input_script) GlobalFree(g_sdata.input_script);
+                    g_sdata.input_script = (char *)GlobalAlloc(GPTR, cds->cbData);
+                    lstrcpy(g_sdata.input_script, (char *)cds->lpData);
+                    break;
+                case MAKENSIS_NOTIFY_WARNING:
+                    g_sdata.warnings++;
+                    break;
+                case MAKENSIS_NOTIFY_ERROR:
+                    break;
+                case MAKENSIS_NOTIFY_OUTPUT:
+                    if (g_sdata.output_exe) GlobalFree(g_sdata.output_exe);
+                    g_sdata.output_exe = (char *)GlobalAlloc(GPTR, cds->cbData);
+                    lstrcpy(g_sdata.output_exe, (char *)cds->lpData);
+                    break;
+            }
+            return TRUE;
+        }
         case WM_COMMAND:
         {
             switch (LOWORD(wParam)) {
@@ -237,7 +259,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                     ShellExecute(g_sdata.hwnd,"open",NSIS_DEV,NULL,NULL,SW_SHOWNORMAL);
                     return TRUE;
                 }
-				case IDM_FORUM:
+                case IDM_FORUM:
                 {
                     ShellExecute(g_sdata.hwnd,"open",NSIS_FOR,NULL,NULL,SW_SHOWNORMAL);
                     return TRUE;

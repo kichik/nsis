@@ -58,6 +58,13 @@
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
+enum {
+  MAKENSIS_NOTIFY_SCRIPT,
+  MAKENSIS_NOTIFY_WARNING,
+  MAKENSIS_NOTIFY_ERROR,
+  MAKENSIS_NOTIFY_OUTPUT
+};
+
 // Extern Variables
 extern const char*	NSISW_VERSION;
 
@@ -79,7 +86,7 @@ typedef struct NSISScriptData {
     char *brandingv;
     int retcode;
     DWORD logLength;
-    BOOL warnings;
+    DWORD warnings;
     BOOL appended;
     HINSTANCE hInstance;
     HWND hwnd;

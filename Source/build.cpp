@@ -313,6 +313,8 @@ CEXEBuild::CEXEBuild()
 
   build_last_page_define[0]=0;
   ubuild_last_page_define[0]=0;
+
+  notify_hwnd=0;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -1619,6 +1621,7 @@ int CEXEBuild::write_output(void)
   {
     char buffer[1024],*p;
     GetFullPathName(build_output_filename,1024,buffer,&p);
+    notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
     INFO_MSG("\nOutput: \"%s\"\n",buffer);
   }
   FILE *fp = fopen(build_output_filename,"w+b");
@@ -2133,6 +2136,7 @@ void CEXEBuild::warning(const char *s, ...)
   vsprintf(buf,s,val);
   va_end(val);
   m_warnings.add(buf,-1);
+  notify(MAKENSIS_NOTIFY_WARNING,buf);
   if (display_warnings)
   {
     fprintf(g_output,"warning: %s\n",buf);
@@ -2142,15 +2146,19 @@ void CEXEBuild::warning(const char *s, ...)
 
 void CEXEBuild::ERROR_MSG(const char *s, ...)
 {
-  if (display_errors)
+  if (display_errors || notify_hwnd)
   {
     char buf[4096];
     va_list val;
     va_start(val,s);
     vsprintf(buf,s,val);
     va_end(val);
-    fprintf(g_output,"%s",buf);
-    fflush(g_output);
+    notify(MAKENSIS_NOTIFY_ERROR,buf);
+    if (display_errors)
+    {
+      fprintf(g_output,"%s",buf);
+      fflush(g_output);
+    }
   }
 }
 
@@ -2195,6 +2203,15 @@ void CEXEBuild::print_warnings()
     p+=strlen(p)+1;
   }
   fflush(g_output);
+}
+
+void CEXEBuild::notify(int code, char *data)
+{
+  if (notify_hwnd)
+  {
+    COPYDATASTRUCT cds = {(DWORD)code, strlen(data)+1, data};
+    SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
+  }
 }
 
 // Added by Ximon Eighteen 5th August 2002
