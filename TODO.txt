@@ -46,7 +46,9 @@ OTHER PLUGINS
 
 NSIS
 
-* MAYBE - set resources code page and font at run-time by saving offsets at compile time
+* set resource's font at run-time by saving offsets at compile time
+
+* more powerful plug-ins (access to ExecFunc and flags and even more)
 
 * ChangeUI RTL support
 
