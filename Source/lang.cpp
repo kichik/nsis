@@ -309,7 +309,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
       char c;
       if (sec->name_ptr < 0) c = 'a';
       else c=build_strlist.get()[sec->name_ptr];
-      if (c && c != '-' && !(sec->default_state&DFS_RO)) iscp++;
+      if (c && c != '-' && !(sec->flags&SF_RO)) iscp++;
     }
     if (iscp)
     {

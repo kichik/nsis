@@ -641,7 +641,8 @@ int CEXEBuild::add_function(const char *funname)
   build_cursection->name_ptr=addr;
   build_cursection->code=cur_entries->getlen()/sizeof(entry);
   build_cursection->code_size=0;
-  build_cursection->default_state=0;
+  build_cursection->install_types=0;
+  build_cursection->flags=0;
   build_cursection->size_kb=0;
   return PS_OK;
 }
@@ -679,7 +680,23 @@ int CEXEBuild::section_add_flags(int flags)
     ERROR_MSG("Error: can't modify flags when no section is open\n");
     return PS_ERROR;
   }
-  build_cursection->default_state|=flags;
+  build_cursection->flags|=flags;
+  return PS_OK;
+}
+
+int CEXEBuild::section_add_install_type(int inst_type)
+{
+  if (uninstall_mode)
+  {
+    ERROR_MSG("Error: can't modify flags of uninstall section\n");
+    return PS_ERROR;
+  }
+  if (!build_cursection || build_cursection_isfunc)
+  {
+    ERROR_MSG("Error: can't modify flags when no section is open\n");
+    return PS_ERROR;
+  }
+  build_cursection->install_types|=inst_type;
   return PS_OK;
 }
 
@@ -759,15 +776,16 @@ int CEXEBuild::add_section(const char *secname, const char *file, int line, cons
   int n=(build_sections.getlen()/sizeof(section));
   build_sections.resize(build_sections.getlen()+sizeof(section));
   build_cursection=((section*)build_sections.get()) + n;
-  build_cursection->default_state=DFS_SET;
-  build_cursection->name_ptr=add_string(secname);
+  build_cursection->flags=SF_SELECTED;
+  build_cursection->name_ptr=add_string(secname[0]=='-'&&secname[1]?secname+1:secname);
   build_cursection->code=cur_entries->getlen()/sizeof(entry);
   build_cursection->code_size=0;
   build_cursection->size_kb=0;
-  build_cursection->expand=expand;
+  build_cursection->flags|=expand?SF_EXPAND:0;
 
   if (secname[0]=='-')
   {
+    build_cursection->flags|=secname[1]?SF_SUBSEC:SF_SUBSECEND;
     build_cursection=NULL;
     entry ent={EW_RET,};
     cur_entries->add(&ent,sizeof(entry));
@@ -848,7 +866,7 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
         if ((*lname == '.' || (s->code >= start && s->code <= end)) && s->name_ptr == *a)
         {
           *a = s->code+1;     // jumps are to the absolute position, +1 (to differentiate between no jump, and jumping to offset 0)
-          s->default_state++;
+          s->flags++;
           return 0;
         }
         s++;
@@ -875,7 +893,7 @@ int CEXEBuild::resolve_call_int(const char *fn, const char *str, int fptr, int *
     if (sec->name_ptr>0 && sec->name_ptr == fptr)
     {
       ofs[0]=sec->code;
-      sec->default_state++;
+      sec->flags++;
       return 0;
     }
     sec++;
@@ -1037,7 +1055,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
     {
       if (sec->name_ptr)
       {
-        if (!sec->default_state)
+        if (!sec->flags)
         {
           if (sec->code_size>0)
           {
@@ -1058,7 +1076,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
     int n=cur_labels->getlen()/sizeof(section);
     while (n-->0)
     {
-      if (!t->default_state)
+      if (!t->flags)
       {
         char *n=(char*)ns_label.get()+t->name_ptr;
         if (*n == '.') warning("global label \"%s\" not used",n);
@@ -1437,7 +1455,7 @@ int CEXEBuild::write_output(void)
     int req=0;
     for (x = 1; x < ns; x ++)
     {
-      if (!s[x].name_ptr || s[x].default_state & DFS_RO) req++;
+      if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
     }
     INFO_MSG("Install: %d section%s",ns,ns==1?"":"s");
     if (req)
