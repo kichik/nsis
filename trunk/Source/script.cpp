@@ -1680,7 +1680,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *incfile=(char*)malloc(size);
 
           for (unsigned int i=0; i<dirs; i++) {
-            if (size < lstrlen(f)+lstrlen(dir))
+            if (size < (unsigned int)lstrlen(f)+lstrlen(dir))
             {
               free(incfile);
               size+=lstrlen(dir);
