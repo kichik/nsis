@@ -206,7 +206,7 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  DeleteRegKey HKCU "Software\${NAME}" "Installer Language"
+  DeleteRegValue HKCU "Software\${NAME}" "Installer Language"
 
   !insertmacro MUI_FINISHHEADER un.SetPage
 
@@ -223,7 +223,7 @@ FunctionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE un.onNextPage
+  !insertmacro MUI_NEXTPAGE un.SetPage
   
 FunctionEnd
 
