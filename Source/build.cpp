@@ -1319,7 +1319,7 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
       for (; jump != 0; jump -= direction)
       {
         offs += direction;
-        if (offs >= 0 && offs < cur_instruction_entry_map->getlen() * sizeof(int))
+        if (offs >= 0 && offs < cur_instruction_entry_map->getlen() * (int) sizeof(int))
         {
           while (skip_map[offs])
           {
