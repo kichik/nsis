@@ -452,7 +452,6 @@ Variable in which to store the selected folder.<br />
 Does not disable the Next button when a folder is invalid but allows you to use GetInstDirError in
 the leave function to handle an invalid folder.</p>
 </div>
-<br />
 <h3>Start Menu Folder Page Settings</h3>
 <div>
 <p>Put the code to write the shortcuts (using CreateShortcut) between the MUI_STARTMENU_WRITE_BEGIN
@@ -633,9 +632,9 @@ language stored in the registry will be selected by default.</p>
 </div>
 </div>
 <h2>6. Reserve files</h2>
-<p>If you are using BZIP2 (solid) compression, it's important that files which are being extracted
-in init- or page functions function are located before other files in the data block, because this
-will make your installer faster.</p>
+<p>If you are using solid compression (by default, solid compression is enabled for BZip2 and
+LZMA), it's important that files which are being extracted in init- or page functions function are
+located before other files in the data block, because this will make your installer faster.</p>
 <p>If there are File commands in your sections or functions above the init- or page functions, add
 the reserve file macros above your sections and functions.</p>
 <pre>
