@@ -13,6 +13,44 @@
   !include "${NSISDIR}\Include\WinMessages.nsh"
 !verbose 4
 
+; ================= GetInstallerExeName implementation =================
+
+; Adopted Get Parameter function -> now it gets full installer.exe path
+; input - nothing, output -> full path at the top of the stack
+Function GetInstallerExeName
+   Push $R0
+   Push $R1
+   Push $R2
+   StrCpy $R0 $CMDLINE 1
+   StrCpy $R1 '"'
+   StrCpy $R2 1
+   StrCmp $R0 '"' loop
+     StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
+   loop:
+     StrCpy $R0 $CMDLINE 1 $R2
+     StrCmp $R0 $R1 loop2
+     StrCmp $R0 "" loop2
+     IntOp $R2 $R2 + 1
+     Goto loop
+   loop2:
+
+   ; Ok, have we found last exename character or string end?
+   StrCmp $R0 "" "" +2
+        IntOp $R2 $R2 - 1       ; last exename char
+   StrCmp $R1 ' ' +3    ; was first character the '"', or something other?
+        StrCpy $R1 1    ; it was quote
+        Goto +2
+        StrCpy $R1 0    
+   IntOp $R2 $R2 - $R1
+   StrCpy $R0 $CMDLINE $R2 $R1  
+
+   GetFullPathName $R0 $R0      ; expand file name to full path
+
+   Pop $R2
+   Pop $R1
+   Exch $R0
+FunctionEnd
+
 ; ================= systemGetFileSysTime implementation =================
 
 !macro smGetFileSysTime FILENAME
