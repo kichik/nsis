@@ -21,7 +21,7 @@ This code will tell NSIS to first show the license page, then the components sel
 
 You can specify the same page type more than once.
 
-If you don't use any page command the installer's pages order will be just as in older versions: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified) and instfiles. The uninstaller's pages order will be: uninstall confirmation page (if \R{auninstalltext}{UninstallText} was specified) and instfiles.
+For backwards compatibility with old NSIS scripts, the following installer pages will be added if no installer page commands are used: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified) and instfiles. When there are no uninstaller page commands, the following uninstaller pages will be added: uninstall confirmation page (if \R{auninstalltext}{UninstallText} was specified) and instfiles. This method is deprecated, converting scripts to use page commands is highly recommended because you can use the new standard language strings.
 
 \S{pageoptions} Page Options
 
