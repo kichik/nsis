@@ -298,7 +298,6 @@ lang_again:
 int NSISCALL ui_doinstall(void)
 {
   static WNDCLASS wc; // richedit subclassing and bgbg creation
-  num_sections=g_inst_header->num_sections;
   g_flags.autoclose=inst_flags&CH_FLAGS_AUTO_CLOSE;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (!g_is_uninstaller)

@@ -274,7 +274,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       log_printf3("IfFileExists: file \"%s\" does not exist, jumping %d",buf0,parm2);
     }
     return parm2;
-    case EW_IFERRORS: return entry_->offsets[!g_flags.exec_error];
+    case EW_IFERRORS:
+    {
+      int f=entry_->offsets[!g_flags.exec_error];
+      g_flags.exec_error=0;
+      return f;
+    }
 #ifdef NSIS_SUPPORT_RENAME
     case EW_RENAME:
       {
@@ -694,8 +699,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SENDMESSAGE:
       {
         int v;
-        int b3=(int)process_string_fromparm_tobuf(0x03);
-        int b4=(int)process_string_fromparm_tobuf(0x14);
+        int b3=(int)process_string_fromparm_tobuf(0x33);
+        int b4=(int)process_string_fromparm_tobuf(0x44);
         if (!(parm5&1)) b3=myatoi((char*)b3);
         if (!(parm5&2)) b4=myatoi((char*)b4);
 
