@@ -4,8 +4,6 @@ TODO
 
 NSIS
 
-* CreateDirectory error flag on files found instead of dirs
-
 * SetCurInstType should work without the components page
 
 * component page for uninstaller, multiple sections
