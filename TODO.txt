@@ -4,8 +4,6 @@ TODO
 
 NSIS
 
-* check big licenses (over 50K)
-
 * skip plugin calls, file instructions that add more than one file with +1 with goto
 
 * move more ui changes to compile time.
