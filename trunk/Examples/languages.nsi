@@ -63,7 +63,7 @@ LangString Message ${LANG_TRADCHINESE} "Trandional Chinese message"
 LangString Message ${LANG_SIMPCHINESE} "Simplified Chinese message"
 LangString Message ${LANG_SLOVAK} "Slovak message"
 
-; scetion names will be given in .onInit to match the language choosen by the user
+;Section names set by Language strings
 Section $(Sec1Name) sec1
 	MessageBox MB_OK $(Message)
 SectionEnd
