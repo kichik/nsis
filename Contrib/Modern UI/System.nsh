@@ -315,7 +315,7 @@ Var MUI_TEMP2
 !macro MUI_GUIINIT_BASIC
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  CreateFont $MUI_TEMP2 "$(^Font)" "$(^FontSize))" "700"
+  CreateFont $MUI_TEMP2 "$(^Font)" "$(^FontSize)" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
@@ -1380,7 +1380,7 @@ Var MUI_TEMP2
         !else
           !define MUI_FINISHPAGE_CURFIELD_TOP 100
           !define MUI_FINISHPAGE_CURFIELD_BOTTOM 110
-	!endif        
+        !endif        
       !else
         !define MUI_FINISHPAGE_CURFIELD_NO 5
         !ifndef MUI_${MUI_PAGE_UNINSTALLER_PREFIX}WELCOMEFINISHPAGE_3LINES
@@ -1905,7 +1905,9 @@ Var MUI_TEMP2
 
   !ifndef "${NAME}"
     !define "${NAME}" "${VALUE}"
-    !warning "${LANGUAGE} Modern UI language file version doesn't match. Using default English texts for missing strings."
+    !ifndef MUI_LANGUAGEFILE_DEFAULT_USED
+      !define MUI_LANGUAGEFILE_DEFAULT_USED
+    !endif
   !endif
 
 !macroend
@@ -1972,6 +1974,10 @@ Var MUI_TEMP2
 !macro MUI_LANGUAGEFILE_END
 
   !include "${NSISDIR}\Contrib\Modern UI\Language files\Default.nsh"
+  !ifdef MUI_LANGUAGEFILE_DEFAULT_USED
+    !undef MUI_LANGUAGEFILE_DEFAULT_USED
+    !warning "${LANGUAGE} Modern UI language file version doesn't match. Using default English texts for missing strings."
+  !endif
   
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
     
