@@ -15,8 +15,8 @@
 !define IO_INITPLUGINS "Call Initialize_____Plugins"
 !define IO_UNINITPLUGINS "Call un.Initialize_____Plugins"
 
-!define TEMP1 $R0
-!define TEMP2 $R1
+!define MUI_TEMP1 $R0
+!define MUI_TEMP2 $R1
 
 !macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR CURRENTPAGEVAR
 
@@ -46,7 +46,7 @@
 
 !macro MUI_INNERDIALOG_INIT
 
-  Push ${TEMP1}
+  Push ${MUI_TEMP1}
 
 !macroend
 
@@ -61,9 +61,9 @@
  ;Text on inner dialogs components
 
   StrCmp $LANGUAGE ${LANGID} "" +4
-    FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
-    GetDlgItem ${TEMP1} ${TEMP1} ${CONTROL}
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+    FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
+    GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} ${CONTROL}
+    SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
 	
 !macroend
 
@@ -77,7 +77,7 @@
 !macro MUI_INNERDIALOG_END
 
   done:
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP1}
 
 !macroend
 
@@ -86,25 +86,25 @@
   ;Set backgrounds & fonts for the outer dialog (only once)
   StrCmp ${CURRENTPAGE} "" "" no_first_run
 
-  Push ${TEMP1}
-  Push ${TEMP2}
+  Push ${MUI_TEMP1}
+  Push ${MUI_TEMP2}
 
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    CreateFont ${TEMP2} "Tahoma" 10 700
-    SendMessage ${TEMP1} ${WM_SETFONT} ${TEMP2} 0
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
+    CreateFont ${MUI_TEMP2} "Tahoma" 10 700
+    SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
  
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
 
-    GetDlgItem ${TEMP1} $HWNDPARENT 1034
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
 
-    GetDlgItem ${TEMP1} $HWNDPARENT 1039
-    SetStaticBkColor ${TEMP1} 0x00FFFFFF
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
+    SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
     
-  Pop ${TEMP2}  
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP2}  
+  Pop ${MUI_TEMP1}
 
   no_first_run:
 
@@ -124,7 +124,7 @@
 
 !macro MUI_PAGE_INIT
 
-  Push ${TEMP1}
+  Push ${MUI_TEMP1}
 
 !macroend
 
@@ -139,10 +139,10 @@
   ;Text on the white rectangle
 
   StrCmp $LANGUAGE ${LANGID} "" +5
-    GetDlgItem ${TEMP1} $HWNDPARENT 1037
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-    GetDlgItem ${TEMP1} $HWNDPARENT 1038
-    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
+    SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
+    SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
 
 !macroend
 
@@ -156,16 +156,16 @@
 !macro MUI_PAGE_END
   
   done:
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP1}
   
 !macroend
 
 !macro MUI_DESCRIPTION_INIT
 
-  Push ${TEMP1}
+  Push ${MUI_TEMP1}
 
-  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
-  GetDlgItem ${TEMP1} ${TEMP1} 1043
+  FindWindow ${MUI_TEMP1} "#32770" "" $HWNDPARENT
+  GetDlgItem ${MUI_TEMP1} ${MUI_TEMP1} 1043
 
 !macroend
 
@@ -175,7 +175,7 @@
 
   StrCmp $LANGUAGE ${LANGID} "" +4
     StrCmp $0 ${VAR} "" +3
-      SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
+      SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
       Goto done
     
 !macroend
@@ -183,7 +183,7 @@
 !macro MUI_DESCRIPTION_END
 
   done:
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP1}
   
 !macroend
 
@@ -261,12 +261,12 @@
 !macro MUI_INSTALLOPTIONS_SHOW PAGE FILE IOBACK IONEXT
         
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP1}
 
-  StrCmp ${TEMP1} "cancel" "" +2
+  StrCmp ${MUI_TEMP1} "cancel" "" +2
     Quit
 
-  StrCmp ${TEMP1} "back" "" noback_${PAGE}
+  StrCmp ${MUI_TEMP1} "back" "" noback_${PAGE}
     !insertmacro MUI_INSTALLOPTIONS_${IOBACK}BACK
   noback_${PAGE}:
 
@@ -277,12 +277,12 @@
 !macro MUI_INSTALLOPTIONS_UNSHOW PAGE FILE IOBACK IONEXT
         
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
-  Pop ${TEMP1}
+  Pop ${MUI_TEMP1}
 
-  StrCmp ${TEMP1} "cancel" "" +2
+  StrCmp ${MUI_TEMP1} "cancel" "" +2
     Quit
 
-  StrCmp ${TEMP1} "back" "" noback_${PAGE}
+  StrCmp ${MUI_TEMP1} "back" "" noback_${PAGE}
     !insertmacro MUI_INSTALLOPTIONS_UN${IOBACK}BACK
   noback_${PAGE}:
 
