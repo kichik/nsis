@@ -74,7 +74,7 @@ Specifies a string that is above the component list. This can be something that 
 
 CRCCheck \e{on|off|force}
 
-Specifies whether or not the installer will perform a CRC on itself before allowing an install. Valid options are 'on','off', and 'force'. Note that if the user uses /NCRC on the command line when executing the installer, the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.
+Specifies whether or not the installer will perform a CRC on itself before allowing an install. Valid options are 'on','off', and 'force'. Note that if the user uses /NCRC on the command line when executing the installer, and you didn't specify 'force', the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.
 
 \H{adetailsbuttontext} DetailsButtonText
 
@@ -224,7 +224,7 @@ Specifies whether or not the uninstaller should be silent.
 
 SpaceTexts \e{[/LANG=lang_id] [req text] [avail text]}
 
-If parameters are specified, overrides the space required and space available text ("Space required: " and "Space available: " by default). 
+If parameters are specified, overrides the space required and space available text ("Space required: " and "Space available: " by default). If 'none' is specified as the required text no space texts will be shown.
 
 \H{asubcaption} SubCaption
 
