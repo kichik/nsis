@@ -219,7 +219,7 @@ uInt *hn)               /* working area: values in order of bit length */
 
 
   /* Return Z_BUF_ERROR if we were given an incomplete table */
-  return y != 0 && g != 1 ? Z_BUF_ERROR : Z_OK;
+  return (y != 0 && g != 1) ? Z_BUF_ERROR : Z_OK;
 }
 
 int inflate_trees_bits(c, bb, tb, hp)
@@ -257,16 +257,18 @@ inflate_huft *hp;       /* space for trees */
   r = huft_build(c, nl, 257, cplens, cplext, tl, bl, hp, &hn);
   if (r != Z_OK || *bl == 0)
   {
-    if (r != Z_MEM_ERROR) return Z_DATA_ERROR;
-    return r;
+    //if (r != Z_MEM_ERROR) 
+      return Z_DATA_ERROR;
+    //return r;
   }
 
   /* build distance tree */
   r = huft_build(c + nl, nd, 0, cpdist, cpdext, td, bd, hp, &hn);
   if (r != Z_OK || (*bd == 0 && nl > 257))
   {
-    if (r != Z_MEM_ERROR) return Z_DATA_ERROR;
-    return r;
+    //if (r != Z_MEM_ERROR) 
+      return Z_DATA_ERROR;
+    //return r;
   }
 
   return Z_OK;
@@ -274,16 +276,16 @@ inflate_huft *hp;       /* space for trees */
 
 
 /* build fixed tables only once--keep them here */
-local int fixed_built = 0;
+local char fixed_built = 0;
 #define FIXEDH 544      /* number of hufts used by fixed tables */
 local inflate_huft fixed_mem[FIXEDH];
-local uInt fixed_bl;
-local uInt fixed_bd;
+local uInt fixed_bl=9;
+local uInt fixed_bd=5;
 local inflate_huft *fixed_tl;
 local inflate_huft *fixed_td;
 
 
-int inflate_trees_fixed(bl, bd, tl, td)
+void inflate_trees_fixed(bl, bd, tl, td)
 uIntf *bl;               /* literal desired/actual bit depth */
 uIntf *bd;               /* distance desired/actual bit depth */
 inflate_huft * FAR *tl;  /* literal/length tree result */
@@ -297,25 +299,30 @@ inflate_huft * FAR *td;  /* distance tree result */
     static uIntf c[288];           /* length list for huft_build */
 
     /* literal table */
-    for (k = 0; k < 144; k++) c[k] = 8;
-    for (; k < 256; k++) c[k] = 9;
-    for (; k < 280; k++) c[k] = 7;
-    for (; k < 288; k++) c[k] = 8;
-    fixed_bl = 9;
+    for (k = 0; k < 288; k++) 
+    {
+      char v=8;
+      if (k > 143)
+      {
+        if (k < 256) v++;
+        else if (k < 280) v--;
+      }
+      c[k] = v;
+    }
+//    fixed_bl = 9;
     huft_build(c, 288, 257, cplens, cplext, &fixed_tl, &fixed_bl, fixed_mem, &f);
 
     /* distance table */
     for (k = 0; k < 30; k++) c[k] = 5;
-    fixed_bd = 5;
+  //  fixed_bd = 5;
     huft_build(c, 30, 0, cpdist, cpdext, &fixed_td, &fixed_bd, fixed_mem, &f);
 
     /* done */
-    fixed_built = 1;
+    fixed_built++;
   }
   *bl = fixed_bl;
   *bd = fixed_bd;
   *tl = fixed_tl;
   *td = fixed_td;
-  return Z_OK;
 }
 #endif

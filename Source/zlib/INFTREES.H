@@ -20,7 +20,7 @@ extern int inflate_trees_dynamic OF((
     inflate_huft * FAR *,
     inflate_huft *));
 
-extern int inflate_trees_fixed OF((
+extern void inflate_trees_fixed OF((
     uIntf *,
     uIntf *,
     inflate_huft * FAR *,
