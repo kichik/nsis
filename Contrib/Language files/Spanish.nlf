@@ -72,13 +72,13 @@ Completado
 Por favor, revise el acuerdo de licencia antes de instalar $(^Name). Si acepta todos los términos del acuerdo, presione Acepto.
 # ^LicenseTextCB
 Por favor, revise el acuerdo de licencia antes de instalar $(^Name). Si acepta todos los términos del acuerdo, marque abajo la casilla. $_CLICK
-# ^LicesnseTextRB
+# ^LicenseTextRB
 Por favor, revise el acuerdo de licencia antes de instalar $(^Name). Si acepta todos los términos del acuerdo, seleccione abajo la primera opción. $_CLICK
 # ^UnLicenseText
 Por favor, revise el acuerdo de licencia antes de desinstalar $(^Name). Si acepta todos los términos del acuerdo, presione Acepto.
 # ^UnLicenseTextCB
 Por favor, revise el acuerdo de licencia antes de desinstalar $(^Name). Si acepta todos los términos del acuerdo, marque abajo la casilla. $_CLICK.
-# ^UnLicesnseTextRB
+# ^UnLicenseTextRB
 Por favor, revise el acuerdo de licencia antes de desinstalar $(^Name). Si acepta todos los términos del acuerdo, seleccione abajo la primera opción. $_CLICK
 # ^Custom
 Personalizada
