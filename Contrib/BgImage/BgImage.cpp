@@ -102,6 +102,7 @@ extern "C" void __declspec(dllexport) SetImage(HWND hwndParent, int string_size,
 
 extern "C" void __declspec(dllexport) Destroy(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
   SendMessage(hWndImage, WM_CLOSE, 0, 0);
+  UnregisterClass("NSISBGImage", g_hInstance);
 }
 
 extern "C" void __declspec(dllexport) Sound(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
