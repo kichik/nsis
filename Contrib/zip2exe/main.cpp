@@ -15,8 +15,8 @@ HINSTANCE g_hInstance;
 HWND g_hwnd;
 HANDLE g_hThread;
 char g_cmdline[1024];
-char g_makensis_path[MAX_PATH];
 int g_extracting;
+int g_bzip2;
 int g_zipfile_size;
 
 char *g_options="";//"/V3";
@@ -420,11 +420,15 @@ void makeEXE(HWND hwndDlg)
   if (!fp)
   {
     MessageBox(hwndDlg,"Error writing .NSI file",g_errcaption,MB_OK|MB_ICONSTOP);
+    PostMessage(g_hwnd,WM_USER+1203,0,0);
     return;
   }
   GetDlgItemText(hwndDlg,IDC_INSTNAME,buf,sizeof(buf));
+  fprintf(fp,"SetCompressor %s\n",g_bzip2?"bzip2":"zlib");
+  fprintf(fp,"AllowRootDirInstall true\n");
   fprintf(fp,"Name `%s`\n",buf);
   fprintf(fp,"Caption `%s Self Extractor`\n",buf);
+  fprintf(fp,"InstallButtonText Extract\n");
   GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
   fprintf(fp,"OutFile `%s`\n",buf);
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
@@ -504,8 +508,36 @@ void makeEXE(HWND hwndDlg)
   fprintf(fp,"SectionEnd\n");
   fclose(fp);
 
-  wsprintf(g_cmdline,"\"%s\" %s \"%s\"",g_makensis_path,g_options,nsifilename);
 
+  char g_makensis_path[MAX_PATH];
+  char *p=g_makensis_path;
+  GetModuleFileName(g_hInstance,g_makensis_path,sizeof(g_makensis_path));
+  while (*p) p++;
+  while (p >= g_makensis_path && *p != '\\') p--;
+  strcpy(p+1,"makensis.exe");
+
+  WIN32_FIND_DATA fd;
+  HANDLE h=FindFirstFile(g_makensis_path,&fd);
+  if (h==INVALID_HANDLE_VALUE)
+  {
+    if ((p-g_makensis_path>4)&&(tolower(*(p-1))=='n')&&(tolower(*(p-2))=='i')&&(tolower(*(p-3))=='b')&&(*(p-4)=='\\')) 
+    {
+      p -= 4;
+      strcpy(p+1,"makensis.exe");
+      h=FindFirstFile(g_makensis_path,&fd);
+      if (h==INVALID_HANDLE_VALUE)
+      {
+        MessageBox(hwndDlg,"Error finding makensis.exe.",g_errcaption,MB_OK|MB_ICONSTOP);
+        PostMessage(g_hwnd,WM_USER+1203,0,0);
+        return;
+      }
+    }
+  }
+  if (h!=INVALID_HANDLE_VALUE) FindClose(h);
+
+
+
+  wsprintf(g_cmdline,"\"%s\" %s \"%s\"",g_makensis_path,g_options,nsifilename);
 
   DWORD id;
   g_hThread=CreateThread(NULL,0,ThreadProc,0,0,&id);
@@ -516,7 +548,7 @@ void makeEXE(HWND hwndDlg)
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_DTEXTST,IDC_DESCTEXT,IDC_DEPST,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_BROWSE3,IDC_COMPILER};
+                        IDC_INSTNAME,IDC_DTEXTST,IDC_DESCTEXT,IDC_DEPST,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_RADIO1,IDC_RADIO2};
   static HICON hIcon;
   static HFONT hFont;
   if (uMsg == WM_DESTROY) { if (hIcon) DeleteObject(hIcon); hIcon=0; if (hFont) DeleteObject(hFont); hFont=0; }
@@ -524,6 +556,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
+      CheckDlgButton(hwndDlg,IDC_RADIO2,BST_CHECKED);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_poi);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$TEMP");
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$SYSDIR");
@@ -550,15 +583,6 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
               CLIP_DEFAULT_PRECIS,
               DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
       SendDlgItemMessage(hwndDlg,IDC_OUTPUTTEXT,WM_SETFONT,(WPARAM)hFont,0);
-      {
-        char *p=g_makensis_path;
-        GetModuleFileName(g_hInstance,g_makensis_path,sizeof(g_makensis_path));
-        while (*p) p++;
-        while (p >= g_makensis_path && *p != '\\') p--;
-		if ((p-g_makensis_path>4)&&(tolower(*(p-1))=='n')&&(tolower(*(p-2))=='i')&&(tolower(*(p-3))=='b')&&(*(p-4)=='\\')) p -= 4;
-        strcpy(++p,"makensis.exe");
-      }
-      SetDlgItemText(hwndDlg,IDC_COMPILER,g_makensis_path);
     return 1;
     case WM_CLOSE:
       if (!g_hThread)
@@ -571,18 +595,15 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (g_hThread)
       {
-        if (!lParam)
-        {
-          ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_SHOWNA);            
-        }
-        made=1;
-        ShowWindow(GetDlgItem(hwndDlg,IDC_BACK),SW_SHOWNA);
-        EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
+        if (!lParam) ShowWindow(GetDlgItem(hwndDlg,IDC_TEST),SW_SHOWNA);            
         CloseHandle(g_hThread);
         g_hThread=0;
-        if (nsifilename[0]) DeleteFile(nsifilename);
-        nsifilename[0]=0;
       }
+      made=1;
+      ShowWindow(GetDlgItem(hwndDlg,IDC_BACK),SW_SHOWNA);
+      EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
+      if (nsifilename[0]) DeleteFile(nsifilename);
+      nsifilename[0]=0;
     break;
     case WM_COMMAND:
       switch (LOWORD(wParam))
@@ -644,25 +665,6 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
           }   
         break;
-        case IDC_BROWSE3:
-          {
-            OPENFILENAME l={sizeof(l),};
-            char buf[1024];
-            l.hwndOwner = hwndDlg;
-            l.lpstrFilter = "Makensis EXE files (Makensis*.exe)\0Makensis*.exe\0All files\0*.*\0";
-            l.lpstrFile = buf;
-            l.nMaxFile = 1023;
-            l.lpstrTitle = "Select compiler EXE file";
-            l.lpstrDefExt = "exe";
-            l.lpstrInitialDir = NULL;
-            l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST;  	        
-            GetDlgItemText(hwndDlg,IDC_COMPILER,buf,sizeof(buf));
-            if (GetOpenFileName(&l)) 
-            {
-              SetDlgItemText(hwndDlg,IDC_COMPILER,buf);
-            }
-          }   
-        break;
         case IDC_BACK:
           if (!g_hThread)
           {
@@ -691,7 +693,8 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           {
             if (!made)
             {
-              GetDlgItemText(hwndDlg,IDC_COMPILER,g_makensis_path,sizeof(g_makensis_path));
+              g_bzip2=!IsDlgButtonChecked(hwndDlg,IDC_RADIO1);
+
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
