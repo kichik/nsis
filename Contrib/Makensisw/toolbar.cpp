@@ -47,25 +47,27 @@ void CreateToolBar()
   tbButton[TBB_LOADSCRIPT]  = CreateToolBarButton(IDB_LOADSCRIPT,    IDM_LOADSCRIPT, TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_SAVE]        = CreateToolBarButton(IDB_SAVE,          IDM_SAVE,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_EXIT]        = CreateToolBarButton(IDB_EXIT,          IDM_EXIT,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP1]        = CreateToolBarButton(0,                 0,               TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
+  tbButton[TBB_SEP1]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_COPY]        = CreateToolBarButton(IDB_COPY,          IDM_COPY,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_FIND]        = CreateToolBarButton(IDB_FIND,          IDM_FIND,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP2]        = CreateToolBarButton(0,                 0,               TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
+  tbButton[TBB_SEP2]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_RECOMPILE]   = CreateToolBarButton(IDB_RECOMPILE,     IDM_RECOMPILE,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_DEFINES]     = CreateToolBarButton(IDB_DEFINES,       IDM_DEFINES,    TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
 #ifdef COMPRESSOR_OPTION
   tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(IDB_COMPRESSOR,    IDM_COMPRESSOR, TBSTATE_ENABLED,        TBSTYLE_DROPDOWN, 0, 0);
+#else
+  tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(0,                 0,              TBSTATE_HIDDEN,         TBSTYLE_DROPDOWN, 0, 0);
 #endif
   tbButton[TBB_TEST]        = CreateToolBarButton(IDB_TEST,          IDM_TEST,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_EDITSCRIPT]  = CreateToolBarButton(IDB_EDITSCRIPT,    IDM_EDITSCRIPT, TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_BROWSESCR]   = CreateToolBarButton(IDB_BROWSESCR,     IDM_BROWSESCR,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_CLEARLOG]    = CreateToolBarButton(IDB_CLEARLOG,      IDM_CLEARLOG,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP3]        = CreateToolBarButton(0,                 0,               TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
+  tbButton[TBB_SEP3]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_NSISHOME]    = CreateToolBarButton(IDB_NSISHOME,      IDM_NSISHOME,   TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_NSISDEV]     = CreateToolBarButton(IDB_NSISDEV,       IDM_NSISDEV,    TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_FORUM]       = CreateToolBarButton(IDB_FORUM,         IDM_FORUM,      TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_NSISUPDATE]  = CreateToolBarButton(IDB_NSISUPDATE,    IDM_NSISUPDATE, TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-  tbButton[TBB_SEP4]        = CreateToolBarButton(0,                0,               TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
+  tbButton[TBB_SEP4]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_DOCS]        = CreateToolBarButton(IDB_DOCS,          IDM_DOCS,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
 
   g_toolbar.hwnd = CreateToolbarEx(g_sdata.hwnd,
