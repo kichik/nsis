@@ -363,6 +363,10 @@ Section "NSIS Update" SecToolsUpdate
   SetOutPath $INSTDIR\Bin
   File ..\Bin\NSISUpdate.exe
   File ..\Bin\InstallCVSData.exe
+  
+  IfFileExists "$INSTDIR\CVS\Root" 0 +2
+    Exec '"$INSTDIR\Bin\InstallCVSData.exe"'
+    
 SectionEnd
 
 Section "Zip2Exe" SecToolsZ2E
@@ -1448,6 +1452,7 @@ Section Uninstall
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh
   Delete $INSTDIR\NSIS.chm
+  RMDIR /r $INSTDIR\CVS 
   RMDir /r $INSTDIR\Contrib
   RMDir /r $INSTDIR\Menu
   RMDir /r $INSTDIR\Source
