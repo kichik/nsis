@@ -31,3 +31,9 @@ This command sets the file date/time saving flag which is used by the File comma
 \c \\<b\\>on\\</b\\>|off|try|ifnewer
 
 This command sets the overwrite flag which is used by the File command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file (note that when in 'ifnewer' mode, the destination file's date is set, regardless of what SetDateSave is set to).
+
+\S2{setpluginunload} SetPluginUnload
+
+\c \\<b\\>manual\\</b\\>|alwaysoff
+
+This command sets the unload plugin flag which is by CallInstDLL and plugin calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plugin call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
