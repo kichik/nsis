@@ -1709,6 +1709,7 @@ int CEXEBuild::uninstall_generate()
 
     GrowBuf udata;
 
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     if (build_compress_whole) {
       // compress uninstaller too
       udata.add(&fh,sizeof(fh));
@@ -1748,7 +1749,9 @@ int CEXEBuild::uninstall_generate()
       firstheader *_fh=(firstheader *)udata.get();
       _fh->length_of_all_following_data=udata.getlen()+(build_crcchk?sizeof(int):0);
     }
-    else {
+    else 
+#endif//NSIS_CONFIG_COMPRESSION_SUPPORT
+    {
       udata.add(&fh,sizeof(fh));
       udata.add(uhd.get(),uhd.getlen());
       udata.add(ubuild_datablock.get(),ubuild_datablock.getlen());
