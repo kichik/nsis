@@ -537,7 +537,10 @@ nextPage:
       EnableWindow(m_hwndOK,1);
 
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
-      else if (g_autoclose) goto nextPage;
+      else {
+        if (g_autoclose) goto nextPage;
+        return 0;
+      }
 
       mystrcpy(g_tmp,g_caption);
       process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);

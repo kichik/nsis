@@ -149,6 +149,8 @@ class CEXEBuild {
     #define IsSet(s,lang) _IsSet(string_tables.size()?&(string_tables[0]->s):0,lang)
     bool _IsSet(int *str, LANGID lang); // Checks if a string is set in a given string table
 
+    bool next_used, install_used;
+
     // a whole bunch O data.
 
     // Added by Amir Szekely 31st July 2002
