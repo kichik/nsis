@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v6
 # Language ID
 1063
 # Font and size - dash (-) means default
@@ -9,63 +9,182 @@ NLF v3
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by NorCis
+# Translation by Vytautas Krivickas (Vytautas)
+# ^Branding
 Nullsoft Install System %s
-$(^Name) Idiegimas
-$(^Name) Panaikinti
+# ^SetupCaption
+%s Idiegimas
+# ^UninstallCaption
+%s Panaikinti
+# ^LicenseSubCaption
 : Naudojimo sutartis
+# ^ComponentsSubCaption
 : Idiegimo nustatymai
+# ^DirSubCaption
 : Idiegimo katalogas
+# ^InstallingSubCaption
 : Diegiama
+# ^CompletedSubCaption
 : Baigta
+# ^UnComponentsSubCaption
+: Ištrinimo nustatymai
+# ^UnDirSubCaption
+: Ištrinimo katalogas
+# ^ConfirmSubCaption
 : Patvirtinimas
+# ^UninstallingSubCaption
 : Panaikinama
+# ^UnCompletedSubCaption
 : Baigta
+# ^BackBtn
 < &Atgal
+# ^NextBtn
 &Toliau >
+# ^AgreeBtn
 Aš &Sutinku
+# ^AcceptBtn
 Aš &sutinku su naudojimo sutarties salygomis
+# ^DontAcceptBtn
 Aš &nesutinku su naudojimo sutarties salygomis
+# ^InstallBtn
 &Idiegti
+# ^UninstallBtn
 &Panaikinti
+# ^CancelBtn
 Nutraukti
+# ^CloseBtn
 &Uždaryti
+# ^BrowseBtn
 P&asirinkti...
+# ^ShowDetailsBtn
 Parodyti &detales
+# ^ClickNext
+Paspauskite Toliau
+# ^ClickInstall
+Paspauskite Idiegti
+# ^ClickUninstall
+Paspauskite Ištrinti
+# ^Name
 Vardas
+# ^Completed
 Baigta
+# ^LicenseText
+Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+# ^LicenseTextCB
+Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+# ^LicenseTextRB
+Prašome perskaityti sutarti prieš idiegdami $(^Name). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+# ^UnLicenseText
+Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, spauskite Sutinku.
+# ^UnLicenseTextCB
+Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, padekite varnele tam skirtame laukelyje.
+# ^UnLicenseTextRB
+Prašome perskaityti sutarti prieš ištrinant $(^Name). Jei jus sutinkate su nurodytomis salygomis, pasirinkite pirma pasirinkima esancia žemiau.
+# ^Custom
 Kitoks
+# ^ComponentsText
+Padekite varneles laukeliuose komponentu kuriuos norite idiegti ir išimkite iš kitu.
+# ^ComponentsSubText1
 Pasirinkite idiegimo tipa:
+# ^ComponentsSubText2_NoInstTypes
 Pasirinkite komponentus, kuriuos idiegti:
+# ^ComponentsSubText2
 Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite idiegti:
-Pasirinkite kataloga, kur idiegti $(^Name):
+# ^UnComponentsText
+Padekite varneles laukeliuose komponentu kuriuos norite ištraukti ir išimkite iš kitu.
+# ^UnComponentsSubText1
+Pasirinkite ištraukimo tipa:
+# ^UnComponentsSubText2_NoInstTypes
+Pasirinkite komponentus, kuriuos ištraukti:
+# ^UnComponentsSubText2
+Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite ištraukti:
+# ^DirText
+Idiegimas dabar idiegs $(Name) šiame kataloge.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+# ^DirSubText
+Idiegimo katalogas
+# ^DirBrowseText
+Pasirinkite kataloga, kur idiegti $(Name):
+# ^UnDirText
+Idiegimas dabar ištrauks $(Name) iš šio katalogo.  Jiegu norite pakeisti ši kataloga paspauskite Pasirinkti
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Pasirinkite kataloga iš kurio ištrinti $(Name):
+# ^SpaceAvailable
 Yra vietos: 
+# ^SpaceRequired
 Reikia vietos: 
+# ^UninstallingText
+Idiegimas dabar ištrauks $(Name).
+# ^UninstallingSubText
 Trinama iš:
+# ^FileError
 Klaida atidarant byla irašymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti idiegima,\r\nPakartoti, jei norite pabandyti dar karta irašyti byla, ar\r\nIgnoruoti, jei norite praleisti šia byla
+# ^FileError_NoIgnore
+Klaida atidarant byla irašymui: \r\n\t"$0"\r\nPaspauskite Pakartoti, jei norite pabandyti dar karta irašyti byla, ar\r\nNutraukti, jei norite nutraukti idiegima.
+# ^CantWrite
 Negalima irašyti: 
+# ^CopyFailed
 Kopijavimas nepavyko
+# ^CopyTo
 Kopijuoti i 
+# ^Registering
+"Užregistruojama: "
+# ^Unregistering
+"Išregistruojama: "
+# ^SymbolNotFound
 Nerastas simbolis: 
+# ^CouldNotLoad
 Negalima paleisti: 
+# ^CreateFolder
 Sukurti kataloga: 
+# ^CreateShortcut
 Sukurti nuoroda: 
-Sukurti panaikinimo pragrama: 
+# ^CreatedUninstaller
+Sukurti panaikinimo pragrama:
+# ^Delete
 Ištrinti byla: 
+# ^DeleteOnReboot
 Ištrinti perkraunant: 
+# ^ErrorCreatingShortcut
 Klaida kuriant nuoroda: 
+# ^ErrorCreating
 Klaida kuriant: 
+# ^ErrorDecompressing
 Klaida išskleidžiant duomenis! Sugadinta idiegimo byla?
+# ^ErrorRegistering
 Klaida užregistruojant DLL
+# ^ExecShell
 ExecShell: 
+# ^Exec
 Paleisti: 
+# ^Extract
 Išskleisti: 
+# ^ErrorWriting
 Išskleisti: klaida irašant i byla
+# ^InvalidOpcode
 Idiegimo byla sugadinta: neteisingas opkodas
+# ^NoOLE
 Nera OLE del: 
+# ^OutputFolder
 Išeinantis katalogas: 
+# ^RemoveFolder
 Panaikinti kataloga: 
+# ^RenameOnReboot
 Pervardinti perkraunant: 
-Pervardinti: 
-Praleista: 
+# ^Rename
+"Pervardinti: "
+# ^Skipped
+"Praleista: "
+# ^CopyDetails
 Kopijuoti detales i atminti
+# ^LogInstall
+Irašyti idiegimo detales
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G
