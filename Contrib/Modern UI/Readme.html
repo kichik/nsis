@@ -470,7 +470,7 @@ will also help you to learn more about the Modern UI.</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
-  <p class="sub2header">Customize fonts</p>
+  <p class="sub2header">Customize Fonts</p>
   <div class="margin">
   <p class="text">You can customize the fonts for a language using the following defines before inserting
   a language.</p>
@@ -484,7 +484,7 @@ will also help you to learn more about the Modern UI.</p>
   The font for the title on the Welcome and Finish page.</p>
   <p class="text"><span class="bold">Note: </span>Page texts can be changed using page settings.</p>
   </div>
-  <p class="sub2header">Language selection dialog</p>
+  <p class="sub2header">Language Selection Dialog</p>
   <div class="margin">
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
@@ -496,11 +496,10 @@ Function .onInit
 
 FunctionEnd
 </pre>
-  <p class="text">To customize the language selection dialog, use these defines before inserting the macro.</p>
-  <p class="text"><span class="bold">MUI_LANGDLL_WINDOWTITLE </span><span class="parameter">text</span><br />
-  The window title of the language selection dialog.</p>
-  <p class="text"><span class="bold">MUI_LANGDLL_INFO </span><span class="parameter">text</span><br />
-  The text to display on the language selection dialog.</p>
+  <p class="sub2header">Language Selection Dialog Settings</p>
+  <div class="margin">
+  <p class="text">To remember to users preference, you can define a registry key.<br />
+  <span class="bold">Note:</span> These defines should be set before inserting the instfiles page macro.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_REGISTRY_ROOT </span><span class="parameter">root</span><br />
   <span class="bold">MUI_LANGDLL_REGISTRY_KEY </span><span class="parameter">key</span><br />
   <span class="bold">MUI_LANGDLL_REGISTRY_VALUENAME </span><span class="parameter">value_name</span><br />
@@ -516,9 +515,19 @@ Function un.onInit
 
 FunctionEnd
 </pre>
+  </div>
+  <p class="sub2header">Language Selection Dialog Interface Settings</p>
+  <div class="margin">
+  <p class="text">To customize the language selection dialog interface, use these defines before inserting
+  the MUI_LANGDLL_DISPLAY macro.</p>
+  <p class="text"><span class="bold">MUI_LANGDLL_WINDOWTITLE </span><span class="parameter">text</span><br />
+  The window title of the language selection dialog.</p>
+  <p class="text"><span class="bold">MUI_LANGDLL_INFO </span><span class="parameter">text</span><br />
+  The text to display on the language selection dialog.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_ALWAYSSHOW</span><br />
   Always show the language selection dialog, even if a language has been stored in the registry.
   The language stored in the registry will be selected by default.</p>
+  </div>
   </div>
   <p class="subheader">6. Reserve files</p>
   <p class="text">If you are using BZIP2 (solid) compression, it's important that
