@@ -42,7 +42,7 @@ Released on February 7th, 2004
 
 \b Improved plug-ins: \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl} and \L{../Contrib/Splash/splash.txt}{Splash}
 
-\b New plug-ins: \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}, \L{../Contrib/Banner/Readme.txt}{Banner}, \L{../Contrib/BgImage/BgImage.txt}{BgImage}, \L{../Contrib/Dialer/Dialer.txt}{Dialer}, \L{../Examples/languages.nsi}{LangDLL}, \L{../Contrib/Math/Math.txt}{Math}, \L{../Contrib/nsExec/nsExec.txt}{nsExec}, \L{../Contrib/StartMenu/Readme.txt}{StartMenu}, \L{../Contrib/System/System.txt}{System}, \L{../Contrib/UserInfo/UserInfo.nsi}{UserInfo} and \L{../Contrib/VPatch/Readme.html}{VPatch}
+\b New plug-ins: \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}, \L{../Contrib/Banner/Readme.txt}{Banner}, \L{../Contrib/BgImage/BgImage.txt}{BgImage}, \L{../Contrib/Dialer/Dialer.txt}{Dialer}, \L{../Examples/languages.nsi}{LangDLL}, \L{../Contrib/Math/Math.txt}{Math}, \L{../Contrib/nsExec/nsExec.txt}{nsExec}, \L{../Contrib/StartMenu/Readme.txt}{StartMenu}, \L{../Contrib/System/System.html}{System}, \L{../Contrib/UserInfo/UserInfo.nsi}{UserInfo} and \L{../Contrib/VPatch/Readme.html}{VPatch}
 
 \b New and improved utilities: \L{../Contrib/Makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
 

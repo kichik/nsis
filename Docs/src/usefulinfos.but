@@ -194,7 +194,7 @@ System.dll recognises the following data types:
 
 \b b - boolean (needs/returns 'true':'false') - by the fact this type is senseless -> usual integer can be used ('0':'1')
 
-\b k - callback. See Callback section in system.txt.
+\b k - callback. See Callback section in system.html.
 
 \b * - pointer specifier -> the proc needs the pointer to type, affects next char (parameter) [ex: '*i' - pointer to int]
 
