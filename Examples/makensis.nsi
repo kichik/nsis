@@ -188,6 +188,7 @@ Section "Script Examples" SecExample
   File ..\Examples\VersionInfo.nsi
   File ..\Examples\UserVars.nsi
   File ..\Examples\LogicLib.nsi
+  File ..\Examples\silent.nsi
 SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
