@@ -256,7 +256,7 @@ SubSectionEnd
 
 
 SubSection "Source code" SecSrc
-Section "NSIS Source Code"
+Section "NSIS Source Code" SecSrcNSIS
   SectionIn 1
   DetailPrint "Extracting source code...."
   SetDetailsPrint textonly
@@ -436,6 +436,7 @@ Function .onMouseOverSection
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribIO} "Plugin that lets you add user interface components to an installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecContribNSISDL} "Plugin that lets you create a web based installer"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrc} "Source code to NSIS and all related files"
+    !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcNSIS} "Source code to NSIS"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcContrib} "Source code to user contributed utilities"
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecSrcEx} "Example DLL source in C"
     !insertmacro MUI_DESCRIPTION_TEXT 1033  ${SecSrcMNW} "MakeNSIS Wrapper source code"
