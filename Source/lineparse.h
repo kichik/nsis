@@ -117,6 +117,7 @@ class LineParser {
         else if (*line == '`') lstate=4;
         if (lstate) line++;
         int nc=0;
+        char *p = line;
         while (*line)
         {
           if (line[0] == '$' && line[1] == '\\') {
@@ -124,7 +125,7 @@ class LineParser {
             	case '"':
               case '\'':
               case '`':
-                nc += 3;
+                nc += 1;
                 line += 3;
             }
           }
@@ -137,10 +138,9 @@ class LineParser {
         }
         if (m_tokens)
         {
-          char *p;
           int i;
           m_tokens[m_nt]=(char*)malloc(nc+1);
-          for (i = 0, p = line - nc; p < line; i++, p++) {
+          for (i = 0; p < line; i++, p++) {
             if (p[0] == '$' && p[1] == '\\') {
               switch (p[2]) {
             	  case '"':
