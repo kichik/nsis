@@ -224,7 +224,7 @@ follow these steps:</p>
 !insertmacro MUI_STARTMENU_WRITE_END
 </pre>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE </span><span class="parameter">variable</span><br />
-  Variable to store the current Start Menu Folder. Default is $9.
+  Variable to store the current Start Menu Folder. Default is $MUI_STARTMENU_FOLDER.
   You cannot use this variable in your script (or you should Push/Pop it).</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER </span><span class="parameter">folder</span><br />
   The default Start Menu Folder. For installers with multiple languages, you can use a language string as value.</p>
@@ -238,11 +238,10 @@ follow these steps:</p>
   remember the users preference. You should also use it in the uninstaller to
   remove the Start Menu folders. Don't forget to remove this key in the
   uninstaller.</p>
-  <p class="text">In the uninstaller, these macro to get the Start Menu folder:</p>
+  <p class="text">In the uninstaller, use the MUI_STARTMENU_GETFOLDER macro to get the Start Menu folder:</p>
 <pre class="margin">
-!insertmacro MUI_STARTMENU_DELETE_BEGIN $R0 ;You can also use another variable
+!insertmacro MUI_STARTMENU_GETFOLDER $R0 ;You can also use another variable
   Delete "$SMPROGRAMS\$R0\Your Shortcut.lnk"
-!insertmacro MUI_STARTMENU_DELETE_END
 </pre>
   </div>
   <p class="sub2header">Finish Page Settings</p>
@@ -505,6 +504,10 @@ FunctionEnd
 <p class="text">For custom fonts and colors, macro's for the initDialog and show
 functions of InstallOptions are also available:</p>
 <pre class="margin">
+Var HWND
+Var DLGITEM
+Var FONT
+
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
 
@@ -512,24 +515,16 @@ Function FunctionName ;FunctionName defined with Page command
 
   !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
 
-  Push $R0
-  Push $R1
-  Push $R2
-
-    !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
-    Pop $R0 ;HWND of dialog
+  !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
+  Pop $HWND ;HWND of dialog
     
-    GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
+  GetDlgItem $DLGITEM $HWND 1200 ;1200 + Field number - 1
     
-    ;$R1 contains the HWND of the first field
-    CreateFont $R2 "Tahoma" 10 700 
-    SendMessage $R1 ${WM_SETFONT} $R2 0
+  ;$DLGITEM contains the HWND of the first field
+  CreateFont $FONT "Tahoma" 10 700 
+  SendMessage $DLGITEM ${WM_SETFONT} $FONT 0
 	
-    !insertmacro MUI_INSTALLOPTIONS_SHOW
-	
-  Pop $R2
-  Pop $R1
-  Pop $R0
+  !insertmacro MUI_INSTALLOPTIONS_SHOW
 
 FunctionEnd
 </pre>
@@ -608,7 +603,8 @@ MUI_CUSTOMFUNCTION_UNGUIINIT
 <p class="text">
 <span class="bold">Welcome Page</span><br />
 MUI_CUSTOMFUNCTION_WELCOME_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_WELCOME_SHOW - ${MUI_HWND} contains HWND of Welcome dialog
+MUI_CUSTOMFUNCTION_WELCOME_SHOW - $MUI_HWND contains HWND of Welcome dialog
+MUI_CUSTOMFUNCTION_WELCOME_LEAVE
 </p>
 <p class="text">
 <span class="bold">License Page</span><br />
@@ -642,7 +638,8 @@ MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
 <p class="text">
 <span class="bold">Finish Page</span><br />
 MUI_CUSTOMFUNCTION_FINISH_PRE - You can write to the IO INI file of the page (ioSpecial.ini)<br />
-MUI_CUSTOMFUNCTION_FINISH_SHOW - ${MUI_HWND} contains HWND of Finish dialog
+MUI_CUSTOMFUNCTION_FINISH_SHOW - $MUI_HWND contains HWND of Finish dialog
+MUI_CUSTOMFUNCTION_FINISH_LEAVE
 </p>
 <p class="text">
 <span class="bold">Installer Abort</span><br />
@@ -662,19 +659,24 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.65 - June 26, 2003
+<li>1.65 - July 16, 2003
   <ul>
     <li>New page configuration system, no different system for installers
     with custom pages</li>
     <li>Default windows color for the license text background</li>
-    <li>New format for example scripts</li>
+    <li>Example script updates (new format, user variables)</li>
     <li>Improved registry storage for Start Menu folder</li>
     <li>ReserveFile macro for StartMenu plug-in</li>
     <li>Option to always show the language selection dialog
     (even if a language has been stored in the registry)</li>
     <li>Checkboxes on Finish page can be used to call a function</li>
+    <li>Support for custom leave functions for Start Menu Folder,
+    Welcome and Finish pages</li>
     <li>Support for a link on the Finish page</li>
+    <li>New macro to get Start Menu folder in uninstaller</li>
     <li>Options to disable bitmap stretching</li>
+    <li>Components page description box info text: always displayed
+    when mouse is outside box, disabled style</li>
   </ul></li>
 </ul>
 <p class="text"></p>
@@ -692,29 +694,6 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>Welcome/Finish page INI files can be modified in pre functions</li>
     <li>More texts can be customized</li>
     <li>Language files have to be updated</li>
-  </ul></li>
-</ul>
-<p class="text"></p>
-<ul>
-<li>1.63 - March 9, 2003
-  <ul>
-    <li>Support for a bitmap in the wizard header</li>
-    <li>New defines to change the description area</li>
-    <li>MUI_SYSTEM inserted automatically</li>
-    <li>Single macro for language selection dialog</li>
-    <li>Removed page description in window title</li>
-    <li>Easier to customize resource files</li>
-    <li>New system for custom functions</li>
-    <li>Start Menu folder registry key automatically written</li>
-    <li>New InstallOptions macro's that do not remove the return value from
-    the stack</li>
-    <li>Support for custom pages before the finish page</li>
-    <li>Renamed Start Menu page defines</li>
-    <li>'Do not create shortcuts' checkbox can be removed</li>
-    <li>'MS Shell Dlg' font for header title</li>
-    <li>RTL support</li>
-    <li>Documentation updates</li>
-    <li>Minor fixes</li>
   </ul></li>
 </ul>
 <p class="text"><a href="Changelog.txt">Complete version history</a></p>
