@@ -1,8 +1,8 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1048
-# Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2
+# Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2  Updated by Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v0.3
 Nullsoft Install System %s
 Instalare %s
 Dezinstalare %s
@@ -17,6 +17,8 @@ Dezinstalare %s
 < Ina&poi
 &Inainte >
 &De acord
+&Accept termenii din acordul de licenta
+Nu accespt termenii din acordul de licenta
 &Instalare
 &Dezinstalare
 Anuleaza
