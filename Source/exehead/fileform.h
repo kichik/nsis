@@ -122,8 +122,7 @@ enum
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
 
-  EW_PLUGINCOMMANDPREP,
-  EW_PLUGINCOMMAND
+  EW_PLUGINCOMMANDPREP
 
 };
 
@@ -225,7 +224,6 @@ typedef struct
 // Settings common to both installers and uninstallers
 typedef struct
 {
-  int str_tables_num; // number of strings tables in array
   int str_tables; // offset to tables array
 
   int num_entries; // total number of entries

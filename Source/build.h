@@ -55,6 +55,7 @@ class CEXEBuild {
     void build_plugin_table(void);
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
+
     // process a script (you can process as many scripts as you want,
     // it is as if they are concatenated)
     int process_script(FILE *fp, char *curfilename, int *lineptr);
@@ -109,6 +110,7 @@ class CEXEBuild {
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
     Plugins m_plugins;
+    bool plugin_used;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     // build.cpp functions used mostly within build.cpp

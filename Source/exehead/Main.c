@@ -33,10 +33,6 @@
 #include "ui.h"
 #include "lang.h"
 
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-#include "dllpaths.h"
-#endif // NSIS_CONFIG_PLUGIN_SUPPORT
-
 extern unsigned long CRC32(unsigned long crc, const unsigned char *buf, unsigned int len);
 
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
@@ -61,6 +57,10 @@ HWND g_hwnd;
 
 static int m_length;
 static int m_pos;
+
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+extern char plugins_temp_dir[NSIS_MAX_STRLEN];
+#endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -364,7 +364,9 @@ end:
   if (m_Err) MessageBox(NULL,m_Err,g_caption,MB_OK|MB_ICONSTOP);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  DllPathsCleanup();
+  // Clean up after plug-ins
+  MessageBox(0, plugins_temp_dir, "delete", MB_OK);
+  if (plugins_temp_dir[0]) doRMDir(plugins_temp_dir,1);
 #endif // NSIS_CONFIG_PLUGIN_SUPPORT
 
   ExitProcess(ret);
