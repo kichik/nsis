@@ -102,7 +102,8 @@ WCHAR* StrToWstrAlloc(const char* istr, int codepage)
   {
     int len = strlen(istr);
     char *in = (char *) istr;
-    char *out = (char *) wstr = new WCHAR[len + 1];
+    wstr = new WCHAR[len + 1];
+    char *out = (char *) wstr;
     size_t insize = len + 1;
     size_t outsize = (len + 1) * sizeof(WCHAR);
     if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)

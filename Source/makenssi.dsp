@@ -156,7 +156,13 @@ SOURCE=.\7zip\7zGuids.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\7zip\Common\Alloc.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
+# End Source File
+# Begin Source File
+
 SOURCE=.\7zip\Common\CRC.cpp
+# ADD CPP /D "COMPRESS_MF_BT"
 # End Source File
 # Begin Source File
 
@@ -166,16 +172,6 @@ SOURCE=.\7zip\7zip\Compress\LZ\LZInWindow.cpp
 # Begin Source File
 
 SOURCE=.\7zip\7zip\Compress\LZMA\LZMAEncoder.cpp
-# ADD CPP /D "COMPRESS_MF_BT"
-# End Source File
-# Begin Source File
-
-SOURCE=.\7zip\7zip\Compress\LZMA\LZMALen.cpp
-# ADD CPP /D "COMPRESS_MF_BT"
-# End Source File
-# Begin Source File
-
-SOURCE=.\7zip\7zip\Compress\LZMA\LZMALiteral.cpp
 # ADD CPP /D "COMPRESS_MF_BT"
 # End Source File
 # Begin Source File
