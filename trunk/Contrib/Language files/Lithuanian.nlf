@@ -1,0 +1,64 @@
+# Header, don't edit
+NLF v3
+# Language ID
+1063
+# Translation by ..... (any credits should go here)
+Andrius Norkaitis (NorCis) %s
+%s Idiegimas
+%s Panaikinti
+: Naudojimo sutartis
+: Idiegimo nustatymai
+: Idiegimo katalogas
+: Diegiama
+: Baigta
+: Patvirtinimas
+: Panaikinama
+: Baigta
+< &Atgal
+&Toliau >
+Aš &Sutinku
+Aš &sutinku su naudojimo sutarties salygomis
+Aš &nesutinku su naudojimo sutarties salygomis
+&Idiegti
+&Panaikinti
+Nutraukti
+&Uždaryti
+P&asirinkti...
+Parodyti &detales
+Vardas
+Baigta
+Kitoks
+Pasirinkite idiegimo tipa:
+Pasirinkite komponentus, kuriuos idiegti:
+Arba, pasirinkite neprivalomus komponentus, kuriuos jus norite idiegti:
+Pasirinkite kataloga, kur idiegti %s:
+Yra vietos: 
+Reikia vietos: 
+Trinama iš:
+Klaida atidarant byla irašymui: \r\n\t"$0"\r\nPaspauskite Nutraukti, jei norite nutraukti idiegima,\r\nPakartoti, jei norite pabandyti dar karta irašyti byla, ar\r\nIgnoruoti, jei norite praleisti šia byla
+Negalima irašyti: 
+Kopijavimas nepavyko
+Kopijuoti i 
+Nerastas simbolis: 
+Negalima paleisti: 
+Sukurti kataloga: 
+Sukurti nuoroda: 
+Sukurti panaikinimo pragrama: 
+Ištrinti byla: 
+Ištrinti perkraunant: 
+Klaida kuriant nuoroda: 
+Klaida kuriant: 
+Klaida išskleidžiant duomenis! Sugadinta idiegimo byla?
+Klaida užregistruojant DLL
+ExecShell: 
+Paleisti: 
+Išskleisti: 
+Išskleisti: klaida irašant i byla
+Idiegimo byla sugadinta: neteisingas opkodas
+Nera OLE del: 
+Išeinantis katalogas: 
+Panaikinti kataloga: 
+Pervardinti perkraunant: 
+Pervardinti: 
+Praleista: 
+Kopijuoti detales i atminti
