@@ -12,6 +12,8 @@
 ;--------------------------------
 ;Configuration
 
+  !define MUI_INSTALLOPTIONS
+  
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
