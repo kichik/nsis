@@ -36,3 +36,9 @@ release 5, 11 september 2003.
 1. u flag - unload dll after procedure call.
 2. some changes to asm to turn on Whole Program Optimization.
 3. Dll shrinked for 1 kb.
+
+bug-fix-release, 4.06.2004
+1. System::Copy /SIZE fixed (Kichik).
+2. System::Alloc with destination auto-allocation now pushes destination
+address on stack.
+3. Callbacks fixed (Kichik's kick is awesome).
