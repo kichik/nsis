@@ -4362,104 +4362,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode, int *data_handle)
 {
   char dir[1024];
-  char newfn[1024], *s;
+  char newfn[1024];
   HANDLE h;
-  WIN32_FIND_DATA d;
+  WIN32_FIND_DATA d, temp;
   strcpy(dir,lgss);
-  s=dir+strlen(dir);
-  while (s > dir && *s != '\\') s=CharPrev(dir,s);
-  *s=0;
+  {
+    char *s=dir+strlen(dir);
+    while (s > dir && *s != '\\') s=CharPrev(dir,s);
+    *s=0;
+  }
 
   h = FindFirstFile(lgss,&d);
   if (h != INVALID_HANDLE_VALUE)
   {
     do
     {
-      if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-      {
-        if (recurse && strcmp(d.cFileName,"..") && strcmp(d.cFileName,"."))
-        {
-          entry ent={0,};
-          int a;
-          int wd_save=strlen(cur_out_path);
-
-          {
-            char *i=d.cFileName,*o=cur_out_path;
-            while (*o) o++;
-            if (o > cur_out_path && CharPrev(cur_out_path,o)[0] != '\\') *o++='\\';
-
-            while (*i)
-            {
-              char *ni=CharNext(i);
-              if (ni-i > 1)
-              {
-                int l=ni-i;
-                while (l--)
-                {
-                  *o++=*i++;
-                }
-              }
-              else
-              {
-                char c=*i++;
-                *o++=c;
-                if (c == '$') *o++='$';
-              }
-            }
-            *o=0;
-          }
-
-          if (generatecode)
-          {
-            (*total_files)++;
-            ent.which=EW_CREATEDIR;
-            ent.offsets[0]=add_string(cur_out_path);
-            ent.offsets[1]=1;
-            a=add_entry(&ent);
-            if (a != PS_OK)
-            {
-              FindClose(h);
-              return a;
-            }
-            if (attrib)
-            {
-              ent.which=EW_SETFILEATTRIBUTES;
-              ent.offsets[0]=add_string(cur_out_path);
-              ent.offsets[1]=d.dwFileAttributes;
-
-              a=add_entry(&ent);
-              if (a != PS_OK)
-              {
-                FindClose(h);
-                return a;
-              }
-            }
-          }
-          char spec[1024];
-          sprintf(spec,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
-          SCRIPT_MSG("%sFile: Descending to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",spec,cur_out_path);
-          strcat(spec,"\\*.*");
-          a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode);
-          if (a != PS_OK)
-          {
-            FindClose(h);
-            return a;
-          }
-
-          cur_out_path[wd_save]=0;
-          ent.which=EW_CREATEDIR;
-          ent.offsets[1]=1;
-          SCRIPT_MSG("%sFile: Returning to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",dir,cur_out_path);
-          ent.offsets[0]=add_string(cur_out_path);
-          a=add_entry(&ent);
-          if (a != PS_OK)
-          {
-            FindClose(h);
-            return a;
-          }
-        }
-      }
-      else
+      if ((d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
       {
         HANDLE hFile,hFileMap;
         DWORD len;
@@ -4609,6 +4527,134 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     } while (FindNextFile(h,&d));
     FindClose(h);
   }
+
+  if (recurse)
+  {
+    static int counter;
+    int thiscounter=counter++;
+
+    int a=GetFileAttributes(lgss);
+    const char *fspec=lgss+strlen(dir)+!!dir[0];
+    strcpy(newfn,lgss);
+    if (a==INVALID_FILE_ATTRIBUTES)
+    {
+      a=GetFileAttributes(dir);
+      sprintf(newfn,"%s%s*.*",dir,dir[0]?"\\":"");
+    }
+    else
+    {
+      // we don't want to include a whole directory if it's not the first call
+      if (thiscounter) return PS_OK;
+      fspec="*.*";
+    }
+    if (a&FILE_ATTRIBUTE_DIRECTORY)
+    {
+      h=FindFirstFile(newfn,&d);
+      if (h != INVALID_HANDLE_VALUE)
+      {
+        do
+        {
+          if (d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+          {
+            if (strcmp(d.cFileName,"..") && strcmp(d.cFileName,"."))
+            {
+              entry ent={0,};
+              int a;
+              int wd_save=strlen(cur_out_path);
+
+              {
+                char *i=d.cFileName,*o=cur_out_path;
+                while (*o) o++;
+                if (o > cur_out_path && CharPrev(cur_out_path,o)[0] != '\\') *o++='\\';
+
+                while (*i)
+                {
+                  char *ni=CharNext(i);
+                  if (ni-i > 1)
+                  {
+                    int l=ni-i;
+                    while (l--)
+                    {
+                      *o++=*i++;
+                    }
+                  }
+                  else
+                  {
+                    char c=*i++;
+                    *o++=c;
+                    if (c == '$') *o++='$';
+                  }
+                }
+                *o=0;
+              }
+
+              char spec[1024];
+              sprintf(spec,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
+              SCRIPT_MSG("%sFile: Descending to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",spec,cur_out_path);
+              strcat(spec,"\\");
+              strcat(spec,fspec);
+              if (generatecode)
+              {
+                HANDLE htemp = FindFirstFile(spec,&temp);
+                if (htemp != INVALID_HANDLE_VALUE)
+                {
+                  FindClose(htemp);
+
+                  ent.which=EW_CREATEDIR;
+                  ent.offsets[0]=add_string(cur_out_path);
+                  ent.offsets[1]=1;
+                  a=add_entry(&ent);
+                  if (a != PS_OK)
+                  {
+                    FindClose(h);
+                    return a;
+                  }
+                  if (attrib)
+                  {
+                    ent.which=EW_SETFILEATTRIBUTES;
+                    ent.offsets[0]=add_string(cur_out_path);
+                    ent.offsets[1]=d.dwFileAttributes;
+
+                    a=add_entry(&ent);
+                    if (a != PS_OK)
+                    {
+                      FindClose(h);
+                      return a;
+                    }
+                  }
+                }
+              }
+              a=do_add_file(spec,attrib,recurse,linecnt,total_files,NULL,generatecode);
+              if (a != PS_OK)
+              {
+                FindClose(h);
+                return a;
+              }
+
+              cur_out_path[wd_save]=0;
+              SCRIPT_MSG("%sFile: Returning to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",dir,cur_out_path);
+            }
+          }
+        } while (FindNextFile(h,&d));
+        FindClose(h);
+
+        if (!thiscounter)
+        {
+          entry ent={0,};
+          ent.which=EW_CREATEDIR;
+          ent.offsets[1]=1;
+          ent.offsets[0]=add_string(cur_out_path);
+          a=add_entry(&ent);
+          if (a != PS_OK)
+          {
+            FindClose(h);
+            return a;
+          }
+        }
+      }
+    }
+  }
+
   return PS_OK;
 }
 #endif
