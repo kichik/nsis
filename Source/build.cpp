@@ -239,20 +239,11 @@ CEXEBuild::CEXEBuild()
   memset(&build_header,-1,sizeof(build_header));
 
   build_header.install_reg_rootkey=0;
-/*#ifdef NSIS_CONFIG_COMPONENTPAGE
-  build_header.no_custom_instmode_flag=0;
-#endif*/
   build_header.num_sections=0;
   build_header.common.num_entries=0;
-/*#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  build_header.common.silent_install=0;
-#endif*/
   build_header.common.flags=CH_FLAGS_NO_ROOT_DIR;
-  /*build_header.common.misc_flags=8;
-  build_header.common.show_details=0;*/
   build_header.common.lb_bg=RGB(0,0,0);
   build_header.common.lb_fg=RGB(0,255,0);
-  /*build_header.common.progress_flags=0;*/
 
   uninstall_mode=0;
   uninstall_size_full=0;
@@ -262,14 +253,9 @@ CEXEBuild::CEXEBuild()
   build_uninst.common.lb_bg=RGB(0,0,0);
   build_uninst.common.lb_fg=RGB(0,255,0);
   build_uninst.common.num_entries=0;
-/*#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  build_uninst.common.silent_install=0;
-#endif*/
   build_uninst.code=0;
   build_uninst.code_size=-1;
-  /*build_uninst.common.show_details=0;
-  build_uninst.common.misc_flags=0;*/
-  build_header.common.flags=0;
+  build_uninst.common.flags=0;
 
   uninstaller_writes_used=0;
 
