@@ -5,13 +5,13 @@
 ;--------------------------------
 ;Include Modern UI
 
-!include "MUI.nsh"
+  !include "MUI.nsh"
 
 ;--------------------------------
 ;Product Info
 
-!define MUI_PRODUCT "Modern UI Test"
-!define MUI_VERSION "1.65"
+  !define MUI_PRODUCT "Modern UI Test"
+  !define MUI_VERSION "1.65"
 
 ;--------------------------------
 ;Configuration
@@ -88,12 +88,11 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "Dummy Test File" SecCopyUI
-
-  ;ADD YOUR OWN STUFF HERE!
+Section "Dummy Section" SecDummy
 
   SetOutPath "$INSTDIR"
-  File "${NSISDIR}\Contrib\UIs\modern.exe"
+  
+  ;ADD YOUR OWN STUFF HERE!
   
   ;Store install folder
   WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
@@ -115,39 +114,39 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
-LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
-LangString DESC_SecCopyUI ${LANG_GERMAN} "modern.exe: German description"
-LangString DESC_SecCopyUI ${LANG_SPANISH} "modern.exe: Spanish description"
-LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
-LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
-LangString DESC_SecCopyUI ${LANG_JAPANESE} "modern.exe: Japanese description"
-LangString DESC_SecCopyUI ${LANG_KOREAN} "modern.exe: Korean description"
-LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
-LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
-LangString DESC_SecCopyUI ${LANG_DANISH} "modern.exe: Danish description"
-LangString DESC_SecCopyUI ${LANG_SWEDISH} "modern.exe: Swedish description"
-LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
-LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Russian description"
-LangString DESC_SecCopyUI ${LANG_PORTUGUESE} "modern.exe: Portuguese description"
-LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
-LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
-LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
-LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
-LangString DESC_SecCopyUI ${LANG_SLOVAK} "modern.exe: Slovakian description"
-LangString DESC_SecCopyUI ${LANG_CROATIAN} "modern.exe: Slovakian description"
-LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
-LangString DESC_SecCopyUI ${LANG_HUNGARIAN} "modern.exe: Hungarian description"
-LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
-LangString DESC_SecCopyUI ${LANG_ROMANIAN} "modern.exe: Romanian description"
-LangString DESC_SecCopyUI ${LANG_MACEDONIAN} "modern.exe: Macedonian description"
-LangString DESC_SecCopyUI ${LANG_TURKISH} "modern.exe: Turkish description"
-LangString DESC_SecCopyUI ${LANG_LITHUANIAN} "modern.exe: Lithuanian description"
-LangString DESC_SecCopyUI ${LANG_CATALAN} "modern.exe: Catalan description"
+  LangString DESC_SecDummy ${LANG_ENGLISH} "Test section: English description"
+  LangString DESC_SecDummy ${LANG_FRENCH} "Test section: French description"
+  LangString DESC_SecDummy ${LANG_GERMAN} "Test section: German description"
+  LangString DESC_SecDummy ${LANG_SPANISH} "Test section: Spanish description"
+  LangString DESC_SecDummy ${LANG_SIMPCHINESE} "Test section: Simplified Chinese description"
+  LangString DESC_SecDummy ${LANG_TRADCHINESE} "Test section: Traditional Chinese description"
+  LangString DESC_SecDummy ${LANG_JAPANESE} "Test section: Japanese description"
+  LangString DESC_SecDummy ${LANG_KOREAN} "Test section: Korean description"
+  LangString DESC_SecDummy ${LANG_ITALIAN} "Test section: Italian description"
+  LangString DESC_SecDummy ${LANG_DUTCH} "Test section: Dutch description"
+  LangString DESC_SecDummy ${LANG_DANISH} "Test section: Danish description"
+  LangString DESC_SecDummy ${LANG_SWEDISH} "Test section: Swedish description"
+  LangString DESC_SecDummy ${LANG_GREEK} "Test section: Greek description"
+  LangString DESC_SecDummy ${LANG_RUSSIAN} "Test section: Russian description"
+  LangString DESC_SecDummy ${LANG_PORTUGUESE} "Test section: Portuguese description"
+  LangString DESC_SecDummy ${LANG_PORTUGUESEBR} "Test section: Portuguese (Brasil) description"
+  LangString DESC_SecDummy ${LANG_POLISH} "Test section: Polish description"
+  LangString DESC_SecDummy ${LANG_UKRAINIAN} "Test section: Ukrainian description"
+  LangString DESC_SecDummy ${LANG_CZECH} "Test section: Czechian description"
+  LangString DESC_SecDummy ${LANG_SLOVAK} "Test section: Slovakian description"
+  LangString DESC_SecDummy ${LANG_CROATIAN} "Test section: Slovakian description"
+  LangString DESC_SecDummy ${LANG_BULGARIAN} "Test section: Bulgarian description"
+  LangString DESC_SecDummy ${LANG_HUNGARIAN} "Test section: Hungarian description"
+  LangString DESC_SecDummy ${LANG_THAI} "Test section: Thai description"
+  LangString DESC_SecDummy ${LANG_ROMANIAN} "Test section: Romanian description"
+  LangString DESC_SecDummy ${LANG_MACEDONIAN} "Test section: Macedonian description"
+  LangString DESC_SecDummy ${LANG_TURKISH} "Test section: Turkish description"
+  LangString DESC_SecDummy ${LANG_LITHUANIAN} "Test section: Lithuanian description"
+  LangString DESC_SecDummy ${LANG_CATALAN} "Test section: Catalan description"
 
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecCopyUI} $(DESC_SecCopyUI)
-!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+  !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
+  !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
  
 ;--------------------------------
 ;Uninstaller Section
@@ -156,7 +155,6 @@ Section "Uninstall"
 
   ;ADD YOUR OWN STUFF HERE!
 
-  Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
