@@ -251,13 +251,21 @@ void CDialogTemplate::RemoveItem(WORD wId) {
 
 // Sets the font of the dialog
 void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
-  m_dwStyle &= ~DS_SHELLFONT;
+  if (lstrcmp(szFaceName, "MS Shell Dlg")) {
+     // not MS Shell Dlg
+    m_dwStyle &= ~DS_SHELLFONT;
+    m_bExtended = false;
+  }
+  else {
+    // MS Shell Dlg
+    m_dwStyle |= DS_SHELLFONT;
+    m_bExtended = true;
+  }
   m_dwStyle |= DS_SETFONT;
 	if (m_szFont) delete [] m_szFont;
 	m_szFont = new char[lstrlen(szFaceName)];
 	lstrcpy(m_szFont, szFaceName);
 	m_sFontSize = wFontSize;
-  m_bExtended = false;
 }
 
 // Adds an item to the dialog
