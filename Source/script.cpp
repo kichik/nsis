@@ -534,8 +534,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (*line.gettoken_str(2))
             p.prefunc = ns_func.add(line.gettoken_str(2),0);
           if (line.getnumtokens()>3) {
-            if (k)
-              p.postfunc = ns_func.add(line.gettoken_str(3),0);
+            if (k) {
+              if (*line.gettoken_str(3))
+                p.postfunc = ns_func.add(line.gettoken_str(3),0);
+            }
             else
               p.caption = add_string_main(line.gettoken_str(3),0);
             if (line.getnumtokens()>4)
@@ -623,19 +625,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (line.getnumtokens()>2) {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           if (*line.gettoken_str(2)) {
-            if (strnicmp(line.gettoken_str(2),"un.",3)) {
-              ERROR_MSG("\nError: function must have a un. prefix!\n");
-              return PS_ERROR;
-            }
-            p.prefunc = ns_func.add(line.gettoken_str(2),0);
-          }
-          if (line.getnumtokens()>3) {
-            if (k) {
-              if (strnicmp(line.gettoken_str(3),"un.",3)) {
+            if (*line.gettoken_str(2)) {
+              if (strnicmp(line.gettoken_str(2),"un.",3)) {
                 ERROR_MSG("\nError: function must have a un. prefix!\n");
                 return PS_ERROR;
               }
-              p.postfunc = ns_func.add(line.gettoken_str(3),0);
+              p.prefunc = ns_func.add(line.gettoken_str(2),0);
+            }
+          }
+          if (line.getnumtokens()>3) {
+            if (k) {
+              if (*line.gettoken_str(3)) {
+                if (strnicmp(line.gettoken_str(3),"un.",3)) {
+                  ERROR_MSG("\nError: function must have a un. prefix!\n");
+                  return PS_ERROR;
+                }
+                p.postfunc = ns_func.add(line.gettoken_str(3),0);
+              }
             }
             else
               p.caption = add_string_uninst(line.gettoken_str(3),0);
