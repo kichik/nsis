@@ -313,7 +313,7 @@ bool SaveSettings(void) {
             pszBuffer = (char*)MALLOC(nBufLen);
             if (!pszBuffer) return false;
           }
-          char *pszItem = (char*)MALLOC(/*nBufLen*/32000);
+          char *pszItem = (char*)MALLOC(nBufLen);
           if (!pszItem) return false;
 
           *pszBuffer = '\0';
