@@ -24,6 +24,9 @@
 #define IDC_TEST                        1017
 #define IDC_BACK                        1018
 #define IDC_COMPILER                    1019
+#define IDC_RADIO1                      1020
+#define IDC_RADIO2                      1021
+#define IDC_COMPRESSOR                  1022
 
 // Next default values for new objects
 // 
@@ -31,7 +34,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
