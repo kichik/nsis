@@ -93,9 +93,7 @@ BEGIN
             MENUITEM "Defa&ult",                    IDM_DEFAULT
             MENUITEM "&zlib",                       IDM_ZLIB
             MENUITEM "bzi&p2",                      IDM_BZIP2
-#ifdef LZMA_COMPRESSOR_SUPPORT
             MENUITEM "&lzma",                       IDM_LZMA
-#endif
             MENUITEM "&Best",                       IDM_BEST
         END
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
@@ -273,9 +271,7 @@ BEGIN
     IDS_BZIP2               "bzip2"
     IDS_RECOMPILE_TEST      "Recompile and run"
     IDS_BEST                "Best"
-#ifdef LZMA_COMPRESSOR_SUPPORT
     IDS_LZMA                "lzma"
-#endif
 END
 
 #endif    // English (U.S.) resources
