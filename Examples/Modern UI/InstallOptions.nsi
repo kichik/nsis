@@ -14,9 +14,11 @@
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
   !define MUI_ABORTWARNING
+  
   !define MUI_UNINSTALLER
   
   !define MUI_WINDOWTITLE
+  !define MUI_CUSTOMPAGECOMMANDS
     
   !define TEMP1 $R0
   !define TEMP2 $R1
@@ -27,8 +29,7 @@
   ;General
   OutFile "InstallOptions.exe"
   
-  ;Page order
-  !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages  
+  ;Page order  
   
   !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA
