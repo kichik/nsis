@@ -2,7 +2,7 @@
 ;Compatible with Modern UI 1.67
 
 ;Language: Italian (1040)
-;By SANFACE Software <sanface@sanface.com>
+;By SANFACE Software <sanface@sanface.com> v1.67 accents
 ;Review and update from v1.65 to v1.67 by Alessandro Staltari < staltari (a) geocities.com >
 
 ;--------------------------------
@@ -17,9 +17,9 @@
   !define MUI_TEXT_LICENSE_TITLE "Licenza d'uso"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Prego leggere le condizioni della licenza d'uso prima di installare $(^Name)."
   !define MUI_INNERTEXT_LICENSE_TOP "Premere Page Down per vedere il resto della licenza d'uso."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. É necessario accettare i termini della licenza d'uso per installare $(^Name)."  
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. É necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. È necessario accettare i termini della licenza d'uso per installare $(^Name)."  
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. È necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. È necessario accettare i termini della licenza d'uso per installare $(^Name). $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "Selezione dei componenti"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Selezionare i componenti di $(^Name) che si desidera installare."
@@ -36,7 +36,7 @@
   !define MUI_TEXT_FINISH_SUBTITLE "L'installazione è stata completata con successo."
 
   !define MUI_TEXT_ABORT_TITLE "Installazione interrotta"
-  !define MUI_TEXT_ABORT_SUBTITLE "L'installazione non é stata completata correttamente."
+  !define MUI_TEXT_ABORT_SUBTITLE "L'installazione non è stata completata correttamente."
   
   !define MUI_BUTTONTEXT_FINISH "&Fine"
   !define MUI_TEXT_FINISH_INFO_TITLE "Completamento dell'installazione di $(^Name)."
@@ -63,9 +63,9 @@
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licenza d'uso"  
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Prego leggere le condizioni della licenza d'uso prima di disinstallare $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. É necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Se si accettano i termini della licenza d'uso scegliere Accetto per continuare. È necessario accettare i termini della licenza d'uso per disinstallare $(^Name)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Se si accettano i termini della licenza d'uso, selezionare la casella sottostante. È necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Se si accettano i termini della licenza d'uso, selezionare la prima opzione sottostante. È necessario accettare i termini della licenza d'uso per disinstallare $(^Name). $_CLICK"
   
   !define MUI_UNTEXT_COMPONENTS_TITLE "Selezione componenti"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Scegliere i componenti di $(^Name) che si desidera disinstallare."
@@ -80,10 +80,10 @@
   !define MUI_UNTEXT_FINISH_SUBTITLE "La disinstallazione è stata completata con successo."
 
   !define MUI_UNTEXT_ABORT_TITLE "Disinstallazione interrotta"
-  !define MUI_UNTEXT_ABORT_SUBTITLE "La disintallazione non e' stata completata correttamente."
+  !define MUI_UNTEXT_ABORT_SUBTITLE "La disintallazione non è stata completata correttamente."
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Completamento della disinstallazione di $(^Name)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) é stato disinstallato dal computer.\r\n\r\nSelezionare Fine per terminare questa procedura."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) è stato disinstallato dal computer.\r\n\r\nSelezionare Fine per terminare questa procedura."
   
   !define MUI_UNTEXT_ABORTWARNING "Sei sicuro di voler interrompere la disinstallazione di $(^Name)?"  
   
