@@ -40,6 +40,7 @@
 #include "ui.h"
 #include "lang.h"
 #include "state.h"
+#include "exec.h"
 
 #if !defined(NSIS_CONFIG_VISIBLE_SUPPORT) && !defined(NSIS_CONFIG_SILENT_SUPPORT)
 #error One of NSIS_CONFIG_SILENT_SUPPORT or NSIS_CONFIG_VISIBLE_SUPPORT must be defined.
@@ -63,8 +64,8 @@ char *ValidateTempDir()
     return NULL;
   addtrailingslash(state_temp_dir);
   CreateDirectory(state_temp_dir, NULL);
-  // g_caption is used as a temp var here
-  return my_GetTempFileName(g_caption, state_temp_dir);
+  // state_command_line is used as a temp var here
+  return my_GetTempFileName(state_command_line, state_temp_dir);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
@@ -87,6 +88,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
 #endif
 
+  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
+
   GetTempPath(NSIS_MAX_STRLEN, state_temp_dir);
   if (!ValidateTempDir())
   {
@@ -97,9 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       goto end;
     }
   }
-  DeleteFile(g_caption);
-
-  mystrcpy(g_caption,_LANG_GENERIC_ERROR);
+  DeleteFile(state_command_line);
 
   lstrcpyn(state_command_line, GetCommandLine(), NSIS_MAX_STRLEN);
 
