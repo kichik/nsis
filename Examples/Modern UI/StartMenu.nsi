@@ -120,7 +120,14 @@ Section "Uninstall"
   
   !insertmacro MUI_STARTMENU_DELETE_BEGIN ${TEMP}
     Delete "$SMPROGRAMS\${TEMP}\Uninstall.lnk"
-    RMDir "$SMPROGRAMS\${TEMP}" ;Only if empty, so it won't delete other shortcuts
+	; Only if empty, so it won't delete other shortcuts
+	StrCpy ${TEMP} "$SMPROGRAMS\${TEMP}"
+	startMenuDeleteLoop:
+      RMDir ${TEMP}
+	  GetFullPathName ${TEMP} "${TEMP}\.."
+	  IfErrors startMenuDeleteLoopDone
+	  StrCmp ${TEMP} $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
+	startMenuDeleteLoopDone:
   !insertmacro MUI_STARTMENU_DELETE_END
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
