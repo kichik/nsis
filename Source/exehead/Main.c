@@ -104,39 +104,50 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   cmdline = state_command_line;
   if (*cmdline == '\"') seekchar = *cmdline++;
 
-  while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
+  cmdline=findchar(cmdline, seekchar);
   cmdline=CharNext(cmdline);
   realcmds=cmdline;
 
-  for (;;)
+  while (*cmdline)
   {
     // skip over any spaces
     while (*cmdline == ' ') cmdline=CharNext(cmdline);
-    if (cmdline[0] != '/') break;
-    cmdline++;
+    // find out if this parm is quoted
+    if (cmdline[0] == '"')
+    {
+      cmdline++;
+      seekchar = '\"';
+    }
+    else seekchar = ' ';
+    if (cmdline[0] == '/')
+    {
+      cmdline++;
 
 // this only works with spaces because they have just one bit on
 #define END_OF_ARG(c) (((c)|' ')==' ')
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1]))
-      cl_flags |= FH_FLAGS_SILENT;
+      if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1]))
+        cl_flags |= FH_FLAGS_SILENT;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
-      cl_flags |= FH_FLAGS_NO_CRC;
+      if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4]))
+        cl_flags |= FH_FLAGS_NO_CRC;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-    if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
-    {
-      cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
-      mystrcpy(state_install_directory,cmdline+2);
-      cmdline=""; // prevent further processing of cmdline
-      break; // not necessary, but for some reason makes smaller exe :)
+      if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
+      {
+        cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
+        mystrcpy(state_install_directory,cmdline+2);
+        cmdline=""; // prevent further processing of cmdline
+      }
     }
 
     // skip over our parm
-    while (!END_OF_ARG(*cmdline)) cmdline=CharNext(cmdline);
+    cmdline = findchar(cmdline, seekchar);
+    // skip the quote
+    if (*cmdline = '\"')
+      cmdline++;
   }
 
   m_Err = loadHeaders(cl_flags);

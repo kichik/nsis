@@ -230,7 +230,7 @@ __forceinline int NSISCALL ui_doinstall(void)
         {
           char *p2=CharNext(p);
           p=p2;
-          while (*p2 && *p2 != '\"') p2=CharNext(p2);
+          p2 = findchar(p2, '"');
           *p2=0;
         }
         // p is the path now, check for .exe extension
