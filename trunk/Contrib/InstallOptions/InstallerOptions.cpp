@@ -1059,6 +1059,7 @@ int createCfgDlg()
     GetWindowText(hMainWindow,old_title,sizeof(old_title));
     SetWindowText(hMainWindow,pszTitle);
   }
+  popstring(NULL);
   char tmp[32];
   wsprintf(tmp,"%d",hConfigWindow);
   pushstring(tmp);
@@ -1115,7 +1116,6 @@ void showCfgDlg()
   }
   FREE(pFields);
 
-  popstring(NULL);
   pushstring(g_is_cancel?"cancel":g_is_back?"back":"success");
 }
 
