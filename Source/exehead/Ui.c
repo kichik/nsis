@@ -81,7 +81,7 @@ static void NSISCALL outernotify(char num) {
 }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 #ifdef NSIS_CONFIG_LICENSEPAGE
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -405,8 +405,9 @@ int NSISCALL ui_doinstall(void)
       static char str2[]="RichEdit20A";
       if (!LoadLibrary(str1))
       {
-        str1[6]='3';
-        str1[7]='2';
+        ((short*)str1)[3]=*(short*)"32";
+        //str1[6]='3';
+        //str1[7]='2';
         LoadLibrary(str1);
       }
 
@@ -463,7 +464,7 @@ static int CALLBACK WINAPI BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lPar
 }
 
 
-static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static HICON hIcon;
   if (uMsg == WM_DESTROY && hIcon) { DeleteObject(hIcon); hIcon=0; }
@@ -1138,73 +1139,73 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         if ((TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM) & ht.flags)
         {
-            TVITEM hItem;
-            hItem.hItem = ht.hItem;
+          TVITEM hItem;
+          hItem.hItem = ht.hItem;
 
-            hItem.mask = TVIF_STATE|TVIF_PARAM;
-            TreeView_GetItem(hwndTree1, &hItem);
+          hItem.mask = TVIF_STATE|TVIF_PARAM;
+          TreeView_GetItem(hwndTree1, &hItem);
 
-            if (!(g_inst_section[hItem.lParam].default_state&DFS_RO))
+          if (!(g_inst_section[hItem.lParam].default_state&DFS_RO))
+          {
+            if ((hItem.state >> 12) == 2) // already checked
             {
-              if ((hItem.state >> 12) == 2) // already checked
-              {
-                g_inst_section[hItem.lParam].default_state&=~DFS_SET;
-                CheckTreeItem(hwndTree1,&hItem,0);
-              }
-              else
-              {
-                g_inst_section[hItem.lParam].default_state|=DFS_SET;
-                CheckTreeItem(hwndTree1,&hItem,1);
-              }
+              g_inst_section[hItem.lParam].default_state&=~DFS_SET;
+              CheckTreeItem(hwndTree1,&hItem,0);
+            }
+            else
+            {
+              g_inst_section[hItem.lParam].default_state|=DFS_SET;
+              CheckTreeItem(hwndTree1,&hItem,1);
+            }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-              {
-                extern HWND g_SectionHack;
-                g_SectionHack=hwndDlg;
-                ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-                g_SectionHack=0;
-              }
+            {
+              extern HWND g_SectionHack;
+              g_SectionHack=hwndDlg;
+              ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
+              g_SectionHack=0;
+            }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
+            {
+              int r,x;
+              // check to see which install type we are
+              for (r = 0; r < m_num_insttypes; r ++)
               {
-                int r,x;
-                // check to see which install type we are
-                for (r = 0; r < m_num_insttypes; r ++)
+                HTREEITEM *ht=hTreeItems;
+                section *t=g_inst_section;
+                x=num_sections;
+                while (x--)
                 {
-                  HTREEITEM *ht=hTreeItems;
-                  section *t=g_inst_section;
-                  x=num_sections;
-                  while (x--)
+                  char c=GetStringFromStringTab(t->name_ptr)[0];
+                  if (c && c!='-')
                   {
-                    char c=GetStringFromStringTab(t->name_ptr)[0];
-                    if (c && c!='-')
+                    TV_ITEM hItem;
+                    hItem.hItem=*ht;
+                    if (g_inst_header->no_custom_instmode_flag==1)
                     {
-                      TV_ITEM hItem;
-                      hItem.hItem=*ht;
-                      if (g_inst_header->no_custom_instmode_flag==1)
-                      {
-                        int c=(t->default_state>>m_whichcfg)&1;
-                        CheckTreeItem(hwndTree1, &hItem,c);
-                      }
-                      else if (!(t->default_state&DFS_RO))
-                      {
-                        hItem.mask=TVIF_STATE;
-                        TreeView_GetItem(hwndTree1,&hItem);
-                        if (!(t->default_state&(1<<r)) != !((hItem.state>>12)>1 )) break;
-                      }
+                      int c=(t->default_state>>m_whichcfg)&1;
+                      CheckTreeItem(hwndTree1, &hItem,c);
                     }
-                    t++;
-                    ht++;
+                    else if (!(t->default_state&DFS_RO))
+                    {
+                      hItem.mask=TVIF_STATE;
+                      TreeView_GetItem(hwndTree1,&hItem);
+                      if (!(t->default_state&(1<<r)) != !((hItem.state>>12)>1 )) break;
+                    }
                   }
-                  if (x < 0) break;
+                  t++;
+                  ht++;
                 }
+                if (x < 0) break;
+              }
 
-                if (!g_inst_header->no_custom_instmode_flag)
-                {
-                  SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
-                  m_whichcfg=r;
-                }
-              } // end of typecheckshit
-              SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
-            } // not ro
+              if (!g_inst_header->no_custom_instmode_flag)
+              {
+                SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
+                m_whichcfg=r;
+              }
+            } // end of typecheckshit
+            SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+          } // not ro
         } // was valid click
       } // was click or hack
 #ifdef NSIS_SUPPORT_CODECALLBACKS
