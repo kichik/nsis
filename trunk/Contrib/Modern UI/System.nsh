@@ -12,13 +12,8 @@
 
 !include "${NSISDIR}\Examples\WinMessages.nsh"
 
-!define IO_DIRECTION_NEXT 1
-!define IO_DIRECTION_PREV 2
-
-!define IO_INITPLUGINS_1 "Call Initialize_____Plugins"
-!define IO_INITPLUGINS_2 "SetDetailsPrint both"
-!define IO_UNINITPLUGINS_1 "Call un.Initialize_____Plugins"
-!define IO_UNINITPLUGINS_2 "SetDetailsPrint both"
+!define MUI_INSTALLOPTIONS_DIRECTION_NEXT 1
+!define MUI_INSTALLOPTIONS_DIRECTION_PREV 2
 
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
@@ -228,12 +223,11 @@
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
   ;Init plugin system
-  ${IO_INITPLUGINS_1}
-  ${IO_INITPLUGINS_2}
-  !undef IO_INITPLUGINS_1
-  !undef IO_INITPLUGINS_2
-  !define IO_INITPLUGINS_1 ""
-  !define IO_INITPLUGINS_2 ""
+  !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
+    !define MUI_INSTALLOPTIONS_INITPLUGINS
+    Call Initialize_____Plugins
+    SetDetailsPrint both
+  !endif  
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
   
@@ -242,6 +236,12 @@
 !macro MUI_INSTALLOPTIONS_UNEXTRACT FILE
 
   ;Init plugin system
+  !ifndef MUI_INSTALLOPTIONS_UNINITPLUGINS
+    !define MUI_INSTALLOPTIONS_UNINITPLUGINS
+    Call un.Initialize_____Plugins
+    SetDetailsPrint both
+  !endif
+
   ${IO_UNINITPLUGINS_1}
   ${IO_UNINITPLUGINS_2}
   !undef IO_UNINITPLUGINS_1
@@ -262,7 +262,7 @@
 !macro MUI_INSTALLOPTIONS_NEXTPAGE
 
   StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
-    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_NEXT}
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${MUI_INSTALLOPTIONS_DIRECTION_NEXT}
   no_setdirection:
   StrCpy ${IO_NOSETDIRECTION} "0"
   
@@ -271,7 +271,7 @@
 !macro MUI_INSTALLOPTIONS_PREVPAGE
 
   StrCmp ${IO_NOSETDIRECTION} "1" no_setdirection
-    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${IO_DIRECTION_PREV}
+    !insertmacro MUI_INSTALLOPTIONS_SETDIRECTION ${MUI_INSTALLOPTIONS_DIRECTION_PREV}
   no_setdirection:
   StrCpy ${IO_NOSETDIRECTION} "0"
   
@@ -311,10 +311,10 @@
 
 !macro MUI_INSTALLOPTIONS_BACK
 
-  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_NEXT}" "" +3
+  StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_NEXT}" "" +3
     Call .onPrevPage
     Abort
-  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_PREV}" "" +3
+  StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_PREV}" "" +3
     Call .onPrevPage
     Goto done
             
@@ -322,10 +322,10 @@
 
 !macro MUI_INSTALLOPTIONS_NEXT
 
-  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_NEXT} "" +3
+  StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_NEXT} "" +3
     Call .onNextPage
     Goto done
-  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_PREV} "" +3
+  StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_PREV} "" +3
     Call .onNextPage
     Abort
    
@@ -349,10 +349,10 @@
 
 !macro MUI_INSTALLOPTIONS_UNBACK
 
-  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_NEXT}" "" +3
+  StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_NEXT}" "" +3
     Call un.onPrevPage
     Abort
-  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_PREV}" "" +3
+  StrCmp ${IO_DIRECTION} "${MUI_INSTALLOPTIONS_DIRECTION_PREV}" "" +3
     Call un.onPrevPage
     Goto done
             
@@ -360,10 +360,10 @@
 
 !macro MUI_INSTALLOPTIONS_UNNEXT
 
-  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_NEXT} "" +3
+  StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_NEXT} "" +3
     Call un.onNextPage
     Goto done
-  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_PREV} "" +3
+  StrCmp ${IO_DIRECTION} ${MUI_INSTALLOPTIONS_DIRECTION_PREV} "" +3
     Call un.onNextPage
     Abort
    
@@ -383,6 +383,148 @@
   Call .onNextPage
   Goto done
 	
+!macroend
+
+
+;BASIC FUNCTIONS
+
+!macro MUI_BASICFUNCTIONS
+
+Function .onNextPage
+  !insertmacro MUI_NEXTPAGE SetPage
+FunctionEnd
+
+Function .onPrevPage
+  !insertmacro MUI_PREVPAGE SetPage
+FunctionEnd
+
+Function .onInitDialog
+
+  !insertmacro MUI_INNERDIALOG_INIT
+  
+    StrCpy ${MUI_TEMP1} 0
+
+    !ifdef MUI_LICENSEPAGE
+       IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+       StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_licensepage
+         !insertmacro MUI_INNERDIALOG_TEXT 1040 $(MUI_INNERTEXT_LICENSE)
+         Goto done
+       done_licensepage:
+    !endif
+
+    !ifdef MUI_COMPONENTPAGE
+       IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+       StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_componentpage
+         !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_DESCRIPTION_TITLE)
+         !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_DESCRIPTION_INFO)
+         Goto done
+       done_componentpage:
+    !endif
+
+	!ifdef MUI_DIRSELECTPAGE
+	   IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+       StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_dirselectpage
+         !insertmacro MUI_INNERDIALOG_TEXT 1041 $(MUI_INNERTEXT_DESTINATIONFOLDER)
+         Goto done
+       done_dirselectpage:
+    !endif
+
+  !insertmacro MUI_INNERDIALOG_END
+  
+FunctionEnd
+
+Function SetPage
+
+  !insertmacro MUI_PAGE_INIT
+
+	StrCpy ${MUI_TEMP1} 0
+
+    !ifdef MUI_LICENSEPAGE
+      IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+      StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_licensepage
+        !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_LICENSE_TITLE) $(MUI_TEXT_LICENSE_SUBTITLE)
+        Goto done
+      done_licensepage:
+    !endif
+     
+     !ifdef MUI_COMPONENTPAGE
+       IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+       StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_componentpage
+         !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
+         Goto done
+       done_componentpage:
+     !endif
+     
+     !ifdef MUI_DIRSELECTPAGE
+       IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+         StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_dirselectpage
+           !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_DIRSELECT_TITLE) $(MUI_TEXT_DIRSELECT_SUBTITLE)
+           Goto done
+         done_dirselectpage:
+     !endif
+
+      IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+        StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_installingpage
+          !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
+          Goto done
+        done_installingpage:
+          
+      IntOp ${MUI_TEMP1} ${MUI_TEMP1} + 1
+        StrCmp ${CURRENTPAGE} ${MUI_TEMP1} "" done_finishedpage
+          !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
+          Goto done
+        done_finishedpage:
+
+  !insertmacro MUI_PAGE_END
+
+FunctionEnd
+
+!macroend
+
+!macro MUI_FUNCTION_DESCRIPTION_START
+  Function .onMouseOverSection
+    !insertmacro MUI_DESCRIPTION_INIT
+!macroend
+
+!macro MUI_FUNCTION_DESCRIPTION_END
+    !insertmacro MUI_DESCRIPTION_END
+  FunctionEnd
+!macroend
+
+!macro MUI_FUNCTION_ABORTWARNING
+  Function .onUserAbort
+    !insertmacro MUI_ABORTWARNING
+  FunctionEnd
+!macroend
+
+!macro MUI_UNBASICFUNCTIONS
+
+Function un.onNextPage
+
+  !insertmacro MUI_NEXTPAGE un.SetPage
+  
+FunctionEnd
+
+Function un.SetPage
+  
+  !insertmacro MUI_PAGE_INIT
+    
+    !insertmacro MUI_PAGE_START 1
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_INTRO_TITLE) $(MUI_UNTEXT_INTRO_SUBTITLE)
+    !insertmacro MUI_PAGE_STOP 1
+
+    !insertmacro MUI_PAGE_START 2
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_UNINSTALLING_TITLE) $(MUI_UNTEXT_UNINSTALLING_SUBTITLE)
+    !insertmacro MUI_PAGE_STOP 2
+
+    !insertmacro MUI_PAGE_START 3
+      !insertmacro MUI_HEADER_TEXT $(MUI_UNTEXT_FINISHED_TITLE) $(MUI_UNTEXT_FINISHED_SUBTITLE)
+    !insertmacro MUI_PAGE_STOP 3
+
+  !insertmacro MUI_PAGE_END
+
+FunctionEnd
+
 !macroend
 
 !endif
