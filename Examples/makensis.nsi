@@ -168,6 +168,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\modern.exe"
     File "..\Contrib\UIs\modern2.exe"
+	File "..\Contrib\UIs\modern3.exe"
     SetOutPath $INSTDIR\Contrib\Icons
     File "..\Contrib\Icons\modern-install.ico"
     File "..\Contrib\Icons\modern-uninstall.ico"
