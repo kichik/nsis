@@ -17,13 +17,13 @@ Nullsoft Install System %s
 : Completed
 < &Back
 &Next >
-I Agree
-Install
-Uninstall
+I &Agree
+&Install
+&Uninstall
 Cancel
 Close
-Browse...
-Show details
+&Browse...
+Show &details
 Name
 Completed
 Custom
