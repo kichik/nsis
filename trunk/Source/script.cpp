@@ -1062,8 +1062,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_LICENSEFORCESELECTION:
     {
-      int k=line.gettoken_enum(1,"off\0checkbox\0radiobuttons\0");
+      LANGID lang = 0;
+      int a = 0;
+
+      if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
+        lang=atoi(line.gettoken_str(1)+6);
+        a++;
+      }
+
+      int k=line.gettoken_enum(1+a,"off\0checkbox\0radiobuttons\0");
       if (k == -1) PRINTHELP()
+      if (k < line.getnumtokens() - 2 - a) PRINTHELP()
+
+      switch (line.getnumtokens()-a) {
+      	case 4:
+          SetString(line.gettoken_str(3+a), NLF_BTN_LICENSE_DISAGREE, 0, lang);
+        case 3:
+          SetString(line.gettoken_str(2+a), NLF_BTN_LICENSE_AGREE, 0, lang);
+          break;
+      }
 
       try {
         init_res_editor();
@@ -1154,6 +1171,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
         return PS_ERROR;
       }
+      SCRIPT_MSG("LicenseForceSelection: %s \"%s\" \"%s\"\n", line.gettoken_str(1+a), line.gettoken_str(2+a), line.gettoken_str(3+a));
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_LICENSEBKCOLOR:
