@@ -302,6 +302,7 @@ int ui_doinstall(void)
   {
     // Added by Amir Szekely 3rd August 2002
     // Multilingual support
+    char c=0;
     LANGID user_lang=GetUserDefaultLangID();
     int size=g_inst_header->common.str_tables_num*sizeof(common_strings);
     cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
@@ -316,13 +317,19 @@ int ui_doinstall(void)
       cur_uninstall_strings_table=uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)uninstall_strings_tables,size);
     }
+    lang_again:
     for (size=0; size<g_inst_header->str_tables_num; size++) {
-      if (user_lang == common_strings_tables[size].lang_id) {
+      if (user_lang == common_strings_tables[size].lang_id
+        || (c && PRIMARYLANGID(user_lang) == PRIMARYLANGID(common_strings_tables[size].lang_id))) {
         cur_install_strings_table = &install_strings_tables[size];
         cur_common_strings_table = &common_strings_tables[size];
         cur_uninstall_strings_table = &uninstall_strings_tables[size];
         break;
       }
+    }
+    if (size==g_inst_header->str_tables_num) {
+      c=1;
+      goto lang_again;
     }
   }
 
