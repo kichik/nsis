@@ -27,10 +27,10 @@ Zobraz detaily
 Názov
 Dokonèené
 Vlastná
-Zvo¾e typ inštalácie:
-Zvo¾e komponenty ktoré sa majú nainštalova:
+Zvo¾te typ inštalácie:
+Zvo¾te komponenty, ktoré sa majú nainštalova:
 Alebo zvo¾te komponenty, ktoré sa majú nainštalova:
-Zvo¾e adresár do ktorého sa má %s nainštalova:
+Zvo¾te adresár do ktorého sa má %s nainštalova:
 Vo¾nı priestor: 
 Potrebnı priestor: 
 Odinštalovávam z:
@@ -48,12 +48,12 @@ Vymaza po reštarte:
 Chyba pri vytváraní zástupcu: 
 Chyba pri vytváraní: 
 Chyba pri dekompresii dát! Chyba programu?
-Chyba pri regisrácii DLL
+Chyba pri registrácii DLL
 ExecShell: 
 Spúšam: 
 Extrahujem: 
 Extrahujem: chyba pri zápise súboru
-Chybná Inštalácia: nesprávny opcode
+Chybná inštalácia: nesprávny opcode
 iadny OLE pre: 
 Vıstupnı adresár: 
 Zmaza adresár: 
