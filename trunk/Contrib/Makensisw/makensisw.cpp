@@ -209,6 +209,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     return TRUE;
                 }
+				case IDM_UPDATE:
+				{
+					char b[100];
+					lstrcpy(b,NSIS_UPDATE);
+					lstrcat(b,g_sdata.brandingv);
+                    ShellExecute(g_sdata.hwnd,"open",b,NULL,NULL,SW_SHOWNORMAL);
+					break;
+				}
 				case IDM_ABOUT:
 				{
 					DialogBox(g_sdata.hInstance,MAKEINTRESOURCE(DLG_ABOUT),g_sdata.hwnd,(DLGPROC)AboutProc);
