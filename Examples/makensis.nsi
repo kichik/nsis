@@ -179,12 +179,12 @@ Section "Splash" SecContribSplash
   File ..\Contrib\splash\splash.txt
 SectionEnd
 
-Section "UberSplash w/transparency" SecContribSplashT
+Section "AdvSplash w/transparency" SecContribSplashT
   SectionIn 1 2
-  SetOutPath $INSTDIR\Bin
-  File ..\Bin\UberSplash.exe
-  SetOutPath $INSTDIR\Contrib\UberSplash
-  File ..\Contrib\UberSplash\*.txt
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\advsplash.dll
+  SetOutPath $INSTDIR\Contrib\AdvSplash
+  File ..\Contrib\AdvSplash\advsplash.txt
 SectionEnd
 
 Section "InstallOptions" SecContribIO
@@ -315,11 +315,13 @@ Section "Splash Source" SecContribSplashS
   File ..\Contrib\splash\splash.txt
 SectionEnd
 
-Section "UberSplash Source" SecContribSplashTS
+Section "AdvSplash Source" SecContribSplashTS
   SectionIn 1
-  SetOutPath $INSTDIR\Contrib\UberSplash
-  File ..\Contrib\UberSplash\splash.*
-  File ..\Contrib\UberSplash\*.txt
+  SetOutPath $INSTDIR\Contrib\AdvSplash
+  File ..\Contrib\AdvSplash\*.c
+  File ..\Contrib\AdvSplash\*.dsw
+  File ..\Contrib\AdvSplash\*.dsp
+  File ..\Contrib\AdvSplash\*.txt
 SectionEnd
 
 Section "InstallOptions Source" SecContribIOS
@@ -452,14 +454,14 @@ Section -post
       CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\Splash project workspace.lnk" "$INSTDIR\Contrib\splash\splash.dsw"
     NoSPLShortCutsS:
 
-    IfFileExists "$INSTDIR\Bin\ubersplash.exe" 0 NoUSPLShortCuts
+    IfFileExists "$INSTDIR\Plugins\advsplash.dll" 0 NoUSPLShortCuts
       CreateDirectory $SMPROGRAMS\NSIS\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\UberSplash Screen Help.lnk" "$INSTDIR\contrib\ubersplash\ubersplash.txt"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\AdvSplash Help.lnk" "$INSTDIR\contrib\advsplash\advsplash.txt"
     NoUSPLShortCuts:
 
-    IfFileExists "$INSTDIR\Contrib\UberSplash\*.dpr" 0 NoUSPLShortCutsS
+    IfFileExists "$INSTDIR\Contrib\AdvSplash\*.dsw" 0 NoUSPLShortCutsS
       CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
-      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\UberSplash project directory.lnk" "$INSTDIR\Contrib\ubersplash"
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\AdvSplash project directory.lnk" "$INSTDIR\Contrib\advsplash"
     NoUSPLShortCutsS:
 
 
@@ -650,6 +652,7 @@ Section Uninstall
   Delete $INSTDIR\Bin\splash.exe
   Delete $INSTDIR\Plugins\splash.dll
   Delete $INSTDIR\Bin\UberSplash.exe
+  Delete $INSTDIR\Plugins\advsplash.dll
   Delete $INSTDIR\Plugins\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
   Delete $INSTDIR\Plugins\LangDLL.dll
