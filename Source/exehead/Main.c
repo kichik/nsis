@@ -55,26 +55,28 @@ char g_caption[NSIS_MAX_STRLEN*2];
 int g_filehdrsize;
 HWND g_hwnd;
 
-static int m_length;
-static int m_pos;
-
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 extern char plugins_temp_dir[NSIS_MAX_STRLEN];
 #endif
 
+int m_length;
+int m_pos;
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-static BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+#if defined(NSIS_CONFIG_CRC_SUPPORT) || defined(NSIS_COMPRESS_WHOLE)
+BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  static char *msg;
   if (uMsg == WM_INITDIALOG)
   {
     SetTimer(hwndDlg,1,250,NULL);
+    msg = (char*)lParam;
     uMsg = WM_TIMER;
   }
   if (uMsg == WM_TIMER)
   {
     static char bt[64];
-    wsprintf(bt,_LANG_VERIFYINGINST,MulDiv(m_pos,100,m_length));
+    wsprintf(bt,msg,MulDiv(m_pos,100,m_length));
 
     SetWindowText(hwndDlg,bt);
     SetDlgItemText(hwndDlg,IDC_STR,bt);
@@ -236,7 +238,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
       }
       else if (GetTickCount() > verify_time)
-        hwnd=CreateDialog(g_hInstance,MAKEINTRESOURCE(IDD_VERIFY),GetDesktopWindow(),verProc);
+        hwnd=CreateDialogParam(
+          g_hInstance,
+          MAKEINTRESOURCE(IDD_VERIFY),
+          GetDesktopWindow(),
+          verProc,
+          (LPARAM)_LANG_VERIFYINGINST
+        );
     }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
