@@ -402,6 +402,7 @@ Function PatchCVSRoot
   Call TrimNewLines
   Pop $TEMP3
   StrCmp $TEMP3 ":pserver:anonymous:@cvs1:/cvsroot/nsis" go
+  StrCmp $TEMP3 ":pserver:anonymous@cvs1:/cvsroot/nsis" go
     Push "stop"
     Return
 go:
