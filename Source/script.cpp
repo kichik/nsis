@@ -562,6 +562,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         SCRIPT_MSG("Page: %s", line.gettoken_str(1));
 
+        enable_last_page_cancel = 0;
+        if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
+          enable_last_page_cancel = 1;
+
         int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles");
         page p = {
           0,
@@ -587,7 +591,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k) {
           // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          switch (line.getnumtokens()) {
+          switch (line.getnumtokens() - enable_last_page_cancel) {
+            case 7:
+              PRINTHELP();
             case 6:
               if (k != 4) {
                 lstrcpy(build_last_page_define, line.gettoken_str(5));
@@ -603,14 +609,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
                 p.prefunc = ns_func.add(line.gettoken_str(2),0);
           }
 #else
-          if (line.getnumtokens() == 3)
+          if (line.getnumtokens() - enable_last_page_cancel == 3)
             lstrcpy(build_last_page_define, line.gettoken_str(2));
 #endif//NSIS_SUPPORT_CODECALLBACKS
         }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         else {
           // a custom page
-          switch (line.getnumtokens()) {
+          switch (line.getnumtokens() - enable_last_page_cancel) {
+            case 7:
             case 6:
               ERROR_MSG("Error: custom page can not have more than the creator function.\n");
               return PS_ERROR;
@@ -698,6 +705,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         SCRIPT_MSG("UninstPage: %s", line.gettoken_str(1));
 
+        uenable_last_page_cancel = 0;
+        if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
+          uenable_last_page_cancel = 1;
+
         int k = line.gettoken_enum(1,"custom\0uninstConfirm\0instfiles");
         page p = {
           0,
@@ -723,7 +734,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (k) {
           // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-          switch (line.getnumtokens()) {
+          switch (line.getnumtokens() - uenable_last_page_cancel) {
+            case 7:
+              PRINTHELP();
             case 6:
               if (k != 2) {
                 lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
@@ -754,14 +767,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
               }
           }
 #else
-          if (line.getnumtokens() == 3)
+          if (line.getnumtokens() - uenable_last_page_cancel == 3)
             lstrcpy(ubuild_last_page_define, line.gettoken_str(2));
 #endif//NSIS_SUPPORT_CODECALLBACKS
         }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         else {
           // a custom page
-          switch (line.getnumtokens()) {
+          switch (line.getnumtokens() - uenable_last_page_cancel) {
+            case 7:
             case 6:
               ERROR_MSG("Error: custom page can not have more than the creator function.\n");
               return PS_ERROR;
