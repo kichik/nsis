@@ -36,12 +36,12 @@ void NSISCALL build_g_logfile(void);
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
 // section text changed
-#define WM_NOTIFY_SECTEXT WM_USER+0x17
+#define WM_NOTIFY_SECTEXT (WM_USER+0x17)
 
 // section flags changed
-#define WM_NOTIFY_SECFLAGS WM_USER+0x18
+#define WM_NOTIFY_SECFLAGS (WM_USER+0x18)
 
 // notifies a component selection change (.onMouseOverSection)
-#define WM_NOTIFY_SELCHANGE WM_USER+0x19
+#define WM_NOTIFY_SELCHANGE (WM_USER+0x19)
 
 #endif//_UI_H_
