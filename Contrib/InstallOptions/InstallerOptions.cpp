@@ -41,6 +41,8 @@
  *
  *   - Added CancelConfirmCaption and CancelConfirmIcon (by Amir Szekely)
  *
+ *   - Added Icon and Bitmap controls (by Amir Szekely 4th September 2002)
+ *
  *  Copyright (C) 2001 Michael Bishop
  *  Portions Copyright (C) 2001 Nullsoft, Inc.
  *
