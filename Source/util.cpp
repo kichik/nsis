@@ -247,7 +247,7 @@ unsigned char* generate_uninstall_icon_data(char* filename)
 }
 
 // Added by Amir Szekely 11th July 2002
-#define MY_ASSERT(x, y) if (x) {if (g_display_errors) fprintf(g_output,"\ngenerate_unicons_offsets: %s -- failing!\n", y);return 0;}
+#define MY_ASSERT(x, y) if (x) {if (g_display_errors) fprintf(g_output,"\nError finding icon resources: %s -- failing!\n", y);return 0;}
 
 int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
   for (int i = rd->Header.NumberOfNamedEntries; i < rd->Header.NumberOfNamedEntries + rd->Header.NumberOfIdEntries; i++) {
@@ -280,25 +280,43 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   PRESOURCE_DIRECTORY rdRoot = PRESOURCE_DIRECTORY(exeHeader + sectionHeadersArray[i].PointerToRawData);
 
+  DWORD dwNextSection;
+  if (i == ntHeaders->FileHeader.NumberOfSections - 1)
+    dwNextSection = exeheader_size;
+  else
+    dwNextSection = sectionHeadersArray[i+1].PointerToRawData;
+
+  MY_ASSERT((int)rdRoot - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+
   int idx = find_in_dir(rdRoot, WORD(RT_ICON));
   MY_ASSERT(idx == -1, "no icons?!");
   MY_ASSERT(!rdRoot->Entries[idx].DataIsDirectory, "bad resource directory");
 
   PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].OffsetToDirectory + DWORD(rdRoot));
 
+  MY_ASSERT((int)rdIcons - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
+
   unsigned char* seeker = uninstIconData;
 
   for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
     MY_ASSERT(!rdIcons->Entries[i].DataIsDirectory, "bad resource directory");
     PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].OffsetToDirectory + DWORD(rdRoot));
+    
+    MY_ASSERT((int)rd - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
     MY_ASSERT(rd->Entries[0].DataIsDirectory, "bad resource directory");
+    
     PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
+
+    MY_ASSERT((int)rde - (int)exeHeader > dwNextSection, "corrupted EXE - invalid pointer");
 
     DWORD dwSize = *(DWORD*)seeker;
     seeker += sizeof(DWORD);
     MY_ASSERT(dwSize != rde->Size, "installer, uninstaller icon size mismatch");
     // Set offset
     *(DWORD*)seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+
+    MY_ASSERT(*(int*)seeker > dwNextSection || *(int*)seeker < (int)rdRoot - (int)exeHeader, "invalid data offset - icon resource probably compressed");
+    
     seeker += sizeof(DWORD) + dwSize;
   }
   MY_ASSERT(i == 0, "no icons found");
