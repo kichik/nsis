@@ -35,6 +35,7 @@
 #define NSIS_DEV    "http://nsis.sourceforge.net/"
 #define NSIS_URL	"http://www.nullsoft.com/free/nsis/"
 #define NSIS_UPDATE	"http://nsis.sourceforge.net/update.php?version="
+#define NSIS_DDL    "http://sourceforge.net/project/showfiles.php?group_id=22049"
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
 #define CONTRIB     "Fritz Elfert, Justin Frankel, Amir Szekely"
@@ -66,6 +67,7 @@ BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK	AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void			CompileNSISScript();
+DWORD CALLBACK  UpdateThread(LPVOID v);
 
 typedef struct NSISScriptData {
     char *script;
