@@ -540,17 +540,19 @@ BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
   GetWindowRect(hWnd, &r);
   ScreenToClient(g_sdata.hwnd, (LPPOINT)&r);
   ScreenToClient(g_sdata.hwnd, ((LPPOINT)&r)+1);
-  switch (GetDlgCtrlID(hWnd)) {
-    case IDC_LOGWIN:
-      SetWindowPos(hWnd, 0, r.left, r.top,r.right - r.left + g_resize.dx, r.bottom - r.top + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE);
-      break;
-    case IDC_TEST:
-    case IDC_CLOSE:
-      SetWindowPos(hWnd, 0, r.left + g_resize.dx, r.top + g_resize.dy, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
-      break;
-    default:
-      SetWindowPos(hWnd, 0, r.left, r.top + g_resize.dy, r.right - r.left + g_resize.dx, r.bottom - r.top, SWP_NOZORDER);
-      break;
+  if(hWnd != g_toolbar.hwnd) {
+    switch (GetDlgCtrlID(hWnd)) {
+      case IDC_LOGWIN:
+        SetWindowPos(hWnd, 0, r.left, r.top,r.right - r.left + g_resize.dx, r.bottom - r.top + g_resize.dy, SWP_NOZORDER|SWP_NOMOVE);
+        break;
+      case IDC_TEST:
+      case IDC_CLOSE:
+        SetWindowPos(hWnd, 0, r.left + g_resize.dx, r.top + g_resize.dy, 0, 0, SWP_NOZORDER|SWP_NOSIZE);
+        break;
+      default:
+        SetWindowPos(hWnd, 0, r.left, r.top + g_resize.dy, r.right - r.left + g_resize.dx, r.bottom - r.top, SWP_NOZORDER);
+        break;
+    }
   }
   RedrawWindow(hWnd,NULL,NULL,RDW_INVALIDATE);
   return TRUE;
