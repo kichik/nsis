@@ -28,7 +28,7 @@
 ;--------------------------------
 ;Variables
 
-  Var TEMP
+  Var MUI_TEMP
 
 ;--------------------------------
 ;Pages
@@ -114,16 +114,16 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
   
-  !insertmacro MUI_STARTMENU_GETFOLDER $TEMP
+  !insertmacro MUI_STARTMENU_GETFOLDER $MUI_TEMP
     
-  Delete "$SMPROGRAMS\$TEMP\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   
   ;Delete empty start menu parent diretories
-  StrCpy $TEMP "$SMPROGRAMS\$TEMP"
+  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
  
   startMenuDeleteLoop:
     RMDir ${TEMP}
-    GetFullPathName $TEMP "$TEMP\.."
+    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
     
     IfErrors startMenuDeleteLoopDone
   
