@@ -1944,7 +1944,7 @@ int CEXEBuild::write_output(void)
     icon_offset = generate_unicons_offsets(header_data_new, m_unicon_data);
     if (icon_offset == 0)
       return PS_ERROR;
-	  SCRIPT_MSG("Done!\n");
+    SCRIPT_MSG("Done!\n");
   }
 #endif //NSIS_CONFIG_UNINSTALL_SUPPORT
 
@@ -2678,7 +2678,7 @@ void CEXEBuild::init_res_editor()
 {
   build_compressor_set=true;
   if (!res_editor)
-    res_editor=new CResourceEditor(header_data_new, exeheader_size_new);	
+    res_editor=new CResourceEditor(header_data_new, exeheader_size_new);
 }
 
 void CEXEBuild::close_res_editor()
@@ -2694,48 +2694,48 @@ void CEXEBuild::close_res_editor()
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
 int CEXEBuild::DeclaredUserVar(const char *szVarName)
 {
-	int idxUserVar = m_UserVarNames.get((char*)szVarName);
-	if ( idxUserVar > 0 )
-	{
-		ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
-		return PS_ERROR;	
-	}
-	const char *pVarName = szVarName;
-	int iVarLen = strlen(szVarName);
+  int idxUserVar = m_UserVarNames.get((char*)szVarName);
+  if ( idxUserVar > 0 )
+  {
+    ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
+    return PS_ERROR;  
+  }
+  const char *pVarName = szVarName;
+  int iVarLen = strlen(szVarName);
 
-	if ( iVarLen > 60 )
-	{
-		ERROR_MSG("Error: variable name too long!\n");
-		return PS_ERROR;
-	}
-	else if ( !iVarLen )
-	{
-		ERROR_MSG("Error: variable with empty name!\n");
-		return PS_ERROR;
-	}
-	else
-	{
-		while ( *pVarName )
-		{
-			if ( !isSimpleChar(*pVarName) )
-			{
-				ERROR_MSG("Error: invalid charaters in variable name \"%s\", use only charaters [a-z][A-Z][0-9] and '_'\n", szVarName);
-				return PS_ERROR;
-			}
-			pVarName++;
-		}
-	}
+  if ( iVarLen > 60 )
+  {
+    ERROR_MSG("Error: variable name too long!\n");
+    return PS_ERROR;
+  }
+  else if ( !iVarLen )
+  {
+    ERROR_MSG("Error: variable with empty name!\n");
+    return PS_ERROR;
+  }
+  else
+  {
+    while ( *pVarName )
+    {
+      if ( !isSimpleChar(*pVarName) )
+      {
+        ERROR_MSG("Error: invalid charaters in variable name \"%s\", use only charaters [a-z][A-Z][0-9] and '_'\n", szVarName);
+        return PS_ERROR;
+      }
+      pVarName++;
+    }
+  }
 
-	if ( !strnicmp(szVarName,"un.",3) )
+  if ( !strnicmp(szVarName,"un.",3) )
     m_UnUserVarNames.add(szVarName);
   else
     m_UserVarNames.add(szVarName);
   if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS || m_UnUserVarNames.getnum() > MAX_NAMED_USER_VARS )
-	{
-	  ERROR_MSG("Error: too many user variables declared!\n");
+  {
+    ERROR_MSG("Error: too many user variables declared!\n");
     return PS_ERROR;
   }
-	return PS_OK;
+  return PS_OK;
 }
 #endif
 

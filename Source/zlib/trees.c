@@ -660,30 +660,29 @@ void _tr_flush_block(s, buf, stored_len, eof)
     /* Build the Huffman trees unless a stored block is forced */
     if (s->level > 0) {
 
+        /* Construct the literal and distance trees */
+        build_tree(s, (tree_desc *)(&(s->l_desc)));
+        Tracev((stderr, "\nlit data: dyn %ld, stat %ld", s->opt_len,
+            s->static_len));
 
-	/* Construct the literal and distance trees */
-	build_tree(s, (tree_desc *)(&(s->l_desc)));
-	Tracev((stderr, "\nlit data: dyn %ld, stat %ld", s->opt_len,
-		s->static_len));
+        build_tree(s, (tree_desc *)(&(s->d_desc)));
+        Tracev((stderr, "\ndist data: dyn %ld, stat %ld", s->opt_len,
+            s->static_len));
+        max_blindex = build_bl_tree(s);
 
-	build_tree(s, (tree_desc *)(&(s->d_desc)));
-	Tracev((stderr, "\ndist data: dyn %ld, stat %ld", s->opt_len,
-		s->static_len));
-	max_blindex = build_bl_tree(s);
+        /* Determine the best encoding. Compute first the block length in bytes*/
+        opt_lenb = (s->opt_len+3+7)>>3;
+        static_lenb = (s->static_len+3+7)>>3;
 
-	/* Determine the best encoding. Compute first the block length in bytes*/
-	opt_lenb = (s->opt_len+3+7)>>3;
-	static_lenb = (s->static_len+3+7)>>3;
+        Tracev((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u ",
+            opt_lenb, s->opt_len, static_lenb, s->static_len, stored_len,
+            s->last_lit));
 
-	Tracev((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u ",
-		opt_lenb, s->opt_len, static_lenb, s->static_len, stored_len,
-		s->last_lit));
-
-	if (static_lenb <= opt_lenb) opt_lenb = static_lenb;
+        if (static_lenb <= opt_lenb) opt_lenb = static_lenb;
 
     } else {
         Assert(buf != (char*)0, "lost buf");
-	opt_lenb = static_lenb = stored_len + 5; /* force a stored block */
+        opt_lenb = static_lenb = stored_len + 5; /* force a stored block */
     }
 
 #ifdef FORCE_STORED

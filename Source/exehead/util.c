@@ -144,15 +144,15 @@ void NSISCALL trimslashtoend(char *buf)
 char * NSISCALL scanendslash(const char *str)
 {
   char *s=CharPrev(str,str+mystrlen(str));
-	if (!*str) return (char*)str-1;
-	for (;;)
-	{
+  if (!*str) return (char*)str-1;
+  for (;;)
+  {
     char *t;
-  	if ('\\' == *s) return s;
-		t=CharPrev(str,s);
-		if (t==s) return (char*)str-1;
-		s=t;
-	}
+    if ('\\' == *s) return s;
+    t=CharPrev(str,s);
+    if (t==s) return (char*)str-1;
+    s=t;
+  }
 }
 
 int NSISCALL validpathspec(char *ubuf)
@@ -326,12 +326,12 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out)
 {
-	HKEY hKey;
+  HKEY hKey;
   *out=0;
   if (RegOpenKeyEx(root,sub,0,KEY_READ,&hKey) == ERROR_SUCCESS)
   {
-		DWORD l = NSIS_MAX_STRLEN;
-		DWORD t;
+    DWORD l = NSIS_MAX_STRLEN;
+    DWORD t;
     if (RegQueryValueEx(hKey,name,NULL,&t,out,&l ) != ERROR_SUCCESS || (t != REG_SZ && t != REG_EXPAND_SZ)) *out=0;
     out[NSIS_MAX_STRLEN-1]=0;
     RegCloseKey(hKey);
@@ -424,11 +424,11 @@ char * NSISCALL process_string(const char *in)
 #ifndef NSIS_SUPPORT_NAMED_USERVARS
     if (nVarIdx < VAR_CODES_START)
     {
-	    *out++ = nVarIdx;
+      *out++ = nVarIdx;
     }
     else if (nVarIdx == 255)
     {
-	    *out++ = *in++;
+      *out++ = *in++;
     }
     else
     {
@@ -544,7 +544,7 @@ char * NSISCALL process_string(const char *in)
 
     if (nVarIdx == 255)
     {      
-      *out++ = *in++;      
+      *out++ = *in++;
     }
     else if (nVarIdx == VAR_CODES_START)
     {
@@ -634,7 +634,7 @@ char * NSISCALL process_string(const char *in)
 #endif
     else // Normal char
     {
-	    *out++ = nVarIdx;
+      *out++ = nVarIdx;
     }
 #endif
   } // while

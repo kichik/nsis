@@ -32,25 +32,25 @@ union installer_flags g_flags;
 // but in win2k you need to do this manually.
 static LONG NSISCALL myRegDeleteKeyEx(HKEY thiskey, LPCTSTR lpSubKey, int onlyifempty)
 {
-	HKEY key;
-	int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
-	if (retval==ERROR_SUCCESS)
-	{
+  HKEY key;
+  int retval=RegOpenKeyEx(thiskey,lpSubKey,0,KEY_ENUMERATE_SUB_KEYS,&key);
+  if (retval==ERROR_SUCCESS)
+  {
     // NB - don't change this to static (recursive function)
-		char buffer[MAX_PATH+1];
-		while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
+    char buffer[MAX_PATH+1];
+    while (RegEnumKey(key,0,buffer,MAX_PATH+1)==ERROR_SUCCESS)
     {
       if (onlyifempty)
       {
-    		RegCloseKey(key);
+        RegCloseKey(key);
         return !ERROR_SUCCESS;
       }
       if ((retval=myRegDeleteKeyEx(key,buffer,0)) != ERROR_SUCCESS) break;
     }
-		RegCloseKey(key);
-		retval=RegDeleteKey(thiskey,lpSubKey);
-	}
-	return retval;
+    RegCloseKey(key);
+    retval=RegDeleteKey(thiskey,lpSubKey);
+  }
+  return retval;
 }
 #endif//NSIS_SUPPORT_REGISTRYFUNCTIONS
 
@@ -454,26 +454,26 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
 
         #undef overwriteflag
-		// Added by ramon 23 May 2003
-		#undef allowskipfilesflag
+        // Added by ramon 23 May 2003
+        #undef allowskipfilesflag
       }
     break;
 #endif//NSIS_SUPPORT_FILE
 #ifdef NSIS_SUPPORT_DELETE
     case EW_DELETEFILE:
       {
-		    HANDLE h;
-		    WIN32_FIND_DATA fd;
+        HANDLE h;
+        WIN32_FIND_DATA fd;
         char *buf1=process_string_fromparm_tobuf(0x10);
         mystrcpy(buf0,buf1);
         log_printf2("Delete: \"%s\"",buf0);
         trimslashtoend(buf0);
         h=FindFirstFile(buf1,&fd);
-		    if (h != INVALID_HANDLE_VALUE)
-		    {
+        if (h != INVALID_HANDLE_VALUE)
+        {
           do
           {
-			      if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+            if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
             {
               wsprintf(buf1,"%s\\%s",buf0,fd.cFileName);
               if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
@@ -503,8 +503,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               }
             }
           } while (FindNextFile(h,&fd));
-			    FindClose(h);
-    		}
+          FindClose(h);
+        }
       }
     break;
 #endif//NSIS_SUPPORT_DELETE
@@ -1038,12 +1038,12 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_COPYFILES: // CopyFile (added by NOP)
       {
         int res;
-		    SHFILEOPSTRUCT op;
+        SHFILEOPSTRUCT op;
         char *buf0=process_string_fromparm_tobuf(0x00);
         char *buf1=process_string_fromparm_tobuf(0x11);
         log_printf3("CopyFiles \"%s\"->\"%s\"",buf0,buf1);
-			  op.hwnd=g_hwnd;
-			  op.wFunc=FO_COPY;
+        op.hwnd=g_hwnd;
+        op.wFunc=FO_COPY;
         buf0[mystrlen(buf0)+1]=0;
         buf1[mystrlen(buf1)+1]=0;
 
@@ -1052,16 +1052,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         op.pFrom=buf0;
         op.pTo=buf1;
         op.lpszProgressTitle=buf2;
-			  op.fFlags=parm2;
+        op.fFlags=parm2;
         update_status_text("",buf2);
-			  res=SHFileOperation(&op);
-			  if (res)
+        res=SHFileOperation(&op);
+        if (res)
         { // some of these changes were from Edgewise (wiked_edge@yahoo.com)
           update_status_text_from_lang(LANG_COPYFAILED,"");
           g_flags.exec_error++;
-			  }
-    	}
-		break;
+        }
+      }
+    break;
 #endif//NSIS_SUPPORT_COPYFILES
 #ifdef NSIS_SUPPORT_REBOOT
     case EW_REBOOT:
@@ -1219,8 +1219,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         p[0]=0;
         if (RegOpenKeyEx((HKEY)rootkey,buf0,0,KEY_READ,&hKey) == ERROR_SUCCESS)
         {
-			    DWORD l = NSIS_MAX_STRLEN;
-			    DWORD t;
+          DWORD l = NSIS_MAX_STRLEN;
+          DWORD t;
 
           if (RegQueryValueEx(hKey,buf1,NULL,&t,p,&l ) != ERROR_SUCCESS ||
               (t != REG_DWORD && t != REG_SZ && t != REG_EXPAND_SZ))

@@ -273,8 +273,8 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(ntHeaders);
 
   for (i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
-		if (dwResourceSectionVA == sectionHeadersArray[i].VirtualAddress)
-			break;
+    if (dwResourceSectionVA == sectionHeadersArray[i].VirtualAddress)
+      break;
 
   MY_ASSERT(i == ntHeaders->FileHeader.NumberOfSections, "can't find resource section");
 

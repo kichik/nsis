@@ -149,7 +149,7 @@ class LineParser {
         {
           if (line[0] == '$' && line[1] == '\\') {
             switch (line[2]) {
-            	case '"':
+              case '"':
               case '\'':
               case '`':
                 nc += ignore_escaping ? 3 : 1;
@@ -171,7 +171,7 @@ class LineParser {
           for (i = 0; p < line; i++, p++) {
             if (!ignore_escaping && p[0] == '$' && p[1] == '\\') {
               switch (p[2]) {
-            	  case '"':
+                case '"':
                 case '\'':
                 case '`':
                   p += 2;
