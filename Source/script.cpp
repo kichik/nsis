@@ -11,6 +11,7 @@
 #include "dirreader.h"
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
+#include <time.h>
 
 using namespace std;
 
@@ -18,7 +19,6 @@ using namespace std;
 #  include <direct.h>
 #else
 #  include <sys/stat.h>
-#  include <time.h>
 #  include <glob.h>
 #  include <fcntl.h> // for O_RDONLY
 #  include <unistd.h>
@@ -2532,12 +2532,45 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     // preprocessor-ish (ifdef/ifndef/else/endif are handled one step out from here)
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_P_DEFINE:
-      if (definedlist.add(line.gettoken_str(1),line.gettoken_str(2)))
+    {
+      char *define=line.gettoken_str(1);
+      char *value;
+      char datebuf[256];
+      bool date=false;
+
+      if (!stricmp(define,"/date")) {
+        if (line.getnumtokens()!=4) PRINTHELP()
+
+        define=line.gettoken_str(2);
+        value=line.gettoken_str(3);
+
+        time_t rawtime;
+		    time(&rawtime);
+
+        datebuf[0]=0;
+        size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
+        
+        if (s < 0)
+          datebuf[0]=0;
+        else
+          datebuf[max(s,sizeof(datebuf)-1)]=0;
+
+        value=datebuf;
+
+        date=true;
+      } else {
+        if (line.getnumtokens()==4) PRINTHELP()
+
+        value=line.gettoken_str(2);
+      }
+
+      if (definedlist.add(define,value))
       {
-        ERROR_MSG("!define: \"%s\" already defined!\n",line.gettoken_str(1));
+        ERROR_MSG("!define: \"%s\" already defined!\n",define);
         return PS_ERROR;
       }
-      SCRIPT_MSG("!define: \"%s\"=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
+      SCRIPT_MSG("!define: %s\"%s\"=\"%s\"\n",date?"/date ":"",define,date?line.gettoken_str(3):value);
+    }
     return PS_OK;
     case TOK_P_UNDEF:
       if (definedlist.del(line.gettoken_str(1)))
