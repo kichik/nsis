@@ -1892,7 +1892,11 @@ again:
               p->parms[1] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT1, NLF_UCOMP_SUBTEXT1));
             if (!p->parms[2])
               p->parms[2] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT2, NLF_UCOMP_SUBTEXT2));
-            if (!p->parms[4])
+            if (!p->parms[3] && !uninstall_mode && HasUserDefined(NLF_COMP_SUBTEXT1))
+              p->parms[3] = p->parms[1];
+            if (!p->parms[4] && !uninstall_mode && HasUserDefined(NLF_COMP_SUBTEXT2))
+              p->parms[4] = p->parms[2];
+            else if (!p->parms[4])
               p->parms[4] = DefineInnerLangString(LS(NLF_COMP_SUBTEXT1_NO_INST_TYPES, NLF_UCOMP_SUBTEXT1_NO_INST_TYPES));
 
             DefineInnerLangString(NLF_SPACE_REQ);

@@ -110,6 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     if (cmdline[0] != '/') break;
     cmdline++;
 
+// this only works with spaces because they have just one bit on
 #define END_OF_ARG(c) (((c)|' ')==' ')
 
 #if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
