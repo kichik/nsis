@@ -47,7 +47,7 @@ void NSISCALL doRMDir(char *buf, int recurse);
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd);
 int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey);
 int NSISCALL validpathspec(char *ubuf);
-void NSISCALL addtrailingslash(char *str);
+char * NSISCALL addtrailingslash(char *str);
 char NSISCALL lastchar(const char *str);
 void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL scanendslash(const char *str);

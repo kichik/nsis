@@ -357,15 +357,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HANDLE hOut;
         int ret;
         char *buf3=process_string_fromparm_tobuf(0x31);
-        #define overwriteflag parm0
-        addtrailingslash(mystrcpy(buf0,state_output_directory));
+        #define overwriteflag parm0        
 
         log_printf3("File: overwriteflag=%d, name=\"%s\"",overwriteflag,buf3);
         if (validpathspec(buf3))
         {
           mystrcpy(buf0,buf3);
         }
-        else lstrcat(buf0,buf3);
+        else lstrcat(addtrailingslash(mystrcpy(buf0,state_output_directory)),buf3);
       _tryagain:
         if (!overwriteflag)
         {
@@ -1341,8 +1340,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          addtrailingslash(mystrcpy(buf1,state_install_directory));
-          lstrcat(buf1,buf0);
+          lstrcat(addtrailingslash(mystrcpy(buf1,state_install_directory)),buf0);
         }
 
 
