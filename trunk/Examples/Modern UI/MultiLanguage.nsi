@@ -5,9 +5,7 @@
 !define NAME "Test Software" ;Define your own software name here
 !define VERSION "1.0" ;Define your own software version here
 
-!verbose 3
-  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
-!verbose 4
+!include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
 ;$9 is the variable used to store the current page, do not use this var!
 

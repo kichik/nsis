@@ -1,10 +1,12 @@
-;Modern UI Macro System 1.3
+;NSIS Modern User Interface version 1.3
+;Macro System
 ;Written by Joost Verburg
 
 ;See Basic.nsi, Multilanguage.nsi and InstallOptions.nsi
 ;in the Examples\Modern UI directory for examples of usage.
 
 ;--------------------------------
+!verbose 3
 
 !ifndef MUI_MACROS_USED
 
@@ -626,3 +628,6 @@ FunctionEnd
 !macroend
 
 !endif
+
+!verbose 4
+;--------------------------------
