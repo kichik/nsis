@@ -9,3 +9,5 @@ DOCUMENTATION
   every function will link to the example file that containts it
 
 * go over everything and search for mistakes :)
+
+* Document InitPluginsDir and creating plugins (exdll.h)
