@@ -1,77 +1,10 @@
-/*********************************************************************************
+/*********************************************************
  *
- *  Original version by Michael Bishop:
- *  InstallerOptions/DLL version 2.0
+ *  InstallOptions version 2.0 - Plugin for custom pages
  *
- *  highly modified by justin frankel to go in as dll, subclass, be sexy, and whatnot.
+ *  See Readme.html for documentation and license
  *
- *  key changes
- *   - jf> updated with new exdll.h
- *   - no longer need parentwnd ini writing shit
- *   - to call now, use:
- *        Push $TEMP\inst.ini
- *        CallInstDLL $TEMP\mydll.dll dialog
- *        Pop $0
- *         ($0 would be "success" "cancel" "back" or some other value on error.
- *   - new INI entries: [settings]\cancelconfirm (text to confirm cancel on cancel button click)
- *   - fixed some flag related bugs (multiple of them at 0x100 etc)
- *   - made it so you can specify positions in negative, for distance from the right/bottom edges.
- *   - made it so that the file/dir requests automatically size the browse button in
- *   - removed a lot of code for the old style integration
- *   - removed support for silent installers (it seems the old version would bring up it's own dialog)
- *
- *   - keyboard integration fixed
- *   - fixed issues with file open dialog too
- *
- *   - added BackEnabled, fixed more (getting it ready to use with closer integration to nsis 1.90)
- *
- *   - results are now read differently from the .ini file. Instead of [Results]\<number>,
- *     use [Field <number>]\State
- *
- *   - The state of checkboxes and radioboxes is now defined by State=. State=1 is checked,
- *     State=0 (or no State=) is unchecked.
- *
- *   - The initial contents of edit controls and file/dir request controls is now defined by
- *     State= instead of Text=.
- *
- *   - Font is now taken from the main NSIS window (by Amir Szekely 22nd July 2002)
- *
- *   - Added CancelEnabled (by ORTIM: 13-August-2002)
- *   - Added CancelShow (by ORTIM: 13-August 2002)
- *   - Added pixel transformation for widgets (by ORTIM: 14-August-2002)
- *
- *   - Added CancelConfirmCaption and CancelConfirmFlags (by Amir Szekely & Dave Laundon)
- *
- *   - Added Icon and Bitmap controls (by Amir Szekely 4th September 2002)
- *
- *   - Added initDialog and show for support with NSIS's new CreateFont and SetStaticBkColor
- *
- *   Version 2.0 - Changes by Joost Verburg
- *
- *   - Works with custom font and DPI settings
- *
- *   - INI files should contain dialog units now, no pixels
- *
- *  Copyright (C) 2001 Michael Bishop
- *  Portions Copyright (C) 2001 Nullsoft, Inc.
- *
- *  This software is provided 'as-is', without any express or implied
- *  warranty.  In no event will the authors be held liable for any damages
- *  arising from the use of this software.
- *
- *  Permission is granted to anyone to use this software for any purpose,
- *  including commercial applications, and to alter it and redistribute it
- *  freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software
- *     in a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *  3. This notice may not be removed or altered from any source distribution.
- *
- **********************************************************************************/
+ *********************************************************/
 
 #include <windows.h>
 #include <windowsx.h>
@@ -794,11 +727,9 @@ int createCfgDlg()
   if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
   if (bBackEnabled!=0xFFFF0000) EnableWindow(hBackButton,bBackEnabled);
-  // by ORTIM: 13-August-2002
   if (bCancelEnabled!=0xFFFF0000) old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);
   if (bCancelShow!=0xFFFF0000) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
-  // Added by Amir Szekely 22nd July 2002
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
 
   RECT dialog_r;
@@ -809,7 +740,6 @@ int createCfgDlg()
     ScreenToClient(hMainWindow,(LPPOINT)&dialog_r);
     ScreenToClient(hMainWindow,((LPPOINT)&dialog_r)+1);
     SetWindowPos(hConfigWindow,0,dialog_r.left,dialog_r.top,dialog_r.right-dialog_r.left,dialog_r.bottom-dialog_r.top,SWP_NOZORDER|SWP_NOACTIVATE);
-    // Added by Amir Szekely 22nd July 2002
     // Sets the font of IO window to be the same as the main window
     SendMessage(hConfigWindow, WM_SETFONT, (WPARAM)hFont, TRUE);
   }
@@ -820,9 +750,7 @@ int createCfgDlg()
     return 1;
   }
 
-  // By Joost Verburg 14th December 2002
-  // Works with custom font & DPI settings
-  // INI files should contain dialog units now
+  // Init dialog unit conversion
 
   HDC memDC = CreateCompatibleDC(GetDC(hConfigWindow));
   SelectObject(memDC, hFont);
@@ -893,9 +821,7 @@ int createCfgDlg()
     DWORD dwStyle = ClassTable[pFields[nIdx].nType - 1].dwStyle;
     DWORD dwExStyle = ClassTable[pFields[nIdx].nType - 1].dwExStyle;
 
-    // By Joost Verburg 14th December 2002
-    // Works with custom font & DPI settings
-    // INI files should contain dialog units now
+    // Convert from dialog units
 
     RECT rect;
 
@@ -957,7 +883,6 @@ int createCfgDlg()
     );
 
     if (hwCtrl) {
-      // Changed by Amir Szekely 22nd July 2002
       // Sets the font of IO window to be the same as the main window
       SendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
       // make sure we created the window, then set additional attributes
@@ -1038,9 +963,6 @@ int createCfgDlg()
             0,
             pFields[nIdx].pszText,
             nImageType,
-            // Scaling an icon/bitmap in relation to dialog units usually looks crap, so
-            // take the size originally specified as pixels, *unless* it seems likely the
-            // image is required to span the whole dialog.
             (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0 && !(pFields[nIdx].nFlags & FLAG_RESIZETOFIT))
               ? (pFields[nIdx].rect.right - pFields[nIdx].rect.left)
               : (rect.right - rect.left),
