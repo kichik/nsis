@@ -11,11 +11,14 @@
 #include "exehead/resource.h"
 #include <cassert> // for assert(3)
 
-#ifndef _WIN32
+#ifdef _WIN32
+#  include <direct.h>
+#else
 #  include <sys/stat.h>
 #  include <time.h>
 #  include <glob.h>
 #  include <fcntl.h> // for O_RDONLY
+#  include <unistd.h>
 #endif
 
 #define MAX_INCLUDEDEPTH 10
@@ -2711,11 +2714,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return PS_OK;
     case TOK_P_CD:
-#ifdef _WIN32
-      if (!line.gettoken_str(1)[0] || !SetCurrentDirectory(line.gettoken_str(1)))
-#else
       if (!line.gettoken_str(1)[0] || chdir(line.gettoken_str(1)))
-#endif
       {
         ERROR_MSG("!cd: error changing to: \"%s\"\n",line.gettoken_str(1));
         return PS_ERROR;
