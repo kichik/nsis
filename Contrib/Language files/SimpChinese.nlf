@@ -1,13 +1,13 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 2052
-# Font and size - dash (-) means default
--
--
-# Codepage - dash (-) means ANSI code page
--
-# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-03-29
+# Font and size - dash (-) means default 字体名称与大小
+宋体
+9
+# Codepage - dash (-) means ANSI code page ANSI 字码页
+936
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-04-30
 Nullsoft Install System %s
 %s 安装
 %s 解除安装
@@ -28,42 +28,53 @@ Nullsoft Install System %s
 移除(&U)
 取消(&C)
 关闭(&L)
-浏览(&B)...
+浏览(&R)...
 显示明细(&D)
 名称
 已完成
 自定义
-选定安装的类型: 
-选定安装的组件: 
-或者，自定义选定想安装的组件: 
-选定要安装 %s 的目录: 
+选定安装的类型:
+选定安装的组件:
+或者，自定义选定想安装的组件:
+选定要安装 %s 的目录:
 可用空间: 
 所需空间: 
-解除安装目录: 
+解除安装目录:
 不能打开目的文件: \r\n\r\n"$0"\r\n\r\n单击 [Abort] 放弃安装，[Retry] 再试写入文件，或\r\n [Ignore] 跳过这个文件。
 无法写入: 
 复制失败 
 复制到: 
+正在注册: 
+正在解除注册: 
 无法找到符号: 
 无法加载: 
 创建目录: 
 创建快捷方式: 
-输出解除安装程序: 
+创建解除安装程序: 
 删除文件: 
 重新启动后删除: 
 正在创建快捷方式时发生错误: 
 正在创建时发生错误: 
-解压缩数据发生错误！安装程序损毁？
+正在解压缩数据发生错误！已损坏的安装程序？
 正在注册 DLL 时发生错误
 运行外部程序: 
 运行: 
 解压缩: 
 解压缩: 无法写入文件 
 安装损毁: 无效的操作代码
-无 OLE 用于: 
+没有 OLE 用于: 
 输出目录: 
 移除目录: 
 重新启动后重命名: 
 重命名: 
 已跳过: 
 复制明细到剪贴板 
+日志安装进程
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
