@@ -59,7 +59,7 @@ void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL scanendslash(const char *str);
 int NSISCALL is_valid_instpath(char *s);
 char * NSISCALL validate_filename(char *fn);
-BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
+void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void * NSISCALL mini_memcpy(void *out, const void *in, int len);
 
 // Turn a pair of chars into a word

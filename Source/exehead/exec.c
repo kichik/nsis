@@ -388,11 +388,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           overwriteflag=!(cmp & (0x80000000 | (overwriteflag - 3)));
         }
+        // remove read only flag if overwrite mode is on
         if (!overwriteflag)
         {
           int attr=GetFileAttributes(buf0);
-          if (attr & FILE_ATTRIBUTE_READONLY)
-            SetFileAttributes(buf0,attr^FILE_ATTRIBUTE_READONLY);
+          SetFileAttributes(buf0,attr&(~FILE_ATTRIBUTE_READONLY));
         }
         hOut=myOpenFile(buf0,GENERIC_WRITE,(overwriteflag==1)?CREATE_NEW:CREATE_ALWAYS);
         if (hOut == INVALID_HANDLE_VALUE)
@@ -430,9 +430,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 
         update_status_text(LANG_EXTRACT,buf3);
         {
-          ui_st_updateflag ^= 1;
+          ui_st_updateflag++;
           ret=GetCompressedDataFromDataBlock(parm2,hOut);
-          ui_st_updateflag ^= 1;
+          ui_st_updateflag--;
         }
 
         log_printf3("File: wrote %d to \"%s\"",ret,buf0);
