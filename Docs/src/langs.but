@@ -16,7 +16,9 @@ Defines a multilingual string and spares the comparing of $LANGUAGE to every lan
 
 LangStrings can you only be used on their own. You can't include them in other strings. "look at my $(string)! isn't it beautiful?" will be seen exactly as written, $(string) will not be expanded. If you want to use LangStrings in other strings you can first copy the LangString to a variable and then use the variable wherever you want. This is a temporary situation, it will be changed before NSIS 2 final.
 
-Note that unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
+\\<b\\>Note #1:\\</b\\> Unlike defines that use curly braces - \{\}, multilingual strings use parenthesis - ().
+
+\\<b\\>Note #2:\\</b\\> If you see weird characters between letters in the string when you use LangString, use LangStringUP (LangString for unprocessed string such as InstType)
 
 For example, instead of:
 
@@ -34,8 +36,6 @@ Use:
 \c  LangString message ${LANG_KOREAN} "Korean message"
 \c
 \c  MessageBox MB_OK $(message)
-
-\\<b\\>Note:\\</b\\> If you see squares between letters in the string when you use LangString use LangStringUP (LangString for unprocessed string such as InstType)
 
 \S0{langs} Multiple Languages
 
