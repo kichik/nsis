@@ -161,6 +161,7 @@ Version History
  - Ctrl+L loads a script
  - Added Clear Log (Ctrl+W)
  - Browse Script (Ctrl+B) launches explorer in script directory
+ - Check for Update command
  - Bunch of other stuff not worth mentioning
 
 

@@ -253,6 +253,8 @@ int InitBranding() {
 		if (lstrlen(szBuf)==0) return 0;
 		g_sdata.branding = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+6);
 		wsprintf(g_sdata.branding,"NSIS %s",szBuf);
+		g_sdata.brandingv = (char *)GlobalAlloc(GPTR,lstrlen(szBuf)+1);
+		lstrcpy(g_sdata.brandingv,szBuf);
 		GlobalFree(s);
 	}
 	return 1;
