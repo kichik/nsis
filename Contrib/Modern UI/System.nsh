@@ -1368,7 +1368,6 @@
     !error "No Modern UI language file inserted!"
   !endif
   
-  !insertmacro MUI_INTERFACE
   !insertmacro MUI_BASIC
   !insertmacro MUI_UNBASIC
   
@@ -1565,6 +1564,8 @@
     !define MUI_LANGUAGEFILE_INSERTED
     
     !define MUI_NOVERBOSE
+    
+    !insertmacro MUI_INTERFACE
     
     !insertmacro MUI_PAGECOMMANDS
     
