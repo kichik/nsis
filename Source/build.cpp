@@ -1835,6 +1835,7 @@ void CEXEBuild::print_warnings()
 void CEXEBuild::build_plugin_table(void)
 {
   plugin_used = false;
+  uninst_plugin_used = false;
   char* nsisdir = definedlist.find("NSISDIR");
   if (nsisdir)
   {
@@ -1933,7 +1934,7 @@ again:
   ret=function_end();
   if (ret != PS_OK) return ret;
 
-  if (uninstaller_writes_used && !uninstall) {
+  if (uninst_plugin_used && !uninstall) {
     add_function("un.Initialize_____Plugins");
     uninstall = true;
     goto again;

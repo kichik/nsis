@@ -25,7 +25,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_BRANDINGTEXT,"BrandingText",1,2,"[/LANG=lang_id] [/TRIM(LEFT|RIGHT|CENTER)] installer_text"},
 {TOK_BRINGTOFRONT,"BringToFront",0,0,""},
 {TOK_CALL,"Call",1,0,"function_name | [:label_name]"},
-{TOK_CALLINSTDLL,"CallInstDLL",2,0,"dll_path_on_target.dll function"},
+{TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll [/NOUNLOAD] function"},
 {TOK_CAPTION,"Caption",1,1,"[/LANG=lang_id] installer_caption"},
 {TOK_CHANGEUI,"ChangeUI",2,0,"(all|dlg_id) ui_file.exe"},
 {TOK_CLEARERRORS,"ClearErrors",0,0,""},
