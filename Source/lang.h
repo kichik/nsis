@@ -1,6 +1,8 @@
 #ifndef ___NLF___H_____
 #define ___NLF___H_____
 
+#include "strlist.h"
+#include "growbuf.h"
 #include "exehead/fileform.h"
 
 struct NLFRef {
