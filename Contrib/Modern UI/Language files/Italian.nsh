@@ -35,8 +35,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "L'installazione è stata completata con successo."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Sei sicuro di voler terminare l'installazione di ${MUI_PRODUCT} ?"
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "Installazione di ${MUI_NAME}"
 
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Disinstalla ${MUI_PRODUCT}"
@@ -48,7 +46,5 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Disinstallazione completata"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "La disinstallazione è stata completata con successo."
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "Rimozione di ${MUI_NAME}"
    
 !insertmacro MUI_LANGUAGEFILE_END
