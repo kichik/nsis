@@ -198,7 +198,7 @@ class CEXEBuild {
     GrowBuf build_labels, ubuild_labels, *cur_labels;
     StringList build_strlist,ubuild_strlist;
     GrowBuf build_langtables, ubuild_langtables;
-    StringList build_userlangstrings, ubuild_userlangstrings, *cur_userlangstrings;
+    StringList build_userlangstrings, ubuild_userlangstrings;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
     IGrowBuf *cur_datablock; 
