@@ -1,4 +1,4 @@
-;Modern UI Language File
+;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.61
 
 ;Language: Italian (1040)
@@ -41,6 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "L'installazione è stata completata con successo."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE " : Installazione completata"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Fine"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Installazione di ${MUI_PRODUCT} completata."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} è stato installato sul vostro computer.\r\n\r\nSelezionate Fine per chiudere il programma di installazione."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Il vostro computer deve essere riavviato per completare l'installazione di ${MUI_PRODUCT}. Desiderate riavviarlo ora ?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Riavvio immediato"
@@ -56,6 +57,9 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Sei sicuro di voler terminare l'installazione di ${MUI_PRODUCT} ?"
 
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Seleziona Disintalla per iniziare la disinstallazione."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Disintalla ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Rimuovi ${MUI_PRODUCT} dal tuo computer."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Questo programma rimuoverà ${MUI_PRODUCT} dal tuo computer."
@@ -67,9 +71,3 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "La disinstallazione è stata completata con successo."
 
 !insertmacro MUI_LANGUAGEFILE_END
-  
-  !ifdef MUI_LICENSEPAGE
-
-
-  !endif
-
