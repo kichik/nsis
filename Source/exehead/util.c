@@ -592,7 +592,7 @@ void NSISCALL log_write(int close)
 #endif
 
 #ifdef NSIS_SUPPORT_CREATESHORTCUT
-int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey)
+/*int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey)
 {
   HRESULT hres;
   int rv=1;
@@ -633,5 +633,5 @@ int NSISCALL CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFil
   }
   OleUninitialize();
   return rv;
-}
+}*/
 #endif//NSIS_SUPPORT_CREATESHORTCUT
