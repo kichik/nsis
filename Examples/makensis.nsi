@@ -14,11 +14,20 @@ SetCompressor bzip2
 
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
+  !define MUI_WELCOMEPAGE
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
+  !define MUI_FINISHPAGE
+  
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\makensis.htm"
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT
+  
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
+
+  ;NSIS updates no system files
+  !define MUI_TEXT_WELCOME_INFO "\r\n\r\nThis will install ${MUI_PRODUCT} on your computer.\r\n\r\n\r\n\r\n"
 
   !insertmacro MUI_LANGUAGE "English"
 
@@ -34,7 +43,6 @@ InstType "Full (w/ Source and Contrib)"
 InstType "Normal (w/ Contrib, w/o Source)"
 InstType "Lite (w/o Source or Contrib)"
 
-AutoCloseWindow false
 ShowInstDetails show
 ShowUninstDetails show
 SetOverwrite on
@@ -42,6 +50,10 @@ SetDateSave on
 
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
+
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+!insertmacro MUI_RESERVEFILE_WIZARDINI
+!insertmacro MUI_RESERVEFILE_WIZARDBITMAP
 
 Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
@@ -459,6 +471,10 @@ SectionEnd
 SubSectionEnd
 SubSectionEnd
 
+Function .onInit
+  !insertmacro MUI_WELCOMEFINISHPAGE_INIT
+FunctionEnd
+
 Function AddContribToStartMenu
 	Pop $0 ; link
 	Pop $1 ; file
@@ -607,16 +623,8 @@ Section -post
   nofunshit:
   Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
-!ifndef CLASSIC_UI
-  !insertmacro MUI_FINISHHEADER
-!endif
-SectionEnd
 
-Function .onInstSuccess
-  MessageBox MB_YESNO|MB_ICONQUESTION "Setup has completed. View readme file now?" IDNO NoReadme
-    ExecShell open '$INSTDIR\makensis.htm'
-  NoReadme:
-FunctionEnd
+SectionEnd
 
 !ifndef CLASSIC_UI
 
