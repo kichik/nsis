@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Hungarian (1038)
 ;Translation by Jozsef Tamas Herczeg, Lajos Molnar (Orfanik) <orfanik@axelero.hu>
@@ -22,7 +22,9 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "A(z) ${MUI_PRODUCT} telepítése elõtt tekintse át a szerzõdés feltételeit."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "A PageDown gombbal olvashatja el a szerzõdés folytatását."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ha elfogadja a szerzõdés valamennyi feltételét, az Elfogadom gombbal folytathatja. El kell fogadnia a(z) ${MUI_PRODUCT} telepítéséhez."
-  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Amennyiben elfogadja a feltételeket, jelölje be a jelölõnényzeten. A(z) ${MUI_PRODUCT} telepítéséhez el kell fogadnia a feltételeket."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Amennyiben elfogadja a feltételeket, válassza az elsõ opciót. A(z) ${MUI_PRODUCT} telepítéséhez el kell fogadnia a feltételeket."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Összetevõk kiválasztása"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Válassza ki, hogy ${MUI_PRODUCT} mely funkcióit kívánja telepíteni."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "Jelölje be a telepíteni kívánt összetevõket, és törölje a telepíteni nem kívánt elemeket."
