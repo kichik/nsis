@@ -25,7 +25,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Selezione dei componenti"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Selezionare i componenti di $(^NameDA) che si desidera installare."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Descrizione"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Posizionare il puntatore del mouse sul componente per vederne la descrizione."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Posizionare il puntatore del mouse sul componente per vederne la descrizione."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selezionare un componente per vederne la descrizione."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Scelta della cartella di installazione"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Scegliere la cartella nella quale installare $(^NameDA)."
