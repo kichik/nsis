@@ -5,8 +5,6 @@ NSIS
 
 * Compiler plug-ins
 
-* SetCurInstType should work without the components page
-
 * Empty subsections should not show
 
 * Option to cancel the installation process
