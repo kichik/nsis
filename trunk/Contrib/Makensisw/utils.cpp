@@ -56,6 +56,7 @@ char *g_input_script;
 extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
+  SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, -1, 0);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_VSCROLL, SB_BOTTOM, 0);
 }
@@ -87,46 +88,31 @@ void EnableItems(HWND hwnd) {
   #define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
   #define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
 
-  static char *outputExeBuf, *inputScriptBuf;
-
-  if (inputScriptBuf) {
-    GlobalFree(inputScriptBuf);
-    g_input_script = inputScriptBuf = 0;
-  }
-  if (outputExeBuf) {
-    GlobalFree(outputExeBuf);
-    g_output_exe = outputExeBuf = 0;
-  }
-
   if (g_input_script) GlobalFree(g_input_script);
   if (g_output_exe) GlobalFree(g_output_exe);
 
+  TEXTRANGE tr;
   FINDTEXT ft;
+
+  // find input script
   ft.chrg.cpMin = 0;
   ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
   ft.lpstrText = "Processing script file: \"";
-  long charPos = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  long lineNum = MSG2(EM_EXLINEFROMCHAR, 0, charPos);
-  long lineLength = MSG1(EM_LINELENGTH, charPos);
-  inputScriptBuf = (char *)GlobalAlloc(GPTR, lineLength+1);
-  *(WORD *)inputScriptBuf = (WORD)lineLength+1;
-  MSG2(EM_GETLINE, lineNum, (WPARAM)inputScriptBuf);
-  g_input_script = inputScriptBuf+lstrlen("Processing script file: \"");
-  char *p = g_input_script;
-  while (*p && *p != '"') p++;
-  *p = 0;
+  ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Processing script file: \"");
+  ft.lpstrText = "\"";
+  tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  tr.lpstrText = g_input_script = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+  MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
+  // find output exe
+  ft.chrg.cpMin = 0;
+  ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
   ft.lpstrText = "Output: \"";
-  charPos = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
-  lineNum = MSG2(EM_EXLINEFROMCHAR, 0, charPos);
-  lineLength = MSG1(EM_LINELENGTH, charPos);
-  outputExeBuf = (char *)GlobalAlloc(GPTR, lineLength+1);
-  *(WORD *)outputExeBuf = (WORD)lineLength+1;
-  MSG2(EM_GETLINE, lineNum, (WPARAM)outputExeBuf);
-  g_output_exe = outputExeBuf+lstrlen("Output: \"");
-  p = g_output_exe;
-  while (*p && *p != '"') p++;
-  *p = 0;
+  ft.chrg.cpMin = tr.chrg.cpMin = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) + lstrlen("Output: \"");
+  ft.lpstrText = "\"";
+  tr.chrg.cpMax = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  tr.lpstrText = g_output_exe = (char *)GlobalAlloc(GPTR, tr.chrg.cpMax-tr.chrg.cpMin+1);
+  MSG2(EM_GETTEXTRANGE, 0, (WPARAM)&tr);
 
   g_warnings = FALSE;
 
