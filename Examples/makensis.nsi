@@ -111,9 +111,9 @@ Section "NSI Development Shell Extensions" SecExtention
   WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
   WriteRegStr HKCR "NSISFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile" "" "Compile NSI"
-  WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" /CD "%1"'
+  WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile-bz2" "" "Compile NSI (with bz2)"
-  WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /CD /X"SetCompressor bzip2" "%1"'
+  WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /X"SetCompressor bzip2" "%1"'
 SectionEnd
 
 Section "Start Menu + Desktop Shortcuts" SecIcons
