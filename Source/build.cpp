@@ -3179,7 +3179,7 @@ again:
   // error
   if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
   // error message box
-  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP, add_string("Error! Can't initialize plug-ins directory. Please try again later."));
+  ret=add_entry_direct(EW_MESSAGEBOX, MB_OK|MB_ICONSTOP|(IDOK<<20), add_string("Error! Can't initialize plug-ins directory. Please try again later."));
   if (ret != PS_OK) return ret;
   // Quit
   ret=add_entry_direct(EW_QUIT);

@@ -539,19 +539,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_RMDIR
     case EW_RMDIR:
       {
-        char *buf0=GetStringFromParm(0x00);
-        log_printf2("RMDir: \"%s\"",buf0);
+        char *buf1=GetStringFromParm(-0x10);
+        log_printf2("RMDir: \"%s\"",buf1);
 
-        if (lastchar(buf0)=='\\') trimslashtoend(buf0);
-
-        doRMDir(buf0,parm1);
-        if (file_exists(buf0) && parm1!=2) exec_error++;
-        else update_status_text(LANG_REMOVEDIR, buf0);
+        doRMDir(buf1,parm1);
+        if (file_exists(buf1) && parm1!=2) exec_error++;
+        else update_status_text(LANG_REMOVEDIR, buf1);
       }
     break;
 #endif//NSIS_SUPPORT_RMDIR
 #ifdef NSIS_SUPPORT_STROPTS
-    case EW_STRLEN: {
+    case EW_STRLEN:
+    {
       char *buf0=GetStringFromParm(0x01);
       myitoa(var0,mystrlen(buf0));
     }
