@@ -1,15 +1,14 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1048
 # Font and size - dash (-) means default
--
--
+Verdana
+9
 # Codepage - dash (-) means ANSI code page
--
-# Translation by Cristian Pirvu (pcristip@yahoo.com) v0.2  Updated by Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v0.3
-# v0.4 - small grammar corrections
-Nullsoft Install System %s
+1250
+# Translation by Sorin Sbarnea INTERSOL SRL (sorin@intersol.ro) v4
+Sistem de instalare Nullsoft %s
 Instalare %s
 Dezinstalare %s
 : Licenta de utilizare
@@ -37,22 +36,24 @@ Nestandard
 Alegeti tipul instalarii:
 Alegeti componentele de instalat:
 Sau alegeti componentele optionale pe care vreti sa le instalati:
-Selectati directorul in care vreti sa instalati %s:
+Selectati directorul In care vreti sa instalati %s:
 Spatiu disponibil: 
-Spatiu necesar: 
+Spattiu necesar: 
 Dezinstaleaza din:
-Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai incerca odata scrierea fisierului, \r\nignora pentru a trece peste acest fisier
+Eroare la scrierea fisierului: \r\n\t"$0"\r\nAlegeti Anuleaza pentru oprirea instalarii,\r\nreincearca pentru a mai Incerca o data scrierea fisierului, \r\nignora pentru a trece peste acest fisier
 Nu pot sa scriu:
 Copierea a esuat
 Copiaza in
+Inregistrez: 
+DezInregistrez: 
 N-am gasit simbolul: 
 N-am putut incarca: 
 Creaza director: 
-Creaza shortcut: 
-Crearea programului de dezinstalare completa: 
-Sterge fisier: 
-Sterge la repornire: 
-Eroare la creare de shortcut: 
+Creaza scurtatura: 
+Crearea programului de dezinstalare este completa: 
+sterge fisier: 
+sterge la repornire: 
+Eroare la creare scurtatura: 
 Eroare la creare: 
 Eroare la decomprimarea datelor! Program de instalare corupt ?
 Eroare la inregistrarea DLL-ului
@@ -66,5 +67,14 @@ Directorul destinatie:
 Sterge destinatia: 
 Sterge sau reporneste calculatorul: 
 Redenumeste: 
-Ignorate: 
-Copiaza detaliile in clipboard
+Sarite: 
+Copiaza detaliile in clipboardLog install process
+Jurnal proces de instalare
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
