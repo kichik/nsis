@@ -3,35 +3,59 @@
 
 \e{v2.0b4}
 
+\\<b\\>Release Notes:\\</b\\>
+
+\b The /LANG parameter is no longer available for any text setting instructions. You must use a \R{langstring}{LangString} if you want to make a certain text multilingual. This means you can also set one text for all languages. To make the license data multilingual you should use \R{licenselangstring}{LicenseLangString}.
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: Because of the new syntax for pages, renaming of settings and variable names etc., you have to make some changes to your scripts, see the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details.
+
+\b \R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work.
+
+\b \R{onselchange}{.onSelChange} is no longer called when the components page is created.
+
+\b The icons folder has been renamed to Graphics and was reorganized. If you were using any files from Contrib\\Icons in your script, you should update it to point to the new image or icon path.
+
+\b \R{upgradedll}{UpgradeDLL} has been changed, it's \e{highly recommend} that you include the new version in your script using \c{!include "UpgradeDLL.nsh"} instead of the old one.
+
+\\<b\\>Changelog:\\</b\\>
+
+\b CHM documentation - searchable and comes with an index
+
 \b User variables ($VARNAME) that can be declared with the \R{var}{Var} command
 
-\b Support for all pages in both installer and uninstaller, components, directory and license pages can be used for the uninstaller
+\b Support for all pages in both installer and uninstaller. Components, directory and license pages can be used for the uninstaller
 
-\b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
+\b Improved large files handling (way lower requirements to compile a 2GB installer now)
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+\b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
 
 \b Full support for RTL languages, including support for LTR and RTL languages in one installer
 
 \b Extraction progress
 
-\b Improved large files handling (way lower requirements to compile a 2GB installer now)
+\b Better installation directory verification
 
-\b Added \R{afilebufsize}{FileBufSize}
+\b Fixed all known problems with temporary files and directoroes
 
-\b Added \R{viaddversionkey}{VIAddVersionKey}: Add version information resource to the installer
+\b No more unprocessed strings, variables can be used everywhere
 
-\b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed
+\b Leave function for custom \R{pages}{pages}: Input on InstallOptions pages can be validated using script code
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.2}: Added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
+\b Better ClearType support
 
-\b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
+\b No more flickering
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar, more
+\b \R{onmouseoversection}{OnMouseOver text} is only displayed when mouse over section
+
+\b RO sections can now be in \R{ainsttype}{InstTypes} too (defaults to old behavior)
+
+\b Improved \R{aaddbrandingimage}{AddBrandingImage}: doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value
+
+\b Increased limit of InstTypes to 32
+
+\b Improved macros & functions: \R{upgradedll}{UpgradeDLL}, GetParent, GetParameters. Using the new versions is recommended.
 
 \b NLF language files (v6): language specific fonts, RTL and more strings
-
-\b Full \R{rtl}{RTL} support (set in language file)
 
 \b Inner LangStrings can be used in the script
 
@@ -39,56 +63,69 @@
 
 \b LangStrings are no longer installer/uninstaller specific (no un.)
 
-\b No more unprocessed strings, variables can be used everywhere
+\b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
 
-\b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
+\b Added \R{afilebufsize}{FileBufSize}
+
+\b Added \R{viaddversionkey}{VIAddVersionKey}: add version information resource to the installer
+
+\b Added \R{asetallowskipfiles}{AllowSkipFiles}: set whether the user should be able to skip a file when overwriting failed
+
+\b Added \R{alicenseforceselection}{LicenseForceSelection}: checkbox or radio buttons on license page to let user agree with license or not
+
+\b Added \R{ssectionsetsize}{SectionSetSize}, \R{ssectiongetsize}{SectionGetSize}, \R{ssetcurinsttype}{SetCurInstType} and \R{sgetcurinsttype}{GetCurInstType}
+
+\b Replaced SetBkColor with \R{setctlcolors}{SetCtlColors} which can set text color too
+
+\b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
+
+\b Added ifdiff and lastusd for \R{asetoverwrite}{SetOverwrite}
 
 \b /o Switch for \R{ssection}{Section} provides ability to unselect the section by default
 
-\b Increased amount of InstTypes to 32
-
-\b Added \R{ssectionsetsize}{SectionSetSize}, \R{ssectiongetsize}{SectionGetSize}, \R{ssetcurinsttype}{SetCurInstType}, \R{sgetcurinsttype}{GetCurInstType}
-
 \b New parameter for DirText to set the browse dialog text
 
-\b Better ClearType support
-
-\b Components Tree: Fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree, Added SF_PSELECTED for partially selected sub-sections
-
-\b \R{onmouseoversection}{OnMouseOver Text} is only displayed when mouse over section else nothing is displayed
-
-\b RO sections can now be in \R{ainsttype}{InstTypes} too (default to old behavior)
-
-\b Added \R{alicenseforceselection}{LicenseForceSelection}: Checkbox or radiobuttons on license page to let user agree with license or not
-
-\b Leave function for custom \R{pages}{pages}: Input on InstallOptions pages can be validated using script code
-
-\b Added \R{rmdir}{RMDir /REBOOTOK}: Remove folders on reboot
-
-\b Added \R{setctlcolors}{SetCtlColors}: Sets background and text color for every dialog control
+\b Added \R{rmdir}{RMDir /REBOOTOK}: remove folders on reboot
 
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
-\b Improved \R{aaddbrandingimage}{AddBrandingImage}: Doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value
-
 \b Added base_dir for \R{gettempfilename}{GetTempFileName}
 
-\b Fixed a problem regarding borders in plug-ins BgImage and InstallOptions
+\b Fixed SetOutPath not setting current directory if the directory didn't exist before
 
-\b Improved System plug-in
+\b Components tree: fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree and added SF_PSELECTED for partially selected sub-sections
 
-\b Improved macros & functions: UpgradeDLL, GetParent, GetParameters. Using the new versions is recommended.
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+
+\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar and more
+
+\b Zip2Exe 0.3: based on header files, improved interface, Modern UI support, new script code, improved folder detection
+
+\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.2}: added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
+
+\b BgImage plug-in stability fixes
+
+\b Added vPatch: patch generator and plug-in that applies the patches
+
+\b Banner plug-in improvements: responds to messages and some new /set tricks by brainsucker
+
+\b AdvSpalsh plug-in improvements: smaller, better transparency support and a possible bug fix
+
+\b System plug-in improvements: Unicode, GUID and COM support 
+
+\b nsExec plug-in improvments: ability to run 16 bit code and tabs to spaces conversion
+
+\b Math plug-in
+
+\b Documentation fixes
+
+\b Delphi unit for NSIS plug-ins
 
 \b Minor bug fixes
 
 \b Code clean-ups and some more comments
 
-\\<b\\>Notes:\\</b\\>
-
-\L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: Because of the new syntax for pages, remamed of settings and variable names etc., you have to make some changes to your scripts, see the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details. \\<br\\>
-\R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work. \\<br\\>
-\R{onselchange}{.onSelChange} is no longer called when the components page is created
-
+\b More...
 
 \e{v2.0b3}
 
