@@ -443,127 +443,136 @@
 
 \H{upgradedll} Upgrade a DLL (macro)
 
-\c  ; Macro - Upgrade DLL File
-\c  ; Written by Joost Verburg
-\c  ; ------------------------
-\c  ;
-\c  ; Parameters:
-\c  ; LOCALFILE   - Location of the new DLL file (on the compiler system)
-\c  ; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
-\c  ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
-\c  ;               to be rebooted.
-\c  ;               For Win9x support, this should be on the same volume as the DESTFILE!
-\c  ;               The Windows temp directory could be located on any volume, so you cannot use
-\c  ;               this directory.
-\c  ;
-\c  ; Note: If you want to support Win9x, you can only use short filenames (8.3).
-\c  ;
-\c  ; Example of usage:
-\c  ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
-\c  ;
-\c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that cannot be registered
+\c ; Macro - Upgrade DLL File
+\c ; Written by Joost Verburg
+\c ; ------------------------
+\c ;
+\c ; Parameters:
+\c ; LOCALFILE   - Location of the new DLL file (on the compiler system)
+\c ; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
+\c ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
+\c ;               to be rebooted.
+\c ;               For Win9x support, this should be on the same volume as the DESTFILE!
+\c ;               The Windows temp directory could be located on any volume, so you cannot use
+\c ;               this directory.
+\c ;
+\c ; Define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that does not have to be registered.
+\c ;
+\c ; Note: If you want to support Win9x, you can only use short filenames (8.3).
+\c ;
+\c ; Example of usage:
+\c ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
+\c ;
 \c
-\c  !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
+\c !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
 \c
-\c    Push $R0
-\c    Push $R1
-\c    Push $R2
-\c    Push $R3
-\c
-\c    ;------------------------
-\c    ;Check file and version
-\c
-\c    IfFileExists "${DESTFILE}" "" "copy_${LOCALFILE}"
-\c
-\c    ClearErrors
-\c      GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
-\c      GetDLLVersion "${DESTFILE}" $R2 $R3
-\c    IfErrors "upgrade_${LOCALFILE}"
-\c
-\c    IntCmpU $R0 $R2 "" "done_${LOCALFILE}" "upgrade_${LOCALFILE}"
-\c    IntCmpU $R1 $R3 "done_${LOCALFILE}" "done_${LOCALFILE}" "upgrade_${LOCALFILE}"
-\c
-\c    ;------------------------
-\c    ;Let's upgrade the DLL!
-\c
-\c    SetOverwrite try
-\c
-\c    "upgrade_${LOCALFILE}:"
-\c      !ifndef UPGRADEDLL_NOREGISTER
-\c        ;Unregister the DLL
-\c        UnRegDLL "${DESTFILE}"
-\c      !endif
-\c
-\c    ;------------------------
-\c    ;Try to copy the DLL directly
-\c
-\c    ClearErrors
-\c      StrCpy $R0 "${DESTFILE}"
-\c      Call ":file_${LOCALFILE}"
-\c    IfErrors "" "noreboot_${LOCALFILE}"
-\c
-\c    ;------------------------
-\c    ;DLL is in use. Copy it to a temp file and Rename it on reboot.
-\c
-\c    GetTempFileName $R0 "${TEMPBASEDIR}"
-\c      Call ":file_${LOCALFILE}"
-\c    Rename /REBOOTOK $R0 "${DESTFILE}"
-\c
-\c    ;------------------------
-\c    ;Register the DLL on reboot
-\c
-\c    !ifndef UPGRADEDLL_NOREGISTER
-\c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-\c      "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
-\c    !endif
-\c
-\c    Goto "done_${LOCALFILE}"
-\c
-\c    ;------------------------
-\c    ;DLL does not exist - just extract
-\c
-\c    "copy_${LOCALFILE}:"
-\c      StrCpy $R0 "${DESTFILE}"
-\c      Call ":file_${LOCALFILE}"
-\c
-\c    ;------------------------
-\c    ;Register the DLL
-\c
-\c    "noreboot_${LOCALFILE}:"
-\c      !ifndef UPGRADEDLL_NOREGISTER
-\c        RegDLL "${DESTFILE}"
-\c      !endif
-\c
-\c    ;------------------------
-\c    ;Done
-\c
-\c    "done_${LOCALFILE}:"
-\c
-\c    Pop $R3
-\c    Pop $R2
-\c    Pop $R1
-\c    Pop $R0
-\c
-\c    ;------------------------
-\c    ;End
-\c
-\c    Goto "end_${LOCALFILE}"
-\c
-\c    ;------------------------
-\c    ;Called to extract the DLL
-\c
-\c    "file_${LOCALFILE}:"
-\c      File /oname=$R0 "${LOCALFILE}"
-\c      Return
-\c
-\c    "end_${LOCALFILE}:"
+\c   Push $R0
+\c   Push $R1
+\c   Push $R2
+\c   Push $R3
 \c
 \c   ;------------------------
-\c   ;Set overwrite flag back
+\c   ;Unique number for labels
 \c
-\c   SetOverwrite lastused
+\c   !define UPGRADEDLL_UNIQUE ${__LINE__}
 \c
-\c  !macroend
+\c   ;------------------------
+\c   ;Check file and version
+\c
+\c   IfFileExists "${DESTFILE}" 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
+\c
+\c   ClearErrors
+\c     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
+\c     GetDLLVersion "${DESTFILE}" $R2 $R3
+\c   IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c
+\c   IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c   IntCmpU $R1 $R3 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.done_${UPGRADEDLL_UNIQUE} \
+\c     upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Let's upgrade the DLL!
+\c
+\c   SetOverwrite try
+\c
+\c   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
+\c     !ifndef UPGRADEDLL_NOREGISTER
+\c       ;Unregister the DLL
+\c       UnRegDLL "${DESTFILE}"
+\c     !endif
+\c
+\c   ;------------------------
+\c   ;Try to copy the DLL directly
+\c
+\c   ClearErrors
+\c     StrCpy $R0 "${DESTFILE}"
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;DLL is in use. Copy it to a temp file and Rename it on reboot.
+\c
+\c   GetTempFileName $R0 "${TEMPBASEDIR}"
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c   Rename /REBOOTOK $R0 "${DESTFILE}"
+\c
+\c   ;------------------------
+\c   ;Register the DLL on reboot
+\c
+\c   !ifndef UPGRADEDLL_NOREGISTER
+\c     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+\c       "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
+\c   !endif
+\c
+\c   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;DLL does not exist - just extract
+\c
+\c   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
+\c     StrCpy $R0 "${DESTFILE}"
+\c     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Register the DLL
+\c
+\c   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
+\c     !ifndef UPGRADEDLL_NOREGISTER
+\c       RegDLL "${DESTFILE}"
+\c     !endif
+\c
+\c   ;------------------------
+\c   ;Done
+\c
+\c   upgradedll.done_${UPGRADEDLL_UNIQUE}:
+\c
+\c   Pop $R3
+\c   Pop $R2
+\c   Pop $R1
+\c   Pop $R0
+\c
+\c   ;------------------------
+\c   ;End
+\c
+\c   Goto upgradedll.end_${UPGRADEDLL_UNIQUE}
+\c
+\c   ;------------------------
+\c   ;Called to extract the DLL
+\c
+\c   upgradedll.file_${UPGRADEDLL_UNIQUE}:
+\c     File /oname=$R0 "${LOCALFILE}"
+\c     Return
+\c
+\c   upgradedll.end_${UPGRADEDLL_UNIQUE}:
+\c
+\c  ;------------------------
+\c  ;Restore settings
+\c
+\c  SetOverwrite lastused
+\c  
+\c  !undef UPGRADEDLL_UNIQUE
+\c
+\c !macroend
 
 \H{connectinternet} Connect to the internet
 
