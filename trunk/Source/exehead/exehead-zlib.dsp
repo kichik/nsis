@@ -119,38 +119,6 @@ SOURCE=..\zlib\INFUTIL.C
 # ADD CPP /Gz
 # End Source File
 # End Group
-# Begin Group "bzip2"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\bzip2\bzlib.c
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\bzlib.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\bzlib_private.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\decompress.c
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\huffman.c
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\randtable.c
-# ADD CPP /Gz
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\bgbg.c
