@@ -2,7 +2,9 @@
 
 \S2{BringToFront} BringToFront
 
-Makes the installer window visible and brings it to the top of the window list (i.e. if a command was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus).
+Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus.
+
+Recent Windows versions restrict the setting of foreground windows. If the user if working with another application during installation, the user may be notifed using a different method.
 
 \S2{createfont} CreateFont
 
