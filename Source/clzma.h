@@ -170,6 +170,7 @@ public:
     if (!hCompressionThread)
     {
       DWORD dwThreadId;
+      finish = flush;
       hCompressionThread = CreateThread(0, 0, lzmaCompressThread, (LPVOID) this, 0, &dwThreadId);
       if (!hCompressionThread)
         return -2;
