@@ -1510,7 +1510,7 @@
   !endif
   
   !ifdef MUI_CUSTOMFUNCTION_UNGUIINIT
-    Call "${MUI_CUSTOMFUNCTION_UNGUIINIT}
+    Call "${MUI_CUSTOMFUNCTION_UNGUIINIT}"
   !endif
   
   FunctionEnd
