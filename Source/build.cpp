@@ -1775,8 +1775,10 @@ int CEXEBuild::write_output(void)
     INFO_MSG("Datablock optimizer saved %d bytes (~%d.%d%%).\n",db_opt_save,
       pc/10,pc%10);
   }
-  
+
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   INFO_MSG("\nUsing %s%s compression.\n\n", compressor->GetName(), build_compress_whole?" (compress whole)":"");
+#endif
 
   int total_usize=exeheader_size;
 
