@@ -479,50 +479,53 @@ value of a Field using ReadINIStr:</p>
 <pre class="margin">
 ReadINIStr $R0 "$PLUGINSDIR\test.ini" "Field 1" "State"
 </pre>
-<p class="text">&nbsp;&nbsp;&nbsp;&nbsp; Important Note:</p>
-<p class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For Multiline edit
-boxe's the output &quot;State&quot; comes with &quot;\r\n&quot; if text as more
-than one line and is your responsiblity to convert it inside script to
-&quot;$\r$\n&quot; if needed! example macro:</p>
-<pre class="margin">NORMALIZE_CRCF VALUE
-  push $1 ; Index
-  push $2 ; Output char by char
-  push $3 ; Output char by char next
-  push $4 ; Text Accumulator
+<p class="text"><span class="bold">Note:</span></p>
+<p class="text">For Multiline edit boxes the output &quot;State&quot; comes with &quot;\r\n&quot;
+if the text contains more than one line. You have to convert it to &quot;$\r$\n&quot; if needed,
+using this macro:</p>
+<pre class="margin">!macro NORMALIZE_CRCF VALUE
 
-  StrCpy $1 &quot;0&quot;
-DONEXT:
-  StrCpy $2 ${VALUE} 1 $1
-  IntOp $1 $1 + 1
-  StrCpy $3 ${VALUE} 1 $1
-  StrCmp $3 &quot;&quot; EOT
-  StrCmp $2 &quot;\&quot; 0 NORMAL_CHAR
-  StrCmp $3 &quot;r&quot; FOUND_CR
-  StrCmp $3 &quot;n&quot; 0 NORMAL_CHAR
-;FOUND_LF:
-  StrCpy $4 &quot;$4$\r&quot;
-  IntOp $1 $1 + 1
-  goto DONEXT
+  ;Note: Do not use $R1-$R4 as value
 
-FOUND_CR:
-  StrCpy $4 &quot;$4$\n&quot;
-  IntOp $1 $1 + 1
-  goto DONEXT
+  Push $R1 ; Index
+  Push $R2 ; Output char by char
+  Push $R3 ; Output char by char next
+  Push $R4 ; Text Accumulator
 
-NORMAL_CHAR:
-  StrCpy $4 &quot;$4$2&quot;
-  goto DONEXT
+  StrCpy $R1 &quot;0&quot;
+  
+  DONEXT:
+    StrCpy $R2 ${VALUE} 1 $R1
+    IntOp $R1 $R1 + 1
+    StrCpy $R3 ${VALUE} 1 $R1
+    StrCmp $R3 &quot;&quot; EOT
+    StrCmp $R2 &quot;\&quot; 0 NORMAL_CHAR
+    StrCmp $R3 &quot;r&quot; FOUND_CR
+    StrCmp $R3 &quot;n&quot; 0 NORMAL_CHAR
 
-EOT:
-  StrCpy ${VALUE} $4
-  pop $4
-  pop $3
-  pop $2
-  pop $1
+    StrCpy $R4 &quot;$R4$\r&quot;
+    IntOp $R1 $R1 + 1
+    Goto DONEXT
+
+  FOUND_CR:
+    StrCpy $R4 &quot;$R4$\n&quot;
+    IntOp $R1 $R1 + 1
+    Goto DONEXT
+
+  NORMAL_CHAR:
+    StrCpy $R4 &quot;$R4$R2&quot;
+    Goto DONEXT
+
+  EOT:
+    StrCpy ${VALUE} $R4
+  
+    Pop $R4
+    Pop $R3
+    Pop $R2
+    Pop $R1
 
 !macroend
 </pre>
-<pre class="margin">&nbsp;</pre>
 <p class="subheader">Validate the input</p>
 <p class="text">If you want to validate the input on the page,
 for example, you want to check whether the user has filled in
