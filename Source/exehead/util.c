@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "../Platform.h"
 #include <shellapi.h>
 #include "util.h"
 #include "state.h"
@@ -26,10 +26,6 @@ NSIS_STRING g_usrvars[1];
 #pragma bss_seg()
 #define SECTION_VARS_RWD "/section:" ## VARS_SECTION_NAME ## ",rwd"
 #pragma comment(linker, SECTION_VARS_RWD)
-
-#ifndef INVALID_FILE_ATTRIBUTES
-#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
-#endif
 
 int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl)
 {

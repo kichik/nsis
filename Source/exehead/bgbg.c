@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "../Platform.h"
 #include "resource.h"
 #include "config.h"
 #include "fileform.h"

@@ -387,10 +387,6 @@
   #define NSIS_DEFAULT_LANG 1033
 #endif
 
-#ifndef INVALID_FILE_ATTRIBUTES
-#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
-#endif
-
 #define VARS_SECTION_NAME ".ndata"
 
 typedef char NSIS_STRING[NSIS_MAX_STRLEN];

@@ -24,8 +24,7 @@
 */
 
 
-#include <windows.h>
-#include <commctrl.h>
+#include "../Platform.h"
 #include <shlobj.h>
 #include "resource.h"
 #include "util.h"

@@ -1,6 +1,8 @@
 #ifndef _STRLIST_H_
 #define _STRLIST_H_
 
+#include "Platform.h"
+#include <stdio.h>
 #include <stdlib.h> // for gcc
 
 class IGrowBuf
