@@ -139,7 +139,7 @@ Ha fallat la còpia
 # ^CreateFolder
 "Crear carpeta: "
 # ^CreateShortcut
-"Crear accés directe: "
+"Crear drecera: "
 # ^CreatedUninstaller
 "Crear desinstal·lador: "
 # ^Delete
@@ -147,7 +147,7 @@ Ha fallat la còpia
 # ^DeleteOnReboot
 "Esborrar al reiniciar: "
 # ^ErrorCreatingShortcut
-"Error creant accés directe: "
+"Error creant drecera: "
 # ^ErrorCreating
 Error creant:
 # ^ErrorDecompressing
