@@ -60,7 +60,7 @@ Released on February 7th, 2004
 
 \b Last part of the path specified in \R{ainstalldir}{InstallDir} was appended even if selected folder name was the same
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.79}: Improved documentation, new Init custom function for Welcome and Finish page
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.70}: Improved documentation, new Init custom function for Welcome and Finish page
 
 \b Added \L{../Include/StrFunc.txt}{StrFunc} by deguix
 
