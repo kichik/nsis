@@ -18,7 +18,7 @@ LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
 /* Enable local speed optimizations inside code */
 
 #ifndef LZMACALL
-#  define LZMACALL stdcall
+#  define LZMACALL
 #endif
 
 #ifndef FORCE_INLINE

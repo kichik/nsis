@@ -910,8 +910,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // advance over parms
         while (*t)
         {
-          char *v;
-          if (v=definedlist.find(t))
+          char *v=definedlist.find(t);
+          if (v)
           {
             l_define_saves.add(t,v);
             definedlist.del(t);
@@ -1302,7 +1302,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       char *file = line.gettoken_str(3);
 
       FILE *fp;
-      int datalen;
+      unsigned int datalen;
       fp=fopen(file,"rb");
       if (!fp)
       {
@@ -1594,7 +1594,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int idx = 0;
         char *file = line.gettoken_str(1);
-        char *data;
+        char *data = NULL;
 
         if (file[0] == '$' && file[1] == '(')
         {
@@ -1610,7 +1610,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         if (!idx)
         {
-          int datalen;
+          unsigned int datalen;
           FILE *fp=fopen(file,"rb");
           if (!fp)
           {
@@ -2075,7 +2075,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (k == -1) PRINTHELP()
         SCRIPT_MSG("XPStyle: %s\n", line.gettoken_str(1));
         init_res_editor();
-        char* szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
+        const char *szXPManifest = k ? 0 : "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\"><assemblyIdentity version=\"1.0.0.0\" processorArchitecture=\"X86\" name=\"Nullsoft.NSIS.exehead\" type=\"win32\"/><description>Nullsoft Install System v2.0</description><dependency><dependentAssembly><assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0\" processorArchitecture=\"X86\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /></dependentAssembly></dependency></assembly>";
         res_editor->UpdateResource(MAKEINTRESOURCE(24), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), (unsigned char*)szXPManifest, k ? 0 : lstrlen(szXPManifest));
       }
       catch (exception& err) {
@@ -2145,7 +2145,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           // Search for bitmap holder (default for SetBrandingImage)
           branding_image_found = false;
           DialogItemTemplate* dlgItem = 0;
-          for (int i = 0; dlgItem = UIDlg.GetItemByIdx(i); i++) {
+          for (int i = 0; (dlgItem = UIDlg.GetItemByIdx(i)); i++) {
             if (IS_INTRESOURCE(dlgItem->szClass)) {
               if (dlgItem->szClass == MAKEINTRESOURCE(0x0082)) {
                 if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
@@ -2233,7 +2233,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         CDialogTemplate dt(dlg,uDefCodePage);
         delete [] dlg;
 
-        DialogItemTemplate *childRect = dt.GetItem(IDC_CHILDRECT);
         DialogItemTemplate brandingCtl = {0,};
 
         brandingCtl.dwStyle = SS_BITMAP | WS_CHILD | WS_VISIBLE;
@@ -3348,8 +3347,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char *np=p;
           while (*np && *np != '|') np++;
           if (*np) *np++=0;
-          for (x  =0 ; x < sizeof(list)/sizeof(list[0]) && strcmpi(list[x].str,p); x ++);
-          if (x < sizeof(list)/sizeof(list[0]))
+          for (x = 0 ; (unsigned) x < sizeof(list) / sizeof(list[0]) && strcmpi(list[x].str, p); x++);
+          if ((unsigned) x < sizeof(list) / sizeof(list[0]))
           {
             r|=list[x].id;
           }
@@ -3958,9 +3957,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char *np=p;
           while (*np && *np != '|') np++;
           if (*np) *np++=0;
-          for (x  =0 ; x < sizeof(list)/sizeof(list[0]) && stricmp(list[x].str,p); x ++);
+          for (x = 0 ; (unsigned) x < sizeof(list)/sizeof(list[0]) && stricmp(list[x].str,p); x ++);
 
-          if (x < sizeof(list)/sizeof(list[0]))
+          if ((unsigned) x < sizeof(list)/sizeof(list[0]))
           {
             r|=list[x].id;
           }
@@ -4122,7 +4121,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLLVERSIONLOCAL:
       {
         char buf[128];
-        DWORD low, high;
+        DWORD low=0, high=0;
         DWORD s,d;
         int flag=0;
         int alloced=0;
@@ -4199,7 +4198,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETFILETIMELOCAL:
       {
         char buf[129];
-        DWORD high,low;
+        DWORD high=0,low=0;
         int flag=0;
         HANDLE hFile=CreateFile(line.gettoken_str(1),0,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
         if (hFile != INVALID_HANDLE_VALUE)
@@ -5442,7 +5441,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 #ifdef NSIS_SUPPORT_STACK
     WIN32_FIND_DATA temp;
 
-    int a=GetFileAttributes(lgss);
+    DWORD a=GetFileAttributes(lgss);
     const char *fspec=lgss+strlen(dir)+!!dir[0];
     strcpy(newfn,lgss);
     if (a==INVALID_FILE_ATTRIBUTES)
@@ -5467,8 +5466,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           {
             if (strcmp(d.cFileName,"..") && strcmp(d.cFileName,"."))
             {
-              entry ent={0,};
-              int a;
               char out_path[1024] = "$OUTDIR\\";
 
               {

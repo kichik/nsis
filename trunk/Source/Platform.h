@@ -4,6 +4,9 @@
 // includes
 
 #ifdef _WIN32
+#  ifndef _WIN32_IE
+#    define _WIN32_IE 0x0400
+#  endif
 #  include <Windows.h>
 #  include <commctrl.h>
 #else
@@ -24,6 +27,27 @@
 #    endif
 #  else
 #    define FORCE_INLINE inline
+#  endif
+#endif
+
+// Added by Dave Laundon 19th August 2002
+// For all internal functions, use of stdcall calling convention moves the
+// responsibility for tidying the stack to callee from caller, reducing the code
+// involved considerably.  Gives an instant saving of 0.5K.
+// NB - the zlib and bzip2 portions have been given the same treatment, but with
+// project compiler-options settings and/or project-wide defines.
+// NB - safer for NSIS's routines to be defined explicitly to avoid problems
+// calling DLL functions.
+#if defined(_WIN32) && ((_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED))
+#  define NSISCALL  __stdcall   // Ordinary functions
+#  define NSISCALLV __cdecl     // Variable-argument-list functions
+#else
+#  ifdef __GNUC__
+#    define NSISCALL  __attribute__((__stdcall__))   // Ordinary functions
+#    define NSISCALLV __attribute__((__cdecl__))     // Variable-argument-list functions
+#  else
+#    define NSISCALL
+#    define NSISCALLV
 #  endif
 #endif
 
@@ -69,8 +93,15 @@
 #define LVS_EX_LABELTIP 0x00004000
 #endif
 
-#ifndef INVALID_FILE_ATTRIBUTES
-#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
+#ifdef __GNUC__  // ((DWORD)-1) may cause parsing errors with MinGW
+#  ifdef INVALID_FILE_ATTRIBUTES	// updated win32api may also set as (DWORD)-1
+#    undef INVALID_FILE_ATTRIBUTES
+#  endif
+#  define INVALID_FILE_ATTRIBUTES ((unsigned long)-1)
+#else
+#  ifndef INVALID_FILE_ATTRIBUTES
+#    define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
+#  endif
 #endif
 
 #ifndef CSIDL_FLAG_CREATE

@@ -50,7 +50,7 @@ public:
     InitializeCriticalSection(&cs);
   }
 
-  ~CLZMA()
+  virtual ~CLZMA()
   {
     End();
     DeleteCriticalSection(&cs);
@@ -79,7 +79,7 @@ public:
       NCoderPropID::kDictionarySize,
       NCoderPropID::kNumFastBytes
     };
-    const kNumProps = sizeof(propdIDs) / sizeof(propdIDs[0]);
+    const int kNumProps = sizeof(propdIDs) / sizeof(propdIDs[0]);
     PROPVARIANT props[kNumProps];
     // NCoderPropID::kAlgorithm
     props[0].vt = VT_UI4;

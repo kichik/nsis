@@ -26,9 +26,10 @@ CResourceVersionInfo::CResourceVersionInfo()
     m_FixedInfo.dwFileType = VFT_APP;
 
     // Detect local codepage and language
+/*  
     WORD Lang = GetSystemDefaultLangID();
     WORD CodePage = GetACP();
-/*
+
     SetKeyValue(Lang, CodePage, "Comments", "Portuguese");
     SetKeyValue(Lang, CodePage, "FileVersion", "1.2");
     SetKeyValue(Lang, CodePage, "FileDescription", "Soft");

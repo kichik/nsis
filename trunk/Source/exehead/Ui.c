@@ -707,8 +707,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     if (nmhdr->code==EN_LINK) {
       if (enlink->msg==WM_LBUTTONDOWN) {
         TEXTRANGE tr = {
-          enlink->chrg.cpMin,
-          enlink->chrg.cpMax,
+          {
+            enlink->chrg.cpMin,
+            enlink->chrg.cpMax,
+          },
           ps_tmpbuf
         };
         if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
@@ -1232,7 +1234,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int ns=lParam;
     TVITEM tv;
 
-    if (tv.hItem=hTreeItems[x])
+    tv.hItem=hTreeItems[x];
+
+    if (tv.hItem)
     {
       tv.mask=TVIF_TEXT;
       tv.pszText=GetNSISStringTT(ns);
@@ -1360,7 +1364,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
           if (t->flags&SF_RO) l+=3;
 
-          if (tv.hItem=*ht) {
+          tv.hItem=*ht;
+
+          if (tv.hItem) {
             tv.mask=TVIF_STATE;
             tv.state=INDEXTOSTATEIMAGEMASK(l);
             tv.stateMask=TVIS_STATEIMAGEMASK;

@@ -120,7 +120,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   char *buf1 = bufs[1];
   char *buf2 = bufs[2];
   char *buf3 = bufs[3];
-  char *buf4 = bufs[4];
+  //char *buf4 = bufs[4];
 
   char *var0;
   char *var1;
@@ -1312,7 +1312,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (*hptr)
         {
           char lc=0;
-          int rcnt=0;
           HANDLE h=(HANDLE)myatoi(hptr);
           while (rpos<maxlen)
           {

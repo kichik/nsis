@@ -19,7 +19,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename);
 unsigned char* generate_uninstall_icon_data(char* filename);
 // Fill the array of icons for uninstall with their offsets
 int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIconData);
-#endif NSIS_CONFIG_UNINSTALL_SUPPORT
+#endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 // Returns dialog's raw data from a given loaded module

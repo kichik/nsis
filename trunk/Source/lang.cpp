@@ -706,12 +706,12 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
 
 char SkipComments(FILE *f) {
   char c;
-  while (c = fgetc(f)) {
+  while ((c = fgetc(f))) {
     while (c == '\n' || c == '\r') {
       c = fgetc(f); // Skip empty lines
     }
     if (c == '#' || c == ';') {
-      while (c = fgetc(f)) {
+      while ((c = fgetc(f))) {
        if (c == '\n') break;
       }
     }
@@ -763,7 +763,7 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   }
 
   // Generate language name
-  char *p, *p2, t;
+  char *p, *p2, t = 0;
 
   p = strrchr(filename, '.');
   if (p) {
@@ -906,7 +906,8 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
     }
 
     nlf->m_szStrings[i] = (char*)malloc(temp+1);
-    for (char *out = nlf->m_szStrings[i]; *in; in++, out++) {
+    char *out;
+    for (out = nlf->m_szStrings[i]; *in; in++, out++) {
       if (*in == '\\') {
         in++;
         switch (*in) {

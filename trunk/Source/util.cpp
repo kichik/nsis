@@ -298,7 +298,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   MY_ASSERT((int)rdRoot - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
-  int idx = find_in_dir(rdRoot, WORD(RT_ICON));
+  int idx = find_in_dir(rdRoot, (WORD) (int) RT_ICON);
   MY_ASSERT(idx == -1, "no icons?!");
   MY_ASSERT(!rdRoot->Entries[idx].DataIsDirectory, "bad resource directory");
 

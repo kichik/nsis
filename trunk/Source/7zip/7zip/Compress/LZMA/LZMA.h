@@ -47,7 +47,7 @@ protected:
     _state.Init();
     _previousByte = 0;
     _peviousIsMatch = false;
-    for(int i = 0 ; i < kNumRepDistances; i++)
+    for(unsigned int i = 0 ; i < kNumRepDistances; i++)
       _repDistances[i] = 0;
   }
 };
