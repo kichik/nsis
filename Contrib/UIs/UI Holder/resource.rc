@@ -8,7 +8,6 @@
 // Generated from the TEXTINCLUDE 2 resource.
 //
 #include "afxres.h"
-#include "config.h"
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -26,12 +25,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_LICENSEPAGE)
-#if defined(APSTUDIO_INVOKED)
-IDD_LICENSE$(NSIS_CONFIG_LICENSEPAGE) DIALOGEX DISCARDABLE  0, 0, 266, 130
-#else
 IDD_LICENSE DIALOGEX DISCARDABLE  0, 0, 266, 130
-#endif
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -40,14 +34,8 @@ BEGIN
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
                     0x804,0,24,266,105
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#if defined(APSTUDIO_INVOKED)
-IDD_DIR$(NSIS_CONFIG_VISIBLE_SUPPORT) DIALOGEX DISCARDABLE  0, 0, 266, 130
-#else
 IDD_DIR DIALOGEX DISCARDABLE  0, 0, 266, 130
-#endif
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -62,14 +50,8 @@ BEGIN
     CONTROL         "",IDC_SPACEREQUIRED,"Static",SS_LEFTNOWORDWRAP,0,111,265,8
     LTEXT           "",IDC_INTROTEXT,25,0,241,34
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_COMPONENTPAGE)
-#if defined(APSTUDIO_INVOKED)
-IDD_SELCOM$(NSIS_CONFIG_COMPONENTPAGE) DIALOGEX DISCARDABLE  0, 0, 266, 130
-#else
 IDD_SELCOM DIALOGEX DISCARDABLE  0, 0, 266, 130
-#endif
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -84,14 +66,8 @@ BEGIN
                     TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
                     WS_BORDER | WS_TABSTOP,114,39,151,90
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#if defined(APSTUDIO_INVOKED)
-IDD_INST$(NSIS_CONFIG_VISIBLE_SUPPORT) DIALOGEX DISCARDABLE  0, 0, 280, 162
-#else
 IDD_INST DIALOGEX DISCARDABLE  0, 0, 280, 162
-#endif
 STYLE DS_FIXEDSYS | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -103,14 +79,8 @@ BEGIN
                     7,6,266,130
     CTEXT           "",IDC_VERSTR,59,145,108,8,WS_DISABLED | WS_GROUP
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#if defined(APSTUDIO_INVOKED)
-IDD_INSTFILES$(NSIS_CONFIG_VISIBLE_SUPPORT) DIALOGEX DISCARDABLE  0, 0, 266, 130
-#else
 IDD_INSTFILES DIALOGEX DISCARDABLE  0, 0, 266, 130
-#endif
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -126,14 +96,8 @@ BEGIN
     ICON            IDI_ICON2,IDC_ULICON,0,0,20,20
     PUSHBUTTON      "",IDC_SHOWDETAILS,0,28,60,14,NOT WS_TABSTOP
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(_NSIS_CONFIG_UNINSTDLG)
-#if defined(APSTUDIO_INVOKED)
-IDD_UNINST$(_NSIS_CONFIG_UNINSTDLG) DIALOGEX DISCARDABLE  0, 0, 266, 130
-#else
 IDD_UNINST DIALOGEX DISCARDABLE  0, 0, 266, 130
-#endif
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -142,54 +106,13 @@ BEGIN
     EDITTEXT        IDC_EDIT1,56,43,209,12,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "",IDC_INTROTEXT,25,0,241,34
 END
-#endif
 
-#if defined(APSTUDIO_INVOKED) || defined(_NSIS_CONFIG_VERIFYDIALOG)
-#if defined(APSTUDIO_INVOKED)
-IDD_VERIFY$(_NSIS_CONFIG_VERIFYDIALOG) DIALOGEX DISCARDABLE  0, 0, 162, 22
-#else
 IDD_VERIFY DIALOGEX DISCARDABLE  0, 0, 162, 22
-#endif
 STYLE DS_MODALFRAME | DS_SHELLFONT | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Shell Dlg"
 BEGIN
     CTEXT           "",IDC_STR,7,7,148,8
 END
-#endif
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    "IDD_INST$(NSIS_CONFIG_VISIBLE_SUPPORT)", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 273
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 156
-    END
-
-    "IDD_INSTFILES$(NSIS_CONFIG_VISIBLE_SUPPORT)", DIALOG
-    BEGIN
-        RIGHTMARGIN, 246
-        BOTTOMMARGIN, 125
-    END
-
-    "IDD_VERIFY$(_NSIS_CONFIG_VERIFYDIALOG)", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 155
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 15
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -205,7 +128,6 @@ END
 2 TEXTINCLUDE DISCARDABLE 
 BEGIN
     "#include ""afxres.h""\r\n"
-    "#include ""config.h""\0"
 END
 
 3 TEXTINCLUDE DISCARDABLE 
@@ -215,29 +137,4 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON2               ICON    DISCARDABLE     "nsis.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-#if defined(APSTUDIO_INVOKED) || defined(NSIS_CONFIG_COMPONENTPAGE)
-#if defined(APSTUDIO_INVOKED)
-IDB_BITMAP1$(NSIS_CONFIG_COMPONENTPAGE) BITMAP  DISCARDABLE     "bitmap1.bmp"
-#else
-IDB_BITMAP1             BITMAP  DISCARDABLE     "bitmap1.bmp"
 #endif
-#endif
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
