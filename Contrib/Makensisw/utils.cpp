@@ -304,6 +304,27 @@ void RestoreWindowPos(HWND hwnd) {
     DWORD l = sizeof(p);
     DWORD t;
     if ((RegQueryValueEx(hKey,REGLOC,NULL,&t,(unsigned char*)&p,&l)==ERROR_SUCCESS)&&(t == REG_BINARY)&&(l==sizeof(p))) {
+      int width, height;
+
+      width = GetSystemMetrics(SM_CXFULLSCREEN);
+      height = GetSystemMetrics(SM_CYFULLSCREEN);
+      height += GetSystemMetrics(SM_CYCAPTION);
+      if((p.rcNormalPosition.right-p.rcNormalPosition.left) > width) {
+        p.rcNormalPosition.left = 0;
+        p.rcNormalPosition.right = width;
+      }
+      else if(p.rcNormalPosition.right > width) {
+        p.rcNormalPosition.left = (width - (p.rcNormalPosition.right-p.rcNormalPosition.left))/2;
+      }
+
+      if((p.rcNormalPosition.bottom-p.rcNormalPosition.top) > height) {
+        p.rcNormalPosition.top = 0;
+        p.rcNormalPosition.bottom = height;
+      }
+      else if(p.rcNormalPosition.bottom > height) {
+        p.rcNormalPosition.top = (height - (p.rcNormalPosition.bottom-p.rcNormalPosition.top))/2;
+      }
+
       p.length = sizeof(p);
       SetWindowPlacement(hwnd, &p);
     }
