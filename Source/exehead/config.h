@@ -391,26 +391,9 @@
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-// This is the old static var count that occupies memory
-// From $0 to $PLUGINSDIR, $_CLICK
-#define USER_VARS_COUNT 28
-
-// This is the total number of old static var
-// From $0 to $HWNDPARENT
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  #define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 32
-#else
-  #define TOTAL_COMPATIBLE_STATIC_VARS_COUNT 31
-#endif
-
 #define VARS_SECTION_NAME ".ndata"
 
 typedef char NSIS_STRING[NSIS_MAX_STRLEN];
-
-// MAX_NAMED_USER_VARS defines the maximum of named user variables
-// the complier also use this value to abort if exceded
-// The real maximum is (0x0FFF - USER_VARS_COUNT) = 4068
-#define MAX_NAMED_USER_VARS (0x0FFF - USER_VARS_COUNT)
 
 #endif//!APSTUDIO_INVOKED
 

@@ -308,7 +308,10 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
       SendMessage(hwParent, WM_NOTIFY_CUSTOM_READY, (WPARAM)hwndDlg, 0);
       ShowWindow(hwndDlg, SW_SHOWNA);
-      SetFocus(GetDlgItem(hwParent, IDOK));
+      if (IsDlgButtonChecked(hwndDlg, IDC_CHECK) == BST_CHECKED)
+        SendMessage(hwndDlg, WM_NEXTDLGCTL, (WPARAM) hwCheckBox, TRUE);
+      else
+        SendMessage(hwndDlg, WM_NEXTDLGCTL, (WPARAM) hwLocation, TRUE);
     }
     break;
     case WM_COMMAND:
