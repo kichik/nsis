@@ -286,7 +286,9 @@ numbers from 1 to NumFields. Each Field section can contain the following values
       <td class="lefttable"><span class="bold">Left<br />Right<br />Top<br />Bottom</span></td>
       <td class="lefttable"><span class="italic">(required)</span></td>
       <td class="righttable">The position on the dialog where this
-        control appears.<br />Sorry, no GUI here to help you.<br /><br />
+        control appears. All sizes should be set in dialog units.
+        To get the right dimensions for your controls, design your dialog
+        using a resource editor and copy the dimensions to the INI file.<br /><br />
         <span class="bold">Note:</span> For combobox or droplist, the
         "<span class="italic">bottom</span>" value is not used in the
         same way.<br />In this case, the bottom value is the maximum
