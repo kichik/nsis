@@ -106,8 +106,8 @@
   UninstallIcon "${MUI_UNICON}"
   CheckBitmap "${MUI_CHECKBITMAP}"
   SetFont "${MUI_FONT}" "${MUI_FONTSIZE}"
-  InstallColors "${MUI_INSTALLCOLORS}"
-  InstProgressFlags "${MUI_PROGRESSBAR}"
+  InstallColors ${MUI_INSTALLCOLORS}
+  InstProgressFlags ${MUI_PROGRESSBAR}
   BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
 
   !ifndef MUI_NOVERBOSE
