@@ -1,7 +1,11 @@
 ;NSIS Setup Script
 
 !define VER_MAJOR 2
-!define VER_MINOR 0b4
+!define VER_MINOR 0
+!define VER_REVISION 0
+!define VER_BUILD 12
+
+!define VER_FILE "20b4"
 !define VER_DISPLAY "2.0 beta 4 (CVS)"
 
 ;--------------------------------
@@ -13,16 +17,12 @@
 ;--------------------------------
 ;Configuration
 
-OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
+OutFile ..\nsis${VER_FILE}.exe
 SetCompressor bzip2
 
 InstType "Full (w/ Source and Contrib)"
 InstType "Normal (w/ Contrib, w/o Source)"
 InstType "Lite (w/o Source or Contrib)"
-
-ShowInstDetails show
-ShowUninstDetails show
-SetDateSave on
 
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
@@ -52,6 +52,7 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "..\license.txt"
+Page custom PageReinstall PageLeaveReinstall
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -71,6 +72,16 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 ;Languages
 
 !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Reserve Files
+  
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for BZIP2 (solid) compression
+  
+  ReserveFile "makensis.ini"
+  !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 ;--------------------------------
 ;Installer Sections
@@ -948,7 +959,12 @@ Section -post
 
   SetOutPath $INSTDIR
 
-  WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
+  WriteRegStr HKLM "Software\NSIS" "" $INSTDIR
+  WriteRegDword HKLM "Software\NSIS" "VersionMajor" "${VER_MAJOR}"
+  WriteRegDword HKLM "Software\NSIS" "VersionMinor" "${VER_MINOR}"
+  WriteRegDword HKLM "Software\NSIS" "VersionRevision" "${VER_REVISION}"
+  WriteRegDword HKLM "Software\NSIS" "VersionBuild" "${VER_BUILD}"
+
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" "$INSTDIR\uninst-nsis.exe"
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
@@ -956,7 +972,7 @@ Section -post
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${VER_DISPLAY}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}.${VER_REVISION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "URLInfoAbout" "http://nsis.sf.net/"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
@@ -1160,6 +1176,100 @@ SectionEnd
 
 ;--------------------------------
 ;Installer Functions
+
+Function .onInit
+
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "makensis.ini"
+
+FunctionEnd
+
+Function PageReinstall
+
+  ReadRegStr $R0 HKLM "Software\NSIS" ""
+  
+  StrCmp $R0 "" 0 +2
+    Abort
+  
+  ;Detect version
+    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMajor"
+    IntCmp $R0 ${VER_MAJOR} minor_check new_version older_version
+  minor_check:
+    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionMinor"
+    IntCmp $R0 ${VER_MINOR} revision_check new_version older_version
+  revision_check:
+    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionRevision"
+    IntCmp $R0 ${VER_REVISION} build_check new_version older_version
+  build_check:
+    ReadRegDWORD $R0 HKLM "Software\NSIS" "VersionBuild"
+    IntCmp $R0 ${VER_BUILD} same_version new_version older_version
+
+  new_version:
+
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A older version of NSIS is installed on your system. It's recommanded that you uninstall the curent version before installing. Select the operation you want to perform and click Next to continue."
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
+   StrCpy $R0 "1"
+   Goto reinst_start
+
+  older_version:
+
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "A newer version of NSIS is already installed! It is not recommanded that you install an older version. If you really want to install this older version, it's better to uninstall the current version first. Select the operation you want to perform and click Next to continue."
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Uninstall before installing"
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Do not uninstall"
+   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose how you want to install NSIS."
+   StrCpy $R0 "1"
+   Goto reinst_start
+
+  same_version:
+
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 1" "Text" "NSIS ${VER_DISPLAY} is already installed. Select the operation you want to perform and click Next to continue."
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 2" "Text" "Add/Reinstall components"
+   !insertmacro MUI_INSTALLOPTIONS_WRITE "makensis.ini" "Field 3" "Text" "Uninstall NSIS"
+   !insertmacro MUI_HEADER_TEXT "Already Installed" "Choose the maintenance option to perform."
+   StrCpy $R0 "2"
+
+  reinst_start:
+
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "makensis.ini"
+  
+FunctionEnd
+
+Function PageLeaveReinstall
+   
+  !insertmacro MUI_INSTALLOPTIONS_READ $R1 "makensis.ini" "Field 2" "State"
+
+  StrCmp $R0 "1" 0 +2
+    StrCmp $R1 "1" reinst_uninstall reinst_done
+  
+  StrCmp $R0 "2" 0 +3
+    StrCmp $R1 "1" reinst_done reinst_uninstall
+
+  reinst_uninstall:
+  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString"
+ 
+  ;Run uninstaller
+  HideWindow
+  
+    ClearErrors
+    ExecWait '"$R1" _?=$INSTDIR'
+    
+    IfErrors no_remove_uninstaller
+    IfFileExists "$INSTDIR\makensis.exe" no_remove_uninstaller
+    
+      Delete $R1
+      RMDir $INSTDIR
+      
+    no_remove_uninstaller:
+    
+  StrCmp $R0 "2" 0 +2
+    Quit
+    
+  BringToFront
+
+  reinst_done:
+  
+FunctionEnd
 
 !macro secSelected SEC
   SectionGetFlags ${SEC} $R7
