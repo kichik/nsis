@@ -121,10 +121,6 @@ SOURCE=.\bzip2\bzlib.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\bzip2\bzlib_private.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\bzip2\compress.c
 # End Source File
 # Begin Source File
