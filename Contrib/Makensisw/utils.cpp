@@ -28,7 +28,7 @@
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
-char g_mru_files[MRU_SIZE][MAX_PATH] = { NULL, NULL, NULL, NULL, NULL };
+char g_mru_list[MRU_LIST_SIZE][MAX_PATH] = { NULL, NULL, NULL, NULL, NULL };
 
 extern NSCRIPTDATA g_sdata;
 
@@ -414,18 +414,18 @@ BOOL PopMRUFile(char* fname)
 {
   int i;
 
-  for(i=0; i<MRU_SIZE; i++) {
-    if(!lstrcmpi(g_mru_files[i], fname)) {
+  for(i=0; i<MRU_LIST_SIZE; i++) {
+    if(!lstrcmpi(g_mru_list[i], fname)) {
       break;
     }
   }
 
-  if(i < MRU_SIZE) {
+  if(i < MRU_LIST_SIZE) {
     int j;
-    for(j = i; j < MRU_SIZE-1; j++) {
-      lstrcpy(g_mru_files[j],g_mru_files[j+1]);
+    for(j = i; j < MRU_LIST_SIZE-1; j++) {
+      lstrcpy(g_mru_list[j],g_mru_list[j+1]);
     }
-    g_mru_files[MRU_SIZE-1][0]='\0';
+    g_mru_list[MRU_LIST_SIZE-1][0]='\0';
     return TRUE;
   }
   else {
@@ -437,7 +437,11 @@ void PushMRUFile(char* fname)
 {
   int i;
   char buf[MAX_PATH+1];
+  DWORD   rv;
+  char*  file_part;
+  char full_file_name[MAX_PATH+1];
 
+  my_memset(full_file_name,0,sizeof(full_file_name));
   if(!fname || fname[0] == '\0') {
     return;
   }
@@ -449,33 +453,69 @@ void PushMRUFile(char* fname)
   if(buf[lstrlen(buf)-1] == '"') {
     buf[lstrlen(buf)-1] = '\0';
   }
-  PopMRUFile(buf);
-  for(i = MRU_SIZE - 2; i >= 0; i--) {
-    lstrcpy(g_mru_files[i+1], g_mru_files[i]);
+  rv = GetFullPathName(buf,sizeof(full_file_name),full_file_name,&file_part);
+  if (rv == 0) {
+    return;
   }
-  lstrcpy(g_mru_files[0],buf);
+
+  PopMRUFile(full_file_name);
+  for(i = MRU_LIST_SIZE - 2; i >= 0; i--) {
+    lstrcpy(g_mru_list[i+1], g_mru_list[i]);
+  }
+  lstrcpy(g_mru_list[0],full_file_name);
 }
 
 void BuildMRUMenu(HMENU hMenu)
 {
   int i;
   MENUITEMINFO mii;
+  char buf[MRU_DISPLAY_LENGTH+1];
+  char buf2[MRU_DISPLAY_LENGTH - 6];
 
-  for(i = 0; i < MRU_SIZE; i++) {
+  for(i = 0; i < MRU_LIST_SIZE; i++) {
     DeleteMenu(hMenu, IDM_MRU_FILE+i, MF_BYCOMMAND);
   }
 
-  for(i = 0; i < MRU_SIZE; i++) {
-    if(g_mru_files[i][0]) {
+  for(i = 0; i < MRU_LIST_SIZE; i++) {
+    if(g_mru_list[i][0]) {
+      my_memset(buf,0,sizeof(buf));
       my_memset(&mii, 0, sizeof(mii));
       mii.cbSize = sizeof(mii);
       mii.fMask = MIIM_ID | MIIM_TYPE | MIIM_STATE;
       mii.wID = IDM_MRU_FILE+i;
       mii.fType = MFT_STRING;
-      mii.dwTypeData = g_mru_files[i];
-      mii.cch = sizeof(g_mru_files[i]);
+      if(lstrlen(g_mru_list[i]) > MRU_DISPLAY_LENGTH) {
+        char *p = my_strrchr(g_mru_list[i],'\\');
+        if(p) {
+          p++;
+          if(lstrlen(p) > MRU_DISPLAY_LENGTH - 7) {
+            my_memset(buf2,0,sizeof(buf2));
+            lstrcpyn(buf2,p,MRU_DISPLAY_LENGTH - 9);
+            lstrcat(buf2,"...");
+
+            lstrcpyn(buf,g_mru_list[i],4);
+            lstrcat(buf,"...\\");
+            lstrcat(buf,buf2);
+          }
+          else {
+            lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH - lstrlen(p) - 3));
+            lstrcat(buf,"...\\");
+            lstrcat(buf,p);
+          }
+        }
+        else {
+          lstrcpyn(buf,g_mru_list[i],(MRU_DISPLAY_LENGTH-2));
+          lstrcat(buf,"...");
+        }
+      }
+      else {
+        lstrcpy(buf, g_mru_list[i]);
+      }
+
+      mii.dwTypeData = buf;
+      mii.cch = sizeof(buf);
       mii.fState = MFS_ENABLED;
-      InsertMenuItem(hMenu, IDM_MRU_FILE+i, TRUE, &mii);
+      InsertMenuItem(hMenu, IDM_MRU_FILE+i, FALSE, &mii);
     }
     else {
       break;
@@ -485,10 +525,20 @@ void BuildMRUMenu(HMENU hMenu)
 
 void LoadMRUFile(int position)
 {
-  if (!g_sdata.thread && position >=0 && position < MRU_SIZE && g_mru_files[position][0]) {
-    g_sdata.script = (char *)GlobalAlloc(GPTR,lstrlen(g_mru_files[position])+3);
-    wsprintf(g_sdata.script,"\"%s\"",g_mru_files[position]);
-    PushMRUFile(g_sdata.script);
+  WIN32_FIND_DATA wfd;
+  HANDLE h;
+
+  if (!g_sdata.thread && position >=0 && position < MRU_LIST_SIZE && g_mru_list[position][0]) {
+    g_sdata.script = (char *)GlobalAlloc(GPTR,lstrlen(g_mru_list[position])+3);
+    wsprintf(g_sdata.script,"\"%s\"",g_mru_list[position]);
+    h = FindFirstFile(g_mru_list[position],&wfd);
+    if(h != INVALID_HANDLE_VALUE) {
+      PushMRUFile(g_mru_list[position]);
+      FindClose(h);
+    }
+    else {
+      PopMRUFile(g_mru_list[position]);
+    }
     ResetObjects();
     CompileNSISScript();
   }
@@ -504,11 +554,11 @@ void RestoreMRUList()
         if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
             char buf[8];
             DWORD l;
-            for(int i=0; i<MRU_SIZE; i++) {
+            for(int i=0; i<MRU_LIST_SIZE; i++) {
                 wsprintf(buf,"%d",i);
-                l = sizeof(g_mru_files[n]);
-                RegQueryValueEx(hSubKey,buf,NULL,NULL,(unsigned char*)g_mru_files[n],&l);
-                if(g_mru_files[n][0] != '\0') {
+                l = sizeof(g_mru_list[n]);
+                RegQueryValueEx(hSubKey,buf,NULL,NULL,(unsigned char*)g_mru_list[n],&l);
+                if(g_mru_list[n][0] != '\0') {
                   n++;
                 }
             }
@@ -516,8 +566,8 @@ void RestoreMRUList()
         }
         RegCloseKey(hKey);
     }
-    for(i = n; i < MRU_SIZE; i++) {
-      g_mru_files[i][0] = '\0';
+    for(i = n; i < MRU_LIST_SIZE; i++) {
+      g_mru_list[i][0] = '\0';
     }
 }
 
@@ -529,12 +579,37 @@ void SaveMRUList()
     if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
         if (RegCreateKey(hKey,REGMRUSUBKEY,&hSubKey) == ERROR_SUCCESS) {
             char buf[8];
-            for(i = 0; i < MRU_SIZE; i++) {
+            for(i = 0; i < MRU_LIST_SIZE; i++) {
                 wsprintf(buf,"%d",i);
-                RegSetValueEx(hSubKey,buf,0,REG_SZ,(const unsigned char *)g_mru_files[i],lstrlen(g_mru_files[i]));
+                RegSetValueEx(hSubKey,buf,0,REG_SZ,(const unsigned char *)g_mru_list[i],lstrlen(g_mru_list[i]));
             }
             RegCloseKey(hSubKey);
         }
         RegCloseKey(hKey);
     }
+}
+
+void ClearMRUList()
+{
+  int i;
+  for(i=0; i<MRU_LIST_SIZE; i++) {
+    g_mru_list[i][0] = '\0';
+  }
+}
+
+void SetClearMRUListMenuitemState(HMENU hMenu)
+{
+  MENUITEMINFO mii;
+  my_memset(&mii, 0, sizeof(mii));
+  mii.cbSize = sizeof(mii);
+  mii.fMask = MIIM_STATE;
+
+  if(g_mru_list[0][0]) {
+    mii.fState = MFS_ENABLED;
+  }
+  else {
+    mii.fState = MFS_GRAYED;
+  }
+
+  SetMenuItemInfo(hMenu, IDM_CLEAR_MRU_LIST,FALSE,&mii);
 }
