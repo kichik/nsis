@@ -34,6 +34,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   MSG  msg;
   int status;
   HACCEL haccel;
+
   my_memset(&g_sdata,0,sizeof(NSCRIPTDATA));
   my_memset(&g_resize,0,sizeof(NRESIZEDATA));
   my_memset(&g_find,0,sizeof(NFINDREPLACE));
@@ -41,31 +42,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.script_alloced=false;
   g_sdata.defines = NULL;
   RestoreDefines();
-  g_sdata.script=GetCommandLine();
-  if (*g_sdata.script=='"') { g_sdata.script++; while (*g_sdata.script && *g_sdata.script++!='"' ); }
-  else while (*g_sdata.script!=' ' && *g_sdata.script) g_sdata.script++;
-  while (*g_sdata.script==' ') g_sdata.script++;
-  if(lstrlen(g_sdata.script)) {
-    bool is_quoted = false;
-    char *p = g_sdata.script + (lstrlen(g_sdata.script) - 1);
-
-    if(*p == '"') is_quoted = true;
-    p--;
-    while(p > g_sdata.script) {
-      if(*p == ' ') {
-        if(!is_quoted) {
-          p++;
-          break;
-        }
-      }
-      else if(*p == '"') {
-        p++;
-        break;
-      }
-      p--;
-    }
-    PushMRUFile(p);
-  }
 
   if (!InitBranding()) {
     MessageBox(0,NSISERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
@@ -109,6 +85,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_INITDIALOG:
     {
+	    int argc;
+	    char **argv;
+      int i;
+      int argSpaceSize;
+
       g_sdata.hwnd=hwndDlg;
       HICON hIcon = LoadIcon(g_sdata.hInstance,MAKEINTRESOURCE(IDI_ICON));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
@@ -129,7 +110,45 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
       RestoreWindowPos(g_sdata.hwnd);
       g_sdata.compressor =  (NCOMPRESSOR)-1;
-      RestoreCompressor();
+
+      argSpaceSize = SetArgv((char *)GetCommandLine(), &argc, &argv);
+      if(argc > 1) {
+        int n;
+
+        g_sdata.script_alloced = true;
+        g_sdata.script = (char *)GlobalAlloc(GPTR,argSpaceSize + 2*(argc-1)*sizeof(char)+1);
+        lstrcpy(g_sdata.script,"");
+        for(i=1; i<argc; i++) {
+          if(!lstrncmpi(argv[i],"/XSetCompressor ",lstrlen("/XSetCompressor "))) {
+            char *p = argv[i]+lstrlen("/XSetCompressor ");
+            if(!lstrncmpi(p,"/FINAL ",lstrlen("/FINAL "))) {
+              p += lstrlen("/FINAL ");
+            }
+            while(*p == ' ') p++;
+            if(!lstrcmpi(p,"zlib")) {
+              SetCompressor(COMPRESSOR_ZLIB);
+            }
+            else if(!lstrcmpi(p,"bzip2")) {
+              SetCompressor(COMPRESSOR_BZIP2);
+            }
+          }
+          else {
+            lstrcat(g_sdata.script,"\"");
+            lstrcat(g_sdata.script,argv[i]);
+            lstrcat(g_sdata.script,"\" ");
+          }
+        }
+        n = lstrlen(g_sdata.script);
+        if(n > 0) {
+          g_sdata.script[n-1] = '\0';
+        }
+        PushMRUFile(argv[argc-1]);
+	      LocalFree(argv);
+      }
+
+      if(g_sdata.compressor ==  (NCOMPRESSOR)-1) {
+        RestoreCompressor();
+      }
       CompileNSISScript();
       return TRUE;
     }

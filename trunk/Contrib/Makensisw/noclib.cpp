@@ -50,9 +50,23 @@ void *my_memset(void *dest, int c, size_t count) {
   return dest;
 }
 
-int lstrcmpn(char *s1, const char *s2, int chars)
+// iceman_k's clib methods
+int lstrncmp(char *s1, const char *s2, int chars)
 {
     while ((chars > 0) && (*s1) && (*s2) && (*(s1) == *(s2))) chars--, s1++, s2++;
     if ((chars == 0) || (*s1 == *s2)) return 0;
     return (*s1 - *s2);
+}
+
+int lstrncmpi(char *s1, const char *s2, int chars)
+{
+  while (chars-- && *s1 && *s2)
+  {
+    char ss1=*s1++;
+    char ss2=*s2++;
+    if (ss1>='a' && ss1 <= 'z') ss1+='A'-'a';
+    if (ss2>='a' && ss2 <= 'z') ss2+='A'-'a';
+    if (ss1 != ss2) return ss1-ss2;
+  }
+  return 0;
 }
