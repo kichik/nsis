@@ -161,6 +161,7 @@ HWND hMainWindow      = NULL;
 HWND hCancelButton    = NULL;
 HWND hNextButton      = NULL;
 HWND hBackButton      = NULL;
+
 HINSTANCE m_hInstance = NULL;
 
 char *pszFilename         = NULL;
@@ -174,6 +175,7 @@ int bCancelEnabled = FALSE;   // by ORTIM: 13-August-2002
 int bCancelShow    = FALSE;   // by ORTIM: 13-August-2002
 
 FieldType *pFields   = NULL;
+int nRectId          = 0;
 int nNumFields       = 0;
 int g_done;
 
@@ -460,6 +462,8 @@ bool ReadSettings(void) {
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
 
+  nRectId = GetPrivateProfileInt("Settings", "Rect", 1018, pszFilename);
+
   bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0xFFFF0000, pszFilename);
   // by ORTIM: 13-August-2002
   bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 0xFFFF0000, pszFilename);
@@ -522,6 +526,34 @@ bool ReadSettings(void) {
     pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
     pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
+    if (pFields[nIdx].nType == FIELD_LABEL) {
+      int j = 0;
+      for (int i = 0; pFields[nIdx].pszText[i]; i++, j++) {
+        if (pFields[nIdx].pszText[i] == '\\') {
+          switch (pFields[nIdx].pszText[i+1]) {
+            case 'n':
+              pFields[nIdx].pszText[j] = '\n';
+              break;
+            case 'r':
+              pFields[nIdx].pszText[j] = '\r';
+              break;
+            case 't':
+              pFields[nIdx].pszText[j] = '\t';
+              break;
+            case '\\':
+              pFields[nIdx].pszText[j] = '\\';
+              break;
+            default:
+              i--;
+              j--;
+              break;
+          }
+          i++;
+        }
+        else pFields[nIdx].pszText[j] = pFields[nIdx].pszText[i];
+      }
+      pFields[nIdx].pszText[j] = 0;
+    }
 
     // pszState cannot be NULL (?)
     myGetProfileString(szField, "STATE");
@@ -673,6 +705,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
       }
     break;
     case WM_CTLCOLORSTATIC:
+    case WM_CTLCOLORDLG:
     {
       COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
       if (color) {
@@ -710,14 +743,6 @@ int createCfgDlg()
     pushstring("error finding mainwnd");
     return 1; // cannot be used in silent mode unfortunately.
   }
-  childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
-  if (!childwnd) childwnd=GetDlgItem(hMainWindow,1018);
-  if (!childwnd)
-  {
-    popstring(NULL);
-    pushstring("error finding childwnd");
-    return 1;
-  }
 
   if (!g_stacktop || !*g_stacktop || !(pszFilename = (*g_stacktop)->text) || !pszFilename[0] || !ReadSettings())
   {
@@ -725,6 +750,16 @@ int createCfgDlg()
     pushstring("error finding config");
     return 1;
   }
+
+  childwnd=FindWindowEx(hMainWindow,NULL,"#32770",NULL); // find window to replace
+  if (!childwnd) childwnd=GetDlgItem(hMainWindow,nRectId);
+  if (!childwnd)
+  {
+    popstring(NULL);
+    pushstring("error finding childwnd");
+    return 1;
+  }
+
   cw_vis=IsWindowVisible(childwnd);
   if (cw_vis) ShowWindow(childwnd,SW_HIDE);
 
