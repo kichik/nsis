@@ -2901,6 +2901,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             a++;
             ent.offsets[3]=1;
           }
+          if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }
         int k=line.gettoken_enum(a,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(a,rootkeys[1]);
