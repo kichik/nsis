@@ -1,5 +1,5 @@
 #include "../exehead/config.h"
-#if (defined(EXEHEAD) && defined(NSIS_COMPRESS_USE_BZIP2)) || !defined(EXEHEAD)
+#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Library top-level functions.                          ---*/
 /*---                                               bzlib.c ---*/

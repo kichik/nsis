@@ -1,3 +1,5 @@
+#include "../exehead/config.h"
+#if (defined(NSIS_COMPRESS_USE_BZIP2) && defined(NSIS_CONFIG_COMPRESSION_SUPPORT)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Huffman coding low-level stuff                        ---*/
 /*---                                             huffman.c ---*/
@@ -227,3 +229,4 @@ void BZ2_hbCreateDecodeTables ( Int32 *limit,
 /*-------------------------------------------------------------*/
 /*--- end                                         huffman.c ---*/
 /*-------------------------------------------------------------*/
+#endif

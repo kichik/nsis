@@ -1,3 +1,5 @@
+#include "../exehead/config.h"
+#if (defined(EXEHEAD) && defined(NSIS_COMPRESS_USE_BZIP2)) || !defined(EXEHEAD)
 /*-------------------------------------------------------------*/
 /*--- Block sorting machinery                               ---*/
 /*---                                           blocksort.c ---*/
@@ -1098,3 +1100,5 @@ void BZ2_blockSort ( EState* s )
 /*-------------------------------------------------------------*/
 /*--- end                                       blocksort.c ---*/
 /*-------------------------------------------------------------*/
+
+#endif
