@@ -2,6 +2,7 @@
 
 !define VER_MAJOR 2
 !define VER_MINOR 0b4
+!define VER_DISPLAY "2.0 beta 4 (CVS)"
 
 ;--------------------------------
 ;Compile CVS Data Setup
@@ -35,10 +36,8 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 ;Modern UI Configuration
 
 ;Names
-!define MUI_PRODUCT "NSIS"
-!define MUI_VERSION "${VER_MAJOR}.${VER_MINOR} (CVS)"
-
-!define MUI_NAME "Nullsoft Install System ${MUI_VERSION}"
+Name "NSIS"
+Caption "NSIS ${VER_DISPLAY} Setup"
 
 ;Pages
 !insertmacro MUI_PAGE_WELCOME
@@ -901,7 +900,7 @@ Section -post
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "Nullsoft Install System"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayIcon" "$INSTDIR\NSIS.exe,0"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${MUI_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayVersion" "${VER_DISPLAY}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMajor" "${VER_MAJOR}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "VersionMinor" "${VER_MINOR}"
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoModify" "1"
