@@ -32,34 +32,6 @@ char *STRDUP(const char *c)
   return t;
 }
 
-void ConvertNewLines(char *str) {
-  char *p1, *p2;
-  for (p1=p2=str; *p1; p1++, p2++) {
-    if (*p1 == '\\') {
-      switch (p1[1]) {
-        case 'n':
-          *p2 = '\n';
-          break;
-        case 'r':
-          *p2 = '\r';
-          break;
-        case 't':
-          *p2 = '\t';
-          break;
-        case '\\':
-          *p2 = '\\';
-          break;
-        default:
-          p1--;
-          p2--;
-          break;
-      }
-      p1++;
-    }
-    else *p2 = *p1;
-  }
-  *p2 = 0;
-}
 
 #define FIELD_LABEL        (1)
 #define FIELD_ICON         (2)
@@ -100,6 +72,8 @@ struct TableEntry {
 
 int LookupToken(TableEntry*, char*);
 int LookupTokens(TableEntry*, char*);
+
+void ConvertNewLines(char *str);
 
 struct FieldType {
   char *pszText;
@@ -377,12 +351,13 @@ bool SaveSettings(void) {
   return true;
 }
 
+#define BROWSE_WIDTH 15
+
 void AddBrowseButtons() {
   // this function loops through all the controls and if a filerequest or dirrequest
   // control is found, then it adds the corresponding browse button.
   // NOTE: this also resizes the text box created to make room for the button.
   int nIdx;
-  int nWidth = 15;
   FieldType *pNewField;
 
   for (nIdx = nNumFields - 1; nIdx >= 0; nIdx--) {
@@ -403,7 +378,7 @@ void AddBrowseButtons() {
         //pNewField->pszValidateText = NULL;
 
         pNewField->rect.right  = pFields[nIdx].rect.right;
-        pNewField->rect.left   = pNewField->rect.right - nWidth;
+        pNewField->rect.left   = pNewField->rect.right - BROWSE_WIDTH;
         pNewField->rect.bottom = pFields[nIdx].rect.bottom;
         pNewField->rect.top    = pFields[nIdx].rect.top;
 
@@ -514,7 +489,7 @@ bool ReadSettings(void) {
     
     // Label Text - convert newline
         
-    if (pFields[nIdx].nType == FIELD_LABEL && pFields[nIdx].pszText) {
+    if (pFields[nIdx].nType == FIELD_LABEL) {
       ConvertNewLines(pFields[nIdx].pszText);
     }
 
@@ -1122,4 +1097,34 @@ int LookupTokens(TableEntry* psTable_, char* pszTokens_)
     pszEnd++;
   }
   return n;
+}
+
+void ConvertNewLines(char *str) {
+  char *p1, *p2;
+  if (!str) return;
+  for (p1=p2=str; *p1; p1++, p2++) {
+    if (*p1 == '\\') {
+      switch (p1[1]) {
+        case 'n':
+          *p2 = '\n';
+          break;
+        case 'r':
+          *p2 = '\r';
+          break;
+        case 't':
+          *p2 = '\t';
+          break;
+        case '\\':
+          *p2 = '\\';
+          break;
+        default:
+          p1--;
+          p2--;
+          break;
+      }
+      p1++;
+    }
+    else *p2 = *p1;
+  }
+  *p2 = 0;
 }
