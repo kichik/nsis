@@ -23,7 +23,7 @@ The result of all of this is an installation system for win32 that lets you comp
 
 Here's a short list of some of NSIS' features.
 
-\b SuperPiMP&trade; technology (so advanced, so amazing, we won't even tell you what it is).
+\b SuperPiMP\\&trade; technology (so advanced, so amazing, we won't even tell you what it is).
 
 \b Generates self contained, win32 executable installer.
 
@@ -52,6 +52,8 @@ Here's a short list of some of NSIS' features.
 \b Optional Silent mode for automated installations
 
 \b Installers have their own VMs that let you write code that can support:
+
+\\<ul\\>
 
 \b File extraction (with configurable overwrite parameters)
 
@@ -96,5 +98,7 @@ Here's a short list of some of NSIS' features.
 \b A lovely coding experience with elements of PHP and assembly (includes 20 general purpose variables, a stack, real flow control, etc)
 
 \b More
+
+\\</ul\\>
 
 \b Completely free for any use. See license (\k{license}).
