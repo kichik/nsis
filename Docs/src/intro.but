@@ -18,7 +18,7 @@ Even with all these features, NSIS is still the smallest installer system availa
 
 \\<b\\>Small overhead size\\</b\\>
 
-NSIS is created to be small, fast and and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
+NSIS is created to be small, fast and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
 
 \\<b\\>Compatible with all major Windows versions\\</b\\>
 
