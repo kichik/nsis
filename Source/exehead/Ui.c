@@ -835,11 +835,15 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     GetUIText(IDC_DIR,state_install_directory,NSIS_MAX_STRLEN);
     is_valid_path=is_valid_instpath(state_install_directory);
 
-    mini_memcpy(s,state_install_directory,NSIS_MAX_STRLEN);
-    s[sizeof(s)-1]=0;
+    mystrcpy(s,state_install_directory);
     if (s[1] == ':') s[3]=0;
     else if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
     {
+      char *p = mystrstr(s+2,"\\");
+      if (p) {
+        p = mystrstr(p+1,"\\");
+        if (p) *p = 0;
+      }
       addtrailingslash(s);
     }
 
@@ -857,12 +861,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
        total+=g_inst_section[x].size_kb;
     }
 
-    // Added by Amir Szekely 24th July 2002
-    // Allows 'SpaceTexts none'
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,mystrcpy(s,LANG_STR(LANG_SPACE_REQ))));
-      //if (available < total)
-        //SetTextColor(GetDC(GetDlgItem(hwndDlg,IDC_SPACEREQUIRED)), RGB(255,0,0));
       if (available != -1)
         SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,mystrcpy(s,LANG_STR(LANG_SPACE_AVAIL))));
       else
