@@ -71,15 +71,15 @@ Završeno
 # ^LicenseText
 Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
 # ^LicenseTextCB
-Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite ispod kvadratiæ. $_CLICK
+Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
 # ^LicenseTextRB
-Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite ispod prvu opciju. $_CLICK
+Molim proèitajte licencu prije instalacije programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
 # ^UnLicenseText
 Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite 'Prihvaæam'.
 # ^UnLicenseTextCB
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite ispod kvadratiæ. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, oznaèite donji kvadratiæ. $_CLICK
 # ^UnLicenseTextRB
-Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite ispod prvu opciju. $_CLICK
+Molim proèitajte licencu prije uklanjanja programa $(^Name). Ukoliko prihvaæate sve uvjete ugovora, odaberite prvu donju opciju. $_CLICK
 # ^Custom
 Posebna
 # ^ComponentsText
@@ -115,7 +115,7 @@ Mapa iz koje æe program $(^Name) biti uklonjen:
 # ^SpaceRequired
 "Potrebno prostora na disku: "
 # ^UninstallingText
-Pokrenuli ste postupak uklanjanja programa $(^Name) s Vašeg raèunala. $_CLICK
+Program $(^Name) æe biti uklonjen iz slijedeæe mape. $_CLICK
 # ^UninstallingSubText
 Uklanjam iz:
 # ^FileError
