@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (c) 2003 Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
@@ -42,7 +42,7 @@ TBBUTTON CreateToolBarButton(int iBitmap, int idCommand, BYTE fsState, BYTE fsSt
 }
 
 void CreateToolBar()
-{ 
+{
   static TBBUTTON tbButton[BUTTONCOUNT];
   tbButton[TBB_LOADSCRIPT]  = CreateToolBarButton(IDB_LOADSCRIPT,    IDM_LOADSCRIPT, TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_SAVE]        = CreateToolBarButton(IDB_SAVE,          IDM_SAVE,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
@@ -53,11 +53,7 @@ void CreateToolBar()
   tbButton[TBB_SEP2]        = CreateToolBarButton(0,                 0,              TBSTATE_ENABLED,        TBSTYLE_SEP,      0, 0);
   tbButton[TBB_RECOMPILE]   = CreateToolBarButton(IDB_RECOMPILE,     IDM_RECOMPILE,  TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   tbButton[TBB_DEFINES]     = CreateToolBarButton(IDB_DEFINES,       IDM_DEFINES,    TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
-#ifdef COMPRESSOR_OPTION
   tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(IDB_COMPRESSOR,    IDM_COMPRESSOR, TBSTATE_ENABLED,        TBSTYLE_DROPDOWN, 0, 0);
-#else
-  tbButton[TBB_COMPRESSOR]  = CreateToolBarButton(0,                 0,              TBSTATE_HIDDEN,         TBSTYLE_DROPDOWN, 0, 0);
-#endif
   tbButton[TBB_TEST]        = CreateToolBarButton(IDB_TEST,          IDM_TEST,       TBSTATE_INDETERMINATE,  TBSTYLE_BUTTON,   0, 0);
   // Added by Darren Owen (DrO) on 1/10/2003
   tbButton[TBB_RECOMPILE_TEST] = CreateToolBarButton(IDB_RECOMPILE_TEST, IDM_RECOMPILE_TEST, TBSTATE_INDETERMINATE, TBSTYLE_BUTTON, 0, 0);
@@ -84,18 +80,15 @@ void CreateToolBar()
                                    IMAGEWIDTH,
                                    IMAGEHEIGHT,
                                     sizeof(TBBUTTON));
-#ifdef COMPRESSOR_OPTION
   SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, (LPARAM) (DWORD) TBSTYLE_EX_DRAWDDARROWS);
-  HMENU toolmenu = GetSubMenu(g_sdata.menu, 2);
-  g_toolbar.dropdownmenu = GetSubMenu(toolmenu,2);
+  HMENU toolmenu = GetSubMenu(g_sdata.menu, TOOLS_MENU_INDEX);
+  g_toolbar.dropdownmenu = GetSubMenu(toolmenu, COMPRESSOR_MENU_INDEX);
   RECT rect;
   SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, TBB_COMPRESSOR, (LPARAM) (LPRECT) &rect);
   g_toolbar.dropdownpoint.x = rect.left;
   g_toolbar.dropdownpoint.y = rect.bottom+1;
-#endif
 }
 
-#ifdef COMPRESSOR_OPTION
 void UpdateToolBarCompressorButton()
 {
   int iBitmap;
@@ -115,9 +108,13 @@ void UpdateToolBarCompressorButton()
       iBitmap = IDB_COMPRESSOR_ZLIB;
       iString = IDS_ZLIB;
       break;
-    case COMPRESSOR_GZIP:
-      iBitmap = IDB_COMPRESSOR_GZIP;
-      iString = IDS_GZIP;
+    case COMPRESSOR_BZIP2:
+      iBitmap = IDB_COMPRESSOR_BZIP2;
+      iString = IDS_BZIP2;
+      break;
+    case COMPRESSOR_BEST:
+      iBitmap = IDB_COMPRESSOR_BEST;
+      iString = IDS_BEST;
       break;
     default:
       return;
@@ -138,16 +135,15 @@ void UpdateToolBarCompressorButton()
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
 
-  ti.cbSize = sizeof(TOOLINFO); 
-  ti.uFlags = 0; 
-  ti.hinst = g_sdata.hInstance; 
-  ti.hwnd = g_toolbar.hwnd; 
+  ti.cbSize = sizeof(TOOLINFO);
+  ti.uFlags = 0;
+  ti.hinst = g_sdata.hInstance;
+  ti.hwnd = g_toolbar.hwnd;
   ti.uId = (UINT)TBB_COMPRESSOR;
-  SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti); 
+  SendMessage(g_tip.tip, TTM_GETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
   ti.lpszText = (LPSTR)szBuffer;
-  SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti); 
+  SendMessage(g_tip.tip, TTM_SETTOOLINFO, 0, (LPARAM) (LPTOOLINFO) &ti);
 }
-#endif
 
 void AddToolBarButtonTooltip(int id, int iString)
 {
@@ -159,23 +155,23 @@ void AddToolBarButtonTooltip(int id, int iString)
 
   SendMessage(g_toolbar.hwnd, TB_GETITEMRECT, id, (LPARAM) (LPRECT) &rect);
 
-  ti.cbSize = sizeof(TOOLINFO); 
-  ti.uFlags = 0; 
-  ti.hwnd = g_toolbar.hwnd; 
-  ti.hinst = g_sdata.hInstance; 
-  ti.uId = (UINT)id; 
+  ti.cbSize = sizeof(TOOLINFO);
+  ti.uFlags = 0;
+  ti.hwnd = g_toolbar.hwnd;
+  ti.hinst = g_sdata.hInstance;
+  ti.uId = (UINT)id;
 
   LoadString(g_sdata.hInstance,
              iString,
              szBuffer,
              sizeof(szBuffer));
-  ti.lpszText = (LPSTR) szBuffer; 
-  ti.rect.left =rect.left; 
-  ti.rect.top = rect.top; 
-  ti.rect.right = rect.right; 
-  ti.rect.bottom = rect.bottom; 
+  ti.lpszText = (LPSTR) szBuffer;
+  ti.rect.left =rect.left;
+  ti.rect.top = rect.top;
+  ti.rect.right = rect.right;
+  ti.rect.bottom = rect.bottom;
 
-  SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti); 
+  SendMessage(g_tip.tip, TTM_ADDTOOL, 0, (LPARAM) (LPTOOLINFO) &ti);
 }
 
 void AddToolBarTooltips()
@@ -187,9 +183,7 @@ void AddToolBarTooltips()
   AddToolBarButtonTooltip(TBB_FIND, IDS_FIND);
   AddToolBarButtonTooltip(TBB_RECOMPILE, IDS_RECOMPILE);
   AddToolBarButtonTooltip(TBB_DEFINES, IDS_DEFINES);
-#ifdef COMPRESSOR_OPTION
   AddToolBarButtonTooltip(TBB_COMPRESSOR, IDS_COMPRESSOR);
-#endif
   AddToolBarButtonTooltip(TBB_TEST, IDS_TEST);
   // Added by Darren Owen (DrO) on 1/10/2003
   AddToolBarButtonTooltip(TBB_RECOMPILE_TEST, IDS_RECOMPILE_TEST);
@@ -205,11 +199,10 @@ void AddToolBarTooltips()
 void EnableToolBarButton(int id, BOOL enabled)
 {
   UINT state = (enabled?TBSTATE_ENABLED:TBSTATE_INDETERMINATE);
-  
+
   SendMessage(g_toolbar.hwnd, TB_SETSTATE, id, MAKELPARAM(state, 0));
 }
 
-#ifdef COMPRESSOR_OPTION
 void ShowToolbarDropdownMenu()
 {
   RECT rect;
@@ -222,4 +215,3 @@ void ShowToolbarDropdownMenu()
                 g_sdata.hwnd,
                 0);
 }
-#endif

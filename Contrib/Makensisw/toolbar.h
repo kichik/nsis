@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (c) 2003 Sunil Kamath
 
   This software is provided 'as-is', without any express or implied
@@ -20,11 +20,11 @@
 */
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
-#include <commctrl.h> 
+#include <commctrl.h>
 
 #define TOOLBAR_ID                   10001
 
-#define NUMIMAGES       19
+#define NUMIMAGES       21
 #define IMAGEWIDTH      16
 #define IMAGEHEIGHT     16
 #define BUTTONWIDTH     0
@@ -63,9 +63,7 @@
 #define IDB_FIND                         4
 #define IDB_RECOMPILE                    5
 #define IDB_DEFINES                      6
-#ifdef COMPRESSOR_OPTION
 #define IDB_COMPRESSOR                   7
-#endif
 #define IDB_TEST                         8
 #define IDB_EDITSCRIPT                   9
 #define IDB_BROWSESCR                    10
@@ -74,12 +72,11 @@
 #define IDB_FORUM                        14
 #define IDB_NSISUPDATE                   15
 #define IDB_DOCS                         16
-#ifdef COMPRESSOR_OPTION
-#define IDB_COMPRESSOR_ZLIB              17
-#define IDB_COMPRESSOR_GZIP              18
-#endif
+#define IDB_COMPRESSOR_BZIP2             17
+#define IDB_COMPRESSOR_ZLIB              18
 // Added by Darren Owen (DrO) on 1/10/2003
 #define IDB_RECOMPILE_TEST               19
+#define IDB_COMPRESSOR_BEST              20
 
 typedef struct ToolBarStruct {
   HWND hwnd;
@@ -90,8 +87,6 @@ typedef struct ToolBarStruct {
 void CreateToolBar();
 void EnableToolBarButton(int, BOOL);
 void AddToolBarTooltips();
-#ifdef COMPRESSOR_OPTION
 void ShowToolbarDropdownMenu();
 void UpdateToolBarCompressorButton();
-#endif
 #endif

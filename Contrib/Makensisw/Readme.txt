@@ -173,6 +173,8 @@ Version History
  - Added NSIS Update menu.
  - Added toolbar for commonly used menus.
  - Made the Toolbar style flat
+ - Added option for compile & run
+ - Added compressor setting option
  
 Copyright Information
 ---------------------
