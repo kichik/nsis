@@ -1054,6 +1054,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         fseek(fp,0,SEEK_END);
         datalen=ftell(fp);
+        if (!datalen)
+        {
+          ERROR_MSG("LicenseData: empty license file \"%s\"\n",line.gettoken_str(a));
+          fclose(fp);
+          return PS_ERROR;
+        }
         rewind(fp);
         char *data=(char*)malloc(datalen+1);
         if (fread(data,1,datalen,fp) != datalen) {
