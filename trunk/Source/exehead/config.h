@@ -71,17 +71,20 @@
   // compressed together. Runtime requirements are increased, but potential
   // for compression is as well. Requires that the installer create a 
   // (potentially large) temporary file in the temp directory.
+  // not recommended for zlib installers, since bzip2 performs much better
+  // than zlib in whole mode usually.
   // #define NSIS_ZLIB_COMPRESS_WHOLE
 
   // NSIS_BZIP2_COMPRESS_WHOLE makes all install data in bzip2 installers
   // compressed together. Runtime requirements are increased, but potential
   // for compression is as well. Requires that the installer create a 
   // (potentially large) temporary file in the temp directory.
+  // recommended for bzip2, since bzip2 really shines in this mode
   #define NSIS_BZIP2_COMPRESS_WHOLE
 
   // if NSIS_COMPRESS_BZIP2_SMALLMODE is defined, bzip2's decompressor uses
-  // bzip2's alternative decompression method that uses a lot less memory, at
-  // the expense of speed. not recommended.
+  // bzip2's alternative decompression method that uses less runtime 
+  // memory, at the expense of speed (and executable size). not recommended.
   // #define NSIS_COMPRESS_BZIP2_SMALLMODE
 
   // if NSIS_COMPRESS_BZIP2_LEVEL is defined, it overrides the default bzip2
