@@ -66,10 +66,7 @@ IDM_MENU MENU DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
-        MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "&Save Output...",             IDM_SAVE
-        MENUITEM SEPARATOR
         MENUITEM "&Load Script...\tCtrl+L",     IDM_LOADSCRIPT
         MENUITEM SEPARATOR
         MENUITEM "E&xit\tAlt+X",                IDM_EXIT
@@ -85,8 +82,10 @@ BEGIN
     END
     POPUP "&Tools"
     BEGIN
+        MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
+        MENUITEM "&Test Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
-        MENUITEM "",                            1
+        MENUITEM SEPARATOR
         MENUITEM "Clear &Log\tCtrl+W",          IDM_CLEARLOG
     END
     POPUP "&Help"
