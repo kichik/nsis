@@ -120,9 +120,9 @@ $(^NameDA) will be uninstalled from the following folder. $_CLICK
 # ^UninstallingSubText
 Uninstalling from:
 # ^FileError
-Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file
+Error opening file for writing: \r\n\r\n$0\r\n\r\nClick Abort to stop the installation,\r\nRetry to try again, or\r\nIgnore to skip this file.
 # ^FileError_NoIgnore
-Error opening file for writing: \r\n\t"$0"\r\nHit retry to retry writing the file, or\r\ncancel to abort installation
+Error opening file for writing: \r\n\r\n$0\r\n\r\nClick Retry to try again, or\r\nCancel to stop the installation.
 # ^CantWrite
 "Can't write: "
 # ^CopyFailed

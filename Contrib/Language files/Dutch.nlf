@@ -119,9 +119,9 @@ $(^NameDA) zal uit de volgende map worden verwijderd. $_CLICK
 # ^UninstallingSubText
 Verwijderen uit:
 # ^FileError
-Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik afbreken om de installatie te stoppen,\r\nopnieuw om het opnieuw te proberen, of\r\nnegeren om dit bestand over te slaan
+Fout bij het schrijven naar bestand: \r\n\r\n$0\r\n\r\nKlik Afbreken om de installatie te stoppen,\r\nOpnieuw om het opnieuw te proberen, of\r\nNegeren om dit bestand over te slaan.
 # ^FileError_NoIgnore
-Fout bij het schrijven naar bestand: \r\n\t"$0"\r\nKlik opnieuw om het opnieuw te proberen, of \r\nafbreken de installatie te stoppen
+Fout bij het schrijven naar bestand: \r\n\r\n$0\r\n\r\nKlik Opnieuw om het opnieuw te proberen, of \r\nAnnuleren om de installatie te stoppen.
 # ^CantWrite
 "Kon niet schrijven: "
 # ^CopyFailed
