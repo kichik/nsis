@@ -757,16 +757,16 @@ int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
       {
         PAINTSTRUCT ps;
         HFONT hOldFont;
-        HFONT hFont = (HFONT)SendMessage(hWin, WM_GETFONT, 0, 0);
         HDC pDC = BeginPaint(hWin, &ps);
+        HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
         int OldMode = SetBkMode(pDC, TRANSPARENT);
         int OldTextColor;
-        
+
         if ( GetSysColorBrush(COLOR_HOTLIGHT) )
           OldTextColor = SetTextColor(pDC, GetSysColor(COLOR_HOTLIGHT));
         else
           OldTextColor = SetTextColor(pDC, RGB(0,0,255)); // Win95/NT4 arrggg!!!
-        
+
         hOldFont = (HFONT)SelectObject(pDC, hFont);        
         GetClientRect(hWin, &pFields[StaticField].rect);
 
@@ -814,7 +814,7 @@ int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
         
         if ( PtInRect(&pFields[StaticField].rect, pt) )
         {
-          ShellExecute(hWin, "", pFields[StaticField].pszState, "", "", SW_SHOWDEFAULT);	
+          ShellExecute(hMainWindow, NULL, pFields[StaticField].pszState, NULL, NULL, SW_SHOWDEFAULT);	
         }	
         return 0;
       }
