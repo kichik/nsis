@@ -1,6 +1,5 @@
 # Header, don't edit
 NLF v6
-# Start editing here
 # Language ID
 1042
 # Font and size - dash (-) means default
@@ -44,9 +43,9 @@ $(^Name) 제거
 # ^AgreeBtn
 동의함
 # ^AcceptBtn
-위 사항에 동의 합니다.
+위 사항에 동의합니다.
 # ^DontAcceptBtn
-동의 하지 않습니다.
+동의하지 않습니다.
 # ^InstallBtn
 설치
 # ^UninstallBtn
@@ -60,7 +59,7 @@ $(^Name) 제거
 # ^ShowDetailsBtn
 자세히 보기
 # ^ClickNext
-계속 하시려면 '다음' 버튼을 눌러 주세요.
+계속하시려면 '다음' 버튼을 눌러 주세요.
 # ^ClickInstall
 설치를 시작하시려면 '설치' 버튼을 눌러 주세요.
 # ^ClickUninstall
@@ -70,17 +69,17 @@ $(^Name) 제거
 # ^Completed
 완료
 # ^LicenseText
-$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
+$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 '동의함'을 눌러 주세요.
 # ^LicenseTextCB
-$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
+$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 아래 사항을 체크해 주세요. $_CLICK
 # ^LicesnseTextRB
-$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
+$(^NameDA)(을)를 설치하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 아래 옵션을 선택해 주세요. $_CLICK
 # ^UnLicenseText
-$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 '동의함'을 눌러 주세요.
+$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 '동의함'을 눌러 주세요.
 # ^UnLicenseTextCB
-$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 사항을 체크해 주세요. $_CLICK
+$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 아래 사항을 체크해 주세요. $_CLICK
 # ^UnLicesnseTextRB
-$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의 하셨다면 아래 옵션을 선택해 주세요. $_CLICK
+$(^NameDA)(을)를 제거하기 전에 사용권 계약 내용을 살펴보시기 바랍니다. 내용에 동의하셨다면 아래 옵션을 선택해 주세요. $_CLICK
 # ^Custom
 사용자 정의
 # ^ComponentsText
@@ -140,7 +139,7 @@ $(^NameDA)(을)를 다음 폴더에서 제거 합니다:
 # ^CreateFolder
 "폴더 생성: "
 # ^CreateShortcut
-"바로가기 생성: "
+"바로 가기 생성: "
 # ^CreatedUninstaller
 "언인스톨러 생성: "
 # ^Delete
@@ -148,7 +147,7 @@ $(^NameDA)(을)를 다음 폴더에서 제거 합니다:
 # ^DeleteOnReboot
 "재부팅시 삭제: "
 # ^ErrorCreatingShortcut
-"바로가기 생성 오류: "
+"바로 가기 생성 오류: "
 # ^ErrorCreating
 "생성 실패: "
 # ^ErrorDecompressing
