@@ -44,7 +44,6 @@
   !insertmacro MUI_LANGUAGE "Italian"
   !insertmacro MUI_LANGUAGE "Dutch"
   !insertmacro MUI_LANGUAGE "Danish"
-  !insertmacro MUI_LANGUAGE "Polish"
   !insertmacro MUI_LANGUAGE "Greek"
   !insertmacro MUI_LANGUAGE "Russian"
   !insertmacro MUI_LANGUAGE "PortugueseBR"
@@ -69,9 +68,8 @@
   LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
   LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
   LangString DESC_SecCopyUI ${LANG_DANISH} "modern.exe: Danish description"
-  LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
   LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
-  LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Greek description"
+  LangString DESC_SecCopyUI ${LANG_RUSSIAN} "modern.exe: Russian description"
   LangString DESC_SecCopyUI ${LANG_PORTUGUESEBR} "modern.exe: Portuguese (Brasil) description"
   LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
   LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
@@ -93,7 +91,6 @@
   LicenseData /LANG=${LANG_ITALIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_RUSSIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -154,7 +151,6 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Italian"
   !insertmacro MUI_LANGDLL_PUSH "Dutch"
   !insertmacro MUI_LANGDLL_PUSH "Danish"
-  !insertmacro MUI_LANGDLL_PUSH "Polish"
   !insertmacro MUI_LANGDLL_PUSH "Greek"
   !insertmacro MUI_LANGDLL_PUSH "Russian"
   !insertmacro MUI_LANGDLL_PUSH "PortugueseBR"
@@ -165,7 +161,7 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Romanian"
   !insertmacro MUI_LANGDLL_PUSH "Macedonian"
   
-  Push 20F ;20 = number of languages, F = change font
+  Push 19F ;19 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
