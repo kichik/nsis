@@ -8,10 +8,7 @@
 using namespace std;
 
 struct StringTable {
-  union {
-    WORD lang_id;
-    common_strings common;
-  };
+  common_strings common;
   common_strings ucommon;
   installer_strings installer;
   uninstall_strings uninstall;
