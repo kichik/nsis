@@ -61,61 +61,83 @@ CEXEBuild::CEXEBuild()
 
   strcpy(cur_out_path,"$INSTDIR");
 
-#ifdef NSIS_CONFIG_LOG
-  definedlist.add("NSIS_CONFIG_LOG");
-#endif
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  definedlist.add("NSIS_CONFIG_UNINSTALL_SUPPORT");
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  definedlist.add("NSIS_CONFIG_LICENSEPAGE");
-#endif
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-  definedlist.add("NSIS_CONFIG_SILENT_SUPPORT");
-#endif
-#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  definedlist.add("NSIS_CONFIG_COMPRESSION_SUPPORT");
-#endif
-#ifdef NSIS_ZLIB_COMPRESS_WHOLE
-  definedlist.add("NSIS_ZLIB_COMPRESS_WHOLE");
-#endif
 #ifdef NSIS_BZIP2_COMPRESS_WHOLE
   definedlist.add("NSIS_BZIP2_COMPRESS_WHOLE");
 #endif
   {
-    char b[123];
-    wsprintf(b,"%d",NSIS_COMPRESS_BZIP2_LEVEL);
-    definedlist.add("NSIS_COMPRESS_BZIP2_LEVEL",b);
+    char bzip_level[32];
+    wsprintf(bzip_level, "%d", NSIS_COMPRESS_BZIP2_LEVEL);
+    definedlist.add("NSIS_COMPRESS_BZIP2_LEVEL", bzip_level);
   }
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-  definedlist.add("NSIS_CONFIG_CRC_SUPPORT");
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  definedlist.add("NSIS_CONFIG_COMPONENTPAGE");
+#endif
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+  definedlist.add("NSIS_CONFIG_COMPRESSION_SUPPORT");
 #endif
 #ifdef NSIS_CONFIG_CRC_ANAL
   definedlist.add("NSIS_CONFIG_CRC_ANAL");
 #endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  definedlist.add("NSIS_CONFIG_COMPONENTPAGE");
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+  definedlist.add("NSIS_CONFIG_CRC_SUPPORT");
+#endif
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
+  definedlist.add("NSIS_CONFIG_ENHANCEDUI_SUPPORT");
+#endif
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  definedlist.add("NSIS_CONFIG_LICENSEPAGE");
+#endif
+#ifdef NSIS_CONFIG_LOG
+  definedlist.add("NSIS_CONFIG_LOG");
+#endif
+#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+  definedlist.add("NSIS_CONFIG_PLUGIN_SUPPORT");
+#endif
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+  definedlist.add("NSIS_CONFIG_SILENT_SUPPORT");
+#endif
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  definedlist.add("NSIS_CONFIG_UNINSTALL_SUPPORT");
 #endif
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   definedlist.add("NSIS_CONFIG_VISIBLE_SUPPORT");
 #endif
-#ifdef NSIS_CONFIG_XPSTYLE_SUPPORT
-  definedlist.add("NSIS_CONFIG_XPSTYLE_SUPPORT");
+  {
+    char max_inst_types[32];
+    wsprintf(max_inst_types, "%d", NSIS_MAX_INST_TYPES);
+    definedlist.add("NSIS_MAX_INST_TYPES", max_inst_types);
+  }
+  {
+    char max_strlen[32];
+    wsprintf(max_strlen, "%d", NSIS_MAX_STRLEN);
+    definedlist.add("NSIS_MAX_STRLEN", max_strlen);
+  }
+#ifdef NSIS_SUPPORT_ACTIVEXREG
+  definedlist.add("NSIS_SUPPORT_ACTIVEXREG");
 #endif
 #ifdef NSIS_SUPPORT_BGBG
   definedlist.add("NSIS_SUPPORT_BGBG");
 #endif
-#ifdef NSIS_SUPPORT_ACTIVEXREG
-  definedlist.add("NSIS_SUPPORT_ACTIVEXREG");
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+  definedlist.add("NSIS_SUPPORT_CODECALLBACKS");
 #endif
-#ifdef NSIS_SUPPORT_INTOPTS
-  definedlist.add("NSIS_SUPPORT_INTOPTS");
+#ifdef NSIS_SUPPORT_COPYFILES
+  definedlist.add("NSIS_SUPPORT_COPYFILES");
 #endif
-#ifdef NSIS_SUPPORT_STROPTS
-  definedlist.add("NSIS_SUPPORT_STROPTS");
+#ifdef NSIS_SUPPORT_CREATESHORTCUT
+  definedlist.add("NSIS_SUPPORT_CREATESHORTCUT");
 #endif
-#ifdef NSIS_SUPPORT_STACK
-  definedlist.add("NSIS_SUPPORT_STACK");
+#ifdef NSIS_SUPPORT_DELETE
+  definedlist.add("NSIS_SUPPORT_DELETE");
+#endif
+#ifdef NSIS_SUPPORT_ENVIRONMENT
+  definedlist.add("NSIS_SUPPORT_ENVIRONMENT");
+#endif
+#ifdef NSIS_SUPPORT_EXECUTE
+  definedlist.add("NSIS_SUPPORT_EXECUTE");
+#endif
+#ifdef NSIS_SUPPORT_FILE
+  definedlist.add("NSIS_SUPPORT_FILE");
 #endif
 #ifdef NSIS_SUPPORT_FILEFUNCTIONS
   definedlist.add("NSIS_SUPPORT_FILEFUNCTIONS");
@@ -123,23 +145,8 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_SUPPORT_FINDFIRST
   definedlist.add("NSIS_SUPPORT_FINDFIRST");
 #endif
-#ifdef NSIS_SUPPORT_CREATESHORTCUT
-  definedlist.add("NSIS_SUPPORT_CREATESHORTCUT");
-#endif
-#ifdef NSIS_SUPPORT_INIFILES
-  definedlist.add("NSIS_SUPPORT_INIFILES");
-#endif
-#ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
-  definedlist.add("NSIS_SUPPORT_REGISTRYFUNCTIONS");
-#endif
-#ifdef NSIS_SUPPORT_COPYFILES
-  definedlist.add("NSIS_SUPPORT_COPYFILES");
-#endif
-#ifdef NSIS_SUPPORT_EXECUTE
-  definedlist.add("NSIS_SUPPORT_EXECUTE");
-#endif
-#ifdef NSIS_SUPPORT_SHELLEXECUTE
-  definedlist.add("NSIS_SUPPORT_SHELLEXECUTE");
+#ifdef NSIS_SUPPORT_FNUTIL
+  definedlist.add("NSIS_SUPPORT_FNUTIL");
 #endif
 #ifdef NSIS_SUPPORT_GETDLLVERSION
   definedlist.add("NSIS_SUPPORT_GETDLLVERSION");
@@ -150,38 +157,42 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_SUPPORT_HWNDS
   definedlist.add("NSIS_SUPPORT_HWNDS");
 #endif
-#ifdef NSIS_SUPPORT_ENVIRONMENT
-  definedlist.add("NSIS_SUPPORT_ENVIRONMENT");
+#ifdef NSIS_SUPPORT_INIFILES
+  definedlist.add("NSIS_SUPPORT_INIFILES");
 #endif
-#ifdef NSIS_SUPPORT_RMDIR
-  definedlist.add("NSIS_SUPPORT_RMDIR");
-#endif
-#ifdef NSIS_SUPPORT_FILE
-  definedlist.add("NSIS_SUPPORT_FILE");
-#endif
-#ifdef NSIS_SUPPORT_DELETE
-  definedlist.add("NSIS_SUPPORT_DELETE");
-#endif
-#ifdef NSIS_SUPPORT_RENAME
-  definedlist.add("NSIS_SUPPORT_RENAME");
+#ifdef NSIS_SUPPORT_INTOPTS
+  definedlist.add("NSIS_SUPPORT_INTOPTS");
 #endif
 #ifdef NSIS_SUPPORT_MESSAGEBOX
   definedlist.add("NSIS_SUPPORT_MESSAGEBOX");
 #endif
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-  definedlist.add("NSIS_SUPPORT_CODECALLBACKS");
-#endif
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
   definedlist.add("NSIS_SUPPORT_MOVEONREBOOT");
 #endif
-
-  {
-    char b[123];
-    wsprintf(b,"%d",NSIS_MAX_STRLEN);
-    definedlist.add("NSIS_MAX_STRLEN",b);
-    wsprintf(b,"%d",NSIS_MAX_INST_TYPES);
-    definedlist.add("NSIS_MAX_INST_TYPES",b);
-  }
+#ifdef NSIS_SUPPORT_REBOOT
+  definedlist.add("NSIS_SUPPORT_REBOOT");
+#endif
+#ifdef NSIS_SUPPORT_REGISTRYFUNCTIONS
+  definedlist.add("NSIS_SUPPORT_REGISTRYFUNCTIONS");
+#endif
+#ifdef NSIS_SUPPORT_RENAME
+  definedlist.add("NSIS_SUPPORT_RENAME");
+#endif
+#ifdef NSIS_SUPPORT_RMDIR
+  definedlist.add("NSIS_SUPPORT_RMDIR");
+#endif
+#ifdef NSIS_SUPPORT_SHELLEXECUTE
+  definedlist.add("NSIS_SUPPORT_SHELLEXECUTE");
+#endif
+#ifdef NSIS_SUPPORT_STACK
+  definedlist.add("NSIS_SUPPORT_STACK");
+#endif
+#ifdef NSIS_SUPPORT_STROPTS
+  definedlist.add("NSIS_SUPPORT_STROPTS");
+#endif
+#ifdef NSIS_ZLIB_COMPRESS_WHOLE
+  definedlist.add("NSIS_ZLIB_COMPRESS_WHOLE");
+#endif
 
   // Added by Amir Szekely 11th July 2002
   // Coded by Robert Rainwater
