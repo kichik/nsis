@@ -311,7 +311,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
     DWORD dwSize = *(DWORD*)seeker;
     seeker += sizeof(DWORD);
-    MY_ASSERT(dwSize != rde->Size, "installer, uninstaller icon size mismatch");
+    MY_ASSERT(dwSize != rde->Size, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
     // Set offset
     *(DWORD*)seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 
