@@ -355,6 +355,11 @@ __declspec(dllexport) void download (HWND   parent,
 	g_stacktop   = stacktop;
 
 	popstring (filename);
+  lstrcpyn(buf, filename, 10);
+  if (!lstrcmp(buf, "/TIMEOUT=")) {
+    g_timeout_ms=my_atoi(filename+9);
+    popstring (filename);
+  }
 	popstring (url);
 
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
