@@ -3325,24 +3325,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETBRANDINGIMAGE:
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     {
-      SCRIPT_MSG("SetBrandingImage: %s\n", line.gettoken_str(1));
+      SCRIPT_MSG("SetBrandingImage: ");
       if (!branding_image_found) {
-        ERROR_MSG("Error: no branding image found in choosen UI!\n");
+        ERROR_MSG("\nError: no branding image found in chosen UI!\n");
         return PS_ERROR;
       }
       ent.which=EW_SETBRANDINGIMAGE;
       for (int i = 1; i < line.getnumtokens(); i++)
-        if (!strnicmp(line.gettoken_str(i),"/IMGID=",7))
+        if (!strnicmp(line.gettoken_str(i),"/IMGID=",7)) {
           ent.offsets[1]=atoi(line.gettoken_str(i)+7);
-        else if (!stricmp(line.gettoken_str(i),"/RESIZETOFIT"))
+          SCRIPT_MSG("/IMGID=%d ",ent.offsets[1]);
+        }
+        else if (!stricmp(line.gettoken_str(i),"/RESIZETOFIT")) {
           ent.offsets[2]=1;
-        else if (!ent.offsets[0])
+          SCRIPT_MSG("/RESIZETOFIT ");
+        }
+        else if (!ent.offsets[0]) {
           ent.offsets[0]=add_string(line.gettoken_str(i));
-        else
+          SCRIPT_MSG("\"%s\" ", line.gettoken_str(i));
+        }
+        else {
+          SCRIPT_MSG("\n");
           PRINTHELP();
+        }
 
       if (!ent.offsets[1])
         ent.offsets[1]=branding_image_id;
+      SCRIPT_MSG("\n");
     }
     return add_entry(&ent);
 #else
