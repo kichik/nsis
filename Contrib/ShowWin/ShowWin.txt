@@ -1,0 +1,23 @@
+ShowWin Plugin
+----------------------------------------------------------------------
+
+Description:
+  ShowWin is a small plugin which will allow you to hide, show, enable
+  and disable controls.
+
+Usage:
+  ShowWin::Show hwnd
+  ShowWin::Hide hwnd
+  ShowWin::Enable hwnd
+  ShowWin::Disable hwnd
+
+Example:
+  Hide the version label
+
+  GetDlgItem $R1 $HWNDPARENT 1028
+  ShowWin::Hide $R1
+
+  Also see ShowWin.nsi.
+
+----------------------------------------------------------------------
+Copyright (c) 2002 Don Selkirk
