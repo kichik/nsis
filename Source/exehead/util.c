@@ -152,7 +152,7 @@ void NSISCALL trimslashtoend(char *buf)
 
 int NSISCALL validpathspec(char *ubuf)
 {
-  char dl = ubuf[0] | 0x20; // convert drive letter to lower case
+  char dl = ubuf[0] | 0x20; // convert alleged drive letter to lower case
   return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (dl >= 'a' && dl <= 'z' && *CharNext(ubuf)==':'));
 }
 
@@ -270,7 +270,7 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
   while (n--)
   {
     char prefix[4] = "nsa";
-    prefix[2] = 'a' + (char)(GetTickCount() % 26);
+    prefix[2] += (char)(GetTickCount() % 26);
     if (GetTempFileName(dir, prefix, 0, buf))
       return buf;
   }
@@ -415,7 +415,7 @@ int NSISCALL myatoi(char *s)
       m=8; // base of 8
       t='7'; // cap top at 7
     }
-    if (s[0] == 'x' || s[0] == 'X')
+    if ((s[0] & ~0x20) == 'X')
     {
       m=16; // base of 16
       s++; // advance over 'x'
