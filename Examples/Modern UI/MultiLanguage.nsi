@@ -12,6 +12,8 @@
 ;--------------------------------
 ;Configuration
 
+  !insertmacro MUI_BASICFUNCTIONS_INIT
+
   !define MUI_LICENSEPAGE
   !define MUI_COMPONENTPAGE
   !define MUI_DIRSELECTPAGE
@@ -142,7 +144,7 @@ Section ""
   ;Invisible section to display the Finish header & write the language to the registry
   
   WriteRegStr HKCU "Software\${NAME}" "Installer Language" $LANGUAGE
-  !insertmacro MUI_FINISHHEADER SetPage
+  !insertmacro MUI_FINISHHEADER
 
 SectionEnd
 
@@ -212,7 +214,7 @@ Section "Uninstall"
   DeleteRegValue HKCU "Software\${NAME}" "Installer Language"
 
   ;Display the Finish header
-  !insertmacro MUI_FINISHHEADER un.SetPage
+  !insertmacro MUI_UNFINISHHEADER
 
 SectionEnd
 
