@@ -51,7 +51,7 @@ ChangeUI IDD_INSTFILES "Resources\GUI\NSISUpdate.exe"
 
 Icon "${NSISDIR}\Contrib\Icons\yi-simple2_install.ico"
 
-Page custom UpdateMethod ": Update Method"
+Page custom UpdateMethod "" ": Update Method"
 Page instfiles
 
 #####################################################################

@@ -13,7 +13,7 @@ Function .onVerifyInstDir
 		Abort
 FunctionEnd
 
-Page custom StartMenuGroupSelect ": Start Menu Folder"
+Page custom StartMenuGroupSelect "" ": Start Menu Folder"
 Function StartMenuGroupSelect
 	Push $R1
 
