@@ -1,27 +1,25 @@
--- TODO for Beta 1 ---
+TODO
+
+-- NSIS 2 Beta 1 --
 
 NSIS
 
-* transparent BrandingText control
 * check for invalid chars/spaces in folder input
 
-BANNER
-
-* compatible with Modern UI
-
--- Later ---
+-- NSIS 2 Beta 2 --
 
 NSIS
 
-* Current working directory changes
+* component page for uninstaller, multiple sections
+
+* more default texts in NLF language files
+
+* current working directory changes
 
 DOCUMENTATION
 
-* user_vars should link to the user_vars section as in the old docs
-  callbacks and other stuff should be linked too
-
-* not so important but could be nice, links to examples in the examples directory for every function
-  every function will link to the example file that containts it
+* user_vars should link to the user_vars section as in the old docs callbacks and
+  other stuff should be linked too
 
 * go over everything and search for mistakes :)
 
@@ -29,10 +27,24 @@ DOCUMENTATION
 
 EXAMPLES
 
-* write an advanced paging example showing multiple components page with multiple instfiles pages
+* write an advanced paging example showing multiple components page with multiple
+  instfiles pages
 
 * language files auto updater
 
-INSTLALLOPTIONS
+INSTALLOPTIONS
 
-* Manual validation
+* manual validation
+
+-- Before NSIS 2 Final --
+
+NSIS
+
+* LZMA compression
+
+* multiple directory pages
+
+DOCUMENTATION
+
+* not so important but could be nice, links to examples in the examples directory
+  for every function every function will link to the example file that containts it
