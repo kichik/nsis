@@ -88,7 +88,7 @@ char *compressor_names[] = {"",
 char *compressor_display_names[] = {"Defined in Script/MakeNSIS Default",
                             "ZLIB",
                             "BZIP2",
-                            "7-Zip (LZMA)",
+                            "LZMA (7-Zip)",
                             "Best Compressor"};
 WORD compressor_commands[] = {IDM_SCRIPT,
                               IDM_ZLIB,
