@@ -191,6 +191,25 @@ int CEXEBuild::SetString(char *string, int id, int process, StringTable *table) 
   return PS_OK;
 }
 
+int CEXEBuild::GetUserString(char *name) {
+  StringList *user_strings_list = 0;
+  bool uninst;
+
+  if (!(uninst = !strnicmp(name,"un.",3))) {
+    user_strings_list=&build_userlangstrings;
+  }
+  else {
+    user_strings_list=&ubuild_userlangstrings;
+  }
+
+  SetUserString(name, 0, 0, 0);
+
+  int idx = -1;
+  user_strings_list->find(name, 0, &idx);
+
+  return idx;  
+}
+
 int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/*=1*/) {
   StringTable *table = 0;
   if (string) {
@@ -214,7 +233,7 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
   if (user_strings_list->find(name, 0, &idx) < 0) {
     // if lang string doesn't exist yet
     user_strings_list->add(name, 0);
-    user_strings_list->find(name, 0, &idx);
+    if (string) user_strings_list->find(name, 0, &idx);
     unsigned int new_size = user_strings_list->getnum() * sizeof(int);
     for (int i = 0; i < string_tables.size(); i++) {
       if (uninst) string_tables[i]->user_ustrings.resize(new_size, 1);
