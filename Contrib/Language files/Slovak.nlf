@@ -1,12 +1,12 @@
 # Header, don't edit
-NLF v2
+NLF v3
 # Language ID
 1051
-# Translation by trace
+# Translation by trace & Kypec
 Nullsoft Install System %s
 Inštalácia %s
 Odinštalácia %s
-: Licenèné podmienky
+: Licenèná zmluva
 : Monosti inštalácie
 : Adresár inštalácie
 : Inštalujem súbory
@@ -14,26 +14,28 @@ Odinštalácia %s
 : Potvrdenie
 : Odinštalovávam súbory
 : Dokonèené
-< Naspä
-Ïalej >
-Súhlasím
-Inštalova
-Odinštalova
+< &Naspä
+Ï&alej >
+&Súhlasím
+&Súhlasím s podmienkami licenènej zmluvy
+N&esúhlasím s podmienkami licenènej zmluvy
+&Inštalova
+&Odinštalova
 Storno
-Zavrie
-Prehliada...
-Zobraz detaily
+&Zavrie
+&Prehliada...
+&Uká detaily
 Názov
 Dokonèené
 Vlastná
 Zvo¾te typ inštalácie:
 Zvo¾te komponenty, ktoré sa majú nainštalova:
-Alebo zvo¾te komponenty, ktoré sa majú nainštalova:
+Alebo, vyberte volite¾né komponenty, ktoré sa majú nainštalova:
 Zvo¾te adresár do ktorého sa má %s nainštalova:
 Vo¾nı priestor: 
 Potrebnı priestor: 
 Odinštalovávam z:
-Chyba pri otváraní súboru pre zápis: \r\n\t"$0"\r\nStlaète ukonèi, pre ukonèenie inštalácie,\r\nopakova, pre opakovanie zápisu súboru, alebo\r\nignorova, pre preskoèenie súboru
+Chyba pri otváraní súboru pre zápis: \r\n\t"$0"\r\nStlaète ukonèi pre ukonèenie inštalácie,\r\nopakova pre opakovanie zápisu súboru, alebo\r\nignorova pre preskoèenie tohto súboru
 Nemoné zapísa: 
 Kopírovanie neúspešné
 Kopírova do 
