@@ -57,9 +57,10 @@ unsigned int uWndWidth, uWndHeight;
 
 void *oldProc;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-int myatoi(char *s);
+HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap);
+int __stdcall myatoi(char *s);
 COLORREF GetColor();
-void GetXY(LPPOINT lpPoint);
+void __stdcall GetXY(LPPOINT lpPoint);
 
 BOOL bReturn;
 
@@ -70,7 +71,7 @@ NSISFunc(SetReturn) {
   bReturn = !lstrcmpi(szTemp, "on");
 }
 
-static void my_pushstring(char *str)
+static void __stdcall my_pushstring(char *str)
 {
   stack_t *th;
   if (!g_stacktop || !bReturn) return;
@@ -90,6 +91,7 @@ NSISFunc(SetBg) {
 
     if (!hwndParent) {
       my_pushstring("can't find parent window");
+      LCS();
       return;
     }
 
@@ -129,13 +131,17 @@ NSISFunc(SetBg) {
     );
     if (!hWndImage) {
       my_pushstring("can't create window");
+      LCS();
       return;
     }
 
     oldProc = (void *)SetWindowLong(hwndParent, GWL_WNDPROC, (long)WndProc);
   }
 
-  if (bgBitmap.iType == MIL_BITMAP) DeleteObject(bgBitmap.hBitmap);
+  bgBitmap.bReady = FALSE;
+
+  if (bgBitmap.iType == MIL_BITMAP)
+    DeleteObject(bgBitmap.hBitmap);
 
   unsigned int uScrWidth = GetSystemMetrics(SM_CXSCREEN);
   unsigned int uScrHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -146,8 +152,12 @@ NSISFunc(SetBg) {
   uWndWidth = uScrWidth;
   uWndHeight = uScrHeight;
 
+  char szGradient[] = {'/', 'G', 'R', 'A', 'D', 'I', 'E', 'N', 'T', 0};
+  char szFillScreen[] = {'/', 'F', 'I' ,'L', 'L', 'S', 'C', 'R', 'E', 'E', 'N', 0};
+  char szTiled[] = {'/', 'T', 'I', 'L', 'E', 'D', 0};
+
   popstring(szTemp);
-  if (!lstrcmpi(szTemp, "/GRADIENT")) {
+  if (!lstrcmpi(szTemp, szGradient)) {
     bgBitmap.cGradientFrom = GetColor();
     bgBitmap.cGradientTo = GetColor();
 
@@ -155,12 +165,12 @@ NSISFunc(SetBg) {
 
     goto done;
   }
-  if (!lstrcmpi(szTemp, "/FILLSCREEN")) {
+  if (!lstrcmpi(szTemp, szFillScreen)) {
     bgBitmap.rPos.right = uScrWidth;
     bgBitmap.rPos.bottom = uScrHeight;
     popstring(szTemp);
   }
-  else if (!lstrcmpi(szTemp, "/TILED")) {
+  else if (!lstrcmpi(szTemp, szTiled)) {
     popstring(szTemp);
   }
   else {
@@ -170,16 +180,10 @@ NSISFunc(SetBg) {
 
   BITMAP bBitmap;
 
-  bgBitmap.hBitmap = (HBITMAP)LoadImage(0, szTemp, IMAGE_BITMAP, bgBitmap.rPos.right, bgBitmap.rPos.bottom, LR_LOADFROMFILE);
-  if (!bgBitmap.hBitmap) {
-    my_pushstring("can't load bitmap");
+  bgBitmap.hBitmap = LoadBitmapFile(bgBitmap.rPos.right, bgBitmap.rPos.bottom, &bBitmap);
+  if (!bgBitmap.hBitmap)
     return;
-  }
 
-  if (!GetObject(bgBitmap.hBitmap, sizeof(bBitmap), (void *)&bBitmap)) {
-    my_pushstring("can't load bitmap");
-    return;
-  }
   if (!bgBitmap.rPos.right) {
     bgBitmap.rPos.right = bBitmap.bmWidth;
     bgBitmap.rPos.bottom = bBitmap.bmHeight;
@@ -216,6 +220,7 @@ NSISFunc(AddImage) {
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
     my_pushstring("memory allocation error");
+    LCS();
     return;
   }
 
@@ -229,20 +234,16 @@ NSISFunc(AddImage) {
     popstring(szTemp);
   }
 
-  newImg->hBitmap = (HBITMAP)LoadImage(0, szTemp, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+  BITMAP bBitmap;
+
+  newImg->hBitmap = LoadBitmapFile(0, 0, &bBitmap);
   if (!newImg->hBitmap) {
-    my_pushstring("can't load bitmap");
+    GlobalFree(newImg);
     return;
   }
 
   GetXY(LPPOINT(&newImg->rPos));
 
-  BITMAP bBitmap;
-
-  if (!GetObject(newImg->hBitmap, sizeof(bBitmap), (void *)&bBitmap)) {
-    my_pushstring("can't load bitmap");
-    return;
-  }
   newImg->rPos.right = newImg->rPos.left + bBitmap.bmWidth;
   newImg->rPos.bottom = newImg->rPos.top + bBitmap.bmHeight;
 
@@ -261,6 +262,7 @@ NSISFunc(AddText) {
   myImageList *newImg = (myImageList *)GlobalAlloc(GPTR, sizeof(myImageList));
   if (!newImg) {
     my_pushstring("memory allocation error");
+    LCS();
     return;
   }
 
@@ -270,6 +272,8 @@ NSISFunc(AddText) {
   newImg->szText = (char *)GlobalAlloc(GPTR, lstrlen(szTemp)+1);
   if (!newImg->szText) {
     my_pushstring("memory allocation error");
+    GlobalFree(newImg);
+    LCS();
     return;
   }
   lstrcpy(newImg->szText, szTemp);
@@ -356,13 +360,14 @@ NSISFunc(Sound) {
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
   HWND hwndParent = hWndParent;
+  HWND hwndImage = hWndImage;
 
   if (hwnd == hwndParent) {
     if (message == WM_SIZE) {
-      ShowWindow(hWndImage, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
+      ShowWindow(hwndImage, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
     }
     if (message == WM_WINDOWPOSCHANGED) {
-      SetWindowPos(hWndImage, hwndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+      SetWindowPos(hwndImage, hwndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
     return CallWindowProc(
       (long (__stdcall *)(HWND,unsigned int,unsigned int,long))oldProc,
@@ -551,18 +556,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
   return 0;
 }
 
-COLORREF GetColor() {
-  int iRed, iGreen, iBlue;
-  popstring(szTemp);
-  iRed = myatoi(szTemp);
-  popstring(szTemp);
-  iGreen = myatoi(szTemp);
-  popstring(szTemp);
-  iBlue = myatoi(szTemp);
-  return RGB(iRed, iGreen, iBlue);
+HBITMAP __stdcall LoadBitmapFile(long right, long bottom, BITMAP *bBitmap)
+{
+  HBITMAP hBitmap = (HBITMAP)LoadImage(0, szTemp, IMAGE_BITMAP, right, bottom, LR_LOADFROMFILE);
+  if (!hBitmap || !GetObject(hBitmap, sizeof(BITMAP), (void *)bBitmap)) {
+    my_pushstring("can't load bitmap");
+    if (hBitmap)
+      DeleteObject(hBitmap);
+    LCS();
+    return 0;
+  }
+  return hBitmap;
 }
 
-void GetXY(LPPOINT lpPoint) {
+COLORREF GetColor() {
+  COLORREF cColor = 0;
+  popstring(szTemp);
+  cColor |= (BYTE) myatoi(szTemp);
+  popstring(szTemp);
+  cColor |= ((BYTE) myatoi(szTemp)) << 8;
+  popstring(szTemp);
+  cColor |= ((BYTE) myatoi(szTemp)) << 16;
+  return cColor;
+}
+
+void __stdcall GetXY(LPPOINT lpPoint) {
   popstring(szTemp);
   int iPosTemp = myatoi(szTemp);
   if (iPosTemp < 0) iPosTemp = iPosTemp + (int)uWndWidth;
@@ -574,7 +592,7 @@ void GetXY(LPPOINT lpPoint) {
   lpPoint->y = (unsigned int)iPosTemp;
 }
 
-int myatoi(char *s)
+int __stdcall myatoi(char *s)
 {
   unsigned int v=0;
   if (*s == '0' && (s[1] == 'x' || s[1] == 'X'))
