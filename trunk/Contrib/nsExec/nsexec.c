@@ -123,7 +123,7 @@ void ExecScript(int log) {
 
   g_to = 0; // default is no timeout
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
-  pExec = g_exec + nComSpecSize - 1; *pExec = ' '; pExec++;
+  pExec = g_exec + nComSpecSize - 2; *pExec = ' '; pExec++;
   popstring(pExec);
   if ( my_strstr(pExec, "/TIMEOUT=") ) {
     char *szTimeout = pExec + 9;
@@ -265,6 +265,8 @@ done:
     CloseHandle(pi.hProcess);
     CloseHandle(newstdout);
     CloseHandle(read_stdout);
+    *(pExec-1) = '\0';
+    DeleteFile(g_exec);
     GlobalFree(g_exec);
     if (log) {
       GlobalUnlock(hUnusedBuf);
@@ -359,10 +361,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   
   cmdline = command_line;
   if (*cmdline == '\"') seekchar = *cmdline++;
-  
+
   while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
   cmdline=CharNext(cmdline);
-  
+
   Ret = CreateProcess (NULL, cmdline,
     NULL, NULL,
     TRUE, 0,
@@ -370,10 +372,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     &si, &pi
     );
   
-  if (Ret)
+  if ( Ret )
   {
-    WaitForSingleObject (pi.hProcess, INFINITE);
-    GetExitCodeProcess(pi.hProcess, &Ret);
+    do
+    {
+        GetExitCodeProcess(pi.hProcess, &Ret);
+        Sleep(LOOPTIMEOUT);
+    } while ( Ret == STILL_ACTIVE );
     CloseHandle (pi.hProcess);
     CloseHandle (pi.hThread);
     return Ret;
