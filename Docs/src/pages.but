@@ -13,6 +13,8 @@ The page order is set simply by the order they are in the script. For example:
 
 This code will show the license page, then the components selction page, then the directory selection page and then the install log, just like in old installers.
 
+You can specify the same page type more than once, just make sure you know what you are doing.
+
 Please note that you must still use LicenseText and LicenseData for the license page to show, ComponentText for the components selection page to show and DirText for the directory page to show.
 
 If you don't use any Page command the installer pages order will be just as in older version: license (if LicenseText and LicenseData were specified), components (if ComponentText was specified and there is more than one visible section), directory (if DirText was specified), instfiles.
