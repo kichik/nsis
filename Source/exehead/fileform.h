@@ -57,7 +57,7 @@ enum
 #ifdef NSIS_SUPPORT_FILE
   EW_EXTRACTFILE,       // File to extract: 5,[overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh]
                         //  overwriteflag: 0x1 = no. 0x0=force, 0x2=try, 0x3=if date is newer
-#endif                       
+#endif
 #ifdef NSIS_SUPPORT_DELETE
   EW_DELETEFILE,        // Delete File: 2, [filename, rebootok]
 #endif
@@ -393,7 +393,7 @@ typedef struct
   // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
   /*
   Useless
-  
+
   WORD space_avail_id;
   WORD space_req_id;
   WORD dir_subtext_id;
@@ -478,6 +478,8 @@ extern int g_quit_flag;
 const char * NSISCALL GetStringFromStringTab(int offs);
 int NSISCALL GetCompressedDataFromDataBlock(int offset, HANDLE hFileOut);
 int NSISCALL GetCompressedDataFromDataBlockToMemory(int offset, char *out, int out_len);
+BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead);
+DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
