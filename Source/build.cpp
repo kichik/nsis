@@ -1058,7 +1058,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_uninst.common.num_pages) {
           if (resolve_call_int("uninstall pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (p->id != NSIS_PAGE_CUSTOM)
+            if (resolve_call_int("uninstall pages","post-page function",p->postfunc,&p->postfunc)) return 1;
           p++;
           i++;
         }
@@ -1089,7 +1090,8 @@ int CEXEBuild::resolve_coderefs(const char *str)
         int i = 0;
         while (i < build_header.common.num_pages) {
           if (resolve_call_int("pages","pre-page function",p->prefunc,&p->prefunc)) return 1;
-          if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
+          if (p->id != NSIS_PAGE_CUSTOM)
+            if (resolve_call_int("pages","post-page function",p->postfunc,&p->postfunc)) return 1;
           p++;
           i++;
         }
