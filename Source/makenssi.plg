@@ -3,206 +3,16 @@
 <pre>
 <h1>Build Log</h1>
 <h3>
---------------------Configuration: exehead_bzip2 - Win32 Release--------------------
-</h3>
-<h3>Command Lines</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release-bzip2/resource.res" /d "NDEBUG" "C:\Program Files\NSIS\Source\exehead\resource.rc"" 
-Creating temporary file "F:\Temp\WinTemp\RSP2E5.tmp" with contents
-[
-/nologo /ML /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_BZIP2" /Fo"Release-bzip2/" /Fd"Release-bzip2/" /FD /c 
-"C:\Program Files\NSIS\Source\zlib\INFBLOCK.C"
-"C:\Program Files\NSIS\Source\zlib\INFCODES.C"
-"C:\Program Files\NSIS\Source\zlib\INFLATE.C"
-"C:\Program Files\NSIS\Source\zlib\INFTREES.C"
-"C:\Program Files\NSIS\Source\zlib\INFUTIL.C"
-"C:\Program Files\NSIS\Source\bzip2\bzlib.c"
-"C:\Program Files\NSIS\Source\bzip2\decompress.c"
-"C:\Program Files\NSIS\Source\bzip2\huffman.c"
-"C:\Program Files\NSIS\Source\bzip2\randtable.c"
-"C:\Program Files\NSIS\Source\exehead\bgbg.c"
-"C:\Program Files\NSIS\Source\crc32.c"
-"C:\Program Files\NSIS\Source\exehead\exec.c"
-"C:\Program Files\NSIS\Source\exehead\fileform.c"
-"C:\Program Files\NSIS\Source\exehead\Main.c"
-"C:\Program Files\NSIS\Source\exehead\Ui.c"
-"C:\Program Files\NSIS\Source\exehead\util.c"
-]
-Creating command line "cl.exe @F:\Temp\WinTemp\RSP2E5.tmp" 
-Creating temporary file "F:\Temp\WinTemp\RSP2E6.tmp" with contents
-[
-comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib version.lib shell32.lib /nologo /entry:"WinMain" /subsystem:windows /pdb:none /machine:I386 /nodefaultlib /out:"Release-bzip2/exehead_bzip2.exe" /opt:nowin98 
-".\Release-bzip2\INFBLOCK.OBJ"
-".\Release-bzip2\INFCODES.OBJ"
-".\Release-bzip2\INFLATE.OBJ"
-".\Release-bzip2\INFTREES.OBJ"
-".\Release-bzip2\INFUTIL.OBJ"
-".\Release-bzip2\bzlib.obj"
-".\Release-bzip2\decompress.obj"
-".\Release-bzip2\huffman.obj"
-".\Release-bzip2\randtable.obj"
-".\Release-bzip2\bgbg.obj"
-".\Release-bzip2\crc32.obj"
-".\Release-bzip2\exec.obj"
-".\Release-bzip2\fileform.obj"
-".\Release-bzip2\Main.obj"
-".\Release-bzip2\Ui.obj"
-".\Release-bzip2\util.obj"
-".\Release-bzip2\resource.res"
-]
-Creating command line "link.exe @F:\Temp\WinTemp\RSP2E6.tmp"
-<h3>Output Window</h3>
-Compiling resources...
-Compiling...
-INFBLOCK.C
-INFCODES.C
-INFLATE.C
-INFTREES.C
-INFUTIL.C
-bzlib.c
-decompress.c
-huffman.c
-randtable.c
-bgbg.c
-crc32.c
-exec.c
-fileform.c
-Main.c
-Ui.c
-util.c
-Generating Code...
-Linking...
-Creating temporary file "F:\Temp\WinTemp\RSP2E8.bat" with contents
-[
-@echo off
-bin2h Release-bzip2\exehead_bzip2.exe Release-bzip2\exehead_bzip2.h bzip2_header_data
-]
-Creating command line "F:\Temp\WinTemp\RSP2E8.bat"
-generating include file for makenssi
-Release-bzip2\exehead_bzip2.exe -> bzip2_header_data (38400 bytes)
-
-<h3>
---------------------Configuration: exehead_zlib - Win32 Release--------------------
-</h3>
-<h3>Command Lines</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release-zlib/resource.res" /d "NDEBUG" "C:\Program Files\NSIS\Source\exehead\resource.rc"" 
-Creating temporary file "F:\Temp\WinTemp\RSP2E9.tmp" with contents
-[
-/nologo /ML /W3 /GX /O1 /Oy /D "_WINDOWS" /D "EXEHEAD" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /D "NSIS_COMPRESS_USE_ZLIB" /Fo"Release-zlib/" /Fd"Release-zlib/" /FD /c 
-"C:\Program Files\NSIS\Source\zlib\INFBLOCK.C"
-"C:\Program Files\NSIS\Source\zlib\INFCODES.C"
-"C:\Program Files\NSIS\Source\zlib\INFLATE.C"
-"C:\Program Files\NSIS\Source\zlib\INFTREES.C"
-"C:\Program Files\NSIS\Source\zlib\INFUTIL.C"
-"C:\Program Files\NSIS\Source\bzip2\bzlib.c"
-"C:\Program Files\NSIS\Source\bzip2\decompress.c"
-"C:\Program Files\NSIS\Source\bzip2\huffman.c"
-"C:\Program Files\NSIS\Source\bzip2\randtable.c"
-"C:\Program Files\NSIS\Source\exehead\bgbg.c"
-"C:\Program Files\NSIS\Source\crc32.c"
-"C:\Program Files\NSIS\Source\exehead\exec.c"
-"C:\Program Files\NSIS\Source\exehead\fileform.c"
-"C:\Program Files\NSIS\Source\exehead\Main.c"
-"C:\Program Files\NSIS\Source\exehead\Ui.c"
-"C:\Program Files\NSIS\Source\exehead\util.c"
-]
-Creating command line "cl.exe @F:\Temp\WinTemp\RSP2E9.tmp" 
-Creating temporary file "F:\Temp\WinTemp\RSP2EA.tmp" with contents
-[
-comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib version.lib shell32.lib /nologo /entry:"WinMain" /subsystem:windows /pdb:none /machine:I386 /nodefaultlib /out:"Release-zlib/exehead_zlib.exe" /opt:nowin98 
-".\Release-zlib\INFBLOCK.OBJ"
-".\Release-zlib\INFCODES.OBJ"
-".\Release-zlib\INFLATE.OBJ"
-".\Release-zlib\INFTREES.OBJ"
-".\Release-zlib\INFUTIL.OBJ"
-".\Release-zlib\bzlib.obj"
-".\Release-zlib\decompress.obj"
-".\Release-zlib\huffman.obj"
-".\Release-zlib\randtable.obj"
-".\Release-zlib\bgbg.obj"
-".\Release-zlib\crc32.obj"
-".\Release-zlib\exec.obj"
-".\Release-zlib\fileform.obj"
-".\Release-zlib\Main.obj"
-".\Release-zlib\Ui.obj"
-".\Release-zlib\util.obj"
-".\Release-zlib\resource.res"
-]
-Creating command line "link.exe @F:\Temp\WinTemp\RSP2EA.tmp"
-<h3>Output Window</h3>
-Compiling resources...
-Compiling...
-INFBLOCK.C
-INFCODES.C
-INFLATE.C
-INFTREES.C
-INFUTIL.C
-bzlib.c
-decompress.c
-huffman.c
-randtable.c
-bgbg.c
-crc32.c
-exec.c
-fileform.c
-Main.c
-Ui.c
-util.c
-Generating Code...
-Linking...
-Creating temporary file "F:\Temp\WinTemp\RSP2EC.bat" with contents
-[
-@echo off
-bin2h Release-zlib\exehead_zlib.exe Release-zlib\exehead_zlib.h zlib_header_data
-bin2h bitmap1.bmp Release-zlib\bitmap1.h bitmap1_data
-bin2h nsis.ico Release-zlib\icon.h icon_data
-bin2h uninst.ico Release-zlib\unicon.h unicon_data
-]
-Creating command line "F:\Temp\WinTemp\RSP2EC.bat"
-generating include file for makenssi
-Release-zlib\exehead_zlib.exe -> zlib_header_data (37888 bytes)
-
-bitmap1.bmp -> bitmap1_data (886 bytes)
-
-nsis.ico -> icon_data (766 bytes)
-
-uninst.ico -> unicon_data (766 bytes)
-
-<h3>
 --------------------Configuration: makenssi - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release/Script1.res" /d "NDEBUG" "C:\Program Files\NSIS\Source\Script1.rc"" 
-Creating temporary file "F:\Temp\WinTemp\RSP2ED.tmp" with contents
+Creating temporary file "F:\Temp\WinTemp\RSP8B.tmp" with contents
 [
 /nologo /G6 /ML /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /Fo"Release/" /Fd"Release/" /FD /c 
-"C:\Program Files\NSIS\Source\zlib\deflate.c"
-"C:\Program Files\NSIS\Source\zlib\trees.c"
-"C:\Program Files\NSIS\Source\build.cpp"
 "C:\Program Files\NSIS\Source\exedata.cpp"
-"C:\Program Files\NSIS\Source\makenssi.cpp"
-"C:\Program Files\NSIS\Source\util.cpp"
 ]
-Creating command line "cl.exe @F:\Temp\WinTemp\RSP2ED.tmp" 
-Creating temporary file "F:\Temp\WinTemp\RSP2EE.tmp" with contents
-[
-/nologo /ML /W3 /GX /O2 /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /Fo"Release/" /Fd"Release/" /FD /c 
-"C:\Program Files\NSIS\Source\bzip2\blocksort.c"
-"C:\Program Files\NSIS\Source\bzip2\bzlib.c"
-"C:\Program Files\NSIS\Source\bzip2\compress.c"
-"C:\Program Files\NSIS\Source\bzip2\huffman.c"
-"C:\Program Files\NSIS\Source\crc32.c"
-"C:\Program Files\NSIS\Source\DialogTemplate.cpp"
-"C:\Program Files\NSIS\Source\ResourceEditor.cpp"
-"C:\Program Files\NSIS\Source\tokens.cpp"
-]
-Creating command line "cl.exe @F:\Temp\WinTemp\RSP2EE.tmp" 
-Creating temporary file "F:\Temp\WinTemp\RSP2EF.tmp" with contents
-[
-/nologo /ML /W3 /GX /Ot /Ow /Oy /Ob2 /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "WIN32_LEAN_AND_MEAN" /Fo"Release/" /Fd"Release/" /FD /c 
-"C:\Program Files\NSIS\Source\script.cpp"
-]
-Creating command line "cl.exe @F:\Temp\WinTemp\RSP2EF.tmp" 
-Creating temporary file "F:\Temp\WinTemp\RSP2F0.tmp" with contents
+Creating command line "cl.exe @F:\Temp\WinTemp\RSP8B.tmp" 
+Creating temporary file "F:\Temp\WinTemp\RSP8C.tmp" with contents
 [
 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib version.lib /nologo /subsystem:console /pdb:none /machine:I386 /out:"../makensis.exe" /opt:nowin98 
 ".\Release\deflate.obj"
@@ -222,33 +32,10 @@ kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32
 ".\Release\util.obj"
 ".\Release\Script1.res"
 ]
-Creating command line "link.exe @F:\Temp\WinTemp\RSP2F0.tmp"
+Creating command line "link.exe @F:\Temp\WinTemp\RSP8C.tmp"
 <h3>Output Window</h3>
-Compiling resources...
 Compiling...
-deflate.c
-trees.c
-Generating Code...
-Compiling...
-build.cpp
 exedata.cpp
-makenssi.cpp
-util.cpp
-Generating Code...
-Compiling...
-blocksort.c
-bzlib.c
-compress.c
-huffman.c
-crc32.c
-Generating Code...
-Compiling...
-DialogTemplate.cpp
-ResourceEditor.cpp
-tokens.cpp
-Generating Code...
-Compiling...
-script.cpp
 Linking...
 
 
