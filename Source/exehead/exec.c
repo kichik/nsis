@@ -1076,9 +1076,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HANDLE h=LoadLibrary("advapi32.dll");
         if (h)
         {
-          BOOL (*OPT)(HANDLE, DWORD,PHANDLE);
-          BOOL (*LPV)(LPCTSTR,LPCTSTR,PLUID);
-          BOOL (*ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
+          BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
+          BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
+          BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
           OPT=(void*)GetProcAddress(h,"OpenProcessToken");
           LPV=(void*)GetProcAddress(h,"LookupPrivilegeValueA");
           ATP=(void*)GetProcAddress(h,"AdjustTokenPrivileges");
