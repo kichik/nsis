@@ -764,6 +764,8 @@
      ;Write Finish text
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 2" "Text" "$(MUI_TEXT_FINISH_TITLE)"
     
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Bottom" "170"
+    
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
         IfRebootFlag "" noreboot_init
