@@ -378,6 +378,13 @@
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
   SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+  SetStaticBkColor ${MUI_TEMP1} -1
+  GetWindowText ${MUI_TEMP2} ${MUI_TEMP1}
+  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+  SetStaticBkColor ${MUI_TEMP1} -1
+  SendMessage ${MUI_TEMP1} ${WM_SETTEXT} ${NSIS_MAX_STRLEN} "STR:${MUI_TEMP2}"
+
   Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
   
