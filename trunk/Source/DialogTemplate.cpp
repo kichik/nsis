@@ -26,6 +26,7 @@
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include <iconv.h>
+#  include <errno.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////
@@ -78,11 +79,18 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
         {
           delete [] readInto;
           readInto = 0;
+          iconv_close(cd);
+          static char err[1024];
+          snprintf(err,1024,"iconv failed (%d)!",errno);
+          throw runtime_error(err);
         }
         iconv_close(cd);
       }
       else
+      {
         readInto = 0;
+        throw runtime_error("iconv failed! no converter from UCS-2 to current code page");
+      }
 #endif
       seeker += iStrLen * sizeof(WCHAR);
     }
@@ -130,6 +138,10 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
         { \
           *(WCHAR*)seeker = 0; \
           seeker += sizeof(WCHAR); \
+          iconv_close(cd); \
+          static char err[1024]; \
+          snprintf(err,1024,"iconv failed (%d)!",errno); \
+          throw runtime_error(err); \
         } \
         seeker = (BYTE *) out; \
         iconv_close(cd); \
@@ -138,6 +150,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
       { \
         *(WCHAR*)seeker = 0; \
         seeker += sizeof(WCHAR); \
+        throw runtime_error("iconv failed! no converter from UCS-2 to current code page"); \
       } \
     } \
   else \
