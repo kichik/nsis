@@ -301,7 +301,6 @@ int CEXEBuild::GenerateLangTables() {
   {
     if (lt[i].nlf.m_bLoaded && (lt[i].nlf.m_szFont || lt[i].nlf.m_bRTL))
     {
-      SCRIPT_MSG("RTLing...\n");
       lt[i].dlg_offset = cur_offset;
 
       char *font = lt[i].nlf.m_szFont;
