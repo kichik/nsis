@@ -51,8 +51,8 @@ ULONG idThreadOwner;
 ULONG ulRefCount;
 static void *lpWndProcOld;
 
-BOOL CALLBACK DownloadDialogProc(HWND   hwndDlg, 
-                 UINT   uMsg,    
+BOOL CALLBACK DownloadDialogProc(HWND   hwndDlg,
+                 UINT   uMsg,
                  WPARAM wParam,
                  LPARAM lParam)
 {
@@ -83,7 +83,7 @@ BOOL TryEnterCS()
       bRet = FALSE;
    }
 
-   ::InterlockedExchange(plBusy, 0);   
+   ::InterlockedExchange(plBusy, 0);
 
    return bRet;
 }
@@ -111,18 +111,15 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
   LRESULT Res = 0;
   while ( !TryEnterCS() ) Sleep(0);
   if (message == WM_COMMAND && LOWORD(wParam) == IDCANCEL)
-  {
-    SendMessage(GetDlgItem(hwnd, IDCANCEL), BM_SETSTATE, FALSE, 0);
     g_cancelled = 1;
-  }
   else
     Res = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
   LeaveCS();
   return Res;
 }
 
-BOOL APIENTRY DllMain( HANDLE _hModule, 
-                       DWORD  ul_reason_for_call, 
+BOOL APIENTRY DllMain( HANDLE _hModule,
+                       DWORD  ul_reason_for_call,
                        LPVOID lpReserved
            )
 {
@@ -153,18 +150,17 @@ void progress_callback(HWND dlg, char *msg, int read_bytes)
 extern char *_strstr(char *i, char *s);
 #define strstr _strstr
 
-extern "C" 
+extern "C"
 {
 
 __declspec(dllexport) void download (HWND   parent,
-              int    string_size, 
-              char   *variables, 
+              int    string_size,
+              char   *variables,
               stack_t **stacktop)
 {
   char buf[1024];
   char url[1024];
   char filename[1024];
-  int wasen=0;
   HWND hwndAux;
   HWND hwndL=0;
   HWND hwndB=0;
@@ -173,8 +169,6 @@ __declspec(dllexport) void download (HWND   parent,
   BOOL bSuccess=FALSE;
   RECT r, cr, orig_childRc;
   int timeout_ms=30000;
-
-  JNL_HTTPGet *get = 0;
 
   char *error=NULL;
 
@@ -220,10 +214,16 @@ __declspec(dllexport) void download (HWND   parent,
 
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
 
-  if (hFile == INVALID_HANDLE_VALUE) {
-    wsprintf (buf, "Unable to open %s", filename);
-    error=buf;
-  } else {
+  if (hFile == INVALID_HANDLE_VALUE)
+  {
+    wsprintf(buf, "Unable to open %s", filename);
+    error = buf;
+  }
+  else
+  {
+    HWND hwndPrevFocus;
+    BOOL fCancelDisabled;
+
     if (parent)
     {
       childwnd=FindWindowEx(parent,NULL,"#32770",NULL);
@@ -236,7 +236,7 @@ __declspec(dllexport) void download (HWND   parent,
 
       lpWndProcOld = (void *)SetWindowLong(parent,GWL_WNDPROC,(long)ParentWndProc);
 
-      dlg = CreateDialog((HINSTANCE)hModule, 
+      dlg = CreateDialog((HINSTANCE)hModule,
                     MAKEINTRESOURCE(IDD_DIALOG1),
                     parent,
                     DownloadDialogProc);
@@ -251,10 +251,10 @@ __declspec(dllexport) void download (HWND   parent,
 
         HWND pb = g_hwndProgressBar = GetDlgItem(dlg, pbid);
 
-        long c;
-
         if (hwPb)
         {
+          long c;
+
           c = SendMessage(hwPb, PBM_SETBARCOLOR, 0, 0);
           SendMessage(hwPb, PBM_SETBARCOLOR, 0, c);
           SendMessage(pb, PBM_SETBARCOLOR, 0, c);
@@ -264,23 +264,23 @@ __declspec(dllexport) void download (HWND   parent,
           SendMessage(pb, PBM_SETBKCOLOR, 0, c);
         }
 
-        ShowWindow(pb, SW_SHOW);
+        ShowWindow(pb, SW_SHOWNA);
 
         GetWindowRect(childwnd,&orig_childRc);
         GetWindowRect(dlg,&cr);
         ScreenToClient(dlg,(LPPOINT)&cr);
         ScreenToClient(dlg,((LPPOINT)&cr)+1);
-        
+
         hwndAux = GetDlgItem(childwnd,1016);
         GetWindowRect(hwndAux,&r);
         ScreenToClient(childwnd,(LPPOINT)&r);
         ScreenToClient(childwnd,((LPPOINT)&r)+1);
         SetWindowPos(childwnd,0,0,0,r.right-r.left,r.top,SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE);
-        
+
         GetWindowRect(hwndAux,&r);
         ScreenToClient(parent,(LPPOINT)&r);
         ScreenToClient(parent,((LPPOINT)&r)+1);
-        SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER|SWP_SHOWWINDOW);
+        SetWindowPos(dlg,0,r.left,r.top,r.right-r.left,cr.bottom-cr.top,SWP_NOACTIVATE|SWP_NOZORDER);
 
         hwndAux = GetDlgItem(dlg,IDC_STATIC2);
         GetWindowRect(hwndAux,&cr);
@@ -305,20 +305,25 @@ __declspec(dllexport) void download (HWND   parent,
         long hFont = SendMessage(parent, WM_GETFONT, 0, 0);
         SendDlgItemMessage(dlg, pbid, WM_SETFONT, hFont, 0);
         SendDlgItemMessage(dlg, IDC_STATIC2, WM_SETFONT, hFont, 0);
+
+        ShowWindow(dlg, SW_SHOWNA);
       }
 
       // enable the cancel button
-      wasen=EnableWindow(GetDlgItem(parent,IDCANCEL),TRUE);
-      SendMessage(parent, WM_NEXTDLGCTL, (WPARAM) GetDlgItem(parent, IDCANCEL), TRUE);
+      hwndPrevFocus = GetFocus();
+      fCancelDisabled = EnableWindow(GetDlgItem(parent, IDCANCEL), TRUE);
+      SendMessage(parent, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(parent, IDCANCEL), TRUE);
     }
     {
       WSADATA wsaData;
       WSAStartup(MAKEWORD(1, 1), &wsaData);
 
+      JNL_HTTPGet *get = 0;
+
       static char main_buf[8192];
       char *buf=main_buf;
       char *p=NULL;
-      
+
       HKEY hKey;
       if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
       {
@@ -373,16 +378,22 @@ __declspec(dllexport) void download (HWND   parent,
           }
         }
         while (!TryEnterCS()); // Process messages
-        if ((g_cancelled || error) && dlg) 
-          DestroyWindow(dlg);
+        if (g_cancelled || error)
+        {
+          if (dlg)
+            DestroyWindow(dlg);
+          dlg = NULL;
+          if (!error)
+            error = "cancel";
+        }
         LeaveCS();
 
-        if ( g_cancelled || error )
+        if (error)
         {
           if (parent)
           {
             SetWindowLong(parent,GWL_WNDPROC,(long)lpWndProcOld);
-            
+
             if (hwndB) ShowWindow(hwndB,SW_SHOWNA);
             if (hwndL) ShowWindow(hwndL,SW_SHOWNA);
 
@@ -393,21 +404,24 @@ __declspec(dllexport) void download (HWND   parent,
               SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE
             );
 
-            if (wasen)
+            // Prevent wierd stuff happening if the cancel button happens to be
+            // pressed at the moment we are finishing
+            SendMessage(GetDlgItem(parent, IDCANCEL), BM_SETSTATE, FALSE, 0);
+            // Restore the previous focus and cancel button states
+            SendMessage(parent, WM_NEXTDLGCTL, (WPARAM)hwndPrevFocus, TRUE);
+            if (fCancelDisabled)
               EnableWindow(GetDlgItem(parent, IDCANCEL), FALSE);
           }
-          if ( !error )
-            error = "cancel";
           break;
         }
-      
+
         Sleep(25);
 
         st = get->run ();
 
         if (st == -1) {
-          error=get->geterrorstr();
-          //break;
+          lstrcpyn(url, get->geterrorstr(), sizeof(url));
+          error = url;
         } else if (st == 1) {
           if (sofar < cl)
             error="download incomplete";
@@ -416,25 +430,18 @@ __declspec(dllexport) void download (HWND   parent,
             bSuccess=TRUE;
             error = "success";
           }
-          //break;
         } else {
 
           if (get->get_status () == 0) {
             // progressFunc ("Connecting ...", 0);
             if (last_recv_time+timeout_ms < GetTickCount())
-            {
               error = "Timed out on connecting.";
-              //break;
-            }
 
           } else if (get->get_status () == 1) {
 
             progress_callback(dlg, "Reading headers", 0);
             if (last_recv_time+timeout_ms < GetTickCount())
-            {
               error = "Timed out on getting headers.";
-              //break;
-            }
 
           } else if (get->get_status () == 2) {
 
@@ -443,12 +450,11 @@ __declspec(dllexport) void download (HWND   parent,
               last_recv_time=GetTickCount();
 
               cl = get->content_length ();
-              if (cl == 0) {
+              if (cl == 0)
                 error = "Server did not specify content length.";
-                //break;
-              } else if (dlg) {
-                  SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
-                  g_file_size=cl;
+              else if (dlg) {
+                SendMessage(g_hwndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0,30000));
+                g_file_size=cl;
               }
             }
 
@@ -465,7 +471,7 @@ __declspec(dllexport) void download (HWND   parent,
                 int bps=sofar/(time_sofar?time_sofar:1);
                 int remain=MulDiv(time_sofar,cl,sofar) - time_sofar;
                 char *rtext=szSecond;
-                if (remain >= 60) 
+                if (remain >= 60)
                 {
                   remain/=60;
                   rtext=szMinute;
@@ -475,7 +481,7 @@ __declspec(dllexport) void download (HWND   parent,
                     rtext=szHour;
                   }
                 }
-                wsprintf (buf, 
+                wsprintf (buf,
                       szProgress,
                       sofar/1024,
                       MulDiv(100,sofar,cl),
@@ -491,41 +497,37 @@ __declspec(dllexport) void download (HWND   parent,
               } else {
                 if (sofar < cl)
                   error = "Server aborted.";
-                //break;
               }
             }
             if (GetTickCount() > last_recv_time+timeout_ms)
-            {
               error = "Downloading timed out.";
-              //break;
-            }
 
           } else {
             error = "Bad response status.";
           }
         }
-        
+
       }
 
+      // Clean up the connection then release winsock
+      if (get) delete get;
       WSACleanup();
     }
-    
+
     CloseHandle(hFile);
   }
-  
+
   if (g_cancelled || !bSuccess) {
     DeleteFile(filename);
   }
 
   pushstring(error);
-    
-  if (get) delete get;
 }
 
 
 __declspec(dllexport) void download_quiet(HWND   parent,
-              int    stringsize, 
-              char   *variables, 
+              int    stringsize,
+              char   *variables,
               stack_t **stacktop)
 {
   g_hwndProgressBar=0;
