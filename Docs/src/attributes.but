@@ -152,7 +152,8 @@ Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color
 
 \c install_type_name | /NOCUSTOM | ([/LANG=lang_id] /CUSTOMSTRING=str) | /COMPONENTSONLYONCUSTOM
 
-Adds an install type to the install type list, or disables the custom install type. There can be as many as 8 types, each one specifying the name of the install. The first type is the default (generally 'Typical'). Each type is numbered, starting at 1. See SectionIn for information on how those numbers are used. If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the "Custom" install type is selected.
+Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install. Instead of an "hard-coded" name you can use User Variables which are processed at Runtime. This allows you to change InstType name dynamically. Another way of changing the InstType name during runtime is the \R{sinsttypesettext}{InstTypeSetText} command. The difference is that with InstTypeSetText you are saving your precious user variables. The first type is the default (generally 'Typical'). Each type is numbered, starting at 1. See SectionIn for information on how those numbers are used. If the /NOCUSTOM switch is specified, then the "custom" install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the "Custom" install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be show
+n if the "Custom" install type is selected.
 
 \S2{alicensebkcolor} LicenseBkColor
 
@@ -281,3 +282,4 @@ Sets whether or not the installer's icon is being displayed.
 \c on|\\<b\\>off\\</b\\>
 
 Sets whether or not an XP manifest will be added to the installer. This affects the uninstaller too.
+
