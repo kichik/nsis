@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 2052
 # Font and size - dash (-) means default 字体名称与大小
@@ -7,17 +7,17 @@ NLF v4
 9
 # Codepage - dash (-) means ANSI code page ANSI 字码页
 936
-# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-01
+# Translation by Kii Ali <kiiali@cpatch.org>,  Revision Date:  2003-05-30
 Nullsoft Install System %s
 %s 安装
 %s 解除安装
  : 授权条款
  : 安装选项
- : 安装目录
- : 正在安装文件
- : 完成
+ : 安装文件夹
+ : 正在安装
+ : 已完成
  : 确认
- : 正在删除文件
+ : 正在解除安装
  : 完成
 < 上一步(&P)
 下一步(&N) >
@@ -33,14 +33,15 @@ Nullsoft Install System %s
 名称
 已完成
 自定义
-选定安装的类型:
-选定安装的组件:
-或者，自定义选定想安装的组件:
-选定要安装 %s 的目录:
+选定安装的类型: 
+选定安装的组件: 
+或者，自定义选定想安装的组件: 
+选定要安装 %s 的文件夹: 
 可用空间: 
 所需空间: 
-解除安装目录:
-不能打开目的文件: \r\n\r\n"$0"\r\n\r\n单击 [Abort] 放弃安装，[Retry] 再试写入文件，或\r\n [Ignore] 忽略这个文件。
+解除安装目录: 
+不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Abort] 放弃安装，\r\n [Retry] 重新尝试写入文件，或\r\n [Ignore] 忽略这个文件。
+不能打开要写入的文件: \r\n\t"$0"\r\n单击 [Retry] 重新尝试写入文件，或\r\n [Cancel] 取消安装。
 无法写入: 
 复制失败 
 复制到: 
@@ -48,7 +49,7 @@ Nullsoft Install System %s
 正在解除注册: 
 无法找到符号: 
 无法加载: 
-创建目录: 
+创建文件夹: 
 创建快捷方式: 
 创建解除安装程序: 
 删除文件: 
