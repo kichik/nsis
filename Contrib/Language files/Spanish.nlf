@@ -9,7 +9,7 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by MoNKi
+# Translation by MoNKi & Lobo Lunar
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -105,11 +105,11 @@ Directorio de Destino
 # ^DirBrowseText
 Seleccione el directorio en el que instalar $(^NameDA):
 # ^UnDirText
-El programa de instalación desinstalará $(^NameDA) de el siguiente directorio. Para desinstalar de un directorio diferente, presione Examinar y seleccione otro directorio. $_CLICK
+El programa de instalación desinstalará $(^NameDA) del siguiente directorio. Para desinstalar de un directorio diferente, presione Examinar y seleccione otro directorio. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Seleccione el directorio desde el que desinstalar $(^NameDA):
+Seleccione el directorio desde el cual desinstalar $(^NameDA):
 # ^SpaceAvailable
 Espacio disponible: 
 # ^SpaceRequired
@@ -163,7 +163,7 @@ Error registrando DLL
 # ^ErrorWriting
 "Extraer: error escribiendo al archivo "
 # ^InvalidOpcode
-Instalador corrupto: código de operación no valido
+Instalador corrupto: código de operación no válido
 # ^NoOLE
 "Sin OLE para: "
 # ^OutputFolder
