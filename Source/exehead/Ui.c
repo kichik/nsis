@@ -103,7 +103,6 @@ static int m_page=-1,m_abort;
 HWND m_curwnd;
 static int m_whichcfg;
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 static BOOL NSISCALL SetDlgItemTextFromLang(HWND dlg, WORD id, langid_t lid) {
   return SetDlgItemText(dlg,id,STR(GetLangString(lid)));
 }
@@ -130,7 +129,8 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
   BOOL ret=0;
   if (uMsg == WM_CTLCOLORSTATIC) {
     if (g_inst_cmnheader->code_onStaticCtlBkColor >= 0) {
-      mystrcpy(g_tmp,g_usrvars[0]);
+      char tmp[NSIS_MAX_STRLEN];
+      mystrcpy(tmp,g_usrvars[0]);
       myitoa(g_usrvars[0],lParam);
       ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onStaticCtlBkColor,NULL);
       if (myatoi(g_usrvars[0]) != -1) {
@@ -138,12 +138,11 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
         SetBkColor((HDC)wParam, b.lbColor);
         ret=(BOOL)CreateBrushIndirect(&b);
       }
-      mystrcpy(g_usrvars[0],g_tmp);
+      mystrcpy(g_usrvars[0],tmp);
     }
   }
   return ret;
 }
-#endif
 
 #ifdef NSIS_CONFIG_LOG
 void NSISCALL build_g_logfile()
@@ -246,6 +245,37 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
+int lang_num;
+
+void NSISCALL select_lang()
+{
+  int i;
+  LANGID user_lang, lang_mask=~(LANGID)0;
+
+  user_lang=myatoi(state_language);
+
+lang_again:
+  for (i = 0; i < lang_num; i++) {
+    if (!((user_lang ^ common_strings_tables[i].lang_id) & lang_mask)) {
+      cur_common_strings_table+=i;
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+      if (g_is_uninstaller)
+        (uninstall_strings *)cur_install_strings_table+=i;
+      else
+#endif
+        (installer_strings *)cur_install_strings_table+=i;
+      break;
+    }
+  }
+  if ((i == lang_num) && (lang_mask == ~(LANGID)0)) {
+    lang_mask=0x3ff; // primary lang
+    goto lang_again;
+  }
+
+  wsprintf(state_language, "%u", cur_common_strings_table->lang_id);
+  process_string_from_lang(g_caption,LANGID_CAPTION);
+}
+
 int NSISCALL ui_doinstall(void)
 {
   g_autoclose=g_inst_cmnheader->misc_flags&1;
@@ -311,6 +341,26 @@ int NSISCALL ui_doinstall(void)
 #endif
   }
 
+  // Added by Amir Szekely 3rd August 2002
+  // Multilingual support
+  {
+    int size;
+    lang_num=g_inst_header->common.str_tables_num;
+    size=lang_num*sizeof(common_strings);
+    cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
+    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
+  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    if (g_is_uninstaller)
+      size=lang_num*sizeof(uninstall_strings);
+    else
+  #endif
+      size=lang_num*sizeof(installer_strings);
+    cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
+    GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
+
+    process_string_from_lang(g_caption,LANGID_CAPTION);
+  }
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   if (!g_inst_cmnheader->silent_install)
@@ -325,51 +375,13 @@ int NSISCALL ui_doinstall(void)
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     g_hwnd=h;
-    {
-      // Added by Amir Szekely 3rd August 2002
-      // Multilingual support
-      int num=g_inst_header->common.str_tables_num;
-      LANGID user_lang, lang_mask=~(LANGID)0;
-      int size=num*sizeof(common_strings);
-      cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (g_is_uninstaller)
-        size=num*sizeof(uninstall_strings);
-      else
-#endif
-        size=num*sizeof(installer_strings);
-      cur_install_strings_table=install_strings_tables=(char *)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->common.inst_str_tables,install_strings_tables,size);
-
-      process_string_from_lang(g_caption,LANGID_CAPTION);
-
-      wsprintf(state_language, "%u", GetUserDefaultLangID());
-      if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
-      g_hwnd=NULL;
-
-      user_lang=myatoi(state_language);
-
-lang_again:
-      for (size = 0; size < num; size++) {
-        if (!((user_lang ^ common_strings_tables[size].lang_id) & lang_mask)) {
-          cur_common_strings_table+=size;
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-          if (g_is_uninstaller)
-            (uninstall_strings *)cur_install_strings_table+=size;
-          else
-#endif
-            (installer_strings *)cur_install_strings_table+=size;
-          break;
-        }
-      }
-      if ((size == num) && (lang_mask == ~(LANGID)0)) {
-        lang_mask=0x3ff; // primary lang
-        goto lang_again;
-      }
-    }
-    wsprintf(state_language, "%u", cur_common_strings_table->lang_id);
-    process_string_from_lang(g_caption,LANGID_CAPTION);
+    // Select language
+    wsprintf(state_language, "%u", GetUserDefaultLangID());
+    // in onInit
+    if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    g_hwnd=NULL;
+    // Make the selection from the tables
+    select_lang();
     if (h != GetDesktopWindow()) {
       SendMessage(h, WM_SETTEXT, 0, (LPARAM)g_caption);
       ShowWindow(h, SW_SHOW);
@@ -384,7 +396,9 @@ lang_again:
 #endif
   {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
+    wsprintf(state_language, "%u", GetUserDefaultLangID());
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    select_lang();
 #endif//NSIS_SUPPORT_CODECALLBACKS
     if (install_thread(NULL))
     {
@@ -1039,12 +1053,12 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               if (image == 2) // already checked
               {
                 g_inst_section[wh].default_state&=~DFS_SET;
-                CheckTreeItem(hwndTree1, &hItem,0);
+                CheckTreeItem(hwndTree1,&hItem,0);
               }
               else
               {
                 g_inst_section[wh].default_state|=DFS_SET;
-                CheckTreeItem(hwndTree1, &hItem,1);
+                CheckTreeItem(hwndTree1,&hItem,1);
               }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
               {
