@@ -969,7 +969,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
 
-static void NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *items)
+static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *items)
 {
   TVITEM item;
   int i, flags, state;
