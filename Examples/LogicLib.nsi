@@ -1,8 +1,12 @@
+!verbose 2
+
 Name "NSIS LogicLib Example"
 OutFile "LogicLib.exe"
 ShowInstDetails show
 
-!include "Sections.nsh"
+!define LOGICLIB_STRCMP
+!define LOGICLIB_INT64CMP
+!define LOGICLIB_SECTIONCMP
 !include "LogicLib.nsh"
 
 ;!undef LOGICLIB_VERBOSITY
@@ -29,7 +33,6 @@ Section /o "Run tests" TESTS
     FindClose $R1
   ${EndUnless}
 
-  StrCpy $R1 "example.xxx"
   ${If} ${FileExists} "${__FILE__}"
     DetailPrint 'Source file "${__FILE__}" still exists'
   ${Else}
@@ -126,11 +129,183 @@ Section /o "Run tests" TESTS
     DetailPrint "FAILED If..ElseIf..Else..EndIf test"
   ${EndIf}
 
+  ; if..andif..orif..endif
+  StrCpy $R2 ""
+  ${If} 1 = 1
+  ${AndIf} 2 = 2
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${AndIf} 2 = 3
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 2
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 3
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+
+  ${If} 1 = 1
+  ${OrIf} 2 = 2
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${OrIf} 2 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 2
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 3
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+
+  ${If} 1 = 1
+  ${AndIf} 2 = 2
+  ${OrIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${AndIf} 2 = 3
+  ${OrIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 2
+  ${OrIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 3
+  ${OrIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${AndIf} 2 = 2
+  ${OrIf} 3 = 4
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${AndIf} 2 = 3
+  ${OrIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 2
+  ${OrIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${AndIf} 2 = 3
+  ${OrIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+
+  ${If} 1 = 1
+  ${OrIf} 2 = 2
+  ${AndIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 1
+  ${OrIf} 2 = 3
+  ${AndIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 2
+  ${AndIf} 3 = 3
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 3
+  ${AndIf} 3 = 3
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 1
+  ${OrIf} 2 = 2
+  ${AndIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 1
+  ${OrIf} 2 = 3
+  ${AndIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 2
+  ${AndIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 1 = 2
+  ${OrIf} 2 = 3
+  ${AndIf} 3 = 4
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+
+  ${If} $R2 == "AAAAAAAAAAAAAAAAAAAAAAAA"
+    DetailPrint "PASSED If..AndIf..OrIf..Else..EndIf test"
+  ${Else}
+    DetailPrint "FAILED If..AndIf..OrIf..Else..EndIf test"
+  ${EndIf}
+
   ; ifthen..|..|
   StrCpy $R1 1
   StrCpy $R2 ""
-  ${ifthen} $R1 = 1 ${|} StrCpy $R2 $R2A ${|}
-  ${ifthen} $R1 = 2 ${|} StrCpy $R2 $R2B ${|}
+  ${IfThen} $R1 = 1 ${|} StrCpy $R2 $R2A ${|}
+  ${IfThen} $R1 = 2 ${|} StrCpy $R2 $R2B ${|}
   ${If} $R2 == "A"
     DetailPrint "PASSED IfThen test"
   ${Else}
@@ -139,8 +314,8 @@ Section /o "Run tests" TESTS
 
   ; ifcmd..||..| and if/unless cmd
   StrCpy $R2 ""
-  ${ifcmd} MessageBox MB_YESNO "Please press Yes" IDYES ${||} StrCpy $R2 $R2A ${|}
-  ${Unless} ${Cmd} `MessageBox MB_YESNO|MB_DEFBUTTON2 "Please press No" IDYES`
+  ${IfCmd} MessageBox MB_YESNO "Please click Yes" IDYES ${||} StrCpy $R2 $R2A ${|}
+  ${Unless} ${Cmd} `MessageBox MB_YESNO|MB_DEFBUTTON2 "Please click No" IDYES`
     StrCpy $R2 $R2B
   ${EndUnless}
   ${If} $R2 == "AB"
@@ -420,3 +595,5 @@ Function ComponentsLeave
     Abort
   ${EndIf}
 FunctionEnd
+
+!verbose 3
