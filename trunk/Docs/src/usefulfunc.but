@@ -369,15 +369,15 @@
 \c    ;------------------------
 \c    ;Check file and version
 \c
-\c    IfFileExists "${DESTFILE}" "" copy_${LOCALFILE}
+\c    IfFileExists "${DESTFILE}" "" "copy_${LOCALFILE}"
 \c
 \c    ClearErrors
 \c      GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
 \c      GetDLLVersion "${DESTFILE}" $R2 $R3
-\c    IfErrors upgrade_${LOCALFILE}
+\c    IfErrors "upgrade_${LOCALFILE}"
 \c
-\c    IntCmpU $R0 $R2 "" done_${LOCALFILE} upgrade_${LOCALFILE}
-\c    IntCmpU $R1 $R3 done_${LOCALFILE} done_${LOCALFILE} upgrade_${LOCALFILE}    
+\c    IntCmpU $R0 $R2 "" "done_${LOCALFILE}" "upgrade_${LOCALFILE}"
+\c    IntCmpU $R1 $R3 "done_${LOCALFILE}" "done_${LOCALFILE}" "upgrade_${LOCALFILE}"
 \c
 \c    ;------------------------
 \c    ;Let's upgrade the DLL!
@@ -396,7 +396,7 @@
 \c    ClearErrors
 \c      StrCpy $R0 "${DESTFILE}"
 \c      Call ":file_${LOCALFILE}"
-\c    IfErrors "" noreboot_${LOCALFILE}
+\c    IfErrors "" "noreboot_${LOCALFILE}"
 \c  
 \c    ;------------------------
 \c    ;DLL is in use. Copy it to a temp file and Rename it on reboot.
@@ -412,7 +412,7 @@
 \c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "Register ${DESTFILE}" '"$SYSDIR\regsvr32.exe" /s "${DESTFILE}"'
 \c    !endif
 \c
-\c    Goto done_${LOCALFILE}
+\c    Goto "done_${LOCALFILE}"
 \c
 \c    ;------------------------
 \c    ;DLL does not exist - just extract
@@ -442,7 +442,7 @@
 \c    ;------------------------
 \c    ;End
 \c
-\c    Goto end_${LOCALFILE}
+\c    Goto "end_${LOCALFILE}"
 \c
 \c    ;------------------------
 \c    ;Called to extract the DLL
@@ -451,7 +451,7 @@
 \c      File /oname=$R0 "${LOCALFILE}"  
 \c      Return
 \c
-\c    end_${LOCALFILE}:
+\c    "end_${LOCALFILE}:"
 \c	
 \c  !macroend
 
