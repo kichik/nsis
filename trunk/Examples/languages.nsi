@@ -82,7 +82,7 @@ Function .onInit
 	Push "Traditional Chinese"
 	Push 1028
 
-	LandDLL::LangDialog 9 ; 9 is the number of languages
+	LangDLL::LangDialog 9 ; 9 is the number of languages
 
 	Pop $LANGUAGE
 	StrCmp $LANGUAGE "cancel" 0 +2
