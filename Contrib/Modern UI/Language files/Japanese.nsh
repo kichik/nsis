@@ -12,11 +12,8 @@
 
   !define MUI_LANGNAME "Japanese" ;(日本語) Name of the language in the language itself
 
-  !define MUI_FONT_HEADER "ＭＳ Ｐゴシック"
-  !define MUI_FONTSIZE_HEADER "9"
-
-  !define MUI_FONT_TITLE "ＭＳ Ｐゴシック"
-  !define MUI_FONTSIZE_TITLE "12"
+  !define MUI_FONT "ＭＳ Ｐゴシック"
+  !define MUI_FONTSIZE "9"
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "$(^Name) セットアップ ウィザードへようこそ"
   !define MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^Name)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによって、セットアップがこのコンピュータを再起動せずに、確実にシステム ファイルをアップデートすることが出来るようになります。\r\n\r\n$_CLICK"

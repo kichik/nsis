@@ -63,14 +63,14 @@ table
 
 .header
 	{
-	font-size: 14pt;
+	font-size: 16pt;
 	color: #7A7272;
 	}
 	
 .subheader
 	{
 	margin: 20px;
-	font-size: 12pt;
+	font-size: 14pt;
 	font-weight: bold;
 	color: #303030;
 	}
@@ -78,7 +78,7 @@ table
 .sub2header
 	{
 	margin: 20px;
-	font-size: 11pt;
+	font-size: 12pt;
 	font-weight: bold;
 	color: #2B5885;
 	}
@@ -164,7 +164,7 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text">When adding &quot; to a Modern UI string, you should always escape it ($\&quot;),
   because the Modern UI macros use &quot; to separate parameters. If you want to set texts like above you have to
   escape both &quot; and ' (using $\&quot; and $\').</p>
-  <p class="subheader">1. Include the header file</p>
+  <p class="subheader">1. Header file</p>
   <pre class="margin">!include "MUI.nsh"</pre>
   <p class="text">MUI.nsh is in the Include directory, so you don't have
   to specify a path.</p>
@@ -238,9 +238,11 @@ will also help you to learn more about the Modern UI.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_INSTFILESPAGE_COLORS </span><span class="parameter">(/windows |
   (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
-  The colors of the details screen. Use /windows for the default colors.</p>
+  The colors of the details screen.<br />
+  <i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_INSTFILESPAGE_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
-  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
+  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br />
+  <i>Default: smooth</i></p>
   </div>
   <p class="sub2header">Finish Page Interface Settings</p>
   <div class="margin">
@@ -460,35 +462,21 @@ will also help you to learn more about the Modern UI.</p>
   <a href="#customFunctions">More info...</a></p>
   </div>
   </div>
-  <p class="subheader">4. Define custom functions</p>
+  <p class="subheader">4. Custom functions</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
   own function and let the Modern UI functions call them.</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
-  <p class="subheader">5. Insert language files</p>
+  <p class="subheader">5. Language files</p>
   <p class="text">Insert the Modern UI language files for the languages to want to include.</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
-  <p class="sub2header">Customize Fonts</p>
-  <div class="margin">
-  <p class="text">You can customize the fonts for a language using the following defines before inserting
-  a language.</p>
-  <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
-  <span class="bold">MUI_FONTSTYLE_HEADER </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
-  The font for the title in the header.</p>
-  <p class="text"><span class="bold">MUI_FONT_TITLE </span><span class="parameter">font_name</span><br />
-  <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
-  <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
-  The font for the title on the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">Note: </span>Page texts can be changed using page settings.</p>
-  </div>
   <p class="sub2header">Language Selection Dialog</p>
   <div class="margin">
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
-  MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit.</p>
+  MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in the .onInit function.</p>
 <pre class="margin">
 Function .onInit
 
@@ -543,7 +531,7 @@ functions.</p>
   <p class="subheader">7. Your own sections and functions</p>
   <p class="text">Add your installer sections and functions.
   See the NSIS Users Manual for details.</p>
-  <p class="subheader">8. Set the descriptions for the sections</p>
+  <p class="subheader">8. Descriptions for the sections</p>
   <p class="text">The descriptions of sections will be displayed on the
   components page, when the user hovers the mouse over a section.
   If you don't want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
