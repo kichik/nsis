@@ -49,6 +49,8 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_DIRTEXT,"DirText",0,4,"[directory_page_description] [directory_page_subtext] [browse_button_text] [browse_dlg_text]"},
 {TOK_DIRSHOW,"DirShow",1,0,"(show|hide)"},
 {TOK_DIRVAR,"DirVar",1,0,"$(user_var: dir in/out))"},
+{TOK_DIRVERIFY,"DirVerify",1,0,"auto|leave"},
+{TOK_GETINSTDIRERROR,"GetInstDirError",1,0,"$(user_var: error output)"},
 {TOK_ROOTDIRINST,"AllowRootDirInstall",1,0,"(true|false)"},
 {TOK_CHECKBITMAP,"CheckBitmap",1,0,"local_bitmap.bmp"},
 {TOK_ENABLEWINDOW,"EnableWindow",2,0,"hwnd (1|0)"},
