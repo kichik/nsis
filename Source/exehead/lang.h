@@ -58,6 +58,8 @@
 #define LANG_LICENSE_TEXT             (INSTALL_STR(licensetext))
 #define LANG_LICENSE_DATA             (INSTALL_STR(licensedata))
 #define LANG_BTN_LICENSE              (INSTALL_STR(licensebutton))
+#define LANG_BTN_LICENSE_AGREE        (INSTALL_STR(licensebuttonagree))
+#define LANG_BTN_LICENSE_DISAGREE     (INSTALL_STR(licensebuttondisagree))
 
 #define UNINSTALL_STR(x)              (~((sizeof(common_strings) + FIELD_OFFSET(uninstall_strings, x)) / sizeof(int)))
 

@@ -1060,7 +1060,102 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         SCRIPT_MSG("LicenseData: \"%s\"\n",line.gettoken_str(a));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-    // Added by Amir Szekely 30th July 2002
+    case TOK_LICENSEFORCESELECTION:
+    {
+      int k=line.gettoken_enum(1,"off\0checkbox\0radiobuttons\0");
+      if (k == -1) PRINTHELP()
+
+      try {
+        init_res_editor();
+
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_LICENSE), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+        if (!dlg) throw runtime_error("IDD_LICENSE doesn't exist!");
+        CDialogTemplate dt(dlg);
+        free(dlg);
+
+        switch (k) {
+        	case 0:
+            build_header.common.flags&=~CH_FLAGS_LICENSE_FORCE_SELECTION;
+            dt.RemoveItem(IDC_LICENSEAGREE);
+            dt.RemoveItem(IDC_LICENSEDISAGREE);
+            break;
+          case 1:
+          {
+            build_header.common.flags|=CH_FLAGS_LICENSE_FORCE_SELECTION;
+            
+            DialogItemTemplate *licenseData = dt.GetItem(IDC_EDIT1);
+
+            DialogItemTemplate *item;
+            for (int i = 0; item = dt.GetItemByIdx(i); i++) {
+              if (item->sY >= licenseData->sY + licenseData->sHeight) {
+                item->sY -= 10;
+              }
+            }
+
+            licenseData->sHeight -= 10;
+
+            DialogItemTemplate checkBox = {
+              0,
+              0,
+              dt.GetHeight() - 9,
+              dt.GetWidth(),
+              9,
+              0,
+              BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+              IDC_LICENSEAGREE,
+              MAKEINTRESOURCE(0x0080),
+            };
+            dt.AddItem(checkBox);
+
+            break;
+          }
+          case 2:
+          {
+            build_header.common.flags|=CH_FLAGS_LICENSE_FORCE_SELECTION;
+
+            license_force_radio_used=true;
+            
+            DialogItemTemplate *licenseData = dt.GetItem(IDC_EDIT1);
+
+            DialogItemTemplate *item;
+            for (int i = 0; item = dt.GetItemByIdx(i); i++) {
+              if (item->sY >= licenseData->sY + licenseData->sHeight) {
+                item->sY -= 20;
+              }
+            }
+
+            licenseData->sHeight -= 20;
+
+            DialogItemTemplate radionButton = {
+              0,
+              0,
+              dt.GetHeight() - 9,
+              dt.GetWidth(),
+              9,
+              0,
+              BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+              IDC_LICENSEDISAGREE,
+              MAKEINTRESOURCE(0x0080),
+            };
+            dt.AddItem(radionButton);
+
+            radionButton.sY -= 10;
+            radionButton.wId = IDC_LICENSEAGREE;
+            dt.AddItem(radionButton);
+          }
+        }
+
+        DWORD dwSize;
+        dlg = dt.Save(dwSize);
+        res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_LICENSE), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+        free(dlg);
+      }
+      catch (exception& err) {
+        ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
+        return PS_ERROR;
+      }
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_LICENSEBKCOLOR:
       {
         char *p = line.gettoken_str(1);

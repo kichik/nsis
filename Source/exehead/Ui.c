@@ -553,7 +553,7 @@ nextPage:
       SetWindowLong(hwndtmp,GWL_STYLE,GetWindowLong(hwndtmp,GWL_STYLE)&~BS_DEFPUSHBUTTON);
       ShowWindow(hwndtmp,this_page->button_states&SW_SHOWNA);// SW_HIDE = 0, SW_SHOWNA = 8
       EnableWindow(hwndtmp,this_page->button_states&2);
-      EnableWindow(m_hwndOK,1);
+      EnableWindow(m_hwndOK,!(this_page->button_states&16));
       EnableWindow(m_hwndCancel,this_page->button_states&4);
 
       mystrcpy(g_tmp,g_caption);
@@ -678,6 +678,12 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   if (uMsg == WM_INITDIALOG)
   {
     EDITSTREAM es={(DWORD)LANG_STR(LANG_LICENSE_DATA),0,StreamLicense};
+
+    SetUITextFromLang(IDC_LICENSEAGREE,LANG_BTN_LICENSE_AGREE);
+    SetUITextFromLang(IDC_LICENSEDISAGREE,LANG_BTN_LICENSE_DISAGREE);
+    SendMessage(GetUIItem(IDC_LICENSEAGREE+!hwLicense), BM_SETCHECK, BST_CHECKED, 0);
+    EnableWindow(m_hwndOK, (BOOL)hwLicense | !(inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION));
+
     hwLicense=GetUIItem(IDC_EDIT1);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg>=0?g_inst_header->license_bg:GetSysColor(COLOR_BTNFACE));
@@ -691,6 +697,10 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SetFocus(hwLicense);
     return FALSE;
     //End Xge
+  }
+  if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED) {
+    if (inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION)
+      EnableWindow(m_hwndOK, IsDlgButtonChecked(hwndDlg, IDC_LICENSEAGREE) & BST_CHECKED);
   }
   if (uMsg == WM_NOTIFY) {
     #define nmhdr ((NMHDR *)lParam)
