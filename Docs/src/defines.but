@@ -32,22 +32,6 @@ This command closes a block started with !ifdef or !ifndef.
 
 This command is the logical lovemonkey to !ifdef and !endif. !ifdef/!else/!endif, !ifdef/!else ifdef/!endif, !ifdef/!else ifdef/!else ifndef/!endif, etc. If ifdef or ifndef is specified as the first parameter, it behaves as expected.  
 
-\e{!echo message} 
-
-This command will echo a message to the user compiling the script.  
-
-\e{!warning [message]} 
-
-This command will issue a warning to the script compiler. You can also add a message to this warning.  
-
-\e{!error [message]}
-
-This commnd will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.  
-
-\e{!verbose level} 
-
-This command will set the level of verbosity. 4=all, 3=no script, 2=no info, 1=no warnings, 0=none  
-
 \e{!macro macro_name [parameter][...]} 
 
 Creates a macro named 'macro_name'. All lines between the !macro and the !macroend will be saved. To insert the macro later on, use !insertmacro. Note that macros cannot contain other macro definitions (though they can insert other macros), or !ifdef/!else/!endif. !macro definitions can have one or more parameters defined. The parameters may be accessed the same way a !define would (i.e. $\{PARMNAME\}) from inside the macro.  

@@ -62,6 +62,6 @@ Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (th
 
 \S{CreateFont} CreateFont
 
-CreateFont \e{user_var(handle output) face_name [height weight /ITALIC /UNDERLINE /STRIKE]}
+CreateFont \e{user_var(handle output) face_name [height] [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]}
 
 Creates a font and puts its handle into user_var. For more information about the different parameters have a look at MSDN's page about the Win32 API function CreateFont().  

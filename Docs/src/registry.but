@@ -1,6 +1,7 @@
 \H{registry} Registry, INI, File Instructions
 
 \S{writeregstr} WriteRegStr
+
 WriteRegStr \e{root_key subkey key_name value}
 
 WriteRegExpandStr \e{root_key subkey key_name value}

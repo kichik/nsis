@@ -3,6 +3,7 @@
 The following commands change how the compiler generates code and compresses data.  These commands are valid anywhere in the script, and effect every line below where each one is placed (until overriden by another command).
 
 \S{asetoverwrite} SetOverwrite
+
 SetOverwrite \e{on|off|try|ifnewer}
 
 This command sets the overwrite flag which is used by the File command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file (note that when in 'ifnewer' mode, the destination file's date is set, regardless of what SetDateSave is set to).
