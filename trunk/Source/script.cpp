@@ -124,6 +124,35 @@ void CEXEBuild::restore_line_predefine(char *oldline)
       free(oldline);
   }
 }
+
+void CEXEBuild::set_date_time_predefines()
+{
+  time_t etime;
+  struct tm * ltime;
+  SYSTEMTIME stime;
+  char datebuf[32];
+  char timebuf[32];
+
+  time(&etime);
+  ltime = localtime(&etime);
+  stime.wYear = ltime->tm_year+1900;
+  stime.wMonth = ltime->tm_mon + 1;
+  stime.wDay = ltime->tm_mday;
+  stime.wHour= ltime->tm_hour; 
+  stime.wMinute= ltime->tm_min; 
+  stime.wSecond= ltime->tm_sec; 
+  stime.wMilliseconds= 0; 
+  GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stime, NULL, datebuf, sizeof(datebuf)); 
+  definedlist.add("__DATE__",(char *)datebuf);
+  GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf)); 
+  definedlist.add("__TIME__",(char *)timebuf);
+}
+
+void CEXEBuild::del_date_time_predefines()
+{
+  definedlist.del("__DATE__");
+  definedlist.del("__TIME__");
+}
 #endif
 
 int CEXEBuild::process_script(FILE *filepointer, char *filename)
@@ -140,6 +169,7 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
+  set_date_time_predefines();
   char *oldfilename = set_file_predefine(curfilename);
   char *oldtimestamp = set_timestamp_predefine(curfilename);
 #endif
@@ -150,6 +180,7 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
   // Added by Sunil Kamath 11 June 2003
   restore_file_predefine(oldfilename);
   restore_timestamp_predefine(oldtimestamp);
+  del_date_time_predefines();
 #endif
 
   fp = 0;
