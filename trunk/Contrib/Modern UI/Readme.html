@@ -124,7 +124,7 @@ with a custom user interface.</p>
   scripts, but you   can also modify an existing script.<br><br>
   There are 8 things you need to insert in an existing script to use the
   Modern UI (in order).<br><br>
-  <p class="subheader">1. Insert the header files</p>
+  <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
   <p class="subheader">2. Define the name and version of your software and the installer name</p>
 <pre class="margin">!define MUI_PRODUCT "Test Software" ;Define your own software name here
@@ -143,7 +143,12 @@ defines and define them again before you insert a language file.</p>
 !define MUI_ABORTWARNING ;Abort warning messabox
 !define MUI_INSTALLOPTIONS ;Use Install Options
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages</pre>
-  <p class="subheader">4. Interface settings (optional)</span></p>
+  <p class="subheader">4. Insert language files</span></p>
+  <p class="text">Insert the Modern UI language files for the languages you are using:</p>
+  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre>
+  <p class="text">Note: The Modern UI language files load the NLF language files,
+  so you should not use LoadLanguageFile.</p>
+  <p class="subheader">5. Define interface settings (optional)</span></p>
   <p class="text">You can change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
@@ -164,16 +169,11 @@ defines and define them again before you insert a language file.</p>
   <span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i>
    - The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or ""
   for a old-school windows look)</p>
-  <p class="subheader">5. Insert the MUI_SYSTEM macro</p>
+  <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
-  <p class="subheader">6. Insert language files</span></p>
-  <p class="text">Insert the Modern UI language files for the languages you are using:</p>
-  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre>
-  <p class="text">Note: The Modern UI language files load the NLF language files,
-  so you should not use LoadLanguageFile.</p>
   <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro
   <p class="text">You should insert the MUI_SECTIONS_FINISHHEADER after all the
-  section to display the finish-header.</p>
+  sections to display the finish-header.</p>
 <pre class="margin">
 !insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
 </pre>
@@ -183,6 +183,9 @@ Unintaller section.</p>
 !insertmacro MUI_UNFINISHHEADER
 </pre>
   <p class="subheader">8. Set the descriptions for the sections</p>
+  <p class="text">Insert the description macro's to set the descriptions
+  for the sections. These descriptions will be displayed when the user
+  hovers the mouse over a component in the component-selection page:</p>
 <pre class="margin">
 LangString DESC_SectionName1 ${LANG_ENGLISH} "Description of section 1."
 LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
@@ -208,8 +211,7 @@ Install Options documentation</a> for info about creating Install Options INI Fi
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer using Install Options,
 you should insert you own page commands to set the order of the pages and the names
-of the page functions and define MUI_CUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM
-macro:</p>
+of the page functions.</p>
 <pre class="margin">
 !insertmacro MUI_PAGECOMMAND_LICENSE
 !insertmacro MUI_PAGECOMMAND_COMPONENTS
@@ -217,6 +219,8 @@ macro:</p>
 Page custom [function name] ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 </pre>
+<p class="text">Note: If you are using custom Page commands, define MUI_CUSTOMPAGECOMMANDS
+before inserting the MUI_SYSTEM macro.</p>
 <p class="subheader">Call Install Options</p>
 <p class="text">You can call Install Options in [function name]:</p>
 <pre class="margin">
@@ -290,16 +294,16 @@ This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
 arising from the use of this software.
 
-Permission is granted to anyone to use this software for any 
-purpose, including commercial applications, and to alter it 
-and redistribute it freely, subject to the following restrictions:
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute
+it freely, subject to the following restrictions:
 
 1. The origin of this software must not be misrepresented; 
-   you must not claim that you wrote the original software. If 
-   you use this software in a product, an acknowledgment in the 
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgment in the
    product documentation would be appreciated but is not required.
-2. Altered versions must be plainly marked as such, and 
-   must not be misrepresented as being the original software.
+2. Altered versions must be plainly marked as such,
+   and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any distribution.
 </pre>
   </div></td>
