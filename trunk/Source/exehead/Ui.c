@@ -555,7 +555,6 @@ nextPage:
           SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
           SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
           ShowWindow(m_curwnd,SW_SHOWNA);
-          LockWindowUpdate(0);
         }
 
         //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
@@ -569,6 +568,8 @@ nextPage:
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       ExecuteCodeSegment(this_page->postfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
+
+      LockWindowUpdate(0);
     }
   }
   if (uMsg == WM_COMMAND)
