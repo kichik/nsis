@@ -465,13 +465,6 @@ BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
 	return TRUE;
 }
 
-#define CONTRIBCOUNT 3
-char * ContribUsers[] = {
-	"Fritz Elfert",
-	"Justin Frankel",
-	"Amir Szekely"
-};
-
 extern char *g_branding;
 
 BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -479,32 +472,36 @@ BOOL CALLBACK AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch(msg) {
 		case WM_INITDIALOG:
 		{
-			HFONT bfont = CreateFont(14,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
+			HFONT bfont = CreateFont(13,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
 							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
-							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
+							FIXED_PITCH|FF_DONTCARE, "Tahoma");
+ 			HFONT bfontb = CreateFont(13,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
+							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
+							FIXED_PITCH|FF_DONTCARE, "Tahoma");
 			HFONT rfont = CreateFont(12,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
 							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
 							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
-            HFONT sfont = CreateFont(11,0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
+            HFONT rfontb = CreateFont(12,0,0,0,FW_BOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,
 							OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
 							FIXED_PITCH|FF_DONTCARE, "MS Shell Dlg");
-			if (bfont) SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)bfont, FALSE);
-			if (rfont) {
+			if (bfont&&bfontb) {
+                SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)bfontb, FALSE);
+				SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)bfont, FALSE);
+				SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)bfont, FALSE);
+			    SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)bfont, FALSE);
+			    SendDlgItemMessage(hwndDlg, IDC_OTHERCONTRIB, WM_SETFONT, (WPARAM)bfont, FALSE);
+            }
+            else if (rfont&&rfontb) {
+                SendDlgItemMessage(hwndDlg, IDC_ABOUTVERSION, WM_SETFONT, (WPARAM)rfontb, FALSE);
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTCOPY, WM_SETFONT, (WPARAM)rfont, FALSE);
 				SendDlgItemMessage(hwndDlg, IDC_ABOUTPORTIONS, WM_SETFONT, (WPARAM)rfont, FALSE);
-			}
-            if (sfont) SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)rfont, FALSE);
+			    SendDlgItemMessage(hwndDlg, IDC_NSISVER, WM_SETFONT, (WPARAM)rfont, FALSE);
+			    SendDlgItemMessage(hwndDlg, IDC_OTHERCONTRIB, WM_SETFONT, (WPARAM)rfont, FALSE);
+            }
             SetDlgItemText(hwndDlg,IDC_NSISVER,g_branding);
 			SetDlgItemText(hwndDlg,IDC_ABOUTVERSION,NSISW_VERSION);
 			SetDlgItemText(hwndDlg,IDC_ABOUTCOPY,COPYRIGHT);
-			HWND ilist = GetDlgItem(hwndDlg,IDC_CONTRIB);
-			int i;
-			if (ilist) {
-				for (i = 0; i < CONTRIBCOUNT; i++) { 
-					SendMessage(ilist, LB_ADDSTRING, 0, (LPARAM) ContribUsers[i]); 
-					SendMessage(ilist, LB_SETITEMDATA, i, (LPARAM) i); 
-				}				
-			}
+            SetDlgItemText(hwndDlg,IDC_OTHERCONTRIB,CONTRIB);
 			break;
 		}
 		case WM_CTLCOLORDLG:
