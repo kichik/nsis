@@ -34,6 +34,15 @@ Pop $R0 ;Get the return value
 
 For another example, see waplugin.nsi in the examples directory.
 
+PROXIES
+-------
+
+NSISdl supports only basic configurations of proxies. It doesn't support
+proxies which require authentication, automatic configuration script, etc.
+NSISdl reads the proxy configuration from Internet Explorer's registry key
+under HKLM\Software\Microsoft\Windows\CurrentVersion\Internet Settings. It
+reads and parses ProxyEnable and ProxyServer.
+
 TRANSLATE
 ---------
 
