@@ -63,7 +63,7 @@ Section ""
 
   ;Invisible section to display the Finish header
   !insertmacro MUI_FINISHHEADER SetHeader
-  
+
 SectionEnd
 
 ;--------------------------------
@@ -94,7 +94,7 @@ Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetHeader
-  
+
 FunctionEnd
 
 Function .onPrevPage
@@ -116,7 +116,7 @@ Function SetHeader
     !insertmacro MUI_HEADER_STOP 2
 
     !insertmacro MUI_HEADER_START 3
-      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME} in."
+      !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
     !insertmacro MUI_HEADER_STOP 3
 
     !insertmacro MUI_HEADER_START 4
@@ -137,7 +137,7 @@ Function .onMouseOverSection
 
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCopyUI} "Copy the modern.exe file to the application folder."
     !insertmacro MUI_DESCRIPTION_TEXT 1033 ${SecCreateUninst} "Create a uninstaller which can automatically delete ${NAME}."
- 
+
  !insertmacro MUI_DESCRIPTION_END
 
 FunctionEnd
@@ -146,7 +146,7 @@ Function .onUserAbort
 
   !insertmacro MUI_ABORTWARNING 1033 "Are you sure you want to quit ${NAME} Setup?"
   !insertmacro MUI_ABORTWARNING_END
-  
+
 FunctionEnd
 
 ;--------------------------------
@@ -162,7 +162,7 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   !insertmacro MUI_FINISHHEADER un.SetHeader
- 
+
 SectionEnd
 
 ;--------------------------------
@@ -172,7 +172,7 @@ Function un.onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetHeader
-  
+
 FunctionEnd
 
 Function un.SetHeader
