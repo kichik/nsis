@@ -186,13 +186,14 @@ public:
     return 0;
   }
 
-  char *find(const char *str) // returns NULL if not found
+  char *find(const char *str, int *idx=0) // returns NULL if not found
   {
     int id;
     int v=defines.find(str,0,&id);
     if (v<0) return NULL;
     v=values.idx2pos(id);
     if (v<0) return NULL;
+    if (idx) *idx=id;
     return (char*)values.get()+v;
   }
 

@@ -3720,9 +3720,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
     case TOK__PLUGINCOMMAND:
     {
-      int ret;
+      int ret, data_handle;
 
-      char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0));
+      char* dllPath = m_plugins.GetPluginDll(line.gettoken_str(0), &data_handle);
       if (dllPath)
       {
         if (uninstall_mode) uninst_plugin_used = true;
@@ -3739,17 +3739,34 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         wsprintf(tempDLL, "$PLUGINSDIR%s", strrchr(dllPath,'\\'));
 
         // Add the DLL to the installer
-        int files_added;
-        int old_build_overwrite=build_overwrite;
-        build_overwrite=1;
-        ret=do_add_file(dllPath,0,0,0,&files_added,tempDLL,2); // 2 means no size add
-        if (ret != PS_OK) return ret;
-        build_overwrite=old_build_overwrite;
+        if (data_handle == -1)
+        {
+          int files_added;
+          int old_build_overwrite=build_overwrite;
+          build_overwrite=1; // off
+          int old_build_datesave=build_datesave;
+          build_datesave=0; // off
+          ret=do_add_file(dllPath,0,0,linecnt,&files_added,tempDLL,2,&data_handle); // 2 means no size add
+          if (ret != PS_OK) return ret;
+          m_plugins.SetDllDataHandle(line.gettoken_str(0),data_handle);
+          build_overwrite=old_build_overwrite;
+          build_datesave=old_build_datesave;
+        }
+        else
+        {
+          ent.which=EW_EXTRACTFILE;
+          ent.offsets[0]=1; // overwrite off
+          ent.offsets[1]=add_string(tempDLL);
+          ent.offsets[2]=data_handle;
+          ret=add_entry(&ent);
+          if (ret != PS_OK) return ret;
+        }
 
         // SetDetailsPrint lastused
         ent.which=EW_UPDATETEXT;
         ent.offsets[0]=0;
         ent.offsets[1]=8; // lastused
+        ent.offsets[2]=0;
         ret=add_entry(&ent);
         if (ret != PS_OK) return ret;
 
@@ -3834,7 +3851,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override, int generatecode, int *data_handle)
 {
   char dir[1024];
   char newfn[1024], *s;
@@ -4007,6 +4024,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         {
           CloseHandle(hFile);
           return PS_ERROR;
+        }
+
+        if (data_handle)
+        {
+          *data_handle=ent.offsets[2];
         }
 
         {
