@@ -1325,8 +1325,6 @@ Var MUI_TEMP2
     !endif
 
     !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
-    Pop $MUI_TEMP1
-    StrCmp $MUI_TEMP1 "success" 0 mui.finish_done
     
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
@@ -1345,6 +1343,9 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+	Pop $MUI_TEMP1
+    StrCmp $MUI_TEMP1 "success" 0 mui.finish_done
       
     !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
