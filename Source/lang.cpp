@@ -4,6 +4,7 @@
 #include "build.h"
 #include "DialogTemplate.h"
 #include "exehead\resource.h"
+#include "exehead\lang.h"
 
 extern const char *NSIS_VERSION;
 
@@ -432,6 +433,9 @@ void CEXEBuild::FillStringTable(StringTable *table, NLF *nlf/*=0*/) {
         table->installer.componentsubtext[0]=add_string_main(str(NLF_COMP_SUBTEXT1),0);
       if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM) && !table->installer.componentsubtext[1])
         table->installer.componentsubtext[1]=add_string_main(str(NLF_COMP_SUBTEXT2),0);
+
+      if (!(build_header.common.flags&CH_FLAGS_NO_CUSTOM))
+        build_header.install_types[NSIS_MAX_INST_TYPES] = LANG_COMP_CUSTOM;
     }
     else table->installer.componenttext=0;
   }
