@@ -38,6 +38,9 @@ BOOL g_warnings;
 FINDREPLACE fr;
 UINT uFindReplaceMsg=0;
 HWND hwndFind=0;
+CHARRANGE g_chrg;
+HMENU g_submnu;
+HMENU g_mnu;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
 	MSG	msg;
@@ -76,7 +79,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static HINSTANCE hRichEditDLL = 0;
-	static HMENU hmnu = 0;
 	if (!hRichEditDLL) hRichEditDLL= LoadLibrary("RichEd32.dll");
 	switch (msg) {
 		case WM_INITDIALOG:
@@ -84,8 +86,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			g_hwnd=hwndDlg;
 			HICON hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON));
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
+            SendMessage(GetDlgItem(hwndDlg,IDC_LOGWIN),EM_SETEVENTMASK,NULL,ENM_SELCHANGE);  
 			DragAcceptFiles(g_hwnd,FALSE);
 			InitTooltips(g_hwnd);
+            g_mnu = GetMenu(hwndDlg);
+            g_submnu = GetSubMenu(g_mnu,1);
 			SetBranding(g_hwnd);
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
@@ -124,13 +129,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_CONTEXTMENU:
 		{
 			if ((HWND)wParam==GetDlgItem(g_hwnd,IDC_LOGWIN)) {
-				if (!hmnu) {
-					hmnu = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_MENU));
-					if (hmnu) hmnu = GetSubMenu(hmnu,1);
-				}
-				if (hmnu) {
-					TrackPopupMenu(hmnu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_hwnd,0);
-				}
+				TrackPopupMenu(g_submnu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_hwnd,0);
 			}
 			return TRUE;
 		}
@@ -200,6 +199,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			DragAcceptFiles(g_hwnd,TRUE);
 			return TRUE;
 		}
+        case WM_NOTIFY:
+            switch (((NMHDR*)lParam)->code ) {
+                case EN_SELCHANGE: 
+                    SendDlgItemMessage(hwndDlg,IDC_LOGWIN, EM_EXGETSEL, 0, (LPARAM) &g_chrg);
+					EnableMenuItem(g_mnu,IDM_COPYSELECTED,(g_chrg.cpMax-g_chrg.cpMin<=0?MF_GRAYED:MF_ENABLED));
+                    break;  
+            }
+            return TRUE;
 		case WM_COMMAND:
 		{
 			switch (LOWORD(wParam)) {
