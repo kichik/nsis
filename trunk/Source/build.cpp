@@ -266,6 +266,7 @@ CEXEBuild::CEXEBuild()
   build_strlist.add("",0);
   ubuild_strlist.add("",0);
   build_header.install_directory_ptr=0;
+  build_header.install_directory_auto_append=0;
   build_header.install_reg_key_ptr=0;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   memset(build_header.install_types,0,sizeof(build_header.install_types));

@@ -1288,12 +1288,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("OutFile: \"%s\"\n",build_output_filename);
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTDIR:
+    {
+      char *p = line.gettoken_str(1);
       if (build_header.install_directory_ptr)
       {
         warning("%s: specified multiple times. wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
       }
-      build_header.install_directory_ptr = add_string_main(line.gettoken_str(1));
+      build_header.install_directory_ptr = add_string_main(p);
+      build_header.install_directory_auto_append = 0;
+      if (*p && p[strlen(p)-1] != '\\')
+      {
+        p = build_strlist.get() + build_header.install_directory_ptr;
+        char *p2 = strrchr(p, '\\');
+        if (p2)
+        {
+          p2++;
+          build_header.install_directory_auto_append = build_header.install_directory_ptr + (p2 - p);
+        }
+      }
       SCRIPT_MSG("InstallDir: \"%s\"\n",line.gettoken_str(1));
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTALLDIRREGKEY: // InstallDirRegKey
       {
