@@ -15,5 +15,3 @@ DOCUMENTATION
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple instfiles pages
-
-* go through each and every one of the examples and make sure they all compile and work as should
