@@ -22,11 +22,11 @@
 
 !include "WinMessages.nsh"
 
+Var MUI_TEMP1
+Var MUI_TEMP2
+
 !macro MUI_DEFINEVARS
 
-  Var MUI_TEMP1
-  Var MUI_TEMP2
-  
   !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
     Var MUI_TEMP3
     Var MUI_HWND
@@ -485,12 +485,12 @@
   !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
     
     ReadRegStr $MUI_TEMP1 "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
-    StrCmp $MUI_TEMP1 "" showlangdialog
+    StrCmp $MUI_TEMP1 "" mui.langdll_show
       StrCpy $LANGUAGE $MUI_TEMP1
       !ifndef MUI_LANGDLL_ALWAYSSHOW
         Goto mui.langdll_done
       !endif
-    showlangdialog:
+    mui.langdll_show:
   
   !endif
   
