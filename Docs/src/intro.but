@@ -18,7 +18,7 @@ Even with all these features, NSIS is still the smallest installer system availa
 
 \\<b\\>Small overhead size\\</b\\>
 
-NSIS is created to be small, fast and and efficient. While other installers often add hundreds of kilobytes or several megeabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
+NSIS is created to be small, fast and and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
 
 \\<b\\>Compatible with all major Windows versions\\</b\\>
 
@@ -30,7 +30,7 @@ You can choose between three different integrated compression method (ZLib, BZip
 
 \\<b\\>Script based\\</b\\>
 
-Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has command that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more.
+Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{http://nsis.sourceforge.net/nsisarchive/}{NSIS Archive Page} you can find a lot more.
 
 \\<b\\>Multiple languages in one installer\\</b\\>
 
@@ -38,7 +38,7 @@ One installer can support multiple interface languages. More than 40 translation
 
 \\<b\\>Many features and checks for the target system\\</b\\>
 
-The script langauge provides commands you can use on the target system. From simple features like folder creation and registry editing to text/binary file modification, modification of environment variables and system reboots. Using provided plug-ins you can even use Windows API.
+The script language provides commands you can use on the target system. From simple features like folder creation and registry editing to text/binary file modification, modification of environment variables and system reboots. Using provided plug-ins you can even use Windows API.
 
 \\<b\\>Custom dialogs and interfaces\\</b\\>
 
@@ -46,7 +46,7 @@ You can create custom wizard pages to get user input or integrate configuration 
 
 \\<b\\>Plug-in system\\</b\\>
 
-NSIS can be extended with plug-in that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using the provided features.
+NSIS can be extended with plug-ins that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using the provided features.
 
 \\<b\\>Support for web installation, file patching\\</b\\>
 
@@ -54,7 +54,7 @@ The NSIS distribution includes a set of plug-ins that allow you to download file
 
 \\<b\\>Project integration, different releases and automatic builds\\</b\\>
 
-The NSIS compiler features a powerful preprocessor. This allows you to easily integrate multiple projects into a single installer or automatically generate installer builds. You can also generate different releases such a lite and full version.
+The NSIS compiler features a powerful preprocessor. This allows you to easily integrate multiple projects into a single installer or automatically generate installer builds. You can also generate different releases such as lite and full version.
 
 \\<b\\>Easy and human readable file formats\\</b\\>
 
