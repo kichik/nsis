@@ -2,23 +2,21 @@
 #define _NSIS_LANG_H_
 
 // generic startup strings (these will never be overridable)
-#define _LANG_INVALIDCRC "Installer verification failed.\r\n\r\n"  \
-                        "This could be the result of an incomplete download,\r\n" \
-                        "a failing disk, or (possibly) corruption from a virus."  \
-                        "\r\n\r\nYou can try to force an install using the /NCRC\r\n" \
-                        "command line switch (but it is NOT recommended)"
+#define _LANG_INVALIDCRC "Installer corrupted or incomplete.\r\n\r\n"  \
+                        "This could be the result of a failed download or corruption from a virus."  \
+                        "\r\n\r\nIf desperate, try the /NCRC command line switch (NOT recommended)"
 
 #define _LANG_INVALIDINST  "Installer corrupted.\r\n\r\n" \
                           "This could be the result of an incomplete download"
 
 
-#define _LANG_UNINSTINITERROR "Error initializing uninstaller"
+#define _LANG_UNINSTINITERROR "Error launching installer"
 
 #define _LANG_VERIFYINGINST "verifying installer: %d%%"
 
 #define _LANG_UNPACKING "unpacking data: %d%%"
 
-#define _LANG_CANTOPENSELF "Can't open self"
+#define _LANG_CANTOPENSELF "Error launching installer" // same as uninstiniterror for size
 
 #define _LANG_GENERIC_ERROR "NSIS ERROR"
 

@@ -408,13 +408,22 @@ int NSISCALL ui_doinstall(void)
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
       WNDCLASS wc={0,};
-      if (!LoadLibrary("RichEd20.dll")) LoadLibrary("RichEd32.dll");
+      static char str1[]="RichEd20.dll";
+      static char str2[]="RichEdit20A";
+      if (!LoadLibrary(str1))
+      {
+        str1[6]='3';
+        str1[7]='2';
+        LoadLibrary(str1);
+      }
 
       // make richedit20a point to RICHEDIT
-      if (!GetClassInfo(NULL,"RichEdit20A",&wc))
+      if (!GetClassInfo(NULL,str2,&wc))
       {
-        GetClassInfo(NULL,"RICHEDIT",&wc);
-        wc.lpszClassName = "RichEdit20A";
+        str2[8]=0;
+        GetClassInfo(NULL,str2,&wc);
+        wc.lpszClassName = str2;
+        str2[8]='2';
         RegisterClass(&wc);
       }
     }
