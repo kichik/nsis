@@ -1,13 +1,14 @@
 #ifndef _UI_H_
 #define _UI_H_
 
+#include "lang.h"
+
 // Added by Amir Szekely 3rd August 2002
-extern installer_strings *cur_install_strings_table;
 extern common_strings *cur_common_strings_table;
-extern uninstall_strings *cur_uninstall_strings_table;
+extern char *cur_install_strings_table;	// installer_strings/uninstall_strings depending on installer type
 
 int ui_doinstall(void);
-void update_status_text_from_tab(int texttab, const char *text2);
+void update_status_text_from_lang(langid_t id, const char *text2);
 void update_status_text(const char *text1, const char *text2);
 extern int ui_st_updateflag;
 

@@ -1,10 +1,13 @@
 #include "config.h"
+#include "lang.h"
 
 void recursive_create_directory(char *directory);
 
 extern char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 void process_string(char *out, const char *in);
 void process_string_fromtab(char *out, int offs);
+void process_string_from_lang(char *out, langid_t id);
+int GetLangString(langid_t id);
 int process_string_fromtab_toint(int offs);
 void myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int myatoi(char *s);
@@ -36,7 +39,7 @@ HANDLE myCreateProcess(char *cmd, char *dir);
 int my_MessageBox(const char *text, UINT type);
 
 void doRMDir(char *buf, int recurse);
-                       
+
 HANDLE myOpenFile(const char *fn, DWORD da, DWORD cd);
 int CreateShortCut(HWND hwnd, LPCSTR pszShortcutFile, LPCSTR pszIconFile, int iconindex, LPCSTR pszExe, LPCSTR pszArg, LPCSTR workingdir, int showmode, int hotkey);
 int validpathspec(char *ubuf);
