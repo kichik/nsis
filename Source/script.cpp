@@ -5629,8 +5629,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     dir_created = true;
 
     if (recurse) {
-      // save $OUTDIR into $0
-      if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("0"), add_string("$OUTDIR")) != PS_OK) {
+      // save $OUTDIR into $_OUTDIR [StrCpy $_OUTDIR $OUTDIR]
+      if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("_OUTDIR"), add_string("$OUTDIR")) != PS_OK) {
         delete dr;
         return PS_ERROR;
       }
@@ -5705,8 +5705,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     if (basedir == "") {
       SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
 
-      // restore $OUTDIR from $0
-      if (do_add_file_create_dir(dir, basedir) != PS_OK) {
+      // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
+      if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
         delete dr;
         return PS_ERROR;
       }
@@ -5929,7 +5929,7 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
 }
 
 int CEXEBuild::do_add_file_create_dir(const string& local_dir, const string& dir, int attrib) {
-  string outdir_s = "$0\\" + dir;
+  string outdir_s = "$_OUTDIR\\" + dir;
 
   string::size_type pos = 1;
   pos = outdir_s.find('$', pos);
