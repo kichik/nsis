@@ -25,7 +25,7 @@ void inflateReset(z_streamp z)
   s->mode = TYPE;
   s->bitk = s->bitb = 0;
   s->read = s->write = s->window;
-  Tracev((stderr, "inflate:   blocks reset\n"));
+  s->end = s->window + (1 << DEF_WBITS);
 }
 
 int inflate(z_streamp z)
