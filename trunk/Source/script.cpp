@@ -1643,6 +1643,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         char *exec=line.gettoken_str(1);
         int comp=line.gettoken_enum(2,"<\0>\0<>\0=\0ignore\0");
+        if (line.getnumtokens() == 2) comp = 4;
         if (comp == -1 && line.getnumtokens() == 3) comp=4;
         if (comp == -1) PRINTHELP()
         int success=0;
@@ -3310,12 +3311,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int a=1;
         if (which_token==TOK_DELETEREGKEY)
         {
+          ent.offsets[3]=1;
           char *s=line.gettoken_str(a);
           if (s[0] == '/')
           {
             if (stricmp(s,"/ifempty")) PRINTHELP()
             a++;
-            ent.offsets[3]=1;
+            ent.offsets[3]=3;
           }
           if (line.gettoken_str(a+2)[0]) PRINTHELP()
         }

@@ -124,13 +124,13 @@ static BOOL NSISCALL SetDlgItemTextFromLang_(HWND dlg, int id, int lid) {
 #define GetUIItem(it) GetDlgItem(hwndDlg,it)
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-#define HandleStaticBkColor() _HandleStaticBkColor(hwndDlg, uMsg, wParam, lParam)
-static BOOL NSISCALL _HandleStaticBkColor(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+#define HandleStaticBkColor() _HandleStaticBkColor(uMsg, lParam)
+static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, LPARAM lParam) {
   if (uMsg == WM_CTLCOLORSTATIC) {
     COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
     if (color) {
       LOGBRUSH b={BS_SOLID, color-1, 0};
-      SetBkColor((HDC)wParam, b.lbColor);
+      SetBkColor(GetDC((HWND)lParam), b.lbColor);
       return (BOOL)CreateBrushIndirect(&b);
     }
   }
@@ -499,10 +499,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
       SetDlgItemTextFromLang(hwndDlg,IDC_BACK,LANG_BTN_BACK);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      if (!ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL))
+      if (!(g_quit_flag = ExecuteCodeSegment(g_inst_cmnheader->code_onGUIInit,NULL)))
 #endif
         ShowWindow(hwndDlg,SW_SHOW);
-      else g_quit_flag = 1;
     }
 
     this_page=g_inst_page+m_page;

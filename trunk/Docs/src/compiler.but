@@ -38,7 +38,7 @@ This option makes the compiler an external EXE packer (such as Petite or UPX) to
 
 \c command [compare comparevalue]
 
-This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '=' or 'ignore'.
+This command will execute 'command' using a call to system(), and if the return value compared (using 'compare') to 'comparevalue' is false, execution will halt. 'compare' can be '<' or '>' or '<>' or '='.
 
 \S1{warning} !warning
 
