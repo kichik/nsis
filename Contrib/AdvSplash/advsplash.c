@@ -17,11 +17,14 @@ int resolution = RESOLUTION;
 int sleep_val, fadein_val, fadeout_val, state, timeleft, keycolor, nt50, alphaparam;
 int call = -1;
 
-BOOL (_stdcall *SetLayeredWindowAttributesProc)(HWND hwnd, // handle to the layered window
+typedef BOOL (_stdcall *_tSetLayeredWindowAttributesProc)(HWND hwnd, // handle to the layered window
   COLORREF crKey,      // specifies the color key
   BYTE bAlpha,         // value for the blend function
   DWORD dwFlags        // action
 );
+
+
+_tSetLayeredWindowAttributesProc SetLayeredWindowAttributesProc;
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -130,9 +133,9 @@ void CALLBACK TimeProc(
         // FadeIN
         case 0: if (timeleft == 0)
                 {
-					timeleft = sleep_val;
+                                        timeleft = sleep_val;
                     state++;
-					if (nt50) call = 255;                                   
+                                        if (nt50) call = 255;                                   
                 } else { call = ((fadein_val-timeleft)*255)/fadein_val; break; }
         // Sleep
         case 1: if (timeleft == 0)
@@ -143,8 +146,8 @@ void CALLBACK TimeProc(
         // FadeOUT
         case 2: if (timeleft == 0)
                 {
-					PostMessage((HWND)dwUser, WM_TIMER, 0, 0);
-					return;
+                                        PostMessage((HWND)dwUser, WM_TIMER, 0, 0);
+                                        return;
                 } else { call = ((timeleft)*255)/fadeout_val; break;    }
         }
         // Transparency value aquired, and could be set...
@@ -152,7 +155,7 @@ void CALLBACK TimeProc(
                 SetLayeredWindowAttributesProc((HWND)dwUser, keycolor, 
                                         call, 
                                         alphaparam);
-		call = -1;
+        call = -1;
         // Time is running out...
         timeleft--;
 }
@@ -206,8 +209,6 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
         HWND myWnd;
                 UINT timerEvent;
 
-                PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME|SND_NODEFAULT);
-
                 // Get Bitmap Information
                 GetObject(g_hbm, sizeof(bm), (LPSTR)&bm);
 
@@ -219,7 +220,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
                 {
                         // Get blending proc address
                         HANDLE user32 = GetModuleHandle("user32");
-                        SetLayeredWindowAttributesProc = GetProcAddress(user32, "SetLayeredWindowAttributes");
+                        SetLayeredWindowAttributesProc = (_tSetLayeredWindowAttributesProc) GetProcAddress(user32, "SetLayeredWindowAttributes");
                         // Use win2k method
                         SetLayeredWindowAttributesProc(myWnd, keycolor, 
                                 (fadein_val > 0)?(0):(255), 
@@ -268,7 +269,7 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
                                         wdelta = ((bm.bmWidth + 3) & 3) ^ 3;
                                         // Search for transparent pixels 
                                         for (y = bm.bmHeight-1; y >= 0; y--, bmp += wdelta)
-                                                for (x = 0; x < bm.bmWidth; x++, bmp++)
+                                                for (x = 0; x < bm.bmWidth; )
                                                         if (*bmp == (BYTE) keycolor) 
                                                         {
                                                                 int j = x;
@@ -278,14 +279,14 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
                                                                 cutrgn = CreateRectRgn(j, y, x, y+1);
                                                                 CombineRgn(region, region, cutrgn, RGN_XOR);
                                                                 DeleteObject(cutrgn);
-                                                        }
+                                                        } else bmp++, x++;
                                 } else if (bm.bmBitsPixel == 24)
                                 {
                                         // Bitmap is DWORD aligned by width
                                         wdelta = ((bm.bmWidth*3 + 3 ) & 3) ^ 3;
                                         // Search for transparent pixels 
                                         for (y = bm.bmHeight-1; y >= 0; y--, bmp += wdelta)
-                                                for (x = 0; x < bm.bmWidth; bmp += 3, x++)
+                                                for (x = 0; x < bm.bmWidth; )
                                                         if ((*(int*)bmp & 0xFFFFFF) == keycolor) 
                                                         {
                                                                 int j = x;
@@ -295,12 +296,14 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
                                                                 cutrgn = CreateRectRgn(j, y, x, y+1);
                                                                 CombineRgn(region, region, cutrgn, RGN_XOR);
                                                                 DeleteObject(cutrgn);
-                                                        }
+                                                        } else bmp += 3, x++;
                                 }
                                 
                                 // Set resulting region.
                                 SetWindowRgn(myWnd, region, TRUE);
                         }
+
+                PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME|SND_NODEFAULT);
 
                 // Start up timer...
                 state = 0; timeleft = fadein_val;
@@ -319,6 +322,9 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
         DeleteObject(g_hbm);
       }
+
+	  // We should UnRegister class, since Windows NT series never does this by itself
+	  UnregisterClass(wc.lpszClassName, g_hInstance);
     }
   }
   wsprintf(temp,"%d",g_rv);
