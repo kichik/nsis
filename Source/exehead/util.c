@@ -16,7 +16,11 @@ char g_log_file[1024];
 
 char temp_directory[NSIS_MAX_STRLEN];
 
-char g_usrvars[26][NSIS_MAX_STRLEN];
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+char g_usrvars[MAX_NAMED_USER_VARS+USER_VARS_COUNT][NSIS_MAX_STRLEN];
+#else
+char g_usrvars[USER_VARS_COUNT][NSIS_MAX_STRLEN];
+#endif
 char *state_command_line=g_usrvars[20];
 char *state_install_directory=g_usrvars[21];
 char *state_output_directory=g_usrvars[22];
@@ -398,11 +402,11 @@ char * NSISCALL process_string(const char *in)
     int nVarIdx = (unsigned char)*in++;
     if (nVarIdx < VAR_CODES_START)
     {
-      *out++ = nVarIdx;
+	    *out++ = nVarIdx;
     }
     else if (nVarIdx == 255)
     {
-      *out++ = *in++;
+	    *out++ = *in++;
     }
     else
     {
@@ -439,9 +443,24 @@ char * NSISCALL process_string(const char *in)
         case VAR_CODES_START + 24: // EXEDIR
         case VAR_CODES_START + 25: // LANGUAGE
         case VAR_CODES_START + 26: // PLUGINSDIR
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+        case VAR_CODES_START + 36: // NAMED USER VARS
+        {
+          if ( nVarIdx == (VAR_CODES_START + 36) )
+          {
+            //char Buf[200];
+            nVarIdx = *(WORD*)in & 0x0FFF; in+=sizeof(WORD);
+            //wsprintf(Buf, "Request var index %d", nVarIdx);
+            //MessageBox(0,Buf,0,0);
+          }
+          else
+            nVarIdx = nVarIdx - (VAR_CODES_START + 1);
+          mystrcpy(out, g_usrvars[nVarIdx]);
+        }
+#else
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
-
+#endif
         case VAR_CODES_START + 27: // PROGRAMFILES
           smwcvesf[41]=0;
           myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
@@ -503,12 +522,22 @@ char * NSISCALL process_string(const char *in)
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
 
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+        #if USER_VARS_COUNT + MAX_NAMED_USER_VARS > 0x0FFF
+          #error "Too many named variables! Decrease MAX_NAMED_USER_VARS"
+        #endif
+
+        #if VAR_CODES_START + 36 >= 255
+          #error "Too many variables!  Extend VAR_CODES_START!"
+        #endif
+#else
         #if VAR_CODES_START + 35 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
+#endif
       } // switch
       // validate the directory name
-      if (nVarIdx > 21+VAR_CODES_START) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
+      if (nVarIdx > 21+VAR_CODES_START && nVarIdx < VAR_CODES_START + 36 ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
         // ($LANGUAGE can't have trailing backslash anyway...)
         validate_filename(out);
       }

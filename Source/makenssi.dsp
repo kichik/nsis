@@ -185,6 +185,10 @@ SOURCE=.\ResourceEditor.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ResourceVersionInfo.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\script.cpp
 # ADD CPP /Ot /Ow /Oy
 # SUBTRACT CPP /Og
@@ -241,6 +245,10 @@ SOURCE=.\Plugins.h
 # Begin Source File
 
 SOURCE=.\ResourceEditor.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ResourceVersionInfo.h
 # End Source File
 # Begin Source File
 
