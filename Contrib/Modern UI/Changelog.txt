@@ -4,6 +4,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Final version for NSIS 2 beta 0
 * modern3.exe UI without description area
 * Different translation for finish page title
+* Define for parameters for the application to run on the finishpage
 * Bugfixes
 
 1.6 - November 18, 2002
