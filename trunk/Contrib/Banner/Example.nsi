@@ -1,3 +1,5 @@
+# Look at Readme.txt for usage alongside with the Modern UI
+
 Name "Banner.dll test"
 
 OutFile "Banner Test.exe"
