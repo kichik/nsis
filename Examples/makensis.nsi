@@ -23,7 +23,7 @@ SetFont Tahoma 8
 CheckBitmap "${NSISDIR}\Contrib\Icons\modern.bmp"
 BrandingText /TRIMRIGHT
 
-LicenseText "Scroll down to see the rest of the agreement."
+LicenseText "Scroll down to read the rest of the license agreement:"
 LicenseData ..\license.txt
 
 ComponentText "This will install the Nullsoft Install System v${VER_MAJOR}.${VER_MINOR} on your computer:"
