@@ -75,8 +75,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_INITDIALOG:
 		{
 			g_hwnd=hwndDlg;
-      g_output_exe = (char *)GlobalAlloc(GPTR, 1);
-      g_input_script = (char *)GlobalAlloc(GPTR, 1);
 			HICON hIcon = LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON));
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
@@ -179,14 +177,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				case IDM_TEST:
 				case IDC_TEST:
 				{
-					if (g_output_exe[0]) {
+					if (g_output_exe) {
 						ShellExecute(g_hwnd,"open",g_output_exe,NULL,NULL,SW_SHOWNORMAL);
 					}
 					return TRUE;
 				}
 				case IDM_EDITSCRIPT:
 				{
-					if (g_input_script[0]) {
+					if (g_input_script) {
 						if ((int)ShellExecute(g_hwnd,"open",g_input_script,NULL,NULL,SW_SHOWNORMAL)<=32) {
 							char path[MAX_PATH];
 							if (GetWindowsDirectory(path,sizeof(path))) {

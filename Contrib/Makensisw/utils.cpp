@@ -71,8 +71,6 @@ void ErrorMessage(HWND hwnd,const char *str) {
 }
 
 void DisableItems(HWND hwnd) {
-	g_output_exe[0]=0;
-	g_input_script[0]=0;
 	EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
 	EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
 	HMENU m = GetMenu(hwnd);
@@ -90,8 +88,14 @@ void EnableItems(HWND hwnd) {
   #define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
   #define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
 
-  if (g_input_script) GlobalFree(g_input_script);
-  if (g_output_exe) GlobalFree(g_output_exe);
+  if (g_input_script) {
+    GlobalFree(g_input_script);
+    g_input_script = 0;
+  }
+  if (g_output_exe) {
+    GlobalFree(g_output_exe);
+    g_output_exe = 0;
+  }
 
   TEXTRANGE tr;
   FINDTEXT ft;
@@ -124,7 +128,7 @@ void EnableItems(HWND hwnd) {
   if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
 
 	HMENU m = GetMenu(hwnd);
-	if (g_output_exe[0]) {
+	if (g_output_exe) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
 			EnableMenuItem(m,IDM_TEST,MF_ENABLED);
 	}
