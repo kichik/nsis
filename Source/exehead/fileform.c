@@ -63,7 +63,7 @@ const char * NSISCALL loadHeaders(void)
   data=(void*)my_GlobalAlloc(h.length_of_header);
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  inflateInit(&g_inflate_stream);
+  //inflateInit(&g_inflate_stream);
 
 #ifdef NSIS_COMPRESS_WHOLE
   inflateReset(&g_inflate_stream);
