@@ -70,6 +70,7 @@ typedef struct NSISScriptData {
     char *input_script;
     char *branding;
     int retcode;
+    DWORD logLength;
     BOOL warnings;
     BOOL appended;
     HINSTANCE hInstance;

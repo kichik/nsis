@@ -24,7 +24,6 @@
 #include "makensisw.h"
 #include "noclib.h"
 
-DWORD g_dwLength;
 NTOOLTIP g_tip;
 LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam);
 
@@ -61,8 +60,8 @@ void ClearLog(HWND hwnd) {
 }
 
 void LogMessage(HWND hwnd,const char *str) {
-	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, g_dwLength, g_dwLength);
-	g_dwLength += lstrlen(str);
+	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, g_sdata.logLength, g_sdata.logLength);
+	g_sdata.logLength += lstrlen(str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
 }
@@ -171,7 +170,7 @@ void CompileNSISScript() {
 		g_sdata.script = s;
 		g_sdata.appended = TRUE;
 	}
-    g_dwLength = 0;
+    g_sdata.logLength = 0;
 	// Disable buttons during compile
 	DisableItems(g_sdata.hwnd);
 	DWORD id;
