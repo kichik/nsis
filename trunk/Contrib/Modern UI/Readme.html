@@ -154,16 +154,28 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_DIRECTORYPAGE</span><br />
   Show the directory selection page.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br />
-  Show the Start Menu Folder selection page.</p>
+  Show the Start Menu Folder selection page.<br /><br />
+  If you did not disable the 'Do not create shortcuts' checkbox,
+  put the script code to write the shortcuts between these macro's,
+  because the creation can be disabled by the user:
+<pre class="margin">
+!insertmacro MUI_STARTMENU_WRITE_BEGIN
+  ...create the shortcuts...
+!insertmacro MUI_STARTMENU_WRITE_END
+</pre>
+  </p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_STARTMENU_VARIABLE</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE</span><br />
   Variable to store the current Start Menu Folder. Default is $9.
   You cannot use this variable in your script (or you should Push/Pop it).e.</p>
-  <p class="text"><span class="bold">MUI_STARTMENU_DEFAULTFOLDER</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER</span><br />
   The default Start Menu Folder. Use $(LANGSTRINGNAME) as value is you want
   to use a language string.</p>
-  <p class="text"><span class="bold">MUI_STARTMENU_REGISTRY_ROOT, MUI_STARTMENU_REGISTRY_KEY,
-  MUI_STARTMENU_REGISTRY_VALUENAME</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_NODISABLE</span><br />
+  Do not display the checkbox to disable the creation of Start Menu
+  shortcuts.</p>
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT,
+  MUI_STARTMENUPAGE_REGISTRY_KEY, MUI_STARTMENUPAGE_REGISTRY_VALUENAME</span><br />
   If your installer saves the Start Menu folder of a previous installation
   in a registry, define these values and the Modern UI will use the saved
   value as default folder.</p>  
@@ -479,7 +491,8 @@ MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
 </p>
 <p class="text">
 <span class="bold">Start Menu Folder Page</span><br>
-MUI_CUSTOMFUNCTION_STARTMENU
+MUI_CUSTOMFUNCTION_STARTMENU_PRE
+MUI_CUSTOMFUNCTION_STARTMENU_LEAVE
 </p>
 <p class="text">
 <span class="bold">Install Files Page</span><br>
@@ -593,7 +606,7 @@ it freely, subject to the following restrictions:
   </div></td>
   </tr>
   <tr>
-    <td><div class="footer">&copy;2002 Joost Verburg</div></td>
+    <td><div class="footer">&copy;2002-2003 Joost Verburg</div></td>
   </tr>
 </table>
 </td></tr>
