@@ -139,14 +139,14 @@ follow these steps:</p>
   should insert. Most defines (i.e. MUI_WELCOMEPAGE) don't need
   a value, there are true/false settings. Others
   (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
-  value, the value type is given next to the define name:
-  MUI_FINISHPAGE_RUN [exe_file].
-  When there multiple values or optional flags, put them all
-  between the quotes.</p>
+  value: the value type is given next to the define name:
+  MUI_DEFINE (required) (option1 | option2) [optional].
+  When there are multiple values or optional flags, put them all
+  between the quotes of a define value.</p>
 <pre class="margin">
 !define MUI_WELCOMEPAGE ;No value
 !define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
-!define MUI_FONTSTYLE_HEADER "700 /ITALIC"
+!define MUI_FONTSTYLE_HEADER "700 /ITALIC" ;Multiple values
 </pre>
   <p class="text">All defines are optional.</p>
   <p class="subheader">3a. General settings</p>
@@ -178,17 +178,17 @@ follow these steps:</p>
 </pre>
   </p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE [variable]</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE (variable)</span><br />
   Variable to store the current Start Menu Folder. Default is $9.
-  You cannot use this variable in your script (or you should Push/Pop it).e.</p>
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER [folder]</span><br />
+  You cannot use this variable in your script (or you should Push/Pop it).</p>
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_DEFAULTFOLDER (folder)</span><br />
   The default Start Menu Folder. Use $(LANGSTRINGNAME) as value is you want
   to use a language string.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_NODISABLE</span><br />
   Do not display the checkbox to disable the creation of Start Menu
   shortcuts.</p>
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT [root],
-  MUI_STARTMENUPAGE_REGISTRY_KEY [key], MUI_STARTMENUPAGE_REGISTRY_VALUENAME [value_name]</span><br />
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_REGISTRY_ROOT (root),
+  MUI_STARTMENUPAGE_REGISTRY_KEY (key), MUI_STARTMENUPAGE_REGISTRY_VALUENAME (value_name)</span><br />
   The registry key to store the Start Menu folder. The page will use it to
   remember the users preference. You should also use it in the uninstaller to
   remove the Start Menu folders. Don't forget to remove this key in the
@@ -200,17 +200,17 @@ follow these steps:</p>
   If the reboot flag is set, a page that allows the user to reboot the system
   will be displayed (this option can be disabled).</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN [exe_file]</span><br />
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN (exe_file)</span><br />
   Application which the user can select to run (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS [parameters]</span><br />
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS (parameters)</span><br />
   Parameters for the application to run. Don't forget to escape double
   quotes in the value (use $\&quot;).</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_NOTCHECKED</span><br />
   Do not check the 'Run program' checkbox by default</p>
   </div>
-  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME [file/url]</span><br />
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME (file/url)</span><br />
   File or website which the user can select to view (using a checkbox).
   You don't need to put quotes around the filename when it contains spaces.
   Use $(LANGSTRINGNAME) as value is you want to use a language string.</p>
@@ -242,55 +242,54 @@ follow these steps:</p>
   UninstPage commands to add your own pages.</p>
   </div>
   <p class="subheader">3b. Interface settings</p>
-  <p class="text">If a defualt value is specified after the define name and values, the default will
-  be used when the value has not been defined.</p>
-  <p class="text"><span class="bold">MUI_UI [ui_file]</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
-  The interface file with the dialog resources. Change this if you have made your own customized UI.</p>
-  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP [ui_file], MUI_UI_HEADERBITMAP_RIGHT [ui_file]</span>
-  <i>(${NSISDIR}\Contrib\UIs\modern-headerbmp(r).exe)</i><br />
+  <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
+  has not been defined.</p>
+  <p class="text"><span class="bold">MUI_UI (ui_file)</span><br />
+  The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
+  <i>Default: ${NSISDIR}\Contrib\UIs\modern.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP (ui_file), MUI_UI_HEADERBITMAP_RIGHT (ui_file)</span><br />
   The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
-  the header bitmap.</p>
+  the header bitmap.<br /><i>Default: ${NSISDIR}\Contrib\UIs\modern-headerbmp(r).exe</i></p>
   <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION, MUI_UI_NODESCRIPTION</span>
   <i>(${NSISDIR}\Contrib\UIs\modern-(small/no)desc.exe)</i><br />
   The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.</p>
-  <p class="text"><span class="bold">MUI_ICON [icon_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
-  The icon of the installer.</p>
-  <p class="text"><span class="bold">MUI_UNICON [icon_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
-  The icon of the uninstaller.</p>
-  <p class="text"><span class="bold">MUI_CHECKBITMAP [bitmap_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i><br />
-  The bitmap with images for the checks of the component select treeview.</p>
-  <p class="text"><span class="bold">MUI_FONT [font_name], MUI_FONTSIZE [font_size]</span> <i>(MS Shell Dlg, 8)</i><br />
-  The font for the normal texts.</p>
-  <p class="text"><span class="bold">MUI_FONT_HEADER [font_name], MUI_FONTSIZE_HEADER [font_size], MUI_FONTSTYLE_HEADER
-  [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</span>
-  <i>(MS Shell Dlg, 8, 700)</i><br />
-  The font for the title in the header.</p>
-  <p class="text"><span class="bold">MUI_FONT_TITLE [font_name], MUI_FONTSIZE_TITLE [font_size], MUI_FONTSTYLE_TITLE
-  [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]</span>
-  <i>(Verdana, 12, 700)</i><br />
-  The font for the title on the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">MUI_INSTALLCOLORS [foreground color, RRBBGG] [background color, RRGGBB]</span>
-  <i>(/windows)</i><br />The colors of the details screen. Use /windows instead of the colors to use the Windows
-  colors (the default).</p>
-  <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br />
-  The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for an old-school
-  windows look).</p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP [bmp_file]</span> <i>(not defined)</i><br />
-  Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57 won't have to be resized.
-  An example of a header bitmap is ${NSISDIR}\Contrib\Icons\modern-header.bmp, but can also make one with your own
-  logo.</p>
+  <p class="text"><span class="bold">MUI_ICON (icon_file)</span><br />
+  The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-install.ico</i></p>
+  <p class="text"><span class="bold">MUI_UNICON (icon_file)</span><br />
+  The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-uninstall.ico</i></p>
+  <p class="text"><span class="bold">MUI_CHECKBITMAP (bitmap_file)</span><br />
+  The bitmap with images for the checks of the component select treeview.<br />
+  <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
+  <p class="text"><span class="bold">MUI_FONT (font_name), MUI_FONTSIZE (font_size)</span><br />
+  The font for the normal texts.<br /><i>Defaults: MS Shell Dlg, 8</i></p>
+  <p class="text"><span class="bold">MUI_FONT_HEADER (font_name), MUI_FONTSIZE_HEADER (font_size), MUI_FONTSTYLE_HEADER
+  (weight) [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br /> The font for the title in the header.<br />
+  <i>Defaults: MS Shell Dlg, 8, 700</i></p>
+  <p class="text"><span class="bold">MUI_FONT_TITLE (font_name), MUI_FONTSIZE_TITLE (font_size), MUI_FONTSTYLE_TITLE
+  (weight) [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
+  The font for the title on the Welcome and Finish page.<br /><i>Defaults: Verdana, 12, 700</i></p>
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS (/windows | (foreground color: RRBBGG)
+  (background color: RRGGBB))</span>
+  <br />The colors of the details screen. Use /windows instead of the colors to use the Windows
+  colors (the default).<br /><i>Default: /windows</i></p>
+  <p class="text"><span class="bold">MUI_PROGRESSBAR ("" | colored | smooth)</span><br />
+  The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.</br /><i>Default: smooth</i></p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP (bmp_file)</span><br />
+  Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57
+  won't have to be resized. An example of a header bitmap is ${NSISDIR}\Contrib\Icons\modern-header.bmp,
+  but can also make one with your own  logo.</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span> <i>(not defined)</i><br />
-  If you have defines MUI_HEADERBITMAP, define this setting if you want the header image to be displayed on the right
-  side of the header instead of the left side.</p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
+  Display the header image on the right side instead of the left side.</p>
   </div>
-  <p class="text"><span class="bold">MUI_SPECIALINI [ini_file]</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br />
-  Install Options INI File for the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP [bmp_file]</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br />
-  Bitmap for the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">MUI_BGCOLOR [color 0xBBGGRR]</span> <i>(0xFFFFFF)</i><br />
-  Background color for the header, Welcome page and Finish page.</p>
-  <p class="text"><span class="bold">MUI_RTL_UI</span> <i>(not defined)</i><br />
+  <p class="text"><span class="bold">MUI_SPECIALINI (ini_file)</span><br />
+  Install Options INI File for the Welcome and Finish page.<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  <p class="text"><span class="bold">MUI_SPECIALBITMAP (bmp_file)</span><br />
+  Bitmap for the Welcome and Finish page.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
+  <p class="text"><span class="bold">MUI_BGCOLOR (color: 0xBBGGRR)</span><br />
+  Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
+  <p class="text"><span class="bold">MUI_RTL_UI</span><br />
   Right-to-left interface.</p>
   <p class="subheader">4. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
