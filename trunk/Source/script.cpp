@@ -533,8 +533,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_LANGSTRING:
-      SCRIPT_MSG("LangString: \"%s\" %s \"%s\"\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
-      if (SetUserString(line.gettoken_str(1), line.gettoken_int(2), line.gettoken_str(3)) != PS_OK)
+    case TOK_LANGSTRINGUP:
+      SCRIPT_MSG("LangString: \"%s\" %s \"%s\"%s\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3), which_token==TOK_LANGSTRINGUP?" (unprocessed)":"");
+      if (SetUserString(line.gettoken_str(1), line.gettoken_int(2), line.gettoken_str(3), which_token==TOK_LANGSTRING) != PS_OK)
       {
         ERROR_MSG("Error: LangString: can't add user string!\n");
         return PS_ERROR;
