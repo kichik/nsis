@@ -432,17 +432,20 @@ bool SaveSettings(void) {
 }
 
 #define BROWSE_WIDTH 15
-static char szResult[4096];
+
+#define BUFFER_SIZE 8192 // 8kb of mem is max char count in multiedit
+static char szResult[BUFFER_SIZE]; 
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 {
   *szResult = '\0';
-  return GetPrivateProfileString(lpAppName, lpKeyName, "", szResult, sizeof(szResult), pszFilename);
+  return GetPrivateProfileString(lpAppName, lpKeyName, "", szResult, BUFFER_SIZE, pszFilename);
 }
 
 char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 {
-  if (myGetProfileString(lpAppName, lpKeyName))
+  int nSize = myGetProfileString(lpAppName, lpKeyName);
+  if ( nSize )
     return strdup(szResult);
   else
     return NULL;
@@ -543,7 +546,8 @@ bool ReadSettings(void) {
 
     // pszState cannot be NULL (?)
     myGetProfileString(szField, "STATE");
-    pFields[nIdx].pszState = STRDUP(szResult);
+    pFields[nIdx].pszState = myGetProfileStringDup(szField, "STATE");
+    //pFields[nIdx].pszState = STRDUP(szResult);
 
     pFields[nIdx].pszRoot = myGetProfileStringDup(szField, "ROOT");
 
@@ -901,7 +905,7 @@ int createCfgDlg()
       DWORD dwExStyle;
     } ClassTable[] = {
       { "STATIC",       // FIELD_LABEL
-        DEFAULT_STYLES /*| WS_TABSTOP*/,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_NOPREFIX,
         WS_EX_TRANSPARENT },
       { "STATIC",       // FIELD_ICON
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
@@ -1033,15 +1037,16 @@ int createCfgDlg()
       // Sets the font of IO window to be the same as the main window
       SendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
       // make sure we created the window, then set additional attributes
-      if (pFields[nIdx].nMaxLength > 0) {
+      //if (pFields[nIdx].nMaxLength > 0) {
         switch (nType) {
           case FIELD_TEXT:
+            SendMessage(hwCtrl, WM_SETTEXT, 0, (LPARAM)title);
           case FIELD_DIRREQUEST:
           case FIELD_FILEREQUEST:
             SendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pFields[nIdx].nMaxLength, (LPARAM)0);
             break;
         }
-      }
+      //}
       if ((nType == FIELD_CHECKBOX) || (nType == FIELD_RADIOBUTTON)) {
         if (pFields[nIdx].pszState[0] == '1')
         {
