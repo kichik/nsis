@@ -222,12 +222,11 @@ uInt *hn)               /* working area: values in order of bit length */
   return y != 0 && g != 1 ? Z_BUF_ERROR : Z_OK;
 }
 
-int inflate_trees_bits(c, bb, tb, hp, z)
+int inflate_trees_bits(c, bb, tb, hp)
 uIntf *c;               /* 19 code lengths */
 uIntf *bb;              /* bits tree desired/actual depth */
 inflate_huft * FAR *tb; /* bits tree result */
 inflate_huft *hp;       /* space for trees */
-z_streamp z;            /* for messages */
 {
   int r;
   uInt hn = 0;          /* hufts used in space */
@@ -241,7 +240,7 @@ z_streamp z;            /* for messages */
   return r;
 }
 
-int inflate_trees_dynamic(nl, nd, c, bl, bd, tl, td, hp, z)
+int inflate_trees_dynamic(nl, nd, c, bl, bd, tl, td, hp)
 uInt nl;                /* number of literal/length codes */
 uInt nd;                /* number of distance codes */
 uIntf *c;               /* that many (total) code lengths */
@@ -250,7 +249,6 @@ uIntf *bd;              /* distance desired/actual bit depth */
 inflate_huft * FAR *tl; /* literal/length tree result */
 inflate_huft * FAR *td; /* distance tree result */
 inflate_huft *hp;       /* space for trees */
-z_streamp z;            /* for messages */
 {
   int r;
   uInt hn = 0;          /* hufts used in space */
@@ -285,12 +283,11 @@ local inflate_huft *fixed_tl;
 local inflate_huft *fixed_td;
 
 
-int inflate_trees_fixed(bl, bd, tl, td, z)
+int inflate_trees_fixed(bl, bd, tl, td)
 uIntf *bl;               /* literal desired/actual bit depth */
 uIntf *bd;               /* distance desired/actual bit depth */
 inflate_huft * FAR *tl;  /* literal/length tree result */
 inflate_huft * FAR *td;  /* distance tree result */
-z_streamp z;             /* for memory allocation */
 {
   /* build fixed tables if not already */
   if (!fixed_built)

@@ -11,7 +11,7 @@
 #include "infcodes.h"
 #include "infutil.h"
 
-struct inflate_codes_state {int dummy;}; /* for buggy compilers */
+struct inflate_codes_state;
 
 /* And'ing with mask[n] masks the lower n bits */
 unsigned short inflate_mask[17] = {
@@ -32,18 +32,19 @@ void NSISCALL genrtable()
 }
 */
 
-int __myleave(inflate_blocks_statef *s, z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
+int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q)
 {
+  inflate_blocks_statef *s = &z->blocks;
   UPDATE 
-  return inflate_flush(s,z,r);
+  return inflate_flush(z,r);
 }
 
 /* copy as much as possible from the sliding window to the output area */
-int inflate_flush(s, z, r)
-inflate_blocks_statef *s;
+int inflate_flush(z, r)
 z_streamp z;
 int r;
 {
+  inflate_blocks_statef *s=&z->blocks;
   uInt n;
   Bytef *p;
   Bytef *q;

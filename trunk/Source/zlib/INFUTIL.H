@@ -6,53 +6,6 @@
 #ifndef _INFUTIL_H
 #define _INFUTIL_H
 
-typedef enum {
-      TYPE,     /* get type bits (3, including end bit) */
-      LENS,     /* get lengths for stored */
-      STORED,   /* processing stored block */
-      TABLE,    /* get table lengths */
-      BTREE,    /* get bit lengths tree for a dynamic block */
-      DTREE,    /* get length, distance trees for a dynamic block */
-      CODES,    /* processing fixed or dynamic block */
-      DRY,      /* output remaining window bytes */
-      DONE,     /* finished last block, done */
-      BAD}      /* got a data error--stuck here */
-inflate_block_mode;
-
-/* inflate blocks semi-private state */
-struct inflate_blocks_state {
-
-  /* mode */
-  inflate_block_mode  mode;     /* current inflate_block mode */
-
-  /* mode dependent information */
-  union {
-    uInt left;          /* if STORED, bytes left to copy */
-    struct {
-      uInt table;               /* table lengths (14 bits) */
-      uInt index;               /* index into blens (or border) */
-      uIntf *blens;             /* bit lengths of codes */
-      uInt bb;                  /* bit length tree depth */
-      inflate_huft *tb;         /* bit length decoding tree */
-    } trees;            /* if DTREE, decoding info for trees */
-    struct {
-      inflate_codes_statef 
-         *codes;
-    } decode;           /* if CODES, current state */
-  } sub;                /* submode */
-  uInt last;            /* true if this block is the last block */
-
-  /* mode independent information */
-  uInt bitk;            /* bits in bit buffer */
-  uLong bitb;           /* bit buffer */
-  inflate_huft hufts[MANY];  /* single malloc for tree space */
-  Bytef window[1 << DEF_WBITS];        /* sliding window */
-  Bytef *end;           /* one byte after sliding window */
-  Bytef *read;          /* window read pointer */
-  Bytef *write;         /* window write pointer */
-  uLong check;          /* check on output */
-
-};
 
 
 /* defines for inflate input/output */
@@ -61,8 +14,8 @@ struct inflate_blocks_state {
 #define UPDIN {z->avail_in=n;z->next_in=p;}
 #define UPDOUT {s->write=q;}
 #define UPDATE {UPDBITS UPDIN UPDOUT}
-#define LEAVE return __myleave(s,z,r,b,k,p,n,q);
-extern int __myleave(inflate_blocks_statef *s, z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q);
+#define LEAVE return __myleave(z,r,b,k,p,n,q);
+extern int __myleave(z_streamp z, int r, int b, int k, Bytef *p, int n, Bytef *q);
 
 /*   get bytes and bits */
 #define LOADIN {p=z->next_in;n=z->avail_in;b=s->bitb;k=s->bitk;}
@@ -77,7 +30,7 @@ extern int __myleave(inflate_blocks_statef *s, z_streamp z, int r, int b, int k,
 #define WAVAIL (uInt)(q<s->read?s->read-q-1:s->end-q)
 #define LOADOUT {q=s->write;m=(uInt)WAVAIL;}
 #define WRAP {if(q==s->end&&s->read!=s->window){q=s->window;m=(uInt)WAVAIL;}}
-#define FLUSH {UPDOUT r=inflate_flush(s,z,r); LOADOUT}
+#define FLUSH {UPDOUT r=inflate_flush(z,r); LOADOUT}
 #define NEEDOUT {if(m==0){WRAP if(m==0){FLUSH WRAP if(m==0) LEAVE}}r=Z_OK;}
 #define OUTBYTE(a) {*q++=(Byte)(a);m--;}
 /*   load local pointers */
@@ -88,23 +41,7 @@ extern unsigned short inflate_mask[17];
 
 /* copy as much as possible from the sliding window to the output area */
 extern int inflate_flush OF((
-    inflate_blocks_statef *,
     z_streamp ,
     int));
-
-struct internal_state {
-
-  /* mode dependent information */
-  union {
-    uInt method;        /* if FLAGS, method byte */
-    struct {
-      uLong was;                /* computed check value */
-      uLong need;               /* stream check value */
-    } check;            /* if CHECK, check values to compare */
-    uInt marker;        /* if BAD, inflateSync's marker bytes count */
-  } sub;        /* submode */
-
-  struct inflate_blocks_state blocks;            /* current inflate_blocks state */
-};
 
 #endif
