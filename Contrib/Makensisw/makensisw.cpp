@@ -128,10 +128,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					if (hmnu) hmnu = GetSubMenu(hmnu,0);
 				}
 				if (hmnu) {
-					int xPos,yPos;
-					xPos = (int)(short)LOWORD(lParam); 
-					yPos = (int)(short)HIWORD(lParam);
-					TrackPopupMenu(hmnu,NULL,xPos,yPos,0,g_hwnd,0);
+					TrackPopupMenu(hmnu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_hwnd,0);
 				}
 			}
 			return TRUE;
