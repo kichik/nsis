@@ -19,12 +19,18 @@
 ;
 ; History:
 ;		1.0 - 09/19/2003 - Initial release
+;		1.1 - 09/20/2003 - Added simplified macros and removed NAME requirement
 
 !ifndef SELECTLIB
   !define SELECTLIB
 
-!macro SELECT NAME VALUE
-  !define SELECT_NAME		"${NAME}"
+!define SELECT		"!insertmacro SELECT"
+!define CASE			"!insertmacro CASE"
+!define CASE_ELSE	"!insertmacro CASE_ELSE"
+!define SELECTEND	"!insertmacro SELECTEND"
+
+!macro SELECT VALUE
+  !define SELECT_NAME		"${__LINE__}"
   !define SELECT_VALUE	"${VALUE}"
   !define SELECT_COUNT	"${__LINE__}"
   Goto "lbl_${SELECT_NAME}_${SELECT_COUNT}"
