@@ -90,7 +90,7 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
              (s->bsLive-nnn)) & ((1 << nnn)-1);
          s->bsLive -= nnn;
          *vtmp = v;
-         break;
+        return 0;
       }
       if (s->strm->avail_in == 0) return 1;
       s->bsBuff = (s->bsBuff << 8) | ((UInt32) (*((UChar*)(s->strm->next_in))));
@@ -100,13 +100,11 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
 //      s->strm->total_in_lo32++;
   //    if (s->strm->total_in_lo32 == 0) s->strm->total_in_hi32++;
    }
-  return 0;
 }
 
 #define GET_BITS(lll,vvv,nnn)                     \
    case lll: s->state = lll;                      \
-    { int vtmp; if (__mygetbits(&vtmp,nnn,s)) RETURN(BZ_OK) \
-      (vvv) = vtmp; }
+    if (__mygetbits(&vvv,nnn,s)) RETURN(BZ_OK)
 
 #define GET_UCHAR(lll,uuu)                        \
    GET_BITS(lll,uuu,8)
@@ -131,9 +129,8 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
    groupPos--;                                    \
    zn = gMinlen;                                  \
    GET_BITS(label1, zvec, zn);                    \
-   while (1) {                                    \
-      if (zn > 20 /* the longest code */)         \
-         RETURN(BZ_DATA_ERROR);                   \
+   for (;;)  {                                    \
+      if (zn > 20 /* the longest code */) RETURN(BZ_DATA_ERROR);                   \
       if (zvec <= gLimit[zn]) break;              \
       zn++;                                       \
       GET_BIT(label2, zj);                        \
@@ -149,7 +146,7 @@ static int __mygetbits(int *vtmp, int nnn, DState* s)
 /*---------------------------------------------------*/
 Int32 BZ2_decompress ( DState* s )
 {
-   UChar      uc;
+   Int32 uc;
    Int32      retVal;
    Int32      minLen, maxLen;
    bz_stream* strm = s->strm;
@@ -331,8 +328,7 @@ Int32 BZ2_decompress ( DState* s )
 
       /*-- MTF init --*/
       {
-         Int32 ii, jj, kk;
-         kk = MTFA_SIZE-1;
+         Int32 ii, jj, kk = MTFA_SIZE-1;
          for (ii = 256 / MTFL_SIZE - 1; ii >= 0; ii--) {
             for (jj = MTFL_SIZE-1; jj >= 0; jj--) {
                s->mtfa[kk] = (UChar)(ii * MTFL_SIZE + jj);
@@ -354,13 +350,13 @@ Int32 BZ2_decompress ( DState* s )
 
             es = -1;
             N = 1;
-            do {
-               if (nextSym == BZ_RUNA) es = es + (0+1) * N; else
-               if (nextSym == BZ_RUNB) es = es + (1+1) * N;
-               N = N * 2;
+            while (nextSym == BZ_RUNA || nextSym == BZ_RUNB)
+            {
+               if (nextSym == BZ_RUNA) es += N;
+               N = N << 1;
+               if (nextSym == BZ_RUNB) es += N;
                GET_MTF_VAL(BZ_X_MTF_3, BZ_X_MTF_4, nextSym);
             }
-               while (nextSym == BZ_RUNA || nextSym == BZ_RUNB);
 
             es++;
             uc = s->seqToUnseq[ s->mtfa[s->mtfbase[0]] ];
@@ -397,7 +393,7 @@ Int32 BZ2_decompress ( DState* s )
                   /* avoid general-case expense */
                   pp = s->mtfbase[0];
                   uc = s->mtfa[pp+nn];
-                  while (nn > 3) {
+                  /*while (nn > 3) {
                      Int32 z = pp+nn;
                      s->mtfa[(z)  ] = s->mtfa[(z)-1];
                      s->mtfa[(z)-1] = s->mtfa[(z)-2];
@@ -405,6 +401,7 @@ Int32 BZ2_decompress ( DState* s )
                      s->mtfa[(z)-3] = s->mtfa[(z)-4];
                      nn -= 4;
                   }
+                  */
                   while (nn > 0) { 
                      s->mtfa[(pp+nn)] = s->mtfa[(pp+nn)-1]; nn--; 
                   };

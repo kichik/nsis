@@ -125,7 +125,7 @@ typedef unsigned short  UInt16;
 
 /*-- Stuff for randomising repetitive blocks. --*/
 
-extern Int16 BZ2_rNums[512]; // make this 513 for smaller-data mode.
+extern Int16 BZ2_rNums[513]; // make this 512 for bigger-data/smaller-code mode.
 
 #define BZ_RAND_DECLS                          \
    Int32 rNToGo;                               \
@@ -329,7 +329,7 @@ typedef
       /* for doing the final run-length decoding */
       UChar    state_out_ch;
       Int32    state_out_len;
-      Bool     blockRandomised;
+      Int32 blockRandomised;
       BZ_RAND_DECLS;
 
       /* the buffer for bit stream reading */
