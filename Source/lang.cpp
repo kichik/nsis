@@ -350,8 +350,6 @@ int CEXEBuild::GenerateLangTables() {
       char *font = lt[i].nlf.m_szFont;
       if (*build_font) font = 0;
 
-      SCRIPT_MSG("setting %d to %s\n", lt[i].lang_id, font);
-
       try {
         init_res_editor();
 
