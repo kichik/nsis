@@ -1157,6 +1157,9 @@
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
     ShowWindow ${MUI_TEMP1} ${SW_HIDE}
 
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+    ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+
     GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
     ShowWindow ${MUI_TEMP1} ${SW_HIDE}
       
@@ -1307,6 +1310,9 @@
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
 
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
