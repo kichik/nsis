@@ -98,134 +98,178 @@ a:hover
 <tr><td>
 <table border="0" cellpadding="0" cellspacing="0">
 <tr class="header">
-     <td><img src="Readme.jpg" width="750" height="80" alt=""></td>
+  <td><img src="Readme.jpg" width="750" height="80" alt=""></td>
 </tr>
 
-  <tr>
-    <td><div class="margin">
-                <p class="header">Introduction</p>
-                <p class="text">NSIS 2 makes it is possible to create installers
-                with a custom user interface.</p>
-                <p class="text"> I made this interface with a modern wizard style, 
-                  like the wizards of recent Windows versions. This new interface 
-                  also features new graphics and a description area on the
-                  component-selection page.</p>
-                <p class="text">To use this new interface for for installer, you need 
-                  to add some code to your NSIS script. Read this document for more info!</p>
-                <p class="header">Requirements</p>
-                <p class="text"><a href="http://nsis.sourceforge.net">NSIS 2 beta 0 (or later)</a></p>
-                <p class="header">Screenshot</p>
-                <p class="text"><img src="Screenshot.png" width="504" height="391" alt=""></p>
-                <p class="header">How to use</p>
-                <p class="text">The Modern UI has a macro system, so most of the code
-                  has already been written for you!</p>
-                <p class="text"><span class="subheader">Basic Macro System</span><br>
-                  For most scripts, you can use the basic macro system. The basic
-                  macro system inserts all code and functions for you. For an example,
-                  have a look at <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a>.<br><br>
-                  To remove certain default NSIS pages (such as the License page),
-                  remove a define at the top of the page (for example, remove
-                  !define MUI_LICENSEPAGE), and remove the other instructions for
-                  the page (for example, LicenseData).</p>
-                <p class="text"><span class="subheader">Advanced Macro System, Install Options</span><br>
-                  If you want put your own code in certain NSIS functions or
-                  want to  use custom installer pages, use the Advanced Macro
-                  System. The code will still be inserted using the macro's,
-                  but you can customize a lot of things, add your own code or
-                  add new pages.<br><br>
-                  Using the Install Options macro's, it's also very easy to use
-                  custom pages in your installer. Just add a new Page command
-                  between the other page commands: Page [function name] and call
-                  Install Options in [function name] using the
-                  MUI_INSTALLOPTIONS_SHOW macro.<br><br>
-                  Have a look at <a href="../../Examples/Modern UI/InstallOptions.nsi">
-                  InstallOptions.nsi</a> for an example of the Install Options
-                  and the Advanced Macro System.</p>
-                <p class="text"><span class="subheader">Multilanguage installers</span><br>
-                  The Modern UI has full multilanguage support and also uses
-                  language files which can be translated easily. You can find the
-                  language files in the Contrib\Modern UI\Language files directory.
-                  There are already a lot of translations available, but you can
-                  also make your own translation.<br>
-                  See <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a>
-                  for a multilanguage example using the Basic Macro System.
-                <p class="header">The interface</p>
-                <p class="text"><span class="subheader">Modern.exe and modern2.exe</span><br>
-                  There are two different versions of the interface.
-                  Modern.exe contains the dialogs of the standard interface.
-                  If you have an installer with a lot of subsections 
-                  or long section names, use modern2.exe, which has a different
-                  component-selection page.</p>
-                <p class="text"><span class="subheader">Change interface settings</span><br>
-                  You can change the settings of the interface
-                  by usings defines before you insert the MUI_INTERFACE macro.<br>
-                  Example: !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"<br>
-                  If you don't define a setting, the default will be used.<br><br>
-                  The following settings are available: <i>(default)</i><br>
-                  <span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i>
-                   - The icon of the instaleller<br>
-                  <span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i>
-                   - The icon of the uninstaleller<br>
-                  <span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i>
-                   - The bitmap with images for the checks of the
-                  component select treeview.<br>
-                  <span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i>
-                   - The interface file with the dialog resources<br>
-                  <span class="bold">MUI_FONT</span> <i>(Tahoma)</i> 
-                  - The font of the installer and uninstaller<br>
-                  <span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i>
-                   - The hexadecimal colors of the details screen ("foreground" "background")<br>
-                  <span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i>
-                   - The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or ""
-                  for a old-school windows look)</p>
-                <p class="text"><span class="subheader">Customize the dialogs</span><br>
-                To change elements on the dialogs, modify modern.exe or modern2.exe in the
-                  Contrib\UIs directory using a resource editor such as
-                  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.<br><br>
-                The 'Loading Setup' text on the splash screen which 
-                  is being displayed when the installer is starting (Verifying 
-                  installer, Unpacking data when using COMPRESS_WHOLE) cannot 
-                  be changed by the script, because the installer is not started 
-                  yet when this dialog is being displayed. If you want to change 
-                  this text, modify dialog 111 of modern(2).exe.<br>
-                The 'verifying installer' and 'unpacking data' texts are defined in
-                  the language header file of the NSIS exehead (Source\exehead\lang.h). 
-                  To change them, you need to edit this file and recompile NSIS.</p>
-                <p class="header">Version history</p>
-                <ul>
-                <li class="changelog">1.4 - October 30, 2002
-                  <ul>
-                    <li>Uses new NSIS Page command
-                    <li>Macro system way smaller
-                    <li>Advanced Macro System a lot easier
-                    <li>Renamed some defines
-                  </ul>
-                </ul>  
-                <p class="text"><a href="Changelog.txt">Complete version history</a></p>
-                <p class="header">Credits</p>
-                <p class="text">Made by Joost Verburg.<br>
-                  Icons designed by Nikos Adamamas, aka adni18.<br>
-                  Thanks to Amir Szekely, aka KiCHiK for his work on NSIS 
-                  to make this possible.</p>
-                <p class="header">Help</p>
-                <p class="text">Please post questions at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS 
-                  Forum</a>.</p>
-                <p class="header">License</p>
-                <p class="text">Copyright &copy; 2002 Joost Verburg</p>
-                <p class="text"> This software is provided 'as-is', without any 
-                  express or implied warranty. In no event will the authors be 
-                  held liable for any damages arising from the use of this software.</p>
-                <p class="text"> Permission is granted to anyone to use this software for any 
-                  purpose, including commercial applications, and to alter it 
-                  and redistribute it freely, subject to the following restrictions:</p>
-                <p class="text"> 1. The origin of this software must not be misrepresented; 
-                  you must not claim that you wrote the original software. If 
-                  you use this software in a product, an acknowledgment in the 
-                  product documentation would be appreciated but is not required.<br>
-                  2. Altered versions must be plainly marked as such, and 
-                  must not be misrepresented as being the original software.<br>
-                  3. This notice may not be removed or altered from any distribution.</p>
-              </div></td>
+<tr>
+ <td><div class="margin">
+<p class="header">Introduction</p>
+<p class="text">NSIS 2 makes it is possible to create installers
+with a custom user interface.</p>
+<p class="text"> I made this interface with a modern wizard style, 
+  like the wizards of recent Windows versions. This new interface 
+  also features new graphics and a description area on the
+  component-selection page.</p>
+<p class="text">To use this new interface for for installer, you need 
+  to add some code to your NSIS script. Read this document for more info!</p>
+<p class="header">Requirements</p>
+<p class="text"><a href="http://nsis.sourceforge.net">NSIS 2 beta 0 (or later)</a></p>
+<p class="header">Screenshot</p>
+<p class="text"><img src="Screenshot.png" width="504" height="391" alt=""></p>
+<p class="header">How to use</p>
+<p class="text">The Modern UI has a macro system, so most of the code
+  has already been written for you!<br><br>
+  The easiest way to use the Modern UI is to customize one of the <a href="#examples">example</a>
+  scripts, but you   can also modify an existing script.<br><br>
+  There are 7 things you need to insert in an existing script to use the
+  Modern UI (in order).<br><br>
+  <p class="text"><span class="subheader">1. Insert the header files</span><br><br>
+  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre></p>
+  <p class="text"><span class="subheader">2. Define the name and version of your software</span><br><br>
+<pre class="margin">!define NAME "Test Software" ;Define your own software name here
+!define VERSION "1.0" ;Define your own software version here</pre></p>
+  <p class="text"><span class="subheader">3. Define which elements you are using</span></br><br>
+  The Modern UI should know which things it should insert. Use the following defines:<br><br>
+<pre class="margin">!define MUI_LICENSEPAGE ;License page
+!define MUI_COMPONENTSPAGE ;Component-selection page
+!define MUI_DIRECTORYPAGE ;Directory-selection page
+!define MUI_LICENSEPAGE ;License page
+!define MUI_UNINSTALL ;Uninstaller
+!define MUI_ABORTWARNING ;Abort warning messabox</pre></p>
+  <p class="text"><span class="subheader">4. Insert language files</span><br><br>
+  Insert the Modern UI language files for the languages you are using:<br>
+  <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"</pre></p>
+  <p class="text"><span class="subheader">5. Interface settings (optional)</span><br><br>
+  You can change the settings of the interface by usings defines:<br>
+  <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre></p>
+  <p class="text">If you don't define a setting, the default will be used.<br><br>
+  The following settings are available: <i>(default)</i><br><br>
+  <span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i>
+   - The icon of the instaleller<br>
+  <span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i>
+   - The icon of the uninstaleller<br>
+  <span class="bold">MUI_CHECKBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern.bmp)</i>
+   - The bitmap with images for the checks of the
+  component select treeview.<br>
+  <span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i>
+   - The interface file with the dialog resources<br>
+  <span class="bold">MUI_FONT</span> <i>(Tahoma)</i> 
+  - The font of the installer and uninstaller<br>
+  <span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i>
+   - The hexadecimal colors of the details screen ("foreground" "background")<br>
+  <span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i>
+   - The style of the progress bar ("colored" to use the MUI_INSTALLCOLORS or ""
+  for a old-school windows look)</p>
+  <p class="text"><span class="subheader">6. Insert the MUI_SYSTEM macro</span><br><br>
+  <pre class="margin">!insertmacro MUI_SYSTEM</pre></p>
+  <p class="text"><span class="subheader">7. Set the descriptions for the sections</span><br><br>
+<pre class="margin">
+LangString DESC_SectionName1 ${LANG_ENGLISH} "Description of section 1."
+LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
+
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_START
+  !insertmacro MUI_DESCRIPTION_TEXT ${SectionName1} $(DESC_SectionName1)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SectionName2} $(DESC_SectionName2)
+!insertmacro MUI_FUNCTIONS_DESCRIPTION_END
+</pre></p>
+<p class="text">Note: Always set a name for a section:<br><br>
+<pre class="margin">
+Section "Section Name 1" SectionName1
+ ...
+SectionEnd
+
+Section "Section Name 2" SectionName2
+ ...
+SectionEnd
+</pre></p>
+<p class="text"><span class="subheader">Custom pages</span><br><br>
+  If you want add custom pages to your installer using Install Options,
+  you can customize the page commands:<br><br>
+<pre class="margin">
+!define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
+
+!insertmacro MUI_PAGECOMMAND_LICENSE
+Page custom [function name]
+Page custom [function name]
+!insertmacro MUI_PAGECOMMAND_COMPONENTS
+!insertmacro MUI_PAGECOMMAND_DIRECTORY
+Page custom [function name]
+!insertmacro MUI_PAGECOMMAND_INSTFILES
+</pre>
+<p class="text">You can call Install Options in [function name]:</p>
+<pre class="margin">
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+
+Function [function name]
+  !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "iniFile.ini"
+FunctionEnd
+</pre>
+<p class="text"><a name="examples"><span class="subheader">Examples</span></a><br><br>
+  Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
+  Multilanguage: <a href="../../Examples/Modern UI/MultiLanguage.nsi">MultiLanguage.nsi</a><br>
+  Cutom pages: <a href="../../Examples/Modern UI/InstallOptions.nsi">
+  InstallOptions.nsi</a><br>
+<p class="header">The interface</p>
+<p class="text"><span class="subheader">Modern.exe and modern2.exe</span><br><br>
+  There are two different versions of the interface.
+  Modern.exe contains the dialogs of the standard interface.
+  If you have an installer with a lot of subsections 
+  or long section names, use modern2.exe, which has a different
+  component-selection page.</p>
+<p class="text"><span class="subheader">Customize the dialogs</span><br><br>
+To change elements on the dialogs, modify modern.exe or modern2.exe in the
+  Contrib\UIs directory using a resource editor such as
+  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.<br><br>
+The 'Loading Setup' text on the splash screen which 
+  is being displayed when the installer is starting (Verifying 
+  installer, Unpacking data when using COMPRESS_WHOLE) cannot 
+  be changed by the script, because the installer is not started 
+  yet when this dialog is being displayed. If you want to change 
+  this text, modify dialog 111 of modern(2).exe.<br>
+The 'verifying installer' and 'unpacking data' texts are defined in
+  the language header file of the NSIS exehead (Source\exehead\lang.h). 
+  To change them, you need to edit this file and recompile NSIS.</p>
+<p class="header">Version history</p>
+<ul>
+<li class="changelog">1.4 - November 3, 2002
+  <ul>
+    <li>Uses new NSIS Page command
+    <li>Macro system way smaller
+    <li>Advanced Macro System a lot easier
+    <li>Renamed some defines
+  </ul>
+</ul>  
+<p class="text"><a href="Changelog.txt">Complete version history</a></p>
+<p class="header">Credits</p>
+<p class="text">Made by Joost Verburg.<br>
+  Icons designed by Nikos Adamamas, aka adni18.<br>
+  Thanks to Amir Szekely, aka KiCHiK for his work on NSIS 
+  to make this possible.</p>
+<p class="header">Help</p>
+<p class="text">Please post questions at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS 
+  Forum</a>.</p>
+<p class="header">License</p>
+<pre class="margin">Copyright &copy; 2002 Joost Verburg
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any 
+purpose, including commercial applications, and to alter it 
+and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; 
+   you must not claim that you wrote the original software. If 
+   you use this software in a product, an acknowledgment in the 
+   product documentation would be appreciated but is not required.
+2. Altered versions must be plainly marked as such, and 
+   must not be misrepresented as being the original software.
+3. This notice may not be removed or altered from any distribution.
+</pre>
+  </div></td>
   </tr>
   <tr>
     <td><div class="footer">&copy;2002 Joost Verburg</div></td>
