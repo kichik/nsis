@@ -603,6 +603,60 @@ int CEXEBuild::parseScript()
   return PS_EOF;
 }
 
+int CEXEBuild::includeScript(char *f)
+{
+  SCRIPT_MSG("!include: \"%s\"\n",f);
+  FILE *incfp=fopen(f,"rt");
+  if (!incfp)
+  {
+    ERROR_MSG("!include: could not open file: \"%s\"\n",f);
+    return PS_ERROR;
+  }
+  if (build_include_depth >= MAX_INCLUDEDEPTH)
+  {
+    ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
+    return PS_ERROR;
+  }
+  build_include_depth++;
+
+  int last_linecnt=linecnt;
+  linecnt=0;
+  char *last_filename=curfilename;
+  curfilename=f;
+  FILE *last_fp=fp;
+  fp=incfp;
+
+#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
+  // Added by Sunil Kamath 11 June 2003
+  char *oldfilename = set_file_predefine(curfilename);
+  char *oldtimestamp = set_timestamp_predefine(curfilename);
+#endif
+
+  int r=parseScript();
+
+#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
+  // Added by Sunil Kamath 11 June 2003
+  restore_file_predefine(oldfilename);
+  restore_timestamp_predefine(oldtimestamp);
+#endif
+
+  int errlinecnt=linecnt;
+
+  linecnt=last_linecnt;
+  curfilename=last_filename;
+  fp=last_fp;
+
+  build_include_depth--;
+  fclose(incfp);
+  if (r != PS_EOF && r != PS_OK)
+  {
+    ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,errlinecnt);
+    return PS_ERROR;
+  }
+  SCRIPT_MSG("!include: closed: \"%s\"\n",f);
+  return PS_OK;
+}
+
 int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
 {
   char *last_filename=curfilename;
@@ -2410,92 +2464,75 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_INCLUDE:
       {
-        bool malloced=false;
-        char *f=line.gettoken_str(1);
-        SCRIPT_MSG("!include: \"%s\"\n",f);
-        FILE *incfp=fopen(f,"rt");
-        if (!incfp)
-        {
-          char *dir=include_dirs.get();
-          unsigned int dirs=include_dirs.getnum();
-          unsigned int size=lstrlen(f)+lstrlen(dir)+100;
-          char *incfile=(char*)malloc(size);
+        WIN32_FIND_DATA fd;
+        char *f = line.gettoken_str(1);
+        int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
+        char *incfile = (char *) malloc(malloced);
 
-          for (unsigned int i=0; i<dirs; i++) {
-            if (size < (unsigned int)lstrlen(f)+lstrlen(dir))
+        strcpy(incfile, f);
+        char *slash = strrchr(incfile, '\\');
+
+        HANDLE search = FindFirstFile(f, &fd);
+        if (search != INVALID_HANDLE_VALUE)
+        {
+          do
+          {
+            if (slash)
+              slash[1] = 0;
+            else
+              incfile[0] = 0;
+            strcat(incfile, fd.cFileName);
+            if (includeScript(incfile) != PS_OK)
+              return PS_ERROR;
+          }
+          while (FindNextFile(search, &fd));
+          FindClose(search);
+        }
+        else
+        {
+          char *dir = include_dirs.get();
+          int dirs = include_dirs.getnum();
+
+          for (int i = 0; i < dirs; i++) {
+            if (malloced < strlen(f) + strlen(dir) + 1)
             {
               free(incfile);
-              size+=lstrlen(dir);
-              incfile=(char*)malloc(size);
+              malloced += strlen(dir);
+              incfile = (char *) malloc(malloced);
             }
-            strcpy(incfile,dir);
+            strcpy(incfile, dir);
             if (*f != '\\')
-              strcat(incfile,"\\");
-            strcat(incfile,f);
-            incfp=fopen(incfile,"rt");
-            if (!incfp)
-              dir+=strlen(dir)+1;
-            else
+              strcat(incfile, "\\");
+            strcat(incfile, f);
+            slash = strrchr(incfile, '\\');
+            
+            search = FindFirstFile(incfile, &fd);
+            if (search != INVALID_HANDLE_VALUE)
             {
-              malloced=true;
-              f=incfile;
+              do
+              {
+                if (slash)
+                  slash[1] = 0;
+                else
+                  incfile[0] = 0;
+                strcat(incfile, fd.cFileName);
+                SCRIPT_MSG("--> %s\n", incfile);
+                if (includeScript(incfile) != PS_OK)
+                  return PS_ERROR;
+                SCRIPT_MSG("%s\n", incfile);
+              }
+              while (FindNextFile(search, &fd));
+              FindClose(search);
               break;
             }
+            else
+            {
+              dir += strlen(dir) + 1;
+            }
           }
-          if (!malloced) free(incfile);
         }
-        if (!incfp)
-        {
-          ERROR_MSG("!include: could not open file: \"%s\"\n",f);
-          if (malloced) free(f);
-          return PS_ERROR;
-        }
-        if (build_include_depth >= MAX_INCLUDEDEPTH)
-        {
-          ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
-          if (malloced) free(f);
-          return PS_ERROR;
-        }
-        build_include_depth++;
 
-        int last_linecnt=linecnt;
-        linecnt=0;
-        char *last_filename=curfilename;
-        curfilename=f;
-        FILE *last_fp=fp;
-        fp=incfp;
-
-#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-        // Added by Sunil Kamath 11 June 2003
-        char *oldfilename = set_file_predefine(curfilename);
-        char *oldtimestamp = set_timestamp_predefine(curfilename);
-#endif
-
-        int r=parseScript();
-
-#ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
-        // Added by Sunil Kamath 11 June 2003
-        restore_file_predefine(oldfilename);
-        restore_timestamp_predefine(oldtimestamp);
-#endif
-
-
-        int errlinecnt=linecnt;
-
-        linecnt=last_linecnt;
-        curfilename=last_filename;
-        fp=last_fp;
-
-        build_include_depth--;
-        fclose(incfp);
-        if (r != PS_EOF && r != PS_OK)
-        {
-          ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,errlinecnt);
-          if (malloced) free(f);
-          return PS_ERROR;
-        }
-        SCRIPT_MSG("!include: closed: \"%s\"\n",f);
-        if (malloced) free(f);
+        free(incfile);
       }
     return PS_OK;
     case TOK_P_CD:
