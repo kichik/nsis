@@ -1371,6 +1371,8 @@ int CEXEBuild::write_output(void)
         #endif
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
           p->back&=~2;
+        if (i && (p-1)->id==NSIS_PAGE_COMPLETED)
+          p->back&=~2;
       }
       (--p)->next=LANG_BTN_CLOSE;
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
