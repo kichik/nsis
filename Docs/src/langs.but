@@ -12,7 +12,9 @@ For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language
 
 \c [un.]name language_id string
 
-Defines a multilingual string and spares the comparing of $LANGUAGE to every possible string you have. This also allows you to make section names and install types multilingual. To use in the uninstaller make sure you define the string with the un. prefix before its name. When you used an uninstaller string you don't need to use the un. prefix, you only have to use it when you define the string.
+Defines a multilingual string and spares the comparing of $LANGUAGE to every possible string you have. This also allows you to make section names and install types multilingual. To use in the uninstaller make sure you define the string with the un. prefix before its name.
+
+LangStrings can you only be used on their own. You can't include them in other strings. "look at my $(string)! isn't it beautiful?" will be seen exactly as written, $(string) will not be expended.
 
 For example, instead of:
 
