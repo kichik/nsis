@@ -21,12 +21,7 @@
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
-;Modern UI Configuration
-
-  ;Remember the installer language
-  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-  !define MUI_LANGDLL_REGISTRY_KEY "Software\Modern UI Test" 
-  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+;Interface Settings
 
   !define MUI_ABORTWARNING
 
@@ -78,8 +73,9 @@
 ;--------------------------------
 ;Reserve Files
   
-  ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only for BZIP2 compression
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for BZIP2 (solid) compression
   !insertmacro MUI_RESERVEFILE_LANGDLL
 
 ;--------------------------------
@@ -103,6 +99,11 @@ SectionEnd
 ;Installer Functions
 
 Function .onInit
+
+  ;Remember the installer language
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\Modern UI Test" 
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !insertmacro MUI_LANGDLL_DISPLAY
 

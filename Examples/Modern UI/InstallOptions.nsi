@@ -21,11 +21,6 @@
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
-;Variables
-
-  Var MUI_TEMP
-
-;--------------------------------
 ;Pages
 
   !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -40,7 +35,7 @@
   !insertmacro MUI_UNPAGE_INSTFILES
   
 ;--------------------------------
-;Modern UI Configuration
+;Interface Settings
 
   !define MUI_ABORTWARNING
   
@@ -52,13 +47,19 @@
 ;--------------------------------
 ;Reserve Files
   
-  ;Things that need to be extracted on first (keep these lines before any File command!)
-  ;Only for BZIP2 compression
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for BZIP2 (solid) compression
   
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+
+;--------------------------------
+;Variables
+
+  Var INI_VALUE
 
 ;--------------------------------
 ;Installer Sections
@@ -76,10 +77,10 @@ Section "Dummy Section" SecDummy
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
   ;Read a value from an InstallOptions INI file
-  !insertmacro MUI_INSTALLOPTIONS_READ $MUI_TEMP "ioC.ini" "Field 2" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "ioC.ini" "Field 2" "State"
   
   ;Display a messagebox if check box was checked
-  StrCmp $MUI_TEMP "1" "" +2
+  StrCmp $INI_VALUE "1" "" +2
     MessageBox MB_OK "You checked the check box, here is the MessageBox..."
 
 SectionEnd

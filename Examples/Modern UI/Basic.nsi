@@ -21,7 +21,7 @@
   InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
-;Modern UI Configuration
+;Interface Settings
 
   !define MUI_ABORTWARNING
 
