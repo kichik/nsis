@@ -2,10 +2,10 @@
   NSIS ExDLL example
   (C) 2001 - Peter Windridge
 
-  Fixed and formatted by Alexander Tereschenko
-  http://futuris.plastiqueweb.com/
+  Fixed and formatted by Brett Dever
+  http://editor.nfscheats.com/
 
-  Tested in Delphi 6.01
+  Tested in Delphi 7.0
 }
 
 library exdll;
@@ -54,75 +54,62 @@ var
   g_variables: PChar;
   g_hwndParent: HWND;
 
-function PopString(str: PChar):integer;
+function PopString(): string;
 var
   th: pstack_t;
 begin
-  if integer(g_stacktop^) = 0 then
-    begin
-    Result:=1;
-    Exit;
-    end;
-  th:=g_stacktop^;
-  lstrcpy(str,@th.text);
-  g_stacktop^ := th.next;
-  GlobalFree(HGLOBAL(th));
-  Result:=0;
+  if integer(g_stacktop^) <> 0 then begin
+    th := g_stacktop^;
+    Result := PChar(@th.text);
+    g_stacktop^ := th.next;
+    GlobalFree(HGLOBAL(th));
+  end;
 end;
 
-function PushString(str: PChar):integer;
+procedure PushString(const str: string='');
 var
   th: pstack_t;
 begin
-  if integer(g_stacktop) = 0 then
-    begin
-    Result:=1;
-    Exit;
-    end;
-  th:=pstack_t(GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize));
-  lstrcpyn(@th.text,str,g_stringsize);
-  th.next:=g_stacktop^;
-  g_stacktop^:=th;
-  Result:=0;
+  if integer(g_stacktop) <> 0 then begin
+    th := pstack_t(GlobalAlloc(GPTR, SizeOf(stack_t) + g_stringsize));
+    lstrcpyn(@th.text, PChar(str), g_stringsize);
+    th.next := g_stacktop^;
+    g_stacktop^ := th;
+  end;
 end;
 
-function GetUserVariable(varnum: TVariableList):PChar;
+function GetUserVariable(varnum: TVariableList): string;
 begin
-  if (integer(varnum) < 0) or (integer(varnum) >= integer(__INST_LAST)) then
-    begin
-    Result:='';
-    Exit;
-    end;
-  Result:=g_variables+integer(varnum)*g_stringsize;
+  if (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
+    Result := g_variables + integer(varnum) * g_stringsize
+  else
+    Result := '';
 end;
 
-procedure SetUserVariable(varnum: TVariableList; value: PChar);
+procedure SetUserVariable(varnum: TVariableList; value: string);
 begin
-  if (value <> nil) and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
-    begin
-      lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
-    end;
+  if (value <> '') and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
+    lstrcpy(g_variables + integer(varnum) * g_stringsize, PChar(value))
 end;
 
-function ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer):integer; cdecl;
-var
-  c: PChar;
-  buf: array[0..1024] of char;
+procedure NSISDialog(text, caption: string; buttons: integer);
+begin
+  MessageBox(g_hwndParent, PChar(text), PChar(caption), buttons);
+end;
+
+procedure ex_dll(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer); cdecl;
 begin
   // set up global variables
-  g_stringsize:=string_size;
-  g_hwndParent:=hwndParent;
-  g_stringsize:=string_size;
-  g_stacktop:=stacktop;
-  g_variables:=variables;
+  g_stringsize := string_size;
+  g_hwndParent := hwndParent;
+  g_stringsize := string_size;
+  g_stacktop := stacktop;
+  g_variables := variables;
 
-  c:=GetUserVariable(INST_0);
-  MessageBox(g_hwndParent,c,'The value of $0',MB_OK);
-  PopString(@buf);
-  MessageBox(g_hwndParent,@buf,'pop',MB_OK);
-  PushString(PChar('Hello, this is a push'));
-
-  Result:=1;
+  NSISDialog(GetUserVariable(INST_0), 'The value of $0', MB_OK);
+  NSISDialog(PopString, 'pop', MB_OK);
+  PushString('Hello, this is a push');
+  SetUserVariable(INST_0, 'This is 0');
 end;
 
 exports ex_dll;

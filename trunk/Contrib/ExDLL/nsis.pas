@@ -5,7 +5,10 @@
     Code in seperate unit and some changes
     2003 by Bernhard Mayer
 
-    simple include this unit in your plugin project and export
+    Fixed and formatted by Brett Dever
+    http://editor.nfscheats.com/
+
+    simply include this unit in your plugin project and export
     functions as needed
 }
 
@@ -60,10 +63,11 @@ var
   g_hwndParent: HWND;
 
 procedure Init(hwndParent: HWND; string_size: integer; variables: PChar; stacktop: pointer);
-function PopString(str: PChar):integer;
-function PushString(str: PChar):integer;
-function GetUserVariable(varnum: TVariableList):PChar;
-function SetUserVariable(varnum: TVariableList; value: PChar):integer;
+function PopString(): string;
+procedure PushString(const str: string='');
+function GetUserVariable(varnum: TVariableList): string;
+procedure SetUserVariable(varnum: TVariableList; value: string);
+procedure NSISDialog(text, caption: string; buttons: integer);
 
 implementation
 
@@ -75,54 +79,47 @@ begin
   g_variables:=variables;
 end;
 
-function PopString(str: PChar):integer;
+function PopString(): string;
 var
   th: pstack_t;
 begin
-  if integer(g_stacktop^) = 0 then
-    begin
-    Result:=1;
-    Exit;
-    end;
-  th:=g_stacktop^;
-  lstrcpy(str,@th.text);
-  g_stacktop^ := th.next;
-  GlobalFree(HGLOBAL(th));
-  Result:=0;
+  if integer(g_stacktop^) <> 0 then begin
+    th := g_stacktop^;
+    Result := PChar(@th.text);
+    g_stacktop^ := th.next;
+    GlobalFree(HGLOBAL(th));
+  end;
 end;
 
-function PushString(str: PChar):integer;
+procedure PushString(const str: string='');
 var
   th: pstack_t;
 begin
-  if integer(g_stacktop) = 0 then
-    begin
-    Result:=1;
-    Exit;
-    end;
-  th:=pstack_t(GlobalAlloc(GPTR,sizeof(stack_t)+g_stringsize));
-  lstrcpyn(@th.text,str,g_stringsize);
-  th.next:=g_stacktop^;
-  g_stacktop^:=th;
-  Result:=0;
+  if integer(g_stacktop) <> 0 then begin
+    th := pstack_t(GlobalAlloc(GPTR, SizeOf(stack_t) + g_stringsize));
+    lstrcpyn(@th.text, PChar(str), g_stringsize);
+    th.next := g_stacktop^;
+    g_stacktop^ := th;
+  end;
 end;
 
-function GetUserVariable(varnum: TVariableList):PChar;
+function GetUserVariable(varnum: TVariableList): string;
 begin
-  if (integer(varnum) < 0) or (integer(varnum) >= integer(__INST_LAST)) then
-    begin
-    Result:='';
-    Exit;
-    end;
-  Result:=g_variables+integer(varnum)*g_stringsize;
+  if (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
+    Result := g_variables + integer(varnum) * g_stringsize
+  else
+    Result := '';
 end;
 
-procedure SetUserVariable(varnum: TVariableList; value: PChar);
+procedure SetUserVariable(varnum: TVariableList; value: string);
 begin
-  if (value <> nil) and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
-    begin
-      lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
-    end;
+  if (value <> '') and (integer(varnum) >= 0) and (integer(varnum) < integer(__INST_LAST)) then
+    lstrcpy(g_variables + integer(varnum) * g_stringsize, PChar(value))
+end;
+
+procedure NSISDialog(text, caption: string; buttons: integer);
+begin
+  MessageBox(g_hwndParent, PChar(text), PChar(caption), buttons);
 end;
 
 begin
