@@ -1,9 +1,10 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Italian (1040)
 ;By SANFACE Software <sanface@sanface.com> v1.67 accents
 ;Review and update from v1.65 to v1.67 by Alessandro Staltari < staltari (a) geocities.com >
+;Review and update from v1.67 to v1.68 by Lorenzo Bevilacqua < meow811@libero.it >
 
 ;--------------------------------
 
@@ -41,7 +42,7 @@
   !define MUI_BUTTONTEXT_FINISH "&Fine"
   !define MUI_TEXT_FINISH_INFO_TITLE "Completamento dell'installazione di $(^NameDA)."
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) è stato installato sul vostro computer.\r\n\r\nScegliere Fine per chiudere il programma di installazione."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Il computer deve essere riavviato per completare l'installazione di $(^NameDA). Si desidera riavviarlo adesso?"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Il computer deve essere riavviato per completare l'installazione di $(^NameDA). Vuoi riavviarlo ora?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Riavvia adesso"
   !define MUI_TEXT_FINISH_REBOOTLATER "Preferisco riavviarlo manualmente più tardi"
   !define MUI_TEXT_FINISH_RUN "Esegui $(^NameDA)"
@@ -55,10 +56,10 @@
   !define MUI_TEXT_ABORTWARNING "Sei sicuro di voler interrompere l'installazione di $(^Name) ?"
 
 
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvenuti nella procedura guidata di disintallazion di $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Questa procedura vi guiderà nella disinstallazione di $(^NameDA).\r\n\r\nPrima di iniziare la disinstallazione, assicuratevi che $(^NameDA) non sia in esecuzione.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Benvenuti nella procedura guidata di disinstallazione di $(^NameDA)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Questa procedura vi guiderà nella disinstallazione di $(^NameDA).\r\n\r\nPrima di iniziare la disinstallazione, assicuratevi che $(^Name) non sia in esecuzione.\r\n\r\n$_CLICK"
   
-  !define MUI_UNTEXT_CONFIRM_TITLE "Disintalla $(^NameDA)"
+  !define MUI_UNTEXT_CONFIRM_TITLE "Disinstalla $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Rimuove $(^NameDA) dal computer."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licenza d'uso"  
@@ -84,6 +85,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Completamento della disinstallazione di $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) è stato disinstallato dal computer.\r\n\r\nSelezionare Fine per terminare questa procedura."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Il computer deve essere riavviato per completare l'installazione di $(^NameDA). Vuoi riavviarlo ora?"
   
   !define MUI_UNTEXT_ABORTWARNING "Sei sicuro di voler interrompere la disinstallazione di $(^Name)?"  
   
