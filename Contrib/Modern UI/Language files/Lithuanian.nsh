@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Pasirinkite"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Pasirinkite kokias $(^NameDA) galimybes jûs norite ádiegti."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Paaiðkinimas"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Uþveskite pelës þymeklá ant komponento ir pamatysite jo apraðymà."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Uþveskite pelës þymeklá ant komponento ir pamatysite jo apraðymà."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Pasirinkite komponentá ir pamatysite jo apraðymà."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Pasirinkite ádiegimo vietà"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Pasirinkite katalogà á kûri ádiegsite $(^NameDA)."
