@@ -84,7 +84,20 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
       return 0;
     }
     memset(table, 0, sizeof(StringTable)-sizeof(GrowBuf)*2);
-    table->lang_id = table->lang_id = lang;
+    table->lang_id = lang;
+    
+    int zero = 0;
+
+    // make sure all of the user's strings tables are the same size
+    for (int j = 0; j < string_tables.size(); j++) {
+      int i = build_userlangstrings.getnum();
+      i -= table->user_strings.getlen() / sizeof(int);
+      while (i--) table->user_strings.add(&zero, sizeof(int));
+
+      i = ubuild_userlangstrings.getnum();
+      i -= table->user_ustrings.getlen() / sizeof(int);
+      while (i--) table->user_ustrings.add(&zero, sizeof(int));
+    }
     string_tables.push_back(table);
   }
 
