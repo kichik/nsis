@@ -140,15 +140,12 @@ class CEXEBuild {
     } *cur_ifblock;
 
     TinyGrowBuf build_preprocessor_data;
-    int last_line_had_slash;
 
     void start_ifblock();
     void end_ifblock();
     int num_ifblock();
-    /*int ignore;
-    int if_count;
-    int ignored_if_count;
-    int wait_for_endif;*/
+
+    int last_line_had_slash;
     bool inside_comment;
 
     void ERROR_MSG(const char *s, ...);
@@ -281,6 +278,8 @@ class CEXEBuild {
     int uninstaller_writes_used;
 
     char build_output_filename[1024];
+
+    int build_include_depth;
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO

@@ -2431,14 +2431,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (malloced) free(f);
           return PS_ERROR;
         }
-        static int depth;
-        if (depth >= MAX_INCLUDEDEPTH)
+        if (build_include_depth >= MAX_INCLUDEDEPTH)
         {
           ERROR_MSG("parseScript: too many levels of includes (%d max).\n",MAX_INCLUDEDEPTH);
           if (malloced) free(f);
           return PS_ERROR;
         }
-        depth++;
+        build_include_depth++;
 
         int last_linecnt=linecnt;
         linecnt=0;
@@ -2468,7 +2467,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         curfilename=last_filename;
         fp=last_fp;
 
-        depth--;
+        build_include_depth--;
         fclose(incfp);
         if (r != PS_EOF && r != PS_OK)
         {
