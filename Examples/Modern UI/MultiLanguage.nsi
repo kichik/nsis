@@ -7,8 +7,6 @@
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
-;$9 is the variable used to store the current page, do not use this var!
-
 ;--------------------------------
 ;Configuration
 
