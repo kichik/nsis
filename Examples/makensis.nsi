@@ -82,6 +82,7 @@ Section "NSIS Examples (recommended)"
   File ..\Examples\primes.nsi
   File ..\Examples\rtest.nsi
   File ..\Examples\gfx.nsi
+  File ..\Examples\one-section.nsi
   File ..\Examples\WinMessages.nsh
   File ..\Examples\branding.nsh
   File ..\Examples\functions.htm
