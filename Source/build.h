@@ -194,6 +194,8 @@ class CEXEBuild {
         db_comp_save_u, db_full_size_u;
     int build_sections_req,build_sections_div;
 
+    StringList include_dirs;
+
     StringList ns_func, ns_label; // function and label namespaces
 
     int build_cursection_isfunc;
