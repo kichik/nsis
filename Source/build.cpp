@@ -1929,6 +1929,8 @@ int CEXEBuild::write_output(void)
 
   build_optimize_datablock=0;
 
+  int data_block_size_before_uninst = build_datablock.getlen();
+
   if (uninstall_generate() != PS_OK)
   {
     return PS_ERROR;
@@ -2046,6 +2048,7 @@ int CEXEBuild::write_output(void)
     }
   }
 
+  INFO_MSG("Install: ");
   {
     int ns=build_sections.getlen()/sizeof(section);
     section *s=(section*)build_sections.get();
@@ -2055,15 +2058,15 @@ int CEXEBuild::write_output(void)
     {
       if (!s[x].name_ptr || s[x].flags & SF_RO) req++;
     }
-    INFO_MSG("Install: %d section%s",ns,ns==1?"":"s");
+    INFO_MSG("%d section%s",ns,ns==1?"":"s");
     if (req)
     {
       INFO_MSG(" (%d required)",req);
     }
-    INFO_MSG(".\n");
+    INFO_MSG(" (%d bytes), ", build_sections.getlen());
   }
   int ne=build_entries.getlen()/sizeof(entry);
-  INFO_MSG("Install: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
+  INFO_MSG("%d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
   int ns=build_strlist.getnum();
   INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",build_strlist.getlen());
   int nlt=string_tables.size();
@@ -2073,20 +2076,20 @@ int CEXEBuild::write_output(void)
   if (ubuild_entries.getlen())
   {
     ne=ubuild_entries.getlen()/sizeof(entry);
-    INFO_MSG("Uninstall: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
+    INFO_MSG("Uninstall: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ubuild_entries.getlen());
     ns=ubuild_strlist.getnum();
     INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",ubuild_strlist.getlen());
     nlt=string_tables.size();
     INFO_MSG("%d language table%s (%d bytes), ",nlt,nlt==1?"":"s",ubuild_langtables.getlen());
     np=ubuild_pages.getlen()/sizeof(page);
-    INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",np*sizeof(page));
+    INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",ubuild_pages.getlen());
   }
 
 
   if (db_opt_save)
   {
     int total_out_size_estimate=
-      exeheader_size_new+sizeof(fh)+build_datablock.getlen()+(build_crcchk?4:0);
+      exeheader_size_new+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(int):0);
     int pc=MulDiv(db_opt_save,1000,db_opt_save+total_out_size_estimate);
     INFO_MSG("Datablock optimizer saved %d bytes (~%d.%d%%).\n",db_opt_save,
       pc/10,pc%10);
@@ -2102,15 +2105,15 @@ int CEXEBuild::write_output(void)
 
   if (build_compress_whole) {
     INFO_MSG("Install code:                          (%d bytes)\n",
-      sizeof(fh)+fh.length_of_header+sizeof(int));
+      sizeof(fh)+fh.length_of_header);
   }
   else {
     INFO_MSG("Install code:             %10d / %d bytes\n",
       sizeof(fh)+installinfo_compressed,
-      sizeof(fh)+fh.length_of_header+sizeof(int));
+      sizeof(fh)+fh.length_of_header);
   }
 
-  total_usize+=sizeof(fh)+fh.length_of_header+sizeof(int);
+  total_usize+=sizeof(fh)+fh.length_of_header;
 
   {
     int dbsize, dbsizeu;
@@ -2137,13 +2140,14 @@ int CEXEBuild::write_output(void)
     total_usize+=uninstall_size_full;
   }
 
+  if (build_compress_whole) {
+    INFO_MSG("Compressed data:          ");
+  }
+
   if (build_datablock.getlen())
   {
     char *dbptr=(char *)build_datablock.get();
     int dbl=build_datablock.getlen();
-    if (build_compress_whole) {
-      INFO_MSG("Compressed data:          ");
-    }
     while (dbl > 0)
     {
       int l=dbl;
@@ -2181,12 +2185,14 @@ int CEXEBuild::write_output(void)
       fclose(fp);
       return PS_ERROR;
     }
-#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     compressor->End();
-#endif
 
-    fh.length_of_all_following_data=(ftell(fp)-fd_start)+(build_crcchk?sizeof(int):0);
-    INFO_MSG("%10d / %d bytes\n",(ftell(fp)-fd_start),build_datablock.getlen());
+    fh.length_of_all_following_data=ftell(fp)-fd_start+(build_crcchk?sizeof(int):0);
+    INFO_MSG(
+      "%10d / %d bytes\n",
+      ftell(fp) - fd_start,
+      data_block_size_before_uninst + fh.length_of_header + sizeof(firstheader) + uninstall_size_full
+    );
 
     fseek(fp,fd_start,SEEK_SET);
     fwrite(&fh,sizeof(fh),1,fp);
@@ -2311,7 +2317,6 @@ int CEXEBuild::uninstall_generate()
     #else
       crc=CRC32(crc,header_data_new+512,icon_offset-512);
     #endif
-    // Changed by Amir Szekely 11th July 2002
     // This bunch of lines do CRC for the uninstaller icon data
     unsigned char* seeker = m_unicon_data;
     DWORD dwEndOfIcons = 0;
@@ -2337,7 +2342,8 @@ int CEXEBuild::uninstall_generate()
     fh.nsinst[0]=FH_INT1;
     fh.nsinst[1]=FH_INT2;
     fh.nsinst[2]=FH_INT3;
-    fh.flags=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
+    fh.flags = FH_FLAGS_UNINSTALL;
+    fh.flags |= (build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     if (build_uninst.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif
@@ -2405,7 +2411,8 @@ int CEXEBuild::uninstall_generate()
     if (add_data((char*)udata.get(),udata.getlen()) < 0)
       return PS_ERROR;
 
-    uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
+    //uninstall_size_full=fh.length_of_all_following_data + sizeof(int) + unicondata_size - 32 + sizeof(int);
+    uninstall_size_full=fh.length_of_all_following_data+unicondata_size;
 
     // compressed size
     uninstall_size=build_datablock.getlen()-build_header.uninstdata_offset;
