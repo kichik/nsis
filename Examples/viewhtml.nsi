@@ -14,27 +14,23 @@ SilentInstall silent
 ; The file to write
 OutFile "viewhtml.exe"
 
-; The installation directory (the user never gets to change this)
-InstallDir "$TEMP\ViewHTML"
-
 ; The stuff to install
 Section ""
   ; Set output path to the installation directory.
-  SetOutPath $INSTDIR
+  GetTempFileName $R0
   ; Extract file
-  File "..\makensis.htm"
+  File /oname=$R0 "..\Docs\Chapter1.html"
   ; View file
-  ExecWait '"$PROGRAMFILES\Internet Explorer\iexplore.exe" "$INSTDIR\makensis.htm"'
+  ExecWait '"$PROGRAMFILES\Internet Explorer\iexplore.exe" "$R0"'
   ; Delete the files
-  Delete $INSTDIR\Makensis.htm
-  RMDir $INSTDIR
+  Delete $R0
 SectionEnd
 
 ; Note: another way of doing this would be to use ExecShell, but then you 
 ; really couldn't get away with deleting the files. Here is the ExecShell
 ; line that you would want to use:
 ;
-; ExecShell "open" '"$INSTDIR\makensis.htm"'
+; ExecShell "open" '"$R0"'
 ;
 ; The advantage of this way is that it would use the default browser to
 ; open the HTML. 
