@@ -216,14 +216,18 @@ add the following things (in order, from the beginning of the script):</p>
   Don't insert the un.onGUIInit function. Use this if you want to add
   custom code to the function. <a href="#customGUIInit">More info...</a></p>
   </div>
-  <p class="subheader">4. Insert language files</p>
+  <p class="subheader">4. Insert custom pages (optional)</p>
+  <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
+  or MUI_UNCUSTOMPAGECOMMANDS!), you should insert them now.</p>
+  <p class="text"><a href="#customPages">More info...</a></p>
+  <p class="subheader">5. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
   <p class="text">You don't need to edit the language files if you want to customize
   some strings. Use defines before you insert the language file:</p>
-  <pre class="margin">
+<pre class="margin">
 !define MUI_INNERTEXT_LICENSE_TOP "Text on the top of the license dialog"
 !insertmacro MUI_LANGUAGE "English"
 </pre>
@@ -234,7 +238,7 @@ add the following things (in order, from the beginning of the script):</p>
   pages and the language file does not contain these strings, you should always define them.<br>
   Please help to translate the new strings and post them at the
   <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
-  <p class="subheader">5. Define interface settings (optional)</p>
+  <p class="subheader">6. Define interface settings (optional)</p>
   <p class="text">You can also change the settings of the interface by using defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
@@ -265,20 +269,20 @@ add the following things (in order, from the beginning of the script):</p>
   Install Options INI File for the Welcome and Finish pages.</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br>
   Bitmap for the Welcome and Finish pages.</p>
-  <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
+  <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
-  <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro
+  <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
   to true, you should insert the MUI_SECTIONS_FINISHHEADER
-  after all the sections to display the finish-header:</p>
+  after all the sections to display the finish header:</p>
 <pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
 <p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
 Uninstaller section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
-  <p class="subheader">8. Set the descriptions for the sections</p>
+  <p class="subheader">9. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
   selection page, when the users hovers the mouse over a section.
@@ -299,7 +303,7 @@ Section "Section Name 1" Section1
   ...
 SectionEnd
 </pre>
-<p class="header">Custom pages</p>
+<p class="header"><a name="customPages">Custom pages</a></p>
 <p class="text">
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
@@ -324,7 +328,8 @@ UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
-MUI_UNCUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM macro.</p>
+MUI_UNCUSTOMPAGECOMMANDS and to insert the Page commands before
+on the right position.</p>
 <p class="subheader">Call Install Options</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
 Install Options documentation</a> for info about creating Install Options INI Files.</p>
@@ -382,8 +387,8 @@ FunctionEnd
   Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.
 <p class="subheader"><a name="customGUIInit">Customize the GUIInit function</a></p>
 <p class="text">If you want to insert your own code in the .onGUIInit function,
-define MUI_CUSTOMGUIINIT (MUI_UNCUSTOMGUIINIT for the uninstaller) before inserting
-MUI_SYSTEM and insert the MUI_GUIINIT (MUI_UNGUIINIT for the uninstaller) macro
+define MUI_CUSTOMGUIINIT (MUI_UNCUSTOMGUIINIT for the uninstaller) on the right
+position and insert the MUI_GUIINIT (MUI_UNGUIINIT for the uninstaller) macro
 in your .onGUIInit or un.onGUInit function:</p>
 <pre class="text">
 !define MUI_CUSTOMGUIINIT
