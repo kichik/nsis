@@ -23,7 +23,6 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Компоненты устанавливаемой программы"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Выберите компоненты $(^NameDA), которые вы хотите установить."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Описание"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Установите курсор мыши на название компонента, чтобы прочесть его описание."
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
     !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Установите курсор мыши на название компонента, чтобы прочесть его описание."
   !else
