@@ -1,9 +1,8 @@
-;NSIS Modern User Interface version 1.5
+;NSIS Modern User Interface version 1.6
 ;Macro System
 ;Written by Joost Verburg
 
-;See Basic.nsi, Multilanguage.nsi, InstallOptions.nsi and StartMenu.nsi
-;in the 'Examples\Modern UI' directory for examples of usage.
+;See the scripts in the 'Examples\Modern UI' directory for examples of usage.
 
 ;--------------------------------
 !verbose 3
@@ -16,6 +15,7 @@
 
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
+!define MUI_TEMP3 $R2
 
 !macro MUI_INTERFACE
 
@@ -40,7 +40,7 @@
   !endif
 
   !ifndef MUI_FONT
-    !define MUI_FONT "Tahoma"
+    !define MUI_FONT "Tahoma" ;"MS Shell Dlg"
   !endif
 
   !ifndef MUI_INSTALLCOLORS
@@ -53,6 +53,18 @@
 
   !ifndef MUI_BRANDINGTEXT
     !define MUI_BRANDINGTEXT "" ;Default value
+  !endif
+  
+  !ifndef MUI_WIZARDINI
+    !define MUI_WIZARDINI "${NSISDIR}\Contrib\Modern UI\ioWizard.ini"
+  !endif
+  
+  !ifndef MUI_WIZARDBITMAP
+    !define MUI_WIZARDBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
+  !endif
+  
+  !ifdef MUI_FINISHPAGE
+    AutoCloseWindow true
   !endif
 
   XPStyle On
@@ -160,7 +172,7 @@
   !verbose 3
 
   ;Finish text on the header (white rectangle)
-  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISHED_TITLE) $(MUI_TEXT_FINISHED_SUBTITLE)
+  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
 
   !verbose 4
 
@@ -219,18 +231,79 @@
   
 !macroend
 
+!macro MUI_WELCOMEFINISHPAGE_INIT
+
+  ;Extract Install Options INI Files
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_WIZARDINI}" "ioWizard.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_WIZARDBITMAP}" "modern-wizard.bmp"   
+  
+  ;Write bitmap location
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
+  
+  ;Write Welcome text
+  !ifdef MUI_WELCOMEPAGE
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_TITLE)"
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO)"
+  !endif
+  
+!macroend
+
+!macro MUI_LANGUAGE LANGUAGE
+
+  !verbose 3
+
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_STARTMENU_WRITE_BEGIN
+
+  Push ${MUI_TEMP1}
+  
+    StrCpy ${MUI_TEMP1} ${MUI_STARTMENU_VARIABLE} 1
+    StrCmp ${MUI_TEMP1} "^" no_startmenu_shortcuts
+
+  Pop ${MUI_TEMP1}
+
+!macroend
+
+!macro MUI_STARTMENU_WRITE_END
+
+  no_startmenu_shortcuts:
+
+!macroend
+
+;--------------------------------
+;PAGE COMMANDS
+
 !macro MUI_PAGECOMMANDS
  
   !verbose 3
   
   !ifndef MUI_CUSTOMPAGECOMMANDS
 
+    !insertmacro MUI_PAGECOMMAND_WELCOME
     !insertmacro MUI_PAGECOMMAND_LICENSE
     !insertmacro MUI_PAGECOMMAND_COMPONENTS
     !insertmacro MUI_PAGECOMMAND_DIRECTORY
     !insertmacro MUI_PAGECOMMAND_STARTMENU
     !insertmacro MUI_PAGECOMMAND_INSTFILES
+    !insertmacro MUI_PAGECOMMAND_FINISH
   
+  !endif
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_PAGECOMMAND_WELCOME
+
+  !verbose 3
+
+  !ifdef MUI_WELCOMEPAGE
+    Page custom SetWelcome "" "MUI_INSTALLBUTTON_WELCOME"
   !endif
   
   !verbose 4
@@ -278,7 +351,7 @@
   !verbose 3
 
   !ifdef MUI_STARTMENUPAGE
-    Page custom SetStartmenu "" "MUI_INSTALLBUTTON_STARTMENU"
+    Page custom SetStartmenu "$(MUI_TEXT_STARTMENU_WINDOWTITLE)" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
   !verbose 4
@@ -293,6 +366,18 @@
    
   !verbose 4
    
+!macroend
+
+!macro MUI_PAGECOMMAND_FINISH
+
+  !verbose 3
+
+  !ifdef MUI_FINISHPAGE
+    Page custom SetFinish "$(MUI_TEXT_FINISH_WINDOWTITLE)"
+  !endif
+  
+  !verbose 4
+  
 !macroend
 
 !macro MUI_UNPAGECOMMANDS
@@ -330,16 +415,6 @@
    
 !macroend
 
-!macro MUI_LANGUAGE LANGUAGE
-
-  !verbose 3
-
-  !include "${NSISDIR}\Contrib\Modern UI\Language files\${LANGUAGE}.nsh"
-  
-  !verbose 4
-  
-!macroend
-
 ;--------------------------------
 ;INSTALL OPTIONS
 
@@ -354,6 +429,22 @@
   !endif
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
+
+  !verbose 4
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME FILE FILENAME
+
+  !verbose 3
+
+  ;Init plugin system
+  !ifndef MUI_INSTALLOPTIONS_INITPLUGINS
+    !define MUI_INSTALLOPTIONS_INITPLUGINS
+    InitPluginsDir
+  !endif
+
+  File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
 
   !verbose 4
 
@@ -462,10 +553,14 @@
 !macro MUI_FUNCTIONS_GUIINIT
 
   !verbose 3
+  
+  !ifndef MUI_NOGUIINIT
 
-  Function .onGUIInit
-    !insertmacro MUI_GUIINIT
-  FunctionEnd
+    Function .onGUIInit
+      !insertmacro MUI_GUIINIT
+    FunctionEnd
+    
+  !endif
 
   !verbose 4
 
@@ -474,6 +569,10 @@
 !macro MUI_FUNCTIONS_PAGES
 
   !verbose 3
+
+  !ifdef MUI_WELCOMEPAGE
+    !insertmacro MUI_FUNCTIONS_WELCOMEPAGE SetWelcome
+  !endif
 
   !ifdef MUI_LICENSEPAGE
     !insertmacro MUI_FUNCTIONS_LICENSEPAGE SetLicense SetLicenseDialog
@@ -492,9 +591,67 @@
   !endif
   
   !insertmacro MUI_FUNCTIONS_INSTFILESPAGE SetInstFiles
+  
+  !ifdef MUI_FINISHPAGE
+    !insertmacro MUI_FUNCTIONS_FINISHPAGE SetFinish
+  !endif
 
   !verbose 4
 
+!macroend
+
+!macro MUI_FUNCTIONS_WELCOMEPAGE SETWELCOME
+
+  !verbose 3
+
+  Function "${SETWELCOME}"
+  
+    Push ${MUI_TEMP1}
+    Push ${MUI_TEMP2}
+    Push ${MUI_TEMP3}
+
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+      ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
+      ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+      
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+
+      !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioWizard.ini"
+      
+        Pop ${MUI_TEMP1}
+        
+        SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+      
+        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
+        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        CreateFont ${MUI_TEMP3} "Tahoma" 12 1000
+        SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
+        
+        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
+        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+  
+      !insertmacro MUI_INSTALLOPTIONS_SHOW
+      
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+      
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
+      ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+
+    Pop ${MUI_TEMP3}
+    Pop ${MUI_TEMP2}
+    Pop ${MUI_TEMP1}
+    
+  FunctionEnd
+  
+  !verbose 4
+  
 !macroend
 
 !macro MUI_FUNCTIONS_LICENSEPAGE SETLICENSE SETLICENSEDIALOG
@@ -562,7 +719,7 @@
   
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
     
-    StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU)" /lastused "${MUI_STARTMENU_VARIABLE}" "${MUI_STARTMENU_DEFAULTFOLDER}"
+    StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENU_VARIABLE}" /checknoshortcuts "$(MUI_INNERTEXT_STARTMENU_CHECKBOX)" "${MUI_STARTMENU_DEFAULTFOLDER}"
     Pop "${MUI_STARTMENU_VARIABLE}"
     
   FunctionEnd
@@ -577,6 +734,149 @@
 
   Function "${SETINSTFILES}"
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_INSTALLING_TITLE) $(MUI_TEXT_INSTALLING_SUBTITLE)
+  FunctionEnd
+  
+  !verbose 4
+  
+!macroend
+
+!macro MUI_FUNCTIONS_FINISHPAGE SETFINISH
+
+  !verbose 3
+
+  Function "${SETFINISH}"
+  
+    Push ${MUI_TEMP1}
+    Push ${MUI_TEMP2}
+    Push ${MUI_TEMP3}
+    
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+    ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
+    ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+      
+    GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
+    ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+    
+     ;Write Finish text
+    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 2" "Text" "$(MUI_TEXT_FINISH_TITLE)"
+    
+      IfRebootFlag "" noreboot_init
+      
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
+      
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "5"
+        
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "RadioButton"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
+        
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Type" "RadioButton"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
+      
+        Goto init
+      
+      noreboot_init:
+       
+        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO)"
+      
+        !ifdef MUI_FINISHPAGE_RUN
+        
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_INFO)"
+        
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "4"
+        
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "CheckBox"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_RUN)"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
+        
+        !endif
+      
+      init:
+
+      !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioWizard.ini"
+      
+        Pop ${MUI_TEMP1}
+        
+        SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+      
+        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
+        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        CreateFont ${MUI_TEMP3} "Tahoma" 12 1000
+        SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
+        
+        GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
+        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        
+        IfRebootFlag "" noreboot_show
+        
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+          SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+          
+          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
+          SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        
+          Goto show
+        
+        noreboot_show:
+        
+          !ifdef MUI_FINISHPAGE_RUN
+          
+            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+          
+          !endif
+        
+        !ifdef MUI_FINISHPAGE_RUN
+        
+        show:
+
+      !insertmacro MUI_INSTALLOPTIONS_SHOW
+      
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
+      ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
+      
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
+      ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+      
+      IfRebootFlag "" noreboot_end
+      
+        !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
+        
+          StrCmp ${MUI_TEMP1} "1" "" +2
+            Reboot
+            
+          Goto done
+      
+      noreboot_end:
+      
+         !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
+        
+         StrCmp ${MUI_TEMP1} "1" "" +2
+           Exec '"${MUI_FINISHPAGE_RUN}"'
+
+    done:
+
+    Pop ${MUI_TEMP3}
+    Pop ${MUI_TEMP2}
+    Pop ${MUI_TEMP1}
+    
   FunctionEnd
   
   !verbose 4
@@ -663,6 +963,21 @@
 !macroend
 
 ;--------------------------------
+;RESERVE FILES
+
+!macro MUI_RESERVEFILE_INSTALLOPTIONS
+  ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
+!macroend
+
+!macro MUI_RESERVEFILE_WIZARDINI
+  ReserveFile "${NSISDIR}\Contrib\Modern UI\ioWizard.ini"
+!macroend
+
+!macro MUI_RESERVEFILE_WIZARDBITMAP
+  ReserveFile "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
+!macroend
+
+;--------------------------------
 ;BASIC MACRO'S
 
 !macro MUI_SYSTEM
@@ -711,22 +1026,6 @@
 
   !verbose 3
   
-  !ifndef MUI_CUSTOMPAGECOMMANDS
-    !ifndef MUI_PAGECOMMANDS
-      !define MUI_PAGECOMMANDS
-      !insertmacro MUI_PAGECOMMANDS
-    !endif
-  !endif
-  
-  !ifdef MUI_UNINSTALLER
-    !ifndef MUI_UNCUSTOMPAGECOMMANDS
-      !ifndef MUI_UNPAGECOMMANDS
-        !define MUI_UNPAGECOMMANDS
-        !insertmacro MUI_UNPAGECOMMANDS
-      !endif
-    !endif
-  !endif
-  
   !define MUI_LANGUAGEFILE_CURRENT "${LANGUAGE}"
   
   !ifndef "MUI_LANGUAGEFILE_${LANGUAGE}_USED"
@@ -756,7 +1055,7 @@
  
   !ifndef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_NEXT
-      LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE} ${MUI_TEXT_CONTINUE_NEXT}"
+      LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}${MUI_TEXT_CONTINUE_NEXT}"
     !endif
     !ifndef MUI_TEXT_CONTINUE_NEXT
       LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
@@ -765,7 +1064,7 @@
   
   !ifdef "${INSTALLBUTTON}"
     !ifdef MUI_TEXT_CONTINUE_INSTALL
-      LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE} ${MUI_TEXT_CONTINUE_INSTALL}"
+      LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}${MUI_TEXT_CONTINUE_INSTALL}"
     !endif
     !ifndef MUI_TEXT_CONTINUE_INSTALL
       LangString "${NAME}" "${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "${VALUE}"
@@ -829,6 +1128,35 @@
 
   !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND Name MUI_NAME "${MUI_NAME}"
 
+  !ifdef MUI_STARTMENUPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
+  !endif
+  
+  !ifdef MUI_FINISHPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_WINDOWTITLE" "${MUI_TEXT_FINISH_WINDOWTITLE}"
+  !endif
+
+  !ifndef MUI_CUSTOMPAGECOMMANDS
+    !ifndef MUI_PAGECOMMANDS
+      !define MUI_PAGECOMMANDS
+      !insertmacro MUI_PAGECOMMANDS
+    !endif
+  !endif
+  
+  !ifdef MUI_UNINSTALLER
+    !ifndef MUI_UNCUSTOMPAGECOMMANDS
+      !ifndef MUI_UNPAGECOMMANDS
+        !define MUI_UNPAGECOMMANDS
+        !insertmacro MUI_UNPAGECOMMANDS
+      !endif
+    !endif
+  !endif
+
+  !ifdef MUI_WELCOMEPAGE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WELCOME_TITLE" "${MUI_TEXT_WELCOME_TITLE}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_TEXT_WELCOME_INFO" "${MUI_TEXT_WELCOME_INFO}" "MUI_INSTALLBUTTON_WELCOME"
+  !endif
+
   !ifdef MUI_LICENSEPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_TITLE" "${MUI_TEXT_LICENSE_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_LICENSE_SUBTITLE" "${MUI_TEXT_LICENSE_SUBTITLE}"
@@ -839,7 +1167,7 @@
   !ifdef MUI_COMPONENTSPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_COMPONENTS_TITLE" "${MUI_TEXT_COMPONENTS_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_COMPONENTS_SUBTITLE" "${MUI_TEXT_COMPONENTS_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "ComponentText" "MUI_INNERTEXT_COMPONENTS" "${MUI_INNERTEXT_COMPONENTS}" "MUI_INSTALLBUTTON_COMPONENTS"
+    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "ComponentText" "MUI_INNERTEXT_COMPONENTS_TOP" "${MUI_INNERTEXT_COMPONENTS_TOP} " "MUI_INSTALLBUTTON_COMPONENTS"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE" "${MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO" "${MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO}"
   !endif
@@ -847,22 +1175,30 @@
   !ifdef MUI_DIRECTORYPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_DIRECTORY_TITLE" "${MUI_TEXT_DIRECTORY_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_DIRECTORY_SUBTITLE" "${MUI_TEXT_DIRECTORY_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "DirText" "MUI_INNERTEXT_DIRECTORY_TOP" "${MUI_INNERTEXT_DIRECTORY_TOP}" "MUI_INSTALLBUTTON_DIRECTORY"
+    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "DirText" "MUI_INNERTEXT_DIRECTORY_TOP" "${MUI_INNERTEXT_DIRECTORY_TOP} " "MUI_INSTALLBUTTON_DIRECTORY"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_INNERTEXT_DIRECTORY_DESTINATION "${MUI_INNERTEXT_DIRECTORY_DESTINATION}"
   !endif
   
   !ifdef MUI_STARTMENUPAGE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_TITLE" "${MUI_TEXT_STARTMENU_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_SUBTITLE" "${MUI_TEXT_STARTMENU_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU" "${MUI_INNERTEXT_STARTMENU}" "MUI_INSTALLBUTTON_STARTMENU"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU_TOP" "${MUI_INNERTEXT_STARTMENU_TOP} " "MUI_INSTALLBUTTON_STARTMENU"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_STARTMENU_CHECKBOX" "${MUI_INNERTEXT_STARTMENU_CHECKBOX}"
   !endif
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE" "${MUI_TEXT_INSTALLING_TITLE}"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_SUBTITLE" "${MUI_TEXT_INSTALLING_SUBTITLE}"
   
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISHED_TITLE" "${MUI_TEXT_FINISHED_TITLE}"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISHED_SUBTITLE" "${MUI_TEXT_FINISHED_SUBTITLE}"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE" "${MUI_TEXT_FINISH_TITLE}"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE" "${MUI_TEXT_FINISH_SUBTITLE}"
+  !ifdef MUI_FINISHPAGE
+    MiscButtonText "/LANG=${LANG_${MUI_LANGUAGEFILE_CURRENT}}" "" "" "" "${MUI_TEXT_FINISH_BUTTON}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO "${MUI_TEXT_FINISH_INFO}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_INFO_REBOOT "${MUI_TEXT_FINISH_INFO_REBOOT}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_REBOOTNOW "${MUI_TEXT_FINISH_REBOOTNOW}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_REBOOTLATER "${MUI_TEXT_FINISH_REBOOTLATER}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_RUN "${MUI_TEXT_FINISH_RUN}"
+  !endif
   
   !ifdef MUI_ABORTWARNING
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORTWARNING" "${MUI_TEXT_ABORTWARNING}"
@@ -880,7 +1216,6 @@
      
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_TITLE" "${MUI_UNTEXT_FINISHED_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_SUBTITLE" "${MUI_UNTEXT_FINISHED_SUBTITLE}"
-  
   !endif
   
   !ifdef MUI_TEXT_CONTINUE_NEXT
