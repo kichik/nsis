@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 #include "../../Source/exehead/resource.h"
 
 // Turn a pair of chars into a word

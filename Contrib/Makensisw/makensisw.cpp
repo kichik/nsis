@@ -21,7 +21,7 @@
 #define MAKENSISW_CPP
 
 #include <windows.h>
-#include <WindowsX.h>
+#include <windowsx.h>
 #include <stdio.h>
 #include "makensisw.h"
 #include "resource.h"

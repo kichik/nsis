@@ -1,8 +1,8 @@
 #define WIN32_LEAN_AND_MEAN 
 #include <windows.h>
-#include <WinInet.h>
+#include <wininet.h>
 
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 
 #define NSISFunction(funcname) void __declspec(dllexport) funcname(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 

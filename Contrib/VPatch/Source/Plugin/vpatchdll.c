@@ -1,6 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "..\..\..\ExDLL\exdll.h"
+#include "../../../ExDLL/exdll.h"
 
 int DoPatch(HANDLE hPatch, HANDLE hSource, HANDLE hDest);
 void strcopy(char *tgt, const char *src);
@@ -107,7 +107,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 UINT CRCTable[256];
 BOOL bInitCRC = FALSE;
 
-_inline void InitCRC() {
+inline void InitCRC() {
   int i, j; unsigned long c;
   for (c = i = 0; i < 256; c = ++i) {
     for (j = 0; j < 8; j++) {

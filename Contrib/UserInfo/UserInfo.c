@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "..\exdll\exdll.h"
+#include "../ExDLL/exdll.h"
 
 void __declspec(dllexport) GetName(HWND hwndParent, int string_size, 
                                    char *variables, stack_t **stacktop)
