@@ -902,6 +902,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (!line.gettoken_str(1)[0]) PRINTHELP()
         char *t=(char *)m_macros.get();
+        char *m=t;
         while (t && *t)
         {
           if (!stricmp(t,line.gettoken_str(1))) break;
@@ -973,6 +974,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             {
               ERROR_MSG("Error in macro %s on macroline %d\n",line.gettoken_str(1),lp);
               return ret;
+            }
+          }
+          {
+            // fix t if process_oneline changed m_macros
+            char *nm=(char *)m_macros.get();
+            if (nm != m)
+            {
+              t += nm - m;
+              m = nm;
             }
           }
           t+=strlen(t)+1;
