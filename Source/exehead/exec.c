@@ -37,6 +37,8 @@ static int exec_rebootflag;
 HBITMAP g_hBrandingBitmap = 0;
 #endif
 
+extern HWND m_curwnd;
+
 static WIN32_FIND_DATA *file_exists(char *buf)
 {
   HANDLE h;
@@ -698,8 +700,8 @@ static int ExecuteEntry(entry *entries, int pos)
         if (IsWindow((HWND)process_string_fromtab_toint(parms[0]))) return parms[1];
     return parms[2];
     case EW_SETDLGITEMTEXT:
-      process_string_fromtab(buf,parms[1]);
-      SetDlgItemText(g_hwnd,parms[0],buf);
+      process_string_fromtab(buf,parms[2]);
+      SetDlgItemText(parms[0]?g_hwnd:m_curwnd,parms[1],buf);
     return 0;
 #endif
 #ifdef NSIS_SUPPORT_SHELLEXECUTE

@@ -102,8 +102,31 @@ static int g_page_offs=4;
 #endif
 
 static int m_page=-1,m_abort;
-static HWND m_curwnd;
+HWND m_curwnd;
 static int m_whichcfg;
+
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+BOOL my_SetDlgItemText(HWND dlg, WORD id, int strtab) {
+  return SetDlgItemText(dlg,id,STR(strtab));
+}
+
+BOOL SetUIText(HWND defhw, WORD def, WORD custom, int strtab) {
+  return my_SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,strtab);
+}
+
+// no tab
+BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
+  return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
+}
+
+UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
+  return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
+}
+
+HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
+  return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
+}
+#endif
 
 #ifdef NSIS_CONFIG_LOG
 static void build_g_logfile()
@@ -398,14 +421,14 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     if (uMsg == WM_INITDIALOG)
     {
       g_hwnd=hwndDlg;
-      SetDlgItemText(hwndDlg,IDC_VERSTR,LANG_BRANDING);
+      my_SetDlgItemText(hwndDlg,IDC_VERSTR,LANG_BRANDING);
       hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
       SetClassLong(hwndDlg,GCL_HICON,(long)hIcon);
-      SetDlgItemText(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
+      my_SetDlgItemText(hwndDlg,IDCANCEL,LANG_BTN_CANCEL);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (!g_is_uninstaller)
 #endif
-        SetDlgItemText(hwndDlg,IDC_BACK,LANG_BTN_BACK);
+        my_SetDlgItemText(hwndDlg,IDC_BACK,LANG_BTN_BACK);
       ShowWindow(hwndDlg,SW_SHOW);
     }
 
@@ -472,7 +495,7 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     else if (!m_curwnd)
     {
       HWND hwndtmp;
-      SetDlgItemText(hwndDlg,IDOK,
+      my_SetDlgItemText(hwndDlg,IDOK,
        (m_page == g_max_page) ? LANG_BTN_CLOSE :
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         g_is_uninstaller ? LANG_BTN_UNINST :
@@ -570,8 +593,8 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,g_inst_header->license_bg);
     SendMessage(hwLicense,EM_SETEVENTMASK,0,ENM_LINK);
-    SetWindowText(hwLicense,LANG_LICENSE_DATA);
-    SetDlgItemText(hwndDlg,IDC_INTROTEXT,LANG_LICENSE_TEXT);
+    SetWindowText(hwLicense,STR(LANG_LICENSE_DATA));
+    SetUIText(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANG_LICENSE_TEXT);
   }
   else if (uMsg == WM_NOTIFY) {
     ENLINK *enlink=(ENLINK *)lParam;
@@ -607,8 +630,8 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 {
   if (uMsg == WM_INITDIALOG)
   {
-    SetDlgItemText(hwndDlg,IDC_UNINSTFROM,LANG_UNINST_SUBTEXT);
-    SetDlgItemText(hwndDlg,IDC_INTROTEXT,LANG_UNINST_TEXT);
+    SetUIText(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANG_UNINST_TEXT);
+    SetUIText(hwndDlg,IDC_UNINSTFROM,g_inst_uninstheader->uninst_subtext_id,LANG_UNINST_SUBTEXT);
     SetDlgItemText(hwndDlg,IDC_EDIT1,state_install_directory);
   }
   return 0;
@@ -645,9 +668,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
 #endif
     SetDlgItemText(hwndDlg,IDC_DIR,state_install_directory);
-    SetDlgItemText(hwndDlg,IDC_INTROTEXT,LANG_DIR_TEXT);
-    SetDlgItemText(hwndDlg,IDC_BROWSE,LANG_BTN_BROWSE);
-    SetDlgItemText(hwndDlg,IDC_SELDIRTEXT,LANG_DIR_SUBTEXT);
+    SetUIText(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANG_DIR_TEXT);
+    my_SetDlgItemText(hwndDlg,IDC_BROWSE,LANG_BTN_BROWSE);
+    SetUIText(hwndDlg,IDC_SELDIRTEXT,g_inst_header->dir_subtext_id,LANG_DIR_SUBTEXT);
     SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
   }
   if (uMsg == WM_COMMAND)
@@ -664,7 +687,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       BROWSEINFO bi={0,};
       ITEMIDLIST *idlist;
       GetDlgItemText(hwndDlg,IDC_DIR,name,256);
-      GetDlgItemText(hwndDlg,IDC_SELDIRTEXT,str,256);
+      GetUIText(IDC_SELDIRTEXT,g_inst_header->dir_subtext_id,str,256);
       bi.hwndOwner = hwndDlg;
       bi.pszDisplayName = name;
       bi.lpfn=BrowseCallbackProc;
@@ -744,17 +767,17 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     // Added by Amir Szekely 24th July 2002
     // Allows 'SpaceTexts none'
     if (INSTALL_STR(spacerequired) >= 0) {
-      lstrcpy(s,LANG_SPACE_REQ);
+      lstrcpy(s,STR(LANG_SPACE_REQ));
       inttosizestr(total,s);
-      SetDlgItemText(hwndDlg,IDC_SPACEREQUIRED,s);
+      SetUITextNT(hwndDlg,IDC_SPACEREQUIRED,g_inst_header->space_req_id,s);
       if (available != -1)
       {
-        lstrcpy(s,LANG_SPACE_AVAIL);
+        lstrcpy(s,STR(LANG_SPACE_AVAIL));
         inttosizestr(available,s);
-        SetDlgItemText(hwndDlg,IDC_SPACEAVAILABLE,s);
+        SetUITextNT(hwndDlg,IDC_SPACEAVAILABLE,g_inst_header->space_avail_id,s);
       }
       else
-        SetDlgItemText(hwndDlg,IDC_SPACEAVAILABLE,"");
+        SetUITextNT(hwndDlg,IDC_SPACEAVAILABLE,g_inst_header->space_avail_id,"");
     }
 
     EnableWindow(GetDlgItem(GetParent(hwndDlg),IDOK),
@@ -798,9 +821,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*g_inst_header->num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
-    SetDlgItemText(hwndDlg,IDC_INTROTEXT,LANG_COMP_TEXT);
-    SetDlgItemText(hwndDlg,IDC_TEXT1,LANG_COMP_SUBTEXT(0));
-    SetDlgItemText(hwndDlg,IDC_TEXT2,LANG_COMP_SUBTEXT(1));
+    SetUIText(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id,LANG_COMP_TEXT);
+    SetUIText(hwndDlg,IDC_TEXT1,g_inst_header->com_subtext1_id,LANG_COMP_SUBTEXT(0));
+    SetUIText(hwndDlg,IDC_TEXT2,g_inst_header->com_subtext2_id,LANG_COMP_SUBTEXT(1));
 
     oldTreeWndProc=GetWindowLong(hwndTree1,GWL_WNDPROC);
     SetWindowLong(hwndTree1,GWL_WNDPROC,(DWORD)newTreeWndProc);
@@ -826,7 +849,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       {
         SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetStringFromStringTab(g_inst_header->install_types_ptr[m_num_insttypes]));
       }
-      if (g_inst_header->no_custom_instmode_flag!=1) SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)LANG_COMP_CUSTOM);
+      if (g_inst_header->no_custom_instmode_flag!=1) SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)STR(LANG_COMP_CUSTOM));
       SendMessage(hwndCombo1,CB_SETCURSEL,m_whichcfg,0);
     }
 
@@ -1084,7 +1107,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       int c=(m_whichcfg == m_num_insttypes && m_num_insttypes)<<3;// SW_SHOWNA=8, SW_HIDE=0
       ShowWindow(hwndTree1,c);
-      ShowWindow(GetDlgItem(hwndDlg,IDC_TEXT2),c);
+      ShowWindow(GetUIItem(hwndDlg,IDC_TEXT2,g_inst_header->com_subtext2_id),c);
     }
 
     if (INSTALL_STR(spacerequired) >= 0) {
@@ -1095,9 +1118,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if (g_inst_section[x].default_state&DFS_SET)
           total+=g_inst_section[x].size_kb;
       }
-      lstrcpy(s,LANG_SPACE_REQ);
+      lstrcpy(s,STR(LANG_SPACE_REQ));
       inttosizestr(total,s);
-      SetDlgItemText(hwndDlg,IDC_SPACEREQUIRED,s);
+      SetUITextNT(hwndDlg,IDC_SPACEREQUIRED,g_inst_header->space_req_id,s);
     }
   }
   return 0;
@@ -1188,7 +1211,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     LVCOLUMN lvc = {0, 0, -1, 0, 0, -1};
 
     insthwndbutton=GetDlgItem(hwndDlg,IDC_SHOWDETAILS);
-    insthwnd2=GetDlgItem(hwndDlg,IDC_INTROTEXT);
+    insthwnd2=GetUIItem(hwndDlg,IDC_INTROTEXT,g_inst_header->common.intro_text_id);
     insthwnd=GetDlgItem(hwndDlg,IDC_LIST1);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
@@ -1198,7 +1221,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     else
 #endif
     {
-      log_printf3("New install of \"%s\" to \"%s\"",LANG_NAME,state_install_directory);
+      log_printf3("New install of \"%s\" to \"%s\"",STR(LANG_NAME),state_install_directory);
       for (; x < g_inst_header->num_sections; x ++)
       {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
@@ -1214,7 +1237,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     ListView_SetBkColor(insthwnd, g_inst_cmnheader->lb_bg);
     ListView_SetTextBkColor(insthwnd, g_inst_cmnheader->lb_bg);
     ListView_SetTextColor(insthwnd, g_inst_cmnheader->lb_fg);
-    SetWindowText(insthwndbutton,LANG_BTN_DETAILS);
+    SetWindowText(insthwndbutton,STR(LANG_BTN_DETAILS));
     if (g_inst_cmnheader->show_details)
     {
       ShowWindow(insthwndbutton,SW_HIDE);
@@ -1258,7 +1281,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         ShowWindow(g_hwnd,SW_SHOWNA);
         lstrcpy(g_tmp,g_caption);
         process_string_fromtab(g_tmp+lstrlen(g_caption),COMMON_STR(subcaptions[g_max_page+1]));
-        update_status_text(LANG_COMPLETED,"");
+        update_status_text(STR(LANG_COMPLETED),"");
         SetWindowText(h2,g_tmp);
         SetFocus(h);
       }

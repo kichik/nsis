@@ -1058,7 +1058,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_EDIT1);
-          SEARCH(IDC_INTROTEXT);
           re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
@@ -1066,13 +1065,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           dlg = get_dlg(hUIFile, IDD_DIR, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
-          SEARCH(IDC_SELDIRTEXT);
-          SEARCH(IDC_INTROTEXT);
           SEARCH(IDC_DIR);
           SEARCH(IDC_BROWSE);
           SEARCH(IDC_CHECK1);
-          SEARCH(IDC_SPACEREQUIRED);
-          SEARCH(IDC_SPACEAVAILABLE);
           re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
@@ -1080,10 +1075,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           dlg = get_dlg(hUIFile, IDD_SELCOM, line.gettoken_str(2));
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
-          SEARCH(IDC_SPACEREQUIRED);
-          SEARCH(IDC_INTROTEXT);
-          SEARCH(IDC_TEXT1);
-          SEARCH(IDC_TEXT2);
           SEARCH(IDC_TREE1);
           SEARCH(IDC_COMBO1);
           re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
@@ -1123,7 +1114,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_LIST1);
-          SEARCH(IDC_INTROTEXT);
           SEARCH(IDC_PROGRESS1);
           SEARCH(IDC_PROGRESS2);
           SEARCH(IDC_SHOWDETAILS);
@@ -1135,8 +1125,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_EDIT1);
-          SEARCH(IDC_INTROTEXT);
-          SEARCH(IDC_UNINSTFROM);
           re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
@@ -1147,14 +1135,51 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ERROR_MSG("can't free library!\n");
         }
 
-        SCRIPT_MSG("ChangeUI: %s%s\n", line.gettoken_str(1), branding_image_found?" (branding image holder found)":"");
+        SCRIPT_MSG("ChangeUI: %s %s%s\n", line.gettoken_str(1), line.gettoken_str(2), branding_image_found?" (branding image holder found)":"");
       }
       catch (exception& err) {
         ERROR_MSG("Error while changing UI: %s\n", err.what());
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
+  case TOK_USEOUTERUIITEM:
+    {
+      int k = line.gettoken_enum(1,"introtext\0spaceavail\0spacereq\0dirsubtext\0comsubtext1\0comsubtext2\0uninstsubtext\0");
+      if (k < 0) PRINTHELP();
+      int id = line.gettoken_int(2);
+      if (!id) {
+        ERROR_MSG("Error: Item id can't be zero!\n");
+        return PS_ERROR;
+      }
+      switch (k) {
+      	case 0:
+          build_header.common.intro_text_id=build_uninst.common.intro_text_id=id;
+          break;
+        case 1:
+          build_header.space_avail_id=id;
+          break;
+        case 2:
+          build_header.space_req_id=id;
+          break;
+        case 3:
+          build_header.dir_subtext_id=id;
+          break;
+        case 4:
+          build_header.com_subtext1_id=id;
+          break;
+        case 5:
+          build_header.com_subtext2_id=id;
+          break;
+        case 6:
+          build_uninst.uninst_subtext_id=id;
+          break;
+      }
+      SCRIPT_MSG("%s: %s now uses outer ui item %d\n",line.gettoken_str(0),line.gettoken_str(1),id);
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
+  case TOK_CHANGEUI:
+  case TOK_USEOUTERUIITEM:
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
@@ -2168,9 +2193,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SETDLGITEMTEXT:
       ent.which=EW_SETDLGITEMTEXT;
-      ent.offsets[0]=line.gettoken_int(1);
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      SCRIPT_MSG("SetDlgItemText: item=%s text=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+      ent.offsets[0]=line.gettoken_enum(1,"inner\0outer\0");
+      if (ent.offsets[0]<0) PRINTHELP();
+      ent.offsets[1]=line.gettoken_int(2);
+      ent.offsets[2]=add_string(line.gettoken_str(3));
+      SCRIPT_MSG("SetDlgItemText: %s dialog item=%s text=%s\n",ent.offsets[0]?"outer":"inner",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_HWNDS
     case TOK_ISWINDOW:
