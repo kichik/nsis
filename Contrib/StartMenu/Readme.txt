@@ -12,7 +12,7 @@ which is the program group default name, and some more optional parameters:
                        folder selected by the user
   /checknoshortcuts text - Shows a check box with the text "text". If
                            the user checks this box, the return value
-                           will have ^ as its first character and you
+                           will have > as its first character and you
                            should not create the program group.
 
 The function pushes the folder selection back to the stack. It does not push the 
