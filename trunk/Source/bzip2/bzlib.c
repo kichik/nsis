@@ -162,10 +162,6 @@ int BZ_API(BZ2_bzCompressInit)
    s->ptr               = (UInt32*)s->arr1;
 
    strm->state          = s;
-//   strm->total_in_lo32  = 0;
-  // strm->total_in_hi32  = 0;
-//   strm->total_out_lo32 = 0;
-//   strm->total_out_hi32 = 0;
    init_RL ( s );
    prepare_new_block ( s );
    return BZ_OK;
@@ -451,28 +447,9 @@ int BZ_API(BZ2_bzDecompressInit)
 {
    DState* s=&local_state;
 
-//   s = BZALLOC( sizeof(DState) );
-  // if (s == NULL) return BZ_MEM_ERROR;
    s->strm                  = strm;
    strm->state              = s;
    s->state                 = BZ_X_BLKHDR_1;
- //  s->bsLive                = 0;
-//   s->bsBuff                = 0;
-//   strm->total_in_lo32      = 0;
-  // strm->total_in_hi32      = 0;
-//   strm->total_out_lo32     = 0;
- //  strm->total_out_hi32     = 0;
-#ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
-//         s->ll16 = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL*100000 * sizeof(UInt16) );
-  //       s->ll4  = BZALLOC(
-    //                  ((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) * sizeof(UChar)
-      //             );
-        // if (s->ll16 == NULL || s->ll4 == NULL) return (BZ_MEM_ERROR);
-#else
-        //s->tt  = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL * 100000 * sizeof(Int32) );
-        //if (s->tt == NULL) return (BZ_MEM_ERROR);
-#endif
-  // s->currBlockNo           = 0;
 
    return BZ_OK;
 }
@@ -502,146 +479,48 @@ static
 void unRLE_obuf_to_output_SMALL ( DState* s )
 {
    UChar k1;
-
-   if (s->blockRandomised) {
-
-      while (True) {
-         /* try to finish existing run */
-         while (True) {
-            if (s->strm->avail_out == 0) return;
-            if (s->state_out_len == 0) break;
-            *( (UChar*)(s->strm->next_out) ) = s->state_out_ch;
-            s->state_out_len--;
-            s->strm->next_out++;
-            s->strm->avail_out--;
+  while (True) {
+     /* try to finish existing run */
+     while (True) {
+        if (s->strm->avail_out == 0) return;
+        if (s->state_out_len == 0) break;
+        *( (UChar*)(s->strm->next_out) ) = s->state_out_ch;
+        s->state_out_len--;
+        s->strm->next_out++;
+        s->strm->avail_out--;
 //            s->strm->total_out_lo32++;
-//            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
-         }
+//          if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
+     }
 
-         /* can a new run be started? */
-         if (s->nblock_used == s->save.nblock+1) return;
+     /* can a new run be started? */
+     if (s->nblock_used == s->save.nblock+1) return;
 
+     s->state_out_len = 1;
+     s->state_out_ch = s->k0;
+     BZ_GET_SMALL(k1); s->nblock_used++;
+     if (s->nblock_used == s->save.nblock+1) continue;
+     if (k1 != s->k0) { s->k0 = k1; continue; };
 
-         s->state_out_len = 1;
-         s->state_out_ch = s->k0;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
+     s->state_out_len = 2;
+     BZ_GET_SMALL(k1); s->nblock_used++;
+     if (s->nblock_used == s->save.nblock+1) continue;
+     if (k1 != s->k0) { s->k0 = k1; continue; };
 
-         s->state_out_len = 2;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
+     s->state_out_len = 3;
+     BZ_GET_SMALL(k1); s->nblock_used++;
+     if (s->nblock_used == s->save.nblock+1) continue;
+     if (k1 != s->k0) { s->k0 = k1; continue; };
 
-         s->state_out_len = 3;
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         BZ_GET_SMALL(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         s->state_out_len = ((Int32)k1) + 4;
-         BZ_GET_SMALL(s->k0); BZ_RAND_UPD_MASK;
-         s->k0 ^= BZ_RAND_MASK; s->nblock_used++;
-      }
-
-   } else {
-
-      while (True) {
-         /* try to finish existing run */
-         while (True) {
-            if (s->strm->avail_out == 0) return;
-            if (s->state_out_len == 0) break;
-            *( (UChar*)(s->strm->next_out) ) = s->state_out_ch;
-            s->state_out_len--;
-            s->strm->next_out++;
-            s->strm->avail_out--;
-//            s->strm->total_out_lo32++;
-  //          if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
-         }
-
-         /* can a new run be started? */
-         if (s->nblock_used == s->save.nblock+1) return;
-
-         s->state_out_len = 1;
-         s->state_out_ch = s->k0;
-         BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         s->state_out_len = 2;
-         BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         s->state_out_len = 3;
-         BZ_GET_SMALL(k1); s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         BZ_GET_SMALL(k1); s->nblock_used++;
-         s->state_out_len = ((Int32)k1) + 4;
-         BZ_GET_SMALL(s->k0); s->nblock_used++;
-      }
-
-   }
+     BZ_GET_SMALL(k1); s->nblock_used++;
+     s->state_out_len = ((Int32)k1) + 4;
+     BZ_GET_SMALL(s->k0); s->nblock_used++;
+  }
 }
 #else//!small, fast
 static
 void unRLE_obuf_to_output_FAST ( DState* s )
 {
    UChar k1;
-
-   if (s->blockRandomised) {
-
-      while (True) {
-         /* try to finish existing run */
-         while (True) {
-            if (s->strm->avail_out == 0) return;
-            if (s->state_out_len == 0) break;
-            *( (UChar*)(s->strm->next_out) ) = s->state_out_ch;
-            BZ_UPDATE_CRC ( s->calculatedBlockCRC, s->state_out_ch );
-            s->state_out_len--;
-            s->strm->next_out++;
-            s->strm->avail_out--;
-//            s->strm->total_out_lo32++;
-//            if (s->strm->total_out_lo32 == 0) s->strm->total_out_hi32++;
-         }
-
-         /* can a new run be started? */
-         if (s->nblock_used == s->save.nblock+1) return;
-
-
-         s->state_out_len = 1;
-         s->state_out_ch = s->k0;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         s->state_out_len = 2;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         s->state_out_len = 3;
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         if (s->nblock_used == s->save.nblock+1) continue;
-         if (k1 != s->k0) { s->k0 = k1; continue; };
-
-         BZ_GET_FAST(k1); BZ_RAND_UPD_MASK;
-         k1 ^= BZ_RAND_MASK; s->nblock_used++;
-         s->state_out_len = ((Int32)k1) + 4;
-         BZ_GET_FAST(s->k0); BZ_RAND_UPD_MASK;
-         s->k0 ^= BZ_RAND_MASK; s->nblock_used++;
-      }
-
-   } else {
 
       /* restore */
 //      UInt32        c_calculatedBlockCRC = s->calculatedBlockCRC;
@@ -711,13 +590,6 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       }
 
       return_notr:
-//      total_out_lo32_old = s->strm->total_out_lo32;
-//      s->strm->total_out_lo32 += (avail_out_INIT - cs_avail_out);
-  //    if (s->strm->total_out_lo32 < total_out_lo32_old)
-    //     s->strm->total_out_hi32++;
-
-      /* save */
-//      s->calculatedBlockCRC = c_calculatedBlockCRC;
       s->state_out_ch       = c_state_out_ch;
       s->state_out_len      = c_state_out_len;
       s->nblock_used        = c_nblock_used;
@@ -727,7 +599,6 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       s->strm->next_out     = cs_next_out;
       s->strm->avail_out    = cs_avail_out;
       /* end save */
-   }
 }
 
 #endif
@@ -761,30 +632,9 @@ int BZ_API(BZ2_bzDecompress) ( bz_stream *strm )
          if (s->state != BZ_X_OUTPUT) return r;
       }
    }
-
-   AssertH ( 0, 6001 );
-
-   return 0;  /*NOTREACHED*/
 }
 
 
-/*---------------------------------------------------*/
-int BZ_API(BZ2_bzDecompressEnd)  ( bz_stream *strm )
-{
-  // DState* s;
-//   s = strm->state;
-
-#ifndef NSIS_COMPRESS_BZIP2_SMALLMODE
-//   BZFREE(s->tt);
-#else
-//   BZFREE(s->ll16);
-  // BZFREE(s->ll4);
-#endif
- //  BZFREE(strm->state);
-   //strm->state = NULL;
-
-   return BZ_OK;
-}
 
 #endif
 

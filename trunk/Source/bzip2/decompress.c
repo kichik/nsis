@@ -192,8 +192,6 @@ Int32 BZ2_decompress ( DState* s )
 
       s->currBlockNo++;
 
-      GET_BITS(BZ_X_RANDBIT, s->blockRandomised, 1);
-
       s->origPtr = 0;
       GET_UCHAR(BZ_X_ORIGPTR_1, uc);
       s->origPtr = (s->origPtr << 8) | ((Int32)uc);
@@ -471,14 +469,7 @@ Int32 BZ2_decompress ( DState* s )
 
          s->tPos = s->origPtr;
          s->nblock_used = 0;
-         if (s->blockRandomised) {
-            BZ_RAND_INIT_MASK;
-            BZ_GET_SMALL(s->k0); s->nblock_used++;
-            BZ_RAND_UPD_MASK; s->k0 ^= BZ_RAND_MASK;
-         } else {
-            BZ_GET_SMALL(s->k0); s->nblock_used++;
-         }
-
+         BZ_GET_SMALL(s->k0); s->nblock_used++;
       }
 #else//!small
 
@@ -491,14 +482,7 @@ Int32 BZ2_decompress ( DState* s )
 
          s->tPos = s->tt[s->origPtr] >> 8;
          s->nblock_used = 0;
-         if (s->blockRandomised) {
-            BZ_RAND_INIT_MASK;
-            BZ_GET_FAST(s->k0); s->nblock_used++;
-            BZ_RAND_UPD_MASK; s->k0 ^= BZ_RAND_MASK;
-         } else {
-            BZ_GET_FAST(s->k0); s->nblock_used++;
-         }
-
+         BZ_GET_FAST(s->k0); s->nblock_used++;
 #endif
       RETURN(BZ_OK);
 

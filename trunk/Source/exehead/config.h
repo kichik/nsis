@@ -69,16 +69,14 @@
 
   // NSIS_ZLIB_COMPRESS_WHOLE makes all install data in zlib installers
   // compressed together. Runtime requirements are increased, but potential
-  // for compression is as well. Adds approximately 1kb of disk footprint,
-  // and requires that the installer create a (potentially large) temporary
-  // file in the temp directory.
+  // for compression is as well. Requires that the installer create a 
+  // (potentially large) temporary file in the temp directory.
   // #define NSIS_ZLIB_COMPRESS_WHOLE
 
   // NSIS_BZIP2_COMPRESS_WHOLE makes all install data in bzip2 installers
   // compressed together. Runtime requirements are increased, but potential
-  // for compression is as well. Adds approximately 1kb of disk footprint,
-  // and requires that the installer create a (potentially large) temporary
-  // file in the temp directory.
+  // for compression is as well. Requires that the installer create a 
+  // (potentially large) temporary file in the temp directory.
   #define NSIS_BZIP2_COMPRESS_WHOLE
 
   // if NSIS_COMPRESS_BZIP2_SMALLMODE is defined, bzip2's decompressor uses

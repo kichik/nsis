@@ -88,11 +88,6 @@ SOURCE=..\bzip2\decompress.c
 SOURCE=..\bzip2\huffman.c
 # ADD CPP /Gz
 # End Source File
-# Begin Source File
-
-SOURCE=..\bzip2\randtable.c
-# ADD CPP /Gz
-# End Source File
 # End Group
 # Begin Source File
 

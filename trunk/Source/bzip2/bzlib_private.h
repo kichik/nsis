@@ -64,7 +64,7 @@
 
 #include <stdlib.h>
 
- #include "bzlib.h"
+#include "bzlib.h"
 
 
 /*-- General stuff. --*/
@@ -120,28 +120,6 @@ typedef unsigned short  UInt16;
 #define BZ_N_ITERS  4
 
 #define BZ_MAX_SELECTORS (2 + (900000 / BZ_G_SIZE))
-
-
-
-/*-- Stuff for randomising repetitive blocks. --*/
-
-extern Int16 BZ2_rNums[512];
-
-#define BZ_RAND_DECLS                          \
-   Int32 rNToGo;                               \
-   Int32 rTPos
-
-#define BZ_RAND_INIT_MASK                      \
-   s->rNToGo = s->rTPos  = 0
-
-#define BZ_RAND_MASK (!(s->rNToGo-1))
-
-#define BZ_RAND_UPD_MASK                       \
-   if (s->rNToGo == 0) {                       \
-      s->rNToGo = BZ2_rNums[s->rTPos];         \
-      if (++s->rTPos == 512) s->rTPos = 0;     \
-   }                                           \
-   s->rNToGo--;
 
 
 
@@ -226,7 +204,6 @@ typedef
       /* run-length-encoding of the input */
       UInt32   state_in_ch;
       Int32    state_in_len;
-      BZ_RAND_DECLS;
 
       /* input and output limits and current posns */
       Int32    nblock;
@@ -357,8 +334,6 @@ typedef
       /* for doing the final run-length decoding */
       UChar    state_out_ch;
       Int32    state_out_len;
-      Int32 blockRandomised;
-      BZ_RAND_DECLS;
 
       /* the buffer for bit stream reading */
       UInt32   bsBuff;
