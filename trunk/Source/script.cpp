@@ -1362,7 +1362,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
         }
 
-        SCRIPT_MSG("BGGradient: %06X->%06X (text=%d)\n",v1,v2,v3);
+        SCRIPT_MSG("BGGradient: 0x%06X->0x%06X (text=0x%06X)\n",v1,v2,v3);
       }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
