@@ -139,16 +139,15 @@ int __stdcall lzmaDecompress(CLZMAStateP lzmaState)
 
   EnterCriticalSection(&lzmaState->cs);
   lzmaState->it_locked = TRUE;
+
+  if (lzmaState->finished)
+  {
+    LeaveCriticalSection(&lzmaState->cs);
+    return lzmaState->res;
+  }
   
   while (lzmaState->dt_locked)
-  {
-    if (lzmaState->finished)
-    {
-      LeaveCriticalSection(&lzmaState->cs);
-      return lzmaState->res;
-    }
     Sleep(0);
-  }
 
   return 0;
 }
