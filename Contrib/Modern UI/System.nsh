@@ -764,30 +764,34 @@
      ;Write Finish text
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 2" "Text" "$(MUI_TEXT_FINISH_TITLE)"
     
-      IfRebootFlag "" noreboot_init
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+    
+        IfRebootFlag "" noreboot_init
       
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
       
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "5"
-        
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "RadioButton"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
-        
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Type" "RadioButton"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
-        !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "5"
+          
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "RadioButton"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_REBOOTNOW)"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
+          
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Type" "RadioButton"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_REBOOTLATER)"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
+          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
       
-        Goto init
+          Goto init
       
-      noreboot_init:
+        noreboot_init:
+      
+      !endif
        
         !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO)"
       
@@ -795,7 +799,9 @@
         
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_INFO)"
         
-          !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "4"
+          !ifndef MUI_FINISHPAGE_SHOWREADME
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "4"
+          !endif
         
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "CheckBox"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_RUN)"
@@ -804,10 +810,43 @@
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
+          
+          !ifdef MUI_FINISHPAGE_SHOWREADME
+          
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "5"
+            
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Type" "CheckBox"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Left" "190"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Right" "475"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Top" "210"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 5" "Bottom" "225"
+            
+          !endif
+
+        !endif
         
+        !ifndef MUI_FINISHPAGE_RUN
+        
+          !ifdef MUI_FINISHPAGE_SHOWREADME
+            
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Settings" "Numfields" "4"
+            
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Type" "CheckBox"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Text" "$(MUI_TEXT_FINISH_SHOWREADME)"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Left" "190"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Right" "475"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Top" "180"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "Bottom" "195"
+            !insertmacro MUI_INSTALLOPTIONS_WRITE "ioWizard.ini" "Field 4" "State" "1"
+            
+          !endif
+          
         !endif
       
-      init:
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+        init:
+      !endif
 
       !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioWizard.ini"
       
@@ -823,26 +862,50 @@
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
         SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
         
-        IfRebootFlag "" noreboot_show
+        !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
-          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-          SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+          IfRebootFlag "" noreboot_show
+        
+            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            
+            GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
+            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            
+            Goto show
+        
+          noreboot_show:
           
-          GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-          SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
-        
-          Goto show
-        
-        noreboot_show:
+        !endif
         
           !ifdef MUI_FINISHPAGE_RUN
           
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
             SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            
+            !ifdef MUI_FINISHPAGE_SHOWREADME
+            
+              GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
+              SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+              
+            !endif
           
           !endif
+          
+          !ifndef MUI_FINISHPAGE_RUN
+          
+            !ifdef MUI_FINISHPAGE_SHOWREADME
+            
+              GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
+              SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+              
+            !endif
+            
+          !endif
         
-        show:
+        !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+          show:
+        !endif
 
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
@@ -855,27 +918,55 @@
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
       
-      IfRebootFlag "" noreboot_end
+      !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       
-        !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
+        IfRebootFlag "" noreboot_end
+      
+          !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
         
-          StrCmp ${MUI_TEMP1} "1" "" +2
-            Reboot
+            StrCmp ${MUI_TEMP1} "1" "" +2
+              Reboot
             
-          Goto done
+            Goto done
       
-      noreboot_end:
+        noreboot_end:
+        
+      !endif
       
         !ifdef MUI_FINISHPAGE_RUN
       
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
-        
+          
            StrCmp ${MUI_TEMP1} "1" "" +2
              Exec '"${MUI_FINISHPAGE_RUN}"'
              
+           !ifdef MUI_FINISHPAGE_SHOWREADME
+          
+             !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 5" "State"
+            
+             StrCmp ${MUI_TEMP1} "1" "" +2
+               ExecShell "open" '"${MUI_FINISHPAGE_SHOWREADME}"'
+               
+           !endif
+             
         !endif
-
-    done:
+        
+        !ifndef MUI_FINISHPAGE_RUN
+        
+          !ifdef MUI_FINISHPAGE_SHOWREADME
+          
+            !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioWizard.ini" "Field 4" "State"
+            
+             StrCmp ${MUI_TEMP1} "1" "" +2
+               ExecShell "open" '"${MUI_FINISHPAGE_SHOWREADME}"'
+               
+          !endif
+          
+        !endif
+        
+    !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
+      done:
+    !endif
 
     Pop ${MUI_TEMP3}
     Pop ${MUI_TEMP2}
@@ -1206,6 +1297,7 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_REBOOTNOW "${MUI_TEXT_FINISH_REBOOTNOW}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_REBOOTLATER "${MUI_TEXT_FINISH_REBOOTLATER}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_RUN "${MUI_TEXT_FINISH_RUN}"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_TEXT_FINISH_SHOWREADME "${MUI_TEXT_FINISH_SHOWREADME}"
   !endif
   
   !ifdef MUI_ABORTWARNING
