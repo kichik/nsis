@@ -10,7 +10,7 @@
 //  LangDLL:LangDialog "Language Selection" "Choose a language" 2F French 1036 English 1033 12 Garamond
 
 
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 
 int myatoi(char *s);
 

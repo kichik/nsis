@@ -1,6 +1,6 @@
-#include <Windows.h>
-#include <Mmsystem.h>
-#include "../exdll/exdll.h"
+#include <windows.h>
+#include <mmsystem.h>
+#include "../ExDLL/exdll.h"
 
 #undef EXDLL_INIT
 

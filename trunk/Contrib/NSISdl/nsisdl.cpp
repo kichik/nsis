@@ -25,7 +25,7 @@
 #include "netinc.h"
 #include "util.h"
 #include "httpget.h"
-#include "../exdll/exdll.h"
+#include "../ExDLL/exdll.h"
 
 void *operator new( unsigned int num_bytes )
 {
