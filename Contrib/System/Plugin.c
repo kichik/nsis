@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Plugin.h"
+#include "Buffers.h"
 #include "System.h"
 
 HWND g_hwndParent;
@@ -50,12 +51,12 @@ char *getuservariable(int varnum)
         return AllocStr(g_variables+varnum*g_stringsize);
 }
 
-void setuservariable(int varnum, char *var)
+char *setuservariable(int varnum, char *var)
 {
         if (var != NULL && varnum >= 0 && varnum < __INST_LAST) {
                 lstrcpy (g_variables + varnum*g_stringsize, var);
-
         }
+        return var;
 }
 
 // Updated for int64 and simple bitwise operations
@@ -121,12 +122,16 @@ void myitoa64(__int64 i, char *buffer)
         *(buffer++) = '-';
         i = -i;
     }
-    while (i > 0) 
+    if (i == 0) *(buffer++) = '0';
+    else 
     {
-        *(b++) = '0' + ((char) (i%10));
-        i /= 10;
+        while (i > 0) 
+        {
+            *(b++) = '0' + ((char) (i%10));
+            i /= 10;
+        }
+        while (b > buf) *(buffer++) = *(--b);
     }
-    while (b > buf) *(buffer++) = *(--b);
     *buffer = 0;
 }
 
@@ -145,6 +150,20 @@ void pushint(int value)
 	char buffer[1024];
 	wsprintf(buffer, "%d", value);
 	pushstring(buffer);
+}
+
+char *copymem(char *output, char *input, int size)
+{
+    char *out = output;
+    if ((input != NULL) && (output != NULL))
+        while (size-- > 0) *(out++) = *(input++);
+    return output;
+}
+
+HANDLE GlobalCopy(HANDLE Old)
+{
+	SIZE_T size = GlobalSize(Old);
+    return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
 }
 
 #ifdef _DEBUG

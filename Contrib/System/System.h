@@ -33,9 +33,10 @@
 #define PAT_CALLBACK    5
 
 // Input/Output Source/Destination
-#define	IOT_NONE	0
+#define	IOT_NONE    0
 #define	IOT_STACK	-1
 #define	IOT_REG		1
+#define IOT_INLINE  (__INST_LAST+1) // should replace pointer to inline input
 // #define INLINE_INPUT -> any other value, will contain pointer to input string
 
 // Options
@@ -50,7 +51,7 @@
 typedef struct
 {
 	int Type;
-	int Option; // -1 -> Pointer, 1-... -> Special
+	int Option; // -1 -> Pointer, 1-... -> Special+1
 	int Value;	// it can hold any 4 byte value 
     int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
@@ -83,7 +84,7 @@ typedef struct tag_SystemProc
 extern int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
 
 extern HANDLE CreateCallback(SystemProc *cbproc);
-extern SystemProc *PrepareProc();
+extern SystemProc *PrepareProc(BOOL NeedForCall);
 extern void ParamAllocate(SystemProc *proc);
 extern void ParamsDeAllocate(SystemProc *proc);
 extern void ParamsIn(SystemProc *proc);
