@@ -134,6 +134,10 @@ Version History
  - Added sound for sucessfull compilations
  - Update home page and documentation menu items to Sourceforge page
 
+1.8
+ - Contents of low window are now streamed in
+ - Empty log window check (to prevent random crashes)
+
 
 Copyright Information
 ---------------------

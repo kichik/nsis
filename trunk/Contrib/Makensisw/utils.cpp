@@ -85,31 +85,32 @@ void DisableItems(HWND hwnd) {
 
 void EnableItems(HWND hwnd) {
 	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-	char *existing_text=(char*)GlobalAlloc(GPTR,len);
-	if (!existing_text) return;
-	existing_text[0]=0;
-	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
-	char *p=existing_text;
-	char *p2;
-	char *p3;
-	if ((p2=my_strstr(p,"\r\nOutput: \""))) {
-		while (*p2 != '\"') p2++;
-		p2++;
-		if ((p3=my_strstr(p2,"\"\r\n")) && p3 < my_strstr(p2,"\r\n")) {
-			*p3=0;
-			lstrcpy(g_output_exe,p2);
+	if (len>0) {
+		char *existing_text=(char*)GlobalAlloc(GPTR,len+1);
+		if (!existing_text) return;
+		existing_text[0]=0;
+		GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
+		char *p=existing_text;
+		char *p2;
+		char *p3;
+		if ((p2=my_strstr(p,"\r\nOutput: \""))) {
+			while (*p2 != '\"') p2++;
+			p2++;
+			if ((p3=my_strstr(p2,"\"\r\n")) && p3 < my_strstr(p2,"\r\n")) {
+				*p3=0;
+				lstrcpy(g_output_exe,p2);
+			}
+		}
+		p=my_strstr(existing_text,"\r\nProcessing script file: \"");
+		if (p) {
+			while (*p++ != '"');
+			char *p2=my_strstr(p,"\r\n");
+			lstrcpyn(g_input_script,p,p2-p);
+		}
+		if (my_strstr(existing_text, " warning:") || my_strstr(existing_text, " warnings:")) {
+			g_warnings = TRUE;
 		}
 	}
-	p=my_strstr(existing_text,"\r\nProcessing script file: \"");
-	if (p) {
-		while (*p++ != '"');
-		char *p2=my_strstr(p,"\r\n");
-		lstrcpyn(g_input_script,p,p2-p);
-	}
-	if (my_strstr(existing_text, " warning:") || my_strstr(existing_text, " warnings:")) {
-		g_warnings = TRUE;
-	}
-
 	HMENU m = GetMenu(hwnd);
 	if (g_output_exe[0]) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
