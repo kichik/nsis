@@ -343,15 +343,17 @@ enum
 #define SF_EXPAND     32
 #define SF_PSELECTED  64
 #define SF_TOGGLED    128
+#define SF_NAMECHG    256
 
 typedef struct
 {
-  int name_ptr; // '' for non-optional components
+  int name_ptr; // initial name pointer
   int install_types; // bits set for each of the different install_types, if any.
   int flags; // SF_* - defined above
   int code;
   int code_size;
   int size_kb;
+  char name[NSIS_MAX_STRLEN]; // '' for invisible sections
 } section;
 
 #define SECTION_OFFSET(field) (FIELD_OFFSET(section, field)/sizeof(int))
