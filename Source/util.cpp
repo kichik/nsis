@@ -306,7 +306,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   MY_ASSERT((int)rdIcons - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
-  unsigned char* seeker = uninstIconData;
+  MY_ASSERT(rdIcons->Header.NumberOfIdEntries == 0, "no icons found");
 
   for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
     MY_ASSERT(!rdIcons->Entries[i].DataIsDirectory, "bad resource directory");
@@ -319,18 +319,38 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
     MY_ASSERT((int)rde - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
-    DWORD dwSize = *(DWORD*)seeker;
-    seeker += sizeof(DWORD);
-    MY_ASSERT(dwSize != rde->Size, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
+    // find icon to replace
+    LPBYTE seeker = uninstIconData;
+    while (*seeker) {
+      DWORD dwSize = *(DWORD*)seeker;
+      seeker += sizeof(DWORD);
+      DWORD dwOffset = *(DWORD*)seeker;
+      // if we haven't set the offset yet and the size is the same, it's a match
+      if (!dwOffset && dwSize == rde->Size)
+        break;
+
+      seeker += dwSize + sizeof(DWORD);
+
+      // reached the end of the list and no match
+      MY_ASSERT(!*seeker, "installer, uninstaller icon size mismatch - see the Icon instruction's documentation for more information");
+    }
+
     // Set offset
-    *(DWORD*)seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+    *(LPDWORD) seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 
     MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (int)rdRoot - (int)exeHeader, "invalid data offset - icon resource probably compressed");
-    
-    seeker += sizeof(DWORD) + dwSize;
   }
-  MY_ASSERT(i == 0, "no icons found");
-  MY_ASSERT(*(DWORD*)seeker != 0, "number of icons doesn't match");
+
+  LPBYTE seeker = uninstIconData;
+  while (*seeker) {
+    DWORD dwSize = *(DWORD*)seeker;
+    seeker += sizeof(DWORD);
+    DWORD dwOffset = *(DWORD*)seeker;
+    seeker += sizeof(DWORD);
+    // offset isn't set which means we found no match for this one
+    MY_ASSERT(!dwOffset, "number of icons doesn't match");
+    seeker += dwSize;
+  }
 
   return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 }
