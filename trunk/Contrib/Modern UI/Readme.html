@@ -235,7 +235,8 @@ title and abortwarning to an INI File.</p>
 LangString TEXT_IO_PAGETITLE ${LANG_ENGLISH} "Page Title"
 
 !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioFile.ini" "$(TEXT_IO_PAGETITLE)"
-!insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioFile.ini" "$(TEXT_IO_PAGETITLE)"
+!insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioFile.ini" \
+"$(TEXT_IO_PAGETITLE)"
 </pre>
 <p class="header"><a name="examples">Examples</a></p>
 <p class="text">Basic: <a href="../../Examples/Modern UI/Basic.nsi">Basic.nsi</a><br>
