@@ -1180,7 +1180,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
         {
           int l=1;
-          // Sf_SELECTED == 1
+          // SF_SELECTED == 1
           l += sec->flags & SF_SELECTED;
           //if (sec->flags & SF_SELECTED) l++;
           if (sec->flags & SF_RO) l+=3;
@@ -1615,7 +1615,6 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   //>>>Ximon Eighteen aka Sunjammer 30th August 2002
   //+++Popup "Copy Details To Clipboard" menu when RMB clicked in DetailView
-  //+++Currently this has no language support for the popup menu tex
   if (uMsg == WM_CONTEXTMENU && wParam == (WPARAM) linsthwnd)
   {
     int count = ListView_GetItemCount(linsthwnd);
