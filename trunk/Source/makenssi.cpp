@@ -399,7 +399,7 @@ int main(int argc, char **argv)
     if (build.display_errors && !nousage)
     {
       fprintf(g_output,"Usage:\n"
-             "  makensis [options] [script.nsi | - [...]]\n"
+             "  makensis [option | script.nsi | - [...]]\n"
              "   options are:\n"
              "    " OPT_STR "CMDHELP item prints out help for 'item', or lists all commands\n"
              "    " OPT_STR "HDRINFO prints information about what options makensis was compiled with\n"
@@ -412,6 +412,7 @@ int main(int argc, char **argv)
              "    " OPT_STR "NOCD disabled the current directory change to that of the .nsi file\n"
              "    " OPT_STR "Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
              "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile poop.exe\")\n"
+             "   parameters are processed by order (" OPT_STR "Ddef ins.nsi != ins.nsi " OPT_STR "Ddef)\n"
              "   for script file name, you can use - to read from the standard input\n");
       fflush(g_output);
     }
