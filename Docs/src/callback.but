@@ -4,6 +4,22 @@ You can create callback functions which have special names, that will be called 
 
 \H{instcallbacks} Install Callbacks
 
+\S{onguiinit} .onGUIInit
+
+This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the the user interface.
+
+Example:
+
+\c  !insertmacro ${NSISDIR}\Examples\WinMessages.NSH
+\c
+\c  Funciton .onGUIInit
+\c    # 1028 is the id of the branding text control
+\c    GetDlgItem $R0 $HWNDPARENT 1028
+\c    CreateFont $R1 "Tahoma" 10 700
+\c    SendMessage $R0 ${WM_SETFONT} $R1 0
+\c    SetStaticBkColor $R0 0x00FFFFFF
+\c  FunctionEnd
+
 \S{oninit} .onInit
 
 This callback will be called when the installer is nearly finished initializing. If the '.onInit' function calls Abort, the installer will quit instantly.
@@ -26,11 +42,7 @@ or:
 \c    NoAbort:
 \c  FunctionEnd
 
-\S{oninitdialog} .onInitDialog
-
-This callback is called right after an inner dialog is created (excluding InstallOptions dialogs) and before it is shown. Useful for CreateFont, SetStaticBkColor and any other last minute text changes.
-
-\S{onInstFailed} .onInstFailed
+\S{oninstfailed} .onInstFailed
 
 This callback is called when the user hits the 'cancel' button after the install has failed (if it could not extract a file, or the install script used the Abort command).
 
@@ -40,7 +52,7 @@ Example:
 \c     MessageBox MB_OK "Better luck next time."
 \c   FunctionEnd
 
-\S{onInstSuccess} .onInstSuccess
+\S{oninstsuccess} .onInstSuccess
 
 This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
 
@@ -52,7 +64,7 @@ Example:
 \c     NoReadme:
 \c   FunctionEnd
 
-\S{onMouseOverSection} .onMouseOverSection
+\S{onmouseoversection} .onMouseOverSection
 
 This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarly, in $0.
 
@@ -69,38 +81,7 @@ Example:
 \c       SendMessage $R0 $\{WM_SETTEXT\} 0 "second section description"
 \c   FunctionEnd
 
-\S{onNextPage} .onNextPage
-
-Called when the user selects to go from one page to the next. Also called when the first page is shown (after .onInit). Call Abort from this callback in order to make the installer stay on the current page (or to make it move relative to the current page - Abort 0 means to stay put, Abort 1 means to go to the next page, Abort 2 means to go to the following page, Abort -1 means to go back a page, and so on). To figure out which page you are on, you can just keep a counter and increment it on .onNextPage, and decrement it on .onPrevPage. Note that if the directory selection page is disabled, .onNextPage and .onPrevPage are still called for it.
-
-Example use of .onNextPage/.onPrevPage/.onInit:
-
-\c Function .onInit
-\c   StrCpy $9 0 ; we start on page 0
-\c FunctionEnd
-
-\c Function .onNextPage
-\c   StrCmp $9 1 "" noabort
-\c     MessageBox MB_YESNO "advance to the second page?" IDYES noabort
-\c       Abort
-\c   noabort:
-\c     IntOp $9 $9 + 1
-\c FunctionEnd
-
-\c Function .onPrevPage
-\c   StrCmp $9 2 "" noabort
-\c     MessageBox MB_YESNO "go back to the first page?" IDYES noabort
-\c       Abort
-\c   noabort:
-\c     IntOp $9 $9 - 1
-\c FunctionEnd
-
-
-\S{onPrevPage} .onPrevPage
-
-Called when the user selects to go from one page to the previous. Call Abort from this callback in order to make the installer stay on the current page (or pass an integer parameter to Abort to specify how many pages to move: Abort 1 means to go back one page, Abort 2 means to go back two pages, Abort -1 means to go forward a page, and so on). See .onNextPage for more information.
-
-\S{onSelChange} .onSelChange
+\S{onselchange} .onSelChange
 
 Called when the selection changes on the component page. Useful for using with SectionSetFlags and SectionGetFlags.
 
@@ -116,7 +97,7 @@ Example:
 \c    NoCancelAbort:
 \c  FunctionEnd
 
-\S{onVerifyInstDir} .onVerifyInstDir
+\S{onverifyinstdir} .onVerifyInstDir
 
 This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with MessageBox or the likes. If this function calls Abort, the installation path in $INSTDIR is deemed invalid.
 
@@ -129,6 +110,12 @@ Example:
 \c   FunctionEnd
 
 \H{uninstcallbacks} Uninstall Callbacks
+
+\S{unonguiinit} un.onGUIInit
+
+This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the the user interface.
+
+Have a look at .onGUIInit (\K{onguiinit}) for an example.
 
 \S{unonInit} un.onInit
 
@@ -151,16 +138,7 @@ or:
 \c     found:
 \c   FunctionEnd
 
-
-\S{unonInitDialog} un.onInitDialog
-
-This callback is called right after an inner dialog is created (excluding InstallOptions dialogs) and before it is shown. Useful for CreateFont, SetStaticBkColor and any other last minute text changes.
-
-\S{unonNextPage} un.onNextPage
-
-Called when the user selects 'Uninstall' or 'Close' from the uninstaller. Call Abort from this callback in order to make the uninstaller stay on the current page.
-
-\S{unonUninstFailed} un.onUninstFailed
+\S{unonuninstfailed} un.onUninstFailed
 
 This callback is called when the user hits the 'cancel' button after the uninstall has failed (if it used the Abort command or otherwise failed).
 
@@ -170,7 +148,7 @@ Example:
 \c     MessageBox MB_OK "Better luck next time."
 \c   FunctionEnd
 
-\S{unonUninstSuccess} un.onUninstSuccess
+\S{unonuninstsuccess} un.onUninstSuccess
 
 This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
 
@@ -180,7 +158,7 @@ Example:
 \c     MessageBox MB_OK "Congrats, it's gone."
 \c   FunctionEnd
 
-\S{unonUserAbort} un.onUserAbort
+\S{unonuserabort} un.onUserAbort
 
 This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls Abort, the install will not be aborted.
 

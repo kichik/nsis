@@ -795,6 +795,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       f.lfItalic=parm4&1;
       f.lfUnderline=parm4&2;
       f.lfStrikeOut=parm4&4;
+      f.lfCharSet=DEFAULT_CHARSET; 
       process_string_fromtab(f.lfFaceName,parm1);
       myitoa(var0,(int)CreateFontIndirect(&f));
     }
@@ -959,7 +960,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               update_status_text_from_lang(LANG_CANNOTFINDSYMBOL,buf1);
               log_printf3("Error registering DLL: %s not found in %s",buf1,buf0);
             }
-            if (!parm3) FreeLibrary(h);
+            if (!parm3) while (FreeLibrary(h));
             // saves 2 bytes - FreeLibrary((HANDLE)((unsigned long)h&(unsigned long)parm3));
           }
           else

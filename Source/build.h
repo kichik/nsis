@@ -2,6 +2,7 @@
 #define _BUILD_H_
 
 #include <Vector>
+#include <List>
 using namespace std;
 
 #include "strlist.h"
@@ -201,6 +202,7 @@ class CEXEBuild {
     StringList build_strlist,ubuild_strlist;
     GrowBuf build_langtables, ubuild_langtables;
     StringList build_userlangstrings, ubuild_userlangstrings;
+    GrowBuf build_pages, ubuild_pages;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
     IGrowBuf *cur_datablock; 

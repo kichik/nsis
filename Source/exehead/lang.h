@@ -46,8 +46,6 @@
 #define INSTALL_STR(x)                (~((sizeof(common_strings) + FIELD_OFFSET(installer_strings, x)) / sizeof(int)))
 
 // Installer specific strings
-#define LANG_BTN_BACK                 (INSTALL_STR(backbutton))
-#define LANG_BTN_NEXT                 (INSTALL_STR(nextbutton))
 #define LANG_BTN_BROWSE               (INSTALL_STR(browse))
 #define LANG_BTN_INSTALL              (INSTALL_STR(installbutton))
 #define LANG_SPACE_REQ                (INSTALL_STR(spacerequired))
@@ -71,6 +69,8 @@
 #define COMMON_STR(x)                 (~(FIELD_OFFSET(common_strings, x) / sizeof(int)))
 
 // Common strings
+#define LANG_BTN_NEXT                 (COMMON_STR(nextbutton))
+#define LANG_BTN_BACK                 (COMMON_STR(backbutton))
 #define LANG_BRANDING                 (COMMON_STR(branding))
 #define LANG_BTN_CANCEL               (COMMON_STR(cancelbutton))
 #define LANG_BTN_DETAILS              (COMMON_STR(showdetailsbutton))
