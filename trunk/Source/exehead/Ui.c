@@ -1454,7 +1454,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         EmptyClipboard();
         memory = GlobalAlloc(GMEM_MOVEABLE,total+1);
         ptr = GlobalLock(memory);
-        endPtr = ptr+total;
+        endPtr = ptr+total+1;
         for (i = 0; i < count; i++)
         {
           // -2 to allow for CR/LF
