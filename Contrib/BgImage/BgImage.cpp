@@ -21,6 +21,11 @@ extern "C" void __declspec(dllexport) SetImage(HWND hwndParent, int string_size,
 extern "C" void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
   hWndParent = hwndParent;
 
+  if (!hwndParent) {
+    pushstring("can't find parent window");
+    return;
+  }
+
   SetImage(hwndParent, string_size, variables, stacktop);
 
   WNDCLASSEX wc = {
@@ -172,19 +177,11 @@ int myatoi(char *s)
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
   if (hWndImage && hwnd != hWndImage) {
+    if (message == WM_SIZE) {
+      ShowWindow(hWndImage, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
+    }
     if (message == WM_WINDOWPOSCHANGED) {
-      LPWINDOWPOS wp = (LPWINDOWPOS) lParam;
-      if (!(wp->flags & SWP_NOZORDER)) {
-        CallWindowProc(
-          (long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))oldProc,
-          hwnd,
-          message,
-          wParam,
-          lParam
-        );
-        SetWindowPos(hWndImage, hWndParent, 0, 0, 0, 0, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOSIZE);
-        return 0;
-      }
+      SetWindowPos(hWndImage, hWndParent, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
     return CallWindowProc(
       (long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))oldProc,
