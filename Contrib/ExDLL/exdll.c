@@ -6,7 +6,8 @@ HINSTANCE g_hInstance;
 HWND g_hwndParent;
 
 void __declspec(dllexport) myFunction(HWND hwndParent, int string_size, 
-                                      char *variables, stack_t **stacktop)
+                                      char *variables, stack_t **stacktop,
+                                      extra_parameters *extra)
 {
   g_hwndParent=hwndParent;
 

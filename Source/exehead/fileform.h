@@ -1,4 +1,5 @@
 #include "config.h"
+#include "../Platform.h"
 
 #ifndef _FILEFORM_H_
 #define _FILEFORM_H_
@@ -462,11 +463,16 @@ typedef struct
 #ifdef NSIS_SUPPORT_REBOOT
   int exec_reboot;
   int reboot_called;
+#else
+  int _;
+  int __;
 #endif
   int cur_insttype;
   int insttype_changed;
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   int silent;
+#else
+  int ___;
 #endif
   int instdir_error;
   int rtl;
