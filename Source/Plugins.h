@@ -1,7 +1,7 @@
 
 
-#ifndef __X18_EXTERNALCOMMANDS_H
-#define __X18_EXTERNALCOMMANDS_H
+#ifndef __X18_PLUGINS_H
+#define __X18_PLUGINS_H
 
 
 #include <windows.h>
@@ -10,12 +10,12 @@
 #include <vector>
 
 
-class ExternalCommands
+class Plugins
 {
   public:
     void  FindCommands(char*,bool);
-    bool  IsExternalCommand(char*);
-    char* GetExternalCommandDll(char*);
+    bool  IsPluginCommand(char*);
+    char* GetPluginDll(char*);
     int   GetDllDataHandle(char*);
     void  StoreDllDataHandle(char*,int);
 

@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Added by Ximon Eighteen 5th August 2002
-  build.build_external_command_table();
+  build.build_plugin_table();
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
   if (!g_output) g_output=stdout;

@@ -1,6 +1,6 @@
 
 
-#include "ExternalCommands.h"
+#include "Plugins.h"
 #include <windows.h>
 
 
@@ -137,7 +137,7 @@ enum
 };
 
 
-void ExternalCommands::FindCommands(char* path,bool displayInfo)
+void Plugins::FindCommands(char* path,bool displayInfo)
 {
   if (path)
   {
@@ -149,13 +149,11 @@ void ExternalCommands::FindCommands(char* path,bool displayInfo)
       HANDLE handle;
       char* slashPtr;
       
-      slashPtr = strrchr(path,'\\');
-      if (slashPtr && slashPtr-path < length)
-        length = slashPtr-path;
-
-      slashPtr = strrchr(path,'/');
-      if (slashPtr && slashPtr-path < length)
-        length = slashPtr-path;
+      if (path[length-1] == '\\' ||
+          path[length-1] == '/')
+      {
+        length--;
+      }
 
       char* basePath = new char [length+1];
       strncpy(basePath,path,length);
@@ -185,7 +183,7 @@ void ExternalCommands::FindCommands(char* path,bool displayInfo)
   }
 }
 
-void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
+void Plugins::GetExports(char* pathToDll,bool displayInfo)
 {
   if (pathToDll)
   {
@@ -225,12 +223,12 @@ void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
 
     // read the file offset stored at 0x3c (a single byte)
     // then find the pe signature bytes stored at that offset
-    unsigned char peheaderoffset = dlldata[0x3c];
+    unsigned long* peheaderoffset = (unsigned long*) &dlldata[0x3c];
     unsigned char pesignature[4] = {
-      dlldata[peheaderoffset+0],
-      dlldata[peheaderoffset+1],
-      dlldata[peheaderoffset+2],
-      dlldata[peheaderoffset+3],
+      dlldata[(*peheaderoffset)+0],
+      dlldata[(*peheaderoffset)+1],
+      dlldata[(*peheaderoffset)+2],
+      dlldata[(*peheaderoffset)+3],
     };
 
     if (pesignature[0] == 'P' &&
@@ -239,15 +237,15 @@ void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
         pesignature[3] == '\0')
     {
       // after the signature comes the COFF header
-      COFFHeader* coffHeader = (COFFHeader*)&dlldata[peheaderoffset+4];
+      COFFHeader* coffHeader = (COFFHeader*)&dlldata[(*peheaderoffset)+4];
 
       if (coffHeader->Characteristics & IMAGE_FILE_DLL)
       {
         // after the COFF header comes the Optional Header magic number
         // (two bytes)
         unsigned char ohmagicnumber[2] = {
-          dlldata[peheaderoffset+4+COFFHeaderSize+0],
-          dlldata[peheaderoffset+4+COFFHeaderSize+1]
+          dlldata[(*peheaderoffset)+4+COFFHeaderSize+0],
+          dlldata[(*peheaderoffset)+4+COFFHeaderSize+1]
         };
 
         // 0x10b means a PE header, but 0x20b means a PE+ header
@@ -265,7 +263,7 @@ void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
             const int standardHeaderSize         = (plus ? StandardHeaderSizePlus : StandardHeaderSize);
             const int windowsHeaderSize          = (plus ? WindowsHeaderSizePlus : WindowsHeaderSize);
       
-            int optionalHeaderOffset             = peheaderoffset+4+COFFHeaderSize;
+            int optionalHeaderOffset             = (*peheaderoffset)+4+COFFHeaderSize;
             StandardHeader* standardHeader       = (StandardHeader*)&dlldata[optionalHeaderOffset];
             WindowsSpecificFields* windowsHeader = (WindowsSpecificFields*)&dlldata[optionalHeaderOffset+standardHeaderSize+4];
             DataDirectory* directories           = (DataDirectory*)&dlldata[optionalHeaderOffset+standardHeaderSize+windowsHeaderSize+4];
@@ -273,7 +271,7 @@ void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
             DataDirectory* exportHeader = directories;
             SectionHeader* sectionTable = 
               (SectionHeader*) &dlldata[
-                  peheaderoffset
+                  (*peheaderoffset)
                 + 4
                 + COFFHeaderSize
                 + coffHeader->SizeOfOptionalHeader];
@@ -319,17 +317,17 @@ void ExternalCommands::GetExports(char* pathToDll,bool displayInfo)
   }
 }
 
-bool ExternalCommands::IsExternalCommand(char* token)
+bool Plugins::IsPluginCommand(char* token)
 {
-  return GetExternalCommandDll(token) ? true : false;
+  return GetPluginDll(token) ? true : false;
 }
 
-char* ExternalCommands::GetExternalCommandDll(char* command)
+char* Plugins::GetPluginDll(char* command)
 {
   return m_commands.find(command);
 }
 
-void ExternalCommands::StoreDllDataHandle(char* command,int handle)
+void Plugins::StoreDllDataHandle(char* command,int handle)
 {
   int idx = -1;
   m_commands.defines.find(command,0,&idx);
@@ -340,7 +338,7 @@ void ExternalCommands::StoreDllDataHandle(char* command,int handle)
   }
 }
 
-int ExternalCommands::GetDllDataHandle(char* command)
+int Plugins::GetDllDataHandle(char* command)
 {
   int idx = -1;
   if (-1 != m_commands.defines.find(command,0,&idx))
