@@ -43,9 +43,10 @@ void CopyToClipboard(HWND hwnd) {
 	EmptyClipboard();
 	existing_text[0]=0;
 	GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
-	GlobalUnlock(mem);
 	SetClipboardData(CF_TEXT,existing_text);
 	CloseClipboard();
+	GlobalUnlock(mem);
+	GlobalFree(mem);
 }
 
 
@@ -193,7 +194,7 @@ void SaveWindowPos(HWND hwnd) {
 	p.length = sizeof(p);
 	GetWindowPlacement(hwnd, &p);
 	if (RegCreateKey(REGSEC,REGKEY,&hKey) == ERROR_SUCCESS) {
-				RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
+		RegSetValueEx(hKey,REGLOC,0,REG_BINARY,(unsigned char*)&p,sizeof(p));
 		RegCloseKey(hKey);
 	}
 }
