@@ -62,7 +62,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 }
 
 
-HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int color3)
+HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, int color1, int color2, int color3)
 {
   RECT vp;
   char classname[4]="_Nb";
@@ -82,7 +82,7 @@ HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color
 
   SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-  return CreateWindow(classname,title,WS_VISIBLE|WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
+  return CreateWindow(classname,"",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
     vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,hInstance,NULL);
 }
 
