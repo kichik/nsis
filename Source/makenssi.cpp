@@ -304,7 +304,15 @@ int main(int argc, char **argv)
                 fprintf(g_output,"Changing directory to: \"%s\"\n",dirbuf);
                 fflush(g_output);
               }
-              SetCurrentDirectory(dirbuf);
+              if (!SetCurrentDirectory(dirbuf))
+              {
+                if (build.display_errors)
+                {
+                  fprintf(g_output,"Error changing directory to \"%s\" (/CD specified)\n",dirbuf);
+                  fflush(g_output);
+                }
+                return 1;
+              }
             }
           }
         }
