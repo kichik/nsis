@@ -23,18 +23,6 @@ public:
     _streamPos = 0;
     _pos = 0;
   }
-  void CopyBackBlock(UINT32 fromPos, int len)
-  {
-    if (fromPos >= _windowSize)
-      fromPos += _windowSize;
-    while (len--)
-    {
-      _buffer[_pos++] = _buffer[fromPos++];
-      if (fromPos >= _windowSize)
-        fromPos = 0;
-      Flush();
-    }
-  }
   void PutOneByte(BYTE b)
   {
     _buffer[_pos++] = b;
