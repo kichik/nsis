@@ -16,6 +16,8 @@ NSIS
 
 * current working directory changes
 
+* different color for the drive space when there is not enough space
+
 DOCUMENTATION
 
 * user_vars should link to the user_vars section as in the old docs callbacks and
