@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19b
+;Modern UI Header File version 1.19c
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -6,6 +6,9 @@
 !ifndef MUI_MACROS_USED
 
 !define MUI_MACROS_USED
+
+!define IO_DIRECTION_NEXT 1
+!define IO_DIRECTION_PREV 2
 
 !macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR
 
@@ -48,7 +51,7 @@
 
  ;Text on inner dialogs components
 
-  StrCmp $LANGUAGE ${LANGID} "" +3
+  StrCmp $LANGUAGE ${LANGID} "" +4
     FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
     GetDlgItem ${TEMP1} ${TEMP1} ${CONTROL}
     SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
@@ -106,11 +109,11 @@
 
 !macroend
 
-!macro MUI_PREVPAGE
+!macro MUI_PREVPAGE CALL
 
   IntOp ${CURRENTPAGE} ${CURRENTPAGE} - 1
 
-  Call SetPage
+  Call "${CALL}"
   
 !macroend
 
@@ -130,10 +133,10 @@
 
   ;Text on the white rectangle
 
-  StrCmp $LANGUAGE ${LANGID} "" +4
+  StrCmp $LANGUAGE ${LANGID} "" +5
     GetDlgItem ${TEMP1} $HWNDPARENT 1037
     SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-	GetDlgItem ${TEMP1} $HWNDPARENT 1038
+    GetDlgItem ${TEMP1} $HWNDPARENT 1038
     SendMessage ${TEMP1} ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
 
 !macroend
@@ -193,6 +196,52 @@
 
   quit:
   
+!macroend
+
+!macro MUI_INSTALLOPTIONS_INIT
+
+  Call Initialize_____Plugins
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNINIT
+
+  Call un.Initialize_____Plugins
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_EXTRACT FILE
+
+  File /oname=$PLUGINSDIR\${FILE} "${FILE}"
+  
+!macroend
+
+!macro MUI_INSTALLOPTIONS_SETDIRECTION DIRECTION
+
+  StrCpy ${IO_DIRECTION} "${DIRECTION}"
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_BACK
+
+  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_NEXT}" "" +3
+    Call .onPrevPage
+    Abort
+  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_PREV}" "" +3
+    Call .onPrevPage
+    Goto done
+            
+!macroend
+
+!macro MUI_INSTALLOPTIONS_NEXT
+
+  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_NEXT} "" +3
+    Call .onNextPage
+    Goto done
+  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_PREV} "" +3
+    Call .onNextPage
+    Abort
+   
 !macroend
 
 !endif
