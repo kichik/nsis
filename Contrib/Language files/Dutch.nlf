@@ -27,9 +27,9 @@ $(^Name) De-installatie
 # ^CompletedSubCaption
 : Voltooid
 # ^UnComponentsSubCaption
-: De-installatie Opties
+: Verwijder Opties
 # ^UnDirSubCaption
-: De-installatie Map
+: Verwijder Map
 # ^ConfirmSubCaption
 : Bevestiging
 # ^UninstallingSubCaption
@@ -83,7 +83,7 @@ Lees de licentie overeenkomst voordat u $(^NameDA) verwijdert. Selecteer de eers
 # ^Custom
 Aangepast
 # ^ComponentsText
-Selecteer de onderdelen die u wilt installleren en deselecteer de onderdelen die u niet wilt installeren. $_CLICK
+Selecteer de onderdelen die u wilt installeren en deselecteer de onderdelen die u niet wilt installeren. $_CLICK
 # ^ComponentsSubText1
 Selecteer het installatietype:
 # ^ComponentsSubText2_NoInstTypes
@@ -91,7 +91,7 @@ Selecteer de onderdelen die geïnstalleerd moeten worden:
 # ^ComponentsSubText2
 Of selecteer de onderdelen die geïnstalleerd moeten worden:
 # ^UnComponentsText
-Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+Selecteer de onderdelen die u wilt verwijderen en deselecteer de onderdelen die u niet wilt verwijderen. $_CLICK
 # ^UnComponentsSubText1
 Selecteer het verwijdertype:
 # ^UnComponentsSubText2_NoInstTypes
