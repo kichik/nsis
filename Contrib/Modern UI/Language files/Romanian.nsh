@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Romanian (1048)
 ;Translated by Cristian Pirvu (pcristip@yahoo.com)
@@ -7,8 +7,7 @@
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "ROMANIAN"
-
-  ;Use only ASCII characters (if this is not possible, use the English name)
+ ;Use only ASCII characters (if this is not possible, use the English name)
   !define MUI_LANGNAME "Romana"
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bine ati venit la instalarea produsului $(^Name)"
@@ -55,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Sunteti sigur(a) ca doriti sa opriti instalarea pentru $(^Name) ?"
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bine a-ti venit in rutina de uninstall -\r\n\Asistent pentru $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Acest Asistent o sa va insoteasca prin rutina de uninstall a programului $(^Name).\r\n\r\nVa rugam opriti programul $(^Name), inainte de a continua rutina de uninstall.\r\n\r\n$_CLICK"
+  
   !define MUI_UNTEXT_CONFIRM_TITLE "Dezinstaleaza $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name)."
   
@@ -78,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Dezinstalare oprita"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Dezinstalarea a fost oprita."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Rutina uninstall pentru $(^Name) va fi incheiata"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) a fost indepartat din computerul dumneavoastra.\r\n\r\nClick pe Inchide, pentru a termina Asistentul de uninstall."
+
+  !define MUI_UNTEXT_ABORTWARNING "Sinte-ti sigur, ca doriti ca rutina de uninstall a programului $(^Name) sa fie intrerupta?"
   
 !insertmacro MUI_LANGUAGEFILE_END
