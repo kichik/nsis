@@ -2,7 +2,7 @@
 ; By KiCHiK
 
 ; Include in your script using:
-; !include "${NSISDIR}\Include\WinMessages.nsh"
+; !include "WinMessages.nsh"
 
 !ifndef WINMESSAGES_INCLUDED
 
