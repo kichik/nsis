@@ -3265,6 +3265,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           line.gettoken_str(2),vname,space,line.gettoken_str(1));
       }
     return add_entry(&ent);
+    case TOK_FLUSHINI:
+      ent.which=EW_WRITEINI;
+      ent.offsets[3]=add_string(line.gettoken_str(1));
+      SCRIPT_MSG("FlushINI: %s\n",line.gettoken_str(1));
+    return add_entry(&ent);
     case TOK_WRITEINISTR:
       ent.which=EW_WRITEINI;
       ent.offsets[0]=add_string(line.gettoken_str(2));
@@ -3287,6 +3292,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #else//!NSIS_SUPPORT_INIFILES
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
+    case TOK_FLUSHINI:
     case TOK_WRITEINISTR:
     case TOK_READINISTR:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_INIFILES not defined.\n",  line.gettoken_str(0));
