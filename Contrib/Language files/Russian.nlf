@@ -11,7 +11,7 @@ NLF v6
 -
 # Translation by Timon [ timon@front.ru ] + 20030919
 # ^Branding
-Nullsoft Scriptable Install System v 2.0
+Nullsoft Install System %s
 # ^SetupCaption
 Установка $(^Name)
 # ^UninstallCaption
