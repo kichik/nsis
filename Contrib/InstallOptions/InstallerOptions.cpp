@@ -18,7 +18,6 @@
 #include "../exdll/exdll.h"
 #undef popstring
 
-
 static int popstring(char *str)
 {
   stack_t *th;
@@ -451,7 +450,7 @@ char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
     return NULL;
 }
 
-bool ReadSettings(void) {
+int ReadSettings(void) {
   static char szField[25];
   int nIdx, nCtrlIdx;
 
@@ -642,8 +641,7 @@ bool ReadSettings(void) {
     }
   }
 
-
-  return true;
+  return nNumFields;
 }
 
 
@@ -906,7 +904,7 @@ int createCfgDlg()
       DWORD dwExStyle;
     } ClassTable[] = {
       { "STATIC",       // FIELD_LABEL
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_NOPREFIX,
+        DEFAULT_STYLES /*| WS_TABSTOP*/,
         WS_EX_TRANSPARENT },
       { "STATIC",       // FIELD_ICON
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
@@ -1259,6 +1257,12 @@ extern "C" void __declspec(dllexport) show(HWND hwndParent, int string_size,
   initCalled--;
   showCfgDlg();
 }
+
+#ifdef _DEBUG
+#ifndef DEBUG
+#define DEBUG
+#endif
+#endif
 
 #ifdef DEBUG
 extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
