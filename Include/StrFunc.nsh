@@ -13,105 +13,397 @@ by Diego Pedroso (aka deguix)
   !define MUI_VERBOSE 3
 !endif
 
-!echo "$\r$\n----------------------------------------------------------------------$\r$\nNSIS String Functions Header File 1.03 - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+!echo `$\r$\n----------------------------------------------------------------------$\r$\nNSIS String Functions Header File 1.06 - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
 
-!define StrClbGet "!insertmacro FUNCTION_STRING_StrClbGet"
-!define StrClbSet "!insertmacro FUNCTION_STRING_StrClbSet"
-!define StrIOToNSIS "!insertmacro FUNCTION_STRING_StrIOToNSIS"
-!define StrLoc "!insertmacro FUNCTION_STRING_StrLoc"
-!define StrLowerCase "!insertmacro FUNCTION_STRING_StrLowerCase"
-!define StrNSISToIO "!insertmacro FUNCTION_STRING_StrNSISToIO"
-!define StrRep "!insertmacro FUNCTION_STRING_StrRep"
-!define StrSort "!insertmacro FUNCTION_STRING_StrSort"
-!define StrStr "!insertmacro FUNCTION_STRING_StrStr"
-!define StrStrAdv "!insertmacro FUNCTION_STRING_StrStrAdv"
-!define StrTok "!insertmacro FUNCTION_STRING_StrTok"
-!define StrTrimNewLines "!insertmacro FUNCTION_STRING_StrTrimNewLines"
-!define StrUpperCase "!insertmacro FUNCTION_STRING_StrUpperCase"
+!define StrCase `!insertmacro FUNCTION_STRING_StrCase`
+!define StrClbGet `!insertmacro FUNCTION_STRING_StrClbGet`
+!define StrClbSet `!insertmacro FUNCTION_STRING_StrClbSet`
+!define StrIOToNSIS `!insertmacro FUNCTION_STRING_StrIOToNSIS`
+!define StrLoc `!insertmacro FUNCTION_STRING_StrLoc`
+!define StrNSISToIO `!insertmacro FUNCTION_STRING_StrNSISToIO`
+!define StrRep `!insertmacro FUNCTION_STRING_StrRep`
+!define StrSort `!insertmacro FUNCTION_STRING_StrSort`
+!define StrStr `!insertmacro FUNCTION_STRING_StrStr`
+!define StrStrAdv `!insertmacro FUNCTION_STRING_StrStrAdv`
+!define StrTok `!insertmacro FUNCTION_STRING_StrTok`
+!define StrTrimNewLines `!insertmacro FUNCTION_STRING_StrTrimNewLines`
 
-!define UnStrFunc "!insertmacro FUNCTION_STRING_UninstSupport"
+!define UnStrFunc `!insertmacro FUNCTION_STRING_UninstSupport`
 
-!macro FUNCTION_STRING_StrStr
+!macro FUNCTION_STRING_UninstSupport
 
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nSearch in String Function - 2002-2004 Ximon Eighteen\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+  !define FUNCTION_STRING_UninstSupport
+
+  !define UnStrCase `!insertmacro FUNCTION_STRING_StrCase`
+  !define UnStrClbGet `!insertmacro FUNCTION_STRING_StrClbGet`
+  !define UnStrClbSet `!insertmacro FUNCTION_STRING_StrClbSet`
+  !define UnStrIOToNSIS `!insertmacro FUNCTION_STRING_StrIOToNSIS`
+  !define UnStrLoc `!insertmacro FUNCTION_STRING_StrLoc`
+  !define UnStrNSISToIO `!insertmacro FUNCTION_STRING_StrNSISToIO`
+  !define UnStrRep `!insertmacro FUNCTION_STRING_StrRep`
+  !define UnStrSort `!insertmacro FUNCTION_STRING_StrSort`
+  !define UnStrStr `!insertmacro FUNCTION_STRING_StrStr`
+  !define UnStrStrAdv `!insertmacro FUNCTION_STRING_StrStrAdv`
+  !define UnStrTok `!insertmacro FUNCTION_STRING_StrTok`
+  !define UnStrTrimNewLines `!insertmacro FUNCTION_STRING_StrTrimNewLines`
+
+!macroend
+
+# Function StrCase
+################
+
+!macro FUNCTION_STRING_StrCase
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nChange Case String Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
 
   !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrStr
-    !define UnStrStr "!insertmacro FUNCTION_STRING_UnStrStr_Call"
-    Function un.StrStr
+    !undef UnStrCase
+    !define UnStrCase `!insertmacro FUNCTION_STRING_UnStrCase_Call`
+    Function un.StrCase
   !else
-    !undef StrStr
-    !define StrStr "!insertmacro FUNCTION_STRING_StrStr_Call"
-    Function StrStr
+    !undef StrCase
+    !define StrCase `!insertmacro FUNCTION_STRING_StrCase_Call`
+    Function StrCase
   !endif
-    
-    Exch $R1 ; st=haystack,old$R1, $R1=needle
-    Exch    ; st=old$R1,haystack
-    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+
+    Exch $R0
+    Exch
+    Exch $R1
+    Push $R2
     Push $R3
     Push $R4
     Push $R5
-    StrLen $R3 $R1
-    StrCpy $R4 0
-    ; $R1=needle
-    ; $R2=haystack
-    ; $R3=len(needle)
-    ; $R4=cnt
-    ; $R5=tmp
+    Push $R6
+
+
+    StrCpy $R2 ""
+    StrCpy $R3 ""
+    StrCpy $R4 ""
+    StrCpy $R5 ""
+    StrCpy $R6 ""
+
+    StrCmp $R0 `Upper Case` +5
+    StrCmp $R0 `Lower Case` +4
+    StrCmp $R0 `Title Case` +3
+    StrCmp $R0 `Sentence Case` +2
+      StrCpy $R0 `Sentence Case`
+
     loop:
-      StrCpy $R5 $R2 $R3 $R4
-      StrCmp $R5 $R1 done
-      StrCmp $R5 "" done
-      IntOp $R4 $R4 + 1
-      Goto loop
+      StrCpy $R2 $R1 1
+      StrCmp $R2 `` done
+      StrCpy $R1 $R1 `` 1
+
+      StrCmp $R0 `Upper Case` 0 +2
+        StrCpy $R3 65
+
+      StrCmp $R0 `Lower Case` 0 +2
+        StrCpy $R3 97
+
+      StrCmp $R0 `Title Case` 0 +6
+        StrCmp $R6 ` ` +2
+        StrCmp $R6 `` 0 +3
+          StrCpy $R3 65
+          Goto +2
+        StrCpy $R3 97
+
+      StrCmp $R0 `Sentence Case` 0 +8
+        StrCmp $R6 `.` +4
+        StrCmp $R6 `!` +3
+        StrCmp $R6 `?` +2
+        StrCmp $R6 `` 0 +3
+          StrCpy $R3 65
+          Goto +2
+        StrCpy $R3 97
+
+      loop2:
+
+        IntFmt $R4 %c $R3
+
+        StrCmp $R2 $R4 0 +10
+          StrCpy $R5 $R5$R4
+
+          StrCmp $R0 `Sentence Case` 0 loop
+            StrCmp $R2 ` ` 0 +5
+              StrCmp $R6 `` +5
+              StrCmp $R6 `.` +4
+              StrCmp $R6 `!` +3
+              StrCmp $R6 `?` +2
+
+          StrCpy $R6 $R2
+          Goto loop
+
+        IntOp $R3 $R3 + 1
+
+        StrCmp $R0 `Upper Case` 0 +3
+          StrCpy $R4 91
+          Goto +3
+        StrCmp $R0 `Lower Case` 0 +2
+          StrCpy $R4 123
+
+        StrCmp $R0 `Title Case` 0 +6
+          StrCmp $R6 ` ` +2
+          StrCmp $R6 `` 0 +3
+            StrCpy $R4 91
+            Goto +2
+          StrCpy $R4 123
+
+        StrCmp $R0 `Sentence Case` 0 +8
+          StrCmp $R6 `.` +4
+          StrCmp $R6 `!` +3
+          StrCmp $R6 `?` +2
+          StrCmp $R6 `` 0 +3
+            StrCpy $R4 97
+            Goto +2
+          StrCpy $R4 123
+
+        StrCmp $R0 `Sentence Case` +2
+          StrCpy $R6 $R2
+
+        StrCmp $R3 $R4 0 Loop2
+        StrCpy $R5 $R5$R2
+
+        StrCmp $R0 `Sentence Case` 0 +6
+          StrCmp $R2 ` ` 0 +5
+            StrCmp $R6 `` +5
+            StrCmp $R6 `.` +4
+            StrCmp $R6 `!` +3
+            StrCmp $R6 `?` +2
+
+        StrCpy $R6 $R2
+
+        Goto loop
+
     done:
-    StrCpy $R1 $R2 "" $R4
+    StrCpy $R0 $R5
+
+    Pop $R6
     Pop $R5
     Pop $R4
     Pop $R3
     Pop $R2
-    Exch $R1
+    Pop $R1
+    Exch $R0
   FunctionEnd
 
 !macroend
 
-!macro FUNCTION_STRING_StrStr_Call ResultVar String StrToSearchFor
+!macro FUNCTION_STRING_StrCase_Call ResultVar String Type
 
-  !echo `$ {StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"$\r$\n`
+  !echo `$ {StrCase} "${ResultVar}" "${String}" "${Type}"$\r$\n`
 
   Push `${String}`
-  Push `${StrToSearchFor}`
+  Push `${Type}`
 
-  Call StrStr
+  Call StrCase
 
   Pop `${ResultVar}`
 
 !macroend
 
-!macro FUNCTION_STRING_UnStrStr_Call ResultVar String StrToSearchFor
+!macro FUNCTION_STRING_UnStrCase_Call ResultVar String Type
 
-  !echo `$ {UnStrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"$\r$\n`
+  !echo `$ {UnStrCase} "${ResultVar}" "${String}" "${Type}"$\r$\n`
 
   Push `${String}`
-  Push `${StrToSearchFor}`
+  Push `${Type}`
 
-  Call un.StrStr
+  Call un.StrCase
 
   Pop `${ResultVar}`
 
 !macroend
+
+!macro FUNCTION_STRING_StrClbGet
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nCopy From Clipboard Function - 2003-2004 Nik Medved - changed by Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrClbGet
+    !define UnStrClbGet `!insertmacro FUNCTION_STRING_UnStrClb_Get`
+    Function un.CopyFromClipboard
+  !else
+    !undef StrClbGet
+    !define StrClbGet `!insertmacro FUNCTION_STRING_StrClb_Get`
+    Function CopyFromClipboard
+  !endif
+
+    Push $0
+    System::Call 'user32::OpenClipboard(i 0)'
+    System::Call 'user32::GetClipboardData(i 1) t .r0'
+    System::Call 'user32::CloseClipboard()'
+    Exch $0
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrClb_Get ResultVar
+
+  !echo `$ {StrClbGet} "${ResultVar}"$\r$\n`
+
+  Call CopyFromClipboard
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrClb_Get ResultVar
+
+  !echo `$ {UnStrClbGet} "${ResultVar}"$\r$\n`
+
+  Call un.CopyFromClipboard
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrClbSet
+##################
+
+!macro FUNCTION_STRING_StrClbSet
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nCopy To Clipboard - 2003-2004 Nik Medved$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrClbSet
+    !define UnStrClbSet `!insertmacro FUNCTION_STRING_UnStrClb_Set`
+    Function un.CopyToClipboard
+  !else
+    !undef StrClbSet
+    !define StrClbSet `!insertmacro FUNCTION_STRING_StrClb_Set`
+    Function CopyToClipboard
+  !endif
+
+    Exch $0 ;input string
+    Push $1
+    Push $2
+    System::Call 'user32::OpenClipboard(i 0)'
+    System::Call 'user32::EmptyClipboard()'
+    StrLen $1 $0
+    IntOp $1 $1 + 1
+    System::Call 'kernel32::GlobalAlloc(i 2, i r1) i.r1'
+    System::Call 'kernel32::GlobalLock(i r1) i.r2'
+    System::Call 'kernel32::lstrcpyA(i r2, t r0)'
+    System::Call 'kernel32::GlobalUnlock(i r1)'
+    System::Call 'user32::SetClipboardData(i 1, i r1)'
+    System::Call 'user32::CloseClipboard()'
+    Pop $2
+    Pop $1
+    Pop $0
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrClb_Set String
+
+  !echo `$ {StrClbSet} "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call CopyToClipboard
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrClb_Set String
+
+  !echo `$ {UnStrClbSet} "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call un.CopyToClipboard
+
+!macroend
+
+# Function StrIOToNSIS
+####################
+
+!macro FUNCTION_STRING_StrIOToNSIS
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nInstall Options -> NSIS String Convertion Function - 2003-2004 Amir Szekely, Joost Verburg and Dave Laundon$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrIOToNSIS
+    !define UnStrIOToNSIS `!insertmacro FUNCTION_STRING_UnStrIOToNSIS_Call`
+    Function un.Io2Nsis
+  !else
+    !undef StrIOToNSIS
+    !define StrIOToNSIS `!insertmacro FUNCTION_STRING_StrIOToNSIS_Call`
+    Function Io2Nsis
+  !endif
+
+    Exch $0 ; The source
+    Push $1 ; The output
+    Push $2 ; Temporary char
+    StrCpy $1 `` ; Initialise the output
+  loop:
+    StrCpy $2 $0 1 ; Get the next source char
+    StrCmp $2 `` done ; Abort when none left
+      StrCpy $0 $0 `` 1 ; Remove it from the source
+      StrCmp $2 `\` +3 ; Escape character?
+        StrCpy $1 `$1$2` ; If not just output
+        Goto loop
+      StrCpy $2 $0 1 ; Get the next source char
+      StrCpy $0 $0 `` 1 ; Remove it from the source
+      StrCmp $2 `\` `` +3 ; Back-slash?
+        StrCpy $1 `$1\`
+        Goto loop
+      StrCmp $2 `r` `` +3 ; Carriage return?
+        StrCpy $1 `$1$\r`
+        Goto loop
+      StrCmp $2 `n` `` +3 ; Line feed?
+        StrCpy $1 `$1$\n`
+        Goto loop
+      StrCmp $2 `t` `` +3 ; Tab?
+        StrCpy $1 `$1$\t`
+        Goto loop
+      StrCpy $1 `$1$2` ; Anything else (should never get here)
+      Goto loop
+  done:
+    StrCpy $0 $1
+    Pop $2
+    Pop $1
+    Exch $0
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrIOToNSIS_Call ResultVar String
+
+  !echo `$ {StrIOToNSIS} "${ResultVar}" "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call IO2NSIS
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrIOToNSIS_Call ResultVar String
+
+  !echo `$ {UnStrIOToNSIS} "${ResultVar}" "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call un.IO2NSIS
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrLoc
+###############
 
 !macro FUNCTION_STRING_StrLoc
 
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nLocalize in String Function - © 2004 Diego Pedroso\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-  
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nLocalize in String Function - © 2004 Diego Pedroso\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
   !ifdef FUNCTION_STRING_UninstSupport
     !undef UnStrLoc
-    !define UnStrLoc "!insertmacro FUNCTION_STRING_UnStrLoc_Call"
+    !define UnStrLoc `!insertmacro FUNCTION_STRING_UnStrLoc_Call`
     Function un.StrLoc
   !else
     !undef StrLoc
-    !define StrLoc "!insertmacro FUNCTION_STRING_StrLoc_Call"
+    !define StrLoc `!insertmacro FUNCTION_STRING_StrLoc_Call`
     Function StrLoc
   !endif
 
@@ -128,12 +420,12 @@ by Diego Pedroso (aka deguix)
     loop:
       StrCpy $R5 $R2 $R3 $R4
       StrCmp $R5 $R1 done
-      StrCmp $R5 "" error
+      StrCmp $R5 `` error
       IntOp $R4 $R4 + 1
       Goto loop
     done:
 
-    StrCmp $R0 "<" 0 +5
+    StrCmp $R0 `<` 0 +5
       StrLen $R0 $R2
       IntOp $R5 $R3 + $R4
       IntOp $R0 $R0 - $R5
@@ -143,7 +435,7 @@ by Diego Pedroso (aka deguix)
     Goto +2
 
     error:
-    StrCpy $R0 ""
+    StrCpy $R0 ``
 
     Pop $R5
     Pop $R4
@@ -184,17 +476,437 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
+# Function StrNSISToIO
+####################
+
+!macro FUNCTION_STRING_StrNSISToIO
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nNSIS -> Install Options String Convertion Function - 2003-2004 Amir Szekely, Joost Verburg and Dave Laundon$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrNSISToIO
+    !define UnStrNSISToIO `!insertmacro FUNCTION_STRING_UnStrNSISToIO_Call`
+    Function un.Nsis2Io
+  !else
+    !undef StrNSISToIO
+    !define StrNSISToIO `!insertmacro FUNCTION_STRING_StrNSISToIO_Call`
+    Function Nsis2Io
+  !endif
+
+    Exch $0 ; The source
+    Push $1 ; The output
+    Push $2 ; Temporary char
+    StrCpy $1 `` ; Initialise the output
+  loop:
+    StrCpy $2 $0 1 ; Get the next source char
+    StrCmp $2 `` done ; Abort when none left
+      StrCpy $0 $0 `` 1 ; Remove it from the source
+      StrCmp $2 `\` `` +3 ; Back-slash?
+        StrCpy $1 `$1\\`
+        Goto loop
+      StrCmp $2 `$\r` `` +3 ; Carriage return?
+        StrCpy $1 `$1\r`
+        Goto loop
+      StrCmp $2 `$\n` `` +3 ; Line feed?
+        StrCpy $1 `$1\n`
+        Goto loop
+      StrCmp $2 `$\t` `` +3 ; Tab?
+        StrCpy $1 `$1\t`
+        Goto loop
+      StrCpy $1 `$1$2` ; Anything else
+      Goto loop
+  done:
+    StrCpy $0 $1
+    Pop $2
+    Pop $1
+    Exch $0
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrNSISToIO_Call ResultVar String
+
+  !echo `$ {StrNSISToIO} "${ResultVar}" "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call NSIS2IO
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrNSISToIO_Call ResultVar String
+
+  !echo `$ {UnStrNSISToIO} "${ResultVar}" "${String}"$\r$\n`
+
+  Push `${String}`
+
+  Call un.NSIS2IO
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrRep
+###############
+
+!macro FUNCTION_STRING_StrRep
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nReplace String Function - 2002-2004 Hendri Adriaens$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrRep
+    !define UnStrRep `!insertmacro FUNCTION_STRING_UnStrRep_Call`
+    Function un.StrReplace
+  !else
+    !undef StrRep
+    !define StrRep `!insertmacro FUNCTION_STRING_StrRep_Call`
+    Function StrReplace
+  !endif
+
+    Exch $0 ;this will replace wrong characters
+    Exch
+    Exch $1 ;needs to be replaced
+    Exch
+    Exch 2
+    Exch $2 ;the orginal string
+    Push $3 ;counter
+    Push $4 ;temp character
+    Push $5 ;temp string
+    Push $6 ;length of string that need to be replaced
+    Push $7 ;length of string that will replace
+    Push $R0 ;tempstring
+    Push $R1 ;tempstring
+    Push $R2 ;tempstring
+    StrCpy $3 `-1`
+    StrCpy $5 ``
+    StrLen $6 $1
+    StrLen $7 $0
+    Loop:
+    IntOp $3 $3 + 1
+    StrCpy $4 $2 $6 $3
+    StrCmp $4 `` ExitLoop
+    StrCmp $4 $1 Replace
+    Goto Loop
+    Replace:
+    StrCpy $R0 $2 $3
+    IntOp $R2 $3 + $6
+    StrCpy $R1 $2 `` $R2
+    StrCpy $2 $R0$0$R1
+    IntOp $3 $3 + $7
+    Goto Loop
+    ExitLoop:
+    StrCpy $0 $2
+    Pop $R2
+    Pop $R1
+    Pop $R0
+    Pop $7
+    Pop $6
+    Pop $5
+    Pop $4
+    Pop $3
+    Pop $2
+    Pop $1
+    Exch $0
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplace ReplacementString
+
+  !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"$\r$\n`
+
+  Push `${String}`
+  Push `${StringToReplace}`
+  Push `${ReplacementString}`
+
+  Call StrReplace
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrRep_Call ResultVar String StringToReplace ReplacementString
+
+  !echo `$ {UnStrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"$\r$\n`
+
+  Push `${String}`
+  Push `${StringToReplace}`
+  Push `${ReplacementString}`
+
+  Call un.StrReplace
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrSort
+################
+
+!macro FUNCTION_STRING_StrSort
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nAdvanced String Sort Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrSort
+    !define UnStrSort `!insertmacro FUNCTION_STRING_UnStrSort_Call`
+    Function un.AdvStrSort
+  !else
+    !undef StrSort
+    !define StrSort `!insertmacro FUNCTION_STRING_StrSort_Call`
+    Function AdvStrSort
+  !endif
+
+    # Prepare Variables
+
+    Exch $R7 ;Include Center string
+    Exch
+    Exch $R6 ;Include Left and Right strings
+    Exch 2
+    Exch $0 ;Right String
+    Exch 3
+    Exch $1 ;Left String
+    Exch 4
+    Exch $2 ;Center String
+    Exch 5
+    Exch $R0 ;String
+    Push $3
+    Push $4
+    Push $5
+    Push $R1
+    Push $R2
+    Push $R3
+    Push $R4
+    Push $R5
+
+    StrLen $3 $0
+    StrLen $4 $1
+    StrLen $5 $2
+    StrCpy $R1 0
+
+    # Center String Search
+
+    loop:
+      StrCpy $R3 $R0 $5 $R1
+      StrCmp $R3 `` error
+        StrCmp $R3 $2 done
+          IntOp $R1 $R1 + 1
+          Goto loop
+    done:
+
+    StrCpy $R5 $R1
+
+    IntOp $R1 $R1 - $4
+
+    # Left String Search
+
+    loop2:
+      StrCpy $R3 $R0 $4 $R1
+      StrCmp $R3 `` error2
+        StrCmp $R3 $1 done2
+          IntOp $R1 $R1 - 1
+          Goto loop2
+
+      error2:
+      StrCpy $R1 0
+      StrCpy $R3 0
+      Goto +2
+
+    done2:
+    StrCpy $R3 1
+
+    StrCpy $R4 $R0 $R5
+
+    StrCmp $R1 0 +2
+      StrCpy $R4 $R4 `` $R1
+
+    StrCmp $R3 1 0 +3
+      StrCmp $R6 0 0 +2
+        StrCpy $R4 $R4 `` $4
+
+    # Center String Addition
+
+    StrCmp $R7 0 +2
+      StrCpy $R4 $R4$2
+
+    StrCpy $R1 $R5
+    IntOp $R1 $R1 + $5
+
+    # Right String Search
+
+    loop3:
+
+      StrCpy $R3 $R0 $3 $R1
+      StrCmp $R3 `` error3
+        StrCmp $R3 $0 done3
+          IntOp $R1 $R1 + 1
+          Goto loop3
+
+      error3:
+      StrCpy $R1 0
+
+    done3:
+
+    IntOp $R5 $R5 + $5
+    StrCpy $R3 $R0 `` $R5
+
+    StrCmp $R1 0 +5
+      IntOp $R1 $R1 - $R5
+      StrCmp $R6 0 +2
+        IntOp $R1 $R1 + $3
+      StrCpy $R3 $R3 $R1
+
+    StrCpy $R4 $R4$R3
+
+    StrCpy $2 $R4
+    Goto +2
+
+      Error:
+      StrCpy $2 ``
+
+    # Return to User
+
+    Pop $R5
+    Pop $R4
+    Pop $R3
+    Pop $R2
+    Pop $R1
+    Pop $5
+    Pop $4
+    Pop $3
+    Pop $R0
+    Pop $R7
+    Pop $R6
+    Pop $0
+    Pop $1
+    Exch $2
+
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
+
+  !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"$\r$\n`
+
+  Push `${String}`
+  Push `${CenterStr}`
+  Push `${LeftStr}`
+  Push `${RightStr}`
+  Push `${IncludeLeftRightStr}`
+  Push `${IncludeCenterStr}`
+
+  Call AdvStrSort
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
+
+  !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"$\r$\n`
+
+  Push `${String}`
+  Push `${CenterStr}`
+  Push `${LeftStr}`
+  Push `${RightStr}`
+  Push `${IncludeLeftRightStr}`
+  Push `${IncludeCenterStr}`
+
+  Call un.AdvStrSort
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrStr
+###############
+
+!macro FUNCTION_STRING_StrStr
+
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nSearch in String Function - 2002-2004 Ximon Eighteen\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
+
+  !ifdef FUNCTION_STRING_UninstSupport
+    !undef UnStrStr
+    !define UnStrStr `!insertmacro FUNCTION_STRING_UnStrStr_Call`
+    Function un.StrStr
+  !else
+    !undef StrStr
+    !define StrStr `!insertmacro FUNCTION_STRING_StrStr_Call`
+    Function StrStr
+  !endif
+    
+    Exch $R1 ; st=haystack,old$R1, $R1=needle
+    Exch    ; st=old$R1,haystack
+    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
+    Push $R3
+    Push $R4
+    Push $R5
+    StrLen $R3 $R1
+    StrCpy $R4 0
+    ; $R1=needle
+    ; $R2=haystack
+    ; $R3=len(needle)
+    ; $R4=cnt
+    ; $R5=tmp
+    loop:
+      StrCpy $R5 $R2 $R3 $R4
+      StrCmp $R5 $R1 done
+      StrCmp $R5 `` done
+      IntOp $R4 $R4 + 1
+      Goto loop
+    done:
+    StrCpy $R1 $R2 `` $R4
+    Pop $R5
+    Pop $R4
+    Pop $R3
+    Pop $R2
+    Exch $R1
+  FunctionEnd
+
+!macroend
+
+!macro FUNCTION_STRING_StrStr_Call ResultVar String StrToSearchFor
+
+  !echo `$ {StrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"$\r$\n`
+
+  Push `${String}`
+  Push `${StrToSearchFor}`
+
+  Call StrStr
+
+  Pop `${ResultVar}`
+
+!macroend
+
+!macro FUNCTION_STRING_UnStrStr_Call ResultVar String StrToSearchFor
+
+  !echo `$ {UnStrStr} "${ResultVar}" "${String}" "${StrToSearchFor}"$\r$\n`
+
+  Push `${String}`
+  Push `${StrToSearchFor}`
+
+  Call un.StrStr
+
+  Pop `${ResultVar}`
+
+!macroend
+
+# Function StrStrAdv
+##################
+
 !macro FUNCTION_STRING_StrStrAdv
 
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nAdvanced Search in String Function - © 2003-2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nAdvanced Search in String Function - © 2003-2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
 
   !ifdef FUNCTION_STRING_UninstSupport
     !undef UnStrStrAdv
-    !define UnStrStrAdv "!insertmacro FUNCTION_STRING_UnStrStrAdv_Call"
+    !define UnStrStrAdv `!insertmacro FUNCTION_STRING_UnStrStrAdv_Call`
     Function un.AdvancedStrStr
   !else
     !undef StrStrAdv
-    !define StrStrAdv "!insertmacro FUNCTION_STRING_StrStrAdv_Call"
+    !define StrStrAdv `!insertmacro FUNCTION_STRING_StrStrAdv_Call`
     Function AdvancedStrStr
   !endif
 
@@ -226,24 +938,26 @@ by Diego Pedroso (aka deguix)
    Push $6
    StrCpy $R2 $R4
    StrCpy $R1 $R5
-   StrCpy $R4 ""
-   StrCpy $R5 ""
+   StrCpy $R4 ``
+   StrCpy $R5 ``
    StrCpy $7 $R2
+
+   StrCpy $6 ""
 
    # Detect Empty Input
 
-   StrCmp $R1 "" 0 +3
+   StrCmp $R1 `` 0 +3
      SetErrors
      Goto granddone
 
-   StrCmp $R2 "" 0 +3
+   StrCmp $R2 `` 0 +3
      SetErrors
      Goto granddone
 
-   StrCmp $R6 "" 0 +2
+   StrCmp $R6 `` 0 +2
      StrCpy $R6 >
 
-   StrCmp $R7 "" 0 +2
+   StrCmp $R7 `` 0 +2
      StrCpy $R7 >
 
    # Preparing StrStr
@@ -265,11 +979,11 @@ by Diego Pedroso (aka deguix)
      StrLen $R3 $R1
      StrCpy $6 $R3
      StrCmp $9 1 0 +4
-       StrCmp $R6 "<" 0 +2
+       StrCmp $R6 `<` 0 +2
          IntOp $R3 $R3 + 1
          IntOp $R4 $R4 + 1
 
-     StrCmp $R6 "<" 0 +5
+     StrCmp $R6 `<` 0 +5
        IntOp $R3 $R3 * -1
        StrCpy $6 $R3
        IntCmp $R0 0 +2 0 0
@@ -281,12 +995,12 @@ by Diego Pedroso (aka deguix)
 
        # RTL...
 
-       StrCmp $R6 "<" 0 EndBack
+       StrCmp $R6 `<` 0 EndBack
 
          IntOp $9 $R4 * -1
 
          StrCmp $9 0 0 +3
-           StrCpy $R5 $R2 "" $R3
+           StrCpy $R5 $R2 `` $R3
            Goto +2
          StrCpy $R5 $R2 $9 $R3
          Goto +2
@@ -301,19 +1015,19 @@ by Diego Pedroso (aka deguix)
 
        StrCmp $R5 $R1 done
 
-       StrCmp $R5 "" granddone
+       StrCmp $R5 `` granddone
 
            # If not, make a loop...
 
            IntOp $R4 $R4 + 1
-           StrCmp $R6 "<" 0 +2
+           StrCmp $R6 `<` 0 +2
              IntOp $R3 $R3 - 1
 
        Goto loop
 
      done:
 
-     StrCmp $R6 "<" 0 +3
+     StrCmp $R6 `<` 0 +3
        IntOp $8 $9 + $8
          Goto +2
      IntOp $8 $R4 + $8
@@ -328,12 +1042,12 @@ by Diego Pedroso (aka deguix)
 
      # RTL...
 
-       StrCmp $R6 "<" 0 EndBackward
-         StrCmp $R7 ">" 0 +7
+       StrCmp $R6 `<` 0 EndBackward
+         StrCmp $R7 `>` 0 +7
            StrCmp $8 0 0 +3
-             StrCpy $R2 ""
+             StrCpy $R2 ``
              Goto +2
-           StrCpy $R2 $7 "" $8
+           StrCpy $R2 $7 `` $8
            StrCpy $R2 $R1$R2
            Goto +3
 
@@ -341,10 +1055,10 @@ by Diego Pedroso (aka deguix)
            StrCpy $R2 $R2 $9
 
          StrCmp $R8 1 EndForward 0
-           StrCmp $R7 ">" 0 End>
+           StrCmp $R7 `>` 0 End>
              Push $6
              IntOp $6 $6 * -1
-             StrCpy $R2 $R2 "" $6
+             StrCpy $R2 $R2 `` $6
              Pop $6
                Goto +2
            End>:
@@ -354,20 +1068,20 @@ by Diego Pedroso (aka deguix)
 
        # LTR...
 
-       StrCmp $R7 "<" 0 +4
+       StrCmp $R7 `<` 0 +4
          StrCpy $R2 $7 $8
          StrCpy $R2 $R2$R1
          Goto +2
-       StrCpy $R2 $R2 "" $R4
+       StrCpy $R2 $R2 `` $R4
        StrCmp $R8 1 EndForward 0
-         StrCmp $R7 "<" 0 End<
+         StrCmp $R7 `<` 0 End<
            Push $6
-           IntOp $6 $6 * 2
+           IntOp $6 $6 * -1
            StrCpy $R2 $R2 $6
            Pop $6
              Goto +2
          End<:
-         StrCpy $R2 $R2 "" $R3
+         StrCpy $R2 $R2 `` $R3
        EndForward:
 
        Goto stoploop
@@ -378,14 +1092,14 @@ by Diego Pedroso (aka deguix)
 
      # RTL...
 
-     StrCmp $R6 "<" 0 +4
+     StrCmp $R6 `<` 0 +4
        StrCmp $9 0 +4
        StrCpy $R2 $R2 $9
          Goto +2
 
      # LTR...
 
-     StrCpy $R2 $R2 "" $R4
+     StrCpy $R2 $R2 `` $R4
 
      stoploop:
 
@@ -403,7 +1117,7 @@ by Diego Pedroso (aka deguix)
 
    # Return the result to user
 
-   StrCpy $R4 ""
+   StrCpy $R4 ``
 
    Pop $6
    Pop $7
@@ -458,17 +1172,20 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
+# Function StrTok
+###############
+
 !macro FUNCTION_STRING_StrTok
 
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nAdvanced Token String Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nAdvanced Token String Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
 
   !ifdef FUNCTION_STRING_UninstSupport
     !undef UnStrTok
-    !define UnStrTok "!insertmacro FUNCTION_STRING_UnStrTok_Call"
+    !define UnStrTok `!insertmacro FUNCTION_STRING_UnStrTok_Call`
     Function un.AdvancedStrTok
   !else
     !undef StrTok
-    !define StrTok "!insertmacro FUNCTION_STRING_StrTok_Call"
+    !define StrTok `!insertmacro FUNCTION_STRING_StrTok_Call`
     Function AdvancedStrTok
   !endif
 
@@ -500,7 +1217,7 @@ by Diego Pedroso (aka deguix)
     StrCmp $R0 L 0 +5
       StrCpy $2 1
       StrCpy $R0 0
-      StrCpy $1 ""
+      StrCpy $1 ``
       StrCpy $9 1
     
     PartLoop:
@@ -512,7 +1229,7 @@ by Diego Pedroso (aka deguix)
     loop:
 
       StrCpy $R5 $R2 1 $R4
-      StrCmp $R5 "" done
+      StrCmp $R5 `` done
 
       StrCpy $R6 -1
       StrCpy $R7 0
@@ -521,13 +1238,13 @@ by Diego Pedroso (aka deguix)
         IntOp $R6 $R6 + 1
         IntOp $R7 $R6 + 1
         StrCpy $R3 $R1 $R7 $R6
-        StrCmp $R3 "" 0 +3
+        StrCmp $R3 `` 0 +3
           IntOp $0 $0 + 1
           Goto ContLoop2
         StrCmp $R5 $R3 0 Loop2
           StrCmp $9 1 0 done
             StrCmp $0 0 0 done
-              StrCpy $R2 $R2 "" 1
+              StrCpy $R2 $R2 `` 1
               Goto Loop
           
       ContLoop2:
@@ -539,10 +1256,10 @@ by Diego Pedroso (aka deguix)
     IntOp $R4 $R4 + $0
     StrCpy $R1 $R2 $0
     IntOp $0 $0 + 1
-    StrCpy $R2 $R2 "" $0
+    StrCpy $R2 $R2 `` $0
     
     StrCmp $2 1 0 +4
-      StrCmp $R1 "" 0 +3
+      StrCmp $R1 `` 0 +3
         StrCpy $R1 $1
         Goto End
 
@@ -604,521 +1321,20 @@ by Diego Pedroso (aka deguix)
 
 !macroend
 
-!macro FUNCTION_STRING_StrClbSet
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nCopy To Clipboard - 2003-2004 Nik Medved$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-  
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrClbSet
-    !define UnStrClbSet "!insertmacro FUNCTION_STRING_UnStrClbSet_Call"
-    Function un.CopyToClipboard
-  !else
-    !undef StrClbSet
-    !define StrClbSet "!insertmacro FUNCTION_STRING_StrClbSet_Call"
-    Function CopyToClipboard
-  !endif
-
-    Exch $0 ;input string
-    Push $1
-    Push $2
-    System::Call 'user32::OpenClipboard(i 0)'
-    System::Call 'user32::EmptyClipboard()'
-    StrLen $1 $0
-    IntOp $1 $1 + 1
-    System::Call 'kernel32::GlobalAlloc(i 2, i r1) i.r1'
-    System::Call 'kernel32::GlobalLock(i r1) i.r2'
-    System::Call 'kernel32::lstrcpyA(i r2, t r0)'
-    System::Call 'kernel32::GlobalUnlock(i r1)'
-    System::Call 'user32::SetClipboardData(i 1, i r1)'
-    System::Call 'user32::CloseClipboard()'
-    Pop $2
-    Pop $1
-    Pop $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrClbGet 
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nCopy From Clipboard Function - 2003-2004 Nik Medved - changed by Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrClbGet
-    !define UnStrClbGet "!insertmacro FUNCTION_STRING_UnStrClbGet_Call"
-    Function un.CopyFromClipboard
-  !else
-    !undef StrClbGet
-    !define StrClbGet "!insertmacro FUNCTION_STRING_StrClbGet_Call"
-    Function CopyFromClipboard
-  !endif
-
-  Function CopyFromClipboard
-    Push $0
-    System::Call 'user32::OpenClipboard(i 0)'
-    System::Call 'user32::GetClipboardData(i 1) t .r0'
-    System::Call 'user32::CloseClipboard()'
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrClb_Set String
-
-  !echo `$ {StrClbSet} "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call CopyToClipboard
-  
-!macroend
-
-!macro FUNCTION_STRING_UnStrClb_Set String
-
-  !echo `$ {UnStrClbSet} "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call un.CopyToClipboard
-
-!macroend
-
-!macro FUNCTION_STRING_StrClb_Get ResultVar
-
-  !echo `$ {StrClbGet} "${ResultVar}"$\r$\n`
-
-  Call CopyFromClipboard
-  
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrClb_Get ResultVar
-
-  !echo `$ {UnStrClbGet} "${ResultVar}"$\r$\n`
-
-  Call un.CopyFromClipboard
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrUpperCase
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nUppercase String Function - 2002-2004 Dave Laundon $\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrUpperCase
-    !define UnStrUpperCase "!insertmacro FUNCTION_STRING_UnStrUpperCase_Call"
-    Function un.StrUpper
-  !else
-    !undef StrUpperCase
-    !define StrUpperCase "!insertmacro FUNCTION_STRING_StrUpperCase_Call"
-    Function StrUpper
-  !endif
-
-    Exch $0 ; Original string
-    Push $1 ; Final string
-    Push $2 ; Current character
-    Push $3
-    Push $4
-    StrCpy $1 ""
-  Loop:
-    StrCpy $2 $0 1 ; Get next character
-    StrCmp $2 "" Done
-    StrCpy $0 $0 "" 1
-    StrCpy $3 65 ; 65 = ASCII code for A
-  Loop2:
-    IntFmt $4 %c $3 ; Get character from current ASCII code
-    StrCmp $2 $4 Match
-    IntOp $3 $3 + 1
-    StrCmp $3 91 NoMatch Loop2 ; 91 = ASCII code one beyond Z
-  Match:
-    StrCpy $2 $4 ; It 'matches' (either case) so grab the uppercase version
-  NoMatch:
-    StrCpy $1 $1$2 ; Append to the final string
-    Goto Loop
-  Done:
-    StrCpy $0 $1 ; Return the final string
-    Pop $4
-    Pop $3
-    Pop $2
-    Pop $1
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrUpperCase_Call ResultVar String
-
-  !echo `$ {StrUpperCase} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call StrUpper
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrUpperCase_Call ResultVar String
-
-  !echo `$ {UnStrUpperCase} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call un.StrUpper
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrLowerCase
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nLowercase String Function - changed from Uppercase String Function 2002-2004 Dave Laundon$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrLowerCase
-    !define UnStrLowerCase "!insertmacro FUNCTION_STRING_UnStrLowerCase_Call"
-    Function un.StrLower
-  !else
-    !undef StrLowerCase
-    !define StrLowerCase "!insertmacro FUNCTION_STRING_StrLowerCase_Call"
-    Function StrLower
-  !endif
-
-    Exch $0 ; Original string
-    Push $1 ; Final string
-    Push $2 ; Current character
-    Push $3
-    Push $4
-    StrCpy $1 ""
-  Loop:
-    StrCpy $2 $0 1 ; Get next character
-    StrCmp $2 "" Done
-    StrCpy $0 $0 "" 1
-    StrCpy $3 122 ; 122 = ASCII code for z
-  Loop2:
-    IntFmt $4 %c $3 ; Get character from current ASCII code
-    StrCmp $2 $4 Match
-    IntOp $3 $3 - 1
-    StrCmp $3 91 NoMatch Loop2 ; 90 = ASCII code one beyond Z
-  Match:
-    StrCpy $2 $4 ; It 'matches' (either case) so grab the lowercase version
-  NoMatch:
-    StrCpy $1 $1$2 ; Append to the final string
-    Goto Loop
-  Done:
-    StrCpy $0 $1 ; Return the final string
-    Pop $4
-    Pop $3
-    Pop $2
-    Pop $1
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrLowerCase_Call ResultVar String
-
-  !echo `$ {StrLowerCase} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call StrLower
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrLowerCase_Call ResultVar String
-
-  !echo `$ {UnStrLowerCase} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call un.StrLower
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrRep
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nReplace String Function - 2002-2004 Hendri Adriaens$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrRep
-    !define UnStrRep "!insertmacro FUNCTION_STRING_UnStrRep_Call"
-    Function un.StrReplace
-  !else
-    !undef StrRep
-    !define StrRep "!insertmacro FUNCTION_STRING_StrRep_Call"
-    Function StrReplace
-  !endif
-
-    Exch $0 ;this will replace wrong characters
-    Exch
-    Exch $1 ;needs to be replaced
-    Exch
-    Exch 2
-    Exch $2 ;the orginal string
-    Push $3 ;counter
-    Push $4 ;temp character
-    Push $5 ;temp string
-    Push $6 ;length of string that need to be replaced
-    Push $7 ;length of string that will replace
-    Push $R0 ;tempstring
-    Push $R1 ;tempstring
-    Push $R2 ;tempstring
-    StrCpy $3 "-1"
-    StrCpy $5 ""
-    StrLen $6 $1
-    StrLen $7 $0
-    Loop:
-    IntOp $3 $3 + 1
-    StrCpy $4 $2 $6 $3
-    StrCmp $4 "" ExitLoop
-    StrCmp $4 $1 Replace
-    Goto Loop
-    Replace:
-    StrCpy $R0 $2 $3
-    IntOp $R2 $3 + $6
-    StrCpy $R1 $2 "" $R2
-    StrCpy $2 $R0$0$R1
-    IntOp $3 $3 + $7
-    Goto Loop
-    ExitLoop:
-    StrCpy $0 $2
-    Pop $R2
-    Pop $R1
-    Pop $R0
-    Pop $7
-    Pop $6
-    Pop $5
-    Pop $4
-    Pop $3
-    Pop $2
-    Pop $1
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrRep_Call ResultVar String StringToReplace ReplacementString
-
-  !echo `$ {StrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"$\r$\n`
-
-  Push `${String}`
-  Push `${StringToReplace}`
-  Push `${ReplacementString}`
-
-  Call StrReplace
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrRep_Call ResultVar String StringToReplace ReplacementString
-
-  !echo `$ {UnStrRep} "${ResultVar}" "${String}" "${StringToReplace}" "${ReplacementString}"$\r$\n`
-
-  Push `${String}`
-  Push `${StringToReplace}`
-  Push `${ReplacementString}`
-
-  Call un.StrReplace
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrSort
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nAdvanced String Sort Function - © 2004 Diego Pedroso$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrSort
-    !define UnStrSort "!insertmacro FUNCTION_STRING_UnStrSort_Call"
-    Function un.AdvStrSort
-  !else
-    !undef StrSort
-    !define StrSort "!insertmacro FUNCTION_STRING_StrSort_Call"
-    Function AdvStrSort
-  !endif
-
-    # Prepare Variables
-
-    Exch $R7 ;Include Center string
-    Exch
-    Exch $R6 ;Include Left and Right strings
-    Exch 2
-    Exch $0 ;Right String
-    Exch 3
-    Exch $1 ;Left String
-    Exch 4
-    Exch $2 ;Center String
-    Exch 5
-    Exch $R0 ;String
-    Push $3
-    Push $4
-    Push $5
-    Push $R1
-    Push $R2
-    Push $R3
-    Push $R4
-    Push $R5
-
-    StrLen $3 $0
-    StrLen $4 $1
-    StrLen $5 $2
-    StrCpy $R1 0
-
-    # Center String Search
-
-    loop:
-      StrCpy $R3 $R0 $5 $R1
-      StrCmp $R3 "" error
-        StrCmp $R3 $2 done
-          IntOp $R1 $R1 + 1
-          Goto loop
-    done:
-
-    StrCpy $R5 $R1
-
-    IntOp $R1 $R1 - $4
-
-    # Left String Search
-
-    loop2:
-      StrCpy $R3 $R0 $4 $R1
-      StrCmp $R3 "" error2
-        StrCmp $R3 $1 done2
-          IntOp $R1 $R1 - 1
-          Goto loop2
-
-      error2:
-      StrCpy $R1 0
-      StrCpy $R3 0
-      Goto +2
-
-    done2:
-    StrCpy $R3 1
-
-    StrCpy $R4 $R0 $R5
-
-    StrCmp $R1 0 +2
-      StrCpy $R4 $R4 "" $R1
-
-    StrCmp $R3 1 0 +3
-      StrCmp $R6 0 0 +2
-        StrCpy $R4 $R4 "" $4
-
-    # Center String Addition
-
-    StrCmp $R7 0 +2
-      StrCpy $R4 $R4$2
-
-    StrCpy $R1 $R5
-    IntOp $R1 $R1 + $5
-
-    # Right String Search
-
-    loop3:
-
-      StrCpy $R3 $R0 $3 $R1
-      StrCmp $R3 "" error3
-        StrCmp $R3 $0 done3
-          IntOp $R1 $R1 + 1
-          Goto loop3
-
-      error3:
-      StrCpy $R1 0
-
-    done3:
-
-    IntOp $R5 $R5 + $5
-    StrCpy $R3 $R0 "" $R5
-
-    StrCmp $R1 0 +5
-      IntOp $R1 $R1 - $R5
-      StrCmp $R6 0 +2
-        IntOp $R1 $R1 + $3
-      StrCpy $R3 $R3 $R1
-
-    StrCpy $R4 $R4$R3
-
-    StrCpy $2 $R4
-    Goto +2
-
-      Error:
-      StrCpy $2 ""
-
-    # Return to User
-
-    Pop $R5
-    Pop $R4
-    Pop $R3
-    Pop $R2
-    Pop $R1
-    Pop $5
-    Pop $4
-    Pop $3
-    Pop $R0
-    Pop $R7
-    Pop $R6
-    Pop $0
-    Pop $1
-    Exch $2
-
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
-
-  !echo `$ {StrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"$\r$\n`
-
-  Push `${String}`
-  Push `${CenterStr}`
-  Push `${LeftStr}`
-  Push `${RightStr}`
-  Push `${IncludeLeftRightStr}`
-  Push `${IncludeCenterStr}`
-
-  Call AdvStrSort
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrSort_Call ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr IncludeCenterStr
-
-  !echo `$ {UnStrSort} "${ResultVar}" "${String}" "${CenterStr}" "${LeftStr}" "${RightStr}" "${IncludeLeftRightStr}" "${IncludeCenterStr}"$\r$\n`
-
-  Push `${String}`
-  Push `${CenterStr}`
-  Push `${LeftStr}`
-  Push `${RightStr}`
-  Push `${IncludeLeftRightStr}`
-  Push `${IncludeCenterStr}`
-
-  Call un.AdvStrSort
-
-  Pop `${ResultVar}`
-
-!macroend
+# Function StrTrimNewLines
+########################
 
 !macro FUNCTION_STRING_StrTrimNewLines
 
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nTrim New Lines Function - 2003-2004 Ximon Eighteen$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
+  !echo `$\r$\n----------------------------------------------------------------------$\r$\nTrim New Lines Function - 2003-2004 Ximon Eighteen$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n`
 
   !ifdef FUNCTION_STRING_UninstSupport
     !undef UnStrTrimNewLines
-    !define UnStrTrimNewLines "!insertmacro FUNCTION_STRING_UnStrTrimNewLines_Call"
+    !define UnStrTrimNewLines `!insertmacro FUNCTION_STRING_UnStrTrimNewLines_Call`
     Function un.TrimNewlines
   !else
     !undef StrTrimNewLines
-    !define StrTrimNewLines "!insertmacro FUNCTION_STRING_StrTrimNewLines_Call"
+    !define StrTrimNewLines `!insertmacro FUNCTION_STRING_StrTrimNewLines_Call`
     Function TrimNewlines
   !endif
 
@@ -1130,8 +1346,8 @@ by Diego Pedroso (aka deguix)
   loop:
     IntOp $R1 $R1 - 1
     StrCpy $R2 $R0 1 $R1
-    StrCmp $R2 "$\r" loop
-    StrCmp $R2 "$\n" loop
+    StrCmp $R2 `$\r` loop
+    StrCmp $R2 `$\n` loop
 
     IntOp $R1 $R1 + 1
     IntCmp $R1 0 no_trim_needed
@@ -1166,169 +1382,6 @@ by Diego Pedroso (aka deguix)
   Call un.TrimNewLines
 
   Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrNSISToIO
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nNSIS -> Install Options String Convertion Function - 2003-2004 Amir Szekely, Joost Verburg and Dave Laundon$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrNSISToIO
-    !define UnStrNSISToIO "!insertmacro FUNCTION_STRING_UnStrNSISToIO_Call"
-    Function un.Nsis2Io
-  !else
-    !undef StrNSISToIO
-    !define StrNSISToIO "!insertmacro FUNCTION_STRING_StrNSISToIO_Call"
-    Function Nsis2Io
-  !endif
-
-    Exch $0 ; The source
-    Push $1 ; The output
-    Push $2 ; Temporary char
-    StrCpy $1 "" ; Initialise the output
-  loop:
-    StrCpy $2 $0 1 ; Get the next source char
-    StrCmp $2 "" done ; Abort when none left
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" "" +3 ; Back-slash?
-        StrCpy $1 "$1\\"
-        Goto loop
-      StrCmp $2 "$\r" "" +3 ; Carriage return?
-        StrCpy $1 "$1\r"
-        Goto loop
-      StrCmp $2 "$\n" "" +3 ; Line feed?
-        StrCpy $1 "$1\n"
-        Goto loop
-      StrCmp $2 "$\t" "" +3 ; Tab?
-        StrCpy $1 "$1\t"
-        Goto loop
-      StrCpy $1 "$1$2" ; Anything else
-      Goto loop
-  done:
-    StrCpy $0 $1
-    Pop $2
-    Pop $1
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrNSISToIO_Call ResultVar String
-
-  !echo `$ {StrNSISToIO} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call NSIS2IO
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrNSISToIO_Call ResultVar String
-
-  !echo `$ {UnStrNSISToIO} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call un.NSIS2IO
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_StrIOToNSIS
-
-  !echo "$\r$\n----------------------------------------------------------------------$\r$\nInstall Options -> NSIS String Convertion Function - 2003-2004 Amir Szekely, Joost Verburg and Dave Laundon$\r$\n----------------------------------------------------------------------$\r$\n$\r$\n"
-
-  !ifdef FUNCTION_STRING_UninstSupport
-    !undef UnStrIOToNSIS
-    !define UnStrIOToNSIS "!insertmacro FUNCTION_STRING_UnStrIOToNSIS_Call"
-    Function un.Io2Nsis
-  !else
-    !undef StrIOToNSIS
-    !define StrIOToNSIS "!insertmacro FUNCTION_STRING_StrIOToNSIS_Call"
-    Function Io2Nsis
-  !endif
-
-    Exch $0 ; The source
-    Push $1 ; The output
-    Push $2 ; Temporary char
-    StrCpy $1 "" ; Initialise the output
-  loop:
-    StrCpy $2 $0 1 ; Get the next source char
-    StrCmp $2 "" done ; Abort when none left
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" +3 ; Escape character?
-        StrCpy $1 "$1$2" ; If not just output
-        Goto loop
-      StrCpy $2 $0 1 ; Get the next source char
-      StrCpy $0 $0 "" 1 ; Remove it from the source
-      StrCmp $2 "\" "" +3 ; Back-slash?
-        StrCpy $1 "$1\"
-        Goto loop
-      StrCmp $2 "r" "" +3 ; Carriage return?
-        StrCpy $1 "$1$\r"
-        Goto loop
-      StrCmp $2 "n" "" +3 ; Line feed?
-        StrCpy $1 "$1$\n"
-        Goto loop
-      StrCmp $2 "t" "" +3 ; Tab?
-        StrCpy $1 "$1$\t"
-        Goto loop
-      StrCpy $1 "$1$2" ; Anything else (should never get here)
-      Goto loop
-  done:
-    StrCpy $0 $1
-    Pop $2
-    Pop $1
-    Exch $0
-  FunctionEnd
-
-!macroend
-
-!macro FUNCTION_STRING_StrIOToNSIS_Call ResultVar String
-
-  !echo `$ {StrIOToNSIS} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call IO2NSIS
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UnStrIOToNSIS_Call ResultVar String
-
-  !echo `$ {UnStrIOToNSIS} "${ResultVar}" "${String}"$\r$\n`
-
-  Push `${String}`
-
-  Call un.IO2NSIS
-
-  Pop `${ResultVar}`
-
-!macroend
-
-!macro FUNCTION_STRING_UninstSupport
-
-  !define FUNCTION_STRING_UninstSupport
-
-  !define UnStrClbGet "!insertmacro FUNCTION_STRING_StrClbGet"
-  !define UnStrClbSet "!insertmacro FUNCTION_STRING_StrClbSet"
-  !define UnStrIOToNSIS "!insertmacro FUNCTION_STRING_StrIOToNSIS"
-  !define UnStrLoc "!insertmacro FUNCTION_STRING_StrLoc"
-  !define UnStrLowerCase "!insertmacro FUNCTION_STRING_StrLowerCase"
-  !define UnStrNSISToIO "!insertmacro FUNCTION_STRING_StrNSISToIO"
-  !define UnStrRep "!insertmacro FUNCTION_STRING_StrRep"
-  !define UnStrSort "!insertmacro FUNCTION_STRING_StrSort"
-  !define UnStrStr "!insertmacro FUNCTION_STRING_StrStr"
-  !define UnStrStrAdv "!insertmacro FUNCTION_STRING_StrStrAdv"
-  !define UnStrTok "!insertmacro FUNCTION_STRING_StrTok"
-  !define UnStrTrimNewLines "!insertmacro FUNCTION_STRING_StrTrimNewLines"
-  !define UnStrUpperCase "!insertmacro FUNCTION_STRING_StrUpperCase"
 
 !macroend
 

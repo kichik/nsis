@@ -7,13 +7,15 @@ functions in a much simpler way to include and call in NSIS scripts.
 How to use
 ----------
 
-  Syntax
+  Basic Syntax
+  ------------
 
-  Parameters are specified in this format: required (option1 | option2)
-  [optional]
+  Parameters are specified in this format:
+  required (required) (option1 | option2) [optional]
 
   The stars in command titles (*****) are the function usefulness in my
-  opinion. 5 stars (*****) the function is much useful.
+  opinion. The more starts, the most useful it is. 5 stars (*****) is much
+  useful.
 
   Any time when is mentioned "Default is" means that you can use the value
   mentioned or keep blank, the result is the same.
@@ -29,7 +31,7 @@ How to use
 
     !include "StrFunc.nsh"
 
-    StrFunc.nsh have to be in the Include directory, so you don't have to
+    StrFunc.nsh has to be inside Include directory, so you don't have to
     specify a path.
 
     You have to put this command before any command used in this header file.
@@ -37,11 +39,15 @@ How to use
   2. Commands
   -----------
 
+  Some commands have special specifications to work. Consult command's
+  documentation on "2.3 Commands" section.
+
     2.1 How To Use Commands In Install Sections and Functions
     ---------------------------------------------------------
 
     Every command used in install sections and functions have to be called
-    first before and out any sections and functions, and without parameters.
+    first before and out of any sections and functions, and without
+    parameters.
 
     Example:
     --------
@@ -69,8 +75,8 @@ How to use
     
     Every command used in uninstall sections and functions have to be called
     first before and out any sections and functions, without parameters, and
-    after the header command "${UnStrFunc}" to activate the Uninstall sections
-    and functions support for the commands following.
+    after the header command "${UnStrFunc}" to activate the Uninstall
+    sections and functions support for the commands following.
     
     Example:
     --------
@@ -100,7 +106,160 @@ How to use
     ------------
 
     =========================================================================
-    *****                           ${StrStr} ResultVar String StrToSearchFor
+    ****                                                           ${StrCase}
+    -------------------------------------------------------------------------
+    ResultVar String Type(Lower|Upper|Title|Sentence (Case))
+    =========================================================================
+    Converts "String" to "Type" Case.
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String to convert to "Type" case.
+      
+      Type
+      Type of string case to convert to:
+      
+        - Lower Case (this is just an example. however this can be useful.)
+        - Upper Case (THIS IS JUST AN EXAMPLE. HOWEVER THIS CAN BE USEFUL.)
+        - Title Case (This Is Just An Example. However This Can Be Useful.)
+        - Sentence Case (This is just an example. However this can be
+          useful.)
+        
+      Default value is "Setence Case".
+
+    Result Value -> ResultVar:
+
+      "String" in "Type" case.
+
+    Example:
+
+      ${StrCase} $0 "That's gonna hurt!" "Upper Case"
+
+      $0 = "THAT'S GONNA HURT!"
+
+    =========================================================================
+    ****                                                         ${StrClbSet}
+    -------------------------------------------------------------------------
+    String
+    =========================================================================
+    Copy "String" to clipboard.
+
+    Parameters:
+
+      String
+      String to put in the clipboard.
+
+    =========================================================================
+    ****                                                         ${StrClbGet}
+    -------------------------------------------------------------------------
+    ResultVar
+    =========================================================================
+    Get a string from the clipboard and return it to "ResultVar".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+    Result Value -> ResultVar:
+
+      The string found in clipboard.
+
+    =========================================================================
+    *****                                                      ${StrIOToNSIS}
+    -------------------------------------------------------------------------
+    ResultVar String
+    =========================================================================
+    Convert "String" from Install Options plugin to be supported by NSIS.
+    Escape, back-slash, carriage return, line feed and tab characters are
+    converted.
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String to convert to be supportable for NSIS.
+
+    Result Value -> ResultVar:
+
+      "String" supportable for NSIS.
+
+    Example:
+
+      ${StrIOToNSIS} $0 "\r\n\t\\This is just an example\\"
+
+      $0 = "$\r$\n$\t\This is just an example\"
+
+    =========================================================================
+    **                                                              ${StrLoc}
+    -------------------------------------------------------------------------
+    ResultVar String StrToSearchFor OffsetDirection(>|<)
+    =========================================================================
+    Searches for "StrToSearchFor" in "String" and returns its location,
+    according to "OffsetDirection".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String where to search "StrToSearchFor".
+
+      StrToSearchFor
+      String to search in "String".
+
+      OffsetDirection(>|<)
+      Direction where the counter goes to. Default is ">".
+      (> = left to right, < = right to left)
+
+    Result Value -> ResultVar:
+
+      Where "StrToSearchFor" is, according to "OffsetDirection".
+
+    Example: 
+
+      ${StrLoc} $0 "This is just an example" "just" "<"
+
+      $0 = "11"
+
+    =========================================================================
+    *****                                                      ${StrNSISToIO}
+    -------------------------------------------------------------------------
+    ResultVar String
+    =========================================================================
+    Converts "String" from NSIS to be supported by Install Options plugin.
+    Escape, back-slash, carriage return, line feed and tab characters are
+    converted.
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      String
+      String to convert to be supportable for Install Options plugin.
+
+    Result Value -> ResultVar:
+
+      "String" supportable for Install Options plugin.
+
+    Example:
+
+      ${StrNSISToIO} $0 "$\r$\n$\t\This is just an example\"
+
+      $0 = "\r\n\t\\This is just an example\\"
+      
+    =========================================================================
+    *****                                                           ${StrStr}
+    -------------------------------------------------------------------------
+    ResultVar String StrToSearchFor
     =========================================================================
     Searches for "StrToSearchFor" in "String".
 
@@ -126,39 +285,10 @@ How to use
       $0 = "just an example"
 
     =========================================================================
-    **         ${StrLoc} ResultVar String StrToSearchFor OffsetDirection(>|<)
-    =========================================================================
-    Searches for "StrToSearchFor" in "String" and returns its location,
-    according to "OffsetDirection".
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String where to search "StrToSearchFor".
-
-      StrToSearchFor
-      String to search in "String".
-
-      OffsetDirection(>|<)
-      Direction where the counter goes to. Default is ">". (> = left to right,
-      < = right to left)
-
-    Result Value -> ResultVar:
-
-      Where "StrToSearchFor" is, according to "OffsetDirection".
-
-    Example: 
-
-      ${StrLoc} $0 "This is just an example" "just" "<"
-
-      $0 = "11"
-
-    =========================================================================
-    *****   ${StrStrAdv} ResultVar String StrToSearchFor SearchDirection(>|<)
-                        ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops
+    *****                                                        ${StrStrAdv}
+    -------------------------------------------------------------------------
+    ResultVar String StrToSearchFor SearchDirection(>|<)
+    ResultStrDirection(>|<) DisplayStrToSearch(1|0) Loops
     =========================================================================
     Searches for "StrToSearchFor" in "String" in the direction specified by
     "SearchDirection" and looping "Loops" times.
@@ -179,12 +309,13 @@ How to use
       (< = To left, > = To right)
 
       ResultStrDirection (>|<)
-      Where the result string will be based on in relation of "StrToSearchFor"
+      Where the result string will be based on in relation of
+      "StrToSearchFor"
       position. Default is ">" (to right). (< = To left, > = To right)
 
       DisplayStrToSearch (1|0)
-      Display "StrToSearchFor" in the result. Default is "1" (True). (1 = True,
-      0 = False)
+      Display "StrToSearchFor" in the result. Default is "1" (True).
+      (1 = True, 0 = False)
 
       Loops
       Number of times the code will search "StrToSearchFor" in "String" not
@@ -213,7 +344,9 @@ How to use
       $0 = "This"
 
     =========================================================================
-    *****           ${StrRep} ResultVar String StrToReplace ReplacementString
+    *****                                                           ${StrRep}
+    -------------------------------------------------------------------------
+    ResultVar String StrToReplace ReplacementString
     =========================================================================
     Searches for all "StrToReplaceFor" in "String" replacing those with
     "ReplacementString".
@@ -243,124 +376,11 @@ How to use
 
       $0 = "This is just one example"
 
-
     =========================================================================
-    ****                                                  ${StrClbSet} String
-    =========================================================================
-    Copy "String" to clipboard.
-
-    Parameters:
-
-      String
-      String to put in the clipboard.
-
-
-    =========================================================================
-    ****                                               ${StrClbGet} ResultVar
-    =========================================================================
-    Get a string from the clipboard and return it to "ResultVar".
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-    Result Value -> ResultVar:
-
-      The string found in clipboard.
-
-
-    =========================================================================
-    *****             ${StrTok} ResultVar StrToTokenize Separators ResultPart
-                                                          SkipEmptyParts(1|0)
-    =========================================================================
-    Returns the part "ResultPart" between two "Separators" inside
-    "StrToTokenize".
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      StrToTokenizing
-      String where to search for "Separators".
-
-      Separators
-      Characters to find in "StrToTokenize".
-
-      ResultPart
-      The part want to be found in "StrToTokenize" between two "Separators".
-      Can be any number, starting at 1, and "L" that is the last part.
-      Default is L.
-
-      SkipEmptyParts(1|0)
-      Skips empty string parts between two "Separators". Default is 1 (True).
-      (1 = True, 0 = False)
-
-    Result Value -> ResultVar:
-
-      "StrToTokenize" part "Part" between two "Separators".
-
-    Examples: 
-
-      1) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "1"
-
-         $0 = "not"
-
-      2) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "0"
-
-         $0 = "is"
-
-    =========================================================================
-    ***                                      ${StrUpperCase} ResultVar String
-    =========================================================================
-    Converts "String" to upper case.
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String to convert to upper case.
-
-    Result Value -> ResultVar:
-
-      "String" in upper case.
-
-    Example:
-
-      ${StrUpperCase} $0 "oh man!"
-
-      $0 = "OH MAN!"
-
-    =========================================================================
-    ***                                      ${StrLowerCase} ResultVar String
-    =========================================================================
-
-    Converts "String" to lower case.
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String to convert to lower case.
-
-    Result Value -> ResultVar:
-
-      "String" in lower case.
-
-    Example:
-
-      ${StrUpperCase} $0 "OH MAN!"
-
-      $0 = "oh man!"
-
-    =========================================================================
-    *****              ${StrSort} ResultVar String CenterStr LeftStr RightStr
-                               IncludeLeftRightStr(1|0) IncludeCenterStr(1|0)
+    *****                                                          ${StrSort}
+    -------------------------------------------------------------------------
+    ResultVar String CenterStr LeftStr RightStr IncludeLeftRightStr(1|0)
+    IncludeCenterStr(1|0)
     =========================================================================
     Searches for "CenterStr" in "String", and returns only the value
     between "LeftStr" and "RightStr", including or not the "CenterStr" using
@@ -410,7 +430,51 @@ How to use
       $0 = "This is an exam"
 
     =========================================================================
-    *                                     ${StrTrimNewLines} ResultVar String
+    *****                                                           ${StrTok}
+    -------------------------------------------------------------------------
+    ResultVar StrToTokenize Separators ResultPart SkipEmptyParts(1|0)
+    =========================================================================
+    Returns the part "ResultPart" between two "Separators" inside
+    "StrToTokenize".
+
+    Parameters:
+
+      ResultVar
+      Destination where result is returned.
+
+      StrToTokenize
+      String where to search for "Separators".
+
+      Separators
+      Characters to find in "StrToTokenize".
+
+      ResultPart
+      The part want to be found in "StrToTokenize" between two "Separators".
+      Can be any number, starting at 1, and "L" that is the last part.
+      Default is L.
+
+      SkipEmptyParts(1|0)
+      Skips empty string parts between two "Separators". Default is 1 (True).
+      (1 = True, 0 = False)
+
+    Result Value -> ResultVar:
+
+      "StrToTokenize" part "Part" between two "Separators".
+
+    Examples: 
+
+      1) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "1"
+
+         $0 = "not"
+
+      2) ${StrTok} $0 "This is, or is not, just an example" " ," "5" "0"
+
+         $0 = "is"
+
+    =========================================================================
+    *                                                      ${StrTrimNewLines}
+    -------------------------------------------------------------------------
+    ResultVar String
     =========================================================================
     Deletes unnecessary new lines at end of "String".
 
@@ -432,82 +496,36 @@ How to use
 
       $0 = "$\r$\nThis is just an example"
 
-    =========================================================================
-    *****                                     ${StrNSISToIO} ResultVar String
-    =========================================================================
-    Converts "String" from NSIS to be supported by Install Options plugin.
-    Escape, back-slash, carriage return, line feed and tab characters are
-    converted.
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String to convert to be supportable for Install Options plugin.
-
-    Result Value -> ResultVar:
-
-      "String" supportable for Install Options plugin.
-
-    Example:
-
-      ${StrNSISToIO} $0 "$\r$\n$\t\This is just an example\"
-
-      $0 = "\r\n\t\\This is just an example\\"
-
-    =========================================================================
-    *****                                     ${StrIOToNSIS} ResultVar String
-    =========================================================================
-    Convert "String" from Install Options plugin to be supported by NSIS.
-    Escape, back-slash, carriage return, line feed and tab characters are
-    converted.
-
-    Parameters:
-
-      ResultVar
-      Destination where result is returned.
-
-      String
-      String to convert to be supportable for NSIS.
-
-    Result Value -> ResultVar:
-
-      "String" supportable for NSIS.
-
-    Example:
-
-      ${StrIOToNSIS} $0 "\r\n\t\\This is just an example\\"
-
-      $0 = "$\r$\n$\t\This is just an example\"
-
 Comments about functions included and not included
 --------------------------------------------------
 
-13 functions have been included
-  7 were included was it was in Archive
-  5 were not included in Archive
-    StrTok
+12 functions have been included
+  6 were included as are in Archive
+  6 were not included in Archive
+    StrTok (AdvStrTok)
+    StrLoc
+    StrSort (AdvStrSort)
+    StrCase
     NSISToIO
     IOToNSIS
-    StrLoc
-    StrSort
-  1 was been changed from original version
-    StrClbGet
 
-12 functions have not been included
-  8 were not included because of better functions
+14 functions have not been included
+  10 were not included because of better functions
     6 were not included because of AdvStrTok (called here as StrTok)
       First String Part Function
       Save on Variables Function
       Sort Strings (1, 2 and 3) Functions
       StrTok Function
+    2 were not included because of StrCase
+      StrLower Function
+      StrUpper Function
     1 was not included because of NSISToIO and IOToNSIS
       Convert / to // in Paths Function
     1 was not included because of original String Replace Function (called
       here as StrRep)
       Another String Replace Function
+    1 was not included because of Number To Text Converter.
+      Number To String Convertor (Archive original)
   2 were not included because isn't useful anymore
     Slash <-> Backslash Converter Function
     Trim Function
@@ -537,25 +555,17 @@ Convert / to // in Paths Function
 
   StrNSISToIO and StrIOToNSIS are better.
 
-Copy from Clipboard Function
-
-  Changed just the function name to the correct "CopyFromClipboard".
-
-
 First String Part Function
 
   AdvStrTok (called here as StrTok) is better.
-
 
 NSIS <-> Install Options String Convertor Functions
 
   Included from Install Options Readme.
 
-
 Number to String Converter Function
 
-  Have a serious bug when input is 5 chars long. Need to be remade to a
-  simpler one.
+  A buggy one, needs to be remade.
 
 Save on Variables Function
 
@@ -575,11 +585,9 @@ Split String Function
 
   AdvStrTok (called here as StrTok) is better.
 
-
 StrTok Function
 
   AdvStrTok (called here as StrTok) is better.
-
 
 Trim Function
 
@@ -590,6 +598,25 @@ Trim Function
 Version History
 ---------------
 
+1.06 - 03/26/2004
+
+- Fixed lots of bugs from faulty basic header file structure relating to
+  StrNumToStr command.
+- Fixed the bug where the old string was attached to string returned by
+StrCase when $R5 variable was used.
+
+1.05 - 03/17/2004
+
+- Fixed a bug with StrCase, Title Case wasn't working as should be.
+- Fixed a bug with StrStrAdv, previous fix created another bug, string not
+  returned correctly when using backwards search with "DisplayStrToSearch" as
+  "0".
+
+1.04 - 03/07/2004
+
+- Added new StrCase, removed StrLower and StrUpper.
+- Organized by name commands inside header and readme files.
+
 1.03 - 02/12/2004
 
 - Added commands support for uninstall sections and functions.
@@ -598,8 +625,7 @@ Version History
 1.02 - 02/07/2004
 
 - Fixed StrLoc.
-- Fixed Documentation about StrLoc. "Direction" is really
-"OffsetDirection".
+- Fixed Documentation about StrLoc. "Direction" is really "OffsetDirection".
 - Added my new AdvStrSort, and removed the old one.
 
 1.01 - 02/05/2004
@@ -607,7 +633,7 @@ Version History
 - Fixed Documentation about StrSort and StrTok.
 - Fixed StrTok default value for the string part. Now it's "L".
 - Fixed StrStrAdv fixed wrong search when had a combination of same
-substrings one after another in a string.
+  substrings one after another in a string.
 - Fixed StrLoc, when a string isn't found, don't return any value at all.
 
 1.00 - 02/01/2004
@@ -635,10 +661,10 @@ Made by Diego Pedroso (aka deguix).
 Functions Credits
 -----------------
 
-- Advanced Search in String, Advanced Token String, Localize in String
-made by Diego Pedroso.
+- Advanced Search in String, Advanced Token String, Localize in String,
+String Case, Advanced Sort String, Number To String Convertor made by
+Diego Pedroso.
 - Copy to/from clipboard made by Nik Medved.
-- StrUpper made by Dave Laundon.
 - StrReplace made by Hendri Adriaens.
 - Search in a string, Trim newlines made by Ximon Eighteen.
 - NSISToIO and IOToNSIS made by Amir Szekely, Joost Verburg and Dave Laundon.
