@@ -18,7 +18,7 @@ All parameters are pushed onto the stack (in this case, the plug-in function onl
 
 If you don't want to unload the DLL after calling a function, use /NOUNLOAD as the first parameter. For example:
 
-\c dll:function /NOUNLOAD "param"
+\c dll::function /NOUNLOAD "param"
 
 You can also use \R{setpluginunload}{SetPluginUnload} alwaysoff to avoid writing /NOUNLOAD each and every time you use the same plugin.
 
