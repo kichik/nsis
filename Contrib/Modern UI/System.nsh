@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.62
+;NSIS Modern User Interface version 1.63
 ;Macro System
 ;Written by Joost Verburg
 
@@ -108,10 +108,33 @@
   XPStyle On
 
   !ifndef MUI_RTL_UI
-	ChangeUI all "${MUI_UI}"
+    ChangeUI all "${MUI_UI}"
+    !ifdef MUI_HEADERBITMAP
+      !ifndef MUI_HEADERBITMAP_RIGHT
+        ChangeUI IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+      !else
+        ChangeUI IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+      !endif
+    !endif
+    !ifdef MUI_COMPONENTSPAGE_SMALLDESC
+      ChangeUI IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+    !else ifdef MUI_COMPONENTSPAGE_NODESC
+      ChangeUI IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+    !endif
   !else
     ChangeUI /RTL all "${MUI_UI}"
+    !ifndef MUI_HEADERBITMAP_RIGHT
+      ChangeUI /RTL IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmp.exe"
+    !else
+      ChangeUI /RTL IDD_INST "${NSISDIR}\Contrib\UIs\modern_headerbmpr.exe"
+    !endif
+    !ifdef MUI_COMPONENTSPAGE_SMALLDESC
+      ChangeUI /RTL IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_smalldesc.exe"
+    !else ifdef MUI_COMPONENTSPAGE_NODESC
+      ChangeUI /RTL IDD_SELCOM "${NSISDIR}\Contrib\UIs\modern_nodesc.exe"
+    !endif
   !endif
+  
   Icon "${MUI_ICON}"
   
   !ifdef MUI_UNINSTALLER
@@ -308,19 +331,19 @@
   
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_WELCOMEFINISHPAGE_INIT
+  !else ifdef MUI_FINISHPAGE
+    !insertmacro MUI_WELCOMEFINISHPAGE_INIT
   !endif
   
-  !ifndef MUI_WELCOMEPAGE
-    !ifdef MUI_FINISHPAGE
-      !insertmacro MUI_WELCOMEFINISHPAGE_INIT
-    !endif
-  !endif
+  !insertmacro MUI_HEADERBITMAP_INIT
 
   !insertmacro MUI_GUIINIT_BASIC
   
 !macroend
 
 !macro MUI_UNGUIINIT
+
+  !insertmacro MUI_HEADERBITMAP_INIT
 
   !insertmacro MUI_GUIINIT_BASIC
   
@@ -370,6 +393,16 @@
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 2" "Text" "$(MUI_TEXT_WELCOME_INFO_TITLE)"
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_WELCOME_INFO_TEXT)"
+  !endif
+
+!macroend
+
+!macro MUI_HEADERBITMAP_INIT
+
+  !ifdef MUI_HEADERBITMAP
+    InitPluginsDir
+    File "/oname=$PLUGINSDIR\modern-header.bmp" "${MUI_HEADERBITMAP}"
+    SetBrandingImage /IMGID=1046 /RESIZETOFIT "$PLUGINSDIR\modern-header.bmp"
   !endif
 
 !macroend
@@ -1751,13 +1784,28 @@
     !verbose 3
   !endif
   
-  !define MUI_NOVERBOSE
-
-  !insertmacro MUI_INTERFACE  
-  !insertmacro MUI_BASIC
-  !insertmacro MUI_UNBASIC
+  !ifndef MUI_SYSTEM_INSERTED
   
-  !undef MUI_NOVERBOSE
+    !define MUI_SYSTEM_INSERTED
+  
+    ;1.62 compatibility
+    !ifdef MUI_STARTMENU_VARIABLE || MUI_STARTMENU_DEFAULTFOLDER || MUI_STARTMENU_REGISTRY_ROOT
+      !error "The Start Menu Folder page defines have been renamed from MUI_STARTMENU_??? to MUI_STARTMENUPAGE_???. Please change this in your script."
+    !endif
+  
+    !define MUI_NOVERBOSE
+
+    !insertmacro MUI_INTERFACE  
+    !insertmacro MUI_BASIC
+    !insertmacro MUI_UNBASIC
+  
+    !undef MUI_NOVERBOSE
+    
+  !else
+  
+    !warning "The MUI_SYSTEM macro is now being inserted automatically. You can remove '!insertmacro MUI_SYSTEM' from your script."
+  
+  !endif
   
   !ifndef MUI_MANUALVERBOSE
     !verbose 4
@@ -1814,6 +1862,13 @@
 ;LANGUAGE FILES
 
 !macro MUI_LANGUAGEFILE_BEGIN LANGUAGE
+
+  !ifndef MUI_SYSTEM_INSERT
+  
+    !define MUI_SYSTEM_INSERT
+    !insertmacro MUI_SYSTEM
+    
+  !endif
   
   !ifndef "MUI_LANGUAGEFILE_${LANGUAGE}_USED"
   

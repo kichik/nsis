@@ -152,6 +152,13 @@ follow these steps:</p>
   Show the license page.</p>
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE</span><br />
   Show the component selection page.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
+  A small description area on the bottom of the page. Use this layout
+  if you have a lot of sections and don't need large descriptions.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
+  No description area.</p>
+  </div>
   <p class="text"><span class="bold">MUI_DIRECTORYPAGE</span><br />
   Show the directory selection page.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br />
@@ -230,11 +237,11 @@ follow these steps:</p>
   </div>
     <p class="subheader">4. Define interface settings (optional)</p>
   <p class="text">You can also change the settings of the interface by using defines:</p>
-  <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
+  <pre class="margin">!define MUI_ICON "myicon.ico"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
   <p class="text">The following settings are available: <i>(default values)</i></p>
   <p class="text"><span class="bold">MUI_UI</span> <i>(${NSISDIR}\Contrib\UIs\modern.exe)</i><br />
-  The interface file with the dialog resources.</p>
+  The interface file with the dialog resources. Change this if you have made your own customized UI.</p>
   <p class="text"><span class="bold">MUI_ICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-install.ico)</i><br />
   The icon of the installer.</p>
   <p class="text"><span class="bold">MUI_UNICON</span> <i>(${NSISDIR}\Contrib\Icons\modern-uninstall.ico)</i><br />
@@ -252,7 +259,16 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS</span> <i>(/windows)</i><br />
   The colors of the details screen, hexadecimal RRGGBB. (&quot;foreground&quot; &quot;background&quot;)</p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR</span> <i>(smooth)</i><br />
-  The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for a old-school windows look).</p>
+  The style of the progress bar (&quot;colored&quot; to use the MUI_INSTALLCOLORS or &quot;&quot; for an old-school
+  windows look).</p>
+  <p class="text"><span class="bold">MUI_HEADERBITMAP</span> <i>(not defined)</i><br />
+  Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57 won't have to be resized.
+  An example of a header bitmap is ${NSISDIR}\Contrib\Icons\modern-header.bmp, but can also make one with your own
+  logo.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span> <i>(not defined)</i><br />
+  Put the header bitmap on the right side of the header instead of the left side.</p>
+  </div>
   <p class="text"><span class="bold">MUI_SPECIALINI</span> <i>(${NSISDIR}\Contrib\Modern UI\ioSpecial.ini)</i><br />
   Install Options INI File for the Welcome and Finish page.</p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP</span> <i>(${NSISDIR}\Contrib\Icons\modern-wizard.bmp)</i><br />
@@ -266,13 +282,11 @@ follow these steps:</p>
   Modern UI, such as the .onGUIInit function and the Page function, create your
   own function and let the Modern UI functions call them..</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
-  <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
-  <pre class="margin">!insertmacro MUI_SYSTEM</pre>
-  <p class="subheader">8. Insert custom pages (optional)</p>
+  <p class="subheader">7. Insert custom pages (optional)</p>
   <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
   or MUI_UNCUSTOMPAGECOMMANDS), insert them before inserting the language files.</p>
   <p class="text"><a href="#customPages">More info...</a></p>
-  <p class="subheader">9. Insert language files</p>
+  <p class="subheader">8. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -291,7 +305,7 @@ follow these steps:</p>
   language (in the language itself) to the stack:</p>
 <pre class="margin">
 !insertmacro MUI_LANGDLL_PUSH "English" ;Parameter = Language file name in English</pre>
-  <p class="subheader">8. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
+  <p class="subheader">9. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
   <p class="text">If you are not using a Finish page without defining
   MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
   to true, you should insert the MUI_SECTIONS_FINISHHEADER
@@ -446,23 +460,17 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
   Start Menu Folder selection: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br />
   Welcome/Finish page: <a href="../../Examples/Modern UI/WelcomeFinish.nsi">WelcomeFinish.nsi</a><br />
   </p>
-<p class="header">The interface</p>
-<p class="subheader">Different versions</p>
-  <p class="text">There are three different versions of the Modern UI.
-  Modern.exe contains the dialogs of the standard interface.
-  If you have an installer with a lot of subsections or long section
-  names, use modern2.exe, which has a different component selection page.
-  Use modern3.exe if you are not using descriptions.</p>
-<p class="subheader">Customize the dialogs</p>
-  <p class="text">To change elements on the dialogs, modify modern?.exe
+<p class="header">Customize the dialogs</p>
+  <p class="text">To change elements on the dialogs, modify modern.exe
   in the Contrib\UIs directory using a resource editor such as
-  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
+  <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>
+  and use the MUI_UI define to use your customized UI.</p>
   <p class="text">The 'Please wait while Setup is loading...' text
   on the splash screen which  is being displayed when the installer
   is starting (Verifying installer, Unpacking data) cannot be changed
   by the script,  because the installer is not started yet when this
   dialog is being displayed. If you want to change this text, modify
-  dialog 111 of modern?.exe.<br />
+  dialog 111 of modern.exe.<br />
   The 'Verifying installer' and 'Unpacking data' texts are defined in
   the language header file of the NSIS exehead (Source\exehead\lang.h). 
   To change them, you need to edit this file and recompile NSIS.</p>
@@ -544,8 +552,12 @@ FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>1.62b - March 6, 2003
+<li>1.63 - March 9, 2003
   <ul>
+    <li>Support for a bitmap in the wizard header</li>
+    <li>New defines to change the description area</li>
+    <li>MUI_SYSTEM inserted automatically</li>
+    <li>Easier to customize resouce files</li>
     <li>New system for custom functions</li>
     <li>New InstallOptions macro's that do not remove the return value from
     the stack</li>

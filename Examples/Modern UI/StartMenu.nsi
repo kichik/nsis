@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.62
+;NSIS Modern User Interface version 1.63
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
@@ -42,9 +42,6 @@
   
   !define MUI_UNINSTALLER
   !define MUI_UNCONFIRMPAGE
-  
-  ;Modern UI System
-  !insertmacro MUI_SYSTEM
   
 ;--------------------------------
 ;Languages
