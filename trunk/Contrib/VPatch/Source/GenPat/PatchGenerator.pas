@@ -32,6 +32,8 @@ unit PatchGenerator;
 
   What's new
   ----------
+  2.1   20031219    Koen            Added error checking to CreatePatch, returns
+                                    negative numbers when there are errors.
   2.0   20030811    Koen            Initial documentation
 }
 
@@ -141,8 +143,8 @@ var
   retTO: Integer;
   noN: Integer;
 begin
-  fsSource:=TFileStream.Create(SourceFileName,fmOpenRead);
-  fsTarget:=TFileStream.Create(TargetFileName,fmOpenRead);
+  fsSource:=TFileStream.Create(SourceFileName,fmOpenRead+fmShareDenyNone);
+  fsTarget:=TFileStream.Create(TargetFileName,fmOpenRead+fmShareDenyNone);
   fm:=TMemoryStream.Create;
 
   SetLength(PRay,INIT_BLOCK_COUNT);
@@ -150,7 +152,14 @@ begin
 
   //Load those files into memory!
   SourceSize:=fsSource.Size;
-  GetMem(Source,SourceSize);
+  try
+    GetMem(Source,SourceSize);
+  except
+    on EOutOfMemory do begin
+      Result:=-2;           // not enough memory for source file
+      Exit;
+    end;
+  end;
   fm.CopyFrom(fsSource,SourceSize);
   Move(fm.Memory^,Source^,SourceSize);
   SourceCRC:=FileCRC(fsSource);
@@ -158,12 +167,27 @@ begin
 
   fm.Clear;
   TargetSize:=fsTarget.Size;
-  GetMem(Target,TargetSize);
+  try
+    GetMem(Target,TargetSize);
+  except
+    on EOutOfMemory do begin
+      FreeMem(Source,SourceSize);
+      Result:=-3;           // not enough memory for target file
+      Exit;
+    end;
+  end;
   fm.CopyFrom(fsTarget,TargetSize);
   Move(fm.Memory^,Target^,TargetSize);
   TargetCRC:=FileCRC(fsTarget);
   fsTarget.Free;
   fm.Free;
+
+  if(SourceCRC = TargetCRC) then begin
+    FreeMem(Source,SourceSize);
+    FreeMem(Target,TargetSize);
+    Result:=-1;
+    Exit;
+  end;
 
   PRay[0].TargetOffset:=0;
   PRay[0].SourceOffset:=0;
