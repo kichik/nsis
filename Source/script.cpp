@@ -5600,7 +5600,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 }
 
 #ifdef NSIS_SUPPORT_FILE
-int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, const set<string>& excluded, string& basedir)
+int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total_files, const char *name_override, int generatecode, int *data_handle, const set<string>& excluded, const string& basedir)
 {
   assert(!name_override || !recurse);
 
