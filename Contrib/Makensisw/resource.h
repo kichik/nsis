@@ -27,13 +27,14 @@
 #define IDM_EDITSCRIPT                  40003
 #define IDM_DOCS                        40004
 #define IDM_LOADSCRIPT                  40005
+#define IDM_FIND                        40006
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        111
-#define _APS_NEXT_COMMAND_VALUE         40006
+#define _APS_NEXT_COMMAND_VALUE         40007
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
