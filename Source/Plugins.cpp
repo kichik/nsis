@@ -8,6 +8,11 @@
 
 extern FILE *g_output;
 
+Plugins::Plugins()
+{
+  m_funcsCount = 0;
+}
+
 void Plugins::FindCommands(char* path,bool displayInfo)
 {
   if (path)
