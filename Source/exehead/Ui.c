@@ -39,7 +39,6 @@
 #define LB_ICONHEIGHT 20
 
 HICON g_hIcon;
-static int gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
 char *language_tables;
@@ -266,14 +265,13 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 #endif//NSIS_CONFIG_COMPONENTPAGE
 
-static int lang_num;
-
 static void NSISCALL set_language()
 {
   int i;
   LANGID lang_mask=~(LANGID)0;
   LANGID lang=myatoi(state_language);
   char *language_table=0;
+  int lang_num=g_inst_cmnheader->language_tables_num;
 
 lang_again:
   for (i = 0; i < lang_num; i++) {
@@ -299,6 +297,7 @@ lang_again:
 
 int NSISCALL ui_doinstall(void)
 {
+  static WNDCLASS wc; // richedit subclassing and bgbg creation
   num_sections=g_inst_header->num_sections;
   g_flags.autoclose=inst_flags&CH_FLAGS_AUTO_CLOSE;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -363,7 +362,6 @@ int NSISCALL ui_doinstall(void)
   // Multilingual support
   {
     extern char *g_db_strtab;
-    lang_num=g_inst_cmnheader->language_tables_num;
     language_tables=(void*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
 
     myitoa(state_language, GetUserDefaultLangID());
@@ -381,7 +379,6 @@ int NSISCALL ui_doinstall(void)
     if (g_inst_cmnheader->bg_color1 != -1)
     {
       RECT vp;
-      static WNDCLASS wc;
       extern int bg_color1, bg_color2, bg_textcolor;
       extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
       wc.lpfnWndProc = BG_WndProc;
@@ -413,7 +410,6 @@ int NSISCALL ui_doinstall(void)
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
-      static WNDCLASS wc;
       static char str1[]="RichEd20.dll";
       static char str2[]="RichEdit20A";
       if (!LoadLibrary(str1))
@@ -575,7 +571,6 @@ nextPage:
 
       if (this_page->id>=0) // NSIS page
       {
-        gDontFookWithFocus = 0;
         m_curwnd=CreateDialog(g_hInstance,windows[this_page->id].id,hwndDlg,windows[this_page->id].proc);
         if (m_curwnd)
         {
@@ -593,11 +588,12 @@ nextPage:
         //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
         //on the license page, instead we want the focus left alone because in
         //WM_INITDIALOG it is given to the richedit control.
-        if (!gDontFookWithFocus)
+        if (this_page->id != NSIS_PAGE_LICENSE)
           SetFocus(m_hwndOK);
         //XGE End
       }
     }
+    return FALSE;
   }
 
 #ifdef NSIS_SUPPORT_BGBG
@@ -694,7 +690,6 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     SendMessage(hwLicense,EM_STREAMIN,(((char*)es.dwCookie)[0]=='{')?SF_RTF:SF_TEXT,(LPARAM)&es);
     SetUITextFromLang(IDC_INTROTEXT,LANG_LICENSE_TEXT);
     //XGE 5th September 2002 - place the initial focus in the richedit control
-    gDontFookWithFocus++;
     SetFocus(hwLicense);
     return FALSE;
     //End Xge
@@ -942,7 +937,6 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   if (uMsg == WM_KEYDOWN && wParam == VK_SPACE)
   {
     SendMessage(m_curwnd,WM_TREEVIEW_KEYHACK,0,0);
-    return 0;
   }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
   if (uMsg == WM_DESTROY) {
@@ -1128,6 +1122,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     hItem.mask = TVIF_STATE;
     hItem.hItem=hTreeItems[wParam];
     if (hItem.hItem) CheckTreeItem(hwndTree1, &hItem,lParam);
+
+    return FALSE;
   }
   if (uMsg == WM_NOTIFY || uMsg == WM_TREEVIEW_KEYHACK)
   {
@@ -1428,6 +1424,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     }
 
     EnableWindow(m_hwndOK,0);
+
+    return FALSE;
   }
   if (uMsg == WM_NOTIFY_START) {
     DWORD id;
@@ -1515,6 +1513,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         CloseClipboard();
       }
     }
+    return FALSE;
   }
   //<<<
   return HandleStaticBkColor();

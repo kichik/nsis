@@ -32,9 +32,8 @@ HANDLE g_hInstance;
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
   DWORD d;
-  PROCESS_INFORMATION ProcInfo={0,};
-  STARTUPINFO StartUp={0,};
-  StartUp.cb=sizeof(StartUp);
+  static PROCESS_INFORMATION ProcInfo;
+  STARTUPINFO StartUp = {sizeof(StartUp), };
   d=GetFileAttributes(dir);
   if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY)) dir=0;
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
@@ -237,14 +236,14 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     char *szRenameSec = "[Rename]\r\n";
     HANDLE hfile, hfilemap;
     DWORD dwFileSize, dwRenameLinePos;
-    static const char nulint[4]="NUL";
+
+    *((int *)tmpbuf) = *((int *)"NUL");
 
     if (pszNew) {
       // create the file if it's not already there to prevent GetShortPathName from failing
       CloseHandle(myOpenFile(pszNew, 0, CREATE_NEW));
       GetShortPathName(pszNew,tmpbuf,1024);
     }
-    else *((int *)tmpbuf) = *((int *)nulint);
     // wininit is used as a temporary here
     GetShortPathName(pszExisting,wininit,1024);
     cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);

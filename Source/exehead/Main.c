@@ -80,8 +80,8 @@ BOOL CALLBACK verProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
-  static int ret;
-  static const char *m_Err;
+  int ret;
+  const char *m_Err = 0;
 #ifdef NSIS_CONFIG_CRC_SUPPORT
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   static HWND hwnd;
@@ -91,7 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   static char do_crc;
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-  static char silent;
+  char silent = 0;
 #endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
   int left;
 
