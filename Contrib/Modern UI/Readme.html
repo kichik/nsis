@@ -309,9 +309,8 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
   The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
   <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap to display in the white header. With the default DPI, a bitmap with a size 150x57
-  won't have to be resized. The NSIS Setup uses the ${NSISDIR}\Contrib\Icons\modern-header.bmp bitmap,
-  but can also make one with your own  logo.</p>
+  Bitmap to display in the white header (recommended size: 150x57 pixels). The NSIS Setup uses the bitmap
+  ${NSISDIR}\Contrib\Icons\modern-header.bmp, but can also make one with your own logo.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
   Display the header image on the right side instead of the left side.</p>
@@ -320,7 +319,8 @@ follow these steps:</p>
   InstallOptions INI file for the Welcome and Finish page.<br />
   <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap for the Welcome and Finish page.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
+  Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
+  <i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
   <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: 0xBBGGRR)</span><br />
   Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
   <p class="text"><span class="bold">MUI_RTL_UI</span><br />
