@@ -1426,6 +1426,7 @@ static void xhtml_rdaddwc(rdstringc * rs, word * text, word * end)
 
 	case word_UpperXref:
 	case word_LowerXref:
+	case word_FreeTextXref:
 	    kwl = kw_lookup(keywords, text->text);
 	    if (kwl) {
 		sect = xhtml_find_section(kwl->para);

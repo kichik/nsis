@@ -28,4 +28,4 @@ CallInstDLL has an option not to unload the DLL after usage. To use it with the 
 
 \c InstallOptions::dialog /NOUNLOAD "ini_file_location.ini"
 
-You can also use SetPluginUnload alawysoff (See \k{setpluginunload}) to avoid writing /NOUNLOAD each and every time you use the same plugin.
+You can also use \R{setpluginunload}{SetPluginUnload} alawysoff to avoid writing /NOUNLOAD each and every time you use the same plugin.

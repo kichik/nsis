@@ -145,7 +145,8 @@ enum {
     word_XrefEnd,		/* (invisible; no text) */
     word_IndexRef,		/* (always an invisible one) */
     word_HyperLink,		/* (invisible) */
-    word_HyperEnd		/* (also invisible; no text) */
+    word_HyperEnd,		/* (also invisible; no text) */
+    word_FreeTextXref		/* \R */
 };
 /* aux values for attributed words */
 enum {
