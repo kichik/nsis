@@ -1116,54 +1116,13 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               g_inst_section[hItem.lParam].flags|=SF_SELECTED;
               CheckTreeItem(hwndTree1,&hItem,1);
             }
-#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
-            {
-              ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
-            }
-#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
-            {
-              int r,x;
-              // check to see which install type we are
-              for (r = 0; r < m_num_insttypes; r ++)
-              {
-                HTREEITEM *ht=hTreeItems;
-                section *t=g_inst_section;
-                x=num_sections;
-                while (x--)
-                {
-                  if (t->name_ptr && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
-                  {
-                    TV_ITEM hItem;
-                    hItem.hItem=*ht;
-                    if (g_inst_header->no_custom_instmode_flag==1)
-                    {
-                      CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
-                    }
-                    else if (!(t->flags&SF_RO))
-                    {
-                      hItem.mask=TVIF_STATE;
-                      TreeView_GetItem(hwndTree1,&hItem);
-                      if (!(t->install_types&(1<<r)) != !((hItem.state>>12)>1 )) break;
-                    }
-                  }
-                  t++;
-                  ht++;
-                }
-                if (x < 0) break;
-              }
-
-              if (!g_inst_header->no_custom_instmode_flag)
-              {
-                SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
-                m_whichcfg=r;
-              }
-            } // end of typecheckshit
+            lParam = 0;
             uMsg = WM_IN_UPDATEMSG;
           } // not ro
         } // was valid click
       } // was click or hack
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      if (lpnmh->code == TVN_SELCHANGED) {
+      if (lpnmh && lpnmh->code == TVN_SELCHANGED) {
         SendMessage(hwndTree1, WM_USER+0x19, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
       }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -1211,7 +1170,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             ht++;
           }
           SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
+          lParam = 0;
         }
+        else lParam = 1;
         uMsg = WM_IN_UPDATEMSG;
       }
     }
@@ -1225,6 +1186,52 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   if (uMsg == WM_IN_UPDATEMSG)
   {
+    if (!lParam)
+    {
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
+      {
+        ExecuteCodeSegment(g_inst_header->code_onSelChange,NULL);
+      }
+#endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_COMPONENTPAGE
+      {
+        int r,x;
+        // check to see which install type we are
+        for (r = 0; r < m_num_insttypes; r ++)
+        {
+          HTREEITEM *ht=hTreeItems;
+          section *t=g_inst_section;
+          x=num_sections;
+          while (x--)
+          {
+            if (t->name_ptr && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
+            {
+              TV_ITEM hItem;
+              hItem.hItem=*ht;
+              if (g_inst_header->no_custom_instmode_flag==1)
+              {
+                CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
+              }
+              else if (!(t->flags&SF_RO))
+              {
+                hItem.mask=TVIF_STATE;
+                TreeView_GetItem(hwndTree1,&hItem);
+                if (!(t->install_types&(1<<r)) != !((hItem.state>>12)>1 )) break;
+              }
+            }
+            t++;
+            ht++;
+          }
+          if (x < 0) break;
+        }
+
+        if (!g_inst_header->no_custom_instmode_flag)
+        {
+          SendMessage(hwndCombo1,CB_SETCURSEL,r,0);
+          m_whichcfg=r;
+        }
+      } // end of typecheckshit
+    }
+
     if (g_inst_header->no_custom_instmode_flag==2)
     {
       int c=(m_whichcfg == m_num_insttypes && m_num_insttypes)<<3;// SW_SHOWNA=8, SW_HIDE=0
