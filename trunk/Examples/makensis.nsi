@@ -91,10 +91,6 @@ Section "NSIS Examples (recommended)" SecExample
   File "..\Examples\Modern UI\Example.nsi"
   File "..\Examples\Modern UI\MultiLanguage.nsi"
   File "..\Examples\Modern UI\ModernUI.nsh"
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
-  NoShortCuts:
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
@@ -121,17 +117,21 @@ Section "NSI Development Shell Extensions" SecExtention
   WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" /CD /X"SetCompressor bzip2" "%1"'
 SectionEnd
 
-Section "Start Menu + Desktop Icons" SecIcons
+Section "Start Menu + Desktop Shortcuts" SecIcons
   SectionIn 1 2 3
-  SetOutPath $SMPROGRAMS\NSIS
+  SetOutPath $INSTDIR
+  CreateDirectory $SMPROGRAMS\NSIS
+
   Delete "$SMPROGRAMS\NSIS\NSIS Home Page.lnk"
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://sourceforge.net/projects/nsis/"
+  Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.lnk"
+  Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.url"
+
+  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" "/CD"
+  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\makensis.htm"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Program Directory.lnk" "$INSTDIR"
-  Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.lnk"
-  WriteINIStr "$SMPROGRAMS\NSIS\NSI Online Template Generator.url" "InternetShortcut" "URL" "http://www.firehose.net/free/nsis/makensitemplate.phtml"
-  SetOutPath $INSTDIR
+
   CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" "/CD"
 SectionEnd
 
@@ -201,11 +201,6 @@ Section "Splash" SecContribSplash
   File ..\Contrib\splash\splash.txt
   SetOutPath $INSTDIR\Bin
   File ..\Bin\splash.exe
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash project workspace.lnk" "$INSTDIR\source\splash\splash.dsw"
-  NoShortCuts:
 SectionEnd
 
 Section "UberSplash w/transparency" SecContribSplashT
@@ -237,13 +232,6 @@ Section "Zip2Exe" SecContribZ2E
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
   SetDetailsPrint both
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    Delete "$SMPROGRAMS\Bin\NSIS\ZIP2EXE converter.lnk"
-    Delete "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP2EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP2EXE project workspace.lnk" "$INSTDIR\source\zip2exe\zip2exe.dsw"
-  NoShortCuts:
 SectionEnd
 
 Section "InstallOptions" SecContribIO
@@ -260,11 +248,7 @@ Section "InstallOptions" SecContribIO
   File "..\contrib\installoptions\Install Options.html"
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\InstallOptions.dll
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions Readme.lnk" "$INSTDIR\contrib\InstallOptions\install options.html"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions project workspace.lnk" "$INSTDIR\contrib\InstallOptions\io.dsw"
-  NoShortCuts:
+
 SectionEnd
 
 Section "NSIS-DL" SecContribNSISDL
@@ -279,11 +263,7 @@ Section "NSIS-DL" SecContribNSISDL
   File ..\contrib\NSISdl\ReadMe.txt
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL Readme.lnk" "$INSTDIR\contrib\NSISDL\ReadMe.txt"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
-  NoShortCuts:
+
 SectionEnd
 SubSectionEnd
 
@@ -316,9 +296,6 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\exehead\uninst.ico
   File ..\Source\exehead\bitmap1.bmp
   File ..\Source\exehead\bin2h.exe
-  IfFileExists $SMPROGRAMS\NSIS 0 NoSourceShortCuts
-    CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
-  NoSourceShortCuts:
   SetDetailsPrint both
 SectionEnd
 
@@ -332,10 +309,6 @@ Section "ExDLL Source" SecSrcEx
   File ..\contrib\exdll\exdll.dsp
   File ..\contrib\exdll\exdll.dsw
   SetOutPath $INSTDIR
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ExDLL project workspace.lnk" "$INSTDIR\contrib\ExDLL\exdll.dsw"
-  NoShortCuts:
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
@@ -349,11 +322,7 @@ Section "MakeNSISW Source" SecSrcMNW
   File ..\contrib\makensisw\*.rc
   File ..\contrib\makensisw\*.txt
   #File ..\contrib\makensisw\Makefile
-  IfFileExists $SMPROGRAMS\NSIS 0 NoShortCuts
-    CreateDirectory $SMPROGRAMS\NSIS\Contrib
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW project workspace.lnk" "$INSTDIR\contrib\MakeNsisw\makensisw.dsw"
-    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
-  NoShortCuts:
+
 SectionEnd
 SubSectionEnd
 SubSectionEnd
@@ -364,6 +333,48 @@ Section -post
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
   SetOutPath $INSTDIR
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
+
+    IfFileExists $INSTDIR\Contrib\Makensisw 0 NoMNWShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\MakeNSISW project workspace.lnk" "$INSTDIR\contrib\MakeNsisw\makensisw.dsw"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
+    NoMNWShortCuts:
+    IfFileExists "$INSTDIR\Contrib\ExDll" 0 NoExDLLShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\ExDLL project workspace.lnk" "$INSTDIR\contrib\ExDLL\exdll.dsw"
+    NoExDLLShortCuts:
+    IfFileExists "$INSTDIR\Source" 0 NoSourceShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Source      
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
+    NoSourceShortCuts:
+    IfFileExists "$INSTDIR\Plugins\installoptions.dll" 0 NoIOShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions Readme.lnk" "$INSTDIR\contrib\InstallOptions\install options.html"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\InstallOptions project workspace.lnk" "$INSTDIR\contrib\InstallOptions\io.dsw"
+    NoIOShortCuts:
+    IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 Noz2eShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      Delete "$SMPROGRAMS\Bin\NSIS\ZIP2EXE converter.lnk"
+      Delete "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP2EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\ZIP2EXE project workspace.lnk" "$INSTDIR\source\zip2exe\zip2exe.dsw"
+    Noz2eShortCuts:
+    IfFileExists "$INSTDIR\Examples\Modern UI\Readme.html" 0 NoMUIShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
+    NoMUIShortCuts:
+    IfFileExists "$INSTDIR\Bin\splash.exe" 0 NoSPLShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\Splash project workspace.lnk" "$INSTDIR\source\splash\splash.dsw"
+    NoSPLShortCuts:
+    IfFileExists "$INSTDIR\Plugins\nsisdl.dll" 0 NoDLShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL Readme.lnk" "$INSTDIR\contrib\NSISDL\ReadMe.txt"
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
+    NoDLShortCuts:
+
+
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
     BringToFront
