@@ -12,7 +12,7 @@ This command sets the compress flag which is used by the installer to determine 
 
 \c zlib|bzip2
 
-This command sets the compression algorithm used to compress files/data in the installer. Options are ZLib or BZip2. ZLib uses deflate compression, which is very good. this mode uses the least amount of overhead on the runtime side, in terms of memory usage, disk footprint, and speed. BZip2 compression can be better than deflate, especially when using NSIS_COMPRESS_WHOLE. bzip2 is much slower to decompress, and uses a LOT more memory at runtime. The disk footprint using bzip2 is also approximately 1kb more than ZLib.
+This command sets the compression algorithm used to compress files/data in the installer. Options are ZLib or BZip2. ZLib (the default) uses deflate compression. This mode uses less memory at runtime and is faster. BZip2 compression is usually better for large installers, but it is slower and uses a lot more memory at runtime.
 
 \H{asetdatablockoptimize} SetDatablockOptimize
 
