@@ -215,21 +215,32 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                     int len;
                     char *response = (char *)GlobalAlloc(GPTR,RSZ);
                     char url[300];
-                    JNL_HTTPGet get;
+                    static char pbuf[8192];
+                    char *p=NULL;
+                    if (getProxyInfo(pbuf)) {
+                        p=my_strstr(pbuf,"http=");
+                        if (!p) p=pbuf;
+                        else {
+                            p+=5;
+                            char *tp=my_strstr(p,";");
+                            if (tp) *tp=0;
+                        }
+                    }
+                    JNL_HTTPGet *get = new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);;
                     JNL::open_socketlib();
                     lstrcpy(url,NSIS_UPDATE);
                     lstrcat(url,g_sdata.brandingv);
                     lstrcpy(response,"0");
-                    get.addheader("User-Agent:Nullsoft Sex (Mozilla)");
-                    get.addheader("Accept:*/*");
-                    get.connect(url);
+                    get->addheader("User-Agent:Nullsoft Sex (Mozilla)");
+                    get->addheader("Accept:*/*");
+                    get->connect(url);
                     while (1) {
-                        int st=get.run();
+                        int st=get->run();
                         if (st<0) break; //error
-                        if (get.get_status()==2) {
-                            if(len=get.bytes_available()) {
+                        if (get->get_status()==2) {
+                            if(len=get->bytes_available()) {
                                 if (len>RSZ) len=RSZ;
-                                len=get.get_bytes(response,len);
+                                len=get->get_bytes(response,len);
                             }
                         }
                         if (st==1) break; //closed

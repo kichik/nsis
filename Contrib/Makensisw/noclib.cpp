@@ -29,6 +29,22 @@ char *my_strrchr(const char *string, int c) {
 	return 0;
 }
 
+char *my_strstr(char *i, char *s) {
+    if (lstrlen(i)>=lstrlen(s)) while (i[lstrlen(s)-1])  {
+        int l=lstrlen(s)+1;
+        char *ii=i;
+        char *is=s;
+        while (--l>0) {
+            if (*ii != *is) break;
+            ii++;
+            is++;
+        }
+        if (l==0) return i;
+        i++;
+    }
+    return NULL;
+}
+
 void *my_memset(void *dest, int c, size_t count) {
 	for (size_t i=0; i<count;i++) ((char*)dest)[i]=c;
 	return dest;
