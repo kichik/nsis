@@ -29,11 +29,16 @@
     ;French
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\French.nsh"
+    
+    ;Greek
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Greek.nsh"
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
   OutFile "MultiLanguage.exe"
 
   ;User interface - icons, ui file, check bitmap, progress bar etc.
@@ -43,22 +48,27 @@
   LicenseData /LANG=${LANG_ENGLISH} "License.txt"
   LicenseData /LANG=${LANG_DUTCH} "License.txt"
   LicenseData /LANG=${LANG_FRENCH} "License.txt"
+  LicenseData /LANG=${LANG_GREEK} "License.txt"
 
   ;Component-select dialog
     ;Titles
     LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
-    LangString TITLE_SecCreateUninst ${LANG_ENGLISH} "Uninstaller"
-    LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Deïnstallatie programma"
-    LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Désinstaller"
+    LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
+    LangString TITLE_SecCreateUninst ${LANG_ENGLISH} "Uninstaller (English)"
+    LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Uninstaller (Dutch)"
+    LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Uninstaller (French)"
+    LangString TITLE_SecCreateUninst ${LANG_GREEK} "Uninstaller (Greek)"
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
-    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Nederlandse beschrijven"
-    LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: Description Français"
+    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
+    LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: French description"
+    LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
     LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Uninstaller: English description"
-    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Deïnstallatie programma: Nederlandse beschrijven"
-    LangString DESC_SecCreateUninst ${LANG_FRENCH} "Désinstaller: Description Français"
+    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Uninstaller: Dutch description"
+    LangString DESC_SecCreateUninst ${LANG_FRENCH} "Uninstaller: French description"
+    LangString DESC_SecCreateUninst ${LANG_GREEK} "Uninstaller: Greek description"
 
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\${NAME}"
@@ -85,7 +95,10 @@ SectionEnd
 
 Section ""
 
-  ;Invisible section to display the Finish header
+  ;Invisible section to display the Finish header & write the language to the registry
+  
+  WriteRegStr HKCU "Software\${NAME}" "Installer Language" $LANGUAGE
+  
   !insertmacro MUI_FINISHHEADER SetPage
 
 SectionEnd
@@ -95,7 +108,7 @@ SectionEnd
 
 Function .onInit
 
-  LangDLL::LangDialog "Installer Language" "Please select a language." "3F" "English" "${LANG_ENGLISH}" "Français" "${LANG_FRENCH}" "Nederlands" "${LANG_DUTCH}" "8" "Tahoma" ;3 is the number of lanugages, F means change font
+  LangDLL::LangDialog "Installer Language" "Please select a language." "4F" "English" "${LANG_ENGLISH}" "French" "${LANG_FRENCH}" "Dutch" "${LANG_DUTCH}" "Greek" "${LANG_GREEK}" "8" "Tahoma" ;4 is the number of lanugages, F means change font
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
@@ -104,6 +117,7 @@ Function .onInit
 FunctionEnd
 
 Function .onInitDialog
+
     !insertmacro MUI_INNERDIALOG_INIT
 
     !insertmacro MUI_INNERDIALOG_START 1
@@ -120,14 +134,19 @@ Function .onInitDialog
     !insertmacro MUI_INNERDIALOG_STOP 3
 
   !insertmacro MUI_INNERDIALOG_END
+  
 FunctionEnd
 
 Function .onNextPage
+
   !insertmacro MUI_NEXTPAGE SetPage
+  
 FunctionEnd
 
 Function .onPrevPage
+
   !insertmacro MUI_PREVPAGE SetPage
+  
 FunctionEnd
 
 Function SetPage
@@ -186,6 +205,8 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR"
+  
+  DeleteRegKey HKCU "Software\${NAME}" "Installer Language"
 
   !insertmacro MUI_FINISHHEADER un.SetPage
 
@@ -194,8 +215,16 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Functions
 
+Function un.onInit
+
+  ReadRegStr $LANGUAGE HKCU "Software\${NAME}" "Installer Language"
+  
+FunctionEnd
+
 Function un.onNextPage
+
   !insertmacro MUI_NEXTPAGE un.onNextPage
+  
 FunctionEnd
 
 Function un.SetPage
