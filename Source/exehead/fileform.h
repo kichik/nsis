@@ -97,6 +97,7 @@ enum
   EW_SETWINDOWLONG,     // SetWindowLong (used by StaticBkColor): 3 [hwnd, which(numeric), value]
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
+  EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
 #endif
 
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
