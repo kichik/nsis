@@ -334,20 +334,27 @@ void AddFolderFromReg(HKEY rootKey)
     RegCloseKey(hKey);
   }
 
-  lstrcat(buf, "\\*.");
+  lstrcat(buf, "\\*.*");
   hSearch = FindFirstFile(buf, &FileData);
-  if (hSearch != INVALID_HANDLE_VALUE) do
+  if (hSearch != INVALID_HANDLE_VALUE) 
   {
-    if (*(WORD*)FileData.cFileName != *(WORD*)".")
+    do
     {
-      if (*(WORD*)FileData.cFileName != *(WORD*)".." || FileData.cFileName[2])
+      if (FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
       {
-        if (SendMessage(hwDirList, LB_FINDSTRINGEXACT, -1, (LPARAM)FileData.cFileName) == LB_ERR)
-          SendMessage(hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);
-        /*idx = */
-        /*SendMessage(hwDirList, LB_SETITEMDATA, (WPARAM)idx,
-          (LPARAM)ExtractAssociatedIcon(g_hInstance, FileData.cFileName, (WORD*)&idx));*/
-      }
-    }
-  } while (FindNextFile(hSearch, &FileData));
+        if (*(WORD*)FileData.cFileName != *(WORD*)".")
+        {
+          if (*(WORD*)FileData.cFileName != *(WORD*)".." || FileData.cFileName[2])
+          {
+            if (SendMessage(hwDirList, LB_FINDSTRINGEXACT, -1, (LPARAM)FileData.cFileName) == LB_ERR)
+              SendMessage(hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);
+            /*idx = */
+            /*SendMessage(hwDirList, LB_SETITEMDATA, (WPARAM)idx,
+              (LPARAM)ExtractAssociatedIcon(g_hInstance, FileData.cFileName, (WORD*)&idx));*/
+          }
+        }
+	  }
+    } while (FindNextFile(hSearch, &FileData));
+    FindClose(hSearch);
+  }
 }
