@@ -19,8 +19,6 @@ Modified LZMA library for NSIS
        - High decompressing speed: about 10-20 MB/s on 2 GHz CPU
        - Small memory requirements for decompressing
        - Small code size for decompressing: about 5 KB
-    If you need more information about 7-Zip, LZMA and licensing,
-    please write to support@7-zip.org 
 
 
     This library is free software; you can redistribute it and/or
