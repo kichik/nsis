@@ -26,6 +26,7 @@
 #define MRU_LIST_SIZE 5
 #define MRU_DISPLAY_LENGTH 40
 
+int SetArgv(char *cmdLine, int *argc, char ***argv);
 void SetTitle(HWND hwnd,char *substr);
 void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);
