@@ -1,5 +1,5 @@
 !define MUI_PRODUCT "NSIS"
-!define MUI_VERSION "2.0b0"
+!define MUI_VERSION "2.0b1 (CVS)"
 
 !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
