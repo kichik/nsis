@@ -109,7 +109,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
       if (hwnd) DestroyWindow(hwnd);
 #endif//NSIS_CONFIG_CRC_SUPPORT
-      return "can't read self";
+      return _LANG_INVALIDCRC;
     }
 
     if (!g_filehdrsize)
@@ -124,7 +124,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
          )
       {
         if (h.length_of_all_following_data > left)
-          return "not enough data";
+          return _LANG_INVALIDCRC;
 
         g_filehdrsize = m_pos;
 
@@ -194,14 +194,14 @@ const char * NSISCALL loadHeaders(int cl_flags)
   if (hwnd) DestroyWindow(hwnd);
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-  if (!g_filehdrsize) return "couldn't find header";
+  if (!g_filehdrsize) return _LANG_INVALIDCRC;
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
   if (do_crc)
   {
     int fcrc;
     if (!ReadSelfFile(&fcrc, sizeof(int)) || crc != fcrc)
-      return "bad crc";
+      return _LANG_INVALIDCRC;
   }
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
@@ -226,8 +226,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   if ((crc = GetCompressedDataFromDataBlockToMemory(-1, data, h.length_of_header)) != h.length_of_header)
   {
     GlobalFree((HGLOBAL)data);
-    wsprintf(g_caption, "can't read headers %d", crc);
-    return g_caption;
+    return _LANG_INVALIDCRC;
   }
 
 #if !defined(NSIS_COMPRESS_WHOLE) || !defined(NSIS_CONFIG_COMPRESSION_SUPPORT)
