@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Croatian (1050)
 ;By Igor Ostriz
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Završetak uklanjanja programa $(^Name)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "Program $(^Name) je uklonjen s Vašeg raèunala.\r\n\r\nOdaberite 'Kraj' za zatvaranje ovog èarobnjaka."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Vaše raèunalo treba ponovno pokrenuti za dovršenje postupka uklanjanja programa $(^Name). Želite li to uèiniti sada?"
 
   !define MUI_UNTEXT_ABORTWARNING "Jeste li sigurni da želite prekinuti uklanjanje programa $(^Name)?"  
 
