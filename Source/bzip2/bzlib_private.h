@@ -351,11 +351,11 @@ typedef
 
 #ifndef NSIS_COMPRESS_BZIP2_SMALLMODE
       /* for undoing the Burrows-Wheeler transform (FAST) */
-      UInt32   *tt;
+      UInt32   tt[ NSIS_COMPRESS_BZIP2_LEVEL * 100000 ];
 #else
       /* for undoing the Burrows-Wheeler transform (SMALL) */
-      UInt16   *ll16;
-      UChar    *ll4;
+      UInt16   ll16 [ NSIS_COMPRESS_BZIP2_LEVEL*100000 ];
+      UChar    ll4 [((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) ];
 #endif
 
       /* stored and calculated CRCs */
