@@ -2267,10 +2267,10 @@ again:
   ret=add_function(uninstall?"un.Initialize_____Plugins":"Initialize_____Plugins");
   if (ret != PS_OK) return ret;
   // SetDetailsPrint none
-  ent.which=EW_UPDATETEXT;
+  /*ent.which=EW_UPDATETEXT;
   ent.offsets[1]=4; // none
   ret=add_entry(&ent);
-  if (ret != PS_OK) return ret;
+  if (ret != PS_OK) return ret;*/
 
   zero_offset=add_string("$0");
   // StrCmp $PLUGINSDIR ""
@@ -2285,13 +2285,13 @@ again:
   ent.which=EW_PUSHPOP;
   ent.offsets[0]=zero_offset;
   ent.offsets[1]=0;
+  ent.offsets[3]=0;
   ret=add_entry(&ent);
   if (ret != PS_OK) return ret;
   // Get temp file name
   ent.which=EW_GETTEMPFILENAME;
   ent.offsets[0]=0; // $0
   ret=add_entry(&ent);
-  if (ret != PS_OK) return ret;
   // Delete the temp file created
   ent.which=EW_DELETEFILE;
   ent.offsets[0]=zero_offset;
@@ -2304,8 +2304,15 @@ again:
   ent.offsets[1]=0;
   ret=add_entry(&ent);
   if (ret != PS_OK) return ret;
+  // Detect errors
+  if (ret != PS_OK) return ret;
+  ent.which=EW_IFERRORS;
+  ent.offsets[0]=ns_label.add("Initialize_____Plugins_error",0);
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
   // Copy $0 to $PLUGINSDIR
   ent.which=EW_PLUGINCOMMANDPREP;
+  ent.offsets[0]=0;
   ret=add_entry(&ent);
   if (ret != PS_OK) return ret;
   // Pop $0
@@ -2316,7 +2323,27 @@ again:
   ret=add_entry(&ent);
   if (ret != PS_OK) return ret;
 
+  // done
   if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
+  ent.which=EW_RET;
+  ent.offsets[1]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+
+  // error
+  if (add_label("Initialize_____Plugins_error")) return PS_ERROR;
+  // error message box
+  ent.which=EW_MESSAGEBOX;
+  ent.offsets[0]=MB_OK|MB_ICONSTOP;
+  ent.offsets[1]=add_string("Error! Can't initialize plug-ins directory. Please try again later.");
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+  // quit
+  ent.which=EW_QUIT;
+  ent.offsets[0]=0;
+  ent.offsets[1]=0;
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
 
   ret=function_end();
   if (ret != PS_OK) return ret;
