@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2002 Robert Rainwater
-  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
+  Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, Sunil Kamath, Joost Verburg
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -34,7 +34,7 @@
 #define NSIS_UPDATE  "\\Bin\\NSISUpdate.exe"
 #define USAGE        "Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT    "Copyright © 2002 Robert Rainwater"
-#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath"
+#define CONTRIB      "Fritz Elfert, Justin Frankel, Amir Szekely, Sunil Kamath, Joost Verburg"
 #define DOCPATH      "http://nsis.sourceforge.net/Docs/"
 #define LOCALDOCS    "\\NSIS.chm"
 #define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
@@ -54,10 +54,11 @@
 #define MINHEIGHT    180
 #define FILE_MENU_INDEX 0
 #define EDIT_MENU_INDEX 1
-#define TOOLS_MENU_INDEX 2
+#define SCRIPT_MENU_INDEX 2
 #define COMPRESSOR_MENU_INDEX 4
-#define COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created the smallest installer."
-#define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created the smallest installer which was restored."
+#define TOOLS_MENU_INDEX 3
+#define COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
+#define RESTORED_COMPRESSOR_MESSAGE "\n\nThe %s compressor created the smallest installer (%d bytes)."
 #define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
 #define TOTAL_SIZE_COMPRESSOR_STAT "Total size:"
 #define SYMBOL_SET_NAME_MAXLEN 40
@@ -96,7 +97,7 @@ char *compressor_names[] = {"",
 char *compressor_display_names[] = {"Defined in Script/Compiler Default",
                             "ZLIB",
                             "BZIP2",
-                            "LZMA (7-Zip)",
+                            "LZMA",
                             "Best Compressor"};
 WORD compressor_commands[] = {IDM_SCRIPT,
                               IDM_ZLIB,
@@ -119,6 +120,7 @@ int compressor_strings[] = {IDS_SCRIPT,
 #endif
 
 // Extern Variables
+
 extern const char* NSISW_VERSION;
 
 int WINAPI     WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
