@@ -287,8 +287,8 @@ bool SaveSettings(void) {
   HWND hwnd;
   int nBufLen = MAX_BUFFER_LENGTH;
   char *pszBuffer = (char*)MALLOC(nBufLen);
-
   if (!pszBuffer) return false;
+
   for(nIdx = 0; nIdx < nNumFields; nIdx++) {
     hwnd = pFields[nIdx].hwnd;
     wsprintf(szField, "Field %d", nIdx + 1);
@@ -313,7 +313,8 @@ bool SaveSettings(void) {
             pszBuffer = (char*)MALLOC(nBufLen);
             if (!pszBuffer) return false;
           }
-          char *pszItem = (char*)MALLOC(nBufLen);
+          char *pszItem = (char*)MALLOC(/*nBufLen*/32000);
+          if (!pszItem) return false;
 
           *pszBuffer = '\0';
           int nNumItems = SendMessage(hwnd, LB_GETCOUNT, 0, 0);
@@ -324,6 +325,9 @@ bool SaveSettings(void) {
               lstrcat(pszBuffer, pszItem);
             }
           }
+
+          wsprintf(pszItem, "%d %d %d\r\n%s\r\n%s", nLength, lstrlen(pszBuffer), nBufLen, pFields[nIdx].pszListItems, pszBuffer);
+          MessageBox(0, pszItem, "asd", MB_OK);
 
           FREE(pszItem);
           break;
@@ -348,7 +352,15 @@ bool SaveSettings(void) {
     WritePrivateProfileString(szField, "STATE", pszBuffer, pszFilename);
   }
 
+  MessageBox(0, "settings saved", "sad", MB_OK);
+
+  char bla[452];
+  wsprintf(bla, "%d", pszBuffer);
+  MessageBox(0, bla, pszBuffer, MB_OK);
+
   FREE(pszBuffer);
+
+  MessageBox(0, "settings saved", "sad", MB_OK);
 
   return true;
 }
@@ -509,7 +521,7 @@ bool ReadSettings(void) {
         pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
         strcpy(pFields[nIdx].pszListItems, szResult);
         pFields[nIdx].pszListItems[nResult] = '|';
-        pFields[nIdx].pszListItems[nResult + 1] = '0';
+        pFields[nIdx].pszListItems[nResult + 1] = '\0';
       }
     }
     pFields[nIdx].nMaxLength = GetPrivateProfileInt(szField, "MaxLen", 0, pszFilename);
@@ -614,8 +626,10 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 {
   BOOL bRes;
   if (message == WM_NOTIFY_OUTER_NEXT && wParam == 1)
+  {
     // Get the settings ready for the leave function verification
     SaveSettings();
+  }
   bRes = CallWindowProc((long (__stdcall *)(struct HWND__ *,unsigned int,unsigned int,long))lpWndProcOld,hwnd,message,wParam,lParam);
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
@@ -894,8 +908,8 @@ int createCfgDlg()
                        && (nFindMsg = LB_FINDSTRINGEXACT) && (nSetSelMsg = LB_SETCURSEL))
                  )) {
         // if this is a listbox or combobox, we need to add the list items.
-        char *pszStart, *pszEnd;
-        pszStart = pszEnd = pFields[nIdx].pszListItems;
+        char *pszStart, *pszEnd, *pszList;
+        pszStart = pszEnd = pszList = STRDUP(pFields[nIdx].pszListItems);
         while ((*pszEnd) && (*pszStart)) {
           if (*pszEnd == '|') {
             *pszEnd = '\0';
@@ -908,6 +922,7 @@ int createCfgDlg()
           }
           pszEnd++;
         }
+        FREE(pszList);
         if (pFields[nIdx].pszState) {
           if (pFields[nIdx].nFlags & (FLAG_MULTISELECT|FLAG_EXTENDEDSEL) && nFindMsg == LB_FINDSTRINGEXACT) {
             SendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
