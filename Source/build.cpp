@@ -317,6 +317,8 @@ CEXEBuild::CEXEBuild()
   uDefCodePage=CP_ACP;
 
   use_first_insttype=true;
+
+  build_header.license_bg=-COLOR_BTNFACE;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }

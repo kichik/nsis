@@ -1206,9 +1206,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_LICENSEBKCOLOR:
       {
         char *p = line.gettoken_str(1);
-        int v=strtoul(p,&p,16);
-        build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
-        SCRIPT_MSG("LicenseBkColor: %06X\n",v);
+        if (!strcmpi(p,"/windows"))
+        {
+          build_header.license_bg=-COLOR_WINDOW;
+          SCRIPT_MSG("LicenseBkColor: /windows\n");
+        }
+        else if (!strcmpi(p,"/grey") || !strcmpi(p,"/gray"))
+        {
+          build_header.license_bg=-COLOR_BTNFACE;
+          SCRIPT_MSG("LicenseBkColor: /grey\n");
+        }
+        else
+        {
+          int v=strtoul(p,&p,16);
+          build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+          SCRIPT_MSG("LicenseBkColor: %06X\n",v);
+        }
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else//!NSIS_CONFIG_LICENSEPAGE
