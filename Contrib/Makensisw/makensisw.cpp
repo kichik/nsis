@@ -21,6 +21,7 @@
 #define MAKENSISW_CPP
 
 #include <windows.h>
+#include <WindowsX.h>
 #include <stdio.h>
 #include "makensisw.h"
 #include "resource.h"
@@ -819,6 +820,23 @@ void EnableSymbolSetButtons(HWND hwndDlg)
   }
 }
 
+void EnableSymbolEditButtons(HWND hwndDlg)
+{
+  int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
+  if(n == 0) {
+    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
+  }
+  else if(n == 1) {
+    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
+    EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
+  }
+  else if(n > 1) {
+    EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
+    EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
+  }
+}
+
 void SetSymbols(HWND hwndDlg, char **symbols)
 {
     int i = 0;
@@ -943,7 +961,13 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               buf = buf3;
               GlobalFree(buf2);
             }
-            SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)buf);
+            int idx = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_ADDSTRING, 0, (LPARAM)buf);
+            if (idx >= 0)
+            {
+              SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_SETSEL, FALSE, -1);
+              SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_SETSEL, TRUE, idx);
+            }
+            EnableSymbolEditButtons(hwndDlg);
             SendDlgItemMessage(hwndDlg, IDC_SYMBOL, WM_SETTEXT, 0, 0);
             SendDlgItemMessage(hwndDlg, IDC_VALUE, WM_SETTEXT, 0, 0);
             GlobalFree(buf);
@@ -1005,6 +1029,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           for(i=n-1;i>=0;i--) {
             SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_DELETESTRING, (WPARAM)items[i], 0);
           }
+          EnableSymbolEditButtons(hwndDlg);
           EnableSymbolSetButtons(hwndDlg);
         }
         break;
@@ -1023,19 +1048,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         case IDC_SYMBOLS:
           if (HIWORD(wParam) == LBN_SELCHANGE)
           {
-            int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
-            if(n == 0) {
-              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-              EnableWindow(GetDlgItem(hwndDlg, IDDEL), FALSE);
-            }
-            else if(n == 1) {
-              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), TRUE);
-              EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
-            }
-            else if(n > 1) {
-              EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
-              EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
-            }
+            EnableSymbolEditButtons(hwndDlg);
           }
           else if (HIWORD(wParam) == LBN_DBLCLK)
           {
