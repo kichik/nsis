@@ -248,12 +248,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           else break;
           while (c)
           {
+            WIN32_FIND_DATA *fd;
             while (*p != '\\' && *p) p=CharNext(p);
             c=*p;
             *p=0;
-            if (!file_exists(buf1)) {
-              g_flags.exec_error += !CreateDirectory(buf1,NULL);
+            fd = file_exists(buf1);
+            if (!fd) {
+              if (!CreateDirectory(buf1,NULL))
+                g_flags.exec_error++;
             }
+            else if ((fd->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) g_flags.exec_error++;
             *p++ = c;
           }
         }
