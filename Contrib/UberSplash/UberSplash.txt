@@ -9,5 +9,7 @@ for a display and die.. [no fade]
 ExecWait '"$TEMP\splash.exe" bitmap.bmp 0 MILLISECONDSHOW 0'
 win95 and win98 just display for full length
 
+To compile you must use the KOL library. You can find it here at http://bonanzas.rinet.ru/
+
 code by vince
 idea by snowchyld
