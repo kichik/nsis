@@ -2516,9 +2516,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_SETSTATICBKCOLOR:
       ent.which=EW_SETWINDOWLONG;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=GWL_USERDATA;
+      ent.offsets[1]=add_string("-21"/*GWL_USERDATA*/);
       ent.offsets[2]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SetStaticBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_SETWINDOWLONG:
+      ent.which=EW_SETWINDOWLONG;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[2]=add_string(line.gettoken_str(3));
+      SCRIPT_MSG("SetWindowLong: handle=%s index=%s new long=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
@@ -2579,6 +2586,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
     case TOK_SETSTATICBKCOLOR:
+    case TOK_SETWINDOWLONG:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",  line.gettoken_str(0));
@@ -2590,6 +2598,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_FINDWINDOW:
     case TOK_GETDLGITEM:
     case TOK_SETSTATICBKCOLOR:
+    case TOK_SETWINDOWLONG:
     case TOK_SHOWWINDOW:
     case TOK_CREATEFONT:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_HWNDS not defined.\n",  line.gettoken_str(0));
