@@ -1,24 +1,37 @@
 TODO
+----
+
+NSIS 2.0 FINAL
+--------------
 
 NSIS
 
+* DirShow should be back
+
+LATER VERSIONS
+--------------
+
+NSIS
+
+* Compiler plug-ins
+
 * SetCurInstType should work without the components page
 
-* empty subsections should not show
+* Empty subsections should not show
 
-* skip plugin calls, file instructions that add more than one file with +1 with goto
+* Smart relative jumps that work with File, plug-ins calls etc.
 
-* more powerful plug-ins (access to ExecFunc and flags and even more)
+* More powerful plug-ins (access to ExecFunc and flags and even more)
 
-* LZMA compression
+* Option to cancel the installation process
 
 EXAMPLES
 
-* write an advanced paging example showing multiple components page with multiple
+* Write an advanced paging example showing multiple components page with multiple
   instfiles pages
 
-PLUGINS
+PLUG-INS
 
 * InstallOptions - custom class names so you can include whatever control you want
 
-* nsExec - live output
+* nsExec - live outputs
