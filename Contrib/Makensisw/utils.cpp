@@ -305,3 +305,13 @@ LRESULT CALLBACK TipHookProc(int nCode, WPARAM wParam, LPARAM lParam) {
     } 
     return CallNextHookEx(g_hook, nCode, wParam, lParam); 
 }
+
+void ShowDocs() {
+	char pathf[MAX_PATH],*path;
+	GetModuleFileName(NULL,pathf,sizeof(pathf));
+	path=my_strrchr(pathf,'\\');
+	if(path!=NULL) *path=0;
+	lstrcat(pathf,LOCALDOCS);
+	if ((int)ShellExecute(g_hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL)<=32) 
+		ShellExecute(g_hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
+}
