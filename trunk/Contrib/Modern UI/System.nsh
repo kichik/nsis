@@ -8,7 +8,7 @@
 ;--------------------------------
 
 !ifndef NSIS_CONFIG_ENHANCEDUI_SUPPORT
-  !error "To use Modern UI you must have a NSIS version compiled with NSIS_CONFIG_ENHANCEDUI_SUPPORT (in Source/exehead/config.h)!"
+  !error "To use the Modern UI you must have a NSIS version compiled with NSIS_CONFIG_ENHANCEDUI_SUPPORT (in Source/exehead/config.h)!"
 !endif
 
 !verbose 3
@@ -1143,16 +1143,20 @@
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
           
            StrCmp ${MUI_TEMP1} "1" "" +3
-             StrCpy ${MUI_TEMP1} "${MUI_FINISHPAGE_RUN}"
-             Exec "$\"${MUI_TEMP1}$\""
+             !ifndef MUI_FINISHPAGE_RUN_PARAMETERS
+               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\""
+             !else
+               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_RUN}$\" ${MUI_FINISHPAGE_RUN_PARAMETERS}"
+             !endif
+             Exec "${MUI_TEMP1}"
              
            !ifdef MUI_FINISHPAGE_SHOWREADME
           
              !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 5" "State"
             
              StrCmp ${MUI_TEMP1} "1" "" +3
-               StrCpy ${MUI_TEMP1} ${MUI_FINISHPAGE_SHOWREADME}
-               ExecShell "open" "$\"${MUI_TEMP1}$\""
+               StrCpy ${MUI_TEMP1} "$\"${MUI_FINISHPAGE_SHOWREADME}$\""
+               ExecShell "open" "{MUI_TEMP1}"
                
            !endif
              
