@@ -1406,22 +1406,31 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   //>>>Ximon Eighteen aka Sunjammer 30th August 2002
   //+++Popup "Copy Details To Clipboard" menu when RMB clicked in DetailView
+  //+++Currently this has no language support for the popup menu text, I'm
+  //+++looking to possibly change this code to work off CTRL-C instead of a
+  //+++popup menu to avoid the language problem.
   if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == NM_RCLICK)
   {
     int count = ListView_GetItemCount(insthwnd);
     if (count > 0)
     {
-  	  POINT p;
+      DWORD pos  = GetMessagePos();
       HMENU menu = CreatePopupMenu();
       AppendMenu(menu,MF_STRING,1,"Copy Details To Clipboard");
-  	  GetCursorPos(&p);
-	  if (1==TrackPopupMenu(menu,TPM_NONOTIFY|TPM_RETURNCMD,p.x,p.y,0,insthwnd,0))
+	  if (1==TrackPopupMenu(
+          menu,
+          TPM_NONOTIFY|TPM_RETURNCMD,
+          GET_X_LPARAM(pos),
+          GET_Y_LPARAM(pos),
+          0,insthwnd,0))
       {
         char textBuf[1024];
         int i,total = 0;
         LVITEM item;
         HGLOBAL memory;
         LPTSTR ptr,endPtr;
+
+        // 1st pass - determine clipboard memory required.
         item.iSubItem   = 0;
         item.pszText    = textBuf;
         item.cchTextMax = 1023;
@@ -1430,11 +1439,14 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
           // Add 2 for the CR/LF combination that must follow every line.
           total += 2+SendMessage(insthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
         }
+
+        // 2nd pass - store detail view strings on the clipboard
+        // Clipboard MSDN docs say mem must be GMEM_MOVEABLE
         OpenClipboard(0);
         EmptyClipboard();
-        memory = GlobalAlloc(GMEM_MOVEABLE,(total+1)*sizeof(TCHAR));
+        memory = GlobalAlloc(GMEM_MOVEABLE,total+1);
         ptr = GlobalLock(memory);
-        endPtr = ptr+(total+1)*sizeof(TCHAR)-1;
+        endPtr = ptr+total;
         for (i = 0; i < count; i++)
         {
           // -2 to allow for CR/LF
@@ -1443,7 +1455,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
           *ptr++ = '\r';
           *ptr++ = '\n';
         }
-        *ptr++ = (TCHAR)0;
+        *ptr++ = 0;
         GlobalUnlock(memory);
         SetClipboardData(CF_TEXT,memory);
         CloseClipboard();
