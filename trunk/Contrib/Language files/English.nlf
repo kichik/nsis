@@ -15,8 +15,8 @@ Nullsoft Install System %s
 : Confirmation
 : Uninstalling Files
 : Completed
-< Back
-Next >
+< &Back
+&Next >
 I Agree
 Install
 Uninstall
