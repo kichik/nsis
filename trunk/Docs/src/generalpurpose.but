@@ -99,7 +99,7 @@ Sets the file attributes of 'filename'. Valid attributes can be combined with | 
 
 \b \e{TEMPORARY} or \e{FILE_ATTRIBUTE_TEMPORARY}
 
-The error flag will be set if the file's attributes cannot be set (i.e. the file doesn't exist, or you don't have the right permissions)
+The error flag will be set if the file's attributes cannot be set (i.e. the file doesn't exist, or you don't have the right permissions). You can only set attributes. It's not possible to unset them. If you want to remove an attribute use NORMAL. This way all attributes are erased. This command doesn't support wildcards.
 
 \S2{regdll} RegDLL
 
