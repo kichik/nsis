@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Japanese (1041)
 ;By Dnanako
@@ -13,7 +13,7 @@
   !define MUI_LANGNAME "Japanese" ;(日本語) Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "$(^Name) セットアップ ウィザードへようこそ"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^Name)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによって、セットアップがこのコンピュータを再起動せずに、確実にシステム ファイルをアップデートすることが出来るようになります。\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "このウィザードは、$(^Name)のインストールをガイドしていきます。\r\n\r\nセットアップを開始する前に、他のすべてのアプリケーションを終了することを推奨します。これによってセットアップがコンピュータを再起動せずに、システム ファイルを更新することが出来るようになります。\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "ライセンス契約書"  
   !define MUI_TEXT_LICENSE_SUBTITLE "$(^Name)をインストールする前に、ライセンス条件を確認してください。"
@@ -85,7 +85,8 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "$(^Name) アンインストール ウィザードは完了しました。"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name)は、このコンピュータからアンインストールされました。\r\n\r\nウィザードを閉じるには [完了] を押してください。"
-  
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "$(^Name) のアンインストールを完了するには、このコンピュータを再起動する必要があります。今すぐ再起動しますか？"  
+
   !define MUI_UNTEXT_ABORTWARNING "$(^Name) アンインストールを中止しますか？"  
   
 !insertmacro MUI_LANGUAGEFILE_END
