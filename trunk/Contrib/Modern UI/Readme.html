@@ -332,6 +332,7 @@ follow these steps:</p>
 </pre>
   <p class="text">Have a look at the language files for a complete list of all the
   string names.</p>
+  <p class="text"><span class="bold">Language selection dialog</span></p>
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
   MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit:</p>
@@ -342,25 +343,18 @@ Function .onInit
 
 FunctionEnd
 </pre>
-  <p class="text">To customize the texts on the language selection dialog, define
-  MUI_TEXT_LANGDLL_WINDOWTITLE and MUI_TEXT_LANGDLL_INFO before inserting the macro.</p>
-  <p class="text">If you want the installer to remember the users language
-  preference, define MUI_STARTMENUPAGE_REGISTRY_ROOT, MUI_STARTMENUPAGE_REGISTRY_KEY
-  and MUI_STARTMENUPAGE_REGISTRY_VALUENAME to set a registry key to store the
-  language. You can also use it in the uninstaller to display the right language.
-  Don't forget to remove this key in the uninstaller.</p>
-  <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro</p>
-  <p class="text">If you are not using a Finish page without
-  MUI_FINISHPAGE_NOAUTOCLOSEWINDOW and have not set AutoCloseWindow
-  to true, you should insert the MUI_SECTIONS_FINISHHEADER
-  after all the sections to display the finish header:</p>
-<pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
-<p class="text">For the uninstaller, insert MUI_UNFINISHHEADER at the end of the
-Uninstall section:</p>
-<pre class="margin">
-!insertmacro MUI_UNFINISHHEADER
-</pre>
-  <p class="subheader">8. Set the descriptions for the sections</p>
+  <p class="text">To customize the language selection dialog, use these defines:</p>
+  <p class="text"><span class="bold">MUI_LANGDLL_WINDOWTITLE</span><br />
+  The window title of the language selection dialog.</p>
+  <p class="text"><span class="bold">MUI_LANGDLL_INFO</span><br />
+  The text on the language selection dialog.</p>
+  <p class="text"><span class="bold">MUI_LANGDLL_REGISTRY_ROOT </span><span class="parameter">root</span><br />
+  <span class="bold">MUI_LANGDLL_REGISTRY_KEY </span><span class="parameter">key</span><br />
+  <span class="bold">MUI_LANGDLL_REGISTRY_VALUENAME </span><span class="parameter">value_name</span><br />
+  The registry key to store the language. The users preference will be remembered.
+  You can also use it in the uninstaller to display the right language. Don't forget
+  to remove this key in the uninstaller.</p>
+  <p class="subheader">7. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
   selection page, when the users hovers the mouse over a section.
@@ -381,7 +375,7 @@ Section "Section Name 1" Section1
   ...
 SectionEnd
 </pre>
-<p class="subheader">9. Reserve Files</p>
+<p class="subheader">8. Reserve Files</p>
 <p class="text">If you are using BZIP2 compression, you might need to
 insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
@@ -595,6 +589,9 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
     let the user accept the agreement or not</li>
+    <li>Macro's for finish headers don't have to be inserted anymore</li>
+    <li>Language preference stored when installation has completed,
+    no problems anymore when the users selects the wrong language</li>
     <li>Language files have to be updated</li>
   </ul></li>
 </ul>
