@@ -2500,7 +2500,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         WIN32_FIND_DATA fd;
         char *f = line.gettoken_str(1);
-        int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
+        unsigned int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
         char *incfile = (char *) malloc(malloced);
 
         int included = 0;
