@@ -22,16 +22,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define REGSEC HKEY_LOCAL_MACHINE // JF> modified this to HKLM so that 
-                                  // nsis uninstaller would remove. this means
-                                  // window placement is shared across users, but
-                                  // bfd.
-#define REGKEY "Software\\NSIS"
-#define REGLOC "MakeNSISWPlacement"
-
-extern const char NSISW_VERSION[];
-
-// Methods
 void SetTitle(HWND hwnd,char *substr);
 void SetBranding(HWND hwnd);
 void CopyToClipboard(HWND hwnd);

@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,12 +19,10 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-/*
-Contribution by kickik
-*/
 #ifndef NOCLIB_H
 #define NOCLIB_H
 
+// kickik's clib methods
 char *my_strrchr(const char *string, int c);
 void *my_memset(void *dest, int c, size_t count);
 

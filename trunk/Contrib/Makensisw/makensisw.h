@@ -1,6 +1,6 @@
 /* 
   Copyright (c) 2002 Robert Rainwater
-  Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert
+  Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,6 +23,7 @@
 #define MAKENSIS_H
 
 #include <commctrl.h>
+#include "utils.h"
 
 #define _RICHEDIT_VER 0x0200
 #include <RichEdit.h>
@@ -32,30 +33,34 @@
 #define NSIS_URL	"http://sourceforge.net/projects/nsis/"
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
-#define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel, Fritz Elfert, and Amir Szekely"
+#define CONTRIBUTOR	"Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely"
 #define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
 #define LOCALDOCS	"\\docs\\index.html"
+#define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
+#define DLGERROR	"Unable to intialize MakeNSISW."
 #define REGSEC		HKEY_LOCAL_MACHINE
 #define REGKEY		"Software\\NSIS"
 #define REGLOC		"MakeNSISWPlacement"
 #define EXENAME		"makensis.exe"
 #define MAX_STRING	256
-#define TIMEOUT		150
+#define TIMEOUT		100
 #define MINWIDTH	350
 #define MINHEIGHT	180
+#define REGSEC		HKEY_LOCAL_MACHINE 
+#define REGKEY		"Software\\NSIS"
+#define REGLOC		"MakeNSISWPlacement"
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
 // Extern Variables
-extern const char	*NSISW_VERSION;
-extern char			  *g_script;
+extern const char*	NSISW_VERSION;
+extern char*		g_script;
 extern HWND		  	g_hwnd;
 extern HANDLE	  	g_hThread;
-extern char		  	*g_output_exe;
-extern char			  *g_input_script;
-extern int	      g_retcode;
+extern char *		g_output_exe;
+extern char	*		g_input_script;
+extern int			g_retcode;
 
-// makensisw
 int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
 static BOOL		CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 DWORD WINAPI	MakeNSISProc(LPVOID p);
@@ -63,20 +68,4 @@ BOOL CALLBACK	DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK	AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void			CompileNSISScript();
 
-// utils
-void			SetTitle(HWND hwnd,char *substr);
-void			SetBranding(HWND hwnd);
-void			CopyToClipboard(HWND hwnd);
-void			ClearLog(HWND hwnd);
-void			LogMessage(HWND hwnd,const char *str);
-void			ErrorMessage(HWND hwnd,const char *str);
-void			DisableItems(HWND hwnd);
-void			EnableItems(HWND hwnd);
-void			RestoreWindowPos(HWND hwnd);
-void			SaveWindowPos(HWND hwnd);
-void			ResetObjects();
-int				InitBranding();
-void			InitTooltips(HWND h);
-void			DestroyTooltips();
-void			AddTip(HWND hWnd,LPSTR lpszToolTip);
 #endif
