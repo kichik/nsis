@@ -7,14 +7,19 @@
 ;--------------------------------
 
 Name "RegTool"
-OutFile "RegTool.bin"
+OutFile "RegToolGenerator.exe"
 SilentInstall silent
+SilentUninstall silent
 
 SetCompressor lzma
 
+Icon "${NSISDIR}\Contrib\Graphics\Icons\classic-install.ico"
+UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\classic-install.ico"
+
+AllowRootDirInstall true
+
 ;--------------------------------
 
-Var COMMAND_LINE
 Var MODE
 Var FILENAME
 Var FOLDER
@@ -23,78 +28,62 @@ Var FOLDER
 
 Section
 
-  Call GetParameters
-  Pop $COMMAND_LINE
-  
-  StrCpy $MODE $COMMAND_LINE 1
-  StrCpy $FILENAME $COMMAND_LINE "" 2
-  
-  ;DLL
-  StrCmp $MODE "D" 0 no_dll
-
-    Push $FILENAME
-    Call GetParent
-    Pop $FOLDER
-    
-    SetOutPath $FOLDER
-    RegDLL $FILENAME
-
-  no_dll:
-
-  ;TLB
-  StrCmp $MODE "T" 0 no_tlb
-
-    TypeLib::Register $FILENAME
-
-  no_tlb:
-  
-  System::Call 'kernel32::GetModuleFileNameA(i 0, t .R0, i 1024) i r1'
-  Delete /REBOOTOK $R0
-  
+  WriteUninstaller $EXEDIR\RegTool.bin
 
 SectionEnd
 
-;--------------------------------
+Section uninstall
 
-; GetParameters
-; input, none
-; output, top of stack (replaces, with e.g. whatever)
-; modifies no other variables.
+  StrCpy $0 -1
 
-Function GetParameters
-
-  Push $R0
-  Push $R1
-  Push $R2
-  Push $R3
-  
-  StrCpy $R2 1
-  StrLen $R3 $CMDLINE
-  
-  ;Check for quote or space
-  StrCpy $R0 $CMDLINE $R2
-  StrCmp $R0 '"' 0 +3
-    StrCpy $R1 '"'
-    Goto loop
-  StrCpy $R1 " "
-  
   loop:
-    IntOp $R2 $R2 + 1
-    StrCpy $R0 $CMDLINE 1 $R2
-    StrCmp $R0 $R1 get
-    StrCmp $R2 $R3 get
-    Goto loop
-  
-  get:
-    IntOp $R2 $R2 + 1
-    StrCpy $R0 $CMDLINE 1 $R2
-    StrCmp $R0 " " get
-    StrCpy $R0 $CMDLINE "" $R2
-  
-  Pop $R3
-  Pop $R2
-  Pop $R1
-  Exch $R0
+
+    IntOp $0 $0 + 1
+
+    EnumRegValue $FILENAME HKLM "Software\NSIS.Library.RegTool" $0
+    StrCmp $FILENAME "" done
+
+      ReadRegStr $MODE HKLM "Software\NSIS.Library.RegTool" $FILENAME
+
+      StrCmp $MODE "DT" 0 +4
+
+        Call un.RegDLL
+        Call un.RegTLB
+        Goto loop
+
+      StrCmp $MODE "D" 0 +3
+
+        Call un.RegDLL
+        Goto loop
+
+      StrCmp $MODE "T" 0 +3
+
+        Call un.RegTLB
+        Goto loop
+
+      Goto loop
+
+  done:
+
+  DeleteRegKey HKLM "Software\NSIS.Library.RegTool"
+  Delete $INSTDIR\NSIS.Library.RegTool.exe
+
+SectionEnd
+
+Function un.RegDLL
+
+  Push $FILENAME
+  Call un.GetParent
+  Pop $FOLDER
+
+  SetOutPath $FOLDER
+  RegDLL $FILENAME
+
+FunctionEnd
+
+Function un.RegTLB
+
+  TypeLib::Register $FILENAME
 
 FunctionEnd
 
@@ -109,29 +98,29 @@ FunctionEnd
 ;   Pop $R0
 ;   ; at this point $R0 will equal "C:\Program Files\Directory"
 
-Function GetParent
+Function un.GetParent
 
   Exch $R0
   Push $R1
   Push $R2
   Push $R3
-  
+
   StrCpy $R1 0
   StrLen $R2 $R0
-  
+
   loop:
     IntOp $R1 $R1 + 1
     IntCmp $R1 $R2 get 0 get
     StrCpy $R3 $R0 1 -$R1
     StrCmp $R3 "\" get
     Goto loop
-  
+
   get:
     StrCpy $R0 $R0 -$R1
-    
+
     Pop $R3
     Pop $R2
     Pop $R1
     Exch $R0
-    
+ 
 FunctionEnd
