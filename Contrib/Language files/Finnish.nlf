@@ -1,0 +1,80 @@
+# Header, don't edit
+NLF v4
+# Language ID
+1035
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# Translation by AKX <akx@theakx.tk>
+Nullsoft Asennusjärjestelmä %s
+%s Asennus
+%s Poisto
+: Lisenssisopimus
+: Asennusvaihtoehdot
+: Asennuskansio
+: Asennetaan
+: Valmis
+: Varmistus
+: Poistetaan
+: Valmis
+&Takaisin
+&Jatka
+&Hyväksyn
+Hyväksyn lisenssisopimuksen ehdot
+En hyväksy sopimuksen ehtoja
+&Asenna
+&Poista
+Peru
+&Sulje
+S&elaa...
+&Näytä tiedot
+Nimi
+Valmis
+Oma
+Valitse asennustyyppi:
+Valitse asennettavat komponentit:
+Tai, valitse valinnaiset komponentit:
+Valitse kansio, johon %s asennetaan:
+Tilaa saatavilla: 
+Tarvittu tila: 
+Poistetaan kansiosta:
+Tiedostoa ei voitu avata: \r\n\t"$0"\r\nValitse Hylkää lopettaaksesi asennuksen,\r\nUudelleen yrittääksesi uudelleen, or\r\nOhita ohittaaksesi tiedoston
+Ei voi kirjoittaa: 
+Kopiointi epäonnistui
+Kopioi kohteeseen 
+Rekisteröidään:
+Poistetaan rekisteröinti:
+Symbolia ei löydy: 
+Ei voitu ladata: 
+Luo kansio: 
+Luo kuvake: 
+Poisto-ohjelma luotiin: 
+Poista: 
+Poista käynnistyksen yhteydessä: 
+Ei voitu luoda kuvaketta: 
+Ei voitu luoda: 
+Pakettia ei voitu purkaa. Korruptoitunut asennusohjelma?
+Ei voitu rekisteröidä DLL-tiedostoa
+ExecShell: 
+Aja: 
+Pura: 
+Pura: ei voitu kirjoittaa 
+Asennus korrupti: opcode invalid
+Ei ole OLEa: 
+Kansio: 
+Poista kansio: 
+Muuta nimi käynn. yhteydessä: 
+Muuta nimi: 
+Hypättiin: 
+Kopioi leikepöydälle
+Tallenna asennusprosessi
+# byte
+t
+# kilo
+k
+# mega
+m
+# giga
+g
