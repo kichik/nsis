@@ -136,24 +136,28 @@ bool Plugins::IsPluginCommand(char* token)
 
 char* Plugins::GetPluginDll(char* command)
 {
-  if (strstr(command,"::"))
-    return m_commands.find(command);
+  bool malloced = false;
+  char *colons = strstr(command,"::");
+  if (!colons) return 0;
 
-  // slow & stupid but it doesn't matter
-  int i = 0,pos = 0;
-  char* signatures = m_commands.defines.get();
-  while (pos != -1)
-  {
-    pos = m_commands.defines.idx2pos(i++);
-    if (pos >= 0)
-    {
-      char* cmd = strstr(signatures+pos,"::");
-      if (cmd && strcmp(cmd+2,command) == 0)
-        return m_commands.find(signatures+pos);
-    }
+  *colons = 0;
+
+  char *p = command;
+
+  while (*p != '.' && *p) p++;
+
+  if (lstrcmpi(p, ".dll")) {
+    char *new_command = (char *)malloc(lstrlen(command)+1+4);
+    wsprintf(new_command, "%s.dll::%s", command, colons+2);
+    command = new_command;
+    malloced = 1;
   }
-
-  return 0;
+  
+  *colons = ':';
+  
+  char *result = m_commands.find(command);
+  if (malloced) free(command);
+  return result;
 }
 
 void Plugins::StoreInstDLL(char* dllName)
