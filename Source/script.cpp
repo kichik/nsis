@@ -5372,6 +5372,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             // $OUTDIR is the working directory
             ent.offsets[0]=add_string(name_override?name_override:buf);
             ent.offsets[1]=d.dwFileAttributes;
+            ent.offsets[2]=0;
+            ent.offsets[3]=0;
+            ent.offsets[4]=0;
+            ent.offsets[5]=0;
 
             a=add_entry(&ent);
             if (a != PS_OK)
