@@ -182,13 +182,6 @@ enum
 
 };
 
-
-// used for section->default_state
-#define DFS_SET 0x80000000
-#define DFS_RO  0x40000000
-
-
-
 typedef struct
 {
   int flags; // &1=CRC, &2=uninstall, &4=silent
@@ -401,17 +394,23 @@ typedef struct
   int code_size;
 } uninstall_header;
 
+// used for section->flags
+#define SF_SELECTED   1
+#define SF_SUBSEC     2
+#define SF_SUBSECEND  4
+#define SF_BOLD       8
+#define SF_RO         16
+#define SF_EXPAND     32
+
 typedef struct
 {
   int name_ptr; // '' for non-optional components
-  int default_state; // bits 0-30 set for each of the different install_types, if any.
-                      // DFS_SET and DFS_RO can be set too
+  int install_types; // bits set for each of the different install_types, if any.
+  int flags; // SF_SELECTED, SF_RO, SF_BOLD, SF_SUB, and/or SF_EXPAND
   int code;
   int code_size;
   int size_kb;
-  int expand;
 } section;
-
 
 typedef struct
 {

@@ -1511,15 +1511,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           else if (parm1==2) // set flags
           {
-            g_inst_section[x].default_state=process_string_fromparm_toint(2);
+            g_inst_section[x].flags=process_string_fromparm_toint(2);
             if (g_SectionHack)
             {
-              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].default_state&DFS_SET));
+              SendMessage(g_SectionHack,WM_USER+0x18,x,(LPARAM)!!(g_inst_section[x].flags&SF_SELECTED));
             }
           }
           else // get flags
           {
-            myitoa(var2,g_inst_section[x].default_state);
+            myitoa(var2,g_inst_section[x].flags);
           }
         }
         else exec_errorflag++;
