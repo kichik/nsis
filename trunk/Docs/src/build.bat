@@ -2,4 +2,4 @@ bin\halibut.exe config.but intro.but usage.but script.but attributes.but compile
 @copy Contents.html index.html
 @copy index.html IndexPage.html
 @copy *.html ..\\
-@rem del -f *.html
+@del -f *.html
