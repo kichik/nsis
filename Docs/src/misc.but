@@ -2,66 +2,62 @@
 
 \H{BringToFront} BringToFront
 
-BringToFront  
-
-Makes the installer window visible and brings it to the top of the window list (i.e. if a command was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus).  
+Makes the installer window visible and brings it to the top of the window list (i.e. if a command was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus).
 
 \H{CreateFont} CreateFont
 
-CreateFont \e{user_var(handle output) face_name [height] [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]}
+\c user_var(handle output) face_name [height] [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]
 
-Creates a font and puts its handle into user_var. For more information about the different parameters have a look at MSDN's page about the Win32 API function CreateFont().  
+Creates a font and puts its handle into user_var. For more information about the different parameters have a look at \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp}{MSDN's page about the Win32 API function CreateFont()}.
 
 \H{DetailPrint} DetailPrint
 
-DetailPrint \e{user_message}
+\c user_message
 
-Adds the string "user_message" to the details view of the installer.  
+Adds the string "user_message" to the details view of the installer.
 
 \H{HideWindow} HideWindow
 
-HideWindow  
-
-Hides the installer.  
+Hides the installer.
 
 \H{SetAutoClose} SetAutoClose
 
-SetAutoClose \e{true|false}
+\c true|false
 
-Overrides the default auto window-closing flag (specified for the installer using AutoCloseWindow, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.  
+Overrides the default auto window-closing flag (specified for the installer using AutoCloseWindow, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.
 
 \H{SetBrandingImage} SetBrandingImage
 
-SetBrandingImage \e{[/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp}
+\c [/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp
 
-Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by AddBrandingImage. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used AddBrandingImage you can get this size, by compiling your script and watching for AddBrandingImage output, it will tell you the size. SetBrandingImage will not work when called from .onInit!  
+Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by AddBrandingImage. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used AddBrandingImage you can get this size, by compiling your script and watching for AddBrandingImage output, it will tell you the size. SetBrandingImage will not work when called from .onInit!
 
 \H{SetDetailsView} SetDetailsView
 
-SetDetailsView \e{show|hide}
+\c show|hide
 
-Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via ShowInstDetails  
+Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via ShowInstDetails
 
 \H{SetDetailsPrint} SetDetailsPrint
 
-SetDetailsPrint \e{none | listonly | textonly |both}
+\c none|listonly|textonly|both|lastused
 
-Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).  
+Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).
 
 \H{SetShellVarContext} SetShellVarContext
 
-SetShellVarContext \e{current|all}
+\c current|all
 
-Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used.  
+Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used.
 
 \H{SetStaticBkColor} SetStaticBkColor
 
-SetStaticBkColor \e{hwnd color}
+\c hwnd color
 
-Sets a background color for a static control. Use GetDlgItem to get the handle (HWND) of the static control.  
+Sets a background color for a static control. Use GetDlgItem to get the handle (HWND) of the static control.
 
 \H{Sleep} Sleep
 
-Sleep \e{sleeptime_in_ms}
+\c sleeptime_in_ms
 
-Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, i.e. "$0" or a number, i.e. "666".  
+Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, i.e. "$0" or a number, i.e. "666".

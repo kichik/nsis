@@ -23,7 +23,7 @@ The result of all of this is an installation system for win32 that lets you comp
 
 Here's a short list of some of NSIS' features.
 
-\b SuperPiMP™ technology (so advanced, so amazing, we won't even tell you what it is).
+\b SuperPiMP&trade; technology (so advanced, so amazing, we won't even tell you what it is).
 
 \b Generates self contained, win32 executable installer.
 
@@ -45,6 +45,56 @@ Here's a short list of some of NSIS' features.
 
 \b Plug-in system (includes plug-ins for generic dialog construction and user interaction, as well as HTTP downloading)
 
+\b Fully multilingual. 20 translations available including Dutch, French, Chinese and more...
+
 \b Installers can be as large as 2GB (theoretically -- when building on Win9x the limit seems to be around 500MB, however building on NT then installing on Win9x works with larger sizes)
 
 \b Optional Silent mode for automated installations
+
+\b Installers have their own VMs that let you write code that can support:
+
+\b File extraction (with configurable overwrite parameters)
+
+\b File/directory copying, renaming, deletion
+
+\b DLL loading (ActiveX control registration/deregistration, extension DLL calling, etc)
+
+\b Executable execution (shell execute and wait options)
+
+\b Shortcut creation
+
+\b Registry key reading/setting/enumerating/deleting
+
+\b INI file reading/writing
+
+\b Generic text file reading/writing
+
+\b Directory scanning
+
+\b Powerful string and integer manipulation
+
+\b Window finding based on class name or title (for is-application-running detection)
+
+\b Window message sending.
+
+\b User interaction with MessageBox.
+
+\b Branching, comparisons, etc.
+
+\b Error checking.
+
+\b Installer behaviour commands (such as show/hide/wait/etc)
+
+\b User functions in script
+
+\b Callback functions that let you customize the way the installer behaves from script.
+
+\b Macros in script
+
+\b A primitive preprocessor
+
+\b A lovely coding experience with elements of PHP and assembly (includes 20 general purpose variables, a stack, real flow control, etc)
+
+\b More
+
+\b Completely free for any use. See license (\k{license}).

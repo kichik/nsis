@@ -1,63 +1,63 @@
 \C{basicinstructions} Basic Instructions
 
-The instructions that NSIS uses for scripting are sort of a cross between PHP and assembly. There are no real high level language constructs, but the instructions themselves are (for the most part) high level, and you have handy string capability (i.e. you don't have to worry about concatenating strings, etc). You essentially have 22 registers (20 general purpose, 2 special purpose), and a stack. 
+The instructions that NSIS uses for scripting are sort of a cross between PHP and assembly. There are no real high level language constructs, but the instructions themselves are (for the most part) high level, and you have handy string capability (i.e. you don't have to worry about concatenating strings, etc). You essentially have 22 registers (20 general purpose, 2 special purpose), and a stack.
 
 \H{delete} Delete
 
-Delete \e{[/REBOOTOK] file}
+\c [/REBOOTOK] file
 
-Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set from trying to delete a file that does not exist.  
+Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set from trying to delete a file that does not exist.
 
 \H{file} File
 
-File \e{[/a] ([/r] file|wildcard [...]) | (/oname=file.dat infile.dat)}
+\c [/a] ([/r] file|wildcard [...]) | (/oname=file.dat infile.dat)
 
-Adds file(s) to be extracted to the current output path ($OUTDIR). 
+Adds file(s) to be extracted to the current output path ($OUTDIR).
 
-\b Note that the output file name is $OUTDIR\\filename_portion_of_file. 
+\b Note that the output file name is $OUTDIR\\filename_portion_of_file.
 
-\b If the /oname=X switch is used, the output name becomes $OUTDIR\\X. When using the /oname= switch, only one file can be specified, and the file name can contain variables (or a fully qualified path, i.e. $SYSDIR\\whatever.dll). 
+\b If the /oname=X switch is used, the output name becomes $OUTDIR\\X. When using the /oname= switch, only one file can be specified, and the file name can contain variables (or a fully qualified path, i.e. $SYSDIR\\whatever.dll).
 
-\b Wildcards are supported. 
+\b Wildcards are supported.
 
-\b If the /r switch is used, files and directories are added recursively. If is no trailing wildcard (i.e. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.* 
+\b If the /r switch is used, files and directories are added recursively. If is no trailing wildcard (i.e. File /r C:\\whatever\\mydir), then the whole tree of mydir will go in $OUTDIR\\mydir. To put it in $OUTDIR, use File /r C:\\whatever\\mydir\\*.*
 
-\b If the /a switch is used, the attributes of the file(s) added will be preserved. 
+\b If the /a switch is used, the attributes of the file(s) added will be preserved.
 
-\b The File command sets the error flag if overwrite mode is set to 'try' and the file could not be overwritten, or if the overwrite mode is set to 'on' and the file could not be overwritten and the user selects ignore.  
+\b The File command sets the error flag if overwrite mode is set to 'try' and the file could not be overwritten, or if the overwrite mode is set to 'on' and the file could not be overwritten and the user selects ignore.
 
 \H{exec} Exec
 
-Exec \e{command}
+\c command
 
-Execute the specfied program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: Exec '"$INSTDIR\\command.exe" parameters'.  
+Execute the specfied program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: Exec '"$INSTDIR\\command.exe" parameters'.
 
 \H{execshell} ExecShell
 
-ExecShell \e{action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]}
+\c action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED]
 
-Execute the specfied program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.  
+Execute the specfied program using ShellExecute. Note that action is usually "open", "print", etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.
 
 \H{execwait} ExecWait
 
-ExecWait \e{command [user_var(exit code)]}
+\c command [user_var(exit code)]
 
-Execute the specfied program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: ExecWait '"$INSTDIR\\command.exe" parameters'  
+Execute the specfied program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you may with to put it in quotes to delimit it from parameters. i.e.: ExecWait '"$INSTDIR\\command.exe" parameters'
 
 \H{rename} Rename
 
-Rename \e{[/REBOOTOK] source_file dest_file}
+\c [/REBOOTOK] source_file dest_file
 
-Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. If /REBOOTOK is specified, and the file cannot be overwritten, then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.  
+Rename source_file to dest_file. Functions just like the Win32 API MoveFile, which means you can move a file from anywhere on the system to anywhere else, and you can move a directory to somewhere else on the same drive. If /REBOOTOK is specified, and the file cannot be overwritten, then the file is moved when the system reboots -- if the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.
 
 \H{rmdir} RMDir
 
-RMDir \e{[/r] directory}
+\c [/r] directory
 
-Remove the directory (which should be a full path). If /r is specified, it will recursively remove the directory. The error flag is set if the directory exists and cannot be removed.  
+Remove the directory (which should be a full path). If /r is specified, it will recursively remove the directory. The error flag is set if the directory exists and cannot be removed.
 
 \H{setoutpath} SetOutPath
 
-SetOutPath \e{outpath}
+\c outpath
 
-Sets the output path ($OUTDIR) and creates it (recursively if necessary), if it does not exist. Must be a full pathname, usually is just $INSTDIR (you can specify $INSTDIR if you are lazy with a single "-").  
+Sets the output path ($OUTDIR) and creates it (recursively if necessary), if it does not exist. Must be a full pathname, usually is just $INSTDIR (you can specify $INSTDIR if you are lazy with a single "-").
