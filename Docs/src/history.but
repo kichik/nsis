@@ -6,7 +6,7 @@
 
 \b See \R{compiling_infos}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
 
-\b NSIS doesn't create installers for Linux/Mac OS X etc., but you can compile Window installers on these platforms
+\b NSIS doesn't create installers for Linux/Mac OS X etc., but you can compile Windows installers on these platforms
 
 \b UpgradeDLL is still provided in UpgradeDLL.nsh for backwards compatibility
 
