@@ -1426,9 +1426,6 @@ static int NSISCALL ExecuteEntry(entry *entries, int pos)
         )
       );
     return 0;
-    case EW_SETLANG:
-      set_language(process_string_fromtab_toint(parm0));
-    return 0;
   }
   my_MessageBox(STR(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;

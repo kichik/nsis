@@ -248,10 +248,12 @@ static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
 
 static int lang_num;
 
-void NSISCALL set_language(LANGID lang)
+static void NSISCALL set_language(LANGID lang)
 {
   int i;
   LANGID lang_mask=~(LANGID)0;
+
+  if (!lang) lang=myatoi(state_language);
 
 lang_again:
   for (i = 0; i < lang_num; i++) {
@@ -377,6 +379,7 @@ int NSISCALL ui_doinstall(void)
     g_hwnd=m_bgwnd;
     // Select language
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    set_language(0);
     g_hwnd=NULL;
     ShowWindow(m_bgwnd, SW_SHOW);
 #endif//NSIS_SUPPORT_CODECALLBACKS
@@ -390,6 +393,7 @@ int NSISCALL ui_doinstall(void)
   {
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     if (ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInit,NULL)) return 1;
+    set_language(0);
 #endif//NSIS_SUPPORT_CODECALLBACKS
     if (install_thread(NULL))
     {
