@@ -76,6 +76,7 @@ CEXEBuild::CEXEBuild()
   cur_ifblock=NULL;
   last_line_had_slash=0;
   inside_comment=false;
+  multiple_entries_instruction=0;
 
   build_include_depth=0;
 
@@ -275,6 +276,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   build_compress_dict_size=1<<23;
 
   cur_entries=&build_entries;
+  cur_instruction_entry_map=&build_instruction_entry_map;
   cur_datablock=&build_datablock;
   cur_datablock_cache=&build_datablock_cache;
   cur_functions=&build_functions;
@@ -1278,8 +1280,11 @@ int CEXEBuild::add_entry(const entry *ent)
   }
 
   cur_entries->add(ent,sizeof(entry));
+  cur_instruction_entry_map->add(&multiple_entries_instruction,sizeof(int));
   build_cursection->code_size++;
   cur_header->blocks[NB_ENTRIES].num++;
+
+  multiple_entries_instruction=1;
 
   return PS_OK;
 }
@@ -1304,7 +1309,26 @@ int CEXEBuild::resolve_jump_int(const char *fn, int *a, int offs, int start, int
     char *lname=(char*)ns_label.get()+*a;
     if (lname[0] == '-' || lname[0]=='+')
     {
-      *a=offs+atoi(lname)+1;
+      int jump = atoi(lname);
+      int *skip_map = (int *) cur_instruction_entry_map->get();
+
+      int direction = 1;
+      if (jump < 0)
+        direction = -1;
+
+      for (; jump != 0; jump -= direction)
+      {
+        offs += direction;
+        if (offs >= 0 && offs < cur_instruction_entry_map->getlen() * sizeof(int))
+        {
+          while (skip_map[offs])
+          {
+            offs += direction;
+          }
+        }
+      }
+
+      *a = offs + 1;
     }
     else
     {
@@ -3014,6 +3038,7 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_datablock=&ubuild_datablock;
       cur_datablock_cache=&ubuild_datablock_cache;
       cur_entries=&ubuild_entries;
+      cur_instruction_entry_map=&ubuild_instruction_entry_map;
       cur_functions=&ubuild_functions;
       cur_labels=&ubuild_labels;
       cur_pages=&ubuild_pages;
@@ -3028,6 +3053,7 @@ void CEXEBuild::set_uninstall_mode(int un)
       cur_datablock=&build_datablock;
       cur_datablock_cache=&build_datablock_cache;
       cur_entries=&build_entries;
+      cur_instruction_entry_map=&build_instruction_entry_map;
       cur_functions=&build_functions;
       cur_labels=&build_labels;
       cur_pages=&build_pages;

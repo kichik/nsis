@@ -158,6 +158,7 @@ class CEXEBuild {
 
     int last_line_had_slash;
     bool inside_comment;
+    int multiple_entries_instruction;
 
     void ERROR_MSG(const char *s, ...);
     void SCRIPT_MSG(const char *s, ...);
@@ -321,6 +322,7 @@ class CEXEBuild {
     section *build_cursection;
     TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
+    GrowBuf build_instruction_entry_map,ubuild_instruction_entry_map, *cur_instruction_entry_map;
     TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
     TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
     StringList build_strlist, ubuild_strlist, *cur_strlist;
