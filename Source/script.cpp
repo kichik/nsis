@@ -66,7 +66,7 @@ int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *
   // remove trailing slash and null
   if (str[0] && CharPrev(str,str+strlen(str))[0] == '\\') return PS_OK;
 
-  res=line.parse((char*)m_linebuild.get());
+  res=line.parse((char*)m_linebuild.get(),!strnicmp(str,"!define",7));
 
   m_linebuild.resize(0);
 
