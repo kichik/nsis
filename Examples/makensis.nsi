@@ -118,6 +118,8 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\Sections.nsh
   File ..\Include\UpgradeDLL.nsh
   File ..\Include\LogicLib.nsh
+  File ..\Include\StrFunc.nsh
+  File ..\Include\StrFunc.txt
 
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\contrib\makensisw\*.txt
@@ -190,6 +192,7 @@ Section "Script Examples" SecExample
   File ..\Examples\UserVars.nsi
   File ..\Examples\LogicLib.nsi
   File ..\Examples\silent.nsi
+  File ..\Examples\StrFunc.nsi
 SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
