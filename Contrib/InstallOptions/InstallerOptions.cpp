@@ -935,7 +935,7 @@ int createCfgDlg()
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
         0 },
       { "STATIC",       // FIELD_BITMAP
-        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP,
+        DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
         0 },
       { "BUTTON",       // FIELD_BROWSEBUTTON
         DEFAULT_STYLES | WS_TABSTOP,
@@ -1136,12 +1136,12 @@ int createCfgDlg()
             0,
             pFields[nIdx].pszText,
             nImageType,
-            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0 && !(pFields[nIdx].nFlags & FLAG_RESIZETOFIT))
-              ? (pFields[nIdx].rect.right - pFields[nIdx].rect.left)
-              : (rect.right - rect.left),
-            (pFields[nIdx].rect.right - pFields[nIdx].rect.left > 0 && !(pFields[nIdx].nFlags & FLAG_RESIZETOFIT))
-              ? (pFields[nIdx].rect.bottom - pFields[nIdx].rect.top)
-              : (rect.bottom - rect.top),
+            (pFields[nIdx].nFlags & FLAG_RESIZETOFIT)
+              ? (rect.right - rect.left)
+              : 0,
+            (pFields[nIdx].nFlags & FLAG_RESIZETOFIT)
+              ? (rect.bottom - rect.top)
+              : 0,
             LR_LOADFROMFILE
           );
           nImage = (LPARAM)pFields[nIdx].hImage;
@@ -1155,7 +1155,6 @@ int createCfgDlg()
           nImage
         );
       } else if (nType == FIELD_LINK){
-
         pFields[nIdx].nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);      
       }
     }
