@@ -40,12 +40,12 @@
 #define TBB_COPY                         4
 #define TBB_FIND                         5
 #define TBB_SEP2                         6
-#define TBB_RECOMPILE                    7
-#define TBB_DEFINES                      8
-#define TBB_COMPRESSOR                   9
-#define TBB_TEST                         10
+#define TBB_SETTINGS                     7
+#define TBB_RECOMPILE                    8
+#define TBB_TEST                         9
 // Added by Darren Owen (DrO) on 1/10/2003 and altered following ids
-#define TBB_RECOMPILE_TEST               11
+#define TBB_RECOMPILE_TEST               10
+#define TBB_COMPRESSOR                   11
 #define TBB_EDITSCRIPT                   12
 #define TBB_BROWSESCR                    13
 #define TBB_CLEARLOG                     14
@@ -62,9 +62,9 @@
 #define IDB_COPY                         3
 #define IDB_FIND                         4
 #define IDB_RECOMPILE                    5
-#define IDB_DEFINES                      6
+#define IDB_SETTINGS                     6
 #define IDB_COMPRESSOR                   7
-#define IDB_COMPRESSOR_DEFAULT           7
+#define IDB_COMPRESSOR_SCRIPT            7
 #define IDB_TEST                         8
 #define IDB_EDITSCRIPT                   9
 #define IDB_BROWSESCR                    10
