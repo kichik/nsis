@@ -38,6 +38,8 @@
 
 \H{v2.0b4} 2.0 Beta 4
 
+Released at November 19th, 2003
+
 \S1{v2.0b4-rn} Release Notes
 
 \b The /LANG parameter is no longer available for any text setting instructions. You must use a \R{langstring}{LangString} if you want to make a certain text multilingual. This means you can also set one text for all languages. To make the license data multilingual you should use \R{licenselangstring}{LicenseLangString}.
@@ -170,6 +172,8 @@
 
 \H{v2.0b3} 2.0 Beta 3
 
+Released at March 16th, 2003
+
 \b Modern UI 1.63: Header bitmap support, new defines to change the description area, single macro for language selection dialog, more!
 
 \b New tutorial in the documentation
@@ -208,6 +212,8 @@
 
 \H{v2.0b2} 2.0 Beta 2
 
+Released at February 26th, 2003
+
 \b NSIS Menu: links to all NSIS utilities, documentation and websites
 
 \b NSIS Update: check for new releases, download latest development files
@@ -227,6 +233,8 @@
 \b Minor fixes
 
 \H{v2.0b1} 2.0 Beta 1
+
+Released at February 9th, 2003
 
 \b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
 
@@ -287,6 +295,8 @@
 \b Code clean-ups (compiles on VC7)
 
 \H{v2.0b0} 2.0 Beta 0
+
+Released at December 6th, 2002
 
 \b New paging system
 
@@ -380,6 +390,8 @@
 
 \H{v2.0a7} 2.0 Alpha 7
 
+Released at August 29th, 2002
+
 \b Can now select the language from .onInit ($LANGUAGE is a variable)
 
 \b Added CreateFont
@@ -444,11 +456,15 @@
 
 \H{v2.0a6} 2.0 Alpha 6
 
+Released at August 10th, 2002
+
 \b Fixed two bugs with the plug-in mechanism
 
 \b Fixed infinite loop bug
 
 \H{v2.0a5} 2.0 Alpha 5
+
+Released at August 9th, 2002
 
 \b Added UseOuterUIItem
 
@@ -472,6 +488,8 @@
 
 \H{v2.0a4} 2.0 Alpha 4
 
+Released August 5th, 2003
+
 \b Added automatic detection, packing, unpacking and deletion of plugin dlls
 
 \b Added simplified calling syntax for plugin dlls
@@ -479,6 +497,8 @@
 \b Added PluginDir
 
 \H{v2.0a3} 2.0 Alpha 3
+
+Released at August 4th, 2002
 
 \b Added LoadLanguageFile
 
@@ -489,6 +509,8 @@
 \b 'LogSet on' now builds a log file if not already created
 
 \H{v2.0a2} 2.0 Alpha 2
+
+Released at July 31st, 2002
 
 \b Added $\{NSISDIR\}
 
@@ -538,6 +560,8 @@
 
 \H{v2.0a1} 2.0 Alpha 1
 
+Released at July 9th, 2002
+
 \b Added expand node option to Section and SubSection
 
 \b Added preserve file attribute option to File command
@@ -549,6 +573,8 @@
 \b Reorganized NSIS directory structure
 
 \H{v2.0a0} 2.0 Alpha 0
+
+Released at May 22nd, 2002
 
 \b TreeView component list (care of Jeff Doozan)
 
