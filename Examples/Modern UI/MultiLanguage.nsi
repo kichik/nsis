@@ -27,7 +27,6 @@
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_LICENSEPAGE
   !define MUI_COMPONENTSPAGE
   !define MUI_DIRECTORYPAGE
   
@@ -64,6 +63,8 @@
   !insertmacro MUI_LANGUAGE "Romanian"
   !insertmacro MUI_LANGUAGE "Macedonian"
   !insertmacro MUI_LANGUAGE "Turkish"
+  !insertmacro MUI_LANGUAGE "Lithuanian"
+  !insertmacro MUI_LANGUAGE "Catalan"
   
 ;--------------------------------
 ;Language Strings
@@ -94,35 +95,8 @@
   LangString DESC_SecCopyUI ${LANG_ROMANIAN} "modern.exe: Romanian description"
   LangString DESC_SecCopyUI ${LANG_MACEDONIAN} "modern.exe: Macedonian description"
   LangString DESC_SecCopyUI ${LANG_TURKISH} "modern.exe: Turkish description"
-  
-;--------------------------------
-;Data
-  
-  LicenseData /LANG=${LANG_ENGLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_FRENCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_GERMAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_SPANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_JAPANESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_KOREAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_ITALIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_DANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_RUSSIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_PORTUGUESEBR} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_CZECH} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_SLOVAK} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_CROATIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_BULGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_HUNGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_THAI} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_ROMANIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_MACEDONIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
-  LicenseData /LANG=${LANG_TURKISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LangString DESC_SecCopyUI ${LANG_LITHUANIAN} "modern.exe: Lithuanian description"
+  LangString DESC_SecCopyUI ${LANG_CATALAN} "modern.exe: Catalan description"
 
 ;--------------------------------
 ;Reserve Files
@@ -185,7 +159,6 @@ SectionEnd
 
 Function un.onInit
 
-  ;Get language from registry
-  ReadRegStr $LANGUAGE HKCU "Software\${MUI_PRODUCT}" "Installer Language"
+  !insertmacro MUI_UNGETLANGUAGE
   
 FunctionEnd

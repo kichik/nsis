@@ -106,16 +106,13 @@ Section "Uninstall"
   Delete "$INSTDIR\modern.exe"
   Delete "$INSTDIR\Uninstall.exe"
   
-  ;Remove shortcut
-  ReadRegStr ${TEMP} "${MUI_STARTMENUPAGE_REGISTRY_ROOT}" "${MUI_STARTMENUPAGE_REGISTRY_KEY}" "${MUI_STARTMENUPAGE_REGISTRY_VALUENAME}"
-  
-  StrCmp ${TEMP} "" noshortcuts
+  !insertmacro MUI_STARTMENU_DELETE_BEGIN ${TEMP}
   
     Delete "$SMPROGRAMS\${TEMP}\Modern UI.lnk"
     Delete "$SMPROGRAMS\${TEMP}\Uninstall.lnk"
     RMDir "$SMPROGRAMS\${TEMP}" ;Only if empty, so it won't delete other shortcuts
     
-  noshortcuts:
+  !insertmacro MUI_STARTMENU_DELETE_END
 
   RMDir "$INSTDIR"
 

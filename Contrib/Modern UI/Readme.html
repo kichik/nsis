@@ -206,6 +206,12 @@ follow these steps:</p>
   remember the users preference. You should also use it in the uninstaller to
   remove the Start Menu folders. Don't forget to remove this key in the
   uninstaller.</p>
+  <p class="text">In the uninstaller, use these macro's to remove the shortcuts:</p>
+<pre class="margin">
+!insertmacro MUI_STARTMENU_DELETE_BEGIN $R0 ;You can also use another variable
+  Delete "$SMPROGRAMS\$R0\Your Shortcut.lnk"
+!insertmacro MUI_STARTMENU_DELETE_END
+</pre>
   </div>
   <p class="text"><span class="bold">MUI_FINISHPAGE</span><br />
   Show the finish page. The finish page tells that the installation is succesful.
@@ -353,6 +359,15 @@ FunctionEnd
   The registry key to store the language. The users preference will be remembered.
   You can also use it in the uninstaller to display the right language. Don't forget
   to remove this key in the uninstaller.</p>
+  <p class="text">In the uninstaller, insert the MUI_UNGETLANGUAGE macro in un.onInit to get the stored language
+  preference:</p>
+<pre class="margin">
+Function un.onInit
+
+  !insertmacro MUI_UNGETLANGUAGE
+
+FunctionEnd
+</pre>
   <p class="subheader">7. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
@@ -584,7 +599,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
-<li>1.64 - March 26, 2003
+<li>1.64 - April 7, 2003
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
     let the user accept the agreement or not</li>
@@ -592,6 +607,7 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>Language preference stored when installation has completed,
     no problems anymore when the users selects the wrong language</li>
     <li>Header text for aborted installation</li>
+    <li>New macro's: get language for uninstaller, delete shortcuts</li>
     <li>Language files have to be updated</li>
   </ul></li>
 </ul>
