@@ -24,6 +24,12 @@ Controls whether or not installs are enabled to the root directory of a drive, o
 
 Sets whether or not the install window automatically closes when completed. This is overrideable from a section using \R{setautoclose}{SetAutoClose}.
 
+\S2{abgfont} BGFont
+
+\c [font_face [height [wieght] [/ITALIC] [/UNDERLINE] [/STRIKE]]]
+
+Specifies the font used to show the text on the background gradient. To set the color use \R{abggradient}{BGGradient}. If no parameters are specified, the default font will be used. The default font is bold and italic Times New Roman.
+
 \S2{abggradient} BGGradient
 
 \c [\\<b\\>off\\</b\\>|(topc botc [textcolor|notext])]

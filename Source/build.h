@@ -341,6 +341,12 @@ class CEXEBuild {
     bool branding_image_found;
     WORD branding_image_id;
     unsigned char *m_unicon_data;
+
+#ifdef NSIS_SUPPORT_BGBG
+    LOGFONT bg_font;
+    LOGFONT bg_default_font;
+#endif
+
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     int deflateToFile(FILE *fp, char *buf, int len); // len==0 to flush
 #endif
