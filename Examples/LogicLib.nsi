@@ -2,10 +2,39 @@ Name "NSIS LogicLib Example"
 OutFile "example.exe"
 ShowInstDetails show
 
-;!define LOGICLIB_VERBOSITY 4
+!include "sections.nsh"
 !include "logiclib.nsh"
 
-Section
+;!undef LOGICLIB_VERBOSITY
+;!define LOGICLIB_VERBOSITY 4   ; For debugging - watch what logiclib does with your code!
+
+Page components "" "" ComponentsLeave
+Page instfiles
+
+Section /o "Run tests" TESTS
+
+  ; kinds of if other than "value1 comparison value2"
+  ClearErrors
+  FindFirst $R1 $R2 "$PROGRAMFILES\*"
+  ${Unless} ${Errors}
+    ${Do}
+      ${Select} $R2
+        ${Case2} "." ".."
+          ; Do nothing
+        ${CaseElse}
+          DetailPrint "Found $PROGRAMFILES\$R2"
+      ${EndSelect}
+      FindNext $R1 $R2
+    ${LoopUntil} ${Errors}
+    FindClose $R1
+  ${EndUnless}
+
+  StrCpy $R1 "example.xxx"
+  ${If} ${FileExists} "${__FILE__}"
+    DetailPrint 'Source file "${__FILE__}" still exists'
+  ${Else}
+    DetailPrint 'Source file "${__FILE__}" has gone'
+  ${EndIf}
 
   ; if..endif
   StrCpy $R1 1
@@ -167,6 +196,56 @@ Section
     DetailPrint "FAILED Select..Case*..EndSelect test"
   ${EndIf}
 
+  ; switch..case..caseelse..endswitch
+  StrCpy $R2 ""
+  ${For} $R1 1 10
+    ${Switch} $R1
+      ${Case} 3
+        StrCpy $R2 $R2A
+      ${Case} 4
+        StrCpy $R2 $R2B
+        ${Break}
+      ${Case} 5
+        StrCpy $R2 $R2C
+    ${EndSwitch}
+    ${Switch} $R1
+      ${Case} 1
+        StrCpy $R2 $R2D
+      ${Default}
+        StrCpy $R2 $R2E
+        ${Break}
+      ${Case} 2
+        StrCpy $R2 $R2F
+    ${EndSwitch}
+    ${Switch} $R1
+      ${Case} 6
+      ${Case} 7
+        StrCpy $R2 $R2G
+        ${If} $R1 = 6
+      ${Case} 8
+          StrCpy $R2 $R2H
+          ${Switch} $R1
+            ${Case} 6
+              StrCpy $R2 $R2I
+              ${Break}
+            ${Case} 8
+              StrCpy $R2 $R2J
+          ${EndSwitch}
+        ${EndIf}
+        StrCpy $R2 $R2K
+        ${Break}
+      ${Default}
+        StrCpy $R2 $R2L
+      ${Case} 9
+        StrCpy $R2 $R2M
+    ${EndSwitch}
+  ${Next}
+  ${If} $R2 == "DELMFLMABELMBELMCELMEGHIKEGKEHJKEMELM"
+    DetailPrint "PASSED Switch..Case*..EndSwitch test"
+  ${Else}
+    DetailPrint "FAILED Switch..Case*..EndSwitch test"
+  ${EndIf}
+
   ; for[each]..exitfor..next
   StrCpy $R2 ""
   ${For} $R1 1 5
@@ -264,27 +343,78 @@ Section
     DetailPrint "FAILED While..ExitWhile..EndWhile test"
   ${EndIf}
 
-  ; kinds of if other than "value1 comparison value2"
-  ClearErrors
-  FindFirst $R1 $R2 "$PROGRAMFILES\*"
-  ${Unless} ${Errors}
-    ${Do}
-      ${Select} $R2
-        ${Case2} "." ".."
-          ; Do nothing
-        ${CaseElse}
-          DetailPrint "Found $PROGRAMFILES\$R2"
-      ${EndSelect}
-      FindNext $R1 $R2
-    ${LoopUntil} ${Errors}
-    FindClose $R1
-  ${EndUnless}
-
-  StrCpy $R1 "example.xxx"
-  ${If} ${FileExists} "${__FILE__}"
-    DetailPrint 'Source file "${__FILE__}" still exists'
+  ; Unsigned integer tests
+  StrCpy $R2 ""
+  ${If} -1 < 1
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} -1 U< 1
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 0xFFFFFFFF > 1
+    StrCpy $R2 $R2C
+  ${EndIf}
+  ${If} 0xFFFFFFFF U> 1
+    StrCpy $R2 $R2D
+  ${EndIf}
+  ${If} $R2 == "AD"
+    DetailPrint "PASSED unsigned integer test"
   ${Else}
-    DetailPrint 'Source file "${__FILE__}" has gone'
+    DetailPrint "FAILED unsigned integer test"
+  ${EndIf}
+
+  ; 64-bit integer tests (uses System.dll)
+  StrCpy $R2 ""
+  ${If} 0x100000000 L= 4294967296
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} 0x100000000 L< 0x200000000
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} 0x500000000 L>= 0x500000000
+    StrCpy $R2 $R2C
+  ${EndIf}
+  ${If} $R2 == "ABC"
+    DetailPrint "PASSED 64-bit integer test"
+  ${Else}
+    DetailPrint "FAILED 64-bit integer test"
+  ${EndIf}
+
+  ; Extra string tests (uses System.dll)
+  StrCpy $R2 ""
+  ${If} "A" S< "B"
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} "b" S> "A"
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} "a" S<= "B"
+    StrCpy $R2 $R2C
+  ${EndIf}
+  ${If} "B" S< "B"
+    StrCpy $R2 $R2D
+  ${EndIf}
+  ${If} "A" S== "A"
+    StrCpy $R2 $R2E
+  ${EndIf}
+  ${If} "A" S== "a"
+    StrCpy $R2 $R2F
+  ${EndIf}
+  ${If} "A" S!= "a"
+    StrCpy $R2 $R2G
+  ${EndIf}
+  ${If} $R2 == "ABCEG"
+    DetailPrint "PASSED extra string test"
+  ${Else}
+    DetailPrint "FAILED extra string test"
   ${EndIf}
 
 SectionEnd
+
+Function ComponentsLeave
+  ; Section flags tests (requires sections.nsh be included)
+  ${Unless} ${SectionIsSelected} ${TESTS}
+    MessageBox MB_OK "Please select the component"
+    Abort
+  ${EndIf}
+FunctionEnd
