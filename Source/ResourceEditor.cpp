@@ -142,16 +142,13 @@ void CResourceEditor::UpdateResource(char* szType, char* szName, LANGID wLanguag
 	else if (data) {
 		// Delete the resource
 		delete data;
-		delete langDir->GetEntry(iLangIdx);
 		langDir->RemoveEntry(iLangIdx);
 		// Delete directories holding the resource if empty
 		if (!langDir->CountEntries()) {
 			delete langDir;
-			delete nameDir->GetEntry(iNameIdx);
 			nameDir->RemoveEntry(iNameIdx);
 			if (!nameDir->CountEntries()) {
 				delete nameDir;
-				delete m_cResDir->GetEntry(iTypeIdx);
 				m_cResDir->RemoveEntry(iTypeIdx);
 			}
 		}
@@ -556,6 +553,7 @@ void CResourceDirectory::RemoveEntry(int i) {
 		m_rdDir.NumberOfNamedEntries--;
 	else
 		m_rdDir.NumberOfIdEntries--;
+  delete m_vEntries[i];
 	m_vEntries.erase(m_vEntries.begin() + i);
 }
 
