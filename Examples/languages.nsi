@@ -95,6 +95,7 @@ Section "Section number two"
 SectionEnd
 
 Function .onInit
+	Push ""
 	Push ${LANG_ENGLISH}
 	Push English
 	Push ${LANG_DUTCH}
@@ -117,7 +118,8 @@ Function .onInit
 	Push "Simplified Chinese"
 	Push ${LANG_SLOVAK}
 	Push Slovak
-	Push 11 ; 11 is the number of languages
+	Push A ; A means auto count languages
+	       ; for the auto count to work the first empty push (Push "") must remain
 	LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
 
 	Pop $LANGUAGE
