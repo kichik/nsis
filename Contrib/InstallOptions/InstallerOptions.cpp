@@ -742,7 +742,7 @@ char old_title[1024];
 
 int createCfgDlg()
 {
-  UINT nAddMsg;
+  UINT nAddMsg, nFindMsg, nSetSelMsg;
 
   g_is_back=0;
   g_is_cancel=0;
@@ -965,10 +965,12 @@ int createCfgDlg()
         {
           SendMessage(hwCtrl, BM_SETCHECK, (WPARAM)BST_CHECKED, 0);
         }
-      } else if (
-                 ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)) ||
-                 ((pFields[nIdx].nType == FIELD_LISTBOX ) && (nAddMsg = LB_ADDSTRING))
-                 ) {
+      } else if (pFields[nIdx].pszListItems && (
+                 ((pFields[nIdx].nType == FIELD_COMBOBOX) && (nAddMsg = CB_ADDSTRING)
+                       && (nFindMsg = CB_FINDSTRINGEXACT) && (nSetSelMsg = CB_SETCURSEL)) ||
+                 ((pFields[nIdx].nType == FIELD_LISTBOX ) && (nAddMsg = LB_ADDSTRING)
+                       && (nFindMsg = LB_FINDSTRINGEXACT) && (nSetSelMsg = LB_SETCURSEL))
+                 )) {
         // if this is a listbox or combobox, we need to add the list items.
         char *pszStart, *pszEnd;
         pszStart = pszEnd = pFields[nIdx].pszListItems;
@@ -985,9 +987,34 @@ int createCfgDlg()
           pszEnd++;
         }
         if (pFields[nIdx].pszState) {
-          int nItem = SendMessage(hwCtrl, CB_FINDSTRINGEXACT, -1, (LPARAM)pFields[nIdx].pszState);
-          if (nItem != CB_ERR) {
-            SendMessage(hwCtrl, CB_SETCURSEL, nItem, 0);
+          if (pFields[nIdx].nFlags & FLAG_MULTISELECT && nFindMsg == LB_FINDSTRINGEXACT) {
+            SendMessage(hwCtrl, LB_SETSEL, FALSE, -1);
+            pszStart = pszEnd = pFields[nIdx].pszState;
+            while (*pszStart) {
+              char cLast = *pszEnd;
+              if (*pszEnd == '|') *pszEnd = '\0';
+              if (!*pszEnd) {
+                if (pszEnd > pszStart) {
+                  int nItem = SendMessage(hwCtrl, nFindMsg, -1, (LPARAM)pszStart);
+                  if (nItem != CB_ERR) { // CB_ERR == LB_ERR == -1
+                    SendMessage(hwCtrl, LB_SETSEL, TRUE, nItem);
+                  }
+                }
+                if (cLast) {
+                  do {
+                    pszEnd++;
+                  } while (*pszEnd == '|');
+                }
+                pszStart = pszEnd;
+              }
+              pszEnd++;
+            }
+          }
+          else {
+            int nItem = SendMessage(hwCtrl, nFindMsg, -1, (LPARAM)pFields[nIdx].pszState);
+            if (nItem != CB_ERR) { // CB_ERR == LB_ERR == -1
+              SendMessage(hwCtrl, nSetSelMsg, nItem, 0);
+            }
           }
         }
       } else if (pFields[nIdx].nType == FIELD_BITMAP || pFields[nIdx].nType == FIELD_ICON) {
