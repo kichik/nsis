@@ -396,10 +396,11 @@ Section "System Source" SecContribSystemS
   SetOutPath $INSTDIR\Contrib\System
   File ..\contrib\System\*.c
   File ..\contrib\System\*.h
-  File ..\contrib\System\*.ncb
   File ..\contrib\System\*.sln
-  File ..\contrib\System\*.txt
+  File ..\contrib\System\*.obj
   File ..\contrib\System\*.vcproj
+  File ..\contrib\System\*.txt
+  File ..\contrib\System\*.nsh
 SectionEnd
 
 Section "ShowWin Source" SecContribShowWinS
