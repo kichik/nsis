@@ -70,7 +70,7 @@
   !endif
   
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_ENGLISH} "${MUI_PRODUCT} ${MUI_VERSION} Setup"
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_ENGLISH} "${MUI_NAME} Uninstall"
   !endif
   
 !endif
