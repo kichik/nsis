@@ -41,11 +41,6 @@ extern unsigned long NSISCALL CRC32(unsigned long crc, const unsigned char *buf,
 #ifdef NSIS_COMPRESS_WHOLE
 extern HANDLE dbd_hFile;
 #endif
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-static const char *g_crcinvalid=_LANG_INVALIDCRC;
-#else
-static const char *g_crcinvalid=_LANG_INVALIDINST;
-#endif
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 static const char *g_errorcopyinginstall=_LANG_UNINSTINITERROR;
@@ -170,7 +165,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     if (l > 512) l=512;
     if (!ReadFile(g_db_hFile,temp,l,&l,NULL))
     {
-      m_Err=g_crcinvalid;
+      m_Err=_LANG_INVALIDCRC;
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
       if (hwnd) DestroyWindow(hwnd);
 #endif//NSIS_CONFIG_CRC_SUPPORT
@@ -187,7 +182,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         g_filehdrsize=m_pos;
         if (dbl > left)
         {
-          m_Err=g_crcinvalid;
+          m_Err=_LANG_INVALIDCRC;
           goto end;
         }
 #if defined(NSIS_CONFIG_SILENT_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
@@ -252,7 +247,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (hwnd) DestroyWindow(hwnd);
 #endif//NSIS_CONFIG_CRC_SUPPORT
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
-  if (!g_filehdrsize) m_Err=g_crcinvalid;
+  if (!g_filehdrsize) m_Err=_LANG_INVALIDCRC;
   else
   {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -263,14 +258,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       SetFilePointer(g_db_hFile,m_pos,NULL,FILE_BEGIN);
       if (!ReadFile(g_db_hFile,&fcrc,4,&l,NULL) || crc != fcrc)
       {
-        m_Err=g_crcinvalid;
+        m_Err=_LANG_INVALIDCRC;
         goto end;
       }
     }
 #endif//NSIS_CONFIG_CRC_SUPPORT
     SetFilePointer(g_db_hFile,g_filehdrsize,NULL,FILE_BEGIN);
 
-    if (loadHeaders()) m_Err=g_crcinvalid;
+    m_Err=loadHeaders();
   }
   if (m_Err) goto end;
 

@@ -1,14 +1,18 @@
 #ifndef _NSIS_LANG_H_
 #define _NSIS_LANG_H_
 
+
 // generic startup strings (these will never be overridable)
+#ifdef NSIS_CONFIG_CRC_SUPPORT
 #define _LANG_INVALIDCRC "Installer corrupted or incomplete.\r\n\r\n"  \
                         "This could be the result of a failed download or corruption from a virus."  \
                         "\r\n\r\nIf desperate, try the /NCRC command line switch (NOT recommended)"
-
-#define _LANG_INVALIDINST  "Installer corrupted.\r\n\r\n" \
+#else
+#define _LANG_INVALIDCRC  "Installer corrupted.\r\n\r\n" \
                           "This could be the result of an incomplete download"
+#endif
 
+#define _LANG_ERRORWRITINGTEMP "Error writing temp file"
 
 #define _LANG_UNINSTINITERROR "Error launching installer"
 

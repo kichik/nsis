@@ -470,7 +470,7 @@ int NSISCALL isheader(firstheader *h); // returns 0 on not header, length_of_dat
 // returns 0 on success
 // on success, m_header will be set to a pointer that should eventually be GlobalFree()'d.
 // (or m_uninstheader)
-int NSISCALL loadHeaders(void);
+const char * NSISCALL loadHeaders(void);
 
 extern HANDLE g_db_hFile;
 extern int g_quit_flag;
