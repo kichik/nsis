@@ -1,49 +1,69 @@
 // OutBuffer.h
 
-// #pragma once
-
 #ifndef __OUTBUFFER_H
 #define __OUTBUFFER_H
 
 #include "../IStream.h"
 
-class COutBufferException
+#ifndef _NO_EXCEPTIONS
+struct COutBufferException
 {
-public:
   HRESULT ErrorCode;
   COutBufferException(HRESULT errorCode): ErrorCode(errorCode) {}
 };
+#endif
 
 class COutBuffer
 {
-  BYTE *_buffer;
-  UINT32 _pos;
-  UINT32 _bufferSize;
+  Byte *_buffer;
+  UInt32 _pos;
+  UInt32 _bufferSize;
   ISequentialOutStream *_stream;
-  UINT64 _processedSize;
+  UInt64 _processedSize;
 
   void WriteBlock();
 public:
-  COutBuffer(UINT32 bufferSize = (1 << 20));
-  ~COutBuffer();
+  #ifdef _NO_EXCEPTIONS
+  HRESULT ErrorCode;
+  #endif
+
+  COutBuffer(): _buffer(0), _pos(0), _stream(0) {}
+  ~COutBuffer() { Free(); }
+  
+  bool Create(UInt32 bufferSize);
+  void Free();
 
   void Init(ISequentialOutStream *stream);
   HRESULT Flush();
-  // void ReleaseStream();
+  // void ReleaseStream(); {  _stream.Release(); }
 
-  void WriteByte(BYTE b)
+  /*
+  void *GetBuffer(UInt32 &sizeAvail)
+  {
+    sizeAvail = _bufferSize - _pos;
+    return _buffer + _pos;
+  }
+  void MovePos(UInt32 num)
+  {
+    _pos += num;
+    if(_pos >= _bufferSize)
+      WriteBlock();
+  }
+  */
+
+  void WriteByte(Byte b)
   {
     _buffer[_pos++] = b;
     if(_pos >= _bufferSize)
       WriteBlock();
   }
-  void WriteBytes(const void *data, UINT32 size)
+  void WriteBytes(const void *data, UInt32 size)
   {
-    for (UINT32 i = 0; i < size; i++)
-      WriteByte(((const BYTE *)data)[i]);
+    for (UInt32 i = 0; i < size; i++)
+      WriteByte(((const Byte *)data)[i]);
   }
 
-  UINT64 GetProcessedSize() const { return _processedSize + _pos; }
+  UInt64 GetProcessedSize() const { return _processedSize + _pos; }
 };
 
 #endif

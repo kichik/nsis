@@ -1,9 +1,9 @@
 // MyCom.h
 
-// #pragma once
-
 #ifndef __MYCOM_H
 #define __MYCOM_H
+
+#include "MyWindows.h"
 
 #define RINOK(x) { HRESULT __result_ = (x); if(__result_ != S_OK) return __result_; }
 
@@ -50,10 +50,12 @@ public:
     _p = NULL;
     return pt;
   }
-  /*HRESULT CoCreateInstance(REFCLSID rclsid, REFIID iid, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL)
+  #ifdef WIN32
+  HRESULT CoCreateInstance(REFCLSID rclsid, REFIID iid, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL)
   {
     return ::CoCreateInstance(rclsid, pUnkOuter, dwClsContext, iid, (void**)&_p);
-  }*/
+  }
+  #endif
   /*
   HRESULT CoCreateInstance(LPCOLESTR szProgID, LPUNKNOWN pUnkOuter = NULL, DWORD dwClsContext = CLSCTX_ALL)
   {
@@ -65,16 +67,16 @@ public:
     return hr;
   }
   */
-  /*template <class Q>
+  template <class Q>
   HRESULT QueryInterface(REFGUID iid, Q** pp) const
   {
     return _p->QueryInterface(iid, (void**)pp);
-  }*/
+  }
 };
 
 //////////////////////////////////////////////////////////
 
-/*class CMyComBSTR
+class CMyComBSTR
 {
 public:
   BSTR m_str;
@@ -83,7 +85,7 @@ public:
   // CMyComBSTR(int nSize) { m_str = ::SysAllocStringLen(NULL, nSize); }
   // CMyComBSTR(int nSize, LPCOLESTR sz) { m_str = ::SysAllocStringLen(sz, nSize);  }
   CMyComBSTR(const CMyComBSTR& src) { m_str = src.MyCopy(); }
-  / *
+  /*
   CMyComBSTR(REFGUID src)
   {
     LPOLESTR szGuid;
@@ -91,7 +93,7 @@ public:
     m_str = ::SysAllocString(szGuid);
     CoTaskMemFree(szGuid);
   }
-  * /
+  */
   ~CMyComBSTR() { ::SysFreeString(m_str); }
   CMyComBSTR& operator=(const CMyComBSTR& src)
   {
@@ -132,7 +134,7 @@ public:
     m_str = NULL;
   }
   bool operator!() const {  return (m_str == NULL); }
-};*/
+};
 
 
 //////////////////////////////////////////////////////////
@@ -182,6 +184,14 @@ STDMETHOD_(ULONG, Release)() { if (--__m_RefCount != 0)  \
   MY_QUERYINTERFACE_ENTRY(i2) \
   MY_QUERYINTERFACE_ENTRY(i3) \
   MY_QUERYINTERFACE_ENTRY(i4) \
+  )
+
+#define MY_UNKNOWN_IMP5(i1, i2, i3, i4, i5) MY_UNKNOWN_IMP_SPEC( \
+  MY_QUERYINTERFACE_ENTRY(i1) \
+  MY_QUERYINTERFACE_ENTRY(i2) \
+  MY_QUERYINTERFACE_ENTRY(i3) \
+  MY_QUERYINTERFACE_ENTRY(i4) \
+  MY_QUERYINTERFACE_ENTRY(i5) \
   )
 
 #endif
