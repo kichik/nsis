@@ -5210,6 +5210,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=SECTION_FIELD_SET(flags);
+      ent.offsets[3]=1;
       SCRIPT_MSG("SectionSetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETFLAGS:
@@ -5266,19 +5267,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETCURINSTTYPE:
-    {
-      int ret;
+      ent.which=EW_INSTTYPESET;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=0;
+      ent.offsets[2]=1;
+      ent.offsets[3]=1;
       SCRIPT_MSG("SetCurInstType: %s\n",line.gettoken_str(1));
-      ret = add_entry_direct(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
-      if (ret != PS_OK) return ret;
-      ret = add_entry_direct(EW_INSTTYPESET, 0, 0, 0, 1);
-      if (ret != PS_OK) return ret;
-    }
-    return PS_OK;
+    return add_entry(&ent);
     case TOK_GETCURINSTTYPE:
-      ent.which=EW_GETFLAG;
-      ent.offsets[0]=GetUserVarIndex(line, 1);
-      ent.offsets[1]=FLAG_OFFSET(cur_insttype);
+      ent.which=EW_INSTTYPESET;
+      ent.offsets[0]=0;
+      ent.offsets[1]=GetUserVarIndex(line,1);
+      ent.offsets[2]=0;
+      ent.offsets[3]=1;
       if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
@@ -5296,7 +5297,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_CONFIG_COMPONENTPAGE
-    // Added by Amir Szekely 29th July 2002
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_SETBRANDINGIMAGE:
     {

@@ -5,6 +5,7 @@
 #include "util.h"
 #include "state.h"
 #include "ui.h"
+#include "components.h"
 #include "exec.h"
 #include "lang.h"
 #include "resource.h"
@@ -160,10 +161,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   //char *var3;
   //char *var4;
   //char *var5;
-
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  HWND hwSectionHack = g_SectionHack;
-#endif
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   // Saves 8 bytes
@@ -1483,13 +1480,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           else
           {
             // setting text, send the message to do it
-            SendMessage(hwSectionHack,WM_NOTIFY_SECTEXT,x,parm1);
+            SendMessage(g_SectionHack,WM_NOTIFY_SECTEXT,x,parm1);
           }
           ((int*)sec)[parm2]=parm1;
-          if (parm2)
+
+          if (parm3) // update flags
           {
-            // update tree view
-            SendMessage(hwSectionHack,WM_NOTIFY_SECFLAGS,x,0);
+            SectionFlagsChanged(x);
           }
         }
       }
@@ -1498,22 +1495,32 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_INSTTYPESET:
     {
-      int x=GetIntFromParm(0);
+      int x = GetIntFromParm(0);
 
-      if (parm3)
+      if ((unsigned int)x < (unsigned int)NSIS_MAX_INST_TYPES)
       {
-        g_exec_flags.insttype_changed++;
-        SendMessage(hwSectionHack,WM_NOTIFY_INSTTYPE_CHANGE,0,0);
-      }
-      else if ((unsigned int)x < (unsigned int)NSIS_MAX_INST_TYPES)
-      {
-        if (parm2) // set text
+        if (parm3) // current install type
         {
-          g_header->install_types[x] = parm1;
+          if (parm2) // set install type
+          {
+            SetInstType(x);
+            RefreshSectionGroups(0);
+          }
+          else // get install type
+          {
+            myitoa(var1, GetInstType(0));
+          }
         }
-        else // get text
+        else // install type text
         {
-          GetNSISString(var1,g_header->install_types[x]);
+          if (parm2) // set text
+          {
+            g_header->install_types[x] = parm1;
+          }
+          else // get text
+          {
+            GetNSISString(var1,g_header->install_types[x]);
+          }
         }
       }
       else exec_error++;
