@@ -36,6 +36,7 @@
 ;--------------------------------
 ;Pages
 
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Contrib\Modern UI\License.txt"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -58,6 +59,7 @@
   !insertmacro MUI_LANGUAGE "Dutch"
   !insertmacro MUI_LANGUAGE "Danish"
   !insertmacro MUI_LANGUAGE "Swedish"
+  !insertmacro MUI_LANGUAGE "Finnish"
   !insertmacro MUI_LANGUAGE "Greek"
   !insertmacro MUI_LANGUAGE "Russian"
   !insertmacro MUI_LANGUAGE "Portuguese"
@@ -76,7 +78,10 @@
   !insertmacro MUI_LANGUAGE "Turkish"
   !insertmacro MUI_LANGUAGE "Lithuanian"
   !insertmacro MUI_LANGUAGE "Catalan"
+  !insertmacro MUI_LANGUAGE "Slovenian"
   !insertmacro MUI_LANGUAGE "Serbian"
+  !insertmacro MUI_LANGUAGE "Arabic"
+  !insertmacro MUI_LANGUAGE "Hebrew"
 
 ;--------------------------------
 ;Reserve Files
@@ -115,40 +120,10 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-  LangString DESC_SecDummy ${LANG_ENGLISH} "Test section: English description"
-  LangString DESC_SecDummy ${LANG_FRENCH} "Test section: French description"
-  LangString DESC_SecDummy ${LANG_GERMAN} "Test section: German description"
-  LangString DESC_SecDummy ${LANG_SPANISH} "Test section: Spanish description"
-  LangString DESC_SecDummy ${LANG_SIMPCHINESE} "Test section: Simplified Chinese description"
-  LangString DESC_SecDummy ${LANG_TRADCHINESE} "Test section: Traditional Chinese description"
-  LangString DESC_SecDummy ${LANG_JAPANESE} "Test section: Japanese description"
-  LangString DESC_SecDummy ${LANG_KOREAN} "Test section: Korean description"
-  LangString DESC_SecDummy ${LANG_ITALIAN} "Test section: Italian description"
-  LangString DESC_SecDummy ${LANG_DUTCH} "Test section: Dutch description"
-  LangString DESC_SecDummy ${LANG_DANISH} "Test section: Danish description"
-  LangString DESC_SecDummy ${LANG_SWEDISH} "Test section: Swedish description"
-  LangString DESC_SecDummy ${LANG_GREEK} "Test section: Greek description"
-  LangString DESC_SecDummy ${LANG_RUSSIAN} "Test section: Russian description"
-  LangString DESC_SecDummy ${LANG_PORTUGUESE} "Test section: Portuguese description"
-  LangString DESC_SecDummy ${LANG_PORTUGUESEBR} "Test section: Portuguese (Brasil) description"
-  LangString DESC_SecDummy ${LANG_POLISH} "Test section: Polish description"
-  LangString DESC_SecDummy ${LANG_UKRAINIAN} "Test section: Ukrainian description"
-  LangString DESC_SecDummy ${LANG_CZECH} "Test section: Czechian description"
-  LangString DESC_SecDummy ${LANG_SLOVAK} "Test section: Slovakian description"
-  LangString DESC_SecDummy ${LANG_CROATIAN} "Test section: Slovakian description"
-  LangString DESC_SecDummy ${LANG_BULGARIAN} "Test section: Bulgarian description"
-  LangString DESC_SecDummy ${LANG_HUNGARIAN} "Test section: Hungarian description"
-  LangString DESC_SecDummy ${LANG_THAI} "Test section: Thai description"
-  LangString DESC_SecDummy ${LANG_ROMANIAN} "Test section: Romanian description"
-  LangString DESC_SecDummy ${LANG_MACEDONIAN} "Test section: Macedonian description"
-  LangString DESC_SecDummy ${LANG_ESTONIAN} "Test section: Estonian description"
-  LangString DESC_SecDummy ${LANG_TURKISH} "Test section: Turkish description"
-  LangString DESC_SecDummy ${LANG_LITHUANIAN} "Test section: Lithuanian description"
-  LangString DESC_SecDummy ${LANG_CATALAN} "Test section: Catalan description"
-  LangString DESC_SecDummy ${LANG_SERBIAN} "Test section: Serbian description"
+  ;USE A LANGSTRING IF YOU WANT A DESCRIPTION TO BE LANGUAGE SPECIFIC
 
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} "A test section."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 ;--------------------------------
