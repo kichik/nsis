@@ -64,7 +64,7 @@ The windows desktop directory (usually C:\\windows\\desktop but detected at runt
 
 \e{$EXEDIR}
 
-The location of the installer executable. (technically you can modify this variable, but it is probably not a good idea)
+The location of the installer executable (technically you can modify this variable, but it is probably not a good idea).
 
 \e{$\{NSISDIR\}}
 
@@ -72,15 +72,15 @@ A symbol that contains the path where NSIS is installed. Detected at compile tim
 
 \e{$WINDIR}
 
-The windows directory (usually C:\\windows or C:\\winnt but detected at runtime)
+The windows directory (usually C:\\windows or C:\\winnt but detected at runtime).
 
 \e{$SYSDIR}
 
-The windows system directory (usually C:\\windows\\system or C:\\winnt\\system32 but detected at runtime)
+The windows system directory (usually C:\\windows\\system or C:\\winnt\\system32 but detected at runtime).
 
 \e{$TEMP}
 
-The system temporary directory (usually C:\\windows\\temp but detected at runtime)
+The system temporary directory (usually C:\\windows\\temp but detected at runtime).
 
 \e{$STARTMENU}
 

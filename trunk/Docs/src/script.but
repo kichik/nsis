@@ -24,7 +24,7 @@ Lines beginning with ; or # are comments. You can put comments after commands. Y
 \c
 \c File "myfile" ; Comment
 
-If want a parameter to start with ; or # put it in quotes.
+If you want a parameter to start with ; or # put it in quotes.
 
 \\<b\\>Plug-ins\\</b\\>
 
@@ -71,7 +71,7 @@ Variables start with $. User variables should be declared and are case-sensitive
 
 \\<b\\>Long commands\\</b\\>
 
-To extend a command over multiple lines, use a backslash (\\) at the end of the line, and the next line will effectively be concatenated the end of it. For example:
+To extend a command over multiple lines, use a backslash (\\) at the end of the line. The next line will effectively be concatenated to the end of it. For example:
 
 \c CreateShortCut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
 \c     "$INSTDIR\source\zip2exe\zip2exe.dsw"
