@@ -112,7 +112,7 @@ void ExecScript(int log) {
     {
       pNTHeaders = (PIMAGE_NT_HEADERS)((BYTE*)pNTHeaders + ((PIMAGE_DOS_HEADER)pNTHeaders)->e_lfanew);
       pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
-        IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE | IMAGE_FILE_RELOCS_STRIPPED;
+        IMAGE_FILE_LINE_NUMS_STRIPPED | IMAGE_FILE_EXECUTABLE_IMAGE;
       pNTHeaders->OptionalHeader.Subsystem = IMAGE_SUBSYSTEM_WINDOWS_CUI;
       pNTHeaders->OptionalHeader.AddressOfEntryPoint = (DWORD)WinMain - (DWORD)g_hInst;  
       UnmapViewOfFile(pNTHeaders);
@@ -123,7 +123,10 @@ void ExecScript(int log) {
 
   g_to = 0; // default is no timeout
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
-  pExec = g_exec + nComSpecSize - 2; *pExec = ' '; pExec++;
+  pExec = g_exec + nComSpecSize;
+  while ( !*(pExec-1) ) pExec--;
+  *pExec = ' '; 
+  pExec++;
   popstring(pExec);
   if ( my_strstr(pExec, "/TIMEOUT=") ) {
     char *szTimeout = pExec + 9;
