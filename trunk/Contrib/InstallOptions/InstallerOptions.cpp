@@ -1099,21 +1099,11 @@ int WINAPI createCfgDlg()
     if (hwCtrl) {
       // Sets the font of IO window to be the same as the main window
       mySendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
-      // Set initial focus to the first appropriate field
-      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP) {
-        fFocused = TRUE;
-        mySetFocus(hwCtrl);
-      }
       // make sure we created the window, then set additional attributes
       switch (pField->nType) {
         case FIELD_TEXT:
         case FIELD_FILEREQUEST:
         case FIELD_DIRREQUEST:
-          // If multiline-readonly then hold the text back until after the
-          // initial focus has been set. This is so the text is not initially
-          // selected - useful for License Page look-a-likes.
-          if ((pField->nFlags & (FLAG_MULTILINE | FLAG_READONLY)) == (FLAG_MULTILINE | FLAG_READONLY))
-            mySetWindowText(hwCtrl, pField->pszState);
           mySendMessage(hwCtrl, EM_LIMITTEXT, (WPARAM)pField->nMaxLength, (LPARAM)0);
           break;
 
@@ -1224,6 +1214,18 @@ int WINAPI createCfgDlg()
           break;
 #endif
       }
+
+      // Set initial focus to the first appropriate field
+      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP) {
+        fFocused = TRUE;
+        mySetFocus(hwCtrl);
+      }
+
+      // If multiline-readonly then hold the text back until after the
+      // initial focus has been set. This is so the text is not initially
+      // selected - useful for License Page look-a-likes.
+      if ((pField->nFlags & (FLAG_MULTILINE | FLAG_READONLY)) == (FLAG_MULTILINE | FLAG_READONLY))
+        mySetWindowText(hwCtrl, pField->pszState);
     }
   }
 
