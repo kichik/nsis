@@ -32,8 +32,9 @@
 #define NSIS_URL	"http://sourceforge.net/projects/nsis2k/"
 #define USAGE		"Usage:\r\n   makensisw full_path_of_makensis.exe [options] [script.nsi | - [...]]\r\n"
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
-#define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel and Fritz Elfert"
-#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis2k/NSIS/makensis.htm?rev=HEAD"
+#define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel, Fritz Elfert, and Amir Szekely"
+#define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis2k/NSIS/docs/index.html?rev=HEAD"
+#define LOCALDOCS	"\\docs\\index.html"
 #define REGSEC		HKEY_LOCAL_MACHINE
 #define REGKEY		"Software\\NSIS"
 #define REGLOC		"MakeNSISWPlacement"
@@ -45,12 +46,12 @@
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
 // Extern Variables
-extern const	char *NSISW_VERSION;
-extern char		*g_script;
-extern HWND		g_hwnd;
-extern HANDLE	g_hThread;
-extern char		g_output_exe[1024];
-extern char		g_input_script[1024];
+extern const char	*NSISW_VERSION;
+extern char			*g_script;
+extern HWND			g_hwnd;
+extern HANDLE		g_hThread;
+extern char			g_output_exe[1024];
+extern char			g_input_script[1024];
 
 // makensisw
 int WINAPI		WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);

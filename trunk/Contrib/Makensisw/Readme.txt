@@ -140,6 +140,8 @@ Version History
 
 1.9
  - Text always scrolls to bottom (Kickik)
+ - Updated link to new docs
+
 
 Copyright Information
 ---------------------
