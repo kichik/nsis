@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (c) 2002 Robert Rainwater
   Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
 
@@ -44,6 +44,7 @@
 #define REGSEC       HKEY_LOCAL_MACHINE
 #define REGKEY       "Software\\NSIS"
 #define REGLOC       "MakeNSISWPlacement"
+#define REGCOMPRESSOR "Compressor"
 #define REGDEFSUBKEY "Defines"
 #define REGDEFCOUNT  "MakeNSISWDefinesCount"
 #define REGMRUSUBKEY "MRU"
@@ -55,6 +56,13 @@
 #define FILE_MENU_INDEX 0
 #define EDIT_MENU_INDEX 1
 #define TOOLS_MENU_INDEX 2
+#define COMPRESSOR_MENU_INDEX 4
+#define BZIP2_COMPRESSOR_NAME "bzip2"
+#define ZLIB_COMPRESSOR_NAME "zlib"
+#define COMPRESSOR_MESSAGE "\n\nThe %s compressor (%d bytes) created a smaller file than the %s compressor (%d bytes)."
+#define ZLIB_COMPRESSOR_MESSAGE "\nThe bzip2 compressed version was replaced with zlib compressed version."
+#define EXE_HEADER_COMPRESSOR_STAT "EXE header size:"
+#define TOTAL_SIZE_COMPRESSOR_STAT "Total size:"
 
 #define WM_MAKENSIS_PROCESSCOMPLETE (WM_USER+1001)
 
@@ -65,18 +73,18 @@ enum {
   MAKENSIS_NOTIFY_OUTPUT
 };
 
-#ifdef COMPRESSOR_OPTION
 typedef enum {
   COMPRESSOR_DEFAULT,
   COMPRESSOR_ZLIB,
-  COMPRESSOR_GZIP
+  COMPRESSOR_BZIP2,
+  COMPRESSOR_BEST
 } NCOMPRESSOR;
-#endif
+
 // Extern Variables
 extern const char* NSISW_VERSION;
 
 int WINAPI     WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow);
-static BOOL    CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+static BOOL    CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI   MakeNSISProc(LPVOID p);
 BOOL CALLBACK  DialogResize(HWND hWnd, LPARAM /* unused*/);
 BOOL CALLBACK  AboutNSISProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -84,9 +92,7 @@ BOOL CALLBACK  AboutProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK  DefinesProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 void           CompileNSISScript();
 char*          BuildDefines();
-#ifdef COMPRESSOR_OPTION
-BOOL           SetCompressor(WORD);
-#endif
+void           SetCompressor(NCOMPRESSOR);
 void           RestoreDefines();
 void           SaveDefines();
 void           RestoreMRUList();
@@ -113,9 +119,9 @@ typedef struct NSISScriptData {
   HANDLE thread;
   HWND focused_hwnd;
   CHARRANGE textrange;
-#ifdef COMPRESSOR_OPTION
   NCOMPRESSOR compressor;
-#endif
+  char *compressor_name;
+  char compressor_stats[512];
   // Added by Darren Owen (DrO) on 1/10/2003
   int recompile_test;
 } NSCRIPTDATA;
