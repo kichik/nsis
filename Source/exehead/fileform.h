@@ -121,6 +121,8 @@ enum
 
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
 
+  EW_SETLANG,           // SetLanguage:       1: [language]
+
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
@@ -322,6 +324,7 @@ typedef struct
   // .on* calls
   int code_onPrevPage;
   int code_onVerifyInstDir;
+  int code_onMouseOverSection;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   int code_onSelChange;
 #endif//NSIS_CONFIG_COMPONENTPAGE
