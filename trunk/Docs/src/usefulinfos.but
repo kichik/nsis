@@ -1,0 +1,58 @@
+\A{usefulinfos} Useful Information
+
+\H{sads}Add uninstall information to Add/Remove Programs
+
+Create a key with your product name under \\<b\\>HKLM/Software/Microsoft/Windows/CurrentVersion/Uninstall\\</b\\> to add entries to the "Add/Remove Programs" section in the Control Panel.
+For Windows NT (NT4/2000/XP), it's also possible to create the key in the HKCU hive, so it will only appear for the current user.
+There are several values you can write to key to give information about your application and the uninstaller.
+Write a value using the WriteRegStr command (for strings) or WriteRegDWORD command (for DWORD values). Example:
+
+
+\c WriteRegStr HKLM "Software/Microsoft/Windows/CurrentVersion/Uninstall/Product" "DisplayName" "Application Name"
+
+
+\\<b\\>Required values\\</b\\>
+
+\e{DisplayName} (string) - Name of the application
+
+\e{UninstallString} (string) - Path and filename of the uninstaller
+
+\\<b\\>Optional values\\</b\\>
+
+Some of the following values will not be used by older Windows versions.
+
+\e{InstallLocation} (string) - Installation directory ($INSTDIR)
+
+\e{DisplayIcon} (string) - Path, filename and index of of the icon which will be displayed next to your application name
+
+\e{Publisher} (string) - (Company) name of the publisher
+
+\e{ModifyPath} (string) - Path and filename of the application modify program
+
+\e{InstallSource} (string) - Location where the application was installed from
+
+\e{ProductID} (string) - Product ID of the application
+
+\e{RegOwner} (string) - Registered owner of the application
+
+\e{RegCompany} (string) - Registered company of the application
+
+\e{HelpLink} (string) - Link to the support website
+
+\e{HelpTelephone} (string) - Telephone number for support
+
+\e{URLUpdateInfo} (string) - Link to the website for application updates
+
+\e{URLInfoAbout} (string) - Link to the application home page
+
+\e{DisplayVersion} (string) - Displayed version of the application
+
+\e{VersionMajor} (DWORD) - Major version number of the application
+
+\e{VersionMinor} (DWORD) - Minor version number of the application
+
+\e{NoModify} (DWORD) - 1 if uninstaller has no option to modify the installed application
+
+\e{NoRepair} (DWORD) - 1 if the uninstaller has no option to repair the installation
+
+If both NoModify and NoRepair are set to 1, the button displays "Remove" instead of "Modify/Remove".
