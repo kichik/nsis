@@ -786,8 +786,8 @@ NLF::NLF(char *filename) {
   // Read strings
   for (int i = 0; i < NLF_STRINGS; i++) {
     if (nlf_version < 3 && (i == NLF_BTN_LICENSE_AGREE || i == NLF_BTN_LICENSE_DISAGREE)) {
-      m_szStrings[i] = new char[1];
-      m_szStrings[i][0] = 0;
+      m_szStrings[i] = new char[strlen(english_strings[i]) + 1];
+      strcpy(m_szStrings[i], english_strings[i]);
       continue;
     }
 
