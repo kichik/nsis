@@ -48,13 +48,18 @@
 #define POPT_NEVERREDEF 0x8    // Never redefine
 #define POPT_GENSTACK   0x10   // Use general stack (non temporary for callback)
 #define POPT_ERROR      0x20   // Call GetLastError after proc and push it to stack
-#define POPT_CLONE      0x40   // This is clone callback
+#define POPT_UNLOAD     0x40   // unload dll after call
+#define POPT_CLONE      0x80   // This is clone callback
 
 // Our single proc parameter
 typedef struct
 {
 	int Type;
 	int Option; // -1 -> Pointer, 1-... -> Special+1
+
+    // if you'll change ProcParameter or SystemProc structure - update this value
+#define  SYSTEM_ZERO_PARAM_VALUE_OFFSET 0x820
+
 	int Value;	// it can hold any 4 byte value 
     int _value; // value buffer for structures > 4 bytes (I hope 8 bytes will be enough)
     int Size; // Value real size (should be either 1 or 2 (the number of pushes))
@@ -76,6 +81,7 @@ typedef struct tag_SystemProc
 	HANDLE Proc;
     int Options;
 	int ParamCount;
+    // if you'll change ProcParameter or SystemProc structure - update SYSTEM_ZERO_PARAM_VALUE_OFFSET value
 	ProcParameter Params[100];	// I hope nobody will use more than 100 params
 
     // Callback specific
@@ -85,7 +91,7 @@ typedef struct tag_SystemProc
     SystemProc *Clone;
 } SystemProc;
 
-extern int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
+extern const int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
 
 extern HANDLE CreateCallback(SystemProc *cbproc);
 extern SystemProc *PrepareProc(BOOL NeedForCall);

@@ -68,7 +68,7 @@
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
 			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="1"
@@ -97,9 +97,10 @@
 				OutputFile="d:\Program FIles\NSIS\Plugins\System.dll"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="TRUE"
-				GenerateDebugInformation="FALSE"
+				GenerateDebugInformation="TRUE"
 				GenerateMapFile="TRUE"
 				MapExports="TRUE"
+				MapLines="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
