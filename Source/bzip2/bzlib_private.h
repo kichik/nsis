@@ -67,7 +67,6 @@
  #include "bzlib.h"
 
 
-
 /*-- General stuff. --*/
 
 #define BZ_VERSION  "1.0.1, 23-June-2000"
@@ -103,6 +102,7 @@ typedef unsigned short  UInt16;
 #define BZALLOC(items) my_GlobalAlloc(items)
 #else   // def EXEHEAD
 #define BZALLOC(items) GlobalAlloc(GPTR,items)
+#define mini_memcpy memcpy
 #endif  // def EXEHEAD
 #define BZFREE(addr)  { if (addr) GlobalFree(addr); }
 
@@ -316,6 +316,34 @@ BZ2_hbMakeCodeLengths ( UChar*, Int32*, Int32, Int32 );
 
 
 
+/* save area for scalars in the main decompress code */
+typedef struct {
+      Int32    i;
+      Int32    j;
+      Int32    t;
+      Int32    alphaSize;
+      Int32    nGroups;
+      Int32    nSelectors;
+      Int32    EOB;
+      Int32    groupNo;
+      Int32    groupPos;
+      Int32    nextSym;
+      Int32    nblockMAX;
+      Int32    nblock;
+      Int32    es;
+      Int32    N;
+      Int32    curr;
+      Int32    zt;
+      Int32    zn;
+      Int32    zvec;
+      Int32    zj;
+      Int32    gSel;
+      Int32    gMinlen;
+      Int32*   gLimit;
+      Int32*   gBase;
+      Int32*   gPerm;
+} DState_save;
+
 /*-- Structure holding all the decompression-side stuff. --*/
 
 typedef
@@ -383,30 +411,7 @@ typedef
       Int32    minLens[BZ_N_GROUPS];
 
       /* save area for scalars in the main decompress code */
-      Int32    save_i;
-      Int32    save_j;
-      Int32    save_t;
-      Int32    save_alphaSize;
-      Int32    save_nGroups;
-      Int32    save_nSelectors;
-      Int32    save_EOB;
-      Int32    save_groupNo;
-      Int32    save_groupPos;
-      Int32    save_nextSym;
-      Int32    save_nblockMAX;
-      Int32    save_nblock;
-      Int32    save_es;
-      Int32    save_N;
-      Int32    save_curr;
-      Int32    save_zt;
-      Int32    save_zn;
-      Int32    save_zvec;
-      Int32    save_zj;
-      Int32    save_gSel;
-      Int32    save_gMinlen;
-      Int32*   save_gLimit;
-      Int32*   save_gBase;
-      Int32*   save_gPerm;
+      DState_save save;
 
    }
    DState;
