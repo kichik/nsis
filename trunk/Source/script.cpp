@@ -2254,12 +2254,25 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+    {
+      if (build_compressor_set) {
+        ERROR_MSG("Error: can't change compressor after data already got compressed or header already changed!\n");
+        return PS_ERROR;
+      }
+      if (!build_compressor_final)
       {
-        if (build_compressor_set) {
-          ERROR_MSG("Error: can't change compressor after data already got compressed or header already changed!\n");
-          return PS_ERROR;
+        int a = 1;
+        if (!strcmpi(line.gettoken_str(1),"/FINAL"))
+        {
+          build_compressor_final = true;
+          a++;
         }
-        int k=line.gettoken_enum(1,"zlib\0bzip2\0");
+        else if (line.getnumtokens() == 3)
+        {
+          ERROR_MSG("%s expects 2 parameters, got 3.\n",line.gettoken_str(0));
+          PRINTHELP();
+        }
+        int k=line.gettoken_enum(a,"zlib\0bzip2\0");
         switch (k) {
           case 0: // JF> should handle the state of going from bzip2 back to zlib:
             compressor = &zlib_compressor;
@@ -2275,11 +2288,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             memcpy(header_data_new,zlib_header_data,zlib_exeheader_size);
-#ifdef NSIS_ZLIB_COMPRESS_WHOLE
+  #ifdef NSIS_ZLIB_COMPRESS_WHOLE
             build_compress_whole=true;
-#else
+  #else
             build_compress_whole=false;
-#endif
+  #endif
           break;
           case 1:
             compressor=&bzip2_compressor;
@@ -2295,17 +2308,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             }
 
             memcpy(header_data_new,bzip2_header_data,bzip2_exeheader_size);
-#ifdef NSIS_BZIP2_COMPRESS_WHOLE
+  #ifdef NSIS_BZIP2_COMPRESS_WHOLE
             build_compress_whole=true;
-#else
+  #else
             build_compress_whole=false;
-#endif
+  #endif
             break;
           default:
             PRINTHELP();
         }
-        SCRIPT_MSG("SetCompressor: %s\n", line.gettoken_str(1));
+        SCRIPT_MSG("SetCompressor: %s%s\n", build_compressor_final? "/FINAL " : "", line.gettoken_str(a));
       }
+      else
+      {
+        warning_fl("SetCompressor ignored due to previous call with the /FINAL switch");
+      }
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else//NSIS_CONFIG_COMPRESSION_SUPPORT
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPRESSION_SUPPORT not defined.\n",  line.gettoken_str(0));
@@ -2764,9 +2782,23 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SetDateSave: %s\n",line.gettoken_str(1));
     return PS_OK;
     case TOK_SETOVERWRITE:
-      build_overwrite=line.gettoken_enum(1,"on\0off\0try\0ifnewer\0");
-      if (build_overwrite==-1) PRINTHELP()
+    {
+      int k=line.gettoken_enum(1,"on\0off\0try\0ifnewer\0lastused\0");
+      if (k==-1) PRINTHELP()
+      if (k==4)
+      {
+        k=build_overwrite;
+        build_overwrite=build_last_overwrite;
+        build_last_overwrite=k;
+      }
+      else
+      {
+        build_last_overwrite=build_overwrite;
+        build_overwrite=k;
+      }
+      SCRIPT_MSG("overwrite = %d, last_overwrite = %d\n", build_overwrite, build_last_overwrite);
       SCRIPT_MSG("SetOverwrite: %s\n",line.gettoken_str(1));
+    }
     return PS_OK;
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     case TOK_SETPLUGINUNLOAD:

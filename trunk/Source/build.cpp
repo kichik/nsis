@@ -243,6 +243,7 @@ CEXEBuild::CEXEBuild()
   compressor = &zlib_compressor;
 #endif
   build_compressor_set = false;
+  build_compressor_final = false;
 #ifdef NSIS_ZLIB_COMPRESS_WHOLE
   build_compress_whole = true;
 #else
@@ -276,7 +277,7 @@ CEXEBuild::CEXEBuild()
   version_product_v[0]=0;
 #endif
 
-  build_overwrite=0;
+  build_overwrite=build_last_overwrite=0;
   build_compress=1;
   build_crcchk=1;
   build_datesave=1;

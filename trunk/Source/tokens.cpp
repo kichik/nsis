@@ -155,7 +155,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SETCTLCOLORS,"SetCtlColors",2,1,"hwnd (branding | (text_color (transparent|bg_color)))"},
 {TOK_SETBRANDINGIMAGE,"SetBrandingImage",1,2,"[/IMGID=image_item_id_in_dialog] [/RESIZETOFIT] bitmap.bmp"},
 {TOK_SETCOMPRESS,"SetCompress",1,0,"(off|auto|force)"},
-{TOK_SETCOMPRESSOR,"SetCompressor",1,0,"(zlib|bzip2)"},
+{TOK_SETCOMPRESSOR,"SetCompressor",1,1,"[/FINAL] (zlib|bzip2)"},
 {TOK_SETDATESAVE,"SetDateSave",1,0,"(off|on)"},
 {TOK_SETDETAILSVIEW,"SetDetailsView",1,0,"(hide|show)"},
 {TOK_SETDETAILSPRINT,"SetDetailsPrint",1,0,"(none|listonly|textonly|both)"},
