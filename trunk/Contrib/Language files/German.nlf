@@ -1,6 +1,5 @@
 # Header, don't edit
 NLF v6
-# Start editing here
 # Language ID
 1031
 # Font and size - dash (-) means default
@@ -100,7 +99,7 @@ Wählen Sie die Komponenten aus, die Sie deinstallieren möchten:
 # ^UnComponentsSubText2
 oder wählen Sie zusätzliche Komponenten aus die Sie deinstallieren möchten:
 # ^DirText
-$(^Name) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren mächten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
+$(^Name) wird in das unten angegebene Verzeichnis installiert. Falls Sie in ein anderes Verzeichnis installieren möchten, klicken Sie auf Durchsuchen und wählen Sie ein anderes Verzeichnis aus. $_CLICK
 # ^DirSubText
 Zielverzeichnis
 # ^DirBrowseText
@@ -110,13 +109,13 @@ $(^Name) wird aus dem unten angegebenen Verzeichnis deinstalliert. Um aus einem 
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Wählen Sie das Verzeichnis aus, aus dem (^Name) deinstalliert werden soll:
+Wählen Sie das Verzeichnis aus, aus dem $(^Name) deinstalliert werden soll:
 # ^SpaceAvailable
 "Verfügbarer Speicher: "
 # ^SpaceRequired
 "Benötigter Speicher: "
 # ^UninstallingText
-Dieser Assisten deinstalliert (^Name) von Ihrem Computer. $_CLICK
+Dieser Assistent deinstalliert $(^Name) von Ihrem Computer. $_CLICK
 # ^UninstallingSubText
 Deinstalliere aus:
 # ^FileError
