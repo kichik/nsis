@@ -2889,9 +2889,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return add_entry(&ent);
     case TOK_SETBKCOLOR:
       ent.which=EW_SETBKCOLOR;
-      ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=line.gettoken_int(2);
-      SCRIPT_MSG("SetBkColor: handle=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+      if (!stricmp(line.gettoken_str(2),"transparent"))
+        ent.offsets[0]=BS_NULL;
+      else {
+        ent.offsets[0]=BS_SOLID;
+        ent.offsets[1]=line.gettoken_int(2);
+      }
+      ent.offsets[2]=0;
+      ent.offsets[3]=add_string(line.gettoken_str(1));
+      SCRIPT_MSG("SetBkColor: hwnd=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
@@ -3562,10 +3568,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_INTOP:
       ent.which=EW_INTOP;
       ent.offsets[0]=line.gettoken_enum(1,usrvars);
-      ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0~\0!\0||\0&&\0%\0");
-      if (ent.offsets[0] < 0 || ent.offsets[3]<0 || ((ent.offsets[3] == 7 || ent.offsets[3]==8) && line.getnumtokens()>4)) PRINTHELP()
+      ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0~\0");
+      if (ent.offsets[0] < 0 || ent.offsets[3]<0 || ((ent.offsets[3] == 7 || ent.offsets[3]==11) && line.getnumtokens()>4)) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
-      if (ent.offsets[3] != 7 && ent.offsets[3] != 8) ent.offsets[2]=add_string(line.gettoken_str(4));
+      if (ent.offsets[3] != 7 && ent.offsets[3] != 11) ent.offsets[2]=add_string(line.gettoken_str(4));
+      if (ent.offsets[3] == 11) {
+        ent.offsets[3]=6;
+        ent.offsets[2]=add_string("0xFFFFFFFF");
+      }
       SCRIPT_MSG("IntOp: %s=%s%s%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
     return add_entry(&ent);
     case TOK_INTFMT:

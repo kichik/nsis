@@ -139,19 +139,22 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   char *buf3 = bufs[3];
   char *buf4 = bufs[4];
 
-  int parm0 = (parms = entry_->offsets)[0]; // the ordering of these makes a size diff (4 bytes) -Justin
+  int parm0 = entry_->offsets[0];
   char *var0 = g_usrvars[parm0];
-  int parm1 = parms[1];
+  int parm1 = entry_->offsets[1];
   char *var1 = g_usrvars[parm1];
-  int parm2 = parms[2];
+  int parm2 = entry_->offsets[2];
   char *var2 = g_usrvars[parm2];
-  int parm3 = parms[3];
+  int parm3 = entry_->offsets[3];
   char *var3 = g_usrvars[parm3];
-  int parm4 = parms[4];
+  int parm4 = entry_->offsets[4];
 //char *var4 = g_usrvars[parm4]; // not used yet
-  int parm5 = parms[5];
+  int parm5 = entry_->offsets[5];
 //char *var5 = g_usrvars[parm5]; // not used yet
   int which = entry_->which;
+  
+  parms = entry_->offsets;
+
   switch (which)
   {
     case EW_NOP:
@@ -272,9 +275,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       log_printf3("IfFileExists: file \"%s\" does not exist, jumping %d",buf0,parm2);
     }
     return parm2;
-    case EW_IFERRORS:
-      if (g_flags.exec_error) return parm0;
-    return parm1;
+    case EW_IFERRORS: return entry_->offsets[!g_flags.exec_error];
 #ifdef NSIS_SUPPORT_RENAME
     case EW_RENAME:
       {
@@ -391,7 +392,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           overwriteflag=1; // if it doesn't exist, fall back to no overwrites (since it shouldn't matter anyway)
           if (ffd)
           {
-            overwriteflag=(CompareFileTime(&ffd->ftLastWriteTime,(FILETIME*)(parms+3)) >= 0);  // if first one is newer, then don't overwrite
+            overwriteflag=(CompareFileTime(&ffd->ftLastWriteTime,(FILETIME*)(entry_->offsets+3)) >= 0);  // if first one is newer, then don't overwrite
           }
         }
         hOut=myOpenFile(buf0,GENERIC_WRITE,(overwriteflag==1)?CREATE_NEW:CREATE_ALWAYS);
@@ -433,7 +434,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         log_printf3("File: wrote %d to \"%s\"",ret,buf0);
 
         if (parm3 != 0xffffffff || parm4 != 0xffffffff)
-          SetFileTime(hOut,(FILETIME*)(parms+3),NULL,(FILETIME*)(parms+3));
+          SetFileTime(hOut,(FILETIME*)(entry_->offsets+3),NULL,(FILETIME*)(entry_->offsets+3));
 
         CloseHandle(hOut);
 
@@ -634,11 +635,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           case 4: v|=v2; break;
           case 5: v&=v2; break;
           case 6: v^=v2; break;
-          case 7: v=~v; break;
-          case 8: v=!v; break;
-          case 9: v=v||v2; break;
-          case 10: v=v&&v2; break;
-          case 11: if (v2) v%=v2; else { v=0; g_flags.exec_error++; } break;
+          case 7: v=!v; break;
+          case 8: v=v||v2; break;
+          case 9: v=v&&v2; break;
+          case 10: if (v2) v%=v2; else { v=0; g_flags.exec_error++; } break;
         }
         myitoa(p,v);
       }
@@ -746,13 +746,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       );
     return 0;
     case EW_SETBKCOLOR:
+    {
       DeleteObject(
         (HGDIOBJ)SetWindowLong(
-          (HWND)process_string_fromparm_toint(0),
+          (HWND)process_string_fromparm_toint(3),
           GWL_USERDATA,
-          parm1==-1?parm1:(LONG)CreateSolidBrush(parm1)
+          // three times 4 bytes (UINT, COLORREF [=DWORD], LONG)
+          parm1==-1?parm1:(int)CreateBrushIndirect((LPLOGBRUSH)entry_->offsets)
         )
       );
+    }
     return 0;
     case EW_SETBRANDINGIMAGE:
     {
@@ -1097,7 +1100,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         return 0;
       }
     break;
-    case EW_IFREBOOTFLAG: return parms[!g_flags.exec_reboot];
+    case EW_IFREBOOTFLAG: return entry_->offsets[!g_flags.exec_reboot];
 #endif//NSIS_SUPPORT_REBOOT
 #ifdef NSIS_SUPPORT_INIFILES
     case EW_WRITEINI:
