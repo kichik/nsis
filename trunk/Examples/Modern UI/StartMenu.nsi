@@ -39,12 +39,11 @@
   !insertmacro MUI_PAGE_DIRECTORY
   
   ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_VARIABLE "$STARTMENU_FOLDER"
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
   !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Modern UI Test" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   
-  !insertmacro MUI_PAGE_STARTMENU Application
+  !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
   
   !insertmacro MUI_PAGE_INSTFILES
   
