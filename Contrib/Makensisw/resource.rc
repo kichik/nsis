@@ -93,6 +93,19 @@ BEGIN
     END
 END
 
+IDM_LOGWIN MENU DISCARDABLE 
+BEGIN
+    POPUP "Edit"
+    BEGIN
+        MENUITEM "&Copy",                       IDM_COPYSELECTED
+        MENUITEM "Copy &All",                   IDM_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "Find...",                     IDM_FIND
+        MENUITEM SEPARATOR
+        MENUITEM "&Select All",                 IDM_SELECTALL
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
