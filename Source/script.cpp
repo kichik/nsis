@@ -127,7 +127,10 @@ parse_again:
 
   if (tkid == TOK_P_ELSE)
   {
-    if (line.getnumtokens() == 1 && !ignored_if_count) {
+    if (ignored_if_count)
+      return PS_OK;
+
+    if (line.getnumtokens() == 1) {
       ignore=!ignore;
       return PS_OK;
     }
@@ -139,8 +142,6 @@ parse_again:
     if (line.getnumtokens() == 1) PRINTHELP()
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
-
-    if (ignore) return PS_OK;
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
@@ -186,7 +187,7 @@ parse_again:
   }
   if (!ignore)
   {
-    int ret=doCommand(tkid,line,fp,curfilename,*lineptr);
+    int ret=doCommand(tkid,line,fp,curfilename,lineptr);
     if (ret != PS_OK) return ret;
   }
   return PS_OK;
@@ -322,8 +323,10 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   return 0;
 }
 
-int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int linecnt)
+int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char *curfilename, int *lineptr)
 {
+  int linecnt = *lineptr;
+
   static const char *rootkeys[2] = {
     "HKCR\0HKLM\0HKCU\0HKU\0HKCC\0HKDD\0HKPD\0",
     "HKEY_CLASSES_ROOT\0HKEY_LOCAL_MACHINE\0HKEY_CURRENT_USER\0HKEY_USERS\0HKEY_CURRENT_CONFIG\0HKEY_DYN_DATA\0HKEY_PERFORMANCE_DATA\0"
@@ -405,7 +408,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           LineParser l2;
           if (!l2.parse(str))
           {
-            if (!stricmp(l2.gettoken_str(0),"!macroend")) break;
+            if (!stricmp(l2.gettoken_str(0),"!macroend"))
+            {
+              (*lineptr)++;
+              break;
+            }
             if (!stricmp(l2.gettoken_str(0),"!macro"))
             {
               ERROR_MSG("Error: can't define a macro inside a macro!\n");
@@ -414,6 +421,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           }
           if (str[0]) m_macros.add(str,strlen(str)+1);
           else m_macros.add(" ",2);
+          (*lineptr)++;
         }
         m_macros.add("",1);
       }
