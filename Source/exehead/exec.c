@@ -1011,22 +1011,21 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         hres = psl->lpVtbl->QueryInterface(psl,&IID_IPersistFile, (void **) &ppf);
         if (SUCCEEDED(hres))
         {
+          hres = psl->lpVtbl->SetPath(psl,buf1);
+          psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
+          if ((parm4&0xff00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0xff00)>>8);
+          psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
+          if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,parm4&0xff);
+          psl->lpVtbl->SetArguments(psl,buf0);
+          psl->lpVtbl->SetDescription(psl,buf4);
 
-           hres = psl->lpVtbl->SetPath(psl,buf1);
-           psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
-           if ((parm4&0xff00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0xff00)>>8);
-           psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
-           if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,parm4&0xff);
-           psl->lpVtbl->SetArguments(psl,buf0);
-           psl->lpVtbl->SetDescription(psl,buf4);
-
-           if (SUCCEEDED(hres))
-           {
-              static WCHAR wsz[1024];
-              wsz[0]=0;
-              MultiByteToWideChar(CP_ACP, 0, buf2, -1, wsz, 1024);
-              hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
-           }
+          if (SUCCEEDED(hres))
+          {
+             static WCHAR wsz[1024];
+             wsz[0]=0;
+             MultiByteToWideChar(CP_ACP, 0, buf2, -1, wsz, 1024);
+             hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+          }
           ppf->lpVtbl->Release(ppf);
         }
         psl->lpVtbl->Release(psl);
@@ -1187,34 +1186,33 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         HKEY hKey;
         int rootkey=parm0;
         int type=parm4;
+        int rtype=parm5;
         char *buf1=GetStringFromParm(0x12);
         char *buf3=GetStringFromParm(0x31);
         exec_error++;
         if (RegCreateKey((HKEY)rootkey,buf3,&hKey) == ERROR_SUCCESS)
         {
-          if (type <= 1)
+          LPBYTE data = (LPBYTE) buf2;
+          DWORD size = 0;
+          if (type == REG_SZ)
           {
-            char *buf2=GetStringFromParm(0x23);
-            if (RegSetValueEx(hKey,buf1,0,type==1?REG_SZ:REG_EXPAND_SZ,buf2,mystrlen(buf2)+1) == ERROR_SUCCESS) exec_error--;
+            GetStringFromParm(0x23);
+            size = mystrlen((char *) data) + 1;
             log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf3,buf1,buf2);
           }
-          else if (type == 2)
+          if (type == REG_DWORD)
           {
-            DWORD l;
-            l=GetIntFromParm(3);
-            if (RegSetValueEx(hKey,buf1,0,REG_DWORD,(unsigned char*)&l,4) == ERROR_SUCCESS) exec_error--;
-            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf3,buf1,l);
+            *(LPDWORD) data = GetIntFromParm(3);
+            size = sizeof(DWORD);
+            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf3,buf1,*(LPDWORD)data);
           }
-          else if (type == 3)
+          if (type == REG_BINARY)
           {
-            int len=GetCompressedDataFromDataBlockToMemory(parm3, buf2, NSIS_MAX_STRLEN);
-            if (len >= 0)
-            {
-              if (RegSetValueEx(hKey,buf1,0,REG_BINARY,buf2,len) == ERROR_SUCCESS) exec_error--;
-            }
+            size = GetCompressedDataFromDataBlockToMemory(parm3, data, NSIS_MAX_STRLEN);
             log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf3,buf1,len);
-
           }
+          if (size >= 0 && RegSetValueEx(hKey,buf1,0,rtype,data,size) == ERROR_SUCCESS)
+            exec_error--;
           RegCloseKey(hKey);
         }
         else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf3); }
@@ -1572,7 +1570,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_LOCKWINDOW_SUPPORT
     case EW_LOCKWINDOW:
     {
-      SendMessage(g_hwnd, WM_SETREDRAW, parm0 && ui_dlg_visible, 0);
+      // ui_dlg_visible is 1 or 0, so is parm0
+      SendMessage(g_hwnd, WM_SETREDRAW, parm0 & ui_dlg_visible, 0);
       if ( parm0 )
         InvalidateRect(g_hwnd, NULL, FALSE);
     }
