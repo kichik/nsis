@@ -28,10 +28,18 @@
 // present a license page.
 #define NSIS_CONFIG_LICENSEPAGE
 
-// NSIS_CONFIG_LICENSEPAGE enables support for the installer to
-// present a page.where you can select what sections are installed.
+// NSIS_CONFIG_COMPONENTPAGE enables support for the installer to
+// present a page where you can select what sections are installed.
 // with this disabled, all sections are installed.
 #define NSIS_CONFIG_COMPONENTPAGE
+
+// NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE enables an alternative
+// components page behavior. Checkboxes will only be toggled when
+// clicking on the checkbox itself and not on its label.
+// .onMouseOverSection will only be called when the user selects
+// the component and not when moving the mouse pointer over it.
+// NOT ENABLED BY DEFAULT.
+// #define NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
 
 // NSIS_CONFIG_SILENT_SUPPORT enables support for making installers
 // that are completely silent.
