@@ -31,7 +31,7 @@ int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
     ERROR_MSG("Error (process_script): write_output already called, can't continue\n");
     return PS_ERROR;
   }
-  int ret=parseScript(fp,curfilename,lineptr,0);
+  int ret=parseScript(fp,curfilename,lineptr);
   if (ret == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
   if (IS_PS_ELSE(ret)) ERROR_MSG("!else: stray !else\n");
   if (m_linebuild.getlen())
@@ -45,8 +45,11 @@ int CEXEBuild::process_script(FILE *fp, char *curfilename, int *lineptr)
 #define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
 
 
-int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr, int ignore)
+int CEXEBuild::doParse(const char *str, FILE *fp, const char *curfilename, int *lineptr)
 {
+  static int ignore;
+  static int ignored_if_count;
+
   LineParser line;
   int res;
 
@@ -121,17 +124,12 @@ parse_again:
     PRINTHELP()
   }
 
-  int is_elseif=0;
-
-  if (!fp && (tkid == TOK_P_ELSE || tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF))
-  {
-    ERROR_MSG("Error: !if/!else/!ifdef can only be specified in file mode, not in command/macro mode\n");
-    return PS_ERROR;
-  }
-
   if (tkid == TOK_P_ELSE)
   {
-    if (line.getnumtokens() == 1) return PS_ELSE;
+    if (line.getnumtokens() == 1 && !ignored_if_count) {
+      ignore=!ignore;
+      return PS_OK;
+    }
 
     line.eattoken();
 
@@ -140,73 +138,51 @@ parse_again:
     if (line.getnumtokens() == 1) PRINTHELP()
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
-    is_elseif=1;
+
+    if (ignore) return PS_OK;
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
   {
+    if (ignore) {
+      ignored_if_count++;
+      return PS_OK;
+    }
+
     int istrue=0;
-    if (!ignore || is_elseif)
+    
+    int mod=0;
+    int p;
+
+    // pure left to right precedence. Not too powerful, but useful.
+    for (p = 1; p < line.getnumtokens(); p ++)
     {
-      int mod=0;
-      int p;
-
-       // pure left to right precedence. Not too powerful, but useful.
-      for (p = 1; p < line.getnumtokens(); p ++)
+      if (p & 1)
       {
-        if (p & 1)
-        {
-          int new_s=!!definedlist.find(line.gettoken_str(p));
-          if (tkid == TOK_P_IFNDEF) new_s=!new_s;
+        int new_s=!!definedlist.find(line.gettoken_str(p));
+        if (tkid == TOK_P_IFNDEF) new_s=!new_s;
 
-          if (mod == 0) istrue = istrue || new_s;
-          else istrue = istrue && new_s;
-        }
-        else
-        {
-          mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
-          if (mod == -1) PRINTHELP()
-          mod &= 1;
-        }
+        if (mod == 0) istrue = istrue || new_s;
+        else istrue = istrue && new_s;
       }
-      if (is_elseif)
+      else
       {
-        if (istrue) return PS_ELSE_IF1;
-        return PS_ELSE_IF0;
+        mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
+        if (mod == -1) PRINTHELP()
+        mod &= 1;
       }
     }
-
-    int r;
-    int hasexec=0;
-    istrue=!istrue;
-
-    for (;;)
-    {
-      r=parseScript(fp,curfilename,lineptr, ignore || hasexec || istrue);
-      if (!istrue) hasexec=1;
-      if (r == PS_ELSE_IF0) istrue=1;
-      else if (r == PS_ELSE_IF1) istrue=0;
-      else break;
-    }
-
-    if (r == PS_ELSE)
-    {
-      r=parseScript(fp,curfilename,lineptr, ignore || hasexec);
-      if (IS_PS_ELSE(r))
-      {
-        ERROR_MSG("!else: stray !else\n");
-        return PS_ERROR;
-      }
-    }
-    if (r == PS_EOF)
-    {
-      ERROR_MSG("!ifdef: open at EOF - need !endif\n");
-      return PS_ERROR;
-    }
-    if (r == PS_ERROR) return r;
+    
+    if (!istrue && !ignored_if_count) ignore=1;
     return PS_OK;
   }
-  if (tkid == TOK_P_ENDIF) return PS_ENDIF;
+  if (tkid == TOK_P_ENDIF) {
+    if (ignore) {
+      if (ignored_if_count) ignored_if_count--;
+      else ignore=0;
+    }
+    return PS_OK;
+  }
   if (!ignore)
   {
     int ret=doCommand(tkid,line,fp,curfilename,*lineptr);
@@ -280,7 +256,7 @@ void CEXEBuild::ps_addtoline(const char *str, GrowBuf &linedata, StringList &his
   }
 }
 
-int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr, int ignore)
+int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr)
 {
   char str[MAX_LINELENGTH];
 
@@ -302,7 +278,7 @@ int CEXEBuild::parseScript(FILE *fp, const char *curfilename, int *lineptr, int 
     GrowBuf linedata;
     ps_addtoline(str,linedata,hist);
     linedata.add((void*)"",1);
-    int ret=doParse((char*)linedata.get(),fp,curfilename,lineptr,ignore);
+    int ret=doParse((char*)linedata.get(),fp,curfilename,lineptr);
     if (ret != PS_OK) return ret;
   }
 
@@ -315,7 +291,7 @@ int CEXEBuild::process_oneline(char *line, char *curfilename, int lineptr)
   GrowBuf linedata;
   ps_addtoline(line,linedata,hist);
   linedata.add((void*)"",1);
-  return doParse((char*)linedata.get(),NULL,curfilename,&lineptr,0);
+  return doParse((char*)linedata.get(),NULL,curfilename,&lineptr);
 }
 
 int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
@@ -1494,7 +1470,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         }
         depth++;
         int lc=0;
-        int r=parseScript(incfp,f,&lc,0);
+        int r=parseScript(incfp,f,&lc);
         depth--;
         fclose(incfp);
         if (r != PS_EOF && r != PS_OK)
