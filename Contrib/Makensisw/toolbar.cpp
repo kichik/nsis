@@ -83,9 +83,13 @@ void CreateToolBar()
   if (GetProcAddress(hMod, "InitCommonControlsEx")) { // Version 4.70
 	// Modern toolbar, 24-bit bitmaps
 
-	SendMessage(g_toolbar.hwnd, TB_SETIMAGELIST, 0, (LPARAM) ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION));
-	SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24D), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION));
-	SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24H), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION));
+	g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+	g_toolbar.imagelistd = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24D), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+	g_toolbar.imagelisth = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24H),  16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+
+	SendMessage(g_toolbar.hwnd, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
+	SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
+	SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
 
 	// Version 4.71
 	if (GetProcAddress(hMod, "DllGetVersion")) {
