@@ -532,7 +532,7 @@ There is also a copy of this macro in the Include folder, so you only have to in
 \c
 \c   !ifndef UPGRADEDLL_NOREGISTER
 \c     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-\c       "Register $R4" '"$SYSDIR\rundll32.exe" "$R4",DllRegisterServer'
+\c       "Register $R4" 'rundll32.exe "$R4",DllRegisterServer'
 \c   !endif
 \c
 \c   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}

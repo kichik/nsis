@@ -89,7 +89,7 @@
 
   !ifndef UPGRADEDLL_NOREGISTER
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "Register $R4" '"$SYSDIR\rundll32.exe" "$R4",DllRegisterServer'
+      "Register $R4" 'rundll32.exe "$R4",DllRegisterServer'
   !endif
 
   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
