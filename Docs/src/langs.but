@@ -4,7 +4,7 @@
 
 \c language_file.nlf
 
-Loads a language file for the construction of a language table. All of the language files that come with NSIS are in \W{../Contrib/Language Files}{Contrib\\Language Files}
+Loads a language file for the construction of a language table. All of the language files that come with NSIS are in \W{../Contrib/Language files}{Contrib\\Language Files}
 
 For ease of use LoadLanguageFile defines $\{LANG_language_file\} as the language id. Use it with /LANG, LangString, LangStringUP, and LangDLL.
 
