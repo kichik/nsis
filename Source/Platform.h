@@ -395,6 +395,7 @@ typedef WORD LANGID;
 #  define MB_SETFOREGROUND 0x10000
 #  define MB_TOPMOST 0x40000
 #  define MB_RIGHT 0x80000
+#  define MB_RTLREADING 0x100000
 #endif
 
 #ifndef IDOK
