@@ -197,17 +197,14 @@ unsigned char* generate_uninstall_icon_data(char* filename)
     iNewIconSize += ige.dwRawSize;
   }
 
-  // First DWORD tells how many icons this array contains
   // Before each icon come two DWORDs, one for size and the other for offset (set later)
+  // The last size is 0, no offset
   iNewIconSize += sizeof(DWORD)*(1 + igh.wCount*2);
 
   BYTE* pbUninstIcon = (BYTE*)malloc(iNewIconSize);
   if (!pbUninstIcon) throw bad_alloc();
 
   BYTE* seeker = pbUninstIcon;
-
-  *(DWORD*)seeker = igh.wCount;
-  seeker += sizeof(DWORD);
 
   for (i = 0; i < igh.wCount; i++) {
     *(DWORD*)seeker = rawSizes[i];
@@ -218,6 +215,9 @@ unsigned char* generate_uninstall_icon_data(char* filename)
     fread(seeker, 1, rawSizes[i], f);
     seeker += rawSizes[i];
   }
+
+  // This is how we know there are no more icons (size = 0)
+  *(DWORD*)seeker = 0;
 
   free(offsets);
   free(rawSizes);
@@ -268,8 +268,6 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
   PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].OffsetToDirectory + DWORD(rdRoot));
 
   unsigned char* seeker = uninstIconData;
-  MY_ASSERT(*(DWORD*)seeker != rdIcons->Header.NumberOfIdEntries, "number of icons doesn't match");
-  seeker += sizeof(DWORD);
 
   for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
     MY_ASSERT(!rdIcons->Entries[i].DataIsDirectory, "bad resource directory");
@@ -285,6 +283,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     seeker += sizeof(DWORD) + dwSize;
   }
   MY_ASSERT(i == 0, "no icons found");
+  MY_ASSERT(*(DWORD*)seeker != 0, "number of icons doesn't match");
 
   return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 }
