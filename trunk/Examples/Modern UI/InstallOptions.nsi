@@ -78,25 +78,6 @@
 ;--------------------------------
 ;Installer Sections
 
-Function .onInit
-
-  ;Extract Install Options INI Files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
-  
-  ;Titles for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioA.ini" "$(TEXT_IO_PAGETITLE_A)"
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioB.ini" "$(TEXT_IO_PAGETITLE_B)"
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioC.ini" "$(TEXT_IO_PAGETITLE_C)"
-  
-  ;Abort warnings for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioA.ini"
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioB.ini"
-  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioC.ini"
-  
-FunctionEnd
-
 Section "modern.exe" SecCopyUI
 
   ;Add your stuff here
@@ -119,6 +100,25 @@ SectionEnd
 
 ;--------------------------------
 ;Installer Functions
+
+Function .onInit
+
+  ;Extract Install Options INI Files
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
+  
+  ;Titles for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioA.ini" "$(TEXT_IO_PAGETITLE_A)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioB.ini" "$(TEXT_IO_PAGETITLE_B)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioC.ini" "$(TEXT_IO_PAGETITLE_C)"
+  
+  ;Abort warnings for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioA.ini"
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioB.ini"
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioC.ini"
+  
+FunctionEnd
 
 Function SetCustomA
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
