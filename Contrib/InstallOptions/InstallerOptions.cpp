@@ -161,6 +161,7 @@ HWND hMainWindow      = NULL;
 HWND hCancelButton    = NULL;
 HWND hNextButton      = NULL;
 HWND hBackButton      = NULL;
+HWND hInitialFocus    = NULL;
 
 HINSTANCE m_hInstance = NULL;
 
@@ -407,7 +408,7 @@ bool SaveSettings(void) {
           GetWindowText(hwnd, pszBuffer+1, nBufLen-1);
           pszBuffer[nLength+1]='"';
           pszBuffer[nLength+2]='\0';
-          
+
           if ( pFields[nIdx].nType == FIELD_TEXT && pFields[nIdx].nFlags & FLAG_MULTILINE )
           {
             char *pszBuf2 = (char*)MALLOC(nBufLen*2); // double the size, consider the worst case, all chars are \r\n
@@ -433,7 +434,7 @@ bool SaveSettings(void) {
             FREE(pszBuffer);
             pszBuffer=pszBuf2;
           }
-          
+
           break;
         }
     }
@@ -449,7 +450,7 @@ bool SaveSettings(void) {
 #define BROWSE_WIDTH 15
 
 #define BUFFER_SIZE 8192 // 8kb of mem is max char count in multiedit
-static char szResult[BUFFER_SIZE]; 
+static char szResult[BUFFER_SIZE];
 
 DWORD WINAPI myGetProfileString(LPCTSTR lpAppName, LPCTSTR lpKeyName)
 {
@@ -466,6 +467,11 @@ char * WINAPI myGetProfileStringDup(LPCTSTR lpAppName, LPCTSTR lpKeyName)
     return NULL;
 }
 
+UINT WINAPI myGetProfileInt(LPCTSTR lpAppName, LPCTSTR lpKeyName, INT nDefault)
+{
+  return GetPrivateProfileInt(lpAppName, lpKeyName, nDefault, pszFilename);
+}
+
 int ReadSettings(void) {
   static char szField[25];
   int nIdx, nCtrlIdx;
@@ -475,16 +481,16 @@ int ReadSettings(void) {
   pszNextButtonText = myGetProfileStringDup("Settings", "NextButtonText");
   pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
 
-  nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
+  nNumFields = myGetProfileInt("Settings", "NumFields", 0);
 
-  nRectId = GetPrivateProfileInt("Settings", "Rect", DEFAULT_RECT, pszFilename);
+  nRectId = myGetProfileInt("Settings", "Rect", DEFAULT_RECT);
 
-  bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0xFFFF0000, pszFilename);
+  bBackEnabled = myGetProfileInt("Settings", "BackEnabled", -1);
   // by ORTIM: 13-August-2002
-  bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 0xFFFF0000, pszFilename);
-  bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 0xFFFF0000, pszFilename);
+  bCancelEnabled = myGetProfileInt("Settings", "CancelEnabled", -1);
+  bCancelShow = myGetProfileInt("Settings", "CancelShow", -1);
 
-  bRTL = GetPrivateProfileInt("Settings", "RTL", 0, pszFilename);
+  bRTL = myGetProfileInt("Settings", "RTL", 0);
 
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
@@ -554,9 +560,9 @@ int ReadSettings(void) {
     pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
     pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
-    
+
     // Label Text - convert newline
-        
+
     if (pFields[nIdx].nType == FIELD_LABEL) {
       ConvertNewLines(pFields[nIdx].pszText);
     }
@@ -577,13 +583,13 @@ int ReadSettings(void) {
         pFields[nIdx].pszListItems[nResult + 1] = '\0';
       }
     }
-    pFields[nIdx].nMaxLength = GetPrivateProfileInt(szField, "MaxLen", 0, pszFilename);
-    pFields[nIdx].nMinLength = GetPrivateProfileInt(szField, "MinLen", 0, pszFilename);
+    pFields[nIdx].nMaxLength = myGetProfileInt(szField, "MaxLen", 0);
+    pFields[nIdx].nMinLength = myGetProfileInt(szField, "MinLen", 0);
 
     pFields[nIdx].pszValidateText = myGetProfileStringDup(szField, "ValidateText");
-    
+
     // ValidateText - convert newline
-        
+
     if (pFields[nIdx].pszValidateText) {
       ConvertNewLines(pFields[nIdx].pszValidateText);
     }
@@ -602,10 +608,10 @@ int ReadSettings(void) {
       }
     }
 
-    pFields[nIdx].rect.left = GetPrivateProfileInt(szField, "LEFT", 0, pszFilename);
-    pFields[nIdx].rect.right = GetPrivateProfileInt(szField, "RIGHT", 0, pszFilename);
-    pFields[nIdx].rect.top = GetPrivateProfileInt(szField, "TOP", 0, pszFilename);
-    pFields[nIdx].rect.bottom = GetPrivateProfileInt(szField, "BOTTOM", 0, pszFilename);
+    pFields[nIdx].rect.left = myGetProfileInt(szField, "LEFT", 0);
+    pFields[nIdx].rect.right = myGetProfileInt(szField, "RIGHT", 0);
+    pFields[nIdx].rect.top = myGetProfileInt(szField, "TOP", 0);
+    pFields[nIdx].rect.bottom = myGetProfileInt(szField, "BOTTOM", 0);
 
     if (myGetProfileString(szField, "Flags")) {
       // append the | to make parsing a bit easier
@@ -636,7 +642,7 @@ int ReadSettings(void) {
 
     // Text color for LINK control, default is pure blue
     //if (pFields[nIdx].nType == FIELD_LINK)
-    pFields[nIdx].hImage = (HANDLE)GetPrivateProfileInt(szField, "TxtColor", RGB(0,0,255), pszFilename);
+    pFields[nIdx].hImage = (HANDLE)myGetProfileInt(szField, "TxtColor", RGB(0,0,255));
 
     pFields[nIdx].nControlID = 1200 + nIdx;
     if (pFields[nIdx].nType == FIELD_FILEREQUEST || pFields[nIdx].nType == FIELD_DIRREQUEST)
@@ -748,22 +754,22 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
         if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
           (lpdis->itemAction & ODA_SELECT))
           DrawFocusRect(lpdis->hDC, &pFields[nIdx].rect);
-        
+
         SetTextColor(lpdis->hDC, (COLORREF)pFields[nIdx].hImage);
-        
+
         pFields[nIdx].rect = lpdis->rcItem;
         // Calculate needed size of the control
         DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &pFields[nIdx].rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
         pFields[nIdx].rect.right += 4;
         pFields[nIdx].rect.bottom = lpdis->rcItem.bottom;
         // Resize but don't move
-        SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pFields[nIdx].rect.right - pFields[nIdx].rect.left, 
+        SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pFields[nIdx].rect.right - pFields[nIdx].rect.left,
           pFields[nIdx].rect.bottom - pFields[nIdx].rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
         // Draw the text
         lpdis->rcItem = pFields[nIdx].rect;
         // Add little margin to avoid focus rect over text
         lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
-        
+
         DrawText(lpdis->hDC, pFields[nIdx].pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
 #ifdef IO_LINK_UNDERLINED
         DeleteObject(SelectObject(lpdis->hDC, OldFont));
@@ -777,7 +783,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     case WM_CTLCOLORLISTBOX:
     {
       ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
-      
+
       if (c) {
         SetBkMode((HDC)wParam, c->bkmode);
         if (c->flags & CC_BK)
@@ -861,16 +867,16 @@ int createCfgDlg()
   }
 
   hCancelButton = GetDlgItem(hMainWindow,IDCANCEL);
-  hNextButton = GetDlgItem(hMainWindow,IDOK);
+  hInitialFocus = hNextButton = GetDlgItem(hMainWindow,IDOK);
   hBackButton = GetDlgItem(hMainWindow,3);
 
   if (pszCancelButtonText) SetWindowText(hCancelButton,pszCancelButtonText);
   if (pszNextButtonText) SetWindowText(hNextButton,pszNextButtonText);
   if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
-  if (bBackEnabled!=0xFFFF0000) EnableWindow(hBackButton,bBackEnabled);
-  if (bCancelEnabled!=0xFFFF0000) EnableWindow(hCancelButton,bCancelEnabled);
-  if (bCancelShow!=0xFFFF0000) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
+  if (bBackEnabled!=-1) EnableWindow(hBackButton,bBackEnabled);
+  if (bCancelEnabled!=-1) EnableWindow(hCancelButton,bCancelEnabled);
+  if (bCancelShow!=-1) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
 
@@ -910,7 +916,7 @@ int createCfgDlg()
   TEXTMETRIC tm;
   GetTextMetrics(memDC, &tm);
   int baseUnitY = tm.tmHeight;
-      
+
   SIZE size;
   GetTextExtentPoint32(memDC,"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &size);
   int baseUnitX = (size.cx / 26 + 1) / 2;
@@ -1051,10 +1057,13 @@ int createCfgDlg()
           dwStyle |= ES_NUMBER;
         if (pFields[nIdx].nFlags & FLAG_MULTILINE)
         {
-          dwStyle |= ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL;
+          dwStyle |= ES_MULTILINE | ES_AUTOVSCROLL;
+          // Enable word-wrap unless we have a horizontal scroll bar
+          if (!(pFields[nIdx].nFlags & FLAG_HSCROLL))
+            dwStyle &= ~ES_AUTOHSCROLL;
           ConvertNewLines(pFields[nIdx].pszState);
         }
-        if ( pFields[nIdx].nFlags & FLAG_WANTRETURN )
+        if (pFields[nIdx].nFlags & FLAG_WANTRETURN)
           dwStyle |= ES_WANTRETURN;
         if (pFields[nIdx].nFlags & FLAG_VSCROLL)
           dwStyle |= WS_VSCROLL;
@@ -1098,6 +1107,9 @@ int createCfgDlg()
     if (hwCtrl) {
       // Sets the font of IO window to be the same as the main window
       SendMessage(hwCtrl, WM_SETFONT, (WPARAM)hFont, TRUE);
+      // Set initial focus to the first appropriate field
+      if ((hInitialFocus == hNextButton) && (dwStyle & WS_TABSTOP))
+        hInitialFocus = hwCtrl;
       // make sure we created the window, then set additional attributes
       //if (pFields[nIdx].nMaxLength > 0) {
         switch (nType) {
@@ -1196,7 +1208,7 @@ int createCfgDlg()
       }
 #ifdef IO_ENABLE_LINK
       else if (nType == FIELD_LINK) {
-        pFields[nIdx].nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);      
+        pFields[nIdx].nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);
       }
 #endif
     }
@@ -1219,7 +1231,7 @@ void showCfgDlg()
   // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
   SendMessage(hMainWindow, WM_NOTIFY_CUSTOM_READY, (WPARAM)hConfigWindow, 0);
   ShowWindow(hConfigWindow, SW_SHOWNA);
-  SetFocus(hNextButton);
+  SetFocus(hInitialFocus);
 
   g_done=0;
 
@@ -1239,7 +1251,7 @@ void showCfgDlg()
   DestroyWindow(hConfigWindow);
 
   // by ORTIM: 13-August-2002
-  if (bCancelShow!=0xFFFF0000) ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);
+  if (bCancelShow!=-1) ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);
 
   FREE(pFilenameStackEntry);
   FREE(pszTitle);
