@@ -582,7 +582,9 @@ bool ReadSettings(void) {
       if (nResult) {
         // add an extra | character to the end to simplify the loop where we add the items.
         pFields[nIdx].pszListItems = (char*)MALLOC(nResult + 2);
-        wsprintf(pFields[nIdx].pszListItems, "%s|", szResult);
+        strcpy(pFields[nIdx].pszListItems, szResult);
+        pFields[nIdx].pszListItems[nResult] = '|';
+        pFields[nIdx].pszListItems[nResult + 1] = '0';
       }
     }
     pFields[nIdx].nMaxLength = GetPrivateProfileInt(szField, "MaxLen", 0, pszFilename);
