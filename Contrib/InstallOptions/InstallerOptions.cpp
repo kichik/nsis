@@ -689,7 +689,7 @@ LRESULT WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
           ShellExecute(hMainWindow, NULL, pFields[nIdx].pszState, NULL, NULL, SW_SHOWDEFAULT);
         }
       }
-			break;
+      break;
 	}
 	return 0;
 }
@@ -1043,6 +1043,10 @@ int createCfgDlg()
 
     char *title = pFields[nIdx].pszText;
     switch (nType) {
+      case FIELD_ICON:
+      case FIELD_BITMAP:
+        title = NULL; // otherwise it is treated as the name of a resource
+        break;
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
         if (pFields[nIdx].nFlags & FLAG_RIGHT)
@@ -1184,7 +1188,7 @@ int createCfgDlg()
         LPARAM nImage = 0;
         if (pFields[nIdx].pszText) {
           pFields[nIdx].hImage = LoadImage(
-            0,
+            m_hInstance,
             pFields[nIdx].pszText,
             nImageType,
             (pFields[nIdx].nFlags & FLAG_RESIZETOFIT)
