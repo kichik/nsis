@@ -58,14 +58,18 @@ typedef WORD LANGID;
 #  define PATH_SEPARATOR_STR "\\"
 #  define PATH_SEPARATOR_C '\\'
 
-// system specific separator
+// system specific characters
 
 #ifdef _WIN32
 #  define PLATFORM_PATH_SEPARATOR_STR "\\"
 #  define PLATFORM_PATH_SEPARATOR_C '\\'
+#  define OPT_STR "/"
+#  define OPT_C '/'
 #else
 #  define PLATFORM_PATH_SEPARATOR_STR "/"
 #  define PLATFORM_PATH_SEPARATOR_C '/'
+#  define OPT_STR "-"
+#  define OPT_C '-'
 #endif
 
 // attributes
