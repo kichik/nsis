@@ -34,7 +34,7 @@ void NSISCALL SectionFlagsChanged(unsigned int index) {
   }
 }
 
-unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
+static unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int first_call) {
   unsigned int selected = 0;
   unsigned int not_selected = 0;
 
@@ -43,8 +43,10 @@ unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
   unsigned int sec = i;
 
   if (sections[sec].flags & SF_SECGRP) {
-    sections[sec].flags &= ~(SF_SELECTED | SF_PSELECTED);
-    i++;
+    if (!first_call) {
+      sections[sec].flags &= ~(SF_SELECTED | SF_PSELECTED);
+      i++;
+    }
   }
 
   while (i < (unsigned int) num_sections) {
@@ -52,7 +54,7 @@ unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
     int ni = i + 1;
 
     if (flags & SF_SECGRP) {
-      ni = RefreshSectionGroups(i);
+      ni = _RefreshSectionGroups(i, 0);
     }
 
     if (flags & SF_SECGRPEND) {
@@ -82,6 +84,10 @@ unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
   }
 
   return 0;
+}
+
+void NSISCALL RefreshSectionGroups() {
+  _RefreshSectionGroups(0, 1);
 }
 
 void NSISCALL SetInstType(int inst_type) {
