@@ -8,7 +8,9 @@
 #endif
 #include "ResourceEditor.h"
 
-#include <string>
+#include <string> // for std::string
+
+#include "boost/scoped_ptr.hpp" // for boost::scoped_ptr
 
 // these are the standard pause-before-quit shit.
 extern int g_dopause;
@@ -86,17 +88,29 @@ inline T align_to_512(const T x) {
   return (x+511) & ~511;
 }
 
+// ================
+// ResourceManagers
+// ================
+
 // When a ResourceManager instance goes out of scope, it will run
 // _FREE_RESOURCE on the resource.
 // Example use:
 // int fd = open(..);
 // assert(fd != -1);
-// ResourceManager<int, close> fdManager(fd);
+// MANAGE_WITH(fd, close);
+
+class BaseResourceManager {
+protected:
+	BaseResourceManager() {}
+public:
+	virtual ~BaseResourceManager() {}
+};
+
 template <typename _RESOURCE, typename _FREE_RESOURCE>
-class ResourceManager {
+class ResourceManager : public BaseResourceManager {
 public:
   ResourceManager(_RESOURCE& resource) : m_resource(resource) {}
-  ~ResourceManager() { m_free_resource(m_resource); };
+  virtual ~ResourceManager() { m_free_resource(m_resource); };
 private: // members
   _RESOURCE& m_resource;
   _FREE_RESOURCE m_free_resource;
@@ -105,19 +119,31 @@ private: // don't copy instances
   void operator=(const ResourceManager&);
 };
 
-#define DEFINE_FREEFUNC(freefunc) \
-struct __free_with_##freefunc { \
+#define RM_MANGLE_FREEFUNC(freefunc) \
+	__free_with_##freefunc
+
+#define RM_DEFINE_FREEFUNC(freefunc) \
+struct RM_MANGLE_FREEFUNC(freefunc) { \
   template <typename T> void operator()(T& x) { freefunc(x); } \
 }
 
-DEFINE_FREEFUNC(close);
-DEFINE_FREEFUNC(CloseHandle);
-DEFINE_FREEFUNC(fclose);
-DEFINE_FREEFUNC(free);
+typedef boost::scoped_ptr<BaseResourceManager> ResourceManagerPtr;
 
-// TODO: (orip)
-// Can the ResourceManager be made generic? Specifically use the same class to:
-// (a) close(fd) on POSIX
-// (b) CloseHandle(handle) on WIN32
+template<typename _FREE_RESOURCE, typename _RESOURCE>
+void createResourceManager(_RESOURCE& resource, ResourceManagerPtr& ptr) {
+	ptr.reset(new ResourceManager<_RESOURCE, _FREE_RESOURCE>(resource));
+}
+
+#define RM_MANGLE_RESOURCE(resource) resource##_autoManager
+#define MANAGE_WITH(resource, freefunc) \
+	ResourceManagerPtr RM_MANGLE_RESOURCE(resource); \
+		createResourceManager<RM_MANGLE_FREEFUNC(freefunc)>( \
+      resource, RM_MANGLE_RESOURCE(resource))
+
+// Add more resource-freeing functions here when you need them
+RM_DEFINE_FREEFUNC(close);
+RM_DEFINE_FREEFUNC(CloseHandle);
+RM_DEFINE_FREEFUNC(fclose);
+RM_DEFINE_FREEFUNC(free);
 
 #endif //_UTIL_H_
