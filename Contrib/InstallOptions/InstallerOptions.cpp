@@ -287,14 +287,14 @@ bool ValidateFields() {
   // May cause problems for the install script, but no memory is problems for us.
   for (nIdx = 0; nIdx < nNumFields; nIdx++) {
     // this if statement prevents a stupid bug where a min/max length is assigned to a label control
-    //   where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
+    // where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
     if (pFields[nIdx].nType >= FIELD_TEXT) {
       nLength = SendMessage(pFields[nIdx].hwnd, WM_GETTEXTLENGTH, 0, 0);
 
       if (((pFields[nIdx].nMaxLength > 0) && (nLength > pFields[nIdx].nMaxLength)) ||
          ((pFields[nIdx].nMinLength > 0) && (nLength < pFields[nIdx].nMinLength))) {
         if (pFields[nIdx].pszValidateText) {
-          MessageBox(hConfigWindow, pFields[nIdx].pszValidateText, NULL, MB_OK);
+          MessageBox(hConfigWindow, pFields[nIdx].pszValidateText, NULL, MB_OK|MB_ICONWARNING);
         }
         SetFocus(pFields[nIdx].hwnd);
         return false;
