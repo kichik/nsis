@@ -131,7 +131,7 @@ with a custom user interface.</p>
 !define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
 </pre>
-  <p class="subheader">3. Define which elements you are using</span></p>
+  <p class="subheader">3. Define which elements you are using</p>
   <p class="text">The Modern UI should know which things it should insert. Use the following defines:</p>
 <pre class="margin">!define MUI_LICENSEPAGE ;License page
 !define MUI_COMPONENTSPAGE ;Component-selection page
@@ -144,7 +144,7 @@ with a custom user interface.</p>
 !define MUI_UNINSTALLER ;Uninstaller
 !define MUI_UNCUSTOMPAGECOMMANDS ;Use customized uninstaller pages
 </pre>
-  <p class="subheader">4. Insert language files</span></p>
+  <p class="subheader">4. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -161,7 +161,7 @@ with a custom user interface.</p>
   new Start Menu Folder selection page yet. If you are using a language file which does not contain
   these strings, you should always define them.<br>Please help to translate the new strings and
   post them at the <a href="http://forums.winamp.com/forumdisplay.php?forumid=65">NSIS Forum</a>.</p>
-  <p class="subheader">5. Define interface settings (optional)</span></p>
+  <p class="subheader">5. Define interface settings (optional)</p>
   <p class="text">You can change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
   <p class="text">If you don't define a setting, the default will be used.</p>
@@ -259,13 +259,13 @@ FunctionEnd
   Start Menu Folder selection: <a href="../../Examples/Modern UI/StartMenu.nsi">StartMenu.nsi</a><br>
   </p>
 <p class="header">The interface</p>
-<p class="subheader">Modern.exe and modern2.exe</span></p>
+<p class="subheader">Modern.exe and modern2.exe</p>
   <p class="text">There are two different versions of the interface
   available. Modern.exe contains the dialogs of the standard interface.
   If you have an installer with a lot of subsections 
   or long section names, use modern2.exe, which has a different
   component-selection page.</p>
-<p class="subheader">Customize the dialogs</span></p>
+<p class="subheader">Customize the dialogs</p>
   <p class="text">To change elements on the dialogs, modify modern.exe or
   modern2.exe in the Contrib\UIs directory using a resource editor such as
   <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.<br><br>
