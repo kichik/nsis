@@ -542,7 +542,7 @@ bool ReadSettings(void) {
     pFields[nIdx].nFlags |= LookupToken(FlagTable, szResult);
 
     pFields[nIdx].pszText = myGetProfileStringDup(szField, "TEXT");
-    if (pFields[nIdx].nType == FIELD_LABEL) {
+    if (pFields[nIdx].nType == FIELD_LABEL && pFields[nIdx].pszText) {
       char *p1, *p2;
       for (p1=p2=pFields[nIdx].pszText; *p1; p1++, p2++) {
         if (*p1 == '\\') {
@@ -722,14 +722,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     break;
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLORDLG:
-    {
-      COLORREF color = GetWindowLong((HWND)lParam, GWL_USERDATA);
-      if (color) {
-        LOGBRUSH b={BS_SOLID, color-1, 0};
-        SetBkColor((HDC)wParam, b.lbColor);
-        return (BOOL)CreateBrushIndirect(&b);
-      }
-    }
+      return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
   }
 	return 0;
 }
