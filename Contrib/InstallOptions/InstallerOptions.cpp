@@ -47,24 +47,35 @@ char *STRDUP(const char *c)
 #define FIELD_GROUPBOX     (12)
 
 // general flags
-#define FLAG_BOLD          (1)
-#define FLAG_RIGHT         (2)
-#define FLAG_DISABLED      (4)
-#define FLAG_GROUP         (8)
-#define FLAG_NOTABSTOP     (16)
+#define FLAG_RIGHT         0x00000001
+
+// OFN_OVERWRITEPROMPT     0x00000002
+// OFN_HIDEREADONLY        0x00000004
+
+#define FLAG_DISABLED      0x00000008
+#define FLAG_GROUP         0x00000010
+#define FLAG_NOTABSTOP     0x00000020
 
 // text box flags
-#define FLAG_PASSWORD      (32)
+#define FLAG_PASSWORD      0x00000040
+#define FLAG_ONLYNUMBERS   0x00000080
+//#define FLAG_MULTILINE     0x00000100
 
 // listbox flags
-#define FLAG_MULTISELECT   (64)
-#define FLAG_EXTENDEDSEL   (128)
+#define FLAG_MULTISELECT   0x00000200
+#define FLAG_EXTENDEDSEL   0x00000400
+
+// OFN_PATHMUSTEXIST       0x00000800
+// OFN_FILEMUSTEXIST       0x00001000
+// OFN_CREATEPROMPT        0x00002000
 
 // combobox flags
-#define FLAG_DROPLIST      (256)
+#define FLAG_DROPLIST      0x00004000
 
 // bitmap flags
-#define FLAG_RESIZETOFIT   (512)
+#define FLAG_RESIZETOFIT   0x00008000
+
+// OFN_EXPLORER            0x00080000
 
 struct TableEntry {
   char *pszName;
@@ -142,7 +153,7 @@ bool BrowseForFile(int nControlIdx) {
 
   hControl = pThisField->hwnd;
 
-  ofn.Flags = pThisField->nFlags;
+  ofn.Flags = pThisField->nFlags & (OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_CREATEPROMPT | OFN_EXPLORER);
 
 //  ofn.hInstance = m_hInstance;  // no templates so we can leave this at NULL;
   ofn.hwndOwner = hConfigWindow;
@@ -469,12 +480,8 @@ bool ReadSettings(void) {
       { "GROUP",             FLAG_GROUP          },
       { "DISABLED",          FLAG_DISABLED       },
       { "NOTABSTOP",         FLAG_NOTABSTOP      },
-/*
-      { "NO_ALPHA",          0                   },
-      { "NO_NUMBERS",        0                   },
-      { "NO_SYMBOLS",        0                   },
-      { "BOLD",              FLAG_BOLD           },
-*/
+      { "ONLY_NUMBERS",      FLAG_ONLYNUMBERS    },
+      //{ "MULTILINE",         FLAG_MULTILINE      },
       { NULL,                0                   }
     };
 
@@ -839,6 +846,10 @@ int createCfgDlg()
       case FIELD_TEXT:
         if (pFields[nIdx].nFlags & FLAG_PASSWORD)
           dwStyle |= ES_PASSWORD;
+        if (pFields[nIdx].nFlags & FLAG_ONLYNUMBERS)
+          dwStyle |= ES_NUMBER;
+        /*if (pFields[nIdx].nFlags & FLAG_MULTILINE)
+          dwStyle |= ES_WANTRETURN | ES_MULTILINE;*/
         title = pFields[nIdx].pszState;
         break;
       case FIELD_COMBOBOX:
