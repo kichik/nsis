@@ -85,8 +85,8 @@ void ExecScript(BOOL log) {
 		HANDLE newstdout=0,read_stdout=0;
 		DWORD dwRead = 1;
 		DWORD dwExit = !STILL_ACTIVE;
-		char szBuf[1024];
-		char szBufTmp[1024];
+		static char szBuf[1024];
+		static char szBufTmp[4096];
 		szBufTmp[0]=0;
 		GetVersionEx(&osv);
 		if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
@@ -162,7 +162,7 @@ int LogMessage(const char *pStr) {
 	nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
 	item.mask=LVIF_TEXT;
 	item.pszText=(char *)pStr;
-	item.cchTextMax=6;
+	item.cchTextMax=0;
 	item.iItem=nItemCount;
 	ListView_InsertItem(g_hwndList, &item);
     ListView_EnsureVisible(g_hwndList, item.iItem, 0);
