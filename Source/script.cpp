@@ -414,7 +414,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           char *p=str;
           str[0]=0;
           fgets(str,MAX_LINELENGTH,fp);
-          SCRIPT_MSG("%s\n", str);
+          SCRIPT_MSG("%s%s", str, str[lstrlen(str)-1]=='\n'?"":"\n");
           if (feof(fp) && !str[0])
           {
             ERROR_MSG("!macro \"%s\": unterminated (no !macroend found in file)!\n",line.gettoken_str(1));
