@@ -480,6 +480,8 @@ Var MUI_TEMP2
   !verbose push
   !verbose 3
 
+  IfSilent mui.langdll_done
+
   !ifndef MUI_LANGDLL_WINDOWTITLE
     !define MUI_LANGDLL_WINDOWTITLE "Installer Language"
   !endif
@@ -506,11 +508,7 @@ Var MUI_TEMP2
   StrCmp $LANGUAGE "cancel" 0 +2
     Abort
   
-  !ifndef MUI_LANGDLL_ALWAYSSHOW
-    !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-      mui.langdll_done:
-    !endif
-  !endif
+  mui.langdll_done:
     
   !verbose pop
     
