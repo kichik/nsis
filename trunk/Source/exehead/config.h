@@ -3,6 +3,22 @@
 
 #ifndef APSTUDIO_INVOKED // keep msdev's resource editor from mangling the .rc file
 
+// Added by Dave Laundon 19th August 2002
+// For all internal functions, use of stdcall calling convention moves the
+// responsibility for tidying the stack to callee from caller, reducing the code
+// involved considerably.  Gives an instant saving of 0.5K.
+// NB - the zlib and bzip2 portions have been given the same treatment, but with
+// project compiler-options settings and/or project-wide defines.
+// NB - safer for NSIS's routines to be defined explicitly to avoid problems
+// calling DLL functions.
+#if defined(_WIN32) && ((_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED))
+#define NSISCALL  __stdcall   // Ordinary functions
+#define NSISCALLV __cdecl     // Variable-argument-list functions
+#else
+#define NSISCALL
+#define NSISCALLV
+#endif
+
 // NSIS_MAX_STRLEN defines the maximum string length for internal variables
 // and stack entries. 1024 should be plenty, but if you are doing crazy registry
 // shit, you might want to bump it up. Generally it adds about 16-32x the memory,
@@ -11,13 +27,13 @@
 #define NSIS_MAX_STRLEN 1024
 
 
-// NSIS_MAX_INST_TYPES specified the  maximum install types. 
+// NSIS_MAX_INST_TYPES specified the  maximum install types.
 // note that this should not exceed 30, ever.
 #define NSIS_MAX_INST_TYPES 8
 
 // NSIS_CONFIG_UNINSTALL_SUPPORT enables the uninstaller
 // support. Comment it out if your installers don't need
-// uninstallers 
+// uninstallers
 // adds approximately 2kb.
 #define NSIS_CONFIG_UNINSTALL_SUPPORT
 
@@ -66,7 +82,7 @@
   // the expense of speed. not recommended.
   // #define NSIS_COMPRESS_BZIP2_SMALLMODE
 
-  // if NSIS_COMPRESS_BZIP2_LEVEL is defined, it overrides the default bzip2 
+  // if NSIS_COMPRESS_BZIP2_LEVEL is defined, it overrides the default bzip2
   // compression window size of 9 (1-9 is valid)
   // 9 uses the most memory, but typically compresses best (recommended).
   // 1 uses the least memory, but typically compresses the worst.
@@ -196,7 +212,7 @@
 //     temporary file name.
 //   - Any parameters following the command will be pushed onto
 //     the stack in left to right order.
-//   - The command will then be invoked in the dll as if 
+//   - The command will then be invoked in the dll as if
 //     "CallInstDLL dll command" had been invoked.
 //   - When the installer exits any extracted temporary dlls will
 //     be deleted.

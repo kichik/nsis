@@ -62,7 +62,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 }
 
 
-HWND bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int color3)
+HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int color3)
 {
   RECT vp;
   char classname[4]="_Nb";
