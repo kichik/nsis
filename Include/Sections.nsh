@@ -7,8 +7,6 @@
 
 !define SECTIONS_NSH_INCLUDED
 
-!define HWND_BROADCAST 0xFFFF
-
 !define SF_SELECTED   1
 !define SF_SUBSEC     2
 !define SF_SUBSECEND  4
