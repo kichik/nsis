@@ -6,12 +6,8 @@ HINSTANCE g_hInstance;
 
 HWND hwParent;
 HWND hwChild;
-HWND hwStartMenuSelect;
-HWND hwIcon;
-HWND hwText;
-HWND hwLocation;
-HWND hwDirList;
-HWND hwCheckBox;
+HWND g_hwStartMenuSelect;
+HWND g_hwDirList;
 
 char buf[MAX_PATH];
 char text[1024];
@@ -32,15 +28,14 @@ void AddFolderFromReg(HKEY rootKey);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
+  HWND hwStartMenuSelect;
+
   hwParent = hwndParent;
 
   EXDLL_INIT();
 
   {
-    int cw_vis;
-
-    hwChild = FindWindowEx(hwndParent, NULL, "#32770", NULL); // find window to replace
-    if (!hwChild) hwChild = GetDlgItem(hwndParent, 1018);
+    hwChild = GetDlgItem(hwndParent, 1018);
     if (!hwChild)
     {
       pushstring("error finding childwnd");
@@ -86,10 +81,8 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       return;
     }
 
-    cw_vis = IsWindowVisible(hwChild);
-    if (cw_vis) ShowWindow(hwChild, SW_HIDE);
-
     hwStartMenuSelect = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG), hwndParent, dlgProc);
+    g_hwStartMenuSelect = hwStartMenuSelect;
     if (!hwStartMenuSelect)
     {
       pushstring("error creating dialog");
@@ -110,8 +103,6 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
     DestroyWindow(hwStartMenuSelect);
 
     SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
-
-    if (cw_vis) ShowWindow(hwChild, SW_SHOW);
   }
 }
 
@@ -121,7 +112,7 @@ static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
   if (message == WM_NOTIFY_OUTER_NEXT && !bRes)
   {
     // if leave function didn't abort (lRes != 0 in that case)
-    PostMessage(hwStartMenuSelect,WM_USER+666,wParam,0);
+    PostMessage(g_hwStartMenuSelect,WM_USER+666,wParam,0);
   }
   return bRes;
 }
@@ -141,10 +132,17 @@ static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  HWND hwLocation = GetDlgItem(hwndDlg, IDC_LOCATION);
+  HWND hwDirList = GetDlgItem(hwndDlg, IDC_DIRLIST);
+  HWND hwCheckBox = GetDlgItem(hwndDlg, IDC_CHECK);
+
   switch (uMsg)
   {
     case WM_INITDIALOG:
     {
+      HWND hwIcon;
+      HWND hwText;
+
       RECT dialog_r, temp_r;
 
       HFONT hFont = (HFONT)SendMessage(hwParent, WM_GETFONT, 0, 0);
@@ -172,9 +170,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       hwIcon = GetDlgItem(hwndDlg, IDC_NSISICON);
       hwText = GetDlgItem(hwndDlg, IDC_TEXT);
-      hwLocation = GetDlgItem(hwndDlg, IDC_LOCATION);
-      hwDirList = GetDlgItem(hwndDlg, IDC_DIRLIST);
-      hwCheckBox = GetDlgItem(hwndDlg, IDC_CHECK);
+      g_hwDirList = hwDirList;
 
       SendMessage(hwndDlg, WM_SETFONT, (WPARAM) hFont, TRUE);
       SendMessage(hwIcon, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -217,10 +213,6 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         temp_r.bottom,
         SWP_NOACTIVATE | (noicon ? SWP_HIDEWINDOW : 0)
       );
-
-      //GetWindowRect(hwIcon, &temp_r);
-      //ScreenToClient(hwndDlg, ((LPPOINT) &temp_r));
-      //ScreenToClient(hwndDlg, ((LPPOINT) &temp_r) + 1);
 
       if (rtl)
       {
@@ -305,7 +297,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
       {
-        BOOL bEnable = IsDlgButtonChecked(hwStartMenuSelect, IDC_CHECK) != BST_CHECKED;
+        BOOL bEnable = IsDlgButtonChecked(hwndDlg, IDC_CHECK) != BST_CHECKED;
         EnableWindow(hwDirList, bEnable);
         EnableWindow(hwLocation, bEnable);
       }
@@ -316,7 +308,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushstring("cancel");
       else
       {
-        if (IsDlgButtonChecked(hwStartMenuSelect, IDC_CHECK) == BST_CHECKED)
+        if (IsDlgButtonChecked(hwndDlg, IDC_CHECK) == BST_CHECKED)
         {
           short *sbuf = (short *) buf;
           *sbuf = *(short *) ">";
@@ -383,8 +375,8 @@ void AddFolderFromReg(HKEY rootKey)
         {
           if (*(WORD*)FileData.cFileName != *(WORD*)".." || FileData.cFileName[2])
           {
-            if (SendMessage(hwDirList, LB_FINDSTRINGEXACT, -1, (LPARAM)FileData.cFileName) == LB_ERR)
-              SendMessage(hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);
+            if (SendMessage(g_hwDirList, LB_FINDSTRINGEXACT, -1, (LPARAM)FileData.cFileName) == LB_ERR)
+              SendMessage(g_hwDirList, LB_ADDSTRING, 0, (LPARAM)FileData.cFileName);
             /*idx = */
             /*SendMessage(hwDirList, LB_SETITEMDATA, (WPARAM)idx,
               (LPARAM)ExtractAssociatedIcon(g_hInstance, FileData.cFileName, (WORD*)&idx));*/

@@ -20,7 +20,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#define RESOURCE_EDITOR_NO_API
+#define RESOURCE_EDITOR_NOT_API
 #include "ResourceEditor.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -41,10 +41,9 @@
 //////////////////////////////////////////////////////////////////////
 
 CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
-  // Copy the data
+  // Copy the data pointer
+  m_pbPE = pbPE;
   m_iSize = iSize;
-  m_pbPE = new BYTE[iSize];
-  CopyMemory(m_pbPE, pbPE, iSize);
 
   // Get dos header
   m_dosHeader = (PIMAGE_DOS_HEADER)m_pbPE;
@@ -65,10 +64,22 @@ CResourceEditor::CResourceEditor(BYTE* pbPE, int iSize) {
   // Pointer to the sections headers array
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
 
+  m_dwResourceSectionIndex = -1;
+
   // Find resource section index in the array
-  for (m_dwResourceSectionIndex = 0; m_dwResourceSectionIndex < m_ntHeaders->FileHeader.NumberOfSections; m_dwResourceSectionIndex++)
-    if (m_dwResourceSectionVA == sectionHeadersArray[m_dwResourceSectionIndex].VirtualAddress)
-      break;
+  for (int i = 0; i < m_ntHeaders->FileHeader.NumberOfSections; i++) {
+    if (m_dwResourceSectionVA == sectionHeadersArray[i].VirtualAddress) {
+      // Remember resource section index
+      m_dwResourceSectionIndex = i;
+      // Check for invalid resource section pointer
+      if (!sectionHeadersArray[i].PointerToRawData)
+        throw runtime_error("Invalid resource section pointer");
+    }
+
+    // Invalid section pointer (goes beyond the PE image)
+    if (sectionHeadersArray[i].PointerToRawData > m_iSize)
+      throw runtime_error("Invalid section pointer");
+  }
 
   // No resource section...
   if (m_dwResourceSectionIndex == m_ntHeaders->FileHeader.NumberOfSections)
@@ -214,33 +225,21 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   BYTE* seeker = pbNewPE;
   BYTE* oldSeeker = m_pbPE;
 
-  // Copy old headers
-  CopyMemory(seeker, oldSeeker, m_ntHeaders->OptionalHeader.SizeOfHeaders);
+  PIMAGE_SECTION_HEADER old_sectionHeadersArray = IMAGE_FIRST_SECTION(m_ntHeaders);
+
+  // Copy everything until the resource section (including headers and everything that might come after them)
+  // We don't use SizeOfHeaders because sometimes (using VC6) it can extend beyond the first section
+  // or (Borland) there could be some more information between the headers and the first section.
+  CopyMemory(seeker, oldSeeker, old_sectionHeadersArray[m_dwResourceSectionIndex].PointerToRawData);
+
+  // Skip the headers and whatever comes after them
+  seeker += old_sectionHeadersArray[m_dwResourceSectionIndex].PointerToRawData;
+  oldSeeker += old_sectionHeadersArray[m_dwResourceSectionIndex].PointerToRawData;
 
   // Get new nt headers pointer
   PIMAGE_NT_HEADERS ntHeaders = PIMAGE_NT_HEADERS(pbNewPE + PIMAGE_DOS_HEADER(pbNewPE)->e_lfanew);
   // Get a pointer to the new section headers
   PIMAGE_SECTION_HEADER sectionHeadersArray = IMAGE_FIRST_SECTION(ntHeaders);
-
-  // Copy everything between the headers and the sections (Borland stuff...)
-  CopyMemory(seeker, oldSeeker, sectionHeadersArray[0].PointerToRawData-ntHeaders->OptionalHeader.SizeOfHeaders);
-
-  // Skip some stuff between the headers and the sections (which is??? ask Borland...)
-  seeker += sectionHeadersArray[0].PointerToRawData-ntHeaders->OptionalHeader.SizeOfHeaders;
-  oldSeeker += sectionHeadersArray[0].PointerToRawData-ntHeaders->OptionalHeader.SizeOfHeaders;
-
-  // Skip the headers
-  seeker += ntHeaders->OptionalHeader.SizeOfHeaders;
-  oldSeeker += m_ntHeaders->OptionalHeader.SizeOfHeaders;
-
-  // Copy all of the section up until the resource section
-  DWORD dwSectionsSize = 0;
-  for (i = 0; i < m_dwResourceSectionIndex; i++)
-    dwSectionsSize += sectionHeadersArray[i].SizeOfRawData;
-
-  CopyMemory(seeker, oldSeeker, dwSectionsSize);
-  seeker += dwSectionsSize;
-  oldSeeker += dwSectionsSize;
 
   // Skip the resource section in the old PE seeker.
   oldSeeker += sectionHeadersArray[m_dwResourceSectionIndex].SizeOfRawData;
@@ -257,8 +256,8 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   // Set the new virtual size of the image
   DWORD old = ntHeaders->OptionalHeader.SizeOfImage;
   ntHeaders->OptionalHeader.SizeOfImage = RALIGN(ntHeaders->OptionalHeader.SizeOfHeaders, ntHeaders->OptionalHeader.SectionAlignment);
-  for (int j = 0; j < ntHeaders->FileHeader.NumberOfSections; j++)
-    ntHeaders->OptionalHeader.SizeOfImage += RALIGN(sectionHeadersArray[j].Misc.VirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
+  for (i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++)
+    ntHeaders->OptionalHeader.SizeOfImage += RALIGN(sectionHeadersArray[i].Misc.VirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
 
   // Set the new AddressOfEntryPoint if needed
   if (ntHeaders->OptionalHeader.AddressOfEntryPoint > sectionHeadersArray[m_dwResourceSectionIndex].VirtualAddress)
@@ -273,19 +272,24 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
     ntHeaders->OptionalHeader.BaseOfData += sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize - dwOldVirtualSize;
 
   // Refresh the headers of the sections that come after the resource section, and the data directory
-  for (i++; i < ntHeaders->FileHeader.NumberOfSections; i++) {
-    if ( sectionHeadersArray[i].PointerToRawData ) {
+  for (i = m_dwResourceSectionIndex + 1; i < ntHeaders->FileHeader.NumberOfSections; i++) {
+    if (sectionHeadersArray[i].PointerToRawData) {
       sectionHeadersArray[i].PointerToRawData -= IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData;
       sectionHeadersArray[i].PointerToRawData += dwRsrcSizeAligned;
     }
-    int secInDataDir = 0;
+
+    // We must find the right data directory entry before we change the virtual address
+    unsigned int uDataDirIdx = 0;
     for (unsigned int j = 0; j < ntHeaders->OptionalHeader.NumberOfRvaAndSizes; j++)
       if (ntHeaders->OptionalHeader.DataDirectory[j].VirtualAddress == sectionHeadersArray[i].VirtualAddress)
-        secInDataDir = j;
+        uDataDirIdx = j;
+
     sectionHeadersArray[i].VirtualAddress -= RALIGN(dwOldVirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
     sectionHeadersArray[i].VirtualAddress += RALIGN(sectionHeadersArray[m_dwResourceSectionIndex].Misc.VirtualSize, ntHeaders->OptionalHeader.SectionAlignment);
-    if (secInDataDir)
-      ntHeaders->OptionalHeader.DataDirectory[secInDataDir].VirtualAddress = sectionHeadersArray[i].VirtualAddress;
+
+    // Change the virtual address in the data directory too
+    if (uDataDirIdx)
+      ntHeaders->OptionalHeader.DataDirectory[uDataDirIdx].VirtualAddress = sectionHeadersArray[i].VirtualAddress;
   }
 
   // Write the resource section
@@ -293,22 +297,13 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   // Advance the pointer
   seeker += dwRsrcSizeAligned;
 
-  // Write all the sections that come after the resource section
-  dwSectionsSize = 0;
-  for (i = m_dwResourceSectionIndex + 1; i < m_ntHeaders->FileHeader.NumberOfSections; i++)
-    dwSectionsSize += sectionHeadersArray[i].SizeOfRawData;
+  // Copy everything that comes after the resource section (other sections and tacked data)
+  DWORD dwLeft = m_iSize - (oldSeeker - m_pbPE);
+  if (dwLeft)
+    CopyMemory(seeker, oldSeeker, dwLeft);
 
-  CopyMemory(seeker, oldSeeker, dwSectionsSize);
-  seeker += dwSectionsSize;
-  oldSeeker += dwSectionsSize;
-
-  // Copy data tacked after the PE headers and sections (NSIS installation data for example)
-  DWORD dwTackedSize = m_iSize - (oldSeeker - m_pbPE);
-  if (dwTackedSize)
-    CopyMemory(seeker, oldSeeker, dwTackedSize);
-
-  seeker += dwTackedSize;
-  oldSeeker += dwTackedSize;
+  seeker += dwLeft;
+  oldSeeker += dwLeft;
 
   /**********************************************************
    * To add checksum to the header use MapFileAndCheckSum
