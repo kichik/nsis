@@ -49,7 +49,7 @@ Section
 
   # this will always show on silent installers because ignore is the option automatically
   # selected when a file can't be opened for writing on a silent installer
-  MessageBox MB_OK|MB_ICONINFORMATION "This message box always if the installer is silent"
+  MessageBox MB_OK|MB_ICONINFORMATION "This message box always shows if the installer is silent"
 
   AllowSkipFiles off
 
