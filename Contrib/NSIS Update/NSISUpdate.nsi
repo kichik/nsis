@@ -55,6 +55,8 @@ ChangeUI IDD_INSTFILES "Resources\GUI\NSISUpdate.exe"
 
 Icon "${NSISDIR}\Contrib\Icons\yi-simple2_install.ico"
 
+XPStyle on
+
 Page custom UpdateMethod "" ": Update Method"
 Page instfiles
 
@@ -314,6 +316,111 @@ Function ConnectInternet
   
 FunctionEnd
 
+Function TrimNewlines
+  Exch $R0
+  Push $R1
+  Push $R2
+  StrCpy $R1 0
+
+loop:
+  IntOp $R1 $R1 - 1
+  StrCpy $R2 $R0 1 $R1
+  StrCmp $R2 "$\r" loop
+  StrCmp $R2 "$\n" loop
+  IntOp $R1 $R1 + 1
+  IntCmp $R1 0 no_trim_needed
+  StrCpy $R0 $R0 $R1
+
+no_trim_needed:
+  Pop $R2
+  Pop $R1
+  Exch $R0
+FunctionEnd
+
+Function FindFiles
+  Exch $R5 # callback function
+  Exch 
+  Exch $R4 # file name
+  Exch 2
+  Exch $R0 # directory
+  Push $R1
+  Push $R2
+  Push $R3
+  Push $R6
+
+  Push $R0 # first dir to search
+
+  StrCpy $R3 1
+
+  nextDir:
+    Pop $R0
+    IntOp $R3 $R3 - 1
+    ClearErrors
+    FindFirst $R1 $R2 "$R0\*.*"
+    nextFile:
+      StrCmp $R2 "." gotoNextFile
+      StrCmp $R2 ".." gotoNextFile
+
+      StrCmp $R2 $R4 0 isDir
+        Push "$R0\$R2"
+        Call $R5
+        Pop $R6
+        StrCmp $R6 "stop" 0 isDir
+          loop:
+            StrCmp $R3 0 done
+            Pop $R0
+            IntOp $R3 $R3 - 1
+            Goto loop
+
+      isDir:
+        IfFileExists "$R0\$R2\*.*" 0 gotoNextFile
+          IntOp $R3 $R3 + 1
+          Push "$R0\$R2"
+
+  gotoNextFile:
+    FindNext $R1 $R2
+    IfErrors 0 nextFile
+
+  done:
+    FindClose $R1
+    StrCmp $R3 0 0 nextDir
+
+  Pop $R6
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
+  Pop $R5
+  Pop $R4
+FunctionEnd
+
+!macro CallFindFiles DIR FILE CBFUNC
+Push ${DIR}
+Push ${FILE}
+Push $0
+GetFunctionAddress $0 ${CBFUNC}
+Exch $0
+Call FindFiles
+!macroend
+
+Function PatchCVSRoot
+  Pop $5
+  FileOpen $6 $5 "r"
+  FileRead $6 $7
+  FileClose $6
+  Push $7
+  Call TrimNewLines
+  Pop $7
+  StrCmp $7 ":pserver:anonymous@cvs1:/cvsroot/nsis" go
+    Push "stop"
+    Return
+go:
+  FileOpen $6 $5 "w"
+  FileWrite $6 ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nsis$\r$\n"
+  FileClose $6
+  Push "go"
+FunctionEnd
+
 #####################################################################
 # Update (Installer Section)
 
@@ -416,12 +523,15 @@ Section ""
     # CVS Update
     
     SetOutPath ${NSISBINPATH}\..
-    
+
     Call CheckCVSAccess
     Call CheckCVSFiles
     Call CheckCVSDownload
     Call CheckCVSData
-    
+    # patch CVS Root files that come from the development snapshot
+    GetFullPathName $9 $OUTDIR
+    !insertmacro CallFindFiles $9 Root PatchCVSRoot
+
     SetDetailsPrint listonly
     
     SendMessage ${TEMP3} ${WM_SETTEXT} 0 "STR:Updating your NSIS files..."
