@@ -11,6 +11,7 @@ XPStyle on
 
 ;--------------------------------
 
+Page license
 Page components
 Page instfiles
 
@@ -28,6 +29,22 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\Swedish.nlf"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Slovak.nlf"
+
+; License data
+; Not exactly translated, but it shows what's needed
+LicenseLangString myLicenseData ${LANG_ENGLISH} "bigtest.nsi"
+LicenseLangString myLicenseData ${LANG_DUTCH} "cvsdata.nsi"
+LicenseLangString myLicenseData ${LANG_FRENCH} "example1.nsi"
+LicenseLangString myLicenseData ${LANG_GERMAN} "example2.nsi"
+LicenseLangString myLicenseData ${LANG_KOREAN} "gfx.nsi"
+LicenseLangString myLicenseData ${LANG_RUSSIAN} "languages.nsi"
+LicenseLangString myLicenseData ${LANG_SPANISH} "logiclib.nsi"
+LicenseLangString myLicenseData ${LANG_SWEDISH} "makensis.nsi"
+LicenseLangString myLicenseData ${LANG_TRADCHINESE} "one-section.nsi"
+LicenseLangString myLicenseData ${LANG_SIMPCHINESE} "primes.nsi"
+LicenseLangString myLicenseData ${LANG_SLOVAK} "silent.nsi"
+
+LicenseData $(myLicenseData)
 
 ; Set name using the normal interface (Name command)
 LangString Name ${LANG_ENGLISH} "English"
