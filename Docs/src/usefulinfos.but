@@ -1,6 +1,6 @@
 \A{usefulinfos} Useful Information
 
-\H{sads}Add uninstall information to Add/Remove Programs
+\H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 
 Create a key with your product name under \\<b\\>HKLM/Software/Microsoft/Windows/CurrentVersion/Uninstall\\</b\\> to add entries to the "Add/Remove Programs" section in the Control Panel.
 For Windows NT (NT4/2000/XP), it's also possible to create the key in the HKCU hive, so it will only appear for the current user.
@@ -13,46 +13,231 @@ Write a value using the WriteRegStr command (for strings) or WriteRegDWORD comma
 
 \\<b\\>Required values\\</b\\>
 
-\e{DisplayName} (string) - Name of the application
-
+\e{DisplayName} (string) - Name of the application \\<br\\>
 \e{UninstallString} (string) - Path and filename of the uninstaller
 
 \\<b\\>Optional values\\</b\\>
 
 Some of the following values will not be used by older Windows versions.
 
-\e{InstallLocation} (string) - Installation directory ($INSTDIR)
-
+\e{InstallLocation} (string) - Installation directory ($INSTDIR) \\<br\\>
 \e{DisplayIcon} (string) - Path, filename and index of of the icon which will be displayed next to your application name
 
 \e{Publisher} (string) - (Company) name of the publisher
 
-\e{ModifyPath} (string) - Path and filename of the application modify program
-
+\e{ModifyPath} (string) - Path and filename of the application modify program \\<br\\>
 \e{InstallSource} (string) - Location where the application was installed from
 
-\e{ProductID} (string) - Product ID of the application
-
-\e{RegOwner} (string) - Registered owner of the application
-
+\e{ProductID} (string) - Product ID of the application \\<br\\>
+\e{RegOwner} (string) - Registered owner of the application \\<br\\>
 \e{RegCompany} (string) - Registered company of the application
 
-\e{HelpLink} (string) - Link to the support website
-
+\e{HelpLink} (string) - Link to the support website \\<br\\>
 \e{HelpTelephone} (string) - Telephone number for support
 
-\e{URLUpdateInfo} (string) - Link to the website for application updates
-
+\e{URLUpdateInfo} (string) - Link to the website for application updates \\<br\\>
 \e{URLInfoAbout} (string) - Link to the application home page
 
-\e{DisplayVersion} (string) - Displayed version of the application
-
-\e{VersionMajor} (DWORD) - Major version number of the application
-
+\e{DisplayVersion} (string) - Displayed version of the application \\<br\\>
+\e{VersionMajor} (DWORD) - Major version number of the application \\<br\\>
 \e{VersionMinor} (DWORD) - Minor version number of the application
 
-\e{NoModify} (DWORD) - 1 if uninstaller has no option to modify the installed application
-
+\e{NoModify} (DWORD) - 1 if uninstaller has no option to modify the installed application \\<br\\>
 \e{NoRepair} (DWORD) - 1 if the uninstaller has no option to repair the installation
 
 If both NoModify and NoRepair are set to 1, the button displays "Remove" instead of "Modify/Remove".
+
+
+\H{usefulvb6_runtime} How to install the VB6 runtimes
+
+The best way to install the VB6 runtimes is to use the UpgradeDLL macro (See \k{upgradedll}) to upgrade the DLL files, and the AddSharedDLL macro (See \k{addshareddll}) when installing the software for the first time to increase the shared DLL count. Define UPGRADEDLL_NOREGISTER before upgrading Stdole2.tlb (and undefine it before upgrading other files).
+
+Use the Modern UI with a Finish page to ask for a reboot if required or use IfRebootFlag (\k{IfRebootFlag}) and make your own page or messagebox.
+
+You can extract the files from vbrun60sp5.exe using any archiver that supports CAB compression, or if you have installed the latest version on your system, copy the following files from your system directory:
+
+Asycfilt.dll \\<br\\>
+Comcat.dll \\<br\\>
+Msvbvm60.dll \\<br\\>
+Oleaut32.dll \\<br\\>
+Olepro32.dll \\<br\\>
+Stdole2.tlb \\<br\\>
+
+In the uninstaller, use \W{http://nsis.sourceforge.net/archive/nsisweb.php?page=19}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because it's never a good idea to remove the VB runtimes. The system to registering shared DLL files does now always work and many application require these files.
+
+
+
+\c # Don't forget to copy the macro's!
+\c 
+\c !define VBFILESDIR C:\Windows\System
+\c # or
+\c #!define VBFILESDIR C:\Path\to\where\vbrun60sp5.exe\extracted
+\c 
+\c Section "Install VB DLLs"
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Asycfilt.dll $SYSDIR\Asycfilt.dll
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Comcat.dll $SYSDIR\Comcat.dll
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Msvbvm60.dll $SYSDIR\Msvbvm60.dll
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Oleaut32.dll $SYSDIR\Oleaut32.dll
+\c   !insertmacro UpgradeDLL ${VBFILESDIR}\Olepro32.dll $SYSDIR\Olepro32.dll
+\c   !define UPGRADEDLL_NOREGISTER
+\c     !insertmacro UpgradeDLL ${VBFILESDIR}\Stdole2.tlb $SYSDIR\Stdole2.tlb
+\c   !undef UPGRADEDLL_NOREGISTER
+\c   # skip shared count increasing if already done once for this application
+\c   IfFileExists $INSTDIR\myprog.exe skipAddShared
+\c     Push $SYSDIR\Asycfilt.dll
+\c     Call AddSharedDLL
+\c     Push $SYSDIR\Comcat.dll
+\c     Call AddSharedDLL
+\c     Push $SYSDIR\Msvbvm60.dll
+\c     Call AddSharedDLL
+\c     Push $SYSDIR\Oleaut32.dll
+\c     Call AddSharedDLL
+\c     Push $SYSDIR\Olepro32.dll
+\c     Call AddSharedDLL
+\c     Push $SYSDIR\Stdole2.tlb
+\c     Call AddSharedDLL
+\c   skipAddShared:
+\c SectionEnd
+\c
+\c Section "Uninstall"
+\c   Push $SYSDIR\Asycfilt.dll
+\c   Call un.RemoveSharedDLL
+\c   Push $SYSDIR\Comcat.dll
+\c   Call un.RemoveSharedDLL
+\c   Push $SYSDIR\Msvbvm60.dll
+\c   Call un.RemoveSharedDLL
+\c   Push $SYSDIR\Oleaut32.dll
+\c   Call un.RemoveSharedDLL
+\c   Push $SYSDIR\Olepro32.dll
+\c   Call un.RemoveSharedDLL
+\c   Push $SYSDIR\Stdole2.tlb
+\c   Call un.RemoveSharedDLL
+\c SectionEnd
+
+\H{useful_system_plugin} Calling an external DLL using the System.dll plugin
+
+Some install processes are required to call functions contained inside third party DLLs. A prime example of this is when installing a Palm(TM) conduit.
+
+\\<b\\>Some background about System.dll\\</b\\> \\<br\\>
+The System.dll plug-in (by Brainsucker) enables calling of external DLLs by providing the 'Call' function. There are a number of other functions provided by System.dll, but they will not be covered here. For more details about the other functions, lock the doors, take the phone off the hook, screw your head on *real* tight and head on over to the Contrib/System directory and read the doco there.
+
+\\<u\\>Data Types\\</u\\> \\<br\\>
+System.dll recognises the following data types:
+
+\b v - void (generally for return)
+
+\b i - int (includes char, byte, short, handles, pointers and so on)
+
+\b l - long & large integer (know as int64)
+
+\b t - text, string (LPCSTR, pointer to first character)
+
+\b b - boolean (needs/returns 'true':'false') - by the fact this type is senseless -> usual integer can be used ('0':'1')
+
+\b k - callback. See Callback section in system.txt.
+
+\b * - pointer specifier -> the proc needs the pointer to type, affects next char (parameter) [ex: '*i' - pointer to int]
+
+
+
+\\<u\\>Mapping System.dll variables to NSIS script variables\\</u\\> \\<br\\>
+There's not much point in being able to call an external function if you can't get any data back. System.dll maps function variables to NSIS script variables in the following way:
+
+NSIS $0..$9 become System.dll r0..r9
+NSIS $R0..$R9 become System.dll r10..r19
+
+There is one final wrinkle: placing a period/dot ('.') in front of a System.dll variable means 'makes no change to source' and it appears to be used everywhere except \e{where a pointer is returned}. This is important and WILL cause you grief if you forget!! See the example below.
+
+Using System.dll::Call
+To call a function in a third party DLL, the Call function is used like this:
+
+
+\c System::Call 'YourDllName::YourDllFunction(i, *i, t) i(.r0, r1, .r2) .r3'
+
+
+'(.r0, r1, .r2) .r3'
+
+section at the end are the parameters that are passed between your DLL and your NSIS script. Note the absence of the dot in front of the 'r1' parameter...
+
+\\<b\\>Before starting to code the NSIS script\\</b\\> \\<br\\>
+Before you start to code any NSIS code, you need to know the full prototype of the function you are going to call. For the purposes of this example, we will use the 'CmGetHotSyncExecPath' function from the Palm 'CondMgr.dll'. This function is used to return the full path of 'HotSync.exe'.
+
+\\<u\\>Function Definition\\</u\\> \\<br\\>
+
+
+int CmGetHotSyncExecPath(TCHAR *pPath, int *piSize);
+
+where
+
+\b  pPath is a pointer to a character buffer. Upon return, this is the path & file name of the installed HotSync manager.
+
+\b  piSize is a pointer to an integer that specifies the size (in TCHAR's), of the buffer referenced by the pPath parameter.
+
+return values:
+
+\b  0: No error
+
+\b  -1: A non-specific error occurred
+
+\b  ERR_REGISTRY_ACCESS(-1006):Unable to access the Palm configuration entries
+
+\b  ERR_BUFFER_TOO_SMALL(-1010): The buffer is too small to hold the requested information
+
+\b  ERR_INVALID_POINTER(-1013):The specified pointer is not a valid pointer
+
+
+Also, if the buffer is too small the value in *int is the size (in TCHARs) that the buffer should be.
+
+This function definition maps to the following System.dll definition:
+
+CmGetHotSyncExecPath(t, *i) i
+
+i.e. It takes a text variable, a pointer to int, and returns an int value.
+
+\\<u\\>Using the external dll function\\</u\\> \\<br\\>
+Now that we've sorted out what the function does, and how it maps to the System.dll format, we can use the function in a NSIS script.
+
+First, it is recommended to turn 'PluginUnload' off before making multiple calls to System.dll. According to Brainsucker (and others), this will speed up execution of the installer package.
+
+Second, you have to change the output directory to that where the DLL you want to use is. It may also work if the DLL is on the system path, but this hasn't been tested.
+
+The following code fragment will install 'condmgr.dll' to a temporary directory, execute the CmGetHotSyncExecPath function, display returned data and finally unload the System.dll plug-in.
+Save this script
+
+\c ; **** snip ****
+\c SetPluginUnload  alwaysoff
+\c 
+\c Function loadDll
+\c 
+\c   SetOutPath $TEMP\eInspect             ; create temp directory
+\c   File bin\CondMgr.dll                  ; copy dll there
+\c   StrCpy $1 ${NSIS_MAX_STRLEN}          ; assign memory to $0
+\c   System::Call 'CondMgr::CmGetHotSyncExecPath(t, *i) i(.r0, r1).r2'
+\c   DetailPrint 'Path: "$0"'
+\c   DetailPrint "Path length (I think): $1"
+\c   DetailPrint "Return value: $2"
+\c 
+\c ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete 
+\c ; the temporary DLL
+\c 
+\c   SetPluginUnload manual
+\c ; do nothing (but let the installer unload the System dll)
+\c   System::Free 0
+\c FunctionEnd
+\c ; **** snip ****
+
+
+and this function produces the following output in the 'details' page:
+
+Output folder: c:\\windows\\TEMP\\eInspect \\<br\\>
+Extract: CondMgr.dll \\<br\\>
+Path: "C:\\Dave\\palm\\Hotsync.exe" \\<br\\>
+Path length (I think): 1024 \\<br\\>
+Return value: 0
+
+
+Written by \W{http://nsis.sourceforge.net/archive/profile.php?userid=78}{djc}
+
+\\<u\\>Acknowledgements & Thanks\\</u\\> \\<br\\>
+Lots of thanks go to \\<b\\>kichik\\</b\\> and \\<b\\>Sunjammer\\</b\\> for spending a lot of time assisting in solving this problem. Also to \\<b\\>brainsucker\\</b\\> for creating the System.dll plug-in in the first place.
+Good Luck!
