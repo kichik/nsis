@@ -108,7 +108,7 @@ Section "Start Menu + Desktop Icons" SecIcons
   SectionIn 1 2 3
   SetOutPath $SMPROGRAMS\NSIS
   Delete "$SMPROGRAMS\NSIS\NSIS Home Page.lnk"
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
+  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://sourceforge.net/projects/nsis2k/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\makensis.htm"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Program Directory.lnk" "$INSTDIR"

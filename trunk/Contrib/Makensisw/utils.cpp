@@ -32,7 +32,7 @@ void SetTitle(HWND hwnd,char *substr) {
 }
 
 void SetBranding(HWND hwnd) {
-	char title[64];
+	char title[16];
 	wsprintf(title,"MakeNSISW %s",NSISW_VERSION);
 	SetDlgItemText(hwnd, IDC_VERSION, title);
 }
@@ -87,7 +87,6 @@ void LogMessage(HWND hwnd,const char *str) {
 	SendDlgItemMessage(hwnd, IDC_LOGWIN,EM_SCROLLCARET,0,0);
 	GlobalFree(existing_text);
 }
-
 
 
 void ErrorMessage(HWND hwnd,const char *str) {
