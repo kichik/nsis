@@ -53,12 +53,15 @@ class CLZMADecoder
   CLZOutWindow  m_OutWindowStream;
   CRangeDecoder m_RangeDecoder;
 
-  CBitDecoder m_MainChoiceDecoders[kNumStates][kLenNumPosStatesMax];
-  CBitDecoder m_MatchRepShortChoiceDecoders[kNumStates][kLenNumPosStatesMax];
-  CBitDecoder m_MatchChoiceDecoders[kNumStates];
-  CBitDecoder m_MatchRepChoiceDecoders[kNumStates];
-  CBitDecoder m_MatchRep1ChoiceDecoders[kNumStates];
-  CBitDecoder m_MatchRep2ChoiceDecoders[kNumStates];
+  struct
+  {
+    CBitDecoder MainChoiceDecoders[kNumStates][kLenNumPosStatesMax];
+    CBitDecoder MatchRepShortChoiceDecoders[kNumStates][kLenNumPosStatesMax];
+    CBitDecoder MatchChoiceDecoders[kNumStates];
+    CBitDecoder MatchRepChoiceDecoders[kNumStates];
+    CBitDecoder MatchRep1ChoiceDecoders[kNumStates];
+    CBitDecoder MatchRep2ChoiceDecoders[kNumStates];
+  } m_Decoders;
 
   CLZMALiteralDecoder m_LiteralDecoder;
 
@@ -72,7 +75,7 @@ class CLZMADecoder
   int m_PosStateMask;
 
 public:
-  UINT32 Create(BYTE *memoryPointer, 
+  void Create(BYTE *memoryPointer, 
       int numLiteralContextBits, 
       int numLiteralPosStateBits,
       int numPosStateBits);

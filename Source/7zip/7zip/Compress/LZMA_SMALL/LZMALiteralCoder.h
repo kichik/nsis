@@ -12,9 +12,8 @@ class CLZMALiteralDecoder2
 public:
   void Init()
   {
-    for (int i = 0; i < 3; i++)
-      for (int j = 0; j < (1 << 8); j++)
-        m_Decoders[i][j].Init();
+    for (int i = 0; i < sizeof(m_Decoders) / sizeof(CBitDecoder); i++)
+      ((CBitDecoder *) m_Decoders)[i].Init();
   }
   BYTE DecodeNormal(CRangeDecoder *rangeDecoder)
   {
@@ -78,17 +77,15 @@ public:
 class CLZMALiteralDecoder
 {
   CLZMALiteralDecoder2 *m_Coders;
-  int  m_NumPrevBits;
+  int m_NumPrevBits;
   int m_PosMask;
 public:
   CLZMALiteralDecoder(): m_Coders(0) {}
-  UINT32 Create(BYTE *memory, int numPosBits, int numPrevBits)
+  void Create(BYTE *memory, int numPosBits, int numPrevBits)
   {
     m_PosMask = (1 << numPosBits) - 1;
     m_NumPrevBits = numPrevBits;
-    int numStates = 1 << (numPrevBits + numPosBits);
-    m_Coders = (CLZMALiteralDecoder2 *)memory;
-    return sizeof(CLZMALiteralDecoder2) * numStates;
+    m_Coders = (CLZMALiteralDecoder2 *) memory;
   }
   void Init()
   {
