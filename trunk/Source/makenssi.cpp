@@ -75,6 +75,7 @@ int main(int argc, char **argv)
   int nousage=0;
   int files_processed=0;
   int cmds_processed=0;
+  int plugins_processed=0;
   FILE *fp;
   int tmpargpos=1;
   int no_logo=0;
@@ -110,11 +111,6 @@ int main(int argc, char **argv)
 
   atexit(myatexit);
   signal(SIGINT,sigint);
-
-#ifdef NSIS_CONFIG_PLUGIN_SUPPORT
-  // Added by Ximon Eighteen 5th August 2002
-  build.build_plugin_table();
-#endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
   if (!g_output) g_output=stdout;
   while (argpos < argc)
@@ -313,6 +309,13 @@ int main(int argc, char **argv)
           }
         }
 
+        #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
+        // Added by Ximon Eighteen 5th August 2002
+        if (!plugins_processed) {
+          build.build_plugin_table();
+          plugins_processed=1;
+        }
+        #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
         if (build.display_script) 
         {
