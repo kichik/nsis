@@ -53,7 +53,7 @@ InstallColors /windows
 ChangeUI IDD_INST "Resources\GUI\NSISUpdate.exe"
 ChangeUI IDD_INSTFILES "Resources\GUI\NSISUpdate.exe"
 
-Icon "${NSISDIR}\Contrib\Icons\yi-simple2_install.ico"
+Icon "${NSISDIR}\Contrib\Graphics\Icons\arrow-install.ico"
 
 XPStyle on
 
