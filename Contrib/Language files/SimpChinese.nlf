@@ -1,15 +1,15 @@
 # Header, don't edit
 NLF v6
 # Language ID
-2052
+1028
 # Font and size - dash (-) means default ×ÖÌåÃû³ÆÓë´óĞ¡
 ËÎÌå
 9
 # Codepage - dash (-) means ANSI code page ANSI ×ÖÂëÒ³
-936
+950
 # RTL - anything else than RTL means LTR ÓÉÓÒÖÁ×óÊéĞ´
 -
-# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-10-20
+# Translator: Kii Ali <kiiali@cpatch.org>;Revision date: 2003-10-23
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -159,9 +159,9 @@ Setup ½«½â³ı°²×° $(^Name) ÔÚÏÂÁĞÎÄ¼ş¼Ğ¡£Òª½â³ı°²×°µ½²»Í¬ÎÄ¼ş¼Ğ£¬µ¥»÷ [ä¯ÀÀ(B)] ²
 # ^Exec
 "ÔËĞĞ: "
 # ^Extract
-"½âÑ¹Ëõ: "
+"³éÈ¡: "
 # ^ErrorWriting
-"½âÑ¹Ëõ: ÎŞ·¨Ğ´ÈëÎÄ¼ş "
+"³éÈ¡: ÎŞ·¨Ğ´ÈëÎÄ¼ş "
 # ^InvalidOpcode
 "°²×°Ëğ»Ù: ÎŞĞ§µÄ²Ù×÷´úÂë "
 # ^NoOLE
