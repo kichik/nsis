@@ -4,7 +4,7 @@ const char *NSIS_VERSION="v2.0rc2";
   Nullsoft Scriptable Install System (NSIS)
   makensis.cpp - installer compiler code
 
-  Copyright (C) 1999-2003 Nullsoft, Inc.
+  Copyright (C) 1999-2004 Nullsoft, Inc.
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
       }
       outputtried=1;
     }
-    fprintf(g_output,"MakeNSIS %s - Copyright 1999-2003 Nullsoft, Inc.\n"
+    fprintf(g_output,"MakeNSIS %s - Copyright 1999-2004 Nullsoft, Inc.\n"
            "\n"
            "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
            "Includes portions derived from bzip2 (see documentation for details).\n"
