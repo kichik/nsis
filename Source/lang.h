@@ -85,7 +85,7 @@ class LangStringList : public SortedStringListND<struct langstring>
 
     const char *offset2name(int name)
     {
-      if ((unsigned int)name > strings.getlen())
+      if ((unsigned int)name > (unsigned int)strings.getlen())
         return 0;
 
       return (const char*)strings.get() + name;
@@ -163,7 +163,7 @@ class StringsArray
       if (idx < 0)
         return 0;
 
-      if (idx >= (offsets.getlen() / sizeof(int)))
+      if (idx >= (int)(offsets.getlen() / sizeof(int)))
         resize(idx+1);
 
       int old = ((int*)offsets.get())[idx];
