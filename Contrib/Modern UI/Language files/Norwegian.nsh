@@ -21,9 +21,9 @@
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du godtar lisensavtalen, velg det første alternativet ovenfor. Du må godta lisensavtalen for å intallere $(^NameDA). $_CLICK"
   
   !define MUI_TEXT_COMPONENTS_TITLE "Velg komponenter"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "velg vilke deler av $(^NameDA) du ønker å installere."
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "Velg vilke deler av $(^NameDA) du ønker å installere."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beskrivelse"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "hold musen over komponentene for å se beskrivelsen."
+  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Beveg musen over komponentene for å se beskrivelsen."
   
   !define MUI_TEXT_DIRECTORY_TITLE "Velg installasjons bane"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Velg hvilken mappe du vil installere $(^NameDA) i."
@@ -40,9 +40,9 @@
   !define MUI_BUTTONTEXT_FINISH "&Ferdig"
   !define MUI_TEXT_FINISH_INFO_TITLE "Avslutter $(^NameDA) istallasjonsveiviser"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) er blitt installert på din datamskin.\r\n\r\nTrykk Lukk for å avslutte installasjons programmet."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Din datamskin må omstartes for at $(^NameDA) skal bli intallert riktig. Vil du starte om datamaskinen nå?"
-  !define MUI_TEXT_FINISH_REBOOTNOW "Start om nå"
-  !define MUI_TEXT_FINISH_REBOOTLATER "Jeg vil starte om senere"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Du må starte datamaskinen på nytt for at $(^NameDA) skal bli intallert riktig. Vil du starte datamaskinen på nytt?"
+  !define MUI_TEXT_FINISH_REBOOTNOW "Starte datamskinen på nytt nå"
+  !define MUI_TEXT_FINISH_REBOOTLATER "Jeg vil starte datamaskinen på nytt senere"
   !define MUI_TEXT_FINISH_RUN "&Kjør $(^NameDA)"
   !define MUI_TEXT_FINISH_SHOWREADME "&Vis Readme filen"
   
@@ -83,7 +83,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Fullfører avistallasjonen av $(^NameDA)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) har blitt avistallert fra din datamaskin.\r\n\r\nTrykk på ferdig for å avslutte denne veiviseren."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Datamaskinen må restarte for å fullføre installasjonen av $(^NameDA). Vil du restarte nå?"  
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Datamaskinen må Starte på nytt for å fullføre installasjonen av $(^NameDA). Vil du starte datamaskinen på nytt nå?"  
 
   !define MUI_UNTEXT_ABORTWARNING "Er du sikker på at du vil avbryte avistalleringen av $(^Name)?"
 
