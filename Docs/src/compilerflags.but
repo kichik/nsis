@@ -1,6 +1,6 @@
 \S1{flags} Compiler Flags
 
-The following commands change how the compiler generates code and compresses data.  These commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command).
+The following commands change how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command).
 
 \S2{asetallowskipfiles} AllowSkipFiles
 
@@ -26,7 +26,7 @@ Note that this option has no effect when solid compression is used, which is ena
 
 \c [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
 
-This command sets the compression algorithm used to compress files/data in the installer.
+This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.
 
 Three compression methods are supported: ZLIB, BZIP2 and LZMA.
 
