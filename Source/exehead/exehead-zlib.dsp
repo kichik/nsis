@@ -105,11 +105,6 @@ SOURCE=..\zlib\INFCODES.C
 # End Source File
 # Begin Source File
 
-SOURCE=..\zlib\INFLATE.C
-# ADD CPP /Gz
-# End Source File
-# Begin Source File
-
 SOURCE=..\zlib\INFTREES.C
 # ADD CPP /Gz
 # End Source File
