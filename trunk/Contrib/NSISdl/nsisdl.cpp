@@ -146,14 +146,15 @@ void downloadFile(char         *url,
   char *p=NULL;
   if (getProxyInfo(buf))
   {
-    p=_strstr(buf,"http=");
+    p=strstr(buf,"http=");
     if (!p) p=buf;
-    else 
-    {
+    else {
       p+=5;
-      char *tp=_strstr(p,";");
-      if (tp) *tp=0;
     }
+    char *tp=strstr(p,";");
+    if (tp) *tp=0;
+    char *p2=strstr(p,"=");
+    if (p2) p=0; // we found the wrong proxy
   }
   DWORD start_time=GetTickCount();
   JNL_HTTPGet *get=new JNL_HTTPGet(JNL_CONNECTION_AUTODNS,16384,(p&&p[0])?p:NULL);
