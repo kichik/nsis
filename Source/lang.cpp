@@ -397,9 +397,15 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 #endif
     )
   {
-    // Changed by Amir Szekely 22nd July 2002
-    // Adds the ability to disable space texts
     if (!table->installer.spacerequired && !no_space_texts) table->installer.spacerequired=add_string_main(str(NLF_SPACE_REQ),0);
+  }
+  if (table->installer.text
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+    || table->installer.componenttext
+#endif
+    || build_custom_used || ubuild_custom_used
+    )
+  {
     if (!table->common.nextbutton) table->common.nextbutton=add_string_main(str(NLF_BTN_NEXT),0);
     if (!table->installer.installbutton) table->installer.installbutton=add_string_main(str(NLF_BTN_INSTALL),0);
   }
