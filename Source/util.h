@@ -49,6 +49,7 @@ size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 std::string get_full_path(const std::string &path);
 std::string get_dir_name(const std::string& path);
 std::string get_file_name(const std::string& path);
+std::string get_executable_dir(const char *argv0);
 
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
