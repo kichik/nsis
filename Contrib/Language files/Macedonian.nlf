@@ -1,5 +1,6 @@
 # Header, don't edit
 NLF v6
+# Start editing here
 # Language ID
 1071
 # Font and size - dash (-) means default
@@ -9,7 +10,7 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 -
-# Translation by Sasko Zdravkin [vardarce@mail.com]
+# Translation by Sasko Zdravkin [wingman2083@yahoo.com]
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -169,7 +170,7 @@ $(^NameDA) ќе биде деинсталиран од следниов директориум. $_CLICK
 # ^OutputFolder
 "Инсталационен директориум: "
 # ^RemoveFolder
-"Избришан директориумот: "
+"Избришан директориум: "
 # ^RenameOnReboot
 "Преименувај после рестартирање: "
 # ^Rename
