@@ -142,7 +142,7 @@ void NSISCALL build_g_logfile()
 static void NSISCALL set_language()
 {
   int i;
-  LANGID lang_mask=~(LANGID)0;
+  LANGID lang_mask=(LANGID)~0;
   LANGID lang=myatoi(state_language);
   char *language_table=0;
   int lang_num=g_inst_cmnheader->language_tables_num;
@@ -157,7 +157,7 @@ lang_again:
     }
   }
   if (i == lang_num) {
-    if (lang_mask == ~(LANGID)0)
+    if (lang_mask == (LANGID)~0)
       lang_mask=0x3ff; // primary lang
     else // we already tried once and we still don't have a language table
       lang_mask=0; // first lang

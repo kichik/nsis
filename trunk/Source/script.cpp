@@ -1312,13 +1312,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       build_header.install_directory_ptr = add_string_main(p);
       build_header.install_directory_auto_append = 0;
-      if (*p && p[strlen(p)-1] != '\\')
+      if (*p && *CharPrev(p, p + strlen(p)) != '\\')
       {
         p = build_strlist.get() + build_header.install_directory_ptr;
-        char *p2 = strrchr(p, '\\');
+        char *p2 = p + strlen(p);
+        while (p2 >= p && *CharPrev(p, p2) != '\\') p2--;;
         if (p2)
         {
-          p2++;
           build_header.install_directory_auto_append = build_header.install_directory_ptr + (p2 - p);
         }
       }
@@ -3382,7 +3382,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (process_jump(line,1,&ent.offsets[0]) ||
           process_jump(line,2,&ent.offsets[1])) PRINTHELP()
       ent.offsets[2]=FLAG_OFFSET(abort);
-      ent.offsets[3]=(int)~0;//new value mask - keep flag
+      ent.offsets[3]=~0;//new value mask - keep flag
       SCRIPT_MSG("IfAbort ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_CLEARERRORS:
@@ -4127,7 +4127,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (process_jump(line,1,&ent.offsets[0]) ||
           process_jump(line,2,&ent.offsets[1])) PRINTHELP()
       ent.offsets[2]=FLAG_OFFSET(exec_reboot);
-      ent.offsets[3]=(int)~0;//new value mask - keep flag
+      ent.offsets[3]=~0;//new value mask - keep flag
       SCRIPT_MSG("IfRebootFlag ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SETREBOOTFLAG:
