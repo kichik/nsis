@@ -7,13 +7,14 @@ NLF v4
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by Magnus Bonnevier.(magnus.bonnevier@telia.com)
+# Translation by Magnus Bonnevier (magnus.bonnevier@telia.com)
+# Updated by Rickard Angbratt (r.angbratt@home.se)
 Nullsoft Install System %s
-%s Setup
-%s Uninstall
-: Licens Avtal
-: Installations Val
-: Installations Katalog
+Installation av %s
+Avinstallation av %s 
+: Licensavtal
+: Installationsval
+: Installationskatalog
 : Installerar
 : Genomförd
 : Bekräftelse
@@ -22,8 +23,8 @@ Nullsoft Install System %s
 < &Tillbaka
 &Nästa >
 Jag &Godkänner
-Jag &Godkänner vilkoren i licens avtalet
-Jag &Godkänner inte vilkoren för licens avtalet
+Jag &godkänner vilkoren i licensavtalet
+Jag godkänner &inte vilkoren i licensavtalet
 &Installera
 &Avinstallera
 Avbryt
@@ -37,8 +38,8 @@ Välj typ av installation:
 Välj komponenter att installera:
 Eller, välj valfria komponenter att installera:
 Välj katalog att installera %s till:
-Disk utrymme tillgängligt: 
-Disk utrymme som behövs: 
+Diskutrymme tillgängligt: 
+Diskutrymme som behövs: 
 Avinstallerar från:
 Fel: Öppna fil för skrivning: \r\n\t"$0"\r\nKlicka abort för att avbryta installationen,\r\nKlicka retry för att försöka igen, or\r\nKlicka ignore för att hoppa över denna fil
 Kan inte skriva: 
@@ -48,28 +49,28 @@ Registrerar:
 Avregistrerar: 
 Kan inte hitta symbol: 
 Kan inte ladda: 
-Skapa Katalog: 
-Skapa Genväg: 
-Skapa Avinstallerare: 
+Skapa katalog: 
+Skapa genväg: 
+Skapa avinstallerare: 
 Radera fil: 
 Radera vid omstart: 
-Fel vid skapande av Genväg: 
-Fel skapande: 
-Fel vid upp-packning av data! Korrupt installation?
+Fel vid skapande av genväg: 
+Fel vid skapande: 
+Fel vid upp-packning av data! Korrupt installerare?
 Fel vid registrering av DLL
 ExecShell: 
 Kör: 
 Extrahera: 
 Extrahera: fel vid skrivning till fil 
-Installation korrupt: ogiltig opcode
+Korrupt installerare : ogiltig opcode
 Ingen OLE för: 
-Ut Katalog: 
+Utkatalog: 
 Ta bort katalog: 
 Döp om vid omstart: 
 Döp om: 
 Ignorerade: 
 Kopiera detaljer till klippbordet
-Logga installations process
+Logga installationsprocessen
 # byte
 B
 # kilo
