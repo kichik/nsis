@@ -4,7 +4,7 @@
 /*---                                               bzlib.h ---*/
 /*-------------------------------------------------------------*/
 
-// (this has been hacked to peices by david eccles and justin frankel,
+// (this has been hacked to pieces by dave laundon and justin frankel,
 //  and others, to make it small for nsis. it is not compatible with
 //  bzip2 any longer. yay. )
 
@@ -21,16 +21,16 @@
   1. Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
 
-  2. The origin of this software must not be misrepresented; you must 
-     not claim that you wrote the original software.  If you use this 
-     software in a product, an acknowledgment in the product 
+  2. The origin of this software must not be misrepresented; you must
+     not claim that you wrote the original software.  If you use this
+     software in a product, an acknowledgment in the product
      documentation would be appreciated but is not required.
 
   3. Altered source versions must be plainly marked as such, and must
      not be misrepresented as being the original software.
 
-  4. The name of the author may not be used to endorse or promote 
-     products derived from this software without specific prior written 
+  4. The name of the author may not be used to endorse or promote
+     products derived from this software without specific prior written
      permission.
 
   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
@@ -91,7 +91,7 @@ extern "C" {
 #define BZ_OUTBUFF_FULL      (-8)
 #define BZ_CONFIG_ERROR      (-9)
 
-typedef 
+typedef
    struct {
       char *next_in;
       unsigned int avail_in;
@@ -100,7 +100,7 @@ typedef
       unsigned int avail_out;
 
       void *state;
-   } 
+   }
    bz_stream;
 
 
@@ -131,20 +131,20 @@ typedef
 
 /*-- Core (low-level) library functions --*/
 
-BZ_EXTERN int BZ_API(BZ2_bzCompressInit) ( 
-      bz_stream* strm, 
-      int        blockSize100k, 
-      int        verbosity, 
-      int        workFactor 
+BZ_EXTERN int BZ_API(BZ2_bzCompressInit) (
+      bz_stream* strm,
+      int        blockSize100k,
+      int        verbosity,
+      int        workFactor
    );
 
-BZ_EXTERN int BZ_API(BZ2_bzCompress) ( 
-      bz_stream* strm, 
-      int action 
+BZ_EXTERN int BZ_API(BZ2_bzCompress) (
+      bz_stream* strm,
+      int action
    );
 
-BZ_EXTERN int BZ_API(BZ2_bzCompressEnd) ( 
-      bz_stream* strm 
+BZ_EXTERN int BZ_API(BZ2_bzCompressEnd) (
+      bz_stream* strm
    );
 
 /*-- General stuff. --*/
