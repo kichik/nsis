@@ -706,6 +706,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ubuild_pages.add(&p,sizeof(page));
           build_uninst.common.num_pages++;
         }
+        SCRIPT_MSG("number of pages: %d\n", build_uninst.common.num_pages);
       }
     return PS_OK;
 #else

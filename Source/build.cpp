@@ -639,6 +639,7 @@ int CEXEBuild::add_function(const char *funname)
 
   if (!strnicmp(funname,"un.",3))
   {
+    SCRIPT_MSG("setting uninstall mode to true\n");
     set_uninstall_mode(1);
   }
 
@@ -1173,7 +1174,8 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Added by Amir Szekely 9th August 2002
   int err=add_plugins_dir_initializer();
-  if (err != PS_OK) return err;
+  if (err != PS_OK)
+    return err;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
   // Added by Amir Szekely 3rd August 2002
@@ -1444,7 +1446,7 @@ int CEXEBuild::write_output(void)
       page *p=(page *) ubuild_pages.get();
       int noinstlogback=0;
       for (int i=0; i<build_uninst.common.num_pages; i++, p++) {
-        if (i) p->back=2; // 2 - enabled, 1 - disabled, 0 - invisible
+        if (i) p->back=SW_SHOWNA|2; // 2 - enabled, SW_SHOWNA - visible, 0 - invisible (or'ed)
         else p->back=0;
 
         p->next=LANG_BTN_NEXT;
@@ -1455,7 +1457,7 @@ int CEXEBuild::write_output(void)
           p->next=LANG_BTN_UNINST;
         }
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
-          p->back=noinstlogback?0:1;
+          p->back=noinstlogback?0:SW_SHOWNA;
       }
       (--p)->next=LANG_BTN_CLOSE;
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
@@ -2188,19 +2190,19 @@ void CEXEBuild::build_plugin_table(void)
 
 int CEXEBuild::add_plugins_dir_initializer(void)
 {
-  if (!plugin_used) return PS_OK;
+  if (!plugin_used && !uninst_plugin_used) return PS_OK;
 
   SCRIPT_MSG("Adding plug-ins initializing function... ");
 
-  bool uninstall = false;
+  bool uninstall = !plugin_used;
 
   int ret;
   entry ent;
   int zero_offset;
 
-  ret=add_function("Initialize_____Plugins");
-  if (ret != PS_OK) return ret;
 again:
+  ret=add_function(uninstall?"un.Initialize_____Plugins":"Initialize_____Plugins");
+  if (ret != PS_OK) return ret;
   // SetDetailsPrint none
   ent.which=EW_UPDATETEXT;
   ent.offsets[1]=4; // none
@@ -2257,7 +2259,6 @@ again:
   if (ret != PS_OK) return ret;
 
   if (uninst_plugin_used && !uninstall) {
-    add_function("un.Initialize_____Plugins");
     uninstall = true;
     goto again;
   }
