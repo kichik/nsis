@@ -916,7 +916,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           char *buf1=GetStringFromParm(-0x10);
           char *buf0=GetStringFromParm(0x01);
 
-          if (parm3)
+          if (parm4)
             h=GetModuleHandle(buf1);
           if (!h)
             h=LoadLibrary(buf1);
