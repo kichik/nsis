@@ -29,7 +29,7 @@ $(^Name) Deinstallation
 # ^UnComponentsSubCaption
 : Deinstallations-Optionen
 # ^UnDirSubCaption
-: Deinstallations-Ordner
+: Quellverzeichnis
 # ^ConfirmSubCaption
 : Bestätigung
 # ^UninstallingSubCaption
@@ -43,9 +43,9 @@ $(^Name) Deinstallation
 # ^AgreeBtn
 &Annehmen
 # ^AcceptBtn
-Ich &akzeptiere das Lizenzabkommen
+Ich &akzeptiere das Lizenzabkommen.
 # ^DontAcceptBtn
-Ich &lehne das Lizenzabkommen ab
+Ich &lehne das Lizenzabkommen ab.
 # ^InstallBtn
 &Installieren
 # ^UninstallBtn
@@ -59,11 +59,11 @@ Abbrechen
 # ^ShowDetailsBtn
 &Details anzeigen
 # ^ClickNext
-Klicken Sie auf Weiter um fortzufahren
+Klicken Sie auf Weiter um fortzufahren.
 # ^ClickInstall
 Klicken Sie auf Installieren um die Installation zu starten.
 # ^ClickUninstall
-Klicken Sie auf Deinstallieren um die Deinstallation zu starten
+Klicken Sie auf Deinstallieren um die Deinstallation zu starten.
 # ^Name
 Name
 # ^Completed
@@ -73,13 +73,13 @@ Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie all
 # ^LicenseTextCB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren sie das Kästchen. $_CLICK
 # ^LicenseTextRB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie untenstehend die entsprechende Option. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) installieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^UnLicenseText
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) deinstallieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, klicken Sie auf Annehmen.
 # ^UnLicenseTextCB
 Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) deinstallieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, aktivieren sie das Kästchen. $_CLICK
 # ^UnLicenseTextRB
-Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) deinstallieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie untenstehend die entsprechende Option. $_CLICK
+Bitte lesen Sie das Lizenzabkommen bevor Sie $(^Name) deinstallieren. Wenn Sie alle Bedingungen des Abkommens akzeptieren, wählen Sie die entsprechende Option. $_CLICK
 # ^Custom
 Benutzerdefiniert
 # ^ComponentsText
@@ -135,7 +135,7 @@ Kopieren fehlgeschlagen
 # ^SymbolNotFound
 "Symbol ist nicht vorhanden: "
 # ^CouldNotLoad
-"Fehler beim Laden von: "
+"Fehler beim Laden von "
 # ^CreateFolder
 "Erstelle Verzeichnis: "
 # ^CreateShortcut
