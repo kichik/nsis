@@ -6,13 +6,15 @@
 
 ;--------------------------------
 
+!echo "NSIS Modern User Interface version 1.63 - © 2002-2003 Joost Verburg"
+
 !ifndef MUI_MANUALVERBOSE
   !verbose 3
 !endif
 
-!ifndef MUI_MACROS_USED
+!ifndef MUI_INCLUDED
 
-!define MUI_MACROS_USED
+!define MUI_INCLUDED
 
 !include "WinMessages.nsh"
 
