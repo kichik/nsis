@@ -868,11 +868,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (GetDiskFreeSpace(s,&spc,&bps,&fc,&tc))
     {
-      DWORD r;
-      DWORD v=0x7fffffff;
-      r=bps*spc*(fc>>10);
-      if (!r) r=(bps*spc*fc)>>10;
-      if (r > v) r=v;
+      DWORD r=MulDiv(bps*spc,fc,1<<10);
+      if (r > 0x7fffffff) r=0x7fffffff;
       available=(int)r;
     }
     for (x = 0; x < num_sections; x ++)
@@ -1176,27 +1173,32 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                 // check to see which install type we are
                 for (r = 0; r < m_num_insttypes; r ++)
                 {
-                  for (x = 0; x < num_sections; x ++)
+                  HTREEITEM *ht=hTreeItems;
+                  section *t=g_inst_section;
+                  x=num_sections;
+                  while (x--)
                   {
-                    char c=GetStringFromStringTab(g_inst_section[x].name_ptr)[0];
+                    char c=GetStringFromStringTab(t->name_ptr)[0];
                     if (c && c!='-')
                     {
                       TV_ITEM hItem;
-                      hItem.hItem=hTreeItems[x];
+                      hItem.hItem=*ht;
                       if (g_inst_header->no_custom_instmode_flag==1)
                       {
-                        int c=(g_inst_section[x].default_state>>m_whichcfg)&1;
+                        int c=(t->default_state>>m_whichcfg)&1;
                         CheckTreeItem(hwndTree1, &hItem,c);
                       }
-                      else if (!(g_inst_section[x].default_state&DFS_RO))
+                      else if (!(t->default_state&DFS_RO))
                       {
                         hItem.mask=TVIF_STATE;
                         TreeView_GetItem(hwndTree1,&hItem);
-                        if (!(g_inst_section[x].default_state&(1<<r)) != !((hItem.state>>12)>1 )) break;
+                        if (!(t->default_state&(1<<r)) != !((hItem.state>>12)>1 )) break;
                       }
                     }
+                    t++;
+                    ht++;
                   }
-                  if (x == num_sections) break;
+                  if (x < 0) break;
                 }
 
                 if (!g_inst_header->no_custom_instmode_flag)
@@ -1227,30 +1229,36 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         m_whichcfg=t;
         if (m_whichcfg != m_num_insttypes)
         {
-          int x;
-          for (x = 0; x < num_sections; x ++)
+          int x=num_sections;
+          section *t=g_inst_section;
+          HTREEITEM *ht=hTreeItems;
+          while (x--)
           {
-            if (g_inst_section[x].name_ptr>=0)
+            if (t->name_ptr>=0 && !(t->default_state & DFS_RO))
             {
-              if (!(g_inst_section[x].default_state & DFS_RO))
+              TVITEM tv;
+              int l=1;
+
+              if (t->default_state & (1<<m_whichcfg)) 
               {
-                TVITEM tv;
-                int n=(g_inst_section[x].default_state & (1<<m_whichcfg));
-                int l=n?2:1;
-                if (n) g_inst_section[x].default_state|=DFS_SET;
-                else g_inst_section[x].default_state&=~DFS_SET;
-
-                tv.hItem=hTreeItems[x];
-                tv.mask=TVIF_STATE;
-                if (g_inst_section[x].default_state & DFS_RO) l+=3;
-
-                tv.state=INDEXTOSTATEIMAGEMASK(l);
-                tv.stateMask = TVIS_STATEIMAGEMASK;
-
-                TreeView_SetItem(hwndTree1,&tv);
-                SetParentState(hwndTree1,&tv);
+                l++;
+                t->default_state|=DFS_SET;
               }
+              else t->default_state&=~DFS_SET;
+              
+              // this can't happen because of the above if()
+              //if (t->default_state & DFS_RO) l+=3;
+
+              tv.hItem=*ht;
+              tv.mask=TVIF_STATE;
+              tv.state=INDEXTOSTATEIMAGEMASK(l);
+              tv.stateMask = TVIS_STATEIMAGEMASK;
+
+              TreeView_SetItem(hwndTree1,&tv);
+              SetParentState(hwndTree1,&tv);
             }
+            t++;
+            ht++;
           }
           SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
         }
