@@ -43,3 +43,44 @@ This command sets the overwrite flag which is used by the File command to determ
 \c \\<b\\>manual\\</b\\>|alwaysoff
 
 This command sets the unload plugin flag which is by CallInstDLL and plugin calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plugin call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
+
+\S1{versioninfo} Version Information
+
+\S2{viaddversionkey} VIAddVersionKey
+
+\c  [/LANG=lang_id] keyname value
+
+Adds a field in the Version Tab of the File Properties. This can either be a field provided by the system or a user defined field.
+The following fields are provided by the System:
+
+\b ProductName
+
+\b Comments
+
+\b CompanyName
+
+\b LegalCopyright 
+
+\b FileDescription
+
+\b FileVersion 
+
+\b ProductVersion
+
+\b InternalName
+
+\b LegalTrademarks
+
+\b OriginalFilename
+
+\b PrivateBuild
+
+\b SpecialBuild
+
+The name of these fields are translated on the target system, whereas user defined fields remain untranslated.
+
+\S2{viproductversion} VIProductVersion
+
+\c [version_string_X.X.X.X]
+
+Adds the Product Version on top of the Version Tab in the Properties of the file.
