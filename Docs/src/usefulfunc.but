@@ -1,4 +1,4 @@
-\A{usefulfunctions} Useful functions
+\A{usefulfunctions} Useful Functions
 
 \H{getparent} Get parent directory
 
@@ -269,14 +269,14 @@
 \c  ;   Call IsDotNETInstalled
 \c  ;   Pop $0
 \c  ;   StrCmp $0 1 found.NETFramework no.NETFramework
-\c  
+\c
 \c  Function IsDotNETInstalled
 \c    Push $0
 \c    Push $1
 \c    Push $2
 \c    Push $3
 \c    Push $4
-\c  
+\c
 \c    ReadRegStr $4 HKEY_LOCAL_MACHINE \
 \c      "Software\Microsoft\.NETFramework" "InstallRoot"
 \c    # remove trailing back slash
@@ -286,33 +286,33 @@
 \c    Pop $4
 \c    # if the root directory doesn't exist .NET is not installed
 \c    IfFileExists $4 0 noDotNET
-\c  
+\c
 \c    StrCpy $0 0
-\c  
+\c
 \c    EnumStart:
-\c  
+\c
 \c      EnumRegKey $2 HKEY_LOCAL_MACHINE \
 \c        "Software\Microsoft\.NETFramework\Policy"  $0
 \c      IntOp $0 $0 + 1
 \c      StrCmp $2 "" noDotNET
-\c  
+\c
 \c      StrCpy $1 0
-\c  
+\c
 \c      EnumPolicy:
-\c  
+\c
 \c        EnumRegValue $3 HKEY_LOCAL_MACHINE \
 \c          "Software\Microsoft\.NETFramework\Policy\$2" $1
 \c        IntOp $1 $1 + 1
 \c         StrCmp $3 "" EnumStart
 \c          IfFileExists "$4\$2.$3" foundDotNET EnumPolicy
-\c  
+\c
 \c    noDotNET:
 \c      StrCpy $0 0
 \c      Goto done
-\c  
+\c
 \c    foundDotNET:
 \c      StrCpy $0 1
-\c  
+\c
 \c    done:
 \c      Pop $4
 \c      Pop $3

@@ -22,7 +22,7 @@
 
 \b LangDLL: Option to auto-count number of languages, shell font support
 
-\b Page and UninstPage can not be used inside sesctions/functions
+\b Page and UninstPage can not be used inside sections/functions
 
 \b CreateDirectory now uses the error flag
 
@@ -60,7 +60,7 @@
 
 \b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
 
-\b LangString improvements: can be used before they have been defined, warning if not present in all language tables 
+\b LangString improvements: can be used before they have been defined, warning if not present in all language tables
 
 \b New version of the Modern User Interface with UI improvements, bugfixes and some small new features
 
@@ -90,7 +90,7 @@
 
 \b All !if/!else/!endif problems should be solved now
 
-\b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style 
+\b SetFont "MS Shell Dlg" adds the DS_SHELLFONT style
 
 \b Win9x rename on reboot now also works when the destination file does not exist
 
@@ -401,4 +401,3 @@
 \b Made config.h have hacks for easier building for me. :)
 
 \e{For complete version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}}
-
