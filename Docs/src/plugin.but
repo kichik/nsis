@@ -4,7 +4,7 @@ The abilities of the NSIS scripting language can be extended by utilising functi
 
 When the NSIS compiler starts it scans the plugins directory for DLLs and makes a list of the plugins found and their exported functions. During compilation if a sequence such as fred::flintstone is encountered where the compiler expected to find a language keyword the compiler will look through this list. If a list entry specifies that fred.dll exports function flintstone NSIS will pack the fred.dll file into the created installer binary.
 
-During execution of the created installer if a plugin command is executed NSIS will unpack the necessary DLL to the $TEMP directory, push all of the arguments specified (right-to-left order), and then execute the DLL function. If the /NOUNLOAD option is specified the DLL will not be deleted until the installer exits or the next time you use the DLL without /NOUNLOAD.
+During execution of the created installer if a plugin command is executed NSIS will unpack the necessary DLL to the $TEMP directory, push all of the arguments specified (right-to-left order), and then execute the DLL function. If the /NOUNLOAD option is specified the DLL will not be unloaded until the installer exits or the next time you use the DLL without /NOUNLOAD. Please note that the last call to the plugin must not have the /NOUNLOAD flag or the plugin will not be deleted from $PLUGINSDIR, thus garbage will be left on the user's machine.
 
 \S1{usingplug} Using Plugin Commands
 
@@ -28,4 +28,4 @@ CallInstDLL has an option not to unload the DLL after usage. To use it with the 
 
 \c InstallOptions::dialog /NOUNLOAD "ini_file_location.ini"
 
-You can also use SetPluginUnload alawysoff (See \k{setpluginunload}) to avoid writing /NOUNLOAD each and every time you use the same plugin. Please note that the last call to the plugin must not have the /NOUNLOAD flag or the plugin will not be deleted from $PLUGINSDIR, thus keeping garbage on the user's machine.
+You can also use SetPluginUnload alawysoff (See \k{setpluginunload}) to avoid writing /NOUNLOAD each and every time you use the same plugin.
