@@ -38,7 +38,7 @@ unsigned int  g_to;
 
 void ExecScript(BOOL log);
 void LogMessage(const char *pStr);
-char *my_strstr(const char *string, const char *strCharSet);
+char *my_strstr(char *a, char *b);
 unsigned int my_atoi(char *s);
 
 void __declspec(dllexport) Exec(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
@@ -94,14 +94,25 @@ void ExecScript(int log) {
   nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH);
   p = meDLLPath + nComSpecSize - 1;
   g_exec = (char *)GlobalAlloc(GPTR, sizeof(char)*g_stringsize+nComSpecSize+1);
-  
-  while ( *p && *p != '\\' )
-    p--;
-  if ( p )
-    *p = 0;
+
+  do
+  {
+    if (*p == '\\')
+      break;
+    p = CharPrev(meDLLPath, p);
+  }
+  while (p > meDLLPath);
+  if (p == meDLLPath)
+  {
+    // bad path
+    lstrcpy(szRet, "error");
+    goto done;
+  }
+
+  *p = 0;
   GetTempFileName(meDLLPath, "ns", 0, g_exec);
   *p = '\\';
-  if ( CopyFile(meDLLPath, g_exec, FALSE) )
+  if (CopyFile(meDLLPath, g_exec, FALSE))
   {
     HANDLE hFile, hMapping;
     LPBYTE pMapView;
@@ -109,7 +120,7 @@ void ExecScript(int log) {
     hFile = CreateFile(g_exec, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING,0, 0);
     hMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
     pMapView = MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, 0);
-    if ( pMapView )
+    if (pMapView)
     {
       pNTHeaders = (PIMAGE_NT_HEADERS)(pMapView + ((PIMAGE_DOS_HEADER)pMapView)->e_lfanew);
       pNTHeaders->FileHeader.Characteristics = IMAGE_FILE_32BIT_MACHINE | IMAGE_FILE_LOCAL_SYMS_STRIPPED | 
@@ -129,12 +140,12 @@ void ExecScript(int log) {
   *pExec = ' '; 
   pExec++;
   popstring(pExec);
-  if ( my_strstr(pExec, "/TIMEOUT=") ) {
+  if (my_strstr(pExec, "/TIMEOUT=")) {
     char *szTimeout = pExec + 9;
     g_to = my_atoi(szTimeout);
     popstring(pExec);
   }
-  if (!g_exec[0] ) 
+  if (!g_exec[0]) 
   {
     lstrcpy(szRet, "error");
     goto done;
@@ -216,30 +227,39 @@ void ExecScript(int log) {
 
           if (!(log & 2)) {
             while (p = my_strstr(p, "\t")) {
-              int len = lstrlen(p);
-              char *c_out=(char*)p+TAB_REPLACE_SIZE+len;
-              char *c_in=(char *)p+len;
-              while (len-- > 0) {
-                *c_out--=*c_in--;
+              if ((int)(p - szUnusedBuf) > (int)(GlobalSize(hUnusedBuf) - TAB_REPLACE_SIZE - 1))
+              {
+                *p++ = ' ';
               }
+              else
+              {
+                int len = lstrlen(p);
+                char *c_out=(char*)p+TAB_REPLACE_SIZE+len;
+                char *c_in=(char *)p+len;
+                while (len-- > 0) {
+                  *c_out--=*c_in--;
+                }
 
-              lstrcpy(p, TAB_REPLACE);
-              p += TAB_REPLACE_SIZE;
-              *p = ' ';
+                lstrcpy(p, TAB_REPLACE);
+                p += TAB_REPLACE_SIZE;
+                *p = ' ';
+              }
             }
             
             p = szUnusedBuf; // get the old left overs
-            for (p2 = p; *p2; p2++) {
+            for (p2 = p; *p2;) {
               if (*p2 == '\r') {
-                *p2 = 0;
+                *p2++ = 0;
                 continue;
               }
               if (*p2 == '\n') {
                 *p2 = 0;
                 while (!*p && p != p2) p++;
                 LogMessage(p);
-                p = p2 + 1;
+                p = ++p2;
+                continue;
               }
+              p2 = CharNext(p2);
             }
             
             // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
@@ -299,21 +319,22 @@ void LogMessage(const char *pStr) {
   ListView_EnsureVisible(g_hwndList, item.iItem, 0);
 }
 
-
-char *my_strstr(const char *string, const char *strCharSet) {
-  char *s1, *s2;
-  size_t chklen;
-  size_t i;
-  if (lstrlen(string) < lstrlen(strCharSet)) return 0;
-  if (!*strCharSet) return (char*)string;
-  chklen=lstrlen(string)-lstrlen(strCharSet);
-  for (i = 0; i <= chklen; i++) {
-    s1=&((char*)string)[i];
-    s2=(char*)strCharSet;
-    while (*s1++ == *s2++)
-    if (!*s2) return &((char*)string)[i];
+char *my_strstr(char *a, char *b)
+{
+  int l = lstrlen(b);
+  while (lstrlen(a) >= l)
+  {
+    char c = a[l];
+    a[l] = 0;
+    if (!lstrcmpi(a, b))
+    {
+      a[l] = c;
+      return a;
+    }
+    a[l] = c;
+    a = CharNext(a);
   }
-  return 0;
+  return NULL;
 }
 
 unsigned int my_atoi(char *s) {
