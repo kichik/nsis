@@ -145,6 +145,7 @@ Section "Script Examples" SecExample
   File ..\Examples\one-section.nsi
   File ..\Examples\languages.nsi
   File ..\Examples\VersionInfo.nsi
+  File ..\Examples\UserVars.nsi
 SectionEnd
 
 Section "NSIS Menu" SecMenu
