@@ -27,6 +27,10 @@ CEXEBuild::~CEXEBuild()
 
 CEXEBuild::CEXEBuild()
 {
+  linecnt = 0;
+  fp = 0;
+  curfilename = 0;
+
   display_info=1;
   display_script=1;
   display_errors=1;
