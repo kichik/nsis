@@ -1834,6 +1834,7 @@ void CEXEBuild::print_warnings()
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 void CEXEBuild::build_plugin_table(void)
 {
+  plugin_used = false;
   char* nsisdir = definedlist.find("NSISDIR");
   if (nsisdir)
   {

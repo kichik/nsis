@@ -3,6 +3,7 @@
 #include "util.h"
 #include "state.h"
 #include "config.h"
+#include "lang.h"
 
 #include "fileform.h"
 #include "ui.h"
@@ -26,6 +27,43 @@ HANDLE myCreateProcess(char *cmd, char *dir)
   return ProcInfo.hProcess;
 }
 
+#ifdef NSIS_SUPPORT_RMDIR
+void doRMDir(char *buf, int recurse)
+{
+  if (recurse && is_valid_instpath(buf))
+  {
+    int i=lstrlen(buf);
+    HANDLE h;
+    WIN32_FIND_DATA fd;
+    lstrcat(buf,"\\*.*");
+    h = FindFirstFile(buf,&fd);
+    if (h != INVALID_HANDLE_VALUE) 
+    {
+      do
+      {
+        if (fd.cFileName[0] != '.' ||
+            (fd.cFileName[1] != '.' && fd.cFileName[1]))
+        {
+          lstrcpy(buf+i+1,fd.cFileName);
+          if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
+          else 
+          {
+            update_status_text_from_tab(LANG_DELETEFILE,buf);
+            if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) 
+              SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
+            DeleteFile(buf);
+          }
+        }
+      } while (FindNextFile(h,&fd));
+      FindClose(h);
+    }
+    buf[i]=0; // fix buffer
+  }
+  log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+  update_status_text_from_tab(LANG_REMOVEDIR,buf);
+  RemoveDirectory(buf);
+}
+#endif//NSIS_SUPPORT_RMDIR
 
 void addtrailingslash(char *str)
 {

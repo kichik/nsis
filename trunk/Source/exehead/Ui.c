@@ -40,11 +40,13 @@
 
 // Added by Amir Szekely 3rd August 2002
 installer_strings *install_strings_tables;
-common_strings *common_strings_tables;
-uninstall_strings *uninstall_strings_tables;
 installer_strings *cur_install_strings_table;
+common_strings *common_strings_tables;
 common_strings *cur_common_strings_table;
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+uninstall_strings *uninstall_strings_tables;
 uninstall_strings *cur_uninstall_strings_table;
+#endif
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
@@ -304,26 +306,32 @@ int ui_doinstall(void)
     // Multilingual support
     char c=0;
     LANGID user_lang=GetUserDefaultLangID();
-    int size=g_inst_header->common.str_tables_num*sizeof(common_strings);
+    int size=g_inst_header->str_tables_num*sizeof(common_strings);
     cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!g_is_uninstaller) {
+#endif
       size=g_inst_header->str_tables_num*sizeof(installer_strings);
       cur_install_strings_table=install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     }
     else {
-      size=g_inst_header->str_tables_num*sizeof(uninstall_strings);
+      size=g_inst_uninstheader->str_tables_num*sizeof(uninstall_strings);
       cur_uninstall_strings_table=uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
-      GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)uninstall_strings_tables,size);
+      GetCompressedDataFromDataBlockToMemory(g_inst_uninstheader->str_tables,(char*)uninstall_strings_tables,size);
     }
+#endif
     lang_again:
     for (size=0; size<g_inst_header->str_tables_num; size++) {
       if (user_lang == common_strings_tables[size].lang_id
         || (c && PRIMARYLANGID(user_lang) == PRIMARYLANGID(common_strings_tables[size].lang_id))) {
         cur_install_strings_table = &install_strings_tables[size];
         cur_common_strings_table = &common_strings_tables[size];
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         cur_uninstall_strings_table = &uninstall_strings_tables[size];
+#endif
         break;
       }
     }
@@ -373,6 +381,7 @@ int ui_doinstall(void)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
     ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInstSuccess,NULL);
 #endif//NSIS_SUPPORT_CODECALLBACKS
+
     return 0;
   }
 #endif//NSIS_CONFIG_SILENT_SUPPORT
@@ -1138,20 +1147,23 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 int ui_st_updateflag=0x3;
 
+void update_status_text_from_tab(int texttab, const char *text2)
+{
+  update_status_text(STR(texttab), text2);
+}
+
 void update_status_text(const char *text1, const char *text2)
 {
-  static LVITEM new_item = {LVIF_TEXT,};
+  static LVITEM new_item = {LVIF_TEXT,0,0,0,0,ps_tmpbuf};
   RECT r;
   if (insthwnd)
   {
     if (lstrlen(text1)+lstrlen(text2) >= sizeof(ps_tmpbuf)) return;
-
     lstrcpy(ps_tmpbuf,text1);
     lstrcat(ps_tmpbuf,text2);
     if ((ui_st_updateflag&1))
     {
       // Changed by Amir Szekely 26th July 2002
-      new_item.pszText=ps_tmpbuf;
       new_item.iItem=ListView_GetItemCount(insthwnd);
       ListView_InsertItem(insthwnd, &new_item);
       ListView_EnsureVisible(insthwnd, new_item.iItem, 0);
@@ -1288,7 +1300,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         ShowWindow(g_hwnd,SW_SHOWNA);
         lstrcpy(g_tmp,g_caption);
         process_string_fromtab(g_tmp+lstrlen(g_caption),COMMON_STR(subcaptions[g_max_page+1]));
-        update_status_text(STR(LANG_COMPLETED),"");
+        update_status_text_from_tab(LANG_COMPLETED,"");
         SetWindowText(h2,g_tmp);
         SetFocus(h);
       }

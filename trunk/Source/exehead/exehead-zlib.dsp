@@ -152,10 +152,6 @@ SOURCE=..\crc32.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\dllpaths.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\exec.c
 # End Source File
 # Begin Source File
