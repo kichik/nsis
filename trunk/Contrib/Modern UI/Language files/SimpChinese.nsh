@@ -3,7 +3,7 @@
 
 ;Language: 'Chinese (Simplified)' (2052)
 ;Kii Ali <kiiali@cpatch.org>
-;Revision date: 2003-04-12
+;Revision date: 2003-04-30
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
@@ -27,7 +27,7 @@
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "选定组件"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "选定 ${MUI_PRODUCT} 当中你想要安装的功能。"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "核取想要安装的组件，并把不想安装的组件解除核取。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_TOP "勾选想要安装的组件，并把不想安装的组件解除勾选。"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指针到组件之上，便可见到它的描述。"
   
