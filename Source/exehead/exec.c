@@ -800,6 +800,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       myitoa(var0,(int)CreateFontIndirect(&f));
     }
     return 0;
+    case EW_SHOWWINDOW:
+      ShowWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
+    return 0;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #endif//NSIS_SUPPORT_HWNDS
 #ifdef NSIS_SUPPORT_SHELLEXECUTE
