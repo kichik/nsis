@@ -3,91 +3,79 @@
 #include "System.h"
 #include "Buffers.h"
 
-PLUGINFUNCTION(AllocCopy)
-	int mem;
-
-	if (popint(&mem) == 0)
-	{
-		pushint(0);
-		return;
-	}
-
-	mem = (int) GlobalCopy((HANDLE) mem);
-	pushint(mem);
-PLUGINFUNCTIONEND
-
-PLUGINFUNCTION(Alloc)
+PLUGINFUNCTIONSHORT(Alloc)
+{
 	int size;
-	int mem;
-
-	if (popint(&size) == 0)
+	if ((size = popint()) == 0)
 	{
 		pushint(0);
 		return;
 	}
-
-	mem = (int) GlobalAlloc(GPTR, size);
-	pushint(mem);
+	pushint((int) GlobalAlloc(GPTR, size));
+}
 PLUGINFUNCTIONEND
 
-PLUGINFUNCTION(Free)
-	int mem;
+PLUGINFUNCTIONSHORT(Copy)
+{
+    int size = 0;
+    HANDLE source, dest;
+	char *str;
+    // Get the string
+	if ((str = popstring()) == NULL) return;
 
-	if ((popint(&mem) == 0) || (mem == 0))
-	{
-		pushstring("false");
-		return;
-	}
-	if ((GlobalFree((HANDLE) mem) == NULL)) pushstring("true");
-	else pushstring("false");
+    // Check for size option
+    if (str[0] == '/')
+    {
+        size = (int) myatoi(str+1);
+        dest = popint();
+    }
+    else dest = (HANDLE) myatoi(str+1);
+    source = popint();
+
+    // Ok, check the size
+    if (size == 0) size = (int) GlobalSize(source);
+    // and the destinantion
+    if ((int) dest == 0) dest = GlobalAlloc((GPTR), size);
+
+    // COPY!
+    copymem(dest, source, size);
+
+    GlobalFree(str);
+}
 PLUGINFUNCTIONEND
 
-/*typedef BOOL (__stdcall *GetDiskSpace)
-(
-  LPCTSTR lpDirectoryName,                 // directory name
-  PULARGE_INTEGER lpFreeBytesAvailable,    // bytes available to caller
-  PULARGE_INTEGER lpTotalNumberOfBytes,    // bytes on disk
-  PULARGE_INTEGER lpTotalNumberOfFreeBytes // free bytes on disk
-);*/
-
-/*PLUGINFUNCTION(MyFunction)
-		GetDiskSpace proc;
-		ULARGE_INTEGER i1, i2, i3;
-		BOOL check;
-
-		proc = (GetDiskSpace) GetProcAddress(GetModuleHandle("kernel32.dll"), "GetDiskFreeSpaceExA");
-		check = proc(NULL, &i1, &i2, &i3);
-
-        _asm
+PLUGINFUNCTIONSHORT(Free)
+{
+	char *str;
+    // Get the string
+	if ((str = popstring()) == NULL) return;
+    // Check for callback clear
+    if (lstrcmpi(str,"/callback") == 0)
+    {
+        SystemProc *proc, *next;
+	    next = (SystemProc*) popint();
+        // Clear all the clone queue of callback
+        while ((proc = next) != NULL)
         {
-                push    ecx
-                lea             ecx, i3
-                push    ecx
-                lea             ecx, i2
-                push    ecx
-                lea             ecx, i1
-                push    ecx
-                push    0
-
-                call    proc
-
-				mov				check, eax
-//                add             esp, 16
-                pop             ecx
+            next = proc->Clone;
+            GlobalFree((HANDLE)proc);
         }
+    }
+    else
+        GlobalFree((HANDLE) myatoi(str)); 
+    GlobalFree(str);
+}
+PLUGINFUNCTIONEND
 
-	char buf[1024];
-    wsprintf(buf,"$0=%s\n",getuservariable(INST_0));
-    MessageBox(g_hwndParent,buf,0,MB_OK);
-PLUGINFUNCTIONEND*/
+char *copymem(char *output, char *input, int size)
+{
+    char *out = output;
+    while (size-- > 0) *(out++) = *(input++);
+    return output;
+}
 
 HANDLE GlobalCopy(HANDLE Old)
 {
-	SIZE_T size;
-	HANDLE n;
-
-	size = GlobalSize(Old);
-	n = GlobalAlloc(GPTR, size);
-	CopyMemory(n, Old, size);
-	return n;
+	SIZE_T size = GlobalSize(Old);
+    return copymem(GlobalAlloc(GPTR, size), Old, (int) size);
 }
