@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.21
+;Modern UI Header File version 1.21b
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -30,6 +30,23 @@
   ChangeUI all "${NSISDIR}\Contrib\UIs\${UI}"
   SetFont Tahoma 8
   CheckBitmap "${NSISDIR}\Contrib\Icons\${CHECKS}"
+  InstallColors /windows
+  InstProgressFlags "${PROGRESSBAR}"
+  BrandingText /TRIMRIGHT
+  !define CURRENTPAGE ${CURRENTPAGEVAR}
+
+!macroend
+
+!macro MUI_INTERFACE_ABSOLUTEPATH UI ICON UNICON CHECKS PROGRESSBAR CURRENTPAGEVAR
+
+  ;User interface
+  
+  Icon "${ICON}"
+  UninstallIcon "${UNICON}"
+  XPStyle On
+  ChangeUI all "${UI}"
+  SetFont Tahoma 8
+  CheckBitmap "${CHECKS}"
   InstallColors /windows
   InstProgressFlags "${PROGRESSBAR}"
   BrandingText /TRIMRIGHT
