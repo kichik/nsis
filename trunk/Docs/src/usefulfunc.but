@@ -13,7 +13,7 @@
 \c  ;   Pop $R0
 \c  ;   ; at this point $R0 will equal "C:\Program Files\Directory"
 \c
-\c  Function GetParent 
+\c  Function GetParent
 \c    Exch $R0 ; old $R0 is on top of stack
 \c    Push $R1
 \c    Push $R2
@@ -49,7 +49,7 @@
 \c        StrCmp $R2 "$\r" loop
 \c        StrCmp $R2 "$\n" loop
 \c    IntOp $R1 $R1 + 1
-\c      
+\c
 \c    StrCpy $R0 $R0 $R1
 \c    Pop $R2
 \c    Pop $R1
@@ -155,7 +155,7 @@
 \c    StrCmp $R0 "" 0 lbl_winnt
 \c    ; we are not NT.
 \c    ReadRegStr $R0 HKLM SOFTWARE\Microsoft\Windows\CurrentVersion VersionNumber
-\c 
+\c
 \c    StrCpy $R1 $R0 1
 \c    StrCmp $R1 '4' 0 lbl_error
 \c
@@ -176,15 +176,15 @@
 \c      StrCpy $R0 'ME'
 \c    Goto lbl_done
 \c
-\c    lbl_winnt: 
+\c    lbl_winnt:
 \c
 \c      StrCpy $R1 $R0 1
-\c    
+\c
 \c      StrCmp $R1 '3' lbl_winnt_x
 \c      StrCmp $R1 '4' lbl_winnt_x
-\c    
+\c
 \c      StrCpy $R1 $R0 3
-\c    
+\c
 \c      StrCmp $R1 '5.0' lbl_winnt_2000 lbl_error
 \c      StrCmp $R1 '5.1' lbl_winnt_XP lbl_error
 \c      StrCmp $R1 '5.2' lbl_winnt_dotNET lbl_error
@@ -196,11 +196,11 @@
 \c      lbl_winnt_2000:
 \c        Strcpy $R0 '2000'
 \c      Goto lbl_done
-\c    
+\c
 \c      lbl_winnt_XP:
 \c        Strcpy $R0 'XP'
 \c      Goto lbl_done
-\c    
+\c
 \c      lbl_winnt_dotNET:
 \c        Strcpy $R0 '.NET Server'
 \c      Goto lbl_done
@@ -219,7 +219,7 @@
 \c  ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
 \c  ; Returns on top of stack
 \c  ; 1-6 (Installed IE Version)
-\c  ; or 
+\c  ; or
 \c  ; '' (IE is not installed)
 \c  ;
 \c  ; Usage:
@@ -249,7 +249,7 @@
 \c
 \c        StrCpy $R0 '3' ; default to ie3 if not 100, 101, or 102.
 \c        Goto lbl_done
-\c          lbl_ie1: 
+\c          lbl_ie1:
 \c            StrCpy $R0 '1'
 \c          Goto lbl_done
 \c          lbl_ie2:
@@ -280,7 +280,7 @@
 \c   Push $R0
 \c   ClearErrors
 \c   ReadRegStr $R0 HKCR "CLSID\{D27CDB6E-AE6D-11cf-96B8-444553540000}" ""
-\c   IfErrors lbl_na 
+\c   IfErrors lbl_na
 \c     StrCpy $R0 1
 \c   Goto lbl_end
 \c   lbl_na:
@@ -296,7 +296,7 @@
 \c  ; Increments a shared DLLs reference count.
 \c  ; Use by passing one item on the stack (the full path of the DLL).
 \c  ;
-\c  ; Usage: 
+\c  ; Usage:
 \c  ;   Push $SYSDIR\myDll.dll
 \c  ;   Call AddSharedDLL
 \c  ;
@@ -319,10 +319,10 @@
 \c  ; Use by passing one item on the stack (the full path of the DLL).
 \c  ; Note: for use in the main installer (not the uninstaller), rename the
 \c  ; function to RemoveSharedDLL.
-\c  ; 
+\c  ;
 \c  ; Usage:
 \c  ;   Push $SYSDIR\myDll.dll
-\c  ;   Call un.RemovedShareDLL
+\c  ;   Call un.RemoveSharedDLL
 \c  ;
 \c
 \c  Function un.RemoveSharedDLL
@@ -360,7 +360,7 @@
 \c  ; you insert the macro.
 \c
 \c  !macro UpgradeDLL LOCALFILE DESTFILE
-\c   
+\c
 \c    Push $R0
 \c    Push $R1
 \c    Push $R2
@@ -381,7 +381,7 @@
 \c
 \c    ;------------------------
 \c    ;Let's upgrade the DLL!
-\c  
+\c
 \c    SetOverwrite try
 \c
 \c    "upgrade_${LOCALFILE}:"
@@ -392,22 +392,22 @@
 \c
 \c    ;------------------------
 \c    ;Try to copy the DLL directly
-\c  
+\c
 \c    ClearErrors
 \c      StrCpy $R0 "${DESTFILE}"
 \c      Call ":file_${LOCALFILE}"
 \c    IfErrors "" "noreboot_${LOCALFILE}"
-\c  
+\c
 \c    ;------------------------
 \c    ;DLL is in use. Copy it to a temp file and Rename it on reboot.
-\c  
+\c
 \c    GetTempFileName $R0
 \c      Call ":file_${LOCALFILE}"
 \c    Rename /REBOOTOK $R0 "${DESTFILE}"
 \c
 \c    ;------------------------
 \c    ;Register the DLL on reboot
-\c  
+\c
 \c    !ifndef UPGRADEDLL_NOREGISTER
 \c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
 \c      "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE},DllRegisterServer"'
@@ -449,11 +449,11 @@
 \c    ;Called to extract the DLL
 \c
 \c    "file_${LOCALFILE}:"
-\c      File /oname=$R0 "${LOCALFILE}"  
+\c      File /oname=$R0 "${LOCALFILE}"
 \c      Return
 \c
 \c    "end_${LOCALFILE}:"
-\c	
+\c
 \c  !macroend
 
 \H{morefuncs} More

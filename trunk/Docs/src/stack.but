@@ -4,7 +4,7 @@
 
 \c [user_var] | stack_index
 
-When no parmater is specified, exchanges the top two elements of the stack. When a parameter is specified and is a user variable, exchanges the top element of the stack with the parameter. When a parameter is specified and is a positive integer, the parameter specifies which item on the stack that the top of the stack is swapped with. If there are not enough items on the stack to accomplish the exchange, a fatal error will occur (to help you debug your code :).
+When no parameter is specified, exchanges the top two elements of the stack. When a parameter is specified and is a user variable, exchanges the top element of the stack with the parameter. When a parameter is specified and is a positive integer, the parameter specifies which item on the stack that the top of the stack is swapped with. If there are not enough items on the stack to accomplish the exchange, a fatal error will occur (to help you debug your code :).
 
 \S{Pop} Pop
 
