@@ -1,0 +1,81 @@
+# Header, don't edit
+NLF v5
+# Language ID
+1050
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# Translation by Vladan "vladano@EUnet.yu" Obradovic
+Nullsoft Install System %s
+%s Instalacija
+%s Deinstalacija
+: Uslovi Licence
+: Installacione Opcije
+: Installacioni Direktorijum
+: Installiram
+: Prekid
+: Potvrðeno
+: Deinstaliram
+: Prekid
+< &Nazad
+&Nastavi >
+&Prihvatam
+&Prihvatam uslove u licenci
+&Ne prihvatam uslove u licenci
+&Instaliraj
+&Deinstaliraj
+Odustani
+&Zatvori
+T&raži...
+Pokaži &detalje
+Ime
+Završeno
+Posebno
+Odaberi tip instalacije:
+Odaberi komponente koje želiš instalirati:
+Ili, odaberi opcione komponente koje želiš instalirati:
+Odaberi direktorijum u koji želiš instalirati %s:
+Slobodno na disku: 
+Potrebno na disku:
+Deinstaliram iz:
+Greška prilikom otvaranja datoteke za upis: \r\n\t"$0"\r\nPritisni abort da prekineš instalaciju,\r\nretry da ponovno pokušaš upis u datoteku, ili\r\nignore da preskoèiš tu datoteku
+Greška prilikom otvaranja datoteke za upis: \r\n\t"$0"\r\nPritisni retry da ponovno pokušaš upis u datoteku, ili\r\ncancel da prekineš instalaciju
+Ne mogu upisati:
+Greška prilikom kopiranja
+Kopiraj u
+Registrovanje:
+Deregistrovanje:
+Ne mogu da naðem simbol:
+Ne mogu da uèitam:
+Napravi direktorijum:
+Napravi shortcut: 
+Kreiran deinstaler: 
+Obriši datoteku: 
+Obriši prilikom novog startovanja: 
+Greška prilikom kreiranja shortcuta: 
+Greška prilikom kreiranja: 
+Greška prilikom dekompresije podataka! Uništena instalaciona datoteka?
+Greška prilikom registrovanja DLLa
+Pokreni iz Shella: 
+Pokreni: 
+Otpakuj: 
+Otpakivanje: greška prilikom upisa u datoteku 
+Uništena instalaciona datoteka: ne valja opkod
+Nema OLE za: 
+Instalacioni direktorijum: 
+Obriši direktorijum: 
+Preimenuj prilikom ponovnog pokretanja: 
+Preimenuj: 
+Preskoèeno: 
+Kopiraj Detalje u Clipboard
+Upiši u log instalacioni proces
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
