@@ -1,0 +1,18 @@
+body {
+	font-family: Verdana,Arial,Tahoma;
+	font-size: 11px;
+}
+pre {
+	font-family: Courier New;
+	background-color: #E9E9E9;
+	padding: 1px;
+}
+a,a:visisted {
+	color: #0000EA;
+	text-decoration: underline;
+}
+a:hover {
+	background-color: #0000EA;
+	color: #FFFFFF;
+	text-decoration: none;
+}
