@@ -146,7 +146,7 @@ class CEXEBuild {
     int uninstall_generate();
     void set_uninstall_mode(int un);
 
-    // lang.cpp by Amir Szekely 3rd August 2002
+    // lang.cpp functions and vars
     StringTable *GetTable(LANGID &lang);
     int SetString(char *string, int id, int process, LANGID lang=0);
     int SetString(char *string, int id, int process, StringTable *table);
@@ -159,7 +159,7 @@ class CEXEBuild {
     #define IsSet(s,lang) _IsSet(string_tables.size()?&(string_tables[0]->s):0,lang)
     bool _IsSet(int *str, LANGID lang); // Checks if a string is set in a given string table
 
-    bool next_used, install_used, comppage_used;
+    bool next_used, install_used, comppage_used, license_force_radio_used;
 
     // a whole bunch O data.
 

@@ -17,8 +17,8 @@ struct StringTable {
   GrowBuf user_ustrings;
 };
 
-#define NLF_VERSION 2
-#define NLF_STRINGS 57
+#define NLF_VERSION 3
+#define NLF_STRINGS 59
 
 enum {
   NLF_BRANDING,
@@ -35,6 +35,8 @@ enum {
   NLF_BTN_BACK,
   NLF_BTN_NEXT,
   NLF_BTN_LICENSE,
+  NLF_BTN_LICENSE_AGREE,
+  NLF_BTN_LICENSE_DISAGREE,
   NLF_BTN_INSTALL,
   NLF_BTN_UNINSTALL,
   NLF_BTN_CANCEL,
