@@ -16,17 +16,18 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         HFONT newFont, oldFont;
         HDC hdc=BeginPaint(hwnd,&ps);
         RECT r;
-        int y;
+        int y,ry;
         GetClientRect(hwnd,&r);
     // this portion by Drew Davidson, drewdavidson@mindspring.com
+        ry=r.bottom;
+        y=r.top;
 
         // JF: made slower, reduced to 4 pixels high, because I like how it looks better/
-        for (y = r.top; y < r.bottom; y += 4)
+        while (y < r.bottom)
         {
           int rv,gv,bv;
 		      RECT rect;
 		      HBRUSH brush;
-          int ry=r.bottom-y;
           rv = (GetRValue(m_color2) * y + GetRValue(m_color1) * ry) / r.bottom;
           gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * ry) / r.bottom;
           bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * ry) / r.bottom;
@@ -36,6 +37,8 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 		      // because FillRect lets us specify the brush as a parameter.
 		      FillRect(hdc, &rect, brush);
 		      DeleteObject(brush);
+          ry-=4;
+          y+=4;
         }
 
         if (m_textcolor != -1)
@@ -66,7 +69,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
 HWND NSISCALL bgWnd_Init(HINSTANCE hInstance, int color1, int color2, int color3)
 {
   RECT vp;
-  char classname[4]="_Nb";
+  static char classname[4]="_Nb";
   static WNDCLASS wc;
 	wc.style = CS_VREDRAW | CS_HREDRAW;
 	wc.lpfnWndProc = BG_WndProc;
