@@ -52,7 +52,7 @@
   
   !define MUI_TEXT_STARTMENU_TITLE "Kies Start Menu Map"
   !define MUI_TEXT_STARTMENU_SUBTITLE "Kies een map in het Start menu voor de snelkoppelingen van $(^NameDA)."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Kies een map in het Start menu waarin de snelkoppelingen moeten worden aangemaakt. U kunt ook een naam invoeren om een niewe map te maken."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Kies een map in het Start menu waarin de snelkoppelingen moeten worden aangemaakt. U kunt ook een naam invoeren om een nieuwe map te maken."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Geen snelkoppelingen aanmaken"
   
   !define MUI_TEXT_ABORTWARNING "Weet u zeker dat u $(^Name) Setup wilt afsluiten?"
