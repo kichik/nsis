@@ -47,6 +47,10 @@
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
     
+    ;Italian
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\Italian.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\Italian.nsh"
+    
     ;Dutch
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Language files\Dutch.nsh"
@@ -82,6 +86,7 @@
   Name /LANG=${LANG_SPANISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_SIMPCHINESE} "${NAME} ${VERSION}"
   Name /LANG=${LANG_TRADCHINESE} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_ITALIAN} "${NAME} ${VERSION}"
   Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_POLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_GREEK} "${NAME} ${VERSION}"
@@ -96,6 +101,7 @@
   LicenseData /LANG=${LANG_SPANISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_SIMPCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_TRADCHINESE} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_ITALIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_DUTCH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_POLISH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_GREEK} "${NSISDIR}\Contrib\Modern UI\License.txt"
@@ -111,6 +117,7 @@
     LangString TITLE_SecCopyUI ${LANG_SPANISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_TRADCHINESE} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_ITALIAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_POLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_GREEK} "modern.exe"
@@ -125,6 +132,7 @@
     LangString DESC_SecCopyUI ${LANG_SPANISH} "modern.exe: Spanish description"
     LangString DESC_SecCopyUI ${LANG_SIMPCHINESE} "modern.exe: Simplified Chinese description"
     LangString DESC_SecCopyUI ${LANG_TRADCHINESE} "modern.exe: Traditional Chinese description"
+    LangString DESC_SecCopyUI ${LANG_ITALIAN} "modern.exe: Italian description"
     LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Dutch description"
     LangString DESC_SecCopyUI ${LANG_POLISH} "modern.exe: Polish description"
     LangString DESC_SecCopyUI ${LANG_GREEK} "modern.exe: Greek description"
@@ -180,6 +188,8 @@ Function .onInit
   Push "${MUI_TRADCHINESE_LANGNAME}"
   Push ${LANG_SIMPCHINESE}
   Push "${MUI_SIMPCHINESE_LANGNAME}"
+  Push ${LANG_ITALIAN}
+  Push "${MUI_ITALIAN_LANGNAME}"
   Push ${LANG_DUTCH}
   Push "${MUI_DUTCH_LANGNAME}"
   Push ${LANG_POLISH}
@@ -193,7 +203,7 @@ Function .onInit
   Push ${LANG_UKRAINIAN}
   Push "${MUI_UKRAINIAN_LANGNAME}"
   
-  Push 12F ;12 = number of languages, F = change font
+  Push 13F ;13 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 
