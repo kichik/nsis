@@ -107,7 +107,11 @@
 
   XPStyle On
 
-  ChangeUI all "${MUI_UI}"
+  !ifndef MUI_RTL_UI
+	ChangeUI all "${MUI_UI}"
+  !else
+    ChangeUI /RTL all "${MUI_UI}"
+  !endif
   Icon "${MUI_ICON}"
   
   !ifdef MUI_UNINSTALLER
