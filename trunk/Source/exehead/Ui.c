@@ -1139,25 +1139,21 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         if ((TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM) & ht.flags)
         {
             TVITEM hItem;
-            int image,wh;
             hItem.hItem = ht.hItem;
 
             hItem.mask = TVIF_STATE|TVIF_PARAM;
             TreeView_GetItem(hwndTree1, &hItem);
 
-            image = hItem.state >> 12;
-            wh=hItem.lParam;
-
-            if (!(g_inst_section[wh].default_state&DFS_RO))
+            if (!(g_inst_section[hItem.lParam].default_state&DFS_RO))
             {
-              if (image == 2) // already checked
+              if ((hItem.state >> 12) == 2) // already checked
               {
-                g_inst_section[wh].default_state&=~DFS_SET;
+                g_inst_section[hItem.lParam].default_state&=~DFS_SET;
                 CheckTreeItem(hwndTree1,&hItem,0);
               }
               else
               {
-                g_inst_section[wh].default_state|=DFS_SET;
+                g_inst_section[hItem.lParam].default_state|=DFS_SET;
                 CheckTreeItem(hwndTree1,&hItem,1);
               }
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
