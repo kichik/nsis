@@ -1,0 +1,62 @@
+# Header, don't edit
+NLF v2
+# Language ID
+1029
+# Translation by T.V. Zuggy (http://zuggy.wz.cz/)
+Nullsoft Install System %s
+Instalace programu %s
+Odinstalování programu %s
+: Licenèní ujednání
+: Možnosti instalace
+: Umístìní instalace
+: Instalování souborù
+: Dokonèeno
+: Potvrzení
+: Odinstalování souborù
+: Dokonèeno
+< &Zpìt
+&Další >
+&Souhlasím
+&Instalovat
+&Odinstalovat
+Storno
+Z&avøít
+&Procházet...
+&Ukázat detaily
+Jméno
+Dokonèeno
+Vlastní
+Zvolte typ instalace:
+Zvolte souèásti pro instalaci:
+Nebo zvolte jednotlivé souèásti, které si pøejete nainstalovat:
+Zvolte adresáø pro instalaci programu %s:
+Dostupné volné místo: 
+Potøebné volné místo: 
+Odinstalování z:
+Chyba pøi pokusu o zápis souboru: \r\n\t"$0"\r\nStiskni 'Pøerušit' pro pøerušení instalace,\r\n'Znovu' pro další pokus o zápis souboru, nebo\r\n'Ignorovat' pro pøeskoèení tohoto souboru
+Nelze zapsat: 
+Kopírování selhalo
+Kopírování do 
+Nelze najít symbol: 
+Nelze pøeèíst: 
+Vytvoøen adresáø: 
+Vytvoøen zástupce: 
+Vytvoøen odinstalátor: 
+Smazán soubor: 
+Smazat po restartu: 
+Chyba pøi vytváøení zástupce: 
+Chyba pøi vytváøení: 
+Chyba pøi rozbalování dat! Poškozený instalátor?
+Chyba pøi registrování DLL
+Spuštìn z shellu: 
+Spuštìn: 
+Rozbalen: 
+Rozbalování: chyba pøi zápisu souboru 
+Instalátor je poškozen: nesprávný kontrolní kód
+Nedostupné OLE pro: 
+Cílový adresáø: 
+Smazán adresáø: 
+Pøejmenovat po restartu: 
+Pøejmenován: 
+Pøeskoèen: 
+Zkopírovat detaily do schránky
