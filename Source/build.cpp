@@ -15,7 +15,7 @@
 
 bool isSimpleChar(char ch)
 {
-  return (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
+  return (ch == '.' ) || (ch == '_' ) || (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z');
 }
 
 void CEXEBuild::define(const char *p, const char *v)
@@ -33,6 +33,9 @@ CEXEBuild::~CEXEBuild()
 
 CEXEBuild::CEXEBuild()
 {
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  b_abort_compile=false;
+#endif
   linecnt = 0;
   fp = 0;
   curfilename = 0;
@@ -373,29 +376,47 @@ CEXEBuild::CEXEBuild()
   for ( int i = 0; i < 10; i++ )    // 0 - 9
   {
     sprintf(Aux, "%d", i);    
-    DeclaredUserVar(Aux);
+    m_UserVarNames.add(Aux);
+    m_UnUserVarNames.add(Aux);
   }
   for ( i = 0; i < 10; i++ )        // 10 - 19
   {
     sprintf(Aux, "R%d", i);    
-    DeclaredUserVar(Aux);
+    m_UserVarNames.add(Aux);
+    m_UnUserVarNames.add(Aux);
   }
-  DeclaredUserVar("CMDLINE");       // 20 everything before here doesn't have trailing slash removal
-  DeclaredUserVar("INSTDIR");       // 21
-  DeclaredUserVar("OUTDIR");        // 22
-  DeclaredUserVar("EXEDIR");        // 23
-  DeclaredUserVar("LANGUAGE");      // 24
-  DeclaredUserVar("PLUGINSDIR");    // 25
-  DeclaredUserVar("PROGRAMFILES");  // 26
-  DeclaredUserVar("SMPROGRAMS");    // 27
-  DeclaredUserVar("SMSTARTUP");     // 28
-  DeclaredUserVar("DESKTOP");       // 29
-  DeclaredUserVar("STARTMENU");     // 30
-  DeclaredUserVar("QUICKLAUNCH");   // 31
-  DeclaredUserVar("TEMP");          // 32
-  DeclaredUserVar("WINDIR");        // 33
-  DeclaredUserVar("SYSDIR");        // 34 everything after here doesn't have trailing slash removal
-  DeclaredUserVar("HWNDPARENT");    // 35 
+  m_UserVarNames.add("CMDLINE");       // 20 everything before here doesn't have trailing slash removal
+  m_UnUserVarNames.add("CMDLINE");
+  m_UserVarNames.add("INSTDIR");       // 21
+  m_UnUserVarNames.add("INSTDIR");
+  m_UserVarNames.add("OUTDIR");        // 22
+  m_UnUserVarNames.add("OUTDIR");
+  m_UserVarNames.add("EXEDIR");        // 23
+  m_UnUserVarNames.add("EXEDIR");
+  m_UserVarNames.add("LANGUAGE");      // 24
+  m_UnUserVarNames.add("LANGUAGE");
+  m_UserVarNames.add("PLUGINSDIR");    // 25
+  m_UnUserVarNames.add("PLUGINSDIR");
+  m_UserVarNames.add("PROGRAMFILES");  // 26
+  m_UnUserVarNames.add("PROGRAMFILES");
+  m_UserVarNames.add("SMPROGRAMS");    // 27
+  m_UnUserVarNames.add("SMPROGRAMS");
+  m_UserVarNames.add("SMSTARTUP");     // 28
+  m_UnUserVarNames.add("SMSTARTUP");
+  m_UserVarNames.add("DESKTOP");       // 29
+  m_UnUserVarNames.add("DESKTOP");
+  m_UserVarNames.add("STARTMENU");     // 30
+  m_UnUserVarNames.add("STARTMENU");
+  m_UserVarNames.add("QUICKLAUNCH");   // 31
+  m_UnUserVarNames.add("QUICKLAUNCH");
+  m_UserVarNames.add("TEMP");          // 32
+  m_UnUserVarNames.add("TEMP");
+  m_UserVarNames.add("WINDIR");        // 33
+  m_UnUserVarNames.add("WINDIR");
+  m_UserVarNames.add("SYSDIR");        // 34 everything after here doesn't have trailing slash removal
+  m_UnUserVarNames.add("SYSDIR");
+  m_UserVarNames.add("HWNDPARENT");    // 35 
+  m_UnUserVarNames.add("HWNDPARENT");
 #endif
 }
 
@@ -422,7 +443,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 #endif
 {
 #ifndef NSIS_SUPPORT_NAMED_USERVARS
-    static const char VarNames[] =
+  static const char VarNames[] =
     "HWNDPARENT\0"    // 0
     "0\0"             // 1
     "1\0"             // 2
@@ -462,7 +483,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
     "SYSDIR\0"        // 35
     ;
 #endif
-    
+  
   const char *p=in;
   while (*p)
   {
@@ -544,7 +565,8 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
             while ( pUserVarName > p )
             {
                 const char * Debug = p-(pUserVarName-p);
-                int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
+                
+                int idxUserVar = uninstall_mode ? m_UnUserVarNames.get((char*)p, pUserVarName-p) : m_UserVarNames.get((char*)p, pUserVarName-p);
                 if ( idxUserVar >= 0 )
                 {
                   *out++=(unsigned int)VAR_CODES_START; // Named user variable;
@@ -2015,6 +2037,9 @@ int CEXEBuild::write_output(void)
 
       installinfo_compressed=ihd.getlen();
       fh.length_of_header=hdrcomp.getlen();
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+      fh.length_of_uservars=m_UserVarNames.getnum()*sizeof(NSIS_STRING);
+#endif
     }
 
 
@@ -2301,6 +2326,9 @@ int CEXEBuild::uninstall_generate()
 
       set_uninstall_mode(1);
       fh.length_of_header=udata.getlen();
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+      fh.length_of_uservars=m_UnUserVarNames.getnum()*sizeof(NSIS_STRING);
+#endif
       int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
       set_uninstall_mode(0);
       if (err < 0) return PS_ERROR;
@@ -2712,8 +2740,11 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
 		}
 	}
 
-	m_UserVarNames.add(szVarName);
-  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS )
+	if ( !strnicmp(szVarName,"un.",3) )
+    m_UnUserVarNames.add(szVarName);
+  else
+    m_UserVarNames.add(szVarName);
+  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS || m_UnUserVarNames.getnum() > MAX_NAMED_USER_VARS )
 	{
 	  ERROR_MSG("Error: too many user variables declared!\n");
     return PS_ERROR;
@@ -2729,13 +2760,30 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
     char *p = line.gettoken_str(token);
     if ( *p == '$' && *(p+1) )
     {
-      int idxUserVar = m_UserVarNames.get((char *)p+1);
+      int idxUserVar = uninstall_mode ? m_UnUserVarNames.get((char *)p+1) : m_UserVarNames.get((char *)p+1);
       if ( idxUserVar >= 0 )
       {
-         return idxUserVar;
+        return idxUserVar;
+      }
+      else
+      {
+        // Show error info to help developer
+        idxUserVar = uninstall_mode ? m_UserVarNames.get((char *)p+1) : m_UnUserVarNames.get((char *)p+1);
+        if ( idxUserVar >= 0 )
+        {
+          if (!strnicmp(p+1,"un.",3) && !uninstall_mode ) {
+            b_abort_compile=true;
+            ERROR_MSG("Installer variables names can't start with un. (%s)! (%s:%d)\n", p+1, curfilename, linecnt);
+          }
+          if (strnicmp(p+1,"un.",3) && uninstall_mode ) {
+            b_abort_compile=true;
+            ERROR_MSG("Uninstaller variables names must start with un. (%s)! (%s:%d)\n", p+1, curfilename, linecnt);
+          }
+        }
       }
     }
     return -1;
+
 #else
 
   static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"

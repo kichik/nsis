@@ -98,49 +98,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   unsigned int verify_time=GetTickCount()+1000;
 #endif
-  char *cmdline=state_command_line;
+  
   char *realcmds;
   char seekchar=' ';
+  char *cmdline;
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  g_usrvars = (NSIS_STRING*)my_GlobalAlloc(USER_VARS_COUNT*sizeof(NSIS_STRING));
+#endif
 
   InitCommonControls();
 
   GetTempPath(sizeof(temp_directory), temp_directory);
 
   lstrcpyn(state_command_line,GetCommandLine(),NSIS_MAX_STRLEN);
-
-  if (*cmdline == '\"') seekchar = *cmdline++;
-
-  while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
-  cmdline=CharNext(cmdline);
-  realcmds=cmdline;
-
-  for (;;)
-  {
-    // skip over any spaces
-    while (*cmdline == ' ') cmdline=CharNext(cmdline);
-    if (cmdline[0] != '/') break;
-    cmdline++;
-
-#define END_OF_ARG(c) (((c)|' ')==' ')
-
-#if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
-    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) silent++;
-#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) no_crc++;
-#endif//NSIS_CONFIG_CRC_SUPPORT
-
-    if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
-    {
-      cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
-      mystrcpy(state_install_directory,cmdline+2);
-      cmdline=""; // prevent further processing of cmdline
-      break; // not necessary, but for some reason makes smaller exe :)
-    }
-
-    // skip over our parm
-    while (!END_OF_ARG(*cmdline)) cmdline=CharNext(cmdline);
-  }
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
@@ -269,14 +239,49 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
   if (m_Err) goto end;
 
+  cmdline = state_command_line;
+  if (*cmdline == '\"') seekchar = *cmdline++;
+
+  while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
+  cmdline=CharNext(cmdline);
+  realcmds=cmdline;
+
+  for (;;)
+  {
+    // skip over any spaces
+    while (*cmdline == ' ') cmdline=CharNext(cmdline);
+    if (cmdline[0] != '/') break;
+    cmdline++;
+
+#define END_OF_ARG(c) (((c)|' ')==' ')
+
+#if defined(NSIS_CONFIG_VISIBLE_SUPPORT) && defined(NSIS_CONFIG_SILENT_SUPPORT)
+    if (cmdline[0] == 'S' && END_OF_ARG(cmdline[1])) silent++;
+#endif//NSIS_CONFIG_SILENT_SUPPORT && NSIS_CONFIG_VISIBLE_SUPPORT
+#ifdef NSIS_CONFIG_CRC_SUPPORT
+    if (*(DWORD*)cmdline == CHAR4_TO_DWORD('N','C','R','C') && END_OF_ARG(cmdline[4])) no_crc++;
+#endif//NSIS_CONFIG_CRC_SUPPORT
+
+    if (*(WORD*)cmdline == CHAR2_TO_WORD('D','='))
+    {
+      cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
+      mystrcpy(state_install_directory,cmdline+2);
+      cmdline=""; // prevent further processing of cmdline
+      break; // not necessary, but for some reason makes smaller exe :)
+    }
+
+    // skip over our parm
+    while (!END_OF_ARG(*cmdline)) cmdline=CharNext(cmdline);
+  }
+
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
     char *p=cmdline;
     while (*p) p++;
 
-    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
-
+    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;    
+    
     if (p >= cmdline)
     {
       *(p-1)=0; // terminate before the " _?="

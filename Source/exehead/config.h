@@ -28,6 +28,8 @@
 
 #define USER_VARS_COUNT 26
 
+typedef char NSIS_STRING[NSIS_MAX_STRLEN];
+
 // MAX_NAMED_USER_VARS defines the maximum of named user variables
 // the complier also use this value to abort if exceded
 // The real maximum is (0x0FFF - USER_VARS_COUNT) = 4069
