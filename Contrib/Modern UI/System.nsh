@@ -724,6 +724,24 @@
 
 !macroend
 
+!macro MUI_INSTALLOPTIONS_DISPLAY_RETURN FILE
+
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 3
+    !endif
+  !endif
+  
+  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
+
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 4
+    !endif
+  !endif
+
+!macroend
+
 !macro MUI_INSTALLOPTIONS_INITDIALOG FILE
 
   !ifndef MUI_NOVERBOSE
@@ -749,7 +767,30 @@
       !verbose 3
     !endif
   !endif
+  
+  Push ${MUI_TEMP1}
 
+  InstallOptions::show
+  Pop ${MUI_TEMP1}
+  
+  Pop ${MUI_TEMP1}
+
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 4
+    !endif
+  !endif
+
+!macroend
+
+!macro MUI_INSTALLOPTIONS_SHOW_RETURN
+
+  !ifndef MUI_NOVERBOSE
+    !ifndef MUI_MANUALVERBOSE
+      !verbose 3
+    !endif
+  !endif
+  
   InstallOptions::show
 
   !ifndef MUI_NOVERBOSE
@@ -1355,7 +1396,7 @@
         Call "${MUI_CUSTOMFUNCTION_FINISH_SHOW}"
       !endif
 
-      !insertmacro MUI_INSTALLOPTIONS_SHOW
+      !insertmacro MUI_INSTALLOPTIONS_SHOW_RETURN
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
@@ -1368,6 +1409,9 @@
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
+      
+      Pop ${MUI_TEMP1}
+      StrCmp ${MUI_TEMP1} "success" "" done
       
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       
@@ -1416,10 +1460,8 @@
           
         !endif
         
-    !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       done:
-    !endif
-
+      
     Pop ${MUI_TEMP3}
     Pop ${MUI_TEMP2}
     Pop ${MUI_TEMP1}
