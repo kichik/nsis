@@ -40,7 +40,7 @@
  *   - Added CancelShow (by ORTIM: 13-August 2002)
  *   - Added pixel transformation for widgets (by ORTIM: 14-August-2002)
  *
- *   - Added CancelConfirmCaption and CancelConfirmIcon (by Amir Szekely)
+ *   - Added CancelConfirmCaption and CancelConfirmFlags (by Amir Szekely & Dave Laundon)
  *
  *   - Added Icon and Bitmap controls (by Amir Szekely 4th September 2002)
  *
