@@ -135,6 +135,10 @@ SOURCE=.\lang.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\resource.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\state.h
 # End Source File
 # Begin Source File
@@ -155,27 +159,7 @@ SOURCE=.\bitmap1.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\bitmap2.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\bitmap3.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\icon3.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\nsis.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\nullsoft.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\resource.h
 # End Source File
 # Begin Source File
 
