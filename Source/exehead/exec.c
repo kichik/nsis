@@ -350,7 +350,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       {
         HANDLE hOut;
         int ret;
-        int overwriteflag=parm0;
+        #define overwriteflag parm0
         addtrailingslash(mystrcpy(buf0,state_output_directory));
 
         process_string_fromparm_tobuf(0x31);
@@ -433,6 +433,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           my_MessageBox(buf0,MB_OK|MB_ICONSTOP);
           return EXEC_ERROR;
         }
+
+        #undef overwriteflag
       }
     return 0;
 #endif//NSIS_SUPPORT_FILE
@@ -917,6 +919,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               log_printf3("Error registering DLL: %s not found in %s",buf1,buf0);
             }
             if (!parm3) FreeLibrary(h);
+            // saves 2 bytes - FreeLibrary((HANDLE)((unsigned long)h&(unsigned long)parm3));
           }
           else
           {
@@ -1353,13 +1356,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             if (g_inst_header->uninstdata_offset != -1)
             {
               // Changed by Amir Szekely 11th July 2002
-              unsigned char* unicon_data = (unsigned char*)my_GlobalAlloc(g_inst_header->uninsticon_size);
+              unsigned char* seeker;
+              unsigned char* unicon_data = seeker = (unsigned char*)my_GlobalAlloc(g_inst_header->uninsticon_size);
               if (unicon_data) {
-                DWORD i;
-                unsigned char* seeker = unicon_data + sizeof(DWORD);
                 GetCompressedDataFromDataBlockToMemory(g_inst_header->uninstdata_offset,
                   unicon_data,g_inst_header->uninsticon_size);
-                for (i = 0; i < *(DWORD*)unicon_data; i++) {
+                //for (i = 0; i < *(DWORD*)unicon_data; i++) {
+                while (*seeker) {
                   DWORD dwSize, dwOffset;
                   dwSize = *(DWORD*)seeker;
                   seeker += sizeof(DWORD);

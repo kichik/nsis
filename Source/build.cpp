@@ -270,10 +270,10 @@ CEXEBuild::CEXEBuild()
   // Changed by Amir Szekely 11th July 2002
   // Changed to fit the new format in which uninstaller icons are saved
   m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
-  memcpy(m_unicon_data+3*sizeof(DWORD),unicon_data+22,unicondata_size);
-  *(DWORD*)m_unicon_data = 1;
+  memcpy(m_unicon_data+2*sizeof(DWORD),unicon_data+22,unicondata_size);
   *(DWORD*)(DWORD(m_unicon_data) + sizeof(DWORD)) = unicondata_size;
   *(DWORD*)(DWORD(m_unicon_data) + 2*sizeof(DWORD)) = 0;
+  *(DWORD*)(DWORD(m_unicon_data) + 3*sizeof(DWORD)) = 0;
   unicondata_size += 3*sizeof(DWORD);
 
   m_inst_fileused=0;
@@ -1674,9 +1674,9 @@ int CEXEBuild::uninstall_generate()
     #endif
     // Changed by Amir Szekely 11th July 2002
     // This bunch of lines do CRC for the uninstaller icon data
-    unsigned char* seeker = m_unicon_data + sizeof(DWORD);
+    unsigned char* seeker = m_unicon_data;
     DWORD dwEndOfIcons = 0;
-    for (DWORD i = 0; i < *(DWORD*)m_unicon_data; i++) {
+    while (*seeker) {
       DWORD dwSize = *(DWORD*)seeker;
       seeker += sizeof(DWORD);
       DWORD dwOffset = *(DWORD*)seeker;
@@ -1684,7 +1684,7 @@ int CEXEBuild::uninstall_generate()
       // Do CRC for icon data
       crc=CRC32(crc,seeker,dwSize);
       seeker += dwSize;
-      if (i < (*(DWORD*)m_unicon_data) - 1) {
+      if (*seeker) {
         // Do CRC for data between icons
         crc=CRC32(crc,header_data_new+dwOffset+dwSize,(*(DWORD*)(seeker+sizeof(DWORD)))-dwOffset-dwSize);
       }
