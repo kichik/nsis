@@ -86,7 +86,7 @@ CEXEBuild::CEXEBuild() :
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
   ns_label.add("",0);
 
-  exeheader_size = zlib_exehead_size;
+  exehead_original_size = zlib_exehead_size;
   update_exehead(zlib_exehead, zlib_exehead_size);
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -2585,9 +2585,9 @@ int CEXEBuild::write_output(void)
   INFO_MSG("\nUsing %s%s compression.\n\n", compressor->GetName(), build_compress_whole?" (compress whole)":"");
 #endif
 
-  int total_usize=exeheader_size;
+  int total_usize=exehead_original_size;
 
-  INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,exeheader_size);
+  INFO_MSG("EXE header size:          %10d / %d bytes\n",m_exehead_size,exehead_original_size);
 
   if (build_compress_whole) {
     INFO_MSG("Install code:                          (%d bytes)\n",
