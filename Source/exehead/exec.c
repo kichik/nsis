@@ -496,7 +496,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             GetNSISString(buf0,LANG_ERRORDECOMPRESSING);
           }
           log_printf2("%s",buf0);
-          my_MessageBox(buf0,MB_OK|MB_ICONSTOP|(IDOK<<20));
+          my_MessageBox(buf0,MB_OK|MB_ICONSTOP|(IDOK<<21));
           return EXEC_ERROR;
         }
       }
@@ -667,7 +667,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (!s)
           {
             log_printf2("Exch: stack < %d elements",parm2);
-            my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<20));
+            my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<21));
             return EXEC_ERROR;
           }
           mystrcpy(buf0,s->text);
@@ -1069,7 +1069,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_REBOOT:
       if (parm0!=0xbadf00d)
       {
-        my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<20));
+        my_MessageBox(GetNSISStringTT(LANG_INSTCORRUPTED),MB_OK|MB_ICONSTOP|(IDOK<<21));
         return EXEC_ERROR;
       }
 

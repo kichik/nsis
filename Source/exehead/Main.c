@@ -261,7 +261,7 @@ end:
 
   if (m_Err)
   {
-    my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
+    my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 21));
     ExitProcess(2);
     return 0;
   }
