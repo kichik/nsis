@@ -1082,6 +1082,7 @@ int CEXEBuild::write_output(void)
 
   // Added by Amir Szekely 3rd August 2002
   if (WriteStringTables() == PS_ERROR) return PS_ERROR;
+  build_header.common.num_string_bytes=build_strlist.getlen();
 
 /*#ifdef NSIS_CONFIG_COMPONENTPAGE
     if (build_header.componenttext_ptr < 0 &&
@@ -1373,6 +1374,7 @@ int CEXEBuild::write_output(void)
       hdrcomp.add(build_sections.get(),build_sections.getlen());
       hdrcomp.add(build_entries.get(),build_entries.getlen());
       hdrcomp.add(build_strlist.get(),build_strlist.getlen());
+      hdrcomp.add(build_langtables.get(),build_langtables.getlen());
 
       if (add_data((char*)hdrcomp.get(),hdrcomp.getlen(),&ihd) < 0) return PS_ERROR;
 
@@ -1638,6 +1640,8 @@ int CEXEBuild::uninstall_generate()
   {
     firstheader fh={0,};
 
+    build_uninst.common.num_string_bytes=ubuild_strlist.getlen();
+
     GrowBuf uhd;
     // add one more bit (the code+strtabs) to the uninstall datablock
     {
@@ -1646,6 +1650,7 @@ int CEXEBuild::uninstall_generate()
       udata.add(&build_uninst,sizeof(build_uninst));
       udata.add(ubuild_entries.get(),ubuild_entries.getlen());
       udata.add(ubuild_strlist.get(),ubuild_strlist.getlen());
+      udata.add(ubuild_langtables.get(),ubuild_langtables.getlen());
 
       set_uninstall_mode(1);
       fh.length_of_header=udata.getlen();

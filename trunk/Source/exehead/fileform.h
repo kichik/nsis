@@ -283,10 +283,9 @@ typedef struct
 typedef struct
 {
   int str_tables_num; // number of strings tables in array
-  int str_tables; // offset to common string tables array
-  int inst_str_tables; // offset to install/uninstall string tables array
 
   int num_entries; // total number of entries
+  int num_string_bytes; // total number of bytes taken by strings
 
 #ifdef NSIS_SUPPORT_BGBG
   int bg_color1, bg_color2, bg_textcolor;
