@@ -32,9 +32,14 @@ void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size,
 
     char *group = "";
 
+    if (GetVersion() & 0x80000000) // Not NT
+    {
+      group = "Admin";
+    }
+
     // First we must open a handle to the access token for this thread.
 
-    if (OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hThread) ||
+    else if (OpenThreadToken(GetCurrentThread(), TOKEN_QUERY, FALSE, &hThread) ||
         OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hThread))
     {
       // Then we must query the size of the group information associated with
