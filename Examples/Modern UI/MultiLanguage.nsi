@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.18
+;NSIS Modern Style UI version 1.19
 ;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
@@ -72,7 +72,7 @@ SectionEnd
 Section ""
 
   ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER SetHeader
+  !insertmacro MUI_FINISHHEADER SetPage
 
 SectionEnd
 
@@ -122,7 +122,7 @@ FunctionEnd
 Function .onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
-  !insertmacro MUI_NEXTPAGE SetHeader
+  !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
 
@@ -132,36 +132,36 @@ Function .onPrevPage
 
 FunctionEnd
 
-Function SetHeader
+Function SetPage
 
-  !insertmacro MUI_HEADER_INIT
+  !insertmacro MUI_PAGE_INIT
 
-    !insertmacro MUI_HEADER_START 1
+    !insertmacro MUI_PAGE_START 1
       !insertmacro MUI_HEADER_TEXT 1033 "License Agreement" "Please review the license terms before installing ${NAME}."
       !insertmacro MUI_HEADER_TEXT 1043 "Licentie Overeenkomst" "Lees de licentie overeenkomst voordat u ${NAME} installeerd."
-    !insertmacro MUI_HEADER_STOP 1
+    !insertmacro MUI_PAGE_STOP 1
 
-    !insertmacro MUI_HEADER_START 2
+    !insertmacro MUI_PAGE_START 2
        !insertmacro MUI_HEADER_TEXT 1033 "Choose Components" "Choose the components you want to install."
        !insertmacro MUI_HEADER_TEXT 1043 "Kies Onderdelen" "Kies de onderdelen die u wilt installeren."
-    !insertmacro MUI_HEADER_STOP 2
+    !insertmacro MUI_PAGE_STOP 2
 
-    !insertmacro MUI_HEADER_START 3
+    !insertmacro MUI_PAGE_START 3
        !insertmacro MUI_HEADER_TEXT 1033 "Choose Install Location" "Choose the folder in which to install ${NAME}."
        !insertmacro MUI_HEADER_TEXT 1043 "Kies Installatie Locatie" "Kies de map waarin u ${NAME} in wilt installeren."
-    !insertmacro MUI_HEADER_STOP 3
+    !insertmacro MUI_PAGE_STOP 3
 
-    !insertmacro MUI_HEADER_START 4
+    !insertmacro MUI_PAGE_START 4
       !insertmacro MUI_HEADER_TEXT 1033 "Installing" "Please wait while ${NAME} is being installed."
       !insertmacro MUI_HEADER_TEXT 1043 "Bezig met installeren" "Een ogenblik geduld terwijl ${NAME} wordt geinstalleerd."
-    !insertmacro MUI_HEADER_STOP 4
+    !insertmacro MUI_PAGE_STOP 4
 
-    !insertmacro MUI_HEADER_START 5
+    !insertmacro MUI_PAGE_START 5
       !insertmacro MUI_HEADER_TEXT 1033 "Finished" "Setup was completed successfully."
       !insertmacro MUI_HEADER_TEXT 1043 "Gereed" "De installatie is succesvol verlopen."
-    !insertmacro MUI_HEADER_STOP 5
+    !insertmacro MUI_PAGE_STOP 5
 
-  !insertmacro MUI_HEADER_END
+  !insertmacro MUI_PAGE_END
 
 FunctionEnd
 
@@ -199,7 +199,7 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
-  !insertmacro MUI_FINISHHEADER un.SetHeader
+  !insertmacro MUI_FINISHHEADER un.SetPage
 
 SectionEnd
 
@@ -209,30 +209,30 @@ SectionEnd
 Function un.onNextPage
 
   !insertmacro MUI_NEXTPAGE_OUTER
-  !insertmacro MUI_NEXTPAGE un.SetHeader
+  !insertmacro MUI_NEXTPAGE un.SetPage
 
 FunctionEnd
 
-Function un.SetHeader
+Function un.SetPage
 
- !insertmacro MUI_HEADER_INIT
+ !insertmacro MUI_PAGE_INIT
 
-   !insertmacro MUI_HEADER_START 1
+   !insertmacro MUI_PAGE_START 1
      !insertmacro MUI_HEADER_TEXT 1033 "Uninstall ${NAME}" "Remove ${NAME} from your system."
      !insertmacro MUI_HEADER_TEXT 1043 "Deïnstalleer ${NAME}" "Verwijder ${NAME} van uw system."
-   !insertmacro MUI_HEADER_STOP 1
+   !insertmacro MUI_PAGE_STOP 1
 
-   !insertmacro MUI_HEADER_START 2
+   !insertmacro MUI_PAGE_START 2
      !insertmacro MUI_HEADER_TEXT 1033 "Uninstalling" "Please wait while ${NAME} is being uninstalled."
      !insertmacro MUI_HEADER_TEXT 1043 "Bezig met deïnstalleren" "Een ogenblik gedult terwijl ${NAME} van uw system wordt verwijderd."
-   !insertmacro MUI_HEADER_STOP 2
+   !insertmacro MUI_PAGE_STOP 2
 
-    !insertmacro MUI_HEADER_START 3
+    !insertmacro MUI_PAGE_START 3
       !insertmacro MUI_HEADER_TEXT 1033 "Finished" "${NAME} has been removed from your system."
       !insertmacro MUI_HEADER_TEXT 1043 "Gereed" "${NAME} is verwijderd van uw systeem."
-    !insertmacro MUI_HEADER_STOP 3
+    !insertmacro MUI_PAGE_STOP 3
 
-  !insertmacro MUI_HEADER_END
+  !insertmacro MUI_PAGE_END
 
 FunctionEnd
 
