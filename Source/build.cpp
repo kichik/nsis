@@ -292,6 +292,9 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   build_uninst.common.num_pages=0;
 #endif
+
+  build_custom_used=0;
+  ubuild_custom_used=0;
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
