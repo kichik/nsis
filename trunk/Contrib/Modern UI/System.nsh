@@ -889,7 +889,7 @@
 
 !macroend
 
-!macro MUI_FUNCTIONS_WELCOMEPAGE SETWELCOME
+!macro MUI_FUNCTIONS_WELCOMEPAGE FUNCTION
 
   !ifndef MUI_NOVERBOSE
     !ifndef MUI_MANUALVERBOSE
@@ -897,7 +897,11 @@
     !endif
   !endif
 
-  Function "${SETWELCOME}"
+  Function "${FUNCTION}"
+
+    !ifdef MUI_CUSTOMFUNCTION_WELCOME_PRE
+      Call "${MUI_CUSTOMFUNCTION_WELCOME_PRE}"
+    !endif
   
     Push ${MUI_TEMP1}
     Push ${MUI_TEMP2}
@@ -906,7 +910,7 @@
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
 
-	  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
 
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
@@ -928,13 +932,17 @@
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
         SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
+
+	!ifdef MUI_CUSTOMFUNCTION_WELCOME_SHOW
+          Call "${MUI_CUSTOMFUNCTION_WELCOME_SHOW}"
+        !endif
   
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1028
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
 
-	  GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
+      GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1256
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
 
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1035
@@ -1170,6 +1178,10 @@
 
   Function "${FUNCTION}"
   
+    !ifdef MUI_CUSTOMFUNCTION_FINISH_PRE
+      Call "${MUI_CUSTOMFUNCTION_FINISH_PRE}"
+    !endif
+
     Push ${MUI_TEMP1}
     Push ${MUI_TEMP2}
     Push ${MUI_TEMP3}
@@ -1326,6 +1338,10 @@
         !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
           show:
         !endif
+
+      !ifdef MUI_CUSTOMFUNCTION_FINISH_SHOW
+        Call "${MUI_CUSTOMFUNCTION_FINISH_SHOW}"
+      !endif
 
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
