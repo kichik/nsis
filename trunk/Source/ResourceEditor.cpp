@@ -207,19 +207,30 @@ BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage)
     return 0;
 }
 
+void CResourceEditor::FreeResource(BYTE* pbResource)
+{
+  if (pbResource)
+    delete [] pbResource;
+}
+
 // Saves the edited PE into a buffer and returns it.
-BYTE* CResourceEditor::Save(DWORD &dwSize) {
+DWORD CResourceEditor::Save(BYTE* pbBuf, DWORD &dwSize) {
   unsigned int i;
+  DWORD dwReqSize;
 
   DWORD dwRsrcSize = m_cResDir->GetSize(); // Size of new resource section
   DWORD dwRsrcSizeAligned = RALIGN(dwRsrcSize, m_ntHeaders->OptionalHeader.FileAlignment); // Align it to FileAlignment
 
   // Calculate the total new PE size
-  dwSize = m_iSize - IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData + dwRsrcSizeAligned;
+  dwReqSize = m_iSize - IMAGE_FIRST_SECTION(m_ntHeaders)[m_dwResourceSectionIndex].SizeOfRawData + dwRsrcSizeAligned;
 
-  // Allocate memory for the new PE
-  BYTE* pbNewPE = new BYTE[dwSize];
-  // Fill it with zeros
+  if (!pbBuf || dwSize < dwReqSize)
+    return dwReqSize;
+
+  // Use buffer
+  BYTE* pbNewPE = pbBuf;
+  dwSize = dwReqSize;
+  // Fill buffer with zeros
   ZeroMemory(pbNewPE, dwSize);
 
   BYTE* seeker = pbNewPE;
@@ -319,7 +330,7 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   // m_dwResourceSectionIndex and m_dwResourceSectionVA have also been left unchanged as
   // we didn't move the resources section
 
-  return pbNewPE;
+  return 0;
 }
 
 // This function scans exe sections and after find a match with given name

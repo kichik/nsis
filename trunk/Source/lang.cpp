@@ -321,7 +321,7 @@ int CEXEBuild::GenerateLangTables() {
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
           res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
-          free(dlg); \
+          res_editor->FreeResource(dlg); \
         } \
       }
 
@@ -377,7 +377,7 @@ int CEXEBuild::GenerateLangTables() {
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
             res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
-            free(dlg); \
+            res_editor->FreeResource(dlg); \
           } \
         }
 

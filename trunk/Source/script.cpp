@@ -1907,7 +1907,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DWORD dwSize;
           dlg = dt.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
-          free(dlg);
+          res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
           ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
@@ -2276,7 +2276,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwDlgSize);
 
-        delete [] dlg;
+        res_editor->FreeResource(dlg);
 
         dt.DlgUnitsToPixels(brandingCtl.sWidth, brandingCtl.sHeight);
         SCRIPT_MSG("AddBrandingImage: %s %ux%u\n", line.gettoken_str(1), brandingCtl.sWidth, brandingCtl.sHeight);
@@ -3020,7 +3020,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DWORD dwSize;
           dlg = td.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
-          free(dlg);
+          res_editor->FreeResource(dlg);
         }
         catch (exception& err) {
           ERROR_MSG("Error while triming branding text control: %s\n", err.what());
