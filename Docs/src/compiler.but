@@ -89,3 +89,9 @@ Time according to the current locale.
 \S1{pretimestamp} $\{__TIMESTAMP__\}
 
 Date & time according to the current locale.
+
+\S0{compenvvarread} Read enviroment variables
+
+\S1{compenvvar} $%envVarName%
+
+$%envVarName% will be replaced on compile time by the enviroment variable envVarName.

@@ -89,7 +89,7 @@ Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos 
 
 \S2{messagebox} MessageBox
 
-\c mb_option_list messagebox_text [return_check jumpto] [return_check_2 jumpto_2]
+\c mb_option_list messagebox_text [/SD return] [return_check jumpto] [return_check_2 jumpto_2]
 
 Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
 
@@ -144,6 +144,8 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 \b \e{IDYES} - Yes button
 
 If the return value of the MessageBox is return_check, the installer will Goto jumpto.
+
+Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent.
 
 \S2{return} Return
 

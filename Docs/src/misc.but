@@ -1,5 +1,17 @@
 \S1{miscinst} Miscellaneous Instructions
 
+\S2{getinstdirerror} GetInstDirError
+
+\c user_var(error output)
+
+Use in the leave function of a directory page. Reads the flag set if '\R{adirverify}{DirVerify leave}' is used. Possible values:
+
+0: No error
+
+1: Invalid installation directory
+
+2: Not enough space on installation drive
+
 \S2{initpluginsdir} InitPluginsDir
 
 Initializes the plugins dir (\R{varconstant}{$PLUGINSDIR}) if not already initialized.

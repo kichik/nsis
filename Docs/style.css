@@ -1,6 +1,21 @@
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 11px;
+	font-size: 0.8em;
+}
+p, li {
+	font-size: 100%;
+}
+h1 {
+	font-size: 170%;
+}
+h2 {
+	font-size: 150%;
+}
+h3 {
+	font-size: 130%;
+}
+h4 {
+	font-size: 120%;
 }
 pre {
 	font-family: Courier New, Courier, mono;

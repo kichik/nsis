@@ -24,17 +24,29 @@ This command, when paired with an !endif command, will tell the compiler whether
 
 \c gflag [bcheck [gflag [...]]]
 
-This command is the logical lovemonkey to !ifdef and !endif. !ifdef/!else/!endif, !ifdef/!else ifdef/!endif, !ifdef/!else ifdef/!else ifndef/!endif, etc. If ifdef or ifndef is specified as the first parameter, it behaves as expected.
+The opposite of !ifmacrodef. The lines will be compiled when the gflag has not been defined.
+
+\S1{ifmacrodef} !ifmacrodef
+
+\c gflag [bcheck [gflag [...]]]
+
+This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If the macro gflag exists, then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.
+
+\S1{ifmacrondef} !ifmacrondef
+
+\c gflag [bcheck [gflag [...]]]
+
+The opposite of !ifmacrodef. The lines will be compiled when the macro gflag does not exist.
 
 \S1{else} !else
 
-\c [ifdef|ifndef [...]]
+\c [ifdef|ifndef|ifmacrodef|ifmacrondef [...]]
 
 This command is the opposite of !ifdef (If 'gflag' is not globally defined, the lines contained will be compiled). Note that when using boolean operators (& or |), 'gflag' is treated as true if it is undefined. e.g. '!ifndef X | Y' means "if either X or Y is undefined" and '!ifndef X & Y' means "if X and Y are both undefined".
 
 \S1{endif} !endif
 
-This command closes a block started with !ifdef or !ifndef.
+This command closes a block started with !ifdef, !ifndef, !ifmacrodef or !ifmacrondef.
 
 \S1{insertmacro} !insertmacro
 
