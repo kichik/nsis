@@ -2209,6 +2209,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
       ent.offsets[3]=add_string(line.gettoken_str(4));
+      ent.offsets[5]=add_string(line.gettoken_str(8));
       int s;
       ent.offsets[4]=line.gettoken_int(5,&s)&0xff;
       if (!s)
@@ -2265,9 +2266,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           ent.offsets[4] |= (c) << 16;
         }
       }
-      SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s  icon:%s,%d, showmode=0x%X, hotkey=0x%X\n",
+      SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s  icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
-        line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16);
+        line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_CREATESHORTCUT
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_CREATESHORTCUT not defined.\n",  line.gettoken_str(0));

@@ -944,12 +944,51 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       char *buf1=process_string_fromparm_tobuf(0x11);
       char *buf0=process_string_fromparm_tobuf(0x02);
       char *buf3=process_string_fromparm_tobuf(0x33);
+      char *buf4=process_string_fromparm_tobuf(0x45);
+
+      HRESULT hres;
+      int rv=1;
+      IShellLink* psl;
 
       log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
-          buf2,buf1,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
+        buf2,buf1,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
 
-      if (CreateShortCut(g_hwnd, buf2, buf3[0]?buf3:NULL, parm4&0xff, buf1, buf0[0]?buf0:NULL,
-          state_output_directory,(parm4&0xff00)>>8,parm4>>16))
+      hres=OleInitialize(NULL);
+      if (hres == S_FALSE || hres == S_OK) {
+
+        hres = CoCreateInstance(&CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+                                  &IID_IShellLink, (void **) &psl);
+        if (SUCCEEDED(hres))
+        {
+          IPersistFile* ppf;
+
+          hres = psl->lpVtbl->QueryInterface(psl,&IID_IPersistFile, (void **) &ppf);
+          if (SUCCEEDED(hres))
+          {
+
+             hres = psl->lpVtbl->SetPath(psl,buf1);
+             psl->lpVtbl->SetWorkingDirectory(psl,state_output_directory);
+             if ((parm4&0xff00)>>8) psl->lpVtbl->SetShowCmd(psl,(parm4&0xff00)>>8);
+             psl->lpVtbl->SetHotkey(psl,(unsigned short)(parm4>>16));
+             if (buf3[0]) psl->lpVtbl->SetIconLocation(psl,buf3,parm4&0xff);
+             psl->lpVtbl->SetArguments(psl,buf0);
+             psl->lpVtbl->SetDescription(psl,buf4);
+
+             if (SUCCEEDED(hres))
+             {
+                WCHAR wsz[1024];
+                MultiByteToWideChar(CP_ACP, 0, buf2, -1, wsz, 1024);
+                hres=ppf->lpVtbl->Save(ppf,(const WCHAR*)wsz,TRUE);
+                if (SUCCEEDED(hres)) rv=0;
+             }
+            ppf->lpVtbl->Release(ppf);
+          }
+          psl->lpVtbl->Release(psl);
+        }
+        OleUninitialize();
+      }
+
+      if (rv)
       {
         exec_errorflag++;
         update_status_text_from_lang(LANGID_ERRORCREATINGSHORTCUT,buf2);
