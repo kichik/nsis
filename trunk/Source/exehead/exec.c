@@ -1003,7 +1003,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       IShellLink* psl;
 
       if (!validpathspec(buf2))
-        GetStringFromParm(0x11);
+        GetStringFromParm(0x21);
 
       log_printf8("CreateShortCut: out: \"%s\", in: \"%s %s\", icon: %s,%d, sw=%d, hk=%d",
         buf1,buf2,buf0,buf3,parm4&0xff,(parm4&0xff00)>>8,parm4>>16);
