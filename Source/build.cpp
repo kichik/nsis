@@ -2605,6 +2605,8 @@ int CEXEBuild::write_output(void)
     }
     compressor->End();
 
+    unsigned fend = ftell(fp);
+
     fh.length_of_all_following_data=ftell(fp)-fd_start+(build_crcchk?sizeof(int):0);
     INFO_MSG(
       "%10d / %d bytes\n",
@@ -2629,7 +2631,7 @@ int CEXEBuild::write_output(void)
       }
     }
 #endif
-    fseek(fp,0,SEEK_END); // reset eof flag
+    fseek(fp,fend,SEEK_SET); // reset eof flag
   }
 #endif
 
