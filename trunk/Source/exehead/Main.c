@@ -70,7 +70,7 @@ char *ValidateTempDir()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
-  int ret;
+  int ret = 0;
   const char *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
@@ -80,8 +80,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   char *cmdline;
 
   InitCommonControls();
-
-  g_exec_flags.errlvl=-1;
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   {
@@ -195,7 +193,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
       for (x = 0; x < 26; x ++)
       {
-        // File name need slash before because temp dir was changed by validate_filename
         static char s[]="A~NSISu_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
@@ -244,9 +241,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 
+  g_exec_flags.errlvl = -1;
   ret = ui_doinstall();
-  if (g_exec_flags.errlvl == -1)
-    g_exec_flags.errlvl = ret;
+  if (g_exec_flags.errlvl != -1)
+    ret = g_exec_flags.errlvl;
 
 #ifdef NSIS_CONFIG_LOG
 #ifndef NSIS_CONFIG_LOG_ODS
@@ -260,14 +258,14 @@ end:
   if (m_Err)
   {
     my_MessageBox(m_Err, MB_OK | MB_ICONSTOP | (IDOK << 20));
-    g_exec_flags.errlvl = 2;
+    ret = 2;
   }
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
   OleUninitialize();
 #endif
 
-  ExitProcess(g_exec_flags.errlvl);
+  ExitProcess(ret);
 }
 
 void NSISCALL CleanUp()
