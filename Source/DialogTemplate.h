@@ -33,6 +33,8 @@
 #include <stdexcept>
 using namespace std;
 
+#define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
+
 struct DialogItemTemplate {
   DWORD  dwHelpId; // Extended only
 
