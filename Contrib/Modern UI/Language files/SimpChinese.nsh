@@ -9,9 +9,6 @@
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SIMPCHINESE"
 
   !define MUI_LANGNAME "Chinese (Simplified)" ;(以语言本身的方式，写下语言名称) Use only ASCII characters (if this is not possible, use the English name)
-
-  !define MUI_FONT "宋体"
-  !define MUI_FONTSIZE "9"
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "欢迎使用 $(^Name) 安装向导"
   !define MUI_TEXT_WELCOME_INFO_TEXT "这将会在你的计算机，安装 $(^Name) 。\r\n\r\n在开始安装之前，建议先关闭其他所有应用程序。这将允许“安装程序”更新指定的系统文件，而不需要重新启动你的计算机。\r\n\r\n$_CLICK"
