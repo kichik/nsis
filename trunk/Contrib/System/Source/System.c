@@ -993,7 +993,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
 
     // Save return
     proc->Params[0].Value = z1;
-    if (proc->Params[0].Size == 2) 
+//    if (proc->Params[0].Size == 2) 
         proc->Params[0]._value = z2;
     // Proc result: OK
     proc->ProcResult = PR_OK;
@@ -1161,8 +1161,9 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
     _asm
     {
         // Prepare return
-//        mov    eax, z1
-        //mov    edx, z2
+        // callback proc result
+        pop edx
+        pop eax
 
         // Restore temporary stack and return
 
@@ -1178,16 +1179,23 @@ SystemProc __declspec(naked) *CallBack(SystemProc *proc)
     }
         
 #ifdef SYSTEM_LOG_DEBUG
+    _asm
+    {
+        push eax
+        push edx
+    }
     SYSTEM_EVENT("\n\t\t\tSh-Before call-back");
     SYSTEM_LOG_POST;        
+    _asm
+    {
+        // callback proc result
+        pop edx
+        pop eax
+    }
 #endif
 
     // Fake return from Callback
     _asm {
-        // callback proc result
-        pop edx
-        pop eax
-
         // Restore registers
         pop     esi
         pop     edi
