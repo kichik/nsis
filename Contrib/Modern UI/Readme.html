@@ -204,9 +204,9 @@ will also help you to learn more about the Modern UI.</p>
   <p class="sub2header">General Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_PAGE_HEADER_TEXT </span><span class="parameter">text </span><br />
-  Custom text to display on the header of the page.</p>
+  Text to display on the header of the page.</p>
   <p class="text"><span class="bold">MUI_PAGE_HEADER_SUBTEXT </span><span class="parameter">text </span><br />
-  Custom subtext to display on the header of the page.</p>
+  Subtext to display on the header of the page.</p>
   </div>
   <p class="sub2header">Welcome Page Settings</p>
   <div class="margin">
@@ -223,14 +223,28 @@ will also help you to learn more about the Modern UI.</p>
   Text to display on the top of the inner dialog of the license page.</p>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_CHECKBOX</span><br />
   Display a checkbox the user has to check to agree with the license terms.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_CHECKBOX_TEXT </span><span class="parameter">text </span><br />
+  Text to display next to the checkbox to agree with the license terms.</p>
+  </div>
   <p class="text"><span class="bold">MUI_LICENSEPAGE_RADIOBUTTONS</span><br />
   Display two radiobuttons to allow the user to choose between accepting the
   license terms or not.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_RADIOBUTTONS_TEXT_ACCEPT </span><span class="parameter">text </span><br />
+  Text to display next to the checkbox to accept the license terms.</p>
+  <p class="text"><span class="bold">MUI_LICENSEPAGE_RADIOBUTTONS_TEXT_DECLINE </span><span class="parameter">text </span><br />
+  Text to display next to the checkbox to dicline the license terms.</p>
+  </div>
   </div>
   <p class="sub2header">Components Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_TEXT </span><span class="parameter">text [subtext] [subtext2]</span><br />
   Texts to display on the inner dialog of the components page. See syntax information about setting multiple texts.</p>
+  <p class="text"><span class="bold">MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE </span><span class="parameter">text</span><br />
+  Text to display on the of the top of the description box.</p>
+ <p class="text"><span class="bold">MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO </span><span class="parameter">text</span><br />
+  Text to display inside the description box when no section is selected.</p>
   </div>
   <p class="sub2header">Directory Page Settings</p>
   <div class="margin">
@@ -251,6 +265,10 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text">When using multiple Start Menu Folder pages, you should also undefine previous StartMenu page
   defines and define the values of the page of which you want to write the value, before inserting the
   MUI_STARTMENU_WRITE_BEGIN macro.</p>
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_TEXT </span><span class="parameter">text </span><br />
+  Text to display on the inner dialog of the Start Menu folder page.</p>
+  <p class="text"><span class="bold">MUI_STARTMENUPAGE_TEXT_CHECKBOX </span><span class="parameter">text </span><br />
+  Text to display next to the checkbox to disable the Start Menu folder creation.</p>
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE </span><span class="parameter">variable</span><br />
   Variable to store the current Start Menu Folder. Default is $MUI_STARTMENU_FOLDER.
   You cannot use this variable in your script (or you should Push/Pop it).</p>
@@ -275,12 +293,39 @@ will also help you to learn more about the Modern UI.</p>
   defines and define the values of the page of which you want to get the value, before inserting the
   MUI_STARTMENU_GETFOLDER macro.</p>
   </div>
+  <p class="sub2header">Installation Page Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_FINISHHEADER_TEXT </span><span class="parameter">text </span><br />
+  Text to display on the header of the installation page when the installation has been completed (won't be displayed when using
+  a Finish page without MUI_FINISHPAGE_NOAUTOCLOSE).</p>
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_FINISHHEADER_SUBTEXT </span><span class="parameter">text </span><br />
+  Subext to display on the header of the installation page when the installation has been completed (won't be displayed when using
+  a Finish page without MUI_FINISHPAGE_NOAUTOCLOSE).</p>
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_ABORTHEADER_TEXT </span><span class="parameter">text </span><br />
+  Text to display on the header of the installation page when the installation has been aborted.</p>
+  <p class="text"><span class="bold">MUI_INSTFILESPAGE_ABORTHEADER_SUBTEXT </span><span class="parameter">text </span><br />
+  Subext to display on the header of the installation page when the installation has been aborted.</p>
+  </div>
   <p class="sub2header">Finish Page Settings</p>
   <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_TITLE </span><span class="parameter">title </span><br />
+  Title to display on the finish page.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_TEXT </span><span class="parameter">text </span><br />
+  Texts to display on the finish page. Use \r\n for a newline.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_BUTTON </span><span class="parameter">text </span><br />
+  Text to display on the Finish button.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_TEXT_REBOOT </span><span class="parameter">text </span><br />
+  Text to display on the finish page when asking for a sytem reboot. Use \r\n for a newline.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_TEXT_REBOOTNOW </span><span class="parameter">text </span><br />
+  Text to display next to the 'Reboot now' option button.</p>
+  <p class="text"><span class="bold">MUI_FINISHPAGE_TEXT_REBOOTLATER </span><span class="parameter">text </span><br />
+  Text to display next to the 'Reboot later' option button.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN </span><span class="parameter">exe_file</span><br />
   Application which the user can select to run using a checkbox.
   You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_TEXT </span><span class="parameter">text </span><br />
+  Texts to display next to the 'Run program' checkbox.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN_PARAMETERS </span><span class="parameter">parameters</span><br />
   Parameters for the application to run. Don't forget to escape double
   quotes in the value (use $\&quot;).</p>
@@ -295,6 +340,8 @@ will also help you to learn more about the Modern UI.</p>
   File or website which the user can select to view using a checkbox.
   You don't need to put quotes around the filename when it contains spaces.</p>
   <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_TEXT </span><span class="parameter">text </span><br />
+  Texts to display next to the 'Show Readme' checkbox.</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_NOTCHECKED</span><br />
   Do not check the 'Show Readme' checkbox by default</p>
   <p class="text"><span class="bold">MUI_FINISHPAGE_SHOWREADME_FUNCTION </span><span class="parameter">function_name</span><br />
@@ -399,8 +446,10 @@ will also help you to learn more about the Modern UI.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
   Show a message box with a warning when the user wants to close the installer.</p>
+  <p class="text"><span class="bold">MUI_ABORTWARNING_TEXT </span><span class="parameter">text </span><br />
+  Texts to display next to the abort warning messagebox.</p>
   </div>
-  <p class="subheader">4. Define custom functions (optional)</p>
+  <p class="subheader">4. Define custom functions</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
   own function and let the Modern UI functions call them.</p>
@@ -410,21 +459,6 @@ will also help you to learn more about the Modern UI.</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
-  <p class="sub2header">Customize Modern UI text</p>
-  <div class="margin">
-  <p class="text">You don't need to edit the language files if you want to customize
-  some strings. Use defines before you insert the language file:</p>
-<pre class="margin">
-!define MUI_TEXT_COMPONENTS_TITLE "Your text"
-!insertmacro MUI_LANGUAGE "English"
-</pre>
-  <p class="text">Have a look at the language files for a complete list of all the
-  string names.</p>
-  <p class="text">You only have to escape &quot; (using $\&quot;).</p>
-  <p class="text"><span class="bold">Note: </span>When using different product name (MUI_PRODUCT)
-  for different languges, !undef MUI_PRODUCT after inserting a language file (or use a language
-  string).</p>
-  </div>
   <p class="sub2header">Customize fonts</p>
   <div class="margin">
   <p class="text">You can customize the fonts for a language using the following defines before inserting
@@ -451,11 +485,11 @@ Function .onInit
 
 FunctionEnd
 </pre>
-  <p class="text">To customize the language selection dialog, use these defines:</p>
+  <p class="text">To customize the language selection dialog, use these defines before inserting the macro:</p>
   <p class="text"><span class="bold">MUI_LANGDLL_WINDOWTITLE </span><span class="parameter">text</span><br />
   The window title of the language selection dialog.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_INFO </span><span class="parameter">text</span><br />
-  The text on the language selection dialog.</p>
+  The text to display on the language selection dialog.</p>
   <p class="text"><span class="bold">MUI_LANGDLL_REGISTRY_ROOT </span><span class="parameter">root</span><br />
   <span class="bold">MUI_LANGDLL_REGISTRY_KEY </span><span class="parameter">key</span><br />
   <span class="bold">MUI_LANGDLL_REGISTRY_VALUENAME </span><span class="parameter">value_name</span><br />
@@ -602,6 +636,7 @@ or above your own init- or page functions, you have to reserve files:</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 ReserveFile "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp" ;Your header bitmap
+ReserveFile "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp" ;Special bitmap
 
 !insertmacro MUI_RESERVEFILE_WELCOMEFINISHPAGE ;Welcome- or Finish page
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS ;InstallOptions
@@ -668,13 +703,13 @@ FunctionEnd
   </div>
 <p class="header">Version history</p>
 <ul>
-<li>1.66 - September 9, 2003
+<li>1.66 - September 25, 2003
   <ul>
     <li>New system for page settings and custom pages</li>
     <li>Support for uninstaller components page</li>
     <li>Support for multiple pages of the same type</li>
     <li>Changed macro names</li>
-    <li>Updated langauge system, new language files</li>
+    <li>Updated langauge system, new language files and settings</li>
     <li>Removed MUI_PRODUCT and MUI VERSION. Use Name command now.</li>
     <li>Removed MUI_BRANDINGTEXT. Use BrandingText command now.</li>
   </ul></li>
