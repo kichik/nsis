@@ -15,28 +15,12 @@
 #include "infcodes.h"
 #include "infutil.h"
 
-
-
-int ZEXPORT inflateReset(z_streamp z)
-{
-  if (z == Z_NULL || z->state == Z_NULL)
-    return Z_STREAM_ERROR;
-  inflate_blocks_reset(&z->state->blocks, z, Z_NULL);
-  return Z_OK;
-}
-
-static struct internal_state __mstate;
-
 int ZEXPORT inflateInit(z_streamp z)
 {
-  void inflate_blocks_init(z_streamp z,struct inflate_blocks_state *s);
+  z->blocks.end = z->blocks.window + (1 << DEF_WBITS);
+  z->blocks.mode = TYPE;
 
-  z->state=&__mstate;
-//  if ((z->state =
-  //  (struct internal_state FAR *) ZALLOC(z,1,sizeof(struct internal_state))) == Z_NULL)
-    //return Z_MEM_ERROR;
-
-  inflate_blocks_init(z,&z->state->blocks);
+  inflateReset(z);
 
   return Z_OK;
 }

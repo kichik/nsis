@@ -11,8 +11,6 @@
 #include "infcodes.h"
 #include "infutil.h"
 
-struct inflate_codes_state {int dummy;}; /* for buggy compilers */
-
 /* simplify the use of the inflate_huft type with some defines */
 #define exop word.what.Exop
 #define bits word.what.Bits
@@ -21,33 +19,22 @@ local const char border[] = { /* Order of the bit length code lengths */
         16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
 
-void inflate_blocks_reset(s, z, c)
-inflate_blocks_statef *s;
-z_streamp z;
-uLongf *c;
+void inflateReset(z_streamp z)
 {
-  if (c) *c = s->check;
+  inflate_blocks_statef *s=&z->blocks;
   if (s->mode == BTREE || s->mode == DTREE)
     ZFREE(z, s->sub.trees.blens);
   if (s->mode == CODES)
     inflate_codes_free(s->sub.decode.codes, z);
   s->mode = TYPE;
-  s->bitk = 0;
-  s->bitb = 0;
+  s->bitk = s->bitb = 0;
   s->read = s->write = s->window;
   Tracev((stderr, "inflate:   blocks reset\n"));
 }
 
-void inflate_blocks_init(z_streamp z,inflate_blocks_statef *s)
-{
-  s->end = s->window + (1 << DEF_WBITS);
-  s->mode = TYPE;
-  inflate_blocks_reset(s, z, Z_NULL);
-}
-
 int inflate(z_streamp z)
 {
-  inflate_blocks_statef *s=&z->state->blocks;
+  inflate_blocks_statef *s=&z->blocks;
 
   // lousy two bytes saved by doing this
   struct
@@ -98,8 +85,8 @@ int r=Z_OK;
             uInt bl, bd;
             inflate_huft *tl, *td;
 
-            inflate_trees_fixed(&bl, &bd, &tl, &td, z);
-            s->sub.decode.codes = inflate_codes_new(bl, bd, tl, td, z);
+            inflate_trees_fixed(&bl, &bd, &tl, &td);
+            s->sub.decode.codes = inflate_codes_new(bl, bd, tl, td);
             if (s->sub.decode.codes == Z_NULL)
             {
               r = Z_MEM_ERROR;
@@ -187,7 +174,7 @@ int r=Z_OK;
         s->sub.trees.blens[border[s->sub.trees.index++]] = 0;
       s->sub.trees.bb = 7;
       t = inflate_trees_bits(s->sub.trees.blens, &s->sub.trees.bb,
-                             &s->sub.trees.tb, s->hufts, z);
+                             &s->sub.trees.tb, s->hufts);
       if (t != Z_OK)
       {
         ZFREE(z, s->sub.trees.blens);
@@ -253,7 +240,7 @@ int r=Z_OK;
         t = s->sub.trees.table;
         t = inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f),
                                   s->sub.trees.blens, &bl, &bd, &tl, &td,
-                                  s->hufts, z);
+                                  s->hufts);
         ZFREE(z, s->sub.trees.blens);
         if (t != Z_OK)
         {
@@ -263,7 +250,7 @@ int r=Z_OK;
           LEAVE
         }
         Tracev((stderr, "inflate:       trees ok\n"));
-        if ((c = inflate_codes_new(bl, bd, tl, td, z)) == Z_NULL)
+        if ((c = inflate_codes_new(bl, bd, tl, td)) == Z_NULL)
         {
           r = Z_MEM_ERROR;
           LEAVE
@@ -273,8 +260,8 @@ int r=Z_OK;
       s->mode = CODES;
     case CODES:
       UPDATE
-      if ((r = inflate_codes(s, z, r)) != Z_STREAM_END)
-        return inflate_flush(s, z, r);
+      if ((r = inflate_codes(z, r)) != Z_STREAM_END)
+        return inflate_flush(z, r);
       r = Z_OK;
       inflate_codes_free(s->sub.decode.codes, z);
       LOAD
@@ -304,15 +291,4 @@ int r=Z_OK;
   }
 }
 
-
-/*int inflate_blocks_free(s, z)
-inflate_blocks_statef *s;
-z_streamp z;
-{
-  inflate_blocks_reset(s, z, Z_NULL);
-  ZFREE(z, s);
-  Tracev((stderr, "inflate:   blocks freed\n"));
-  return Z_OK;
-}
-*/
 #endif

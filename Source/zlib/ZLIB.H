@@ -43,13 +43,87 @@
 #define _ZLIB_H
 
 #include "zconf.h"
+#include "zutil.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
+#ifdef EXEHEAD
+
+
+
+ typedef enum {
+      TYPE,     /* get type bits (3, including end bit) */
+      LENS,     /* get lengths for stored */
+      STORED,   /* processing stored block */
+      TABLE,    /* get table lengths */
+      BTREE,    /* get bit lengths tree for a dynamic block */
+      DTREE,    /* get length, distance trees for a dynamic block */
+      CODES,    /* processing fixed or dynamic block */
+      DRY,      /* output remaining window bytes */
+      DONE,     /* finished last block, done */
+      BAD}      /* got a data error--stuck here */
+inflate_block_mode;
+
+typedef struct inflate_huft_s FAR inflate_huft;
+
+struct inflate_huft_s {
+  union {
+    struct {
+      Byte Exop;        /* number of extra bits or operation */
+      Byte Bits;        /* number of bits in this code or subcode */
+    } what;
+  } word;
+  unsigned short base;            /* literal, length base, distance base,
+                           or table offset */
+};
+
+#define MANY 1440
+
+struct inflate_codes_state;
+typedef struct inflate_codes_state inflate_codes_statef;
+
+struct inflate_blocks_state {
+
+  /* mode */
+  inflate_block_mode  mode;     /* current inflate_block mode */
+
+  /* mode dependent information */
+  union {
+    uInt left;          /* if STORED, bytes left to copy */
+    struct {
+      uInt table;               /* table lengths (14 bits) */
+      uInt index;               /* index into blens (or border) */
+      uIntf *blens;             /* bit lengths of codes */
+      uInt bb;                  /* bit length tree depth */
+      inflate_huft *tb;         /* bit length decoding tree */
+    } trees;            /* if DTREE, decoding info for trees */
+    struct {
+      inflate_codes_statef 
+         *codes;
+    } decode;           /* if CODES, current state */
+  } sub;                /* submode */
+  uInt last;            /* true if this block is the last block */
+
+  /* mode independent information */
+  uInt bitk;            /* bits in bit buffer */
+  uLong bitb;           /* bit buffer */
+  inflate_huft hufts[MANY];  /* single malloc for tree space */
+  Bytef window[1 << MAX_WBITS];        /* sliding window */
+  Bytef *end;           /* one byte after sliding window */
+  Bytef *read;          /* window read pointer */
+  Bytef *write;         /* window write pointer */
+  uLong check;          /* check on output */
+
+};
+
+
+
+#else
 struct internal_state;
+#endif
 
 typedef struct z_stream_s {
     Bytef    *next_in;  /* next input byte */
@@ -65,7 +139,12 @@ typedef struct z_stream_s {
 #endif
 
 //    char     *msg;      /* last error message, NULL if no error */
-    struct internal_state FAR *state; /* not visible by applications */
+    //struct internal_state FAR *state; /* not visible by applications */
+#ifdef EXEHEAD
+    struct inflate_blocks_state blocks;            /* current inflate_blocks state */
+#else
+    struct internal_state *state;
+#endif
 
 } z_stream;
 
@@ -130,8 +209,9 @@ ZEXTERN int ZEXPORT deflateInit2 OF((z_streamp strm,
 
 
 ZEXTERN int ZEXPORT deflateReset OF((z_streamp strm));
-int ZEXPORT inflateReset(z_streamp z);
 
+void ZEXPORT inflateReset OF((
+    z_streamp));                
 
                         /* various hacks, don't look :) */
 
@@ -146,8 +226,7 @@ ZEXTERN int ZEXPORT deflateInit2_ OF((z_streamp strm, int  level, int  method,
                                       int windowBits, int memLevel,
                                       int strategy, const char *version,
                                       int stream_size));
-ZEXTERN int ZEXPORT inflateInit2_ OF((z_streamp strm, int  windowBits,
-                                      const char *version, int stream_size));
+
 #define deflateInit(strm, level) \
         deflateInit_((strm), (level),       "", sizeof(z_stream))
 

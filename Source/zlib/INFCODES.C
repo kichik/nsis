@@ -57,16 +57,15 @@ struct inflate_codes_state {
 };
 
 
-inflate_codes_statef *inflate_codes_new(bl, bd, tl, td, z)
+inflate_codes_statef *inflate_codes_new(bl, bd, tl, td)
 uInt bl, bd;
 inflate_huft *tl;
 inflate_huft *td; /* need separate declaration for Borland C++ */
-z_streamp z;
 {
   inflate_codes_statef *c;
 
   if ((c = (inflate_codes_statef *)
-       ZALLOC(z,1,sizeof(struct inflate_codes_state))) != Z_NULL)
+       ZALLOC(0,1,sizeof(struct inflate_codes_state))) != Z_NULL)
   {
     c->mode = START;
     c->lbits = (Byte)bl;
@@ -79,11 +78,11 @@ z_streamp z;
 }
 
 
-int inflate_codes(s, z, r)
-inflate_blocks_statef *s;
+int inflate_codes(z, r)
 z_streamp z;
 int r;
 {
+  inflate_blocks_statef *s=&z->blocks;
   uInt j;               /* temporary storage */
   inflate_huft *t;      /* temporary pointer */
   uInt e;               /* extra bits or operation */
@@ -236,11 +235,4 @@ int r;
 }
 
 
-void inflate_codes_free(c, z)
-inflate_codes_statef *c;
-z_streamp z;
-{
-  ZFREE(z, c);
-  Tracev((stderr, "inflate:       codes free\n"));
-}
 #endif
