@@ -2860,7 +2860,35 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         DWORD low, high;
         DWORD s,d;
         int flag=0;
-        s=GetFileVersionInfoSize(line.gettoken_str(1),&d);
+        int alloced=0;
+        char *path=line.gettoken_str(1);
+        if (!((*path == '\\' && path[1] == '\\') || (*path && path[1] == ':'))) {
+          size_t pathlen=lstrlen(path)+GetCurrentDirectory(0, buf)+2;
+          char *nrpath=(char *)malloc(pathlen);
+          alloced=1;
+          GetCurrentDirectory(pathlen, nrpath);
+          if (path[0] != '\\')
+            strcat(nrpath,"\\");
+          else if (nrpath[1] == ':') {
+            nrpath[2]=0;
+          }
+          else {
+            char *p=nrpath+2;
+            while (*p!='\\') p++;
+            *p=0;
+          }
+          strcat(nrpath,path);
+          FILE *f=fopen(nrpath, "r");
+          if (f) {
+            path=nrpath;
+            fclose(f);
+          }
+          else {
+            free(nrpath);
+            alloced=0;
+          }
+        }
+        s=GetFileVersionInfoSize(path,&d);
         if (s)
         {
           void *buf;
@@ -2869,7 +2897,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           {
             UINT uLen;
             VS_FIXEDFILEINFO *pvsf;
-            if (GetFileVersionInfo(line.gettoken_str(1),0,s,buf) && VerQueryValue(buf,"\\",(void**)&pvsf,&uLen))
+            if (GetFileVersionInfo(path,0,s,buf) && VerQueryValue(buf,"\\",(void**)&pvsf,&uLen))
             {
               low=pvsf->dwFileVersionLS;
               high=pvsf->dwFileVersionMS;
@@ -2878,6 +2906,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
             GlobalFree(buf);
           }
         }
+        if (alloced) free(path);
         if (!flag)
         {
           ERROR_MSG("GetDLLVersionLocal: error reading version info from \"%s\"\n",line.gettoken_str(1));
