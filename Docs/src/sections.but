@@ -1,6 +1,6 @@
 \H{sections} Sections
 
-Each NSIS installer contains one or more Sections. Each These sections are created, modified, and ended with the following commands.
+Each NSIS installer contains one or more sections. Each of these sections are created, modified, and ended with the following commands.
 
 \b Each section contains zero or more instructions.
 
