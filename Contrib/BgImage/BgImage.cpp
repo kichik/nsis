@@ -105,9 +105,14 @@ extern "C" void __declspec(dllexport) Destroy(HWND hwndParent, int string_size, 
 }
 
 extern "C" void __declspec(dllexport) Sound(HWND hwndParent, int string_size, char *variables, stack_t **stacktop) {
+  DWORD flags = SND_FILENAME|SND_NODEFAULT;
   g_stacktop=stacktop;
   popstring(temp);
-  PlaySound(temp, 0, SND_ASYNC|SND_FILENAME|SND_NODEFAULT);
+  if (lstrcmp(temp, "/WAIT"))
+    flags |= SND_ASYNC;
+  else
+    popstring(temp);
+  PlaySound(temp, 0, flags);
 }
 
 BOOL WINAPI _DllMainCRTStartup(HINSTANCE hInst, ULONG ul_reason_for_call, LPVOID lpReserved) {
