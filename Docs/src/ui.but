@@ -84,7 +84,7 @@ Sets mode at which commands print their status. None has commands be quiet, list
 
 \c hwnd color
 
-Sets a background color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. \e{Do not} use this on branding image controls!
+Sets a background color for a static control, edit control, button or a dialog. Use GetDlgItem to get the handle (HWND) of the control. To make the control transparent specify "transparent" as the color value. \e{Do not} use this on branding image controls!
 
 \S2{showwindow} ShowWindow
 

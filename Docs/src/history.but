@@ -1,5 +1,11 @@
 \A{history} Release History
 
+\e{v2.0b4}
+
+\b Controls can be transparent using \R{setbkcolor}{SetBkColor}
+
+\b Added LicenseForceSelection
+
 \e{v2.0b3}
 
 \b Modern UI 1.63: Header bitmap support, new defines to change the description area, single macro for language selection dialog, more!
