@@ -100,6 +100,26 @@ ShowInstDetails show
 
 Function .onInit
 
+  StrCpy ${NSISPATH} "$EXEDIR\.."
+  
+  StrCpy $R0 $CMDLINE "" -23
+  
+    StrCmp $R0 'NSISUpdate Running.exe"' temp
+    
+    # Create a temporary file, so NSIS Update can update itself
+    
+    CopyFiles /SILENT "$EXEDIR\NSISUpdate.exe" "$EXEDIR\NSISUpdate Running.exe"
+    Exec '"$EXEDIR\NSISUpdate Running.exe"'
+    Quit
+    
+  temp:
+
+  # Remove temporary file on next reboot
+  
+  Delete /REBOOTOK "$EXEDIR\NSISUpdate Running.exe"
+  
+  # InstallOptions INI File for "Update Method" idalog
+  
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "Resources\GUI\io.ini" "io.ini"
   
   # InitPluginsDir called by Modern UI InstallOptions extract macro
@@ -164,14 +184,14 @@ Function CheckCVSData
 
   IfFileExists "${NSISPATH}\CVS\Root" datainstalled
     
-    IfFileExists "${NSISPATH}\Bin\InstallCVSData.exe" +3
+    IfFileExists "$EXEDIR\InstallCVSData.exe" +3
       MessageBox MB_OK|MB_ICONSTOP "CVS Data Setup not found."
       Quit
     
     SetDetailsPrint listonly
     DetailPrint "Installing CVS data..."
     SetDetailsPrint none
-    Exec "${NSISPATH}\Bin\InstallCVSData.exe"
+    Exec "$EXEDIR\Bin\InstallCVSData.exe"
 
   datainstalled:
 
@@ -187,8 +207,6 @@ FunctionEnd
 # Update (Installer Section)
 
 Section ""
-
-  StrCpy ${NSISPATH} "$EXEDIR\.."
 
   FindWindow ${TEMP3} "#32770" "" $HWNDPARENT
   GetDlgItem ${TEMP3} ${TEMP3} 1111
