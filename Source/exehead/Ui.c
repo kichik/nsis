@@ -1002,7 +1002,11 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (hImageList) ImageList_Destroy(hImageList);
     hImageList = ImageList_Create(16,16, ILC_COLOR32, 4, 4);
-    ImageList_SetBkColor(hImageList, GetSysColor(COLOR_WINDOW));
+    // From MSDN:
+    //   Sets the background color for an image list. This function only works if you add an icon or use
+    //   ImageList_AddMasked with a black and white bitmap. Without a mask, the entire image is drawn;
+    //   hence the background color is not visible. 
+    //ImageList_SetBkColor(hImageList, GetSysColor(COLOR_WINDOW));
 
     ImageList_Add(hImageList,hBMcheck1,NULL);
 
@@ -1400,7 +1404,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     // Changed by Amir Szekely 26th July 2002
     ListView_InsertColumn(insthwnd, 0, &lvc);
     GetClientRect(insthwnd,&r);
-    ListView_SetColumnWidth(insthwnd, 0, r.right-r.left);
+    ListView_SetColumnWidth(insthwnd, 0, r.right-r.left-GetSystemMetrics(SM_CXHSCROLL));
 #define LVS_EX_LABELTIP         0x00004000 // listview unfolds partly hidden labels if it does not have infotip text
     ListView_SetExtendedListViewStyleEx(insthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
     if (lb_bg >= 0) {
