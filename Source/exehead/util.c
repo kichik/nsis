@@ -328,6 +328,19 @@ void NSISCALL mini_memcpy(void *out, const void *in, int len)
   }
 }
 
+#ifdef __GNUC__
+void *memcpy(void *out, const void *in, size_t len)
+{
+  char *c_out=(char*)out;
+  char *c_in=(char *)in;
+  while (len-- > 0)
+  {
+    *c_out++=*c_in++;
+  }
+  return out;
+}
+#endif
+
 
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd)
 {
