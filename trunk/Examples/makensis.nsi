@@ -656,10 +656,12 @@ Section -post
   Push "Source\System project workspace"
   Call AddContribToStartMenu
 
+!ifndef DONTSHOWSHORTCUTS
   ; open sesame
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
     BringToFront
+!endif
   nofunshit:
 !endif
   
