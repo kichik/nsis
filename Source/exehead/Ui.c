@@ -1318,9 +1318,13 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     ListView_InsertColumn(insthwnd, 0, &lvc);
 #define LVS_EX_LABELTIP         0x00004000 // listview unfolds partly hidden labels if it does not have infotip text
     ListView_SetExtendedListViewStyleEx(insthwnd, LVS_EX_LABELTIP, LVS_EX_LABELTIP);
-    ListView_SetBkColor(insthwnd, lb_bg);
-    ListView_SetTextBkColor(insthwnd, lb_bg);
-    ListView_SetTextColor(insthwnd, lb_fg);
+    if (lb_bg >= 0) {
+      ListView_SetBkColor(insthwnd, lb_bg);
+      ListView_SetTextBkColor(insthwnd, lb_bg);
+    }
+    if (lb_fg >= 0) {
+      ListView_SetTextColor(insthwnd, lb_fg);
+    }
     SetWindowText(insthwndbutton,STR(LANG_BTN_DETAILS));
     if (g_inst_cmnheader->show_details)
     {
