@@ -263,12 +263,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_IFFILEEXISTS:
     {
       char *buf0=GetStringFromParm(0x00);
-      WIN32_FIND_DATA *fd;
-      // Avoid a "There is no disk in the drive" error box on empty removable drives
-      SetErrorMode(SEM_NOOPENFILEERRORBOX | SEM_FAILCRITICALERRORS);
-      fd = file_exists(buf0);
-      SetErrorMode(0);
-      if (fd)
+      if (file_exists(buf0))
       {
         log_printf3("IfFileExists: file \"%s\" exists, jumping %d",buf0,parm1);
         return parm1;
