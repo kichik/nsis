@@ -6,10 +6,6 @@
 #include "7zip/7zip/Compress/LZMA/LZMAEncoder.h"
 #include "7zip/Common/MyCom.h"
 
-#ifndef _WIN32
-#  include <sched.h>
-#endif
-
 // implemented in build.cpp - simply calls CompressReal
 #ifdef _WIN32
 DWORD WINAPI lzmaCompressThread(LPVOID lpParameter);
@@ -31,6 +27,8 @@ private:
 #else
   pthread_t hCompressionThread;
 #endif
+  HANDLE hNeedIOEvent;
+  HANDLE hIOReadyEvent;
 
   BYTE *next_in; /* next input byte */
   UINT avail_in; /* number of bytes available at next_in */
@@ -41,37 +39,93 @@ private:
   int res;
 
   BOOL finish;
-
-  long sync_state;
   BOOL compressor_finished;
 
 #ifndef _WIN32
-#  define Sleep(x) sched_yield()
-
-  pthread_mutex_t mutex;
-
-  // these two lock every targer passed to them, but that's ok becuase
-  // we use only one target anyway...
-  long InterlockedExchange(long volatile* target, long value)
+  struct evnet_t
   {
-    long oldvalue;
-    pthread_mutex_lock(&mutex);
-    oldvalue = *target;
-    *target = value;
-    pthread_mutex_unlock(&mutex);
-    return oldvalue;
+    pthread_cond_t cond;
+    pthread_mutex_t mutex;
+    bool signaled;
+  };
+
+  HANDLE CreateEvent(void *, BOOL, BOOL, char *)
+  {
+    evnet_t *event = (evnet_t *) malloc(sizeof(evnet_t));
+    if (!event)
+      return 0;
+    if (pthread_cond_init(&event->cond, NULL))
+    {
+      free(event);
+      return 0;
+    }
+    if (pthread_mutex_init(&event->mutex, NULL))
+    {
+      free(event);
+      return 0;
+    }
+    event->signaled = false;
+    return (HANDLE) event;
   }
 
-  long InterlockedCompareExchange(long volatile* destination, long exchange, long comperand)
+  BOOL SetEvent(HANDLE _event)
   {
-    long oldvalue;
-    pthread_mutex_lock(&mutex);
-    oldvalue = *destination;
-    if (oldvalue == comperand)
-      *destination = exchange;
-    pthread_mutex_unlock(&mutex);
-    return oldvalue;
+    evnet_t *event = (evnet_t *) _event;
+    if (pthread_mutex_lock(&event->mutex))
+      return FALSE;
+    event->signaled = true;
+    pthread_cond_signal(&event->cond);
+    if (pthread_mutex_unlock(&event->mutex))
+      return FALSE;
+    return TRUE;
   }
+
+  BOOL ResetEvent(HANDLE _event)
+  {
+    evnet_t *event = (evnet_t *) _event;
+    event->signaled = false;
+    return TRUE;
+  }
+
+  BOOL CloseHandle(HANDLE _event)
+  {
+    BOOL ret = TRUE;
+    evnet_t *event = (evnet_t *) _event;
+    if (event)
+      return FALSE;
+    if (pthread_cond_destroy(&event->cond))
+      ret = FALSE;
+    if (pthread_mutex_destroy(&event->mutex))
+      ret = FALSE;
+    free(event);
+    return ret;
+  }
+
+#define WAIT_OBJECT_0 0
+#define INFINITE 0
+  DWORD WaitForSingleObject(HANDLE _event, DWORD) {
+    DWORD ret = WAIT_OBJECT_0;
+    evnet_t *event = (evnet_t *) _event;
+    if (!event->signaled)
+    {
+      pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+      if (pthread_mutex_lock(&m) || pthread_cond_wait(&event->cond, &m))
+      {
+        ret = !WAIT_OBJECT_0;
+      }
+      pthread_mutex_unlock(&m);
+      pthread_mutex_destroy(&m);
+    }
+    if (pthread_mutex_lock(&event->mutex))
+      return !WAIT_OBJECT_0;
+    event->signaled = false;
+    if (pthread_mutex_unlock(&event->mutex))
+      return !WAIT_OBJECT_0;
+    return ret;
+  }
+
+#define WaitForMultipleObjects(x, list, y, t) WaitForSingleObject(list[0], t)
+
 #endif
 
 public:
@@ -86,22 +140,22 @@ public:
 #else
     hCompressionThread = 0;
 #endif
-    compressor_finished = FALSE;
+    hNeedIOEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    hIOReadyEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     finish = FALSE;
-#ifndef _WIN32
-    pthread_mutex_init(&mutex, 0);
-#endif
-    compressor_finished = 1;
-    sync_state = 0;
-    End();
+    compressor_finished = TRUE;
+    hCompressionThread = 0;
+    SetNextOut(NULL, 0);
+    SetNextIn(NULL, 0);
   }
 
   virtual ~CLZMA()
   {
-#ifndef _WIN32
-    pthread_mutex_destroy(&mutex);
-#endif
     End();
+    if (hNeedIOEvent)
+      CloseHandle(hNeedIOEvent);
+    if (hIOReadyEvent)
+      CloseHandle(hIOReadyEvent);
     if (_encoder)
     {
       delete _encoder;
@@ -113,10 +167,11 @@ public:
   {
     End();
 
-    sync_state = 1;
-
     compressor_finished = FALSE;
     finish = FALSE;
+
+    ResetEvent(hNeedIOEvent);
+    ResetEvent(hIOReadyEvent);
 
     res = C_OK;
 
@@ -150,16 +205,20 @@ public:
 
   int End()
   {
-    // is compressor not finished and waiting for input/output?
-    if (hCompressionThread && !compressor_finished && sync_state == 0)
+    // has compressor not finished?
+    if (hCompressionThread && !compressor_finished)
     {
       // kill compression thread
       avail_in = 0;
       avail_out = 0;
+      compressor_finished = TRUE;
 
-      InterlockedExchange(&sync_state, 1);
-      while (InterlockedCompareExchange(&sync_state, 2, 0) != 0)
-        Sleep(1);
+      SetEvent(hIOReadyEvent);
+#ifdef _WIN32
+      WaitForSingleObject(hCompressionThread, INFINITE);
+#else
+      pthread_join(hCompressionThread, NULL);
+#endif
     }
 #ifdef _WIN32
     if (hCompressionThread)
@@ -208,7 +267,7 @@ public:
     }
 
     compressor_finished = TRUE;
-    InterlockedExchange(&sync_state, 0);
+    SetEvent(hNeedIOEvent);
     return C_OK;
   }
 
@@ -239,11 +298,17 @@ public:
     }
     else
     {
-      InterlockedExchange(&sync_state, 1);
+      SetEvent(hIOReadyEvent);
     }
 
-    while (InterlockedCompareExchange(&sync_state, 2, 0) != 0)
-      Sleep(1);
+    HANDLE waitList[2] = {hNeedIOEvent, hCompressionThread};
+    if (WaitForMultipleObjects(2, waitList, FALSE, INFINITE) != WAIT_OBJECT_0)
+    {
+      // thread ended or WaitForMultipleObjects failed
+      compressor_finished = TRUE;
+      SetEvent(hIOReadyEvent);
+      return -4;
+    }
 
     if (compressor_finished)
     {
@@ -255,9 +320,9 @@ public:
 
   void GetMoreIO()
   {
-    InterlockedExchange(&sync_state, 0);
-    while (InterlockedCompareExchange(&sync_state, 2, 1) != 1)
-      Sleep(1);
+    SetEvent(hNeedIOEvent);
+    if (WaitForSingleObject(hIOReadyEvent, INFINITE) != WAIT_OBJECT_0)
+      compressor_finished = TRUE;
   }
 
   STDMETHOD(Read)(void *data, UINT32 size, UINT32 *processedSize)
@@ -278,11 +343,15 @@ public:
           return S_OK;
         }
         GetMoreIO();
-        if (!avail_in && finish)
-        {
-          return S_OK;
-        }
         if (!avail_in)
+        {
+          if (finish)
+          {
+            return S_OK;
+          }
+          return E_ABORT;
+        }
+        if (compressor_finished)
           return E_ABORT;
       }
       UINT32 l = min(size, avail_in);
