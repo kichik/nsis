@@ -125,6 +125,10 @@ Section "NSIS Development System (required)" SecCore
   SetOutPath $INSTDIR\Menu\images
   File ..\Menu\images\*.gif
   
+  Delete $INSTDIR\Docs\*.html
+  Delete $INSTDIR\Docs\style.css
+  RMDir $INSTDIR\Docs
+  
 SectionEnd
 
 Section "Script Examples" SecExample
@@ -275,6 +279,7 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\UIs\modern_nodesc.exe"
     File "..\Contrib\UIs\modern_smalldesc.exe"
 
+    Delete "$INSTDIR\Contrib\Modern UI\Readme.jpg"
     Delete "$INSTDIR\Contrib\UIs\modern2.exe"
     Delete "$INSTDIR\Contrib\UIs\modern3.exe"
 
@@ -316,6 +321,7 @@ Section "Graphics" SecContribGraphics
   SectionIn 1 2
   Delete $INSTDIR\Contrib\Icons\*.ico
   Delete $INSTDIR\Contrib\Icons\*.bmp
+  RMDir $INSTDIR\Contrib\Icons
   SetOutPath $INSTDIR\Contrib\Graphics
   File /r "..\Contrib\Graphics\*.ico"
   File /r "..\Contrib\Graphics\*.bmp"
@@ -1372,6 +1378,7 @@ Section Uninstall
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh
+  Delete $INSTDIR\NSIS.chm
   RMDir /r $INSTDIR\Contrib
   RMDir /r $INSTDIR\Menu
   RMDir /r $INSTDIR\Source
@@ -1379,7 +1386,6 @@ Section Uninstall
   RMDir /r $INSTDIR\Plugins
   RMDir /r $INSTDIR\Examples
   RMDir /r $INSTDIR\Include
-  RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
   SetDetailsPrint both
