@@ -889,7 +889,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     }
 
     // In case of cleared call-proc-queue -> clear allocated stack place (more flexible)
-    if (LastProc == NULL) LastStackPlace = NULL;
+    if (LastProc == NULL) LastStackPlace = (int) NULL;
 
     // Save return
     proc->Params[0].Value = z1;
@@ -1105,7 +1105,7 @@ HANDLE CreateCallback(SystemProc *cbproc)
 
 void CallStruct(SystemProc *proc)
 {
-    BOOL ssflag = FALSE; // structsize flag -> structure size should be loaded
+    BOOL ssflag;
     int i, structsize = 0, size = 0;
     char *st, *ptr;
 
@@ -1130,6 +1130,8 @@ void CallStruct(SystemProc *proc)
 
     for (i = 1; i <= proc->ParamCount; i++)
     {
+        ssflag = FALSE;
+
         // Normal or special block?
         if (proc->Params[i].Option < 1)
         {
