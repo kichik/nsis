@@ -16,6 +16,12 @@ This command will include 'file' as if it was part of the original script. Note 
 
 Adds another include directory to the include directories list. This list is searched when !include is used. This list's initial value is $\{NSISDIR\}\\Include alone.
 
+\S2{addplugindir} !addplugindir
+
+\c directory
+
+Causes the NSIS compiler to scan the given directory for Plugin DLLs.
+
 \S1{cd} !cd
 
 \c new_path
