@@ -4,14 +4,14 @@
 
 // generic startup strings (these will never be overridable)
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\r\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\r\n\r\n"  \
-				"You may want to contact the author of this installer to obtain a new copy.\r\n\r\n"  \
-				"It may be possible to skip this check using the /NCRC command line switch\r\n" \
+#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
+				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
+				"You may want to contact the author of this installer to obtain a new copy.\n\n"  \
+				"It may be possible to skip this check using the /NCRC command line switch\n" \
 				"(NOT RECOMMENDED)."
 #else
-#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\r\n"  \
-				"This could be the result of a damaged disk, a failed download or a virus.\r\n\r\n"  \
+#define _LANG_INVALIDCRC	"The installer you are trying to use is corrupted or incomplete.\n"  \
+				"This could be the result of a damaged disk, a failed download or a virus.\n\n"  \
 				"You may want to contact the author of this installer to obtain a new copy."
 #endif
 

@@ -97,9 +97,9 @@ static void NSISCALL EnableNext(BOOL e)
   EnableWindow(m_hwndOK, e);
 }
 
-static void NSISCALL SetActiveCtl(HWND hDlg, HWND hCtl)
+static void NSISCALL SetActiveCtl(HWND hCtl)
 {
-  SendMessage(hDlg, WM_NEXTDLGCTL, (WPARAM) hCtl, TRUE);
+  SendMessage(g_hwnd, WM_NEXTDLGCTL, (WPARAM) hCtl, TRUE);
 }
 
 static void NSISCALL NotifyCurWnd(UINT uNotifyCode)
@@ -276,19 +276,20 @@ __forceinline int NSISCALL ui_doinstall(void)
 #ifdef NSIS_SUPPORT_BGBG
   if (header->bg_color1 != -1)
   {
+    DWORD cn = CHAR4_TO_DWORD('_', 'N', 'b', 0);
     RECT vp;
     extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
     wc.lpfnWndProc = BG_WndProc;
     wc.hInstance = g_hInstance;
     wc.hIcon = g_hIcon;
     //wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-    wc.lpszClassName = "_Nb";
+    wc.lpszClassName = (LPCSTR)&cn;
 
     if (!RegisterClass(&wc)) return 0;
 
     SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,"_Nb",0,WS_POPUP,
+    m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,(LPCSTR)&cn,0,WS_POPUP,
       vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,0,NULL,g_hInstance,NULL);
   }
 
@@ -491,11 +492,11 @@ nextPage:
       if (g_exec_flags.abort)
       {
         SendMessage(hwndDlg, DM_SETDEFID, IDCANCEL, 0);
-        SetActiveCtl(hwndDlg, m_hwndCancel);
+        SetActiveCtl(m_hwndCancel);
       }
       else
       {
-        SetActiveCtl(hwndDlg, m_hwndOK);
+        SetActiveCtl(m_hwndOK);
       }
 
       mystrcpy(g_tmp,g_caption);
@@ -677,7 +678,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     EnableNext(selected);
 
     hwLicense=GetUIItem(IDC_EDIT1);
-    SetActiveCtl(hwndDlg, hwLicense);
+    SetActiveCtl(hwLicense);
     SendMessage(hwLicense,EM_AUTOURLDETECT,TRUE,0);
 #define lbg g_header->license_bg
     SendMessage(hwLicense,EM_SETBKGNDCOLOR,0,lbg>=0?lbg:GetSysColor(-lbg));
@@ -768,19 +769,16 @@ static char * NSISCALL inttosizestr(int kb, char *str)
 {
   char scalestr[32], byte[32];
   char sh=20;
-  char s=0;
   int scale=LANG_GIGA;
   if (kb < 1024) { sh=0; scale=LANG_KILO; }
   else if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
-  else if (GetVersion()&0x80000000) s='+';//only display the + on GB shown on win9x.
   wsprintf(
     str+mystrlen(str),
-    "%d.%d%s%s%c",
+    "%d.%d%s%s",
     kb>>sh,
     ((kb*10)>>sh)%10,
     GetNSISString(scalestr,scale),
-    GetNSISString(byte,LANG_BYTE),
-    s
+    GetNSISString(byte,LANG_BYTE)
   );
   return str;
 }
@@ -833,7 +831,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     SetUITextNT(IDC_DIR,dir);
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
-    SetActiveCtl(hwndDlg, GetUIItem(IDC_DIR));
+    SetActiveCtl(GetUIItem(IDC_DIR));
   }
   if (uMsg == WM_COMMAND)
   {
@@ -880,7 +878,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     char *p;
     int error = 0;
     int total, available=-1;
-    DWORD spc,bps,fc,tc;
+    HMODULE hLib;
 
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
@@ -891,11 +889,27 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (p)
       *p=0;
 
-    if (GetDiskFreeSpace(s,&spc,&bps,&fc,&tc))
+    // Test for and use the GetDiskFreeSpaceEx API
+    hLib = GetModuleHandle("KERNEL32.dll");
+    if (hLib)
     {
-      DWORD r=MulDiv(bps*spc,fc,1<<10);
-      if (r > 0x7fffffff) r=0x7fffffff;
-      available=(int)r;
+      BOOL (WINAPI *GDFSE)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
+        (void*)GetProcAddress(hLib, "GetDiskFreeSpaceExA");
+      if (GDFSE)
+      {
+        ULARGE_INTEGER available64;
+        if (GDFSE(s, &available64, NULL, NULL))
+          available = (int)(available64.QuadPart >> 10);
+      }
+
+    }
+
+    if (available == -1)
+    {
+      // GetDiskFreeSpaceEx is not available
+      DWORD spc, bps, fc, tc;
+      if (GetDiskFreeSpace(s, &spc, &bps, &fc, &tc))
+        available = (int)MulDiv(bps * spc, fc, 1 << 10);
     }
 
     total = sumsecsfield(size_kb);
@@ -905,7 +919,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetUITextNT(IDC_SPACEREQUIRED,inttosizestr(total,GetNSISString(s,LANG_SPACE_REQ)));
-      if (available != -1)
+      // Did we get a usable value above?
+      if (available >= 0)
         SetUITextNT(IDC_SPACEAVAILABLE,inttosizestr(available,GetNSISString(s,LANG_SPACE_AVAIL)));
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
@@ -1204,10 +1219,10 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (!noCombo)
     {
       ShowWindow(hwndCombo1, SW_SHOW);
-      SetActiveCtl(hwndDlg, hwndCombo1);
+      SetActiveCtl(hwndCombo1);
     }
     else
-      SetActiveCtl(hwndDlg, hwndTree1);
+      SetActiveCtl(hwndTree1);
 
     uMsg = g_exec_flags.insttype_changed ? WM_NOTIFY_INSTTYPE_CHANGE : WM_IN_UPDATEMSG;
   }
