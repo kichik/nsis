@@ -97,7 +97,7 @@ public:
 
 	IMAGE_RESOURCE_DIRECTORY GetInfo();
 
-	CResourceDirectoryEntry* GetEntry(int i);
+	CResourceDirectoryEntry* GetEntry(unsigned int i);
 	void AddEntry(CResourceDirectoryEntry* entry);
 	void RemoveEntry(int i);
 	int CountEntries();
