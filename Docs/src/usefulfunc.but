@@ -13,25 +13,32 @@
 \c  ;   Pop $R0
 \c  ;   ; at this point $R0 will equal "C:\Program Files\Directory"
 \c
-\c Function GetParent
-\c   Exch $R0 ; old $R0 is on top of stack
-\c   Push $R1
-\c   Push $R2
-\c   Push $R3
-\c   StrLen $R3 $R0
-\c   loop:
-\c     IntOp $R1 $R1 - 1
-\c     IntCmp $R1 -$R3 exit exit
-\c     StrCpy $R2 $R0 1 $R1
-\c     StrCmp $R2 "\" exit
-\c   Goto loop
-\c   exit:
-\c     StrCpy $R0 $R0 $R1
-\c     Pop $R3
-\c     Pop $R2
-\c     Pop $R1
-\c     Exch $R0 ; put $R0 on top of stack, restore $R0 to original value
-\c FunctionEnd
+\c  Function GetParent
+\c  
+\c    Exch $R0
+\c    Push $R1
+\c    Push $R2
+\c    Push $R3
+\c    
+\c    StrCpy $R1 0
+\c    StrLen $R2 $R0
+\c    
+\c    loop:
+\c      IntOp $R1 $R1 + 1
+\c      IntCmp $R1 $R2 get 0 get
+\c      StrCpy $R3 $R0 1 -$R1
+\c      StrCmp $R3 "\" get
+\c      Goto loop
+\c    
+\c    get:
+\c      StrCpy $R0 $R0 -$R1
+\c      
+\c      Pop $R3
+\c      Pop $R2
+\c      Pop $R1
+\c      Exch $R0
+\c      
+\c  FunctionEnd
 
 \H{trimnewlines} Trim newlines
 
@@ -68,34 +75,43 @@
 \c  ; input, none
 \c  ; output, top of stack (replaces, with e.g. whatever)
 \c  ; modifies no other variables.
-\c
-\c Function GetParameters
-\c   Push $R0
-\c   Push $R1
-\c   Push $R2
-\c   Push $R3
-\c   StrCpy $R0 $CMDLINE 1
-\c   StrCpy $R1 '"'
-\c   StrCpy $R2 1
-\c   StrLen $R3 $CMDLINE
-\c   StrCmp $R0 '"' loop
-\c     StrCpy $R1 ' ' ; we're scanning for a space instead of a quote
-\c   loop:
-\c     StrCpy $R0 $CMDLINE 1 $R2
-\c     StrCmp $R0 $R1 loop2
-\c     StrCmp $R2 $R3 loop2
-\c     IntOp $R2 $R2 + 1
-\c     Goto loop
-\c   loop2:
-\c     IntOp $R2 $R2 + 1
-\c     StrCpy $R0 $CMDLINE 1 $R2
-\c     StrCmp $R0 " " loop2
-\c   StrCpy $R0 $CMDLINE "" $R2
-\c   Pop $R3
-\c   Pop $R2
-\c   Pop $R1
-\c   Exch $R0
-\c FunctionEnd
+\c  
+\c  Function GetParameters
+\c  
+\c    Push $R0
+\c    Push $R1
+\c    Push $R2
+\c    Push $R3
+\c    
+\c    StrCpy $R2 1
+\c    StrLen $R3 $CMDLINE
+\c    
+\c    ;Check for quote or space
+\c    StrCpy $R0 $CMDLINE $R2
+\c    StrCmp $R0 '"' 0 +3
+\c      StrCpy $R1 '"'
+\c      Goto loop
+\c    StrCpy $R1 " "
+\c    
+\c    loop:
+\c      IntOp $R2 $R2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 $R1 get
+\c      StrCmp $R2 $R3 get
+\c      Goto loop
+\c    
+\c    get:
+\c      IntOp $R2 $R2 + 1
+\c      StrCpy $R0 $CMDLINE 1 $R2
+\c      StrCmp $R0 " " get
+\c      StrCpy $R0 $CMDLINE "" $R2
+\c    
+\c    Pop $R3
+\c    Pop $R2
+\c    Pop $R1
+\c    Exch $R0
+\c  
+\c  FunctionEnd
 
 \H{strstr} Search in a string
 
