@@ -8,44 +8,9 @@ typedef struct _stack_t {
 int popstring(char *str); // 0 on success, 1 on empty stack
 void pushstring(char *str);
 
-enum
-{
-INST_0,         // $0
-INST_1,         // $1
-INST_2,         // $2
-INST_3,         // $3
-INST_4,         // $4
-INST_5,         // $5
-INST_6,         // $6
-INST_7,         // $7
-INST_8,         // $8
-INST_9,         // $9
-INST_R0,        // $R0
-INST_R1,        // $R1
-INST_R2,        // $R2
-INST_R3,        // $R3
-INST_R4,        // $R4
-INST_R5,        // $R5
-INST_R6,        // $R6
-INST_R7,        // $R7
-INST_R8,        // $R8
-INST_R9,        // $R9
-INST_CMDLINE,   // $CMDLINE
-INST_INSTDIR,   // $INSTDIR
-INST_OUTDIR,    // $OUTDIR
-INST_EXEDIR,    // $EXEDIR
-INST_LANG,      // $LANGUAGE
-__INST_LAST
-};
-
-char *getuservariable(int varnum);
-
-
 HINSTANCE g_hInstance;
-HWND g_hwndParent;
-int g_stringsize;
 stack_t **g_stacktop;
-char *g_variables;
+int g_stringsize;
 
 HBITMAP g_hbm;
 int sleep_val;
@@ -85,11 +50,6 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
   }
   if (uMsg == WM_CLOSE) return 0;
-  if (uMsg == WM_DESTROY)
-  {
-    PostQuitMessage(0);
-    return 0;
-  }
   if (uMsg == WM_TIMER || uMsg == WM_LBUTTONDOWN)
   {
     g_rv=(uMsg == WM_LBUTTONDOWN);
@@ -106,64 +66,58 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 
 void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
-  g_hwndParent=hwndParent;
+  char fn[MAX_PATH];
+  char temp[64];
+  char *sleep=temp;
+
   g_stringsize=string_size;
   g_stacktop=stacktop;
-  g_variables=variables;
 
-  // do your stuff here
+  popstring(fn);
+  popstring(sleep);
+
+  sleep_val=0;
+  while (*sleep >= '0' && *sleep <= '9')
   {
-    char fn[MAX_PATH];
-    char temp[64];
-    char *sleep=temp;
+    sleep_val*=10;
+    sleep_val+=*sleep++-'0';
+  }
 
-    popstring(fn);
-    popstring(sleep);
-
-    sleep_val=0;
-    while (*sleep >= '0' && *sleep <= '9')
+  if (fn[0] && sleep_val>0)
+  {
+    MSG msg;
+    char classname[4]="_sp";
+    static WNDCLASS wc;
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = g_hInstance;
+    wc.hCursor = LoadCursor(NULL,IDC_ARROW);
+    wc.lpszClassName = classname;
+    if (RegisterClass(&wc)) 
     {
-      sleep_val*=10;
-      sleep_val+=*sleep++-'0';
-    }
-
-    if (fn[0] && sleep_val>0)
-    {
-      MSG msg;
-      char classname[4]="_sp";
-      static WNDCLASS wc;
-      wc.lpfnWndProc = WndProc;
-      wc.hInstance = g_hInstance;
-      wc.hCursor = LoadCursor(NULL,IDC_ARROW);
-      wc.lpszClassName = classname;
-      if (RegisterClass(&wc)) 
+      char fn2[MAX_PATH];
+      lstrcpy(fn2,fn);
+      lstrcat(fn,".bmp");
+      lstrcat(fn2,".wav");
+      g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
+      if (g_hbm) 
       {
-        char fn2[MAX_PATH];
-        lstrcpy(fn2,fn);
-        lstrcat(fn,".bmp");
-        lstrcat(fn2,".wav");
-        g_hbm=LoadImage(NULL,fn,IMAGE_BITMAP,0,0,LR_CREATEDIBSECTION|LR_LOADFROMFILE);
-        if (g_hbm) 
+        PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME|SND_NODEFAULT);
+
+        CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
+          0,0,0,0,0,(HWND)hwndParent,NULL,g_hInstance,NULL);
+
+        while (GetMessage(&msg,NULL,0,0))
         {
-          BOOL s=0;
-          HANDLE f=CreateFile(fn2,0,0,NULL,OPEN_EXISTING,0,NULL);
-          if (f != INVALID_HANDLE_VALUE) { CloseHandle(f); s=PlaySound(fn2,NULL,SND_ASYNC|SND_FILENAME); }
-
-          CreateWindowEx(WS_EX_TOOLWINDOW,classname,classname,
-            0,0,0,0,0,(HWND)hwndParent,NULL,g_hInstance,NULL);
-
-          while (GetMessage(&msg,NULL,0,0))
-          {
-            DispatchMessage(&msg);
-          }
-
-          if (s) PlaySound(NULL,0,0);
-
-          DeleteObject(g_hbm);
-
-          wsprintf(temp,"%d",g_rv);
-          pushstring(temp);
+          DispatchMessage(&msg);
         }
+
+        // Stop currently playing wave, we want to exit
+        PlaySound(0,0,0);
+
+        DeleteObject(g_hbm);
+
+        wsprintf(temp,"%d",g_rv);
+        pushstring(temp);
       }
     }
   }
@@ -189,10 +143,4 @@ void pushstring(char *str)
   lstrcpyn(th->text,str,g_stringsize);
   th->next=*g_stacktop;
   *g_stacktop=th;
-}
-
-char *getuservariable(int varnum)
-{
-  if (varnum < 0 || varnum >= __INST_LAST) return NULL;
-  return g_variables+varnum*g_stringsize;
 }
