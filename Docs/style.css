@@ -8,7 +8,7 @@ pre {
 	padding: 1px;
 }
 pre b {
-	color: red;
+	text-decoration: underline;
 }
 a {
 	color: #567599;
