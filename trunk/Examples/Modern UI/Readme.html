@@ -106,10 +106,8 @@ table
                 <p class="text">To change elements on the dialogs, modify modern.exe
                   in the Contrib\UIs folder  using a a resource editor such as
                   <a href="http://www.users.on.net/johnson/resourcehacker/">Resource Hacker</a>.</p>
-                <p class="text">This new interface uses some additional texts 
-                  which are not included in the standard NSIS language files. 
-                  If you want to create a multilanguage installer, you need to 
-                  control this texts by your script.</p>
+                <p class="text">The new macro system has full multilanguage support, 
+                  for an example, see Multilanguage.nsi</p>
                 <p class="text">The 'Loading Setup' text on the slash screen 
                   which is being displayed when the installer is starting (Verifying 
                   installer, Unpacking data when using COMPRESS_WHOLE) cannot 
@@ -122,6 +120,21 @@ table
                   file and recompile NSIS.</p>
                 <p class="header">Version history</p>
                 <ul>
+                <li class="text">1.1 - August 28th, 2002
+                  <ul>
+                    <li>You need the latest NSIS 2 CVS version for this to work!
+                    <li>Header file with macros, it's now very easy to use the UI in your scripts :)
+                    <li>Updated example scripts
+                      <li>Added Multilanguage.nsi example (Multilanguage & LangDLL) 
+                      <li>Fixed background color issue with some custom XP themes
+                    <li>Removed WS_VISIBLE from black rect for inner dialog (fixes display issues)
+                    <li>Changed size of description area
+                    <li>Example script: Added instructions for the user on the Description frame
+                    <li>Auto sizing branding text
+                    <li>Used modern.bmp for the checks (thanks rainwater)
+                    <li>Using the new NSIS version, descriptions work using the keyboard and you can give
+                    descriptions to subsections
+                  </ul>
                 <li class="text">1.0 - August 26th, 2002
                   <ul>
                     <li>Initial release
