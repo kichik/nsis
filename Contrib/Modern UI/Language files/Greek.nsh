@@ -49,7 +49,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Εμφάνιση του &αρχείου Readme"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Επιλογή Φακέλου για το Μενού Έναρξη"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του προγράμματος."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του '${MUI_PRODUCT}'."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Επιλέξτε ένα φάκελο του μενού Έναρξη για τις συντομεύσεις του προγράμματος. Μπορείτε επίσης να εισάγετε ένα όνομα για να δημιουργήσετε ένα νέο φάκελο."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Να μη δημιουργηθούν συντομεύσεις"
   
@@ -61,9 +61,18 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_TITLE "Απεγκατάσταση του '${MUI_PRODUCT}'"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONFIRM_SUBTITLE "Αφαίρεση του '${MUI_PRODUCT}' από τον υπολογιστή σας."
 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_LICENSE_TITLE "Συμφωνία ’δειας Χρήσης"  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_LICENSE_SUBTITLE "Ελέγξτε την άδεια χρήσης πριν απεγκαταστήσετε το '${MUI_PRODUCT}'."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_LICENSE_BOTTOM "Εάν αποδέχεστε τους όρους της άδειας χρήσης, κάντε κλικ στο Συμφωνώ για να συνεχίσετε. Πρέπει να αποδεχθείτε τη συμφωνία για να απεγκαταστήσετε το '${MUI_PRODUCT}'."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Εάν αποδέχεστε τους όρους της άδειας χρήσης, κάντε κλικ στην επιλογή παρακάτω. Πρέπει να αποδεχθείτε τη συμφωνία για να απεγκαταστήσετε το '${MUI_PRODUCT}'. $_CLICK"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Εάν αποδέχεστε τους όρους της άδειας χρήσης, κάντε κλικ στην πρώτη επιλογή παρακάτω. Πρέπει να αποδεχθείτε τη συμφωνία για να απεγκαταστήσετε το '${MUI_PRODUCT}'. $_CLICK"
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_TITLE "Επιλογή Στοιχείων"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_COMPONENTS_SUBTITLE "Επιλέξτε τα στοιχεία του '${MUI_PRODUCT}' που θέλετε να απεγκαταστήσετε."
-    
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_DIRECTORY_TITLE "Επιλογή Θέσης Απεγκατάστασης"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_DIRECTORY_SUBTITLE "Επιλέξτε το φάκελο από τον οποίο θα απεγκατασταθεί το '${MUI_PRODUCT}'."
+  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Απεγκατάσταση Σε Εξέλιξη"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Παρακαλώ περιμένετε όσο το '${MUI_PRODUCT}' απεγκαθίσταται."
   
