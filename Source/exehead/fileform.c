@@ -256,7 +256,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
   dbd_srcpos = SetSelfFilePointer(g_filehdrsize + sizeof(firstheader));
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((cl_flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
+  dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data - ((h.flags & FH_FLAGS_NO_CRC) ? 0 : sizeof(int));
 #else
   dbd_fulllen = dbd_srcpos - sizeof(h) + h.length_of_all_following_data;
 #endif//NSIS_CONFIG_CRC_SUPPORT
