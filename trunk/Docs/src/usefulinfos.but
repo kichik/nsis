@@ -63,16 +63,16 @@ Oleaut32.dll \\<br\\>
 Olepro32.dll \\<br\\>
 Stdole2.tlb \\<br\\>
 
-In the uninstaller, use \W{http://nsis.sourceforge.net/archive/nsisweb.php?page=19}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because it's never a good idea to remove the VB runtimes. The system to registering shared DLL files does now always work and many application require these files.
+In the uninstaller, use \R{unremovesharedll}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because it's never a good idea to remove the VB runtimes. The system to registering shared DLL files does now always work and many application require these files.
 
 
 
 \c # Don't forget to copy the macro's!
-\c 
+\c
 \c !define VBFILESDIR C:\Windows\System
 \c # or
 \c #!define VBFILESDIR C:\Path\to\where\vbrun60sp5.exe\extracted
-\c 
+\c
 \c Section "Install VB DLLs"
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Asycfilt.dll $SYSDIR\Asycfilt.dll
 \c   !insertmacro UpgradeDLL ${VBFILESDIR}\Comcat.dll $SYSDIR\Comcat.dll
@@ -206,9 +206,9 @@ Save this script
 
 \c ; **** snip ****
 \c SetPluginUnload  alwaysoff
-\c 
+\c
 \c Function loadDll
-\c 
+\c
 \c   SetOutPath $TEMP\eInspect             ; create temp directory
 \c   File bin\CondMgr.dll                  ; copy dll there
 \c   StrCpy $1 ${NSIS_MAX_STRLEN}          ; assign memory to $0
@@ -216,10 +216,10 @@ Save this script
 \c   DetailPrint 'Path: "$0"'
 \c   DetailPrint "Path length (I think): $1"
 \c   DetailPrint "Return value: $2"
-\c 
-\c ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete 
+\c
+\c ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete
 \c ; the temporary DLL
-\c 
+\c
 \c   SetPluginUnload manual
 \c ; do nothing (but let the installer unload the System dll)
 \c   System::Free 0
@@ -241,3 +241,67 @@ Written by \W{http://nsis.sourceforge.net/archive/profile.php?userid=78}{djc}
 \\<u\\>Acknowledgements & Thanks\\</u\\> \\<br\\>
 Lots of thanks go to \\<b\\>kichik\\</b\\> and \\<b\\>Sunjammer\\</b\\> for spending a lot of time assisting in solving this problem. Also to \\<b\\>brainsucker\\</b\\> for creating the System.dll plug-in in the first place.
 Good Luck!
+
+\H{dumplogtofile} Dump Content of Log Window to File
+
+This function will dump the log of the installer (installer details) to a file of your choice. I created this function for Afrow_UK who requested a way to dump the log to a file in \W{http://forums.winamp.com/showthread.php?s=&threadid=125431}{this forum thread}.
+
+To use it push a file name and call it. It will dump the log to the file specified. For example:
+
+
+\c GetTempFileName $0
+\c Push $0
+\c Call DumpLog
+
+Here is the function:
+
+
+
+\c !define LVM_GETITEMCOUNT 0x1004
+\c !define LVM_GETITEMTEXT 0x102D
+\c 
+\c Function DumpLog
+\c   Exch $5
+\c   Push $0
+\c   Push $1
+\c   Push $2
+\c   Push $3
+\c   Push $4
+\c   Push $6
+\c 
+\c   FindWindow $0 "#32770" "" $HWNDPARENT
+\c   GetDlgItem $0 $0 1016
+\c   StrCmp $0 0 error
+\c   FileOpen $5 $5 "w"
+\c   StrCmp $5 0 error
+\c     SendMessage $0 ${LVM_GETITEMCOUNT} 0 0 $6
+\c     System::Alloc ${NSIS_MAX_STRLEN}
+\c     Pop $3
+\c     StrCpy $2 0
+\c     System::Call "*(i, i, i, i, i, i, i, i, i) i \
+\c       (0, 0, 0, 0, 0, r3, ${NSIS_MAX_STRLEN}) .r1"
+\c     loop: StrCmp $2 $6 done
+\c       System::Call "User32::SendMessageA(i, i, i, i) i \
+\c         ($0, ${LVM_GETITEMTEXT}, $2, r1)"
+\c       System::Call "*$3(&t${NSIS_MAX_STRLEN} .r4)"
+\c       FileWrite $5 "$4$\r$\n"
+\c       IntOp $2 $2 + 1
+\c       Goto loop
+\c     done:
+\c       FileClose $5
+\c       System::Free $1
+\c       System::Free $3
+\c       Goto exit
+\c   error:
+\c     MessageBox MB_OK error
+\c   exit:
+\c     Pop $6
+\c     Pop $4
+\c     Pop $3
+\c     Pop $2
+\c     Pop $1
+\c     Pop $0
+\c     Exch $5
+\c FunctionEnd
+
+written by KiCHiK
