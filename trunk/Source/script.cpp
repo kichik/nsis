@@ -1215,7 +1215,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_LOADNLF:
     {
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
-      NLF *lang = new NLF(line.gettoken_str(1));
+      try {
+      	NLF *newLang = new NLF(line.gettoken_str(1));
+        for (int i = 0; i < build_langs.size(); i++)
+          if (build_langs[i]->GetLang() == newLang->GetLang()) {
+            ERROR_MSG("Error: Can't add same language twice!\n");
+            return PS_ERROR;
+          }
+        build_langs.push_back(newLang);
+      }
+      catch (exception &err) {
+        ERROR_MSG("Error while adding language file: %s", err.what());
+        return PS_ERROR;
+      }
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));  
 
