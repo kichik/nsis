@@ -50,6 +50,8 @@ CEXEBuild::CEXEBuild()
   last_line_had_slash=0;
   inside_comment=false;
 
+  build_include_depth=0;
+
   has_called_write_output=0;
 
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
