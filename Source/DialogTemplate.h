@@ -82,7 +82,7 @@ typedef struct {
 	short	cx;
 	short	cy;
 	WORD	id;
-  WORD  _miscrosoft_docs_are_wrong;
+	WORD	_miscrosoft_docs_are_wrong;
 } DLGITEMTEMPLATEEX;
 
 #pragma pack(pop)
@@ -105,7 +105,7 @@ public:
 	void RTrimToString(WORD id, char *str, int margins);
 	void LTrimToString(WORD id, char *str, int margins);
 	void CTrimToString(WORD id, char *str, int margins);
-  void ConvertToRTL();
+	void ConvertToRTL();
 	BYTE* Save(DWORD& dwSize);
 	DWORD GetSize();
 
@@ -129,7 +129,7 @@ private:
 	short m_sFontSize;
 	short m_sFontWeight; // Extended only
 	BYTE m_bItalic; // Extended only
-  BYTE m_bCharset; // Extended only
+	BYTE m_bCharset; // Extended only
 	char* m_szFont;
 
 	// Items vector
