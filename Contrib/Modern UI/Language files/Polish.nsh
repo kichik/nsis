@@ -13,33 +13,30 @@
   ;INSTALLER
   
   !ifdef MUI_LICENSEPAGE
-     LicenseText /LANG=${LANG_POLISH} "Proszê naduœ klawisz Page Down, aby zobaczyæ resztê umowy."
+    LicenseText /LANG=${LANG_POLISH} "Proszê naduœ klawisz Page Down, aby zobaczyæ resztê umowy."
+    LangString MUI_TEXT_LICENSE_TITLE ${LANG_POLISH} "Umowa licencyjna"  
+    LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_POLISH} "Proszê przejrzy warunki licencji przed instalacj¹ ${NAME}."
+    LangString MUI_INNERTEXT_LICENSE ${LANG_POLISH} "Je¿eli akceptujesz wszystkie warunki umnowy wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ ${NAME}."
   !endif
   
   !ifdef MUI_COMPONENTPAGE
     ComponentText /LANG=${LANG_POLISH} "Zaznacz komponenty, które chcesz zainstalowaæ oraz odznacz komponenty, które nie maj¹ byæ zainstalowane. Kliknij przycisk Dalej, aby kontynuowaæ."
+    LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_POLISH} "Wybór komponentów"
+    LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_POLISH} "Wybierz komponenty ${NAME}, które chcesz zainstalowaæ."
+    LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_POLISH} "Opis"
+    LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_POLISH} "Przesuñ kursor myszy nad komponent, aby zobaczyæ jego opis."
   !endif
   
   !ifdef MUI_DIRSELECTPAGE
     DirText /LANG=${LANG_POLISH} "Instalator zainstaluje ${NAME} do nastêpuj¹cego folderu.$\r$\n$\r$\nAby zainstalowaæ w tym folderze kliknij Instaluj. Aby zainstalowaæ w innym folderze kliknij Przegl¹daj i wybierz inny folder." " "
+    LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_POLISH} "Wybór miejsca instalacji"
+    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_POLISH} "Wybierz folder, w którym ma byæ zainstalowany ${NAME}."
+    LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_POLISH} "Folder docelowy"
   !endif
   
   !ifdef MUI_INSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_POLISH} "Dalej >"
   !endif
-   
-  LangString MUI_TEXT_LICENSE_TITLE ${LANG_POLISH} "Umowa licencyjna"  
-  LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_POLISH} "Proszê przejrzy warunki licencji przed instalacj¹ ${NAME}."
-  LangString MUI_INNERTEXT_LICENSE ${LANG_POLISH} "Je¿eli akceptujesz wszystkie warunki umnowy wybierz Zgadzam siê, aby kontynuowaæ. Musisz zaakceptowaæ warunki umowy, aby zainstalowaæ ${NAME}."
-  
-  LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_POLISH} "Wybór komponentów"
-  LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_POLISH} "Wybierz komponenty ${NAME}, które chcesz zainstalowaæ."
-  LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_POLISH} "Opis"
-  LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_POLISH} "Przesuñ kursor myszy nad komponent, aby zobaczyæ jego opis."
-  
-  LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_POLISH} "Wybór miejsca instalacji"
-  LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_POLISH} "Wybierz folder, w którym ma byæ zainstalowany ${NAME}."
-  LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_POLISH} "Folder docelowy"
   
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_POLISH} "Instaluje"
   LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_POLISH} "Proszê czekaæ, kiedy ${NAME} jest instalowany."
@@ -47,36 +44,41 @@
   LangString MUI_TEXT_FINISHED_TITLE ${LANG_POLISH} "Zakoñczono"
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_POLISH} "Instalacja zakoñczona powodzeniem."
   
-  LangString MUI_MSGTEXT_ABORTWARNING ${LANG_POLISH} "Czy na pewno chcesz wyjœæ z instalatora ${NAME}?"
-
-  LangString MUI_BUTTONTEXT_BACK ${LANG_POLISH} "< Cofnij"
-  LangString MUI_BUTTONTEXT_NEXT ${LANG_POLISH} "Dalej >"
-  LangString MUI_BUTTONTEXT_CANCEL ${LANG_POLISH} "Anuluj"
-  LangString MUI_BUTTONTEXT_INSTALL ${LANG_POLISH} "Instaluj"
-
+  !ifdef MUI_ABORTWARNING
+    LangString MUI_MSGTEXT_ABORTWARNING ${LANG_POLISH} "Czy na pewno chcesz wyjœæ z instalatora ${NAME}?"
+  !endif
+  
+  !ifdef MUI_INSTALLOPTIONS
+    LangString MUI_BUTTONTEXT_BACK ${LANG_POLISH} "< Cofnij"
+    LangString MUI_BUTTONTEXT_NEXT ${LANG_POLISH} "Dalej >"
+    LangString MUI_BUTTONTEXT_CANCEL ${LANG_POLISH} "Anuluj"
+    LangString MUI_BUTTONTEXT_INSTALL ${LANG_POLISH} "Instaluj"
+  !endif
+  
   
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
     UninstallText /LANG=${LANG_POLISH} "Deinstalator odinstaluje ${NAME} z twojego systemu."
+    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_POLISH} "Odinstaluj ${NAME}"
+    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_POLISH} "Usuñ ${NAME} z twojego systemu."
+  
+    LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_POLISH} "Odinstalowuje"
+    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_POLISH} "Proszê czekaæ, kiedy ${NAME} jest odinstalowywany."
+  
+    LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_POLISH} "Zakoñczono"
+    LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_POLISH} "Odinstalowanie zakoñczone powodzeniem."
   !endif
   
   !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_POLISH} "Dalej >"
   !endif
   
-  LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_POLISH} "Odinstaluj ${NAME}"
-  LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_POLISH} "Usuñ ${NAME} z twojego systemu."
-  
-  LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_POLISH} "Odinstalowuje"
-  LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_POLISH} "Proszê czekaæ, kiedy ${NAME} jest odinstalowywany."
-  
-  LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_POLISH} "Zakoñczono"
-  LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_POLISH} "Odinstalowanie zakoñczone powodzeniem."
-  
-  LangString un.MUI_BUTTONTEXT_BACK ${LANG_POLISH} "< Cofnij"
-  LangString un.MUI_BUTTONTEXT_NEXT ${LANG_POLISH} "Dalej >"
-  LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_POLISH} "Anuluj"
-  LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_POLISH} "Odinstaluj"
+  !ifdef MUI_UNINSTALLOPTIONS 
+    LangString un.MUI_BUTTONTEXT_BACK ${LANG_POLISH} "< Cofnij"
+    LangString un.MUI_BUTTONTEXT_NEXT ${LANG_POLISH} "Dalej >"
+    LangString un.MUI_BUTTONTEXT_CANCEL ${LANG_POLISH} "Anuluj"
+    LangString un.MUI_BUTTONTEXT_UNINSTALL ${LANG_POLISH} "Odinstaluj"
+  !endif
     
 !endif
