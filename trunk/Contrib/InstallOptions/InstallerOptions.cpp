@@ -53,21 +53,27 @@ char *WINAPI STRDUP(const char *c)
   return lstrcpy(t,c);
 }
 
+// Field types
+// NB - the order of this list is important - see below
+
 #define FIELD_INVALID      (0)
 #define FIELD_LABEL        (1)
 #define FIELD_ICON         (2)
 #define FIELD_BITMAP       (3)
 #define FIELD_BROWSEBUTTON (4)
-#define FIELD_CHECKBOX     (5)
-#define FIELD_RADIOBUTTON  (6)
-#define FIELD_TEXT         (7)
-#define FIELD_FILEREQUEST  (8)
-#define FIELD_DIRREQUEST   (9)
-#define FIELD_COMBOBOX     (10)
-#define FIELD_LISTBOX      (11)
-#define FIELD_GROUPBOX     (12)
-#define FIELD_LINK         (13)
-#define FIELD_BUTTON       (14)
+#define FIELD_LINK         (5)
+#define FIELD_BUTTON       (6)
+#define FIELD_GROUPBOX     (7)
+#define FIELD_CHECKBOX     (8)
+#define FIELD_RADIOBUTTON  (9)
+#define FIELD_TEXT         (10)
+#define FIELD_FILEREQUEST  (11)
+#define FIELD_DIRREQUEST   (12)
+#define FIELD_COMBOBOX     (13)
+#define FIELD_LISTBOX      (14)
+
+#define FIELD_SETFOCUS     FIELD_CHECKBOX // First field that qualifies for having the initial keyboard focus
+#define FIELD_CHECKLEN     FIELD_TEXT     // First field to have length of state value checked against MinLen/MaxLen
 
 //---------------------------------------------------------------------
 // settings
@@ -216,7 +222,7 @@ bool INLINE ValidateFields() {
     FieldType *pField = pFields + nIdx;
     // this if statement prevents a stupid bug where a min/max length is assigned to a label control
     // where the user obviously has no way of changing what is displayed. (can you say, "infinite loop"?)
-    if (pField->nType >= FIELD_TEXT) {
+    if (pField->nType >= FIELD_CHECKLEN) {
       nLength = mySendMessage(pField->hwnd, WM_GETTEXTLENGTH, 0, 0);
 
       if (((pField->nMaxLength > 0) && (nLength > pField->nMaxLength)) ||
@@ -939,6 +945,21 @@ int WINAPI createCfgDlg()
         DEFAULT_STYLES | WS_TABSTOP,
         0,
         WS_EX_RTLREADING },
+      { "BUTTON",       // FIELD_LINK
+        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW,
+        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW | BS_RIGHT,
+        0,
+        WS_EX_RTLREADING },
+      { "BUTTON",       // FIELD_BUTTON
+        DEFAULT_STYLES | WS_TABSTOP,
+        DEFAULT_STYLES | WS_TABSTOP,
+        0,
+        WS_EX_RTLREADING },
+      { "BUTTON",       // FIELD_GROUPBOX
+        DEFAULT_STYLES | BS_GROUPBOX,
+        DEFAULT_STYLES | BS_GROUPBOX | BS_RIGHT,
+        WS_EX_TRANSPARENT,
+        WS_EX_TRANSPARENT | WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_CHECKBOX
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE,
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
@@ -973,22 +994,7 @@ int WINAPI createCfgDlg()
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RIGHT | WS_EX_RTLREADING },
-      { "BUTTON",       // FIELD_GROUPBOX
-        DEFAULT_STYLES | BS_GROUPBOX,
-        DEFAULT_STYLES | BS_GROUPBOX | BS_RIGHT,
-        WS_EX_TRANSPARENT,
-        WS_EX_TRANSPARENT | WS_EX_RTLREADING },
-      { "BUTTON",       // FIELD_LINK
-        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW,
-        DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW | BS_RIGHT,
-        0,
-        WS_EX_RTLREADING },
-      { "BUTTON",       // FIELD_BUTTON
-        DEFAULT_STYLES | WS_TABSTOP,
-        DEFAULT_STYLES | WS_TABSTOP,
-        0,
-        WS_EX_RTLREADING }
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RIGHT | WS_EX_RTLREADING }
     };
 
     FieldType *pField = pFields + nIdx;
@@ -1216,7 +1222,7 @@ int WINAPI createCfgDlg()
       }
 
       // Set initial focus to the first appropriate field
-      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP) {
+      if (!fFocused && (dwStyle & (WS_TABSTOP | WS_DISABLED)) == WS_TABSTOP && pField->nType >= FIELD_SETFOCUS) {
         fFocused = TRUE;
         mySetFocus(hwCtrl);
       }
