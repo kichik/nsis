@@ -806,6 +806,9 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
     {
       char *out;
 
+      char a;
+      compressor->SetNextIn(&a,0);
+
       do
       {
         int out_len = min(build_filebuflen, avail_out);
