@@ -94,36 +94,110 @@ void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
   return (void *)GlobalAlloc(GPTR, dwBytes);
 }
 
-#ifdef NSIS_SUPPORT_RMDIR
-void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
+void NSISCALL myDelete(char *buf, int flags)
 {
-  if (is_valid_instpath(buf))
-  {
-    if (flags&1) {
-      SHFILEOPSTRUCT op;
+  static char lbuf[NSIS_MAX_STRLEN];
 
-      op.hwnd=g_hwnd;
-      op.wFunc=FO_DELETE;
-      buf[mystrlen(buf)+1]=0;
-      op.pFrom=buf;
-      op.pTo=0;
+  HANDLE h;
+  WIN32_FIND_DATA fd;
+  char *fn;
 
-      op.fFlags=FOF_NOERRORUI|FOF_SILENT|FOF_NOCONFIRMATION;
-
-      SHFileOperation(&op);
-    }
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-    else if (!RemoveDirectory(buf) && flags&2) {
-      log_printf2("Remove folder on reboot: %s",buf);
-      MoveFileOnReboot(buf,0);
-    }
-#else
-    else RemoveDirectory(buf);
-#endif
-  }
-  log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-}
+#ifdef NSIS_SUPPORT_RMDIR
+  if (!(flags & DEL_DIR) || (is_valid_instpath(buf) && (flags & DEL_RECURSE)))
 #endif//NSIS_SUPPORT_RMDIR
+  {
+    mystrcpy(lbuf,buf);
+#ifdef NSIS_SUPPORT_RMDIR
+    if (flags & DEL_DIR)
+      lstrcat(lbuf,"\\*.*");
+    else
+#endif//NSIS_SUPPORT_RMDIR
+      trimslashtoend(buf);
+
+    lstrcat(buf,"\\");
+
+    fn=buf+mystrlen(buf);
+
+    h = FindFirstFile(lbuf,&fd);
+    if (h != INVALID_HANDLE_VALUE)
+    {
+      do
+      {
+#ifdef NSIS_SUPPORT_RMDIR
+        if (fd.cFileName[0] != '.' ||
+            (fd.cFileName[1] != '.' && fd.cFileName[1]))
+#endif//NSIS_SUPPORT_RMDIR
+        {
+          mystrcpy(fn,fd.cFileName);
+          if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+          {
+#ifdef NSIS_SUPPORT_RMDIR
+            if ((flags & DEL_DIR | DEL_RECURSE) == (DEL_DIR | DEL_RECURSE))
+            {
+              myDelete(buf,flags);
+            }
+#endif//NSIS_SUPPORT_RMDIR
+          }
+          else
+          {
+            log_printf2("Delete: DeleteFile(\"%s\")",buf);
+            SetFileAttributes(buf,fd.dwFileAttributes&(~FILE_ATTRIBUTE_READONLY));
+            if (!DeleteFile(buf))
+            {
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+              if (flags & DEL_REBOOT)
+              {
+                log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf);
+                update_status_text(LANG_DELETEONREBOOT,buf);
+                MoveFileOnReboot(buf,NULL);
+              }
+              else
+#endif//NSIS_SUPPORT_MOVEONREBOOT
+              {
+                log_printf2("Delete: DeleteFile failed(\"%s\")",buf);
+                g_exec_flags.exec_error++;
+              }
+            }
+            else
+              update_status_text(LANG_DELETEFILE,buf);
+          }
+        }
+      } while (FindNextFile(h,&fd));
+      FindClose(h);
+    }
+
+#ifdef NSIS_SUPPORT_RMDIR
+    if (flags & DEL_DIR)
+      fn[-1]=0;
+#endif//NSIS_SUPPORT_RMDIR
+  }
+
+#ifdef NSIS_SUPPORT_RMDIR
+  if (flags & DEL_DIR)
+  {
+    addtrailingslash(buf);
+    log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+    if (!RemoveDirectory(buf))
+    {
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+      if (flags & DEL_REBOOT)
+      {
+        log_printf2("RMDir: RemoveDirectory on Reboot(\"%s\")",buf);
+        update_status_text(LANG_DELETEONREBOOT,buf);
+        MoveFileOnReboot(buf,NULL);
+      }
+      else
+#endif//NSIS_SUPPORT_MOVEONREBOOT
+      {
+        log_printf2("RMDir: RemoveDirectory failed(\"%s\")",buf);
+        g_exec_flags.exec_error++;
+      }
+    }
+    else
+      update_status_text(LANG_REMOVEDIR,buf);
+  }
+#endif//NSIS_SUPPORT_RMDIR
+}
 
 char *NSISCALL addtrailingslash(char *str)
 {

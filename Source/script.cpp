@@ -3929,7 +3929,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!stricmp(line.gettoken_str(a),"/REBOOTOK"))
         {
           a++;
-          ent.offsets[1]=1;
+          ent.offsets[1]=DEL_REBOOT;
 #ifndef NSIS_SUPPORT_MOVEONREBOOT
           ERROR_MSG("Error: /REBOOTOK specified, NSIS_SUPPORT_MOVEONREBOOT not defined\n");
           PRINTHELP()
@@ -3958,23 +3958,37 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int a=1;
         ent.which=EW_RMDIR;
-        if (!stricmp(line.gettoken_str(1),"/r"))
+        ent.offsets[1]=DEL_DIR;
+        while (line.gettoken_str(a)[0]=='/')
         {
-          if (line.getnumtokens() < 3) PRINTHELP()
-          a++;
-          ent.offsets[1]=1;
+          if (!stricmp(line.gettoken_str(a),"/r"))
+          {
+            if (a == 3) PRINTHELP();
+            a++;
+            ent.offsets[1]|=DEL_RECURSE;
+          }
+          else if (!stricmp(line.gettoken_str(a),"/REBOOTOK"))
+          {
+            if (a == 3) PRINTHELP();
+            a++;
+            ent.offsets[1]|=DEL_REBOOT;
+          }          
+          else PRINTHELP();
         }
-        else if (!stricmp(line.gettoken_str(1),"/REBOOTOK"))
-        {
-          if (line.getnumtokens() < 3) PRINTHELP()
-          a++;
-          ent.offsets[1]=2;
-        }          
-        else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
+        if (a < line.getnumtokens() - 1) PRINTHELP();
         ent.offsets[0]=add_string(line.gettoken_str(a));
-        SCRIPT_MSG("RMDir: %s%s\"%s\"\n",a==1?"":line.gettoken_str(1),ent.offsets[1]?" ":"",line.gettoken_str(a));
+        SCRIPT_MSG("RMDir: ");
+        if (a>1)
+          SCRIPT_MSG("%s ",line.gettoken_str(1));
+        if (a>2)
+          SCRIPT_MSG("%s ",line.gettoken_str(2));
+        SCRIPT_MSG("\"%s\"\n",line.gettoken_str(a));
 
         DefineInnerLangString(NLF_REMOVE_DIR);
+        DefineInnerLangString(NLF_DEL_FILE);
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+        DefineInnerLangString(NLF_DEL_ON_REBOOT);
+#endif
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_RMDIR

@@ -54,7 +54,7 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir);
 int NSISCALL my_MessageBox(const char *text, UINT type);
 void * NSISCALL my_GlobalAlloc(DWORD dwBytes);
 
-void NSISCALL doRMDir(char *buf, int recurse);
+void NSISCALL myDelete(char *buf, int flags);
 
 HANDLE NSISCALL myOpenFile(const char *fn, DWORD da, DWORD cd);
 int NSISCALL validpathspec(char *ubuf);
