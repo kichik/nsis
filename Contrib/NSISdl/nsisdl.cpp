@@ -200,7 +200,7 @@ __declspec(dllexport) void download (HWND   parent,
         char *p=filename;
         while (*p) p++;
         while (*p != '\\' && p != filename) p=CharPrev(filename,p);
-        wsprintf(buf,szDownloading, p+1);
+        wsprintf(buf,szDownloading, p!=filename?p+1:p);
         SetDlgItemText(g_childwnd,1006,buf);
 
         SetDlgItemText (g_dialog, IDC_STATIC2, szConnecting);
