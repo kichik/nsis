@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2003 Sunil Kamath
+  Modified by Joost Verburg
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,61 +25,42 @@
 
 #define TOOLBAR_ID                   10001
 
-#define NUMIMAGES       22
-#define IMAGEWIDTH      16
-#define IMAGEHEIGHT     16
-#define BUTTONWIDTH     0
-#define BUTTONHEIGHT    0
-
-// Altered by Darren Owen (DrO) on 1/10/2003
-#define BUTTONCOUNT     21 // was 20
+#define IMAGECOUNT      16
+#define BUTTONCOUNT     15
 
 #define TBB_LOADSCRIPT                   0
 #define TBB_SAVE                         1
-#define TBB_EXIT                         2
-#define TBB_SEP1                         3
-#define TBB_COPY                         4
-#define TBB_FIND                         5
-#define TBB_SEP2                         6
-#define TBB_SETTINGS                     7
-#define TBB_RECOMPILE                    8
-#define TBB_TEST                         9
-// Added by Darren Owen (DrO) on 1/10/2003 and altered following ids
-#define TBB_RECOMPILE_TEST               10
-#define TBB_COMPRESSOR                   11
-#define TBB_EDITSCRIPT                   12
-#define TBB_BROWSESCR                    13
-#define TBB_CLEARLOG                     14
-#define TBB_SEP3                         15
-#define TBB_NSISHOME                     16
-#define TBB_FORUM                        17
-#define TBB_NSISUPDATE                   18
-#define TBB_SEP4                         19
-#define TBB_DOCS                         20
+#define TBB_SEP1                         2
+#define TBB_COPY                         3
+#define TBB_FIND                         4
+#define TBB_SEP2                         5
+#define TBB_RECOMPILE                    6
+#define TBB_TEST                         7
+#define TBB_COMPRESSOR                   8
+#define TBB_EDITSCRIPT                   9
+#define TBB_BROWSESCR                    10
+#define TBB_CLEARLOG                     11
+#define TBB_SEP3                         12
+#define TBB_NSISHOME                     13
+#define TBB_DOCS                         14
 
 #define IDB_LOADSCRIPT                   0
 #define IDB_SAVE                         1
-#define IDB_EXIT                         2
-#define IDB_COPY                         3
-#define IDB_FIND                         4
-#define IDB_RECOMPILE                    5
-#define IDB_SETTINGS                     6
-#define IDB_COMPRESSOR                   7
-#define IDB_COMPRESSOR_SCRIPT            7
-#define IDB_TEST                         8
-#define IDB_EDITSCRIPT                   9
-#define IDB_BROWSESCR                    10
-#define IDB_CLEARLOG                     11
-#define IDB_NSISHOME                     12
-#define IDB_FORUM                        14
-#define IDB_NSISUPDATE                   15
-#define IDB_DOCS                         16
-#define IDB_COMPRESSOR_BZIP2             17
-#define IDB_COMPRESSOR_ZLIB              18
-// Added by Darren Owen (DrO) on 1/10/2003
-#define IDB_RECOMPILE_TEST               19
-#define IDB_COMPRESSOR_BEST              20
-#define IDB_COMPRESSOR_LZMA              21
+#define IDB_COPY                         2
+#define IDB_FIND                         3
+#define IDB_RECOMPILE                    4
+#define IDB_TEST                         5
+#define IDB_EDITSCRIPT                   6
+#define IDB_BROWSESCR                    7
+#define IDB_CLEARLOG                     8
+#define IDB_NSISHOME                     9
+#define IDB_DOCS                         10
+#define IDB_COMPRESSOR                   11
+#define IDB_COMPRESSOR_SCRIPT            11
+#define IDB_COMPRESSOR_BZIP2             12
+#define IDB_COMPRESSOR_ZLIB              13
+#define IDB_COMPRESSOR_BEST              14
+#define IDB_COMPRESSOR_LZMA              15
 
 typedef struct ToolBarStruct {
   HWND hwnd;

@@ -145,19 +145,11 @@ SOURCE=.\utils.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE="..\Icons\adni18-installer-B.ico"
-# End Source File
-# Begin Source File
-
 SOURCE=.\logo.bmp
 # End Source File
 # Begin Source File
 
 SOURCE="..\Graphics\Icons\modern-install-blue-full.ico"
-# End Source File
-# Begin Source File
-
-SOURCE="..\Icons\modern-install.ico"
 # End Source File
 # Begin Source File
 

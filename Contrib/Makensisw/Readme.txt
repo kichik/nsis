@@ -32,7 +32,7 @@ For the options, please see the MakeNSIS documentation.
 Shortcut Keys
 -------------
 Ctrl+A: Select All text
-Ctrl+B: Browse Script
+Ctrl+B: Open Script Folder
 Ctrl+C: Copy selected text
 Ctrl+D: Opens the Define Symbols dialog
 Ctrl+E: Edits the script
@@ -40,7 +40,7 @@ Ctrl+F: Find text
 Ctrl+L: Load a script
 Ctrl+R: Recompiles the script
 Ctrl+T: Tests the installer
-Ctrl+W: Clears Log Window
+Ctrl+W: Clear Log Window
 Alt+X: Exits the application
 F1: View Documentation
 
@@ -168,6 +168,7 @@ Version History
  - Define Symbols menu (Ctrl+D)
 
 2.0
+ - Improved user interface
  - Define Symbols is available even if a script is not loaded.
  - Defined Symbols are saved on exit and reloaded on start.
  - Added NSIS Update menu.
@@ -181,7 +182,7 @@ Version History
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater
-Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, and Sunil Kamath
+Contributors: Justin Frankel, Fritz Elfert, Amir Szekely, Sunil Kamath, Joost Verburg
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
