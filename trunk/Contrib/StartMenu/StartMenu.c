@@ -276,7 +276,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     break;
     case WM_USER+666:
       g_done = 1;
-      if (wParam == 0xD1E)
+      if (wParam == NOTIFY_BYE_BYE)
         pushstring("cancel");
       else
       {

@@ -697,9 +697,9 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
     return 0;
     case WM_USER+666:
-      if (wParam == 0xD1E || wParam == -1 || ValidateFields()) {
+      if (wParam == NOTIFY_BYE_BYE || wParam == -1 || ValidateFields()) {
         if (wParam == -1) g_is_back++;
-        if (wParam == 0xD1E) g_is_cancel++;
+        if (wParam == NOTIFY_BYE_BYE) g_is_cancel++;
         g_done++;
         PostMessage(hwndDlg,WM_CLOSE,0,0);
       }
