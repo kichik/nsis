@@ -97,11 +97,13 @@ enumex: ; End of drives or user cancel
      System::Free $1
 
      ; ----- Sample 6 ----- systemGetFileSysTime demo -----
+     Call       GetInstallerExeName
+     pop        $0
 
-     !insertmacro smGetFileSysTime $CMDLINE
+     !insertmacro smGetFileSysTime $0
      System::Call '*$R0${stSYSTEMTIME}(.r1, .r2, .r3, .r4, .r5, .r6, .r7, .r8)'
  
-     MessageBox MB_OK "GetFileSysTime example: file '$CMDLINE', year $1, month $2, dow $3, day $4, hour $5, min $6, sec $7, ms $8"     
+     MessageBox MB_OK "GetFileSysTime example: file '$0', year $1, month $2, dow $3, day $4, hour $5, min $6, sec $7, ms $8"     
 
      ; free memory from SYSTEMTIME
      System::Free $R0   
