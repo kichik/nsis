@@ -44,24 +44,29 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
   SetOutPath $INSTDIR
+  RMDir /r $SMPROGRAMS\NSIS
+
   SetOverwrite try
   Delete $INSTDIR\makensis-bz2.exe
   File ..\makensis.exe
   File ..\makensisw.exe
   File ..\makensis.htm
   File ..\license.txt
+  SetOverwrite off
+  File ..\nsisconf.nsi
+  SetOverwrite try
+
   SetOutPath $INSTDIR\Docs
   File ..\Docs\*.html
   File ..\Docs\*.css
-  SetOutPath $INSTDIR
-  SetOverwrite off
-  File ..\nsisconf.nsi
+
+  SetOutPath $INSTDIR\Contrib\Makensisw
+  File ..\contrib\makensisw\*.txt
 SectionEnd
 
 Section "NSIS Examples (recommended)" SecExample
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
-  SetOverwrite try
   Delete $INSTDIR\*.nsh
   Delete $INSTDIR\viewhtml.nsi
   Delete $INSTDIR\waplugin.nsi
@@ -122,16 +127,11 @@ Section "Start Menu + Desktop Shortcuts" SecIcons
   SetOutPath $INSTDIR
   CreateDirectory $SMPROGRAMS\NSIS
 
-  Delete "$SMPROGRAMS\NSIS\NSIS Home Page.lnk"
-  Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.lnk"
-  Delete "$SMPROGRAMS\NSIS\NSI Online Template Generator.url"
-
-  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" "/CD"
+  CreateShortCut "$SMPROGRAMS\NSIS\MakeNSIS GUI.lnk" "$INSTDIR\Makensisw.exe" "/CD"
   WriteINIStr "$SMPROGRAMS\NSIS\NSIS Home Page.url" "InternetShortcut" "URL" "http://www.nullsoft.com/free/nsis/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\makensis.htm"
-  CreateShortCut "$SMPROGRAMS\NSIS\NSIS Program Directory.lnk" "$INSTDIR"
-
+  
   CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" "/CD"
 SectionEnd
 
@@ -139,96 +139,58 @@ SubSection "Contrib" SecContrib
 Section "Extra Icons" SecContribIcons
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Icons
-  SetOverwrite try
   Delete $INSTDIR\Contrib\*.ico
   Delete $INSTDIR\Contrib\*.bmp
   File ..\Contrib\Icons\*.ico
   File ..\Contrib\Icons\*.bmp
-  SetOutPath $INSTDIR
 SectionEnd
 
 Section "Extra UIs" SecContribUIs
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\UIs
-  SetOverwrite try
   File ..\Contrib\UIs\*.exe
-  SetOutPath $INSTDIR
 SectionEnd
 
 Section "Language files" SecContribLang
   SectionIn 1 2
   SetOutPath "$INSTDIR\Contrib\Language files"
-  SetOverwrite try
   File "..\Contrib\Language files\*.nlf"
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
-  SetOutPath $INSTDIR
 SectionEnd
 
 Section "Language DLL" SecContribLangDLL
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
-  SetOverwrite try
   File ..\Plugins\LangDLL.dll
-  SetOutPath $INSTDIR\Contrib\LangDLL
-  File ..\Contrib\LangDLL\LangDLL.c
-  File ..\Contrib\LangDLL\resource.h
-  File ..\Contrib\LangDLL\resource.rc
-  File ..\Contrib\LangDLL\LangDLL.dsw
-  File ..\Contrib\LangDLL\LangDLL.dsp
 SectionEnd
 
 Section "nsExec" SecContribnsExec
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
-  SetOverwrite try
   File ..\Plugins\nsExec.dll
   SetOutPath $INSTDIR\Contrib\nsExec
-  File ..\Contrib\nsExec\*.c
-  File ..\Contrib\nsExec\*.h
   File ..\Contrib\nsExec\*.txt
-  File ..\Contrib\nsExec\*.dsw
-  File ..\Contrib\nsExec\*.dsp
 SectionEnd
 
 Section "Splash" SecContribSplash
   SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\Splash
-  SetOverwrite try
-  File ..\Contrib\Splash\splash.c
-  File ..\Contrib\Splash\splash.dsp
-  File ..\Contrib\Splash\splash.dsw
-  File ..\Contrib\splash\splash.txt
   SetOutPath $INSTDIR\Bin
   File ..\Bin\splash.exe
+  SetOutPath $INSTDIR\Contrib\Splash
+  File ..\Contrib\splash\splash.txt
 SectionEnd
 
 Section "UberSplash w/transparency" SecContribSplashT
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
-  SetOverwrite try
   File ..\Bin\UberSplash.exe
   SetOutPath $INSTDIR\Contrib\UberSplash
-  SetOverwrite try
-  File ..\Contrib\UberSplash\splash.*
   File ..\Contrib\UberSplash\*.txt
 SectionEnd
 
 Section "Zip2Exe" SecContribZ2E
   SectionIn 1 2
-  DetailPrint "Extracting zip2exe source"
-  SetDetailsPrint textonly
-  RMDir /r $INSTDIR\Source\Zip2Exe
-  SetOutPath $INSTDIR\Contrib\zip2exe
-  SetOverwrite try
-  File ..\Contrib\zip2exe\*.cpp
-  File ..\Contrib\zip2exe\*.ico
-  File ..\Contrib\zip2exe\*.h
-  File ..\Contrib\zip2exe\*.rc
-  File ..\Contrib\zip2exe\*.dsw
-  File ..\Contrib\zip2exe\*.dsp
-  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
-  File ..\Contrib\zip2exe\zlib\*.*
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
   SetDetailsPrint both
@@ -236,33 +198,21 @@ SectionEnd
 
 Section "InstallOptions" SecContribIO
   SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\InstallOptions
-  SetOverwrite try
-  File ..\contrib\installoptions\io.dsp
-  File ..\contrib\installoptions\io.dsw
-  File ..\contrib\installoptions\test.ini
-  File ..\contrib\installoptions\test.nsi
-  File ..\contrib\installoptions\InstallerOptions.cpp
-  File ..\contrib\installoptions\*.rc
-  File ..\contrib\installoptions\*.h
-  File "..\contrib\installoptions\Install Options.html"
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\InstallOptions.dll
+  SetOutPath $INSTDIR\Contrib\InstallOptions
+  File "..\contrib\installoptions\Install Options.html"
+  File ..\contrib\installoptions\test.ini
+  File ..\contrib\installoptions\test.nsi
 
 SectionEnd
 
 Section "NSIS-DL" SecContribNSISDL
   SectionIn 1 2
-  SetOutPath $INSTDIR\Contrib\NSISdl
-  SetOverwrite try
-  File ..\contrib\NSISdl\nsisdl.dsw
-  File ..\contrib\NSISdl\nsisdl.dsp
-  File ..\contrib\NSISdl\*.cpp
-  File ..\contrib\NSISdl\*.h
-  File ..\contrib\NSISdl\*.rc
-  File ..\contrib\NSISdl\ReadMe.txt
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
+  SetOutPath $INSTDIR\Contrib\NSISdl
+  File ..\contrib\NSISdl\ReadMe.txt
 
 SectionEnd
 SubSectionEnd
@@ -274,7 +224,6 @@ Section "NSIS Source Code" SecSrcNSIS
   DetailPrint "Extracting source code...."
   SetDetailsPrint textonly
   SetOutPath $INSTDIR\Source
-  SetOverwrite try
   File ..\Source\*.cpp
   File ..\Source\*.c
   File ..\Source\*.h
@@ -303,18 +252,15 @@ SubSection "Contrib" SecSrcContrib
 Section "ExDLL Source" SecSrcEx
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
-  SetOverwrite try
   File ..\contrib\exdll\exdll.c
   File ..\contrib\exdll\exdll.dpr
   File ..\contrib\exdll\exdll.dsp
   File ..\contrib\exdll\exdll.dsw
-  SetOutPath $INSTDIR
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Makensisw
-  SetOverwrite try
   File ..\contrib\makensisw\*.cpp
   File ..\contrib\makensisw\*.xml
   File ..\contrib\makensisw\*.h
@@ -324,56 +270,171 @@ Section "MakeNSISW Source" SecSrcMNW
   #File ..\contrib\makensisw\Makefile
 
 SectionEnd
+
+
+Section "Language DLL Source" SecContribLangDLLS
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Contrib\LangDLL
+  File ..\Contrib\LangDLL\LangDLL.c
+  File ..\Contrib\LangDLL\resource.h
+  File ..\Contrib\LangDLL\resource.rc
+  File ..\Contrib\LangDLL\LangDLL.dsw
+  File ..\Contrib\LangDLL\LangDLL.dsp
+SectionEnd
+
+Section "nsExec Source" SecContribnsExecS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\nsExec
+  File ..\Contrib\nsExec\*.c
+  File ..\Contrib\nsExec\*.h
+  File ..\Contrib\nsExec\*.txt
+  File ..\Contrib\nsExec\*.dsw
+  File ..\Contrib\nsExec\*.dsp
+SectionEnd
+
+Section "Splash Source" SecContribSplashS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\Splash
+  File ..\Contrib\Splash\splash.c
+  File ..\Contrib\Splash\splash.dsp
+  File ..\Contrib\Splash\splash.dsw
+  File ..\Contrib\splash\splash.txt
+SectionEnd
+
+Section "UberSplash Source" SecContribSplashTS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\UberSplash
+  File ..\Contrib\UberSplash\splash.*
+  File ..\Contrib\UberSplash\*.txt
+SectionEnd
+
+Section "Zip2Exe Source" SecContribZ2ES
+  SectionIn 1
+  DetailPrint "Extracting zip2exe source"
+  SetDetailsPrint textonly
+  RMDir /r $INSTDIR\Source\Zip2Exe
+  SetOutPath $INSTDIR\Contrib\zip2exe
+  File ..\Contrib\zip2exe\*.cpp
+  File ..\Contrib\zip2exe\*.ico
+  File ..\Contrib\zip2exe\*.h
+  File ..\Contrib\zip2exe\*.rc
+  File ..\Contrib\zip2exe\*.dsw
+  File ..\Contrib\zip2exe\*.dsp
+  SetOutPath $INSTDIR\Contrib\zip2exe\zlib
+  File ..\Contrib\zip2exe\zlib\*.*
+  SetDetailsPrint both
+SectionEnd
+
+Section "InstallOptions Source" SecContribIOS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\InstallOptions
+  File ..\contrib\installoptions\io.dsp
+  File ..\contrib\installoptions\io.dsw
+  File ..\contrib\installoptions\test.ini
+  File ..\contrib\installoptions\test.nsi
+  File ..\contrib\installoptions\InstallerOptions.cpp
+  File ..\contrib\installoptions\*.rc
+  File ..\contrib\installoptions\*.h
+  File "..\contrib\installoptions\Install Options.html"
+SectionEnd
+
+
+Section "NSIS-DL Source" SecSrcNSISDL
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\NSISdl
+  File ..\contrib\NSISdl\nsisdl.dsw
+  File ..\contrib\NSISdl\nsisdl.dsp
+  File ..\contrib\NSISdl\*.cpp
+  File ..\contrib\NSISdl\*.h
+  File ..\contrib\NSISdl\*.rc
+  File ..\contrib\NSISdl\ReadMe.txt
+SectionEnd
+
 SubSectionEnd
 SubSectionEnd
 
 Section -post
+  SetOutPath $INSTDIR
   WriteRegStr HKLM SOFTWARE\NSIS "" $INSTDIR
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "DisplayName" "NSIS Development Kit (remove only)"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "UninstallString" '"$INSTDIR\uninst-nsis.exe"'
-  SetOutPath $INSTDIR
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
 
-    IfFileExists $INSTDIR\Contrib\Makensisw 0 NoMNWShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\MakeNSISW project workspace.lnk" "$INSTDIR\contrib\MakeNsisw\makensisw.dsw"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
+    IfFileExists $INSTDIR\Examples 0 NoExShortCuts
+      CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
+    NoExShortCuts:
+
+    CreateDirectory $SMPROGRAMS\NSIS\Contrib
+    CreateShortCut "$SMPROGRAMS\NSIS\Contrib\MakeNSISW readme.lnk" "$INSTDIR\contrib\MakeNsisw\readme.txt"
+
+    IfFileExists $INSTDIR\Contrib\Makensisw\*.dsw 0 NoMNWShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\MakeNSISW project workspace.lnk" "$INSTDIR\contrib\MakeNsisw\makensisw.dsw"
     NoMNWShortCuts:
     IfFileExists "$INSTDIR\Contrib\ExDll" 0 NoExDLLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\ExDLL project workspace.lnk" "$INSTDIR\contrib\ExDLL\exdll.dsw"
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\ExDLL project workspace.lnk" "$INSTDIR\contrib\ExDLL\exdll.dsw"
     NoExDLLShortCuts:
     IfFileExists "$INSTDIR\Source" 0 NoSourceShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Source      
+      CreateDirectory $SMPROGRAMS\NSIS\Source
       CreateShortCut "$SMPROGRAMS\NSIS\Source\MakeNSIS project workspace.lnk" "$INSTDIR\source\makenssi.dsw"
     NoSourceShortCuts:
+
     IfFileExists "$INSTDIR\Plugins\installoptions.dll" 0 NoIOShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\InstallOptions Readme.lnk" "$INSTDIR\contrib\InstallOptions\install options.html"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\InstallOptions project workspace.lnk" "$INSTDIR\contrib\InstallOptions\io.dsw"
     NoIOShortCuts:
+    
+    IfFileExists "$INSTDIR\Contrib\InstallOptions\io.dsw" 0 NoIOShortCutsS
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\InstallOptions project workspace.lnk" "$INSTDIR\contrib\InstallOptions\io.dsw"
+    NoIOShortCutsS:
+
     IfFileExists "$INSTDIR\Bin\zip2exe.exe" 0 Noz2eShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
-      Delete "$SMPROGRAMS\Bin\NSIS\ZIP2EXE converter.lnk"
-      Delete "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP2EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\ZIP2EXE project workspace.lnk" "$INSTDIR\source\zip2exe\zip2exe.dsw"
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\ZIP 2 EXE converter.lnk" "$INSTDIR\Bin\zip2exe.exe"
     Noz2eShortCuts:
+
+    IfFileExists "$INSTDIR\Contrib\ZIP2EXE\*.dsw" 0 Noz2eShortCutsS
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\ZIP2EXE project workspace.lnk" "$INSTDIR\source\zip2exe\zip2exe.dsw"
+    Noz2eShortCutsS:
+
     IfFileExists "$INSTDIR\Examples\Modern UI\Readme.html" 0 NoMUIShortCuts
       CreateDirectory $SMPROGRAMS\NSIS\Contrib
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
     NoMUIShortCuts:
+
     IfFileExists "$INSTDIR\Bin\splash.exe" 0 NoSPLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\Splash project workspace.lnk" "$INSTDIR\source\splash\splash.dsw"
     NoSPLShortCuts:
+
+    IfFileExists "$INSTDIR\Contrib\Splash\*.dsw" 0 NoSPLShortCutsS
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\Splash project workspace.lnk" "$INSTDIR\Contrib\splash\splash.dsw"
+    NoSPLShortCutsS:
+
+    IfFileExists "$INSTDIR\Bin\ubersplash.exe" 0 NoUSPLShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\UberSplash Screen Help.lnk" "$INSTDIR\contrib\ubersplash\ubersplash.txt"
+    NoUSPLShortCuts:
+
+    IfFileExists "$INSTDIR\Contrib\UberSplash\*.dpr" 0 NoUSPLShortCutsS
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\UberSplash project directory.lnk" "$INSTDIR\Contrib\ubersplash"
+    NoUSPLShortCutsS:
+
+
     IfFileExists "$INSTDIR\Plugins\nsisdl.dll" 0 NoDLShortCuts
-      CreateDirectory $SMPROGRAMS\NSIS\Contrib\Source
+      CreateDirectory $SMPROGRAMS\NSIS\Contrib
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\NSIS-DL Readme.lnk" "$INSTDIR\contrib\NSISDL\ReadMe.txt"
-      CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Source\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
     NoDLShortCuts:
 
+    IfFileExists "$INSTDIR\Contrib\NSISDL\*.dsw" 0 NoDLSShortCuts
+      CreateDirectory $SMPROGRAMS\NSIS\Source\Contrib
+      CreateShortCut "$SMPROGRAMS\NSIS\Source\Contrib\NSIS-DL project workspace.lnk" "$INSTDIR\contrib\NSISDL\nsisdl.dsw"
+    NoDLSShortCuts:
 
     ExecShell open '$SMPROGRAMS\NSIS'
     Sleep 500
@@ -526,14 +587,8 @@ Section Uninstall
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
   DeleteRegKey HKLM SOFTWARE\NSIS
 
-  Delete $SMPROGRAMS\NSIS\Contrib\*.lnk
-  Delete $SMPROGRAMS\NSIS\Contrib\*.url
-  RMDir $SMPROGRAMS\NSIS\Contrib
+  RMDir /r $SMPROGRAMS\NSIS
   RMDir /r $INSTDIR\Contrib
-
-  Delete $SMPROGRAMS\NSIS\*.lnk
-  Delete $SMPROGRAMS\NSIS\*.url
-  RMDir $SMPROGRAMS\NSIS
   Delete $DESKTOP\MakeNSIS.lnk
   Delete $INSTDIR\makensis*.exe
   Delete $INSTDIR\Docs\*.html
