@@ -57,6 +57,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Opravdu chcete ukonèit instalaci programu ${MUI_PRODUCT}?"  
 
 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Kliknìte na Odinstalovat pro spuštìní odinstalace."
+
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Odinstalování programu ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Odstranìní programu ${MUI_PRODUCT} z Vašeho systému."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Tímto odinstalujete program ${MUI_PRODUCT} z Vašeho systému."
