@@ -91,17 +91,26 @@ void CEXEBuild::restore_timestamp_predefine(char *oldtimestamp)
   }
 }
 
-char *CEXEBuild::set_line_predefine(int linecnt)
+char *CEXEBuild::set_line_predefine(int linecnt, BOOL is_macro)
 {
-  char linebuf[32] = "";
-  wsprintf(linebuf,"%d",linecnt);
+  char* linebuf = NULL;
+  char temp[8] = "";
+  wsprintf(temp,"%d",linecnt);
 
   char *oldline = definedlist.find("__LINE__");
   if(oldline) {
     oldline = strdup(oldline);
     definedlist.del("__LINE__");
   }
+  if(is_macro && oldline) {
+    linebuf = (char *)malloc(strlen(oldline)+strlen(temp)+2);
+    wsprintf(linebuf,"%s.%s",oldline,temp);
+  }
+  else {
+    linebuf = strdup(temp);
+  }
   definedlist.add("__LINE__",linebuf);
+  free(linebuf);
 
   return oldline;
 }
@@ -434,7 +443,7 @@ int CEXEBuild::parseScript()
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
-    char *oldline = set_line_predefine(linecnt);
+    char *oldline = set_line_predefine(linecnt, FALSE);
 #endif
 
     ps_addtoline(str,linedata,hist);
@@ -471,18 +480,17 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
   BOOL is_macro = !strncmp(filename,"macro:",strlen("macro:"));
 
   if(!is_commandline) { // Don't set the predefines for command line /X option
-    if(is_macro) {
-      oldline = set_line_predefine(last_linecnt+linecnt-1); // This is done so that line numbers are 
-    }                                                       //handled properly when macros are inserted.
-    else {
+    if(!is_macro) {
       oldfilename = set_file_predefine(curfilename);
       oldtimestamp = set_timestamp_predefine(curfilename);
-      oldline = set_line_predefine(linecnt);
     }
+    oldline = set_line_predefine(linecnt, is_macro);
   }
 #endif
 
   ps_addtoline(line,linedata,hist);
+  linedata.add((void*)"",1);
+  int ret=doParse((char*)linedata.get());
 
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
@@ -494,9 +502,6 @@ int CEXEBuild::process_oneline(char *line, char *filename, int linenum)
     restore_line_predefine(oldline);
   }
 #endif
-
-  linedata.add((void*)"",1);
-  int ret=doParse((char*)linedata.get());
 
   linecnt=last_linecnt;
   curfilename=last_filename;
