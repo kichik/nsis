@@ -31,8 +31,10 @@ InstallDirRegKey HKLM Software\NSIS ""
 
 ;--------------------------------
 
-;Include Modern UI
+;Header Files
+
 !include "MUI.nsh"
+!include "Sections.nsh"
 
 ;--------------------------------
 ;Configuration
@@ -85,8 +87,6 @@ Page custom PageReinstall PageLeaveReinstall
 
 ;--------------------------------
 ;Installer Sections
-
-!define SF_SELECTED 1
 
 Section "NSIS Core Files (required)" SecCore
 
@@ -240,7 +240,7 @@ SubSection "User Interfaces" SecInterfaces
 Section "Modern User Interface" SecInterfacesModernUI
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Interfaces | Modern User Interface..."
+  DetailPrint "Installing User Interfaces | Modern User Interface..."
   SetDetailsPrint listonly
 
   SectionIn 1 2 3
@@ -286,7 +286,7 @@ SectionEnd
 Section "Default User Interface" SecInterfacesDefaultUI
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Interfaces | Default User Interface..."
+  DetailPrint "Installing User Interfaces | Default User Interface..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -299,7 +299,7 @@ SectionEnd
 Section "Tiny User Interface" SecInterfacesTinyUI
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Interfaces | Tiny User Interface..."
+  DetailPrint "Installing User Interfaces | Tiny User Interface..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -311,7 +311,7 @@ SectionEnd
 
 SubSectionEnd
 
-Section "Graphics" SecPluginsGraphics
+Section "Graphics" SecGraphics
 
   SetDetailsPrint textonly
   DetailPrint "Installing Graphics..."
@@ -327,10 +327,10 @@ Section "Graphics" SecPluginsGraphics
   File /r "..\Contrib\Graphics\*.bmp"
 SectionEnd
 
-Section "Language files" SecPluginsLang
+Section "Language Files" SecLangFiles
 
   SetDetailsPrint textonly
-  DetailPrint "Installing Language files..."
+  DetailPrint "Installing Language Files..."
   SetDetailsPrint listonly
 
   SectionIn 1 2
@@ -341,11 +341,10 @@ Section "Language files" SecPluginsLang
   SetOutPath $INSTDIR\Bin
   File ..\Bin\MakeLangID.exe
 
-  SectionGetFlags ${SecInterfacesModernUI} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    IntCmp $R0 ${SF_SELECTED} 0 nomui nomui
-      SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
-      File "..\Contrib\Modern UI\Language files\*.nsh"
+  !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
+  mui:
+    SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+    File "..\Contrib\Modern UI\Language files\*.nsh"
   nomui:
 
 SectionEnd
@@ -983,32 +982,38 @@ Section -post
   ; * Always install the English language file
   ; * Always install default icons / bitmaps
 
-  SectionGetFlags ${SecInterfacesModernUI} $R0
-  IntOp $R0 $R0 & ${SF_SELECTED}
-    IntCmp $R0 ${SF_SELECTED} "" nomui nomui
+  !insertmacro SectionFlagIsSet ${SecInterfacesModernUI} ${SF_SELECTED} mui nomui
+  
+    mui: 
 
-      SetDetailsPrint textonly
-      DetailPrint "Configurating Modern UI..."
-      SetDetailsPrint listonly
+    SetDetailsPrint textonly
+    DetailPrint "Configurating Modern UI..."
+    SetDetailsPrint listonly
 
-
-    SectionGetFlags ${SecPluginsLang} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    IntCmp $R0 ${SF_SELECTED} langfiles
+    !insertmacro SectionFlagIsSet ${SecLangFiles} ${SF_SELECTED} langfiles nolangfiles
     
+      nolangfiles:
+      
+      SetOutPath "$INSTDIR\Contrib\Language files"
+      File "..\Contrib\Language files\English.nlf"
       SetOutPath "$INSTDIR\Contrib\Modern UI\Language files"
+      File "..\Contrib\Modern UI\Language files\Default.nsh"
       File "..\Contrib\Modern UI\Language files\English.nsh"
 
     langfiles:
 
-    SectionGetFlags ${SecPluginsGraphics} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    IntCmp $R0 ${SF_SELECTED} graphics
-
+    !insertmacro SectionFlagIsSet ${SecGraphics} ${SF_SELECTED} graphics nographics
+      
+      nographics:
+      
       SetOutPath $INSTDIR\Contrib\Graphics
+      SetOutPath $INSTDIR\Contrib\Graphics\Checks
+      File "..\Contrib\Graphics\Checks\modern.bmp"
       SetOutPath $INSTDIR\Contrib\Graphics\Icons
       File "..\Contrib\Graphics\Icons\modern-install.ico"
       File "..\Contrib\Graphics\Icons\modern-uninstall.ico"
+      SetOutPath $INSTDIR\Contrib\Graphics\Header
+      File "..\Contrib\Graphics\Header\nsis.bmp"
       SetOutPath $INSTDIR\Contrib\Graphics\Wizard
       File "..\Contrib\Graphics\Wizard\win.bmp"
 
@@ -1171,8 +1176,7 @@ Section -post
   SetDetailsPrint none
   RMDir $INSTDIR\Contrib\Source
   SetDetailsPrint lastused
-
-  Delete $INSTDIR\uninst-nsis.exe
+  
   WriteUninstaller $INSTDIR\uninst-nsis.exe
 
   SetDetailsPrint both
@@ -1195,8 +1199,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsUpdate} "A tool that lets you check for new NSIS releases and download the latest development files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsZ2E} "A utility that converts a ZIP file to a NSIS installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecToolsZ2ES} "Source code to a utility that converts a ZIP file to a NSIS installer"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsGraphics} "Icons, checkbox images and other graphics"
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsLang} "Language files used to support multiple languages in an installer"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGraphics} "Icons, checkbox images and other graphics"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecLangFiles} "Language files used to support multiple languages in an installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsPlugins} "Useful plugins that extend NSIS's functionality"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsPluginsS} "Source code for plugins"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsBanner} "Plugin that lets you show a banner before installation starts"
@@ -1403,40 +1407,28 @@ Section Uninstall
   DetailPrint "Uninstalling NSI Development Shell Extensions..."
   SetDetailsPrint listonly
 
-  IfFileExists $INSTDIR\makensis.exe skip_confirmation
-    MessageBox MB_YESNO "It does not appear that NSIS is installed in the directory '$INSTDIR'.$\r$\nContinue anyway (not recommended)" IDYES skip_confirmation
+  IfFileExists $INSTDIR\makensis.exe nsis_installed
+    MessageBox MB_YESNO "It does not appear that NSIS is installed in the directory '$INSTDIR'.$\r$\nContinue anyway (not recommended)?" IDYES nsis_installed
     Abort "Uninstall aborted by user"
-  skip_confirmation:
-  ReadRegStr $1 HKCR ".nsi" ""
-  StrCmp $1 "NSISFile" 0 NoOwn ; only do this if we own it
-    ReadRegStr $1 HKCR ".nsi" "backup_val"
-    StrCmp $1 "" 0 RestoreBackup ; if backup == "" then delete the whole key
-      DeleteRegKey HKCR ".nsi"
-    Goto NoOwn
-    RestoreBackup:
-      WriteRegStr HKCR ".nsi" "" $1
-      DeleteRegValue HKCR ".nsi" "backup_val"
-  NoOwn:
-
-  ReadRegStr $1 HKCR ".nsh" ""
-  StrCmp $1 "NSHFile" 0 NoOwn2 ; only do this if we own it
-    ReadRegStr $1 HKCR ".nsh" "backup_val"
-    StrCmp $1 "" 0 RestoreBackup2 ; if backup == "" then delete the whole key
-      DeleteRegKey HKCR ".nsh"
-    Goto NoOwn
-    RestoreBackup2:
-      WriteRegStr HKCR ".nsh" "" $1
-      DeleteRegValue HKCR ".nsh" "backup_val"
-  NoOwn2:
+  nsis_installed:
 
   SetDetailsPrint textonly
   DetailPrint "Deleting Registry Keys..."
   SetDetailsPrint listonly
+  
+  ReadRegStr $R0 HKCR ".nsi" ""
+  StrCmp $R0 "NSIS.Script" 0 +2
+    DeleteRegKey HKCR ".nsi"
+    
+  ReadRegStr $R0 HKCR ".nsh" ""
+  StrCmp $R0 "NSIS.Header" 0 +2
+    DeleteRegKey HKCR ".nsh"
 
-  DeleteRegKey HKCR "NSISFile"
-  DeleteRegKey HKCR "NSHFile"
+  DeleteRegKey HKCR "NSIS.Script"
+  DeleteRegKey HKCR "NSIS.Header"
+  
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
-  DeleteRegKey HKLM SOFTWARE\NSIS
+  DeleteRegKey HKLM "Software\NSIS"
 
   SetDetailsPrint textonly
   DetailPrint "Deleting Files..."
