@@ -186,6 +186,30 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 						ShellExecute(g_hwnd,"open",DOCPATH,NULL,NULL,SW_SHOWNORMAL);
 					return TRUE;
 				}
+				case IDM_LOADSCRIPT:
+				{
+					if (!g_hThread) {
+						OPENFILENAME l={sizeof(l),};
+						char buf[MAX_STRING];
+						l.hwndOwner = hwndDlg;
+						l.lpstrFilter = "NSIS Script (*.nsi)\0*.nsi\0All Files (*.*)\0*.*\0";
+						l.lpstrFile = buf;
+						l.nMaxFile = MAX_STRING-1;
+						l.lpstrTitle = "Load Script";
+						l.lpstrDefExt = "log";
+						l.lpstrFileTitle = NULL;
+						l.lpstrInitialDir = NULL;
+						l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST;
+						lstrcpy(buf,"");
+						if (GetOpenFileName(&l)) {
+							g_script = (char *)GlobalAlloc(GPTR,sizeof(buf)+7);
+							wsprintf(g_script,"/CD \"%s\"",buf);
+							ResetObjects();
+							CompileNSISScript();
+						}
+					}
+					return TRUE;
+				}
 				case IDM_RECOMPILE:
 				{
 					CompileNSISScript();
@@ -235,14 +259,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					OPENFILENAME l={sizeof(l),};
 					char buf[MAX_STRING];
 					l.hwndOwner = hwndDlg;
-					l.lpstrFilter = "Log Files (*.log)\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
+					l.lpstrFilter = "Log Files (*.log)\0*.log\0Text Files (*.txt)\0*.txt\0All Files (*.*)\0*.*\0";
 					l.lpstrFile = buf;
 					l.nMaxFile = MAX_STRING-1;
 					l.lpstrTitle = "Save Output";
 					l.lpstrDefExt = "log";
 					l.lpstrInitialDir = NULL;
 					l.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_PATHMUSTEXIST;
-					lstrcpy(buf,"output.log");
+					lstrcpy(buf,"output");
 					if (GetSaveFileName(&l)) {
 						HANDLE hFile = CreateFile(buf,GENERIC_WRITE,0,0,CREATE_ALWAYS,0,0);
 						if (hFile) {

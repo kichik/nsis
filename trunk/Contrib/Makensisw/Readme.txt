@@ -146,6 +146,7 @@ Version History
  - Fixed some random crashes
  - Drag and Drop Support into the Makensisw window
  - Updated icon to Trace's modern NSIS icon
+ - Added Load Script option on File menu
 
 
 Copyright Information
