@@ -3,13 +3,12 @@
 
 ;Language: Korean (1042)
 ;By linak linak@korea.com ( ~ V2.0 BETA3 )
-;By park,kun-hong koder@popdesk.co.kr(wini.pe.kr) ( V2.0 BETA3 ~ ) (last update:2003/12/31)  수정시 꼭 연락 바랍니다.
-
+;By hardkoder@gmail.com(www.kipple.pe.kr) ( V2.0 BETA3 ~ ) (last update:2004/12/13)
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Korean"
 
-  !define MUI_LANGNAME "Korean" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Korean"  ;Use only ASCII characters (if this is not possible, use the English name)
 
   !ifndef EUL_RUL
     !define EUL_RUL	"(을)를"	; ~을/를 문제 해결을 위한 정의 !insertmacro MUI_LANGUAGE "Korean" 하기 전에 define 해 놓으면된다.
@@ -28,7 +27,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "구성 요소 선택"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "설치하고자 하는 $(^NameDA)의 구성 요소를 선택해 주세요."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "상세 설명"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분에 마우스를 올려놓으세요."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분에 마우스를 올려놓으세요."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "상세 설명을 보고 싶으신 부분을 선택하세요."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "설치 위치 선택"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "$(^NameDA)${EUL_RUL} 설치할 폴더를 선택해 주세요."
