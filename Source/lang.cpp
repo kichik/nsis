@@ -403,58 +403,63 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   }
 
 #define SET_INSTRUCTION(id,s) table->common.s=add_string_main(str(id),0);table->ucommon.s=add_string_uninst(str(id),0)
-#if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)
-  SET_INSTRUCTION(NLF_CANT_WRITE, cant_write);
-#endif
-#ifdef NSIS_SUPPORT_RMDIR
-  SET_INSTRUCTION(NLF_REMOVE_DIR, remove_dir);
-#endif
-#ifdef NSIS_SUPPORT_COPYFILES
-  SET_INSTRUCTION(NLF_COPY_FAILED, copy_failed);
-  SET_INSTRUCTION(NLF_COPY_TO, copy_to);
-#endif
-#ifdef NSIS_SUPPORT_ACTIVEXREG
-  SET_INSTRUCTION(NLF_SYMBOL_NOT_FOUND, symbol_not_found);
-  SET_INSTRUCTION(NLF_COULD_NOT_LOAD, could_not_load);
-  SET_INSTRUCTION(NLF_NO_OLE, no_ole);
-  // not used anywhere - SET_INSTRUCTION(NLF_ERR_REG_DLL, err_reg_dll);
-#endif
-#ifdef NSIS_SUPPORT_CREATESHORTCUT
-  SET_INSTRUCTION(NLF_CREATE_SHORTCUT, create_shortcut);
-  SET_INSTRUCTION(NLF_ERR_CREATING_SHORTCUT, err_creating_shortcut);
-#endif
-#ifdef NSIS_SUPPORT_DELETE
-  SET_INSTRUCTION(NLF_DEL_FILE, del_file);
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-  SET_INSTRUCTION(NLF_DEL_ON_REBOOT, del_on_reboot);
-#endif
-#endif
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  SET_INSTRUCTION(NLF_CREATED_UNINST, created_uninst);
-  SET_INSTRUCTION(NLF_ERR_CREATING, err_creating);
-#endif
-#ifdef NSIS_SUPPORT_SHELLEXECUTE
-  SET_INSTRUCTION(NLF_EXEC_SHELL, exec_shell);
-#endif
-#ifdef NSIS_SUPPORT_EXECUTE
-  SET_INSTRUCTION(NLF_EXEC, exec);
-#endif
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-  SET_INSTRUCTION(NLF_RENAME_ON_REBOOT, rename_on_reboot);
-#endif
-#ifdef NSIS_SUPPORT_RENAME
-  SET_INSTRUCTION(NLF_RENAME, rename);
-#endif
-#ifdef NSIS_SUPPORT_FILE
-  SET_INSTRUCTION(NLF_EXTRACT, extract);
-  SET_INSTRUCTION(NLF_ERR_WRITING, err_writing);
-  SET_INSTRUCTION(NLF_ERR_DECOMPRESSING, err_decompressing);
-  SET_INSTRUCTION(NLF_SKIPPED, skipped);
-#endif
-  SET_INSTRUCTION(NLF_INST_CORRUPTED, inst_corrupted);
+
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  #if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)
+    SET_INSTRUCTION(NLF_CANT_WRITE, cant_write);
+  #endif
+  #ifdef NSIS_SUPPORT_RMDIR
+    SET_INSTRUCTION(NLF_REMOVE_DIR, remove_dir);
+  #endif
+  #ifdef NSIS_SUPPORT_COPYFILES
+    SET_INSTRUCTION(NLF_COPY_FAILED, copy_failed);
+    SET_INSTRUCTION(NLF_COPY_TO, copy_to);
+  #endif
+  #ifdef NSIS_SUPPORT_ACTIVEXREG
+    SET_INSTRUCTION(NLF_SYMBOL_NOT_FOUND, symbol_not_found);
+    SET_INSTRUCTION(NLF_COULD_NOT_LOAD, could_not_load);
+    SET_INSTRUCTION(NLF_NO_OLE, no_ole);
+    // not used anywhere - SET_INSTRUCTION(NLF_ERR_REG_DLL, err_reg_dll);
+  #endif
+  #ifdef NSIS_SUPPORT_CREATESHORTCUT
+    SET_INSTRUCTION(NLF_CREATE_SHORTCUT, create_shortcut);
+    SET_INSTRUCTION(NLF_ERR_CREATING_SHORTCUT, err_creating_shortcut);
+  #endif
+  #ifdef NSIS_SUPPORT_DELETE
+    SET_INSTRUCTION(NLF_DEL_FILE, del_file);
+    #ifdef NSIS_SUPPORT_MOVEONREBOOT
+      SET_INSTRUCTION(NLF_DEL_ON_REBOOT, del_on_reboot);
+    #endif
+  #endif
+  #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    SET_INSTRUCTION(NLF_CREATED_UNINST, created_uninst);
+    SET_INSTRUCTION(NLF_ERR_CREATING, err_creating);
+  #endif
+  #ifdef NSIS_SUPPORT_SHELLEXECUTE
+    SET_INSTRUCTION(NLF_EXEC_SHELL, exec_shell);
+  #endif
+  #ifdef NSIS_SUPPORT_EXECUTE
+    SET_INSTRUCTION(NLF_EXEC, exec);
+  #endif
+  #ifdef NSIS_SUPPORT_MOVEONREBOOT
+    SET_INSTRUCTION(NLF_RENAME_ON_REBOOT, rename_on_reboot);
+  #endif
+  #ifdef NSIS_SUPPORT_RENAME
+    SET_INSTRUCTION(NLF_RENAME, rename);
+  #endif
+
+  #ifdef NSIS_SUPPORT_FILE
+    SET_INSTRUCTION(NLF_EXTRACT, extract);
+    SET_INSTRUCTION(NLF_ERR_WRITING, err_writing);
+    SET_INSTRUCTION(NLF_ERR_DECOMPRESSING, err_decompressing);
+    SET_INSTRUCTION(NLF_SKIPPED, skipped);
+  #endif
   SET_INSTRUCTION(NLF_OUTPUT_DIR, output_dir);
   SET_INSTRUCTION(NLF_CREATE_DIR, create_dir);
   SET_INSTRUCTION(NLF_COPY_DETAILS, copy_details);
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
+
+  SET_INSTRUCTION(NLF_INST_CORRUPTED, inst_corrupted);
 }
 
 bool CEXEBuild::_IsNotSet(int *str) {
