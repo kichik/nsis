@@ -178,6 +178,10 @@ enum
   // instructions not actually implemented in exehead, but used in compiler.
   EW_GETLABELADDR,      // both of these get converted to EW_ASSIGNVAR
   EW_GETFUNCTIONADDR,
+
+#ifdef NSIS_LOCKWINDOW_SUPPORT
+  EW_LOCKWINDOW,
+#endif
 };
 
 #define FH_FLAGS_MASK 15
