@@ -1,8 +1,8 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.68
+;Compatible with Modern UI 1.72
 
 ;Language: Swedish (1053)
-;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se)
+;By Magnus Bonnevier (magnus.bonnevier@telia.com), updated by Rickard Angbratt (r.angbratt@home.se), updated by Ulf Axelsson (ulf.axelsson@gmail.com)
 
 ;--------------------------------
 
@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Välj komponenter"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Välj vilka alternativ av $(^NameDA) som du vill installera."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beskrivning"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Håll muspekaren över ett alternativ för att se dess beskrivning."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Håll muspekaren över ett alternativ för att se dess beskrivning."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Välj ett alternativ för att se dess beskrivning."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Välj installationsväg"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Välj katalog att installera $(^NameDA) i."
