@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Romanian (1048)
 ;Translated by Cristian Pirvu (pcristip@yahoo.com)
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Romana"
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bine ati venit la instalarea produsului $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "$(^Name) incepe instalarea.\r\n\r\nE recomandat sa inchideti toate aplicatiile inainte. Aceasta va permite programului sa modifice anumite fisiere de sistem fara repornirea calculatorului.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Aceasta aplicatie incepe produsului $(^Name).\r\n\r\nE recomandat sa inchideti toate aplicatiile inainte. Aceasta va permite aplicatiei sa modifice anumite fisiere de sistem fara repornirea calculatorului.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Licenta de utilizare"
   !define MUI_TEXT_LICENSE_SUBTITLE "Cititi cu atentie termenii licentei inaintea instalarii $(^Name)."
@@ -52,38 +52,39 @@
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Nu doresc comenzi rapide"
 
   !define MUI_TEXT_ABORTWARNING "Sunteti sigur(a) ca doriti sa opriti instalarea pentru $(^Name) ?"
-  
-  
+
+
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bine a-ti venit in rutina de uninstall -\r\n\Asistent pentru $(^Name)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Acest Asistent o sa va insoteasca prin rutina de uninstall a programului $(^Name).\r\n\r\nVa rugam opriti programul $(^Name), inainte de a continua rutina de uninstall.\r\n\r\n$_CLICK"
-  
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Dezinstaleaza $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Elimina $(^Name)."
-  
-  !define MUI_UNTEXT_LICENSE_TITLE "Licenta de utilizare"  
+
+  !define MUI_UNTEXT_LICENSE_TITLE "Licenta de utilizare"
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Va rugam sa revedeti termenii din licenta inainte de dezinstalarea $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Daca acceptati termenii licentei, apasati De acord. Trebuie sa acceptati termenii pentru a dezinstala $(^Name)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Daca acceptati termenii acordului, bifati caseta de mai jos. Pentru a dezinstala $(^Name) trebuie sa acceptati termenii din acordul de licenta."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Daca acceptati termenii acordului, alegeti prima optiune de mai jos. Pentru a instala $(^Name) trebuie sa accesati acordul. $_CLICK"
-  
+
   !define MUI_UNTEXT_COMPONENTS_TITLE "Alegeti componentele"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Alegeti caracteristicile $(^Name) pentru dezinstalare."
-  
+
   !define MUI_UNTEXT_DIRECTORY_TITLE "Alegeti locatiza pentru dezinstalare"
   !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Alegeti dosarul din care sa dezinstalati $(^Name)."
-  
+
   !define MUI_UNTEXT_UNINSTALLING_TITLE "In proces de dezinstalare"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Va rugam sa asteptati, $(^Name) se dezinstaleaza."
-    
+
   !define MUI_UNTEXT_FINISH_TITLE "Dezinstalare finalizata"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Dezinstalarea a fost finalizata cu succes."
-  
+
   !define MUI_UNTEXT_ABORT_TITLE "Dezinstalare oprita"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Dezinstalarea a fost oprita."
-  
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Rutina uninstall pentru $(^Name) va fi incheiata"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) a fost indepartat din computerul dumneavoastra.\r\n\r\nClick pe Inchide, pentru a termina Asistentul de uninstall."
 
-  !define MUI_UNTEXT_ABORTWARNING "Sinte-ti sigur, ca doriti ca rutina de uninstall a programului $(^Name) sa fie intrerupta?"
-  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Rutina de dezinstalare pentru $(^Name) va fi incheiata"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) a fost indepartat din computerul dumneavoastra.\r\n\r\nClick pe Inchide, pentru a termina dezinstalarea."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Calculatorul dumneavoastra trebuie repornit pentru a termina dezinstalarea $(^Name). Doriti sa restartati acum?"
+
+  !define MUI_UNTEXT_ABORTWARNING "Sunteti sigur ca doriti ca rutina de dezinstalare a programului $(^Name) sa fie intrerupta?"
+
 !insertmacro MUI_LANGUAGEFILE_END

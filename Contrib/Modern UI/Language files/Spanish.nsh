@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Spanish (1034)
 ;By MoNKi & Lobo Lunar
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Español" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Bienvenido al Asistente de Instalación de $(^Name)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Este programa instalará $(^Name) en su ordenador.\r\n\r\nSe recomienda que cierre todas las demás aplicaciones antes de iniciar la Instalación. Esto permitirá a la Instalación actualizar ciertos archivos del sistema sin reiniciar su ordenador.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Este programa instalará $(^Name) en su ordenador.\r\n\r\nSe recomienda que cierre todas las demás aplicaciones antes de iniciar la Instalación. Esto hará posible actualizar archivos relacionados con el sistema sin tener que reiniciar su ordenador.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Acuerdo de licencia"
   !define MUI_TEXT_LICENSE_SUBTITLE "Por favor revise los términos de la licencia antes de instalar $(^Name)."
@@ -83,7 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Completando el Asistente de Desinstalación de $(^Name)"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) ha sido desinstalado de su sistema.\r\n\r\nPresione Terminar para cerrar este asistente."
-  	 
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Su ordenador debe ser reiniciado para completar la desinstalación de $(^Name). ¿Desea reiniciar ahora?"
   !define MUI_UNTEXT_ABORTWARNING "¿Está seguro de que desea salir de la desinstalación de $(^Name)?"
 
 !insertmacro MUI_LANGUAGEFILE_END
