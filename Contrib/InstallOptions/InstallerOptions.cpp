@@ -110,6 +110,7 @@ char *STRDUP(const char *c)
 #define FIELD_DIRREQUEST   (9)
 #define FIELD_COMBOBOX     (10)
 #define FIELD_LISTBOX      (11)
+#define FIELD_GROUPBOX     (12)
 
 // general flags
 #define FLAG_BOLD          (0x1)
@@ -209,7 +210,7 @@ bool BrowseForFile(int nControlIdx) {
 //  ofn.lpstrCustomFilter = NULL;
 //  ofn.lpstrDefExt = NULL;
   ofn.nMaxFile  = MAX_PATH;
-  ofn.lpstrFile = (char*)MALLOC(ofn.nMaxFile);
+  ofn.lpstrFile = (char*)MALLOC(MAX_PATH);
 
 //  ofn.nMaxFileTitle = MAX_PATH;  // we ignore this for simplicity, leave lpstrFileTitle at NULL
 //  ofn.lpstrFileTitle = new char [ofn.nMaxFileTitle];
@@ -224,9 +225,9 @@ bool BrowseForFile(int nControlIdx) {
 //  ofn.nFilterIndex = 1;  // since we use no custom filters, leaving it at 0 means use the first.
 //  ofn.nMaxCustFilter = 0;
 
-  GetWindowText(hControl, ofn.lpstrFile, ofn.nMaxFile);
+  GetWindowText(hControl, ofn.lpstrFile, MAX_PATH);
 
-  for(;;) {
+  //for(;;) {
     if (pThisField->bSaveDlg) {
       bResult = GetSaveFileName(&ofn);
     } else {
@@ -241,9 +242,9 @@ bool BrowseForFile(int nControlIdx) {
 //    if (*(ofn.lpstrFile)) { //&& (CommDlgExtendedError() == FNERR_INVALIDFILENAME)) {
   //    *(ofn.lpstrFile) = '\0';
    // } else {
-      break;
+      //break;
    // }
-  }
+  //}
 
   return false;
 }
@@ -263,14 +264,11 @@ int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData) {
 
 bool BrowseForFolder(int nControlIdx) {
   BROWSEINFO bi;
-  HWND hControl;
-
-  hControl = pFields[nControlIdx].hwnd;
 
   bi.hwndOwner = hConfigWindow;
   bi.pidlRoot = NULL;
   bi.pszDisplayName = (char*)MALLOC(MAX_PATH);
-  LPCTSTR lpszTitle = NULL;
+  bi.lpszTitle = pFields[nControlIdx].pszText;
   bi.ulFlags = BIF_STATUSTEXT;
   bi.lpfn = BrowseCallbackProc;
   bi.lParam = nControlIdx;
@@ -299,7 +297,7 @@ bool BrowseForFolder(int nControlIdx) {
 
   char *pszFolder = (char*)MALLOC(MAX_PATH);
   if (SHGetPathFromIDList(pResult, pszFolder)) {
-    SetWindowText(hControl, pszFolder);
+    SetWindowText(pFields[nControlIdx].hwnd, pszFolder);
   }
 
   LPMALLOC pMalloc;
@@ -413,7 +411,7 @@ void AddBrowseButtons() {
   // control is found, then it adds the corresponding browse button.
   // NOTE: this also resizes the text box created to make room for the button.
   int nIdx;
-  int nWidth = 22;
+  int nWidth = 15;
   FieldType *pNewField;
 
   for (nIdx = nNumFields - 1; nIdx >= 0; nIdx--) {
@@ -501,6 +499,7 @@ bool ReadSettings(void) {
       { "RADIOBUTTON", FIELD_RADIOBUTTON },
       { "ICON",        FIELD_ICON        },
       { "BITMAP",      FIELD_BITMAP      },
+      { "GROUPBOX",    FIELD_GROUPBOX    },
       { NULL,          0                 }
     };
     // Control flags
@@ -869,7 +868,10 @@ int createCfgDlg()
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
       { "LISTBOX",      // FIELD_LISTBOX
         DEFAULT_STYLES | WS_GROUP | WS_TABSTOP | LBS_DISABLENOSCROLL | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE }
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+      { "BUTTON",       // FIELD_GROUPBOX
+        DEFAULT_STYLES | BS_GROUPBOX,
+        WS_EX_TRANSPARENT }
     };
 
 #undef DEFAULT_STYLES
@@ -891,7 +893,7 @@ int createCfgDlg()
     rect.top = MulDiv(pFields[nIdx].rect.top, baseUnitY, 8);
     rect.bottom = MulDiv(pFields[nIdx].rect.bottom, baseUnitY, 8);
 
-	if (pFields[nIdx].rect.left < 0)
+    if (pFields[nIdx].rect.left < 0)
       rect.left += dialog_r.right - dialog_r.left;
     if (pFields[nIdx].rect.right < 0)
       rect.right += dialog_r.right - dialog_r.left;
