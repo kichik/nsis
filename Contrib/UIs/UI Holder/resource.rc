@@ -84,10 +84,7 @@ IDD_INSTFILES DIALOGEX DISCARDABLE  0, 0, 266, 130
 STYLE DS_CONTROL | DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,24,10,241,11
-    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_SMOOTH | NOT 
-                    WS_VISIBLE | WS_BORDER,24,10,241,11
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,24,10,241,11
     CONTROL         "",IDC_INTROTEXT,"Static",SS_LEFTNOWORDWRAP,
                     24,0,241,8
     CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SINGLESEL | 

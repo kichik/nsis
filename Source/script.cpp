@@ -962,15 +962,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_INSTTYPE:
       {
         int x;
+
         if (strnicmp(line.gettoken_str(1),"/LANG=",6) && line.getnumtokens() > 2) PRINTHELP();
         if (!stricmp(line.gettoken_str(1),"/NOCUSTOM"))
         {
-          build_header.no_custom_instmode_flag=1;
+          build_header.common.flags|=CH_FLAGS_NO_CUSTOM;
           SCRIPT_MSG("InstType: disabling custom install type\n");
         }
         else if (!stricmp(line.gettoken_str(1),"/COMPONENTSONLYONCUSTOM"))
         {
-          build_header.no_custom_instmode_flag=2;
+          build_header.common.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
           SCRIPT_MSG("InstType: making components viewable only on custom install type\n");
         }
         else if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
@@ -1024,7 +1025,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_LICENSEDATA:
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-      if (build_header.common.silent_install)
+      if (build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
       {
         warning("LicenseData: SilentInstall enabled, wasting space (%s:%d)",curfilename,linecnt);
       }
@@ -1077,10 +1078,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif//!NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
     case TOK_SILENTINST:
-      build_header.common.silent_install=line.gettoken_enum(1,"normal\0silent\0silentlog\0");
-      if (build_header.common.silent_install<0) PRINTHELP()
+    {
+      int k=line.gettoken_enum(1,"normal\0silent\0silentlog\0");
+      if (k<0) PRINTHELP()
 #ifndef NSIS_CONFIG_LOG
-      if (build_header.common.silent_install == 2)
+      if (k == 2)
       {
         ERROR_MSG("SilentInstall: silentlog specified, no log support compiled in (use NSIS_CONFIG_LOG)\n");
         return PS_ERROR;
@@ -1088,17 +1090,33 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #endif//NSIS_CONFIG_LOG
       SCRIPT_MSG("SilentInstall: %s\n",line.gettoken_str(1));
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      if (build_header.common.silent_install && !IsNotSet(installer.licensedata))
+      if (k && !IsNotSet(installer.licensedata))
       {
         warning("SilentInstall: LicenseData already specified. wasting space (%s:%d)",curfilename,linecnt);
       }
+      if (k) {
+        build_header.common.flags|=CH_FLAGS_SILENT;
+        if (k == 2)
+          build_header.common.flags|=CH_FLAGS_SILENT_LOG;
+      }
+      else {
+        build_header.common.flags&=~CH_FLAGS_SILENT;
+        build_header.common.flags&=~CH_FLAGS_SILENT_LOG;
+      }
 #endif//NSIS_CONFIG_LICENSEPAGE
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_SILENTUNINST:
+    {
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      build_uninst.common.silent_install=line.gettoken_enum(1,"normal\0silent\0");
-      if (build_uninst.common.silent_install<0) PRINTHELP()
+      int k=line.gettoken_enum(1,"normal\0silent\0");
+      if (k<0) PRINTHELP()
+      if (k)
+        build_uninst.common.flags|=CH_FLAGS_SILENT;
+      else
+        build_uninst.common.flags&=~CH_FLAGS_SILENT;
       SCRIPT_MSG("SilentUnInstall: %s\n",line.gettoken_str(1));
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
@@ -1146,24 +1164,52 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_INSTPROGRESSFLAGS:
       {
         int x;
-        build_header.common.progress_flags=0;
+        int smooth=0;
+        build_header.common.flags&=~CH_FLAGS_PROGRESS_COLORED;
         for (x = 1; x < line.getnumtokens(); x ++)
         {
-          if (!stricmp(line.gettoken_str(x),"smooth")) build_header.common.progress_flags|=1;
-          else if (!stricmp(line.gettoken_str(x),"colored")) build_header.common.progress_flags|=2;
+          if (!stricmp(line.gettoken_str(x),"smooth")) smooth=1;
+          else if (!stricmp(line.gettoken_str(x),"colored")) build_header.common.flags|=CH_FLAGS_PROGRESS_COLORED;
           else PRINTHELP()
         }
-        SCRIPT_MSG("InstProgressFlags: %d (smooth=%d,colored=%d)\n",build_header.common.progress_flags,
-          build_header.common.progress_flags&1,
-          (build_header.common.progress_flags&2)>>1);
+        try {
+          init_res_editor();
+
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
+          if (!dlg) throw runtime_error("IDD_INSTFILES doesn't exist!");
+          CDialogTemplate dt(dlg);
+          free(dlg);
+          DialogItemTemplate* progress = dt.GetItem(IDC_PROGRESS);
+          if (!progress) {
+            throw runtime_error("IDC_PROGRESS doesn't exist!");
+          }
+
+          if (smooth)
+            progress->dwStyle |= PBS_SMOOTH;
+          else
+            progress->dwStyle &= ~PBS_SMOOTH;
+
+          DWORD dwSize;
+          dlg = dt.Save(dwSize);
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+          free(dlg);
+        }
+        catch (exception& err) {
+          ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
+          return PS_ERROR;
+        }
+        SCRIPT_MSG("InstProgressFlags: smooth=%d, colored=%d\n",smooth,
+          !!(build_header.common.flags&CH_FLAGS_PROGRESS_COLORED));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_AUTOCLOSE:
       {
         int k=line.gettoken_enum(1,"false\0true\0");
-        if (k == -1) PRINTHELP()
-        build_header.common.misc_flags&=~1;
-        build_header.common.misc_flags|=k;
+        if (k == -1) PRINTHELP();
+        if (k)
+          build_header.common.flags|=CH_FLAGS_AUTO_CLOSE;
+        else
+          build_header.common.flags&=~CH_FLAGS_AUTO_CLOSE;
         SCRIPT_MSG("AutoCloseWindow: %s\n",k?"true":"false");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1186,19 +1232,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           free(dlg); \
           dt.RemoveItem(IDC_ULICON); \
           DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
-          DialogItemTemplate* prog1 = dt.GetItem(IDC_PROGRESS1); \
-          DialogItemTemplate* prog2 = dt.GetItem(IDC_PROGRESS2); \
+          DialogItemTemplate* prog = dt.GetItem(IDC_PROGRESS); \
           if (text) { \
             text->sWidth += text->sX; \
             text->sX = 0; \
           } \
-          if (prog1) { \
-            prog1->sWidth += prog1->sX; \
-            prog1->sX = 0; \
-          } \
-          if (prog2) { \
-            prog2->sWidth += prog2->sX; \
-            prog2->sX = 0; \
+          if (prog) { \
+            prog->sWidth += prog->sX; \
+            prog->sX = 0; \
           } \
            \
           DWORD dwSize; \
@@ -1241,28 +1282,45 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         int k=line.gettoken_enum(1,"hide\0show\0nevershow\0");
         if (k == -1) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        if (which_token == TOK_SHOWDETAILSUNINST) build_uninst.common.show_details=k;
+        if (which_token == TOK_SHOWDETAILSUNINST)
+        {
+          build_uninst.common.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
+          if (k==1)
+            build_uninst.common.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
+          else if (k==2)
+            build_uninst.common.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
+        }
         else
 #endif
-          build_header.common.show_details=k;
+        {
+          build_header.common.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
+          if (k==1)
+            build_header.common.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
+          else if (k==2)
+            build_header.common.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
+        }
         SCRIPT_MSG("%s: %s\n",line.gettoken_str(0),line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_DIRSHOW:
       {
         int k=line.gettoken_enum(1,"show\0hide\0");
-        if (k == -1) PRINTHELP()
-        build_header.common.misc_flags&=~2;
-        build_header.common.misc_flags|=(k<<1);
+        if (k == -1) PRINTHELP();
+        if (k)
+          build_header.common.flags|=CH_FLAGS_DIR_NO_SHOW;
+        else
+          build_header.common.flags&=~CH_FLAGS_DIR_NO_SHOW;
         SCRIPT_MSG("DirShow: %s\n",k?"hide":"show");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_ROOTDIRINST:
       {
         int k=line.gettoken_enum(1,"true\0false\0");
-        if (k == -1) PRINTHELP()
-        build_header.common.misc_flags&=~8;
-        build_header.common.misc_flags|=(k<<3);
+        if (k == -1) PRINTHELP();
+        if (k)
+          build_header.common.flags|=CH_FLAGS_NO_ROOT_DIR;
+        else
+          build_header.common.flags&=~CH_FLAGS_NO_ROOT_DIR;
         SCRIPT_MSG("AllowRootDirInstall: %s\n",k?"false":"true");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1446,8 +1504,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           if (!dlg) return PS_ERROR;
           CDialogTemplate UIDlg(dlg);
           SEARCH(IDC_LIST1);
-          SEARCH(IDC_PROGRESS1);
-          SEARCH(IDC_PROGRESS2);
+          SEARCH(IDC_PROGRESS);
           SEARCH(IDC_SHOWDETAILS);
           SAVE(IDD_INSTFILES);
         }
