@@ -17,7 +17,9 @@ to the logwindow.
 
 The timeout value is optional and is used to set the time in 
 milliseconds for the plugin to wait for the process to return
-before it quits.
+before it quits, or the time in milliseconds for the plugin
+to wait for output to come out before it quits if using
+ExecToLog. The default is no timeout.
 
 
 Return Value

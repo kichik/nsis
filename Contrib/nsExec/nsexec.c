@@ -29,6 +29,7 @@ freely, subject to the following restrictions:
 #define false FALSE
 #endif
 #define TIMEOUT 15000
+#define NOLOG_TIMEOUT 600000
 #define LOOPTIMEOUT 100
 
 HINSTANCE   g_hInstance;
@@ -68,7 +69,7 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 }
 
 void ExecScript(BOOL log) {
-    g_to = TIMEOUT;
+    g_to = INFINITE;
     g_foundto = FALSE;
     g_hwndDlg = FindWindowEx(g_hwndParent,NULL,"#32770",NULL);
     g_hwndList = FindWindowEx(g_hwndDlg,NULL,"SysListView32",NULL);
@@ -78,7 +79,7 @@ void ExecScript(BOOL log) {
         if (my_strstr(g_szto,"/TIMEOUT=")) {
             g_szto += 9;
             g_to = my_atoi(g_szto);
-            if (g_to<0) g_to = TIMEOUT;
+            if (g_to<0) g_to = log?TIMEOUT:NOLOG_TIMEOUT;
             g_foundto = TRUE;
         }
     }
@@ -112,20 +113,21 @@ void ExecScript(BOOL log) {
                 return;
             }
             szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
+
+            GetVersionEx(&osv);
+            if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
+                InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
+                SetSecurityDescriptorDacl(&sd,true,NULL,false);
+                sa.lpSecurityDescriptor = &sd;
+            }
+            else sa.lpSecurityDescriptor = NULL;
+            sa.bInheritHandle = true;
+            if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
+                pushstring("error");
+                return;
+            }
         }
 
-        GetVersionEx(&osv);
-        if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-            InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-            SetSecurityDescriptorDacl(&sd,true,NULL,false);
-            sa.lpSecurityDescriptor = &sd;
-        }
-        else sa.lpSecurityDescriptor = NULL;
-        sa.bInheritHandle = true;
-        if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-            pushstring("error");
-            return;
-        }
         GetStartupInfo(&si);
         si.dwFlags = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
         si.wShowWindow = SW_HIDE;
@@ -138,51 +140,54 @@ void ExecScript(BOOL log) {
             return;
         }
 
-        while (dwExit == STILL_ACTIVE || dwRead) {
-            PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-            if (dwRead) {
-                ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
-                szBuf[dwRead] = 0;
-                if (log) {
-                    char *p, *lineBreak;
-                    SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf);
-                    if (GlobalSize(hUnusedBuf) < iReqLen) {
-                        GlobalUnlock(hUnusedBuf);
-                        hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen+sizeof(szBuf), GHND);
-                        if (!hUnusedBuf) {
-                            pushstring("error");
-                            CloseHandle(pi.hThread);
-                            CloseHandle(pi.hProcess);
-                            CloseHandle(newstdout);
-                            CloseHandle(read_stdout);
-                            return;
+        if (log) {
+            while (dwExit == STILL_ACTIVE || dwRead) {
+                PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+                if (dwRead) {
+                    ReadFile(read_stdout, szBuf, sizeof(szBuf)-1, &dwRead, NULL);
+                    szBuf[dwRead] = 0;
+                    {
+                        char *p, *lineBreak;
+                        SIZE_T iReqLen = lstrlen(szBuf) + lstrlen(szUnusedBuf);
+                        if (GlobalSize(hUnusedBuf) < iReqLen) {
+                            GlobalUnlock(hUnusedBuf);
+                            hUnusedBuf = GlobalReAlloc(hUnusedBuf, iReqLen+sizeof(szBuf), GHND);
+                            if (!hUnusedBuf) {
+                                pushstring("error");
+                                CloseHandle(pi.hThread);
+                                CloseHandle(pi.hProcess);
+                                CloseHandle(newstdout);
+                                CloseHandle(read_stdout);
+                                return;
+                            }
+                            szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
                         }
-                        szUnusedBuf = (char *)GlobalLock(hUnusedBuf);
-                    }
-                    p = szUnusedBuf; // get the old left overs
-                    lstrcat(p, szBuf);
+                        p = szUnusedBuf; // get the old left overs
+                        lstrcat(p, szBuf);
 
-                    while (lineBreak = my_strstr(p, "\r\n")) {
-                        *lineBreak = 0;
-                        LogMessage(p);
-                        p = lineBreak + 2;
-                    }
+                        while (lineBreak = my_strstr(p, "\r\n")) {
+                            *lineBreak = 0;
+                            LogMessage(p);
+                            p = lineBreak + 2;
+                        }
 
-                    // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
-                    if (p != szUnusedBuf) {
-                        char *p2 = szUnusedBuf;
-                        while (*p) *p2++ = *p++;
-                        *p2 = 0;
+                        // If data was taken out from the unused buffer, move p contents to the start of szUnusedBuf
+                        if (p != szUnusedBuf) {
+                            char *p2 = szUnusedBuf;
+                            while (*p) *p2++ = *p++;
+                            *p2 = 0;
+                        }
                     }
                 }
+                else Sleep(LOOPTIMEOUT);
+                GetExitCodeProcess(pi.hProcess, &dwExit);
+                if (dwExit != STILL_ACTIVE) {
+                    PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
+                }
             }
-            else Sleep(LOOPTIMEOUT);
-            GetExitCodeProcess(pi.hProcess, &dwExit);
-            if (dwExit != STILL_ACTIVE) {
-                PeekNamedPipe(read_stdout, 0, 0, 0, &dwRead, NULL);
-            }
+            if (*szUnusedBuf) LogMessage(szUnusedBuf);
         }
-        if (*szUnusedBuf) LogMessage(szUnusedBuf);
+        else WaitForSingleObject(pi.hProcess, g_to);
         wsprintf(szRet,"%d",dwExit);
         pushstring(szRet);
         CloseHandle(pi.hThread);
