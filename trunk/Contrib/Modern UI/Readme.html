@@ -126,28 +126,38 @@ with a custom user interface.</p>
   Modern UI (in order).<br><br>
   <p class="subheader">1. Include the header file</p>
   <pre class="margin">!include "${NSISDIR}\Contrib\Modern UI\System.nsh"</pre>
-  <p class="subheader">2. Define the name and version of your software and the installer name</p>
-<pre class="margin">!define MUI_PRODUCT "Test Software" ;Define your own software name here
+  <p class="subheader">2. Define the name and version of your software</p>
+<pre class="margin">
+!define MUI_PRODUCT "Test Software" ;Define your own software name here
 !define MUI_VERSION "1.0" ;Define your own software version here
-
-!define MUI_NAME "${NAME} ${VERSION}" ;Installer name</pre>
-<p class="text">Note: If you want to use a different name for different languages, undef these
-defines and define them again before you insert a language file.</p>
+</pre>
   <p class="subheader">3. Define which elements you are using</span></p>
   <p class="text">The Modern UI should know which things it should insert. Use the following defines:</p>
 <pre class="margin">!define MUI_LICENSEPAGE ;License page
 !define MUI_COMPONENTSPAGE ;Component-selection page
 !define MUI_DIRECTORYPAGE ;Directory-selection page
 !define MUI_LICENSEPAGE ;License page
+!define MUI_ABORTWARNING ;Abort warning messagebox
+!define MUI_INSTALLOPTIONS ;Install Options
+!define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
+
 !define MUI_UNINSTALLER ;Uninstaller
-!define MUI_ABORTWARNING ;Abort warning messabox
-!define MUI_INSTALLOPTIONS ;Use Install Options
-!define MUI_CUSTOMPAGECOMMANDS ;Use customized pages</pre>
+!define MUI_UNINSTALLOPTIONS ;Install Options in Uninstaller
+!define MUI_CUSTOMPAGECOMMANDS ;Use customized uninstaller pages
+</pre>
   <p class="subheader">4. Insert language files</span></p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
-  <p class="text">Note: The Modern UI language files load the NLF language files,
+  <p class="text">The Modern UI language files load the NLF language files,
   so you should not use LoadLanguageFile.</p>
+  <p class="text">You don't need to edit the language files if you want to customize
+  some strings. Use defines before you insert the language file:</p>
+  <pre class="margin">
+!define MUI_INNERTEXT_LICENSE_TOP "Text on the top of the license dialog"
+!insertmacro MUI_LANGUAGE "English"
+</pre>
+  <p class="text">Have a look at the language files for a complete list of all the
+  names.
   <p class="subheader">5. Define interface settings (optional)</span></p>
   <p class="text">You can change the settings of the interface by usings defines:</p>
   <pre class="margin">!define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"</pre>
@@ -174,9 +184,7 @@ defines and define them again before you insert a language file.</p>
   <p class="subheader">7. Insert the MUI_SECTIONS_FINISHHEADER macro
   <p class="text">You should insert the MUI_SECTIONS_FINISHHEADER after all the
   sections to display the finish-header.</p>
-<pre class="margin">
-!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
-</pre>
+<pre class="margin">!insertmacro MUI_SECTIONS_FINISHHEADER</pre>
 <p class="text">In the uninstaller, insert MUI_UNFINISHHEADER at the end of the
 Unintaller section.</p>
 <pre class="margin">
@@ -195,7 +203,7 @@ LangString DESC_SectionName2 ${LANG_ENGLISH} "Description of section 2."
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionName2} $(DESC_SectionName2)
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_END
 </pre>
-<p class="text">Note: Always set a name for a section:</p>
+<p class="text">Always set a name for a section:</p>
 <pre class="margin">
 Section "Section Name 1" SectionName1
  ...
@@ -219,8 +227,14 @@ of the page functions.</p>
 Page custom [function name] ;A custom page
 !insertmacro MUI_PAGECOMMAND_INSTFILES
 </pre>
-<p class="text">Note: If you are using custom Page commands, define MUI_CUSTOMPAGECOMMANDS
-before inserting the MUI_SYSTEM macro.</p>
+<p class="text">This is also possible the uninstaller:</p>
+<pre class="margin">
+!insertmacro MUI_UNPAGECOMMAND_CONFIRM
+UninstPage custom [function name] ;A custom page
+!insertmacro MUI_UNPAGECOMMAND_INSTFILES
+</pre>
+<p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
+MUI_UNCUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM macro.</p>
 <p class="subheader">Call Install Options</p>
 <p class="text">You can call Install Options in [function name]:</p>
 <pre class="margin">
@@ -249,8 +263,8 @@ LangString TEXT_IO_PAGETITLE ${LANG_ENGLISH} "Page Title"
   </p>
 <p class="header">The interface</p>
 <p class="subheader">Modern.exe and modern2.exe</span></p>
-  <p class="text">There are two different versions of the interface.
-  Modern.exe contains the dialogs of the standard interface.
+  <p class="text">There are two different versions of the interface
+  available. Modern.exe contains the dialogs of the standard interface.
   If you have an installer with a lot of subsections 
   or long section names, use modern2.exe, which has a different
   component-selection page.</p>
@@ -269,10 +283,22 @@ The 'verifying installer' and 'unpacking data' texts are defined in
   To change them, you need to edit this file and recompile NSIS.</p>
 <p class="header">Version history</p>
 <ul>
+<li class="changelog">1.5 - November 8, 2002
+  <ul>
+    <li>New language file format
+    <li>Language strings can be changed in the script without editing
+    language files
+    <li>Install Options macro's updated. MUI_INSTALLOPTIONS_DISPLAY is
+    the standard macro now. Use MUI_INSTALLOPTIONS_INITDIALOG and
+    MUI_INSTALLOPTIONS_SHOW if you want to customize dialog controls.
+    <li>Renamed macro's and defines
+    <li>Some small fixes
+  </ul>
+<p class="text"></p>
 <li class="changelog">1.4 - November 4, 2002
   <ul>
     <li>Uses new NSIS Page command
-    <li>Macro system updates (smaller)
+    <li>Macro System updates (smaller)
     <li>Macro System a lot easier
     <li>Modern UI Language Files load NLF language files
     <li>Renamed macro's and defines

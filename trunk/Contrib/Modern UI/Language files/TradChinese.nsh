@@ -1,78 +1,54 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.4
+;Compatible with Modern UI 1.5
 
 ;Language: 'Chinese (Traditional)' (1028)
 ;By Kii Ali <kiiali@cpatch.org>
 
 ;--------------------------------
-!verbose 3
 
-!ifndef MUI_TRADCHINESE_USED
+!insertmacro MUI_LANGUAGEFILE_BEGIN "TRADCHINESE"
 
-!define MUI_TRADCHINESE_USED
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_LANGNAME "Chinese (Traditional)" ;以語言本身的方式，寫下語言名稱
 
-  LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-
-  !define MUI_TRADCHINESE_LANGNAME "Chinese (Traditional)" ;以語言本身的方式，寫下語言名稱 (English, Deutsch, Fran蓷is etc.)
-
-  ;INSTALLER
-  Name /LANG=${LANG_TRADCHINESE} "${MUI_NAME}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}"
   
-  !ifdef MUI_LICENSEPAGE
-     LicenseText /LANG=${LANG_TRADCHINESE} "若要看授權合約的其餘部分，請按 [PgDn] 往下捲動頁面。"
-     LangString MUI_TEXT_LICENSE_TITLE ${LANG_TRADCHINESE} "授權合約"
-     LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_TRADCHINESE} "在安裝 ${MUI_PRODUCT} 之前，請檢閱授權條款。"
-     LangString MUI_INNERTEXT_LICENSE ${LANG_TRADCHINESE} "如果你同意所有合約中的條款，選取 [我同意(A)] 繼續安裝。如果你選取 [取消(C)] ，安裝程式將會關閉。必須要接受授權合約才能安裝  ${MUI_PRODUCT}。"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "授權合約"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "在安裝 ${MUI_PRODUCT} 之前，請檢閱授權條款。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "若要看授權合約的其餘部分，請按 [PgDn] 往下捲動頁面。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "如果你同意所有合約中的條款，選取 [我同意(A)] 繼續安裝。如果你選取 [取消(C)] ，安裝程式將會關閉。必須要接受授權合約才能安裝  ${MUI_PRODUCT}。"
   
-  !ifdef MUI_COMPONENTSPAGE
-    ComponentText /LANG=${LANG_TRADCHINESE} "核取想要安裝的元件，並把不想安裝的元件解除核取。按 [下一步(N)] 繼續。"
-    LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_TRADCHINESE} "選取元件"
-    LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_TRADCHINESE} "選取 ${MUI_PRODUCT} 中你想要安裝的元件。"
-    LangString MUI_INNERTEXT_DESCRIPTION_TITLE ${LANG_TRADCHINESE} "描述"
-    LangString MUI_INNERTEXT_DESCRIPTION_INFO ${LANG_TRADCHINESE} "移動你的滑鼠指標到元件之上，便可見到它的描述。"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "選取元件"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "選取 ${MUI_PRODUCT} 中你想要安裝的元件。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS "核取想要安裝的元件，並把不想安裝的元件解除核取。按 [下一步(N)] 繼續。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移動你的滑鼠指標到元件之上，便可見到它的描述。"
   
-  !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_TRADCHINESE} "安裝程式將在下列資料夾，安裝 ${MUI_PRODUCT} 。$\r$\n$\r$\n要安裝到這個資料夾，按一下 [安裝(I)] 。要安裝在不同資料夾，按一下 [瀏覽(B)...] 並選擇其他資料夾。"
-    LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_TRADCHINESE} "選取安裝位置" 
-    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_TRADCHINESE} "選取 ${MUI_PRODUCT} 要安裝的資料夾位置。"
-    LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_TRADCHINESE} "目的資料夾"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_TITLE "選取安裝位置" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_DIRECTORY_SUBTITLE "選取 ${MUI_PRODUCT} 要安裝的資料夾位置。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_TOP "安裝程式將在下列資料夾，安裝 ${MUI_PRODUCT} 。$\r$\n$\r$\n要安裝到這個資料夾，按一下 [安裝(I)] 。要安裝在不同資料夾，按一下 [瀏覽(B)...] 並選擇其他資料夾。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_DIRECTORY_DESTINATION "目的資料夾"
   
-  LangString MUI_TEXT_INSTALLING_TITLE ${LANG_TRADCHINESE} "正在安裝" 
-  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_TRADCHINESE} "${MUI_PRODUCT} 正在安裝，請等候。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_TITLE "正在安裝" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_INSTALLING_SUBTITLE "${MUI_PRODUCT} 正在安裝，請等候。"
   
-  LangString MUI_TEXT_FINISHED_TITLE ${LANG_TRADCHINESE} "完成"
-  LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_TRADCHINESE} "安裝程式已成功地執行完成。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_TITLE "完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "安裝程式已成功地執行完成。"
   
-  !ifdef MUI_ABORTWARNING
-    LangString MUI_TEXT_ABORTWARNING ${LANG_TRADCHINESE} "你確定要離開 ${MUI_PRODUCT} 安裝程式？"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "你確定要離開 ${MUI_PRODUCT} 安裝程式？"
   
-  !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_TEXT_SETUPCAPTION ${LANG_TRADCHINESE} "${MUI_PRODUCT} ${MUI_VERSION} 安裝"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "${MUI_NAME} 安裝"
 
 
-  ;UNINSTALLER
-  
-  !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_TRADCHINESE} "這將會從你的系統中解除安裝 ${MUI_PRODUCT}。"
-    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_TRADCHINESE} "解除安裝 ${MUI_PRODUCT}"
-    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_TRADCHINESE} "從你的系統解除安裝 ${MUI_PRODUCT} 。"
-  
-    LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_TRADCHINESE} "正在解除安裝"
-    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_TRADCHINESE} "${MUI_PRODUCT} 正在解除安裝，請等候。"
-  
-    LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_TRADCHINESE} "完成"
-    LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_TRADCHINESE} "${MUI_PRODUCT} 已從你的系統解除安裝。"
-  !endif
-  
-  !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_TRADCHINESE} "${MUI_PRODUCT} ${MUI_VERSION} 安裝"
-  !endif
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "解除安裝 ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "從你的系統解除安裝 ${MUI_PRODUCT} 。"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "這將會從你的系統中解除安裝 ${MUI_PRODUCT}。"
     
-!endif
-
-!verbose 4
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "正在解除安裝"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "${MUI_PRODUCT} 正在解除安裝，請等候。"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "完成"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "${MUI_PRODUCT} 已從你的系統解除安裝。"
+  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "${MUI_NAME} 解除安裝"
+   
+!insertmacro MUI_LANGUAGEFILE_END
