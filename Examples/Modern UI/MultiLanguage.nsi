@@ -103,9 +103,9 @@ Function .onInitDialog
 
     !insertmacro MUI_INNERDIALOG_START 2
        !insertmacro MUI_INNERDIALOG_TEXT ${LANG_ENGLISH} 1042 "Description"
-       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_ENGLISH} ${LANG_DUTCH} "Hover your mouse over a component to see it's description."
+       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_ENGLISH} 1043 "Hover your mouse over a component to see it's description."
        !insertmacro MUI_INNERDIALOG_TEXT ${LANG_DUTCH} 1042 "Beschrijving"
-       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_DUTCH} ${LANG_DUTCH} "Beweeg uw muis over een onderdeel om een beschrijving te zien."
+       !insertmacro MUI_INNERDIALOG_TEXT ${LANG_DUTCH} 1043 "Beweeg uw muis over een onderdeel om een beschrijving te zien."
     !insertmacro MUI_INNERDIALOG_STOP 2
 
     !insertmacro MUI_INNERDIALOG_START 3
