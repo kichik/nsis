@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Slovenian (1060)
 ;By Janez Dolinar
@@ -11,7 +11,7 @@
   !define MUI_LANGNAME "Slovenscina" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Dobrodošli v $(^Name) èarovniku"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Ta program bo na vaš raèunalnik namestil $(^Name).\r\n\r\nPriporoèamo vam, da zaprete vsa ostala okna in programe pred namestitvijo. To bo omogoèalo nemoteno namestitev programa in njegovih delov brez ponovnega zagona raèunalnika.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Ta èarovnik vam bo pomagal pri namestitvi $(^Name).\r\n\r\nPriporoèamo vam, da zaprete vsa ostala okna in programe pred namestitvijo. To bo omogoèilo nemoteno namestitev programa in njegovih delov brez ponovnega zagona raèunalnika.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Licenèna pogodba"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Prosimo, preglejte pogoje pogodbe pred namestitvijo $(^Name)."
@@ -83,6 +83,7 @@
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "Èarovnik za odstranitev $(^Name) se zakljuèuje"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) je bil odstranjen iz vašega raèunalnika.\r\n\r\nKliknite na Dokonèaj, da konèate z èarovnikom."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "Vaš raèunalnik se mora ponovno zagnati, da bi se lahko $(^Name) namestitev dokonèala. Želite sedaj ponovno zagnati vaš raèunalnik?"  
   
   !define MUI_UNTEXT_ABORTWARNING "Ste preprièani, da želite zapustiti odstranitev $(^Name)?"  
 
