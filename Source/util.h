@@ -79,9 +79,45 @@ int my_glob(const char *pattern, int flags,
 #define OPEN(a, b) open(a, b)
 #endif
 
+// round a value up to be a multiple of 512
+// assumption: T is an int type
 template <class T>
 inline T align_to_512(const T x) {
   return (x+511) & ~511;
 }
+
+// When a ResourceManager instance goes out of scope, it will run
+// _FREE_RESOURCE on the resource.
+// Example use:
+// int fd = open(..);
+// assert(fd != -1);
+// ResourceManager<int, close> fdManager(fd);
+template <typename _RESOURCE, typename _FREE_RESOURCE>
+class ResourceManager {
+public:
+	ResourceManager(_RESOURCE& resource) : m_resource(resource) {}
+	~ResourceManager() { m_free_resource(m_resource); };
+private: // members
+	_RESOURCE& m_resource;
+  _FREE_RESOURCE m_free_resource;
+private: // don't copy instances
+	ResourceManager(const ResourceManager&);
+	void operator=(const ResourceManager&);
+};
+
+#define DEFINE_FREEFUNC(freefunc) \
+struct __free_with_##freefunc { \
+  template <typename T> void operator()(T& x) { freefunc(x); } \
+}
+
+DEFINE_FREEFUNC(close);
+DEFINE_FREEFUNC(CloseHandle);
+DEFINE_FREEFUNC(fclose);
+DEFINE_FREEFUNC(free);
+
+// TODO: (orip)
+// Can the ResourceManager be made generic? Specifically use the same class to:
+// (a) close(fd) on POSIX
+// (b) CloseHandle(handle) on WIN32
 
 #endif //_UTIL_H_
