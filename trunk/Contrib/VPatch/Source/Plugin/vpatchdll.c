@@ -1,6 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "..\ExDLL\exdll.h"
+#include "..\..\..\ExDLL\exdll.h"
 
 int DoPatch(HANDLE hPatch, HANDLE hSource, HANDLE hDest);
 void strcopy(char *tgt, const char *src);

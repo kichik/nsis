@@ -141,23 +141,43 @@ file.</p>
 patch from file A version 1 to file A version 2 and a patch from file B version 1 to
 file B version 2. Just call the plug-in multiple times with the same patch file. It
 will automatically select the right patch (based on the file CRC).</p>
+<p class="header">Source code</p>
+<p class="subheader">NSIS plug-in (C++)</p>
+<p class="text">The source of the NSIS plug-in that applies patches can be found in the
+Source\Plugin folder.</p>
+<p class="subheader">Patch Generator (Delphi)</p>
+<p class="text">The most interesting part of VPatch, the actual patch generation algoritm,
+can be found in Source\GenPat\PatchGenerator.pas. The header of that file contains a brief
+explanation of the algoritm as well.</p>
+<p class="subheader">User interface (Delphi)</p>
+<p class="text">A user interface is included as well, which you will have to build yourself
+because the GUI executable was too large to include. Besides Borland Delphi 6 or higher,
+you will also need to install the <a href="http://www.delphi-gems.com">VirtualTreeView</a> 
+component by Mike Lischke.</p>
 <p class="header">Version history</p>
 <ul>
-<li>2.0 beta 2
-  <ul>
-    <li>All new algorithm used in the patch generator: much faster (up to 
-        90%) while using smaller block sizes (higher compression)</li>
-    <li>Created a NSIS 2 plugin</li>
-    <li>Works with small files</li>
-    <li>Replaces existing patch in file if original file CRC is identical</li>
-  </ul></li>
+<li>2.0 final
+<ul>
+<li>Cleaned up source code for the patch generator, which is now included (this code is
+written in Borland Delphi 6 and compiles with the freely available Personal edition).</li>
+</ul>
+</li>
+<li>2.0 beta 2 
+<ul>
+<li>All new algorithm used in the patch generator: much faster (up to 90%) while using
+smaller block sizes (higher compression)</li>
+<li>Created a NSIS 2 plugin</li>
+<li>Works with small files</li>
+<li>Replaces existing patch in file if original file CRC is identical</li>
+</ul>
+</li>
 </ul>
 <p class="header">Credits</p>
 <p class="text">Written by Koen van de Sande<br />
 C plug-in by Edgewize<br />
 New documentation and example by Joost Verburg</p>
 <p class="header">License</p>
-<pre class="margin">Copyright (C) 2001-2002 Koen van de Sande
+<pre class="margin">Copyright (C) 2001-2003 Koen van de Sande
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -174,9 +194,6 @@ it freely, subject to the following restrictions:
 2. Altered versions must be plainly marked as such,
    and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any distribution.
-
-Please note that this version contains the plug-in source only,
-not the source of the patch generator.
 </pre>
   </div></td>
   </tr>
