@@ -1,6 +1,6 @@
 \H{pages} Pages
 
-Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with InstallOptions for example).
+Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with \W{../contrib/Installoptions/readme.html}{InstallOptions} for example).
 
 \S{pageoreder} Ordering
 
@@ -15,9 +15,9 @@ This code will show the license page, then the components selection page, then t
 
 You can specify the same page type more than once, just make sure you know what you are doing.
 
-Please note that you must still use LicenseText and LicenseData for the license page to show, ComponentText for the components selection page to show and DirText for the directory page to show.
+Please note that you must still use \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} for the license page to show, \R{acomponenttext}{ComponentText} for the components selection page to show and \R{adirtext}{DirText} for the directory page to show.
 
-If you don't use any Page command the installer pages order will be just as in older version: license (if LicenseText and LicenseData were specified), components (if ComponentText was specified and there is more than one visible section), directory (if DirText was specified), instfiles.
+If you don't use any Page command the installer pages order will be just as in older version: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified), instfiles.
 
 \S{pagecallbacks} Callbacks
 

@@ -9,4 +9,4 @@ A special Section named 'Uninstall' must be created in order to generate an unin
 \c   DeleteRegKey HKLM SOFTWARE\myApp
 \c SectionEnd
 
-The first Delete instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall.
+The first \R{delete}{Delete} instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall.

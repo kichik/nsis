@@ -22,7 +22,7 @@ Example:
 
 \S3{oninit} .onInit
 
-This callback will be called when the installer is nearly finished initializing. If the '.onInit' function calls Abort, the installer will quit instantly.
+This callback will be called when the installer is nearly finished initializing. If the '.onInit' function calls \R{abort}{Abort}, the installer will quit instantly.
 
 Here are two examples of how this might be used:
 
@@ -44,7 +44,7 @@ or:
 
 \S3{oninstfailed} .onInstFailed
 
-This callback is called when the user hits the 'cancel' button after the install has failed (if it could not extract a file, or the install script used the Abort command).
+This callback is called when the user hits the 'cancel' button after the install has failed (if it could not extract a file, or the install script used the \R{abort}{Abort} command).
 
 Example:
 
@@ -54,7 +54,7 @@ Example:
 
 \S3{oninstsuccess} .onInstSuccess
 
-This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
+This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{aautoclosewindow}{AutoCloseWindow} is set to false).
 
 Example:
 
@@ -83,11 +83,11 @@ Example:
 
 \S3{onselchange} .onSelChange
 
-Called when the selection changes on the component page. Useful for using with SectionSetFlags and SectionGetFlags.
+Called when the selection changes on the \R{pages}{component page}. Useful for using with \R{sectionsetflags}{SectionSetFlags} and \R{sectiongetflags}{SectionGetFlags}.
 
 \S3{onuserabort} .onUserAbort
 
-This callback is called when the user hits the 'cancel' button, and the install hasn't already failed. If this function calls Abort, the install will not be aborted.
+This callback is called when the user hits the 'cancel' button, and the install hasn't already failed. If this function calls \R{abort}{Abort}, the install will not be aborted.
 
 Example:
 
@@ -99,7 +99,7 @@ Example:
 
 \S3{onverifyinstdir} .onVerifyInstDir
 
-This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with MessageBox or the likes. If this function calls Abort, the installation path in $INSTDIR is deemed invalid.
+This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with \R{messagebox}{MessageBox} or the likes. If this function calls \R{abort}{Abort}, the installation path in $INSTDIR is deemed invalid.
 
 Example:
 
@@ -140,7 +140,7 @@ or:
 
 \S3{unonuninstfailed} un.onUninstFailed
 
-This callback is called when the user hits the 'cancel' button after the uninstall has failed (if it used the Abort command or otherwise failed).
+This callback is called when the user hits the 'cancel' button after the uninstall has failed (if it used the \R{abort}{Abort command} or otherwise failed).
 
 Example:
 
@@ -150,7 +150,7 @@ Example:
 
 \S3{unonuninstsuccess} un.onUninstSuccess
 
-This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
+This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if \R{aautoclosewindow}{AutoCloseWindow} is set to false).
 
 Example:
 

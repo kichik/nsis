@@ -112,6 +112,12 @@ Specifies a string that is above the directory selection area. If this command i
 
 Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: "Can not write to file $\\r$\\n$0$\\r$\\ngood luck, bitch.".
 
+\S2{aicon} Icon
+
+\c [path\]icon.ico
+
+Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail.
+
 \S2{ainstallbuttontext} InstallButtonText
 
 \c [/LANG=lang_id] install button text
@@ -162,17 +168,17 @@ Specifies a text file or a RTF file to use for the license that the user can rea
 
 If you make your license file a RTF file it is recommended you edit it with WordPad and not MS Word. Using WordPad will result in a much smaller file.
 
-\S2{alicensetext} LicenseText
-
-\c [[/LANG=lang_id] text [button_text]]
-
-Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
-
 \S2{alicenseforceselection} LicenseForceSelection
 
 \c [/LANG=lang_id] (checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | \\<b\\>off\\</b\\>)
 
 Specifies if the displayed license must be accept explicit or not. This can be done either by a checkbox or by radiobuttons. By default the "next button" is disabled and will only be enabled if the checkbox is enabled or the right radio button is selected. If off is specified the "next button" is enabled by default.
+
+\S2{alicensetext} LicenseText
+
+\c [[/LANG=lang_id] text [button_text]]
+
+Specifies a string that is above the license text. Omit this to not have a license displayed. If button_text is specified, it will override the default button text of "I Agree".
 
 \S2{amiscbuttontext} MiscButtonText
 
@@ -185,12 +191,6 @@ Replaces the default text strings for the four buttons (< Back, Next >, Cancel a
 \c [/LANG=lang_id] name
 
 Sets the name of the installer. The name is usually simply the product name such as 'MyApp' or 'CrapSoft MyApp'.
-
-\S2{aicon} Icon
-
-\c [path\]icon.ico
-
-Sets the icon of the installer. Every icon in the icon file will be included in the installer. Note that if you use different icons for installer and uninstaller the file size and structure of the icons has to match otherwise the build of your installer will fail.
 
 \S2{aoutfile} OutFile
 
