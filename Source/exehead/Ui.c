@@ -1404,6 +1404,53 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
       SetFocus(h);
     }
   }
+  //>>>Ximon Eighteen aka Sunjammer 30th August 2002
+  //+++Popup "Copy Details To Clipboard" menu when RMB clicked in DetailView
+  if (uMsg == WM_NOTIFY && ((NMHDR*)lParam)->code == NM_RCLICK)
+  {
+    int count = ListView_GetItemCount(insthwnd);
+    if (count > 0)
+    {
+  	  POINT p;
+      HMENU menu = CreatePopupMenu();
+      AppendMenu(menu,MF_STRING,1,"Copy Details To Clipboard");
+  	  GetCursorPos(&p);
+	  if (1==TrackPopupMenu(menu,TPM_NONOTIFY|TPM_RETURNCMD,p.x,p.y,0,insthwnd,0))
+      {
+        char textBuf[1024];
+        int i,total = 0;
+        LVITEM item;
+        HGLOBAL memory;
+        LPTSTR ptr,endPtr;
+        item.iSubItem   = 0;
+        item.pszText    = textBuf;
+        item.cchTextMax = 1023;
+        for (i = 0; i < count; i++)
+        {
+          // Add 2 for the CR/LF combination that must follow every line.
+          total += 2+SendMessage(insthwnd,LVM_GETITEMTEXT,i,(LPARAM)&item);
+        }
+        OpenClipboard(0);
+        EmptyClipboard();
+        memory = GlobalAlloc(GMEM_MOVEABLE,(total+1)*sizeof(TCHAR));
+        ptr = GlobalLock(memory);
+        endPtr = ptr+(total+1)*sizeof(TCHAR)-1;
+        for (i = 0; i < count; i++)
+        {
+          // -2 to allow for CR/LF
+          ListView_GetItemText(insthwnd,i,0,ptr,(endPtr-2)-ptr);
+          while (*ptr) ptr++;
+          *ptr++ = '\r';
+          *ptr++ = '\n';
+        }
+        *ptr++ = (TCHAR)0;
+        GlobalUnlock(memory);
+        SetClipboardData(CF_TEXT,memory);
+        CloseClipboard();
+      }
+    }
+  }
+  //<<<
   return HandleStaticBkColor();
 }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
