@@ -3248,19 +3248,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_DELETEINISEC:
     case TOK_DELETEINISTR:
       {
-        char *vname="<section>";
+        char *vname="";
+        char *space="";
         ent.which=EW_WRITEINI;
         ent.offsets[0]=add_string(line.gettoken_str(2)); // section name
         if (line.getnumtokens() > 3)
         {
           vname=line.gettoken_str(3);
           ent.offsets[1]=add_string(vname); // value name
+          space=" ";
         }
         else ent.offsets[1]=0;
         ent.offsets[2]=0;
         ent.offsets[3]=add_string(line.gettoken_str(1));
-        SCRIPT_MSG("DeleteINI%s: [%s] %s in %s\n",vname?"Str":"Sec",
-          line.gettoken_str(2),vname,line.gettoken_str(1));
+        SCRIPT_MSG("DeleteINI%s: [%s] %s%sin %s\n",*vname?"Str":"Sec",
+          line.gettoken_str(2),vname,space,line.gettoken_str(1));
       }
     return add_entry(&ent);
     case TOK_WRITEINISTR:
@@ -3269,6 +3271,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       ent.offsets[1]=add_string(line.gettoken_str(3));
       ent.offsets[2]=add_string(line.gettoken_str(4));
       ent.offsets[3]=add_string(line.gettoken_str(1));
+      ent.offsets[4]=1; // write
       SCRIPT_MSG("WriteINIStr: [%s] %s=%s in %s\n",
         line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4),line.gettoken_str(1));
     return add_entry(&ent);
