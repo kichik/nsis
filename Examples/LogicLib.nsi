@@ -1,109 +1,290 @@
 Name "NSIS LogicLib Example"
 OutFile "example.exe"
-SilentInstall silent
+ShowInstDetails show
 
+;!define LOGICLIB_VERBOSITY 4
 !include "logiclib.nsh"
-!define MsgBox "MessageBox MB_OK"
 
 Section
 
+  ; if..endif
+  StrCpy $R1 1
+  StrCpy $R2 ""
+  ${If} $R1 = 1
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} $R1 = 2
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} $R1 < 2
+    StrCpy $R2 $R2C
+  ${EndIf}
+  ${If} $R1 < -2
+    StrCpy $R2 $R2D
+  ${EndIf}
+  ${If} $R1 > 2
+    StrCpy $R2 $R2E
+  ${EndIf}
+  ${If} $R1 > -2
+    StrCpy $R2 $R2F
+  ${EndIf}
+  ${If} $R1 <> 1
+    StrCpy $R2 $R2G
+  ${EndIf}
+  ${If} $R1 <> 2
+    StrCpy $R2 $R2H
+  ${EndIf}
+  ${If} $R1 >= 2
+    StrCpy $R2 $R2I
+  ${EndIf}
+  ${If} $R1 >= -2
+    StrCpy $R2 $R2J
+  ${EndIf}
+  ${If} $R1 <= 2
+    StrCpy $R2 $R2K
+  ${EndIf}
+  ${If} $R1 <= -2
+    StrCpy $R2 $R2L
+  ${EndIf}
+  ${If} $R2 == "ACFHJK"
+    DetailPrint "PASSED If..EndIf test"
+  ${Else}
+    DetailPrint "FAILED If..EndIf test"
+  ${EndIf}
+
   ; if..elseif..else..endif
-  StrCpy $R1 1 ;change to test the following if statement
-  ${if} $R1 = 1
-    MessageBox MB_OK "if: R1=1"
-  ${elseif} $R1 = 2
-    MessageBox MB_OK "ifelse: R1=2"
-  ${else}
-    MessageBox MB_OK "else: R1=$R1"
-  ${endif}
+  StrCpy $R1 A
+  StrCpy $R2 ""
+  ${If} $R1 == A
+    StrCpy $R2 $R2A
+  ${ElseIf} $R1 == B
+    StrCpy $R2 $R2B
+  ${ElseUnless} $R1 != C
+    StrCpy $R2 $R2C
+  ${Else}
+    StrCpy $R2 $R2D
+  ${EndIf}
+  ${If} $R1 == D
+    StrCpy $R2 $R2D
+  ${ElseIf} $R1 == A
+    StrCpy $R2 $R2A
+  ${ElseUnless} $R1 != B
+    StrCpy $R2 $R2B
+  ${Else}
+    StrCpy $R2 $R2C
+  ${EndIf}
+  ${If} $R1 == C
+    StrCpy $R2 $R2C
+  ${ElseIf} $R1 == D
+    StrCpy $R2 $R2D
+  ${ElseUnless} $R1 != A
+    StrCpy $R2 $R2A
+  ${Else}
+    StrCpy $R2 $R2B
+  ${EndIf}
+  ${If} $R1 == B
+    StrCpy $R2 $R2B
+  ${ElseIf} $R1 == C
+    StrCpy $R2 $R2C
+  ${ElseUnless} $R1 != D
+    StrCpy $R2 $R2D
+  ${Else}
+    StrCpy $R2 $R2A
+  ${EndIf}
+  ${If} $R2 == "$R1$R1$R1$R1"
+    DetailPrint "PASSED If..ElseIf..Else..EndIf test"
+  ${Else}
+    DetailPrint "FAILED If..ElseIf..Else..EndIf test"
+  ${EndIf}
 
   ; ifthen..|..|
-  StrCpy $R1 1 ; change to test ifthen statement.
-  ${ifthen} $R1 = 1 ${|} MessageBox MB_OK "R1=1" ${|}
+  StrCpy $R1 1
+  StrCpy $R2 ""
+  ${ifthen} $R1 = 1 ${|} StrCpy $R2 $R2A ${|}
+  ${ifthen} $R1 = 2 ${|} StrCpy $R2 $R2B ${|}
+  ${If} $R2 == "A"
+    DetailPrint "PASSED IfThen test"
+  ${Else}
+    DetailPrint "FAILED IfThen test"
+  ${EndIf}
 
   ; ifcmd..||..|
-  StrCpy $R1 "example.nsi" ; change to test ifcmd statement
-  ${ifcmd} IfFileExists "example.nsi" ${||} MessageBox MB_OK "IfFileExists: R1=$R1" ${|}
+  StrCpy $R2 ""
+  ${ifcmd} MessageBox MB_YESNO "Please press Yes" IDYES ${||} StrCpy $R2 $R2A ${|}
+  ${ifcmd} MessageBox MB_YESNO|MB_DEFBUTTON2 "Please press No" IDYES ${||} StrCpy $R2 $R2B ${|}
+  ${If} $R2 == "A"
+    DetailPrint "PASSED IfCmd test"
+  ${Else}
+    DetailPrint "FAILED IfCmd test"
+  ${EndIf}
 
-  ; select..case..case2..case3..case4..case5..case_else..endselect
-  StrCpy $R1 1 ;change to test the following if statement
-  ${select} $R1
-    ${case} "1"
-      MessageBox MB_OK "case: R1=1"
-    ${case} "2"
-      MessageBox MB_OK "case: R1=2"
-    ${case2} "3" "4"
-      MessageBox MB_OK "case2: R1=3 or 4, R1=$R1"
-    ${case_else}
-      MessageBox MB_OK "caseelse: R1=$R1"
-  ${endselect}
+  ; select..case..case2..case3..case4..case5..caseelse..endselect
+  StrCpy $R1 1
+  StrCpy $R2 ""
+  ${Select} $R1
+    ${Case} "1"
+      StrCpy $R2 $R2A
+    ${Case} "2"
+      StrCpy $R2 $R2B
+    ${Case2} "3" "4"
+      StrCpy $R2 $R2C
+    ${CaseElse}
+      StrCpy $R2 $R2D
+  ${EndSelect}
+  ${Select} $R1
+    ${Case} "2"
+      StrCpy $R2 $R2A
+    ${Case} "3"
+      StrCpy $R2 $R2B
+    ${Case2} "4" "5"
+      StrCpy $R2 $R2C
+    ${CaseElse}
+      StrCpy $R2 $R2D
+  ${EndSelect}
+  ${Select} $R1
+    ${Case} "3"
+      StrCpy $R2 $R2A
+    ${Case} "4"
+      StrCpy $R2 $R2B
+    ${Case2} "5" "1"
+      StrCpy $R2 $R2C
+    ${CaseElse}
+      StrCpy $R2 $R2D
+  ${EndSelect}
+  ${Select} $R1
+    ${Case} "4"
+      StrCpy $R2 $R2A
+    ${Case} "5"
+      StrCpy $R2 $R2B
+    ${Case2} "1" "2"
+      StrCpy $R2 $R2C
+    ${CaseElse}
+      StrCpy $R2 $R2D
+  ${EndSelect}
+  ${If} $R2 == "ADCC"
+    DetailPrint "PASSED Select..Case*..EndSelect test"
+  ${Else}
+    DetailPrint "FAILED Select..Case*..EndSelect test"
+  ${EndIf}
 
-  ; for..exitfor..next
-  ${for} $R1 1 5
-    MessageBox MB_OK "for: R1=$R1"
-  ${next}
-
-  ; foreach..exitfor..next
-  ${foreach} $R1 10 1 - 1 
-    MessageBox MB_OK "foreach: R1=$R1"
-  ${next}
+  ; for[each]..exitfor..next
+  StrCpy $R2 ""
+  ${For} $R1 1 5
+    StrCpy $R2 $R2$R1
+  ${Next}
+  ${ForEach} $R1 10 1 - 1
+    StrCpy $R2 $R2$R1
+  ${Next}
+  ${For} $R1 1 0
+    StrCpy $R2 $R2$R1
+  ${Next}
+  ${If} $R2 == "1234510987654321"
+    DetailPrint "PASSED For[Each]..Next test"
+  ${Else}
+    DetailPrint "FAILED For[Each]..Next test"
+  ${EndIf}
 
   ; do..exitdo..loop
   StrCpy $R1 0
-  ${do}
+  StrCpy $R2 ""
+  ${Do}
+    StrCpy $R2 $R2$R1
     IntOp $R1 $R1 + 1
-    MessageBox MB_YESNO "Do..Loop statement test, iteration $R1.$\nDo you want to stop?" IDYES 0 IDNO +2
-    ${exitdo}
-  ${loop}
+    ${If} $R1 > 10
+      ${ExitDo}
+    ${EndIf}
+  ${Loop}
+  ${If} $R2 == "012345678910"
+    DetailPrint "PASSED Do..ExitDo..Loop test"
+  ${Else}
+    DetailPrint "FAILED Do..ExitDo..Loop test"
+  ${EndIf}
 
-  ; do..exitdo..loopuntil 
+  ; do..exitdo..loopuntil
   StrCpy $R1 0
-  ${do}
+  StrCpy $R2 ""
+  ${Do}
+    StrCpy $R2 $R2$R1
     IntOp $R1 $R1 + 1
-  ${loopuntil} $R1 >= 5 ; Change to test loop until
-  MessageBox MB_OK "do..loopuntil: R1=$R1"
+  ${LoopUntil} $R1 >= 5
+  ${If} $R2 == "01234"
+    DetailPrint "PASSED Do..ExitDo..LoopUntil test"
+  ${Else}
+    DetailPrint "FAILED Do..ExitDo..LoopUntil test"
+  ${EndIf}
 
   ; dountil..exitdo..loop
   StrCpy $R1 0
-  ${dountil} $R1 >= 5 ; Change to test loop until
+  StrCpy $R2 ""
+  ${DoUntil} $R1 >= 5
+    StrCpy $R2 $R2$R1
     IntOp $R1 $R1 + 1
-  ${loop}
-  MessageBox MB_OK "dountil..loop: R1=$R1"
+  ${Loop}
+  ${If} $R2 == "01234"
+    DetailPrint "PASSED DoUntil..ExitDo..Loop test"
+  ${Else}
+    DetailPrint "FAILED DoUntil..ExitDo..Loop test"
+  ${EndIf}
 
-  ; exitdo statement test
+  ; nested do test
   StrCpy $R1 0
   StrCpy $R2 0
-  ${do}
+  StrCpy $R3 ""
+  ${Do}
+    StrCpy $R3 $R3$R1$R2
     IntOp $R1 $R1 + 1
-    IntCmp $R1 5 +2 +2 0
-    ${exitdo}
+    ${If} $R1 > 5
+      ${ExitDo}
+    ${EndIf}
     StrCpy $R2 0
-    ${do}
+    ${Do}
+      StrCpy $R3 $R3$R1$R2
       IntOp $R2 $R2 + 1
-      MessageBox MB_OK "loop1: $R1$\nloop2: $R2"
-      IntCmp $R2 5 0 +2 0
-      ${exitdo}
-    ${loop}
-  ${loop}
-  MessageBox MB_OK "loopR1: $R1$\nloop2: $R2"
+      ${If} $R2 >= 5
+        ${ExitDo}
+      ${EndIf}
+    ${Loop}
+  ${Loop}
+  ${If} $R3 == "00101112131415202122232425303132333435404142434445505152535455"
+    DetailPrint "PASSED nested Do test"
+  ${Else}
+    DetailPrint "FAILED nested Do test"
+  ${EndIf}
 
-  ; break..continue labels
+  ; while..exitwhile..endwhile (exact replica of dowhile..enddo}
   StrCpy $R1 0
-  ${do}
-    StrCpy $R2 0
-    ${do}
-      IntOp $R2 $R2 + 1
-      MessageBox MB_YESNO "Do..Loop1: $R1.$\nDo..Loop2: $R2.$\n$\nDo you want to stop Loop2?" IDYES ${_Break} IDNO ${_Continue}
-    ${loop}
+  StrCpy $R2 ""
+  ${While} $R1 < 5
+    StrCpy $R2 $R2$R1
     IntOp $R1 $R1 + 1
-    MessageBox MB_YESNO "Do..Loop1: $R1.$\nDo..Loop2: $R2.$\n$\nDo you want to stop Loop1?" IDYES ${_Break} IDNO ${_Continue}
-  ${loop}
+  ${EndWhile}
+  ${If} $R2 == "01234"
+    DetailPrint "PASSED While..ExitWhile..EndWhile test"
+  ${Else}
+    DetailPrint "FAILED While..ExitWhile..EndWhile test"
+  ${EndIf}
 
-  ; while..exitwhile..endwhile
-  StrCpy $R1 0
-  ${while} $R1 < 5 ;change to test while statement.
-    IntOp $R1 $R1 + 1
-  ${endwhile}
-  MessageBox MB_OK "while: R1=$R1"
+  ; kinds of if other than "value1 comparison value2"
+  ClearErrors
+  FindFirst $R1 $R2 "$PROGRAMFILES\*"
+  ${Unless} ${Errors}
+    ${Do}
+      ${Select} $R2
+        ${Case2} "." ".."
+          ; Do nothing
+        ${CaseElse}
+          DetailPrint "Found $PROGRAMFILES\$R2"
+      ${EndSelect}
+      FindNext $R1 $R2
+    ${LoopUntil} ${Errors}
+    FindClose $R1
+  ${EndUnless}
+
+  StrCpy $R1 "example.xxx"
+  ${If} ${FileExists} "${__FILE__}"
+    DetailPrint 'Source file "${__FILE__}" still exists'
+  ${Else}
+    DetailPrint 'Source file "${__FILE__}" has gone'
+  ${EndIf}
 
 SectionEnd
