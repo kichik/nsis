@@ -36,7 +36,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;Modern UI Configuration
 
   !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "2.0b2 (CVS)"
+  !define MUI_VERSION "2.0b2"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
@@ -193,7 +193,7 @@ Section "Desktop Shortcut" SecIcons
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Menu.lnk" "$INSTDIR\NSIS.exe" ""
     
   CreateShortCut "$SMPROGRAMS\NSIS\MakeNSISW.lnk" "$INSTDIR\makensisw.exe"
-  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://www.nsis.sourceforge.net/"
+  WriteINIStr "$SMPROGRAMS\NSIS\NSIS Development Site.url" "InternetShortcut" "URL" "http://nsis.sourceforge.net/"
   CreateShortCut "$SMPROGRAMS\NSIS\Uninstall NSIS.lnk" "$INSTDIR\uninst-nsis.exe"
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
 !endif
