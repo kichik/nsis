@@ -29,8 +29,8 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 ;--------------------------------
 !ifndef CLASSIC_UI
 
-  ;Include Modern UI Macro's
-  !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
+  ;Include Modern UI
+  !include "MUI.nsh"
 
   ;--------------------------------
   ;Modern UI Configuration
@@ -821,10 +821,25 @@ Section "VPatch Source" SecContribVPatchS
   SetDetailsPrint listonly
 
   SectionIn 1
-  SetOutPath $INSTDIR\Contrib\VPatch
-  File ..\Contrib\VPatch\vpatchdll.c
-  File ..\Contrib\VPatch\vpatchdll.dsp
-  File ..\Contrib\VPatch\vpatchdll.dsw
+  SetOutPath $INSTDIR\Contrib\VPatch\Source
+  
+  SetOutPath $INSTDIR\Contrib\VPatch\Source\GenPat
+  File ..\Contrib\VPatch\Source\GenPat\*.pas
+  File ..\Contrib\VPatch\Source\GenPat\*.dpr
+  File ..\Contrib\VPatch\Source\GenPat\*.bpg
+  
+  SetOutPath $INSTDIR\Contrib\VPatch\Source\Plugin
+  File ..\Contrib\VPatch\Source\Plugin\*.c
+  File ..\Contrib\VPatch\Source\Plugin\*.dsw
+  File ..\Contrib\VPatch\Source\Plugin\*.dsp
+  
+  SetOutPath $INSTDIR\Contrib\VPatch\Source\GUI
+  File ..\Contrib\VPatch\Source\GUI\*.pas
+  File ..\Contrib\VPatch\Source\GUI\*.dpr
+  File ..\Contrib\VPatch\Source\GUI\*.dfm
+  File ..\Contrib\VPatch\Source\GUI\*.dof
+  File ..\Contrib\VPatch\Source\GUI\*.res
+  
 SectionEnd
 
 SubSectionEnd ; plugins
