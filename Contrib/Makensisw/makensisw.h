@@ -28,7 +28,7 @@
 #include "jnetlib/netinc.h"
 #include "jnetlib/httpget.h"
 #define _RICHEDIT_VER 0x0200
-#include <RichEdit.h>
+#include <richedit.h>
 #undef _RICHEDIT_VER
 
 // Defines
