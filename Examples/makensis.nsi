@@ -25,6 +25,7 @@ BrandingText /TRIMRIGHT
 
 LicenseText "Scroll down to read the rest of the license agreement:"
 LicenseData ..\license.txt
+LicenseBkColor FFFFFF
 
 ComponentText "This will install the Nullsoft Install System v${VER_MAJOR}.${VER_MINOR} on your computer:"
 InstType "Full"
