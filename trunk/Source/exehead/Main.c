@@ -164,7 +164,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     static char temp[512];
     DWORD l=left;
     if (l > 512) l=512;
-    if (!ReadSelfFile(temp,l,&l))
+    if (!ReadSelfFile(temp,l))
     {
       m_Err=_LANG_INVALIDCRC;
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
@@ -254,10 +254,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     if (do_crc)
     {
-      DWORD l;
       int fcrc;
       SetSelfFilePointer(m_pos,FILE_BEGIN);
-      if (!ReadSelfFile(&fcrc,4,&l) || crc != fcrc)
+      if (!ReadSelfFile(&fcrc,4) || crc != fcrc)
       {
         m_Err=_LANG_INVALIDCRC;
         goto end;
