@@ -853,7 +853,7 @@ Var MUI_TEMP2
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
   
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "$(^RTL)"
 
   !verbose pop
 
