@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19c
+;Modern UI Header File version 1.19d - WORKING ON INSTALLOPTIONS INTEGRATION
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -240,6 +240,28 @@
     Goto done
   StrCmp ${IO_DIRECTION} ${IO_DIRECTION_PREV} "" +3
     Call .onNextPage
+    Abort
+   
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNBACK
+
+  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_NEXT}" "" +3
+    Call un.onPrevPage
+    Abort
+  StrCmp ${IO_DIRECTION} "${IO_DIRECTION_PREV}" "" +3
+    Call un.onPrevPage
+    Goto done
+            
+!macroend
+
+!macro MUI_INSTALLOPTIONS_UNNEXT
+
+  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_NEXT} "" +3
+    Call un.onNextPage
+    Goto done
+  StrCmp ${IO_DIRECTION} ${IO_DIRECTION_PREV} "" +3
+    Call un.onNextPage
     Abort
    
 !macroend
