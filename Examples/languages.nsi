@@ -11,43 +11,56 @@ XPStyle on
 
 ;--------------------------------
 
+Page components
+Page instfiles
+
+;--------------------------------
+
 ; First is default
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-Name English
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
-Name Dutch
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
-Name French
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
-Name German
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Korean.nlf"
-Name Korean
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Russian.nlf"
-Name Russian
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Spanish.nlf"
-Name Spanish
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Swedish.nlf"
-Name Swedish
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-Name "Traditional Chinese"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
-Name "Simplified Chinese"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\Slovak.nlf"
-Name Slovak
 
-; The language can be the last used language like above, but it can be defined using /LANG
-ComponentText /LANG=${LANG_ENGLISH} "English component page"
-ComponentText /LANG=${LANG_DUTCH} "Dutch component page"
-ComponentText /LANG=${LANG_FRENCH} "French component page"
-ComponentText /LANG=${LANG_GERMAN} "German component page"
-ComponentText /LANG=${LANG_KOREAN} "Korean component page"
-ComponentText /LANG=${LANG_RUSSIAN} "Russian component page"
-ComponentText /LANG=${LANG_SPANISH} "Spanish component page"
-ComponentText /LANG=${LANG_SWEDISH} "Swedish component page"
-ComponentText /LANG=${LANG_TRADCHINESE} "Traditional Chinese component page"
-ComponentText /LANG=${LANG_SIMPCHINESE} "Simplified Chinese component page"
-ComponentText /LANG=${LANG_SLOVAK} "Slovak component page"
+; Set name using the normal interface (Name command)
+LangString Name ${LANG_ENGLISH} "English"
+LangString Name ${LANG_DUTCH} "Dutch"
+LangString Name ${LANG_FRENCH} "French"
+LangString Name ${LANG_GERMAN} "German"
+LangString Name ${LANG_KOREAN} "Korean"
+LangString Name ${LANG_RUSSIAN} "Russian"
+LangString Name ${LANG_SPANISH} "Spanish"
+LangString Name ${LANG_SWEDISH} "Swedish"
+LangString Name ${LANG_TRADCHINESE} "Traditional Chinese"
+LangString Name ${LANG_SIMPCHINESE} "Simplified Chinese"
+LangString Name ${LANG_SLOVAK} "Slovak"
 
+Name $(Name)
+
+; Directly change the inner lang strings (Same as ComponentText)
+LangString ^ComponentsText ${LANG_ENGLISH} "English component page"
+LangString ^ComponentsText ${LANG_DUTCH} "Dutch component page"
+LangString ^ComponentsText ${LANG_FRENCH} "French component page"
+LangString ^ComponentsText ${LANG_GERMAN} "German component page"
+LangString ^ComponentsText ${LANG_KOREAN} "Korean component page"
+LangString ^ComponentsText ${LANG_RUSSIAN} "Russian component page"
+LangString ^ComponentsText ${LANG_SPANISH} "Spanish component page"
+LangString ^ComponentsText ${LANG_SWEDISH} "Swedish component page"
+LangString ^ComponentsText ${LANG_TRADCHINESE} "Traditional Chinese component page"
+LangString ^ComponentsText ${LANG_SIMPCHINESE} "Simplified Chinese component page"
+LangString ^ComponentsText ${LANG_SLOVAK} "Slovak component page"
+
+; Set one text for all languages (simply don't use a LangString)
+CompletedText "Languages example completed"
+
+; A LangString for the section name
 LangString Sec1Name ${LANG_ENGLISH} "English section #1"
 LangString Sec1Name ${LANG_DUTCH} "Dutch section #1"
 LangString Sec1Name ${LANG_FRENCH} "French section #1"
@@ -60,6 +73,7 @@ LangString Sec1Name ${LANG_TRADCHINESE} "Trandional Chinese section #1"
 LangString Sec1Name ${LANG_SIMPCHINESE} "Simplified Chinese section #1"
 LangString Sec1Name ${LANG_SLOVAK} "Slovak section #1"
 
+; A multilingual message
 LangString Message ${LANG_ENGLISH} "English message"
 LangString Message ${LANG_DUTCH} "Dutch message"
 LangString Message ${LANG_FRENCH} "French message"
@@ -80,6 +94,8 @@ Section !$(Sec1Name) sec1
 	MessageBox MB_OK $(Message)
 SectionEnd
 
+; The old, slow, wasteful way
+; Look at this section and see why LangString is so much easier
 Section "Section number two"
 	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
 		MessageBox MB_OK "Installing English stuff"
