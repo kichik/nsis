@@ -164,12 +164,13 @@ Version History
  - Check for Update command
  - Added link to the NSIS Forum under Help menu
  - Bunch of other stuff not worth mentioning
+ - Define Symbols menu (Ctrl+D) (iceman_k)
 
 
 Copyright Information
 ---------------------
 Copyright (c) 2002 Robert Rainwater
-Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely
+Contributors: Justin Frankel, Fritz Elfert, and Amir Szekely, iceman_k
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
