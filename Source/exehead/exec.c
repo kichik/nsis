@@ -937,11 +937,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           char *buf0=process_string_fromparm_tobuf(0x00);
           char *buf1=process_string_fromparm_tobuf(0x11);
 
-          // suggested by Kevin Gadd (janusfury)
-          mystrcpy(buf3, buf0);
-          trimslashtoend(buf3);
-          SetCurrentDirectory(buf3);
-
           h=LoadLibrary(buf0);
           if (h)
           {
@@ -952,8 +947,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               if (parm2)
               {
                 char *buf2=process_string_fromparm_tobuf(0x22);
+
+                // suggested by Kevin Gadd (janusfury)
+                mystrcpy(buf3, buf0);
+                trimslashtoend(buf3);
+                SetCurrentDirectory(buf3);
+
                 update_status_text(buf2,buf0);
                 if (funke()) exec_errorflag++;
+
+                SetCurrentDirectory(state_exe_directory);
               }
               else
               {
@@ -980,7 +983,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             update_status_text_from_lang(LANG_COULDNOTLOAD,buf0);
             log_printf2("Error registering DLL: Could not load %s",buf0);
           }
-          SetCurrentDirectory(state_exe_directory);
           OleUninitialize();
         }
         else
