@@ -1522,9 +1522,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_ADDBRANDINGIMAGE:
     try {
-        int k=line.gettoken_enum(1,"top\0left\0");
+        int k=line.gettoken_enum(1,"top\0left\0bottom\0right\0");
         int wh=line.gettoken_int(2);
-        if (k == -1) PRINTHELP()
+        if (k == -1) PRINTHELP();
+        int padding = 2;
+        if (line.getnumtokens() == 4)
+          padding = line.gettoken_int(3);
 
         init_res_editor();
         BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INST), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
@@ -1536,8 +1539,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         DialogItemTemplate brandingCtl = {0,};
 
         brandingCtl.dwStyle = SS_BITMAP | WS_CHILD | WS_VISIBLE;
-        brandingCtl.sX = childRect->sX;
-        brandingCtl.sY = childRect->sY;
+        brandingCtl.sX = padding;
+        brandingCtl.sY = padding;
         brandingCtl.szClass = MAKEINTRESOURCE(0x0082);
         brandingCtl.szTitle = "";
         brandingCtl.wId = IDC_BRANDIMAGE;
@@ -1545,18 +1548,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         brandingCtl.sHeight = wh;
         brandingCtl.sWidth = wh;
         dt.PixelsToDlgUnits(brandingCtl.sWidth, brandingCtl.sHeight);
-        if (k) {
-          // Left
-          dt.MoveAllAndResize(brandingCtl.sWidth + childRect->sX, 0);
+        if (k%2) {
+          // left (1) / right (3)
 
-          DialogItemTemplate *okButton = dt.GetItem(IDOK);
-          brandingCtl.sHeight = okButton->sY + okButton->sHeight - childRect->sY;
+          if (k & 2) // right
+            brandingCtl.sX += dt.GetWidth();
+          else // left
+            dt.MoveAll(brandingCtl.sWidth + (padding * 2), 0);
+          
+          dt.Resize(brandingCtl.sWidth + (padding * 2), 0);
+
+          brandingCtl.sHeight = dt.GetHeight() - (padding * 2);
         }
         else {
-          // Top
-          dt.MoveAllAndResize(0, brandingCtl.sHeight + childRect->sY);
+          // top (0) / bottom (2)
 
-          brandingCtl.sWidth = childRect->sWidth;
+          if (k & 2) // bottom
+            brandingCtl.sY += dt.GetHeight();
+          else // top
+            dt.MoveAll(0, brandingCtl.sHeight + (padding * 2));
+
+          dt.Resize(0, brandingCtl.sHeight + (padding * 2));
+
+          brandingCtl.sWidth = dt.GetWidth() - (padding * 2);
         }
 
         dt.AddItem(brandingCtl);
