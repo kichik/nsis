@@ -459,49 +459,15 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 
 void CEXEBuild::setdirs(char *argv0)
 {
-  char szNSISDir[NSIS_MAX_STRLEN],*fn2;
+  char szNSISDir[NSIS_MAX_STRLEN*2],*fn2;
+  int len = sizeof(szNSISDir) - sizeof(PATH_SEPARATOR_STR "Include") - 1;
 #ifdef _WIN32
-  GetModuleFileName(NULL,szNSISDir,sizeof(szNSISDir)-sizeof(PATH_SEPARATOR_STR "Include"));
+  GetModuleFileName(NULL,szNSISDir,len);
 #else
-  if (argv0[0] == '.' || argv0[0] == PATH_SEPARATOR_C)
-  {
-    getcwd(szNSISDir,sizeof(szNSISDir)-strlen(argv0)-2);
-    if (szNSISDir[strlen(szNSISDir)-1]!=PATH_SEPARATOR_C)
-      strcat(szNSISDir,PATH_SEPARATOR_STR);
-    strcat(szNSISDir,argv0);
-  }
-  else
-  {
-    char *path = getenv("PATH");
-    if (path)
-    {
-      char *p = path;
-      char *l = path;
-      char *e = path + strlen(path);
-      while (p <= e)
-      {
-        if (*p == ':' || !*p)
-        {
-          *p = 0;
-          strncpy(szNSISDir,l,sizeof(szNSISDir)-strlen(argv0)-2);
-          if (szNSISDir[strlen(szNSISDir)-1]!=PATH_SEPARATOR_C)
-            strcat(szNSISDir,PATH_SEPARATOR_STR);
-          strcat(szNSISDir,argv0);
-          struct stat st;
-          if (!stat(szNSISDir,&st))
-            break;
-          szNSISDir[0]=0;
-          l = ++p;
-        }
-        p = CharNext(p);
-      }
-    }
-  }
-#if defined(MAX_PATH) && (NSIS_MAX_STRLEN >= MAX_PATH)
-  const char buf[NSIS_MAX_STRLEN];
-  strcpy(buf, szNSISDir);
-  realpath(buf, szNSISDir);
-#endif
+  char *buffer = my_realpath(argv0);
+  strncpy(szNSISDir, buffer, len);
+  szNSISDir[sizeof(szNSISDir)-1] = 0;
+  my_free_realpath(argv0, buffer);
 #endif
   fn2=strrchr(szNSISDir,PATH_SEPARATOR_C);
   if(fn2!=NULL) *fn2=0;
@@ -2389,23 +2355,10 @@ int CEXEBuild::write_output(void)
     char *p;
     GetFullPathName(build_output_filename,1024,buffer,&p);
 #else
-#  ifdef PATH_MAX
-    char buffer[PATH_MAX];
-#  else
-    int path_max = pathconf(build_output_filename, _PC_PATH_MAX);
-    if (path_max <= 0)
-      path_max = 4096;
-    char *buffer = (char *) malloc(path_max);
-    if (!buffer)
-      buffer = build_output_filename;
-#  endif
-    realpath(build_output_filename, buffer);
-#endif
+    char *buffer = my_realpath(build_output_filename);
     notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
     INFO_MSG("\nOutput: \"%s\"\n", buffer);
-#if !defined(_WIN32) && !defined(PATH_MAX)
-    if (buffer != build_output_filename)
-      free(buffer);
+    my_free_realpath(build_output_filename, buffer);
 #endif
   }
   FILE *fp = fopen(build_output_filename,"w+b");
