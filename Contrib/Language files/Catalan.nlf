@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v3
+NLF v4
 # Language ID
 1027
 # Font and size - dash (-) means default
@@ -44,6 +44,8 @@ Error obrint arxiu per escriptura: \r\n\t"$0"\r\nPremi abortar per abortar l'ins
 No s'ha pogut escriure: 
 Ha fallat la còpia
 Copiar a
+Registrant: 
+Eliminant registre: 
 No s'ha trobat el símbol: 
 No s'ha pogut carregar: 
 Crear directori: 
@@ -58,7 +60,7 @@ Error registrant DLL
 Executar comanda: 
 Executar: 
 Extraure: 
-Extraure: error escrivint l'arxiu 
+Extraure: error escrivint l'arxiu
 Instal·lador corrupte: codi d'operació no vàlid
 No OLE per: 
 Directori de sortida: 
@@ -67,3 +69,12 @@ Eliminar al reiniciar:
 Renombrar: 
 Saltat: 
 Copiar Detalls al Portapapers
+Procés de registre de la instal·lació 
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
