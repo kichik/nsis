@@ -1692,15 +1692,22 @@ int CEXEBuild::write_output(void)
   }
   int ne=build_entries.getlen()/sizeof(entry);
   INFO_MSG("Install: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
-  INFO_MSG("%d strings (%d bytes), ",build_strlist.getnum(),build_strlist.getlen());
-  INFO_MSG("%d language tables (%d bytes).\n",string_tables.size(),build_langtables.getlen());
+  int ns=build_strlist.getnum();
+  INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",build_strlist.getlen());
+  int nlt=string_tables.size();
+  INFO_MSG("%d language table%s (%d bytes), ",nlt,nlt==1?"":"s",build_langtables.getlen());
+  int np=build_pages.getlen()/sizeof(page);
+  INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",np*sizeof(page));
   if (ubuild_entries.getlen())
   {
-    int tmp=ubuild_entries.getlen()/sizeof(entry);
-    INFO_MSG("Uninstall: ");
-    INFO_MSG("%d instruction%s (%d bytes), ",tmp,tmp==1?"":"s",tmp*sizeof(entry));
-    INFO_MSG("%d strings (%d bytes), ",ubuild_strlist.getnum(),ubuild_strlist.getlen());
-    INFO_MSG("%d language tables (%d bytes).\n",string_tables.size(),ubuild_langtables.getlen());
+    ne=ubuild_entries.getlen()/sizeof(entry);
+    INFO_MSG("Uninstall: %d instruction%s (%d bytes), ",ne,ne==1?"":"s",ne*sizeof(entry));
+    ns=ubuild_strlist.getnum();
+    INFO_MSG("%d string%s (%d bytes), ",ns,ns==1?"":"s",ubuild_strlist.getlen());
+    nlt=string_tables.size();
+    INFO_MSG("%d language table%s (%d bytes), ",nlt,nlt==1?"":"s",ubuild_langtables.getlen());
+    np=ubuild_pages.getlen()/sizeof(page);
+    INFO_MSG("%d page%s (%d bytes).\n",np,np==1?"":"s",np*sizeof(page));
   }
 
 
