@@ -1193,7 +1193,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (type == REG_BINARY)
           {
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, NSIS_MAX_STRLEN);
-            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf3,buf1,len);
+            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf3,buf1,size);
           }
           if (size >= 0 && RegSetValueEx(hKey,buf1,0,rtype,data,size) == ERROR_SUCCESS)
             exec_error--;
