@@ -14,12 +14,12 @@ body
         font-family: Verdana, Arial, Helvetica, sans-serif;
         font-size: 13px;
         font-weight: normal;
+        text-align: left;
         }
 
-p
+p, li
         {
-        font-size: 100%;
-        margin: 20px;
+        font-size: 13px;
         }
 
 .center
@@ -30,7 +30,7 @@ p
 table
         {
         margin: auto;
-        text-align: left;
+        font-size: 13px;
         background-color: #FFFFFF;
         }
 
@@ -48,31 +48,29 @@ table
 
 h1
         {
-        font-size: 220%;
+        font-size: 30px;
         color: #333333;
         font-weight: normal;
         text-align: center;
-        margin: 20px;
+        margin-top: 20px;
         }
-        
+
 h2
         {
-        font-size: 165%;
+        font-size: 20px;
         color: #7A7272;
         font-weight: normal;
         }
-        
+
 h3
         {
-        font-size: 140%;
-        font-weight: normal
+        font-size: 17px;
+        font-weight: bold;
         color: #303030;
-        margin: 20px;
         }
 
 pre     {
-        font-size: 100%;
-        margin: 20px;
+	font-size: 13px;
         }
 
 div
@@ -85,7 +83,7 @@ a:link, a:visited, a:active
         color: #294F75;
         text-decoration: none;
         }
-        
+
 a:hover
         {
         color: #182634;
@@ -97,19 +95,23 @@ a:hover
 </head>
 <body>
 <div class="center">
-<table width="750" class="maintable" cellspacing="0" cellpadding="0">
+<table width="750" class="maintable" cellspacing="0" cellpadding="0" align="center">
     <tr> 
       <td> 
         <h1>VPatch 2</h1>
         <div> 
           <h2>Introduction</h2>
+          <div>
           <p>VPatch allows to create a patch file to update previous versions 
             of your software. The GenPat utitily generates the patch file. The 
             plug-in can use the patch to update a file. Using a patch, you can 
             reduce the download size of your updates, because only the differences 
             between the files are included in the patch file.</p>
+          </div>
           <h2>How to use</h2>
+          <div>
           <h3>Generate the patch file</h3>
+          <div>
           <p>Make sure you have the source file (original version) and the target 
             file (version to update to). For example, DATA.DTA (currently on user 
             system) and DATA_20.DTA (version 2.0 of this data file). Now call 
@@ -122,7 +124,9 @@ GENPAT data.dta data_20.dta data.pat
             after the filenames), you can use a different block size. A smaller 
             block size may result in a smaller patch, but the generation will 
             take more time (the default blocksize is 64).</p>
+          </div>
           <h3>Update the file during installation</h3>
+          <div>
           <p>Use the VPatch plug-in to update a file using a patch file:</p>
           <pre>
 vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
@@ -137,7 +141,9 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
             <li>No suitable patches were found</li>
           </ul>
           <p>Check <a href="example.nsi">example.nsi</a> for an example.</p>
+          </div>
           <h3>Multiple patches in one file</h3>
+          <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
             a patch for the same orginal file in the patch file, the patch will 
             be replaced. For example, if you want to be able to upgrade version 
@@ -148,7 +154,9 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
             from file B version 1 to file B version 2. Just call the plug-in multiple 
             times with the same patch file. It will automatically select the right 
             patch (based on the file CRC).</p>
+          </div>
           <h3>GenPat exit codes</h3>
+          <div>
           <p>In version 2.1 support was added for exit codes (known as error levels 
             in the DOS period) to GenPat. GenPat will return an exit code based 
             on succes of the patch generation. Here is a list of the possible 
@@ -202,22 +210,33 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
           <p>These exit codes can be useful when you generate patch files through 
             a script.</p>
         </div>
+        </div>
+        </div>
         <div>
           <h2>Source code</h2>
+          <div>
           <h3>NSIS plug-in (C++)</h3>
+          <div>
           <p>The source of the NSIS plug-in that applies patches can be found 
             in the Source\Plugin folder.</p>
+          </div>
           <h3>Patch Generator (Delphi)</h3>
+          <div>
           <p>The most interesting part of VPatch, the actual patch generation 
             algoritm, can be found in Source\GenPat\PatchGenerator.pas. The header 
             of that file contains a brief explanation of the algoritm as well.</p>
+          </div>
           <h3>User interface (Delphi)</h3>
+          <div>
           <p>A user interface is included as well, which you will have to build 
             yourself because the GUI executable was too large to include. Besides 
             Borland Delphi 6 or higher (you can use the freely available Personal 
             edition), you will also need to install the <a href=
 "http://www.delphi-gems.com">VirtualTreeView</a> component by Mike Lischke.</p>
+          </div>
+          </div>
           <h2>Version history</h2>
+          <div>
           <ul>
             <li>2.1 
               <ul>
@@ -247,11 +266,15 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
               </ul>
             </li>
           </ul>
+          </div>
           <h2>Credits</h2>
+          <div>
           <p>Written by Koen van de Sande<br />
             C plug-in by Edgewize<br />
             New documentation and example by Joost Verburg</p>
+          </div>
           <h2>License</h2>
+          <div>
           <pre>
 Copyright (C) 2001-2003 Koen van de Sande
 
@@ -271,6 +294,7 @@ it freely, subject to the following restrictions:
    and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any distribution.
 </pre>
+</div>
         </div>
       </td>
 </tr>
