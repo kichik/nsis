@@ -38,6 +38,7 @@
 #define REGSEC		HKEY_LOCAL_MACHINE
 #define REGKEY		"Software\\NSIS"
 #define REGLOC		"MakeNSISWPlacement"
+#define EXENAME		"makensis.exe"
 #define MAX_STRING	256
 #define TIMEOUT		150
 #define MINWIDTH	350
