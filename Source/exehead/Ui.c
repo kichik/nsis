@@ -223,16 +223,19 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
 static void NSISCALL CheckTreeItem(HWND hWnd, TV_ITEM *pItem, int checked) {
   HTREEITEM hItem = pItem->hItem;
   int l=0;
+  int flags;
 
   pItem->mask = TVIF_STATE|TVIF_PARAM;
   TreeView_GetItem(hWnd, pItem);
   if (pItem->state >> 12 == 0)
     return;
 
-  if (g_inst_section[pItem->lParam].flags & SF_RO) l=3;
+  flags = g_inst_section[pItem->lParam].flags;
 
-  pItem->state = INDEXTOSTATEIMAGEMASK(checked?2:1+l);
-  pItem->stateMask = TVIS_STATEIMAGEMASK;
+  if (flags & SF_RO) l=3;
+
+  pItem->state = INDEXTOSTATEIMAGEMASK(checked?2:1+l) | (flags & SF_BOLD ? TVIS_BOLD : 0);
+  pItem->stateMask = TVIS_STATEIMAGEMASK | TVIS_BOLD;
 
   TreeView_SetItem(hWnd, pItem);
 
@@ -1133,15 +1136,13 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                 x=num_sections;
                 while (x--)
                 {
-                  char c=GetStringFromStringTab(t->name_ptr)[0];
-                  if (c && c!='-')
+                  if (t->name_ptr && !(t->flags&(SF_SUBSEC|SF_SUBSECEND)))
                   {
                     TV_ITEM hItem;
                     hItem.hItem=*ht;
                     if (g_inst_header->no_custom_instmode_flag==1)
                     {
-                      int c=(t->install_types>>m_whichcfg)&1;
-                      CheckTreeItem(hwndTree1, &hItem,c);
+                      CheckTreeItem(hwndTree1,&hItem,(t->install_types>>m_whichcfg)&1);
                     }
                     else if (!(t->flags&SF_RO))
                     {

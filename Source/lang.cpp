@@ -207,22 +207,20 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string, int process/
     user_strings_list->find(name, 0, &idx);
   }
 
-  user_strings->resize((idx+1)*sizeof(int));
+  #define MAX(a, b) (a > b ? a : b)
+  user_strings->resize(MAX(user_strings->getlen(), (idx+1)*sizeof(int)));
   ((int*)user_strings->get())[idx] = uninst ? add_string_uninst(string,process) : add_string_main(string,process);
 
+  int zero = 0;
+
+  // make sure all of the user's strings tables are the same size
   for (int j = 0; j < string_tables.size(); j++) {
-    if (j == idx) continue;
-    if (uninst) {
-      if (string_tables[j]->user_ustrings.getlen() < (idx+1)*sizeof(int)) {
-        string_tables[j]->user_ustrings.resize((idx+1)*sizeof(int));
-        ((int*)string_tables[j]->user_ustrings.get())[idx] = 0;
-      }
-    }
-    else {
-      if (string_tables[j]->user_strings.getlen() < (idx+1)*sizeof(int)) {
-        string_tables[j]->user_strings.resize((idx+1)*sizeof(int));
-        ((int*)string_tables[j]->user_strings.get())[idx] = 0;
-      }
+    int i = user_strings_list->getnum();
+    if (uninst) i -= string_tables[j]->user_ustrings.getlen() / sizeof(int);
+    else i -= string_tables[j]->user_strings.getlen() / sizeof(int);
+    while (i--) {
+      if (uninst) string_tables[j]->user_ustrings.add(&zero, sizeof(int));
+      else string_tables[j]->user_strings.add(&zero, sizeof(int));
     }
   }
 
@@ -265,21 +263,20 @@ int CEXEBuild::WriteStringTables() {
     build_langtables.add(&string_tables[i]->common, sizeof(common_strings));
     build_langtables.add(&string_tables[i]->installer, sizeof(installer_strings));
     if (build_userlangstrings.getnum())
-      build_langtables.add(string_tables[i]->user_strings.get(), string_tables[i]->user_strings.getlen());
+      build_langtables.add(string_tables[i]->user_strings.get(), build_userlangstrings.getnum()*sizeof(int));
   }
   build_header.common.language_tables_num = st_num;
-  build_header.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(installer_strings) + (build_userlangstrings.getnum() * sizeof(int));
+  build_header.common.language_table_size = build_langtables.getlen() / st_num;
 
   for (i = 0; i < st_num; i++) {
     ubuild_langtables.add(&string_tables[i]->lang_id, sizeof(LANGID));
     ubuild_langtables.add(&string_tables[i]->ucommon, sizeof(common_strings));
     ubuild_langtables.add(&string_tables[i]->uninstall, sizeof(uninstall_strings));
     if (ubuild_userlangstrings.getnum())
-      ubuild_langtables.add(string_tables[i]->user_ustrings.get(), string_tables[i]->user_ustrings.getlen());
+      ubuild_langtables.add(string_tables[i]->user_ustrings.get(), ubuild_userlangstrings.getnum()*sizeof(int));
   }
   build_uninst.common.language_tables_num = st_num;
-  build_uninst.common.language_table_size = sizeof(LANGID) + sizeof(common_strings) + sizeof(uninstall_strings) + (ubuild_userlangstrings.getnum() * sizeof(int));
-
+  build_uninst.common.language_table_size = ubuild_langtables.getlen() / st_num;
   SCRIPT_MSG("Done!\n");
 
   return PS_OK;
