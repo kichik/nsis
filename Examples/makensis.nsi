@@ -405,7 +405,7 @@ Section -post
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Modern UI Readme.lnk" "$INSTDIR\Examples\Modern UI\Readme.html"
     NoMUIShortCuts:
 
-    IfFileExists "$INSTDIR\Bin\splash.exe" 0 NoSPLShortCuts
+    IfFileExists "$INSTDIR\Plugins\splash.dll" 0 NoSPLShortCuts
       CreateDirectory $SMPROGRAMS\NSIS\Contrib
       CreateShortCut "$SMPROGRAMS\NSIS\Contrib\Splash Screen Help.lnk" "$INSTDIR\contrib\splash\splash.txt"
     NoSPLShortCuts:
@@ -605,6 +605,7 @@ Section Uninstall
   Delete $INSTDIR\Plugins\installoptions.dll
   Delete $INSTDIR\Bin\splash.txt
   Delete $INSTDIR\Bin\splash.exe
+  Delete $INSTDIR\Plugins\splash.dll
   Delete $INSTDIR\Bin\UberSplash.exe
   Delete $INSTDIR\Plugins\nsisdl.dll
   Delete $INSTDIR\Bin\MakeLangID.exe
