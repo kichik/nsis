@@ -600,11 +600,11 @@ skipPage:
     {
       outernotify(1);
     }
-    if (id == IDC_BACK && m_page>0)
+    else if (id == IDC_BACK && m_page>0)
     {
       outernotify(-1);
     }
-    if (id == IDCANCEL)
+    else if (id == IDCANCEL)
     {
       if (g_exec_flags.abort)
       {
