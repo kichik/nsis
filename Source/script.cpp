@@ -3336,19 +3336,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         if (ret != PS_OK) return ret;
 
         // Add the DLL if not already added
-        int dataHandle = m_plugins.GetDllDataHandle(dllPath);
-        if (dataHandle == -1)
+        if (!m_plugins.IsDLLStored(strrchr(dllPath,'\\')+1))
         {
           int error;
+          int files_added;
           char file[NSIS_MAX_STRLEN];
           wsprintf(file,"$0\\%s",strrchr(dllPath,'\\')+1);
-          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&dataHandle,file)))
+          if (PS_OK != (error = do_add_file(dllPath,0,0,0,&files_added,file)))
           {
             ERROR_MSG("Error: Failed to auto include plugin file \"%s\"\n",dllPath);
             return error;
           }
 
-          m_plugins.StoreDllDataHandle(line.gettoken_str(0),dataHandle);
+          m_plugins.DLLStored(strrchr(dllPath,'\\')+1);
         }
 
         if (!plugin_used) {

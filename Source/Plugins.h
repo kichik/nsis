@@ -9,6 +9,10 @@
 #include "strlist.h"
 #include <vector>
 
+struct DLL {
+  char *name;
+  bool stored;
+};
 
 class Plugins
 {
@@ -16,12 +20,12 @@ class Plugins
     void  FindCommands(char*,bool);
     bool  IsPluginCommand(char*);
     char* GetPluginDll(char*);
-    int   GetDllDataHandle(char*);
-    void  StoreDllDataHandle(char*,int);
+    void  DLLStored(char*);
+    bool  IsDLLStored(char*);
 
   protected:
     DefineList       m_commands;
-    std::vector<int> m_dataHandles;
+    std::vector<DLL> m_storedDLLs;
 
     void GetExports(char*,bool);
 };
