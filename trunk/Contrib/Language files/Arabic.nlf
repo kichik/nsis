@@ -9,23 +9,23 @@ NLF v6
 -
 # RTL - anything else than RTL means LTR
 RTL
-# Translation by asdfuae@msn.com
+# Translation by asdfuae@msn.com, updated by Rami Kattan
 # ^Branding
 ไูวใ วแสไีํศ ไแำๆÝส %s
 # ^SetupCaption
 สไีํศ $(^Name)
 # ^UninstallCaption
-ใาํแ $(^Name)
+ลาวแษ $(^Name)
 # ^LicenseSubCaption
-วสÝวÞํษþ วแสัฮํี :
+ลสÝวÞํษþ วแสัฮํี :
 # ^ComponentsSubCaption
 ฮํวัวส วแสไีํศ :
 # ^DirSubCaption
 ใฬแฯ วแสไีํศ :
 # ^InstallingSubCaption
-ํไีศ :
+สไีํศ :
 # ^CompletedSubCaption
-สใ ศอใฯ วแแๅ :
+ลไสๅ์ :
 # ^UnComponentsSubCaption
 ฮํวัวส วแลาวแษ :
 # ^UnDirSubCaption
@@ -35,17 +35,17 @@ RTL
 # ^UninstallingSubCaption
 ลาวแษ :
 # ^UnCompletedSubCaption
-วแอใฯแแๅ สใ ศไฬวอ :
+ลไสๅ์ :
 # ^BackBtn
-< &วแำวศÞ
+< วแ&ำวศÞ
 # ^NextBtn
-&วแสวแํ >
+วแ&สวแํ >
 # ^AgreeBtn
 ใๆวÝÞ&
 # ^AcceptBtn
-วไว &รๆวÝÞ ฺแ์ ิัๆุ วสÝวÞํษ วแสัฮํี
+&รๆวÝÞ ฺแ์ ิัๆุ วสÝวÞํษ วแสัฮํี
 # ^DontAcceptBtn
-วไว &แว รๆวÝÞ ฺแ์ ิัๆุ วสÝวÞํษ วแสัฮํี
+&แว รๆวÝÞ ฺแ์ ิัๆุ วสÝวÞํษ วแสัฮํี
 # ^InstallBtn
 &สไีํศ
 # ^UninstallBtn
@@ -53,13 +53,13 @@ RTL
 # ^CancelBtn
 ลแÛวม
 # ^CloseBtn
-&ลÛแวÞ
+ล&ÛแวÞ
 # ^BrowseBtn
 &ฺัึ...
 # ^ShowDetailsBtn
-ลูๅวั& วแสÝวีํแ
+ล&ูๅวั วแสÝวีํแ
 # ^ClickNext
-ลึÛุ ฺแ์ วแสวแํ แแส฿ใแษ.
+ลึÛุ ฺแ์ วแสวแํ แแใสวศฺษ.
 # ^ClickInstall
 ลึÛุ ฺแ์ สไีํศ แสิÛํแ วแสไีํศ.
 # ^ClickUninstall
@@ -67,61 +67,61 @@ RTL
 # ^Name
 วแลำใ
 # ^Completed
-สใ ศอใฯแแๅ
+ลไสๅ์
 # ^LicenseText
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). วึÛุ ใๆวÝÞก ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษ.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก ลึÛุ ใๆวÝÞ.
 # ^LicenseTextCB
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). ๆฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษกวึÛุ ฺแ์ ใัศฺ วแใฤิั $_CLICK.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก ลึÛุ ฺแ์ ใัศฺ วแใฤิั วแสวแํ. $_CLICK.
 # ^LicenseTextRB
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). ๆฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษกวฮสั วแฮํวั วแรๆแ วแสวแํ $_CLICK.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ สไีํศ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก ลฮสั วแฮํวั วแรๆแ วแสวแํ. $_CLICK
 # ^UnLicenseText
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ลึÛุ ใๆวÝÞก ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษ.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก ลึÛุ ใๆวÝÞ.
 # ^UnLicenseTextCB
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ๆฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษกวึÛุ ฺแ์ ใัศฺ วแใฤิั $_CLICK.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก วึÛุ ฺแ์ ใัศฺ วแใฤิั วแสวแํ. $_CLICK
 # ^UnLicenseTextRB
-ัวฬฺ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ๆฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษกวฮสั วแฮํวั วแรๆแ วแสวแํ $_CLICK.
+วแัฬวม ใัวฬฺษ ลสÝวÞํษ วแสัฮํี Þศแ ลาวแษ $(^NameDA). ฺไฯ วแใๆวÝÞษ ฺแ์ ฬใํฺ ิัๆุ วแลสÝวÞํษก ลฮสั วแฮํวั วแรๆแ วแสวแํ. $_CLICK
 # ^Custom
-วฮสํวัํ
+ลฮสํวัํ
 # ^ComponentsText
-ึฺ ฺแวใษ ีอ ฺแ์ วแใ฿ๆไวส วแใัวฯ สไีํศๅว. $_CLICK
+ฺแ๘ใ วแใ฿ๆไวส วแใัวฯ สไีํศๅว ๆลาแ วแฺแวใษ ฺไ วแใ฿ๆไวส วแÛํั ใัวฯ สไีํศๅว. $_CLICK
 # ^ComponentsSubText1
-วฮสั ไๆฺ วแสไีํศ:
+ลฮสั ไๆฺ วแสไีํศ:
 # ^ComponentsSubText2_NoInstTypes
-วฮสั วแใ฿ๆไวส แสไีํศๅว:
+ลฮสั วแใ฿ๆไวส แแสไีํศ:
 # ^ComponentsSubText2
-รๆ, วฮสั วแใ฿ๆไวส วแฮํวัํษ วแใัวฯ สไีํศๅว:
+รๆก Þใ ศลฮสํวั วแใ฿ๆไวส วแลฮสํวัํษ วแใัวฯ สไีํศๅว:
 # ^UnComponentsText
-Check the components you want to uninstall and uncheck the components you don't want to uninstall. $_CLICK
+ฺแ๘ใ วแใ฿ๆไวส วแใัวฯ ลาวแสๅว ๆราแ วแฺแวใษ ฺไ วแใ฿ๆไวส วแÛํั ใัวฯ ลาวแสๅว. $_CLICK
 # ^UnComponentsSubText1
-วฮสั ไๆฺ วแลาวแษ:
+ลฮสั ไๆฺ วแลาวแษ:
 # ^UnComponentsSubText2_NoInstTypes
-วฮสั วแใ฿ๆไวส แลาวแสๅว:
+ลฮสั วแใ฿ๆไวส แแลาวแษ:
 # ^UnComponentsSubText2
-รๆ, วฮสั วแใ฿ๆไวส วแฮํวัํษ วแใัวฯ ลาวแสๅว:
+รๆก ลฮสั วแใ฿ๆไวส วแลฮสํวัํษ วแใัวฯ ลาวแสๅว:
 # ^DirText
-ำํสใ สไีํศ $(^NameDA) Ýํ วแใฬแฯ วแสวแํ. แแสไีํศ Ýํ ใฬแฯ ยฮัก วึÛุ ฺัึ ๆ วฮสั วแใฬแฯ วแใัวฯ. $_CLICK
+ำํสใ สไีํศ $(^NameDA) Ýํ วแใฬแฯ วแสวแํ. แแสไีํศ Ýํ ใฬแฯ ยฮัก ลึÛุ ฺัึ ๆลฮสั ใฬแฯ ยฮั. $_CLICK
 # ^DirSubText
-ใ฿วไ วแใฬแฯ
+ใฬแฯ วแๅฯÝ
 # ^DirBrowseText
-วฮสั ใฬแฯ แสไีํศ $(^NameDA) Ýํๅ:
+ลฮสั วแใฬแฯ แสไีํศ $(^NameDA) Ýํๅ:
 # ^UnDirText
-ำํสใ ลาวแษ $(^NameDA) ใไ วแใฬแฯ วแสวแํ. แแลาวแษ ใไ ใฬแฯ ยฮัก วึÛุ ฺัึ ๆ วฮสั วแใฬแฯ วแใัวฯ. $_CLICK
+ำํสใ ลาวแษ $(^NameDA) ใไ วแใฬแฯ วแสวแํ. แแลาวแษ ใไ ใฬแฯ ยฮัก ลึÛุ ฺัึ ๆรฮสั ใฬแฯ ยฮั. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-วฮสั ใฬแฯ $(^NameDA) แลาวแสๅ ใไๅ:
+ลฮสั วแใฬแฯ แลาวแษ $(^NameDA) ใไๅ:
 # ^SpaceAvailable
 "วแใำวอษ วแใสๆÝัษ: "
 # ^SpaceRequired
 "วแใำวอษ วแใุแๆศษ: "
 # ^UninstallingText
-วแใาํแ ำําํแ $(^NameDA) ใไ วแไูวใ. $_CLICK
+ำํสใ ลาวแษ $(^NameDA) ใไ วแใฬแฯ วแสวแํ. $_CLICK
 # ^UninstallingSubText
-ําํแ ใไ:
+ลาวแษ ใไ:
 # ^FileError
-ฮแแ Ýํ Ýสอ ใแÝ แแ฿สวศษ Ýํๅ: \r\n\t\"$0\"\r\nวึÛุ ลแÛวม แลแÛวม วแสไีํศก\r\nใอวๆแษ แใอวๆแษ ฿สวศษ วแใแÝก\r\nสฬวๅแ แสฮุํ วแใแÝ
+อฯห ฮแแ รหไวม Ýสอ ใแÝ แแ฿สวศษ: \r\n\t\"$0\"\r\nลึÛุ ลแÛวม แลแÛวม วแสไีํศก\r\nใอวๆแษ แลฺวฯษ ใอวๆแษ ฿สวศษ วแใแÝก\r\n สฬวๅแ แสฮุํ วแใแÝ
 # ^FileError_NoIgnore
-ฮแแ Ýํ Ýสอ ใแÝ แแ฿สวศษ Ýํๅ: \r\n\t\"$0\"\r\nวึÛุ ใอวๆแษ แใอวๆแษ ฿สวศษ วแใแÝก รๆ\r\nลแÛวม แลแÛวม วแสไีํศ
+อฯห ฮแแ รหไวม Ýสอ ใแÝ แแ฿สวศษ: \r\n\t\"$0\"\r\nลึÛุ ใอวๆแษ แลฺวฯษ ใอวๆแษ ฿สวศษ วแใแÝก รๆ\r\nลแÛวม แลแÛวม วแสไีํศ
 # ^CantWrite
 "แว ํำสุํฺ วแ฿สวศษ: "
 # ^CopyFailed
@@ -137,54 +137,54 @@ Check the components you want to uninstall and uncheck the components you don't 
 # ^CouldNotLoad
 "แใ ํสใ฿ไ ใไ สอใํแ :"
 # ^CreateFolder
-"ลไิวม ใฬแฯ" "
+"ลไิวม ใฬแฯ"
 # ^CreateShortcut
 "ลไิวม ลฮสีวั: "
 # ^CreatedUninstaller
 "ลไิวม ใาํแ: "
 # ^Delete
-"ํอะÝ ใแÝ: "
+"อะÝ ใแÝ: "
 # ^DeleteOnReboot
-"อะÝ ศฺฯ วแลฺวฯษ: "
+"อะÝ ศฺฯ ลฺวฯษ วแสิÛํแ: "
 # ^ErrorCreatingShortcut
-"Ýิแ ลไิวม ลฮสีวั: "
+"ฮแแ รหไวม ลไิวม ลฮสีวั: "
 # ^ErrorCreating
-"ฮุวม ส฿ๆํไ :"
+"ฮแแ รหไวม ลไิวม :"
 # ^ErrorDecompressing
-ฮแแ Ýํ Ýสอ วแศํวไวส วแใึÛๆุษ! วแใไีศ ฮัศวไฟ
+ฮแแ รหไวม Ýสอ วแศํวไวส วแใึÛๆุษ! ใไีศ สวแÝฟ
 # ^ErrorRegistering
-Ýิแ สำฬํแ ใิÛแ
+ฮแแ รหไวม สำฬํแ DLL
 # ^ExecShell
-"วแไูวใ ํิÛแ:"
+"สไÝํะ ExecShell:"
 # ^Exec
-"ํิÛแ: "
+"สไÝํะ: "
 # ^Extract
-"ํำสฮัฬ: "
+"ลำสฮัวฬ: "
 # ^ErrorWriting
-"วำสฮัวฬ: Ýิแ วแ฿สวศษ Ýํ วแใแÝ "
+"ลำสฮัวฬ: ฮแแ รหไวม วแ฿สวศษ ลแ์ ใแÝ "
 # ^InvalidOpcode
-วแใไีศ ฮัศวไ: ิÝัษ Ûํั ีวแอษ
+วแใไี๘ศ สวแÝ: ิÝัษ Ûํั ีวแอษ
 # ^NoOLE
-"No OLE for: "
+"แว สๆฬฯ OLE แÜ๖: "
 # ^OutputFolder
-"วแใฬแฯ วแฮวัฬ: "
+"ใฬแฯ วแลฮัวฬ: "
 # ^RemoveFolder
 "ลาวแษ ใฬแฯ: "
 # ^RenameOnReboot
-"ำํำใ์ ศฺฯ วแลฺวฯษ: "
+"ลฺวฯษ สำใํษ ศฺฯ ลฺวฯษ วแสิÛํแ: "
 # ^Rename
-"ํำใ์: "
+"ลฺวฯษ สำใํษ: "
 # ^Skipped
 "สฮุ์: "
 # ^CopyDetails
 ไำฮ วแสÝวีํแ ลแ์ วแะว฿ัษ
 # ^LogInstall
-สÝวีํแ ฺใแํษ วแสไีํศ
+ำฬ๘แ ฺใแํษ วแสไีํศ
 # ^Byte
-ศ
+ศวํส
 # ^Kilo
-฿
+฿ํแๆ
 # ^Mega
-ใ
+ใํÛว
 # ^Giga
-Û
+ฬํÛว
