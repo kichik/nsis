@@ -303,9 +303,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
           if (parm2 && file_exists(buf1))
           {
-#ifdef NSIS_SUPPORT_REBOOT
-            g_exec_flags.exec_reboot++;
-#endif
             MoveFileOnReboot(buf1,buf2);
             update_status_text(LANG_RENAMEONREBOOT,buf3);
             log_printf2("Rename on reboot: %s",buf3);
@@ -495,9 +492,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #ifdef NSIS_SUPPORT_MOVEONREBOOT
                 if (parm1)
                 {
-#ifdef NSIS_SUPPORT_REBOOT
-                  g_exec_flags.exec_reboot++;
-#endif
                   log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf1);
                   update_status_text(LANG_DELETEONREBOOT,buf1);
                   MoveFileOnReboot(buf1,NULL);
