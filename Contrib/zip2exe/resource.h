@@ -30,6 +30,8 @@
 #define IDC_CLASSICUI                   1025
 #define IDC_INFO                        1026
 #define IDC_NSISICON                    1027
+#define IDC_BZIP3                       1028
+#define IDC_LZMA                        1028
 
 // Next default values for new objects
 // 
