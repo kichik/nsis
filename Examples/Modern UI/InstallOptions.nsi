@@ -27,8 +27,6 @@
   
   ;Language
   !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
-  
-  !insertmacro MUI_SYSTEM
 
   ;General
   OutFile "InstallOptions.exe"
@@ -71,6 +69,11 @@
   ReserveFile "ioA.ini"
   ReserveFile "ioB.ini"
   ReserveFile "ioC.ini"
+
+;--------------------------------
+;Modern UI System
+
+!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Installer Sections
