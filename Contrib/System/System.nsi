@@ -115,9 +115,10 @@ enumex: ; End of drives or user cancel
 
      ; Logo
      File /oname=spltmp.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
+;     File /oname=spltmp.wav "${WINDIR}\media\Windows XP Startup.wav"
 
      ; I. systemSplash variant
-     !insertmacro smSystemSplash 2000 "$TEMP\spltmp"
+     !insertmacro smSystemSplash 500 "$TEMP\spltmp"
 
      ; II. Splash Plugin variant
 ;    splash::show 2000 $TEMP\spltmp
@@ -125,14 +126,17 @@ enumex: ; End of drives or user cancel
 
      ; remove logo
      Delete $TEMP\spltmp.bmp
+;     Delete $TEMP\spltmp.wav
 
      ; Display splash result
+     pop $0
      MessageBox MB_OK "Splash (callbacks) demo result $R0"
 
      ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete the temporary DLL
      SetPluginUnload manual
      ; do nothing
      System::Free 0
+
 SectionEnd 
 
 ; eof

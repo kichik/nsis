@@ -190,7 +190,6 @@ Function _systemSplashWndCB
    goto default
 
 m_Create:
-
    ; Create structures
    System::Call "*${stRECT} (_) .R8"
    System::Call "*${stBITMAP} (_, &l0 .R7) .R9"
@@ -242,7 +241,6 @@ m_Create:
    goto exit
 
 m_Paint:
-
    ; Create structures
    System::Call "*${stRECT} (_) .R8"
    System::Call "*${stPAINTSTRUCT} (_) .R9"
