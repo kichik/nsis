@@ -17,7 +17,7 @@
 
 !define MUI_MACROS_USED
 
-!include "${NSISDIR}\Examples\WinMessages.nsh"
+!include "${NSISDIR}\Include\WinMessages.nsh"
 
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1

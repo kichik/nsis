@@ -72,6 +72,9 @@ Section "NSIS Development System (required)" SecCore
   File ..\nsisconf.nsh
   SetOverwrite try
 
+  SetOutPath $INSTDIR\Include
+  File ..\Include\WinMessages.nsh
+
   SetOutPath $INSTDIR\Docs
   File ..\Docs\*.html
   File ..\Docs\*.css
@@ -100,7 +103,6 @@ Section "NSIS Examples (recommended)" SecExample
   File ..\Examples\gfx.nsi
   File ..\Examples\one-section.nsi
   File ..\Examples\languages.nsi
-  File ..\Examples\WinMessages.nsh
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention

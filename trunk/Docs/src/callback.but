@@ -10,7 +10,7 @@ This callback will be called just before the first page is loaded and the instal
 
 Example:
 
-\c  !include "${NSISDIR}\Examples\WinMessages.NSH"
+\c  !include "${NSISDIR}\Include\WinMessages.nsh"
 \c
 \c  Function .onGUIInit
 \c    # 1028 is the id of the branding text control

@@ -10,8 +10,8 @@
 !include "${NSISDIR}\Contrib\System\System.nsh"
 
 !verbose 3      ; For WinMessages especially
-!include "${NSISDIR}\Examples\WinMessages.nsh"
-!verbose 3
+  !include "${NSISDIR}\Include\WinMessages.nsh"
+!verbose 4
 
 ; ================= systemGetFileSysTime implementation =================
 
