@@ -1065,7 +1065,8 @@ Var MUI_TEMP2
     !else
       StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU_TOP)" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
     !endif
-      
+
+    Pop $MUI_TEMP1
     StrCmp $MUI_TEMP1 "success" 0 +2
       Pop "${MUI_STARTMENUPAGE_VARIABLE}"
       
