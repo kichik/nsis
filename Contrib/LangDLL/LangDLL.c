@@ -81,7 +81,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         size = myatoi(temp);
       if (!popstring(temp)) {
         LOGFONT f = {0,};
-        f.lfHeight = size;
+        f.lfHeight = -MulDiv(size, GetDeviceCaps(GetDC(hwndDlg), LOGPIXELSY), 72);
         lstrcpy(f.lfFaceName, temp);
         font = CreateFontIndirect(&f);
         SendMessage(hwndDlg, WM_SETFONT, (WPARAM)font, 1);
