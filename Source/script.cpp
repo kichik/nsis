@@ -142,6 +142,7 @@ parse_again:
     if (line.getnumtokens() == 1) PRINTHELP()
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
+    ignore=0; // process the ifdef
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
@@ -187,8 +188,7 @@ parse_again:
   }
   if (!ignore)
   {
-    int ret=doCommand(tkid,line,fp,curfilename,lineptr);
-    if (ret != PS_OK) return ret;
+    return doCommand(tkid,line,fp,curfilename,lineptr);
   }
   return PS_OK;
 }
