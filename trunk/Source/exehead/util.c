@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <shlobj.h>
+#include <shellapi.h>
 #include "util.h"
 #include "state.h"
 #include "config.h"
@@ -72,38 +73,25 @@ void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
 #ifdef NSIS_SUPPORT_RMDIR
 void NSISCALL doRMDir(char *buf, int recurse)
 {
-  if (recurse && is_valid_instpath(buf))
+  if (is_valid_instpath(buf))
   {
-    int i=mystrlen(buf);
-    HANDLE h;
-    WIN32_FIND_DATA fd;
-    lstrcat(buf,"\\*.*");
-    h = FindFirstFile(buf,&fd);
-    if (h != INVALID_HANDLE_VALUE)
-    {
-      do
-      {
-        if (fd.cFileName[0] != '.' ||
-            (fd.cFileName[1] != '.' && fd.cFileName[1]))
-        {
-          mystrcpy(buf+i+1,fd.cFileName);
-          if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
-          else
-          {
-            update_status_text_from_lang(LANG_DELETEFILE,buf);
-            if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
-              SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
-            DeleteFile(buf);
-          }
-        }
-      } while (FindNextFile(h,&fd));
-      FindClose(h);
+    if (recurse) {
+      SHFILEOPSTRUCT op;
+
+      op.hwnd=0;
+      op.wFunc=FO_DELETE;
+      buf[mystrlen(buf)+1]=0;
+      op.pFrom=buf;
+      op.pTo=0;
+
+      op.fFlags=FOF_NOERRORUI|FOF_SILENT|FOF_NOCONFIRMATION;
+
+      SHFileOperation(&op);
     }
-    buf[i]=0; // fix buffer
+    else RemoveDirectory(buf);
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
   update_status_text_from_lang(LANG_REMOVEDIR,buf);
-  RemoveDirectory(buf);
 }
 #endif//NSIS_SUPPORT_RMDIR
 

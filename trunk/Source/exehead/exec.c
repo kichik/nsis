@@ -937,6 +937,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           char *buf0=process_string_fromparm_tobuf(0x00);
           char *buf1=process_string_fromparm_tobuf(0x11);
 
+          // suggested by Kevin Gadd (janusfury)
+          lstrcpy(buf3, buf0);
+          trimslashtoend(buf3);
+          SetCurrentDirectory(buf3);
+
           h=LoadLibrary(buf0);
           if (h)
           {
