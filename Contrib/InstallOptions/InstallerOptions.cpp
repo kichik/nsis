@@ -30,15 +30,16 @@
 void *WINAPI MALLOC(int len) { return (void*)GlobalAlloc(GPTR,len); }
 void WINAPI FREE(void *d) { if (d) GlobalFree((HGLOBAL)d); }
 
-static int WINAPI popstring(char *str)
+void WINAPI popstring(char *str)
 {
-  stack_t *th;
-  if (!g_stacktop || !*g_stacktop) return 1;
-  th=(*g_stacktop);
-  if (str) lstrcpy(str,th->text);
-  *g_stacktop = th->next;
-  FREE(th);
-  return 0;
+  if (g_stacktop && *g_stacktop)
+  {
+    stack_t *th = *g_stacktop;
+    *g_stacktop = th->next;
+    if (str)
+      lstrcpy(str, th->text);
+    FREE(th);
+  }
 }
 
 #define strcpy(x,y) lstrcpy(x,y)
@@ -558,7 +559,8 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
     {
       char szBrowsePath[MAX_PATH];
       int nIdx = FindControlIdx(id);
-      if (nIdx < 0)
+      // Ignore if the dialog is in the process of being created
+      if (g_done || nIdx < 0)
         break;
       if (pFields[nIdx].nType == FIELD_BROWSEBUTTON)
         --nIdx;
@@ -869,6 +871,9 @@ int WINAPI createCfgDlg()
   if (bCancelShow!=-1) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
   HFONT hFont = (HFONT)mySendMessage(mainwnd, WM_GETFONT, 0, 0);
+
+  // Prevent WM_COMMANDs from being processed while we are building
+  g_done = 1;
 
   RECT dialog_r;
   int mainWndWidth, mainWndHeight;
@@ -1268,8 +1273,7 @@ void WINAPI showCfgDlg()
   // quit soon, which means the ini might get flushed late and cause crap. :) anwyay.
   if (!g_is_cancel) SaveSettings();
 
-  if (lpWndProcOld)
-    SetWindowLong(hMainWindow,DWL_DLGPROC,(long)lpWndProcOld);
+  SetWindowLong(hMainWindow,DWL_DLGPROC,(long)lpWndProcOld);
   DestroyWindow(hConfigWindow);
 
   // by ORTIM: 13-August-2002
