@@ -76,7 +76,7 @@ local inflate_huft *fixed_tl;
 local inflate_huft *fixed_td;
 
 /* copy as much as possible from the sliding window to the output area */
-local void inflate_flush(z)
+local void ZEXPORT inflate_flush(z)
 z_streamp z;
 {
   inflate_blocks_statef *s = &z->blocks;
@@ -118,7 +118,7 @@ again:
 
 #define BMAX 15         /* maximum bit length of any code */
 
-local int huft_build(
+local int ZEXPORT huft_build(
 uIntf *b,               /* code lengths in bits (all assumed <= BMAX) */
 uInt n,                 /* number of codes (assumed <= 288) */
 uInt s,                 /* number of simple-valued codes (0..s-1) */
@@ -306,7 +306,7 @@ uInt *hn)               /* working area: values in order of bit length */
   return (y != 0 && g != 1) ? Z_BUF_ERROR : Z_OK;
 }
 
-int inflate(z_streamp z)
+int ZEXPORT inflate(z_streamp z)
 {
   inflate_blocks_statef *s = &z->blocks;
   inflate_codes_statef *c = &s->sub.decode.t_codes;  /* codes state */

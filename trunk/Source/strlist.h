@@ -4,6 +4,12 @@
 #include "Platform.h"
 #include <stdio.h>
 #include <stdlib.h> // for gcc
+#ifndef _WIN32
+#  include <sys/mman.h>
+#  include <sys/stat.h>
+#  include <fcntl.h>
+#  include <unistd.h>
+#endif
 
 class IGrowBuf
 {
@@ -20,9 +26,10 @@ class IMMap
     virtual void resize(int newlen)=0;
     virtual int getsize()=0;
     virtual void *get(int offset, int size)=0;
-    virtual void *getmore(int offset, int size)=0;
+    virtual void *get(int offset, int *size)=0;
+    virtual void *getmore(int offset, int *size)=0;
     virtual void release()=0;
-    virtual void release(void *view)=0;
+    virtual void release(void *view, int size)=0;
     virtual void clear()=0;
     virtual void setro(BOOL bRO)=0;
     virtual void flush(int num)=0;
@@ -485,8 +492,13 @@ class MMapFile : public IMMap
   public:
     MMapFile()
     {
+#ifdef _WIN32
       m_hFile = INVALID_HANDLE_VALUE;
       m_hFileMap = NULL;
+#else
+      m_hFile = -1;
+#endif
+
       m_pView = NULL;
       m_iSize = 0;
       m_bReadOnly = FALSE;
@@ -494,9 +506,13 @@ class MMapFile : public IMMap
 
       if (!m_iAllocationGranularity)
       {
+#ifdef _WIN32
         SYSTEM_INFO si;
         GetSystemInfo(&si);
         m_iAllocationGranularity = (int) si.dwAllocationGranularity;
+#else
+        m_iAllocationGranularity = getpagesize();
+#endif
       }
     }
 
@@ -509,12 +525,17 @@ class MMapFile : public IMMap
     {
       release();
 
+#ifdef _WIN32
       if (m_hFileMap)
         CloseHandle(m_hFileMap);
       if (m_bTempHandle && m_hFile)
         CloseHandle(m_hFile);
 
       m_hFileMap = 0;
+#else
+      if (m_bTempHandle && m_hFile)
+        close(m_hFile);
+#endif
     }
 
     void setro(BOOL bRO)
@@ -522,21 +543,22 @@ class MMapFile : public IMMap
       m_bReadOnly = bRO;
     }
 
+#ifdef _WIN32
     int setfile(HANDLE hFile, DWORD dwSize)
+#else
+    int setfile(int hFile, DWORD dwSize)
+#endif
     {
-      release();
-
-      if (m_hFileMap)
-        CloseHandle(m_hFileMap);
-      if (m_bTempHandle && m_hFile)
-        CloseHandle(m_hFile);
-
-      m_hFileMap = 0;
+      clear();
 
       m_hFile = hFile;
       m_bTempHandle = FALSE;
 
+#ifdef _WIN32
       if (m_hFile == INVALID_HANDLE_VALUE)
+#else
+      if (m_hFile == -1)
+#endif
         return 0;
 
       m_iSize = (int) dwSize;
@@ -544,10 +566,12 @@ class MMapFile : public IMMap
       if (m_iSize <= 0)
         return 0;
 
+#ifdef _WIN32
       m_hFileMap = CreateFileMapping(m_hFile, NULL, PAGE_READONLY, 0, m_iSize, NULL);
 
       if (!m_hFileMap)
         return 0;
+#endif
 
       m_bReadOnly = TRUE;
 
@@ -560,13 +584,16 @@ class MMapFile : public IMMap
 
       if (newsize > m_iSize)
       {
+#ifdef _WIN32
         if (m_hFileMap)
           CloseHandle(m_hFileMap);
 
         m_hFileMap = 0;
+#endif
 
         m_iSize = newsize;
 
+#ifdef _WIN32
         if (m_hFile == INVALID_HANDLE_VALUE)
         {
           char buf[MAX_PATH], buf2[MAX_PATH];
@@ -610,6 +637,14 @@ class MMapFile : public IMMap
           }
           quit();
         }
+#else
+        if (m_hFile == -1)
+        {
+          char tmp[] = "/tmp/makensisXXXXXX";
+          m_hFile = mkstemp(tmp);
+          m_bTempHandle = TRUE;
+        }
+#endif
       }
     }
 
@@ -620,8 +655,18 @@ class MMapFile : public IMMap
 
     void *get(int offset, int size)
     {
+      return get(offset, &size);
+    }
+
+    void *get(int offset, int *sizep)
+    {
+      if (!sizep)
+        return NULL;
+
       if (m_pView)
         release();
+
+      int size = *sizep;
 
       if (!m_iSize || offset + size > m_iSize)
       {
@@ -639,9 +684,18 @@ class MMapFile : public IMMap
       int alignedoffset = offset - (offset % m_iAllocationGranularity);
       size += offset - alignedoffset;
 
+#ifdef _WIN32
       m_pView = MapViewOfFile(m_hFileMap, m_bReadOnly ? FILE_MAP_READ : FILE_MAP_WRITE, 0, alignedoffset, size);
+#else
+      m_pView = mmap(0, size, m_bReadOnly ? PROT_READ : PROT_READ | PROT_WRITE, MAP_SHARED, m_hFile, alignedoffset);
+      m_iMappedSize = *sizep = size;
+#endif
 
+#ifdef _WIN32
       if (!m_pView)
+#else
+      if (m_pView == MAP_FAILED)
+#endif
       {
         extern FILE *g_output;
         extern void quit(); extern int g_display_errors;
@@ -656,13 +710,19 @@ class MMapFile : public IMMap
       return (void *)((char *)m_pView + offset - alignedoffset);
     }
 
-    void *getmore(int offset, int size)
+    void *getmore(int offset, int *size)
     {
       void *pView;
       void *pViewBackup = m_pView;
+#ifndef _WIN32
+      int iMappedSizeBackup = m_iMappedSize;
+#endif
       m_pView = 0;
       pView = get(offset, size);
       m_pView = pViewBackup;
+#ifndef _WIN32
+      m_iMappedSize = iMappedSizeBackup;
+#endif
       return pView;
     }
 
@@ -671,26 +731,43 @@ class MMapFile : public IMMap
       if (!m_pView)
         return;
 
+#ifdef _WIN32
       UnmapViewOfFile(m_pView);
+#else
+      munmap(m_pView, m_iMappedSize);
+#endif
       m_pView = NULL;
     }
 
-    void release(void *pView)
+    void release(void *pView, int size)
     {
       if (!pView)
         return;
 
+#ifdef _WIN32
       UnmapViewOfFile(pView);
+#else
+      munmap(pView, size);
+#endif
     }
 
     void flush(int num)
     {
       if (m_pView)
+#ifdef _WIN32
         FlushViewOfFile(m_pView, num);
+#else
+        msync(m_pView, num, MS_SYNC);
+#endif
     }
 
   private:
+#ifdef _WIN32
     HANDLE m_hFile, m_hFileMap;
+#else
+    int m_hFile;
+    int m_iMappedSize;
+#endif
     void *m_pView;
     int m_iSize;
     BOOL m_bReadOnly;
@@ -721,19 +798,24 @@ class MMapFake : public IMMap
 
     void *get(int offset, int size)
     {
-      if (offset + size > m_iSize)
+      return get(offset, &size);
+    }
+
+    void *get(int offset, int *size)
+    {
+      if (!size || (offset + *size > m_iSize))
         return NULL;
       return (void *)(m_pMem + offset);
     }
 
-    void *getmore(int offset, int size)
+    void *getmore(int offset, int *size)
     {
       return get(offset, size);
     }
 
     void resize(int n) {}
     void release() {}
-    void release(void *p) {}
+    void release(void *p, int size) {}
     void clear() {}
     void setro(BOOL b) {}
     void flush(BOOL b) {}
@@ -817,6 +899,14 @@ class MMapBuf : public IGrowBuf, public IMMap
       return get(0, m_alloc);
     }
 
+    void *get(int offset, int *sizep)
+    {
+      if (!sizep)
+        return NULL;
+      int size = *sizep;
+      return get(offset, size);
+    }
+
     void *get(int offset, int size)
     {
       if (m_gb_u)
@@ -824,7 +914,7 @@ class MMapBuf : public IGrowBuf, public IMMap
       return (void *) ((char *) m_gb.get() + offset);
     }
 
-    void *getmore(int offset, int size)
+    void *getmore(int offset, int *size)
     {
       if (m_gb_u)
         return m_fm.getmore(offset, size);
@@ -837,10 +927,10 @@ class MMapBuf : public IGrowBuf, public IMMap
         m_fm.release();
     }
 
-    void release(void *pView)
+    void release(void *pView, int size)
     {
       if (m_gb_u)
-        m_fm.release(pView);
+        m_fm.release(pView, size);
     }
 
     void clear()

@@ -20,8 +20,14 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#define RESOURCE_EDITOR_NOT_API
 #include "ResourceEditor.h"
+#include "util.h"
+#include <time.h>
+#include <queue>
+
+#ifndef _WIN32
+#  include <iconv.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Utilities
@@ -195,7 +201,9 @@ BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage)
     i = nameDir->Find(szName);
     if (i > -1) {
       langDir = nameDir->GetEntry(i)->GetSubDirectory();
-      i = langDir->Find(wLanguage);
+      i = 0;
+      if (wLanguage)
+        i = langDir->Find(wLanguage);
       if (i > -1) {
         data = langDir->GetEntry(i)->GetDataEntry();
       }
@@ -208,7 +216,7 @@ BYTE* CResourceEditor::GetResource(char* szType, char* szName, LANGID wLanguage)
     return toReturn;
   }
   else
-    return 0;
+    return NULL;
 }
 
 void CResourceEditor::FreeResource(BYTE* pbResource)
@@ -381,29 +389,47 @@ CResourceDirectory* CResourceEditor::ScanDirectory(PRESOURCE_DIRECTORY rdRoot, P
   // Go through all entries of this resource directory
   for (int i = 0; i < rdToScan->Header.NumberOfNamedEntries + rdToScan->Header.NumberOfIdEntries; i++) {
     // If this entry points to data entry get a pointer to it
-    if (!rdToScan->Entries[i].DataIsDirectory)
+    if (!rdToScan->Entries[i].DirectoryOffset.DataIsDirectory)
       rde = PIMAGE_RESOURCE_DATA_ENTRY(rdToScan->Entries[i].OffsetToData + (BYTE*)rdRoot);
 
     // If this entry has a name, translate it from Unicode
-    if (rdToScan->Entries[i].NameIsString) {
-      PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rdToScan->Entries[i].NameOffset + (char*)rdRoot);
+    if (rdToScan->Entries[i].NameString.NameIsString) {
+      PIMAGE_RESOURCE_DIR_STRING_U rds = PIMAGE_RESOURCE_DIR_STRING_U(rdToScan->Entries[i].NameString.NameOffset + (char*)rdRoot);
 
+#ifdef _WIN32
       int mbsSize = WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, 0, 0, 0, 0);
       szName = new char[mbsSize+1];
       WideCharToMultiByte(CP_ACP, 0, rds->NameString, rds->Length, szName, mbsSize, 0, 0);
       szName[mbsSize] = 0;
+#else
+      {
+        iconv_t cd = iconv_open("", "UCS-2");
+        if (cd != (iconv_t) -1)
+        {
+          char *in = (char *) rds->NameString;
+          char *out = szName = new char[rds->Length * 2 + 1];
+          size_t insize = rds->Length;
+          size_t outsize = rds->Length * 2 + 1;
+          if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
+            throw runtime_error("Unicode conversion failed");
+          iconv_close(cd);
+        }
+        else
+          throw runtime_error("Unicode conversion failed");
+      }
+#endif
     }
     // Else, set the name to this entry's id
     else
       szName = MAKEINTRESOURCE(rdToScan->Entries[i].Id);
 
-    if (rdToScan->Entries[i].DataIsDirectory)
+    if (rdToScan->Entries[i].DirectoryOffset.DataIsDirectory)
       rdc->AddEntry(
         new CResourceDirectoryEntry(
           szName,
           ScanDirectory(
             rdRoot,
-            PRESOURCE_DIRECTORY(rdToScan->Entries[i].OffsetToDirectory + (BYTE*)rdRoot)
+            PRESOURCE_DIRECTORY(rdToScan->Entries[i].DirectoryOffset.OffsetToDirectory + (BYTE*)rdRoot)
           )
         )
       );
@@ -457,14 +483,15 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
         qDataEntries2.push(crd->GetEntry(i)->GetDataEntry());
       }
 
-      IMAGE_RESOURCE_DIRECTORY_ENTRY rDirE = {{0}};
-      rDirE.DataIsDirectory = crd->GetEntry(i)->IsDataDirectory();
+      MY_IMAGE_RESOURCE_DIRECTORY_ENTRY rDirE;
+      ZeroMemory(&rDirE, sizeof(rDirE));
+      rDirE.DirectoryOffset.DataIsDirectory = crd->GetEntry(i)->IsDataDirectory();
       rDirE.Id = (crd->GetEntry(i)->HasName()) ? 0 : crd->GetEntry(i)->GetId();
-      rDirE.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
+      rDirE.NameString.NameIsString = (crd->GetEntry(i)->HasName()) ? 1 : 0;
 
-      CopyMemory(seeker, &rDirE, sizeof(IMAGE_RESOURCE_DIRECTORY_ENTRY));
+      CopyMemory(seeker, &rDirE, sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY));
       crd->GetEntry(i)->m_dwWrittenAt = DWORD(seeker);
-      seeker += sizeof(IMAGE_RESOURCE_DIRECTORY_ENTRY);
+      seeker += sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY);
     }
     qDirs.pop();
   }
@@ -491,13 +518,36 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
   while (!qStrings.empty()) {
     CResourceDirectoryEntry* cRDirE = qStrings.front();
 
-    PIMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->NameOffset = DWORD(seeker) - DWORD(pbRsrcSec);
+    PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(cRDirE->m_dwWrittenAt)->NameString.NameOffset = DWORD(seeker) - DWORD(pbRsrcSec);
 
     char* szName = cRDirE->GetName();
-    WORD iLen = lstrlen(szName);
-    WCHAR* szwName = new WCHAR[iLen+1];
+    WORD iLen = strlen(szName);
+    WCHAR *szwName = new WCHAR[iLen + 1];
+#ifdef _WIN32
     // MultiByteToWideChar return value includes the null char, so -1
     iLen = MultiByteToWideChar(CP_ACP, 0, szName, iLen, szwName, iLen) - 1;
+#else
+    {
+      iconv_t cd = iconv_open("UCS-2", "");
+      if (cd != (iconv_t) -1)
+      {
+        char *in = szName;
+        char *out = (char *) szwName;
+        size_t insize = iLen + 1;
+        size_t outsize = (iLen + 1) * sizeof(unsigned short);
+        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
+          iLen = (WORD) -1;
+        else
+          iLen = (WORD) ((int) out - (int) szwName - 1);
+        iconv_close(cd);
+      }
+      else
+        iLen = (WORD) -1;
+    }
+#endif
+    if (iLen == (WORD) -1)
+      throw runtime_error("Unicode conversion failed");
+
     *(WORD*)seeker = iLen;
     seeker += sizeof(WORD);
     CopyMemory(seeker, szwName, iLen*sizeof(WCHAR));
@@ -536,12 +586,12 @@ void CResourceEditor::WriteRsrcSec(BYTE* pbRsrcSec) {
 void CResourceEditor::SetOffsets(CResourceDirectory* resDir, DWORD newResDirAt) {
   for (int i = 0; i < resDir->CountEntries(); i++) {
     if (resDir->GetEntry(i)->IsDataDirectory()) {
-      PIMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->DataIsDirectory = 1;
-      PIMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_dwWrittenAt - newResDirAt;
+      PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->DirectoryOffset.DataIsDirectory = 1;
+      PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->DirectoryOffset.OffsetToDirectory = resDir->GetEntry(i)->GetSubDirectory()->m_dwWrittenAt - newResDirAt;
       SetOffsets(resDir->GetEntry(i)->GetSubDirectory(), newResDirAt);
     }
     else {
-      PIMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->OffsetToData = resDir->GetEntry(i)->GetDataEntry()->m_dwWrittenAt - newResDirAt;
+      PMY_IMAGE_RESOURCE_DIRECTORY_ENTRY(resDir->GetEntry(i)->m_dwWrittenAt)->OffsetToData = resDir->GetEntry(i)->GetDataEntry()->m_dwWrittenAt - newResDirAt;
     }
   }
 }
@@ -587,7 +637,7 @@ void CResourceDirectory::AddEntry(CResourceDirectoryEntry* entry) {
     char* szEntName = entry->GetName();
     for (i = 0; i < m_rdDir.NumberOfIdEntries; i++) {
       char* szName = m_vEntries[i]->GetName();
-      int cmp = lstrcmp(szName, szEntName);
+      int cmp = strcmp(szName, szEntName);
       delete [] szName;
       if (cmp == 0) {
         delete [] szEntName;
@@ -639,7 +689,7 @@ int CResourceDirectory::Find(char* szName) {
       continue;
 
     char* szEntName = m_vEntries[i]->GetName();
-    int cmp = lstrcmp(szName, szEntName);
+    int cmp = strcmp(szName, szEntName);
     delete [] szEntName;
 
     if (!cmp)
@@ -667,7 +717,7 @@ int CResourceDirectory::Find(WORD wId) {
 DWORD CResourceDirectory::GetSize() {
   DWORD dwSize = sizeof(IMAGE_RESOURCE_DIRECTORY);
   for (unsigned int i = 0; i < m_vEntries.size(); i++) {
-    dwSize += sizeof(IMAGE_RESOURCE_DIRECTORY_ENTRY);
+    dwSize += sizeof(MY_IMAGE_RESOURCE_DIRECTORY_ENTRY);
     if (m_vEntries[i]->HasName())
       dwSize += sizeof(IMAGE_RESOURCE_DIR_STRING_U) + (m_vEntries[i]->GetNameLength()+1)*sizeof(WCHAR);
     if (m_vEntries[i]->IsDataDirectory())
@@ -711,8 +761,8 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDirector
   }
   else {
     m_bHasName = true;
-    m_szName = new char[lstrlen(szName)+1];
-    lstrcpy(m_szName, szName);
+    m_szName = new char[strlen(szName)+1];
+    strcpy(m_szName, szName);
   }
   m_bIsDataDirectory = true;
   m_rdSubDir = rdSubDir;
@@ -726,8 +776,8 @@ CResourceDirectoryEntry::CResourceDirectoryEntry(char* szName, CResourceDataEntr
   }
   else {
     m_bHasName = true;
-    m_szName = new char[lstrlen(szName)+1];
-    lstrcpy(m_szName, szName);
+    m_szName = new char[strlen(szName)+1];
+    strcpy(m_szName, szName);
   }
   m_bIsDataDirectory = false;
   m_rdeData = rdeData;
@@ -751,13 +801,13 @@ char* CResourceDirectoryEntry::GetName() {
   if (!m_bHasName)
     return 0;
   char* szName = 0;
-  szName = new char[lstrlen(m_szName)+1];
-  lstrcpy(szName, m_szName);
+  szName = new char[strlen(m_szName)+1];
+  strcpy(szName, m_szName);
   return szName;
 }
 
 int CResourceDirectoryEntry::GetNameLength() {
-  return lstrlen(m_szName);
+  return strlen(m_szName);
 }
 
 WORD CResourceDirectoryEntry::GetId() {

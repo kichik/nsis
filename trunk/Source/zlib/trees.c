@@ -4,7 +4,7 @@
  */
 
 
-#include "deflate.h"
+#include "DEFLATE.H"
 
 #ifdef DEBUG
 #  include <ctype.h>

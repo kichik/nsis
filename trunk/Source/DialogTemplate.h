@@ -28,9 +28,9 @@
 #endif // _MSC_VER > 1000
 
 #include "Platform.h"
-#include <Vector>
+#include <vector>
 
-#include <StdExcept>
+#include <stdexcept>
 using namespace std;
 
 struct DialogItemTemplate {
@@ -51,7 +51,19 @@ struct DialogItemTemplate {
   WORD  wCreateDataSize;
 };
 
-#pragma pack(push, 1)
+#pragma pack(1)
+
+#ifndef _WIN32
+typedef struct {
+    DWORD style;
+    DWORD dwExtendedStyle;
+    WORD cdit;
+    short x;
+    short y;
+    short cx;
+    short cy;
+} DLGTEMPLATE;
+#endif
 
 typedef struct {
   WORD   dlgVer;
@@ -66,6 +78,18 @@ typedef struct {
   short  cy;
 } DLGTEMPLATEEX;
 
+#ifndef _WIN32
+typedef struct {
+    DWORD style;
+    DWORD dwExtendedStyle;
+    short x;
+    short y;
+    short cx;
+    short cy;
+    WORD id;
+} DLGITEMTEMPLATE;
+#endif
+
 typedef struct {
   DWORD  helpID;
   DWORD  exStyle;
@@ -78,7 +102,7 @@ typedef struct {
   WORD   _miscrosoft_docs_are_wrong;
 } DLGITEMTEMPLATEEX;
 
-#pragma pack(pop)
+#pragma pack()
 
 class CDialogTemplate {
 public:
@@ -92,15 +116,19 @@ public:
   int   RemoveItem(WORD wId);
   void  SetFont(char* szFaceName, WORD wFontSize);
   void  AddItem(DialogItemTemplate item);
+#ifdef _WIN32
   HWND  CreateDummyDialog();
+#endif
   void  MoveAll(short x, short y);
   void  Resize(short x, short y);
+#ifdef _WIN32
   void  PixelsToDlgUnits(short& x, short& y);
   void  DlgUnitsToPixels(short& x, short& y);
   SIZE  GetStringSize(WORD id, char *str);
   void  RTrimToString(WORD id, char *str, int margins);
   void  LTrimToString(WORD id, char *str, int margins);
   void  CTrimToString(WORD id, char *str, int margins);
+#endif
   void  ConvertToRTL();
   BYTE* Save(DWORD& dwSize);
   DWORD GetSize();

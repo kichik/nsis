@@ -6,8 +6,16 @@
 #include "7zip/7zip/Compress/LZMA/LZMAEncoder.h"
 #include "7zip/Common/MyCom.h"
 
+#ifndef _WIN32
+#  include <sched.h>
+#endif
+
 // implemented in build.cpp - simply calls CompressReal
+#ifdef _WIN32
 DWORD WINAPI lzmaCompressThread(LPVOID lpParameter);
+#else
+void *lzmaCompressThread(void *arg);
+#endif
 
 class CLZMA:
   public ICompressor,
@@ -18,7 +26,11 @@ class CLZMA:
 private:
   NCompress::NLZMA::CEncoder *_encoder;
 
+#ifdef _WIN32
   HANDLE hCompressionThread;
+#else
+  pthread_t hCompressionThread;
+#endif
 
   BYTE *next_in; /* next input byte */
   UINT avail_in; /* number of bytes available at next_in */
@@ -30,10 +42,37 @@ private:
 
   BOOL finish;
 
-  CRITICAL_SECTION cs;
-  BOOL nt_locked; /* nsis thread locked */
-  BOOL ct_locked; /* compression thread locked */
+  long sync_state;
   BOOL compressor_finished;
+
+#ifndef _WIN32
+#  define Sleep(x) sched_yield()
+
+  pthread_mutex_t mutex;
+
+  // these two lock every targer passed to them, but that's ok becuase
+  // we use only one target anyway...
+  long InterlockedExchange(long volatile* target, long value)
+  {
+    long oldvalue;
+    pthread_mutex_lock(&mutex);
+    oldvalue = *target;
+    *target = value;
+    pthread_mutex_unlock(&mutex);
+    return oldvalue;
+  }
+
+  long InterlockedCompareExchange(long volatile* destination, long exchange, long comperand)
+  {
+    long oldvalue;
+    pthread_mutex_lock(&mutex);
+    oldvalue = *destination;
+    if (oldvalue == comperand)
+      *destination = exchange;
+    pthread_mutex_unlock(&mutex);
+    return oldvalue;
+  }
+#endif
 
 public:
   MY_UNKNOWN_IMP
@@ -42,18 +81,27 @@ public:
   {
     _encoder = new NCompress::NLZMA::CEncoder();
     _encoder->SetWriteEndMarkerMode(true);
+#ifdef _WIN32
     hCompressionThread = NULL;
+#else
+    hCompressionThread = 0;
+#endif
     compressor_finished = FALSE;
     finish = FALSE;
-    ct_locked = TRUE;
+#ifndef _WIN32
+    pthread_mutex_init(&mutex, 0);
+#endif
+    compressor_finished = 1;
+    sync_state = 0;
     End();
-    InitializeCriticalSection(&cs);
   }
 
   virtual ~CLZMA()
   {
+#ifndef _WIN32
+    pthread_mutex_destroy(&mutex);
+#endif
     End();
-    DeleteCriticalSection(&cs);
     if (_encoder)
     {
       delete _encoder;
@@ -65,8 +113,7 @@ public:
   {
     End();
 
-    nt_locked = TRUE;
-    ct_locked = FALSE;
+    sync_state = 1;
 
     compressor_finished = FALSE;
     finish = FALSE;
@@ -103,27 +150,26 @@ public:
 
   int End()
   {
-    if (!compressor_finished && !ct_locked)
+    // is compressor not finished and waiting for input/output?
+    if (hCompressionThread && !compressor_finished && sync_state == 0)
     {
       // kill compression thread
       avail_in = 0;
       avail_out = 0;
-      finish = TRUE;
-      LeaveCriticalSection(&cs);
-      while (!ct_locked)
-        Sleep(0);
-      nt_locked = FALSE;
-      EnterCriticalSection(&cs);
-      while (ct_locked)
-        Sleep(0);
-      nt_locked = TRUE;
-      LeaveCriticalSection(&cs);
+
+      InterlockedExchange(&sync_state, 1);
+      while (InterlockedCompareExchange(&sync_state, 2, 0) != 0)
+        Sleep(1);
     }
+#ifdef _WIN32
     if (hCompressionThread)
     {
       CloseHandle(hCompressionThread);
       hCompressionThread = NULL;
     }
+#else
+    hCompressionThread = 0;
+#endif
     SetNextOut(NULL, 0);
     SetNextIn(NULL, 0);
     return C_OK;
@@ -131,12 +177,6 @@ public:
 
   int CompressReal()
   {
-    EnterCriticalSection(&cs);
-    ct_locked = TRUE;
-
-    while (nt_locked)
-      Sleep(0);
-
     try
     {
       if (_encoder->WriteCoderProperties(this) == S_OK)
@@ -168,8 +208,7 @@ public:
     }
 
     compressor_finished = TRUE;
-    LeaveCriticalSection(&cs);
-    ct_locked = FALSE;
+    InterlockedExchange(&sync_state, 0);
     return C_OK;
   }
 
@@ -188,31 +227,26 @@ public:
 
     if (!hCompressionThread)
     {
+#ifdef _WIN32
       DWORD dwThreadId;
 
       hCompressionThread = CreateThread(0, 0, lzmaCompressThread, (LPVOID) this, 0, &dwThreadId);
       if (!hCompressionThread)
+#else
+      if (pthread_create(&hCompressionThread, NULL, lzmaCompressThread, (LPVOID) this))
+#endif
         return -2;
     }
     else
     {
-      LeaveCriticalSection(&cs);
+      InterlockedExchange(&sync_state, 1);
     }
 
-    while (!ct_locked)
-      Sleep(0);
-
-    nt_locked = FALSE;
-
-    EnterCriticalSection(&cs);
-    nt_locked = TRUE;
-
-    while (ct_locked)
-      Sleep(0);
+    while (InterlockedCompareExchange(&sync_state, 2, 0) != 0)
+      Sleep(1);
 
     if (compressor_finished)
     {
-      LeaveCriticalSection(&cs);
       return res;
     }
 
@@ -221,17 +255,9 @@ public:
 
   void GetMoreIO()
   {
-    LeaveCriticalSection(&cs);
-    while (!nt_locked)
-      Sleep(0);
-
-    ct_locked = FALSE;
-
-    EnterCriticalSection(&cs);
-    ct_locked = TRUE;
-
-    while (nt_locked)
-      Sleep(0);
+    InterlockedExchange(&sync_state, 0);
+    while (InterlockedCompareExchange(&sync_state, 2, 1) != 1)
+      Sleep(1);
   }
 
   STDMETHOD(Read)(void *data, UINT32 size, UINT32 *processedSize)

@@ -5,7 +5,11 @@
 #ifndef __COMMON_TYPES_H
 #define __COMMON_TYPES_H
 
-#include <basetsd.h>
+#ifdef _WIN32
+#  include <basetsd.h>
+#else
+#  include "../../Platform.h"
+#endif
 
 typedef unsigned char   UINT8;
 typedef unsigned short  UINT16;

@@ -24,7 +24,7 @@ typedef struct _stack_t {
 static stack_t *g_st;
 #endif
 
-union exec_flags g_exec_flags;
+exec_flags g_exec_flags;
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
 HRESULT g_hres;
@@ -212,16 +212,16 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_SETFLAG:
-      g_exec_flags.flags[parm0]=GetIntFromParm(1);
+      FIELDN(g_exec_flags,parm0)=GetIntFromParm(1);
     break;
     case EW_IFFLAG:
     {
-      int f=lent.offsets[!g_exec_flags.flags[parm2]];
-      g_exec_flags.flags[parm2]&=parm3;
+      int f=lent.offsets[!FIELDN(g_exec_flags,parm2)];
+      FIELDN(g_exec_flags,parm2)&=parm3;
       return f;
     }
     case EW_GETFLAG:
-      myitoa(var0,g_exec_flags.flags[parm1]);
+      myitoa(var0,FIELDN(g_exec_flags,parm1));
     break;
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case EW_CHDETAILSVIEW:

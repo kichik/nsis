@@ -69,7 +69,7 @@ char *ValidateTempDir()
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow)
 {
-  int ret = 2;
+  static int ret;
   const char *m_Err = _LANG_ERRORWRITINGTEMP;
 
   int cl_flags = 0;
