@@ -358,6 +358,8 @@ Section "InstallOptions" SecContribIO
   File ..\Contrib\InstallOptions\Changelog.txt
   File ..\contrib\installoptions\test.ini
   File ..\contrib\installoptions\test.nsi
+  File ..\contrib\installoptions\testlink.ini
+  File ..\contrib\installoptions\testlink.nsi
 SectionEnd
 
 Section "NSISdl" SecContribNSISDL
