@@ -21,37 +21,75 @@
 #define _LANG_GENERIC_ERROR "NSIS ERROR"
 
 
-#define LANG_STR(x) (x)
+// Changed by Amir Szekely 3rd August 2002
+// Now supports more than one language in each installer
 
-// instruction strings (these may someday be stored in the datablock or string table, and accessed
-// via LANG_STR()
-#define LANG_DELETEFILE "Delete file: "
-#define LANG_DLLREGERROR "Error registering DLL"
-#define LANG_REMOVEDIR "Remove directory: "
-#define LANG_OUTPUTDIR "Output directory: "
-#define LANG_CREATEDIR "Create directory: "
-#define LANG_RENAME "Rename: "
-#define LANG_RENAMEONREBOOT "Rename on reboot: "
-#define LANG_SKIPPED "Skipped: "
-#define LANG_CANTWRITE "Can't write: "
-#define LANG_EXTRACT "Extract: "
-#define LANG_ERRORWRITING "Extract: error writing to file "
-#define LANG_ERRORDECOMPRESSING "Error decompressing data! Corrupted installer?"
-#define LANG_DELETEONREBOOT "Delete on reboot: "
-#define LANG_EXECSHELL "ExecShell: "
-#define LANG_EXECUTE "Execute: "
-#define LANG_CANNOTFINDSYMBOL "Could not find symbol: "
-#define LANG_COULDNOTLOAD "Could not load: "
-#define LANG_NOOLE "No OLE for: "
-#define LANG_ERRORCREATINGSHORTCUT "Error creating shortcut: "
-#define LANG_CREATESHORTCUT "Create shortcut: "
-#define LANG_COPYTO "Copy to "
-#define LANG_COPYFAILED "Copy failed"
-#define LANG_ERRORCREATING "Error creating: "
-#define LANG_CREATEDUNINST "Created uninstaller: "
-#define LANG_INSTCORRUPTED "Install corrupted: invalid opcode"
+// Please note that all of these define the offset not the string itself.
+// To get the string it self use process_string_fromtab or GetStringFromStringTab.
 
+#define INSTALL_STR(x) (install_strings_tables[current_lang].x)
 
+// Installer specific strings
+#define LANG_BTN_BACK GetStringFromStringTab(INSTALL_STR(backbutton))
+#define LANG_BTN_NEXT GetStringFromStringTab(INSTALL_STR(nextbutton))
+#define LANG_BTN_BROWSE GetStringFromStringTab(INSTALL_STR(browse))
+#define LANG_BTN_INSTALL GetStringFromStringTab(INSTALL_STR(installbutton))
+#define LANG_SPACE_REQ GetStringFromStringTab(INSTALL_STR(spacerequired))
+#define LANG_SPACE_AVAIL GetStringFromStringTab(INSTALL_STR(spaceavailable))
+#define LANG_COMP_CUSTOM GetStringFromStringTab(INSTALL_STR(custom))
+#define LANG_DIR_TEXT GetStringFromStringTab(INSTALL_STR(text))
+#define LANG_DIR_SUBTEXT GetStringFromStringTab(INSTALL_STR(dirsubtext))
+#define LANG_COMP_TEXT GetStringFromStringTab(INSTALL_STR(componenttext))
+#define LANG_COMP_SUBTEXT(x) GetStringFromStringTab(INSTALL_STR(componentsubtext[x]))
+#define LANG_LICENSE_TEXT GetStringFromStringTab(INSTALL_STR(licensetext))
+#define LANG_LICENSE_DATA GetStringFromStringTab(INSTALL_STR(licensedata))
+#define LANG_BTN_LICENSE GetStringFromStringTab(INSTALL_STR(licensebutton))
 
+#define UNINSTALL_STR(x) (uninstall_strings_tables[current_lang].x)
+
+// Uninstall specific strings
+#define LANG_BTN_UNINST GetStringFromStringTab(UNINSTALL_STR(uninstbutton))
+#define LANG_UNINST_TEXT GetStringFromStringTab(UNINSTALL_STR(uninstalltext))
+#define LANG_UNINST_SUBTEXT GetStringFromStringTab(UNINSTALL_STR(uninstalltext2))
+
+#define COMMON_STR(x) (common_strings_tables[current_lang].x)
+
+// Common strings
+#define LANG_BRANDING GetStringFromStringTab(COMMON_STR(branding))
+#define LANG_BTN_CANCEL GetStringFromStringTab(COMMON_STR(cancelbutton))
+#define LANG_BTN_DETAILS GetStringFromStringTab(COMMON_STR(showdetailsbutton))
+#define LANG_COMPLETED GetStringFromStringTab(COMMON_STR(completed))
+#define LANG_BTN_CLOSE GetStringFromStringTab(COMMON_STR(closebutton))
+#define LANG_NAME GetStringFromStringTab(COMMON_STR(name))
+#define LANG_CAPTION GetStringFromStringTab(COMMON_STR(caption))
+#define LANG_SUBCAPTION(x) GetStringFromStringTab(COMMON_STR(subcaptions[x]))
+
+// instruction strings
+#define LANG_FILEERR GetStringFromStringTab(COMMON_STR(fileerrtext))
+#define LANG_DELETEFILE GetStringFromStringTab(COMMON_STR(del_file))
+#define LANG_DLLREGERROR GetStringFromStringTab(COMMON_STR(err_reg_dll))
+#define LANG_REMOVEDIR GetStringFromStringTab(COMMON_STR(remove_dir))
+#define LANG_OUTPUTDIR GetStringFromStringTab(COMMON_STR(output_dir))
+#define LANG_CREATEDIR GetStringFromStringTab(COMMON_STR(create_dir))
+#define LANG_RENAME GetStringFromStringTab(COMMON_STR(rename))
+#define LANG_RENAMEONREBOOT GetStringFromStringTab(COMMON_STR(rename_on_reboot))
+#define LANG_SKIPPED GetStringFromStringTab(COMMON_STR(skipped))
+#define LANG_CANTWRITE GetStringFromStringTab(COMMON_STR(cant_write))
+#define LANG_EXTRACT GetStringFromStringTab(COMMON_STR(extract))
+#define LANG_ERRORWRITING GetStringFromStringTab(COMMON_STR(err_writing))
+#define LANG_ERRORDECOMPRESSING GetStringFromStringTab(COMMON_STR(err_decompressing))
+#define LANG_DELETEONREBOOT GetStringFromStringTab(COMMON_STR(del_on_reboot))
+#define LANG_EXECSHELL GetStringFromStringTab(COMMON_STR(exec_shell))
+#define LANG_EXECUTE GetStringFromStringTab(COMMON_STR(exec))
+#define LANG_CANNOTFINDSYMBOL GetStringFromStringTab(COMMON_STR(symbol_not_found))
+#define LANG_COULDNOTLOAD GetStringFromStringTab(COMMON_STR(could_not_load))
+#define LANG_NOOLE GetStringFromStringTab(COMMON_STR(no_ole))
+#define LANG_ERRORCREATINGSHORTCUT GetStringFromStringTab(COMMON_STR(err_creating_shortcut))
+#define LANG_CREATESHORTCUT GetStringFromStringTab(COMMON_STR(create_shortcut))
+#define LANG_COPYTO GetStringFromStringTab(COMMON_STR(copy_to))
+#define LANG_COPYFAILED GetStringFromStringTab(COMMON_STR(copy_failed))
+#define LANG_ERRORCREATING GetStringFromStringTab(COMMON_STR(err_creating))
+#define LANG_CREATEDUNINST GetStringFromStringTab(COMMON_STR(created_uninst))
+#define LANG_INSTCORRUPTED GetStringFromStringTab(COMMON_STR(inst_corrupted))
 
 #endif//_NSIS_LANG_H_

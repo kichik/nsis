@@ -1,8 +1,12 @@
 #ifndef _BUILD_H_
 #define _BUILD_H_
 
+#include <Vector>
+using namespace std;
+
 #include "strlist.h"
 #include "lineparse.h"
+#include "lang.h"
 
 #include "exehead/fileform.h"
 #include "exehead/config.h"
@@ -107,6 +111,14 @@ class CEXEBuild {
     int uninstall_generate();
     void set_uninstall_mode(int un);
 
+    // lang.cpp by Amir Szekely 3rd August 2002
+    int SetString(char *string, int id, int process, WORD lang=0);
+    int SetString(char *string, int id, int process, StringTable *table);
+    int WriteStringTables();
+    void FillDefaultsIfNeeded(StringTable *table, NLF *nlf=0);
+    #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->##s):0)
+    bool _IsNotSet(int *str); // Checks if a string is not set in all of the string tables
+
     // a whole bunch O data.
 
     // Added by Amir Szekely 31st July 2002
@@ -115,6 +127,12 @@ class CEXEBuild {
     CBzip2 bzip2_compressor;
     bool build_compressor_set;
     bool build_compress_whole;
+
+    // Added by Amir Szekely 2nd August 2002
+    vector<NLF*> build_nlfs;
+    vector<StringTable*> string_tables;
+
+    bool no_space_texts;
 
     int has_called_write_output;
 

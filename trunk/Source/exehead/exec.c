@@ -15,6 +15,12 @@
 HWND g_SectionHack;
 #endif
 
+// Added by Amir Szekely 3rd August 2002
+extern installer_strings *install_strings_tables;
+extern common_strings *common_strings_tables;
+extern uninstall_strings *uninstall_strings_tables;
+extern int current_lang;
+
 #ifdef NSIS_SUPPORT_STACK
 typedef struct _stack_t {
   struct _stack_t *next;
@@ -67,7 +73,7 @@ static void doRMDir(char *buf, int recurse)
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) doRMDir(buf,recurse);
           else 
           {
-            update_status_text(LANG_STR(LANG_DELETEFILE),buf);
+            update_status_text(LANG_DELETEFILE,buf);
             if (fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) 
               SetFileAttributes(buf,fd.dwFileAttributes^FILE_ATTRIBUTE_READONLY);
             DeleteFile(buf);
@@ -79,7 +85,7 @@ static void doRMDir(char *buf, int recurse)
     buf[i]=0; // fix buffer
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-  update_status_text(LANG_STR(LANG_REMOVEDIR),buf);
+  update_status_text(LANG_REMOVEDIR,buf);
   RemoveDirectory(buf);
 }
 #endif//NSIS_SUPPORT_RMDIR
@@ -234,10 +240,10 @@ static int ExecuteEntry(entry *entries, int pos)
       log_printf3("CreateDirectory: \"%s\" (%d)",buf2,parms[1]);
       if (parms[1]) 
       {
-        update_status_text(LANG_STR(LANG_OUTPUTDIR),buf2);
+        update_status_text(LANG_OUTPUTDIR,buf2);
         lstrcpy(state_output_directory,buf2);     
       }
-      else update_status_text(LANG_STR(LANG_CREATEDIR),buf2);
+      else update_status_text(LANG_CREATEDIR,buf2);
       recursive_create_directory(buf2);
     return 0;
     case EW_IFFILEEXISTS:
@@ -273,7 +279,7 @@ static int ExecuteEntry(entry *entries, int pos)
         log_printf2("Rename: %s",buf4);
         if (MoveFile(buf,buf2))
         {
-          update_status_text(LANG_STR(LANG_RENAME),buf4);
+          update_status_text(LANG_RENAME,buf4);
         }
         else
         {
@@ -284,7 +290,7 @@ static int ExecuteEntry(entry *entries, int pos)
             exec_rebootflag++;
 #endif
             MoveFileOnReboot(buf,buf2);
-            update_status_text(LANG_STR(LANG_RENAMEONREBOOT),buf4);
+            update_status_text(LANG_RENAMEONREBOOT,buf4);
             log_printf2("Rename on reboot: %s",buf4);
           }
           else
@@ -384,7 +390,7 @@ static int ExecuteEntry(entry *entries, int pos)
         {
           if (overwriteflag) 
           {
-            update_status_text(LANG_STR(LANG_SKIPPED),buf4);
+            update_status_text(LANG_SKIPPED,buf4);
             if (overwriteflag==2) exec_errorflag++;
             log_printf3("File: skipped: \"%s\" (overwriteflag=%d)",buf,overwriteflag); 
             return 0;
@@ -393,7 +399,7 @@ static int ExecuteEntry(entry *entries, int pos)
           lstrcpy(buf3,g_usrvars[0]);//save $0
           lstrcpy(g_usrvars[0],buf); 
 
-          process_string_fromtab(buf2,g_inst_cmnheader->fileerrtext_ptr);
+          process_string(buf2,LANG_FILEERR);
           lstrcpy(g_usrvars[0],buf3); // restore $0
 
           switch (MessageBox(g_hwnd,buf2,g_caption,MB_ABORTRETRYIGNORE|MB_ICONSTOP))
@@ -407,12 +413,12 @@ static int ExecuteEntry(entry *entries, int pos)
               return 0;
             default:
               log_printf("File: error, user abort"); 
-              update_status_text(LANG_STR(LANG_CANTWRITE),buf);
+              update_status_text(LANG_CANTWRITE,buf);
             return EXEC_ERROR;
           }
         }
 
-        update_status_text(LANG_STR(LANG_EXTRACT),buf4);
+        update_status_text(LANG_EXTRACT,buf4);
         ret=GetCompressedDataFromDataBlock(parms[2],hOut);
 
         log_printf3("File: wrote %d to \"%s\"",ret,buf);
@@ -426,12 +432,12 @@ static int ExecuteEntry(entry *entries, int pos)
         {
           if (ret == -2)
           {
-            lstrcpy(buf,LANG_STR(LANG_ERRORWRITING));
+            lstrcpy(buf,LANG_ERRORWRITING);
             lstrcat(buf,buf4);
           }
           else
           {
-            lstrcpy(buf,LANG_STR(LANG_ERRORDECOMPRESSING));
+            lstrcpy(buf,LANG_ERRORDECOMPRESSING);
           }
           log_printf2("%s",buf);
           MessageBox(g_hwnd,buf,g_caption,MB_OK|MB_ICONSTOP);
@@ -462,7 +468,7 @@ static int ExecuteEntry(entry *entries, int pos)
               if (DeleteFile(buf2))
               {
                 log_printf2("Delete: DeleteFile(\"%s\")",buf2); 
-                update_status_text(LANG_STR(LANG_DELETEFILE),buf2);
+                update_status_text(LANG_DELETEFILE,buf2);
               }
               else
               {
@@ -473,7 +479,7 @@ static int ExecuteEntry(entry *entries, int pos)
                   exec_rebootflag++;
 #endif
                   log_printf2("Delete: DeleteFile on Reboot(\"%s\")",buf2); 
-                  update_status_text(LANG_STR(LANG_DELETEONREBOOT),buf2);
+                  update_status_text(LANG_DELETEONREBOOT,buf2);
                   MoveFileOnReboot(buf2,NULL);
                 }
                 else
@@ -708,7 +714,7 @@ static int ExecuteEntry(entry *entries, int pos)
         lstrcpy(buf4,buf);
         lstrcat(buf4," ");
         lstrcat(buf4,buf2);
-        update_status_text(LANG_STR(LANG_EXECSHELL), buf4);
+        update_status_text(LANG_EXECSHELL, buf4);
         x=(int)ShellExecute(g_hwnd,buf[0]?buf:NULL,buf2,buf3[0]?buf3:NULL,state_output_directory,parms[3]);
         if (x < 33)
         {
@@ -728,7 +734,7 @@ static int ExecuteEntry(entry *entries, int pos)
         HANDLE hProc;
         process_string_fromtab(buf,parms[0]);
         log_printf2("Exec: command=\"%s\"",buf);
-        update_status_text(LANG_STR(LANG_EXECUTE),buf);
+        update_status_text(LANG_EXECUTE,buf);
 
         hProc=myCreateProcess(buf,*state_output_directory?state_output_directory:NULL);
 
@@ -855,21 +861,21 @@ static int ExecuteEntry(entry *entries, int pos)
             }
             else
             {
-              update_status_text(LANG_STR(LANG_CANNOTFINDSYMBOL),buf2); 
+              update_status_text(LANG_CANNOTFINDSYMBOL,buf2); 
               log_printf3("Error registering DLL: %s not found in %s",buf2,buf);
             }
             FreeLibrary(h);
           }
           else
           {
-            update_status_text(LANG_STR(LANG_COULDNOTLOAD),buf); 
+            update_status_text(LANG_COULDNOTLOAD,buf); 
             log_printf2("Error registering DLL: Could not load %s",buf);
           }
           OleUninitialize();
         }
         else
         {
-          update_status_text(LANG_STR(LANG_NOOLE),buf); 
+          update_status_text(LANG_NOOLE,buf); 
           log_printf("Error registering DLL: Could not initialize OLE");
         }
       }
@@ -889,11 +895,11 @@ static int ExecuteEntry(entry *entries, int pos)
           state_output_directory,(parms[4]&0xff00)>>8,parms[4]>>16))
       {
         exec_errorflag++;
-        update_status_text(LANG_STR(LANG_ERRORCREATINGSHORTCUT),buf3);
+        update_status_text(LANG_ERRORCREATINGSHORTCUT,buf3);
       }
       else
       {
-        update_status_text(LANG_STR(LANG_CREATESHORTCUT),buf3);
+        update_status_text(LANG_CREATESHORTCUT,buf3);
       }
     return 0;
 #endif//NSIS_SUPPORT_CREATESHORTCUT
@@ -910,7 +916,7 @@ static int ExecuteEntry(entry *entries, int pos)
 			  buf[lstrlen(buf)+1]=0;
 			  buf2[lstrlen(buf2)+1]=0;
 
-        lstrcpy(buf3,LANG_STR(LANG_COPYTO));
+        lstrcpy(buf3,LANG_COPYTO);
         lstrcat(buf3,buf2);
 
         op.pFrom=buf;
@@ -921,7 +927,7 @@ static int ExecuteEntry(entry *entries, int pos)
 			  res=SHFileOperation(&op);
 			  if (res) 
         { // some of these changes were from Edgewise (wiked_edge@yahoo.com)
-          update_status_text(LANG_STR(LANG_COPYFAILED),"");
+          update_status_text(LANG_COPYFAILED,"");
           exec_errorflag++;
 			  }
     	}
@@ -1326,11 +1332,11 @@ static int ExecuteEntry(entry *entries, int pos)
         log_printf3("created uninstaller: %d, \"%s\"",ret,buf2);
         if (ret < 0)
         {
-          update_status_text(LANG_STR(LANG_ERRORCREATING),buf);
+          update_status_text(LANG_ERRORCREATING,buf);
           DeleteFile(buf2);
         }
         else
-          update_status_text(LANG_STR(LANG_CREATEDUNINST),buf);
+          update_status_text(LANG_CREATEDUNINST,buf);
       }
     return 0;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
@@ -1418,6 +1424,6 @@ static int ExecuteEntry(entry *entries, int pos)
     return 0;
 #endif //NSIS_CONFIG_VISIBLE_SUPPORT
   }
-  MessageBox(g_hwnd,LANG_STR(LANG_INSTCORRUPTED),g_caption,MB_OK|MB_ICONSTOP);
+  MessageBox(g_hwnd,LANG_INSTCORRUPTED,g_caption,MB_OK|MB_ICONSTOP);
   return EXEC_ERROR;
 }
