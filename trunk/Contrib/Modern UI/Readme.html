@@ -139,7 +139,11 @@ with a custom user interface.</p>
 !define MUI_LICENSEPAGE ;License page
 !define MUI_STARTMENUPAGE ;Start Menu Folder selection page
 !define MUI_FINISHPAGE ;Finish page with options to run the program or reboot
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\File.exe" ;File to run on the Finish page
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\File.exe" ;Option to run a file
+  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\Readme.txt" ;Option to show a Readme
+  !define MUI_FINISHPAGE_NOREBOOTSUPPORT ;Disables support for a reboot option.
+                                         ;Use this if you are not using /REBOOTOK
+                                         ;or SetRebootFlag.
 
 !define MUI_ABORTWARNING ;Abort warning messagebox
 !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
