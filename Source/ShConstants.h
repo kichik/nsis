@@ -3,7 +3,7 @@
 #ifndef ___CONSTANTS___H_____
 #define ___CONSTANTS___H_____
 
-#include "Lang.h"
+#include "lang.h"
 
 struct constantstring {
   int name;

@@ -794,7 +794,7 @@ static int NSISCALL _sumsecsfield(int idx)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (sections[x].flags & SF_SELECTED)
 #endif
-      total += sections[x].fields[idx];
+      total += ((int *)&sections[x])[idx];
   }
   return total;
 }

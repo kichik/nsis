@@ -8,13 +8,13 @@
    subject to change. Applications should only use zlib.h.
  */
 
-/* @(#) $Id: ZUTIL.H,v 1.1.1.1 2002/08/02 10:01:35 kichik Exp $ */
+/* @(#) $Id: ZUTIL.H,v 1.2 2002/09/22 20:02:03 eccles Exp $ */
 
 #ifndef _Z_UTIL_H
 #define _Z_UTIL_H
 
-#include <windows.h>
-#include "zlib.h"
+#include "../Platform.h"
+#include "ZLIB.H"
 
 #ifndef local
 #  define local static
@@ -63,10 +63,11 @@ typedef unsigned long  ulg;
 #ifdef EXEHEAD
 #include "../exehead/util.h"
 #define ZALLOC(strm, items, size) my_GlobalAlloc((items)*(size))
-#else   // def EXEHEAD
-#define ZALLOC(strm, items, size) GlobalAlloc(GPTR,(items)*(size))
-#endif  // def EXEHEAD
 #define ZFREE(strm, addr)  { if (addr) GlobalFree(addr); }
+#else   // def EXEHEAD
+#define ZALLOC(strm, items, size) malloc((items)*(size))
+#define ZFREE(strm, addr)  { if (addr) free(addr); }
+#endif  // def EXEHEAD
 #define TRY_FREE(s, p) { ZFREE(s, p); }
 #define ERR_RETURN(strm,err) return (err)
 

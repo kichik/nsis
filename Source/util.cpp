@@ -1,7 +1,6 @@
 #include "Platform.h"
 #include <stdio.h>
 #include <stdarg.h>
-#include <conio.h>
 #include "exedata.h"
 #include "exehead/fileform.h"
 #include "util.h"
@@ -18,7 +17,7 @@ void dopause(void)
     if (g_display_errors) fprintf(g_output,"MakeNSIS done - hit enter to close...");
     fflush(stdout);
     int a;
-    while ((a=_getch()) != '\r' && a != 27/*esc*/);
+    while ((a=getchar()) != '\r' && a != '\n' && a != 27/*esc*/);
   }
 }
 
@@ -82,7 +81,7 @@ int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width/*=0*/,
   }
   fclose(f);
 
-  re->UpdateResource(RT_BITMAP, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), bitmap, dwSize);
+  re->UpdateResource(RT_BITMAP, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, bitmap, dwSize);
 
   free(bitmap);
 
@@ -146,7 +145,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
   int i = 1;
 
   // Delete old icons
-  while (re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i++), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0));
+  while (re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
 
   int iNewIconSize = 0;
 
@@ -170,7 +169,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
       throw bad_alloc();
     }
     fread(iconData, sizeof(BYTE), ige->dwRawSize, f);
-    re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), iconData, ige->dwRawSize);
+    re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i+1), NSIS_DEFAULT_LANG, iconData, ige->dwRawSize);
     free(iconData);
 
     fsetpos(f, &pos);
@@ -185,7 +184,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, char* filename)
 
   fclose(f);
 
-  re->UpdateResource(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
+  re->UpdateResource(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
 
   free(rsrcIconGroup);
 
@@ -300,20 +299,20 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
 
   int idx = find_in_dir(rdRoot, (WORD) (int) RT_ICON);
   MY_ASSERT(idx == -1, "no icons?!");
-  MY_ASSERT(!rdRoot->Entries[idx].DataIsDirectory, "bad resource directory");
+  MY_ASSERT(!rdRoot->Entries[idx].DirectoryOffset.DataIsDirectory, "bad resource directory");
 
-  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].OffsetToDirectory + DWORD(rdRoot));
+  PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
 
   MY_ASSERT((int)rdIcons - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
   MY_ASSERT(rdIcons->Header.NumberOfIdEntries == 0, "no icons found");
 
   for (i = 0; i < rdIcons->Header.NumberOfIdEntries; i++) { // Icons dir can't have named entries
-    MY_ASSERT(!rdIcons->Entries[i].DataIsDirectory, "bad resource directory");
-    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].OffsetToDirectory + DWORD(rdRoot));
+    MY_ASSERT(!rdIcons->Entries[i].DirectoryOffset.DataIsDirectory, "bad resource directory");
+    PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
     
     MY_ASSERT((int)rd - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
-    MY_ASSERT(rd->Entries[0].DataIsDirectory, "bad resource directory");
+    MY_ASSERT(rd->Entries[0].DirectoryOffset.DataIsDirectory, "bad resource directory");
     
     PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
 
@@ -352,30 +351,45 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     seeker += dwSize;
   }
 
-  return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
+  return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
 
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename) {
-  HRSRC hUIRes = FindResource(hUIFile, MAKEINTRESOURCE(dlgId), RT_DIALOG);
-  if (!hUIRes) {
-    if (g_display_errors) fprintf(g_output, "Error: \"%s\" doesn't contain a dialog with the ID %u!\n", filename, dlgId);
-    return 0;
-  }
-  HGLOBAL hUIMem = LoadResource(hUIFile, hUIRes);
-  if (!hUIMem) {
-    if (g_display_errors) fprintf(g_output, "Error: Can't load a dialog from \"%s\"!\n", filename);
-    return 0;
-  }
-  BYTE* pbUIData = (BYTE*)LockResource(hUIMem);
-  if (!pbUIData) {
-    if (g_display_errors) fprintf(g_output, "Error: Can't lock resource from \"%s\"!\n", filename);
-    return 0;
-  }
-  return pbUIData;
+// returns the number of WCHARs in str including null charcter
+int WCStrLen(const WCHAR* szwStr) {
+  int i;
+  for (i = 0; szwStr[i]; i++);
+  return i+1;
 }
-#endif //NSIS_CONFIG_VISIBLE_SUPPORT
+
+#ifndef _WIN32
+char *CharPrev(const char *s, const char *p) {
+  if (!s || !p || p < s)
+    return NULL;
+  while (*s) {
+    char *n = CharNext(s);
+    if (n >= p)
+      break;
+    s = n;
+  }
+  return (char *) s;
+}
+
+char *CharNext(const char *s) {
+  int l = 0;
+  if (s && *s)
+    l = min(1, mblen(s, strlen(s)));
+  return (char *) s + l;
+}
+
+int wsprintf(char *s, const char *format, ...) {
+  va_list val;
+  va_start(val, format);
+  int res = vsnprintf(s, 1024, format, val);
+  va_end(val);
+  return res;
+}
+#endif
 
 void *operator new(size_t size) {
   void *p = malloc(size);

@@ -40,13 +40,13 @@ namespace BT_NAMESPACE {
 
 
 CInTree::CInTree():
+  _hash(0),
   #ifdef HASH_ARRAY_2
   _hash2(0),
   #ifdef HASH_ARRAY_3
   _hash3(0),
   #endif
   #endif
-  _hash(0),
   _son(0),
   _cutValue(0xFF)
 {
@@ -134,7 +134,7 @@ static const UINT32 kEmptyHashValue = 0;
 HRESULT CInTree::Init(ISequentialInStream *stream)
 {
   RINOK(CLZInWindow::Init(stream));
-  int i;
+  unsigned int i;
   for(i = 0; i < kHashSize; i++)
     _hash[i] = kEmptyHashValue;
 

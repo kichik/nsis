@@ -21,19 +21,18 @@
 */
 
 #include "DialogTemplate.h"
+#include "util.h"
+#ifndef _WIN32
+#  include <stdio.h>
+#  include <stdlib.h>
+#  include <iconv.h>
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // Utilities
 //////////////////////////////////////////////////////////////////////
 
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
-
-// returns the number of WCHARs in str including null charcter
-inline DWORD WCStrLen(WCHAR* szwStr) {
-  int i;
-  for (i = 0; szwStr[i]; i++);
-  return i+1;
-}
 
 // Reads a variany length array from seeker into readInto and advances seeker
 void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
@@ -49,16 +48,49 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      int iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
-      readInto = new char[iStrLen];
-      WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
-      seeker += WCStrLen((WCHAR*)arr)*sizeof(WCHAR);
+      int iStrLen = 1;
+#ifdef _WIN32
+      iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
+      if (iStrLen)
+      {
+        readInto = new char[iStrLen];
+        WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, readInto, iStrLen, 0, 0);
+      }
+      else
+      {
+        *arr = 0;
+        seeker += sizeof(WCHAR);
+      }
+#else
+      char cp[128] = "";
+      if (uCodePage != CP_ACP)
+        snprintf(cp, 128, "CP%d", uCodePage);
+      iconv_t cd = iconv_open(cp, "UCS-2");
+      if (cd != (iconv_t) -1)
+      {
+        iStrLen = WCStrLen((WCHAR *) arr);
+        char *in = (char *) arr;
+        char *out = readInto = new char[iStrLen + 1];
+        size_t insize = (iStrLen * sizeof(WCHAR)) + 1;
+        size_t outsize = iStrLen + 1;
+        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
+        {
+          *arr = 0;
+          iStrLen = 1;
+        }
+        iconv_close(cd);
+      }
+      else
+        *arr = 0;
+#endif
+      seeker += iStrLen*sizeof(WCHAR);
     }
     break;
   }
 }
 
 // A macro that writes a given string (that can be a number too) into the buffer
+#ifdef _WIN32
 #define WriteStringOrId(x) \
   if (x) \
     if (IS_INTRESOURCE(x)) { \
@@ -73,9 +105,46 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     } \
   else \
     seeker += sizeof(WORD);
+#else
+#define WriteStringOrId(x) \
+  if (x) \
+    if (IS_INTRESOURCE(x)) { \
+      *(WORD*)seeker = 0xFFFF; \
+      seeker += sizeof(WORD); \
+      *(WORD*)seeker = WORD(DWORD(x)); \
+      seeker += sizeof(WORD); \
+    } \
+    else { \
+      char cp[128] = ""; \
+      if (m_uCodePage != CP_ACP) \
+        snprintf(cp, 128, "CP%d", m_uCodePage); \
+      iconv_t cd = iconv_open("UCS-2", cp); \
+      if (cd != (iconv_t) -1) \
+      { \
+        char *in = (char *) x; \
+        char *out = (char *) seeker; \
+        size_t insize = strlen(in) + 1; \
+        size_t outsize = insize * 2; \
+        if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1) \
+        { \
+          *seeker = 0; \
+          seeker += sizeof(WCHAR); \
+        } \
+        seeker = (BYTE *) out; \
+        iconv_close(cd); \
+      } \
+      else \
+      { \
+        *seeker = 0; \
+        seeker += sizeof(WCHAR); \
+      } \
+    } \
+  else \
+    seeker += sizeof(WORD);
+#endif
 
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
-#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (lstrlen(x)+1)*sizeof(WCHAR)) : sizeof(WORD)
+#define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (strlen(x)+1)*sizeof(WCHAR)) : sizeof(WORD)
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -264,7 +333,7 @@ int CDialogTemplate::RemoveItem(WORD wId) {
 
 // Sets the font of the dialog
 void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
-  if (lstrcmp(szFaceName, "MS Shell Dlg")) {
+  if (strcmp(szFaceName, "MS Shell Dlg")) {
      // not MS Shell Dlg
     m_dwStyle &= ~DS_SHELLFONT;
     m_bExtended = false;
@@ -276,8 +345,8 @@ void CDialogTemplate::SetFont(char* szFaceName, WORD wFontSize) {
   }
   m_dwStyle |= DS_SETFONT;
   if (m_szFont) delete [] m_szFont;
-  m_szFont = new char[lstrlen(szFaceName)+1];
-  lstrcpy(m_szFont, szFaceName);
+  m_szFont = new char[strlen(szFaceName)+1];
+  strcpy(m_szFont, szFaceName);
   m_sFontSize = wFontSize;
 }
 
@@ -287,12 +356,12 @@ void CDialogTemplate::AddItem(DialogItemTemplate item) {
   CopyMemory(newItem, &item, sizeof(DialogItemTemplate));
 
   if (item.szClass && !IS_INTRESOURCE(item.szClass)) {
-    newItem->szClass = new char[lstrlen(item.szClass)+1];
-    lstrcpy(newItem->szClass, item.szClass);
+    newItem->szClass = new char[strlen(item.szClass)+1];
+    strcpy(newItem->szClass, item.szClass);
   }
   if (item.szTitle && !IS_INTRESOURCE(item.szTitle)) {
-    newItem->szTitle = new char[lstrlen(item.szTitle)+1];
-    lstrcpy(newItem->szTitle, item.szTitle);
+    newItem->szTitle = new char[strlen(item.szTitle)+1];
+    strcpy(newItem->szTitle, item.szTitle);
   }
   if (item.wCreateDataSize) {
     newItem->szCreationData = new char[item.wCreateDataSize];
@@ -315,6 +384,7 @@ void CDialogTemplate::Resize(short x, short y) {
   m_sHeight += y;
 }
 
+#ifdef _WIN32
 // Creates a dummy dialog that is used for converting units
 HWND CDialogTemplate::CreateDummyDialog() {
   DWORD dwTemp;
@@ -361,7 +431,7 @@ SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
   SelectObject(memDC, font);
 
   SIZE size;
-  GetTextExtentPoint32(memDC, str, lstrlen(str), &size);
+  GetTextExtentPoint32(memDC, str, strlen(str), &size);
 
   DestroyWindow(hDlg);
   DeleteObject(font);
@@ -415,6 +485,7 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
   item->sWidth = short(size.cx);
   item->sHeight = short(size.cy);
 }
+#endif
 
 // Moves every item right and gives it the WS_EX_RIGHT extended style
 void CDialogTemplate::ConvertToRTL() {
@@ -452,12 +523,12 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !strcmpi(m_vItems[i]->szClass, "RichEdit20A")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(m_vItems[i]->szClass, "RichEdit20A")) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !strcmpi(m_vItems[i]->szClass, "SysTreeView32")) {
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !stricmp(m_vItems[i]->szClass, "SysTreeView32")) {
       m_vItems[i]->dwStyle |= TVS_RTLREADING;
       addExStyle = true;
     }

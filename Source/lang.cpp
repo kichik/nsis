@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "build.h"
 #include "DialogTemplate.h"
-#include "exehead\resource.h"
+#include "exehead/resource.h"
 
 extern const char *NSIS_VERSION;
 
@@ -313,14 +313,14 @@ int CEXEBuild::GenerateLangTables() {
       init_res_editor();
 
 #define ADD_FONT(id) { \
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
         if (dlg) { \
           CDialogTemplate td(dlg); \
           free(dlg); \
           td.SetFont(build_font, build_font_size); \
           DWORD dwSize; \
           dlg = td.Save(dwSize); \
-          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+          res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
           res_editor->FreeResource(dlg); \
         } \
       }
@@ -368,7 +368,7 @@ int CEXEBuild::GenerateLangTables() {
         init_res_editor();
 
 #define ADD_FONT(id) { \
-          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+          BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
           if (dlg) { \
             CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             free(dlg); \
@@ -376,7 +376,7 @@ int CEXEBuild::GenerateLangTables() {
             if (lt[i].nlf.m_bRTL) td.ConvertToRTL(); \
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
-            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+            res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
             res_editor->FreeResource(dlg); \
           } \
         }
@@ -719,6 +719,14 @@ char SkipComments(FILE *f) {
   }
   return c;
 }
+
+#ifndef _WIN32
+BOOL IsValidCodePage(UINT CodePage)
+{
+  // FIXME make a real check
+  return TRUE;
+}
+#endif
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(char *filename) {

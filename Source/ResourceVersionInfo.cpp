@@ -2,11 +2,24 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "Platform.h"
-#include "build.h"
-
 #include "ResourceVersionInfo.h"
+
+#include "Platform.h"
+#include "util.h"
+
 #ifdef NSIS_SUPPORT_VERSION_INFO
+
+#ifndef VOS__WINDOWS32
+#  define VOS__WINDOWS32 4
+#endif
+#ifndef VFT_APP
+#  define VFT_APP 1
+#endif
+
+#ifndef _WIN32
+#  include <iconv.h>
+#endif
+
 /*
 int ValidCodePages[] = {
 437, 708, 709, 710, 720, 737, 775, 850, 852, 855, 85, 86, 86, 86, 86, 864,
@@ -74,10 +87,33 @@ void CResourceVersionInfo::SetProductVersion(int HighPart, int LowPart)
 // Util function - must be freeded
 WCHAR* StrToWstrAlloc(const char* istr, int codepage)
 {
+#ifdef _WIN32
   int strSize = MultiByteToWideChar(codepage, 0, istr, -1, 0, 0);
   WCHAR* wstr = new WCHAR[strSize];
   MultiByteToWideChar(codepage, 0, istr, -1, wstr, strSize);
   return wstr;
+#else
+  WCHAR *wstr = NULL;
+  char cp[128] = "";
+  if (codepage != CP_ACP)
+    snprintf(cp, 128, "CP%d", codepage);
+  iconv_t cd = iconv_open("UCS-2", cp);
+  if (cd != (iconv_t) -1)
+  {
+    int len = strlen(istr);
+    char *in = (char *) istr;
+    char *out = (char *) wstr = new WCHAR[len + 1];
+    size_t insize = len + 1;
+    size_t outsize = (len + 1) * sizeof(WCHAR);
+    if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
+    {
+      delete [] wstr;
+      wstr = NULL;
+    }
+    iconv_close(cd);
+  }
+  return wstr;
+#endif
 }
 
 int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
@@ -93,7 +129,7 @@ int GetVersionHeader (LPSTR &p, WORD &wLength, WORD &wValueLength, WORD &wType)
     wType = *(WORD*)p;
     p += sizeof(WORD);
     szKey = (WCHAR*)p;
-    p += (wcslen(szKey) + 1) * sizeof (WCHAR);
+    p += (WCStrLen(szKey)) * sizeof (WCHAR);
     while ( ((long)p % 4) != 0 )
         p++;
     return p - baseP;    
@@ -116,7 +152,7 @@ void SaveVersionHeader (GrowBuf &strm, WORD wLength, WORD wValueLength, WORD wTy
     
     strm.add (&wValueLength, sizeof (wValueLength));
     strm.add (&wType, sizeof (wType));
-    keyLen = (wcslen(key) + 1) * sizeof (WCHAR);
+    keyLen = (WCStrLen(key)) * sizeof (WCHAR);
     strm.add ((void*)key, keyLen);
     
     PadStream(strm);
@@ -138,7 +174,9 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     WCHAR *KeyName, *KeyValue;
 
     strm.resize(0);
-    SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, L"VS_VERSION_INFO", &m_FixedInfo);
+    KeyName = StrToWstrAlloc("VS_VERSION_INFO", CP_ACP);
+    SaveVersionHeader (strm, 0, sizeof (VS_FIXEDFILEINFO), 0, KeyName, &m_FixedInfo);
+    delete [] KeyName;
     
     DefineList *pChildStrings = m_ChildStringLists.get_strings(Index);
     if ( pChildStrings->getnum() > 0 )
@@ -159,7 +197,7 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
         p = stringInfoStream.getlen();
         KeyName = StrToWstrAlloc(pChildStrings->getname(i), codepage);
         KeyValue = StrToWstrAlloc(pChildStrings->getvalue(i), codepage);
-        SaveVersionHeader (stringInfoStream, 0, wcslen(KeyValue) + 1, 1, KeyName, (void*)KeyValue);
+        SaveVersionHeader (stringInfoStream, 0, WCStrLen(KeyValue), 1, KeyName, (void*)KeyValue);
         delete [] KeyName;
         delete [] KeyValue;
         wSize = stringInfoStream.getlen() - p;
@@ -172,7 +210,9 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
       
       PadStream (strm);
       p = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"StringFileInfo", &ZEROS);
+      KeyName = StrToWstrAlloc("StringFileInfo", CP_ACP);
+      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
+      delete [] KeyName;
       strm.add (stringInfoStream.get(), stringInfoStream.getlen());
       wSize = strm.getlen() - p;
       
@@ -184,11 +224,15 @@ void CResourceVersionInfo::ExportToStream(GrowBuf &strm, int Index)
     {
       PadStream (strm);
       p = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"VarFileInfo", &ZEROS);
+      KeyName = StrToWstrAlloc("VarFileInfo", CP_ACP);
+      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
+      delete [] KeyName;
       PadStream (strm);
       
       p1 = strm.getlen();
-      SaveVersionHeader (strm, 0, 0, 0, L"Translation", &ZEROS);
+      KeyName = StrToWstrAlloc("Translation", CP_ACP);
+      SaveVersionHeader (strm, 0, 0, 0, KeyName, &ZEROS);
+      delete [] KeyName;
       
       // First add selected code language translation
       v = MAKELONG(m_ChildStringLists.get_lang(Index), m_ChildStringLists.get_codepage(Index));

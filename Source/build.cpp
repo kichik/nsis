@@ -12,18 +12,29 @@
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "ResourceVersionInfo.h"
-#include <Shlobj.h>
+
+#ifndef _WIN32
+#  include <locale.h>
+#  include <unistd.h>
+#  include <limits.h>
+#  include <stdlib.h>
+#endif
 
 int MMapFile::m_iAllocationGranularity = 0;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
+#ifdef _WIN32
 DWORD WINAPI lzmaCompressThread(LPVOID lpParameter)
+#else
+void *lzmaCompressThread(void *lpParameter)
+#endif
 {
   CLZMA *Compressor = (CLZMA *) lpParameter;
   if (!Compressor)
     return 0;
 
-  return Compressor->CompressReal();
+  Compressor->CompressReal();
+  return 0;
 }
 #endif
 
@@ -226,19 +237,6 @@ CEXEBuild::CEXEBuild()
 #ifdef NSIS_ZLIB_COMPRESS_WHOLE
   definedlist.add("NSIS_ZLIB_COMPRESS_WHOLE");
 #endif
-
-  // Added by Amir Szekely 11th July 2002
-  // Coded by Robert Rainwater
-  {
-    char szNSISDir[NSIS_MAX_STRLEN],*fn2;
-    GetModuleFileName(NULL,szNSISDir,sizeof(szNSISDir)-sizeof("\\Include"));
-    fn2=strrchr(szNSISDir,'\\');
-    if(fn2!=NULL) *fn2=0;
-    definedlist.add("NSISDIR",(char*)szNSISDir);
-    lstrcat(szNSISDir, "\\Include");
-    include_dirs.add(szNSISDir,0);
-  }
-
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
@@ -380,7 +378,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   plugins_processed=0;
 #endif
 
-  last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+  last_used_lang=NSIS_DEFAULT_LANG;
 
   res_editor=0;
 
@@ -391,7 +389,9 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 
   disable_window_icon=0;
 
+#ifdef _WIN32
   notify_hwnd=0;
+#endif
 
   defcodepage_set=false;
   uDefCodePage=CP_ACP;
@@ -456,6 +456,60 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   m_ShellConstants.add("CDBURN_AREA", CSIDL_CDBURN_AREA, CSIDL_CDBURN_AREA);
 }
 
+void CEXEBuild::setdirs(char *argv0)
+{
+  char szNSISDir[NSIS_MAX_STRLEN],*fn2;
+#ifdef _WIN32
+  GetModuleFileName(NULL,szNSISDir,sizeof(szNSISDir)-sizeof(PATH_SEPARATOR_STR "Include"));
+#else
+  if (argv0[0] == '.' || argv0[0] == PATH_SEPARATOR_C)
+  {
+    getcwd(szNSISDir,sizeof(szNSISDir)-strlen(argv0)-2);
+    if (szNSISDir[strlen(szNSISDir)-1]!=PATH_SEPARATOR_C)
+      strcat(szNSISDir,PATH_SEPARATOR_STR);
+    strcat(szNSISDir,argv0);
+  }
+  else
+  {
+    char *path = getenv("PATH");
+    if (path)
+    {
+      char *p = path;
+      char *l = path;
+      char *e = path + strlen(path);
+      while (p <= e)
+      {
+        if (*p == ':' || !*p)
+        {
+          *p = 0;
+          strncpy(szNSISDir,l,sizeof(szNSISDir)-strlen(argv0)-2);
+          if (szNSISDir[strlen(szNSISDir)-1]!=PATH_SEPARATOR_C)
+            strcat(szNSISDir,PATH_SEPARATOR_STR);
+          strcat(szNSISDir,argv0);
+          struct stat st;
+          if (!stat(szNSISDir,&st))
+            break;
+          szNSISDir[0]=0;
+          l = ++p;
+        }
+        p = CharNext(p);
+      }
+    }
+  }
+#if defined(MAX_PATH) && (NSIS_MAX_STRLEN >= MAX_PATH)
+  const char buf[NSIS_MAX_STRLEN];
+  strcpy(buf, szNSISDir);
+  realpath(buf, szNSISDir);
+#endif
+#endif
+  fn2=strrchr(szNSISDir,PATH_SEPARATOR_C);
+  if(fn2!=NULL) *fn2=0;
+  definedlist.add("NSISDIR",(char*)szNSISDir);
+  strcat(szNSISDir, PATH_SEPARATOR_STR "Include");
+  include_dirs.add(szNSISDir,0);
+}
+
+
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
 
 // returns offset in stringblock
@@ -484,8 +538,12 @@ int CEXEBuild::add_string(const char *string, int process/*=1*/, WORD codepage/*
 
 int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 {
-  char i_str[64];
+  char i_str[128];
+#ifdef _WIN32
   wsprintf(i_str, "%d", i);
+#else
+  snprintf(i_str, 128, "%d", i);
+#endif
   return add_string(i_str);
 }
 
@@ -495,11 +553,25 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
   const char *p=in;
   while (*p)
   {
-    const char *np=CharNextExA(codepage, p, 0);
-    
-    if (np-p > 1) // multibyte char
+    const char *np;
+#ifdef _WIN32
+    np = CharNextExA(codepage, p, 0);
+#else
     {
-      int l=np-p;
+      char buf[1024];
+      snprintf(buf, 1024, "CP%d", codepage);
+      setlocale(LC_CTYPE, buf);
+      int len = mblen(p, strlen(p));
+      if (len > 0)
+        np = p + len;
+      else
+        np = p + 1;
+      setlocale(LC_CTYPE, "");
+    }
+#endif
+    if (np - p > 1) // multibyte char
+    {
+      int l = np - p;
       while (l--)
       {
         int i = (unsigned char)*p++;
@@ -510,9 +582,9 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
       }
       continue;
     }
-    
+
     int i = (unsigned char)*p;
-    
+
     p=np;
     
     // Test for characters extending into the variable codes
@@ -674,12 +746,13 @@ int CEXEBuild::datablock_optimize(int start_offset)
       while (left > 0)
       {
         int l = min(left, build_filebuflen);
+        int la = l;
         void *newstuff = db->get(start_offset + this_len - left, l);
-        void *oldstuff = db->getmore(pos + this_len - left, l);
+        void *oldstuff = db->getmore(pos + this_len - left, &la);
 
         int res = memcmp(newstuff, oldstuff, l);
 
-        db->release(oldstuff);
+        db->release(oldstuff, la);
         db->release();
 
         if (res)
@@ -1168,8 +1241,12 @@ int CEXEBuild::add_section(const char *secname, const char *defname, int expand/
 
   if (defname[0])
   {
-    char buf[32];
+    char buf[128];
+#ifdef _WIN32
     wsprintf(buf, "%d", cur_header->blocks[NB_SECTIONS].num);
+#else
+    snprintf(buf, 128, "%d", cur_header->blocks[NB_SECTIONS].num);
+#endif
     if (definedlist.add(defname, buf))
     {
       ERROR_MSG("Error: \"%s\" already defined, can't assign section index!\n", defname);
@@ -1353,7 +1430,6 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
 #ifdef NSIS_SUPPORT_STROPTS
   else if (w->which == EW_GETFUNCTIONADDR)
   {
-    char buf[32];
     if (w->offsets[1] < 0)
     {
       ERROR_MSG("Error: GetFunctionAddress requires a real function to get address of.\n");
@@ -1363,16 +1439,13 @@ int CEXEBuild::resolve_instruction(const char *fn, const char *str, entry *w, in
     if (resolve_call_int(fn,str,w->offsets[1],&w->offsets[1])) return 1;
 
     w->which=EW_ASSIGNVAR;
-    wsprintf(buf,"%d",w->offsets[1]+1); // +1 here to make 1-based.
-    w->offsets[1]=add_string(buf);
+    w->offsets[1]=add_intstring(w->offsets[1]+1); // +1 here to make 1-based.
   }
   else if (w->which == EW_GETLABELADDR)
   {
-    char buf[32];
     if (resolve_jump_int(fn,&w->offsets[1],offs,start,end)) return 1;
     w->which=EW_ASSIGNVAR;
-    wsprintf(buf,"%d",w->offsets[1]);
-    w->offsets[1]=add_string(buf);
+    w->offsets[1]=add_intstring(w->offsets[1]);
   }
 #endif
   return 0;
@@ -1978,7 +2051,7 @@ again:
   SCRIPT_MSG("Done!\n");
 
 #define REMOVE_ICON(id) if (disable_window_icon) { \
-    BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US)); \
+    BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
     if (dlg) { \
       CDialogTemplate dt(dlg,uDefCodePage); \
       free(dlg); \
@@ -1996,7 +2069,7 @@ again:
          \
         DWORD dwSize; \
         dlg = dt.Save(dwSize); \
-        res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize); \
+        res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
       } \
       res_editor->FreeResource(dlg); \
     } \
@@ -2007,43 +2080,43 @@ again:
     init_res_editor();
 #ifdef NSIS_CONFIG_LICENSEPAGE
     if (!license_normal) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE);
     if (!license_fsrb) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSRB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSRB, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE_FSRB);
     if (!license_fscb) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSCB, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_LICENSE_FSCB, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_LICENSE_FSCB);
 #endif // NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     if (!selcom) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-      res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_SELCOM, NSIS_DEFAULT_LANG, 0, 0);
+      res_editor->UpdateResource(RT_BITMAP, IDB_BITMAP1, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_SELCOM);
 #endif // NSIS_CONFIG_COMPONENTPAGE
     if (!dir) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_DIR, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_DIR);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!uninstconfirm) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_UNINST, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_UNINST);
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!instlog) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_INSTFILES, NSIS_DEFAULT_LANG, 0, 0);
     }
     else REMOVE_ICON(IDD_INSTFILES);
     if (!main) {
-      res_editor->UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+      res_editor->UpdateResource(RT_DIALOG, IDD_INST, NSIS_DEFAULT_LANG, 0, 0);
       if (!build_compress_whole && !build_crcchk)
-        res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
+        res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, NSIS_DEFAULT_LANG, 0, 0);
     }
 
     SCRIPT_MSG("Done!\n");
@@ -2310,10 +2383,29 @@ int CEXEBuild::write_output(void)
   int crc=0;
 
   {
-    char buffer[1024],*p;
+#ifdef _WIN32
+    char buffer[1024];
+    char *p;
     GetFullPathName(build_output_filename,1024,buffer,&p);
+#else
+#  ifdef PATH_MAX
+    char buffer[PATH_MAX];
+#  else
+    int path_max = pathconf(build_output_filename, _PC_PATH_MAX);
+    if (path_max <= 0)
+      path_max = 4096;
+    char *buffer = (char *) malloc(path_max);
+    if (!buffer)
+      buffer = build_output_filename;
+#  endif
+    realpath(build_output_filename, buffer);
+#endif
     notify(MAKENSIS_NOTIFY_OUTPUT, buffer);
-    INFO_MSG("\nOutput: \"%s\"\n",buffer);
+    INFO_MSG("\nOutput: \"%s\"\n", buffer);
+#if !defined(_WIN32) && defined(PATH_MAX)
+    if (buffer != build_output_filename)
+      free(buffer);
+#endif
   }
   FILE *fp = fopen(build_output_filename,"w+b");
   if (!fp)
@@ -2503,7 +2595,11 @@ int CEXEBuild::write_output(void)
   {
     int total_out_size_estimate=
       exeheader_size_new+sizeof(fh)+build_datablock.getlen()+(build_crcchk?sizeof(int):0);
+#ifdef _WIN32
     int pc=MulDiv(db_opt_save,1000,db_opt_save+total_out_size_estimate);
+#else
+    int pc=(int)(((long long)db_opt_save*1000)/(db_opt_save+total_out_size_estimate));
+#endif
     INFO_MSG("Datablock optimizer saved %d bytes (~%d.%d%%).\n",db_opt_save,
       pc/10,pc%10);
   }
@@ -2648,7 +2744,11 @@ int CEXEBuild::write_output(void)
   }
   INFO_MSG("\n");
   {
+#ifdef _WIN32
     int pc=MulDiv(ftell(fp),1000,total_usize);
+#else
+    int pc=(int)(((long long)ftell(fp)*1000)/(total_usize));
+#endif
     INFO_MSG("Total size:               %10d / %d bytes (%d.%d%%)\n",
       ftell(fp),total_usize,pc/10,pc%10);
   }
@@ -2996,7 +3096,11 @@ void CEXEBuild::warning_fl(const char *s, ...)
 
 void CEXEBuild::ERROR_MSG(const char *s, ...)
 {
+#ifdef _WIN32
   if (display_errors || notify_hwnd)
+#else
+  if (display_errors)
+#endif
   {
     char buf[NSIS_MAX_STRLEN*4];
     va_list val;
@@ -3055,7 +3159,8 @@ void CEXEBuild::print_warnings()
   fflush(g_output);
 }
 
-void CEXEBuild::notify(int code, char *data)
+#ifdef _WIN32
+void CEXEBuild::notify(notify_e code, char *data)
 {
   if (notify_hwnd)
   {
@@ -3063,6 +3168,7 @@ void CEXEBuild::notify(int code, char *data)
     SendMessage(notify_hwnd, WM_COPYDATA, 0, (LPARAM)&cds);
   }
 }
+#endif
 
 // Added by Ximon Eighteen 5th August 2002
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
@@ -3080,8 +3186,8 @@ void CEXEBuild::build_plugin_table(void)
     char* searchPath = new char [strlen(nsisdir)+9];
     if (searchPath)
     {
-      wsprintf(searchPath,"%s\\plugins",nsisdir);
-      INFO_MSG("Processing plugin dlls: \"%s\\*.dll\"\n",searchPath);
+      sprintf(searchPath,"%s" PATH_SEPARATOR_STR "Plugins",nsisdir);
+      INFO_MSG("Processing plugin dlls: \"%s" PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
       m_plugins.FindCommands(searchPath,display_info?true:false);
       INFO_MSG("\n");
       delete[] searchPath;

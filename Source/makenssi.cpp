@@ -36,6 +36,9 @@ const char *NSIS_VERSION="v2.0";
 #include "Platform.h"
 #include <stdio.h>
 #include <signal.h>
+#ifdef _WIN32
+#  include <direct.h>
+#endif
 
 #include "build.h"
 #include "util.h"
@@ -85,6 +88,8 @@ int main(int argc, char **argv)
   FILE *fp;
   int tmpargpos=1;
   int no_logo=0;
+
+  build.setdirs(argv[0]);
 
   if (argc > 1 && !stricmp(argv[1], "/VERSION"))
   {
@@ -217,9 +222,14 @@ int main(int argc, char **argv)
     }
     else if (!stricmp(argv[argpos],"/NOTIFYHWND"))
     {
+#ifdef _WIN32
       build.notify_hwnd=(HWND)atol(argv[++argpos]);
       if (!IsWindow(build.notify_hwnd))
         build.notify_hwnd=0;
+#else
+      argpos++;
+      build.warning("/NOTIFYHWND is disabled for non Win32 platforms.");
+#endif
     }
     else if (!stricmp(argv[argpos],"/HDRINFO"))
     {
@@ -257,12 +267,11 @@ int main(int argc, char **argv)
       {
         g_noconfig=1;
         char exepath[1024];
-        GetModuleFileName(NULL,exepath,sizeof(exepath)-1);
-        //strncpy(exepath,argv[0],1023);
+        strncpy(exepath,argv[0],sizeof(exepath)-1);
         exepath[1023]=0;
         char *p=exepath;
         while (*p) p++;
-        while (p > exepath && *p != '\\') p=CharPrev(exepath,p);
+        while (p > exepath && *p != PATH_SEPARATOR_C) p=CharPrev(exepath,p);
         if (p>exepath) p++;
         strcpy(p,"nsisconf.nsh");
         FILE *cfg=fopen(exepath,"rt");
@@ -320,11 +329,19 @@ int main(int argc, char **argv)
           }
           if (do_cd)
           {
-            char dirbuf[1024],*p;
+            char dirbuf[1024]="";
+            char *p;
+#ifdef _WIN32
             GetFullPathName(sfile,sizeof(dirbuf),dirbuf,&p);
-            p=dirbuf;
-            while (*p) p++;
-            while (p > dirbuf && *p != '\\') p=CharPrev(dirbuf,p);
+            p=CharPrev(dirbuf,p);
+#else
+            getcwd(dirbuf,sizeof(dirbuf)-strlen(sfile)-2);
+            if (dirbuf[strlen(dirbuf)-1]!=PATH_SEPARATOR_C)
+              strcat(dirbuf,PATH_SEPARATOR_STR);
+            strcat(dirbuf,sfile);
+            p=strrchr(dirbuf,PATH_SEPARATOR_C);
+#endif
+            if (!p) p=dirbuf;
             *p=0;
             if (dirbuf[0]) 
             {
@@ -333,7 +350,7 @@ int main(int argc, char **argv)
                 fprintf(g_output,"Changing directory to: \"%s\"\n",dirbuf);
                 fflush(g_output);
               }
-              if (!SetCurrentDirectory(dirbuf))
+              if (chdir(dirbuf))
               {
                 if (build.display_errors)
                 {

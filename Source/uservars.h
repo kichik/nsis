@@ -3,7 +3,7 @@
 #ifndef ___USERVARS___H_____
 #define ___USERVARS___H_____
 
-#include "Lang.h"
+#include "lang.h"
 
 struct uservarstring {
   int name;

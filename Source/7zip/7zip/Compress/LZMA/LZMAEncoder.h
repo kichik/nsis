@@ -254,10 +254,11 @@ public:
 
   HRESULT Create();
 
-  MY_UNKNOWN_IMP2(
+  /*MY_UNKNOWN_IMP2(
       ICompressSetCoderProperties,
       ICompressWriteCoderProperties
-      )
+      )*/
+  MY_UNKNOWN_IMP
     
   STDMETHOD(Init)(
       ISequentialOutStream *outStream);
