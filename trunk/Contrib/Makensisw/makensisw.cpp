@@ -301,7 +301,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 				case IDM_COPYSELECTED:
 				{
-					SendMessage(GetDlgItem(g_hwnd,IDC_LOGWIN), WM_COPY, 0, 0);
+					SendDlgItemMessage(g_hwnd,IDC_LOGWIN, WM_COPY, 0, 0);
 					return TRUE;
 				}
 				case IDM_SAVE:

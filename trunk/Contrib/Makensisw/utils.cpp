@@ -69,7 +69,8 @@ void ClearLog(HWND hwnd) {
 }
 
 void LogMessage(HWND hwnd,const char *str) {
-	DWORD dwLength = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+  GETTEXTLENGTHEX tl={GTL_DEFAULT,CP_ACP};
+	DWORD dwLength = SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_GETTEXTLENGTHEX, (WPARAM)&tl, 0);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, dwLength, dwLength);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
