@@ -12,21 +12,21 @@
 
   ;INSTALLER
   
-  !macro MUI_DUTCH_LICENSETEXT
+  !ifdef MUI_LICENSEPAGE
      LicenseText /LANG=${LANG_DUTCH} "Druk op Page Down om de rest van de overeenkomt te zien."
-  !macroend
+  !endif
   
-  !macro MUI_DUTCH_COMPONENTTEXT
+  !ifdef MUI_COMPONENTPAGE
     ComponentText /LANG=${LANG_DUTCH} "Selecteer de onderdelen die u wilt installleren en deselecteer de onderdelen die u niet wilt installeren. Klik Volgende om verder te gaan." " "
-  !macroend
+  !endif
   
-  !macro MUI_DUTCH_DIRTEXT
+  !ifdef MUI_DIRSELECTPAGE
     DirText /LANG=${LANG_DUTCH} "Setup zal ${NAME} in de volgende map installeren.$\r$\n$\r$\nOm in een deze map te intalleren, klik Installeren. Om in een andere map te installeren, klik Bladeren en selecteer een andere map." " "
-  !macroend 
+  !endif
   
-  !macro MUI_DUTCH_INSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_DUTCH} "Volgende >"
-  !macroend
+  !endif
   
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_DUTCH} "Licentie Overeenkomst"
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_DUTCH} "Lees de licentie overeenkomst voordat u ${NAME} installeerd."
@@ -57,13 +57,13 @@
 
   ;UNINSTALLER
   
-  !macro MUI_DUTCH_UNINSTALLTEXT
+  !ifdef MUI_UNINSTALLER
     UninstallText /LANG=${LANG_DUTCH} "Dit programma zal ${NAME} verwijderen van uw systeem."
-  !macroend
+  !endif
   
-  !macro MUI_DUTCH_UNINSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
     UnInstallButtonText /LANG=${LANG_DUTCH} "Volgende >"
-  !macroend
+  !endif
   
   LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_DUTCH} "Deïnstalleer ${NAME}"
   LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_DUTCH} "Verwijder ${NAME} van uw system."

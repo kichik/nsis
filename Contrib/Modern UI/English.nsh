@@ -12,21 +12,21 @@
 
   ;INSTALLER
   
-  !macro MUI_ENGLISH_LICENSETEXT
+  !ifdef MUI_LICENSEPAGE
      LicenseText /LANG=${LANG_ENGLISH} "Press Page Down to see the rest of the agreement."
-  !macroend
+  !endif
   
-  !macro MUI_ENGLISH_COMPONENTTEXT
+  !ifdef MUI_COMPONENTPAGE
     ComponentText /LANG=${LANG_ENGLISH} "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue." " "
-  !macroend
+  !endif
   
-  !macro MUI_ENGLISH_DIRTEXT
+  !ifdef MUI_DIRSELECTPAGE
     DirText /LANG=${LANG_ENGLISH} "Setup will install ${NAME} in the following folder.$\r$\n$\r$\nTo install in this folder, click Install. To install in a different folder, click Browse and select another folder." " "
-  !macroend
+  !endif
   
-  !macro MUI_ENGLISH_INSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_INSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_ENGLISH} "Next >"
-  !macroend
+  !endif
    
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_ENGLISH} "License Agreement"  
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_ENGLISH} "Please review the license terms before installing ${NAME}."
@@ -57,13 +57,13 @@
   
   ;UNINSTALLER
   
-  !macro MUI_ENGLISH_UNINSTALLTEXT
+  !ifdef MUI_UNINSTALLER
     UninstallText /LANG=${LANG_ENGLISH} "This will uninstall ${NAME} from your system."
-  !macroend
+  !endif
   
-  !macro MUI_ENGLISH_UNINSTALLBUTTONTEXT_NEXT
+  !ifdef MUI_UNINSTALLBUTTONTEXT_NEXT
     InstallButtonText /LANG=${LANG_ENGLISH} "Next >"
-  !macroend
+  !endif
   
   LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_ENGLISH} "Uninstall ${NAME}"
   LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_ENGLISH} "Remove ${NAME} from your system."

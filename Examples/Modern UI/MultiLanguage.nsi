@@ -12,7 +12,12 @@
 ;--------------------------------
 ;Configuration
 
-  ;Language
+  !define MUI_LICENSEPAGE
+  !define MUI_COMPONENTPAGE
+  !define MUI_DIRSELECTPAGE
+  !define MUI_UNINSTALLER
+
+  ;Languages
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
@@ -20,44 +25,44 @@
     ;Dutch
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
     !include "${NSISDIR}\Contrib\Modern UI\Dutch.nsh"
+    
+    ;French
+    LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
+    !include "${NSISDIR}\Contrib\Modern UI\French.nsh"
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
   Name /LANG=${LANG_DUTCH} "${NAME} ${VERSION}"
+  Name /LANG=${LANG_FRENCH} "${NAME} ${VERSION}"
   OutFile "MultiLanguage.exe"
 
   ;User interface - icons, ui file, check bitmap, progress bar etc.
   !insertmacro MUI_INTERFACE "modern.exe" "adni18-installer-C-no48xp.ico" "adni18-uninstall-C-no48xp.ico" "modern.bmp" "smooth" "$9" ;$9 is the variable used to store the current page, do not use this var!
 
   ;License dialog
-  !insertmacro MUI_ENGLISH_LICENSETEXT
-  !insertmacro MUI_DUTCH_LICENSETEXT
   LicenseData /LANG=${LANG_ENGLISH} "License.txt"
   LicenseData /LANG=${LANG_DUTCH} "License.txt"
+  LicenseData /LANG=${LANG_FRENCH} "License.txt"
 
   ;Component-select dialog
-  !insertmacro MUI_ENGLISH_COMPONENTTEXT
-  !insertmacro MUI_DUTCH_COMPONENTTEXT
     ;Titles
     LangString TITLE_SecCopyUI ${LANG_ENGLISH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_DUTCH} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_FRENCH} "modern.exe"
     LangString TITLE_SecCreateUninst ${LANG_ENGLISH} "Uninstaller"
     LangString TITLE_SecCreateUninst ${LANG_DUTCH} "Deïnstallatie programma"
+    LangString TITLE_SecCreateUninst ${LANG_FRENCH} "Désinstaller"
     ;Descriptions
-    LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-    LangString DESC_SecCopyUI ${LANG_DUTCH} "Kopieër modern.exe naar de programma map."
-    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
-    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Maak een deïnstallatie programma dat ${NAME} automatisch kan verwijderen."
+    LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
+    LangString DESC_SecCopyUI ${LANG_DUTCH} "modern.exe: Nederlandse beschrijven"
+    LangString DESC_SecCopyUI ${LANG_FRENCH} "modern.exe: Description Français"
+    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Uninstaller: English description"
+    LangString DESC_SecCreateUninst ${LANG_DUTCH} "Deïnstallatie programma: Nederlandse beschrijven"
+    LangString DESC_SecCreateUninst ${LANG_FRENCH} "Désinstaller: Description Français"
 
   ;Folder-select dialog
-  !insertmacro MUI_ENGLISH_DIRTEXT
-  !insertmacro MUI_DUTCH_DIRTEXT
   InstallDir "$PROGRAMFILES\${NAME}"
-
-  ;Uninstaller
-  !insertmacro MUI_ENGLISH_UNINSTALLTEXT
-  !insertmacro MUI_DUTCH_UNINSTALLTEXT
-
+  
 ;--------------------------------
 ;Installer Sections
 
@@ -90,7 +95,7 @@ SectionEnd
 
 Function .onInit
 
-  LangDLL::LangDialog "Installer Language" "Please select a language." "2F" "English" "${LANG_ENGLISH}" "Nederlands" "${LANG_DUTCH}" "8" "Tahoma" ;2 is the number of lanugages, F means change font
+  LangDLL::LangDialog "Installer Language" "Please select a language." "3F" "English" "${LANG_ENGLISH}" "Français" "${LANG_FRENCH}" "Nederlands" "${LANG_DUTCH}" "8" "Tahoma" ;3 is the number of lanugages, F means change font
 
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
