@@ -1,8 +1,9 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.67
+;Compatible with Modern UI 1.68
 
 ;Language: Turkish (1055)
 ;By Çagatay Dilsiz(Chagy)
+;Updated by Fatih BOY (fatih_boy@yahoo.com)
 
 ;--------------------------------
 
@@ -83,6 +84,7 @@
   
   !define MUI_UNTEXT_FINISH_INFO_TITLE "$(^Name) Programý Kaldýrma Sihirbazý Tamamlanýyor"
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) programý sisteminizden kaldýrýldý.\r\n\r\nSihirbazý kapatmak için 'bitir'e basýnýz."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "$(^Name) programýný kaldýrma iþleminin tamamlanmasý için bilgisayarýnýzýn yeniden baþlatýlmasý gerekiyor. Bilgisayarýnýzýn þimdi yeniden baþlatýlmasýný ister misiniz?"
   
   !define MUI_UNTEXT_ABORTWARNING "$(^Name) Programi Kaldýrma iþleminden çýkmak istediðinize emin misiniz?"  
   
