@@ -141,32 +141,4 @@ char* Plugins::GetPluginDll(char* command)
   return m_commands.find(command);
 }
 
-void Plugins::StoreInstDLL(char* dllName)
-{
-  for (int i = 0; i < m_installDLLs.size(); i++)
-    if (!strcmp(m_installDLLs[i], dllName))
-      return;
-  m_installDLLs.push_back(strdup(dllName));
-}
-
-void Plugins::StoreUninstDLL(char* dllName)
-{
-  for (int i = 0; i < m_uninstallDLLs.size(); i++)
-    if (!strcmp(m_uninstallDLLs[i], dllName))
-      return;
-  m_uninstallDLLs.push_back(strdup(dllName));
-}
-
-char* Plugins::GetInstDLL(int i)
-{
-  if (i >= 0 && i < m_installDLLs.size()) return m_installDLLs[i];
-  else return 0;
-}
-
-char* Plugins::GetUninstDLL(int i)
-{
-  if (i >= 0 && i < m_uninstallDLLs.size()) return m_uninstallDLLs[i];
-  else return 0;
-}
-
 #endif

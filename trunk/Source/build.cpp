@@ -1076,7 +1076,7 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   // Added by Amir Szekely 9th August 2002
-  int err=add_plugin_initializer();
+  int err=add_plugins_dir_initializer();
   if (err != PS_OK) return err;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
@@ -1890,15 +1890,15 @@ void CEXEBuild::build_plugin_table(void)
   }
 }
 
-int CEXEBuild::add_plugin_initializer(void)
+int CEXEBuild::add_plugins_dir_initializer(void)
 {
   if (!plugin_used) return PS_OK;
 
-  SCRIPT_MSG("Adding plug-ins initializing function...\n");
+  SCRIPT_MSG("Adding plug-ins initializing function... ");
 
   bool uninstall = false;
 
-  int ret, i;
+  int ret;
   entry ent;
   int zero_offset;
 
@@ -1948,26 +1948,6 @@ again:
   ent.offsets[2]=0;
   ret=add_entry(&ent);
   if (ret != PS_OK) return ret;
-
-  int files_added;
-  if (uninstall) {
-    char* dll;
-    for (i = 0; dll = m_plugins.GetUninstDLL(i); i++) {
-      char tempPath[NSIS_MAX_STRLEN];
-      wsprintf(tempPath,"$PLUGINSDIR%s",strrchr(dll,'\\'));
-      ret=do_add_file(dll,0,0,0,&files_added,tempPath);
-      if (ret != PS_OK) return ret;
-    }
-  }
-  else {
-    char* dll;
-    for (i = 0; dll = m_plugins.GetInstDLL(i); i++) {
-      char tempPath[NSIS_MAX_STRLEN];
-      wsprintf(tempPath,"$PLUGINSDIR%s",strrchr(dll,'\\'));
-      ret=do_add_file(dll,0,0,0,&files_added,tempPath);
-      if (ret != PS_OK) return ret;
-    }
-  }
 
   if (add_label("Initialize_____Plugins_done")) return PS_ERROR;
 

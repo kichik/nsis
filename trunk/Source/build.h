@@ -87,7 +87,7 @@ class CEXEBuild {
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Amir Szekely 9th August 2002
-    int add_plugin_initializer(void);
+    int add_plugins_dir_initializer(void);
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
     void ERROR_MSG(const char *s, ...);
