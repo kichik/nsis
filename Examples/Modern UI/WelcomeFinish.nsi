@@ -40,8 +40,8 @@
   ;Only useful for BZIP2 compression
   ;Use ReserveFile for your own Install Options ini files too!
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_WIZARDINI
-  !insertmacro MUI_RESERVEFILE_WIZARDBITMAP
+  !insertmacro MUI_RESERVEFILE_SPECIALINI
+  !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
   
 ;--------------------------------
 ;Modern UI System
