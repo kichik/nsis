@@ -36,6 +36,8 @@
     }}                                                             \
     RC_NORMALIZE
 
+//modelIndex <<= 1; if (code >= newBound) modelIndex++;
+
 #define RC_GETBIT(prob, modelIndex) RC_GETBIT2(prob, modelIndex, ; , ;)               
 
 #endif
