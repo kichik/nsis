@@ -361,7 +361,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   build_langstring_num=0;
   ubuild_langstring_num=0;
 
-  build_font[0]=NULL;
+  build_font[0]=0;
   build_font_size=0;
 
   m_unicon_data=(unsigned char *)malloc(unicondata_size+3*sizeof(DWORD));
@@ -401,12 +401,13 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   // Register static user variables $0, $1 and so on
   // with ONE of reference count, to avoid warning on this vars
   char Aux[3];
-  for ( int i = 0; i < 10; i++ )    // 0 - 9
+  int i;
+  for (i = 0; i < 10; i++)    // 0 - 9
   {
     sprintf(Aux, "%d", i);    
     m_UserVarNames.add(Aux,1);
   }
-  for ( i = 0; i < 10; i++ )        // 10 - 19
+  for (i = 0; i < 10; i++)        // 10 - 19
   {
     sprintf(Aux, "R%d", i);    
     m_UserVarNames.add(Aux,1);
@@ -653,7 +654,7 @@ int CEXEBuild::datablock_optimize(int start_offset)
   int this_len = cur_datablock->getlen() - start_offset;
   int pos = 0;
 
-  if (!build_optimize_datablock || this_len < sizeof(int))
+  if (!build_optimize_datablock || this_len < (int) sizeof(int))
     return start_offset;
 
   MMapBuf *db = (MMapBuf *) cur_datablock;
@@ -958,7 +959,7 @@ int CEXEBuild::add_label(const char *name)
     }
   }
 
-  section s={0,};
+  section s={{0}};
   s.name_ptr = offs;
   s.code = ce;
   cur_labels->add(&s,sizeof(s));
@@ -1467,7 +1468,7 @@ int CEXEBuild::resolve_coderefs(const char *str)
     };
 
     for (int i = 0; callbacks[i].name; i++) {
-      char *un = uninstall_mode ? "un" : "";
+      const char *un = uninstall_mode ? "un" : "";
       char fname[1024];
       wsprintf(fname, callbacks[i].name, un, un);
       char cbstr[1024];
@@ -1609,7 +1610,6 @@ int CEXEBuild::page_end()
 int CEXEBuild::AddVersionInfo()
 {
   GrowBuf VerInfoStream;
-  bool bNeedVInfo = false;
 
   if ( rVersionInfo.GetStringTablesCount() > 0 )
   {
@@ -2372,7 +2372,7 @@ int CEXEBuild::write_output(void)
   fh.siginfo=FH_SIG;
 
   int installinfo_compressed;
-  int fd_start;
+  int fd_start = 0;
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole)
@@ -3200,14 +3200,14 @@ void CEXEBuild::close_res_editor()
 
 int CEXEBuild::DeclaredUserVar(const char *szVarName)
 {
-  if ( m_ShellConstants.get((char*)szVarName) >= 0 )
+  if (m_ShellConstants.get((char*)szVarName) >= 0)
   {
     ERROR_MSG("Error: name \"%s\" in use by constant\n", szVarName);
     return PS_ERROR;  
   }
 
   int idxUserVar = m_UserVarNames.get((char*)szVarName);
-  if ( idxUserVar >= 0 )
+  if (idxUserVar >= 0)
   {
     ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
     return PS_ERROR;  
@@ -3215,21 +3215,21 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
   const char *pVarName = szVarName;
   int iVarLen = strlen(szVarName);
 
-  if ( iVarLen > 60 )
+  if (iVarLen > 60)
   {
     ERROR_MSG("Error: variable name too long!\n");
     return PS_ERROR;
   }
-  else if ( !iVarLen )
+  else if (!iVarLen)
   {
     ERROR_MSG("Error: variable with empty name!\n");
     return PS_ERROR;
   }
   else
   {
-    while ( *pVarName )
+    while (*pVarName)
     {
-      if ( !isSimpleChar(*pVarName) )
+      if (!isSimpleChar(*pVarName))
       {
         ERROR_MSG("Error: invalid charaters in variable name \"%s\", use only charaters [a-z][A-Z][0-9] and '_'\n", szVarName);
         return PS_ERROR;
@@ -3261,11 +3261,11 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
     }
     else
     {
-        int idxConst = m_ShellConstants.get((char *)p+1);
-        if ( idxConst >= 0 )
-        {
-            ERROR_MSG("Error: cannot change constants : %s\n", p);
-        }
+      int idxConst = m_ShellConstants.get((char *)p+1);
+      if (idxConst >= 0)
+      {
+        ERROR_MSG("Error: cannot change constants : %s\n", p);
+      }
     }
   }
   return -1;

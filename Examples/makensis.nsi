@@ -620,7 +620,7 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\*.cpp
   File ..\Source\*.c
   File ..\Source\*.h
-  ; outdated - File ..\Source\Makefile
+  File ..\Source\Makefile
   File ..\Source\makenssi.dsp
   File ..\Source\makenssi.dsw
   # zlib
@@ -652,7 +652,7 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\exehead\*.h
   File ..\Source\exehead\resource.rc
   File ..\Source\exehead\*.dsp
-  ; outdated - File ..\Source\exehead\Makefile
+  File ..\Source\exehead\Makefile
   File ..\Source\exehead\nsis.ico
   File ..\Source\exehead\uninst.ico
   File ..\Source\exehead\bitmap1.bmp

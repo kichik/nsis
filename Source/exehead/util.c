@@ -21,11 +21,18 @@ char g_log_file[1024];
 // and change the virtual size of this section
 // which result in extra memory for extra variables without code to do allocation :)
 // nsis then removes the "DISCARDABLE" style from section (for safe)
-#pragma bss_seg( VARS_SECTION_NAME )
+#ifdef _MSC_VER
+#  pragma bss_seg(VARS_SECTION_NAME)
 NSIS_STRING g_usrvars[1];
-#pragma bss_seg()
-#define SECTION_VARS_RWD "/section:" ## VARS_SECTION_NAME ## ",rwd"
-#pragma comment(linker, SECTION_VARS_RWD)
+#  pragma bss_seg()
+#  pragma comment(linker, "/section:" VARS_SECTION_NAME ",rwd")
+#else
+#  ifdef __GNUC__
+NSIS_STRING g_usrvars[1] __attribute__((section (VARS_SECTION_NAME)));
+#  else
+#    error Unknown compiler. You must implement the seperate PE section yourself.
+#  endif
+#endif
 
 void NSISCALL FreePIDL(LPITEMIDLIST idl)
 {
@@ -155,7 +162,7 @@ void NSISCALL trimslashtoend(char *buf)
 int NSISCALL validpathspec(char *ubuf)
 {
   char dl = ubuf[0] | 0x20; // convert alleged drive letter to lower case
-  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (dl >= 'a' && dl <= 'z' && *CharNext(ubuf)==':'));
+  return ((*(WORD*)ubuf==CHAR2_TO_WORD('\\','\\')) || (dl >= 'a' && dl <= 'z' && ubuf[1]==':'));
 }
 
 char * NSISCALL skip_root(char *path)
@@ -176,7 +183,7 @@ char * NSISCALL skip_root(char *path)
       p2 = findchar(p2, '\\');
       if (!*p2)
         return NULL;
-      p2 = CharNext(p2);
+      p2++; // skip backslash
     }
 
     return p2;
@@ -475,7 +482,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
     unsigned char nVarIdx = (unsigned char)*in++;
     int nData;
     int fldrs[4];
-    if (nVarIdx > NS_SKIP_CODE)
+    if (nVarIdx > NS_CODES_START)
     {
       nData = ((in[1] & 0x7F) << 7) | (in[0] & 0x7F);
       fldrs[0] = in[0]; // current user

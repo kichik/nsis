@@ -32,7 +32,7 @@ class GrowBuf : public IGrowBuf
 {
   public:
     GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; m_bs=32768; }
-    ~GrowBuf() { free(m_s); }
+    virtual ~GrowBuf() { free(m_s); }
 
     void set_zeroing(int zero) { m_zero=zero; }
 
@@ -284,6 +284,8 @@ class SortedStringList
     TinyGrowBuf gr;
 };
 
+#define mymin(x, y) ((x < y) ? x : y)
+
 template <class T>
 class SortedStringListND // no delete - can be placed in GrowBuf
 {
@@ -311,7 +313,7 @@ class SortedStringListND // no delete - can be placed in GrowBuf
     // returns -1 if not found, position if found
     // if returnbestpos=1 returns -1 if found, best pos to insert if not found
     // if n_chars equal to -1 all string is tested
-    int find(const char *str, size_t n_chars=-1, int case_sensitive=0, int returnbestpos=0, int *where=0)
+    int find(const char *str, int n_chars=-1, int case_sensitive=0, int returnbestpos=0, int *where=0)
     {
       T *data=(T *)gr.get();
       int ul=gr.getlen()/sizeof(T);
@@ -322,20 +324,20 @@ class SortedStringListND // no delete - can be placed in GrowBuf
       {
         int res;
         const char *pCurr = (char*)strings.get() + data[nextpos].name;
-        if (n_chars == -1 )
+        if (n_chars < 0)
         {
           if (case_sensitive)
-            res=strcmp(str, pCurr);
+            res = strcmp(str, pCurr);
           else
-            res=stricmp(str, pCurr);
+            res = stricmp(str, pCurr);
         }
         else
         {
           if (case_sensitive)
-            res=strncmp(str, pCurr, min(n_chars, strlen(pCurr)));
+            res=strncmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
           else
-            res=strnicmp(str, pCurr, min(n_chars, strlen(pCurr)));
-          if ( res == 0 && n_chars != -1 && n_chars != strlen(pCurr) )
+            res=strnicmp(str, pCurr, mymin((unsigned int) n_chars, strlen(pCurr)));
+          if (res == 0 && n_chars != -1 && (unsigned int) n_chars != strlen(pCurr))
             res = n_chars - strlen(pCurr);
         }
 
@@ -498,7 +500,7 @@ class MMapFile : public IMMap
       }
     }
 
-    ~MMapFile()
+    virtual ~MMapFile()
     {
       clear();
     }
@@ -750,7 +752,7 @@ class MMapBuf : public IGrowBuf, public IMMap
       m_alloc=m_used=0;
     }
 
-    ~MMapBuf() 
+    virtual ~MMapBuf() 
     { 
       m_fm.release();
     }

@@ -82,7 +82,6 @@ int main(int argc, char **argv)
   int nousage=0;
   int files_processed=0;
   int cmds_processed=0;
-  int plugins_processed=0;
   FILE *fp;
   int tmpargpos=1;
   int no_logo=0;

@@ -119,7 +119,7 @@ void Plugins::GetExports(char* pathToDll, bool displayInfo)
               && sections[i].VirtualAddress+sections[i].Misc.VirtualSize >= ExportDirVA+ExportDirSize)
             {
             PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(dlldata + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
-            unsigned long *names = (unsigned long*)((char*)exports + exports->AddressOfNames - ExportDirVA);
+            unsigned long *names = (unsigned long*)((unsigned long)exports + (char *)exports->AddressOfNames - ExportDirVA);
             for (unsigned long j = 0; j < exports->NumberOfNames; j++)
             {
               char *name = (char*)exports + names[j] - ExportDirVA;

@@ -44,7 +44,7 @@ class LangStringList : public SortedStringListND<struct langstring>
       if (index) *index = -1;
       if (uindex) *uindex = -1;
       if (sn) *sn = -1;
-      int v=SortedStringListND<struct langstring>::find(name);
+      int v=find(name);
       if (v==-1) return -1;
       if (index) *index = ((struct langstring*)gr.get())[v].index;
       if (uindex) *uindex = ((struct langstring*)gr.get())[v].uindex;

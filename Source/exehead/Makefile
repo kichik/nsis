@@ -1,81 +1,108 @@
 # -- Objects and source files --
-SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c ../zlib/infblock.c ../zlib/infcodes.c ../zlib/inflate.c ../zlib/inftrees.c ../zlib/infutil.c ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c ../bzip2/randtable.c
-OBJS = bgbg.o exec.o fileform.o main.o ui.o util.o resource.res crc32.o infblock.o infcodes.o inflate.o inftrees.o infutil.o bzlib.o decompress.o huffman.o randtable.o
+DEPENDS = ../Platform.h config.h
+
+ZLIB_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../zlib/infblock.c
+ZLIB_OBJS = Release-zlib/bgbg.o Release-zlib/exec.o Release-zlib/fileform.o Release-zlib/main.o Release-zlib/ui.o Release-zlib/util.o Release-zlib/crc32.o Release-zlib/resource.res Release-zlib/infblock.o
+
+BZIP2_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../bzip2/bzlib.c ../bzip2/decompress.c ../bzip2/huffman.c
+BZIP2_OBJS = Release-bzip2/bgbg.o Release-bzip2/exec.o Release-bzip2/fileform.o Release-bzip2/main.o Release-bzip2/ui.o Release-bzip2/util.o Release-bzip2/crc32.o Release-bzip2/resource.res Release-bzip2/bzlib.o Release-bzip2/decompress.o Release-bzip2/huffman.o
+
+LZMA_SRCS = bgbg.c exec.c fileform.c main.c ui.c util.c ../crc32.c resource.rc ../7zip/LZMADecode.c
+LZMA_OBJS = Release-lzma/bgbg.o Release-lzma/exec.o Release-lzma/fileform.o Release-lzma/main.o Release-lzma/ui.o Release-lzma/util.o Release-lzma/crc32.o Release-lzma/resource.res Release-lzma/LZMADecode.o
+
 LIBS = -lole32 -lgdi32 -lversion -luuid -lcomctl32 -lkernel32 -luser32 -lshell32 -ladvapi32
 
 # -- Programs --
 CC = gcc
 RC = windres
-RM = del
+RM = rm
+MKDIR = mkdir
 
 # -- Compilers and linker flags --
-DEFINES = -DWIN32 -D_WINDOWS_ -DEXEHEAD -DWinMain=WinMainCRTStartup
-CFLAGS = -Os -fomit-frame-pointer -fno-inline $(DEFINES)
-LFLAGS = -s -mwindows -nostdlib -nostartfiles -Wl,--enable-stdcall-fixup
+DEFINES = -DWIN32 -D_WINDOWS_ -DEXEHEAD -DWIN32_LEAN_AND_MEAN -DZEXPORT=__stdcall -DLZMACALL=__stdcall
+CFLAGS = -Wall -Os -fno-common -fomit-frame-pointer -fno-inline $(DEFINES)
+LFLAGS = -s -mwindows -nostdlib -nostartfiles --enable-stdcall-fixup -Wl,-Bdynamic -Wl,--file-alignment,512 -Wl,--exclude-libs,msvcrt.a -Wl,-e,_WinMain@16 -Wl,sections_script.ld
 RCFLAGS = --input-format rc --output-format coff
 
-all : exehead
+all : exehead_zlib exehead_bzip2 exehead_lzma exehead_resources
 
-exehead : $(OBJS)
-	$(CC) $(CFLAGS) $(LFLAGS) -o exehead.exe $(OBJS) $(LIBS)
-	bin2h exehead.exe Release\exehead.h header_data
-	bin2h bitmap1.bmp Release\bitmap1.h bitmap1_data
-	bin2h bitmap2.bmp Release\bitmap2.h bitmap2_data
-	bin2h nsis.ico Release\icon.h icon_data
-	bin2h uninst.ico Release\unicon.h unicon_data
+missing_dirs = $(filter-out $(wildcard Release-*),Release-zlib Release-bzip2 Release-lzma)
 
-# -- Dependencies --
-bgbg.o : bgbg.c resource.h config.h Makefile
-exec.o : exec.c fileform.h util.h state.h ui.h exec.h config.h lang.h Makefile
-fileform.o : fileform.c fileform.h util.h state.h ../zlib/zlib.h ../zlib/zconf.h ui.h config.h Makefile
-main.o : main.c resource.h util.h fileform.h state.h ui.h ../zlib/zlib.h ../zlib/zconf.h config.h lang.h Makefile
-ui.o : ui.c resource.h fileform.h state.h ui.h config.h Makefile
-util.o : util.c util.h state.h fileform.h ui.h config.h Makefile
+ifneq ($(strip $(missing_dirs)),)
+  mkdirline = $(MKDIR) $(missing_dirs)
+else
+  mkdirline = 
+endif
 
-# -- Special command line for the resource file --
-resource.res : resource.rc resource.h config.h Makefile
-	$(RC) $(RCFLAGS) -o resource.res -i resource.rc
+dirs:
+	$(mkdirline)
 
-crc32.o : ../crc32.c config.h Makefile
-	$(CC) $(CFLAGS) -c ../crc32.c -o crc32.o
+exehead_zlib : dirs $(ZLIB_SRCS) $(ZLIB_OBJS) sections_script
+	$(CC) $(CFLAGS) $(LFLAGS) -o Release-zlib/exehead_zlib.exe $(ZLIB_OBJS) $(LIBS)
+	bin2h Release-zlib/exehead_zlib.exe Release-zlib/exehead_zlib.h zlib_header_data
 
+exehead_bzip2 : dirs $(BZIP2_SRCS) $(BZIP2_OBJS) sections_script
+	$(CC) $(CFLAGS) $(LFLAGS) -o Release-bzip2/exehead_bzip2.exe $(BZIP2_OBJS) $(LIBS)
+	bin2h Release-bzip2/exehead_bzip2.exe Release-bzip2/exehead_bzip2.h bzip2_header_data
 
-# -- Special command lines for zlib --
-infblock.o : ../zlib/infblock.c ../zlib/zutil.h ../zlib/infblock.h ../zlib/inftrees.h ../zlib/infcodes.h ../zlib/infutil.h ../zlib/zlib.h ../zlib/zconf.h Makefile
-	$(CC) $(CFLAGS) -c ../zlib/infblock.c -o infblock.o
+exehead_lzma : dirs $(LZMA_SRCS) $(LZMA_OBJS) sections_script
+	$(CC) $(CFLAGS) $(LFLAGS) -o Release-lzma/exehead_lzma.exe $(LZMA_OBJS) $(LIBS)
+	bin2h Release-lzma/exehead_lzma.exe Release-lzma/exehead_lzma.h lzma_header_data
 
-infcodes.o : ../zlib/infcodes.c ../zlib/zutil.h ../zlib/inftrees.h ../zlib/infblock.h ../zlib/infcodes.h ../zlib/infutil.h ../zlib/zlib.h ../zlib/zconf.h Makefile
-	$(CC) $(CFLAGS) -c ../zlib/infcodes.c -o infcodes.o
+exehead_resources : exehead_zlib
+	bin2h bitmap1.bmp Release-zlib/bitmap1.h bitmap1_data
+	bin2h nsis.ico Release-zlib/icon.h icon_data
+	bin2h uninst.ico Release-zlib/unicon.h unicon_data
 
-inflate.o : ../zlib/inflate.c ../zlib/zutil.h ../zlib/infblock.h ../zlib/zlib.h ../zlib/zconf.h  Makefile
-	$(CC) $(CFLAGS) -c ../zlib/inflate.c -o inflate.o
+sections_script:
+	echo SECTIONS > sections_script.ld
+	echo { >> sections_script.ld
+	echo   .text : { *(.text) } >> sections_script.ld
+	echo   .data : { *(.data) } >> sections_script.ld
+	echo   .rdata : { *(.rdata) } >> sections_script.ld
+	echo   .bss : { *(.bss) } >> sections_script.ld
+	echo   .idata : { *(.idata) } >> sections_script.ld
+	echo   .ndata BLOCK(__section_alignment__) : { [ .ndata ] } >> sections_script.ld
+	echo   .rsrc : { *(.rsrc) } >> sections_script.ld
+	echo } >> sections_script.ld
 
-inftrees.o : ../zlib/inftrees.c ../zlib/zutil.h ../zlib/inftrees.h ../zlib/zlib.h ../zlib/zconf.h Makefile
-	$(CC) $(CFLAGS) -c ../zlib/inftrees.c -o inftrees.o
+Release-zlib/ = -DNSIS_COMPRESS_USE_ZLIB
+Release-bzip2/ = -DNSIS_COMPRESS_USE_BZIP2
+Release-lzma/ = -DNSIS_COMPRESS_USE_LZMA
+getdefine = $($(dir $@))
 
-infutil.o : ../zlib/infutil.c ../zlib/zutil.h ../zlib/infblock.h ../zlib/inftrees.h ../zlib/infcodes.h ../zlib/infutil.h ../zlib/zlib.h ../zlib/zconf.h Makefile
-	$(CC) $(CFLAGS) -c ../zlib/infutil.c -o infutil.o
+Release-zlib/%.o Release-bzip2/%.o Release-lzma/%.o : %.c $(DEPENDS)
+	$(CC) $(CFLAGS) $(getdefine) -c $< -o $@
 
-# -- Special command lines for bzip2 --
-bzlib.o : ../bzip2/bzlib.c ../bzip2/bzlib.h ../bzip2/bzlib_private.h config.h
-	$(CC) $(CFLAGS) -c ../bzip2/bzlib.c -o bzlib.o
+Release-zlib/%.o Release-bzip2/%.o Release-lzma/%.o : ../%.c $(DEPENDS)
+	$(CC) $(CFLAGS) $(getdefine) -c $< -o $@
 
-decompress.o : ../bzip2/decompress.c ../bzip2/bzlib.h ../bzip2/bzlib_private.h config.h
-	$(CC) $(CFLAGS) -c ../bzip2/decompress.c -o decompress.o
+Release-zlib/%.o Release-bzip2/%.o Release-lzma/%.o : ../zlib/%.c $(DEPENDS)
+	$(CC) $(CFLAGS) $(getdefine) -c $< -o $@
 
-huffman.o : ../bzip2/huffman.c ../bzip2/bzlib.h ../bzip2/bzlib_private.h config.h
-	$(CC) $(CFLAGS) -c ../bzip2/huffman.c -o huffman.o
+Release-zlib/%.o Release-bzip2/%.o Release-lzma/%.o : ../bzip2/%.c $(DEPENDS)
+	$(CC) $(CFLAGS) $(getdefine) -c $< -o $@
 
-randtable.o : ../bzip2/randtable.c ../bzip2/bzlib.h ../bzip2/bzlib_private.h config.h
-	$(CC) $(CFLAGS) -c ../bzip2/randtable.c -o randtable.o
+Release-zlib/%.o Release-bzip2/%.o Release-lzma/%.o : ../7zip/%.c $(DEPENDS)
+	$(CC) $(CFLAGS) $(getdefine) -c $< -o $@
 
-# -- Clean script --
+%/resource.res : resource.rc resource.h config.h Makefile
+	$(RC) $(RCFLAGS) -o $*/resource.res -i resource.rc
+
 clean ::
-	$(RM) *.o
-	$(RM) resource.res
-	$(RM) exehead.exe
-	$(RM) Release\exehead.h
-	$(RM) Release\bitmap1.h
-	$(RM) Release\bitmap2.h
-	$(RM) Release\icon.h
-	$(RM) Release\unicon.h
+	$(RM) sections_script.ld
+	$(RM) Release-zlib/*.o
+	$(RM) Release-zlib/resource.res
+	$(RM) Release-zlib/exehead_zlib.exe
+	$(RM) Release-zlib/exehead_zlib.h
+	$(RM) Release-zlib/bitmap1.h
+	$(RM) Release-zlib/icon.h
+	$(RM) Release-zlib/unicon.h
+	$(RM) Release-bzip2/*.o
+	$(RM) Release-bzip2/resource.res
+	$(RM) Release-bzip2/exehead_bzip2.exe
+	$(RM) Release-bzip2/exehead_bzip2.h
+	$(RM) Release-lzma/*.o
+	$(RM) Release-lzma/resource.res
+	$(RM) Release-lzma/exehead_lzma.exe
+	$(RM) Release-lzma/exehead_lzma.h

@@ -120,14 +120,14 @@ static void bsW ( EState* s, Int32 n, UInt32 v )
 
 
 /*---------------------------------------------------*/
-static
+/*static
 void bsPutUInt32 ( EState* s, UInt32 u )
 {
    bsW ( s, 8, (u >> 24) & 0xffL );
    bsW ( s, 8, (u >> 16) & 0xffL );
    bsW ( s, 8, (u >>  8) & 0xffL );
    bsW ( s, 8,  u        & 0xffL );
-}
+}*/
 
 
 /*---------------------------------------------------*/

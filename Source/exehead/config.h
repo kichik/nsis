@@ -3,22 +3,6 @@
 
 #ifndef APSTUDIO_INVOKED // keep msdev's resource editor from mangling the .rc file
 
-// Added by Dave Laundon 19th August 2002
-// For all internal functions, use of stdcall calling convention moves the
-// responsibility for tidying the stack to callee from caller, reducing the code
-// involved considerably.  Gives an instant saving of 0.5K.
-// NB - the zlib and bzip2 portions have been given the same treatment, but with
-// project compiler-options settings and/or project-wide defines.
-// NB - safer for NSIS's routines to be defined explicitly to avoid problems
-// calling DLL functions.
-#if defined(_WIN32) && ((_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED))
-#define NSISCALL  __stdcall   // Ordinary functions
-#define NSISCALLV __cdecl     // Variable-argument-list functions
-#else
-#define NSISCALL
-#define NSISCALLV
-#endif
-
 // NSIS_MAX_STRLEN defines the maximum string length for internal variables
 // and stack entries. 1024 should be plenty, but if you are doing crazy registry
 // shit, you might want to bump it up. Generally it adds about 16-32x the memory,
