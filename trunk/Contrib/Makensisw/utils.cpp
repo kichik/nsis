@@ -69,7 +69,7 @@ void LogMessage(HWND hwnd,const char *str) {
 void ErrorMessage(HWND hwnd,const char *str) {
 	if (!str) return;
 	char buf[1028];
-	wsprintf(buf,"Error - %s\r\n",str);
+	wsprintf(buf,"[Error] %s\r\n",str);
 	LogMessage(hwnd,buf);
 }
 

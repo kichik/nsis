@@ -134,7 +134,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (num==1) {
                 DragQueryFile((HDROP)wParam,0,szTmp,MAX_PATH);
                 if (lstrlen(szTmp)>0) {
-          g_sdata.script_alloced = true;
+					g_sdata.script_alloced = true;
                     g_sdata.script = (char *)GlobalAlloc(GPTR,sizeof(szTmp)+7);
                     wsprintf(g_sdata.script,"\"%s\"",szTmp);
                     ResetObjects();
@@ -218,7 +218,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case IDM_UPDATE:
                 {
                     DWORD dwThreadId;
+					EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_GRAYED);
                     CloseHandle(CreateThread(NULL,0,UpdateThread,(LPVOID)NULL,0,&dwThreadId));
+					EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_ENABLED);
                     break;
                 }
                 case IDM_ABOUT:
@@ -528,7 +530,6 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     static char pbuf[8192];
     char *p=NULL;
     *response = 0;
-    EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_GRAYED);
     if (getProxyInfo(pbuf))
     {
       p=my_strstr(pbuf,"http=");
@@ -548,7 +549,7 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     lstrcpy(url,NSIS_UPDATE);
     lstrcat(url,g_sdata.brandingv);
     lstrcpy(response,"");
-    get->addheader("User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; Q312461; .NET CLR 1.0.3705)");
+    get->addheader("User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 4.0)");
     get->addheader("Accept:*/*");
     get->connect(url);
     while (1) {
@@ -595,6 +596,5 @@ DWORD CALLBACK UpdateThread(LPVOID v) {
     else MessageBox(g_sdata.hwnd,"There is no update available for NSIS at this time.","NSIS Update",MB_OK|MB_ICONINFORMATION); 
     GlobalFree(response);
     delete get;
-    EnableMenuItem(g_sdata.menu,IDM_UPDATE,MF_ENABLED);
     return 0;
 }
