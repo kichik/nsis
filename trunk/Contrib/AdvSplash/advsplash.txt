@@ -1,6 +1,6 @@
-AdvSplash.exe - small (6.0k), simple plugin that lets you throw 
+AdvSplash.exe - small (5.5k), simple plugin that lets you throw 
 up a splash screen in NSIS installers with cool fading effects (win2k/xp)
-and transparency (24bit/8bit bitmaps).
+and transparency.
 
 To use:
 
@@ -31,13 +31,9 @@ Calling format
 Delay - length to show the screen for (in milliseconds)
 FadeIn - length to show the fadein scene (in ms) (not included in Delay)
 FadeOut - length to show the fadeout scene (in ms) (not included in Delay)
-KeyColor - color used for transparency. For 24 bit bitmaps could be any RGB
-        value (for ex. R=255 G=100 B=16 -> KeyColor=0xFF6410), for 8 bit bitmaps
-        could be either RGB value or index of the color at bitmap palette
-        (if such RGB color present in your image and you'd like to use palette
-        index, use (0x1000000+index) as KeyColor [you should calculate
-        this value by yourself]). Use KeyColor=-1 if there is now transparent
-        color at your image.
+KeyColor - color used for transparency, could be any RGB value 
+        (for ex. R=255 G=100 B=16 -> KeyColor=0xFF6410), 
+        use KeyColor=-1 if there is no transparent color at your image.
 FileName - splash bitmap filename (without the .bmp). The BMP file used will be 
         this parameter.bmp, and the wave file used (if present) will be this 
         parameter.wav.
@@ -45,11 +41,11 @@ FileName - splash bitmap filename (without the .bmp). The BMP file used will be
 (If you already have an .onInit function, put that in it)
 
 Note 1: fadein/fadeout supported only on win2k/winxp systems, all other systems
-will show simple splash screen with Delay = Delay + FadeIn + FadeOut.
+will show simple splash screen with Delay = Delay + FadeIn + FadeOut. Also, I've
+noted my winXP uses no transparent color at 16 bpp, so at bpps lower than 32
+for images with transparent color no fading effect will occur.
 
-Note 2: transparency supported only for 24bit and 8bit bitmaps.
-
-Note 3: the return value of splash is 1 if the user closed the splash 
+Note 2: the return value of splash is 1 if the user closed the splash 
 screen early (pop it from the stack)
 
 -Justin
