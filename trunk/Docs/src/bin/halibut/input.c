@@ -190,6 +190,7 @@ enum {
     c_i,			/* visible index mark */
     c_ii,			/* uncapitalised visible index mark */
     c_k,			/* uncapitalised cross-reference */
+    c_R,                        /* free text cross-reference */
     c_n,			/* numbered list */
     c_nocite,			/* bibliography trickery */
     c_preamble,			/* document preamble text */
@@ -266,6 +267,9 @@ static void match_kw(token * tok)
 	{
 	"K", c_K}
 	,			/* capitalised cross-reference */
+	{
+	"R", c_R}
+	,			/* free text cross-reference */
 	{
 	"U", c_U}
 	,			/* unnumbered-chapter heading */
@@ -1092,6 +1096,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
 		    break;
 		case c_K:
 		case c_k:
+		case c_R:
 		case c_W:
 		case c_date:
 		    /*
@@ -1105,6 +1110,8 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
 			wd.type = word_UpperXref;
 		    else if (t.cmd == c_k)
 			wd.type = word_LowerXref;
+		    else if (t.cmd == c_R)
+			wd.type = word_FreeTextXref;
 		    else if (t.cmd == c_W)
 			wd.type = word_HyperLink;
 		    else
@@ -1154,7 +1161,7 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
 			addword(wd, &idximplicit);
 		    }
 		    sfree(wdtext);
-		    if (wd.type == word_HyperLink) {
+		    if (wd.type == word_FreeTextXref || wd.type == word_HyperLink) {
 			/*
 			 * Hyperlinks are different: they then
 			 * expect another left brace, to begin

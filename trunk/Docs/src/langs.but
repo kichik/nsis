@@ -41,7 +41,7 @@ Use:
 
 As of version 2 NSIS fully supports multiple languages. An installer can have more than one language. Each string in the installer can be easily translated, and so can script strings such as messages in a message box.
 
-Each installer has one or more language table which holds references to strings in the strings table. To create a language table all you need to do is use LoadLanguageFile (See \k{loadlanguagefile}), define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using LangString or LangStringUP (See \k{langstring}) and you have built your installer a language table.
+Each installer has one or more language table which holds references to strings in the strings table. To create a language table all you need to do is use \R{loadlanguagefile}{LoadLanguageFile}, define strings used in your installer for that language such as Name and Caption, message box, install type, and other strings using \R{langstring}{LangString} or \R{langstring}{LangStringUP} and you have built your installer a language table.
 
 For an example of usage see \W{../Examples/languages.nsi}{languages.nsi}.
 
@@ -55,7 +55,7 @@ When the installer starts up it goes through these stages to select the interfac
 
 \n If no match, take the first language defined in the script
 
-\n If $LANGUAGE (\K{var1}) has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
+\n If \R{var1}{$LANGUAGE} has changed during .onInit, go through steps 1 to 3 with the language inside $LANGUAGE instead of the default user language.
 
 \S1{/lang} The /LANG Parameter
 

@@ -50,9 +50,9 @@ If both NoModify and NoRepair are set to 1, the button displays "Remove" instead
 
 \H{usefulvb6_runtime} How to install the VB6 runtimes
 
-The best way to install the VB6 runtimes is to use the UpgradeDLL macro (See \k{upgradedll}) to upgrade the DLL files, and the AddSharedDLL macro (See \k{addshareddll}) when installing the software for the first time to increase the shared DLL count. Define UPGRADEDLL_NOREGISTER before upgrading Stdole2.tlb (and undefine it before upgrading other files).
+The best way to install the VB6 runtimes is to use the \R{upgradedll}{UpgradeDLL macro} to upgrade the DLL files, and the \R{addshareddll}{AddSharedDLL macro} when installing the software for the first time to increase the shared DLL count. Define UPGRADEDLL_NOREGISTER before upgrading Stdole2.tlb (and undefine it before upgrading other files).
 
-Use the Modern UI with a Finish page to ask for a reboot if required or use IfRebootFlag (\k{IfRebootFlag}) and make your own page or messagebox.
+Use the Modern UI with a Finish page to ask for a reboot if required or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or messagebox.
 
 You can extract the files from vbrun60sp5.exe using any archiver that supports CAB compression, or if you have installed the latest version on your system, copy the following files from your system directory:
 

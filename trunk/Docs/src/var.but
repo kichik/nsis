@@ -24,7 +24,7 @@ The command line of the installer. The format of the command line can be one of 
 
 \b installer.exe PARAMETER PARAMETER PARAMETER
 
-\b For parsing out the PARAMETER portion, see GetParameters on the useful functions appendix (See \k{getparameters}). If /D= is specified on the command line (to override the install directory) it won't show up in $CMDLINE.
+\b For parsing out the PARAMETER portion, see GetParameters on the \R{getparameters}{useful functions appendix}. If /D= is specified on the command line (to override the install directory) it won't show up in $CMDLINE.
 
 \e{$LANGUAGE}
 
@@ -82,7 +82,7 @@ The decimal HWND of the parent window.
 
 \e{$PLUGINSDIR}
 
-The path to a temporary folder created upon the first usage of a plugin or a call to InitPluginsDir (See \k{initpluginsdir}). This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for InstallOptions, bitmaps for the splash plugin, or any other file that a plugin needs to work.
+The path to a temporary folder created upon the first usage of a plugin or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for InstallOptions, bitmaps for the splash plugin, or any other file that a plugin needs to work.
 
 \e{$$}
 

@@ -66,7 +66,7 @@ Remove the specified directory (which should be a full path). Without /r, the di
 
 Reserves a file in the data block for later use. As files are added in the order they are used in the script files that are used in the .onInit function, for example, might be added last and slow the loading of the installer. This is where this command comes useful, allowing you to speed up the loading process by including the file at the top of the data block instead of letting NSIS seek all the way down to the bottom of the \e{compressed} data block.
 
-See File (\K{file}) for more information about the parameters.
+See \R{file}{File} for more information about the parameters.
 
 \S2{setoutpath} SetOutPath
 

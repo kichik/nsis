@@ -115,7 +115,7 @@ Example:
 
 This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.
 
-Have a look at .onGUIInit (\K{onguiinit}) for an example.
+Have a look at \R{onguiinit}{.onGUIInit} for an example.
 
 \S3{unonInit} un.onInit
 

@@ -110,7 +110,7 @@
 
 \b Faster and better MakeNSISw integration
 
-\b New .NET Framework detection function in \k{detect.netframework}
+\b \R{detect.netframework}{New .NET Framework detection function}
 
 \b Minor bugfixes
 
