@@ -271,7 +271,7 @@ int main(int argc, char **argv)
         exepath[1023]=0;
         char *p=exepath;
         while (*p) p++;
-        while (p > exepath && *p != PATH_SEPARATOR_C) p=CharPrev(exepath,p);
+        while (p > exepath && *p != PLATFORM_PATH_SEPARATOR_C) p=CharPrev(exepath,p);
         if (p>exepath) p++;
         strcpy(p,"nsisconf.nsh");
         FILE *cfg=fopen(exepath,"rt");
@@ -336,10 +336,10 @@ int main(int argc, char **argv)
             p=CharPrev(dirbuf,p);
 #else
             getcwd(dirbuf,sizeof(dirbuf)-strlen(sfile)-2);
-            if (dirbuf[strlen(dirbuf)-1]!=PATH_SEPARATOR_C)
-              strcat(dirbuf,PATH_SEPARATOR_STR);
+            if (dirbuf[strlen(dirbuf)-1]!=PLATFORM_PATH_SEPARATOR_C)
+              strcat(dirbuf,PLATFORM_PATH_SEPARATOR_STR);
             strcat(dirbuf,sfile);
-            p=strrchr(dirbuf,PATH_SEPARATOR_C);
+            p=strrchr(dirbuf,PLATFORM_PATH_SEPARATOR_C);
 #endif
             if (!p) p=dirbuf;
             *p=0;

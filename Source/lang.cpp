@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "build.h"
+#include "util.h"
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
 
@@ -730,9 +731,9 @@ BOOL IsValidCodePage(UINT CodePage)
 
 // NSIS Language File parser
 LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
-  FILE *f = fopen(filename, "r");
+  FILE *f = FOPEN(filename, "r");
   if (!f) {
-    ERROR_MSG("Error: Can't open language file!\n");
+    ERROR_MSG("Error: Can't open language file - \"%s\"!\n",filename);
     return 0;
   }
 
