@@ -44,7 +44,7 @@ class CZlib : public ICompressor {
       return stream->avail_out;
     }
 
-    char* GetName() {
+    const char* GetName() {
       return "zlib";
     }
 

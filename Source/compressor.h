@@ -18,7 +18,7 @@ class ICompressor {
     virtual unsigned int GetAvailIn() = 0;
     virtual unsigned int GetAvailOut() = 0;
 
-    virtual char* GetName() = 0;
+    virtual const char* GetName() = 0;
 };
 
 #endif

@@ -12,6 +12,16 @@
 #include "../zlib/zlib.h"
 #endif
 
+#ifdef NSIS_COMPRESS_USE_LZMA
+#include "../7zip/lzmaNSIS.h"
+#define z_stream CLZMAState
+#define inflateInit(x) lzmaInit(x)
+#define inflateReset(x) lzmaInit(x)
+#define inflate(x) lzmaDecompress(x)
+#define Z_OK 0
+#define Z_STREAM_END 1
+#endif
+
 #ifdef NSIS_COMPRESS_USE_BZIP2
 #include "../bzip2/bzlib.h"
 
@@ -353,7 +363,9 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
           ltc = tc;
         }
 
-        if (!u) break;
+        // if there's no output, more input is needed
+        if (!u)
+          break;
 
         if (!outbuf)
         {

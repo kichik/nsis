@@ -15,6 +15,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "exehead_lzma"=".\exehead\exehead-lzma.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "exehead_zlib"=".\exehead\exehead-zlib.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -40,6 +52,9 @@ Package=<4>
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name exehead_zlib
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name exehead_lzma
     End Project Dependency
 }}}
 

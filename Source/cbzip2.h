@@ -44,7 +44,7 @@ class CBzip2 : public ICompressor {
       return stream->avail_out;
     }
 
-    char* GetName() {
+    const char* GetName() {
       return "bzip2";
     }
 

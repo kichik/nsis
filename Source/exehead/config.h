@@ -74,6 +74,12 @@
   // than zlib in whole mode usually.
   // #define NSIS_ZLIB_COMPRESS_WHOLE
 
+  // NSIS_LZMA_COMPRESS_WHOLE makes all install data in lzma installers
+  // compressed together. Runtime requirements are increased, but potential
+  // for compression is as well. Requires that the installer create a 
+  // (potentially large) temporary file in the temp directory.
+  #define NSIS_LZMA_COMPRESS_WHOLE
+
   // NSIS_BZIP2_COMPRESS_WHOLE makes all install data in bzip2 installers
   // compressed together. Runtime requirements are increased, but potential
   // for compression is as well. Requires that the installer create a 
@@ -286,7 +292,9 @@
   #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     #ifndef NSIS_COMPRESS_USE_ZLIB
       #ifndef NSIS_COMPRESS_USE_BZIP2
-        #error compression is enabled but both zlib and bzip2 are disabled.
+        #ifndef NSIS_COMPRESS_USE_LZMA
+          #error compression is enabled but zlib, bzip2 and lzma are disabled.
+        #endif
       #endif
     #endif
   #endif
@@ -295,27 +303,39 @@
     #ifdef NSIS_COMPRESS_USE_BZIP2
       #error both zlib and bzip2 are enabled.
     #endif
+    #ifdef NSIS_COMPRESS_USE_LZMA
+      #error both zlib and lzma are enabled.
+    #endif
+  #endif
+  #ifdef NSIS_COMPRESS_USE_BZIP2
+    #ifdef NSIS_COMPRESS_USE_LZMA
+      #error both bzip2 and lzma are enabled.
+    #endif
   #endif
 
   #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
     #ifdef NSIS_COMPRESS_USE_ZLIB
       #ifdef NSIS_ZLIB_COMPRESS_WHOLE
         #define NSIS_COMPRESS_WHOLE
-        #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-          #ifndef _NSIS_CONFIG_VERIFYDIALOG
-            #define _NSIS_CONFIG_VERIFYDIALOG
-          #endif
-        #endif
       #endif
     #endif
 
     #ifdef NSIS_COMPRESS_USE_BZIP2
       #ifdef NSIS_BZIP2_COMPRESS_WHOLE
         #define NSIS_COMPRESS_WHOLE
-        #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-          #ifndef _NSIS_CONFIG_VERIFYDIALOG
-            #define _NSIS_CONFIG_VERIFYDIALOG
-          #endif
+      #endif
+    #endif
+
+    #ifdef NSIS_COMPRESS_USE_LZMA
+      #ifdef NSIS_LZMA_COMPRESS_WHOLE
+        #define NSIS_COMPRESS_WHOLE
+      #endif
+    #endif
+
+    #ifdef NSIS_COMPRESS_WHOLE
+      #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+        #ifndef _NSIS_CONFIG_VERIFYDIALOG
+          #define _NSIS_CONFIG_VERIFYDIALOG
         #endif
       #endif
     #endif

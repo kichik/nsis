@@ -2,6 +2,7 @@
 #define _BUILD_H_
 
 #include <StdExcept>
+
 using namespace std;
 
 #include "strlist.h"
@@ -26,6 +27,7 @@ using namespace std;
 #include "compressor.h"
 #include "czlib.h"
 #include "cbzip2.h"
+#include "clzma.h"
 
 #endif//NSIS_CONFIG_COMPRESSION_SUPPORT
 
@@ -264,18 +266,22 @@ class CEXEBuild {
     ICompressor *compressor;
     CZlib zlib_compressor;
     CBzip2 bzip2_compressor;
+    CLZMA lzma_compressor;
 #endif
     bool build_compressor_set;
     bool build_compressor_final;
     bool build_compress_whole;
+    int build_compress;
+    int build_compress_level;
+    int build_compress_dict_size;
 
     bool no_space_texts;
 
     int has_called_write_output;
 
     char build_packname[1024], build_packcmd[1024];
-    int build_overwrite, build_last_overwrite, build_compress,
-        build_crcchk, build_datesave, build_optimize_datablock,
+    int build_overwrite, build_last_overwrite, build_crcchk,
+        build_datesave, build_optimize_datablock,
         build_allowskipfiles; // Added by ramon 23 May 2003
 
     header build_header, build_uninst, *cur_header;

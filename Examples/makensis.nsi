@@ -5,8 +5,8 @@
 !define VER_REVISION 0
 !define VER_BUILD 12
 
-!define VER_FILE "20b4"
-!define VER_DISPLAY "2.0 beta 4"
+!define VER_FILE "20b5"
+!define VER_DISPLAY "2.0 beta 5 (CVS)"
 
 ;--------------------------------
 ;Compile CVS Data Setup
@@ -19,7 +19,7 @@
 ;Configuration
 
 OutFile ..\nsis${VER_FILE}.exe
-SetCompressor bzip2
+SetCompressor lzma
 
 InstType "Full (w/ Source and Contrib)"
 InstType "Normal (w/ Contrib, w/o Source)"
