@@ -1049,7 +1049,11 @@ HTREEITEM NSISCALL TreeHitTest(HWND tree)
 
   TreeView_HitTest(tree, &ht);
 
+#ifdef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+  if (ht.flags & TVHT_ONITEMSTATEICON)
+#else
   if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
+#endif
     return ht.hItem;
 
   return 0;
@@ -1068,6 +1072,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   if (uMsg == WM_DESTROY) {
     last_item=-1;
   }
+#ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
   if (uMsg == WM_MOUSEMOVE) {
     TVITEM tvItem;
 
@@ -1087,6 +1092,7 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
       uMsg = WM_NOTIFY_SELCHANGE;
     }
   }
+#endif
   if (uMsg == WM_NOTIFY_SELCHANGE) {
     if (last_item != lParam)
     {
