@@ -2,7 +2,7 @@
 #include "..\exdll\exdll.h"
 
 void __declspec(dllexport) GetName(HWND hwndParent, int string_size, 
-                                      char *variables, stack_t **stacktop)
+                                   char *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
 
@@ -17,8 +17,8 @@ void __declspec(dllexport) GetName(HWND hwndParent, int string_size,
   }
 }
 
-void __declspec(dllexport) GetGroup(HWND hwndParent, int string_size, 
-                                      char *variables, stack_t **stacktop)
+void __declspec(dllexport) GetAccountType(HWND hwndParent, int string_size, 
+                                          char *variables, stack_t **stacktop)
 {
   EXDLL_INIT();
 
