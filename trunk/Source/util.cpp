@@ -536,3 +536,19 @@ string get_file_name(const string& path) {
     return path;
   return path.substr(last_separator_pos + 1, string::npos);
 }
+
+string get_executable_path(const char* argv0) {
+#ifdef _WIN32
+  char temp_buf[1024];
+  temp_buf[0] = '\0';
+  int rc = GetModuleFileName(NULL,temp_buf,1024);
+  assert(rc != 0);
+  return string(temp_buf);
+#else
+  return get_full_path(argv0);
+#endif
+}
+
+string get_executable_dir(const char *argv0) {
+  return get_dir_name(get_executable_path(argv0));
+}
