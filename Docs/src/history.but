@@ -2,39 +2,31 @@
 
 \e{v2.0b0}
 
-\b Accelerator keys
+\b Added accelerator keys
 
 \b New version of the Modern User Interface with better multilanguage support, InstallOptions integration etc.
 
-\b Unprocessed strings (such as InstType) can now use LangString/$(name) too
+\b Added LangString and LangStringUP for user defined multilingual strings
 
-\b Fixed a bug with ReadRegStr and $0
-
-\b Added multilanguage strings (LangString)
+\b Added support for transparent check marks
 
 \b Renamed nsisconf.nsi to nsisconf.nsh
 
 \b Added CreateShortcut comment/description parameter
 
-\b Added new plugins: ShowWin, System
-
 \b Splash.exe is now a plugin (splash.dll)
 
-\b Prevent multiple inclusion of !defines
+\b Added new plugins: ShowWin, System, AdvSplash, nsExec
 
-\b [InstallOptions] Clicking [x] behaves the same as Cancel.
+\b !ifdef and friends can now be used in macros
 
 \b SendMessage can send strings (put STR: before a param) and supports timeouts
 
 \b Right mouse button "Copy to clipboard" context menu for the Details window
 
-\b PluginDir is an attribute, not an instruction, corrected makensis.htm
-
 \b Plugin syntax now requires dll name, e.g. dll::func not just func
 
-\b Licence text receives initial focus (page up & down work immediately)
-
-\b Return key still works with initial focus licence text change ;)
+\b Licence text receives initial focus (page up & down work immediately, return key still works)
 
 \b Made win9x move/delete on reboot support proper and function like on win2k
 
@@ -42,19 +34,47 @@
 
 \b DeleteRegKey now complains if given a third parameter (other than /ifempty)
 
+\b ${LANG_langName} defined as the language id when loading a NLF
+
+\b Fixed a few bugs that caused the installer to load slower than before
+
+\b Uninstall can now get command line parameters too
+
+\b Added ReserveFile
+
+\b Added ExDLL.h
+
 \b Included makensisw 1.9 (lots of changes)
 
-\b New InstallOptions
+\b Updated InstallOptions
 
-\b Added nsExec
+\b Updated ZIP2EXE
 
-\b Added advSplash
+\b Updated NSIS-dl (timeout added)
 
 \b A lot of new language files
 
-\b A lot of new icons
+\b A lot of new icons and check marks
+
+\b Changed section flags values
+
+\b SectionSetFlags can now set bold too
+
+\b SectionSetName for sub sections doesn't need - infront of the name
+
+\b Added SetPluginUnload
+
+\b Hidden section can now use SectionIn too
+
+\b File /nonfatal switch added
+
+\b Plugins no longer add size to their containing section
 
 \b New docs format (WOOHA!)
+
+\b EXE header size a lot smaller, 33.5KB for bzip2 and 34KB for zlib
+
+\b Lots of other bugs fixed...
 
 
 \e{v2.0a7}
