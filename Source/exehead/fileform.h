@@ -517,7 +517,7 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  #define VAR_CODES_START 250
+  #define VAR_CODES_START 253
 #else
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   #define VAR_CODES_START (256 - 37)
@@ -527,7 +527,7 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 #endif
 
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  #define LANG_CODES_START 251
+  #define LANG_CODES_START 254
 #endif
 
 union installer_flags {
