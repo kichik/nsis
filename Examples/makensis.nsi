@@ -30,11 +30,16 @@ InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM Software\NSIS ""
 
 ;--------------------------------
-
 ;Header Files
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+
+;--------------------------------
+;Definitions
+
+!define SHCNE_ASSOCCHANGED 0x8000000
+!define SHCNF_IDLIST 0
 
 ;--------------------------------
 ;Configuration
@@ -144,12 +149,12 @@ Section "NSIS Core Files (required)" SecCore
   SetOutPath $INSTDIR\Contrib\Library\RegTool
   File ..\Contrib\Library\RegTool\*.nsi
   File ..\Contrib\Library\RegTool\*.bin
-  
+
   SetOutPath $INSTDIR\Contrib\Library\TypeLib
   File ..\Contrib\Library\TypeLib\*.cpp
   File ..\Contrib\Library\TypeLib\*.dsw
   File ..\Contrib\Library\TypeLib\*.dsp
-  
+
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\TypeLib.dll
 
@@ -182,6 +187,8 @@ Section "NSIS Core Files (required)" SecCore
     WriteRegStr HKCR "NSIS.Header\shell" "" "open"
     WriteRegStr HKCR "NSIS.Header\shell\open\command" "" 'notepad.exe "%1"'
   no_nshopen:
+
+  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
 
 SectionEnd
 
@@ -277,7 +284,7 @@ Section "Modern User Interface" SecInterfacesModernUI
   File "..\Contrib\Modern UI\Changelog.txt"
   File "..\Contrib\Modern UI\License.txt"
   File "..\Contrib\Modern UI\ioSpecial.ini"
-  
+
   SetOutPath "$INSTDIR\Contrib\Modern UI\images"
   File "..\Contrib\Modern UI\images\header.gif"
   File "..\Contrib\Modern UI\images\screen1.png"
@@ -291,7 +298,7 @@ Section "Modern User Interface" SecInterfacesModernUI
   File "..\Contrib\UIs\modern_headerbmpr.exe"
   File "..\Contrib\UIs\modern_nodesc.exe"
   File "..\Contrib\UIs\modern_smalldesc.exe"
-  
+
   SetOutPath $INSTDIR\Include
   File "..\Include\MUI.nsh"
 
@@ -1445,6 +1452,8 @@ Section Uninstall
 
   DeleteRegKey HKCR "NSIS.Script"
   DeleteRegKey HKCR "NSIS.Header"
+
+  System::Call 'Shell32::SHChangeNotify(i ${SHCNE_ASSOCCHANGED}, i ${SHCNF_IDLIST}, i 0, i 0)'
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
   DeleteRegKey HKLM "Software\NSIS"
