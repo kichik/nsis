@@ -864,6 +864,11 @@ Var MUI_TEMP2
     
     Caption " "
     
+    !ifdef MUI_UNCONFIRMPAGE_TEXT
+      UninstallText ${MUI_UNCONFIRMPAGE_TEXT}
+      !undef MUI_UNCONFIRMPAGE_TEXT
+    !endif
+    
   PageExEnd
   
   !insertmacro MUI_UNFUNCTION_CONFIRMPAGE un.mui.ConfirmPre_${MUI_UNIQUEID} un.mui.ConfirmShow_${MUI_UNIQUEID} un.mui.ConfirmLeave_${MUI_UNIQUEID}
