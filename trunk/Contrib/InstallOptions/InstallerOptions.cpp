@@ -168,10 +168,10 @@ char *pszTitle            = NULL;
 char *pszCancelButtonText = NULL;
 char *pszNextButtonText   = NULL;
 char *pszBackButtonText   = NULL;
-BOOL bBackDisabled        = FALSE;
 
-BOOL bCancelEnabled = TRUE;  // by ORTIM: 13-August-2002
-int  bCancelShow    = 1;     // by ORTIM: 13-August-2002
+int bBackEnabled   = FALSE;
+int bCancelEnabled = FALSE;   // by ORTIM: 13-August-2002
+int bCancelShow    = FALSE;   // by ORTIM: 13-August-2002
 
 FieldType *pFields   = NULL;
 int nNumFields       = 0;
@@ -459,10 +459,11 @@ bool ReadSettings(void) {
   pszBackButtonText = myGetProfileStringDup("Settings", "BackButtonText");
 
   nNumFields = GetPrivateProfileInt("Settings", "NumFields", 0, pszFilename);
-  bBackDisabled = GetPrivateProfileInt("Settings", "BackDisabled", 0, pszFilename);
 
-  bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 1, pszFilename);  // by ORTIM: 13-August-2002
-  bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 1, pszFilename);        // by ORTIM: 13-August-2002
+  bBackEnabled = GetPrivateProfileInt("Settings", "BackEnabled", 0xFFFF0000, pszFilename);
+  // by ORTIM: 13-August-2002
+  bCancelEnabled = GetPrivateProfileInt("Settings", "CancelEnabled", 0xFFFF0000, pszFilename);
+  bCancelShow = GetPrivateProfileInt("Settings", "CancelShow", 0xFFFF0000, pszFilename);
 
   if (nNumFields > 0) {
     // make this twice as large for the worst case that every control is a browse button.
@@ -740,11 +741,10 @@ int createCfgDlg()
   GetWindowText(hBackButton,old_back,sizeof(old_back));
   if (pszBackButtonText) SetWindowText(hBackButton,pszBackButtonText);
 
-  if (bBackDisabled) EnableWindow(hBackButton,0);
-
-  old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);                     // by ORTIM: 13-August-2002
-  old_cancel_visible=IsWindowVisible(hCancelButton);                                  // by ORTIM: 13-August-2002
-  ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);                            // by ORTIM: 13-August-2002
+  if (bBackEnabled!=0xFFFF0000) EnableWindow(hBackButton,bBackEnabled);
+  // by ORTIM: 13-August-2002
+  if (bCancelEnabled!=0xFFFF0000) old_cancel_enabled=!EnableWindow(hCancelButton,bCancelEnabled);
+  if (bCancelShow!=0xFFFF0000) old_cancel_visible=ShowWindow(hCancelButton,bCancelShow?SW_SHOWNA:SW_HIDE);
 
   // Added by Amir Szekely 22nd July 2002
   HFONT hFont = (HFONT)SendMessage(hMainWindow, WM_GETFONT, 0, 0);
@@ -997,8 +997,9 @@ void showCfgDlg()
   SetWindowText(hNextButton,old_ok);
   SetWindowText(hBackButton,old_back);
 
-  EnableWindow(hCancelButton,old_cancel_enabled);                  // by ORTIM: 13-August-2002
-  ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);  // by ORTIM: 13-August-2002
+  // by ORTIM: 13-August-2002
+  if (bCancelEnabled!=0xFFFF0000) EnableWindow(hCancelButton,old_cancel_enabled);
+  if (bCancelShow!=0xFFFF0000) ShowWindow(hCancelButton,old_cancel_visible?SW_SHOWNA:SW_HIDE);
 
   if (pszTitle) SetWindowText(hMainWindow,old_title);
 
