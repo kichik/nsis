@@ -17,7 +17,7 @@
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
   ;Remember install folder
-  InstallDirRegKey HKCU "Softare\${MUI_PRODUCT}" ""
+  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
   
   ;$9 is being used to store the Start Menu Folder.
   ;Do not use this variable in your script (or Push/Pop it)!
@@ -73,7 +73,7 @@ Section "modern.exe" SecCopyUI
   File "${NSISDIR}\Contrib\UIs\modern.exe"
   
   ;Store install folder
-  WriteRegStr HKCU "Softare\${MUI_PRODUCT}" "" $INSTDIR
+  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
   
   !insertmacro MUI_STARTMENU_WRITE_BEGIN
     
