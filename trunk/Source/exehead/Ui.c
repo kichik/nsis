@@ -42,7 +42,7 @@ HICON g_hIcon;
 #endif
 
 int dlg_offset;
-
+int ui_dlg_visible=0; // At start main window is not visible
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
 #if NSIS_MAX_INST_TYPES > 32 || NSIS_MAX_INST_TYPES < 1
@@ -354,9 +354,9 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
   return 0;
 }
 
-
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  BOOL bNextPage=FALSE;
   if (uMsg == WM_INITDIALOG || uMsg == WM_NOTIFY_OUTER_NEXT)
   {
     page *this_page;
@@ -383,9 +383,9 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       SetDlgItemTextFromLang(hwndDlg,IDC_VERSTR,LANG_BRANDING);
       SetClassLong(hwndDlg,GCL_HICON,(long)g_hIcon);
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      if (!(g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL)))
+      g_quit_flag = ExecuteCodeSegment(g_header->code_onGUIInit,NULL);
 #endif
-        ShowWindow(hwndDlg,SW_SHOW);
+        //ShowWindow(hwndDlg, SW_SHOW);
     }
 
     this_page=g_pages+m_page;
@@ -406,7 +406,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     SendMessage(m_curwnd, WM_NOTIFY_INIGO_MONTOYA, 0, 0);
 
 nextPage:
-
+    bNextPage=FALSE;
     m_page+=m_delta;
     this_page+=m_delta;
 
@@ -452,6 +452,7 @@ nextPage:
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (ExecuteCodeSegment(this_page->prefunc, NULL) || !this_page->dlg_id) {
+        bNextPage=TRUE;
         goto nextPage;
       }
 #endif //NSIS_SUPPORT_CODECALLBACKS
@@ -461,7 +462,7 @@ nextPage:
         if (g_exec_flags.abort) SetFocus(m_hwndCancel);
         else if (g_exec_flags.autoclose) goto nextPage;
         else SetFocus(m_hwndOK); // without focus button, the system Beeps every time user press one key
-        return 0;
+        goto skipPage;
       }
 
       // update g_this_page for the dialog proc
@@ -498,6 +499,18 @@ nextPage:
         //XGE End
       }
     }
+
+skipPage:
+
+    if (!ui_dlg_visible && m_curwnd)
+    {
+      ShowWindow(hwndDlg, SW_SHOW);
+      ui_dlg_visible = TRUE;
+    }
+
+    if (bNextPage)
+      goto nextPage;
+
     return FALSE;
   }
 
@@ -514,6 +527,7 @@ nextPage:
   if (uMsg == WM_NOTIFY_CUSTOM_READY) {
     DestroyWindow(m_curwnd);
     m_curwnd = (HWND)wParam;
+    goto skipPage;
   }
   if (uMsg == WM_CLOSE)
   {
@@ -559,7 +573,7 @@ nextPage:
     else
     {
       // Forward WM_COMMANDs to inner dialogs, can be custom ones
-      SendMessage(m_curwnd, uMsg, wParam, lParam);
+      //SendMessage(m_curwnd, uMsg, wParam, lParam);
     }
   }
   return HandleStaticBkColor();

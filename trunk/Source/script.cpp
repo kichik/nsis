@@ -5025,6 +5025,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
 #endif// NSIS_CONFIG_PLUGIN_SUPPORT
 
+#ifdef NSIS_LOCKWINDOW_SUPPORT
+    case TOK_LOCKWINDOW:
+      SCRIPT_MSG("LockWindow: lock state=%d\n",line.gettoken_str(1));
+      ent.which=EW_LOCKWINDOW;
+      ent.offsets[0]=line.gettoken_enum(1,"on\0off\0");
+      if ( ent.offsets[0] == -1 )
+          PRINTHELP();
+    return add_entry(&ent);
+#else
+    case TOK_LOCKWINDOW:
+    {
+      ERROR_MSG("Error: %s specified, NSIS_LOCKWINDOW_SUPPORT not defined.\n",line.gettoken_str(0));
+    }
+    return PS_ERROR;
+#endif // NSIS_LOCKWINDOW_SUPPORT
+
     default: break;
 
   }

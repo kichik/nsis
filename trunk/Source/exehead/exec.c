@@ -1557,6 +1557,15 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     }
     break;
 #endif//NSIS_CONFIG_COMPONENTPAGE
+
+#ifdef NSIS_LOCKWINDOW_SUPPORT
+    case EW_LOCKWINDOW:
+    {
+      SendMessage(g_hwnd, WM_SETREDRAW, parm0 && ui_dlg_visible, 0);
+      if ( parm0 )
+        InvalidateRect(g_hwnd, NULL, FALSE);
+    }
+#endif //NSIS_LOCKWINDOW_SUPPORT
   }
 
   g_exec_flags.exec_error += exec_error;

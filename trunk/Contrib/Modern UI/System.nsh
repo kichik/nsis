@@ -1075,6 +1075,7 @@ Var MUI_TEMP2
 
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     
+    LockWindow on
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
@@ -1092,6 +1093,7 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+    LockWindow off
 
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
@@ -1113,6 +1115,7 @@ Var MUI_TEMP2
   
     !insertmacro MUI_INSTALLOPTIONS_SHOW
      
+    LockWindow on
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
@@ -1130,7 +1133,8 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
-    
+    LockWindow off
+
   FunctionEnd
   
   Function "${LEAVE}"
@@ -1291,24 +1295,6 @@ Var MUI_TEMP2
 
   Function "${PRE}"
     
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
-    ShowWindow $MUI_TEMP1 ${SW_HIDE}
-
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
-    ShowWindow $MUI_TEMP1 ${SW_HIDE}
-
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
-    ShowWindow $MUI_TEMP1 ${SW_HIDE}
-
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-    ShowWindow $MUI_TEMP1 ${SW_HIDE}
-
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-    ShowWindow $MUI_TEMP1 ${SW_HIDE}
-      
-    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
-    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
-    
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "NextButtonText" "${MUI_FINISHPAGE_BUTTON}"
     
     !ifdef MUI_FINISHPAGE_ABORTWARNINGCHECK
@@ -1459,6 +1445,26 @@ Var MUI_TEMP2
       
     !insertmacro MUI_PAGE_FUNCTION_CUSTOM PRE
     
+    LockWindow on
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1256
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1035
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+    LockWindow off
+
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
     Pop $MUI_HWND
     SetCtlColors $MUI_HWND "" "${MUI_BGCOLOR}"
@@ -1532,6 +1538,7 @@ Var MUI_TEMP2
       StrCpy $MUI_NOABORTWARNING ""
     !endif
     
+    LockWindow on
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
@@ -1549,7 +1556,8 @@ Var MUI_TEMP2
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
-   
+    LockWindow off
+
   FunctionEnd
   
   Function "${LEAVE}"
