@@ -151,9 +151,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
       {
         // File name need slash before coz temp dir was changed by validate_filename(...)
         static char s[]="\\A~NSISu_.exe";
-        static char buf2[NSIS_MAX_STRLEN*2]="\"";
+        static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
 
+        buf2[0]='\"';
         mystrcpy(buf2+1,state_temp_dir);
         lstrcat(buf2,s);
 
