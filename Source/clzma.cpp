@@ -145,7 +145,7 @@ CLZMA::~CLZMA()
   }
 }
 
-int CLZMA::Init(int level, UINT32 dicSize)
+int CLZMA::Init(int level, unsigned int dicSize)
 {
   End();
 
@@ -183,12 +183,6 @@ int CLZMA::Init(int level, UINT32 dicSize)
   if (_encoder->SetCoderProperties(propdIDs, props, kNumProps) != 0)
     return LZMA_INIT_ERROR;
   return _encoder->SetStreams(this, this, 0, 0) == S_OK ? C_OK : LZMA_INIT_ERROR;
-}
-
-int CLZMA::Init(int level)
-{
-  // default dictionary size is 8MB
-  return Init(level, 8 << 20);
 }
 
 int CLZMA::End()
