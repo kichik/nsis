@@ -129,19 +129,17 @@ extern Int16 BZ2_rNums[513];
 
 #define BZ_RAND_DECLS                          \
    Int32 rNToGo;                               \
-   Int32 rTPos                                 \
+   Int32 rTPos
 
 #define BZ_RAND_INIT_MASK                      \
-   s->rNToGo = 0;                              \
-   s->rTPos  = 0                               \
+   s->rNToGo = s->rTPos  = 0
 
-#define BZ_RAND_MASK ((s->rNToGo == 1) ? 1 : 0)
+#define BZ_RAND_MASK (!(s->rNToGo-1))
 
 #define BZ_RAND_UPD_MASK                       \
    if (s->rNToGo == 0) {                       \
       s->rNToGo = BZ2_rNums[s->rTPos];         \
-      s->rTPos++;                              \
-      if (s->rTPos == 512) s->rTPos = 0;       \
+      if (++s->rTPos == 512) s->rTPos = 0;     \
    }                                           \
    s->rNToGo--;
 
