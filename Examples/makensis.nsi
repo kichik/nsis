@@ -1,7 +1,7 @@
 ;NSIS Setup Script
 
 !define VER_MAJOR 2
-!define VER_MINOR 0b1
+!define VER_MINOR 0b2
 
 ;--------------------------------
 ;Configuration
@@ -31,7 +31,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
   ;Modern UI Configuration
 
   !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "2.0b1"
+  !define MUI_VERSION "2.0b2 (CVS)"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
@@ -137,14 +137,20 @@ Section "NSI Development Shell Extensions" SecExtention
     WriteRegStr HKCR ".nsi" "backup_val" $1
   Label1:
   WriteRegStr HKCR ".nsh" "" "NSHFile"
-  WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
-  WriteRegStr HKCR "NSHFile\shell" "" "open"
-  WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+  ReadRegStr $0 HKCR "NSHFile" ""
+  StrCmp $0 "" 0 skipNSIAssoc
+	WriteRegStr HKCR "NSHFile" "" "NSIS Header File"
+	WriteRegStr HKCR "NSHFile\shell" "" "open"
+	WriteRegStr HKCR "NSHFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+  skipNSHAssoc:
   WriteRegStr HKCR "NSHFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR ".nsi" "" "NSISFile"
-  WriteRegStr HKCR "NSISFile" "" "NSIS Script File"
-  WriteRegStr HKCR "NSISFile\shell" "" "open"
-  WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+  ReadRegStr $0 HKCR "NSISFile" ""
+  StrCmp $0 "" 0 skipNSIAssoc
+	WriteRegStr HKCR "NSISFile" "" "NSIS Script File"
+	WriteRegStr HKCR "NSISFile\shell" "" "open"
+	WriteRegStr HKCR "NSISFile\DefaultIcon" "" $INSTDIR\makensisw.exe,1
+  skipNSIAssoc:
   WriteRegStr HKCR "NSISFile\shell\open\command" "" 'notepad.exe "%1"'
   WriteRegStr HKCR "NSISFile\shell\compile" "" "Compile NSI"
   WriteRegStr HKCR "NSISFile\shell\compile\command" "" '"$INSTDIR\makensisw.exe" "%1"'
