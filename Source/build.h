@@ -200,7 +200,6 @@ class CEXEBuild {
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
     bool b_abort_compile;
     UserVarsStringList m_UserVarNames;
-    UserVarsStringList m_UnUserVarNames;
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 #endif
