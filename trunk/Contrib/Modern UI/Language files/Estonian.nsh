@@ -2,7 +2,7 @@
 ;Compatible with Modern UI 1.68
 
 ;Language: Estonian (1061)
-;Translated by izzo (izzo@hot.ee)
+;Translated by johnny izzo (izzo@hot.ee)
 
 ;--------------------------------
 
@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Vali komponendid"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Vali millised $(^NameDA) osad sa soovid paigaldada."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Kirjeldus"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Nihuta hiir komponendile, et näha selle kirjeldust."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Nihuta hiir komponendile, et näha selle kirjeldust."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Vali komponent, et näha selle kirjeldust."
+  !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Vali asukoht"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Vali kaust kuhu paigaldada $(^NameDA)."
