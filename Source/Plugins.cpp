@@ -64,6 +64,8 @@ void Plugins::GetExports(char* pathToDll,bool displayInfo)
     dllName[0] = 0;
     char* ptr = strrchr(pathToDll,'\\');
     if (ptr && *ptr && *(ptr+1)) strcpy(dllName,ptr+1);
+    ptr = strstr(dllName, ".dll");
+    if (ptr) *ptr = 0;
 
     FILE* dll = fopen(pathToDll,"rb");
     if (dll)
@@ -136,28 +138,7 @@ bool Plugins::IsPluginCommand(char* token)
 
 char* Plugins::GetPluginDll(char* command)
 {
-  bool malloced = false;
-  char *colons = strstr(command,"::");
-  if (!colons) return 0;
-
-  *colons = 0;
-
-  char *p = command;
-
-  while (*p != '.' && *p) p++;
-
-  if (lstrcmpi(p, ".dll")) {
-    char *new_command = (char *)malloc(lstrlen(command)+1+4);
-    wsprintf(new_command, "%s.dll::%s", command, colons+2);
-    command = new_command;
-    malloced = 1;
-  }
-  
-  *colons = ':';
-  
-  char *result = m_commands.find(command);
-  if (malloced) free(command);
-  return result;
+  return m_commands.find(command);
 }
 
 void Plugins::StoreInstDLL(char* dllName)
