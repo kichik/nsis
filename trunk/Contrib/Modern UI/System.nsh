@@ -309,11 +309,9 @@ Var MUI_TEMP2
   !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
 
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALINI}" "ioSpecial.ini"
-    !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
+    File "/oname=$PLUGINSDIR\modern-wizard.bmp" "${MUI_SPECIALBITMAP}"
     
     !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Text" "$PLUGINSDIR\modern-wizard.bmp"
-	
-	!insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Settings" "RTL" "$(^RTL)"
     
     !ifdef MUI_SPECIALBITMAP_NOSTRETCH
       !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 1" "Flags" ""
@@ -855,8 +853,7 @@ Var MUI_TEMP2
 
   File "/oname=$PLUGINSDIR\${FILE}" "${FILE}"
   
-  StrCmp $(^RTL) 0 +2
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "1"
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
 
   !verbose pop
 
@@ -871,9 +868,8 @@ Var MUI_TEMP2
 
   File "/oname=$PLUGINSDIR\${FILENAME}" "${FILE}"
   
-  StrCmp $(^RTL) 0 +2
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "RTL" "1"
-
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILENAME}" "Settings" "RTL" "$(^RTL)"
+  
   !verbose pop
 
 !macroend
