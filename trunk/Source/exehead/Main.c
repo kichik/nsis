@@ -73,7 +73,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   // g_caption is used as a temp var here
   if (!my_GetTempFileName(g_caption, state_temp_dir))
   {
-    mystrcpy(state_temp_dir + GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir)), "\\Temp");
+    GetWindowsDirectory(state_temp_dir, sizeof(state_temp_dir));
+    lstrcat(state_temp_dir, "\\Temp");
     validate_filename(state_temp_dir);
     CreateDirectory(state_temp_dir, NULL);
     if (!my_GetTempFileName(g_caption, state_temp_dir))
