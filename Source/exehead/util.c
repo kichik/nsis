@@ -73,11 +73,11 @@ void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
 }
 
 #ifdef NSIS_SUPPORT_RMDIR
-void NSISCALL doRMDir(char *buf, int recurse)
+void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
 {
   if (is_valid_instpath(buf))
   {
-    if (recurse) {
+    if (flags&1) {
       SHFILEOPSTRUCT op;
 
       op.hwnd=0;
@@ -90,7 +90,17 @@ void NSISCALL doRMDir(char *buf, int recurse)
 
       SHFileOperation(&op);
     }
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+    else if (!RemoveDirectory(buf) && flags&2) {
+      log_printf2("Remove folder on reboot: %s",buf);
+#ifdef NSIS_SUPPORT_REBOOT
+      g_flags.exec_reboot++;
+#endif
+      MoveFileOnReboot(buf,0);
+    }
+#else
     else RemoveDirectory(buf);
+#endif
   }
   log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
   update_status_text_from_lang(LANG_REMOVEDIR,buf);

@@ -3021,9 +3021,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
           a++;
           ent.offsets[1]=1;
         }
+        else if (!stricmp(line.gettoken_str(1),"/REBOOTOK"))
+        {
+          if (line.getnumtokens() < 3) PRINTHELP()
+          a++;
+          ent.offsets[1]=2;
+        }          
         else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
-        SCRIPT_MSG("RMDir: %s\"%s\"\n",ent.offsets[1]?"/r " : "",line.gettoken_str(a));
+        SCRIPT_MSG("RMDir: %s%s\"%s\"\n",a==1?"":line.gettoken_str(1),ent.offsets[1]?" ":"",line.gettoken_str(a));
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_RMDIR
