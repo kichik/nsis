@@ -478,7 +478,7 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 void CEXEBuild::setdirs(char *argv0)
 {
   char szNSISDir[NSIS_MAX_STRLEN*2],*fn2;
-  int len = sizeof(szNSISDir) - sizeof(PATH_SEPARATOR_STR "Include") - 1;
+  int len = sizeof(szNSISDir) - sizeof(PLATFORM_PATH_SEPARATOR_STR "Include") - 1;
 #ifdef _WIN32
   GetModuleFileName(NULL,szNSISDir,len);
 #else
@@ -487,10 +487,10 @@ void CEXEBuild::setdirs(char *argv0)
   szNSISDir[sizeof(szNSISDir)-1] = 0;
   my_free_realpath(argv0, buffer);
 #endif
-  fn2=strrchr(szNSISDir,PATH_SEPARATOR_C);
+  fn2=strrchr(szNSISDir,PLATFORM_PATH_SEPARATOR_C);
   if(fn2!=NULL) *fn2=0;
   definedlist.add("NSISDIR",(char*)szNSISDir);
-  strcat(szNSISDir, PATH_SEPARATOR_STR "Include");
+  strcat(szNSISDir, PLATFORM_PATH_SEPARATOR_STR "Include");
   include_dirs.add(szNSISDir,0);
 }
 
@@ -2322,7 +2322,7 @@ int CEXEBuild::write_output(void)
   // Pack exe header if asked for
   if (build_packname[0] && build_packcmd[0])
   {
-    FILE *tmpfile=fopen(build_packname,"wb");
+    FILE *tmpfile=FOPEN(build_packname,"wb");
     if (!tmpfile)
     {
       ERROR_MSG("Error: writing temporary file \"%s\" for pack\n",build_packname);
@@ -2336,7 +2336,7 @@ int CEXEBuild::write_output(void)
       ERROR_MSG("Error: calling packer on \"%s\"\n",build_packname);
       return PS_ERROR;
     }
-    tmpfile=fopen(build_packname,"rb");
+    tmpfile=FOPEN(build_packname,"rb");
     if (!tmpfile)
     {
       remove(build_packname);
@@ -2389,7 +2389,7 @@ int CEXEBuild::write_output(void)
     my_free_realpath(build_output_filename, buffer);
 #endif
   }
-  FILE *fp = fopen(build_output_filename,"w+b");
+  FILE *fp = FOPEN(build_output_filename,"w+b");
   if (!fp)
   {
     ERROR_MSG("Can't open output file\n");
@@ -2451,7 +2451,7 @@ int CEXEBuild::write_output(void)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   if (build_compress_whole)
   {
-  	int n;
+    int n;
     if (compressor == &lzma_compressor)
       n = ((CLZMA *) compressor)->Init(build_compress_level, build_compress_dict_size);
     else
@@ -3176,8 +3176,8 @@ void CEXEBuild::build_plugin_table(void)
     char* searchPath = new char [strlen(nsisdir)+9];
     if (searchPath)
     {
-      sprintf(searchPath,"%s" PATH_SEPARATOR_STR "Plugins",nsisdir);
-      INFO_MSG("Processing plugin dlls: \"%s" PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
+      sprintf(searchPath,"%s" PLATFORM_PATH_SEPARATOR_STR "Plugins",nsisdir);
+      INFO_MSG("Processing plugin dlls: \"%s" PLATFORM_PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
       m_plugins.FindCommands(searchPath,display_info?true:false);
       INFO_MSG("\n");
       delete[] searchPath;

@@ -34,7 +34,7 @@ void Plugins::FindCommands(char* path, bool displayInfo)
 
       char* pathAndWildcard = new char [length+7];
       strcpy(pathAndWildcard,basePath);
-      strcat(pathAndWildcard,PATH_SEPARATOR_STR "*.dll");
+      strcat(pathAndWildcard,PLATFORM_PATH_SEPARATOR_STR "*.dll");
 
 #ifdef _WIN32
       WIN32_FIND_DATA data;
@@ -59,7 +59,7 @@ void Plugins::FindCommands(char* path, bool displayInfo)
 #ifdef _WIN32
         {
           char* dllPath = new char [length+strlen(data.cFileName)+2];
-          wsprintf(dllPath,"%s" PATH_SEPARATOR_STR "%s",basePath,data.cFileName);
+          wsprintf(dllPath,"%s" PLATFORM_PATH_SEPARATOR_STR "%s",basePath,data.cFileName);
 #else
           char *dllPath = new char [strlen(globbuf.gl_pathv[i])+1];
           strcpy(dllPath,globbuf.gl_pathv[i]);
@@ -93,7 +93,7 @@ void Plugins::GetExports(char* pathToDll, bool displayInfo)
     char           signature[1024];
 
     dllName[0] = 0;
-    char* ptr = strrchr(pathToDll,PATH_SEPARATOR_C);
+    char* ptr = strrchr(pathToDll,PLATFORM_PATH_SEPARATOR_C);
     if (ptr && *ptr && *(ptr+1)) strcpy(dllName,ptr+1);
 
     // find .dll

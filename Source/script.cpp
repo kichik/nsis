@@ -634,7 +634,7 @@ int CEXEBuild::parseScript()
 int CEXEBuild::includeScript(char *f)
 {
   SCRIPT_MSG("!include: \"%s\"\n",f);
-  FILE *incfp=fopen(f,"rt");
+  FILE *incfp=FOPEN(f,"rt");
   if (!incfp)
   {
     ERROR_MSG("!include: could not open file: \"%s\"\n",f);
@@ -1335,7 +1335,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       FILE *fp;
       unsigned int datalen;
-      fp=fopen(file,"rb");
+      fp=FOPEN(file,"rb");
       if (!fp)
       {
         ERROR_MSG("LicenseLangString: open failed \"%s\"\n",file);
@@ -1643,7 +1643,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!idx)
         {
           unsigned int datalen;
-          FILE *fp=fopen(file,"rb");
+          FILE *fp=FOPEN(file,"rb");
           if (!fp)
           {
             ERROR_MSG("LicenseData: open failed \"%s\"\n",file);
@@ -2196,7 +2196,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0IDD_LICENSE_FSRB\0IDD_LICENSE_FSCB\0");
         if (k<0) PRINTHELP();
 
-        FILE *fui = fopen(line.gettoken_str(2), "rb");
+        FILE *fui = FOPEN(line.gettoken_str(2), "rb");
         if (!fui) {
           ERROR_MSG("Error: Can't open \"%s\"!\n", line.gettoken_str(2));
           return PS_ERROR;
@@ -2589,7 +2589,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int cmpv=line.gettoken_int(3,&success);
         if (!success && comp != 4) PRINTHELP()
         SCRIPT_MSG("!system: \"%s\"\n",exec);
+#ifdef _WIN32
         int ret=system(exec);
+#else
+        char *execfixed = my_convert(exec);
+        int ret=system(execfixed);
+        my_convert_free(execfixed);
+#endif
         if (comp == 0 && ret < cmpv);
         else if (comp == 1 && ret > cmpv);
         else if (comp == 2 && ret != cmpv);
@@ -2616,7 +2622,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           CloseHandle(pi.hProcess);
         }
 #else
-        system(exec);
+        char *execfixed = my_convert(exec);
+        system(execfixed);
+        my_convert_free(execfixed);
 #endif
         SCRIPT_MSG("!execute: \"%s\"\n",exec);
       }
@@ -2652,7 +2660,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         char *incfile = (char *) malloc(malloced);
         strcpy(incfile, f);
         glob_t globbuf;
-        if (!glob(incfile, GLOB_NOSORT, NULL, &globbuf))
+        if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
         {
           for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
           {
@@ -2700,7 +2708,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
                 if (includeScript(incfile) != PS_OK)
 #else
-            if (!glob(incfile, GLOB_NOSORT, NULL, &globbuf))
+            if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
             {
               for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
               {
@@ -4021,7 +4029,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (!*on||line.getnumtokens()!=a+1||strstr(on,"*") || strstr(on,"?")) PRINTHELP()
 
           int tf=0;
+#ifdef _WIN32
           int v=do_add_file(line.gettoken_str(a), attrib, 0, linecnt,&tf,on);
+#else
+          char *fn = my_convert(line.gettoken_str(a));
+          int v=do_add_file(fn, attrib, 0, linecnt,&tf,on);
+          my_convert_free(fn);
+#endif
           if (v != PS_OK) return v;
           if (tf > 1) PRINTHELP()
           if (!tf)
@@ -4039,11 +4053,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
           return PS_OK;
         }
+#ifdef _WIN32
         else if (line.gettoken_str(a)[0] == '/') PRINTHELP()
+#endif
         if (line.getnumtokens()<a+1) PRINTHELP()
         while (a < line.getnumtokens())
         {
+#ifdef _WIN32
           if (line.gettoken_str(a)[0]=='/') PRINTHELP()
+#endif
           char buf[32];
           char *t=line.gettoken_str(a++);
           if (t[0] && CharNext(t)[0] == ':' && CharNext(t)[1] == '\\' && !CharNext(t)[2])
@@ -4053,7 +4071,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             t=buf;
           }
           int tf=0;
+#ifdef _WIN32
           int v=do_add_file(t, attrib, rec, linecnt,&tf,NULL,which_token == TOK_FILE);
+#else
+          char *fn = my_convert(t);
+          int v=do_add_file(fn, attrib, rec, linecnt,&tf,NULL,which_token == TOK_FILE);
+          my_convert_free(fn);
+#endif
           if (v != PS_OK) return v;
           if (!tf)
           {
@@ -4337,7 +4361,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             *p=0;
           }
           strcat(nrpath,path);
-          FILE *f=fopen(nrpath, "r");
+          FILE *f=FOPEN(nrpath, "r");
           if (f) {
             path=nrpath;
             fclose(f);
@@ -5283,7 +5307,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.getnumtokens() == 2)
       {
         SCRIPT_MSG("PluginDir: \"%s\"\n",line.gettoken_str(1));
+#ifdef _WIN32
         m_plugins.FindCommands(line.gettoken_str(1),display_info?true:false);
+#else
+        char *converted_path = my_convert(line.gettoken_str(1));
+        m_plugins.FindCommands(converted_path,display_info?true:false);
+        my_convert_free(converted_path);
+#endif
         return PS_OK;
       }
     }
@@ -5310,7 +5340,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         // DLL name on the user machine
         char tempDLL[NSIS_MAX_STRLEN];
-        wsprintf(tempDLL, "$PLUGINSDIR%s", strrchr(dllPath,'\\'));
+        char *dllName = strrchr(dllPath,PLATFORM_PATH_SEPARATOR_C);
+        if (dllName && *dllName == PLATFORM_PATH_SEPARATOR_C)
+          dllName++;
+        wsprintf(tempDLL, "$PLUGINSDIR%c%s", PATH_SEPARATOR_C, dllName);
 
         // Add the DLL to the installer
         if (data_handle == -1)
@@ -5491,11 +5524,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
   strcpy(dir,lgss);
   {
     char *s=dir+strlen(dir);
-    while (s > dir && *s != PATH_SEPARATOR_C) s=CharPrev(dir,s);
+    while (s > dir && *s != PLATFORM_PATH_SEPARATOR_C) s=CharPrev(dir,s);
     if (s == dir)
     {
-      if (*s == PATH_SEPARATOR_C)
-        sprintf(dir,"%c.",PATH_SEPARATOR_C);
+      if (*s == PLATFORM_PATH_SEPARATOR_C)
+        sprintf(dir,"%c.",PLATFORM_PATH_SEPARATOR_C);
       else
         strcpy(dir,".");
     }
@@ -5512,14 +5545,14 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
       if ((d.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
       {
 #else
-  glob(lgss, GLOB_NOSORT, NULL, &globbuf);
+  GLOB(lgss, GLOB_NOSORT, NULL, &globbuf);
   {
     for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
     {
       struct stat s;
       if (!stat(globbuf.gl_pathv[i], &s) && S_ISREG(s.st_mode))
       {
-        char *filename = strrchr(globbuf.gl_pathv[i], PATH_SEPARATOR_C);
+        char *filename = strrchr(globbuf.gl_pathv[i], PLATFORM_PATH_SEPARATOR_C);
         if (filename)
           filename++;
         else
@@ -5532,7 +5565,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 #ifdef _WIN32
         HANDLE hFile;
         
-        sprintf(newfn,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",d.cFileName);
+        sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",d.cFileName);
         hFile = CreateFile(
           newfn,
           GENERIC_READ,
@@ -5559,10 +5592,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 #else
         int fd;
 
-        sprintf(newfn,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",filename);
+        sprintf(newfn,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",filename);
         len = (DWORD) s.st_size;
 
-        fd = open(newfn, O_RDONLY);
+        fd = OPEN(newfn, O_RDONLY);
         if (fd == -1)
         {
           globfree(&globbuf);
@@ -5792,7 +5825,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     if (a==INVALID_FILE_ATTRIBUTES)
     {
       a=GetFileAttributes(dir);
-      sprintf(newfn,"%s%s*.*",dir,dir[0]?PATH_SEPARATOR_STR:"");
+      sprintf(newfn,"%s%s*.*",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"");
     }
 #else
     int a;
@@ -5800,7 +5833,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
     if (stat(lgss, &st))
     {
       stat(dir, &st);
-      sprintf(newfn,"%s%s*",dir,dir[0]?PATH_SEPARATOR_STR:"");
+      sprintf(newfn,"%s%s*",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"");
     }
 #endif
     else
@@ -5828,14 +5861,14 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 #else
     if (S_ISDIR(st.st_mode))
     {
-      if (!glob(newfn, GLOB_NOSORT, NULL, &globbuf))
+      if (!GLOB(newfn, GLOB_NOSORT, NULL, &globbuf))
       {
         for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
         {
           struct stat s;
           if (!stat(globbuf.gl_pathv[i], &s) && S_ISDIR(s.st_mode))
           {
-            char *dirname = strrchr(globbuf.gl_pathv[i], PATH_SEPARATOR_C);
+            char *dirname = strrchr(globbuf.gl_pathv[i], PLATFORM_PATH_SEPARATOR_C);
             if (dirname)
               dirname++;
             else
@@ -5876,12 +5909,12 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
               char spec[1024];
 #ifdef _WIN32
-              wsprintf(spec,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",d.cFileName);
+              wsprintf(spec,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",d.cFileName);
 #else
-              wsprintf(spec,"%s%s%s",dir,dir[0]?PATH_SEPARATOR_STR:"",dirname);
+              wsprintf(spec,"%s%s%s",dir,dir[0]?PLATFORM_PATH_SEPARATOR_STR:"",dirname);
 #endif
               SCRIPT_MSG("%sFile: Descending to: \"%s\"\n",generatecode?"":"Reserve",spec);
-              strcat(spec,PATH_SEPARATOR_STR);
+              strcat(spec,PLATFORM_PATH_SEPARATOR_STR);
               strcat(spec,fspec);
               if (generatecode)
               {
@@ -5914,7 +5947,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                   FindClose(htemp);
 #else
                 glob_t globbuf2;
-                glob(spec, GLOB_NOSORT, NULL, &globbuf2);
+                GLOB(spec, GLOB_NOSORT, NULL, &globbuf2);
                 if (globbuf2.gl_pathc)
                 {
 #endif

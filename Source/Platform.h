@@ -49,14 +49,20 @@ typedef unsigned long HBRUSH;
 typedef WORD LANGID;
 #endif
 
-// system specific
 
-#ifdef _WIN32
+// script path separator
+
 #  define PATH_SEPARATOR_STR "\\"
 #  define PATH_SEPARATOR_C '\\'
+
+// system specific separator
+
+#ifdef _WIN32
+#  define PLATFORM_PATH_SEPARATOR_STR "\\"
+#  define PLATFORM_PATH_SEPARATOR_C '\\'
 #else
-#  define PATH_SEPARATOR_STR "/"
-#  define PATH_SEPARATOR_C '/'
+#  define PLATFORM_PATH_SEPARATOR_STR "/"
+#  define PLATFORM_PATH_SEPARATOR_C '/'
 #endif
 
 // attributes
