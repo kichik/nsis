@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.20b
+;NSIS Modern Style UI version 1.21
 ;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
@@ -34,6 +34,8 @@
   ;Component-select dialog
   ComponentText /LANG=${LANG_ENGLISH} "Check the components you want to install and uncheck the components you don't want to install. Click Next to continue."
   ComponentText /LANG=${LANG_DUTCH} "Selecteer de onderdelen die u wilt installer en deselecteer de onderdelen die u niet wilt installeren. Klik Volgende om verder te gaan."
+  LangString SecCreateUninstName ${LANG_ENGLISH} "Uninstaller"
+  LangString SecCreateUninstName ${LANG_DUTCH} "Deïnstallatie programma"
 
   ;Folder-select dialog
   InstallDir "$PROGRAMFILES\${NAME}"
@@ -50,7 +52,7 @@
 ;--------------------------------
 ;Installer Sections
 
-Section "Modern.exe" SecCopyUI
+Section "modern.exe" SecCopyUI
 
   ;Add your stuff here
 
@@ -59,7 +61,7 @@ Section "Modern.exe" SecCopyUI
 
 SectionEnd
 
-Section "Create uninstaller" SecCreateUninst
+Section $(SecCreateUninstName) SecCreateUninst
 
   ;Write the language to the registry (for the uninstaller)
   WriteRegStr HKCU "Software\${NAME}" "Installer Language" "$LANGUAGE"
@@ -87,9 +89,6 @@ Function .onInit
   Pop $LANGUAGE
   StrCmp $LANGUAGE "cancel" 0 +2
     Abort
-
-  StrCmp $LANGUAGE ${LANG_DUTCH} "" +2
-    SectionSetText ${SecCreateUninst} "Deïnstallatie programma"
 
 FunctionEnd
 
