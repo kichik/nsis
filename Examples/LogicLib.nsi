@@ -137,14 +137,16 @@ Section /o "Run tests" TESTS
     DetailPrint "FAILED IfThen test"
   ${EndIf}
 
-  ; ifcmd..||..|
+  ; ifcmd..||..| and if/unless cmd
   StrCpy $R2 ""
   ${ifcmd} MessageBox MB_YESNO "Please press Yes" IDYES ${||} StrCpy $R2 $R2A ${|}
-  ${ifcmd} MessageBox MB_YESNO|MB_DEFBUTTON2 "Please press No" IDYES ${||} StrCpy $R2 $R2B ${|}
-  ${If} $R2 == "A"
-    DetailPrint "PASSED IfCmd test"
+  ${Unless} ${Cmd} `MessageBox MB_YESNO|MB_DEFBUTTON2 "Please press No" IDYES`
+    StrCpy $R2 $R2B
+  ${EndUnless}
+  ${If} $R2 == "AB"
+    DetailPrint "PASSED IfCmd/If Cmd test"
   ${Else}
-    DetailPrint "FAILED IfCmd test"
+    DetailPrint "FAILED IfCmd/If Cmd test"
   ${EndIf}
 
   ; select..case..case2..case3..case4..case5..caseelse..endselect
