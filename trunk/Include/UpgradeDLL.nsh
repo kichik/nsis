@@ -29,6 +29,8 @@
   Push $R1
   Push $R2
   Push $R3
+  Push $R4
+  Push $R5
 
   ;------------------------
   ;Unique number for labels
@@ -36,13 +38,20 @@
   !define UPGRADEDLL_UNIQUE ${__LINE__}
 
   ;------------------------
+  ;Copy the parameters used on run-time to a variable
+  ;This allows the usage of variables as paramter
+
+  StrCpy $R4 "${DESTFILE}"
+  StrCpy $R5 "${TEMPBASEDIR}"
+
+  ;------------------------
   ;Check file and version
 
-  IfFileExists "${DESTFILE}" 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
+  IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
 
   ClearErrors
     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
-    GetDLLVersion "${DESTFILE}" $R2 $R3
+    GetDLLVersion $R4 $R2 $R3
   IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
 
   IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
@@ -57,30 +66,30 @@
   upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
     !ifndef UPGRADEDLL_NOREGISTER
       ;Unregister the DLL
-      UnRegDLL "${DESTFILE}"
+      UnRegDLL $R4
     !endif
 
   ;------------------------
   ;Try to copy the DLL directly
 
   ClearErrors
-    StrCpy $R0 "${DESTFILE}"
+    StrCpy $R0 $R4
     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
   IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
   ;DLL is in use. Copy it to a temp file and Rename it on reboot.
 
-  GetTempFileName $R0 "${TEMPBASEDIR}"
+  GetTempFileName $R0 $R5
     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-  Rename /REBOOTOK $R0 "${DESTFILE}"
+  Rename /REBOOTOK $R0 $R4
 
   ;------------------------
   ;Register the DLL on reboot
 
   !ifndef UPGRADEDLL_NOREGISTER
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-      "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
+      "Register $R4" '"$SYSDIR\rundll32.exe" "$R4",DllRegisterServer'
   !endif
 
   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
@@ -89,7 +98,7 @@
   ;DLL does not exist - just extract
 
   upgradedll.copy_${UPGRADEDLL_UNIQUE}:
-    StrCpy $R0 "${DESTFILE}"
+    StrCpy $R0 $R4
     Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
 
   ;------------------------
@@ -97,7 +106,7 @@
 
   upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
     !ifndef UPGRADEDLL_NOREGISTER
-      RegDLL "${DESTFILE}"
+      RegDLL $R4
     !endif
 
   ;------------------------
@@ -105,6 +114,8 @@
 
   upgradedll.done_${UPGRADEDLL_UNIQUE}:
 
+  Pop $R5
+  Pop $R4
   Pop $R3
   Pop $R2
   Pop $R1
