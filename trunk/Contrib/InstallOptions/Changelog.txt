@@ -1,8 +1,9 @@
-DLL version 2.0 (12/14/2002)
+DLL version 2.0 (1/4/2003)
 * Supports custom font and DPI settings (by Joost Verburg)
 * INI files should contain dialog units now, no pixels (by Joost Verburg)
 * RESIZETOFIT flag for Bitmap control (by Amir Szekely)
 * New documentation (by Joost Verburg)
+* New GROUP/NOTABSTOP/DISABLED flags
 
 DLL version 1.7 beta (11/2/2002) 
 * Added initDialog and show DLL functions
