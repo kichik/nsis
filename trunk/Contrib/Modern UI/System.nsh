@@ -2,8 +2,8 @@
 ;Macro System
 ;Written by Joost Verburg
 
-;See Basic.nsi, Multilanguage.nsi and InstallOptions.nsi
-;in the Examples\Modern UI directory for examples of usage.
+;See Basic.nsi, Multilanguage.nsi, InstallOptions.nsi and StartMenu.nsi
+;in the 'Examples\Modern UI' directory for examples of usage.
 
 ;--------------------------------
 !verbose 3
@@ -254,7 +254,7 @@
   !verbose 3
 
   !ifdef MUI_COMPONENTSPAGE
-    Page components SetComponents SetComponentsDialog
+    Page components SetComponents SetComponentsDialog "MUI_INSTALLBUTTON_COMPONENTS"
   !endif
   
   !verbose 4
@@ -266,7 +266,7 @@
   !verbose 3
 
   !ifdef MUI_DIRECTORYPAGE
-    Page directory SetDirectory SetDirectoryDialog
+    Page directory SetDirectory SetDirectoryDialog "MUI_INSTALLBUTTON_DIRECTORY"
   !endif
   
   !verbose 4
@@ -278,7 +278,7 @@
   !verbose 3
 
   !ifdef MUI_STARTMENUPAGE
-    Page custom SetStartmenu
+    Page custom SetStartmenu "" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
   !verbose 4
@@ -438,38 +438,6 @@
 
 !macroend
 
-!macro MUI_INSTALLOPTIONS_WRITETITLE FILE TITLE
-
-  !verbose 3
-  
-  Push ${MUI_TEMP1}
-  Push ${MUI_TEMP2}
-
-    StrCpy ${MUI_TEMP1} "$(MUI_TEXT_WINDOWTITLE)"
-    StrCpy ${MUI_TEMP2} "${TITLE}"
-    
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "Title" "${MUI_TEMP1}: ${MUI_TEMP2}"
-  
-  Pop ${MUI_TEMP2}
-  Pop ${MUI_TEMP1}
-  
-!macroend
-
-!macro MUI_UNINSTALLOPTIONS_WRITETITLE FILE TITLE
-
-  !verbose 3
-  
-  Push ${MUI_TEMP1}
-
-    StrCpy ${MUI_TEMP1} "$(MUI_UNTEXT_WINDOWTITLE)"
-    StrCpy ${MUI_TEMP2} "${MUI_TEMP1}: ${TITLE}"
-    
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "${FILE}" "Settings" "Title" "${MUI_TEMP1}"
-  
-  Pop ${MUI_TEMP1}
-  
-!macroend
-
 ;--------------------------------
 ;SECTIONS
 
@@ -594,19 +562,8 @@
   
     !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_STARTMENU_TITLE) $(MUI_TEXT_STARTMENU_SUBTITLE)
     
-    Push ${MUI_TEMP1}
-    Push ${MUI_TEMP2}
-    
-      StrCpy ${MUI_TEMP1} "$(MUI_TEXT_WINDOWTITLE)"
-      StrCpy ${MUI_TEMP2} "$(MUI_TEXT_STARTMENU_WINDOWTITLE)"
-    
-      SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:${MUI_TEMP1}: ${MUI_TEMP2}"
-      
-      StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU)" /lastused "${MUI_STARTMENU_VARIABLE}" "${MUI_STARTMENU_DEFAULTFOLDER}"
-      Pop "${MUI_STARTMENU_VARIABLE}"
-      
-    Pop ${MUI_TEMP1}
-    Pop ${MUI_TEMP2}
+    StartMenu::Select /noicon /autoadd /text "$(MUI_INNERTEXT_STARTMENU)" /lastused "${MUI_STARTMENU_VARIABLE}" "${MUI_STARTMENU_DEFAULTFOLDER}"
+    Pop "${MUI_STARTMENU_VARIABLE}"
     
   FunctionEnd
 
@@ -724,7 +681,6 @@
 
   !verbose 3
 
-  !insertmacro MUI_PAGECOMMANDS
   !insertmacro MUI_FUNCTIONS_PAGES
   !insertmacro MUI_FUNCTIONS_GUIINIT
   !insertmacro MUI_FUNCTIONS_ABORTWARNING
@@ -739,7 +695,6 @@
   
   !ifdef MUI_UNINSTALLER
 
-    !insertmacro MUI_UNPAGECOMMANDS
     !insertmacro MUI_UNFUNCTIONS_PAGES
     !insertmacro MUI_UNFUNCTIONS_GUIINIT
   
@@ -755,6 +710,22 @@
 !macro MUI_LANGUAGEFILE_BEGIN LANGUAGE
 
   !verbose 3
+  
+  !ifndef MUI_CUSTOMPAGECOMMANDS
+    !ifndef MUI_PAGECOMMANDS
+      !define MUI_PAGECOMMANDS
+      !insertmacro MUI_PAGECOMMANDS
+    !endif
+  !endif
+  
+  !ifdef MUI_UNINSTALLER
+    !ifndef MUI_UNCUSTOMPAGECOMMANDS
+      !ifndef MUI_UNPAGECOMMANDS
+        !define MUI_UNPAGECOMMANDS
+        !insertmacro MUI_UNPAGECOMMANDS
+      !endif
+    !endif
+  !endif
   
   !define MUI_LANGUAGEFILE_CURRENT "${LANGUAGE}"
   
@@ -853,34 +824,6 @@
 !macroend
 
 !macro MUI_LANGUAGEFILE_END
-
-  !ifndef MUI_STARTMENUPAGE
-    !ifndef MUI_CUSTOMPAGECOMMANDS
-      !ifdef MUI_DIRECTORYPAGE
-        !ifndef MUI_DIRECTORY_INSTALLBUTTON
-          !define MUI_DIRECTORY_INSTALLBUTTON
-        !endif
-      !endif
-      !ifndef MUI_DIRECTORYPAGE
-        !ifdef MUI_COMPONENTSPAGE
-          !ifndef MUI_COMPONENTS_INSTALLBUTTON
-            !define MUI_COMPONENTS_INSTALLBUTTON
-          !endif
-        !endif
-      !endif
-    !endif
-  !endif
-
-  !ifdef MUI_STARTMENUPAGE
-    !ifndef MUI_WINDOWTITLE
-      !define MUI_WINDOWTITLE
-    !endif
-    !ifndef MUI_CUSTOMPAGECOMMANDS
-      !ifndef MUI_STARTMENU_INSTALLBUTTON
-        !define MUI_STARTMENU_INSTALLBUTTON
-      !endif
-    !endif
-  !endif
     
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME" "${MUI_LANGNAME}"
 
@@ -896,7 +839,7 @@
   !ifdef MUI_COMPONENTSPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_COMPONENTS_TITLE" "${MUI_TEXT_COMPONENTS_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_COMPONENTS_SUBTITLE" "${MUI_TEXT_COMPONENTS_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "ComponentText" "MUI_INNERTEXT_COMPONENTS" "${MUI_INNERTEXT_COMPONENTS}" "MUI_COMPONENTS_INSTALLBUTTON"
+    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "ComponentText" "MUI_INNERTEXT_COMPONENTS" "${MUI_INNERTEXT_COMPONENTS}" "MUI_INSTALLBUTTON_COMPONENTS"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE" "${MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO" "${MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO}"
   !endif
@@ -904,7 +847,7 @@
   !ifdef MUI_DIRECTORYPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_DIRECTORY_TITLE" "${MUI_TEXT_DIRECTORY_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_DIRECTORY_SUBTITLE" "${MUI_TEXT_DIRECTORY_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "DirText" "MUI_INNERTEXT_DIRECTORY_TOP" "${MUI_INNERTEXT_DIRECTORY_TOP}" "MUI_DIRECTORY_INSTALLBUTTON"
+    !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE "DirText" "MUI_INNERTEXT_DIRECTORY_TOP" "${MUI_INNERTEXT_DIRECTORY_TOP}" "MUI_INSTALLBUTTON_DIRECTORY"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING MUI_INNERTEXT_DIRECTORY_DESTINATION "${MUI_INNERTEXT_DIRECTORY_DESTINATION}"
   !endif
   
@@ -912,7 +855,7 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_WINDOWTITLE" "${MUI_TEXT_STARTMENU_WINDOWTITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_TITLE" "${MUI_TEXT_STARTMENU_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_STARTMENU_SUBTITLE" "${MUI_TEXT_STARTMENU_SUBTITLE}"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU" "${MUI_INNERTEXT_STARTMENU}" "MUI_STARTMENU_INSTALLBUTTON"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE "MUI_INNERTEXT_STARTMENU" "${MUI_INNERTEXT_STARTMENU}" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE" "${MUI_TEXT_INSTALLING_TITLE}"
@@ -925,9 +868,6 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORTWARNING" "${MUI_TEXT_ABORTWARNING}"
   !endif
   
-  !ifdef MUI_WINDOWTITLE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WINDOWTITLE" "${MUI_TEXT_WINDOWTITLE}"
-  !endif
   
   !ifdef MUI_UNINSTALLER
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_INTRO_TITLE" "${MUI_UNTEXT_INTRO_TITLE}"
@@ -941,9 +881,6 @@
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_TITLE" "${MUI_UNTEXT_FINISHED_TITLE}"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_SUBTITLE" "${MUI_UNTEXT_FINISHED_SUBTITLE}"
   
-    !ifdef MUI_UNWINDOWTITLE
-      !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_WINDOWTITLE" "${MUI_UNTEXT_WINDOWTITLE}"
-    !endif
   !endif
   
   !ifdef MUI_TEXT_CONTINUE_NEXT

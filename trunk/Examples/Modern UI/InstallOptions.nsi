@@ -29,14 +29,24 @@
   ;General
   OutFile "InstallOptions.exe"
   
-  ;Page order  
+  ;Install Options pages
   
+    ;Header
+    LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
+    LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+  
+    ;Window titles
+    LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} ": Custom Page A"
+    LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} ": Custom Page B"
+    LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} ": Custom Page C"
+  
+  ;Page order 
   !insertmacro MUI_PAGECOMMAND_LICENSE
-  Page custom SetCustomA
-  Page custom SetCustomB
+  Page custom SetCustomA "$(TEXT_IO_PAGETITLE_A)"
+  Page custom SetCustomB "$(TEXT_IO_PAGETITLE_B)"
   !insertmacro MUI_PAGECOMMAND_COMPONENTS
   !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetCustomC
+  Page custom SetCustomC "$(TEXT_IO_PAGETITLE_C)"
   !insertmacro MUI_PAGECOMMAND_INSTFILES
   
   ;License page
@@ -48,14 +58,6 @@
 
   ;Folder-selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
-  
-  ;Install Options pages
-  LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
-  LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
-  
-  LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} "Custom Page A"
-  LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} "Custom Page B"
-  LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} "Custom Page C"
   
   ;Things that need to be extracted on startup (keep these lines before any File command!)
   ;Only useful for BZIP2 compression
@@ -109,11 +111,6 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
-  
-  ;Titles for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioA.ini" "$(TEXT_IO_PAGETITLE_A)"
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioB.ini" "$(TEXT_IO_PAGETITLE_B)"
-  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioC.ini" "$(TEXT_IO_PAGETITLE_C)"
   
 FunctionEnd
 
