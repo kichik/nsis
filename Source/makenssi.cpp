@@ -275,8 +275,11 @@ int main(int argc, char **argv)
             }
             return 1;
           }
-          fprintf(g_output,"\n");
-          fflush(g_output);
+          if (build.display_script) 
+          {
+            fprintf(g_output,"\n");
+            fflush(g_output);
+          }
         }
       }
 
@@ -330,8 +333,11 @@ int main(int argc, char **argv)
                 }
                 return 1;
               }
-              fprintf(g_output,"\n");
-              fflush(g_output);
+              if (build.display_script) 
+              {
+                fprintf(g_output,"\n");
+                fflush(g_output);
+              }
             }
           }
         }
