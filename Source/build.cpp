@@ -195,7 +195,7 @@ CEXEBuild::CEXEBuild()
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 
   // Added by Amir Szekely 31st July 2002
-  compressor = &zlib_comressor;
+  compressor = &zlib_compressor;
   build_compressor_set = false;
 #ifdef NSIS_ZLIB_COMPRESS_WHOLE
   build_compress_whole = true;
@@ -278,6 +278,8 @@ CEXEBuild::CEXEBuild()
   branding_image_found=false; // Added by Amir Szekely 22nd July 2002
   
   no_space_texts=false;
+
+  last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
 }
 
 int CEXEBuild::getcurdbsize() { return cur_datablock->getlen(); }
@@ -313,21 +315,21 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
   "R7\0"            // 18
   "R8\0"            // 19
   "R9\0"            // 20
-  "CMDLINE\0"       // 21 everything before here doesn't have trailing slash removal
+  "LANGUAGE\0"      // 21
+  "CMDLINE\0"       // 22 everything before here doesn't have trailing slash removal
 
-  "INSTDIR\0"       // 22
-  "OUTDIR\0"        // 23
-  "EXEDIR\0"        // 24
-  "PROGRAMFILES\0"  // 25
-  "SMPROGRAMS\0"    // 26
-  "SMSTARTUP\0"     // 27
-  "DESKTOP\0"       // 28
-  "STARTMENU\0"     // 29
-  "QUICKLAUNCH\0"   // 30
-  "TEMP\0"          // 31
-  "WINDIR\0"        // 32
-  "SYSDIR\0"        // 33
-  "LANGUAGE\0"      // 34
+  "INSTDIR\0"       // 23
+  "OUTDIR\0"        // 24
+  "EXEDIR\0"        // 25
+  "PROGRAMFILES\0"  // 26
+  "SMPROGRAMS\0"    // 27
+  "SMSTARTUP\0"     // 28
+  "DESKTOP\0"       // 29
+  "STARTMENU\0"     // 30
+  "QUICKLAUNCH\0"   // 31
+  "TEMP\0"          // 32
+  "WINDIR\0"        // 33
+  "SYSDIR\0"        // 34
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   "PLUGINSDIR\0"    // 35
 #endif
@@ -1113,7 +1115,7 @@ int CEXEBuild::write_output(void)
   {
     if (!uninstaller_writes_used)
     {
-      warning("Uninstall turned on but WriteUninstaller never used. No uninstaller will be created.");
+      warning("Uninstall section found but WriteUninstaller never used - no uninstaller will be created.");
     }
     else
     {
@@ -1127,6 +1129,7 @@ int CEXEBuild::write_output(void)
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUninstFailed",0),&build_uninst.common.code_onInstFailed)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUserAbort",0),&build_uninst.common.code_onUserAbort)) return PS_ERROR;
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onNextPage",0),&build_uninst.common.code_onNextPage)) return PS_ERROR;
+      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onStaticCtlBkColor",0),&build_uninst.common.code_onStaticCtlBkColor)) return PS_ERROR;
   #endif//NSIS_SUPPORT_CODECALLBACKS
       if (resolve_coderefs("uninstall")) return PS_ERROR;
       set_uninstall_mode(0);
@@ -1148,6 +1151,7 @@ int CEXEBuild::write_output(void)
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onVerifyInstDir",0),&build_header.code_onVerifyInstDir)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onNextPage",0),&build_header.common.code_onNextPage)) return PS_ERROR;
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onPrevPage",0),&build_header.code_onPrevPage)) return PS_ERROR;
+  if (resolve_call_int("install callback",".callbacks",ns_func.find(".onStaticCtlBkColor",0),&build_header.common.code_onStaticCtlBkColor)) return PS_ERROR;
 #ifdef NSIS_CONFIG_COMPONENTPAGE
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onSelChange",0),&build_header.code_onSelChange)) return PS_ERROR;
 #endif//NSIS_CONFIG_COMPONENTPAGE
@@ -1209,9 +1213,8 @@ int CEXEBuild::write_output(void)
     {
       re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
       re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-#ifdef NSIS_CONFIG_CRC_SUPPORT
-      re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
-#endif // NSIS_CONFIG_CRC_SUPPORT
+      if (!build_compress_whole && !build_crcchk)
+        re.UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), 0, 0);
     }
 #endif // NSIS_CONFIG_SILENT_SUPPORT
 
