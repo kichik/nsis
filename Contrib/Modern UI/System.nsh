@@ -245,7 +245,7 @@
 
   StrCmp $0 ${VAR} "" +3
     SendMessage ${MUI_TEMP1} ${WM_SETTEXT} 0 "STR:${TEXT}"
-    Goto description_done
+    Goto mui.description_done
 
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
     !verbose 4
@@ -259,7 +259,7 @@
     !verbose 3
   !endif
 
-  description_done:
+  mui.description_done:
   Pop ${MUI_TEMP1}
 
   !ifndef MUI_NOVERBOSE & MUI_MANUALVERBOSE
@@ -271,16 +271,38 @@
 !macro MUI_FINISHHEADER
 
   !ifndef MUI_FINISHPAGE
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+    !insertmacro MUI_FINISHHEADER_DISPLAY
   !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
-    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+    !insertmacro MUI_FINISHHEADER_DISPLAY
   !endif
   
 !macroend
 
+!macro MUI_FINISHHEADER_DISPLAY
+
+  IfAbort mui.finishheader_abort
+    
+  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
+  Goto mui.finishheader_done
+  
+  mui.finishheader_abort:
+  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_ABORT_TITLE) $(MUI_TEXT_ABORT_SUBTITLE)
+  
+  mui.finishheader_done:
+
+!macroend
+
 !macro MUI_UNFINISHHEADER
   
-  !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_FINISHED_TITLE) $(un.MUI_UNTEXT_FINISHED_SUBTITLE)
+  IfAbort mui.finishheader_abort
+  
+  !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_FINISH_TITLE) $(un.MUI_UNTEXT_FINISH_SUBTITLE)
+  Goto mui.finishheader_done
+
+  mui.finishheader_abort:
+  !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_ABORT_TITLE) $(un.MUI_UNTEXT_ABORT_SUBTITLE)
+  
+  mui.finishheader_done:
 
 !macroend
 
@@ -452,7 +474,7 @@
       ReadRegStr ${MUI_TEMP1} "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}"
       StrCmp ${MUI_TEMP1} "" showlangdialog
         StrCpy $LANGUAGE ${MUI_TEMP1}
-        Goto langdll_done
+        Goto mui.langdll_done
       showlangdialog:
       
     Pop ${MUI_TEMP1}
@@ -465,7 +487,7 @@
     Abort
     
   !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    langdll_done:
+    mui.langdll_done:
   !endif
     
   !ifndef MUI_MANUALVERBOSE
@@ -1190,7 +1212,7 @@
     
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
     
-        IfRebootFlag "" noreboot_init
+        IfRebootFlag "" mui.finish_noreboot_init
       
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 3" "Text" "$(MUI_TEXT_FINISH_INFO_REBOOT)"
       
@@ -1211,9 +1233,9 @@
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Top" "110"
           !insertmacro MUI_INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
       
-          Goto init
+          Goto mui.finish_load
       
-        noreboot_init:
+        mui.finish_noreboot_init:
       
       !endif
        
@@ -1268,7 +1290,7 @@
       !endif
       
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
-        init:
+        mui.finish_load:
       !endif
 
       !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
@@ -1287,7 +1309,7 @@
         
         !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
-          IfRebootFlag "" noreboot_show
+          IfRebootFlag "" mui.finish_noreboot_show
         
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
             SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
@@ -1295,9 +1317,9 @@
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
             SetBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
-            Goto show
+            Goto mui.finish_show
         
-          noreboot_show:
+          mui.finish_noreboot_show:
           
         !endif
         
@@ -1321,7 +1343,7 @@
           !endif
         
         !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
-          show:
+          mui.finish_show:
         !endif
 
       !ifdef MUI_CUSTOMFUNCTION_FINISH_SHOW
@@ -1343,20 +1365,20 @@
       ShowWindow ${MUI_TEMP1} ${SW_HIDE}
       
       Pop ${MUI_TEMP1}
-      StrCmp ${MUI_TEMP1} "success" "" done
+      StrCmp ${MUI_TEMP1} "success" "" mui.finish_done
       
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
       
-        IfRebootFlag "" noreboot_end
+        IfRebootFlag "" mui.finish_noreboot_end
       
           !insertmacro MUI_INSTALLOPTIONS_READ ${MUI_TEMP1} "ioSpecial.ini" "Field 4" "State"
         
             StrCmp ${MUI_TEMP1} "1" "" +2
               Reboot
             
-            Goto done
+            Goto mui.finish_done
       
-        noreboot_end:
+        mui.finish_noreboot_end:
         
       !endif
       
@@ -1392,7 +1414,7 @@
           
         !endif
         
-      done:
+      mui.finish_done:
       
     Pop ${MUI_TEMP3}
     Pop ${MUI_TEMP2}
@@ -1767,6 +1789,12 @@
   
 !macroend
 
+!macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF NAME DEFINE
+
+  LangString "${NAME}" 0 "${${DEFINE}}"
+
+!macroend
+
 !macro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_CONTINUE NAME DEFINE INSTALLBUTTON
 
   !ifndef "${INSTALLBUTTON}"
@@ -1784,6 +1812,12 @@
   LangString "un.${NAME}" 0 "${${NAME}}"
   !undef "${NAME}"
   
+!macroend
+
+!macro MUI_LANGUAGEFILE_UNLANGSTRING_CUSTOMDEFINE_NOUNDEF NAME DEFINE
+
+  LangString "un.${NAME}" 0 "${${DEFINE}}"
+
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND COMMAND NAME
@@ -1910,16 +1944,14 @@
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_INNERTEXT_STARTMENU_CHECKBOX"
   !endif
   
+  !ifndef MUI_FINISHPAGE
+    !insertmacro MUI_LANGUAGEFILE_END_FINISHHEADER
+  !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
+    !insertmacro MUI_LANGUAGEFILE_END_FINISHHEADER
+  !endif
+  
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_SUBTITLE"
-  
-  !ifndef MUI_FINISHPAGE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
-  !else ifdef MUI_FINISHPAGE_NOAUTOCLOSE
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
-    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
-  !endif
   
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'
@@ -1944,12 +1976,27 @@
     !ifdef MUI_UNCONFIRMPAGE
       !insertmacro MUI_LANGUAGEFILE_UNNSISCOMMAND_CONTINUE "UninstallText" "MUI_UNINNERTEXT_INTRO" "MUI_UNINSTALLBUTTON_CONFIRM"
     !endif
-  
+     
+    !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISH_TITLE"
+    !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISH_SUBTITLE"
+    
+    !ifdef MUI_UNTEXT_ABORT_TITLE
+       !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_ABORT_TITLE"
+    !else
+      ;1.63 compatibility
+      !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_UNTEXT_ABORT_TITLE" "MUI_UNTEXT_UNINSTALLING_TITLE"
+    !endif
+    
+    !ifdef MUI_UNTEXT_ABORT_SUBTITLE
+      !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_ABORT_SUBTITLE"
+    !else
+      ;1.63 compatibility
+      !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_UNTEXT_ABORT_SUBTITLE" "MUI_UNTEXT_UNINSTALLING_SUBTITLE"
+    !endif
+    
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_UNINSTALLING_TITLE"
     !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_UNINSTALLING_SUBTITLE"
-     
-    !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_TITLE"
-    !insertmacro MUI_LANGUAGEFILE_UNLANGSTRING "MUI_UNTEXT_FINISHED_SUBTITLE"
+  
   !endif
   
   !undef MUI_TEXT_CONTINUE_NEXT
@@ -1957,6 +2004,27 @@
   
   !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
     !undef MUI_UNTEXT_CONTINUE_UNINSTALL
+  !endif
+    
+!macroend
+
+!macro MUI_LANGUAGEFILE_END_FINISHHEADER
+
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
+  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
+
+  !ifdef MUI_TEXT_ABORT_TITLE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_TITLE"
+  !else
+    ;1.63 compatibility
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_TITLE" "MUI_TEXT_INSTALLING_TITLE"
+  !endif
+  
+  !ifdef MUI_TEXT_ABORT_SUBTITLE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_ABORT_SUBTITLE"
+  !else
+    ;1.63 compatibility
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING_CUSTOMDEFINE_NOUNDEF "MUI_TEXT_ABORT_SUBTITLE" "MUI_TEXT_INSTALLING_SUBTITLE"
   !endif
     
 !macroend
