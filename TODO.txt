@@ -4,6 +4,8 @@ TODO
 
 NSIS
 
+* pre-leave for custom pages
+
 * skip plugin calls, file instructions that add more than one file with +1 with goto
 
 * move more ui changes to compile time.
