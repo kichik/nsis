@@ -1,20 +1,20 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.68
 
-;Language: Serbcyr (3098)
+;Language: Serbian Cyrillic (3098)
 ;Translation by Срђан Обућина <obucina@srpskijezik.edu.yu>
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SERBIAN"
 
-  !define MUI_LANGNAME "Serbian (Cyrillic)" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Serbian Cyrillic" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Добродошли у инсталациони процес програма $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес инсталирања програма $(^NameDA).\r\n\r\nПрепоручљиво је да искључите све друге програме пре почетка инсталирања. Ово може омогућити ажурирање системских фајлова без потребе за рестартовањем рачунара.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Договор о праву коришћења"
-  !define MUI_TEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре инсталације програма $(^NameDA)-e."
+  !define MUI_TEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре инсталирања програма $(^NameDA)-e."
   !define MUI_INNERTEXT_LICENSE_TOP "Притисните Page Down да би видели остатак договора."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме 'Прихватам' за наставак. Морате прихватити договор да би инсталирали програм $(^NameDA)-u."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да би инсталирали програм $(^NameDA)-u. $_CLICK"
@@ -57,11 +57,11 @@
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добродошли у деинсталирање програма $(^NameDA)"
   !define MUI_UNTEXT_WELCOME_INFO_TEXT "Бићете вођени кроз процес деинсталирања програма $(^NameDA).\r\n\r\nПре почетка деинсталирања, уверите се да је програм $(^NameDA) искључен. $_CLICK"
 
-  !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталирање програма$(^NameDA)"
+  !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталирање програма $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Деинсталирање програма $(^NameDA) са рачунара."
 
   !define MUI_UNTEXT_LICENSE_TITLE "Договор о праву коришћења"  
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре деинсталације програма $(^NameDA)-e."
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Пажљиво прочитајте договор о праву коришћења пре деинсталирања програма $(^NameDA)-e."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Ако прихватате све услове договора, притисните дугме 'Прихватам' за наставак. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако прихватате све услове договора, обележите квадратић испод. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u. $_CLICK"
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако прихватате све услове договора, изаберите прву опцију испод. Морате прихватити договор да би деинсталирали програм $(^NameDA)-u. $_CLICK"
