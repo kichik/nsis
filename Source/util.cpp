@@ -1,6 +1,7 @@
 #include "Platform.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include <time.h>
 #include "exedata.h"
 #include "exehead/fileform.h"
 #include "util.h"
@@ -431,4 +432,8 @@ void operator delete(void *p) {
 
 void operator delete [](void *p) {
   if (p) free(p);
+}
+
+size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm) {
+  return strftime(s, max, fmt, tm);
 }

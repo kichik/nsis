@@ -160,9 +160,9 @@ void CEXEBuild::set_date_time_predefines()
   GetTimeFormat(LOCALE_USER_DEFAULT, 0, &stime, NULL, timebuf, sizeof(timebuf));
   definedlist.add("__TIME__",(char *)timebuf);
 #else
-  strftime(datebuf, sizeof(datebuf), "%x", ltime);
+  my_strftime(datebuf, sizeof(datebuf), "%x", ltime);
   definedlist.add("__DATE__",(char *)datebuf);
-  strftime(timebuf, sizeof(timebuf), "%X", ltime);
+  my_strftime(timebuf, sizeof(timebuf), "%X", ltime);
   definedlist.add("__TIME__",(char *)timebuf);
 #endif
 }
