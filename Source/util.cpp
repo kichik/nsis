@@ -11,7 +11,6 @@ int g_dopause=0;
 extern int g_display_errors;
 extern FILE *g_output;
 
-
 void dopause(void)
 {
   if (g_dopause)
@@ -290,3 +289,24 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
   return PIMAGE_RESOURCE_DATA_ENTRY(PRESOURCE_DIRECTORY(rdIcons->Entries[0].OffsetToDirectory + DWORD(rdRoot))->Entries[0].OffsetToData + DWORD(rdRoot))->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 }
 #endif // NSIS_CONFIG_UNINSTALL_SUPPORT
+
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+BYTE* get_dlg(HINSTANCE hUIFile, WORD dlgId, char* filename) {
+  HRSRC hUIRes = FindResource(hUIFile, MAKEINTRESOURCE(dlgId), RT_DIALOG);
+  if (!hUIRes) {
+    if (g_display_errors) fprintf(g_output, "Error: \"%s\" doesn't contain a dialog with the ID %u!\n", filename, dlgId);
+    return 0;
+  }
+  HGLOBAL hUIMem = LoadResource(hUIFile, hUIRes);
+  if (!hUIMem) {
+    if (g_display_errors) fprintf(g_output, "Error: Can't load a dialog from \"%s\"!\n", filename);
+    return 0;
+  }
+  BYTE* pbUIData = (BYTE*)LockResource(hUIMem);
+  if (!pbUIData) {
+    if (g_display_errors) fprintf(g_output, "Error: Can't lock resource from \"%s\"!\n", filename);
+    return 0;
+  }
+  return pbUIData;
+}
+#endif //NSIS_CONFIG_VISIBLE_SUPPORT

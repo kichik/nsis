@@ -33,7 +33,7 @@ Select the directory to install %s in:
 Space available: 
 Space required: 
 Uninstalling from:
-Error opening file for writing: $\r$\n$\t"$0"$\r$\nHit abort to abort installation,$\r$\nretry to retry writing the file, or$\r$\nignore to skip this file
+Error opening file for writing: \r\n\t"$0"\r\nHit abort to abort installation,\r\nretry to retry writing the file, or\r\nignore to skip this file
 Can't write: 
 Copy failed
 Copy to 

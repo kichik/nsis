@@ -784,7 +784,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     case TOK_INSTDIR:
       if (build_header.install_directory_ptr >= 0)
       {
-        warning("InstallDir: specified multiple times. wasting space (%s:%d)",curfilename,linecnt);
+        warning("%s: specified multiple times. wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
       }
       build_header.install_directory_ptr = add_string_main(line.gettoken_str(1));
       SCRIPT_MSG("InstallDir: \"%s\"\n",line.gettoken_str(1));
@@ -793,7 +793,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       {
         if (build_header.install_reg_key_ptr>= 0)
         {
-          warning("InstallRegKey: specified multiple times, wasting space (%s:%d)",curfilename,linecnt);
+          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
         }
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
@@ -1035,59 +1035,117 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     // Added by Amir Szekely 28th July 2002
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 	  case TOK_CHANGEUI:
-	  try {
-        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(1), 0, LOAD_LIBRARY_AS_DATAFILE);
+	    try {
+        int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0");
+        if (k<0) PRINTHELP();
+
+        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
         if (!hUIFile) {
           ERROR_MSG("Error: Can't find \"%s\"!\n", line.gettoken_str(1));
           return PS_ERROR;
         }
-        HRSRC hUIRes = FindResource(hUIFile, MAKEINTRESOURCE(IDD_INST), RT_DIALOG);
-        if (!hUIRes) {
-          ERROR_MSG("Error: \"%s\" doesn't contain a dialog named IDD_INST (%u)!\n", line.gettoken_str(1), IDD_INST);
-          return PS_ERROR;
-        }
-        HGLOBAL hUIMem = LoadResource(hUIFile, hUIRes);
-        if (!hUIMem) {
-          ERROR_MSG("Error: Can't load a dialog from \"%s\"!\n", line.gettoken_str(1));
-          return PS_ERROR;
-        }
-        BYTE* pbUIData = (BYTE*)LockResource(hUIMem);
-        if (!pbUIData) {
-          ERROR_MSG("Error: Can't lock resource from \"%s\"!\n", line.gettoken_str(1));
-          return PS_ERROR;
-        }
-
-        CDialogTemplate UIDlg(pbUIData);
-
-        // Search for required items
-        #define SEARCH(x) if (!UIDlg.GetItem(IDC_BACK)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return PS_ERROR;}
-        SEARCH(IDC_BACK);
-        SEARCH(IDC_CHILDRECT);
-        SEARCH(IDC_VERSTR);
-        SEARCH(IDOK);
-        SEARCH(IDCANCEL);
-
-        // Search for bitmap holder (default for SetBrandingImage)
-        DialogItemTemplate* dlgItem = 0;
-        int i = 0;
-        while (dlgItem = UIDlg.GetItemByIdx(i)) {
-          if (IS_INTRESOURCE(dlgItem->szClass)) {
-            if (dlgItem->szClass == MAKEINTRESOURCE(0x0082)) {
-              if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
-                branding_image_found = true;
-                branding_image_id = dlgItem->wId;
-                break;
-              }
-            }
-          }
-          i++;
-        }
 
         build_compressor_set=true;
         CResourceEditor re(header_data_new, exeheader_size_new);
-        re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), pbUIData, UIDlg.GetSize());
+
+        // Search for required items
+        #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return 0;}
+
+        BYTE* dlg = 0;
+
+        if (k == 0 || k == 1) {
+          dlg = get_dlg(hUIFile, IDD_LICENSE, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_EDIT1);
+          SEARCH(IDC_INTROTEXT);
+          re.UpdateResource(RT_DIALOG, IDD_LICENSE, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
+        if (k == 0 || k == 2) {
+          dlg = get_dlg(hUIFile, IDD_DIR, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_SELDIRTEXT);
+          SEARCH(IDC_INTROTEXT);
+          SEARCH(IDC_DIR);
+          SEARCH(IDC_BROWSE);
+          SEARCH(IDC_CHECK1);
+          SEARCH(IDC_SPACEREQUIRED);
+          SEARCH(IDC_SPACEAVAILABLE);
+          re.UpdateResource(RT_DIALOG, IDD_DIR, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
+        if (k == 0 || k == 3) {
+          dlg = get_dlg(hUIFile, IDD_SELCOM, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_SPACEREQUIRED);
+          SEARCH(IDC_INTROTEXT);
+          SEARCH(IDC_TEXT1);
+          SEARCH(IDC_TEXT2);
+          SEARCH(IDC_TREE1);
+          SEARCH(IDC_COMBO1);
+          re.UpdateResource(RT_DIALOG, IDD_SELCOM, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
+        if (k == 0 || k == 4) {
+          dlg = get_dlg(hUIFile, IDD_INST, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_BACK);
+          SEARCH(IDC_CHILDRECT);
+          SEARCH(IDC_VERSTR);
+          SEARCH(IDOK);
+          SEARCH(IDCANCEL);
+
+          // Search for bitmap holder (default for SetBrandingImage)
+          DialogItemTemplate* dlgItem = 0;
+          int i = 0;
+          while (dlgItem = UIDlg.GetItemByIdx(i)) {
+            if (IS_INTRESOURCE(dlgItem->szClass)) {
+              if (dlgItem->szClass == MAKEINTRESOURCE(0x0082)) {
+                if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
+                  branding_image_found = true;
+                  branding_image_id = dlgItem->wId;
+                  break;
+                }
+              }
+            }
+            i++;
+          }
+
+          re.UpdateResource(RT_DIALOG, IDD_INST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
+        if (k == 0 || k == 5) {
+          dlg = get_dlg(hUIFile, IDD_INSTFILES, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_LIST1);
+          SEARCH(IDC_INTROTEXT);
+          SEARCH(IDC_PROGRESS1);
+          SEARCH(IDC_PROGRESS2);
+          SEARCH(IDC_SHOWDETAILS);
+          re.UpdateResource(RT_DIALOG, IDD_INSTFILES, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
+        if (k == 0 || k == 6) {
+          dlg = get_dlg(hUIFile, IDD_UNINST, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg);
+          SEARCH(IDC_EDIT1);
+          SEARCH(IDC_INTROTEXT);
+          SEARCH(IDC_UNINSTFROM);
+          re.UpdateResource(RT_DIALOG, IDD_UNINST, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
+        }
+
         free(header_data_new);
         header_data_new = re.Save((DWORD&)exeheader_size_new);
+
+        if (!FreeLibrary(hUIFile)) {
+          ERROR_MSG("can't free library!\n");
+        }
 
         SCRIPT_MSG("ChangeUI: %s%s\n", line.gettoken_str(1), branding_image_found?" (branding image holder found)":"");
       }
@@ -1259,16 +1317,24 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
       try {
       	NLF *newNLF = new NLF(line.gettoken_str(1));
-        for (int i = 0; i < build_nlfs.size(); i++)
+        int i;
+        for (i = 0; i < build_nlfs.size(); i++)
           if (build_nlfs[i]->GetLang() == newNLF->GetLang()) {
             ERROR_MSG("Error: Can't add same language twice!\n");
             return PS_ERROR;
           }
         build_nlfs.push_back(newNLF);
-        StringTable *table = (StringTable*)malloc(sizeof(StringTable));
-        memset(table, -1, sizeof(StringTable));
-        table->lang_id=table->ucommon.lang_id=table->installer.lang_id=table->uninstall.lang_id=newNLF->GetLang();
-        string_tables.push_back(table);
+        for (i = 0; i < string_tables.size(); i++) {
+          if (newNLF->GetLang() == string_tables[i]->lang_id) {
+            break;
+          }
+        }
+        if (i < string_tables.size()) {
+          StringTable *table = (StringTable*)malloc(sizeof(StringTable));
+          memset(table, -1, sizeof(StringTable));
+          table->lang_id=table->ucommon.lang_id=table->installer.lang_id=table->uninstall.lang_id=newNLF->GetLang();
+          string_tables.push_back(table);
+        }
       }
       catch (exception &err) {
         ERROR_MSG("Error while loading language file: %s\n", err.what());
