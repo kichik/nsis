@@ -48,7 +48,6 @@
 #define TBB_CLEARLOG                     13
 #define TBB_SEP3                         14
 #define TBB_NSISHOME                     15
-#define TBB_NSISDEV                      16
 #define TBB_FORUM                        17
 #define TBB_NSISUPDATE                   18
 #define TBB_SEP4                         19
@@ -69,7 +68,6 @@
 #define IDB_BROWSESCR                    10
 #define IDB_CLEARLOG                     11
 #define IDB_NSISHOME                     12
-#define IDB_NSISDEV                      13
 #define IDB_FORUM                        14
 #define IDB_NSISUPDATE                   15
 #define IDB_DOCS                         16

@@ -84,14 +84,6 @@ BEGIN
     BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "&Define Symbols...\tCtrl+D",  IDM_DEFINES
-#ifdef COMPRESSOR_OPTION
-        POPUP "&Set Compressor"
-        BEGIN
-            MENUITEM "Defa&ult",                    IDM_DEFAULT
-            MENUITEM "&zlib",                       IDM_ZLIB
-            MENUITEM "&gzip",                       IDM_GZIP
-        END
-#endif
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
@@ -100,7 +92,6 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "NSIS Homepage",               IDM_NSISHOME
-        MENUITEM "NSIS Developer Site",         IDM_NSISDEV
         MENUITEM "NSIS Forum",                  IDM_FORUM
         MENUITEM "NSIS Update",                 IDM_NSISUPDATE
         MENUITEM SEPARATOR
@@ -252,15 +243,11 @@ BEGIN
     IDS_FIND                "Find..."
     IDS_RECOMPILE           "Recompile"
     IDS_DEFINES             "Define Symbols..."
-#ifdef COMPRESSOR_OPTION
-    IDS_COMPRESSOR          "Set Compressor"
-#endif
     IDS_TEST                "Test Installer"
     IDS_EDITSCRIPT          "Edit Script"
     IDS_BROWSESCR           "Browse Script"
     IDS_CLEARLOG            "Clear Log Window"
     IDS_NSISHOME            "NSIS Homepage"
-    IDS_NSISDEV             "NSIS Developer Site"
     IDS_FORUM               "NSIS Forum"
 END
 
@@ -268,9 +255,9 @@ STRINGTABLE DISCARDABLE
 BEGIN
     IDS_NSISUPDATE          "NSIS Update"
     IDS_DOCS                "Documentation"
-	IDS_DEFAULT				"Default"
-	IDS_ZLIB				"zlib"
-	IDS_GZIP				"gzip"
+    IDS_DEFAULT             "Default"
+    IDS_ZLIB                "zlib"
+    IDS_GZIP                "gzip"
 END
 
 #endif    // English (U.S.) resources
