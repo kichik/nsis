@@ -228,10 +228,17 @@ Section "Desktop Shortcut" SecIcons
   CreateShortCut "$SMPROGRAMS\NSIS\NSIS Documentation.lnk" "$INSTDIR\Docs\index.html"
 !endif
 
-  IfFileExists "$INSTDIR\NSIS.exe" "" +3
+  IfFileExists "$INSTDIR\NSIS.exe" 0 +3
     CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\NSIS.exe"
-    Goto +2
-  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe"
+    Goto deskshortcut_done
+   
+  IfFileExists "$INSTDIR\makensisw.exe" 0 +3
+    CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensisw.exe"
+    Goto deskshortcut_done
+   
+  CreateShortCut "$DESKTOP\Nullsoft Install System.lnk" "$INSTDIR\makensis.exe"
+  
+  deskshortcut_done:
 
 SectionEnd
 
@@ -921,6 +928,7 @@ Section -post
       SetOutPath $INSTDIR\Contrib\Graphics\Icons
       File "..\Contrib\Graphics\Icons\modern-install.ico"
       File "..\Contrib\Graphics\Icons\modern-uninstall.ico"
+      SetOutPath $INSTDIR\Contrib\Graphics\Wizard
       File "..\Contrib\Graphics\Wizard\win.bmp"
 
     graphics:
@@ -945,7 +953,7 @@ Section -post
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS" "NoRepair" "1"
 
 !ifndef NO_STARTMENUSHORTCUTS
-  IfFileExists $SMPROGRAMS\NSIS "" nofunshit
+  IfFileExists $SMPROGRAMS\NSIS "" no_startshortcuts
 
   SetDetailsPrint textonly
   DetailPrint "Creating Shortcuts..."
@@ -1069,7 +1077,7 @@ Section -post
   Push "VPatch Readme"
   Call AddContribToStartMenu
 
-  nofunshit:
+  no_startshortcuts:
 !endif
 
   ; will only be removed if empty
