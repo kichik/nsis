@@ -2,6 +2,7 @@
 #include "fileform.h"
 #include "util.h"
 #include "state.h"
+#include "resource.h"
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 #ifdef NSIS_COMPRESS_USE_ZLIB
@@ -224,13 +225,20 @@ static int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int out
 
 static char _inbuffer[IBUFSIZE];
 static char _outbuffer[OBUFSIZE];
+extern int m_length;
+extern int m_pos;
+extern BOOL CALLBACK verProc(HWND, UINT, WPARAM, LPARAM);
 static int NSISCALL __ensuredata(int amount)
 {
+  HWND hwnd=NULL;
+  unsigned int verify_time=GetTickCount()+500;
   int needed=amount-(dbd_size-dbd_pos);
   if (needed>0)
   {
     SetFilePointer(g_db_hFile,dbd_srcpos,NULL,FILE_BEGIN);
     SetFilePointer(dbd_hFile,dbd_size,NULL,FILE_BEGIN);
+    m_length=needed;
+    m_pos=0;
     for (;;)
     {
       int err;
@@ -242,6 +250,24 @@ static int NSISCALL __ensuredata(int amount)
       do
       {
         DWORD r,t;
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+        if (g_inst_cmnheader)
+          if (!g_inst_cmnheader->silent_install) {
+            if (hwnd) {
+              static MSG msg;
+              m_pos=m_length-(amount-(dbd_size-dbd_pos));
+              while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
+            }
+            else if (GetTickCount() > verify_time)
+              hwnd=CreateDialogParam(
+                g_hInstance,
+                MAKEINTRESOURCE(IDD_VERIFY),
+                GetDesktopWindow(),
+                verProc,
+                (LPARAM)_LANG_UNPACKING
+              );
+          }
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
         g_inflate_stream.next_out=_outbuffer;
         g_inflate_stream.avail_out=OBUFSIZE;
         err=inflate(&g_inflate_stream);
@@ -266,6 +292,7 @@ static int NSISCALL __ensuredata(int amount)
     }
     SetFilePointer(dbd_hFile,dbd_pos,NULL,FILE_BEGIN);
   }
+  if (hwnd) DestroyWindow(hwnd);
   return 0;
 }
 
