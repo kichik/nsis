@@ -68,6 +68,7 @@ public:
 	bool UpdateResource(WORD szType, WORD szName, LANGID wLanguage, BYTE* lpData, DWORD dwSize);
 	BYTE* GetResource(char* szType, char* szName, LANGID wLanguage);
 
+  bool AddExtraVirtualSize2PESection(const char* pszSectionName, int addsize);
 	BYTE* Save(DWORD &dwSize);
 
 private:

@@ -108,7 +108,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
   InitCommonControls();
 
-  GetTempPath(sizeof(temp_directory), temp_directory);
+  GetTempPath(sizeof(state_temp_dir), state_temp_dir);
+  CreateDirectory(state_temp_dir,NULL);
 
   lstrcpyn(state_command_line,GetCommandLine(),NSIS_MAX_STRLEN);
 
@@ -308,7 +309,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         static char ibuf[NSIS_MAX_STRLEN];
 
         buf2[0]='\"';
-        mystrcpy(buf2+1,temp_directory);
+        mystrcpy(buf2+1,state_temp_dir);
         lstrcat(buf2,s);
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
@@ -334,7 +335,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2,realcmds);
             lstrcat(buf2," _?=");
             lstrcat(buf2,ibuf);
-            hProc=myCreateProcess(buf2,temp_directory);
+            hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc) CloseHandle(hProc);
             else m_Err = g_errorcopyinginstall;
           }

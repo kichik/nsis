@@ -202,6 +202,7 @@ class CEXEBuild {
     UserVarsStringList m_UserVarNames;
     UserVarsStringList m_UnUserVarNames;
     int DeclaredUserVar(const char *VarName);
+    void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
 #endif
 
     // a whole bunch O data.

@@ -351,52 +351,53 @@ CEXEBuild::CEXEBuild()
   build_header.license_bg=-COLOR_BTNFACE;
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  // Register user variables $0, $1 and so one
+  // Register static user variables $0, $1 and so one
+  // with ONE of reference count, to avoid warning on this vars
   char Aux[3];
   for ( int i = 0; i < 10; i++ )    // 0 - 9
   {
     sprintf(Aux, "%d", i);    
-    m_UserVarNames.add(Aux);
-    m_UnUserVarNames.add(Aux);
+    m_UserVarNames.add(Aux,1);
+    m_UnUserVarNames.add(Aux,1);
   }
   for ( i = 0; i < 10; i++ )        // 10 - 19
   {
     sprintf(Aux, "R%d", i);    
-    m_UserVarNames.add(Aux);
-    m_UnUserVarNames.add(Aux);
+    m_UserVarNames.add(Aux,1);
+    m_UnUserVarNames.add(Aux,1);
   }
-  m_UserVarNames.add("CMDLINE");       // 20 everything before here doesn't have trailing slash removal
-  m_UnUserVarNames.add("CMDLINE");
-  m_UserVarNames.add("INSTDIR");       // 21
-  m_UnUserVarNames.add("INSTDIR");
-  m_UserVarNames.add("OUTDIR");        // 22
-  m_UnUserVarNames.add("OUTDIR");
-  m_UserVarNames.add("EXEDIR");        // 23
-  m_UnUserVarNames.add("EXEDIR");
-  m_UserVarNames.add("LANGUAGE");      // 24
-  m_UnUserVarNames.add("LANGUAGE");
-  m_UserVarNames.add("PLUGINSDIR");    // 25
-  m_UnUserVarNames.add("PLUGINSDIR");
-  m_UserVarNames.add("PROGRAMFILES");  // 26
-  m_UnUserVarNames.add("PROGRAMFILES");
-  m_UserVarNames.add("SMPROGRAMS");    // 27
-  m_UnUserVarNames.add("SMPROGRAMS");
-  m_UserVarNames.add("SMSTARTUP");     // 28
-  m_UnUserVarNames.add("SMSTARTUP");
-  m_UserVarNames.add("DESKTOP");       // 29
-  m_UnUserVarNames.add("DESKTOP");
-  m_UserVarNames.add("STARTMENU");     // 30
-  m_UnUserVarNames.add("STARTMENU");
-  m_UserVarNames.add("QUICKLAUNCH");   // 31
-  m_UnUserVarNames.add("QUICKLAUNCH");
-  m_UserVarNames.add("TEMP");          // 32
-  m_UnUserVarNames.add("TEMP");
-  m_UserVarNames.add("WINDIR");        // 33
-  m_UnUserVarNames.add("WINDIR");
-  m_UserVarNames.add("SYSDIR");        // 34 everything after here doesn't have trailing slash removal
-  m_UnUserVarNames.add("SYSDIR");
-  m_UserVarNames.add("HWNDPARENT");    // 35 
-  m_UnUserVarNames.add("HWNDPARENT");
+  m_UserVarNames.add("CMDLINE",1);       // 20 everything before here doesn't have trailing slash removal
+  m_UnUserVarNames.add("CMDLINE",1);
+  m_UserVarNames.add("INSTDIR",1);       // 21
+  m_UnUserVarNames.add("INSTDIR",1);
+  m_UserVarNames.add("OUTDIR",1);        // 22
+  m_UnUserVarNames.add("OUTDIR",1);
+  m_UserVarNames.add("EXEDIR",1);        // 23
+  m_UnUserVarNames.add("EXEDIR",1);
+  m_UserVarNames.add("LANGUAGE",1);      // 24
+  m_UnUserVarNames.add("LANGUAGE",1);
+  m_UserVarNames.add("PLUGINSDIR",1);    // 25
+  m_UnUserVarNames.add("PLUGINSDIR",1);
+  m_UserVarNames.add("PROGRAMFILES",1);  // 26
+  m_UnUserVarNames.add("PROGRAMFILES",1);
+  m_UserVarNames.add("SMPROGRAMS",1);    // 27
+  m_UnUserVarNames.add("SMPROGRAMS",1);
+  m_UserVarNames.add("SMSTARTUP",1);     // 28
+  m_UnUserVarNames.add("SMSTARTUP",1);
+  m_UserVarNames.add("DESKTOP",1);       // 29
+  m_UnUserVarNames.add("DESKTOP",1);
+  m_UserVarNames.add("STARTMENU",1);     // 30
+  m_UnUserVarNames.add("STARTMENU",1);
+  m_UserVarNames.add("QUICKLAUNCH",1);   // 31
+  m_UnUserVarNames.add("QUICKLAUNCH",1);
+  m_UserVarNames.add("TEMP",1);          // 32
+  m_UnUserVarNames.add("TEMP",1);
+  m_UserVarNames.add("WINDIR",1);        // 33
+  m_UnUserVarNames.add("WINDIR",1);
+  m_UserVarNames.add("SYSDIR",1);        // 34 everything after here doesn't have trailing slash removal
+  m_UnUserVarNames.add("SYSDIR",1);
+  m_UserVarNames.add("HWNDPARENT",1);    // 35 
+  m_UnUserVarNames.add("HWNDPARENT",1);
 #endif
 }
 
@@ -544,11 +545,14 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 
             while ( pUserVarName > p )
             {
-                const char * Debug = p-(pUserVarName-p);
-                
                 int idxUserVar = uninstall_mode ? m_UnUserVarNames.get((char*)p, pUserVarName-p) : m_UserVarNames.get((char*)p, pUserVarName-p);
                 if ( idxUserVar >= 0 )
                 {
+                  // Well, using variables inside string formating doens't mean 
+                  // using the variable, beacuse it will be always an empty string
+                  // which is also memory wasting
+                  // So the line below must be commented !??
+                  //uninstall_mode ? m_UnUserVarNames.inc_reference(idxUserVar): m_UserVarNames.inc_reference(idxUserVar);
                   *out++=(unsigned int)VAR_CODES_START; // Named user variable;
                   *(WORD*)out=((WORD)idxUserVar+1) | 0xF000;
                   out += sizeof(WORD);
@@ -1868,9 +1872,20 @@ int CEXEBuild::write_output(void)
   // Generate language tables
   if (WriteStringTables() == PS_ERROR) return PS_ERROR;
 
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  VerifyDeclaredUserVarRefs(&m_UserVarNames);
+  VerifyDeclaredUserVarRefs(&m_UnUserVarNames);
+  int MaxUserVars = max(m_UserVarNames.getnum(), m_UnUserVarNames.getnum());
+  if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars-TOTAL_COMPATIBLE_STATIC_VARS_COUNT) * sizeof(NSIS_STRING)))
+  {
+    ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", VARS_SECTION_NAME);
+    return PS_ERROR;
+  }
+#endif
+
   // Save all changes to the exe header
   try {
-    close_res_editor();	
+    close_res_editor();
   }
   catch (exception& err) {
     ERROR_MSG("\nError: %s\n", err.what());
@@ -2017,9 +2032,6 @@ int CEXEBuild::write_output(void)
 
       installinfo_compressed=ihd.getlen();
       fh.length_of_header=hdrcomp.getlen();
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-      fh.length_of_uservars=m_UserVarNames.getnum()*sizeof(NSIS_STRING);
-#endif
     }
 
 
@@ -2306,9 +2318,6 @@ int CEXEBuild::uninstall_generate()
 
       set_uninstall_mode(1);
       fh.length_of_header=udata.getlen();
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-      fh.length_of_uservars=m_UnUserVarNames.getnum()*sizeof(NSIS_STRING);
-#endif
       int err=add_data((char*)udata.get(),udata.getlen(),&uhd);
       set_uninstall_mode(0);
       if (err < 0) return PS_ERROR;
@@ -2738,11 +2747,13 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
 
     char *p = line.gettoken_str(token);
+    UserVarsStringList *pUserVarList = uninstall_mode ? &m_UnUserVarNames : &m_UserVarNames;
     if ( *p == '$' && *(p+1) )
     {
-      int idxUserVar = uninstall_mode ? m_UnUserVarNames.get((char *)p+1) : m_UserVarNames.get((char *)p+1);
+      int idxUserVar = pUserVarList->get((char *)p+1);
       if ( idxUserVar >= 0 )
       {
+        pUserVarList->inc_reference(idxUserVar);
         return idxUserVar;
       }
       else
@@ -2772,3 +2783,16 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
   return line.gettoken_enum(token, usrvars);
 #endif
 }
+
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
+{
+  for ( int i = TOTAL_COMPATIBLE_STATIC_VARS_COUNT; i < pVarsStringList->getnum(); i++ )
+  {
+    if ( !pVarsStringList->get_reference(i) )
+    {      
+      warning("Variable \"%s\" not referenced, wasting memory!", pVarsStringList->idx2name(i));
+    }  
+  }
+}
+#endif

@@ -367,7 +367,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int n=100;
         while (n--)
         {
-          if (GetTempFileName(temp_directory,"nst",0,textout))
+          if (GetTempFileName(state_temp_dir,"nst",0,textout))
             return 0;
         }
         g_flags.exec_error++;
@@ -1443,7 +1443,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           filebuf=(unsigned char *)my_GlobalAlloc(g_filehdrsize);
           if (filebuf)
           {
-            int fixoffs=0;
+            //int fixoffs=0;
             DWORD lout;
             SetSelfFilePointer(0,FILE_BEGIN);
             ReadSelfFile((char*)filebuf,g_filehdrsize);

@@ -14,10 +14,20 @@
 char g_log_file[1024];
 #endif
 
-char temp_directory[NSIS_MAX_STRLEN];
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-  NSIS_STRING *g_usrvars;
+  // *** DO NOT DECLARE MORE VARIABLES INSIDE THIS PRAGMAS ***
+  // This will produce a special section called ".ndata" (stands for nsis data)
+  // this way makensis during build time, can search for this section by name
+  // and change the virtual size of this section
+  // which result in extra memory for extra variables without code to do allocation :)
+  // nsis then removes the "DISCARDABLE" style from section (for safe)
+  #pragma bss_seg( VARS_SECTION_NAME )
+  NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
+  #pragma bss_seg()
+  #define SECTION_VARS_RWD "/section:" ## VARS_SECTION_NAME ## ",rwd"
+  #pragma comment(linker, SECTION_VARS_RWD)
 #else
+  char temp_directory[NSIS_MAX_STRLEN];
   char g_usrvars[USER_VARS_COUNT][NSIS_MAX_STRLEN];
   char *state_command_line=g_usrvars[20];
   char *state_install_directory=g_usrvars[21];
@@ -580,7 +590,7 @@ char * NSISCALL process_string(const char *in)
                 {
                   f=0; goto again;
                 }
-                mystrcpy(out,temp_directory);
+                mystrcpy(out,state_temp_dir);
               }
 
             if (nVarIdx == 31) {
@@ -591,10 +601,6 @@ char * NSISCALL process_string(const char *in)
             }
             else break;
           }
-
-        case 32: // TEMP
-          mystrcpy(out,temp_directory);
-          break;
 
         case 33: // WINDIR
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
@@ -612,7 +618,7 @@ char * NSISCALL process_string(const char *in)
           mystrcpy(out, g_usrvars[nVarIdx]);
       } // switch
       // validate the directory name
-      if (nVarIdx > 21 && nVarIdx < 36 ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT and not great than $SYSDIR
+      if (nVarIdx > 21 && nVarIdx < TOTAL_COMPATIBLE_STATIC_VARS_COUNT ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT and not great than $SYSDIR
         // ($LANGUAGE can't have trailing backslash anyway...)
         validate_filename(out);
       }
