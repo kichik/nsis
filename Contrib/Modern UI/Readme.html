@@ -156,6 +156,13 @@ you should always escape it ($\&quot;), because the Modern UI macro's use &quot;
 !define MUI_UNCUSTOMPAGECOMMANDS ;Use customized uninstaller pages
 !define MUI_UNCUSTOMGUIINIT ;Use customized un.onGUIInit function
 </pre>
+  <p class="text">You can also use a LangString for the Readme and Run filenames,
+  if you have different files for different languages:</p>
+<pre class="margin">
+LangString FILE_README ${LANG_ENGLISH} "$INSTDIR\Readme-English.txt"
+
+!define MUI_FINISHPAGE_SHOWREADME "$(FILE_README)"
+</pre>
   <p class="subheader">4. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
@@ -240,8 +247,7 @@ Section "Section Name 2" SectionName2
 SectionEnd
 </pre>
 <p class="header">Custom pages</p>
-<p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
-Install Options documentation</a> for info about creating Install Options INI Files.</p>
+<p class="text">
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
 own page commands to set the order of the pages and the names of the page functions.</p>
@@ -258,16 +264,31 @@ Page custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
 </pre>
 <p class="text">This is also possible in the uninstaller:</p>
 <pre class="margin">
-LangString UNTEXT_IO_WINDOWTITLE ": Install Options Page Title"
+LangString un.UNTEXT_IO_WINDOWTITLE ": Install Options Page Title"
 
 !insertmacro MUI_UNPAGECOMMAND_CONFIRM
-UninstPage custom FunctionName $(TEXT_IO_WINDOWTITLE) ;A custom page
+UninstPage custom un.FunctionName $(UNTEXT_IO_WINDOWTITLE) ;A custom page
 !insertmacro MUI_UNPAGECOMMAND_INSTFILES
 </pre>
 <p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
 MUI_UNCUSTOMPAGECOMMANDS before inserting the MUI_SYSTEM macro.</p>
 <p class="subheader">Call Install Options</p>
-<p class="text">You can call Install Options in FunctionName:</p>
+<p class="text">First, you need to extract your InstallOptions INI
+File in the .onInit function (un.onInit for the uninstaller):</p>
+<pre class="margin">
+Function .onInit
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioFile.ini"
+FunctionEnd
+
+Function FunctionName
+  !insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+  !insertmacro MUI_INSTALLOPTIONS_SHOW "ioFile.ini"
+FunctionEnd
+</pre>
+<p class="text">Have a look at the <a href="..\InstallOptions\Install Options.html">
+Install Options documentation</a> for info about creating Install Options INI Files.</p>
+<p class="text">You can call Install Options in the function defined with the Page
+or UninstPage command:</p>
 <pre class="margin">
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
