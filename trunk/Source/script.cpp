@@ -779,6 +779,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     HKEY_CLASSES_ROOT,HKEY_LOCAL_MACHINE,HKEY_CURRENT_USER,HKEY_USERS,HKEY_CURRENT_CONFIG,HKEY_DYN_DATA,HKEY_PERFORMANCE_DATA
   };
 
+  build_plugin_table();
+
   entry ent={0,};
   switch (which_token)
   {

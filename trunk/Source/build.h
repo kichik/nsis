@@ -78,6 +78,7 @@ class CEXEBuild {
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
     void build_plugin_table(void);
+    int plugins_processed;
 #endif //NSIS_CONFIG_PLUGIN_SUPPORT
 
 

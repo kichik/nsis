@@ -372,6 +372,7 @@ CEXEBuild::CEXEBuild()
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   build_plugin_unload=0;
+  plugins_processed=0;
 #endif
 
   last_used_lang=MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
@@ -3093,6 +3094,10 @@ void CEXEBuild::notify(int code, char *data)
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
 void CEXEBuild::build_plugin_table(void)
 {
+  if (plugins_processed)
+    return;
+  plugins_processed=1;
+
   plugin_used = false;
   uninst_plugin_used = false;
   char* nsisdir = definedlist.find("NSISDIR");
@@ -3102,8 +3107,9 @@ void CEXEBuild::build_plugin_table(void)
     if (searchPath)
     {
       wsprintf(searchPath,"%s\\plugins",nsisdir);
-      INFO_MSG("\nProcessing plugin dlls: \"%s\\*.dll\"\n",searchPath);
+      INFO_MSG("Processing plugin dlls: \"%s\\*.dll\"\n",searchPath);
       m_plugins.FindCommands(searchPath,display_info?true:false);
+      INFO_MSG("\n");
       delete[] searchPath;
     }
   }
