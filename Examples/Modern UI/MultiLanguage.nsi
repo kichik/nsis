@@ -89,6 +89,7 @@
   !insertmacro MUI_LANGUAGE "Indonesian"
   !insertmacro MUI_LANGUAGE "Mongolian"
   !insertmacro MUI_LANGUAGE "Luxembourgish"
+  !insertmacro MUI_LANGUAGE "Albanian"
 
 ;--------------------------------
 ;Reserve Files
