@@ -1,9 +1,23 @@
 #include <windows.h>
 #include <stdio.h>
 #include <commctrl.h>
-// version 0.3 (based on header files, improved interface, Modern UI support, new script code, improved folder detection) by Joost Verburg
 
-// portions Copyright © 1999-2001 Miguel Garrido (mgarrido01@hotmail.com)
+/*
+
+version 0.31 (by Joost Verburg)
+* LZMA compression support
+* Fixed compression setting
+
+version 0.31 (by Joost Verburg)
+* Based on header files
+* Improved interface
+* Modern UI support
+* New script code
+* Immproved folder detection
+
+portions Copyright © 1999-2001 Miguel Garrido (mgarrido01@hotmail.com)
+
+*/
 
 extern "C"
 {
@@ -18,7 +32,7 @@ HWND g_hwnd;
 HANDLE g_hThread;
 char g_cmdline[1024];
 int g_extracting;
-int g_bzip2;
+int g_compressor;
 int g_mui;
 int g_zipfile_size;
 
@@ -430,7 +444,12 @@ void makeEXE(HWND hwndDlg)
   fprintf(fp,"!define ZIP2EXE_NAME `%s`\n",buf);
   GetDlgItemText(hwndDlg,IDC_OUTFILE,buf,sizeof(buf));
   fprintf(fp,"!define ZIP2EXE_OUTFILE `%s`\n",buf);
-  fprintf(fp,"!define ZIP2EXE_COMPRESSOR_%s\n",g_bzip2?"BZIP2":"ZLIB");
+  if (g_compressor == 1)
+    fprintf(fp,"!define ZIP2EXE_COMPRESSOR_ZLIB\n");
+  if (g_compressor == 2)
+    fprintf(fp,"!define ZIP2EXE_COMPRESSOR_BZIP2\n");
+  if (g_compressor == 3)
+    fprintf(fp,"!define ZIP2EXE_COMPRESSOR_LZMA\n");
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
   char *outpath = "$INSTDIR";
   int iswinamp=0;
@@ -525,7 +544,7 @@ void makeEXE(HWND hwndDlg)
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
+                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
   static HICON hIcon;
   static HFONT hFont;
   if (uMsg == WM_DESTROY) { if (hIcon) DeleteObject(hIcon); hIcon=0; if (hFont) DeleteObject(hFont); hFont=0; }
@@ -533,7 +552,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     case WM_INITDIALOG:
       g_hwnd=hwndDlg;
-      CheckDlgButton(hwndDlg,IDC_BZIP2,BST_CHECKED);
+      CheckDlgButton(hwndDlg,IDC_LZMA,BST_CHECKED);
 	  CheckDlgButton(hwndDlg,IDC_MODERNUI,BST_CHECKED);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)gp_poi);
       SendDlgItemMessage(hwndDlg,IDC_INSTPATH,CB_ADDSTRING,0,(LPARAM)"$TEMP");
@@ -671,9 +690,13 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           {
             if (!made)
             {
-              g_bzip2=!IsDlgButtonChecked(hwndDlg,IDC_ZLIB);
+			  if (IsDlgButtonChecked(hwndDlg,IDC_ZLIB))
+                g_compressor = 1;
+			  if (IsDlgButtonChecked(hwndDlg,IDC_BZIP2))
+                g_compressor = 2;
+			  if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
+                g_compressor = 3;
 			  g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
-
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
               int x;
               for (x = 0; x < sizeof(ids)/sizeof(ids[0]); x ++)
