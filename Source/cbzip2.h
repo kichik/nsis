@@ -53,6 +53,22 @@ class CBzip2 : public ICompressor {
       return "bzip2";
     }
 
+    const char* GetErrStr(int err) {
+      switch (err)
+      {
+      case BZ_SEQUENCE_ERROR:
+        return "sequence error - bad call";
+      case BZ_PARAM_ERROR:
+        return "parameter error - bad call";
+      case BZ_MEM_ERROR:
+        return "not enough memory";
+      case BZ_CONFIG_ERROR:
+        return "config error";
+      default:
+        return "unknown error";
+      }
+    }
+
   private:
     bz_stream *stream;
     int last_ret;
