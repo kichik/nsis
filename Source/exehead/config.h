@@ -221,28 +221,28 @@
 
 // fixes
 #ifndef NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_LICENSEPAGE
-#undef NSIS_CONFIG_LICENSEPAGE
-#endif
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-#undef NSIS_CONFIG_COMPONENTPAGE
-#endif
-#ifdef NSIS_SUPPORT_BGBG
-#undef NSIS_SUPPORT_BGBG
-#endif
+  #ifdef NSIS_CONFIG_LICENSEPAGE
+    #undef NSIS_CONFIG_LICENSEPAGE
+  #endif
+  #ifdef NSIS_CONFIG_COMPONENTPAGE
+    #undef NSIS_CONFIG_COMPONENTPAGE
+  #endif
+  #ifdef NSIS_SUPPORT_BGBG
+    #undef NSIS_SUPPORT_BGBG
+  #endif
 #endif
 
 
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#define _NSIS_CONFIG_VERIFYDIALOG
+  #define _NSIS_CONFIG_VERIFYDIALOG
 #endif
 
 #if defined(NSIS_CONFIG_UNINSTALL_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#define _NSIS_CONFIG_UNINSTDLG
+  #define _NSIS_CONFIG_UNINSTDLG
 #endif
 
 #if defined(NSIS_CONFIG_UNINSTALL_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
-#define _NSIS_CONFIG_UNINSTDLG
+  #define _NSIS_CONFIG_UNINSTDLG
 #endif
 
 #ifdef EXEHEAD
@@ -263,12 +263,22 @@
   #ifdef NSIS_COMPRESS_USE_ZLIB
     #ifdef NSIS_ZLIB_COMPRESS_WHOLE
       #define NSIS_COMPRESS_WHOLE
+      #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+        #ifndef _NSIS_CONFIG_VERIFYDIALOG
+          #define _NSIS_CONFIG_VERIFYDIALOG
+        #endif
+      #endif
     #endif
   #endif
 
   #ifdef NSIS_COMPRESS_USE_BZIP2
     #ifdef NSIS_BZIP2_COMPRESS_WHOLE
       #define NSIS_COMPRESS_WHOLE
+      #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+        #ifndef _NSIS_CONFIG_VERIFYDIALOG
+          #define _NSIS_CONFIG_VERIFYDIALOG
+        #endif
+      #endif
     #endif
   #endif
 #endif // EXEHEAD
