@@ -4,7 +4,7 @@
 
 SectionSetFlags \e{section_index section_flags}
 
-Sets the section's flags. The flag is a 32 bit integer. The low 30 bits represent whether the section is in the (as many as) 30 file types. The top bit (0x80000000) represents whether the section is currently enabled, and the second to top bit (0x40000000) represents whether or not the section is read-only. The error flag will be set if an out of range section is specified.  
+Sets the section's flags. The flag is a 32 bit integer. The low 30 bits represent whether the section is in the (as many as) 30 install types. The top bit (0x80000000) represents whether the section is currently enabled, and the second to top bit (0x40000000) represents whether or not the section is read-only. The error flag will be set if an out of range section is specified.  
 
 \S{SectionGetFlags} SectionGetFlags
 
