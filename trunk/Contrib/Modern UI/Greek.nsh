@@ -30,7 +30,7 @@
    
   LangString MUI_TEXT_LICENSE_TITLE ${LANG_GREEK} "Συμφωνία ’δειας Χρήσης"  
   LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_GREEK} "Ελέγξτε τους όρους της άδειας χρήσης πριν εγκαταστήσετε το '${NAME}'."
-  LangString MUI_INNERTEXT_LICENSE ${LANG_GREEK} "Για να συνεχιστεί η εγκατάσταση πρέπει να αποδεχθείτε όλους τους όρους της άδειας χρήσης. Αν τους αποδέχεστε, κάντε κλικ στο Συμφωνώ, αλλιώς κάντε κλικ στο ’κυρο για να τερματιστεί η εγκατάσταση."
+  LangString MUI_INNERTEXT_LICENSE ${LANG_GREEK} "Για να συνεχιστεί η εγκατάσταση πρέπει να αποδεχθείτε όλους τους όρους της άδειας χρήσης. Αν τους αποδέχεστε, κάντε κλικ στο Συμφωνώ, αλλιώς κάντε κλικ στο ’κυρο για να τερματιστεί η εγκατάσταση του '${NAME}'."
   
   LangString MUI_TEXT_COMPONENTS_TITLE ${LANG_GREEK} "Επιλογή Στοιχείων"
   LangString MUI_TEXT_COMPONENTS_SUBTITLE ${LANG_GREEK} "Επιλέξτε τα στοιχεία που θέλετε να εγκαταστήσετε."
