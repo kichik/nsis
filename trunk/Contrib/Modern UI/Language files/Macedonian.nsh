@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.63
+;Compatible with Modern UI 1.64
 
 ;Language: Macedonian (1071)
 ;By Sasko Zdravkin [vardarce@mail.com]
@@ -19,9 +19,11 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Ќе се инсталира ${MUI_PRODUCT} на вашиот компјутер.\r\n\r\nПрепорачано е да ги затворите сите апликации пред да инсталирате. Ова ќе му дозволи на Инсталациониот Визард да ги надокнади некои системски датотеки без рестартирање на компјутерот.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лиценцен Договор"  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Прочитајте ги лиценцните права пред да го инсталирате ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Прочитајте ги лиценцните услови пред да го инсталирате ${MUI_PRODUCT}."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_TOP "Притиснeте Page Down да го видите остатокот од договорот."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ако ги прифаќате правата на договорот, притиснeте Да за да продолжите. Мора да го прифатите Лиценцниот Договор за да продолжите со инсталирањето на ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM "Ако ги прифаќате условите на договорот, притиснeте Да за да продолжите. Мора да го прифатите Лиценцниот Договор за да продолжите со инсталирањето на ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Ако ги прифаќате условите на договорот, чекирајте го check box-от подоле. Мора да го прифатите Лиценцниот Договор за да продолжите со инсталирањето на ${MUI_PRODUCT}."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Ако ги прифаќате условите на договорот, одберете ја првата опција подоле. Мора да го прифатите Лиценцниот Договор за да продолжите со инсталирањето на ${MUI_PRODUCT}."
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_TITLE "Одберете Компоненти"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_COMPONENTS_SUBTITLE "Одберете што сакате од ${MUI_PRODUCT} да се инсталира."
@@ -39,6 +41,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Инсталацијата е завршена"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Инсталирањето заврши успешно."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Завршува"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Крај"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Завршува Инсталациониот Визард на ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} е инсталиран на компјутерот.\r\n\r\nПритиснeте Крај за да го затворите Инсталациониот Визард."
@@ -48,13 +51,16 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Стартувај го ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Отвори ја Readme датотеката"
   
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Start Menu Директориум"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Одберете Start Menu Директориум"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Одберете Start Menu директориум за скратеницата на прогамот."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Одберете Start Menu директориум во кој што сакате да се креираат скратениците на програмата. Исто така може да пишете име за нов директориум."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_CHECKBOX "Не креирај скратеници"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Дали сте сигурни дека сакате да го откажете инсталирањето на ${MUI_PRODUCT}?"  
-  
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Дали сте сигурни дека сакате да го откажете инсталирањето на ${MUI_PRODUCT}?"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_TITLE "Инсталацијата е откажана" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORT_SUBTITLE "Инсталирањето не заврши успешно." 
+
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Притиснeте Деинсталирај за да почне деинсталирањето."
   
@@ -65,7 +71,10 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_TITLE "Деинсталира"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_UNINSTALLING_SUBTITLE "Ве молиме почекајте додека ${MUI_PRODUCT} се деинсталира."
     
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_TITLE "Крај"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISH_SUBTITLE "Деинсталирањето беше успешно."
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Деинсталирањето заврши"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Деинсталирањето беше успешно."
+
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_TITLE "Деинсталирањето е откажано" 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_ABORT_SUBTITLE "Деинсталирањето не заврши успешно."
   
 !insertmacro MUI_LANGUAGEFILE_END
