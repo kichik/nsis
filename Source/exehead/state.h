@@ -1,4 +1,4 @@
-extern char g_usrvars[24][NSIS_MAX_STRLEN];
+extern char g_usrvars[25][NSIS_MAX_STRLEN];
 #define state_command_line (g_usrvars[20])
 #define state_install_directory (g_usrvars[21])
 #define state_output_directory (g_usrvars[22])
