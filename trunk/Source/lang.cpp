@@ -319,7 +319,7 @@ int CEXEBuild::WriteStringTables() {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
         ADD_FONT(IDD_VERIFY);
 #endif
-#undef SET_FONT
+#undef ADD_FONT
       }
       catch (exception& err) {
         ERROR_MSG("Error while applying NLF font for %s: %s\n", err.what());
