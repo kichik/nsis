@@ -450,8 +450,6 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
 
   #ifdef NSIS_SUPPORT_FILE
     SET_INSTRUCTION(NLF_EXTRACT, extract);
-    SET_INSTRUCTION(NLF_ERR_WRITING, err_writing);
-    SET_INSTRUCTION(NLF_ERR_DECOMPRESSING, err_decompressing);
     SET_INSTRUCTION(NLF_SKIPPED, skipped);
   #endif
   SET_INSTRUCTION(NLF_OUTPUT_DIR, output_dir);
@@ -459,6 +457,10 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   SET_INSTRUCTION(NLF_COPY_DETAILS, copy_details);
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 
+  #ifdef NSIS_SUPPORT_FILE
+    SET_INSTRUCTION(NLF_ERR_WRITING, err_writing);
+    SET_INSTRUCTION(NLF_ERR_DECOMPRESSING, err_decompressing);
+  #endif
   SET_INSTRUCTION(NLF_INST_CORRUPTED, inst_corrupted);
 }
 
