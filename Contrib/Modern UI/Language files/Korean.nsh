@@ -12,7 +12,7 @@
 
   !ifndef EUL_RUL
     !define EUL_RUL	"(을)를"	; ~을/를 문제 해결을 위한 정의 !insertmacro MUI_LANGUAGE "Korean" 하기 전에 define 해 놓으면된다.
-  !endif	s
+  !endif
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "$(^Name) 설치를 시작합니다."
   !define MUI_TEXT_WELCOME_INFO_TEXT "이 프로그램은 당신의 컴퓨터에 $(^Name)${EUL_RUL} 설치할 것입니다.\r\n\r\n설치를 시작하기 전 가능한한 모든 프로그램을 종료하여 주시기 바랍니다. 이는 재부팅을 하지 않고서도 시스템 파일을 수정할 수 있게 해줍니다.\r\n\r\n$_CLICK"
