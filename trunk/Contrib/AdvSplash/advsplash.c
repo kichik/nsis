@@ -112,7 +112,7 @@ void SetTransparentRegion(HWND myWnd)
     GlobalFree(bmp);
 }
 
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
     g_hInstance=hInst;
     return TRUE;
@@ -273,12 +273,6 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
   wsprintf(temp,"%d",g_rv);
   pushstring(temp);
 }
-
-#ifdef _DEBUG
-void main()
-{
-}
-#endif
 
 int myatoi(char *s)
 {
