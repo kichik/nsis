@@ -2,8 +2,10 @@
 ;Install Options Example Script
 ;Written by Joost Verburg
 
-!define NAME "Test Software" ;Define your own software name here
-!define VERSION "1.0" ;Define your own software version here
+!define MUI_PRODUCT "Test Software" ;Define your own software name here
+!define MUI_VERSION "1.0" ;Define your own software version here
+
+!define MUI_NAME "${MUI_PRODUCT} ${MUI_VERSION}" ;Installer name
 
 !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
@@ -18,20 +20,20 @@
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
   
+  !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
+    
   !define TEMP1 $R0
-
+  !define TEMP2 $R1
+  
   ;Language
-    ;English
-    LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  
+  !insertmacro MUI_SYSTEM
 
   ;General
   OutFile "InstallOptions.exe"
-  Name "${NAME} ${VERSION}"
   
   ;Page order
-  !define MUI_CUSTOMPAGECOMMANDS ;Use customized pages
-  
   !insertmacro MUI_PAGECOMMAND_LICENSE
   Page custom SetCustomA
   Page custom SetCustomB
@@ -46,14 +48,17 @@
   ;Component-selection page
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
-    LangString DESC_SecCreateUninst ${LANG_ENGLISH} "Create a uninstaller which can automatically delete ${NAME}."
 
   ;Folder-selection page
-  InstallDir "$PROGRAMFILES\${NAME}"
+  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
   
   ;Install Options pages
   LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page"
   LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "Create your own dialog!"
+  
+  LangString TEXT_IO_PAGETITLE_A ${LANG_ENGLISH} "Custom Page A"
+  LangString TEXT_IO_PAGETITLE_B ${LANG_ENGLISH} "Custom Page B"
+  LangString TEXT_IO_PAGETITLE_C ${LANG_ENGLISH} "Custom Page C"
   
   ;Uninstaller
   !define MUI_UNCUSTOMPAGECOMMANDS
@@ -71,23 +76,22 @@
 ;Installer Sections
 
 Function .onInit
-  ;Init InstallOptions
+
+  ;Extract Install Options INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioA.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioB.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "ioC.ini"
+  
   ;Titles for Install Options dialogs
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page A"
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page B"
-  !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "Title" "$(MUI_TEXT_SETUPCAPTION): Custom page C"
-  !ifdef MUI_ABORTWARNING
-    ;Abort warnings for Install Options dialogs
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioA.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioB.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirm" "$(MUI_TEXT_ABORTWARNING)"
-    !insertmacro MUI_INSTALLOPTIONS_WRITE "ioC.ini" "Settings" "CancelConfirmCaption" "$(MUI_TEXT_SETUPCAPTION)"
-  !endif
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioA.ini" "$(TEXT_IO_PAGETITLE_A)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioB.ini" "$(TEXT_IO_PAGETITLE_B)"
+  !insertmacro MUI_INSTALLOPTIONS_WRITETITLE "ioC.ini" "$(TEXT_IO_PAGETITLE_C)"
+  
+  ;Abort warnings for Install Options dialogs
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioA.ini"
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioB.ini"
+  !insertmacro MUI_INSTALLOPTIONS_WRITEABORTWARNING "ioC.ini"
+  
 FunctionEnd
 
 Section "modern.exe" SecCopyUI
@@ -108,12 +112,7 @@ Section "modern.exe" SecCopyUI
 
 SectionEnd
 
-Section ""
-
-  ;Invisible section to display the Finish header
-  !insertmacro MUI_FINISHHEADER
-
-SectionEnd
+!insertmacro MUI_SECTIONS_FINISHHEADER ;Insert this macro after the sections
 
 ;--------------------------------
 ;Installer Functions
@@ -132,11 +131,6 @@ Function SetCustomC
   !insertmacro MUI_HEADER_TEXT $(TEXT_IO_TITLE) $(TEXT_IO_SUBTITLE)
   !insertmacro MUI_INSTALLOPTIONS_SHOW "ioC.ini"
 FunctionEnd
-
-;--------------------------------
-;Modern UI System
-
-!insertmacro MUI_SYSTEM
 
 ;--------------------------------
 ;Uninstaller Section
