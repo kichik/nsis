@@ -1302,7 +1302,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   if (uMsg == WM_IN_UPDATEMSG)
   {
-    RefreshSectionGroups(0);
+    RefreshSectionGroups();
 
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_COMPONENTPAGE)
     if (wParam)
@@ -1347,7 +1347,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       } // end of typecheckshit
     }
 
-    RefreshSectionGroups(0);
+    RefreshSectionGroups();
     RefreshComponents(hwndTree1, hTreeItems);
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
