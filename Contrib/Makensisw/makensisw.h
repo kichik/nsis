@@ -70,11 +70,12 @@ void			CompileNSISScript();
 DWORD CALLBACK  UpdateThread(LPVOID v);
 
 typedef struct NSISScriptData {
+    bool script_alloced;
     char *script;
     char *output_exe;
     char *input_script;
     char *branding;
-	char *brandingv;
+    char *brandingv;
     int retcode;
     DWORD logLength;
     BOOL warnings;
