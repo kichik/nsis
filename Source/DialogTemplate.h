@@ -34,6 +34,9 @@
 using namespace std;
 
 #ifndef IS_INTRESOURCE
+#ifndef ULONG_PTR
+#define ULONG_PTR DWORD
+#endif
 #define IS_INTRESOURCE(_r) (((ULONG_PTR)(_r) >> 16) == 0)
 #endif
 
