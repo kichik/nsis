@@ -297,6 +297,10 @@ SOURCE=.\ResourceVersionInfo.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ShConstants.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\strlist.h
 # End Source File
 # Begin Source File

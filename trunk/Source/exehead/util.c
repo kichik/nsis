@@ -31,7 +31,7 @@ NSIS_STRING g_usrvars[TOTAL_COMPATIBLE_STATIC_VARS_COUNT];
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-int my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree)
+int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree)
 {
   int Res;
   IMalloc *m;
@@ -39,7 +39,6 @@ int my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree)
   Res = SHGetPathFromIDList(idl, out);
   if (m && bFree)
   {
-    m->lpVtbl->Free(m,idl);
     m->lpVtbl->Release(m);
   }
   return Res;
@@ -491,12 +490,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       // NOTE 3: the code CSIDL_CONTROLS is used for PROGRAMFILES
       LPITEMIDLIST idl;
       int qLaunch=0;
+      int nCreateFlag = CSIDL_FLAG_CREATE;
 
       nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD); // Read code for current user
       if ( g_exec_flags.all_user_var )
         nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD); // Use code for All users instead
 
-      nVarIdx |= CSIDL_FLAG_CREATE;
       *out=0;
 
       while (TRUE)
@@ -512,12 +511,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
                   mystrcpy(out, "C:\\Program Files");
               break;
           case CSIDL_DESKTOP: // QUICKLAUNCH
-              nVarIdx = CSIDL_APPDATA;
+              nVarIdx |= CSIDL_APPDATA;
               qLaunch = 1;
               // dont break
           default:
               // Get and force path creation
-              if ( !SHGetSpecialFolderLocation(g_hwnd, nVarIdx, &idl) )
+              if ( !SHGetSpecialFolderLocation(g_hwnd, nVarIdx | nCreateFlag, &idl) )
               {
                   if (my_PIDL2Path(out, idl, 1))
                   {
@@ -530,10 +529,10 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
               break;
           }
 
-          if ( *out || ((nVarIdx & CSIDL_FLAG_CREATE) != CSIDL_FLAG_CREATE) )
+          if ( *out || nCreateFlag == 0 )
               break;
           else
-              nVarIdx &= ~CSIDL_FLAG_CREATE;
+              nCreateFlag = 0; // remove create flag if it fails
       }
 
       validate_filename(out);

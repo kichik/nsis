@@ -353,7 +353,7 @@ static int CALLBACK WINAPI BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lPara
       hwnd,
       BFFM_ENABLEOK,
       0,
-      my_PIDL2Path((char*)lpData, (LPITEMIDLIST)lParam, 0)
+      SHGetPathFromIDList((LPITEMIDLIST)lParam,(char*)lpData)
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       && !ExecuteCodeSegment(g_header->code_onVerifyInstDir,NULL)
 #endif

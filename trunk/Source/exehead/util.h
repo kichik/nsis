@@ -14,7 +14,7 @@ int NSISCALL mystrlen(const char *in);
 char * NSISCALL mystrstr(char *a, char *b);
 WIN32_FIND_DATA * NSISCALL file_exists(char *buf);
 char * NSISCALL my_GetTempFileName(char *buf, const char *dir);
-int my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree);
+int NSISCALL my_PIDL2Path(char *out, LPITEMIDLIST idl, int bFree);
 
 //BOOL NSISCALL my_SetWindowText(HWND hWnd, const char *val);
 #define my_SetWindowText SetWindowText
