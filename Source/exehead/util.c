@@ -254,7 +254,7 @@ void recursive_create_directory(char *directory)
   else return;
   while (*p)
   {
-    while (*p != '\\' && *p) CharNext(p);
+    while (*p != '\\' && *p) p=CharNext(p);
     if (!*p) CreateDirectory(directory,NULL);
     else
     {
