@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v4
 # Language ID
 2070
 # Font and size - dash (-) means default
@@ -7,7 +7,7 @@ NLF v2
 -
 # Codepage - dash (-) means ANSI code page
 -
-# Translation by DragonSoull <dragonsoull@madalien.tk> version 0.91
+# Translation v4.0.3 by DragonSoull <dragonsoull@madalien.tk> with help from Dre`
 Sistema de Instalação Nullsoft %s
 Instalação de %s
 Desinstalação de %s
@@ -19,35 +19,39 @@ Desinstalação de %s
 : Confirmação
 : Desinstalado Ficheiros
 : Concluído
-< Recuar
-Próximo >
-Aceito
-Instalar
-Desinstalar
-Cancelar
+< An&terior
+&Seguinte >
+&Aceito
+Eu &aceito os termos da licença
+Eu &não aceito os termos da licença
+&Instalar
+&Desinstalar
+&Cancelar
 Fechar
-Procurar...
-Ver Detalhes
+&Procurar...
+&Ver Detalhes
 Nome
 Concluído
-Personalizado
+Personalizada
 Escolha o tipo de instalação:
 Escolha os componentes a instalar:
 Ou, escolha os componentes opcionais que deseja instalar:
 Escolha a directoria a instalar %s:
 Espaço disponível: 
 Espaço necessário: 
-Desinstalando de:
-Erro ao abrir ficheiro para escrita: \r\n\t"$0"\r\nHCarregue Abort para Abortar instalação,\r\nretry para retentar a escrita do ficheiro, ou\r\nignore para Saltar este  ficheiro
+A Desinstalar de:
+Erro ao abrir o ficheiro para escrita: \r\n\t"$0"\r\nHCarregue Abort para Abortar instalação,\r\nretry para voltar a tentar a escrita do ficheiro, ou\r\nignore para Saltar este ficheiro
 Não e possível Escrever: 
 Copia Falhada
-Copiar para 
+A Copiar para 
+A Registar: 
+A Desregistar: 
 Não foi encontrado símbolo: 
 Não foi possível carregar: 
-Criando directoria: 
-Criando atalho: 
-Criando desinstalador: 
-Apagando ficheiro:
+A Criar directoria: 
+A Criar atalho: 
+A Criar Desinstalador: 
+Apagando ficheiro: 
 Apagar ao reiniciar: 
 Erro criando atalho: 
 Erro criando: 
@@ -61,7 +65,16 @@ Instalação corrupta: opcode invalido
 Sem OLE para: 
 Directoria de Saída: 
 Remover directoria: 
-Renomear ao Reiniciar: 
-Renomear: 
-Saltado:
+Mudar o nome ao Reiniciar: 
+A mudar nome: 
+Saltado: 
 Copiar Detalhes para a Área de Transferencia
+A gravar registo da instalação
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
