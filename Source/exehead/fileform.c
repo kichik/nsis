@@ -14,12 +14,12 @@
 
 #ifdef NSIS_COMPRESS_USE_LZMA
 #include "../7zip/LZMADecode.h"
-#define z_stream CLZMAState
+#define z_stream lzma_stream
 #define inflateInit(x) lzmaInit(x)
 #define inflateReset(x) lzmaInit(x)
-#define inflate(x) lzmaDecompress(x)
-#define Z_OK 0
-#define Z_STREAM_END 1
+#define inflate(x) lzmaDecode(x)
+#define Z_OK LZMA_OK
+#define Z_STREAM_END LZMA_STREAM_END
 #endif
 
 #ifdef NSIS_COMPRESS_USE_BZIP2

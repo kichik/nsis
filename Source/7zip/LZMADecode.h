@@ -2,10 +2,16 @@
 LzmaDecode.h
 LZMA Decoder interface
 LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
+
+Converted to a state machine by Amir Szekely
 */
 
 #ifndef __LZMADECODE_H
 #define __LZMADECODE_H
+
+/***********************
+ *    Configuration    *
+ ***********************/
 
 #include "../Platform.h"
 #include "../exehead/util.h"
@@ -14,15 +20,27 @@ LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
 /* It can increase speed on some 32-bit CPUs, 
    but memory usage will be doubled in that case */
 
-#define _LZMA_LOC_OPT
-/* Enable local speed optimizations inside code */
+#define lzmaalloc my_GlobalAlloc
+#define lzmafree GlobalFree
+
+/***********************
+ *  Configuration End  *
+ ***********************/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef lzmaalloc
+#define lzmaalloc malloc
+#endif
+
+#ifndef lzmafree
+#define lzmafree free
+#endif
 
 #ifndef LZMACALL
 #  define LZMACALL
-#endif
-
-#ifndef FORCE_INLINE
-#  define FORCE_INLINE
 #endif
 
 #ifndef UInt32
@@ -39,71 +57,72 @@ LZMA SDK 4.01 Copyright (c) 1999-2004 Igor Pavlov (2004-02-15)
 #define CProb unsigned short
 #endif
 
-#define LZMA_RESULT_OK 0
-#define LZMA_RESULT_DATA_ERROR -1
-// we don't really care what the problem is...
-// #define LZMA_RESULT_NOT_ENOUGH_MEM -2
-#define LZMA_RESULT_NOT_ENOUGH_MEM LZMA_RESULT_DATA_ERROR
+typedef unsigned char Byte;
 
-#define LZMA_BASE_SIZE 1846
-#define LZMA_LIT_SIZE 768
-
-/* 
-bufferSize = (LZMA_BASE_SIZE + (LZMA_LIT_SIZE << (lc + lp)))* sizeof(CProb)
-by default CProb is unsigned short, 
-but if specify _LZMA_PROB_32, CProb will be UInt32(unsigned int)
-*/
+#define LZMA_STREAM_END 1
+#define LZMA_OK 0
+#define LZMA_DATA_ERROR -1
+/* we don't really care what the problem is... */
+/* #define LZMA_RESULT_NOT_ENOUGH_MEM -2 */
+#define LZMA_NOT_ENOUGH_MEM -1
 
 typedef struct
 {
-  unsigned char FirstProp;
+  /* mode control */
+  int mode;
+  int last;
+  int last2;
+  int last3;
 
-  unsigned char *DynamicData;
-  UInt32 DynamicDataSize;
+  /* properties */
+  UInt32 dynamicDataSize;
+  UInt32 dictionarySize;
 
-  unsigned char *Dictionary;
-  UInt32 DictionarySize;
-  UInt32 DictionaryPos;
+  /* io */
+  Byte *next_in;    /* next input byte */
+  UInt32 avail_in;  /* number of bytes available at next_in */
 
-  // range coder
-  UInt32 Range;
-  UInt32 Code;
-  int Result;
+  Byte *next_out;   /* next output byte should be put there */
+  UInt32 avail_out; /* remaining free space at next_out */
 
-  // others
-  UInt32 GlobalPos;
-  UInt32 Reps[4];
+  UInt32 totalOut;  /* total output */
+
+  /* saved state */
+  Byte previousByte;
+  Byte matchByte;
+  CProb *probs;
+  CProb *prob;
+  int mi;
+  int posState;
+  int temp1;
+  int temp2;
+  int temp3;
   int lc;
-  int lp;
-  int pb;
-  int State;
-  int PreviousIsMatch;
-  int RemainLen;
+  int state;
+  int isPreviousMatch;
+  int len;
+  UInt32 rep0;
+  UInt32 rep1;
+  UInt32 rep2;
+  UInt32 rep3;
+  UInt32 posStateMask;
+  UInt32 literalPosMask;
+  UInt32 dictionaryPos;
 
-  // io
-  unsigned char *next_in;  /* next input byte */
-  unsigned int avail_in;  /* number of bytes available at next_in */
+  /* range coder */
+  UInt32 range;
+  UInt32 code;
 
-  unsigned char *next_out; /* next output byte should be put there */
-  unsigned int avail_out; /* remaining free space at next_out */
+  /* allocated buffers */
+  Byte *dictionary;
+  Byte *dynamicData;
+} lzma_stream;
 
-  // sync
-  HANDLE hThread;
-  long sync_state;
+void LZMACALL lzmaInit(lzma_stream *);
+int LZMACALL lzmaDecode(lzma_stream *);
 
-  // finish
-  int finished;
-  int res;
-} CLZMAState, *CLZMAStateP;
-
-int LZMACALL LzmaDecoderInit(CLZMAStateP lzmaState);
-int LZMACALL LzmaDecode(CLZMAStateP lzmaState);
-
-void LZMACALL lzmaInit(CLZMAStateP lzmaState);
-int LZMACALL lzmaDecompress(CLZMAStateP lzmaState);
-
-#define LZMAAlloc my_GlobalAlloc
-#define LZMAFree GlobalFree
-#define LZMAMemCopy mini_memcpy
+#ifdef __cplusplus
+}
+#endif
 
 #endif
