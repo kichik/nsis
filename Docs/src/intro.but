@@ -2,7 +2,7 @@
 
 NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
 
-\H{intro-about} About NSIS
+\B{intro-about} About NSIS
 
 NSIS tries to be a scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
 
@@ -21,7 +21,7 @@ In order to make NSIS even more powerful than it already is, we have released it
 
 The result of all of this is an installation system for win32 that lets you compile nice little scripts (which are text files, no wizards to slow you down) into tiny installers. Many features are supported, and the whole thing just works pretty damn well (at least, we think).
 
-\H{intro-features} Main Features
+\B{intro-features} Main Features
 
 Here's a short list of some of NSIS' features.
 
