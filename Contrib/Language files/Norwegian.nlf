@@ -1,7 +1,7 @@
 # Header, don't edit
 NLF v6
 # Language ID
-1033
+1044
 # Font and size - dash (-) means default
 -
 -
@@ -33,7 +33,7 @@ $(^Name) avinstallasjon
 # ^ConfirmSubCaption
 : Bekreft
 # ^UninstallingSubCaption
-: Avisntallerer
+: Avinstallerer
 # ^UnCompletedSubCaption
 : Ferdig
 # ^BackBtn

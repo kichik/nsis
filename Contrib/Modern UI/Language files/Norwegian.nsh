@@ -11,11 +11,11 @@
   !define MUI_LANGNAME "Norwegian" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "Velkommen til veiviseren for installasjon av $(^NameDA) "
-  !define MUI_TEXT_WELCOME_INFO_TEXT "Denne veiviseren vil lede deg gjennom installasjonen av $(^NameDA).\r\n\r\nIt Det anbefales at du avslutter alle andre programmer før du fortsetter. Dette vil la installasjonsprogrammet forandre på systemfiler uten at du må starte maskinen på nytt.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "Denne veiviseren vil lede deg gjennom installasjonen av $(^NameDA).\r\n\r\nDet anbefales at du avslutter alle andre programmer før du fortsetter. Dette vil la installasjonsprogrammet forandre på systemfiler uten at du må starte datamaskinen på nytt.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "Lisensavtale"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Vennligst les gjennom lisensavtalen før du starter installasjonen av $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_TOP "Trykk Page Down-knappen for å se resten av lisensavtalen."
+  !define MUI_INNERTEXT_LICENSE_TOP "Trykk Page Down knappen for å se resten av lisensavtalen."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Hvis du godtar lisensavtalen trykk Godta for å fortsette. Du må godta lisensavtalen for å installere $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Hvis du godtar lisensavtalen, kryss av på merket under. Du må godta lisensavtalen for å installere $(^NameDA). $_CLICK"
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Hvis du godtar lisensavtalen, velg det første alternativet ovenfor. Du må godta lisensavtalen for å installere $(^NameDA). $_CLICK"
@@ -39,7 +39,7 @@
   
   !define MUI_BUTTONTEXT_FINISH "&Ferdig"
   !define MUI_TEXT_FINISH_INFO_TITLE "Avslutter $(^NameDA) installasjonsveiviser"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) er klart til bruk på din datamskin.\r\n\r\nTrykk Lukk for å avslutte installasjonsprogrammet."
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) er klart til bruk på din datamskin.\r\n\r\nTrykk Ferdig for å avslutte installasjonsprogrammet."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Du må starte datamaskinen på nytt for å fullføre installasjonen av $(^NameDA). Vil du starte datamaskinen på nytt nå?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Ja. Start datamaskinen på nytt nå"
   !define MUI_TEXT_FINISH_REBOOTLATER "Nei. Jeg vil starte datamaskinen på nytt senere"
