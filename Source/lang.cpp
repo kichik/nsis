@@ -94,7 +94,11 @@ StringTable* CEXEBuild::GetTable(LANGID &lang) {
       ERROR_MSG("Internal compiler error #12345: malloc(%d) failed\n",sizeof(StringTable));
       return 0;
     }
-    memset(table, 0, sizeof(LANGID) + sizeof(int) + sizeof(common_strings)*2 + sizeof(installer_strings) + sizeof(uninstall_strings));
+    table->dlg_offset = 0;
+    memset(&(table->common), 0, sizeof(common_strings));
+    memset(&(table->ucommon), 0, sizeof(common_strings));
+    memset(&(table->installer), 0, sizeof(installer_strings));
+    memset(&(table->uninstall), 0, sizeof(uninstall_strings));
     table->nlf = 0;
 
     table->lang_id = lang;
