@@ -160,8 +160,8 @@ will also help you to learn more about the Modern UI.</p>
 !define MUI_LICENSEPAGE_TEXT '"Text"' ;Text
 !define MUI_LICENSEPAGE_TEXT '"Text" "Buttontext"' ;Multiple texts
 </pre>
-  <p class="text">If you want a certain value (i.e. a text) to be language-specific, set a language string and define
-  $(LANGUAGESTRINGNAME) as value.</p>
+  <p class="text">If you want a certain value (i.e. a text) to be language-specific, set a language string (using LangString)
+  and define $(LANGUAGESTRINGNAME) as value. Use a license language string (LicenseLangString) for the license text.</p>
   <p class="text">When adding &quot; to a Modern UI string, you should always escape it ($\&quot;),
   because the Modern UI macros use &quot; to separate parameters. If you want to set texts like above you have to
   escape both &quot; and ' (using $\&quot; and $\').</p>
@@ -169,14 +169,7 @@ will also help you to learn more about the Modern UI.</p>
   <pre class="margin">!include "MUI.nsh"</pre>
     <p class="text">MUI.nsh is in the Include directory, so you don't have
   to specify a path.</p>
-  <p class="subheader">2. Define the name and version of your software</p>
-<pre class="margin">
-!define MUI_PRODUCT "Your Software"
-!define MUI_VERSION "1.0"
-</pre>
-  <p class="text">This information will be used inside the texts for the installer
-  interface.</p>
-  <p class="subheader">3. Pages</p>
+  <p class="subheader">2. Pages</p>
   <p class="text">Insert the following macros to set the pages you want to use.
   The pages will appear in the order you insert them in your script.
   You can also insert custom Page commands between the macros to add custom pages.
@@ -330,7 +323,7 @@ will also help you to learn more about the Modern UI.</p>
   <a href="#customFunctions">More info...</a></p>
   </div>
   </div>
-  <p class="subheader">4. Interface Settings</p>
+  <p class="subheader">3. Interface Settings</p>
   <p class="text">Page interface settings apply to all pages of a certain type.</p>
   <p class="sub2header">General Interface Settings</p>
   <div class="margin">
@@ -407,12 +400,12 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
   Show a message box with a warning when the user wants to close the installer.</p>
   </div>
-  <p class="subheader">5. Define custom functions (optional)</p>
+  <p class="subheader">4. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
   Modern UI (i.e. the .onGUIInit function and the page functions), create your
   own function and let the Modern UI functions call them.</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
-  <p class="subheader">6. Insert language files</p>
+  <p class="subheader">5. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -482,7 +475,7 @@ FunctionEnd
   Always show the language selection dialog, even if a language has been stored in the registry.
   The language stored in the registry will be selected by default.</p>
   </div>
-  <p class="subheader">7. Set the descriptions for the sections</p>
+  <p class="subheader">6. Set the descriptions for the sections</p>
   <p class="text">The descriptions of sections will be displayed on the
   components page, when the user hovers the mouse over a section.
   If you don't want to use descriptions, use the MUI_COMPONENTSPAGE_NODESC
@@ -507,7 +500,7 @@ LangString DESC_Section2 ${LANG_ENGLISH} "Description of section 2."
 </pre>
 <p class="text">For the uninstaller, use the MUI_UNFUNCTION_DESCRIPTION_BEGIN
 and MUI_UNFUNCTIONS_DESCRIPTION_END macros</p>
-<p class="subheader">8. Reserve Files</p>
+<p class="subheader">7. Reserve Files</p>
 <p class="text">If you are using BZIP2 compression, you might need to
 insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
@@ -675,13 +668,14 @@ FunctionEnd
   </div>
 <p class="header">Version history</p>
 <ul>
-<li>1.66 - September 4, 2003
+<li>1.66 - September 9, 2003
   <ul>
     <li>New system for page settings and custom pages</li>
     <li>Support for uninstaller components page</li>
     <li>Support for multiple pages of the same type</li>
     <li>Changed macro names</li>
     <li>Updated langauge system, new language files</li>
+    <li>Removed MUI_PRODUCT and MUI VERSION. Use Name command now.</li>
     <li>Removed MUI_BRANDINGTEXT. Use BrandingText command now.</li>
   </ul></li>
 </ul>

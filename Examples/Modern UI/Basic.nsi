@@ -8,22 +8,17 @@
   !include "MUI.nsh"
 
 ;--------------------------------
-;Product Info
-
-  !define MUI_PRODUCT "Modern UI Test"
-  !define MUI_VERSION "1.66"
-
-;--------------------------------
 ;Configuration
 
   ;General
+  Name "Modern UI Test 1.66"
   OutFile "Basic.exe"
 
   ;Folder selection page
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  InstallDir "$PROGRAMFILES\Modern UI Test"
   
   ;Get install folder from registry if available
-  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
+  InstallDirRegKey HKCU "Software\Modern UI Test" ""
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -56,7 +51,7 @@ Section "Dummy Section" SecDummy
   ;ADD YOUR OWN STUFF HERE!
   
   ;Store install folder
-  WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
+  WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -83,6 +78,6 @@ Section "Uninstall"
 
   RMDir "$INSTDIR"
 
-  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
+  DeleteRegKey /ifempty HKCU "Software\Modern UI Test"
 
 SectionEnd
