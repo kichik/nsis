@@ -9,6 +9,7 @@
 #define IDK_ACCEL                       105
 #define IDR_DEFAULT1                    108
 #define IDI_ABOUT                       110
+#define IDM_LOGWIN                      111
 #define IDC_LOGWIN                      402
 #define IDC_VERSION                     405
 #define IDC_CLOSE                       406
@@ -34,7 +35,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        111
+#define _APS_NEXT_RESOURCE_VALUE        112
 #define _APS_NEXT_COMMAND_VALUE         40008
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
