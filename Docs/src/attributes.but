@@ -250,7 +250,7 @@ Overrides the subcaptions for each of the installer pages (0=": License Agreemen
 
 \c [/LANG=lang_id] [button text]
 
-Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also WriteUninstaller (replaces UninstallEXEName).
+Changes the text of the button that by default says "Uninstall" in the uninstaller. If no parameter is specified, the default text is used. See also WriteUninstaller in \k{WriteUninstaller} (replaces UninstallEXEName).
 
 \S2{auninstallcaption} UninstallCaption
 
