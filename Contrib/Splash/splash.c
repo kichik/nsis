@@ -109,6 +109,8 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
 
         DeleteObject(g_hbm);
 
+        UnregisterClass(classname, g_hInstance);
+
       }
     }
   }
