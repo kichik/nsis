@@ -37,7 +37,7 @@ InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
   ;Names
   !define MUI_PRODUCT "NSIS"
-  !define MUI_VERSION "2.0b4 (CVS)"
+  !define MUI_VERSION "${VER_MAJOR}.${VER_MINOR} (CVS)"
 
   !define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
 
@@ -90,6 +90,11 @@ LicenseData ..\license.txt
 !define SF_SELECTED 1
 
 Section "NSIS Development System (required)" SecCore
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing NSIS Development System..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2 3 RO
   SetOutPath $INSTDIR
   RMDir /r $SMPROGRAMS\NSIS
@@ -119,6 +124,11 @@ Section "NSIS Development System (required)" SecCore
 SectionEnd
 
 Section "Script Examples" SecExample
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Script Examples..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
   Delete $INSTDIR\functions.htm
@@ -138,6 +148,11 @@ Section "Script Examples" SecExample
 SectionEnd
 
 Section "NSIS Menu" SecMenu
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing NSIS Menu..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2 3
   SetOutPath $INSTDIR
   File ..\NSIS.exe
@@ -148,6 +163,11 @@ Section "NSIS Menu" SecMenu
 SectionEnd
 
 Section "NSIS Update" SecUpdate
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing NSIS Update..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Bin
   File ..\Bin\NSISUpdate.exe
@@ -155,6 +175,11 @@ Section "NSIS Update" SecUpdate
 SectionEnd
 
 Section "NSI Development Shell Extensions" SecExtention
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing NSI Development Shell Extensions..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2 3
   ; back up old value of .nsi
   ReadRegStr $1 HKCR ".nsi" ""
@@ -186,8 +211,18 @@ SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
 Section "Start Menu + Desktop Shortcuts" SecIcons
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Start Menu + Desktop Shortcuts..."
+  SetDetailsPrint listonly
+
 !else
 Section "Desktop Shortcut" SecIcons
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Desktop Shortcut..."
+  SetDetailsPrint listonly
+
 !endif
   SectionIn 1 2 3
   SetOutPath $INSTDIR
@@ -218,6 +253,11 @@ SubSection "Contrib" SecContrib
 
 SubSection "Extra User Interfaces" SecContribUIs
   Section "Modern User Interface" SecContribModernUI
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Extra User Interfaces | Modern User Interface..."
+  SetDetailsPrint listonly
+
     SectionIn 1 2
     SetOutPath "$INSTDIR\Examples\Modern UI"
     File "..\Examples\Modern UI\Basic.nsi"
@@ -256,12 +296,22 @@ SubSection "Extra User Interfaces" SecContribUIs
   SectionEnd
   
   Section "Default User Interface" SecContribDefaultUI
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Extra User Interfaces | Default User Interface..."
+  SetDetailsPrint listonly
+
     SectionIn 1 2
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\default.exe"
   SectionEnd
   
   Section "Tiny User Interface" SecContribTinyUI
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Extra User Interfaces | Tiny User Interface..."
+  SetDetailsPrint listonly
+
     SectionIn 1 2
     SetOutPath "$INSTDIR\Contrib\UIs"
     File "..\Contrib\UIs\sdbarker_tiny.exe"
@@ -270,6 +320,11 @@ SubSection "Extra User Interfaces" SecContribUIs
 SubSectionEnd
 
 Section "Graphics" SecContribGraphics
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Graphics..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Icons
   Delete $INSTDIR\Contrib\*.ico
@@ -279,6 +334,11 @@ Section "Graphics" SecContribGraphics
 SectionEnd
 
 Section "Language files" SecContribLang
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Language Files..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   
   SetOutPath "$INSTDIR\Contrib\Language files"
@@ -299,6 +359,11 @@ SectionEnd
 SubSection "Plugins" SecContribPlugins
 
 Section "Banner" SecContribBanner
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | Banner..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\Banner.dll
@@ -308,12 +373,22 @@ Section "Banner" SecContribBanner
 SectionEnd
 
 Section "Language DLL" SecContribLangDLL
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | Language DLL..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\LangDLL.dll
 SectionEnd
 
 Section "nsExec" SecContribnsExec
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | nsExec..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsExec.dll
@@ -323,6 +398,11 @@ Section "nsExec" SecContribnsExec
 SectionEnd
 
 Section "Splash" SecContribSplash
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | Splash..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\splash.dll
@@ -332,6 +412,11 @@ Section "Splash" SecContribSplash
 SectionEnd
 
 Section "AdvSplash w/transparency" SecContribSplashT
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | AdvSplash w/transparency..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\advsplash.dll
@@ -341,6 +426,11 @@ Section "AdvSplash w/transparency" SecContribSplashT
 SectionEnd
 
 Section "BgImage" SecContribBgImage
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | BgImage..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\BgImage.dll
@@ -350,6 +440,11 @@ Section "BgImage" SecContribBgImage
 SectionEnd
 
 Section "InstallOptions" SecContribIO
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | InstallOptions..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\InstallOptions.dll
@@ -363,6 +458,11 @@ Section "InstallOptions" SecContribIO
 SectionEnd
 
 Section "NSISdl" SecContribNSISDL
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | NSISdl..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\nsisdl.dll
@@ -372,6 +472,11 @@ Section "NSISdl" SecContribNSISDL
 SectionEnd
 
 Section "System" SecContribSystem
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | System..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\System.dll
@@ -383,6 +488,11 @@ Section "System" SecContribSystem
 SectionEnd
 
 Section "StartMenu" SecContribStartMenu
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | StartMenu..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\StartMenu.dll
@@ -392,6 +502,11 @@ Section "StartMenu" SecContribStartMenu
 SectionEnd
 
 Section "UserInfo" SecContribUserInfo
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | UserInfo..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\UserInfo.dll
@@ -400,6 +515,11 @@ Section "UserInfo" SecContribUserInfo
 SectionEnd
 
 Section "Dialer" SecContribDialer
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | Dialer..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\Dialer.dll
@@ -408,6 +528,11 @@ Section "Dialer" SecContribDialer
 SectionEnd
 
 Section "VPatch" SecContribVPatch
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Plugins | VPatch..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Plugins
   File ..\Plugins\VPatch.dll
@@ -422,6 +547,11 @@ SectionEnd
 SubSectionEnd
 
 Section "Zip2Exe" SecContribZ2E
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Contrib | Zip2Exe..."
+  SetDetailsPrint listonly
+
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
   File ..\Bin\zip2exe.exe
@@ -433,9 +563,12 @@ SubSectionEnd
 
 SubSection "Source code" SecSrc
 Section "NSIS Source Code" SecSrcNSIS
-  SectionIn 1
-  DetailPrint "Extracting source code...."
+
   SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | NSIS Source Code..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
   SetOutPath $INSTDIR\Source
   File ..\Source\*.cpp
   File ..\Source\*.c
@@ -457,13 +590,17 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\exehead\uninst.ico
   File ..\Source\exehead\bitmap1.bmp
   File ..\Source\exehead\bin2h.exe
-  SetDetailsPrint both
 SectionEnd
 
 SubSection "Contrib" SecSrcContrib
 # required for other plugins sources
 # text changes in .onSelChange
 Section "ExDLL Source (required)" SecSrcEx
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | ExDLL Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
   File ..\Contrib\exdll\exdll.c
@@ -474,6 +611,11 @@ Section "ExDLL Source (required)" SecSrcEx
 SectionEnd
 
 Section "MakeNSISW Source" SecSrcMNW
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | MakeNSISW Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Makensisw
   File ..\Contrib\Makensisw\*.cpp
@@ -489,6 +631,11 @@ Section "MakeNSISW Source" SecSrcMNW
 SectionEnd
 
 Section "UI Holder Source" SecContribUIHolderS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | UI Holder..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath "$INSTDIR\Contrib\UIs\UI Holder"
   File "..\Contrib\UIs\UI Holder\*.h"
@@ -501,6 +648,11 @@ SectionEnd
 SubSection "Plugins" SecContribPluginsS
 
 Section "Banner Source" SecContribBannerS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | Banner Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Banner
   File ..\Contrib\Banner\Banner.dsw
@@ -509,6 +661,11 @@ Section "Banner Source" SecContribBannerS
 SectionEnd
 
 Section "Language DLL Source" SecContribLangDLLS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | Language DLL Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\LangDLL
   File ..\Contrib\LangDLL\LangDLL.c
@@ -519,6 +676,11 @@ Section "Language DLL Source" SecContribLangDLLS
 SectionEnd
 
 Section "nsExec Source" SecContribnsExecS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | nsExec Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\nsExec
   File ..\Contrib\nsExec\*.c
@@ -527,6 +689,11 @@ Section "nsExec Source" SecContribnsExecS
 SectionEnd
 
 Section "Splash Source" SecContribSplashS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | Splash Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Splash
   File ..\Contrib\Splash\splash.c
@@ -535,6 +702,11 @@ Section "Splash Source" SecContribSplashS
 SectionEnd
 
 Section "AdvSplash Source" SecContribSplashTS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | AdvSplash Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\AdvSplash
   File ..\Contrib\AdvSplash\*.c
@@ -543,6 +715,11 @@ Section "AdvSplash Source" SecContribSplashTS
 SectionEnd
 
 Section "BgImage Source" SecContribBgImageS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | BgImage Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\BgImage
   File ..\Contrib\BgImage\BgImage.cpp
@@ -551,6 +728,11 @@ Section "BgImage Source" SecContribBgImageS
 SectionEnd
 
 Section "InstallOptions Source" SecContribIOS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | InstallOptions Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\InstallOptions
   File ..\contrib\installoptions\io.dsp
@@ -561,6 +743,11 @@ Section "InstallOptions Source" SecContribIOS
 SectionEnd
 
 Section "NSISdl Source" SecContribNSISDLS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | NSISdl Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\NSISdl
   File ..\contrib\NSISdl\nsisdl.dsw
@@ -571,6 +758,11 @@ Section "NSISdl Source" SecContribNSISDLS
 SectionEnd
 
 Section "System Source" SecContribSystemS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | System Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\System\Source
   File ..\contrib\System\Source\*.c
@@ -581,6 +773,11 @@ Section "System Source" SecContribSystemS
 SectionEnd
 
 Section "StartMenu Source" SecContribStartMenuS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | StartMenu Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\StartMenu
   File ..\Contrib\StartMenu\StartMenu.c
@@ -591,6 +788,11 @@ Section "StartMenu Source" SecContribStartMenuS
 SectionEnd
 
 Section "UserInfo Source" SecContribUserInfoS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | UserInfo Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\UserInfo
   File ..\Contrib\UserInfo\UserInfo.c
@@ -599,6 +801,11 @@ Section "UserInfo Source" SecContribUserInfoS
 SectionEnd
 
 Section "Dialer Source" SecContribDialerS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | Dialer Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Dialer
   File ..\Contrib\Dialer\dialer.c
@@ -607,6 +814,11 @@ Section "Dialer Source" SecContribDialerS
 SectionEnd
 
 Section "VPatch Source" SecContribVPatchS
+
+  SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Plugins | VPatch Source..."
+  SetDetailsPrint listonly
+
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\VPatch
   File ..\Contrib\VPatch\vpatchdll.c
@@ -617,9 +829,12 @@ SectionEnd
 SubSectionEnd ; plugins
 
 Section "Zip2Exe Source" SecContribZ2ES
-  SectionIn 1
-  DetailPrint "Extracting zip2exe source"
+
   SetDetailsPrint textonly
+  DetailPrint "Installing Source Code | Contrib | Zip2exe Source..."
+  SetDetailsPrint listonly
+
+  SectionIn 1
   RMDir /r $INSTDIR\Source\Zip2Exe
   SetOutPath $INSTDIR\Contrib\zip2exe
   File ..\Contrib\zip2exe\*.cpp
@@ -631,7 +846,6 @@ Section "Zip2Exe Source" SecContribZ2ES
   File ..\Contrib\zip2exe\*.xml
   SetOutPath $INSTDIR\Contrib\zip2exe\zlib
   File ..\Contrib\zip2exe\zlib\*.*
-  SetDetailsPrint both
 SectionEnd
 
 SubSectionEnd
@@ -646,6 +860,11 @@ Section -post
   SectionGetFlags ${SecContribModernUI} $R0
   IntOp $R0 $R0 & ${SF_SELECTED}
 	IntCmp $R0 ${SF_SELECTED} "" nomui nomui
+
+      SetDetailsPrint textonly
+      DetailPrint "Configurating Modern UI..."
+      SetDetailsPrint listonly
+
 
     SectionGetFlags ${SecContribLang} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
@@ -669,6 +888,9 @@ Section -post
     
   nomui:
   
+  SetDetailsPrint textonly
+  DetailPrint "Creating Registry Keys..."
+  SetDetailsPrint listonly
 
   SetOutPath $INSTDIR
   
@@ -685,6 +907,10 @@ Section -post
   
 !ifndef NO_STARTMENUSHORTCUTS
   IfFileExists $SMPROGRAMS\NSIS "" nofunshit
+
+  SetDetailsPrint textonly
+  DetailPrint "Creating Shortcuts..."
+  SetDetailsPrint listonly
 
   IfFileExists $INSTDIR\Examples 0 +2
     CreateShortCut "$SMPROGRAMS\NSIS\NSIS Examples Directory.lnk" "$INSTDIR\Examples"
@@ -806,6 +1032,8 @@ Section -post
 
   Delete $INSTDIR\uninst-nsis.exe
   WriteUninstaller $INSTDIR\uninst-nsis.exe
+
+  SetDetailsPrint both
 
 SectionEnd
 
@@ -938,6 +1166,11 @@ FunctionEnd
 ;Uninstaller Section
 
 Section Uninstall
+
+  SetDetailsPrint textonly
+  DetailPrint "Uninstalling NSI Development Shell Extensions..."
+  SetDetailsPrint listonly
+
   IfFileExists $INSTDIR\makensis.exe skip_confirmation
     MessageBox MB_YESNO "It does not appear that NSIS is installed in the directory '$INSTDIR'.$\r$\nContinue anyway (not recommended)" IDYES skip_confirmation
     Abort "Uninstall aborted by user"
@@ -964,10 +1197,18 @@ Section Uninstall
       DeleteRegValue HKCR ".nsh" "backup_val"
   NoOwn2:
 
+  SetDetailsPrint textonly
+  DetailPrint "Deleting Registry Keys..."
+  SetDetailsPrint listonly
+
   DeleteRegKey HKCR "NSISFile"
   DeleteRegKey HKCR "NSHFile"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\NSIS"
   DeleteRegKey HKLM SOFTWARE\NSIS
+
+  SetDetailsPrint textonly
+  DetailPrint "Deleting Files..."
+  SetDetailsPrint listonly
 
   RMDir /r $SMPROGRAMS\NSIS
   Delete "$DESKTOP\Nullsoft Install System.lnk"
@@ -988,5 +1229,7 @@ Section Uninstall
   RMDir /r $INSTDIR\Include
   RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
+
+  SetDetailsPrint both
 
 SectionEnd
