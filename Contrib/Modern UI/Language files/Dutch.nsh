@@ -56,7 +56,6 @@
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Verwijder $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Verwijder $(^Name) van uw system."
-  !define MUI_UNINNERTEXT_INTRO "Deze wizard zal $(^Name) verwijderen van uw systeem."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Licentie Overeenkomst"
   !define MUI_UNTEXT_LICENSE_SUBTITLE "Lees de licentie overeenkomst voordat u $(^Name) verwijdert."

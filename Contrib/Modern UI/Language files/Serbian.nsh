@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.65
 
 ;Language: Serbian (2074)
 ;Translation by Vladan "vladano@EUnet.yu" Obradovic
@@ -8,7 +8,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SERBIAN"
 
-  !define MUI_LANGNAME "Serbian" ;Name of the language in the language itself
+  !define MUI_LANGNAME "Serbian" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Dobro došao u $(^Name) Instalaciju"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Ovo æe instalirati $(^Name) na tvoj raèunar.\r\n\r\nPreporuèujem da zatvoriš sve ostale aplikacije pre zapoèinjanja Instalacije. To ce dozvoliti Instalaciji da nadogradi neke sistemska datoteke bez potrebe za ponovnim pokretanjem vašeg raèunara.\r\n\r\n$_CLICK"
@@ -55,19 +55,7 @@
 
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Deinstaliraj $(^Name)"
-  !define MUI_UNTEXT_CONFIRM_SUBTITLE  "Obriši $(^Name) sa tvog raèunara."
-
-  !define MUI_UNTEXT_LICENSE_TITLE "Licenca"  
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Please review the license terms before uninstalling $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "If you accept the terms of the agreement, click I Agree to continue. You must accept the agreement to uninstall $(^Name)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "If you accept the terms of the agreement, click the check box below. You must accept the agreement to uninstall $(^Name). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "If you accept the terms of the agreement, select the first option below. You must accept the agreement to uninstall $(^Name). $_CLICK"
-
-  !define MUI_UNTEXT_COMPONENTS_TITLE "Choose Components"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "Choose which features of $(^Name) you want to uninstall."
-
-  !define MUI_UNTEXT_DIRECTORY_TITLE "Choose Uninstall Location"
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "Choose the folder from which to uninstall $(^Name)."
+  !define MUI_UNTEXT_CONFIRM_SUBTITLE "Obriši $(^Name) sa tvog raèunara."
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Deinstaliraj"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prièekaj dok se deinstalira $(^Name)."

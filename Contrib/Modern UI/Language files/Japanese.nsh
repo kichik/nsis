@@ -10,7 +10,7 @@
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "JAPANESE"
 
-  !define MUI_LANGNAME "Japanese" ;(“ú–{Œê) Name of the language in the language itself
+  !define MUI_LANGNAME "Japanese" ;(“ú–{Œê) Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_FONT "‚l‚r ‚oƒSƒVƒbƒN"
   !define MUI_FONTSIZE "9"
