@@ -22,7 +22,7 @@ p
         margin: 20px;
         }
 
-center
+.center
         {
         text-align: center;
         }
@@ -64,7 +64,7 @@ h2
 
 h3
         {
-        font-size: 150%;
+        font-size: 140%;
         font-weight: bold;
         color: #303030;
         margin: 20px;
@@ -203,9 +203,8 @@ to the right. Use NSIS's $(^RTL) to fill this field, it's the easiest way.</td>
 <td class="lefttable"><strong>State</strong></td>
 <td class="lefttable"><em>(output)</em></td>
 <td class="righttable">This is not something you have to supply yourself but is set by
-InstallOptions, before calling your custom page validation function, to the field
-number of the custom Button control (or other control having the Notify flag) the
-user pressed, if any.
+InstallOptions, before calling your custom page validation function, to the field number of the
+custom Button control (or other control having the Notify flag) the user pressed, if any.</td>
 </tr>
 </table>
 <p>Each field section has the heading "Field #" where # must be sequential numbers from 1 to
@@ -217,7 +216,8 @@ NumFields. Each Field section can contain the following values:</p>
 <td class="righttable">Type of control to be created. Valid values are "<em>Label</em>",
 "<em>Text</em>", "<em>Password</em>", "<em>Combobox</em>", "<em>DropList</em>", "<em>Listbox</em>",
 "<em>CheckBox</em>", "<em>RadioButton</em>", "<em>FileRequest</em>", "<em>DirRequest</em>"
-"<em>Icon</em>", "<em>Bitmap</em>", "<em>GroupBox</em>", "<em>Link</em>" or "<em>Button</em>".<br />
+"<em>Icon</em>", "<em>Bitmap</em>", "<em>GroupBox</em>", "<em>Link</em>" or
+"<em>Button</em>".<br />
 <br />
 A "<em>Label</em>" is used to display static text. (i.e. a caption for a textbox)<br />
 A "<em>Text</em>" and "<em>Password</em>" accept text input from the user. "<em>Password</em>"
@@ -237,8 +237,8 @@ A "<em>Bitmap</em>" control displays a bitmap.<br />
 A "<em>GroupBox</em>" control displays a frame to group controls.<br />
 A "<em>Link</em>" control displays a static hot text, when the user click the control the contents
 of <strong>State</strong> (e.g. http://...) will be executed using ShellExecute<br />
-A "<em>Button</em>" control displays a push button that your NSIS script can act on
-when pressed. See the "<em>NOTIFY</em>" flag for more information.</td>
+A "<em>Button</em>" control displays a push button that your NSIS script can act on when pressed.
+See the "<em>NOTIFY</em>" flag for more information.</td>
 </tr>
 <tr>
 <td class="lefttable"><strong>Text</strong></td>
@@ -455,10 +455,9 @@ box.</td>
 </tr>
 <tr>
 <td class="righttable">NOWORDWRAP</td>
-<td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Disables the
-word-wrap that occurs when long lines are entered. Long lines instead scroll off to the
-side. Specifying the HSCROLL flag also has this effect.
-</td>
+<td class="righttable">Used by "<em>Text</em>" controls with multiple-line. Disables the word-wrap
+that occurs when long lines are entered. Long lines instead scroll off to the side. Specifying the
+HSCROLL flag also has this effect.</td>
 </tr>
 <tr>
 <td class="righttable">HSCROLL</td>
@@ -478,12 +477,11 @@ text in the edit control, but allow the user to select and copy the text.</td>
 <tr>
 <td class="righttable">NOTIFY</td>
 <td class="righttable">Used by "<em>Button</em>", "<em>CheckBox</em>" and "<em>RadioButton</em>"
-controls. Causes InstallOptions to call your NSIS custom page validation/leave function
-whenever the button is pressed. Your validation/leave function can read the "<em>State</em>"
-value from the "<em>Settings</em>" section to determine which custom button has been
-pressed, if any, and perform some appropriate action followed by an Abort instruction
-(to tell NSIS to return to the page). The Contrib\InstallOptions folder contains an
-example script showing how this might be used.</td>
+controls. Causes InstallOptions to call your NSIS custom page validation/leave function whenever
+the button is pressed. Your validation/leave function can read the "<em>State</em>" value from the
+"<em>Settings</em>" section to determine which custom button has been pressed, if any, and perform
+some appropriate action followed by an Abort instruction (to tell NSIS to return to the page). The
+Contrib\InstallOptions folder contains an example script showing how this might be used.</td>
 </tr>
 </table>
 </td>
@@ -672,10 +670,12 @@ following values:</p>
 (have a look at the example above).</p>
 <p>If you want to check the user input immediately, for example, to display a warning when the
 input is invalid, you should check whether the user has pressed the Back or Next button.</p>
-<p class="subheader">ReserveFile</p>
-<p>It you are using solid BZIP2 compression and your .onInit and Page functions are not above all
-other sections/functions with File commands, use ReserveFile on the top of your script to put the
-DLL/INI files first in the data block, which will make your installer start faster:</p>
+<h2>Reserve files</h2>
+<p>If you are using BZIP2 (solid) compression, it's important that files which are being extracted
+in init- or page functions function are located before other files in the data block, because this
+will make your installer faster.</p>
+<p>If there are File commands in your sections or functions above the init- or page functions, add
+ReserveFile commands above your sections and functions:</p>
 <pre>
 ReserveFile "test.ini"
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
