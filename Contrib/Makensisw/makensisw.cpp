@@ -296,7 +296,6 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				{
 					if (!g_sdata.thread) {
 						ClearLog(g_sdata.hwnd);
-						LogMessage(g_sdata.hwnd,USAGE);
 					}
 					return TRUE;
 				}
