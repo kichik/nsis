@@ -725,6 +725,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     break;
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLORDLG:
+      SetBkMode((HDC)wParam, TRANSPARENT);
       return (BOOL)GetWindowLong((HWND)lParam, GWL_USERDATA);
   }
 	return 0;
