@@ -2695,9 +2695,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_SETOVERWRITE:
     {
-      int k=line.gettoken_enum(1,"on\0off\0try\0ifnewer\0lastused\0");
+      int k=line.gettoken_enum(1,"on\0off\0try\0ifnewer\0ifdiff\0lastused\0");
       if (k==-1) PRINTHELP()
-      if (k==4)
+      if (k==5)
       {
         k=build_overwrite;
         build_overwrite=build_last_overwrite;
@@ -4882,7 +4882,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DefineInnerLangString(NLF_CANT_WRITE);
 
           ent.offsets[0]=1; // overwrite off
-          ent.offsets[0]|=(MB_ABORTRETRYIGNORE|MB_ICONSTOP)<<2;
+          ent.offsets[0]|=(MB_ABORTRETRYIGNORE|MB_ICONSTOP)<<3;
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
           ent.offsets[3]=0xffffffff;
@@ -5121,7 +5121,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         if (generatecode)
         {
-          if (build_datesave || build_overwrite==0x3 /*ifnewer*/)
+          if (build_datesave || build_overwrite>=0x3 /*ifnewer or ifdiff*/)
           {
             FILETIME ft;
             if (GetFileTime(hFile,NULL,NULL,&ft))
@@ -5143,7 +5143,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           }
 
           // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
-          ent.offsets[0] |= ((build_allowskipfiles ? MB_ABORTRETRYIGNORE : MB_RETRYCANCEL) | MB_ICONSTOP) << 2;
+          ent.offsets[0] |= ((build_allowskipfiles ? MB_ABORTRETRYIGNORE : MB_RETRYCANCEL) | MB_ICONSTOP) << 3;
           ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
         }
 
