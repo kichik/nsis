@@ -3712,7 +3712,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           {
             if (hFileMap) CloseHandle(hFileMap);
             CloseHandle(hFile);
-            ERROR_MSG("File: failed mmapping file \"%s\"\n",newfn);
+            ERROR_MSG("File: failed mapping file \"%s\"\n",newfn);
             return PS_ERROR;
           }
         }
