@@ -1153,7 +1153,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-  case TOK_USEOUTERUIITEM:
+  /*
+    Useless
+
+    case TOK_USEOUTERUIITEM:
     {
       int k = line.gettoken_enum(1,"introtext\0spaceavail\0spacereq\0dirsubtext\0comsubtext1\0comsubtext2\0uninstsubtext\0");
       if (k < 0) PRINTHELP();
@@ -1187,10 +1190,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       }
       SCRIPT_MSG("%s: %s now uses outer UI item %d\n",line.gettoken_str(0),line.gettoken_str(1),id);
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));*/
 #else
   case TOK_CHANGEUI:
-  case TOK_USEOUTERUIITEM:
+  //case TOK_USEOUTERUIITEM:
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
     return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
