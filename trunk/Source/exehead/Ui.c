@@ -1548,6 +1548,8 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
     insthwnd2=GetUIItem(IDC_INTROTEXT);
     linsthwnd=insthwnd=GetUIItem(IDC_LIST1);
 
+    SetActiveCtl(insthwndbutton);
+
     progress_bar_len=sumsecsfield(code_size);
     progress_bar_pos=0;
 
