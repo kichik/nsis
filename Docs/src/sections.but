@@ -4,9 +4,9 @@ Each NSIS installer contains one or more Sections. Each These sections are creat
 
 \b Each section contains zero or more instructions.
 
-\b Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each section.
+\b Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each visible section.
 
-\b If a section's name is 'Uninstall', then it is a special Uninstall Section.
+\b If a section's name is 'Uninstall' or is prefixed with 'un.', then it is a an uninstaller section.
 
 \S1{ssectioncommands} Section Commands
 
@@ -20,7 +20,7 @@ Tells the installer that the current section needs an additional "size_kb" kilob
 
 \c [/o] [([!]|[-])section_name] [section index output]
 
-Begins and opens a new section. If section_name is empty, omitted, or begins with a -, then it is a hidden section and the user will not have the option of disabling it. If the section name is 'Uninstall', then it is a special Uninstall Section. If section index output is specified, the parameter will be !defined with the section index (that can be used for \R{sectionsettext}{SectionSetText} etc). If the section name begins with a !, the section will be displayed as bold. If the Switch /o is specified than the Section is unselected by default.
+Begins and opens a new section. If section_name is empty, omitted, or begins with a -, then it is a hidden section and the user will not have the option of disabling it. If the section name is 'Uninstall' or is prefixed with 'un.', then it is a an uninstaller section. If section index output is specified, the parameter will be !defined with the section index (that can be used for \R{sectionsettext}{SectionSetText} etc). If the section name begins with a !, the section will be displayed as bold. If the /o switch is specified, the section will be unselected by default.
 
 \S2{ssectionend} SectionEnd
 
@@ -34,9 +34,9 @@ This command specifies which install types (see \R{ainsttype}{InstType}) the cur
 
 \S2{ssubsection} SubSection
 
-\c [/e] Caption [section index output]
+\c [/e] Caption [subsection_name index output]
 
-This command inserts a subsection. The subsection must be closed with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for SectionSetText etc).
+This command inserts a subsection. The subsection must be closed with SubSectionEnd, and should contain 1 or more Sections. If the subsection name begins with a !, the subsection will be displayed as bold. If /e is present, the sub sections of the sub section will be expanded by default. If section index output is specified, the parameter will be !defined with the section index (that can be used for SectionSetText etc). If the name is prefixed with 'un.' the subsection is an uninstaller subsection.
 
 \S2{ssubsectionend} SubSectionEnd
 
