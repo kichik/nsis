@@ -789,53 +789,21 @@ Section Uninstall
   DeleteRegKey HKLM SOFTWARE\NSIS
 
   RMDir /r $SMPROGRAMS\NSIS
-  RMDir /r $INSTDIR\Contrib
   Delete $DESKTOP\MakeNSIS.lnk
-  Delete $INSTDIR\makensis*.exe
-  Delete $INSTDIR\Docs\*.html
-  Delete $INSTDIR\Docs\*.css
-  Delete $INSTDIR\Bin\zip2exe.exe
-  Delete $INSTDIR\Bin\installoptions.exe
-  Delete $INSTDIR\Plugins\installoptions.dll
-  Delete $INSTDIR\Bin\splash.txt
-  Delete $INSTDIR\Bin\splash.exe
-  Delete $INSTDIR\Plugins\splash.dll
-  Delete $INSTDIR\Bin\UberSplash.exe
-  Delete $INSTDIR\Plugins\advsplash.dll
-  Delete $INSTDIR\Plugins\nsisdl.dll
-  Delete $INSTDIR\Bin\MakeLangID.exe
-  Delete $INSTDIR\Plugins\LangDLL.dll
+  Delete $INSTDIR\makensis.exe
+  Delete $INSTDIR\makensisw.exe
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\license.txt
   Delete $INSTDIR\uninst-nsis.exe
   Delete $INSTDIR\nsisconf.nsi
   Delete $INSTDIR\nsisconf.nsh
-  Delete $INSTDIR\Examples\makensis.nsi
-  Delete $INSTDIR\Examples\example1.nsi
-  Delete $INSTDIR\Examples\example2.nsi
-  Delete $INSTDIR\Examples\waplugin.nsi
-  Delete $INSTDIR\Examples\viewhtml.nsi
-  Delete $INSTDIR\Examples\bigtest.nsi
-  Delete $INSTDIR\Examples\primes.nsi
-  Delete $INSTDIR\Examples\rtest.nsi
-  Delete $INSTDIR\Examples\uglytest.nsi
-  Delete $INSTDIR\Examples\spin.nsi
-  Delete $INSTDIR\Examples\wafull.nsi
-  Delete $INSTDIR\Examples\languages.nsi
-  Delete $INSTDIR\Examples\upgradedll.nsh
-  Delete $INSTDIR\Examples\WinMessages.nsh
-  Delete "$INSTDIR\Examples\Modern UI\Screenshot.png"
-  Delete "$INSTDIR\Examples\Modern UI\Readme.jpg"
-  Delete "$INSTDIR\Examples\Modern UI\Readme.html"
-  Delete "$INSTDIR\Examples\Modern UI\License.txt"
-  Delete "$INSTDIR\Examples\Modern UI\Example.nsi"
-  Delete "$INSTDIR\Examples\Modern UI\MultiLanguage.nsi"
-  Delete "$INSTDIR\Examples\Modern UI\ModernUI.nsh"
+  RMDir /r $INSTDIR\Contrib
   RMDir /r $INSTDIR\Source
   RMDir /r $INSTDIR\Bin
   RMDir /r $INSTDIR\Plugins
   RMDir /r "$INSTDIR\Examples\Modern UI"
   RMDir /r $INSTDIR\Examples
+  RMDir /r $INSTDIR\Include
   RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
@@ -843,7 +811,6 @@ Section Uninstall
   IfFileExists $INSTDIR 0 Removed
     MessageBox MB_YESNO|MB_ICONQUESTION \
       "Remove all files in your NSIS directory? (If you have anything you created that you want to keep, click No)" IDNO Removed
-    Delete $INSTDIR\*.* ; this would be skipped if the user hits no
     RMDir /r $INSTDIR
     IfFileExists $INSTDIR 0 Removed
       MessageBox MB_OK|MB_ICONEXCLAMATION "Note: $INSTDIR could not be removed."
