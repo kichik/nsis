@@ -108,7 +108,8 @@ const char * NSISCALL loadHeaders(void)
 #endif
   {
     g_inst_section=(section *) (g_inst_header + 1);
-    g_inst_page=(page *) (g_inst_section + g_inst_header->num_sections);
+    num_sections=g_inst_header->num_sections;
+    g_inst_page=(page *) (g_inst_section + num_sections);
   }
   g_inst_entry=(entry *) (g_inst_page + g_inst_cmnheader->num_pages);
   g_db_strtab = (char *) (g_inst_entry + g_inst_cmnheader->num_entries);

@@ -38,7 +38,7 @@ HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
   if (d == INVALID_FILE_ATTRIBUTES || !(d&FILE_ATTRIBUTE_DIRECTORY)) dir=0;
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
     return NULL;
-  if (NULL != ProcInfo.hThread) CloseHandle( ProcInfo.hThread );
+  CloseHandle(ProcInfo.hThread);
   return ProcInfo.hProcess;
 }
 
