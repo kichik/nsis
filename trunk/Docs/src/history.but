@@ -2,11 +2,17 @@
 
 \e{v2.0b4}
 
-\b Added \R{rmdir}{RMDir /REBOOTOK}
+\b Modern UI 1.64: Finish header macro's don't have to be inserted anymore, \R{alicenseforceselection}{LicenseForceSelection} support, improved language preference storage
 
-\b Controls can be transparent using \R{setbkcolor}{SetBkColor}
+\b Added \R{alicenseforceselection}{LicenseForceSelection}: Checkbox or radiobuttons on license page to let user agree with license or not
 
-\b Added \R{alicenseforceselection}{LicenseForceSelection}
+\b Leave function for custom \R{pages}{pages}: Input on InstallOptions pages can be validated using script code
+
+\b Added \R{rmdir}{RMDir /REBOOTOK}: Remove folders on reboot
+
+\b Added \R{setbkcolor}{SetBkColor}: Background colors can be set for non-static controls, transparent background support
+
+\b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
 \e{v2.0b3}
 
