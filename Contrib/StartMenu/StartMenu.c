@@ -2,8 +2,6 @@
 #include "../exdll/exdll.h"
 #include "resource.h"
 
-#define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
-
 HINSTANCE g_hInstance;
 
 HWND hwParent;
