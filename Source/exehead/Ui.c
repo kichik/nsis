@@ -113,20 +113,36 @@ BOOL my_SetDlgItemText(HWND dlg, WORD id, int strtab) {
 }
 
 BOOL SetUIText(HWND defhw, WORD def, WORD custom, int strtab) {
-  return my_SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,strtab);
+  if (custom)
+    return my_SetDlgItemText(g_hwnd,custom,strtab);
+  else
+    return my_SetDlgItemText(defhw,def,strtab);
+  //my_SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,strtab);
 }
 
 // no tab
 BOOL SetUITextNT(HWND defhw, WORD def, WORD custom, const char *text) {
-  return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
+  if (custom)
+    return SetDlgItemText(g_hwnd,custom,text);
+  else
+    return SetDlgItemText(defhw,def,text);
+  //return SetDlgItemText(custom?g_hwnd:defhw,custom?custom:def,text);
 }
 
 UINT GetUIText(WORD def, WORD custom, char *str, int max_size) {
-  return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
+  if (custom)
+    return GetDlgItemText(g_hwnd,custom,str,max_size);
+  else
+    return GetDlgItemText(m_curwnd,def,str,max_size);
+  //return GetDlgItemText(custom?g_hwnd:m_curwnd,custom?custom:def,str,max_size);
 }
 
 HWND GetUIItem(HWND defhw, WORD def, WORD custom) {
-  return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
+  if (custom)
+    return GetDlgItem(g_hwnd,custom);
+  else
+    return GetDlgItem(defhw,def);
+  //return GetDlgItem(custom?g_hwnd:defhw,custom?custom:def);
 }
 #endif
 
@@ -304,39 +320,42 @@ int ui_doinstall(void)
   {
     // Added by Amir Szekely 3rd August 2002
     // Multilingual support
-    char c=0;
+    char pa=0;
+    int num=g_inst_header->str_tables_num;
     LANGID user_lang=GetUserDefaultLangID();
-    int size=g_inst_header->str_tables_num*sizeof(common_strings);
+    int size=num*sizeof(common_strings);
     cur_common_strings_table=common_strings_tables=(common_strings*)GlobalAlloc(GPTR,size);
     GetCompressedDataFromDataBlockToMemory(g_inst_header->common.str_tables,(char*)common_strings_tables,size);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (!g_is_uninstaller) {
 #endif
-      size=g_inst_header->str_tables_num*sizeof(installer_strings);
+      size=num*sizeof(installer_strings);
       cur_install_strings_table=install_strings_tables=(installer_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_header->str_tables,(char*)install_strings_tables,size);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     }
     else {
-      size=g_inst_uninstheader->str_tables_num*sizeof(uninstall_strings);
+      size=num*sizeof(uninstall_strings);
       cur_uninstall_strings_table=uninstall_strings_tables=(uninstall_strings*)GlobalAlloc(GPTR,size);
       GetCompressedDataFromDataBlockToMemory(g_inst_uninstheader->str_tables,(char*)uninstall_strings_tables,size);
     }
 #endif
     lang_again:
-    for (size=0; size<g_inst_header->str_tables_num; size++) {
-      if (user_lang == common_strings_tables[size].lang_id
-        || (c && PRIMARYLANGID(user_lang) == PRIMARYLANGID(common_strings_tables[size].lang_id))) {
+    for (size=0; size < num; size++) {
+      if (user_lang == common_strings_tables[size].lang_id) {
         cur_install_strings_table = &install_strings_tables[size];
         cur_common_strings_table = &common_strings_tables[size];
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         cur_uninstall_strings_table = &uninstall_strings_tables[size];
 #endif
+        pa++;
         break;
       }
+      common_strings_tables[size].lang_id&=0x3ff; // primary lang
     }
-    if (size==g_inst_header->str_tables_num && !c) {
-      c=1;
+    if (!pa) {
+      user_lang&=0x3ff; // primary lang
+      pa++;
       goto lang_again;
     }
   }
@@ -584,6 +603,11 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         }
       }
     }
+  }
+  if (uMsg == WM_CTLCOLORSTATIC) {
+    SetTextColor((HDC)wParam, RGB(0,0,0));
+    SetBkMode((HDC)wParam, TRANSPARENT);
+    return (long)GetStockObject(NULL_BRUSH);
   }
   if (uMsg == WM_CLOSE)
   {
