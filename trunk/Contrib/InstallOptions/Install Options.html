@@ -265,7 +265,7 @@ numbers from 1 to NumFields. Each Field section contains the following values:
 <HR>
 <A name="ui"><B>Fonts and colors:</B>
 <P>InstallOptions supports the new UI enhancements in the new NSIS 2. To support them, InstallOptions now has two new functions, initDialog, and show. The first creates the dialog but doesn't show it. It pushes the HWND of the custom dialog to the stack. To get the HWND of any of the controls use:<BR><BR>
-<PRE>	GetDlgItem (output var) (hwnd of the custom dialog) (12000 + field number - 1)</PRE>
+<PRE>	GetDlgItem (output var) (hwnd of the custom dialog) (1200 + field number - 1)</PRE>
 To finally show the tweaked dialog use the show function.
 
 Here is a little example:
@@ -275,7 +275,7 @@ Here is a little example:
 	IntCmp $0 0 error
 		; $0 is now the IO dialog HWND
 		; use getdlgitem with it and sendmessage
-		GetDlgItem $1 $0 12000 ; 12000 + field number - 1
+		GetDlgItem $1 $0 1200 ; 1200 + field number - 1
 		; $1 is now the HWND of the first field
 		CreateFont $2 "Tahoma" 10 700 
 		SendMessage $1 ${WM_SETFONT} $2 0
