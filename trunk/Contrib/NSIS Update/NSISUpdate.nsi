@@ -395,7 +395,7 @@ Function PatchCVSRoot
     Return
 go:
   FileOpen $6 $5 "w"
-  FileWrite $6 ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nsis$\r$\n"
+  FileWrite $6 ":pserver:anonymous:@cvs.sourceforge.net:/cvsroot/nsis$\r$\n"
   FileClose $6
   Push "go"
 FunctionEnd
