@@ -41,7 +41,7 @@ SetDateSave on
 InstallDir $PROGRAMFILES\NSIS
 InstallDirRegKey HKLM SOFTWARE\NSIS ""
 
-Section "NSIS development system (required)"
+Section "NSIS Development System (required)" SecCore
   SectionIn 1 2 3 RO
   SetOutPath $INSTDIR
   SetOverwrite try
@@ -54,7 +54,7 @@ Section "NSIS development system (required)"
   File ..\nsisconf.nsi
 SectionEnd
 
-Section "NSIS Examples (recommended)"
+Section "NSIS Examples (recommended)" SecExample
   SectionIn 1 2 3
   SetOutPath $INSTDIR\Examples
   SetOverwrite try
@@ -87,7 +87,7 @@ Section "NSIS Examples (recommended)"
   File "..\Examples\Modern UI\Example.nsi"
 SectionEnd
 
-Section "NSI Development Shell Extensions"
+Section "NSI Development Shell Extensions" SecExtention
   SectionIn 1 2 3
   ; back up old value of .nsi
   ReadRegStr $1 HKCR ".nsi" ""
@@ -106,7 +106,7 @@ Section "NSI Development Shell Extensions"
   WriteRegStr HKCR "NSISFile\shell\compile-bz2\command" "" '"$INSTDIR\makensisw.exe" "$INSTDIR\makensis.exe" /CD /X"SetCompressor bzip2" "%1"'
 SectionEnd
 
-Section "Start Menu + Desktop Icons"
+Section "Start Menu + Desktop Icons" SecIcons
   SectionIn 1 2 3
   SetOutPath $SMPROGRAMS\NSIS
   Delete "$SMPROGRAMS\NSIS\NSIS Home Page.lnk"
@@ -120,8 +120,8 @@ Section "Start Menu + Desktop Icons"
   CreateShortCut "$DESKTOP\MakeNSIS.lnk" "$INSTDIR\Makensisw.exe" '"$INSTDIR\makensis.exe" /CD'
 SectionEnd
 
-SubSection "Contrib"
-Section "Extra Icons"
+SubSection "Contrib" SecContrib
+Section "Extra Icons" SecContribIcons
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Icons
   SetOverwrite try
@@ -132,7 +132,7 @@ Section "Extra Icons"
   SetOutPath $INSTDIR
 SectionEnd
 
-Section "Extra UIs"
+Section "Extra UIs" SecContribUIs
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\UIs
   SetOverwrite try
@@ -140,7 +140,7 @@ Section "Extra UIs"
   SetOutPath $INSTDIR
 SectionEnd
 
-Section "Language files"
+Section "Language files" SecContribLang
   SectionIn 1 2
   SetOutPath "$INSTDIR\Contrib\Language files"
   SetOverwrite try
@@ -150,7 +150,7 @@ Section "Language files"
   SetOutPath $INSTDIR
 SectionEnd
 
-Section "Splash"
+Section "Splash" SecContribSplash
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\Splash
   SetOverwrite try
@@ -167,7 +167,7 @@ Section "Splash"
   NoShortCuts:
 SectionEnd
 
-Section "Splash w/transparency"
+Section "Splash w/transparency" SecContribSplashT
   SectionIn 1 2
   SetOutPath $INSTDIR\Bin
   SetOverwrite try
@@ -175,7 +175,7 @@ Section "Splash w/transparency"
   File ..\Bin\magiclime.exe
 SectionEnd
 
-Section "Zip2Exe"
+Section "Zip2Exe" SecContribZ2E
   SectionIn 1 2
   DetailPrint "Extracting zip2exe source"
   SetDetailsPrint textonly
@@ -202,7 +202,7 @@ Section "Zip2Exe"
   NoShortCuts:
 SectionEnd
 
-Section "InstallOptions"
+Section "InstallOptions" SecContribIO
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\InstallOptions
   SetOverwrite try
@@ -223,7 +223,7 @@ Section "InstallOptions"
   NoShortCuts:
 SectionEnd
 
-Section "NSIS-DL"
+Section "NSIS-DL" SecContribNSISDL
   SectionIn 1 2
   SetOutPath $INSTDIR\Contrib\NSISdl
   SetOverwrite try
@@ -244,7 +244,7 @@ SectionEnd
 SubSectionEnd
 
 
-SubSection "Source code"
+SubSection "Source code" SecSrc
 Section "NSIS Source Code"
   SectionIn 1
   DetailPrint "Extracting source code...."
@@ -280,8 +280,8 @@ Section "NSIS Source Code"
   SetDetailsPrint both
 SectionEnd
 
-SubSection "Contrib"
-Section "ExDLL Source"
+SubSection "Contrib" SecSrcContrib
+Section "ExDLL Source" SecSrcEx
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\ExDLL
   SetOverwrite try
@@ -296,7 +296,7 @@ Section "ExDLL Source"
   NoShortCuts:
 SectionEnd
 
-Section "MakeNSISW Source"
+Section "MakeNSISW Source" SecSrcMNW
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\Makensisw
   SetOverwrite try
@@ -409,6 +409,65 @@ Function SetHeader
   done:
   Pop ${TEMP1}
   Pop ${TEMP2}
+FunctionEnd
+
+Function .onMouseOverSection
+  Push ${TEMP1}
+  FindWindow ${TEMP1} "#32770" "" $HWNDPARENT
+  GetDlgItem ${TEMP1} ${TEMP1} 14585
+  StrCmp $0 ${SecCore} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "The Core files required to use NSIS"
+    Goto done
+  StrCmp $0 ${SecExample} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Example installation scripts that show you how to use NSIS"
+    Goto done
+  StrCmp $0 ${SecExtention} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Adds right mouse click integration to nsi files so you can compile scripts easily"
+    Goto done
+  StrCmp $0 ${SecIcons} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Adds icons to your start menu and your desktop for easy access"
+    Goto done
+  StrCmp $0 ${SecContrib} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Tools, files, and other utilities contributed by other NSIS developers"
+    Goto done
+  StrCmp $0 ${SecContribIcons} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Icon files contributed by other NSIS developers"
+    Goto done
+  StrCmp $0 ${SecContribUIs} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "User interface designs that can be used to change the installer look and feel"
+    Goto done
+  StrCmp $0 ${SecContribLang} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Language files used to support multiple languages in an installer"
+    Goto done
+  StrCmp $0 ${SecContribSplash} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Splash screen add-on that lets you add a splash screen to an installer"
+    Goto done
+  StrCmp $0 ${SecContribSplashT} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Splash screen add-on with transparency support that lets you add a splash screen to an installer"
+    Goto done
+  StrCmp $0 ${SecContribZ2E} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Zip2Exe utility that converts zip files into an NSIS installer"
+    Goto done
+   StrCmp $0 ${SecContribIO} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Plugin that lets you add user interface components to an installer"
+    Goto done
+   StrCmp $0 ${SecContribNSISDL} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Plugin that lets you create a web based installer"
+    Goto done
+   StrCmp $0 ${SecSrc} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Source code to NSIS and all related files"
+    Goto done
+   StrCmp $0 ${SecSrcContrib} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Source code to user contributed utilities"
+    Goto done
+   StrCmp $0 ${SecSrcEx} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "Example DLL source in C"
+    Goto done
+   StrCmp $0 ${SecSrcMNW} "" +3
+    SendMessage ${TEMP1} ${WM_SETTEXT} 0 "MakeNSIS Wrapper source code"
+    Goto done
+  done:
+  Pop ${TEMP1}
 FunctionEnd
 
 Function .onUserAbort
