@@ -19,24 +19,24 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
         int y;
         GetClientRect(hwnd,&r);
     // this portion by Drew Davidson, drewdavidson@mindspring.com
-        
+
         // JF: made slower, reduced to 4 pixels high, because I like how it looks better/
         for (y = r.top; y < r.bottom; y += 4)
         {
           int rv,gv,bv;
 		      RECT rect;
 		      HBRUSH brush;
-          rv = GetRValue(m_color2) * y / r.bottom + GetRValue(m_color1) * (r.bottom - y) / r.bottom;
-          gv = GetGValue(m_color2) * y / r.bottom + GetGValue(m_color1) * (r.bottom - y) / r.bottom;
-          bv = GetBValue(m_color2) * y / r.bottom + GetBValue(m_color1) * (r.bottom - y) / r.bottom;
+          rv = (GetRValue(m_color2) * y + GetRValue(m_color1) * (r.bottom - y)) / r.bottom;
+          gv = (GetGValue(m_color2) * y + GetGValue(m_color1) * (r.bottom - y)) / r.bottom;
+          bv = (GetBValue(m_color2) * y + GetBValue(m_color1) * (r.bottom - y)) / r.bottom;
 		      brush = CreateSolidBrush(RGB(rv,gv,bv));
 		      SetRect(&rect, r.left, y, r.right, y+4);
-		      // note that we don't need to do "SelectObject(hdc, brush)" 
+		      // note that we don't need to do "SelectObject(hdc, brush)"
 		      // because FillRect lets us specify the brush as a parameter.
 		      FillRect(hdc, &rect, brush);
 		      DeleteObject(brush);
         }
-        
+
         if (m_textcolor != -1)
         {
           newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
@@ -79,7 +79,7 @@ HWND bgWnd_Init(HINSTANCE hInstance, char *title, int color1, int color2, int co
   m_color1=color1;
   m_color2=color2;
   m_textcolor=color3;
-  
+
   SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
   return CreateWindow(classname,title,WS_VISIBLE|WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
