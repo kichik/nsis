@@ -93,6 +93,7 @@ char *STRDUP(const char *c)
 #define FLAG_WANTRETURN    0x00100000
 #define FLAG_VSCROLL       0x00200000
 #define FLAG_HSCROLL       0x00400000
+#define FLAG_READONLY      0x00800000
 
 struct TableEntry {
   char *pszName;
@@ -544,7 +545,8 @@ bool ReadSettings(void) {
       { "MULTILINE",         FLAG_MULTILINE      },
       { "VSCROLL",           FLAG_VSCROLL        },
       { "HSCROLL",           FLAG_HSCROLL        },
-      { "WANTRETURN",        FLAG_WANTRETURN     },      
+      { "WANTRETURN",        FLAG_WANTRETURN     },
+      { "READONLY",          FLAG_READONLY       },
       { NULL,                0                   }
     };
 
@@ -922,6 +924,9 @@ int createCfgDlg()
           dwStyle |= WS_VSCROLL;
         if (pFields[nIdx].nFlags & FLAG_HSCROLL)
           dwStyle |= WS_HSCROLL;
+        if (pFields[nIdx].nFlags & FLAG_READONLY)
+          dwStyle |= ES_READONLY
+          ;
         title = pFields[nIdx].pszState;
         break;
       case FIELD_COMBOBOX:

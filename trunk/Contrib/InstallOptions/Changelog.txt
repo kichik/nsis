@@ -2,6 +2,7 @@ DLL version 2.2 (6/10/2003)
 * \r\n converts to newline in Multiline edit box
 * Support for multiline edit box
 * Better tab order in DirRequest and FileRequest
+* Added READONLY option to text box
 * Minor fixes
 
 DLL version 2.1 (3/15/2003)
