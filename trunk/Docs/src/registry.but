@@ -8,11 +8,20 @@ In all of the below registry instructions use an empty string (just two quotes w
 
 Deletes the entire section [section_name] from ini_filename. If the section could not be removed from the ini file, the error flag is set. It does not set the error flag if the section could not be found.
 
+\c WriteINIStr $TEMP\something.ini section1 something 123
+\c WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+\c WriteINIStr $TEMP\something.ini section2 nsis true
+\c DeleteINISec $TEMP\something.ini section1
+
 \S2{deleteinistr} DeleteINIStr
 
 \c ini_filename section_name str_name
 
 Deletes the string str_name from section [section_name] from ini_filename. If the string could not be removed from the ini file, the error flag is set. It does not set the error flag if the string could not be found.
+
+\c WriteINIStr $TEMP\something.ini section1 something 123
+\c WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+\c DeleteINIStr $TEMP\something.ini section1 somethingelse
 
 \S2{deleteregkey} DeleteRegKey
 
@@ -20,11 +29,16 @@ Deletes the string str_name from section [section_name] from ini_filename. If th
 
 Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under \R{writeregstr}{WriteRegStr}. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
 
+\c DeleteRegKey HKLM "Software\My Company\My Software"
+\c DeleteRegKey /ifempty HKLM "Software\A key that might have subkeys"
+
 \S2{deleteregvalue} DeleteRegValue
 
 \c root_key subkey key_name
 
 Deletes a registry value. Valid values for root_key are listed under WriteRegStr. The error flag is set if the value could not be removed from the registry (or if it didn't exist to begin with).
+
+\c DeleteRegValue HKLM "Software\My Company\My Software" "some value"
 
 \S2{enumregkey} EnumRegKey
 
@@ -32,11 +46,28 @@ Deletes a registry value. Valid values for root_key are listed under WriteRegStr
 
 Set user variable $x with the name of the 'index'th registry key in root_key\\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string if there are no more keys, and returns an empty string and sets the error flag if there is an error.
 
+\c StrCpy $0 0
+\c loop:
+\c   EnumRegKey $1 HKLM Software $0
+\c   StrCmp $1 "" done
+\c   IntOp $0 $0 + 1
+\c   MessageBox MB_YESNO|MB_ICONQUESTION "$1$\n$\nMore?" IDYES loop
+\c done:
+
 \S2{enumregvalue} EnumRegValue
 
 \c user_var(output) root_key subkey index
 
 Set user variable $x with the name of the 'index'th registry value in root_key\\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string if there are no more values, and returns an empty string and sets the error flag if there is an error.
+
+\c StrCpy $0 0
+\c loop:
+\c   EnumRegValue $1 HKLM Software\Microsoft\Windows\CurrentVersion $0
+\c   StrCmp $1 "" done
+\c   IntOp $0 $0 + 1
+\c   ReadRegStr $2 HKLM Software\Microsoft\Windows\CurrentVersion $1
+\c   MessageBox MB_YESNO|MB_ICONQUESTION "$1 = $2$\n$\nMore?" IDYES loop
+\c done:
 
 \S2{expandenvstrings} ExpandEnvStrings
 
@@ -44,11 +75,17 @@ Set user variable $x with the name of the 'index'th registry value in root_key\\
 
 Expands environment variables in "string" into the user variable $x. If error, the variable is set to empty, and the error flag is set.
 
+\c ExpandEnvStrings $0 "WINDIR=%WINDIR%$\nTEMP=%TEMP%"
+
 \S2{flushini} FlushINI
 
 \c ini_filename
 
 Flushes the INI file's buffers. Windows 9x keeps all changes to the INI file in memory. This command causes the changes to be written to the disk immediately. Use it if you edit the INI manually, delete it, move it or copy it right after you change it with \R{writeinistr}{WriteINIStr}, \R{deleteinisec}{DeleteINISec} or \R{deleteinistr}{DeleteINStr}.
+
+\c WriteINIStr $TEMP\something.ini test test test
+\c FlushINI $TEMP\something.ini
+\c Delete $TEMP\something.ini
 
 \S2{readenvstr} ReadEnvStr
 
@@ -56,11 +93,16 @@ Flushes the INI file's buffers. Windows 9x keeps all changes to the INI file in 
 
 Reads from the environment string "name" and sets the value into the user variable $x. If there is an error reading the string, the user variable is set to empty, and the error flag is set.
 
+\c ReadEnvStr $0 WINDIR
+\c ReadEnvStr $1 TEMP
+
 \S2{readinistr} ReadINIStr
 
 \c user_var(output) ini_filename section_name entry_name
 
 Reads from entry_name in [section_name] of ini_filename and stores the value into user variable $x. The error flag will be set and $x will be assigned to an empty string if the entry is not found.
+
+\c ReadINIStr $0 $INSTDIR\winamp.ini winamp outname
 
 \S2{readregdword} ReadRegDWORD
 
@@ -68,11 +110,16 @@ Reads from entry_name in [section_name] of ini_filename and stores the value int
 
 Reads a 32 bit DWORD from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("" which is 0) if the DWORD is not present. If the value is present, but is not a DWORD, it will be read as a string and the error flag will be set.
 
+\c ReadRegDWORD $0 HKLM Software\NSIS VersionBuild
+
 \S2{readregstr} ReadRegStr
 
 \c user_var(output) root_key sub_key name
 
 Reads from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("") if the string is not present. If the value is present, but is of type REG_DWORD, it will be read and converted to a string and the error flag will be set.
+
+\c ReadRegStr $0 HKLM Software\NSIS ""
+\c DetailPrint "NSIS is installed at: $0"
 
 \S2{writeinistr} WriteINIStr
 
@@ -80,11 +127,17 @@ Reads from the registry into the user variable $x. Valid values for root_key are
 
 Writes entry_name=value into [section_name] of ini_filename. The error flag is set if the string could not be written to the ini file.
 
+\c WriteINIStr $TEMP\something.ini section1 something 123
+\c WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+\c WriteINIStr $TEMP\something.ini section2 nsis true
+
 \S2{writeregbin} WriteRegBin
 
 \c root_key subkey key_name valuedata
 
 This command writes a block of binary data to the registry. Valid values for root_key are listed under WriteRegStr. Valuedata is in hexadecimal (e.g. DEADBEEF01223211151). The error flag is set if the binary data could not be written to the registry. If the registry key doesn't exist it will be created.
+
+\c WriteRegBin HKLM "Software\My Company\My Software" "Binary Value" DEADBEEF01223211151
 
 \S2{writeregdword} WriteRegDWORD
 
@@ -92,11 +145,15 @@ This command writes a block of binary data to the registry. Valid values for roo
 
 This command writes a dword (32 bit integer) to the registry (a user variable can be specified). Valid values for root_key are listed under WriteRegStr. The error flag is set if the dword could not be written to the registry. If the registry key doesn't exist it will be created.
 
+\c WriteRegDWORD HKLM "Software\My Company\My Software" "DWORD Value" 0xDEADBEEF
+
 \S2{writeregstr} WriteRegStr
 
 \c root_key subkey key_name value
 
 Write a string to the registry. See \R{writeregexpandstr}{WriteRegExpandStr} for more details.
+
+\c WriteRegStr HKLM "Software\My Company\My Software" "String Value" "dead beef"
 
 \S2{writeregexpandstr} WriteRegExpandStr
 
@@ -119,3 +176,5 @@ Write a string to the registry. root_key must be one of:
 \b \e{HKPD} or \e{HKEY_PERFORMANCE_DATA}
 
 The error flag is set if the string could not be written to the registry. The type of the string will be REG_SZ for WriteRegStr, or REG_EXPAND_STR for WriteRegExpandStr. If the registry key doesn't exist it will be created.
+
+\c WriteRegExpandStr HKLM "Software\My Company\My Software" "Expand String Value" "%WINDIR%\notepad.exe"

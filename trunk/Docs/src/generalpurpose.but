@@ -6,6 +6,10 @@
 
 Calls a function_name inside a NSIS extension DLL. See Contrib\\ExDLL for an example of how to make one. Extension DLLs can access the stack and variables. Use /NOUNLOAD to force the installer to leave the DLL loaded. Note: To automatically extract and call plug-in DLLs, use a plug-in command instead of CallInstDLL.
 
+\c Push "a parameter"
+\c Push "anoter parameter"
+\c CallInstDLL $INSTDIR\somedll.dll somefunction
+
 \S2{copyfiles} CopyFiles
 
 \c [/SILENT] [/FILESONLY] filespec_on_destsys destination_path [size_of_files_in_kb]
@@ -14,6 +18,9 @@ Copies files from the source to the destination on the installing system. Useful
 
 If no absolute path is specified the current folder will be used. The current folder is the folder set using the last \R{setoutpath}{SetOutPath} instruction. If you have not used \R{setoutpath}{SetOutPath} the current folder is usually \R{varother}{$EXEDIR}.
 
+\c CreateDirectory $INSTDIR\backup
+\c CopyFiles $INSTDIR\*.dat $INSTDIR\backup
+
 \S2{createdirectory} CreateDirectory
 
 \c path_to_create
@@ -21,6 +28,8 @@ If no absolute path is specified the current folder will be used. The current fo
 Creates (recursively if necessary) the specified directory. The error flag is set if the directory couldn't be created.
 
 You should always specify an absolute path.
+
+\c CreateDirectory $INSTDIR\some\directory
 
 \S2{createshortcut} CreateShortCut
 
@@ -33,6 +42,10 @@ keyboard_shortcut should be in the form of 'flag|c' where flag can be a combinat
 description should be the description of the shortcut, or comment as it is called under XP.
 The error flag is set if the shortcut cannot be created (i.e. either of the paths (link or target) does not exist, or some other error).
 
+\c CreateDirectory "$SMPROGRAMS\My Company"
+\c CreateShortCut "$SMPROGRAMS\My Company\My Program.lnk" "$INSTDIR\My Program.exe" \
+\c   "some command line parameters" "$INSTDIR\My Program.exe" 2 SW_SHOWNORMAL \
+\c   ALT|CTRL|SHIFT|F5 "a description"
 
 \S2{getdllversion} GetDLLVersion
 
@@ -76,6 +89,11 @@ Assign to the user variable $x, the full path of the file specified. If the path
 \c user_var(output) base_dir
 
 Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. If to want the temporary file to be created in another directory than the Windows temp directory, specify a base_dir. Delete the file when done with it.
+
+\c GetTempFileName $0
+\c File /oname=$0 something.dat
+\c # do something with something.dat
+\c Delete $0
 
 \S2{searchpath} SearchPath
 
