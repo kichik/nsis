@@ -196,14 +196,14 @@
 
 // Added by ramon 3 jun 2003
 // NSIS_SUPPORT_NAMED_USERVARS enables support for user variables
-//#define NSIS_SUPPORT_NAMED_USERVARS
+#define NSIS_SUPPORT_NAMED_USERVARS
 
 // Added by ramon 5 jun 2003
 // NSIS_SUPPORT_VERSION_INFO enables support for version information on final exe
 #define NSIS_SUPPORT_VERSION_INFO
 
 // NSIS_SUPPORT_LANG_IN_STRINGS enables support for language strings inside other strings
-//#define NSIS_SUPPORT_LANG_IN_STRINGS
+#define NSIS_SUPPORT_LANG_IN_STRINGS
 
 // NSIS_FIX_DEFINES_IN_STRINGS fix defines inside defines and handles chars $ perfectly
 //#define NSIS_FIX_DEFINES_IN_STRINGS

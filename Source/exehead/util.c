@@ -704,3 +704,16 @@ void NSISCALL log_write(int close)
   }
 }
 #endif
+
+WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
+{
+  HANDLE h;
+  static WIN32_FIND_DATA fd;
+  h = FindFirstFile(buf,&fd);
+  if (h != INVALID_HANDLE_VALUE)
+  {
+    FindClose(h);
+    return &fd;
+  }
+  return NULL;
+}
