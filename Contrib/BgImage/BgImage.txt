@@ -1,37 +1,91 @@
 BgImage.DLL - NSIS extension DLL
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Displays an image behind the NSIS window.
+Displays an image or a gradient with user defined texts and/or images behind the NSIS window.
 Can also play WAVs.
 
-Note
-~~~~
+See Example.nsi for a usage example.
 
-All but the last used function (which should be Destroy) must use /NOUNLOAD so the image window won't be destroyed before it should. Therefore, this DLL requires NSIS 2.0a7 and above.
+Usage
+~~~~~
+
+1) Call SetBg to set the background
+2) Call AddText, or AddImage to add texts and images
+3) Call Redraw to update the background window
+4) Optional - repeat steps 2-3 to add more images
+           -or-
+   call Clear and repeat steps 1-3 for a completely new background.
+5) Call Destroy when the background is no longer required (.onGUIEnd for example)
+
+Notes
+~~~~~
+
+* All but the last used function (which should be Destroy) must use /NOUNLOAD so the image window won't be destroyed before it should. 
+
+* This plugin requires NSIS 2.0b4 and above.
+
+* Do not call SetBg (which creates the window) from a section unless you're going to destroy it from a section.
+
+* Always use /NOUNLOAD in .onInstSuccess and .onInstFailed. Failing to do so will cause the installer to crash.
+  This means you should not call Destroy from .onInstSuccess or .onInstFailed.
 
 Available functions
 ~~~~~~~~~~~~~~
 
-Init [/FILLSCREEN] path_to_bitmap
-   Create a new image window
+SetBg [/FILLSCREEN|/TILED] path_to_bitmap
+SetBg /GRADIENT R G B R G B
+   Sets the background and creates the window if necessary
    Use /FILLSCREEN to make the image fill the screen
+   Use /TILED to set a tiled background
+   Use /GRADIENT to set a gradient background
+
+   If SetReturn on was called returns "success" on the stack
+     or an error string if there was an error
+
    Do not use in .onInit!
 
-SetImage [/FILLSCREEN] path_to_bitmap
-   Sets a new image to the current timage window
-   Use /FILLSCREEN to make the image fill the screen
-   Do not use in .onInit!
+AddImage [/TRANSPARENT R G B] path_to_bitmap X Y
+   Adds an image to the background window at (X,Y)
+   Use /TRANSPARENT to make BgImage draw the image transparently
+     Define the transprent color using R G B
+
+   If SetReturn on was called returns "success" on the stack
+     or an error string if there was an error
+
+AddText text font_handle R G B X Y X Y
+  Adds text to the background window
+  Use NSIS's CreateFont to create a font and pass it as font_handle
+  Use R G B to set the text color
+  The first X Y is for the top left corner of the text box
+  The second X Y is for the bottom right corner of the text box
+
+  If SetReturn on was called returns "success" on the stack
+     or an error string if there was an error
+
+Clear
+   Clears all of the current background, images and texts
 
 Destroy
-   Destroys the current image window
+   Destroys the current background window
+   Destroy calls Clear automatically
 
 Sound [/WAIT] path_to_wav
    Plays a wave file
    Use /WAIT to wait for the sound to finish playing
 
+SetReturn on|off
+   Enable return values from SetBg, AddImage and AddText
+   Default value is off because all of the possible errors
+     are either things you should handle when debugging your script
+     such as "can't load bitmap" or errors you can do nothing about
+     such as "memory allocation error"
+
 Credits
 ~~~~~~~
 
 Coded by Amir Szekely, aka KiCHiK
-Modified by Ximon Eighteen, aka Sunjammer (08Feb2003) - Removed the window title bar
-  
+
+Ximon Eighteen, aka Sunjammer - Fixed window title bar issues
+iceman_k - Text idea and original implmentation
+Lajos Molnar, aka orfanik - Tile idea and original implmentation
+Jason Reis - Coding help

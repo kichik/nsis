@@ -9,7 +9,7 @@ extern void dopause(void);
 
 // Adds the bitmap in filename using resource editor re as id id.
 // If width or height are specified it will also make sure the bitmap is in that size
-int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width=0, int height=0);
+int update_bitmap(CResourceEditor* re, WORD id, char* filename, int width=0, int height=0, int maxbpp=0);
 
 // reads icon file filename and places its icons in the resource wIconId using resource editor re. Also updates icondata_size.
 int replace_icon(CResourceEditor* re, WORD wIconId, char* filename);

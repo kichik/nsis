@@ -8,7 +8,8 @@
 
 #ifdef NSIS_SUPPORT_BGBG
 
-int bg_color1, bg_color2, bg_textcolor;
+#define c1 g_inst_cmnheader->bg_color1
+#define c2 g_inst_cmnheader->bg_color2
 
 LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -23,46 +24,43 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
     case WM_PAINT:
       {
-        static PAINTSTRUCT ps;
+        PAINTSTRUCT ps;
         HDC hdc=BeginPaint(hwnd,&ps);
         RECT r;
-        int y,ry;
+        int ry;
         GetClientRect(hwnd,&r);
         // this portion by Drew Davidson, drewdavidson@mindspring.com
         ry=r.bottom;
-        y=0; //r.top
 
         // JF: made slower, reduced to 4 pixels high, because I like how it looks better/
-        while (y < r.bottom)
+        while (r.top < ry)
         {
           int rv,gv,bv;
-		      RECT rect;
 		      HBRUSH brush;
-          rv = (GetRValue(bg_color2) * y + GetRValue(bg_color1) * ry) / r.bottom;
-          gv = (GetGValue(bg_color2) * y + GetGValue(bg_color1) * ry) / r.bottom;
-          bv = (GetBValue(bg_color2) * y + GetBValue(bg_color1) * ry) / r.bottom;
+          rv = (GetRValue(c2) * r.top + GetRValue(c1) * (ry-r.top)) / ry;
+          gv = (GetGValue(c2) * r.top + GetGValue(c1) * (ry-r.top)) / ry;
+          bv = (GetBValue(c2) * r.top + GetBValue(c1) * (ry-r.top)) / ry;
 		      brush = CreateSolidBrush(RGB(rv,gv,bv));
-		      SetRect(&rect, 0 /*r.left*/, y, r.right, y+4);
 		      // note that we don't need to do "SelectObject(hdc, brush)"
 		      // because FillRect lets us specify the brush as a parameter.
-		      FillRect(hdc, &rect, brush);
+		      FillRect(hdc, &r, brush);
 		      DeleteObject(brush);
-          ry-=4;
-          y+=4;
+          r.top+=4;
+          r.bottom+=4;
         }
 
-        if (bg_textcolor != -1)
+        if (g_inst_cmnheader->bg_textcolor != -1)
         {
           HFONT newFont, oldFont;
           newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
           if (newFont)
           {
             static char buf[256];
-            r.left+=16;
-            r.top+=8;
+            r.left=16;
+            r.top=8;
             my_GetWindowText(hwnd,buf,sizeof(buf));
             SetBkMode(hdc,TRANSPARENT);
-            SetTextColor(hdc,bg_textcolor);
+            SetTextColor(hdc,g_inst_cmnheader->bg_textcolor);
             oldFont = SelectObject(hdc,newFont);
             DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
             SelectObject(hdc,oldFont);

@@ -152,6 +152,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
   int parm5 = entry_->offsets[5];
 //char *var5 = g_usrvars[parm5]; // not used yet
   int which = entry_->which;
+
+  // Saves 8 bytes
+  // HWND mainHwnd = g_hwnd;
+  // #define g_hwnd mainHwnd
   
   parms = entry_->offsets;
 
@@ -196,9 +200,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_SLEEP:
       {
         int x=process_string_fromparm_toint(0);
-        if (x < 1) x=1;
         log_printf2("Sleep(%d)",x);
-        Sleep(x);
+        Sleep(min(x,1));
       }
     break;
     case EW_BRINGTOFRONT:
@@ -764,13 +767,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       RECT r;
       HANDLE hImage;
       HWND hwImage=GetDlgItem(g_hwnd, parm1);
-      GetWindowRect(hwImage, &r);
+      GetClientRect(hwImage, &r);
       hImage=LoadImage(
         0,
         process_string_fromparm_tobuf(0x00),
         IMAGE_BITMAP,
-        parm2?r.right-r.left:0,
-        parm2?r.bottom-r.top:0,
+        parm2?r.right:0,
+        parm2?r.bottom:0,
         LR_LOADFROMFILE
       );
       DeleteObject((HGDIOBJ)SetWindowLong(hwImage,GWL_USERDATA,(LONG)hImage));

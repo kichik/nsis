@@ -350,6 +350,7 @@ typedef struct
   int code_onUserAbort;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onGUIInit;
+  int code_onGUIEnd;
 #endif
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
