@@ -48,7 +48,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
     break;
   default:
     {
-      int iStrLen = 1;
+      int iStrLen;
 #ifdef _WIN32
       iStrLen = WideCharToMultiByte(uCodePage, 0, (WCHAR*)arr, -1, 0, 0, 0, 0);
       if (iStrLen)
@@ -62,28 +62,29 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
         seeker += sizeof(WCHAR);
       }
 #else
-      char cp[128] = "";
+      iStrLen = WCStrLen((WCHAR *) arr);
+
+      char cp[128] = "CP1252";
       if (uCodePage != CP_ACP)
         snprintf(cp, 128, "CP%d", uCodePage);
       iconv_t cd = iconv_open(cp, "UCS-2");
       if (cd != (iconv_t) -1)
       {
-        iStrLen = WCStrLen((WCHAR *) arr);
         char *in = (char *) arr;
         char *out = readInto = new char[iStrLen + 1];
-        size_t insize = (iStrLen * sizeof(WCHAR)) + 1;
+        size_t insize = (iStrLen + 1) * sizeof(WCHAR);
         size_t outsize = iStrLen + 1;
         if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1)
         {
-          *arr = 0;
-          iStrLen = 1;
+          delete [] readInto;
+          readInto = 0;
         }
         iconv_close(cd);
       }
       else
-        *arr = 0;
+        readInto = 0;
 #endif
-      seeker += iStrLen*sizeof(WCHAR);
+      seeker += iStrLen * sizeof(WCHAR);
     }
     break;
   }
@@ -115,7 +116,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
       seeker += sizeof(WORD); \
     } \
     else { \
-      char cp[128] = ""; \
+      char cp[128] = "CP1252"; \
       if (m_uCodePage != CP_ACP) \
         snprintf(cp, 128, "CP%d", m_uCodePage); \
       iconv_t cd = iconv_open("UCS-2", cp); \
@@ -124,10 +125,10 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
         char *in = (char *) x; \
         char *out = (char *) seeker; \
         size_t insize = strlen(in) + 1; \
-        size_t outsize = insize * 2; \
+        size_t outsize = insize * sizeof(WCHAR); \
         if (__iconv_adaptor(iconv, cd, &in, &insize, &out, &outsize) == (size_t) -1) \
         { \
-          *seeker = 0; \
+          *(WCHAR*)seeker = 0; \
           seeker += sizeof(WCHAR); \
         } \
         seeker = (BYTE *) out; \
@@ -135,7 +136,7 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
       } \
       else \
       { \
-        *seeker = 0; \
+        *(WCHAR*)seeker = 0; \
         seeker += sizeof(WCHAR); \
       } \
     } \
@@ -160,7 +161,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
 
   WORD wItems = 0;
 
-  if (*(DWORD*)pbData == 0xFFFF0001) { // Extended dialog template signature
+  if (*(DWORD*)pbData == EXTENDED_DIALOG) { // Extended dialog template signature
     m_bExtended = true;
 
     DLGTEMPLATEEX* dTemplateEx = (DLGTEMPLATEEX*)pbData;
@@ -177,6 +178,7 @@ CDialogTemplate::CDialogTemplate(BYTE* pbData, unsigned int uCodePage) {
   }
   else {
     m_bExtended = false;
+
     DLGTEMPLATE* dTemplate = (DLGTEMPLATE*)pbData;
 
     m_dwStyle = dTemplate->style;
