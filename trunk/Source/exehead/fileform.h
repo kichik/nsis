@@ -69,6 +69,7 @@ enum
   EW_SENDMESSAGE,       // SendMessage: 5 [output, hwnd, msg, lparam, wparam]
   EW_ISWINDOW,          // IsWindow: 3 [hwnd, jump_if_window, jump_if_notwindow]
   EW_GETDLGITEM,        // GetDlgItem: 3 [outputvar, dialog, item_id]
+  EW_SETWINDOWLONG,     // SetStaticBkColor: 2 [hwnd, color]
 
   EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
 
@@ -246,7 +247,7 @@ typedef struct
   int code_onInstFailed;
   int code_onUserAbort;
   int code_onNextPage;
-  int code_onStaticCtlBkColor;
+  int code_onInitDialog;
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
   char show_details;
