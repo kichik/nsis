@@ -1662,21 +1662,9 @@
 !macro MUI_LANGUAGEFILE_LANGSTRING_CONTINUE NAME INSTALLBUTTON
 
   !ifndef "${INSTALLBUTTON}"
-  
-    !ifdef MUI_TEXT_CONTINUE_NEXT
-      LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_NEXT}"
-    !else
-      LangString "${NAME}" 0 "${${NAME}}"
-    !endif
-    
+    LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_NEXT}"
   !else
-  
-    !ifdef MUI_TEXT_CONTINUE_INSTALL
-      LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_INSTALL}"
-    !else
-      LangString "${NAME}" 0 "${${NAME}}"
-    !endif
-    
+    LangString "${NAME}" 0 "${${NAME}}${MUI_TEXT_CONTINUE_INSTALL}"
   !endif
 
   !undef "${NAME}"
@@ -1707,21 +1695,9 @@
 !macro MUI_LANGUAGEFILE_NSISCOMMAND_CONTINUE COMMAND NAME INSTALLBUTTON
 
   !ifndef "${INSTALLBUTTON}"
-  
-    !ifdef MUI_TEXT_CONTINUE_NEXT
-      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
-    !else
-      ${COMMAND} "${${NAME}}"
-    !endif
-    
+     ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
   !else
-  
-    !ifdef MUI_TEXT_CONTINUE_INSTALL
-      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
-    !else
-      ${COMMAND} "${${NAME}}"
-    !endif
-    
+    ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
   !endif
   
   !undef "${NAME}"
@@ -1731,27 +1707,14 @@
 !macro MUI_LANGUAGEFILE_UNNSISCOMMAND_CONTINUE COMMAND NAME INSTALLBUTTON
 
   !ifndef "${INSTALLBUTTON}"
-  
-    !ifdef MUI_TEXT_CONTINUE_NEXT
-      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
-    !else
-      ${COMMAND} "${${NAME}}"
-    !endif
-    
+    ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
   !else
-  
-    !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
-      ${COMMAND} "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
-    !else
-      ${COMMAND} "${${NAME}}"
-    !endif
-    
+    ${COMMAND} "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
   !endif
   
   !undef "${NAME}"
   
 !macroend
-
 
 !macro MUI_LANGUAGEFILE_DEFINE DEFINE NAME
 
@@ -1814,6 +1777,7 @@
   !ifdef MUI_TEXT_FINISH_INFO_TITLE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
   !else
+    ;Modern UI 1.61 Language File compatibility 
     LangString "MUI_TEXT_FINISH_TITLE" 0 "${MUI_TEXT_FINISH_TITLE}"
   !endif
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
@@ -1821,11 +1785,12 @@
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_WINDOWTITLE"
-    !ifndef MUI_TEXT_FINISH_INFO_TITLE
+    !ifdef MUI_TEXT_FINISH_INFO_TITLE
+      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TITLE"
+    !else
+      ;Modern UI 1.61 Language File compatibility 
       LangString "MUI_TEXT_FINISH_INFO_TITLE" 0 "${MUI_TEXT_FINISH_TITLE}"
       !undef MUI_TEXT_FINISH_TITLE
-    !else
-      !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TITLE"
     !endif
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_TEXT"
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_INFO_REBOOT"
