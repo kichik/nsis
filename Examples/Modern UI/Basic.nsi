@@ -19,7 +19,7 @@
   !define MUI_UNINSTALLER
 
   ;Language
-  !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
+  !insertmacro MUI_LANGUAGE "English"
   
   ;General
   OutFile "Basic.exe"
