@@ -1357,12 +1357,12 @@ int CEXEBuild::write_output(void)
 
         p->next=LANG_BTN_NEXT;
 
-#ifdef NSIS_CONFIG_LICENSEPAGE
-        if (p->id==NSIS_PAGE_LICENSE)
-          p->next=LANG_BTN_LICENSE;
-#endif
         if (i<build_header.common.num_pages-1 && (p+1)->id==NSIS_PAGE_INSTFILES)
           p->next=LANG_BTN_INSTALL;
+        #ifdef NSIS_CONFIG_LICENSEPAGE
+        if (p->id==NSIS_PAGE_LICENSE)
+          p->next=LANG_BTN_LICENSE;
+        #endif
         if (p->id==NSIS_PAGE_INSTFILES || p->id==NSIS_PAGE_COMPLETED)
           p->back=1;
       }
