@@ -16,6 +16,14 @@ NSIS
 
 * all installer strings should be language strings
 
+* make temp (for compress whole) creation better
+
+* move no custom to compiler (custom as just another inst type)
+
+PLUGINS
+
+* Banner doesn't refresh and doesn't stay on top
+
 -- Before NSIS 2 Final --
 
 EXAMPLES
