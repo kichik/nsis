@@ -409,40 +409,6 @@ uInt *hn)               /* working area: values in order of bit length */
   return (y != 0 && g != 1) ? Z_BUF_ERROR : Z_OK;
 }
 
-local int __inline inflate_trees_dynamic(nl, nd, c, bl, bd, tl, td, hp)
-uInt nl;                /* number of literal/length codes */
-uInt nd;                /* number of distance codes */
-uIntf *c;               /* that many (total) code lengths */
-uIntf *bl;              /* literal desired/actual bit depth */
-uIntf *bd;              /* distance desired/actual bit depth */
-inflate_huft * FAR *tl; /* literal/length tree result */
-inflate_huft * FAR *td; /* distance tree result */
-inflate_huft *hp;       /* space for trees */
-{
-  int r;
-  uInt hn = 0;          /* hufts used in space */
-
-  /* build literal/length tree */
-  r = huft_build(c, nl, 257, cplens, cplext, tl, bl, hp, &hn);
-  if (r != Z_OK || *bl == 0)
-  {
-    //if (r != Z_MEM_ERROR) 
-      return Z_DATA_ERROR;
-    //return r;
-  }
-
-  /* build distance tree */
-  r = huft_build(c + nl, nd, 0, cpdist, cpdext, td, bd, hp, &hn);
-  if (r != Z_OK || (*bd == 0 && nl > 257))
-  {
-    //if (r != Z_MEM_ERROR) 
-      return Z_DATA_ERROR;
-    //return r;
-  }
-
-  return Z_OK;
-}
-
 
 /* build fixed tables only once--keep them here */
 local char fixed_built = 0;
@@ -452,48 +418,6 @@ local uInt fixed_bl=9;
 local uInt fixed_bd=5;
 local inflate_huft *fixed_tl;
 local inflate_huft *fixed_td;
-
-
-local void __inline inflate_trees_fixed(bl, bd, tl, td)
-uIntf *bl;               /* literal desired/actual bit depth */
-uIntf *bd;               /* distance desired/actual bit depth */
-inflate_huft * FAR *tl;  /* literal/length tree result */
-inflate_huft * FAR *td;  /* distance tree result */
-{
-  /* build fixed tables if not already */
-  if (!fixed_built)
-  {
-    int k;              /* temporary variable */
-    uInt f = 0;         /* number of hufts used in fixed_mem */
-    static uIntf c[288];           /* length list for huft_build */
-
-    /* literal table */
-    for (k = 0; k < 288; k++) 
-    {
-      char v=8;
-      if (k > 143)
-      {
-        if (k < 256) v++;
-        else if (k < 280) v--;
-      }
-      c[k] = v;
-    }
-//    fixed_bl = 9;
-    huft_build(c, 288, 257, cplens, cplext, &fixed_tl, &fixed_bl, fixed_mem, &f);
-
-    /* distance table */
-    for (k = 0; k < 30; k++) c[k] = 5;
-  //  fixed_bd = 5;
-    huft_build(c, 30, 0, cpdist, cpdext, &fixed_td, &fixed_bd, fixed_mem, &f);
-
-    /* done */
-    fixed_built++;
-  }
-  *bl = fixed_bl;
-  *bd = fixed_bd;
-  *tl = fixed_tl;
-  *td = fixed_td;
-}
 
 void inflateReset(z_streamp z)
 {
@@ -553,11 +477,36 @@ int r=Z_OK;
           Tracev((stderr, "inflate:     fixed codes block%s\n",
                  s->last ? " (last)" : ""));
           {
-            uInt bl, bd;
-            inflate_huft *tl, *td;
+            if (!fixed_built)
+            {
+              int _k;              /* temporary variable */
+              uInt f = 0;         /* number of hufts used in fixed_mem */
+              static uIntf c[288];           /* length list for huft_build */
 
-            inflate_trees_fixed(&bl, &bd, &tl, &td);
-            inflate_codes_new(&s->sub.decode.t_codes,bl, bd, tl, td);
+              /* literal table */
+              for (_k = 0; _k < 288; _k++) 
+              {
+                char v=8;
+                if (_k > 143)
+                {
+                  if (_k < 256) v++;
+                  else if (_k < 280) v--;
+                }
+                c[_k] = v;
+              }
+          //    fixed_bl = 9;
+              huft_build(c, 288, 257, cplens, cplext, &fixed_tl, &fixed_bl, fixed_mem, &f);
+
+              /* distance table */
+              for (_k = 0; _k < 30; _k++) c[_k] = 5;
+            //  fixed_bd = 5;
+              huft_build(c, 30, 0, cpdist, cpdext, &fixed_td, &fixed_bd, fixed_mem, &f);
+
+              /* done */
+              fixed_built++;
+            }
+
+            inflate_codes_new(&s->sub.decode.t_codes,fixed_bl, fixed_bd, fixed_tl, fixed_td);
           }
           s->mode = CODES;
           break;
@@ -568,7 +517,6 @@ int r=Z_OK;
           break;
         default:                         /* illegal */
           s->mode = BAD;
-//          z->msg = (char*)"err";//invalid block type";
           r = Z_DATA_ERROR;
           LEAVE
       }
@@ -626,12 +574,10 @@ int r=Z_OK;
         if (t == Z_BUF_ERROR || s->sub.trees.bb == 0) t=Z_DATA_ERROR;
       }
 
-
       if (t != Z_OK)
       {
         r = t;
-        if (r == Z_DATA_ERROR)
-          s->mode = BAD;
+        s->mode = BAD;
         LEAVE
       }
       s->sub.trees.index = 0;
@@ -687,19 +633,32 @@ int r=Z_OK;
       }
       s->sub.trees.tb = Z_NULL;
       {
+        uInt hn = 0;          /* hufts used in space */
         uInt bl, bd;
         inflate_huft *tl, *td;
+        int nl,nd;
+        t = s->sub.trees.table;
 
+        nl=257 + (t & 0x1f);
+        nd=1 + ((t >> 5) & 0x1f);
         bl = 9;         /* must be <= 9 for lookahead assumptions */
         bd = 6;         /* must be <= 9 for lookahead assumptions */
-        t = s->sub.trees.table;
-        t = inflate_trees_dynamic(257 + (t & 0x1f), 1 + ((t >> 5) & 0x1f),
-                                  s->sub.trees.t_blens, &bl, &bd, &tl, &td,
-                                  s->hufts);
+
+        t = huft_build(s->sub.trees.t_blens, nl, 257, cplens, cplext, &tl, &bl, s->hufts, &hn);
+        if (t != Z_OK || bl == 0) t=Z_DATA_ERROR;
+        else
+        {
+          /* build distance tree */
+          t = huft_build(s->sub.trees.t_blens + nl, nd, 0, cpdist, cpdext, &td, &bd, s->hufts, &hn);
+          if (t != Z_OK || (bd == 0 && nl > 257))
+          {
+              t=Z_DATA_ERROR;
+          }
+        }
+
         if (t != Z_OK)
         {
-          if (t == (uInt)Z_DATA_ERROR)
-            s->mode = BAD;
+          s->mode = BAD;
           r = t;
           LEAVE
         }
