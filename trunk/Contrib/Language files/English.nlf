@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v1
+NLF v2
 # Language ID
 1033
 # Start editing here
@@ -60,3 +60,4 @@ Remove directory:
 Rename on reboot: 
 Rename: 
 Skipped: 
+Copy Details To Clipboard

@@ -14,8 +14,8 @@ struct StringTable {
   uninstall_strings uninstall;
 };
 
-#define NLF_VERSION 1
-#define NLF_STRINGS 56
+#define NLF_VERSION 2
+#define NLF_STRINGS 57
 
 #define NLF_BRANDING 0
 #define NLF_CAPTION 1
@@ -73,13 +73,14 @@ struct StringTable {
 #define NLF_RENAME_ON_REBOOT 53
 #define NLF_RENAME 54
 #define NLF_SKIPPED 55
+#define NLF_COPY_DETAILS 56
 
-#define LANG_NAME 56
-#define LANG_COMP_TEXT 57
-#define LANG_LICENSE_TEXT 58
-#define LANG_LICENSE_DATA 59
-#define LANG_DIR_TEXT 60
-#define LANG_UNINST_TEXT 61
+#define LANG_NAME 102
+#define LANG_COMP_TEXT 103
+#define LANG_LICENSE_TEXT 104
+#define LANG_LICENSE_DATA 105
+#define LANG_DIR_TEXT 106
+#define LANG_UNINST_TEXT 107
 
 extern char *english_strings[NLF_STRINGS];
 
