@@ -212,6 +212,7 @@ enum
   TOK_INITPLUGINSDIR,
   TOK_CREATEFONT,
   TOK_SHOWWINDOW,
+  TOK_ENABLEWINDOW,
   // Added by ramon 23 May 2003
   TOK_ALLOWSKIPFILES,
   // Added by ramon 3 jun 2003

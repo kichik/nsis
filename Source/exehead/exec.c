@@ -796,7 +796,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     break;
     case EW_SHOWWINDOW:
       if (parm2) log_printf("HideWindow");
-      ShowWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
+      if (!parm3)
+        ShowWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
+      else
+        EnableWindow((HWND)process_string_fromparm_toint(0),process_string_fromparm_toint(1));
     break;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
 #endif//NSIS_SUPPORT_HWNDS

@@ -3287,6 +3287,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG("\n");
     return add_entry(&ent);
+    case TOK_ENABLEWINDOW:
+      ent.which=EW_SHOWWINDOW;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+      ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[3]=1;
+      SCRIPT_MSG("EnableWindow: handle=%s enable=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
     case TOK_SHOWWINDOW:
       ent.which=EW_SHOWWINDOW;
       ent.offsets[0]=add_string(line.gettoken_str(1));
@@ -3321,6 +3328,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_BRINGTOFRONT:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
+    case TOK_ENABLEWINDOW:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -3331,6 +3339,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_GETDLGITEM:
     case TOK_SETBKCOLOR:
     case TOK_SHOWWINDOW:
+    case TOK_ENABLEWINDOW:
     case TOK_CREATEFONT:
     case TOK_HIDEWINDOW:
     case TOK_BRINGTOFRONT:
