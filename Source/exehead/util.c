@@ -601,7 +601,7 @@ char * NSISCALL validate_filename(char *in) {
   out = out_save = in;
   while (*in)
   {
-    if (*in > 31 && !*findchar(nono, *in))
+    if ((unsigned char)*in > 31 && !*findchar(nono, *in))
     {
       mini_memcpy(out, in, CharNext(in) - in);
       out = CharNext(out);
