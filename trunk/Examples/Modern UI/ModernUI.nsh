@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19i
+;Modern UI Header File version 1.20
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage

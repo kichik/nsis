@@ -1,4 +1,4 @@
-;NSIS Modern Style UI version 1.19
+;NSIS Modern Style UI version 1.20
 ;Multilanguage & LangDLL Example Script
 ;Written by Joost Verburg
 
@@ -16,6 +16,7 @@
 !define TEMP2 $R1
 
 ;--------------------------------
+;Configuration
 
   ;Language Files
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
@@ -48,6 +49,9 @@
   ;Uninstaller
   UninstallText /LANG=1033 "This will uninstall ${NAME} from your system."
   UninstallText /LANG=1043 "Dit programma zal ${NAME} verwijderen van uw systeem."
+
+  ;Things that need to be extracted on startup (keep these lines before any File command!)
+  ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
 
 ;--------------------------------
 ;Installer Sections
