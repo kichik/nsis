@@ -36,6 +36,8 @@
 
 \b WriteINIStr with empty value works again
 
+\b Added FlushINI
+
 \e{v2.0b2}
 
 \b NSIS Menu: links to all NSIS utitlies, documentation and websites
