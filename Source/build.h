@@ -1,10 +1,6 @@
 #ifndef _BUILD_H_
 #define _BUILD_H_
 
-#include <stdexcept>
-
-using namespace std;
-
 #include "strlist.h"
 #include "lineparse.h"
 #include "lang.h"
@@ -116,6 +112,8 @@ class CEXEBuild {
     int check_write_output_errors() const;
     int prepare_uninstaller();
     int pack_exe_header();
+
+    void update_exehead(const unsigned char *new_exehead, size_t new_size);
 
     // tokens.cpp
     int get_commandtoken(char *s, int *np, int *op, int *pos);
@@ -350,8 +348,9 @@ class CEXEBuild {
 
     TinyGrowBuf verbose_stack;
 
-    unsigned char *header_data_new;
-    int exeheader_size_new;
+    unsigned char *m_exehead;
+    size_t m_exehead_size;
+
     int icon_offset;
     bool branding_image_found;
     WORD branding_image_id;

@@ -73,7 +73,7 @@ Release-zlib/exehead_zlib.exe : $(ZLIB_OBJS) sections_script
 
 ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-zlib/exehead_zlib.h : Release-zlib/exehead_zlib.exe $(BIN2H)
-	$(BIN2H) $< $@ zlib_header_data
+	$(BIN2H) $< $@ zlib_exehead
 endif
 
 Release-zlib/%.o : %.c
@@ -92,7 +92,7 @@ Release-bzip2/exehead_bzip2.exe : $(BZIP2_OBJS) sections_script
 
 ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-bzip2/exehead_bzip2.h : Release-bzip2/exehead_bzip2.exe $(BIN2H)
-	$(BIN2H) $< $@ bzip2_header_data
+	$(BIN2H) $< $@ bzip2_exehead
 endif
 
 Release-bzip2/%.o : %.c
@@ -108,7 +108,7 @@ Release-lzma/exehead_lzma.exe : $(LZMA_OBJS) sections_script
 
 ifneq ($(USE_PRECOMPILED_EXEHEADS),1)
 Release-lzma/exehead_lzma.h :  Release-lzma/exehead_lzma.exe $(BIN2H)
-	$(BIN2H) $< $@ lzma_header_data
+	$(BIN2H) $< $@ lzma_exehead
 endif
 
 Release-lzma/%.o : %.c

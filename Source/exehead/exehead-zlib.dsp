@@ -54,7 +54,7 @@ LINK32=link.exe
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Desc=generating include file for makenssi
-PostBuild_Cmds=bin2h Release-zlib\exehead_zlib.exe Release-zlib\exehead_zlib.h zlib_header_data	bin2h bitmap1.bmp Release-zlib\bitmap1.h bitmap1_data	bin2h nsis.ico Release-zlib\icon.h icon_data	bin2h uninst.ico Release-zlib\unicon.h unicon_data
+PostBuild_Cmds=bin2h Release-zlib\exehead_zlib.exe Release-zlib\exehead_zlib.h zlib_exehead	bin2h bitmap1.bmp Release-zlib\bitmap1.h bitmap1_data	bin2h nsis.ico Release-zlib\icon.h icon_data	bin2h uninst.ico Release-zlib\unicon.h unicon_data
 # End Special Build Tool
 # Begin Target
 
