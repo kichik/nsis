@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.61
+;Compatible with Modern UI 1.62
 
 ;Language: Russian (1049)
 ;By Nik Medved (brainsucker). Fixed by Scam (1.5).
@@ -41,6 +41,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Установка успешно завершена."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Завершена"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Закрыть"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "Завершение мастера настройки ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} был установлен на вашу систему.\r\nНажмите Закрыть чтобы завершить данный Мастер Установки."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_REBOOT "Ваша система должна быть перезапущена с целью завершения инсталяции ${MUI_PRODUCT}. Вы хотите перезагрузиться сейчас?"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_REBOOTNOW "Перезагрузиться сейчас"
@@ -56,6 +57,7 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Вы уверены, что хотите отменить установку ${MUI_PRODUCT}?"
 
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_CONTINUE_UNINSTALL "Нажмите Uninstall для удаления программы."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Удаление ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Удаление ${MUI_PRODUCT} с Вашего компьютера."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNINNERTEXT_INTRO "Эта программа удалит ${MUI_PRODUCT} с вашего компьютера."
