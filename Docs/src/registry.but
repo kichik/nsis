@@ -1,5 +1,7 @@
 \S1{registry} Registry, INI, File Instructions
 
+In all of the below registry instructions use an empty string (just two quotes with nothing between them - "") as the kye name to specify the default key which is shown as (Default) in regedit.exe.
+
 \S2{deleteinisec} DeleteINISec
 
 \c ini_filename section_name
