@@ -79,9 +79,5 @@ SOURCE=.\resource.h
 SOURCE=.\resource.rc
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\ReadMe.txt
-# End Source File
 # End Target
 # End Project
