@@ -18,6 +18,8 @@ NSIS
 
 * all installer strings should be language strings
 
+* RMDir /REBOOTOK
+
 DOCUMENTATION
 
 * links should have alternative text instead of Section 1.2.3.4
