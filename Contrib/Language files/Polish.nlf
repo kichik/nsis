@@ -10,7 +10,7 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by Piotr Murawski & Rafa³ Lampe <ppiter@skrzynka.pl> - www.lomsel.prv.pl
-# Updated by cube, cube(at)lp.net.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
+# Updated by cube, kubad(at)poczta.onet.pl and SYSTEMsoft Group, http://www.systemsoft-group.com
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -44,9 +44,9 @@ Deinstalator $(^Name)
 # ^AgreeBtn
 &Zgadzam siê
 # ^AcceptBtn
-&Akceptujê warunki Umowy Licencyjnej
+&Akceptujê warunki umowy licencyjnej
 # ^DontAcceptBtn
-&Nie akceptujê warunków licencji
+&Nie akceptujê warunków umowy licencyjnej
 # ^InstallBtn
 &Zainstaluj
 # ^UninstallBtn
