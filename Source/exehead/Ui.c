@@ -202,6 +202,21 @@ lang_again:
     my_SetWindowText(m_bgwnd, caption);
 #endif
   }
+
+  // reload section names
+  {
+    section *sec = g_sections;
+    int x = num_sections;
+
+    while (x--)
+    {
+      if (sec->name_ptr)
+      {
+        GetNSISString(sec->name, sec->name_ptr);
+      }
+      sec++;
+    }
+  }
 }
 
 FORCE_INLINE int NSISCALL ui_doinstall(void)
@@ -302,20 +317,6 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   if (ExecuteCallbackFunction(CB_ONINIT)) return 2;
   set_language();
 #endif
-
-  {
-    section *sec = g_sections;
-    int x = num_sections;
-
-    while (x--)
-    {
-      if (sec->name_ptr)
-      {
-        GetNSISString(sec->name, sec->name_ptr);
-      }
-      sec++;
-    }
-  }
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
