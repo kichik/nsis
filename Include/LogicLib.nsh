@@ -1,5 +1,5 @@
 ; NSIS LOGIC LIBRARY - logiclib.nsh
-; Version 2.3 - 12/06/2003
+; Version 2.4 - 12/13/2003
 ; By dselkirk@hotmail.com
 ; and eccles@users.sf.net
 ;
@@ -22,6 +22,8 @@
 ;         - Conditionally executes an inline statement, depending on a True value of the provided NSIS function.
 ;       select..case..case2..case3..case4..case5..caseelse..endselect
 ;         - Executes one of several groups of statements, depending on the value of an expression.
+;       switch..case..default..endswitch
+;         - As above but with C-like features and behaviour.
 ;       for..exitfor..continue..break..next
 ;         - Repeats a group of statements a specified number of times.
 ;       foreach..exitfor..continue..break..next
@@ -82,6 +84,25 @@
 ;                      underscore so why should that one). The old name is still
 ;                      available too though (if you must).
 ;                    - CaseElse can also be called Default (for the C-minded).
+;   2.4 - 12/13/2003 - Added Switch..Case*/Default..EndSwitch: similar to Select
+;                      but behaves just like the C version. I.e.:
+;                         - Each Case is more like a label than a block so
+;                           execution "falls through" unless you use Break.
+;                         - CaseElse (or Default) does not have to be the final
+;                           case.
+;                         - Case*/Default can appear anywhere inside the Switch
+;                           (e.g. inside an If inside the Switch).
+;                      (With thanks to kichik for the idea and proof-of-concept
+;                      model).
+;                    - Added unsigned integer comparisons U<, U>=, U> and U<=.
+;                    - Added 64-bit integer comparisons L=, L<>, L<, L>=, L> and
+;                      L<= (these use System.dll).
+;                    - Added case-sensitive string tests S== and S!= (these use
+;                      System.dll).
+;                    - Added string comparisons (not case sensitive) S<, S>=, S>
+;                      and S<= (these use System.dll).
+;                    - Added section flag tests (SectionIsSelected, etc.) (to
+;                      use these your script must include sections.nsh).
 
 !verbose push
 !verbose 3
@@ -96,6 +117,8 @@
   !define LOGICLIB
   !define | "'"
   !define || "' '"
+
+  Var _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
 
   !macro _PushLogic
     !insertmacro _PushScope Logic _${__LINE__}
@@ -141,6 +164,44 @@
     !insertmacro _== `${_a}` `${_b}` `${_f}` `${_t}`
   !macroend
 
+  ; Case-sensitive string tests
+  !macro _StrCmp _a _b _e _l _m
+    System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+  !macroend
+
+  !macro _S== _a _b _t _f
+    !insertmacro _StrCmp `${_a}` `${_b}` `${_t}` `${_f}` `${_f}`
+  !macroend
+
+  !macro _S!= _a _b _t _f
+    !insertmacro _S== `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  ; Extra string tests (cannot do these case-sensitively - I tried and lstrcmp still ignored the case)
+  !macro _StrCmpI _a _b _e _l _m
+    System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+  !macroend
+
+  !macro _S< _a _b _t _f
+    !insertmacro _StrCmpI `${_a}` `${_b}` `${_f}` `${_t}` `${_f}`
+  !macroend
+
+  !macro _S>= _a _b _t _f
+    !insertmacro _S< `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _S> _a _b _t _f
+    !insertmacro _StrCmpI `${_a}` `${_b}` `${_f}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _S<= _a _b _t _f
+    !insertmacro _S> `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
   ; Integer tests
   !macro _= _a _b _t _f
     IntCmp `${_a}` `${_b}` `${_t}` `${_f}` `${_f}`
@@ -164,6 +225,54 @@
 
   !macro _<= _a _b _t _f
     !insertmacro _> `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  ; Unsigned integer tests (NB: no need for extra equality tests)
+  !macro _U< _a _b _t _f
+    IntCmpU `${_a}` `${_b}` `${_f}` `${_t}` `${_f}`
+  !macroend
+
+  !macro _U>= _a _b _t _f
+    !insertmacro _U< `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _U> _a _b _t _f
+    IntCmpU `${_a}` `${_b}` `${_f}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _U<= _a _b _t _f
+    !insertmacro _U> `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  ; Int64 tests
+  !macro _Int64Cmp _a _o _b _t _f
+    System::Int64Op `${_a}` `${_o}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    !insertmacro _= $_LOGICLIB_TEMP 0 `${_f}` `${_t}`
+  !macroend
+
+  !macro _L= _a _b _t _f
+    !insertmacro _Int64Cmp `${_a}` = `${_b}` `${_t}` `${_f}`
+  !macroend
+
+  !macro _L<> _a _b _t _f
+    !insertmacro _L= `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _L< _a _b _t _f
+    !insertmacro _Int64Cmp `${_a}` < `${_b}` `${_t}` `${_f}`
+  !macroend
+
+  !macro _L>= _a _b _t _f
+    !insertmacro _L< `${_a}` `${_b}` `${_f}` `${_t}`
+  !macroend
+
+  !macro _L> _a _b _t _f
+    !insertmacro _Int64Cmp `${_a}` > `${_b}` `${_t}` `${_f}`
+  !macroend
+
+  !macro _L<= _a _b _t _f
+    !insertmacro _L> `${_a}` `${_b}` `${_f}` `${_t}`
   !macroend
 
   ; Flag tests
@@ -206,6 +315,20 @@
     Goto ${_f}
   !macroend
   !define Cmd `"" Cmd`
+
+  ; Section flag test
+  !macro _SectionFlagIsSet _a _b _t _f
+    SectionGetFlags `${_b}` $_LOGICLIB_TEMP
+    IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
+    !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
+  !macroend
+  !define SectionIsSelected `${SF_SELECTED} SectionFlagIsSet`
+  !define SectionIsSubSection `${SF_SUBSEC} SectionFlagIsSet`
+  !define SectionIsSubSectionEnd `${SF_SUBSECEND} SectionFlagIsSet`
+  !define SectionIsBold `${SF_BOLD} SectionFlagIsSet`
+  !define SectionIsReadOnly `${SF_RO} SectionFlagIsSet`
+  !define SectionIsExpanded `${SF_EXPAND} SectionFlagIsSet`
+  !define SectionIsPartiallySelected `${SF_PSELECTED} SectionFlagIsSet`
 
   !define IfCmd `!insertmacro _IfThen "" Cmd ${|}`
 
@@ -421,7 +544,7 @@
   !macroend
   !define Select `!insertmacro _Select`
 
-  !macro _CaseElse
+  !macro _Select_CaseElse
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     !ifndef _Logic | ${_Logic}Select
@@ -443,7 +566,7 @@
   !define Case_Else `!insertmacro _CaseElse`              ; Compatibility with 2.2 and earlier
   !define Default `!insertmacro _CaseElse`                ; For the C-minded
 
-  !macro _Case _a
+  !macro _Select_Case _a
     !verbose push
     !verbose ${LOGICLIB_VERBOSITY}
     ${CaseElse}                                           ; Perform the CaseElse
@@ -522,6 +645,78 @@
     !verbose pop
   !macroend
   !define EndSelect `!insertmacro _EndSelect`
+
+  !macro _Switch _a
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !insertmacro _PushLogic
+    !insertmacro _PushScope Switch ${_Logic}              ; Keep a separate stack for switch data
+    !insertmacro _PushScope Break _${__LINE__}            ; Get a lable for beyond the end of the switch
+    !define ${_Switch}Var `${_a}`                         ; Remember the left hand side of the comparison
+    !define ${_Switch}Tmp "$%TMP%\${__LINE__}.tmp"        ; Get a name for a temporary file
+    !system `@echo # logiclib temp file > "${${_Switch}Tmp}"` ; and create it
+    !define ${_Logic}Switch _${__LINE__}                  ; Get a label for the end of the switch
+    Goto ${${_Logic}Switch}                               ; and go there
+    !verbose pop
+  !macroend
+  !define Switch `!insertmacro _Switch`
+
+  !macro _Case _a
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !ifdef _Logic & ${_Logic}Select                       ; Check for an active Select
+      !insertmacro _Select_Case `${_a}`
+    !else ifndef _Switch                                  ; If not then check for an active Switch
+      !error "Cannot use Case without a preceding Select or Switch"
+    !else
+      !define _label _${__LINE__}                         ; Get a label for this case,
+      ${_label}:                                          ; place it and add it's check to the temp file
+      !system `@echo !insertmacro _== $\`${${_Switch}Var}$\` $\`${_a}$\` ${_label} "" >> "${${_Switch}Tmp}"`
+      !undef _label
+    !endif
+    !verbose pop
+  !macroend
+
+  !macro _CaseElse
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !ifdef _Logic & ${_Logic}Select                       ; Check for an active Select
+      !insertmacro _Select_CaseElse
+    !else ifndef _Switch                                  ; If not then check for an active Switch
+      !error "Cannot use Case without a preceding Select or Switch"
+    !else ifdef ${_Switch}Else                            ; Already had a default case?
+      !error "Cannot use CaseElse following a CaseElse"
+    !else
+      !define ${_Switch}Else _${__LINE__}                 ; Get a label for the default case,
+      ${${_Switch}Else}:                                  ; and place it
+    !endif
+    !verbose pop
+  !macroend
+
+  !macro _EndSwitch
+    !verbose push
+    !verbose ${LOGICLIB_VERBOSITY}
+    !ifndef _Logic | ${_Logic}Switch
+      !error "Cannot use EndSwitch without a preceding Switch"
+    !endif
+    Goto ${_Break}                                        ; Skip the jump table
+    ${${_Logic}Switch}:                                   ; Place the end of the switch
+    !undef ${_Logic}Switch
+    !include "${${_Switch}Tmp}"                           ; Include the jump table
+    !system `@del /q "${${_Switch}Tmp}"`                  ; and clear it up
+    !ifdef ${_Switch}Else                                 ; Was there a default case?
+      Goto ${${_Switch}Else}                              ; then go there if all else fails
+      !undef ${_Switch}Else
+    !endif
+    !undef ${_Switch}Tmp
+    !undef ${_Switch}Var
+    ${_Break}:                                            ; Place the break label
+    !insertmacro _PopScope Break
+    !insertmacro _PopScope Switch
+    !insertmacro _PopLogic
+    !verbose pop
+  !macroend
+  !define EndSwitch `!insertmacro _EndSwitch`
 
 !endif ; LOGICLIB
 !verbose 3
