@@ -822,11 +822,11 @@ Section "VPatch Source" SecContribVPatchS
 
   SectionIn 1
   SetOutPath $INSTDIR\Contrib\VPatch\Source
+  File ..\Contrib\VPatch\Source\*.bpg
   
   SetOutPath $INSTDIR\Contrib\VPatch\Source\GenPat
   File ..\Contrib\VPatch\Source\GenPat\*.pas
   File ..\Contrib\VPatch\Source\GenPat\*.dpr
-  File ..\Contrib\VPatch\Source\GenPat\*.bpg
   
   SetOutPath $INSTDIR\Contrib\VPatch\Source\Plugin
   File ..\Contrib\VPatch\Source\Plugin\*.c
