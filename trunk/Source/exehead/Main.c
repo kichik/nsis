@@ -164,7 +164,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     static char temp[512];
     DWORD l=left;
     if (l > 512) l=512;
-    if (!ReadFile(g_db_hFile,temp,l,&l,NULL))
+    if (!ReadSelfFile(temp,l,&l))
     {
       m_Err=_LANG_INVALIDCRC;
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
@@ -256,15 +256,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     {
       DWORD l;
       int fcrc;
-      SetFilePointer(g_db_hFile,m_pos,NULL,FILE_BEGIN);
-      if (!ReadFile(g_db_hFile,&fcrc,4,&l,NULL) || crc != fcrc)
+      SetSelfFilePointer(m_pos,FILE_BEGIN);
+      if (!ReadSelfFile(&fcrc,4,&l) || crc != fcrc)
       {
         m_Err=_LANG_INVALIDCRC;
         goto end;
       }
     }
 #endif//NSIS_CONFIG_CRC_SUPPORT
-    SetFilePointer(g_db_hFile,g_filehdrsize,NULL,FILE_BEGIN);
+    SetSelfFilePointer(g_filehdrsize,FILE_BEGIN);
 
     m_Err=loadHeaders();
   }
