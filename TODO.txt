@@ -16,10 +16,6 @@ NSIS
 
 * all installer strings should be language strings
 
-PLUGINS
-
-* BGImage - crash when called from .onInstSuccess
-
 -- Before NSIS 2 Final --
 
 EXAMPLES

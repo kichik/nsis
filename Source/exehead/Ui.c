@@ -274,7 +274,6 @@ int NSISCALL ui_doinstall(void)
     if (inst_cmnheader->bg_color1 != -1)
     {
       RECT vp;
-      extern int bg_color1, bg_color2, bg_textcolor;
       extern LRESULT CALLBACK BG_WndProc(HWND, UINT, WPARAM, LPARAM);
       wc.lpfnWndProc = BG_WndProc;
       wc.hInstance = g_hInstance;
@@ -283,10 +282,6 @@ int NSISCALL ui_doinstall(void)
       wc.lpszClassName = "_Nb";
 
       if (!RegisterClass(&wc)) return 0;
-
-      bg_color1=inst_cmnheader->bg_color1;
-      bg_color2=inst_cmnheader->bg_color2;
-      bg_textcolor=inst_cmnheader->bg_textcolor;
 
       SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
@@ -300,8 +295,10 @@ int NSISCALL ui_doinstall(void)
     if (ExecuteCodeSegment(inst_cmnheader->code_onInit,NULL)) return 1;
     set_language();
     g_hwnd=NULL;
-    ShowWindow(m_bgwnd, SW_SHOW);
 #endif//NSIS_SUPPORT_CODECALLBACKS
+#ifdef NSIS_SUPPORT_BGBG
+    ShowWindow(m_bgwnd, SW_SHOW);
+#endif//NSIS_SUPPORT_BGBG
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
     { // load richedit DLL
@@ -325,7 +322,13 @@ int NSISCALL ui_doinstall(void)
     }
 #endif
 
-    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
+    {
+      int ret=DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST+dlg_offset),0,DialogProc);
+#if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
+      ExecuteCodeSegment(g_inst_cmnheader->code_onGUIEnd,NULL);
+#endif
+      return ret;
+    }
   }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -414,7 +417,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // Call leave function. If Abort used don't move to the next page.
       if (m_delta==1) if (ExecuteCodeSegment(this_page->leavefunc,NULL)) return 1;
 #endif
-
+      
       // if the last page was a custom page, wait for it to finish by itself.
       // if it doesn't, it's a BAD plugin.
       // plugins should react to WM_NOTIFY_OUTER_NEXT.
@@ -445,9 +448,9 @@ nextPage:
       if (g_flags.abort)
       {
         this_page->button_states|=16|4;
-        SendMessage(g_hwnd,DM_SETDEFID,IDCANCEL,0);
+        SendMessage(hwndDlg,DM_SETDEFID,IDCANCEL,0);
       }
-      else SendMessage(g_hwnd,DM_SETDEFID,IDOK,0);
+      else SendMessage(hwndDlg,DM_SETDEFID,IDOK,0);
       SetWindowLong(hwndtmp,GWL_STYLE,GetWindowLong(hwndtmp,GWL_STYLE)&~BS_DEFPUSHBUTTON);
       ShowWindow(hwndtmp,this_page->button_states&SW_SHOWNA);// SW_HIDE = 0, SW_SHOWNA = 8
       EnableWindow(hwndtmp,this_page->button_states&2);

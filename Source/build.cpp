@@ -1252,6 +1252,7 @@ int CEXEBuild::write_output(void)
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onUserAbort",0),&build_uninst.common.code_onUserAbort)) return PS_ERROR;
     #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
       if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onGUIInit",0),&build_uninst.common.code_onGUIInit)) return PS_ERROR;
+      if (resolve_call_int("uninstall callback","un.callbacks",ns_func.find("un.onGUIEnd",0),&build_uninst.common.code_onGUIEnd)) return PS_ERROR;
     #endif
   #endif//NSIS_SUPPORT_CODECALLBACKS
 
@@ -1275,6 +1276,7 @@ int CEXEBuild::write_output(void)
   if (resolve_call_int("install callback",".callbacks",ns_func.find(".onVerifyInstDir",0),&build_header.code_onVerifyInstDir)) return PS_ERROR;
   #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     if (resolve_call_int("install callback",".callbacks",ns_func.find(".onGUIInit",0),&build_header.common.code_onGUIInit)) return PS_ERROR;
+    if (resolve_call_int("install callback",".callbacks",ns_func.find(".onGUIEnd",0),&build_header.common.code_onGUIEnd)) return PS_ERROR;
     if (resolve_call_int("install callback",".callbacks",ns_func.find(".onMouseOverSection",0),&build_header.code_onMouseOverSection)) return PS_ERROR;
   #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
