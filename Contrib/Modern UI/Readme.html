@@ -246,13 +246,18 @@ follow these steps:</p>
   Bitmap for the Welcome and Finish page.</p>
   <p class="text"><span class="bold">MUI_BGCOLOR</span> <i>(0xFFFFFF)</i><br />
   Background color for the header, Welcome page and Finish page, hexadecimal. (0xBBGGRR)</p>
-  <p class="subheader">6. Insert the MUI_SYSTEM macro</p>
+  <p class="subheader">6. Define custom functions (optional)</p>
+  <p class="text">If you want add your own code to functions inserted by the
+  Modern UI, such as the .onGUIInit function and the Page function, create your
+  own function and let the Modern UI functions call them..</p>
+  <p class="text"><a href="#customFunctions">More info...</a></p>
+  <p class="subheader">7. Insert the MUI_SYSTEM macro</p>
   <pre class="margin">!insertmacro MUI_SYSTEM</pre>
-  <p class="subheader">7. Insert custom pages (optional)</p>
+  <p class="subheader">8. Insert custom pages (optional)</p>
   <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
   or MUI_UNCUSTOMPAGECOMMANDS!), insert them before inserting the language files.</p>
   <p class="text"><a href="#customPages">More info...</a></p>
-  <p class="subheader">7. Insert language files</p>
+  <p class="subheader">9. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
   <p class="text">The Modern UI language files load the NLF language files,
@@ -281,7 +286,7 @@ Uninstaller section:</p>
 <pre class="margin">
 !insertmacro MUI_UNFINISHHEADER
 </pre>
-  <p class="subheader">9. Set the descriptions for the sections</p>
+  <p class="subheader">10. Set the descriptions for the sections</p>
   <p class="text">Insert the description macro's to set the descriptions
   for the sections. These descriptions will be displayed on the component
   selection page, when the users hovers the mouse over a section.
@@ -440,23 +445,78 @@ ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
   To change them, you need to edit this file and recompile NSIS.</p>
   <p class="text">To modify the Welcome and Finish dialog, edit the Install
   Options INI File ioWizard.ini in the 'Contrib\Modern UI' directory.</p>
-<p class="subheader"><a name="customGUIInit">Customize the GUIInit function</a></p>
-<p class="text">If you want to insert your own code in the .onGUIInit function,
-define MUI_CUSTOMGUIINIT (MUI_UNCUSTOMGUIINIT for the uninstaller) on the right
-position and insert the MUI_GUIINIT (MUI_UNGUIINIT for the uninstaller) macro
-in your .onGUIInit or un.onGUInit function:</p>
+<p class="header">Customize Modern UI Functions</p>
+<a name="customFunctions"><p class="text">If you want add your own code to functions inserted by the
+Modern UI, such as the .onGUIInit function and the Page function, create your
+own function and let the Modern UI functions call them. Use these
+defines to define the name of your functions:</p>
+<p class="text">
+<span class="bold">GUI Init</span><br>
+MUI_CUSTOMFUNCTION_GUIINIT<br>
+MUI_CUSTOMFUNCTION_UNGUIINIT
+</p>
+<p class="text">
+<span class="bold">Welcome Page</span><br>
+MUI_CUSTOMFUNCTION_WELCOME
+</p>
+<p class="text">
+<span class="bold">License Page</span><br>
+MUI_CUSTOMFUNCTION_LICENSE_PRE<br>
+MUI_CUSTOMFUNCTION_LICENSE_SHOW<br>
+MUI_CUSTOMFUNCTION_LICENSE_LEAVE
+</p>
+<p class="text">
+<span class="bold">Components Page</span><br>
+MUI_CUSTOMFUNCTION_COMPONENTS_PRE<br>
+MUI_CUSTOMFUNCTION_COMPONENTS_SHOW<br>
+MUI_CUSTOMFUNCTION_COMPONENTS_LEAVE
+</p>
+<p class="text">
+<span class="bold">Directory Page</span><br>
+MUI_CUSTOMFUNCTION_DIRECTORY_PRE<br>
+MUI_CUSTOMFUNCTION_DIRECTORY_SHOW<br>
+MUI_CUSTOMFUNCTION_DIRECTORY_LEAVE
+</p>
+<p class="text">
+<span class="bold">Start Menu Folder Page</span><br>
+MUI_CUSTOMFUNCTION_STARTMENU<br>
+</p>
+<p class="text">
+<span class="bold">Install Files Page</span><br>
+MUI_CUSTOMFUNCTION_INSTFILES_PRE<br>
+MUI_CUSTOMFUNCTION_INSTFILES_SHOW<br>
+MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
+</p>
+<p class="text">
+<span class="bold">Finish Page</span><br>
+MUI_CUSTOMFUNCTION_FINISH<br>
+</p>
+<p class="text">
+<span class="bold">Uninstaller - Confirm Page</span><br>
+MUI_UNCUSTOMFUNCTION_LICENSE_PRE<br>
+MUI_UNCUSTOMFUNCTION_LICENSE_SHOW<br>
+MUI_UNCUSTOMFUNCTION_LICENSE_LEAVE
+</p>
+<p class="text">
+<span class="bold">Uninstaller - Uninstall Files Page</span><br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_PRE<br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_SHOW<br>
+MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
+</p>
+<p class="text">Example:</p>
 <pre class="text">
-!define MUI_CUSTOMGUIINIT
+!define MUI_CUSTOMFUNCTION_ONGUIINIT .ownGuiInit
 
-Function .onGUIInit
-  !insertmacro MUI_GUIINIT
+Function .ownGUIInit
   ...your own code...
 FunctionEnd
 </pre>
 <p class="header">Version history</p>
 <ul>
-<li>1.62 - December 20, 2002
+<li>1.62 - February 2, 2003
   <ul>
+    <li>Final version for NSIS 2 beta 0</li>
+    <li>Possibility to let a Modern UI Function call your own function</li>
     <li>No problems anymore when using both 'Run program' and 'Show Readme'
     on the finish page</li>
     <li>Default state of checkboxes on the finish page can be changed</li>
