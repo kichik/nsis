@@ -115,7 +115,7 @@ Nullsoft Install System %s
 # ^SpaceRequired
 "Потребен простор: "
 # ^UninstallingText
-Овој инсталационен програм ќе го деинсталира $(^Name) од вашиот компјутер. $_CLICK
+$(^Name) ќе биде деинсталиран од следниов директориум. $_CLICK
 # ^UninstallingSubText
 Деинсталира од:
 # ^FileError
