@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: Slovak (1051)
 ;By Kypec (peter.dzugas@mahe.sk)
@@ -54,6 +54,9 @@
   !define MUI_TEXT_ABORTWARNING "Naozaj chcete ukonËiù inötal·ciu $(^Name)?"  
   
   
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Vitajte v sprievodcovi odinötal·cie $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Tento sprievodca V·s prevedie odinötal·ciou $(^Name).\r\n\r\nPred zaËiatkom odinötal·cie sa uistite, ûe $(^Name) nie je pr·ve teraz spusten˝.\r\n\r\n$_CLICK"
+
   !define MUI_UNTEXT_CONFIRM_TITLE "Odinötalovanie $(^Name)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Odstr·nenie $(^Name) z V·öho systÈmu."
   
@@ -77,5 +80,10 @@
   
   !define MUI_UNTEXT_ABORT_TITLE "Odinötal·cia bola preruöen·"
   !define MUI_UNTEXT_ABORT_SUBTITLE "Odinötalovanie nebolo ˙speöne dokonËenÈ."
+  
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "DokonËenie sprievodcu odinötal·cie $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) bol odinötalovan˝ z V·öho systÈmu.\r\n\r\nKliknite na DokonËiù pre uzavretie tohto sprievodcu."
+  
+  !define MUI_UNTEXT_ABORTWARNING "Naozaj chcete ukonËiù odinötal·ciu $(^Name)?"  
   
 !insertmacro MUI_LANGUAGEFILE_END

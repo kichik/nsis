@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.66
+;Compatible with Modern UI 1.67
 
 ;Language: French (1036)
 ;By Sébastien Delahaye <seb@delahaye.net>
@@ -51,6 +51,8 @@
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Ne pas créer de raccourcis"
 
   !define MUI_TEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Bienvenue dans le programme de désinstallation de $(^Name)"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Vous êtes sur le point de desinstaller $(^Name) sur votre ordinateur.\r\n\r\nAvant de débuter l'installation, il est recommandé de fermer toutes les autres applications.\r\n\r\n"
 
 
   !define MUI_UNTEXT_CONFIRM_TITLE "Désinstaller $(^Name)"
@@ -76,5 +78,10 @@
 
   !define MUI_UNTEXT_ABORT_TITLE "Désinstallation interrompue"
   !define MUI_UNTEXT_ABORT_SUBTITLE "La désinstallation n'a pas été terminée."
+
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Fin de la déinstallation de $(^Name)"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) a été supprimé de votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
+
+  !define MUI_UNTEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
 
 !insertmacro MUI_LANGUAGEFILE_END
