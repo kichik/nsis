@@ -685,6 +685,10 @@ Section "NSIS Source Code" SecSrcNSIS
   File ..\Source\exehead\uninst.ico
   File ..\Source\exehead\bitmap1.bmp
   File ..\Source\exehead\bin2h.exe
+  # tests
+  SetOutPath $INSTDIR\Source\Tests
+  File ..\Source\Tests\*.cpp
+  File ..\Source\Tests\Tests.dsp
 SectionEnd
 
 Section "ExDLL Source (required)" SecSrcEx
