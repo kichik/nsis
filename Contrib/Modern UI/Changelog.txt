@@ -1,10 +1,11 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.4 - November 3, 2002
+1.4 - November 4, 2002
 * Uses new NSIS Page command
-* Macro system way smaller
-* Advanced Macro System a lot easier
-* Renamed some defines
+* Macro system updates (smaller)
+* Macro System a lot easier
+* Modern UI Language Files load NLF language files
+* Renamed macro's and defines
 
 1.3 - October 27, 2002 
 * Easier macro system for basic scripts 

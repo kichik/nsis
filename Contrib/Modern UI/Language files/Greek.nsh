@@ -11,15 +11,18 @@
 
 !define MUI_GREEK_USED
 
+  LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
+
   !define MUI_GREEK_LANGNAME "Greek" ;Ελληνικά (English, Deutsch, Franηais etc.)
 
   ;INSTALLER
+  Name /LANG=${LANG_GREEK} "${MUI_NAME}"
   
   !ifdef MUI_LICENSEPAGE
     LicenseText /LANG=${LANG_GREEK} "Πατήστε το Page Down για να δείτε το υπόλοιπο της άδειας χρήσης."
     LangString MUI_TEXT_LICENSE_TITLE ${LANG_GREEK} "Συμφωνία ’δειας Χρήσης"  
-    LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_GREEK} "Ελέγξτε τους όρους της άδειας χρήσης πριν εγκαταστήσετε το '${NAME}'."
-    LangString MUI_INNERTEXT_LICENSE ${LANG_GREEK} "Για να συνεχιστεί η εγκατάσταση πρέπει να αποδεχθείτε όλους τους όρους της άδειας χρήσης. Αν τους αποδέχεστε, κάντε κλικ στο Συμφωνώ, αλλιώς κάντε κλικ στο ’κυρο για να τερματιστεί η εγκατάσταση του '${NAME}'."
+    LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_GREEK} "Ελέγξτε τους όρους της άδειας χρήσης πριν εγκαταστήσετε το '${MUI_PRODUCT}'."
+    LangString MUI_INNERTEXT_LICENSE ${LANG_GREEK} "Για να συνεχιστεί η εγκατάσταση πρέπει να αποδεχθείτε όλους τους όρους της άδειας χρήσης. Αν τους αποδέχεστε, κάντε κλικ στο Συμφωνώ, αλλιώς κάντε κλικ στο ’κυρο για να τερματιστεί η εγκατάσταση του '${MUI_PRODUCT}'."
   !endif
   
   !ifdef MUI_COMPONENTSPAGE
@@ -31,43 +34,43 @@
   !endif
   
   !ifdef MUI_DIRECTORYPAGE
-    DirText /LANG=${LANG_GREEK} "Το πρόγραμμα εγκατάστασης θα εγκαταστήσει το '${NAME}' στον παρακάτω φάκελο.$\r$\n$\r$\nΓια να το εγκαταστήσετε στο φάκελο αυτό, κάντε κλικ στο Εγκατάσταση. Για να το εγκαταστήσετε σε έναν άλλο φάκελο, κάντε κλικ στο Αναζήτηση και επιλέξτε κάποιον άλλο φάκελο."
+    DirText /LANG=${LANG_GREEK} "Το πρόγραμμα εγκατάστασης θα εγκαταστήσει το '${MUI_PRODUCT}' στον παρακάτω φάκελο.$\r$\n$\r$\nΓια να το εγκαταστήσετε στο φάκελο αυτό, κάντε κλικ στο Εγκατάσταση. Για να το εγκαταστήσετε σε έναν άλλο φάκελο, κάντε κλικ στο Αναζήτηση και επιλέξτε κάποιον άλλο φάκελο."
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_GREEK} "Επιλογή Θέσης Εγκατάστασης"
-    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_GREEK} "Επιλέξτε το φάκελο μέσα στον οποίο θα εγκατασταθεί το '${NAME}'."
+    LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_GREEK} "Επιλέξτε το φάκελο μέσα στον οποίο θα εγκατασταθεί το '${MUI_PRODUCT}'."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_GREEK} "Φάκελος εγκατάστασης"
   !endif
 
   LangString MUI_TEXT_INSTALLING_TITLE ${LANG_GREEK} "Εγκατάσταση Σε Εξέλιξη"
-  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_GREEK} "Παρακαλώ περιμένετε όσο το '${NAME}' εγκαθίσταται."
+  LangString MUI_TEXT_INSTALLING_SUBTITLE ${LANG_GREEK} "Παρακαλώ περιμένετε όσο το '${MUI_PRODUCT}' εγκαθίσταται."
   
   LangString MUI_TEXT_FINISHED_TITLE ${LANG_GREEK} "Ολοκληρώθηκε"
   LangString MUI_TEXT_FINISHED_SUBTITLE ${LANG_GREEK} "Η εγκατάσταση ολοκληρώθηκε επιτυχώς."
   
   !ifdef MUI_ABORTWARNING
-    LangString MUI_TEXT_ABORTWARNING ${LANG_GREEK} "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '${NAME}';"
+    LangString MUI_TEXT_ABORTWARNING ${LANG_GREEK} "Είστε σίγουροι πως θέλετε να τερματίσετε την εγκατάσταση του '${MUI_PRODUCT}';"
   !endif
   
   !ifdef MUI_INSTALLOPTIONS
-    LangString MUI_TEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${NAME} ${VERSION}'"
+    LangString MUI_TEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${MUI_PRODUCT} ${MUI_VERSION}'"
   !endif
   
   
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_GREEK} "Αυτό το πρόγραμμα θα απεγκαταστήσει το '${NAME}' από τον υπολογιστή σας."
-    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_GREEK} "Απεγκατάσταση του '${NAME}'"
-    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_GREEK} "Αφαίρεση του '${NAME}' από τον υπολογιστή σας."
+    UninstallText /LANG=${LANG_GREEK} "Αυτό το πρόγραμμα θα απεγκαταστήσει το '${MUI_PRODUCT}' από τον υπολογιστή σας."
+    LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_GREEK} "Απεγκατάσταση του '${MUI_PRODUCT}'"
+    LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_GREEK} "Αφαίρεση του '${MUI_PRODUCT}' από τον υπολογιστή σας."
   
     LangString un.MUI_UNTEXT_UNINSTALLING_TITLE ${LANG_GREEK} "Απεγκατάσταση Σε Εξέλιξη"
-    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_GREEK} "Παρακαλώ περιμένετε όσο το '${NAME}' απεγκαθίσταται."
+    LangString un.MUI_UNTEXT_UNINSTALLING_SUBTITLE ${LANG_GREEK} "Παρακαλώ περιμένετε όσο το '${MUI_PRODUCT}' απεγκαθίσταται."
   
     LangString un.MUI_UNTEXT_FINISHED_TITLE ${LANG_GREEK} "Ολοκληρώθηκε"
     LangString un.MUI_UNTEXT_FINISHED_SUBTITLE ${LANG_GREEK} "Η απεγκατάσταση ολοκληρώθηκε επιτυχώς."
   !endif
   
   !ifdef MUI_UNINSTALLOPTIONS
-    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${NAME} ${VERSION}'"
+    LangString un.MUI_UNTEXT_SETUPCAPTION ${LANG_GREEK} "Απεγκατάσταση του '${MUI_PRODUCT} ${MUI_VERSION}'"
   !endif
 
 !endif
