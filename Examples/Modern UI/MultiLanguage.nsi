@@ -20,35 +20,35 @@
   ;Languages
     ;English
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\English.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\English.nsh"
        
     ;French
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\French.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\French.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\French.nsh"
     
     ;German
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\German.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\German.nsh"
     
     ;Dutch
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Dutch.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Dutch.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\Dutch.nsh"
     
     ;Polish
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Polish.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\Polish.nsh"
     
     ;Greek
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\Greek.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\Greek.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\Greek.nsh"
     
     ;Simplified Chinese
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\SimpChinese.nsh"
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\SimpChinese.nsh"
 
     ;Traditional Chinese
     LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
-    !include "${NSISDIR}\Contrib\Modern UI\TradChinese.nsh"    
+    !include "${NSISDIR}\Contrib\Modern UI\Language files\TradChinese.nsh"    
 
   ;General
   Name /LANG=${LANG_ENGLISH} "${NAME} ${VERSION}"
