@@ -2,7 +2,7 @@
 ;Compatible with Modern UI 1.68
 
 ;Language: German (1031)
-;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack
+;By L.King, changes by K. Windszus & R. Bisswanger & M. Simmack & D. Weiß
 
 ;--------------------------------
 
@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Komponenten auswählen"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Wählen Sie die Komponenten aus, die Sie installieren möchten."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Beschreibung"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Bewegen Sie den Mauszeiger über eine Komponente, um ihre Beschreibung zu sehen."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Selektieren Sie eine Komponente, um ihre Beschreibung zu sehen."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Zielverzeichnis auswählen"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Wählen Sie das Verzeichnis aus, in das $(^NameDA) installiert werden soll."
