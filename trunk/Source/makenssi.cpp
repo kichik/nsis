@@ -28,7 +28,7 @@ const char *NSIS_VERSION="v2.0rc3";
   Includes portions derived from bzip2 (see documentation for details).
 */
 
-#include <windows.h>
+#include "Platform.h"
 #include <stdio.h>
 #include <signal.h>
 

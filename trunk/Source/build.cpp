@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "Platform.h"
 #include <stdio.h>
 #include "exehead/config.h"
 #include "exehead/fileform.h"

@@ -1,4 +1,4 @@
-#include <windows.h>
+#include "Platform.h"
 #include <stdlib.h>
 #include <stdio.h>
 

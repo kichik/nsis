@@ -1,11 +1,7 @@
-
-
 #ifndef __X18_PLUGINS_H
 #define __X18_PLUGINS_H
 
-
-#include <windows.h>
-#include <stdio.h>
+#include "Platform.h"
 #include "strlist.h"
 
 struct plugin {
