@@ -63,6 +63,7 @@ procedure Init(hwndParent: HWND; string_size: integer; variables: PChar; stackto
 function PopString(str: PChar):integer;
 function PushString(str: PChar):integer;
 function GetUserVariable(varnum: TVariableList):PChar;
+function SetUserVariable(varnum: TVariableList; value: PChar):integer;
 
 implementation
 
@@ -114,6 +115,15 @@ begin
     Exit;
     end;
   Result:=g_variables+integer(varnum)*g_stringsize;
+end;
+
+procedure SetUserVariable(varnum: TVariableList; value: PChar);
+begin
+  if (value = nil) or (integer(varnum) < 0) or (integer(varnum) >= integer(__INST_LAST)) then
+    begin
+    Exit;
+    end;
+  lstrcpy(g_variables+integer(varnum)*g_stringsize,value);
 end;
 
 begin
