@@ -11,3 +11,7 @@ DOCUMENTATION
 * go over everything and search for mistakes :)
 
 * Document InitPluginsDir and creating plugins (exdll.h)
+
+EXAMPLES
+
+* write an advanced paging example showing multiple components page with multiple instfiles pages
