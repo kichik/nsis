@@ -93,6 +93,10 @@ SOURCE=.\endian.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\mmap.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\textrunner.cpp
 # End Source File
 # End Group
