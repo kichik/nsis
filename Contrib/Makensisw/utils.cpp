@@ -74,6 +74,8 @@ void ErrorMessage(HWND hwnd,const char *str) {
 }
 
 void DisableItems(HWND hwnd) {
+  g_sdata.focused_hwnd = GetFocus();
+  
   EnableWindow(GetDlgItem(hwnd,IDC_CLOSE),0);
   EnableWindow(GetDlgItem(hwnd,IDC_TEST),0);
   EnableMenuItem(g_sdata.menu,IDM_SAVE,MF_GRAYED);
@@ -86,6 +88,9 @@ void DisableItems(HWND hwnd) {
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_GRAYED);
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_GRAYED);
+
+  if (!IsWindowEnabled(g_sdata.focused_hwnd))
+    SetFocus(GetDlgItem(hwnd,IDC_LOGWIN));
 }
 
 void EnableItems(HWND hwnd) {
@@ -103,6 +108,8 @@ void EnableItems(HWND hwnd) {
   EnableMenuItem(g_sdata.menu,IDM_EDITSCRIPT,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_CLEARLOG,MF_ENABLED);
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,MF_ENABLED);
+  
+  SetFocus(g_sdata.focused_hwnd);
 }
 
 void CompileNSISScript() {
