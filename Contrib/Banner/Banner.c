@@ -109,6 +109,12 @@ void __declspec(dllexport) show(HWND hwndParent, int string_size, char *variable
   }
 }
 
+void __declspec(dllexport) getWindow(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+{
+  wsprintf(buf, "%u", hwBanner);
+  pushstring(buf);
+}
+
 void __declspec(dllexport) destroy(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
   if (!hwBanner)

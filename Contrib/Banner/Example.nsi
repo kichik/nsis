@@ -1,5 +1,7 @@
 # Look at Readme.txt for usage alongside with the Modern UI
 
+!include "WinMessages.nsh"
+
 Name "Banner.dll test"
 
 OutFile "Banner Test.exe"
@@ -8,10 +10,25 @@ ShowInstDetails show
 
 Function .onInit
 	Banner::show /NOUNLOAD "Calculating important stuff..."
+
+	Banner::getWindow /NOUNLOAD
+	Pop $1
+
 	again:
 		IntOp $0 $0 + 1
 		Sleep 1
-		StrCmp $0 2000 0 again
+		StrCmp $0 1000 0 again
+
+	GetDlgItem $2 $1 1030
+	SendMessage $2 ${WM_SETTEXT} 0 "STR:Calculating more important stuff..."
+
+	StrCpy $0 0
+
+	again2:
+		IntOp $0 $0 + 1
+		Sleep 1
+		StrCmp $0 1000 0 again2
+
 	Banner::destroy
 FunctionEnd
 
