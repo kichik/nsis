@@ -341,7 +341,8 @@ int JNL_HTTPGet::run()
 
 
 run_again:
-  static char buf[4096];
+  static char main_buf[4096];
+  char *buf = main_buf;
   m_con->run();
 
   if (m_con->get_state()==JNL_Connection::STATE_ERROR)
