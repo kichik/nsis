@@ -370,7 +370,7 @@ int NSISCALL ui_doinstall(void)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   {
     g_hIcon=LoadImage(g_hInstance,MAKEINTRESOURCE(IDI_ICON2),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_SHARED);
-    m_bgwnd=GetDesktopWindow();
+    m_bgwnd=0;
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
     {
@@ -392,8 +392,8 @@ int NSISCALL ui_doinstall(void)
 
       SystemParametersInfo(SPI_GETWORKAREA, 0, &vp, 0);
 
-      m_bgwnd = CreateWindow("_Nb","",WS_OVERLAPPED|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_MAXIMIZEBOX|WS_MINIMIZEBOX,
-        vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,GetDesktopWindow(),NULL,g_hInstance,NULL);
+      m_bgwnd = CreateWindowEx(WS_EX_TOOLWINDOW,"_Nb",0,WS_POPUP,
+        vp.left,vp.top,vp.right-vp.left,vp.bottom-vp.top,0,NULL,g_hInstance,NULL);
     }
 #endif//NSIS_SUPPORT_BGBG
 #ifdef NSIS_SUPPORT_CODECALLBACKS
@@ -428,7 +428,7 @@ int NSISCALL ui_doinstall(void)
     }
 #endif
 
-    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),m_bgwnd,DialogProc);
+    return DialogBox(g_hInstance,MAKEINTRESOURCE(IDD_INST),0,DialogProc);
   }
 #endif//NSIS_CONFIG_VISIBLE_SUPPORT
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -593,6 +593,17 @@ nextPage:
       }
     }
   }
+
+#ifdef NSIS_SUPPORT_BGBG
+  if (uMsg == WM_WINDOWPOSCHANGED)
+  {
+    SetWindowPos(m_bgwnd, hwndDlg, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+  }
+  if (uMsg == WM_SIZE) {
+    ShowWindow(m_bgwnd, wParam == SIZE_MINIMIZED ? SW_HIDE : SW_SHOW);
+  }
+#endif //NSIS_SUPPORT_BGBG
+
   if (uMsg == WM_NOTIFY_CUSTOM_READY) {
     DestroyWindow(m_curwnd);
   }
@@ -642,7 +653,7 @@ nextPage:
 }
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
-// Changed by Amir Szekely 27th July 2002
+
 #define _RICHEDIT_VER 0x0200
 #include <RichEdit.h>
 #undef _RICHEDIT_VER

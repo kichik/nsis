@@ -14,6 +14,13 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {
+    case WM_WINDOWPOSCHANGING:
+      {
+        LPWINDOWPOS wp = (LPWINDOWPOS) lParam;
+        wp->flags |= SWP_NOACTIVATE;
+        wp->hwndInsertAfter = g_hwnd;
+        break;
+      }
     case WM_PAINT:
       {
         static PAINTSTRUCT ps;
