@@ -441,10 +441,6 @@
 \c  ; !insertmacro UpgradeDLL "dllname.dll" "$SYSDIR\dllname.dll" "$SYSDIR"
 \c  ;
 \c  ; !define UPGRADEDLL_NOREGISTER if you want to upgrade a DLL that cannot be registered
-\c  ;
-\c  ; Note that this macro sets overwrite to ON (the default) when it has been inserted.
-\c  ; If you are using another setting, set it again after inserting the macro.
-\c
 \c
 \c  !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
 \c
@@ -496,7 +492,7 @@
 \c    ;Register the DLL on reboot
 \c
 \c    !ifndef UPGRADEDLL_NOREGISTER
-\c      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+\c      WriteRegStr HKLM "Software\Microsoft\WindowsurrentVersion\RunOnce" \
 \c      "Register ${DESTFILE}" '"$SYSDIR\rundll32.exe" "${DESTFILE}",DllRegisterServer'
 \c    !endif
 \c
@@ -542,10 +538,9 @@
 \c    "end_${LOCALFILE}:"
 \c
 \c   ;------------------------
-\c   ;Set overwrite to default
-\c   ;(was set to TRY above)
+\c   ;Set overwrite flag back
 \c
-\c   SetOverwrite on
+\c   SetOverwrite lastused
 \c
 \c  !macroend
 
