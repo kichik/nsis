@@ -81,10 +81,8 @@ SectionEnd
 
 Function .onInit
 
-  Push "Tahoma"
-  Push "8"
-  Push "Select a language"
-  LangDLL::LangDialog "Please select a language." Nederlands 1043 English 1033 2
+   LangDLL::LangDialog "Installer Language" "Please select a language." "2F" "English" "${LANG_ENGLISH}" "Nederlands" "${LANG_DUTCH}" "8" "Tahoma" ;2 is the number of lanugages, F means change font
+
     Pop $LANGUAGE
     StrCmp $LANGUAGE "cancel" 0 +2
       Abort
@@ -121,7 +119,6 @@ FunctionEnd
 
 Function .onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE SetPage
 
 FunctionEnd
@@ -208,7 +205,6 @@ SectionEnd
 
 Function un.onNextPage
 
-  !insertmacro MUI_NEXTPAGE_OUTER
   !insertmacro MUI_NEXTPAGE un.SetPage
 
 FunctionEnd
