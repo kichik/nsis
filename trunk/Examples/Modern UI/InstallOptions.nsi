@@ -34,7 +34,18 @@
   
   ;Modern UI System
   !insertmacro MUI_SYSTEM
+
+;--------------------------------
+;Pages
   
+  !insertmacro MUI_PAGECOMMAND_LICENSE
+  Page custom SetCustomA "$(TEXT_IO_PAGETITLE_A)"
+  Page custom SetCustomB "$(TEXT_IO_PAGETITLE_B)"
+  !insertmacro MUI_PAGECOMMAND_COMPONENTS
+  !insertmacro MUI_PAGECOMMAND_DIRECTORY
+  Page custom SetCustomC "$(TEXT_IO_PAGETITLE_C)"
+  !insertmacro MUI_PAGECOMMAND_INSTFILES
+
 ;--------------------------------
 ;Languages
  
@@ -59,17 +70,6 @@
 ;Data
   
   LicenseData "${NSISDIR}\Contrib\Modern UI\License.txt"
-
-;--------------------------------
-;Pages
-  
-  !insertmacro MUI_PAGECOMMAND_LICENSE
-  Page custom SetCustomA "$(TEXT_IO_PAGETITLE_A)"
-  Page custom SetCustomB "$(TEXT_IO_PAGETITLE_B)"
-  !insertmacro MUI_PAGECOMMAND_COMPONENTS
-  !insertmacro MUI_PAGECOMMAND_DIRECTORY
-  Page custom SetCustomC "$(TEXT_IO_PAGETITLE_C)"
-  !insertmacro MUI_PAGECOMMAND_INSTFILES
 
 ;--------------------------------
 ;Reserve Files
