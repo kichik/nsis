@@ -16,8 +16,6 @@ NSIS
 
 * LZMA compression
 
-* stop using static variables so CEXEBuild can be used as a real class
-
 EXAMPLES
 
 * write an advanced paging example showing multiple components page with multiple
