@@ -1,7 +1,7 @@
 NSIS Modern User Interface - VERSION HISTORY
 
 1.62 - February 2, 2003
-* Final version for NSIS 2 beta 0
+* Final version for NSIS 2 beta 1
 * Possibility to let a Modern UI Function call your own function
 * No problems anymore when using both 'Run program' and 'Show Readme'
   on the finish page
