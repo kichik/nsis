@@ -106,7 +106,7 @@ Example:
 \c   Function .onVerifyInstDir
 \c     IfFileExists $INSTDIR\Winamp.exe PathGood
 \c       Abort ; if $INSTDIR is not a winamp directory, don't let us install there
-\c     PathGood
+\c     PathGood:
 \c   FunctionEnd
 
 \S2{uninstcallbacks} Uninstall Callbacks
