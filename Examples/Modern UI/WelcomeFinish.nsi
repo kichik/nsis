@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  OutFile "Basic.exe"
+  OutFile "WelcomeFinish.exe"
 
   ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
