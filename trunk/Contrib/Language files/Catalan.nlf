@@ -8,10 +8,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by falanko
 Nullsoft Install System %s
-Instal·lació de %s
-Desinstal·lació de %s
+Instal·lació de $(^Name)
+Desinstal·lació de $(^Name)
 : Acord de Llicència
 : Opcions d'Instal·lació
 : Carpeta d'Instal·lació
@@ -37,7 +39,7 @@ Personalitzada
 Indiqui el tipus d'instal·lació:
 Seleccioni els components:
 O seleccioni els components opcionals a instal·lar:
-Seleccioni la carpeta on instal·lar %s:
+Seleccioni la carpeta on instal·lar $(^Name):
 Espai lliure: 
 Espai necessari: 
 Desinstal·lant de:

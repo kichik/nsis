@@ -37,6 +37,7 @@ char g_log_file[1024];
   #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     char *state_plugins_dir=g_usrvars[25];
   #endif
+  char *state_plugins_dir=g_usrvars[36];
 #endif
 
 HANDLE g_hInstance;
@@ -109,7 +110,7 @@ void NSISCALL doRMDir(char *buf, int flags) // 1 - recurse, 2 - rebootok
     else if (!RemoveDirectory(buf) && flags&2) {
       log_printf2("Remove folder on reboot: %s",buf);
 #ifdef NSIS_SUPPORT_REBOOT
-      g_flags.exec_reboot++;
+      g_exec_flags.exec_reboot++;
 #endif
       MoveFileOnReboot(buf,0);
     }
@@ -163,7 +164,7 @@ int NSISCALL is_valid_instpath(char *s)
 {
   int ivp=0;
   // if CH_FLAGS_NO_ROOT_DIR is set, req is 0, which means rootdirs are not allowed.
-  int req=!(inst_flags&CH_FLAGS_NO_ROOT_DIR);
+  int req=!(g_flags&CH_FLAGS_NO_ROOT_DIR);
   if (*(WORD*)s == CHAR2_TO_WORD('\\','\\')) // \\ path
   {
     if (lastchar(s)!='\\') ivp++;
@@ -243,7 +244,7 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
 BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
-  HMODULE hLib=LoadLibrary("kernel32.dll");
+  HMODULE hLib=GetModuleHandle("kernel32.dll");
   if (hLib)
   {
     typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
@@ -253,7 +254,6 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     {
       fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
     }
-    FreeLibrary(hLib);
   }
 
   if (!fOk)
@@ -270,7 +270,7 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 
     if (pszNew) {
       // create the file if it's not already there to prevent GetShortPathName from failing
-      CloseHandle(myOpenFile(pszNew, 0, CREATE_NEW));
+      CloseHandle(myOpenFile(pszNew,0,CREATE_NEW));
       GetShortPathName(pszNew,tmpbuf,1024);
     }
     // wininit is used as a temporary here
@@ -307,11 +307,11 @@ BOOL NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
             char *pszNextSec = mystrstr(pszFirstRenameLine,"\n[");
             if (pszNextSec)
             {
-              int l=dwFileSize - (pszNextSec - pszWinInit);
-              void* data=(void*)my_GlobalAlloc(l);
-              mini_memcpy(data, pszNextSec, l);
-              mini_memcpy(pszNextSec + cchRenameLine, data, l);
-              GlobalFree((HGLOBAL)data);
+              char *p = ++pszNextSec;
+              while (p < pszWinInit + dwFileSize) {
+                p[cchRenameLine] = *p;
+                p++;
+              }
 
               dwRenameLinePos = pszNextSec - pszWinInit;
             }
@@ -351,20 +351,10 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
   }
 }
 
-char ps_tmpbuf[NSIS_MAX_STRLEN*2];
-
-char * NSISCALL process_string_fromtab(char *out, int offs)
+void NSISCALL myitoa(char *s, int d)
 {
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  char *p=process_string(GetStringFromStringTab(offs), 0);
-#else
-  char *p=process_string(GetStringFromStringTab(offs));
-#endif
-  if (!out) return p;
-  return lstrcpyn(out,p,NSIS_MAX_STRLEN);
+  wsprintf(s,"%d",d);
 }
-
-void NSISCALL myitoa(char *s, int d) { wsprintf(s,"%d",d); }
 
 int NSISCALL myatoi(char *s)
 {
@@ -419,18 +409,20 @@ int NSISCALL mystrlen(const char *in)
   return lstrlen(in);
 }
 
-// Dave Laundon's simplified process_string
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-char * NSISCALL process_string(const char *in, int iStartIdx )
-#else
-char * NSISCALL process_string(const char *in)
-#endif
+char ps_tmpbuf[NSIS_MAX_STRLEN*2];
+
+// Based on Dave Laundon's simplified process_string
+char * NSISCALL GetNSISString(char *outbuf, int strtab)
 {
-#ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-  char *out = ps_tmpbuf+iStartIdx;
-#else
-  char *out = ps_tmpbuf;
-#endif
+  char *in = (char*)GetNSISStringNP(GetNSISTab(strtab));
+  char *out;
+  if (outbuf >= ps_tmpbuf && outbuf < ps_tmpbuf+sizeof(ps_tmpbuf))
+  {
+    out = outbuf;
+    outbuf = 0;
+  }
+  else
+    out = ps_tmpbuf;
   while (*in && out - ps_tmpbuf < NSIS_MAX_STRLEN)
   {
     int nVarIdx = (unsigned char)*in++;
@@ -446,9 +438,9 @@ char * NSISCALL process_string(const char *in)
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
     else if (nVarIdx == LANG_CODES_START)
     {
-        nVarIdx = *(short*)in; in+=sizeof(WORD);
-        process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
-        out+=mystrlen(out);
+      nVarIdx = *(short*)in; in+=sizeof(short);
+      GetNSISString(out, nVarIdx);
+      out+=mystrlen(out);
     }
 #endif
     else
@@ -485,22 +477,24 @@ char * NSISCALL process_string(const char *in)
         case VAR_CODES_START + 23: // OUTDIR
         case VAR_CODES_START + 24: // EXEDIR
         case VAR_CODES_START + 25: // LANGUAGE
-        case VAR_CODES_START + 26: // PLUGINSDIR
+        case VAR_CODES_START + 26: // TEMP
+        case VAR_CODES_START + 27: // _CLICK
+        case VAR_CODES_START + 28: // PLUGINSDIR
           mystrcpy(out, g_usrvars[nVarIdx - (VAR_CODES_START + 1)]);
           break;
 
-        case VAR_CODES_START + 27: // PROGRAMFILES
+        case VAR_CODES_START + 29: // PROGRAMFILES
           smwcvesf[41]=0;
           myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
 
-        case VAR_CODES_START + 28: // SMPROGRAMS
-        case VAR_CODES_START + 29: // SMSTARTUP
-        case VAR_CODES_START + 30: // DESKTOP
-        case VAR_CODES_START + 31: // STARTMENU
-        case VAR_CODES_START + 32: // QUICKLAUNCH
+        case VAR_CODES_START + 30: // SMPROGRAMS
+        case VAR_CODES_START + 31: // SMSTARTUP
+        case VAR_CODES_START + 32: // DESKTOP
+        case VAR_CODES_START + 33: // STARTMENU
+        case VAR_CODES_START + 34: // QUICKLAUNCH
           {
             static const char *tab[]={
               "Programs",
@@ -510,9 +504,9 @@ char * NSISCALL process_string(const char *in)
               "AppData"
             };
             static char name[20]="Common ";
-            const char *name_=tab[nVarIdx-(VAR_CODES_START+28)];
+            const char *name_=tab[nVarIdx-(VAR_CODES_START+30)];
             mystrcpy(name+7,name_);
-            f=g_flags.all_user_var & (nVarIdx != VAR_CODES_START + 32);
+            f=g_exec_flags.all_user_var & (nVarIdx != VAR_CODES_START + 34);
 
             again:
 
@@ -529,7 +523,7 @@ char * NSISCALL process_string(const char *in)
                 mystrcpy(out,temp_directory);
               }
 
-            if (nVarIdx == VAR_CODES_START + 32) {
+            if (nVarIdx == VAR_CODES_START + 34) {
               lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
               f = GetFileAttributes(out);
               if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
@@ -538,24 +532,25 @@ char * NSISCALL process_string(const char *in)
             else break;
           }
 
-        case VAR_CODES_START + 33: // TEMP
+        case VAR_CODES_START + 35: // TEMP
           mystrcpy(out,temp_directory);
           break;
 
-        case VAR_CODES_START + 34: // WINDIR
+        case VAR_CODES_START + 36: // WINDIR
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        case VAR_CODES_START + 35: // SYSDIR
+        case VAR_CODES_START + 37: // SYSDIR
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        #if VAR_CODES_START + 35 >= 255
+        #if VAR_CODES_START + 37 >= 255
           #error "Too many variables!  Extend VAR_CODES_START!"
         #endif
       } // switch
       // validate the directory name
-      if (nVarIdx > 21+VAR_CODES_START ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT
+      if (nVarIdx > 21+VAR_CODES_START && nVarIdx != VAR_CODES_START+27) {
+         // only if not $0 to $R9, $CMDLINE, $HWNDPARENT, or $_CLICK
         // ($LANGUAGE can't have trailing backslash anyway...)
         validate_filename(out);
       }
@@ -574,18 +569,18 @@ char * NSISCALL process_string(const char *in)
       nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD);
       switch (nVarIdx) // The order of this list must match that in ..\strlist.cpp (err, build.cpp -J)
       {
-        case 26: // PROGRAMFILES
+        case 28: // PROGRAMFILES
           smwcvesf[41]=0;
           myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
 
-        case 27: // SMPROGRAMS
-        case 28: // SMSTARTUP
-        case 29: // DESKTOP
-        case 30: // STARTMENU
-        case 31: // QUICKLAUNCH
+        case 29: // SMPROGRAMS
+        case 30: // SMSTARTUP
+        case 31: // DESKTOP
+        case 32: // STARTMENU
+        case 33: // QUICKLAUNCH
           {
             static const char *tab[]={
               "Programs",
@@ -595,9 +590,9 @@ char * NSISCALL process_string(const char *in)
               "AppData"
             };
             static char name[20]="Common ";
-            const char *name_=tab[nVarIdx-27];
+            const char *name_=tab[nVarIdx-29];
             mystrcpy(name+7,name_);
-            f=g_flags.all_user_var & (nVarIdx != 31);
+            f=g_exec_flags.all_user_var & (nVarIdx != 33);
 
             again:
 
@@ -614,7 +609,7 @@ char * NSISCALL process_string(const char *in)
                 mystrcpy(out,state_temp_dir);
               }
 
-            if (nVarIdx == 31) {
+            if (nVarIdx == 33) {
               lstrcat(out, "\\Microsoft\\Internet Explorer\\Quick Launch");
               f = GetFileAttributes(out);
               if (f != (DWORD)-1 && (f & FILE_ATTRIBUTE_DIRECTORY))
@@ -623,15 +618,15 @@ char * NSISCALL process_string(const char *in)
             else break;
           }
 
-        case 33: // WINDIR
+        case 34: // WINDIR
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
           break;
 
-        case 34: // SYSDIR
+        case 35: // SYSDIR
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
           break;
         
-        case 35: // HWNDPARENT
+        case 36: // HWNDPARENT
           myitoa(out, (unsigned int)g_hwnd);
           break;
 
@@ -639,17 +634,18 @@ char * NSISCALL process_string(const char *in)
           mystrcpy(out, g_usrvars[nVarIdx]);
       } // switch
       // validate the directory name
-      if (nVarIdx > 21 && nVarIdx < TOTAL_COMPATIBLE_STATIC_VARS_COUNT ) { // only if not $0 to $R9, $CMDLINE, or $HWNDPARENT and not great than $SYSDIR
+      if (nVarIdx > 20 && nVarIdx < TOTAL_COMPATIBLE_STATIC_VARS_COUNT && nVarIdx != 26) {
+        // only if not $0 to $R9, $CMDLINE or $_CLICK and not great than $HWNDPARENT
         // ($LANGUAGE can't have trailing backslash anyway...)
         validate_filename(out);
       }
       out+=mystrlen(out);
     } // == VAR_CODES_START
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
-    else if ( nVarIdx == LANG_CODES_START )
+    else if (nVarIdx == LANG_CODES_START)
     {
-      nVarIdx = *(short*)in; in+=sizeof(WORD);
-      process_string(GetStringFromStringTab(nVarIdx), out-ps_tmpbuf);
+      nVarIdx = *(short*)in; in+=sizeof(short);
+      GetNSISString(out, nVarIdx);
       out+=mystrlen(out);
     }
 #endif
@@ -660,6 +656,8 @@ char * NSISCALL process_string(const char *in)
 #endif
   } // while
   *out = 0;
+  if (outbuf)
+    return lstrcpyn(outbuf, ps_tmpbuf, NSIS_MAX_STRLEN);
   return ps_tmpbuf;
 }
 

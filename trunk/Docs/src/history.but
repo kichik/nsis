@@ -5,6 +5,10 @@
 
 \b User variables ($VARNAME) that can be declared with the \R{var}{Var} command
 
+\b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
+
+\b Extraction progress
+
 \b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Easier page macro system, language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed
@@ -15,13 +19,29 @@
 
 \b \W{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, toolbar, more
 
-\b NLF language files (v5): More strings translatable (K/M/G Byte, registering, unregistering), language specific fonts
+\b NLF language files (v6): language specific fonts, RTL and more strings
+
+\b Full \R{rtl}{RTL} support (set in language file)
+
+\b Inner LangStrings can be used in the script
+
+\b No more /LANG, only LangStrings - easier to set one string to all languages
+
+\b LangStrings are no longer installer/uninstaller specific (no un.)
+
+\b No more unprocessed strings, variables can be used everywhere
+
+\b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
 
 \b /o Switch for \R{ssection}{Section} provides ability to unselect the section by default
 
 \b Increased amount of InstTypes to 32
 
 \b Added \R{ssectionsetsize}{SectionSetSize}, \R{ssectiongetsize}{SectionGetSize}, \R{ssetcurinsttype}{SetCurInstType}, \R{sgetcurinsttype}{GetCurInstType}
+
+\b New parameter for DirText to set the browse dialog text
+
+\b Better ClearType support
 
 \b System Plug-in: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
 
@@ -37,7 +57,7 @@
 
 \b Added \R{rmdir}{RMDir /REBOOTOK}: Remove folders on reboot
 
-\b Added \R{setbkcolor}{SetBkColor}: Background colors can be set for non-static controls, transparent background support
+\b Added \R{setctlcolors}{SetCtlColors}: Sets background and text color for every dialog control
 
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
@@ -47,9 +67,9 @@
 
 \b Fixed a problem regarding borders in Plug-ins BgImage and InstallOptions
 
-\b Fixed plug-ins directory init function generation
+\b Minor bug fixes
 
-\b Fixed overlapping chars in directory input
+\b Code clean-ups and some more comments
 
 \\<b\\>Notes:\\</b\\>
 

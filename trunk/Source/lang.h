@@ -1,86 +1,188 @@
-// Lang.h by Amir Szekely 3rd August 2002
-
 #ifndef ___NLF___H_____
 #define ___NLF___H_____
 
 #include "exehead/fileform.h"
-#include <StdExcept>
-using namespace std;
+
+struct NLFRef {
+  int iRef;
+  int iUnRef;
+};
 
 struct langstring {
   int name;
+  int sn;
   int index;
+  int uindex;
+  int process;
 };
 
 class LangStringList : public SortedStringListND<struct langstring>
 {
   public:
-    LangStringList()
-    {
-      index = 0;
+    LangStringList() {
+      count = 0;
     }
     ~LangStringList() { }
 
-    int add(const char *name)
+    int add(const char *name, int *sn=0)
     {
-      int pos=SortedStringListND<struct langstring>::add(name);
+      int pos = SortedStringListND<struct langstring>::add(name);
       if (pos == -1) return -1;
 
-      ((struct langstring*)gr.get())[pos].index = index;
+      ((struct langstring*)gr.get())[pos].sn = count;
+      if (sn) *sn = count;
+      count++;
+      ((struct langstring*)gr.get())[pos].index = -1;
+      ((struct langstring*)gr.get())[pos].uindex = -1;
+      ((struct langstring*)gr.get())[pos].process = 1;
 
-      int temp = index;
-      index++;
-
-      return temp;
+      return pos;
     }
 
-    int get(char *name)
+    int get(char *name, int *sn=0, int *index=0, int *uindex=0, int *process=0)
     {
+      if (index) *index = -1;
+      if (uindex) *uindex = -1;
+      if (sn) *sn = -1;
       int v=SortedStringListND<struct langstring>::find(name);
       if (v==-1) return -1;
-      return ((struct langstring*)gr.get())[v].index;
+      if (index) *index = ((struct langstring*)gr.get())[v].index;
+      if (uindex) *uindex = ((struct langstring*)gr.get())[v].uindex;
+      if (sn) *sn = ((struct langstring*)gr.get())[v].sn;
+      if (process) *process = ((struct langstring*)gr.get())[v].process;
+      return v;
+    }
+
+    void set(int pos, int index=-1, int uindex=-1, int process=-1)
+    {
+      if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
+        return;
+
+      struct langstring *data=(struct langstring *)gr.get();
+
+      if (index >= 0)
+        data[pos].index = index;
+      if (uindex >= 0)
+        data[pos].uindex = uindex;
+      if (process >= 0)
+        data[pos].process = process;
+    }
+
+    void set(char *name, int index, int uindex=-1, int process=-1)
+    {
+      set(get(name), index, uindex, process);
+    }
+
+    const char *pos2name(int pos)
+    {
+      struct langstring *data=(struct langstring *)gr.get();
+      
+      if ((unsigned int)pos > (gr.getlen() / sizeof(struct langstring)))
+        return 0;
+
+      return ((const char*)strings.get() + data[pos].name);
+    }
+
+    const char *offset2name(int name)
+    {
+      if ((unsigned int)name > strings.getlen())
+        return 0;
+
+      return (const char*)strings.get() + name;
     }
 
     int getnum()
     {
-      return index;
+      return gr.getlen() / sizeof(struct langstring);
     }
 
-    char *idx2name(int idx)
+    static int compare_index(const void *item1, const void *item2)
     {
-      struct langstring *data=(struct langstring *)gr.get();
-      
-      for (int i = 0; i < index; i++)
-      {
-        if (data[i].index == idx)
-        {
-          return ((char*)strings.get() + data[i].name);
-        }
-      }
+      struct langstring *ls1 = (struct langstring *)item1;
+      struct langstring *ls2 = (struct langstring *)item2;
 
-      return NULL;
+      return ls1->index - ls2->index;
+    }
+
+    struct langstring *sort_index(int *num)
+    {
+      if (!num) return 0;
+      sortbuf.resize(0);
+      sortbuf.add(gr.get(), gr.getlen());
+      *num = sortbuf.getlen() / sizeof(struct langstring);
+      qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_index);
+      return (struct langstring*) sortbuf.get();
+    }
+
+    static int compare_uindex(const void *item1, const void *item2)
+    {
+      struct langstring *ls1 = (struct langstring *)item1;
+      struct langstring *ls2 = (struct langstring *)item2;
+
+      return ls1->uindex - ls2->uindex;
+    }
+
+    struct langstring *sort_uindex(int *num)
+    {
+      if (!num) return 0;
+      sortbuf.resize(0);
+      sortbuf.add(gr.get(), gr.getlen());
+      *num = sortbuf.getlen() / sizeof(struct langstring);
+      qsort(sortbuf.get(), *num, sizeof(struct langstring), compare_uindex);
+      return (struct langstring*) sortbuf.get();
     }
 
   private:
-    int index;
+    int count;
+    TinyGrowBuf sortbuf;
 };
 
-class NLF;
+class StringsArray
+{
+  private:
+    TinyGrowBuf offsets;
+    GrowBuf strings;
 
-struct StringTable {
-  LANGID lang_id;
-  int dlg_offset;
-  common_strings common;
-  common_strings ucommon;
-  installer_strings installer;
-  uninstall_strings uninstall;
-  TinyGrowBuf user_strings;
-  TinyGrowBuf user_ustrings;
+  public:
+    StringsArray()
+    {
+      offsets.set_zeroing(1);
 
-  NLF *nlf;
+      strings.add("", sizeof(""));
+    }
+
+    ~StringsArray() { }
+
+    void resize(int num)
+    {
+      offsets.resize(num * sizeof(int));
+    }
+
+    int set(int idx, char *str)
+    {
+      if (idx < 0)
+        return 0;
+
+      if (idx >= (offsets.getlen() / sizeof(int)))
+        resize(idx+1);
+
+      int old = ((int*)offsets.get())[idx];
+      
+      ((int*)offsets.get())[idx] = strings.add(str, strlen(str) + 1);
+      
+      return old;
+    }
+
+    const char *get(int idx)
+    {
+      if ((unsigned int)idx >= (offsets.getlen() / sizeof(int)))
+        return 0;
+
+      return (const char *)strings.get() + ((int*)offsets.get())[idx];
+    }
 };
 
-#define NLF_VERSION 5
+#define NLF_VERSION 6
 
 enum {
   NLF_BRANDING,
@@ -91,6 +193,8 @@ enum {
   NLF_SUBCAPTION_DIR,
   NLF_SUBCAPTION_INSTFILES,
   NLF_SUBCAPTION_COMPLETED,
+  NLF_USUBCAPTION_OPTIONS,
+  NLF_USUBCAPTION_DIR,
   NLF_USUBCAPTION_CONFIRM,
   NLF_USUBCAPTION_INSTFILES,
   NLF_USUBCAPTION_COMPLETED,
@@ -105,15 +209,36 @@ enum {
   NLF_BTN_CLOSE,
   NLF_BTN_BROWSE,
   NLF_BTN_DETAILS,
-  NLF_DEF_NAME,
+  NLF_CLICK_NEXT,
+  NLF_CLICK_INSTALL,
+  NLF_CLICK_UNINSTALL,
+  NLF_NAME,
   NLF_COMPLETED,
+  NLF_LICENSE_TEXT,
+  NLF_LICENSE_TEXT_FSCB,
+  NLF_LICENSE_TEXT_FSRB,
+  NLF_ULICENSE_TEXT,
+  NLF_ULICENSE_TEXT_FSCB,
+  NLF_ULICENSE_TEXT_FSRB,
+  NLF_LICENSE_DATA, // virtual
   NLF_COMP_CUSTOM,
+  NLF_COMP_TEXT,
   NLF_COMP_SUBTEXT1,
   NLF_COMP_SUBTEXT1_NO_INST_TYPES,
   NLF_COMP_SUBTEXT2,
+  NLF_UCOMP_TEXT,
+  NLF_UCOMP_SUBTEXT1,
+  NLF_UCOMP_SUBTEXT1_NO_INST_TYPES,
+  NLF_UCOMP_SUBTEXT2,
+  NLF_DIR_TEXT,
   NLF_DIR_SUBTEXT,
+  NLF_DIR_BROWSETEXT,
+  NLF_UDIR_TEXT,
+  NLF_UDIR_SUBTEXT,
+  NLF_UDIR_BROWSETEXT,
   NLF_SPACE_AVAIL,
   NLF_SPACE_REQ,
+  NLF_UNINST_TEXT,
   NLF_UNINST_SUBTEXT,
   NLF_FILE_ERROR,
   NLF_FILE_ERROR_NOIGNORE,
@@ -150,36 +275,32 @@ enum {
   NLF_KILO,
   NLF_MEGA,
   NLF_GIGA,
+  NLF_RTL,
 
-  NLF_STRINGS,
-
-  SLANG_NAME,
-  SLANG_COMP_TEXT,
-  SLANG_LICENSE_TEXT,
-  SLANG_LICENSE_DATA,
-  SLANG_DIR_TEXT,
-  SLANG_UNINST_TEXT
+  NLF_STRINGS
 };
 
-extern char *english_strings[NLF_STRINGS];
-
-// NSIS Language File parser
-class NLF {
-  public:
-    NLF(char *filename);
-    ~NLF();
-
-    char         *GetString(int idx);
-
+struct NLF {
+    bool          m_bLoaded;
     char         *m_szName;
-
-    LANGID        m_wLangId;
     char         *m_szFont;
     int           m_iFontSize;
     unsigned int  m_uCodePage;
-  
-  private:
+    bool          m_bRTL;
+
     char         *m_szStrings[NLF_STRINGS];
+};
+
+struct LanguageTable {
+  LANGID lang_id;
+
+  int dlg_offset;
+
+  GrowBuf *strlist;
+
+  StringsArray *lang_strings;
+
+  NLF nlf;
 };
 
 #endif

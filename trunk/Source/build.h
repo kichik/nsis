@@ -1,8 +1,7 @@
 #ifndef _BUILD_H_
 #define _BUILD_H_
 
-#include <Vector>
-#include <List>
+#include <StdExcept>
 using namespace std;
 
 #include "strlist.h"
@@ -43,12 +42,8 @@ extern "C"
 
 #define PS_OK 0
 #define PS_EOF 1
-#define PS_ENDIF 2
-#define PS_ELSE 3
-#define PS_ELSE_IF0 4
-#define PS_ELSE_IF1 5
 #define PS_ERROR 50
-#define IS_PS_ELSE(x) (( x ) >= PS_ELSE && ( x ) <= PS_ELSE_IF1)
+#define PS_WARNING 100
 
 enum {
   MAKENSIS_NOTIFY_SCRIPT,
@@ -57,6 +52,14 @@ enum {
   MAKENSIS_NOTIFY_OUTPUT
 };
 
+#define PAGE_CUSTOM 0
+#define PAGE_LICENSE 1
+#define PAGE_COMPONENTS 2
+#define PAGE_DIRECTORY 3
+#define PAGE_INSTFILES 4
+#define PAGE_UNINSTCONFIRM 5
+#define PAGE_COMPLETED 6
+
 class CEXEBuild {
   public:
     CEXEBuild();
@@ -64,6 +67,8 @@ class CEXEBuild {
 
     // to add a warning to the compiler's warning list.
     void warning(const char *s, ...);
+    // warning with file name and line count
+    void warning_fl(const char *s, ...);
 
     // to add a defined thing.
     void define(const char *p, const char *v="");
@@ -125,6 +130,27 @@ class CEXEBuild {
     int do_add_file(const char *lgss, int attrib, int recurse, int linecnt, int *total_files, const char *name_override=0, int generatecode=1, int *data_handle=0, int rec_depth=0);
     GrowBuf m_linebuild; // used for concatenating lines
 
+    // used by doParse to do preprocessing
+    struct ifblock
+    {
+      int hasexeced;
+      int elseused;
+      int ignore;
+      int inherited_ignore;
+    } *cur_ifblock;
+
+    TinyGrowBuf build_preprocessor_data;
+    int last_line_had_slash;
+
+    void start_ifblock();
+    void end_ifblock();
+    int num_ifblock();
+    /*int ignore;
+    int if_count;
+    int ignored_if_count;
+    int wait_for_endif;*/
+    bool inside_comment;
+
     void ERROR_MSG(const char *s, ...);
     void SCRIPT_MSG(const char *s, ...);
     void INFO_MSG(const char *s, ...);
@@ -142,21 +168,22 @@ class CEXEBuild {
     void section_add_size_kb(int kb);
     int section_add_flags(int flags);
     int section_add_install_type(int inst_type);
+    int add_page(int type);
+    int page_end();
     int add_label(const char *name);
     int add_entry(const entry *ent);
-    int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
+    int add_entry_indirect(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
-    int add_string(const char *string); // returns offset (in string table)
+    int add_string(const char *string, int process=1); // returns offset (in string table)
     int add_intstring(const int i); // returns offset in stringblock
-    int add_string_main(const char *string, int process=1); // returns offset (in string table)
-    int add_string_uninst(const char *string, int process=1); // returns offset (in string table)
+
 #ifdef NSIS_SUPPORT_LANG_IN_STRINGS
     int preprocess_string(char *out, const char *in, bool bUninstall);
 #else
     int preprocess_string(char *out, const char *in);
 #endif
 
-    int make_sure_not_in_secorfunc(const char *str);
+    int make_sure_not_in_secorfunc(const char *str, int page_ok=0);
 
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
     // Added by Ximon Eighteen 5th August 2002
@@ -171,6 +198,11 @@ class CEXEBuild {
     void printline(int l);
     int process_jump(LineParser &line, int wt, int *offs);
 
+    int AddVersionInfo();
+    int ProcessPages();
+    void PreperInstTypes();
+    void PreperHeaders(IGrowBuf *hdrbuf);
+
     int resolve_jump_int(const char *fn, int *a, int offs, int start, int end);
     int resolve_call_int(const char *fn, const char *str, int fptr, int *ofs);
     int resolve_instruction(const char *fn, const char *str, entry *w, int offs, int start, int end);
@@ -180,27 +212,44 @@ class CEXEBuild {
     int uninstall_generate();
     void set_uninstall_mode(int un);
 
-    // lang.cpp functions and vars
-    StringTable *GetTable(LANGID &lang);
-    int SetString(char *string, int id, int process, LANGID lang=0);
-    int SetString(char *string, int id, int process, StringTable *table);
-    int GetUserString(char *name);
-    int SetUserString(char *name, LANGID lang, char *string, int process=1);
-    int WriteStringTables();
-    void FillStringTable(StringTable *table, NLF *nlf=0);
-    #define IsNotSet(s) _IsNotSet(string_tables.size()?&(string_tables[0]->s):0)
-    bool _IsNotSet(int *str); // Checks if a string is not set in all of the string tables
-    #define IsSet(s,lang) _IsSet(string_tables.size()?&(string_tables[0]->s):0,lang)
-    bool _IsSet(int *str, LANGID lang); // Checks if a string is set in a given string table
+    // lang.cpp functions and variables
+    void InitLangTables();
+    LanguageTable *GetLangTable(LANGID &lang);
+    int DefineLangString(char *name, int process=-1);
+    int DefineInnerLangString(int id, int process=-1);
+    int SetLangString(char *name, LANGID lang, char *string);
+    int SetInnerString(int id, char *string);
+    int GenerateLangTables();
+    void FillLanguageTable(LanguageTable *table);
+    int HasUserDefined(int id) {
+      const char *us = UserInnerStrings.get(id);
+      return us && *us;
+    };
+
+    LanguageTable *LoadLangFile(char *filename);
+    void DeleteLangTable(LanguageTable *table);
+
+    NLFRef NLFRefs[NLF_STRINGS];
+    bool keep_ref;
+    StringsArray UserInnerStrings;
+    bool defcodepage_set;
+    GrowBuf lang_tables;
+    LANGID last_used_lang;
+    LangStringList build_langstrings;
+    int build_langstring_num, ubuild_langstring_num;
 
     unsigned int uDefCodePage;
 
-    bool next_used, install_used, comppage_used, license_force_radio_used, register_used, unregister_used;
+    // pages stuff
+    int license_res_id;
+    page *cur_page;
+    int cur_page_type;
+    int enable_last_page_cancel, uenable_last_page_cancel;
 
+    // User variables stuff
     int GetUserVarIndex(LineParser &line, int token);
 // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
-    bool b_abort_compile;
     UserVarsStringList m_UserVarNames;
     int DeclaredUserVar(const char *VarName);
     void VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList);
@@ -216,12 +265,6 @@ class CEXEBuild {
     bool build_compressor_set;
     bool build_compress_whole;
 
-    bool use_first_insttype;
-
-    vector<NLF*> build_nlfs;
-    vector<StringTable*> string_tables;
-    LANGID last_used_lang;
-
     bool no_space_texts;
 
     int has_called_write_output;
@@ -231,14 +274,12 @@ class CEXEBuild {
         build_datesave, build_optimize_datablock,
     build_allowskipfiles; // Added by ramon 23 May 2003
 
-    header build_header;
+    header build_header, build_uninst, *cur_header;
     int uninstall_mode;
-    uninstall_header build_uninst;
     int uninstall_size,uninstall_size_full;
     int uninstaller_writes_used;
 
     char build_output_filename[1024];
-    char cur_out_path[1024];
 
     // Added by ramon 6 jun 2003
 #ifdef NSIS_SUPPORT_VERSION_INFO
@@ -262,21 +303,19 @@ class CEXEBuild {
 
     int build_cursection_isfunc;
     section *build_cursection;
-    TinyGrowBuf build_sections;
+    TinyGrowBuf build_sections, ubuild_sections, *cur_sections;
     GrowBuf build_entries,ubuild_entries, *cur_entries;
     TinyGrowBuf build_functions, ubuild_functions, *cur_functions;
     TinyGrowBuf build_labels, ubuild_labels, *cur_labels;
-    StringList build_strlist, ubuild_strlist;
-    GrowBuf build_langtables, ubuild_langtables;
-    LangStringList build_userlangstrings, ubuild_userlangstrings;
-    TinyGrowBuf build_pages, ubuild_pages;
-
-    char build_last_page_define[1024], ubuild_last_page_define[1024];
-    int build_custom_used, ubuild_custom_used;
-    int enable_last_page_cancel, uenable_last_page_cancel;
+    StringList build_strlist, ubuild_strlist, *cur_strlist;
+    GrowBuf build_langtables, ubuild_langtables, *cur_langtables;
+    TinyGrowBuf build_pages, ubuild_pages, *cur_pages;
+    TinyGrowBuf build_ctlcolors, ubuild_ctlcolors, *cur_ctlcolors;
 
     MMapBuf build_datablock, ubuild_datablock; // use GrowBuf here instead of MMapBuf if you want
-    IGrowBuf *cur_datablock; 
+    IGrowBuf *cur_datablock;
+
+    TinyGrowBuf verbose_stack;
 
     unsigned char *header_data_new;
     int exeheader_size_new;

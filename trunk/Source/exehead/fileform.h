@@ -4,22 +4,23 @@
 #define _FILEFORM_H_
 
 
-// stored in file:
-// exehead (~34k)
-// firstheader (~28 bytes)
-// hdrinfo (4 bytes describing length/compression)::
-//   (if install)
-//     header (~228 bytes)
-//     sections (20 bytes each)
-//   (if uninstall)
-//     uninstall_header (~116 bytes)
-//   pages (12 bytes each)
-//   entries (24 bytes each)
-//   string table
-//   language tables
-// datablock
-// (hdrinfo+datablock is at least 512 bytes if CRC enabled)
+// * the installer is compsed of the following parts:
+// exehead (~34kb)
+// firstheader (struct firstheader)
+// * headers (compressed together):
+//   header (struct header)
+//   * nsis blocks (described in header->blocks)
+//     pages (struct page)
+//     section headers (struct section)
+//     entries/instructions (struct entry)
+//     strings (null seperated)
+//     language tables (language id, dialog offset, language strings)
+//     colors (struct color)
+// data block (files and uninstaller data)
+// * not compressed
 // CRC (optional - 4 bytes)
+//
+// headers + datablock is at least 512 bytes if CRC enabled
 
 
 #define MAX_ENTRY_OFFSETS 6
@@ -92,8 +93,7 @@ enum
 
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   EW_GETDLGITEM,        // GetDlgItem:        3: [outputvar, dialog, item_id]
-  EW_GETWINTEXT,        // GetWindowText:     2: [outputvar, hwnd]
-  EW_SETBKCOLOR,        // SerBkColor:        2: [hwnd, color]
+  EW_SETCTLCOLORS,      // SerCtlColors:      3: [hwnd, pointer to struct colors]
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
@@ -211,96 +211,6 @@ typedef struct
   int length_of_all_following_data;
 } firstheader;
 
-// Strings common to both installers and uninstallers
-typedef struct
-{
-  int name; // name of installer
-
-  // unprocessed strings
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  int branding;
-  int backbutton;
-  int nextbutton;
-  int cancelbutton;
-  int showdetailsbutton;
-  int closebutton;   // "Close"
-  int completed;
-
-  int copy_details;
-
-  int byte;
-  int kilo;
-  int mega;
-  int giga;
-
-  // processed strings
-  int subcaptions[5];
-#endif
-  int caption; // name of installer + " Setup" or whatever.
-
-#ifdef NSIS_SUPPORT_FILE
-  int fileerrtext;
-  int fileerrtext_noignore;
-#endif
-
-#if defined(NSIS_SUPPORT_DELETE) || defined(NSIS_SUPPORT_RMDIR) || defined(NSIS_SUPPORT_FILE)
-  int cant_write;
-#endif
-#ifdef NSIS_SUPPORT_RMDIR
-  int remove_dir;
-#endif
-#ifdef NSIS_SUPPORT_COPYFILES
-  int copy_failed;
-  int copy_to;
-#endif
-#ifdef NSIS_SUPPORT_ACTIVEXREG
-  int registering;
-  int unregistering;
-  int symbol_not_found;
-  int could_not_load;
-  int no_ole;
-  // not used anywhere - int err_reg_dll;
-#endif
-#ifdef NSIS_SUPPORT_CREATESHORTCUT
-  int create_shortcut;
-  int err_creating_shortcut;
-#endif
-#ifdef NSIS_SUPPORT_DELETE
-  int del_file;
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-  int del_on_reboot;
-#endif
-#endif
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  int created_uninst;
-  int err_creating;
-#endif
-#ifdef NSIS_SUPPORT_SHELLEXECUTE
-  int exec_shell;
-#endif
-#ifdef NSIS_SUPPORT_EXECUTE
-  int exec;
-#endif
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-  int rename_on_reboot;
-#endif
-#ifdef NSIS_SUPPORT_RENAME
-  int rename;
-#endif
-#ifdef NSIS_SUPPORT_FILE
-  int extract;
-  int err_writing;
-  int err_decompressing;
-  int skipped;
-#endif
-  int inst_corrupted;
-  int output_dir;
-  int create_dir;
-#ifdef NSIS_CONFIG_LOG
-  int log_install_process;
-#endif
-} common_strings;
-
 // Flags for common_header.flags
 #define CH_FLAGS_DETAILS_SHOWDETAILS 1
 #define CH_FLAGS_DETAILS_NEVERSHOW 2
@@ -316,25 +226,54 @@ typedef struct
   #define CH_FLAGS_COMP_ONLY_ON_CUSTOM 256
   #define CH_FLAGS_NO_CUSTOM 512
 #endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  #define CH_FLAGS_LICENSE_FORCE_SELECTION 1024
+
+// nsis blocks
+struct block_header {
+  int offset;
+  int num;
+};
+
+enum {
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  NB_PAGES,
 #endif
+  NB_SECTIONS,
+  NB_ENTRIES,
+  NB_STRINGS,
+  NB_LANGTABLES,
+  NB_CTLCOLORS,
+  NB_DATA,
+
+  BLOCKS_NUM
+};
 
 // Settings common to both installers and uninstallers
 typedef struct
 {
-  int language_tables_num; // number of strings tables in array
-  int language_table_size; // size of each language table
+  int flags; // CH_FLAGS_*
+  struct block_header blocks[BLOCKS_NUM];
 
-  int num_entries; // total number of entries
-  int num_string_bytes; // total number of bytes taken by strings
-
-  int num_pages; // number of used pages (including custom pages)
+  // InstallDirRegKey stuff
+  int install_reg_rootkey;
+  // these two are not processed!
+  int install_reg_key_ptr, install_reg_value_ptr;
 
 #ifdef NSIS_SUPPORT_BGBG
   int bg_color1, bg_color2, bg_textcolor;
 #endif
-  int lb_bg, lb_fg, license_bg;
+
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+  // installation log window colors
+  int lb_bg, lb_fg;
+#endif
+
+  // langtable size
+  int langtable_size;
+
+#ifdef NSIS_CONFIG_LICENSEPAGE
+  // license background color
+  int license_bg;
+#endif//NSIS_CONFIG_LICENSEPAGE
 
 #ifdef NSIS_SUPPORT_CODECALLBACKS
   // .on* calls
@@ -346,69 +285,6 @@ typedef struct
   int code_onGUIInit;
   int code_onGUIEnd;
 #endif
-#endif//NSIS_SUPPORT_CODECALLBACKS
-
-  int flags; // CH_FLAGS_*
-} common_header;
-
-// Strings specific to installers
-typedef struct
-{
-  // these first strings are literals (should not be encoded)
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  int browse; // "Browse..."
-  int installbutton; // "Install"
-  int spacerequired; // "Space required: "
-  int spaceavailable; // "Space available: "
-  int custom;  // Custom
-  int text; // directory page text
-  int dirsubtext; // directory text2
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  int componenttext; // component page text
-  int componentsubtext[4];
-#endif
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  int licensetext; // license page text
-  int licensedata; // license text
-  int licensebutton; // license button text
-  int licensebuttonagree; // agree check box/radio button
-  int licensebuttondisagree; // disagree check box/radio button
-#endif//NSIS_CONFIG_LICENSEPAGE
-#else
-  int foo;
-#endif
-} installer_strings;
-
-// Settings specific to installers
-typedef struct
-{
-  // common settings
-  common_header common;
-
-  int install_reg_rootkey;
-  // these two are not processed!
-  int install_reg_key_ptr, install_reg_value_ptr;
-
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-  int install_types[NSIS_MAX_INST_TYPES+1];
-#endif
-
-#ifdef NSIS_CONFIG_LICENSEPAGE
-  int license_bg; // license background color
-#endif//NSIS_CONFIG_LICENSEPAGE
-
-  int install_directory_ptr; // default install dir.
-  int install_directory_auto_append; // auto append part
-
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  int uninstdata_offset; // -1 if no uninst data.
-  int uninsticon_size;
-#endif
-
-  int num_sections; // total number of sections
-
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-  // .on* calls
   int code_onVerifyInstDir;
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
   int code_onMouseOverSection;
@@ -417,25 +293,19 @@ typedef struct
   int code_onSelChange;
 #endif//NSIS_CONFIG_COMPONENTPAGE
 #endif//NSIS_SUPPORT_CODECALLBACKS
+
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+  int install_types[NSIS_MAX_INST_TYPES+1];
+#endif
+
+  int install_directory_ptr; // default install dir.
+  int install_directory_auto_append; // auto append part
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+  int uninstdata_offset; // -1 if no uninst data.
+  int uninsticon_size;
+#endif
 } header;
-
-// Strings specific to uninstallers
-typedef struct
-{
-  int uninstbutton;
-  int uninstalltext;
-  int uninstalltext2;
-} uninstall_strings;
-
-// Settings specific to uninstallers
-typedef struct
-{
-  // common settings
-  common_header common;
-
-  int code;
-  int code_size;
-} uninstall_header;
 
 // used for section->flags
 #define SF_SELECTED   1
@@ -462,35 +332,76 @@ typedef struct
   int offsets[MAX_ENTRY_OFFSETS]; // count and meaning of offsets depend on 'which'
 } entry;
 
+// page window proc
 enum
 {
-  NSIS_PAGE_CUSTOM = -1,
 #ifdef NSIS_CONFIG_LICENSEPAGE
-  NSIS_PAGE_LICENSE,
+  PWP_LICENSE,
 #endif
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-  NSIS_PAGE_SELCOM,
+  PWP_SELCOM,
 #endif
-  NSIS_PAGE_DIR,
-  NSIS_PAGE_INSTFILES,
-  NSIS_PAGE_COMPLETED,
+  PWP_DIR,
+  PWP_INSTFILES,
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-  NSIS_PAGE_UNINST
+  PWP_UNINST,
 #endif
+  PWP_COMPLETED,
+  PWP_CUSTOM
 };
+
+// page flags
+#define PF_BACK_ENABLE 256
+#define PF_NEXT_ENABLE 2
+#define PF_CANCEL_ENABLE 4
+#define PF_BACK_SHOW 8 // must be SW_SHOWNA, don't change
+#define PF_LICENSE_STREAM 16
+#define PF_LICENSE_FORCE_SELECTION 32
+#define PF_LICENSE_NO_FORCE_SELECTION 64
+#define PF_LICENSE_SELECTED 1 // must be 1
+#define PF_NO_NEXT_FOCUS 128
+#define PF_PAGE_EX 512
 
 typedef struct
 {
-  int id; // index in the pages array
+  int dlg_id; // dialog resource id
+  int wndproc_id;
+
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-  int prefunc; // called before the page is created, or if custom to show the it. Allows to skip the page using Abort.
-  int showfunc; // function to do stuff right before page is shown
-  int leavefunc; // function to do stuff after the page is shown
+  // called before the page is created, or if custom to show the page
+  // use Abort to skip the page
+  int prefunc;
+  // called right before page is shown
+  int showfunc;
+  // called when the user leaves to the next page
+  // use Abort to force the user to stay on this page
+  int leavefunc;
 #endif //NSIS_SUPPORT_CODECALLBACKS
-  int caption; // caption tab
+
+  int flags;
+
+  int caption;
+  int back;
   int next;
-  int button_states;
+  int clicknext;
+  int cancel;
+
+  int parms[5];
 } page;
+
+#define CC_TEXT 1
+#define CC_TEXT_SYS 2
+#define CC_BK 4
+#define CC_BK_SYS 8
+#define CC_BKB 16
+
+typedef struct {
+  COLORREF text;
+  LOGBRUSH bk;
+  HBRUSH bkb;
+  int bkmode;
+  int flags;
+} ctlcolors;
 
 // the following are only used/implemented in exehead, not makensis.
 
@@ -510,9 +421,8 @@ int NSISCALL _dodecomp(int offset, HANDLE hFileOut, char *outbuf, int outbuflen)
 extern HANDLE g_db_hFile;
 extern int g_quit_flag;
 
-const char * NSISCALL GetStringFromStringTab(int offs);
 BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead);
-DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
+DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
 // Added by ramon 3 jun 2003
@@ -539,7 +449,7 @@ DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
   #endif
 #endif
 
-union installer_flags {
+union exec_flags {
   struct {
     int autoclose;
     int all_user_var;
@@ -550,8 +460,39 @@ union installer_flags {
 #endif
     int cur_insttype;
     int insttype_changed;
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+    int silent;
+#endif
   };
   int flags[1];
 };
+
+#ifdef EXEHEAD
+extern struct block_header g_blocks[BLOCKS_NUM];
+extern header *g_header;
+extern int g_flags;
+extern int g_filehdrsize;
+extern int g_is_uninstaller;
+
+#define g_pages ((page*)g_blocks[NB_PAGES].offset)
+#define g_sections ((section*)g_blocks[NB_SECTIONS].offset)
+#define num_sections (g_blocks[NB_SECTIONS].num)
+#define g_entries ((entry*)g_blocks[NB_ENTRIES].offset)
+/*extern int num_sections;
+
+//extern int g_autoclose;
+extern void *g_inst_combinedheader;
+extern page *g_inst_page;
+extern section *g_inst_section;
+extern entry *g_inst_entry;
+
+#define g_inst_header ((header *)g_inst_combinedheader)
+#define g_inst_cmnheader ((common_header *)g_inst_combinedheader)
+
+#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+#define g_inst_uninstheader ((uninstall_header *)g_inst_combinedheader)
+extern int g_is_uninstaller;
+#endif*/
+#endif
 
 #endif //_FILEFORM_H_

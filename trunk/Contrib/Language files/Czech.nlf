@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by T.V. Zuggy (http://zuggy.wz.cz/)
 Nullsoft Install System %s
-Instalace programu %s
-Odinstalování programu %s
+Instalace programu $(^Name)
+Odinstalování programu $(^Name)
 : Licenèní ujednání
 : Možnosti instalace
 : Umístìní instalace
@@ -36,7 +38,7 @@ Vlastní
 Zvolte typ instalace:
 Zvolte souèásti pro instalaci:
 Nebo zvolte jednotlivé souèásti, které si pøejete nainstalovat:
-Zvolte adresáø pro instalaci programu %s:
+Zvolte adresáø pro instalaci programu $(^Name):
 Dostupné volné místo: 
 Potøebné volné místo: 
 Odinstalování z:

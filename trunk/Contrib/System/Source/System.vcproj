@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "windows-1251"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="System"
 	ProjectGUID="{2FB013AB-6FD4-4239-9974-C999F4DFD70C}"
 	Keyword="Win32Proj">
@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SYSTEM_EXPORTS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;SYSTEM_EXPORTS;SYSTEM_LOG_DEBUG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="5"
@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="kernel32.lib user32.lib RunTmChk.lib libcd.lib"
-				OutputFile="$(OutDir)/System.dll"
+				OutputFile="d:\Program FIles\NSIS\Plugins\System.dll"
 				LinkIncremental="2"
 				IgnoreAllDefaultLibraries="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -54,14 +54,21 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="1"
@@ -71,20 +78,23 @@
 				OmitFramePointers="TRUE"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SYSTEM_EXPORTS"
 				StringPooling="TRUE"
+				ExceptionHandling="FALSE"
 				RuntimeLibrary="4"
+				StructMemberAlignment="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="3"
 				AssemblerOutput="2"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				DebugInformationFormat="3"
+				CompileAs="1"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="kernel32.lib user32.lib vc7ldvrm.obj vc7lmul.obj vc7lshl.obj vc7lshr.obj  chkstk.obj"
-				OutputFile="$(OutDir)/System.dll"
+				AdditionalDependencies="kernel32.lib user32.lib vc7ldvrm.obj vc7lmul.obj vc7lshl.obj vc7lshr.obj chkstk.obj"
+				OutputFile="d:\Program FIles\NSIS\Plugins\System.dll"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="TRUE"
 				GenerateDebugInformation="FALSE"
@@ -109,9 +119,17 @@
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -131,9 +149,6 @@
 				RelativePath="Plugin.c">
 			</File>
 			<File
-				RelativePath="System.c">
-			</File>
-			<File
 				RelativePath="stdafx.c">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -148,6 +163,15 @@
 						UsePrecompiledHeader="1"/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="System.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ExpandAttributedSource="TRUE"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -159,10 +183,10 @@
 				RelativePath="Plugin.h">
 			</File>
 			<File
-				RelativePath="System.h">
+				RelativePath="stdafx.h">
 			</File>
 			<File
-				RelativePath="stdafx.h">
+				RelativePath="System.h">
 			</File>
 		</Filter>
 		<Filter

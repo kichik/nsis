@@ -7,10 +7,12 @@ NLF v2
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by TuW@nNu tuwannu@hotmail.com (asdfuae)
 Nullsoft Install System %s
-%s ติดตั้ง
-%s ถอนการติดตั้ง
+$(^Name) ติดตั้ง
+$(^Name) ถอนการติดตั้ง
 : ข้อตกลงเรื่องลิขสิทธิ์
 : ตัวเลือกการติดตั้ง
 : โฟลเดอร์ที่ติดตั้ง
@@ -34,7 +36,7 @@ Nullsoft Install System %s
 เลือกรูปแบบการติดตั้ง:
 เลือกคอมโพเนนต์ที่ต้องการติดตั้ง:
 เลือกคอมโพเนนต์อื่นๆที่ต้องการติดตั้ง:
-ให้ติดตั้ง %s ลงใน:
+ให้ติดตั้ง $(^Name) ลงใน:
 เนื้อที่ที่เหลือ: 
 เนื้อที่ที่ต้องการ: 
 ถอนการติดตั้งจาก:

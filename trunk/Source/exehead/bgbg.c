@@ -8,8 +8,8 @@
 
 #ifdef NSIS_SUPPORT_BGBG
 
-#define c1 g_inst_cmnheader->bg_color1
-#define c2 g_inst_cmnheader->bg_color2
+#define c1 g_header->bg_color1
+#define c2 g_header->bg_color2
 
 LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -49,7 +49,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
           r.bottom+=4;
         }
 
-        if (g_inst_cmnheader->bg_textcolor != -1)
+        if (g_header->bg_textcolor != -1)
         {
           HFONT newFont, oldFont;
           newFont = CreateFont(40,0,0,0,FW_BOLD,TRUE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH,"Garamond");
@@ -60,7 +60,7 @@ LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             r.top=8;
             my_GetWindowText(hwnd,buf,sizeof(buf));
             SetBkMode(hdc,TRANSPARENT);
-            SetTextColor(hdc,g_inst_cmnheader->bg_textcolor);
+            SetTextColor(hdc,g_header->bg_textcolor);
             oldFont = SelectObject(hdc,newFont);
             DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
             SelectObject(hdc,oldFont);

@@ -1,6 +1,9 @@
 #include <windows.h>
 #include <stdio.h>
 #include <shlobj.h>
+#define _RICHEDIT_VER 0x0200
+#include <RichEdit.h>
+#undef _RICHEDIT_VER
 #include "tokens.h"
 #include "build.h"
 #include "util.h"
@@ -8,13 +11,11 @@
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
 #include "lang.h"
-#include "exehead/lang.h"
 #include "exehead/resource.h"
 
 #ifndef FOF_NOERRORUI
 #define FOF_NOERRORUI 0x0400
 #endif
-
 
 #define MAX_INCLUDEDEPTH 10
 #define MAX_LINELENGTH 4096
@@ -186,38 +187,58 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
   fp = 0;
   curfilename = 0;
 
-  if (ret == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
-  if (IS_PS_ELSE(ret)) ERROR_MSG("!else: stray !else\n");
   if (m_linebuild.getlen())
   {
     ERROR_MSG("Error: invalid script: last line ended with \\\n");
     return PS_ERROR;
   }
+
+  if (num_ifblock())
+  {
+    ERROR_MSG("!if[n]def: open at EOF - need !endif\n");
+    return PS_ERROR;
+  }
+
   return ret;
 }
 
-#ifdef NSIS_SUPPORT_NAMED_USERVARS
-  #define PRINTHELP() { if ( !b_abort_compile ) print_help(line.gettoken_str(0)); return PS_ERROR; }
-#else
-  #define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
-#endif
+#define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
 
+void CEXEBuild::start_ifblock()
+{
+  ifblock ib = {0, };
+  if (cur_ifblock)
+    ib.inherited_ignore = cur_ifblock->ignore || cur_ifblock->inherited_ignore;
+  int num = build_preprocessor_data.getlen() / sizeof(ifblock);
+  build_preprocessor_data.add(&ib, sizeof(ifblock));
+  cur_ifblock = (ifblock *) build_preprocessor_data.get() + num;
+}
+
+void CEXEBuild::end_ifblock()
+{
+  if (build_preprocessor_data.getlen())
+  {
+    cur_ifblock--;
+    build_preprocessor_data.resize(build_preprocessor_data.getlen() - sizeof(ifblock));
+    if (!build_preprocessor_data.getlen())
+      cur_ifblock = 0;
+  }
+}
+
+int CEXEBuild::num_ifblock()
+{
+  return build_preprocessor_data.getlen() / sizeof(ifblock);
+}
 
 int CEXEBuild::doParse(const char *str)
 {
-  static int ignore;
-  static int last_line_had_slash;
-  static int ignored_if_count;
-  static int wait_for_endif;
-  static bool inside_comment=0;
-
   LineParser line(inside_comment);
   int res;
 
   while (*str == ' ' || *str == '\t') str++;
 
   // if ignoring, ignore all lines that don't begin with !.
-  if (ignore && *str!='!' && !last_line_had_slash) return PS_OK;
+  if (cur_ifblock && cur_ifblock->ignore && *str!='!' && !last_line_had_slash) return PS_OK;
 
   if (m_linebuild.getlen()>1) m_linebuild.resize(m_linebuild.getlen()-2);
 
@@ -291,21 +312,32 @@ parse_again:
     PRINTHELP()
   }
 
+  int if_from_else = 0;
+
   if (tkid == TOK_P_ELSE)
   {
-    if (ignored_if_count) {
+    if (cur_ifblock && cur_ifblock->inherited_ignore)
+      return PS_OK;
+
+    if (!num_ifblock() || cur_ifblock->elseused)
+    {
+      ERROR_MSG("!else: stray !else\n");
+      return PS_ERROR;
+    }
+
+    if (line.getnumtokens() == 1)
+    {
+      cur_ifblock->ignore = !cur_ifblock->ignore;
+      // if not executed up until now, it will now
+      cur_ifblock->hasexeced++;
+      cur_ifblock->elseused++;
       return PS_OK;
     }
 
-    if (line.getnumtokens() == 1) {
-      if (!wait_for_endif) {
-        ignore=!ignore;
-        return PS_OK;
-      }
-      else {
-        ignore=1;
-        return PS_OK;
-      }
+    if (cur_ifblock->hasexeced)
+    {
+      cur_ifblock->ignore++;
+      return PS_OK;
     }
 
     line.eattoken();
@@ -315,24 +347,18 @@ parse_again:
     if (line.getnumtokens() == 1) PRINTHELP()
     if (!v) tkid = TOK_P_IFDEF;
     else tkid = TOK_P_IFNDEF;
-    if (ignore && !wait_for_endif) {
-      ignore=0; // process the ifdef
-    }
-    else {
-      // don't process the if(n)def because the else code shouldn't be executed
-      // one if was already executed
-      ignore=1;
-      wait_for_endif=1;
-    }
+    if_from_else++;
+
+    SCRIPT_MSG("!else on line %d - %s\n", linecnt, line.gettoken_str(0));
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
   {
-    if (wait_for_endif) {
-      return PS_OK;
-    }
-    if (ignore) {
-      ignored_if_count++;
+    if (!if_from_else)
+      start_ifblock();
+
+    if (cur_ifblock && cur_ifblock->inherited_ignore)
+    {
       return PS_OK;
     }
 
@@ -359,24 +385,31 @@ parse_again:
         mod &= 1;
       }
     }
-    
-    if (!istrue && !ignored_if_count) ignore=1;
+
+    if (istrue)
+    {
+      cur_ifblock->hasexeced++;
+      cur_ifblock->ignore = 0;
+    }
+    else
+      cur_ifblock->ignore++;
+
     return PS_OK;
   }
   if (tkid == TOK_P_ENDIF) {
-    if (ignore) {
-      if (ignored_if_count) ignored_if_count--;
-      else {
-        wait_for_endif=0;
-        ignore=0;
-      }
+    if (!num_ifblock())
+    {
+      ERROR_MSG("!endif: no !ifdef open\n");
+      return PS_ERROR;
     }
+    end_ifblock();
     return PS_OK;
   }
-  if (!ignore)
+  if (!cur_ifblock || (!cur_ifblock->ignore && !cur_ifblock->inherited_ignore))
   {
     return doCommand(tkid,line);
   }
+
   return PS_OK;
 }
 
@@ -615,7 +648,7 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   return 0;
 }
 
-#define FLAG_OFFSET(flag) (FIELD_OFFSET(installer_flags, flag)/sizeof(int))
+#define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))
 #define SECTION_FIELD_GET(field) (FIELD_OFFSET(section, field)/sizeof(int))
 #define SECTION_FIELD_SET(field) (-1 - (int)(FIELD_OFFSET(section, field)/sizeof(int)))
 
@@ -688,7 +721,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           char *p=str;
           str[0]=0;
           fgets(str,MAX_LINELENGTH,fp);
-          SCRIPT_MSG("%s%s", str, str[lstrlen(str)-1]=='\n'?"":"\n");
+          //SCRIPT_MSG("%s%s", str, str[lstrlen(str)-1]=='\n'?"":"\n");
           if (feof(fp) && !str[0])
           {
             ERROR_MSG("!macro \"%s\": unterminated (no !macroend found in file)!\n",line.gettoken_str(1));
@@ -819,24 +852,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     // page ordering shit
     ///////////////////////////////////////////////////////////////////////////////
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
+    case TOK_UNINSTPAGE:
+      set_uninstall_mode(1);
     case TOK_PAGE:
       {
-        SCRIPT_MSG("Page: %s", line.gettoken_str(1));
+        SCRIPT_MSG("%sPage: %s", uninstall_mode?"Uninst":"", line.gettoken_str(1));
 
-        enable_last_page_cancel = 0;
-        if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
-          enable_last_page_cancel = 1;
+        if (!uninstall_mode) {
+          enable_last_page_cancel = 0;
+          if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
+            enable_last_page_cancel = 1;
+        }
+        else {
+          uenable_last_page_cancel = 0;
+          if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
+            uenable_last_page_cancel = 1;
+        }
 
-        int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles");
-        page p = {
-          0,
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-          -1,
-          -1,
-          -1,
-#endif
-          0
-        };
+        int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles\0uninstConfirm");
+
+        if (k < 0) PRINTHELP();
+
+        if (add_page(k) != PS_OK)
+          return PS_ERROR;
 
 #ifndef NSIS_SUPPORT_CODECALLBACKS
         if (!k) {
@@ -845,51 +884,38 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 #endif//!NSIS_SUPPORT_CODECALLBACKS
 
-        if (k != 4) {
-          *build_last_page_define=0;
-        }
-
         if (k) {
           // not custom
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           switch (line.getnumtokens() - enable_last_page_cancel) {
-            case 7:
-              PRINTHELP();
             case 6:
-              if (k != 4) {
-                lstrcpy(build_last_page_define, line.gettoken_str(5));
-              }
+              PRINTHELP();
             case 5:
               if (*line.gettoken_str(4))
-                p.leavefunc = ns_func.add(line.gettoken_str(4),0);
+                cur_page->leavefunc = ns_func.add(line.gettoken_str(4),0);
             case 4:
               if (*line.gettoken_str(3))
-                p.showfunc = ns_func.add(line.gettoken_str(3),0);
+                cur_page->showfunc = ns_func.add(line.gettoken_str(3),0);
             case 3:
               if (*line.gettoken_str(2))
-                p.prefunc = ns_func.add(line.gettoken_str(2),0);
+                cur_page->prefunc = ns_func.add(line.gettoken_str(2),0);
           }
-#else
-          if (line.getnumtokens() - enable_last_page_cancel == 3)
-            lstrcpy(build_last_page_define, line.gettoken_str(2));
 #endif//NSIS_SUPPORT_CODECALLBACKS
         }
 #ifdef NSIS_SUPPORT_CODECALLBACKS
         else {
           // a custom page
           switch (line.getnumtokens() - enable_last_page_cancel) {
-            case 7:
-              PRINTHELP();
             case 6:
-              lstrcpy(build_last_page_define, line.gettoken_str(5));
+              PRINTHELP();
             case 5:
-              p.caption = add_string_main(line.gettoken_str(4));
+              cur_page->caption = add_string(line.gettoken_str(4));
             case 4:
               if (*line.gettoken_str(3))
-                p.leavefunc = ns_func.add(line.gettoken_str(3),0);
+                cur_page->leavefunc = ns_func.add(line.gettoken_str(3),0);
             case 3:
               if (*line.gettoken_str(2))
-                p.prefunc = ns_func.add(line.gettoken_str(2),0);
+                cur_page->prefunc = ns_func.add(line.gettoken_str(2),0);
               break;
             case 2:
               ERROR_MSG("\nError: custom page must have a creator function!\n");
@@ -898,259 +924,336 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 #endif//NSIS_SUPPORT_CODECALLBACKS
 
-        switch (k) {
-          case 0:
-            p.id = NSIS_PAGE_CUSTOM;
-            build_custom_used++;
-            break;
-          case 1:
-#ifdef NSIS_CONFIG_LICENSEPAGE
-            p.id = NSIS_PAGE_LICENSE;
-            p.caption = LANG_SUBCAPTION(0);
-            break;
-#else
-            ERROR_MSG("Error: %s specified, NSIS_CONFIG_LICENSEPAGE not defined.\n", line.gettoken_str(1));
-            return PS_ERROR;
-#endif
-          case 2:
-#ifdef NSIS_CONFIG_COMPONENTPAGE
-            p.id = NSIS_PAGE_SELCOM;
-            p.caption = LANG_SUBCAPTION(1);
-            comppage_used++;
-            break;
-#else
-            ERROR_MSG("Error: %s specified, NSIS_CONFIG_COMPONENTPAGE not defined.\n", line.gettoken_str(1));
-            return PS_ERROR;
-#endif
-          case 3:
-            p.id = NSIS_PAGE_DIR;
-            p.caption = LANG_SUBCAPTION(2);
-            break;
-          case 4:
-            if (*build_last_page_define) definedlist.add(build_last_page_define,"");
-            p.id = NSIS_PAGE_INSTFILES;
-            p.caption = LANG_SUBCAPTION(3);
-            break;
-          default:
-            PRINTHELP();
-        }
-
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        if (p.prefunc>=0)
+        if (cur_page->prefunc>=0)
           SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.showfunc>=0 && k)
+        if (cur_page->showfunc>=0 && k)
           SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
-        if (p.leavefunc>=0)
+        if (cur_page->leavefunc>=0)
           SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4-!k));
-        else if (p.caption && !k)
+        else if (cur_page->caption && !k)
           SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
 #endif
         SCRIPT_MSG("\n");
 
-        build_pages.add(&p,sizeof(page));
-        build_header.common.num_pages++;
-        if (p.id == NSIS_PAGE_INSTFILES) {
-          p.id=NSIS_PAGE_COMPLETED;
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-          p.prefunc = -1;
-          p.showfunc = -1;
-          p.leavefunc = -1;
-#endif
-          p.caption = LANG_SUBCAPTION(4);
-          build_pages.add(&p,sizeof(page));
-          build_header.common.num_pages++;
+        page_end();
+
+        if (k == PAGE_INSTFILES) {
+          add_page(PAGE_COMPLETED);
+          page_end();
         }
+
+        set_uninstall_mode(0);
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-    case TOK_UNINSTPAGE:
-#ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+
+    // extended page setting
+    case TOK_PAGEEX:
+    {
+      int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles\0uninstConfirm\0");
+      if (k < 0) {
+        k = line.gettoken_enum(1,"un.custom\0un.license\0un.components\0un.directory\0un.instfiles\0un.uninstConfirm\0");
+        if (k < 0) PRINTHELP();
+        set_uninstall_mode(1);
+      }
+
+      SCRIPT_MSG("PageEx: %s\n", line.gettoken_str(1));
+
+      if (add_page(k) != PS_OK)
+        return PS_ERROR;
+
+      cur_page->flags |= PF_PAGE_EX;
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
+
+    case TOK_PAGEEXEND:
+    {
+      SCRIPT_MSG("PageExEnd\n");
+
+      if (!cur_page) {
+        ERROR_MSG("Error: no PageEx open!\n");
+        return PS_ERROR;
+      }
+
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      if (cur_page_type == PAGE_CUSTOM && !cur_page->prefunc) {
+        ERROR_MSG("Error: custom pages must have a creator function.\n");
+        return PS_ERROR;
+      }
+#endif
+
+      page_end();
+
+      if (cur_page_type == PAGE_INSTFILES) {
+        add_page(PAGE_COMPLETED);
+        page_end();
+      }
+
+      set_uninstall_mode(0);
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    case TOK_PAGECALLBACKS:
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+    {
+      SCRIPT_MSG("PageCallbacks:");
+      if (!cur_page) {
+        ERROR_MSG("\nPageCallbacks must be used inside PageEx!\n");
+        return PS_ERROR;
+      }
+      if (cur_page_type == PAGE_CUSTOM)
       {
-        SCRIPT_MSG("UninstPage: %s", line.gettoken_str(1));
-
-        uenable_last_page_cancel = 0;
-        if (!stricmp(line.gettoken_str(line.getnumtokens()-1),"/ENABLECANCEL"))
-          uenable_last_page_cancel = 1;
-
-        int k = line.gettoken_enum(1,"custom\0uninstConfirm\0instfiles");
-        page p = {
-          0,
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-          -1,
-          -1,
-          -1,
-#endif
-          0
-        };
-
-#ifndef NSIS_SUPPORT_CODECALLBACKS
-        if (!k) {
-          ERROR_MSG("Error: custom page specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n");
-          return PS_ERROR;
-        }
-#endif//!NSIS_SUPPORT_CODECALLBACKS
-
-        if (k != 2) {
-          *ubuild_last_page_define=0;
-        }
-
-        if (k) {
-          // not custom
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-          switch (line.getnumtokens() - uenable_last_page_cancel) {
-            case 7:
-              PRINTHELP();
-            case 6:
-              if (k != 2) {
-                lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
-              }
-            case 5:
-              if (*line.gettoken_str(4)) {
-                if (strnicmp(line.gettoken_str(4),"un.",3)) {
-                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
-                  return PS_ERROR;
-                }
-                p.leavefunc = ns_func.add(line.gettoken_str(4),0);
-              }
-            case 4:
-              if (*line.gettoken_str(3)) {
-                if (strnicmp(line.gettoken_str(3),"un.",3)) {
-                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
-                  return PS_ERROR;
-                }
-                p.showfunc = ns_func.add(line.gettoken_str(3),0);
-              }
-            case 3:
-              if (*line.gettoken_str(2)) {
-                if (strnicmp(line.gettoken_str(2),"un.",3)) {
-                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
-                  return PS_ERROR;
-                }
-                p.prefunc = ns_func.add(line.gettoken_str(2),0);
-              }
-          }
-#else
-          if (line.getnumtokens() - uenable_last_page_cancel == 3)
-            lstrcpy(ubuild_last_page_define, line.gettoken_str(2));
-#endif//NSIS_SUPPORT_CODECALLBACKS
-        }
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-        else {
-          // a custom page
-          switch (line.getnumtokens() - uenable_last_page_cancel) {
-            case 7:
-              PRINTHELP();
-            case 6:
-              lstrcpy(ubuild_last_page_define, line.gettoken_str(5));
-            case 5:
-              p.caption = add_string_uninst(line.gettoken_str(4));
-            case 4:
-              if (*line.gettoken_str(3)) {
-                if (strnicmp(line.gettoken_str(3),"un.",3)) {
-                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
-                  return PS_ERROR;
-                }
-                p.leavefunc = ns_func.add(line.gettoken_str(3),0);
-              }
-            case 3:
-              if (*line.gettoken_str(2)) {
-                if (strnicmp(line.gettoken_str(2),"un.",3)) {
-                  ERROR_MSG("\nError: uninstall function must have a un. prefix!\n");
-                  return PS_ERROR;
-                }
-                p.prefunc = ns_func.add(line.gettoken_str(2),0);
-              }
-              break;
-            case 2:
-              ERROR_MSG("\nError: custom page must have a creator function!\n");
-              PRINTHELP();
-          }
-        }
-#endif//NSIS_SUPPORT_CODECALLBACKS
-
-        switch (k) {
-          case 0:
-            p.id = NSIS_PAGE_CUSTOM;
-            ubuild_custom_used++;
-            break;
-          case 1:
-            p.id = NSIS_PAGE_UNINST;
-            p.caption=LANG_SUBCAPTION(0);
-            break;
-          case 2:
-            if (*ubuild_last_page_define) definedlist.add(ubuild_last_page_define,"");
-            p.id = NSIS_PAGE_INSTFILES;
-            p.caption=LANG_SUBCAPTION(1);
-            break;
-          default:
+        switch (line.getnumtokens())
+        {
+          case 4:
+          {
             PRINTHELP();
-        }
-
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-        if (p.prefunc>=0)
-          SCRIPT_MSG(" (%s:%s)", k?"pre":"creator", line.gettoken_str(2));
-        if (p.showfunc>=0 && k)
-          SCRIPT_MSG(" (show:%s)", line.gettoken_str(3));
-        if (p.leavefunc>=0)
-          SCRIPT_MSG(" (leave:%s)", line.gettoken_str(4-!k));
-        else if (p.caption && !k)
-          SCRIPT_MSG(" (caption:%s)", line.gettoken_str(3));
-#endif
-        SCRIPT_MSG("\n");
-
-        ubuild_pages.add(&p,sizeof(page));
-        build_uninst.common.num_pages++;
-        if (p.id==NSIS_PAGE_INSTFILES) {
-          p.id=NSIS_PAGE_COMPLETED;
-#ifdef NSIS_SUPPORT_CODECALLBACKS
-          p.prefunc=-1;
-          p.showfunc=-1;
-          p.leavefunc=-1;
-#endif
-          p.caption=LANG_SUBCAPTION(2);
-          ubuild_pages.add(&p,sizeof(page));
-          build_uninst.common.num_pages++;
+          }
+          case 3:
+          {
+            if (*line.gettoken_str(2))
+            {
+              if (strnicmp(line.gettoken_str(2), "un.", 3))
+              {
+                if (uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              else
+              {
+                if (!uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              cur_page->leavefunc = ns_func.add(line.gettoken_str(2),0);
+            }
+          }
+          case 2:
+          {
+            if (*line.gettoken_str(1))
+            {
+              if (strnicmp(line.gettoken_str(1), "un.", 3))
+              {
+                if (uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              else
+              {
+                if (!uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              cur_page->prefunc = ns_func.add(line.gettoken_str(1),0);
+            }
+          }
         }
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+      else
+      {
+        switch (line.getnumtokens())
+        {
+          case 4:
+          {
+            if (*line.gettoken_str(3))
+            {
+              if (strnicmp(line.gettoken_str(3), "un.", 3))
+              {
+                if (uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              else
+              {
+                if (!uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              cur_page->leavefunc = ns_func.add(line.gettoken_str(3),0);
+            }
+          }
+          case 3:
+          {
+            if (*line.gettoken_str(2))
+            {
+              if (strnicmp(line.gettoken_str(2), "un.", 3))
+              {
+                if (uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              else
+              {
+                if (!uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              cur_page->showfunc = ns_func.add(line.gettoken_str(2),0);
+            }
+          }
+          case 2:
+          {
+            if (*line.gettoken_str(1))
+            {
+              if (strnicmp(line.gettoken_str(1), "un.", 3))
+              {
+                if (uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              else
+              {
+                if (!uninstall_mode)
+                {
+                  ERROR_MSG("\nError: function names must start with \"un.\" in an uninstall page.\n");
+                  return PS_ERROR;
+                }
+              }
+              cur_page->prefunc = ns_func.add(line.gettoken_str(1),0);
+            }
+          }
+        }
+      }
+      
+      int custom = cur_page_type == PAGE_CUSTOM ? 1 : 0;
+
+      if (cur_page->prefunc>=0)
+        SCRIPT_MSG(" %s:%s", !custom?"pre":"creator", line.gettoken_str(1));
+      if (cur_page->showfunc>=0 && !custom)
+        SCRIPT_MSG(" show:%s", line.gettoken_str(2));
+      if (cur_page->leavefunc>=0)
+        SCRIPT_MSG(" leave:%s", line.gettoken_str(3-custom));
+
+      SCRIPT_MSG("\n");
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
 #else
-      ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n", line.gettoken_str(0));
+      ERROR_MSG("Error: %s specified, NSIS_SUPPORT_CODECALLBACKS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
-#endif
+#endif//NSIS_SUPPORT_CODECALLBACKS
+#else
+    case TOK_PAGE:
+    case TOK_UNINSTPAGE:
+    case TOK_PAGEEX:
+    case TOK_PAGEEXEND:
+    case TOK_PAGECALLBACKS:
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",  line.gettoken_str(0));
+    return PS_ERROR;
+#endif//NSIS_CONFIG_VISIBLE_SUPPORT
     // header flags
     ///////////////////////////////////////////////////////////////////////////////
     case TOK_LANGSTRING:
-    case TOK_LANGSTRINGUP:
-      SCRIPT_MSG("LangString: \"%s\" %s \"%s\"%s\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3), which_token==TOK_LANGSTRINGUP?" (unprocessed)":"");
-      if (SetUserString(line.gettoken_str(1), line.gettoken_int(2), line.gettoken_str(3), which_token==TOK_LANGSTRING) != PS_OK)
-      {
-        ERROR_MSG("Error: LangString: can't add user string!\n");
+    {
+      char *name = line.gettoken_str(1);
+      LANGID lang = line.gettoken_int(2);
+      char *str = line.gettoken_str(3);
+      int ret = SetLangString(name, lang, str);
+      if (ret == PS_WARNING)
+        warning_fl("LangString \"%s\" set multiple times for %d, wasting space", name, lang);
+      else if (ret == PS_ERROR) {
+        ERROR_MSG("Error: can't set LangString \"%s\"!\n", name);
         return PS_ERROR;
       }
+      SCRIPT_MSG("LangString: \"%s\" %d \"%s\"\n", name, lang, str);
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    case TOK_LANGSTRINGUP:
+      SCRIPT_MSG("Error: LangStringUP is obsolete, there are no more unprocessed strings. Use LangString.\n");
+    return PS_ERROR;
+    case TOK_LICENSELANGSTRING:
+    {
+#ifdef NSIS_CONFIG_SILENT_SUPPORT
+      if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
+      {
+        warning_fl("LicenseLangString: SilentInstall enabled, wasting space");
+      }
+#endif
+      char *name = line.gettoken_str(1);
+      LANGID lang = line.gettoken_int(2);
+      char *file = line.gettoken_str(3);
+
+      FILE *fp;
+      int datalen;
+      fp=fopen(file,"rb");
+      if (!fp)
+      {
+        ERROR_MSG("LicenseLangString: open failed \"%s\"\n",file);
+        PRINTHELP()
+      }
+      fseek(fp,0,SEEK_END);
+      datalen=ftell(fp);
+      if (!datalen)
+      {
+        ERROR_MSG("LicenseLangString: empty license file \"%s\"\n",file);
+        fclose(fp);
+        return PS_ERROR;
+      }
+      rewind(fp);
+      char *data=(char*)malloc(datalen+2);
+      char *ldata=data+1;
+      if (fread(ldata,1,datalen,fp) != datalen)
+      {
+        ERROR_MSG("LicenseLangString: can't read file.\n");
+        fclose(fp);
+        return PS_ERROR;
+      }
+      fclose(fp);
+      ldata[datalen]=0;
+      if (!strncmp(ldata,"{\\rtf",sizeof("{\\rtf")-1))
+        *data = SF_RTF;
+      else
+        *data = SF_TEXT;
+
+      int ret = SetLangString(name, lang, data);
+      if (ret == PS_WARNING)
+        warning_fl("LicenseLangString \"%s\" set multiple times for %d, wasting space", name, lang);
+      else if (ret == PS_ERROR)
+      {
+        ERROR_MSG("Error: can't set LicenseLangString \"%s\"!\n", name);
+        return PS_ERROR;
+      }
+
+      SCRIPT_MSG("LicenseLangString: \"%s\" %d \"%s\"\n", name, lang, file);
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_NAME:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+1) PRINTHELP();
-        if (IsSet(common.name,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),SLANG_NAME,0,lang);
-        SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(a));
+        if (SetInnerString(NLF_NAME,line.gettoken_str(1)) == PS_WARNING)
+          warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+        SCRIPT_MSG("Name: \"%s\"\n",line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_CAPTION:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+1) PRINTHELP();
-        if (IsSet(common.caption,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),NLF_CAPTION,1,lang);
-        SCRIPT_MSG("Caption: \"%s\"\n",line.gettoken_str(a));
+        if (!cur_page)
+        {
+          if (SetInnerString(NLF_CAPTION,line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+        }
+        else
+        {
+          cur_page->caption = add_string(line.gettoken_str(1));
+        }
+        SCRIPT_MSG("Caption: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_ICON:
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
@@ -1166,7 +1269,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-    // Changed by Amir Szekely 24th July 2002
     case TOK_CHECKBITMAP:
       SCRIPT_MSG("CheckBitmap: \"%s\"\n",line.gettoken_str(1));
       try {
@@ -1203,78 +1305,118 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_DIRTEXT:
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(installer.text,lang) && line.gettoken_str(a)[0])
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),SLANG_DIR_TEXT,0,lang);
-        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_DIR_SUBTEXT,0,lang);
-        if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_BTN_BROWSE,0,lang);
-        SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
+        if (!cur_page) {
+          if (SetInnerString(NLF_DIR_TEXT, line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+          if (line.getnumtokens() > 2)
+            SetInnerString(NLF_DIR_SUBTEXT, line.gettoken_str(2));
+          if (line.getnumtokens() > 3)
+            SetInnerString(NLF_BTN_BROWSE, line.gettoken_str(3));
+          if (line.getnumtokens() > 4)
+            SetInnerString(NLF_DIR_BROWSETEXT, line.gettoken_str(4));
+        }
+        else {
+          if (cur_page_type != PAGE_DIRECTORY) {
+            ERROR_MSG("Error: DirText can only be used inside PageEx directory.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[0] = add_string(line.gettoken_str(1));
+          if (line.getnumtokens() > 2)
+            cur_page->parms[1] = add_string(line.gettoken_str(2));
+          if (line.getnumtokens() > 3)
+            cur_page->parms[2] = add_string(line.gettoken_str(3));
+          if (line.getnumtokens() > 4)
+            cur_page->parms[3] = add_string(line.gettoken_str(4));
+        }
+        SCRIPT_MSG("DirText: \"%s\" \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
 #else//NSIS_CONFIG_VISIBLE_SUPPORT
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_CONFIG_VISIBLE_SUPPORT
+    case TOK_DIRVAR:
+    {
+      if (!cur_page || (cur_page_type != PAGE_DIRECTORY && cur_page_type != PAGE_UNINSTCONFIRM)) {
+        ERROR_MSG("Error: can't use DirVar outside of PageEx directory|uninstConfirm.\n");
+        return PS_ERROR;
+      }
+      cur_page->parms[4] = GetUserVarIndex(line, 1) + 1;
+      if (cur_page->parms[4] <= 0) PRINTHELP();
+      SCRIPT_MSG("DirVar: %s\n", line.gettoken_str(1));
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_COMPTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(installer.componenttext,lang) && line.gettoken_str(a)[0])
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),SLANG_COMP_TEXT,0,lang);
-        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_COMP_SUBTEXT1,0,lang);
-        if (line.getnumtokens()>a+2) SetString(line.gettoken_str(a+2),NLF_COMP_SUBTEXT2,0,lang);
-        SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2));
+        if (!cur_page) {
+          if (SetInnerString(NLF_COMP_TEXT, line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+          if (line.getnumtokens() > 2)
+            SetInnerString(NLF_COMP_SUBTEXT1, line.gettoken_str(2));
+          if (line.getnumtokens() > 3)
+            SetInnerString(NLF_COMP_SUBTEXT2, line.gettoken_str(3));
+        }
+        else {
+          if (cur_page_type != PAGE_COMPONENTS) {
+            ERROR_MSG("Error: ComponentText can only be used inside PageEx components.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[0] = add_string(line.gettoken_str(1));
+          cur_page->parms[1] = add_string(line.gettoken_str(2));
+          cur_page->parms[2] = add_string(line.gettoken_str(3));
+          cur_page->parms[3] = cur_page->parms[1];
+          cur_page->parms[4] = cur_page->parms[2];
+        }
+        SCRIPT_MSG("ComponentText: \"%s\" \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_INSTTYPE:
       {
         int x;
 
-        if (strnicmp(line.gettoken_str(1),"/LANG=",6) && line.getnumtokens() > 2) PRINTHELP();
         if (!stricmp(line.gettoken_str(1),"/NOCUSTOM"))
         {
-          build_header.common.flags|=CH_FLAGS_NO_CUSTOM;
+          build_header.flags|=CH_FLAGS_NO_CUSTOM;
           SCRIPT_MSG("InstType: disabling custom install type\n");
         }
         else if (!stricmp(line.gettoken_str(1),"/COMPONENTSONLYONCUSTOM"))
         {
-          build_header.common.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
+          build_header.flags|=CH_FLAGS_COMP_ONLY_ON_CUSTOM;
           SCRIPT_MSG("InstType: making components viewable only on custom install type\n");
-        }
-        else if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
-          if (!strnicmp(line.gettoken_str(2),"/CUSTOMSTRING=",14)) {
-            SCRIPT_MSG("InstType: setting custom text to: /LANG=%d \"%s\"\n",line.gettoken_str(1)+6,line.gettoken_str(2)+14);
-            SetString(line.gettoken_str(2)+14,NLF_COMP_CUSTOM,0,atoi(line.gettoken_str(1)+6));
-          }
-          else PRINTHELP()
         }
         else if (!strnicmp(line.gettoken_str(1),"/CUSTOMSTRING=",14))
         {
           SCRIPT_MSG("InstType: setting custom text to: \"%s\"\n",line.gettoken_str(1)+14);
-          SetString(line.gettoken_str(1)+14,NLF_COMP_CUSTOM,0);
+          if (SetInnerString(NLF_COMP_CUSTOM,line.gettoken_str(1)+14) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space","InstType /CUSTOMSTRING");
         }
-        else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
+        else if (line.gettoken_str(1)[0]=='/')
+        {
+          PRINTHELP()
+        }
         else
         {
-          for (x = 0; x < NSIS_MAX_INST_TYPES && build_header.install_types[x]; x ++);
-          if (x==NSIS_MAX_INST_TYPES)
+          char *itname = line.gettoken_str(1);
+
+          if (!strnicmp(itname, "un.", 3)) {
+            set_uninstall_mode(1);
+            itname += 3;
+          }
+
+          for (x = 0; x < NSIS_MAX_INST_TYPES && cur_header->install_types[x]; x ++);
+          if (x == NSIS_MAX_INST_TYPES)
           {
-            ERROR_MSG("InstType: no more than %d install types allowed. %d specified\n",NSIS_MAX_INST_TYPES,NSIS_MAX_INST_TYPES+1);
+            ERROR_MSG("InstType: no more than %d install types allowed. %d specified\n", NSIS_MAX_INST_TYPES, NSIS_MAX_INST_TYPES + 1);
             return PS_ERROR;
           }
           else
           {
-            build_header.install_types[x] = add_string_main(line.gettoken_str(1));
-            SCRIPT_MSG("InstType: %d=\"%s\"\n",x+1,line.gettoken_str(1));
+            cur_header->install_types[x] = add_string(itname);
+            SCRIPT_MSG("InstType: %s%d=\"%s\"\n", uninstall_mode ? "(uninstall) " : "", x+1, itname);
           }
+
+          set_uninstall_mode(0);
         }
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1287,174 +1429,170 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_LICENSEPAGE
     case TOK_LICENSETEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(installer.licensetext,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),SLANG_LICENSE_TEXT,0,lang);
-        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_BTN_LICENSE,0,lang);
-        SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
+        if (!cur_page) {
+          if (SetInnerString(NLF_LICENSE_TEXT, line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+          SetInnerString(NLF_LICENSE_TEXT_FSRB, line.gettoken_str(1));
+          SetInnerString(NLF_LICENSE_TEXT_FSCB, line.gettoken_str(1));
+          if (line.getnumtokens() > 2)
+            SetInnerString(NLF_BTN_LICENSE, line.gettoken_str(2));
+        }
+        else {
+          if (cur_page_type != PAGE_LICENSE) {
+            ERROR_MSG("Error: LicenseText can only be used inside PageEx license.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[0] = add_string(line.gettoken_str(1));
+          cur_page->next = add_string(line.gettoken_str(2));
+        }
+        SCRIPT_MSG("LicenseText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_LICENSEDATA:
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
-      if (build_header.common.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
+      if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG))
       {
-        warning("LicenseData: SilentInstall enabled, wasting space (%s:%d)",curfilename,linecnt);
+        warning_fl("LicenseData: SilentInstall enabled, wasting space");
       }
 #endif
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(installer.licensedata,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        FILE *fp;
-        int datalen;
-        fp=fopen(line.gettoken_str(a),"rb");
-        if (!fp)
+        int idx = 0;
+        char *file = line.gettoken_str(1);
+        char *data;
+
+        if (file[0] == '$' && file[1] == '(')
         {
-          ERROR_MSG("LicenseData: open failed \"%s\"\n",line.gettoken_str(a));
-          PRINTHELP()
+          char *cp = strdup(file+2);
+          char *p = strchr(cp, ')');
+          if (p && p[1] == 0) { // if string is only a language str identifier
+            *p = 0;
+            if (!uninstall_mode && !strnicmp(cp,"un.",3))
+            {
+              ERROR_MSG("Installer language strings can't start with un. (%s)! (%s:%d)", cp, curfilename, linecnt);
+              free(cp);
+              return PS_ERROR;
+            }
+            else if (uninstall_mode && strnicmp(cp,"un.",3))
+            {
+              ERROR_MSG("Uninstaller language strings must start with un. (%s)! (%s:%d)", cp, curfilename, linecnt);
+              free(cp);
+              return PS_ERROR;
+            }
+            idx = DefineLangString(cp, 0);
+          }
+          free(cp);
+          data = file;
         }
-        fseek(fp,0,SEEK_END);
-        datalen=ftell(fp);
-        if (!datalen)
+
+        if (!idx)
         {
-          ERROR_MSG("LicenseData: empty license file \"%s\"\n",line.gettoken_str(a));
+          int datalen;
+          FILE *fp=fopen(file,"rb");
+          if (!fp)
+          {
+            ERROR_MSG("LicenseData: open failed \"%s\"\n",file);
+            PRINTHELP()
+          }
+          fseek(fp,0,SEEK_END);
+          datalen=ftell(fp);
+          if (!datalen)
+          {
+            ERROR_MSG("LicenseData: empty license file \"%s\"\n",file);
+            fclose(fp);
+            return PS_ERROR;
+          }
+          rewind(fp);
+          data=(char*)malloc(datalen+2);
+          char *ldata=data+1;
+          if (fread(ldata,1,datalen,fp) != datalen) {
+            ERROR_MSG("LicenseData: can't read file.\n");
+            fclose(fp);
+            return PS_ERROR;
+          }
           fclose(fp);
-          return PS_ERROR;
+          ldata[datalen]=0;
+          if (!strncmp(ldata,"{\\rtf",sizeof("{\\rtf")-1))
+            *data = SF_RTF;
+          else
+            *data = SF_TEXT;
         }
-        rewind(fp);
-        char *data=(char*)malloc(datalen+1);
-        if (fread(data,1,datalen,fp) != datalen) {
-          ERROR_MSG("LicenseData: can't read file.\n");
-          fclose(fp);
-          return PS_ERROR;
+
+        if (!cur_page) {
+          if (SetInnerString(NLF_LICENSE_DATA,data) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
         }
-        fclose(fp);
-        data[datalen]=0;
-        SetString(data,SLANG_LICENSE_DATA,0,lang);
-        SCRIPT_MSG("LicenseData: \"%s\"\n",line.gettoken_str(a));
+        else {
+          if (cur_page_type != PAGE_LICENSE) {
+            ERROR_MSG("Error: LicenseData can only be used inside PageEx license.\n");
+            return PS_ERROR;
+          }
+
+          cur_page->parms[1] = add_string(data, 0);
+        }
+        SCRIPT_MSG("LicenseData: \"%s\"\n",file);
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_LICENSEFORCESELECTION:
     {
-      LANGID lang = 0;
-      int a = 0;
-
-      if (!strnicmp(line.gettoken_str(1),"/LANG=",6)) {
-        lang=atoi(line.gettoken_str(1)+6);
-        a++;
-      }
-
-      int k=line.gettoken_enum(1+a,"off\0checkbox\0radiobuttons\0");
+      int k=line.gettoken_enum(1,"off\0checkbox\0radiobuttons\0");
       if (k == -1) PRINTHELP()
-      if (k < line.getnumtokens() - 2 - a) PRINTHELP()
+      if (k < line.getnumtokens() - 2) PRINTHELP()
 
-      switch (line.getnumtokens()-a) {
-        case 4:
-          SetString(line.gettoken_str(3+a), NLF_BTN_LICENSE_DISAGREE, 0, lang);
-        case 3:
-          SetString(line.gettoken_str(2+a), NLF_BTN_LICENSE_AGREE, 0, lang);
-          break;
-      }
-
-      try {
-        init_res_editor();
-
-        BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(IDD_LICENSE), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US));
-        if (!dlg) throw runtime_error("IDD_LICENSE doesn't exist!");
-        CDialogTemplate dt(dlg,uDefCodePage);
-        free(dlg);
+      if (!cur_page) {
+        switch (line.getnumtokens()) {
+          case 4:
+            SetInnerString(NLF_BTN_LICENSE_DISAGREE, line.gettoken_str(3));
+          case 3:
+            SetInnerString(NLF_BTN_LICENSE_AGREE, line.gettoken_str(2));
+            break;
+        }
 
         switch (k) {
           case 0:
-            build_header.common.flags&=~CH_FLAGS_LICENSE_FORCE_SELECTION;
-            dt.RemoveItem(IDC_LICENSEAGREE);
-            dt.RemoveItem(IDC_LICENSEDISAGREE);
+            license_res_id = IDD_LICENSE;
             break;
           case 1:
-          {
-            build_header.common.flags|=CH_FLAGS_LICENSE_FORCE_SELECTION;
-            
-            DialogItemTemplate *licenseData = dt.GetItem(IDC_EDIT1);
-
-            DialogItemTemplate *item;
-            for (int i = 0; item = dt.GetItemByIdx(i); i++) {
-              if (item->sY >= licenseData->sY + licenseData->sHeight) {
-                item->sY -= 10;
-              }
-            }
-
-            licenseData->sHeight -= 10;
-
-            DialogItemTemplate checkBox = {
-              0,
-              0,
-              dt.GetHeight() - 9,
-              dt.GetWidth(),
-              9,
-              0,
-              BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-              IDC_LICENSEAGREE,
-              MAKEINTRESOURCE(0x0080),
-            };
-            dt.AddItem(checkBox);
-
+            license_res_id = IDD_LICENSE_FSCB;
             break;
-          }
           case 2:
-          {
-            build_header.common.flags|=CH_FLAGS_LICENSE_FORCE_SELECTION;
-
-            license_force_radio_used=true;
-            
-            DialogItemTemplate *licenseData = dt.GetItem(IDC_EDIT1);
-
-            DialogItemTemplate *item;
-            for (int i = 0; item = dt.GetItemByIdx(i); i++) {
-              if (item->sY >= licenseData->sY + licenseData->sHeight) {
-                item->sY -= 20;
-              }
-            }
-
-            licenseData->sHeight -= 20;
-
-            DialogItemTemplate radionButton = {
-              0,
-              0,
-              dt.GetHeight() - 9,
-              dt.GetWidth(),
-              9,
-              0,
-              BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-              IDC_LICENSEDISAGREE,
-              MAKEINTRESOURCE(0x0080),
-            };
-            dt.AddItem(radionButton);
-
-            radionButton.sY -= 10;
-            radionButton.wId = IDC_LICENSEAGREE;
-            dt.AddItem(radionButton);
-          }
+            license_res_id = IDD_LICENSE_FSRB;
+            break;
+        }
+      }
+      else {
+        if (cur_page_type != PAGE_LICENSE) {
+          ERROR_MSG("Error: LicenseForceSelection can only be used inside PageEx license.\n");
+          return PS_ERROR;
+        }
+        switch (line.getnumtokens()) {
+          case 4:
+            cur_page->parms[3] = add_string(line.gettoken_str(3));
+          case 3:
+            cur_page->parms[2] = add_string(line.gettoken_str(2));
+            break;
         }
 
-        DWORD dwSize;
-        dlg = dt.Save(dwSize);
-        res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_LICENSE), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
-        free(dlg);
+        cur_page->flags &= ~(PF_LICENSE_FORCE_SELECTION | PF_LICENSE_NO_FORCE_SELECTION);
+
+        switch (k) {
+        	case 0:
+            cur_page->dlg_id = IDD_LICENSE;
+            cur_page->flags |= PF_LICENSE_NO_FORCE_SELECTION;
+            break;
+          case 1:
+            cur_page->dlg_id = IDD_LICENSE_FSCB;
+            cur_page->flags |= PF_LICENSE_FORCE_SELECTION;
+            break;
+          case 2:
+            cur_page->dlg_id = IDD_LICENSE_FSRB;
+            cur_page->flags |= PF_LICENSE_FORCE_SELECTION;
+            break;
+        }
       }
-      catch (exception& err) {
-        ERROR_MSG("Error in LicenseForceSelection: %s\n", err.what());
-        return PS_ERROR;
-      }
-      SCRIPT_MSG("LicenseForceSelection: %s \"%s\" \"%s\"\n", line.gettoken_str(1+a), line.gettoken_str(2+a), line.gettoken_str(3+a));
+
+      SCRIPT_MSG("LicenseForceSelection: %s \"%s\" \"%s\"\n", line.gettoken_str(1), line.gettoken_str(2), line.gettoken_str(3));
     }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_LICENSEBKCOLOR:
       {
         char *p = line.gettoken_str(1);
@@ -1472,6 +1610,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
         int v=strtoul(p,&p,16);
         build_header.license_bg=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+        build_uninst.license_bg=build_header.license_bg;
         SCRIPT_MSG("LicenseBkColor: %06X\n",v);
       }
       }
@@ -1497,31 +1636,31 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//NSIS_CONFIG_LOG
       SCRIPT_MSG("SilentInstall: %s\n",line.gettoken_str(1));
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      if (k && !IsNotSet(installer.licensedata))
+      if (k && HasUserDefined(NLF_LICENSE_DATA))
       {
-        warning("SilentInstall: LicenseData already specified. wasting space (%s:%d)",curfilename,linecnt);
+        warning_fl("SilentInstall: LicenseData already specified. wasting space");
       }
       if (k) {
-        build_header.common.flags|=CH_FLAGS_SILENT;
+        build_header.flags|=CH_FLAGS_SILENT;
         if (k == 2)
-          build_header.common.flags|=CH_FLAGS_SILENT_LOG;
+          build_header.flags|=CH_FLAGS_SILENT_LOG;
       }
       else {
-        build_header.common.flags&=~CH_FLAGS_SILENT;
-        build_header.common.flags&=~CH_FLAGS_SILENT_LOG;
+        build_header.flags&=~CH_FLAGS_SILENT;
+        build_header.flags&=~CH_FLAGS_SILENT_LOG;
       }
 #endif//NSIS_CONFIG_LICENSEPAGE
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_SILENTUNINST:
-    {
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
+    {
       int k=line.gettoken_enum(1,"normal\0silent\0");
       if (k<0) PRINTHELP()
       if (k)
-        build_uninst.common.flags|=CH_FLAGS_SILENT;
+        build_uninst.flags|=CH_FLAGS_SILENT;
       else
-        build_uninst.common.flags&=~CH_FLAGS_SILENT;
+        build_uninst.flags&=~CH_FLAGS_SILENT;
       SCRIPT_MSG("SilentUnInstall: %s\n",line.gettoken_str(1));
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1529,9 +1668,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_UNINSTALL_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif
+    case TOK_IFSILENT:
+      ent.which=EW_IFFLAG;
+      if (process_jump(line,1,&ent.offsets[0]) ||
+          process_jump(line,2,&ent.offsets[1])) PRINTHELP()
+      ent.offsets[2]=FLAG_OFFSET(silent);
+      ent.offsets[3]=~0;//new value mask - keep flag
+      SCRIPT_MSG("IfSilent ?%s:%s\n",line.gettoken_str(1),line.gettoken_str(2));
+    return add_entry(&ent);
+    case TOK_SETSILENT:
+    {
+      ent.which=EW_SETFLAG;
+      ent.offsets[0]=FLAG_OFFSET(silent);
+      int k=line.gettoken_enum(1,"normal\0silent\0");
+      if (k<0) PRINTHELP()
+      ent.offsets[1]=add_intstring(k);
+      SCRIPT_MSG("SetSilent: %s\n",line.gettoken_str(1));
+    }
+    return add_entry(&ent);
 #else//!NSIS_CONFIG_SILENT_SUPPORT
     case TOK_SILENTINST:
     case TOK_SILENTUNINST:
+    case TOK_IFSILENT:
+    case TOK_SETSILENT:
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_SILENT_SUPPORT not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//NSIS_CONFIG_SILENT_SUPPORT
@@ -1544,9 +1703,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       char *p = line.gettoken_str(1);
       if (build_header.install_directory_ptr)
       {
-        warning("%s: specified multiple times. wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        warning_fl("%s: specified multiple times. wasting space",line.gettoken_str(0));
       }
-      build_header.install_directory_ptr = add_string_main(p);
+      build_header.install_directory_ptr = add_string(p);
       build_header.install_directory_auto_append = 0;
       if (*p && *CharPrev(p, p + strlen(p)) != '\\')
       {
@@ -1565,15 +1724,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         if (build_header.install_reg_key_ptr)
         {
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+          warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
         }
         int k=line.gettoken_enum(1,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(1,rootkeys[1]);
         if (k == -1) PRINTHELP()
         build_header.install_reg_rootkey=(int)rootkey_tab[k];
-        build_header.install_reg_key_ptr = add_string_main(line.gettoken_str(2),0);
-        if (line.gettoken_str(2)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        build_header.install_reg_value_ptr = add_string_main(line.gettoken_str(3),0);
+        build_header.install_reg_key_ptr = add_string(line.gettoken_str(2),0);
+        if (line.gettoken_str(2)[0] == '\\')
+          warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
+        build_header.install_reg_value_ptr = add_string(line.gettoken_str(3),0);
         SCRIPT_MSG("InstallRegKey: \"%s\\%s\\%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1586,11 +1746,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         int x;
         int smooth=0;
-        build_header.common.flags&=~CH_FLAGS_PROGRESS_COLORED;
+        build_header.flags&=~CH_FLAGS_PROGRESS_COLORED;
         for (x = 1; x < line.getnumtokens(); x ++)
         {
           if (!stricmp(line.gettoken_str(x),"smooth")) smooth=1;
-          else if (!stricmp(line.gettoken_str(x),"colored")) build_header.common.flags|=CH_FLAGS_PROGRESS_COLORED;
+          else if (!stricmp(line.gettoken_str(x),"colored")) build_header.flags|=CH_FLAGS_PROGRESS_COLORED;
           else PRINTHELP()
         }
         try {
@@ -1620,7 +1780,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         SCRIPT_MSG("InstProgressFlags: smooth=%d, colored=%d\n",smooth,
-          !!(build_header.common.flags&CH_FLAGS_PROGRESS_COLORED));
+          !!(build_header.flags&CH_FLAGS_PROGRESS_COLORED));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_AUTOCLOSE:
@@ -1628,9 +1788,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,"false\0true\0");
         if (k == -1) PRINTHELP();
         if (k)
-          build_header.common.flags|=CH_FLAGS_AUTO_CLOSE;
+          build_header.flags|=CH_FLAGS_AUTO_CLOSE;
         else
-          build_header.common.flags&=~CH_FLAGS_AUTO_CLOSE;
+          build_header.flags&=~CH_FLAGS_AUTO_CLOSE;
         SCRIPT_MSG("AutoCloseWindow: %s\n",k?"true":"false");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1705,20 +1865,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
         if (which_token == TOK_SHOWDETAILSUNINST)
         {
-          build_uninst.common.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
+          build_uninst.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
           if (k==1)
-            build_uninst.common.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
+            build_uninst.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
           else if (k==2)
-            build_uninst.common.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
+            build_uninst.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
         }
         else
 #endif
         {
-          build_header.common.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
+          build_header.flags&=~(CH_FLAGS_DETAILS_NEVERSHOW|CH_FLAGS_DETAILS_SHOWDETAILS);
           if (k==1)
-            build_header.common.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
+            build_header.flags|=CH_FLAGS_DETAILS_SHOWDETAILS;
           else if (k==2)
-            build_header.common.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
+            build_header.flags|=CH_FLAGS_DETAILS_NEVERSHOW;
         }
         SCRIPT_MSG("%s: %s\n",line.gettoken_str(0),line.gettoken_str(1));
       }
@@ -1728,9 +1888,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,"show\0hide\0");
         if (k == -1) PRINTHELP();
         if (k)
-          build_header.common.flags|=CH_FLAGS_DIR_NO_SHOW;
+          build_header.flags|=CH_FLAGS_DIR_NO_SHOW;
         else
-          build_header.common.flags&=~CH_FLAGS_DIR_NO_SHOW;
+          build_header.flags&=~CH_FLAGS_DIR_NO_SHOW;
         SCRIPT_MSG("DirShow: %s\n",k?"hide":"show");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1739,9 +1899,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int k=line.gettoken_enum(1,"true\0false\0");
         if (k == -1) PRINTHELP();
         if (k)
-          build_header.common.flags|=CH_FLAGS_NO_ROOT_DIR;
+          build_header.flags|=CH_FLAGS_NO_ROOT_DIR;
         else
-          build_header.common.flags&=~CH_FLAGS_NO_ROOT_DIR;
+          build_header.flags&=~CH_FLAGS_NO_ROOT_DIR;
         SCRIPT_MSG("AllowRootDirInstall: %s\n",k?"false":"true");
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
@@ -1753,12 +1913,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (line.getnumtokens()==1)
       {
         SCRIPT_MSG("BGGradient: default colors\n");
-        build_header.common.bg_color1=0;
-        build_header.common.bg_color2=RGB(0,0,255);
+        build_header.bg_color1=0;
+        build_header.bg_color2=RGB(0,0,255);
       }
       else if (!stricmp(line.gettoken_str(1),"off"))
       {
-        build_header.common.bg_color1=build_header.common.bg_color2=-1;
+        build_header.bg_color1=build_header.bg_color2=-1;
         SCRIPT_MSG("BGGradient: off\n");
         if (line.getnumtokens()>2) PRINTHELP()
       }
@@ -1767,19 +1927,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         char *p = line.gettoken_str(1);
         int v1,v2,v3=-1;
         v1=strtoul(p,&p,16);
-        build_header.common.bg_color1=((v1&0xff)<<16)|(v1&0xff00)|((v1&0xff0000)>>16);
+        build_header.bg_color1=((v1&0xff)<<16)|(v1&0xff00)|((v1&0xff0000)>>16);
         p=line.gettoken_str(2);
         v2=strtoul(p,&p,16);
-        build_header.common.bg_color2=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
+        build_header.bg_color2=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
 
         p=line.gettoken_str(3);
         if (*p)
         {
-          if (!stricmp(p,"notext")) build_header.common.bg_textcolor=-1;
+          if (!stricmp(p,"notext")) build_header.bg_textcolor=-1;
           else
           {
             v3=strtoul(p,&p,16);
-            build_header.common.bg_textcolor=((v3&0xff)<<16)|(v3&0xff00)|((v3&0xff0000)>>16);
+            build_header.bg_textcolor=((v3&0xff)<<16)|(v3&0xff00)|((v3&0xff0000)>>16);
           }
         }
 
@@ -1787,40 +1947,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      build_uninst.common.bg_color1=build_header.common.bg_color1;
-      build_uninst.common.bg_color2=build_header.common.bg_color2;
-      build_uninst.common.bg_textcolor=build_header.common.bg_textcolor;
+      build_uninst.bg_color1=build_header.bg_color1;
+      build_uninst.bg_color2=build_header.bg_color2;
+      build_uninst.bg_textcolor=build_header.bg_textcolor;
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
 #endif//NSIS_SUPPORT_BGBG
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
+#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_INSTCOLORS:
+    {
+      char *p = line.gettoken_str(1);
+      if (p[0]=='/')
       {
-        char *p = line.gettoken_str(1);
-        if (p[0]=='/')
-        {
-          if (stricmp(p,"/windows") || line.getnumtokens()!=2) PRINTHELP()
-          build_header.common.lb_fg=build_header.common.lb_bg=-1;
-          SCRIPT_MSG("InstallColors: windows default colors\n");
-        }
-        else
-        {
-          int v1,v2;
-          if (line.getnumtokens()!=3) PRINTHELP()
-          v1=strtoul(p,&p,16);
-          build_header.common.lb_fg=((v1&0xff)<<16)|(v1&0xff00)|((v1&0xff0000)>>16);
-          p=line.gettoken_str(2);
-          v2=strtoul(p,&p,16);
-          build_header.common.lb_bg=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
-          SCRIPT_MSG("InstallColors: fg=%06X bg=%06X\n",v1,v2);
-        }
+        if (stricmp(p,"/windows") || line.getnumtokens()!=2) PRINTHELP()
+        build_header.lb_fg=build_header.lb_bg=-1;
+        SCRIPT_MSG("InstallColors: windows default colors\n");
+      }
+      else
+      {
+        int v1,v2;
+        if (line.getnumtokens()!=3) PRINTHELP()
+        v1=strtoul(p,&p,16);
+        build_header.lb_fg=((v1&0xff)<<16)|(v1&0xff00)|((v1&0xff0000)>>16);
+        p=line.gettoken_str(2);
+        v2=strtoul(p,&p,16);
+        build_header.lb_bg=((v2&0xff)<<16)|(v2&0xff00)|((v2&0xff0000)>>16);
+        SCRIPT_MSG("InstallColors: fg=%06X bg=%06X\n",v1,v2);
+      }
 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-        build_uninst.common.lb_fg=build_header.common.lb_fg;
-        build_uninst.common.lb_bg=build_header.common.lb_bg;
+      build_uninst.lb_fg=build_header.lb_fg;
+      build_uninst.lb_bg=build_header.lb_bg;
 #endif
-      }
+    }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-    // Added by Amir Szekely 7th July 2002
     case TOK_XPSTYLE:
       try {
         int k=line.gettoken_enum(1,"on\0off\0");
@@ -1835,21 +1995,13 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-    // Added by Amir Szekely 28th July 2002
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_CHANGEUI:
       try {
         DWORD dwSize;
-        int a = 1;
-        bool rtl = false;
-        if (!stricmp(line.gettoken_str(a), "/RTL")) {
-          rtl = true;
-          a++;
-        }
-        int k=line.gettoken_enum(a++, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0");
+        int k=line.gettoken_enum(1, "all\0IDD_LICENSE\0IDD_DIR\0IDD_SELCOM\0IDD_INST\0IDD_INSTFILES\0IDD_UNINST\0IDD_VERIFY\0IDD_LICENSE_FSRB\0IDD_LICENSE_FSCB\0");
         if (k<0) PRINTHELP();
 
-        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(a), 0, LOAD_LIBRARY_AS_DATAFILE);
+        HINSTANCE hUIFile = LoadLibraryEx(line.gettoken_str(2), 0, LOAD_LIBRARY_AS_DATAFILE);
         if (!hUIFile) {
           ERROR_MSG("Error: Can't find \"%s\" in \"%s\"!\n", line.gettoken_str(1), line.gettoken_str(2));
           return PS_ERROR;
@@ -1859,7 +2011,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
         // Search for required items
         #define SEARCH(x) if (!UIDlg.GetItem(x)) {ERROR_MSG("Error: Can't find %s (%u) in the custom UI!\n", #x, x);return PS_ERROR;}
-        #define SAVE(x) if (rtl) {UIDlg.ConvertToRTL(); dlg = UIDlg.Save(dwSize);} else dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
+        #define SAVE(x) dwSize = UIDlg.GetSize(); res_editor->UpdateResource(RT_DIALOG, x, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, dwSize);
 
         BYTE* dlg = 0;
 
@@ -1948,65 +2100,38 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           res_editor->UpdateResource(RT_DIALOG, IDD_VERIFY, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), dlg, UIDlg.GetSize());
         }
 
+        if (k == 0 || k == 8) {
+          dlg = get_dlg(hUIFile, IDD_LICENSE_FSRB, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          SEARCH(IDC_EDIT1);
+          SEARCH(IDC_LICENSEAGREE);
+          SEARCH(IDC_LICENSEDISAGREE);
+          SAVE(IDD_LICENSE_FSRB);
+        }
+
+        if (k == 0 || k == 9) {
+          dlg = get_dlg(hUIFile, IDD_LICENSE_FSCB, line.gettoken_str(2));
+          if (!dlg) return PS_ERROR;
+          CDialogTemplate UIDlg(dlg,uDefCodePage);
+          SEARCH(IDC_EDIT1);
+          SEARCH(IDC_LICENSEAGREE);
+          SAVE(IDD_LICENSE_FSCB);
+        }
+
         if (!FreeLibrary(hUIFile)) {
           ERROR_MSG("can't free library!\n");
         }
 
-        SCRIPT_MSG("ChangeUI: %s%s %s%s\n", rtl?"(RTL) ":"", line.gettoken_str(a-1), line.gettoken_str(a), branding_image_found?" (branding image holder found)":"");
+        SCRIPT_MSG("ChangeUI: %s %s%s\n", line.gettoken_str(1), line.gettoken_str(2), branding_image_found?" (branding image holder found)":"");
       }
       catch (exception& err) {
         ERROR_MSG("Error while changing UI: %s\n", err.what());
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-  /*
-    Useless
-
-    case TOK_USEOUTERUIITEM:
-    {
-      int k = line.gettoken_enum(1,"introtext\0spaceavail\0spacereq\0dirsubtext\0comsubtext1\0comsubtext2\0uninstsubtext\0");
-      if (k < 0) PRINTHELP();
-      int id = line.gettoken_int(2);
-      if (!id) {
-        ERROR_MSG("Error: Item id can't be zero!\n");
-        return PS_ERROR;
-      }
-      switch (k) {
-        case 0:
-          build_header.common.intro_text_id=build_uninst.common.intro_text_id=id;
-          break;
-        case 1:
-          build_header.space_avail_id=id;
-          break;
-        case 2:
-          build_header.space_req_id=id;
-          break;
-        case 3:
-          build_header.dir_subtext_id=id;
-          break;
-        case 4:
-          build_header.com_subtext1_id=id;
-          break;
-        case 5:
-          build_header.com_subtext2_id=id;
-          break;
-        case 6:
-          build_uninst.uninst_subtext_id=id;
-          break;
-      }
-      SCRIPT_MSG("%s: %s now uses outer UI item %d\n",line.gettoken_str(0),line.gettoken_str(1),id);
-    }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));*/
-#else
-  case TOK_CHANGEUI:
-  //case TOK_USEOUTERUIITEM:
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-    return PS_ERROR;
-#endif// NSIS_CONFIG_VISIBLE_SUPPORT
-    // Added by Amir Szekely 21st July 2002
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_ADDBRANDINGIMAGE:
-    try {
+      try {
         int k=line.gettoken_enum(1,"top\0left\0bottom\0right\0");
         int wh=line.gettoken_int(2);
         if (k == -1) PRINTHELP();
@@ -2078,11 +2203,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
-#else
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-    return PS_ERROR;
-#endif// NSIS_CONFIG_VISIBLE_SUPPORT
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_SETFONT:
       SCRIPT_MSG("SetFont: \"%s\" %s\n", line.gettoken_str(1), line.gettoken_str(2));
       try {
@@ -2123,10 +2243,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
+  case TOK_INSTCOLORS:
+  case TOK_XPSTYLE:
+  case TOK_CHANGEUI:
+  case TOK_ADDBRANDINGIMAGE:
+  case TOK_SETFONT:
     ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-    return PS_ERROR;
+  return PS_ERROR;
 #endif// NSIS_CONFIG_VISIBLE_SUPPORT
-    // Added by Amir Szekely 31st July 2002
     // Ability to change compression methods from within the script
     case TOK_SETCOMPRESSOR:
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
@@ -2190,44 +2314,26 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_LOADNLF:
     {
       SCRIPT_MSG("LoadLanguageFile: %s\n", line.gettoken_str(1));
-      try {
-        NLF *newNLF = new NLF(line.gettoken_str(1));
-        unsigned int i;
-        for (i = 0; i < build_nlfs.size(); i++)
-        {
-          if (build_nlfs[i]->m_wLangId == newNLF->m_wLangId)
-          {
-            ERROR_MSG("Error: Can't add same language twice!\n");
-            return PS_ERROR;
-          }
-        }
-        if (!build_nlfs.size())
-        {
-          uDefCodePage = newNLF->m_uCodePage;
-        }
-        build_nlfs.push_back(newNLF);
-        StringTable * Table = GetTable(newNLF->m_wLangId);
 
-        for (i = 0; i < build_nlfs.size(); i++) {
-          if (build_nlfs[i]->m_wLangId == Table->lang_id) {
-            Table->nlf = build_nlfs[i];
-            break;
-          }
-        }
+      LanguageTable *table = LoadLangFile(line.gettoken_str(1));
 
-        last_used_lang = newNLF->m_wLangId;
-        // define LANG_LangName as "####" (lang id)
-        // for example ${LANG_ENGLISH} = 1033
-        char lang_id[16];
-        char lang_name[128];
-        wsprintf(lang_name, "LANG_%s", newNLF->m_szName);
-        wsprintf(lang_id, "%u", newNLF->m_wLangId);
-        definedlist.add(lang_name,lang_id);
-      }
-      catch (exception &err) {
-        ERROR_MSG("Error while loading language file: %s\n", err.what());
+      if (!table)
         return PS_ERROR;
+
+      if (!defcodepage_set)
+      {
+        uDefCodePage = table->nlf.m_uCodePage;
+        defcodepage_set = true;
       }
+
+      last_used_lang = table->lang_id;
+      // define LANG_LangName as "####" (lang id)
+      // for example ${LANG_ENGLISH} = 1033
+      char lang_id[16];
+      char lang_name[128];
+      wsprintf(lang_name, "LANG_%s", table->nlf.m_szName);
+      wsprintf(lang_id, "%u", table->lang_id);
+      definedlist.add(lang_name, lang_id);
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 
@@ -2366,8 +2472,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         fclose(incfp);
         if (r != PS_EOF && r != PS_OK)
         {
-          if (r == PS_ENDIF) ERROR_MSG("!endif: stray !endif\n");
-          if (IS_PS_ELSE(r)) ERROR_MSG("!else: stray !else\n");
           ERROR_MSG("!include: error in script: \"%s\" on line %d\n",f,errlinecnt);
           if (malloced) free(f);
           return PS_ERROR;
@@ -2387,18 +2491,58 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("!error: %s\n",line.gettoken_str(1));
     return PS_ERROR;
     case TOK_P_WARNING:
-      warning("!warning: %s (%s:%d)\n",line.gettoken_str(1),curfilename,linecnt);
+      warning_fl("!warning: %s\n",line.gettoken_str(1));
     return PS_OK;
-    // Added by Amir Szekely 23rd July 2002
     case TOK_P_ECHO:
       SCRIPT_MSG("%s (%s:%d)\n", line.gettoken_str(1),curfilename,linecnt);
     return PS_OK;
 
-    // Added by Amir Szekely 23rd July 2002
     case TOK_P_VERBOSE:
     {
       extern int g_display_errors;
-      int v=line.gettoken_int(1);
+      int k=line.gettoken_enum(1,"push\0pop\0");
+      int v;
+      if (k < 0)
+        // just set
+        v=line.gettoken_int(1);
+      else
+      {
+        if (k)
+        {
+          // pop
+          int l=verbose_stack.getlen();
+          if (l)
+          {
+            v=((int*)verbose_stack.get())[(l/sizeof(int))-1];
+            verbose_stack.resize(l-sizeof(int));
+          }
+          else
+            return PS_OK;
+        }
+        else
+        {
+          // push
+          v=0;
+          if (display_errors)
+          {
+            v++;
+            if (display_warnings)
+            {
+              v++;
+              if (display_info)
+              {
+                v++;
+                if (display_script)
+                {
+                  v++;
+                }
+              }
+            }
+          }
+          verbose_stack.add(&v,sizeof(int));
+          return PS_OK;
+        }
+      }
       display_script=v>3;
       display_info=v>2;
       display_warnings=v>1;
@@ -2413,14 +2557,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_UNINSTCAPTION:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(ucommon.caption,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),NLF_UCAPTION,1,lang);
-        SCRIPT_MSG("UninstCaption: \"%s\"\n",line.gettoken_str(a));
+        if (SetInnerString(NLF_UCAPTION,line.gettoken_str(1)) == PS_WARNING)
+          warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+        SCRIPT_MSG("UninstCaption: \"%s\"\n",line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTICON:
@@ -2440,28 +2579,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        if (IsSet(uninstall.uninstalltext,lang))
-          warning("%s: specified multiple times, wasting space (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
-        SetString(line.gettoken_str(a),SLANG_UNINST_TEXT,0,lang);
-        if (line.getnumtokens()>a+1) SetString(line.gettoken_str(a+1),NLF_UNINST_SUBTEXT,0,lang);
-        SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
+        if (!cur_page) {
+          if (SetInnerString(NLF_UNINST_TEXT, line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+          SetInnerString(NLF_UNINST_SUBTEXT, line.gettoken_str(2));
+        }
+        else {
+          if (cur_page_type != PAGE_UNINSTCONFIRM) {
+            ERROR_MSG("Error: UninstallText can only be used inside PageEx uninstConfirm.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[0] = add_string(line.gettoken_str(1));
+          cur_page->parms[1] = add_string(line.gettoken_str(2));
+        }
+        SCRIPT_MSG("UninstallText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0), 1);
     case TOK_UNINSTSUBCAPTION:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+2) PRINTHELP();
         int s;
-        int w=line.gettoken_int(a,&s);
+        int w=line.gettoken_int(1,&s);
         if (!s || w < 0 || w > 2) PRINTHELP()
-        SetString(line.gettoken_str(a+1),NLF_USUBCAPTION_CONFIRM+w,1,lang);
-        SCRIPT_MSG("UninstSubCaption: page:%d, text=%s\n",w,line.gettoken_str(a+1));
+        SetInnerString(NLF_USUBCAPTION_CONFIRM+w,line.gettoken_str(2));
+        SCRIPT_MSG("UninstSubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_WRITEUNINSTALLER:
@@ -2472,11 +2612,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       uninstaller_writes_used++;
       ent.which=EW_WRITEUNINSTALLER;
-      ent.offsets[0]=add_string_main(line.gettoken_str(1));
+      ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=0; // uninstall section 0
       ent.offsets[2]=0;
       if (!ent.offsets[0]) PRINTHELP()
       SCRIPT_MSG("WriteUninstaller: \"%s\"\n",line.gettoken_str(1));
+
+      DefineInnerLangString(NLF_ERR_CREATING);
+      DefineInnerLangString(NLF_CREATED_UNINST);
     return add_entry(&ent);
 #else//!NSIS_CONFIG_UNINSTALL_SUPPORT
     case TOK_WRITEUNINSTALLER:
@@ -2514,15 +2657,18 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       int ret;
 
-      if (line.gettoken_str(a)[0]=='-') ret=add_section("",line.gettoken_str(a+1));
+      if (line.gettoken_str(a)[0]=='-')
+      {
+        if (!strnicmp(line.gettoken_str(a)+1,"un.",3))
+          ret=add_section("un.",line.gettoken_str(a+1));
+        else
+          ret=add_section("",line.gettoken_str(a+1));
+      }
       else ret=add_section(line.gettoken_str(a),line.gettoken_str(a+1));
       if (ret != PS_OK) return ret;
       
       if (unselected)
-      {
-        use_first_insttype = false;
         build_cursection->flags &= ~SF_SELECTED;
-      }
 
       return PS_OK;
     }
@@ -2576,18 +2722,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       wsprintf(buf,"-%s",line.gettoken_str(a));
       if (which_token == TOK_SUBSECTION && !line.gettoken_str(a)[0]) PRINTHELP()
-
-      if (which_token == TOK_SUBSECTIONEND)
-      {
-        subsection_open_cnt--;
-        if (subsection_open_cnt<0)
-        {
-          ERROR_MSG("SubSectionEnd: no SubSections are open\n");
-          return PS_ERROR;
-        }
-      }
-      else
-        subsection_open_cnt++;
 
       SCRIPT_MSG("%s %s",line.gettoken_str(0),line.gettoken_str(a));
       if (line.gettoken_str(a+1)[0]) SCRIPT_MSG(" ->(%s)",line.gettoken_str(a+1));
@@ -2646,7 +2780,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (build_compress==-1) PRINTHELP()
       if (build_compress==0 && build_compress_whole)
       {
-        warning("'SetCompress off' encountered, and in whole compression mode. Effectively ignored. (%s:%d)",curfilename,linecnt);
+        warning_fl("'SetCompress off' encountered, and in whole compression mode. Effectively ignored.");
       }
       SCRIPT_MSG("SetCompress: %s\n",line.gettoken_str(1));
     return PS_OK;
@@ -2666,26 +2800,19 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_SUBCAPTION:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()!=a+2) PRINTHELP();
         int s;
-        int w=line.gettoken_int(a,&s);
+        int w=line.gettoken_int(1,&s);
         if (!s || w < 0 || w > 4) PRINTHELP()
-        SetString(line.gettoken_str(a+1),NLF_SUBCAPTION_LICENSE+w,1,lang);
-        SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(a+1));
+        SetInnerString(NLF_SUBCAPTION_LICENSE+w,line.gettoken_str(2));
+        SCRIPT_MSG("SubCaption: page:%d, text=%s\n",w,line.gettoken_str(2));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_FILEERRORTEXT:
 #ifdef NSIS_SUPPORT_FILE
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        SetString(line.gettoken_str(a),NLF_FILE_ERROR,1,lang);
-        SetString(line.gettoken_str(a+1),NLF_FILE_ERROR_NOIGNORE,1,lang);
-        SCRIPT_MSG("FileErrorText: \"%s\" \"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
+        SetInnerString(NLF_FILE_ERROR,line.gettoken_str(1));
+        SetInnerString(NLF_FILE_ERROR_NOIGNORE,line.gettoken_str(2));
+        SCRIPT_MSG("FileErrorText: \"%s\" \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
@@ -2695,11 +2822,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_BRANDINGTEXT:
       {
         int a = 1;
-        WORD lang = 0;
         int trim = 0;
         while (line.gettoken_str(a)[0] == '/') {
-          if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-          else if (!strnicmp(line.gettoken_str(a),"/TRIM",5)) {
+          if (!strnicmp(line.gettoken_str(a),"/TRIM",5)) {
             if (!stricmp(line.gettoken_str(a)+5,"LEFT")) trim = 1;
             else if (!stricmp(line.gettoken_str(a)+5,"RIGHT")) trim = 2;
             else if (!stricmp(line.gettoken_str(a)+5,"CENTER")) trim = 3;
@@ -2709,7 +2834,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else break;
         }
         if (line.getnumtokens()!=a+1 && !trim) PRINTHELP();
-        if (line.getnumtokens()==a+1) SetString(line.gettoken_str(a),NLF_BRANDING,0,lang);
+        if (line.getnumtokens()==a+1)
+          SetInnerString(NLF_BRANDING,line.gettoken_str(a));
         if (trim) try {
           init_res_editor();
 
@@ -2746,74 +2872,69 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_MISCBUTTONTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_BTN_BACK,0,lang);
-        SetString(line.gettoken_str(a+1),NLF_BTN_NEXT,0,lang);
-        SetString(line.gettoken_str(a+2),NLF_BTN_CANCEL,0,lang);
-        SetString(line.gettoken_str(a+3),NLF_BTN_CLOSE,0,lang);
-        SCRIPT_MSG("MiscButtonText: back=\"%s\" next=\"%s\" cancel=\"%s\" close=\"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1),line.gettoken_str(a+2),line.gettoken_str(a+3));
+        SetInnerString(NLF_BTN_BACK,line.gettoken_str(1));
+        SetInnerString(NLF_BTN_NEXT,line.gettoken_str(2));
+        SetInnerString(NLF_BTN_CANCEL,line.gettoken_str(3));
+        SetInnerString(NLF_BTN_CLOSE,line.gettoken_str(4));
+        SCRIPT_MSG("MiscButtonText: back=\"%s\" next=\"%s\" cancel=\"%s\" close=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_SPACETEXTS:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-
-        if (!lstrcmpi(line.gettoken_str(a), "none")) {
+        if (!lstrcmpi(line.gettoken_str(1), "none")) {
           no_space_texts=true;
           SCRIPT_MSG("SpaceTexts: none\n");
         }
         else {
-          SetString(line.gettoken_str(a),NLF_SPACE_REQ,0);
-          SetString(line.gettoken_str(a+1),NLF_SPACE_AVAIL,0);
-          SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(a),line.gettoken_str(a+1));
+          SetInnerString(NLF_SPACE_REQ,line.gettoken_str(1));
+          SetInnerString(NLF_SPACE_AVAIL,line.gettoken_str(2));
+          SCRIPT_MSG("SpaceTexts: required=\"%s\" available=\"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
         }
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_INSTBUTTONTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_BTN_INSTALL,0,lang);
-        SCRIPT_MSG("InstallButtonText: \"%s\"\n",line.gettoken_str(a));
+        SetInnerString(NLF_BTN_INSTALL,line.gettoken_str(1));
+        SCRIPT_MSG("InstallButtonText: \"%s\"\n",line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_DETAILSBUTTONTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_BTN_DETAILS,0,lang);
-        SCRIPT_MSG("DetailsButtonText: \"%s\"\n",line.gettoken_str(a));
+        if (!cur_page) {
+          if (SetInnerString(NLF_BTN_DETAILS,line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+        }
+        else {
+          if (cur_page_type != PAGE_INSTFILES) {
+            ERROR_MSG("Error: DetailsButtonText can only be used inside PageEx instfiles.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[1] = add_string(line.gettoken_str(1));
+        }
+        SCRIPT_MSG("DetailsButtonText: \"%s\"\n",line.gettoken_str(1));
       }
-    return make_sure_not_in_secorfunc(line.gettoken_str(0));
+    return make_sure_not_in_secorfunc(line.gettoken_str(0),1);
     case TOK_COMPLETEDTEXT:
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_COMPLETED,0,lang);
-        SCRIPT_MSG("CompletedText: \"%s\"\n",line.gettoken_str(a));
+        if (!cur_page) {
+          if (SetInnerString(NLF_COMPLETED,line.gettoken_str(1)) == PS_WARNING)
+            warning_fl("%s: specified multiple times, wasting space",line.gettoken_str(0));
+        }
+        else {
+          if (cur_page_type != PAGE_INSTFILES) {
+            ERROR_MSG("Error: CompletedText can only be used inside PageEx instfiles.\n");
+            return PS_ERROR;
+          }
+          cur_page->parms[2] = add_string(line.gettoken_str(1));
+        }
+        SCRIPT_MSG("CompletedText: \"%s\"\n",line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
     case TOK_UNINSTBUTTONTEXT:
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       {
-        int a = 1;
-        WORD lang = 0;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) lang=atoi(line.gettoken_str(a++)+6);
-        if (line.getnumtokens()==a) PRINTHELP();
-        SetString(line.gettoken_str(a),NLF_BTN_UNINSTALL,0,lang);
-        SCRIPT_MSG("UninstButtonText: \"%s\"\n",line.gettoken_str(a));
+        SetInnerString(NLF_BTN_UNINSTALL,line.gettoken_str(1));
+        SCRIPT_MSG("UninstButtonText: \"%s\"\n",line.gettoken_str(1));
       }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));
 #else
@@ -2882,21 +3003,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SETOUTPATH:
       {
-        char *p=line.gettoken_str(1);
-        if (*p == '-') cur_out_path[0]=0;
-        else
-        {
-          if (p[0] == '\\' && p[1] != '\\') p++;
-          strncpy(cur_out_path,p,1024-1);
-          cur_out_path[1024-1]=0;
-          if (*CharPrev(cur_out_path,cur_out_path+strlen(cur_out_path))=='\\')
-            *CharPrev(cur_out_path,cur_out_path+strlen(cur_out_path))=0; // remove trailing slash
-        }
-        if (!cur_out_path[0]) strcpy(cur_out_path,"$INSTDIR");
-        SCRIPT_MSG("SetOutPath: \"%s\"\n",cur_out_path);
+        SCRIPT_MSG("SetOutPath: \"%s\"\n",line.gettoken_str(1));
         ent.which=EW_CREATEDIR;
-        ent.offsets[0]=add_string(cur_out_path);
+        ent.offsets[0]=add_string(line.gettoken_str(1));
         ent.offsets[1]=1;
+
+        DefineInnerLangString(NLF_OUTPUT_DIR);
       }
     return add_entry(&ent);
     case TOK_CREATEDIR:
@@ -2915,6 +3027,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("CreateDirectory: \"%s\"\n",out_path);
         ent.which=EW_CREATEDIR;
         ent.offsets[0]=add_string(out_path);
+
+        DefineInnerLangString(NLF_CREATE_DIR);
       }
     return add_entry(&ent);
     case TOK_EXEC:
@@ -2930,6 +3044,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       }
       SCRIPT_MSG("%s: \"%s\" (->%s)\n",ent.offsets[1]?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
+
+      DefineInnerLangString(NLF_EXEC);
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_EXECUTE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_EXECUTE not defined.\n",  line.gettoken_str(0));
@@ -2951,6 +3067,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       SCRIPT_MSG("ExecShell: %s: \"%s\" \"%s\" %s\n",line.gettoken_str(1),line.gettoken_str(2),
                                                  line.gettoken_str(3),line.gettoken_str(4));
+
+      DefineInnerLangString(NLF_EXEC_SHELL);
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_SHELLEXECUTE
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_SHELLEXECUTE not defined.\n",  line.gettoken_str(0));
@@ -2968,8 +3086,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (which_token == TOK_UNREGDLL)
       {
         ent.offsets[1]=add_string("DllUnregisterServer");
-        ent.offsets[2]=LANG_UNREGISTERING;
-        unregister_used=true;
+        ent.offsets[2]=DefineInnerLangString(NLF_UNREGISTERING);
       }
       else if (which_token == TOK_CALLINSTDLL)
       {
@@ -2987,11 +3104,15 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         ent.offsets[1] = add_string(line.gettoken_str(2));
         if (!ent.offsets[1]) ent.offsets[1]=add_string("DllRegisterServer");
-        ent.offsets[2]=LANG_REGISTERING;
-        register_used=true;
+        ent.offsets[2]=DefineInnerLangString(NLF_REGISTERING);
       }
 
       SCRIPT_MSG("%s: \"%s\" %s\n",line.gettoken_str(0),line.gettoken_str(1), line.gettoken_str(ent.offsets[3]?3:2));
+
+      DefineInnerLangString(NLF_SYMBOL_NOT_FOUND);
+      DefineInnerLangString(NLF_COULD_NOT_LOAD);
+      DefineInnerLangString(NLF_NO_OLE);
+      DefineInnerLangString(NLF_ERR_REG_DLL);
     return add_entry(&ent);
 #endif//NSIS_SUPPORT_ACTIVEXREG
     case TOK_RENAME:
@@ -3016,6 +3137,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=add_string(line.gettoken_str(a));
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
         SCRIPT_MSG("Rename: %s%s->%s\n",ent.offsets[2]?"/REBOOTOK ":"",line.gettoken_str(a),line.gettoken_str(a+1));
+
+        DefineInnerLangString(NLF_RENAME);
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+        DefineInnerLangString(NLF_RENAME_ON_REBOOT);
+#endif
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_RENAME
@@ -3148,7 +3274,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             c=VK_F1-1+atoi(s+1);
             if (atoi(s+1) < 1 || atoi(s+1) > 24)
             {
-              warning("CreateShortCut: F-key \"%s\" out of range (%s:%d)",s,curfilename,linecnt);
+              warning_fl("CreateShortCut: F-key \"%s\" out of range",s);
             }
           }
           else if (s[0] >= 'a' && s[0] <= 'z' && !s[1])
@@ -3158,7 +3284,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           else
           {
             c=s[0];
-            warning("CreateShortCut: unrecognized hotkey \"%s\" (%s:%d)",s,curfilename,linecnt);
+            warning_fl("CreateShortCut: unrecognized hotkey \"%s\"",s);
           }
           ent.offsets[4] |= (c) << 16;
         }
@@ -3166,6 +3292,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("CreateShortCut: \"%s\"->\"%s\" %s icon:%s,%d, showmode=0x%X, hotkey=0x%X, comment=%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),
         line.gettoken_str(4),ent.offsets[4]&0xff,(ent.offsets[4]>>8)&0xff,ent.offsets[4]>>16,line.gettoken_str(8));
+
+      DefineInnerLangString(NLF_CREATE_SHORTCUT);
+      DefineInnerLangString(NLF_ERR_CREATING_SHORTCUT);
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_CREATESHORTCUT
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_CREATESHORTCUT not defined.\n",  line.gettoken_str(0));
@@ -3249,24 +3378,73 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[2]=add_string(line.gettoken_str(3));
       SCRIPT_MSG("GetDlgItem: output=%s dialog=%s item=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
-    case TOK_GETWINTEXT:
-      ent.which=EW_GETWINTEXT;
-      ent.offsets[0]=GetUserVarIndex(line,1);
-      if (ent.offsets[0]<0) PRINTHELP();
-      ent.offsets[1]=add_string(line.gettoken_str(2));
-      SCRIPT_MSG("GetWindowText: output=%s hwnd=%s\n",line.gettoken_str(1),line.gettoken_str(2));
-    return add_entry(&ent);
-    case TOK_SETBKCOLOR:
-      ent.which=EW_SETBKCOLOR;
-      if (!stricmp(line.gettoken_str(2),"transparent"))
-        ent.offsets[0]=BS_NULL;
-      else {
-        ent.offsets[0]=BS_SOLID;
-        ent.offsets[1]=line.gettoken_int(2);
+    case TOK_SETCTLCOLORS:
+    {
+      ctlcolors c={0, };
+
+      ent.which=EW_SETCTLCOLORS;
+      ent.offsets[0]=add_string(line.gettoken_str(1));
+
+      if (!strcmpi(line.gettoken_str(2),"branding")) {
+        if (line.getnumtokens() == 4) {
+          ERROR_MSG("Error: SetCtlColors expected 2 parameters, got 3\n");
+          return PS_ERROR;
+        }
+
+        c.flags|=CC_BK|CC_BK_SYS|CC_BKB;
+        c.bk.lbStyle=BS_NULL;
+        c.bk.lbColor=COLOR_BTNFACE;
+        c.flags|=CC_TEXT|CC_TEXT_SYS;
+        c.text=COLOR_BTNFACE;
+        c.bkmode=OPAQUE;
       }
-      ent.offsets[2]=0;
-      ent.offsets[3]=add_string(line.gettoken_str(1));
-      SCRIPT_MSG("SetBkColor: hwnd=%s color=%s\n",line.gettoken_str(1),line.gettoken_str(2));
+      else {
+        char *p;
+
+        if (line.getnumtokens() == 3) {
+          ERROR_MSG("Error: SetCtlColors expected 3 parameters, got 2\n");
+          return PS_ERROR;
+        }
+
+        if (!strcmpi(line.gettoken_str(3),"transparent")) {
+          c.flags|=CC_BKB;
+          c.bk.lbStyle=BS_NULL;
+          c.bkmode=TRANSPARENT;
+        }
+        else {
+          p=line.gettoken_str(3);
+          if (*p) {
+            int v=strtoul(p,&p,16);
+            c.bk.lbColor=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+            c.flags|=CC_BK|CC_BKB;
+          }
+
+          c.bk.lbStyle=BS_SOLID;
+          c.bkmode=OPAQUE;
+        }
+
+        p=line.gettoken_str(2);
+        if (*p) {
+          int v=strtoul(p,&p,16);
+          c.text=((v&0xff)<<16)|(v&0xff00)|((v&0xff0000)>>16);
+          c.flags|=CC_TEXT;
+        }
+      }
+
+      int i;
+      int l=cur_ctlcolors->getlen()/sizeof(ctlcolors);
+      for (i=0; i<l; i++) {
+        if (!memcmp((ctlcolors*)cur_ctlcolors->get()+i,&c,sizeof(ctlcolors))) {
+          ent.offsets[1]=i*sizeof(ctlcolors);
+          break;
+        }
+      }
+      if (i>=l) {
+        ent.offsets[1]=cur_ctlcolors->add(&c,sizeof(ctlcolors));
+      }
+
+      SCRIPT_MSG("SetCtlColors: hwnd=%s text=%s background=%s\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
+    }
     return add_entry(&ent);
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
@@ -3354,7 +3532,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
-    case TOK_SETBKCOLOR:
+    case TOK_SETCTLCOLORS:
     case TOK_SHOWWINDOW:
     case TOK_BRINGTOFRONT:
     case TOK_CREATEFONT:
@@ -3398,6 +3576,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens() != a+1) PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
         SCRIPT_MSG("Delete: %s\"%s\"\n",ent.offsets[1]?"/REBOOTOK ":"",line.gettoken_str(a));
+
+        DefineInnerLangString(NLF_DEL_FILE);
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+        DefineInnerLangString(NLF_DEL_ON_REBOOT);
+#endif
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_DELETE
@@ -3424,6 +3607,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else if (line.gettoken_str(1)[0]=='/') PRINTHELP()
         ent.offsets[0]=add_string(line.gettoken_str(a));
         SCRIPT_MSG("RMDir: %s%s\"%s\"\n",a==1?"":line.gettoken_str(1),ent.offsets[1]?" ":"",line.gettoken_str(a));
+
+        DefineInnerLangString(NLF_REMOVE_DIR);
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_RMDIR
@@ -3526,6 +3711,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (!s && line.gettoken_str(a+2)[0]) PRINTHELP()
         section_add_size_kb(size_kb);
         SCRIPT_MSG("CopyFiles: %s\"%s\" -> \"%s\", size=%iKB\n",ent.offsets[2]&FOF_SILENT?"(silent) ":"", line.gettoken_str(a),line.gettoken_str(a+1),size_kb);
+
+        DefineInnerLangString(NLF_COPY_FAILED);
+        DefineInnerLangString(NLF_COPY_TO);
       }
     return add_entry(&ent);
 #else//!NSIS_SUPPORT_COPYFILES
@@ -3620,8 +3808,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_UPDATETEXT;
       ent.offsets[0] = 0;
       ent.offsets[1] = line.gettoken_enum(1,"lastused\0listonly\0textonly\0both\0none\0");
-      if (ent.offsets[1] < 0) PRINTHELP()
-      if (!ent.offsets[1]) ent.offsets[1]=8;
+      if (ent.offsets[1] < 0) PRINTHELP();
+      switch (ent.offsets[1]) {
+      	case 0:
+          ent.offsets[1]=8;
+        break;
+        case 1:
+        case 2:
+        case 3:
+          ent.offsets[1]<<=2;
+        break;
+        case 4:
+          ent.offsets[1]=16;
+        break;
+      }
       SCRIPT_MSG("SetDetailsPrint: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_SETAUTOCLOSE:
@@ -3702,7 +3902,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[0]=GetUserVarIndex(line, 1);
       {
         char buf[32];
-        wsprintf(buf,"%d",1+(uninstall_mode?build_uninst.code_size:build_header.common.num_entries));
+        wsprintf(buf,"%d",1+(cur_header->blocks[NB_ENTRIES].num));
         ent.offsets[1]=add_string(buf);
       }
       if (ent.offsets[0] < 0) PRINTHELP()
@@ -4033,7 +4233,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[3]=add_string(line.gettoken_str(4));
         if (which_token == TOK_READREGDWORD) ent.offsets[4]=1;
         else ent.offsets[4]=0;
-        if (line.gettoken_str(3)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        if (line.gettoken_str(3)[0] == '\\')
+          warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
 
         SCRIPT_MSG("%s %s %s\\%s\\%s\n",line.gettoken_str(0),
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
@@ -4062,7 +4263,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[0]=(int)rootkey_tab[k];
         ent.offsets[1]=add_string(line.gettoken_str(a+1));
         ent.offsets[2]=(which_token==TOK_DELETEREGKEY)?0:add_string(line.gettoken_str(a+2));
-        if (line.gettoken_str(a+1)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        if (line.gettoken_str(a+1)[0] == '\\')
+          warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         if (which_token==TOK_DELETEREGKEY)
           SCRIPT_MSG("DeleteRegKey: %s\\%s\n",line.gettoken_str(a),line.gettoken_str(a+1));
         else
@@ -4080,7 +4282,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.which=EW_WRITEREG;
         ent.offsets[0]=(int)rootkey_tab[k];
         ent.offsets[1]=add_string(line.gettoken_str(2));
-        if (line.gettoken_str(2)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        if (line.gettoken_str(2)[0] == '\\')
+          warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         ent.offsets[2]=add_string(line.gettoken_str(3));
         if (which_token == TOK_WRITEREGSTR || which_token == TOK_WRITEREGEXPANDSTR)
         {
@@ -4150,7 +4353,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.offsets[2]=add_string(line.gettoken_str(3));
         ent.offsets[3]=add_string(line.gettoken_str(4));
         ent.offsets[4]=which_token == TOK_ENUMREGKEY;
-        if (line.gettoken_str(3)[0] == '\\') warning("%s: registry path name begins with \'\\\', may cause problems (%s:%d)",line.gettoken_str(0),curfilename,linecnt);
+        if (line.gettoken_str(3)[0] == '\\') warning_fl("%s: registry path name begins with \'\\\', may cause problems",line.gettoken_str(0));
         SCRIPT_MSG("%s %s %s\\%s\\%s\n",which_token == TOK_ENUMREGKEY ? "EnumRegKey" : "EnumRegValue",
           line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3),line.gettoken_str(4));
       }
@@ -4202,6 +4405,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           ent.offsets[1]=1;
           ent.offsets[2]=0;
         }
+
+        DefineInnerLangString(NLF_INST_CORRUPTED);
       }
     return add_entry(&ent);
     case TOK_PUSH:
@@ -4390,6 +4595,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_REBOOT;
       ent.offsets[0]=0xbadf00d;
       SCRIPT_MSG("Reboot! (WOW)\n");
+
+      DefineInnerLangString(NLF_INST_CORRUPTED);
     return add_entry(&ent);
     case TOK_IFREBOOTFLAG:
       ent.which=EW_IFFLAG;
@@ -4439,11 +4646,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif//!NSIS_CONFIG_LOG
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     case TOK_SECTIONSETTEXT:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_SET(name_ptr);
@@ -4451,11 +4653,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETTEXT:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(name_ptr);
@@ -4464,11 +4661,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETFLAGS:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_SET(flags);
@@ -4476,11 +4668,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionSetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETFLAGS:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(flags);
@@ -4489,11 +4676,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INSTTYPESETTEXT:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_INSTTYPESET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -4501,11 +4683,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("InstTypeSetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_INSTTYPEGETTEXT:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_INSTTYPESET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=GetUserVarIndex(line, 2);
@@ -4514,11 +4691,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("InstTypeGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETINSTTYPES:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_SET(install_types);
@@ -4526,11 +4698,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionSetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETINSTTYPES:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(install_types);
@@ -4539,11 +4706,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONSETSIZE:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_SET(size_kb);
@@ -4551,11 +4713,6 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SectionSetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_SECTIONGETSIZE:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(size_kb);
@@ -4566,24 +4723,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_SETCURINSTTYPE:
     {
       int ret;
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       SCRIPT_MSG("SetCurInstType: %s\n",line.gettoken_str(1));
-      ret = add_entry_direct(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
+      ret = add_entry_indirect(EW_SETFLAG, FLAG_OFFSET(cur_insttype), add_string(line.gettoken_str(1)));
       if (ret != PS_OK) return ret;
-      ret = add_entry_direct(EW_INSTTYPESET, 0, 0, 0, 1);
+      ret = add_entry_indirect(EW_INSTTYPESET, 0, 0, 0, 1);
       if (ret != PS_OK) return ret;
     }
     return PS_OK;
     case TOK_GETCURINSTTYPE:
-      if (uninstall_mode)
-      {
-        ERROR_MSG("Error: %s called in uninstall section.\n",  line.gettoken_str(0));
-        return PS_ERROR;
-      }
       ent.which=EW_GETFLAG;
       ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=FLAG_OFFSET(cur_insttype);
@@ -4664,9 +4811,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_VERSION_INFO
     case TOK_VI_ADDKEY:
     {
-        LANGID LangID=0;        
+        LANGID LangID=0;
         int a = 1;
-        if (!strnicmp(line.gettoken_str(a),"/LANG=",6)) 
+        if (!strnicmp(line.gettoken_str(a),"/LANG=",6))
           LangID=atoi(line.gettoken_str(a++)+6);
         if (line.getnumtokens()!=a+2) PRINTHELP();
         char *pKey = line.gettoken_str(a);
@@ -4680,12 +4827,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         {
            SCRIPT_MSG("%s: \"%s\" \"%s\"\n", line.gettoken_str(0), line.gettoken_str(a), line.gettoken_str(a+1));
            LANGID lReaded = LangID;
-           StringTable *strTable = GetTable(LangID);
+           LanguageTable *table = GetLangTable(LangID);
            if ( a > 1 && lReaded == 0 )
-             warning("%s: %s language not loaded, using default \"1033-English\". (%s:%d)", line.gettoken_str(0), line.gettoken_str(1), curfilename,linecnt);
-           if ( rVersionInfo.SetKeyValue(LangID, strTable->nlf ? strTable->nlf->m_uCodePage : 1252 /*English US*/, pKey, pValue) )
+             warning_fl("%s: %s language not loaded, using default \"1033-English\"", line.gettoken_str(0), line.gettoken_str(1));
+           if ( rVersionInfo.SetKeyValue(LangID, table->nlf.m_bLoaded ? table->nlf.m_uCodePage : 1252 /*English US*/, pKey, pValue) )
            {
-             ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, strTable->nlf ? strTable->nlf->m_szName : LangID == 1033 ? "English" : "???");
+             ERROR_MSG("%s: \"%s\" \"%04d-%s\" already defined!\n",line.gettoken_str(0), line.gettoken_str(2), LangID, table->nlf.m_bLoaded ? table->nlf.m_szName : LangID == 1033 ? "English" : "???");
              return PS_ERROR;
            }
 
@@ -4773,12 +4920,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         else
         {
           ent.which=EW_EXTRACTFILE;
+          
+          DefineInnerLangString(NLF_SKIPPED);
+          DefineInnerLangString(NLF_ERR_DECOMPRESSING);
+          DefineInnerLangString(NLF_ERR_WRITING);
+          DefineInnerLangString(NLF_EXTRACT);
+          DefineInnerLangString(NLF_CANT_WRITE);
+
           ent.offsets[0]=1; // overwrite off
+          ent.offsets[0]|=(MB_ABORTRETRYIGNORE|MB_ICONSTOP)<<2;
           ent.offsets[1]=add_string(tempDLL);
           ent.offsets[2]=data_handle;
           ent.offsets[3]=0xffffffff;
           ent.offsets[4]=0xffffffff;
           ent.offsets[5]=MB_ABORTRETRYIGNORE | MB_ICONSTOP;
+          ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
           ret=add_entry(&ent);
           if (ret != PS_OK) {
             free(command);
@@ -4829,7 +4985,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("\n");
         if (nounloadmisused)
-          warning("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong. (%s:%d)",curfilename,linecnt);
+          warning_fl("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong");
 
         // next, call it
         ent.which=EW_REGISTERDLL;
@@ -4894,7 +5050,7 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
   char dir[1024];
   char newfn[1024];
   HANDLE h;
-  WIN32_FIND_DATA d, temp;
+  WIN32_FIND_DATA d;
   strcpy(dir,lgss);
   {
     char *s=dir+strlen(dir);
@@ -4913,7 +5069,15 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         DWORD len;
         (*total_files)++;
         sprintf(newfn,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
-        hFile=CreateFile(newfn,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+        hFile=CreateFile(
+          newfn,
+          GENERIC_READ,
+          FILE_SHARE_READ,
+          NULL,
+          OPEN_EXISTING,
+          FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN,
+          NULL
+        );
         if (hFile == INVALID_HANDLE_VALUE)
         {
           ERROR_MSG("%sFile: failed opening file \"%s\"\n",generatecode?"":"Reserve",newfn);
@@ -4953,6 +5117,13 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         if (generatecode)
         {
           ent.which=EW_EXTRACTFILE;
+
+          DefineInnerLangString(NLF_SKIPPED);
+          DefineInnerLangString(NLF_ERR_DECOMPRESSING);
+          DefineInnerLangString(NLF_ERR_WRITING);
+          DefineInnerLangString(NLF_EXTRACT);
+          DefineInnerLangString(NLF_CANT_WRITE);
+
           ent.offsets[0]=build_overwrite;
           if (name_override)
           {
@@ -5016,8 +5187,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             ent.offsets[3]=0xffffffff;
             ent.offsets[4]=0xffffffff;
           }
-          // Added by ramon 23 May 2003
-          ent.offsets[5]=(build_allowskipfiles?MB_ABORTRETRYIGNORE:MB_RETRYCANCEL) | MB_ICONSTOP;
+
+          // overwrite flag can be 0, 1, 2 or 3. in all cases, 2 bits
+          ent.offsets[0] |= ((build_allowskipfiles ? MB_ABORTRETRYIGNORE : MB_RETRYCANCEL) | MB_ICONSTOP) << 2;
+          ent.offsets[5] = DefineInnerLangString(build_allowskipfiles ? NLF_FILE_ERROR : NLF_FILE_ERROR_NOIGNORE);
 
           if (uninstall_mode) m_uninst_fileused++;
           else m_inst_fileused++;
@@ -5035,17 +5208,9 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
           }
           if (attrib)
           {
-            char tmp_path[1024];
             ent.which=EW_SETFILEATTRIBUTES;
-            if (name_override)
-            {
-              sprintf(tmp_path,"%s\\%s",cur_out_path,name_override);
-            }
-            else
-            {
-              sprintf(tmp_path,"%s\\%s",cur_out_path,buf);
-            }
-            ent.offsets[0]=add_string(tmp_path);
+            // $OUTDIR is the working directory
+            ent.offsets[0]=add_string(name_override?name_override:buf);
             ent.offsets[1]=d.dwFileAttributes;
 
             a=add_entry(&ent);
@@ -5063,6 +5228,9 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
   if (recurse)
   {
+#ifdef NSIS_SUPPORT_STACK
+    WIN32_FIND_DATA temp;
+
     int a=GetFileAttributes(lgss);
     const char *fspec=lgss+strlen(dir)+!!dir[0];
     strcpy(newfn,lgss);
@@ -5090,12 +5258,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
             {
               entry ent={0,};
               int a;
-              int wd_save=strlen(cur_out_path);
+              char out_path[1024] = "$OUTDIR\\";
 
               {
-                char *i=d.cFileName,*o=cur_out_path;
-                while (*o) o++;
-                if (o > cur_out_path && CharPrev(cur_out_path,o)[0] != '\\') *o++='\\';
+                char *i = d.cFileName, *o=out_path+strlen(out_path);
 
                 while (*i)
                 {
@@ -5120,37 +5286,35 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
               char spec[1024];
               sprintf(spec,"%s%s%s",dir,dir[0]?"\\":"",d.cFileName);
-              SCRIPT_MSG("%sFile: Descending to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",spec,cur_out_path);
+              SCRIPT_MSG("%sFile: Descending to: \"%s\"\n",generatecode?"":"Reserve",spec);
               strcat(spec,"\\");
               strcat(spec,fspec);
               if (generatecode)
               {
+                a=add_entry_indirect(EW_PUSHPOP, add_string("$OUTDIR"));
+                if (a != PS_OK)
+                {
+                  FindClose(h);
+                  return a;
+                }
+
+                a=add_entry_indirect(EW_ASSIGNVAR, m_UserVarNames.get("OUTDIR"), add_string(out_path));
+                if (a != PS_OK)
+                {
+                  FindClose(h);
+                  return a;
+                }
+
                 HANDLE htemp = FindFirstFile(spec,&temp);
                 if (htemp != INVALID_HANDLE_VALUE)
                 {
                   FindClose(htemp);
 
-                  ent.which=EW_CREATEDIR;
-                  ent.offsets[0]=add_string(cur_out_path);
-                  ent.offsets[1]=1;
-                  a=add_entry(&ent);
+                  a=add_entry_indirect(EW_CREATEDIR, add_string("$OUTDIR"), 1);
                   if (a != PS_OK)
                   {
                     FindClose(h);
                     return a;
-                  }
-                  if (attrib)
-                  {
-                    ent.which=EW_SETFILEATTRIBUTES;
-                    ent.offsets[0]=add_string(cur_out_path);
-                    ent.offsets[1]=d.dwFileAttributes;
-
-                    a=add_entry(&ent);
-                    if (a != PS_OK)
-                    {
-                      FindClose(h);
-                      return a;
-                    }
                   }
                 }
               }
@@ -5161,8 +5325,26 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
                 return a;
               }
 
-              cur_out_path[wd_save]=0;
-              SCRIPT_MSG("%sFile: Returning to: \"%s\" -> \"%s\"\n",generatecode?"":"Reserve",dir,cur_out_path);
+              if (generatecode)
+              {
+                a=add_entry_indirect(EW_PUSHPOP, m_UserVarNames.get("OUTDIR"), 1);
+                if (a != PS_OK)
+                {
+                  FindClose(h);
+                  return a;
+                }
+
+                if (attrib)
+                {
+                  a=add_entry_indirect(EW_SETFILEATTRIBUTES, add_string(out_path), d.dwFileAttributes);
+                  if (a != PS_OK)
+                  {
+                    FindClose(h);
+                    return a;
+                  }
+                }
+              }
+              SCRIPT_MSG("%sFile: Returning to: \"%s\"\n",generatecode?"":"Reserve",dir);
             }
           }
         } while (FindNextFile(h,&d));
@@ -5170,11 +5352,8 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
 
         if (!rec_depth)
         {
-          entry ent={0,};
-          ent.which=EW_CREATEDIR;
-          ent.offsets[1]=1;
-          ent.offsets[0]=add_string(cur_out_path);
-          a=add_entry(&ent);
+          // return to the original $OUTDIR
+          a=add_entry_indirect(EW_CREATEDIR, add_string("$OUTDIR"), 1);
           if (a != PS_OK)
           {
             FindClose(h);
@@ -5183,6 +5362,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int linecn
         }
       }
     }
+#else
+    ERROR_MSG("Error: recursive [Reserve]File requires NSIS_SUPPORT_STACK\n");
+    return PS_ERROR;
+#endif
   }
 
   return PS_OK;

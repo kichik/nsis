@@ -7,10 +7,12 @@ NLF v5
 -
 # Codepage - dash (-) means ANSI code page
 -
+# RTL - anything else than RTL means LTR
+-
 # Translation by Igor Ostriz
 Nullsoft Install System %s
-%s Instalacija
-%s Deinstalacija
+$(^Name) Instalacija
+$(^Name) Deinstalacija
 : Licenenèni uvjeti
 : Instalacijske opcije
 : Instalacijska mapa
@@ -36,7 +38,7 @@ Posebna
 Izaberite tip instalacije:
 Odaberite komponente za instalaciju:
 Ili po izboru oznaèite komponente koje želite instalirati:
-Odaberite mapu u koju želite instalirati program %s:
+Odaberite mapu u koju želite instalirati program $(^Name):
 Slobodno prostora na disku: 
 Potrebno prostora na disku:
 Uklanjam iz:

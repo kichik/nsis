@@ -214,7 +214,7 @@ int main(int argc, char **argv)
       {
         fprintf(g_output,"Size of EXE header is %d bytes for zlib, %d bytes for bzip2.\n", zlib_exeheader_size,bzip2_exeheader_size);
         fprintf(g_output,"Size of info header is %d bytes.\n",sizeof(firstheader));
-        fprintf(g_output,"Size of install header is %d bytes, uninstall header is %d bytes.\n",sizeof(header),sizeof(uninstall_header));
+        fprintf(g_output,"Size of [un]install header is %d bytes,\n",sizeof(header));
         fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));
         fprintf(g_output,"Size of each page is %d bytes.\n",sizeof(page));
         fprintf(g_output,"Size of each instruction is %d bytes.\n",sizeof(entry));

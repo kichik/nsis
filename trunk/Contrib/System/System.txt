@@ -9,7 +9,7 @@ to the people living there, they'll always help you.
         By the way, any help in writing complete and easy-to-go System plugin
 documentation will be appreciated.
 
-        Note: it will be best to turn plugin onload off in case of using System
+        Note: it will be best to turn plugin unload off in case of using System
 plugin (SetPluginUnload alwaysoff).
 
 ============== Main functions ==============
@@ -78,6 +78,9 @@ Proc:
         ::addr          -> Handle to system proc (memory address)
         *addr           -> Structure
         *               -> New structure
+        IPtr->MemberIdx -> Call member with member index from interface given
+                           by interface pointer IPtr (IPtr will be passed to
+                           proc automatically, use like C++ call).
         nothing         -> Dup proc, usually callback or for future defenition
 
         proc            -> Ready proc specification for use or redefinition
@@ -109,8 +112,8 @@ Params & Return - Type:
         i - int (includes char, byte, short, handles, pointers and so on)
         l - long & large integer (know as int64)
         t - text, string (LPCSTR, pointer to first character)
-        b - boolean (needs/returns 'true':'false') - by the fact this type is 
-                senseless -> usual integer can be used ('0':'1')
+        w - WCHAR text, or unicode string.
+        g - GUID
         k - callback. See Callback section.
 
         * - pointer specifier -> the proc needs the pointer to type, affects
@@ -124,7 +127,10 @@ For structures:
         &i      - smaller types: &i4, &i2 (short), &i1 (byte)
         &l      - cumbersome, but &lN means the structure size (N bytes value),
                   calculated automaticaly, outputed always as int (N could be 0).
-        &t      - structure contains plain text, &tN - lenght == N bytes.
+        &t      - structure contains plain text, &tN, where lenght == N bytes.
+        &w      - structure contains plain unicode text, &tN, 
+                where lenght == (N)/2 chars = N bytes.
+        &g      - &gN copy N bytes of plain GUID. in fact guid size is 16 :)
 
 ----------------------------------
 Params & Return - Source / Destination:

@@ -8,6 +8,8 @@
 
 #define IDC_BACK                        3
 #define IDD_LICENSE                     102
+#define IDD_LICENSE_FSRB                108
+#define IDD_LICENSE_FSCB                109
 #define IDI_ICON2                       103
 #define IDD_DIR                         103
 #define IDD_SELCOM                      104
@@ -15,7 +17,7 @@
 #define IDD_INSTFILES                   106
 #define IDD_UNINST                      107
 #define IDD_VERIFY                      111
-#define IDB_BITMAP1                     109
+#define IDB_BITMAP1                     110
 #define IDC_EDIT1                       1000
 #define IDC_BROWSE                      1001
 #define IDC_PROGRESS                    1004

@@ -303,7 +303,7 @@ BYTE* CResourceEditor::Save(DWORD &dwSize) {
   oldSeeker += dwSectionsSize;
 
   // Copy data tacked after the PE headers and sections (NSIS installation data for example)
-  DWORD dwTackedSize = oldSeeker - m_pbPE - m_iSize;
+  DWORD dwTackedSize = m_iSize - (oldSeeker - m_pbPE);
   if (dwTackedSize)
     CopyMemory(seeker, oldSeeker, dwTackedSize);
 
