@@ -262,7 +262,7 @@ static int NSISCALL __ensuredata(int amount)
 #endif
           {
             if (hwnd) {
-              static MSG msg;
+              MSG msg;
               m_pos=m_length-(amount-(dbd_size-dbd_pos));
               while (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) DispatchMessage(&msg);
             }

@@ -839,7 +839,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             DWORD lExitCode;
             while (WaitForSingleObject(hProc,100) == WAIT_TIMEOUT)
             {
-              static MSG msg;
+              MSG msg;
               while (PeekMessage(&msg,NULL,WM_PAINT,WM_PAINT,PM_REMOVE))
                 DispatchMessage(&msg);
             }
@@ -1129,7 +1129,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     return 0;
     case EW_READINISTR:
       {
-        static const char *errstr="!N~";
+        const char *errstr="!N~";
         char *p=var0;
         char *buf0=process_string_fromparm_tobuf(0x01);
         char *buf1=process_string_fromparm_tobuf(0x12);

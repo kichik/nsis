@@ -674,7 +674,7 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  static HWND hwLicense;
+  HWND hwLicense;
   static unsigned int uLastAcceptState;
   if (uMsg == WM_INITDIALOG)
   {
@@ -701,23 +701,29 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
   }
   if (uMsg == WM_COMMAND && HIWORD(wParam) == BN_CLICKED) {
     if (inst_flags&CH_FLAGS_LICENSE_FORCE_SELECTION)
-      EnableWindow(m_hwndOK, uLastAcceptState = IsDlgButtonChecked(hwndDlg, IDC_LICENSEAGREE) & BST_CHECKED);
+      EnableWindow(
+        m_hwndOK,
+        uLastAcceptState = SendMessage(GetUIItem(IDC_LICENSEAGREE), BM_GETCHECK, 0, 0) & BST_CHECKED
+      );
   }
   if (uMsg == WM_NOTIFY) {
+    hwLicense=GetUIItem(IDC_EDIT1);
     #define nmhdr ((NMHDR *)lParam)
     #define enlink ((ENLINK *)lParam)
     #define msgfilter ((MSGFILTER *)lParam)
     if (nmhdr->code==EN_LINK) {
       if (enlink->msg==WM_LBUTTONDOWN) {
-        char *szUrl;
-        long min=enlink->chrg.cpMin, max=enlink->chrg.cpMax;
-        SendMessage(hwLicense,EM_SETSEL,min,max);
-        szUrl=(char *)my_GlobalAlloc(max-min+1);
-        SendMessage(hwLicense,EM_GETSELTEXT,0,(LPARAM)szUrl);
-        SetCursor(LoadCursor(0,IDC_WAIT));
-        ShellExecute(hwndDlg,"open",szUrl,NULL,NULL,SW_SHOWNORMAL);
-        SetCursor(LoadCursor(0,IDC_ARROW));
-        GlobalFree(szUrl);
+        TEXTRANGE tr = {
+          enlink->chrg.cpMin,
+          enlink->chrg.cpMax,
+          ps_tmpbuf
+        };
+        if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
+          SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
+          SetCursor(LoadCursor(0,IDC_WAIT));
+          ShellExecute(hwndDlg,"open",ps_tmpbuf,NULL,NULL,SW_SHOWNORMAL);
+          SetCursor(LoadCursor(0,IDC_ARROW));
+        }
       }
       if (enlink->msg==WM_SETCURSOR) {
 #ifndef IDC_HAND
@@ -733,10 +739,14 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     //rich edit control should NOT process this message, hence the return 1.
     if (nmhdr->code==EN_MSGFILTER)
     {
-      if (msgfilter->msg==WM_KEYDOWN &&
-          msgfilter->wParam==VK_RETURN)
+      if (msgfilter->msg==WM_KEYDOWN)
       {
-        outernotify(1);
+        if (msgfilter->wParam==VK_RETURN && IsWindowEnabled(m_hwndOK)) {
+          outernotify(1);
+        }
+        if (msgfilter->wParam==VK_ESCAPE) {
+          SendMessage(g_hwnd, WM_CLOSE, 0, 0);
+        }
         return 1;
       }
     }
