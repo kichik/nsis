@@ -241,7 +241,7 @@ SOURCE=..\makensis.htm
 # End Source File
 # Begin Source File
 
-SOURCE=..\makensis.nsi
+SOURCE=..\Examples\makensis.nsi
 # End Source File
 # End Target
 # End Project
