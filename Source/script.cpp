@@ -164,7 +164,11 @@ int CEXEBuild::process_script(FILE *filepointer, char *filename)
   return ret;
 }
 
-#define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  #define PRINTHELP() { if ( !b_abort_compile ) print_help(line.gettoken_str(0)); return PS_ERROR; }
+#else
+  #define PRINTHELP() { print_help(line.gettoken_str(0)); return PS_ERROR; }
+#endif
 
 
 int CEXEBuild::doParse(const char *str)

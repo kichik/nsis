@@ -52,7 +52,17 @@ int NSISCALL isheader(firstheader *h)
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 static z_stream g_inflate_stream;
 #endif
-
+/*
+void DEBUG(const char* Frm, ...)
+{
+  char Buf[1024];
+  va_list va;
+  va_start(va, Frm);
+  wvsprintf(Buf, Frm, va);
+  MessageBox(0, Buf, 0, 0);
+  va_end(va);
+}
+*/
 const char * NSISCALL loadHeaders(void)
 {
   void *data;
@@ -60,7 +70,13 @@ const char * NSISCALL loadHeaders(void)
 
   if (!ReadSelfFile((LPVOID)&h,sizeof(h)) || !isheader(&h)) return _LANG_INVALIDCRC;
 
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  //DEBUG("Needed size is : %i", h.length_of_header + h.length_of_uservars);
+  g_usrvars = (NSIS_STRING*)GlobalReAlloc(g_usrvars, h.length_of_header + h.length_of_uservars, GMEM_MOVEABLE);
+  data = (void*)(g_usrvars[0]+h.length_of_uservars);
+#else
   data=(void*)my_GlobalAlloc(h.length_of_header);
+#endif
 
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
   inflateInit(&g_inflate_stream);

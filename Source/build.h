@@ -198,7 +198,9 @@ class CEXEBuild {
     int GetUserVarIndex(LineParser &line, int token);
 // Added by ramon 3 jun 2003
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
+    bool b_abort_compile;
     UserVarsStringList m_UserVarNames;
+    UserVarsStringList m_UnUserVarNames;
     int DeclaredUserVar(const char *VarName);
 #endif
 
