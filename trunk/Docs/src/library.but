@@ -63,7 +63,7 @@ Specify the installation method
 
 REBOOT_PROTECTED
 
-\b Upgrade the libary on reboot when in use (required for system files).
+\b Upgrade the library on reboot when in use (required for system files).
 
 \b Upgrade the library if the file is not protected by Windows File Protection.
 
@@ -75,7 +75,7 @@ NOREBOOT_PROTECTED
 
 REBOOT_NOTPROTECTED
 
-\b Upgrade the libary on reboot when in use (required for system files).
+\b Upgrade the library on reboot when in use (required for system files).
 
 \b Upgrade the library without checking for Windows File Protection.
 										
@@ -155,7 +155,7 @@ system files such as the Visual Basic/C++/MFC runtimes.
 										
 REBOOT_PROTECTED
 
-\b Remove the libary on reboot when in use (required for system files).
+\b Remove the library on reboot when in use (required for system files).
 
 \b Remove the library if the file is not protected by Windows File Protection.
 										
@@ -167,7 +167,7 @@ NOREBOOT_PROTECTED
 										
 REBOOT_NOTPROTECTED
 
-\b Remove the libary on reboot when in use (required for system files).
+\b Remove the library on reboot when in use (required for system files).
 
 \b Remove the library without checking for Windows File Protection.
 										
@@ -208,7 +208,7 @@ The correct version of the following files should be stored in your script folde
 
 \b  stdole2.tlb
 
-A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} is available that explains you how to obatain these files.
+A \W{http://support.microsoft.com/default.aspx?scid=kb;en-us;290887}{Microsoft article} that explains how to obtain these files is available.
 
 To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{IfRebootFlag}{IfRebootFlag} and make your own page or message box.
 
