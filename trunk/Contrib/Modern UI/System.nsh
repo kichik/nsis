@@ -519,7 +519,7 @@
   !endif
 
   !ifdef MUI_WELCOMEPAGE
-    Page custom mui.Welcome "" "MUI_INSTALLBUTTON_WELCOME"
+    Page custom mui.Welcome "" "" "MUI_INSTALLBUTTON_WELCOME"
   !endif
   
   !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
@@ -583,7 +583,7 @@
   !endif
 
   !ifdef MUI_STARTMENUPAGE
-    Page custom mui.Startmenu "" "MUI_INSTALLBUTTON_STARTMENU"
+    Page custom mui.Startmenu "" "" "MUI_INSTALLBUTTON_STARTMENU"
   !endif
   
   !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
@@ -614,9 +614,9 @@
 
   !ifdef MUI_FINISHPAGE
     !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME)
-      Page custom mui.Finish "" /ENABLECANCEL
+      Page custom mui.Finish /ENABLECANCEL
     !else
-      Page custom mui.Finish ""
+      Page custom mui.Finish
     !endif
   !endif
       

@@ -30,7 +30,7 @@ Use \R{abort}{Abort} from a built-in page's pre-function to skip the page, and f
 Examples:
 
 \c  Page license skipLicense "" stayInLicense
-\c  Page custom customPage ": custom page"
+\c  Page custom customPage "" ": custom page"
 \c  Page instfiles
 \c
 \c  Function skipLicense
