@@ -8,6 +8,8 @@
 #endif
 #include "ResourceEditor.h"
 
+#include <string>
+
 // these are the standard pause-before-quit shit.
 extern int g_dopause;
 extern void dopause(void);
@@ -41,6 +43,8 @@ size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
   (((x)&0x00FF0000) >>  8) | \
   (((x)&0x0000FF00) <<  8) | \
   (((x)&0x000000FF) << 24) )
+
+std::string get_full_path(const std::string &path);
 
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
