@@ -140,7 +140,7 @@ This attribute tells the installer to check a string in the registry, and use it
 
 \c [flag [...]]
 
-Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with XPStyle on (see \k{axpstyle}).
+Valid values for flag are "smooth" (smooth the progress bar) or "colored" (color the progress bar with the colors set by InstallColors. Examples: "InstProgressFlags" (default old-school windows look), "InstProgressFlags smooth" (new smooth look), "InstProgressFlags smooth colored" (colored smooth look whee). Note: neither "smooth" or "colored" work with XPStyle on (see \k{axpstyle}) when the installer runs on Windows XP with a modern theme.
 
 \S2{ainsttype} InstType
 
