@@ -26,7 +26,7 @@ Released on January 24th, 2004
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Fixed resize bug
+\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Fixed resize bug, added double click handling in settings window
 
 \b NSIS Update: Improved UI
 

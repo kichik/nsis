@@ -953,8 +953,12 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
         break;
         case IDLEFT:
         {
-          int index = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETCURSEL, 0, 0);
-          if(index != LB_ERR) {
+          if (SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0) != 1)
+            break;
+
+          int index;
+          int num = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELITEMS, 1, (LPARAM) &index);
+          if(num == 1) {
             int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETTEXTLEN, (WPARAM)index, 0);
             if(n > 0) {
               char *buf = (char *)GlobalAlloc(GPTR, (n+1)*sizeof(char));
@@ -1017,7 +1021,7 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
           }
           break;
         case IDC_SYMBOLS:
-          if(HIWORD(wParam) == LBN_SELCHANGE)
+          if (HIWORD(wParam) == LBN_SELCHANGE)
           {
             int n = SendDlgItemMessage(hwndDlg, IDC_SYMBOLS, LB_GETSELCOUNT, 0, 0);
             if(n == 0) {
@@ -1032,6 +1036,10 @@ BOOL CALLBACK SettingsProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam)
               EnableWindow(GetDlgItem(hwndDlg, IDLEFT), FALSE);
               EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
             }
+          }
+          else if (HIWORD(wParam) == LBN_DBLCLK)
+          {
+            SendDlgItemMessage(hwndDlg, IDLEFT, BM_CLICK, 0, 0);
           }
           break;
         }
@@ -1185,6 +1193,14 @@ BOOL CALLBACK SymbolSetProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam
             }
             else {
               EnableWindow(GetDlgItem(hwndDlg, IDDEL), TRUE);
+            }
+          }
+          else if(HIWORD(wParam) == CBN_DBLCLK)
+          {
+            int n = SendDlgItemMessage(hwndDlg, IDC_NAMES, CB_GETCURSEL, 0, 0);
+            if (n != CB_ERR)
+            {
+              SendDlgItemMessage(hwndDlg, IDOK, BM_CLICK, 0, 0);
             }
           }
           break;
