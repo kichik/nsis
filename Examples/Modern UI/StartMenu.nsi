@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.66
+;NSIS Modern User Interface version 1.67
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
@@ -11,7 +11,7 @@
 ;Configuration
 
   ;General
-  Name "Modern UI Test 1.66"
+  Name "Modern UI Test 1.67"
   OutFile "StartMenu.exe"
 
   ;Folder selection page

@@ -47,6 +47,9 @@
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_TEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Setup?"  
   
   
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_WELCOME_INFO_TITLE "Welcome to the $(^Name) Uninstall Wizard"
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^Name) components.\r\n\r\nBefore starting the uninstallation, make sure $(^Name) is not running.\r\n\r\n$_CLICK"
+  
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_CONFIRM_TITLE "Uninstall $(^Name)"
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_CONFIRM_SUBTITLE "Remove $(^Name) from your computer."
   
@@ -70,3 +73,8 @@
   
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORT_TITLE "Uninstallation Aborted"
   !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORT_SUBTITLE "Uninstall was not completed successfully."
+  
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_TITLE "Completing the $(^Name) Uninstall Wizard"
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_FINISH_INFO_TEXT "$(^Name) components have been uninstalled from your computer.\r\n\r\nClick Finish to close this wizard."
+  
+  !insertmacro MUI_LANGUAGEFILE_DEFAULT MUI_UNTEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Uninstall?"  

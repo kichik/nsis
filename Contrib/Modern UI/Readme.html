@@ -174,17 +174,6 @@ will also help you to learn more about the Modern UI.</p>
   <div class="margin">
   <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
   has not been defined.</p>
-  <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
-  The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
-  <i>Default: ${NSISDIR}\Contrib\UIs\modern.exe</i></p>
-  <p class="text"><span class="bold">MUI_UI_HEADERBITMAP </span><span class="parameter">ui_file</span><br />
-  <span class="bold">MUI_UI_HEADERBITMAP_RIGHT </span><span class="parameter">ui_file</span><br />
-  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
-  the header bitmap.<br /><i>Defaults: ${NSISDIR}\Contrib\UIs\modern-headerbmp.exe,
-  ${NSISDIR}\Contrib\UIs\modern-headerbmpr.exe</i></p>
-  <p class="text"><span class="bold">MUI_UI_SMALLDESCRIPTION<br />MUI_UI_NODESCRIPTION</span><br />
-  The interface files with a customized dialog resource IDD_SELCOM for a small or no description area.<br />
-  <i>Defaults: {NSISDIR}\Contrib\UIs\modern-smalldesc.exe, {NSISDIR}\Contrib\UIs\modern-nodesc.exe</i></p>
   <p class="text"><span class="bold">MUI_ICON </span><span class="parameter">icon_file</span><br />
   The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Graphics\Icons\modern-install.ico</i></p>
   <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
@@ -192,32 +181,77 @@ will also help you to learn more about the Modern UI.</p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
   <i>Default: ${NSISDIR}\Contrib\Graphics\Checks\modern.bmp</i></p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap to display in the white header (recommended size: 150x57 pixels). The NSIS Setup uses the bitmap
-  ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp, but can also make one with your own logo.</p>
+  <p class="text"><span class="bold">MUI_HEADERIMAGE</span><br />
+  Display an image on the header of page.</p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_HEADERBITMAP_RIGHT</span><br />
+  <p class="text"><span class="bold">MUI_HEADERIMAGE_BITMAP </span><span class="parameter">bmp_file</span><br />
+  Bitmap image to display on the header of the page (recommended size: 150x57 pixels).<br />
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Header\nsis.bmp</i></p>
+  <p class="text"><span class="bold">MUI_HEADERIMAGE_RIGHT</span><br />
   Display the header image on the right side instead of the left side.</p>
-  <p class="text"><span class="bold">MUI_HEADERBITMAP_NOSTRETCH</span><br />
+  <p class="text"><span class="bold">MUI_HEADERIMAGE_NOSTRETCH</span><br />
   Do not stretch the header bitmap to fit the size of the field. Use this option only if you have an
   image that does not use the whole space. If you have a full size bitmap that fits exactly, you should
   not use this option because the size of the field will be different if the user has a custom DPI setting.</p>
   </div>
-  <p class="text"><span class="bold">MUI_SPECIALINI </span><span class="parameter">ini_file</span><br />
-  InstallOptions INI file for the Welcome and Finish page.<br />
+  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
+  Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
+  </div>
+  <p class="sub2header">User Interface Resource Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
+  The interface file with the dialog resources. Change this if you have made your own customized UI.<br />
+  <i>Default: ${NSISDIR}\Contrib\UIs\modern.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_HEADERIMAGE </span><span class="parameter">ui_file</span><br />
+  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
+  the header bitmap.<br />
+  <i>Default: ${NSISDIR}\Contrib\UIs\modern-headerbmp.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_HEADERIMAGE_RIGHT </span><span class="parameter">ui_file</span><br />
+  The interface files with the dialog resource IDD_INST that contains a bitmap control and space for
+  the header bitmap on the right side.<br />
+  <i>Default: ${NSISDIR}\Contrib\UIs\modern-headerbmpr.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_COMPONENTSPAGE_SMALLDESC </span><span class="parameter">ui_file</span><br />
+  The interface files with a customized dialog resource IDD_SELCOM with a small description area.<br />
+  <i>Default: {NSISDIR}\Contrib\UIs\modern-smalldesc.exe</i></p>
+  <p class="text"><span class="bold">MUI_UI_COMPONENTSPAGE_NODESC </span><span class="parameter">ui_file</span><br />
+  The interface files with a customized dialog resource IDD_SELCOM without a description area.<br />
+  <i>Default: {NSISDIR}\Contrib\UIs\modern-nodesc.exe</i></p>
+  </div>
+  <p class="sub2header">Welcome/Finish Page Interface Settings</p>
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_3LINES </span><span class="parameter">ini_file</span><br />
+  Create a bigger area for the title on the Welcome- and Finish page, to allow displaying 3 lines of text
+  (with the default font). This setting has no effect when using a custom INI file.</p>
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the Welcome- and Finish page. You can create your own modified copy of
+  ioSpecial.ini or ioSpecial3.ini (for 3 lines title).<br />
   <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
-  Bitmap for the Welcome and Finish page (recommended size: 164x314 pixels).<br />
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_BITMAP </span><span class="parameter">bmp_file</span><br />
+  Bitmap for the Welcome- and Finish page (recommended size: 164x314 pixels).<br />
   <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
   <div class="margin">
-  <p class="text"><span class="bold">MUI_SPECIALBITMAP_NOSTRETCH</span><br />
+  <p class="text"><span class="bold">MUI_WELCOMEFINISHPAGE_NOSTRETCH</span><br />
   Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
   Use this option only if you have an image that does not use the whole space. If you have a full size
   bitmap that fits exactly, you should not use this option because the size of the field will be different
   if the user has a custom DPI setting.</p>
   </div>
-  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: RRGGBBR hexadecimal)</span><br />
-  Background color for the header, Welcome- and Finish page.<br /><i>Default: FFFFFF</i></p>
+  <p class="sub2header">Uninstaller Welcome/Finish Page Interface Settings</p>
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_3LINES </span><span class="parameter">ini_file</span><br />
+  Create a bigger area for the title on the uninstaller Welcome- and Finish page, to allow displaying 3 lines of text
+  (with the default font). This setting has no effect when using a custom INI file.</p>
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_INI </span><span class="parameter">ini_file</span><br />
+  InstallOptions INI file for the uninstaller Welcome- and Finish page. You can create your own modified copy of
+  ioSpecial.ini or ioSpecial3.ini (for 3 lines title).<br />
+  <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_BITMAP </span><span class="parameter">bmp_file</span><br />
+  Bitmap for the Welcome- and Finish page (recommended size: 164x314 pixels).<br />
+  <i>Default: ${NSISDIR}\Contrib\Graphics\Wizard\win.bmp</i></p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNWELCOMEFINISHPAGE_NOSTRETCH</span><br />
+  Do not stretch the bitmap for the Welcome and Finish page to fit the size of the field.
+  Use this option only if you have an image that does not use the whole space. If you have a full size
+  bitmap that fits exactly, you should not use this option because the size of the field will be different
+  if the user has a custom DPI setting.</p>
   </div>
   <p class="sub2header">License Page Interface Settings</p>
   <div class="margin">
@@ -226,7 +260,6 @@ will also help you to learn more about the Modern UI.</p>
   The background color for the license textbox. Use /windows for the default text background (usually white).
   Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
   </div>
-  <p class="sub2header">Components Page Interface Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
   A small description area on the bottom of the page. Use this layout
@@ -248,14 +281,31 @@ will also help you to learn more about the Modern UI.</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
   Do not automatically jump to the finish page, to allow the user to
-  check the log.</p>
+  check the install log.</p>
   </div>
-  <p class="sub2header">Abort Warning Message Settings</p>
+  <p class="sub2header">Uninstaller Finish Page Interface Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_FINISHPAGE_NOAUTOCLOSE</span><br />
+  Do not automatically jump to the finish page, to allow the user to
+  check the uninstall log.</p>
+  </div>
+  <p class="sub2header">Abort Warning Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
   Show a message box with a warning when the user wants to close the installer.</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_ABORTWARNING_TEXT </span><span class="parameter">text </span><br />
-  Texts to display next to the abort warning messagebox.</p>
+  Texts to display on the abort warning messagebox.</p>
+  </div>
+  </div>
+  <p class="sub2header">Uninstaller Abort Warning Settings</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNABORTWARNING</span><br />
+  Show a message box with a warning when the user wants to close the uninstaller.</p>
+  <div class="margin">
+  <p class="text"><span class="bold">MUI_UNABORTWARNING_TEXT </span><span class="parameter">text </span><br />
+  Texts to display on the abort warning messagebox.</p>
+  </div>
   </div>
   <p class="subheader">3. Pages</p>
   <p class="text">Insert the following macros to set the pages you want to use.
@@ -280,11 +330,13 @@ will also help you to learn more about the Modern UI.</p>
   </p>
   <p class="text">
   <span class="bold">Uninstaller Pages</span><br />
+  MUI_UNPAGE_WELCOME<br />
   MUI_UNPAGE_CONFIRM<br />
   MUI_UNPAGE_LICENSE <span class="parameter">text/rtf_file</span><br />
   MUI_UNPAGE_COMPONENTS<br />
   MUI_UNPAGE_DIRECTORY<br />
   MUI_UNPAGE_INSTFILES<br />
+  MUI_UNPAGE_FINISH<br />
   </p>
   <p class="sub2header">Page Settings</p>
   <div class="margin">
@@ -690,7 +742,8 @@ FunctionEnd
   <p class="text">These defines should be set before inserting a the language macros.</p>
   <p class="text"><span class="bold">MUI_CUSTOMFUNCTION_GUIINIT </span><span class="parameter">function </span><br />
   <span class="bold">MUI_CUSTOMFUNCTION_UNGUIINIT </span><span class="parameter">function </span><br />
-  <span class="bold">MUI_CUSTOMFUNCTION_ABORT </span><span class="parameter">function </span></p>
+  <span class="bold">MUI_CUSTOMFUNCTION_ABORT </span><span class="parameter">function </span><br />
+  <span class="bold">MUI_CUSTOMFUNCTION_UNABORT </span><span class="parameter">function </span></p>
   </div>
   <p class="sub2header">Page Custom Functions</p>
   <div class="margin">
@@ -707,6 +760,17 @@ FunctionEnd
   </ul>
   </div>
 <p class="header">Version history</p>
+<ul>
+<li>1.67 - October 27, 2003
+  <ul>
+    <li>Support for uninstaller Welcome- and Finish pages</li>
+    <li>Renamed a few settings</li>
+    <li>Default header image</li>
+    <li>Support for uninstaller abort warning</li>
+    <li>Setting for 3 line text on Welcome- and Finish page</li>
+    <li>Langauge file backwards compatibility: English for missing strings</li>
+  </ul></li>
+</ul>
 <ul>
 <li>1.66 - October 7, 2003
   <ul>

@@ -116,7 +116,7 @@ Select the folder to uninstall $(^Name) from:
 # ^SpaceRequired
 "Space required: "
 # ^UninstallingText
-This wizard will uninstall $(^Name) from your computer. $_CLICK
+$(^Name) will be uninstalled from the following folder. $_CLICK
 # ^UninstallingSubText
 Uninstalling from:
 # ^FileError

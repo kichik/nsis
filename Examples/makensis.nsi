@@ -42,7 +42,7 @@ Caption "NSIS ${VER_DISPLAY} Setup"
 ;Interface Settings
 !define MUI_ABORTWARNING
 
-!define MUI_HEADERBITMAP "${NSISDIR}\Contrib\Graphics\Header\nsis.bmp"
+!define MUI_HEADERIMAGE
 !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\nullsoft.bmp"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
