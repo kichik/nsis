@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v2
+NLF v4
 # Language ID
 1041
 # Font and size - dash (-) means default
@@ -8,6 +8,7 @@ NLF v2
 # Codepage - dash (-) means ANSI code page
 932
 # Translation by Dnanako
+# Updated by Takahiro Yoshimura <takahiro_y@monolithworks.co.jp>
 Nullsoft Install System %s
 %s セットアップ
 %s アンインストール
@@ -22,6 +23,8 @@ Nullsoft Install System %s
 < 戻る(&B)
 次へ(&N) >
 同意する(&A)
+このライセンス契約書に同意します(&A)
+このライセンス契約書には同意できません(&D)
 インストール(&I)
 ｱﾝｲﾝｽﾄｰﾙ(&U)
 キャンセル
@@ -42,6 +45,8 @@ Nullsoft Install System %s
 作成できません：
 コピーは失敗しました
 コピーします
+登録中:
+登録解除中:
 シンボルを見つけることができません：
 ロードすることができません：
 フォルダの作成：
@@ -65,3 +70,12 @@ OLEがありません：
 名前の変更：
 スキップ：
 クリップボードへ詳細をコピー
+インストールプロセスをログヘ記録
+# byte
+B
+# kilo
+K
+# mega
+M
+# giga
+G
