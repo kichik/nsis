@@ -2,61 +2,61 @@
 NLF v2
 # Language ID
 1033
-# Translation by Casper Bergenstoff
-Nullsoft Installerings System %s
-%s Setup
-%s afinstaller
-: Licens Aftale
-: Installations egenskaber
-: Installation mappe
-: Installing Filer
-: Færdig
-: Bekræft
-: Afinstallerer Filer
-: Færdig
-< &Tilbage
-&Næste >
-Jeg &Accepterer
-&Installer
+# Translation by Christopher www.terrorscript.dynu.com &Musicmp3box@hotmail.com
+Nullsoft Install System %s
+%s installation
+%s afintsallation
+: Licens aftale
+: Installations instillinger
+: Installations mappe
+: Installer filer
+: fuldført
+: konfirmation
+: afinstaller filer
+: fuldført
+< &tilbage
+&næste >
+jeg &accepter
+&installer
 &afinstaller
-Afbryd
-&Luk
+annuler
+&luk
 G&ennemse...
-Vis &detaljer
-Navn
-Færdig
-Tilpasset
-Vælg hvilken type du vil installere:
-Vælg komponenter du vil installere:
-Eller, Vælg de udvalgte komponenter som du vil installere:
-Vælg mappe du vil installere %s i:
-Plads til rådighed: 
-Krævet plads: 
-Afinstallerer fra:
-Fejl under åbning af fil til skrivning: \r\n\t"$0"\r\nTryk afbryd for at afbryde installationen,\r\nPrøv igen for at prøve at skrive til filen, eller\r\nignorer for at droppe denne fil
-Kan ikke skrive: 
-Kopiering mislykkedes
-Kopier til
-Kunne ikke finde symbol: 
-Kunne ikke læse: 
-Opret mappe: 
-Opret genvej: 
-Oprettet afinstallerer: 
-Slet fil: 
-Slet ved genstart: 
-Fejl under oprettelse af genvej: 
-Fejl under oprettelse: 
-Fejl under dekomprimering af data! Beskadiget installer?
-Fejl under registrering af DLL
+vis &detaljer
+vavn
+fuldført
+advanceret
+vælg typen af installationen:
+vælg kompunenter til at installer:
+eller, eller vælg de kompunenter du vil installer:
+vælg mappen til at installer %s i:
+tilgængelig plads: 
+plads de er brug for: 
+faninstaller fra:
+fejl i åbning af fil: \r\n\t"$0"\r\ntryk avbryd for at stoppe insatllationen,\r\nprøv igen for at prøve igen, eller\r\nignorer for at springe denne fil over
+kan ikek skrive: 
+kopiering kunne ikke lade sig gøre
+kopierer til 
+kunne ikke finde symbol: 
+kunne ikke loade: 
+lav mappe: 
+lav genvej: 
+lavede lavede afinstallation: 
+slet fil: 
+slet på en genstart: 
+fejl i lavning af genvej: 
+fejl i lavning: 
+fejl i dekomprimeringen af data! fejl i setup?
+kunne ikke registerer dll
 ExecShell: 
 Execute: 
 Extract: 
-Extract: fejl under skrivning til fil 
-Installering beskadiget: invalid opcode
-Ingen OLE til: 
-Installations mappe: 
-Slet mappe: 
-Omdøb efter genstart: 
-Omdøb: 
-Ignoreret: 
-Kopier Detaljer Til Skrivebord
+dekomprimer: fejl i skrivning til fil
+fejl i insatllationen: falsk opkode
+ingen OLE til: 
+destinations mappe: 
+fjern mappe: 
+ømdøbe på et genstart: 
+omdøb: 
+sprunget over: 
+kopier detaljer til Clipboard
