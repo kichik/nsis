@@ -12,8 +12,10 @@
 !define IO_DIRECTION_NEXT 1
 !define IO_DIRECTION_PREV 2
 
-!define IO_INITPLUGINS "Call Initialize_____Plugins"
-!define IO_UNINITPLUGINS "Call un.Initialize_____Plugins"
+!define IO_INITPLUGINS_1 "Call Initialize_____Plugins"
+!define IO_INITPLUGINS_2 "SetDetailsPrint both"
+!define IO_UNINITPLUGINS_1 "Call un.Initialize_____Plugins"
+!define IO_UNINITPLUGINS_2 "SetDetailsPrint both"
 
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
@@ -215,9 +217,12 @@
 !macro MUI_INSTALLOPTIONS_EXTRACT FILE
 
   ;Init plugin system
-  ${IO_INITPLUGINS}
-  !undef IO_INITPLUGINS
-  !define IO_INITPLUGINS ""
+  ${IO_INITPLUGINS_1}
+  ${IO_INITPLUGINS_2}
+  !undef IO_INITPLUGINS_1
+  !undef IO_INITPLUGINS_2
+  !define IO_INITPLUGINS_1 ""
+  !define IO_INITPLUGINS_2 ""
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
   
@@ -226,9 +231,12 @@
 !macro MUI_INSTALLOPTIONS_UNEXTRACT FILE
 
   ;Init plugin system
-  ${IO_UNINITPLUGINS}
-  !undef IO_UNINITPLUGINS
-  !define IO_UNINITPLUGINS ""
+  ${IO_UNINITPLUGINS_1}
+  ${IO_UNINITPLUGINS_2}
+  !undef IO_UNINITPLUGINS_1
+  !undef IO_UNINITPLUGINS_2
+  !define IO_UNINITPLUGINS_1 ""
+  !define IO_UNINITPLUGINS_2 ""
   
   File /oname=$PLUGINSDIR\${FILE} "${FILE}"
   
