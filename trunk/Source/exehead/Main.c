@@ -157,13 +157,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (g_is_uninstaller)
   {
     char *p=cmdline;
-    while (*p) p++;
 
-    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
+    while (p >= realcmds && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
 
     m_Err = _LANG_UNINSTINITERROR;
 
-    if (p >= cmdline)
+    if (p >= realcmds)
     {
       *(p-1)=0; // terminate before the " _?="
       p+=3; // skip over _?=
