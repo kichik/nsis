@@ -12,7 +12,9 @@ body
 	{
 	padding: 10px;
 	background-color: #F0F0F0;
-	color: #000000;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
 	}
 
 center
@@ -25,7 +27,6 @@ table
 	margin: auto;
 	text-align: left;
 	background-color: #FFFFFF;
-	color: #000000;
 	}
 
 .maintable
@@ -41,38 +42,29 @@ table
 .text
 	{
 	margin: 20px;
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: #000000;
-	background-color: #FFFFFF;
 	}
 
 .bold
 	{
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	color: #303030;
-	background-color: #FFFFFF;
+	}
+
+.changelog
+	{
 	}
 
 .header
 	{
 	font-size: 14pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
 	color: #7A7272;
-	background-color: #FFFFFF;
 	}
 	
 .subheader
 	{
 	font-size: 11pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	color: #303030;
-	background-color: #FFFFFF;
 	}
 
 .footer
@@ -80,10 +72,7 @@ table
     margin: 5px 5px 5px 5px;
     text-align: right;
     font-size: 8pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
 	color: #909090;
-	background-color: #FFFFFF;
 	}
 	
 a:link, a:visited, a:active
@@ -115,12 +104,12 @@ a:hover
   <tr>
     <td><div class="margin">
                 <p class="header">Introduction</p>
-                <p class="text">Using NSIS 2, it is possible 
-                  to create new user interfaces for the Nullsoft Installer System.</p>
+                <p class="text">NSIS 2 makes it is possible to create installers
+                with a custom user interface.</p>
                 <p class="text"> I made this interface with a modern wizard style, 
                   like the wizards of recent Windows versions. This new interface 
-                  also features new icons (designed by adni18) and a description 
-                  area on the component select dialog.</p>
+                  also features new graphics and a description area on the
+                  component-selection page.</p>
                 <p class="text">To use this new interface for for installer, you need 
                   to add some code to your NSIS script. Read this document for more info!</p>
                 <p class="header">Requirements</p>
@@ -157,11 +146,11 @@ a:hover
                   also make your own translation.<br>
                   See <a href="..\..\Examples\Modern UI\MultiLanguage.nsi">MultiLanguage.nsi</a>
                   for a multilanguage example using the Basic Macro System.
-				<p class="header">The interface</p>
-				<p class="text"><span class="subheader">Modern.exe and modern2.exe</span><br>
-				  There are two different version of the interface.
-				  Modern.exe contains the dialogs of the standard interface.
-				  If you have an installer with a lot of subsections 
+                <p class="header">The interface</p>
+                <p class="text"><span class="subheader">Modern.exe and modern2.exe</span><br>
+                  There are two different version of the interface.
+                  Modern.exe contains the dialogs of the standard interface.
+                  If you have an installer with a lot of subsections 
                   or long section names, use modern2.exe, which has a different
                   component-selection page.</p>
                 <p class="text"><span class="subheader">Change interface settings</span><br>
@@ -201,7 +190,7 @@ a:hover
                   To change them, you need to edit this file and recompile NSIS.</p>
                 <p class="header">Version history</p>
                 <ul>
-                <li class="text">1.3 - October 26, 2002
+                <li class="changelog">1.3 - October 27, 2002
                   <ul>
                     <li>Easier macro system for basic scripts
                     <li>New MultiLanguage system using Modern UI Language Files
@@ -213,85 +202,8 @@ a:hover
                     for MUI_INTERFACE anymore
                     <li>New Install Options macro's to read/write IO INI file values
                   </ul>
-                <li class="text">1.21 - September 30, 2002
-                  <ul>
-                    <li>Temp vars set in Modern UI header
-                    <li>Currentpage & Install Options vars should be set using parameters of the
-                    MUI_INTERFACE and MUI_INSTALLOPTIONS macro's
-                    <li>MultiLanguage.nsi uses the new language strings
-                  </ul>
-                <li class="text">1.2 - September 22, 2002
-                  <ul>
-                    <li>Lots of macro system updates & fixes
-                    <li>InstallOptions support in macro system
-                    <li>Added Modern UI + InstallOptions example (InstallOptions.nsi)
-                    <li>MUI_NEXTPAGE_OUTER integrated in MUI_NEXTPAGE
-                    <li>No hard-coded function names anymore (you should give MUI_PREVPAGE a parameter
-                    with the set page function name (for example, MUI_PREVPAGE SetPage)
-                    <li>Examples use ReserveFile for faster startup
-                  </ul>
-                <li class="text">1.19 - Semtember 19, 2002
-                  <ul>
-                    <li>Renamed some macro's
-                    <li>Custom code can be used between page start/stop macro's
-                  </ul>
-				<li class="text">1.18 - Semtember 13, 2002
-                  <ul>
-                    <li>Uses the new Sendmessage string option
-                  </ul>
-                <li class="text">1.17 - Semtember 10, 2002
-                  <ul>
-                    <li>Win9x font weight bug fixed (font of title in white rect)
-                  </ul>
-                <li class="text">1.16 - Semtember 6, 2002
-                  <ul>
-                    <li>Change text 'Scroll down' on license page to 'Press Page Down',
-                    because the RichEdit control has focus by default now
-                  </ul>
-                <li class="text">1.15 - Semtember 4, 2002
-                  <ul>
-                    <li>Multilanguage example: changed LangDialog to LangDLL::LangDialog
-                    (using the DLL name is now required)
-                  </ul>
-                <li class="text">1.14 - Semtember 3, 2002
-                  <ul>
-                    <li>Small grammar fix (thanks eccles)
-                    <li>UI files updated by Justin for better RichEdit usage
-                  </ul>
-                <li class="text">1.13 - Semtember 2, 2002
-                  <ul>
-                    <li>Added 16 color icons
-                  </ul>
-                <li class="text">1.12 - August 30, 2002
-                  <ul>
-                    <li>Verifying installer & Unpacking data dialog has no titlebar anymore
-                  </ul> 
-				<li class="text">1.11 - August 29, 2002
-                  <ul>
-                    <li>Finish header for uninstaller can also be set using MUI_FINISHHEADER
-                  </ul> 
-                <li class="text">1.1 - August 29, 2002
-                  <ul>
-                    <li>Header file with macros, it's now very easy to use the UI in your scripts :)
-                    <li>Added the modern2.exe UI, with an other location of the Description frame,
-                    for installers with a lot of subsections (thanks rainwater)
-                    <li>Updated example scripts
-                    <li>Added Multilanguage.nsi example (Multilanguage & LangDLL) 
-                    <li>Fixed background color issue with some custom XP themes
-                    <li>Removed WS_VISIBLE from black rect for inner dialog (fixes display issues)
-                    <li>Changed size of description area
-                    <li>Example script: Added instructions for the user on the Description frame
-                    <li>Auto sizing branding text
-                    <li>Used modern.bmp for the checks (thanks rainwater)
-                    <li>Using the new NSIS version, descriptions work using the keyboard and you can give
-                    descriptions to subsections
-                    <li>Correct font size using High-DPI fonts
-                  </ul>
-                <li class="text">1.0 - August 26, 2002
-                  <ul>
-                    <li>Initial release
-                  </ul>
                 </ul>  
+                <p class="text"><a href="Changelog.txt">Complete version history</a></p>
                 <p class="header">Credits</p>
                 <p class="text">Made by Joost Verburg.<br>
                   Icons designed by Nikos Adamamas, aka adni18.<br>
