@@ -53,8 +53,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /entry:"WinMain" /subsystem:windows /machine:I386 /out:"../../makensisw.exe" /opt:nowin98
-# SUBTRACT LINK32 /pdb:none /nodefaultlib
+# ADD LINK32 wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /entry:"WinMain" /subsystem:windows /map /machine:I386 /nodefaultlib /out:"../../makensisw.exe" /opt:nowin98
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "makensisw - Win32 Debug"
 
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 wsock32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -122,6 +122,14 @@ SOURCE=.\makensisw.h
 # Begin Source File
 
 SOURCE=.\noclib.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\utils.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -174,6 +182,46 @@ SOURCE=.\shell.ico
 # Begin Source File
 
 SOURCE=.\Readme.txt
+# End Source File
+# End Group
+# Begin Group "JNetLib"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\jnetlib\asyncdns.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\asyncdns.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\connection.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\connection.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\httpget.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\httpget.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\netinc.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\util.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\jnetlib\util.h
 # End Source File
 # End Group
 # Begin Source File

@@ -24,7 +24,9 @@
 
 #include <commctrl.h>
 #include "utils.h"
-
+#include "jnetlib/util.h"
+#include "jnetlib/netinc.h"
+#include "jnetlib/httpget.h"
 #define _RICHEDIT_VER 0x0200
 #include <RichEdit.h>
 #undef _RICHEDIT_VER
