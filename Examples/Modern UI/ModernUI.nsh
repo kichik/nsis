@@ -7,14 +7,14 @@
 
 !define MUI_MACROS_USED
 
-!macro MUI_INTERFACE ICON UNICON CHECKS PROGRESSBAR
+!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR
 
   ;User interface
   
   Icon "${NSISDIR}\Contrib\Icons\${ICON}"
   UninstallIcon "${NSISDIR}\Contrib\Icons\${UNICON}"
   XPStyle On
-  ChangeUI all "${NSISDIR}\Contrib\UIs\modern.exe"
+  ChangeUI all "${NSISDIR}\Contrib\UIs\${UI}"
   SetFont Tahoma 8
   CheckBitmap "${NSISDIR}\Contrib\Icons\${CHECKS}"
   InstallColors /windows
