@@ -554,11 +554,10 @@ to get the user input:</p>
 <p class="header"><a name="ReserveFile">Reserve files</a></p>
 
 <p class="text">If you are using BZIP2 compression, it's important that
-files which are being extracted in the .onInit function or in Page
-functions are first in the data block, because this will make your installer
-start faster.</p>
-<p class="text">If these functions are not above any other File command,
-insert the ReserveFile commands or macros above other File commands:</p>
+files which are being extracted in init- or page functions functions are first in
+the data block, because this will make your installer start faster.</p>
+<p class="text">If there are File commands in your script above Modern UI settings
+or above your own init- or page functions, you have to reserve files:</p>
 <pre class="margin">
 ReserveFile "ioFile.ini" ;Your own InstallOptions INI files
 ReserveFile "${NSISDIR}\Contrib\Icons\modern-header.bmp" ;Your header bitmap
