@@ -27,6 +27,7 @@ int ParamSizeByType[6] = {0, // PAT_VOID (Size will be equal to 1)
 int z1, z2; // I've made them static for easier use at callback procs
 int LastStackPlace = 0;
 int LastStackReal = 0;
+DWORD LastError = 0;
 SystemProc *LastProc = NULL;
 int CallbackIndex = 0;
 HINSTANCE g_hInstance;
@@ -211,9 +212,14 @@ PLUGINFUNCTION(Call)
             ParamsOut(proc);        
     }
 
-    // Deallocate params if not callback
     if (proc->ProcResult != PR_CALLBACK)
+    {
+        // Deallocate params if not callback
         ParamsDeAllocate(proc);
+
+        // In case of POPT_ERROR - first pop will be proc error
+        if ((proc->Options & POPT_ERROR) != 0) pushint(LastError);
+    }    
 
     // If proc is permanent?
     if ((proc->Options & POPT_PERMANENT) == 0)
@@ -546,6 +552,9 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             case 's':
                 temp2 = POPT_GENSTACK;
                 break;
+            case 'e':
+                temp2 = POPT_ERROR;
+                break;
             }
 
             // New Options
@@ -626,8 +635,8 @@ void ParamsIn(SystemProc *proc)
     int i, *place;
     char *realbuf;
 
-    i = 1;
-    do
+    i = (proc->ParamCount > 0)?(1):(0);
+    while (TRUE)
     {
         // Step 1: retrive value
         if ((proc->Params[i].Input == IOT_NONE) || (proc->Params[i].Input == IOT_INLINE)) 
@@ -684,10 +693,10 @@ void ParamsIn(SystemProc *proc)
         }
 #endif
 
+        if (i == 0) break;
         if (i == proc->ParamCount) i = 0;
         else i++;
     } 
-    while (i != 1);
 }
 
 void ParamsDeAllocate(SystemProc *proc)
@@ -888,6 +897,12 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
         proc->Params[0]._value = z2;
     // Proc result: OK
     proc->ProcResult = PR_OK;
+
+    // In case of POPT_ERROR -> GetLastError
+    if ((proc->Options & POPT_ERROR) != 0)
+    {
+        LastError = GetLastError();
+    }
 
     SYSTEM_EVENT("\n\t\t\tAfter call         ")
 #ifdef SYSTEM_LOG_DEBUG
