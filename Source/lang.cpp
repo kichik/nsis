@@ -192,11 +192,11 @@ int CEXEBuild::SetUserString(char *name, LANGID lang, char *string) {
   StringList *user_strings_list;
   bool uninst;
   if (!(uninst = !strnicmp(name,"un.",3))) {
-    name += 3;
     user_strings=&table->user_strings;
     user_strings_list=&build_userlangstrings;
   }
   else {
+    name += 3;
     user_strings=&table->user_ustrings;
     user_strings_list=&ubuild_userlangstrings;
   }
