@@ -55,6 +55,7 @@ char *STRDUP(const char *c)
   return lstrcpy(t,c);
 }
 
+#define FIELD_INVALID      (0)
 #define FIELD_LABEL        (1)
 #define FIELD_ICON         (2)
 #define FIELD_BITMAP       (3)
@@ -345,12 +346,14 @@ bool SaveSettings(void) {
 
   int CurrField = 1;
   for(nIdx = 0; nIdx < nNumFields; nIdx++) {
-    if ( pFields[nIdx].nType == FIELD_BROWSEBUTTON )
+    if (pFields[nIdx].nType == FIELD_BROWSEBUTTON)
       continue;
 
     hwnd = pFields[nIdx].hwnd;
     wsprintf(szField, "Field %d", CurrField);
     switch(pFields[nIdx].nType) {
+      case FIELD_INVALID:
+        break;
       case FIELD_CHECKBOX:
       case FIELD_RADIOBUTTON:
         {
@@ -544,7 +547,7 @@ int ReadSettings(void) {
 
     // Get the control type
     pFields[nIdx].nType = LookupToken(TypeTable, szResult);
-    if (!pFields[nIdx].nType)
+    if (pFields[nIdx].nType == FIELD_INVALID)
       continue;
 
     // Lookup flags associated with the control type
