@@ -2015,6 +2015,11 @@ Var MUI_TEMP2
     !warning "The MUI_PRODUCT and MUI_VERSION defines have been removed. Use a normal Name command now."
   !endif
   
+  !ifndef MUI_INSERT_INTERFACE
+    !insertmacro MUI_INTERFACE
+    !define MUI_INSERT_INTERFACE
+  !endif
+  
   !insertmacro MUI_FUNCTION_GUIINIT
   !insertmacro MUI_FUNCTION_ABORTWARNING
   
