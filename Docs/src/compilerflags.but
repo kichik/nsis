@@ -1,6 +1,6 @@
 \H{flags} Compiler Flags
 
-The following commands change how the compiler generates code and compresses data.  These commands are valid anywhere in the script, and effect every line below where each one is placed (until overriden by another command).
+The following commands change how the compiler generates code and compresses data.  These commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command).
 
 \S{asetcompress} SetCompress
 

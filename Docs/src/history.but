@@ -66,7 +66,7 @@
 
 \b SectionSetFlags can now set bold too
 
-\b SectionSetName for sub sections doesn't need - infront of the name
+\b SectionSetName for sub sections doesn't need - in front of the name
 
 \b Added SetPluginUnload
 
@@ -129,7 +129,7 @@
 
 \b Added new full color icons by adni18
 
-\b Added Dutch, Korean, Russian, Swedish and Tradional Chinese language files
+\b Added Dutch, Korean, Russian, Swedish and Traditional Chinese language files
 
 \b Updated Spanish language file version (thanks to LsMoNKi)
 
@@ -219,7 +219,7 @@
 
 \b CheckBitmap now support bitmaps with any color table/depth
 
-\b Unused resources are removed before wrinting out the installer
+\b Unused resources are removed before writing out the installer
 
 \b Documented !error and !warning
 

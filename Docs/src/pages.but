@@ -11,7 +11,7 @@ The page order is set simply by the order they are in the script. For example:
 \c  Page directory
 \c  Page instfiles
 
-This code will show the license page, then the components selction page, then the directory selection page and then the install log, just like in old installers.
+This code will show the license page, then the components selection page, then the directory selection page and then the install log, just like in old installers.
 
 You can specify the same page type more than once, just make sure you know what you are doing.
 
@@ -25,7 +25,7 @@ Each built-in page has two callback functions. The pre-function and the post-cre
 
 A custom page has only one callback function that creates it but unlike the built-in pages this function is mandatory.
 
-Use Abort (see \K{abort}) from a built-in page pre-function to to skip the page.
+Use Abort (see \K{abort}) from a built-in page pre-function to skip the page.
 
 Examples:
 
@@ -38,7 +38,7 @@ Examples:
 \c      Abort
 \c    no:
 \c  FunctionEnd
-\c  
+\c
 \c  Function customPage
 \c    GetTempFileName $R0
 \c    File /oname=$R0 customPage.ini
@@ -46,7 +46,7 @@ Examples:
 \c    Pop $R1
 \c    StrCmp $R1 "cancel" done
 \c    StrCmp $R1 "back" done
-\c    StrCmp $R1 "sucess" done
+\c    StrCmp $R1 "success" done
 \c    error: MessageBox MB_OK|MB_ICONSTOP "InstallOptions error:$\r$\n$R1"
 \c    done:
 \c  FunctionEnd

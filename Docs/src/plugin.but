@@ -8,7 +8,7 @@ During execution of the created installer if a plugin command is executed NSIS w
 
 \H{usingplug} Using Plugin Commands
 
-The following two examples both invoke the same plugin command. The first example shows the (still okay) syntax that scripts written for versions of NSIS earlier than 2.0a4 had to use, and the second is how it can be scripted more succintly now. The newer syntax automatically handles packing & extraction of the DLL file, and stacks up arguments for you too.
+The following two examples both invoke the same plugin command. The first example shows the (still okay) syntax that scripts written for versions of NSIS earlier than 2.0a4 had to use, and the second is how it can be scripted more succinctly now. The newer syntax automatically handles packing & extraction of the DLL file, and stacks up arguments for you too.
 
 \c ; Pre 2.0a4 syntax
 \c SetOutPath $TEMP

@@ -24,7 +24,7 @@ This command will echo a message to the user compiling the script.
 
 \c [message]
 
-This commnd will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.
+This command will issue an error to the script compiler and will stop execution of the script. You can also add a message to this error.
 
 \H{packhdr} !packhdr
 
