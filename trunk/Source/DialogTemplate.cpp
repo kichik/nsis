@@ -21,6 +21,7 @@
 */
 
 #include "DialogTemplate.h"
+#include <commctrl.h>
 
 //////////////////////////////////////////////////////////////////////
 // Utilities
@@ -424,10 +425,9 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 void CDialogTemplate::ConvertToRTL() {
   for (unsigned int i = 0; i < m_vItems.size(); i++) {
     bool addExStyle = false;
-    if (m_vItems[i]->dwExtStyle & WS_EX_LEFT)
-      addExStyle = true;
+
     // Button
-    else if (int(m_vItems[i]->szClass) == 0x80) {
+    if (int(m_vItems[i]->szClass) == 0x80) {
       m_vItems[i]->dwStyle ^= BS_LEFTTEXT;
       m_vItems[i]->dwStyle ^= BS_RIGHT;
       m_vItems[i]->dwStyle ^= BS_LEFT;
@@ -435,14 +435,16 @@ void CDialogTemplate::ConvertToRTL() {
       if ((m_vItems[i]->dwStyle & (BS_LEFT|BS_RIGHT)) == (BS_LEFT|BS_RIGHT)) {
         m_vItems[i]->dwStyle ^= BS_LEFT;
         m_vItems[i]->dwStyle ^= BS_RIGHT;
-        if (m_vItems[i]->dwStyle & (BS_RADIOBUTTON|BS_CHECKBOX|BS_USERBUTTON))
+        if (m_vItems[i]->dwStyle & (BS_RADIOBUTTON|BS_CHECKBOX|BS_USERBUTTON)) {
           m_vItems[i]->dwStyle |= BS_RIGHT;
+        }
       }
     }
     // Edit
     else if (int(m_vItems[i]->szClass) == 0x81) {
-      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0)
+      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
+      }
     }
     // Static
     else if (int(m_vItems[i]->szClass) == 0x82) {
@@ -455,14 +457,21 @@ void CDialogTemplate::ConvertToRTL() {
         m_vItems[i]->dwStyle |= SS_CENTERIMAGE;
       }
     }
-    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && strcmpi(m_vItems[i]->szClass, "RichEdit20A")) {
-      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0)
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !strcmpi(m_vItems[i]->szClass, "RichEdit20A")) {
+      if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
+      }
+    }
+    else if (!IS_INTRESOURCE(m_vItems[i]->szClass) && !strcmpi(m_vItems[i]->szClass, "SysTreeView32")) {
+      m_vItems[i]->dwStyle |= TVS_RTLREADING;
+      addExStyle = true;
     }
     else addExStyle = true;
 
     if (addExStyle)
-      m_vItems[i]->dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING;
+      m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
+
+    m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING;
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
   }

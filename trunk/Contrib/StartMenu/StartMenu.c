@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <shlobj.h>
 #include "../exdll/exdll.h"
 #include "resource.h"
 
@@ -9,7 +10,7 @@ HWND hwChild;
 HWND g_hwStartMenuSelect;
 HWND g_hwDirList;
 
-char buf[MAX_PATH];
+char buf[1024];
 char text[1024];
 char progname[1024];
 char lastused[1024];
@@ -24,7 +25,7 @@ void *lpWndProcOld;
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void AddFolderFromReg(HKEY rootKey);
+void AddFolderFromReg(int nFolder);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
@@ -125,7 +126,7 @@ static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
     y_offset, \
     cx, \
     cy, \
-    SWP_NOACTIVATE \
+    SWP_NOACTIVATE | SWP_NOZORDER \
   ); \
    \
   y_offset += cy + 5;
@@ -182,14 +183,24 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (rtl)
       {
         long s;
+
         s = GetWindowLong(hwText, GWL_STYLE);
         SetWindowLong(hwText, GWL_STYLE, (s & ~SS_LEFT) | SS_RIGHT);
+        s = GetWindowLong(hwText, GWL_EXSTYLE);
+        SetWindowLong(hwText, GWL_EXSTYLE, s | WS_EX_RTLREADING);
+
         s = GetWindowLong(hwLocation, GWL_STYLE);
         SetWindowLong(hwLocation, GWL_STYLE, (s & ~ES_LEFT) | ES_RIGHT);
+        s = GetWindowLong(hwLocation, GWL_EXSTYLE);
+        SetWindowLong(hwLocation, GWL_EXSTYLE, s | WS_EX_RTLREADING);
+
         s = GetWindowLong(hwDirList, GWL_EXSTYLE);
         SetWindowLong(hwDirList, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
+
         s = GetWindowLong(hwCheckBox, GWL_STYLE);
         SetWindowLong(hwCheckBox, GWL_STYLE, s | BS_RIGHT | BS_LEFTTEXT);
+        s = GetWindowLong(hwCheckBox, GWL_EXSTYLE);
+        SetWindowLong(hwCheckBox, GWL_EXSTYLE, s | WS_EX_RTLREADING);
       }
 
       if (!noicon)
@@ -211,7 +222,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         0,
         temp_r.right,
         temp_r.bottom,
-        SWP_NOACTIVATE | (noicon ? SWP_HIDEWINDOW : 0)
+        SWP_NOZORDER | SWP_NOACTIVATE | (noicon ? SWP_HIDEWINDOW : 0)
       );
 
       if (rtl)
@@ -278,8 +289,8 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         SetWindowText(hwCheckBox, checkbox);
       }
 
-      AddFolderFromReg(HKEY_LOCAL_MACHINE);
-      AddFolderFromReg(HKEY_CURRENT_USER);
+      AddFolderFromReg(CSIDL_COMMON_PROGRAMS);
+      AddFolderFromReg(CSIDL_PROGRAMS);
 
       // Tell NSIS to remove old inner dialog and pass handle of the new inner dialog
       SendMessage(hwParent, WM_NOTIFY_CUSTOM_READY, (WPARAM)hwndDlg, 0);
@@ -329,39 +340,29 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 	return TRUE;
 }
 
-void AddFolderFromReg(HKEY rootKey)
+void AddFolderFromReg(int nFolder)
 {
-  DWORD dwResult;
-  DWORD dwLength = MAX_PATH;
-  DWORD dwType = REG_SZ;
-  HKEY hKey;
-
   //DWORD idx;
   WIN32_FIND_DATA FileData;
   HANDLE hSearch;
 
-  char szName[20] = "Common Programs";
-
-  dwResult = RegOpenKeyEx(
-    rootKey,
-		"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-		0,
-	  KEY_READ,
-		&hKey
-  );
-
-  if (dwResult == ERROR_SUCCESS)
+  LPMALLOC ppMalloc;
+  if (SHGetMalloc(&ppMalloc) == NOERROR)
   {
-    dwResult = RegQueryValueEx(
-      hKey,
-      rootKey == HKEY_LOCAL_MACHINE ? szName : szName + 7,
-			NULL,
-			&dwType,
-			(BYTE *) buf,
-			&dwLength
-    );
-    RegCloseKey(hKey);
+    LPITEMIDLIST ppidl;
+
+    buf[0] = 0;
+    if (SHGetSpecialFolderLocation(hwParent, nFolder, &ppidl) == S_OK)
+    {
+      SHGetPathFromIDList(ppidl, buf);
+      ppMalloc->lpVtbl->Free(ppMalloc, ppidl);
+    }
+
+    ppMalloc->lpVtbl->Release(ppMalloc);
   }
+
+  if (!buf[0])
+    return;
 
   lstrcat(buf, "\\*.*");
   hSearch = FindFirstFile(buf, &FileData);

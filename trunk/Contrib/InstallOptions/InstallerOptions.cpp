@@ -566,8 +566,8 @@ int WINAPI ReadSettings(void) {
 
 
 LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) {
-	switch (codeNotify) {
-		case BN_CLICKED:
+  switch (codeNotify) {
+    case BN_CLICKED:
     {
       char szBrowsePath[MAX_PATH];
       int nIdx = FindControlIdx(id);
@@ -659,8 +659,8 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
       }
     }
     break;
-	}
-	return 0;
+  }
+  return 0;
 }
 
 
@@ -691,61 +691,66 @@ BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
   return bRes;
 }
 
-BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
-								 UINT   uMsg,
-								 WPARAM wParam,
-								 LPARAM lParam)
+BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch (uMsg)
   {
     HANDLE_MSG(hwndDlg, WM_COMMAND, WMCommandProc);
     case WM_DRAWITEM:
     {
-        DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
-        int nIdx = FindControlIdx(lpdis->CtlID);
+      DRAWITEMSTRUCT* lpdis = (DRAWITEMSTRUCT*)lParam;
+      int nIdx = FindControlIdx(lpdis->CtlID);
 #ifdef IO_LINK_UNDERLINED
-        HFONT OldFont;
-        LOGFONT lf;
+      HFONT OldFont;
+      LOGFONT lf;
 #endif
 
-        if (nIdx < 0)
-          break;
-        FieldType *pField = pFields + nIdx;
-
-#ifdef IO_LINK_UNDERLINED
-        GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
-        lf.lfUnderline = TRUE;
-        OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
-#endif
-        // Set up tranparent background
-        HBRUSH brush = (HBRUSH)GetWindowLong(lpdis->hwndItem, GWL_USERDATA);
-        if ( brush )
-          FillRect(lpdis->hDC, &lpdis->rcItem, brush);
-
-        if ( ( lpdis->itemState & ODS_FOCUS && lpdis->itemAction & ODA_DRAWENTIRE) || (lpdis->itemAction & ODA_FOCUS) ||
-          (lpdis->itemAction & ODA_SELECT))
-          DrawFocusRect(lpdis->hDC, &pField->rect);
-
-        SetTextColor(lpdis->hDC, (COLORREF)pField->hImage);
-
-        pField->rect = lpdis->rcItem;
-        // Calculate needed size of the control
-        DrawText(lpdis->hDC, pField->pszText, -1, &pField->rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
-        pField->rect.right += 4;
-        pField->rect.bottom = lpdis->rcItem.bottom;
-        // Resize but don't move
-        SetWindowPos(lpdis->hwndItem, NULL, 0, 0, pField->rect.right - pField->rect.left,
-          pField->rect.bottom - pField->rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
-        // Draw the text
-        lpdis->rcItem = pField->rect;
-        // Add little margin to avoid focus rect over text
-        lpdis->rcItem.right += 2; lpdis->rcItem.left += 2;
-
-        DrawText(lpdis->hDC, pField->pszText, -1, &lpdis->rcItem, DT_LEFT | DT_VCENTER | DT_SINGLELINE );
-#ifdef IO_LINK_UNDERLINED
-        DeleteObject(SelectObject(lpdis->hDC, OldFont));
-#endif
+      if (nIdx < 0)
         break;
+      FieldType *pField = pFields + nIdx;
+
+#ifdef IO_LINK_UNDERLINED
+      GetObject(GetCurrentObject(lpdis->hDC, OBJ_FONT), sizeof(lf), &lf);
+      lf.lfUnderline = TRUE;
+      OldFont = (HFONT)SelectObject(lpdis->hDC, CreateFontIndirect(&lf));
+#endif
+
+      // We need lpdis->rcItem later
+      RECT rc = lpdis->rcItem;
+
+      // Get TxtColor unless the user has set another using SetCtlColors
+      if (!GetWindowLong(lpdis->hwndItem, GWL_USERDATA))
+        SetTextColor(lpdis->hDC, (COLORREF) pField->hImage);
+
+      // Calculate needed size of the control
+      DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_VCENTER | DT_SINGLELINE | DT_CALCRECT);
+      
+      // Move rect to right if in RTL mode
+      if (bRTL)
+      {
+        rc.left += lpdis->rcItem.right - rc.right;
+        rc.right += lpdis->rcItem.right - rc.right;
+      }
+
+      // Make some more room so the focus rect won't cut letters off
+      rc.left = max(rc.left - 2, lpdis->rcItem.left);
+      rc.right = min(rc.right + 2, lpdis->rcItem.right);
+      /*rc.top = max(rc.top - 2, lpdis->rcItem.top);
+      rc.bottom = min(rc.bottom + 2, lpdis->rcItem.bottom);*/
+
+      // Draw the text
+      DrawText(lpdis->hDC, pField->pszText, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE | (bRTL ? DT_RTLREADING : 0));
+
+      // Draw the focus rect if needed
+      if (((lpdis->itemState & ODS_FOCUS) && (lpdis->itemAction & ODA_DRAWENTIRE)) || (lpdis->itemAction & ODA_FOCUS) || (lpdis->itemAction & ODA_SELECT))
+      {
+        DrawFocusRect(lpdis->hDC, &rc);
+      }
+
+#ifdef IO_LINK_UNDERLINED
+      DeleteObject(SelectObject(lpdis->hDC, OldFont));
+#endif
+      break;
     }
     case WM_CTLCOLORSTATIC:
     case WM_CTLCOLOREDIT:
@@ -753,7 +758,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
     case WM_CTLCOLORBTN:
     case WM_CTLCOLORLISTBOX:
     {
-      ctlcolors *c = (ctlcolors *)GetWindowLong((HWND)lParam, GWL_USERDATA);
+      ctlcolors *c = (ctlcolors *) GetWindowLong((HWND) lParam, GWL_USERDATA);
 
       if (c) {
         SetBkMode((HDC)wParam, c->bkmode);
@@ -766,7 +771,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
       }
     }
   }
-	return 0;
+  return 0;
 }
 
 #ifdef IO_ENABLE_LINK
@@ -908,47 +913,47 @@ int WINAPI createCfgDlg()
         DEFAULT_STYLES /*| WS_TABSTOP*/,
         DEFAULT_STYLES | SS_RIGHT /*| WS_TABSTOP*/,
         WS_EX_TRANSPARENT,
-        WS_EX_TRANSPARENT },
+        WS_EX_TRANSPARENT | WS_EX_RTLREADING },
       { "STATIC",       // FIELD_ICON
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_ICON,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "STATIC",       // FIELD_BITMAP
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
         DEFAULT_STYLES /*| WS_TABSTOP*/ | SS_BITMAP | SS_CENTERIMAGE,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_BROWSEBUTTON
         DEFAULT_STYLES | WS_TABSTOP,
         DEFAULT_STYLES | WS_TABSTOP,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_CHECKBOX
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE,
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTOCHECKBOX | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_RADIOBUTTON
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE,
         DEFAULT_STYLES | WS_TABSTOP | BS_TEXT | BS_VCENTER | BS_AUTORADIOBUTTON | BS_MULTILINE | BS_RIGHT | BS_LEFTTEXT,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "EDIT",         // FIELD_TEXT
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RTLREADING },
       { "EDIT",         // FIELD_FILEREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RTLREADING },
       { "EDIT",         // FIELD_DIRREQUEST
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL,
         DEFAULT_STYLES | WS_TABSTOP | ES_AUTOHSCROLL | ES_RIGHT,
         WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE,
-        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE },
+        WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_RTLREADING },
       { "COMBOBOX",     // FIELD_COMBOBOX
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
         DEFAULT_STYLES | WS_TABSTOP | WS_VSCROLL | WS_CLIPCHILDREN | CBS_AUTOHSCROLL | CBS_HASSTRINGS,
@@ -963,17 +968,17 @@ int WINAPI createCfgDlg()
         DEFAULT_STYLES | BS_GROUPBOX,
         DEFAULT_STYLES | BS_GROUPBOX | BS_RIGHT,
         WS_EX_TRANSPARENT,
-        WS_EX_TRANSPARENT },
+        WS_EX_TRANSPARENT | WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_LINK
         DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW,
         DEFAULT_STYLES | WS_TABSTOP | BS_OWNERDRAW | BS_RIGHT,
         0,
-        0 },
+        WS_EX_RTLREADING },
       { "BUTTON",       // FIELD_BUTTON
         DEFAULT_STYLES | WS_TABSTOP,
-        DEFAULT_STYLES | WS_TABSTOP | BS_RIGHT,
+        DEFAULT_STYLES | WS_TABSTOP,
         0,
-        0 }
+        WS_EX_RTLREADING }
     };
 
     FieldType *pField = pFields + nIdx;
@@ -1233,12 +1238,12 @@ void WINAPI showCfgDlg()
 
   g_done = g_NotifyField = 0;
 
-	while (!g_done) {
+  while (!g_done) {
     MSG msg;
     int nResult = GetMessage(&msg, NULL, 0, 0);
     if (!IsDialogMessage(hConfigWindow,&msg) && !IsDialogMessage(hMainWindow,&msg) && !TranslateMessage(&msg))
-	  	DispatchMessage(&msg);
-	}
+      DispatchMessage(&msg);
+  }
 
   // we don't save settings on cancel since that means your installer will likely
   // quit soon, which means the ini might get flushed late and cause crap. :) anwyay.
@@ -1325,7 +1330,7 @@ extern "C" BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
   m_hInstance=(HINSTANCE) hInst;
   if (ul_reason_for_call == DLL_THREAD_DETACH || ul_reason_for_call == DLL_PROCESS_DETACH)
     DestroyWindow(hConfigWindow);
-	return TRUE;
+  return TRUE;
 }
 
 
