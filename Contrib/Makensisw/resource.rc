@@ -54,7 +54,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON                ICON    DISCARDABLE     "..\\..\\contrib\\icons\\new_nsis.ico"
+IDI_ICON                ICON    DISCARDABLE     "..\\..\\contrib\\icons\\adni18-installer-C-no48xp.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -128,8 +128,8 @@ BEGIN
                     WS_VSCROLL,7,4,345,186
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,202,346,1
     LTEXT           "",IDC_VERSION,7,212,200,12,WS_DISABLED
-    DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,303,209,49,14
-    PUSHBUTTON      "&Test",IDC_TEST,247,209,50,14,WS_DISABLED
+    DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,303,208,49,15
+    PUSHBUTTON      "&Test",IDC_TEST,247,208,50,15,WS_DISABLED
 END
 
 DLG_ABOUT DIALOG DISCARDABLE  0, 0, 235, 86

@@ -30,7 +30,7 @@
 
 // Defines
 #define NSIS_URL	"http://sourceforge.net/projects/nsis/"
-#define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag .nsi file into this window\r\n - Right click .nsi and choose \"Compile NSI\""
+#define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
 #define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
 #define CONTRIBUTOR	"Portions Copyright (c) 2002 Justin Frankel, Fritz Elfert, and Amir Szekely"
 #define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
@@ -75,5 +75,8 @@ void			EnableItems(HWND hwnd);
 void			RestoreWindowPos(HWND hwnd);
 void			SaveWindowPos(HWND hwnd);
 void			ResetObjects();
-
+int				InitBranding();
+void			InitTooltips(HWND h);
+void			DestroyTooltips();
+void			AddTip(HWND hWnd,LPSTR lpszToolTip);
 #endif
