@@ -355,46 +355,28 @@ CEXEBuild::CEXEBuild()
   {
     sprintf(Aux, "%d", i);    
     m_UserVarNames.add(Aux,1);
-    m_UnUserVarNames.add(Aux,1);
   }
   for ( i = 0; i < 10; i++ )        // 10 - 19
   {
     sprintf(Aux, "R%d", i);    
     m_UserVarNames.add(Aux,1);
-    m_UnUserVarNames.add(Aux,1);
   }
   m_UserVarNames.add("CMDLINE",1);       // 20 everything before here doesn't have trailing slash removal
-  m_UnUserVarNames.add("CMDLINE",1);
   m_UserVarNames.add("INSTDIR",1);       // 21
-  m_UnUserVarNames.add("INSTDIR",1);
   m_UserVarNames.add("OUTDIR",1);        // 22
-  m_UnUserVarNames.add("OUTDIR",1);
   m_UserVarNames.add("EXEDIR",1);        // 23
-  m_UnUserVarNames.add("EXEDIR",1);
   m_UserVarNames.add("LANGUAGE",1);      // 24
-  m_UnUserVarNames.add("LANGUAGE",1);
   m_UserVarNames.add("PLUGINSDIR",1);    // 25
-  m_UnUserVarNames.add("PLUGINSDIR",1);
   m_UserVarNames.add("PROGRAMFILES",1);  // 26
-  m_UnUserVarNames.add("PROGRAMFILES",1);
   m_UserVarNames.add("SMPROGRAMS",1);    // 27
-  m_UnUserVarNames.add("SMPROGRAMS",1);
   m_UserVarNames.add("SMSTARTUP",1);     // 28
-  m_UnUserVarNames.add("SMSTARTUP",1);
   m_UserVarNames.add("DESKTOP",1);       // 29
-  m_UnUserVarNames.add("DESKTOP",1);
   m_UserVarNames.add("STARTMENU",1);     // 30
-  m_UnUserVarNames.add("STARTMENU",1);
   m_UserVarNames.add("QUICKLAUNCH",1);   // 31
-  m_UnUserVarNames.add("QUICKLAUNCH",1);
   m_UserVarNames.add("TEMP",1);          // 32
-  m_UnUserVarNames.add("TEMP",1);
   m_UserVarNames.add("WINDIR",1);        // 33
-  m_UnUserVarNames.add("WINDIR",1);
   m_UserVarNames.add("SYSDIR",1);        // 34 everything after here doesn't have trailing slash removal
-  m_UnUserVarNames.add("SYSDIR",1);
   m_UserVarNames.add("HWNDPARENT",1);    // 35 
-  m_UnUserVarNames.add("HWNDPARENT",1);
 #endif
 }
 
@@ -542,14 +524,14 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 
             while ( pUserVarName > p )
             {
-                int idxUserVar = uninstall_mode ? m_UnUserVarNames.get((char*)p, pUserVarName-p) : m_UserVarNames.get((char*)p, pUserVarName-p);
+                int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
                 if ( idxUserVar >= 0 )
                 {
                   // Well, using variables inside string formating doens't mean 
                   // using the variable, beacuse it will be always an empty string
                   // which is also memory wasting
                   // So the line below must be commented !??
-                  //uninstall_mode ? m_UnUserVarNames.inc_reference(idxUserVar): m_UserVarNames.inc_reference(idxUserVar);
+                  //m_UserVarNames.inc_reference(idxUserVar);
                   *out++=(unsigned int)VAR_CODES_START; // Named user variable;
                   *(WORD*)out=((WORD)idxUserVar+1) | 0xF000;
                   out += sizeof(WORD);
@@ -1871,8 +1853,7 @@ int CEXEBuild::write_output(void)
 
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
-  VerifyDeclaredUserVarRefs(&m_UnUserVarNames);
-  int MaxUserVars = max(m_UserVarNames.getnum(), m_UnUserVarNames.getnum());
+  int MaxUserVars = m_UserVarNames.getnum();
   if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars-TOTAL_COMPATIBLE_STATIC_VARS_COUNT) * sizeof(NSIS_STRING)))
   {
     ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", VARS_SECTION_NAME);
@@ -2726,11 +2707,8 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
     }
   }
 
-  if ( !strnicmp(szVarName,"un.",3) )
-    m_UnUserVarNames.add(szVarName);
-  else
-    m_UserVarNames.add(szVarName);
-  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS || m_UnUserVarNames.getnum() > MAX_NAMED_USER_VARS )
+  m_UserVarNames.add(szVarName);
+  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS )
   {
     ERROR_MSG("Error: too many user variables declared!\n");
     return PS_ERROR;
@@ -2744,30 +2722,13 @@ int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
 
     char *p = line.gettoken_str(token);
-    UserVarsStringList *pUserVarList = uninstall_mode ? &m_UnUserVarNames : &m_UserVarNames;
     if ( *p == '$' && *(p+1) )
     {
-      int idxUserVar = pUserVarList->get((char *)p+1);
+      int idxUserVar = m_UserVarNames.get((char *)p+1);
       if ( idxUserVar >= 0 )
       {
-        pUserVarList->inc_reference(idxUserVar);
+        m_UserVarNames.inc_reference(idxUserVar);
         return idxUserVar;
-      }
-      else
-      {
-        // Show error info to help developer
-        idxUserVar = uninstall_mode ? m_UserVarNames.get((char *)p+1) : m_UnUserVarNames.get((char *)p+1);
-        if ( idxUserVar >= 0 )
-        {
-          if (!strnicmp(p+1,"un.",3) && !uninstall_mode ) {
-            b_abort_compile=true;
-            ERROR_MSG("Installer variables names can't start with un. (%s)! (%s:%d)\n", p+1, curfilename, linecnt);
-          }
-          if (strnicmp(p+1,"un.",3) && uninstall_mode ) {
-            b_abort_compile=true;
-            ERROR_MSG("Uninstaller variables names must start with un. (%s)! (%s:%d)\n", p+1, curfilename, linecnt);
-          }
-        }
       }
     }
     return -1;

@@ -4603,8 +4603,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_NAMED_USERVARS
     case TOK_DEFVAR:
     {
-        return DeclaredUserVar(line.gettoken_str(1));
-        SCRIPT_MSG("dim \"%s\"\n",line.gettoken_str(1));
+        SCRIPT_MSG("VAR \"%s\"\n",line.gettoken_str(1));
+        int res = DeclaredUserVar(line.gettoken_str(1));
+        if ( res != PS_OK )
+          return res;        
     }
     return make_sure_not_in_secorfunc(line.gettoken_str(0));    
 

@@ -15,8 +15,7 @@
 
   Var "Name"
   Var "Serial"
-  
-  Var "un.Info" ; this one can only be used in the uninstaller
+  Var "Info"
 
 ;--------------------------------
 ; Installer
@@ -38,7 +37,7 @@ SectionEnd
 
 Section "Uninstall"
 
-     StrCpy $un.Info "User variables test uninstalled successfully."
+     StrCpy $Info "User variables test uninstalled successfully."
      Delete "$INSTDIR\Uninst.exe"
      RmDir $INSTDIR
 
@@ -47,6 +46,6 @@ SectionEnd
 Function un.OnUninstSuccess
 
      HideWindow
-     MessageBox MB_OK "$un.Info"
+     MessageBox MB_OK "$Info"
      
 FunctionEnd
