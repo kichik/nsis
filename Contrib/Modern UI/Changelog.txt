@@ -6,6 +6,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Support for multiple pages of the same type
 * Changed macro names
 * Updated langauge system, new language files
+* Removed MUI_BRANDINGTEXT. Use BrandingText command now.
 
 1.65 - July 16, 2003
 * New page configuration system, no different system for installers
@@ -36,7 +37,6 @@ NSIS Modern User Interface - VERSION HISTORY
 * Language specific fonts
 * Welcome/Finish page INI files can be modified in pre functions
 * More texts can be customized
-* Language files have to be updated
 
 1.63 - March 9, 2003
 * Support for a bitmap in the wizard header
@@ -56,7 +56,6 @@ NSIS Modern User Interface - VERSION HISTORY
 * RTL support
 * Documentation updates
 * Minor fixes
-* No changed language strings
 
 1.62 - February 2, 2003
 * New language strings for finish page
