@@ -74,7 +74,7 @@ The start menu programs / startup folder. The context of this variable (All User
 
 \e{$QUICKLAUNCH}
 
-The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP. The context of this variable (All Users or Current user) depends on the \R{setshellvarcontext}{SetShellVarContext} setting. The default is the current user.
+The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP.
 
 \e{$HWNDPARENT}
 
