@@ -588,7 +588,11 @@ static BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         SetWindowPos(m_curwnd,0,r.left,r.top,0,0,SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-        ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
+        {
+          MSG msg;
+          while (PeekMessage(&msg,m_curwnd,0,0,PM_NOREMOVE)) Sleep(100);
+          ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onInitDialog,NULL);
+        }
 #endif //NSIS_SUPPORT_CODECALLBACKS
         ShowWindow(m_curwnd,SW_SHOWNA);
       }
