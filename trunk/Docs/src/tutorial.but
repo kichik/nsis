@@ -170,7 +170,7 @@ It it also possible to compile Windows installer on Linux, BSD or Mac OS X serve
 
 \H{tutmodernui} Modern UI
 
-A popular user interface for NSIS is the Modern User Interface, it has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
+A popular user interface for NSIS is the Modern User Interface. It has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
 
 For more information, check the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
 
