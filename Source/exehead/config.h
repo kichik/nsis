@@ -26,6 +26,13 @@
 // really a big deal, but not usually needed).
 #define NSIS_MAX_STRLEN 1024
 
+#define USER_VARS_COUNT 26
+
+// MAX_NAMED_USER_VARS defines the maximum of named user variables
+// the complier also use this value to abort if exceded
+// The real maximum is (0x0FFF - USER_VARS_COUNT) = 4069
+// But 500 variables are a more than enough (and only consume more 512kb of memory)
+#define MAX_NAMED_USER_VARS 500
 
 // NSIS_MAX_INST_TYPES specified the  maximum install types.
 // note that this should not exceed 32, ever.
@@ -194,6 +201,14 @@
 
 // NSIS_SUPPORT_MESSAGEBOX enables support for MessageBox
 #define NSIS_SUPPORT_MESSAGEBOX
+
+// Added by ramon 3 jun 2003
+// NSIS_SUPPORT_NAMED_USERVARS enables support for user variables
+//#define NSIS_SUPPORT_NAMED_USERVARS
+
+// Added by ramon 5 jun 2003
+// NSIS_SUPPORT_VERSION_INFO enables support for version information on final exe
+#define NSIS_SUPPORT_VERSION_INFO
 
 
 // Added by Ximon Eighteen 5th August 2002

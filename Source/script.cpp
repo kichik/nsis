@@ -20,11 +20,6 @@
 #define MAX_LINELENGTH 4096
 
 
-static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
-                             "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
-                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
-
-
 int CEXEBuild::process_script(FILE *filepointer, char *filename)
 {
   linecnt = 0;
@@ -60,8 +55,9 @@ int CEXEBuild::doParse(const char *str)
   static int last_line_had_slash;
   static int ignored_if_count;
   static int wait_for_endif;
+  static bool inside_comment=0;
 
-  LineParser line;
+  LineParser line(inside_comment);
   int res;
 
   while (*str == ' ' || *str == '\t') str++;
@@ -81,6 +77,8 @@ int CEXEBuild::doParse(const char *str)
   else last_line_had_slash = 0;
 
   res=line.parse((char*)m_linebuild.get(),!strnicmp(str,"!define",7));
+
+  inside_comment = line.InCommentBlock();
 
   m_linebuild.resize(0);
 
@@ -358,7 +356,7 @@ int CEXEBuild::process_jump(LineParser &line, int wt, int *offs)
   int v;
 
   if (!stricmp(s,"0") || !stricmp(s,"")) *offs=0;
-  else if ((v=line.gettoken_enum(wt,usrvars))>=0)
+  else if ((v=GetUserVarIndex(line, wt))>=0)
   {
     *offs=-v-1; // to jump to a user variable target, -variable_index-1 is stored.
   }
@@ -463,7 +461,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           if (p > str) p--;
           while (p >= str && (*p == '\r' || *p == '\n' || *p == ' ' || *p == '\t')) p--;
           *++p=0;
-          LineParser l2;
+          LineParser l2(false);
           if (!l2.parse(str))
           {
             if (!stricmp(l2.gettoken_str(0),"!macroend"))
@@ -2593,7 +2591,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CALL:
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==':' && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3) && (line.gettoken_enum(1,usrvars) < 0))
+      if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3) && (GetUserVarIndex(line,1) < 0))
       {
         ERROR_MSG("Call must be used with function names starting with \"un.\" in the uninstall section.\n");
         PRINTHELP()
@@ -2608,7 +2606,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.offsets[1]=0;
       {
         int v;
-        if ((v=line.gettoken_enum(1,usrvars))>=0)
+        if ((v=GetUserVarIndex(line, 1))>=0)
         {
           ent.offsets[0]=-v-2;
         }
@@ -2670,7 +2668,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       if (which_token == TOK_EXECWAIT)
       {
         ent.offsets[1]=1;
-        ent.offsets[2]=line.gettoken_enum(2,usrvars);
+        ent.offsets[2]=GetUserVarIndex(line, 2);
         if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       }
       SCRIPT_MSG("%s: \"%s\" (->%s)\n",ent.offsets[1]?"ExecWait":"Exec",line.gettoken_str(1),line.gettoken_str(2));
@@ -2918,7 +2916,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_HWNDS
     case TOK_FINDWINDOW:
       ent.which=EW_FINDWINDOW;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
@@ -2939,7 +2937,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("SendMessage:");
       {
         int a=5;
-        ent.offsets[0]=line.gettoken_enum(5,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 5);
         if (ent.offsets[0]>=0)
         {
           SCRIPT_MSG("(->%s)",line.gettoken_str(5));
@@ -2987,7 +2985,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_GETDLGITEM:
       ent.which=EW_GETDLGITEM;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0]<0) PRINTHELP();
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
@@ -2995,7 +2993,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETWINTEXT:
       ent.which=EW_GETWINTEXT;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line,1);
       if (ent.offsets[0]<0) PRINTHELP();
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("GetWindowText: output=%s hwnd=%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -3014,7 +3012,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_CREATEFONT:
       ent.which=EW_CREATEFONT;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("CreateFont: output=%s \"%s\"",line.gettoken_str(1),line.gettoken_str(2));
       {
@@ -3400,14 +3398,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_STROPTS
     case TOK_STRLEN:
       ent.which=EW_STRLEN;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=add_string(line.gettoken_str(2));
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG("StrLen %s \"%s\"\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_STRCPY:
       ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
       ent.offsets[3]=add_string(line.gettoken_str(4));
@@ -3417,7 +3415,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETFUNCTIONADDR:
       ent.which=EW_GETFUNCTIONADDR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=ns_func.add(line.gettoken_str(2),0);
       ent.offsets[2]=0;
       ent.offsets[3]=0;
@@ -3426,7 +3424,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETLABELADDR:
       ent.which=EW_GETLABELADDR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0 || process_jump(line,2,&ent.offsets[1])) PRINTHELP()
       ent.offsets[2]=0;
       ent.offsets[3]=0;
@@ -3434,7 +3432,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_GETCURRENTADDR:
       ent.which=EW_ASSIGNVAR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       {
         char buf[32];
         wsprintf(buf,"%d",1+(uninstall_mode?build_uninst.code_size:build_header.common.num_entries));
@@ -3512,7 +3510,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           return PS_ERROR;
         }
         ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=line.gettoken_enum(2,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 2);
         wsprintf(buf,"%u",high);
         ent.offsets[1]=add_string(buf);
         ent.offsets[2]=0;
@@ -3520,7 +3518,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ent.offsets[0]<0) PRINTHELP()
         add_entry(&ent);
 
-        ent.offsets[0]=line.gettoken_enum(3,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 3);
         wsprintf(buf,"%u",low);
         ent.offsets[1]=add_string(buf);
         ent.offsets[2]=0;
@@ -3554,7 +3552,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         ent.which=EW_ASSIGNVAR;
-        ent.offsets[0]=line.gettoken_enum(2,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 2);
         wsprintf(buf,"%u",high);
         ent.offsets[1]=add_string(buf);
         ent.offsets[2]=0;
@@ -3562,7 +3560,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ent.offsets[0]<0) PRINTHELP()
         add_entry(&ent);
 
-        ent.offsets[0]=line.gettoken_enum(3,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 3);
         wsprintf(buf,"%u",low);
         ent.offsets[1]=add_string(buf);
         ent.offsets[2]=0;
@@ -3623,7 +3621,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_READINISTR:
       ent.which=EW_READINISTR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(3));
       ent.offsets[2]=add_string(line.gettoken_str(4));
@@ -3648,7 +3646,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_FNUTIL
     case TOK_GETTEMPFILENAME:
       ent.which=EW_GETTEMPFILENAME;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG("GetTempFileName -> %s\n",line.gettoken_str(1));
     return add_entry(&ent);
@@ -3658,7 +3656,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         ent.which=EW_GETFULLPATHNAME;
         if (line.getnumtokens()==4 && !stricmp(line.gettoken_str(1),"/SHORT")) a++;
         else if (line.getnumtokens()==4 || *line.gettoken_str(1)=='/') PRINTHELP()
-        ent.offsets[0]=line.gettoken_enum(1+a,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 1+a);
         ent.offsets[1]=add_string(line.gettoken_str(2+a));
         ent.offsets[2]=!a;
         if (ent.offsets[0]<0) PRINTHELP()
@@ -3668,7 +3666,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_SEARCHPATH:
       ent.which=EW_SEARCHPATH;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       SCRIPT_MSG("SearchPath %s %s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -3684,8 +3682,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_GETDLLVERSION
       ent.which=EW_GETDLLVERSION;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=line.gettoken_enum(2,usrvars);
-      ent.offsets[2]=line.gettoken_enum(3,usrvars);
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=GetUserVarIndex(line, 3);
       if (ent.offsets[1]<0 || ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("GetDLLVersion: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
@@ -3698,8 +3696,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_GETFILETIME
       ent.which=EW_GETFILETIME;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=line.gettoken_enum(2,usrvars);
-      ent.offsets[2]=line.gettoken_enum(3,usrvars);
+      ent.offsets[1]=GetUserVarIndex(line, 2);
+      ent.offsets[2]=GetUserVarIndex(line, 3);
       if (ent.offsets[1]<0 || ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("GetFileTime: %s->%s,%s\n",
         line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
@@ -3711,7 +3709,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_INTOPTS
     case TOK_INTOP:
       ent.which=EW_INTOP;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[3]=line.gettoken_enum(3,"+\0-\0*\0/\0|\0&\0^\0!\0||\0&&\0%\0~\0");
       if (ent.offsets[0] < 0 || ent.offsets[3]<0 || ((ent.offsets[3] == 7 || ent.offsets[3]==11) && line.getnumtokens()>4)) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -3724,7 +3722,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_INTFMT:
       ent.which=EW_INTFMT;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0]<0) PRINTHELP()
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=add_string(line.gettoken_str(3));
@@ -3755,7 +3753,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_READREGDWORD:
       {
         ent.which=EW_READREGSTR;
-        ent.offsets[0]=line.gettoken_enum(1,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 1);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
@@ -3873,7 +3871,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_ENUMREGVAL:
       {
         ent.which=EW_REGENUM;
-        ent.offsets[0]=line.gettoken_enum(1,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 1);
         int k=line.gettoken_enum(2,rootkeys[0]);
         if (k == -1) k=line.gettoken_enum(2,rootkeys[1]);
         if (ent.offsets[0] == -1 || k == -1) PRINTHELP()
@@ -3904,7 +3902,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_EXCH:
       {
         int swapitem=1;
-        int save=line.gettoken_enum(1,usrvars);
+        int save=GetUserVarIndex(line, 1);
         ent.which=EW_PUSHPOP;
         if (line.gettoken_str(1)[0] && save<0)
         {
@@ -3943,7 +3941,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_POP:
       ent.which=EW_PUSHPOP;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=1;
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG("Pop: %s\n",line.gettoken_str(1));
@@ -3958,7 +3956,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #ifdef NSIS_SUPPORT_ENVIRONMENT
     case TOK_READENVSTR:
       ent.which=EW_READENVSTR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       {
         ent.offsets[1]=add_string(line.gettoken_str(2));
         if (ent.offsets[0] < 0 || strlen(line.gettoken_str(2))<1) PRINTHELP()
@@ -3968,7 +3966,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_EXPANDENVSTRS:
       ent.which=EW_READENVSTR;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=0;
       if (ent.offsets[0] < 0) PRINTHELP()
@@ -3984,21 +3982,21 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FINDFIRST:
       ent.which=EW_FINDFIRST;
       ent.offsets[0]=add_string(line.gettoken_str(3)); // filespec
-      ent.offsets[1]=line.gettoken_enum(2,usrvars); // out
-      ent.offsets[2]=line.gettoken_enum(1,usrvars); // handleout
+      ent.offsets[1]=GetUserVarIndex(line, 2); // out
+      ent.offsets[2]=GetUserVarIndex(line, 1); // handleout
       if (ent.offsets[1] < 0 || ent.offsets[2] < 0) PRINTHELP()
       SCRIPT_MSG("FindFirst: spec=\"%s\" handle=%s output=%s\n",line.gettoken_str(3),line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_FINDNEXT:
       ent.which=EW_FINDNEXT;
-      ent.offsets[0]=line.gettoken_enum(2,usrvars);
-      ent.offsets[1]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 2);
+      ent.offsets[1]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0 || ent.offsets[1] < 0) PRINTHELP()
       SCRIPT_MSG("FindNext: handle=%s output=%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
     case TOK_FINDCLOSE:
       ent.which=EW_FINDCLOSE;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG("FindClose: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
@@ -4016,7 +4014,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_FILEOPEN:
       {
         ent.which=EW_FOPEN;
-        ent.offsets[3]=line.gettoken_enum(1,usrvars); // file handle
+        ent.offsets[3]=GetUserVarIndex(line, 1); // file handle
         ent.offsets[0]=add_string(line.gettoken_str(2));
         ent.offsets[1]=0; //openmode
         if (!stricmp(line.gettoken_str(3),"r"))
@@ -4041,29 +4039,29 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_FILECLOSE:
       ent.which=EW_FCLOSE;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars); // file handle
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       if (ent.offsets[0] < 0) PRINTHELP()
       SCRIPT_MSG("FileClose: %s\n",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_FILEREAD:
       ent.which=EW_FGETS;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars); // file handle
-      ent.offsets[1]=line.gettoken_enum(2,usrvars); // output string
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
       ent.offsets[2]=add_string(line.gettoken_str(3)[0]?line.gettoken_str(3):"1023");
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("FileRead: %s->%s (max:%s)\n",line.gettoken_str(1),line.gettoken_str(2),line.gettoken_str(3));
     return add_entry(&ent);
     case TOK_FILEWRITE:
       ent.which=EW_FPUTS;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars); // file handle
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=add_string(line.gettoken_str(2));
       if (ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG("FileWrite: %s->%s\n",line.gettoken_str(2),line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_FILEREADBYTE:
       ent.which=EW_FGETS;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars); // file handle
-      ent.offsets[1]=line.gettoken_enum(2,usrvars); // output string
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
+      ent.offsets[1]=GetUserVarIndex(line, 2); // output string
       ent.offsets[2]=add_string("1");
       ent.offsets[3]=1;
       if (ent.offsets[0]<0 || ent.offsets[1]<0) PRINTHELP()
@@ -4071,7 +4069,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return add_entry(&ent);
     case TOK_FILEWRITEBYTE:
       ent.which=EW_FPUTS;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars); // file handle
+      ent.offsets[0]=GetUserVarIndex(line, 1); // file handle
       ent.offsets[1]=add_string(line.gettoken_str(2));
       ent.offsets[2]=1;
       if (ent.offsets[0]<0) PRINTHELP()
@@ -4083,9 +4081,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int tab[3]={FILE_BEGIN,FILE_CURRENT,FILE_END};
         int mode=line.gettoken_enum(3,"SET\0CUR\0END\0");
         ent.which=EW_FSEEK;
-        ent.offsets[0]=line.gettoken_enum(1,usrvars);
+        ent.offsets[0]=GetUserVarIndex(line, 1);
         ent.offsets[1]=add_string(line.gettoken_str(2));
-        ent.offsets[3]=line.gettoken_enum(4,usrvars);
+        ent.offsets[3]=GetUserVarIndex(line, 4);
 
         if (mode<0 && !line.gettoken_str(3)[0])
         {
@@ -4190,7 +4188,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(name_ptr);
-      ent.offsets[2]=line.gettoken_enum(2,usrvars);
+      ent.offsets[2]=GetUserVarIndex(line, 2);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4215,7 +4213,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(flags);
-      ent.offsets[2]=line.gettoken_enum(2,usrvars);
+      ent.offsets[2]=GetUserVarIndex(line, 2);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetFlags: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4239,7 +4237,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
       ent.which=EW_INSTTYPESET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
-      ent.offsets[1]=line.gettoken_enum(2,usrvars);
+      ent.offsets[1]=GetUserVarIndex(line, 2);
       ent.offsets[2]=0;
       if (line.gettoken_str(1)[0] && ent.offsets[1]<0) PRINTHELP()
       SCRIPT_MSG("InstTypeGetText: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
@@ -4265,7 +4263,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(install_types);
-      ent.offsets[2]=line.gettoken_enum(2,usrvars);
+      ent.offsets[2]=GetUserVarIndex(line, 2);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetInstTypes: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4290,7 +4288,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ent.which=EW_SECTIONSET;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=SECTION_FIELD_GET(size_kb);
-      ent.offsets[2]=line.gettoken_enum(2,usrvars);
+      ent.offsets[2]=GetUserVarIndex(line, 2);
       if (line.gettoken_str(2)[0] && ent.offsets[2]<0) PRINTHELP()
       SCRIPT_MSG("SectionGetSize: %s->%s\n",line.gettoken_str(1),line.gettoken_str(2));
     return add_entry(&ent);
@@ -4316,7 +4314,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         return PS_ERROR;
       }
       ent.which=EW_GETFLAG;
-      ent.offsets[0]=line.gettoken_enum(1,usrvars);
+      ent.offsets[0]=GetUserVarIndex(line, 1);
       ent.offsets[1]=FLAG_OFFSET(cur_insttype);
       if (line.gettoken_str(1)[0] && ent.offsets[0]<0) PRINTHELP()
       SCRIPT_MSG("GetCurInstType: %s\n",line.gettoken_str(1));
@@ -4373,6 +4371,75 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",line.gettoken_str(0));
       return PS_ERROR;
 #endif//!NSIS_SUPPORT_CREATEFONT
+
+	  // Added by ramon 3 jun 2003
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+    case TOK_DEFVAR:
+    {
+        return DeclaredUserVar(line.gettoken_str(1));
+        SCRIPT_MSG("dim \"%s\"\n",line.gettoken_str(1));
+    }
+    return make_sure_not_in_secorfunc(line.gettoken_str(0));    
+
+#else //NSIS_SUPPORT_NAMED_USERVARS
+	case TOK_DEFVAR:
+      ERROR_MSG("Error: %s specified, case NSIS_SUPPORT_NAMED_USERVARS not defined.\n",line.gettoken_str(0));
+      return PS_ERROR;
+#endif //NSIS_SUPPORT_NAMED_USERVARS
+
+    // Added by ramon 6 jun 2003
+#ifdef NSIS_SUPPORT_VERSION_INFO
+    case TOK_VI_PRODUCTVERSION:
+    case TOK_VI_PRODUCTNAME:
+    case TOK_VI_COMPANY:
+    case TOK_VI_COMMENTS:
+    case TOK_VI_LEGALTRADEMARKS:
+    case TOK_VI_LEGALCOPYRIGHTS:
+    case TOK_VI_DESCRIPTION:
+    {
+        char *pVI;
+        switch (which_token)
+        {    
+          case TOK_VI_PRODUCTVERSION:
+            pVI = szVIProductVersion; break;
+          case TOK_VI_PRODUCTNAME:
+            pVI = szVIProductName; break;
+          case TOK_VI_COMPANY:
+            pVI = szVICompanyName; break;
+          case TOK_VI_COMMENTS:
+            pVI = szVIComments; break;
+          case TOK_VI_LEGALTRADEMARKS:
+            pVI = szVILegalTrademarks; break;
+          case TOK_VI_LEGALCOPYRIGHTS:
+            pVI = szVILegalCopyrights; break;
+          case TOK_VI_DESCRIPTION:
+            pVI = szVIDescription; break;
+        }
+        
+        if ( pVI[0] )
+        {
+           ERROR_MSG("Error: %s already defined.\n",line.gettoken_str(0));
+           return PS_ERROR;
+        }
+        else
+        {
+           SCRIPT_MSG("%s = \"%s\"\n",line.gettoken_str(0), line.gettoken_str(1));
+           strcpy(pVI, line.gettoken_str(1));
+           return PS_OK;
+        }
+    }
+
+#else
+    case TOK_VI_PRODUCTVERSION:
+    case TOK_VI_PRODUCTNAME:
+    case TOK_VI_COMPANY:
+    case TOK_VI_COMMENTS:
+    case TOK_VI_LEGALTRADEMARKS:
+    case TOK_VI_LEGALCOPYRIGHTS:
+    case TOK_VI_DESCRIPTION:
+      ERROR_MSG("Error: %s specified, NSIS_SUPPORT_VERSION_INFO not defined.\n",line.gettoken_str(0));
+      return PS_ERROR;
+#endif
 
     // end of instructions
     ///////////////////////////////////////////////////////////////////////////////

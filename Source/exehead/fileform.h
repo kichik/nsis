@@ -513,10 +513,15 @@ BOOL NSISCALL ReadSelfFile(LPVOID lpBuffer, DWORD nNumberOfBytesToRead);
 DWORD NSISCALL SetSelfFilePointer(LONG lDistanceToMove, DWORD dwMoveMethod);
 
 // $0..$9, $INSTDIR, etc are encoded as ASCII bytes starting from this value.
+// Added by ramon 3 jun 2003
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  #define VAR_CODES_START (256 - 38)
+#else
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   #define VAR_CODES_START (256 - 37)
 #else
   #define VAR_CODES_START (256 - 36)
+#endif
 #endif
 
 union installer_flags {

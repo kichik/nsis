@@ -11,6 +11,7 @@
 #include "ResourceEditor.h"
 #include "exehead/resource.h"
 #include "exehead/lang.h"
+#include "ResourceVersionInfo.h"
 
 void CEXEBuild::define(const char *p, const char *v)
 {
@@ -238,6 +239,12 @@ CEXEBuild::CEXEBuild()
   // Added by ramon 23 May 2003
   build_allowskipfiles=1;
 
+  // Added by ramon 6 jun 2003
+#ifdef NSIS_SUPPORT_VERSION_INFO
+  szVIProductVersion[0]=szVIProductName[0]=szVICompanyName[0]=0;
+  szVIComments[0]=szVILegalTrademarks[0]=szVILegalCopyrights[0]=szVIDescription[0]=0;
+#endif
+
   build_overwrite=0;
   build_compress=1;
   build_crcchk=1;
@@ -347,51 +354,51 @@ int CEXEBuild::add_intstring(const int i) // returns offset in stringblock
 // based on Dave Laundon's code
 int CEXEBuild::preprocess_string(char *out, const char *in)
 {
-  static const char VarNames[] =
-  "HWNDPARENT\0"    // 0
-  "0\0"             // 1
-  "1\0"             // 2
-  "2\0"             // 3
-  "3\0"             // 4
-  "4\0"             // 5
-  "5\0"             // 6
-  "6\0"             // 7
-  "7\0"             // 8
-  "8\0"             // 9
-  "9\0"             // 10
-  "R0\0"            // 11
-  "R1\0"            // 12
-  "R2\0"            // 13
-  "R3\0"            // 14
-  "R4\0"            // 15
-  "R5\0"            // 16
-  "R6\0"            // 17
-  "R7\0"            // 18
-  "R8\0"            // 19
-  "R9\0"            // 20
-  "CMDLINE\0"       // 21 everything before here doesn't have trailing slash removal
-
-  "INSTDIR\0"       // 22
-  "OUTDIR\0"        // 23
-  "EXEDIR\0"        // 24
-  "LANGUAGE\0"      // 25
-  "PLUGINSDIR\0"    // 26
-  "PROGRAMFILES\0"  // 27
-  "SMPROGRAMS\0"    // 28
-  "SMSTARTUP\0"     // 29
-  "DESKTOP\0"       // 30
-  "STARTMENU\0"     // 31
-  "QUICKLAUNCH\0"   // 32
-  "TEMP\0"          // 33
-  "WINDIR\0"        // 34
-  "SYSDIR\0"        // 35
-  ;
-
+    static const char VarNames[] =
+    "HWNDPARENT\0"    // 0
+    "0\0"             // 1
+    "1\0"             // 2
+    "2\0"             // 3
+    "3\0"             // 4
+    "4\0"             // 5
+    "5\0"             // 6
+    "6\0"             // 7
+    "7\0"             // 8
+    "8\0"             // 9
+    "9\0"             // 10
+    "R0\0"            // 11
+    "R1\0"            // 12
+    "R2\0"            // 13
+    "R3\0"            // 14
+    "R4\0"            // 15
+    "R5\0"            // 16
+    "R6\0"            // 17
+    "R7\0"            // 18
+    "R8\0"            // 19
+    "R9\0"            // 20
+    "CMDLINE\0"       // 21 everything before here doesn't have trailing slash removal
+    
+    "INSTDIR\0"       // 22
+    "OUTDIR\0"        // 23
+    "EXEDIR\0"        // 24
+    "LANGUAGE\0"      // 25
+    "PLUGINSDIR\0"    // 26
+    "PROGRAMFILES\0"  // 27
+    "SMPROGRAMS\0"    // 28
+    "SMSTARTUP\0"     // 29
+    "DESKTOP\0"       // 30
+    "STARTMENU\0"     // 31
+    "QUICKLAUNCH\0"   // 32
+    "TEMP\0"          // 33
+    "WINDIR\0"        // 34
+    "SYSDIR\0"        // 35
+    ;
+  
   const char *p=in;
   while (*p)
   {
     const char *np=CharNext(p);
-
+    
     if (np-p > 1) // multibyte char
     {
       int l=np-p;
@@ -405,11 +412,11 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
       }
       continue;
     }
-
+    
     int i = (unsigned char)*p;
-
+    
     p=np;
-
+    
     // Test for characters extending into the variable codes
     if (i >= VAR_CODES_START) {
       *out++ = (char)255;
@@ -423,26 +430,86 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
         const char *pVarName;
         for (
           pVarName = VarNames, i = VAR_CODES_START;
-          strncmp(pVarName, p, strlen(pVarName));
-          pVarName += strlen(pVarName) + 1, i++
-        );
+        strncmp(pVarName, p, strlen(pVarName));
+        pVarName += strlen(pVarName) + 1, i++
+          );
         // Found?
         if (*pVarName
 #ifndef NSIS_CONFIG_PLUGIN_SUPPORT
-            && i != VAR_CODES_START + 26
+          && i != VAR_CODES_START + USER_VARS_COUNT
 #endif
-           )
+          )
         {
           p += strlen(pVarName);
         }
         else  // warning should go here
         {
-          char tbuf[64];
-          strncpy(tbuf,p,63);
-          tbuf[63]=0;
-          if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
-          warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
-          i = '$';
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+          bool bProceced=false;
+          if ( *p == '[' )
+          {
+            char *pUserVarName = (char *)p+1;
+            while ( *pUserVarName )
+            {
+              if ( *pUserVarName == ']' )
+              {
+                *pUserVarName='\0';
+                int idxUserVar = m_UserVarNames.get((char*)p+1);
+                int varLen = strlen(p)+1;
+                *pUserVarName=']'; // restore
+                if ( idxUserVar >= 0 )
+                {
+                  *out++=(unsigned int)VAR_CODES_START + 36; // Named user variable;
+                  *(WORD*)out=((WORD)idxUserVar+USER_VARS_COUNT) | 0xF000;
+                  out += sizeof(WORD);
+                  p += varLen;                  
+                  bProceced = true;
+                  {
+                    for ( WORD i = 0; i < 0x0FFF; i++ )
+                    {
+                      WORD bb = i | 0xF000;
+                      WORD ok = bb & 0x0FFF;
+                      if ( ok != i )
+                      {
+                        warning("Problems with %d",i);
+                      }
+                    
+                    }                  
+                  }
+                }
+                break;
+              }
+              pUserVarName++;
+            }
+          }
+          if ( bProceced )
+            continue;
+          else
+#endif
+          {
+            char tbuf[64];
+            char cBracket = '\0';
+            if ( *p == '[' )
+              cBracket = ']';
+            else if ( *p == '(' )
+              cBracket = ')';
+            else if ( *p == '{' )
+              cBracket = '}';
+            
+            strncpy(tbuf,p,63);
+            tbuf[63]=0;
+            
+            if ( cBracket != 0 )
+            {
+              if (strchr(tbuf,cBracket)) (strchr(tbuf,cBracket)+1)[0]=0;
+            }
+            else
+            {
+              if (strstr(tbuf," ")) strstr(tbuf," ")[0]=0;
+            }
+            warning("unknown variable \"%s\" detected, ignoring (%s:%d)",tbuf,curfilename,linecnt);
+            i = '$';
+          }
         }
       }
     }
@@ -1201,6 +1268,76 @@ int CEXEBuild::resolve_coderefs(const char *str)
 
 int CEXEBuild::write_output(void)
 {
+#ifdef NSIS_SUPPORT_VERSION_INFO
+  CResourceVersionInfo ResourceVersionInfo;
+  GrowBuf VerInfoStream;  
+  bool bNeedVInfo = false;
+
+  ResourceVersionInfo.SetFileFlags(VS_FF_DEBUG);
+
+  if ( szVIProductVersion[0] ) {
+     ResourceVersionInfo.SetKeyValue("ProductVersion", szVIProductVersion);
+     ResourceVersionInfo.SetKeyValue("FileVersion", szVIProductVersion); // this is needed to explorer show version tab with some info
+     bNeedVInfo = true;
+  }
+
+  if ( szVIProductName[0] ) {
+     ResourceVersionInfo.SetKeyValue("ProductName", szVIProductName);
+     bNeedVInfo = true;
+  }
+
+  if ( szVICompanyName[0] ) {
+     ResourceVersionInfo.SetKeyValue("CompanyName", szVICompanyName);
+     bNeedVInfo = true;
+  }
+
+  if ( szVIComments[0] ) {
+     ResourceVersionInfo.SetKeyValue("Comments", szVIComments);
+     bNeedVInfo = true;
+  }
+
+  if ( szVILegalTrademarks[0] ) {
+     ResourceVersionInfo.SetKeyValue("LegalTrademarks", szVILegalTrademarks);
+     bNeedVInfo = true;
+  }
+  
+  if ( szVILegalCopyrights[0] ) {
+     ResourceVersionInfo.SetKeyValue("LegalCopyright", szVILegalCopyrights);
+     bNeedVInfo = true;
+  }
+
+  if ( szVIDescription[0] ) {
+     ResourceVersionInfo.SetKeyValue("FileDescription", szVIDescription);
+     bNeedVInfo = true;
+  }
+
+  if ( bNeedVInfo )
+  {
+    if ( !szVIProductVersion[0] )
+    { 
+      ERROR_MSG("Error: VIProductVersion is required when other version information functions are used.\n");
+      return PS_ERROR;
+    }
+    else
+    {
+      int imm, iml, ilm, ill;
+      if ( sscanf(szVIProductVersion, "%d.%d.%d.%d", &imm, &iml, &ilm, &ill) != 4 )
+      { 
+        ERROR_MSG("Error: invalid VIProductVersion format, should be X.X.X.X\n");
+        return PS_ERROR;
+      }
+      ResourceVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+      ResourceVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
+      ResourceVersionInfo.SetKeyValue("InternalName", build_output_filename);
+      ResourceVersionInfo.AddTranslation(0x0,0x0409);
+      ResourceVersionInfo.ExportToStream(VerInfoStream);
+      init_res_editor();
+      res_editor->UpdateResource(RT_VERSION, 1, 0, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+    }
+  }
+
+#endif // NSIS_SUPPORT_VERSION_INFO
+
 #ifndef NSIS_CONFIG_CRC_SUPPORT
   build_crcchk=0;
 #endif
@@ -2395,4 +2532,88 @@ void CEXEBuild::close_res_editor()
   header_data_new = res_editor->Save((DWORD&)exeheader_size_new);
   delete res_editor;
   res_editor=0;
+}
+
+// Added by ramon 3 jun 2003
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+int CEXEBuild::DeclaredUserVar(const char *szVarName)
+{
+	int idxUserVar = m_UserVarNames.get((char*)szVarName);
+	if ( idxUserVar > 0 )
+	{
+		ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
+		return PS_ERROR;	
+	}
+	const char *pVarName = szVarName;
+	int iVarLen = strlen(szVarName);
+
+	if ( iVarLen > 60 )
+	{
+		ERROR_MSG("Error: variable name too long!\n");
+		return PS_ERROR;
+	}
+	else if ( !iVarLen )
+	{
+		ERROR_MSG("Error: variable with empty name!\n");
+		return PS_ERROR;
+	}
+	else
+	{
+		while ( *pVarName )
+		{
+			if ((*pVarName < '0') || 
+				(*pVarName > '9' && *pVarName < 'A' ) || 
+				(*pVarName > 'Z' && *pVarName < 'a' && *pVarName != '_' ) ||  
+				(*pVarName > 'z') )
+			{
+				ERROR_MSG("Error: invalid charaters in variable name \"%s\"\n", szVarName);
+				return PS_ERROR;
+			}
+			pVarName++;
+		}
+	}
+
+	m_UserVarNames.add(szVarName);
+  if ( m_UserVarNames.getnum() > MAX_NAMED_USER_VARS )
+	{
+	  ERROR_MSG("Error: too many user variables declared!\n");
+    return PS_ERROR;
+  }
+	return PS_OK;
+}
+#endif
+
+int CEXEBuild::GetUserVarIndex(LineParser &line, int token)
+{
+  static const char *usrvars="$0\0$1\0$2\0$3\0$4\0$5\0$6\0$7\0$8\0$9\0"
+                             "$R0\0$R1\0$R2\0$R3\0$R4\0$R5\0$R6\0$R7\0$R8\0$R9\0"
+                             "$CMDLINE\0$INSTDIR\0$OUTDIR\0$EXEDIR\0$LANGUAGE\0";
+  int res = line.gettoken_enum(token, usrvars);
+// Added by ramon 3 jun 2003
+#ifdef NSIS_SUPPORT_NAMED_USERVARS
+  if ( res < 0 )
+  {
+    char *p = line.gettoken_str(token);
+    if ( *p == '$' && *(p+1) == '[' )
+    {
+      char *pUserVarName = (char *)p+2;
+      while ( *pUserVarName )
+      {
+        if ( *pUserVarName == ']' )
+        {
+          *pUserVarName='\0';
+          int idxUserVar = m_UserVarNames.get((char*)p+2);
+          *pUserVarName=']'; // restore
+          if ( idxUserVar >= 0 )
+          {
+            res=idxUserVar+USER_VARS_COUNT; // User named variable;
+          }
+          break;
+        }
+        pUserVarName++;
+      }
+    }
+  }
+#endif
+  return res;
 }

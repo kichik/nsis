@@ -4,24 +4,32 @@
 class LineParser {
   public:
 
-    LineParser()
+    LineParser(bool bCommentBlock)
     {
+      m_bCommentBlock=bCommentBlock;
       m_nt=m_eat=0;
       m_tokens=0;
     }
-
+    
     ~LineParser()
     {
       freetokens();
     }
-
+    
+    bool InCommentBlock()
+    {
+      return m_bCommentBlock;
+    }
+    
     int parse(char *line, int ignore_escaping=0) // returns -1 on error
     {
       freetokens();
+      bool bPrevCB=m_bCommentBlock;
       int n=doline(line, ignore_escaping);
       if (n) return n;
       if (m_nt) 
       {
+        m_bCommentBlock=bPrevCB;
         m_tokens=(char**)malloc(sizeof(char*)*m_nt);
         n=doline(line, ignore_escaping);
         if (n) 
@@ -107,11 +115,30 @@ class LineParser {
     int doline(char *line, int ignore_escaping=0)
     {
       m_nt=0;
+      if ( m_bCommentBlock )
+      {
+        while ( *line )
+        {
+          if ( *line == '*' && *(line+1) == '/' )
+          {
+            m_bCommentBlock=false; // Found end of comment block
+            line+=2;
+            break;
+          }
+          line++;
+        }
+      }
       while (*line == ' ' || *line == '\t') line++;
       while (*line) 
       {
         int lstate=0; // 1=", 2=`, 4='
         if (*line == ';' || *line == '#') break;
+        if (*line == '/' && *(line+1) == '*')
+        {
+          m_bCommentBlock = true;
+          line+=2;
+          return doline(line, ignore_escaping);
+        }
         if (*line == '\"') lstate=1;
         else if (*line == '\'') lstate=2;
         else if (*line == '`') lstate=4;
@@ -167,6 +194,7 @@ class LineParser {
     
     int m_eat;
     int m_nt;
+    bool m_bCommentBlock;
     char **m_tokens;
 };
 #endif//_LINEPARSE_H_

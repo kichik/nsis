@@ -226,7 +226,17 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_PLUGINDIR,"!AddPluginDir",1,0,"new_plugin_directory"},
 {TOK_INITPLUGINSDIR,"InitPluginsDir",0,0,""},
 // Added by ramon 23 May 2003
-{TOK_ALLOWSKIPFILES,"AllowSkipFiles",1,0,"(off|on)"}
+{TOK_ALLOWSKIPFILES,"AllowSkipFiles",1,0,"(off|on)"},
+// Added by ramon 3 jun 2003
+{TOK_DEFVAR,"dim",1,0,"VarName"},
+// Added by ramon 6 jun 2003
+{TOK_VI_PRODUCTVERSION,"VIProductVersion", 1, 0, "product version"},
+{TOK_VI_PRODUCTNAME,"VIProductName", 1, 0, "product name"},
+{TOK_VI_COMPANY,"VICompanyName", 1, 0, "company name"},
+{TOK_VI_COMMENTS,"VIComments", 1, 0, "comments"},
+{TOK_VI_LEGALTRADEMARKS,"VILegalTrademarks", 1, 0, "legal trademarks"},
+{TOK_VI_LEGALCOPYRIGHTS,"VILegalCopyrights", 1, 0, "legal copyrights"},
+{TOK_VI_DESCRIPTION, "VIDescription", 1, 0, "description text"},
 };
 
 void CEXEBuild::print_help(char *commandname)
