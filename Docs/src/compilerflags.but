@@ -24,7 +24,7 @@ Note that this option has no effect when solid compression is used, which is ena
 
 \S2{asetcompressor} SetCompressor
 
-\c \\<b\\>zlib\\</b\\>|bzip2|lzma
+\c [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
 
 This command sets the compression algorithm used to compress files/data in the installer.
 
@@ -35,6 +35,8 @@ ZLIB (the default) uses the deflate algorithm, it is a quick and simple method. 
 BZIP2 usually gives better compression ratios than ZLIB, but it is a bit slower and uses more memory. With the default compression level it uses about 4 MB of memory.
 
 LZMA is a new compression method that gives very good compression ratios. The decompression speed is high (10-20 MB/s on a 2 GHz CPU), the compression speed is lower. The memory size that will be used for decompression is the dictionary size plus a few KBs, the default is 8 MB.
+
+If \e{/FINAL} is used, subsequent calls to SetCompressor will be ignored.
 
 \S2{asetcompressordictsize} SetCompressorDictSize
 
