@@ -270,35 +270,15 @@
 
 !macro MUI_FINISHHEADER
 
-  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
-    !verbose 3
+  !ifndef MUI_FINISHPAGE && MUI_FINISHPAGE_NOAUTOCLOSE
+    !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
   !endif
-
-  ;Finish text on the header (white rectangle)
-  !insertmacro MUI_HEADER_TEXT $(MUI_TEXT_FINISH_TITLE) $(MUI_TEXT_FINISH_SUBTITLE)
-
-  !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
-
+  
 !macroend
 
 !macro MUI_UNFINISHHEADER
-
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
   
-  !define MUI_NOVERBOSE
-  
-  ;Finish text on the header (white rectangle)
   !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_FINISHED_TITLE) $(un.MUI_UNTEXT_FINISHED_SUBTITLE)
-
-  !undef MUI_NOVERBOSE
-
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
 
 !macroend
 
@@ -483,7 +463,6 @@
     Abort
     
   !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
-    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
     langdll_done:
   !endif
     
@@ -491,6 +470,14 @@
     !verbose 4
   !endif
     
+!macroend
+
+!macro MUI_LANGDLL_SAVELANGUAGE
+
+  !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
+    WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
+  !endif
+  
 !macroend
 
 ;--------------------------------
@@ -833,24 +820,8 @@
 
 !macro MUI_SECTIONS_FINISHHEADER
 
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 3
-  !endif
-  
-  !define MUI_NOVERBOSE
-
-  Section ""
-
-    ;Invisible section to display the Finish header
-    !insertmacro MUI_FINISHHEADER
-
-  SectionEnd
-  
-  !undef MUI_NOVERBOSE
-  
-  !ifndef MUI_MANUALVERBOSE
-    !verbose 4
-  !endif
+  ;1.63 compatibility
+  !error "Remove '!insertmacro MUI_SECTIONS_FINISHHEADER' from your script."
   
 !macroend
 
@@ -1168,6 +1139,10 @@
     !ifdef MUI_CUSTOMFUNCTION_INSTFILES_LEAVE
       Call "${MUI_CUSTOMFUNCTION_INSTFILES_LEAVE}"
     !endif
+      
+    !insertmacro MUI_FINISHHEADER
+    !insertmacro MUI_LANGDLL_SAVELANGUAGE
+    
   FunctionEnd
 
   !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
@@ -1534,10 +1509,10 @@
   !endif
 
   Function "${PRE}"
-    !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_INTRO_TITLE) $(un.MUI_UNTEXT_INTRO_SUBTITLE)
     !ifdef MUI_UNCUSTOMFUNCTION_CONFIRM_PRE
       Call "${MUI_UNCUSTOMFUNCTION_CONFIRM_PRE}"
     !endif
+    !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_INTRO_TITLE) $(un.MUI_UNTEXT_INTRO_SUBTITLE)
   FunctionEnd
   
   Function "${SHOW}"
@@ -1565,10 +1540,10 @@
   !endif
 
   Function ${PRE}
-    !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_UNINSTALLING_TITLE) $(un.MUI_UNTEXT_UNINSTALLING_SUBTITLE)
     !ifdef MUI_UNCUSTOMFUNCTION_INSTFILES_PRE
       Call "${MUI_UNCUSTOMFUNCTION_INSTFILES_PRE}"
     !endif
+    !insertmacro MUI_HEADER_TEXT $(un.MUI_UNTEXT_UNINSTALLING_TITLE) $(un.MUI_UNTEXT_UNINSTALLING_SUBTITLE)
   FunctionEnd
 
   Function "${SHOW}"
@@ -1581,6 +1556,7 @@
     !ifdef MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
       Call "${MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE}"
     !endif
+    !insertmacro MUI_UNFINISHHEADER
   FunctionEnd
   
   !ifndef MUI_NOVERBOSE && MUI_MANUALVERBOSE
@@ -1934,8 +1910,10 @@
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_TITLE"
   !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_INSTALLING_SUBTITLE"
   
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
-  !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
+  !ifndef MUI_FINISHPAGE && MUI_FINISHPAGE_NOAUTOCLOSE
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_TITLE"
+    !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_FINISH_SUBTITLE"
+  !endif
   
   !ifdef MUI_FINISHPAGE
     !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER "MiscButtonText" "MUI_TEXT_FINISH_BUTTON" '"" "" "" "${MUI_TEXT_FINISH_BUTTON}"'

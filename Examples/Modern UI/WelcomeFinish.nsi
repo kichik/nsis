@@ -96,6 +96,4 @@ Section "Uninstall"
 
   DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
 
-  !insertmacro MUI_UNFINISHHEADER
-
 SectionEnd
