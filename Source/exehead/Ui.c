@@ -303,6 +303,20 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   set_language();
 #endif
 
+  {
+    section *sec = g_sections;
+    int x = num_sections;
+
+    while (x--)
+    {
+      if (sec->name_ptr)
+      {
+        GetNSISString(sec->name, sec->name_ptr);
+      }
+      sec++;
+    }
+  }
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
 
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
@@ -951,22 +965,31 @@ static void NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *items)
 {
   TVITEM item;
   int i, flags, state;
+  section *sec;
 
-  item.mask = TVIF_STATE;
   item.stateMask = TVIS_STATEIMAGEMASK | TVIS_EXPANDED | TVIS_BOLD;
 
-  for (i = 0; i < num_sections; i++)
+  for (i = 0, sec = g_sections; i < num_sections; i++, sec++)
   {
     if (!items[i])
     {
       continue;
     }
 
-    flags = g_sections[i].flags;
+    flags = sec->flags;
 
     item.hItem = items[i];
+
+    item.mask = TVIF_STATE;
     item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
     item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
+
+    if (flags & SF_NAMECHG)
+    {
+      item.mask |= TVIF_TEXT;
+      item.pszText = sec->name;
+      sec->flags &= ~SF_NAMECHG;
+    }
 
     if (flags & SF_PSELECTED)
     {
@@ -1111,7 +1134,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       section *sec=sections+x;
 
-      if (sec->name_ptr)
+      if (sec->name[0])
       {
         TVINSERTSTRUCT tv;
 
@@ -1120,7 +1143,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         tv.item.mask = TVIF_PARAM | TVIF_TEXT | TVIF_STATE;
         tv.item.stateMask = TVIS_EXPANDED;
         tv.item.lParam = x;
-        tv.item.pszText = GetNSISStringTT(sec->name_ptr);
+        tv.item.pszText = sec->name;
 
         tv.item.state = sec->flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
 
@@ -1163,22 +1186,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     wParam = 0;
     lParam = 1;
     uMsg = WM_IN_UPDATEMSG;
-  }
-
-  if (uMsg == WM_NOTIFY_SECTEXT) // update text
-  {
-    int x = wParam;
-    int ns = lParam;
-    TVITEM tv;
-
-    tv.hItem = hTreeItems[x];
-
-    if (tv.hItem)
-    {
-      tv.mask = TVIF_TEXT;
-      tv.pszText = GetNSISStringTT(ns);
-      TreeView_SetItem(hwndTree1, &tv);
-    }
   }
 
   if (uMsg == WM_NOTIFY || uMsg == WM_TREEVIEW_KEYHACK)
@@ -1403,7 +1410,7 @@ static DWORD WINAPI install_thread(LPVOID p)
     if (s->flags&SF_SELECTED)
 #endif
     {
-      log_printf2("Section: \"%s\"",GetNSISStringTT(s->name_ptr));
+      log_printf2("Section: \"%s\"",s->name);
       if (ExecuteCodeSegment(s->code,progresswnd))
       {
         g_exec_flags.abort++;
@@ -1413,7 +1420,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_COMPONENTPAGE
     else
     {
-      log_printf2("Skipping section: \"%s\"",GetNSISStringTT(s->name_ptr));
+      log_printf2("Skipping section: \"%s\"",name);
     }
 #endif
     s++;
