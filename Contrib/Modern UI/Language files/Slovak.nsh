@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Slovak (1051)
 ;By Kypec (peter.kysucky@mahe.sk)
@@ -39,7 +39,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "DokonËenie inötal·cie"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "Inötal·cia prebehla v poriadku."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": dokonËenÈ"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&DokonËiù"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "DokonËenie sprievodcu inötal·cie programu ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "Pr·ve ste nainötalovali program ${MUI_PRODUCT} do svojho systÈmu.\r\nKliknite na DokonËiù pre uzavretie tohto sprievodcu."
@@ -49,7 +48,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Spustiù ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Uk·zaù »Ìtaj-ma"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Ponuka ätart"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Voæba umiestnenia v ponuke ätart"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Zvoæte poloûku v ponuke ätart pre umiestnenie z·stupcov programu."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Vyberte poloûku v ponuke ätart, v ktorej chcete vytvoriù z·stupcov programu. Pokiaæ zad·te neexistuj˙cu poloûku, bude vytvoren· nov· s Vami zadan˝m menom."

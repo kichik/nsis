@@ -4,7 +4,8 @@ NSIS Modern User Interface - VERSION HISTORY
 * Support for a bitmap in the wizard header
 * New defines to change the description area
 * MUI_SYSTEM inserted automatically
-* Easier to customize resouce files
+* Removed page description in window title
+* Easier to customize resource files
 * New system for custom functions
 * New InstallOptions macro's that do not remove the return value from
   the stack

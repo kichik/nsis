@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Thai (1054)
 ;By TuW@nNu tuwannu@hotmail.com (asdfuae)
@@ -39,7 +39,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "ติดตั้งเรียบร้อย"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "การติดตั้งเสร็จสมบูรณ์แล้ว"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": กำลังติดตั้ง"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&เสร็จสิ้น"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "กำลังดำเนินการเรียกโปรแกรมติดตั้ง ${MUI_PRODUCT} "
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} ถูกติดตั้งเรียบร้อยแล้ว\r\n\r\nคลิ๊กปุ่ม เสร็จสิ้น เพื่อออกจากโปรแกรม"
@@ -49,7 +48,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "เปิดโปรแกรม ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "อ่าน Readme"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": โฟลเดอร์ Start เมนู"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "เลือกโฟลเอร์ Start เมนู"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "เลือกโฟลเดอร์ Start เมนูที่ต้องการให้ทางลัดของโปรแกรมนี้ไปอยู่"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "เลือกเมนู Start ที่คุณต้องการให้ทางลัดของโปรแกรมไปอยู่ หรือสร้างโฟลเดอร์ขึ้นมาใหม่"

@@ -1,5 +1,5 @@
 ;NSIS Modern User Interface - Turkish Language File
-;Compatible with Modern UI 1.62
+;Compatible with Modern UI 1.63
 
 ;Language: Turkish (1055)
 ;By Bertan Kodamanoglu (astoichen@soultrap.com)
@@ -37,7 +37,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_TITLE "Kurulum Tamamlandý!"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SUBTITLE "${MUI_PRODUCT} kurulumu sorunsuz bir þekilde sonlandý."
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_WINDOWTITLE ": Tamamlanýyor"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_BUTTON "&Bitir"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TITLE "${MUI_PRODUCT} Kurulumu Tamamlanýyor"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_INFO_TEXT "${MUI_PRODUCT} baþarýyla bilgisayarýnýza yüklendi.\r\n\r\nLütfen 'Bitir'e basarak kurulumu sonlandýrýn."
@@ -47,7 +46,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_RUN "Programý çalýþtýr"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISH_SHOWREADME "Yardým dosyasýný göster"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_WINDOWTITLE ": Baþlat menüsü"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_TITLE "Baþlat menüsü klasörü seçimi"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Programýn kýsayollarýnýn konulacaðý baþlat menüsü klasörünü seçimi"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU_TOP "Programýn kýsayollarýnýn konulacaðý baþlat menüsü klasörü seçin. Ayný zamanda farklý bir isim girerek yeni bir klasör yaratabilirsiniz."
