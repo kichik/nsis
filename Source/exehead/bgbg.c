@@ -49,7 +49,7 @@ static LRESULT CALLBACK BG_WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
             SetBkMode(hdc,TRANSPARENT);
             SetTextColor(hdc,m_textcolor);
             oldFont = SelectObject(hdc,newFont);
-            DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE);
+            DrawText(hdc,buf,-1,&r,DT_TOP|DT_LEFT|DT_SINGLELINE|DT_NOPREFIX);
             SelectObject(hdc,oldFont);
             DeleteObject(newFont);
           }
