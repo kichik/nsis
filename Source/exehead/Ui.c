@@ -512,7 +512,7 @@ skipPage:
     if (!ui_dlg_visible && m_curwnd)
     {
       ShowWindow(hwndDlg, SW_SHOW);
-      ui_dlg_visible = TRUE;
+      ui_dlg_visible = 1;
     }
 
     if (bNextPage)
