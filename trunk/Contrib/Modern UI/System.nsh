@@ -18,28 +18,58 @@
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
 
-!macro MUI_INTERFACE UI ICON UNICON CHECKS PROGRESSBAR FONT CURRENTPAGEVAR
+!macro MUI_INTERFACE
 
   ;User interface
   
-  !ifndef MUI_ICONPATH
-    !define MUI_ICONPATH "${NSISDIR}\Contrib\Icons\"
+  !ifndef MUI_ICON
+    !define MUI_ICON "${NSISDIR}\Contrib\Icons\modern-install.ico"
   !endif
   
-  !ifndef MUI_UIPATH
-    !define MUI_UIPATH "${NSISDIR}\Contrib\UIs\"
+  !ifndef MUI_UNICON
+    !define MUI_UNICON "${NSISDIR}\Contrib\Icons\modern-uninstall.ico"
   !endif
   
-  Icon "${MUI_ICONPATH}${ICON}"
-  UninstallIcon "${MUI_ICONPATH}${UNICON}"
+  !ifndef MUI_CHECKBITMAP
+    !define MUI_CHECKBITMAP "${NSISDIR}\Contrib\Icons\modern.bmp"
+  !endif
+  
+  !ifndef MUI_UI
+    !define MUI_UI "${NSISDIR}\Contrib\UIs\modern.exe"
+  !endif
+  
+  !ifndef MUI_FONT
+    !define MUI_FONT "Tahoma"
+  !endif
+  
+  !ifndef MUI_INSTALLCOLORS
+    !define MUI_INSTALLCOLORS "/windows"
+  !endif
+  
+  !ifndef MUI_PROGRESSBAR
+    !define MUI_PROGRESSBAR "smooth"
+  !endif
+  
+  !ifndef MUI_BRANDINGTEXT
+    !define MUI_BRANDINGTEXT "" ;Default value
+  !endif
+  
+  !ifndef MUI_CURRENTPAGEVAR
+    !define MUI_CURRENTPAGEVAR "$9"
+  !endif
+  
   XPStyle On
-  ChangeUI all "${MUI_UIPATH}${UI}"
-  SetFont "${FONT}" 8
-  CheckBitmap "${MUI_ICONPATH}${CHECKS}"
-  InstallColors /windows
-  InstProgressFlags "${PROGRESSBAR}"
-  BrandingText /TRIMRIGHT
-  !define CURRENTPAGE ${CURRENTPAGEVAR}
+
+  Icon "${MUI_ICON}"
+  UninstallIcon "${MUI_UNICON}"
+  CheckBitmap "${MUI_CHECKBITMAP}"
+  ChangeUI all "${MUI_UI}"
+  SetFont "${MUI_FONT}" 8
+  InstallColors "${MUI_INSTALLCOLORS}"
+  InstProgressFlags "${MUI_PROGRESSBAR}"
+  BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
+  
+  !define CURRENTPAGE ${MUI_CURRENTPAGEVAR}
 
 !macroend
 
