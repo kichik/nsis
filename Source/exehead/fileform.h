@@ -15,6 +15,7 @@
 //     uninstall_header (~116 bytes)
 //   entries (24 bytes each)
 //   string table
+//   language tables
 // datablock
 // (hdrinfo+datablock is at least 512 bytes if CRC enabled)
 // CRC (optional - 4 bytes)
@@ -273,16 +274,13 @@ typedef struct
   int output_dir;
   int create_dir;
   int copy_details;
-
-  // Note - should be at the end (everything before here should be just ints)
-  WORD lang_id;
-
 } common_strings;
 
 // Settings common to both installers and uninstallers
 typedef struct
 {
   int str_tables_num; // number of strings tables in array
+  int language_table_size; // size of each language table
 
   int num_entries; // total number of entries
   int num_string_bytes; // total number of bytes taken by strings
@@ -311,12 +309,6 @@ typedef struct
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   // additional flags
   char misc_flags; // auto_close=&1, no_show_dirpage=&2, no_show_icon&4, no_rootdir&8;
-
-  // Added by Amir Szekely 6th August 2002
-  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
-  /* Useless
-  WORD intro_text_id;*/
-
 } common_header;
 
 // Strings specific to installers
@@ -388,18 +380,6 @@ typedef struct
   int code_onSelChange;
 #endif//NSIS_CONFIG_COMPONENTPAGE
 #endif//NSIS_SUPPORT_CODECALLBACKS
-
-  // Added by Amir Szekely 6th August 2002
-  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
-  /*
-  Useless
-
-  WORD space_avail_id;
-  WORD space_req_id;
-  WORD dir_subtext_id;
-  WORD com_subtext1_id;
-  WORD com_subtext2_id;*/
-
 } header;
 
 // Strings specific to uninstallers
@@ -419,12 +399,6 @@ typedef struct
 
   int code;
   int code_size;
-
-  // Added by Amir Szekely 6th August 2002
-  // Adds the ability to make the inner text show up in a dialog item in the outer dialog.
-  /* Useless
-  WORD uninst_subtext_id;*/
-
 } uninstall_header;
 
 typedef struct

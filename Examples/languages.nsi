@@ -23,6 +23,8 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\TradChinese.nlf"
 Name "Traditional Chinese"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\SimpChinese.nlf"
 Name "Simplified Chinese"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\Slovak.nlf"
+Name Slovak
 
 ; The language can be the last used language like above, but it can be defined using /LANG
 ComponentText /LANG=${LANG_ENGLISH} "English component page"
@@ -35,14 +37,38 @@ ComponentText /LANG=${LANG_SPANISH} "Spanish component page"
 ComponentText /LANG=${LANG_SWEDISH} "Swedish component page"
 ComponentText /LANG=${LANG_TRADCHINESE} "Traditional Chinese component page"
 ComponentText /LANG=${LANG_SIMPCHINESE} "Simplified Chinese component page"
+ComponentText /LANG=${LANG_SLOVAK} "Slovak component page"
+
+LangString Sec1Name ${LANG_ENGLISH} "!English section #1"
+LangString Sec1Name ${LANG_DUTCH} "!Dutch section #1"
+LangString Sec1Name ${LANG_FRENCH} "!French section #1"
+LangString Sec1Name ${LANG_GERMAN} "!German section #1"
+LangString Sec1Name ${LANG_KOREAN} "!Korean section #1"
+LangString Sec1Name ${LANG_RUSSIAN} "!Russian section #1"
+LangString Sec1Name ${LANG_SPANISH} "!Spanish section #1"
+LangString Sec1Name ${LANG_SWEDISH} "!Swedish section #1"
+LangString Sec1Name ${LANG_TRADCHINESE} "!Trandional Chinese section #1"
+LangString Sec1Name ${LANG_SIMPCHINESE} "!Simplified Chinese section #1"
+LangString Sec1Name ${LANG_SLOVAK} "!Slovak section #1"
+
+LangString Message ${LANG_ENGLISH} "English message"
+LangString Message ${LANG_DUTCH} "Dutch message"
+LangString Message ${LANG_FRENCH} "French message"
+LangString Message ${LANG_GERMAN} "German message"
+LangString Message ${LANG_KOREAN} "Korean message"
+LangString Message ${LANG_RUSSIAN} "Russian message"
+LangString Message ${LANG_SPANISH} "Spanish message"
+LangString Message ${LANG_SWEDISH} "Swedish message"
+LangString Message ${LANG_TRADCHINESE} "Trandional Chinese message"
+LangString Message ${LANG_SIMPCHINESE} "Simplified Chinese message"
+LangString Message ${LANG_SLOVAK} "Slovak message"
 
 ; scetion names will be given in .onInit to match the language choosen by the user
-Section " " sec1
-	; $0 is already set from .onInit
-	MessageBox MB_OK "$0 section"
+Section $(Sec1Name) sec1
+	MessageBox MB_OK $(Message)
 SectionEnd
 
-Section " " sec2
+Section "Section number two"
 	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
 		MessageBox MB_OK "Installing English stuff"
 	StrCmp $LANGUAGE ${LANG_DUTCH} 0 +2
@@ -63,6 +89,8 @@ Section " " sec2
 		MessageBox MB_OK "Installing Traditional Chinese stuff"
 	StrCmp $LANGUAGE ${LANG_SIMPCHINESE} 0 +2
 		MessageBox MB_OK "Installing Simplified Chinese stuff"
+	StrCmp $LANGUAGE ${LANG_SLOVAK} 0 +2
+		MessageBox MB_OK "Installing Slovak stuff"
 SectionEnd
 
 Function .onInit
@@ -86,35 +114,12 @@ Function .onInit
 	Push "Traditional Chinese"
 	Push ${LANG_SIMPCHINESE}
 	Push "Simplified Chinese"
-	Push 10 ; 10 is the number of languages
+	Push ${LANG_SLOVAK}
+	Push Slovak
+	Push 11 ; 11 is the number of languages
 	LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
 
 	Pop $LANGUAGE
 	StrCmp $LANGUAGE "cancel" 0 +2
 		Abort
-
-	StrCmp $LANGUAGE ${LANG_ENGLISH} 0 +2
-		StrCpy $0 "English"
-	StrCmp $LANGUAGE ${LANG_DUTCH} 0 +2
-		StrCpy $0 "Dutch"
-	StrCmp $LANGUAGE ${LANG_FRENCH} 0 +2
-		StrCpy $0 "French"
-	StrCmp $LANGUAGE ${LANG_GERMAN} 0 +2
-		StrCpy $0 "German"
-	StrCmp $LANGUAGE ${LANG_KOREAN} 0 +2
-		StrCpy $0 "Korean"
-	StrCmp $LANGUAGE ${LANG_RUSSIAN} 0 +2
-		StrCpy $0 "Russian"
-	StrCmp $LANGUAGE ${LANG_SPANISH} 0 +2
-		StrCpy $0 "Spanish"
-	StrCmp $LANGUAGE ${LANG_SWEDISH} 0 +2
-		StrCpy $0 "Swedish"
-	StrCmp $LANGUAGE ${LANG_TRADCHINESE} 0 +2
-		StrCpy $0 "Traditional Chinese"
-	StrCmp $LANGUAGE ${LANG_SIMPCHINESE} 0 +2
-		StrCpy $0 "Simplified Chinese"
-
-	; Set the section name to something localized
-	SectionSetText ${sec1} "!$0 section #1"
-	SectionSetText ${sec2} "$0 section #2"
 FunctionEnd

@@ -42,10 +42,10 @@ HICON g_hIcon;
 static char gDontFookWithFocus = 0;
 
 // Added by Amir Szekely 3rd August 2002
-common_strings *common_strings_tables;
+char *language_tables;
 common_strings *cur_common_strings_table;
-char *install_strings_tables; // installer_strings/uninstall_strings depending on installer type
-char *cur_install_strings_table;
+char *cur_install_strings_table; // installer_strings/uninstall_strings depending on installer type
+int *cur_user_strings_table;
 
 int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
@@ -252,26 +252,32 @@ static void NSISCALL set_language()
   int i;
   LANGID lang_mask=~(LANGID)0;
   LANGID lang=myatoi(state_language);
+  char *language_table=0;
 
 lang_again:
   for (i = 0; i < lang_num; i++) {
-    if (!((lang ^ common_strings_tables[i].lang_id) & lang_mask)) {
-      cur_common_strings_table=common_strings_tables+i;
+    language_table=language_tables+i*g_inst_cmnheader->language_table_size;
+    if (!((lang ^ *(LANGID*)language_table) & lang_mask)) {
+      cur_common_strings_table=(common_strings*)(language_table+sizeof(LANGID));
+      cur_install_strings_table=(void*)(cur_common_strings_table+1);
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
       if (g_is_uninstaller)
-        (uninstall_strings *)cur_install_strings_table=(uninstall_strings *)install_strings_tables+i;
+        cur_user_strings_table=(int*)((uninstall_strings*)cur_install_strings_table+1);
       else
 #endif
-        (installer_strings *)cur_install_strings_table=(installer_strings *)install_strings_tables+i;
+        cur_user_strings_table=(int*)((installer_strings*)cur_install_strings_table+1);
       break;
     }
   }
-  if ((i == lang_num) && (lang_mask == ~(LANGID)0)) {
-    lang_mask=0x3ff; // primary lang
+  if (i == lang_num) {
+    if (lang_mask == ~(LANGID)0)
+      lang_mask=0x3ff; // primary lang
+    else // we already tried once and we still don't have a language table
+      lang_mask=0; // first lang
     goto lang_again;
   }
 
-  myitoa(state_language, cur_common_strings_table->lang_id);
+  myitoa(state_language, *(LANGID*)language_table);
 
   SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_from_lang(g_caption,LANGID_CAPTION));
 }
@@ -290,7 +296,7 @@ int NSISCALL ui_doinstall(void)
 #endif
     if (!is_valid_instpath(state_install_directory))
     {
-      if (g_inst_header->install_reg_key_ptr>=0)
+      if (g_inst_header->install_reg_key_ptr)
       {
         myRegGetStr((HKEY)g_inst_header->install_reg_rootkey,
           GetStringFromStringTab(g_inst_header->install_reg_key_ptr),
@@ -347,10 +353,7 @@ int NSISCALL ui_doinstall(void)
   {
     extern char *g_db_strtab;
     lang_num=g_inst_cmnheader->str_tables_num;
-    cur_common_strings_table=common_strings_tables=
-      (common_strings*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
-    cur_install_strings_table=install_strings_tables=
-      (char*)((unsigned long)common_strings_tables+lang_num*sizeof(common_strings));
+    language_tables=(void*)(g_db_strtab+g_inst_cmnheader->num_string_bytes);
 
     myitoa(state_language, GetUserDefaultLangID());
     set_language();
@@ -492,19 +495,19 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
     if (g_is_uninstaller)
     {
-      islp = (LANG_UNINST_TEXT>=0);
+      islp = (LANG_UNINST_TEXT>0);
       iscp++;
     }
     else
 #endif//NSIS_CONFIG_UNINSTALL_SUPPORT
     {
 #ifdef NSIS_CONFIG_LICENSEPAGE
-      islp = (LANG_LICENSE_DATA>=0);
+      islp = (LANG_LICENSE_DATA>0);
 #endif//NSIS_CONFIG_LICENSEPAGE
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      iscp = (LANG_COMP_TEXT>=0);
+      iscp = (LANG_COMP_TEXT>0);
 #endif//NSIS_CONFIG_COMPONENTPAGE
-      ispotentiallydp = (LANG_DIR_TEXT>=0);
+      ispotentiallydp = (LANG_DIR_TEXT>0);
       if (ispotentiallydp &&
           !((g_inst_cmnheader->misc_flags&2) &&
             is_valid_instpath(state_install_directory)
@@ -859,7 +862,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     // Added by Amir Szekely 24th July 2002
     // Allows 'SpaceTexts none'
-    if (LANG_SPACE_REQ >= 0) {
+    if (LANG_SPACE_REQ) {
       inttosizestr(total,mystrcpy(s,STR(LANG_SPACE_REQ)));
       SetUITextNT(IDC_SPACEREQUIRED,s);
       if (available != -1)
@@ -979,14 +982,14 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     DeleteObject(hBMcheck1);
 
-    if (g_inst_header->install_types_ptr[0]<0)
+    if (!g_inst_header->install_types_ptr[0])
     {
       ShowWindow(hwndCombo1,SW_HIDE);
     }
     else
     {
       for (m_num_insttypes = 0; m_num_insttypes < NSIS_MAX_INST_TYPES &&
-           g_inst_header->install_types_ptr[m_num_insttypes]>=0; m_num_insttypes ++)
+           g_inst_header->install_types_ptr[m_num_insttypes]; m_num_insttypes ++)
       {
         SendMessage(hwndCombo1,CB_ADDSTRING,0,(LPARAM)GetStringFromStringTab(g_inst_header->install_types_ptr[m_num_insttypes]));
       }
@@ -998,7 +1001,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     for (x = 0; x < num_sections; x ++)
     {
-      if (g_inst_section[x].name_ptr>=0)
+      if (g_inst_section[x].name_ptr)
       {
         TVINSERTSTRUCT tv;
         tv.hParent=Par;
@@ -1038,7 +1041,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
             tv.item.pszText++;
             tv.item.mask|=TVIF_CHILDREN;
             tv.item.cChildren=1;
-            if (g_inst_section[x].name_ptr>=0 && g_inst_section[x].expand)
+            if (g_inst_section[x].name_ptr && g_inst_section[x].expand)
               tv.item.state|=TVIS_EXPANDED;
             Par = hTreeItems[x] = TreeView_InsertItem(hwndTree1,&tv);
             doLines=1;
@@ -1074,7 +1077,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int x=wParam;
     int ns=lParam;
 
-    if (g_inst_section[x].name_ptr>=0 && ns >= 0)
+    if (g_inst_section[x].name_ptr && ns >= 0)
     {
       TVITEM tv;
       tv.hItem=hTreeItems[x];
@@ -1200,7 +1203,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           HTREEITEM *ht=hTreeItems;
           while (x--)
           {
-            if (t->name_ptr>=0 && !(t->default_state & DFS_RO))
+            if (t->name_ptr && !(t->default_state & DFS_RO))
             {
               TVITEM tv;
               int l=1;
@@ -1248,7 +1251,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       ShowWindow(GetUIItem(IDC_TEXT2),c);
     }
 
-    if (LANG_SPACE_REQ >= 0) {
+    if (LANG_SPACE_REQ) {
       int x,total;
       char s[128];
       for (total=x=0; x < num_sections; x ++)

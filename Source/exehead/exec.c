@@ -569,7 +569,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         char *p=var0;
         char *buf0=process_string_fromparm_tobuf(0x01);
         *p=0;
-        if (parm2 < 0 || newlen)
+        if (!parm2 || newlen)
         {
           l=mystrlen(buf0);
 
@@ -737,7 +737,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           v=(int)FindWindowEx((HWND)b3,(HWND)b4,buf0[0]?buf0:NULL,buf1[0]?buf1:NULL);
         }
 
-        if (parm0>=0)
+        if (parm0)
           myitoa(var0,v);
       }
     return 0;
@@ -928,7 +928,13 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             if (funke)
             {
               exec_errorflag--;
-              if (parm2<0)
+              if (parm2)
+              {
+                char *buf2=process_string_fromparm_tobuf(0x22);
+                update_status_text(buf2,buf0);
+                funke();
+              }
+              else
               {
                 void (*func)(HWND,int,char*,void*);
                 func=(void*)funke;
@@ -938,12 +944,6 @@ static int NSISCALL ExecuteEntry(entry *entry_)
 #else
                 NULL);
 #endif
-              }
-              else
-              {
-                char *buf2=process_string_fromparm_tobuf(0x22);
-                update_status_text(buf2,buf0);
-                funke();
               }
             }
             else
@@ -1107,11 +1107,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         mystrcpy(buf1,"<RM>");
         mystrcpy(buf2,buf1);
 #endif
-        if (parm1>=0)
+        if (parm1)
         {
           sec=process_string_fromparm_tobuf(0x11);
         }
-        if (parm2>=0)
+        if (parm2)
         {
           ent=process_string_fromparm_tobuf(0x22);
         }
@@ -1142,7 +1142,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rootkey=parm0;
         char *buf3=process_string_fromparm_tobuf(0x31);
         exec_errorflag++;
-        if (parm2 != -1)
+        if (parm2)
         {
           HKEY hKey;
           if (RegOpenKeyEx((HKEY)rootkey,buf3,0,KEY_ALL_ACCESS,&hKey) == ERROR_SUCCESS)
@@ -1486,7 +1486,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (g_SectionHack)
           {
             int a;
-            for (a = 0; a < x; a ++) if (g_inst_section[a].name_ptr>=0) z++;
+            for (a = 0; a < x; a ++) if (g_inst_section[a].name_ptr) z++;
           }
 
           if (parm1==0) //set text

@@ -4,8 +4,10 @@
 #include "lang.h"
 
 // Added by Amir Szekely 3rd August 2002
+extern char *language_tables;
 extern common_strings *cur_common_strings_table;
-extern char *cur_install_strings_table;	// installer_strings/uninstall_strings depending on installer type
+extern char *cur_install_strings_table; // installer_strings/uninstall_strings depending on installer type
+extern int *cur_user_strings_table;
 
 int NSISCALL ui_doinstall(void);
 void NSISCALL update_status_text_from_lang(langid_t id, const char *text2);
