@@ -2,41 +2,86 @@
 
 \H{fileformat} Script File Format
 
-A NSIS Script File (.nsi) is just a text file with a series of commands.
+A NSIS Script File (.nsi) is just a text file with script code.
 
-\b Lines beginning with ; or # are comments.
+\\<b\\>Commands\\</b\\>
 
-\b Non-comment lines are in the form of 'command [parameters]'
+Commands lines are in the format 'command [parameters]'
 
-\b To call a plugin, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plugin DLLs}.
+\c File "myfile"
 
-\b Anything after a ; or # that is not in a parameter (i.e. in quotes or part of another string) is treated as a comment. (i.e. "File myfile ; this is the file" would work)
+\\<b\\>Comments\\</b\\>
 
-\b For parameters that are treated as numbers, use decimal (the number) or hexadecimal (with 0x prepended to it, i.e. 0x12345AB), or octal (numbers beginning with a 0 and no x).
+Lines beginning with ; or # are comments. You can put comments after commands. You can also use C-style comments to comment one or more lines.
 
-\b To represent strings that have spaces, use quotes.
-
-\b Quotes only have the property of containing a parameter if they begin the parameter.
-
-\b Quotes can be either single quotes, double quotes, or the backward single quote.
-
-\b You can escape quotes using $\\.
-
-\b Examples:
-
-\c           MessageBox MB_OK "I'll be happy" ; this one puts a ' inside a string
-\c           MessageBox MB_OK 'And he said to me "Hi there!"' ; this one puts a " inside a string
-\c           MessageBox MB_OK `And he said to me "I'll be fucked!"` ; this one puts both ' and "s inside a string
-\c           MessageBox MB_OK "$\"A quote from a wise man$\" said the wise man" ; this one shows escaping of quotes
-
-\b To extend a command over multiple lines, use a backslash (\\) at the end of the line, and the next line will effectively be concatenated the end of it. For example:
-
-\c           CreateShortCut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
-\c                          "$INSTDIR\source\zip2exe\zip2exe.dsw"
+\c ; Comment
+\c # Comment
 \c
-\c           MessageBox MB_YESNO|MB_ICONQUESTION \
-\c                      "Remove all files in your NSIS directory? (If you have anything \
-\c                      you created that you want to keep, click No)" \
-\c                      IDNO NoRemoveLabel
+\c /*
+\c Comment
+\c Comment
+\c */
+\c
+\c File "myfile" ; Comment
 
-\b If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used).
+If want a parameter to start with ; or # put it in quotes.
+
+\\<b\\>Plug-ins\\</b\\>
+
+To call a plugin, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plugin DLLs}.
+
+\c nsExec::Exec "myfile"
+
+\\<b\\>Numbers\\</b\\>
+
+For parameters that are treated as numbers, use decimal (the number) or hexadecimal (with 0x prepended to it, i.e. 0x12345AB), or octal (numbers beginning with a 0 and no x).
+
+Colors should be set in hexadecimal RGB format, like HTML but without the #.
+
+\c IntCmp 1 0x1 lbl_equal
+\c
+\c SetCtlColors $HWND CCCCCC
+
+\\<b\\>Strings\\</b\\>
+
+To represent strings that have spaces, use quotes:
+
+\c MessageBox MB_OK "Hi there!"
+
+Quotes only have the property of containing a parameter if they begin the parameter. They can be either single quotes, double quotes, or the backward single quote.
+
+You can escape quotes using $\\:
+
+\c MessageBox MB_OK "I'll be happy" ; this one puts a ' inside a string
+\c MessageBox MB_OK 'And he said to me "Hi there!"' ; this one puts a " inside a string
+\c MessageBox MB_OK `And he said to me "I'll be fucked!"` ; this one puts both ' and "s inside a string
+\c MessageBox MB_OK "$\"A quote from a wise man$\" said the wise man" ; this one shows escaping of quotes
+
+It is also possible to put newlines, tabs etc. in a string using $\r, $\n, $\t etc. \R{varstrings}{More information...}
+
+\\<b\\>Variables\\</b\\>
+
+Variables start with $. User variables should be declared and are case-sensitive.
+
+\c Var MYVAR
+\c
+\c StrCpy $MYVAR "myvalue"
+
+\R{variables}{More information...}
+
+\\<b\\>Long commands\\</b\\>
+
+To extend a command over multiple lines, use a backslash (\\) at the end of the line, and the next line will effectively be concatenated the end of it. For example:
+
+\c CreateShortCut "$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk" \
+\c     "$INSTDIR\source\zip2exe\zip2exe.dsw"
+\c
+\c MessageBox MB_YESNO|MB_ICONQUESTION \
+\c     "Do you want to remove all files in the folder? \
+\c     (If you have anything you created that you want \
+\c      to keep, click No)" \
+\c     IDNO NoRemoveLabel
+
+\\<b\\>Configuration file\\</b\\>
+
+If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used).
