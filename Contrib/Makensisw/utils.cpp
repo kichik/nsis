@@ -51,8 +51,8 @@ void ClearLog(HWND hwnd) {
 	SetDlgItemText(hwnd, IDC_LOGWIN, "");
 }
 
-char g_output_exe[1024];
-char g_input_script[1024];
+char *g_output_exe;
+char *g_input_script;
 extern BOOL g_warnings;
 
 void LogMessage(HWND hwnd,const char *str) {
@@ -83,37 +83,58 @@ void DisableItems(HWND hwnd) {
 }
 
 void EnableItems(HWND hwnd) {
-	int len=SendDlgItemMessage(hwnd,IDC_LOGWIN,WM_GETTEXTLENGTH,0,0);
-	if (len>0) {
-		HGLOBAL memory;
-		char *existing_text;
-		memory = GlobalAlloc(GMEM_MOVEABLE,len+1);
-        existing_text = (char *)GlobalLock(memory);
-		if (!existing_text) return;
-		existing_text[0]=0;
-		GetDlgItemText(hwnd, IDC_LOGWIN, existing_text, len);
-		char *p=existing_text;
-		char *p2;
-		char *p3;
-		if ((p2=my_strstr(p,"\r\nOutput: \""))) {
-			while (*p2 != '\"') p2++;
-			p2++;
-			if ((p3=my_strstr(p2,"\"\r\n")) && p3 < my_strstr(p2,"\r\n")) {
-				*p3=0;
-				lstrcpy(g_output_exe,p2);
-			}
-		}
-		p=my_strstr(existing_text,"\r\nProcessing script file: \"");
-		if (p) {
-			while (*p++ != '"');
-			char *p2=my_strstr(p,"\r\n");
-			lstrcpyn(g_input_script,p,p2-p);
-		}
-		if (my_strstr(existing_text, " warning:") || my_strstr(existing_text, " warnings:")) {
-			g_warnings = TRUE;
-		}
-		GlobalUnlock(memory);
-	}
+  #define MSG(a) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,0,0)
+  #define MSG1(a,b) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,0)
+  #define MSG2(a,b,c) SendDlgItemMessage(hwnd,IDC_LOGWIN,a,b,c)
+
+  static char *outputExeBuf, *inputScriptBuf;
+
+  if (inputScriptBuf) {
+    GlobalFree(inputScriptBuf);
+    g_input_script = inputScriptBuf = 0;
+  }
+  if (outputExeBuf) {
+    GlobalFree(outputExeBuf);
+    g_output_exe = outputExeBuf = 0;
+  }
+
+  if (g_input_script) GlobalFree(g_input_script);
+  if (g_output_exe) GlobalFree(g_output_exe);
+
+  FINDTEXT ft;
+  ft.chrg.cpMin = 0;
+  ft.chrg.cpMax = MSG(WM_GETTEXTLENGTH);
+  ft.lpstrText = "Processing script file: \"";
+  long charPos = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  long lineNum = MSG2(EM_EXLINEFROMCHAR, 0, charPos);
+  long lineLength = MSG1(EM_LINELENGTH, charPos);
+  inputScriptBuf = (char *)GlobalAlloc(GPTR, lineLength+1);
+  *(WORD *)inputScriptBuf = (WORD)lineLength+1;
+  MSG2(EM_GETLINE, lineNum, (WPARAM)inputScriptBuf);
+  g_input_script = inputScriptBuf+lstrlen("Processing script file: \"");
+  char *p = g_input_script;
+  while (*p && *p != '"') p++;
+  *p = 0;
+
+  ft.lpstrText = "Output: \"";
+  charPos = MSG2(EM_FINDTEXT, 0, (LPARAM)&ft);
+  lineNum = MSG2(EM_EXLINEFROMCHAR, 0, charPos);
+  lineLength = MSG1(EM_LINELENGTH, charPos);
+  outputExeBuf = (char *)GlobalAlloc(GPTR, lineLength+1);
+  *(WORD *)outputExeBuf = (WORD)lineLength+1;
+  MSG2(EM_GETLINE, lineNum, (WPARAM)outputExeBuf);
+  g_output_exe = outputExeBuf+lstrlen("Output: \"");
+  p = g_output_exe;
+  while (*p && *p != '"') p++;
+  *p = 0;
+
+  g_warnings = FALSE;
+
+  ft.lpstrText = "warning:";
+  if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+  ft.lpstrText = "warnings:";
+  if (MSG2(EM_FINDTEXT, 0, (LPARAM)&ft) != -1) g_warnings++;
+
 	HMENU m = GetMenu(hwnd);
 	if (g_output_exe[0]) {
 			EnableWindow(GetDlgItem(hwnd,IDC_TEST),1);
@@ -130,7 +151,7 @@ void EnableItems(HWND hwnd) {
 
 static BOOL g_appended = FALSE;
 void CompileNSISScript() {
-	char s[MAX_PATH];
+	static char *s;
 	ClearLog(g_hwnd);
 	SetTitle(g_hwnd,NULL);
 	SetBranding(g_hwnd);
@@ -144,8 +165,10 @@ void CompileNSISScript() {
 		return;
 	}
 	if (!g_appended) {
+    if (s) GlobalFree(s);
+    s = (char *)GlobalAlloc(GPTR, lstrlen(g_script)+lstrlen(EXENAME)+1);
 		wsprintf(s,"%s %s",EXENAME,g_script);
-		lstrcpy(g_script,s);
+    g_script = s;
 		g_appended = TRUE;
 	}
 	// Disable buttons during compile
