@@ -232,6 +232,7 @@ __declspec(dllexport) void download (HWND   parent,
   char filename[1024];
   BOOL bSuccess=FALSE;
   int timeout_ms=30000;
+  int getieproxy=1;
 
   char *error=NULL;
 
@@ -273,6 +274,10 @@ __declspec(dllexport) void download (HWND   parent,
     timeout_ms=my_atoi(url+9);
     popstring(url);
   }
+  if (!lstrcmpi(url, "/NOIEPROXY")) {
+    getieproxy=0;
+    popstring(url);
+  }
   popstring(filename);
 
   HANDLE hFile = CreateFile(filename,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,0,NULL);
@@ -311,7 +316,7 @@ __declspec(dllexport) void download (HWND   parent,
       char *p=NULL;
 
       HKEY hKey;
-      if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
+      if (getieproxy && RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS)
       {
         DWORD l = 4;
         DWORD t;
