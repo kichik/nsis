@@ -54,7 +54,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON                ICON    DISCARDABLE     "..\\..\\contrib\\icons\\modern-install.ico"
+IDI_ICON                ICON    DISCARDABLE     "..\\..\\contrib\\icons\\adni18-installer-B.ico"
 IDI_SHELL               ICON    DISCARDABLE     "shell.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -87,8 +87,6 @@ BEGIN
         MENUITEM "Edit Script\tCtrl+E",         IDM_EDITSCRIPT
         MENUITEM "Browse Script\tCtrl+B",       IDM_BROWSESCR
         MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
-        MENUITEM SEPARATOR
-        MENUITEM "Check for &Update",           IDM_UPDATE
     END
     POPUP "&Help"
     BEGIN
