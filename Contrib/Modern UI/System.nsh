@@ -74,10 +74,6 @@ Var MUI_TEMP2
   !ifndef MUI_INSTFILESPAGE_PROGRESSBAR
     !define MUI_INSTFILESPAGE_PROGRESSBAR "smooth"
   !endif
-  
-  !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
-    AutoCloseWindow true
-  !endif
 
   !ifndef MUI_BGCOLOR
     !define MUI_BGCOLOR "FFFFFF"
@@ -564,11 +560,6 @@ Var MUI_TEMP2
     
   PageExEnd
   
-  !ifndef MUI_VAR_HWND
-    Var MUI_HWND
-    !define MUI_VAR_HWND
-  !endif
-  
   !insertmacro MUI_FUNCTION_WELCOMEPAGE mui.WelcomePre_${MUI_UNIQUEID} mui.WelcomeLeave_${MUI_UNIQUEID}
 
   !verbose pop
@@ -651,11 +642,6 @@ Var MUI_TEMP2
     !define MUI_COMPONENTSPAGE
   !endif
   
-  !ifndef MUI_VAR_TEXT
-    Var MUI_TEXT
-    !define MUI_VAR_TEXT
-  !endif
-  
   !insertmacro MUI_PAGE_INIT
   
   PageEx components
@@ -721,15 +707,6 @@ Var MUI_TEMP2
     !define MUI_STARTMENUPAGE
   !endif
   
-  !ifndef MUI_STARTMENUPAGE_VARIABLE
-    Var MUI_STARTMENU_FOLDER
-    !define MUI_STARTMENUPAGE_VARIABLE "$MUI_STARTMENU_FOLDER"
-  !endif
-  
-  !ifndef MUI_STARTMENUPAGE_DEFAULTFOLDER
-    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "$(^Name)"
-  !endif
-  
   !insertmacro MUI_PAGE_INIT
   
   PageEx custom
@@ -780,12 +757,6 @@ Var MUI_TEMP2
     !define MUI_FINISHPAGE
   !endif
   
-  !ifdef MUI_FINISHPAGE_LINK
-    !ifndef MUI_FINISHPAGE_LINK_COLOR
-      !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
-    !endif
-  !endif
-  
   !insertmacro MUI_PAGE_INIT
   
   PageEx custom
@@ -795,11 +766,6 @@ Var MUI_TEMP2
     Caption " "
     
   PageExEnd
-  
-  !ifndef MUI_VAR_HWND
-    Var MUI_HWND
-    !define MUI_VAR_HWND
-  !endif
   
   !insertmacro MUI_FUNCTION_FINISHPAGE mui.FinishPre_${MUI_UNIQUEID} mui.FinishLeave_${MUI_UNIQUEID}
 
@@ -1127,6 +1093,11 @@ Var MUI_TEMP2
 
 !macro MUI_FUNCTION_WELCOMEPAGE PRE LEAVE
 
+  !ifndef MUI_VAR_HWND
+    Var MUI_HWND
+    !define MUI_VAR_HWND
+  !endif
+
   Function "${PRE}"
   
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1028
@@ -1242,6 +1213,11 @@ Var MUI_TEMP2
 
 !macro MUI_FUNCTION_COMPONENTSPAGE PRE SHOW LEAVE
 
+  !ifndef MUI_VAR_TEXT
+    Var MUI_TEXT
+    !define MUI_VAR_TEXT
+  !endif
+
   Function "${PRE}"
     !insertmacro MUI_FUNCTION_CUSTOM PRE
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_TEXT_COMPONENTS_TITLE) $(MUI_TEXT_COMPONENTS_SUBTITLE)
@@ -1277,7 +1253,6 @@ Var MUI_TEMP2
     !insertmacro MUI_FUNCTION_CUSTOM LEAVE
     
   FunctionEnd
-  
     
 !macroend
 
@@ -1299,6 +1274,15 @@ Var MUI_TEMP2
 !macroend
 
 !macro MUI_FUNCTION_STARTMENUPAGE PRE LEAVE
+  
+  !ifndef MUI_STARTMENUPAGE_VARIABLE
+    Var MUI_STARTMENU_FOLDER
+    !define MUI_STARTMENUPAGE_VARIABLE "$MUI_STARTMENU_FOLDER"
+  !endif
+  
+  !ifndef MUI_STARTMENUPAGE_DEFAULTFOLDER
+    !define MUI_STARTMENUPAGE_DEFAULTFOLDER "$(^Name)"
+  !endif
   
   Function "${PRE}"
   
@@ -1394,6 +1378,21 @@ Var MUI_TEMP2
 !macroend
 
 !macro MUI_FUNCTION_FINISHPAGE PRE LEAVE
+
+  !ifndef MUI_VAR_HWND
+    Var MUI_HWND
+    !define MUI_VAR_HWND
+  !endif
+
+  !ifndef MUI_FINISHPAGE_NOAUTOCLOSE
+    AutoCloseWindow true
+  !endif
+  
+  !ifdef MUI_FINISHPAGE_LINK
+    !ifndef MUI_FINISHPAGE_LINK_COLOR
+      !define MUI_FINISHPAGE_LINK_COLOR "0x800000"
+    !endif
+  !endif
 
   Function "${PRE}"
     
@@ -1754,7 +1753,7 @@ Var MUI_TEMP2
     !ifdef MUI_FINISHPAGE_LINK_LOCATION
       !undef MUI_FINISHPAGE_LINK_LOCATION
     !endif
-     !ifdef MUI_FINISHPAGE_LINK_COLOR
+    !ifdef MUI_FINISHPAGE_LINK_COLOR
       !undef MUI_FINISHPAGE_LINK_COLOR
     !endif
   !ifdef MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -1917,31 +1916,47 @@ Var MUI_TEMP2
 
 !macro MUI_UNFUNCTION_COMPONENTSPAGE PRE SHOW LEAVE
 
+  !ifndef MUI_VAR_TEXT
+    Var MUI_TEXT
+    !define MUI_VAR_TEXT
+  !endif
+
   Function "${PRE}"
-  
     !insertmacro MUI_FUNCTION_CUSTOM PRE
-    
     !insertmacro MUI_HEADER_TEXT_PAGE $(MUI_UNTEXT_COMPONENTS_TITLE) $(MUI_UNTEXT_COMPONENTS_SUBTITLE)
-    
   FunctionEnd
-  
+
   Function "${SHOW}"
   
-    !insertmacro MUI_INNERDIALOG_TEXT 1042 $(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE)
+    !ifdef MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 "${MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE}"
+      !undef MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_TITLE
+    !else
+      !insertmacro MUI_INNERDIALOG_TEXT 1042 "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE)"
+    !endif
+    
     FindWindow $MUI_TEMP1 "#32770" "" $HWNDPARENT
     GetDlgItem $MUI_TEMP1 $MUI_TEMP1 1043
     EnableWindow $MUI_TEMP1 0
-    !insertmacro MUI_INNERDIALOG_TEXT 1043 $(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)
+    
+    !ifdef MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 "${MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO}"
+      StrCpy $MUI_TEXT "${MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO}"
+      !undef MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO
+    !else
+      !insertmacro MUI_INNERDIALOG_TEXT 1043 "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)"
+      StrCpy $MUI_TEXT "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)"
+    !endif
     !insertmacro MUI_FUNCTION_CUSTOM SHOW
    
   FunctionEnd
-  
+
   Function "${LEAVE}"
   
     !insertmacro MUI_FUNCTION_CUSTOM LEAVE
-  
+    
   FunctionEnd
-  
+    
 !macroend
 
 !macro MUI_UNFUNCTION_DIRECTORYPAGE PRE SHOW LEAVE
@@ -2260,4 +2275,4 @@ Var MUI_TEMP2
 
 !ifndef MUI_MANUALVERBOSE
   !verbose 4
-!endif                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+!endif
