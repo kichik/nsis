@@ -65,9 +65,17 @@ table
 .subheader
 	{
 	margin: 20px;
-	font-size: 11pt;
+	font-size: 12pt;
 	font-weight: bold;
 	color: #303030;
+	}
+
+.sub2header
+	{
+	margin: 20px;
+	font-size: 11pt;
+	font-weight: bold;
+	color: #2B5885;
 	}
 
 .footer
@@ -142,31 +150,49 @@ follow these steps:</p>
   to specify a path.</p>
   <p class="subheader">2. Define the name and version of your software</p>
 <pre class="margin">
-!define MUI_PRODUCT "Test Software" ;Define your own software name here
-!define MUI_VERSION "1.0" ;Define your own software version here
+!define MUI_PRODUCT "Your Software"
+!define MUI_VERSION "1.0"
 </pre>
-  <p class="subheader">3. Defines</p>
-  <p class="text">Use defines to let the Modern UI know what it
-  should insert. Most defines (i.e. MUI_WELCOMEPAGE) don't need
-  a value, there are true/false settings. Others
+  <p class="subheader">3. Pages</p>
+  <p class="text">Insert the following macro's to set the pages you want to use
+  and the order of the pages. You can insert custom Page commmands between
+  the macro's to add custom pages.<br />
+  <a href="#customPages">More info about custom pages...</a></p>
+  <p class="text">Example:</p>
+  <pre class="margin">!insertmacro MUI_PAGE_COMPONENTS</pre>
+  <p class="text">
+  <span class="bold">Installer Pages</span><br />
+  MUI_PAGE_WELCOME<br />
+  MUI_PAGE_LICENSE<br />
+  MUI_PAGE_COMPONENTS<br />
+  MUI_PAGE_DIRECTORY<br />
+  MUI_PAGE_STARTMENU<br />
+  MUI_PAGE_INSTFILES<br />
+  MUI_PAGE_FINISH
+  </p>
+  <p class="text">
+  <span class="bold">Uninstaller Pages</span><br />
+  MUI_UNPAGE_CONFIRM<br />
+  MUI_UNPAGE_INSTFILES<br />
+  </p>
+  <p class="subheader">4. Defines</p>
+  <p class="text">You can use defines to configure the Modern UI.
+  Most defines (i.e. MUI_COMPONENTSPAGE_SMALLDESC)
+  don't need a value, they are true/false settings. Others
   (i.e. MUI_FINISHPAGE_RUN) can be used to define a specific
-  value.<br />
-  Parameters are specified in this format:
+  value.</p>
+  <p class="text">Parameters are specified in this format:
   <span class="parameter">required (option1 | option2)
-  [optional]</span>.<br />
-  You should put all parameters in one string for the define:</p>
+  [optional]</span>.</p>
+  <p class="text">You should put all parameters in one string for the define:</p>
 <pre class="margin">
 !define MUI_WELCOMEPAGE ;No value
 !define MUI_FINISHPAGE_RUN "$INSTDIR\Application.exe" ;Value
 !define MUI_INSTALLCOLORS "FFFFFF 000000" ;Multiple parameters
 </pre>
   <p class="text">All defines are optional.</p>
-  <p class="subheader">3a. General settings</p>
-  <p class="text"><span class="bold">MUI_WELCOMEPAGE</span><br />
-  Show the welcome page. The welcome page is an introduction
-  and shows information for the user.</p>
-  <p class="text"><span class="bold">MUI_LICENSEPAGE</span><br />
-  Show the license page.</p>
+  <p class="subheader">4a. General settings</p>
+  <p class="sub2header">License Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_LICENSEPAGE_CHECKBOX</span><br />
   Display a checkbox the user has to check to agree with the license terms.</p>
@@ -174,8 +200,7 @@ follow these steps:</p>
   Display two radiobuttons to allow the user to choose between accepting the
   license terms or not.</p>
   </div>
-  <p class="text"><span class="bold">MUI_COMPONENTSPAGE</span><br />
-  Show the component selection page.</p>
+  <p class="sub2header">Components Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_SMALLDESC</span><br />
   A small description area on the bottom of the page. Use this layout
@@ -183,11 +208,9 @@ follow these steps:</p>
   <p class="text"><span class="bold">MUI_COMPONENTSPAGE_NODESC</span><br />
   No description area.</p>
   </div>
-  <p class="text"><span class="bold">MUI_DIRECTORYPAGE</span><br />
-  Show the directory selection page.</p>
-  <p class="text"><span class="bold">MUI_STARTMENUPAGE</span><br />
-  Show the Start Menu Folder selection page.<br /><br />
-  If you did not disable the 'Do not create shortcuts' checkbox,
+  <p class="sub2header">Start Menu Folder Selection Page Settings</p>
+  <div class="margin">
+  <p class="text">If you did not disable the 'Do not create shortcuts' checkbox,
   put the script code to write the shortcuts between these macro's,
   because the creation can be disabled by the user:</p>
 <pre class="margin">
@@ -195,7 +218,6 @@ follow these steps:</p>
   ...create the shortcuts...
 !insertmacro MUI_STARTMENU_WRITE_END
 </pre>
-  <div class="margin">
   <p class="text"><span class="bold">MUI_STARTMENUPAGE_VARIABLE </span><span class="parameter">variable</span><br />
   Variable to store the current Start Menu Folder. Default is $9.
   You cannot use this variable in your script (or you should Push/Pop it).</p>
@@ -218,11 +240,7 @@ follow these steps:</p>
 !insertmacro MUI_STARTMENU_DELETE_END
 </pre>
   </div>
-  <p class="text"><span class="bold">MUI_FINISHPAGE</span><br />
-  Show the finish page. The finish page tells that the installation is succesful.
-  You can also add options to run the application or show the Readme file.
-  If the reboot flag is set, a page that allows the user to reboot the system
-  will be displayed (this option can be disabled).</p>
+  <p class="sub2header">Finish Page Settings</p>
   <div class="margin">
   <p class="text"><span class="bold">MUI_FINISHPAGE_RUN </span><span class="parameter">exe_file</span><br />
   Application which the user can select to run (using a checkbox).
@@ -250,22 +268,13 @@ follow these steps:</p>
   Define this option to save some space if you are not using the /REBOOTOK
   flag or SetRebootFlag.</p>
   </div>
+  <p class="sub2header">Other settings</p>
+  <div class="margin">
   <p class="text"><span class="bold">MUI_ABORTWARNING</span><br />
   Show a message box with a warning (are you sure?) when the user closes
   the installation.</p>
-  <p class="text"><span class="bold">MUI_CUSTOMPAGECOMMANDS</span><br />
-  Don't insert Page commands. Use this if you are using custom Page
-  commands to add your own pages.</p>
-  <p class="text"><span class="bold">MUI_UNINSTALLER</span><br />
-  Define if you are using an uninstaller.</p>
-  <div class="margin">
-  <p class="text"><span class="bold">MUI_UNCONFIRMPAGE</span><br />
-  Show the uninstall confirm page.</p>
-  <p class="text"><span class="bold">MUI_UNCUSTOMPAGECOMMANDS</span><br />
-  Don't insert UninstPage commands. Use this if you are using custom
-  UninstPage commands to add your own pages.</p>
   </div>
-  <p class="subheader">3b. Interface settings</p>
+  <p class="subheader">4b. Interface settings</p>
   <p class="text">For UI elements that are enabled by default, the default value will be used when a setting
   has not been defined.</p>
   <p class="text"><span class="bold">MUI_UI </span><span class="parameter">ui_file</span><br />
@@ -283,12 +292,14 @@ follow these steps:</p>
   The icon of the installer.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-install.ico</i></p>
   <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
   The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-uninstall.ico</i></p>
+  <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">color: RRGGBB</span><br />
+  The background color for the license textbox.<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
   <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
-  <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows | (foreground color: RRBBGG)
-  (background color: RRGGBB))</span>
-  <br />The colors of the details screen. Use /windows instead of the colors to use the Windows
+  <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows | (foreground color: RRGGBB)
+  (background color: RRGGBB))</span><br />
+  The colors of the details screen. Use /windows instead of the colors to use the Windows
   colors (the default).<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
   The style of the progress bar. Colored makes it use the MUI_INSTALLCOLORS.<br /><i>Default: smooth</i></p>
@@ -301,7 +312,7 @@ follow these steps:</p>
   Display the header image on the right side instead of the left side.</p>
   </div>
   <p class="text"><span class="bold">MUI_SPECIALINI </span><span class="parameter">ini_file</span><br />
-  Install Options INI File for the Welcome and Finish page.<br />
+  InstallOptions INI file for the Welcome and Finish page.<br />
   <i>Default: ${NSISDIR}\Contrib\Modern UI\ioSpecial.ini</i></p>
   <p class="text"><span class="bold">MUI_SPECIALBITMAP </span><span class="parameter">bmp_file</span><br />
   Bitmap for the Welcome and Finish page.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-wizard.bmp</i></p>
@@ -309,15 +320,11 @@ follow these steps:</p>
   Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
   <p class="text"><span class="bold">MUI_RTL_UI</span><br />
   Right-to-left interface.</p>
-  <p class="subheader">4. Define custom functions (optional)</p>
+  <p class="subheader">5. Define custom functions (optional)</p>
   <p class="text">If you want add your own code to functions inserted by the
-  Modern UI, such as the .onGUIInit function and the Page function, create your
+  Modern UI (i.e. the .onGUIInit function and the page functions), create your
   own function and let the Modern UI functions call them..</p>
   <p class="text"><a href="#customFunctions">More info...</a></p>
-  <p class="subheader">5. Insert custom pages (optional)</p>
-  <p class="text">If you want to use custom pages (define MUI_CUSTOMPAGECOMMANDS
-  or MUI_UNCUSTOMPAGECOMMANDS), insert them before inserting the language files.</p>
-  <p class="text"><a href="#customPages">More info...</a></p>
   <p class="subheader">6. Insert language files</p>
   <p class="text">Insert the Modern UI language files for the languages you are using:</p>
   <pre class="margin">!insertmacro MUI_LANGUAGE "English"</pre>
@@ -334,14 +341,19 @@ follow these steps:</p>
   <p class="text">You can customize texts that can be set in the Classic UI using the LicenseText,
   ComponentText, DirText and MiscButtonText commands but are not being changed by the Modern UI using
   these defines:</p>
-<pre class="margin">
-MUI_BUTTONTEXT_LICENSE, MUI_BUTTONTEXT_BACK, MUI_BUTTONTEXT_NEXT,
-MUI_BUTTONTEXT_CANCEL
-
-MUI_INNERTEXT_COMPONENTS_SUB1, MUI_INNERTEXT_COMPONENTS_SUB2
-
-MUI_TEXT_DIRECTORY_BROWSE
-</pre>
+  <p class="text">
+  <span class="bold">MUI_BUTTONTEXT_LICENSE </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_BUTTONTEXT_BACK </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_BUTTONTEXT_NEXT </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_BUTTONTEXT_CANCEL </span><span class="parameter">text</span>
+  </p>
+  <p class="text">
+  <span class="bold">MUI_INNERTEXT_COMPONENTS_SUB1 </span><span class="parameter">text</span><br />
+  <span class="bold">MUI_INNERTEXT_COMPONENTS_SUB2 </span><span class="parameter">text</span>
+  </p>
+  <p class="text">
+  <span class="bold">MUI_TEXT_DIRECTORY_BROWSE </span><span class="parameter">text</span>
+  </p>
   <p class="text">You can also customize the fonts for a language using the following defines:</p>
   <p class="text"><span class="bold">MUI_FONT_HEADER </span><span class="parameter">font_name</span><br />
   <span class="bold">MUI_FONTSIZE_HEADER </span><span class="parameter">font_size</span><br />
@@ -351,7 +363,7 @@ MUI_TEXT_DIRECTORY_BROWSE
   <span class="bold">MUI_FONTSIZE_TITLE </span><span class="parameter">font_size</span><br />
   <span class="bold">MUI_FONTSTYLE_TITLE </span><span class="parameter">weight [/ITALIC] [/UNDERLINE] [/STRIKE]</span><br />
   The font for the title on the Welcome and Finish page.</p>
-  <p class="text"><span class="bold">Language selection dialog</span></p>
+  <p class="sub2header">Language selection dialog</p>
   <p class="text">If you want the installer to display a  language selection dialog
   (have a look at the <a href="../../Examples/Modern UI/MultiLanguage.nsi">
   MultiLanguage.nsi</a> example), insert the MUI_LANGDLL_DISPLAY macro in .onInit:</p>
@@ -409,29 +421,23 @@ insert ReserveFile commands. <a href="#ReserveFile">More info...</a></p>
 <p class="header"><a name="customPages">Custom pages</a></p>
 <p class="subheader">Custom page commands</p>
 <p class="text">If you want add custom pages to your installer, you should insert your
-own page commands to set the order of the pages and the names of the page functions.
-For the normal Modern UI pages, insert one of the PAGECOMMAND macro's:</p>
+own page commands between the page macro's:</p>
 <pre class="margin">
-!insertmacro MUI_PAGECOMMAND_WELCOME
-!insertmacro MUI_PAGECOMMAND_LICENSE
-!insertmacro MUI_PAGECOMMAND_COMPONENTS
-!insertmacro MUI_PAGECOMMAND_DIRECTORY
+!insertmacro MUI_PAGE_WELCOME
 Page custom FunctionName ;Custom page
-!insertmacro MUI_PAGECOMMAND_INSTFILES
-!insertmacro MUI_PAGECOMMAND_FINISH
+!insertmacro MUI_COMPONENTS
 </pre>
 <p class="text">For the uninstaller:</p>
 <pre class="margin">
-!insertmacro MUI_UNPAGECOMMAND_CONFIRM
+!insertmacro MUI_UNPAGE_CONFIRM
 UninstPage custom un.FunctionName ;Custom page
-!insertmacro MUI_UNPAGECOMMAND_INSTFILES
+!insertmacro MUI_UNPAGE_INSTFILES
 </pre>
-<p class="text">Don't forget to define MUI_CUSTOMPAGECOMMANDS or
-MUI_UNCUSTOMPAGECOMMANDS and to insert the Page commands on the
-right position.</p>
-<p class="subheader">Call Install Options</p>
+<p class="subheader">Call InstallOptions</p>
+<p class="text">InstallOptions is a plug-in that displays custom pages that you can create
+using INI files.</p>
 <p class="text">Have a look at the <a href="..\InstallOptions\Readme.html">
-Install Options documentation</a> for info about creating Install Options INI Files.</p>
+InstallOptions documentation</a> for info about creating InstallOptions INI files.</p>
 <p class="text">First, you need to extract your InstallOptions INI
 File in the .onInit function (un.onInit for the uninstaller) using
 the MUI_INSTALLOPTIONS_EXTRACT macro:</p>
@@ -449,9 +455,9 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "..\ioFile.ini" "ioFile.ini"
 FunctionEnd
 </pre>
-<p class="text">You can call Install Options in the function defined with the Page
-or UninstPage command. Use the MUI_HEADER_TEXT macro to set the text in the
-white box:</p>
+<p class="text">You can call Instal Options in the function defined with the Page
+or UninstPage command using the MUI_INSTALLOPTIONS_DISPLAY macro.
+Use the MUI_HEADER_TEXT macro to set the text in the white box:</p>
 <pre class="margin">
 LangString TEXT_IO_TITLE ${LANG_ENGLISH} "Install Options Page Title"
 LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "A subtitle"
@@ -476,7 +482,7 @@ Function FunctionName ;FunctionName defined with Page command
   Push $R2
 
     !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioFile.ini"
-    Pop $R0
+    Pop $R0 ;HWND of dialog
     
     GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
     
@@ -486,22 +492,27 @@ Function FunctionName ;FunctionName defined with Page command
 	
     !insertmacro MUI_INSTALLOPTIONS_SHOW
 	
-  Pop $R1
+  Pop $R2
   Pop $R1
   Pop $R0
 
 FunctionEnd
 </pre>
-
-<p class="text">To read or write values to the INI Files on runtime, use these macro's:</p>
+<p class="text">If you need the InstallOptions return value (success, back, cancel, error),
+use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The
+return value will be added to the stack, so you can use the Pop command to get it.</p>
+<p class="text">To read or write INI file values use these macro's:</p>
 <pre class="margin">
 !insertmacro MUI_INSTALLOPTIONS_READ $VAR "ioFile.ini" "Field #" "Value Name"
 !insertmacro MUI_INSTALLOPTIONS_WRITE "ioFile.ini" "Field #" "Value Name" "Value"
 </pre>
-<p class="text">If you need the InstallOptions return value (success, back, cancel, error),
-use the MUI_INSTALLOPTIONS_DISPLAY_RETURN or MUI_INSTALLOPTIONS_SHOW_RETURN macro. The
-return value will be added to the stack, so you can use the Pop command to get it.</p>
+<p class="text">For example, you can use the MUI_INSTALLOPTIONS_READ macro in a section
+to get the user input:</p>
+<pre class="margin">!insertmacro MUI_INSTALLOPTIONS_READ $R0 "ioFile.ini" "Field 1" "State"</pre>
+<p class="text">For more details about InstallOptions, validation of user input etc., check the
+<a href="..\InstallOptions\Readme.html">InstallOptions documentation</a>.</p>
 <p class="header"><a name="ReserveFile">Reserve files</a></p>
+
 <p class="text">If you are using BZIP2 compression, it's important that
 files which are being extracted in the .onInit function or in Page
 functions are first in the data block, because this will make your installer
@@ -614,6 +625,16 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
 </p>
 <p class="header">Version history</p>
 <ul>
+<li>1.65 - May 25, 2003
+  <ul>
+    <li>New page configuration system, no different system for installers
+    with custom pages</li>
+    <li>Default windows color for the license text background</li>
+    <li>New format for example scripts</li>
+  </ul></li>
+</ul>
+<p class="text"></p>
+<ul>
 <li>1.64 - April 27, 2003
   <ul>
     <li>Support for license page with checkbox or radiobuttons to
@@ -650,7 +671,6 @@ MUI_UNCUSTOMFUNCTION_INSTFILES_LEAVE
     <li>RTL support</li>
     <li>Documentation updates</li>
     <li>Minor fixes</li>
-    <li>No changed language strings</li>
   </ul></li>
 </ul>
 <p class="text"><a href="Changelog.txt">Complete version history</a></p>

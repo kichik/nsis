@@ -1,5 +1,11 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.65 - May 25, 2003
+* New page configuration system, no different system for installers
+  with custom pages
+* Default windows color for the license text background
+* New format for example scripts
+
 1.64 - April 27, 2003
 * Support for license page with checkbox or radiobuttons to let the
   user accept the agreement or not
