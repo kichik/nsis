@@ -150,7 +150,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     {
       cmdline[-2]=0; // keep this from being passed to uninstaller if necessary
       mystrcpy(state_install_directory,cmdline+2);
-      cmdline+=mystrlen(cmdline);
+      while (*cmdline) cmdline++;
     }
     else while (*cmdline && *cmdline != ' ') cmdline=CharNext(cmdline);
   }
@@ -287,14 +287,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
-    if (cmdline[0] == '_' && cmdline[1] == '=' && cmdline[2])
+    char *p=cmdline;
+    while (*p) p++; 
+
+    while (p >= cmdline && (p[0] != '_' || p[1] != '?' || p[2] != '=')) p--;
+
+    if (p >= cmdline)
     {
-      cmdline[-1]=0;
-      cmdline+=2;
-      if (is_valid_instpath(cmdline))
+      p[0]=0; // terminate on the _?=
+      p+=3; // skip over _?=
+      if (is_valid_instpath(p))
       {
-        mystrcpy(state_install_directory,cmdline);
-        mystrcpy(state_output_directory,cmdline);
+        mystrcpy(state_install_directory,p);
+        mystrcpy(state_output_directory,p);
       }
       else
       {
@@ -338,7 +343,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             done++;
             lstrcat(buf2,"\" ");
             lstrcat(buf2,realcmds);
-            lstrcat(buf2," _=");
+            lstrcat(buf2," _?=");
             lstrcat(buf2,ibuf);
             GetTempPath(sizeof(ibuf),ibuf);
             hProc=myCreateProcess(buf2,ibuf);
