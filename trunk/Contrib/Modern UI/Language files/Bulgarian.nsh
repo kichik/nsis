@@ -15,8 +15,8 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_NEXT "Натиснете 'Напред', за да продължите."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_CONTINUE_INSTALL "Натиснете 'Инсталиране', за да започнете инсталацията."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_TITLE "Добре дошли в инсталационния магьосник на ${MUI_PRODUCT}"
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO "Той ще инсталира ${MUI_PRODUCT} на вашия компютър.\r\n\r\nПрепоръчва се да затворите всички други приложения, преди да стартирате инсталацията. Това ще позволи на инсталацията да обнови някои системни файлове, без да рестартира компютъра.\r\n\r\n"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в инсталационния магьосник на ${MUI_PRODUCT}"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WELCOME_INFO_TEXT "Той ще инсталира ${MUI_PRODUCT} на вашия компютър.\r\n\r\nПрепоръчва се да затворите всички други приложения, преди да стартирате инсталацията. Това ще позволи на инсталацията да обнови някои системни файлове, без да рестартира компютъра.\r\n\r\n"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_TITLE "Лицензно споразумение"  
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_LICENSE_SUBTITLE "Моля прегледайте лицензните условия преди инсталирането на ${MUI_PRODUCT}."
