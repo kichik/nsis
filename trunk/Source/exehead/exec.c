@@ -229,12 +229,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       char *buf1=GetStringFromParm(-0x10);
       log_printf3("CreateDirectory: \"%s\" (%d)",buf1,parm1);
       {
-        char *p=buf1;
-        char c='c';
-        if (*p) {
-          p = skip_root(buf1);
-          if (!p)
-            break;
+        char *p = skip_root(buf1);
+        char c = 'c';
+        if (*buf1 && p)
+        {
           while (c)
           {
             WIN32_FIND_DATA *fd;
