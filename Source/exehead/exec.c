@@ -184,7 +184,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         return ExecuteCodeSegment(v,NULL);
       }
     case EW_UPDATETEXT:
-      if (parm1) ui_st_updateflag=parm1;
+      if (parm1) {
+        static int old_st_updateflag=3;
+        if (parm1&8) ui_st_updateflag=old_st_updateflag;
+        else {
+          old_st_updateflag=ui_st_updateflag;
+          ui_st_updateflag=parm1;
+        }
+      }
       else
       {
         char *buf3=process_string_fromparm_tobuf(0x30);

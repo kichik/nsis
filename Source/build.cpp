@@ -396,7 +396,6 @@ int CEXEBuild::preprocess_string(char *out, const char *in)
 int CEXEBuild::add_string_main(const char *string, int process) // returns offset (in string block)
 {
   if (!*string) return 0;
-  if (!process) return build_strlist.add(string,2);
 
   if (*string == '$' && *(string+1) == '(') {
     int idx = -1;
@@ -410,6 +409,8 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
     if (idx >= 0) return -(idx+1+(sizeof(common_strings)+sizeof(installer_strings))/sizeof(int));
   }
 
+  if (!process) return build_strlist.add(string,2);
+
   char buf[4096];
   preprocess_string(buf,string);
   return build_strlist.add(buf,2);
@@ -418,7 +419,6 @@ int CEXEBuild::add_string_main(const char *string, int process) // returns offse
 int CEXEBuild::add_string_uninst(const char *string, int process) // returns offset (in string block)
 {
   if (!*string) return 0;
-  if (!process) return ubuild_strlist.add(string,2);
 
   if (*string == '$' && *(string+1) == '(') {
     int idx = -1;
@@ -431,6 +431,8 @@ int CEXEBuild::add_string_uninst(const char *string, int process) // returns off
     free(cp);
     if (idx >= 0) return -(idx+1+(sizeof(common_strings)+sizeof(uninstall_strings))/sizeof(int));
   }
+
+  if (!process) return ubuild_strlist.add(string,2);
 
   char buf[4096];
   preprocess_string(buf,string);
@@ -1925,6 +1927,12 @@ int CEXEBuild::add_plugins_dir_initializer(void)
   ret=add_function("Initialize_____Plugins");
   if (ret != PS_OK) return ret;
 again:
+  // SetDetailsPrint none
+  ent.which=EW_UPDATETEXT;
+  ent.offsets[1]=4; // none
+  ret=add_entry(&ent);
+  if (ret != PS_OK) return ret;
+
   zero_offset=add_string("$0");
   // StrCmp $PLUGINSDIR ""
   ent.which=EW_STRCMP;
