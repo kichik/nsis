@@ -21,6 +21,7 @@
 !define MUI_TEMP1 $R0
 !define MUI_TEMP2 $R1
 !define MUI_TEMP3 $R2
+!define MUI_HWND ${MUI_TEMP1}
 
 !macro MUI_INTERFACE
 
@@ -975,10 +976,6 @@
 
   Function "${FUNCTION}"
 
-    !ifdef MUI_CUSTOMFUNCTION_WELCOME_PRE
-      Call "${MUI_CUSTOMFUNCTION_WELCOME_PRE}"
-    !endif
-  
     Push ${MUI_TEMP1}
     Push ${MUI_TEMP2}
     Push ${MUI_TEMP3}
@@ -994,7 +991,11 @@
       
       GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1045
       ShowWindow ${MUI_TEMP1} ${SW_NORMAL}
-
+      
+      !ifdef MUI_CUSTOMFUNCTION_WELCOME_PRE
+        Call "${MUI_CUSTOMFUNCTION_WELCOME_PRE}"
+      !endif
+      
       !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
       
         Pop ${MUI_TEMP1}
@@ -1237,10 +1238,6 @@
   !endif
 
   Function "${FUNCTION}"
-  
-    !ifdef MUI_CUSTOMFUNCTION_FINISH_PRE
-      Call "${MUI_CUSTOMFUNCTION_FINISH_PRE}"
-    !endif
 
     Push ${MUI_TEMP1}
     Push ${MUI_TEMP2}
@@ -1346,7 +1343,11 @@
       !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         mui.finish_load:
       !endif
-
+      
+      !ifdef MUI_CUSTOMFUNCTION_FINISH_PRE
+        Call "${MUI_CUSTOMFUNCTION_FINISH_PRE}"
+      !endif
+      
       !insertmacro MUI_INSTALLOPTIONS_INITDIALOG "ioSpecial.ini"
       
         Pop ${MUI_TEMP1}
