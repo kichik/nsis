@@ -428,7 +428,7 @@
 \c  ;
 \c  ; Parameters:
 \c  ; LOCALFILE   - Location of the new DLL file (on the compiler system)
-\c  ; DESTFILE    - Location of the file that shouuld be upgrade (on the user's system)
+\c  ; DESTFILE    - Location of the DLL file that should be upgraded (on the user's system)
 \c  ; TEMPBASEDIR - Directory on the user's system to store a temporary file when the system has
 \c  ;               to be rebooted.
 \c  ;               For Win9x support, this should be on the same volume as the DESTFILE!
