@@ -11,14 +11,14 @@
   !define MUI_LANGNAME "Hebrew" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "ברוכים הבאים לאשף ההתקנה של $(^NameDA)"
-  !define MUI_TEXT_WELCOME_INFO_TEXT "אשף זה ינחה אותכם במהלך ההתקנה של $(^NameDA).\r\n\r\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההתקנה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.\r\n\r\n$_CLICK"
+  !define MUI_TEXT_WELCOME_INFO_TEXT "אשף זה ינחה אתכם במהלך ההתקנה של $(^NameDA).\r\n\r\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההתקנה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.\r\n\r\n$_CLICK"
 
   !define MUI_TEXT_LICENSE_TITLE "הסכם רישוי"
-  !define MUI_TEXT_LICENSE_SUBTITLE "אנא עיין בתנאי הרשיון לפני התקנת $(^NameDA)."
-  !define MUI_INNERTEXT_LICENSE_TOP "בכדי לצפות בשאר הרשיון לחץ על Page Down."
-  !define MUI_INNERTEXT_LICENSE_BOTTOM "אם אתה מקבל את תנאי הרשיון, לחץ על 'אני מסכים' כדי להמשיך. אם לא תסכים לתנאי הרשיון לא תוכל להתקין את $(^NameDA)."
+  !define MUI_TEXT_LICENSE_SUBTITLE "נא עיין בתנאי הסכם הרישוי לפני התקנת $(^NameDA)."
+  !define MUI_INNERTEXT_LICENSE_TOP "כדי לצפות בשאר הסכם הרישוי לחץ על Page Down."
+  !define MUI_INNERTEXT_LICENSE_BOTTOM "אם אתה מקבל את תנאי ההסכם, לחץ על 'אני מסכים' כדי להמשיך. אם לא תסכים לתנאי ההסכם לא תוכל להתקין את $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "אם אתה מקבל את תנאי ההסכם, סמן את תיבת הבחירה שלהלן. עלייך לקבל את תנאי ההסכם בכדי להתקין את $(^NameDA). $_CLICK"
-  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "אם אתה מקבל את תנאי ההסכם, בחר באפשרות הראשונה שלהלן. עלייך לקבל את ההסכם בכדי להתקין את $(^NameDA). $_CLICK"
+  !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "אם אתה מקבל את תנאי ההסכם, בחר באפשרות הראשונה שלהלן. עלייך לקבל את ההסכם כדי להתקין את $(^NameDA). $_CLICK"
 
   !define MUI_TEXT_COMPONENTS_TITLE "בחר רכיבים"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "בחר אילו רכיבים של $(^NameDA) ברצונך להתקין."
@@ -39,32 +39,32 @@
 
   !define MUI_BUTTONTEXT_FINISH "&סיים"
   !define MUI_TEXT_FINISH_INFO_TITLE "משלים את אשף ההתקנה של $(^NameDA)"
-  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) הותקן בהצלחה.\r\n\r\nלחץ על סיום בכדי לסגור את האשף."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "עלייך לאתחל את המחשב בכדי לסיים את התקנת $(^NameDA). האם ברצונך לאתחל כעת?"
+  !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) הותקן בהצלחה.\r\n\r\nלחץ על סיום כדי לסגור את האשף."
+  !define MUI_TEXT_FINISH_INFO_REBOOT "עלייך לאתחל את המחשב כדי לסיים את התקנת $(^NameDA). האם ברצונך לאתחל כעת?"
   !define MUI_TEXT_FINISH_REBOOTNOW "אתחל כעת"
   !define MUI_TEXT_FINISH_REBOOTLATER "ברצוני לאתחל ידנית מאוחר יותר"
   !define MUI_TEXT_FINISH_RUN "&הרץ את $(^NameDA)"
-  !define MUI_TEXT_FINISH_SHOWREADME "'&הצג מסמך 'קרא אותי"
+  !define MUI_TEXT_FINISH_SHOWREADME "&הצג מסמך 'קרא אותי'"
 
-  !define MUI_TEXT_STARTMENU_TITLE "בחר תיקייה בתפריט התחל"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "בחר בתיקיית תפריט התחל בכדי לשים בה את קיצורי הדרך של התוכנית."
-  !define MUI_INNERTEXT_STARTMENU_TOP "בחר בתיקייה בתפריט התחל בה ברצונך למקם את קיצורי הדרך עבור התוכנית. באפשרותך גם להקיש את שם התיקייה בכדי ליצור תיקייה חדשה."
+  !define MUI_TEXT_STARTMENU_TITLE "בחר תיקייה בתפריט ההתחלה"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "בחר בתיקיית תפריט ההתחלה בה יווצרו קיצורי הדרך של התוכנית."
+  !define MUI_INNERTEXT_STARTMENU_TOP "בחר בתיקייה מתפריט ההתחלה בה ברצונך ליצור את קיצורי הדרך עבור התוכנית. באפשרותך גם להקליד את שם התיקייה כדי ליצור תיקייה חדשה."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "אל תיצור קיצורי דרך"
 
   !define MUI_TEXT_ABORTWARNING "האם אתה בטוח שברצונך לצאת מהתקנת $(^Name)?"
 
 
   !define MUI_UNTEXT_WELCOME_INFO_TITLE "ברוכים הבאים לאשף ההסרה של $(^NameDA)"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "אשף זה ינחה אותכם במהלך ההסרה של $(^NameDA).\r\n\r\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההתקנה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "אשף זה ינחה אתכם במהלך ההסרה של $(^NameDA).\r\n\r\nמומלץ לסגור כל תוכנית אחרת לפני התחלת ההסרה. פעולה זו תאפשר לאשף לעדכן קבצי מערכת ללא איתחול המחשב.\r\n\r\n$_CLICK"
 
   !define MUI_UNTEXT_CONFIRM_TITLE "הסר את $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "הסר את $(^NameDA) מהמחשב."
 
   !define MUI_UNTEXT_LICENSE_TITLE "הסכם רישוי"
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "אנא עיין בתנאי הרשיון לפני הסרת $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "אם אתה מקבל את תנאי הרשיון, לחץ על 'אני מסכים' כדי להמשיך. אם לא תסכים לתנאי הרשיון לא תוכל להסיר את $(^NameDA)."
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "אם אתה מקבל את תנאי ההסכם, סמן את תיבת הבחירה שלהלן. עלייך לקבל את תנאי ההסכם בכדי להסיר את $(^NameDA). $_CLICK"
-  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "אם אתה מקבל את תנאי ההסכם, בחר באפשרות הראשונה שלהלן. עלייך לקבל את ההסכם בכדי להסיר את $(^NameDA). $_CLICK"
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "נא עיין בתנאי הסכם הרישוי לפני הסרת $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM "אם אתה מקבל את תנאי ההסכם, לחץ על 'אני מסכים' כדי להמשיך. אם לא תקבל את תנאי ההסכם לא תוכל להסיר את $(^NameDA)."
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "אם אתה מקבל את תנאי ההסכם, סמן את תיבת הבחירה שלהלן. עלייך לקבל את תנאי ההסכם כדי להסיר את $(^NameDA). $_CLICK"
+  !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "אם אתה מקבל את תנאי ההסכם, בחר באפשרות הראשונה שלהלן. עלייך לקבל את ההסכם כדי להסיר את $(^NameDA). $_CLICK"
 
   !define MUI_UNTEXT_COMPONENTS_TITLE "בחר רכיבים"
   !define MUI_UNTEXT_COMPONENTS_SUBTITLE "בחר אילו תכונות של $(^NameDA) ברצונך להסיר."
@@ -82,8 +82,8 @@
   !define MUI_UNTEXT_ABORT_SUBTITLE "ההסרה לא הושלמה במלואה."
 
   !define MUI_UNTEXT_FINISH_INFO_TITLE "משלים את אשף ההסרה של $(^NameDA)"
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) הוסר בהצלחה.\r\n\r\nלחץ על סיום בכדי לסגור את האשף."
-  !define MUI_UNTEXT_FINISH_INFO_REBOOT "עלייך לאתחל את המחשב בכדי לסיים את הסרת $(^NameDA). האם ברצונך לאתחל כעת?"
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) הוסר בהצלחה.\r\n\r\nלחץ על סיום כדי לסגור את האשף."
+  !define MUI_UNTEXT_FINISH_INFO_REBOOT "עלייך לאתחל את המחשב כדי לסיים את הסרת $(^NameDA). האם ברצונך לאתחל כעת?"
 
   !define MUI_UNTEXT_ABORTWARNING "האם אתה בטוח שברצונך לצאת מהסרת $(^Name)?"
 
