@@ -181,7 +181,8 @@ class SortedStringList
       int num=gr.getlen()/sizeof(T);
 
       for (int i=0; i<num; i++) {
-        free(s[i].name);
+        if (s[i].name)
+          free(s[i].name);
       }
     }
 
