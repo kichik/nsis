@@ -31,7 +31,7 @@
 ;Change the default icons
 
 ;Icon "${NSISDIR}\Contrib\Graphics\Icons\arrow-install.ico"
-;UnIcon "${NSISDIR}\Contrib\Graphics\Icons\arrow-uninstall.ico"
+;UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\arrow-uninstall.ico"
 
 ;------------------------
 
