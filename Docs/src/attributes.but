@@ -4,7 +4,7 @@
 
 The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a Section or Function.  With the exception of InstallDir, none of these attributes allow use of Variables other than $\\r and $\\n in their strings.
 
-\\<span style='color: red;'\\>Defaults are red\\</span\\>
+\\<b\\>\\<u\\>Defaults are bold and underlined\\</u\\>\\</b\\>
 
 \S2{aaddbrandingimage} AddBrandingImage
 
