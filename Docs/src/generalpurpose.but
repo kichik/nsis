@@ -97,10 +97,10 @@ The error flag will be set if the file's attributes cannot be set (i.e. the file
 
 RegDLL \e{dllfile [entrypoint_name]}
 
-Loads the specified DLL and calls DllRegisterServer (or entrypoint_name if specified). The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, or find the entry point).  
+Loads the specified DLL and calls DllRegisterServer (or entrypoint_name if specified). The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, find the entry point, or the function returned anything other than ERROR_SUCCESS (=0)).
 
 \H{unregdll} UnRegDLL
 
 UnRegDLL \e{dllfile}
 
-Loads the specified DLL and calls DllUnregisterServer. The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, or find the entry point).  
+Loads the specified DLL and calls DllUnregisterServer. The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, find the entry point, or the function returned anything other than ERROR_SUCCESS (=0)).
