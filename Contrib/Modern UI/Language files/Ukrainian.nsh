@@ -36,8 +36,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Ви впевненнi що хочете покинути установку ${MUI_PRODUCT}?"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "${MUI_NAME} Установка"
-  
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Видалення ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Видалення ${MUI_PRODUCT} з вашого комп'ютера."
@@ -48,7 +46,5 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Завершено"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Видалення успiшно завершено."
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "${MUI_NAME} Видалення"
    
 !insertmacro MUI_LANGUAGEFILE_END

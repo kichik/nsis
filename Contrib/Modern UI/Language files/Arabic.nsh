@@ -35,8 +35,6 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_FINISHED_SUBTITLE "«·Õ„œ··Â  „ »‰Ã«Õ  ‰’Ì» «·»—‰«„Ã"
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Â· √‰  „ √ﬂœ „‰ ≈€·«ﬁ „‰’» ${MUI_PRODUCT}ø"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE " ‰’Ì» ${MUI_NAME}"
   
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "„“Ì· ${MUI_PRODUCT}"
@@ -48,7 +46,5 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE " „ "
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE " „  «·≈“«·… »‰Ã«Õ Ê «·Õ„œ··Â"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "„“Ì· ${MUI_NAME}"
 
 !insertmacro MUI_LANGUAGEFILE_END

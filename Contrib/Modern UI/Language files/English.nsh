@@ -42,9 +42,7 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_STARTMENU_SUBTITLE "Choose a Start Menu folder for the program's shortcuts."
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_INNERTEXT_STARTMENU "Select the Start Menu folder in which you would like to create the program's shotcuts. You can also enter a name to create a new folder."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Are you sure you want to quit ${MUI_PRODUCT} Setup?"
-
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "${MUI_NAME} Setup"
+  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Are you sure you want to quit ${MUI_PRODUCT} Setup?"  
   
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Uninstall ${MUI_PRODUCT}"
@@ -56,7 +54,5 @@
     
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Finished"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "Uninstall was completed successfully."
-  
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "${MUI_NAME} Uninstall"
   
 !insertmacro MUI_LANGUAGEFILE_END

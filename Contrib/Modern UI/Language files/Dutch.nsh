@@ -44,8 +44,6 @@
   
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_ABORTWARNING "Weet u zeker dat u ${MUI_PRODUCT} Setup wilt afsluiten?"
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_TEXT_WINDOWTITLE "${MUI_NAME} Installatie"
-
 
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_TITLE "Deïnstalleer ${MUI_PRODUCT}"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_INTRO_SUBTITLE "Verwijder ${MUI_PRODUCT} van uw system."
@@ -57,6 +55,4 @@
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_TITLE "Gereed"
   !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_FINISHED_SUBTITLE "${MUI_PRODUCT} is verwijderd van uw systeem."
   
-  !insertmacro MUI_LANGUAGEFILE_STRING MUI_UNTEXT_WINDOWTITLE "${MUI_NAME} Deïnstallatie"
-   
 !insertmacro MUI_LANGUAGEFILE_END
