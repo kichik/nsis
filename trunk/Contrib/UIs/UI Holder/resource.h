@@ -28,6 +28,7 @@
 #define IDC_CHECK1                      1008
 #define IDC_MJF                         1008
 #define IDC_VERSION                     1009
+#define IDC_EDIT2                       1010
 #define IDC_DIRCAPTION                  1011
 #define IDC_STATUSTEXT                  1014
 #define IDC_LICTEXT                     1015
