@@ -1,9 +1,8 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.0b4} 2.0 Beta 4
 
-\e{v2.0b4}
-
-\\<b\\>Release Notes:\\</b\\>
+\S1{v2.0b4-rn} Release Notes
 
 \b The /LANG parameter is no longer available for any text setting instructions. You must use a \R{langstring}{LangString} if you want to make a certain text multilingual. This means you can also set one text for all languages. To make the license data multilingual you should use \R{licenselangstring}{LicenseLangString}.
 
@@ -17,7 +16,9 @@
 
 \b \R{upgradedll}{UpgradeDLL} has been changed, it's \e{highly recommend} that you include the new version in your script using \c{!include "UpgradeDLL.nsh"} instead of the old one.
 
-\\<b\\>Changelog:\\</b\\>
+\S1{v2.0b4-cl} Changelog
+
+\S2{} Major Changes
 
 \b CHM documentation - searchable and comes with an index
 
@@ -30,6 +31,8 @@
 \b Added \R{ifsilent}{IfSilent} and \R{setsilent}{SetSilent} to allow better /S interaction
 
 \b Full support for RTL languages, including support for LTR and RTL languages in one installer
+
+\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Extraction progress
 
@@ -63,6 +66,20 @@
 
 \b LangStrings are no longer installer/uninstaller specific (no un.)
 
+\b Fixed SetOutPath not setting current directory if the directory didn't exist before
+
+\b Components tree: fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree and added SF_PSELECTED for partially selected sub-sections
+
+\b Documentation fixes
+
+\b Minor bug fixes
+
+\b Code clean-ups and some more comments
+
+\b More...
+
+\S2{} New/Changed Commands
+
 \b Added \R{pageex}{PageEx}, \R{pagecallbacks}{PageCallbacks} and \R{adirvar}{DirVar} - it's now a lot easier to add the same page type twice
 
 \b Added \R{afilebufsize}{FileBufSize}
@@ -91,11 +108,7 @@
 
 \b Added base_dir for \R{gettempfilename}{GetTempFileName}
 
-\b Fixed SetOutPath not setting current directory if the directory didn't exist before
-
-\b Components tree: fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree and added SF_PSELECTED for partially selected sub-sections
-
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+\S2{} Utilities and Plug-ins
 
 \b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar and more
 
@@ -117,17 +130,9 @@
 
 \b Math plug-in
 
-\b Documentation fixes
-
 \b Delphi unit for NSIS plug-ins
 
-\b Minor bug fixes
-
-\b Code clean-ups and some more comments
-
-\b More...
-
-\e{v2.0b3}
+\H{v2.0b3} 2.0 Beta 3
 
 \b Modern UI 1.63: Header bitmap support, new defines to change the description area, single macro for language selection dialog, more!
 
@@ -165,7 +170,7 @@
 
 \b Added FlushINI
 
-\e{v2.0b2}
+\H{v2.0b2} 2.0 Beta 2
 
 \b NSIS Menu: links to all NSIS utilities, documentation and websites
 
@@ -185,7 +190,7 @@
 
 \b Minor fixes
 
-\e{v2.0b1}
+\H{v2.0b1} 2.0 Beta 1
 
 \b User interface improvements: better order/grouping of controls, button selection problems fixed, added minimize box, transparent BrandingText
 
@@ -245,8 +250,7 @@
 
 \b Code clean-ups (compiles on VC7)
 
-
-\e{v2.0b0}
+\H{v2.0b0} 2.0 Beta 0
 
 \b New paging system
 
@@ -338,8 +342,7 @@
 
 \b Lots of other bugs fixed...
 
-
-\e{v2.0a7}
+\H{v2.0a7} 2.0 Alpha 7
 
 \b Can now select the language from .onInit ($LANGUAGE is a variable)
 
@@ -403,15 +406,13 @@
 
 \b CallInstDLL /NOUNLOAD added (works on plugin calls too)
 
-
-\e{v2.0a6}
+\H{v2.0a6} 2.0 Alpha 6
 
 \b Fixed two bugs with the plug-in mechanism
 
 \b Fixed infinite loop bug
 
-
-\e{v2.0a5}
+\H{v2.0a5} 2.0 Alpha 5
 
 \b Added UseOuterUIItem
 
@@ -433,8 +434,7 @@
 
 \b Included MagicLime.exe by snowchyld
 
-
-\e{v2.0a4}
+\H{v2.0a4} 2.0 Alpha 4
 
 \b Added automatic detection, packing, unpacking and deletion of plugin dlls
 
@@ -442,7 +442,7 @@
 
 \b Added PluginDir
 
-\e{v2.0a3}
+\H{v2.0a3} 2.0 Alpha 3
 
 \b Added LoadLanguageFile
 
@@ -452,8 +452,7 @@
 
 \b 'LogSet on' now builds a log file if not already created
 
-
-\e{v2.0a2}
+\H{v2.0a2} 2.0 Alpha 2
 
 \b Added $\{NSISDIR\}
 
@@ -501,8 +500,7 @@
 
 \b Faster compile time (WIN32_LEAN_AND_MEAN)
 
-
-\e{v2.0a1}
+\H{v2.0a1} 2.0 Alpha 1
 
 \b Added expand node option to Section and SubSection
 
@@ -514,8 +512,7 @@
 
 \b Reorganized NSIS directory structure
 
-
-\e{v2.0a0}
+\H{v2.0a0} 2.0 Alpha 0
 
 \b TreeView component list (care of Jeff Doozan)
 
@@ -529,4 +526,6 @@
 
 \b Made config.h have hacks for easier building for me. :)
 
-\e{For the NSIS 1.x version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}}
+\H{cl-older} Older Versions
+
+For the NSIS 1.x version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}
