@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.61
+;NSIS Modern User Interface version 1.62
 ;Install Options Example Script
 ;Written by Joost Verburg
 

@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.61
+;NSIS Modern User Interface version 1.62
 ;MultiLanguage Example Script
 ;Written by Joost Verburg
 
@@ -36,6 +36,7 @@
   !insertmacro MUI_LANGUAGE "Ukrainian"
   !insertmacro MUI_LANGUAGE "Czech"
   !insertmacro MUI_LANGUAGE "Bulgarian"
+  !insertmacro MUI_LANGUAGE "Thai"
   
   OutFile "MultiLanguage.exe"
 
@@ -56,6 +57,7 @@
   LicenseData /LANG=${LANG_UKRAINIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_CZECH} "${NSISDIR}\Contrib\Modern UI\License.txt"
   LicenseData /LANG=${LANG_BULGARIAN} "${NSISDIR}\Contrib\Modern UI\License.txt"
+  LicenseData /LANG=${LANG_THAI} "${NSISDIR}\Contrib\Modern UI\License.txt"
 
   ;Component-selection page
     ;Titles
@@ -75,6 +77,7 @@
     LangString TITLE_SecCopyUI ${LANG_UKRAINIAN} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_CZECH} "modern.exe"
     LangString TITLE_SecCopyUI ${LANG_BULGARIAN} "modern.exe"
+    LangString TITLE_SecCopyUI ${LANG_THAI} "modern.exe"
     
     ;Descriptions
     LangString DESC_SecCopyUI ${LANG_ENGLISH} "modern.exe: English description"
@@ -93,6 +96,7 @@
     LangString DESC_SecCopyUI ${LANG_UKRAINIAN} "modern.exe: Ukrainian description"
     LangString DESC_SecCopyUI ${LANG_CZECH} "modern.exe: Czechian description"
     LangString DESC_SecCopyUI ${LANG_BULGARIAN} "modern.exe: Bulgarian description"
+    LangString DESC_SecCopyUI ${LANG_THAI} "modern.exe: Thai description"
     
   ;Folder-selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
@@ -151,8 +155,9 @@ Function .onInit
   !insertmacro MUI_LANGDLL_PUSH "Ukrainian"
   !insertmacro MUI_LANGDLL_PUSH "Czech"
   !insertmacro MUI_LANGDLL_PUSH "Bulgarian"
+  !insertmacro MUI_LANGDLL_PUSH "Thai"
   
-  Push 16F ;16 = number of languages, F = change font
+  Push 17F ;17 = number of languages, F = change font
 
   LangDLL::LangDialog "Installer Language" "Please select a language."
 

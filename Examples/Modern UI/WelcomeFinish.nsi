@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.61
+;NSIS Modern User Interface version 1.62
 ;Welcome/Finish Page Example Script
 ;Written by Joost Verburg
 
