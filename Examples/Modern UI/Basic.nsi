@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.69
+;NSIS Modern User Interface version 1.70
 ;Basic Example Script
 ;Written by Joost Verburg
 
@@ -8,10 +8,10 @@
   !include "MUI.nsh"
 
 ;--------------------------------
-;Configuration
+;General
 
-  ;General
-  Name "Modern UI Test 1.69"
+  ;Name and file
+  Name "Modern UI Test 1.70"
   OutFile "Basic.exe"
 
   ;Default installation folder
@@ -48,7 +48,7 @@ Section "Dummy Section" SecDummy
 
   SetOutPath "$INSTDIR"
   
-  ;ADD YOUR OWN STUFF HERE!
+  ;ADD YOUR OWN FILES HERE...
   
   ;Store installation folder
   WriteRegStr HKCU "Software\Modern UI Test" "" $INSTDIR
@@ -74,7 +74,7 @@ SectionEnd
 
 Section "Uninstall"
 
-  ;ADD YOUR OWN STUFF HERE!
+  ;ADD YOUR OWN FILES HERE...
 
   Delete "$INSTDIR\Uninstall.exe"
 
