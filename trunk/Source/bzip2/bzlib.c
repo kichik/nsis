@@ -443,15 +443,16 @@ int BZ_API(BZ2_bzCompressEnd)  ( bz_stream *strm )
 /*---------------------------------------------------*/
 /*--- Decompression stuff                         ---*/
 /*---------------------------------------------------*/
+static DState local_state;
 
 /*---------------------------------------------------*/
 int BZ_API(BZ2_bzDecompressInit) 
                      ( bz_stream* strm)
 {
-   DState* s;
+   DState* s=&local_state;
 
-   s = BZALLOC( sizeof(DState) );
-   if (s == NULL) return BZ_MEM_ERROR;
+//   s = BZALLOC( sizeof(DState) );
+  // if (s == NULL) return BZ_MEM_ERROR;
    s->strm                  = strm;
    strm->state              = s;
    s->state                 = BZ_X_BLKHDR_1;
@@ -462,14 +463,14 @@ int BZ_API(BZ2_bzDecompressInit)
 //   strm->total_out_lo32     = 0;
  //  strm->total_out_hi32     = 0;
 #ifdef NSIS_COMPRESS_BZIP2_SMALLMODE
-         s->ll16 = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL*100000 * sizeof(UInt16) );
-         s->ll4  = BZALLOC( 
-                      ((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) * sizeof(UChar) 
-                   );
-         if (s->ll16 == NULL || s->ll4 == NULL) return (BZ_MEM_ERROR);
+//         s->ll16 = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL*100000 * sizeof(UInt16) );
+  //       s->ll4  = BZALLOC( 
+    //                  ((1 + NSIS_COMPRESS_BZIP2_LEVEL*100000) >> 1) * sizeof(UChar) 
+      //             );
+        // if (s->ll16 == NULL || s->ll4 == NULL) return (BZ_MEM_ERROR);
 #else
-        s->tt  = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL * 100000 * sizeof(Int32) );
-        if (s->tt == NULL) return (BZ_MEM_ERROR);
+        //s->tt  = BZALLOC( NSIS_COMPRESS_BZIP2_LEVEL * 100000 * sizeof(Int32) );
+        //if (s->tt == NULL) return (BZ_MEM_ERROR);
 #endif
   // s->currBlockNo           = 0;
 
@@ -721,7 +722,7 @@ void unRLE_obuf_to_output_FAST ( DState* s )
       s->state_out_len      = c_state_out_len;
       s->nblock_used        = c_nblock_used;
       s->k0                 = c_k0;
-      s->tt                 = c_tt;
+   //   s->tt                 = c_tt;
       s->tPos               = c_tPos;
       s->strm->next_out     = cs_next_out;
       s->strm->avail_out    = cs_avail_out;
@@ -770,17 +771,17 @@ int BZ_API(BZ2_bzDecompress) ( bz_stream *strm )
 /*---------------------------------------------------*/
 int BZ_API(BZ2_bzDecompressEnd)  ( bz_stream *strm )
 {
-   DState* s;
-   s = strm->state;
+  // DState* s;
+//   s = strm->state;
 
 #ifndef NSIS_COMPRESS_BZIP2_SMALLMODE
-   BZFREE(s->tt);
+//   BZFREE(s->tt);
 #else
-   BZFREE(s->ll16);
-   BZFREE(s->ll4);
+//   BZFREE(s->ll16);
+  // BZFREE(s->ll4);
 #endif
-   BZFREE(strm->state);
-   strm->state = NULL;
+ //  BZFREE(strm->state);
+   //strm->state = NULL;
 
    return BZ_OK;
 }
