@@ -63,6 +63,9 @@ char *STRDUP(const char *c)
 #define FIELD_GROUPBOX     (12)
 #define FIELD_LINK         (13)
 
+// settings
+// crashes on windows 98 - #define IO_ENABLE_LINK
+
 // general flags
 #define FLAG_RIGHT         0x00000001
 
@@ -529,7 +532,11 @@ bool ReadSettings(void) {
       { "ICON",        FIELD_ICON        },
       { "BITMAP",      FIELD_BITMAP      },
       { "GROUPBOX",    FIELD_GROUPBOX    },
+#ifdef IO_ENABLE_LINK
       { "LINK",        FIELD_LINK        },
+#else
+      { "LINK",        FIELD_LABEL       },
+#endif
       { NULL,          0                 }
     };
     // Control flags
@@ -738,6 +745,7 @@ BOOL CALLBACK cfgDlgProc(HWND   hwndDlg,
 	return 0;
 }
 
+#ifdef IO_ENABLE_LINK
 // pFields[nIdx].nParentIdx is used to store original windowproc
 int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
 {
@@ -824,6 +832,7 @@ int StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
   else
     return 0;
 }
+#endif
 
 int nIdx;
 HWND childwnd;
@@ -1154,9 +1163,12 @@ int createCfgDlg()
           nImageType,
           nImage
         );
-      } else if (nType == FIELD_LINK){
+      }
+#ifdef IO_ENABLE_LINK
+      else if (nType == FIELD_LINK) {
         pFields[nIdx].nParentIdx = SetWindowLong(hwCtrl, GWL_WNDPROC, (long)StaticLINKWindowProc);      
       }
+#endif
     }
   }
 
