@@ -3428,8 +3428,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
     return PS_ERROR;
 #endif//!NSIS_CONFIG_COMPONENTPAGE
     // Added by Amir Szekely 29th July 2002
+#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
     case TOK_SETBRANDINGIMAGE:
-#ifdef NSIS_CONFIG_VISIBLE_SUPPORT
     {
       SCRIPT_MSG("SetBrandingImage: ");
       if (!branding_image_found) {
@@ -3460,12 +3460,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("\n");
     }
     return add_entry(&ent);
-#else
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_VISIBLE_SUPPORT not defined.\n",line.gettoken_str(0));
-    return PS_ERROR;
-#endif// NSIS_CONFIG_VISIBLE_SUPPORT
     case TOK_CREATEFONT:
-#ifdef NSIS_CONFIG_ENHANCEDUI_SUPPORT
       ent.which=EW_CREATEFONT;
       ent.offsets[0]=line.gettoken_enum(1,usrvars);
       ent.offsets[1]=add_string(line.gettoken_str(2));
@@ -3516,8 +3511,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line, FILE *fp, const char
       SCRIPT_MSG("\n");
     return add_entry(&ent);
 #else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
-    ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",line.gettoken_str(0));
-    return PS_ERROR;
+    case TOK_CREATEFONT:
+    case TOK_SETBRANDINGIMAGE:
+      ERROR_MSG("Error: %s specified, NSIS_CONFIG_ENHANCEDUI_SUPPORT not defined.\n",line.gettoken_str(0));
+      return PS_ERROR;
 #endif//!NSIS_SUPPORT_CREATEFONT
 
     // end of instructions
