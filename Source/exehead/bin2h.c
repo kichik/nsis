@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     total_bytes++;
     fprintf(out,"%i",c);
   }
-  fprintf(out,"};\n",token);
+  fprintf(out,"};\n");
   fclose(in);
   fclose(out);
   fprintf(stderr,"%s -> %s (%d bytes)\n\n",argv[1],token,total_bytes);
