@@ -16,6 +16,7 @@
 
 int MMapFile::m_iAllocationGranularity = 0;
 
+#ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
 DWORD WINAPI lzmaCompressThread(LPVOID lpParameter)
 {
   CLZMA *Compressor = (CLZMA *) lpParameter;
@@ -24,6 +25,7 @@ DWORD WINAPI lzmaCompressThread(LPVOID lpParameter)
 
   return Compressor->CompressReal();
 }
+#endif
 
 bool isSimpleChar(char ch)
 {
@@ -2347,7 +2349,9 @@ int CEXEBuild::write_output(void)
         fclose(fp);
         return PS_ERROR;
       }
+#ifdef NSIS_CONFIG_CRC_SUPPORT
       crc=CRC32(crc,&z,1);
+#endif
     }
     exeheader_size_new = exeheader_size_new_aligned;
   }
@@ -2357,7 +2361,11 @@ int CEXEBuild::write_output(void)
   fh.nsinst[1]=FH_INT2;
   fh.nsinst[2]=FH_INT3;
 
+#ifdef NSIS_CONFIG_CRC_SUPPORT
   fh.flags=(build_crcchk?(build_crcchk==2?FH_FLAGS_FORCE_CRC:0):FH_FLAGS_NO_CRC);
+#else
+  fh.flags=0;
+#endif
 #ifdef NSIS_CONFIG_SILENT_SUPPORT
   if (build_header.flags&(CH_FLAGS_SILENT|CH_FLAGS_SILENT_LOG)) fh.flags |= FH_FLAGS_SILENT;
 #endif

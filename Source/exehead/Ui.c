@@ -633,6 +633,8 @@ skipPage:
   return HandleStaticBkColor();
 }
 
+#define this_page ((page*)lParam)
+
 #ifdef NSIS_CONFIG_LICENSEPAGE
 
 #define _RICHEDIT_VER 0x0200
@@ -646,8 +648,6 @@ DWORD CALLBACK StreamLicense(DWORD dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
   dwRead+=*pcb;
   return 0;
 }
-
-#define this_page ((page*)lParam)
 
 static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
