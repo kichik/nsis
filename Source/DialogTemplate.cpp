@@ -311,6 +311,64 @@ void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) {
 	y = float(y) * (float(r.bottom)/1024);
 }
 
+// Returns the size of a string in the dialog (in dialog units)
+SIZE CDialogTemplate::GetStringSize(char *str) {
+	DWORD dwTemp;
+	BYTE* pbDlg = Save(dwTemp);
+	HWND hDlg = CreateDialogIndirect(GetModuleHandle(0), (DLGTEMPLATE*)pbDlg, 0, 0);
+	delete [] pbDlg;
+
+	SIZE size;
+	GetTextExtentPoint32(GetDC(hDlg), str, lstrlen(str), &size);
+
+	DestroyWindow(hDlg);
+
+	PixelsToDlgUnits((short&)size.cx, (short&)size.cy);
+	
+	return size;
+}
+
+// Trims the right margins of a control to fit a given text string size.
+void CDialogTemplate::RTrimToString(WORD id, char *str, int margins) {
+	DialogItemTemplate* item = GetItem(id);
+	if (!item) return;
+
+	SIZE size = GetStringSize(str);
+
+	size.cx += margins;
+
+	item->sWidth = size.cx;
+	item->sHeight = size.cy;
+}
+
+// Trims the left margins of a control to fit a given text string size.
+void CDialogTemplate::LTrimToString(WORD id, char *str, int margins) {
+	DialogItemTemplate* item = GetItem(id);
+	if (!item) return;
+
+	SIZE size = GetStringSize(str);
+
+	size.cx += margins;
+
+	item->sX += item->sWidth - size.cx;
+	item->sWidth =  size.cx;
+	item->sHeight = size.cy;
+}
+
+// Trims the left and right margins of a control to fit a given text string size.
+void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
+	DialogItemTemplate* item = GetItem(id);
+	if (!item) return;
+
+	SIZE size = GetStringSize(str);
+
+	size.cx += margins;
+
+	item->sX += item->sWidth/2 - size.cx/2;
+	item->sWidth =  size.cx;
+	item->sHeight = size.cy;
+}
+
 // Saves the dialog in the form of DLGTEMPLATE[EX]
 BYTE* CDialogTemplate::Save(DWORD& dwSize) {
 	// We need the size first to know how much memory to allocate
