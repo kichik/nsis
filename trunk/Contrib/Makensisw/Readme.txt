@@ -142,13 +142,16 @@ Version History
  - Text always scrolls to bottom (Kickik)
  - Updated link to new docs
  - Makensisw now takes the same parameters as makensis
- - About Box is closeable
+ - About Box is closeable by clicking X
  - Fixed some random crashes
  - Drag and Drop Support into the Makensisw window
- - Updated icon to Trace's modern NSIS icon
+ - Updated icon to more sexy one
  - Added Load Script option on File menu
  - Added Search Dialog (Ctrl+F) (Kickik)
  - Added Select All (Ctrl+A), Copy (Ctrl+C), Exit (Alt+X) keys
+ - Branding text now reflects NSIS version
+ - Bunch of other stuff not worth mentioning
+ - Added some simple tool tips
 
 
 Copyright Information
