@@ -749,6 +749,11 @@ BOOL CALLBACK DialogResize(HWND hWnd, LPARAM /* unused */)
         break;
     }
   }
+  else {
+      RECT r2;
+      GetWindowRect(g_toolbar.hwnd, &r2);
+      SetWindowPos(hWnd, 0, 0, 0, r.right - r.left + g_resize.dx, r2.bottom-r2.top, SWP_NOMOVE|SWP_NOZORDER);
+  }
   RedrawWindow(hWnd,NULL,NULL,RDW_INVALIDATE);
   return TRUE;
 }
