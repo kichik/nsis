@@ -18,7 +18,7 @@
      LicenseText /LANG=${LANG_ITALIAN} "Seleziona Page Down per vedere il resto della licenza d'uso."
      LangString MUI_TEXT_LICENSE_TITLE ${LANG_ITALIAN} "Licenza d'uso"  
      LangString MUI_TEXT_LICENSE_SUBTITLE ${LANG_ITALIAN} "Per favore esamina i termini della licenza d'uso prima di installare ${NAME}."
-     LangString MUI_INNERTEXT_LICENSE ${LANG_ITALIAN} "Se accetti i termini della licenza d'uso seleziona Io accetto per continuare. Devi accettare i termini della licenza d'uso per installare ${NAME}."  
+     LangString MUI_INNERTEXT_LICENSE ${LANG_ITALIAN} "Se accetti i termini della licenza d'uso seleziona Accetto per continuare. Devi accettare i termini della licenza d'uso per installare ${NAME}."  
   !endif
   
   !ifdef MUI_COMPONENTPAGE
@@ -30,7 +30,7 @@
   !endif
   
   !ifdef MUI_DIRSELECTPAGE
-    DirText /LANG=${LANG_ITALIAN} "Il programma d'installazione installerà ${NAME} nella seguente cartella.$\r$\n$\r$\nPer installare nella seguente cartella clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella." " "
+    DirText /LANG=${LANG_ITALIAN} "Il programma d'installazione installerà ${NAME} nella cartella selezionata.$\r$\n$\r$\nPer installare nella cartella selezionata clicca su Installa. Per installare in una cartella differente, clicca su Sfoglia e seleziona un'altra cartella." " "
     LangString MUI_TEXT_DIRSELECT_TITLE ${LANG_ITALIAN} "Scegli la cartella di installazione"
     LangString MUI_TEXT_DIRSELECT_SUBTITLE ${LANG_ITALIAN} "Scegli la cartella dove installare ${NAME}."
     LangString MUI_INNERTEXT_DESTINATIONFOLDER ${LANG_ITALIAN} "Cartella d'installazione"
@@ -57,11 +57,11 @@
     LangString MUI_BUTTONTEXT_INSTALL ${LANG_ITALIAN} "&Installa"
   !endif
   
+  
   ;UNINSTALLER
   
   !ifdef MUI_UNINSTALLER
-    UninstallText /LANG=${LANG_FRENCH} "Questo programma rimuoverà ${NAME} dal
-    vosto computer."
+    UninstallText /LANG=${LANG_ITALIAN} "Questo programma rimuoverà ${NAME} dal vosto computer."
     LangString un.MUI_UNTEXT_INTRO_TITLE ${LANG_ITALIAN} "Disinstalla ${NAME}"
     LangString un.MUI_UNTEXT_INTRO_SUBTITLE ${LANG_ITALIAN} "Rimuovi ${NAME} dal vostro computer."
   
