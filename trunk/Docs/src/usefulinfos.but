@@ -2,31 +2,31 @@
 
 \H{compiling_infos}Compiling NSIS Sources
 
-If you want to compile NSIS by yourself you have to install the Sources. The Sources are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly} development Snapshots. NSIS is programmed in Microsoft Visual C 6.0. Therefore it contains all necessary files including the Project Files. You can also use the current Version 7.0 of Visual C but the output is a few KB larger. The Sources also include a makefile for the famous Open Source Compiler GCC but unfortunately it is a little bit outdated. If you are working with GCC and want to provide a updated working makefile or your using an other Compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
+The NSIS source files are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly} development snapshots. The binary files distributed with the NSIS releases are compiled with the Microsoft Visual C++ 6.0 compiler. The source has also been tested to be compatible with the Microsoft Visual C++ .NET 2003 compiler. The NSIS distribution includes Microsoft Visual C++ 6.0 project files. Microsoft Visual C++ .NET 2003 automatically converts these files to the Microsoft Visual C++ .NET 2003 format.
 
-\\<b\\>Note: If your using Visual C 6.0 you have to update the \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK} to avoid crashes when using CopyFiles. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{here} for further informations. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/ppack/default.asp}{Processor Pack} for decreasing the excutable Size.\\</b\\>
+Previous versions of NSIS have been tested with with the MinGW compiler, however we don't have an up-to-date makefile. If you are working with GCC or another compiler like Borland C++ Builder or Open Watcom C/C++ and want to provide makefiles or project files please drop a line on the \W{http://forums.winamp.com/forumdisplay.php?forumid=65}{NSIS Forum}.
 
+\\<b\\>Note: If your using Microsoft Visual C++ 6.0 you have install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the lib's distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{Click here} for more information. You should also install the \W{http://msdn.microsoft.com/vstudio/downloads/ppack/default.asp}{Processor Pack} to decrease the size of the installer overhead.\\</b\\>
 
-\H{errorlevels}Errorlevels
+\H{errorlevels}Error Levels
 
-Like any other program installers made by NSIS return errorlevels as a result of their execution. Very useful if you call an NSIS Installer from within an other installer with \R{execwait}{Execwait}.
+Like any other program installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
 
-On normal Installers:
+Normal installers:
 
-\b 0 for normal execution
+\b 0 - Normal execution (no error)
 
-\b 1 for User Abort
+\b 1 - Installation aborted by user
 
-\b 2 for Script Abort
+\b 2 - Installation aborted by script
 
-On silent Installers:
+Silent installers:
 
-\b 0 for normal execution
+\b 0 - Normal execution (no error)
 
-\b 1 for User Abort
+\b 1 - Installation aborted by user
 
-\b 1 for Script Abort
-
+\b 1 - Installation aborted by script
 
 \H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
 
@@ -49,7 +49,7 @@ Write a value using the WriteRegStr command (for strings) or WriteRegDWORD comma
 Some of the following values will not be used by older Windows versions.
 
 \e{InstallLocation} (string) - Installation directory ($INSTDIR) \\<br\\>
-\e{DisplayIcon} (string) - Path, filename and index of of the icon which will be displayed next to your application name
+\e{DisplayIcon} (string) - Path, filename and index of of the icon that will be displayed next to your application name
 
 \e{Publisher} (string) - (Company) name of the publisher
 
@@ -91,9 +91,7 @@ Oleaut32.dll \\<br\\>
 Olepro32.dll \\<br\\>
 Stdole2.tlb \\<br\\>
 
-In the uninstaller, use \R{unremovesharedll}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because it's never a good idea to remove the VB runtimes. The system to registering shared DLL files does now always work and many application require these files.
-
-
+During the uninstallation, use \R{unremovesharedll}{un.RemoveSharedDLL} to decrement the shared DLL count, but remove the Delete /REBOOTOK $R1 line, because the shared DLL registration is not reliable enough for such important system files.
 
 \c # Don't forget to copy the macro's!
 \c

@@ -3,31 +3,29 @@
 
 \e{v2.0b4}
 
+\b \W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Easier page macro system, language specific fonts, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+
+\b Added \R{asetallowskipfiles}{AllowSkipFiles}: Set whether the user should be able to skip a file when overwriting failed
+
+\b \W{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
+
+\b Added support for standard predefines: $\{__DATE__\}, $\{__TIME__\}, $\{__TIMESTAMP__\}, $\{__FILE__\}, $\{__LINE__\}
+
+\b \W{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, toolbar, more
+
 \b /o Switch for \R{ssection}{Section} provides ability to unselect the section by default
 
 \b Increased amount of InstTypes to 32
 
 \b Added \R{ssectionsetsize}{SectionSetSize}, \R{ssectiongetsize}{SectionGetSize}, \R{ssetcurinsttype}{SetCurInstType}, \R{sgetcurinsttype}{GetCurInstType}
 
-\b InstallOptions PlugIn: Fixed bug [ 720332 ] ">301 Characters in State of List Box Bug in InstallOptions"
+\b System Plug-in: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
 
-\b System PlugIn: Fixed a bug with calling proc(void) and added e switch to get GetLastError return value
-
-\b Fixed a problem regarding borders in PlugIns BgImage and InstallOptions
-
-\b Fixed pluginsdir init function generation
-
-\b Bug #717022 fixed: overlapping chars in dir input
-
-\b In Components Tree: Fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree, Added SF_PSELECTED for partially selected sub-sections
+\b Components Tree: Fixed problems with sub-sections with RO sections as children, SF_EXPAND now refreshes the components tree, Added SF_PSELECTED for partially selected sub-sections
 
 \b \R{onmouseoversection}{OnMouseOver Text} is only displayed when mouse over section else nothing is displayed
 
 \b RO sections can now be in \R{ainsttype}{InstTypes} too (default to old behavior)
-
-\b \W{../contrib/InstallOptions/readme.html}{InstallOptions}: Added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection)
-
-\b Modern UI 1.64: Finish header macro's don't have to be inserted anymore, \R{alicenseforceselection}{LicenseForceSelection} support, improved language preference storage
 
 \b Added \R{alicenseforceselection}{LicenseForceSelection}: Checkbox or radiobuttons on license page to let user agree with license or not
 
@@ -39,9 +37,19 @@
 
 \b \R{ainsttype}{InstType} /NOCUSTOM and /COMPONENTSONLYONCUSTOM work together
 
+\b Improved \R{aaddbrandingimage}{AddBrandingImage}: Doesn't depend on the UI, can set image on the bottom and on the right, support for custom padding value 
+
+\b NLF language files (v5): More strings translatable (K/M/G Byte, registering, unregistering), language specific fonts
+
+\b Fixed a problem regarding borders in Plug-ins BgImage and InstallOptions
+
+\b Fixed plug-ins directory init function generation
+
+\b Fixed overlapping chars in directory input
 
 \\<b\\>Notes:\\</b\\>
 
+\W{../Contrib/Modern UI/Readme.html}{Modern UI 1.65}: Because of the new page macro's, you have to make some small changes to your scripts, see the Modern UI Readme for details \\<br\\>
 \R{page}{Custom Pages} now have a leave function. As this parameter is before the caption you have to add another "" empty string for the title to work. \\<br\\>
 \R{onselchange}{.onSelChange} is no longer called when the components page is created
 
@@ -448,4 +456,4 @@
 
 \b Made config.h have hacks for easier building for me. :)
 
-\e{For complete version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}}
+\e{For the NSIS 1.x version history, see \W{http://www.nullsoft.com/free/nsis/version-history.html}{http://www.nullsoft.com/free/nsis/version-history.html}}
