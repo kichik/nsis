@@ -129,18 +129,7 @@ Function SetPage
     !insertmacro MUI_PAGE_START 2
 
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options A" "Create your own dialog!"
-
-        InstallOptions::dialog "$PLUGINSDIR\iniA.ini"
-        Pop ${TEMP1}
-
-        StrCmp ${TEMP1} "cancel" "" +2
-          Quit
-
-        StrCmp ${TEMP1} "back" "" ioA_noback
-          !insertmacro MUI_INSTALLOPTIONS_BACK
-          ioA_noback:
-
-        !insertmacro MUI_INSTALLOPTIONS_NEXT
+       !insertmacro MUI_INSTALLOPTIONS_SHOW "iniA.ini"
 
     !insertmacro MUI_PAGE_STOP 2
 
@@ -155,18 +144,7 @@ Function SetPage
     !insertmacro MUI_PAGE_START 5
 
        !insertmacro MUI_HEADER_TEXT 1033 "Install Options B" "Create your own dialog!"
-
-        InstallOptions::dialog "$PLUGINSDIR\iniB.ini"
-        Pop ${TEMP1}
-
-        StrCmp ${TEMP1} "cancel" "" +2
-          Quit
-
-        StrCmp ${TEMP1} "back" "" ioB_noback
-          !insertmacro MUI_INSTALLOPTIONS_BACK
-          ioB_noback:
-
-        !insertmacro MUI_INSTALLOPTIONS_NEXT
+       !insertmacro MUI_INSTALLOPTIONS_SHOW "iniB.ini"
 
     !insertmacro MUI_PAGE_STOP 5
 

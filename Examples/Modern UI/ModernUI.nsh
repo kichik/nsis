@@ -1,4 +1,4 @@
-;Modern UI Header File version 1.19d - WORKING ON INSTALLOPTIONS INTEGRATION
+;Modern UI Header File version 1.19e - WORKING ON INSTALLOPTIONS INTEGRATION
 ;Written by Joost Verburg
 
 ;See Example.nsi & Multilanguage.nsi for an example of usage
@@ -220,6 +220,21 @@
 
   StrCpy ${IO_DIRECTION} "${DIRECTION}"
 
+!macroend
+
+!macro MUI_INSTALLOPTIONS_SHOW FILE
+        
+  InstallOptions::dialog "$PLUGINSDIR\${FILE}"
+  Pop ${TEMP1}
+
+  StrCmp ${TEMP1} "cancel" "" +2
+    Quit
+
+  StrCmp ${TEMP1} "back" "" +7
+    !insertmacro MUI_INSTALLOPTIONS_BACK
+
+  !insertmacro MUI_INSTALLOPTIONS_NEXT
+		
 !macroend
 
 !macro MUI_INSTALLOPTIONS_BACK
