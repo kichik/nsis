@@ -31,7 +31,7 @@ enum {
   MIL_BITMAP,
   MIL_TRANSPARENT_BITMAP,
   MIL_TEXT
-} ObjType;
+};
 
 struct myImageList {
   BYTE iType;
