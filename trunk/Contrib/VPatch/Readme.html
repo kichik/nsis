@@ -131,6 +131,15 @@ a smaller patch, but the generation will take more time (the default blocksize i
 <p class="subheader">Update the file in your installer</p>
 <p class="text">Use the VPatch plug-in to update a file using a patch file:</p>
 <pre class="margin">vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"</pre>
+<p class="text">The result of the patch operating will be added to the stack and can
+be one of the following texts:</p>
+<ul>
+<li>OK</li>
+<li>OK, new version already installed</li>
+<li>An error occured while patching</li>
+<li>Patch data is invalid or corrupt</li>
+<li>No suitable patches were found</li>
+</ul>
 <p class="text">Check <a href="example.nsi">example.nsi</a> for an example.</p>
 <p class="subheader">Multiple patches in one file</p>
 <p class="text">GenPat appends a patch to the file you specified. If there is already a patch
