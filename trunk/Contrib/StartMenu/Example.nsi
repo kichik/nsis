@@ -17,10 +17,8 @@ Function .onVerifyInstDir
 		Abort
 FunctionEnd
 
-Page custom StartMenuGroupSelect
+Page custom StartMenuGroupSelect ": Start Menu Folder"
 Function StartMenuGroupSelect
-	SendMessage $HWNDPARENT ${WM_SETTEXT} 0 "STR:StartMenu.dll test Setup: Start Menu Folder"
-
 	StartMenu::Select /autoadd /lastused $R0 "StartMenu.dll test"
 	Pop $R1
 
