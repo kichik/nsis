@@ -7,9 +7,6 @@
 #define DLG_ABOUT                       103
 #define IDM_MENU                        104
 #define IDK_ACCEL                       105
-#define IDR_DEFAULT1                    108
-#define IDI_ABOUT                       110
-#define IDM_LOGWIN                      111
 #define IDI_SHELL                       112
 #define DLG_ABOUTNSIS                   113
 #define IDC_LOGWIN                      402
@@ -36,13 +33,14 @@
 #define IDM_FIND                        40006
 #define IDM_SELECTALL                   40007
 #define IDM_ABOUTNSIS                   40008
+#define IDM_CLEARLOG                    40009
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        114
-#define _APS_NEXT_COMMAND_VALUE         40009
+#define _APS_NEXT_COMMAND_VALUE         40011
 #define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

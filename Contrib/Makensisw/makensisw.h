@@ -32,7 +32,7 @@
 // Defines
 #define NSIS_URL	"http://nsis.sourceforge.net/"
 #define USAGE		"Usage:\r\n\r\n - File | Load Script...\r\n - Drag the .nsi file into this window\r\n - Right click the .nsi file and choose \"Compile NSI\""
-#define COPYRIGHT	"Copyright (c) 2002 Robert Rainwater"
+#define COPYRIGHT	"Copyright © 2002 Robert Rainwater"
 #define DOCPATH		"http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/*checkout*/nsis/NSIS/docs/index.html?rev=HEAD"
 #define LOCALDOCS	"\\docs\\index.html"
 #define NSISERROR	"Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."

@@ -39,6 +39,7 @@ Ctrl+F: Find text
 Ctrl+L: Load a script
 Ctrl+R: Recompiles the script
 Ctrl+T: Tests the installer
+Ctrl+W: Clears Log Window
 Alt+X: Exits the application
 F1: View Documentation
 
@@ -159,6 +160,7 @@ Version History
  - Added Context Menu in log window
  - Added resize gripper
  - Ctrl+L loads a script
+ - Added Clear Log (Ctrl+W)
  - Bunch of other stuff not worth mentioning
 
 

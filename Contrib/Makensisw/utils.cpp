@@ -69,7 +69,7 @@ void ClearLog(HWND hwnd) {
 }
 
 void LogMessage(HWND hwnd,const char *str) {
-  DWORD dwLength = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
+	DWORD dwLength = SendDlgItemMessage(hwnd, IDC_LOGWIN, WM_GETTEXTLENGTH, 0, 0);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SETSEL, dwLength, dwLength);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_REPLACESEL, 0, (WPARAM)str);
 	SendDlgItemMessage(hwnd, IDC_LOGWIN, EM_SCROLLCARET, 0, 0);
@@ -94,6 +94,7 @@ void DisableItems(HWND hwnd) {
 	EnableMenuItem(m,IDM_COPY,MF_GRAYED);
 	EnableMenuItem(m,IDM_COPYSELECTED,MF_GRAYED);
 	EnableMenuItem(m,IDM_EDITSCRIPT,MF_GRAYED);
+	EnableMenuItem(m,IDM_CLEARLOG,MF_ENABLED);
 }
 
 void EnableItems(HWND hwnd) {
@@ -151,6 +152,7 @@ void EnableItems(HWND hwnd) {
 	EnableMenuItem(m,IDM_COPY,MF_ENABLED);
 	EnableMenuItem(m,IDM_COPYSELECTED,MF_ENABLED);
 	EnableMenuItem(m,IDM_EDITSCRIPT,MF_ENABLED);
+	EnableMenuItem(m,IDM_CLEARLOG,MF_ENABLED);
 }
 
 void CompileNSISScript() {
@@ -158,7 +160,6 @@ void CompileNSISScript() {
 	DragAcceptFiles(g_hwnd,FALSE);
 	ClearLog(g_hwnd);
 	SetTitle(g_hwnd,NULL);
-	SetBranding(g_hwnd);
 	if (lstrlen(g_script)==0) {
 		HMENU m = GetMenu(g_hwnd);
 		LogMessage(g_hwnd,USAGE);

@@ -40,6 +40,8 @@ UINT uFindReplaceMsg=0;
 HWND hwndFind=0;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmdShow) {
+	MSG	msg;
+	int status;
 	HACCEL haccel; 
 	g_hInstance=GetModuleHandle(0);
 	g_script=GetCommandLine();
@@ -53,12 +55,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
 	ResetObjects();
 	HWND hDialog = CreateDialog(g_hInstance,MAKEINTRESOURCE(DLG_MAIN),0,DialogProc);
 	if (!hDialog) {
-		MessageBox(0, DLGERROR, "Error", MB_ICONEXCLAMATION|MB_OK);
+		MessageBox(0,DLGERROR,"Error",MB_ICONEXCLAMATION|MB_OK);
 		return 1;
 	}
 	haccel = LoadAccelerators(g_hInstance, MAKEINTRESOURCE(IDK_ACCEL)); 
-	MSG	msg;
-	int status;
 		while ((status=GetMessage(&msg,0,0,0))!=0) {
 		if (status==-1) return -1;
 		if (!IsDialogMessage(hwndFind, &msg)) {
@@ -86,6 +86,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			SetClassLong(hwndDlg,GCL_HICON,(long)hIcon); 
 			DragAcceptFiles(g_hwnd,FALSE);
 			InitTooltips(g_hwnd);
+			SetBranding(g_hwnd);
 			HFONT hFont = CreateFont(14,0,0,0,FW_NORMAL,0,0,0,DEFAULT_CHARSET,OUT_CHARACTER_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,WM_SETFONT,(WPARAM)hFont,0);
 			SendDlgItemMessage(hwndDlg,IDC_LOGWIN,EM_SETBKGNDCOLOR,0,GetSysColor(COLOR_BTNFACE));
@@ -124,8 +125,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 		{
 			if ((HWND)wParam==GetDlgItem(g_hwnd,IDC_LOGWIN)) {
 				if (!hmnu) {
-					hmnu = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_LOGWIN));
-					if (hmnu) hmnu = GetSubMenu(hmnu,0);
+					hmnu = LoadMenu(g_hInstance,MAKEINTRESOURCE(IDM_MENU));
+					if (hmnu) hmnu = GetSubMenu(hmnu,1);
 				}
 				if (hmnu) {
 					TrackPopupMenu(hmnu,NULL,(int)(short)LOWORD(lParam),(int)(short)HIWORD(lParam),0,g_hwnd,0);
@@ -248,6 +249,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 							ResetObjects();
 							CompileNSISScript();
 						}
+					}
+					return TRUE;
+				}
+				case IDM_CLEARLOG:
+				{
+					if (!g_hThread) {
+						ClearLog(g_hwnd);
+						LogMessage(g_hwnd,USAGE);
 					}
 					return TRUE;
 				}
