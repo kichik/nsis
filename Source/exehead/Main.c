@@ -110,7 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   if (*cmdline == '\"') seekchar = *cmdline++;
 
   while (*cmdline && *cmdline != seekchar) cmdline=CharNext(cmdline);
-  if (*cmdline) cmdline=CharNext(cmdline);
+  cmdline=CharNext(cmdline);
   realcmds=cmdline;
 
   for (;;)

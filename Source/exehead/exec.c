@@ -237,12 +237,10 @@ static int NSISCALL ExecuteEntry(entry *entry_)
       }
       else update_status_text_from_lang(LANG_CREATEDIR,buf1);
       {
-        char *tp;
-        char *p;
-        p=buf1;
-        while (*p == ' ') p=CharNext(p);
+        char *tp=CharNext(buf1);
+        char *p=buf1;
+        char c = 'c';
         if (*p) {
-          tp=CharNext(p);
           if (*(WORD*)tp == CHAR2_TO_WORD(':','\\')) p=tp+2;
           else if (*(WORD*)p == CHAR2_TO_WORD('\\','\\'))
           {
@@ -250,21 +248,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             for (x = 0; x < 2; x ++)
             {
               while (*p != '\\' && *p) p=CharNext(p); // skip host then share
-              if (*p) p=CharNext(p);
+              p=CharNext(p);
             }
 
           }
           else return 0;
-          while (*p)
+          while (c)
           {
             while (*p != '\\' && *p) p=CharNext(p);
-            if (!*p) CreateDirectory(buf1,NULL);
-            else
-            {
-              *p=0;
-              CreateDirectory(buf1,NULL);
-              *p++ = '\\';
-            }
+            c=*p;
+            *p=0;
+            g_flags.exec_error += !CreateDirectory(buf1,NULL);
+            *p++ = c;
           }
         }
       }
