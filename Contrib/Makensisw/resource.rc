@@ -69,6 +69,8 @@ BEGIN
         MENUITEM "&Test\tCtrl+T",               IDM_TEST
         MENUITEM "&Save Output...",             IDM_SAVE
         MENUITEM SEPARATOR
+        MENUITEM "&Load Script...",             IDM_LOADSCRIPT
+        MENUITEM SEPARATOR
         MENUITEM "E&xit\tCtrl+X",               IDM_EXIT
     END
     POPUP "&Edit"
