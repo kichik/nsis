@@ -19,7 +19,7 @@ In a NSIS script every line is treated as a command. If your command is too long
 
 If you want to use a double-quote in a string you can either use \\$" to esapce the quote or quote the string with a different type of quote such as ` or '.
 
-For more details about the script format, see \k{fileformat}.
+For more details about the script format, see \R{fileformat}{Script File Format}.
 
 The default extension for a script file is .nsi. Header files have the .nsh extension. Header files can help you arrange your script by dividing it to more than one block of code, you can also put functions or macros in header files and include the header files in multiple installers. This makes updating easier and it also makes your scripts easier to read. To include a header file in your script use \R{include}{!include}. Header files that reside in the Include directory under your NSIS directory can be included just by their name. For example:
 
@@ -35,13 +35,13 @@ Installer Attributes determine the behavior and the look and feel of your instal
 
 The most basic attributes are \R{aname}{Name}, \R{ainstalldir}{InstallDir} and \R{adirtext}{DirText}.
 
-For more information about installer attributes, have a look at \k{instattribs}.
+For more information about installer attributes, have a look at \R{instattribs}{Installer Attributes}.
 
 \S1{tut-sections} Sections
 
 In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is in sections. Each visible section is a component for the user to choose from. We will not discuss invisible sections in this tutorial. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install you'll have to use more than one section.
 
-The instructions that can be used in sections are very different from the installer attributes instructions, they are executed at runtime on the user's computer. Those instructions can extract files, read from and write to the registry, INI files or normal files, create directories, create shortcuts and a lot more. You can find out about those instructions in \k{instr}.
+The instructions that can be used in sections are very different from the installer attributes instructions, they are executed at runtime on the user's computer. Those instructions can extract files, read from and write to the registry, INI files or normal files, create directories, create shortcuts and a lot more. You can find out more in \R{instr}{Instructions}.
 
 The most basic instructions are \R{setoutpath}{SetOutPath} which tells the installer where to extract files and \R{file}{File} which extracts files.
 
@@ -53,7 +53,7 @@ Example:
 \c   File "Readme.txt"
 \c SectionEnd
 
-For more information about sections see \k{sections}.
+For more information about sections see \R{sections}{Sections}.
 
 \S1{tut-functions} Functions
 
@@ -69,9 +69,9 @@ Callback functions are called by the installer upon certain defined events such 
 \c   gogogo:
 \c FunctionEnd
 
-\R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \k{callbacks} for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.
+\R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \R{callbacks}{Callback Functions} for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.
 
-For more information about sections see \k{functions}.
+For more information about sections see \R{functions}{Functions}.
 
 \S1{tut-working-with-scripts} Working with Scripts
 
@@ -118,7 +118,7 @@ Compiler commands will be executed on compile time on your computer. They can be
 \c Name "My Program ${VERSION}"
 \c OutFile "My Program Installer - ${VERSION}.exe"
 
-For more information about defines see \k{compdefines}.
+For more information about defines see \R{compdefines}{Conditional Compilation}.
 
 Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. An example of a macro is \R{upgradedll}{UpgradeDLL}, which you can use to upgrade a DLL file. The macro's commands are inserts at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
 
@@ -134,7 +134,7 @@ Another common use is macros. Macros are used to insert code on compile time, de
 
 This macro helps you avoid writing the same code for both the installer and the uninstaller. The two !insertmacros insert two functions, one for the installer called MyFunc and one for the uninstaller called un.MyFunc and both do exactly the same thing.
 
-For more information see \k{comptime}.
+For more information see \R{comptime}{Compile Time Commands}.
 
 \H{tutcompiler} Compiler
 
@@ -162,7 +162,7 @@ Every plug-in's function has its own requirements when it comes to parameters, s
 
 The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \W{../Plugins/}{Plugins directory} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addPluginDir} to tell NSIS to search in other directories too.
 
-There are several plug-ins that come with the NSIS distribution. \W{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to add custom pages to your installer, in combination with the NSIS Page commands (See \k{pages}). The \W{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \W{../Contrib/}{Contrib directory} for help files and examples. You can find additional plug-ins at the on-line \W{http://nsis.sf.net/archive/}{NSIS Archive}.
+There are several plug-ins that come with the NSIS distribution. \W{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to add custom pages to your installer, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \W{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \W{../Contrib/}{Contrib directory} for help files and examples. You can find additional plug-ins at the on-line \W{http://nsis.sf.net/archive/}{NSIS Archive}.
 
 You can also create a plug-in of your own if you know programming. \W{../Contrib/ExDLL}{ExDLL} is the basic plug-in example. As all of the plug-ins packed with NSIS and most of the plug-ins in the archive come with source code you can have a look at the \W{../Contrib/}{Contrib directory} and the on-line \W{http://nsis.sf.net/archive/}{NSIS Archive} for more examples.
 
