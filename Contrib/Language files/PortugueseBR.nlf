@@ -1,5 +1,5 @@
 # Header, don't edit
-NLF v4
+NLF v5
 # Language ID
 1046
 # Font and size - dash (-) means default
@@ -40,7 +40,8 @@ Escolha o diretório para instalar %s:
 Espaço disponível: 
 Espaço necessário: 
 Desinstalando de:
-Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para Abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nignorar para ignorar este arquivo.
+Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Abortar para abortar a instalação,\r\nRepetir para tentar novamente a gravação do arquivo, ou\r\nIgnorar para ignorar este arquivo.
+Erro ao abrir arquivo para gravação: \r\n\t"$0"\r\nClique em Repetir para tentar novamente a gravação do arquivo, ou\r\nCancelar para abortar a instalação.
 Não foi possível gravar: 
 Falha ao copiar
 Copiar para 
