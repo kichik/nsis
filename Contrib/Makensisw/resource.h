@@ -76,9 +76,7 @@
 #define IDM_CLEAR_MRU_LIST              40029
 #define IDM_RECOMPILE_TEST              40030
 #define IDM_BEST                        40031
-#ifdef LZMA_COMPRESSOR_SUPPORT
 #define IDM_LZMA                        40032
-#endif
 
 // Next default values for new objects
 // 
