@@ -1508,7 +1508,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (parm2) // set install type
           {
             SetInstType(x);
-            RefreshSectionGroups(0);
+            RefreshSectionGroups();
           }
           else // get install type
           {
