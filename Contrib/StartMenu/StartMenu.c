@@ -29,8 +29,7 @@ void *lpWndProcOld;
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void AddFolderFromReg(char *name, HKEY rootKey);
-void PopulateListWithDir(char *dir);
+void AddFolderFromReg(HKEY rootKey);
 
 void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
 {
@@ -97,7 +96,7 @@ void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variab
       lpWndProcOld = (void *) SetWindowLong(hwndParent, GWL_WNDPROC, (long) ParentWndProc);
     }
 
-    LockWindowUpdate(0);
+    //LockWindowUpdate(0);
 
     while (!g_done)
     {
@@ -208,7 +207,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         temp_r.bottom + 2
       );
 
-      SendMessage(hwText, WM_SETTEXT, 0, (LPARAM) text);
+      SetWindowText(hwText, text);
 
       GetWindowRect(hwLocation, &temp_r);
 
@@ -221,12 +220,13 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (*lastused == '>')
       {
-        SendMessage(hwCheckBox, BM_SETCHECK, BST_CHECKED, 0);
-        lstrcpy(buf, lastused);
-        lstrcpy(lastused, buf + 1);
+        CheckDlgButton(hwndDlg, IDC_CHECK, BST_CHECKED);
+        lstrcpy(lastused, lstrcpy(buf, lastused) + 1);
+        EnableWindow(hwDirList, FALSE);
+        EnableWindow(hwLocation, FALSE);
       }
 
-      SendMessage(hwLocation, WM_SETTEXT, 0, (LPARAM) (*lastused ? lastused : progname));
+      SetWindowText(hwLocation, *lastused ? lastused : progname);
 
       GetWindowRect(hwCheckBox, &temp_r);
       ScreenToClient(hwndDlg, ((LPPOINT) &temp_r));
@@ -249,11 +249,11 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (*checkbox)
       {
         ShowWindow(hwCheckBox, SW_SHOWNA);
-        SendMessage(hwCheckBox, WM_SETTEXT, 0, (LPARAM) checkbox);
+        SetWindowText(hwCheckBox, checkbox);
       }
 
-      AddFolderFromReg("Programs", HKEY_LOCAL_MACHINE);
-      AddFolderFromReg("Programs", HKEY_CURRENT_USER);
+      AddFolderFromReg(HKEY_LOCAL_MACHINE);
+      AddFolderFromReg(HKEY_CURRENT_USER);
 
       ShowWindow(hwndDlg, SW_SHOWNA);
       SetFocus(GetDlgItem(hwParent, IDOK));
@@ -264,11 +264,14 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         SendMessage(hwDirList, LB_GETTEXT, SendMessage(hwDirList, LB_GETCURSEL, 0, 0), (WPARAM)buf);
         if (autoadd)
-        {
-          lstrcat(buf, "\\");
-          lstrcat(buf, progname);
-        }
-        SendMessage(hwLocation, WM_SETTEXT, 0, (LPARAM) buf);
+          lstrcat(lstrcat(buf, "\\"), progname);
+        SetWindowText(hwLocation, buf);
+      }
+      else if (LOWORD(wParam) == IDC_CHECK && HIWORD(wParam) == BN_CLICKED)
+      {
+        BOOL bEnable = IsDlgButtonChecked(hwStartMenuSelect, IDC_CHECK) != BST_CHECKED;
+        EnableWindow(hwDirList, bEnable);
+        EnableWindow(hwLocation, bEnable);
       }
     break;
     case WM_USER+666:
@@ -277,13 +280,13 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushstring("cancel");
       else
       {
-        if (SendMessage(hwCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED)
+        if (IsDlgButtonChecked(hwStartMenuSelect, IDC_CHECK) == BST_CHECKED)
         {
-          buf[0] = '>';
-          buf[1] = 0;
+          short *sbuf = (short *) buf;
+          *sbuf = *(short *) ">";
         }
         else *buf = 0;
-        SendMessage(hwLocation, WM_GETTEXT, MAX_PATH, (LPARAM) buf + lstrlen(buf));
+        GetWindowText(hwLocation, buf + (*buf ? 1 : 0), MAX_PATH);
         pushstring(buf);
       }
     break;
@@ -297,16 +300,18 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
 	return TRUE;
 }
 
-void AddFolderFromReg(char *name, HKEY rootKey)
+void AddFolderFromReg(HKEY rootKey)
 {
   DWORD dwResult;
   DWORD dwLength = MAX_PATH;
   DWORD dwType = REG_SZ;
   HKEY hKey;
 
-  char szName[20] = "Common ";
+  //DWORD idx;
+  WIN32_FIND_DATA FileData;
+  HANDLE hSearch;
 
-  lstrcpy(szName + 7, name);
+  char szName[20] = "Common Programs";
 
   dwResult = RegOpenKeyEx(
     rootKey,
@@ -329,17 +334,8 @@ void AddFolderFromReg(char *name, HKEY rootKey)
     RegCloseKey(hKey);
   }
 
-  PopulateListWithDir(buf);
-}
-
-void PopulateListWithDir(char *dir)
-{
-  //DWORD idx;
-  WIN32_FIND_DATA FileData;
-  HANDLE hSearch;
-
-  lstrcat(dir, "\\*.");
-  hSearch = FindFirstFile(dir, &FileData);
+  lstrcat(buf, "\\*.");
+  hSearch = FindFirstFile(buf, &FileData);
   if (hSearch != INVALID_HANDLE_VALUE) do
   {
     if (*(WORD*)FileData.cFileName != *(WORD*)".")
