@@ -67,9 +67,8 @@ const char * NSISCALL loadHeaders(void)
   inflateReset(&g_inflate_stream);
 
   {
-    char fn[MAX_PATH],fno[MAX_PATH];
-    GetTempPath(sizeof(fn),fn);
-    GetTempFileName(fn,"nsi",0,fno);
+    char fno[MAX_PATH];
+    GetTempFileName(temp_directory,"nst",0,fno);
     dbd_hFile=CreateFile(fno,GENERIC_WRITE|GENERIC_READ,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY|FILE_FLAG_DELETE_ON_CLOSE,NULL);
     if (dbd_hFile == INVALID_HANDLE_VALUE)
     {

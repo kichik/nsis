@@ -411,7 +411,7 @@ void CEXEBuild::FillDefaultsIfNeeded(StringTable *table, NLF *nlf/*=0*/) {
   if (!table->common.subcaptions[3])
     table->common.subcaptions[3]=add_string_main(str(NLF_SUBCAPTION_INSTFILES));
   if (!table->common.subcaptions[4])
-    table->common.subcaptions[4]=add_string_main(str(NLF_USUBCAPTION_COMPLETED));
+    table->common.subcaptions[4]=add_string_main(str(NLF_SUBCAPTION_COMPLETED));
 
   if (!table->common.branding)
   {

@@ -134,7 +134,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
   }
   return 0;
 }
-#else//NSIS_CONFIG_ENHANCEDUI_SUPPORT
+#else
 #define HandleStaticBkColor() 0
 #endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
@@ -207,7 +207,7 @@ static void NSISCALL SetParentState(HWND hWnd, TV_ITEM *pItem) {
     if (iState)
     {
       if (iState==5) iState=2;
-      else if (iState==4) iState=1;
+      if (iState==4) iState=1;
       if (iStatePrev && (iStatePrev != iState)) {
         iState = 3;
         break;
@@ -279,7 +279,7 @@ lang_again:
 
   myitoa(state_language, *(LANGID*)language_table);
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  SendMessage(m_bgwnd, WM_SETTEXT, 0, (LPARAM)process_string_fromtab(g_caption,LANG_CAPTION));
+  SetWindowText(m_bgwnd,process_string_fromtab(g_caption,LANG_CAPTION));
 #endif
 }
 
@@ -361,7 +361,7 @@ int NSISCALL ui_doinstall(void)
   if (!g_inst_cmnheader->silent_install)
 #endif//NSIS_CONFIG_SILENT_SUPPORT
   {
-    g_hIcon=LoadIcon(g_hInstance,MAKEINTRESOURCE(IDI_ICON2));
+    g_hIcon=LoadImage(g_hInstance,MAKEINTRESOURCE(IDI_ICON2),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_SHARED);
     m_bgwnd=GetDesktopWindow();
 #ifdef NSIS_SUPPORT_BGBG
     if (g_inst_cmnheader->bg_color1 != -1)
@@ -373,7 +373,7 @@ int NSISCALL ui_doinstall(void)
       wc.lpfnWndProc = BG_WndProc;
       wc.hInstance = g_hInstance;
       wc.hIcon = g_hIcon;
-      wc.hCursor = LoadCursor(NULL,IDC_ARROW);
+      //wc.hCursor = LoadCursor(NULL,IDC_ARROW);
       wc.lpszClassName = "_Nb";
 
       if (!RegisterClass(&wc)) return 0;
@@ -505,7 +505,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     this_page=g_inst_page+m_page;
 
     // if the last page was a custom page, wait for it to finish by itself.
-    // if it doesn't, it's a bad plugin.
+    // if it doesn't, it's a BAD plugin.
     // plugins should react to WM_NOTIFY_OUTER_NEXT.
     if (m_page>=0&&this_page->id<0) return 0;
 
@@ -527,7 +527,12 @@ nextPage:
     {
       HWND hwndtmp;
 
-      //LockWindowUpdate(g_hwnd);
+#ifdef NSIS_SUPPORT_CODECALLBACKS
+      // lock display for custom pages to prevent flickering
+      // the custom page must unlock the display
+      if (this_page->id<0) LockWindowUpdate(hwndDlg);
+      else LockWindowUpdate(0);
+#endif
 
       SetDlgItemTextFromLang(hwndDlg,IDOK,this_page->next);
       
@@ -536,21 +541,20 @@ nextPage:
       EnableWindow(hwndtmp,this_page->back&2);
       EnableWindow(m_hwndOK,1);
 
+      mystrcpy(g_tmp,g_caption);
+      process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
+      SetWindowText(hwndDlg,g_tmp);
+
       if (this_page->id!=NSIS_PAGE_COMPLETED) DestroyWindow(m_curwnd);
       else {
         if (g_autoclose) goto nextPage;
         return 0;
       }
 
-      mystrcpy(g_tmp,g_caption);
-      process_string_fromtab(g_tmp+mystrlen(g_tmp),this_page->caption);
-      SetWindowText(hwndDlg,g_tmp);
-
 #ifdef NSIS_SUPPORT_CODECALLBACKS
       if (ExecuteCodeSegment(this_page->prefunc,NULL) || this_page->id<0)
         goto nextPage;
 #endif //NSIS_SUPPORT_CODECALLBACKS
-      //LockWindowUpdate(0);
       if (this_page->id>=0) // NSIS page
       {
         gDontFookWithFocus = 0;
@@ -564,8 +568,8 @@ nextPage:
 #ifdef NSIS_SUPPORT_CODECALLBACKS
           ExecuteCodeSegment(this_page->postfunc,NULL);
 #endif //NSIS_SUPPORT_CODECALLBACKS
-          SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
           ShowWindow(m_curwnd,SW_SHOWNA);
+          SendMessage(m_curwnd, WM_NOTIFY_START, 0, 0);
         }
 
         //XGE 5th September 2002 - Do *not* move the focus to the OK button if we are
@@ -575,6 +579,14 @@ nextPage:
           SetFocus(m_hwndOK);
         //XGE End
       }
+    }
+  }
+  if (uMsg == WM_CLOSE)
+  {
+    if (!IsWindowEnabled(m_hwndCancel) && IsWindowEnabled(m_hwndOK))
+    {
+      uMsg = WM_COMMAND;
+      wParam = IDOK;
     }
   }
   if (uMsg == WM_COMMAND)
@@ -610,11 +622,6 @@ nextPage:
         }
       }
     }
-  }
-  if (uMsg == WM_CLOSE)
-  {
-    if (!IsWindowEnabled(m_hwndCancel) && IsWindowEnabled(m_hwndOK))
-      SendMessage(hwndDlg,WM_COMMAND,IDOK,0);
   }
   return HandleStaticBkColor();
 }
@@ -652,7 +659,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     return FALSE;
     //End Xge
   }
-  else if (uMsg == WM_NOTIFY) {
+  if (uMsg == WM_NOTIFY) {
     #define nmhdr ((NMHDR *)lParam)
     #define enlink ((ENLINK *)lParam)
     #define msgfilter ((MSGFILTER *)lParam)
@@ -668,7 +675,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         SetCursor(LoadCursor(0,IDC_ARROW));
         GlobalFree(szUrl);
       }
-      else if (enlink->msg==WM_SETCURSOR) {
+      if (enlink->msg==WM_SETCURSOR) {
 #ifndef IDC_HAND
 #define IDC_HAND MAKEINTRESOURCE(32649)
 #endif
@@ -680,7 +687,7 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
     //push button. When the user presses return ask the outer dialog to move
     //the installer onto the next page. MSDN docs say return non-zero if the
     //rich edit control should NOT process this message, hence the return 1.
-    else if (nmhdr->code==EN_MSGFILTER)
+    if (nmhdr->code==EN_MSGFILTER)
     {
       if (msgfilter->msg==WM_KEYDOWN &&
           msgfilter->wParam==VK_RETURN)
@@ -689,8 +696,11 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         return 1;
       }
     }
+    #undef nmhdr
+    #undef enlink
+    #undef msgfilter
   }
-  else if (uMsg == WM_CLOSE) {
+  if (uMsg == WM_CLOSE) {
     SendMessage(g_hwnd,WM_CLOSE,0,0);
   }
   return HandleStaticBkColor();
@@ -753,7 +763,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int id=LOWORD(wParam);
     if (id == IDC_DIR && HIWORD(wParam) == EN_CHANGE)
     {
-      SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+      uMsg = WM_IN_UPDATEMSG;
     }
     if (id == IDC_BROWSE)
     {
@@ -1057,7 +1067,9 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       tv.pszText=process_string_fromtab(ps_tmpbuf,ns);
       TreeView_SetItem(hwndTree1,&tv);
     }
-    SendMessage(hwndDlg,WM_USER+0x18,x,(LPARAM)(g_inst_section[x].flags&SF_SELECTED));
+    uMsg = WM_USER+0x18;
+    wParam = x;
+    lParam = (LPARAM)(g_inst_section[x].flags&SF_SELECTED);
   }
   if (uMsg == WM_USER+0x18) // select
   {
@@ -1146,12 +1158,12 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
                 m_whichcfg=r;
               }
             } // end of typecheckshit
-            SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+            uMsg = WM_IN_UPDATEMSG;
           } // not ro
         } // was valid click
       } // was click or hack
 #if defined(NSIS_SUPPORT_CODECALLBACKS) && defined(NSIS_CONFIG_ENHANCEDUI_SUPPORT)
-      else if (lpnmh->code == TVN_SELCHANGED) {
+      if (lpnmh->code == TVN_SELCHANGED) {
         SendMessage(hwndTree1, WM_USER+0x19, 0, ((LPNMTREEVIEW)lpnmh)->itemNew.lParam);
       }
 #endif//NSIS_SUPPORT_CODECALLBACKS && NSIS_CONFIG_ENHANCEDUI_SUPPORT
@@ -1200,7 +1212,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           }
           SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
         }
-        SendMessage(hwndDlg,WM_IN_UPDATEMSG,0,0);
+        uMsg = WM_IN_UPDATEMSG;
       }
     }
   }
@@ -1266,7 +1278,6 @@ void NSISCALL update_status_text(const char *text1, const char *text2)
 
 static DWORD WINAPI install_thread(LPVOID p)
 {
-  HWND hwndDlg=(HWND)p;
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   if (g_is_uninstaller)
   {
@@ -1279,11 +1290,7 @@ static DWORD WINAPI install_thread(LPVOID p)
     while (m_inst_sec<num_sections && !m_abort)
     {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
-      if (g_inst_section[m_inst_sec].flags&SF_SELECTED
-#ifdef NSIS_CONFIG_SILENT_SUPPORT
-        || g_inst_cmnheader->silent_install
-#endif//NSIS_CONFIG_SILENT_SUPPORT
-        )
+      if (g_inst_section[m_inst_sec].flags&SF_SELECTED)
 #endif
       {
         log_printf2("Section: \"%s\"",GetStringFromStringTab(g_inst_section[m_inst_sec].name_ptr));
@@ -1300,7 +1307,7 @@ static DWORD WINAPI install_thread(LPVOID p)
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
   }
 #endif
-  if (hwndDlg) SendMessage(hwndDlg,WM_NOTIFY_INSTPROC_DONE,m_abort,0);
+  if (m_curwnd) SendMessage(m_curwnd,WM_NOTIFY_INSTPROC_DONE,m_abort,0);
   return m_abort;
 }
 
@@ -1371,7 +1378,7 @@ static BOOL CALLBACK InstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
   }
   if (uMsg == WM_NOTIFY_START) {
     DWORD id;
-    CloseHandle(CreateThread(NULL,0,install_thread,(LPVOID)hwndDlg,0,&id));
+    CloseHandle(CreateThread(NULL,0,install_thread,0,0,&id));
   }
   if (uMsg == WM_COMMAND && LOWORD(wParam) == IDC_SHOWDETAILS)
   {
