@@ -262,7 +262,9 @@ To finally show the tweaked dialog use the show function.
 
 Here is a little example:
 <PRE>
-	InstallOptions::initDialog file.ini
+	# we don't want the DLL to unload so it will remember
+	# our ini file when we are trying to show it
+	InstallOptions::initDialog /NOUNLOAD file.ini
 	Pop $0
 	IntCmp $0 0 error
 		; $0 is now the IO dialog HWND
