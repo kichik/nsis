@@ -1,4 +1,4 @@
-NSISdl 1.1 - HTTP downloading plugin for NSIS
+NSISdl 1.3 - HTTP downloading plugin for NSIS
 ---------------------------------------------
 
 Copyright (C) 2001-2002 Yaroslav Faybishenko & Justin Frankel
