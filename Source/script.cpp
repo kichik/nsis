@@ -2469,6 +2469,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
         char *incfile = (char *) malloc(malloced);
 
+        int included = 0;
+
         strcpy(incfile, f);
         char *slash = strrchr(incfile, '\\');
 
@@ -2484,6 +2486,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             strcat(incfile, fd.cFileName);
             if (includeScript(incfile) != PS_OK)
               return PS_ERROR;
+            included++;
           }
           while (FindNextFile(search, &fd));
           FindClose(search);
@@ -2516,10 +2519,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
                 else
                   incfile[0] = 0;
                 strcat(incfile, fd.cFileName);
-                SCRIPT_MSG("--> %s\n", incfile);
                 if (includeScript(incfile) != PS_OK)
                   return PS_ERROR;
-                SCRIPT_MSG("%s\n", incfile);
+                included++;
               }
               while (FindNextFile(search, &fd));
               FindClose(search);
@@ -2533,6 +2535,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
 
         free(incfile);
+
+        if (!included)
+        {
+          ERROR_MSG("!include: could not find: \"%s\"\n",f);
+          return PS_ERROR;
+        }
       }
     return PS_OK;
     case TOK_P_CD:
