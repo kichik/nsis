@@ -6,6 +6,8 @@
 
 \cfg{xhtml-leaf-contains-contents}{true}
 
+\cfg{xhtml-contents-depth-0}{5}
+
 \cfg{xhtml-head-end}{<link rel="stylesheet" href="style.css" type='text/css' />}
 
 \preamble NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.
