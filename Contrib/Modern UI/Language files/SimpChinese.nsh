@@ -4,6 +4,8 @@
 ;Language: 'Chinese (Simplified)' (2052)
 ;Translator: Kii Ali <kiiali@cpatch.org>
 ;Revision date: 2003-12-29
+;Alternative translator: bluenet <bluenet@163.com>
+;Revision date: 2004-11-27
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "SimpChinese"
@@ -20,13 +22,17 @@
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的单选框。必须要接受协议才能安装 $(^NameDA)。$_CLICK"
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能安装 $(^NameDA)。$_CLICK"
 
-  !define MUI_TEXT_COMPONENTS_TITLE "选定组件"
-  !define MUI_TEXT_COMPONENTS_SUBTITLE "选定 $(^NameDA) 当中你想要安装的功能。"
+  !define MUI_TEXT_COMPONENTS_TITLE "选择组件"
+  !define MUI_TEXT_COMPONENTS_SUBTITLE "选择 $(^NameDA) 当中你想要安装的功能。"
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "描述"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指针到组件之上，便可见到它的描述。"
+  !ifdef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+	!define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "鼠标点击组件，便可见到它的描述。"
+  !else
+	!define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "移动你的鼠标指针到组件之上，便可见到它的描述。"
+  !endif
   
-  !define MUI_TEXT_DIRECTORY_TITLE "选定安装位置" 
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "选定 $(^NameDA) 要安装的文件夹。"
+  !define MUI_TEXT_DIRECTORY_TITLE "选择安装位置" 
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "选择 $(^NameDA) 要安装的文件夹。"
 
   !define MUI_TEXT_INSTALLING_TITLE "正在安装"
   !define MUI_TEXT_INSTALLING_SUBTITLE "$(^NameDA) 正在安装，请等候。"
@@ -66,11 +72,11 @@
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "如果你接受协议中的条款，单击下方的单选框。必须要接受协议才能卸载 $(^NameDA)。$_CLICK"
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "如果你接受协议中的条款，选择下方第一个选项。必须要接受协议才能卸载 $(^NameDA)。$_CLICK"
   
-  !define MUI_UNTEXT_COMPONENTS_TITLE "选定组件"
-  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "选定 $(^NameDA) 当中你想要卸载的功能。"
+  !define MUI_UNTEXT_COMPONENTS_TITLE "选择组件"
+  !define MUI_UNTEXT_COMPONENTS_SUBTITLE "选择 $(^NameDA) 当中你想要卸载的功能。"
   
-  !define MUI_UNTEXT_DIRECTORY_TITLE "选定卸载位置" 
-  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "选定 $(^NameDA) 要卸载的文件夹。"
+  !define MUI_UNTEXT_DIRECTORY_TITLE "选择卸载位置" 
+  !define MUI_UNTEXT_DIRECTORY_SUBTITLE "选择 $(^NameDA) 要卸载的文件夹。"
 
   !define MUI_UNTEXT_UNINSTALLING_TITLE "正在卸载"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "$(^NameDA) 正在卸载，请等候。"
