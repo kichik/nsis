@@ -31,7 +31,7 @@
   ;Descriptions
   LangString DESC_SecCopyUI ${LANG_ENGLISH} "Copy the modern.exe file to the application folder."
 
-  ;Folder-selection page
+  ;Folder selection page
   InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
 
 ;--------------------------------

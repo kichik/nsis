@@ -1,10 +1,13 @@
 NSIS Modern User Interface - VERSION HISTORY
 
-1.62 - December 14, 2002
+1.62 - December 15, 2002
 * No problems anymore when using both 'Run program' and 'Show Readme' on the finish page
 * Default state of checkboxes on the finish page can be changed
-* Welcome / Finish pages compatible with custom DPI settings
+* Welcome / Finish page compatible with custom DPI settings
 * Converted Install Options INI files to use dialog units
+* Support for multilingual branding texts
+* More ReserveFile macro's
+* Background color can be changed with a define
 
 1.61 - December 5, 2002
 * Final version for NSIS 2 beta 0
@@ -15,7 +18,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Bugfixes
 
 1.6 - November 18, 2002
-* Welcome / Finish pages
+* Welcome / Finish page
 * Automatic ask for reboot on finish page
 * Create no shortcut option on the Start Menu Folder selection page
 * Customizing GUIInit functions easier

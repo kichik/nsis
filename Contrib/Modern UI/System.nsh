@@ -83,16 +83,16 @@
     !define MUI_PROGRESSBAR "smooth"
   !endif
 
-  !ifndef MUI_BRANDINGTEXT
-    !define MUI_BRANDINGTEXT "" ;Default value
-  !endif
-  
   !ifndef MUI_SPECIALINI
     !define MUI_SPECIALINI "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
   !endif
   
   !ifndef MUI_SPECIALBITMAP
     !define MUI_SPECIALBITMAP "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
+  !endif
+  
+  !ifndef MUI_BGCOLOR
+    !define MUI_BGCOLOR "0xFFFFFF"
   !endif
   
   !ifdef MUI_FINISHPAGE
@@ -110,7 +110,6 @@
   SetFont "${MUI_FONT}" "${MUI_FONTSIZE}"
   InstallColors ${MUI_INSTALLCOLORS}
   InstProgressFlags ${MUI_PROGRESSBAR}
-  BrandingText /TRIMRIGHT "${MUI_BRANDINGTEXT}"
 
   !ifndef MUI_NOVERBOSE
     !verbose 4
@@ -281,16 +280,16 @@
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
   CreateFont ${MUI_TEMP2} "${MUI_FONT_HEADER}" "${MUI_FONTSIZE_HEADER}" "${MUI_FONTSTYLE_HEADER}"
   SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
@@ -313,16 +312,16 @@
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1037
   CreateFont ${MUI_TEMP2} "${MUI_FONT_HEADER}" "${MUI_FONTSIZE_HEADER}" "${MUI_FONTSTYLE_HEADER}"
   SendMessage ${MUI_TEMP1} ${WM_SETFONT} ${MUI_TEMP2} 0
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1038
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1034
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   GetDlgItem ${MUI_TEMP1} $HWNDPARENT 1039
-  SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+  SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
 
   Pop ${MUI_TEMP2}
   Pop ${MUI_TEMP1}
@@ -335,7 +334,7 @@
 
 !macro MUI_WELCOMEFINISHPAGE_INIT
 
-  ;Extract Install Options INI Files
+  ;Extract InstallOptions INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_SPECIALINI}" "ioSpecial.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_CUSTOMNAME "${MUI_SPECIALBITMAP}" "modern-wizard.bmp"   
   
@@ -623,7 +622,11 @@
     !verbose 3
   !endif
   
+  Push ${MUI_TEMP1}
+  
   InstallOptions::dialog "$PLUGINSDIR\${FILE}"
+  Pop ${MUI_TEMP1}
+  
   Pop ${MUI_TEMP1}
 
   !ifndef MUI_NOVERBOSE
@@ -637,7 +640,7 @@
   !ifndef MUI_NOVERBOSE
     !verbose 3
   !endif
-
+  
   InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\${FILE}"
 
   !ifndef MUI_NOVERBOSE
@@ -652,19 +655,7 @@
     !verbose 3
   !endif
 
-  Push ${MUI_TEMP1}
-
   InstallOptions::show
-  Pop ${MUI_TEMP1}
-
-  StrCmp ${MUI_TEMP1} "cancel" "" +2
-    Quit
-
-  StrCmp ${MUI_TEMP1} "back" "" +3
-    Pop ${MUI_TEMP1}
-    Abort
-
-  Pop ${MUI_TEMP1}
 
   !ifndef MUI_NOVERBOSE
     !verbose 4
@@ -808,15 +799,15 @@
       
         Pop ${MUI_TEMP1}
         
-        SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
-        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
-        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
   
       !insertmacro MUI_INSTALLOPTIONS_SHOW
       
@@ -1060,25 +1051,25 @@
       
         Pop ${MUI_TEMP1}
         
-        SetStaticBkColor ${MUI_TEMP1} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP1} "${MUI_BGCOLOR}"
       
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1201
-        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         CreateFont ${MUI_TEMP3} "${MUI_FONT_TITLE}" "${MUI_FONTSIZE_TITLE}" "${MUI_FONTSTYLE_TITLE}"
         SendMessage ${MUI_TEMP2} ${WM_SETFONT} ${MUI_TEMP3} 0
         
         GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1202
-        SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+        SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
         
         !ifndef MUI_FINISHPAGE_NOREBOOTSUPPORT
         
           IfRebootFlag "" noreboot_show
         
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             Goto show
         
@@ -1089,19 +1080,19 @@
           !ifdef MUI_FINISHPAGE_RUN
           
             GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-            SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+            SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
             !ifdef MUI_FINISHPAGE_SHOWREADME
             
               GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1204
-              SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+              SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
               
             !endif
           
           !else ifdef MUI_FINISHPAGE_SHOWREADME
             
               GetDlgItem ${MUI_TEMP2} ${MUI_TEMP1} 1203
-              SetStaticBkColor ${MUI_TEMP2} 0x00FFFFFF
+              SetStaticBkColor ${MUI_TEMP2} "${MUI_BGCOLOR}"
             
           !endif
         
@@ -1296,31 +1287,69 @@
 ;--------------------------------
 ;RESERVE FILES
 
-!macro MUI_RESERVEFILE_INSTALLOPTIONS
+!macro MUI_RESERVEFILE_WELCOMEFINISHPAGE
 
   !verbose 3
+  
+    !define MUI_NOVERBOSE
+
+    !insertmacro MUI_RESERVEFILE_SPECIALINI
+    !insertmacro MUI_RESERVEFILE_SPECIALBITMAP
+    !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+    
+    !undef MUI_NOVERBOSE
+    
+  !verbose 4
+    
+!macroend
+
+!macro MUI_RESERVEFILE_INSTALLOPTIONS
+
+  !ifndef MUI_NOVERBOSE
+    !verbose 3
+  !endif
 
   ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
   
-  !verbose 4
+  !ifndef MUI_NOVERBOSE
+    !verbose 4
+  !endif
   
 !macroend
 
 !macro MUI_RESERVEFILE_SPECIALINI
 
-  !verbose 3
+  !ifndef MUI_NOVERBOSE
+    !verbose 3
+  !endif
 
   ReserveFile "${NSISDIR}\Contrib\Modern UI\ioSpecial.ini"
   
-  !verbose 4
+  !ifndef MUI_NOVERBOSE
+    !verbose 4
+  !endif
   
 !macroend
 
 !macro MUI_RESERVEFILE_SPECIALBITMAP
 
-  !verbose 3
+  !ifndef MUI_NOVERBOSE
+    !verbose 3
+  !endif
 
   ReserveFile "${NSISDIR}\Contrib\Icons\modern-wizard.bmp"
+  
+  !ifndef MUI_NOVERBOSE
+    !verbose 4
+  !endif
+  
+!macroend
+
+!macro MUI_RESERVEFILE_LANGDLL
+
+  !verbose 3
+  
+  ReserveFile "${NSISDIR}\Plugins\LangDLL.dll"
   
   !verbose 4
   
@@ -1451,14 +1480,14 @@
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND COMMAND NAME
 
-  "${COMMAND}" "${${NAME}}"
+  ${COMMAND} "${${NAME}}"
   !undef "${NAME}"
 
 !macroend
 
 !macro MUI_LANGUAGEFILE_NSISCOMMAND_MULTIPARAMETER COMMAND NAME VALUE
 
-  "${COMMAND}" ${VALUE}
+  ${COMMAND} ${VALUE}
   !undef "${NAME}"
 
 !macroend
@@ -1468,17 +1497,17 @@
   !ifndef "${INSTALLBUTTON}"
   
     !ifdef MUI_TEXT_CONTINUE_NEXT
-      "${COMMAND}" "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
+      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
     !else
-      "${COMMAND}" "${${NAME}}"
+      ${COMMAND} "${${NAME}}"
     !endif
     
   !else
   
     !ifdef MUI_TEXT_CONTINUE_INSTALL
-      "${COMMAND}" "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
+      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_INSTALL}"
     !else
-      "${COMMAND}" "${${NAME}}"
+      ${COMMAND} "${${NAME}}"
     !endif
     
   !endif
@@ -1492,17 +1521,17 @@
   !ifndef "${INSTALLBUTTON}"
   
     !ifdef MUI_TEXT_CONTINUE_NEXT
-      "${COMMAND}" "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
+      ${COMMAND} "${${NAME}} ${MUI_TEXT_CONTINUE_NEXT}"
     !else
-      "${COMMAND}" "${${NAME}}"
+      ${COMMAND} "${${NAME}}"
     !endif
     
   !else
   
     !ifdef MUI_UNTEXT_CONTINUE_UNINSTALL
-      "${COMMAND}" "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
+      ${COMMAND} "${${NAME}} ${MUI_UNTEXT_CONTINUE_UNINSTALL}"
     !else
-      "${COMMAND}" "${${NAME}}"
+      ${COMMAND} "${${NAME}}"
     !endif
     
   !endif
@@ -1549,7 +1578,12 @@
 
   !insertmacro MUI_LANGUAGEFILE_DEFINE "MUI_${LANGUAGE}_LANGNAME" "MUI_LANGNAME"
 
-  !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND Name MUI_NAME
+  !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "Name" "MUI_NAME"
+  
+  !ifndef MUI_BRANDINGTEXT
+    !define MUI_BRANDINGTEXT ""
+  !endif
+  !insertmacro MUI_LANGUAGEFILE_NSISCOMMAND "BrandingText /TRIMRIGHT" "MUI_BRANDINGTEXT"
 
   !ifdef MUI_WELCOMEPAGE
     !insertmacro MUI_LANGUAGEFILE_LANGSTRING "MUI_TEXT_WELCOME_INFO_TITLE"
