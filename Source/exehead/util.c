@@ -28,7 +28,8 @@ HANDLE g_hInstance;
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir)
 {
   PROCESS_INFORMATION ProcInfo={0,};
-  STARTUPINFO StartUp={sizeof(StartUp),};
+  STARTUPINFO StartUp={0,};
+  StartUp.cb=sizeof(StartUp);
   if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, dir, &StartUp, &ProcInfo))
     return NULL;
   if (NULL != ProcInfo.hThread)  CloseHandle( ProcInfo.hThread );
@@ -340,11 +341,14 @@ static void NSISCALL queryShellFolders(const char *name_, char *out)
   mystrcpy(name + 7, name_);
   {
     char f=g_all_user_var_flag;
+    static char buf[65];
+    wsprintf(buf,"%s\\Explorer\\Shell Folders","Software\\Microsoft\\Windows\\CurrentVersion");
+
   again:
 
     myRegGetStr(f?HKEY_LOCAL_MACHINE:HKEY_CURRENT_USER,
-      "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-      name+(f?0:7),out);
+      buf,
+      f?name:name_,out);
     if (!out[0])
     {
       if (f)
@@ -497,7 +501,7 @@ void NSISCALL process_string(char *out, const char *in)
           break;
 
         case VAR_CODES_START + 26: // PROGRAMFILES
-          myRegGetStr(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", out);
+          myRegGetStr(HKEY_LOCAL_MACHINE, "Software\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
           break;
