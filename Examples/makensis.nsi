@@ -135,19 +135,17 @@ Section "NSIS Core Files (required)" SecCore
   Delete $INSTDIR\Docs\style.css
   RMDir $INSTDIR\Docs
 
-  SetOutPath $INSTDIR\Contrib\Library
-  
-  SetOutPath $INSTDIR\Contrib\LibraryLocal
+  SetOutPath $INSTDIR\Contrib\Library\LibraryLocal
   File ..\Contrib\Library\LibraryLocal\*.exe
   File ..\Contrib\Library\LibraryLocal\*.cpp
   File ..\Contrib\Library\LibraryLocal\*.dsw
   File ..\Contrib\Library\LibraryLocal\*.dsp
 
-  SetOutPath $INSTDIR\Contrib\RegTool
+  SetOutPath $INSTDIR\Contrib\Library\RegTool
   File ..\Contrib\Library\RegTool\*.nsi
   File ..\Contrib\Library\RegTool\*.bin
   
-  SetOutPath $INSTDIR\Contrib\TypeLib
+  SetOutPath $INSTDIR\Contrib\Library\TypeLib
   File ..\Contrib\Library\TypeLib\*.cpp
   File ..\Contrib\Library\TypeLib\*.dsw
   File ..\Contrib\Library\TypeLib\*.dsp
