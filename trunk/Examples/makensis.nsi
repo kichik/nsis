@@ -1,5 +1,5 @@
 !define VER_MAJOR 2
-!define VER_MINOR 0a6
+!define VER_MINOR 0a7
 
 !ifdef NO_COMPRESSION
 SetCompress off
@@ -83,9 +83,16 @@ Section "NSIS Examples (recommended)"
   File ..\Examples\rtest.nsi
   File ..\Examples\gfx.nsi
   File ..\Examples\one-section.nsi
+  File ..\Examples\languages.nsi
   File ..\Examples\WinMessages.nsh
   File ..\Examples\branding.nsh
   File ..\Examples\functions.htm
+  SetOutPath "$INSTDIR\Examples\Modern UI"
+  File "..\Examples\Modern UI\Screenshot.png"
+  File "..\Examples\Modern UI\Readme.png"
+  File "..\Examples\Modern UI\Readme.html"
+  File "..\Examples\Modern UI\License.txt"
+  File "..\Examples\Modern UI\Example.nsi"
 SectionEnd
 
 Section "NSI Development Shell Extensions"
@@ -149,6 +156,8 @@ Section "Language files"
   SetOutPath "$INSTDIR\Contrib\Language files"
   SetOverwrite try
   File "..\Contrib\Language files\*.nlf"
+  SetOutPath $INSTDIR\Bin
+  File ..\Bin\MakeLangID.exe
   SetOutPath $INSTDIR
 SectionEnd
 
@@ -391,7 +400,9 @@ Section Uninstall
   Delete $INSTDIR\Bin\installoptions.dll
   Delete $INSTDIR\Bin\splash.txt
   Delete $INSTDIR\Bin\splash.exe
+  Delete $INSTDIR\Bin\magiclime.exe
   Delete $INSTDIR\Bin\nsisdl.dll
+  Delete $INSTDIR\Bin\MakeLangID.exe
   Delete $INSTDIR\makensis.htm
   Delete $INSTDIR\Examples\functions.htm
   Delete $INSTDIR\makensis.rtf
@@ -408,8 +419,14 @@ Section Uninstall
   Delete $INSTDIR\Examples\uglytest.nsi
   Delete $INSTDIR\Examples\spin.nsi
   Delete $INSTDIR\Examples\wafull.nsi
+  Delete $INSTDIR\Examples\languages.nsi
   Delete $INSTDIR\Examples\upgradedll.nsh
   Delete $INSTDIR\Examples\WinMessages.nsh
+  Delete "$INSTDIR\Examples\Modern UI\Screenshot.png"
+  Delete "$INSTDIR\Examples\Modern UI\Readme.png"
+  Delete "$INSTDIR\Examples\Modern UI\Readme.html"
+  Delete "$INSTDIR\Examples\Modern UI\License.txt"
+  Delete "$INSTDIR\Examples\Modern UI\Example.nsi"
   Delete $INSTDIR\main.ico
   Delete $INSTDIR\makensis-license.txt
   Delete $INSTDIR\license.txt
