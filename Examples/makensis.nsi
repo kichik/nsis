@@ -398,6 +398,18 @@ Section "Dialer" SecContribDialer
   File ..\Contrib\Dialer\Dialer.txt
 SectionEnd
 
+Section "VPatch" SecContribVPatch
+  SectionIn 1 2
+  SetOutPath $INSTDIR\Plugins
+  File ..\Plugins\VPatch.dll
+  SetOutPath $INSTDIR\Contrib\VPatch
+  File ..\Contrib\VPatch\Readme.html
+  File ..\Contrib\VPatch\example.nsi
+  File ..\Contrib\VPatch\oldfile.txt
+  File ..\Contrib\VPatch\newfile.txt
+  File ..\Contrib\VPatch\patch.pat
+SectionEnd
+
 SubSectionEnd
 
 Section "Zip2Exe" SecContribZ2E
@@ -585,6 +597,14 @@ Section "Dialer Source" SecContribDialerS
   File ..\Contrib\Dialer\dialer.dsw
 SectionEnd
 
+Section "VPatch Source" SecContribVPatchS
+  SectionIn 1
+  SetOutPath $INSTDIR\Contrib\VPatch
+  File ..\Contrib\VPatch\vpatchdll.c
+  File ..\Contrib\VPatch\vpatchdll.dsp
+  File ..\Contrib\VPatch\vpatchdll.dsw
+SectionEnd
+
 SubSectionEnd ; plugins
 
 Section "Zip2Exe Source" SecContribZ2ES
@@ -677,8 +697,8 @@ Section -post
   Call AddWorkspaceToStartMenu
 
   ; InstallOptions
-  Push "InstallOptions\install options.html"
-  Push "InstallOptions readme"
+  Push "InstallOptions\Readme.html"
+  Push "InstallOptions Readme"
   Call AddContribToStartMenu
 
   Push "InstallOptions\io.dsw"
@@ -694,7 +714,7 @@ Section -post
 
   ; Modern UI
   Push "Modern UI\Readme.html"
-  Push "Modern UI readme"
+  Push "Modern UI Readme"
   Call AddContribToStartMenu
 
   ; Splash
@@ -761,6 +781,11 @@ Section -post
   Push System\Source\System.sln
   Push "Source\System project workspace"
   Call AddContribToStartMenu
+  
+  ; VPatch
+  Push "VPatch\Readme.html"
+  Push "VPatch Readme"
+  Call AddContribToStartMenu
 
   nofunshit:
 !endif
@@ -823,6 +848,8 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDL} "Plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribNSISDLS} "Source code to plugin that lets you create a web based installer"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecContribUiHolderS} "Source code to the UI Holder where you can put your recources in to preview your user interface"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribVPatch} "Plugin that lets you create patches to upgrade older files"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecContribVPatchS} "Source code to plugin that lets you create patches to upgrade older files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrc} "Source code to NSIS and all related files"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcNSIS} "Source code to NSIS"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSrcContrib} "Source code to user contributed utilities"
@@ -892,7 +919,7 @@ Function AddReadmeToStartMenu
   IfFileExists $INSTDIR\Contrib\$0\Readme.txt 0 done
     Push $0\Readme.txt
   create:
-    Push "$0 readme"
+    Push "$0 Readme"
     Call AddContribToStartMenu
   done:
 FunctionEnd
