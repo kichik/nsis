@@ -1,90 +1,90 @@
-\H{registry} Registry, INI, File Instructions
+\S1{registry} Registry, INI, File Instructions
 
-\S{deleteinisec} DeleteINISec
+\S2{deleteinisec} DeleteINISec
 
 \c ini_filename section_name
 
 Deletes the entire section [section_name] from ini_filename. If the section could not be removed from the ini file, the error flag is set.
 
-\S{deleteinistr} DeleteINIStr
+\S2{deleteinistr} DeleteINIStr
 
 \c ini_filename section_name str_name
 
 Deletes the string str_name from section [section_name] from ini_filename. If the string could not be removed from the ini file, the error flag is set.
 
-\S{deleteregkey} DeleteRegKey
+\S2{deleteregkey} DeleteRegKey
 
 \c [/ifempty] root_key subkey
 
 Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under WriteRegStr. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).
 
-\S{deleteregvalue} DeleteRegValue
+\S2{deleteregvalue} DeleteRegValue
 
 \c root_key subkey key_name
 
 Deletes a registry value. Valid values for root_key are listed under WriteRegStr. The error flag is set if the value could not be removed from the registry (or if it didn't exist to begin with).
 
-\S{enumregkey} EnumRegKey
+\S2{enumregkey} EnumRegKey
 
 \c user_var(output) root_key subkey index
 
 Set user variable $x with the name of the 'index'th registry key in root_key\\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string if there are no more keys, and returns an empty string and sets the error flag if there is an error.
 
-\S{enumregvalue} EnumRegValue
+\S2{enumregvalue} EnumRegValue
 
 \c user_var(output) root_key subkey index
 
 Set user variable $x with the name of the 'index'th registry value in root_key\\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string if there are no more values, and returns an empty string and sets the error flag if there is an error.
 
-\S{expandenvstrings} ExpandEnvStrings
+\S2{expandenvstrings} ExpandEnvStrings
 
 \c user_var(output) string
 
 Expands environment variables in "string" into the user variable $x. If error, the variable is set to empty, and the error flag is set.
 
-\S{readenvstr} ReadEnvStr
+\S2{readenvstr} ReadEnvStr
 
 \c user_var(output) name
 
 Reads from the environment string "name" and sets the value into the user variable $x. If there is an error reading the string, the user variable is set to empty, and the error flag is set.
 
-\S{readinistr} ReadINIStr
+\S2{readinistr} ReadINIStr
 
 \c user_var(output) ini_filename section_name entry_name
 
 Reads from entry_name in [section_name] of ini_filename and stores the value into user variable $x. The error flag will be set and $x will be assigned to an empty string if the entry is not found.
 
-\S{readregdword} ReadRegDWORD
+\S2{readregdword} ReadRegDWORD
 
 \c user_var(output) root_key sub_key name
 
 Reads a 32 bit DWORD from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("" which is 0) if the DWORD is not present. If the value is present, but is not a DWORD, it will be read as a string and the error flag will be set.
 
-\S{readregstr} ReadRegStr
+\S2{readregstr} ReadRegStr
 
 \c user_var(output) root_key sub_key name
 
 Reads from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string ("") if the string is not present. If the value is present, but is of type REG_DWORD, it will be read and converted to a string and the error flag will be set.
 
-\S{writeinistr} WriteINIStr
+\S2{writeinistr} WriteINIStr
 
 \c ini_filename section_name entry_name value
 
 Writes entry_name=value into [section_name] of ini_filename. The error flag is set if the string could not be written to the ini file.
 
-\S{writeregbin} WriteRegBin
+\S2{writeregbin} WriteRegBin
 
 \c root_key subkey key_name valuedata
 
-This command writes a block of binary data to the registry. Valid values for root_key are listed under WriteRegStr. Valuedata is in hexadecimal (i.e. DEADBEEF01223211151). The error flag is set if the binary data could not be written to the registry. If the registry key doesn't exist it will be created.
+This command writes a block of binary data to the registry. Valid values for root_key are listed under WriteRegStr. Valuedata is in hexadecimal (e.g. DEADBEEF01223211151). The error flag is set if the binary data could not be written to the registry. If the registry key doesn't exist it will be created.
 
-\S{writeregdword} WriteRegDWORD
+\S2{writeregdword} WriteRegDWORD
 
 \c root_key subkey key_name value
 
 This command writes a dword (32 bit integer) to the registry (a user variable can be specified). Valid values for root_key are listed under WriteRegStr. The error flag is set if the dword could not be written to the registry. If the registry key doesn't exist it will be created.
 
-\S{writeregstr} WriteRegStr
+\S2{writeregstr} WriteRegStr
 
 \c root_key subkey key_name value
 

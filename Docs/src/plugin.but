@@ -1,4 +1,4 @@
-\C{plugindlls} Plugin DLLs
+\S0{plugindlls} Plugin DLLs
 
 The abilities of the NSIS scripting language can be extended by utilising functionality provided in a DLL file. Probably the best known example of this is the InstallOptions.dll bundled with every NSIS release.
 
@@ -6,7 +6,7 @@ When the NSIS compiler starts it scans the plugins directory for DLLs and makes 
 
 During execution of the created installer if a plugin command is executed NSIS will unpack the necessary DLL to the $TEMP directory, push all of the arguments specified (right-to-left order), and then execute the DLL function. If the /NOUNLOAD option is specified the DLL will not be deleted until the installer exits or the next time you use the DLL without /NOUNLOAD.
 
-\H{usingplug} Using Plugin Commands
+\S1{usingplug} Using Plugin Commands
 
 The following two examples both invoke the same plugin command. The first example shows the (still okay) syntax that scripts written for versions of NSIS earlier than 2.0a4 had to use, and the second is how it can be scripted more succinctly now. The newer syntax automatically handles packing & extraction of the DLL file, and stacks up arguments for you too.
 
@@ -22,7 +22,7 @@ The following two examples both invoke the same plugin command. The first exampl
 
 InstallOptions needs the name of it's ini file as a parameter to the dialog function so it has to be pushed onto the stack before the dialog call is made. Some plugin commands may not need any parameters on the stack, others might require two or three. To use a plugin command you will need to read the documentation for the plugin so that you know what parameters it's functions require, if any.
 
-\H{disablingplug} Disabling Plugin Unloading
+\S1{disablingplug} Disabling Plugin Unloading
 
 CallInstDLL has an option not to unload the DLL after usage. To use it with the newer plugin command syntax just specify the first parameter as /NOUNLOAD. For example:
 

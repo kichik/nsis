@@ -1,12 +1,12 @@
-\H{intinst} Integer Support
+\S1{intinst} Integer Support
 
-\S{IntFmt} IntFmt
+\S2{IntFmt} IntFmt
 
 \c user_var(output) format numberstring
 
 Formats the number in "numberstring" using the format "format", and sets the output to user variable $x. Example format strings include "%08X" "%u"
 
-\S{IntOp} IntOp
+\S2{IntOp} IntOp
 
 \c user_var(output) value1 OP [value2]
 

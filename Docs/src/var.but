@@ -1,6 +1,6 @@
-\C{var} Variables
+\H{var} Variables
 
-\H{var1} Modifiable variables used in Instructions
+\S1{var1} Modifiable variables used in Instructions
 
 \e{$INSTDIR}
 
@@ -28,7 +28,7 @@ The command line of the installer. The format of the command line can be one of 
 
 The identifier of the language that is currently used. For example, English is 1033. You can change this variable in .onInit.
 
-\H{var2} Constant Variables used in Instructions and InstallDir
+\S1{var2} Constant Variables used in Instructions and InstallDir
 
 \e{$PROGRAMFILES}
 
@@ -82,7 +82,7 @@ The decimal HWND of the parent window.
 
 Use to represent $.
 
-\H{var3} Variables used Strings
+\S1{var3} Variables used Strings
 
 \e{$\\r}
 

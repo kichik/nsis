@@ -1,40 +1,40 @@
-\H{flowcontrol} Flow Control Instructions
+\S1{flowcontrol} Flow Control Instructions
 
-\S{abort} Abort
+\S2{abort} Abort
 
 \c user_message
 
 Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from Callback Functions (\k{callbacks}) to do special things. Pages callbacks (\K{pages}) also uses Abort for special purposes.
 
-\S{call} Call
+\S2{call} Call
 
 \c function_name | :label_name
 
 Calls the function named function_name. If in the Uninstall section, Call can only be used with function names beginning with "un.". If the parameter starts with a ':' it will be treated as a label (so you can call to a label in your function - this is probably not going to be used most of the time).
 
-\S{clearerrors} ClearErrors
+\S2{clearerrors} ClearErrors
 
 Clears the error flag.
 
-\S{getcurrentaddress} GetCurrentAddress
+\S2{getcurrentaddress} GetCurrentAddress
 
 \c user_var(output)
 
 Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.
 
-\S{getfunctionaddress} GetFunctionAddress
+\S2{getfunctionaddress} GetFunctionAddress
 
 \c user_var(output) function_name
 
 Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).
 
-\S{getlabeladdress} GetLabelAddress
+\S2{getlabeladdress} GetLabelAddress
 
 \c user_var(output) label
 
 Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.
 
-\S{goto} Goto
+\S2{goto} Goto
 
 \c label_to_jump_to | +offset| -offset| user_var(target)
 
@@ -44,41 +44,41 @@ If +offset or -offset is specified, jump is relative by offset instructions. Got
 
 If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress. I Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
 
-\S{iferrors} IfErrors
+\S2{iferrors} IfErrors
 
 \c jumpto_iferror [jumpto_ifnoerror]
 
 Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.
 
-\S{iffileexists} IfFileExists
+\S2{iffileexists} IfFileExists
 
 \c file_to_check_for jump_if_present [jump_otherwise]
 
 Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*
 
-\S{IfRebootFlag} IfRebootFlag
+\S2{IfRebootFlag} IfRebootFlag
 
 \c [jump_if_set] [jump_if_not_set]
 
 Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with SetRebootFlag.
 
-\S{intcmp} IntCmp
+\S2{intcmp} IntCmp
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more.
 
-\S{intcmpu} IntCmpU
+\S2{intcmpu} IntCmpU
 
 \c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
 
 Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.
 
-\S{messagebox} MessageBox
+\S2{messagebox} MessageBox
 
 \c mb_option_list messagebox_text [return_check jumpto] [return_check_2 jumpto_2]
 
-Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (i.e. MB_YESNO|MB_ICONSTOP).
+Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
 
 \b \e{MB_OK} - Display with an OK button
 
@@ -132,7 +132,7 @@ Return_check can be 0 (or empty, or left off), or one of the following:
 
 If the return value of the MessageBox is return_check, the installer will Goto jumpto.
 
-\S{return} Return
+\S2{return} Return
 
 Returns from a function or section.
 
@@ -148,15 +148,15 @@ To send a string param, put STR: before the parameter, for example: "STR:Some st
 
 Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.
 
-\S{quit} Quit
+\S2{quit} Quit
 
 Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
 
-\S{seterrors} SetErrors
+\S2{seterrors} SetErrors
 
 Sets the error flag.
 
-\S{strcmp} StrCmp
+\S2{strcmp} StrCmp
 
 \c str1 str2 jump_if_equal [jump_if_not_equal]
 

@@ -1,60 +1,60 @@
-\H{fileinst} File Instructions
+\S1{fileinst} File Instructions
 
-\S{FileClose} FileClose
+\S2{FileClose} FileClose
 
 \c handle
 
 Closes a file handle opened with FileOpen.
 
-\S{FileOpen} FileOpen
+\S2{FileOpen} FileOpen
 
 \c user_var(handle output) filename openmode
 
 Opens a file named "filename", and sets the handle output variable with the handle. The openmode should be one of "r" (read) "w" (write, all contents of file are destroyed) or "a" (append, meaning opened for both read and write, contents preserved). In all open modes, the file pointer is placed at the beginning of the file. If the file cannot be opened, the handle output is set to empty, and the error flag is set.
 
-\S{FileRead} FileRead
+\S2{FileRead} FileRead
 
 \c handle user_var(output) [maxlen]
 
 Reads a string from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). Strings are limited to 1024 characters. If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
 
-\S{FileReadByte} FileReadByte
+\S2{FileReadByte} FileReadByte
 
 \c handle user_var(output)
 
 Reads a byte from a file opened with FileOpen. The byte is stored in the output as an integer (0-255). If the end of file is read and no more data is available, the output will be empty, and the error flag will be set.
 
-\S{FileSeek} FileSeek
+\S2{FileSeek} FileSeek
 
 \c handle offset [mode] [user_var(new position)]
 
 Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to "offset". If mode is specified as CUR, then the file pointer is moved by offset. If mode is specified as END, the file pointer is set to a position relative to EOF. If the final parameter "new position" is specified, the new file position will be stored to that variable.
 
-\S{FileWrite} FileWrite
+\S2{FileWrite} FileWrite
 
 \c handle string
 
 Writes a string to a file opened with FileOpen. If an error occurs writing, the error flag will be set.
 
-\S{FileWriteByte} FileWriteByte
+\S2{FileWriteByte} FileWriteByte
 
 \c handle string
 
 Writes the integer interpretation of 'string' to a file opened with FileOpen. If an error occurs writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.
 
-\S{FindClose} FindClose
+\S2{FindClose} FindClose
 
 \c handle
 
 Closes a search opened with FindFirst.
 
-\S{FindFirst} FindFirst
+\S2{FindFirst} FindFirst
 
 \c user_var(handle output) user_var(filename output) filespec
 
 Performs a search for 'filespec', placing the first file found in filename_output (a user variable). It also puts the handle of the search into handle_output (also a user variable). If no files are found, both outputs are set to empty, and the error flag is set. Best used with FindNext and FindClose. Note that the filename output is without path.
 
-\S{FindNext} FindNext
+\S2{FindNext} FindNext
 
 \c handle user_var(filename_output)
 

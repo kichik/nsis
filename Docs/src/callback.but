@@ -1,10 +1,10 @@
-\C{callbacks} Callback Functions
+\S1{callbacks} Callback Functions
 
 You can create callback functions which have special names, that will be called by the installer at certain points in the install. Below is a list of currently available callbacks:
 
-\H{instcallbacks} Install Callbacks
+\S2{instcallbacks} Install Callbacks
 
-\S{onguiinit} .onGUIInit
+\S3{onguiinit} .onGUIInit
 
 This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.
 
@@ -20,7 +20,7 @@ Example:
 \c    SetStaticBkColor $R0 0x00FFFFFF
 \c  FunctionEnd
 
-\S{oninit} .onInit
+\S3{oninit} .onInit
 
 This callback will be called when the installer is nearly finished initializing. If the '.onInit' function calls Abort, the installer will quit instantly.
 
@@ -42,7 +42,7 @@ or:
 \c    NoAbort:
 \c  FunctionEnd
 
-\S{oninstfailed} .onInstFailed
+\S3{oninstfailed} .onInstFailed
 
 This callback is called when the user hits the 'cancel' button after the install has failed (if it could not extract a file, or the install script used the Abort command).
 
@@ -52,7 +52,7 @@ Example:
 \c     MessageBox MB_OK "Better luck next time."
 \c   FunctionEnd
 
-\S{oninstsuccess} .onInstSuccess
+\S3{oninstsuccess} .onInstSuccess
 
 This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
 
@@ -64,7 +64,7 @@ Example:
 \c     NoReadme:
 \c   FunctionEnd
 
-\S{onmouseoversection} .onMouseOverSection
+\S3{onmouseoversection} .onMouseOverSection
 
 This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarily, in $0.
 
@@ -81,11 +81,11 @@ Example:
 \c       SendMessage $R0 $\{WM_SETTEXT\} 0 "second section description"
 \c   FunctionEnd
 
-\S{onselchange} .onSelChange
+\S3{onselchange} .onSelChange
 
 Called when the selection changes on the component page. Useful for using with SectionSetFlags and SectionGetFlags.
 
-\S{onuserabort} .onUserAbort
+\S3{onuserabort} .onUserAbort
 
 This callback is called when the user hits the 'cancel' button, and the install hasn't already failed. If this function calls Abort, the install will not be aborted.
 
@@ -97,7 +97,7 @@ Example:
 \c    NoCancelAbort:
 \c  FunctionEnd
 
-\S{onverifyinstdir} .onVerifyInstDir
+\S3{onverifyinstdir} .onVerifyInstDir
 
 This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with MessageBox or the likes. If this function calls Abort, the installation path in $INSTDIR is deemed invalid.
 
@@ -109,15 +109,15 @@ Example:
 \c     PathGood
 \c   FunctionEnd
 
-\H{uninstcallbacks} Uninstall Callbacks
+\S2{uninstcallbacks} Uninstall Callbacks
 
-\S{unonguiinit} un.onGUIInit
+\S3{unonguiinit} un.onGUIInit
 
 This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.
 
 Have a look at .onGUIInit (\K{onguiinit}) for an example.
 
-\S{unonInit} un.onInit
+\S3{unonInit} un.onInit
 
 This callback will be called when the uninstaller is nearly finished initializing. If the 'un.onInit' function calls Abort, the uninstaller will quit instantly. Note that this function can verify and/or modify $INSTDIR if necessary.
 
@@ -138,7 +138,7 @@ or:
 \c     found:
 \c   FunctionEnd
 
-\S{unonuninstfailed} un.onUninstFailed
+\S3{unonuninstfailed} un.onUninstFailed
 
 This callback is called when the user hits the 'cancel' button after the uninstall has failed (if it used the Abort command or otherwise failed).
 
@@ -148,7 +148,7 @@ Example:
 \c     MessageBox MB_OK "Better luck next time."
 \c   FunctionEnd
 
-\S{unonuninstsuccess} un.onUninstSuccess
+\S3{unonuninstsuccess} un.onUninstSuccess
 
 This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if AutoCloseWindow is set to false).
 
@@ -158,7 +158,7 @@ Example:
 \c     MessageBox MB_OK "Congrats, it's gone."
 \c   FunctionEnd
 
-\S{unonuserabort} un.onUserAbort
+\S3{unonuserabort} un.onUserAbort
 
 This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls Abort, the install will not be aborted.
 

@@ -1,4 +1,4 @@
-\C{UninstallSection} Uninstall Section
+\S1{UninstallSection} Uninstall Section
 
 A special Section named 'Uninstall' must be created in order to generate an uninstaller. This section should remove all files, registry keys, etc that were installed by the installer, from the system. Here is an example of a simple uninstall section:
 
