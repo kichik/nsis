@@ -116,6 +116,7 @@ Yra vietos:
 Reikia vietos: 
 # ^UninstallingText
 Idiegimas dabar ištrauks $(^Name).
+$(^Name) dabar bus ištrauktas iš šio katalogo.
 # ^UninstallingSubText
 Trinama iš:
 # ^FileError

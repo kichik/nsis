@@ -115,7 +115,7 @@ Espacio disponible:
 # ^SpaceRequired
 Espacio requerido: 
 # ^UninstallingText
-Este asistente desinstalará $(^Name) de su ordenador. $_CLICK
+$(^Name) será desinstalado del siguiente directorio. $_CLICK
 # ^UninstallingSubTex
 Desinstalando desde:
 # ^FileError
