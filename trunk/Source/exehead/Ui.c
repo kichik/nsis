@@ -134,8 +134,9 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
       myitoa(g_usrvars[0],lParam);
       ExecuteCodeSegment(g_inst_entry,g_inst_cmnheader->code_onStaticCtlBkColor,NULL);
       if (myatoi(g_usrvars[0]) != -1) {
-        SetBkColor((HDC)wParam, myatoi(g_usrvars[0]));
-        ret=(BOOL)GetStockObject(HOLLOW_BRUSH);
+        LOGBRUSH b={BS_SOLID,myatoi(g_usrvars[0]),0};
+        SetBkColor((HDC)wParam, b.lbColor);
+        ret=(BOOL)CreateBrushIndirect(&b);
       }
       mystrcpy(g_usrvars[0],g_tmp);
     }
