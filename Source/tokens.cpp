@@ -50,6 +50,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_DIRSHOW,"DirShow",1,0,"(show|hide)"},
 {TOK_ROOTDIRINST,"AllowRootDirInstall",1,0,"(true|false)"},
 {TOK_CHECKBITMAP,"CheckBitmap",1,0,"local_bitmap.bmp"},
+{TOK_ENABLEWINDOW,"EnableWindow",2,0,"hwnd (1|0)"},
 {TOK_ENUMREGKEY,"EnumRegKey",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD)"},
 {TOK_ENUMREGVAL,"EnumRegValue",4,0,"$(user_var: output) rootkey subkey index\n    root_key=(HKCR|HKLM|HKCU|HKU|HKCC|HKDD|HKPD)"},
 {TOK_EXCH,"Exch",0,1,"[$(user_var)] | [stack_item_index]"},
