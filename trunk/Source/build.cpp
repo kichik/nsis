@@ -1405,7 +1405,7 @@ int CEXEBuild::write_output(void)
         if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
-      if (!enable_last_page_cancel) {
+      if (!enable_last_page_cancel && instlog) {
         p->button_states&=~4;
       }
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
@@ -1421,6 +1421,8 @@ int CEXEBuild::write_output(void)
     {
       if (!IsNotSet(uninstall.uninstalltext)) uninst++;
 
+      int uninstlog = 0;
+
       if (!add_uninst_pages) {
         int i=0;
         page *p=(page *) ubuild_pages.get();
@@ -1433,6 +1435,7 @@ int CEXEBuild::write_output(void)
 #endif
             case NSIS_PAGE_INSTFILES:
               instlog++;
+              uninstlog++;
               break;
           }
           p++;
@@ -1489,7 +1492,7 @@ int CEXEBuild::write_output(void)
         if (p->next == LANG_BTN_NEXT) next_used = true;
       }
       (--p)->next=LANG_BTN_CLOSE;
-      if (!uenable_last_page_cancel) {
+      if (!uenable_last_page_cancel && uninstlog) {
         p->button_states&=~4;
       }
       if (p->id==NSIS_PAGE_COMPLETED) (--p)->next=LANG_BTN_CLOSE;
