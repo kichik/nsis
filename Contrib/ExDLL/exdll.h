@@ -11,6 +11,7 @@
 
 // For page showing plug-ins
 #define WM_NOTIFY_OUTER_NEXT (WM_USER+0x8)
+#define WM_NOTIFY_CUSTOM_READY (WM_USER+0xd)
 #define NOTIFY_BYE_BYE 'x'
 
 typedef struct _stack_t {
