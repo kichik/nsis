@@ -1,10 +1,13 @@
+!define MUI_PRODUCT "NSIS"
+!define MUI_VERSION "2.0b0"
+
+!define MUI_NAME "Nullsoft Install System ${MUI_VERSION}" ;Installer name
+
 !define VER_MAJOR 2
 !define VER_MINOR 0b0
-!define NAME "NSIS"
 
-Name "NSIS"
-Caption "Nullsoft Install System - Setup"
 OutFile ..\nsis${VER_MAJOR}${VER_MINOR}.exe
+
 SetCompressor bzip2
 
 !ifndef CLASSIC_UI
@@ -17,9 +20,11 @@ SetCompressor bzip2
   !define MUI_ABORTWARNING
   !define MUI_UNINSTALLER
 
-  !include "${NSISDIR}\Contrib\Modern UI\Language Files\English.nsh"
+  !insertmacro MUI_LANGUAGE "English"
 
   !define MUI_UI "${NSISDIR}\Contrib\UIs\modern2.exe"
+  
+  !insertmacro MUI_SYSTEM
   
 !endif
 
@@ -530,8 +535,6 @@ Function .onInstSuccess
 FunctionEnd
 
 !ifndef CLASSIC_UI
-
-!insertmacro MUI_SYSTEM
 
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_START
   !insertmacro MUI_DESCRIPTION_TEXT ${SecCore} "The Core files required to use NSIS"
