@@ -953,9 +953,4 @@ Section Uninstall
   RMDir /r $INSTDIR\Docs
   RMDir $INSTDIR
 
-  !ifndef CLASSIC_UI
-    ;Modern UI Finish Header
-    !insertmacro MUI_UNFINISHHEADER
-  !endif
-
 SectionEnd
