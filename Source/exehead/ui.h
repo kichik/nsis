@@ -29,22 +29,16 @@ void NSISCALL build_g_logfile(void);
 // update message used by DirProc and SelProc for space display
 #define WM_IN_UPDATEMSG (WM_USER+0xf)
 
-// the selected insttype has changed
-#define WM_NOTIFY_INSTTYPE_CHANGE (WM_USER+0x32)
-
 // custom pages should send this message to let NSIS know they're ready
 #define WM_NOTIFY_CUSTOM_READY (WM_USER+0xd)
 
 // simulates clicking on the tree
 #define WM_TREEVIEW_KEYHACK (WM_USER+0x13)
 
-// section text changed
-#define WM_NOTIFY_SECTEXT (WM_USER+0x17)
-
-// section flags changed
-#define WM_NOTIFY_SECFLAGS (WM_USER+0x18)
-
 // notifies a component selection change (.onMouseOverSection)
 #define WM_NOTIFY_SELCHANGE (WM_USER+0x19)
+
+// Notifies the installation type has changed by the user
+#define WM_NOTIFY_INSTTYPE_CHANGED (WM_USER+0x20)
 
 #endif//_UI_H_

@@ -1244,7 +1244,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
               SectionFlagsChanged(tvItem.lParam);
 
               wParam = 1;
-              lParam = 1;
+              lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
               uMsg = WM_IN_UPDATEMSG;
             }
           }
@@ -1282,6 +1282,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
       SetInstType(whichcfg);
 
+      SendMessage(hwndDlg, WM_NOTIFY_INSTTYPE_CHANGED, 0, whichcfg);
+
       wParam = 1;
       lParam = 0;
       uMsg = WM_IN_UPDATEMSG;
@@ -1315,38 +1317,22 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (lParam)
     {
-      if (g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)
+      int i, cbi;
+      int inst_type = GetInstType(hTreeItems);
+      SetInstType(inst_type);
+
+      for (i = 0, cbi = 0; i < inst_type; i++)
       {
-        int c = SW_SHOWNA;
-
-        int t = SendMessage(hwndCombo1,CB_GETCURSEL,0,0);
-        if (t != CB_ERR)
+        if (install_types[i])
         {
-          int whichcfg = SendMessage(hwndCombo1, CB_GETITEMDATA, t, 0);
-
-          if (whichcfg != CB_ERR && install_types[whichcfg] && whichcfg != NSIS_MAX_INST_TYPES)
-            c = SW_HIDE;
+          cbi++;
         }
-
-        ShowWindow(hwndTree1, c);
-        ShowWindow(GetUIItem(IDC_TEXT2), c);
       }
-      else
-      {
-        int i, cbi;
-        int inst_type = GetInstType(hTreeItems);
-        SetInstType(inst_type);
 
-        for (i = 0, cbi = 0; i < inst_type; i++)
-        {
-          if (install_types[i])
-          {
-            cbi++;
-          }
-        }
+      SendMessage(hwndCombo1, CB_SETCURSEL, cbi, 0);
 
-        SendMessage(hwndCombo1, CB_SETCURSEL, cbi, 0);
-      } // end of typecheckshit
+      lParam = inst_type;
+      uMsg = WM_NOTIFY_INSTTYPE_CHANGED;
     }
 
     RefreshSectionGroups();
@@ -1354,6 +1340,16 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
       SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb));
+    }
+  }
+
+  if (uMsg == WM_NOTIFY_INSTTYPE_CHANGED)
+  {
+    if (g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM)
+    {
+      int c = (lParam == NSIS_MAX_INST_TYPES ? 1 : 0) << 3;// SW_SHOWNA=8, SW_HIDE=0
+      ShowWindow(hwndTree1, c);
+      ShowWindow(GetUIItem(IDC_TEXT2), c);
     }
   }
 
