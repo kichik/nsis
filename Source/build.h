@@ -169,7 +169,7 @@ class CEXEBuild {
     int page_end();
     int add_label(const char *name);
     int add_entry(const entry *ent);
-    int add_entry_indirect(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
+    int add_entry_direct(int which, int o0=0, int o1=0, int o2=0, int o3=0, int o4=0, int o5=0);
     int add_data(const char *data, int length, IGrowBuf *dblock=NULL); // returns offset
     int add_string(const char *string, int process=1); // returns offset (in string table)
     int add_intstring(const int i); // returns offset in stringblock
