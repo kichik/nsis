@@ -97,7 +97,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_LANGSTRING,"LangString",3,0,"[un.]name lang_id string"},
 {TOK_LANGSTRINGUP,"LangStringUP",3,0,"[un.]name lang_id string"},
 {TOK_LICENSEDATA,"LicenseData",1,1,"[/LANG=lang_id] local_file_that_has_license_text.txt"},
-{TOK_LICENSEFORCESELECTION,"LicenseForceSelection",1,3,"[/LANG=lang_id] (checkbox|radiobuttons|off) accept_text decline_text"},
+{TOK_LICENSEFORCESELECTION,"LicenseForceSelection",1,3,"[/LANG=lang_id] (checkbox|radiobuttons|off) [accept_text] [decline_text]"},
 {TOK_LICENSETEXT,"LicenseText",1,2,"[/LANG=lang_id] license_page_description [license_button_text]"},
 {TOK_LICENSEBKCOLOR,"LicenseBkColor",1,0,"background_color"},
 {TOK_LOADNLF,"LoadLanguageFile",1,0,"language.nlf"},
