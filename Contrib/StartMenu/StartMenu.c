@@ -118,18 +118,27 @@ static BOOL CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
   return bRes;
 }
 
+void AddRTLStyle(HWND hWnd, long dwStyle)
+{
+  long s;
+
+  s = GetWindowLong(hWnd, GWL_STYLE);
+  SetWindowLong(hWnd, GWL_STYLE, s | dwStyle);
+  s = GetWindowLong(hWnd, GWL_EXSTYLE);
+  SetWindowLong(hWnd, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
+}
+
 #define ProgressiveSetWindowPos(hwWindow, x, cx, cy) \
-  SetWindowPos( \
+  MoveWindow( \
     hwWindow, \
-    0, \
     x, \
     y_offset, \
     cx, \
     cy, \
-    SWP_NOACTIVATE | SWP_NOZORDER \
+    FALSE \
   ); \
    \
-  y_offset += cy + 5;
+  y_offset += cy + 3;
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -146,27 +155,43 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       RECT dialog_r, temp_r;
 
-      HFONT hFont = (HFONT)SendMessage(hwParent, WM_GETFONT, 0, 0);
+      HFONT hFont = (HFONT) SendMessage(hwParent, WM_GETFONT, 0, 0);
 
       int y_offset = 0;
 
       int width, height;
 
+      int baseUnitY;
+
+      // Init dialog unit conversion
+
+      {
+        TEXTMETRIC tm;
+        HDC hDC;
+
+        hDC = GetDC(hwndDlg);
+        SelectObject(hDC, hFont);
+
+        GetTextMetrics(hDC, &tm);
+        baseUnitY = tm.tmHeight;
+
+        ReleaseDC(hwndDlg, hDC);
+      }
+
       GetWindowRect(hwChild, &dialog_r);
       ScreenToClient(hwParent, (LPPOINT) &dialog_r);
-      ScreenToClient(hwParent, ((LPPOINT) &dialog_r)+1);
+      ScreenToClient(hwParent, ((LPPOINT) &dialog_r) + 1);
 
       width = dialog_r.right - dialog_r.left;
       height = dialog_r.bottom - dialog_r.top;
 
-      SetWindowPos(
+      MoveWindow(
         hwndDlg,
-        0,
         dialog_r.left,
         dialog_r.top,
         width,
         height,
-        SWP_NOZORDER | SWP_NOACTIVATE
+        FALSE
       );
 
       hwIcon = GetDlgItem(hwndDlg, IDC_NSISICON);
@@ -182,26 +207,13 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       if (rtl)
       {
-        long s;
-
-        s = GetWindowLong(hwText, GWL_STYLE);
-        SetWindowLong(hwText, GWL_STYLE, (s & ~SS_LEFT) | SS_RIGHT);
-        s = GetWindowLong(hwText, GWL_EXSTYLE);
-        SetWindowLong(hwText, GWL_EXSTYLE, s | WS_EX_RTLREADING);
-
-        s = GetWindowLong(hwLocation, GWL_STYLE);
-        SetWindowLong(hwLocation, GWL_STYLE, (s & ~ES_LEFT) | ES_RIGHT);
-        s = GetWindowLong(hwLocation, GWL_EXSTYLE);
-        SetWindowLong(hwLocation, GWL_EXSTYLE, s | WS_EX_RTLREADING);
-
-        s = GetWindowLong(hwDirList, GWL_EXSTYLE);
-        SetWindowLong(hwDirList, GWL_EXSTYLE, s | WS_EX_RIGHT | WS_EX_RTLREADING);
-
-        s = GetWindowLong(hwCheckBox, GWL_STYLE);
-        SetWindowLong(hwCheckBox, GWL_STYLE, s | BS_RIGHT | BS_LEFTTEXT);
-        s = GetWindowLong(hwCheckBox, GWL_EXSTYLE);
-        SetWindowLong(hwCheckBox, GWL_EXSTYLE, s | WS_EX_RTLREADING);
+        AddRTLStyle(hwText, SS_RIGHT);
+        AddRTLStyle(hwLocation, ES_RIGHT);
+        AddRTLStyle(hwDirList, 0);
+        AddRTLStyle(hwCheckBox, BS_RIGHT | BS_LEFTTEXT);
       }
+
+      GetClientRect(hwIcon, &temp_r);
 
       if (!noicon)
       {
@@ -211,48 +223,51 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           IMAGE_ICON,
           (LPARAM)LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(103))
         );
+
+        MoveWindow(
+          hwIcon,
+          rtl ? width - temp_r.right : 0,
+          0,
+          temp_r.right,
+          temp_r.bottom,
+          FALSE
+        );
+
+        temp_r.right += 3;
       }
-
-      GetClientRect(hwIcon, &temp_r);
-
-      SetWindowPos(
-        hwIcon,
-        0,
-        rtl ? width - temp_r.right : 0,
-        0,
-        temp_r.right,
-        temp_r.bottom,
-        SWP_NOZORDER | SWP_NOACTIVATE | (noicon ? SWP_HIDEWINDOW : 0)
-      );
+      else
+      {
+        ShowWindow(hwIcon, SW_HIDE);
+        
+        temp_r.right = 0;
+      }
 
       if (rtl)
       {
         ProgressiveSetWindowPos(
           hwText,
           0,
-          width - (noicon ? 0 : temp_r.right + 5),
-          temp_r.bottom + 2
+          width - temp_r.right,
+          3 * baseUnitY //MulDiv(24, baseUnitY, 8);
         );
       }
       else
       {
         ProgressiveSetWindowPos(
           hwText,
-          noicon ? 0 : temp_r.right + 5,
-          width - (noicon ? 0 : temp_r.right + 5),
-          temp_r.bottom + 2
+          temp_r.right,
+          width - temp_r.right + 3,
+          3 * baseUnitY //MulDiv(24, baseUnitY, 8);
         );
       }
 
       SetWindowText(hwText, *text ? text : "Select the Start Menu folder in which you would like to create the program's shortcuts:");
 
-      GetWindowRect(hwLocation, &temp_r);
-
       ProgressiveSetWindowPos(
         hwLocation,
         0,
         width,
-        temp_r.bottom - temp_r.top
+        MulDiv(12, baseUnitY, 8)
       );
 
       if (*lastused == '>')
@@ -265,26 +280,24 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       SetWindowText(hwLocation, *lastused ? lastused : progname);
 
-      GetWindowRect(hwCheckBox, &temp_r);
-      ScreenToClient(hwndDlg, ((LPPOINT) &temp_r));
-      ScreenToClient(hwndDlg, ((LPPOINT) &temp_r) + 1);
+      temp_r.bottom = MulDiv(8, baseUnitY, 8);
 
       ProgressiveSetWindowPos(
         hwDirList,
         0,
         width,
-        height - y_offset - (*checkbox ? temp_r.bottom - temp_r.top + 5 : 0)
-      );
-
-      ProgressiveSetWindowPos(
-        hwCheckBox,
-        0,
-        width,
-        temp_r.bottom - temp_r.top
+        height - y_offset - (*checkbox ? temp_r.bottom + 3 : 0)
       );
 
       if (*checkbox)
       {
+        ProgressiveSetWindowPos(
+          hwCheckBox,
+          0,
+          width,
+          temp_r.bottom
+        );
+
         ShowWindow(hwCheckBox, SW_SHOWNA);
         SetWindowText(hwCheckBox, checkbox);
       }
