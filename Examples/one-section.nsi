@@ -36,13 +36,13 @@ SectionEnd
 Section "optional #1" sec1
 SectionEnd
 
-Section "optional #2" sec2
+Section /o "optional #2" sec2
 SectionEnd
 
-Section "optional #3" sec3
+Section /o "optional #3" sec3
 SectionEnd
 
-Section "optional #4" sec4
+Section /o "optional #4" sec4
 SectionEnd
 
 !ifdef USE_SUBSECTION
@@ -50,36 +50,14 @@ SectionEnd
 !endif
 
 Function .onInit
-	Push $0
-
 	StrCpy $1 ${sec1} ; Gotta remember which section we are at now...
-	SectionGetFlags ${sec1} $0
-	IntOp $0 $0 | ${SF_SELECTED}
-	SectionSetFlags ${sec1} $0
-	# !insertmacro SelectSection ${sec1}
-
-	SectionGetFlags ${sec2} $0
-	IntOp $0 $0 & ${SECTION_OFF}
-	SectionSetFlags ${sec2} $0
-	# !insertmacro UnselectSection ${sec2}
-
-	SectionGetFlags ${sec3} $0
-	IntOp $0 $0 & ${SECTION_OFF}
-	SectionSetFlags ${sec3} $0
-	# !insertmacro UnselectSection ${sec3}
-
-	SectionGetFlags ${sec4} $0
-	IntOp $0 $0 & ${SECTION_OFF}
-	SectionSetFlags ${sec4} $0
-	# !insertmacro UnselectSection ${sec4}
-
-	Pop $0
 FunctionEnd
 
 Function .onSelChange
 	Push $0
 
 !ifdef USE_SUBSECTION
+; Check if the user have selected all of the sections using the sub-section
 	Push $2
 	StrCpy $2 ${SF_SELECTED}
 	SectionGetFlags ${sec1} $0
