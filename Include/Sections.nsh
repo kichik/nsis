@@ -45,49 +45,58 @@
 # macros for mutually exclusive section selection
 # written by Tim Gallagher
 
-#### usage example:
+#### usage example (see one-section.nsi too):
 
+# Var SomeVar
+#
 # Function .onSelChange
-# !insertmacro StartRadioButtons
+# !insertmacro StartRadioButtons $SomeVar
 # !insertmacro RadioButton ${sec1}
 # !insertmacro RadioButton ${sec2}
 # !insertmacro RadioButton ${sec3}
 # !insertmacro EndRadioButtons
 # FunctionEnd
-
+#
 # Function .onInit
-# !insertmacro UnselectSection ${sec1}
+# StrCpy $SomeVar ${sec1} ; default section
 # !insertmacro UnselectSection ${sec2}
 # !insertmacro UnselectSection ${sec3}
 # FunctionEnd
 
-# starts the Radio Button Block
-!macro StartRadioButtons
-	Push $0
-	SectionGetFlags $1 $0
-	IntOp $0 $0 & ${SECTION_OFF}
-	SectionSetFlags $1 $0
+# Starts the Radio Button Block.
+# You should pass a variable that keeps the selected section
+# as the first parameter for this macro. This variable should
+# be initialized to the default section's index. As this macro
+# uses $R0 and $R1 you can't use those two as the varible
+# which will keep the selected section.
+!macro StartRadioButtons var
+!define StartRadioButtons_Var "${var}"
+	Push $R0
+	SectionGetFlags "${StartRadioButtons_Var}" $R0
+	IntOp $R0 $R0 & ${SECTION_OFF}
+	SectionSetFlags "${StartRadioButtons_Var}" $R0
 
-	Push $2
-	StrCpy $2 $1
+	Push $R1
+	StrCpy $R1 "${StartRadioButtons_Var}"
 !macroend
 
 !macro RadioButton SECTION_NAME
-  SectionGetFlags ${SECTION_NAME} $0
-	IntOp $0 $0 & ${SF_SELECTED}
-	IntCmp $0 ${SF_SELECTED} 0 +2 +2
-		StrCpy $1 ${SECTION_NAME}
+	SectionGetFlags ${SECTION_NAME} $R0
+	IntOp $R0 $R0 & ${SF_SELECTED}
+	IntCmp $R0 ${SF_SELECTED} 0 +2 +2
+		StrCpy "${StartRadioButtons_Var}" ${SECTION_NAME}
 !macroend
 
 # ends the radio button block
 !macro EndRadioButtons
-	StrCmp $2 $1 0 +4 ; selection hasn't changed
-		SectionGetFlags $1 $0
-		IntOp $0 $0 | ${SF_SELECTED}
-		SectionSetFlags $1 $0
+	StrCmp $R1 "${StartRadioButtons_Var}" 0 +4 ; selection hasn't changed
+		SectionGetFlags "${StartRadioButtons_Var}" $R0
+		IntOp $R0 $R0 | ${SF_SELECTED}
+		SectionSetFlags "${StartRadioButtons_Var}" $R0
 
-	Pop $2
-	Pop $0
+	Pop $R1
+	Pop $R0
+!undef StartRadioButtons_Var
 !macroend
 
 ; For details about SetSectionInInstType and ClearSectionInInstType, see
