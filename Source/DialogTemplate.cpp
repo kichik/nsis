@@ -77,7 +77,6 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto) {
 // A macro that adds the size of x (which can be a string a number, or nothing) to dwSize
 #define AddStringOrIdSize(x) dwSize += x ? (IS_INTRESOURCE(x) ? sizeof(DWORD) : (lstrlen(x)+1)*sizeof(WCHAR)) : sizeof(WORD)
 
-
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -279,49 +278,57 @@ void CDialogTemplate::MoveAllAndResize(short x, short y) {
 	m_sHeight += y;
 }
 
-// Converts pixels to this dialog's units
-void CDialogTemplate::PixelsToDlgUnits(short& x, short& y) {
+// Creates a dummy dialog that is used for converting units
+HWND CDialogTemplate::CreateDummyDialog() {
 	DWORD dwTemp;
 	BYTE* pbDlg = Save(dwTemp);
 	HWND hDlg = CreateDialogIndirect(GetModuleHandle(0), (DLGTEMPLATE*)pbDlg, 0, 0);
 	delete [] pbDlg;
 	if (!hDlg)
 		throw runtime_error("Can't create dialog from template!");
-	RECT r = {0, 0, 1024, 1024};
+
+	return hDlg;
+}
+
+// Converts pixels to this dialog's units
+void CDialogTemplate::PixelsToDlgUnits(short& x, short& y) {
+	HWND hDlg = CreateDummyDialog();
+	RECT r = {0, 0, 10000, 10000};
 	MapDialogRect(hDlg, &r);
 	DestroyWindow(hDlg);
 
-	x = float(x) / (float(r.right)/1024);
-	y = float(y) / (float(r.bottom)/1024);
+	x = float(x) / (float(r.right)/10000);
+	y = float(y) / (float(r.bottom)/10000);
 }
 
 // Converts pixels to this dialog's units
 void CDialogTemplate::DlgUnitsToPixels(short& x, short& y) {
-	DWORD dwTemp;
-	BYTE* pbDlg = Save(dwTemp);
-	HWND hDlg = CreateDialogIndirect(GetModuleHandle(0), (DLGTEMPLATE*)pbDlg, 0, 0);
-	delete [] pbDlg;
-	if (!hDlg)
-		throw runtime_error("Can't create dialog from template!");
-	RECT r = {0, 0, 1024, 1024};
+	HWND hDlg = CreateDummyDialog();
+	RECT r = {0, 0, 10000, 10000};
 	MapDialogRect(hDlg, &r);
 	DestroyWindow(hDlg);
 
-	x = float(x) * (float(r.right)/1024);
-	y = float(y) * (float(r.bottom)/1024);
+	x = float(x) * (float(r.right)/10000);
+	y = float(y) * (float(r.bottom)/10000);
 }
 
 // Returns the size of a string in the dialog (in dialog units)
-SIZE CDialogTemplate::GetStringSize(char *str) {
-	DWORD dwTemp;
-	BYTE* pbDlg = Save(dwTemp);
-	HWND hDlg = CreateDialogIndirect(GetModuleHandle(0), (DLGTEMPLATE*)pbDlg, 0, 0);
-	delete [] pbDlg;
+SIZE CDialogTemplate::GetStringSize(WORD id, char *str) {
+	HWND hDlg = CreateDummyDialog();
+
+	LOGFONT f;
+	GetObject((HFONT)SendMessage(hDlg, WM_GETFONT, 0, 0), sizeof(LOGFONT), &f);
+
+	HDC memDC = CreateCompatibleDC(GetDC(hDlg));
+	HFONT font = CreateFontIndirect(&f);
+	SelectObject(memDC, font);
 
 	SIZE size;
-	GetTextExtentPoint32(GetDC(hDlg), str, lstrlen(str), &size);
+	GetTextExtentPoint32(memDC, str, lstrlen(str), &size);
 
 	DestroyWindow(hDlg);
+	DeleteObject(font);
+	DeleteDC(memDC);
 
 	PixelsToDlgUnits((short&)size.cx, (short&)size.cy);
 	
@@ -333,9 +340,10 @@ void CDialogTemplate::RTrimToString(WORD id, char *str, int margins) {
 	DialogItemTemplate* item = GetItem(id);
 	if (!item) return;
 
-	SIZE size = GetStringSize(str);
+	SIZE size = GetStringSize(id, str);
 
 	size.cx += margins;
+	size.cy += 2;
 
 	item->sWidth = size.cx;
 	item->sHeight = size.cy;
@@ -346,9 +354,10 @@ void CDialogTemplate::LTrimToString(WORD id, char *str, int margins) {
 	DialogItemTemplate* item = GetItem(id);
 	if (!item) return;
 
-	SIZE size = GetStringSize(str);
+	SIZE size = GetStringSize(id, str);
 
 	size.cx += margins;
+	size.cy += 2;
 
 	item->sX += item->sWidth - size.cx;
 	item->sWidth =  size.cx;
@@ -360,9 +369,10 @@ void CDialogTemplate::CTrimToString(WORD id, char *str, int margins) {
 	DialogItemTemplate* item = GetItem(id);
 	if (!item) return;
 
-	SIZE size = GetStringSize(str);
+	SIZE size = GetStringSize(id, str);
 
 	size.cx += margins;
+	size.cy += 2;
 
 	item->sX += item->sWidth/2 - size.cx/2;
 	item->sWidth =  size.cx;
