@@ -20,5 +20,4 @@ Section "Output to variable"
 	DetailPrint ""
 	DetailPrint "       Return value: $0"
 	DetailPrint ""
-	Return
 SectionEnd
