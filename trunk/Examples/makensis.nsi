@@ -236,6 +236,9 @@ SubSection "Extra User Interfaces" SecContribUIs
     File "..\Contrib\UIs\modern_nodesc.exe"
     File "..\Contrib\UIs\modern_smalldesc.exe"
     
+    Delete "$INSTDIR\Contrib\UIs\modern2.exe"
+    Delete "$INSTDIR\Contrib\UIs\modern3.exe"
+    
     SetOutPath $INSTDIR\Include
     File "..\Include\MUI.nsh"
 	
