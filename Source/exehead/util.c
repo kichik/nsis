@@ -491,48 +491,66 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
       LPITEMIDLIST idl;
       int qLaunch=0;
       int nCreateFlag = CSIDL_FLAG_CREATE;
+      int nFolderCurUser;
 
-      nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD); // Read code for current user
+      nFolderCurUser = (*(WORD*)in & 0x0FFF)-1; // Read code for current user
+      in+=sizeof(WORD);
+      nVarIdx = nFolderCurUser;
       if ( g_exec_flags.all_user_var )
-        nVarIdx = (*(WORD*)in & 0x0FFF)-1; in+=sizeof(WORD); // Use code for All users instead
+      {
+        nVarIdx = (*(WORD*)in & 0x0FFF)-1; // Use code for All users instead
+      }
+      else
+        nFolderCurUser=-1; // Already using current user
+
+      in+=sizeof(WORD);
 
       *out=0;
-
+      
       while (TRUE)
       {
-          switch ( nVarIdx )
+        switch ( nVarIdx )
+        {
+        case CSIDL_BITBUCKET: // COMMONFILES
+          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "CommonFilesDir", out);
+          break;
+        case CSIDL_CONTROLS: // PROGRAMFILES
+          myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
+          if (!*out)
+            mystrcpy(out, "C:\\Program Files");
+          break;
+        case CSIDL_DESKTOP: // QUICKLAUNCH
+          nVarIdx = CSIDL_APPDATA;
+          qLaunch = 1;
+          // dont break
+        default:
+          // Get and force path creation
+          if ( !SHGetSpecialFolderLocation(g_hwnd, nVarIdx | nCreateFlag, &idl) )
           {
-          case CSIDL_BITBUCKET: // COMMONFILES
-              myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "CommonFilesDir", out);
-              break;
-          case CSIDL_CONTROLS: // PROGRAMFILES
-              myRegGetStr(HKEY_LOCAL_MACHINE, smwcvesf, "ProgramFilesDir", out);
-              if (!*out)
-                  mystrcpy(out, "C:\\Program Files");
-              break;
-          case CSIDL_DESKTOP: // QUICKLAUNCH
-              nVarIdx |= CSIDL_APPDATA;
-              qLaunch = 1;
-              // dont break
-          default:
-              // Get and force path creation
-              if ( !SHGetSpecialFolderLocation(g_hwnd, nVarIdx | nCreateFlag, &idl) )
-              {
-                  if (my_PIDL2Path(out, idl, 1))
-                  {
-                      if (qLaunch) 
-                          lstrcat(out,"\\Microsoft\\Internet Explorer\\Quick Launch");
-                  }
-              }
-              else
-                  *out=0;
-              break;
+            if (my_PIDL2Path(out, idl, 1))
+            {
+              if (qLaunch) 
+                lstrcat(out,"\\Microsoft\\Internet Explorer\\Quick Launch");
+            }
           }
+          break;
+        }
 
-          if ( *out || nCreateFlag == 0 )
-              break;
+        if ( *out )
+          break; // Found something
+
+        if ( nCreateFlag == 0 )
+        {
+          if ( nFolderCurUser == -1 ) // Already dropped to current user???
+            break;
           else
-              nCreateFlag = 0; // remove create flag if it fails
+          {
+            nVarIdx = nFolderCurUser; // Drop to current user if fail
+            nFolderCurUser = -1;
+          }
+        }
+        else
+          nCreateFlag = 0; // remove create flag if it fails
       }
 
       validate_filename(out);
