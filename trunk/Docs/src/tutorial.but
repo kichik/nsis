@@ -17,7 +17,7 @@ In a NSIS script every line is treated as a command. If your command is too long
 \c Messagebox MB_OK|MB_ICONINFORMATION \
 \c "This is a sample that shows how to use line breaks for larger commands in NSIS scripts"
 
-If you want to use a double-quote in a string you can either use \\$" to escape the quote or quote the string with a different type of quote such as ` or '.
+If you want to use a double-quote in a string you can either use $\\\\" to escape the quote or quote the string with a different type of quote such as ` or '.
 
 For more details about the script format, see \R{fileformat}{Script File Format}.
 
