@@ -315,14 +315,14 @@ parameters.</p>
   <p class="text"><span class="bold">MUI_UNICON </span><span class="parameter">icon_file</span><br />
   The icon of the uninstaller.<br /><i>Default: ${NSISDIR}\Contrib\Icons\modern-uninstall.ico</i></p>
   <p class="text"><span class="bold">MUI_LICENSEBKCOLOR </span><span class="parameter">
-  (/windows | /grey | (color: RRGGBB))</span><br />
+  (/windows | /grey | (color: RRGGBB hexadecimal))</span><br />
   The background color for the license textbox. Use /windows for the default text background (usually white).
   Use the /grey for the standard window background (usually grey).<br /><i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_CHECKBITMAP </span><span class="parameter">bitmap_file</span><br />
   The bitmap with images for the checks of the component select treeview.<br />
   <i>Default: ${NSISDIR}\Contrib\Icons\modern.bmp</i></p>
   <p class="text"><span class="bold">MUI_INSTALLCOLORS </span><span class="parameter">(/windows |
-  (foreground color: RRGGBB) (background color: RRGGBB))</span><br />
+  (foreground color: RRGGBB hexadecimal) (background color: RRGGBB hexadecimal))</span><br />
   The colors of the details screen. Use /windows for the default colors.<br />
   <i>Default: /windows</i></p>
   <p class="text"><span class="bold">MUI_PROGRESSBAR </span><span class="parameter">("" | colored | smooth)</span><br />
@@ -351,7 +351,7 @@ parameters.</p>
   bitmap that fits exactly, you should not use this option because the size of the field will be different
   if the user has a custom DPI setting.</p>
   </div>
-  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: 0xBBGGRR)</span><br />
+  <p class="text"><span class="bold">MUI_BGCOLOR </span><span class="parameter">(color: 0xBBGGRR hexadecimal)</span><br />
   Background color for the header, Welcome page and Finish page.<br /><i>Default: 0xFFFFFF</i></p>
   <p class="text"><span class="bold">MUI_RTL_UI</span><br />
   Right-to-left interface.</p>
