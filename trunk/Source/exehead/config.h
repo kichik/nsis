@@ -220,7 +220,7 @@
 //     be deleted.
 #define NSIS_CONFIG_PLUGIN_SUPPORT
 
-// fixes
+// fixes - do not edit past here
 #ifndef NSIS_CONFIG_VISIBLE_SUPPORT
   #ifdef NSIS_CONFIG_LICENSEPAGE
     #undef NSIS_CONFIG_LICENSEPAGE
