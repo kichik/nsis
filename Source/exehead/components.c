@@ -56,13 +56,11 @@ unsigned int NSISCALL RefreshSectionGroups(unsigned int i) {
     }
 
     if (flags & SF_SECGRPEND) {
-      if (sections[sec].flags & SF_SECGRP) {
-        if (selected) {
-          if (not_selected) {
-            sections[sec].flags |= SF_PSELECTED;
-          } else {
-            sections[sec].flags |= SF_SELECTED;
-          }
+      if (selected) {
+        if (not_selected) {
+          sections[sec].flags |= SF_PSELECTED;
+        } else {
+          sections[sec].flags |= SF_SELECTED;
         }
       }
 
