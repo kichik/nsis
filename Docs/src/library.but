@@ -37,7 +37,7 @@ To ask the user for a reboot if required, use the Modern UI with a Finish page o
 
 \S1{} Parameters
 
-\c libtype shared protection localfile destfile tempbasedir
+\c libtype shared install localfile destfile tempbasedir
 
 \\<b\\>libtype\\</b\\>
 
