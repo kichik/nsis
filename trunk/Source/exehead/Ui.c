@@ -580,8 +580,9 @@ skipPage:
     }
     else
     {
-      // Forward WM_COMMANDs to inner dialogs, can be custom ones
-      //SendMessage(m_curwnd, uMsg, wParam, lParam);
+      // Forward WM_COMMANDs to inner dialogs, can be custom ones.
+      // Without this, enter on buttons in inner dialogs won't work.
+      SendMessage(m_curwnd, uMsg, wParam, lParam);
     }
   }
   return HandleStaticBkColor();
