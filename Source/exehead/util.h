@@ -8,7 +8,6 @@ void NSISCALL process_string(char *out, const char *in);
 void NSISCALL process_string_fromtab(char *out, int offs);
 void NSISCALL process_string_from_lang(char *out, langid_t id);
 int NSISCALL GetLangString(langid_t id);
-int NSISCALL process_string_fromtab_toint(int offs);
 void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *out);
 int NSISCALL myatoi(char *s);
 void NSISCALL myitoa(char *s, int d);
