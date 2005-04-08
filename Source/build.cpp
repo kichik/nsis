@@ -2050,7 +2050,7 @@ again:
     BYTE* dlg = res_editor->GetResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG); \
     if (dlg) { \
       CDialogTemplate dt(dlg,uDefCodePage); \
-      free(dlg); \
+      res_editor->FreeResource(dlg); \
       if (dt.RemoveItem(IDC_ULICON)) { \
         DialogItemTemplate* text = dt.GetItem(IDC_INTROTEXT); \
         DialogItemTemplate* prog = dt.GetItem(IDC_PROGRESS); \
@@ -2066,8 +2066,8 @@ again:
         DWORD dwSize; \
         dlg = dt.Save(dwSize); \
         res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id), NSIS_DEFAULT_LANG, dlg, dwSize); \
+        delete [] dlg; \
       } \
-      res_editor->FreeResource(dlg); \
     } \
   }
 
