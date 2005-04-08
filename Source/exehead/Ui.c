@@ -831,7 +831,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #ifndef NSIS_CONFIG_LOG_ODS
     build_g_logfile();
 #endif
-    log_dolog = IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
+    if (GetUIItem(IDC_CHECK1) != NULL)
+      log_dolog = IsDlgButtonChecked(hwndDlg,IDC_CHECK1);
 #endif
   }
   if (uMsg == WM_INITDIALOG)
