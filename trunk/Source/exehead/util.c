@@ -180,7 +180,7 @@ void NSISCALL myDelete(char *buf, int flags)
   }
 
 #ifdef NSIS_SUPPORT_RMDIR
-  if (valid_dir && (flags & DEL_DIR))
+  if (valid_dir && (flags & DEL_DIR) && file_exists(buf))
   {
     addtrailingslash(buf);
     log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
