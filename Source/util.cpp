@@ -305,15 +305,15 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
   else
     iNextSection = (int)sectionHeadersArray[i+1].PointerToRawData;
 
-  MY_ASSERT((int)rdRoot - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((long)rdRoot - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
-  int idx = find_in_dir(rdRoot, (WORD) (int) RT_ICON);
+  int idx = find_in_dir(rdRoot, (WORD) (long) RT_ICON);
   MY_ASSERT(idx == -1, "no icons?!");
   MY_ASSERT(!rdRoot->Entries[idx].DirectoryOffset.DataIsDirectory, "bad resource directory");
 
   PRESOURCE_DIRECTORY rdIcons = PRESOURCE_DIRECTORY(rdRoot->Entries[idx].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
 
-  MY_ASSERT((int)rdIcons - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+  MY_ASSERT((long)rdIcons - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
   MY_ASSERT(rdIcons->Header.NumberOfIdEntries == 0, "no icons found");
 
@@ -321,12 +321,12 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     MY_ASSERT(!rdIcons->Entries[i].DirectoryOffset.DataIsDirectory, "bad resource directory");
     PRESOURCE_DIRECTORY rd = PRESOURCE_DIRECTORY(rdIcons->Entries[i].DirectoryOffset.OffsetToDirectory + DWORD(rdRoot));
     
-    MY_ASSERT((int)rd - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+    MY_ASSERT((long)rd - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
     MY_ASSERT(rd->Entries[0].DirectoryOffset.DataIsDirectory, "bad resource directory");
     
     PIMAGE_RESOURCE_DATA_ENTRY rde = PIMAGE_RESOURCE_DATA_ENTRY(rd->Entries[0].OffsetToData + DWORD(rdRoot));
 
-    MY_ASSERT((int)rde - (int)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
+    MY_ASSERT((long)rde - (long)exeHeader > iNextSection, "corrupted EXE - invalid pointer");
 
     // find icon to replace
     LPBYTE seeker = uninstIconData;
@@ -347,7 +347,7 @@ int generate_unicons_offsets(unsigned char* exeHeader, unsigned char* uninstIcon
     // Set offset
     *(LPDWORD) seeker = rde->OffsetToData + DWORD(rdRoot) - dwResourceSectionVA - DWORD(exeHeader);
 
-    MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (int)rdRoot - (int)exeHeader, "invalid data offset - icon resource probably compressed");
+    MY_ASSERT(*(int*)seeker > iNextSection || *(int*)seeker < (long)rdRoot - (long)exeHeader, "invalid data offset - icon resource probably compressed");
   }
 
   LPBYTE seeker = uninstIconData;
