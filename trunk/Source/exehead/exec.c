@@ -1223,7 +1223,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           DWORD d=NSIS_MAX_STRLEN-1;
           if (parm4) RegEnumKey(key,b,p,d);
-          else RegEnumValue(key,b,p,&d,NULL,NULL,NULL,NULL);
+          else if (RegEnumValue(key,b,p,&d,NULL,NULL,NULL,NULL)!=ERROR_SUCCESS)
+          {
+            exec_error++;
+            break;
+          }
           p[NSIS_MAX_STRLEN-1]=0;
           RegCloseKey(key);
         }
