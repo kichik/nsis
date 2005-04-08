@@ -444,7 +444,7 @@ void CDialogTemplate::ConvertToRTL() {
     bool addExStyle = false;
 
     // Button
-    if (int(m_vItems[i]->szClass) == 0x80) {
+    if (long(m_vItems[i]->szClass) == 0x80) {
       m_vItems[i]->dwStyle ^= BS_LEFTTEXT;
       m_vItems[i]->dwStyle ^= BS_RIGHT;
       m_vItems[i]->dwStyle ^= BS_LEFT;
@@ -458,13 +458,13 @@ void CDialogTemplate::ConvertToRTL() {
       }
     }
     // Edit
-    else if (int(m_vItems[i]->szClass) == 0x81) {
+    else if (long(m_vItems[i]->szClass) == 0x81) {
       if ((m_vItems[i]->dwStyle & ES_CENTER) == 0) {
         m_vItems[i]->dwStyle ^= ES_RIGHT;
       }
     }
     // Static
-    else if (int(m_vItems[i]->szClass) == 0x82) {
+    else if (long(m_vItems[i]->szClass) == 0x82) {
       if ((m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFT || (m_vItems[i]->dwStyle & SS_TYPEMASK) == SS_LEFTNOWORDWRAP)
       {
         m_vItems[i]->dwStyle &= ~SS_TYPEMASK;
