@@ -599,7 +599,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          ExpandEnvironmentStrings(buf0,p,NSIS_MAX_STRLEN);
+          if (!ExpandEnvironmentStrings(buf0,p,NSIS_MAX_STRLEN))
+          {
+            exec_error++;
+            *p=0;
+          }
         }
         p[NSIS_MAX_STRLEN-1]=0;
       }
