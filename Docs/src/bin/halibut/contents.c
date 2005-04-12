@@ -73,21 +73,21 @@ static void dospace(word *** wret)
 static void donumber(word *** wret, int num)
 {
   wchar_t text[20];
-  wchar_t *p = text + sizeof(text);
-  *--p = L'\0';
+  int i = 19;
+  text[i] = L'\0';
   while (num != 0)
   {
-    assert(p > text);
-    *--p = L"0123456789"[num % 10];
+    assert(i >= 0);
+    i--; text[i] = L"0123456789"[num % 10];
     num /= 10;
   }
-  dotext(wret, p);
+  dotext(wret, &text[i]);
 }
 
 static void doanumber(word *** wret, int num)
 {
   wchar_t text[20];
-  wchar_t *p;
+  int i = 19;
   int nletters, aton;
   nletters = 1;
   aton = 25;
@@ -100,15 +100,14 @@ static void doanumber(word *** wret, int num)
     else
       aton = INT_MAX;
   }
-  p = text + sizeof(text);
-  *--p = L'\0';
+  text[i] = L'\0';
   while (nletters--)
   {
-    assert(p > text);
-    *--p = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[num % 26];
+    assert(i >= 0);
+    i--; text[i] = L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[num % 26];
     num /= 26;
   }
-  dotext(wret, p);
+  dotext(wret, &text[i]);
 }
 
 void number_cfg(numberstate * state, paragraph * source)
