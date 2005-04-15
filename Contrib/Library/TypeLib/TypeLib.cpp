@@ -109,9 +109,9 @@ NSISFunction(GetLibVersion) {
 			
 			char buf[33];
 
-			itoa (typelibAttr->wMajorVerNum, buf, 10);
+			wsprintf(buf, "%d", typelibAttr->wMajorVerNum);
 			pushstring(buf);
-			itoa (typelibAttr->wMinorVerNum, buf, 10);
+			wsprintf(buf, "%d", typelibAttr->wMinorVerNum);
 			pushstring(buf);
 
 		}
