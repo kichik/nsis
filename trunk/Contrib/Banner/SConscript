@@ -1,0 +1,18 @@
+target = 'Banner'
+
+files = Split("""
+	Banner.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

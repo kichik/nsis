@@ -1,0 +1,23 @@
+target = 'Math'
+
+files = Split("""
+	Source/Math.cpp
+	Source/MyMath.cpp
+	Source/plugin.cpp
+	Source/floatp10.c
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target, entry = 'DllMain', nodeflib = 0)
+#env = PluginEnv(target, entry = '_DllMainCRTStartup', vc7 = 1)
+
+#libs = libs + [File('Source/mathcrt.lib')]
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

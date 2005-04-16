@@ -1,0 +1,19 @@
+target = 'nsExec'
+
+files = Split("""
+	nsexec.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	advapi32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

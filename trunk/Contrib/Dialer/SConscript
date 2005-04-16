@@ -1,0 +1,19 @@
+target = 'Dialer'
+
+files = Split("""
+	dialer.c
+""")
+
+libs = Split("""
+	kernel32
+	wininet
+	delayimp
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

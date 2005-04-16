@@ -1,0 +1,32 @@
+print "Using default tools configuration"
+
+Import('defenv')
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: ''
+defenv['MAP_FLAG'] = lambda x: ''
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = ''
+defenv['C_FLAG'] = ''
+defenv['CPP_FLAG'] = ''
+
+### stub environment
+
+stub_env = defenv.Copy()
+
+### makensis environment
+
+makensis_env = defenv.Copy()
+
+### plugin environment
+
+plugin_env = defenv.Copy(no_import_lib = 1)
+
+### util environment
+
+util_env = defenv.Copy()
+
+# return
+
+Return('stub_env makensis_env plugin_env util_env')

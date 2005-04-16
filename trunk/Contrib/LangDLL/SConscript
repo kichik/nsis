@@ -1,0 +1,25 @@
+target = 'LangDLL'
+
+files = Split("""
+	LangDLL.c
+""")
+
+resources = Split("""
+	resource.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+files += env.RES(resources)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

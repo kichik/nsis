@@ -1,0 +1,28 @@
+target = 'halibut'
+
+files = Split("""
+	biblio.c
+	bk_xhtml.c
+	contents.c
+	error.c
+	help.c
+	index.c
+	input.c
+	keywords.c
+	licence.c
+	main.c
+	malloc.c
+	misc.c
+	style.c
+	tree234.c
+	ustring.c
+	version.c
+""")
+
+env = Environment()
+
+env.Append(CPPDEFINES = ['VERSION=\\"1.0 (NSIS Custom Build)\\"'])
+
+halibut = env.Program(target, files)
+
+Return('halibut')
