@@ -1,0 +1,19 @@
+target = 'TypeLib'
+
+files = Split("""
+	TypeLib.cpp
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	oleaut32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target, entry = 'DllMain')
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

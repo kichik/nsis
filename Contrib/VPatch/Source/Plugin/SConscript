@@ -1,0 +1,17 @@
+target = 'VPatch'
+
+files = Split("""
+	vpatchdll.c
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target, entry = 'DllMain')
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

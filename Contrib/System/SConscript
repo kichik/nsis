@@ -1,0 +1,33 @@
+target = 'System'
+
+files = Split("""
+	Source/Buffers.c
+	Source/Plugin.c
+	Source/System.c
+""")
+
+objs = Split("""
+	Source/chkstk.obj
+	Source/vc7ldvrm.obj
+	Source/vc7lmul.obj
+	Source/vc7lshl.obj
+	Source/vc7lshr.obj
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	ole32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target, entry = '_DllMainCRTStartup', nodeflib = 0)
+
+env.Append(CPPDEFINES = ['SYSTEM_EXPORTS'])
+
+#files += [File(obj) for obj in objs]
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

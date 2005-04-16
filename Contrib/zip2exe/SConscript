@@ -1,0 +1,41 @@
+target = "zip2exe"
+
+cpp_files = Split("""
+	main.cpp
+""")
+
+c_files = Split("""
+	zlib/ADLER32.C
+	zlib/CRC32.C
+	zlib/INFBLOCK.C
+	zlib/INFCODES.C
+	zlib/INFFAST.C
+	zlib/INFLATE.C
+	zlib/INFTREES.C
+	zlib/INFUTIL.C
+	zlib/Unzip.c
+	zlib/Zutil.c
+""")
+
+resources = Split("""
+	zip2exe.xml
+	icon.ico
+""")
+
+rc = 'res.rc'
+
+libs = Split("""
+	user32
+	gdi32
+	comctl32
+	comdlg32
+	advapi32
+	shell32
+""")
+
+Import('BuildUtil env')
+
+env.Append(CPPFLAGS = '$C_FLAG')
+files = env.Object(c_files) + cpp_files
+
+BuildUtil(target, files, libs, res = rc, resources = resources, install = 'Bin')
