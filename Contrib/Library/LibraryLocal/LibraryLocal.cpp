@@ -13,16 +13,12 @@
 
 using namespace std;
 
-int APIENTRY WinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPSTR     lpCmdLine,
-                     int       nCmdShow)
+int main(int argc, char* argv[])
 {
 
-	// Parse the command line
+  // Parse the command line
 
 	string cmdline;
-	cmdline = lpCmdLine;
 
 	string mode;
 	string filename;
@@ -30,13 +26,13 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	int filefound = 0;
 
-	if (cmdline.length() >= 3)
+	if (argc == 3)
 	{
 
 		// Get the full path of the local file
 
-		mode = cmdline.substr(0, 1);
-		filename = cmdline.substr(2);
+		mode = argv[1];
+		filename = argv[2];
 
 		char buf[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, buf);
