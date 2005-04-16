@@ -1,0 +1,94 @@
+print "Using GNU tools configuration"
+
+Import('defenv')
+
+### workarounds
+
+# patch #1184316 for SCons
+# http://sourceforge.net/tracker/?func=detail&aid=1184316&group_id=30337&atid=398973
+defenv['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE -o $TARGET'
+
+### cross compiling
+
+import SCons.Util
+
+res_action = Action('$RCCOM', '$RCCOMSTR')
+res_builder = Builder(action=res_action, suffix='.o')
+
+def cross_env(env):
+	if env['MINGWPREFIX']:
+		prefix = env['MINGWPREFIX']
+
+		env['CC']   = prefix + '-gcc'
+		env['CXX']  = prefix + '-g++'
+		env['LINK'] = prefix + '-ld'
+		env['RC']   = prefix + '-windres'
+
+		env['RCFLAGS'] = SCons.Util.CLVar('')
+		env['RCINCFLAGS'] = '$( ${_concat(RCINCPREFIX, CPPPATH, RCINCSUFFIX, __env__, RDirs, TARGET)} $)'
+		env['RCINCPREFIX'] = '--include-dir '
+		env['RCINCSUFFIX'] = ''
+		env['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE -o $TARGET'
+		env['BUILDERS']['RES'] = res_builder
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: '-Wl,-e,_' + x + '@16'
+defenv['MAP_FLAG'] = lambda x: '-Wl,-Map,' + x + '.map'
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
+defenv['C_FLAG'] = '-x c'
+defenv['CPP_FLAG'] = '-x c++'
+defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
+
+### stub environment
+
+stub_env = defenv.Copy()
+cross_env(stub_env)
+
+stub_env.Append(CCFLAGS = '-Os')                  # optimize for size
+stub_env.Append(CCFLAGS = '-Wall')                # all warnings
+stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
+
+stub_env.Append(LINKFLAGS = '-s')                 # strip
+stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
+stub_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+stub_env.Append(LINKFLAGS = '-Wl,-e,_WinMain@16') # entry point
+
+### makensis environment
+
+makensis_env = defenv.Copy()
+
+makensis_env.Append(CCFLAGS = '-O2')              # optimize
+makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
+
+makensis_env.Append(LINKFLAGS = '-s')             # strip
+makensis_env.Append(LINKFLAGS = '$ALIGN_FLAG')    # 512 bytes align
+
+### plugin environment
+
+plugin_env = defenv.Copy()
+cross_env(plugin_env)
+
+plugin_env.Append(CCFLAGS = '-Os')                # optimize for size
+plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
+
+plugin_env.Append(LINKFLAGS = '-s')               # strip
+plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
+
+### util environment
+
+util_env = defenv.Copy()
+cross_env(util_env)
+
+util_env.Append(CCFLAGS = '-O2')                  # optimize
+util_env.Append(CCFLAGS = '-Wall')                # all warnings
+
+util_env.Append(LINKFLAGS = '-s')                 # strip
+util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+
+# return
+
+Return('stub_env makensis_env plugin_env util_env')

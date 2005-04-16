@@ -1,0 +1,78 @@
+config_but = 'config.but'
+
+chm_config_but = 'chm_config.but'
+
+buts = Split("""
+	intro.but
+	tutorial.but
+	usage.but
+	script.but
+	var.but
+	labels.but
+	jumps.but
+	pages.but
+	sections.but
+	usection.but
+	functions.but
+	callback.but
+	attributes.but
+	compilerflags.but
+	basic.but
+	registry.but
+	generalpurpose.but
+	flowcontrol.but
+	file.but
+	uninstall.but
+	misc.but
+	string.but
+	stack.but
+	int.but
+	reboot.but
+	log.but
+	sec.but
+	ui.but
+	langs.but
+	plugin.but
+	silent.but
+	compiler.but
+	defines.but
+	modernui.but
+	library.but
+	usefulfunc.but
+	usefulinfos.but
+	history.but
+	credits.but
+	license.but
+""")
+
+import os
+
+Import('halibut prefix')
+
+env = Environment(ENV = {'PATH' : os.environ['PATH']})
+
+build_dir = Dir(GetBuildPath('.')).abspath
+
+hhc_action = Action('cd "%s" && hhc nsis.hhp' % (build_dir))
+execute = hhc_action.execute
+def rexecute(*args):
+	return execute(*args) != 1 # hhc returns 1 on success
+hhc_action.execute = rexecute
+
+builder = Builder(
+	action = [
+		Copy(build_dir, '${SOURCE.dir}/../style.css'),
+		Copy(build_dir, '${SOURCE.dir}/chmlink.js'),
+		Copy(build_dir, '${SOURCE.dir}/nsis.hhp'),
+		Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
+		hhc_action
+	]
+)
+
+env.Append(BUILDERS = {'HalibutCHM' : builder})
+
+#env.Halibut([config_but] + buts)
+chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
+env.Depends(chm, halibut)
+
+env.Install(prefix, chm)

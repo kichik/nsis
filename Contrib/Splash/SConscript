@@ -1,0 +1,20 @@
+target = 'Splash'
+
+files = Split("""
+	splash.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	winmm
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')

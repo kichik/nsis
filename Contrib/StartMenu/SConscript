@@ -1,0 +1,26 @@
+target = 'StartMenu'
+
+files = Split("""
+	StartMenu.c
+""")
+
+resources = Split("""
+	StartMenu.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+""")
+
+Import('PluginEnv')
+
+env = PluginEnv(target)
+
+files += env.RES('StartMenuRC', resources)
+
+plugin = env.SharedLibrary(target, files, LIBS = libs)
+
+Return('plugin')
