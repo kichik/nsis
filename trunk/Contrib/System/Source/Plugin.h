@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ___PLUGIN__H___
+#define ___PLUGIN__H___
 
 typedef struct _stack_t {
   struct _stack_t *next;
@@ -64,3 +65,5 @@ extern HWND g_hwndParent;
 extern int g_stringsize;
 extern stack_t **g_stacktop;
 extern char *g_variables;
+
+#endif
