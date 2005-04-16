@@ -246,8 +246,8 @@ Example:
   ;------------------------
   ;Get version information
 
-  !execute '"${NSISDIR}\Contrib\Library\LibraryLocal\LibraryLocal.exe" D ${LOCALFILE}'
-  !include "${NSISDIR}\Contrib\Library\LibraryLocal\LibraryLocal.nsh"
+  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" D ${LOCALFILE}'
+  !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
   !ifdef LIBRARY_VERSION_FILENOTFOUND
     !error "InstallLib: The library ${LOCALFILE} could not be found."
@@ -274,8 +274,8 @@ Example:
 
     !else
 
-      !execute '"${NSISDIR}\Contrib\LIBRARY\LIBRARYLocal\LibraryLocal.exe" T ${LOCALFILE}'
-      !include "${NSISDIR}\Contrib\LIBRARY\LIBRARYLocal\LibraryLocal.nsh"
+      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T ${LOCALFILE}'
+      !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
       !ifdef LIBRARY_VERSION_FILENOTFOUND
         !error "InstallLib: The library ${LOCALFILE} could not be found."
@@ -303,8 +303,8 @@ Example:
 
     !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      !execute '"${NSISDIR}\Contrib\LIBRARY\LIBRARYLocal\LibraryLocal.exe" T ${LOCALFILE}'
-      !include "${NSISDIR}\Contrib\LIBRARY\LIBRARYLocal\LibraryLocal.nsh"
+      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T ${LOCALFILE}'
+      !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
     !endif
 
