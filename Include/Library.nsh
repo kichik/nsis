@@ -212,6 +212,7 @@ Example:
     StrCmp ${shared} "" 0 installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}
 
       ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4
+      ClearErrors
       IntOp $R0 $R0 + 1
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4 $R0
 
