@@ -107,7 +107,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 UINT CRCTable[256];
 BOOL bInitCRC = FALSE;
 
-inline void InitCRC() {
+void InitCRC() {
   int i, j; unsigned long c;
   for (c = i = 0; i < 256; c = ++i) {
     for (j = 0; j < 8; j++) {
