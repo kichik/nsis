@@ -44,9 +44,6 @@ utils = [
 
 import os
 
-prefix = GetLaunchDir() + os.sep
-build_prefix = 'build' + os.sep
-
 ######################################################################
 #######  environments                                              ###
 ######################################################################
@@ -55,6 +52,7 @@ defenv = Environment()
 Export('defenv')
 
 opts = Options()
+opts.Add(PathOption('PREFIX', 'Installation prefix', GetLaunchDir()))
 opts.Add(('MINGWPREFIX', 'MinGW toolset prefix', 0))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
@@ -80,6 +78,13 @@ stub_env = envs[0]
 makensis_env = envs[1]
 plugin_env = envs[2]
 util_env = envs[3]
+
+######################################################################
+#######  directories                                               ###
+######################################################################
+
+prefix = defenv['PREFIX'] + os.sep
+build_prefix = 'build' + os.sep
 
 ######################################################################
 #######  stubs                                                     ###
