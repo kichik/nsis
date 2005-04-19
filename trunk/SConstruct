@@ -56,7 +56,7 @@ defenv = Environment()
 Export('defenv')
 
 opts = Options()
-opts.Add(('MINGWPREFIX', 'MinGW toolset prefix'))
+opts.Add(('MINGWPREFIX', 'MinGW toolset prefix', 0))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Update(defenv)
