@@ -91,6 +91,8 @@ void NSISCALL RefreshSectionGroups() {
   _RefreshSectionGroups(0, 1);
 }
 
+#ifdef NSIS_CONFIG_COMPONENTPAGE
+
 void NSISCALL SetInstType(int inst_type) {
   unsigned int i = 0;
 
@@ -146,3 +148,5 @@ unsigned int NSISCALL GetInstType(HTREEITEM *items) {
 
   return i;
 }
+
+#endif//NSIS_CONFIG_COMPONENTPAGE
