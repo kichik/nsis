@@ -1,7 +1,6 @@
 ## TODO
 #
 #   * VPatch GenPat (wait for v3 written in C)
-#   * Get Math to Compile
 #   * Write SConscript for NSIS Menu
 #    - Use inheritance instead of current wxWidgets patches
 #    - Compile for POSIX too? wxWidgets is cross platform after all...
@@ -23,7 +22,7 @@ plugins = [
 	'InstallOptions',
 	'LangDLL',
 	'Library/TypeLib',
-	# compile errors 'Math',
+	'Math',
 	'nsExec',
 	'NSISdl',
 	'Splash',
