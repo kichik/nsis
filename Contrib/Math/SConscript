@@ -1,10 +1,10 @@
 target = 'Math'
 
 files = Split("""
-	Source/Math.cpp
-	Source/MyMath.cpp
-	Source/plugin.cpp
-	Source/floatp10.c
+	Source/Math.c
+	Source/MyMath.c
+	Source/plugin.c
+	Source/mathcrt.lib
 """)
 
 libs = Split("""
@@ -14,9 +14,8 @@ libs = Split("""
 Import('PluginEnv')
 
 env = PluginEnv(target, entry = 'DllMain', nodeflib = 0)
-#env = PluginEnv(target, entry = '_DllMainCRTStartup', vc7 = 1)
 
-#libs = libs + [File('Source/mathcrt.lib')]
+env.Append(CPPFLAGS = env['CPP_FLAG'])
 
 plugin = env.SharedLibrary(target, files, LIBS = libs)
 
