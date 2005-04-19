@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <crtdbg.h>
 #include "MyMath.h"
 #include "Math.h"
 
@@ -8,6 +7,8 @@ stack_t **g_stacktop;
 char *g_variables;
 
 #ifdef _DEBUG_LEAKS
+
+#include <crtdbg.h>
 
 int blocksnum = 0;
 HGLOBAL blocks[100000];
