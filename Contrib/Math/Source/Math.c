@@ -42,7 +42,7 @@ void PlaceNewItem(char *&vb, ParseInfo *pi, int precedence)
         pi->root = &((*pi->root)->next);
         pi->SetupNewRoot = 0;
     }
-    if (pi->place == *pi->root) pi->place = *pi->root = newroot;
+    if (*pi->place == *pi->root) *pi->place = *pi->root = newroot;
     else *pi->root = newroot;    
     // no item at our pockets
     pi->item = NULL;
@@ -59,9 +59,11 @@ const smallstr NSISVariablesNames[NSIS_VARS_COUNT] = {{'r','0'}, {'r','1'}, {'r'
 
 ExpressionItem *FindVariable(char *varname)
 {
+    int i;
+
     ExpressionItem *item = AllocItem();
     // check NSIS variables
-    for (int i = 0; i < NSIS_VARS_COUNT; i++)
+    for (i = 0; i < NSIS_VARS_COUNT; i++)
     {
         if (lstrcmpn(varname, NSISVariablesNames[i],2) == 0)
         {
@@ -73,7 +75,7 @@ ExpressionItem *FindVariable(char *varname)
         }
     }
     // no.. that's user variable
-    for (int i = 0; i < UserVarsCount; i++)
+    for (i = 0; i < UserVarsCount; i++)
     {
         if (lstrcmp(varname, UserVars[i].name) == 0)
         {
@@ -140,11 +142,12 @@ const MathFunction MathFunctions[MATHFUNCNUM] = {
 
 void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
 {
+    int i;
     ExpressionItem *item = pi->item = AllocItem();
     *vb = 0;
     
     // check BUILTIN functions
-    for (int i = 0; i < MATHFUNCNUM; i++)
+    for (i = 0; i < MATHFUNCNUM; i++)
     {
         if (lstrcmpn(pi->valbuf, MathFunctions[i].name, 3) == 0)
         {
@@ -164,7 +167,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
     }
 
     // heh, may be it user function
-    for (int i = 0; i < UserFuncsCount; i++)
+    for (i = 0; i < UserFuncsCount; i++)
     {
         if (lstrcmp(pi->valbuf, UserFuncs[i].name) == 0)
         {
@@ -234,7 +237,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
     while (*sp != ')');
 
     // prepare flag for fast analisys
-    for (int i = 0; i < f->varsnum; i++)
+    for (i = 0; i < f->varsnum; i++)
     {
         f->varflags <<= 1;
         flags >>= 1;
@@ -255,7 +258,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
   char place[1024];
   wsprintf(place, "function %s(", f->name);
   flags = f->varflags;
-  for (int i = 0; i < f->varsnum; i++)
+  for (i = 0; i < f->varsnum; i++)
   {
     if (flags&1) lstrcat(place, "&");
     lstrcat(place, UserVars[f->vars[i]].name);
@@ -298,7 +301,7 @@ void PlaceOp(char *&vb, int type, int precedence, ParseInfo *pi)
         item->type = type;
         item->param1 = (EIPARAM) (*pi->root);
 
-        if (pi->place == *pi->root) pi->place = *pi->root = NULL;
+        if (*pi->place == *pi->root) *pi->place = *pi->root = NULL;
         else *pi->root = NULL;    
 
         if (type & PO_UNARYPOST)
@@ -386,7 +389,7 @@ void CheckForOperator(char *&sp, char *&vb, ParseInfo *pi)
 
 void ParseString(char *&sp, ExpressionItem* &itemplace)
 {
-    ParseInfo pi = {0, NULL, NULL, itemplace, &itemplace};
+    ParseInfo pi = {0, NULL, NULL, &itemplace, &itemplace};
 
     int redefine = 0;
     char *vb = pi.valbuf;
@@ -1184,13 +1187,14 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
         case IT_FUNCTION:
             if (subtype == ITF_USER)
             {
+                int i;
                 UserFunc *f = &(UserFuncs[ioptions]);
                 int flags = f->varflags;
                 ExpressionItem *ip = *((ExpressionItem**)&(item->param1));
                 ExpressionItem *si = AllocItem(), *var = AllocItem();
                 ExpressionItem *vals[32];
                 si->type = IT_VARIABLE | ITV_STACK; 
-                for (int i = 0; i < f->varsnum; i++)
+                for (i = 0; i < f->varsnum; i++)
                 {
                     // push every variable
                     ExpressionItem *val;
@@ -1216,7 +1220,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 }
 
                 // now when all values got we could save them to variables
-                for (int i = 0; i < f->varsnum; i++)
+                for (i = 0; i < f->varsnum; i++)
                 {
                         var->type = (IT_VARIABLE | ITV_USER) + f->vars[i];
                         SaveResult(var, vals[i]);
@@ -1228,7 +1232,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 RunTree(f->root, result, RTO_NEEDCONST | ITC_STRING | ITC_INT | ITC_FLOAT | ITC_ARRAY);
 
                 // pop original params
-                for (int i = f->varsnum-1; i >= 0; i--)
+                for (i = f->varsnum-1; i >= 0; i--)
                 {
                     // pop every variable
                     ExpressionItem *val;
@@ -1508,13 +1512,14 @@ void CleanAll(int init)
     UserFuncsCount = 0;
   } else
   {
+    int i;
     // cleanup stack
     CleanupItems(stack); stack = NULL;
     // cleanup user vars
-    for (int i = 0; i < UserVarsCount; i++)
+    for (i = 0; i < UserVarsCount; i++)
         CleanupItems(UserVars[i].item);
     // cleanup user funcs
-    for (int i = 0; i < UserFuncsCount; i++)
+    for (i = 0; i < UserFuncsCount; i++)
         CleanupItems(UserFuncs[i].root);
     UserVarsCount = 0;
     UserFuncsCount = 0;
@@ -1523,20 +1528,8 @@ void CleanAll(int init)
   }
 }
 
-BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
+BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 {
     CleanAll(ul_reason_for_call == DLL_PROCESS_ATTACH);
     return TRUE;
 }
-
-#ifdef _DEBUG
-BOOL WINAPI DllMain(
-        HANDLE  hDllHandle,
-        DWORD   dwReason,
-        LPVOID  lpreserved
-        )
-{
-    CleanAll(dwReason == DLL_PROCESS_ATTACH);
-    return TRUE;
-}
-#endif

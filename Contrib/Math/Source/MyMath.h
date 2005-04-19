@@ -92,9 +92,9 @@ typedef struct __ParseInfo
     int SetupNewRoot;
     ExpressionItem *item;
     ExpressionItem *OpsStack;
-    ExpressionItem *&place;
+    ExpressionItem **place;
     ExpressionItem **root;
-char valbuf[108];
+    char valbuf[108];
 } ParseInfo;
 
 #define OPERATOR_SET_PRECEDENCE 14
