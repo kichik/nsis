@@ -761,7 +761,7 @@ void CopyArray(ExpressionItem *&item)
 
 void ItemToType(ExpressionItem* &item, int type)
 {
-    char *buffer;
+    char *buffer, *bp;
     if (item == NULL) return;
     int itemt = item->type & ITEMTYPE, oldtype = item->type & ITEMSUBTYPE;
 
@@ -781,9 +781,9 @@ void ItemToType(ExpressionItem* &item, int type)
             *((double *)&(item->param1)) = (double) *((__int64 *)&(item->param1));
         else
         {
-            buffer = (char*) item->param1;
+            bp = buffer = (char*) item->param1;
             StringToItem(buffer, item, STI_FLOAT);
-            dbgGlobalFree(buffer);
+            dbgGlobalFree(bp);
         }
         break;
     case ITC_INT:
@@ -791,9 +791,9 @@ void ItemToType(ExpressionItem* &item, int type)
             *((__int64 *)&(item->param1)) = (__int64) *((double *)&(item->param1));
         else
         {
-            buffer = (char*) item->param1;
+            bp = buffer = (char*) item->param1;
             StringToItem(buffer, item, STI_INT);
-            dbgGlobalFree(buffer);
+            dbgGlobalFree(bp);
         }
         break;
     case ITC_ARRAY:
@@ -1002,7 +1002,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     break;
                 }                
 
-                __int64 i1, i2, i3, i4;
+                __int64 i1=0, i2=0, i3=0, i4=0;
                 if (((!item1)||((item1->type & ITEMTYPE)==IT_CONST)) &&
                     ((!item2)||((item2->type & ITEMTYPE)==IT_CONST)))
                 {
@@ -1098,7 +1098,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         int ir = -666;
                         char *i1 = (item1)?((char*)item1->param1):(NULL);
                         char *i2 = (item2)?((char*)item2->param1):(NULL);
-                        int sc = lstrcmp(i1, i2);
+                       	int sc = (i1 && i2)?(lstrcmp(i1, i2)):((i1)?(1):((i2)?(-1):(0)));
                     
                     switch (subtype)
                     {
