@@ -33,7 +33,7 @@ InstallDirRegKey HKLM "Software\NSISCrap\BigNSISTest" ""
 CheckBitmap "..\Contrib\Graphics\Checks\classic-cross.bmp"
 
 LicenseText "A test text, make sure it's all there"
-LicenseData "..\source\exehead\main.c"
+LicenseData "..\Source\exehead\Main.c"
 
 ;--------------------------------
 
@@ -73,7 +73,7 @@ Section "" ; empty string makes it hidden, so would starting with -
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BigNSISTest" "UninstallString" '"$INSTDIR\bt-uninst.exe"'
 
   SetOutPath $INSTDIR
-  File /a "..\source\exehead\bin2h.exe"
+  File /a "..\Source\exehead\bin2h.exe"
   CreateDirectory "$INSTDIR\shiz\crap" ; 2 recursively create a directory for fun.
   WriteUninstaller "bt-uninst.exe"
   
@@ -163,7 +163,7 @@ Section "Test Branching"
 
   NoOverwrite:
 
-  File "..\source\exehead\bin2h.c" ; skipped if answered no
+  File "..\Source\exehead\bin2h.c" ; skipped if answered no
   SetOverwrite try ; NOT AN INSTRUCTION, NOT COUNTED IN SKIPPINGS
 
   MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to skip the rest of this section?" IDYES EndTestBranch

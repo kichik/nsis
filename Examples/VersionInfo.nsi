@@ -9,7 +9,7 @@ Name "Version Info"
 
 OutFile "VersionInfo.exe"
 
-LoadLanguageFile "${NSISDIR}\Contrib\Language Files\English.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 ;--------------------------------
 ;Version Information
 
