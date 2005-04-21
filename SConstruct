@@ -56,6 +56,8 @@ opts.Add(PathOption('PREFIX', 'Installation prefix', GetLaunchDir()))
 opts.Add(('MINGWPREFIX', 'MinGW toolset prefix', 0))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
+opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
+opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
 opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
