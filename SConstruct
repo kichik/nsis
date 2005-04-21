@@ -44,12 +44,12 @@ utils = [
 
 import os
 
-######################################################################
-#######  environments                                              ###
-######################################################################
-
 defenv = Environment()
 Export('defenv')
+
+######################################################################
+#######  options                                                   ###
+######################################################################
 
 opts = Options()
 opts.Add(PathOption('PREFIX', 'Installation prefix', GetLaunchDir()))
@@ -60,8 +60,17 @@ opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
 
+if defenv['DEBUG']:
+	defenv.Replace(BUILD_PREFIX = 'build/debug')
+else:
+	defenv.Replace(BUILD_PREFIX = 'build/release')
+
 if defenv['MSTOOLKIT']:
 	defenv.Tool('mstoolkit', toolpath = ['SCons/Tools'])
+
+######################################################################
+#######  environments                                              ###
+######################################################################
 
 tools = defenv['TOOLS']
 
@@ -80,40 +89,39 @@ plugin_env = envs[2]
 util_env = envs[3]
 
 ######################################################################
-#######  directories                                               ###
+#######  aliases                                                   ###
 ######################################################################
 
-prefix = defenv['PREFIX'] + os.sep
-build_prefix = 'build' + os.sep
+defenv.Alias('install', '$PREFIX')
 
 ######################################################################
 #######  stubs                                                     ###
 ######################################################################
 
 for stub in stubs:
-	build_dir = build_prefix + 'stub_' + stub
+	build_dir = '$BUILD_PREFIX/stub_%s' % stub
 	env = stub_env.Copy()
 	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % ('stub_' + stub))
 	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 0 }
 
-	target = SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
-	env.SideEffect(File(build_dir + os.sep + 'stub_' + stub + '.map'), target)
+	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
+	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
-	ins_target = InstallAs(prefix + '/Stubs/' + stub, target)
+	ins_target = defenv.InstallAs('$PREFIX/Stubs/%s' % stub, target)
 
-	build_dir = build_prefix + 'stub_' + stub + '_solid'
+	build_dir = '$BUILD_PREFIX/stub_%s_solid' % stub
 	env = stub_env.Copy()
 	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % ('stub_' + stub))
 	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 1 }
 
-	solid_target = SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
-	env.SideEffect(File(build_dir + os.sep + 'stub_' + stub + '.map'), target)
+	solid_target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
+	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), solid_target)
 
-	ins_solid_target = InstallAs(prefix + '/Stubs/' + stub + '_solid', solid_target)
+	ins_solid_target = defenv.InstallAs('$PREFIX/Stubs/%s_solid' % stub, solid_target)
 
-	env.Alias(stub, ins_target + ins_solid_target)
+	env.Alias(stub, target + solid_target)
 
-uninst_icon = InstallAs(prefix + '/Stubs/' + 'uninst', 'Source/exehead/uninst.ico')
+uninst_icon = defenv.InstallAs('$PREFIX/Stubs/uninst', 'Source/exehead/uninst.ico')
 
 Alias('stubs', [stubs, uninst_icon])
 
@@ -121,16 +129,18 @@ Alias('stubs', [stubs, uninst_icon])
 #######  makensis                                                  ###
 ######################################################################
 
-build_dir = build_prefix + 'makensis'
+build_dir = '$BUILD_PREFIX/makensis'
 exports = { 'env' : makensis_env }
 
 makensis_env.Append(LINKFLAGS = '${MAP_FLAG("makensis")}')
 
-makensis = SConscript(dirs = 'Source', build_dir = build_dir, duplicate = 0, exports = exports)
+makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = 0, exports = exports)
 
-makensis_env.Clean(makensis, 'makensis.map')
+makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
-Alias('makensis', Install(prefix, makensis))
+Alias('makensis', makensis)
+
+defenv.Install('$PREFIX', makensis)
 
 ######################################################################
 #######  Plug-ins                                                  ###
@@ -150,13 +160,13 @@ def PluginEnv(target, entry = 'DllMain', nodeflib = 1):
 	return env
 
 for plugin in plugins:
-	path = 'Contrib' + os.sep + plugin
-	build_dir = build_prefix + plugin
+	path = 'Contrib/' + plugin
+	build_dir = '$BUILD_PREFIX/' + plugin
 	exports = 'PluginEnv'
 
-	plugin_dll = SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
+	plugin_dll = defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
 
-	Alias(plugin, Install(prefix + 'Plugins', plugin_dll))
+	defenv.Install('$PREFIX/Plugins', plugin_dll)
 
 ######################################################################
 #######  Utilities                                                 ###
@@ -188,31 +198,31 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	env.Clean(util, File(target + '.map'))
 
 	if install is not None:
-		ins = Install(prefix + install, util)
+		ins = defenv.Install('$PREFIX/%s' % install, util)
 		Alias(target, ins)
 	else:
 		Alias(target, util)
 
 for util in utils:
-	path = 'Contrib' + os.sep + util
-	build_dir = build_prefix + util
+	path = 'Contrib/' + util
+	build_dir = '$BUILD_PREFIX/' + util
 	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Copy()}
 
-	SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
+	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
 
 ######################################################################
 #######  Documentation                                             ###
 ######################################################################
 
-halibut = SConscript(
+halibut = defenv.SConscript(
 	dirs = 'Docs/src/bin/halibut',
-	build_dir = build_prefix + 'halibut',
+	build_dir = '$BUILD_PREFIX/halibut',
 	duplicate = 0
 )
 
-SConscript(
+defenv.SConscript(
 	dirs = 'Docs/src',
-	build_dir = build_prefix + 'Docs',
+	build_dir = '$BUILD_PREFIX/Docs',
 	duplicate = 0,
-	exports = {'halibut' : halibut, 'prefix' : prefix}
+	exports = {'halibut' : halibut, 'env' : defenv.Copy()}
 )
