@@ -73,7 +73,7 @@ Section "" ; empty string makes it hidden, so would starting with -
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BigNSISTest" "UninstallString" '"$INSTDIR\bt-uninst.exe"'
 
   SetOutPath $INSTDIR
-  File /a "..\Source\exehead\bin2h.exe"
+  File /a "..\Source\exehead\fileform.h"
   CreateDirectory "$INSTDIR\shiz\crap" ; 2 recursively create a directory for fun.
   WriteUninstaller "bt-uninst.exe"
   
@@ -153,9 +153,9 @@ Section "Test Branching"
  
   SetOutPath $INSTDIR
 
-  IfFileExists "$INSTDIR\bin2h.c" 0 BranchTest69
+  IfFileExists "$INSTDIR\Ui.c" 0 BranchTest69
     
-    MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to overwrite $INSTDIR\bin2h.c?" IDNO NoOverwrite ; skipped if file doesn't exist
+    MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to overwrite $INSTDIR\Ui.c?" IDNO NoOverwrite ; skipped if file doesn't exist
 
     BranchTest69:
   
@@ -163,7 +163,7 @@ Section "Test Branching"
 
   NoOverwrite:
 
-  File "..\Source\exehead\bin2h.c" ; skipped if answered no
+  File "..\Source\exehead\Ui.c" ; skipped if answered no
   SetOverwrite try ; NOT AN INSTRUCTION, NOT COUNTED IN SKIPPINGS
 
   MessageBox MB_YESNO|MB_ICONQUESTION "Would you like to skip the rest of this section?" IDYES EndTestBranch
@@ -238,7 +238,7 @@ Function "CSCTest"
   SetOutPath $INSTDIR ; for working directory
   CreateShortCut "$SMPROGRAMS\Big NSIS Test\Uninstall BIG NSIS Test.lnk" "$INSTDIR\bt-uninst.exe" ; use defaults for parameters, icon, etc.
   ; this one will use notepad's icon, start it minimized, and give it a hotkey (of Ctrl+Shift+Q)
-  CreateShortCut "$SMPROGRAMS\Big NSIS Test\bin2h.exe.lnk" "$INSTDIR\bin2h.exe" "" "$WINDIR\notepad.exe" 0 SW_SHOWMINIMIZED CONTROL|SHIFT|Q
+  CreateShortCut "$SMPROGRAMS\Big NSIS Test\fileform.h.lnk" "$INSTDIR\fileform.h" "" "$WINDIR\notepad.exe" 0 SW_SHOWMINIMIZED CONTROL|SHIFT|Q
   CreateShortCut "$SMPROGRAMS\Big NSIS Test\TheDir.lnk" "$INSTDIR\" "" "" 0 SW_SHOWMAXIMIZED CONTROL|SHIFT|Z
 
 FunctionEnd
@@ -283,8 +283,8 @@ Section "Uninstall"
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BigNSISTest"
   DeleteRegKey HKLM "SOFTWARE\NSISCrap\BigNSISTest"
-  Delete "$INSTDIR\bin2h.exe"
-  Delete "$INSTDIR\bin2h.c"
+  Delete "$INSTDIR\fileform.h"
+  Delete "$INSTDIR\Ui.c"
   Delete "$INSTDIR\bt-uninst.exe"
   Delete "$INSTDIR\test.ini"
   Delete "$SMPROGRAMS\Big NSIS Test\*.*"
