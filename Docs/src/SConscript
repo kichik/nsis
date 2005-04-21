@@ -47,9 +47,9 @@ buts = Split("""
 
 import os
 
-Import('halibut prefix')
+Import('halibut env')
 
-env = Environment(ENV = {'PATH' : os.environ['PATH']})
+env.Append(ENV = {'PATH' : os.environ['PATH']})
 
 build_dir = Dir(GetBuildPath('.')).abspath
 
@@ -75,4 +75,4 @@ env.Append(BUILDERS = {'HalibutCHM' : builder})
 chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
 env.Depends(chm, halibut)
 
-env.Install(prefix, chm)
+env.Install('$PREFIX', chm)
