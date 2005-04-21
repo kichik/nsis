@@ -11,11 +11,19 @@ defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
 defenv['C_FLAG'] = '/TC'
 defenv['CPP_FLAG'] = '/TP'
 
+### debug
+
+if defenv['DEBUG']:
+	defenv.Append(CCFLAGS = '/Zi')
+	defenv.Append(CCFLAGS = '/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb')
+	defenv.Append(LINKFLAGS = '/debug')
+
 ### stub environment
 
 stub_env = defenv.Copy()
 
-stub_env.Append(CCFLAGS = '/O1')                 # optimize for size
+if not defenv['DEBUG']:
+	stub_env.Append(CCFLAGS = '/O1')               # optimize for size
 stub_env.Append(CCFLAGS = '/W3')                 # level 3 warnings
 
 stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
@@ -26,7 +34,8 @@ stub_env.Append(LINKFLAGS = '/NODEFAULTLIB')     # no default libraries
 
 makensis_env = defenv.Copy()
 
-makensis_env.Append(CCFLAGS = '/O2')             # optimize for speed
+if not defenv['DEBUG']:
+	makensis_env.Append(CCFLAGS = '/O2')           # optimize for speed
 makensis_env.Append(CCFLAGS = '/GX')             # enable exceptions
 makensis_env.Append(CCFLAGS = '/W3')             # level 3 warnings
 
@@ -36,7 +45,8 @@ makensis_env.Append(LINKFLAGS = '/opt:nowin98')  # 512 bytes align
 
 plugin_env = defenv.Copy(no_import_lib = 1)
 
-plugin_env.Append(CCFLAGS = '/O1')               # optimize for size
+if not defenv['DEBUG']:
+	plugin_env.Append(CCFLAGS = '/O1')             # optimize for size
 plugin_env.Append(CCFLAGS = '/W3')               # level 3 warnings
 
 plugin_env.Append(LINKFLAGS = '/opt:nowin98')    # 512 bytes align
@@ -45,7 +55,8 @@ plugin_env.Append(LINKFLAGS = '/opt:nowin98')    # 512 bytes align
 
 util_env = defenv.Copy()
 
-util_env.Append(CCFLAGS = '/O1')              # optimize for speed
+if not defenv['DEBUG']:
+	util_env.Append(CCFLAGS = '/O1')            # optimize for speed
 util_env.Append(CCFLAGS = '/W3')              # level 3 warnings
 
 util_env.Append(LINKFLAGS = '/opt:nowin98')   # 512 bytes align
