@@ -148,27 +148,43 @@ defenv.Install('$PREFIX', makensis)
 #######  Plug-ins                                                  ###
 ######################################################################
 
-def PluginEnv(target, entry = 'DllMain', nodeflib = 1):
+def BuildPlugin(target, source, libs, entry = 'DllMain', res = None,
+                res_target = None, resources = None, defines = None,
+                flags = None, nodeflib = 1):
 	env = plugin_env.Copy()
+
+	if defines:
+		env.Append(CPPDEFINES = defines)
+	if flags:
+		env.Append(CCFLAGS = flags)
+
+	if entry:
+		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
 
 	if nodeflib:
 		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
 
-	env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry) # entry function
-	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % target)  # generate map file
+	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % target)
 
-	env.SideEffect(File(target + '.map'), target)
+	if res:
+		target_res = env.RES(res_target, res)
+		if resources:
+			env.Depends(target_res, resources)
+		source = source + target_res
 
-	return env
+	plugin = env.SharedLibrary(target, source, LIBS = libs)
+	Alias(target, plugin)
+
+	env.Clean(plugin, File(target + '.map'))
+
+	env.Install('$PREFIX/Plugins', plugin)
 
 for plugin in plugins:
 	path = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
-	exports = 'PluginEnv'
+	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Copy()}
 
-	plugin_dll = defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
-
-	defenv.Install('$PREFIX/Plugins', plugin_dll)
+	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
 
 ######################################################################
 #######  Utilities                                                 ###
@@ -176,13 +192,13 @@ for plugin in plugins:
 
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
-							install = None):
+              install = None):
 	env = util_env.Copy()
 
 	if defines:
 		env.Append(CPPDEFINES = defines)
 	if flags:
-		env.Append(CPPFLAGS = flags)
+		env.Append(CCFLAGS = flags)
 
 	if entry:
 		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
@@ -201,7 +217,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	env.Clean(util, File(target + '.map'))
 
 	if install is not None:
-		defenv.Install('$PREFIX/%s' % install, util)
+		env.Install('$PREFIX/%s' % install, util)
 
 for util in utils:
 	path = 'Contrib/' + util
