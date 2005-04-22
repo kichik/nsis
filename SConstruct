@@ -196,14 +196,12 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		source = source + target_res
 
 	util = env.Program(target, source, LIBS = libs)
+	Alias(target, util)
 
 	env.Clean(util, File(target + '.map'))
 
 	if install is not None:
-		ins = defenv.Install('$PREFIX/%s' % install, util)
-		Alias(target, ins)
-	else:
-		Alias(target, util)
+		defenv.Install('$PREFIX/%s' % install, util)
 
 for util in utils:
 	path = 'Contrib/' + util
