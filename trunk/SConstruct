@@ -95,6 +95,13 @@ util_env = envs[3]
 ######################################################################
 
 defenv.Alias('install', '$PREFIX')
+defenv.Alias('install-docs', '$PREFIX/NSIS.chm')
+
+# defined below:
+#  install-compiler
+#  install-stubs
+#  install-plugins
+#  install-utils
 
 ######################################################################
 #######  stubs                                                     ###
@@ -121,11 +128,12 @@ for stub in stubs:
 
 	ins_solid_target = defenv.InstallAs('$PREFIX/Stubs/%s_solid' % stub, solid_target)
 
-	env.Alias(stub, target + solid_target)
+	defenv.Alias(stub, target + solid_target)
+	defenv.Alias('stubs', target + solid_target)
+	defenv.Alias('install-stubs', ins_target + ins_solid_target)
 
 uninst_icon = defenv.InstallAs('$PREFIX/Stubs/uninst', 'Source/exehead/uninst.ico')
-
-Alias('stubs', [stubs, uninst_icon])
+defenv.Alias('install-stubs', uninst_icon)
 
 ######################################################################
 #######  makensis                                                  ###
@@ -140,9 +148,10 @@ makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate =
 
 makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
-Alias('makensis', makensis)
+defenv.Alias('makensis', makensis)
 
-defenv.Install('$PREFIX', makensis)
+ins = defenv.Install('$PREFIX', makensis)
+defenv.Alias('install-compiler', ins)
 
 ######################################################################
 #######  Plug-ins                                                  ###
@@ -173,11 +182,13 @@ def BuildPlugin(target, source, libs, entry = 'DllMain', res = None,
 		source = source + target_res
 
 	plugin = env.SharedLibrary(target, source, LIBS = libs)
-	Alias(target, plugin)
+	defenv.Alias(target, plugin)
+	defenv.Alias('plugins', plugin)
 
 	env.Clean(plugin, File(target + '.map'))
 
-	env.Install('$PREFIX/Plugins', plugin)
+	ins = env.Install('$PREFIX/Plugins', plugin)
+	defenv.Alias('install-plugins', ins)
 
 for plugin in plugins:
 	path = 'Contrib/' + plugin
@@ -212,12 +223,14 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		source = source + target_res
 
 	util = env.Program(target, source, LIBS = libs)
-	Alias(target, util)
+	defenv.Alias(target, util)
+	defenv.Alias('utils', util)
 
 	env.Clean(util, File(target + '.map'))
 
 	if install is not None:
-		env.Install('$PREFIX/%s' % install, util)
+		ins = env.Install('$PREFIX/%s' % install, util)
+		defenv.Alias('install-utils', ins)
 
 for util in utils:
 	path = 'Contrib/' + util
