@@ -11,12 +11,6 @@ libs = Split("""
 	kernel32
 """)
 
-Import('PluginEnv')
+Import('BuildPlugin env')
 
-env = PluginEnv(target, entry = 'DllMain', nodeflib = 0)
-
-env.Append(CPPFLAGS = env['CPP_FLAG'])
-
-plugin = env.SharedLibrary(target, files, LIBS = libs)
-
-Return('plugin')
+BuildPlugin(target, files, libs, nodeflib = 0, flags = env['CPP_FLAG'])

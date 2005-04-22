@@ -16,12 +16,6 @@ libs = Split("""
 	comdlg32
 """)
 
-Import('PluginEnv')
+Import('BuildPlugin')
 
-env = PluginEnv(target)
-
-files += env.RES(resources)
-
-plugin = env.SharedLibrary(target, files, LIBS = libs)
-
-Return('plugin')
+BuildPlugin(target, files, libs, res = resources)

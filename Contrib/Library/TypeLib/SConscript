@@ -10,10 +10,7 @@ libs = Split("""
 	oleaut32
 """)
 
-Import('PluginEnv')
+Import('BuildPlugin')
 
-env = PluginEnv(target, entry = 'DllMain')
+BuildPlugin(target, files, libs)
 
-plugin = env.SharedLibrary(target, files, LIBS = libs)
-
-Return('plugin')

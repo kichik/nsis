@@ -15,12 +15,7 @@ libs = Split("""
 	shell32
 """)
 
-Import('PluginEnv')
+Import('BuildPlugin')
 
-env = PluginEnv(target)
+BuildPlugin(target, files, libs, res = resources, res_target = 'StartMenuRC')
 
-files += env.RES('StartMenuRC', resources)
-
-plugin = env.SharedLibrary(target, files, LIBS = libs)
-
-Return('plugin')
