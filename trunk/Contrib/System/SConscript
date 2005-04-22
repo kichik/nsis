@@ -20,14 +20,6 @@ libs = Split("""
 	ole32
 """)
 
-Import('PluginEnv')
+Import('BuildPlugin')
 
-env = PluginEnv(target, entry = '_DllMainCRTStartup', nodeflib = 0)
-
-env.Append(CPPDEFINES = ['SYSTEM_EXPORTS'])
-
-#files += [File(obj) for obj in objs]
-
-plugin = env.SharedLibrary(target, files, LIBS = libs)
-
-Return('plugin')
+BuildPlugin(target, files, libs, entry = '_DllMainCRTStartup', nodeflib = 0, defines = ['SYSTEM_EXPORTS'])
