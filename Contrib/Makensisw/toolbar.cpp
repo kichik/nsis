@@ -109,8 +109,6 @@ void CreateToolBar()
     SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LONG) &tbBitmap);
   }
 
-  FreeLibrary(hMod);
-
   HMENU toolmenu = GetSubMenu(g_sdata.menu, SCRIPT_MENU_INDEX);
   g_toolbar.dropdownmenu = GetSubMenu(toolmenu, COMPRESSOR_MENU_INDEX);
   RECT rect;
