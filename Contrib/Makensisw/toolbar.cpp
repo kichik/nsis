@@ -140,13 +140,13 @@ void UpdateToolBarCompressorButton()
              sizeof(temp));
   my_memset(szBuffer, 0, sizeof(szBuffer));
   lstrcat(szBuffer,temp);
-  lstrcat(szBuffer," (");
+  lstrcat(szBuffer," [");
   LoadString(g_sdata.hInstance,
              iString,
              temp,
              sizeof(temp));
   lstrcat(szBuffer,temp);
-  lstrcat(szBuffer,")");
+  lstrcat(szBuffer,"]");
 
   SendMessage(g_toolbar.hwnd, TB_CHANGEBITMAP, (WPARAM) IDM_COMPRESSOR, (LPARAM) MAKELPARAM(iBitmap, 0));
 

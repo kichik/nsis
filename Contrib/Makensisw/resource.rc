@@ -93,8 +93,11 @@ BEGIN
         BEGIN
             MENUITEM "&Defined in Script/Compiler Default", IDM_SCRIPT
             MENUITEM "&ZLIB",                       IDM_ZLIB
+            MENUITEM "ZLIB (solid)",                IDM_ZLIB_SOLID
             MENUITEM "BZI&P2",                      IDM_BZIP2
+            MENUITEM "BZIP2 (solid)",               IDM_BZIP2_SOLID
             MENUITEM "&LZMA",                       IDM_LZMA
+            MENUITEM "LZMA (solid)",                IDM_LZMA_SOLID
             MENUITEM "&Best Compressor",            IDM_BEST
         END
         MENUITEM SEPARATOR
@@ -329,10 +332,13 @@ BEGIN
     IDS_DOCS                "NSIS Users Manual"
     IDS_SCRIPT              "Defined in Script/Compiler Default"
     IDS_ZLIB                "ZLIB"
+    IDS_ZLIB_SOLID          "ZLIB (solid)"
     IDS_BZIP2               "BZIP2"
+    IDS_BZIP2_SOLID         "BZIP2 (solid)"
     IDS_RECOMPILE_TEST      "Recompile and Test"
     IDS_BEST                "Best Compressor"
     IDS_LZMA                "LZMA"
+    IDS_LZMA_SOLID          "LZMA (solid)"
 END
 
 #endif    // English (U.S.) resources
