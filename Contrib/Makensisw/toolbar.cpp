@@ -64,7 +64,7 @@ void CreateToolBar()
   tbButton[TBB_DOCS]        = CreateToolBarButton(IDB_DOCS,          IDM_DOCS,       TBSTATE_ENABLED,        TBSTYLE_BUTTON,   0, 0);
 
   g_toolbar.hwnd = CreateWindowEx (
-	0L,
+    0L,
     TOOLBARCLASSNAME,
     "",
     WS_CHILD | WS_VISIBLE | TBSTYLE_TRANSPARENT | TBSTYLE_FLAT,
@@ -81,32 +81,32 @@ void CreateToolBar()
   HMODULE hMod = GetModuleHandle("comctl32.dll");
 
   if (GetProcAddress(hMod, "InitCommonControlsEx")) { // Version 4.70
-	// Modern toolbar, 24-bit bitmaps
+    // Modern toolbar, 24-bit bitmaps
 
-	g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
-	g_toolbar.imagelistd = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24D), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
-	g_toolbar.imagelisth = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24H),  16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    g_toolbar.imagelist = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    g_toolbar.imagelistd = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24D), 16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
+    g_toolbar.imagelisth = ImageList_LoadImage(g_sdata.hInstance, MAKEINTRESOURCE(IDB_TOOLBAR24H),  16, 0, RGB(255, 0, 255), IMAGE_BITMAP, LR_CREATEDIBSECTION);
 
-	SendMessage(g_toolbar.hwnd, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
-	SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
-	SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
+    SendMessage(g_toolbar.hwnd, TB_SETIMAGELIST, 0, (LPARAM) g_toolbar.imagelist);
+    SendMessage(g_toolbar.hwnd, TB_SETDISABLEDIMAGELIST, 0, (LPARAM) g_toolbar.imagelistd);
+    SendMessage(g_toolbar.hwnd, TB_SETHOTIMAGELIST, 0, (LPARAM) g_toolbar.imagelisth);
 
-	// Version 4.71
-	if (GetProcAddress(hMod, "DllGetVersion")) {
-		SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, (LPARAM) (DWORD) TBSTYLE_EX_DRAWDDARROWS);
-	}
-	  
-   }
-   else
-   {
-	// Old Windows 95 toolbar, 256 color bitmap with system palette
+    // Version 4.71
+    if (GetProcAddress(hMod, "DllGetVersion")) {
+      SendMessage(g_toolbar.hwnd, TB_SETEXTENDEDSTYLE, 0, (LPARAM) (DWORD) TBSTYLE_EX_DRAWDDARROWS);
+    }
+      
+  }
+  else
+  {
+    // Old Windows 95 toolbar, 256 color bitmap with system palette
 
-	TBADDBITMAP tbBitmap;
+    TBADDBITMAP tbBitmap;
 
-	tbBitmap.hInst = g_sdata.hInstance;
-	tbBitmap.nID = IDB_TOOLBAR;
+    tbBitmap.hInst = g_sdata.hInstance;
+    tbBitmap.nID = IDB_TOOLBAR;
   
-	SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LONG) &tbBitmap);
+    SendMessage(g_toolbar.hwnd, TB_ADDBITMAP, IMAGECOUNT, (LONG) &tbBitmap);
   }
 
   FreeLibrary(hMod);
@@ -219,10 +219,10 @@ void ShowToolbarDropdownMenu()
   RECT rect;
   GetWindowRect(g_toolbar.hwnd, (LPRECT) &rect);
   TrackPopupMenu(g_toolbar.dropdownmenu,
-                NULL,
-                rect.left + (int)(short)g_toolbar.dropdownpoint.x,
-                rect.top + (int)(short)g_toolbar.dropdownpoint.y,
-                0,
-                g_sdata.hwnd,
-                0);
+                 NULL,
+                 rect.left + (int)(short)g_toolbar.dropdownpoint.x,
+                 rect.top + (int)(short)g_toolbar.dropdownpoint.y,
+                 0,
+                 g_sdata.hwnd,
+                 0);
 }
