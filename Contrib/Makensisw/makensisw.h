@@ -83,39 +83,57 @@ enum {
 typedef enum {
   COMPRESSOR_SCRIPT,
   COMPRESSOR_ZLIB,
+  COMPRESSOR_ZLIB_SOLID,
   COMPRESSOR_BZIP2,
+  COMPRESSOR_BZIP2_SOLID,
   COMPRESSOR_LZMA,
+  COMPRESSOR_LZMA_SOLID,
   COMPRESSOR_BEST,
 } NCOMPRESSOR;
 
 #ifdef MAKENSISW_CPP
 char *compressor_names[] = {"",
                             "zlib",
+                            "/SOLID zlib",
                             "bzip2",
+                            "/SOLID bzip2",
                             "lzma",
+                            "/SOLID lzma",
                             "Best"};
 char *compressor_display_names[] = {"Defined in Script/Compiler Default",
                             "ZLIB",
+                            "ZLIB (solid)",
                             "BZIP2",
+                            "BZIP2 (solid)",
                             "LZMA",
+                            "LZMA (solid)",
                             "Best Compressor"};
 WORD compressor_commands[] = {IDM_SCRIPT,
                               IDM_ZLIB,
+                              IDM_ZLIB_SOLID,
                               IDM_BZIP2,
+                              IDM_BZIP2_SOLID,
                               IDM_LZMA,
+                              IDM_LZMA_SOLID,
                               IDM_BEST};
 #endif
 
 #ifdef TOOLBAR_CPP
-int compressor_bitmaps[] = {IDB_COMPRESSOR_SCRIPT, 
-                            IDB_COMPRESSOR_ZLIB, 
-                            IDB_COMPRESSOR_BZIP2, 
-                            IDB_COMPRESSOR_LZMA, 
+int compressor_bitmaps[] = {IDB_COMPRESSOR_SCRIPT,
+                            IDB_COMPRESSOR_ZLIB,
+                            IDB_COMPRESSOR_ZLIB,
+                            IDB_COMPRESSOR_BZIP2,
+                            IDB_COMPRESSOR_BZIP2,
+                            IDB_COMPRESSOR_LZMA,
+                            IDB_COMPRESSOR_LZMA,
                             IDB_COMPRESSOR_BEST};
-int compressor_strings[] = {IDS_SCRIPT, 
-                            IDS_ZLIB, 
-                            IDS_BZIP2, 
-                            IDS_LZMA, 
+int compressor_strings[] = {IDS_SCRIPT,
+                            IDS_ZLIB,
+                            IDS_ZLIB_SOLID,
+                            IDS_BZIP2,
+                            IDS_BZIP2_SOLID,
+                            IDS_LZMA,
+                            IDS_LZMA_SOLID,
                             IDS_BEST};
 #endif
 
