@@ -2459,16 +2459,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       while (line.gettoken_str(a)[0] == '/')
       {
-        if (!strcmpi(line.gettoken_str(1),"/FINAL"))
+        if (!strcmpi(line.gettoken_str(a),"/FINAL"))
         {
           build_compressor_final = true;
           a++;
         }
-        else if (!strcmpi(line.gettoken_str(1),"/SOLID"))
+        else if (!strcmpi(line.gettoken_str(a),"/SOLID"))
         {
           build_compress_whole = true;
           a++;
         }
+        else PRINTHELP();
       }
 
       if (a != line.getnumtokens() - 1)
