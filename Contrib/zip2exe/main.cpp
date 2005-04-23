@@ -168,7 +168,6 @@ int tempzip_make(HWND hwndDlg, char *fn)
   g_extracting=1;
   do {
     char filename[MAX_PATH];
-    WCHAR filenameW[MAX_PATH];
     unz_file_info info;
 
     unzGetCurrentFileInfo(f,&info,filename,sizeof(filename),NULL,0,NULL,0);
@@ -176,11 +175,7 @@ int tempzip_make(HWND hwndDlg, char *fn)
     // was zip created on MS-DOS/Windows?
     if ((info.version & 0xFF00) == 0)
     {
-      // convert from OEM codepage to ANSI codepage
-      if (MultiByteToWideChar(CP_OEMCP, 0, filename, -1, filenameW, MAX_PATH))
-      {
-        WideCharToMultiByte(CP_ACP, 0, filenameW, -1, filename, MAX_PATH, "-", NULL);
-      }
+      OemToCharBuff(filename, filename, strlen(filename));
     }
 
     if (filename[0] &&
