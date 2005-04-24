@@ -7,7 +7,6 @@ files = Split("""
 libs = Split("""
 	kernel32
 	wininet
-	delayimp
 """)
 
 Import('BuildPlugin')
