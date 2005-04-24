@@ -21,8 +21,6 @@ files = Split("""
 
 env = Environment()
 
-env.Append(CPPDEFINES = ['VERSION=1.0 (NSIS Custom Build)'])
-
 halibut = env.Program(target, files)
 
 Return('halibut')

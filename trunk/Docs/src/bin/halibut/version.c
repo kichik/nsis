@@ -10,4 +10,4 @@
 #define VER "version " VERSION
 #endif
 
-const char *const version = VER;
+const char *const version = "version 1.0 (NSIS Custom Build)";
