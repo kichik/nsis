@@ -246,7 +246,8 @@ for util in utils:
 halibut = defenv.SConscript(
 	dirs = 'Docs/src/bin/halibut',
 	build_dir = '$BUILD_PREFIX/halibut',
-	duplicate = 0
+	duplicate = 0,
+	exports = {'env' : defenv.Copy()}
 )
 
 defenv.SConscript(
