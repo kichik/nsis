@@ -19,7 +19,7 @@ files = Split("""
 	version.c
 """)
 
-env = Environment()
+Import('env')
 
 halibut = env.Program(target, files)
 
