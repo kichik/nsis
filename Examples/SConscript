@@ -1,0 +1,35 @@
+examples = Split("""
+	bigtest.nsi
+	cvsdata.nsi
+	example1.nsi
+	example2.nsi
+	gfx.nsi
+	languages.nsi
+	LogicLib.nsi
+	makensis.nsi
+	one-section.nsi
+	primes.nsi
+	rtest.nsi
+	silent.nsi
+	StrFunc.nsi
+	UserVars.nsi
+	VersionInfo.nsi
+	viewhtml.nsi
+	waplugin.nsi
+""")
+
+mui_examples = [
+	'Modern UI/Basic.nsi',
+	'Modern UI/HeaderBitmap.nsi',
+	'Modern UI/InstallOptions.nsi',
+	'Modern UI/MultiLanguage.nsi',
+	'Modern UI/StartMenu.nsi',
+	'Modern UI/WelcomeFinish.nsi'
+]
+
+Import('env')
+
+env.Install('$PREFIX/Examples', examples)
+env.Install('$PREFIX/Examples/Modern UI', mui_examples)
+
+env.Alias('install-examples', '$PREFIX/Examples')
