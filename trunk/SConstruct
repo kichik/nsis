@@ -97,11 +97,12 @@ util_env = envs[3]
 defenv.Alias('install', '$PREFIX')
 defenv.Alias('install-docs', '$PREFIX/NSIS.chm')
 
-# defined below:
+# defined elsewhere:
 #  install-compiler
 #  install-stubs
 #  install-plugins
 #  install-utils
+#  install-examples
 
 ######################################################################
 #######  stubs                                                     ###
@@ -255,4 +256,13 @@ defenv.SConscript(
 	build_dir = '$BUILD_PREFIX/Docs',
 	duplicate = 0,
 	exports = {'halibut' : halibut, 'env' : defenv.Copy()}
+)
+
+######################################################################
+#######  Examples                                                  ###
+######################################################################
+
+defenv.SConscript(
+	dirs = 'Examples',
+	exports = {'env': defenv.Copy()}
 )
