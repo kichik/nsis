@@ -21,7 +21,7 @@ def cross_env(env):
 
 		env['CC']   = prefix + '-gcc'
 		env['CXX']  = prefix + '-g++'
-		env['LINK'] = prefix + '-ld'
+		env['LINK'] = prefix + '-g++'
 		env['RC']   = prefix + '-windres'
 
 		env['RCFLAGS'] = SCons.Util.CLVar('')
