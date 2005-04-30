@@ -1,0 +1,15 @@
+includes = Split("""
+	Colors.nsh
+	Library.nsh
+	LogicLib.nsh
+	MUI.nsh
+	Sections.nsh
+	StrFunc.nsh
+	UpgradeDLL.nsh
+	WinMessages.nsh
+""")
+
+Import('env')
+
+env.Distribute('Include', includes)
+env.DistributeDocs('StrFunc', 'StrFunc.txt')

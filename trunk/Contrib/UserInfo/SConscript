@@ -9,7 +9,10 @@ libs = Split("""
 	advapi32
 """)
 
+examples = Split("""
+	UserInfo.nsi
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs)
-
+BuildPlugin(target, files, libs, examples)

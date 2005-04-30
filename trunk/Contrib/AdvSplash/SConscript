@@ -11,6 +11,14 @@ libs = Split("""
 	winmm
 """)
 
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	advsplash.txt
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs)
+BuildPlugin(target, files, libs, examples, docs)
