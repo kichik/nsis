@@ -28,6 +28,14 @@ libs = Split("""
 	shell32
 """)
 
-Import('BuildUtil')
+headers = Split("""
+	Base.nsh
+	Classic.nsh
+	Modern.nsh
+""")
+
+Import('BuildUtil defenv')
 
 BuildUtil(target, files, libs, res = rc, resources = resources, install = 'Bin')
+
+defenv.DistributeContribs(target, headers)

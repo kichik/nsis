@@ -1,0 +1,13 @@
+uis = Split("""
+	default.exe
+	modern.exe
+	modern_headerbmp.exe
+	modern_headerbmpr.exe
+	modern_nodesc.exe
+	modern_smalldesc.exe
+	sdbarker_tiny.exe
+""")
+
+Import('defenv')
+
+defenv.DistributeContribs('UIs', uis)

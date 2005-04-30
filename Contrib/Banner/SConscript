@@ -9,6 +9,14 @@ libs = Split("""
 	user32
 """)
 
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	Readme.txt
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs)
+BuildPlugin(target, files, libs, examples, docs)

@@ -16,6 +16,21 @@ libs = Split("""
 	comdlg32
 """)
 
+examples = Split("""
+	test.nsi
+	test.ini
+	testimgs.nsi
+	testimgs.ini
+	testlink.nsi
+	testlink.ini
+	testnotify.nsi
+	testnotify.ini
+""")
+
+docs = Split("""
+	Readme.html
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs, res = resources)
+BuildPlugin(target, files, libs, examples, docs, res = resources)

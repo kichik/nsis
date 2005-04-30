@@ -24,12 +24,13 @@ mui_examples = [
 	'Modern UI/InstallOptions.nsi',
 	'Modern UI/MultiLanguage.nsi',
 	'Modern UI/StartMenu.nsi',
-	'Modern UI/WelcomeFinish.nsi'
+	'Modern UI/WelcomeFinish.nsi',
+	'Modern UI/ioA.ini',
+	'Modern UI/ioB.ini',
+	'Modern UI/ioC.ini'
 ]
 
 Import('env')
 
-env.Install('$PREFIX/Examples', examples)
-env.Install('$PREFIX/Examples/Modern UI', mui_examples)
-
-env.Alias('install-examples', '$PREFIX/Examples')
+env.DistributeExamples('', examples)
+env.DistributeExamples('Modern UI', mui_examples)

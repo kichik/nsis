@@ -75,4 +75,4 @@ env.Append(BUILDERS = {'HalibutCHM' : builder})
 chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
 env.Depends(chm, halibut)
 
-env.Install('$PREFIX', chm)
+env.Distribute('', chm)
