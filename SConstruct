@@ -1,12 +1,14 @@
 ## TODO
 #
-#   * VPatch GenPat (wait for v3 written in C)
+#   * VPatch GenPat & distribution
 #   * Write SConscript for NSIS Menu
 #    - Use inheritance instead of current wxWidgets patches
 #    - Compile for POSIX too? wxWidgets is cross platform after all...
 #   * Write SConscript for Library RegTool (needs to compile makensis with smaller configuration)
 #
 ##
+
+VERSION = '2.06'
 
 stubs = [
 	'bzip2',
@@ -42,17 +44,23 @@ utils = [
 	'zip2exe'
 ]
 
-import os
+misc = [
+	'Graphics',
+	'Language files',
+	'Modern UI',
+	'UIs'
+]
 
 defenv = Environment()
+defenv.SConsignFile()
 Export('defenv')
 
 ######################################################################
-#######  options                                                   ###
+#######  Options                                                   ###
 ######################################################################
 
 opts = Options()
-opts.Add(PathOption('PREFIX', 'Installation prefix', GetLaunchDir()))
+opts.Add(PathOption('PREFIX', 'Installation prefix', None))
 opts.Add(('MINGWPREFIX', 'MinGW toolset prefix', 0))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
@@ -62,6 +70,45 @@ opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
 
+######################################################################
+#######  Functions                                                 ###
+######################################################################
+
+defenv['DISTDIR'] = '#nsis-%s' % VERSION
+
+def Distribute(dir, files):
+	if defenv.has_key('PREFIX') and defenv['PREFIX']:
+		ins = defenv.Install('$PREFIX/%s' % dir, files)
+		return ins
+	defenv.Install('$DISTDIR/%s' % dir, files)
+	return []
+
+def DistributeAs(path, file):
+	if defenv.has_key('PREFIX') and defenv['PREFIX']:
+		ins = defenv.InstallAs('$PREFIX/%s' % path, file)
+		return ins
+	defenv.InstallAs('$DISTDIR/%s' % path, file)
+	return []
+
+def DistributeExamples(dir, examples):
+	return Distribute('Examples/%s' % dir, examples)
+
+def DistributeDocs(dir, docs):
+	return Distribute('Docs/%s' % dir, docs)
+
+def DistributeContribs(dir, contribs):
+	return Distribute('Contrib/%s' % dir, contribs)
+
+defenv.Distribute = Distribute
+defenv.DistributeAs = DistributeAs
+defenv.DistributeExamples = DistributeExamples
+defenv.DistributeDocs = DistributeDocs
+defenv.DistributeContribs = DistributeContribs
+
+######################################################################
+#######  Environments                                              ###
+######################################################################
+
 if defenv['DEBUG']:
 	defenv.Replace(BUILD_PREFIX = 'build/debug')
 else:
@@ -70,9 +117,7 @@ else:
 if defenv['MSTOOLKIT']:
 	defenv.Tool('mstoolkit', toolpath = ['SCons/Tools'])
 
-######################################################################
-#######  environments                                              ###
-######################################################################
+Default(defenv['BUILD_PREFIX'])
 
 tools = defenv['TOOLS']
 
@@ -91,21 +136,31 @@ plugin_env = envs[2]
 util_env = envs[3]
 
 ######################################################################
-#######  aliases                                                   ###
+#######  Aliases                                                   ###
 ######################################################################
 
 defenv.Alias('install', '$PREFIX')
 defenv.Alias('install-docs', '$PREFIX/NSIS.chm')
+defenv.Alias('install-docs', '$PREFIX/Docs')
+defenv.Alias('install-examples', '$PREFIX/Examples')
+defenv.Alias('install-plugins', '$PREFIX/Plugins')
+defenv.Alias('install-stubs', '$PREFIX/Stubs')
+defenv.Alias('install-includes', '$PREFIX/Include')
 
 # defined elsewhere:
 #  install-compiler
-#  install-stubs
-#  install-plugins
 #  install-utils
-#  install-examples
 
 ######################################################################
-#######  stubs                                                     ###
+#######  Distribution                                              ###
+######################################################################
+
+dist_zip = 'nsis-%s.zip' % VERSION
+defenv.Zip(dist_zip, '$DISTDIR')
+defenv.Alias('dist', dist_zip)
+
+######################################################################
+#######  Stubs                                                     ###
 ######################################################################
 
 for stub in stubs:
@@ -117,7 +172,7 @@ for stub in stubs:
 	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
-	ins_target = defenv.InstallAs('$PREFIX/Stubs/%s' % stub, target)
+	defenv.DistributeAs('Stubs/%s' % stub, target)
 
 	build_dir = '$BUILD_PREFIX/stub_%s_solid' % stub
 	env = stub_env.Copy()
@@ -127,14 +182,12 @@ for stub in stubs:
 	solid_target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), solid_target)
 
-	ins_solid_target = defenv.InstallAs('$PREFIX/Stubs/%s_solid' % stub, solid_target)
+	defenv.DistributeAs('Stubs/%s_solid' % stub, solid_target)
 
 	defenv.Alias(stub, target + solid_target)
 	defenv.Alias('stubs', target + solid_target)
-	defenv.Alias('install-stubs', ins_target + ins_solid_target)
 
-uninst_icon = defenv.InstallAs('$PREFIX/Stubs/uninst', 'Source/exehead/uninst.ico')
-defenv.Alias('install-stubs', uninst_icon)
+defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 
 ######################################################################
 #######  makensis                                                  ###
@@ -151,16 +204,17 @@ makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
 defenv.Alias('makensis', makensis)
 
-ins = defenv.Install('$PREFIX', makensis)
+ins = defenv.Distribute('', makensis)
 defenv.Alias('install-compiler', ins)
 
 ######################################################################
 #######  Plug-ins                                                  ###
 ######################################################################
 
-def BuildPlugin(target, source, libs, entry = 'DllMain', res = None,
-                res_target = None, resources = None, defines = None,
-                flags = None, nodeflib = 1):
+def BuildPlugin(target, source, libs, examples = None, docs = None,
+                entry = 'DllMain', res = None, res_target = None,
+                resources = None, defines = None, flags = None, 
+                nodeflib = 1):
 	env = plugin_env.Copy()
 
 	if defines:
@@ -188,8 +242,12 @@ def BuildPlugin(target, source, libs, entry = 'DllMain', res = None,
 
 	env.Clean(plugin, File(target + '.map'))
 
-	ins = env.Install('$PREFIX/Plugins', plugin)
-	defenv.Alias('install-plugins', ins)
+	env.Distribute('Plugins', plugin)
+
+	if examples:
+		env.DistributeExamples(target, examples)
+	if docs:
+		env.DistributeDocs(target, docs)
 
 for plugin in plugins:
 	path = 'Contrib/' + plugin
@@ -230,7 +288,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	env.Clean(util, File(target + '.map'))
 
 	if install is not None:
-		ins = env.Install('$PREFIX/%s' % install, util)
+		ins = env.Distribute(install, util)
 		defenv.Alias('install-utils', ins)
 
 for util in utils:
@@ -266,3 +324,19 @@ defenv.SConscript(
 	dirs = 'Examples',
 	exports = {'env': defenv.Copy()}
 )
+
+######################################################################
+#######  Includes                                                  ###
+######################################################################
+
+defenv.SConscript(
+	dirs = 'Include',
+	exports = {'env': defenv.Copy()}
+)
+
+######################################################################
+#######  Miscellaneous                                             ###
+######################################################################
+
+for i in misc:
+	defenv.SConscript(dirs = 'Contrib/%s' % i)

@@ -10,7 +10,15 @@ libs = Split("""
 	advapi32
 """)
 
+examples = Split("""
+	test.nsi
+""")
+
+docs = Split("""
+	nsExec.txt
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs)
+BuildPlugin(target, files, libs, examples, docs)
 

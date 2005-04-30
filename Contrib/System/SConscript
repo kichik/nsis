@@ -20,6 +20,26 @@ libs = Split("""
 	ole32
 """)
 
+examples = Split("""
+	System.nsi
+	System.nsh
+	SysFunc.nsh
+""")
+
+docs = Split("""
+	System.html
+	WhatsNew.txt
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs, entry = '_DllMainCRTStartup', nodeflib = 0, defines = ['SYSTEM_EXPORTS'])
+BuildPlugin(
+	target,
+	files,
+	libs,
+	examples,
+	docs,
+	entry = '_DllMainCRTStartup',
+	nodeflib = 0,
+	defines = ['SYSTEM_EXPORTS']
+)

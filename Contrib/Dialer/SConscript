@@ -9,6 +9,10 @@ libs = Split("""
 	wininet
 """)
 
+docs = Split("""
+	Dialer.txt
+""")
+
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs)
+BuildPlugin(target, files, libs, docs = docs)
