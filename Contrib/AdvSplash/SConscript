@@ -1,7 +1,7 @@
 target = 'AdvSplash'
 
 files = Split("""
-	AdvSplash.c
+	advsplash.c
 """)
 
 libs = Split("""
