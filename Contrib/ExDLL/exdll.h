@@ -70,10 +70,10 @@ typedef struct {
   int instdir_error;
   int rtl;
   int errlvl;
-} exec_flags;
+} exec_flags_type;
 
 typedef struct {
-  exec_flags *exec_flags;
+  exec_flags_type *exec_flags;
   int (__stdcall *ExecuteCodeSegment)(int, HWND);
 } extra_parameters;
 
