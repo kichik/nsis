@@ -129,11 +129,17 @@ def replace_emitter(env, builder_name):
 	builder = env['BUILDERS'][builder_name]
 
 	def new_emitter(target, source, env):
-		global funcs_file, funcs_obj
 		res = builder.emitter(target, source, env)
+
+		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
+			return res
+
+		global funcs_file, funcs_obj
+
 		if not funcs_obj:
 			funcs_obj = env.SharedObject(funcs_file)
 		res[1].append(funcs_obj)
+
 		return res
 
 	env['BUILDERS'][builder_name] = Builder(
