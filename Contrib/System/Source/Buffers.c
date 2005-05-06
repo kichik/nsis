@@ -4,11 +4,11 @@
 #include "Buffers.h"
 
 typedef struct tagTempStack TempStack;
-typedef struct tagTempStack
+struct tagTempStack
 {
     TempStack *Next;
     char Data[0];
-} TempStack;
+};
 TempStack *tempstack = NULL;
 
 PLUGINFUNCTIONSHORT(Alloc)

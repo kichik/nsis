@@ -73,7 +73,7 @@ typedef struct
 // Our single proc (Since the user will free proc with GlobalFree, 
 // I've declared all variables as statics)
 typedef struct tag_SystemProc SystemProc;
-typedef struct tag_SystemProc
+struct tag_SystemProc
 {
 	int ProcType;
     int ProcResult;
@@ -91,7 +91,7 @@ typedef struct tag_SystemProc
     int ArgsSize;
     // Clone of current element (used for multi-level callbacks)
     SystemProc *Clone;
-} SystemProc;
+};
 
 extern const int ParamSizeByType[];   // Size of every parameter type (*4 bytes)
 
