@@ -968,7 +968,11 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
   paragraph *p;
   char fname[_MAX_PATH];
   int done = FALSE;
+
   FILE *fp = fopen(file->filename, "w");
+  if (fp == NULL)
+    fatal(err_cantopenw, file->filename);
+
   ustrtoa(conf.chm_toc_file, fname, _MAX_PATH);
   if(*fname)
   {
@@ -987,9 +991,6 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
   }
   else
     chm_ind = NULL;
-  if (fp == NULL)
-    fatal(err_cantopenw, file->filename);
-
 
   /* Do the title -- only one allowed */
   for (p = sourceform; p && !done; p = p->next)
