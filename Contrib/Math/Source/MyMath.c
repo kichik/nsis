@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "Mathcrt.h"
+#include "mathcrt.h"
 #include "MyMath.h"
 #include "Math.h"
 
