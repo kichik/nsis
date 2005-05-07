@@ -271,6 +271,9 @@ typedef WORD LANGID;
 #ifndef CSIDL_COMMON_APPDATA
 #  define CSIDL_COMMON_APPDATA 0x23
 #endif
+#ifndef CSIDL_LOCAL_APPDATA
+#  define CSIDL_LOCAL_APPDATA 0x1C
+#endif
 #ifndef CSIDL_PRINTHOOD
 #  define CSIDL_PRINTHOOD 0x1B
 #endif
