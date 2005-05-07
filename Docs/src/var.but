@@ -156,6 +156,12 @@ The application data directory. Detection of the current user path requires Inte
 
 This constant is not available on Windows 95 with Internet Explorer 4 and Active Desktop not installed.
 
+\e{$LOCALAPPDATA}
+
+The local (nonroaming) application data directory.
+
+This constant is available on Windows 2000 and above.
+
 \e{$PRINTHOOD}
 
 The directory that contains link objects that may exist in the Printers folder.
