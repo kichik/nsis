@@ -110,6 +110,8 @@ funcs_obj = None
 def check_requirement(ctx, func, trigger):
 	ctx.Message('Checking for %s requirement... ' % func)
 
+	flags = ctx.env['LINKFLAGS']
+
 	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')
 	ctx.env.Append(LINKFLAGS = '-Wl,-e,___main')
 
@@ -122,6 +124,8 @@ def check_requirement(ctx, func, trigger):
 
 	ret = not ctx.TryLink(test, '.c')
 	ctx.Result(ret)
+
+	ctx.env['LINKFLAGS'] = flags
 
 	return ret
 
