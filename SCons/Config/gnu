@@ -69,7 +69,6 @@ makensis_env.Append(CCFLAGS = '-O2')              # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
 makensis_env.Append(LINKFLAGS = '-s')             # strip
-makensis_env.Append(LINKFLAGS = '$ALIGN_FLAG')    # 512 bytes align
 
 ### plugin environment
 
