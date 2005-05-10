@@ -3321,7 +3321,8 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_CALL:
       if (!line.gettoken_str(1)[0] || (line.gettoken_str(1)[0]==':' && !line.gettoken_str(1)[1] )) PRINTHELP()
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
-      if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3) && (GetUserVarIndex(line,1) < 0))
+      if (uninstall_mode && strnicmp(line.gettoken_str(1),"un.",3)
+          && (GetUserVarIndex(line,1) < 0) && line.gettoken_str(1)[0]!=':')
       {
         ERROR_MSG("Call must be used with function names starting with \"un.\" in the uninstall section.\n");
         PRINTHELP()
