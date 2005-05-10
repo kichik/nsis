@@ -1055,8 +1055,16 @@ static void xhtml_do_top_file(xhtmlfile * file, paragraph * sourceform)
   if(chm_toc)chm_dofooter(chm_toc);
   if(chm_ind)chm_dofooter(chm_ind);
   fclose(fp);
-  if(chm_toc)fclose(chm_toc);
-  if(chm_ind)fclose(chm_ind);
+  if(chm_toc)
+  {
+    fclose(chm_toc);
+    chm_toc = NULL;
+  }
+  if(chm_ind)
+  {
+    fclose(chm_ind);
+    chm_ind = NULL;
+  }
 }
 
 /* Convert a Unicode string to an ASCII one. '?' is
