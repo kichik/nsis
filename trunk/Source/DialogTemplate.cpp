@@ -37,7 +37,7 @@
 #define ALIGN(dwToAlign, dwAlignOn) dwToAlign = (dwToAlign%dwAlignOn == 0) ? dwToAlign : dwToAlign - (dwToAlign%dwAlignOn) + dwAlignOn
 
 // Reads a variany length array from seeker into readInto and advances seeker
-void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
+void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
   WORD* arr = (WORD*)seeker;
   switch (arr[0]) {
   case 0x0000:
@@ -64,7 +64,10 @@ void ReadVarLenArr(BYTE* &seeker, char* &readInto, unsigned int uCodePage) {
       {
         throw runtime_error("ReadVarLenArr - Unicode conversion failed.");
       }
-      while (*(WCHAR*)seeker++);
+
+      PWCHAR wseeker = PWCHAR(seeker);
+      while (*wseeker++);
+      seeker = LPBYTE(wseeker);
     }
     break;
   }
