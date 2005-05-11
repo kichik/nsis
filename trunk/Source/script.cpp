@@ -1950,7 +1950,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           DWORD dwSize;
           dlg = dt.Save(dwSize);
           res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(IDD_INSTFILES), NSIS_DEFAULT_LANG, dlg, dwSize);
-          res_editor->FreeResource(dlg);
+          delete [] dlg;
         }
         catch (exception& err) {
           ERROR_MSG("Error setting smooth progress bar: %s\n", err.what());
