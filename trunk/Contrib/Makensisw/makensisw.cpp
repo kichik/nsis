@@ -20,12 +20,9 @@
 */
 #define MAKENSISW_CPP
 
-#define _WIN32_IE 0x0400
-
-#include <windows.h>
+#include "makensisw.h"
 #include <windowsx.h>
 #include <stdio.h>
-#include "makensisw.h"
 #include "resource.h"
 #include "noclib.h"
 #include "toolbar.h"
