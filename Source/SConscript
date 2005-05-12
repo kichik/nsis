@@ -72,7 +72,11 @@ conf.Finish()
 #env['PCH'] = env.PCH(pch)[0]
 #env['PCHSTOP'] = pch
 
-##### Compile LZMA
+##### Defines
+
+env.Append(CPPDEFINES = ['NSIS_VERSION=v$NSIS_VERSION'])
+
+##### LZMA specific defines
 
 lzma_env = env.Copy()
 lzma_env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])

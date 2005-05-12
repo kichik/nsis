@@ -1,5 +1,3 @@
-const char *NSIS_VERSION="v2.06";
-
 /* 
 
   Nullsoft Scriptable Install System (NSIS)
@@ -108,7 +106,7 @@ int main(int argc, char **argv)
 
   if (argc > 1 && !stricmp(argv[1], OPT_STR "VERSION"))
   {
-    fprintf(g_output,NSIS_VERSION);
+    fprintf(g_output,CONST_STR(NSIS_VERSION));
     fflush(g_output);
     return 0;
   }
@@ -139,7 +137,7 @@ int main(int argc, char **argv)
            "Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).\n"
            "Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).\n"
            "\n"
-           "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",NSIS_VERSION);
+           "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",CONST_STR(NSIS_VERSION));
     fflush(g_output);
   }
 
