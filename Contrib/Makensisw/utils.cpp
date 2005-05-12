@@ -19,9 +19,9 @@
   3. This notice may not be removed or altered from any source distribution.
 
 */
-#include <windows.h>
-#include "resource.h"
+
 #include "makensisw.h"
+#include "resource.h"
 #include "toolbar.h"
 #include "noclib.h"
 

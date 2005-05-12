@@ -22,6 +22,8 @@
 #ifndef MAKENSIS_H
 #define MAKENSIS_H
 
+#define _WIN32_IE 0x0400
+#include <windows.h>
 #include <commctrl.h>
 #include "utils.h"
 #define _RICHEDIT_VER 0x0200
