@@ -21,9 +21,8 @@
 */
 #define TOOLBAR_CPP
 
-#include <windows.h>
-#include "resource.h"
 #include "makensisw.h"
+#include "resource.h"
 #include "noclib.h"
 #include "toolbar.h"
 
