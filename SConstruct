@@ -55,6 +55,8 @@ defenv = Environment()
 defenv.SConsignFile()
 Export('defenv')
 
+defenv.Append(NSIS_VERSION = VERSION)
+
 ######################################################################
 #######  Options                                                   ###
 ######################################################################
