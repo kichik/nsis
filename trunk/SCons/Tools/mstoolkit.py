@@ -70,16 +70,21 @@ def get_msvctoolkit_paths():
 	if os.environ.has_key('VCToolkitInstallDir'):
 		MSToolkitDir = os.path.normpath(os.environ['VCToolkitInstallDir'])
 	else:
-		# last resort -- default install location
-		MSToolkitDir = r'C:\Program Files\Microsoft Visual C++ Toolkit 2003'
-	
+		raise SCons.Errors.InternalError, "Microsoft Visual C++ Toolkit 2003 directory was not found in the `VCToolkitInstallDir` environment variable."
+
 	# look for platform sdk
-	PlatformSDKDir = ""	
-	try:
-		PlatformSDKDir = SCons.Util.RegGetValue(SCons.Util.HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\MicrosoftSDK\Directories\Install Dir')[0]
-		PlatformSDKDir = str(PlatformSDKDir)
-	except SCons.Util.RegError:
-		raise SCons.Errors.InternalError, "The Platform SDK directory was not found in the registry."
+	if os.environ.has_key('MSSdk'):
+		PlatformSDKDir = os.path.normpath(os.environ['MSSdk'])
+	else:
+		try:
+			PlatformSDKDir = SCons.Util.RegGetValue(SCons.Util.HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\MicrosoftSDK\Directories\Install Dir')[0]
+			PlatformSDKDir = str(PlatformSDKDir)
+		except SCons.Util.RegError:
+			try:
+				PlatformSDKDir = SCons.Util.RegGetValue(SCons.Util.HKEY_LOCAL_MACHINE, r'SOFTWARE\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3\Install Dir')[0]
+				PlatformSDKDir = str(PlatformSDKDir)
+			except SCons.Util.RegError:
+				raise SCons.Errors.InternalError, "The Platform SDK directory was not found in the registry or in the `MSSdk` environment variable."
 
 	include_path = r'%s\include;%s\include' % (MSToolkitDir, PlatformSDKDir)
 	lib_path = r'%s\lib;%s\lib' % (MSToolkitDir, PlatformSDKDir)
