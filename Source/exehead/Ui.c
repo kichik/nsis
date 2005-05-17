@@ -889,6 +889,10 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         dontsetdefstyle++;
         SetUITextNT(IDC_DIR,dir);
       }
+      else
+      {
+        uMsg = WM_IN_UPDATEMSG;
+      }
     }
   }
   if (uMsg == WM_IN_UPDATEMSG || uMsg == WM_NOTIFY_START)
