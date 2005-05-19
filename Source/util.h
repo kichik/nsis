@@ -35,7 +35,8 @@ size_t WCStrLen(const WCHAR* szwStr);
 
 size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
-#define CONST_STR(x) #x
+#define _CONST_STR(x) #x
+#define CONST_STR(x) _CONST_STR(x)
 
 #ifndef __BIG_ENDIAN__
 # define FIX_ENDIAN_INT32_INPLACE(x) (x)
