@@ -10,26 +10,9 @@ defenv['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE 
 
 ### cross compiling
 
-import SCons.Util
-
-res_action = Action('$RCCOM', '$RCCOMSTR')
-res_builder = Builder(action=res_action, suffix='.o')
-
 def cross_env(env):
-	if env['MINGWPREFIX']:
-		prefix = env['MINGWPREFIX']
-
-		env['CC']   = prefix + '-gcc'
-		env['CXX']  = prefix + '-g++'
-		env['LINK'] = prefix + '-g++'
-		env['RC']   = prefix + '-windres'
-
-		env['RCFLAGS'] = SCons.Util.CLVar('')
-		env['RCINCFLAGS'] = '$( ${_concat(RCINCPREFIX, CPPPATH, RCINCSUFFIX, __env__, RDirs, TARGET)} $)'
-		env['RCINCPREFIX'] = '--include-dir '
-		env['RCINCSUFFIX'] = ''
-		env['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE -o $TARGET'
-		env['BUILDERS']['RES'] = res_builder
+	if env['PLATFORM'] != 'win32'
+		env.Tool('crossmingw', toolpath = ['../Tools'])
 
 ### flags
 
