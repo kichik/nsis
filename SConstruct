@@ -63,7 +63,6 @@ defenv.Append(NSIS_VERSION = VERSION)
 
 opts = Options()
 opts.Add(PathOption('PREFIX', 'Installation prefix', None))
-opts.Add(('MINGWPREFIX', 'MinGW toolset prefix', 0))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
