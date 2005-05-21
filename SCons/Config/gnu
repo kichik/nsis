@@ -17,7 +17,7 @@ def cross_env(env):
 ### flags
 
 defenv['ENTRY_FLAG'] = lambda x: '-Wl,-e,_' + x + '@16'
-defenv['MAP_FLAG'] = lambda x: '-Wl,-Map,' + x + '.map'
+defenv['MAP_FLAG'] = lambda x: '-Wl,-Map,${TARGET.base}.map'
 defenv['EXCEPTION_FLAG'] = ''
 defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
 defenv['C_FLAG'] = '-x c'
