@@ -21,4 +21,4 @@ docs = Split("""
 
 Import('BuildPlugin')
 
-BuildPlugin(target, files, libs, docs = docs)
+BuildPlugin(target, files, libs, docs = docs, cppused = 1)
