@@ -67,6 +67,10 @@ opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
 opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
+opts.Add(ListOption('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
+opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
+opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
+opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
 opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
@@ -165,6 +169,9 @@ defenv.Alias('dist', dist_zip)
 ######################################################################
 
 for stub in stubs:
+	if stub in defenv['SKIPSTUBS']:
+		continue
+
 	build_dir = '$BUILD_PREFIX/stub_%s' % stub
 	env = stub_env.Copy()
 	env.Append(LINKFLAGS = '$MAP_FLAG')
@@ -254,6 +261,9 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 		env.DistributeDocs(target, docs)
 
 for plugin in plugins:
+	if plugin in defenv['SKIPPLUGINS']:
+		continue
+
 	path = 'Contrib/' + plugin
 	build_dir = '$BUILD_PREFIX/' + plugin
 	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Copy()}
@@ -296,6 +306,9 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		defenv.Alias('install-utils', ins)
 
 for util in utils:
+	if util in defenv['SKIPUTILS']:
+		continue
+
 	path = 'Contrib/' + util
 	build_dir = '$BUILD_PREFIX/' + util
 	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Copy()}
@@ -343,4 +356,7 @@ defenv.SConscript(
 ######################################################################
 
 for i in misc:
+	if i in defenv['SKIPMISC']:
+		continue
+
 	defenv.SConscript(dirs = 'Contrib/%s' % i)
