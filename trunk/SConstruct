@@ -65,12 +65,18 @@ opts = Options()
 opts.Add(PathOption('PREFIX', 'Installation prefix', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
+opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', 'no'))
 opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
 opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
 opts.Add(ListOption('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
 opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
 opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
 opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
+
+import os
+if defenv.WhereIs('hhc', os.environ['PATH']):
+	defenv['CHMDOCS'] = 1
+
 opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
@@ -326,12 +332,20 @@ halibut = defenv.SConscript(
 	exports = {'env' : defenv.Copy()}
 )
 
-defenv.SConscript(
-	dirs = 'Docs/src',
-	build_dir = '$BUILD_PREFIX/Docs',
-	duplicate = 0,
-	exports = {'halibut' : halibut, 'env' : defenv.Copy()}
-)
+if defenv['CHMDOCS']:
+	defenv.SConscript(
+		dirs = 'Docs/src',
+		build_dir = '$BUILD_PREFIX/Docs/chm',
+		duplicate = 0,
+		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : 1}
+	)
+else:
+	defenv.SConscript(
+		dirs = 'Docs/src',
+		build_dir = '$BUILD_PREFIX/Docs/html',
+		duplicate = 0,
+		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : 0}
+	)
 
 ######################################################################
 #######  Examples                                                  ###
