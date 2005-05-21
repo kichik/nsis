@@ -1,5 +1,12 @@
 config_but = 'config.but'
 
+chapters = 5
+appendices = 7
+
+htmls = Split('IndexPage.html Contents.html') \
+	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
+	+ map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices))
+
 chm_config_but = 'chm_config.but'
 
 buts = Split("""
@@ -47,32 +54,45 @@ buts = Split("""
 
 import os
 
-Import('halibut env')
+Import('halibut env build_chm')
 
 env.Append(ENV = {'PATH' : os.environ['PATH']})
 
 build_dir = Dir(GetBuildPath('.')).abspath
 
-hhc_action = Action('cd "%s" && hhc nsis.hhp' % (build_dir))
-execute = hhc_action.execute
-def rexecute(*args):
-	return execute(*args) != 1 # hhc returns 1 on success
-hhc_action.execute = rexecute
+if build_chm:
+	hhc_action = Action('cd "%s" && hhc nsis.hhp' % (build_dir))
+	execute = hhc_action.execute
+	def rexecute(*args):
+		return execute(*args) != 1 # hhc returns 1 on success
+	hhc_action.execute = rexecute
 
-builder = Builder(
-	action = [
-		Copy(build_dir, '${SOURCE.dir}/../style.css'),
-		Copy(build_dir, '${SOURCE.dir}/chmlink.js'),
-		Copy(build_dir, '${SOURCE.dir}/nsis.hhp'),
-		Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
-		hhc_action
-	]
-)
+	chm_builder = Builder(
+		action = [
+			Copy(build_dir, '${SOURCE.dir}/../style.css'),
+			Copy(build_dir, '${SOURCE.dir}/chmlink.js'),
+			Copy(build_dir, '${SOURCE.dir}/nsis.hhp'),
+			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
+			hhc_action
+		]
+	)
 
-env.Append(BUILDERS = {'HalibutCHM' : builder})
+	env.Append(BUILDERS = {'HalibutCHM' : chm_builder})
 
-#env.Halibut([config_but] + buts)
-chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
-env.Depends(chm, halibut)
+	chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
+	env.Depends(chm, halibut)
+	env.Distribute('', chm)
 
-env.Distribute('', chm)
+else:
+	html_builder = Builder(
+		action = [
+			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
+		]
+	)
+
+	env.Append(BUILDERS = {'Halibut' : html_builder})
+
+	html = env.Halibut(htmls, [config_but] + buts)
+	env.Depends(html, halibut)
+	env.DistributeDocs('', 'style.css')
+	env.DistributeDocs('', htmls)
