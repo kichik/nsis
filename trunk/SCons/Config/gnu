@@ -23,6 +23,7 @@ defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
 defenv['C_FLAG'] = '-x c'
 defenv['CPP_FLAG'] = '-x c++'
 defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
+defenv['CPP_REQUIRES_STDLIB'] = 1
 
 ### debug
 
