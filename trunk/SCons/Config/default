@@ -5,7 +5,7 @@ Import('defenv')
 ### flags
 
 defenv['ENTRY_FLAG'] = lambda x: ''
-defenv['MAP_FLAG'] = lambda x: ''
+defenv['MAP_FLAG'] = ''
 defenv['EXCEPTION_FLAG'] = ''
 defenv['NODEFLIBS_FLAG'] = ''
 defenv['C_FLAG'] = ''
