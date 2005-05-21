@@ -215,8 +215,11 @@ defenv.Alias('install-compiler', ins)
 def BuildPlugin(target, source, libs, examples = None, docs = None,
                 entry = 'DllMain', res = None, res_target = None,
                 resources = None, defines = None, flags = None, 
-                nodeflib = 1):
+                nodeflib = 1, cppused = 0):
 	env = plugin_env.Copy()
+
+	if cppused and env['CPP_REQUIRES_STDLIB']:
+		nodeflib = 0
 
 	if defines:
 		env.Append(CPPDEFINES = defines)
