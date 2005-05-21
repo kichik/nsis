@@ -10,6 +10,7 @@ defenv['EXCEPTION_FLAG'] = ''
 defenv['NODEFLIBS_FLAG'] = ''
 defenv['C_FLAG'] = ''
 defenv['CPP_FLAG'] = ''
+defenv['CPP_REQUIRES_STDLIB'] = 0
 
 ### stub environment
 

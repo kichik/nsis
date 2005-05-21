@@ -10,6 +10,7 @@ defenv['EXCEPTION_FLAG'] = '/GX'
 defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
 defenv['C_FLAG'] = '/TC'
 defenv['CPP_FLAG'] = '/TP'
+defenv['CPP_REQUIRES_STDLIB'] = 0
 
 ### debug
 
