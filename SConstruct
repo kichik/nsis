@@ -167,7 +167,7 @@ defenv.Alias('dist', dist_zip)
 for stub in stubs:
 	build_dir = '$BUILD_PREFIX/stub_%s' % stub
 	env = stub_env.Copy()
-	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % ('stub_' + stub))
+	env.Append(LINKFLAGS = '$MAP_FLAG')
 	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 0 }
 
 	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
@@ -177,7 +177,7 @@ for stub in stubs:
 
 	build_dir = '$BUILD_PREFIX/stub_%s_solid' % stub
 	env = stub_env.Copy()
-	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % ('stub_' + stub))
+	env.Append(LINKFLAGS = '$MAP_FLAG')
 	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 1 }
 
 	solid_target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
@@ -197,7 +197,7 @@ defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 build_dir = '$BUILD_PREFIX/makensis'
 exports = { 'env' : makensis_env }
 
-makensis_env.Append(LINKFLAGS = '${MAP_FLAG("makensis")}')
+makensis_env.Append(LINKFLAGS = '$MAP_FLAG')
 
 makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = 0, exports = exports)
 
@@ -232,7 +232,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 	if nodeflib:
 		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
 
-	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % target)
+	env.Append(LINKFLAGS = '$MAP_FLAG')
 
 	if res:
 		target_res = env.RES(res_target, res)
@@ -277,7 +277,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	if entry:
 		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
 
-	env.Append(LINKFLAGS = '${MAP_FLAG("%s")}' % target)
+	env.Append(LINKFLAGS = '$MAP_FLAG')
 
 	if res:
 		target_res = env.RES(res)
