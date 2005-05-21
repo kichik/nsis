@@ -11,7 +11,7 @@ defenv['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE 
 ### cross compiling
 
 def cross_env(env):
-	if env['PLATFORM'] != 'win32'
+	if env['PLATFORM'] != 'win32':
 		env.Tool('crossmingw', toolpath = ['../Tools'])
 
 ### flags
