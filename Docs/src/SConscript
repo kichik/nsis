@@ -86,7 +86,8 @@ if build_chm:
 else:
 	html_builder = Builder(
 		action = [
-			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath)),
+			Copy(build_dir, '${SOURCE.dir}/../style.css'),
+			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath))
 		]
 	)
 
