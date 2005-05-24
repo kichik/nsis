@@ -54,7 +54,7 @@ If your installer/uninstaller requires some more information that can not be gat
 \c done:
 \c FunctionEnd
 
-The above example will copy the value the user passes on after /USRNAME= into $0. This allows the user to specify the required information on the command line instead of using the interactive user interface. The user can use:
+The above example will copy the value the user passes on after /USERNAME= into $0. This allows the user to specify the required information on the command line instead of using the interactive user interface. The user can use:
 
 \c foo.exe /S /USERNAME=Bar /D=C:\Program Files\Foo
 
