@@ -1,0 +1,68 @@
+\A{build} Building NSIS
+
+NSIS version 2.07 introduced a new build system, based on \W{http://www.scons.org/}{SCons}. The build system can build the entire NSIS package so there is no longer need to build it project by project. It allows building using several simultaneous jobs, installation without an installer on both Windows and POSIX and easy compilation with debugging symbols.
+
+\H{build_general}Building in General
+
+Source code is available in \W{http://cvs.sourceforge.net/viewcvs.py/nsis}{CVS} and as a separate package with every \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution}.
+
+To build NSIS \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 0.96.90. Any version of Python above 1.5.2 is supported.
+
+To build, open a console, change the working directory to the root directory of NSIS and type \c{scons}. That's it. For example:
+
+\c C:\>cd dev\nsis
+\c C:\dev\nsis>scons
+\c scons: Reading SConscript files ...
+\c Using Microsoft tools configuration
+\c Checking for main() in C library gdi32... (cached) yes
+\c Checking for main() in C library user32... (cached) yes
+\c Checking for main() in C library version... (cached) yes
+\c Checking for main() in C library pthread... (cached) no
+\c Checking for main() in C library stdc++... (cached) no
+\c Checking for main() in C library iconv... (cached) no
+\c Checking for main() in C library libiconv... (cached) no
+\c scons: done reading SConscript files.
+\c scons: Building targets ...
+\c ...
+
+To install the built files, type:
+
+\c scons PREFIX="C:\Program Files\NSIS" install
+
+To get a complete list of options that the build system has to offer, type:
+
+\c scons -h
+
+To get a complete list of options SCons has to offset, type:
+
+\c scons -H
+
+\H{build_windows}Building on Windows
+
+If you have Microsoft Visual C++ installed, SCons will automatically detect and use it. If you don't have it, you can download the free \W{http://msdn.microsoft.com/visualc/vctoolkit2003/}{Visual C++ Toolkit} and \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. The build system doesn't automatically recognize the toolkit, so you'll have to give it a hint:
+
+\c scons MSTOOLKIT=yes
+
+If you get errors about the compiler or the Platform SDK not being found, use:
+
+\c set MSSDK=C:\Path\To\Platform SDK
+\c set VCToolkitInstallDir=C:\Path\To\VCToolkit
+\c scons MSTOOLKIT=yes
+
+You can also build using the open-source \W{http://www.mingw.org/}{MinGW}, but this results in noticeably larger installers. Borland C++ or Open Watcom C/C++ might also work, but haven't been tested.
+
+\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
+
+\H{build_posix}Building on POSIX
+
+As of NSIS 2.01, the compiler, makensis, also compiles on POSIX platforms. POSIX platforms include Linux, *BSD, Mac OS X and others. Since the generated installer will eventually run on Windows, you need a \W{http://www.libsdl.org/extras/win32/cross/README.txt}{cross-compiler} in order to compile them.
+
+If you don't have a cross compiler, you can use:
+
+\c scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all
+
+This should build only build makensis. Once you have makensis, you can drop it in a downloaded precompiled package such as the nightly build. Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h} and \c{Source\\exehead\\fileform.h} must be identical.
+
+\H{build_nightly}Nightly Builds
+
+If you don't want to build NSIS on your own but want to get the latest CVS version, you can use the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly build}. The nightly build is automatically generated every night from source code in CVS.
