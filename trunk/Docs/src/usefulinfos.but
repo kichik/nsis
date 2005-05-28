@@ -1,21 +1,5 @@
 \A{usefulinfos} Useful Information
 
-\H{compiling_infos}Compiling NSIS Sources
-
-The NSIS source files are shipped with every official \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution} as well with the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{development snapshots}. The binary files distributed with the NSIS releases are compiled with the Microsoft Visual C++ 6.0 compiler. The source has also been tested to be compatible with the Microsoft Visual C++ .NET 2002/2003 compiler. The NSIS distribution includes Microsoft Visual C++ 6.0 project files, Microsoft Visual C++ .NET 2002/2003 automatically convert these files to a new format.
-
-If you don't have Microsoft Visual C++, you can download the free \W{http://msdn.microsoft.com/downloads/list/netdevframework.asp}{.NET Framework SDK} (requires Windows 2000/XP/Server 2003), which includes the latest Microsoft compiler. This SDK does not include the Win32 API headers/libraries, so you should also download the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. See the Microsoft documentation for information about using the command line compiler and linker tools.
-
-You can also compile NSIS using \W{http://www.mingw.org/}{MinGW} and \W{http://www.mingw.org/msys.shtml}{MSYS} or \W{http://www.cygwin.com/}{Cygwin}, but this results in noticeably larger exeheads. To compile using MinGW, simply use `make'. Borland C++ or Open Watcom C/C++ should also work but probably require some makefile changes.
-
-As of NSIS 2.01, the compiler, makensis, also compiles on POSIX platforms. POSIX platforms include Linux, *BSD, Mac OS X and others. You must first compile the exeheads to be able to compile makensis. This can be done on Windows using the methods explained above, or using a cross compiler (\W{http://www.libsdl.org/extras/win32/cross/README.txt}{HOWTO}). Once the exeheads are compiled, you must copy over the .h files in Source\\exehead\\Release-*. These .h files are automatically generated during the build process from the compiled exeheads. Official NSIS source code releases for POSIX include these .h files, so it is only needed to manually compile them if the source code was taken from CVS.
-
-When building with precompiled exehead .h files, you should set the USE_PRECOMPILED_EXEHEADS flag to 1 on the make command line. This forces the makefile to skip the compilation process of the exeheads, even if the .h files seem outdated or if dependencies are missing.
-
-\c make USE_PRECOMPILED_EXEHEADS=1
-
-\\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
-
 \H{errorlevels}Error Levels
 
 Like other applications installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
