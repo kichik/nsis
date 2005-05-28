@@ -254,7 +254,7 @@ Released on September 24th, 2004
 
 \S1{v2.01-rn} Release Notes
 
-\b See \R{compiling_infos}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
+\b See \R{build_posix}{Compiling NSIS Sources} for information about compiling makensis on POSIX platforms
 
 \b NSIS doesn't create installers for Linux/Mac OS X etc., but you can compile Windows installers on these platforms
 

@@ -167,7 +167,7 @@ The compiler will check your script and give you warnings or an error. If an err
 
 NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
 
-It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See \R{compiling_infos}{Compiling NSIS Sources} for details.
+It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See \R{build}{Building NSIS} for details.
 
 \H{tutmodernui} Modern UI
 
