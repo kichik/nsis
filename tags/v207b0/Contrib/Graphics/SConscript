@@ -1,0 +1,86 @@
+checks = Split("""
+	big.bmp
+	classic-cross.bmp
+	classic.bmp
+	colorful.bmp
+	grey-cross.bmp
+	grey.bmp
+	modern.bmp
+	red-round.bmp
+	red.bmp
+	simple-round.bmp
+	simple-round2.bmp
+	simple.bmp
+""")
+
+headers = Split("""
+	nsis-r.bmp
+	nsis.bmp
+	orange-nsis.bmp
+	orange-r-nsis.bmp
+	orange-r.bmp
+	orange-uninstall-nsis.bmp
+	orange-uninstall-r-nsis.bmp
+	orange-uninstall-r.bmp
+	orange-uninstall.bmp
+	orange.bmp
+	win.bmp
+""")
+
+icons = Split("""
+	arrow-install.ico
+	arrow-uninstall.ico
+	arrow2-install.ico
+	arrow2-uninstall.ico
+	box-install.ico
+	box-uninstall.ico
+	classic-install.ico
+	classic-uninstall.ico
+	llama-blue.ico
+	llama-grey.ico
+	modern-install-blue-full.ico
+	modern-install-blue.ico
+	modern-install-colorful.ico
+	modern-install-full.ico
+	modern-install.ico
+	modern-uninstall-blue-full.ico
+	modern-uninstall-blue.ico
+	modern-uninstall-colorful.ico
+	modern-uninstall-full.ico
+	modern-uninstall.ico
+	nsis1-install.ico
+	nsis1-uninstall.ico
+	orange-install-nsis.ico
+	orange-install.ico
+	orange-uninstall-nsis.ico
+	orange-uninstall.ico
+	pixel-install.ico
+	pixel-uninstall.ico
+	win-install.ico
+	win-uninstall.ico
+""")
+
+wizards = Split("""
+	arrow.bmp
+	llama.bmp
+	nsis.bmp
+	nullsoft.bmp
+	orange-nsis.bmp
+	orange-uninstall-nsis.bmp
+	orange-uninstall.bmp
+	orange.bmp
+	win.bmp
+""")
+
+Import('defenv')
+
+def join(prefix, list):
+	return map(lambda x: '%s/%s' % (prefix, x), list)
+
+def dist(dir, files):
+	defenv.DistributeContribs('Graphics/%s' % dir, join(dir, files))
+
+dist('Checks', checks)
+dist('Header', headers)
+dist('Icons', icons)
+dist('Wizard', wizards)

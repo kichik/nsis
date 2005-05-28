@@ -1,0 +1,13 @@
+target = 'VPatch'
+
+files = Split("""
+	vpatchdll.c
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs)

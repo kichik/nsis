@@ -1,0 +1,202 @@
+print "Using GNU tools configuration"
+
+Import('defenv')
+
+### workarounds
+
+# patch #1184316 for SCons
+# http://sourceforge.net/tracker/?func=detail&aid=1184316&group_id=30337&atid=398973
+defenv['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE -o $TARGET'
+
+### cross compiling
+
+def cross_env(env):
+	if env['PLATFORM'] != 'win32':
+		env.Tool('crossmingw', toolpath = ['../Tools'])
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: '-Wl,-e,_' + x + '@16'
+defenv['MAP_FLAG'] = '-Wl,-Map,${TARGET.base}.map'
+defenv['EXCEPTION_FLAG'] = ''
+defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
+defenv['C_FLAG'] = '-x c'
+defenv['CPP_FLAG'] = '-x c++'
+defenv['ALIGN_FLAG'] = '-Wl,--file-alignment,512'
+defenv['CPP_REQUIRES_STDLIB'] = 1
+
+### debug
+
+if defenv['DEBUG']:
+	defenv.Append(CCFLAGS = '-g')
+
+### stub environment
+
+stub_env = defenv.Copy()
+cross_env(stub_env)
+
+stub_env.Append(CCFLAGS = '-Os')                  # optimize for size
+stub_env.Append(CCFLAGS = '-Wall')                # all warnings
+stub_env.Append(CCFLAGS = '-x c')                 # force compile as c
+
+stub_env.Append(LINKFLAGS = '-s')                 # strip
+stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
+stub_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+stub_env.Append(LINKFLAGS = '-Wl,-e,_WinMain@16') # entry point
+
+### makensis environment
+
+makensis_env = defenv.Copy()
+
+makensis_env.Append(CCFLAGS = '-O2')              # optimize
+makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
+
+makensis_env.Append(LINKFLAGS = '-s')             # strip
+
+### plugin environment
+
+plugin_env = defenv.Copy()
+cross_env(plugin_env)
+
+plugin_env.Append(CCFLAGS = '-Os')                # optimize for size
+plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
+
+plugin_env.Append(LINKFLAGS = '-s')               # strip
+plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
+
+### util environment
+
+util_env = defenv.Copy()
+cross_env(util_env)
+
+util_env.Append(CCFLAGS = '-O2')                  # optimize
+util_env.Append(CCFLAGS = '-Wall')                # all warnings
+
+util_env.Append(LINKFLAGS = '-s')                 # strip
+util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+
+
+### weird GCC requirements
+
+#
+# GCC requires some functions from the CRT to be present, if certain
+# operations are done. For example, if a small string is assigned to
+# a larger buffer, GCC 3.4+ uses memset to fill the remaining of the
+# buffer with zeros.
+#
+
+funcs_file = None
+funcs_obj = None
+
+def check_requirement(ctx, func, trigger):
+	ctx.Message('Checking for %s requirement... ' % func)
+
+	flags = ctx.env['LINKFLAGS']
+
+	ctx.env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')
+	ctx.env.Append(LINKFLAGS = '-Wl,-e,___main')
+
+	test = """
+		int __main() {
+			%s
+			return 0;
+		}
+	""" % trigger
+
+	ret = not ctx.TryLink(test, '.c')
+	ctx.Result(ret)
+
+	ctx.env['LINKFLAGS'] = flags
+
+	return ret
+
+def replace_emitter(env, builder_name):
+	builder = env['BUILDERS'][builder_name]
+
+	def new_emitter(target, source, env):
+		res = builder.emitter(target, source, env)
+
+		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
+			return res
+
+		global funcs_file, funcs_obj
+
+		if not funcs_obj:
+			funcs_obj = env.SharedObject(funcs_file)
+		res[1].append(funcs_obj)
+
+		return res
+
+	env['BUILDERS'][builder_name] = Builder(
+		action = builder.action,
+		prefix = builder.prefix,
+		suffix = builder.suffix,
+		src_suffix = builder.src_suffix,
+		target_scanner = builder.target_scanner,
+		source_scanner = builder.source_scanner,
+		target_factory = builder.target_factory,
+		source_factory = builder.source_factory,
+		emitter = new_emitter, # only thing being replaced
+		src_builder = builder.src_builder,
+		single_source = builder.single_source
+	)
+
+def add_func(func):
+	global funcs_file
+
+	if not funcs_file:
+		import os
+		funcs_file = File('#.sconf_temp/funcs.c')
+		try:
+			os.unlink(funcs_file.abspath)
+		except OSError:
+			pass
+
+	f = file(funcs_file.abspath, 'a')
+	f.write(func)
+	f.write('\n')
+	f.close()
+
+conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+
+if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
+	add_func("""
+	  #include <stdlib.h> // for size_t
+		void *memcpy(void *out, const void *in, size_t len)
+		{
+			char *c_out=(char*)out;
+			char *c_in=(char *)in;
+			while (len-- > 0)
+			{
+				*c_out++=*c_in++;
+			}
+			return out;
+		}
+	""")
+
+if conf.CheckRequirement('memset', 'char c[128] = "test";'):
+	add_func("""
+	  #include <stdlib.h> // for size_t
+		void *memset(void *mem, int c, size_t len)
+		{
+			char *p=(char*)mem;
+			while (len-- > 0)
+			{
+				*p++=c;
+			}
+			return mem;
+		}
+	""")
+
+if funcs_file:
+	replace_emitter(stub_env, 'Program')
+	replace_emitter(plugin_env, 'SharedLibrary')
+	replace_emitter(util_env, 'Program')
+
+conf.Finish()
+
+### return
+
+Return('stub_env makensis_env plugin_env util_env')
