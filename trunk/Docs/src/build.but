@@ -61,7 +61,7 @@ If you don't have a cross compiler, you can use:
 
 \c scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all
 
-This should build only build makensis. Once you have makensis, you can drop it in a downloaded precompiled package such as the nightly build. Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h} and \c{Source\\exehead\\fileform.h} must be identical.
+This should only build makensis. Once you have makensis, you can drop it in a downloaded precompiled package such as the nightly build. Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h} and \c{Source\\exehead\\fileform.h} must be identical.
 
 \H{build_nightly}Nightly Builds
 
