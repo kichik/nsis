@@ -85,7 +85,7 @@ Help(opts.GenerateHelpText(defenv))
 #######  Functions                                                 ###
 ######################################################################
 
-defenv['DISTDIR'] = '#nsis-%s' % VERSION
+defenv['DISTDIR'] = Dir('#nsis-%s' % VERSION)
 
 def Distribute(dir, files):
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
@@ -167,7 +167,8 @@ defenv.Alias('install-includes', '$PREFIX/Include')
 ######################################################################
 
 dist_zip = 'nsis-%s.zip' % VERSION
-defenv.Zip(dist_zip, '$DISTDIR')
+zip_target = defenv.Zip(dist_zip, '$DISTDIR')
+defenv.AddPostAction(zip_target, Delete('$DISTDIR'))
 defenv.Alias('dist', dist_zip)
 
 ######################################################################
