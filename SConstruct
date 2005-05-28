@@ -8,7 +8,7 @@
 #
 ##
 
-VERSION = '2.06'
+VERSION = open('VERSION').read()
 
 stubs = [
 	'bzip2',
