@@ -1,7 +1,7 @@
 config_but = 'config.but'
 
 chapters = 5
-appendices = 7
+appendices = 8
 
 htmls = Split('IndexPage.html Contents.html') \
 	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
@@ -48,6 +48,7 @@ buts = Split("""
 	usefulfunc.but
 	usefulinfos.but
 	history.but
+	build.but
 	credits.but
 	license.but
 """)
