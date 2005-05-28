@@ -497,37 +497,37 @@ UDM     Up-down control
 !define DBT_VXDINITCOMPLETE             0x0023
 
 #Default push button control#
-!define DM_BITSPERPEL       0x00040000L
-!define DM_COLLATE          0x00008000L
-!define DM_COLOR            0x00000800L
-!define DM_COPIES           0x00000100L
-!define DM_DEFAULTSOURCE    0x00000200L
-!define DM_DISPLAYFLAGS     0x00200000L
-!define DM_DISPLAYFREQUENCY 0x00400000L
-!define DM_DITHERTYPE       0x04000000L
-!define DM_DUPLEX           0x00001000L
-!define DM_FORMNAME         0x00010000L
+!define DM_BITSPERPEL       0x00040000
+!define DM_COLLATE          0x00008000
+!define DM_COLOR            0x00000800
+!define DM_COPIES           0x00000100
+!define DM_DEFAULTSOURCE    0x00000200
+!define DM_DISPLAYFLAGS     0x00200000
+!define DM_DISPLAYFREQUENCY 0x00400000
+!define DM_DITHERTYPE       0x04000000
+!define DM_DUPLEX           0x00001000
+!define DM_FORMNAME         0x00010000
 !define DM_GRAYSCALE        0x00000001  # This flag is no longer valid
-!define DM_ICMINTENT        0x01000000L
-!define DM_ICMMETHOD        0x00800000L
+!define DM_ICMINTENT        0x01000000
+!define DM_ICMMETHOD        0x00800000
 !define DM_INTERLACED       0x00000002  # This flag is no longer valid
-!define DM_LOGPIXELS        0x00020000L
-!define DM_MEDIATYPE        0x02000000L
-!define DM_NUP              0x00000040L
-!define DM_ORIENTATION      0x00000001L
-!define DM_PANNINGHEIGHT    0x10000000L
-!define DM_PANNINGWIDTH     0x08000000L
-!define DM_PAPERLENGTH      0x00000004L
-!define DM_PAPERSIZE        0x00000002L
-!define DM_PAPERWIDTH       0x00000008L
-!define DM_PELSHEIGHT       0x00100000L
-!define DM_PELSWIDTH        0x00080000L
-!define DM_POSITION         0x00000020L
-!define DM_PRINTQUALITY     0x00000400L
-!define DM_SCALE            0x00000010L
+!define DM_LOGPIXELS        0x00020000
+!define DM_MEDIATYPE        0x02000000
+!define DM_NUP              0x00000040
+!define DM_ORIENTATION      0x00000001
+!define DM_PANNINGHEIGHT    0x10000000
+!define DM_PANNINGWIDTH     0x08000000
+!define DM_PAPERLENGTH      0x00000004
+!define DM_PAPERSIZE        0x00000002
+!define DM_PAPERWIDTH       0x00000008
+!define DM_PELSHEIGHT       0x00100000
+!define DM_PELSWIDTH        0x00080000
+!define DM_POSITION         0x00000020
+!define DM_PRINTQUALITY     0x00000400
+!define DM_SCALE            0x00000010
 !define DM_SPECVERSION      0x0320       # 0x0400 0x0401
-!define DM_TTOPTION         0x00004000L
-!define DM_YRESOLUTION      0x00002000L
+!define DM_TTOPTION         0x00004000
+!define DM_YRESOLUTION      0x00002000
 
 #Header control#
 !define HDM_FIRST           0x1200
