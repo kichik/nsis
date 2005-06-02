@@ -49,7 +49,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 
 \b Note that the output file name is $OUTDIR\\filename_portion_of_file.
 
-\b If the /oname=X switch is used, the output name becomes $OUTDIR\\X. When using the /oname= switch, only one file can be specified, and the file name can contain variables (or a fully qualified path, e.g. $SYSDIR\\whatever.dll).
+\b If the /oname=X switch is used, the output name becomes $OUTDIR\\X. When using the /oname= switch, only one file can be specified, and the file name can contain variables (or a fully qualified path, e.g. $SYSDIR\\whatever.dll). If the output name contains spaces, quote the entire parameter, including /oname, as shown in the examples below.
 
 \b Wildcards are supported.
 
@@ -69,6 +69,7 @@ Adds file(s) to be extracted to the current output path ($OUTDIR).
 \c File /r *.dat
 \c File /r data
 \c File /oname=$TEMP\temp.dat somefile.ext
+\c File "/oname=$TEMP\name with spaces.dat" somefile.ext
 \c File /nonfatal "a file that might not exist"
 \c File /r /x CVS myproject\*.*
 \c File /r /x *.res /x *.obj /x *.pch source\*.*
