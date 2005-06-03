@@ -4048,6 +4048,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           a++;
           if (!*on||line.getnumtokens()!=a+1||strstr(on,"*") || strstr(on,"?")) PRINTHELP()
 
+          if (on[0]=='"')
+          {
+            ERROR_MSG("%sFile: output name must not begin with a quote, use \"/oname=name with spaces\".\n",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
+            PRINTHELP();
+          }
+
           int tf=0;
 #ifdef _WIN32
           int v=do_add_file(line.gettoken_str(a), attrib, 0, &tf, on);
