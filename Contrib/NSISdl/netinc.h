@@ -24,7 +24,7 @@
 #define strcat lstrcat
 #define strlen lstrlen
 #define malloc(x) (new char[x])
-#define free(x) {delete x;}
+#define free(x) {delete [] x;}
 typedef int socklen_t;
 
 #ifndef INADDR_NONE
