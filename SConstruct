@@ -85,7 +85,7 @@ Help(opts.GenerateHelpText(defenv))
 #######  Functions                                                 ###
 ######################################################################
 
-defenv['DISTDIR'] = Dir('#nsis-$VERSION')
+defenv['DISTDIR'] = Dir('#.dist')
 
 def Distribute(dir, files):
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
