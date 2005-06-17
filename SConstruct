@@ -37,7 +37,7 @@ utils = [
 	'Library/LibraryLocal',
 	'MakeLangId',
 	'Makensisw',
-	# wxWidgets 'NSIS Menu',
+	'NSIS Menu',
 	'NSIS Update',
 	'zip2exe'
 ]
