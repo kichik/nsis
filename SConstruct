@@ -8,8 +8,6 @@
 #
 ##
 
-VERSION = open('VERSION').read()
-
 stubs = [
 	'bzip2',
 	'lzma',
@@ -55,8 +53,6 @@ defenv = Environment()
 defenv.SConsignFile()
 Export('defenv')
 
-defenv.Append(NSIS_VERSION = VERSION)
-
 ######################################################################
 #######  Options                                                   ###
 ######################################################################
@@ -66,7 +62,11 @@ hhc = 'no'
 if defenv.WhereIs('hhc', os.environ['PATH']):
 	hhc = 'yes'
 
+from time import strftime, gmtime
+cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
+
 opts = Options()
+opts.Add(('VERSION', 'Version of NSIS', cvs_version))
 opts.Add(PathOption('PREFIX', 'Installation prefix', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
@@ -85,7 +85,7 @@ Help(opts.GenerateHelpText(defenv))
 #######  Functions                                                 ###
 ######################################################################
 
-defenv['DISTDIR'] = Dir('#nsis-%s' % VERSION)
+defenv['DISTDIR'] = Dir('#nsis-$VERSION')
 
 def Distribute(dir, files):
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
@@ -166,7 +166,7 @@ defenv.Alias('install-includes', '$PREFIX/Include')
 #######  Distribution                                              ###
 ######################################################################
 
-dist_zip = 'nsis-%s.zip' % VERSION
+dist_zip = 'nsis-${VERSION}.zip'
 zip_target = defenv.Zip(dist_zip, '$DISTDIR')
 defenv.AddPostAction(zip_target, Delete('$DISTDIR'))
 defenv.Alias('dist', dist_zip)
