@@ -1,0 +1,69 @@
+target = "NSIS"
+
+files = Split("""
+	nsismenu.cpp
+""")
+
+resources = Split("""
+	nsisicon.ico
+""")
+
+rc = 'nsismenu.rc'
+
+libs = Split("""
+	user32
+	gdi32
+	advapi32
+	ole32
+	comctl32
+	comdlg32
+	uuid
+	rpcrt4
+	shell32
+	wxbase26
+	wxbase26_net
+	wxbase26_xml
+	wxexpat
+	wxjpeg
+	wxmsw26_adv
+	wxmsw26_core
+	wxmsw26_html
+	wxmsw26_media
+	wxmsw26_xrc
+	wxpng
+	wxregex
+	wxtiff
+	wxzlib
+""")
+
+Import('BuildUtil env')
+
+import os
+
+#wxlib = [os.environ['WXWIN'] + os.sep + 'lib' + os.sep + 'vc_lib']
+#wxinc = [os.environ['WXWIN'] + os.sep + 'include', os.environ['WXWIN'] + os.sep + 'lib' + os.sep + 'vc_lib' + os.sep + 'msw']
+
+#BuildUtil(target, files, libs, libpath = wxlib, cpppath = wxinc, res = rc, resources = resources, install = '', flags = ['/MD'])
+
+# install pre-built NSIS.exe
+ins = env.Distribute('', '#NSIS.exe')
+
+env.Alias('install-utils', ins)
+
+# install menu files
+env.Distribute('Menu', '#Menu/compiler.html')
+env.Distribute('Menu', '#Menu/docs.html')
+env.Distribute('Menu', '#Menu/index.html')
+env.Distribute('Menu', '#Menu/intro.html')
+env.Distribute('Menu', '#Menu/notinstalled.html')
+env.Distribute('Menu', '#Menu/update.html')
+env.Distribute('Menu', '#Menu/websites.html')
+
+env.Distribute('Menu/images', '#Menu/images/clear.gif')
+env.Distribute('Menu/images', '#Menu/images/header.gif')
+env.Distribute('Menu/images', '#Menu/images/line.gif')
+env.Distribute('Menu/images', '#Menu/images/menu.gif')
+env.Distribute('Menu/images', '#Menu/images/menud.gif')
+env.Distribute('Menu/images', '#Menu/images/site.gif')
+
+env.Alias('install-utils', '$PREFIX/Menu')
