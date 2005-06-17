@@ -168,7 +168,8 @@ defenv.Alias('install-includes', '$PREFIX/Include')
 
 dist_zip = 'nsis-${VERSION}.zip'
 zip_target = defenv.Zip(dist_zip, '$DISTDIR')
-defenv.AddPostAction(zip_target, Delete('$DISTDIR'))
+delete_action = defenv.AddPostAction(zip_target, Delete('$DISTDIR'))
+AlwaysBuild(delete_action)
 defenv.Alias('dist', dist_zip)
 
 ######################################################################
