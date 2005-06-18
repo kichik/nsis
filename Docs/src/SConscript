@@ -96,5 +96,5 @@ else:
 
 	html = env.Halibut(htmls, [config_but] + buts)
 	env.Depends(html, halibut)
-	env.DistributeDocs('', 'style.css')
+	env.DistributeDocs('', build_dir + '/style.css')
 	env.DistributeDocs('', htmls)
