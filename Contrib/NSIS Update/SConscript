@@ -1,4 +1,0 @@
-Import('env')
-
-#cmd = Command('#bin/NSISUpdate.exe', 'NSISUpdate.nsi', 'makensis $SOURCE')
-#Depends(cmd, ['makensis', 'stubs', 'System', 'NSISdl', 'Dialer', 'nsExec', 'InstallOptions'])
