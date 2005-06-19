@@ -28,6 +28,7 @@ examples = Split("""
 """)
 
 docs = Split("""
+	Changelog.txt
 	Readme.html
 """)
 
