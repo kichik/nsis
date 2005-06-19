@@ -16,6 +16,7 @@ libs = Split("""
 """)
 
 docs = Split("""
+	License.txt
 	ReadMe.txt
 """)
 
