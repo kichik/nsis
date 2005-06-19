@@ -38,7 +38,6 @@ utils = [
 	'MakeLangId',
 	'Makensisw',
 	'NSIS Menu',
-	'NSIS Update',
 	'zip2exe'
 ]
 
