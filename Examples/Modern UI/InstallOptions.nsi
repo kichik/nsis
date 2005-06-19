@@ -23,7 +23,7 @@
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Contrib\Modern UI\License.txt"
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
   Page custom CustomPageA
   !insertmacro MUI_PAGE_COMPONENTS
   Page custom CustomPageB

@@ -7,7 +7,7 @@ Name "System Plugin Example"
 OutFile "System.exe"
 SetPluginUnload  alwaysoff
 
-!include "${NSISDIR}\Contrib\System\sysfunc.nsh"
+!include "SysFunc.nsh"
 
 Section "ThisNameIsIgnoredSoWhyBother?"
      SetOutPath $TEMP
@@ -23,7 +23,7 @@ Section "ThisNameIsIgnoredSoWhyBother?"
      ; The same example but using icon from resource.dll.
      ; You could use this dll for storing your resources, just replace FAR icon
      ; with something you really need.   
-     File "${NSISDIR}\Contrib\System\Resource.dll"
+     File "Resource.dll"
      System::Call '${sysMessageBeep} (${MB_ICONHAND})'  ; custom beep
      !insertmacro smMessageBox "`$TEMP\resource.dll`" "Message box with custom icon from resource.dll!" "System Example 1b" ${MB_OKCANCEL} "i 103"
      Delete $TEMP\resource.dll
@@ -114,7 +114,7 @@ enumex: ; End of drives or user cancel
      ; ----- Sample 7 ----- systemSplash -> Callbacks demonstration -----
 
      ; Logo
-     File /oname=spltmp.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
+     File /oname=spltmp.bmp "${NSISDIR}\Contrib\Graphics\Header\orange-nsis.bmp"
 ;     File /oname=spltmp.wav "d:\Windows\Media\tada.wav"
 
      ; I. systemSplash variant
