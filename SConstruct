@@ -290,7 +290,7 @@ for plugin in plugins:
 
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
-              install = None):
+              install = None, examples = None, docs = None):
 	env = util_env.Copy()
 
 	if defines:
@@ -318,6 +318,11 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	if install is not None:
 		ins = env.Distribute(install, util)
 		defenv.Alias('install-utils', ins)
+
+	if examples:
+		env.DistributeExamples(target, examples)
+	if docs:
+		env.DistributeDocs(target, docs)
 
 for util in utils:
 	if util in defenv['SKIPUTILS']:
