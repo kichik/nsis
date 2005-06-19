@@ -7,10 +7,10 @@
 !ifndef SysFunc.NSH.Included
 !define SysFunc.NSH.Included
 
-!include "${NSISDIR}\Contrib\System\System.nsh"
+!include "${NSISDIR}\Examples\System\System.nsh"
 
 !verbose 3      ; For WinMessages especially
-  !include "${NSISDIR}\Include\WinMessages.nsh"
+  !include "WinMessages.nsh"
 !verbose 4
 
 ; ================= GetInstallerExeName implementation =================

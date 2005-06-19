@@ -33,7 +33,7 @@ LoadLanguageFile "${NSISDIR}\Contrib\Language files\Slovak.nlf"
 ; License data
 ; Not exactly translated, but it shows what's needed
 LicenseLangString myLicenseData ${LANG_ENGLISH} "bigtest.nsi"
-LicenseLangString myLicenseData ${LANG_DUTCH} "cvsdata.nsi"
+LicenseLangString myLicenseData ${LANG_DUTCH} "waplugin.nsi"
 LicenseLangString myLicenseData ${LANG_FRENCH} "example1.nsi"
 LicenseLangString myLicenseData ${LANG_GERMAN} "example2.nsi"
 LicenseLangString myLicenseData ${LANG_KOREAN} "gfx.nsi"
