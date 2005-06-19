@@ -33,7 +33,7 @@ plugins = [
 ]
 
 utils = [
-	# special makensis 'Library',
+	'Library/RegTool',
 	'Library/LibraryLocal',
 	'MakeLangId',
 	'Makensisw',
