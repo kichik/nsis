@@ -179,8 +179,8 @@ defenv.Alias('dist-zip', zip_target)
 AlwaysBuild(defenv.AddPostAction(zip_target, Delete('$ZIPDISTDIR')))
 
 defenv['INSTVER'] = '/DVERSION=$VERSION'
-if defenv['VER_MAJOR'] and defenv['VER_MINOR'] \
-    and defenv['VER_REVISION'] and defenv['VER_BUILD']:
+if defenv.has_key('VER_MAJOR') and defenv.has_key('VER_MINOR') \
+    and defenv.has_key('VER_REVISION') and defenv.has_key('VER_BUILD'):
 	defenv['INSTVER'] += ' /DVER_MAJOR=$VER_MAJOR'
 	defenv['INSTVER'] += ' /DVER_MINOR=$VER_MINOR'
 	defenv['INSTVER'] += ' /DVER_REVISION=$VER_REVISION'
