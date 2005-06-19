@@ -66,6 +66,10 @@ cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
 opts = Options()
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
+opts.Add(('VER_MAJOR', 'Major version of NSIS (recommended for dist-installer)', None))
+opts.Add(('VER_MINOR', 'Minor version of NSIS (recommended for dist-installer)', None))
+opts.Add(('VER_REVISION', 'Revision of NSIS (recommended for dist-installer)', None))
+opts.Add(('VER_BUILD', 'Build version of NSIS (recommended for dist-installer)', None))
 opts.Add(PathOption('PREFIX', 'Installation prefix', None))
 opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
 opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
@@ -84,17 +88,20 @@ Help(opts.GenerateHelpText(defenv))
 #######  Functions                                                 ###
 ######################################################################
 
-defenv['DISTDIR'] = defenv.Dir('#nsis-$VERSION')
+defenv['ZIPDISTDIR'] = defenv.Dir('#nsis-$VERSION')
+defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
 
 def Distribute(dir, files):
-	defenv.Install('$DISTDIR/%s' % dir, files)
+	defenv.Install('$ZIPDISTDIR/%s' % dir, files)
+	defenv.Install('$INSTDISTDIR/%s' % dir, files)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.Install('$PREFIX/%s' % dir, files)
 		return ins
 	return []
 
 def DistributeAs(path, file):
-	defenv.InstallAs('$DISTDIR/%s' % path, file)
+	defenv.InstallAs('$ZIPDISTDIR/%s' % path, file)
+	defenv.InstallAs('$INSTDISTDIR/%s' % path, file)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.InstallAs('$PREFIX/%s' % path, file)
 		return ins
@@ -166,10 +173,29 @@ defenv.Alias('install-includes', '$PREFIX/Include')
 ######################################################################
 
 dist_zip = 'nsis-${VERSION}.zip'
-zip_target = defenv.Zip(dist_zip, '$DISTDIR')
-delete_action = defenv.AddPostAction(zip_target, Delete('$DISTDIR'))
-AlwaysBuild(delete_action)
-defenv.Alias('dist', dist_zip)
+zip_target = defenv.Zip(dist_zip, '$ZIPDISTDIR')
+defenv.Alias('dist-zip', zip_target)
+
+AlwaysBuild(defenv.AddPostAction(zip_target, Delete('$ZIPDISTDIR')))
+
+defenv['INSTVER'] = '/DVERSION=$VERSION'
+if defenv['VER_MAJOR'] and defenv['VER_MINOR'] \
+    and defenv['VER_REVISION'] and defenv['VER_BUILD']:
+	defenv['INSTVER'] += ' /DVER_MAJOR=$VER_MAJOR'
+	defenv['INSTVER'] += ' /DVER_MINOR=$VER_MINOR'
+	defenv['INSTVER'] += ' /DVER_REVISION=$VER_REVISION'
+	defenv['INSTVER'] += ' /DVER_BUILD=$VER_BUILD'
+
+installer_target = defenv.Command('nsis-${VERSION}.exe',
+                                  '$INSTDISTDIR' + os.sep + 'Examples' + os.sep + 'makensis.nsi',
+																	'$INSTDISTDIR' + os.sep + 'makensis.exe ' +
+																	'/DOUTFILE=$TARGET.abspath $INSTVER $SOURCE')
+defenv.Depends(installer_target, '$INSTDISTDIR')
+defenv.Alias('dist-installer', installer_target)
+
+AlwaysBuild(defenv.AddPostAction(installer_target, Delete('$INSTDISTDIR')))
+
+defenv.Alias('dist', ['dist-zip', 'dist-installer'])
 
 ######################################################################
 #######  Distribute Basics                                         ###
