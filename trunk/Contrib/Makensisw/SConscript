@@ -6,6 +6,11 @@ files = Split("""
 	toolbar.cpp
 	utils.cpp
 	version.cpp
+	update.cpp
+	jnetlib/asyncdns.cpp
+	jnetlib/connection.cpp
+	jnetlib/httpget.cpp
+	jnetlib/util.cpp
 """)
 
 res = Split("""
@@ -31,6 +36,7 @@ libs = Split("""
 	shell32
 	comdlg32
 	comctl32
+	wsock32
 """)
 
 Import('BuildUtil')

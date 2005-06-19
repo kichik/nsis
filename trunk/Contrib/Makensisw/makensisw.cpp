@@ -26,6 +26,7 @@
 #include "resource.h"
 #include "noclib.h"
 #include "toolbar.h"
+#include "update.h"
 
 NSCRIPTDATA g_sdata;
 NRESIZEDATA g_resize;
@@ -69,6 +70,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     }
   }
   if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
+  FinalizeUpdate();
   ExitProcess(msg.wParam);
   return msg.wParam;
 }
@@ -464,17 +466,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case IDM_NSISUPDATE:
         {
-          int rv;
-          rv = MessageBox(g_sdata.hwnd,NSISUPDATEPROMPT,"Question",MB_YESNO|MB_ICONQUESTION);
-          if(rv == IDYES) {
-            char pathf[MAX_PATH],*path;
-            GetModuleFileName(NULL,pathf,sizeof(pathf));
-            path=my_strrchr(pathf,'\\');
-            if(path!=NULL) *path=0;
-            lstrcat(pathf,NSIS_UPDATE);
-            ShellExecute(g_sdata.hwnd,"open",pathf,NULL,NULL,SW_SHOWNORMAL);
-            PostMessage(g_sdata.hwnd,WM_COMMAND, IDM_EXIT, 0);
-          }
+          Update();
           return TRUE;
         }
         case IDM_SELECTALL:
