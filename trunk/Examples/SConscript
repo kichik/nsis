@@ -6,6 +6,7 @@ examples = Split("""
 	languages.nsi
 	LogicLib.nsi
 	makensis.nsi
+	makensis.ini
 	one-section.nsi
 	primes.nsi
 	rtest.nsi
