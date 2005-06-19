@@ -39,6 +39,11 @@ libs = Split("""
 	wsock32
 """)
 
+docs = Split("""
+	License.txt
+	Readme.txt
+""")
+
 Import('BuildUtil')
 
 BuildUtil(
@@ -49,5 +54,6 @@ BuildUtil(
 	resources = resources,
 	entry = 'WinMain',
 	install = '',
-	defines = ['WIN32_MEAN_AND_LEAN', 'RELEASE=2.0']
+	defines = ['WIN32_MEAN_AND_LEAN', 'RELEASE=2.0'],
+	docs = docs
 )
