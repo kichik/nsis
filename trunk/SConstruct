@@ -87,17 +87,17 @@ Help(opts.GenerateHelpText(defenv))
 defenv['DISTDIR'] = defenv.Dir('#nsis-$VERSION')
 
 def Distribute(dir, files):
+	defenv.Install('$DISTDIR/%s' % dir, files)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.Install('$PREFIX/%s' % dir, files)
 		return ins
-	defenv.Install('$DISTDIR/%s' % dir, files)
 	return []
 
 def DistributeAs(path, file):
+	defenv.InstallAs('$DISTDIR/%s' % path, file)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.InstallAs('$PREFIX/%s' % path, file)
 		return ins
-	defenv.InstallAs('$DISTDIR/%s' % path, file)
 	return []
 
 def DistributeExamples(dir, examples):
