@@ -172,10 +172,11 @@ AlwaysBuild(delete_action)
 defenv.Alias('dist', dist_zip)
 
 ######################################################################
-#######  License                                                   ###
+#######  Distribute Basics                                         ###
 ######################################################################
 
 defenv.Distribute('', 'license.txt')
+defenv.Distribute('', 'nsisconf.nsh')
 
 ######################################################################
 #######  Stubs                                                     ###
