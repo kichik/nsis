@@ -968,7 +968,7 @@ Var MUI_TEMP2
     !insertmacro MUI_UNSET MUI_FINISHPAGE_LINK_LOCATION
     !insertmacro MUI_UNSET MUI_FINISHPAGE_LINK_COLOR
   !insertmacro MUI_UNSET MUI_FINISHPAGE_NOREBOOTSUPPORT
-  
+
   !insertmacro MUI_UNSET MUI_FINISHPAGE_ABORTWARNINGCHECK
 
   !verbose pop
@@ -1162,6 +1162,9 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
     LockWindow off
@@ -1197,6 +1200,9 @@ Var MUI_TEMP2
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1610,6 +1616,9 @@ Var MUI_TEMP2
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
     ShowWindow $MUI_TEMP1 ${SW_HIDE}
 
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
     LockWindow off
@@ -1698,6 +1707,9 @@ Var MUI_TEMP2
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    ShowWindow $MUI_TEMP1 ${SW_NORMAL}
+
+	GetDlgItem $MUI_TEMP1 $HWNDPARENT 1039
     ShowWindow $MUI_TEMP1 ${SW_NORMAL}
 
     GetDlgItem $MUI_TEMP1 $HWNDPARENT 1045
@@ -1988,15 +2000,15 @@ Var MUI_TEMP2
 !macro MUI_LANGDLL_SAVELANGUAGE
 
   !ifndef MUI_PAGE_UNINSTALLER
-    
+
     IfAbort mui.langdllsavelanguage_abort
-    
+
     !ifdef MUI_LANGDLL_REGISTRY_ROOT & MUI_LANGDLL_REGISTRY_KEY & MUI_LANGDLL_REGISTRY_VALUENAME
       WriteRegStr "${MUI_LANGDLL_REGISTRY_ROOT}" "${MUI_LANGDLL_REGISTRY_KEY}" "${MUI_LANGDLL_REGISTRY_VALUENAME}" $LANGUAGE
     !endif
-    
+
     mui.langdllsavelanguage_abort:
-    
+
   !endif
 
 !macroend
