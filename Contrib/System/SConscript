@@ -21,6 +21,7 @@ libs = Split("""
 """)
 
 examples = Split("""
+	Resource.dll
 	System.nsi
 	System.nsh
 	SysFunc.nsh
