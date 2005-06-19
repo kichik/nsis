@@ -17,9 +17,9 @@ ShowInstDetails show
 
 ReserveFile "${NSISDIR}\Plugins\InstallOptions.dll"
 ReserveFile "testimgs.ini"
-ReserveFile "${NSISDIR}\Contrib\Makensisw\toolbar.bmp"
-ReserveFile "${NSISDIR}\Contrib\Makensisw\toolbar24.bmp"
-ReserveFile "${NSISDIR}\Contrib\Makensisw\shell.ico"
+ReserveFile "${NSISDIR}\Contrib\Graphics\Checks\colorful.bmp"
+ReserveFile "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
+ReserveFile "${NSISDIR}\Contrib\Graphics\Icons\pixel-install.ico"
 
 ;Order of pages
 Page custom SetCustom "" ": Testing InstallOptions" ;Custom page. InstallOptions gets called in SetCustom.
@@ -35,9 +35,9 @@ Function .onInit
   
   InitPluginsDir
   File /oname=$PLUGINSDIR\testimgs.ini "testimgs.ini"
-  File /oname=$PLUGINSDIR\image.bmp "${NSISDIR}\Contrib\Makensisw\toolbar.bmp"
-  File /oname=$PLUGINSDIR\image2.bmp "${NSISDIR}\Contrib\Makensisw\toolbar24.bmp"
-  File /oname=$PLUGINSDIR\icon.ico "${NSISDIR}\Contrib\Makensisw\shell.ico"
+  File /oname=$PLUGINSDIR\image.bmp "${NSISDIR}\Contrib\Graphics\Checks\colorful.bmp"
+  File /oname=$PLUGINSDIR\image2.bmp "${NSISDIR}\Contrib\Graphics\Checks\modern.bmp"
+  File /oname=$PLUGINSDIR\icon.ico "${NSISDIR}\Contrib\Graphics\Icons\pixel-install.ico"
 
   ;Write image paths to the INI file
 

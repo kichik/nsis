@@ -19,7 +19,7 @@ Function .onInit
                         ; '0' if everything closed normal, and '-1' if some error occured.
 
         MessageBox MB_OK "Transparency"
-        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Makensisw\logo.bmp"
+        File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"
         advsplash::show 2000 0 0 0x1856B1 $PLUGINSDIR\splash
         Pop $0 
 
