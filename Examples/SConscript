@@ -1,6 +1,5 @@
 examples = Split("""
 	bigtest.nsi
-	cvsdata.nsi
 	example1.nsi
 	example2.nsi
 	gfx.nsi
