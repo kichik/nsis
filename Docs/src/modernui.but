@@ -4,4 +4,4 @@ NSIS 2 makes it is possible to create installers with a custom user interface. T
 This new interface also features new pages (Welcome, Finish, Start Menu) and a description area on the components page. The interface and the graphics can be customized using the provided settings.
 Using the Modern UI macros and language files, writing scripts with a modern interface is easy.
 
-For more information and documentation see the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme}.
+For more information and documentation see the \L{../Docs/Modern UI/Readme.html}{Modern UI Readme}.
