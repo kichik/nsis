@@ -29,6 +29,18 @@ To install the built files, type:
 
 \c scons PREFIX="C:\Program Files\NSIS" install
 
+To create an installer (only on Windows), type:
+
+\c scons dist-installer
+
+To create a distribution zip file, type:
+
+\c scons dist-zip
+
+To create both, type:
+
+\c scons dist
+
 To get a complete list of options that the build system has to offer, type:
 
 \c scons -h
