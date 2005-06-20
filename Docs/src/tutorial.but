@@ -173,7 +173,7 @@ It it also possible to compile Windows installer on Linux, BSD or Mac OS X serve
 
 A popular user interface for NSIS is the Modern User Interface. It has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
 
-For more information, check the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
+For more information, check the \L{../Docs/Modern UI/Readme.html}{Modern UI Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
 
 \H{tutplugin} Plug-ins
 
@@ -191,9 +191,9 @@ Every plug-in's function has its own requirements when it comes to parameters, s
 
 The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addplugindir} to tell NSIS to search in other directories too.
 
-The NSIS distribution already included many plug-ins. \L{../Contrib/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Contrib/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Contrib/}{Contrib folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/archive/}{NSIS Archive}.
+The NSIS distribution already included many plug-ins. \L{../Docs/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Docs/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Docs/}{Docs folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/archive/}{NSIS Archive}.
 
-You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see \L{../Contrib/ExDLL}{ExDLL} for a basic plug-in example. Source code of included plug-ins can also be found in the \L{../Contrib/}{Contrib folder}.
+You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see Contrib/ExDLL in the source code package for a basic plug-in example. Source code of included plug-ins can also be found in the source code package.
 
 \H{tutmore} More
 
