@@ -749,7 +749,7 @@
     ${${_Logic}Switch}:                                   ; Place the end of the switch
     !undef ${_Logic}Switch
     !include "${${_Switch}Tmp}"                           ; Include the jump table
-    !system `del /q "${${_Switch}Tmp}"`                   ; and clear it up
+    !system `del "${${_Switch}Tmp}"`                      ; and clear it up
     !ifdef ${_Switch}Else                                 ; Was there a default case?
       Goto ${${_Switch}Else}                              ; then go there if all else fails
       !undef ${_Switch}Else
