@@ -1,0 +1,190 @@
+# Header, don't edit
+NLF v6
+# Language ID
+4103
+# Font and size - dash (-) means default
+-
+-
+# Codepage - dash (-) means ANSI code page
+-
+# RTL - anything else than RTL means LTR
+-
+# Translation by Jo Hoeser
+# ^Branding
+Nullsoft Install System %s
+# ^SetupCaption
+$(^Name) Installatioun
+# ^UninstallCaption
+$(^Name) Desinstallatioun
+# ^LicenseSubCaption
+: Lizenzoofkommes
+# ^ComponentsSubCaption
+: Installatiouns-Optiounen
+# ^DirSubCaption
+: Zielverzeechnis
+# ^InstallingSubCaption
+: Installéieren
+# ^CompletedSubCaption
+: Ferdeg
+# ^UnComponentsSubCaption
+: Desinstallatiuons-Optiounen
+# ^UnDirSubCaption
+: Quellverzeechnis
+# ^ConfirmSubCaption
+: Bestätegung
+# ^UninstallingSubCaption
+: Läschen
+# ^UnCompletedSubCaption
+: Ferdeg
+# ^BackBtn
+< &Zréck
+# ^NextBtn
+&Weider >
+# ^AgreeBtn
+&Unhuelen
+# ^AcceptBtn
+Ech &huelen d'Lizenzoofkommes un.
+# ^DontAcceptBtn
+Ech &lehnen d'Lizenzoofkommes oof.
+# ^InstallBtn
+&Installéieren
+# ^UninstallBtn
+&Desinstalléieren
+# ^CancelBtn
+Oofbriechen
+# ^CloseBtn
+&Zou maan
+# ^BrowseBtn
+&Duerchsichen...
+# ^ShowDetailsBtn
+&Details uwéisen
+# ^ClickNext
+Klick op wéider fir wéiderzefueren
+# ^ClickInstall
+Klick op Installéieren, fir d'Installatioun unzefänken.
+# ^ClickUninstall
+Klick op Desinstalléieren, fir d'Desinstallatioun unzefänken.
+# ^Name
+Numm
+# ^Completed
+Ferdeg
+# ^LicenseText
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, klick op Unhuelen.
+# ^LicenseTextCB
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
+# ^LicenseTextRB
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, wiel d'entsprichend Optioun. $_CLICK
+# ^UnLicenseText
+W.e.g. d'Lizenzoofkommes liesen, ierts de$(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, klick op Unhuelen.
+# ^UnLicenseTextCB
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
+# ^UnLicenseTextRB
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, wiel d'entsprichend Optioun. $_CLICK
+# ^Custom
+Benutzerdefiniert
+# ^ComponentsText
+Wield'Komponenten aus, déis de wells installéieren an wiel déijeneg oof, déis de net installéieren wells. $_CLICK
+# ^ComponentsSubText1
+Installatiouns-Typ bestëmmen:
+# ^ComponentsSubText2_NoInstTypes
+Wiel d'Komponenten aus, déis de installéieren wells:
+# ^ComponentsSubText2
+oder wiel zousätzlech Komponenten aus déis de installéieren wells:
+# ^UnComponentsText
+Wiel d'Komponenten aus déis de desinstalléieren wells an wiel déijeneg oof, déis de net desinstalléieren wells. $_CLICK
+# ^UnComponentsSubText1
+Deinstallatiouns-Typ bestëmmen:
+# ^UnComponentsSubText2_NoInstTypes
+Wiel d'Komponenten aus, déis de desinstalléieren wells:
+# ^UnComponentsSubText2
+oder wiel zusätzlech Komponenten aus, déis de desinstalléieren wells:
+# ^DirText
+$(^NameDA) gett an den Dossier installéiert deen fiergin gouf. Wanns de et an een aaneren Dossier installéieren wells, klick op Duechsichen an wiel een aaneren Dossier aus. $_CLICK
+# ^DirSubText
+Zielverzeechnes
+# ^DirBrowseText
+Wiel en Dossier aus wuers de $(^NameDA) installéieren wells:
+# ^UnDirText
+$(^NameDA) gett as dem Dossier desinstalléiert, deen ugin gouf. Wann $(^NameDA) an engem aaneren Dossier ass, klick op Duechsichen an wiel een aaneren Dossier aus. $_CLICK
+# ^UnDirSubText
+""
+# ^UnDirBrowseText
+Wiel den Dossier aus wou $(^NameDA) dran installéiert ass:
+# ^SpaceAvailable
+"Verfügbaren Späicher: "
+# ^SpaceRequired
+"Gebrauchten Späicher: "
+# ^UninstallingText
+$(^NameDA) gett aus dem ausgewielten Dossier desinstalléiert. $_CLICK
+# ^UninstallingSubText
+Desinstalléieren aus:
+# ^FileError
+Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op oofbriechen fir den Setup ze verloossen,\r\nop Widderhuelen fir den Setup nach eng Kéier duechzeféieren\r\n oder op Ignoréieren fir des Datei ze iwwersprengen an wéiderzefueren.
+# ^FileError_NoIgnore
+Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op Widderhuelen fir den Setup nach eng Kéier duechzeféieren,\r\noder op oofbriechen fir den Setup ze verloossen.
+# ^CantWrite
+"Fehler beim Schreiwen: "
+# ^CopyFailed
+Kopéieren fehlgeschloen
+# ^CopyTo
+"Kopéiere an "
+# ^Registering
+"Registréieren: "
+# ^Unregistering
+"Deregistréieren: "
+# ^SymbolNotFound
+"Symbol ass net do: "
+# ^CouldNotLoad
+"Fehler beim Lueden vun: "
+# ^CreateFolder
+"Maan Dossier: "
+# ^CreateShortcut
+"Maan Oofkierzung: "
+# ^CreatedUninstaller
+"Maan Desinstallatiouns-Programm: "
+# ^Delete
+"Läschen Datei: "
+# ^DeleteOnReboot
+"Läschen Datei no engem Neistart: "
+# ^ErrorCreatingShortcut
+"Fehler beim maan vun enger Oofkierzung: "
+# ^ErrorCreating
+"Fehler beim maan: "
+# ^ErrorDecompressing
+Fehler beim Dekompriméieren. Installations-Programm beschiedegt?
+# ^ErrorRegistering
+Fehler beim Registréieren vun der DLL
+# ^ExecShell
+"ExecShell: "
+# ^Exec
+"Starten: "
+# ^Extract
+"Dekompriméieren: "
+# ^ErrorWriting
+"Dekompriméierung: Fehler beim Schreiwen vun der Datei "
+# ^InvalidOpcode
+Installations-Programm Beschiedegt: net zoulässegen Befehlscode
+# ^NoOLE
+"Keen OLE fier: "
+# ^OutputFolder
+"Zieldossier: "
+# ^RemoveFolder
+"Läschen Dossier: "
+# ^RenameOnReboot
+"Gett no Neistart embenannt: "
+# ^Rename
+"Embenennen: "
+# ^Skipped
+"Iwwersprongen: "
+# ^CopyDetails
+Detailler an d'Zweschenooflaag kopéieren
+# ^LogInstall
+Installatioun protokolléieren
+# ^Byte
+B
+# ^Kilo
+K
+# ^Mega
+M
+# ^Giga
+G

@@ -1,0 +1,149 @@
+\C{intro} Introduction to NSIS
+
+\H{intro-about} About NSIS
+
+An installer is the first experience of a user with your application.
+Slow or unsuccessful software installations are the most irritating computer problems.
+A quick and user friendly installer is therefore an essential part of your software product. 
+
+NSIS (Nullsoft Scriptable Install System) is a tool that allows programmers to create such installers for Windows.
+It is released under an open source license and is \R{license}{completely free for any use}. 
+
+NSIS creates installers that are capable of installing, uninstalling, setting system settings, extracting files, etc.
+Because it's based on script files, you can fully control every part of your installers.
+The script language supports variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers.
+Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.
+
+\H{intro-features} Main Features
+
+\\<b\\>Small overhead size\\</b\\>
+
+NSIS is created to be small, fast and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.
+
+\\<b\\>Compatible with all major Windows versions\\</b\\>
+
+You can create a single installer that is compatible with Windows 95, Windows 98, Windows ME, Windows NT, Windows 2000, Windows XP and Windows Server 2003.
+
+\\<b\\>Unique compression methods\\</b\\>
+
+You can choose between three different integrated compression method (ZLib, BZip2, LZMA). The new LZMA compression gives better results than any other common compression method. You don't have to use large self-extracting archive modules or other applications. The compression support is included in the 34 KB overhead.
+
+\\<b\\>Script based\\</b\\>
+
+Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{http://nsis.sourceforge.net/nsisarchive/}{NSIS Archive Page} you can find a lot more.
+
+\\<b\\>Multiple languages in one installer\\</b\\>
+
+One installer can support multiple interface languages. More than 40 translations are already included, but you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported.
+
+\\<b\\>Many features and checks for the target system\\</b\\>
+
+The script language provides commands you can use on the target system. From simple features like folder creation and registry editing to text/binary file modification, modification of environment variables and system reboots. Using provided plug-ins you can even use Windows API.
+
+\\<b\\>Custom dialogs and interfaces\\</b\\>
+
+You can create custom wizard pages to get user input or integrate configuration options. NSIS includes a classic and modern wizard interface, but it is even possible to create your own custom interface.
+
+\\<b\\>Plug-in system\\</b\\>
+
+NSIS can be extended with plug-ins that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using the provided features.
+
+\\<b\\>Support for web installation, file patching\\</b\\>
+
+The NSIS distribution includes a set of plug-ins that allow you to download files from the internet, make internet connections, patch existing files and more.
+
+\\<b\\>Project integration, different releases and automatic builds\\</b\\>
+
+The NSIS compiler features a powerful preprocessor. This allows you to easily integrate multiple projects into a single installer or automatically generate installer builds. You can also generate different releases such as lite and full version.
+
+\\<b\\>Easy and human readable file formats\\</b\\>
+
+The NSIS script format and the format used for interface dialogs are easy, documented and humanly readable, so you can edit your files with your favorite editor. This also makes automatic script generation possible. 
+
+\H{intro-featurelist} Feature List
+
+\b Generates self contained executable installers
+
+\b Support for ZLIB, BZIP2 and LZMA data compression (files can be compressed individually or together) 
+
+\b Uninstall support (installer can generate an uninstaller) 
+
+\b Customizable user interface (dialogs, fonts, backgrounds, icons, text, checkmarks, images etc.)
+
+\b Classic and Modern wizard interface
+
+\b Fully multilingual, support for multiple languages in one installer. More than 35 translations are available, but you can also create your own 
+
+\b Page system: You can add standard wizard pages or custom pages 
+
+\b User selection of installation components, tree for component selection
+
+\b Multiple install configurations (usually Minimal, Typical, Full), and custom configuration
+
+\b Installer self-verification using a CRC32 checksum
+
+\b Small overhead over compressed data size (34 KB with default options)
+
+\b Ability to display a license agreement in text or RTF format
+
+\b Ability to detect destination directory from the registry
+
+\b Easy to use plug-in system (lots of plug-ins for creation of custom dialogs, internet connections, HTTP downloading, file patching, Win32 API calls etc. are included)
+
+\b Installers can be as large as 2GB
+
+\b Optional silent mode for automated installations
+
+\b A preprocessor with support for defined symbols, macro's, conditional compilation, standard predefines
+
+\b A lovely coding experience with elements of PHP and assembly (includes user variables, a stack, real flow control, etc.)
+
+\b Installers have their own VMs that let you write code that can support:
+
+\\<ul\\>
+
+\b File extraction (with configurable overwrite parameters)
+
+\b File/directory copying, renaming, deletion, searching
+
+\b Plug-in DLL calling
+
+\b DLL/ActiveX control registration/deregistration
+
+\b Executable execution (shell execute and wait options)
+
+\b Shortcut creation
+
+\b Registry key reading/setting/enumerating/deleting
+
+\b INI file reading/writing
+
+\b Generic text file reading/writing
+
+\b Powerful string and integer manipulation
+
+\b Window finding based on class name or title
+
+\b User interface manipulation (font/text setting)
+
+\b Window message sending
+
+\b User interaction with message boxes or custom pages
+
+\b Branching, comparisons, etc.
+
+\b Error checking
+
+\b Reboot support, including delete or rename on reboot
+
+\b Installer behaviour commands (such as show/hide/wait/etc)
+
+\b User functions in script
+
+\b Callback functions for user actions
+
+\\</ul\\>
+
+\b Completely free for any use. See \R{license}{license}.
+
+\b More

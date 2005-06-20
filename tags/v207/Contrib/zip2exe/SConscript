@@ -1,0 +1,41 @@
+target = "zip2exe"
+
+files = Split("""
+	main.cpp
+	zlib/adler32.c
+	zlib/crc32.c
+	zlib/inffast.c
+	zlib/inflate.c
+	zlib/inftrees.c
+	zlib/ioapi.c
+	zlib/unzip.c
+	zlib/zutil.c
+""")
+
+resources = Split("""
+	zip2exe.xml
+	icon.ico
+""")
+
+rc = 'res.rc'
+
+libs = Split("""
+	user32
+	gdi32
+	comctl32
+	comdlg32
+	advapi32
+	shell32
+""")
+
+headers = Split("""
+	Base.nsh
+	Classic.nsh
+	Modern.nsh
+""")
+
+Import('BuildUtil defenv')
+
+BuildUtil(target, files, libs, res = rc, resources = resources, install = 'Bin')
+
+defenv.DistributeContribs(target, headers)

@@ -1,0 +1,36 @@
+examples = Split("""
+	bigtest.nsi
+	example1.nsi
+	example2.nsi
+	gfx.nsi
+	languages.nsi
+	LogicLib.nsi
+	makensis.nsi
+	makensis.ini
+	one-section.nsi
+	primes.nsi
+	rtest.nsi
+	silent.nsi
+	StrFunc.nsi
+	UserVars.nsi
+	VersionInfo.nsi
+	viewhtml.nsi
+	waplugin.nsi
+""")
+
+mui_examples = [
+	'Modern UI/Basic.nsi',
+	'Modern UI/HeaderBitmap.nsi',
+	'Modern UI/InstallOptions.nsi',
+	'Modern UI/MultiLanguage.nsi',
+	'Modern UI/StartMenu.nsi',
+	'Modern UI/WelcomeFinish.nsi',
+	'Modern UI/ioA.ini',
+	'Modern UI/ioB.ini',
+	'Modern UI/ioC.ini'
+]
+
+Import('env')
+
+env.DistributeExamples('', examples)
+env.DistributeExamples('Modern UI', mui_examples)

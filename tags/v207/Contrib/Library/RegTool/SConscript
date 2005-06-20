@@ -1,0 +1,19 @@
+target = 'RegTool'
+
+files = Split("""
+	RegTool.c
+""")
+
+libs = Split("""
+	kernel32
+	oleaut32
+	version
+""")
+
+#Import('BuildUtil')
+
+#BuildUtil(target, files, libs, install = 'Bin')
+
+Import('env')
+
+env.Distribute('Bin', 'RegTool.bin')
