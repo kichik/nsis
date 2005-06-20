@@ -50,9 +50,9 @@ Released on March 19th, 2005
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}: Fixed a small memory leak (Thanks Takhir)
+\b \L{../Docs/AdvSplash/advsplash.txt}{AdvSplash}: Fixed a small memory leak (Thanks Takhir)
 
-\b \L{../Contrib/StartMenu/Readme.txt}{StartMenu}: Added support for \R{setctlcolors}{SetCtlColors} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=711900}{RFE #711900})
+\b \L{../Docs/StartMenu/Readme.txt}{StartMenu}: Added support for \R{setctlcolors}{SetCtlColors} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=711900}{RFE #711900})
 
 \H{v2.05} 2.05
 
@@ -78,7 +78,7 @@ Released on February 4th, 2005
 
 \b Added Breton translation
 
-\b \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}: Fixed double delay time in some cases
+\b \L{../Docs/AdvSplash/advsplash.txt}{AdvSplash}: Fixed double delay time in some cases
 
 \b Documentation fixes and enhancements (including \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1098454&group_id=22049&atid=373087}{patch #1098454})
 
@@ -94,7 +94,7 @@ Released on February 4th, 2005
 
 \b Improved some error messages
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.42}: Added an image displaying example, added TRANSPARENT flag for BITMAP fields (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1079715}{RFE #1079715} - funded by Chris Morgan)
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.42}: Added an image displaying example, added TRANSPARENT flag for BITMAP fields (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1079715}{RFE #1079715} - funded by Chris Morgan)
 
 \b Invisible sections weren't always affected by a change of the installation type (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1045722&group_id=22049&atid=373085}{bug #1045722})
 
@@ -180,7 +180,7 @@ Released on December 3rd, 2004
 
 \b Language file fixes
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.72}: Fixed state of Cancel button on Finish page when used in installer and uninstaller, added a string for NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.72}: Fixed state of Cancel button on Finish page when used in installer and uninstaller, added a string for NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
 
 \b nsisconf.nsh was not always parsed when compiling using MakeNSISw
 
@@ -238,15 +238,15 @@ Released on October 23rd, 2004
 
 \b Makefile improvements
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.71}: Made the selected language only be saved if the installation was successful
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.71}: Made the selected language only be saved if the installation was successful
 
 \b Some code refactoring
 
-\b \L{../Include/StrFunc.txt}{StrFunc}: Rewrote StrSort and fixed StrStrAdv. See the \L{../Include/StrFunc.txt}{readme} for a complete changelog
+\b \L{../Docs/StrFunc/StrFunc.txt}{StrFunc}: Rewrote StrSort and fixed StrStrAdv. See the \L{../Docs/StrFunc/StrFunc.txt}{readme} for a complete changelog
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/Banner/Readme.txt}{Banner}: Fixed some cases where the banner would not show on the foreground
+\b \L{../Docs/Banner/Readme.txt}{Banner}: Fixed some cases where the banner would not show on the foreground
 
 \H{v2.01} 2.01
 
@@ -286,13 +286,13 @@ Released on September 24th, 2004
 
 \b Windows 95 (OSR2)/98/ME no longer see drive free space capped to 2GB
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
+\b \L{../Docs/Modern UI/Readme.html}{Modern User Interface}: New orange theme by MoNKi
 
 \b Speedup background gradient painting
 
 \b \L{../Examples/LogicLib.nsi}{LogicLib} 2.5: Added AndIf, AndUnless, OrIf, OrUnless. Avoids unused variable warnings by requiring !defines before using certain features.
 
-\b \L{../Include/StrFunc.txt}{StrFunc}: Added support for uninstaller, some fixes and improvements. See the \L{../Include/StrFunc.txt}{readme} for a complete changelog
+\b \L{../Docs/StrFunc/StrFunc.txt}{StrFunc}: Added support for uninstaller, some fixes and improvements. See the \L{../Docs/StrFunc/StrFunc.txt}{readme} for a complete changelog
 
 \b The plug-ins folder is properly removed when the system is rebooted
 
@@ -326,19 +326,19 @@ Released on September 24th, 2004
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
+\b \L{../Docs/System/System.html}{System}: New, hopefully more informative, documentation; fixed some bugs
 
-\b \L{../Contrib/Banner/Readme.txt}{Banner}: Added getWindow to allow greater control over the banner window
+\b \L{../Docs/Banner/Readme.txt}{Banner}: Added getWindow to allow greater control over the banner window
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.41}: Bitmaps are now automatically centered, fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages, fixed a rare freeze
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.41}: Bitmaps are now automatically centered, fixed a bug which prevented enabling the next button from the leave function of InstallOptions pages, fixed a rare freeze
 
 \b Zip2Exe 0.32: Fixed codepage problems
 
-\b \L{../Contrib/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
+\b \L{../Docs/nsExec/nsExec.txt}{nsExec}: Always create a valid input handle, fixed a problem when called from a path with spaces
 
-\b \L{../Contrib/VPatch/Readme.html}{VPatch}: Close all open file handles when one of them fail to open
+\b \L{../Docs/VPatch/Readme.html}{VPatch}: Close all open file handles when one of them fail to open
 
-\b \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl}: Added /NOIEPROXY (based on memph's code)
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: Added /NOIEPROXY (based on memph's code)
 
 \H{v2.0} 2.0
 
@@ -356,7 +356,7 @@ Released on February 7th, 2004
 
 \b \R{plugindlls}{Easier plug-in system}
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern User Interface} (optional)
+\b \L{../Docs/Modern UI/Readme.html}{Modern User Interface} (optional)
 
 \b \W{http://www.7-zip.org/}{LZMA} compression which provides installers 20% smaller than bzip2
 
@@ -378,13 +378,13 @@ Released on February 7th, 2004
 
 \b \R{silent}{Better silent support}
 
-\b New include files for easier scripting: \L{../Examples/LogicLib.nsi}{LogicLib}, \L{../Include/StrFunc.txt}{StrFunc} and \L{../Include/Sections.nsh}{Sections}
+\b New include files for easier scripting: \L{../Examples/LogicLib.nsi}{LogicLib}, \L{../Docs/StrFunc/StrFunc.txt}{StrFunc} and \L{../Include/Sections.nsh}{Sections}
 
-\b Improved plug-ins: \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}, \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl} and \L{../Contrib/Splash/splash.txt}{Splash}
+\b Improved plug-ins: \L{../Docs/InstallOptions/Readme.html}{InstallOptions}, \L{../Docs/NSISdl/ReadMe.txt}{NSISdl} and \L{../Docs/Splash/splash.txt}{Splash}
 
-\b New plug-ins: \L{../Contrib/AdvSplash/advsplash.txt}{AdvSplash}, \L{../Contrib/Banner/Readme.txt}{Banner}, \L{../Contrib/BgImage/BgImage.txt}{BgImage}, \L{../Contrib/Dialer/Dialer.txt}{Dialer}, \L{../Examples/languages.nsi}{LangDLL}, \L{../Contrib/Math/Math.txt}{Math}, \L{../Contrib/nsExec/nsExec.txt}{nsExec}, \L{../Contrib/StartMenu/Readme.txt}{StartMenu}, \L{../Contrib/System/System.html}{System}, \L{../Contrib/UserInfo/UserInfo.nsi}{UserInfo} and \L{../Contrib/VPatch/Readme.html}{VPatch}
+\b New plug-ins: \L{../Docs/AdvSplash/advsplash.txt}{AdvSplash}, \L{../Docs/Banner/Readme.txt}{Banner}, \L{../Docs/BgImage/BgImage.txt}{BgImage}, \L{../Docs/Dialer/Dialer.txt}{Dialer}, \L{../Examples/languages.nsi}{LangDLL}, \L{../Docs/Math/Math.txt}{Math}, \L{../Docs/nsExec/nsExec.txt}{nsExec}, \L{../Docs/StartMenu/Readme.txt}{StartMenu}, \L{../Docs/System/System.html}{System}, \L{../Examples/UserInfo/UserInfo.nsi}{UserInfo} and \L{../Docs/VPatch/Readme.html}{VPatch}
 
-\b New and improved utilities: \L{../Contrib/Makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
+\b New and improved utilities: \L{../Docs/makensisw/Readme.txt}{MakeNSISw}, NSIS Menu (NSIS.exe), NSIS Update (Bin\\NSIS Update.exe) and zip2exe (Bin\\zip2exe.exe)
 
 \b New commands: \R{addplugindir}{!addplugindir}, \R{echo}{!echo}, \R{ifmacrodef}{!ifmacrodef}, \R{ifmacrondef}{!ifmacrondef}, \R{verbose}{!verbose}, \R{aaddbrandingimage}{AddBrandingImage}, \R{asetallowskipfiles}{AllowSkipFiles}, \R{achangeui}{ChangeUI}, \R{acheckbitmap}{CheckBitmap}, \R{createfont}{CreateFont}, \R{adirvar}{DirVar}, \R{adirverify}{DirVerify}, \R{enablewindow}{EnableWindow}, \R{afilebufsize}{FileBufSize}, \R{flushini}{FlushINI}, \R{sgetcurinsttype}{GetCurInstType}, \R{getdlgitem}{GetDlgItem}, \R{getinstdirerror}{GetInstDirError}, \R{ifabort}{IfAbort}, \R{ifsilent}{IfSilent}, \R{initpluginsdir}{InitPluginsDir}, \R{sinsttypegettext}{InstTypeGetText}, \R{sinsttypesettext}{InstTypeSetText}, \R{langstring}{LangString}, \R{alicensebkcolor}{LicenseBkColor}, \R{alicenseforceselection}{LicenseForceSelection}, \R{licenselangstring}{LicenseLangString}, \R{loadlanguagefile}{LoadLanguageFile}, LockWindow, \R{page}{Page}, \R{pageex}{PageEx}, \R{reservefile}{ReserveFile}, \R{sectiongetinsttypes}{SectionGetInstTypes}, \R{ssectiongetsize}{SectionGetSize}, \R{sectionsetinsttypes}{SectionSetInstTypes}, \R{ssectionsetsize}{SectionSetSize}, \R{setbrandingimage}{SetBrandingImage}, SetCompressionLevel, \R{asetcompressor}{SetCompressor}, \R{asetcompressordictsize}{SetCompressorDictSize}, \R{setctlcolors}{SetCtlColors}, \R{ssetcurinsttype}{SetCurInstType}, \R{setpluginunload}{SetPluginUnload}, \R{setsilent}{SetSilent}, \R{showwindow}{ShowWindow}, SubSection (replaced by \R{ssectiongroup}{SectionGroup}), SubSectionEnd (replaced by \R{ssectiongroupend}{SectionGroupEnd}), \R{var}{Var}, \R{viaddversionkey}{VIAddVersionKey}, \R{viproductversion}{VIProductVersion} and \R{axpstyle}{XPStyle}
 
@@ -400,9 +400,9 @@ Released on February 7th, 2004
 
 \b Last part of the path specified in \R{ainstalldir}{InstallDir} was appended even if selected folder name was the same
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.70}: Improved documentation, new Init custom function for Welcome and Finish page
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.70}: Improved documentation, new Init custom function for Welcome and Finish page
 
-\b Added \L{../Include/StrFunc.txt}{StrFunc} by deguix
+\b Added \L{../Docs/StrFunc/StrFunc.txt}{StrFunc} by deguix
 
 \b Updated and fixed language files
 
@@ -432,9 +432,9 @@ Released on February 2nd, 2004
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/NSISdl/ReadMe.txt}{NSISdl}: All potential and rare crashes should be completely fixed now
+\b \L{../Docs/NSISdl/ReadMe.txt}{NSISdl}: All potential and rare crashes should be completely fixed now
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed a rare crash related to ListItems and a small memory leak when using ValidateText
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions}: Fixed a rare crash related to ListItems and a small memory leak when using ValidateText
 
 \H{v2.0rc3} 2.0 Release Candidate 3
 
@@ -458,15 +458,15 @@ Released on January 26th, 2004
 
 \b Some documentation improvements and fix-ups
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.69}: Made all uninstaller pages work without installer pages and fixed top text on uninstaller license page
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.69}: Made all uninstaller pages work without installer pages and fixed top text on uninstaller license page
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Fixed resize bug, fixed some UI issues in the settings dialog
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Fixed resize bug, fixed some UI issues in the settings dialog
 
 \b NSIS Update: Improved UI
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions}: Fixed minor problems with the new NOTIFY flag
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions}: Fixed minor problems with the new NOTIFY flag
 
 \H{v2.0rc2} 2.0 Release Candidate 2
 
@@ -498,9 +498,9 @@ Released on January 5th, 2004
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.4}: NOTIFY for link, drop list and list box; UI fixes and improvements. See IO's \L{../Contrib/InstallOptions/Changelog.txt}{change log} for a complete list
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.4}: NOTIFY for link, drop list and list box; UI fixes and improvements. See IO's \L{../Docs/InstallOptions/Changelog.txt}{change log} for a complete list
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: Improved user interface, added support for named symbol sets and fixed best compressor selector
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: Improved user interface, added support for named symbol sets and fixed best compressor selector
 
 \H{v2.0rc1} 2.0 Release Candidate 1
 
@@ -510,7 +510,7 @@ Released on Decemeber 27th, 2003
 
 \b Trying the LZMA compression method for your installer is recommended. It often gives a 20% better compression ratio.
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: The setting to change the title size on the Welcome page and Finish page has been changed
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.68}: The setting to change the title size on the Welcome page and Finish page has been changed
 
 \S1{v2.0rc1-cl} Changelog
 
@@ -518,7 +518,7 @@ Released on Decemeber 27th, 2003
 
 \b LZMA compression support. Added \R{asetcompressordictsize}{SetCompresssorDictSize}.
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.68}: New settings for extra space for title and text on Welcome page and Finish page, improved handling of verbose settings, language file string for uninstaller reboot information, more
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.68}: New settings for extra space for title and text on Welcome page and Finish page, improved handling of verbose settings, language file string for uninstaller reboot information, more
 
 \b Shell folders are now detected using shell API functions and not the registry. This is the recommended method by Microsoft. New constants have been added in the process ($FONTS, $SENDTO and more...). See \k{varconstant} for more details.
 
@@ -538,13 +538,13 @@ Released on Decemeber 27th, 2003
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.3}: Added new control type "Button", added new flag "NOTIFY", added new flag "NOWORDWRAP" for multi-line text boxes, reduced size down to 12K
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.3}: Added new control type "Button", added new flag "NOTIFY", added new flag "NOWORDWRAP" for multi-line text boxes, reduced size down to 12K
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW}: More options to set the compression method
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW}: More options to set the compression method
 
 \b Zip2Exe 0.31: Fixed compression setting, LZMA compression support
 
-\b \L{../Contrib/VPatch/Readme.html}{VPatch 2.1}: Better error handling and exit code for GenPat
+\b \L{../Docs/VPatch/Readme.html}{VPatch 2.1}: Better error handling and exit code for GenPat
 
 \H{v2.0b4} 2.0 Beta 4
 
@@ -554,7 +554,7 @@ Released on November 19th, 2003
 
 \b The /LANG parameter is no longer available for any text setting instructions. You must use a \R{langstring}{LangString} if you want to make a certain text multilingual. This means you can also set one text for all languages. To make the license data multilingual you should use \R{licenselangstring}{LicenseLangString}.
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: Because of the new syntax for pages, renaming of settings and variable names etc., you have to make some changes to your scripts, see the \L{../Contrib/Modern UI/Readme.html}{Modern UI Readme} for details.
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.67}: Because of the new syntax for pages, renaming of settings and variable names etc., you have to make some changes to your scripts, see the \L{../Docs/Modern UI/Readme.html}{Modern UI Readme} for details.
 
 \b \R{page}{Custom Pages} now have a leave function. As this parameter is placed before the caption you have to add another "" empty string for the title to work.
 
@@ -578,7 +578,7 @@ Released on November 19th, 2003
 
 \b Full support for RTL languages, including support for LTR and RTL languages in one installer
 
-\b \L{../Contrib/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.67}: New system & syntax for pages, settings (support for multiple pages of the same type, page specific settings, more customization options etc.), Welcome/Finish pages for uninstaller, \R{alicenseforceselection}{LicenseForceSelection} support, new options for Finish page / language selection dialog, fixes, more
 
 \b Extraction progress
 
@@ -658,11 +658,11 @@ Released on November 19th, 2003
 
 \S2{} Utilities and Plug-ins
 
-\b \L{../Contrib/Makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar and more
+\b \L{../Docs/makensisw/Readme.txt}{MakeNSISW 2.0}: UI to define symbols, easy access to recent scripts, toolbar and more
 
 \b Zip2Exe 0.3: based on header files, improved interface, Modern UI support, new script code, improved folder detection
 
-\b \L{../Contrib/InstallOptions/Readme.html}{InstallOptions 2.2}: added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.2}: added LINK control, added EXTENDEDSELECT flag for list boxes which replaces MULTISELECT that now acts exactly as the real style flag ([double] click turns on or off selection), fixes
 
 \b BgImage plug-in stability fixes
 
