@@ -1,5 +1,99 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.07} 2.07
+
+Released on June 20th, 2005
+
+\S1{v2.07-rn} Release Notes
+
+\b NSIS Update was removed and the update check was moved back to MakeNSISw (Help -> NSIS Update). Use the \R{build_nightly}{nightly builds} to get the latest compiled binaries from CVS.
+
+\b Solid compression is no longer the default for bzip2 and lzma, use \c{SetCompressor /SOLID bzip2} or \c{SetCompressor /SOLID lzma} for solid compression.
+
+\b Source code is no longer supplied with the installer package. Source code can be downloaded from CVS or from the \W{http://nsis.sourceforge.net/download/}{download page}.
+
+\b The directory structure of the installation has been changed. All documentation is now in the Docs folder and all examples are in the Examples folder.
+
+\S1{v2.07-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added /SOLID switch for \R{asetcompressor}{SetCompressor}
+
+\b New build system (see \k{build})
+
+\b Stubs (exeheads) are no longer compiled into makensis.exe, but kept in the Stubs folder
+
+\S2{} New/Changed Commands
+
+\b \R{enumregvalue}{EnumRegValue} sets the error flag, if the enumeration index is out of range (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1178756&group_id=22049&atid=373085}{bug #1178756})
+
+\b \R{expandenvstrings}{ExpandEnvStrings} now sets the error flag as the documentation states
+
+\b Made \R{file}{File} /oname throw an error if the first character is a quote
+
+\S2{} Minor Changes
+
+\b Added \R{varconstant}{$LOCALAPPDATA} (\W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1172123}{RFE #1172123})
+
+\b Changed MUI dialogs charset from ANSI_CHARSET to DEFAULT_CHARSET (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1193736&group_id=22049&atid=373085}{bug #1193736}, \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1201712&group_id=22049&atid=373085}{bug #1201712})
+
+\b Fixed \R{varother}{$INSTDIR} changing, even if user clicked Cancel in browse dialog
+
+\b Fixed a crash in makensis when using \R{awindowicon}{WindowIcon} off (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1123353&group_id=22049&atid=373085}{bug #1123353})
+
+\b Fixed \R{call}{Call} :label in uninstall code
+
+\b Fixed compilation error without NSIS_CONFIG_COMPONENTPAGE
+
+\b Fixed compilation errors on various platforms (including \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1179116&group_id=22049&atid=373087}{patch #1179116}, \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1193692&group_id=22049&atid=373087}{patch #1193692})
+
+\b Fixed \R{createdirectory}{CreateDirectory} setting the error flag for directories with two consecutive backslashes (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1119442&group_id=22049&atid=373085}{bug #1119442})
+
+\b Fixed \R{library}{InstallLib} setting the error flag for new shared libraries (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1181951&group_id=22049&atid=373085}{bug #1181951})
+
+\b Fixed letters case in examples (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1184571&group_id=22049&atid=373087}{patch #1184571})
+
+\b Fixed logging state being reset after the directory page (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1168711&group_id=22049&atid=373085}{bug #1168711})
+
+\b Fixed overlapping icon in welcome page (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1221772&group_id=22049&atid=373085}{bug #1221772})
+
+\b Fixed \R{rmdir}{RMDir} /REBOOTOK setting the reboot flag when trying to delete non-existent directory (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1073792&group_id=22049&atid=373085}{bug #1073792})
+
+\b Minor documentation fixes and improvements (including \W{http://sourceforge.net/tracker/index.php?func=detail&aid=1220940&group_id=22049&atid=373085}{bug #1220940})
+
+\b Removed NSIS Update, MakeNSISw checks for new versions again
+
+\S2{} Include Files
+
+\b More messages in \L{../Include/WinMessages.nsh}{WinMessages.nsh} (Shengalts Aleksander)
+
+\b Some more useful macros in \L{../Include/Colors.nsh}{Colors.nsh} (Joel)
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed halibut segfaults on PowerPC (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1180886&group_id=22049&atid=373087}{patch #1180886})
+
+\b \L{../Docs/Math/Math.txt}{Math}: Fixed memory leak (brainsucker)
+
+\b zip2exe: upgraded to zlib 1.2.2
+
+\S2{} Translations
+
+\b Added Malaysian translation (Azwa)
+
+\b Added Welsh translation (Rhoslyn Prys)
+
+\b Fixed Breton NLF file (credits weren't commented)
+
+\b Fixed duplicate accelerator in French translation (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1168652&group_id=22049&atid=373085}{bug #1168652})
+
+\b Improved French translation (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1220277&group_id=22049&atid=373085}{bug #1220277})
+
+\b Updated Russian translation (Dmitry)
+
+\b Updated translation credits (\W{http://sourceforge.net/tracker/index.php?func=detail&aid=1223362&group_id=22049&atid=373087}{patch #1223362})
+
 \H{v2.06} 2.06
 
 Released on March 19th, 2005
