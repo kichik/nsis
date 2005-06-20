@@ -407,7 +407,7 @@ Example:
       ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool"
       IfFileExists $R0 installlib.rebootreg_${INSTALLLIB_UNIQUE}
 
-        File /oname=$R5\NSIS.Library.RegTool.exe "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
+        File /oname=$R5\NSIS.Library.RegTool.exe "${NSISDIR}\Bin\RegTool.bin"
         WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
           "NSIS.Library.RegTool" '"$R5\NSIS.Library.RegTool.exe"'
 
