@@ -1198,7 +1198,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         p[0]=0;
         if (hKey)
         {
-          DWORD l = NSIS_MAX_STRLEN;
+          DWORD l = NSIS_MAX_STRLEN - 1;
           DWORD t;
 
           if (RegQueryValueEx(hKey,buf3,NULL,&t,p,&l) != ERROR_SUCCESS ||
@@ -1214,7 +1214,11 @@ static int NSISCALL ExecuteEntry(entry *entry_)
               if (!parm4) exec_error++;
               myitoa(p,*((DWORD*)p));
             }
-            else if (parm4) exec_error++;
+            else
+            {
+              if (parm4) exec_error++;
+              p[l]=0;
+            }
           }
           RegCloseKey(hKey);
         }
