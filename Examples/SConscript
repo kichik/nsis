@@ -2,20 +2,29 @@ examples = Split("""
 	bigtest.nsi
 	example1.nsi
 	example2.nsi
+	FileFunc.ini
+	FileFunc.nsi
+	FileFuncTest.nsi
 	gfx.nsi
 	languages.nsi
 	LogicLib.nsi
-	makensis.nsi
 	makensis.ini
+	makensis.nsi
 	one-section.nsi
 	primes.nsi
 	rtest.nsi
 	silent.nsi
 	StrFunc.nsi
+	TextFunc.ini
+	TextFunc.nsi
+	TextFuncTest.nsi
 	UserVars.nsi
 	VersionInfo.nsi
 	viewhtml.nsi
 	waplugin.nsi
+	WordFunc.ini
+	WordFunc.nsi
+	WordFuncTest.nsi
 """)
 
 mui_examples = [

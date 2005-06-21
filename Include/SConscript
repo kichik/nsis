@@ -1,12 +1,15 @@
 includes = Split("""
 	Colors.nsh
+	FileFunc.nsh
 	Library.nsh
 	LogicLib.nsh
 	MUI.nsh
 	Sections.nsh
 	StrFunc.nsh
+	TextFunc.nsh
 	UpgradeDLL.nsh
 	WinMessages.nsh
+	WordFunc.nsh
 """)
 
 Import('env')
