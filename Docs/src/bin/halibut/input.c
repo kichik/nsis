@@ -731,6 +731,12 @@ static void read_file(paragraph *** ret, input * in, indexdata * idx)
       continue;
     }
 
+    while (t.type == tok_cmd && macrolookup(macros, in, t.text, &t.pos))
+    {
+      dtor(t), t = get_token(in);
+    }
+
+
     /*
      * This token begins a paragraph. See if it's one of the
      * special commands that define a paragraph type.
