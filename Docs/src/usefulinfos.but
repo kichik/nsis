@@ -212,7 +212,7 @@ Good Luck!
 
 This function will dump the log of the installer (installer details) to a file of your choice. I created this function for Afrow_UK who requested a way to dump the log to a file in \W{http://forums.winamp.com/showthread.php?s=&threadid=125431}{this forum thread}.
 
-To use it push a file name and call it. It will dump the log to the file specified. For example:
+To use it, push a file name and call it. It will dump the log to the file specified. For example:
 
 
 \c GetTempFileName $0
