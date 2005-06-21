@@ -260,7 +260,7 @@ To ask the user for a reboot if required, use the Modern UI with a Finish page o
 \c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\msvbvm60.dll"
 \c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\oleaut32.dll"
 \c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\olepro32.dll"
-\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat32.dll"
+\c    !insertmacro UnInstallLib REGDLL SHARED NOREMOVE "$SYSDIR\comcat.dll"
 \c    !insertmacro UnInstallLib DLL    SHARED NOREMOVE "$SYSDIR\asycfilt.dll"
 \c    !insertmacro UnInstallLib TLB    SHARED NOREMOVE "$SYSDIR\stdole2.tlb"
 \c
