@@ -63,6 +63,8 @@ If you get errors about the compiler or the Platform SDK not being found, use:
 
 You can also build using the open-source \W{http://www.mingw.org/}{MinGW}, but this results in noticeably larger installers. Borland C++ or Open Watcom C/C++ might also work, but haven't been tested.
 
+To compile the documentation as a CHM file, you must have hhc.exe from \W{http://msdn.microsoft.com/library/en-us/htmlhelp/html/hwMicrosoftHTMLHelpDownloads.asp}{HTML Help Workshop} in the PATH.
+
 \\<b\\>Important notes for Microsoft Visual C++ 6.0 users:\\</b\\> You should install the latest \W{http://www.microsoft.com/msdownload/platformsdk/sdkupdate/}{Platform SDK}. Because of flaws in the libraries distributed with Microsoft Visual C++ 6.0, not installing the Platform SDK will result in crashes when using the CopyFiles command. See \W{http://forums.winamp.com/showthread.php?s=&threadid=131964}{this forum topic} for more information. Installing the \W{http://msdn.microsoft.com/vstudio/downloads/tools/ppack/download.aspx}{Processor Pack} is highly recommended to decrease the size of the installer overhead.
 
 \H{build_posix}Building on POSIX
