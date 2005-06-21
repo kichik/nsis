@@ -2,7 +2,7 @@
 
 \H{errorlevels}Error Levels
 
-Like other applications installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
+Like other applications, installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
 
 \b 0 - Normal execution (no error)
 
