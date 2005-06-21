@@ -45,7 +45,7 @@ To get a complete list of options that the build system has to offer, type:
 
 \c scons -h
 
-To get a complete list of options SCons has to offset, type:
+To get a complete list of options SCons has to offer, type:
 
 \c scons -H
 
