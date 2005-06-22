@@ -188,8 +188,8 @@ if defenv.has_key('VER_MAJOR') and defenv.has_key('VER_MINOR') \
 
 installer_target = defenv.Command('nsis-${VERSION}.exe',
                                   '$INSTDISTDIR' + os.sep + 'Examples' + os.sep + 'makensis.nsi',
-																	'$INSTDISTDIR' + os.sep + 'makensis.exe ' +
-																	'/DOUTFILE=$TARGET.abspath $INSTVER $SOURCE')
+                                  '$INSTDISTDIR' + os.sep + 'makensis.exe ' +
+                                  '/DOUTFILE=$TARGET.abspath $INSTVER $SOURCE')
 defenv.Depends(installer_target, '$INSTDISTDIR')
 defenv.Alias('dist-installer', installer_target)
 
@@ -316,8 +316,8 @@ for plugin in plugins:
 
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
-							nodeflib = 0, install = None, install_as = None,
-							examples = None, docs = None):
+              nodeflib = 0, install = None, install_as = None,
+              examples = None, docs = None):
 	env = util_env.Copy()
 
 	if defines:
