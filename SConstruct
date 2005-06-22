@@ -33,19 +33,19 @@ plugins = [
 ]
 
 utils = [
-	'Library/RegTool',
 	'Library/LibraryLocal',
+	'Library/RegTool',
 	'MakeLangId',
 	'Makensisw',
 	'NSIS Menu',
+	'UIs',
 	'zip2exe'
 ]
 
 misc = [
 	'Graphics',
 	'Language files',
-	'Modern UI',
-	'UIs'
+	'Modern UI'
 ]
 
 defenv = Environment()
@@ -316,7 +316,8 @@ for plugin in plugins:
 
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
-              install = None, examples = None, docs = None):
+							nodeflib = 0, install = None, install_as = None,
+							examples = None, docs = None):
 	env = util_env.Copy()
 
 	if defines:
@@ -326,6 +327,9 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 
 	if entry:
 		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
+
+	if nodeflib:
+		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
 
 	env.Append(LINKFLAGS = '$MAP_FLAG')
 
@@ -343,6 +347,10 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 
 	if install is not None:
 		ins = env.Distribute(install, util)
+		defenv.Alias('install-utils', ins)
+
+	if install_as is not None:
+		ins = env.DistributeAs(install_as, util)
 		defenv.Alias('install-utils', ins)
 
 	if examples:

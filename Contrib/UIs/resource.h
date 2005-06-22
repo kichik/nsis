@@ -1,9 +1,11 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
-// Used by resource.rc
-//
+#include <windows.h>
+
+#ifndef IDC_STATIC
+#define IDC_STATIC (-1)
+#endif
+
 #ifndef DS_SHELLFONT
-#define DS_SHELLFONT        (DS_SETFONT | DS_FIXEDSYS)
+#define DS_SHELLFONT (DS_SETFONT | DS_FIXEDSYS)
 #endif
 
 #define IDC_BACK                        3
@@ -41,16 +43,3 @@
 #define IDC_BRANDIMAGE                  1033
 #define IDC_LICENSEAGREE                1034
 #define IDC_LICENSEDISAGREE             1035
-
-// Next default values for new objects
-// 
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        112
-#define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1036
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
-#endif
-
-

@@ -1,29 +1,6 @@
-//Microsoft Developer Studio generated resource script.
-//
 #include "resource.h"
 
-#define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
-#include "afxres.h"
-/////////////////////////////////////////////////////////////////////////////
-#undef APSTUDIO_READONLY_SYMBOLS
-
-/////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
 
 IDD_LICENSE DIALOGEX 0, 0, 266, 130
 STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
@@ -36,10 +13,10 @@ BEGIN
 END
 
 IDD_LICENSE_FSRB DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CAPTION
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
-    ICON            IDI_ICON2,1031,0,0,22,20
+    ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL | 
                     WS_TABSTOP | 0x804,0,24,266,85
@@ -50,10 +27,10 @@ BEGIN
 END
 
 IDD_LICENSE_FSCB DIALOG DISCARDABLE  0, 0, 266, 130
-STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CAPTION
+STYLE DS_FIXEDSYS | DS_CONTROL | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
-    ICON            IDI_ICON2,1031,0,0,22,20
+    ICON            IDI_ICON2,IDC_ULICON,0,0,22,20
     LTEXT           "",IDC_INTROTEXT,25,0,241,23
     CONTROL         "",IDC_EDIT1,"RichEdit20A",WS_BORDER | WS_VSCROLL |
                     WS_TABSTOP | 0x804,0,24,266,95
@@ -141,66 +118,3 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CTEXT           "",IDC_STR,7,7,148,8
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
-    "IDD_INST$(NSIS_CONFIG_VISIBLE_SUPPORT)", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 273
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 156
-    END
-
-    "IDD_INSTFILES$(NSIS_CONFIG_VISIBLE_SUPPORT)", DIALOG
-    BEGIN
-        RIGHTMARGIN, 246
-        BOTTOMMARGIN, 125
-    END
-
-    "IDD_VERIFY$(_NSIS_CONFIG_VERIFYDIALOG)", DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 155
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 15
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "#include ""afxres.h""\r\n"
-    "#include ""config.h""\0"
-END
-
-3 TEXTINCLUDE DISCARDABLE 
-BEGIN
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
-#endif    // English (U.S.) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
