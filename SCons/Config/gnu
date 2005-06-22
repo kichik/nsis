@@ -81,6 +81,32 @@ util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 ### weird GCC requirements
 
 #
+# GCC puts new PE sections, added by code, between other sections.
+# This is not good for the .ndata section because makensis changes
+# its size dynamically. This is not good if RVAs to sections below
+# it are saved in other places. The RVAs will point to garbage.
+#
+# To fix this, a linker script is provided. The linker script makes
+# sure the sections will be written in the correct order.
+#
+
+script_path = File('#.sconf_temp/linker_script').path
+open(script_path, 'w').write("""
+	SECTIONS
+	{
+		.text : { *(.text) }
+		.data : { *(.data) }
+		.rdata : { *(.rdata) }
+		.bss : { *(.bss) }
+		.idata : { *(.idata) }
+		.ndata BLOCK(__section_alignment__) : { [ .ndata ] }
+		.rsrc : { *(.rsrc) }
+	}
+""")
+
+stub_env.Append(LINKFLAGS = '-Wl,%s' % script_path)
+
+#
 # GCC requires some functions from the CRT to be present, if certain
 # operations are done. For example, if a small string is assigned to
 # a larger buffer, GCC 3.4+ uses memset to fill the remaining of the
