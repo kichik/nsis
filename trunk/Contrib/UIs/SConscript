@@ -1,13 +1,25 @@
+code = 'ui.c'
+
 uis = Split("""
-	default.exe
-	modern.exe
-	modern_headerbmp.exe
-	modern_headerbmpr.exe
-	modern_nodesc.exe
-	modern_smalldesc.exe
-	sdbarker_tiny.exe
+	default
+	modern
+	modern_headerbmp
+	modern_headerbmpr
+	modern_nodesc
+	modern_smalldesc
+	sdbarker_tiny
 """)
 
-Import('defenv')
+libs = Split("""
+	kernel32
+	comctl32
+	user32
+	gdi32
+""")
 
-defenv.DistributeContribs('UIs', uis)
+Import('BuildUtil env')
+
+code = env.Object(code)
+
+for ui in uis:
+	BuildUtil(ui, code, libs, entry = 'WinMain', res = ui + '.rc', install = 'Contrib/UIs')
