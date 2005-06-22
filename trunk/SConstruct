@@ -421,3 +421,17 @@ for i in misc:
 		continue
 
 	defenv.SConscript(dirs = 'Contrib/%s' % i)
+
+######################################################################
+#######  Tests                                                     ###
+######################################################################
+
+build_dir = '$BUILD_PREFIX/tests'
+exports = {'env' : defenv.Copy()}
+
+defenv.SConscript(
+	dirs = 'Source/Tests',
+	duplicate = 0,
+	exports = exports,
+	build_dir = build_dir
+)
