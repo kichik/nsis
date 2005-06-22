@@ -18,7 +18,11 @@ char* windows[] = {
 
 BOOL CALLBACK GenericProc(HWND hwndDlg,UINT uMsg,WPARAM wParam,LPARAM lParam) {
   static LOGBRUSH b = {BS_SOLID, RGB(255,0,0), 0};
-  static HBRUSH red = CreateBrushIndirect(&b);
+  static HBRUSH red;
+
+  if (!red)
+    red = CreateBrushIndirect(&b);
+
   switch (uMsg) {
     case WM_CTLCOLORSTATIC:
       return (int)red;
