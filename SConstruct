@@ -4,7 +4,6 @@
 #   * Write SConscript for NSIS Menu
 #    - Use inheritance instead of current wxWidgets patches
 #    - Compile for POSIX too? wxWidgets is cross platform after all...
-#   * Write SConscript for Library RegTool (needs to compile makensis with smaller configuration)
 #
 ##
 
