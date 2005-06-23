@@ -444,4 +444,4 @@ Put the following code in your \R{oninit}{.onInit function}:
 
 \H{morefuncs} More
 
-You can find more useful scripts at \W{http://nsis.sourceforge.net/archive/}{the NSIS Archive}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
+You can find more useful scripts at \W{http://nsis.sourceforge.net/wiki/}{the NSIS Wiki}, \W{http://forums.winamp.com/forumdisplay.php?s=&forumid=65}{the NSIS forum} and \W{http://nsis.sourceforge.net/}{NSIS development page}.
