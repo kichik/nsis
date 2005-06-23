@@ -130,7 +130,7 @@
 ;
 ; Written by Robert Kehl
 ;
-; For details, see http://nsis.sourceforge.net/archive/nsisweb.php?page=287
+; For details, see http://nsis.sourceforge.net/wiki/SetSectionInInstType%2C_ClearSectionInInstType
 ;
 ; Use the defines below for the WANTED_INSTTYPE paramter.
 
