@@ -30,7 +30,7 @@ You can choose between three different integrated compression method (ZLib, BZip
 
 \\<b\\>Script based\\</b\\>
 
-Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{http://nsis.sourceforge.net/nsisarchive/}{NSIS Archive Page} you can find a lot more.
+Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the \W{http://nsis.sourceforge.net/wiki/}{NSIS Wiki} you can find a lot more.
 
 \\<b\\>Multiple languages in one installer\\</b\\>
 
