@@ -7,13 +7,11 @@ files = Split("""
 libs = Split("""
 	kernel32
 	oleaut32
-	version
+	advapi32
+	user32
+	ole32
 """)
 
-#Import('BuildUtil')
+Import('BuildUtil')
 
-#BuildUtil(target, files, libs, install = 'Bin')
-
-Import('env')
-
-env.Distribute('Bin', 'RegTool.bin')
+BuildUtil(target, files, libs, entry = 'WinMain', nodeflib = 1, install_as = 'Bin/RegTool.bin')
