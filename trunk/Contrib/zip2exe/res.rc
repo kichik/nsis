@@ -52,7 +52,7 @@ BEGIN
                     174,42,12
     LTEXT           "Default Folder",IDC_DEPST,18,192,48,8
     COMBOBOX        IDC_INSTPATH,78,192,264,126,CBS_DROPDOWN | WS_VSCROLL | 
-                    WS_TABSTOP
+                    WS_TABSTOP | CBS_AUTOHSCROLL
     LTEXT           "Output EXE File",IDC_OEFST,18,210,54,8
     EDITTEXT        IDC_OUTFILE,78,210,204,12,ES_AUTOHSCROLL
     PUSHBUTTON      "&Browse...",IDC_BROWSE2,288,210,54,13
