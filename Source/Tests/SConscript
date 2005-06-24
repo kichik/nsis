@@ -28,31 +28,36 @@ env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
 
 # test for CppUnit
 conf = env.Configure()
-
-if not conf.CheckLibWithHeader(libs, 'cppunit/extensions/HelperMacros.h', 'C++'):
-
-	if 'test' in BUILD_TARGETS:
-
-		print '*** error: CppUnit must be installed for testing!'
-		Exit(1)
-
+cppunit = conf.CheckLibWithHeader(libs, 'cppunit/extensions/HelperMacros.h', 'C++')
 conf.Finish()
 
-# compile files from parent directory
-required_obj = []
+if cppunit:
 
-for i in required:
-	b = 'required/%s' % i[:-4]
-	s = '#Source/%s' % i
-	o = env.Object(b, s)
+	# compile files from parent directory
+	required_obj = []
 
-	required_obj.append(o)
+	for i in required:
+		b = 'required/%s' % i[:-4]
+		s = '#Source/%s' % i
+		o = env.Object(b, s)
 
-# build test program
-tests = env.Program(target, tests + required_obj, LIBS = libs)
+		required_obj.append(o)
 
-# alias running the test to 'test'
-test = env.Alias('test', [tests], tests[0].abspath)
+	# build test program
+	tests = env.Program(target, tests + required_obj, LIBS = libs)
 
-# always test when asked to
-AlwaysBuild(test)
+	# alias running the test to 'test'
+	test = env.Alias('test-code', [tests], tests[0].abspath)
+
+	# always test when asked to
+	AlwaysBuild(test)
+
+else:
+	
+	# no CppUnit
+	def err(target, source, env):
+		print '*** error: CppUnit must be installed for testing!'
+		return 1
+
+	cmd = env.Command(target, [tests], Action(err, ''))
+	env.Alias('test-code', cmd)
