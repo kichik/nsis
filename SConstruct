@@ -89,10 +89,16 @@ Help(opts.GenerateHelpText(defenv))
 
 defenv['ZIPDISTDIR'] = defenv.Dir('#nsis-$VERSION')
 defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
+defenv['TESTDISTDIR'] = defenv.Dir('#.test')
+
+defenv.Execute(Delete('$ZIPDISTDIR'))
+defenv.Execute(Delete('$INSTDISTDIR'))
+defenv.Execute(Delete('$TESTDISTDIR'))
 
 def Distribute(dir, files):
 	defenv.Install('$ZIPDISTDIR/%s' % dir, files)
 	defenv.Install('$INSTDISTDIR/%s' % dir, files)
+	defenv.Install('$TESTDISTDIR/%s' % dir, files)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.Install('$PREFIX/%s' % dir, files)
 		return ins
@@ -101,6 +107,7 @@ def Distribute(dir, files):
 def DistributeAs(path, file):
 	defenv.InstallAs('$ZIPDISTDIR/%s' % path, file)
 	defenv.InstallAs('$INSTDISTDIR/%s' % path, file)
+	defenv.InstallAs('$TESTDISTDIR/%s' % path, file)
 	if defenv.has_key('PREFIX') and defenv['PREFIX']:
 		ins = defenv.InstallAs('$PREFIX/%s' % path, file)
 		return ins
@@ -425,6 +432,8 @@ for i in misc:
 #######  Tests                                                     ###
 ######################################################################
 
+# test code
+
 build_dir = '$BUILD_PREFIX/tests'
 exports = {'env' : defenv.Copy()}
 
@@ -434,3 +443,29 @@ defenv.SConscript(
 	exports = exports,
 	build_dir = build_dir
 )
+
+# test scripts
+
+def test_scripts(target, source, env):
+	from os import walk, sep
+
+	instdir = source[0].path
+
+	makensis = instdir + sep + 'makensis'
+
+	for root, dirs, files in walk(instdir):
+		for file in files:
+			if file[-4:] == '.nsi':
+				nsi = root + sep + file
+				cmd = env.Command(None, nsi, '%s $SOURCE' % makensis)
+				AlwaysBuild(cmd)
+				env.Alias('test-scripts', cmd)
+
+	return None
+
+test = defenv.Command('test-scripts.log', '$TESTDISTDIR', test_scripts)
+defenv.Alias('test-scripts', test)
+
+# test all
+
+defenv.Alias('test', ['test-code', 'test-scripts'])
