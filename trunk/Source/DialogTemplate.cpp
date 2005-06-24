@@ -83,7 +83,7 @@ void ReadVarLenArr(LPBYTE &seeker, char* &readInto, unsigned int uCodePage) {
       seeker += sizeof(WORD); \
     } \
     else { \
-      int us = MultiByteToWideChar(m_uCodePage, 0, x, -1, (WCHAR*)seeker, dwSize); \
+      int us = MultiByteToWideChar(m_uCodePage, 0, x, -1, (WCHAR*)seeker, dwSize - DWORD(seeker - pbDlg)); \
       if (!us) { \
         throw runtime_error("WriteStringOrId - Unicode conversion failed."); \
       } \
