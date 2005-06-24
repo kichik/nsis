@@ -21,7 +21,6 @@
 */
 
 #include "DialogTemplate.h"
-#include "util.h"
 #include <cassert> // for assert(3)
 #ifndef _WIN32
 #  include <stdio.h>
