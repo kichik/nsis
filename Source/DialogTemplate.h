@@ -28,10 +28,9 @@
 #endif // _MSC_VER > 1000
 
 #include "Platform.h"
-#include <vector>
 
+#include <vector>
 #include <stdexcept>
-using namespace std;
 
 #define EXTENDED_DIALOG ((DWORD) 0xFFFF0001)
 
@@ -162,7 +161,7 @@ private:
   unsigned int m_uCodePage;
 
   // Items vector
-  vector<DialogItemTemplate*> m_vItems;
+  std::vector<DialogItemTemplate*> m_vItems;
 };
 
 #endif // !defined(AFX_DIALOGTEMPLATE_H__C5A973AF_0F56_4BEC_814A_79318E2EB4AC__INCLUDED_)
