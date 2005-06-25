@@ -195,12 +195,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
 
       for (x = 0; x < 26; x ++)
       {
-        static char s[]="A~NSISu_.exe";
+        static char s[]="Au_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
 
         buf2[0]='\"';
         mystrcpy(buf2+1,state_temp_dir);
+        lstrcat(buf2,"~nsu.tmp\\");
+        CreateDirectory(buf2+1,NULL);
         lstrcat(buf2,s);
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
@@ -227,7 +229,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2,ibuf);
             // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
             addtrailingslash(buf2);
-            hProc=myCreateProcess(buf2,state_temp_dir);
+            hProc=myCreateProcess(buf2,state_install_directory);
             if (hProc)
             {
               CloseHandle(hProc);
