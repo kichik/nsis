@@ -61,7 +61,7 @@ It is also possible to put newlines, tabs etc. in a string using $\\r, $\\n, $\\
 
 \\<b\\>Variables\\</b\\>
 
-Variables start with $. User variables should be declared and are case-sensitive.
+Variables start with $. User variables should be declared.
 
 \c Var MYVAR
 \c
