@@ -6,7 +6,7 @@ All variables are global and can be used in Sections or Functions.
 
 \e{$VARNAME}
 
-User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with string manipulation etc. Unlike constants these variables are case-sensitive.
+User variables can be declared with the \R{var}{Var} command. You can use these variables to store values, work with string manipulation etc.
 
 \S2{var} Var
 
