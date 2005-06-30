@@ -40,6 +40,53 @@ Example:
 
 !define UPGRADEDLL_INCLUDED
 
+!macro __UpgradeDLL_Helper_AddRegToolEntry mode filename tempdir
+
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+
+  ;------------------------
+  ;Copy the parameters
+
+  Push "${filename}"
+  Push "${tempdir}"
+
+  Pop $R2 ; temporary directory
+  Pop $R1 ; file name to register
+
+  ;------------------------
+  ;Advance counter
+
+  StrCpy $R0 0
+  ReadRegDWORD $R0 HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "count"
+  IntOp $R0 $R0 + 1
+  WriteRegDWORD HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "count" "$R0"
+
+  ;------------------------
+  ;Setup RegTool
+
+  ReadRegStr $R3 HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" "NSIS.Library.RegTool.v2"
+  IfFileExists $R3 +3
+
+    File /oname=$R2\NSIS.Library.RegTool.v2.exe "${NSISDIR}\Bin\RegTool.bin"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
+      "NSIS.Library.RegTool.v2" '"$R2\NSIS.Library.RegTool.v2.exe" /S'
+
+  ;------------------------
+  ;Add RegTool entry
+
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "$R0.file" "$R1"
+  WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\UpgradeDLLSession" "$R0.mode" "${mode}"
+
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
+
+!macroend
+
 !macro UpgradeDLL LOCALFILE DESTFILE TEMPBASEDIR
 
   Push $R0
@@ -101,11 +148,7 @@ Example:
   ;------------------------
   ;Register on reboot
 
-  GetTempFileName $R0 $R5
-  File /oname=$R0 "${NSISDIR}\Contrib\Library\RegTool\RegTool.bin"
-   
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
-    "$R4" '"$R0" D $R4'
+  !insertmacro __UpgradeDLL_Helper_AddRegToolEntry 'D' $R4 $R5
 
   Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
 
