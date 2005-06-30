@@ -180,28 +180,38 @@ void NSISCALL myDelete(char *buf, int flags)
   }
 
 #ifdef NSIS_SUPPORT_RMDIR
-  if (valid_dir && (flags & DEL_DIR) && file_exists(buf))
+  if ((flags & DEL_DIR))
   {
-    addtrailingslash(buf);
-    log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
-    if (!RemoveDirectory(buf))
+    if (!valid_dir)
     {
-#ifdef NSIS_SUPPORT_MOVEONREBOOT
-      if (flags & DEL_REBOOT)
+      log_printf2("RMDir: RemoveDirectory invalid input(\"%s\")",buf);
+      g_exec_flags.exec_error++;
+    }
+    else if (file_exists(buf))
+    {
+      addtrailingslash(buf);
+      log_printf2("RMDir: RemoveDirectory(\"%s\")",buf);
+      if (!RemoveDirectory(buf))
       {
-        log_printf2("RMDir: RemoveDirectory on Reboot(\"%s\")",buf);
-        update_status_text(LANG_DELETEONREBOOT,buf);
-        MoveFileOnReboot(buf,NULL);
+#ifdef NSIS_SUPPORT_MOVEONREBOOT
+        if (flags & DEL_REBOOT)
+        {
+          log_printf2("RMDir: RemoveDirectory on Reboot(\"%s\")",buf);
+          update_status_text(LANG_DELETEONREBOOT,buf);
+          MoveFileOnReboot(buf,NULL);
+        }
+        else
+#endif//NSIS_SUPPORT_MOVEONREBOOT
+        {
+          log_printf2("RMDir: RemoveDirectory failed(\"%s\")",buf);
+          g_exec_flags.exec_error++;
+        }
       }
       else
-#endif//NSIS_SUPPORT_MOVEONREBOOT
       {
-        log_printf2("RMDir: RemoveDirectory failed(\"%s\")",buf);
-        g_exec_flags.exec_error++;
+        update_status_text(LANG_REMOVEDIR,buf);
       }
     }
-    else
-      update_status_text(LANG_REMOVEDIR,buf);
   }
 #endif//NSIS_SUPPORT_RMDIR
 }
