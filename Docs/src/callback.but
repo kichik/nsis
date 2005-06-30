@@ -77,13 +77,13 @@ Example:
 
 \c   Function .onMouseOverSection
 \c     FindWindow $R0 "#32770" "" $HWNDPARENT
-\c     GetDlgItem $R0 $R0 1043 ; description item
+\c     GetDlgItem $R0 $R0 1043 ; description item (must be added to the UI)
 \c
 \c     StrCmp $0 0 "" +2
-\c       SendMessage $R0 ${WM_SETTEXT} 0 "first section description"
+\c       SendMessage $R0 ${WM_SETTEXT} 0 "STR:first section description"
 \c
 \c     StrCmp $0 1 "" +2
-\c       SendMessage $R0 ${WM_SETTEXT} 0 "second section description"
+\c       SendMessage $R0 ${WM_SETTEXT} 0 "STR:second section description"
 \c   FunctionEnd
 
 \S3{onrebootfailed} .onRebootFailed
