@@ -77,6 +77,8 @@ If you don't have a cross compiler, you can use:
 
 This should only build makensis. Once you have makensis, you can drop it in a downloaded precompiled package such as the nightly build. Note that the in order for this to work, the precompiled package must be compiled using the exact same sources as makensis. In particular, \c{Source\\exehead\\config.h} and \c{Source\\exehead\\fileform.h} must be identical.
 
+Note that compiling on big-endian platforms is possible. However, makensis will not work on such platforms.
+
 \H{build_nightly}Nightly Builds
 
 If you don't want to build NSIS on your own but want to get the latest CVS version, you can use the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly build}. The nightly build is automatically generated every night from source code in CVS.
