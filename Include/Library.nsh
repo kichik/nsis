@@ -438,27 +438,17 @@ Var __INSTALLLLIB_SESSIONGUID
 
     SetOverwrite try
 
-    installlib.file_${INSTALLLIB_UNIQUE}:
-      File /oname=$R0 "${LOCALFILE}"
-      Return
-
-    installlib.end_${INSTALLLIB_UNIQUE}:
-
-    SetOverwrite lastused
-
   !else
 
     SetOverwrite on
 
-    installlib.file_${INSTALLLIB_UNIQUE}:
-      File /oname=$R0 "${LOCALFILE}"
-      Return
-
-    installlib.end_${INSTALLLIB_UNIQUE}:
-
-    SetOverwrite lastused
-
   !endif
+
+  installlib.file_${INSTALLLIB_UNIQUE}:
+    File /oname=$R0 "${LOCALFILE}"
+    Return
+
+  SetOverwrite lastused
 
   ;------------------------
   ;Register on reboot
@@ -483,6 +473,11 @@ Var __INSTALLLLIB_SESSIONGUID
       Return
 
   !endif
+
+  ;------------------------
+  ;End label
+
+  installlib.end_${INSTALLLIB_UNIQUE}:
 
   ;------------------------
   ;Undefine
