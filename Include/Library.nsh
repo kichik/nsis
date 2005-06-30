@@ -92,6 +92,7 @@ Var __INSTALLLLIB_SESSIONGUID
   WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "$R0.file" "$R1"
   WriteRegStr HKLM "Software\NSIS.Library.RegTool.v2\$__INSTALLLLIB_SESSIONGUID" "$R0.mode" "${mode}"
 
+  Pop $R3
   Pop $R2
   Pop $R1
   Pop $R0
