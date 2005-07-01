@@ -17,10 +17,9 @@
 using namespace std;
 
 #ifdef _WIN32
-#  include <direct.h>
+#  include <direct.h> // for chdir
 #else
 #  include <sys/stat.h>
-#  include <glob.h>
 #  include <fcntl.h> // for O_RDONLY
 #  include <unistd.h>
 #endif
@@ -2651,106 +2650,83 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_P_INCLUDE:
       {
         char *f = line.gettoken_str(1);
-        int included = 0;
 #ifdef _WIN32
-        WIN32_FIND_DATA fd;
-        unsigned int malloced = sizeof(fd.cFileName) + strlen(f) + 1;
-
-        char *incfile = (char *) malloc(malloced);
-
-        strcpy(incfile, f);
-        char *slash = strrchr(incfile, PATH_SEPARATOR_C);
-
-        HANDLE search = FindFirstFile(f, &fd);
-        if (search != INVALID_HANDLE_VALUE)
-        {
-          do
-          {
-            if (slash)
-              slash[1] = 0;
-            else
-              incfile[0] = 0;
-            strcat(incfile, fd.cFileName);
-            if (includeScript(incfile) != PS_OK)
+        char *fc = f;
 #else
-        unsigned int malloced = strlen(f) + 100;
-        char *incfile = (char *) malloc(malloced);
-        assert(incfile != 0);
-        MANAGE_WITH(incfile, free);
-        strcpy(incfile, f);
-        glob_t globbuf;
-        if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
-        {
-          for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
-          {
-            if (includeScript(globbuf.gl_pathv[i]) != PS_OK)
+        char *fc = my_convert(f);
 #endif
+        int included = 0;
+
+        string dir = get_dir_name(fc);
+        string spec = get_file_name(fc);
+        string basedir = dir + PLATFORM_PATH_SEPARATOR_STR;
+        if (dir == spec) {
+          // no path, just file name
+          dir = ".";
+          basedir = "";
+        }
+
+#ifndef _WIN32
+        my_convert_free(fc);
+#endif
+
+        // search working directory
+        dir_reader *dr = new_dir_reader();
+        dr->read(dir);
+
+        dir_reader::iterator files_itr = dr->files().begin();
+        dir_reader::iterator files_end = dr->files().end();
+
+        for (; files_itr != files_end; files_itr++) {
+          if (!dir_reader::matches(*files_itr, spec))
+            continue;
+
+          string incfile = basedir + *files_itr;
+
+          if (includeScript((char *) incfile.c_str()) != PS_OK) {
+            delete dr;
+            return PS_ERROR;
+          }
+
+          included++;
+        }
+
+        delete dr;
+
+        if (included)
+          return PS_OK;
+
+        // search include dirs
+        char *incdir = include_dirs.get();
+        int incdirs = include_dirs.getnum();
+
+        for (int i = 0; i < incdirs; i++, incdir += strlen(incdir) + 1) {
+          string curincdir = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
+
+          dir_reader *dr = new_dir_reader();
+          dr->read(curincdir);
+
+          files_itr = dr->files().begin();
+          files_end = dr->files().end();
+
+          for (; files_itr != files_end; files_itr++) {
+            if (!dir_reader::matches(*files_itr, spec))
+              continue;
+
+            string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *files_itr;
+
+            if (includeScript((char *) incfile.c_str()) != PS_OK) {
+              delete dr;
               return PS_ERROR;
+            }
+
             included++;
           }
-#ifdef _WIN32
-          while (FindNextFile(search, &fd));
-          FindClose(search);
-#else
-          globfree(&globbuf);
-#endif
-        }
-        else
-        {
-          char *dir = include_dirs.get();
-          int dirs = include_dirs.getnum();
 
-          for (int i = 0; i < dirs; i++) {
-            if (malloced < strlen(f) + strlen(dir) + 1)
-            {
-              free(incfile);
-              malloced += strlen(dir);
-              incfile = (char *) malloc(malloced);
-            }
-            strcpy(incfile, dir);
-            if (*f != PATH_SEPARATOR_C)
-              strcat(incfile, PATH_SEPARATOR_STR);
-            strcat(incfile, f);
-#ifdef _WIN32
-            slash = strrchr(incfile, PATH_SEPARATOR_C);
-
-            search = FindFirstFile(incfile, &fd);
-            if (search != INVALID_HANDLE_VALUE)
-            {
-              do
-              {
-                if (slash)
-                  slash[1] = 0;
-                else
-                  incfile[0] = 0;
-                strcat(incfile, fd.cFileName);
-
-                if (includeScript(incfile) != PS_OK)
-#else
-            if (!GLOB(incfile, GLOB_NOSORT, NULL, &globbuf))
-            {
-              for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
-              {
-                if (includeScript(globbuf.gl_pathv[i]) != PS_OK)
-#endif
-                  return PS_ERROR;
-                included++;
-              }
-#ifdef _WIN32
-              while (FindNextFile(search, &fd));
-              FindClose(search);
-#else
-              globfree(&globbuf);
-#endif
-              break;
-            }
-            else
-            {
-              dir += strlen(dir) + 1;
-            }
-          }
+          delete dr;
         }
 
+        // nothing found
         if (!included)
         {
           ERROR_MSG("!include: could not find: \"%s\"\n",f);
