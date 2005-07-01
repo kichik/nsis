@@ -4,12 +4,12 @@
 #include "Plugins.h"
 #include "Platform.h"
 #include "util.h"
+#include "dirreader.h"
 
 #ifdef _WIN32
 #  include <WinNT.h>
 #else
 #  include <sys/stat.h>
-#  include <glob.h>
 #endif
 
 extern FILE *g_output;
@@ -48,70 +48,25 @@ void PluginsList::setDataHandle(const char *name, int dataHandle, int uninstData
 
 void Plugins::FindCommands(char* path, bool displayInfo)
 {
-  if (path)
-  {
-    int length = strlen(path);
+  if (!path)
+    return;
 
-    if (length > 0)
-    {
-      char *lc = CharPrev(path, path + strlen(path));
-      if (*lc == '\\' || *lc == '/')
-      {
-        length--;
-      }
+  dir_reader *dr = new_dir_reader();
+  dr->read(path);
 
-      char* basePath = new char [length+1];
-      strncpy(basePath,path,length);
-      basePath[length] = 0;
+  dir_reader::iterator files_itr = dr->files().begin();
+  dir_reader::iterator files_end = dr->files().end();
 
-      char* pathAndWildcard = new char [length+7];
-      strcpy(pathAndWildcard,basePath);
-      strcat(pathAndWildcard,PLATFORM_PATH_SEPARATOR_STR "*.dll");
+  for (; files_itr != files_end; files_itr++) {
+    if (!dir_reader::matches(*files_itr, "*.dll"))
+      continue;
 
-#ifdef _WIN32
-      WIN32_FIND_DATA data;
-      HANDLE handle;
+    string plugin = string(path) + PLATFORM_PATH_SEPARATOR_C + *files_itr;
 
-      handle = FindFirstFile(pathAndWildcard,&data);
-      if (handle != INVALID_HANDLE_VALUE)
-      {
-        do
-#else
-      glob_t globbuf;
-      globbuf.gl_offs = 0;
-      globbuf.gl_pathc = 0;
-      if (!glob(pathAndWildcard, 0, NULL, &globbuf))
-      {
-        struct stat s;
-        for (unsigned int i = 0; i < globbuf.gl_pathc; i++)
-        {
-          if (stat(globbuf.gl_pathv[i], &s) || !S_ISREG(s.st_mode))
-            continue;
-#endif
-#ifdef _WIN32
-        {
-          char* dllPath = new char [length+strlen(data.cFileName)+2];
-          wsprintf(dllPath,"%s" PLATFORM_PATH_SEPARATOR_STR "%s",basePath,data.cFileName);
-#else
-          char *dllPath = new char [strlen(globbuf.gl_pathv[i])+1];
-          strcpy(dllPath,globbuf.gl_pathv[i]);
-#endif
-          GetExports(dllPath,displayInfo);
-          delete[] dllPath;
-        }
-#ifdef _WIN32
-        while (FindNextFile(handle,&data));
-#else
-        globfree(&globbuf);
-#endif
-      }
-
-#ifdef _WIN32
-      delete[] pathAndWildcard;
-#endif
-      delete[] basePath;
-    }
+    GetExports((char *) plugin.c_str(), displayInfo);
   }
+
+  delete dr;
 }
 
 void Plugins::GetExports(char* pathToDll, bool displayInfo)
