@@ -23,6 +23,7 @@
 #include "DialogTemplate.h"
 #include <cassert> // for assert(3)
 #ifndef _WIN32
+#  include "util.h" // for Unicode conversion functions
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include <iconv.h>
