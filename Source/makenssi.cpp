@@ -441,7 +441,8 @@ int main(int argc, char **argv)
           }
           if (do_cd)
           {
-            if (change_to_script_dir(build, string(sfile)))
+            string script_file = string(sfile);
+            if (change_to_script_dir(build, script_file))
               return 1;
           }
         }
