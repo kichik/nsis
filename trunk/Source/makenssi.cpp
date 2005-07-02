@@ -77,6 +77,49 @@ static void sigint(int sig)
   quit();
 }
 
+static string get_home()
+{
+  char *home = getenv(
+#ifdef _WIN32
+    "APPDATA"
+#else
+    "HOME"
+#endif
+  );
+
+  return home ? home : "";
+}
+
+static int process_config(CEXEBuild& build, string& conf)
+{
+  FILE *cfg=fopen(conf.c_str(),"rt");
+  if (cfg)
+  {
+    if (build.display_script) 
+    {
+      fprintf(g_output,"Processing config: \n");
+      fflush(g_output);
+    }
+    int ret=build.process_script(cfg,(char*)conf.c_str());
+    fclose(cfg);
+    if (ret != PS_OK && ret != PS_EOF)
+    {
+      if (build.display_errors) 
+      {
+        fprintf(g_output,"Error in config on line %d -- aborting creation process\n",build.linecnt);
+        fflush(g_output);
+      }
+      return 1;
+    }
+    if (build.display_script) 
+    {
+      fprintf(g_output,"\n");
+      fflush(g_output);
+    }
+  }
+  return 0;
+}
+
 int main(int argc, char **argv)
 {
   CEXEBuild build;
@@ -95,7 +138,7 @@ int main(int argc, char **argv)
 
   try
   {
-  	build.initialize(argv[0]);
+    build.initialize(argv[0]);
   }
   catch (exception& err)
   {
@@ -283,31 +326,22 @@ int main(int argc, char **argv)
       if (!g_noconfig)
       {
         g_noconfig=1;
-        string nsisconf=get_executable_dir(argv[0])+PLATFORM_PATH_SEPARATOR_STR+"nsisconf.nsh";
-        FILE *cfg=fopen(nsisconf.c_str(),"rt");
-        if (cfg)
+
+        string main_conf = get_executable_dir(argv[0]) + PLATFORM_PATH_SEPARATOR_STR + "nsisconf.nsh";
+        if (process_config(build, main_conf))
+          return 1;
+
+        string home_conf = get_home();
+        if (home_conf != "")
         {
-          if (build.display_script) 
-          {
-            fprintf(g_output,"Processing config: \n");
-            fflush(g_output);
-          }
-          int ret=build.process_script(cfg,(char*)nsisconf.c_str());
-          fclose(cfg);
-          if (ret != PS_OK && ret != PS_EOF)
-          {
-            if (build.display_errors) 
-            {
-              fprintf(g_output,"Error in config on line %d -- aborting creation process\n",build.linecnt);
-              fflush(g_output);
-            }
+          home_conf += PLATFORM_PATH_SEPARATOR_STR;
+#ifdef _WIN32
+          home_conf += "nsisconf.nsh";
+#else
+          home_conf += ".nsisconf.nsh";
+#endif
+          if (process_config(build, home_conf))
             return 1;
-          }
-          if (build.display_script) 
-          {
-            fprintf(g_output,"\n");
-            fflush(g_output);
-          }
         }
       }
 
