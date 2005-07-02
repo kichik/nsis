@@ -77,6 +77,83 @@ static void sigint(int sig)
   quit();
 }
 
+static void print_logo()
+{
+  fprintf(g_output,"MakeNSIS %s - Copyright 1999-2005 Nullsoft, Inc.\n"
+         "\n"
+         "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
+         "Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).\n"
+         "Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).\n"
+         "\n"
+         "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",CONST_STR(NSIS_VERSION));
+  fflush(g_output);
+}
+
+static void print_license()
+{
+  fprintf(g_output,"Copyright (C) 1999-2005 Nullsoft, Inc.\n\n"
+       "This license applies to everything in the NSIS package, except where otherwise\nnoted.\n\n"
+       "This software is provided 'as-is', without any express or implied warranty.\n"
+       "In no event will the authors be held liable for any damages arising from the\n"
+       "use of this software.\n\n"
+       "Permission is granted to anyone to use this software for any purpose, including\n"
+       "commercial applications, and to alter it and redistribute it freely, subject to\n"
+       "the following restrictions:\n"
+       "  1. The origin of this software must not be misrepresented; you must not claim\n"
+       "     that you wrote the original software. If you use this software in a\n"
+       "     product, an acknowledgment in the product documentation would be\n"
+       "     appreciated but is not required.\n"
+       "  2. Altered source versions must be plainly marked as such, and must not be\n"
+       "     misrepresented as being the original software.\n"
+       "  3. This notice may not be removed or altered from any source distribution.\n\n");
+  fflush(g_output);
+}
+
+static void print_usage()
+{
+  fprintf(g_output,"Usage:\n"
+         "  makensis [option | script.nsi | - [...]]\n"
+         "   options are:\n"
+         "    " OPT_STR "CMDHELP item prints out help for 'item', or lists all commands\n"
+         "    " OPT_STR "HDRINFO prints information about what options makensis was compiled with\n"
+         "    " OPT_STR "LICENSE prints the makensis software license\n"
+         "    " OPT_STR "VERSION prints the makensis version and exits\n"
+         "    " OPT_STR "Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n"
+         "    " OPT_STR "Ofile specifies a text file to log compiler output (default is stdout)\n"
+         "    " OPT_STR "PAUSE pauses after execution\n"
+         "    " OPT_STR "NOCONFIG disables inclusion of <path to makensis.exe>" PLATFORM_PATH_SEPARATOR_STR "nsisconf.nsh\n"
+         "    " OPT_STR "NOCD disabled the current directory change to that of the .nsi file\n"
+         "    " OPT_STR "Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
+         "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile poop.exe\")\n"
+         "   parameters are processed by order (" OPT_STR "Ddef ins.nsi != ins.nsi " OPT_STR "Ddef)\n"
+         "   for script file name, you can use - to read from the standard input\n");
+  fflush(g_output);
+}
+
+static void print_stub_info(CEXEBuild& build)
+{
+  if (build.display_info)
+  {
+    fprintf(g_output,"Size of first header is %d bytes.\n",sizeof(firstheader));
+    fprintf(g_output,"Size of main header is %d bytes.\n",sizeof(header));
+    fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));
+    fprintf(g_output,"Size of each page is %d bytes.\n",sizeof(page));
+    fprintf(g_output,"Size of each instruction is %d bytes.\n",sizeof(entry));
+    int x=build.definedlist.getnum();
+    fprintf(g_output,"\nDefined symbols: ");
+    for (int i=0; i<x; i++)
+    {
+      fprintf(g_output,"%s",build.definedlist.getname(i));
+      char *p=build.definedlist.getvalue(i);
+      if (*p) fprintf(g_output,"=%s",p);
+      if (i<x-1) fprintf(g_output,",");
+    }
+    if (!x) fprintf(g_output,"none");
+    fprintf(g_output,"\n");
+    fflush(g_output);
+  }
+}
+
 static string get_home()
 {
   char *home = getenv(
@@ -107,6 +184,34 @@ static int process_config(CEXEBuild& build, string& conf)
       if (build.display_errors) 
       {
         fprintf(g_output,"Error in config on line %d -- aborting creation process\n",build.linecnt);
+        fflush(g_output);
+      }
+      return 1;
+    }
+    if (build.display_script) 
+    {
+      fprintf(g_output,"\n");
+      fflush(g_output);
+    }
+  }
+  return 0;
+}
+
+static int change_to_script_dir(CEXEBuild& build, string& script)
+{
+  string dir = get_dir_name(get_full_path(script));
+  if (!dir.empty()) 
+  {
+    if (build.display_script) 
+    {
+      fprintf(g_output,"Changing directory to: \"%s\"\n",dir.c_str());
+      fflush(g_output);
+    }
+    if (chdir(dir.c_str()))
+    {
+      if (build.display_errors)
+      {
+        fprintf(g_output,"Error changing directory to \"%s\"\n",dir.c_str());
         fflush(g_output);
       }
       return 1;
@@ -174,14 +279,7 @@ int main(int argc, char **argv)
       }
       outputtried=1;
     }
-    fprintf(g_output,"MakeNSIS %s - Copyright 1999-2005 Nullsoft, Inc.\n"
-           "\n"
-           "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
-           "Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).\n"
-           "Portions Copyright (C) 1999-2003 Igor Pavlov (lzma).\n"
-           "\n"
-           "Contributors: nnop@newmail.ru, Ryan Geiss, Andras Varga, Drew Davidson, Peter Windridge, Dave Laundon, Robert Rainwater, Yaroslav Faybishenko, Jeff Doozan, Amir Szekely, Ximon Eighteen, et al.\n\n",CONST_STR(NSIS_VERSION));
-    fflush(g_output);
+    print_logo();
   }
 
   atexit(myatexit);
@@ -250,22 +348,7 @@ int main(int argc, char **argv)
       {
         if (build.display_info) 
         {
-          fprintf(g_output,"Copyright (C) 1999-2005 Nullsoft, Inc.\n\n"
-               "This license applies to everything in the NSIS package, except where otherwise\nnoted.\n\n"
-               "This software is provided 'as-is', without any express or implied warranty.\n"
-               "In no event will the authors be held liable for any damages arising from the\n"
-               "use of this software.\n\n"
-               "Permission is granted to anyone to use this software for any purpose, including\n"
-               "commercial applications, and to alter it and redistribute it freely, subject to\n"
-               "the following restrictions:\n"
-               "  1. The origin of this software must not be misrepresented; you must not claim\n"
-               "     that you wrote the original software. If you use this software in a\n"
-               "     product, an acknowledgment in the product documentation would be\n"
-               "     appreciated but is not required.\n"
-               "  2. Altered source versions must be plainly marked as such, and must not be\n"
-               "     misrepresented as being the original software.\n"
-               "  3. This notice may not be removed or altered from any source distribution.\n\n");
-          fflush(g_output);
+          print_license();
         }
         nousage++;
       }
@@ -290,26 +373,7 @@ int main(int argc, char **argv)
       }
       else if (!stricmp(&argv[argpos][1],"HDRINFO"))
       {
-        if (build.display_info)
-        {
-          fprintf(g_output,"Size of first header is %d bytes.\n",sizeof(firstheader));
-          fprintf(g_output,"Size of main header is %d bytes.\n",sizeof(header));
-          fprintf(g_output,"Size of each section is %d bytes.\n",sizeof(section));
-          fprintf(g_output,"Size of each page is %d bytes.\n",sizeof(page));
-          fprintf(g_output,"Size of each instruction is %d bytes.\n",sizeof(entry));
-          int x=build.definedlist.getnum();
-          fprintf(g_output,"\nDefined symbols: ");
-          for (int i=0; i<x; i++)
-          {
-            fprintf(g_output,"%s",build.definedlist.getname(i));
-            char *p=build.definedlist.getvalue(i);
-            if (*p) fprintf(g_output,"=%s",p);
-            if (i<x-1) fprintf(g_output,",");
-          }
-          if (!x) fprintf(g_output,"none");
-          fprintf(g_output,"\n");
-          fflush(g_output);
-        }
+        print_stub_info(build);
         nousage++;
       }
       else break;
@@ -377,29 +441,8 @@ int main(int argc, char **argv)
           }
           if (do_cd)
           {
-            string dir = get_dir_name(get_full_path(sfile));
-            if (!dir.empty()) 
-            {
-              if (build.display_script) 
-              {
-                fprintf(g_output,"Changing directory to: \"%s\"\n",dir.c_str());
-                fflush(g_output);
-              }
-              if (chdir(dir.c_str()))
-              {
-                if (build.display_errors)
-                {
-                  fprintf(g_output,"Error changing directory to \"%s\"\n",dir.c_str());
-                  fflush(g_output);
-                }
-                return 1;
-              }
-              if (build.display_script) 
-              {
-                fprintf(g_output,"\n");
-                fflush(g_output);
-              }
-            }
+            if (change_to_script_dir(build, string(sfile)))
+              return 1;
           }
         }
 
@@ -430,23 +473,7 @@ int main(int argc, char **argv)
   {
     if (build.display_errors && !nousage)
     {
-      fprintf(g_output,"Usage:\n"
-             "  makensis [option | script.nsi | - [...]]\n"
-             "   options are:\n"
-             "    " OPT_STR "CMDHELP item prints out help for 'item', or lists all commands\n"
-             "    " OPT_STR "HDRINFO prints information about what options makensis was compiled with\n"
-             "    " OPT_STR "LICENSE prints the makensis software license\n"
-             "    " OPT_STR "VERSION prints the makensis version and exits\n"
-             "    " OPT_STR "Vx verbosity where x is 4=all,3=no script,2=no info,1=no warnings,0=none\n"
-             "    " OPT_STR "Ofile specifies a text file to log compiler output (default is stdout)\n"
-             "    " OPT_STR "PAUSE pauses after execution\n"
-             "    " OPT_STR "NOCONFIG disables inclusion of <path to makensis.exe>" PLATFORM_PATH_SEPARATOR_STR "nsisconf.nsh\n"
-             "    " OPT_STR "NOCD disabled the current directory change to that of the .nsi file\n"
-             "    " OPT_STR "Ddefine[=value] defines the symbol \"define\" for the script [to value]\n"
-             "    " OPT_STR "Xscriptcmd executes scriptcmd in script (i.e. \"" OPT_STR "XOutFile poop.exe\")\n"
-             "   parameters are processed by order (" OPT_STR "Ddef ins.nsi != ins.nsi " OPT_STR "Ddef)\n"
-             "   for script file name, you can use - to read from the standard input\n");
-      fflush(g_output);
+      print_usage();
     }
     return 1;
   }
