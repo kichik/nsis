@@ -1,6 +1,6 @@
 \H{variables} Variables
 
-All variables are global and can be used in Sections or Functions.
+All variables are global and can be used in Sections or Functions. Note that, by default, variables are limited to 1024 characters. To extend this limit, \R{build}{build NSIS} with a bigger value of NSIS_MAX_STRLEN in Source/exehead/config.h or use the \W{http://nsis.sourceforge.net/download/specialbuilds/}{special build}.
 
 \S1{varuser} User Variables
 
@@ -12,7 +12,13 @@ User variables can be declared with the \R{var}{Var} command. You can use these 
 
 \c var_name
 
-Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'.
+Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'. Variables cannot be declared in sections or functions.
+
+\c Var example
+\c
+\c Function testVar
+\c   StrCpy $example "example value"
+\c FunctionEnd
 
 \S1{varother} Other Writable Variables
 
