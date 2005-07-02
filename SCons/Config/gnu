@@ -90,21 +90,7 @@ util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 # sure the sections will be written in the correct order.
 #
 
-script_path = File('#.sconf_temp/linker_script').path
-open(script_path, 'w').write("""
-	SECTIONS
-	{
-		.text : { *(.text) }
-		.data : { *(.data) }
-		.rdata : { *(.rdata) }
-		.bss : { *(.bss) }
-		.idata : { *(.idata) }
-		.ndata BLOCK(__section_alignment__) : { [ .ndata ] }
-		.rsrc : { *(.rsrc) }
-	}
-""")
-
-stub_env.Append(LINKFLAGS = '-Wl,%s' % script_path)
+stub_env.Append(LINKFLAGS = '-Wl,%s' % File('linker_script').abspath)
 
 #
 # GCC requires some functions from the CRT to be present, if certain
@@ -112,9 +98,6 @@ stub_env.Append(LINKFLAGS = '-Wl,%s' % script_path)
 # a larger buffer, GCC 3.4+ uses memset to fill the remaining of the
 # buffer with zeros.
 #
-
-funcs_file = None
-funcs_obj = None
 
 def check_requirement(ctx, func, trigger):
 	ctx.Message('Checking for %s requirement... ' % func)
@@ -131,95 +114,43 @@ def check_requirement(ctx, func, trigger):
 		}
 	""" % trigger
 
-	ret = not ctx.TryLink(test, '.c')
-	ctx.Result(ret)
+	result = not ctx.TryLink(test, '.c')
+	ctx.Result(result)
 
 	ctx.env['LINKFLAGS'] = flags
 
-	return ret
+	return result
 
-def replace_emitter(env, builder_name):
-	builder = env['BUILDERS'][builder_name]
+def add_file_to_emitter(env, emitter_name, file):
+	try:
+		original_emitter = env[emitter_name]
+	except KeyError:
+		original_emitter = None
 
-	def new_emitter(target, source, env):
-		res = builder.emitter(target, source, env)
+	def emitter(target, source, env):
+		if original_emitter:
+			target, source = original_emitter(target, source, env)
 
 		if '$NODEFLIBS_FLAG' not in env['LINKFLAGS']:
-			return res
+			return target, source
 
-		global funcs_file, funcs_obj
+		return target, source + [file]
 
-		if not funcs_obj:
-			funcs_obj = env.SharedObject(funcs_file)
-		res[1].append(funcs_obj)
+	env[emitter_name] = emitter
 
-		return res
-
-	env['BUILDERS'][builder_name] = Builder(
-		action = builder.action,
-		prefix = builder.prefix,
-		suffix = builder.suffix,
-		src_suffix = builder.src_suffix,
-		target_scanner = builder.target_scanner,
-		source_scanner = builder.source_scanner,
-		target_factory = builder.target_factory,
-		source_factory = builder.source_factory,
-		emitter = new_emitter, # only thing being replaced
-		src_builder = builder.src_builder,
-		single_source = builder.single_source
-	)
-
-def add_func(func):
-	global funcs_file
-
-	if not funcs_file:
-		import os
-		funcs_file = File('#.sconf_temp/funcs.c')
-		try:
-			os.unlink(funcs_file.abspath)
-		except OSError:
-			pass
-
-	f = file(funcs_file.abspath, 'a')
-	f.write(func)
-	f.write('\n')
-	f.close()
+def add_file(file):
+	file = File(file)
+	add_file_to_emitter(stub_env, 'PROGEMITTER', file)
+	add_file_to_emitter(util_env, 'PROGEMITTER', file)
+	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
 
 conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
-	add_func("""
-	  #include <stdlib.h> // for size_t
-		void *memcpy(void *out, const void *in, size_t len)
-		{
-			char *c_out=(char*)out;
-			char *c_in=(char *)in;
-			while (len-- > 0)
-			{
-				*c_out++=*c_in++;
-			}
-			return out;
-		}
-	""")
+	add_file('memcpy.c')
 
 if conf.CheckRequirement('memset', 'char c[128] = "test";'):
-	add_func("""
-	  #include <stdlib.h> // for size_t
-		void *memset(void *mem, int c, size_t len)
-		{
-			char *p=(char*)mem;
-			while (len-- > 0)
-			{
-				*p++=c;
-			}
-			return mem;
-		}
-	""")
-
-if funcs_file:
-	replace_emitter(stub_env, 'Program')
-	replace_emitter(plugin_env, 'SharedLibrary')
-	replace_emitter(util_env, 'Program')
+	add_file('memset.c')
 
 conf.Finish()
 
