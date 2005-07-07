@@ -186,7 +186,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Get version information
 
-  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" D ${LOCALFILE}'
+  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" D "${LOCALFILE}"'
   !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
   !ifdef LIBRARY_VERSION_FILENOTFOUND
@@ -214,7 +214,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !else
 
-      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T ${LOCALFILE}'
+      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T "${LOCALFILE}"'
       !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
       !ifdef LIBRARY_VERSION_FILENOTFOUND
@@ -243,7 +243,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T ${LOCALFILE}'
+      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T "${LOCALFILE}"'
       !include "${NSISDIR}\Bin\LibraryLocal.nsh"
 
     !endif
