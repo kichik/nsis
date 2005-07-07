@@ -140,7 +140,7 @@ else:
 if defenv['MSTOOLKIT']:
 	defenv.Tool('mstoolkit', toolpath = ['SCons/Tools'])
 
-Default(defenv['BUILD_PREFIX'])
+defenv.Default('$BUILD_PREFIX')
 
 tools = defenv['TOOLS']
 
@@ -443,6 +443,8 @@ defenv.SConscript(
 	exports = exports,
 	build_dir = build_dir
 )
+
+defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
 
 # test scripts
 
