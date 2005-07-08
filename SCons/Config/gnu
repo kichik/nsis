@@ -124,6 +124,8 @@ def check_requirement(ctx, func, trigger):
 def add_file_to_emitter(env, emitter_name, file):
 	try:
 		original_emitter = env[emitter_name]
+		if type(original_emitter) == list:
+			original_emitter = original_emitter[0]
 	except KeyError:
 		original_emitter = None
 
