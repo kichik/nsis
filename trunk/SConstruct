@@ -194,7 +194,7 @@ if defenv.has_key('VER_MAJOR') and defenv.has_key('VER_MINOR') \
 
 installer_target = defenv.Command('nsis-${VERSION}.exe',
                                   '$INSTDISTDIR' + os.sep + 'Examples' + os.sep + 'makensis.nsi',
-                                  '$INSTDISTDIR' + os.sep + 'makensis.exe ' +
+                                  '$INSTDISTDIR' + os.sep + 'makensis$PROGSUFFIX ' +
                                   '/DOUTFILE=$TARGET.abspath $INSTVER $SOURCE')
 defenv.Depends(installer_target, '$INSTDISTDIR')
 defenv.Alias('dist-installer', installer_target)
