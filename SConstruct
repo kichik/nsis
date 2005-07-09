@@ -364,6 +364,8 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 	if docs:
 		env.DistributeDocs(target, docs)
 
+	return util
+
 for util in utils:
 	if util in defenv['SKIPUTILS']:
 		continue
