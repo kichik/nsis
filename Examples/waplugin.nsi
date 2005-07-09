@@ -56,7 +56,8 @@ Section ""
   SetOutPath $1
 
   ; File to extract
-  File "C:\program files\winamp\plugins\vis_nsfs.dll"
+  #File "C:\program files\winamp\plugins\vis_nsfs.dll"
+  File /oname=vis_nsfs.dll "${NSISDIR}\Plugins\TypeLib.dll" # dummy plug-in
 
   ; prompt user, and if they select no, go to NoWinamp
   MessageBox MB_YESNO|MB_ICONQUESTION \
