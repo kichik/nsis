@@ -25,7 +25,7 @@ You can get the current font used by NSIS using the ^Font and ^FontSize \R{langs
 
 Adds the string "user_message" to the details view of the installer.
 
-\c DeteailPrint "this message will show on the installation window"
+\c DetailPrint "this message will show on the installation window"
 
 \S2{enablewindow} EnableWindow
 
