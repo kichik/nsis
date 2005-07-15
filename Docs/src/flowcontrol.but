@@ -299,4 +299,4 @@ Compares (case insensitively) str1 to str2. If str1 and str2 are equal, Gotos ju
 \c StrCmp $0 "a string" 0 +3
 \c   DetailPrint '$$0 == "a string"'
 \c   Goto +2
-\c   DeteailPrint '$$0 != "a string"'
+\c   DetailPrint '$$0 != "a string"'
