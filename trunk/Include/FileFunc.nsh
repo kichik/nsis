@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v2.4
+                       File Functions Header v2.5
 _____________________________________________________________________________
 
  2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -919,7 +919,6 @@ RefreshShellIcons
 	!endif
 !macroend
 
-
 !macro GetDrives
 	!ifndef ${_FILEFUNC_UN}GetDrives
 		!verbose push
@@ -935,11 +934,13 @@ RefreshShellIcons
 			Push $3
 			Push $4
 			Push $5
+			Push $6
 			Push $8
 			Push $9
 
 			System::Alloc 1024
 			Pop $2
+			System::Call 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
 
 			StrCmp $0 ALL drivestring
 			StrCmp $0 '' 0 typeset
@@ -947,59 +948,59 @@ RefreshShellIcons
 			goto drivestring
 
 			typeset:
-			StrCpy $5 -1
-			IntOp $5 $5 + 1
-			StrCpy $8 $0 1 $5
+			StrCpy $6 -1
+			IntOp $6 $6 + 1
+			StrCpy $8 $0 1 $6
 			StrCmp $8$0 '' enumex
 			StrCmp $8 '' +2
 			StrCmp $8 '+' 0 -4
-			StrCpy $8 $0 $5
-			IntOp $5 $5 + 1
-			StrCpy $0 $0 '' $5
+			StrCpy $8 $0 $6
+			IntOp $6 $6 + 1
+			StrCpy $0 $0 '' $6
 
 			StrCmp $8 'FDD' 0 +3
-			StrCpy $5 2
+			StrCpy $6 2
 			goto drivestring
 			StrCmp $8 'HDD' 0 +3
-			StrCpy $5 3
+			StrCpy $6 3
 			goto drivestring
 			StrCmp $8 'NET' 0 +3
-			StrCpy $5 4
+			StrCpy $6 4
 			goto drivestring
 			StrCmp $8 'CDROM' 0 +3
-			StrCpy $5 5
+			StrCpy $6 5
 			goto drivestring
 			StrCmp $8 'RAM' 0 typeset
-			StrCpy $5 6
+			StrCpy $6 6
 
 			drivestring:
-			System::Call 'kernel32::GetLogicalDriveStringsA(i,i) i(1024,r2)'
+			StrCpy $3 $2
 
 			enumok:
-			System::Call 'kernel32::lstrlenA(t) i(i r2) .r3'
-			StrCmp $3$0 '0ALL' enumex
-			StrCmp $3 0 typeset
-			System::Call 'kernel32::GetDriveTypeA(t) i (i r2) .r4'
+			System::Call 'kernel32::lstrlenA(t) i(i r3) .r4'
+			StrCmp $4$0 '0ALL' enumex
+			StrCmp $4 0 typeset
+			System::Call 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
 
 			StrCmp $0 ALL +2
-			StrCmp $4 $5 letter enumnext
-			StrCmp $4 2 0 +3
+			StrCmp $5 $6 letter enumnext
+			StrCmp $5 2 0 +3
 			StrCpy $8 FDD
 			goto letter
-			StrCmp $4 3 0 +3
+			StrCmp $5 3 0 +3
 			StrCpy $8 HDD
 			goto letter
-			StrCmp $4 4 0 +3
+			StrCmp $5 4 0 +3
 			StrCpy $8 NET
 			goto letter
-			StrCmp $4 5 0 +3
+			StrCmp $5 5 0 +3
 			StrCpy $8 CDROM
 			goto letter
-			StrCmp $4 6 0 enumex
+			StrCmp $5 6 0 enumex
 			StrCpy $8 RAM
 
 			letter:
-			System::Call '*$2(&t1024 .r9)'
+			System::Call '*$3(&t1024 .r9)'
 
 			Push $0
 			Push $1
@@ -1007,10 +1008,12 @@ RefreshShellIcons
 			Push $3
 			Push $4
 			Push $5
+			Push $6
 			Push $8
 			Call $1
 			Pop $9
 			Pop $8
+			Pop $6
 			Pop $5
 			Pop $4
 			Pop $3
@@ -1020,8 +1023,8 @@ RefreshShellIcons
 			StrCmp $9 'StopGetDrives' enumex
 
 			enumnext:
-			IntOp $2 $2 + $3
-			IntOp $2 $2 + 1
+			IntOp $3 $3 + $4
+			IntOp $3 $3 + 1
 			goto enumok
 
 			enumex:
@@ -1029,6 +1032,7 @@ RefreshShellIcons
 
 			Pop $9
 			Pop $8
+			Pop $6
 			Pop $5
 			Pop $4
 			Pop $3
@@ -1481,58 +1485,65 @@ RefreshShellIcons
 			Push $3
 			Push $4
 			Push $5
+			Push $6
+			Push $7
 
 			StrCpy $2 $1 '' 1
 			StrCpy $1 $1 1
-			StrLen $3 '$1$2'
+			StrLen $3 $2
+			StrCpy $7 0
+
+			begin:
 			StrCpy $4 -1
+			StrCpy $6 ''
+
+			quote:
+			IntOp $4 $4 + 1
+			StrCpy $5 $0 1 $4
+			StrCmp $5$7 '0' notfound
+			StrCmp $5 '' trimright
+			StrCmp $5 '"' 0 +7
+			StrCmp $6 '' 0 +3
+			StrCpy $6 '"'
+			goto quote
+			StrCmp $6 '"' 0 +3
+			StrCpy $6 ''
+			goto quote
+			StrCmp $5 `'` 0 +7
+			StrCmp $6 `` 0 +3
+			StrCpy $6 `'`
+			goto quote
+			StrCmp $6 `'` 0 +3
+			StrCpy $6 ``
+			goto quote
+			StrCmp $5 '`' 0 +7
+			StrCmp $6 '' 0 +3
+			StrCpy $6 '`'
+			goto quote
+			StrCmp $6 '`' 0 +3
+			StrCpy $6 ''
+			goto quote
+			StrCmp $6 '"' quote
+			StrCmp $6 `'` quote
+			StrCmp $6 '`' quote
+			StrCmp $5 $1 0 quote
+			StrCmp $7 0 trimleft trimright
 
 			trimleft:
 			IntOp $4 $4 + 1
 			StrCpy $5 $0 $3 $4
 			StrCmp $5 '' notfound
-			StrCmp $5 '$1$2' 0 trimleft
+			StrCmp $5 $2 0 quote
 			IntOp $4 $4 + $3
 			StrCpy $0 $0 '' $4
 			StrCpy $4 $0 1
 			StrCmp $4 ' ' 0 +3
 			StrCpy $0 $0 '' 1
 			goto -3
-
-			StrCpy $3 ''
-			StrCpy $4 -1
+			StrCpy $7 1
+			goto begin
 
 			trimright:
-			IntOp $4 $4 + 1
-			StrCpy $5 $0 1 $4
-			StrCmp $5 '' found
-			StrCmp $5 '"' 0 +7
-			StrCmp $3 '' 0 +3
-			StrCpy $3 '"'
-			goto trimright
-			StrCmp $3 '"' 0 +3
-			StrCpy $3 ''
-			goto trimright
-			StrCmp $5 `'` 0 +7
-			StrCmp $3 `` 0 +3
-			StrCpy $3 `'`
-			goto trimright
-			StrCmp $3 `'` 0 +3
-			StrCpy $3 ``
-			goto trimright
-			StrCmp $5 '`' 0 +7
-			StrCmp $3 '' 0 +3
-			StrCpy $3 '`'
-			goto trimright
-			StrCmp $3 '`' 0 +3
-			StrCpy $3 ''
-			goto trimright
-			StrCmp $3 '"' trimright
-			StrCmp $3 `'` trimright
-			StrCmp $3 '`' trimright
-			StrCmp $5 $1 0 trimright
-
-			found:
 			StrCpy $0 $0 $4
 			StrCpy $4 $0 1 -1
 			StrCmp $4 ' ' 0 +3
@@ -1551,6 +1562,8 @@ RefreshShellIcons
 			StrCpy $0 ''
 
 			end:
+			Pop $7
+			Pop $6
 			Pop $5
 			Pop $4
 			Pop $3

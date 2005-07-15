@@ -268,13 +268,22 @@ Section GetOptions
 	${GetOptions} '/INSTDIR=WxxxW /SILENT=yes' '/INSTDIR=' $OUT1
 	StrCmp $OUT1 'WxxxW' 0 error
 
+	${GetOptions} "/Prm='/D=True' /D=1" '/D=' $OUT1
+	StrCmp $OUT1 "1" 0 error
+
+	${GetOptions} "/D=1 /Prm='/D=True'" '/Prm=' $OUT1
+	StrCmp $OUT1 "/D=True" 0 error
+
+	${GetOptions} `/D=1 /Prm='/D="True" /S="/Temp"'` '/Prm=' $OUT1
+	StrCmp $OUT1 '/D="True" /S="/Temp"' 0 error
+
 	${GetOptions} `/INSTDIR='"C:/Program Files/Common Files"' /SILENT=yes` '/INSTDIR=' $OUT1
 	StrCmp $OUT1 '"C:/Program Files/Common Files"' 0 error
 
 	${GetOptions} `/INSTDIR='"C:/Program Files/Common Files"' /SILENT=yes` '/INSTDIR*=' $OUT1
 	StrCmp $OUT1 '' 0 error
 
-	${GetOptions} `/INSTDIR=''C:/Program Files/Common Files'' /SILENT=yes` '' $OUT1
+	${GetOptions} `/INSTDIR="C:/Program Files/Common Files" /SILENT=yes` '' $OUT1
 	StrCmp $OUT1 '' 0 error
 
 	goto +2

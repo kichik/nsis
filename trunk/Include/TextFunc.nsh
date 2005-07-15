@@ -35,6 +35,10 @@ LineSum
 	Afrow UK (Based on his idea of Function "LineCount")
 FileJoin
 	Afrow UK (Based on his idea of Function "JoinFiles")
+ConfigRead
+	vbgunz (His idea)
+ConfigWrite
+	vbgunz (His idea)
 TrimNewLines
 	sunjammer (Based on his Function "TrimNewLines")
 */
