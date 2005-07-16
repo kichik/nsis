@@ -214,32 +214,31 @@ defenv.Distribute('', 'nsisconf.nsh')
 #######  Stubs                                                     ###
 ######################################################################
 
-for stub in stubs:
-	if stub in defenv['SKIPSTUBS']:
-		continue
-
-	build_dir = '$BUILD_PREFIX/stub_%s' % stub
+def BuildStub(compression, solid):
 	env = stub_env.Copy()
-	env.Append(LINKFLAGS = '$MAP_FLAG')
-	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 0 }
+
+	suffix = ''
+	if solid:
+		suffix = '_solid'
+
+	build_dir = '$BUILD_PREFIX/stub_%s%s' % (compression, suffix)
+
+	exports = { 'env' : env, 'compression' : compression, 'solid_compression' : solid }
 
 	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
-	defenv.DistributeAs('Stubs/%s' % stub, target)
+	env.DistributeAs('Stubs/%s%s' % (compression, suffix), target)
 
-	build_dir = '$BUILD_PREFIX/stub_%s_solid' % stub
-	env = stub_env.Copy()
-	env.Append(LINKFLAGS = '$MAP_FLAG')
-	exports = { 'env' : env, 'compression' : stub, 'solid_compression' : 1 }
+	defenv.Alias(compression, target)
+	defenv.Alias('stubs', target)
 
-	solid_target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
-	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), solid_target)
+for stub in stubs:
+	if stub in defenv['SKIPSTUBS']:
+		continue
 
-	defenv.DistributeAs('Stubs/%s_solid' % stub, solid_target)
-
-	defenv.Alias(stub, target + solid_target)
-	defenv.Alias('stubs', target + solid_target)
+	BuildStub(stub, 0)
+	BuildStub(stub, 1)
 
 defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 
@@ -250,8 +249,6 @@ defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 build_dir = '$BUILD_PREFIX/makensis'
 exports = { 'env' : makensis_env }
 
-makensis_env.Append(LINKFLAGS = '$MAP_FLAG')
-
 makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = 0, exports = exports)
 
 makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
@@ -260,6 +257,38 @@ defenv.Alias('makensis', makensis)
 
 ins = defenv.Distribute('', makensis)
 defenv.Alias('install-compiler', ins)
+
+######################################################################
+#######  Common Functions                                          ###
+######################################################################
+
+def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
+	if defines:
+		env.Append(CPPDEFINES = defines)
+	if flags:
+		env.Append(CCFLAGS = flags)
+
+	if entry:
+		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
+
+	if nodeflib:
+		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
+
+def AppendRES(env, source, res, resources):
+	if res:
+		target_res = env.RES(res)
+		if resources:
+			env.Depends(target_res, resources)
+		source.append(target_res)
+
+def CleanMap(env, target, target_name):
+	env.Clean(target, File(target_name + '.map'))
+
+def DistributeExtras(env, target, examples, docs):
+	if examples:
+		env.DistributeExamples(target, examples)
+	if docs:
+		env.DistributeDocs(target, docs)
 
 ######################################################################
 #######  Plug-ins                                                  ###
@@ -274,37 +303,19 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 	if cppused and env['CPP_REQUIRES_STDLIB']:
 		nodeflib = 0
 
-	if defines:
-		env.Append(CPPDEFINES = defines)
-	if flags:
-		env.Append(CCFLAGS = flags)
+	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
-	if entry:
-		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
-
-	if nodeflib:
-		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
-
-	env.Append(LINKFLAGS = '$MAP_FLAG')
-
-	if res:
-		target_res = env.RES(res_target, res)
-		if resources:
-			env.Depends(target_res, resources)
-		source = source + target_res
+	AppendRES(env, source, res, resources)
 
 	plugin = env.SharedLibrary(target, source, LIBS = libs)
 	defenv.Alias(target, plugin)
 	defenv.Alias('plugins', plugin)
 
-	env.Clean(plugin, File(target + '.map'))
+	CleanMap(env, plugin, target)
 
 	env.Distribute('Plugins', plugin)
 
-	if examples:
-		env.DistributeExamples(target, examples)
-	if docs:
-		env.DistributeDocs(target, docs)
+	DistributeExtras(env, target, examples, docs)
 
 for plugin in plugins:
 	if plugin in defenv['SKIPPLUGINS']:
@@ -326,30 +337,15 @@ def BuildUtil(target, source, libs, entry = None, res = None,
               examples = None, docs = None):
 	env = util_env.Copy()
 
-	if defines:
-		env.Append(CPPDEFINES = defines)
-	if flags:
-		env.Append(CCFLAGS = flags)
+	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
-	if entry:
-		env.Append(LINKFLAGS = '${ENTRY_FLAG("%s")}' % entry)
-
-	if nodeflib:
-		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
-
-	env.Append(LINKFLAGS = '$MAP_FLAG')
-
-	if res:
-		target_res = env.RES(res)
-		if resources:
-			env.Depends(target_res, resources)
-		source = source + target_res
+	AppendRES(env, source, res, resources)
 
 	util = env.Program(target, source, LIBS = libs)
 	defenv.Alias(target, util)
 	defenv.Alias('utils', util)
 
-	env.Clean(util, File(target + '.map'))
+	CleanMap(env, util, target)
 
 	if install is not None:
 		ins = env.Distribute(install, util)
@@ -359,10 +355,7 @@ def BuildUtil(target, source, libs, entry = None, res = None,
 		ins = env.DistributeAs(install_as, util)
 		defenv.Alias('install-utils', ins)
 
-	if examples:
-		env.DistributeExamples(target, examples)
-	if docs:
-		env.DistributeDocs(target, docs)
+	DistributeExtras(env, target, examples, docs)
 
 	return util
 
