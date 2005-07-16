@@ -44,6 +44,7 @@ stub_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 stub_env.Append(LINKFLAGS = '$NODEFLIBS_FLAG')    # no standard libraries
 stub_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 stub_env.Append(LINKFLAGS = '-Wl,-e,_WinMain@16') # entry point
+stub_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 
 ### makensis environment
 
@@ -53,6 +54,7 @@ makensis_env.Append(CCFLAGS = '-O2')              # optimize
 makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
 makensis_env.Append(LINKFLAGS = '-s')             # strip
+makensis_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
 
 ### plugin environment
 
@@ -64,6 +66,7 @@ plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
 
 plugin_env.Append(LINKFLAGS = '-s')               # strip
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
+plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 
 ### util environment
 
@@ -76,6 +79,7 @@ util_env.Append(CCFLAGS = '-Wall')                # all warnings
 util_env.Append(LINKFLAGS = '-s')                 # strip
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
 util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 
 
 ### weird GCC requirements
