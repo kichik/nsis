@@ -30,6 +30,7 @@ stub_env.Append(CCFLAGS = '/W3')                 # level 3 warnings
 stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
 stub_env.Append(LINKFLAGS = '/entry:WinMain')    # entry point
 stub_env.Append(LINKFLAGS = '/NODEFAULTLIB')     # no default libraries
+stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
 
 ### makensis environment
 
@@ -41,6 +42,7 @@ makensis_env.Append(CCFLAGS = '/GX')             # enable exceptions
 makensis_env.Append(CCFLAGS = '/W3')             # level 3 warnings
 
 makensis_env.Append(LINKFLAGS = '/opt:nowin98')  # 512 bytes align
+makensis_env.Append(LINKFLAGS = '$MAP_FLAG')     # generate map file
 
 ### plugin environment
 
@@ -51,6 +53,7 @@ if not defenv['DEBUG']:
 plugin_env.Append(CCFLAGS = '/W3')               # level 3 warnings
 
 plugin_env.Append(LINKFLAGS = '/opt:nowin98')    # 512 bytes align
+plugin_env.Append(LINKFLAGS = '$MAP_FLAG')       # generate map file
 
 ### util environment
 
@@ -61,6 +64,7 @@ if not defenv['DEBUG']:
 util_env.Append(CCFLAGS = '/W3')              # level 3 warnings
 
 util_env.Append(LINKFLAGS = '/opt:nowin98')   # 512 bytes align
+util_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
 
 # return
 
