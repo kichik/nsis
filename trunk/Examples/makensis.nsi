@@ -726,7 +726,6 @@ Section -post
   Push AdvSplash
   Call AddReadmeToStartMenu
 
-
   ; Math
   Push Math
   Call AddReadmeToStartMenu
@@ -757,6 +756,10 @@ Section -post
 
   ; VPatch
   Push VPatch
+  Call AddReadmeToStartMenu
+
+  ; InstallOptions
+  Push InstallOptions
   Call AddReadmeToStartMenu
 
   no_startshortcuts:
