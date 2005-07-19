@@ -274,9 +274,9 @@ def AddEnvStandardFlags(env, defines, flags, entry, nodeflib):
 	if nodeflib:
 		env.Append(LINKFLAGS = '$NODEFLIBS_FLAG') # no default libraries
 
-def AppendRES(env, source, res, resources):
+def AppendRES(env, source, res, resources, target_name = None):
 	if res:
-		target_res = env.RES(res)
+		target_res = env.RES(target_name, res)
 		if resources:
 			env.Depends(target_res, resources)
 		source.append(target_res)
@@ -305,7 +305,7 @@ def BuildPlugin(target, source, libs, examples = None, docs = None,
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
-	AppendRES(env, source, res, resources)
+	AppendRES(env, source, res, resources, res_target)
 
 	plugin = env.SharedLibrary(target, source, LIBS = libs)
 	defenv.Alias(target, plugin)
