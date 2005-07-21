@@ -17,7 +17,7 @@ $(^Name) Installatioun
 # ^UninstallCaption
 $(^Name) Desinstallatioun
 # ^LicenseSubCaption
-: Lizenzoofkommes
+: Lizenzofkommes
 # ^ComponentsSubCaption
 : Installatiouns-Optiounen
 # ^DirSubCaption
@@ -25,17 +25,17 @@ $(^Name) Desinstallatioun
 # ^InstallingSubCaption
 : Installéieren
 # ^CompletedSubCaption
-: Ferdeg
+: Färdeg
 # ^UnComponentsSubCaption
 : Desinstallatiuons-Optiounen
 # ^UnDirSubCaption
-: Quellverzeechnis
+: Quellverzeechnes
 # ^ConfirmSubCaption
 : Bestätegung
 # ^UninstallingSubCaption
 : Läschen
 # ^UnCompletedSubCaption
-: Ferdeg
+: Färdeg
 # ^BackBtn
 < &Zréck
 # ^NextBtn
@@ -43,23 +43,23 @@ $(^Name) Desinstallatioun
 # ^AgreeBtn
 &Unhuelen
 # ^AcceptBtn
-Ech &huelen d'Lizenzoofkommes un.
+Ech &huelen d'Lizenzofkommes un.
 # ^DontAcceptBtn
-Ech &lehnen d'Lizenzoofkommes oof.
+Ech &lehnen d'Lizenzofkommes of.
 # ^InstallBtn
 &Installéieren
 # ^UninstallBtn
 &Desinstalléieren
 # ^CancelBtn
-Oofbriechen
+Ofbriechen
 # ^CloseBtn
 &Zou maan
 # ^BrowseBtn
 &Duerchsichen...
 # ^ShowDetailsBtn
-&Details uwéisen
+&Details uweisen
 # ^ClickNext
-Klick op wéider fir wéiderzefueren
+Klick op weider fir weiderzefueren
 # ^ClickInstall
 Klick op Installéieren, fir d'Installatioun unzefänken.
 # ^ClickUninstall
@@ -67,45 +67,45 @@ Klick op Desinstalléieren, fir d'Desinstallatioun unzefänken.
 # ^Name
 Numm
 # ^Completed
-Ferdeg
+Färdeg
 # ^LicenseText
-W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, klick op Unhuelen.
+W.e.g. d'Lizenzofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Ofkommes akzeptéiers, klick op Unhuelen.
 # ^LicenseTextCB
-W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
+W.e.g. d'Lizenzofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Ofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
 # ^LicenseTextRB
-W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, wiel d'entsprichend Optioun. $_CLICK
+W.e.g. d'Lizenzofkommes liesen, ierts de $(^NameDA) installéiers. Wanns de all Bedengungen vum Ofkommes akzeptéiers, wiel d'entsprichend Optioun. $_CLICK
 # ^UnLicenseText
-W.e.g. d'Lizenzoofkommes liesen, ierts de$(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, klick op Unhuelen.
+W.e.g. d'Lizenzofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Ofkommes akzeptéiers, klick op Unhuelen.
 # ^UnLicenseTextCB
-W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
+W.e.g. d'Lizenzofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Ofkommes akzeptéiers, aktivéier d'Kontrollkeschtchen. $_CLICK
 # ^UnLicenseTextRB
-W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, wiel d'entsprichend Optioun. $_CLICK
+W.e.g. d'Lizenzoofkommes liesen, ierts de $(^NameDA) desinstalléiers. Wanns de all Bedengungen vum Oofkommes akzeptéiers, wiel d'entspriechend Optioun. $_CLICK
 # ^Custom
 Benutzerdefiniert
 # ^ComponentsText
-Wield'Komponenten aus, déis de wells installéieren an wiel déijeneg oof, déis de net installéieren wells. $_CLICK
+Wiel d'Komponenten aus, déis de wëlls installéieren an wiel déijéineg of, déis de net installéieren wëlls. $_CLICK
 # ^ComponentsSubText1
 Installatiouns-Typ bestëmmen:
 # ^ComponentsSubText2_NoInstTypes
-Wiel d'Komponenten aus, déis de installéieren wells:
+Wiel d'Komponenten aus, déis de installéieren wëlls:
 # ^ComponentsSubText2
-oder wiel zousätzlech Komponenten aus déis de installéieren wells:
+oder wiel zousätzlech Komponenten aus déis de installéieren wëlls:
 # ^UnComponentsText
-Wiel d'Komponenten aus déis de desinstalléieren wells an wiel déijeneg oof, déis de net desinstalléieren wells. $_CLICK
+Wiel d'Komponenten aus déis de desinstalléieren wëlls an wiel déijéineg of, déis de net desinstalléieren wëlls. $_CLICK
 # ^UnComponentsSubText1
 Deinstallatiouns-Typ bestëmmen:
 # ^UnComponentsSubText2_NoInstTypes
-Wiel d'Komponenten aus, déis de desinstalléieren wells:
+Wiel d'Komponenten aus, déis de desinstalléieren wëlls:
 # ^UnComponentsSubText2
-oder wiel zusätzlech Komponenten aus, déis de desinstalléieren wells:
+oder wiel zusätzlech Komponenten aus, déis de desinstalléieren wëlls:
 # ^DirText
-$(^NameDA) gett an den Dossier installéiert deen fiergin gouf. Wanns de et an een aaneren Dossier installéieren wells, klick op Duechsichen an wiel een aaneren Dossier aus. $_CLICK
+$(^NameDA) gëtt an den Dossier installéiert deen fierginn gouf. Wanns de et an een aneren Dossier installéieren wëlls, klick op Duechsichen an wiel een aneren Dossier aus. $_CLICK
 # ^DirSubText
 Zielverzeechnes
 # ^DirBrowseText
-Wiel en Dossier aus wuers de $(^NameDA) installéieren wells:
+Wiel en Dossier aus wuers de $(^NameDA) installéieren wëlls:
 # ^UnDirText
-$(^NameDA) gett as dem Dossier desinstalléiert, deen ugin gouf. Wann $(^NameDA) an engem aaneren Dossier ass, klick op Duechsichen an wiel een aaneren Dossier aus. $_CLICK
+$(^NameDA) gëtt an deem Dossier desinstalléiert, deen uginn gouf. Wann $(^NameDA) an engem aneren Dossier ass, klick op Duechsichen an wiel een aneren Dossier aus. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
@@ -115,13 +115,13 @@ Wiel den Dossier aus wou $(^NameDA) dran installéiert ass:
 # ^SpaceRequired
 "Gebrauchten Späicher: "
 # ^UninstallingText
-$(^NameDA) gett aus dem ausgewielten Dossier desinstalléiert. $_CLICK
+$(^NameDA) gëtt aus dem ausgewielten Dossier desinstalléiert. $_CLICK
 # ^UninstallingSubText
 Desinstalléieren aus:
 # ^FileError
-Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op oofbriechen fir den Setup ze verloossen,\r\nop Widderhuelen fir den Setup nach eng Kéier duechzeféieren\r\n oder op Ignoréieren fir des Datei ze iwwersprengen an wéiderzefueren.
+Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op ofbriechen fir den Setup ze verloossen,\r\nop Widderhuelen fir den Setup nach eng Kéier duechzeféieren\r\n oder op Ignoréieren fir des Datei ze iwwersprengen an weiderzefueren.
 # ^FileError_NoIgnore
-Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op Widderhuelen fir den Setup nach eng Kéier duechzeféieren,\r\noder op oofbriechen fir den Setup ze verloossen.
+Fehler beim Iwwerschreiwen vun der Datei: \r\n\t"$0"\r\nKlick op Widderhuelen fir den Setup nach eng Kéier duechzeféieren,\r\noder op ofbriechen fir den Setup ze verloossen.
 # ^CantWrite
 "Fehler beim Schreiwen: "
 # ^CopyFailed
@@ -141,13 +141,13 @@ Kopéieren fehlgeschloen
 # ^CreateShortcut
 "Maan Oofkierzung: "
 # ^CreatedUninstaller
-"Maan Desinstallatiouns-Programm: "
+"Man Desinstallatiouns-Programm: "
 # ^Delete
 "Läschen Datei: "
 # ^DeleteOnReboot
 "Läschen Datei no engem Neistart: "
 # ^ErrorCreatingShortcut
-"Fehler beim maan vun enger Oofkierzung: "
+"Fehler beim man vun enger Oofkierzung: "
 # ^ErrorCreating
 "Fehler beim maan: "
 # ^ErrorDecompressing
@@ -177,7 +177,7 @@ Installations-Programm Beschiedegt: net zoulässegen Befehlscode
 # ^Skipped
 "Iwwersprongen: "
 # ^CopyDetails
-Detailler an d'Zweschenooflaag kopéieren
+Detailler an d'Zwëschenooflag kopéieren
 # ^LogInstall
 Installatioun protokolléieren
 # ^Byte
