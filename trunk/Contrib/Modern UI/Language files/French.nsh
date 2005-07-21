@@ -89,6 +89,6 @@
   !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) a été supprimé de votre ordinateur.\r\n\r\nCliquez sur Fermer pour quitter le programme d'installation."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Votre ordinateur doit être redémarré pour terminer l'installation de $(^NameDA). Souhaitez-vous redémarrer maintenant ?"
 
-  !define MUI_UNTEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter l'installation de $(^Name) ?"
+  !define MUI_UNTEXT_ABORTWARNING "Êtes-vous sûr de vouloir quitter la désinstallation de $(^Name) ?"
 
 !insertmacro MUI_LANGUAGEFILE_END
