@@ -65,7 +65,7 @@ Call functions:
 \c               ;     /B=0     - Banner isn't used (default)
 \c               ;     /B=1     - Banner is used. Callback when function
 \c               ;                start to search in new directory
-\c "Function"    ; Callback function then found
+\c "Function"    ; Callback function when found
 \c 
 \c Function "Function"
 \c 	; $R9    "path\name"
@@ -420,7 +420,7 @@ Call functions:
 \c                 ; [ALL]
 \c                 ;   Find all drives by letter (default)
 \c                 ;
-\c "Function"      ; Callback function then found
+\c "Function"      ; Callback function when found
 \c 
 \c Function "Function"
 \c 	; $9    "drive letter"  (a:\ c:\ ...)
@@ -611,7 +611,7 @@ Call functions:
 
 \S1{} GetExeName
 
-\b Get installer filename (also valid case for Windows 9X).
+\b Get installer filename (with valid case for Windows 9X/Me).
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -626,7 +626,7 @@ Call functions:
 
 \S1{} GetExePath
 
-\b Get installer pathname ($EXEDIR with valid case for Windows 9X).
+\b Get installer pathname ($EXEDIR with valid case for Windows 9X/Me).
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -792,18 +792,20 @@ Call functions:
 
 \c "[PathString]"    ;
 \c                   ;
-\c "[Option]"        ; [Lenght][A|B|C]
+\c "[Option]"        ; [Length][A|B|C|D]
 \c                   ;
-\c                   ; Lenght  -Maximum string lenght
+\c                   ; Length  -Maximum string length
 \c                   ;   A     -Trim center path (default)
 \c                   ;           (C:\root\...\third path) 
 \c                   ;           If A mode not possible Then will be used B mode
-\c                   ;           If B mode not possible Then will be used C mode
 \c                   ;   B     -Trim right path
 \c                   ;           (C:\root\second path\...)
 \c                   ;           If B mode not possible Then will be used C mode
 \c                   ;   C     -Trim right string
 \c                   ;           (C:\root\second path\third p...)
+\c                   ;   D     -Trim right string + filename
+\c                   ;           (C:\root\second p...\third path)
+\c                   ;           If D mode not possible Then will be used C mode
 \c                   ;
 \c $var              ; Result:  Trimmed path
 

@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v2.5
+                       File Functions Header v2.6
 _____________________________________________________________________________
 
  2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -1063,34 +1063,41 @@ RefreshShellIcons
 			Push $4
 			Push $5
 			Push $6
+			Push $7
 			ClearErrors
 
 			StrCmp $1 'L' gettime
-			System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r2'
-			System::Call 'kernel32::FindFirstFileA(t,i)i(r0,r2) .r3'
-			IntCmp $3 -1 error
-			System::Call 'kernel32::FindClose(i)i(r3)'
+			StrCmp $1 'A' getfile
+			StrCmp $1 'C' getfile
+			StrCmp $1 'M' getfile
+			goto error
+
+			getfile:
+			IfFileExists $0 0 error
+			System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
+			System::Call 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
+			System::Call 'kernel32::FindClose(i)i(r2)'
 
 			gettime:
-			System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r0'
+			System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
 			StrCmp $1 'L' 0 filetime
-			System::Call 'kernel32::GetLocalTime(i)i(r0)'
+			System::Call 'kernel32::GetLocalTime(i)i(r7)'
 			goto convert
 
 			filetime:
-			System::Call '*$2(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r6,.r5,.r4)'
+			System::Call '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
+			System::Free $6
 			StrCmp $1 'A' 0 +3
-			StrCpy $4 $5
-			goto +5
-			StrCmp $1 'C' 0 +3
-			StrCpy $4 $6
-			goto +2
-			StrCmp $1 'M' 0 error
-			System::Call 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r4,.r3)'
-			System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r0)'
+			StrCpy $2 $3
+			goto +3
+			StrCmp $1 'C' 0 +2
+			StrCpy $2 $4
+			System::Call 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
+			System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 			convert:
-			System::Call '*$0(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+			System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+			System::Free $7
 
 			IntCmp $0 9 0 0 +2
 			StrCpy $0 '0$0'
@@ -1134,6 +1141,7 @@ RefreshShellIcons
 			StrCpy $6 ''
 
 			end:
+			Pop $7
 			Exch $6
 			Exch
 			Exch $5
@@ -1357,23 +1365,8 @@ RefreshShellIcons
 
 		Function ${_FILEFUNC_UN}GetExeName
 			Push $0
-			Push $1
-
-			StrCpy $1 $CMDLINE 1
-			StrCmp $1 '"' 0 kernel
-			StrCpy $1 0
-			IntOp $1 $1 + 1
-			StrCpy $0 $CMDLINE 1 $1
-			StrCmp $0 '"' 0 -2
-			IntOp $1 $1 - 1
-			StrCpy $0 $CMDLINE $1 1
-			goto end
-
-			kernel:
-			System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024) i r1'
-
-			end:
-			Pop $1
+			System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
+			System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
 			Exch $0
 		FunctionEnd
 
@@ -1391,31 +1384,8 @@ RefreshShellIcons
 
 		Function ${_FILEFUNC_UN}GetExePath
 			Push $0
-			Push $1
-			Push $2
-
-			StrCpy $1 $CMDLINE 1
-			StrCmp $1 '"' 0 exedir
-			StrCpy $1 0
-			IntOp $1 $1 + 1
-			StrCpy $0 $CMDLINE 1 $1
-			StrCmp $0 '"' 0 -2
-			IntOp $1 $1 - 1
-			StrCpy $0 $CMDLINE $1 1
-
-			StrCpy $1 0
-			IntOp $1 $1 - 1
-			StrCpy $2 $0 1 $1
-			StrCmp $2 '\' 0 -2
-			StrCpy $0 $0 $1
-			goto end
-
-			exedir:
 			StrCpy $0 $EXEDIR
-
-			end:
-			Pop $2
-			Pop $1
+			System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
 			Exch $0
 		FunctionEnd
 
@@ -1814,6 +1784,7 @@ RefreshShellIcons
 			StrCmp $3 'A' A-trim
 			StrCmp $3 'B' B-trim
 			StrCmp $3 'C' C-trim
+			StrCmp $3 'D' D-trim
 
 			A-trim:
 			StrCpy $3 $0 1 1
@@ -1852,6 +1823,19 @@ RefreshShellIcons
 			C-trim:
 			StrCpy $0 $0 $1
 			StrCpy $0 '$0...'
+			goto end
+
+			D-trim:
+			StrCpy $3 -1
+			IntOp $3 $3 - 1
+			StrCmp $3 -$2 C-trim
+			StrCpy $4 $0 1 $3
+			StrCmp $4 '\' 0 -3
+			StrCpy $4 $0 '' $3
+			IntOp $3 $1 + $3
+			IntCmp $3 2 C-trim C-trim
+			StrCpy $0 $0 $3
+			StrCpy $0 '$0...$4'
 			goto end
 
 			empty:
