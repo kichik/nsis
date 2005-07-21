@@ -451,6 +451,18 @@ Section BannerTrimPath
 	${BannerTrimPath} 'C:\12\3456\789' '11C' $OUT1
 	StrCmp $OUT1 'C:\12\34...' 0 error
 
+	${BannerTrimPath} 'C:\12\3456\789' '9D' $OUT1
+	StrCmp $OUT1 'C:\12\...' 0 error
+
+	${BannerTrimPath} 'C:\12\3456\789' '10D' $OUT1
+	StrCmp $OUT1 'C:\...\789' 0 error
+
+	${BannerTrimPath} 'C:\12\3456\789' '11D' $OUT1
+	StrCmp $OUT1 'C:\1...\789' 0 error
+
+	${BannerTrimPath} '123456789' '5D' $OUT1
+	StrCmp $OUT1 '12...' 0 error
+
 	goto +2
 	error:
 	SetErrors

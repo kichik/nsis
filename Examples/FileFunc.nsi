@@ -100,7 +100,7 @@ Function ShowCustom
 	StrCpy $GETBASENAME1 'C:\path\file.dll'
 	StrCpy $GETFILEEXT1 'C:\path\file.dll'
 	StrCpy $BANNERTRIMPATH1 'C:\Server\Documents\Terminal\license.htm'
-	StrCpy $BANNERTRIMPATH2 '35A'
+	StrCpy $BANNERTRIMPATH2 '34A'
 	StrCpy $DIRSTATE1 '$TEMP'
 
 	GetDlgItem $1 $HWND 1203
