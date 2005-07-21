@@ -10,6 +10,7 @@ NLF v6
 # RTL - anything else than RTL means LTR
 -
 # Translation by Yuri Holubow, Nash-Soft.com <http://www.Nash-Soft.com>
+# Corrections by Dmitriy Kononchuk [http://gri3ly.kiev.ua]
 # ^Branding
 Nullsoft Install System %s
 # ^SetupCaption
@@ -17,13 +18,13 @@ $(^Name) Установка
 # ^UninstallCaption
 $(^Name) Видалення
 # ^LicenseSubCaption
-: Лiцензiйна угода
+: Ліцензійна угода
 # ^ComponentsSubCaption
-: Опцiї установки
+: Опції установки
 # ^DirSubCaption
-: Директорiя установки
+: Директорія установки
 # ^InstallingSubCaption
-: Копiювання файлiв
+: Копіювання файлів
 # ^CompletedSubCaption
 : Завершено
 # ^UnComponentsSubCaption
@@ -31,9 +32,9 @@ $(^Name) Видалення
 # ^UnDirSubCaption
 : Директорія видалення
 # ^ConfirmSubCaption
-: Пiдтверждення
+: Підтверждення
 # ^UninstallingSubCaption
-: Видалення файлiв
+: Видалення файлів
 # ^UnCompletedSubCaption
 : Завершено
 # ^BackBtn
@@ -55,9 +56,9 @@ $(^Name) Видалення
 # ^CloseBtn
 &Закрити
 # ^BrowseBtn
-О&бгляд...
+О&гляд...
 # ^ShowDetailsBtn
-Подробицi
+Подробиці
 # ^ClickNext
 Натисніть Далі щоб продовжити
 # ^ClickInstall
@@ -65,7 +66,7 @@ $(^Name) Видалення
 # ^ClickUninstall
 Натисніть Видалить для початку процессу видалення
 # ^Name
-Iм'я
+Ім'я
 # ^Completed
 Завершено
 # ^LicenseText
@@ -85,11 +86,11 @@ Iм'я
 # ^ComponentsText
 Виберіть які компоненти програми Ви бажаєте встановити. $_CLICK
 # ^ComponentsSubText1
-Виберiть тип установки:
+Виберіть тип установки:
 # ^ComponentsSubText2_NoInstTypes
-Виберiть компоненти для установки:
+Виберіть компоненти для установки:
 # ^ComponentsSubText2
-Чи, виберiть вручну компоненти, якi Ви хочете встановити:
+Чи, виберіть вручну компоненти, які Ви хочете встановити:
 # ^UnComponentsText
 Виберіть які компоненти Ви бажаєте видалити. Відмітьте компоненти для видалення і зніміть відмітку з тих, які Ви видаляти не бажаєте. $_CLICK
 # ^UnComponentsSubText1
@@ -99,21 +100,21 @@ Iм'я
 # ^UnComponentsSubText2
 Чи виберіть компоненти програми для видалення по своєму бажанні:
 # ^DirText
-Программа установки встановить $(^NameDA) у вказану директорію. Для того, щоб встановити программу в іншу директорію, натисніть Огляд і вкажіть поьрібну директорію. $_CLICK
+Программа установки встановить $(^NameDA) у вказану директорію. Для того, щоб встановити программу в іншу директорію, натисніть Огляд і вкажіть потрібну директорію. $_CLICK
 # ^DirSubText
 Директорія призначення
 # ^DirBrowseText
 Виберіть директорію для установки $(^NameDA):
 # ^UnDirText
-Программа установки видалить $(^NameDA) з вказанної директорвї. Для того, щоб провести видалення з іншої директорії, натисніть Огляд і вкажіть поьрібну директорію. $_CLICK
+Программа установки видалить $(^NameDA) з вказанної директорії. Для того, щоб провести видалення з іншої директорії, натисніть Огляд і вкажіть поьрібну директорію. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
 Виберіть директорію, з якої Ви бажаєте видалити $(^NameDA):
 # ^SpaceAvailable
-"Доступно мiсця: "
+"Доступно місця: "
 # ^SpaceRequired
-"Необхiдно мiсця: "
+"Необхідно місця: "
 # ^UninstallingText
 Майстер установки допоможе Вам видалити $(^NameDA) з Вашого комп'ютера. $_CLICK
 # ^UninstallingSubText
