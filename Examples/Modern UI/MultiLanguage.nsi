@@ -95,6 +95,7 @@
   !insertmacro MUI_LANGUAGE "Icelandic"
   !insertmacro MUI_LANGUAGE "Malaysian"
   !insertmacro MUI_LANGUAGE "Bosnian"
+  !insertmacro MUI_LANGUAGE "Kurdish"
 
 ;--------------------------------
 ;Reserve Files
