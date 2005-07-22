@@ -607,7 +607,12 @@ int CEXEBuild::GenerateLangTables() {
             {
               // No string is defined; give a warning (for user strings only)
               if (lsn[0] != '^')
-                warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+              {
+                if (lt[i].nlf.m_bLoaded)
+                  warning("LangString \"%s\" is not set in language table of language %s", lsn, lt[i].nlf.m_szName);
+                else
+                  warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+              }
             }
             else
             {
@@ -714,7 +719,12 @@ int CEXEBuild::GenerateLangTables() {
             {
               // No string is defined; give a warning (for user strings only)
               if (lsn[0] != '^')
-                warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+              {
+                if (lt[i].nlf.m_bLoaded)
+                  warning("LangString \"%s\" is not set in language table of language %s", lsn, lt[i].nlf.m_szName);
+                else
+                  warning("LangString \"%s\" is not set in language table of language %d", lsn, lt[i].lang_id);
+              }
             }
             else
             {
