@@ -364,7 +364,7 @@ System::Call "dll::UseCallback(k r0)"</pre></blockquote>
 
 <p>Each time the callback is called, the string callback#, where # is the number of the callback, will be placed in the destination of the return "parameter". The number of the first callback created is 1, the second's is 2, the third's is 3 and so on. As System is single threaded, a callback can only be called while calling another function. For example, EnumChildWindows's callback can only be called when EnumChildWindows is being called. You should therefore check for callback# after each function call that might call your callback.</p>
 
-<blockquote><pre>System::Call "(i .r0, i .r1) isR0"
+<blockquote><pre>System::Get "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
 StrCmp $R0 "callback1" 0 +2
@@ -374,7 +374,7 @@ DetailPrint "UseCallback passed ($0, $1) to the callback"
 <p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
 
 <blockquote><pre>SetPluginUnload alwaysoff
-System::Call "(i .r0, i .r1) isR0"
+System::Get "(i .r0, i .r1) isR0"
 Pop $0
 System::Call "dll::UseCallback(k r0)"
 loop:
