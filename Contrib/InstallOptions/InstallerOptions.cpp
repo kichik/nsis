@@ -798,7 +798,7 @@ BOOL CALLBACK cfgDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 
 // pFields[nIdx].nParentIdx is used to store original windowproc
-int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, LPARAM wParam, WPARAM lParam)
+int WINAPI StaticLINKWindowProc(HWND hWin, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int StaticField = FindControlIdx(GetDlgCtrlID(hWin));
   if (StaticField < 0)
