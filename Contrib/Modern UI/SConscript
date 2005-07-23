@@ -46,6 +46,7 @@ languages = Split("""
 	Italian.nsh
 	Japanese.nsh
 	Korean.nsh
+	Kurdish.nsh
 	Latvian.nsh
 	Lithuanian.nsh
 	Luxembourgish.nsh
