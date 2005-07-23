@@ -1,0 +1,10 @@
+SECTIONS
+{
+	.text : { *(.text) }
+	.data : { *(.data) }
+	.rdata : { *(.rdata) }
+	.bss : { *(.bss) }
+	.idata : { *(.idata) }
+	.ndata BLOCK(__section_alignment__) : { [ .ndata ] }
+	.rsrc : { *(.rsrc) }
+}

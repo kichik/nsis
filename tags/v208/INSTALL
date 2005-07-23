@@ -1,0 +1,49 @@
+INSTALLING NSIS
+~~~~~~~~~~~~~~~
+
+This is a trimmed version of Appendix F of the documentation.
+
+ - Requirements
+
+   * Python version 1.5.2 and above (http://www.python.org/)
+   * SCons version 0.96.90 and above (http://www.scons.org/)
+   * C compiler
+
+ - Installing
+
+   * type:
+
+       scons PREFIX="C:\Program Files\NSIS" install
+
+ - More options
+
+   * For build options, type:
+
+       scons -h
+
+   * For SCons options, type:
+
+       scons -H
+
+ - Special cases
+
+   * If using the free Visual C++ Toolkit and Platform SDK
+     (available at http://msdn.microsoft.com/visualc/vctoolkit2003/,
+      http://www.microsoft.com/msdownload/platformsdk/sdkupdate/),
+     add MSTOOLKIT=yes to the build command line. For example:
+
+        scons MSTOOLKIT=yes PREFIX=C:\NSIS install
+
+     If path problems occur, try:
+
+        set MSSDK=C:\Path\To\Platform SDK
+        set VCToolkitInstallDir=C:\Path\To\VCToolkit
+        scons MSTOOLKIT=yes
+
+    * If a cross compiler is not available on POSIX, use:
+
+        scons SKIPSTUBS=all SKIPPLUGINS=all SKIPUTILS=all SKIPMISC=all
+
+      This should only build makensis. Once you have makensis, you can
+      drop it in a downloaded precompiled package such as the nightly
+      build.

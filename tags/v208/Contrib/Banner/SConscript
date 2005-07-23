@@ -1,0 +1,22 @@
+target = 'Banner'
+
+files = Split("""
+	Banner.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+""")
+
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	Readme.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, examples, docs)

@@ -1,0 +1,26 @@
+target = 'VPatch'
+
+files = Split("""
+	vpatchdll.c
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+examples = Split("""
+	#Contrib/VPatch/example.nsi
+	#Contrib/VPatch/newfile.txt
+	#Contrib/VPatch/oldfile.txt
+	#Contrib/VPatch/patch.pat
+""")
+
+docs = Split("""
+	#Contrib/VPatch/Readme.html
+""")
+
+Import('BuildPlugin env')
+
+BuildPlugin(target, files, libs, examples, docs)
+
+env.Distribute('Bin', '#Contrib/VPatch/GenPat.exe')

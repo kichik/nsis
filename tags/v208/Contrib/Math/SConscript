@@ -1,0 +1,27 @@
+target = 'Math'
+
+files = Split("""
+	Source/Math.c
+	Source/MyMath.c
+	Source/plugin.c
+	Source/mathcrt.lib
+""")
+
+libs = Split("""
+	kernel32
+""")
+
+examples = Split("""
+	math.nsi
+	mathtest.nsi
+	mathtest.ini
+	mathtest.txt
+""")
+
+docs = Split("""
+	Math.txt
+""")
+
+Import('BuildPlugin env')
+
+BuildPlugin(target, files, libs, examples, docs, nodeflib = 0, flags = ['$CPP_FLAG'])

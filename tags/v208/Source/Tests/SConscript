@@ -1,0 +1,63 @@
+target = 'test'
+
+tests = Split("""
+	endian.cpp
+	mmap.cpp
+	specmatch.cpp
+	textrunner.cpp
+""")
+
+required = Split("""
+	dirreader.cpp
+	growbuf.cpp
+	mmap.cpp
+""")
+
+libs = Split("""
+	cppunit
+""")
+
+Import('env')
+
+# compile using msvcrt (that's how cppunit.lib is built)
+if 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']:
+	env.Append(CCFLAGS = ['/MD'])
+
+# uses exceptions
+env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+
+# test for CppUnit
+conf = env.Configure()
+cppunit = conf.CheckLibWithHeader(libs, 'cppunit/extensions/HelperMacros.h', 'C++')
+conf.Finish()
+
+if cppunit:
+
+	# compile files from parent directory
+	required_obj = []
+
+	for i in required:
+		b = 'required/%s' % i[:-4]
+		s = '#Source/%s' % i
+		o = env.Object(b, s)
+
+		required_obj.append(o)
+
+	# build test program
+	tests = env.Program(target, tests + required_obj, LIBS = libs)
+
+	# alias running the test to 'test'
+	test = env.Alias('test-code', [tests], tests[0].abspath)
+
+	# always test when asked to
+	AlwaysBuild(test)
+
+else:
+	
+	# no CppUnit
+	def err(target, source, env):
+		print '*** error: CppUnit must be installed for testing!'
+		return 1
+
+	cmd = env.Command(target, [tests], Action(err, ''))
+	env.Alias('test-code', cmd)
