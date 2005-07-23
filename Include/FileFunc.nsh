@@ -1366,7 +1366,7 @@ RefreshShellIcons
 		Function ${_FILEFUNC_UN}GetExeName
 			Push $0
 			System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
-			System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
+			#System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
 			Exch $0
 		FunctionEnd
 
@@ -1385,7 +1385,7 @@ RefreshShellIcons
 		Function ${_FILEFUNC_UN}GetExePath
 			Push $0
 			StrCpy $0 $EXEDIR
-			System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
+			#System::Call 'kernel32::GetLongPathNameA(t r0, t .r0, i 1024)'
 			Exch $0
 		FunctionEnd
 
