@@ -1,5 +1,54 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.08} 2.08
+
+Released on July 23rd, 2005
+
+\S1{v2.08-rn} Release Notes
+
+\b The Archive has been replaced with a \W{http://nsis.sourceforge.net/wiki/}{Wiki}. The new Wiki allows everyone to edit all pages so there's no longer need to hunt for the original author. It also allows everyone to upload plug-ins and not just administrators. And as if that's not enough, it looks better and provides easier and more feature-rich syntax.
+
+\S1{v2.08-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added Instructor's \R{headers}{header files of useful functions}
+
+\b \R{library}{Library} improvements: ordered registration after reboot, smaller RegTool and separate process for each registration to avoid conflicts (thanks stb)
+
+\S2{} Minor Changes
+
+\b Added Bosnian and Kurdish translations
+
+\b Added per-user nsisconf.nsh file in %APPDATA% or $HOME, depending on the platform (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1223041}{patch #1223041})
+
+\b Documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1202495}{bug #1202495}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1227610}{bug #1227610}, 
+\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1238686}{bug #1238686}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1225167}{patch #1225167}, \W{http://sourceforge.net/tracker/?group_id=22049&atid=373088&func=detail&aid=1240601}{RFE #1240601})
+
+\b Fixed _?= being ignored, if the uninstaller path is not quoted and is separated with only space from _?=
+
+\b Fixed \R{library}{Library} failing on paths with spaces (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1234283}{bug #1234283})
+
+\b Fixed UpgradeDLL compilation error (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1230336}{bug #1230336})
+
+\b Improved French, Ukrainian and Luxembourgish translation
+
+\b Made \R{rmdir}{RMDir} set the error flag, if passed an invalid directory path (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1227553}{bug #1227553})
+
+\b Made uninstallers copy themselves into a subdirectory of the temporary directory to avoid DLLs left in the temporary directory from being loaded by the uninstaller (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1214319}{patch #1214319})
+
+\b Missing \R{langstring}{LangString} warning now uses the language name, if possible
+
+\b zip2exe: fixed restriction of extraction path length and updated to \W{http://www.zlib.net/}{zlib} 1.2.3 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1226381}{bug #1226381})
+
+\S2{} Build System
+
+\b Added linker script to assure correct order of sections when building using GNU tools
+
+\b Added \c{test} target
+
+\b UIs are now built from source
+
 \H{v2.07} 2.07
 
 Released on June 20th, 2005
