@@ -2271,13 +2271,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           branding_image_found = false;
           DialogItemTemplate* dlgItem = 0;
           for (int i = 0; (dlgItem = UIDlg.GetItemByIdx(i)); i++) {
-            if (IS_INTRESOURCE(dlgItem->szClass)) {
-              if (dlgItem->szClass == MAKEINTRESOURCE(0x0082)) {
-                if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
-                  branding_image_found = true;
-                  branding_image_id = dlgItem->wId;
-                  break;
-                }
+            if ((IS_INTRESOURCE(dlgItem->szClass) && dlgItem->szClass == MAKEINTRESOURCE(0x0082))
+                || (!IS_INTRESOURCE(dlgItem->szClass) && !strcmp(dlgItem->szClass, "Static"))) {
+              if ((dlgItem->dwStyle & SS_BITMAP) == SS_BITMAP) {
+                branding_image_found = true;
+                branding_image_id = dlgItem->wId;
+                break;
               }
             }
           }
