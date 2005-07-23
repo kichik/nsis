@@ -130,6 +130,9 @@ Section "NSIS Core Files (required)" SecCore
   File ..\Include\LogicLib.nsh
   File ..\Include\StrFunc.nsh
   File ..\Include\Colors.nsh
+  File ..\Include\FileFunc.nsh
+  File ..\Include\TextFunc.nsh
+  File ..\Include\WordFunc.nsh
 
   SetOutPath $INSTDIR\Docs\StrFunc
   File ..\Docs\StrFunc\StrFunc.txt
@@ -213,6 +216,15 @@ Section "Script Examples" SecExample
   File ..\Examples\LogicLib.nsi
   File ..\Examples\silent.nsi
   File ..\Examples\StrFunc.nsi
+  File ..\Examples\FileFunc.nsi
+  File ..\Examples\FileFunc.ini
+  File ..\Examples\FileFuncTest.nsi
+  File ..\Examples\TextFunc.nsi
+  File ..\Examples\TextFunc.ini
+  File ..\Examples\TextFuncTest.nsi
+  File ..\Examples\WordFunc.nsi
+  File ..\Examples\WordFunc.ini
+  File ..\Examples\WordFuncTest.nsi
 SectionEnd
 
 !ifndef NO_STARTMENUSHORTCUTS
