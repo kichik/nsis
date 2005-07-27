@@ -3,13 +3,13 @@
 
 ;Language: Kurdish
 ;By Rêzan Tovjîn
-;Updated by Rêzan Tovjîn (retovjin@hotmail.com)
+;Updated by Erdal Ronahî (erdal.ronahi@gmail.com)
 
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Kurdish"
 
-  !define MUI_LANGNAME "Kurdish" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Kurdî" ;Use only ASCII characters (if this is not possible, use the English name)
   
   !define MUI_TEXT_WELCOME_INFO_TITLE "$(^NameDA) Tu bi xêr hatî sêrbaziya sazkirinê"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Ev sêrbaz dê di dema sazkirina $(^NameDA) de rêberiya te bike.\r\n\r\nBerî tu dest bi sazkirinê bikî, em pêþniyar dikin tu hemû bernameyên vekirî bigirî. Bi vî rengî beyî tu komputera ji nû ve vekî dê hinek dosiyên pergalê bêpirsgirêk werin sazkirin.\r\n\r\n$_CLICK"
@@ -24,8 +24,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Hilbijartina pareyan"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Ji bo sazkirina $(^NameDA) pareyên tu dixwazî hilbijêre."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Dazanîn"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîþanekê bibe ser pareyekê."
-  
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE 
+   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî nîþanekê bibe ser pareyekê."
+   !else 
+   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Ji bo tu der barê pareyan de agahiyan bistînî pareyekê hilbijêre." 
+  !endif   
   !define MUI_TEXT_DIRECTORY_TITLE "Hilbijartina peldanka armanckirî"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Peldanka tu dixwazî bernameya $(^NameDA) tê de were sazkirin hilbijêre."
   
@@ -49,7 +52,7 @@
   
   !define MUI_TEXT_STARTMENU_TITLE "Hilbijartina Peldanka Pêþeka Destpêkê"
   !define MUI_TEXT_STARTMENU_SUBTITLE "Peldanka pêþeka destpêkê ya ku dê kineriya $(^NameDA) tê de were bikaranîn hilbijêre."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Peldanka pêþeka destpêkê ya ku dê kineriya bernameyê tê de were bicihkirin hilbijêre. Tu dikarî bi navekî nû peldankeke nû ava bikî."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Peldanka pêþeka destpêkê ya ku dê kineriya bernameyê tê de were bicihkirin hilbijêre.  Tu dikarî bi navekî nû peldankeke nû ava bikî."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Bêyî çêkirina kineriyê bidomîne"
   
   !define MUI_TEXT_ABORTWARNING "Tu bawer î ku dixwazî ji sazkirina $(^Name) derkevî?"
