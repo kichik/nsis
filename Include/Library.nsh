@@ -103,7 +103,7 @@ Var __INSTALLLLIB_SESSIONGUID
 !macro InstallLib libtype shared install localfile destfile tempbasedir
 
   !verbose push
-  #!verbose 3
+  !verbose 3
 
   Push $R0
   Push $R1
@@ -115,7 +115,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Define
 
-  !define INSTALLLIB_UNIQUE ${__LINE__}
+  !define INSTALLLIB_UNIQUE "${__FILE__}${__LINE__}"
 
   !define INSTALLLIB_LIBTYPE_${libtype}
   !define INSTALLLIB_LIBTYPE_SET INSTALLLIB_LIBTYPE_${libtype}
@@ -149,14 +149,14 @@ Var __INSTALLLLIB_SESSIONGUID
 
   !ifndef INSTALLLIB_SHARED_NOTSHARED
 
-    StrCmp ${shared} "" 0 installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}
+    StrCmp ${shared} "" 0 "installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}"
 
       ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4
       ClearErrors
       IntOp $R0 $R0 + 1
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R4 $R0
 
-    installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}:
+    "installlib.noshareddllincrease_${INSTALLLIB_UNIQUE}:"
 
   !endif
 
@@ -169,19 +169,19 @@ Var __INSTALLLLIB_SESSIONGUID
 
     System::Call "sfc::SfcIsFileProtected(i 0, w R4) i.R0"
 
-      StrCmp $R0 "error" installlib.notprotected_${INSTALLLIB_UNIQUE}
-      StrCmp $R0 "0" installlib.notprotected_${INSTALLLIB_UNIQUE}
+      StrCmp $R0 "error" "installlib.notprotected_${INSTALLLIB_UNIQUE}"
+      StrCmp $R0 "0" "installlib.notprotected_${INSTALLLIB_UNIQUE}"
 
-    Goto installlib.done_${INSTALLLIB_UNIQUE}
+    Goto "installlib.done_${INSTALLLIB_UNIQUE}"
 
-    installlib.notprotected_${INSTALLLIB_UNIQUE}:
+    "installlib.notprotected_${INSTALLLIB_UNIQUE}:"
 
   !endif
 
   ;------------------------
   ;Check file
 
-  IfFileExists $R4 0 installlib.copy_${INSTALLLIB_UNIQUE}
+  IfFileExists $R4 0 "installlib.copy_${INSTALLLIB_UNIQUE}"
 
   ;------------------------
   ;Get version information
@@ -208,9 +208,9 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !ifndef INSTALLLIB_LIBTYPE_TLB & INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-      IntCmpU $R1 $R3 installlib.register_${INSTALLLIB_UNIQUE} installlib.register_${INSTALLLIB_UNIQUE} \
-        installlib.upgrade_${INSTALLLIB_UNIQUE}
+      IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+      IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
+        "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
     !else
 
@@ -223,15 +223,15 @@ Var __INSTALLLLIB_SESSIONGUID
 
       !ifndef LIBRARY_VERSION_NONE
 
-        IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-        IntCmpU $R1 $R3 0 installlib.register_${INSTALLLIB_UNIQUE} \
-          installlib.upgrade_${INSTALLLIB_UNIQUE}
+        IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+        IntCmpU $R1 $R3 0 "installlib.register_${INSTALLLIB_UNIQUE}" \
+          "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
       !else
 
-        IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-        IntCmpU $R1 $R3 installlib.register_${INSTALLLIB_UNIQUE} installlib.register_${INSTALLLIB_UNIQUE} \
-          installlib.upgrade_${INSTALLLIB_UNIQUE}
+        IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+        IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
+          "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
       !endif
 
@@ -273,9 +273,9 @@ Var __INSTALLLLIB_SESSIONGUID
       Pop $R2
       Pop $R3
 
-      IntCmpU $R0 $R2 0 installlib.register_${INSTALLLIB_UNIQUE} installlib.upgrade_${INSTALLLIB_UNIQUE}
-      IntCmpU $R1 $R3 installlib.register_${INSTALLLIB_UNIQUE} installlib.register_${INSTALLLIB_UNIQUE} \
-        installlib.upgrade_${INSTALLLIB_UNIQUE}
+      IntCmpU $R0 $R2 0 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.upgrade_${INSTALLLIB_UNIQUE}"
+      IntCmpU $R1 $R3 "installlib.register_${INSTALLLIB_UNIQUE}" "installlib.register_${INSTALLLIB_UNIQUE}" \
+        "installlib.upgrade_${INSTALLLIB_UNIQUE}"
 
       !undef LIBRARY_VERSION_HIGH
       !undef LIBRARY_VERSION_LOW
@@ -295,7 +295,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !undef LIBRARY_DEFINE_UPGRADE_LABEL
 
-    installlib.upgrade_${INSTALLLIB_UNIQUE}:
+    "installlib.upgrade_${INSTALLLIB_UNIQUE}:"
 
   !endif
 
@@ -304,10 +304,10 @@ Var __INSTALLLLIB_SESSIONGUID
 
   !ifdef INSTALLLIB_INSTALL_NOREBOOT_PROTECTED | INSTALLLIB_INSTALL_NOREBOOT_NOTPROTECTED
 
-    installlib.copy_${INSTALLLIB_UNIQUE}:
+    "installlib.copy_${INSTALLLIB_UNIQUE}:"
 
     StrCpy $R0 $R4
-    Call :installlib.file_${INSTALLLIB_UNIQUE}
+    Call ":installlib.file_${INSTALLLIB_UNIQUE}"
 
   !else
 
@@ -326,9 +326,9 @@ Var __INSTALLLLIB_SESSIONGUID
     ClearErrors
 
     StrCpy $R0 $R4
-    Call :installlib.file_${INSTALLLIB_UNIQUE}
+    Call ":installlib.file_${INSTALLLIB_UNIQUE}"
 
-    IfErrors 0 installlib.register_${INSTALLLIB_UNIQUE}
+    IfErrors 0 "installlib.register_${INSTALLLIB_UNIQUE}"
 
     SetOverwrite lastused
 
@@ -336,19 +336,19 @@ Var __INSTALLLLIB_SESSIONGUID
     ;Copy on reboot
 
     GetTempFileName $R0 $R5
-    Call :installlib.file_${INSTALLLIB_UNIQUE}
+    Call ":installlib.file_${INSTALLLIB_UNIQUE}"
     Rename /REBOOTOK $R0 $R4
 
     ;------------------------
     ;Register on reboot
 
-    Call :installlib.regonreboot_${INSTALLLIB_UNIQUE}
+    Call ":installlib.regonreboot_${INSTALLLIB_UNIQUE}"
 
-    Goto installlib.done_${INSTALLLIB_UNIQUE}
+    Goto "installlib.done_${INSTALLLIB_UNIQUE}"
 
-    installlib.copy_${INSTALLLIB_UNIQUE}:
+    "installlib.copy_${INSTALLLIB_UNIQUE}:"
       StrCpy $R0 $R4
-      Call :installlib.file_${INSTALLLIB_UNIQUE}
+      Call ":installlib.file_${INSTALLLIB_UNIQUE}"
 
   !endif
 
@@ -359,7 +359,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !undef LIBRARY_DEFINE_REGISTER_LABEL
 
-    installlib.register_${INSTALLLIB_UNIQUE}:
+    "installlib.register_${INSTALLLIB_UNIQUE}:"
 
   !endif
 
@@ -367,13 +367,13 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !ifdef INSTALLLIB_INSTALL_REBOOT_PROTECTED | INSTALLLIB_INSTALL_REBOOT_NOTPROTECTED
 
-      IfRebootFlag 0 installlib.regnoreboot_${INSTALLLIB_UNIQUE}
+      IfRebootFlag 0 "installlib.regnoreboot_${INSTALLLIB_UNIQUE}"
 
-        Call :installlib.regonreboot_${INSTALLLIB_UNIQUE}
+        Call ":installlib.regonreboot_${INSTALLLIB_UNIQUE}"
 
-        Goto installlib.registerfinish_${INSTALLLIB_UNIQUE}
+        Goto "installlib.registerfinish_${INSTALLLIB_UNIQUE}"
 
-      installlib.regnoreboot_${INSTALLLIB_UNIQUE}:
+      "installlib.regnoreboot_${INSTALLLIB_UNIQUE}:"
 
     !endif
 
@@ -391,7 +391,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !ifdef INSTALLLIB_INSTALL_REBOOT_PROTECTED | INSTALLLIB_INSTALL_REBOOT_NOTPROTECTED
 
-      installlib.registerfinish_${INSTALLLIB_UNIQUE}:
+      "installlib.registerfinish_${INSTALLLIB_UNIQUE}:"
 
     !endif
 
@@ -416,7 +416,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
     !undef LIBRARY_DEFINE_DONE_LABEL
 
-  installlib.done_${INSTALLLIB_UNIQUE}:
+  "installlib.done_${INSTALLLIB_UNIQUE}:"
 
   !endif
 
@@ -430,7 +430,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;End
 
-  Goto installlib.end_${INSTALLLIB_UNIQUE}
+  Goto "installlib.end_${INSTALLLIB_UNIQUE}"
 
   ;------------------------
   ;Extract
@@ -445,7 +445,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
   !endif
 
-  installlib.file_${INSTALLLIB_UNIQUE}:
+  "installlib.file_${INSTALLLIB_UNIQUE}:"
     File /oname=$R0 "${LOCALFILE}"
     Return
 
@@ -456,7 +456,7 @@ Var __INSTALLLLIB_SESSIONGUID
 
   !ifdef INSTALLLIB_INSTALL_REBOOT_PROTECTED | INSTALLLIB_INSTALL_REBOOT_NOTPROTECTED
 
-    installlib.regonreboot_${INSTALLLIB_UNIQUE}:
+    "installlib.regonreboot_${INSTALLLIB_UNIQUE}:"
 
       !ifdef INSTALLLIB_LIBTYPE_REGDLL
         !insertmacro __InstallLib_Helper_AddRegToolEntry 'D' "$R4" "$R5"
@@ -478,7 +478,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;End label
 
-  installlib.end_${INSTALLLIB_UNIQUE}:
+  "installlib.end_${INSTALLLIB_UNIQUE}:"
 
   ;------------------------
   ;Undefine
@@ -508,7 +508,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Define
 
-  !define UNINSTALLLIB_UNIQUE ${__LINE__}
+  !define UNINSTALLLIB_UNIQUE "${__FILE__}${__LINE__}"
 
   !define UNINSTALLLIB_LIBTYPE_${libtype}
   !define UNINSTALLLIB_LIBTYPE_SET UNINSTALLLIB_LIBTYPE_${libtype}
@@ -547,23 +547,23 @@ Var __INSTALLLLIB_SESSIONGUID
   !ifdef UNINSTALLLIB_SHARED_SHARED
 
     ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
-    StrCmp $R0 "" uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}
+    StrCmp $R0 "" "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}"
 
     IntOp $R0 $R0 - 1
-    IntCmp $R0 0 uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE} \
-      uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE} uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}
+    IntCmp $R0 0 "uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE}" \
+      "uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE}" "uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}"
 
-    uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE}:
+    "uninstalllib.shareddllremove_${UNINSTALLLIB_UNIQUE}:"
       DeleteRegValue HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
       !ifndef UNINSTALLLIB_SHARED_SHAREDNOREMOVE
-        Goto uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}
+        Goto "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}"
       !endif
 
-    uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}:
+    "uninstalllib.shareddllinuse_${UNINSTALLLIB_UNIQUE}:"
       WriteRegDWORD HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1 $R0
-      Goto uninstalllib.done_${UNINSTALLLIB_UNIQUE}
+      Goto "uninstalllib.done_${UNINSTALLLIB_UNIQUE}"
 
-  uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:
+  "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}:"
 
   !endif
 
@@ -579,12 +579,12 @@ Var __INSTALLLLIB_SESSIONGUID
 
       System::Call "sfc::SfcIsFileProtected(i 0, w $R1) i.R0"
 
-        StrCmp $R0 "error" uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}
-        StrCmp $R0 "0" uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}
+        StrCmp $R0 "error" "uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}"
+        StrCmp $R0 "0" "uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}"
 
-      Goto uninstalllib.done_${UNINSTALLLIB_UNIQUE}
+      Goto "uninstalllib.done_${UNINSTALLLIB_UNIQUE}"
 
-      uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}:
+      "uninstalllib.notprotected_${UNINSTALLLIB_UNIQUE}:"
 
     !endif
 
@@ -633,7 +633,7 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Done
 
-  uninstalllib.done_${UNINSTALLLIB_UNIQUE}:
+  "uninstalllib.done_${UNINSTALLLIB_UNIQUE}:"
 
   Pop $R1
   Pop $R0
