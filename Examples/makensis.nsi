@@ -211,6 +211,7 @@ Section "Script Examples" SecExample
   File ..\Examples\gfx.nsi
   File ..\Examples\one-section.nsi
   File ..\Examples\languages.nsi
+  File ..\Examples\Library.nsi
   File ..\Examples\VersionInfo.nsi
   File ..\Examples\UserVars.nsi
   File ..\Examples\LogicLib.nsi

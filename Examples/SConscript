@@ -7,6 +7,7 @@ examples = Split("""
 	FileFuncTest.nsi
 	gfx.nsi
 	languages.nsi
+	Library.nsi
 	LogicLib.nsi
 	makensis.ini
 	makensis.nsi
