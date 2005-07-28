@@ -633,7 +633,11 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Done
 
-  "uninstalllib.done_${UNINSTALLLIB_UNIQUE}:"
+  !ifdef UNINSTALLLIB_SHARED_SHARED | !UNINSTALLLIB_UNINSTALL_NOREMOVE
+
+    "uninstalllib.done_${UNINSTALLLIB_UNIQUE}:"
+
+  !endif
 
   Pop $R1
   Pop $R0
