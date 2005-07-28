@@ -96,7 +96,7 @@ Example:
   Push $R4
   Push $R5
 
-  !define UPGRADEDLL_UNIQUE ${__LINE__}
+  !define UPGRADEDLL_UNIQUE "${__FILE__}${__LINE__}"
 
   SetOverwrite try
 
@@ -110,21 +110,21 @@ Example:
   ;------------------------
   ;Get version information
 
-  IfFileExists $R4 0 upgradedll.copy_${UPGRADEDLL_UNIQUE}
+  IfFileExists $R4 0 "upgradedll.copy_${UPGRADEDLL_UNIQUE}"
 
   ClearErrors
     GetDLLVersionLocal "${LOCALFILE}" $R0 $R1
     GetDLLVersion $R4 $R2 $R3
-  IfErrors upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+  IfErrors "upgradedll.upgrade_${UPGRADEDLL_UNIQUE}"
 
-  IntCmpU $R0 $R2 0 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
-  IntCmpU $R1 $R3 upgradedll.done_${UPGRADEDLL_UNIQUE} upgradedll.done_${UPGRADEDLL_UNIQUE} \
-    upgradedll.upgrade_${UPGRADEDLL_UNIQUE}
+  IntCmpU $R0 $R2 0 "upgradedll.done_${UPGRADEDLL_UNIQUE}" "upgradedll.upgrade_${UPGRADEDLL_UNIQUE}"
+  IntCmpU $R1 $R3 "upgradedll.done_${UPGRADEDLL_UNIQUE}" "upgradedll.done_${UPGRADEDLL_UNIQUE}" \
+    "upgradedll.upgrade_${UPGRADEDLL_UNIQUE}"
 
   ;------------------------
   ;Upgrade
 
-  upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.upgrade_${UPGRADEDLL_UNIQUE}:"
     !ifndef UPGRADEDLL_NOREGISTER
       ;Unregister the DLL
       UnRegDLL $R4
@@ -135,14 +135,14 @@ Example:
 
   ClearErrors
     StrCpy $R0 $R4
-    Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
-  IfErrors 0 upgradedll.noreboot_${UPGRADEDLL_UNIQUE}
+    Call ":upgradedll.file_${UPGRADEDLL_UNIQUE}"
+  IfErrors 0 "upgradedll.noreboot_${UPGRADEDLL_UNIQUE}"
 
   ;------------------------
   ;Copy on reboot
 
   GetTempFileName $R0 $R5
-    Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+    Call ":upgradedll.file_${UPGRADEDLL_UNIQUE}"
   Rename /REBOOTOK $R0 $R4
 
   ;------------------------
@@ -150,19 +150,19 @@ Example:
 
   !insertmacro __UpgradeDLL_Helper_AddRegToolEntry 'D' $R4 $R5
 
-  Goto upgradedll.done_${UPGRADEDLL_UNIQUE}
+  Goto "upgradedll.done_${UPGRADEDLL_UNIQUE}"
 
   ;------------------------
   ;DLL does not exist
 
-  upgradedll.copy_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.copy_${UPGRADEDLL_UNIQUE}:"
     StrCpy $R0 $R4
-    Call :upgradedll.file_${UPGRADEDLL_UNIQUE}
+    Call ":upgradedll.file_${UPGRADEDLL_UNIQUE}"
 
   ;------------------------
   ;Register
 
-  upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.noreboot_${UPGRADEDLL_UNIQUE}:"
     !ifndef UPGRADEDLL_NOREGISTER
       RegDLL $R4
     !endif
@@ -170,7 +170,7 @@ Example:
   ;------------------------
   ;Done
 
-  upgradedll.done_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.done_${UPGRADEDLL_UNIQUE}:"
 
   Pop $R5
   Pop $R4
@@ -182,16 +182,16 @@ Example:
   ;------------------------
   ;End
 
-  Goto upgradedll.end_${UPGRADEDLL_UNIQUE}
+  Goto "upgradedll.end_${UPGRADEDLL_UNIQUE}"
 
   ;------------------------
   ;Extract
 
-  upgradedll.file_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.file_${UPGRADEDLL_UNIQUE}:"
     File /oname=$R0 "${LOCALFILE}"
     Return
 
-  upgradedll.end_${UPGRADEDLL_UNIQUE}:
+  "upgradedll.end_${UPGRADEDLL_UNIQUE}:"
 
   SetOverwrite lastused
   
