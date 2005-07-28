@@ -546,6 +546,8 @@ Var __INSTALLLLIB_SESSIONGUID
 
   !ifdef UNINSTALLLIB_SHARED_SHARED
 
+    !define UNINSTALLLIB_DONE_LABEL
+
     ReadRegDword $R0 HKLM Software\Microsoft\Windows\CurrentVersion\SharedDLLs $R1
     StrCmp $R0 "" "uninstalllib.shareddlldone_${UNINSTALLLIB_UNIQUE}"
 
@@ -576,6 +578,12 @@ Var __INSTALLLLIB_SESSIONGUID
     ;Check Windows File Protection
 
     !ifdef UNINSTALLLIB_UNINSTALL_REBOOT_PROTECTED | UNINSTALLLIB_UNINSTALL_NOREBOOT_PROTECTED
+
+      !ifndef UNINSTALLLIB_DONE_LABEL
+
+        !define UNINSTALLLIB_DONE_LABEL
+
+      !endif
 
       System::Call "sfc::SfcIsFileProtected(i 0, w $R1) i.R0"
 
@@ -633,7 +641,9 @@ Var __INSTALLLLIB_SESSIONGUID
   ;------------------------
   ;Done
 
-  !ifdef UNINSTALLLIB_SHARED_SHARED | !UNINSTALLLIB_UNINSTALL_NOREMOVE
+  !ifdef UNINSTALLLIB_DONE_LABEL
+
+    !undef UNINSTALLLIB_DONE_LABEL
 
     "uninstalllib.done_${UNINSTALLLIB_UNIQUE}:"
 
