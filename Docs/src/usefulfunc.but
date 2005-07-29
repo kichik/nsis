@@ -389,7 +389,7 @@
 
 \H{connectinternet} Connect to the Internet
 
-\c  ; ConnectInternet (uses Dialer plugin)
+\c  ; ConnectInternet (uses Dialer plug-in)
 \c  ; Written by Joost Verburg 
 \c  ;
 \c  ; This function attempts to make a connection to the internet if there is no

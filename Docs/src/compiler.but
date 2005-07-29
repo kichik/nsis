@@ -28,7 +28,7 @@ Adds another include directory to the include directories list. This list is sea
 
 \c directory
 
-Causes the NSIS compiler to scan the given directory for Plugin DLLs.
+Causes the NSIS compiler to scan the given directory for plug-in DLLs.
 
 \c !addplugindir myplugin
 \c MyPlugin::SomeFunction
