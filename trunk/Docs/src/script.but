@@ -28,7 +28,7 @@ If you want a parameter to start with ; or # put it in quotes.
 
 \\<b\\>Plug-ins\\</b\\>
 
-To call a plugin, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plugin DLLs}.
+To call a plug-in, use 'plugin::command [parameters]'. For more info see \R{plugindlls}{Plug-in DLLs}.
 
 \c nsExec::Exec "myfile"
 

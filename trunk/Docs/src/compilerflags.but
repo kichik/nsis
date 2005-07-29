@@ -72,7 +72,7 @@ This command sets the overwrite flag which is used by the File command to determ
 
 \c \\<b\\>manual\\</b\\>|alwaysoff
 
-This command sets the unload plugin flag which is by CallInstDLL and plugin calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plugin call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
+This command sets the unload plug-in flag which is by CallInstDLL and plug-in calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plug-in call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
 
 \S1{versioninfo} Version Information
 
