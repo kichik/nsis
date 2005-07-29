@@ -228,7 +228,7 @@ The decimal HWND of the parent window.
 
 \e{$PLUGINSDIR}
 
-The path to a temporary folder created upon the first usage of a plugin or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Docs/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plugin, or any other file that a plugin needs to work.
+The path to a temporary folder created upon the first usage of a plug-in or a call to \R{initpluginsdir}{InitPluginsDir}. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for \L{../Docs/InstallOptions/Readme.html}{InstallOptions}, bitmaps for the splash plug-in, or any other file that a plug-in needs to work.
 
 \S1{varstrings} Constants Used in Strings
 

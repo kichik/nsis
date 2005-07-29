@@ -68,7 +68,7 @@ Some of the following values will not be used by older Windows versions.
 If both NoModify and NoRepair are set to 1, the button displays "Remove" instead of "Modify/Remove".
 
 
-\H{useful_system_plugin} Calling an external DLL using the System.dll plugin
+\H{useful_system_plugin} Calling an external DLL using the System.dll plug-in
 
 Some install processes are required to call functions contained inside third party DLLs. A prime example of this is when installing a Palm(TM) conduit.
 
@@ -183,7 +183,7 @@ Save this script
 \c   DetailPrint "Path length: $1"
 \c   DetailPrint "Return value: $2"
 \c
-\c ; last plugin call must not have /NOUNLOAD so NSIS will be able to delete
+\c ; last plug-in call must not have /NOUNLOAD so NSIS will be able to delete
 \c ; the temporary DLL
 \c
 \c   SetPluginUnload manual
