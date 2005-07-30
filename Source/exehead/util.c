@@ -289,6 +289,8 @@ int NSISCALL is_valid_instpath(char *s)
 
   mystrcpy(tmp, s);
 
+  validate_filename(tmp);
+
   root = skip_root(tmp);
 
   if (!root)
@@ -681,7 +683,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
   return ps_tmpbuf;
 }
 
-char * NSISCALL validate_filename(char *in) {
+void NSISCALL validate_filename(char *in) {
   char *nono = "*?|<>/\":";
   char *out;
   char *out_save;
@@ -715,7 +717,6 @@ char * NSISCALL validate_filename(char *in) {
     else
       break;
   } while (out_save < out);
-  return out_save;
 }
 
 #ifdef NSIS_CONFIG_LOG
