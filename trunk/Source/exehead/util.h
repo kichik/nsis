@@ -65,7 +65,7 @@ char * NSISCALL findchar(char *str, char c);
 void NSISCALL trimslashtoend(char *buf);
 char * NSISCALL skip_root(char *path);
 int NSISCALL is_valid_instpath(char *s);
-char * NSISCALL validate_filename(char *fn);
+void NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
 
