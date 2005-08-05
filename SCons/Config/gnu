@@ -65,6 +65,7 @@ plugin_env.Append(CCFLAGS = '-Os')                # optimize for size
 plugin_env.Append(CCFLAGS = '-Wall')              # level 3 warnings
 
 plugin_env.Append(LINKFLAGS = '-s')               # strip
+plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
 plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 
