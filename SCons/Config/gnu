@@ -16,7 +16,14 @@ def cross_env(env):
 
 ### flags
 
-defenv['ENTRY_FLAG'] = lambda x: '-Wl,-e,_' + x + '@16'
+def entry(x):
+	if x == 'WinMain':
+		x = '_WinMain@16'
+	elif x == 'DllMain':
+		x = '_DllMain@12'
+	return '-Wl,-e%s' % x
+
+defenv['ENTRY_FLAG'] = entry
 defenv['MAP_FLAG'] = '-Wl,-Map,${TARGET.base}.map'
 defenv['EXCEPTION_FLAG'] = ''
 defenv['NODEFLIBS_FLAG'] = '-nostdlib -Wl,--exclude-libs,msvcrt.a'
