@@ -102,7 +102,7 @@ util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 # sure the sections will be written in the correct order.
 #
 
-stub_env.Append(LINKFLAGS = '-Wl,%s' % File('linker_script').abspath)
+stub_env.Append(LINKFLAGS = '-T %s' % File('linker_script').abspath)
 
 #
 # GCC requires some functions from the CRT to be present, if certain
