@@ -193,16 +193,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     {
       int x;
 
+      lstrcat(state_temp_dir,"~nsu.tmp\\");
+      CreateDirectory(state_temp_dir,NULL);
+
       for (x = 0; x < 26; x ++)
       {
         static char s[]="Au_.exe";
         static char buf2[NSIS_MAX_STRLEN*2];
         static char ibuf[NSIS_MAX_STRLEN];
 
-        buf2[0]='\"';
-        mystrcpy(buf2+1,state_temp_dir);
-        lstrcat(buf2,"~nsu.tmp\\");
-        CreateDirectory(buf2+1,NULL);
+        *(LPWORD)buf2=CHAR2_TO_WORD('\"',0);
+        lstrcat(buf2,state_temp_dir);
         lstrcat(buf2,s);
 
         DeleteFile(buf2+1); // clean up after all the other ones if they are there
@@ -211,7 +212,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
         {
           // get current name
           int l=GetModuleFileName(g_hInstance,ibuf,sizeof(ibuf));
-          // check if it is ?~NSISu_.exe - if so, fuck it
+          // check if it is ?Au_.exe - if so, fuck it
           if (!lstrcmpi(ibuf+l-(sizeof(s)-2),s+1)) break;
 
           // copy file
@@ -229,7 +230,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
             lstrcat(buf2,ibuf);
             // add a trailing backslash to make sure is_valid_instpath will not fail when it shouldn't
             addtrailingslash(buf2);
-            hProc=myCreateProcess(buf2,state_install_directory);
+            hProc=myCreateProcess(buf2,state_temp_dir);
             if (hProc)
             {
               CloseHandle(hProc);
