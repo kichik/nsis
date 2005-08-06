@@ -10,14 +10,17 @@ User variables can be declared with the \R{var}{Var} command. You can use these 
 
 \S2{var} Var
 
-\c var_name
+\c [/GLOBAL] var_name
 
-Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'. Variables cannot be declared in sections or functions.
+Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'. All defined variables are global, even if defined in a section or a function. To make this clear, variables defined in a section or a function must use the /GLOBAL flag. The /GLOBAL flag is not required outside of sections and functions.
 
 \c Var example
 \c
 \c Function testVar
+\c   Var /GLOBAL example2
+\c 
 \c   StrCpy $example "example value"
+\c   StrCpy $example2 "another example value"
 \c FunctionEnd
 
 \S1{varother} Other Writable Variables

@@ -258,7 +258,7 @@ static tokenType tokenlist[TOK__LAST] =
 // Added by ramon 23 May 2003
 {TOK_ALLOWSKIPFILES,"AllowSkipFiles",1,0,"(off|on)",TP_ALL},
 // Added by ramon 3 jun 2003
-{TOK_DEFVAR,"Var",1,0,"VarName",TP_GLOBAL},
+{TOK_DEFVAR,"Var",1,1,"[/GLOBAL] var_name",TP_ALL},
 // Added by ramon 6 jun 2003
 {TOK_VI_ADDKEY,"VIAddVersionKey",2,1,"/LANG=lang_id keyname value",TP_GLOBAL},
 {TOK_VI_SETPRODUCTVERSION,"VIProductVersion",1,0,"[version_string_X.X.X.X]",TP_GLOBAL},

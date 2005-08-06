@@ -40,6 +40,14 @@ Section "Dummy Section" SecDummy
      
 SectionEnd
 
+Section "Another Section"
+
+     Var /GLOBAL "AnotherVar"
+
+     StrCpy $AnotherVar "test"
+
+SectionEnd
+
 ;--------------------------------
 ; Uninstaller
 

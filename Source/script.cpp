@@ -5329,10 +5329,28 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     // Added by ramon 3 jun 2003
     case TOK_DEFVAR:
     {
-        SCRIPT_MSG("VAR \"%s\"\n",line.gettoken_str(1));
-        int res = DeclaredUserVar(line.gettoken_str(1));
-        if (res != PS_OK)
-          return res;
+      int a=1;
+
+      if (!strcmpi(line.gettoken_str(1),"/GLOBAL"))
+      {
+        a++;
+      }
+
+      if (build_cursection)
+      {
+        if (a==1)
+        {
+          ERROR_MSG("Var: currently, only global variables can be defined.\n");
+          PRINTHELP();
+        }
+      }
+
+      SCRIPT_MSG("Var: \"%s\"\n",line.gettoken_str(a));
+
+      int res = DeclaredUserVar(line.gettoken_str(a));
+      if (res != PS_OK)
+        return res;
+
     }
     return PS_OK;
 
