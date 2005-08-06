@@ -42,17 +42,14 @@
 ;         a == b; a != b
 ;       Additional case-insensitive string tests (using System.dll):
 ;         a S< b; a S>= b; a S> b; a S<= b
-;           - Requires a !define LOGICLIB_STRCMP above !include LogicLib.nsh
 ;       Case-sensitive string tests (using System.dll):
 ;         a S== b; a S!= b
-;           - Requires a !define LOGICLIB_STRCMP above !include LogicLib.nsh
 ;       Standard (built-in) signed integer tests:
 ;         a = b; a <> b; a < b; a >= b; a > b; a <= b
 ;       Standard (built-in) unsigned integer tests:
 ;         a U< b; a U>= b; a U> b; a U<= b
 ;       64-bit integer tests (using System.dll):
 ;         a L= b; a L<> b; a L< b; a L>= b; a L> b; a L<= b
-;           - Requires a !define LOGICLIB_INT64CMP above !include LogicLib.nsh
 ;       Built-in NSIS flag tests:
 ;         ${Abort}; ${Errors}; ${RebootFlag}; ${Silent}
 ;       Built-in NSIS other tests:
@@ -83,14 +80,14 @@
   !define | "'"
   !define || "' '"
 
-  !ifdef LOGICLIB_SECTIONCMP
-    !include Sections.nsh
-  !endif
+  !include Sections.nsh
 
-  !ifdef LOGICLIB_STRCMP | LOGICLIB_INT64CMP | LOGICLIB_SECTIONCMP
-    !define _LOGICLIB_TEMP
-    Var _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
-  !endif
+  !macro _LOGICLIB_TEMP
+    !ifndef _LOGICLIB_TEMP
+      !define _LOGICLIB_TEMP
+      Var /GLOBAL _LOGICLIB_TEMP  ; Temporary variable to aid the more elaborate logic tests
+    !endif
+  !macroend
 
   !macro _PushLogic
     !insertmacro _PushScope Logic _${__LINE__}
@@ -138,13 +135,10 @@
 
   ; Case-sensitive string tests
   !macro _StrCmp _a _b _e _l _m
-    !ifdef _LOGICLIB_TEMP
-      System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
-      Pop $_LOGICLIB_TEMP
-      IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
-    !else
-      !error "Please !define LOGICLIB_STRCMP above !include LogicLib.nsh and recompile"
-    !endif
+    !insertmacro _LOGICLIB_TEMP
+    System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
   !macroend
 
   !macro _S== _a _b _t _f
@@ -157,13 +151,10 @@
 
   ; Extra string tests (cannot do these case-sensitively - I tried and lstrcmp still ignored the case)
   !macro _StrCmpI _a _b _e _l _m
-    !ifdef _LOGICLIB_TEMP
-      System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
-      Pop $_LOGICLIB_TEMP
-      IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
-    !else
-      !error "Please !define LOGICLIB_STRCMP above !include LogicLib.nsh and recompile"
-    !endif
+    !insertmacro _LOGICLIB_TEMP
+    System::Call `kernel32::lstrcmpiA(ts, ts) i.s` `${_a}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
   !macroend
 
   !macro _S< _a _b _t _f
@@ -226,13 +217,10 @@
 
   ; Int64 tests
   !macro _Int64Cmp _a _o _b _t _f
-    !ifdef _LOGICLIB_TEMP
-      System::Int64Op `${_a}` `${_o}` `${_b}`
-      Pop $_LOGICLIB_TEMP
-      !insertmacro _= $_LOGICLIB_TEMP 0 `${_f}` `${_t}`
-    !else
-      !error "Please !define LOGICLIB_INT64CMP above !include LogicLib.nsh and recompile"
-    !endif
+    !insertmacro _LOGICLIB_TEMP
+    System::Int64Op `${_a}` `${_o}` `${_b}`
+    Pop $_LOGICLIB_TEMP
+    !insertmacro _= $_LOGICLIB_TEMP 0 `${_f}` `${_t}`
   !macroend
 
   !macro _L= _a _b _t _f
@@ -309,13 +297,10 @@
 
   ; Section flag test
   !macro _SectionFlagIsSet _a _b _t _f
-    !ifdef _LOGICLIB_TEMP & SF_SELECTED
-      SectionGetFlags `${_b}` $_LOGICLIB_TEMP
-      IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
-      !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
-    !else
-      !error "Please !define LOGICLIB_SECTIONCMP above !include LogicLib.nsh and recompile"
-    !endif
+    !insertmacro _LOGICLIB_TEMP
+    SectionGetFlags `${_b}` $_LOGICLIB_TEMP
+    IntOp $_LOGICLIB_TEMP $_LOGICLIB_TEMP & `${_a}`
+    !insertmacro _= $_LOGICLIB_TEMP `${_a}` `${_t}` `${_f}`
   !macroend
   !define SectionIsSelected `${SF_SELECTED} SectionFlagIsSet`
   !define SectionIsSubSection `${SF_SUBSEC} SectionFlagIsSet`
