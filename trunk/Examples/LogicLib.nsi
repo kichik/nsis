@@ -4,9 +4,6 @@ Name "NSIS LogicLib Example"
 OutFile "LogicLib.exe"
 ShowInstDetails show
 
-!define LOGICLIB_STRCMP
-!define LOGICLIB_INT64CMP
-!define LOGICLIB_SECTIONCMP
 !include "LogicLib.nsh"
 
 ;!undef LOGICLIB_VERBOSITY
