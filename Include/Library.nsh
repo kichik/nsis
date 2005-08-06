@@ -28,10 +28,16 @@
   !define SHCNF_IDLIST 0x0000
 !endif
 
-Var __INSTALLLLIB_SESSIONGUID
-
 ### Initialize session id (GUID)
 !macro __InstallLib_Helper_InitSession
+
+  !ifndef __InstallLib_SessionGUID_Defined
+
+    !define __InstallLib_SessionGUID_Defined
+
+    Var /GLOBAL __INSTALLLLIB_SESSIONGUID
+
+  !endif
 
   StrCmp $__INSTALLLLIB_SESSIONGUID '' 0 +6
 
