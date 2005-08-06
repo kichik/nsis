@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.72
+;NSIS Modern User Interface version 1.73
 ;Macro System
 ;Written by Joost Verburg
 
@@ -8,7 +8,7 @@
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.72 - © 2002-2005 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.73 - © 2002-2005 Joost Verburg"
 
 ;--------------------------------
 
@@ -32,10 +32,10 @@
 !include "WinMessages.nsh"
 !verbose pop
 
-!define MUI_SYSVERSION "1.72"
+!define MUI_SYSVERSION "1.73"
 
-Var MUI_TEMP1
-Var MUI_TEMP2
+Var /GLOBAL MUI_TEMP1
+Var /GLOBAL MUI_TEMP2
 
 ;--------------------------------
 ;INSERT CODE
@@ -440,7 +440,7 @@ Var MUI_TEMP2
   !verbose ${MUI_VERBOSE}
 
   !ifndef MUI_VAR_TEXT
-    Var MUI_TEXT
+    Var /GLOBAL MUI_TEXT
     !define MUI_VAR_TEXT
   !endif
 
@@ -662,7 +662,7 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_WELCOMEPAGE_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_WELCOME_INFO_TEXT)"
 
   !ifndef MUI_VAR_HWND
-    Var MUI_HWND
+    Var /GLOBAL MUI_HWND
     !define MUI_VAR_HWND
   !endif
 
@@ -756,7 +756,7 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_COMPONENTSPAGE_TEXT_DESCRIPTION_INFO "$(MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO)"
 
   !ifndef MUI_VAR_TEXT
-    Var MUI_TEXT
+    Var /GLOBAL MUI_TEXT
     !define MUI_VAR_TEXT
   !endif
 
@@ -915,12 +915,12 @@ Var MUI_TEMP2
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_TEXT_REBOOT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_INFO_REBOOT)"
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_TEXT_REBOOTNOW "$(MUI_TEXT_FINISH_REBOOTNOW)"
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_TEXT_REBOOTLATER "$(MUI_TEXT_FINISH_REBOOTLATER)"
-  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_RUN_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_RUN)"
-  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_SHOWREADME_TEXT "$(MUI_${MUI_PAGE_UNINSTALLER_PREFIX}TEXT_FINISH_SHOWREADME)"
+  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_RUN_TEXT "$(MUI_TEXT_FINISH_RUN)"
+  !insertmacro MUI_DEFAULT MUI_FINISHPAGE_SHOWREADME_TEXT "$(MUI_TEXT_FINISH_SHOWREADME)"
   !insertmacro MUI_DEFAULT MUI_FINISHPAGE_LINK_COLOR "000080"
 
   !ifndef MUI_VAR_HWND
-    Var MUI_HWND
+    Var /GLOBAL MUI_HWND
     !define MUI_VAR_HWND
   !endif
 
@@ -931,9 +931,10 @@ Var MUI_TEMP2
   !endif
 
   !ifdef MUI_FINISHPAGE_RUN | MUI_FINISHPAGE_SHOWREADME
-    !ifndef MUI_FINISHPAGE_ABORTWARNINGCHECK
-      !define MUI_FINISHPAGE_ABORTWARNINGCHECK
-      Var MUI_NOABORTWARNING
+    !define MUI_FINISHPAGE_ABORTWARNINGCHECK
+    !ifndef MUI_VAR_NOABORTWARNING
+      !define MUI_VAR_NOABORTWARNING
+      Var /GLOBAL MUI_NOABORTWARNING
     !endif
   !endif
 
