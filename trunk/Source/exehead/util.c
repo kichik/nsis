@@ -116,12 +116,12 @@ void NSISCALL myDelete(char *buf, int flags)
     mystrcpy(lbuf,buf);
 #ifdef NSIS_SUPPORT_RMDIR
     if (flags & DEL_DIR)
-      lstrcat(lbuf,"\\*.*");
+      mystrcat(lbuf,"\\*.*");
     else
 #endif//NSIS_SUPPORT_RMDIR
       trimslashtoend(buf);
 
-    lstrcat(buf,"\\");
+    mystrcat(buf,"\\");
 
     fn=buf+mystrlen(buf);
 
@@ -218,7 +218,7 @@ void NSISCALL myDelete(char *buf, int flags)
 
 char *NSISCALL addtrailingslash(char *str)
 {
-  if (lastchar(str)!='\\') lstrcat(str,"\\");
+  if (lastchar(str)!='\\') mystrcat(str,"\\");
   return str;
 }
 
@@ -419,7 +419,7 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     cchRenameLine = wsprintf(szRenameLine,"%s=%s\r\n",tmpbuf,wininit);
 
     GetWindowsDirectory(wininit, 1024-16);
-    lstrcat(wininit, "\\wininit.ini");
+    mystrcat(wininit, "\\wininit.ini");
     hfile = CreateFile(wininit,
         GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS,
         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -554,6 +554,11 @@ int NSISCALL mystrlen(const char *in)
   return lstrlen(in);
 }
 
+char * NSISCALL mystrcat(char *out, const char *concat)
+{
+  return lstrcat(out, concat);
+}
+
 char ps_tmpbuf[NSIS_MAX_STRLEN*2];
 
 #define SYSREGKEY "Software\\Microsoft\\Windows\\CurrentVersion"
@@ -642,7 +647,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
 
         if (*out && append)
         {
-          lstrcat(out, append);
+          mystrcat(out, append);
         }
 
         validate_filename(out);
@@ -747,7 +752,7 @@ void NSISCALL log_write(int close)
     if (fp!=INVALID_HANDLE_VALUE)
     {
       DWORD d;
-      lstrcat(log_text,"\r\n");
+      mystrcat(log_text,"\r\n");
       WriteFile(fp,log_text,mystrlen(log_text),&d,NULL);
     }
   }

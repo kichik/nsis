@@ -333,8 +333,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         mystrcpy(buf1,buf3);
         if (mystrlen(buf3)+mystrlen(buf2) < NSIS_MAX_STRLEN-3)
         {
-          lstrcat(buf1,"->");
-          lstrcat(buf1,buf2);
+          mystrcat(buf1,"->");
+          mystrcat(buf1,buf2);
         }
         log_printf2("Rename: %s",buf1);
         if (MoveFile(buf3,buf2))
@@ -420,7 +420,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           mystrcpy(buf0,buf3);
         }
-        else lstrcat(addtrailingslash(mystrcpy(buf0,state_output_directory)),buf3);
+        else mystrcat(addtrailingslash(mystrcpy(buf0,state_output_directory)),buf3);
         validate_filename(buf0);
       _tryagain:
         if (overwriteflag >= 3) // check date and time
@@ -493,7 +493,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           if (ret == -2)
           {
             GetNSISString(buf0,LANG_ERRORWRITING);
-            lstrcat(buf0,buf3);
+            mystrcat(buf0,buf3);
           }
           else
           {
@@ -1057,7 +1057,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         buf1[mystrlen(buf1)+1]=0;
 
         GetNSISString(buf2,LANG_COPYTO);
-        lstrcat(buf2,buf1);
+        mystrcat(buf2,buf1);
 
         op.pFrom=buf0;
         op.pTo=buf1;
@@ -1403,7 +1403,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          lstrcat(addtrailingslash(mystrcpy(buf1,state_install_directory)),buf0);
+          mystrcat(addtrailingslash(mystrcpy(buf1,state_install_directory)),buf0);
         }
         validate_filename(buf1);
 
