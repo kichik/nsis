@@ -162,7 +162,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #ifndef NSIS_CONFIG_LOG_ODS
 void NSISCALL build_g_logfile()
 {
-  lstrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
+  mystrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
 }
 #endif
 #endif
@@ -882,7 +882,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           // display name gives just the folder name
           if (lstrcmpi(post_str, g_tmp))
           {
-            lstrcat(addtrailingslash(dir), post_str);
+            mystrcat(addtrailingslash(dir), post_str);
           }
         }
 
@@ -1383,7 +1383,7 @@ void NSISCALL update_status_text(int strtab, const char *text) {
     if (text)
     {
       if (tmplen + mystrlen(text) >= sizeof(tmp)) return;
-      lstrcat(tmp, text);
+      mystrcat(tmp, text);
     }
 
     if ((updateflag & 4)) my_SetWindowText(insthwnd2, tmp);
