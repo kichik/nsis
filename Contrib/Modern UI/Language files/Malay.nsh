@@ -1,14 +1,14 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.68
 
-;Language: Malaysian (1086)
+;Language: Malay (1086)
 ;By muhammadazwa@yahoo.com
 
 ;--------------------------------
 
-!insertmacro MUI_LANGUAGEFILE_BEGIN "Malaysian"
+!insertmacro MUI_LANGUAGEFILE_BEGIN "Malay"
 
-  !define MUI_LANGNAME "Malaysian" ;Use only ASCII characters (if this is not possible, use the English name)
+  !define MUI_LANGNAME "Malay" ;Use only ASCII characters (if this is not possible, use the English name)
 
   !define MUI_TEXT_WELCOME_INFO_TITLE "Assalamualaikum, Selamat datang ke $(^NameDA) Setup Wizard"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Setup Wizard akan membantu anda untuk memasukkan $(^NameDA).\r\n\r\nSila tutup program aplikasi yang lain sebelum Setup ini dimulakan. Ini supaya tiada proses reboot komputer diperlukan.\r\n\r\n$_CLICK"
@@ -32,7 +32,7 @@
   !define MUI_TEXT_DIRECTORY_TITLE "Pilih Lokasi Kemasukan"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Pilih folder untuk memasukkan $(^NameDA)."
 
-  !define MUI_TEXT_INSTALLING_TITLE "Install"
+  !define MUI_TEXT_INSTALLING_TITLE "Pemasangan"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Sila tunggu ketika $(^NameDA) sedang dimasukkan."
 
   !define MUI_TEXT_FINISH_TITLE "Proses Selesai"
@@ -44,16 +44,16 @@
   !define MUI_BUTTONTEXT_FINISH "&Selesai"
   !define MUI_TEXT_FINISH_INFO_TITLE "Menyelesaikan $(^NameDA) Setup Wizard"
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) sudah dimasukkan di komputer anda.\r\n\r\nKlik Selesai untuk menutup Setup Wizard."
-  !define MUI_TEXT_FINISH_INFO_REBOOT "Komputer anda harus di reboot untuk menyelesaikan proses memasukkan $(^NameDA). Apakah anda hendak reboot sekarang juga?"
+  !define MUI_TEXT_FINISH_INFO_REBOOT "Komputer anda harus direboot untuk menyelesaikan proses memasukkan $(^NameDA). Apakah anda hendak reboot sekarang juga?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Reboot sekarang"
   !define MUI_TEXT_FINISH_REBOOTLATER "Reboot nanti"
   !define MUI_TEXT_FINISH_RUN "&Jalankan $(^NameDA)"
-  !define MUI_TEXT_FINISH_SHOWREADME "&Buka file Readme"
+  !define MUI_TEXT_FINISH_SHOWREADME "&Buka fail Readme"
 
   !define MUI_TEXT_STARTMENU_TITLE "Pilih Folder Start Menu"
-  !define MUI_TEXT_STARTMENU_SUBTITLE "Pilih folder Start Menu untuk meletakkan shortcut $(^NameDA)."
-  !define MUI_INNERTEXT_STARTMENU_TOP "Pilih folder Start Menu untuk perletakkan shortcut aplikasi ini. Boleh cipta nama folder anda sendiri."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Tidak perlu shortcut"
+  !define MUI_TEXT_STARTMENU_SUBTITLE "Pilih folder Start Menu untuk meletakkan pintasan $(^NameDA)."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Pilih folder Start Menu untuk perletakkan pintasan aplikasi ini. Boleh cipta nama folder anda sendiri."
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Tidak perlu pintasan"
 
   !define MUI_TEXT_ABORTWARNING "Adakan anda yakin ingin membatalkan Setup $(^Name)?"
 
