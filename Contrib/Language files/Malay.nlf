@@ -23,7 +23,7 @@ Uninstall $(^Name)
 # ^DirSubCaption
 : Folder kemasukan
 # ^InstallingSubCaption
-: Menginstall
+: Memasang
 # ^CompletedSubCaption
 : Selesai
 # ^UnComponentsSubCaption
@@ -37,15 +37,15 @@ Uninstall $(^Name)
 # ^UnCompletedSubCaption
 : Tidak Selesai
 # ^BackBtn
-< &Undur
+< &Ke Belakang
 # ^NextBtn
-&Maju >
+&Ke Depan >
 # ^AgreeBtn
 Saya &setuju
 # ^AcceptBtn
-Saya bers&umpah
+Saya s&etuju dengan Perlesenan
 # ^DontAcceptBtn
-Saya &tidak mahu bersumpah
+Saya &tidak setuju dengan Perlesenan
 # ^InstallBtn
 &Masukkan
 # ^UninstallBtn
@@ -59,9 +59,9 @@ S&elusur...
 # ^ShowDetailsBtn
 Buka &lagi
 # ^ClickNext
-Klik Maju untuk teruskan.
+Klik Ke Depan untuk teruskan.
 # ^ClickInstall
-Klik Masukkan untuk kemasukan.
+Klik Masukkan untuk kemasukkan.
 # ^ClickUninstall
 Klik Uninstall untuk membuang.
 # ^Name
@@ -69,7 +69,7 @@ Nama
 # ^Completed
 Selesai
 # ^LicenseText
-$(^NameDA). Jika anda terima perlesenan, klik Saya setuju.
+Sila baca lesen sebelum memasukkan $(^NameDA). Jika anda terima perlesenan, klik Saya setuju.
 # ^LicenseTextCB
 Sila baca lesen sebelum memasukkan $(^NameDA). Jika terima, beri tanda dicheckbox. $_CLICK
 # ^LicenseTextRB
@@ -111,17 +111,17 @@ Setup akan membuang $(^NameDA) dari folder berikut. Untuk memilih folder lainnya
 # ^UnDirBrowseText
 Pilih folder untuk dibuang $(^NameDA):
 # ^SpaceAvailable
-"Ruang disk yang ada: "
+"Ruang cakera keras yang ada: "
 # ^SpaceRequired
-"Ruang disk yang diperlukan: "
+"Ruang cakera keras yang diperlukan: "
 # ^UninstallingText
 $(^NameDA) akan buang dari folder berikut. $_CLICK
 # ^UninstallingSubText
 Membuang:
 # ^FileError
-Tidak dapat menulis pada file: \r\n\t"$0"\r\nKlik abort untuk membatalkan kemasukan,\r\nretry untuk cuba lagi, atau\r\nignore untuk abaikan file ini.
+Tidak dapat menulis pada fail: \r\n\t"$0"\r\nKlik abort untuk membatalkan kemasukan,\r\nretry untuk cuba lagi, atau\r\nignore untuk abaikan fail ini.
 # ^FileError_NoIgnore
-Tidak dapat menulis pada file: \r\n\t"$0"\r\nKlik retry untuk cuba lagi, atau\r\ncancel untuk batalkan kemasukan
+Tidak dapat menulis pada fail: \r\n\t"$0"\r\nKlik retry untuk cuba lagi, atau\r\ncancel untuk batalkan kemasukan
 # ^CantWrite
 "Gagal menulis pada: "
 # ^CopyFailed
@@ -131,23 +131,23 @@ Gagal menyalin
 # ^Registering
 "Mendaftarkan modul: "
 # ^Unregistering
-"Melepas modul: "
+"Melepaskan modul: "
 # ^SymbolNotFound
-"Tidak jumpa : "
+"Symbol tidak jumpa : "
 # ^CouldNotLoad
 "Tidak dapat membuka: "
 # ^CreateFolder
 "Membuat folder: "
 # ^CreateShortcut
-"Membuat shortcut: "
+"Membuat pintasan: "
 # ^CreatedUninstaller
 "Membuat program unistall: "
 # ^Delete
-"Memadam file: "
+"Memadam fail: "
 # ^DeleteOnReboot
 "Akan dipadam ketika reboot: "
 # ^ErrorCreatingShortcut
-"Tidak dapat membuat shortcut: "
+"Tidak dapat membuat pintasan: "
 # ^ErrorCreating
 "Ralat penciptaan: "
 # ^ErrorDecompressing
@@ -161,7 +161,7 @@ Ralat mendaftarkan modul DLL
 # ^Extract
 "Mengekstrak: "
 # ^ErrorWriting
-"Ekstrak: error ketika menulis ke file "
+"Ekstrak: ralat ketika menulis ke fail "
 # ^InvalidOpcode
 Installer rosak: opcode tidak lengkap
 # ^NoOLE
@@ -169,15 +169,15 @@ Installer rosak: opcode tidak lengkap
 # ^OutputFolder
 "Folder tujuan: "
 # ^RemoveFolder
-"Menghapus folder: "
+"Menghapuskan folder: "
 # ^RenameOnReboot
-"Akan di-Rename pada reboot: "
+"Menamakan semula pada reboot: "
 # ^Rename
-"Rename: "
+"Menamakan semula: "
 # ^Skipped
 "Diabaikan: "
 # ^CopyDetails
-Salin details ke clipboard
+Salin terperinci ke clipboard
 # ^LogInstall
 Catat proses kemasukan
 # ^Byte
