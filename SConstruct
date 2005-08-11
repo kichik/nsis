@@ -7,6 +7,9 @@
 #
 ##
 
+EnsurePythonVersion(1,6)
+# no revision check yet - EnsureSConsVersion(0,96,90)
+
 stubs = [
 	'bzip2',
 	'lzma',
