@@ -190,7 +190,7 @@ static LRESULT CALLBACK ParentWndProc(HWND hwnd, UINT message, WPARAM wParam, LP
   return 0;
 }
 
-BOOL APIENTRY DllMain(HINSTANCE _hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
+extern "C" BOOL APIENTRY DllMain(HINSTANCE _hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
 {
   hModule = _hModule;
   return TRUE;
