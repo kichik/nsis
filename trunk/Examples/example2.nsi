@@ -3,7 +3,7 @@
 ; This script is based on example1.nsi, but it remember the directory, 
 ; has uninstall support and (optionally) installs start menu shortcuts.
 ;
-; It will install makensisw.exe into a directory that the user selects,
+; It will install example2.nsi into a directory that the user selects,
 
 ;--------------------------------
 
@@ -42,7 +42,7 @@ Section "Example2 (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "..\makensisw.exe"
+  File "example2.nsi"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\NSIS_Example2 "Install_Dir" "$INSTDIR"
@@ -61,7 +61,7 @@ Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Example2"
   CreateShortCut "$SMPROGRAMS\Example2\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Example2\Example2 (MakeNSISW).lnk" "$INSTDIR\makensisw.exe" "" "$INSTDIR\makensisw.exe" 0
+  CreateShortCut "$SMPROGRAMS\Example2\Example2 (MakeNSISW).lnk" "$INSTDIR\example2.nsi" "" "$INSTDIR\example2.nsi" 0
   
 SectionEnd
 
@@ -76,7 +76,7 @@ Section "Uninstall"
   DeleteRegKey HKLM SOFTWARE\NSIS_Example2
 
   ; Remove files and uninstaller
-  Delete $INSTDIR\makensisw.exe
+  Delete $INSTDIR\example2.nsi
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any
