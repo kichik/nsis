@@ -2,7 +2,7 @@
 ;
 ; This script is perhaps one of the simplest NSIs you can make. All of the
 ; optional settings are left to their default settings. The installer simply 
-; prompts the user asking them where to install, and drops a copy of makensisw.exe
+; prompts the user asking them where to install, and drops a copy of example1.nsi
 ; there. 
 
 ;--------------------------------
@@ -32,6 +32,6 @@ Section "" ;No components page, name is not important
   SetOutPath $INSTDIR
   
   ; Put file there
-  File ..\makensisw.exe
+  File example1.nsi
   
 SectionEnd ; end the section
