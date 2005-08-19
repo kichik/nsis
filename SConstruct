@@ -94,6 +94,10 @@ Help(opts.GenerateHelpText(defenv))
 defenv['ZIPDISTDIR'] = defenv.Dir('#nsis-$VERSION')
 defenv['INSTDISTDIR'] = defenv.Dir('#.instdist')
 defenv['TESTDISTDIR'] = defenv.Dir('#.test')
+defenv['DISTSUFFIX'] = ''
+
+if defenv.has_key('CODESIGNER'):
+	defenv['DISTSUFFIX'] = '-signed'
 
 defenv.Execute(Delete('$ZIPDISTDIR'))
 defenv.Execute(Delete('$INSTDISTDIR'))
@@ -193,7 +197,7 @@ defenv.Alias('install-includes', '$PREFIX/Include')
 #######  Distribution                                              ###
 ######################################################################
 
-dist_zip = 'nsis-${VERSION}.zip'
+dist_zip = 'nsis-${VERSION}${DISTSUFFIX}.zip'
 zip_target = defenv.Zip(dist_zip, '$ZIPDISTDIR')
 defenv.Alias('dist-zip', zip_target)
 
@@ -207,7 +211,7 @@ if defenv.has_key('VER_MAJOR') and defenv.has_key('VER_MINOR') \
 	defenv['INSTVER'] += ' /DVER_REVISION=$VER_REVISION'
 	defenv['INSTVER'] += ' /DVER_BUILD=$VER_BUILD'
 
-installer_target = defenv.Command('nsis-${VERSION}.exe',
+installer_target = defenv.Command('nsis-${VERSION}${DISTSUFFIX}.exe',
                                   '$INSTDISTDIR' + os.sep + 'Examples' + os.sep + 'makensis.nsi',
                                   '$INSTDISTDIR' + os.sep + 'makensis$PROGSUFFIX ' +
                                   '/DOUTFILE=$TARGET.abspath $INSTVER $SOURCE')
