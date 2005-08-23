@@ -269,6 +269,9 @@ Section WordReplace
 	${WordReplace} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'SYS' '' '+' $OUT
 	StrCmp $OUT 'C:\io. C:\logo. C:\WINDOWS' 0 error
 
+	${WordReplace} 'C:\io.sys C:\logo.sys C:\WINDOWS' 'C:\io.sys' '' '+' $OUT
+	StrCmp $OUT ' C:\logo.sys C:\WINDOWS' 0 error
+
 	${WordReplace} 'C:\io.sys      C:\logo.sys   C:\WINDOWS' ' ' ' ' '+1*' $OUT
 	StrCmp $OUT 'C:\io.sys C:\logo.sys   C:\WINDOWS' 0 error
 

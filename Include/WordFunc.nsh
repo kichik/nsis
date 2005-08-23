@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       Word Functions Header v3.0
+                       Word Functions Header v3.1
 _____________________________________________________________________________
 
  2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -808,11 +808,11 @@ VersionConvert
 			all:
 			StrCpy $5 0
 			StrCpy $2 $R0 $7 $5
-			StrCmp $2$3 '' error1
 			StrCmp $2 '' +4
-			StrCmp $2 $0 +5
+			StrCmp $2 $0 +6
 			IntOp $5 $5 + 1
-			goto -5
+			goto -4
+			StrCmp $R0 $R1 error1
 			StrCpy $R0 '$3$R0'
 			goto end
 			StrCpy $2 $R0 $5
