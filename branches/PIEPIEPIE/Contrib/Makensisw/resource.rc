@@ -1,0 +1,377 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON                    "icon.ico"
+IDI_SHELL               ICON                    "shell.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_MENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Save Output...",             IDM_SAVE
+        MENUITEM "&Load Script...\tCtrl+L",     IDM_LOADSCRIPT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit\tAlt+X",                IDM_EXIT
+        MENUITEM SEPARATOR
+        MENUITEM "",                            IDM_MRU_FILE
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy\tCtrl+C",               IDM_COPYSELECTED
+        MENUITEM "Copy &All",                   IDM_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Find...\tCtrl+F",            IDM_FIND
+        MENUITEM SEPARATOR
+        MENUITEM "&Select All\tCtrl+A",         IDM_SELECTALL
+        MENUITEM "Clear &Log Window\tCtrl+W",   IDM_CLEARLOG
+    END
+    POPUP "&Script"
+    BEGIN
+        MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
+        MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
+        MENUITEM "Reco&mpile and Test\tCtrl+M", IDM_RECOMPILE_TEST
+        MENUITEM SEPARATOR
+        POPUP "Set &Compressor"
+        BEGIN
+            MENUITEM "&Defined in Script/Compiler Default", IDM_SCRIPT
+            MENUITEM "&ZLIB",                       IDM_ZLIB
+            MENUITEM "ZLIB (solid)",                IDM_ZLIB_SOLID
+            MENUITEM "BZI&P2",                      IDM_BZIP2
+            MENUITEM "BZIP2 (solid)",               IDM_BZIP2_SOLID
+            MENUITEM "&LZMA",                       IDM_LZMA
+            MENUITEM "LZMA (solid)",                IDM_LZMA_SOLID
+            MENUITEM "&Best Compressor",            IDM_BEST
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Edit Script\tCtrl+E",        IDM_EDITSCRIPT
+        MENUITEM "Open Script &Folder\tCtrl+B", IDM_BROWSESCR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "&Settings..\tCtrl+S",         IDM_SETTINGS
+        MENUITEM SEPARATOR
+        MENUITEM "Clear Recent &Files List",    IDM_CLEAR_MRU_LIST
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "NSIS Users &Manual\tF1",      IDM_DOCS
+        MENUITEM SEPARATOR
+        MENUITEM "NSIS &Homepage",              IDM_NSISHOME
+        MENUITEM "NSIS &Forum",                 IDM_FORUM
+        MENUITEM "NSIS &Update",                IDM_NSISUPDATE
+        MENUITEM SEPARATOR
+        MENUITEM "&About MakeNSISW",            IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDK_ACCEL ACCELERATORS 
+BEGIN
+    "A",            IDM_SELECTALL,          VIRTKEY, CONTROL, NOINVERT
+    "B",            IDM_BROWSESCR,          VIRTKEY, CONTROL, NOINVERT
+    "C",            IDM_COPYSELECTED,       VIRTKEY, CONTROL, NOINVERT
+    "E",            IDM_EDITSCRIPT,         VIRTKEY, CONTROL, NOINVERT
+    "F",            IDM_FIND,               VIRTKEY, CONTROL, NOINVERT
+    "L",            IDM_LOADSCRIPT,         VIRTKEY, CONTROL, NOINVERT
+    "M",            IDM_RECOMPILE_TEST,     VIRTKEY, CONTROL, NOINVERT
+    "R",            IDM_RECOMPILE,          VIRTKEY, CONTROL, NOINVERT
+    "S",            IDM_SETTINGS,           VIRTKEY, CONTROL, NOINVERT
+    "T",            IDM_TEST,               VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          IDM_DOCS,               VIRTKEY, NOINVERT
+    "W",            IDM_CLEARLOG,           VIRTKEY, CONTROL, NOINVERT
+    "X",            IDM_EXIT,               VIRTKEY, ALT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+DLG_MAIN DIALOG  0, 0, 362, 246
+STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | 
+    WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN | WS_CAPTION | 
+    WS_SYSMENU | WS_THICKFRAME
+CAPTION "MakeNSISW"
+MENU IDM_MENU
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "",IDC_LOGWIN,"RICHEDIT",TCS_HOTTRACK | TCS_BUTTONS | 
+                    TCS_RAGGEDRIGHT | TCS_OWNERDRAWFIXED | TCS_MULTISELECT | 
+                    WS_BORDER | WS_VSCROLL,7,22,345,186
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,220,346,1
+    LTEXT           "",IDC_VERSION,7,230,200,12,WS_DISABLED
+    DEFPUSHBUTTON   "Clo&se",IDC_CLOSE,296,226,49,15
+    PUSHBUTTON      "Test &Installer",IDC_TEST,230,226,60,15,WS_DISABLED
+END
+
+DLG_ABOUT DIALOGEX 0, 0, 233, 126
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_FIXEDSYS | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "About MakeNSISW"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,174,104,49,15
+    CONTROL         115,IDC_STATIC,"Static",SS_BITMAP,0,0,233,25
+    LTEXT           "MakeNSISW",IDC_ABOUTVERSION,14,31,219,8
+    LTEXT           "Copyright",IDC_ABOUTCOPY,14,43,220,8
+    LTEXT           "Other Contributors:",IDC_ABOUTPORTIONS,14,56,220,10
+    LTEXT           "",IDC_OTHERCONTRIB,27,68,206,22
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,15,97,208,1
+    LTEXT           "NSIS",IDC_NSISVER,15,107,135,8,WS_DISABLED
+END
+
+DLG_SETTINGS DIALOGEX 0, 0, 292, 215
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "MakeNSISW Settings"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,180,192,48,14
+    PUSHBUTTON      "Cancel",IDCANCEL,234,192,48,14
+    GROUPBOX        "Default Compressor (overrides script setting)",
+                    IDC_STATIC,6,6,282,41
+    COMBOBOX        IDC_COMPRESSOR,18,24,258,94,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Symbol Definitions",IDC_STATIC,6,54,282,132
+    LTEXT           "Symbol &Name",IDC_STATIC,18,84,44,8
+    EDITTEXT        IDC_SYMBOL,18,96,68,12,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    LTEXT           "&Value (optional)",IDC_STATIC,18,120,50,8
+    EDITTEXT        IDC_VALUE,18,132,66,12,ES_AUTOHSCROLL,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "&Add >>",IDRIGHT,96,84,49,14
+    PUSHBUTTON      "&Edit <<",IDLEFT,96,108,49,14
+    PUSHBUTTON      "&Delete",IDDEL,96,132,49,14
+    LTEXT           "Symbol List",IDC_STATIC,156,66,118,9
+    LISTBOX         IDC_SYMBOLS,156,78,121,79,LBS_NOINTEGRALHEIGHT | 
+                    LBS_EXTENDEDSEL | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,
+                    WS_EX_CLIENTEDGE
+    PUSHBUTTON      "&Clear",IDCLEAR,156,162,36,14
+    PUSHBUTTON      "&Load",IDLOAD,198,162,36,14
+    PUSHBUTTON      "&Save",IDSAVE,240,162,36,14
+END
+
+DLG_COMPRESSOR DIALOGEX 0, 0, 250, 53
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Choose Compressor"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,138,30,48,14
+    PUSHBUTTON      "Cancel",IDCANCEL,192,30,48,14
+    LTEXT           "Compressor:",IDC_STATIC,6,14,43,8
+    COMBOBOX        IDC_COMPRESSOR,54,12,184,94,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+DLG_SYMBOLSET DIALOGEX 0, 0, 190, 125
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,78,102,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,132,102,50,14
+    LTEXT           "Symbol Definitions Set Name:",IDC_STATIC,6,6,101,10
+    COMBOBOX        IDC_NAMES,6,17,174,85,CBS_SIMPLE | CBS_AUTOHSCROLL | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Delete",IDDEL,6,102,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    DLG_MAIN, DIALOG
+    BEGIN
+        RIGHTMARGIN, 361
+        BOTTOMMARGIN, 228
+    END
+
+    DLG_ABOUT, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 121
+    END
+
+    DLG_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 285
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 208
+    END
+
+    DLG_COMPRESSOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 46
+    END
+
+    DLG_SYMBOLSET, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 183
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "makensisw.xml"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_LOGO                BITMAP                  "logo.bmp"
+IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
+IDB_TOOLBAR24           BITMAP                  "toolbar24.bmp"
+IDB_TOOLBAR24D          BITMAP                  "toolbar24d.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_LOADSCRIPT          "Load Script..."
+    IDS_SAVE                "Save Output..."
+    IDS_EXIT                "Exit"
+    IDS_COPY                "Copy"
+    IDS_FIND                "Find..."
+    IDS_RECOMPILE           "Recompile"
+    IDS_SETTINGS            "Settings..."
+    IDS_COMPRESSOR          "Set Compressor"
+    IDS_TEST                "Test Installer"
+    IDS_EDITSCRIPT          "Edit Script"
+    IDS_BROWSESCR           "Open Script Folder"
+    IDS_CLEARLOG            "Clear Log Window"
+    IDS_NSISHOME            "NSIS Homepage"
+    IDS_FORUM               "NSIS Forum"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NSISUPDATE          "NSIS Update"
+    IDS_DOCS                "NSIS Users Manual"
+    IDS_SCRIPT              "Defined in Script/Compiler Default"
+    IDS_ZLIB                "ZLIB"
+    IDS_ZLIB_SOLID          "ZLIB (solid)"
+    IDS_BZIP2               "BZIP2"
+    IDS_BZIP2_SOLID         "BZIP2 (solid)"
+    IDS_RECOMPILE_TEST      "Recompile and Test"
+    IDS_BEST                "Best Compressor"
+    IDS_LZMA                "LZMA"
+    IDS_LZMA_SOLID          "LZMA (solid)"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Dutch (Netherlands) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NLD)
+#ifdef _WIN32
+LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
+#endif    // Dutch (Netherlands) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

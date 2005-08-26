@@ -1,0 +1,200 @@
+\C{tutorial} Tutorial: The Basics
+
+\H{tutintro} Introduction
+
+Most software packages you download or buy come with an installer. The installer copies and/or updates files, writes registry keys, writes configuration, creates shortcuts, etc. All of this is done automatically for the user. All the user needs to do is supply some information and the installer will do the rest. The user goes through a wizard, makes the appropriate choices and waits until the installer finishes. After the installer has finished the user is left only with the simple task of starting the program. The user doesn't have to worry about things he might have forgotten because all of the necessary steps were done by the installer.
+
+NSIS is a tool for developers to create such installers. NSIS allows you to create everything from basic installers that just copy files to very complex installers that handle a lot of advanced tasks such as writing registry keys, settings environment variables, downloading the latest files from the internet, customizing the configuration file and more. NSIS is very flexible and its scripting language is easy to learn.
+
+NSIS compiles all of the files and the installation script into one executable file, so your application will be easy to distribute. NSIS adds only about 34KB of code of its own (for the default configuration) to the data. NSIS boasts the smallest overhead available while still providing a lot of options thanks to its powerful scripting language and support of external plug-ins.
+
+\H{tutscriptfiles} Script Files
+
+To create a NSIS installer, you first have to write a NSIS script. A NSIS script is just a regular text file with a special syntax. You can edit scripts with every text editor. It's recommended you use a text editor that shows line numbers because NSIS uses line numbers to indicate where errors lie, and to warn you about where errors might lie. An editor that supports syntax highlighting is also recommended. You can download editors made especially for NSIS and files for syntax highlighting at the \W{http://nsis.sf.net/wiki/}{NSIS Wiki}.
+
+In a NSIS script every line is treated as a command. If your command is too long for one line you can use a back-slash - '\\' - at the end of the line. The compiler will treat the new line as an addition to the previous line and will not expect a new command. For example:
+
+\c Messagebox MB_OK|MB_ICONINFORMATION \
+\c "This is a sample that shows how to use line breaks for larger commands in NSIS scripts"
+
+If you want to use a double-quote in a string you can either use $\\\\" to escape the quote or quote the string with a different type of quote such as ` or '.
+
+For more details about the script format, see \R{fileformat}{Script File Format}.
+
+The default extension for a script file is .nsi. Header files have the .nsh extension. Header files can help you arrange your script by dividing it to more than one block of code, you can also put functions or macros in header files and include the header files in multiple installers. This makes updating easier and it also makes your scripts easier to read. To include a header file in your script use \R{include}{!include}. Header files that reside in the Include directory under your NSIS directory can be included just by their name. For example:
+
+\c !include Sections.nsh
+
+\H{tutstructure} Scripting structure
+
+A NSIS script can contain Installer Attributes and Sections/Functions. You can also use Compiler Commands for compile-time operations. Required is the \R{aoutfile}{OutFile} instruction, which tells NSIS where to write the installer, and one section.
+
+\S1{installerattributes} Installer Attributes
+
+Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can change texts that will be shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.
+
+Other basic instructions are \R{aname}{Name} and \R{ainstalldir}{InstallDir}.
+
+For more information about installer attributes, have a look at \R{instattribs}{Installer Attributes}.
+
+\S1{tut-pages} Pages
+
+An non-silent installer has a set of wizard pages to let the user configure the installer. You can set which pages to display using the \R{page}{Page} command (or \R{pageex}{PageEx} for more advanced settings). A typical set of pages looks like this:
+
+\c Page license
+\c Page components
+\c Page directory
+\c Page instfiles
+\c UninstPage uninstConfirm
+\c UninstPage instfiles
+
+\S1{tut-sections} Sections
+
+In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is in sections. Each visible section is a component for the user to choose from. We will not discuss invisible sections in this tutorial. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install you'll have to use more than one section.
+
+Uninstallers can also have multiple sections. Uninstaller section names are prefixed with 'un.'. For example:
+
+\c Section "Installer Section"
+\c SectionEnd
+\c
+\c Section "un.Uninstaller Section"
+\c SectionEnd
+
+The instructions that can be used in sections are very different from the installer attributes instructions, they are executed at runtime on the user's computer. Those instructions can extract files, read from and write to the registry, INI files or normal files, create directories, create shortcuts and a lot more. You can find out more in \R{instr}{Instructions}.
+
+The most basic instructions are \R{setoutpath}{SetOutPath} which tells the installer where to extract files and \R{file}{File} which extracts files.
+
+Example:
+
+\c Section "My Program"
+\c   SetOutPath $INSTDIR
+\c   File "My Program.exe"
+\c   File "Readme.txt"
+\c SectionEnd
+
+For more information about sections see \R{sections}{Sections}.
+
+\S1{tut-functions} Functions
+
+Functions can contain script code, just like sections. The difference between sections and functions is the way they are called. There are two types of functions, user functions and callback functions.
+
+User functions are called by the user from within sections or other functions using the \R{call}{Call} instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.
+
+Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recognize this function as a callback function by the name and will call it when the installer starts.
+
+\c Function .onInit
+\c   MessageBox MB_YESNO "This will install My Program. Do you wish to continue?" IDYES gogogo
+\c     Abort
+\c   gogogo:
+\c FunctionEnd
+
+\R{abort}{Abort} has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at \R{callbacks}{Callback Functions} for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.
+
+For more information about functions see \R{functions}{Functions}.
+
+\S1{tut-working-with-scripts} Working with Scripts
+
+\S2{tutVariables} Variables
+
+You can declare your own variables ($VARNAME) with the \R{var}{Var} command. Variables are global and can be used in any Section or Function.
+
+Declaring and using a user variable:
+
+\c Var BLA ;Declare the variable
+\c
+\c Section bla
+\c
+\c   StrCpy $BLA "123" ;Now you can use the variable $BLA
+\c
+\c SectionEnd
+
+In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable.
+
+For shared code, there are \R{varother}{20 registers avaibable} (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.
+
+After calling the function, the variables contain the same value as before. Note the order when using multiple variables (last-in first-out):
+
+\c Function bla
+\c
+\c   Push $R0
+\c   Push $R1
+\c
+\c     ...code...
+\c
+\c   Pop $R1
+\c   Pop $R0
+\c
+\c FunctionEnd
+
+\S2{tutdebug} Debugging Scripts
+
+The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debugging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plug-in \W{http://nsis.sourceforge.net/wiki/DumpState}{DumpState}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
+
+\S1{compilercommands} Compiler Commands
+
+Compiler commands will be executed on compile time on your computer. They can be used for conditional compilation, to include header files, to execute applications, to change the working directory and more. The most common usage is defines. Defines are compile time constants. You can define your product's version number and use it in your script. For example:
+
+\c !define VERSION "1.0.3"
+\c Name "My Program ${VERSION}"
+\c OutFile "My Program Installer - ${VERSION}.exe"
+
+For more information about defines see \R{compdefines}{Conditional Compilation}.
+
+Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserts at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:
+
+\c !macro MyFunc UN
+\c Function ${UN}MyFunc
+\c   Call ${UN}DoRegStuff
+\c   ReadRegStr $0 HKLM Software\MyProgram key
+\c   DetailPrint $0
+\c FunctionEnd
+\c !macroend
+\c
+\c !insertmacro MyFunc ""
+\c !insertmacro MyFunc "un."
+
+This macro helps you avoid writing the same code for both the installer and the uninstaller. The two !insertmacros insert two functions, one for the installer called MyFunc and one for the uninstaller called un.MyFunc and both do exactly the same thing.
+
+For more information see \R{comptime}{Compile Time Commands}.
+
+\H{tutcompiler} Compiler
+
+The second thing you need to do in order to create your installer after you have created your script is to compile your script. MakeNSIS.exe is the NSIS compiler. It reads your script, parses it and creates an installer for you.
+
+To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.
+
+The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.
+
+NSIS supports different compression methods, as explained \R{asetcompressor}{here}. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.
+
+It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See \R{build}{Building NSIS} for details.
+
+\H{tutmodernui} Modern UI
+
+A popular user interface for NSIS is the Modern User Interface. It has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.
+
+For more information, check the \L{../Docs/Modern UI/Readme.html}{Modern UI Readme} and the \L{../Examples/Modern UI}{Modern UI Examples}.
+
+\H{tutplugin} Plug-ins
+
+NSIS support plug-ins that can be called from the script. Plug-ins are DLL files written in C, C++, Delphi or another programming language and therefore provide a more powerful code base to NSIS.
+
+A plug-in call looks like this:
+
+\c DLLName::FunctionName "parameter number 1" "parameter number 2" "parameter number 3"
+
+Every plug-in's function has its own requirements when it comes to parameters, some will require none, some will accept as many parameters as you want to send. Examples:
+
+\c nsExec::ExecToLog '"${NSISDIR}\makensis.exe" /CMDHELP'
+\c InstallOptions::dialog "$PLUGINSDIR\test.ini"
+\c NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
+
+The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the \L{../Plugins/}{Plugins folder} under your NSIS directory and lists all of their available functions. You can use \R{addplugindir}{!addplugindir} to tell NSIS to search in other directories too.
+
+The NSIS distribution already included many plug-ins. \L{../Docs/InstallOptions/Readme.html}{InstallOptions} is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See \R{pages}{Pages}). The \L{../Docs/StartMenu/Readme.txt}{Startmenu plug-in} provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the \L{../Docs/}{Docs folder} for help files and examples. You can find additional plug-ins on-line: \W{http://nsis.sf.net/wiki/}{NSIS Wiki}.
+
+You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see Contrib/ExDLL in the source code package for a basic plug-in example. Source code of included plug-ins can also be found in the source code package.
+
+\H{tutmore} More
+
+This tutorial has described the basic NSIS features, to learn more about everything NSIS can do, take some time to read this manual.

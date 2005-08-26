@@ -1,0 +1,26 @@
+code = 'ui.c'
+
+uis = Split("""
+	default
+	modern
+	modern_headerbmp
+	modern_headerbmpr
+	modern_nodesc
+	modern_smalldesc
+	sdbarker_tiny
+""")
+
+libs = Split("""
+	kernel32
+	comctl32
+	user32
+	gdi32
+""")
+
+Import('BuildUtil env')
+
+code = env.Object(code)
+
+for ui in uis:
+	ui = BuildUtil(ui, [code], libs, entry = 'WinMain', res = ui + '.rc', install = 'Contrib/UIs')
+	env.Alias('UIs', ui)
