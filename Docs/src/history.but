@@ -1,5 +1,47 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.09} 2.09
+
+Released on August 26th, 2005
+
+\S1{v2.09-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug introduced in 2.08, that prevented uninstallers from deleting $INSTDIR
+
+\b Fixed a bug that caused "C:\\ " to be considered a valid installation directory, even without \R{aallowrootdirinstall}{AllowRootDirInstall}
+
+\S2{} New/Changed Commands
+
+\b \R{var}{Var} can now be used in sections and functions, but only with the /GLOBAL flag
+
+\S2{} Minor Changes
+
+\b Applied \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1248335}{patch #1248335} for greater portability of examples
+
+\b \R{filefunc}{FileFunc}: workaround for GetLongPathName which is not available on Windows 95 (Instructor)
+
+\b Fixed an unused label warning in \R{library}{Library}
+
+\b Fixed duplicate label errors in \L{../Examples/LogicLib.nsi}{LogicLib} and \R{library}{Library} when used in different files (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1243865}{bug #1243865})
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.73}: fixed checkboxes on uninstaller finish page or multiple finish pages
+
+\b \R{wordfunc}{WordFunc}: fixed incorrect replacement of first word in WordReplace, under some conditions (Instructor)
+
+\S2{} Translations
+
+\b Renamed Malaysian to Malay
+
+\b Update Thai translation to the latest version
+
+\b Updated Kurdish MUI translation to the latest version
+
+\S2{} Build System
+
+\b Fixed a number of build problems on POSIX platforms which caused plug-ins to malfunction and installers to crash
+
 \H{v2.08} 2.08
 
 Released on July 23rd, 2005
