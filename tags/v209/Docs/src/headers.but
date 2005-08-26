@@ -1,0 +1,2506 @@
+\A{headers} Useful Headers
+
+
+\H{filefunc} File Functions Header
+
+
+\S1{} Introduction
+
+Include header:
+
+\c !include "FileFunc.nsh"
+
+
+Include function "GetFileExt" for install and "GetParent" for uninstall:
+
+\c !insertmacro GetFileExt
+\c !insertmacro un.GetParent
+
+
+Call functions:
+
+\c Section Install
+\c      ${GetFileExt} "C:\My Downloads\Index.html" $R0
+\c      ; $R0="html"
+\c SectionEnd
+
+\c Section un.Install
+\c      ${un.GetParent} "C:\My Downloads\Index.html" $R0
+\c      ; $R0="C:\My Downloads"
+\c SectionEnd
+
+
+\S1{} Locate
+
+\b Find files, directories and empty directories with mask and size options.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${Locate} "[Path]" "[Options]" "Function"
+
+\c "[Path]"      ; Disk or Directory
+\c               ;
+\c "[Options]"   ; /L=[FD|F|D|DE|FDE]
+\c               ;     /L=FD    - Locate Files and Directories (default)
+\c               ;     /L=F     - Locate Files only
+\c               ;     /L=D     - Locate Directories only
+\c               ;     /L=DE    - Locate Empty Directories only
+\c               ;     /L=FDE   - Locate Files and Empty Directories
+\c               ; /M=[mask]
+\c               ;     /M=*.*         - Locate all (default)
+\c               ;     /M=*.doc       - Locate Work.doc, 1.doc ...
+\c               ;     /M=Pho*        - Locate PHOTOS, phone.txt ...
+\c               ;     /M=win???.exe  - Locate winamp.exe, winver.exe ...
+\c               ;     /M=winamp.exe  - Locate winamp.exe only
+\c               ; /S=No:No[B|K|M|G]
+\c               ;     /S=      - Don't locate file size (faster) (default)
+\c               ;     /S=0:0B  - Locate only files of 0 Bytes exactly
+\c               ;     /S=5:9K  - Locate only files of 5 to 9 Kilobytes
+\c               ;     /S=:10M  - Locate only files of 10 Megabyte or less
+\c               ;     /S=1G    - Locate only files of 1 Gigabyte or more
+\c               ; /G=[1|0]
+\c               ;     /G=1     - Locate with subdirectories (default)
+\c               ;     /G=0     - Locate without subdirectories
+\c               ; /B=[0|1]
+\c               ;     /B=0     - Banner isn't used (default)
+\c               ;     /B=1     - Banner is used. Callback when function
+\c               ;                start to search in new directory
+\c "Function"    ; Callback function when found
+\c 
+\c Function "Function"
+\c 	; $R9    "path\name"
+\c 	; $R8    "path"
+\c 	; $R7    "name"
+\c 	; $R6    "size"  ($R6="" if directory, $R6="0" if file with /S=)
+\c 
+\c 	; $R0-$R5  are not used (save data in them).
+\c 	; ...
+\c 
+\c 	Push $var    ; If $var="StopLocate" Then exit from function
+\c FunctionEnd
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if disk or directory isn't exist
+\\<br\\>-Error flag if syntax error
+
+
+\\<b\\>Example (Find one file):\\</b\\>
+
+\c Section
+\c 	${Locate} "C:\ftp" "/L=F /M=RPC DCOM.rar /S=1K" "Example1"
+\c 	; 'RPC DCOM.rar' file in 'C:\ftp' with size 1 Kb or more
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	MessageBox MB_OK "$$R0=$R0"
+\c SectionEnd
+\c 
+\c Function Example1
+\c 	StrCpy $R0 $R9
+\c 	; $R0="C:\ftp\files\RPC DCOM.rar"
+\c 
+\c 	MessageBox MB_YESNO '$R0$\n$\nFind next?' IDYES +2
+\c 	StrCpy $0 StopLocate
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Write founded in text file):\\</b\\>
+
+\c Section
+\c 	GetTempFileName $R0
+\c 	FileOpen $R1 $R0 w
+\c 	${Locate} "C:\ftp" "/S=:2M /G=0" "Example2"
+\c 	; folders and all files with size 2 Mb or less
+\c 	; don't scan subdirectories
+\c 	FileClose $R1
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	Exec '"notepad.exe" "$R0"'
+\c SectionEnd
+\c 
+\c Function Example2
+\c 	StrCmp $R6 '' 0 +3
+\c 	FileWrite $R1 "Directory=$R9$\r$\n"
+\c 	goto +2
+\c 	FileWrite $R1 "File=$R9  Size=$R6 Mb$\r$\n"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Write founded in INI file):\\</b\\>
+
+\c Section
+\c 	GetTempFileName $R0
+\c 	${Locate} "C:\ftp" "/L=F /S=0K" "Example3"
+\c 	; all files in 'C:\ftp' with size detect in Kb
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	Exec '"notepad.exe" "$R0"'
+\c SectionEnd
+\c 
+\c Function Example3
+\c 	WriteINIStr $R0 "$R8" "$R7" "$R6 Kb"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Delete empty directories):\\</b\\>
+
+\c Section
+\c 	StrCpy $R2 0
+\c 	StrCpy $R3 0
+\c 
+\c 	loop:
+\c 	StrCpy $R1 0
+\c 	${Locate} "C:\ftp" "/L=DE" "Example4"
+\c 	IntOp $R3 $R3 + 1
+\c 	IntOp $R2 $R2 + $R1
+\c 	StrCmp $R0 StopLocate +2
+\c 	StrCmp $R1 0 0 loop
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK 'error' IDOK +2
+\c 	MessageBox MB_OK '$R2 directories were removed$\n$R3 loops'
+\c SectionEnd
+\c 
+\c Function Example4
+\c 	MessageBox MB_YESNOCANCEL 'Delete empty "$R9"?' IDNO end IDCANCEL cancel
+\c 	RMDir $R9
+\c 	IntOp $R1 $R1 + 1
+\c 	goto end
+\c 
+\c 	cancel:
+\c 	StrCpy $R0 StopLocate
+\c 
+\c 	end:
+\c 	Push $R0
+\c FunctionEnd
+
+\\<b\\>Example (Move all files into one folder):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 "C:\ftp"   ;Directory move from
+\c 	StrCpy $R1 "C:\ftp2"  ;Directory move into
+\c 
+\c 	StrCpy $R2 0
+\c 	StrCpy $R3 0
+\c 	${Locate} "$R0" "/L=F" "Example5"
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK 'error' IDOK +4
+\c 	StrCmp $R3 0 0 +2
+\c 	MessageBox MB_OK '$R2 files were moved' IDOK +2
+\c 	MessageBox MB_OK '$R2 files were moved$\n$R3 files were NOT moved'
+\c SectionEnd
+\c 
+\c Function Example5
+\c 	StrCmp $R8 $R1 +6
+\c 	IfFileExists '$R1\$R7' +4
+\c 	Rename $R9 '$R1\$R7'
+\c 	IntOp $R2 $R2 + 1
+\c 	goto +2
+\c 	IntOp $R3 $R3 + 1
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Copy files with log):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 "C:\ftp"   ;Directory copy from
+\c 	StrCpy $R1 "C:\ftp2"  ;Directory copy into
+\c 	StrLen $R2 $R0
+\c 
+\c 	GetTempFileName $0
+\c 	FileOpen $R3 $0 w
+\c 	${Locate} "$R0" "/L=FDE" "Example6"
+\c 	FileClose $R3
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK 'error'
+\c 
+\c 	Exec '"notepad.exe" "$0"'     ;view log
+\c SectionEnd
+\c 
+\c Function Example6
+\c 	StrCpy $1 $R8 '' $R2
+\c 
+\c 	StrCmp $R6 '' 0 +3
+\c 	CreateDirectory '$R1$1\$R7'
+\c 	goto end
+\c 	CreateDirectory '$R1$1'
+\c 	CopyFiles /SILENT $R9 '$R1$1'
+\c 
+\c 	IfFileExists '$R1$1\$R7' 0 +3
+\c 	FileWrite $R3 "-old:$R9  -new:$R1$1\$R7  -success$\r$\n"
+\c 	goto +2
+\c 	FileWrite $R3 "-old:$R9  -new:$R1$1\$R7  -failed$\r$\n"
+\c 
+\c 	end:
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Recreate directory structure):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 "C:\ftp"     ;Directory structure from
+\c 	StrCpy $R1 "C:\ftp2"    ;Directory structure into
+\c 	StrLen $R2 $R0
+\c 
+\c 	${Locate} "$R0" "/L=D" "Example7"
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK 'error'
+\c SectionEnd
+\c 
+\c Function Example7
+\c 	StrCpy $1 $R9 '' $R2
+\c 	CreateDirectory '$R1$1'
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Locate with banner - "NxS" plugin required):\\</b\\>
+
+\c Section
+\c 	nxs::Show /NOUNLOAD `$(^Name) Setup` /top `Setup searching something$\r$\nPlease wait... If you can..` /h 1 /can 1 /end
+\c 	${Locate} "C:\WINDOWS" "/L=F /M=*.inf /B=1" "Example8"
+\c 	nxs::Destroy
+\c SectionEnd
+\c 
+\c Function Example8
+\c 	StrCmp $R0 $R8 abortcheck
+\c 	StrCpy $R0 $R8
+\c 	nxs::Update /NOUNLOAD /sub "$R8" /pos 78 /end
+\c 
+\c 	abortcheck:
+\c 	nxs::HasUserAborted /NOUNLOAD
+\c 	Pop $0
+\c 	StrCmp $0 1 0 +2
+\c 	StrCpy $0 StopLocate
+\c 
+\c 	StrCmp $R9 '' end
+\c 	;...
+\c 
+\c 	end:
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} GetSize
+
+\b Find the size of a file, files mask or directory.
+
+\b Find the sum of the files, directories and subdirectories.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetSize} "[Path]" "[Options]" $var1 $var2 $var3
+
+\c "[Path]"      ; Disk or Directory
+\c               ;
+\c "[Options]"   ; /M=[mask]
+\c               ;     /M=*.*         - Find all (default)
+\c               ;     /M=*.doc       - Find Work.doc, 1.doc ...
+\c               ;     /M=Pho*        - Find PHOTOS, phone.txt ...
+\c               ;     /M=win???.exe  - Find winamp.exe, winver.exe ...
+\c               ;     /M=winamp.exe  - Find winamp.exe only
+\c               ; /S=No:No[B|K|M|G]
+\c               ;     /S=      - Don't find file size (faster) (default)
+\c               ;     /S=0:0B  - Find only files of 0 Bytes exactly
+\c               ;     /S=5:9K  - Find only files of 5 to 9 Kilobytes
+\c               ;     /S=:10M  - Find only files of 10 Megabyte or less
+\c               ;     /S=1G    - Find only files of 1 Gigabyte or more
+\c               ; /G=[1|0]
+\c               ;     /G=1     - Find with subdirectories (default)
+\c               ;     /G=0     - Find without subdirectories
+\c               ;
+\c $var1         ; Result1: Size
+\c $var2         ; Result2: Sum of files
+\c $var3         ; Result3: Sum of directories
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if disk or directory isn't exist
+\\<br\\>-Error flag if syntax error
+
+
+\\<b\\>Example (1):\\</b\\>
+
+\c Section
+\c 	; Find file size "C:\WINDOWS\Explorer.exe" in kilobytes
+\c 
+\c 	${GetSize} "C:\WINDOWS" "/M=Explorer.exe /S=0K /G=0" $0 $1 $2
+\c 	; $0="220" Kb
+\c 	; $1="1"   files
+\c 	; $2=""    directories
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+
+\\<b\\>Example (2):\\</b\\>
+
+\c Section
+\c 	; Find folder size "C:\Installs\Reanimator\Drivers" in megabytes
+\c 
+\c 	${GetSize} "C:\Installs\Reanimator\Drivers" "/S=0M" $0 $1 $2
+\c 	; $0="132" Mb
+\c 	; $1="555" files
+\c 	; $2="55"  directories
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+
+\\<b\\>Example (3):\\</b\\>
+
+\c Section
+\c 	; Find sum of files and folders "C:\WINDOWS" (no subfolders)
+\c 
+\c 	${GetSize} "C:\WINDOWS" "/G=0" $0 $1 $2
+\c 	; $0=""    size
+\c 	; $1="253" files
+\c 	; $2="46"  directories
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+
+\S1{} DriveSpace
+
+\b Get total, occupied or free space of the drive.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetSize} "[Drive]" "[Options]" $var
+
+\c "[Drive]"     ; Disk to check
+\c               ;     
+\c "[Options]"   ; /D=[T|O|F]
+\c               ;     /D=T  - Total space (default)
+\c               ;     /D=O  - Occupied space
+\c               ;     /D=F  - Free space
+\c               ; /S=[B|K|M|G]
+\c               ;     /S=B  - size in Bytes (default)
+\c               ;     /S=K  - size in Kilobytes
+\c               ;     /S=M  - size in Megabytes
+\c               ;     /S=G  - size in Gigabytes
+\c               ;
+\c $var          ; Result: Size
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if disk isn't exist or not ready
+\\<br\\>-Error flag if syntax error
+
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${DriveSpace} "C:\" "/D=F /S=M" $R0
+\c 	; $R0="2530"   megabytes free on drive C:
+\c SectionEnd
+
+\S1{} GetDrives
+
+\b Find all available drives in the system.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetDrives} "[Option]" "Function"
+
+\c "[Option]"      ; [FDD+HDD+CDROM+NET+RAM]
+\c                 ;   FDD    Floppy Disk Drives
+\c                 ;   HDD    Hard Disk Drives 
+\c                 ;   CDROM  CD-ROM Drives
+\c                 ;   NET    Network Drives
+\c                 ;   RAM    RAM Disk Drives
+\c                 ;
+\c                 ; [ALL]
+\c                 ;   Find all drives by letter (default)
+\c                 ;
+\c "Function"      ; Callback function when found
+\c 
+\c Function "Function"
+\c 	; $9    "drive letter"  (a:\ c:\ ...)
+\c 	; $8    "drive type"    (FDD HDD ...)
+\c 
+\c 	; $R0-$R9  are not used (save data in them).
+\c 	; ...
+\c 
+\c 	Push $var    ; If $var="StopGetDrives" Then exit from function
+\c FunctionEnd
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${GetDrives} "FDD+CDROM" "Example1"
+\c SectionEnd
+\c 
+\c Function Example1
+\c 	MessageBox MB_OK "$9  ($8 Drive)"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${GetDrives} "ALL" "Example2"
+\c SectionEnd
+\c 
+\c Function Example2
+\c 	MessageBox MB_OK "$9  ($8 Drive)"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example3 (Get type of drive):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 "D:\"      ;Drive letter
+\c 	StrCpy $R1 "invalid"
+\c 
+\c 	${GetDrives} "ALL" "Example3"
+\c 
+\c 	MessageBox MB_OK "Type of drive $R0 is $R1"
+\c SectionEnd
+\c 
+\c Function Example3
+\c 	StrCmp $9 $R0 0 +3
+\c 	StrCpy $R1 $8
+\c 	StrCpy $0 StopGetDrives
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} GetTime
+
+\b Get local time.
+
+\b Get file time (access, creation and modification).
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetTime} "[File]" "[Option]" $var1 $var2 $var3 $var4 $var5 $var6 $var7
+
+\c "[File]"        ; Ignored if "L"
+\c                 ;
+\c "[Option]"      ; [Options]
+\c                 ;   L   Local time
+\c                 ;   A   last Access file time
+\c                 ;   C   Creation file time
+\c                 ;   M   Modification file time
+\c                 ;
+\c $var1           ; Result1: day
+\c $var2           ; Result2: month
+\c $var3           ; Result3: year
+\c $var4           ; Result4: day of week name
+\c $var5           ; Result5: hour
+\c $var6           ; Result6: minute
+\c $var7           ; Result7: seconds
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+\\<br\\>-Error flag if syntax error
+
+
+\\<b\\>Example (Get local time):\\</b\\>
+
+\c Section
+\c 	${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+\c 	; $0="01"      day
+\c 	; $1="04"      month
+\c 	; $2="2005"    year
+\c 	; $3="Friday"  day of week name
+\c 	; $4="16"      hour
+\c 	; $5="05"      minute
+\c 	; $6="50"      seconds
+\c 
+\c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+\c SectionEnd
+
+\\<b\\>Example (Get file time):\\</b\\>
+
+\c Section
+\c 	${GetTime} "$WINDIR\Explorer.exe" "C" $0 $1 $2 $3 $4 $5 $6
+\c 	; $0="12"       day
+\c 	; $1="10"       month
+\c 	; $2="2004"     year
+\c 	; $3="Tuesday"  day of week name
+\c 	; $4="2"        hour
+\c 	; $5="32"       minute
+\c 	; $6="03"       seconds
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+\c SectionEnd
+
+\S1{} GetFileAttributes
+
+\b Get attributes of file or directory.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetFileAttributes} "[File]" "[Attributes]" $var
+
+\c "[File]"          ; File or directory
+\c                   ;
+\c "[Attributes]"    ; "ALL"  (default)
+\c                   ;  -all attributes of file combined with "|" to output
+\c                   ;
+\c                   ; "READONLY|HIDDEN|SYSTEM|DIRECTORY|ARCHIVE|
+\c                   ; DEVICE|NORMAL|TEMPORARY|SPARSE_FILE|REPARSE_POINT|
+\c                   ; COMPRESSED|OFFLINE|NOT_CONTENT_INDEXED|ENCRYPTED"
+\c                   ;  -file must have specified attributes
+\c                   ;
+\c $var              ; Result:
+\c                   ;    $var=attr1|attr2|... (if used "ALL")
+\c                   ;    $var=1   file has specified attributes
+\c                   ;    $var=0   file has no specified attributes
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${GetFileAttributes} "C:\MSDOS.SYS" "ALL" $R0
+\c 	; $R0=READONLY|HIDDEN|SYSTEM|ARCHIVE
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${GetFileAttributes} "C:\MSDOS.SYS" "SYSTEM|HIDDEN" $R0
+\c 	; $R0=1
+\c SectionEnd
+
+\\<b\\>Example3:\\</b\\>
+
+\c Section
+\c 	${GetFileAttributes} "C:\MSDOS.SYS" "NORMAL" $R0
+\c 	; $R0=0
+\c SectionEnd
+
+\S1{} GetFileVersion
+
+\b Get version information from executable file.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetFileVersion} "[Executable]" $var
+
+\c "[Executable]"      ; Executable file (*.exe *.dll ...)
+\c $var                ; Result: Version number
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+\\<br\\>-Error flag if file isn't contain version information
+
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetFileVersion} "C:\ftp\program.exe" $R0
+\c 	; $R0="1.1.0.12"
+\c SectionEnd
+
+\S1{} GetExeName
+
+\b Get installer filename (with valid case for Windows 9X/Me).
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetExeName} $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetExeName} $R0
+\c 	; $R0="C:\ftp\program.exe"
+\c SectionEnd
+
+\S1{} GetExePath
+
+\b Get installer pathname ($EXEDIR with valid case for Windows 9X/Me).
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetExePath} $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetExePath} $R0
+\c 	; $R0="C:\ftp"
+\c SectionEnd
+
+\S1{} GetParameters
+
+\b Get command line parameters.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetParameters} $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetParameters} $R0
+\c 	; $R0="[parameters]"
+\c SectionEnd
+
+\S1{} GetOptions
+
+\b Get options from command line parameters.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetOptions} "[Parameters]" "[Option]" $var
+
+\c "[Parameters]"     ; command line parameters
+\c                    ;
+\c "[Option]"         ; option name
+\c                    ;
+\c $var               ; Result: option string
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-First option symbol it is delimiter
+
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${GetOptions} "/INSTDIR=Temp /SILENT=yes /ADMIN=qwerty" "/ADMIN="  $R0
+\c 	;$R0=qwerty
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${GetOptions} "-INSTDIR=C:\Program Files\Common Files -SILENT=yes" "-INSTDIR="  $R0
+\c 	;$R0=C:\Program Files\Common Files
+\c SectionEnd
+
+\\<b\\>Example3:\\</b\\>
+
+\c Section
+\c 	${GetOptions} '/SILENT=yes /INSTDIR="C:/Program Files/Common Files" /ADMIN=password' "/INSTDIR="  $R0
+\c 	;$R0=C:/Program Files/Common Files
+\c SectionEnd
+
+\\<b\\>Example4:\\</b\\>
+
+\c Section
+\c 	${GetOptions} `-SILENT=yes -INSTDIR='"C:/Program Files/Common Files"' -ADMIN=password` "-INSTDIR="  $R0
+\c 	;$R0="C:/Program Files/Common Files"
+\c SectionEnd
+
+\S1{} GetRoot
+
+\b Get root directory.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetRoot} "[FullPath]" $var
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${GetRoot} "C:\Program Files\NSIS" $R0
+\c 	; $R0="C:"
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${GetRoot} "\\SuperPimp\NSIS\Source\exehead\Ui.c" $R0
+\c 	; $R0="\\SuperPimp\NSIS"
+\c SectionEnd
+
+\S1{} GetParent
+
+\b Get parent directory.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetParent} "[PathString]" $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetParent} "C:\Program Files\Winamp\uninstwa.exe" $R0
+\c 	; $R0="C:\Program Files\Winamp"
+\c SectionEnd
+
+\S1{} GetFileName
+
+\b Get last part from directory path.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetFileName} "[PathString]" $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetFileName} "C:\Program Files\Winamp\uninstwa.exe" $R0
+\c 	; $R0="uninstwa.exe"
+\c SectionEnd
+
+\S1{} GetBaseName
+
+\b Get file name without extension.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetBaseName} "[FileString]" $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetBaseName} "C:\ftp\program.exe" $R0
+\c 	; $R0="program"
+\c SectionEnd
+
+\S1{} GetFileExt
+
+\b Get extention of file.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${GetFileExt} "[FileString]" $var
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${GetFileExt} "C:\ftp\program.exe" $R0
+\c 	; $R0="exe"
+\c SectionEnd
+
+\S1{} BannerTrimPath
+
+\b Trim string path for banner.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${BannerTrimPath} "[PathString]" "[Option]" $var
+
+\c "[PathString]"    ;
+\c                   ;
+\c "[Option]"        ; [Length][A|B|C|D]
+\c                   ;
+\c                   ; Length  -Maximum string length
+\c                   ;   A     -Trim center path (default)
+\c                   ;           (C:\root\...\third path) 
+\c                   ;           If A mode not possible Then will be used B mode
+\c                   ;   B     -Trim right path
+\c                   ;           (C:\root\second path\...)
+\c                   ;           If B mode not possible Then will be used C mode
+\c                   ;   C     -Trim right string
+\c                   ;           (C:\root\second path\third p...)
+\c                   ;   D     -Trim right string + filename
+\c                   ;           (C:\root\second p...\third path)
+\c                   ;           If D mode not possible Then will be used C mode
+\c                   ;
+\c $var              ; Result:  Trimmed path
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${BannerTrimPath} "C:\Server\Documents\Terminal\license.htm" "35A" $R0
+\c 	;$R0=C:\Server\...\Terminal\license.htm
+\c SectionEnd
+
+\\<b\\>Example (Banner plugin):\\</b\\>
+
+\c !include "WinMessages.nsh"
+\c !include "FileFunc.nsh"
+\c !insertmacro Locate
+\c Section
+\c 	Banner::show /NOUNLOAD "Starting..."
+\c 	Banner::getWindow /NOUNLOAD
+\c 	Pop $R1
+\c 	${Locate} "$WINDIR" "/L=F /M=*.* /B=1" "LocateCallback"
+\c 	Banner::destroy
+\c SectionEnd
+\c 
+\c Function LocateCallback
+\c 	StrCmp $R0 $R8 code
+\c 	StrCpy $R0 $R8
+\c 	${BannerTrimPath} "$R8" "38B" $R8
+\c 	GetDlgItem $1 $R1 1030
+\c 	SendMessage $1 ${WM_SETTEXT} 0 "STR:$R8"
+\c 
+\c 	code:
+\c 	StrCmp $R9 '' end
+\c 	;...
+\c 
+\c 	end:
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (nxs plugin):\\</b\\>
+
+\c !include "FileFunc.nsh"
+\c !insertmacro Locate
+\c Section
+\c 	nxs::Show /NOUNLOAD `$(^Name) Setup`\
+\c 	  /top `Setup searching something$\nPlease wait$\nIf you can...`\
+\c 	  /h 1 /can 1 /end
+\c 	${Locate} "$WINDIR" "/L=F /M=*.* /B=1" "LocateCallback"
+\c 	nxs::Destroy
+\c SectionEnd
+\c 
+\c Function LocateCallback
+\c 	StrCmp $R0 $R8 abortcheck
+\c 	StrCpy $R0 $R8
+\c 	${BannerTrimPath} "$R8" "55A" $R8
+\c 	nxs::Update /NOUNLOAD /sub "$R8" /pos 78 /end
+\c 
+\c 	abortcheck:
+\c 	nxs::HasUserAborted /NOUNLOAD
+\c 	Pop $0
+\c 	StrCmp $0 1 0 +2
+\c 	StrCpy $0 StopLocate
+\c 
+\c 	StrCmp $R9 '' end
+\c 	;...
+\c 
+\c 	end:
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} DirState
+
+\b Check directory full, empty or not exist.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${DirState} "[path]" $var
+
+\c "[path]"      ; Directory
+\c $var          ; Result:
+\c               ;    $var=0  (empty)
+\c               ;    $var=1  (full)
+\c               ;    $var=-1 (directory not found)
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${DirState} "$TEMP" $R0
+\c 	; $R0="1"  directory is full
+\c SectionEnd
+
+\S1{} RefreshShellIcons
+
+\b After changing file associations, you can call this function to refresh the shell immediatly.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${RefreshShellIcons}
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	WriteRegStr HKCR "Winamp.File\DefaultIcon" "" "$PROGRAMFILES\Winamp\WINAMP.EXE,2"
+\c 
+\c 	${RefreshShellIcons}
+\c SectionEnd
+
+
+\H{textfunc} Text Functions Header
+
+
+\S1{} Introduction
+
+Include header:
+
+\c !include "TextFunc.nsh"
+
+
+Include function "LineRead" for install and "TrimNewLines" for uninstall:
+
+\c !insertmacro LineRead
+\c !insertmacro un.TrimNewLines
+
+
+Call functions:
+
+\c Section Install
+\c 	${LineRead} "C:\a.log" "-1" $R0
+\c 	; $R0="Last line$\r$\n"
+\c SectionEnd
+
+\c Section un.Install
+\c 	${un.TrimNewLines} "Last line$\r$\n" $R0
+\c 	; $R0="Last line"
+\c SectionEnd
+
+
+\S1{} LineFind
+
+\b Find specified lines in text file and edit or view this lines in callback function.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${LineFind} "[File1]" "[File2|/NUL]" "[LineNumbers]" "Function"
+
+\c "[File1]"         ; Input text file
+\c                   ;
+\c "[File2|/NUL]"    ; [File2]
+\c                   ;   Output text file
+\c                   ;   If empty then File2=File1
+\c                   ; [/NUL]
+\c                   ;   No output text file (only read File1)
+\c                   ;
+\c "[LineNumbers]"   ; [No|-No|No:No|{No}|{-No}|{No:No}]
+\c                   ;   1:-1     all lines to change (default)
+\c                   ;   2        second line from start
+\c                   ;   -3       third line from end
+\c                   ;   5:9      range of lines from 5 to 9
+\c                   ;   {2}      only second line from start to output
+\c                   ;   {-3}     only third line from end to output
+\c                   ;   {5:9}    only range of lines from 5 to 9 to output
+\c                   ;
+\c "Function"        ; Callback function for specified lines
+\c 
+\c Function "Function"
+\c 	; $R9       current line
+\c 	; $R8       current line number
+\c 	; $R7       current line negative number
+\c 	; $R6       current range of lines
+\c 	; $R5       handle of a file opened to read
+\c 	; $R4       handle of a file opened to write ($R4="" if "/NUL")
+\c 
+\c 	; you can use any string functions
+\c 	; $R0-$R3  are not used (save data in them).
+\c 	; ...
+\c 
+\c 	Push $var      ; If $var="StopLineFind"  Then exit from function
+\c 	               ; If $var="SkipWrite"     Then skip current line (ignored if "/NUL")
+\c FunctionEnd
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if input file isn't exists
+\\<br\\>-Error flag if output file path isn't exists
+\\<br\\>-Ranges must be specified on growth (2 4:5 9:-8 -5:-4 -2:-1)
+\\<br\\>-Output file will not be updated if no changes made.
+
+\\<b\\>Example1 (delete first two symbols):\\</b\\>
+
+\c Section
+\c 	${LineFind} "C:\a.log" "C:\a-edited.log" "3:-1" "Example1"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example1
+\c 	${TrimNewLines} '$R9' $R9
+\c 	StrCpy $R9 $R9 '' 2
+\c 	StrCpy $R9 '$R9$\r$\n'
+\c 	;start from 3 line and delete first two symbols
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example2 (show changed lines):\\</b\\>
+
+\c Section
+\c 	${LineFind} "C:\a.log" "a.log" "{5:12 15 -6:-5 -1}" "Example2"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example2
+\c 	${TrimNewLines} '$R9' $R9
+\c 	StrCpy $R9 "$R9   ~Changed line ($R8)~$\r$\n"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example3 (delete lines):\\</b\\>
+
+\c Section
+\c 	${LineFind} "C:\a.log" "\logs\a.log" "2:3 10:-5 -3:-2" "Example3"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example3
+\c 	StrCpy $0 SkipWrite
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example4 (insert lines):\\</b\\>
+
+\c Section
+\c 	${LineFind} "C:\a.log" "" "10" "Example4
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example4
+\c 	FileWrite $R4 "---First Line---$\r$\n"
+\c 	FileWrite $R4 "---Second Line ...---$\r$\n"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example5 (replace in file with count of changes - "WordFunc.nsh" required):\\</b\\>
+
+\c !include "WordFunc.nsh"
+\c !insertmacro WordReplace
+\c 
+\c Section
+\c 	StrCpy $R0 0
+\c 	${LineFind} "C:\a.log" "C:\logs\a.log" "1:-1" "Example5"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	MessageBox MB_OK "Changed lines=$R0"
+\c SectionEnd
+\c 
+\c Function Example5
+\c 	StrCpy $1 $R9
+\c 
+\c 	${WordReplace} '$R9' ' ' '_' '+*' $R9
+\c 
+\c 	StrCmp $1 $R9 +2
+\c 	IntOp $R0 $R0 + 1
+\c 	;$R0   count of changed lines
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example6 (line string to cut or delete):\\</b\\>
+
+\c Section
+\c 	${LineFind} "\a.log" "C:\logs\a.log" "" "Example6"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	MessageBox MB_OK "Processed lines=$R1:$R2"
+\c SectionEnd
+\c 
+\c Function Example6
+\c 	;(Cut lines from a line to another line (also including that line))
+\c 	StrCmp $R0 finish stop
+\c 	StrCmp $R0 start finish
+\c 	StrCmp $R9 'Start Line$\r$\n' 0 skip
+\c 	StrCpy $R0 start
+\c 	StrCpy $R1 $R8
+\c 	goto code
+\c 	finish:
+\c 	StrCmp $R9 'Finish Line$\r$\n' 0 code
+\c 	StrCpy $R0 finish
+\c 	StrCpy $R2 $R8
+\c 	goto code
+\c 	skip:
+\c 	StrCpy $0 SkipWrite
+\c 	goto output
+\c 	stop:
+\c 	StrCpy $0 StopLineFind
+\c 	goto output
+\c 
+\c 	;;(Delete lines from a line to another line (also including that line))
+\c 	; StrCmp $R0 finish code
+\c 	; StrCmp $R0 start finish
+\c 	; StrCmp $R9 'Start Line$\r$\n' 0 code
+\c 	; StrCpy $R0 start
+\c 	; StrCpy $R1 $R8
+\c 	; goto skip
+\c 	; finish:
+\c 	; StrCmp $R9 'Finish Line$\r$\n' 0 skip
+\c 	; StrCpy $R0 finish
+\c 	; StrCpy $R2 $R8
+\c 	; skip:
+\c 	; StrCpy $0 SkipWrite
+\c 	; goto output
+\c 
+\c 	code:
+\c 	;...
+\c 
+\c 	output:
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example7 (read lines):\\</b\\>
+
+\c Section
+\c 	${LineFind} "C:\a.log" "/NUL" "1:-1" "Example7"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example7
+\c 	MessageBox MB_OKCANCEL '$$R9  "Line"=[$R9]$\n$$R8     "#" =[$R8]' IDOK +2
+\c 	StrCpy $0 StopLineFind
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} LineRead
+
+\b Get line in file specified with number.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${LineRead} "[File]" "[LineNumber]" $var
+
+\c "[File]"         ; Input text file
+\c                  ;
+\c "[LineNumber]"   ; [No|-No]
+\c                  ;   3    line number from start
+\c                  ;   -5   line number from end
+\c                  ;
+\c $var             ; Result: Line
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if input file isn't exists
+\\<br\\>-Error flag if line number not found
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${LineRead} "C:\a.log" "-1" $R0
+\c 	; $R0="Last line$\r$\n"
+\c SectionEnd
+
+\S1{} FileReadFromEnd
+
+\b Read text file from end line by line.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${FileReadFromEnd} "[File]" "Function"
+
+\c "[File]"      ; Input text file
+\c "Function"    ; Callback function
+\c 
+\c Function "Function"
+\c 	; $9       current line
+\c 	; $8       current line number
+\c 	; $7       current line negative number
+\c 
+\c 	; $R0-$R9  are not used (save data in them).
+\c 	; ...
+\c 
+\c 	Push $var      ; If $var="StopFileReadFromEnd"  Then exit from function
+\c FunctionEnd
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if input file isn't exists
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${FileReadFromEnd} "C:\a.log" "Example1"
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example1
+\c 	MessageBox MB_OKCANCEL '"Line"=[$9]$\n   "#"=[$8]$\n  "-#"=[$7]' IDOK +2
+\c 	StrCpy $0 StopFileReadFromEnd
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example2 (Reverse text file):\\</b\\>
+
+\c Section
+\c 	GetTempFileName $R0
+\c 	FileOpen $R1 $R0 w
+\c 	${FileReadFromEnd} "C:\a.log" "Example2"
+\c 	FileClose $R1
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 	Exec '"notepad.exe" "$R0"'
+\c SectionEnd
+\c 
+\c Function Example2
+\c 	StrCmp $7 -1 0 +5
+\c 	StrCpy $1 $9 1 -1
+\c 	StrCmp $1 '$\n' +3
+\c 	StrCmp $1 '$\r' +2
+\c 	StrCpy $9 '$9$\r$\n'
+\c 
+\c 	FileWrite $R1 "$9"
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} LineSum
+
+\b Get sum of lines in text file.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${LineSum} "[File]" $var
+
+\c "[File]"      ; Input file
+\c $var          ; Result: Sum of lines
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if input file isn't exists
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${LineSum} "C:\a.log" $R0
+\c 	; $R0="54"
+\c SectionEnd
+
+\S1{} FileJoin
+
+\b Join two files in one (File1 + File2 = File3).
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${FileJoin} "[File1]" "[File2]" "[File3]"
+
+\c "[File1]"     ; Input File1
+\c "[File2]"     ; Input File2
+\c "[File3]"     ; Output File3
+\c               ;  If [File3]="" Then add [File2] to [File1]
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if input files aren't exists
+\\<br\\>-Error flag if output file path isn't exists
+
+\\<b\\>Example1 (Join:  a.log + b.log = Z.log):\\</b\\>
+
+\c Section
+\c 	${FileJoin} "C:\a.log" "C:\logs\b.log" "C:\Z.log"
+\c SectionEnd
+
+\\<b\\>Example2 (Add:  a.log + b.log = a.log):\\</b\\>
+
+\c Section
+\c 	${FileJoin} "C:\a.log" "C:\logs\b.log" "C:\a.log"
+\c SectionEnd
+
+\S1{} TextCompare
+
+\b Compare two text files.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${TextCompare} "[File1]" "[File2]" "[Option]" "Function"
+
+\c "[File1]"     ; File1      Compare these lines
+\c "[File2]"     ; File2      Compare with these lines
+\c "[Options]"   ; (line-by-line):
+\c               ; FastDiff   Compare line N (File1) with line N (File2)
+\c               ;            Call function if Different lines found
+\c               ; FastEqual  Compare line N (File1) with line N (File2)
+\c               ;            Call function if Equal lines found
+\c               ; (line number independent):
+\c               ; SlowDiff   Compare line N (File1) with all lines (File2)
+\c               ;            Call function if line N (File1) Different
+\c               ; SlowEqual  Compare line N (File1) with all lines (File2)
+\c               ;            Call function if line N (File1) Equal
+\c "Function"    ; Callback function
+\c 
+\c Function "Function"
+\c 	; $9    "Line File1"
+\c 	; $8    "Line number"
+\c 	; $7    "Line File2"  (empty if SlowDiff)
+\c 	; $6    "Line number" (empty if SlowDiff)
+\c 
+\c 	; $R0-$R9  are not used (save data in them).
+\c 	; ...
+\c 
+\c 	Push $var    ; If $var="StopTextCompare"  Then exit from function
+\c FunctionEnd
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if File1 or File2 isn't exist
+\\<br\\>-Error flag if syntax error
+
+\\<b\\>Example (Different or Equal):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 ''
+\c 	${TextCompare} "C:\1.txt" "C:\2.txt" "FastDiff" "Example1"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +4
+\c 
+\c 	StrCmp $R0 NotEqual 0 +2
+\c 	MessageBox MB_OK "Files differ" IDOK +2
+\c 	MessageBox MB_OK "Files identical"
+\c SectionEnd
+\c 
+\c Function Example1
+\c 	StrCpy $R0 NotEqual
+\c 	StrCpy $0 StopTextCompare
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Compare line-by-line - Different):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 'Text1.txt'
+\c 	StrCpy $R1 'Text2.txt'
+\c 
+\c 	GetTempFileName $R2
+\c 	FileOpen $R3 $R2 w
+\c 	FileWrite $R3 "$R0 | $R1$\r$\n"
+\c 	${TextCompare} "$R0" "$R1" "FastDiff" "Example2"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 
+\c 	Exec "notepad.exe $R2"
+\c FunctionEnd
+\c 
+\c Function Example2
+\c 	FileWrite $R3 '$8=$9'
+\c 	FileWrite $R3 '$6=$7$\r$\n'
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Compare line-by-line - Equal):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 'Text1.txt'
+\c 	StrCpy $R1 'Text2.txt'
+\c 
+\c 	GetTempFileName $R2
+\c 	FileOpen $R3 $R2 w
+\c 	FileWrite $R3 "$R0 | $R1$\r$\n"
+\c 	${TextCompare} "$R0" "$R1" "FastEqual" "Example3"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 
+\c 	Exec "notepad.exe $R2"
+\c FunctionEnd
+\c 
+\c Function Example3
+\c 	FileWrite $R3 '$8|$6=$9'
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Compare all lines - Different):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 'Text1.txt'
+\c 	StrCpy $R1 'Text2.txt'
+\c 
+\c 	GetTempFileName $R2
+\c 	FileOpen $R3 $R2 w
+\c 	FileWrite $R3 "$R0 | $R1$\r$\n"
+\c 	${TextCompare} "$R0" "$R1" "SlowDiff" "Example4"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK end
+\c 
+\c 	FileWrite $R3 "$\r$\n$R1 | $R0$\r$\n"
+\c 	${TextCompare} "$R1" "$R0" "SlowDiff" "Example4"
+\c 	FileClose $R3
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK end
+\c 
+\c 	Exec "notepad.exe $R2"
+\c 
+\c 	end:
+\c FunctionEnd
+\c 
+\c Function Example4
+\c 	FileWrite $R3 '$8=$9'
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Compare all lines - Equal):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 'Text1.txt'
+\c 	StrCpy $R1 'Text2.txt'
+\c 
+\c 	GetTempFileName $R2
+\c 	FileOpen $R3 $R2 w
+\c 	FileWrite $R3 "$R0 | $R1$\r$\n"
+\c 	${TextCompare} "$R0" "$R1" "SlowEqual" "Example5"
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error" IDOK +2
+\c 
+\c 	Exec "notepad.exe $R2"
+\c FunctionEnd
+\c 
+\c Function Example5
+\c 	FileWrite $R3 '$8|$6=$9'
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\\<b\\>Example (Show variables):\\</b\\>
+
+\c Section
+\c 	${TextCompare} "C:\1.txt" "C:\2.txt" "FastDiff" "Example6"
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Error"
+\c SectionEnd
+\c 
+\c Function Example6
+\c 	MessageBox MB_OKCANCEL '$$9    "Line File1" =[$9]$\n$$8    "Line #"      =[$8]$\n$$7    "Line File2" =[$7]$\n$$6    "Line #"      =[$6]' IDOK +2
+\c 	StrCpy $0 StopTextCompare
+\c 
+\c 	Push $0
+\c FunctionEnd
+
+\S1{} ConfigRead
+
+\b Read value from entry name in config file.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${ConfigRead} "[File]" "[Entry]" $var
+
+\c "[File]"      ; config file
+\c               ;
+\c "[Entry]"     ; entry name
+\c               ;
+\c $var          ; Result:  Value
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${ConfigRead} "C:\AUTOEXEC.BAT" "SET winbootdir=" $R0
+\c 	;$R0=C:\WINDOWS
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${ConfigRead} "C:\apache\conf\httpd.conf" "Timeout " $R0
+\c 	;$R0=30
+\c SectionEnd
+
+\S1{} ConfigWrite
+
+\b Write value from entry name in config file.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${ConfigWrite} "[File]" "[Entry]" "[Value]" $var
+
+\c "[File]"      ; config file
+\c               ;
+\c "[Entry]"     ; entry name
+\c               ;
+\c "[Value]"     ; value name
+\c               ;  if "" then delete Entry
+\c               ;
+\c $var          ; Result:
+\c               ;    $var=CHANGED  Value is written
+\c               ;    $var=DELETED  Entry is deleted
+\c               ;    $var=ADDED    Entry and Value are added
+\c               ;    $var=SAME     Entry and Value already exist
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+\\<br\\>-Error flag if file can't be opened
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${ConfigWrite} "C:\AUTOEXEC.BAT" "SET winbootdir=" "D:\WINDOWS" $R0
+\c 	;$R0=CHANGED
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${ConfigWrite} "C:\apache\conf\httpd.conf" "Timeout " "30" $R0
+\c 	;$R0=SAME
+\c SectionEnd
+
+\\<b\\>Example3:\\</b\\>
+
+\c Section
+\c 	${ConfigWrite} "C:\apache\conf\httpd.conf" "Timeout " "" $R0
+\c 	;$R0=DELETED
+\c SectionEnd
+
+\S1{} FileRecode
+
+\b Recode text file from DOS to Windows format and vice-versa.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${FileRecode} "[File]" "[Format]"
+
+\c "[File]"        ;
+\c                 ;
+\c "[Format]"      ; OemToChar   -from DOS to Windows
+\c                 ; CharToOem   -from Windows to DOS
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if file isn't exist
+\\<br\\>-Error flag if syntax error
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${FileRecode} "C:\SCANDISK.LOG" "CharToOem"
+\c SectionEnd
+
+\S1{} TrimNewLines
+
+\b Trim newlines in a string.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${TrimNewLines} "[string]" $var
+
+\c "[string]"    ; Input string
+\c $var          ; Result: String without '$\r' and '$\n' at the end
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${TrimNewLines} "Text line$\r$\n" $R0
+\c 	; $R0="Text line"
+\c SectionEnd
+
+
+\H{wordfunc} Word Functions Header
+
+
+\S1{} Introduction
+
+Include header:
+
+\c !include "WordFunc.nsh"
+
+
+Include function "WordFind" for install and "WordReplace" for uninstall:
+
+\c !insertmacro WordFind
+\c !insertmacro un.WordReplace
+
+
+Call functions:
+
+\c Section Install
+\c 	${WordFind} "A--H---S" "-" "+2" $R0
+\c 	; $R0="H"
+\c SectionEnd
+
+\c Section un.Install
+\c 	${un.WordReplace} "A--H---S" "-" "x" "+3*" $R0
+\c 	; $R0="A--HxS"
+\c SectionEnd
+
+
+\S1{} WordFind
+
+\b Multi-features string function.
+
+\c Strings:
+\c "[word+1][delimiter][word+2][delimiter][word+3]..."
+\c "[delimiter][word+1][delimiter][word+2][delimiter]..."
+\c "[delimiter][delimiter][word+1][delimiter][delimiter][delimiter]..."
+\c "...[word-3][delimiter][word-2][delimiter][word-1]"
+\c "...[delimiter][word-2][delimiter][word-1][delimiter]"
+\c "...[delimiter][delimiter][word-1][delimiter][delimiter][delimiter]"
+
+\\<b\\>Syntax: \\</b\\>
+
+\c ${WordFind} "[string]" "[delimiter]" "[E][options]" $var
+
+\c "[string]"         ;[string]
+\c                    ;  input string
+\c "[delimiter]"      ;[delimiter]
+\c                    ;  one or several symbols
+\c "[E][options]"     ;[options]
+\c                    ;  +number   : word number from start
+\c                    ;  -number   : word number from end
+\c                    ;  +number}  : delimiter number from start
+\c                    ;              all space after this
+\c                    ;              delimiter to output
+\c                    ;  +number{  : delimiter number from start
+\c                    ;              all space before this
+\c                    ;              delimiter to output
+\c                    ;  +number}} : word number from start
+\c                    ;              all space after this word
+\c                    ;              to output
+\c                    ;  +number{{ : word number from start
+\c                    ;              all space before this word
+\c                    ;              to output
+\c                    ;  +number{} : word number from start
+\c                    ;              all space before and after
+\c                    ;              this word (word exclude)
+\c                    ;  +number*} : word number from start
+\c                    ;              all space after this
+\c                    ;              word to output with word
+\c                    ;  +number{* : word number from start
+\c                    ;              all space before this
+\c                    ;              word to output with word
+\c                    ;  #         : sum of words to output
+\c                    ;  *         : sum of delimiters to output
+\c                    ;  /word     : number of word to output
+\c                    ;
+\c                    ;[E]
+\c                    ;  with errorlevel output
+\c                    ;  IfErrors:
+\c                    ;     $var=1  delimiter not found
+\c                    ;     $var=2  no such word number
+\c                    ;     $var=3  syntax error (Use: +1,-1},#,*,/word,...)
+\c                    ;[]
+\c                    ;  no errorlevel output (default)
+\c                    ;  If some errors found then (result=input string)
+\c                    ;
+\c $var               ;output (result)
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Accepted numbers 1,01,001,...
+
+\\<b\\>Example (Find word by number):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\Program Files C:\WINDOWS" " C:\" "-02" $R0
+\c 	; $R0="Program Files"
+\c SectionEnd
+
+\\<b\\>Example (Delimiter exclude):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" "sys" "-2}" $R0
+\c 	; $R0=" C:\logo.sys C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (Sum of words):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" " C:\" "#" $R0
+\c 	; $R0="3"
+\c SectionEnd
+
+\\<b\\>Example (Sum of delimiters):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" "sys" "*" $R0
+\c 	; $R0="2"
+\c SectionEnd
+
+\\<b\\>Example (Find word number):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\Program Files C:\WINDOWS" " " "/Files" $R0
+\c 	; $R0="3"
+\c SectionEnd
+
+\\<b\\>Example ( \}\} ):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" " " "+2}}" $R0
+\c 	; $R0=" C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example ( \{\} ):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" " " "+2{}" $R0
+\c 	; $R0="C:\io.sys C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example ( *\} ):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" " " "+2*}" $R0
+\c 	; $R0="C:\logo.sys C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (Get parent directory):\\</b\\>
+
+\c Section
+\c 	StrCpy $R0 "C:\Program Files\NSIS\NSIS.chm"
+\c ;	           "C:\Program Files\NSIS\Include\"
+\c ;	           "C:\\Program Files\\NSIS\\NSIS.chm"
+\c 
+\c 	${WordFind} "$R0" "\" "-2{*" $R0
+\c 	; $R0="C:\Program Files\NSIS"
+\c 	;     "C:\\Program Files\\NSIS"
+\c SectionEnd
+
+\\<b\\>Example (Coordinates):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys C:\WINDOWS" ":\lo" "E+1{" $R0
+\c 	; $R0="C:\io.sys C"
+\c 	IfErrors end
+\c 
+\c 	StrLen $0 $R0             ; $0 = Start position of word (11)
+\c 	StrLen $1 ':\lo'          ; $1 = Word leght (4)
+\c 	; StrCpy $R0 $R1 $1 $0    ; $R0 = :\lo
+\c 
+\c 	end:
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordFind} "[string]" "[delimiter]" "E[options]" $R0
+\c 
+\c 	IfErrors 0 end
+\c 	StrCmp $R0 1 0 +2       ; errorlevel 1?
+\c 	MessageBox MB_OK 'delimiter not found' IDOK end
+\c 	StrCmp $R0 2 0 +2       ; errorlevel 2?
+\c 	MessageBox MB_OK 'no such word number' IDOK end
+\c 	StrCmp $R0 3 0 +2       ; errorlevel 3?
+\c 	MessageBox MB_OK 'syntax error'
+\c 
+\c 	end:
+\c SectionEnd
+
+\\<b\\>Example (Without errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys" "_" "+1" $R0
+\c 
+\c 	; $R0="C:\io.sys C:\logo.sys" (error: delimiter "_" not found)
+\c SectionEnd
+
+\\<b\\>Example (If found):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys" ":\lo" "E+1{" $R0
+\c 
+\c 	IfErrors notfound found
+\c 	found:
+\c 	MessageBox MB_OK 'Found' IDOK end
+\c 	notfound:
+\c 	MessageBox MB_OK 'Not found'
+\c 
+\c 	end:
+\c SectionEnd
+
+\\<b\\>Example (If found 2):\\</b\\>
+
+\c Section
+\c 	${WordFind} "C:\io.sys C:\logo.sys" ":\lo" "+1{" $R0
+\c 
+\c 	StrCmp $R0 "C:\io.sys C:\logo.sys" notfound found        ; error?
+\c 	found:
+\c 	MessageBox MB_OK 'Found' IDOK end
+\c 	notfound:
+\c 	MessageBox MB_OK 'Not found'
+\c 
+\c 	end:
+\c SectionEnd
+
+\\<b\\>Example (To accept one word in string if delimiter not found):\\</b\\>
+
+\c Section
+\c 	StrCpy $0 'OneWord'
+\c 	StrCpy $1 1
+\c 
+\c 	loop:
+\c 	${WordFind} "$0" " " "E+$1" $R0
+\c 	IfErrors 0 code
+\c 	StrCmp $1$R0 11 0 error
+\c 	StrCpy $R0 $0
+\c 	goto end
+\c 
+\c 	code:
+\c 	; ...
+\c 	IntOp $1 $1 + 1
+\c 	goto loop
+\c 
+\c 	error:
+\c 	StrCpy $1 ''
+\c 	StrCpy $R0 ''
+\c 
+\c 	end:
+\c 	; $R0="OneWord"
+\c SectionEnd
+
+\S1{} WordFind2X
+
+\b Find word between two delimiters.
+
+\c Strings:
+\c "[delimiter1][word+1][delimiter2][delimiter1][word+2][delimiter2]..."
+\c "[text][delimiter1][text][delimiter1][word+1][delimiter2][text]..."
+\c "...[delimiter1][word-2][delimiter2][delimiter1][word-1][delimiter2]"
+\c "...[text][delimiter1][text][delimiter1][word-1][delimiter2][text]"
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${WordFind2X} "[string]" "[delimiter1]" "[delimiter2]" "[E][options]" $var
+
+\c "[string]"         ;[string]
+\c                    ;  input string
+\c "[delimiter1]"     ;[delimiter1]
+\c                    ;  first delimiter
+\c "[delimiter2]"     ;[delimiter2]
+\c                    ;  second delimiter
+\c "[E][options]"     ;[options]
+\c                    ;  +number   : word number from start
+\c                    ;  -number   : word number from end
+\c                    ;  +number}} : word number from start all space
+\c                    ;              after this word to output
+\c                    ;  +number{{ : word number from end all space
+\c                    ;              before this word to output
+\c                    ;  +number{} : word number from start
+\c                    ;              all space before and after
+\c                    ;              this word (word exclude)
+\c                    ;  +number*} : word number from start
+\c                    ;              all space after this
+\c                    ;              word to output with word
+\c                    ;  +number{* : word number from start
+\c                    ;              all space before this
+\c                    ;              word to output with word
+\c                    ;  #         : sum of words to output
+\c                    ;  /word     : number of word to output
+\c                    ;
+\c                    ;[E]
+\c                    ;  with errorlevel output
+\c                    ;  IfErrors:
+\c                    ;     $var=1  no words found
+\c                    ;     $var=2  no such word number
+\c                    ;     $var=3  syntax error (Use: +1,-1,#)
+\c                    ;[]
+\c                    ;  no errorlevel output (default)
+\c                    ;  If some errors found then (result=input string)
+\c                    ;
+\c $var               ;output (result)
+
+\\<b\\>Example (1):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]" "[C:\" "];" "+2" $R0
+\c 	; $R0="logo.sys"
+\c SectionEnd
+
+\\<b\\>Example (2):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "C:\WINDOWS C:\io.sys C:\logo.sys" "\" "." "-1" $R0
+\c 	; $R0="logo"
+\c SectionEnd
+
+\\<b\\>Example (3):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "C:\WINDOWS C:\io.sys C:\logo.sys" "\" "." "-1{{" $R0
+\c 	; $R0="C:\WINDOWS C:\io.sys C:"
+\c SectionEnd
+
+\\<b\\>Example (4):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "C:\WINDOWS C:\io.sys C:\logo.sys" "\" "." "-1{}" $R0
+\c 	; $R0="C:\WINDOWS C:\io.sys C:sys"
+\c SectionEnd
+
+\\<b\\>Example (5):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "C:\WINDOWS C:\io.sys C:\logo.sys" "\" "." "-1{*" $R0
+\c 	; $R0="C:\WINDOWS C:\io.sys C:\logo."
+\c SectionEnd
+
+\\<b\\>Example (6):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "C:\WINDOWS C:\io.sys C:\logo.sys" "\" "." "/logo" $R0
+\c 	; $R0="2"
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordFind2X} "[io.sys];[C:\logo.sys]" "\" "];" "E+1" $R0
+\c 	; $R0="1" ("\...];" not found)
+\c 
+\c 	IfErrors 0 noerrors
+\c 	MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+\c 
+\c 	noerrors:
+\c 	MessageBox MB_OK 'No errors'
+\c 
+\c 	end:
+\c SectionEnd
+
+\S1{} WordFind3X
+
+\b Find word, that contain string, between two delimiters.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${WordFind3X} "[string]" "[delimiter1]" "[center]" "[delimiter2]" "[E][options]" $var
+
+\c "[string]"         ;[string]
+\c                    ;  input string
+\c "[delimiter1]"     ;[delimiter1]
+\c                    ;  first delimiter
+\c "[center]"         ;[center]
+\c                    ;  center string
+\c "[delimiter2]"     ;[delimiter2]
+\c                    ;  second delimiter
+\c "[E][options]"     ;[options]
+\c                    ;  +number   : word number from start
+\c                    ;  -number   : word number from end
+\c                    ;  +number}} : word number from start all space
+\c                    ;              after this word to output
+\c                    ;  +number{{ : word number from end all space
+\c                    ;              before this word to output
+\c                    ;  +number{} : word number from start
+\c                    ;              all space before and after
+\c                    ;              this word (word exclude)
+\c                    ;  +number*} : word number from start
+\c                    ;              all space after this
+\c                    ;              word to output with word
+\c                    ;  +number{* : word number from start
+\c                    ;              all space before this
+\c                    ;              word to output with word
+\c                    ;  #         : sum of words to output
+\c                    ;  /word     : number of word to output
+\c                    ;
+\c                    ;[E]
+\c                    ;  with errorlevel output
+\c                    ;  IfErrors:
+\c                    ;     $var=1  no words found
+\c                    ;     $var=2  no such word number
+\c                    ;     $var=3  syntax error (Use: +1,-1,#)
+\c                    ;[]
+\c                    ;  no errorlevel output (default)
+\c                    ;  If some errors found then (result=input string)
+\c                    ;
+\c $var               ;output (result)
+
+\\<b\\>Example (1):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "+1" $R0
+\c 	; $R0="1.AAB"
+\c SectionEnd
+
+\\<b\\>Example (2):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "-1" $R0
+\c 	; $R0="2.BAA"
+\c SectionEnd
+
+\\<b\\>Example (3):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "-1{{" $R0
+\c 	; $R0="[1.AAB];"
+\c SectionEnd
+
+\\<b\\>Example (4):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "-1{}" $R0
+\c 	; $R0="[1.AAB];[3.BBB];"
+\c SectionEnd
+
+\\<b\\>Example (5):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "-1{*" $R0
+\c 	; $R0="[1.AAB];[2.BAA];"
+\c SectionEnd
+
+\\<b\\>Example (6):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "AA" "];" "/2.BAA" $R0
+\c 	; $R0="2"
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordFind3X} "[1.AAB];[2.BAA];[3.BBB];" "[" "XX" "];" "E+1" $R0
+\c 	; $R0="1" ("[...XX...];" not found)
+\c 
+\c 	IfErrors 0 noerrors
+\c 	MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+\c 
+\c 	noerrors:
+\c 	MessageBox MB_OK 'No errors'
+\c 
+\c 	end:
+\c SectionEnd
+
+\S1{} WordReplace
+
+\b Replace or delete word from string.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${WordReplace} "[string]" "[word1]" "[word2]" "[E][options]" $var
+
+\c "[string]"         ;[string]
+\c                    ;  input string
+\c "[word1]"          ;[word1]
+\c                    ;  word to replace or delete
+\c "[word2]"          ;[word2]
+\c                    ;  replace with (if empty delete)
+\c "[E][options]"     ;[options]
+\c                    ;  +number  : word number from start
+\c                    ;  -number  : word number from end
+\c                    ;  +number* : word number from start multiple-replace
+\c                    ;  -number* : word number from end multiple-replace
+\c                    ;  +        : replace or delete all founded
+\c                    ;  +*       : multiple-replace all founded
+\c                    ;  {}       : if exists replace or delete all delimiters
+\c                    ;               from edges (no errorlevel output)
+\c                    ;  {}*      : if exists multiple-replace all delimiters
+\c                    ;               from edges (no errorlevel output)
+\c                    ;
+\c                    ;[E]
+\c                    ;  with errorlevel output
+\c                    ;  IfErrors:
+\c                    ;     $var=1  word to replace or delete not found
+\c                    ;     $var=2  no such word number
+\c                    ;     $var=3  syntax error (Use: +1,-1,+1*,-1*,+,+*,{},{}*)
+\c                    ;[]
+\c                    ;  no errorlevel output (default)
+\c                    ;  If some errors found then (result=input string)
+\c                    ;
+\c $var               ;output (result)
+
+\\<b\\>Example (replace):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "C:\io.sys C:\logo.sys C:\WINDOWS" "SYS" "bmp" "+2" $R0
+\c 	; $R0="C:\io.sys C:\logo.bmp C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (delete):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "C:\io.sys C:\logo.sys C:\WINDOWS" "SYS" "" "+" $R0
+\c 	; $R0="C:\io. C:\logo. C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (multiple-replace 1):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "C:\io.sys      C:\logo.sys   C:\WINDOWS" " " " " "+1*" $R0
+\c 	; +1* or +2* or +3* or +4* or +5* or +6*
+\c 	; $R0="C:\io.sys C:\logo.sys   C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (multiple-replace 2):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "C:\io.sys C:\logo.sysSYSsys C:\WINDOWS" "sys" "bmp" "+*" $R0
+\c 	; $R0="C:\io.bmp C:\logo.bmp C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (multiple-replace 3):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "sysSYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys" "sys" "|" "{}*" $R0
+\c 	; $R0="|C:\io.sys C:\logo.sys C:\WINDOWS|"
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordReplace} "C:\io.sys C:\logo.sys" "sys" "bmp" "E+3" $R0
+\c 	; $R0="2" (no such word number "+3")
+\c 
+\c 	IfErrors 0 noerrors
+\c 	MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+\c 
+\c 	noerrors:
+\c 	MessageBox MB_OK 'No errors'
+\c 
+\c 	end:
+\c SectionEnd
+
+\S1{} WordAdd
+
+\b Add words to string1 from string2 if not exist or delete words if exist.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${WordAdd} "[string1]" "[delimiter]" "[E][options]" $var
+
+\c "[string1]"          ;[string1]
+\c                      ;  string for addition or removing
+\c "[delimiter]"        ;[delimiter]
+\c                      ;  one or several symbols
+\c "[E][options]"       ;[options]
+\c                      ;  +string2 : words to add
+\c                      ;  -string2 : words to delete
+\c                      ;
+\c                      ;[E]
+\c                      ;  with errorlevel output
+\c                      ;  IfErrors:
+\c                      ;     $var=1  delimiter is empty
+\c                      ;     $var=3  syntax error (use: +text,-text)
+\c                      ;[]
+\c                      ;  no errorlevel output (default)
+\c                      ;  If some errors found then (result=input string)
+\c                      ;
+\c $var                 ;output (result)
+
+\\<b\\>Example (add):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\WINDOWS" " " "+C:\WINDOWS C:\config.sys" $R0
+\c 	; $R0="C:\io.sys C:\WINDOWS C:\config.sys"
+\c SectionEnd
+
+\\<b\\>Example (delete):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\logo.sys C:\WINDOWS" " " "-C:\WINDOWS C:\config.sys C:\IO.SYS" $R0
+\c 	; $R0="C:\logo.sys"
+\c SectionEnd
+
+\\<b\\>Example (add to one):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys" " " "+C:\WINDOWS C:\config.sys C:\IO.SYS" $R0
+\c 	; $R0="C:\io.sys C:\WINDOWS C:\config.sys"
+\c SectionEnd
+
+\\<b\\>Example (delete one):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\logo.sys C:\WINDOWS" " " "-C:\WINDOWS" $R0
+\c 	; $R0="C:\io.sys C:\logo.sys"
+\c SectionEnd
+
+\\<b\\>Example (No new words found):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\logo.sys" " " "+C:\logo.sys" $R0
+\c 	StrCmp $R0 "C:\io.sys C:\logo.sys" 0 +2
+\c 	MessageBox MB_OK "No new words found to add"
+\c SectionEnd
+
+\\<b\\>Example (No words deleted):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\logo.sys" " " "-C:\config.sys" $R0
+\c 	StrCmp $R0 "C:\io.sys C:\logo.sys" 0 +2
+\c 	MessageBox MB_OK "No words found to delete"
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordAdd} "C:\io.sys C:\logo.sys" "" "E-C:\logo.sys" $R0
+\c 	; $R0="1" (delimiter is empty "")
+\c 
+\c 	IfErrors 0 noerrors
+\c 	MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+\c 
+\c 	noerrors:
+\c 	MessageBox MB_OK 'No errors'
+\c 
+\c 	end:
+\c SectionEnd
+
+\S1{} WordInsert
+
+\b Insert word in string.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${WordInsert} "[string]" "[delimiter]" "[word]" "[E][options]" $var
+
+\c "[string]"          ;[string]
+\c                     ;  input string
+\c "[delimiter]"       ;[delimiter]
+\c                     ;  one or several symbols
+\c "[word]"            ;[word]
+\c                     ;  word to insert
+\c "[E][options]"      ;[options]
+\c                     ;  +number  : word number from start
+\c                     ;  -number  : word number from end
+\c                     ;
+\c                     ;[E]
+\c                     ;  with errorlevel output
+\c                     ;  IfErrors:
+\c                     ;     $var=1  delimiter is empty
+\c                     ;     $var=2  wrong word number
+\c                     ;     $var=3  syntax error (Use: +1,-1)
+\c                     ;[]
+\c                     ;  no errorlevel output (default)
+\c                     ;  If some errors found then (result=input string)
+\c                     ;
+\c $var                ;output (result)
+
+\\<b\\>Example (1):\\</b\\>
+
+\c Section
+\c 	${WordInsert} "C:\io.sys C:\WINDOWS" " " "C:\logo.sys" "-2" $R0
+\c 	; $R0="C:\io.sys C:\logo.sys C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (2):\\</b\\>
+
+\c Section
+\c 	${WordInsert} "C:\io.sys" " " "C:\WINDOWS" "+2" $R0
+\c 	; $R0="C:\io.sys C:\WINDOWS"
+\c SectionEnd
+
+\\<b\\>Example (3):\\</b\\>
+
+\c Section
+\c 	${WordInsert} "" " " "C:\WINDOWS" "+1" $R0
+\c 	; $R0="C:\WINDOWS "
+\c SectionEnd
+
+\\<b\\>Example (With errorlevel output):\\</b\\>
+
+\c Section
+\c 	${WordInsert} "C:\io.sys C:\logo.sys" " " "C:\logo.sys" "E+4" $R0
+\c 	; $R0="2" (wrong word number "+4")
+\c 
+\c 	IfErrors 0 noerrors
+\c 	MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+\c 
+\c 	noerrors:
+\c 	MessageBox MB_OK 'No errors'
+\c 
+\c 	end:
+\c SectionEnd
+
+\S1{} StrFilter
+
+\b Convert string to uppercase or lowercase.
+
+\b Set symbol filter.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${StrFilter} "[string]" "[options]" "[symbols1]" "[symbols2]" $var
+
+\c "[string]"       ;[string]
+\c                  ;  input string
+\c                  ;
+\c "[options]"      ;[+|-][1|2|3|12|23|31][eng|rus]
+\c                  ;  +   : covert string to uppercase
+\c                  ;  -   : covert string to lowercase
+\c                  ;  1   : only Digits
+\c                  ;  2   : only Letters
+\c                  ;  3   : only Special
+\c                  ;  12  : only Digits  + Letters
+\c                  ;  23  : only Letters + Special
+\c                  ;  31  : only Special + Digits
+\c                  ;  eng : English symbols (default)
+\c                  ;  rus : Russian symbols
+\c                  ;
+\c "[symbols1]"     ;[symbols1]
+\c                  ;  symbols include (not changeable)
+\c                  ;
+\c "[symbols2]"     ;[symbols2]
+\c                  ;  symbols exclude
+\c                  ;
+\c $var             ;output (result)
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Error flag if syntax error
+\\<br\\>-Same symbol to include & to exclude = to exclude
+
+\\<b\\>Example (UpperCase):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc 456DEF 7890|%#" "+" "" "" $R0
+\c 	; $R0="123ABC 456DEF 7890|%#"
+\c SectionEnd
+
+\\<b\\>Example (LowerCase):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc 456DEF 7890|%#" "-" "ef" "" $R0
+\c 	; $R0="123abc 456dEF 7890|%#"
+\c SectionEnd
+
+\\<b\\>Example (Filter1):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc 456DEF 7890|%#" "2" "|%" "" $R0
+\c 	; $R0="abcDEF|%"       ;only Letters + |%
+\c SectionEnd
+
+\\<b\\>Example (Filter2):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc 456DEF 7890|%#" "13" "af" "4590" $R0
+\c 	; $R0="123a 6F 78|%#"  ;only Digits + Special + af - 4590
+\c SectionEnd
+
+\\<b\\>Example (Filter3):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc 456DEF 7890|%#" "+12" "b" "def" $R0
+\c 	; $R0="123AbC4567890"  ;only Digits + Letters + b - def
+\c SectionEnd
+
+\\<b\\>Example (Filter4):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc¿¡¬ 456DEF„‰Â 7890|%#" "+12rus" "‰" "„Â" $R0
+\c 	; $R0="123¿¡¬456‰7890"  ;only Digits + Letters + ‰ - „Â
+\c SectionEnd
+
+\\<b\\>Example (English + Russian Letters):\\</b\\>
+
+\c Section
+\c 	${StrFilter} "123abc¿¡¬ 456DEF„‰Â 7890|%#" "2rus" "" "" $R0
+\c 	; $R0="¿¡¬„‰Â"        ;only Russian Letters
+\c 	${StrFilter} "123abc¿¡¬ 456DEF„‰Â 7890|%#" "2" "$R0" "" $R0
+\c 	; $R0="abc¿¡¬DEF„‰Â"  ;only English + Russian Letters
+\c SectionEnd
+
+\\<b\\>Example (Word Capitalize):\\</b\\>
+
+\c Section
+\c 	Push "_01-PERPETUOUS_DREAMER__-__THE_SOUND_OF_GOODBYE_(ORIG._MIX).MP3_"
+\c 	Call Capitalize
+\c 	Pop $R0
+\c 	; $R0="_01-Perpetuous_Dreamer__-__The_Sound_Of_Goodbye_(Orig._Mix).mp3_"
+\c 
+\c 	${WordReplace} "$R0" "_" " " "+*" $R0
+\c 	; $R0=" 01-Perpetuous Dreamer - The Sound Of Goodbye (Orig. Mix).mp3 "
+\c 
+\c 	${WordReplace} "$R0" " " "" "{}" $R0
+\c 	; $R0="01-Perpetuous Dreamer - The Sound Of Goodbye (Orig. Mix).mp3"
+\c SectionEnd
+\c 
+\c Function Capitalize
+\c 	Exch $R0
+\c 	Push $0
+\c 	Push $1
+\c 	Push $2
+\c 
+\c 	${StrFilter} '$R0' '-eng' '' '' $R0
+\c 	${StrFilter} '$R0' '-rus' '' '' $R0
+\c 
+\c 	StrCpy $0 0
+\c 
+\c 	loop:
+\c 	IntOp $0 $0 + 1
+\c 	StrCpy $1 $R0 1 $0
+\c 	StrCmp $1 '' end
+\c 	StrCmp $1 ' ' +5
+\c 	StrCmp $1 '_' +4
+\c 	StrCmp $1 '-' +3
+\c 	StrCmp $1 '(' +2
+\c 	StrCmp $1 '[' 0 loop
+\c 	IntOp $0 $0 + 1
+\c 	StrCpy $1 $R0 1 $0
+\c 	StrCmp $1 '' end
+\c 
+\c 	${StrFilter} '$1' '+eng' '' '' $1
+\c 	${StrFilter} '$1' '+rus' '' '' $1
+\c 
+\c 	StrCpy $2 $R0 $0
+\c 	IntOp $0 $0 + 1
+\c 	StrCpy $R0 $R0 '' $0
+\c 	IntOp $0 $0 - 2
+\c 	StrCpy $R0 '$2$1$R0'
+\c 	goto loop
+\c 
+\c 	end:
+\c 	Pop $2
+\c 	Pop $1
+\c 	Pop $0
+\c 	Exch $R0
+\c FunctionEnd
+
+\S1{} VersionCompare
+
+\b Compare version numbers.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${VersionCompare} "[Version1]" "[Version2]" $var
+
+\c "[Version1]"        ; First version
+\c "[Version2]"        ; Second version
+\c $var                ; Result:
+\c                     ;    $var=0  Versions are equal
+\c                     ;    $var=1  Version1 is newer
+\c                     ;    $var=2  Version2 is newer
+
+\\<b\\>Example:\\</b\\>
+
+\c Section
+\c 	${VersionCompare} "1.1.1.9" "1.1.1.01" $R0
+\c 	; $R0="1"
+\c SectionEnd
+
+\S1{} VersionConvert
+
+\b Convert version in the numerical format which can be compared.
+
+\\<b\\>Syntax:\\</b\\>
+
+\c ${VersionConvert} "[Version]" "[CharList]" $var
+
+\c "[Version]"         ; Version
+\c                     ;
+\c "[CharList]"        ; List of characters, which will be replaced by numbers
+\c                     ; "abcdefghijklmnopqrstuvwxyz" (default)
+\c                     ;
+\c $var                ; Result: converted version
+
+\\<b\\>Note:\\</b\\>
+\\<br\\>-Converted letters are separated with dot
+\\<br\\>-If character is non-digit and not in list then it will be converted to dot
+
+\\<b\\>Example1:\\</b\\>
+
+\c Section
+\c 	${VersionConvert} "9.0a" "" $R0
+\c 	; $R0="9.0.01"
+\c 
+\c 	${VersionConvert} "9.0c" "" $R1
+\c 	; $R1="9.0.03"
+\c 
+\c 	${VersionCompare} "$R0" "$R1" $R2
+\c 	; $R2="2"   version2 is newer
+\c SectionEnd
+
+\\<b\\>Example2:\\</b\\>
+
+\c Section
+\c 	${VersionConvert} "0.15c-9m" "" $R0
+\c 	; $R0="0.15.03.9.13"
+\c 
+\c 	${VersionConvert} "0.15c-1n" "" $R1
+\c 	; $R1="0.15.03.1.14"
+\c 
+\c 	${VersionCompare} "$R0" "$R1" $R2
+\c 	; $R2="1"   version1 is newer
+\c SectionEnd
+
+\\<b\\>Example3:\\</b\\>
+
+\c Section
+\c 	${VersionConvert} "0.15c+" "abcdefghijklmnopqrstuvwxyz+" $R0
+\c 	; $R0="0.15.0327"
+\c 
+\c 	${VersionConvert} "0.15c" "abcdefghijklmnopqrstuvwxyz+" $R1
+\c 	; $R1="0.15.03"
+\c 
+\c 	${VersionCompare} "$R0" "$R1" $R2
+\c 	; $R2="1"   version1 is newer
+\c SectionEnd
