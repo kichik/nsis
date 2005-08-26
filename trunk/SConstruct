@@ -467,6 +467,8 @@ defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
 
 # test scripts
 
+test_env = defenv.Copy(ENV = os.environ) # env needed for some scripts
+
 def test_scripts(target, source, env):
 	from os import walk, sep
 
@@ -484,8 +486,8 @@ def test_scripts(target, source, env):
 
 	return None
 
-test = defenv.Command('test-scripts.log', '$TESTDISTDIR', test_scripts)
-defenv.Alias('test-scripts', test)
+test = test_env.Command('test-scripts.log', '$TESTDISTDIR', test_scripts)
+test_env.Alias('test-scripts', test)
 
 # test all
 
