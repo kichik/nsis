@@ -1,36 +1,27 @@
 #ifndef __X18_PLUGINS_H
 #define __X18_PLUGINS_H
 
-#include "Platform.h"
-#include "strlist.h"
-
-struct plugin {
-  int name;
-  int path;
-  int dataHandle;
-  int unDataHandle;
-};
-
-class PluginsList : public SortedStringListND<struct plugin>
-{
-  public:
-    int add(const char *name, const char *path);
-    char *get(char **name, int *dataHandle=0, int *uninstDataHandle=0);
-    void setDataHandle(const char *name, int dataHandle, int uninstDataHandle);
-};
+#include <map>
+#include <string>
 
 class Plugins
 {
   public:
-    void  FindCommands(char*,bool);
-    bool  IsPluginCommand(char*);
-    char* GetPluginDll(int, char**, int*);
-    void  SetDllDataHandle(int, char*, int);
+    void FindCommands(const std::string& path, bool displayInfo);
+    bool IsPluginCommand(const std::string& command) const;
+    std::string NormalizedCommand(const std::string& command) const;
+    int GetPluginHandle(bool uninst, const std::string& command) const;
+    std::string GetPluginPath(const std::string& command) const;
+    void SetDllDataHandle(bool uninst, const std::string& command, int dataHandle);
 
-  protected:
-    PluginsList m_list;
+  private: // methods
+    void GetExports(const std::string &pathToDll, bool displayInfo);
 
-    void GetExports(char*,bool);
+  private: // data members
+    std::map<std::string, std::string> m_command_lowercase_to_command;
+    std::map<std::string, std::string> m_command_to_path;
+    std::map<std::string, int> m_command_to_data_handle;
+    std::map<std::string, int> m_command_to_uninstall_data_handle;
 };
 
 #endif

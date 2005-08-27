@@ -112,12 +112,6 @@ typedef WORD LANGID;
 // macros
 
 #ifndef _WIN32
-#  ifndef min
-#    define min(x,y) ((x<y)?x:y)
-#  endif
-#  ifndef max
-#    define max(x,y) ((x>y)?x:y)
-#  endif
 #  ifndef FIELD_OFFSET
 #    define FIELD_OFFSET(t,f) ((LONG)&(((t*)0)->f))
 #  endif

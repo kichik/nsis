@@ -16,7 +16,7 @@
 
 #include <cassert> // for assert
 
-using std::string;
+using namespace std;
 
 int g_dopause=0;
 extern int g_display_errors;
@@ -611,18 +611,26 @@ string get_full_path(const string &path) {
 #endif//_WIN32
 }
 
-string get_dir_name(const string& path) {
-  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
+string get_string_prefix(const string& str, const string& separator) {
+  const string::size_type last_separator_pos = str.rfind(separator);
   if (last_separator_pos == string::npos)
-    return path;
-  return path.substr(0, last_separator_pos);
+    return str;
+  return str.substr(0, last_separator_pos);
+}
+
+string get_string_suffix(const string& str, const string& separator) {
+  const string::size_type last_separator_pos = str.rfind(separator);
+  if (last_separator_pos == string::npos)
+    return str;
+  return str.substr(last_separator_pos + separator.size(), string::npos);
+}
+
+string get_dir_name(const string& path) {
+  return get_string_prefix(path, PLATFORM_PATH_SEPARATOR_STR);
 }
 
 string get_file_name(const string& path) {
-  string::size_type last_separator_pos = path.rfind(PLATFORM_PATH_SEPARATOR_C);
-  if (last_separator_pos == string::npos)
-    return path;
-  return path.substr(last_separator_pos + 1, string::npos);
+  return get_string_suffix(path, PLATFORM_PATH_SEPARATOR_STR);
 }
 
 string get_executable_path(const char* argv0) {
@@ -639,4 +647,14 @@ string get_executable_path(const char* argv0) {
 
 string get_executable_dir(const char *argv0) {
   return get_dir_name(get_executable_path(argv0));
+}
+
+string remove_file_extension(const string& path) {
+  return get_string_prefix(path, ".");
+}
+
+string lowercase(const string &str) {
+  string result = str;
+  transform(str.begin(), str.end(), result.begin(), tolower);
+  return result;
 }
