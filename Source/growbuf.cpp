@@ -1,9 +1,11 @@
 #include "growbuf.h"
 
-#include "Platform.h"
 #include <cstdlib> // for malloc/free
 #include <cstring> // for memcpy
 #include <cstdio> // for f*
+#include <algorithm> // for std::min
+
+#include "Platform.h"
 
 GrowBuf::GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; m_bs=32768; }
 GrowBuf::~GrowBuf() { free(m_s); }
@@ -49,7 +51,7 @@ void GrowBuf::resize(int newlen)
         }
         quit();
       }
-      memcpy(n,m_s,min(newlen,os));
+      memcpy(n,m_s,std::min(newlen,os));
       free(m_s);
     }
     m_s=n;

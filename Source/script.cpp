@@ -2495,7 +2495,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       }
 
       string compressor_name = line.gettoken_str(a);
-      transform(compressor_name.begin(), compressor_name.end(), compressor_name.begin(), tolower);
+      compressor_name = lowercase(compressor_name);
 
       if (set_compressor(compressor_name, build_compress_whole) != PS_OK)
       {
@@ -5413,10 +5413,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         SCRIPT_MSG("PluginDir: \"%s\"\n",line.gettoken_str(1));
 #ifdef _WIN32
-        m_plugins.FindCommands(line.gettoken_str(1),display_info?true:false);
+        m_plugins.FindCommands(line.gettoken_str(1), display_info);
 #else
         char *converted_path = my_convert(line.gettoken_str(1));
-        m_plugins.FindCommands(converted_path,display_info?true:false);
+        m_plugins.FindCommands(converted_path, display_info);
         my_convert_free(converted_path);
 #endif
         return PS_OK;
@@ -5425,136 +5425,125 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_ERROR;
     case TOK__PLUGINCOMMAND:
     {
-      int ret, data_handle;
-      char* command = strdup(line.gettoken_str(0));
-      assert(command != 0);
-      MANAGE_WITH(command, free);
+      int ret;
 
-      char* dllPath = m_plugins.GetPluginDll(uninstall_mode, &command, &data_handle);
-      if (dllPath)
+      const string command = m_plugins.NormalizedCommand(line.gettoken_str(0));
+      const string dllPath = m_plugins.GetPluginPath(command);
+      int data_handle = m_plugins.GetPluginHandle(uninstall_mode, command);
+
+      if (uninstall_mode) uninst_plugin_used = true;
+      else plugin_used = true;
+
+      // Initialize $PLUGINSDIR
+      ent.which=EW_CALL;
+      ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
+      ret=add_entry(&ent);
+      if (ret != PS_OK) {
+        return ret;
+      }
+
+      // DLL name on the user machine
+      char tempDLL[NSIS_MAX_STRLEN];
+      string dllName = get_file_name(dllPath);
+      wsprintf(tempDLL, "$PLUGINSDIR%c%s", PATH_SEPARATOR_C, dllName.c_str());
+
+      // Add the DLL to the installer
+      if (data_handle == -1)
       {
-        if (uninstall_mode) uninst_plugin_used = true;
-        else plugin_used = true;
-
-        // Initialize $PLUGINSDIR
-        ent.which=EW_CALL;
-        ent.offsets[0]=ns_func.add(uninstall_mode?"un.Initialize_____Plugins":"Initialize_____Plugins",0);
-        ret=add_entry(&ent);
+        int files_added;
+        int old_build_allowskipfiles=build_allowskipfiles;
+        build_allowskipfiles=1; // on
+        int old_build_overwrite=build_overwrite;
+        build_overwrite=1; // off
+        int old_build_datesave=build_datesave;
+        build_datesave=0; // off
+        ret=do_add_file(dllPath.c_str(),0,0,&files_added,tempDLL,2,&data_handle); // 2 means no size add
         if (ret != PS_OK) {
           return ret;
         }
-
-        // DLL name on the user machine
-        char tempDLL[NSIS_MAX_STRLEN];
-        char *dllName = strrchr(dllPath,PLATFORM_PATH_SEPARATOR_C);
-        if (dllName && *dllName == PLATFORM_PATH_SEPARATOR_C)
-          dllName++;
-        wsprintf(tempDLL, "$PLUGINSDIR%c%s", PATH_SEPARATOR_C, dllName);
-
-        // Add the DLL to the installer
-        if (data_handle == -1)
-        {
-          int files_added;
-          // BEGIN - Added by ramon 23 May 2003
-          int old_build_allowskipfiles=build_allowskipfiles;
-          build_allowskipfiles=1; // on
-          // END - Added by ramon 23 May 2003
-          int old_build_overwrite=build_overwrite;
-          build_overwrite=1; // off
-          int old_build_datesave=build_datesave;
-          build_datesave=0; // off
-          ret=do_add_file(dllPath,0,0,&files_added,tempDLL,2,&data_handle); // 2 means no size add
-          if (ret != PS_OK) {
-            return ret;
-          }
-          m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0),data_handle);
-          build_overwrite=old_build_overwrite;
-          build_datesave=old_build_datesave;
-          // Added by ramon 23 May 2003
-          build_allowskipfiles=old_build_allowskipfiles;
-        }
-        else
-        {
-          ent.which=EW_EXTRACTFILE;
-
-          DefineInnerLangString(NLF_SKIPPED);
-          DefineInnerLangString(NLF_ERR_DECOMPRESSING);
-          DefineInnerLangString(NLF_ERR_WRITING);
-          DefineInnerLangString(NLF_EXTRACT);
-          DefineInnerLangString(NLF_CANT_WRITE);
-
-          ent.offsets[0]=1; // overwrite off
-          ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<21))<<3;
-          ent.offsets[1]=add_string(tempDLL);
-          ent.offsets[2]=data_handle;
-          ent.offsets[3]=0xffffffff;
-          ent.offsets[4]=0xffffffff;
-          ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
-          ret=add_entry(&ent);
-          if (ret != PS_OK) {
-            return ret;
-          }
-        }
-
-        // SetDetailsPrint lastused
-        ent.which=EW_UPDATETEXT;
-        ent.offsets[0]=0;
-        ent.offsets[1]=8; // lastused
-        ent.offsets[2]=0;
-        ret=add_entry(&ent);
-        if (ret != PS_OK) {
-          return ret;
-        }
-
-        // Call the DLL
-        char* funcname = strstr(command,"::");
-        if (funcname) funcname += 2;
-        else          funcname  = command;
-        SCRIPT_MSG("Plugin Command: %s",funcname);
-
-        int i = 1;
-        int nounload = 0;
-        if (!strcmpi(line.gettoken_str(i), "/NOUNLOAD")) {
-          i++;
-          nounload++;
-        }
-
-        // First push dll args
-
-        int parmst=i; // we push  em in reverse order
-        int nounloadmisused=0;
-        for (; i < line.getnumtokens(); i++) {
-          int w=parmst + (line.getnumtokens()-i - 1);
-          ent.which=EW_PUSHPOP;
-          ent.offsets[0]=add_string(line.gettoken_str(w));
-          if (!strcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
-          ent.offsets[1]=0;
-          ret=add_entry(&ent);
-          if (ret != PS_OK) {
-            return ret;
-          }
-          SCRIPT_MSG(" %s",line.gettoken_str(i));
-        }
-        SCRIPT_MSG("\n");
-        if (nounloadmisused)
-          warning_fl("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong");
-
-        // next, call it
-        ent.which=EW_REGISTERDLL;
-        ent.offsets[0]=add_string(tempDLL);;
-        ent.offsets[1]=add_string(funcname);
-        ent.offsets[2]=0;
-        ent.offsets[3]=nounload|build_plugin_unload;
-        ent.offsets[4]=1;
-        ret=add_entry(&ent);
-        if (ret != PS_OK) {
-          return ret;
-        }
-
-        return PS_OK;
+        m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0), data_handle);
+        build_overwrite=old_build_overwrite;
+        build_datesave=old_build_datesave;
+        // Added by ramon 23 May 2003
+        build_allowskipfiles=old_build_allowskipfiles;
       }
       else
-        ERROR_MSG("Error: Plugin dll for command \"%s\" not found.\n",line.gettoken_str(0));
+      {
+        ent.which=EW_EXTRACTFILE;
+
+        DefineInnerLangString(NLF_SKIPPED);
+        DefineInnerLangString(NLF_ERR_DECOMPRESSING);
+        DefineInnerLangString(NLF_ERR_WRITING);
+        DefineInnerLangString(NLF_EXTRACT);
+        DefineInnerLangString(NLF_CANT_WRITE);
+
+        ent.offsets[0]=1; // overwrite off
+        ent.offsets[0]|=(MB_RETRYCANCEL|MB_ICONSTOP|(IDCANCEL<<21))<<3;
+        ent.offsets[1]=add_string(tempDLL);
+        ent.offsets[2]=data_handle;
+        ent.offsets[3]=0xffffffff;
+        ent.offsets[4]=0xffffffff;
+        ent.offsets[5]=DefineInnerLangString(NLF_FILE_ERROR);
+        ret=add_entry(&ent);
+        if (ret != PS_OK) {
+          return ret;
+        }
+      }
+
+      // SetDetailsPrint lastused
+      ent.which=EW_UPDATETEXT;
+      ent.offsets[0]=0;
+      ent.offsets[1]=8; // lastused
+      ent.offsets[2]=0;
+      ret=add_entry(&ent);
+      if (ret != PS_OK) {
+        return ret;
+      }
+
+      // Call the DLL
+      string funcname = get_string_suffix(command, "::");
+      SCRIPT_MSG("Plugin Command: %s",funcname.c_str());
+
+      int i = 1;
+      int nounload = 0;
+      if (!strcmpi(line.gettoken_str(i), "/NOUNLOAD")) {
+        i++;
+        nounload++;
+      }
+
+      // First push dll args
+
+      int parmst=i; // we push  em in reverse order
+      int nounloadmisused=0;
+      for (; i < line.getnumtokens(); i++) {
+        int w=parmst + (line.getnumtokens()-i - 1);
+        ent.which=EW_PUSHPOP;
+        ent.offsets[0]=add_string(line.gettoken_str(w));
+        if (!strcmpi(line.gettoken_str(w), "/NOUNLOAD")) nounloadmisused=1;
+        ent.offsets[1]=0;
+        ret=add_entry(&ent);
+        if (ret != PS_OK) {
+          return ret;
+        }
+        SCRIPT_MSG(" %s",line.gettoken_str(i));
+      }
+      SCRIPT_MSG("\n");
+      if (nounloadmisused)
+        warning_fl("/NOUNLOAD must come first before any plugin parameter. Unless the plugin you are trying to use has a parameter /NOUNLOAD, you are doing something wrong");
+
+      // next, call it
+      ent.which=EW_REGISTERDLL;
+      ent.offsets[0]=add_string(tempDLL);;
+      ent.offsets[1]=add_string(funcname.c_str());
+      ent.offsets[2]=0;
+      ent.offsets[3]=nounload|build_plugin_unload;
+      ent.offsets[4]=1;
+      ret=add_entry(&ent);
+      if (ret != PS_OK) {
+        return ret;
+      }
+
+      return PS_OK;
     }
     return PS_ERROR;
     case TOK_INITPLUGINSDIR:

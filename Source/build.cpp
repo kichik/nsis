@@ -8,8 +8,6 @@
 
 #include <stdexcept>
 
-using namespace std;
-
 #include "exehead/resource.h"
 #include "ResourceEditor.h"
 #include "DialogTemplate.h"
@@ -30,6 +28,8 @@ using namespace std;
   if ( rc != PS_OK) \
     return rc; \
 } while (false)
+
+using namespace std;
 
 namespace { // begin anonymous namespace
 
@@ -3154,7 +3154,7 @@ void CEXEBuild::build_plugin_table(void)
     {
       sprintf(searchPath,"%s" PLATFORM_PATH_SEPARATOR_STR "Plugins",nsisdir);
       INFO_MSG("Processing plugin dlls: \"%s" PLATFORM_PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
-      m_plugins.FindCommands(searchPath,display_info?true:false);
+      m_plugins.FindCommands(searchPath, display_info);
       INFO_MSG("\n");
       delete[] searchPath;
     }

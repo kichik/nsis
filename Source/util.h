@@ -1,16 +1,17 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
+#include <string> // for std::string
+
+#include "boost/scoped_ptr.hpp" // for boost::scoped_ptr
+#include "ResourceEditor.h"
+
 #ifndef _WIN32
 #  include <iconv.h>
 #  include <stdio.h>
 #  include <glob.h>
 #endif
-#include "ResourceEditor.h"
 
-#include <string> // for std::string
-
-#include "boost/scoped_ptr.hpp" // for boost::scoped_ptr
 
 // these are the standard pause-before-quit shit.
 extern int g_dopause;
@@ -49,10 +50,15 @@ size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
   (((x)&0x0000FF00) <<  8) | \
   (((x)&0x000000FF) << 24) )
 
-std::string get_full_path(const std::string &path);
+std::string get_full_path(const std::string& path);
 std::string get_dir_name(const std::string& path);
 std::string get_file_name(const std::string& path);
 std::string get_executable_dir(const char *argv0);
+std::string remove_file_extension(const std::string& path);
+std::string lowercase(const std::string&);
+
+std::string get_string_prefix(const std::string& str, const std::string& separator);
+std::string get_string_suffix(const std::string& str, const std::string& separator);
 
 #ifndef _WIN32
 char *CharPrev(const char *s, const char *p);
