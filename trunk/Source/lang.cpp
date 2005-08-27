@@ -6,6 +6,8 @@
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
 
+using namespace std;
+
 // Default English strings. Should match NSIS_DEFAULT_LANG
 // Do not change the first string in every item, it's the LangString
 // name for usage in scripts.
