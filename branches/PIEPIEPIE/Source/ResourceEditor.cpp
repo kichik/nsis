@@ -24,6 +24,7 @@
 #include "util.h"
 #include <time.h>
 #include <queue>
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Utilities

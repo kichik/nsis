@@ -23,12 +23,15 @@
 #if !defined(AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_)
 #define AFX_RESOURCEEDITOR_H__683BF710_E805_4093_975B_D5729186A89A__INCLUDED_
 
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "Platform.h"
+
 #include <vector>
+
+#include "Platform.h"
 #ifdef _WIN32
 #  include <WinNT.h>
 #else
@@ -82,7 +85,6 @@ typedef struct _MY_IMAGE_RESOURCE_DIRECTORY_ENTRY {
 #pragma pack()
 
 #include <stdexcept>
-using namespace std;
 
 class CResourceDirectory;
 class CResourceDirectoryEntry;
@@ -150,7 +152,7 @@ public:
 
 private:
   IMAGE_RESOURCE_DIRECTORY m_rdDir;
-  vector<CResourceDirectoryEntry*> m_vEntries;
+  std::vector<CResourceDirectoryEntry*> m_vEntries;
 };
 
 class CResourceDirectoryEntry {

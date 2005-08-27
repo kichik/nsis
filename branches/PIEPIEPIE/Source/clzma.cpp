@@ -1,3 +1,4 @@
+#include <algorithm> // for std::min
 #include "clzma.h"
 
 #ifndef _WIN32
@@ -342,7 +343,7 @@ HRESULT CLZMA::ReadPart(void *data, UINT32 size, UINT32 *processedSize)
       if (compressor_finished)
         return E_ABORT;
     }
-    UINT32 l = min(size, avail_in);
+    UINT32 l = std::min(size, avail_in);
     memcpy(data, next_in, l);
     avail_in -= l;
     size -= l;
@@ -371,7 +372,7 @@ HRESULT CLZMA::WritePart(const void *data, UINT32 size, UINT32 *processedSize)
       if (!avail_out)
         return E_ABORT;
     }
-    UINT32 l = min(size, avail_out);
+    UINT32 l = std::min(size, avail_out);
     memcpy(next_out, data, l);
     avail_out -= l;
     size -= l;
