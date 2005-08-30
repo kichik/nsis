@@ -7,6 +7,8 @@
 
 #include "Platform.h"
 
+using namespace std;
+
 GrowBuf::GrowBuf() { m_alloc=m_used=m_zero=0; m_s=NULL; m_bs=32768; }
 GrowBuf::~GrowBuf() { free(m_s); }
 
@@ -51,7 +53,7 @@ void GrowBuf::resize(int newlen)
         }
         quit();
       }
-      memcpy(n,m_s,std::min(newlen,os));
+      memcpy(n,m_s,min(newlen,os));
       free(m_s);
     }
     m_s=n;
