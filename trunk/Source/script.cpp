@@ -5413,10 +5413,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       {
         SCRIPT_MSG("PluginDir: \"%s\"\n",line.gettoken_str(1));
 #ifdef _WIN32
-        m_plugins.FindCommands(line.gettoken_str(1), display_info);
+        m_plugins.FindCommands(line.gettoken_str(1), display_info?true:false);
 #else
         char *converted_path = my_convert(line.gettoken_str(1));
-        m_plugins.FindCommands(converted_path, display_info);
+        m_plugins.FindCommands(converted_path, display_info?true:false);
         my_convert_free(converted_path);
 #endif
         return PS_OK;
@@ -5429,7 +5429,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 
       const string command = m_plugins.NormalizedCommand(line.gettoken_str(0));
       const string dllPath = m_plugins.GetPluginPath(command);
-      int data_handle = m_plugins.GetPluginHandle(uninstall_mode, command);
+      int data_handle = m_plugins.GetPluginHandle(uninstall_mode?true:false, command);
 
       if (uninstall_mode) uninst_plugin_used = true;
       else plugin_used = true;
@@ -5461,7 +5461,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (ret != PS_OK) {
           return ret;
         }
-        m_plugins.SetDllDataHandle(uninstall_mode, line.gettoken_str(0), data_handle);
+        m_plugins.SetDllDataHandle(uninstall_mode?true:false, line.gettoken_str(0), data_handle);
         build_overwrite=old_build_overwrite;
         build_datesave=old_build_datesave;
         // Added by ramon 23 May 2003
