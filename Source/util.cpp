@@ -15,6 +15,7 @@
 #endif
 
 #include <cassert> // for assert
+#include <algorithm>
 
 using namespace std;
 

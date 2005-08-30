@@ -756,19 +756,19 @@ int CEXEBuild::datablock_optimize(int start_offset, int first_int)
   return start_offset;
 }
 
-int CEXEBuild::add_db_data(IMMap *map) // returns offset
+int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
 {
   build_compressor_set = true;
 
   int done = 0;
 
-  if (!map)
+  if (!mmap)
   {
     ERROR_MSG("Error: add_db_data() called with invalid mapped file\n");
     return -1;
   }
 
-  int length = map->getsize();
+  int length = mmap->getsize();
 
   if (length < 0)
   {
@@ -802,14 +802,14 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
       int in_len = min(build_filebuflen, avail_in);
       int out_len = min(build_filebuflen, avail_out);
       
-      compressor->SetNextIn((char *) map->get(length - avail_in, in_len), in_len);
+      compressor->SetNextIn((char *) mmap->get(length - avail_in, in_len), in_len);
       compressor->SetNextOut((char *) db->get(st + sizeof(int) + bufferlen - avail_out, out_len), out_len);
       if ((ret = compressor->Compress(0)) < 0)
       {
         ERROR_MSG("Error: add_db_data() - compress() failed(%s [%d])\n", compressor->GetErrStr(ret), ret);
         return -1;
       }
-      map->release();
+      mmap->release();
       db->flush(out_len);
       db->release();
       avail_in -= in_len - compressor->GetAvailIn();
@@ -883,10 +883,10 @@ int CEXEBuild::add_db_data(IMMap *map) // returns offset
     {
       int l = min(build_filebuflen, left);
       int *p = (int *) db->get(st + sizeof(int) + length - left, l);
-      memcpy(p, map->get(length - left, l), l);
+      memcpy(p, mmap->get(length - left, l), l);
       db->flush(l);
       db->release();
-      map->release();
+      mmap->release();
       left -= l;
     }
 
@@ -3154,7 +3154,7 @@ void CEXEBuild::build_plugin_table(void)
     {
       sprintf(searchPath,"%s" PLATFORM_PATH_SEPARATOR_STR "Plugins",nsisdir);
       INFO_MSG("Processing plugin dlls: \"%s" PLATFORM_PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
-      m_plugins.FindCommands(searchPath, display_info);
+      m_plugins.FindCommands(searchPath, display_info?true:false);
       INFO_MSG("\n");
       delete[] searchPath;
     }
