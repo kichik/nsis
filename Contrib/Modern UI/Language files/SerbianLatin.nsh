@@ -23,7 +23,11 @@
   !define MUI_TEXT_COMPONENTS_TITLE "Izbor komponenti za instalaciju"
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Izaberite komponente za instalaciju. Instaliraju se samo oznaèene komponente."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Opis"
-  !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Preðite kursorom miša preko imena komponente da biste videli njen opis."
+  !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Preðite kursorom miša preko imena komponente da biste videli njen opis."
+  !else
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Izaberite komponentu da biste videli njen opis."
+  !endif
 
   !define MUI_TEXT_DIRECTORY_TITLE "Izbor foldera za instalaciju"
   !define MUI_TEXT_DIRECTORY_SUBTITLE "Izaberite folder u koji æete instalirati program $(^NameDA)."
