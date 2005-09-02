@@ -24,6 +24,7 @@
 #include <windowsx.h>
 #include <shlobj.h>
 #include <shellapi.h>
+#include <shlwapi.h>
 
 #include "resource.h"
 
@@ -837,6 +838,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
   if (uMsg == WM_INITDIALOG)
   {
+    HWND hDir = GetUIItem(IDC_DIR);
+
 #ifdef NSIS_CONFIG_LOG
     if (GetAsyncKeyState(VK_SHIFT)&0x8000)
     {
@@ -847,10 +850,20 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
     if (validpathspec(dir) && !skip_root(dir))
       addtrailingslash(dir);
-    SetUITextNT(IDC_DIR,dir);
+    my_SetWindowText(hDir,dir);
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
-    SetActiveCtl(GetUIItem(IDC_DIR));
+    SetActiveCtl(hDir);
+
+    {
+      typedef HRESULT (WINAPI *SHAutoCompletePtr)(HWND, DWORD);
+      SHAutoCompletePtr fSHAutoComplete;
+      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress("SHLWAPI.dll", "SHAutoComplete");
+      if (fSHAutoComplete)
+      {
+        fSHAutoComplete(hDir, SHACF_FILESYSTEM);
+      }
+    }
   }
   if (uMsg == WM_COMMAND)
   {
@@ -902,7 +915,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     int error = 0;
     int available_set = 0;
     unsigned total, available = 0xFFFFFFFF;
-    HMODULE hLib;
 
     GetUIText(IDC_DIR,dir);
     if (!is_valid_instpath(dir))
@@ -914,11 +926,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       *p=0;
 
     // Test for and use the GetDiskFreeSpaceEx API
-    hLib = GetModuleHandle("KERNEL32.dll");
-    if (hLib)
     {
       BOOL (WINAPI *GDFSE)(LPCSTR, PULARGE_INTEGER, PULARGE_INTEGER, PULARGE_INTEGER) =
-        (void*)GetProcAddress(hLib, "GetDiskFreeSpaceExA");
+          myGetProcAddress("KERNEL32.dll", "GetDiskFreeSpaceExA");
       if (GDFSE)
       {
         ULARGE_INTEGER available64;
@@ -929,7 +939,6 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           available_set++;
         }
       }
-
     }
 
     if (!available_set)

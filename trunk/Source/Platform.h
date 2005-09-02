@@ -7,7 +7,7 @@
 
 #ifdef _WIN32
 #  ifndef _WIN32_IE
-#    define _WIN32_IE 0x0400
+#    define _WIN32_IE 0x0500
 #  endif
 #  include <windows.h>
 #  include <commctrl.h>
