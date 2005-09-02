@@ -272,26 +272,22 @@ end:
 #ifdef NSIS_SUPPORT_REBOOT
   if (g_exec_flags.reboot_called)
   {
-    HANDLE h=GetModuleHandle("ADVAPI32.dll");
-    if (h)
+    BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
+    BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
+    BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
+    OPT=myGetProcAddress("ADVAPI32.dll","OpenProcessToken");
+    LPV=myGetProcAddress("ADVAPI32.dll","LookupPrivilegeValueA");
+    ATP=myGetProcAddress("ADVAPI32.dll","AdjustTokenPrivileges");
+    if (OPT && LPV && ATP)
     {
-      BOOL (WINAPI *OPT)(HANDLE, DWORD,PHANDLE);
-      BOOL (WINAPI *LPV)(LPCTSTR,LPCTSTR,PLUID);
-      BOOL (WINAPI *ATP)(HANDLE,BOOL,PTOKEN_PRIVILEGES,DWORD,PTOKEN_PRIVILEGES,PDWORD);
-      OPT=(void*)GetProcAddress(h,"OpenProcessToken");
-      LPV=(void*)GetProcAddress(h,"LookupPrivilegeValueA");
-      ATP=(void*)GetProcAddress(h,"AdjustTokenPrivileges");
-      if (OPT && LPV && ATP)
+      HANDLE hToken;
+      TOKEN_PRIVILEGES tkp;
+      if (OPT(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
       {
-        HANDLE hToken;
-        TOKEN_PRIVILEGES tkp;
-        if (OPT(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
-        {
-          LPV(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
-          tkp.PrivilegeCount = 1;
-          tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-          ATP(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
-        }
+        LPV(NULL, SE_SHUTDOWN_NAME, &tkp.Privileges[0].Luid);
+        tkp.PrivilegeCount = 1;
+        tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+        ATP(hToken, FALSE, &tkp, 0, (PTOKEN_PRIVILEGES)NULL, 0);
       }
     }
 
