@@ -70,6 +70,8 @@ void NSISCALL validate_filename(char *fn);
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew);
 void NSISCALL mini_memcpy(void *out, const void *in, int len);
 
+void * NSISCALL myGetProcAddress(char *dll, char *func);
+
 // Turn a pair of chars into a word
 // Turn four chars into a dword
 #ifdef __BIG_ENDIAN__ // Not very likely, but, still...

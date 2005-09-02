@@ -379,16 +379,12 @@ char * NSISCALL my_GetTempFileName(char *buf, const char *dir)
 void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
 {
   BOOL fOk = 0;
-  HMODULE hLib=GetModuleHandle("KERNEL32.dll");
-  if (hLib)
+  typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
+  mfea_t mfea;
+  mfea=(mfea_t) myGetProcAddress("KERNEL32.dll","MoveFileExA");
+  if (mfea)
   {
-    typedef BOOL (WINAPI *mfea_t)(LPCSTR lpExistingFileName,LPCSTR lpNewFileName,DWORD dwFlags);
-    mfea_t mfea;
-    mfea=(mfea_t) GetProcAddress(hLib,"MoveFileExA");
-    if (mfea)
-    {
-      fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
-    }
+    fOk=mfea(pszExisting, pszNew, MOVEFILE_DELAY_UNTIL_REBOOT|MOVEFILE_REPLACE_EXISTING);
   }
 
   if (!fOk)
@@ -788,4 +784,15 @@ WIN32_FIND_DATA * NSISCALL file_exists(char *buf)
     return &fd;
   }
   return NULL;
+}
+
+void * NSISCALL myGetProcAddress(char *dll, char *func)
+{
+  HMODULE hModule = GetModuleHandle(dll);
+  if (!hModule)
+    hModule = LoadLibrary(dll);
+  if (!hModule)
+    return NULL;
+
+  return GetProcAddress(hModule, func);
 }
