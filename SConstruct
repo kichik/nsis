@@ -67,25 +67,34 @@ from time import strftime, gmtime
 cvs_version = strftime('%d-%b-%Y.cvs', gmtime())
 
 opts = Options()
+
+# version
 opts.Add(('VERSION', 'Version of NSIS', cvs_version))
 opts.Add(('VER_MAJOR', 'Major version of NSIS (recommended for dist-installer)', None))
 opts.Add(('VER_MINOR', 'Minor version of NSIS (recommended for dist-installer)', None))
 opts.Add(('VER_REVISION', 'Revision of NSIS (recommended for dist-installer)', None))
 opts.Add(('VER_BUILD', 'Build version of NSIS (recommended for dist-installer)', None))
+# installation
 opts.Add(PathOption('PREFIX', 'Installation prefix', None))
-opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
-opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
-opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
-opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
-opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
 opts.Add(ListOption('SKIPSTUBS', 'A list of stubs that will not be built', 'none', stubs))
 opts.Add(ListOption('SKIPPLUGINS', 'A list of plug-ins that will not be built', 'none', plugins))
 opts.Add(ListOption('SKIPUTILS', 'A list of utilities that will not be built', 'none', utils))
 opts.Add(ListOption('SKIPMISC', 'A list of plug-ins that will not be built', 'none', misc))
+# build tools
+opts.Add(BoolOption('MSTOOLKIT', 'Use Microsoft Visual C++ Toolkit', 'no'))
+opts.Add(BoolOption('CHMDOCS', 'Build CHM documentation, requires hhc.exe', hhc))
+opts.Add(PathOption('CPPPATH', 'Path to search for include files', None))
+opts.Add(PathOption('LIBPATH', 'Path to search for libraries', None))
+# build options
+opts.Add(BoolOption('DEBUG', 'Build executables with debugging information', 'no'))
 opts.Add(PathOption('CODESIGNER', 'A program used to sign executables', None))
+
 opts.Update(defenv)
 
 Help(opts.GenerateHelpText(defenv))
+
+# build configuration
+SConscript('SCons/config.py')
 
 ######################################################################
 #######  Functions                                                 ###
