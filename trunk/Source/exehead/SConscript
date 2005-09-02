@@ -50,6 +50,7 @@ Import('env compression solid_compression')
 
 env.Append(CPPDEFINES = ['EXEHEAD'])
 env.Append(CPPDEFINES = ['WIN32_LEAN_AND_MEAN'])
+env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 
 if compression == 'bzip2':
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_BZIP2'])

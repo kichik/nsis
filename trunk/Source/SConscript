@@ -66,6 +66,10 @@ for lib in libs:
 
 conf.Finish()
 
+##### Configuration defines
+
+env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
+
 ##### Set PCH
 
 # XXX doesn't work
