@@ -118,7 +118,7 @@ def confirm(question):
 ### confirm
 
 confirm('are you sure you want to release version %s?' % VERSION)
-confirm('did update history.but?' % VERSION)
+confirm('did you update history.but?')
 
 ### start log
 
@@ -181,7 +181,7 @@ im.save(r'..\Menu\images\header.gif')
 print 'committing header.gif...'
 
 run(
-	'%s commit -m "%s" ..\\Menu\\images\\header.gif' % (CVS, VERSION).
+	'%s commit -m "%s" ..\\Menu\\images\\header.gif' % (CVS, VERSION),
 	'header.gif.commit',
 	'failed committing header.gif'
 )
@@ -199,7 +199,7 @@ run(
 )
 
 run(
-	'..\\nsis-test.exe /S /D=%s\\insttest' % os.getcwd()
+	'..\\nsis-test.exe /S /D=%s\\insttest' % os.getcwd(),
 	None,
 	'installer failed'
 )
