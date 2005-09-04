@@ -1,5 +1,8 @@
 NSIS Modern User Interface - VERSION HISTORY
 
+1.74 - September 4, 2005
+* Fixed compile error when checkboxes are used on multiple finish page pages
+
 1.73 - August 6, 2005
 * The checkboxes to run an application or show a Readme file can now also be used on an uninstaller
   finish pages or multiple finish pages
