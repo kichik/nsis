@@ -1,4 +1,4 @@
-;NSIS Modern User Interface version 1.73
+;NSIS Modern User Interface version 1.74
 ;Macro System
 ;Written by Joost Verburg
 
@@ -8,7 +8,7 @@
 ;License: License.txt
 ;Examples: Examples\Modern UI
 
-!echo "NSIS Modern User Interface version 1.73 - © 2002-2005 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.74 - © 2002-2005 Joost Verburg"
 
 ;--------------------------------
 
@@ -32,7 +32,7 @@
 !include "WinMessages.nsh"
 !verbose pop
 
-!define MUI_SYSVERSION "1.73"
+!define MUI_SYSVERSION "1.74"
 
 Var /GLOBAL MUI_TEMP1
 Var /GLOBAL MUI_TEMP2
@@ -971,6 +971,8 @@ Var /GLOBAL MUI_TEMP2
   !insertmacro MUI_UNSET MUI_FINISHPAGE_NOREBOOTSUPPORT
 
   !insertmacro MUI_UNSET MUI_FINISHPAGE_ABORTWARNINGCHECK
+  !insertmacro MUI_UNSET MUI_FINISHPAGE_CURFIELD_TOP
+  !insertmacro MUI_UNSET MUI_FINISHPAGE_CURFIELD_BOTTOM
 
   !verbose pop
 
