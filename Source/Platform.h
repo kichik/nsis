@@ -335,6 +335,14 @@ typedef WORD LANGID;
 #  define CSIDL_CDBURN_AREA 0x3B
 #endif
 
+// other shell stuff
+
+#ifndef SHACF_FILESYSTEM
+#  define SHACF_FILESYSTEM 1
+#endif
+
+// other stuff
+
 #ifndef CP_ACP
 #  define CP_ACP 0
 #endif
@@ -345,6 +353,8 @@ typedef WORD LANGID;
 #ifndef COLOR_WINDOW
 #  define COLOR_WINDOW 5
 #endif
+
+// resources
 
 #ifndef RT_BITMAP
 #  define RT_BITMAP MAKEINTRESOURCE(2)
@@ -361,6 +371,8 @@ typedef WORD LANGID;
 #ifndef RT_VERSION
 #  define RT_VERSION MAKEINTRESOURCE(16)
 #endif
+
+// version
 
 #ifndef VS_FILE_INFO
 #  define VS_FILE_INFO RT_VERSION
