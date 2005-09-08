@@ -60,7 +60,7 @@ $(^Name) ยกเลิกการติดตั้ง
 # ^ShowDetailsBtn
 แสดง &รายละเอียด
 # ^ClickNext
-กด ทำต่อไป เพื่อทำต่อ
+กด ทำต่อไป เพื่อเริ่มระบบอัติโนมัติ
 # ^ClickInstall
 กด  ติดตั้ง เพื่อทำการติดตั้ง
 # ^ClickUninstall
@@ -114,7 +114,7 @@ $(^Name) ยกเลิกการติดตั้ง
 # ^SpaceAvailable
 "มีพื้นที่เหลือ: "
 # ^SpaceRequired
-"ต้างการพื้นที่: "
+"ต้องการพื้นที่: "
 # ^UninstallingText
 $(^NameDA) จะถูกยกเลิกการติดตั้งจากแฟ้มต่อไปนี้. $_CLICK
 # ^UninstallingSubText
