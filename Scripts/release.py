@@ -95,11 +95,11 @@ def log(msg):
 def exit():
 	log('\nerror occured, exiting')
 
-def run(command, log_name, err, wanted_ret = 0):
+def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 	log('running %s' % command)
 
 	if log_name:
-		cmd = '%s >> release.log 2>&1' % (command, log)
+		cmd = '%s >> %s\\release.log 2>&1' % (command, log_dir)
 	else:
 		cmd = command
 
@@ -266,14 +266,16 @@ def create_special_build(name, option):
 	run(
 		scons_line + 'PREFIX=%s\\%s %s install-compiler install-stubs' % (os.getcwd(), name, option),
 		name,
-		'creation of %s special build failed' % name
+		'creation of %s special build failed' % name,
+		log_dir = '..'
 	)
 
 	os.chdir(name)
 	run(
 		ZIP % ('..\\nsis-%s-%s.zip' % (VERSION, name), '*'),
 		'%s.zip' % name,
-		'copmression of %s special build failed' % name
+		'copmression of %s special build failed' % name,
+		log_dir = '..'
 	)
 	os.chdir('..')
 
