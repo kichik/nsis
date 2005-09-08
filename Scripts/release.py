@@ -89,14 +89,14 @@ newverdir = 'nsis-%s-src' % VERSION
 
 ### some useful functions
 
-def log(msg):
+def log(msg, log_dir = '.'):
 	open('release.log', 'a').write(msg + '\n')
 
-def exit():
-	log('\nerror occured, exiting')
+def exit(log_dir = '.'):
+	log('\nerror occured, exiting', log_dir)
 
 def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
-	log('running %s' % command)
+	log('running %s' % command, log_dir)
 
 	if log_name:
 		cmd = '%s >> %s\\release.log 2>&1' % (command, log_dir)
@@ -105,10 +105,10 @@ def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 
 	if os.system(cmd) != wanted_ret:
 		print '*** ' + err
-		log('*** ' + err)
-		exit()
+		log('*** ' + err, log_dir)
+		exit(log_dir)
 
-	log('')
+	log('', log_dir)
 
 def confirm(question):
 	print question
