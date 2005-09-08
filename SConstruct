@@ -8,7 +8,7 @@
 ##
 
 EnsurePythonVersion(1,6)
-# no revision check yet - EnsureSConsVersion(0,96,90)
+EnsureSConsVersion(0,96,91)
 
 stubs = [
 	'bzip2',
@@ -51,7 +51,6 @@ misc = [
 ]
 
 defenv = Environment()
-defenv.SConsignFile()
 Export('defenv')
 
 ######################################################################

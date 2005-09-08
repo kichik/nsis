@@ -6,7 +6,7 @@ NSIS version 2.07 introduced a new build system, based on \W{http://www.scons.or
 
 Source code is available in \W{http://cvs.sourceforge.net/viewcvs.py/nsis}{CVS} and as a separate package with every \W{http://sourceforge.net/project/showfiles.php?group_id=22049}{NSIS distribution}.
 
-To build NSIS \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 0.96.90. Any version of Python above 1.5.2 is supported.
+To build NSIS \W{http://www.python.org/}{Python} and \W{http://www.scons.org/}{SCons} must be installed. Currently, the supported version of SCons is version 0.96.91. Any version of Python above 1.6 is supported.
 
 To build, open a console, change the working directory to the root directory of NSIS and type \c{scons}. That's it. For example:
 
