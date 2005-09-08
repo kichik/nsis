@@ -69,17 +69,17 @@ Ime
 # ^Completed
 Dokonèano
 # ^LicenseText
-Prosimo vas, da pred namestitvijo $($^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^LicenseTextCB
-Prosimo vas, da pred namestitvijo $($^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^LicenseTextRB
-Prosimo vas, da pred namestitvijo $($^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
+Prosimo vas, da pred namestitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
 # ^UnLicenseText
-Prosimo vas, da pred odstranitvijo $($^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
+Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe se z njo strinjate, pritisnite Se strinjam.
 # ^UnLicenseTextCB
-Prosimo vas, da pred odstranitvijo $($^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
+Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, obkljukajte spodnje okence. $_CLICK
 # ^UnLicenseTextRB
-Prosimo vas, da pred odstranitvijo $($^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
+Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe sprejmete vse naštete pogoje, izberite spodaj prvo podano možnost. $_CLICK
 # ^Custom
 Po meri
 # ^ComponentsText
