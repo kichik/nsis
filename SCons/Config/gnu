@@ -2,12 +2,6 @@ print "Using GNU tools configuration"
 
 Import('defenv')
 
-### workarounds
-
-# patch #1184316 for SCons
-# http://sourceforge.net/tracker/?func=detail&aid=1184316&group_id=30337&atid=398973
-defenv['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX $SOURCE.dir $RCFLAGS -i $SOURCE -o $TARGET'
-
 ### cross compiling
 
 def cross_env(env):
