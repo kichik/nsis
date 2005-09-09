@@ -237,7 +237,7 @@ const char * NSISCALL loadHeaders(int cl_flags)
   }
 #endif//NSIS_CONFIG_CRC_SUPPORT
 
-  data = (void *)my_GlobalAlloc(h.length_of_header);
+  data = (void *)GlobalAlloc(GPTR,h.length_of_header);
 
 #ifdef NSIS_COMPRESS_WHOLE
   inflateReset(&g_inflate_stream);

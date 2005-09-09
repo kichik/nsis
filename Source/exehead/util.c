@@ -90,10 +90,6 @@ int NSISCALL my_MessageBox(const char *text, UINT type) {
   return MessageBox(g_hwnd, text, g_caption, _type);
 }
 
-void * NSISCALL my_GlobalAlloc(DWORD dwBytes) {
-  return (void *)GlobalAlloc(GPTR, dwBytes);
-}
-
 void NSISCALL myDelete(char *buf, int flags)
 {
   static char lbuf[NSIS_MAX_STRLEN];
