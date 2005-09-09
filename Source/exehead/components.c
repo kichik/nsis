@@ -34,17 +34,17 @@ void NSISCALL SectionFlagsChanged(unsigned int index) {
   }
 }
 
-static unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int first_call) {
+unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int not_first_call) {
   unsigned int selected = 0;
   unsigned int not_selected = 0;
 
   section *sections = g_sections;
 
-  unsigned int sec = i;
+  section *sec = &sections[i];
 
-  if (sections[sec].flags & SF_SECGRP) {
-    if (!first_call) {
-      sections[sec].flags &= ~(SF_SELECTED | SF_PSELECTED);
+  if (sec->flags & SF_SECGRP) {
+    if (not_first_call) {
+      sec->flags &= ~(SF_SELECTED | SF_PSELECTED);
       i++;
     }
   }
@@ -54,17 +54,17 @@ static unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int first_cal
     int ni = i + 1;
 
     if (flags & SF_SECGRP) {
-      ni = _RefreshSectionGroups(i, 0);
+      ni = _RefreshSectionGroups(i, 1);
       flags = sections[i].flags;
     }
 
     if (flags & SF_SECGRPEND) {
       if (selected) {
         if (not_selected) {
-          sections[sec].flags |= SF_PSELECTED;
+          sec->flags |= SF_PSELECTED;
         } else {
-          sections[sec].flags |= SF_SELECTED;
-          sections[sec].flags &= ~SF_TOGGLED;
+          sec->flags |= SF_SELECTED;
+          sec->flags &= ~SF_TOGGLED;
         }
       }
 
@@ -85,10 +85,6 @@ static unsigned int NSISCALL _RefreshSectionGroups(unsigned int i, int first_cal
   }
 
   return 0;
-}
-
-void NSISCALL RefreshSectionGroups() {
-  _RefreshSectionGroups(0, 1);
 }
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE
