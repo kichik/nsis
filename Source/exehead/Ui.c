@@ -20,11 +20,12 @@
 *  3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../Platform.h"
 #include <windowsx.h>
 #include <shlobj.h>
 #include <shellapi.h>
 #include <shlwapi.h>
+
+#include "../Platform.h"
 
 #include "resource.h"
 
