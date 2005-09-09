@@ -632,16 +632,20 @@ SystemProc *PrepareProc(BOOL NeedForCall)
             {
                 // Use direct system proc address
                 int addr;
+
+                proc->Dll = (HANDLE) myatoi(proc->DllName);
   
-                if ((proc->Dll = addr = (HANDLE) myatoi(proc->DllName)) == 0)
+                if (proc->Dll == 0)
                 {
                     proc->ProcResult = PR_ERROR;
                     break;
                 }
 
+                addr = (int) proc->Dll;
+
                 // fake-real parameter: for COM interfaces first param is Interface Pointer
                 proc->Params[1].Output = IOT_NONE;
-                proc->Params[1].Input = AllocStr(proc->DllName);
+                proc->Params[1].Input = (int) AllocStr(proc->DllName);
                 proc->Params[1].Size = 1;
                 proc->Params[1].Type = PAT_INT;
                 proc->Params[1].Option = 0;
@@ -650,7 +654,7 @@ SystemProc *PrepareProc(BOOL NeedForCall)
                 addr = *((int *)addr);
                 // now addr contains the pointer to first item at VTABLE
                 // add the index of proc
-                addr = addr + (myatoi(proc->ProcName)*4);
+                addr = addr + (int)(myatoi(proc->ProcName)*4);
                 proc->Proc = *((HANDLE*)addr);
             }
             break;
@@ -931,7 +935,7 @@ SystemProc __declspec(naked) *CallProc(SystemProc *proc)
     z1 = (int) proc->Proc;
 
     // Save proc
-    proc->Clone = LastProc;
+    proc->Clone = (SystemProc *) LastProc;
     _asm 
     {
         mov eax, proc
@@ -1226,9 +1230,9 @@ HANDLE CreateCallback(SystemProc *cbproc)
         cbproc->Options |= POPT_PERMANENT;
 
         mem = (char *) (cbproc->Proc = VirtualAlloc(NULL, 10, MEM_COMMIT, PAGE_EXECUTE_READWRITE));
-        *(mem++) = 0xB8; // Mov eax, const
+        *(mem++) = (char) 0xB8; // Mov eax, const
         *(((int *)mem)++) = (int) cbproc;
-        *(mem++) = 0xe9; // Jmp relative
+        *(mem++) = (char) 0xe9; // Jmp relative
         *((int *)mem) = (int) RealCallBack;
         *((int *)mem) -= ((int) mem) + 4;
     }
@@ -1339,7 +1343,7 @@ BOOL WINAPI _DllMainCRTStartup(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lp
             LastError = 0;
             LastProc = NULL;
             CallbackIndex = 0;
-            retexpr[0] = 0xC2;
+            retexpr[0] = (char) 0xC2;
             retexpr[2] = 0x00;
         }
 
