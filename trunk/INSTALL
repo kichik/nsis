@@ -5,8 +5,8 @@ This is a trimmed version of Appendix F of the documentation.
 
  - Requirements
 
-   * Python version 1.5.2 and above (http://www.python.org/)
-   * SCons version 0.96.90 and above (http://www.scons.org/)
+   * Python version 1.6 and above (http://www.python.org/)
+   * SCons version 0.96.91 and above (http://www.scons.org/)
    * C compiler
 
  - Installing
