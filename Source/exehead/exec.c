@@ -696,7 +696,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
         else
         {
-          s=(stack_t*)my_GlobalAlloc(sizeof(stack_t));
+          s=(stack_t*)GlobalAlloc(GPTR,sizeof(stack_t));
           GetNSISString(s->text,parm0);
           s->next=g_st;
           g_st=s;
@@ -900,7 +900,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         if (s1)
         {
           void *b1;
-          b1=my_GlobalAlloc(s1);
+          b1=GlobalAlloc(GPTR,s1);
           if (b1)
           {
             UINT uLen;
@@ -1410,7 +1410,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         {
           unsigned char *filebuf;
           int filehdrsize = g_filehdrsize;
-          filebuf=(unsigned char *)my_GlobalAlloc(filehdrsize);
+          filebuf=(unsigned char *)GlobalAlloc(GPTR,filehdrsize);
           if (filebuf)
           {
             DWORD lout;
@@ -1418,7 +1418,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             ReadSelfFile((char*)filebuf,filehdrsize);
             {
               unsigned char* seeker;
-              unsigned char* unicon_data = seeker = (unsigned char*)my_GlobalAlloc(parm2);
+              unsigned char* unicon_data = seeker = (unsigned char*)GlobalAlloc(GPTR,parm2);
               if (unicon_data) {
                 GetCompressedDataFromDataBlockToMemory(parm1,unicon_data,parm2);
                 while (*seeker) {
