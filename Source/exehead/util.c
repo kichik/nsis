@@ -796,3 +796,10 @@ void * NSISCALL myGetProcAddress(char *dll, char *func)
 
   return GetProcAddress(hModule, func);
 }
+
+void NSISCALL MessageLoop(UINT uCheckedMsg)
+{
+  MSG msg;
+  while (PeekMessage(&msg, NULL, uCheckedMsg, uCheckedMsg, PM_REMOVE))
+    DispatchMessage(&msg);
+}

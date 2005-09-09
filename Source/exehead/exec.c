@@ -842,9 +842,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
             DWORD lExitCode;
             while (WaitForSingleObject(hProc,100) == WAIT_TIMEOUT)
             {
-              MSG msg;
-              while (PeekMessage(&msg,NULL,WM_PAINT,WM_PAINT,PM_REMOVE))
-                DispatchMessage(&msg);
+              MessageLoop(WM_PAINT);
             }
             GetExitCodeProcess(hProc, &lExitCode);
 
