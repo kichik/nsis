@@ -1129,7 +1129,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     g_SectionHack=hwndDlg;
 
-    hTreeItems=(HTREEITEM*)my_GlobalAlloc(sizeof(HTREEITEM)*num_sections);
+    hTreeItems=(HTREEITEM*)GlobalAlloc(GPTR,sizeof(HTREEITEM)*num_sections);
 
     hBMcheck1=LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
 
