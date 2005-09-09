@@ -867,7 +867,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       typedef HRESULT (WINAPI *SHAutoCompletePtr)(HWND, DWORD);
       SHAutoCompletePtr fSHAutoComplete;
-      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress("SHLWAPI.dll", "SHAutoComplete");
+      static const char shlwapi[] = "shlwapi.dll";
+      static const char shac[] = "SHAutoComplete";
+      fSHAutoComplete = (SHAutoCompletePtr) myGetProcAddress((char *) shlwapi, (char *) shac);
       if (fSHAutoComplete)
       {
         fSHAutoComplete(hDir, SHACF_FILESYSTEM);
