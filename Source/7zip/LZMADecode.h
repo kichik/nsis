@@ -20,7 +20,7 @@ Converted to a state machine by Amir Szekely
 /* It can increase speed on some 32-bit CPUs, 
    but memory usage will be doubled in that case */
 
-#define lzmaalloc my_GlobalAlloc
+#define lzmaalloc(bytes) GlobalAlloc(GPTR,bytes)
 #define lzmafree GlobalFree
 
 /***********************
