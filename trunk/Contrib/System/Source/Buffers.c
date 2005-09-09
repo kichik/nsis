@@ -46,7 +46,7 @@ PLUGINFUNCTIONSHORT(Copy)
     if ((int) dest == 0) 
     {
         dest = GlobalAlloc((GPTR), size);
-        pushint(dest);
+        pushint((int) dest);
     }
 
     // COPY!
