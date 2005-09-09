@@ -782,7 +782,7 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb, int roundUp)
+static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb, BOOL roundDown)
 {
   char scalestr[32], byte[32];
   unsigned sh=20;
@@ -791,19 +791,21 @@ static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb, int round
   if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
   if (kb < 1024) { sh=0; scale=LANG_KILO; }
 
-  if (roundUp)
+  if (!roundDown)
     // this will not overflow because currently, installers
     // can't contain over 2GB of data and this is not used
     // for the available size, but only required size
     kb += (1 << sh) / 10; // round up number after decimal point
 
   wsprintf(
-    GetNSISString(g_tmp,prefix)+mystrlen(g_tmp),
+    GetNSISString(g_tmp, prefix) + mystrlen(g_tmp),
     "%u.%u%s%s",
-    kb>>sh,
-    ((kb*10)>>sh)%10,
-    GetNSISString(scalestr,scale),
-    GetNSISString(byte,LANG_BYTE)
+    kb >> sh,
+    (((kb & 0x00FFFFFF) * 10) >> sh) % 10, // 0x00FFFFFF mask is used to
+                                           // prevent overflow that causes
+                                           // bad results
+    GetNSISString(scalestr, scale),
+    GetNSISString(byte, LANG_BYTE)
   );
 
   my_SetDialogItemText(m_curwnd,dlgItem,g_tmp);
@@ -969,9 +971,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total,1);
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total,FALSE);
       if (available_set)
-        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available,0);
+        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available,TRUE);
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
@@ -1364,7 +1366,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     RefreshComponents(hwndTree1, hTreeItems);
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb),1);
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb),FALSE);
     }
   }
 
