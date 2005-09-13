@@ -602,8 +602,11 @@ LRESULT WINAPI WMCommandProc(HWND hWnd, UINT id, HWND hwndCtl, UINT codeNotify) 
           GetWindowText(pField->hwnd, szBrowsePath, sizeof(szBrowsePath));
 
         tryagain:
+          GetCurrentDirectory(BUFFER_SIZE, szResult); // save working dir
           if ((pField->nFlags & FLAG_SAVEAS) ? GetSaveFileName(&ofn) : GetOpenFileName(&ofn)) {
             mySetWindowText(pField->hwnd, szBrowsePath);
+            SetCurrentDirectory(szResult); // restore working dir
+                                           // OFN_NOCHANGEDIR doesn't always work (see MSDN)
             break;
           }
           else if (szBrowsePath[0] && CommDlgExtendedError() == FNERR_INVALIDFILENAME) {
