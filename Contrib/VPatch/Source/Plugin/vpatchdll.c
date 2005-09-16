@@ -78,7 +78,7 @@ void __declspec(dllexport) vpatchfile(HWND hwndParent, int string_size,
 
     if ((result != PATCH_SUCCESS)) {
       if (result == PATCH_ERROR)
-        pushstring("An error occured while patching");
+        pushstring("An error occurred while patching");
       else if (result == PATCH_CORRUPT)
         pushstring("Patch data is invalid or corrupt");
       else if (result == PATCH_NOMATCH)

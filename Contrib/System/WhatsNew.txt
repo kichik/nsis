@@ -3,7 +3,7 @@ release 2.
 2. Int64 full support (conversion/operations/comparison)
 3. Structures support
 4. Callbacks support, including multilevel callbacks
-5. Some useful rountines (Alloc, Free, Copy)
+5. Some useful routines (Alloc, Free, Copy)
 6. CDecl and StdCall calling conventions
 
 release 3, 22 march 2003.
@@ -30,12 +30,12 @@ release 4, 3 september 2003.
 5. Automatic A-letter at proc name discovery.
 6. COM optimized: new proc specification "x->y", where x is interface ptr, and
 y is vtable member index. For such procs Interface pointer passed as first arg
-automaticaly.
+automatically.
 
 release 5, 11 september 2003.
 1. u flag - unload dll after procedure call.
 2. some changes to asm to turn on Whole Program Optimization.
-3. Dll shrinked for 1 kb.
+3. Dll shrunk by 1 kb.
 
 bug-fix-release, 4.06.2004
 1. System::Copy /SIZE fixed (Kichik).

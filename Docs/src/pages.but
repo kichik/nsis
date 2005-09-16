@@ -65,7 +65,7 @@ To set the page caption use \R{acaption}{Caption}.
 
 \S{pagecallbacks_explain} Callbacks
 
-Each built-in page has three callback functions. The pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.
+Each built-in page has three callback functions: the pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.
 
 \b The pre-function allows you to skip the page using \R{abort}{Abort}.
 

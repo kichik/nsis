@@ -110,7 +110,7 @@ Declaring and using a user variable:
 
 In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands \R{Push}{Push} and \R{Pop}{Pop}. Push adds a value to the stack, Pop removes one and sets the variable.
 
-For shared code, there are \R{varother}{20 registers avaibable} (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.
+For shared code, there are \R{varother}{20 registers available} (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.
 
 After calling the function, the variables contain the same value as before. Note the order when using multiple variables (last-in first-out):
 

@@ -189,7 +189,7 @@ void MMapFile::resize(int newsize)
       }
     }
 
-    m_hFileDesc = -1; // some error occured, bail
+    m_hFileDesc = -1; // some error occurred, bail
 #endif
 
 #ifdef _WIN32

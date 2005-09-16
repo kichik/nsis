@@ -40,17 +40,17 @@ How to use
   2. Defines
   ----------
 
-    This header file contains defines that automatizes the life of some who
-    fear of a lot of changes sometimes imposed in this header file or who have
+    This header file contains defines that automate the life of some who
+    fear a lot of changes sometimes imposed in this header file, or who have
     applications that put it to work at maximum capacity. Before you try
-    these, give a look on the information below:
+    these, take a look at the information below:
 
       - Every item on a define value is separated by a "|", and every subitem
         (items in an item) is separated by " ".
 
       - Use ${StrTok} $var "${DefineName}" "|" "$counter" "0" to get every
         item inside the define. For subitems, use ${StrTok} $var2 "$var" " "
-        "$counter2" "0" after getting the value for a desidered item.
+        "$counter2" "0" after getting the value for a desired item.
 
       - ${StrFunc_List} is automatically made by the header file. The rest
         is manually added to the header.
@@ -70,7 +70,7 @@ How to use
 
                    - Output - Needs a variable to output a function result.
 
-                   - Text   - Needs text or number to be inputed.
+                   - Text   - Needs text or number to be input.
 
                    - Mixed  - Needs text, number or option to be inputed.
                               Each subitem following the "Mixed" word is an
@@ -315,7 +315,7 @@ How to use
 
     Result Value -> ResultVar:
 
-      "String" with all occurences of "StringToReplace" replaced with
+      "String" with all occurrences of "StringToReplace" replaced with
       "ReplacementString".
 
     Example: 
@@ -452,8 +452,8 @@ How to use
       including the original execution. Default is "0" (1 code execution).
 
       CaseSensitive(0|1)
-      If "1" the search will be case-sensitive (diferenciates between cases).
-      If "0" it is case-insensitive (does not diferenciate between cases).
+      If "1" the search will be case-sensitive (differentiates between cases).
+      If "0" it is case-insensitive (does not differentiate between cases).
       Default is "0" (Case-Insensitive).
 
 
@@ -612,7 +612,7 @@ Version History
   functions commands like ${UnStrStr} to be supported by uninstall functions
   and sections.
 - Added case-sensitive comparation option for StrStrAdv.
-- StrCase now uses System.dll which makes case convertions effective with
+- StrCase now uses System.dll which makes case conversions effective with
 all latin letters (i.e. ê).
 - Added switch case and original case for StrCase.
 - StrClbSet and StrClbGet removed, added StrClb.

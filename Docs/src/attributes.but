@@ -32,7 +32,7 @@ Sets whether or not the install window automatically closes when completed. This
 
 \S2{abgfont} BGFont
 
-\c [font_face [height [wieght] [/ITALIC] [/UNDERLINE] [/STRIKE]]]
+\c [font_face [height [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]]]
 
 Specifies the font used to show the text on the background gradient. To set the color use \R{abggradient}{BGGradient}. If no parameters are specified, the default font will be used. The default font is bold and italic Times New Roman.
 
@@ -64,7 +64,7 @@ Accepts variables. If variables are used, they must be initialized on \R{oninit}
 
 \c dialog ui_file.exe
 
-Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to load replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
+Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{IDD_INSTFILES}, \e{IDD_UNINST} or \e{IDD_VERIFY}) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\\UIs under your NSIS directory.
 
 \b \e{IDD_LICENSE} must contain \e{IDC_EDIT1} (RICHEDIT control).
 
