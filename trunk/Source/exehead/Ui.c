@@ -945,7 +945,11 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         ULARGE_INTEGER a, b;
         if (GDFSE(s, &available64, &a, &b))
         {
+#ifndef _NSIS_NO_INT64_SHR
           available = (int)(available64.QuadPart >> 10);
+#else
+          available = (int)(Int64ShrlMod32(available64.QuadPart, 10));
+#endif
           available_set++;
         }
       }
