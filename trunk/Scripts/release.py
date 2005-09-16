@@ -93,7 +93,7 @@ def log(msg, log_dir = '.'):
 	open('release.log', 'a').write(msg + '\n')
 
 def exit(log_dir = '.'):
-	log('\nerror occured, exiting', log_dir)
+	log('\nerror occurred, exiting', log_dir)
 
 def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 	log('running %s' % command, log_dir)

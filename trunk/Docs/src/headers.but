@@ -898,7 +898,7 @@ Call functions:
 
 \S1{} RefreshShellIcons
 
-\b After changing file associations, you can call this function to refresh the shell immediatly.
+\b After changing file associations, you can call this function to refresh the shell immediately.
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -944,7 +944,7 @@ Call functions:
 
 \S1{} LineFind
 
-\b Find specified lines in text file and edit or view this lines in callback function.
+\b Find specified lines in text file, and edit or view these lines in callback function.
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -1938,7 +1938,7 @@ Call functions:
 
 \S1{} WordFind3X
 
-\b Find word, that contain string, between two delimiters.
+\b Find a word that contains a string, between two delimiters.
 
 \\<b\\>Syntax:\\</b\\>
 

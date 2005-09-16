@@ -4,7 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id: app.cpp,v 1.173.2.2 2002/11/03 21:11:11 VZ Exp $
+// RCS-ID:      $Id: app.cpp,v 1.1 2003/05/26 17:53:58 joostverburg Exp $
 // Copyright:   (c) Julian Smart and Markus Holzem
 // Licence:     wxWindows license
 /////////////////////////////////////////////////////////////////////////////
@@ -1001,7 +1001,7 @@ bool wxApp::ProcessMessage(WXMSG *wxmsg)
     HWND hwnd = msg->hwnd;
     wxWindow *wndThis = wxGetWindowFromHWND((WXHWND)hwnd);
 
-    // this may happen if the event occured in a standard modeless dialog (the
+    // this may happen if the event occurred in a standard modeless dialog (the
     // only example of which I know of is the find/replace dialog) - then call
     // IsDialogMessage() to make TAB navigation in it work
     if ( !wndThis )

@@ -11,7 +11,7 @@ NSIS Modern User Interface - VERSION HISTORY
 * Fixed state of Finish page Cancel button when both an installer and uninstaller page is included
 
 1.71 - October 14, 2004
-* The selected language is only stored in the registry when installation was succesful
+* The selected language is only stored in the registry when installation was successful
 
 1.70 - February 6, 2004
 * Improved documentation

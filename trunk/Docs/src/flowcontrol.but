@@ -13,7 +13,7 @@ Cancels the install, stops execution of script, and displays user_message in the
 
 \c function_name | :label_name | user_var(input)
 
-Calls the function named \e{function_name}, the label named \e{label_name}, or a variable that specifies an address. An address is returned by \R{getcurrentaddress}{GetCurrentAddress}, \R{getfunctionaddress}{GetFunctionAddress} or \R{getlabeladdress}{GetLabelAddress}. A call returns when it encouters a \R{return}{Return} instruction. Sections and functions are automatically ended with a \R{return}{Return} instruction. Uninstall functions cannot be called from installer functions and sections, and vice-versa.
+Calls the function named \e{function_name}, the label named \e{label_name}, or a variable that specifies an address. An address is returned by \R{getcurrentaddress}{GetCurrentAddress}, \R{getfunctionaddress}{GetFunctionAddress} or \R{getlabeladdress}{GetLabelAddress}. A call returns when it encounters a \R{return}{Return} instruction. Sections and functions are automatically ended with a \R{return}{Return} instruction. Uninstall functions cannot be called from installer functions and sections, and vice-versa.
 
 \c Function func
 \c   Call :label

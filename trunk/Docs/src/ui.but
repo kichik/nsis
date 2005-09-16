@@ -4,7 +4,7 @@
 
 Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus.
 
-Recent Windows versions restrict the setting of foreground windows. If the user is working with another application during installation, the user may be notifed using a different method.
+Recent Windows versions restrict the setting of foreground windows. If the user is working with another application during installation, the user may be notified using a different method.
 
 \S2{createfont} CreateFont
 
@@ -75,7 +75,7 @@ If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (
 
 \c on|off
 
-\e{LockWindow on} makes the main window not to redraw itself upon changes. When \e{LockWindow off} is used, all controls that weren't redrawn since \e{LockWindow on} will be redrawn. This makes the pages flickering look nicer because now it flickers a group of controls at the same time, instead of one control at a time. The individual control flickering is more noticiable on older computers.
+\e{LockWindow on} prevents the main window from redrawing itself upon changes. When \e{LockWindow off} is used, all controls that weren't redrawn since \e{LockWindow on} will be redrawn. This makes the pages flickering look nicer because now it flickers a group of controls at the same time, instead of one control at a time. The individual control flickering is more noticeable on old computers.
 
 \S2{sendmessage} SendMessage
 
@@ -147,7 +147,7 @@ Sets the installer to silent mode or normal mode. See \R{asilentinstall}{SilentI
 
 \c hwnd show_state
 
-Sets the visability of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \L{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
+Sets the visibility of a window. Possible show_states are the same as \W{http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp}{Windows ShowWindow} function. SW_* constants are defined in \L{../Include/WinMessages.nsh}{Include\\WinMessages.nsh}.
 
 \c !include WinMessages.nsh
 \c GetDlgItem $0 $HWNDPARENT 1

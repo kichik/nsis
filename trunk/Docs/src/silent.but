@@ -1,6 +1,6 @@
 \S0{silent} Silent Installers/Uninstallers
 
-Silent installers are installers which require no user intervention and have no user interface. The user doesn't see any dialog and isn't ask any questions. This is useful for network administrators who wish to install or uninstall something without user intervention so they can preform the operation quickly over multiple number of computers. It is also useful for other developers who wish to embed another installer in their own and collect all of the required information on their installer instead of showing two installers.
+Silent installers are installers which require no user intervention and have no user interface. The user doesn't see any dialog and isn't asked any questions. This is useful for network administrators who wish to install or uninstall something without user intervention so they can perform the operation quickly over any number of computers. It is also useful for other developers who wish to embed another installer in their own and collect all of the required information on their installer instead of showing two installers.
 
 NSIS installers and uninstallers can be both silent and not silent. When an installer or an uninstaller is silent, not all callback functions are called. \R{onguiinit}{.onGUIInit}, \R{onguiend}{.onGUIEnd}, their uninstaller equivalents and any callback related to a specific page or page type will not be called.
 

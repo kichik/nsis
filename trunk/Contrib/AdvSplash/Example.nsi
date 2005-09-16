@@ -16,7 +16,7 @@ Function .onInit
         advsplash::show 1000 600 400 -1 $PLUGINSDIR\splash
 
         Pop $0          ; $0 has '1' if the user closed the splash screen early,
-                        ; '0' if everything closed normal, and '-1' if some error occured.
+                        ; '0' if everything closed normally, and '-1' if some error occurred.
 
         MessageBox MB_OK "Transparency"
         File /oname=$PLUGINSDIR\splash.bmp "${NSISDIR}\Contrib\Graphics\Wizard\orange-uninstall.bmp"

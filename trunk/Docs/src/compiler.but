@@ -137,8 +137,8 @@ Time when the script started compiling according to the current locale.
 
 Date & time of the last modification to the script file according to the current locale.
 
-\S0{compenvvarread} Read enviroment variables
+\S0{compenvvarread} Read environment variables
 
 \S1{compenvvar} $%envVarName%
 
-$%envVarName% will be replaced on compile time by the enviroment variable envVarName.
+$%envVarName% will be replaced on compile time by the environment variable envVarName.
