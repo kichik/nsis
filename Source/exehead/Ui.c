@@ -782,20 +782,17 @@ static BOOL CALLBACK UninstProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
 
 
-static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb, BOOL roundDown)
+static void NSISCALL SetSizeText(int dlgItem, int prefix, unsigned kb)
 {
   char scalestr[32], byte[32];
-  unsigned sh=20;
-  int scale=LANG_GIGA;
+  unsigned sh = 20;
+  int scale = LANG_GIGA;
 
-  if (kb < 1024*1024) { sh=10; scale=LANG_MEGA; }
-  if (kb < 1024) { sh=0; scale=LANG_KILO; }
+  if (kb < 1024 * 1024) { sh = 10; scale = LANG_MEGA; }
+  if (kb < 1024) { sh = 0; scale = LANG_KILO; }
 
-  if (!roundDown)
-    // this will not overflow because currently, installers
-    // can't contain over 2GB of data and this is not used
-    // for the available size, but only required size
-    kb += (1 << sh) / 10; // round up number after decimal point
+  if (kb < (0xFFFFFFFF - ((1 << 20) / 20))) // check for overflow
+    kb += (1 << sh) / 20; // round numbers for better display (e.g. 1.59 => 1.6)
 
   wsprintf(
     GetNSISString(g_tmp, prefix) + mystrlen(g_tmp),
@@ -971,9 +968,9 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
       error = NSIS_INSTDIR_NOT_ENOUGH_SPACE;
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total,FALSE);
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,total);
       if (available_set)
-        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available,TRUE);
+        SetSizeText(IDC_SPACEAVAILABLE,LANG_SPACE_AVAIL,available);
       else
         SetUITextNT(IDC_SPACEAVAILABLE,"");
     }
@@ -1366,7 +1363,7 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     RefreshComponents(hwndTree1, hTreeItems);
 
     if (LANG_STR_TAB(LANG_SPACE_REQ)) {
-      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb),FALSE);
+      SetSizeText(IDC_SPACEREQUIRED,LANG_SPACE_REQ,sumsecsfield(size_kb));
     }
   }
 
