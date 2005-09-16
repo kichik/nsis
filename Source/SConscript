@@ -52,7 +52,6 @@ libs = Split("""
 	pthread
 	stdc++
 	iconv
-	libiconv
 """)
 
 Import('env')
