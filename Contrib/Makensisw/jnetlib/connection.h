@@ -15,7 +15,7 @@
 **      so you can tell how much has been send/received. You want to do this a lot, while:
 **   4. check get_state() to check the state of the connection. The states are:
 **        JNL_Connection::STATE_ERROR
-**          - an error has occured on the connection. the connection has closed,
+**          - an error has occurred on the connection. the connection has closed,
 **            and you can no longer write to the socket (there still might be 
 **            data in the receive buffer - use recv_bytes_available()). 
 **        JNL_Connection::STATE_NOCONNECTION

@@ -109,7 +109,7 @@ version 1.2 (10/28/2001)
 * Still 44k
 * Added the "FileRequest" and "DirRequest" control types (thanks Schultz)
 * Added "MinLen", "MaxLen", and "ValidateText" properties to fields
-* Added "Flags" as a way to specifiy additional parameters for controls
+* Added "Flags" as a way to specify additional parameters for controls
 * Few more changes to the documentation
 * Cleaned the code in a few places...still trying to make it smaller
 

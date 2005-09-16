@@ -5,7 +5,7 @@ Copyright (C) 2001-2002 Yaroslav Faybishenko & Justin Frankel
 
 This plugin can be used from NSIS to download files via http.
 
-To connect to the internet, use the Dialer pluin.
+To connect to the internet, use the Dialer plugin.
 
 USAGE
 -----
@@ -22,7 +22,7 @@ The return value is pushed to the stack:
   "success" if success
   otherwise, an error string describing the error
 
-If you don't want the progess window to appear use NSISdl::download_quiet.
+If you don't want the progress window to appear, use NSISdl::download_quiet.
 
 Example of usage:
 

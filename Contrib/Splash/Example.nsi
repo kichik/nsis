@@ -14,7 +14,7 @@ Function .onInit
 	splash::show 1000 $PLUGINSDIR\splash
 
 	Pop $0 ; $0 has '1' if the user closed the splash screen early,
-			; '0' if everything closed normal, and '-1' if some error occured.
+			; '0' if everything closed normally, and '-1' if some error occurred.
 FunctionEnd
 
 Section

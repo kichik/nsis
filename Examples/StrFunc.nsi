@@ -224,7 +224,7 @@ strreperror:
   StrCmp $0 "example" 0 strsorterror
   ${StrSort} $0 "This is just an example" " " "le" " " "1" "0" "0"
   StrCmp $0 " examp" 0 strsorterror
-  ${StrSort} $0 "an error has occured" " " "e" " " "0" "1" "0"
+  ${StrSort} $0 "an error has occurred" " " "e" " " "0" "1" "0"
   StrCmp $0 "error" 0 strsorterror
   ${StrSort} $0 "" " " "something" " " "0" "1" "0"
   StrCmp $0 "" 0 strsorterror
@@ -240,7 +240,7 @@ strreperror:
   StrCmp $0 "This is jst " 0 strsorterror
   ${StrSort} $0 "This is just an example" " " "just" " " "1" "0" "1"
   StrCmp $0 "  " 0 strsorterror
-  ${StrSort} $0 "an error has occured" " " "e" "h" "1" "0" "0"
+  ${StrSort} $0 "an error has occurred" " " "e" "h" "1" "0" "0"
   StrCmp $0 " rror " 0 strsorterror
   ${StrSort} $0 "" " " "something" " " "1" "0" "1"
   StrCmp $0 "" 0 strsorterror
@@ -503,7 +503,7 @@ strreperror:
   StrCmp $0 "example" 0 strsorterror
   ${UnStrSort} $0 "This is just an example" " " "le" " " "1" "0" "0"
   StrCmp $0 " examp" 0 strsorterror
-  ${UnStrSort} $0 "an error has occured" " " "e" " " "0" "1" "0"
+  ${UnStrSort} $0 "an error has occurred" " " "e" " " "0" "1" "0"
   StrCmp $0 "error" 0 strsorterror
   ${UnStrSort} $0 "" " " "something" " " "0" "1" "0"
   StrCmp $0 "" 0 strsorterror
@@ -519,7 +519,7 @@ strreperror:
   StrCmp $0 "This is jst " 0 strsorterror
   ${UnStrSort} $0 "This is just an example" " " "just" " " "1" "0" "1"
   StrCmp $0 "  " 0 strsorterror
-  ${UnStrSort} $0 "an error has occured" " " "e" "h" "1" "0" "0"
+  ${UnStrSort} $0 "an error has occurred" " " "e" "h" "1" "0" "0"
   StrCmp $0 " rror " 0 strsorterror
   ${UnStrSort} $0 "" " " "something" " " "1" "0" "1"
   StrCmp $0 "" 0 strsorterror
