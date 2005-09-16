@@ -48,9 +48,34 @@ libs = Split("""
 
 Import('env compression solid_compression')
 
+### Compiler specific configuration
+
+conf = env.Configure()
+
+int64test = """
+#include <windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, int nCmdShow) {
+	ULARGE_INTEGER *i = 0;
+	return (int)(i->QuadPart >> 10);
+}
+"""
+
+if not conf.TryLink(int64test, '.c'):
+	# MSVC 6 SP6 doesn't like direct shifting of 64-bit integers.
+	# It generates a call to ___aullshr which requires libc, which
+	# we don't like. However, it does agree to work properly with
+	# a call to Int64ShrlMod32.
+	env.Append(CPPDEFINES = ['_NSIS_NO_INT64_SHR'])
+
+conf.Finish()
+
+### Defines
+
 env.Append(CPPDEFINES = ['EXEHEAD'])
 env.Append(CPPDEFINES = ['WIN32_LEAN_AND_MEAN'])
 env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
+
+### Compression specific configuration
 
 if compression == 'bzip2':
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_USE_BZIP2'])
@@ -67,6 +92,8 @@ elif compression == 'zlib':
 if solid_compression:
 	env.Append(CPPDEFINES = ['NSIS_COMPRESS_WHOLE'])
 
+### Build with no sub-build-directories
+
 objs = []
 
 def basename(file):
@@ -75,10 +102,16 @@ def basename(file):
 for file in files:
 	objs.append(env.Object(target = basename(file), source = file))
 
+### Resources
+
 res = env.RES(resources)
 env.Depends(res, resource_files)
 objs = objs + res
 
+### Build stub
+
 stub = env.Program(target = 'stub_' + compression, source = objs, LIBS = libs)
+
+### Return stub
 
 Return('stub')
