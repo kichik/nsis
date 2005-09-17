@@ -67,6 +67,7 @@ conf.Finish()
 
 ##### Configuration defines
 
+env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 
 ##### Set PCH
