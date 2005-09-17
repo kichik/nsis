@@ -1,6 +1,5 @@
 ## TODO
 #
-#   * VPatch GenPat & distribution
 #   * Write SConscript for NSIS Menu
 #    - Use inheritance instead of current wxWidgets patches
 #    - Compile for POSIX too? wxWidgets is cross platform after all...
@@ -41,13 +40,15 @@ utils = [
 	'Makensisw',
 	'NSIS Menu',
 	'UIs',
+	'VPatch/Source/GenPat',
 	'zip2exe'
 ]
 
 misc = [
 	'Graphics',
 	'Language files',
-	'Modern UI'
+	'Modern UI',
+	'VPatch'
 ]
 
 defenv = Environment()
