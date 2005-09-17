@@ -41,6 +41,6 @@ BuildPlugin(
 	examples,
 	docs,
 	entry = '_DllMainCRTStartup',
-	nodeflib = 0,
+	nodeflib = False,
 	defines = ['SYSTEM_EXPORTS']
 )

@@ -24,4 +24,4 @@ docs = Split("""
 
 Import('BuildPlugin env')
 
-BuildPlugin(target, files, libs, examples, docs, nodeflib = 0, flags = ['$CPP_FLAG'])
+BuildPlugin(target, files, libs, examples, docs, nodeflib = False, flags = ['$CPP_FLAG'])
