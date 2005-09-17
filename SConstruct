@@ -185,6 +185,7 @@ stub_env = envs[0]
 makensis_env = envs[1]
 plugin_env = envs[2]
 util_env = envs[3]
+cp_util_env = envs[4]
 
 ######################################################################
 #######  Aliases                                                   ###
@@ -365,8 +366,11 @@ for plugin in plugins:
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
               nodeflib = False, install = None, install_as = None,
-              examples = None, docs = None):
-	env = util_env.Copy()
+              examples = None, docs = None, cross_platform = False):
+	if not cross_platform:
+		env = util_env.Copy()
+	else:
+		env = cp_util_env.Copy()
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
