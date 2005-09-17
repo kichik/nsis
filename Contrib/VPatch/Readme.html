@@ -98,7 +98,7 @@ a:hover
     <tr> 
       <td> 
         
-      <h1>VPatch 3.0</h1>
+      <h1>VPatch 3.1</h1>
         <div> 
           <h2>Introduction</h2>
           <div>
@@ -222,14 +222,23 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <h3>Test framework (Python)</h3>
           <div>
             <p>Run the <i>VPatch_tests.py</i> script (if you have <a href="http://www.python.org">Python</a> 
-              installed) to perform basic functionality tests on VPatch.</p>
+              installed) to perform basic functionality tests on VPatch. The <i>testExtended</i> 
+              test is known to fail if a set of big test files is not installed, 
+              you can safely ignore this.</p>
           </div>
           </div>
           <h2>Version history</h2>
           <div>
           <ul>
-            <li>3.0
-<ul>
+            <li>3.1 
+              <ul>
+                <li>GenPat now compiles on POSIX platforms (MinGW/GCC), Visual 
+                  C++ 6 and Borland C++.</li>
+                <li>More test cases to verify functionality of GenPat.</li>
+              </ul>
+            </li>
+            <li>3.0 
+              <ul>
                 <li><b>Final</b>: Updates to the GUI, installer</li>
                 <li><b>RC8</b>: GenPat will now flag replacement of a patch (e.g. 
                   the source file has the same contents as a previous patch inside 
