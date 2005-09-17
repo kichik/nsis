@@ -31,6 +31,12 @@
   #include <unistd.h>
 #endif
 
+#ifdef __WIN32__
+  #define OPT_CHAR '/'
+#else
+  #define OPT_CHAR '-'
+#endif
+
 #include "GlobalTypes.h"
 #include "POSIXUtil.h"
 #include "Checksums.h"
@@ -61,7 +67,7 @@ int main( int argc, char * argv[] ) {
     for(int i = 1; i < argc; i++) {
       string s(argv[i]);
       if(s.size() > 0) {
-        if(s[0] == '/') {
+        if(s[0] == OPT_CHAR) {
           if(s.size() > 1) {
             if((s[1] == 'v') || (s[1] == 'V')) {
               beVerbose = true;
@@ -117,13 +123,13 @@ int main( int argc, char * argv[] ) {
     cout << "  GENPAT (sourcefile) (targetfile) (patchfile)\n\n";
 
     cout << "Command line option (optional):\n";
-    cout << "/R        Replace a patch with same contents as source silently if it\n          already exists.\n";
-    cout << "/B=64     Set blocksize (default=64), multiple of 2 is required.\n";
-    cout << "/V        More verbose information during patch creation.\n";
-    cout << "/O        Deactivate match limit of the /A switch (sometimes smaller patches).\n";
-    cout << "/A=500    Maximum number of block matches per block (improves performance).\n";
-    cout << "          Default is 500, larger is slower. Use /V to see the cut-off aborts.\n\n";
-    cout << "Note: filenames should never start with / character!\n\n";
+    cout << OPT_CHAR << "R        Replace a patch with same contents as source silently if it\n          already exists.\n";
+    cout << OPT_CHAR << "B=64     Set blocksize (default=64), multiple of 2 is required.\n";
+    cout << OPT_CHAR << "V        More verbose information during patch creation.\n";
+    cout << OPT_CHAR << "O        Deactivate match limit of the " << OPT_CHAR << "A switch (sometimes smaller patches).\n";
+    cout << OPT_CHAR << "A=500    Maximum number of block matches per block (improves performance).\n";
+    cout << "          Default is 500, larger is slower. Use " << OPT_CHAR << "V to see the cut-off aborts.\n\n";
+    cout << "Note: filenames should never start with " << OPT_CHAR << " character!\n\n";
     cout << "Possible exit codes:\n";
     cout << "  0  Success\n";
     cout << "  1  Arguments missing\n";
