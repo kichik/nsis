@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Buttons, StdCtrls, Menus, PatchClasses, VirtualTrees, VDSP_CRC,
-  ToolWin, ComCtrls, ImgList, ExtCtrls, PatchGenerator, Math;
+  ToolWin, ComCtrls, ImgList, ExtCtrls, Math, OSUtil;
 
 const
   UntitledFile='Untitled.vpj';
@@ -50,16 +50,7 @@ type
     toolCreateEXE: TToolButton;
     barCool: TCoolBar;
     Label5: TLabel;
-    Label6: TLabel;
-    txtMinimumBlockSize: TEdit;
-    UDMinimumBlockSize: TUpDown;
-    UDBlockDivider: TUpDown;
-    txtBlockDivider: TEdit;
     Label7: TLabel;
-    UDStepSize: TUpDown;
-    txtStepSize: TEdit;
-    Label8: TLabel;
-    chkDebug: TCheckBox;
     tbBlockSize: TTrackBar;
     txtStartBlockSize: TLabel;
     mnuClearcachedpatches: TMenuItem;
@@ -70,6 +61,12 @@ type
     toolCreatePAT: TToolButton;
     dlgSaveDLL: TSaveDialog;
     dlgSavePAT: TSaveDialog;
+    chkOutputWait: TCheckBox;
+    mnuWebsite: TMenuItem;
+    Readme1: TMenuItem;
+    N2: TMenuItem;
+    ReadmeincludedwithNSIS1: TMenuItem;
+    chkOptimal: TCheckBox;
     procedure butAddClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -95,11 +92,15 @@ type
     procedure txtMinimumBlockSizeChange(Sender: TObject);
     procedure txtBlockDividerChange(Sender: TObject);
     procedure txtStepSizeChange(Sender: TObject);
-    procedure chkDebugClick(Sender: TObject);
     procedure tbBlockSizeChange(Sender: TObject);
     procedure mnuClearcachedpatchesClick(Sender: TObject);
     procedure mnuCreateDLLClick(Sender: TObject);
     procedure mnuCreatePATClick(Sender: TObject);
+    procedure chkOutputWaitClick(Sender: TObject);
+    procedure mnuWebsiteClick(Sender: TObject);
+    procedure Readme1Click(Sender: TObject);
+    procedure ReadmeincludedwithNSIS1Click(Sender: TObject);
+    procedure chkOptimalClick(Sender: TObject);
   private
     { Private declarations }
 //    MS: TModeSelector;
@@ -108,7 +109,6 @@ type
     procedure OpenAFile(FileName: String; AskSave: Boolean=True; PromptNew: Boolean=False);
     function CollectConfig: String;
     procedure SetConfigTextBoxes(Config: String);
-    procedure PrintDebug(S: String);
   public
     { Public declarations }
   end;
@@ -119,7 +119,7 @@ var
 
 implementation
 
-uses AboutForm;
+uses AboutForm, DLLWrapper;
 
 {$R *.dfm}
 
@@ -292,15 +292,15 @@ begin
   PP:=TPatchProject.Create;
   ReloadNewTree;
   if FileName<>'' then begin
-    fs:=nil;
-    try
       fs:=TFileStream.Create(FileName,fmOpenRead);
-      PP.LoadFromStream(fs);
-    finally
+      try
+        PP.LoadFromStream(fs);
+      except
+        on E: Exception do ShowMessage(E.Message);
+      end;
       dskName:=FileName;
       ReloadNewTree;
       fs.Free;
-    end;
   end else begin
     dskName:=UntitledFile;
     if PromptNew then butAddClick(Self);
@@ -318,6 +318,8 @@ procedure TfrmMain.mnuOpenClick(Sender: TObject);
 begin
   if dlgOpen.Execute then begin
     OpenAFile(dlgOpen.FileName,True);
+    if lstNew.GetFirst <> nil then
+      lstNew.Selected[lstNew.GetFirst]:=True;
   end;
 end;
 
@@ -460,7 +462,7 @@ end;
 
 function TfrmMain.CollectConfig: String;
 begin
-  Result:=txtStartBlockSize.Caption+','+txtMinimumBlockSize.Text+','+txtBlockDivider.Text+','+txtStepSize.Text;
+  Result:=txtStartBlockSize.Caption;
 end;
 
 procedure TfrmMain.txtMinimumBlockSizeChange(Sender: TObject);
@@ -494,33 +496,6 @@ begin
       Inc(i);
     end;
     tbBlockSize.Position := i;
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    txtMinimumBlockSize.Text:=Copy(Config,1,a-1);
-    Config:=Copy(Config,a+1,Length(Config));
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    txtBlockDivider.Text:=Copy(Config,1,a-1);
-    Config:=Copy(Config,a+1,Length(Config));
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    txtStepSize.Text:=Copy(Config,1,a-1);
-end;
-
-procedure TfrmMain.chkDebugClick(Sender: TObject);
-begin
-  if chkDebug.State = cbUnchecked then
-    PatchGenerator.DebugEvent:=nil
-  else
-    PatchGenerator.DebugEvent:=PrintDebug;
-end;
-
-procedure TfrmMain.PrintDebug(S: String);
-begin
-  WriteLn(S);
 end;
 
 procedure TfrmMain.tbBlockSizeChange(Sender: TObject);
@@ -532,6 +507,31 @@ end;
 procedure TfrmMain.mnuClearcachedpatchesClick(Sender: TObject);
 begin
   PP.ResetCache;
+end;
+
+procedure TfrmMain.chkOutputWaitClick(Sender: TObject);
+begin
+  WaitAfterGenerate:=chkOutputWait.Checked;
+end;
+
+procedure TfrmMain.mnuWebsiteClick(Sender: TObject);
+begin
+  OpenLink('http://www.tibed.net/vpatch');
+end;
+
+procedure TfrmMain.Readme1Click(Sender: TObject);
+begin
+  OpenLink('VPatch.htm');
+end;
+
+procedure TfrmMain.ReadmeincludedwithNSIS1Click(Sender: TObject);
+begin
+  OpenLink('Readme.html');
+end;
+
+procedure TfrmMain.chkOptimalClick(Sender: TObject);
+begin
+  OptimalPatches:=chkOptimal.Checked;
 end;
 
 initialization

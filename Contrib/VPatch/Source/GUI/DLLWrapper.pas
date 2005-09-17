@@ -6,48 +6,46 @@ uses Classes, SysUtils;
 
   function DoGenerate(const Source, Target: String; Stream: TStream; Config: String): Integer; forward;
 
+var
+  WaitAfterGenerate: Boolean = False;
+  OptimalPatches: Boolean = False;
+
 implementation
 
-uses PatchGenerator;
+uses
+  OSUtil, Forms;
 
 function DoGenerate(const Source, Target: String; Stream: TStream; Config: String): Integer;
 var
-  PG: TPatchGenerator;
-  a: Integer;
+  F: TextFile;
+  Temp, BatchFile: String;
+  fs: TFileStream;
 begin
-  WriteLn('Generating '+ExtractFileName(Source)+' to '+ExtractFileName(Target)+'...');
-
-  PG:=TPatchGenerator.Create;
-  PG.StartBlockSize:=512;
-  PG.MinimumBlockSize:=512;
-  PG.BlockDivider:=2;
-  PG.StepSize:=256;
-  try
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    PG.StartBlockSize:=StrToInt(Copy(Config,1,a-1));
-    Config:=Copy(Config,a+1,Length(Config));
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    PG.MinimumBlockSize:=StrToInt(Copy(Config,1,a-1));
-    Config:=Copy(Config,a+1,Length(Config));
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    PG.BlockDivider:=StrToInt(Copy(Config,1,a-1));
-    Config:=Copy(Config,a+1,Length(Config));
-
-    a:=Pos(',',Config);
-    if(a=0) then a:=Length(Config)+1;
-    PG.StepSize:=StrToInt(Copy(Config,1,a-1));
-  finally
+  BatchFile:=ExcludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + PathDelim +'~generate_patch.bat';
+  AssignFile(F,BatchFile);
+  Rewrite(F);
+  Temp:=GetTempFile;
+  WriteLn(F,'@cls');
+  WriteLn(F,'@echo Generating '+ExtractFileName(Source)+' to '+ExtractFileName(Target)+'...');
+  Write(F,'genpat.exe "', Source, '" "', Target, '" "', Temp, '" /b='+Config);
+  if OptimalPatches then begin
+    Write(F,' /o');
   end;
+  WriteLn(F,'');
+  if WaitAfterGenerate then begin
+    WriteLn(F,'@echo.');
+    WriteLn(F,'@pause');
+  end;
+  CloseFile(F);
 
-  Result:=PG.CreatePatch(Source,Target);
-  PG.WriteToStream(Stream);
-  PG.Free;
-  WriteLn(ExtractFileName(Source)+' -> '+ExtractFileName(Target)+': '+IntToStr(Result)+' bytes');
+  ExecWaitBatchFile(ExtractFilePath(BatchFile),BatchFile);
+
+  fs:=TFileStream.Create(Temp,fmOpenRead);
+  Stream.CopyFrom(fs,fs.Size);
+  Result:=fs.Size;
+  fs.Free;
+  DeleteFile(Temp);
+  DeleteFile(BatchFile);
 end;
 
 end.

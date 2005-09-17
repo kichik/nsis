@@ -2,7 +2,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>VPatch 2</title>
+<title>VPatch 3</title>
 <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 <style type="text/css">
 /*<![CDATA[*/
@@ -97,12 +97,13 @@ a:hover
 <table width="750" class="maintable" cellspacing="0" cellpadding="0" align="center">
     <tr> 
       <td> 
-        <h1>VPatch 2</h1>
+        
+      <h1>VPatch 3.0</h1>
         <div> 
           <h2>Introduction</h2>
           <div>
           <p>VPatch allows to create a patch file to update previous versions 
-            of your software. The GenPat utility generates the patch file. The 
+            of your software. The GenPat utitily generates the patch file. The 
             plug-in can use the patch to update a file. Using a patch, you can 
             reduce the download size of your updates, because only the differences 
             between the files are included in the patch file.</p>
@@ -116,35 +117,41 @@ a:hover
             system) and DATA_20.DTA (version 2.0 of this data file). Now call 
             the command line tool GenPat.exe:</p>
           <pre>
-GENPAT data.dta data_20.dta data.pat
+GENPAT oldfile.txt newfile.txt patch.pat
 </pre>
           <p>Now, the patch will be generated, this will take some time.</p>
-          <p>Using the /B=(BlockSize) parameter of the GenPat utility (put it 
-            after the filenames), you can use a different block size. A smaller 
-            block size may result in a smaller patch, but the generation will 
-            take more time (the default blocksize is 64).</p>
+            <p>Using the /B=(BlockSize) parameter of the GenPat utility (put it 
+              after the filenames), you can use a different block size. A smaller 
+              block size may result in a smaller patch, but the generation will 
+              take more time (the default blocksize is 64).</p>
+            <p>If you have trouble using this command-line utility, you can download 
+              a GUI (graphical user interface) for VPatch from its own website: 
+              <a href="http://www.tibed.net/vpatch">http://www.tibed.net/vpatch</a>.</p>
           </div>
           <h3>Update the file during installation</h3>
           <div>
           <p>Use the VPatch plug-in to update a file using a patch file:</p>
           <pre>
-vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
+vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
 </pre>
           <p>The result of the patch operating will be added to the stack and 
             can be one of the following texts:</p>
           <ul>
             <li>OK</li>
             <li>OK, new version already installed</li>
-            <li>An error occurred while patching</li>
+            <li>An error occured while patching</li>
             <li>Patch data is invalid or corrupt</li>
             <li>No suitable patches were found</li>
           </ul>
-          <p>Check <a href="../../Examples/VPatch/example.nsi">example.nsi</a> for an example.</p>
+            <p>Check <a href="example.nsi">example.nsi</a> for an example. You 
+              should check whether the stack string starts with &quot;OK&quot; 
+              because then the patch has succeeded and you can rename &quot;temporary_newfile.txt&quot; 
+              to &quot;oldfile.txt&quot; to replace the original, if you want.</p>
           </div>
           <h3>Multiple patches in one file</h3>
           <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
-            a patch for the same original file in the patch file, the patch will 
+            a patch for the same orginal file in the patch file, the patch will 
             be replaced. For example, if you want to be able to upgrade version 
             1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
             one file.</p>
@@ -154,76 +161,55 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
             times with the same patch file. It will automatically select the right 
             patch (based on the file CRC).</p>
           </div>
-          <h3>GenPat exit codes</h3>
+          <h3>Patch generator (GenPat) exit codes</h3>
           <div>
-          <p>In version 2.1 support was added for exit codes (known as error levels 
-            in the DOS period) to GenPat. GenPat will return an exit code based 
-            on success of the patch generation. Here is a list of the possible 
-            exit codes:</p>
-          <table width="547" border="0" cellspacing="0" cellpadding="0">
-            <tr> 
-              <td><b>Exit code</b></td>
-              <td><b>Description</b></td>
-            </tr>
-            <tr> 
-              <td>0</td>
-              <td>Success</td>
-            </tr>
-            <tr> 
-              <td>1</td>
-              <td>Arguments missing</td>
-            </tr>
-            <tr> 
-              <td>2</td>
-              <td>Source file not found</td>
-            </tr>
-            <tr> 
-              <td>3</td>
-              <td>Target file not found</td>
-            </tr>
-            <tr> 
-              <td>4</td>
-              <td>Unknown error while reading existing patch file</td>
-            </tr>
-            <tr> 
-              <td>5</td>
-              <td>Unknown error while generating patch</td>
-            </tr>
-            <tr> 
-              <td>6</td>
-              <td>Unknown error while writing patch file to disk</td>
-            </tr>
-            <tr> 
-              <td>10</td>
-              <td>CRC of source and target file are equal</td>
-            </tr>
-            <tr> 
-              <td>11</td>
-              <td>Not enough memory for source file</td>
-            </tr>
-			<tr> 
-              <td>12</td>
-              <td>Not enough memory for target file</td>
-            </tr>
-          </table>
-          <p>These exit codes can be useful when you generate patch files through 
-            a script.</p>
+            <p>In version 3 the following exit codes (known as error levels in 
+              the DOS period) can be returned by GenPat. GenPat will return an 
+              exit code based on succes of the patch generation. Here is a list 
+              of the possible exit codes:</p>
+            <table width="547" border="0" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td><b>Exit code</b></td>
+                <td><b>Description</b></td>
+              </tr>
+              <tr> 
+                <td>0</td>
+                <td>Success</td>
+              </tr>
+              <tr> 
+                <td>1</td>
+                <td>Arguments missing</td>
+              </tr>
+              <tr> 
+                <td>2</td>
+                <td>Other error</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Source file already has a patch in specified patch file (ERROR), 
+                  use /R switch to override</td>
+              </tr>
+            </table>
+            <p>These exit codes can be useful when you generate patch files through 
+              a NSIS script.</p>
         </div>
         </div>
         </div>
         <div>
           <h2>Source code</h2>
           <div>
+		  <p>Source code is available in the original package and in the CVS repository of NSIS.</p>
           <h3>NSIS plug-in (C++)</h3>
           <div>
           <p>The source of the NSIS plug-in that applies patches can be found 
             in the Source\Plugin folder.</p>
           </div>
-          <h3>Patch Generator (Delphi)</h3>
+          <h3>Patch Generator (C++)</h3>
           <div>
-          <p>The most interesting part of VPatch, the actual patch generation 
-            algorithm, can be found in Source\GenPat\PatchGenerator.pas. The header 
-            of that file contains a brief explanation of the algorithm as well.</p>
+            <p>The most interesting part of VPatch, the actual patch generation 
+              algoritm, can be found in Source\GenPat\PatchGenerator.cpp. The 
+              header of that file contains a brief explanation of the algorithm 
+              as well.</p>
           </div>
           <h3>User interface (Delphi)</h3>
           <div>
@@ -233,10 +219,54 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
             edition), you will also need to install the <a href=
 "http://www.delphi-gems.com">VirtualTreeView</a> component by Mike Lischke.</p>
           </div>
+          <h3>Test framework (Python)</h3>
+          <div>
+            <p>Run the <i>VPatch_tests.py</i> script (if you have <a href="http://www.python.org">Python</a> 
+              installed) to perform basic functionality tests on VPatch.</p>
+          </div>
           </div>
           <h2>Version history</h2>
           <div>
           <ul>
+            <li>3.0
+<ul>
+                <li><b>Final</b>: Updates to the GUI, installer</li>
+                <li><b>RC8</b>: GenPat will now flag replacement of a patch (e.g. 
+                  the source file has the same contents as a previous patch inside 
+                  a patch file) as an error. You can specifically allow it using 
+                  the /R switch. Added license to source files.</li>
+                <li><b>RC7</b>: Fixed critical bug in GenPat with multiple patches 
+                  in a single file. Fixed serious bug in stand-alone EXE runtime: 
+                  process kept on running forever. Included case testing through 
+                  a Python script to test common usage (and prevent bugs like 
+                  the one in GenPat in the future).</li>
+                <li><b>RC6</b>: Upgraded to non-beta compiler. Added /A switch 
+                  to change block match limit and /O to deactivate the limit. 
+                  Updated GUI to support the /O switch.</li>
+                <li><b>RC4a to RC5a</b>: input block size is now checked for power 
+                  of 2 and fixed if incorrect. When patch file does not yet exist, 
+                  no longer forgets to create the header. No longer tries to allocate 
+                  memory when there are no chunks. Fixed memory leaks.</li>
+                <li>Target file date is now preserved inside a patch and restored 
+                  on the user system.</li>
+                <li>MD5 checksums are now used instead of CRC32 checksums, unless 
+                  existing patches in a file already are in CRC32 mode.</li>
+                <li>The patch generator, GenPat, has been completely rewritten 
+                  in C++. It no longer needs to keep the entire files in memory, 
+                  instead memory usage is a certain percentage of the source file 
+                  size. The percentage is based on the block size, larger block 
+                  sizes will reduce memory usage.</li>
+                <li>All runtimes now share a common codebase, perform proper error 
+                  checking and don't leave behind files if the input file was 
+                  already up to date.</li>
+                <li>Bug Fix: The patch generator algorithm no longer reduces to 
+                  a quadratic runtime if there are many blocks with the same content 
+                  in the files to patch.</li>
+                <li>Bug Fix: The documentation of the command-line utilities was 
+                  incorrect and no warnings would be given by the runtimes, causing 
+                  the patch not to work (this does not apply to NSIS patches).</li>
+              </ul>
+            </li>
             <li>2.1 
               <ul>
                 <li>Added argument checking and error handling to GenPat. Now 
@@ -269,13 +299,13 @@ vpatch::vpatchfile "pathfile.pat" "source.file" "new.file"
           <h2>Credits</h2>
           <div>
           <p>Written by Koen van de Sande<br />
-            C plug-in by Edgewize<br />
-            New documentation and example by Joost Verburg</p>
+            C plug-in initially by Edgewize, updated by Koen van de Sande<br />
+            New documentation and example by Joost Verburg and Koen van de Sande</p>
           </div>
           <h2>License</h2>
           <div>
           <pre>
-Copyright (C) 2001-2003 Koen van de Sande
+Copyright (C) 2001-2005 Koen van de Sande / Van de Sande Productions
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
