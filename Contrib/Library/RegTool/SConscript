@@ -14,4 +14,4 @@ libs = Split("""
 
 Import('BuildUtil')
 
-BuildUtil(target, files, libs, entry = 'WinMain', nodeflib = 1, install_as = 'Bin/RegTool.bin')
+BuildUtil(target, files, libs, entry = 'WinMain', nodeflib = True, install_as = 'Bin/RegTool.bin')
