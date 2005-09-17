@@ -494,11 +494,11 @@ void CDialogTemplate::ConvertToRTL() {
     if (addExStyle)
       m_vItems[i]->dwExtStyle |= WS_EX_RIGHT;
 
-    m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING;
+    m_vItems[i]->dwExtStyle |= WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 
     m_vItems[i]->sX = m_sWidth - m_vItems[i]->sWidth - m_vItems[i]->sX;
   }
-  m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING;
+  m_dwExtStyle |= WS_EX_RIGHT | WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR;
 }
 
 // Saves the dialog in the form of DLGTEMPLATE[EX]
