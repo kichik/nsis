@@ -28,6 +28,10 @@ plugin_env = defenv.Copy(no_import_lib = 1)
 
 util_env = defenv.Copy()
 
+### cross-platform util environment
+
+cp_util_env = util_env.Copy()
+
 # return
 
-Return('stub_env makensis_env plugin_env util_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env')

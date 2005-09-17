@@ -70,19 +70,23 @@ plugin_env.Append(LINKFLAGS = '-mwindows')        # build windows executables
 plugin_env.Append(LINKFLAGS = '$ALIGN_FLAG')      # 512 bytes align
 plugin_env.Append(LINKFLAGS = '$MAP_FLAG')        # generate map file
 
+### cross-platform util environment
+
+cp_util_env = defenv.Copy()
+
+cp_util_env.Append(CCFLAGS = '-O2')                  # optimize
+cp_util_env.Append(CCFLAGS = '-Wall')                # all warnings
+
+cp_util_env.Append(LINKFLAGS = '-s')                 # strip
+cp_util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
+cp_util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
+
 ### util environment
 
-util_env = defenv.Copy()
+util_env = cp_util_env.Copy()
 cross_env(util_env)
 
-util_env.Append(CCFLAGS = '-O2')                  # optimize
-util_env.Append(CCFLAGS = '-Wall')                # all warnings
-
-util_env.Append(LINKFLAGS = '-s')                 # strip
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
-util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
-util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
-
 
 ### weird GCC requirements
 
@@ -164,4 +168,4 @@ conf.Finish()
 
 ### return
 
-Return('stub_env makensis_env plugin_env util_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env')
