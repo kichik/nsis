@@ -103,7 +103,7 @@ a:hover
           <h2>Introduction</h2>
           <div>
           <p>VPatch allows to create a patch file to update previous versions 
-            of your software. The GenPat utitily generates the patch file. The 
+            of your software. The GenPat utility generates the patch file. The 
             plug-in can use the patch to update a file. Using a patch, you can 
             reduce the download size of your updates, because only the differences 
             between the files are included in the patch file.</p>
@@ -139,7 +139,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <ul>
             <li>OK</li>
             <li>OK, new version already installed</li>
-            <li>An error occured while patching</li>
+            <li>An error occurred while patching</li>
             <li>Patch data is invalid or corrupt</li>
             <li>No suitable patches were found</li>
           </ul>
@@ -151,7 +151,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <h3>Multiple patches in one file</h3>
           <div>
           <p>GenPat appends a patch to the file you specified. If there is already 
-            a patch for the same orginal file in the patch file, the patch will 
+            a patch for the same original file in the patch file, the patch will 
             be replaced. For example, if you want to be able to upgrade version 
             1 and 2 to version 3, you can put a 1 &gt; 3 and 2 &gt; 3 patch in 
             one file.</p>
@@ -165,7 +165,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <div>
             <p>In version 3 the following exit codes (known as error levels in 
               the DOS period) can be returned by GenPat. GenPat will return an 
-              exit code based on succes of the patch generation. Here is a list 
+              exit code based on success of the patch generation. Here is a list 
               of the possible exit codes:</p>
             <table width="547" border="0" cellspacing="0" cellpadding="0">
               <tr> 
@@ -207,7 +207,7 @@ vpatch::vpatchfile "patch.pat" "oldfile.txt" "temporary_newfile.txt"
           <h3>Patch Generator (C++)</h3>
           <div>
             <p>The most interesting part of VPatch, the actual patch generation 
-              algoritm, can be found in Source\GenPat\PatchGenerator.cpp. The 
+              algorithm, can be found in Source\GenPat\PatchGenerator.cpp. The 
               header of that file contains a brief explanation of the algorithm 
               as well.</p>
           </div>
