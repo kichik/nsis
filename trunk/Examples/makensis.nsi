@@ -633,6 +633,8 @@ Section "VPatch" SecPluginsVPatch
   File ..\Docs\VPatch\Readme.html
   SetOutPath $INSTDIR\Bin
   File ..\Bin\GenPat.exe
+  SetOutPath $INSTDIR\Include
+  File ..\Include\VPatchLib.nsh
 SectionEnd
 
 SectionGroupEnd

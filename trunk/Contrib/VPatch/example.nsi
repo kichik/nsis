@@ -19,8 +19,27 @@ DirText "Choose a folder in which to install the VPatch Test!"
 ShowInstDetails show
 
 ;--------------------------------
+;  The normal way to use VPatch
+;--------------------------------
+!include "VPatchLib.nsh"
 
-Section ""
+Section "Update file"
+  ; Set output path to the installation directory
+  SetOutPath $INSTDIR
+
+  ; Extract the old file under name 'updatefile.txt'
+  File /oname=updatefile.txt oldfile.txt
+  
+  ; Update the file - it will be replaced with the new version
+  DetailPrint "Updating updatefile.txt using patch..."
+  !insertmacro VPatchFile "patch.pat" "$INSTDIR\updatefile.txt" "$INSTDIR\temporaryfile.txt"
+  
+SectionEnd
+
+;-------------------------------
+;  The hard way to use VPatch
+;-------------------------------
+Section "New version in separate file"
 
   ; Set output path to the installation directory
   SetOutPath $INSTDIR
@@ -33,7 +52,7 @@ Section ""
   File /oname=$PLUGINSDIR\patch.pat patch.pat
   
   ; Update the old file to the new file using the patch
-  DetailPrint "Updating oldfile.txt using patch..."
+  DetailPrint "Updating oldfile.txt using patch to newfile.txt..."
   vpatch::vpatchfile "$PLUGINSDIR\patch.pat" "$INSTDIR\oldfile.txt" "$INSTDIR\newfile.txt"
   
   ; Show result

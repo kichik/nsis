@@ -5,7 +5,7 @@ interface
 uses Classes, sysutils, VDSP_CRC, DLLWrapper, Dialogs;
 
 const
-  DEFAULT_CONFIG = '64,64,2,32';
+  DEFAULT_CONFIG = '64';
 
 type
   TAbstractFile = record
@@ -215,7 +215,7 @@ begin
   Result:=FOld[Index].FileName;
   if FOld[Index].Cached then
     if FOld[Index].Cache.Size>0 then begin
-      Result:=Result + ' ('+IntToStr(FOld[Index].Cache.Size)+' bytes)';
+      Result:=Result + ' ('+IntToStr(FOld[Index].Cache.Size)+' bytes to patch)';
     end;
 end;
 
@@ -445,6 +445,7 @@ end;
 
 procedure TPatchProject.LoadFromStream(Stream: TStream);
 var
+  MagicWord: Array[0..15] of Char;
   i: LongInt;
   j: Integer;
 begin
@@ -453,15 +454,13 @@ begin
     FPat[j].Free;
     FPat[j]:=nil;
   end;
-  Stream.Read(i,SizeOf(i));
-  if(i=$1A4A5056) then begin            //still read old files
-    Stream.Read(i,SizeOf(i));           //16 dummy bytes
-    Stream.Read(i,SizeOf(i));
-    Stream.Read(i,SizeOf(i));
-    Stream.Read(i,SizeOf(i));
+  Stream.Read(MagicWord,SizeOf(MagicWord));
+  if SameText('VPatchProject 3'#26,MagicWord) then begin
+    Stream.Read(i,SizeOf(i));           //4 dummy bytes
+  end else
+    raise Exception.Create('Error: file format incompatible (only version 3 and newer are supported).');
 
-    Stream.Read(i,SizeOf(i));
-  end;
+  Stream.Read(i,SizeOf(i));           // file count
   SetLength(FPat,i);
   for j:=0 to i - 1 do begin
     FPat[j]:=TPatchFile.Create(j,Stream);
@@ -503,17 +502,14 @@ end;
 
 procedure TPatchProject.SaveToStream(Stream: TStream);
 var
-  HeadID: Array[0..3] of Char;
+  HeadID: Array[0..15] of Char;
   i: LongInt;
   j: Integer;
 begin
-  HeadID:='VPJ'+#26;
+  HeadID:='VPatchProject 3'+#26;
   Stream.Write(HeadID,SizeOf(HeadID));
-  //16 dummy bytes
+  //4 dummy bytes left
   i:=0;
-  Stream.Write(i,SizeOf(i));
-  Stream.Write(i,SizeOf(i));
-  Stream.Write(i,SizeOf(i));
   Stream.Write(i,SizeOf(i));
   i:=Length(FPat);
   Stream.Write(i,SizeOf(i));
@@ -525,6 +521,7 @@ end;
 procedure TPatchProject.WritePatches(Stream: TStream);
 var
   i,j,k,o: LongInt;
+  q: LongWord;
 begin
   k:=$54415056;
   o:=Stream.Position;
@@ -539,7 +536,10 @@ begin
     end;
   end;
   Stream.Seek(o+4,soFromBeginning);
-  Stream.Write(k,SizeOf(k));
+  q:=k;
+  // set the MD5 flag
+  q:=q or $80000000;
+  Stream.Write(q,SizeOf(q));
   Stream.Seek(Stream.Size,soFromBeginning);
   Stream.Write(o,SizeOf(o));
 end;

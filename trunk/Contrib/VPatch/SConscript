@@ -1,0 +1,22 @@
+target = 'VPatch'
+
+examples = Split("""
+	example.nsi
+	newfile.txt
+	oldfile.txt
+	patch.pat
+""")
+
+docs = Split("""
+	Readme.html
+""")
+
+includes = Split("""
+	VPatchLib.nsh
+""")
+
+Import('defenv')
+
+defenv.DistributeExamples(target, examples)
+defenv.DistributeDocs(target, docs)
+defenv.Distribute('Include', includes)
