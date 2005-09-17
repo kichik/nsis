@@ -253,7 +253,7 @@ def BuildStub(compression, solid):
 
 	exports = { 'env' : env, 'compression' : compression, 'solid_compression' : solid }
 
-	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = 0, exports = exports)
+	target = defenv.SConscript(dirs = 'Source/exehead', build_dir = build_dir, duplicate = False, exports = exports)
 	env.SideEffect('%s/stub_%s.map' % (build_dir, stub), target)
 
 	env.DistributeAs('Stubs/%s%s' % (compression, suffix), target)
@@ -265,8 +265,8 @@ for stub in stubs:
 	if stub in defenv['SKIPSTUBS']:
 		continue
 
-	BuildStub(stub, 0)
-	BuildStub(stub, 1)
+	BuildStub(stub, False)
+	BuildStub(stub, True)
 
 defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 
@@ -277,7 +277,7 @@ defenv.DistributeAs('Stubs/uninst', 'Source/exehead/uninst.ico')
 build_dir = '$BUILD_PREFIX/makensis'
 exports = { 'env' : makensis_env }
 
-makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = 0, exports = exports)
+makensis = defenv.SConscript(dirs = 'Source', build_dir = build_dir, duplicate = False, exports = exports)
 
 makensis_env.SideEffect('%s/makensis.map' % build_dir, makensis)
 
@@ -325,11 +325,11 @@ def DistributeExtras(env, target, examples, docs):
 def BuildPlugin(target, source, libs, examples = None, docs = None,
                 entry = 'DllMain', res = None, res_target = None,
                 resources = None, defines = None, flags = None, 
-                nodeflib = 1, cppused = 0):
+                nodeflib = True, cppused = False):
 	env = plugin_env.Copy()
 
 	if cppused and env['CPP_REQUIRES_STDLIB']:
-		nodeflib = 0
+		nodeflib = False
 
 	AddEnvStandardFlags(env, defines, flags, entry, nodeflib)
 
@@ -355,7 +355,7 @@ for plugin in plugins:
 	build_dir = '$BUILD_PREFIX/' + plugin
 	exports = {'BuildPlugin' : BuildPlugin, 'env' : plugin_env.Copy()}
 
-	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
+	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
 ######################################################################
 #######  Utilities                                                 ###
@@ -363,7 +363,7 @@ for plugin in plugins:
 
 def BuildUtil(target, source, libs, entry = None, res = None, 
               resources = None, defines = None, flags = None,
-              nodeflib = 0, install = None, install_as = None,
+              nodeflib = False, install = None, install_as = None,
               examples = None, docs = None):
 	env = util_env.Copy()
 
@@ -399,7 +399,7 @@ for util in utils:
 	build_dir = '$BUILD_PREFIX/' + util
 	exports = {'BuildUtil' : BuildUtil, 'env' : util_env.Copy()}
 
-	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = 0, exports = exports)
+	defenv.SConscript(dirs = path, build_dir = build_dir, duplicate = False, exports = exports)
 
 ######################################################################
 #######  Documentation                                             ###
@@ -408,7 +408,7 @@ for util in utils:
 halibut = defenv.SConscript(
 	dirs = 'Docs/src/bin/halibut',
 	build_dir = '$BUILD_PREFIX/halibut',
-	duplicate = 0,
+	duplicate = False,
 	exports = {'env' : defenv.Copy()}
 )
 
@@ -416,15 +416,15 @@ if defenv['CHMDOCS']:
 	defenv.SConscript(
 		dirs = 'Docs/src',
 		build_dir = '$BUILD_PREFIX/Docs/chm',
-		duplicate = 0,
-		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : 1}
+		duplicate = False,
+		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : True}
 	)
 else:
 	defenv.SConscript(
 		dirs = 'Docs/src',
 		build_dir = '$BUILD_PREFIX/Docs/html',
-		duplicate = 0,
-		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : 0}
+		duplicate = False,
+		exports = {'halibut' : halibut, 'env' : defenv.Copy(), 'build_chm' : False}
 	)
 
 ######################################################################
@@ -466,7 +466,7 @@ exports = {'env' : defenv.Copy()}
 
 defenv.SConscript(
 	dirs = 'Source/Tests',
-	duplicate = 0,
+	duplicate = False,
 	exports = exports,
 	build_dir = build_dir
 )
