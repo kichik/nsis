@@ -15,6 +15,6 @@ files = Split("""
 libs = Split("""
 """)
 
-Import('BuildUtil defenv')
+Import('BuildUtil')
 
-BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], install = 'Bin')
+BuildUtil(target, files, libs, flags = ['$EXCEPTION_FLAG'], install = 'Bin', cross_platform = True)
