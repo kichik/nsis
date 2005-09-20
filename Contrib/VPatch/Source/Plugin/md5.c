@@ -21,7 +21,7 @@
   ghost@aladdin.com
 
  */
-/* $Id: md5.c,v 1.6 2002/04/13 19:20:28 lpd Exp $ */
+/* $Id: md5.c,v 1.1 2005/09/17 09:25:44 kichik Exp $ */
 /*
   Independent implementation of MD5 (RFC 1321).
 
@@ -53,7 +53,7 @@
 
 #include "md5.h"
 
-void memcpy( void *dest, const void *src, int count ) {
+void md5_memcpy( void *dest, const void *src, int count ) {
   md5_byte_t* bDest = (md5_byte_t*)dest;
   md5_byte_t* bSrc = (md5_byte_t*)src;
   int i = 0;
@@ -174,7 +174,7 @@ md5_process(md5_state_t *pms, const md5_byte_t *data /*[64]*/)
 		X = (const md5_word_t *)data;
 	    } else {
 		/* not aligned */
-		memcpy(xbuf, data, 64);
+		md5_memcpy(xbuf, data, 64);
 		X = xbuf;
 	    }
 	}
@@ -348,7 +348,7 @@ md5_append(md5_state_t *pms, const md5_byte_t *data, int nbytes)
     if (offset) {
 	int copy = (offset + nbytes > 64 ? 64 - offset : nbytes);
 
-	memcpy(pms->buf + offset, p, copy);
+	md5_memcpy(pms->buf + offset, p, copy);
 	if (offset + copy < 64)
 	    return;
 	p += copy;
@@ -362,7 +362,7 @@ md5_append(md5_state_t *pms, const md5_byte_t *data, int nbytes)
 
     /* Process a final partial block. */
     if (left)
-	memcpy(pms->buf, p, left);
+	md5_memcpy(pms->buf, p, left);
 }
 
 void
