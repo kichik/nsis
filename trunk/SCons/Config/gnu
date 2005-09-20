@@ -78,7 +78,6 @@ cp_util_env.Append(CCFLAGS = '-O2')                  # optimize
 cp_util_env.Append(CCFLAGS = '-Wall')                # all warnings
 
 cp_util_env.Append(LINKFLAGS = '-s')                 # strip
-cp_util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 cp_util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
 
 ### util environment
@@ -87,6 +86,7 @@ util_env = cp_util_env.Copy()
 cross_env(util_env)
 
 util_env.Append(LINKFLAGS = '-mwindows')          # build windows executables
+util_env.Append(LINKFLAGS = '$ALIGN_FLAG')        # 512 bytes align
 
 ### weird GCC requirements
 
