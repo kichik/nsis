@@ -27,7 +27,7 @@
 #include <windows.h>
 #include "apply_patch.h"
 #include "checksum.h"
-#include "..\..\..\ExDLL\exdll.h"
+#include "../../../ExDLL/exdll.h"
 
 /* ------------------------ Plug-in code ------------------------- */
 
