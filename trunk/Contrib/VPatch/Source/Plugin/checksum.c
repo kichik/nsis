@@ -25,12 +25,26 @@
 
 #include "checksum.h"
 
+#ifdef _MSC_VER
+#  define FORCE_INLINE __forceinline
+#else
+#  ifdef __GNUC__
+#    if __GNUC__ < 3
+#      define FORCE_INLINE inline
+#    else
+#      define FORCE_INLINE inline __attribute__ ((always_inline))
+#    endif
+#  else
+#    define FORCE_INLINE inline
+#  endif
+#endif
+
 /* ------------------------ CRC32 checksum calculation ----------------- */
 
 UINT CRCTable[256];
 BOOL bInitCRC = FALSE;
 
-_inline void InitCRC() {
+FORCE_INLINE void InitCRC() {
   int i, j; unsigned long c;
   for (c = i = 0; i < 256; c = ++i) {
     for (j = 0; j < 8; j++) {
