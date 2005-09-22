@@ -23,6 +23,7 @@ HANDLE CreateEvent(void *, BOOL, BOOL, char *)
   }
   if (pthread_mutex_init(&event->mutex, NULL))
   {
+    pthread_cond_destroy(&event->cond);
     free(event);
     return 0;
   }
@@ -205,15 +206,16 @@ int CLZMA::End()
     pthread_join(hCompressionThread, NULL);
 #endif
   }
-#ifdef _WIN32
   if (hCompressionThread)
   {
+#ifdef _WIN32
     CloseHandle(hCompressionThread);
     hCompressionThread = NULL;
-  }
 #else
-  hCompressionThread = 0;
+    pthread_detach(hCompressionThread);
+    hCompressionThread = 0;
 #endif
+  }
   SetNextOut(NULL, 0);
   SetNextIn(NULL, 0);
   return C_OK;
