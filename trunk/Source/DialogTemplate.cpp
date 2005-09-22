@@ -617,7 +617,7 @@ BYTE* CDialogTemplate::Save(DWORD& dwSize) {
     }
   }
 
-  assert(seeker - pbDlg == dwSize);
+  assert((DWORD) seeker - (DWORD) pbDlg == dwSize);
 
   // DONE!
   return pbDlg;
