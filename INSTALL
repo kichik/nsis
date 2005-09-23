@@ -9,6 +9,11 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
    * SCons version 0.96.91 and above (http://www.scons.org/)
    * C compiler
 
+ - Optional Tools
+
+   * HTML Help Workshop for CHM documentation (http://msdn.microsoft.com/)
+   * Cross compiler on POSIX platforms, i.e. MinGW (http://www.mingw.org/)
+
  - Installing
 
    * type:
