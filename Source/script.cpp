@@ -1031,7 +1031,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             uenable_last_page_cancel = 1;
         }
 
-        int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles\0uninstConfirm");
+        int k = line.gettoken_enum(1,"custom\0license\0components\0directory\0instfiles\0uninstConfirm\0");
 
         if (k < 0) PRINTHELP();
 
