@@ -128,9 +128,9 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_NAME,"Name",1,1,"installer_name installer_name_doubled_ampersands",TP_GLOBAL},
 {TOK_OUTFILE,"OutFile",1,0,"install_output.exe",TP_GLOBAL},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_PAGE,"Page",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function]))",TP_GLOBAL},
+{TOK_PAGE,"Page",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]",TP_GLOBAL},
 #else
-{TOK_PAGE,"Page",1,1,"license|components|directory|instfiles|uninstConfirm",TP_GLOBAL},
+{TOK_PAGE,"Page",1,1,"license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]",TP_GLOBAL},
 #endif
 {TOK_PAGECALLBACKS,"PageCallbacks",0,3,"([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])",TP_PAGEEX},
 {TOK_PAGEEX,"PageEx",1,0,"[un.](custom|uninstConfirm|license|components|directory|instfiles)",TP_GLOBAL},
@@ -203,9 +203,9 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTCAPTION,"UninstallCaption",1,0,"uninstaller_caption",TP_GLOBAL},
 {TOK_UNINSTICON,"UninstallIcon",1,0,"icon_on_local_system.ico",TP_GLOBAL},
 #ifdef NSIS_SUPPORT_CODECALLBACKS
-{TOK_UNINSTPAGE,"UninstPage",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function]))",TP_GLOBAL},
+{TOK_UNINSTPAGE,"UninstPage",1,4,"((custom [creator_function] [leave_function] [caption]) | ((license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function])) [/ENABLECANCEL]",TP_GLOBAL},
 #else
-{TOK_UNINSTPAGE,"UninstPage",1,1,"license|components|directory|instfiles|uninstConfirm",TP_GLOBAL},
+{TOK_UNINSTPAGE,"UninstPage",1,1,"license|components|directory|instfiles|uninstConfirm [/ENABLECANCEL]",TP_GLOBAL},
 #endif
 {TOK_UNINSTTEXT,"UninstallText",1,1,"Text_to_go_on_uninstall_page [subtext]",TP_PG},
 {TOK_UNINSTSUBCAPTION,"UninstallSubCaption",2,0,"page_number(0-2) new_subcaption",TP_GLOBAL},
