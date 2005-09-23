@@ -107,19 +107,35 @@ Examples:
 
 \S{page} Page
 
-\c custom [creator_function] [leave_function] [caption]
+\c custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
 \c   OR
-\c (license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function]
+\c internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
 
 Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
 
+\e{internal_page_type} can be:
+
+\b \e{license} - license page
+
+\b \e{components} - components selection page
+
+\b \e{directory} - installation directory selection page
+
+\b \e{instfiles} - installation page where the sections are executed
+
+\b \e{uninstConfirm} - uninstall confirmation page
+
+The last page of the installer has its cancel button disabled to prevent confusion. To enable it anyway, use \e{/ENABLECANCEL}.
+
 \S{uninstpage} UninstPage
 
-\c custom [creator_function] [leave_function] [caption]
+\c custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
 \c   OR
-\c (license|components|directory|instfiles|uninstConfirm) [pre_function] [show_function] [leave_function]
+\c internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
 
 Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.
+
+See \R{page}{Page} for possible values of \e{internal_page_type}.
 
 \S{pageex} PageEx
 
