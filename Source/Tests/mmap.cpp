@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+using namespace std; // for std::min
+
 int g_display_errors = 1;
 FILE *g_output = stderr;
 

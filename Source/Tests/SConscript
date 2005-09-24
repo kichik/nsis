@@ -13,11 +13,18 @@ required = Split("""
 	mmap.cpp
 """)
 
-libs = Split("""
+cppunitlibs = Split("""
 	cppunit
 """)
 
-Import('env')
+extralibs = Split("""
+	dl
+""")
+
+Import('env AddAvailableLibs')
+
+# Use available libraries
+AddAvailableLibs(env, extralibs)
 
 # compile using msvcrt (that's how cppunit.lib is built)
 if 'msvc' in env['TOOLS'] or 'mstoolkit' in env['TOOLS']:
@@ -28,7 +35,7 @@ env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
 
 # test for CppUnit
 conf = env.Configure()
-cppunit = conf.CheckLibWithHeader(libs, 'cppunit/extensions/HelperMacros.h', 'C++')
+cppunit = conf.CheckLibWithHeader(cppunitlibs, 'cppunit/extensions/HelperMacros.h', 'C++')
 conf.Finish()
 
 if cppunit:
@@ -44,7 +51,7 @@ if cppunit:
 		required_obj.append(o)
 
 	# build test program
-	tests = env.Program(target, tests + required_obj, LIBS = libs)
+	tests = env.Program(target, tests + required_obj)
 
 	# alias running the test to 'test'
 	test = env.Alias('test-code', [tests], tests[0].abspath)
