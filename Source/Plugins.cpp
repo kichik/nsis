@@ -92,8 +92,9 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
           {
             const string name = string((char*)exports + names[j] - ExportDirVA);
             const string signature = dllName + "::" + name;
-            m_command_to_path[signature] = pathToDll;
-            m_command_lowercase_to_command[lowercase(signature)] = signature;
+            const string lcsig = lowercase(signature);
+            m_command_to_path[lcsig] = pathToDll;
+            m_command_lowercase_to_command[lcsig] = signature;
             if (displayInfo)
               fprintf(g_output, " - %s\n", signature.c_str());
           }
@@ -107,7 +108,7 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
 }
 
 bool Plugins::IsPluginCommand(const string& token) const {
-  return m_command_to_path.find(NormalizedCommand(token)) != m_command_to_path.end();
+  return m_command_to_path.find(lowercase(token)) != m_command_to_path.end();
 }
 
 namespace {
@@ -144,7 +145,7 @@ int Plugins::GetPluginHandle(bool uninst, const string& command) const {
 }
 
 string Plugins::GetPluginPath(const string& command) const {
-  return get_value(m_command_to_path, command);
+  return get_value(m_command_to_path, lowercase(command));
 }
 
 void Plugins::SetDllDataHandle(bool uninst, const string& command, int dataHandle)
