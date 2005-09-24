@@ -54,16 +54,11 @@ libs = Split("""
 	iconv
 """)
 
-Import('env')
+Import('env AddAvailableLibs')
 
-##### Configure
+##### Use available libraries
 
-conf = env.Configure()
-
-for lib in libs:
-	conf.CheckLib(lib)
-
-conf.Finish()
+AddAvailableLibs(env, libs)
 
 ##### Configuration defines
 
