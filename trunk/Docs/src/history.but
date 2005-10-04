@@ -1,5 +1,57 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.10} 2.10
+
+Released on October 4th, 2005
+
+\S1{v2.10-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added auto completion to the directory page
+
+\b Fixed a bug, introduced in 2.09, that caused \R{aallowrootdirinstall}{AllowRootDirInstall} to fail
+
+\b Fixed a thread leak in the POSIX implementation of LZMA
+
+\b \L{../Docs/VPatch/Readme.html}{VPatch 3.1}: MD5 checksums, better performance, and some bug fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1219806}{bug #1219806})
+
+\S2{} Minor Changes
+
+\b Added rounding of required and available size on the directory page (1.59 => 1.6 instead of 1.5)
+
+\b Added WS_EX_LEFTSCROLLBAR style in RTL mode (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1283528}{bug #1283528})
+
+\b Fixed alteration of the working directory by FileRequest in InstallOptions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1287731}{bug #1287731})
+
+\b Fixed bad mnemonic key in MakeNSISw menu (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1288159}{bug #1288159})
+
+\b Minor documentation improvements and fixes
+
+\b \L{../Docs/Modern UI/Readme.html}{Modern UI 1.74}: Fixed compile error when checkboxes are used on multiple finish pages
+
+\S2{} Translations
+
+\b Fixed a bug in Slovenian translation that caused lots of missing language string warnings
+
+\b Fixed typos in Serbian translation
+
+\b Fixed typos in Thai translation
+
+\b Updated Simple Chinese translation
+
+\S2{} Build System
+
+\b Automatic fix for \W{http://forums.winamp.com/showthread.php?s=&threadid=179848}{VC6 SP6 compile error}
+
+\b Moved most of the configuration from config.h to the build system
+
+\b Removed all optimizations and symbol stripping in debug mode
+
+\b SCons requirement updated to 0.96.91
+
+\b VPatch can be built on POSIX as well
+
 \H{v2.09} 2.09
 
 Released on August 26th, 2005
