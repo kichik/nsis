@@ -285,12 +285,18 @@ int NSISCALL is_valid_instpath(char *s)
 
   mystrcpy(tmp, s);
 
-  validate_filename(tmp);
-
   root = skip_root(tmp);
 
   if (!root)
     return 0;
+
+  // must be called after skip_root or AllowRootDirInstall won't work.
+  // validate_filename removes trailing blackslashes and so converts
+  // "C:\" to "C:" which is not a valid directory. skip_root returns
+  // NULL for "C:" so the above test returns 0.
+  // validate_filename is called so directories such as "C:\ " will
+  // not pass as a valid non-root directory.
+  validate_filename(root);
 
   if ((g_flags & CH_FLAGS_NO_ROOT_DIR) && (!*root || *root == '\\'))
     return 0;
@@ -684,7 +690,10 @@ void NSISCALL validate_filename(char *in) {
   char *nono = "*?|<>/\":";
   char *out;
   char *out_save;
-  while (*in == ' ') in = CharNext(in);
+
+  // ignoring spaces is wrong, " C:\blah" is invalid
+  //while (*in == ' ') in = CharNext(in);
+
   if (in[0] == '\\' && in[1] == '\\' && in[2] == '?' && in[3] == '\\')
   {
     // at least four bytes
