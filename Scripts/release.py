@@ -263,8 +263,7 @@ def create_special_build(name, option):
 	run(
 		scons_line + 'PREFIX=%s\\%s %s install-compiler install-stubs' % (os.getcwd(), name, option),
 		name,
-		'creation of %s special build failed' % name,
-		log_dir = '..'
+		'creation of %s special build failed' % name
 	)
 
 	os.chdir(name)
