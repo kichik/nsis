@@ -284,7 +284,7 @@ print 'uploading files to SourceForge...'
 
 def upload(ftp, file):
 	print '  uploading %s...' % file
-	ftp.storbinary('STOR %s' % file.split('\\')[-1], open(file, 'rb'))
+	ftp.storbinary('STOR /incoming/%s' % file.split('\\')[-1], open(file, 'rb'))
 
 ftp = FTP('upload.sourceforge.net')
 ftp.login()
