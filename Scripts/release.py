@@ -251,7 +251,7 @@ print 'creating distribution files...'
 
 run(
 	scons_line + 'dist',
-	'dist'
+	'dist',
 	'creation of distribution files failed'
 )
 
