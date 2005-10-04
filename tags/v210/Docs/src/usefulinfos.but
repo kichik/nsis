@@ -1,0 +1,408 @@
+\A{usefulinfos} Useful Information
+
+\H{errorlevels}Error Levels
+
+Like other applications, installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.
+
+\b 0 - Normal execution (no error)
+
+\b 1 - Installation aborted by user (cancel button)
+
+\b 2 - Installation aborted by script
+
+As of NSIS 2.01, you can set the error level to other values using \R{seterrorlevel}{SetErrorLevel}.
+
+Note that uninstallers copy themselves to the temporary directory and execute from there so the original uninstaller can be deleted. This means the error level the uninstaller sets is not available to the executing process, unless it simulates this copy process and executes the copied uninstaller. To simulate this process, use:
+
+\c CopyFiles $INSTDIR\uninstaller.exe $TEMP
+\c ExecWait '"$TEMP\uninstaller.exe" _?=$INSTDIR' $0
+\c DetailPrint "uninstaller set error level $0"
+
+If you don't do this, you'll only be able to know if the uninstaller failed copying itself to the temporary directory.
+
+\H{useful_add_uninst_infos}Add uninstall information to Add/Remove Programs
+
+Create a key with your product name under \\<b\\>HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\</b\\> to add entries to the "Add/Remove Programs" section in the Control Panel.
+For Windows NT (NT4/2000/XP), it's also possible to create the key in the HKCU hive, so it will only appear for the current user.
+There are several values you can write to key to give information about your application and the uninstaller.
+Write a value using the WriteRegStr command (for strings) or WriteRegDWORD command (for DWORD values). Example:
+
+
+\c WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Product" "DisplayName" "Application Name"
+
+
+\\<b\\>Required values\\</b\\>
+
+\e{DisplayName} (string) - Name of the application \\<br\\>
+\e{UninstallString} (string) - Path and filename of the uninstaller. You should \\<b\\>always\\</b\\> quote the path to make sure spaces in the path will not disrupt Windows to find the uninstaller.
+
+\\<b\\>Optional values\\</b\\>
+
+Some of the following values will not be used by older Windows versions.
+
+\e{InstallLocation} (string) - Installation directory ($INSTDIR) \\<br\\>
+\e{DisplayIcon} (string) - Path, filename and index of the icon that will be displayed next to your application name
+
+\e{Publisher} (string) - (Company) name of the publisher
+
+\e{ModifyPath} (string) - Path and filename of the application modify program \\<br\\>
+\e{InstallSource} (string) - Location where the application was installed from
+
+\e{ProductID} (string) - Product ID of the application \\<br\\>
+\e{RegOwner} (string) - Registered owner of the application \\<br\\>
+\e{RegCompany} (string) - Registered company of the application
+
+\e{HelpLink} (string) - Link to the support website \\<br\\>
+\e{HelpTelephone} (string) - Telephone number for support
+
+\e{URLUpdateInfo} (string) - Link to the website for application updates \\<br\\>
+\e{URLInfoAbout} (string) - Link to the application home page
+
+\e{DisplayVersion} (string) - Displayed version of the application \\<br\\>
+\e{VersionMajor} (DWORD) - Major version number of the application \\<br\\>
+\e{VersionMinor} (DWORD) - Minor version number of the application
+
+\e{NoModify} (DWORD) - 1 if uninstaller has no option to modify the installed application \\<br\\>
+\e{NoRepair} (DWORD) - 1 if the uninstaller has no option to repair the installation
+
+If both NoModify and NoRepair are set to 1, the button displays "Remove" instead of "Modify/Remove".
+
+
+\H{useful_system_plugin} Calling an external DLL using the System.dll plug-in
+
+Some install processes are required to call functions contained inside third party DLLs. A prime example of this is when installing a Palm(TM) conduit.
+
+\\<b\\>Some background about System.dll\\</b\\> \\<br\\>
+The System.dll plug-in (by Brainsucker) enables calling of external DLLs by providing the 'Call' function. There are a number of other functions provided by System.dll, but they will not be covered here. For more details about the other functions, lock the doors, take the phone off the hook, screw your head on *real* tight and head on over to the \L{../Docs/System/System.html}{System readme}.
+
+\\<u\\>Data Types\\</u\\> \\<br\\>
+System.dll recognises the following data types:
+
+\b v - void (generally for return)
+
+\b i - int (includes char, byte, short, handles, pointers and so on)
+
+\b l - long & large integer (known as int64)
+
+\b t - text, string (LPCSTR, pointer to first character)
+
+\b b - boolean (needs/returns 'true':'false') - by the fact this type is senseless -> usual integer can be used ('0':'1')
+
+\b k - callback. See Callback section in system.html.
+
+\b * - pointer specifier -> the proc needs the pointer to type, affects next char (parameter) [ex: '*i' - pointer to int]
+
+
+
+\\<u\\>Mapping System.dll variables to NSIS script variables\\</u\\> \\<br\\>
+There's not much point in being able to call an external function if you can't get any data back. System.dll maps function variables to NSIS script variables in the following way:
+
+NSIS $0..$9 become System.dll r0..r9
+NSIS $R0..$R9 become System.dll r10..r19
+
+Each parameter is specified by type, input and output. To skip input or output use a dot. Examples:
+
+String (pointer to a characters array), input is 'happy calling':
+
+\c t 'happy calling'
+
+String (pointer to a characters array), input is taken from $5 and changes to the array made by the call are saved into $R8:
+
+\c t r5R8
+
+Pointer to an integer, value taken from $1 and put into $2:
+
+\c *i r1r2
+
+Pointer to a 64-bit integer, output pushed on stack, no input:
+
+\c *l .s
+
+Using System.dll::Call
+To call a function in a third party DLL, the Call function is used like this:
+
+\c System::Call 'YourDllName::YourDllFunction(i, *i, t) i(r0, .r1, r2) .r3'
+
+The '(r0, .r1, r2) .r3' section at the end are the parameters that are passed between your DLL and your NSIS script. As can be seen in this parameters list type and input/output can be seperated. Each block of "(parms list) return value" overrides and/or adds to the last one. In this case, the first block specifies the types and the second specifies input and output.
+
+\\<b\\>Before starting to code the NSIS script\\</b\\> \\<br\\>
+Before you start to code any NSIS code, you need to know the full prototype of the function you are going to call. For the purposes of this example, we will use the 'CmGetHotSyncExecPath' function from the Palm 'CondMgr.dll'. This function is used to return the full path of 'HotSync.exe'.
+
+\\<u\\>Function Definition\\</u\\> \\<br\\>
+
+
+int CmGetHotSyncExecPath(TCHAR *pPath, int *piSize);
+
+where
+
+\b  pPath is a pointer to a character buffer. Upon return, this is the path & file name of the installed HotSync manager.
+
+\b  piSize is a pointer to an integer that specifies the size (in TCHAR's), of the buffer referenced by the pPath parameter.
+
+return values:
+
+\b  0: No error
+
+\b  -1: A non-specific error occurred
+
+\b  ERR_REGISTRY_ACCESS(-1006):Unable to access the Palm configuration entries
+
+\b  ERR_BUFFER_TOO_SMALL(-1010): The buffer is too small to hold the requested information
+
+\b  ERR_INVALID_POINTER(-1013):The specified pointer is not a valid pointer
+
+
+Also, if the buffer is too small the value in *int is the size (in TCHARs) that the buffer should be.
+
+This function definition maps to the following System.dll definition:
+
+CmGetHotSyncExecPath(t, *i) i
+
+i.e. It takes a text variable, a pointer to int, and returns an int value.
+
+\\<u\\>Using the external dll function\\</u\\> \\<br\\>
+Now that we've sorted out what the function does, and how it maps to the System.dll format, we can use the function in a NSIS script.
+
+First, it is recommended to turn 'PluginUnload' off before making multiple calls to System.dll. According to Brainsucker (and others), this will speed up execution of the installer package.
+
+Second, you have to change the output directory to that where the DLL you want to use is. It may also work if the DLL is on the system path, but this hasn't been tested.
+
+The following code fragment will install 'condmgr.dll' to a temporary directory, execute the CmGetHotSyncExecPath function, display returned data and finally unload the System.dll plug-in.
+Save this script
+
+\c ; **** snip ****
+\c SetPluginUnload  alwaysoff
+\c
+\c Function loadDll
+\c
+\c   SetOutPath $TEMP\eInspect             ; create temp directory
+\c   File bin\CondMgr.dll                  ; copy dll there
+\c   StrCpy $1 ${NSIS_MAX_STRLEN}          ; assign memory to $0
+\c   System::Call 'CondMgr::CmGetHotSyncExecPath(t, *i) i(.r0, r1r1).r2'
+\c   DetailPrint 'Path: "$0"'
+\c   DetailPrint "Path length: $1"
+\c   DetailPrint "Return value: $2"
+\c
+\c ; last plug-in call must not have /NOUNLOAD so NSIS will be able to delete
+\c ; the temporary DLL
+\c
+\c   SetPluginUnload manual
+\c ; do nothing (but let the installer unload the System dll)
+\c   System::Free 0
+\c FunctionEnd
+\c ; **** snip ****
+
+
+and this function produces the following output in the 'details' page:
+
+Output folder: c:\\windows\\TEMP\\eInspect \\<br\\>
+Extract: CondMgr.dll \\<br\\>
+Path: "C:\\Dave\\palm\\Hotsync.exe" \\<br\\>
+Path length: 24 \\<br\\>
+Return value: 0
+
+
+Written by \W{http://nsis.sourceforge.net/archive/profile.php?userid=78}{djc}
+
+\\<u\\>Acknowledgements & Thanks\\</u\\> \\<br\\>
+Lots of thanks go to \\<b\\>kichik\\</b\\> and \\<b\\>Sunjammer\\</b\\> for spending a lot of time assisting in solving this problem. Also to \\<b\\>brainsucker\\</b\\> for creating the System.dll plug-in in the first place.
+Good Luck!
+
+\H{dumplogtofile} Dump Content of Log Window to File
+
+This function will dump the log of the installer (installer details) to a file of your choice. I created this function for Afrow_UK who requested a way to dump the log to a file in \W{http://forums.winamp.com/showthread.php?s=&threadid=125431}{this forum thread}.
+
+To use it, push a file name and call it. It will dump the log to the file specified. For example:
+
+
+\c GetTempFileName $0
+\c Push $0
+\c Call DumpLog
+
+Here is the function:
+
+
+
+\c !define LVM_GETITEMCOUNT 0x1004
+\c !define LVM_GETITEMTEXT 0x102D
+\c
+\c Function DumpLog
+\c   Exch $5
+\c   Push $0
+\c   Push $1
+\c   Push $2
+\c   Push $3
+\c   Push $4
+\c   Push $6
+\c
+\c   FindWindow $0 "#32770" "" $HWNDPARENT
+\c   GetDlgItem $0 $0 1016
+\c   StrCmp $0 0 error
+\c   FileOpen $5 $5 "w"
+\c   StrCmp $5 0 error
+\c     SendMessage $0 ${LVM_GETITEMCOUNT} 0 0 $6
+\c     System::Alloc ${NSIS_MAX_STRLEN}
+\c     Pop $3
+\c     StrCpy $2 0
+\c     System::Call "*(i, i, i, i, i, i, i, i, i) i \
+\c       (0, 0, 0, 0, 0, r3, ${NSIS_MAX_STRLEN}) .r1"
+\c     loop: StrCmp $2 $6 done
+\c       System::Call "User32::SendMessageA(i, i, i, i) i \
+\c         ($0, ${LVM_GETITEMTEXT}, $2, r1)"
+\c       System::Call "*$3(&t${NSIS_MAX_STRLEN} .r4)"
+\c       FileWrite $5 "$4$\r$\n"
+\c       IntOp $2 $2 + 1
+\c       Goto loop
+\c     done:
+\c       FileClose $5
+\c       System::Free $1
+\c       System::Free $3
+\c       Goto exit
+\c   error:
+\c     MessageBox MB_OK error
+\c   exit:
+\c     Pop $6
+\c     Pop $4
+\c     Pop $3
+\c     Pop $2
+\c     Pop $1
+\c     Pop $0
+\c     Exch $5
+\c FunctionEnd
+
+written by KiCHiK
+
+
+\H{readreg_multi_sz} How to Read REG_MULTI_SZ Values
+
+I wrote this script to help rpetges in \W{http://forums.winamp.com/showthread.php?s=&threadid=131154}{this forum thread}. It reads a registry value of the type REG_MULTI_SZ and prints it out. Don't forget to edit where it says "Edit this!" when you test this script. The values must point to a REG_MULTI_SZ value or the example will spit out an error.
+
+
+\c OutFile "REG_MULTI_SZ Reader.exe"
+\c
+\c Name "REG_MULTI_SZ Reader"
+\c
+\c ShowInstDetails show
+\c
+\c !define HKEY_CLASSES_ROOT        0x80000000
+\c !define HKEY_CURRENT_USER        0x80000001
+\c !define HKEY_LOCAL_MACHINE       0x80000002
+\c !define HKEY_USERS               0x80000003
+\c !define HKEY_PERFORMANCE_DATA    0x80000004
+\c !define HKEY_PERFORMANCE_TEXT    0x80000050
+\c !define HKEY_PERFORMANCE_NLSTEXT 0x80000060
+\c !define HKEY_CURRENT_CONFIG      0x80000005
+\c !define HKEY_DYN_DATA            0x80000006
+\c
+\c !define KEY_QUERY_VALUE          0x0001
+\c !define KEY_ENUMERATE_SUB_KEYS   0x0008
+\c
+\c !define REG_NONE                 0
+\c !define REG_SZ                   1
+\c !define REG_EXPAND_SZ            2
+\c !define REG_BINARY               3
+\c !define REG_DWORD                4
+\c !define REG_DWORD_LITTLE_ENDIAN  4
+\c !define REG_DWORD_BIG_ENDIAN     5
+\c !define REG_LINK                 6
+\c !define REG_MULTI_SZ             7
+\c
+\c !define RegOpenKeyEx     "Advapi32::RegOpenKeyExA(i, t, i, i, i) i"
+\c !define RegQueryValueEx  "Advapi32::RegQueryValueExA(i, t, i, i, i, i) i"
+\c !define RegCloseKey      "Advapi32::RegCloseKeyA(i) i"
+\c
+\c ####### Edit this!
+\c
+\c !define ROOT_KEY         ${HKEY_CURRENT_USER}
+\c !define SUB_KEY          "Software\Joe Software"
+\c !define VALUE            "Strings"
+\c
+\c ####### Stop editing
+\c
+\c Section "Read"
+\c   StrCpy $0 ""
+\c   StrCpy $1 ""
+\c   StrCpy $2 ""
+\c   StrCpy $3 ""
+\c   SetPluginUnload alwaysoff
+\c   System::Call "*(i) i (0) .r0"
+\c   System::Call "*(i) i (0) .r1"
+\c   System::Call "*(i) i (0) .r2"
+\c   System::Call "${RegOpenKeyEx}(${ROOT_KEY}, '${SUB_KEY}', \
+\c     0, ${KEY_QUERY_VALUE}|${KEY_ENUMERATE_SUB_KEYS}, r0) .r3"
+\c
+\c   StrCmp $3 0 goon
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't open registry key! ($3)"
+\c     Goto done
+\c goon:
+\c
+\c   System::Call "*$0(&i4 .r4)"
+\c   System::Call "${RegQueryValueEx}(r4, '${VALUE}', 0, r1, 0, r2) .r3"
+\c
+\c   StrCmp $3 0 read
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)"
+\c     Goto done
+\c
+\c read:
+\c
+\c   System::Call "*$1(&i4 .r3)"
+\c
+\c   StrCmp $3 ${REG_MULTI_SZ} multisz
+\c     MessageBox MB_OK|MB_ICONSTOP "Registry value no SZ_MULTI_SZ! ($3)"
+\c     Goto done
+\c
+\c multisz:
+\c
+\c   System::Call "*$2(&i4 .r3)"
+\c
+\c   StrCmp $3 0 0 multiszalloc
+\c     MessageBox MB_OK|MB_ICONSTOP "Registry value empty! ($3)"
+\c     Goto done
+\c
+\c multiszalloc:
+\c
+\c   System::Free $1
+\c   System::Alloc $3
+\c   Pop $1
+\c
+\c   StrCmp $1 0 0 multiszget
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't allocate enough memory! ($3)"
+\c     Goto done
+\c
+\c multiszget:
+\c
+\c   System::Call "${RegQueryValueEx}(r4, '${VALUE}', 0, 0, r1, r2) .r3"
+\c
+\c   StrCmp $3 0 multiszprocess
+\c     MessageBox MB_OK|MB_ICONSTOP "Can't query registry value! ($3)[2]"
+\c     Goto done
+\c
+\c multiszprocess:
+\c
+\c   StrCpy $4 $1
+\c
+\c   loop:
+\c
+\c     System::Call "*$4(&t${NSIS_MAX_STRLEN} .r3)"
+\c     StrCmp $3 "" done
+\c     DetailPrint $3
+\c     StrLen $5 $3
+\c     IntOp $4 $4 + $5
+\c     IntOp $4 $4 + 1
+\c     Goto loop
+\c
+\c done:
+\c
+\c   System::Free $2
+\c   System::Free $1
+\c
+\c   StrCmp $0 0 noClose
+\c     System::Call "${RegCloseKey}(r0)"
+\c
+\c noClose:
+\c
+\c   SetPluginUnload manual
+\c   System::Free $0
+\c SectionEnd
+
+written by KiCHiK
