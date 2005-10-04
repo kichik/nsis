@@ -208,13 +208,9 @@ run(
 run(
 	'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
 	'diff',
-	'diff failed',
+	'scons and installer installations differ',
 	1
 )
-
-if open('diff.log').read() != '':
-	print '*** scons and installer installations differ'
-	exit()
 
 ### tag
 
