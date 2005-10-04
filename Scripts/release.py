@@ -94,6 +94,7 @@ def log(msg, log_dir = '.'):
 
 def exit(log_dir = '.'):
 	log('\nerror occurred, exiting', log_dir)
+	sys.exit(3)
 
 def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 	log('running %s' % command, log_dir)
