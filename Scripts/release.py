@@ -90,7 +90,7 @@ newverdir = 'nsis-%s-src' % VERSION
 ### some useful functions
 
 def log(msg, log_dir = '.'):
-	open('release.log', 'a').write(msg + '\n')
+	open('%s\\release.log' % log_dir, 'a').write(msg + '\n')
 
 def exit(log_dir = '.'):
 	log('\nerror occurred, exiting', log_dir)
@@ -276,7 +276,7 @@ def create_special_build(name, option):
 	os.chdir('..')
 
 create_special_build('strlen_8192', 'NSIS_MAX_STRLEN=8192')
-create_special_build('log', 'NSIS_CONFIG_LOG=yes', 'log')
+create_special_build('log', 'NSIS_CONFIG_LOG=yes')
 
 ### upload files to SourceForge
 
