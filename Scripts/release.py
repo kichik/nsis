@@ -207,7 +207,7 @@ run(
 
 run(
 	'diff -r insttest insttestscons | grep -v uninst-nsis.exe',
-	'diff'
+	'diff',
 	'diff failed',
 	1
 )
