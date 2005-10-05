@@ -149,10 +149,7 @@ def generate(env):
 
     env['RC'] = mingw_prefix + 'windres'
     env['RCFLAGS'] = SCons.Util.CLVar('')
-    env['RCINCFLAGS'] = '$( ${_concat(RCINCPREFIX, CPPPATH, RCINCSUFFIX, __env__, RDirs, TARGET, SOURCE)} $)'
-    env['RCINCPREFIX'] = '--include-dir '
-    env['RCINCSUFFIX'] = ''
-    env['RCCOM'] = '$RC $RCINCFLAGS $RCINCPREFIX ${SOURCE.dir} $RCFLAGS -i $SOURCE -o $TARGET'
+    env['RCCOM'] = '$RC $_CPPDEFFLAGS $_CPPINCFLAGS ${INCPREFIX}${SOURCE.dir} $RCFLAGS -i $SOURCE -o $TARGET'
     env['BUILDERS']['RES'] = res_builder
     
     # Some setting from the platform also have to be overridden:
