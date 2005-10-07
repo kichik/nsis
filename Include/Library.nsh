@@ -105,6 +105,17 @@
 
 !macroend
 
+### Get library version
+!macro __InstallLib_Helper_GetVersion TYPE FILE
+
+  !tempfile LIBRARY_TEMP_NSH
+  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" "${TYPE}" "${FILE}" "${LIBRARY_TEMP_NSH}"'
+  !include "${LIBRARY_TEMP_NSH}"
+  !delfile "${LIBRARY_TEMP_NSH}"
+  !undef LIBRARY_TEMP_NSH
+
+!macroend
+
 ### Install library
 !macro InstallLib libtype shared install localfile destfile tempbasedir
 
@@ -192,8 +203,7 @@
   ;------------------------
   ;Get version information
 
-  !execute '"${NSISDIR}\Bin\LibraryLocal.exe" D "${LOCALFILE}"'
-  !include "${NSISDIR}\Bin\LibraryLocal.nsh"
+  !insertmacro __InstallLib_Helper_GetVersion D "${LOCALFILE}"
 
   !ifdef LIBRARY_VERSION_FILENOTFOUND
     !error "InstallLib: The library ${LOCALFILE} could not be found."
@@ -220,8 +230,7 @@
 
     !else
 
-      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T "${LOCALFILE}"'
-      !include "${NSISDIR}\Bin\LibraryLocal.nsh"
+      !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
 
       !ifdef LIBRARY_VERSION_FILENOTFOUND
         !error "InstallLib: The library ${LOCALFILE} could not be found."
@@ -249,8 +258,7 @@
 
     !ifdef INSTALLLIB_LIBTYPE_TLB | INSTALLLIB_LIBTYPE_REGDLLTLB
 
-      !execute '"${NSISDIR}\Bin\LibraryLocal.exe" T "${LOCALFILE}"'
-      !include "${NSISDIR}\Bin\LibraryLocal.nsh"
+      !insertmacro __InstallLib_Helper_GetVersion T "${LOCALFILE}"
 
     !endif
 
