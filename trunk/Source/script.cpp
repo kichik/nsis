@@ -2991,7 +2991,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (wt = 1; wt < line.getnumtokens(); wt ++)
         {
           char *p=line.gettoken_str(wt);
-          if (p[0]=='R' && p[1]=='O')
+          if (!stricmp(p, "RO"))
           {
             if (section_add_flags(SF_RO) != PS_OK) return PS_ERROR;
             SCRIPT_MSG("[RO] ");
