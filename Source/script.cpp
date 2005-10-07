@@ -1037,7 +1037,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #else
         char t[] = "/tmp/makensisXXXXXX";
 
-        mode_t old_umask = umask(0600);
+        mode_t old_umask = umask(0077);
 
         int fd = mkstemp(t);
         if (fd == -1) {
