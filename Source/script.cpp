@@ -19,9 +19,11 @@ using namespace std;
 #ifdef _WIN32
 #  include <direct.h> // for chdir
 #else
-#  include <sys/stat.h>
+#  include <sys/stat.h> // for stat and umask
+#  include <sys/types.h> // for mode_t
 #  include <fcntl.h> // for O_RDONLY
 #  include <unistd.h>
+#  include <stdlib.h> // for mkstemp
 #endif
 
 #define MAX_INCLUDEDEPTH 10
@@ -1011,8 +1013,62 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         }
         SCRIPT_MSG("!insertmacro: end of %s\n",line.gettoken_str(1));
       }
-
     return PS_OK;
+
+    // preprocessor files fun
+    ///////////////////////////////////////////////////////////////////////////////
+
+    case TOK_P_TEMPFILE:
+      {
+        char *symbol = line.gettoken_str(1);
+        char *fpath;
+
+#ifdef _WIN32
+        char buf[MAX_PATH], buf2[MAX_PATH];
+
+        GetTempPath(MAX_PATH, buf);
+        if (!GetTempFileName(buf, "nst", 0, buf2))
+        {
+          ERROR_MSG("!tempfile: unable to create temporary file.\n");
+          return PS_ERROR;
+        }
+
+        fpath = buf2;
+#else
+        char t[] = "/tmp/makensisXXXXXX";
+
+        mode_t old_umask = umask(0600);
+
+        int fd = mkstemp(t);
+        if (fd == -1) {
+          ERROR_MSG("!tempfile: unable to create temporary file.\n");
+          return PS_ERROR;
+        }
+        close(fd);
+
+        umask(old_umask);
+
+        fpath = t;
+#endif
+
+        if (definedlist.add(symbol, fpath))
+        {
+          ERROR_MSG("!tempfile: \"%s\" already defined!\n", symbol);
+          return PS_ERROR;
+        }
+
+        SCRIPT_MSG("!tempfile: \"%s\"=\"%s\"\n", symbol, fpath);
+      }
+    return PS_OK;
+
+    case TOK_P_DELFILE:
+      if (unlink(line.gettoken_str(1)) == -1) {
+        ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", line.gettoken_str(1));
+        return PS_ERROR;
+      }
+      SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(1));
+    return PS_OK;
+
     // page ordering shit
     ///////////////////////////////////////////////////////////////////////////////
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT

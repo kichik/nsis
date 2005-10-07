@@ -41,6 +41,16 @@ This command will change the compiler to the new directory, new_path. new_path c
 
 \c !cd ..\more-scripts\new
 
+\S1{delfile} !delfile
+
+\c file
+
+This command deletes a file.
+
+\c !tempfile FILE
+\c !delfile "${FILE}"
+\c !undef FILE
+
 \S1{echo} !echo
 
 \c message
@@ -89,6 +99,23 @@ This command will execute 'command' using a call to system(), and if the return 
 \c !ifdef something
 \c   !echo "something is defined"
 \c !endif
+
+\S1{tempfile} !tempfile
+
+\c symbol
+
+This command creates a temporary file. It puts its path into a define, named \e{symbol}.
+
+\c !tempfile PACKHDRTEMP
+\c !packhdr "${PACKHDRTEMP}" '"C:\Program Files\UPX\upx.exe" "${PACKHDRTEMP}"'
+
+\c !tempfile FILE
+\c !define /date DATE "%H:%M:%S %d %b, %Y"
+\c !system 'echo built on ${DATE} > "${FILE}"'
+\c File /oname=build.txt "${FILE}"
+\c !delfile "${FILE}"
+\c !undef FILE
+\c !undef DATE
 
 \S1{warning} !warning
 
