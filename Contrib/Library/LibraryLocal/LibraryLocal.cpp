@@ -26,67 +26,65 @@ int main(int argc, char* argv[])
 
 	int filefound = 0;
 
-	if (argc == 3)
-	{
+  if (argc != 4)
+    return 1;
 
-		// Get the full path of the local file
+  // Get the full path of the local file
 
-		mode = argv[1];
-		filename = argv[2];
+  mode = argv[1];
+  filename = argv[2];
 
-		char buf[MAX_PATH];
-		GetCurrentDirectory(MAX_PATH, buf);
-		filepath = buf;
+  char buf[MAX_PATH];
+  GetCurrentDirectory(MAX_PATH, buf);
+  filepath = buf;
 
-		if ((filename.substr(0, 1).compare("\\") != 0) && (filename.substr(1, 1).compare(":") != 0)) {
-		  
-			// Path is relative
+  if ((filename.substr(0, 1).compare("\\") != 0) && (filename.substr(1, 1).compare(":") != 0)) {
+    
+    // Path is relative
 
-			if (filepath.substr(filepath.length() - 1, 1).compare("\\") != 0)
-				filepath.append("\\");
-				
-			filepath.append(filename);
+    if (filepath.substr(filepath.length() - 1, 1).compare("\\") != 0)
+      filepath.append("\\");
+      
+    filepath.append(filename);
 
-		} else if ((filename.substr(0, 1).compare("\\") == 0) && (filename.substr(1, 1).compare("\\") != 0)) {
+  } else if ((filename.substr(0, 1).compare("\\") == 0) && (filename.substr(1, 1).compare("\\") != 0)) {
 
-			// Path is relative to current root
+    // Path is relative to current root
 
-			if (filepath.substr(1, 1).compare(":") == 0) {
+    if (filepath.substr(1, 1).compare(":") == 0) {
 
-				// Standard path
+      // Standard path
 
-				filepath = filepath.substr(0, filepath.find('\\'));
-				filepath.append(filename);
+      filepath = filepath.substr(0, filepath.find('\\'));
+      filepath.append(filename);
 
-			} else {
+    } else {
 
-				// UNC path
-				
-				filepath = filepath.substr(0, filepath.find('\\', filepath.find('\\', 2) + 1));
-				filepath.append(filename);
-					
-			}
+      // UNC path
+      
+      filepath = filepath.substr(0, filepath.find('\\', filepath.find('\\', 2) + 1));
+      filepath.append(filename);
+        
+    }
 
-		} else {
-			
-			// Absolute path
+  } else {
+    
+    // Absolute path
 
-			filepath = filename;
+    filepath = filename;
 
-		}
+  }
 
-		// Validate filename
+  // Validate filename
 
-		WIN32_FIND_DATA wfd;
-		HANDLE hFind = FindFirstFile(filepath.c_str(), &wfd);
-		
-		if (hFind != INVALID_HANDLE_VALUE)
-		{
-			filefound = 1;
-			FindClose(hFind);
-		}
-
-	}
+  WIN32_FIND_DATA wfd;
+  HANDLE hFind = FindFirstFile(filepath.c_str(), &wfd);
+  
+  if (hFind != INVALID_HANDLE_VALUE)
+  {
+    filefound = 1;
+    FindClose(hFind);
+  }
 	
 	int versionfound = 0;
 	DWORD low = 0, high = 0;
@@ -172,22 +170,13 @@ int main(int argc, char* argv[])
 
 	// Write the version to an NSIS header file
 
-	char appfile[MAX_PATH];
-    GetModuleFileName(0, appfile, MAX_PATH);
-
-	string headerfile;
-	headerfile = appfile;
-	headerfile = headerfile.substr(0, headerfile.rfind('\\'));
-	headerfile.append("\\LibraryLocal.nsh");
-	
-	ofstream header(headerfile.c_str(), ofstream::out);
+	ofstream header(argv[3], ofstream::out);
 	
 	if (header)
 	{
 
 		if (!filefound)
 		{
-
 			header << "!define LIBRARY_VERSION_FILENOTFOUND" << endl;
 		}
 		else if (!versionfound)
