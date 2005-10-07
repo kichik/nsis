@@ -95,6 +95,9 @@ enum
   TOK_P_IFMACRODEF,
   TOK_P_IFMACRONDEF,
 
+  TOK_P_TEMPFILE,
+  TOK_P_DELFILE,
+
   // section/function shit
   TOK_SECTION,
   TOK_SECTIONEND,

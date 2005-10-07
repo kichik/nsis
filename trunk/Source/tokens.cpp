@@ -242,6 +242,9 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_P_IFMACRODEF,"!ifmacrodef",1,-1,"macro [| macro2 [& macro3 [...]]]",TP_ALL},
 {TOK_P_IFMACRONDEF,"!ifmacrondef",1,-1,"macro [| macro2 [& macro3 [...]]]",TP_ALL},
 
+{TOK_P_TEMPFILE,"!tempfile",1,0,"symbol",TP_ALL},
+{TOK_P_DELFILE,"!delfile",1,0,"file",TP_ALL},
+
 {TOK_MISCBUTTONTEXT,"MiscButtonText",0,4,"[back button text] [next button text] [cancel button text] [close button text]",TP_GLOBAL},
 {TOK_DETAILSBUTTONTEXT,"DetailsButtonText",0,1,"[details button text]",TP_PG},
 {TOK_UNINSTBUTTONTEXT,"UninstallButtonText",0,1,"[uninstall button text]",TP_GLOBAL},
