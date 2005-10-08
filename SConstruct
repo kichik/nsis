@@ -7,8 +7,13 @@
 ##
 
 EnsurePythonVersion(1,6)
-EnsureSConsVersion(0,96,91)
 
+try:
+	EnsureSConsVersion(0,96,91)
+except TypeError: # EnsureSConsVersion in older versions took only two parameters
+	print 'SCons 0.96.91 or greater is required, but you have an older version'
+	Exit(2)
+	
 stubs = [
 	'bzip2',
 	'lzma',
