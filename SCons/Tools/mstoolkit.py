@@ -86,8 +86,8 @@ def get_msvctoolkit_paths():
 			except SCons.Util.RegError:
 				raise SCons.Errors.InternalError, "The Platform SDK directory was not found in the registry or in the `MSSdk` environment variable."
 
-	include_path = r'%s\include;%s\include' % (MSToolkitDir, PlatformSDKDir)
-	lib_path = r'%s\lib;%s\lib' % (MSToolkitDir, PlatformSDKDir)
+	include_path = r'%s\include;%s\include' % (PlatformSDKDir, MSToolkitDir)
+	lib_path = r'%s\lib;%s\lib' % (PlatformSDKDir, MSToolkitDir)
 	exe_path = r'%s\bin;%s\bin\win95;%s\bin' % (MSToolkitDir, PlatformSDKDir, PlatformSDKDir)
 	return (include_path, lib_path, exe_path, PlatformSDKDir)
 
