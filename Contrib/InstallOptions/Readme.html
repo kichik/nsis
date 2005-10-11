@@ -581,6 +581,14 @@ used.</td>
 specify the foreground color of the text. Format: 0xBBRRGG
 (hexadecimal).</td>
 </tr>
+<tr>
+<td class="lefttable"><strong>HWND<br>HWND2</strong></td>
+<td class="lefttable"><em>(output)</em></td>
+<td class="righttable">After initDialog returns, this will contain
+the HWND of the control created by this field. It can be used
+instead of FindWindow and GetDlgItem. HWND2 contains the HWND of
+an additional control, such as the browse button.</td>
+</tr>
 </table>
 </div>
 <h2>How to use</h2>
@@ -801,11 +809,9 @@ dialogs, you should use the initDialog and show functions.
 initDialog creates the dialog in memory, but does not show it.
 After calling initDialog, you can set the fonts and colors, and
 call show to show the dialog. initDialog pushes the HWND of the
-custom dialog to the stack. To get the HWND of the controls
-use:</p>
-<pre>
-GetDlgItem (output var) (hwnd of the custom dialog) (1200 + Field number - 1)
-</pre>
+custom dialog to the stack. Control HWND's are available for each
+control in the HWND entry of the corresponding field in the INI
+file.</p>
 <p>Example of using a custom font:</p>
 <pre>
 Function FunctionName ;FunctionName defined with Page command
@@ -819,7 +825,7 @@ Function FunctionName ;FunctionName defined with Page command
     InstallOptions::initDialog /NOUNLOAD $PLUGINSDIR\test.ini
     Pop $R0
 
-    GetDlgItem $R1 $R0 1200 ;1200 + Field number - 1
+    ReadINIStr $R1 $PLUGINSDIR\test.ini "Field 1" "HWND"
 
     ;$R1 contains the HWND of the first field
     CreateFont $R2 "Tahoma" 10 700
