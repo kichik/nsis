@@ -156,6 +156,9 @@ struct FieldType {
 
   int    nParentIdx;  // this is used to store original windowproc for LINK
   HANDLE hImage; // this is used by image/icon field to save the handle to the image
+
+  int    nField; // field number in INI file
+  char  *pszHwndEntry; // "HWND" or "HWND2"
 };
 
 // initial buffer size.  buffers will grow as required.
@@ -482,6 +485,9 @@ int WINAPI ReadSettings(void) {
     };
     FieldType *pField = pFields + nIdx;
 
+    pField->nField = nCtrlIdx + 1;
+    pField->pszHwndEntry = "HWND";
+
     wsprintf(szField, "Field %d", nCtrlIdx + 1);
     pszAppName = szField;
 
@@ -565,6 +571,8 @@ int WINAPI ReadSettings(void) {
       pNewField->rect.bottom = pField->rect.bottom;
       pNewField->rect.top    = pField->rect.top;
       pField->rect.right = pNewField->rect.left - 3;
+      pNewField->nField = nCtrlIdx + 1;
+      pNewField->pszHwndEntry = "HWND2";
       nNumFields++;
       nIdx++;
     }
@@ -1113,6 +1121,14 @@ int WINAPI createCfgDlg()
       m_hInstance,
       NULL
     );
+
+    {
+      char szField[64];
+      char szHwnd[64];
+      wsprintf(szField, "Field %d", pField->nField);
+      wsprintf(szHwnd, "%d", hwCtrl);
+      WritePrivateProfileString(szField, pField->pszHwndEntry, szHwnd, pszFilename);
+    }
 
     if (hwCtrl) {
       // Sets the font of IO window to be the same as the main window

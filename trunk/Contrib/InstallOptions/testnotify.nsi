@@ -3,8 +3,6 @@
 
 !include WinMessages.nsh
 
-Var hwnd ; Window handle of the custom page
-
 ; The name of the installer
 Name "InstallOptions Test"
 
@@ -34,7 +32,7 @@ Function ShowCustom
     WriteINIStr "$PLUGINSDIR\test.ini" "Settings" "RTL" "1"
   InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\test.ini"
   ; In this mode InstallOptions returns the window handle so we can use it
-  Pop $hwnd
+  Pop $0
   ; Now show the dialog and wait for it to finish
   InstallOptions::show
   ; Finally fetch the InstallOptions status value (we don't care what it is though)
@@ -56,9 +54,9 @@ Function LeaveCustom
 supportx:
   ; Make the FileRequest field depend on the first checkbox
   ReadINIStr $0 "$PLUGINSDIR\test.ini" "Field 2" "State"
-  GetDlgItem $1 $hwnd 1204 ; PathRequest control (1200 + field 5 - 1)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 5" "HWND"
   EnableWindow $1 $0
-  GetDlgItem $1 $hwnd 1205 ; ... button (the following control)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 5" "HWND2"
   EnableWindow $1 $0
   ; Add the disabled flag too so when we return to this page it's disabled again
   StrCmp $0 0 0 +3
@@ -71,11 +69,11 @@ supportx:
 
 clearbtn:
   ; Clear all text fields
-  GetDlgItem $1 $hwnd 1204 ; PathRequest control (1200 + field 5 - 1)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 5" "HWND"
   SendMessage $1 ${WM_SETTEXT} 0 "STR:"
-  GetDlgItem $1 $hwnd 1206 ; DirRequest control (1200 + field 6 - 1 + 1 browse button)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 6" "HWND"
   SendMessage $1 ${WM_SETTEXT} 0 "STR:"
-  GetDlgItem $1 $hwnd 1209 ; Multiline control (1200 + field 8 - 1 + 2 browse buttons)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 8" "HWND"
   SendMessage $1 ${WM_SETTEXT} 0 "STR:"
   Abort ; Return to the page
 
@@ -86,9 +84,9 @@ droplist:
     StrCpy $0 0
   Goto +2
     StrCpy $0 1
-  GetDlgItem $1 $hwnd 1206 ; DirRequest control (1200 + field 6 - 1 + 1 browse button)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 6" "HWND"
   EnableWindow $1 $0
-  GetDlgItem $1 $hwnd 1207 ; ... button (the following control)
+  ReadINIStr $1 "$PLUGINSDIR\test.ini" "Field 6" "HWND2"
   EnableWindow $1 $0
   ; Add the disabled flag too so when we return to this page it's disabled again
   StrCmp $0 0 0 +3
