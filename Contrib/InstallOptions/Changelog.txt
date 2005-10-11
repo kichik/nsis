@@ -1,3 +1,10 @@
+DLL version 2.44 (10/11/2005)
+* Added HWND and HWND2 entries to the INI file to avoid messy calculations of the correct control id
+
+DLL version 2.43 (10/4/2005)
+* Fixed alteration of the working directory by FileRequest
+* Added WS_EX_LEFTSCROLLBAR in RTL mode
+
 DLL version 2.42 (1/21/2005)
 * Added TRANSPARENT flag for BITMAP fields (funded by Chris Morgan)
 
