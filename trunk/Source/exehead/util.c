@@ -503,7 +503,7 @@ int NSISCALL myatoi(char *s)
 {
   unsigned int v=0;
   int sign=1; // sign of positive
-  char m=10; // base of 0
+  char m=10; // base of 10
   char t='9'; // cap top of numbers at 9
 
   if (*s == '-')
