@@ -684,8 +684,7 @@
     !insertmacro _PushScope Switch ${_Logic}              ; Keep a separate stack for switch data
     !insertmacro _PushScope Break _${__LINE__}            ; Get a lable for beyond the end of the switch
     !define ${_Switch}Var `${_a}`                         ; Remember the left hand side of the comparison
-    !define ${_Switch}Tmp "$%TMP%\${__LINE__}.tmp"        ; Get a name for a temporary file
-    !system `echo # logiclib temp file > "${${_Switch}Tmp}"` ; and create it
+    !tempfile ${_Switch}Tmp                               ; Create a temporary file
     !define ${_Logic}Switch _${__LINE__}                  ; Get a label for the end of the switch
     Goto ${${_Logic}Switch}                               ; and go there
     !verbose pop
@@ -702,7 +701,7 @@
     !else
       !define _label _${__LINE__}                         ; Get a label for this case,
       ${_label}:                                          ; place it and add it's check to the temp file
-      !system `echo !insertmacro _== $\`${${_Switch}Var}$\` $\`${_a}$\` ${_label} "" >> "${${_Switch}Tmp}"`
+      !appendfile "${${_Switch}Tmp}" `!insertmacro _== $\`${${_Switch}Var}$\` $\`${_a}$\` ${_label} ""$\n`
       !undef _label
     !endif
     !verbose pop
@@ -734,7 +733,7 @@
     ${${_Logic}Switch}:                                   ; Place the end of the switch
     !undef ${_Logic}Switch
     !include "${${_Switch}Tmp}"                           ; Include the jump table
-    !system `del "${${_Switch}Tmp}"`                      ; and clear it up
+    !delfile "${${_Switch}Tmp}"                           ; and clear it up
     !ifdef ${_Switch}Else                                 ; Was there a default case?
       Goto ${${_Switch}Else}                              ; then go there if all else fails
       !undef ${_Switch}Else
