@@ -1062,11 +1062,22 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
 
     case TOK_P_DELFILE:
-      if (unlink(line.gettoken_str(1)) == -1) {
-        ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", line.gettoken_str(1));
-        return PS_ERROR;
+      {
+        char *file = line.gettoken_str(1);
+#ifndef _WIN32
+        file = my_convert(file);
+#endif
+        int result = unlink(file);
+#ifndef _WIN32
+        my_convert_free(file);
+#endif
+        if (result == -1) {
+          ERROR_MSG("!delfile: \"%s\" couldn't be deleted.\n", line.gettoken_str(1));
+          return PS_ERROR;
+        }
+
+        SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(1));
       }
-      SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(1));
     return PS_OK;
 
     case TOK_P_APPENDFILE:
