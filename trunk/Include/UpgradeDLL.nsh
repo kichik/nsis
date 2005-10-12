@@ -71,7 +71,7 @@ Example:
   StrCpy $R3 $R3 -4 1
   IfFileExists $R3 +3
 
-    File /oname=$R2\NSIS.Library.RegTool.v2.exe "${NSISDIR}\Bin\RegTool.bin"
+    File /oname=$R2\NSIS.Library.RegTool.v2.$HWNDPARENT.exe "${NSISDIR}\Bin\RegTool.bin"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\RunOnce" \
       "NSIS.Library.RegTool.v2" '"$R2\NSIS.Library.RegTool.v2.$HWNDPARENT.exe" /S'
 
