@@ -97,6 +97,7 @@ enum
 
   TOK_P_TEMPFILE,
   TOK_P_DELFILE,
+  TOK_P_APPENDFILE,
 
   // section/function shit
   TOK_SECTION,

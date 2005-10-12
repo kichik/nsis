@@ -1069,6 +1069,30 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("!delfile: \"%s\"\n", line.gettoken_str(1));
     return PS_OK;
 
+    case TOK_P_APPENDFILE:
+      {
+        char *file = line.gettoken_str(1);
+        char *text = line.gettoken_str(2);
+
+        FILE *fp = FOPEN(file, "a");
+        if (!fp)
+        {
+          ERROR_MSG("!appendfile: \"%s\" couldn't be opened.\n", file);
+          return PS_ERROR;
+        }
+
+        if (fputs(text, fp) < 0)
+        {
+          ERROR_MSG("!appendfile: error writing to \"%s\".\n", file);
+          return PS_ERROR;
+        }
+
+        fclose(fp);
+
+        SCRIPT_MSG("!appendfile: \"%s\" \"%s\"\n", file, text);
+      }
+    return PS_OK;
+
     // page ordering shit
     ///////////////////////////////////////////////////////////////////////////////
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT

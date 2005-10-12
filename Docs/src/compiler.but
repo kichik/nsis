@@ -33,6 +33,19 @@ Causes the NSIS compiler to scan the given directory for plug-in DLLs.
 \c !addplugindir myplugin
 \c MyPlugin::SomeFunction
 
+\S1{appendfile} !appendfile
+
+\c file text
+
+Appends \e{text} to \e{file}.
+
+\c !tempfile FILE
+\c !appendfile "${FILE}" "XPStyle on$\n"
+\c !appendfile "${FILE}" "Name 'test'$\n"
+\c !include "${FILE}"
+\c !delfile "${FILE}"
+\c !undef FILE
+
 \S1{cd} !cd
 
 \c new_path
