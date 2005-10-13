@@ -19,6 +19,46 @@ if defenv['DEBUG']:
 	defenv.Append(CCFLAGS = '/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb')
 	defenv.Append(LINKFLAGS = '/debug')
 
+### workarounds
+
+# latest Platform SDK includes a bad version of libcp.lib.
+# if stl usage causes link failure, copy the good libcp.lib
+# from one of the other lib folders and use it instead.
+
+conf = defenv.Configure()
+
+libcptest = """
+#include <fstream>
+int main() {
+	// %s
+	std::ofstream header("test", std::ofstream::out);
+	return 0;
+}
+"""
+
+conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+
+if not conf.TryLink(libcptest % 'no change', '.cpp'):
+	import os, shutil
+
+	libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+	libdirs.remove(Dir('#/.sconf_temp').abspath);
+
+	for libdir in libdirs:
+		try:
+			libcp = r'%s\libcp.lib' % libdir
+			shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
+			if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
+				break
+		except IOError:
+			continue
+	else:
+		print "*** Couldn't find a good version of libcp.lib"
+		Exit(2)
+
+conf.Finish()
+
 ### stub environment
 
 stub_env = defenv.Copy()
