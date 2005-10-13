@@ -44,7 +44,6 @@ if not conf.TryLink(libcptest % 'no change', '.cpp'):
 	import os, shutil
 
 	libdirs = defenv['ENV']['LIB'].split(os.pathsep)
-	libdirs.remove(Dir('#/.sconf_temp').abspath);
 
 	for libdir in libdirs:
 		try:
