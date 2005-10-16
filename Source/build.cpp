@@ -50,7 +50,7 @@ CEXEBuild::~CEXEBuild()
   free(m_unicon_data);
 
   delete [] m_exehead;
-  
+
   int nlt = lang_tables.getlen() / sizeof(LanguageTable);
   LanguageTable *nla = (LanguageTable*)lang_tables.get();
 
@@ -223,6 +223,10 @@ CEXEBuild::CEXEBuild() :
 #ifdef NSIS_SUPPORT_STANDARD_PREDEFINES
   // Added by Sunil Kamath 11 June 2003
   definedlist.add("NSIS_SUPPORT_STANDARD_PREDEFINES");
+#endif
+#ifdef NSIS_FIX_COMMENT_HANDLING
+  // Added by Sunil Kamath 15 October 2005
+  definedlist.add("NSIS_FIX_COMMENT_HANDLING");
 #endif
 
 // no more optional
@@ -403,12 +407,12 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   int i;
   for (i = 0; i < 10; i++)    // 0 - 9
   {
-    sprintf(Aux, "%d", i);    
+    sprintf(Aux, "%d", i);
     m_UserVarNames.add(Aux,1);
   }
   for (i = 0; i < 10; i++)        // 10 - 19
   {
-    sprintf(Aux, "R%d", i);    
+    sprintf(Aux, "R%d", i);
     m_UserVarNames.add(Aux,1);
   }
   m_UserVarNames.add("CMDLINE",1);       // 20 everything before here doesn't have trailing slash removal
@@ -562,7 +566,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
     int i = (unsigned char)*p;
 
     p=np;
-    
+
     // Test for characters extending into the variable codes
     if (i >= NS_CODES_START) {
       *out++ = (char)NS_SKIP_CODE;
@@ -589,7 +593,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               int idxUserVar = m_UserVarNames.get((char*)p, pUserVarName-p);
               if (idxUserVar >= 0)
               {
-                // Well, using variables inside string formating doens't mean 
+                // Well, using variables inside string formating doens't mean
                 // using the variable, beacuse it will be always an empty string
                 // which is also memory wasting
                 // So the line below must be commented !??
@@ -632,7 +636,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
             int idx = -1;
             char *cp = strdup(p+1);
             char *pos = strchr(cp, ')');
-            if (pos) 
+            if (pos)
             {
               *pos = 0;
               idx = DefineLangString(cp);
@@ -645,7 +649,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 bProceced = true;
               }
             }
-            free(cp);              
+            free(cp);
           }
           if ( bProceced )
             continue;
@@ -661,10 +665,10 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               cBracket = ')';
             else if ( *p == '{' )
               cBracket = '}';
-            
+
             strncpy(tbuf,p,63);
             tbuf[63]=0;
-            
+
             if ( cBracket != 0 )
             {
               if (strchr(tbuf,cBracket)) (strchr(tbuf,cBracket)+1)[0]=0;
@@ -801,7 +805,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
     {
       int in_len = min(build_filebuflen, avail_in);
       int out_len = min(build_filebuflen, avail_out);
-      
+
       compressor->SetNextIn((char *) mmap->get(length - avail_in, in_len), in_len);
       compressor->SetNextOut((char *) db->get(st + sizeof(int) + bufferlen - avail_out, out_len), out_len);
       if ((ret = compressor->Compress(0)) < 0)
@@ -1691,7 +1695,7 @@ int CEXEBuild::AddVersionInfo()
     {
       int imm, iml, ilm, ill;
       if ( sscanf(version_product_v, "%d.%d.%d.%d", &imm, &iml, &ilm, &ill) != 4 )
-      { 
+      {
         ERROR_MSG("Error: invalid VIProductVersion format, should be X.X.X.X\n");
         return PS_ERROR;
       }
@@ -1717,7 +1721,7 @@ int CEXEBuild::AddVersionInfo()
       }
     }
   }
-  
+
   return PS_OK;
 }
 #endif // NSIS_SUPPORT_VERSION_INFO
@@ -1798,7 +1802,7 @@ again:
     {
       int i = 0;
       page *p = (page *) cur_pages->get();
-      
+
       for (i = 0; i < cur_header->blocks[NB_PAGES].num; i++, p++) {
         page *pp = 0;
 
@@ -2261,7 +2265,7 @@ int CEXEBuild::prepare_uninstaller() {
     DefineInnerLangString(NLF_UCAPTION);
     if (resolve_coderefs("uninstall"))
       return PS_ERROR;
-#ifdef NSIS_CONFIG_COMPONENTPAGE 
+#ifdef NSIS_CONFIG_COMPONENTPAGE
     // set sections to the first insttype
     PrepareInstTypes();
 #endif
@@ -2470,7 +2474,7 @@ int CEXEBuild::write_output(void)
         return PS_ERROR;
       }
     }
-    else 
+    else
 #endif
     {
       if (fwrite(ihd.get(),1,ihd.getlen(),fp) != (unsigned int)ihd.getlen())
@@ -2625,7 +2629,7 @@ int CEXEBuild::write_output(void)
           return PS_ERROR;
         }
       }
-      else 
+      else
 #endif
       {
 #ifdef NSIS_CONFIG_CRC_SUPPORT
@@ -2646,7 +2650,7 @@ int CEXEBuild::write_output(void)
     build_datablock.clear();
   }
 #ifdef NSIS_CONFIG_COMPRESSION_SUPPORT
-  if (build_compress_whole) 
+  if (build_compress_whole)
   {
     if (deflateToFile(fp,NULL,0))
     {
@@ -3281,14 +3285,14 @@ int CEXEBuild::DeclaredUserVar(const char *szVarName)
   if (m_ShellConstants.get((char*)szVarName) >= 0)
   {
     ERROR_MSG("Error: name \"%s\" in use by constant\n", szVarName);
-    return PS_ERROR;  
+    return PS_ERROR;
   }
 
   int idxUserVar = m_UserVarNames.get((char*)szVarName);
   if (idxUserVar >= 0)
   {
     ERROR_MSG("Error: variable \"%s\" already declared\n", szVarName);
-    return PS_ERROR;  
+    return PS_ERROR;
   }
   const char *pVarName = szVarName;
   int iVarLen = strlen(szVarName);
@@ -3354,9 +3358,9 @@ void CEXEBuild::VerifyDeclaredUserVarRefs(UserVarsStringList *pVarsStringList)
   for (int i = m_iBaseVarsNum; i < pVarsStringList->getnum(); i++)
   {
     if (!pVarsStringList->get_reference(i))
-    {      
+    {
       warning("Variable \"%s\" not referenced, wasting memory!", pVarsStringList->idx2name(i));
-    }  
+    }
   }
 }
 
