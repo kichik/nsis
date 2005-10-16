@@ -5,398 +5,398 @@ Import('defenv')
 cfg = Options()
 
 cfg.Add(
-    (
-        'NSIS_MAX_STRLEN',
-        'defines the maximum string length for internal variables and stack entries. 1024 should be plenty, but if you are doing crazy registry shit, you might want to bump it up. Generally it adds about 16-32x the memory, so setting this to 4096 from 1024 will add around 64k of memory usage (not really a big deal, but not usually needed).',
-        1024
-    )
+  (
+    'NSIS_MAX_STRLEN',
+    'defines the maximum string length for internal variables and stack entries. 1024 should be plenty, but if you are doing crazy registry shit, you might want to bump it up. Generally it adds about 16-32x the memory, so setting this to 4096 from 1024 will add around 64k of memory usage (not really a big deal, but not usually needed).',
+    1024
+  )
 )
 
 cfg.Add(
-    (
-        'NSIS_MAX_INST_TYPES',
-        'defines the maximum install types. Note that this should not exceed 32, ever.',
-        32
-    )
+  (
+    'NSIS_MAX_INST_TYPES',
+    'defines the maximum install types. Note that this should not exceed 32, ever.',
+    32
+  )
 )
 
 cfg.Add(
-    (
-        'NSIS_DEFAULT_LANG',
-        'defines the default language id NSIS will use if nothing else is defined in the script. Default value is 1033 which is English.',
-        1033
-    )
+  (
+    'NSIS_DEFAULT_LANG',
+    'defines the default language id NSIS will use if nothing else is defined in the script. Default value is 1033 which is English.',
+    1033
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_UNINSTALL_SUPPORT',
-        "enables the uninstaller support. Turn it off if your installers don't need uninstallers. Adds less than 1kb.",
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_UNINSTALL_SUPPORT',
+    "enables the uninstaller support. Turn it off if your installers don't need uninstallers. Adds less than 1kb.",
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_LICENSEPAGE',
-        'enables support for the installer to present a license page.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_LICENSEPAGE',
+    'enables support for the installer to present a license page.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_COMPONENTPAGE',
-        'enables support for the installer to present a page where you can select what sections are installed. with this disabled, all sections are installed by default',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_COMPONENTPAGE',
+    'enables support for the installer to present a page where you can select what sections are installed. with this disabled, all sections are installed by default',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE',
-        'enables an alternative components page behavior. Checkboxes will only be toggled when clicking on the checkbox itself and not on its label. .onMouseOverSection will only be called when the user selects the component and not when moving the mouse pointer over it.',
-        'no'
-    )
+  BoolOption(
+    'NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE',
+    'enables an alternative components page behavior. Checkboxes will only be toggled when clicking on the checkbox itself and not on its label. .onMouseOverSection will only be called when the user selects the component and not when moving the mouse pointer over it.',
+    'no'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_SILENT_SUPPORT',
-        'enables support for making installers that are completely silent.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_SILENT_SUPPORT',
+    'enables support for making installers that are completely silent.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_VISIBLE_SUPPORT',
-        'enables support for making installers that are visible.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_VISIBLE_SUPPORT',
+    'enables support for making installers that are visible.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_ENHANCEDUI_SUPPORT',
-        'enables support for CreateFont, SetCtlColors (used by some UIs), SetBrandingImage, .onGUIInit, etc.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_ENHANCEDUI_SUPPORT',
+    'enables support for CreateFont, SetCtlColors (used by some UIs), SetBrandingImage, .onGUIInit, etc.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_COMPRESSION_SUPPORT',
-        'enables support for making installers that use compression (recommended).',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_COMPRESSION_SUPPORT',
+    'enables support for making installers that use compression (recommended).',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_COMPRESS_BZIP2_SMALLMODE',
-        "if defined, bzip2's decompressor uses bzip2's alternative decompression method that uses less runtime memory, at the expense of speed (and executable size). not recommended.",
-        'no'
-    )
+  BoolOption(
+    'NSIS_COMPRESS_BZIP2_SMALLMODE',
+    "if defined, bzip2's decompressor uses bzip2's alternative decompression method that uses less runtime memory, at the expense of speed (and executable size). not recommended.",
+    'no'
+  )
 )
 
 cfg.Add(
-    (
-        'NSIS_COMPRESS_BZIP2_LEVEL',
-        'bzip2 compression window size. 1-9 is valid. 9 uses the most memory, but typically compresses best (recommended). 1 uses the least memory, but typically compresses the worst.',
-        9
-    )
+  (
+    'NSIS_COMPRESS_BZIP2_LEVEL',
+    'bzip2 compression window size. 1-9 is valid. 9 uses the most memory, but typically compresses best (recommended). 1 uses the least memory, but typically compresses the worst.',
+    9
+  )
 )
 
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_CRC_SUPPORT',
-        'enables support for installer verification. HIGHLY recommended.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_CRC_SUPPORT',
+    'enables support for installer verification. HIGHLY recommended.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_CRC_ANAL',
-        'makes the CRC verification extremely careful, meaning extra bytes on the end of file, or the first 512 bytes changing, will give error. Enable this if you are paranoid, otherwise leaving it off seems safe (and is less prone to reporting virii). If you will be digitally signing your installers, leave this off.',
-        'no'
-    )
+  BoolOption(
+    'NSIS_CONFIG_CRC_ANAL',
+    'makes the CRC verification extremely careful, meaning extra bytes on the end of file, or the first 512 bytes changing, will give error. Enable this if you are paranoid, otherwise leaving it off seems safe (and is less prone to reporting virii). If you will be digitally signing your installers, leave this off.',
+    'no'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_LOG',
-        'enables the logging facility. turning this on (by uncommenting it) adds about 4kb, but can be useful in debugging your installers.',
-        'no'
-    )
+  BoolOption(
+    'NSIS_CONFIG_LOG',
+    'enables the logging facility. turning this on (by uncommenting it) adds about 4kb, but can be useful in debugging your installers.',
+    'no'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_LOG_ODS',
-        'makes the logging facility use OutputDebugString instead of a file.',
-        'no'
-    )
+  BoolOption(
+    'NSIS_CONFIG_LOG_ODS',
+    'makes the logging facility use OutputDebugString instead of a file.',
+    'no'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_BGBG',
-        'enables support for the blue (well, whatever color you want) gradient background window.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_BGBG',
+    'enables support for the blue (well, whatever color you want) gradient background window.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_CODECALLBACKS',
-        'enables support for installer code callbacks. recommended, as it uses a minimum of space and allows for neat functionality.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_CODECALLBACKS',
+    'enables support for installer code callbacks. recommended, as it uses a minimum of space and allows for neat functionality.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_MOVEONREBOOT',
-        'enables support for uninstallers that automatically delete themselves from the temp directory, as well as the reboot moving/deleting modes of Delete and Rename. Adds about 512 gay bytes..',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_MOVEONREBOOT',
+    'enables support for uninstallers that automatically delete themselves from the temp directory, as well as the reboot moving/deleting modes of Delete and Rename. Adds about 512 gay bytes..',
+    'yes'
+  )
 )
 
 ### Instruction enabling configuration
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_ACTIVEXREG',
-        'enables activeX plug-in registration and deregistration, as well as CallInstDLL',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_ACTIVEXREG',
+    'enables activeX plug-in registration and deregistration, as well as CallInstDLL',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_INTOPTS',
-        'enables support for IntCmp, IntCmpU, IntOp, and IntFmt.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_INTOPTS',
+    'enables support for IntCmp, IntCmpU, IntOp, and IntFmt.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_STROPTS',
-        'enables support for StrCmp, StrCpy, and StrLen, as well as Get*Local.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_STROPTS',
+    'enables support for StrCmp, StrCpy, and StrLen, as well as Get*Local.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_STACK',
-        'enables support for the stack (Push, Pop, Exch)',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_STACK',
+    'enables support for the stack (Push, Pop, Exch)',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_FILEFUNCTIONS',
-        'enables support for FileOpen,FileClose, FileSeek, FileRead, and FileWrite.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_FILEFUNCTIONS',
+    'enables support for FileOpen,FileClose, FileSeek, FileRead, and FileWrite.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_FINDFIRST',
-        'enables support for FindFirst, FindNext, and FindClose.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_FINDFIRST',
+    'enables support for FindFirst, FindNext, and FindClose.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_CREATESHORTCUT',
-        'enables support for CreateShortCut.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_CREATESHORTCUT',
+    'enables support for CreateShortCut.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_INIFILES',
-        'enables support for ReadINIStr and WriteINIStr.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_INIFILES',
+    'enables support for ReadINIStr and WriteINIStr.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_REGISTRYFUNCTIONS',
-        'enables support for ReadRegStr, ReadRegDWORD, WriteRegStr, etc etc etc.',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_REGISTRYFUNCTIONS',
+    'enables support for ReadRegStr, ReadRegDWORD, WriteRegStr, etc etc etc.',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_COPYFILES',
-        'enables support for CopyFiles',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_COPYFILES',
+    'enables support for CopyFiles',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_REBOOT',
-        'enables support for Reboot, IfRebootFlag, SetRebootFlag',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_REBOOT',
+    'enables support for Reboot, IfRebootFlag, SetRebootFlag',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_FNUTIL',
-        'enables support for GetFullPathName, GetTempFileName, and SearchPath',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_FNUTIL',
+    'enables support for GetFullPathName, GetTempFileName, and SearchPath',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_EXECUTE',
-        'enables support for Exec and ExecWait',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_EXECUTE',
+    'enables support for Exec and ExecWait',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_SHELLEXECUTE',
-        'enables support for ExecShell',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_SHELLEXECUTE',
+    'enables support for ExecShell',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_GETDLLVERSION',
-        'enables support for GetDLLVersion',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_GETDLLVERSION',
+    'enables support for GetDLLVersion',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_GETFILETIME',
-        'enables support for GetFileTime',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_GETFILETIME',
+    'enables support for GetFileTime',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_HWNDS',
-        'enables support for FindWindow, SendMessage, and IsWindow',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_HWNDS',
+    'enables support for FindWindow, SendMessage, and IsWindow',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_ENVIRONMENT',
-        'enables support for ReadEnvStr and ExpandEnvStrings',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_ENVIRONMENT',
+    'enables support for ReadEnvStr and ExpandEnvStrings',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_RMDIR',
-        'enables support for RMDir',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_RMDIR',
+    'enables support for RMDir',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_FILE',
-        'enables support for File (extracting files)',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_FILE',
+    'enables support for File (extracting files)',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_DELETE',
-        'enables support for Delete (delete files)',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_DELETE',
+    'enables support for Delete (delete files)',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_RENAME',
-        'enables support for Rename (rename files)',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_RENAME',
+    'enables support for Rename (rename files)',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_MESSAGEBOX',
-        'enables support for MessageBox',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_MESSAGEBOX',
+    'enables support for MessageBox',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_VERSION_INFO',
-        'enables support for version information in the installer',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_VERSION_INFO',
+    'enables support for version information in the installer',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_FIX_DEFINES_IN_STRINGS',
-        'fixes defines inside defines and handles chars $ perfectly',
-        'no'
-    )
+  BoolOption(
+    'NSIS_FIX_DEFINES_IN_STRINGS',
+    'fixes defines inside defines and handles chars $ perfectly',
+    'no'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_SUPPORT_STANDARD_PREDEFINES',
-        'enables standard predefines - __FILE__, __LINE__, __DATE__, __TIME__ and __TIMESTAMP__',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_SUPPORT_STANDARD_PREDEFINES',
+    'enables standard predefines - __FILE__, __LINE__, __DATE__, __TIME__ and __TIMESTAMP__',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_LOCKWINDOW_SUPPORT',
-        'enables the LockWindow command',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_LOCKWINDOW_SUPPORT',
+    'enables the LockWindow command',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_CONFIG_PLUGIN_SUPPORT',
-        'enables installer plug-ins support',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_CONFIG_PLUGIN_SUPPORT',
+    'enables installer plug-ins support',
+    'yes'
+  )
 )
 
 cfg.Add(
-    BoolOption(
-        'NSIS_FIX_COMMENT_HANDLING',
-        'fixes comment handling',
-        'yes'
-    )
+  BoolOption(
+    'NSIS_FIX_COMMENT_HANDLING',
+    'fixes comment handling',
+    'yes'
+  )
 )
 
 ### Generate help
@@ -409,11 +409,11 @@ env = Environment()
 cfg.Update(env)
 
 def AddValuedDefine(define):
-    defenv.Append(NSIS_CPPDEFINES = [(define, env[define])])
+  defenv.Append(NSIS_CPPDEFINES = [(define, env[define])])
 
 def AddBoolDefine(define):
-    if env[define]:
-        defenv.Append(NSIS_CPPDEFINES = [define])
+  if env[define]:
+    defenv.Append(NSIS_CPPDEFINES = [define])
 
 AddValuedDefine('NSIS_MAX_STRLEN')
 AddValuedDefine('NSIS_MAX_INST_TYPES')
