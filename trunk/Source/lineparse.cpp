@@ -124,25 +124,9 @@ void LineParser::freetokens()
 int LineParser::doline(char *line, int ignore_escaping/*=0*/)
 {
   m_nt=0;
-#ifndef NSIS_FIX_COMMENT_HANDLING
-  if ( m_bCommentBlock )
-  {
-    while ( *line )
-    {
-      if ( *line == '*' && *(line+1) == '/' )
-      {
-        m_bCommentBlock=false; // Found end of comment block
-        line+=2;
-        break;
-      }
-      line++;
-    }
-  }
-#endif
   while (*line == ' ' || *line == '\t') line++;
   while (*line)
   {
-#ifdef NSIS_FIX_COMMENT_HANDLING
     if ( m_bCommentBlock )
     {
       while ( *line )
@@ -158,20 +142,14 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
       }
     }
     else {
-#endif
       int lstate=0; // 1=", 2=`, 4='
       if (*line == ';' || *line == '#') break;
       if (*line == '/' && *(line+1) == '*')
       {
         m_bCommentBlock = true;
         line+=2;
-#ifndef NSIS_FIX_COMMENT_HANDLING
-        return doline(line, ignore_escaping);
-#endif
       }
-#ifdef NSIS_FIX_COMMENT_HANDLING
       else {
-#endif
         if (*line == '\"') lstate=1;
         else if (*line == '\'') lstate=2;
         else if (*line == '`') lstate=4;
@@ -224,10 +202,8 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
           else return -2;
         }
         while (*line == ' ' || *line == '\t') line++;
-#ifdef NSIS_FIX_COMMENT_HANDLING
       }
     }
-#endif
   }
   return 0;
 }
