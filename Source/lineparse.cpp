@@ -27,12 +27,12 @@ int LineParser::parse(char *line, int ignore_escaping/*=0*/) // returns -1 on er
   bool bPrevCB=m_bCommentBlock;
   int n=doline(line, ignore_escaping);
   if (n) return n;
-  if (m_nt) 
+  if (m_nt)
   {
     m_bCommentBlock=bPrevCB;
     m_tokens=(char**)malloc(sizeof(char*)*m_nt);
     n=doline(line, ignore_escaping);
-    if (n) 
+    if (n)
     {
       freetokens();
       return -1;
@@ -54,7 +54,7 @@ void LineParser::eattoken()
 double LineParser::gettoken_float(int token, int *success/*=0*/)
 {
   token+=m_eat;
-  if (token < 0 || token >= m_nt) 
+  if (token < 0 || token >= m_nt)
   {
     if (success) *success=0;
     return 0.0;
@@ -63,7 +63,7 @@ double LineParser::gettoken_float(int token, int *success/*=0*/)
   {
     char *t=m_tokens[token];
     *success=*t?1:0;
-    while (*t) 
+    while (*t)
     {
       if ((*t < '0' || *t > '9')&&*t != '.') *success=0;
       t++;
@@ -72,10 +72,10 @@ double LineParser::gettoken_float(int token, int *success/*=0*/)
   return atof(m_tokens[token]);
 }
 
-int LineParser::gettoken_int(int token, int *success/*=0*/) 
-{ 
+int LineParser::gettoken_int(int token, int *success/*=0*/)
+{
   token+=m_eat;
-  if (token < 0 || token >= m_nt || !m_tokens[token][0]) 
+  if (token < 0 || token >= m_nt || !m_tokens[token][0])
   {
     if (success) *success=0;
     return 0;
@@ -88,11 +88,11 @@ int LineParser::gettoken_int(int token, int *success/*=0*/)
   return l;
 }
 
-char* LineParser::gettoken_str(int token) 
-{ 
+char* LineParser::gettoken_str(int token)
+{
   token+=m_eat;
   if (token < 0 || token >= m_nt) return "";
-  return m_tokens[token]; 
+  return m_tokens[token];
 }
 
 int LineParser::gettoken_enum(int token, const char *strlist) // null seperated list
@@ -124,6 +124,7 @@ void LineParser::freetokens()
 int LineParser::doline(char *line, int ignore_escaping/*=0*/)
 {
   m_nt=0;
+#ifndef NSIS_FIX_COMMENT_HANDLING
   if ( m_bCommentBlock )
   {
     while ( *line )
@@ -137,66 +138,96 @@ int LineParser::doline(char *line, int ignore_escaping/*=0*/)
       line++;
     }
   }
+#endif
   while (*line == ' ' || *line == '\t') line++;
-  while (*line) 
+  while (*line)
   {
-    int lstate=0; // 1=", 2=`, 4='
-    if (*line == ';' || *line == '#') break;
-    if (*line == '/' && *(line+1) == '*')
+#ifdef NSIS_FIX_COMMENT_HANDLING
+    if ( m_bCommentBlock )
     {
-      m_bCommentBlock = true;
-      line+=2;
-      return doline(line, ignore_escaping);
-    }
-    if (*line == '\"') lstate=1;
-    else if (*line == '\'') lstate=2;
-    else if (*line == '`') lstate=4;
-    if (lstate) line++;
-    int nc=0;
-    char *p = line;
-    while (*line)
-    {
-      if (line[0] == '$' && line[1] == '\\') {
-        switch (line[2]) {
-          case '"':
-          case '\'':
-          case '`':
-            nc += ignore_escaping ? 3 : 1;
-            line += 3;
-            continue;
+      while ( *line )
+      {
+        if ( *line == '*' && *(line+1) == '/' )
+        {
+          m_bCommentBlock=false; // Found end of comment block
+          line+=2;
+          while (*line == ' ' || *line == '\t') line++;
+          break;
         }
+        else line++;
       }
-      if (lstate==1 && *line =='\"') break;
-      if (lstate==2 && *line =='\'') break;
-      if (lstate==4 && *line =='`') break;
-      if (!lstate && (*line == ' ' || *line == '\t')) break;
-      line++;
-      nc++;
     }
-    if (m_tokens)
-    {
-      int i;
-      m_tokens[m_nt]=(char*)malloc(nc+1);
-      for (i = 0; p < line; i++, p++) {
-        if (!ignore_escaping && p[0] == '$' && p[1] == '\\') {
-          switch (p[2]) {
-            case '"':
-            case '\'':
-            case '`':
-              p += 2;
+    else {
+#endif
+      int lstate=0; // 1=", 2=`, 4='
+      if (*line == ';' || *line == '#') break;
+      if (*line == '/' && *(line+1) == '*')
+      {
+        m_bCommentBlock = true;
+        line+=2;
+#ifndef NSIS_FIX_COMMENT_HANDLING
+        return doline(line, ignore_escaping);
+#endif
+      }
+#ifdef NSIS_FIX_COMMENT_HANDLING
+      else {
+#endif
+        if (*line == '\"') lstate=1;
+        else if (*line == '\'') lstate=2;
+        else if (*line == '`') lstate=4;
+        if (lstate) line++;
+        int nc=0;
+        char *p = line;
+        while (*line)
+        {
+          if (line[0] == '$' && line[1] == '\\') {
+            switch (line[2]) {
+              case '"':
+              case '\'':
+              case '`':
+                nc += ignore_escaping ? 3 : 1;
+                line += 3;
+                continue;
+            }
           }
+          if (lstate==1 && *line =='\"') break;
+          if (lstate==2 && *line =='\'') break;
+          if (lstate==4 && *line =='`') break;
+          if (!lstate && (*line == ' ' || *line == '\t')) break;
+#ifdef NSIS_FIX_COMMENT_HANDLING
+          if (!lstate && (*line == ';' || *line == '#' || (*line == '/' && *(line+1) == '*'))) break;
+#endif
+          line++;
+          nc++;
         }
-        m_tokens[m_nt][i] = *p;
+        if (m_tokens)
+        {
+          int i;
+          m_tokens[m_nt]=(char*)malloc(nc+1);
+          for (i = 0; p < line; i++, p++) {
+            if (!ignore_escaping && p[0] == '$' && p[1] == '\\') {
+              switch (p[2]) {
+                case '"':
+                case '\'':
+                case '`':
+                  p += 2;
+              }
+            }
+            m_tokens[m_nt][i] = *p;
+          }
+          m_tokens[m_nt][nc]=0;
+        }
+        m_nt++;
+        if (lstate)
+        {
+          if (*line) line++;
+          else return -2;
+        }
+        while (*line == ' ' || *line == '\t') line++;
+#ifdef NSIS_FIX_COMMENT_HANDLING
       }
-      m_tokens[m_nt][nc]=0;
     }
-    m_nt++;
-    if (lstate)
-    {
-      if (*line) line++;
-      else return -2;
-    }
-    while (*line == ' ' || *line == '\t') line++;
+#endif
   }
   return 0;
 }
