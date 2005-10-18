@@ -1013,7 +1013,7 @@ LanguageTable * CEXEBuild::LoadLangFile(char *filename) {
   }
 
   // Read strings
-  for (int i = 0; i < NLF_STRINGS - 3 /* ^Font, ^FontSize and ^RTL */; i++) {
+  for (int i = 0; i < NLF_STRINGS_NO_SPECIAL; i++) {
 
     // skip virtual strings
     if (!NLFStrings[i].szDefault)
