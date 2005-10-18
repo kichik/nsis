@@ -22,6 +22,8 @@ Lines beginning with ; or # are comments. You can put comments after commands. Y
 \c Comment
 \c */
 \c
+\c Name /* comment */ mysetup
+\c
 \c File "myfile" ; Comment
 
 If you want a parameter to start with ; or # put it in quotes.
