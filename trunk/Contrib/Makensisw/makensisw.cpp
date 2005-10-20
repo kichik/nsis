@@ -666,6 +666,7 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   SECURITY_DESCRIPTOR sd={0,};
   PROCESS_INFORMATION pi={0,};
   HANDLE newstdout=0,read_stdout=0;
+  HANDLE newstdin=0,read_stdin=0;
   OSVERSIONINFO osv={sizeof(osv)};
   GetVersionEx(&osv);
   if (osv.dwPlatformId == VER_PLATFORM_WIN32_NT) {
@@ -676,7 +677,12 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   else sa.lpSecurityDescriptor = NULL;
   sa.bInheritHandle = true;
   if (!CreatePipe(&read_stdout,&newstdout,&sa,0)) {
-    ErrorMessage(g_sdata.hwnd,"There was an error creating the pipe.");
+    ErrorMessage(g_sdata.hwnd,"There was an error creating the output pipe.");
+    PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
+    return 1;
+  }
+  if (!CreatePipe(&read_stdin,&newstdin,&sa,0)) {
+    ErrorMessage(g_sdata.hwnd,"There was an error creating the input pipe.");
     PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
     return 1;
   }
@@ -685,6 +691,7 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   si.wShowWindow = SW_HIDE;
   si.hStdOutput = newstdout;
   si.hStdError = newstdout;
+  si.hStdInput = newstdin;
   if (!CreateProcess(NULL,g_sdata.script,NULL,NULL,TRUE,CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi)) {
     char buf[MAX_STRING];
     wsprintf(buf,"Could not execute:\r\n %s.",g_sdata.script);
@@ -717,6 +724,8 @@ DWORD WINAPI MakeNSISProc(LPVOID p) {
   CloseHandle(pi.hProcess);
   CloseHandle(newstdout);
   CloseHandle(read_stdout);
+  CloseHandle(newstdin);
+  CloseHandle(read_stdin);
   PostMessage(g_sdata.hwnd,WM_MAKENSIS_PROCESSCOMPLETE,0,0);
   return 0;
 }
