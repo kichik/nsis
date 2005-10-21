@@ -5,6 +5,9 @@
 
 /*
 
+version 0.33
+* Added solid compression checkbox
+
 version 0.32
 * Fixed codepage problems
 
