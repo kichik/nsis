@@ -1,0 +1,126 @@
+\S1{flags} Compiler Flags
+
+The following commands change how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command).
+
+\S2{asetallowskipfiles} AllowSkipFiles
+
+\c \\<b\\>on\\</b\\>|off
+
+This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if \R{asetoverwrite}{SetOverwrite} is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If \e{off} is used the ignore button which allows the user to skip the file will not show and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If \e{on} is used the user will have an option to skip the file (error flag will be set - see \R{asetoverwrite}{SetOverwrite}).
+
+\S2{afilebufsize} FileBufSize
+
+\c buffer_size_in_mb
+
+This command sets the size of the compiler's internal file buffers. This command allows you to control the compiler's memory usage by limiting how much of a given file it will load into memory at once. Since the compiler needs both input and output, twice the memory size specified could be used at any given time for file buffers. This command does not limit the compression buffers which could take another couple of MB, neither does it limit the compiler's other internal buffers, but those shouldn't normally top 1MB anyway. Specifying a very small number could decrease performance. Specifying a very large number could exhaust system resources and force the compiler to cancel the compilation process. The default value is 32MB.
+
+\S2{asetcompress} SetCompress
+
+\c \\<b\\>auto\\</b\\>|force|off
+
+This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will effect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).
+
+Note that this option has no effect when solid compression is used.
+
+\S2{asetcompressor} SetCompressor
+
+\c [/SOLID] [/FINAL] \\<b\\>zlib\\</b\\>|bzip2|lzma
+
+This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.
+
+Three compression methods are supported: ZLIB, BZIP2 and LZMA.
+
+ZLIB (the default) uses the deflate algorithm, it is a quick and simple method. With the default compression level it uses about 300 KB of memory.
+
+BZIP2 usually gives better compression ratios than ZLIB, but it is a bit slower and uses more memory. With the default compression level it uses about 4 MB of memory.
+
+LZMA is a new compression method that gives very good compression ratios. The decompression speed is high (10-20 MB/s on a 2 GHz CPU), the compression speed is lower. The memory size that will be used for decompression is the dictionary size plus a few KBs, the default is 8 MB.
+
+If \e{/FINAL} is used, subsequent calls to SetCompressor will be ignored.
+
+If \e{/SOLID} is used, all of the installer data is compressed in one block. This results in greater compression ratios.
+
+\S2{asetcompressordictsize} SetCompressorDictSize
+
+\c dict_size_mb
+
+Sets the dictionary size in megabytes (MB) used by the LZMA compressor (default is 8 MB).
+
+\S2{asetdatablockoptimize} SetDatablockOptimize
+
+\c \\<b\\>on\\</b\\>|off
+
+This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations have the compiler check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.
+
+\S2{asetdatesave} SetDateSave
+
+\c \\<b\\>on\\</b\\>|off
+
+This command sets the file date/time saving flag which is used by the File command to determine whether or not to save the last write date and time of the file, so that it can be restored on installation. Valid flags are 'on' and 'off'. 'on' is the default.
+
+\S2{asetoverwrite} SetOverwrite
+
+\c \\<b\\>on\\</b\\>|off|try|ifnewer|ifdiff|lastused
+
+This command sets the overwrite flag which is used by the File command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file. If overwriteflag is 'ifdiff', then files are only overwritten if the existing file is older or newer than the new file. Note that when in 'ifnewer' or 'ifdiff' mode, the destination file's date is set, regardless of what SetDateSave is set to.
+
+\c SetOverwrite off
+\c File program.cfg # config file we don't want to overwrite
+\c SetOverwrite on
+
+\S2{setpluginunload} SetPluginUnload
+
+\c \\<b\\>manual\\</b\\>|alwaysoff
+
+This command sets the unload plug-in flag which is by CallInstDLL and plug-in calls (dll::func). Setting this to always off will behave as if you have added the /NOUNLOAD to every CallInstDLL and plug-in call. Setting this to manual will only not unload if you specifically use /NOUNLOAD.
+
+\S1{versioninfo} Version Information
+
+\S2{viaddversionkey} VIAddVersionKey
+
+\c  [/LANG=lang_id] keyname value
+
+Adds a field in the Version Tab of the File Properties. This can either be a field provided by the system or a user defined field.
+The following fields are provided by the System:
+
+\b ProductName
+
+\b Comments
+
+\b CompanyName
+
+\b LegalCopyright 
+
+\b FileDescription
+
+\b FileVersion 
+
+\b ProductVersion
+
+\b InternalName
+
+\b LegalTrademarks
+
+\b OriginalFilename
+
+\b PrivateBuild
+
+\b SpecialBuild
+
+The name of these fields are translated on the target system, whereas user defined fields remain untranslated.
+
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "Test Application"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
+\c VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.2.3"
+
+\S2{viproductversion} VIProductVersion
+
+\c [version_string_X.X.X.X]
+
+Adds the Product Version on top of the Version Tab in the Properties of the file.
+
+\c VIProductVersion "1.2.3.4"

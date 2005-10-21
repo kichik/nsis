@@ -1,0 +1,18 @@
+target = 'Dialer'
+
+files = Split("""
+	dialer.c
+""")
+
+libs = Split("""
+	kernel32
+	wininet
+""")
+
+docs = Split("""
+	Dialer.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, docs = docs)
