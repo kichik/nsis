@@ -8,6 +8,8 @@ Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) r
 
 For an example of usage please see the \L{../Examples/one-section.nsi}{one-section.nsi} example.
 
+For useful macros and definitions, see Include\Sections.nsh.
+
 \S2{sectiongetflags} SectionGetFlags
 
 \c section_index user_var(output)
