@@ -62,7 +62,7 @@ BEGIN
                     10
     CONTROL         "ZLib",IDC_ZLIB,"Button",BS_AUTORADIOBUTTON,186,228,30,
                     10
-	CONTROL			"Solid",IDC_SOLID,"Button",BS_AUTOCHECKBOX,240,228,30,
+    CONTROL         "Solid",IDC_SOLID,"Button",BS_AUTOCHECKBOX,240,228,30,
                     10
     DEFPUSHBUTTON   "&Generate",IDOK,306,252,48,14,WS_DISABLED
     PUSHBUTTON      "&Test",IDC_TEST,246,252,49,14,NOT WS_VISIBLE
