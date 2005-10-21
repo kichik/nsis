@@ -33,6 +33,7 @@
 
 #include "../Platform.h"
 #include <shlobj.h>
+#include <shellapi.h>
 #include "resource.h"
 #include "util.h"
 #include "fileform.h"
@@ -87,6 +88,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
     g_hres=OleInitialize(NULL);
   }
 #endif
+
+  {
+    // workaround for bug #1008632
+    // http://sourceforge.net/tracker/index.php?func=detail&aid=1008632&group_id=22049&atid=373085
+    //
+    // without this, SHGetSpecialFolderPath doesn't always recognize some
+    // special folders, like the desktop folder for all users, on Windows
+    // 9x. unlike SHGetSpecialFolderPath, which is not available on all
+    // versions of Windows, SHGetSpecialFolderLocation doesn't try too
+    // hard to make sure the caller gets what he asked for. so we give it
+    // a little push in the right direction by doing part of the work for
+    // it.
+    //
+    // part of what SHGetFileInfo does, is to convert a path into an idl.
+    // to do this conversion, it first needs to initialize the list of 
+    // special idls, which are exactly the idls we use to get the paths
+    // of special folders (CSIDL_*).
+
+    SHFILEINFO shfi;
+    SHGetFileInfo("", 0, &shfi, sizeof(SHFILEINFO), 0);
+  }
 
   mystrcpy(g_caption,_LANG_GENERIC_ERROR);
 
