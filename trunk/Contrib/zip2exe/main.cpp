@@ -37,6 +37,7 @@ HANDLE g_hThread;
 char g_cmdline[1024];
 int g_extracting;
 int g_compressor;
+int g_compressor_solid;
 int g_mui;
 int g_zipfile_size;
 
@@ -463,6 +464,8 @@ void makeEXE(HWND hwndDlg)
     fprintf(fp,"!define ZIP2EXE_COMPRESSOR_BZIP2\n");
   if (g_compressor == 3)
     fprintf(fp,"!define ZIP2EXE_COMPRESSOR_LZMA\n");
+  if (g_compressor_solid == 1)
+    fprintf(fp,"!define ZIP2EXE_COMPRESSOR_SOLID\n");
   GetDlgItemText(hwndDlg,IDC_INSTPATH,buf,sizeof(buf));
   char *outpath = "$INSTDIR";
   int iswinamp=0;
@@ -557,7 +560,7 @@ void makeEXE(HWND hwndDlg)
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   static int ids[]={IDC_INFO,IDC_NSISICON,IDC_SZIPFRAME,IDC_BROWSE,IDC_ZIPFILE,IDC_ZIPINFO_SUMMARY,IDC_ZIPINFO_FILES,IDC_OFRAME,IDC_INAMEST,
-                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
+                        IDC_INSTNAME,IDC_INSTPATH,IDC_OEFST,IDC_OUTFILE,IDC_BROWSE2,IDC_COMPRESSOR,IDC_ZLIB,IDC_BZIP2,IDC_LZMA,IDC_SOLID,IDC_INTERFACE,IDC_MODERNUI,IDC_CLASSICUI};
   static HICON hIcon;
   static HFONT hFont;
   if (uMsg == WM_DESTROY) { if (hIcon) DeleteObject(hIcon); hIcon=0; if (hFont) DeleteObject(hFont); hFont=0; }
@@ -709,6 +712,10 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 g_compressor = 2;
               if (IsDlgButtonChecked(hwndDlg,IDC_LZMA))
                 g_compressor = 3;
+              if (IsDlgButtonChecked(hwndDlg,IDC_SOLID))
+                g_compressor_solid = 1;
+              else
+                g_compressor_solid = 0;
               g_mui=!IsDlgButtonChecked(hwndDlg,IDC_CLASSICUI);
               SetDlgItemText(g_hwnd, IDC_OUTPUTTEXT, "");
               int x;
