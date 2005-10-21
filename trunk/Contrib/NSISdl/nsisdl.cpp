@@ -230,9 +230,11 @@ __declspec(dllexport) void download (HWND   parent,
   char buf[1024];
   char url[1024];
   char filename[1024];
+  static char proxy[1024];
   BOOL bSuccess=FALSE;
   int timeout_ms=30000;
   int getieproxy=1;
+  int manualproxy=0;
 
   char *error=NULL;
 
@@ -274,7 +276,13 @@ __declspec(dllexport) void download (HWND   parent,
     timeout_ms=my_atoi(url+9);
     popstring(url);
   }
-  if (!lstrcmpi(url, "/NOIEPROXY")) {
+  if (!lstrcmpi(url, "/PROXY")) {
+    getieproxy=0;
+    manualproxy=1;
+    popstring(proxy);
+    popstring(url);
+  }
+  else if (!lstrcmpi(url, "/NOIEPROXY")) {
     getieproxy=0;
     popstring(url);
   }
@@ -339,6 +347,9 @@ __declspec(dllexport) void download (HWND   parent,
         }
         buf[8192-1]=0;
         RegCloseKey(hKey);
+      }
+      if(manualproxy == 1){
+        p = proxy;
       }
 
       DWORD start_time=GetTickCount();
