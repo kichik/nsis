@@ -15,18 +15,27 @@
 
 ; Generic section defines
 
+# section or section group is selected
 !define SF_SELECTED   1
+# section group
 !define SF_SECGRP     2
 !define SF_SUBSEC     2  # deprecated
+# section group end marker
 !define SF_SECGRPEND  4
 !define SF_SUBSECEND  4  # deprecated
+# bold text (Section !blah)
 !define SF_BOLD       8
+# read only (SectionIn RO)
 !define SF_RO         16
+# expanded section group (SectionGroup /e blah)
 !define SF_EXPAND     32
+# section group is partially selected
 !define SF_PSELECTED  64  # internal
+# internal
 !define SF_TOGGLED    128 # internal
 !define SF_NAMECHG    256 # internal
 
+# mask to toggle off the selected flag
 !define SECTION_OFF   0xFFFFFFFE
 
 ;--------------------------------
