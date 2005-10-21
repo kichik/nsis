@@ -5,12 +5,19 @@ OutFile "${ZIP2EXE_OUTFILE}"
 
 AllowRootDirInstall true
 
+
+!ifdef ZIP2EXE_COMPRESSOR_SOLID
+  !define SETCOMPRESSOR_SWITCH /SOLID
+!else
+  !define SETCOMPRESSOR_SWITCH
+!endif
+
 !ifdef ZIP2EXE_COMPRESSOR_ZLIB
-  SetCompressor zlib
+  SetCompressor ${SETCOMPRESSOR_SWITCH} zlib
 !else ifdef ZIP2EXE_COMPRESSOR_BZIP2
-  SetCompressor bzip2
+  SetCompressor ${SETCOMPRESSOR_SWITCH} bzip2
 !else ifdef ZIP2EXE_COMPRESSOR_LZMA
-  SetCompressor lzma
+  SetCompressor ${SETCOMPRESSOR_SWITCH} lzma
 !endif
 
 !ifdef ZIP2EXE_INSTALLDIR
