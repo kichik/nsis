@@ -30,16 +30,16 @@
 #define IDC_CLASSICUI                   1025
 #define IDC_INFO                        1026
 #define IDC_NSISICON                    1027
-#define IDC_BZIP3                       1028
 #define IDC_LZMA                        1028
+#define IDC_SOLID                       1029
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1028
+#define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
