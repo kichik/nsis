@@ -282,7 +282,7 @@ __declspec(dllexport) void download (HWND   parent,
     popstring(proxy);
     popstring(url);
   }
-  else if (!lstrcmpi(url, "/NOIEPROXY")) {
+  if (!lstrcmpi(url, "/NOIEPROXY")) {
     getieproxy=0;
     popstring(url);
   }
@@ -348,7 +348,7 @@ __declspec(dllexport) void download (HWND   parent,
         buf[8192-1]=0;
         RegCloseKey(hKey);
       }
-      if(manualproxy == 1){
+      if (manualproxy == 1) {
         p = proxy;
       }
 
