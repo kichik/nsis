@@ -47,8 +47,12 @@ If you don't want NSISdl to use Internet Explorer's settings, use the
 /NOIEPROXY flag. /NOIEPROXY should be used after /TRANSLATE and
 /TIMEOUT. For example:
 
+If you want to specify a proxy on your own, use the /PROXY flag.
+
 NSISdl::download /NOIEPROXY http://www.domain.com/file localfile.exe
 NSISdl::download /TIMEOUT=30000 /NOIEPROXY http://www.domain.com/file localfile.exe
+NSISdl::download /PROXY proxy.whatever.com http://www.domain.com/file localfile.exe
+NSISdl::download /PROXY proxy.whatever.com:8080 http://www.domain.com/file localfile.exe
 
 TRANSLATE
 ---------
