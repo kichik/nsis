@@ -611,7 +611,7 @@ Call functions:
 
 \S1{} GetExeName
 
-\b Get installer filename (with valid case for Windows 9X/Me).
+\b Get installer filename (with valid case for Windows 98/Me).
 
 \\<b\\>Syntax:\\</b\\>
 
@@ -626,7 +626,7 @@ Call functions:
 
 \S1{} GetExePath
 
-\b Get installer pathname ($EXEDIR with valid case for Windows 9X/Me).
+\b Get installer pathname ($EXEDIR with valid case for Windows 98/Me).
 
 \\<b\\>Syntax:\\</b\\>
 
