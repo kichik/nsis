@@ -13,6 +13,7 @@
 #include <time.h>
 #include <string>
 #include <algorithm>
+#include "boost/scoped_ptr.hpp"
 
 using namespace std;
 
@@ -2761,7 +2762,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
 #endif
 
         // search working directory
-        dir_reader *dr = new_dir_reader();
+        boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
         dr->read(dir);
 
         dir_reader::iterator files_itr = dr->files().begin();
@@ -2774,14 +2775,11 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           string incfile = basedir + *files_itr;
 
           if (includeScript((char *) incfile.c_str()) != PS_OK) {
-            delete dr;
             return PS_ERROR;
           }
 
           included++;
         }
-
-        delete dr;
 
         if (included)
           return PS_OK;
@@ -2793,7 +2791,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         for (int i = 0; i < incdirs; i++, incdir += strlen(incdir) + 1) {
           string curincdir = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + dir;
 
-          dir_reader *dr = new_dir_reader();
+          boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
 
           files_itr = dr->files().begin();
@@ -2806,14 +2804,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *files_itr;
 
             if (includeScript((char *) incfile.c_str()) != PS_OK) {
-              delete dr;
               return PS_ERROR;
             }
 
             included++;
           }
 
-          delete dr;
         }
 
         // nothing found
@@ -5708,24 +5704,23 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     spec = "*";
   }
 
-  dir_reader *dr = new_dir_reader();
-  dr->exclude(excluded);
-  dr->read(dir);
-
-  dir_reader::iterator files_itr = dr->files().begin();
-  dir_reader::iterator files_end = dr->files().end();
-
   if (basedir == "") {
     dir_created = true;
 
     if (recurse) {
       // save $OUTDIR into $_OUTDIR [StrCpy $_OUTDIR $OUTDIR]
       if (add_entry_direct(EW_ASSIGNVAR, m_UserVarNames.get("_OUTDIR"), add_string("$OUTDIR")) != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
     }
   }
+
+  boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
+  dr->exclude(excluded);
+  dr->read(dir);
+
+  dir_reader::iterator files_itr = dr->files().begin();
+  dir_reader::iterator files_end = dr->files().end();
 
   // add files in the current directory
   for (; files_itr != files_end; files_itr++) {
@@ -5736,7 +5731,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
       SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
 
       if (do_add_file_create_dir(dir, basedir, attrib) != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
 
@@ -5744,7 +5738,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     }
 
     if (add_file(dir, *files_itr, attrib, name_override, generatecode, data_handle) != PS_OK) {
-      delete dr;
       return PS_ERROR;
     }
 
@@ -5776,7 +5769,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
         SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
 
         if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
-          delete dr;
           return PS_ERROR;
         }
 
@@ -5787,7 +5779,6 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
 
       int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
       if (res != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
     }
@@ -5797,13 +5788,10 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
 
       // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
       if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
-        delete dr;
         return PS_ERROR;
       }
     }
   }
-
-  delete dr;
 
   return PS_OK;
 }
