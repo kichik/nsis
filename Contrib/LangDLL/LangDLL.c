@@ -31,24 +31,26 @@ struct lang {
 BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int i, size;
+  char *selected_language;
   static HFONT font;
   switch (uMsg) {
   	case WM_INITDIALOG:
       // add languages
       for (i = langs_num - 1; i >= 0; i--) {
-        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM)langs[i].name);
+        int cbi = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM) langs[i].name);
+        SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETITEMDATA, cbi, (LPARAM) langs[i].id);
+
+        // remember selected language
+        if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
+          selected_language = langs[i].name;
+        }
       }
+      // select the current language
+      SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SELECTSTRING, -1, (LPARAM) selected_language);
       // set texts
       SetDlgItemText(hwndDlg, IDC_TEXT, g_wndtext);
       SetWindowText(hwndDlg, g_wndtitle);
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
-      // select the current language
-      for (i = 0; i < langs_num; i++) {
-        if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
-          SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, langs_num-i-1, 0);
-          break;
-        }
-      }
       // set font
       if (dofont && !popstring(temp)) {
         size = myatoi(temp);
@@ -73,7 +75,14 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       switch (LOWORD(wParam)) {
       	case IDOK:
           // push result on the stack
-          pushstring(langs[langs_num-SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0)-1].id);
+          i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0);
+          i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETITEMDATA, i, 0);
+          if (i) {
+            pushstring((char *) i);
+          } else {
+            // ?!
+            pushstring("cancel");
+          }
           // end dialog
           EndDialog(hwndDlg, 0);
           break;
