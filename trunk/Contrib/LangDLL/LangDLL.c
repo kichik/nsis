@@ -34,18 +34,22 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   static HFONT font;
   switch (uMsg) {
   	case WM_INITDIALOG:
+      // add languages
       for (i = langs_num - 1; i >= 0; i--) {
         SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_ADDSTRING, 0, (LPARAM)langs[i].name);
       }
+      // set texts
       SetDlgItemText(hwndDlg, IDC_TEXT, g_wndtext);
       SetWindowText(hwndDlg, g_wndtitle);
       SendDlgItemMessage(hwndDlg, IDC_APPICON, STM_SETICON, (LPARAM)LoadIcon(GetModuleHandle(0),MAKEINTRESOURCE(103)), 0);
+      // select the current language
       for (i = 0; i < langs_num; i++) {
         if (!lstrcmp(langs[i].id, getuservariable(INST_LANG))) {
           SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_SETCURSEL, langs_num-i-1, 0);
           break;
         }
       }
+      // set font
       if (dofont && !popstring(temp))
       {
         size = myatoi(temp);
@@ -63,21 +67,25 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           }
         }
       }
+      // show window
       ShowWindow(hwndDlg, SW_SHOW);
       break;
     case WM_COMMAND:
       switch (LOWORD(wParam)) {
       	case IDOK:
+          // push result on the stack
           pushstring(langs[langs_num-SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0)-1].id);
           EndDialog(hwndDlg, 0);
           break;
         case IDCANCEL:
+          // push "cancel" on the stack
           pushstring("cancel");
           EndDialog(hwndDlg, 1);
           break;
       }
       break;
     case WM_CLOSE:
+      // clean up, push "cancel"
       if (font) DeleteObject(font);
       pushstring("cancel");
       EndDialog(hwndDlg, 1);
@@ -96,14 +104,17 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
   {
     int i;
-    BOOL bPopOneMore = FALSE;
+    BOOL pop_empty_string = FALSE;
 
+    // get texts
     if (popstring(g_wndtitle)) return;
     if (popstring(g_wndtext)) return;
 
+    // get flags
     if (popstring(temp)) return;
     if (*temp == 'A')
     {
+      // automatic language count
       stack_t *th;
       langs_num=0;
       th=(*g_stacktop);
@@ -113,19 +124,27 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       }
       if (!th) return;
       langs_num /= 2;
-      bPopOneMore = TRUE;
+      pop_empty_string = TRUE;
     }
     else
-      langs_num = myatoi(temp);
     {
+      // use counts languages
+      langs_num = myatoi(temp);
+    }
+
+    {
+      // parse font flag
       char *p=temp;
       while (*p) if (*p++ == 'F') dofont=1;
     }
 
+    // zero languages?
     if (!langs_num) return;
 
+    // allocate language struct
     langs = (struct lang *)GlobalAlloc(GPTR, langs_num*sizeof(struct lang));
 
+    // fill language struct
     for (i = 0; i < langs_num; i++) {
       if (popstring(temp)) return;
       langs[i].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
@@ -135,7 +154,9 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       langs[i].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
       lstrcpy(langs[i].id, temp);
     }
-    if (bPopOneMore) {
+
+    // pop the empty string to keep the stack clean
+    if (pop_empty_string) {
       if (popstring(temp)) return;
     }
 
