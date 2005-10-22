@@ -2765,10 +2765,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
         dr->read(dir);
 
-        dir_reader::iterator files_itr = dr->files().begin();
-        dir_reader::iterator files_end = dr->files().end();
-
-        for (; files_itr != files_end; files_itr++) {
+        for (dir_reader::iterator files_itr = dr->files().begin();
+             files_itr != dr->files().end();
+             files_itr++)
+        {
           if (!dir_reader::matches(*files_itr, spec))
             continue;
 
@@ -2794,14 +2794,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
           dr->read(curincdir);
 
-          files_itr = dr->files().begin();
-          files_end = dr->files().end();
-
-          for (; files_itr != files_end; files_itr++) {
-            if (!dir_reader::matches(*files_itr, spec))
+          for (dir_reader::iterator incdir_itr = dr->files().begin();
+               incdir_itr != dr->files().end();
+               incdir_itr++)
+          {
+            if (!dir_reader::matches(*incdir_itr, spec))
               continue;
 
-            string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *files_itr;
+            string incfile = string(incdir) + PLATFORM_PATH_SEPARATOR_STR + basedir + *incdir_itr;
 
             if (includeScript((char *) incfile.c_str()) != PS_OK) {
               return PS_ERROR;
@@ -5719,11 +5719,11 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
   dr->exclude(excluded);
   dr->read(dir);
 
-  dir_reader::iterator files_itr = dr->files().begin();
-  dir_reader::iterator files_end = dr->files().end();
-
   // add files in the current directory
-  for (; files_itr != files_end; files_itr++) {
+  for (dir_reader::iterator files_itr = dr->files().begin();
+       files_itr != dr->files().end();
+       files_itr++)
+  {
     if (!dir_reader::matches(*files_itr, spec))
       continue;
 
@@ -5744,52 +5744,54 @@ int CEXEBuild::do_add_file(const char *lgss, int attrib, int recurse, int *total
     (*total_files)++;
   }
 
+  if (!recurse) {
+    return PS_OK;
+  }
+
   // recurse into directories
-  if (recurse) {
-    dir_reader::iterator dirs_itr = dr->dirs().begin();
-    dir_reader::iterator dirs_end = dr->dirs().end();
-
-    for (; dirs_itr != dirs_end; dirs_itr++) {
-      string new_dir;
-      bool created = false;
-
-      if (basedir == "") {
-        new_dir = *dirs_itr;
-      } else {
-        new_dir = basedir + '\\' + *dirs_itr;
-      }
-
-      string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
-
-      if (!dir_reader::matches(*dirs_itr, spec)) {
-        new_spec += spec;
-      } else if (generatecode) {
-        // always create directories that match
-
-        SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
-
-        if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
-          return PS_ERROR;
-        }
-
-        created = true;
-      }
-
-      const char *new_spec_c = new_spec.c_str();
-
-      int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
-      if (res != PS_OK) {
-        return PS_ERROR;
-      }
-    }
+  for (dir_reader::iterator dirs_itr = dr->dirs().begin();
+       dirs_itr != dr->dirs().end();
+       dirs_itr++)
+  {
+    string new_dir;
+    bool created = false;
 
     if (basedir == "") {
-      SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
+      new_dir = *dirs_itr;
+    } else {
+      new_dir = basedir + '\\' + *dirs_itr;
+    }
 
-      // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
-      if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
+    string new_spec = dir + PLATFORM_PATH_SEPARATOR_STR + *dirs_itr + PLATFORM_PATH_SEPARATOR_STR;
+
+    if (!dir_reader::matches(*dirs_itr, spec)) {
+      new_spec += spec;
+    } else if (generatecode) {
+      // always create directories that match
+
+      SCRIPT_MSG("%sFile: Descending to: \"%s\"\n", generatecode ? "" : "Reserve", new_spec.c_str());
+
+      if (do_add_file_create_dir(*dirs_itr, new_dir, attrib) != PS_OK) {
         return PS_ERROR;
       }
+
+      created = true;
+    }
+
+    const char *new_spec_c = new_spec.c_str();
+
+    int res = do_add_file(new_spec_c, attrib, 1, total_files, NULL, generatecode, NULL, excluded, new_dir, created);
+    if (res != PS_OK) {
+      return PS_ERROR;
+    }
+  }
+
+  if (basedir == "") {
+    SCRIPT_MSG("%sFile: Returning to: \"%s\"\n", generatecode ? "" : "Reserve", dir.c_str());
+
+    // restore $OUTDIR from $_OUTDIR [SetOutPath $_OUTDIR]
+    if (add_entry_direct(EW_CREATEDIR, add_string("$_OUTDIR"), 1) != PS_OK) {
+      return PS_ERROR;
     }
   }
 
