@@ -143,15 +143,18 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // allocate language struct
     langs = (struct lang *)GlobalAlloc(GPTR, langs_num*sizeof(struct lang));
+    if (!langs) return;
 
     // fill language struct
     for (i = 0; i < langs_num; i++) {
       if (popstring(temp)) return;
       langs[i].name = GlobalAlloc(GPTR, lstrlen(temp)+1);
+      if (!langs[i].name) return;
       lstrcpy(langs[i].name, temp);
 
       if (popstring(temp)) return;
       langs[i].id = GlobalAlloc(GPTR, lstrlen(temp)+1);
+      if (!langs[i].id) return;
       lstrcpy(langs[i].id, temp);
     }
 
@@ -160,7 +163,15 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       if (popstring(temp)) return;
     }
 
+    // start dialog
     DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_DIALOG), 0, DialogProc);
+
+    // free structs
+    for (i = 0; i < langs_num; i++) {
+      GlobalFree(langs[i].name);
+      GlobalFree(langs[i].id);
+    }
+    GlobalFree(langs);
   }
 }
 
