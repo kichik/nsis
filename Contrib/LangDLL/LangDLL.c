@@ -75,25 +75,25 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       	case IDOK:
           // push result on the stack
           pushstring(langs[langs_num-SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0)-1].id);
+          // end dialog
           EndDialog(hwndDlg, 0);
           break;
         case IDCANCEL:
           // push "cancel" on the stack
           pushstring("cancel");
-          EndDialog(hwndDlg, 1);
+          // end dialog
+          EndDialog(hwndDlg, 0);
           break;
       }
       break;
-    case WM_CLOSE:
-      // clean up, push "cancel"
+    case WM_DESTROY:
+      // clean up
       if (font) DeleteObject(font);
-      pushstring("cancel");
-      EndDialog(hwndDlg, 1);
       break;
     default:
-      return 0;
+      return FALSE; // message not processed
   }
-  return 1;
+  return TRUE; // message processed
 }
 
 void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size, 
