@@ -217,6 +217,9 @@ This attribute tells the installer to check a string in the registry, and use it
 
 Language strings and variables cannot be used with InstallDirRegKey.
 
+\c InstallDirRegKey HKLM Software\NSIS ""
+\c InstallDirRegKey HKLM Software\ACME\Thingy InstallLocation
+
 \S2{ainstprogressflags} InstProgressFlags
 
 \c [flag [...]]
