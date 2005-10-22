@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <fstream>
 
 #include "Plugins.h"
 #include "Platform.h"
@@ -39,38 +40,60 @@ void Plugins::FindCommands(const string &path, bool displayInfo)
   }
 }
 
+struct NSISException : public std::runtime_error
+{
+  NSISException(const string& msg) : std::runtime_error(msg) {}
+};
+
+namespace {
+size_t file_size(ifstream& file) {
+  const ifstream::pos_type pos = file.tellg();
+
+  file.seekg(0, ios::end);
+
+  ifstream::pos_type result = file.tellg();
+  assert(result >= 0);
+
+  file.seekg(pos);
+
+  return (size_t)result;
+}
+
+vector<unsigned char> read_file(const string& filename) {
+  ifstream file(filename.c_str(), ios::binary);
+
+  if (!file) {
+    throw NSISException("Can't open file '" + filename + "'");
+  }
+
+  // get the file size
+  size_t filesize = file_size(file);
+
+  vector<unsigned char> result;
+  result.resize(filesize);
+
+  file.read(reinterpret_cast<char*>(&result[0]), filesize);
+
+  if (size_t(file.tellg()) != filesize) { // ifstream::eof doesn't return true here
+    throw NSISException("Couldn't read entire file '" + filename + "'");
+  }
+
+  return result;
+}
+}
+
 void Plugins::GetExports(const string &pathToDll, bool displayInfo)
 {
-  unsigned char* dlldata    = 0;
-  bool           loaded     = false;
-
-  string dllName = remove_file_extension(get_file_name(pathToDll));
-
-  FILE* dll = fopen(pathToDll.c_str() ,"rb");
-  if (dll == NULL)
-    return;
-
-  fseek(dll,0,SEEK_END);
-  long dlldatalen = ftell(dll);
-  fseek(dll,0,SEEK_SET);
-  if (dlldatalen > 0)
-  {
-    dlldata = new unsigned char [dlldatalen];
-    assert(dlldata);
-
-    size_t bytesread = fread((void*)dlldata,1,dlldatalen,dll);
-    if (bytesread == (size_t)dlldatalen)
-      loaded = true;
-  }
-  fclose(dll);
-
-  if (!loaded)
-  {
-    delete[] dlldata;
+  vector<unsigned char> dlldata;
+  try {
+    dlldata = read_file(pathToDll);
+  } catch (NSISException&) {
     return;
   }
 
-  PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(dlldata + PIMAGE_DOS_HEADER(dlldata)->e_lfanew);
+  const string dllName = remove_file_extension(get_file_name(pathToDll));
+
+  PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(&dlldata[0] + PIMAGE_DOS_HEADER(&dlldata[0])->e_lfanew);
   if (NTHeaders->Signature == IMAGE_NT_SIGNATURE)
   {
     if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL)
@@ -86,7 +109,7 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
         if (sections[i].VirtualAddress <= ExportDirVA
             && sections[i].VirtualAddress+sections[i].Misc.VirtualSize >= ExportDirVA+ExportDirSize)
           {
-          PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(dlldata + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
+          PIMAGE_EXPORT_DIRECTORY exports = PIMAGE_EXPORT_DIRECTORY(&dlldata[0] + sections[i].PointerToRawData + ExportDirVA - sections[i].VirtualAddress);
           unsigned long *names = (unsigned long*)((unsigned long)exports + (char *)exports->AddressOfNames - ExportDirVA);
           for (unsigned long j = 0; j < exports->NumberOfNames; j++)
           {
@@ -103,8 +126,6 @@ void Plugins::GetExports(const string &pathToDll, bool displayInfo)
       }
     }
   }
-
-  delete[] dlldata;
 }
 
 bool Plugins::IsPluginCommand(const string& token) const {
