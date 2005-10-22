@@ -27,10 +27,10 @@ void Plugins::FindCommands(const string &path, bool displayInfo)
   boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(path);
 
-  dir_reader::iterator files_itr = dr->files().begin();
-  dir_reader::iterator files_end = dr->files().end();
-
-  for (; files_itr != files_end; files_itr++) {
+  for (dir_reader::iterator files_itr = dr->files().begin();
+       files_itr != dr->files().end();
+       files_itr++)
+  {
     if (!dir_reader::matches(*files_itr, "*.dll"))
       continue;
 
