@@ -50,8 +50,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
       }
       // set font
-      if (dofont && !popstring(temp))
-      {
+      if (dofont && !popstring(temp)) {
         size = myatoi(temp);
         if (!popstring(temp)) {
           LOGFONT f = {0,};
@@ -112,8 +111,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
 
     // get flags
     if (popstring(temp)) return;
-    if (*temp == 'A')
-    {
+    if (*temp == 'A') {
       // automatic language count
       stack_t *th;
       langs_num=0;
@@ -125,9 +123,7 @@ void __declspec(dllexport) LangDialog(HWND hwndParent, int string_size,
       if (!th) return;
       langs_num /= 2;
       pop_empty_string = TRUE;
-    }
-    else
-    {
+    } else {
       // use counts languages
       langs_num = myatoi(temp);
     }
@@ -184,8 +180,7 @@ BOOL WINAPI DllMain(HANDLE hInst, ULONG ul_reason_for_call, LPVOID lpReserved)
 int myatoi(char *s)
 {
   unsigned int v=0;
-  for (;;)
-  {
+  for (;;) {
     int c=*s++ - '0';
     if (c < 0 || c > 9) break;
     v*=10;
