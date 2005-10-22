@@ -16,13 +16,15 @@
 #  include <sys/stat.h>
 #endif
 
+#include "boost/scoped_ptr.hpp"
+
 using namespace std;
 
 extern FILE *g_output;
 
 void Plugins::FindCommands(const string &path, bool displayInfo)
 {
-  dir_reader *dr = new_dir_reader();
+  boost::scoped_ptr<dir_reader> dr( new_dir_reader() );
   dr->read(path);
 
   dir_reader::iterator files_itr = dr->files().begin();
@@ -35,8 +37,6 @@ void Plugins::FindCommands(const string &path, bool displayInfo)
     const string plugin = path + PLATFORM_PATH_SEPARATOR_C + *files_itr;
     GetExports(plugin, displayInfo);
   }
-
-  delete dr;
 }
 
 void Plugins::GetExports(const string &pathToDll, bool displayInfo)
