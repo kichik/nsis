@@ -302,6 +302,7 @@ IDB_LOGO                BITMAP                  "logo.bmp"
 IDB_TOOLBAR             BITMAP                  "toolbar.bmp"
 IDB_TOOLBAR24           BITMAP                  "toolbar24.bmp"
 IDB_TOOLBAR24D          BITMAP                  "toolbar24d.bmp"
+IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -343,26 +344,6 @@ END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Dutch (Netherlands) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NLD)
-#ifdef _WIN32
-LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_TOOLBAR24H          BITMAP                  "toolbar24h.bmp"
-#endif    // Dutch (Netherlands) resources
-/////////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef APSTUDIO_INVOKED
