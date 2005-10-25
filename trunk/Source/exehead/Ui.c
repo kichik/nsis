@@ -1150,8 +1150,8 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     TreeView_SetImageList(hwndTree1, hImageList, TVSIL_STATE);
 
-    if (SendMessage(hwndTree1, TVM_GETITEMHEIGHT, 0, 0) < 16)
-      SendMessage(hwndTree1, TVM_SETITEMHEIGHT, 16, 0);
+    if (TreeView_GetItemHeight(hwndTree1) < 16)
+      TreeView_SetItemHeight(hwndTree1, 16);
 
     DeleteObject(hBMcheck1);
 
