@@ -56,7 +56,7 @@ You can escape quotes using $\\:
 
 \c MessageBox MB_OK "I'll be happy" ; this one puts a ' inside a string
 \c MessageBox MB_OK 'And he said to me "Hi there!"' ; this one puts a " inside a string
-\c MessageBox MB_OK `And he said to me "I'll be fucked!"` ; this one puts both ' and "s inside a string
+\c MessageBox MB_OK `And he said to me "I'll be happy!"` ; this one puts both ' and "s inside a string
 \c MessageBox MB_OK "$\"A quote from a wise man$\" said the wise man" ; this one shows escaping of quotes
 
 It is also possible to put newlines, tabs etc. in a string using $\\r, $\\n, $\\t etc. \R{varstrings}{More information...}
