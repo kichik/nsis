@@ -27,8 +27,8 @@ BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
 XPStyle on
 
-InstallDir "$PROGRAMFILES\NSISCrap\BigNSISTest"
-InstallDirRegKey HKLM "Software\NSISCrap\BigNSISTest" ""
+InstallDir "$PROGRAMFILES\NSISTest\BigNSISTest"
+InstallDirRegKey HKLM "Software\NSISTest\BigNSISTest" ""
 
 CheckBitmap "${NSISDIR}\Contrib\Graphics\Checks\classic-cross.bmp"
 
@@ -63,10 +63,10 @@ ShowInstDetails show
 
 Section "" ; empty string makes it hidden, so would starting with -
 
-  ; write reg crap
+  ; write reg info
   StrCpy $1 "POOOOOOOOOOOP"
-  DetailPrint "I like to f*ck sheep $1"
-  WriteRegStr HKLM SOFTWARE\NSISCrap\BigNSISTest "Install_Dir" "$INSTDIR"
+  DetailPrint "I like to be able to see what is going on (debug) $1"
+  WriteRegStr HKLM SOFTWARE\NSISTest\BigNSISTest "Install_Dir" "$INSTDIR"
 
   ; write uninstall strings
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BigNSISTest" "DisplayName" "BigNSISTest (remove only)"
@@ -74,7 +74,7 @@ Section "" ; empty string makes it hidden, so would starting with -
 
   SetOutPath $INSTDIR
   File /a "silent.nsi"
-  CreateDirectory "$INSTDIR\shiz\crap" ; 2 recursively create a directory for fun.
+  CreateDirectory "$INSTDIR\MyProjectFamily\MyProject" ; 2 recursively create a directory for fun.
   WriteUninstaller "bt-uninst.exe"
   
   Nop ; for fun
@@ -86,13 +86,13 @@ Section "TempTest"
 SectionIn 1 2 3
   Start: MessageBox MB_OK "Start:"
 
-  MessageBox MB_YESNO "Goto Poop" IDYES Poop
+  MessageBox MB_YESNO "Goto MyLabel" IDYES MyLabel
 
-  MessageBox MB_OK "Right before Poop:"
+  MessageBox MB_OK "Right before MyLabel:"
 
-  Poop: MessageBox MB_OK "Poop:"
+  MyLabel: MessageBox MB_OK "MyLabel:"
   
-  MessageBox MB_OK "Right after Poop:"
+  MessageBox MB_OK "Right after MyLabel:"
 
   MessageBox MB_YESNO "Goto Start:?" IDYES Start
 
@@ -104,34 +104,34 @@ Section "Test Registry/INI functions"
 
 SectionIn 1 4 3
 
-  WriteRegStr HKLM SOFTWARE\NSISCrap\BigNSISTest "StrTest_INSTDIR" "$INSTDIR"
-  WriteRegDword HKLM SOFTWARE\NSISCrap\BigNSISTest "DwordTest_0xDEADBEEF" 0xdeadbeef
-  WriteRegDword HKLM SOFTWARE\NSISCrap\BigNSISTest "DwordTest_123456" 123456
-  WriteRegDword HKLM SOFTWARE\NSISCrap\BigNSISTest "DwordTest_0123" 0123
-  WriteRegBin HKLM SOFTWARE\NSISCrap\BigNSISTest "BinTest_deadbeef01f00dbeef" "DEADBEEF01F00DBEEF"
-  StrCpy $8 "$SYSDIR\Poop"
+  WriteRegStr HKLM SOFTWARE\NSISTest\BigNSISTest "StrTest_INSTDIR" "$INSTDIR"
+  WriteRegDword HKLM SOFTWARE\NSISTest\BigNSISTest "DwordTest_0xDEADBEEF" 0xdeadbeef
+  WriteRegDword HKLM SOFTWARE\NSISTest\BigNSISTest "DwordTest_123456" 123456
+  WriteRegDword HKLM SOFTWARE\NSISTest\BigNSISTest "DwordTest_0123" 0123
+  WriteRegBin HKLM SOFTWARE\NSISTest\BigNSISTest "BinTest_deadbeef01f00dbeef" "DEADBEEF01F00DBEEF"
+  StrCpy $8 "$SYSDIR\IniTest"
   WriteINIStr "$INSTDIR\test.ini"  "MySection" "Value1" $8
-  WriteINIStr "$INSTDIR\test.ini"  "MySectionShit" "Value1" $8
-  WriteINIStr "$INSTDIR\test.ini"  "MySectionShit" "Value2" $8
-  WriteINIStr "$INSTDIR\test.ini"  "POOPon" "Value1" $8
+  WriteINIStr "$INSTDIR\test.ini"  "MySectionIni" "Value1" $8
+  WriteINIStr "$INSTDIR\test.ini"  "MySectionIni" "Value2" $8
+  WriteINIStr "$INSTDIR\test.ini"  "IniOn" "Value1" $8
 
-  Call poopTest
+  Call MyFunctionTest
 
-  DeleteINIStr "$INSTDIR\test.ini" "POOPon" "Value1"
-  DeleteINISec "$INSTDIR\test.ini" "MySectionShit"
+  DeleteINIStr "$INSTDIR\test.ini" "IniOn" "Value1"
+  DeleteINISec "$INSTDIR\test.ini" "MySectionIni"
 
-  ReadINIStr $1 "$INSTDIR\test.ini" "MySectionShit" "Value1"
+  ReadINIStr $1 "$INSTDIR\test.ini" "MySectionIni" "Value1"
   StrCmp $1 "" INIDelSuccess
     MessageBox MB_OK "DeleteINISec failed"
   INIDelSuccess:
 
   ClearErrors
-  ReadRegStr $1 HKCR "software\microsoft" shit
+  ReadRegStr $1 HKCR "software\microsoft" xyz_¢¢_does_not_exist
   IfErrors 0 NoError
-    MessageBox MB_OK "could not read from HKCR\software\microsoft\shit"
+    MessageBox MB_OK "could not read from HKCR\software\microsoft\xyz_¢¢_does_not_exist"
     Goto ErrorYay
   NoError:
-    MessageBox MB_OK "read '$1' from HKCR\software\microsoft\shit"
+    MessageBox MB_OK "read '$1' from HKCR\software\microsoft\xyz_¢¢_does_not_exist"
   ErrorYay:
   
 SectionEnd
@@ -180,11 +180,11 @@ Section "Test Branching"
 
     StrCpy $1 "x"
 
-  LoopPoop: 
+  LoopTest: 
       
     Call myfunc
     StrCpy $1 "x$1"
-    StrCmp $1 "xxxxxx" 0 LoopPoop
+    StrCmp $1 "xxxxxx" 0 LoopTest
       
   NoRecurse:
 
@@ -205,7 +205,7 @@ SectionEnd
 
 SectionGroupEnd
 
-Section "Test Exec functions" CRAPIDX
+Section "Test Exec functions" TESTIDX
 
   SectionIn 1 2 3
   
@@ -245,14 +245,14 @@ FunctionEnd
 
 Function myfunc
 
-  StrCpy $2 "poop=$1"
+  StrCpy $2 "MyTestVar=$1"
   MessageBox MB_OK "myfunc: $2"
 
 FunctionEnd
 
-Function poopTest
+Function MyFunctionTest
 
-  ReadINIStr $1 "$INSTDIR\test.ini" "MySectionShit" "Value1"
+  ReadINIStr $1 "$INSTDIR\test.ini" "MySectionIni" "Value1"
   StrCmp $1 $8 NoFailedMsg
     MessageBox MB_OK "WriteINIStr failed"
   
@@ -262,12 +262,12 @@ FunctionEnd
 
 Function .onSelChange
 
-  SectionGetText ${CRAPIDX} $0
+  SectionGetText ${TESTIDX} $0
   StrCmp $0 "" e
-    SectionSetText ${CRAPIDX} ""
+    SectionSetText ${TESTIDX} ""
   Goto e2
 e:
-  SectionSetText ${CRAPIDX} "Doop"
+  SectionSetText ${TESTIDX} "TextInSection"
 e2:
 
 FunctionEnd
@@ -282,7 +282,7 @@ UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\nsis1-uninstall.ico"
 Section "Uninstall"
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BigNSISTest"
-  DeleteRegKey HKLM "SOFTWARE\NSISCrap\BigNSISTest"
+  DeleteRegKey HKLM "SOFTWARE\NSISTest\BigNSISTest"
   Delete "$INSTDIR\silent.nsi"
   Delete "$INSTDIR\LogicLib.nsi"
   Delete "$INSTDIR\bt-uninst.exe"
@@ -295,8 +295,8 @@ Section "Uninstall"
     RMDir "$INSTDIR\cpdest" ; skipped if no
   NoDelete:
   
-  RMDir "$INSTDIR\shiz\crap"
-  RMDir "$INSTDIR\shiz"
+  RMDir "$INSTDIR\MyProjectFamily\MyProject"
+  RMDir "$INSTDIR\MyProjectFamily"
   RMDir "$INSTDIR"
 
   IfFileExists "$INSTDIR" 0 NoErrorMsg
