@@ -70,7 +70,7 @@ RefreshShellIcons
 ; !include "FileFunc.nsh"
 ; !insertmacro Locate
 ; ${FILEFUNC_VERBOSE} 4   # all verbosity
-; !insertmacro VersionCompare
+; !insertmacro GetTime
 ; ${FILEFUNC_VERBOSE} 3   # no script
 
 !verbose push
