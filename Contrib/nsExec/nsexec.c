@@ -165,8 +165,11 @@ params:
 
   if (!pExec[0]) 
   {
-    lstrcpy(szRet, "error");
-    goto done;
+    pushstring("error");
+    *(pExec-2) = '\0'; // skip space and quote
+    DeleteFile(executor);
+    GlobalFree(g_exec);
+    return;
   }
   
   {
