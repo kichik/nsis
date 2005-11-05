@@ -151,7 +151,7 @@ void ExecScript(int log) {
 
 params:
   popstring(pExec);
-  if (my_strstr(pExec, "/TIMEOUT=")) {
+  if (my_strstr(pExec, "/TIMEOUT=") == pExec) {
     char *szTimeout = pExec + 9;
     g_to = my_atoi(szTimeout);
     goto params;
