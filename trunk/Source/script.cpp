@@ -5925,6 +5925,10 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
       FILETIME ft;
       if (GetFileTime(hFile,NULL,NULL,&ft))
       {
+        // FAT write time has a resolution of 2 seconds
+        PULONGLONG fti = (PULONGLONG) &ft;
+        *fti -= *fti % 20000000;
+
         ent.offsets[3]=ft.dwLowDateTime;
         ent.offsets[4]=ft.dwHighDateTime;
       }
@@ -5942,6 +5946,10 @@ int CEXEBuild::add_file(const string& dir, const string& file, int attrib, const
           long long ll;
         };
         ll = (st.st_mtime * 10000000LL) + 116444736000000000LL;
+
+        // FAT write time has a resolution of 2 seconds
+        ll -= ll % 20000000;
+
         ent.offsets[3] = words.l;
         ent.offsets[4] = words.h;
       }
