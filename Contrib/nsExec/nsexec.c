@@ -35,7 +35,7 @@ HWND          g_hwndParent;
 HWND          g_hwndList;
 
 void ExecScript(BOOL log);
-void LogMessage(const char *pStr);
+void LogMessage(const char *pStr, BOOL bOEM);
 char *my_strstr(char *a, char *b);
 unsigned int my_atoi(char *s);
 
@@ -91,6 +91,7 @@ void ExecScript(int log) {
   char *executor;
   char *g_exec;
   unsigned int g_to;
+  BOOL bOEM;
 
   nComSpecSize = GetModuleFileName(g_hInst, meDLLPath, MAX_PATH) + 2; // 2 chars for quotes
   p = meDLLPath + nComSpecSize - 2; // point p at null char of meDLLPath
@@ -138,7 +139,8 @@ void ExecScript(int log) {
 
   lstrcat(g_exec, "\"");
 
-  g_to = 0; // default is no timeout
+  g_to = 0;      // default is no timeout
+  bOEM = FALSE;  // default is no OEM->ANSI conversion
 
   g_hwndList = FindWindowEx(FindWindowEx(g_hwndParent,NULL,"#32770",NULL),NULL,"SysListView32",NULL);
 
@@ -146,12 +148,17 @@ void ExecScript(int log) {
   pExec = g_exec + lstrlen(g_exec);
   *pExec = ' ';
   pExec++;
-  
+
+params:
   popstring(pExec);
   if (my_strstr(pExec, "/TIMEOUT=")) {
     char *szTimeout = pExec + 9;
     g_to = my_atoi(szTimeout);
-    popstring(pExec);
+    goto params;
+  }
+  if (!lstrcmpi(pExec, "/OEM")) {
+    bOEM = TRUE;
+    goto params;
   }
 
   if (!g_exec[0]) 
@@ -269,7 +276,7 @@ void ExecScript(int log) {
               if (*p2 == '\n') {
                 *p2 = 0;
                 while (!*p && p != p2) p++;
-                LogMessage(p);
+                LogMessage(p, bOEM);
                 p = ++p2;
                 continue;
               }
@@ -299,7 +306,7 @@ void ExecScript(int log) {
     }
 done:
     if (log & 2) pushstring(szUnusedBuf);
-    if (log & 1 && *szUnusedBuf) LogMessage(szUnusedBuf);
+    if (log & 1 && *szUnusedBuf) LogMessage(szUnusedBuf, bOEM);
     if ( dwExit == STATUS_ILLEGAL_INSTRUCTION )
       lstrcpy(szRet, "error");
     if (!szRet[0]) wsprintf(szRet,"%d",dwExit);
@@ -321,11 +328,12 @@ done:
 }
 
 // Tim Kosse's LogMessage
-void LogMessage(const char *pStr) {
+void LogMessage(const char *pStr, BOOL bOEM) {
   LVITEM item={0};
   int nItemCount;
   if (!g_hwndList) return;
   //if (!lstrlen(pStr)) return;
+  if (bOEM == TRUE) OemToCharBuff(pStr, (char *)pStr, lstrlen(pStr));
   nItemCount=SendMessage(g_hwndList, LVM_GETITEMCOUNT, 0, 0);
   item.mask=LVIF_TEXT;
   item.pszText=(char *)pStr;
