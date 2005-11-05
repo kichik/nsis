@@ -38,7 +38,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_CALL,"Call",1,0,"function_name | [:label_name]",TP_CODE},
 {TOK_CALLINSTDLL,"CallInstDLL",2,1,"dll_path_on_target.dll [/NOUNLOAD] function",TP_CODE},
 {TOK_CAPTION,"Caption",1,0,"installer_caption",TP_GLOBAL|TP_PAGEEX},
-{TOK_CHANGEUI,"ChangeUI",1,1,"[/RTL] (all|dlg_id) ui_file.exe",TP_GLOBAL},
+{TOK_CHANGEUI,"ChangeUI",2,0,"(all|dlg_id) ui_file.exe",TP_GLOBAL},
 {TOK_CLEARERRORS,"ClearErrors",0,0,"",TP_CODE},
 {TOK_COMPTEXT,"ComponentText",0,3,"[component_page_description] [component_subtext1] [component_subtext2]",TP_PG},
 {TOK_GETDLLVERSION,"GetDLLVersion",3,0,"filename $(user_var: high output) $(user_var: low output)",TP_CODE},
