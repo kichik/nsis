@@ -344,6 +344,8 @@
     Call ":installlib.file_${INSTALLLIB_UNIQUE}"
 
     IfErrors 0 "installlib.register_${INSTALLLIB_UNIQUE}"
+    
+    ClearErrors
 
     SetOverwrite lastused
 
