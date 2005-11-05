@@ -31,7 +31,7 @@ Note that you can only compile scripts using this system on Windows systems. It 
 
 \S1{} Introduction
 
-The InstallLib macro allows you to install a library.
+The InstallLib macro allows you to install a library. It sets the error flag if something went wrong during library setup.
 
 To ask the user for a reboot if required, use the Modern UI with a Finish page or use \R{ifrebootflag}{IfRebootFlag} and make your own page or message box.
 
@@ -132,7 +132,7 @@ LIBRARY_COM
 
 \S1{} Introduction
 
-The UnInstallLib macro allows you to uninstall a library.
+The UnInstallLib macro allows you to uninstall a library. It sets the error flag if something went wrong during library removal.
 
 \S1{} Parameters
 
