@@ -109,8 +109,9 @@ void ExecScript(int log) {
   if (p == meDLLPath)
   {
     // bad path
-    lstrcpy(szRet, "error");
-    goto done;
+    pushstring("error");
+    GlobalFree(g_exec);
+    return;
   }
 
   *p = 0;
