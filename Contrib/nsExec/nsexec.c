@@ -154,14 +154,16 @@ params:
   if (my_strstr(pExec, "/TIMEOUT=") == pExec) {
     char *szTimeout = pExec + 9;
     g_to = my_atoi(szTimeout);
+    *pExec = 0;
     goto params;
   }
   if (!lstrcmpi(pExec, "/OEM")) {
     bOEM = TRUE;
+    *pExec = 0;
     goto params;
   }
 
-  if (!g_exec[0]) 
+  if (!pExec[0]) 
   {
     lstrcpy(szRet, "error");
     goto done;
