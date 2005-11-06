@@ -31,7 +31,7 @@ Odstranitev $(^Name)
 # ^UnDirSubCaption
 : Mapa odstranitve
 # ^ConfirmSubCaption
-: Potrdilo
+: Potrditev
 # ^UninstallingSubCaption
 : Odstranjevanje poteka
 # ^UnCompletedSubCaption
@@ -43,9 +43,9 @@ N&aprej >
 # ^AgreeBtn
 Se &strinjam
 # ^AcceptBtn
-&Sprejmem pogoje v licenèni pogodbi
+&Sprejmem pogoje licenène pogodbe
 # ^DontAcceptBtn
-&Ne sprejmem pogoje v licenèni pogodbi
+&Ne sprejmem pogojev licenène pogodbe
 # ^InstallBtn
 &Namesti
 # ^UninstallBtn
@@ -83,15 +83,15 @@ Prosimo vas, da pred odstranitvijo $(^Name) pregledate licenèno pogodbo. Èe spre
 # ^Custom
 Po meri
 # ^ComponentsText
-Oznaèite bloke, ki jih želite namestiti, in odznaèite tiste, za katere ne želite, da se namestijo. $_CLICK
+Oznaèite bloke, ki jih želite namestiti, in odznaèite tiste, katerih ne želite namestiti. $_CLICK
 # ^ComponentsSubText1
 Izberite vrsto namestitve: 
 # ^ComponentsSubText2_NoInstTypes
 Izberite bloke namestitve: 
 # ^ComponentsSubText2
-Ali pa si izberite bloke namestitve, ki jih želite namestiti: 
+Ali pa si izberite bloke, ki jih želite namestiti: 
 # ^UnComponentsText
-Oznaèite bloke, ki jih želite odstraniti in odznaèite tiste, ki želite, da se ne odstranijo. $_CLICK
+Oznaèite bloke, ki jih želite odstraniti, in odznaèite tiste, ki jih ne želite odstraniti. $_CLICK
 # ^UnComponentsSubText1
 Izberite vrsto odstranitve: 
 # ^UnComponentsSubText2_NoInstTypes
@@ -99,23 +99,23 @@ Izberite bloke za odstranitev:
 # ^UnComponentsSubText2
 Ali pa si izberite bloke namestitve, ki jih želite odstraniti: 
 # ^DirText
-Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape, kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
+Nastavitev bo namestila $(^NameDA) v sledeèo mapo. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^DirSubText
 Ciljna mapa
 # ^DirBrowseText
-Izberite mapo, kamor bo namešèen $(^NameDA):
+Izberite mapo, kamor bo namešèena aplikacija $(^NameDA):
 # ^UnDirText
-Nastavitev odstrani $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite na tipko Brskaj in izberite drugo mapo. $_CLICK
+Nastavitev odstrani $(^NameDA) iz sledeèe mape. Za izbiro druge mape kliknite na tipko Prebrskaj in izberite drugo mapo. $_CLICK
 # ^UnDirSubText
 ""
 # ^UnDirBrowseText
-Izberite mapo, od koder bo odstranjen $(^NameDA):
+Izberite mapo, od koder bo odstranjena aplikacija $(^NameDA):
 # ^SpaceAvailable
 "Prostor na disku: "
 # ^SpaceRequired
 "Zahtevan prostor: "
 # ^UninstallingText
-$(^NameDA) bo odstranjen iz sledeèe mape. $_CLICK
+$(^NameDA) bo odstranjen iz naslednje mape. $_CLICK
 # ^UninstallingSubText
 Odstranjevanje iz: 
 # ^FileError
@@ -123,7 +123,7 @@ Napaka pri odpiranju datoteke za pisanje: \r\n\t"$0"\r\nPritisnite Preklièi za p
 # ^FileError_NoIgnore
 Napaka pri odpiranju datoteke za pisanje: \r\n\t"$0"\r\nPritisnite Ponovi za ponoven poskus pisanja v datoteko ali\r\Preklièi za prekinitev namestitve.
 # ^CantWrite
-"Ni mogoèe zapisati: "
+"Ni mogoèe pisati: "
 # ^CopyFailed
 Kopiranje neuspešno
 # ^CopyTo
@@ -133,13 +133,13 @@ Kopiranje neuspešno
 # ^Unregistering
 "Od-registracija: "
 # ^SymbolNotFound
-"Ni moè najti simbola: "
+"Ni mogoèe najti simbola: "
 # ^CouldNotLoad
-"Ni moè naložiti: "
+"Ni mogoèe naložiti: "
 # ^CreateFolder
-"Ustvari mapo: "
+"Ustvarjanje mape: "
 # ^CreateShortcut
-"Ustvari bližnjico: "
+"Ustvarjanje bližnjice: "
 # ^CreatedUninstaller
 "Ustvarjena odstranitev: "
 # ^Delete
@@ -151,7 +151,7 @@ Kopiranje neuspešno
 # ^ErrorCreating
 "Napaka ustvarjanja: "
 # ^ErrorDecompressing
-Napaka pri razširjanju podatkov! Pokvarjena namestitvena datoteka?
+Napaka pri razširjanju podatkov! Je namestitvena datoteka okvarjena?
 # ^ErrorRegistering
 Napaka registracije DLL
 # ^ExecShell
