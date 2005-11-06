@@ -79,7 +79,7 @@
   !define MUI_UNTEXT_UNINSTALLING_TITLE "Odstranjevanje poteka"
   !define MUI_UNTEXT_UNINSTALLING_SUBTITLE "Prosimo poèakajte, dokler se paket $(^NameDA) odstranjuje."
     
-  !define MUI_UNTEXT_FINISH_TITLE "Uninstallation Complete"
+  !define MUI_UNTEXT_FINISH_TITLE "Odstranitev dokonèana"
   !define MUI_UNTEXT_FINISH_SUBTITLE "Odstranitev je uspešno konèana."
 
   !define MUI_UNTEXT_ABORT_TITLE "Odstranitev je bila prekinjena"
