@@ -5,6 +5,9 @@
 
 /*
 
+version 0.34
+* preserve zip timestamps
+
 version 0.33
 * Added solid compression checkbox
 
@@ -237,6 +240,19 @@ int tempzip_make(HWND hwndDlg, char *fn)
           } while (l > 0);
 
           fclose(fp);
+
+          {
+            // set file time
+            HANDLE hf = CreateFile(out_filename, GENERIC_WRITE, 0, 0, OPEN_ALWAYS, 0, 0);
+            if (hf != INVALID_HANDLE_VALUE)
+            {
+              FILETIME ft, lft;
+              DosDateTimeToFileTime(HIWORD(info.dosDate), LOWORD(info.dosDate), &ft);
+              LocalFileTimeToFileTime(&ft, &lft);
+              SetFileTime(hf, 0, 0, &lft);
+              CloseHandle(hf);
+            }
+          }
         }
         else
         {
