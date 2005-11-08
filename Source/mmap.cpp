@@ -3,6 +3,7 @@
 #include <cstdio> // for f*
 #include <cassert> // for assert
 #ifndef _WIN32
+#  include <sys/types.h> // for freebsd
 #  include <sys/mman.h>
 #  include <sys/stat.h>
 #  include <fcntl.h>

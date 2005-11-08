@@ -178,6 +178,36 @@ if conf.CheckRequirement('memset', 'char c[128] = "test";'):
 
 conf.Finish()
 
+#
+# Some platforms, like FreeBSD, require -pthread flag to be passed
+# instead of -lpthread.
+#
+
+def check_pthread(ctx):
+	ctx.Message('Checking for -pthread... ')
+
+	last_flags = ctx.env['LINKFLAGS']
+
+	ctx.env.Append(LINKFLAGS = '-pthread')
+
+	test = """
+		int __main() {
+			return 0;
+		}
+	"""
+
+	result = not ctx.TryLink(test, '.c')
+	ctx.Result(result)
+
+	ctx.env.Replace(LINKFLAGS = last_flags)
+
+	return result
+
+conf = defenv.Configure(custom_tests = { 'CheckPThread' : check_pthread })
+if conf.CheckPThread():
+	makensis_env.Append(LINKFLAGS = '-pthread')
+conf.Finish()
+
 ### return
 
 Return('stub_env makensis_env plugin_env util_env cp_util_env')
