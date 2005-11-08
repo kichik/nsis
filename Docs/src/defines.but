@@ -2,9 +2,9 @@
 
 The compiler maintains a list of defined symbols, which can be defined using !define or the /D command line switch. These defined symbols can be used for conditional compilation (using !ifdef) or for symbol replacement (a simple form of macros). To replace a symbol with its value, use $\{SYMBOL\} (if SYMBOL is not defined, no translation will occur). The translation is first-come-first-served, meaning if you do:
 
-\c !define symbol1 ${symbol2}
+\c !define symbol_one ${symbol_two}
 
-If symbol2 is defined when that line occurs, it will be replaced. Otherwise, any replacing will occur when $\{symbol1\} is referenced.
+If symbol_two is defined when that line occurs, it will be replaced. Otherwise, any replacing will occur when $\{symbol_one\} is referenced.
 
 Define/conditional compilation related commands:
 
