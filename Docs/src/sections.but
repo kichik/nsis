@@ -64,7 +64,7 @@ This command specifies which install types (see \R{ainsttype}{InstType}) the cur
 
 \S2{ssectiongroup} SectionGroup
 
-\c [/e] Caption [section_group_name index_output]
+\c [/e] section_group_name [index_output]
 
 This command inserts a section group. The section group must be closed with \R{ssectiongroupend}{SectionGroupEnd}, and should contain 1 or more sections. If the section group name begins with a !, its name will be displayed with a bold font. If /e is present, the section group will be expanded by default. If \e{index_output} is specified, the parameter will be !defined with the section index (that can be used for \R{sectionsettext}{SectionSetText} etc). If the name is prefixed with 'un.' the section group is an uninstaller section group.
 
