@@ -48,7 +48,6 @@ zlib_files = Split("""
 libs = Split("""
 	gdi32
 	user32
-	version
 	pthread
 	stdc++
 	iconv
@@ -57,6 +56,11 @@ libs = Split("""
 Import('env AddAvailableLibs')
 
 ##### Use available libraries
+
+if env['PLATFORM'] == 'win32':
+	# XXX will cause problems if makensis is cross compiled
+	# on freebsd, libversion.a exists and gives trouble if linked
+	libs += ['version']
 
 AddAvailableLibs(env, libs)
 
