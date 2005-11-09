@@ -52,3 +52,11 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
       This should only build makensis. Once you have makensis, you can
       drop it in a downloaded precompiled package such as the nightly
       build.
+
+  - Problems
+
+    * Get help in the forum:
+        http://forums.winamp.com/forumdisplay.php?forumid=65
+
+    * Report bugs in the bug tracker:
+        http://sourceforge.net/tracker/?group_id=22049&atid=373085
