@@ -1,5 +1,85 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.11} 2.11
+
+Released on November 12th, 2005
+
+\S1{v2.11-rl} Release Notes
+
+\b Rebuilding existing installers which use \c{\R{asetoverwrite}{SetOverwrite} ifdiff}, might falsely overwrite files once
+
+\S1{v2.11-cl} Changelog
+
+\S2{} Major Changes
+
+\b Added a workaround for a bug that prevented detection of some special folders (e.g. \R{varother}{$DESKTOP} for all users) on Windows 9x (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1008632}{bug #1008632})
+
+\b Fixed a crash caused by copying very long details to clipboard in the installation log page (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1314004}{bug #1314004})
+
+\S2{} New/Changed Commands
+
+\b Added \R{tempfile}{!tempfile}, \R{delfile}{!delfile} and \R{appendfile}{!appendfile} for cross-platform handling of text files during compilation
+
+\b Fixed \R{achangeui}{ChangeUI} input handling (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1348473}{patch #1348473})
+
+\b \R{ssectionin}{SectionIn} RO is no longer case sensitive
+
+\S2{} Minor Changes
+
+\b Added support URL to the NSIS package entry in the Add/Remove control panel (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373088&aid=1349867}{RFE #1349867})
+
+\b Fixed comment handling (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1324898}{patch #1324898})
+
+\b Fixed duplicate RegTool test in \R{library}{Library}
+
+\b Fixed invalid language selection according to \R{varother}{$LANGUAGE} in \R{oninit}{.onInit} when only primary language match is found (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1328629}{bug #1328629})
+
+\b Fixed missing RegTool error after install-reboot-install-reboot sequence with \R{library}{Library}
+
+\b Fixed portability issues with \L{../Examples/LogicLib.nsi}{LogicLib} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1320297}{bug #1320297}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1248336}{patch #1248336})
+
+\b Fixed \c{\R{asetoverwrite}{SetOverwrite} ifdiff} always overwriting on FAT file system (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1338423}{bug #1338423})
+
+\b Fixed wrong size of red.bmp check box image
+
+\b Larger browse button for localized texts (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1314682}{bug #1314682})
+
+\b Minor documentation improvements and fixes (including (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810}))
+
+\b Sort language names in language selection dialog
+
+\b Use the temporary directory for \R{library}{Library} temporary files, instead of the possibly write-protected installation directory
+
+\S2{} Utilities and Plug-ins
+
+\b Added /OEM switch for OEM to ANSI conversion in \L{../Docs/nsExec/nsExec.txt}{nsExec} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1346737}{patch #1346737})
+
+\b Added /PROXY switch for manual proxy configuration in \L{../Docs/NSISdl/ReadMe.txt}{NSISdl} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1334166}{patch #1334166})
+
+\b Added solid compression check box to zip2exe (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1334155}{patch #1334155})
+
+\b Added stdin in MakeNSISw to allow xcopy to run
+
+\b Added timestamp handling to zip2exe (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349853}{bug #1349853})
+
+\b Fixed input validation of \L{../Docs/nsExec/nsExec.txt}{nsExec}
+
+\b \L{../Docs/InstallOptions/Readme.html}{InstallOptions 2.44}: Added HWND and HWND2 entries to the INI file to avoid messy calculations of the correct control id
+
+\S2{} Translations
+
+\b Slovenian translation fixes and improvements
+
+\S2{} Build System
+
+\b Added a workaround for linking errors caused by a bad library included in recent Platform SDK versions
+
+\b Check for and use -pthread linker flag
+
+\b Improved FreeBSD portability
+
+\b Nicer error message for SCons version older than 0.96.90
+
 \H{v2.10} 2.10
 
 Released on October 4th, 2005
