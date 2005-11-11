@@ -426,7 +426,7 @@ int WideCharToMultiByte(UINT CodePage, DWORD dwFlags, LPCWSTR lpWideCharStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open(cp, "UCS-2");
+  iconv_t cd = iconv_open(cp, "UCS-2LE");
   if (cd == (iconv_t) -1) {
     return 0;
   }
@@ -462,7 +462,7 @@ int MultiByteToWideChar(UINT CodePage, DWORD dwFlags, LPCSTR lpMultiByteStr,
   char cp[128];
   create_code_page_string(cp, sizeof(cp), CodePage);
 
-  iconv_t cd = iconv_open("UCS-2", cp);
+  iconv_t cd = iconv_open("UCS-2LE", cp);
   if (cd == (iconv_t) -1) {
     return 0;
   }
