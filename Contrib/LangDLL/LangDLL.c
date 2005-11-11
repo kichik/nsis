@@ -80,7 +80,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
           // push result on the stack
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETCURSEL, 0, 0);
           i = SendDlgItemMessage(hwndDlg, IDC_LANGUAGE, CB_GETITEMDATA, i, 0);
-          if (i) {
+          if (i != CB_ERR && i) {
             pushstring((char *) i);
           } else {
             // ?!
