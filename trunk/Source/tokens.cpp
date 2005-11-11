@@ -71,7 +71,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_EXCH,"Exch",0,1,"[$(user_var)] | [stack_item_index]",TP_CODE},
 {TOK_EXEC,"Exec",1,0,"command_line",TP_CODE},
 {TOK_EXECWAIT,"ExecWait",1,1,"command_line [$(user_var: return value)]",TP_CODE},
-{TOK_EXECSHELL,"ExecShell",2,2,"(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED)",TP_CODE},
+{TOK_EXECSHELL,"ExecShell",2,2,"(open|print|etc) command_line [parameters [showmode]]\n   showmode=(SW_SHOWNORMAL|SW_SHOWMAXIMIZED|SW_SHOWMINIMIZED|SW_HIDE)",TP_CODE},
 {TOK_EXPANDENVSTRS,"ExpandEnvStrings",2,0,"$(user_var: output) string",TP_CODE},
 {TOK_FINDWINDOW,"FindWindow",2,3,"$(user_var: handle output) WindowClass [WindowTitle] [Window_Parent] [Child_After]",TP_CODE},
 {TOK_FINDCLOSE,"FindClose",1,0,"$(user_var: handle input)",TP_CODE},
