@@ -6,7 +6,7 @@ Released on November 12th, 2005
 
 \S1{v2.11-rl} Release Notes
 
-\b Rebuilding existing installers which use \c{\R{asetoverwrite}{SetOverwrite} ifdiff}, might falsely overwrite files once
+\b Rebuilding existing installers that use \c{\R{asetoverwrite}{SetOverwrite} ifdiff}, might falsely overwrite files once
 
 \S1{v2.11-cl} Changelog
 
