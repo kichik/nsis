@@ -40,10 +40,9 @@ TODO
  * Create release on SourceForge automatically
  * Edit update.php
  * Edit cl.sh
- * Submit news on nsis.sf.net
- * Update download page on nsis.sf.net
- * Update special builds page on nsis.sf.net
  * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
+ * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseDate&action=edit
+ * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseID&action=edit
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
@@ -296,10 +295,9 @@ print """
  * Add SourceForge release
  * Edit update.php
  * Edit cl.sh
- * Submit news on nsis.sf.net
- * Update download page on nsis.sf.net
- * Update special builds page on nsis.sf.net
  * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
+ * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseDate&action=edit
+ * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseID&action=edit
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
