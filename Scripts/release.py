@@ -90,7 +90,7 @@ newverdir = 'nsis-%s-src' % VERSION
 ### some useful functions
 
 def log(msg, log_dir = '.'):
-	open('%s\\release.log' % log_dir, 'a').write(msg + '\n')
+	open('%s\\release-%s.log' % (log_dir, VERSION), 'a').write(msg + '\n')
 
 def exit(log_dir = '.'):
 	log('\nerror occurred, exiting', log_dir)
@@ -100,7 +100,7 @@ def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 	log('running %s' % command, log_dir)
 
 	if log_name:
-		cmd = '%s >> %s\\release.log 2>&1' % (command, log_dir)
+		cmd = '%s >> %s\\release-%s.log 2>&1' % (command, log_dir, VERSION)
 	else:
 		cmd = command
 
@@ -123,7 +123,7 @@ confirm('did you update history.but?')
 
 ### start log
 
-open('release.log', 'w').write('releasing version %s at %s\n\n' % (VERSION, time.ctime()))
+open('release-%s.log' % VERSION, 'w').write('releasing version %s at %s\n\n' % (VERSION, time.ctime()))
 
 ### test
 
