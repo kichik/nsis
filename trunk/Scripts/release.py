@@ -166,6 +166,8 @@ for t in 'NSIS %s' % VERSION:
 
 # save
 
+im.palette = im_orig.palette
+im = im.convert('P', palette = Image.ADAPTIVE)
 im.save(r'..\Menu\images\header.gif')
 
 # commit header.gif
