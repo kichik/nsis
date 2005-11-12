@@ -142,31 +142,20 @@ print 'creating images...'
 
 im = Image.new('RGB', (598, 45), '#000000')
 
-# copy old header.gif
+# copy background from header-notext.gif
 
-im_orig = Image.open(r'..\Menu\images\header.gif')
-im.paste(im_orig)
-
-# remove old version number
-
-bg = im.crop((1, 0, 11, 45))
-for x in range(60, 250, 10):
-	im.paste(bg, (x, 0))
+bim = Image.open(r'..\Menu\images\header-notext.gif')
+im.paste(bim)
 
 # draw new version number
 
 draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('tahomabd.ttf', 24)
-
-#x = 140
-x = 66
-for t in 'NSIS %s' % VERSION:
-	draw.text((x, 5), t, font = font, fill = 'white')
-	x += draw.textsize(t, font = font)[0] + 1
+font = ImageFont.truetype('trebuc.ttf', 24)
+text = 'nullsoft scriptable install system %s' % VERSION
+draw.text((85, 7), text, font = font, fill = 'white')
 
 # save
 
-im.palette = im_orig.palette
 im = im.convert('P', palette = Image.ADAPTIVE)
 im.save(r'..\Menu\images\header.gif')
 
