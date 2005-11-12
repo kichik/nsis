@@ -168,7 +168,9 @@ def add_file(file):
 	add_file_to_emitter(util_env, 'PROGEMITTER', file)
 	add_file_to_emitter(plugin_env, 'SHLIBEMITTER', file)
 
-conf = defenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
+cenv = defenv.Copy()
+cross_env(cenv)
+conf = cenv.Configure(custom_tests = { 'CheckRequirement' : check_requirement })
 
 if conf.CheckRequirement('memcpy', 'struct s { char c[128]; } t = { "test" };'):
 	add_file('memcpy.c')
