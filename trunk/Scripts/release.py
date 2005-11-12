@@ -103,7 +103,14 @@ def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 	else:
 		cmd = command
 
-	if os.system(cmd) != wanted_ret:
+	ret = os.system(cmd)
+
+	# sleep because for some weird reason, running cvs.exe hugs
+	# the release log for some time after os.system returns
+	import time
+	time.sleep(5)
+
+	if ret != wanted_ret:
 		print '*** ' + err
 		log('*** ' + err, log_dir)
 		exit(log_dir)
