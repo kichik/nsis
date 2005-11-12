@@ -139,14 +139,6 @@ run(
 
 print 'creating images...'
 
-## create get.gif for website
-
-im = Image.new('L', (140, 50), '#ffffff')
-draw = ImageDraw.Draw(im)
-font = ImageFont.truetype('verdanab.ttf', 22)
-draw.text((9, 10), 'NSIS %s' % VERSION, font = font, fill = '#bebebe')
-im.save(r'get.gif')
-
 ## create new header.gif for menu
 
 im = Image.new('RGB', (598, 45), '#000000')
@@ -296,16 +288,6 @@ upload(ftp, 'nsis-%s-log.zip' % VERSION)
 upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
 
 ftp.quit()
-
-# upload get.gif
-
-print '  uploading get.gif...'
-
-run(
-	'%s get.gif %s@nsis.sf.net:/home/groups/n/ns/nsis/htdocs/uploads/pics/get.gif' % (SCP, USER),
-	'upload',
-	'uploading get.gif failed'
-)
 
 ### update some websites...
 
