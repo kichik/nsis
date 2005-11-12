@@ -219,6 +219,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
       } else {
         MessageBox(hwndDlg,MULTIDROPERROR,"Error",MB_OK|MB_ICONSTOP);
       }
+      DragFinish((HDROP)wParam);
       break;
     }
     case WM_GETMINMAXINFO:
