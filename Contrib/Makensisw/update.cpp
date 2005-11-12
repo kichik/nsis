@@ -27,10 +27,10 @@ void FinalizeUpdate() {
 
 int getProxyInfo(char *out) {
   DWORD v=0;
-	HKEY hKey;
+  HKEY hKey;
   if (RegOpenKeyEx(HKEY_CURRENT_USER,"Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",0,KEY_READ,&hKey) == ERROR_SUCCESS) {
-		DWORD l = 4;
-		DWORD t;
+    DWORD l = 4;
+    DWORD t;
     if (RegQueryValueEx(hKey,"ProxyEnable",NULL,&t,(unsigned char *)&v,&l) == ERROR_SUCCESS && t == REG_DWORD) {
       l=8192;
       if (RegQueryValueEx(hKey,"ProxyServer",NULL,&t,(unsigned char *)out,&l ) != ERROR_SUCCESS || t != REG_SZ) { 
