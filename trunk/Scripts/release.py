@@ -96,7 +96,7 @@ def exit(log_dir = '.'):
 	sys.exit(3)
 
 def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
-	log('running %s' % command, log_dir)
+	log('\nrunning %s\n' % command, log_dir)
 
 	if log_name:
 		cmd = '%s >> %s\\release-%s.log 2>&1' % (command, log_dir, VERSION)
@@ -107,8 +107,6 @@ def run(command, log_name, err, wanted_ret = 0, log_dir = '.'):
 		print '*** ' + err
 		log('*** ' + err, log_dir)
 		exit(log_dir)
-
-	log('', log_dir)
 
 def confirm(question):
 	print question
