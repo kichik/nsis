@@ -216,6 +216,8 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           ResetObjects();
           CompileNSISScript();
         }
+      } else {
+        MessageBox(hwndDlg,MULTIDROPERROR,"Error",MB_OK|MB_ICONSTOP);
       }
       break;
     }
