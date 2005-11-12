@@ -680,6 +680,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
         MessageBox(hwndDlg,"Dropping more than one zip file at a time is not supported",g_errcaption,MB_OK|MB_ICONSTOP);
       }
+      DragFinish((HDROP)wParam);
       return TRUE;
     }
     case WM_COMMAND:
