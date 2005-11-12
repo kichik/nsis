@@ -5,6 +5,9 @@
 
 /*
 
+version 0.35
+* drag & drop support
+
 version 0.34
 * preserve zip timestamps
 
@@ -575,6 +578,29 @@ void makeEXE(HWND hwndDlg)
 
 }
 
+void SetZip(HWND hwndDlg, char *path)
+{
+  char buf2[1024];
+  lstrcpy(buf2,path);
+  tempzip_cleanup(hwndDlg,1);
+  SetDlgItemText(hwndDlg,IDC_ZIPFILE,path);
+  char *t=path+lstrlen(path);
+  while (t > path && *t != '\\' && *t != '.') t--;
+  {
+    char *p=t;
+    while (p >= path && *p != '\\') p--;
+    p++;
+    *t=0;
+    SetDlgItemText(hwndDlg,IDC_INSTNAME,p[0]?p:"Stuff");
+  }
+  strcpy(t,".exe");
+  SetDlgItemText(hwndDlg,IDC_OUTFILE,path);
+  if (tempzip_make(hwndDlg,buf2)) tempzip_cleanup(hwndDlg,1);
+  else
+  {
+    EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
+  }
+}
 
 BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -615,6 +641,8 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
               CLIP_DEFAULT_PRECIS,
               DEFAULT_QUALITY,FIXED_PITCH|FF_DONTCARE,"Courier New");
       SendDlgItemMessage(hwndDlg,IDC_OUTPUTTEXT,WM_SETFONT,(WPARAM)hFont,0);
+
+      DragAcceptFiles(hwndDlg,TRUE);
     return 1;
     case WM_CLOSE:
       if (!g_hThread)
@@ -637,6 +665,23 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       if (nsifilename[0]) DeleteFile(nsifilename);
       nsifilename[0]=0;
     break;
+    case WM_DROPFILES:
+    {
+      char dropped_file[MAX_PATH]="";
+      if (DragQueryFile((HDROP)wParam,-1,NULL,0)==1)
+      {
+        DragQueryFile((HDROP)wParam,0,dropped_file,MAX_PATH);
+        if (lstrlen(dropped_file)>0)
+        {
+          SetZip(hwndDlg,dropped_file);
+        }
+      }
+      else
+      {
+        MessageBox(hwndDlg,"Dropping more than one zip file at a time is not supported",g_errcaption,MB_OK|MB_ICONSTOP);
+      }
+      return TRUE;
+    }
     case WM_COMMAND:
       switch (LOWORD(wParam))
       {
@@ -655,26 +700,7 @@ BOOL CALLBACK DlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
             buf[0]=0;
             if (GetOpenFileName(&l))
             {
-              char buf2[1024];
-              lstrcpy(buf2,buf);
-              tempzip_cleanup(hwndDlg,1);
-              SetDlgItemText(hwndDlg,IDC_ZIPFILE,buf);
-              char *t=buf+strlen(buf);
-              while (t > buf && *t != '\\' && *t != '.') t--;
-              {
-                char *p=t;
-                while (p >= buf && *p != '\\') p--;
-                p++;
-                *t=0;
-                SetDlgItemText(hwndDlg,IDC_INSTNAME,p[0]?p:"Stuff");
-              }
-              strcpy(t,".exe");
-              SetDlgItemText(hwndDlg,IDC_OUTFILE,buf);
-              if (tempzip_make(hwndDlg,buf2)) tempzip_cleanup(hwndDlg,1);
-              else
-              {
-                EnableWindow(GetDlgItem(hwndDlg,IDOK),1);
-              }
+              SetZip(hwndDlg,buf);
             }
           }
         break;
