@@ -1,0 +1,302 @@
+\S1{flowcontrol} Flow Control Instructions
+
+\S2{abort} Abort
+
+\c user_message
+
+Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from \R{callbacks}{Callback functions} to do special things. \R{pages}{Page callbacks} also uses Abort for special purposes.
+
+\c Abort
+\c Abort "can't install"
+
+\S2{call} Call
+
+\c function_name | :label_name | user_var(input)
+
+Calls the function named \e{function_name}, the label named \e{label_name}, or a variable that specifies an address. An address is returned by \R{getcurrentaddress}{GetCurrentAddress}, \R{getfunctionaddress}{GetFunctionAddress} or \R{getlabeladdress}{GetLabelAddress}. A call returns when it encounters a \R{return}{Return} instruction. Sections and functions are automatically ended with a \R{return}{Return} instruction. Uninstall functions cannot be called from installer functions and sections, and vice-versa.
+
+\c Function func
+\c   Call :label
+\c   DetailPrint "#1: This will only appear 1 time."
+\c label:
+\c   DetailPrint "#2: This will appear before and after message #1."
+\c   Call :.global_label
+\c FunctionEnd
+\c
+\c Section
+\c   Call func
+\c   Return
+\c
+\c .global_label:
+\c   DetailPrint "#3: The global label was called"
+\c SectionEnd
+
+\S2{clearerrors} ClearErrors
+
+Clears the error flag.
+
+\c ClearErrors
+\c IfErrors 0 +2
+\c   MessageBox MB_OK "this message box will never show"
+
+\S2{getcurrentaddress} GetCurrentAddress
+
+\c user_var(output)
+
+Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.
+
+\c Function func
+\c   DetailPrint "function"
+\c   IntOp $0 $0 + 2
+\c   Call $0
+\c   DetailPrint "function end"
+\c FunctionEnd
+\c
+\c Section
+\c   DetailPrint "section"
+\c   DetailPrint "section"
+\c   GetCurrentAddress $0
+\c   Goto callFunc
+\c
+\c   DetailPrint "back to section"
+\c   Return
+\c
+\c callFunc:
+\c   Call func
+\c   DetailPrint "section end"
+\c SectionEnd
+
+\S2{getfunctionaddress} GetFunctionAddress
+
+\c user_var(output) function_name
+
+Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).
+
+\c Function func
+\c   DetailPrint "function"
+\c FunctionEnd
+\c
+\c Section
+\c   GetFunctionAddress $0 func
+\c   Call $0
+\c SectionEnd
+
+\S2{getlabeladdress} GetLabelAddress
+
+\c user_var(output) label
+
+Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.
+
+\c label:
+\c DetailPrint "label"
+\c GetLabelAddress $0 label
+\c IntOp $0 $0 + 4
+\c Goto $0
+\c DetailPrint "done"
+
+\S2{goto} Goto
+
+\c label_to_jump_to | +offset| -offset| user_var(target)
+
+If label is specified, goto the label 'label_to_jump_to:'.
+
+If +offset or -offset is specified, jump is relative by offset instructions. Goto +1 goes to the next instruction, Goto -1 goes to the previous instruction, etc.
+
+If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress). Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.
+
+\c Goto label
+\c Goto +2
+\c Goto -2
+\c Goto $0
+
+\S2{ifabort} IfAbort
+
+\c label_to_goto_if_abort [label_to_goto_if_no_abort]
+
+If abort is called it will "return" true. This can happen if the user chose abort on a file that failed to create (or overwrite) or if the user aborted by hand. This function can only be called from the leave function of the instfiles \R{page}{page}.
+
+\c Page instfiles "" "" instfilesLeave
+\c
+\c Function instfilesLeave
+\c   IfAbort 0 +2
+\c     MessageBox MB_OK "user aborted"
+\c FunctionEnd
+
+\S2{iferrors} IfErrors
+
+\c jumpto_iferror [jumpto_ifnoerror]
+
+Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.
+
+\c ClearErrors
+\c File file.dat
+\c IfErrors 0 +2
+\c   Call ErrorHandler
+
+\S2{iffileexists} IfFileExists
+
+\c file_to_check_for jump_if_present [jump_otherwise]
+
+Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\\*.*
+
+\c IfFileExists $WINDIR\notepad.exe 0 +2
+\c   MessageBox MB_OK "notepad is installed"
+
+\S2{ifrebootflag} IfRebootFlag
+
+\c jump_if_set [jump_if_not_set]
+
+Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with \R{setrebootflag}{SetRebootFlag}.
+
+\c IfRebootFlag 0 noreboot
+\c   MessageBox MB_YESNO "A reboot is required to finish the installation. Do you wish to reboot now?" IDNO noreboot
+\c     Reboot
+\c noreboot:
+
+\S2{ifsilent} IfSilent
+
+\c jump_if_silent [jump_if_not]
+
+Checks the silent flag, and jumps to jump_if_silent if the installer is silent, otherwise jumps to jump_if_not. The silent flag can be set by \R{asilentinstall}{SilentInstall}, \R{asilentuninstall}{SilentUninstall}, \R{setsilent}{SetSilent} and by the user passing /S on the command line.
+
+\c IfSilent +2
+\c   ExecWait '"$INSTDIR\nonsilentprogram.exe"'
+
+\S2{intcmp} IntCmp
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more.
+
+\c IntCmp $0 5 is5 lessthan5 morethan5
+\c is5:
+\c   DetailPrint "$$0 == 5"
+\c   Goto done
+\c lessthan5:
+\c   DetailPrint "$$0 < 5"
+\c   Goto done
+\c morethan5:
+\c   DetailPrint "$$0 > 5"
+\c   Goto done
+\c done:
+
+\S2{intcmpu} IntCmpU
+
+\c val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+
+Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 < val2, Gotos jump_if_val1_less, otherwise if val1 > val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.
+
+\S2{messagebox} MessageBox
+
+\c mb_option_list messagebox_text [/SD return] [return_check jumpto] [return_check_2 jumpto_2]
+
+Displays a MessageBox containing the text "messagebox_text". mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).
+
+\b \e{MB_OK} - Display with an OK button
+
+\b \e{MB_OKCANCEL} - Display with an OK and a cancel button
+
+\b \e{MB_ABORTRETRYIGNORE} - Display with abort, retry, ignore buttons
+
+\b \e{MB_RETRYCANCEL} - Display with retry and cancel buttons
+
+\b \e{MB_YESNO} - Display with yes and no buttons
+
+\b \e{MB_YESNOCANCEL} - Display with yes, no, cancel buttons
+
+\b \e{MB_ICONEXCLAMATION} - Display with exclamation icon
+
+\b \e{MB_ICONINFORMATION} - Display with information icon
+
+\b \e{MB_ICONQUESTION} - Display with question mark icon
+
+\b \e{MB_ICONSTOP} - Display with stop icon
+
+\b \e{MB_TOPMOST} - Make messagebox topmost
+
+\b \e{MB_SETFOREGROUND} - Set foreground
+
+\b \e{MB_RIGHT} - Right align text
+
+\b \e{MB_RTLREADING} - RTL reading order
+
+\b \e{MB_DEFBUTTON1} - Button 1 is default
+
+\b \e{MB_DEFBUTTON2} - Button 2 is default
+
+\b \e{MB_DEFBUTTON3} - Button 3 is default
+
+\b \e{MB_DEFBUTTON4} - Button 4 is default
+
+Return_check can be 0 (or empty, or left off), or one of the following:
+
+\b \e{IDABORT} - Abort button
+
+\b \e{IDCANCEL} - Cancel button
+
+\b \e{IDIGNORE} - Ignore button
+
+\b \e{IDNO} - No button
+
+\b \e{IDOK} - OK button
+
+\b \e{IDRETRY} - Retry button
+
+\b \e{IDYES} - Yes button
+
+If the return value of the MessageBox is return_check, the installer will Goto jumpto.
+
+Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent. See \k{silent} for more information.
+
+\c MessageBox MB_OK "simple message box"
+\c MessageBox MB_YESNO "is it true?" IDYES true IDNO false
+\c true:
+\c   DetailPrint "it's true!"
+\c   Goto next
+\c false:
+\c   DetailPrint "it's false"
+\c next:
+\c MessageBox MB_YESNO "is it true? (defaults to yes on silent installations)" /SD IDYES IDNO false2
+\c   DetailPrint "it's true (or silent)!"
+\c   Goto next2
+\c false2:
+\c   DetailPrint "it's false"
+\c next2:
+
+\S2{return} Return
+
+Returns from a function or section.
+
+\c Function func
+\c   StrCmp $0 "return now" 0 +2
+\c     Return
+\c   # do stuff
+\c FunctionEnd
+\c
+\c Section
+\c   Call func
+\c   ;"Return" will return here
+\c SectionEnd
+
+\S2{quit} Quit
+
+Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).
+
+\S2{seterrors} SetErrors
+
+Sets the error flag.
+
+\c SetErrors
+\c IfErrors 0 +2
+\c   MessageBox MB_OK "this message box will always show"
+
+\S2{strcmp} StrCmp
+
+\c str1 str2 jump_if_equal [jump_if_not_equal]
+
+Compares (case insensitively) str1 to str2. If str1 and str2 are equal, Gotos jump_if_equal, otherwise Gotos jump_if_not_equal.
+
+\c StrCmp $0 "a string" 0 +3
+\c   DetailPrint '$$0 == "a string"'
+\c   Goto +2
+\c   DetailPrint '$$0 != "a string"'

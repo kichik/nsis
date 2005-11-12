@@ -1,0 +1,108 @@
+target = 'makensis'
+
+pch = 'Platform.h'
+
+makensis_files = Split("""
+	build.cpp
+	clzma.cpp
+	crc32.c
+	DialogTemplate.cpp
+	dirreader.cpp
+	growbuf.cpp
+	lang.cpp
+	lineparse.cpp
+	makenssi.cpp
+	mmap.cpp
+	Plugins.cpp
+	ResourceEditor.cpp
+	ResourceVersionInfo.cpp
+	script.cpp
+	ShConstants.cpp
+	strlist.cpp
+	tokens.cpp
+	util.cpp
+""")
+
+bzip2_files = Split("""
+	bzip2/blocksort.c
+	bzip2/bzlib.c
+	bzip2/compress.c
+	bzip2/huffman.c
+""")
+
+lzma_files = Split("""
+	7zip/7zGuids.cpp
+	7zip/Common/CRC.cpp
+	7zip/7zip/Compress/LZ/LZInWindow.cpp
+	7zip/7zip/Compress/LZMA/LZMAEncoder.cpp
+	7zip/7zip/Common/OutBuffer.cpp
+	7zip/7zip/Compress/RangeCoder/RangeCoderBit.cpp
+	7zip/Common/Alloc.cpp
+""")
+
+zlib_files = Split("""
+	zlib/deflate.c
+	zlib/trees.c
+""")
+
+libs = Split("""
+	gdi32
+	user32
+	pthread
+	stdc++
+	iconv
+""")
+
+Import('env AddAvailableLibs')
+
+##### Use available libraries
+
+if env['PLATFORM'] == 'win32':
+	# XXX will cause problems if makensis is cross compiled
+	# on freebsd, libversion.a exists and gives trouble if linked
+	libs += ['version']
+
+AddAvailableLibs(env, libs)
+
+##### Configuration defines
+
+env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
+env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
+
+##### Set PCH
+
+# XXX doesn't work
+#env['PCH'] = env.PCH(pch)[0]
+#env['PCHSTOP'] = pch
+
+##### Version define
+
+version_env = env.Copy()
+version_env.Append(CPPDEFINES = ['NSIS_VERSION=v$VERSION'])
+
+# only pass -DNSIS_VERSION to files that use it to minimize rebuilds
+
+new_makensis_files = []
+
+for file in makensis_files:
+	f = File(file).srcnode().abspath
+	if open(f).read().find('NSIS_VERSION') >= 0:
+		new_makensis_files.append(version_env.Object(file))
+	else:
+		new_makensis_files.append(file)
+
+makensis_files = new_makensis_files
+
+##### LZMA specific defines
+
+lzma_env = env.Copy()
+lzma_env.Append(CPPDEFINES = ['COMPRESS_MF_BT'])
+lzma_files = lzma_env.Object(lzma_files)
+
+##### Compile makensis
+
+files = makensis_files + bzip2_files + lzma_files + zlib_files
+
+makensis = env.Program(target, files)
+
+Return('makensis')
