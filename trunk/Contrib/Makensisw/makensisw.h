@@ -43,6 +43,7 @@
 #define NSISERROR    "Unable to intialize MakeNSIS.  Please verify that makensis.exe is in the same directory as makensisw.exe."
 #define DLGERROR     "Unable to intialize MakeNSISW."
 #define SYMBOLSERROR "Symbol cannot contain whitespace characters"
+#define MULTIDROPERROR "Dropping more than one script at a time is not supported"
 #define NSISUPDATEPROMPT "Running NSIS Update will close MakeNSISW.\nContinue?"
 #define REGSEC       HKEY_LOCAL_MACHINE
 #define REGKEY       "Software\\NSIS"
