@@ -251,7 +251,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_UNINSTBUTTONTEXT,"UninstallButtonText",0,1,"[uninstall button text]",TP_GLOBAL},
 {TOK_INSTBUTTONTEXT,"InstallButtonText",0,1,"[install button text]",TP_GLOBAL},
 {TOK_SPACETEXTS,"SpaceTexts",0,2,"none | ([space required text] [space available text])",TP_GLOBAL},
-{TOK_COMPLETEDTEXT,"CompletedText",0,2,"[completed text]",TP_PG},
+{TOK_COMPLETEDTEXT,"CompletedText",0,1,"[completed text]",TP_PG},
 
 {TOK_GETFUNCTIONADDR,"GetFunctionAddress",2,0,"output function",TP_CODE},
 {TOK_GETLABELADDR,"GetLabelAddress",2,0,"output label",TP_CODE},
