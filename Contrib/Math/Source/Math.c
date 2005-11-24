@@ -245,7 +245,9 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
     }
 
     // find nearest round bracket - function body
-    while (*sp != '(') sp++;
+    while (*sp != '(' && *sp) sp++;
+    if (!*sp)
+      return;
     sp++;
 
     // now we are ready to parse function body
