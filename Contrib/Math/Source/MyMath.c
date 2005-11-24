@@ -14,7 +14,7 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
   if (!s) return;
 
   // String-value
-  if ((((options & (STI_FLOAT | STI_INT)) == 0) || *s == '\'' || *s == '\"' || *s == '`' || 
+  if ((((options & (STI_FLOAT | STI_INT)) == 0) || *s == '\'' || *s == '\"' || *s == '`' ||
       ((*s != '+') && (*s != '-') && ((*s < '0') || (*s > '9'))))
       && (options & STI_STRING))
   {
@@ -62,7 +62,7 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
     for (;;)
     {
       int c=*(++s) - '0'; numsignif++;
-      if ((options & STI_FLOAT) && 
+      if ((options & STI_FLOAT) &&
           ((c == ('e'-'0')) || (c==('E'-'0')) || (c==('.'-'0'))
           || (numsignif > 18)))
       {
@@ -96,7 +96,7 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
               int expc = 0, esign = 0;
               s++;
               // detect exponential sign
-              if ((*s == '+') || (*s == '-')) 
+              if ((*s == '+') || (*s == '-'))
                   esign = (*s == '-');
               else s--;
 
@@ -132,7 +132,7 @@ void StringToItem(char *&s, ExpressionItem *item, int options)
     if ((options & STI_FLOAT) && ((options & STI_INT) == 0))
     {
         double& d = *((double*)&(item->param1));
-        d = (double) v;    
+        d = (double) v;
         item->type = IT_CONST | ITC_FLOAT;
     }
   }
@@ -147,7 +147,7 @@ void ItemToString(char *sbuf, ExpressionItem *item)
         return;
     }
 
-    switch (item->type & ITEMSUBTYPE) 
+    switch (item->type & ITEMSUBTYPE)
     {
     case ITC_STRING:
         {
@@ -156,10 +156,10 @@ void ItemToString(char *sbuf, ExpressionItem *item)
         }
         break;
     case ITC_ARRAY:
-        {            
+        {
             ArrayDesc *ad = (ArrayDesc *) item->param1;
             for (int index = 0; index < ad->count; index++)
-                if ((ad->array[index]) && 
+                if ((ad->array[index]) &&
                     ((ad->array[index]->type & (ITEMTYPE|ITEMSUBTYPE)) == (IT_CONST | ITC_INT)))
                     if ((*(sbuf++) = (char) *((__int64*)&(ad->array[index]->param1))) == 0)
                         break;
@@ -184,9 +184,9 @@ void itoa64(__int64 i, char *buffer)
         i = -i;
     }
     if (i == 0) *(buffer++) = '0';
-    else 
+    else
     {
-        while (i > 0) 
+        while (i > 0)
         {
             *(b++) = '0' + ((char) (i%10));
             i /= 10;
@@ -336,12 +336,12 @@ void FloatFormat(char *s, double value, int options)
 
         if((value != 0.0) && ((fpower < -4) || (fpower >= prec)))
             FloatFormatE(s, value, options);
-        else 
+        else
         {
             prec -= (fpower + 1);
             if(prec <= 0) prec = 1;
             FloatFormatF(s, value, prec);
-        }        
+        }
     }
 }
 
