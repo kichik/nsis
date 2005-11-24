@@ -509,7 +509,9 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
                 while (*sp != '}')
                 {
                     sp++;
-                    ParseString(sp, ad->array[ad->count++]); 
+                    ParseString(sp, ad->array[ad->count]);
+                    if (ad->array[ad->count])
+                      ad->count++;
                 }
 
                 sp++;
@@ -1438,7 +1440,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     aritem->param2 = (EIPARAM) *((__int64*)&(index->param1));
 
                     ArrayDesc *ad = (ArrayDesc*)aritem->param1;
-                    if (((int)aritem->param2) > ad->count) 
+                    if (((int)aritem->param2) >= ad->count) 
                     {
                         ad->count = ((int)aritem->param2)+1;
                         while (ad->count > ad->size)
