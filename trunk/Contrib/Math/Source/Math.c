@@ -23,17 +23,17 @@ void PlaceNewItem(char *&vb, ParseInfo *pi, int precedence)
     if (pi->item == NULL) return;
 
     while ((pi->OpsStack) && ((((int) pi->OpsStack->param2) < precedence)
-        || ((((int)pi->OpsStack->param2) == precedence) 
+        || ((((int)pi->OpsStack->param2) == precedence)
             && (precedence != OPERATOR_SET_PRECEDENCE))))
     {
-        // second operand for our operator        
+        // second operand for our operator
         newroot = pi->OpsStack;
         *((ExpressionItem **)&(newroot->param2)) = pi->item;
         pi->OpsStack = newroot->next;
         newroot->next = NULL;
         pi->item = newroot;
     }
-    // finally we have got new root 
+    // finally we have got new root
     newroot = pi->item;
 
     if (pi->SetupNewRoot)
@@ -43,7 +43,7 @@ void PlaceNewItem(char *&vb, ParseInfo *pi, int precedence)
         pi->SetupNewRoot = 0;
     }
     if (*pi->place == *pi->root) *pi->place = *pi->root = newroot;
-    else *pi->root = newroot;    
+    else *pi->root = newroot;
     // no item at our pockets
     pi->item = NULL;
 }
@@ -53,8 +53,8 @@ void PlaceNewItem(char *&vb, ParseInfo *pi, int precedence)
 #define NSIS_VARS_NSTACK 26
 
 typedef char smallstr[2];
-const smallstr NSISVariablesNames[NSIS_VARS_COUNT] = {{'r','0'}, {'r','1'}, {'r','2'}, {'r','3'}, {'r','4'}, {'r','5'}, {'r','6'}, {'r','7'}, {'r','8'}, {'r','9'}, 
-{'R','0'}, {'R','1'}, {'R','2'}, {'R','3'}, {'R','4'}, {'R','5'}, {'R','6'}, {'R','7'}, {'R','8'}, {'R','9'}, 
+const smallstr NSISVariablesNames[NSIS_VARS_COUNT] = {{'r','0'}, {'r','1'}, {'r','2'}, {'r','3'}, {'r','4'}, {'r','5'}, {'r','6'}, {'r','7'}, {'r','8'}, {'r','9'},
+{'R','0'}, {'R','1'}, {'R','2'}, {'R','3'}, {'R','4'}, {'R','5'}, {'R','6'}, {'R','7'}, {'R','8'}, {'R','9'},
 {'C','L'}, {'I','D'}, {'O','D'}, {'E','D'}, {'L','G'}, {'S',0}, {'N','S'}};
 
 ExpressionItem *FindVariable(char *varname)
@@ -145,7 +145,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
     int i;
     ExpressionItem *item = pi->item = AllocItem();
     *vb = 0;
-    
+
     // check BUILTIN functions
     for (i = 0; i < MATHFUNCNUM; i++)
     {
@@ -161,7 +161,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
                 sp++;
                 ParseString(sp, *((ExpressionItem **)(&item->param2)));
             }
-            sp++; vb = pi->valbuf;            
+            sp++; vb = pi->valbuf;
             return;
         }
     }
@@ -185,13 +185,13 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
                 ParseString(sp, *((ExpressionItem **)(&(*newplace)->param1)));
                 newplace = &((*newplace)->next);
             }
-            sp++; vb = pi->valbuf;            
+            sp++; vb = pi->valbuf;
             return;
         }
     }
 
     // oops, we need no item for function defenition
-    CleanupItems(item); pi->item = NULL;    
+    CleanupItems(item); pi->item = NULL;
 
     // it's user function define
     int flags = 0;
@@ -205,7 +205,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
 
     lstrcpy(f->name, pi->valbuf);
     f->varflags = 0;
-    f->varsnum = 0;    
+    f->varsnum = 0;
     do
     {
         sp++;
@@ -214,7 +214,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
         case ' ':
             break;
         case ',':
-        case ')':            
+        case ')':
             if (buf > buffer)
             {
                 *buf = 0;
@@ -224,7 +224,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
                 CleanupItems(it);
                 buf = buffer;
                 flags <<= 1;
-            }            
+            }
             break;
         case '&':
             flags |= 1;
@@ -246,7 +246,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
 
     // find nearest round bracket - function body
     while (*sp != '(') sp++;
-    sp++;    
+    sp++;
 
     // now we are ready to parse function body
     ParseString(sp, f->root);
@@ -265,7 +265,7 @@ void PlaceFunction(char *&vb, char *&sp, ParseInfo *pi, int redefine)
     if (i < f->varsnum-1) lstrcat(place, ", ");
     flags >>= 1;
   }
-  lstrcat(place, ")");                
+  lstrcat(place, ")");
   PrintTree(f->root, place);
 #endif
 }
@@ -289,10 +289,10 @@ void PlaceOp(char *&vb, int type, int precedence, ParseInfo *pi)
         ExpressionItem *item = AllocItem();
         item->type = type;
         item->param2 = (EIPARAM) precedence;
-        item->next = pi->OpsStack;        
+        item->next = pi->OpsStack;
         pi->OpsStack = item;
     }
-    else 
+    else
     {
         // get previous tree as items and operators of lower precedence
         PlaceNewItem(vb, pi, precedence);
@@ -302,7 +302,7 @@ void PlaceOp(char *&vb, int type, int precedence, ParseInfo *pi)
         item->param1 = (EIPARAM) (*pi->root);
 
         if (*pi->place == *pi->root) *pi->place = *pi->root = NULL;
-        else *pi->root = NULL;    
+        else *pi->root = NULL;
 
         if (type & PO_UNARYPOST)
         {
@@ -354,7 +354,7 @@ const OpStruct Operators[OPSNUM] =
 
 // single byte ops
 // !!! don't forget to change Set Operator Precedence !!!
-{"=", 14, ITO_SET | PO_PRENONCONST | PO_LASTOP | PO_SET | PO_USESPOST}, 
+{"=", 14, ITO_SET | PO_PRENONCONST | PO_LASTOP | PO_SET | PO_USESPOST},
 {"+", 5, ITO_PLUS | PO_USESPRE | PO_USESPOST},
 {"-", 5, ITO_MINUS | PO_USESPRE | PO_USESPOST | PO_UNARYPRE},
 {"*", 4, ITO_MUL | PO_USESPRE | PO_USESPOST | PO_UNARYPRE},
@@ -372,7 +372,7 @@ const OpStruct Operators[OPSNUM] =
 void CheckForOperator(char *&sp, char *&vb, ParseInfo *pi)
 {
     for (int op = 0; op < OPSNUM; op++)
-    {        
+    {
         int c = lstrlen(Operators[op].name);
         if (c > 3) c = 3; // real operator length
         if (lstrcmpn(sp, Operators[op].name, c))
@@ -410,10 +410,10 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
             if (*pi.root) pi.SetupNewRoot = 1;
             sp++;
             break;
-        case '0': case '1': case '2': case '3': case '4': 
+        case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
             // variable & function names could contain numbers as non first chars
-            if (vb > pi.valbuf) 
+            if (vb > pi.valbuf)
             {
                 processed = FALSE;
                 break;
@@ -428,7 +428,7 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
             if (vb > pi.valbuf)
             {
                 // thats function
-                PlaceFunction(vb, sp, &pi, redefine);                
+                PlaceFunction(vb, sp, &pi, redefine);
             } else
             {
                 // expression
@@ -440,7 +440,7 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
             break;
 
         case '#':   // start of one of logical expresions
-            sp++;            
+            sp++;
             if ((*sp != '[') && (*sp != '{'))
             {
                 // function redefine flag
@@ -453,7 +453,7 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
                 pi.item->type = ((*sp == '[')?(IT_LOGIC | ITL_IF):(IT_LOGIC | ITL_WHILE));
                 // first expr - logic statement
                 sp++;
-            
+
                 ParseString(sp, *((ExpressionItem **)(&pi.item->param1)));
                 // ok, second expr - then, third - else statement.. others???
                 ExpressionItem **newplace = ((ExpressionItem **)(&pi.item->param2));
@@ -471,7 +471,7 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
 
         case '[':
             {
-            // thats array access 
+            // thats array access
             PlaceOp(vb, IT_ARRAY | ITA_ACCESS | PO_UNARYPOST, 1, &pi);
             sp++;
             // item index
@@ -491,16 +491,16 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
             sp++;
             }
             break;
- 
+
         case '{':   // start of array define
-            {            
+            {
                 // array define - constists of array copy operator and array define itself
 
                 // type conversion item (to create a copy of array)
                 pi.item = AllocItem();
                 pi.item->type = IT_FUNCTION | ITF_TYPE | ITFT_CARRAY_ID | ITFA_COPY;
 
-                // during first create our array descriptor and array pointers 
+                // during first create our array descriptor and array pointers
                 ExpressionItem *ai = AllocArray(DEFAULT_ARRAY_SIZE);
                 pi.item->param1 = (EIPARAM)  ai;
                 ArrayDesc *ad = *((ArrayDesc**)&(ai->param1));
@@ -519,7 +519,7 @@ void ParseString(char *&sp, ExpressionItem* &itemplace)
             break;
         case '-': case '+': case '<': case '=': case '>':
         case '/': case '*': case '~': case '^': case '!':
-        case '&': case '|': case '%': 
+        case '&': case '|': case '%':
             CheckForOperator(sp, vb, &pi);
             break;
 
@@ -568,7 +568,7 @@ void CleanupItems(ExpressionItem* &itemplace)
         {
             if ((item->type & ITEMSUBTYPE) == ITC_STRING)
                 dbgGlobalFree((HGLOBAL) item->param1);
-        } else 
+        } else
         {
             CleanupItems(*((ExpressionItem**) &item->param1));
             CleanupItems(*((ExpressionItem**) &item->param2));
@@ -577,7 +577,7 @@ void CleanupItems(ExpressionItem* &itemplace)
         itemnext = item->next;
         dbgGlobalFree((HGLOBAL) item);
         item = itemnext;
-    } while (item != NULL);    
+    } while (item != NULL);
     itemplace = NULL;
 }
 
@@ -590,7 +590,7 @@ char *opsnames[] = {"", "-", "+", "<<", ">>", "*", "/", "=", "&&", "||", "++", "
 void PrintNode(int index, int spaces, ExpressionItem* itemplace)
 {
     if (itemplace == NULL) return;
-    
+
     ExpressionItem *item = itemplace;
     do
     {
@@ -608,21 +608,21 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
         case  IT_CONST:
             switch (item->type & ITEMSUBTYPE)
             {
-            case ITC_STRING:                
+            case ITC_STRING:
                 wsprintf(place, "String: \"%s\"", (char *) item->param1);
                 break;
             case ITC_INT:
                 wsprintf(place, "Int: ");
                 itoa64(*((__int64*)&(item->param1)), place+5);
                 break;
-            case ITC_FLOAT:                
+            case ITC_FLOAT:
                 wsprintf(place, "Float: ");
                 FloatFormat(place+7, *((double*)&(item->param1)), 6);
                 break;
             case ITC_ARRAY:
                 ArrayDesc *ad = (ArrayDesc*) item->param1;
-                wsprintf(place, "Array, ptr %08X, size %d, count %d, references %d", 
-                    ad->array, ad->size, ad->count, ad->references);                
+                wsprintf(place, "Array, ptr %08X, size %d, count %d, references %d",
+                    ad->array, ad->size, ad->count, ad->references);
                 break;
             }
             strcat(place, "    ");
@@ -639,7 +639,7 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
                 buffer[0] = NSISVariablesNames[item->type & ITEMOPTIONS][0];
                 buffer[1] = NSISVariablesNames[item->type & ITEMOPTIONS][1];
                 buffer[2] = 0;
-                wsprintf(place, "Var: %s (%d)   ", 
+                wsprintf(place, "Var: %s (%d)   ",
                     buffer,
                     item->type & ITEMOPTIONS);
                 }
@@ -671,7 +671,7 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
                 buffer[1] = (MathFunctions[item->type &ITEMOPTIONS].name)[1];
                 buffer[2] = (MathFunctions[item->type &ITEMOPTIONS].name)[2];
                 buffer[3] = 0;
-                wsprintf(place, "Built-In Function %s() [%d] ", 
+                wsprintf(place, "Built-In Function %s() [%d] ",
                     buffer,
                     item->type &ITEMOPTIONS);
             }
@@ -693,7 +693,7 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
         case IT_ARRAY:
             wsprintf(place, "Array access []   ");
             break;
-        } 
+        }
         place += lstrlen(place);
         wsprintf(place, "Addr: %08X Type: %08X   Next: %08X  Param1: %08X  Param2: %08X", item, item->type, item->next, item->param1, item->param2);
         lstrcat(place, "\n");
@@ -709,13 +709,13 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
                 show = 1;
             if (show)
             {
-                wsprintf(place, "Sub1:\n"); 
+                wsprintf(place, "Sub1:\n");
                 WriteFile(myfile, buffer, lstrlen(buffer), &wrote, NULL);
             }
             PrintNode(1, spaces + 4, *((ExpressionItem**) &item->param1));
             if (show)
             {
-                wsprintf(place, "Sub2:\n"); 
+                wsprintf(place, "Sub2:\n");
                 WriteFile(myfile, buffer, lstrlen(buffer), &wrote, NULL);
             }
             PrintNode(2, spaces + 4, *((ExpressionItem**) &item->param2));
@@ -730,7 +730,7 @@ void PrintNode(int index, int spaces, ExpressionItem* itemplace)
             }
         }
         item = item->next;
-    } while (item != NULL);    
+    } while (item != NULL);
 }
 
 void PrintTree(ExpressionItem *root, char *str)
@@ -770,7 +770,7 @@ void ItemToType(ExpressionItem* &item, int type)
     if (item == NULL) return;
     int itemt = item->type & ITEMTYPE, oldtype = item->type & ITEMSUBTYPE;
 
-    if (((itemt == IT_CONST) && (oldtype == type)) 
+    if (((itemt == IT_CONST) && (oldtype == type))
         || (itemt != IT_CONST)) return;
 
     switch (type)
@@ -782,7 +782,7 @@ void ItemToType(ExpressionItem* &item, int type)
         item->param2 = 0;
         break;
     case ITC_FLOAT:
-        if (oldtype == ITC_INT) 
+        if (oldtype == ITC_INT)
             *((double *)&(item->param1)) = (double) *((__int64 *)&(item->param1));
         else
         {
@@ -792,7 +792,7 @@ void ItemToType(ExpressionItem* &item, int type)
         }
         break;
     case ITC_INT:
-        if (oldtype == ITC_FLOAT) 
+        if (oldtype == ITC_FLOAT)
             *((__int64 *)&(item->param1)) = (__int64) *((double *)&(item->param1));
         else
         {
@@ -805,7 +805,7 @@ void ItemToType(ExpressionItem* &item, int type)
         if (oldtype == ITC_STRING)
         {
             char *buf = (char*) item->param1;
-            int len = lstrlen(buf)+1;            
+            int len = lstrlen(buf)+1;
             ExpressionItem *ni = AllocArray(lstrlen(buf)+1);
             ArrayDesc *ad = (ArrayDesc*) ni->param1;
             for (int i = 0; i < len; i++)
@@ -881,7 +881,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
     while (item != NULL)
     {
         CleanupItems(result);
-        int type = item->type & ITEMTYPE, 
+        int type = item->type & ITEMTYPE,
             subtype = item->type & ITEMSUBTYPE,
             ioptions = item->type & ITEMOPTIONS;
         switch (type)
@@ -900,10 +900,10 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 {
                 case ITV_NSIS:
                     {
-                        // nsis                  
+                        // nsis
                         result = AllocItem();
                         char *variable = getuservariable(ioptions);
-                        StringToItem(variable, result, options); 
+                        StringToItem(variable, result, options);
                     }
                     break;
                 case ITV_USER:
@@ -926,7 +926,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     }
                     break;
                 case ITV_STACK:
-                    {  
+                    {
                         // pop from plugin stack
                         result = stack;
                         if (result == NULL) result = AllocItem();
@@ -997,15 +997,15 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 // reference operator
                 if ((!item1) && (subtype == ITO_MUL) && ((item2->type & ITEMTYPE) == (IT_VARIABLE)))
                 {
-                    // ok, that's the result we need                    
+                    // ok, that's the result we need
                     if (options & RTO_NEEDCONST)
                     {
                         RunTree(item2, result, options);
                         CleanupItems(item2);
                     } else
-                        result = item2;                        
+                        result = item2;
                     break;
-                }                
+                }
 
                 __int64 i1=0, i2=0, i3=0, i4=0;
                 if (((!item1)||((item1->type & ITEMTYPE)==IT_CONST)) &&
@@ -1020,14 +1020,14 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 // convert operands to desired type
                 ItemToType(item1, type);
                 ItemToType(item2, type);
-                
+
                 switch (type)
                 {
                 case ITC_INT:
                     {
                         i1 = (item1)?(*((__int64*)&item1->param1)):(0);
                         i2 = (item2)?(*((__int64*)&item2->param1)):(0);
-              
+
                     switch (subtype)
                     {
                     case ITO_MINUS: i1 -= i2; break;    // unary minus auto handled with NULL
@@ -1036,7 +1036,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     case ITO_SHR:   i1 >>= i2; break;
                     case ITO_MUL:   i1 *= i2; break;
                     case ITO_MOD:
-                    case ITO_DIV:   
+                    case ITO_DIV:
                                     if (i2 == 0) { i3 = 0; i4 = i1;  }
                                     else { i3 = i1 / i2; i4 = i1 % i2; }
                                     if (subtype == ITO_DIV) i1 = i3; else i1 = i4;
@@ -1073,7 +1073,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         int ir = -666;
                         double i1 = (item1)?(*((double*)&item1->param1)):(0.0);
                         double i2 = (item2)?(*((double*)&item2->param1)):(0.0);
-                    
+
                     switch (subtype)
                     {
                     case ITO_MINUS: i1 -= i2; break;    // unary minus auto handled with NULL
@@ -1093,9 +1093,9 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     {
                         // if ir value left intact - result is double
                         result->type = IT_CONST | ITC_FLOAT;
-                        *((double*)&result->param1) = i1;            
+                        *((double*)&result->param1) = i1;
                     } else
-                        *((__int64*)&result->param1) = (__int64) ir;            
+                        *((__int64*)&result->param1) = (__int64) ir;
                     }
                     break;
                 case ITC_STRING:
@@ -1104,7 +1104,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         char *i1 = (item1)?((char*)item1->param1):(NULL);
                         char *i2 = (item2)?((char*)item2->param1):(NULL);
                        	int sc = (i1 && i2)?(lstrcmp(i1, i2)):((i1)?(1):((i2)?(-1):(0)));
-                    
+
                     switch (subtype)
                     {
                     case ITO_PLUS:  lstrcat(i1, i2); break;
@@ -1115,14 +1115,14 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     case ITO_EQ:    ir = (sc == 0); break;
                     case ITO_LS:    ir = (sc < 0); break;
                     case ITO_GR:    ir = (sc > 0); break;
-                    }                    
+                    }
                     if (ir == -666)
                     {
                         result = CopyItem((item1)?(item1):(item2));
                     } else
                     {
                         result = AllocItem();
-                        *((__int64*)&result->param1) = (__int64) ir;            
+                        *((__int64*)&result->param1) = (__int64) ir;
                     }
                     }
                     break;
@@ -1177,7 +1177,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     }
                     // ok, run the approtiate branch of if statement (if available)
                     if (dobr)
-                    {                    
+                    {
                         CleanupItems(result);
                         RunTree(dobr, result, options);
                     }
@@ -1195,13 +1195,13 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 ExpressionItem *ip = *((ExpressionItem**)&(item->param1));
                 ExpressionItem *si = AllocItem(), *var = AllocItem();
                 ExpressionItem *vals[32];
-                si->type = IT_VARIABLE | ITV_STACK; 
+                si->type = IT_VARIABLE | ITV_STACK;
                 for (i = 0; i < f->varsnum; i++)
                 {
                     // push every variable
                     ExpressionItem *val;
                     var->type = (IT_VARIABLE | ITV_USER) + f->vars[i];
-                    RunTree(var, val, RTO_NEEDCONST | ITC_STRING | ITC_INT | ITC_FLOAT | ITC_ARRAY);                    
+                    RunTree(var, val, RTO_NEEDCONST | ITC_STRING | ITC_INT | ITC_FLOAT | ITC_ARRAY);
                     SaveResult(si, val);
                     CleanupItems(val);
                     // calculate argument value and for future
@@ -1218,7 +1218,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         ip = ip->next;
                     } else vals[i] = AllocItem();
 
-                    flags >>= 1; 
+                    flags >>= 1;
                 }
 
                 // now when all values got we could save them to variables
@@ -1239,31 +1239,31 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     // pop every variable
                     ExpressionItem *val;
                     var->type = (IT_VARIABLE | ITV_USER) + f->vars[i];
-                    RunTree(si, val, RTO_NEEDCONST | ITC_STRING | ITC_INT | ITC_FLOAT | ITC_ARRAY);                    
+                    RunTree(si, val, RTO_NEEDCONST | ITC_STRING | ITC_INT | ITC_FLOAT | ITC_ARRAY);
                     SaveResult(var, val);
                     CleanupItems(val);
                 }
 
                 // free used items
-                CleanupItems(si); CleanupItems(var); 
+                CleanupItems(si); CleanupItems(var);
             } else if (subtype == ITF_TYPE)
             {
                 int newtype = (int) MathFunctions[ioptions].fptr;
                 if (newtype < ITC_UNKNOWN)
                 {
-                    // get as possibly close to ready expression                                        
+                    // get as possibly close to ready expression
                     RunAndGetConst((int)item->param1, result, newtype);
-                    if (ioptions == ITFT_CARRAY_ID) 
+                    if (ioptions == ITFT_CARRAY_ID)
                         CopyArray(result);
                 } else if (newtype == FTT_FLOATF)
                 {
                     // float format function
                     ExpressionItem *arg1, *arg2;
                     RunAndGetConst((int)item->param1, arg1, ITC_FLOAT);
-                    double value = *((double*)&(arg1->param1));                
+                    double value = *((double*)&(arg1->param1));
                     RunAndGetConst((int)item->param2, arg2, ITC_INT);
                     int format = (int) *((__int64*)&(arg2->param1));
-                    
+
                     result = AllocItem();
                     result->type = IT_CONST | ITC_STRING;
                     result->param1 = (EIPARAM)  AllocString();
@@ -1304,7 +1304,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         *((__int64*)&(result->param1)) = (__int64) chr;
                         result->type = IT_CONST | ITC_INT;
                         break;
-                    } 
+                    }
                     if ((result->type & (ITEMTYPE|ITEMSUBTYPE)) == (IT_CONST|ITC_INT))
                     {
                         // ok, that's int - convert to new string (char+0)
@@ -1329,7 +1329,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                 if (subtype == ITF_MATH2)
                 {
                     // Built-In math function with 2 args
-                    if (ioptions >= MATHFUNCNUM-2)  
+                    if (ioptions >= MATHFUNCNUM-2)
                     {
                         // specific function - we need second arg as out
                         ExpressionItem *arg2, *res2 = AllocItem();
@@ -1358,7 +1358,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                         value = ((Math2FuncPtr)(MathFunctions[ioptions].fptr))(value, value2);
                         CleanupItems(arg2);
                     }
-                } 
+                }
             }
             break;
         case IT_ARRAY:
@@ -1377,7 +1377,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     {
                         // one index - user need a char
                         RunAndGetConst((int)item->param2, index, ITC_INT);
-                        
+
                         int pos = (int) *((__int64*)&(index->param1));
                         if (pos < 0) pos += len; // -index - means from end
                         if ((pos > len) || (pos < 0))
@@ -1419,7 +1419,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
 
                         // copy string part
                         char* lpos = str + (pos2-pos1);
-                        while (str <= lpos) 
+                        while (str <= lpos)
                         {
                             *str = *(str + pos1);
                             str++;
@@ -1429,7 +1429,7 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
 
                         CleanupItems(index2);
                     }
-                    
+
                 } else
                 {
                     // argument is array
@@ -1440,22 +1440,22 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
                     aritem->param2 = (EIPARAM) *((__int64*)&(index->param1));
 
                     ArrayDesc *ad = (ArrayDesc*)aritem->param1;
-                    if (((int)aritem->param2) >= ad->count) 
+                    if (((int)aritem->param2) >= ad->count)
                     {
                         ad->count = ((int)aritem->param2)+1;
                         while (ad->count > ad->size)
                         {
                             // resize array
-                            ExpressionItem **oldei = ad->array;                        
+                            ExpressionItem **oldei = ad->array;
                             ad->array = (ExpressionItem**) dbgGlobalAlloc(GPTR, 2*ad->size*sizeof(ExpressionItem*));
                             for (int i = 0; i < ad->size; i++)
-                                ad->array[i] = oldei[i];                        
+                                ad->array[i] = oldei[i];
                             ad->size*=2;
                             dbgGlobalFree(oldei);
                         }
                     }
                 }
-                                
+
                 CleanupItems(index);
 
                 // we need constant result?
@@ -1472,12 +1472,12 @@ void RunTree(ExpressionItem *from, ExpressionItem* &result, int options)
 }
 
 extern "C"
-void __declspec(dllexport) Script(HWND hwndParent, int string_size, 
+void __declspec(dllexport) Script(HWND hwndParent, int string_size,
                                       char *variables, stack_t **stacktop)
 {
   Math_INIT();
   char *buffer = AllocString(), *buf = buffer;
-  ExpressionItem *root = NULL; // root of current tree    
+  ExpressionItem *root = NULL; // root of current tree
 
   // pop script string
   popstring(buffer);

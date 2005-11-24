@@ -68,7 +68,7 @@ char *getuservariable(int varnum)
 
 void setuservariable(int varnum, char *var)
 {
-    if (var != NULL && varnum >= 0 && varnum < __INST_LAST) 
+    if (var != NULL && varnum >= 0 && varnum < __INST_LAST)
     lstrcpy(g_variables + varnum*g_stringsize, var);
 }
 
@@ -94,7 +94,7 @@ ExpressionItem *AllocArray(int s)
     ExpressionItem *ai = (ExpressionItem*)dbgGlobalAlloc(GPTR,sizeof(ExpressionItem));
     ai->type = IT_CONST | ITC_ARRAY;
     ai->param1 = (EIPARAM) dbgGlobalAlloc(GPTR, sizeof(ArrayDesc));
-    
+
     ArrayDesc *ad = *((ArrayDesc**)&(ai->param1));
     // initialize and clear the array memory
     ad->array = (ExpressionItem**) dbgGlobalAlloc(GPTR, size*sizeof(ExpressionItem*));
@@ -113,7 +113,7 @@ ExpressionItem *CopyItem(ExpressionItem *citem, int NeedConst)
         // in case of non constant expression - flat it to const
         RunTree(citem, item, RTO_NEEDCONST | ITC_INT | ITC_STRING | ITC_FLOAT | ITC_ARRAY);
         if (item) return item;
-    } 
+    }
 
     item = AllocItem();
     item->type = citem->type;
@@ -124,11 +124,11 @@ ExpressionItem *CopyItem(ExpressionItem *citem, int NeedConst)
     } else if (((item->type & (ITEMTYPE | ITEMSUBTYPE)) == (IT_CONST | ITC_ARRAY))
         ||
         ((item->type & (ITEMTYPE | ITEMSUBTYPE)) == (IT_VARIABLE | ITV_ARRITEM)))
-    {        
+    {
         item->param1 = citem->param1;
         ArrayDesc *ad = (ArrayDesc*) item->param1;
         ad->references++;
-    } 
+    }
     else item->param1 = citem->param1;
     item->param2 = citem->param2;
     item->next = NULL;
