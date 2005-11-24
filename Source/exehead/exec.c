@@ -1183,7 +1183,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             *(LPDWORD) data = GetIntFromParm(3);
             size = sizeof(DWORD);
-            log_printf5("WriteRegDWORD: \"%s\\%s\" \"%s\"=\"%08x\"",rkn,buf1,buf0,*(LPDWORD) data);
+            log_printf5("WriteRegDWORD: \"%s\\%s\" \"%s\"=\"0x%08x\"",rkn,buf1,buf0,*(LPDWORD) data);
           }
           if (type == REG_BINARY)
           {
