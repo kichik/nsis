@@ -1129,6 +1129,7 @@ static int NSISCALL ExecuteEntry(entry *entry_)
     case EW_DELREG:
       {
         long res=!ERROR_SUCCESS;
+        const char *rkn=RegKeyHandleToName((HKEY)parm1);
         if (!parm4)
         {
           HKEY hKey=myRegOpenKey(KEY_SET_VALUE);
@@ -1136,14 +1137,14 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             char *buf3=GetStringFromParm(0x33);
             res = RegDeleteValue(hKey,buf3);
-            log_printf4("DeleteRegValue: %d\\%s\\%s",parm1,buf2,buf3);
+            log_printf4("DeleteRegValue: \"%s\\%s\" \"%s\"",rkn,buf2,buf3);
             RegCloseKey(hKey);
           }
         }
         else
         {
           char *buf2=GetStringFromParm(0x22);
-          log_printf3("DeleteRegKey: %d\\%s",parm1,buf2);
+          log_printf3("DeleteRegKey: \"%s\\%s\"",rkn,buf2);
           res = myRegDeleteKeyEx(GetRegRootKey(parm1),buf2,parm4&2);
         }
         if (res != ERROR_SUCCESS)
@@ -1158,6 +1159,8 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         int rtype=parm5;
         char *buf0=GetStringFromParm(0x02);
         char *buf1=GetStringFromParm(0x11);
+        const char *rkn=RegKeyHandleToName(rootkey);
+
         exec_error++;
         if (RegCreateKeyEx(rootkey,buf1,0,0,REG_OPTION_NON_VOLATILE,KEY_SET_VALUE,0,&hKey,0) == ERROR_SUCCESS)
         {
@@ -1167,25 +1170,35 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           {
             GetStringFromParm(0x23);
             size = mystrlen((char *) data) + 1;
-            log_printf5("WriteRegStr: set %d\\%s\\%s to %s",rootkey,buf1,buf0,data);
+            if (rtype == REG_SZ)
+            {
+              log_printf5("WriteRegStr: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,data);
+            }
+            else
+            {
+              log_printf5("WriteRegExpandStr: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,data);
+            }
           }
           if (type == REG_DWORD)
           {
             *(LPDWORD) data = GetIntFromParm(3);
             size = sizeof(DWORD);
-            log_printf5("WriteRegDWORD: set %d\\%s\\%s to %d",rootkey,buf1,buf0,*(LPDWORD)data);
+            log_printf5("WriteRegDWORD: \"%s\\%s\" \"%s\"=\"%08x\"",rkn,buf1,buf0,*(LPDWORD) data);
           }
           if (type == REG_BINARY)
           {
+            char binbuf[128];
+
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, 3 * NSIS_MAX_STRLEN);
-            log_printf5("WriteRegBin: set %d\\%s\\%s with %d bytes",rootkey,buf1,buf0,size);
+            LogData2Hex(binbuf, sizeof(binbuf), data, size);
+            log_printf5("WriteRegBin: \"%s\\%s\" \"%s\"=\"%s\"",rkn,buf1,buf0,binbuf);
           }
           if (size >= 0 && RegSetValueEx(hKey,buf0,0,rtype,data,size) == ERROR_SUCCESS)
             exec_error--;
           RegCloseKey(hKey);
         }
-        else { log_printf3("WriteReg: error creating key %d\\%s",rootkey,buf1); }
+        else { log_printf3("WriteReg: error creating key \"%s\\%s\"",buf3,buf1); }
       }
     break;
     case EW_READREGSTR: // read registry string
