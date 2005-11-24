@@ -1187,8 +1187,9 @@ static int NSISCALL ExecuteEntry(entry *entry_)
           }
           if (type == REG_BINARY)
           {
+#ifdef NSIS_CONFIG_LOG
             char binbuf[128];
-
+#endif
             // use buf2, buf3 and buf4
             size = GetCompressedDataFromDataBlockToMemory(parm3, data, 3 * NSIS_MAX_STRLEN);
             LogData2Hex(binbuf, sizeof(binbuf), data, size);
