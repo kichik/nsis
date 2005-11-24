@@ -760,6 +760,53 @@ void NSISCALL log_write(int close)
 }
 #endif//!NSIS_CONFIG_LOG_ODS
 
+const char * _RegKeyHandleToName(HKEY hKey)
+{
+  if (hKey == HKEY_CLASSES_ROOT)
+    return "HKEY_CLASSES_ROOT";
+  else if (hKey == HKEY_CURRENT_USER)
+    return "HKEY_CURRENT_USER";
+  else if (hKey == HKEY_LOCAL_MACHINE)
+    return "HKEY_LOCAL_MACHINE";
+  else if (hKey == HKEY_USERS)
+    return "HKEY_USERS";
+  else if (hKey == HKEY_PERFORMANCE_DATA)
+    return "HKEY_PERFORMANCE_DATA";
+  else if (hKey == HKEY_CURRENT_CONFIG)
+    return "HKEY_CURRENT_CONFIG";
+  else if (hKey == HKEY_DYN_DATA)
+    return "HKEY_DYN_DATA";
+  else
+    return "invalid registry key";
+}
+
+void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen)
+{
+  char *p = buf;
+
+  size_t i;
+
+  int dots = 0;
+  size_t bufbytes = buflen / 3; // 2 hex digits, one space/null
+
+  if (datalen > bufbytes)
+  {
+    bufbytes--;
+    dots = 1;
+  }
+  else
+    bufbytes = datalen;
+
+  for (i = 0; i < bufbytes; i++)
+  {
+    wsprintf(p, "%02x%c", data[i], (i == bufbytes - 1) ? '\0' : ' ');
+    p += 3;
+  }
+
+  if (dots)
+    mystrcat(buf, "...");
+}
+
 void log_printf(char *format, ...)
 {
   va_list val;
