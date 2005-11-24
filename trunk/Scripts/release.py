@@ -7,6 +7,7 @@ example release.cfg:
 =========================
 [auth]
 USER=kichik
+WIKI_PASSWORD=xxx
 
 [version]
 VERSION=2.10
@@ -25,6 +26,9 @@ ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 
 [scp]
 SCP="pscp -2"
+
+[wiki]
+UPDATE_URL=http://nsis.sourceforge.net/Special:Simpleupdate?action=raw
 =========================
 
 7zatarbz2.bat:
@@ -40,9 +44,6 @@ TODO
  * Create release on SourceForge automatically
  * Edit update.php
  * Edit cl.sh
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseDate&action=edit
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseID&action=edit
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
@@ -55,6 +56,7 @@ import time
 import Image, ImageFont, ImageDraw
 from ConfigParser import ConfigParser
 from ftplib import FTP
+import time
 
 ### read config
 
@@ -62,6 +64,7 @@ cfg = ConfigParser()
 cfg.read('release.cfg')
 
 USER = cfg.get('auth', 'USER')
+WIKI_PASSWORD = cfg.get('auth', 'WIKI_PASSWORD')
 
 VERSION = cfg.get('version', 'VERSION')
 VER_MAJOR = cfg.get('version', 'VER_MAJOR')
@@ -76,6 +79,8 @@ TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
 
 SCP = cfg.get('scp', 'SCP')
+
+UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
 
 ### config env
 
@@ -286,14 +291,36 @@ ftp.quit()
 
 ### update some websites...
 
+sys.stdout.write('What\'s the SF release id of the new version? ')
+release_id = raw_input()
+
+print 'updating wiki...'
+
+def update_wiki_page(page, data, summary):
+	print '  updating `%s` to `%s`' % (page, data)
+
+	import urllib
+
+	post =  'su_user=' + urllib.quote(USER)
+	post += '&su_password=' + urllib.quote(WIKI_PASSWORD)
+	post += '&su_title=' + urllib.quote(page)
+	post += '&su_data=' + urllib.quote(data)
+	post += '&su_summary=' + urllib.quote(summary)
+	
+	if urllib.urlopen(UPDATE_URL, post).read() != 'success':
+		log('*** failed updating `%s` wiki page' % page)
+		print '  *** failed updating `%s` wiki page' % page
+		exit()
+
+update_wiki_page('Template:NSISVersion', VERSION, 'new version')
+update_wiki_page('Template:NSISReleaseDate', time.strftime('%B %d, %Y'), 'new version')
+update_wiki_page('Template:NSISReleaseID', release_id, 'new version')
+
 print 'automatic phase done\n'
 print """
  * Add SourceForge release
  * Edit update.php
  * Edit cl.sh
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISVersion&action=edit
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseDate&action=edit
- * http://nsis.sourceforge.net/mediawiki/index.php?title=Template:NSISReleaseID&action=edit
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
