@@ -30,6 +30,8 @@ int NSISCALL my_GetDialogItemText(UINT idx, char *val);
 #ifdef NSIS_CONFIG_LOG
 extern char log_text[NSIS_MAX_STRLEN*4];
 void NSISCALL log_write(int close);
+const char * _RegKeyHandleToName(HKEY hKey);
+void _LogData2Hex(char *buf, size_t buflen, unsigned char *data, size_t datalen);
 void log_printf(char *format, ...);
 #define log_printf2(x1,x2) log_printf(x1,x2);
 #define log_printf3(x1,x2,x3) log_printf(x1,x2,x3);
@@ -38,6 +40,8 @@ void log_printf(char *format, ...);
 #define log_printf6(x1,x2,x3,x4,x5,x6) log_printf(x1,x2,x3,x4,x5,x6);
 #define log_printf7(x1,x2,x3,x4,x5,x6,x7) log_printf(x1,x2,x3,x4,x5,x6,x7);
 #define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8) log_printf(x1,x2,x3,x4,x5,x6,x7,x8);
+#define RegKeyHandleToName(x1) _RegKeyHandleToName(x1);
+#define LogData2Hex(x1,x2,x3,x4) _LogData2Hex(x1,x2,x3,x4);
 extern int log_dolog;
 extern char g_log_file[1024];
 #else
@@ -49,6 +53,8 @@ extern char g_log_file[1024];
 #define log_printf6(x1,x2,x3,x4,x5,x6)
 #define log_printf7(x1,x2,x3,x4,x5,x6,x7)
 #define log_printf8(x1,x2,x3,x4,x5,x6,x7,x8)
+#define RegKeyHandleToName(x1) NULL
+#define LogData2Hex(x1,x2,x3,x4)
 #endif
 
 HANDLE NSISCALL myCreateProcess(char *cmd, char *dir);
