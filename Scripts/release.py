@@ -291,6 +291,10 @@ ftp.quit()
 
 ### update some websites...
 
+print 'release url:'
+print '  http://sourceforge.net/project/admin/qrs.php?package_id=0&group_id=22049'
+print
+
 sys.stdout.write('What\'s the SF release id of the new version? ')
 release_id = raw_input()
 
