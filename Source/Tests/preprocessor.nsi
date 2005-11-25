@@ -38,5 +38,15 @@ code inside comments should not be executed
 !error "d2 is defined!"
 !endif
 
+!ifdef some_define_that_doesnt_exist
+the next !endif should be part of this line\
+!endif
+!\
+e\
+n\
+d\
+i\
+f
+
 Section
 SectionEnd
