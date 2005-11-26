@@ -160,12 +160,16 @@ def Sign(targets):
 			a = defenv.Action('$CODESIGNER "%s"' % t.path)
 			defenv.AddPostAction(t, a)
 
+def TestScript(scripts):
+	defenv.Install('$TESTDISTDIR/Tests', scripts)
+
 defenv.Distribute = Distribute
 defenv.DistributeAs = DistributeAs
 defenv.DistributeExamples = DistributeExamples
 defenv.DistributeDocs = DistributeDocs
 defenv.DistributeContribs = DistributeContribs
 defenv.Sign = Sign
+defenv.TestScript = TestScript
 
 ######################################################################
 #######  Environments                                              ###
