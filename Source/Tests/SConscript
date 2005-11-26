@@ -21,7 +21,14 @@ extralibs = Split("""
 	dl
 """)
 
+scripts = Split("""
+	preprocessor.nsi
+""")
+
 Import('env AddAvailableLibs')
+
+# Test scripts
+env.TestScript(scripts)
 
 # Use available libraries
 AddAvailableLibs(env, extralibs)
