@@ -901,6 +901,8 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
         // free idlist
         FreePIDL(idlist);
 
+        addtrailingslash(dir);
+
         if (g_header->install_directory_auto_append)
         {
           const char *post_str = ps_tmpbuf;
@@ -908,7 +910,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
           // display name gives just the folder name
           if (lstrcmpi(post_str, g_tmp))
           {
-            mystrcat(addtrailingslash(dir), post_str);
+            mystrcat(dir, post_str);
           }
         }
 
