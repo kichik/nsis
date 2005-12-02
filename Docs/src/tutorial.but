@@ -48,9 +48,11 @@ An non-silent installer has a set of wizard pages to let the user configure the 
 \c UninstPage uninstConfirm
 \c UninstPage instfiles
 
+For the installer, this typical set of pages will display a license agreement, allow selection of components to install, allow selection of an installation directory, and finally install the selected components in the instfiles page. For the uninstaller, it will display a confirmation page, and uninstall in the instfiles page.
+
 \S1{tut-sections} Sections
 
-In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is in sections. Each visible section is a component for the user to choose from. We will not discuss invisible sections in this tutorial. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install you'll have to use more than one section.
+In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is defined in sections. Each section corresponds to one component in the components page. The section's name is the displayed component name, and the section code will be executed if that component is selected. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install, you'll have to use more than one section.
 
 Uninstallers can also have multiple sections. Uninstaller section names are prefixed with 'un.'. For example:
 
@@ -129,6 +131,12 @@ After calling the function, the variables contain the same value as before. Note
 \S2{tutdebug} Debugging Scripts
 
 The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debugging the code. To display the contents of variables you should use \R{messagebox}{MessageBoxes} or \R{detailprint}{DetailPrint}. To get a brief overview about all variables you should use the plug-in \W{http://nsis.sourceforge.net/wiki/DumpState}{DumpState}. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select "Copy Details To Clipboard". There is also a way to write it directly to a file, see \R{dumplogtofile}{here}.
+
+\S1{tutscriptexecution} Script Execution
+
+When a user runs an installer or an uninstaller, pages are displayed in the order they were defined in the script. When the instfiles page is reached, sections, corresponding to the selected components, are executed in the order they were defined in the script. If the components page is not displayed, all sections are executed, assuming they were not unselected or somehow disabled by the script.
+
+Beside code in sections, there's also code in callback functions. If defined, they might be executed before the sections code. For example, the \R{oninit}{.onInit} callback function is executed before anything else in the script. There are also \R{pagecallbacks_explain}{page callback functions} which are executed at certain points of the page display process.
 
 \S1{compilercommands} Compiler Commands
 
