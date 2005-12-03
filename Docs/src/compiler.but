@@ -6,14 +6,15 @@ These commands are similar to the C preprocessor in terms of purpose and functio
 
 \S1{include} !include
 
-\c file
+\c [/NONFATAL] file
 
-This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See \R{addincludedir}{!addincludedir} for more information.
+This command will include 'file' as if it was part of the original script. Note that if a file is included in another directory, the current directory is still where the script was compiled from (not where the included file resides). If the compiler can't find the file it will look for it in every include directory. See \R{addincludedir}{!addincludedir} for more information. If the /nonfatal switch is used and no files are found, a warning will be issued instead of an error.
 
 \c !include WinMessages.nsh
 \c !include Library.nsh
-\c !include MyConfig.nsh
+\c !include C:\MyConfig.nsi
 \c !include ..\MyConfig.nsh
+\c !include /NONFATAL file_that_may_exist_or_not.nsh
 
 \S1{addincludedir} !addincludedir
 
