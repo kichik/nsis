@@ -1,3 +1,6 @@
+!ifndef file_is_included
+!define file_is_included
+
 Name preprocessor
 OutFile preprocessor.exe
 
@@ -48,5 +51,16 @@ d\
 i\
 f
 
+# this should just give a warning, not an error
+!include /NONFATAL file_that_doesnt_exist.nsh
+
+# this should include this file just one time.
+!include preprocessor.nsi
+
 Section
 SectionEnd
+
+!else
+# this should just give a warning, not an error
+!include /NONFATAL another_file_that_doesnt_exist.nsh
+!endif

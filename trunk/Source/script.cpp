@@ -2745,7 +2745,20 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     return PS_OK;
     case TOK_P_INCLUDE:
       {
+        bool required = true;
+
         char *f = line.gettoken_str(1);
+
+        if(!stricmp(f,"/nonfatal")) {
+          if (line.getnumtokens()!=3)
+            PRINTHELP();
+
+          f = line.gettoken_str(2);
+          required = false;
+        } else if (line.getnumtokens()!=2) {
+          PRINTHELP();
+        }
+
 #ifdef _WIN32
         char *fc = f;
 #else
@@ -2820,8 +2833,12 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         // nothing found
         if (!included)
         {
-          ERROR_MSG("!include: could not find: \"%s\"\n",f);
-          return PS_ERROR;
+          if(required) {
+            ERROR_MSG("!include: could not find: \"%s\"\n",f);
+            return PS_ERROR;
+          } else {
+            warning_fl("!include: could not find: \"%s\"",f);
+          }
         }
       }
     return PS_OK;
