@@ -15,7 +15,7 @@ Creates a font and puts its handle into user_var. For more information about the
 You can get the current font used by NSIS using the ^Font and ^FontSize \R{langstring}{LangString}s.
 
 \c !include WinMessages.nsh
-\c GetDlgItem $$0 $HWNDPARENT 1
+\c GetDlgItem $0 $HWNDPARENT 1
 \c CreateFont $1 "Times New Roman" "7" "700" /UNDERLINE
 \c SendMessage $0 ${WM_SETFONT} $1 1
 
