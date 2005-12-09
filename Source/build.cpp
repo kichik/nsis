@@ -997,7 +997,13 @@ int CEXEBuild::add_label(const char *name)
           t->name_ptr==offs)
       {
         if (*name == '.') ERROR_MSG("Error: global label \"%s\" already declared\n",name);
-        else ERROR_MSG("Error: label \"%s\" already declared in section/function\n",name);
+        else
+        {
+          char *t = "section";
+          if (build_cursection_isfunc)
+            t = "function";
+          ERROR_MSG("Error: label \"%s\" already declared in %s\n",name,t);
+        }
         return PS_ERROR;
       }
       t++;
