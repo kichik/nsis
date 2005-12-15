@@ -42,11 +42,11 @@ Distaliañ $(^Name)
 # ^NextBtn
 &War-lerc'h >
 # ^AgreeBtn
-I &A-du on
+&A-du on
 # ^AcceptBtn
-I &Degemer pep term eus an aotre arverañ
+&Degemer holl dermoù an aotre arverañ
 # ^DontAcceptBtn
-I &Na zegemer termoù eus an aotre arverañ
+&Chom hep degemer termoù an aotre arverañ
 # ^InstallBtn
 &Staliañ
 # ^UninstallBtn
@@ -100,7 +100,7 @@ Dibabit an elfennoù da zistaliañ :
 # ^UnComponentsSubText2
 Pe dibabit an elfennoù diret a fell deoc'h distaliañ :
 # ^DirText
-Staliet e vo $(^NameDA) gant ar goulev-mañ er c'havlec'h da heul. Ma fell deoc'h dibab ur c'havlec'h all, klikit war « Furchal » ha dibabit ur c'havlec'h all. $_CLICK
+Staliet e vo $(^NameDA) gant ar goulev-mañ er c'havlec'h da-heul. Mar fell deoc'h dibab ur c'havlec'h all, klikit war « Furchal » ha dibabit ur c'havlec'h all. $_CLICK
 # ^DirSubText
 Kavlec'h bukenn
 # ^DirBrowseText
@@ -116,11 +116,11 @@ Diuzit ar c'havlec'h evit distaliañ $(^NameDA) adalek :
 # ^SpaceRequired
 "Egor kantenn rekis : "
 # ^UninstallingText
-Distaliet e vo $(^NameDA) adalek ar c'havelec'h da heul. $_CLICK
+Distaliet e vo $(^NameDA) adalek ar c'havelec'h da-heul. $_CLICK
 # ^UninstallingSubText
 Distaliañ adalek :
 # ^FileError
-Fazi o tigeriñ ur restr a-benn skrivañ : \r\n\r\n$0\r\n\r\nKlikit war « Arsav » evit paouez gant ar staliañ,\r\n« Adober » evit easeañ en-dro, pe\r\n« Tremen » evit leuskel a-gostez ar restr-mañ.
+Fazi en ur zigeriñ ur restr evit skrivañ : \r\n\r\n$0\r\n\r\nKlikit war « Paouez » evit paouez gant ar staliañ,\r\n« Adober » evit eseañ en-dro, pe\r\n« Tremen » evit leuskel a-gostez ar restr-mañ.
 # ^FileError_NoIgnore
 Fazi o tigeriñ ur restr a-benn skrivañ : \r\n\r\n$0\r\n\r\nKlikit war « Adober » evit esaeañ en-dro, pe\r\nwar « Nullañ » evit paouez gant ar staliañ.
 # ^CantWrite
@@ -142,11 +142,11 @@ Kopiañ faziet
 # ^CreateShortcut
 "Krouiñ berradenn : "
 # ^CreatedUninstaller
-"Krouet skoazeller distaliañ : "
+"Skoazeller distaliañ krouet : "
 # ^Delete
 "Dilemel restr : "
 # ^DeleteOnReboot
-"Dilemel pa vez adloc'het : "
+"Dilemel en ur adloc'hañ : "
 # ^ErrorCreatingShortcut
 "Fazi o krouiñ berradenn : "
 # ^ErrorCreating
@@ -162,7 +162,7 @@ Fazi oc'h enskrivañ an DLL
 # ^Extract
 "Eztennañ : "
 # ^ErrorWriting
-"Eztennañ : fazi o skivañ restr "
+"Eztennañ : fazi en ur skrivañ restr "
 # ^InvalidOpcode
 Skoazeller staliañ gwastet : opcode direizh
 # ^NoOLE

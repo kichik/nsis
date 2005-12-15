@@ -10,12 +10,12 @@
 
   !define MUI_LANGNAME "Brezhoneg" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Degemer mat er skoazeller staliañ $(^NameDA)"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Degemer mat e skoazeller staliañ $(^NameDA)"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ a-benn staliañ $(^NameDA).\r\n\r\nGwelloc'h eo serriñ pep arload oberiant er reizhiad a-raok mont pelloc'h gant ar skoazeller-mañ. Evel-se e c'heller nevesaat ar restroù reizhiad hep rankout adloc'hañ hoc'h urzhiataer.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Aotre arverañ"  
   !define MUI_TEXT_LICENSE_SUBTITLE "Bezit aketus o lenn pep term eus an aotre a-raok staliañ $(^NameDA), mar plij."
-  !define MUI_INNERTEXT_LICENSE_TOP "Pouezit war « Pajenn a-raok » evit lenn pajennoù an aotre a heul."
+  !define MUI_INNERTEXT_LICENSE_TOP "Pouezit war « Pajenn a-raok » evit lenn ar pajennoù eus an aotre da-heul."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Mar degemerit pep term eus an aotre, klikit war « War-lerc'h ». Ret eo deoc'h degemer an aotre evit staliañ $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus an aotre, klikit war al log a-zindan. Ret eo deoc'h degemer an aotre a-benn staliañ $(^NameDA). $_CLICK"
   !define MUI_INNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus an aotre, diuzit an dibab kentañ a-zindan. Ret eo deoc'h degemer an aotre a-benn staliañ $(^NameDA). $_CLICK"
@@ -24,13 +24,13 @@
   !define MUI_TEXT_COMPONENTS_SUBTITLE "Dibabit pe elfenn(où) $(^NameDA) a fell deoc'h staliañ."
   !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Deskrivadenn"
   !ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Lakait ho logodenn a-us an elfenn evit gwelout he deskrivadenn."
+    !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Lakait ho logodenn a-zioc'h an elfenn evit gwelout he deskrivadenn."
   !else
     !define MUI_INNERTEXT_COMPONENTS_DESCRIPTION_INFO "Diuzuit an elfenn evit gwelout he deskrivadenn."
   !endif
   
   !define MUI_TEXT_DIRECTORY_TITLE "Dibabit al lec'hiadur staliañ"
-  !define MUI_TEXT_DIRECTORY_SUBTITLE "Dibabit ar c'havlec'h e vo lakaet $(^NameDA) ennañ."
+  !define MUI_TEXT_DIRECTORY_SUBTITLE "Dibabit ar c'havlec'h ma vo lakaet $(^NameDA) ennañ."
   
   !define MUI_TEXT_INSTALLING_TITLE "O staliañ"
   !define MUI_TEXT_INSTALLING_SUBTITLE "Gortozit mar plij, emañ $(^NameDA) o vezañ staliet."
@@ -43,17 +43,17 @@
   
   !define MUI_BUTTONTEXT_FINISH "&Echuiñ"
   !define MUI_TEXT_FINISH_INFO_TITLE "Oc'h echuiñ staliañ $(^NameDA) gant ar skoazeller"
-  !define MUI_TEXT_FINISH_INFO_TEXT "Staliet eo bet $(^NameDA) en hoc'h urzhiataer.\r\n\r\nKlikit war « Echuiñ » evit serriñ ar skoazeller-mañ."
+  !define MUI_TEXT_FINISH_INFO_TEXT "Staliet eo bet $(^NameDA) war hoc'h urzhiataer.\r\n\r\nKlikit war « Echuiñ » evit serriñ ar skoazeller-mañ."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Ret eo hoc'h urzhiataer bezañ adloc'het evit ma vez kaset da benn staliañ $(^NameDA). Ha fellout a ra deoc'h adloc'hañ diouzhtu ?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Adloc'hañ diouzhtu"
   !define MUI_TEXT_FINISH_REBOOTLATER "Fellout a ra din adloc'hañ diwezatoc'h dre zorn"
   !define MUI_TEXT_FINISH_RUN "&Lañsañ $(^NameDA)"
-  !define MUI_TEXT_FINISH_SHOWREADME "&Diskouez ar restr Lenn-ac'hanon"
+  !define MUI_TEXT_FINISH_SHOWREADME "&Diskouez ar restr Malennit"
   
   !define MUI_TEXT_STARTMENU_TITLE "Diskouez kavlec'h al Lañser loc'hañ"
   !define MUI_TEXT_STARTMENU_SUBTITLE "Dibabit ur c'havlec'h Lañser loc'hañ evit berradennoù $(^NameDA)."
   !define MUI_INNERTEXT_STARTMENU_TOP "Diuzit ar c'havlec'h Lañser loc'hañ e vo savet ennañ berradennoù ar goulevioù. Gallout a rit ingal reiñ un anv evit sevel ur c'havlec'h nevez."
-  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Na sevel berradennoù"
+  !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Chom hep sevel berradennoù"
   
   !define MUI_TEXT_ABORTWARNING "Ha sur oc'h e fell deoc'h kuitaat staliañ $(^Name) ?"
   
@@ -65,7 +65,7 @@
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Dilemel $(^NameDA) adalek hoc'h urzhiataer."
   
   !define MUI_UNTEXT_LICENSE_TITLE "Aotre arverañ"  
-  !define MUI_UNTEXT_LICENSE_SUBTITLE "Please review the license terms before uninstalling $(^NameDA)."
+  !define MUI_UNTEXT_LICENSE_SUBTITLE "Trugarez da lenn an aotre arverañ a-raok distaliañ $(^NameDA)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM "Mar degemerit pep term eus an aotre, klikit war « A-du on » evit kenderc'hel. Ret eo deoc'h degemer an aotre evit distaliañ $(^NameDA)."
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus an aotre, klikit war al log a-zindan. Ret eo deoc'h degemer an aotre evit distaliañ $(^NameDA). $_CLICK"
   !define MUI_UNINNERTEXT_LICENSE_BOTTOM_RADIOBUTTONS "Mar degemerit pep term eus an aotre, dizuit an dibab kentañ a-zindan. Ret eo deoc'h degemer an aotre evit distaliañ $(^NameDA). $_CLICK"
