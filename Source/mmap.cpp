@@ -390,6 +390,7 @@ int MMapBuf::add(const void *data, int len)
   if (len <= 0) return 0;
   resize(getlen() + len);
   memcpy((char*)get(getlen() - len, len), data, len);
+  release();
   return getlen() - len;
 }
 
