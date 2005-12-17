@@ -11,7 +11,7 @@
 !ifdef OUTFILE
   OutFile "${OUTFILE}"
 !else
-  OutFile ..\nsis-${VERSION}.exe
+  OutFile ..\nsis-${VERSION}-setup.exe
 !endif
 
 SetCompressor /SOLID lzma
