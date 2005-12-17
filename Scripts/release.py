@@ -192,7 +192,7 @@ run(
 )
 
 run(
-	'..\\nsis-test.exe /S /D=%s\\insttest' % os.getcwd(),
+	'..\\nsis-test-setup.exe /S /D=%s\\insttest' % os.getcwd(),
 	None,
 	'installer failed'
 )
@@ -282,7 +282,7 @@ ftp = FTP('upload.sourceforge.net')
 ftp.login()
 
 upload(ftp, newverdir + '.tar.bz2')
-upload(ftp, newverdir + '\\nsis-%s.exe' % VERSION)
+upload(ftp, newverdir + '\\nsis-%s-setup.exe' % VERSION)
 upload(ftp, newverdir + '\\nsis-%s.zip' % VERSION)
 upload(ftp, 'nsis-%s-log.zip' % VERSION)
 upload(ftp, 'nsis-%s-strlen_8192.zip' % VERSION)
