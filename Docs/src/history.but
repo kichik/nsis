@@ -1,5 +1,59 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.12} 2.12
+
+Released on December 17th, 2005
+
+\S1{v2.12-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed compile-time assertion failure for big uninstallers (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1380447}{bug #1380447})
+
+\b \R{tutorial}{Tutorial} enhancements (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1366431}{bug #1366431})
+
+\S2{} New/Changed Commands
+
+\b Added /NONFATAL switch to \R{include}{!include} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1372048}{patch #1372048})
+
+\S2{} Minor Changes
+
+\b Clearer error message for double label definition (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1374675}{patch #1374675})
+
+\b Fixed browsed network root directory not being accepted (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1331292}{bug #1331292})
+
+\b Fixed incorrect \R{acompletedtext}{CompletedText} parsing (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810})
+
+\b Fixed sdbarker_tiny.exe's compatibility with NSIS_CONFIG_LOG (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1365869}{bug #1365869})
+
+\b Implemented nicer registry commands log (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1340255}{patch #1340255})
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1355653}{patch #1355653}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1349810}{bug #1349810})
+
+\b Multi-line comments are no longer ignored inside !ifdef'd block
+
+\S2{} Utilities and Plug-ins
+
+\b Added drag & drop support for zip2exe
+
+\b Better drag & drop error handling in MakeNSISw
+
+\b Fixed Math plug-in array issues (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1235875}{bug #1235875})
+
+\S2{} Translations
+
+\b Added browse button Danish translation
+
+\b Breton translation fixes and improvements
+
+\b Fixed finish button Swedish translation
+
+\S2{} Build System
+
+\b Fixed endianess detection problem on POSIX platforms (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1370179}{bug #1370179})
+
+\b Generated installers use nsis-VERSION-setup.exe template
+
 \H{v2.11} 2.11
 
 Released on November 12th, 2005
