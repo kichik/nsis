@@ -167,7 +167,7 @@ To use the LogicLib, the following line needs to put at the top of the script.
 
 \c !include LogicLib.nsh
 
-More examples can be found in \R{../Examples/LogicLib.nsi}{LogicLib.nsi}.
+More examples can be found in \L{../Examples/LogicLib.nsi}{LogicLib.nsi}.
 
 \S2{tutVariables} Variables
 
