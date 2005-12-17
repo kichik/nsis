@@ -174,7 +174,7 @@ im.save(r'..\Menu\images\header.gif')
 print 'committing header.gif...'
 
 run(
-	'%s commit -m "%s" ..\\Menu\\images\\header.gif' % (CVS, VERSION),
+	'%s commit -m %s ..\\Menu\\images\\header.gif' % (CVS, VERSION),
 	'header.gif.commit',
 	'failed committing header.gif'
 )
