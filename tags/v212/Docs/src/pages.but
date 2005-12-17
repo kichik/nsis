@@ -1,0 +1,170 @@
+\H{pages} Pages
+
+Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with \L{../Docs/InstallOptions/Readme.html}{InstallOptions} for example).
+
+Using the script you can control the pages' order, appearance, and behavior. You can skip pages, paint them white, force the user to stay in a certain page until a certain condition is met, show a readme page, show custom designed pages for input and more. In this section, you will learn how to control all of the above.
+
+There are two basic commands regarding pages, \R{page}{Page} and \R{uninstpage}{UninstPage}. The first adds a page to the installer, the second adds a page to the uninstaller. On top of those two there is the \R{pageex}{PageEx} command which allows you to add a page to either one and with greater amount of options. \R{pageex}{PageEx} allows you to set options to the specific page you are adding instead of using the default that's set outside of \R{pageex}{PageEx}.
+
+\S{pageoreder} Ordering
+
+The page order is set simply by the order \R{page}{Page}, \R{uninstpage}{UninstPage} and \R{pageex}{PageEx} appear in the script. For example:
+
+\c  Page license
+\c  Page components
+\c  Page directory
+\c  Page instfiles
+\c  UninstPage uninstConfirm
+\c  UninstPage instfiles
+
+This code will tell NSIS to first show the license page, then the components selection page, then the directory selection page and finally the install log where sections are executed, just like in old installers. The uninstaller will first show the uninstall confirmation page and then the uninstallation log.
+
+You can specify the same page type more than once.
+
+For backwards compatibility with old NSIS scripts, the following installer pages will be added if no installer page commands are used: license (if \R{alicensetext}{LicenseText} and \R{alicensedata}{LicenseData} were specified), components (if \R{acomponenttext}{ComponentText} was specified and there is more than one visible section), directory (if \R{adirtext}{DirText} was specified) and instfiles. When there are no uninstaller page commands, the following uninstaller pages will be added: uninstall confirmation page (if \R{auninstalltext}{UninstallText} was specified) and instfiles. This method is deprecated, converting scripts to use page commands is highly recommended because you can use the new standard language strings.
+
+\S{pageoptions} Page Options
+
+Each page has its unique set of data that defines how it will look and act. This section describes what data each type of page uses and how you can set it. \R{pagecallbacks_explain}{Callback functions} are described below and are not dealt with in this section.
+
+The list below lists what commands affect the certain page type. Unless mentioned otherwise, these commands can be used both in and out of a \R{pageex}{PageEx} block. If used inside a \R{pageex}{PageEx} block they will only affect the current page being set by \R{pageex}{PageEx}, else they will set the default for every other page.
+
+\e{License page}
+
+\b \R{alicensetext}{LicenseText}
+
+\b \R{alicensedata}{LicenseData}
+
+\b \R{alicenseforceselection}{LicenseForceSelection}
+
+\e{Components selection page}
+
+\b \R{acomponenttext}{ComponentText}
+
+\e{Directory selection page}
+
+\b \R{adirtext}{DirText}
+
+\b \R{adirvar}{DirVar} - can only be used in \R{pageex}{PageEx}
+
+\b \R{adirverify}{DirVerify}
+
+\e{Un/Installation log page}
+
+\b \R{adetailsbuttontext}{DetailsButtonText}
+
+\b \R{acompletedtext}{CompletedText}
+
+\e{Uninstall confirmation page}
+
+\b \R{adirvar}{DirVar} - can only be used in \R{pageex}{PageEx}
+
+\b \R{auninstalltext}{UninstallText}
+
+To set the page caption use \R{acaption}{Caption}.
+
+\S{pagecallbacks_explain} Callbacks
+
+Each built-in page has three callback functions: the pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.
+
+\b The pre-function allows you to skip the page using \R{abort}{Abort}.
+
+\b The show-function allows you to tweak the page's user interface with \R{createfont}{CreateFont}, \R{setctlcolors}{SetCtlColors}, \R{sendmessage}{SendMessage} and others.
+
+\b The leave-function allows you to force the user to stay on the current page using \R{abort}{Abort}.
+
+A custom page only has two callback functions, one that creates it which is mandatory, and one leave-function that acts just like the leave-function for built-in pages.
+
+Examples:
+
+\c  Page license skipLicense "" stayInLicense
+\c  Page custom customPage "" ": custom page"
+\c  Page instfiles
+\c
+\c  Function skipLicense
+\c    MessageBox MB_YESNO "Do you want to skip the license page?" IDNO no
+\c      Abort
+\c    no:
+\c  FunctionEnd
+\c
+\c  Function stayInLicense
+\c    MessageBox MB_YESNO "Do you want to stay in the license page?" IDNO no
+\c      Abort
+\c    no:
+\c  FunctionEnd
+\c
+\c  Function customPage
+\c    GetTempFileName $R0
+\c    File /oname=$R0 customPage.ini
+\c    InstallOptions::dialog $R0
+\c    Pop $R1
+\c    StrCmp $R1 "cancel" done
+\c    StrCmp $R1 "back" done
+\c    StrCmp $R1 "success" done
+\c    error: MessageBox MB_OK|MB_ICONSTOP "InstallOptions error:$\r$\n$R1"
+\c    done:
+\c  FunctionEnd
+
+\S{page} Page
+
+\c custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
+\c   OR
+\c internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
+
+Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.
+
+\e{internal_page_type} can be:
+
+\b \e{license} - license page
+
+\b \e{components} - components selection page
+
+\b \e{directory} - installation directory selection page
+
+\b \e{instfiles} - installation page where the sections are executed
+
+\b \e{uninstConfirm} - uninstall confirmation page
+
+The last page of the installer has its cancel button disabled to prevent confusion. To enable it anyway, use \e{/ENABLECANCEL}.
+
+\S{uninstpage} UninstPage
+
+\c custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
+\c   OR
+\c internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
+
+Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.
+
+See \R{page}{Page} for possible values of \e{internal_page_type}.
+
+\S{pageex} PageEx
+
+\c [un.](custom|uninstConfirm|license|components|directory|instfiles)
+
+Adds an installer page or an uninstaller page if the un. prefix was used. Every PageEx must have a matching \R{pageexend}{PageExEnd}. In a PageEx block you can set options that are specific to this page and will not be used for other pages. Options that are not set will revert to what was set outside the PageEx block or the default if nothing was set. To set the sub-caption for a page use \R{acaption}{Caption} or \R{asubcaption}{SubCaption} to set the default. To set the callback functions for a page set with PageEx use \R{pagecallbacks}{PageCallbacks}. See the above sections for more information about built-in versus custom pages.
+
+Example usage:
+
+\c  PageEx license
+\c    LicenseText "Readme"
+\c    LicenseData readme.rtf
+\c  PageExEnd
+\c
+\c  PageEx license
+\c    LicenseData license.txt
+\c    LicenseForceSelection checkbox
+\c  PageExEnd
+
+\S{pageexend} PageExEnd
+
+Ends a \R{pageex}{PageEx} block.
+
+\S{pagecallbacks} PageCallbacks
+
+\c ([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])
+
+Sets the callback functions for a page defined using \R{pageex}{PageEx}. Can only be used inside a \R{pageex}{PageEx} block. See the above sections for more information about callback functions.
+
+\c PageEx license
+\c   PageCallbacks licensePre licenseShow licenseLeave
+\c PageExEnd

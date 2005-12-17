@@ -1,0 +1,28 @@
+target = 'StartMenu'
+
+files = Split("""
+	StartMenu.c
+""")
+
+resources = Split("""
+	StartMenu.rc
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	shell32
+""")
+
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	Readme.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, examples, docs, res = resources, res_target = 'StartMenuRC')
