@@ -16,3 +16,13 @@ Examples:
 \c  MessageBox MB_OK "You will never ever see this message box"
 \c  Goto -3
 \c  MessageBox MB_OK "Done"
+
+Note that \R{insertmacro}{macro insertion} is not considered as one instruction when it comes to relative jumps. The macro is expanded before relative jumps are applied, and so relative jumps can jump into code inside an inserted macro. The following code, for example, will not skip the macro. It will show a message box.
+
+\c !macro relative_jump_test
+\c   MessageBox MB_OK "first macro line"
+\c   MessageBox MB_OK "second macro line"
+\c !macroend
+\c 
+\c Goto +2
+\c !insertmacro relative_jump_test
