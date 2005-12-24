@@ -124,7 +124,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   }
   DeleteFile(state_command_line);
 
-  lstrcpyn(state_command_line, GetCommandLine(), NSIS_MAX_STRLEN);
+  mystrcpy(state_command_line, GetCommandLine());
 
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
   g_hInstance = GetModuleHandle(NULL);

@@ -544,7 +544,7 @@ int NSISCALL myatoi(char *s)
 // of a new function there should be about a couple of dozen or so calls.
 char * NSISCALL mystrcpy(char *out, const char *in)
 {
-  return lstrcpy(out, in);
+  return lstrcpyn(out, in, NSIS_MAX_STRLEN);
 }
 
 int NSISCALL mystrlen(const char *in)
@@ -680,7 +680,7 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
   } // while
   *out = 0;
   if (outbuf)
-    return lstrcpyn(outbuf, ps_tmpbuf, NSIS_MAX_STRLEN);
+    return mystrcpy(outbuf, ps_tmpbuf);
   return ps_tmpbuf;
 }
 
