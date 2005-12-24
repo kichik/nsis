@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v2.7
+                       File Functions Header v2.9
 _____________________________________________________________________________
 
  2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -1070,6 +1070,10 @@ RefreshShellIcons
 			StrCmp $1 'A' getfile
 			StrCmp $1 'C' getfile
 			StrCmp $1 'M' getfile
+			StrCmp $1 'LS' gettime
+			StrCmp $1 'AS' getfile
+			StrCmp $1 'CS' getfile
+			StrCmp $1 'MS' getfile
 			goto error
 
 			getfile:
@@ -1080,8 +1084,12 @@ RefreshShellIcons
 
 			gettime:
 			System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
-			StrCmp $1 'L' 0 filetime
+			StrCmp $1 'L' 0 systemtime
 			System::Call 'kernel32::GetLocalTime(i)i(r7)'
+			goto convert
+			systemtime:
+			StrCmp $1 'LS' 0 filetime
+			System::Call 'kernel32::GetSystemTime(i)i(r7)'
 			goto convert
 
 			filetime:
@@ -1089,10 +1097,23 @@ RefreshShellIcons
 			System::Free $6
 			StrCmp $1 'A' 0 +3
 			StrCpy $2 $3
-			goto +3
-			StrCmp $1 'C' 0 +2
+			goto tolocal
+			StrCmp $1 'C' 0 +3
 			StrCpy $2 $4
+			goto tolocal
+			StrCmp $1 'M' tolocal
+
+			StrCmp $1 'AS' tosystem
+			StrCmp $1 'CS' 0 +3
+			StrCpy $3 $4
+			goto tosystem
+			StrCmp $1 'MS' 0 +3
+			StrCpy $3 $2
+			goto tosystem
+
+			tolocal:
 			System::Call 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
+			tosystem:
 			System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 			convert:
