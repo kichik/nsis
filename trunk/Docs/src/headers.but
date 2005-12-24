@@ -263,7 +263,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (Locate with banner - "NxS" plugin required):\\</b\\>
+\\<b\\>Example (Locate with banner - "\W{http://nsis.sourceforge.net/Banner_with_Cancel_button}{NxS}" plugin required):\\</b\\>
 
 \c Section
 \c 	nxs::Show /NOUNLOAD `$(^Name) Setup` /top `Setup searching something$\r$\nPlease wait... If you can..` /h 1 /can 1 /end
@@ -477,7 +477,7 @@ Call functions:
 
 \S1{} GetTime
 
-\b Get local time.
+\b Get local or system time.
 
 \b Get file time (access, creation and modification).
 
@@ -485,13 +485,17 @@ Call functions:
 
 \c ${GetTime} "[File]" "[Option]" $var1 $var2 $var3 $var4 $var5 $var6 $var7
 
-\c "[File]"        ; Ignored if "L"
+\c "[File]"        ; Ignored if "L" or "LS"
 \c                 ;
 \c "[Option]"      ; [Options]
 \c                 ;   L   Local time
 \c                 ;   A   last Access file time
 \c                 ;   C   Creation file time
 \c                 ;   M   Modification file time
+\c                 ;   LS  System time (UTC)
+\c                 ;   AS  last Access file time (UTC)
+\c                 ;   CS  Creation file time (UTC)
+\c                 ;   MS  Modification file time (UTC)
 \c                 ;
 \c $var1           ; Result1: day
 \c $var2           ; Result2: month
@@ -536,6 +540,39 @@ Call functions:
 \c 	IfErrors 0 +2
 \c 	MessageBox MB_OK "Error" IDOK +2
 \c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+\c SectionEnd
+
+\\<b\\>Example (Get system time):\\</b\\>
+
+\c Section
+\c 	${GetTime} "" "LS" $0 $1 $2 $3 $4 $5 $6
+\c 	; $0="01"      day
+\c 	; $1="04"      month
+\c 	; $2="2005"    year
+\c 	; $3="Friday"  day of week name
+\c 	; $4="11"      hour
+\c 	; $5="05"      minute
+\c 	; $6="50"      seconds
+\c 
+\c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+\c SectionEnd
+
+\\<b\\>Example (Convert time to 12-hour format AM/PM):\\</b\\>
+
+\c Section
+\c 	${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+\c 
+\c 	StrCmp $4 0 0 +3
+\c 	StrCpy $4 12
+\c 	goto +3
+\c 	StrCmp $4 12 +5
+\c 	IntCmp $4 12 0 0 +3
+\c 	StrCpy $7 AM
+\c 	goto +3
+\c 	IntOp $4 $4 - 12
+\c 	StrCpy $7 PM
+\c 
+\c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6 $7'
 \c SectionEnd
 
 \S1{} GetFileAttributes
@@ -821,6 +858,7 @@ Call functions:
 \c !include "WinMessages.nsh"
 \c !include "FileFunc.nsh"
 \c !insertmacro Locate
+\c 
 \c Section
 \c 	Banner::show /NOUNLOAD "Starting..."
 \c 	Banner::getWindow /NOUNLOAD
@@ -844,10 +882,11 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (nxs plugin):\\</b\\>
+\\<b\\>Example (\W{http://nsis.sourceforge.net/Banner_with_Cancel_button}{NxS} plugin):\\</b\\>
 
 \c !include "FileFunc.nsh"
 \c !insertmacro Locate
+\c 
 \c Section
 \c 	nxs::Show /NOUNLOAD `$(^Name) Setup`\
 \c 	  /top `Setup searching something$\nPlease wait$\nIf you can...`\
