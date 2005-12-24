@@ -602,21 +602,21 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           append = "\\Microsoft\\Internet Explorer\\Quick Launch";
           x = 2;
         }
-        if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
+        else if (fldrs[0] == CSIDL_PROGRAM_FILES_COMMON)
         {
           myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "CommonFilesDir", out);
         }
-        if (fldrs[0] == CSIDL_PROGRAM_FILES)
+        else if (fldrs[0] == CSIDL_PROGRAM_FILES)
         {
           myRegGetStr(HKEY_LOCAL_MACHINE, SYSREGKEY, "ProgramFilesDir", out);
           if (!*out)
             mystrcpy(out, "C:\\Program Files");
         }
-        if (fldrs[0] == CSIDL_SYSTEM)
+        else if (fldrs[0] == CSIDL_SYSTEM)
         {
           GetSystemDirectory(out, NSIS_MAX_STRLEN);
         }
-        if (fldrs[0] == CSIDL_WINDOWS)
+        else if (fldrs[0] == CSIDL_WINDOWS)
         {
           GetWindowsDirectory(out, NSIS_MAX_STRLEN);
         }
@@ -649,7 +649,6 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
         }
 
         validate_filename(out);
-        out += mystrlen(out);
       }
       else if (nVarIdx == NS_VAR_CODE)
       {
@@ -663,13 +662,12 @@ char * NSISCALL GetNSISString(char *outbuf, int strtab)
           // $LANGUAGE is just a number anyway...
           validate_filename(out);
         }
-        out += mystrlen(out);
       } // == VAR_CODES_START
       else if (nVarIdx == NS_LANG_CODE)
       {
         GetNSISString(out, -nData-1);
-        out += mystrlen(out);
       }
+      out += mystrlen(out);
     }
     else if (nVarIdx == NS_SKIP_CODE)
     {
