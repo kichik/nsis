@@ -21,7 +21,7 @@ If no absolute path is specified the current folder will be used. The current fo
 
 \c handle user_var(output) [maxlen]
 
-Reads a string from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). Strings are limited to 1024 characters. If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
+Reads a string from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.
 
 \c ClearErrors
 \c FileOpen $0 $INSTDIR\file.dat r
