@@ -174,7 +174,7 @@ int *cur_langtable;
 static void NSISCALL set_language()
 {
   LANGID lang_mask=(LANGID)~0;
-  LANGID lang=state_language[0]?myatoi(state_language):GetUserDefaultLangID();
+  LANGID lang=myatoi(state_language);
   char *language_table=0;
   int lang_num;
   int *selected_langtable=0;
@@ -228,10 +228,49 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 {
   header *header = g_header;
   static WNDCLASS wc; // richedit subclassing and bgbg creation
-  g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
 
+  // detect default language
+  // more information at:
+  //   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp
+
+  LANGID (WINAPI *GUDUIL)();
+  static const char guduil[] = "GetUserDefaultUILanguage";
+
+  GUDUIL = myGetProcAddress("KERNEL32.dll", (char *) guduil);
+  if (GUDUIL)
+  {
+    // Windows ME/2000+
+    myitoa(state_language, GUDUIL());
+  }
+  else
+  {
+    *(WORD*)state_language = CHAR2_TO_WORD('0', 'x');
+
+    {
+      // Windows 9x
+      static const char reg_9x_locale[] = "Control Panel\\Desktop\\ResourceLocale";
+
+      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, state_language + 2);
+    }
+
+    if (!state_language[2])
+    {
+      // Windows NT
+      // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
+      static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
+      static const char reg_nt_locale_val[] = "Locale";
+
+      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, state_language + 2);
+    }
+  }
+
+  // set default language
   set_language();
 
+  // initialize auto close flag
+  g_exec_flags.autoclose=g_flags&CH_FLAGS_AUTO_CLOSE;
+
+  // read install directory from registry
   if (!is_valid_instpath(state_install_directory))
   {
     if (header->install_reg_key_ptr)
