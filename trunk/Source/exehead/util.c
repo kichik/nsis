@@ -396,8 +396,11 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     static char tmpbuf[1024];
     int cchRenameLine;
     char *szRenameSec = "[Rename]\r\n";
-    HANDLE hfile, hfilemap;
-    DWORD dwFileSize, dwRenameLinePos;
+    HANDLE hfile;
+    DWORD dwFileSize;
+    DWORD dwBytes;
+    DWORD dwRenameLinePos;
+    char *pszWinInit;
 
     int spn;
 
@@ -425,13 +428,11 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
     if (hfile != INVALID_HANDLE_VALUE)
     {
       dwFileSize = GetFileSize(hfile, NULL);
-      hfilemap = CreateFileMapping(hfile, NULL, PAGE_READWRITE, 0, dwFileSize + cchRenameLine + 10, NULL);
+      pszWinInit = GlobalAlloc(GPTR, dwFileSize + cchRenameLine + 10);
 
-      if (hfilemap != NULL)
+      if (pszWinInit != NULL)
       {
-        LPSTR pszWinInit = (LPSTR) MapViewOfFile(hfilemap, FILE_MAP_WRITE, 0, 0, 0);
-
-        if (pszWinInit != NULL)
+        if (ReadFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL) && dwFileSize == dwBytes)
         {
           LPSTR pszRenameSecInFile = mystrstri(pszWinInit, szRenameSec);
           if (pszRenameSecInFile == NULL)
@@ -461,18 +462,16 @@ void NSISCALL MoveFileOnReboot(LPCTSTR pszExisting, LPCTSTR pszNew)
           mini_memcpy(&pszWinInit[dwRenameLinePos], szRenameLine, cchRenameLine);
           dwFileSize += cchRenameLine;
 
-          UnmapViewOfFile(pszWinInit);
+          SetFilePointer(hfile, 0, NULL, FILE_BEGIN);
+          WriteFile(hfile, pszWinInit, dwFileSize, &dwBytes, NULL);
 
-          //fOk++;
+          GlobalFree(pszWinInit);
         }
-        CloseHandle(hfilemap);
       }
-      SetFilePointer(hfile, dwFileSize, NULL, FILE_BEGIN);
-      SetEndOfFile(hfile);
+      
       CloseHandle(hfile);
     }
   }
-  //return fOk;
 
 #ifdef NSIS_SUPPORT_REBOOT
   g_exec_flags.exec_reboot++;
