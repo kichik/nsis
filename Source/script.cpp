@@ -3277,10 +3277,17 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             else
               wsprintf(str, "Nullsoft Install System %s", CONST_STR(NSIS_VERSION));
 
+            short old_width = td.GetItem(IDC_VERSTR)->sWidth;
+
             switch (trim) {
               case 1: td.LTrimToString(IDC_VERSTR, str, 4); break;
               case 2: td.RTrimToString(IDC_VERSTR, str, 4); break;
               case 3: td.CTrimToString(IDC_VERSTR, str, 4); break;
+            }
+
+            if (td.GetItem(IDC_VERSTR)->sWidth > old_width)
+            {
+              warning_fl("BrandingText: \"%s\" is too long, trimming has expanded the label", str);
             }
           }
 
