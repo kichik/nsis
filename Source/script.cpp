@@ -4165,6 +4165,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             else
             {
               warning_fl("%sFile: \"%s\" -> no files found",(which_token == TOK_FILE)?"":"Reserve",line.gettoken_str(a));
+
+              // workaround for bug #1299100
+              // add a nop opcode so relative jumps will work as expected
+              add_entry_direct(EW_NOP);
             }
           }
 
