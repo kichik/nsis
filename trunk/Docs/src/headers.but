@@ -105,7 +105,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (Write founded in text file):\\</b\\>
+\\<b\\>Example (Write results to a text file):\\</b\\>
 
 \c Section
 \c 	GetTempFileName $R0
@@ -129,7 +129,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (Write founded in INI file):\\</b\\>
+\\<b\\>Example (Write results to an INI file):\\</b\\>
 
 \c Section
 \c 	GetTempFileName $R0
@@ -2098,8 +2098,8 @@ Call functions:
 \c                    ;  -number  : word number from end
 \c                    ;  +number* : word number from start multiple-replace
 \c                    ;  -number* : word number from end multiple-replace
-\c                    ;  +        : replace or delete all founded
-\c                    ;  +*       : multiple-replace all founded
+\c                    ;  +        : replace or delete all found
+\c                    ;  +*       : multiple-replace all found
 \c                    ;  {}       : if exists replace or delete all delimiters
 \c                    ;               from edges (no errorlevel output)
 \c                    ;  {}*      : if exists multiple-replace all delimiters
