@@ -135,10 +135,7 @@
 
   ; Case-sensitive string tests
   !macro _StrCmp _a _b _e _l _m
-    !insertmacro _LOGICLIB_TEMP
-    System::Call `kernel32::lstrcmpA(ts, ts) i.s` `${_a}` `${_b}`
-    Pop $_LOGICLIB_TEMP
-    IntCmp $_LOGICLIB_TEMP 0 `${_e}` `${_l}` `${_m}`
+    StrCmpS `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
 
   !macro _S== _a _b _t _f
