@@ -300,3 +300,9 @@ Compares (case insensitively) str1 to str2. If str1 and str2 are equal, Gotos ju
 \c   DetailPrint '$$0 == "a string"'
 \c   Goto +2
 \c   DetailPrint '$$0 != "a string"'
+
+\S2{strcmps} StrCmpS
+
+\c str1 str2 jump_if_equal [jump_if_not_equal]
+
+Same as \R{strcmp}{StrCmp}, but case sensitive.

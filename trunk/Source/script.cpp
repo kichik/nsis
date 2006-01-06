@@ -4476,12 +4476,14 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("GetCurrentAddress: %s",line.gettoken_str(1));
     return add_entry(&ent);
     case TOK_STRCMP:
+    case TOK_STRCMPS:
       ent.which=EW_STRCMP;
       ent.offsets[0]=add_string(line.gettoken_str(1));
       ent.offsets[1]=add_string(line.gettoken_str(2));
+      ent.offsets[4]=which_token == TOK_STRCMPS;
       if (process_jump(line,3,&ent.offsets[2]) ||
           process_jump(line,4,&ent.offsets[3])) PRINTHELP()
-      SCRIPT_MSG("StrCmp \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
+      SCRIPT_MSG("%s \"%s\" \"%s\" equal=%s, nonequal=%s\n",line.gettoken_str(0),line.gettoken_str(1),line.gettoken_str(2), line.gettoken_str(3),line.gettoken_str(4));
     return add_entry(&ent);
     case TOK_GETDLLVERSIONLOCAL:
       {
@@ -4695,6 +4697,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
     case TOK_STRLEN:
     case TOK_STRCPY:
     case TOK_STRCMP:
+    case TOK_STRCMPS:
       ERROR_MSG("Error: %s specified, NSIS_SUPPORT_STROPTS not defined.\n",  line.gettoken_str(0));
     return PS_ERROR;
 #endif//!NSIS_SUPPORT_STROPTS
