@@ -134,12 +134,8 @@
   !macroend
 
   ; Case-sensitive string tests
-  !macro _StrCmp _a _b _e _l _m
-    StrCmpS `${_a}` `${_b}` `${_t}` `${_f}`
-  !macroend
-
   !macro _S== _a _b _t _f
-    !insertmacro _StrCmp `${_a}` `${_b}` `${_t}` `${_f}` `${_f}`
+    StrCmpS `${_a}` `${_b}` `${_t}` `${_f}`
   !macroend
 
   !macro _S!= _a _b _t _f
