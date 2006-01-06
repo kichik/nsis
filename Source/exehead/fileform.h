@@ -73,7 +73,7 @@ enum
 #ifdef NSIS_SUPPORT_STROPTS
   EW_STRLEN,            // StrLen: 2 [output, input]
   EW_ASSIGNVAR,         // Assign: 4 [variable (0-9) to assign, string to assign, maxlen, startpos]
-  EW_STRCMP,            // StrCmp: 4 [str1, str2, jump_if_equal, jump_if_not_equal] (case-insensitive)
+  EW_STRCMP,            // StrCmp: 5 [str1, str2, jump_if_equal, jump_if_not_equal, case-sensitive?]
 #endif
 #ifdef NSIS_SUPPORT_ENVIRONMENT
   EW_READENVSTR,        // ReadEnvStr/ExpandEnvStrings: 3 [output, string_with_env_variables, IsRead]

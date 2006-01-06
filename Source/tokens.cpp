@@ -196,6 +196,7 @@ static tokenType tokenlist[TOK__LAST] =
 {TOK_SILENTUNINST,"SilentUnInstall",1,0,"(normal|silent)",TP_GLOBAL},
 {TOK_SLEEP,"Sleep",1,0,"sleep_time_in_ms",TP_CODE},
 {TOK_STRCMP,"StrCmp",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
+{TOK_STRCMPS,"StrCmpS",3,1,"str1 str2 label_to_goto_if_equal [label_to_goto_if_not]",TP_CODE},
 {TOK_STRCPY,"StrCpy",2,2,"$(user_var: output) str [maxlen] [startoffset]",TP_CODE},
 {TOK_STRLEN,"StrLen",2,0,"$(user_var: length output) str",TP_CODE},
 {TOK_SUBCAPTION,"SubCaption",2,0,"page_number(0-4) new_subcaption",TP_GLOBAL},

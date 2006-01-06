@@ -581,10 +581,18 @@ static int NSISCALL ExecuteEntry(entry *entry_)
         }
       }
     break;
-    case EW_STRCMP: {
+    case EW_STRCMP:
+    {
       char *buf2=GetStringFromParm(0x20);
       char *buf3=GetStringFromParm(0x31);
-      if (!lstrcmpi(buf2,buf3)) return parm2;
+      if (!parm4) {
+        // case insensitive
+        if (!lstrcmpi(buf2,buf3)) return parm2;
+      }
+      else {
+        // case sensitive
+        if (!lstrcmp(buf2,buf3)) return parm2;
+      }
     }
     return parm3;
 #endif//NSIS_SUPPORT_STROPTS
