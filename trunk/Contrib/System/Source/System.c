@@ -700,7 +700,7 @@ void ParamAllocate(SystemProc *proc)
     for (i = 0; i <= proc->ParamCount; i++)
         if (((HANDLE) proc->Params[i].Value == NULL) && (proc->Params[i].Option == -1))
         {
-            proc->Params[i].Value = (int) GlobalAlloc(GPTR, ParamSizeByType[proc->Params[i].Type]);
+            proc->Params[i].Value = (int) GlobalAlloc(GPTR, 4*ParamSizeByType[proc->Params[i].Type]);
         }
 }
 
@@ -794,10 +794,7 @@ void ParamsDeAllocate(SystemProc *proc)
     for (i = proc->ParamCount; i >= 0; i--)
         if (((HANDLE) proc->Params[i].Value != NULL) && (proc->Params[i].Option == -1))
         {
-#ifndef _DEBUG
-            // I see no point for error debug version gives here
             GlobalFree((HANDLE) (proc->Params[i].Value));
-#endif
             proc->Params[i].Value = (int) NULL;
         }
 }
