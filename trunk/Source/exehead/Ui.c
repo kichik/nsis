@@ -1106,25 +1106,37 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
   }
 }
 
-HTREEITEM NSISCALL TreeHitTest(HWND tree)
+int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
 {
-  TVHITTESTINFO ht;
-  DWORD dwpos = GetMessagePos();
+  HTREEITEM hItem = TreeView_GetSelection(tree);
+  TVITEM item;
 
-  ht.pt.x = GET_X_LPARAM(dwpos);
-  ht.pt.y = GET_Y_LPARAM(dwpos);
-  ScreenToClient(tree, &ht.pt);
+  if (mouse)
+  {
+    TVHITTESTINFO ht;
+    DWORD dwpos = GetMessagePos();
 
-  TreeView_HitTest(tree, &ht);
+    ht.pt.x = GET_X_LPARAM(dwpos);
+    ht.pt.y = GET_Y_LPARAM(dwpos);
+    ScreenToClient(tree, &ht.pt);
+
+    TreeView_HitTest(tree, &ht);
 
 #ifdef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
-  if (ht.flags & TVHT_ONITEMSTATEICON)
+    if (!(ht.flags & TVHT_ONITEMSTATEICON))
 #else
-  if (ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM))
+    if (!(ht.flags & (TVHT_ONITEMSTATEICON|TVHT_ONITEMLABEL|TVHT_ONITEMRIGHT|TVHT_ONITEM)))
 #endif
-    return ht.hItem;
+      return -1;
 
-  return 0;
+    hItem = ht.hItem;
+  }
+
+  item.mask = TVIF_PARAM;
+  item.hItem = hItem;
+  TreeView_GetItem(tree, &item);
+
+  return (int) item.lParam;
 }
 
 static LONG oldTreeWndProc;
@@ -1141,21 +1153,8 @@ static DWORD WINAPI newTreeWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM l
   }
 #ifndef NSIS_CONFIG_COMPONENTPAGE_ALTERNATIVE
   if (uMsg == WM_MOUSEMOVE) {
-    TVITEM tvItem;
-
     if (IsWindowVisible(hwnd)) {
-      tvItem.hItem = TreeHitTest(hwnd);
-
-      lParam = -1;
-
-      if (tvItem.hItem)
-      {
-        tvItem.mask = TVIF_PARAM;
-
-        TreeView_GetItem(hwnd, &tvItem);
-
-        lParam = tvItem.lParam;
-      }
+      lParam = TreeGetSelectedSection(hwnd, TRUE);
       uMsg = WM_NOTIFY_SELCHANGE;
     }
   }
@@ -1293,48 +1292,39 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       if (!(g_flags&CH_FLAGS_NO_CUSTOM) && (uMsg == WM_TREEVIEW_KEYHACK || lpnmh->code == NM_CLICK))
       {
-        TVITEM tvItem;
+        int secid = TreeGetSelectedSection(hwndTree1, uMsg != WM_TREEVIEW_KEYHACK);
 
-        if (uMsg != WM_TREEVIEW_KEYHACK)
-          tvItem.hItem=TreeHitTest(hwndTree1);
-        else
-          tvItem.hItem=TreeView_GetSelection(hwndTree1);
-
-        if (tvItem.hItem)
+        if (secid >= 0)
         {
-          tvItem.mask = TVIF_PARAM;
-          if (TreeView_GetItem(hwndTree1, &tvItem))
+          int flags = sections[secid].flags;
+
+          if ((flags & SF_RO) == 0)
           {
-            int flags = sections[tvItem.lParam].flags;
-
-            if ((flags & SF_RO) == 0)
+            if ((flags & SF_PSELECTED))
             {
-              if ((flags & SF_PSELECTED))
-              {
-                flags ^= SF_TOGGLED;
+              flags ^= SF_TOGGLED;
 
-                if (flags & SF_TOGGLED)
-                {
-                  flags |= SF_SELECTED;
-                }
-                else
-                {
-                  flags &= ~SF_SELECTED;
-                }
+              if (flags & SF_TOGGLED)
+              {
+                flags |= SF_SELECTED;
               }
               else
               {
-                flags ^= SF_SELECTED;
+                flags &= ~SF_SELECTED;
               }
-
-              sections[tvItem.lParam].flags = flags;
-
-              SectionFlagsChanged(tvItem.lParam);
-
-              wParam = 1;
-              lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
-              uMsg = WM_IN_UPDATEMSG;
             }
+            else
+            {
+              flags ^= SF_SELECTED;
+            }
+
+            sections[secid].flags = flags;
+
+            SectionFlagsChanged(secid);
+
+            wParam = 1;
+            lParam = !(g_flags & CH_FLAGS_COMP_ONLY_ON_CUSTOM);
+            uMsg = WM_IN_UPDATEMSG;
           }
         } // was valid click
       } // was click or hack
