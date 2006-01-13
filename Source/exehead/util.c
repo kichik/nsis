@@ -126,12 +126,16 @@ void NSISCALL myDelete(char *buf, int flags)
     {
       do
       {
+        char *fdfn = fd.cFileName;
+        if (*findchar(fdfn, '?') && *fd.cAlternateFileName)
+          // name contains unicode, use short name
+          fdfn = fd.cAlternateFileName;
+
 #ifdef NSIS_SUPPORT_RMDIR
-        if (fd.cFileName[0] != '.' ||
-            (fd.cFileName[1] != '.' && fd.cFileName[1]))
+        if (fdfn[0] != '.' || (fdfn[1] != '.' && fdfn[1]))
 #endif//NSIS_SUPPORT_RMDIR
         {
-          mystrcpy(fn,fd.cFileName);
+          mystrcpy(fn,fdfn);
           if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
           {
 #ifdef NSIS_SUPPORT_RMDIR
