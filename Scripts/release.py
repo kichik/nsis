@@ -24,8 +24,8 @@ CVS_EXT="C:\Program Files\PuTTY\plink.exe" -2 -l "%u" "%h"
 TAR_BZ2=7zatarbz2.bat %s %s
 ZIP="C:\Program Files\7-zip\7za.exe" a -tzip %s -mx9 -mfb=255 -mpass=4 %s
 
-[scp]
-SCP="pscp -2"
+[rsh]
+RSH="C:\Program Files\PuTTY\plink.exe" -2 -l kichik nsis.sourceforge.net
 
 [wiki]
 PURGE_URL=http://nsis.sourceforge.net/%s?action=purge
@@ -44,7 +44,6 @@ TODO
 
  * Create release on SourceForge automatically
  * Edit update.php
- * Edit cl.sh
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
@@ -79,7 +78,7 @@ CVS_EXT = cfg.get('cvs', 'CVS_EXT')
 TAR_BZ2 = cfg.get('compression', 'TAR_BZ2')
 ZIP = cfg.get('compression', 'ZIP')
 
-SCP = cfg.get('scp', 'SCP')
+RSH = cfg.get('rsh', 'RSH')
 
 PURGE_URL = cfg.get('wiki', 'PURGE_URL')
 UPDATE_URL = cfg.get('wiki', 'UPDATE_URL')
@@ -336,12 +335,19 @@ purge_wiki_page('Special_Builds')
 purge_wiki_page('What_is_the_latest_version_of_NSIS')
 purge_wiki_page('Change_Log')
 
+# update changelog start time
+
+run(
+	'%s touch /home/groups/n/ns/nsis/bin/cl.timestamp' % RSH,
+	'cl-timestamp',
+	'change log start time modification failed'
+)
+
 ### still left to do
 
 print 'automatic phase done\n'
 print """
  * Edit update.php
- * Edit cl.sh
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
  * Update Freshmeat
  * Update BetaNews
