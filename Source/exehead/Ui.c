@@ -900,6 +900,22 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 #endif
     if (validpathspec(dir) && !skip_root(dir))
       addtrailingslash(dir);
+
+    // workaround for bug #1209843
+    //
+    // m_curwnd is only updated once WM_INITDIALOG returns.
+    // my_SetWindowText triggers an EN_CHANGE message that
+    // triggers a WM_IN_UPDATEMSG message that uses m_curwnd
+    // to get the selected directory (GetUIText).
+    // because m_curwnd is still outdated, dir varialble is
+    // filled with an empty string. by default, dir points
+    // to $INSTDIR.
+    //
+    // to solve this, m_curwnd is manually set to the correct
+    // window handle.
+
+    m_curwnd=hwndDlg;
+
     my_SetWindowText(hDir,dir);
     SetUITextFromLang(IDC_BROWSE,this_page->parms[2]);
     SetUITextFromLang(IDC_SELDIRTEXT,this_page->parms[1]);
