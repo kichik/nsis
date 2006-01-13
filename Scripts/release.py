@@ -293,12 +293,16 @@ ftp.quit()
 
 ### update some websites...
 
+# manual release
+
 print 'release url:'
 print '  http://sourceforge.net/project/admin/qrs.php?package_id=0&group_id=22049'
 print
 
 sys.stdout.write('What\'s the SF release id of the new version? ')
 release_id = raw_input()
+
+# update wiki
 
 print 'updating wiki...'
 
@@ -332,9 +336,10 @@ purge_wiki_page('Special_Builds')
 purge_wiki_page('What_is_the_latest_version_of_NSIS')
 purge_wiki_page('Change_Log')
 
+### still left to do
+
 print 'automatic phase done\n'
 print """
- * Add SourceForge release
  * Edit update.php
  * Edit cl.sh
  * http://en.wikipedia.org/w/index.php?title=Nullsoft_Scriptable_Install_System&action=edit
