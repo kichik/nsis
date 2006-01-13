@@ -371,7 +371,7 @@ StrCmp $R0 "callback1" 0 +2
 DetailPrint "UseCallback passed ($0, $1) to the callback"
 </pre></blockquote>
 
-<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
+<p>After you've processed the callback call, you should use <a href="#callfuncs">Call</a>, passing it the value returned by <a href="#callfuncs">Get</a> - the callback. This tells System to return from the callback. Destination of the return "parameter" must be cleared prior to calling a function, to avoid false detection of a callback call. If you've specified a source for the return "parameter" when the callback was created, you should fill that source with the appropriate return value. Callbacks are not automatically freed, don't forget to free it after you've finished using it.</p>
 
 <blockquote><pre>SetPluginUnload alwaysoff
 System::Get "(i .r0, i .r1) isR0"
@@ -381,6 +381,7 @@ loop:
 	StrCmp $R0 "callback1" 0 done
 	DetailPrint "UseCallback passed ($0, $1) to the callback"
 	Push 1 # return value of the callback
+	StrCpy $R0 "" # clear $R0 in case there are no more callback calls
 	System::Call $0 # tell system to return from the callback
 	Goto loop
 done:
