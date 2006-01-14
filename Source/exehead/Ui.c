@@ -1105,6 +1105,17 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
     TreeView_SetItem(hwTree, &item);
   }
 
+  // workaround for bug #1397031
+  //
+  // windows 95 doesn't erase the background of the state image
+  // before it draws a new one. because of this parts of the old
+  // state image will show where the new state image is masked.
+  //
+  // to solve this, the following line forces the background to
+  // be erased. sadly, this redraws the entire control. it might
+  // be a good idea to figure out where the state images are and
+  // redraw only those.
+
   InvalidateRect(hwTree, NULL, TRUE);
 }
 
