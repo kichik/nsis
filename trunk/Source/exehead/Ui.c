@@ -699,6 +699,11 @@ skipPage:
 
 #ifdef NSIS_CONFIG_LICENSEPAGE
 
+static void NSISCALL LoadAndSetCursor(LPCTSTR lpCursorName)
+{
+  SetCursor(LoadCursor(0, lpCursorName));
+}
+
 #define _RICHEDIT_VER 0x0200
 #include <richedit.h>
 #undef _RICHEDIT_VER
@@ -772,13 +777,13 @@ static BOOL CALLBACK LicenseProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
         };
         if (tr.chrg.cpMax-tr.chrg.cpMin < sizeof(ps_tmpbuf)) {
           SendMessage(hwLicense,EM_GETTEXTRANGE,0,(LPARAM)&tr);
-          SetCursor(LoadCursor(0,IDC_WAIT));
+          LoadAndSetCursor(IDC_WAIT);
           ShellExecute(hwndDlg,"open",tr.lpstrText,NULL,NULL,SW_SHOWNORMAL);
-          SetCursor(LoadCursor(0,IDC_ARROW));
+          LoadAndSetCursor(IDC_ARROW);
         }
       }
       if (enlink->msg==WM_SETCURSOR) {
-        SetCursor(LoadCursor(0,IDC_HAND));
+        LoadAndSetCursor(IDC_HAND);
       }
     }
     //Ximon Eighteen 8th September 2002 Capture return key presses in the rich
