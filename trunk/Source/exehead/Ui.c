@@ -1084,8 +1084,6 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
     item.hItem = items[i];
 
     item.mask = TVIF_STATE;
-    item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
-    item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
 
     if (flags & SF_NAMECHG)
     {
@@ -1104,6 +1102,8 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
       if (flags & SF_RO) state += 3;
     }
 
+    item.state = (flags & SF_BOLD) << 1; // (SF_BOLD << 1) == 16 == TVIS_BOLD
+    item.state |= flags & SF_EXPAND; // TVIS_EXPANDED == SF_EXPAND
     item.state |= INDEXTOSTATEIMAGEMASK(state);
 
     // TVE_COLLAPSE = 1, TVE_EXPAND = 2
