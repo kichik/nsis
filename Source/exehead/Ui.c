@@ -1267,7 +1267,6 @@ static BOOL CALLBACK SelProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     {
       SetWindowLong(hwndTree1,GWL_STYLE,GetWindowLong(hwndTree1,GWL_STYLE)&~(TVS_LINESATROOT));
     }
-    SendMessage(hwndTree1,WM_VSCROLL,SB_TOP,0);
 
     if (!noCombo)
     {
