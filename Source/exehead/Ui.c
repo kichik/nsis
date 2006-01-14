@@ -1101,7 +1101,9 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
 
     item.state |= INDEXTOSTATEIMAGEMASK(state);
 
-    TreeView_Expand(hwTree, item.hItem, (flags & SF_EXPAND) ? TVE_EXPAND : TVE_COLLAPSE);
+    // TVE_COLLAPSE = 1, TVE_EXPAND = 2
+    TreeView_Expand(hwTree, item.hItem, TVE_COLLAPSE + ((flags & SF_EXPAND) / SF_EXPAND));
+
     TreeView_SetItem(hwTree, &item);
   }
 
@@ -1478,7 +1480,8 @@ void NSISCALL update_status_text(int strtab, const char *text) {
       new_item.pszText = tmp;
       new_item.iItem = ListView_GetItemCount(linsthwnd) - (updateflag & 1);
       new_item.iSubItem = 0;
-      SendMessage(linsthwnd, (updateflag & 1) ? LVM_SETITEM : LVM_INSERTITEM, 0, (LPARAM) &new_item);
+      // LVM_INSERTITEM - LVM_SETITEM = 1
+      SendMessage(linsthwnd, LVM_INSERTITEM - (updateflag & 1), 0, (LPARAM) &new_item);
       ListView_EnsureVisible(linsthwnd, new_item.iItem, 0);
     }
 
