@@ -1104,6 +1104,8 @@ static void FORCE_INLINE NSISCALL RefreshComponents(HWND hwTree, HTREEITEM *item
     TreeView_Expand(hwTree, item.hItem, (flags & SF_EXPAND) ? TVE_EXPAND : TVE_COLLAPSE);
     TreeView_SetItem(hwTree, &item);
   }
+
+  InvalidateRect(hwTree, NULL, TRUE);
 }
 
 int NSISCALL TreeGetSelectedSection(HWND tree, BOOL mouse)
