@@ -3,7 +3,7 @@
   Nullsoft Scriptable Install System (NSIS)
   makensis.cpp - installer compiler code
 
-  Copyright (C) 1999-2005 Nullsoft, Inc.
+  Copyright (C) 1999-2006 Nullsoft, Inc.
   
   This license applies to everything in the NSIS package, except where otherwise noted.
 
@@ -79,7 +79,7 @@ static void sigint(int sig)
 
 static void print_logo()
 {
-  fprintf(g_output,"MakeNSIS %s - Copyright 1999-2005 Nullsoft, Inc.\n"
+  fprintf(g_output,"MakeNSIS %s - Copyright 1999-2006 Nullsoft, Inc.\n"
          "\n"
          "Portions Copyright (C) 1995-1998 Jean-loup Gailly and Mark Adler (zlib).\n"
          "Portions Copyright (C) 1996-2002 Julian R Seward (bzip2).\n"
@@ -91,7 +91,7 @@ static void print_logo()
 
 static void print_license()
 {
-  fprintf(g_output,"Copyright (C) 1999-2005 Nullsoft, Inc.\n\n"
+  fprintf(g_output,"Copyright (C) 1999-2006 Nullsoft, Inc.\n\n"
        "This license applies to everything in the NSIS package, except where otherwise\nnoted.\n\n"
        "This software is provided 'as-is', without any express or implied warranty.\n"
        "In no event will the authors be held liable for any damages arising from the\n"

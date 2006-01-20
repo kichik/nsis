@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2002-2005 Amir Szekely <kichik@netvision.net.il>
+  Copyright (C) 2002-2006 Amir Szekely <kichik@users.sourceforge.net>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
