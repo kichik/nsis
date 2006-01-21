@@ -399,6 +399,14 @@ cfg.Add(
   )
 )
 
+cfg.Add(
+  BoolOption(
+    'NSIS_CONFIG_CONST_DATA_PATH',
+    'determines if plugins, includes, stubs etc. are located in a constant path set at build-time',
+    defenv['PLATFORM'] != 'win32'
+  )
+)
+
 ### Generate help
 
 Help(cfg.GenerateHelpText(defenv))
@@ -467,3 +475,4 @@ AddBoolDefine('NSIS_SUPPORT_STANDARD_PREDEFINES')
 AddBoolDefine('NSIS_LOCKWINDOW_SUPPORT')
 AddBoolDefine('NSIS_CONFIG_PLUGIN_SUPPORT')
 AddBoolDefine('NSIS_FIX_COMMENT_HANDLING')
+AddBoolDefine('NSIS_CONFIG_CONST_DATA_PATH')

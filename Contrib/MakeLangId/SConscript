@@ -19,5 +19,5 @@ libs = Split("""
 
 Import('BuildUtil')
 
-BuildUtil(target, files, libs, res = res, resources = resources, entry = 'WinMain', install = 'Bin')
+BuildUtil(target, files, libs, res = res, resources = resources, entry = 'WinMain')
 

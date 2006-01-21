@@ -53,6 +53,15 @@ This is a trimmed version of Appendix "Building NSIS" of the documentation.
       drop it in a downloaded precompiled package such as the nightly
       build.
 
+    * Options for POSIX installs
+
+      PREFIX: defaults to /usr/local
+      PREFIX_BIN: Where to put native binaries. Defaults to $PREFIX/bin/
+      PREFIX_CONF: Where to put the config file. Defaults to $PREFIX/etc/
+      PREFIX_DATA: Where to put the plugins, stubs, etc. Defaults to $PREFIX/share/nsis/
+      PREFIX_DOC: Where to put the docs and examples. Defaults to $PREFIX/share/doc/nsis/
+      PREFIX_DEST: The install root Useful for packagers. Defaults to the root directory.
+
   - Problems
 
     * Get help in the forum:
