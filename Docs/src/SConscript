@@ -6,6 +6,7 @@ appendices = 9
 htmls = Split('IndexPage.html Contents.html') \
 	+ map(lambda ch: 'Chapter' + str(ch + 1) + '.html', range(chapters)) \
 	+ map(lambda ap: 'Appendix' + chr(ord('A') + ap) + '.html', range(appendices))
+fixed_htmls = map(lambda fn: 'fixed/'+fn, htmls)
 
 chm_config_but = 'chm_config.but'
 
@@ -55,12 +56,22 @@ buts = Split("""
 """)
 
 import os
+import re
 
 Import('halibut env build_chm')
 
 env.Append(ENV = {'PATH' : os.environ['PATH']})
 
 build_dir = Dir(GetBuildPath('.')).abspath
+
+replacement = '<a href="%s/\\1/' % env.subst('$PREFIX_DATA')
+
+def fix_html(target, source, env):
+	for i in range(len(source)):
+		data = open(str(source[i]),'rb').read()
+		data = re.sub('<a href="../(Include|Stubs|Plugins|Contrib)/', replacement, data)
+		open(str(target[i]),'wb').write(data)
+	return None
 
 if build_chm:
 	hhc_action = Action('cd "%s" && hhc nsis.hhp' % (build_dir))
@@ -83,7 +94,7 @@ if build_chm:
 
 	chm = env.HalibutCHM('NSIS.chm', [chm_config_but] + buts)
 	env.Depends(chm, halibut)
-	env.Distribute('', chm)
+	env.DistributeDoc(chm)
 
 else:
 	html_builder = Builder(
@@ -92,10 +103,14 @@ else:
 			Action('cd "%s" && "%s" ${SOURCES.abspath}' % (build_dir, halibut[0].abspath))
 		]
 	)
+	
+	html_fixer = Builder(action = fix_html, suffix = '.html', src_suffix = '.html')
 
-	env.Append(BUILDERS = {'Halibut' : html_builder})
+	env.Append(BUILDERS = {'Halibut' : html_builder, 'FixHTML': html_fixer})
 
 	html = env.Halibut(htmls, [config_but] + buts)
+	fixed_html = env.FixHTML(fixed_htmls, htmls)
 	env.Depends(html, halibut)
-	env.DistributeDocs('', build_dir + '/style.css')
-	env.DistributeDocs('', htmls)
+	env.Depends(fixed_html, html)
+	env.DistributeDocs('#Docs/style.css')
+	env.DistributeDocs(fixed_html)

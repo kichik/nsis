@@ -36,6 +36,6 @@ headers = Split("""
 
 Import('BuildUtil defenv')
 
-BuildUtil(target, files, libs, res = rc, resources = resources, install = 'Bin')
+BuildUtil(target, files, libs, res = rc, resources = resources)
 
-defenv.DistributeContribs(target, headers)
+defenv.DistributeContrib(headers,path=target)

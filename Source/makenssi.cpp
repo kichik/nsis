@@ -390,8 +390,17 @@ int main(int argc, char **argv)
       if (!g_noconfig)
       {
         g_noconfig=1;
-
-        string main_conf = get_executable_dir(argv[0]) + PLATFORM_PATH_SEPARATOR_STR + "nsisconf.nsh";
+        string main_conf;
+        char* env_var = getenv("NSISCONFDIR");
+        if(env_var == NULL)
+#ifndef NSIS_CONFIG_CONST_DATA_PATH
+          main_conf = get_executable_dir(argv[0]);
+#else
+          main_conf = CONST_STR(PREFIX_CONF);
+#endif
+        else main_conf = env_var;
+        main_conf += PLATFORM_PATH_SEPARATOR_STR;
+        main_conf += "nsisconf.nsh";
         if (process_config(build, main_conf))
           return 1;
 

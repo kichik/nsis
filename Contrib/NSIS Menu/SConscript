@@ -36,6 +36,25 @@ libs = Split("""
 	wxzlib
 """)
 
+html = Split("""
+	#Menu/compiler.html
+	#Menu/docs.html
+	#Menu/index.html
+	#Menu/intro.html
+	#Menu/notinstalled.html
+	#Menu/update.html
+	#Menu/websites.html
+""")
+
+images = Split("""
+	#Menu/images/clear.gif
+	#Menu/images/header.gif
+	#Menu/images/line.gif
+	#Menu/images/menu.gif
+	#Menu/images/menud.gif
+	#Menu/images/site.gif
+""")
+
 Import('BuildUtil env')
 
 import os
@@ -46,24 +65,14 @@ import os
 #BuildUtil(target, files, libs, libpath = wxlib, cpppath = wxinc, res = rc, resources = resources, install = '', flags = ['/MD'])
 
 # install pre-built NSIS.exe
-ins = env.Distribute('', '#NSIS.exe')
+if env['PLATFORM'] == 'win32':
+	ins = env.DistributeBin('#NSIS.exe')
+else:
+	ins = env.DistributeW32Bin('#NSIS.exe')
 
 env.Alias('install-utils', ins)
 
 # install menu files
-env.Distribute('Menu', '#Menu/compiler.html')
-env.Distribute('Menu', '#Menu/docs.html')
-env.Distribute('Menu', '#Menu/index.html')
-env.Distribute('Menu', '#Menu/intro.html')
-env.Distribute('Menu', '#Menu/notinstalled.html')
-env.Distribute('Menu', '#Menu/update.html')
-env.Distribute('Menu', '#Menu/websites.html')
 
-env.Distribute('Menu/images', '#Menu/images/clear.gif')
-env.Distribute('Menu/images', '#Menu/images/header.gif')
-env.Distribute('Menu/images', '#Menu/images/line.gif')
-env.Distribute('Menu/images', '#Menu/images/menu.gif')
-env.Distribute('Menu/images', '#Menu/images/menud.gif')
-env.Distribute('Menu/images', '#Menu/images/site.gif')
-
-env.Alias('install-utils', '$PREFIX/Menu')
+env.DistributeMenu(html, alias='install-utils')
+env.DistributeMenu(images, path='images', alias='install-utils')

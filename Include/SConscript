@@ -14,5 +14,5 @@ includes = Split("""
 
 Import('env')
 
-env.Distribute('Include', includes)
-env.DistributeDocs('StrFunc', 'StrFunc.txt')
+env.DistributeInclude(includes)
+env.DistributeDocs('StrFunc.txt', path='StrFunc')

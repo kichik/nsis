@@ -52,4 +52,4 @@ languages = Split("""
 
 Import('defenv')
 
-defenv.DistributeContribs('Language files', languages)
+defenv.DistributeContrib(languages, path='Language files')
