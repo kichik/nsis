@@ -21,13 +21,13 @@ char g_log_file[1024];
 // which result in extra memory for extra variables without code to do allocation :)
 // nsis then removes the "DISCARDABLE" style from section (for safe)
 #ifdef _MSC_VER
-#  pragma bss_seg(VARS_SECTION_NAME)
+#  pragma bss_seg(NSIS_VARS_SECTION)
 NSIS_STRING g_usrvars[1];
 #  pragma bss_seg()
-#  pragma comment(linker, "/section:" VARS_SECTION_NAME ",rwd")
+#  pragma comment(linker, "/section:" NSIS_VARS_SECTION ",rwd")
 #else
 #  ifdef __GNUC__
-NSIS_STRING g_usrvars[1] __attribute__((section (VARS_SECTION_NAME)));
+NSIS_STRING g_usrvars[1] __attribute__((section (NSIS_VARS_SECTION)));
 #  else
 #    error Unknown compiler. You must implement the seperate PE section yourself.
 #  endif

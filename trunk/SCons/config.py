@@ -29,6 +29,14 @@ cfg.Add(
 )
 
 cfg.Add(
+  (
+    'NSIS_VARS_SECTION',
+    'defines the name of the PE section containing the runtime variables',
+    '.ndata'
+  )
+)
+
+cfg.Add(
   BoolOption(
     'NSIS_CONFIG_UNINSTALL_SUPPORT',
     "enables the uninstaller support. Turn it off if your installers don't need uninstallers. Adds less than 1kb.",
@@ -426,6 +434,7 @@ def AddBoolDefine(define):
 AddValuedDefine('NSIS_MAX_STRLEN')
 AddValuedDefine('NSIS_MAX_INST_TYPES')
 AddValuedDefine('NSIS_DEFAULT_LANG')
+AddValuedDefine('NSIS_VARS_SECTION')
 
 AddBoolDefine('NSIS_CONFIG_UNINSTALL_SUPPORT')
 AddBoolDefine('NSIS_CONFIG_LICENSEPAGE')
