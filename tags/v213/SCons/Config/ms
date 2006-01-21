@@ -1,0 +1,116 @@
+print "Using Microsoft tools configuration"
+
+Import('defenv')
+
+### flags
+
+defenv['ENTRY_FLAG'] = lambda x: '/entry:' + x
+defenv['MAP_FLAG'] = '/map'
+defenv['EXCEPTION_FLAG'] = '/GX'
+defenv['NODEFLIBS_FLAG'] = '/NODEFAULTLIB'
+defenv['C_FLAG'] = '/TC'
+defenv['CPP_FLAG'] = '/TP'
+defenv['CPP_REQUIRES_STDLIB'] = 0
+
+### debug
+
+if defenv['DEBUG']:
+	defenv.Append(CCFLAGS = '/Zi')
+	defenv.Append(CCFLAGS = '/Fd${TARGET.dir}\\${TARGET.dir.file}.pdb')
+	defenv.Append(LINKFLAGS = '/debug')
+
+### workarounds
+
+# latest Platform SDK includes a bad version of libcp.lib.
+# if stl usage causes link failure, copy the good libcp.lib
+# from one of the other lib folders and use it instead.
+
+confenv = defenv.Copy()
+conf = confenv.Configure()
+
+libcptest = """
+#include <fstream>
+int main() {
+	// %s
+	std::ofstream header("test", std::ofstream::out);
+	return 0;
+}
+"""
+
+conf.env.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+conf.env.Append(CCFLAGS = ['$EXCEPTION_FLAG'])
+
+if not conf.TryLink(libcptest % 'no change', '.cpp'):
+	import os, shutil
+
+	libdirs = defenv['ENV']['LIB'].split(os.pathsep)
+
+	for libdir in libdirs:
+		try:
+			libcp = r'%s\libcp.lib' % libdir
+			shutil.copy(libcp, Dir('#/.sconf_temp').abspath)
+			if conf.TryLink(libcptest % (r'using %s' % libcp), '.cpp'):
+				defenv.PrependENVPath('LIB', Dir('#/.sconf_temp').abspath)
+				break
+		except IOError:
+			continue
+	else:
+		print "*** Couldn't find a good version of libcp.lib"
+		Exit(2)
+
+conf.Finish()
+
+### stub environment
+
+stub_env = defenv.Copy()
+
+if not defenv['DEBUG']:
+	stub_env.Append(CCFLAGS = '/O1')               # optimize for size
+stub_env.Append(CCFLAGS = '/W3')                 # level 3 warnings
+
+stub_env.Append(LINKFLAGS = '/opt:nowin98')      # 512 bytes align
+stub_env.Append(LINKFLAGS = '/entry:WinMain')    # entry point
+stub_env.Append(LINKFLAGS = '/NODEFAULTLIB')     # no default libraries
+stub_env.Append(LINKFLAGS = '$MAP_FLAG')         # generate map file
+
+### makensis environment
+
+makensis_env = defenv.Copy()
+
+if not defenv['DEBUG']:
+	makensis_env.Append(CCFLAGS = '/O2')           # optimize for speed
+makensis_env.Append(CCFLAGS = '/GX')             # enable exceptions
+makensis_env.Append(CCFLAGS = '/W3')             # level 3 warnings
+
+makensis_env.Append(LINKFLAGS = '/opt:nowin98')  # 512 bytes align
+makensis_env.Append(LINKFLAGS = '$MAP_FLAG')     # generate map file
+
+### plugin environment
+
+plugin_env = defenv.Copy(no_import_lib = 1)
+
+if not defenv['DEBUG']:
+	plugin_env.Append(CCFLAGS = '/O1')             # optimize for size
+plugin_env.Append(CCFLAGS = '/W3')               # level 3 warnings
+
+plugin_env.Append(LINKFLAGS = '/opt:nowin98')    # 512 bytes align
+plugin_env.Append(LINKFLAGS = '$MAP_FLAG')       # generate map file
+
+### util environment
+
+util_env = defenv.Copy()
+
+if not defenv['DEBUG']:
+	util_env.Append(CCFLAGS = '/O1')            # optimize for speed
+util_env.Append(CCFLAGS = '/W3')              # level 3 warnings
+
+util_env.Append(LINKFLAGS = '/opt:nowin98')   # 512 bytes align
+util_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
+
+### cross-platform util environment
+
+cp_util_env = util_env.Copy()
+
+# return
+
+Return('stub_env makensis_env plugin_env util_env cp_util_env')
