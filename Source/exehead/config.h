@@ -128,6 +128,11 @@
 
 typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 
+// I'd love to move this one to config.py, but it must have quotes for #pragma
+// and at the same time can't have quotes because the shell will kill it...
+
+#define NSIS_VARS_SECTION ".ndata"
+
 #endif//!APSTUDIO_INVOKED
 
 #endif // NSIS_CONFIG_H
