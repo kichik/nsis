@@ -126,8 +126,6 @@
   #define NSIS_DEFAULT_LANG 1033
 #endif
 
-#define VARS_SECTION_NAME ".ndata"
-
 typedef char NSIS_STRING[NSIS_MAX_STRLEN];
 
 #endif//!APSTUDIO_INVOKED
