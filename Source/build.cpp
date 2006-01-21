@@ -2372,9 +2372,9 @@ int CEXEBuild::write_output(void)
   VerifyDeclaredUserVarRefs(&m_UserVarNames);
   int MaxUserVars = m_UserVarNames.getnum();
   // -1 because the default size is 1
-  if (!res_editor->AddExtraVirtualSize2PESection(VARS_SECTION_NAME, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
+  if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
   {
-    ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", VARS_SECTION_NAME);
+    ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", NSIS_VARS_SECTION);
     return PS_ERROR;
   }
 
