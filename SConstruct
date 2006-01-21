@@ -57,7 +57,6 @@ misc = [
 ]
 
 doc = [
-	'TODO.txt',
 	'license.txt'
 ]
 
