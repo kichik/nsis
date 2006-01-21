@@ -24,7 +24,7 @@ Released on January 21st, 2006
 
 \b Fixed components page checkbox redraw problem under Windows 95 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1397031}{bug #1397031})
 
-\b Fixed constant maximum string length in \R{FileRead}{FileRead} (1024 instead of NSIS_MAX_STRLEN)
+\b Fixed constant maximum string length in \R{FileRead}{FileRead} (changed from 1024 to NSIS_MAX_STRLEN)
 
 \b Fixed empty $INSTDIR value in directory page show callback function (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1209843}{bug #1209843})
 
