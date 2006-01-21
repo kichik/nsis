@@ -243,6 +243,10 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
   definedlist.add("NSIS_FIX_DEFINES_IN_STRINGS");
 #endif
 
+#ifdef NSIS_CONFIG_CONST_DATA_PATH
+  definedlist.add("NSIS_CONFIG_CONST_DATA_PATH");
+#endif
+
   db_opt_save=db_comp_save=db_full_size=db_opt_save_u=db_comp_save_u=db_full_size_u=0;
 
   // Added by Amir Szekely 31st July 2002
@@ -463,18 +467,24 @@ definedlist.add("NSIS_SUPPORT_LANG_IN_STRINGS");
 
 void CEXEBuild::initialize(const char *makensis_path)
 {
-  string nsis_dir = get_executable_dir(makensis_path);
-
-  definedlist.add("NSISDIR",nsis_dir.c_str());
+  string nsis_dir;
+  const char *dir = getenv("NSISDIR");
+  if (dir) nsis_dir = dir;
+  else {
+#ifndef NSIS_CONFIG_CONST_DATA_PATH
+    nsis_dir = get_executable_dir(makensis_path);
+#else
+    nsis_dir = CONST_STR(PREFIX_DATA);
+#endif
+  }
+  definedlist.add("NSISDIR", nsis_dir.c_str());
 
   string includes_dir = nsis_dir;
-  includes_dir += PLATFORM_PATH_SEPARATOR_STR;
-  includes_dir += "Include";
+  includes_dir += PLATFORM_PATH_SEPARATOR_STR"Include";
   include_dirs.add(includes_dir.c_str(),0);
 
   stubs_dir = nsis_dir;
-  stubs_dir += PLATFORM_PATH_SEPARATOR_STR;
-  stubs_dir += "Stubs";
+  stubs_dir += PLATFORM_PATH_SEPARATOR_STR"Stubs";
 
   if (set_compressor("zlib", false) != PS_OK)
   {
@@ -3156,19 +3166,11 @@ void CEXEBuild::build_plugin_table(void)
 
   plugin_used = false;
   uninst_plugin_used = false;
-  char* nsisdir = definedlist.find("NSISDIR");
-  if (nsisdir)
-  {
-    char* searchPath = new char [strlen(nsisdir)+9];
-    if (searchPath)
-    {
-      sprintf(searchPath,"%s" PLATFORM_PATH_SEPARATOR_STR "Plugins",nsisdir);
-      INFO_MSG("Processing plugin dlls: \"%s" PLATFORM_PATH_SEPARATOR_STR "*.dll\"\n",searchPath);
-      m_plugins.FindCommands(searchPath, display_info?true:false);
-      INFO_MSG("\n");
-      delete[] searchPath;
-    }
-  }
+  string searchPath = definedlist.find("NSISDIR");
+  searchPath += PLATFORM_PATH_SEPARATOR_STR"Plugins";
+  INFO_MSG("Processing plugin dlls: \"%s" PLATFORM_PATH_SEPARATOR_STR "*.dll\"\n",searchPath.c_str());
+  m_plugins.FindCommands(searchPath, display_info?true:false);
+  INFO_MSG("\n");
 }
 
 #define FLAG_OFFSET(flag) (FIELD_OFFSET(exec_flags, flag)/sizeof(int))

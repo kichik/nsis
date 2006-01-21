@@ -77,7 +77,9 @@ Import('defenv')
 def join(prefix, list):
 	return map(lambda x: '%s/%s' % (prefix, x), list)
 
-defenv.DistributeDocs(target, docs)
-defenv.DistributeDocs('%s/%s' % (target, 'images'), join('images', doc_images))
-defenv.DistributeContribs(target, contribs)
-defenv.DistributeContribs('%s/%s' % (target, 'Language files'), join('Language files', languages))
+defenv.DistributeDocs(docs, path=target)
+path = 'images'
+defenv.DistributeDocs(join(path,doc_images), path='%s/%s'%(target,path))
+defenv.DistributeContrib(contribs, path=target)
+path = 'Language files'
+defenv.DistributeContrib(join(path,languages), path='%s/%s'%(target,path))

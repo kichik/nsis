@@ -86,4 +86,4 @@ To extend a command over multiple lines, use a backslash (\\) at the end of the 
 
 \\<b\\>Configuration file\\</b\\>
 
-If a file named "nsisconf.nsh" in the same directory as makensis.exe exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used).
+If a file named "nsisconf.nsh" in the config directory exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used). The config directory on Windows is the same directory as makensis.exe is in. On other platforms this is set at install time and defaults to $PREFIX/etc/. You can alter this at runtime, see \k{usageenvironment} for more information.
