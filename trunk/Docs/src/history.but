@@ -1,5 +1,57 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.13} 2.13
+
+Released on January 21st, 2006
+
+\S1{v2.13-rn} Release Notes
+
+\b Language detection has changed. The default language is now set to the user's user-interface language instead of the locale language, as suggested by \W{http://msdn.microsoft.com/library/default.asp?url=/library/en-us/intl/nls_0xrn.asp}{MSDN}. To restore the old behavior, use \c{System::Call "kernel32::GetUserDefaultLangID()i.a"} in \R{oninit}{.onInit}.
+
+\S1{v2.13-cl} Changelog
+
+\S2{} Major Changes
+
+\b Default $LANGUAGE value is now based on user's UI language instead of locale (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1324734}{bug #1324734})
+
+\S2{} New/Changed Commands
+
+\b Added \R{strcmps}{StrCmpS} for case sensitive string comparison (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1381929}{patch #1381929})
+
+\S2{} Minor Changes
+
+\b Added system time support to \R{filefunc}{GetTime}
+
+\b Fixed components page checkbox redraw problem under Windows 95 (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1397031}{bug #1397031})
+
+\b Fixed constant maximum string length in \R{FileRead}{FileRead} (1024 instead of NSIS_MAX_STRLEN)
+
+\b Fixed empty $INSTDIR value in directory page show callback function (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1209843}{bug #1209843})
+
+\b Fixed relative jumps ignoring \c{\R{file}{File} /nonfatal} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1299100}{bug #1299100})
+
+\b Fixed typo in NSIS Menu (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1387748}{bug #1387748})
+
+\b Issue a warning when \c{\R{abrandingtext}{BrandingText} /TRIM*} actually expands the label (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1362443}{bug #1362443})
+
+\b Made \c{\R{rmdir}{RMDir} /r} remove Unicode paths as well using short names (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1378785}{bug #1378785})
+
+\b Minor documentation improvements and fixes
+
+\S2{} Utilities and Plug-ins
+
+\b Fixed System plug-in \L{../Docs/System/System.html}{documentation} of callback functions (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1403608}{bug #1403608})
+
+\b Fixed System plug-in heap corruption (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1403601}{bug #1403601})
+
+\S2{} Translations
+
+\b Mongolian translation improvements
+
+\S2{} Build System
+
+\b Better installation under POSIX with proper $\{NSISDIR\} detection and appropriate directory paths (/usr/bin, /usr/share/doc, etc.)
+
 \H{v2.12} 2.12
 
 Released on December 17th, 2005
