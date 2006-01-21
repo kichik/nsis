@@ -109,8 +109,11 @@ else:
 	env.Append(BUILDERS = {'Halibut' : html_builder, 'FixHTML': html_fixer})
 
 	html = env.Halibut(htmls, [config_but] + buts)
-	fixed_html = env.FixHTML(fixed_htmls, htmls)
 	env.Depends(html, halibut)
-	env.Depends(fixed_html, html)
 	env.DistributeDocs('#Docs/style.css')
-	env.DistributeDocs(fixed_html)
+
+	if env['PLATFORM'] == 'win32':
+		env.DistributeDocs(html)
+	else:
+		fixed_html = env.FixHTML(fixed_htmls, htmls)
+		env.DistributeDocs(fixed_html)
