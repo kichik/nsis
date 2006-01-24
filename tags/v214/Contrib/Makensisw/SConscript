@@ -1,0 +1,59 @@
+target = 'makensisw'
+
+files = Split("""
+	makensisw.cpp
+	noclib.cpp
+	toolbar.cpp
+	utils.cpp
+	version.cpp
+	update.cpp
+	jnetlib/asyncdns.cpp
+	jnetlib/connection.cpp
+	jnetlib/httpget.cpp
+	jnetlib/util.cpp
+""")
+
+res = Split("""
+	resource.rc
+""")
+
+resources = Split("""
+	shell.ico
+	icon.ico
+	makensisw.xml
+	logo.bmp
+	toolbar.bmp
+	toolbar24.bmp
+	toolbar24d.bmp
+	toolbar24h.bmp
+""")
+
+libs = Split("""
+	kernel32
+	advapi32
+	user32
+	gdi32
+	shell32
+	comdlg32
+	comctl32
+	wsock32
+""")
+
+docs = Split("""
+	License.txt
+	Readme.txt
+""")
+
+Import('BuildUtil')
+
+BuildUtil(
+	target,
+	files,
+	libs,
+	res = res,
+	resources = resources,
+	entry = 'WinMain',
+	defines = ['WIN32_MEAN_AND_LEAN', 'RELEASE=2.0'],
+	docs = docs,
+	root_util = True
+)
