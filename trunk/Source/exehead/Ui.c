@@ -248,13 +248,13 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
   }
   else
   {
-    *(WORD*)state_language = CHAR2_TO_WORD('0', 'x');
+    *(DWORD*)state_language = CHAR4_TO_DWORD('0', 'x', 0, 0);
 
     {
       // Windows 9x
       static const char reg_9x_locale[] = "Control Panel\\Desktop\\ResourceLocale";
 
-      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, state_language + 2);
+      myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp);
     }
 
     if (!state_language[2])
@@ -264,8 +264,10 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       static const char reg_nt_locale_key[] = ".DEFAULT\\Control Panel\\International";
       static const char reg_nt_locale_val[] = "Locale";
 
-      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, state_language + 2);
+      myRegGetStr(HKEY_USERS, reg_nt_locale_key, reg_nt_locale_val, g_tmp);
     }
+
+    mystrcat(state_language, g_tmp);
   }
 
   // set default language
