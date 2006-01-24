@@ -257,7 +257,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
       myRegGetStr(HKEY_CURRENT_USER, reg_9x_locale, NULL, g_tmp);
     }
 
-    if (!state_language[2])
+    if (!g_tmp[0])
     {
       // Windows NT
       // This key exists on 9x as well, so it's only read if ResourceLocale wasn't found
