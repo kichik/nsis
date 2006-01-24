@@ -1,5 +1,23 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.14} 2.14
+
+Released on January 24th, 2006
+
+\S1{v2.14-rn} Release Notes
+
+\b This release fixes a critical bug that caused installers using plug-ins to fail loading on Windows 9x and NT. Upgrading from 2.13 is highly recommended.
+
+\S1{v2.13-cl} Changelog
+
+\S2{} Major Changes
+
+\b Fixed a bug that corrupted $TEMP under Windows 9x and NT and caused InitPluginsDir to fail (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1412159}{bug #1412159})
+
+\S2{} Minor Changes
+
+\b Fixed a possible buffer overflow caused by long values of $0, when using large NSIS_MAX_STRLEN builds (above 4096)
+
 \H{v2.13} 2.13
 
 Released on January 21st, 2006
