@@ -51,7 +51,11 @@ int g_quit_flag; // set when Quit has been called (meaning bail out ASAP)
 
 int progress_bar_pos, progress_bar_len;
 
+#if NSIS_MAX_STRLEN < 1024
 static char g_tmp[4096];
+#else
+static char g_tmp[NSIS_MAX_STRLEN * 4];
+#endif
 
 static int m_page=-1,m_retcode,m_delta;
 static page *g_this_page;
