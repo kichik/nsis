@@ -1,7 +1,7 @@
 ;NSIS Modern User Interface - Language File
 ;Compatible with Modern UI 1.68
 
-;Language: Breton (33280)
+;Language: Breton (1150)
 ;By KAD-Korvigelloù An Drouizig
 
 ;--------------------------------
@@ -14,7 +14,7 @@
   !define MUI_TEXT_WELCOME_INFO_TEXT "Sturiet e viot gant ar skoazeller-mañ a-benn staliañ $(^NameDA).\r\n\r\nGwelloc'h eo serriñ pep arload oberiant er reizhiad a-raok mont pelloc'h gant ar skoazeller-mañ. Evel-se e c'heller nevesaat ar restroù reizhiad hep rankout adloc'hañ hoc'h urzhiataer.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Aotre arverañ"  
-  !define MUI_TEXT_LICENSE_SUBTITLE "Bezit aketus o lenn pep term eus an aotre a-raok staliañ $(^NameDA), mar plij."
+  !define MUI_TEXT_LICENSE_SUBTITLE "Bezit aketus en ur lenn pep term eus an aotre a-raok staliañ $(^NameDA), mar plij."
   !define MUI_INNERTEXT_LICENSE_TOP "Pouezit war « Pajenn a-raok » evit lenn ar pajennoù eus an aotre da-heul."
   !define MUI_INNERTEXT_LICENSE_BOTTOM "Mar degemerit pep term eus an aotre, klikit war « War-lerc'h ». Ret eo deoc'h degemer an aotre evit staliañ $(^NameDA)."
   !define MUI_INNERTEXT_LICENSE_BOTTOM_CHECKBOX "Mar degemerit pep term eus an aotre, klikit war al log a-zindan. Ret eo deoc'h degemer an aotre a-benn staliañ $(^NameDA). $_CLICK"
