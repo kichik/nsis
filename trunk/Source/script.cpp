@@ -1518,13 +1518,10 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       SCRIPT_MSG("Icon: \"%s\"\n",line.gettoken_str(1));
       try {
         init_res_editor();
-        if (replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1)) < 0) {
-          ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
-          return PS_ERROR;
-        }
+        replace_icon(res_editor, IDI_ICON2, line.gettoken_str(1));
       }
       catch (exception& err) {
-        ERROR_MSG("Error while replacing icon: %s\n", err.what());
+        ERROR_MSG("Error while setting icon to \"%s\": %s\n", line.gettoken_str(1), err.what());
         return PS_ERROR;
       }
     return PS_OK;
@@ -2929,13 +2926,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       try {
         free(m_unicon_data);
         m_unicon_data = generate_uninstall_icon_data(line.gettoken_str(1), m_unicon_size);
-        if (!m_unicon_data) {
-          ERROR_MSG("Error: File doesn't exist or is an invalid icon file\n");
-          return PS_ERROR;
-        }
       }
       catch (exception& err) {
-        ERROR_MSG("Error while replacing icon: %s\n", err.what());
+        ERROR_MSG("Error while setting icon to \"%s\": %s\n", line.gettoken_str(1), err.what());
         return PS_ERROR;
       }
     return PS_OK;
