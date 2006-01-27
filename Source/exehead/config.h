@@ -30,6 +30,12 @@
   #endif
 #endif
 
+#ifdef NSIS_CONFIG_LOG_STDOUT
+  #ifndef NSIS_CONFIG_LOG
+    #error NSIS_CONFIG_LOG_STDOUT relies on NSIS_CONFIG_LOG, but NSIS_CONFIG_LOG is not defined
+  #endif
+#endif
+
 #if defined(NSIS_CONFIG_CRC_SUPPORT) && defined(NSIS_CONFIG_VISIBLE_SUPPORT)
   #define _NSIS_CONFIG_VERIFYDIALOG
 #endif
