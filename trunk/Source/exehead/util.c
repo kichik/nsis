@@ -819,7 +819,7 @@ void log_printf(char *format, ...)
     OutputDebugString(log_text);
 #endif
 #ifdef NSIS_CONFIG_LOG_STDOUT
-  if (GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
+  if (log_dolog && GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE)
   {
     DWORD dwBytes;
     WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), log_text, lstrlen(log_text), &dwBytes, NULL);
