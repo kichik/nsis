@@ -143,6 +143,14 @@ cfg.Add(
 
 cfg.Add(
   BoolOption(
+    'NSIS_CONFIG_LOG_STDOUT',
+    'makes the logging facility use stdout instead of a file.',
+    'no'
+  )
+)
+
+cfg.Add(
+  BoolOption(
     'NSIS_SUPPORT_BGBG',
     'enables support for the blue (well, whatever color you want) gradient background window.',
     'yes'
@@ -443,6 +451,7 @@ AddBoolDefine('NSIS_CONFIG_CRC_SUPPORT')
 AddBoolDefine('NSIS_CONFIG_CRC_ANAL')
 AddBoolDefine('NSIS_CONFIG_LOG')
 AddBoolDefine('NSIS_CONFIG_LOG_ODS')
+AddBoolDefine('NSIS_CONFIG_LOG_STDOUT')
 AddBoolDefine('NSIS_SUPPORT_BGBG')
 AddBoolDefine('NSIS_SUPPORT_CODECALLBACKS')
 AddBoolDefine('NSIS_SUPPORT_MOVEONREBOOT')

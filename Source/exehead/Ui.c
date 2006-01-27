@@ -165,7 +165,7 @@ static BOOL NSISCALL _HandleStaticBkColor(UINT uMsg, WPARAM wParam, LPARAM lPara
 #endif//!NSIS_CONFIG_ENHANCEDUI_SUPPORT
 
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
 void NSISCALL build_g_logfile()
 {
   mystrcat(addtrailingslash(mystrcpy(g_log_file,state_install_directory)),"install.log");
@@ -329,7 +329,7 @@ FORCE_INLINE int NSISCALL ui_doinstall(void)
 #ifdef NSIS_CONFIG_LOG
   if (g_flags & CH_FLAGS_SILENT_LOG && !g_is_uninstaller)
   {
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
     build_g_logfile();
 #endif
     log_dolog=1;
@@ -882,7 +882,7 @@ static BOOL CALLBACK DirProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
     GetUIText(IDC_DIR,dir);
     validate_filename(dir);
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
     build_g_logfile();
 #endif
     if (GetUIItem(IDC_CHECK1) != NULL)

@@ -76,6 +76,11 @@ env.Append(CPPDEFINES = ['WIN32_LEAN_AND_MEAN'])
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
 env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 
+### Some other settings
+
+if 'NSIS_CONFIG_LOG_STDOUT' in env['NSIS_CPPDEFINES']:
+	env.Append(LINKFLAGS = env['SUBSYS_CON'])
+
 ### Compression specific configuration
 
 if compression == 'bzip2':
