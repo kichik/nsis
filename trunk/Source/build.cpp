@@ -130,6 +130,9 @@ CEXEBuild::CEXEBuild() :
 #ifdef NSIS_CONFIG_LOG_ODS
   definedlist.add("NSIS_CONFIG_LOG_ODS");
 #endif
+#ifdef NSIS_CONFIG_LOG_STDOUT
+  definedlist.add("NSIS_CONFIG_LOG_STDOUT");
+#endif
 #ifdef NSIS_CONFIG_PLUGIN_SUPPORT
   definedlist.add("NSIS_CONFIG_PLUGIN_SUPPORT");
 #endif

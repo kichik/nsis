@@ -272,9 +272,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst,LPSTR lpszCmdParam, 
   ret = ui_doinstall();
 
 #ifdef NSIS_CONFIG_LOG
-#ifndef NSIS_CONFIG_LOG_ODS
+#if !defined(NSIS_CONFIG_LOG_ODS) && !defined(NSIS_CONFIG_LOG_STDOUT)
   log_write(1);
-#endif//!NSIS_CONFIG_LOG_ODS
+#endif//!NSIS_CONFIG_LOG_ODS && !NSIS_CONFIG_LOG_STDOUT
 #endif//NSIS_CONFIG_LOG
 end:
 
