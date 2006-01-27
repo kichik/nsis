@@ -237,7 +237,7 @@ def check_big_endian(ctx):
 
 conf = defenv.Configure(custom_tests = { 'CheckBigEndian' : check_big_endian })
 if conf.CheckBigEndian():
-	makensis_env.Append(CPPFLAGS = ['__BIG_ENDIAN__'])
+	makensis_env.Append(CPPDEFINES = ['__BIG_ENDIAN__'])
 conf.Finish()
 
 ### return
