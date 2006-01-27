@@ -133,20 +133,16 @@ typedef struct {
 
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
 
-// Added by Amir Szekely 8th July 2002
 // replace_icon, must get an initialized resource editor
-// return values:
-//   0  - All OK
-//   -1 - Bad icon file
-int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
+void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 {
   FILE* f = FOPEN(filename, "rb");
-  if (!f) return -1;
+  if (!f) throw exception("can't open file");
 
   IconGroupHeader igh;
-  fread(&igh, sizeof(IconGroupHeader), 1, f);
+  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw exception("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) return -1;
+  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw exception("invalid icon file");
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
@@ -174,7 +170,7 @@ int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 
     if (fseek(f, dwOffset, SEEK_SET)) {
       free(rsrcIconGroup);
-      return -1;
+      throw exception("corrupted icon file, too small");
     }
     BYTE* iconData = (BYTE*)malloc(ige->dwRawSize);
     if (!iconData) {
@@ -200,27 +196,21 @@ int replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
   re->UpdateResource(RT_GROUP_ICON, MAKEINTRESOURCE(wIconId), NSIS_DEFAULT_LANG, rsrcIconGroup, sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
 
   free(rsrcIconGroup);
-
-  return 0;
 }
 
-// Added by Amir Szekely 8th July 2002
 #ifdef NSIS_CONFIG_UNINSTALL_SUPPORT
 // returns the data of the uninstaller icon that should replace the installer icon data
-// return values:
-//   0  - Bad icon file
-//   Anything else - Pointer to the uninstaller icon data
 unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 {
   int i;
 
   FILE* f = FOPEN(filename, "rb");
-  if (!f) return 0;
+  if (!f) throw exception("can't open file");
 
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) return 0;
+  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw exception("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) return 0;
+  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw exception("invalid icon file");
 
   int iNewIconSize = 0;
   FileIconGroupEntry ige;
@@ -230,7 +220,7 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
   if (!offsets || !rawSizes) throw bad_alloc();
 
   for (i = 0; i < igh.wCount; i++) {
-    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) return 0;
+    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw exception("unable to read file");
     offsets[i] = ige.dwImageOffset;
     rawSizes[i] = ige.dwRawSize;
     iNewIconSize += ige.dwRawSize;
