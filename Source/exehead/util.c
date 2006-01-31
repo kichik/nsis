@@ -132,7 +132,8 @@ void NSISCALL myDelete(char *buf, int flags)
           fdfn = fd.cAlternateFileName;
 
 #ifdef NSIS_SUPPORT_RMDIR
-        if (fdfn[0] != '.' || (fdfn[1] != '.' && fdfn[1]))
+        if (fdfn[0] == '.' && !fdfn[1]) continue;
+        if (fdfn[0] == '.' && fdfn[1] == '.' && !fdfn[2]) continue;
 #endif//NSIS_SUPPORT_RMDIR
         {
           mystrcpy(fn,fdfn);
