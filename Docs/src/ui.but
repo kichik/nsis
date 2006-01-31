@@ -137,6 +137,8 @@ Sets a background color and the text color for a static control, edit control, b
 \c GetDlgItem $0 $0 1006
 \c SetCtlColors $0 0xFF0000 0x00FF00
 
+\\<b\\>Warning:\\</b\\> setting the background color of check boxes to "transparent" may not function properly when using \c{\R{axpstyle}{XPStlye} on}. The background may be completely black, instead of transparent, when using certain Windows themes.
+
 \S2{setsilent} SetSilent
 
 \c silent | normal
