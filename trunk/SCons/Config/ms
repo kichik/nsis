@@ -112,6 +112,10 @@ util_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
 
 cp_util_env = util_env.Copy()
 
+### test environment
+
+test_env = defenv.Copy()
+
 # return
 
-Return('stub_env makensis_env plugin_env util_env cp_util_env')
+Return('stub_env makensis_env plugin_env util_env cp_util_env test_env')
