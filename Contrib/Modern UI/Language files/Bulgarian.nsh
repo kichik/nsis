@@ -3,15 +3,14 @@
 
 ;Language: Bulgarian (1026)
 ;Translated by Asparouh Kalyandjiev [acnapyx@sbline.net]
-;Review and update from v1.63 to v1.68 by Plamen Penkov <plamen_mbx@yahoo.com>
-
+;Review and update from v1.63 to v1.68 by Plamen Penkov [plamen71@hotmail.com]
 ;--------------------------------
 
 !insertmacro MUI_LANGUAGEFILE_BEGIN "Bulgarian"
 
   !define MUI_LANGNAME "Bulgarian" ;Use only ASCII characters (if this is not possible, use the English name)
   
-  !define MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в инстала-\r\nционния магьосник на $(^NameDA)!"
+  !define MUI_TEXT_WELCOME_INFO_TITLE "Добре дошли в инсталационния\r\nсъветник на $(^NameDA)!"
   !define MUI_TEXT_WELCOME_INFO_TEXT "Той ще инсталира $(^NameDA) на вашия компютър.\r\n\r\nПрепоръчва се да затворите всички други приложения, преди да стартирате инсталацията. Това ще позволи на инсталатора да обнови някои системни файлове, без да рестартира компютъра.\r\n\r\n$_CLICK"
   
   !define MUI_TEXT_LICENSE_TITLE "Лицензионно споразумение"
@@ -39,7 +38,7 @@
   !define MUI_TEXT_ABORT_SUBTITLE "Инсталацията не завърши успешно."
     
   !define MUI_BUTTONTEXT_FINISH "&Приключи"
-  !define MUI_TEXT_FINISH_INFO_TITLE "Затваряне на магьосника за инсталация на $(^NameDA)."
+  !define MUI_TEXT_FINISH_INFO_TITLE "Затваряне на съветика за инсталация на $(^NameDA)."
   !define MUI_TEXT_FINISH_INFO_TEXT "$(^NameDA) е инсталиран на вашата система.\r\nНатиснете 'Приключи', за да затворите магьосника."
   !define MUI_TEXT_FINISH_INFO_REBOOT "Компютърът трябва да бъде рестартиран, за да завърши инсталацията на $(^NameDA). Желаете ли да рестартирате сега?"
   !define MUI_TEXT_FINISH_REBOOTNOW "Рестарт сега!"
@@ -55,8 +54,8 @@
   !define MUI_TEXT_ABORTWARNING "Сигурни ли сте, че желаете да се прекрати инсталацията на $(^Name)?"  
   
  
-  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добре дошли в деинстала-\r\nционния магьосник на $(^NameDA)!"
-  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Този магьосник ще ви упъти при деинсталацията на $(^NameDA).\r\n\r\nПреди да стартирате деинсталацията, уверете се че $(^NameDA) не е стартиран в момента.\r\n\r\n$_CLICK"
+  !define MUI_UNTEXT_WELCOME_INFO_TITLE "Добре дошли в деинсталационния-\r\n съветник на $(^NameDA)!"
+  !define MUI_UNTEXT_WELCOME_INFO_TEXT "Този съветник ще ви упъти при деинсталацията на $(^NameDA).\r\n\r\nПреди да стартирате деинсталацията, уверете се че $(^NameDA) не е стартиран в момента.\r\n\r\n$_CLICK"
   
   !define MUI_UNTEXT_CONFIRM_TITLE "Деинсталация на $(^NameDA)"
   !define MUI_UNTEXT_CONFIRM_SUBTITLE "Премахване на $(^NameDA) от вашата система."
@@ -82,8 +81,8 @@
   !define MUI_UNTEXT_ABORT_TITLE "Деинсталирането прекъсна."
   !define MUI_UNTEXT_ABORT_SUBTITLE "Деинсталирането не завърши успешно."
   
-  !define MUI_UNTEXT_FINISH_INFO_TITLE "Приключване на деинсталационния магьосник на $(^NameDA)."
-  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) беше деинсталиран от Вашия компютър.\r\n\r\nНатиснете 'Приключи' за да затворите този магьосник."
+  !define MUI_UNTEXT_FINISH_INFO_TITLE "Приключване на деинсталационния съветник на $(^NameDA)."
+  !define MUI_UNTEXT_FINISH_INFO_TEXT "$(^NameDA) беше деинсталиран от Вашия компютър.\r\n\r\nНатиснете 'Приключи' за да затворите този съветник."
   !define MUI_UNTEXT_FINISH_INFO_REBOOT "Компютърът трябва да се рестартира, за да приключи успешно деинсталацията на $(^NameDA). Искате ли да рестартирате сега?"
   
   !define MUI_UNTEXT_ABORTWARNING "Наистина ли искате да прекъснете деинсталирането на $(^Name)?"
