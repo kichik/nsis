@@ -281,6 +281,7 @@ makensis_env = envs[1]
 plugin_env = envs[2]
 util_env = envs[3]
 cp_util_env = envs[4]
+test_env = envs[5]
 
 ######################################################################
 #######  Distribution                                              ###
@@ -566,7 +567,7 @@ for i in misc:
 # test code
 
 build_dir = '$BUILD_PREFIX/tests'
-exports = {'env' : defenv.Copy()}
+exports = {'env' : test_env.Copy()}
 
 defenv.SConscript(
 	dirs = 'Source/Tests',
@@ -579,9 +580,9 @@ defenv.Ignore('$BUILD_PREFIX', '$BUILD_PREFIX/tests')
 
 # test scripts
 
-test_env = defenv.Copy(ENV = os.environ) # env needed for some scripts
-test_env['ENV']['NSISDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
-test_env['ENV']['NSISCONFDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
+test_scripts_env = defenv.Copy(ENV = os.environ) # env needed for some scripts
+test_scripts_env['ENV']['NSISDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
+test_scripts_env['ENV']['NSISCONFDIR'] = os.path.abspath(str(defenv['TESTDISTDIR']))
 
 def test_scripts(target, source, env):
 	from os import walk, sep
@@ -600,8 +601,8 @@ def test_scripts(target, source, env):
 
 	return None
 
-test = test_env.Command('test-scripts.log', '$TESTDISTDIR', test_scripts)
-test_env.Alias('test-scripts', test)
+test = test_scripts_env.Command('test-scripts.log', '$TESTDISTDIR', test_scripts)
+test_scripts_env.Alias('test-scripts', test)
 
 # test all
 
