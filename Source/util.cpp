@@ -16,6 +16,7 @@
 
 #include <cassert> // for assert
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
@@ -137,12 +138,12 @@ typedef struct {
 void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 {
   FILE* f = FOPEN(filename, "rb");
-  if (!f) throw exception("can't open file");
+  if (!f) throw runtime_error("can't open file");
 
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw exception("unable to read file");
+  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw exception("invalid icon file");
+  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw runtime_error("invalid icon file");
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
@@ -170,7 +171,7 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 
     if (fseek(f, dwOffset, SEEK_SET)) {
       free(rsrcIconGroup);
-      throw exception("corrupted icon file, too small");
+      throw runtime_error("corrupted icon file, too small");
     }
     BYTE* iconData = (BYTE*)malloc(ige->dwRawSize);
     if (!iconData) {
@@ -205,12 +206,12 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
   int i;
 
   FILE* f = FOPEN(filename, "rb");
-  if (!f) throw exception("can't open file");
+  if (!f) throw runtime_error("can't open file");
 
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw exception("unable to read file");
+  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw exception("invalid icon file");
+  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw runtime_error("invalid icon file");
 
   int iNewIconSize = 0;
   FileIconGroupEntry ige;
@@ -220,7 +221,7 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
   if (!offsets || !rawSizes) throw bad_alloc();
 
   for (i = 0; i < igh.wCount; i++) {
-    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw exception("unable to read file");
+    if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw runtime_error("unable to read file");
     offsets[i] = ige.dwImageOffset;
     rawSizes[i] = ige.dwRawSize;
     iNewIconSize += ige.dwRawSize;
