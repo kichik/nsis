@@ -3,7 +3,7 @@
 ;                          Text Functions
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "Text Functions"
 OutFile "TextFunc.exe"
@@ -142,12 +142,19 @@ Function LeaveCustom
 	goto +2
 	FileWrite $0 '!include "WordFunc.nsh"$\r$\n'
 	FileWrite $0 '!insertmacro WordFind$\r$\n'
+	FileWrite $0 '!insertmacro WordFindS$\r$\n'
 	FileWrite $0 '!insertmacro WordFind2X$\r$\n'
+	FileWrite $0 '!insertmacro WordFind2XS$\r$\n'
 	FileWrite $0 '!insertmacro WordFind3X$\r$\n'
+	FileWrite $0 '!insertmacro WordFind3XS$\r$\n'
 	FileWrite $0 '!insertmacro WordReplace$\r$\n'
+	FileWrite $0 '!insertmacro WordReplaceS$\r$\n'
 	FileWrite $0 '!insertmacro WordAdd$\r$\n'
+	FileWrite $0 '!insertmacro WordAddS$\r$\n'
 	FileWrite $0 '!insertmacro WordInsert$\r$\n'
+	FileWrite $0 '!insertmacro WordInsertS$\r$\n'
 	FileWrite $0 '!insertmacro StrFilter$\r$\n'
+	FileWrite $0 '!insertmacro StrFilterS$\r$\n'
 	TextFuncInclude:
 	IfFileExists '$EXEDIR\TextFunc.nsh' 0 +3
 	FileWrite $0 '!include "$EXEDIR\TextFunc.nsh"$\r$\n'
@@ -257,9 +264,11 @@ Function LeaveCustom
 	FileWrite $0 "	FileWrite $$R4 '---Second Line ...---$$\$8$$\$9'$\r$\n$\r$\n"
 	goto endwrite
 	Example5LF:
-	FileWrite $0 "	; Use any of WordFunctions:$\r$\n"
-	FileWrite $0 "	; $7WordFind}|$7WordFind2X}|$7WordFind3X}|$\r$\n"
-	FileWrite $0 "	; $7WordReplace}|$7WordAdd}|$7WordInsert}|$7StrFilter}$\r$\n$\r$\n"
+	FileWrite $0 "	; You can use:$\r$\n"
+	FileWrite $0 "	; $7WordFind}|$7WordFindS}|$7WordFind2X}|$7WordFind2XS}|$\r$\n"
+	FileWrite $0 "	; $7WordFind3X}|$7WordFind3XS}|$7WordReplace}|$7WordReplaceS}|$\r$\n"
+	FileWrite $0 "	; $7WordAdd}|$7WordAddS}|$7WordInsert}|$7WordInsertS}|$\r$\n"
+	FileWrite $0 "	; $7StrFilter}|$7StrFilterS}$\r$\n$\r$\n"
 	FileWrite $0 "	$7WordReplace} '$$R9' ' ' '_' '+*' $$R9$\r$\n$\r$\n"
 	goto endwrite
 	Example6LF:

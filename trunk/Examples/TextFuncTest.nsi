@@ -3,7 +3,7 @@
 ;                          Text Functions Test
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "Text Functions Test"
 OutFile "TextFuncTest.exe"
@@ -26,8 +26,11 @@ Var OUT
 !insertmacro LineSum
 !insertmacro FileJoin
 !insertmacro TextCompare
+!insertmacro TextCompareS
 !insertmacro ConfigRead
+!insertmacro ConfigReadS
 !insertmacro ConfigWrite
+!insertmacro ConfigWriteS
 !insertmacro FileRecode
 !insertmacro TrimNewLines
 
@@ -37,8 +40,11 @@ Var OUT
 !insertmacro un.LineSum
 !insertmacro un.FileJoin
 !insertmacro un.TextCompare
+!insertmacro un.TextCompareS
 !insertmacro un.ConfigRead
+!insertmacro un.ConfigReadS
 !insertmacro un.ConfigWrite
+!insertmacro un.ConfigWriteS
 !insertmacro un.FileRecode
 !insertmacro un.TrimNewLines
 
@@ -120,16 +126,16 @@ FunctionEnd
 
 
 Section CreateTestFile
-	GetTempFileName $TEMPFILE1 $PLUGINSDIR
+	GetTempFileName $TEMPFILE1
 	FileOpen $HANDLE $TEMPFILE1 w
-	FileWrite $HANDLE '1=a$\r$\n'
-	FileWrite $HANDLE '2=b$\r$\n'
-	FileWrite $HANDLE '3=c$\r$\n'
-	FileWrite $HANDLE '4=d$\r$\n'
-	FileWrite $HANDLE '5=e$\r$\n'
+	FileWrite $HANDLE '1A=a$\r$\n'
+	FileWrite $HANDLE '2B=b$\r$\n'
+	FileWrite $HANDLE '3C=c$\r$\n'
+	FileWrite $HANDLE '4D=d$\r$\n'
+	FileWrite $HANDLE '5E=e$\r$\n'
 	FileClose $HANDLE
-	GetTempFileName $TEMPFILE2 $PLUGINSDIR
-	GetTempFileName $TEMPFILE3 $PLUGINSDIR
+	GetTempFileName $TEMPFILE2
+	GetTempFileName $TEMPFILE3
 SectionEnd
 
 
@@ -138,14 +144,14 @@ Section LineFind
 
 	${LineFind} '$TEMPFILE1' '/NUL' '1:-4 3 -1' 'LineFindCallback1'
 	IfErrors error
-	StrCmp $OUT '|1:2|-5|1|1=a$\r$\n|1:2|-4|2|2=b$\r$\n|3:3|-3|3|3=c$\r$\n' 0 error
+	StrCmp $OUT '|1:2|-5|1|1A=a$\r$\n|1:2|-4|2|2B=b$\r$\n|3:3|-3|3|3C=c$\r$\n' 0 error
 
 	StrCpy $OUT ''
 	SetDetailsPrint none
 	${LineFind} '$TEMPFILE1' '$TEMPFILE2' '1:-1' 'LineFindCallback2'
 	SetDetailsPrint both
 	IfErrors error
-	StrCmp $OUT '|1:-1||1|1=a$\r$\n|1:-1||2|4=d$\r$\n|1:-1||3|3=c$\r$\n|1:-1||4|2=x$\r$\n|1:-1||5|5=e$\r$\n' 0 error
+	StrCmp $OUT '|1:-1||1|1A=a$\r$\n|1:-1||2|4D=d$\r$\n|1:-1||3|3C=c$\r$\n|1:-1||4|2B=B$\r$\n|1:-1||5|5E=e$\r$\n' 0 error
 
 	goto +2
 	error:
@@ -164,9 +170,9 @@ FunctionEnd
 
 Function LineFindCallback2
 	StrCmp $R8 2 0 +2
-	StrCpy $R9 '4=d$\r$\n'
+	StrCpy $R9 '4D=d$\r$\n'
 	StrCmp $R8 4 0 +2
-	StrCpy $R9 '2=x$\r$\n'
+	StrCpy $R9 '2B=B$\r$\n'
 
 	StrCpy $OUT '$OUT|$R6|$R7|$R8|$R9'
 
@@ -179,7 +185,7 @@ Section LineRead
 
 	${LineRead} '$TEMPFILE1' '-1' $OUT
 	IfErrors error
-	StrCmp $OUT '5=e$\r$\n' 0 error
+	StrCmp $OUT '5E=e$\r$\n' 0 error
 
 	goto +2
 	error:
@@ -195,7 +201,7 @@ Section FileReadFromEnd
 	StrCpy $OUT ''
 	${FileReadFromEnd} '$TEMPFILE1' 'FileReadFromEndCallback'
 	IfErrors error
-	StrCmp $OUT '|-1|5|5=e$\r$\n|-2|4|4=d$\r$\n|-3|3|3=c$\r$\n|-4|2|2=b$\r$\n' 0 error
+	StrCmp $OUT '|-1|5|5E=e$\r$\n|-2|4|4D=d$\r$\n|-3|3|3C=c$\r$\n|-4|2|2B=b$\r$\n' 0 error
 
 	goto +2
 	error:
@@ -244,19 +250,37 @@ Section TextCompare
 
 	StrCpy $OUT ''
 	${TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'TextCompareCallback'
-	StrCmp $OUT '|2|4=d$\r$\n|2|2=b$\r$\n|4|2=x$\r$\n|4|4=d$\r$\n' 0 error
+	StrCmp $OUT '|2|4D=d$\r$\n|2|2B=b$\r$\n|4|2B=B$\r$\n|4|4D=d$\r$\n' 0 error
 
 	StrCpy $OUT ''
 	${TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'FastEqual' 'TextCompareCallback'
-	StrCmp $OUT '|1|1=a$\r$\n|1|1=a$\r$\n|3|3=c$\r$\n|3|3=c$\r$\n|5|5=e$\r$\n|5|5=e$\r$\n' 0 error
+	StrCmp $OUT '|1|1A=a$\r$\n|1|1A=a$\r$\n|3|3C=c$\r$\n|3|3C=c$\r$\n|5|5E=e$\r$\n|5|5E=e$\r$\n' 0 error
 
 	StrCpy $OUT ''
 	${TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'SlowDiff' 'TextCompareCallback'
-	StrCmp $OUT '|||2|2=b$\r$\n' 0 error
+	StrCmp $OUT '' 0 error
 
 	StrCpy $OUT ''
 	${TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'SlowEqual' 'TextCompareCallback'
-	StrCmp $OUT '|1|1=a$\r$\n|1|1=a$\r$\n|3|3=c$\r$\n|3|3=c$\r$\n|2|4=d$\r$\n|4|4=d$\r$\n|5|5=e$\r$\n|5|5=e$\r$\n' 0 error
+	StrCmp $OUT '|1|1A=a$\r$\n|1|1A=a$\r$\n|4|2B=B$\r$\n|2|2B=b$\r$\n|3|3C=c$\r$\n|3|3C=c$\r$\n|2|4D=d$\r$\n|4|4D=d$\r$\n|5|5E=e$\r$\n|5|5E=e$\r$\n' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+Section TextCompareS
+	${StackVerificationStart} TextCompareS
+
+	StrCpy $OUT ''
+	${TextCompareS} '$TEMPFILE1' '$TEMPFILE2' 'SlowDiff' 'TextCompareCallback'
+	StrCmp $OUT '|||2|2B=b$\r$\n' 0 error
+
+	StrCpy $OUT ''
+	${TextCompareS} '$TEMPFILE1' '$TEMPFILE2' 'SlowEqual' 'TextCompareCallback'
+	StrCmp $OUT '|1|1A=a$\r$\n|1|1A=a$\r$\n|3|3C=c$\r$\n|3|3C=c$\r$\n|2|4D=d$\r$\n|4|4D=d$\r$\n|5|5E=e$\r$\n|5|5E=e$\r$\n' 0 error
 
 	goto +2
 	error:
@@ -275,10 +299,31 @@ FunctionEnd
 Section ConfigRead
 	${StackVerificationStart} ConfigRead
 
-	${ConfigRead} '$TEMPFILE1' '3=' $OUT
+	${ConfigRead} '$TEMPFILE1' '3c=' $OUT
 	StrCmp $OUT 'c' 0 error
 
-	${ConfigRead} '$TEMPFILE1' '6=' $OUT
+	${ConfigRead} '$TEMPFILE1' '6F=' $OUT
+	StrCmp $OUT '' 0 error
+
+	${ConfigRead} '$TEMPFILE1' 'FF=' $OUT
+	IfErrors 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section ConfigReadS
+	${StackVerificationStart} ConfigReadS
+
+	${ConfigReadS} '$TEMPFILE1' '3C=' $OUT
+	StrCmp $OUT 'c' 0 error
+
+	${ConfigReadS} '$TEMPFILE1' '3c=' $OUT
+	IfErrors 0 error
 	StrCmp $OUT '' 0 error
 
 	goto +2
@@ -292,16 +337,30 @@ SectionEnd
 Section ConfigWrite
 	${StackVerificationStart} ConfigWrite
 
-	${ConfigWrite} '$TEMPFILE1' '5=' 'e**' $OUT
+	${ConfigWrite} '$TEMPFILE1' '5E=' 'e**' $OUT
 	StrCmp $OUT 'CHANGED' 0 error
 
-	${ConfigWrite} '$TEMPFILE1' '2=' '' $OUT
+	${ConfigWrite} '$TEMPFILE1' '2B=' '' $OUT
 	StrCmp $OUT 'DELETED' 0 error
 
-	${ConfigWrite} '$TEMPFILE1' '3=' 'c' $OUT
+	${ConfigWrite} '$TEMPFILE1' '3c=' 'c' $OUT
 	StrCmp $OUT 'SAME' 0 error
 
-	${ConfigWrite} '$TEMPFILE1' '6=' '*' $OUT
+	${ConfigWrite} '$TEMPFILE1' '6F=' '*' $OUT
+	StrCmp $OUT 'ADDED' 0 error
+
+	goto +2
+	error:
+	SetErrors
+
+	${StackVerificationEnd}
+SectionEnd
+
+
+Section ConfigWriteS
+	${StackVerificationStart} ConfigWriteS
+
+	${ConfigWriteS} '$TEMPFILE1' '5e=' 'e**' $OUT
 	StrCmp $OUT 'ADDED' 0 error
 
 	goto +2
@@ -342,14 +401,15 @@ SectionEnd
 
 
 Section WriteUninstaller
+	SetDetailsPrint none
+	Delete $TEMPFILE1
+	Delete $TEMPFILE2
+	Delete $TEMPFILE3
+	SetDetailsPrint both
 	goto +2
 	WriteUninstaller '$EXEDIR\un.TextFuncTest.exe'
 SectionEnd
 
-
-Function .onInit
-	InitPluginsDir
-FunctionEnd
 
 
 ;############### UNINSTALL ###############
@@ -361,8 +421,11 @@ Section un.Uninstall
 	${un.LineSum} '$TEMPFILE1' $OUT
 	${un.FileJoin} '$TEMPFILE1' '$TEMPFILE2' '$TEMPFILE3'
 	${un.TextCompare} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
-	${un.ConfigRead} '$TEMPFILE1' '3=' $OUT
-	${un.ConfigWrite} '$TEMPFILE1' '5=' 'e**' $OUT
+	${un.TextCompareS} '$TEMPFILE1' '$TEMPFILE2' 'FastDiff' 'un.TextCompareCallback'
+	${un.ConfigRead} '$TEMPFILE1' '3c=' $OUT
+	${un.ConfigReadS} '$TEMPFILE1' '3c=' $OUT
+	${un.ConfigWrite} '$TEMPFILE1' '5E=' 'e**' $OUT
+	${un.ConfigWriteS} '$TEMPFILE1' '5E=' 'e**' $OUT
 	${un.FileRecode} '$TEMPFILE1' 'CharToOem'
 	${un.TrimNewLines} 'Text Line$\r$\n' $OUT
 SectionEnd

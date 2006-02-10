@@ -30,7 +30,7 @@ Call functions:
 \c SectionEnd
 
 
-\S1{} Locate
+\S1{locate} Locate
 
 \b Find files, directories and empty directories with mask and size options.
 
@@ -80,8 +80,9 @@ Call functions:
 \c FunctionEnd
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if disk or directory isn't exist
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if disk or directory isn't exist
+\\<br\\>- Error flag if syntax error
+\\<br\\>- See also \W{http://nsis.sourceforge.net/Locate_plugin}{Locate plugin}
 
 
 \\<b\\>Example (Find one file):\\</b\\>
@@ -263,7 +264,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (Locate with banner - "\W{http://nsis.sourceforge.net/Banner_with_Cancel_button}{NxS}" plugin required):\\</b\\>
+\\<b\\>Example (Locate with banner - \W{http://nsis.sourceforge.net/Nxs_plug-in}{NxS plugin} required):\\</b\\>
 
 \c Section
 \c 	nxs::Show /NOUNLOAD `$(^Name) Setup` /top `Setup searching something$\r$\nPlease wait... If you can..` /h 1 /can 1 /end
@@ -289,7 +290,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} GetSize
+\S1{getsize} GetSize
 
 \b Find the size of a file, files mask or directory.
 
@@ -322,8 +323,9 @@ Call functions:
 \c $var3         ; Result3: Sum of directories
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if disk or directory isn't exist
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if disk or directory isn't exist
+\\<br\\>- Error flag if syntax error
+\\<br\\>- See also \W{http://nsis.sourceforge.net/Locate_plugin}{Locate plugin}
 
 
 \\<b\\>Example (1):\\</b\\>
@@ -368,7 +370,7 @@ Call functions:
 \c 	MessageBox MB_OK "Error"
 \c SectionEnd
 
-\S1{} DriveSpace
+\S1{drivespace} DriveSpace
 
 \b Get total, occupied or free space of the drive.
 
@@ -391,8 +393,8 @@ Call functions:
 \c $var          ; Result: Size
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if disk isn't exist or not ready
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if disk isn't exist or not ready
+\\<br\\>- Error flag if syntax error
 
 
 \\<b\\>Example:\\</b\\>
@@ -402,7 +404,7 @@ Call functions:
 \c 	; $R0="2530"   megabytes free on drive C:
 \c SectionEnd
 
-\S1{} GetDrives
+\S1{getdrives} GetDrives
 
 \b Find all available drives in the system.
 
@@ -475,7 +477,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} GetTime
+\S1{gettime} GetTime
 
 \b Get local or system time.
 
@@ -506,8 +508,9 @@ Call functions:
 \c $var7           ; Result7: seconds
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if file isn't exist
+\\<br\\>- Error flag if syntax error
+\\<br\\>- See also \W{http://nsis.sourceforge.net/Time_plugin}{Time plugin}
 
 
 \\<b\\>Example (Get local time):\\</b\\>
@@ -575,7 +578,7 @@ Call functions:
 \c 	MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6 $7'
 \c SectionEnd
 
-\S1{} GetFileAttributes
+\S1{getfileattributes} GetFileAttributes
 
 \b Get attributes of file or directory.
 
@@ -599,7 +602,7 @@ Call functions:
 \c                   ;    $var=0   file has no specified attributes
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
+\\<br\\>- Error flag if file doesn't exist
 
 
 \\<b\\>Example1:\\</b\\>
@@ -623,7 +626,7 @@ Call functions:
 \c 	; $R0=0
 \c SectionEnd
 
-\S1{} GetFileVersion
+\S1{getfileversion} GetFileVersion
 
 \b Get version information from executable file.
 
@@ -635,8 +638,8 @@ Call functions:
 \c $var                ; Result: Version number
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
-\\<br\\>-Error flag if file isn't contain version information
+\\<br\\>- Error flag if file doesn't exist
+\\<br\\>- Error flag if file doesn't contain version information
 
 
 \\<b\\>Example:\\</b\\>
@@ -646,7 +649,7 @@ Call functions:
 \c 	; $R0="1.1.0.12"
 \c SectionEnd
 
-\S1{} GetExeName
+\S1{getexename} GetExeName
 
 \b Get installer filename (with valid case for Windows 98/Me).
 
@@ -661,7 +664,7 @@ Call functions:
 \c 	; $R0="C:\ftp\program.exe"
 \c SectionEnd
 
-\S1{} GetExePath
+\S1{getexepath} GetExePath
 
 \b Get installer pathname ($EXEDIR with valid case for Windows 98/Me).
 
@@ -676,7 +679,7 @@ Call functions:
 \c 	; $R0="C:\ftp"
 \c SectionEnd
 
-\S1{} GetParameters
+\S1{headers_getparameters} GetParameters
 
 \b Get command line parameters.
 
@@ -691,7 +694,7 @@ Call functions:
 \c 	; $R0="[parameters]"
 \c SectionEnd
 
-\S1{} GetOptions
+\S1{getoptions} GetOptions
 
 \b Get options from command line parameters.
 
@@ -706,14 +709,18 @@ Call functions:
 \c $var               ; Result: option string
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-First option symbol it is delimiter
+\\<br\\>- Error flag if option not found
+\\<br\\>- First option symbol it is delimiter
 
 
 \\<b\\>Example1:\\</b\\>
 
 \c Section
-\c 	${GetOptions} "/INSTDIR=Temp /SILENT=yes /ADMIN=qwerty" "/ADMIN="  $R0
-\c 	;$R0=qwerty
+\c 	${GetOptions} "/S /T" "/T"  $R0
+\c 
+\c 	IfErrors 0 +2
+\c 	MessageBox MB_OK "Not found" IDOK +2
+\c 	MessageBox MB_OK "Found"
 \c SectionEnd
 
 \\<b\\>Example2:\\</b\\>
@@ -737,7 +744,11 @@ Call functions:
 \c 	;$R0="C:/Program Files/Common Files"
 \c SectionEnd
 
-\S1{} GetRoot
+\S1{getoptionss} GetOptionsS
+
+\b Same as \R{getoptions}{GetOptions}, but case sensitive.
+
+\S1{getroot} GetRoot
 
 \b Get root directory.
 
@@ -759,7 +770,7 @@ Call functions:
 \c 	; $R0="\\SuperPimp\NSIS"
 \c SectionEnd
 
-\S1{} GetParent
+\S1{headers_getparent} GetParent
 
 \b Get parent directory.
 
@@ -774,7 +785,7 @@ Call functions:
 \c 	; $R0="C:\Program Files\Winamp"
 \c SectionEnd
 
-\S1{} GetFileName
+\S1{getfilename} GetFileName
 
 \b Get last part from directory path.
 
@@ -789,7 +800,7 @@ Call functions:
 \c 	; $R0="uninstwa.exe"
 \c SectionEnd
 
-\S1{} GetBaseName
+\S1{getbasename} GetBaseName
 
 \b Get file name without extension.
 
@@ -804,7 +815,7 @@ Call functions:
 \c 	; $R0="program"
 \c SectionEnd
 
-\S1{} GetFileExt
+\S1{getfileext} GetFileExt
 
 \b Get extention of file.
 
@@ -819,7 +830,7 @@ Call functions:
 \c 	; $R0="exe"
 \c SectionEnd
 
-\S1{} BannerTrimPath
+\S1{bannertrimpath} BannerTrimPath
 
 \b Trim string path for banner.
 
@@ -882,7 +893,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\\<b\\>Example (\W{http://nsis.sourceforge.net/Banner_with_Cancel_button}{NxS} plugin):\\</b\\>
+\\<b\\>Example (\W{http://nsis.sourceforge.net/Nxs_plug-in}{NxS plugin}):\\</b\\>
 
 \c !include "FileFunc.nsh"
 \c !insertmacro Locate
@@ -914,7 +925,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} DirState
+\S1{dirstate} DirState
 
 \b Check directory full, empty or not exist.
 
@@ -935,7 +946,7 @@ Call functions:
 \c 	; $R0="1"  directory is full
 \c SectionEnd
 
-\S1{} RefreshShellIcons
+\S1{refreshshellicons} RefreshShellIcons
 
 \b After changing file associations, you can call this function to refresh the shell immediately.
 
@@ -981,7 +992,7 @@ Call functions:
 \c SectionEnd
 
 
-\S1{} LineFind
+\S1{linefind} LineFind
 
 \b Find specified lines in text file, and edit or view these lines in callback function.
 
@@ -1025,10 +1036,10 @@ Call functions:
 \c FunctionEnd
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if input file isn't exists
-\\<br\\>-Error flag if output file path isn't exists
-\\<br\\>-Ranges must be specified on growth (2 4:5 9:-8 -5:-4 -2:-1)
-\\<br\\>-Output file will not be updated if no changes made.
+\\<br\\>- Error flag if input file doesn't exist
+\\<br\\>- Error flag if output file path doesn't exist
+\\<br\\>- Ranges must be specified on growth (2 4:5 9:-8 -5:-4 -2:-1)
+\\<br\\>- Output file will not be updated if no changes made.
 
 \\<b\\>Example1 (delete first two symbols):\\</b\\>
 
@@ -1182,7 +1193,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} LineRead
+\S1{lineread} LineRead
 
 \b Get line in file specified with number.
 
@@ -1199,8 +1210,8 @@ Call functions:
 \c $var             ; Result: Line
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if input file isn't exists
-\\<br\\>-Error flag if line number not found
+\\<br\\>- Error flag if input file doesn't exist
+\\<br\\>- Error flag if line number not found
 
 \\<b\\>Example:\\</b\\>
 
@@ -1209,7 +1220,7 @@ Call functions:
 \c 	; $R0="Last line$\r$\n"
 \c SectionEnd
 
-\S1{} FileReadFromEnd
+\S1{filereadfromend} FileReadFromEnd
 
 \b Read text file from end line by line.
 
@@ -1232,7 +1243,7 @@ Call functions:
 \c FunctionEnd
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if input file isn't exists
+\\<br\\>- Error flag if input file doesn't exist
 
 \\<b\\>Example1:\\</b\\>
 
@@ -1275,7 +1286,7 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} LineSum
+\S1{linesum} LineSum
 
 \b Get sum of lines in text file.
 
@@ -1287,7 +1298,7 @@ Call functions:
 \c $var          ; Result: Sum of lines
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if input file isn't exists
+\\<br\\>- Error flag if input file doesn't exist
 
 \\<b\\>Example:\\</b\\>
 
@@ -1296,7 +1307,7 @@ Call functions:
 \c 	; $R0="54"
 \c SectionEnd
 
-\S1{} FileJoin
+\S1{filejoin} FileJoin
 
 \b Join two files in one (File1 + File2 = File3).
 
@@ -1310,8 +1321,8 @@ Call functions:
 \c               ;  If [File3]="" Then add [File2] to [File1]
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if input files aren't exists
-\\<br\\>-Error flag if output file path isn't exists
+\\<br\\>- Error flag if input files don't exist
+\\<br\\>- Error flag if output file path doesn't exist
 
 \\<b\\>Example1 (Join:  a.log + b.log = Z.log):\\</b\\>
 
@@ -1325,7 +1336,7 @@ Call functions:
 \c 	${FileJoin} "C:\a.log" "C:\logs\b.log" "C:\a.log"
 \c SectionEnd
 
-\S1{} TextCompare
+\S1{textcompare} TextCompare
 
 \b Compare two text files.
 
@@ -1360,8 +1371,8 @@ Call functions:
 \c FunctionEnd
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if File1 or File2 isn't exist
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if File1 or File2 doesn't exist
+\\<br\\>- Error flag if syntax error
 
 \\<b\\>Example (Different or Equal):\\</b\\>
 
@@ -1496,7 +1507,11 @@ Call functions:
 \c 	Push $0
 \c FunctionEnd
 
-\S1{} ConfigRead
+\S1{textcompares} TextCompareS
+
+\b Same as \R{textcompare}{TextCompare}, but case sensitive.
+
+\S1{configread} ConfigRead
 
 \b Read value from entry name in config file.
 
@@ -1511,7 +1526,8 @@ Call functions:
 \c $var          ; Result:  Value
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
+\\<br\\>- Error flag if entry not found
+\\<br\\>- Error flag if file doesn't exist
 
 \\<b\\>Example1:\\</b\\>
 
@@ -1527,7 +1543,11 @@ Call functions:
 \c 	;$R0=30
 \c SectionEnd
 
-\S1{} ConfigWrite
+\S1{configreads} ConfigReadS
+
+\b Same as \R{configread}{ConfigRead}, but case sensitive.
+
+\S1{configwrite} ConfigWrite
 
 \b Write value from entry name in config file.
 
@@ -1549,8 +1569,8 @@ Call functions:
 \c               ;    $var=SAME     Entry and Value already exist
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
-\\<br\\>-Error flag if file can't be opened
+\\<br\\>- Error flag if file doesn't exist
+\\<br\\>- Error flag if file can't be opened
 
 \\<b\\>Example1:\\</b\\>
 
@@ -1573,7 +1593,11 @@ Call functions:
 \c 	;$R0=DELETED
 \c SectionEnd
 
-\S1{} FileRecode
+\S1{configwrites} ConfigWriteS
+
+\b Same as \R{configwrite}{ConfigWrite}, but case sensitive.
+
+\S1{filerecode} FileRecode
 
 \b Recode text file from DOS to Windows format and vice-versa.
 
@@ -1587,8 +1611,8 @@ Call functions:
 \c                 ; CharToOem   -from Windows to DOS
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if file isn't exist
-\\<br\\>-Error flag if syntax error
+\\<br\\>- Error flag if file doesn't exist
+\\<br\\>- Error flag if syntax error
 
 \\<b\\>Example:\\</b\\>
 
@@ -1596,7 +1620,7 @@ Call functions:
 \c 	${FileRecode} "C:\SCANDISK.LOG" "CharToOem"
 \c SectionEnd
 
-\S1{} TrimNewLines
+\S1{headers_trimnewlines} TrimNewLines
 
 \b Trim newlines in a string.
 
@@ -1644,7 +1668,7 @@ Call functions:
 \c SectionEnd
 
 
-\S1{} WordFind
+\S1{wordfind} WordFind
 
 \b Multi-features string function.
 
@@ -1705,7 +1729,7 @@ Call functions:
 \c $var               ;output (result)
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Accepted numbers 1,01,001,...
+\\<br\\>- Accepted numbers 1,01,001,...
 
 \\<b\\>Example (Find word by number):\\</b\\>
 
@@ -1867,7 +1891,11 @@ Call functions:
 \c 	; $R0="OneWord"
 \c SectionEnd
 
-\S1{} WordFind2X
+\S1{wordfinds} WordFindS
+
+\b Same as \R{wordfind}{WordFind}, but case sensitive.
+
+\S1{wordfind2x} WordFind2X
 
 \b Find word between two delimiters.
 
@@ -1975,7 +2003,11 @@ Call functions:
 \c 	end:
 \c SectionEnd
 
-\S1{} WordFind3X
+\S1{wordfind2xs} WordFind2XS
+
+\b Same as \R{wordfind2x}{WordFind2X}, but case sensitive.
+
+\S1{wordfind3x} WordFind3X
 
 \b Find a word that contains a string, between two delimiters.
 
@@ -2079,7 +2111,11 @@ Call functions:
 \c 	end:
 \c SectionEnd
 
-\S1{} WordReplace
+\S1{wordfind3xs} WordFind3XS
+
+\b Same as \R{wordfind3x}{WordFind3X}, but case sensitive.
+
+\S1{wordreplace} WordReplace
 
 \b Replace or delete word from string.
 
@@ -2098,17 +2134,25 @@ Call functions:
 \c                    ;  -number  : word number from end
 \c                    ;  +number* : word number from start multiple-replace
 \c                    ;  -number* : word number from end multiple-replace
-\c                    ;  +        : replace or delete all found
-\c                    ;  +*       : multiple-replace all found
-\c                    ;  {}       : if exists replace or delete all delimiters
-\c                    ;               from edges (no errorlevel output)
-\c                    ;  {}*      : if exists multiple-replace all delimiters
-\c                    ;               from edges (no errorlevel output)
+\c                    ;  +        : replace all results
+\c                    ;  +*       : multiple-replace all results
+\c                    ;  {        : if exists replace all delimiters
+\c                    ;               from left edge
+\c                    ;  }        : if exists replace all delimiters
+\c                    ;               from right edge
+\c                    ;  {}       : if exists replace all delimiters
+\c                    ;               from edges
+\c                    ;  {*       : if exists multiple-replace all
+\c                    ;               delimiters from left edge
+\c                    ;  }*       : if exists multiple-replace all
+\c                    ;               delimiters from right edge
+\c                    ;  {}*      : if exists multiple-replace all
+\c                    ;               delimiters from edges
 \c                    ;
 \c                    ;[E]
 \c                    ;  with errorlevel output
 \c                    ;  IfErrors:
-\c                    ;     $var=1  word to replace or delete not found
+\c                    ;     $var=1  word to replace not found
 \c                    ;     $var=2  no such word number
 \c                    ;     $var=3  syntax error (Use: +1,-1,+1*,-1*,+,+*,{},{}*)
 \c                    ;[]
@@ -2168,7 +2212,11 @@ Call functions:
 \c 	end:
 \c SectionEnd
 
-\S1{} WordAdd
+\S1{wordreplaces} WordReplaceS
+
+\b Same as \R{wordreplace}{WordReplace}, but case sensitive.
+
+\S1{wordadd} WordAdd
 
 \b Add words to string1 from string2 if not exist or delete words if exist.
 
@@ -2254,7 +2302,11 @@ Call functions:
 \c 	end:
 \c SectionEnd
 
-\S1{} WordInsert
+\S1{wordadds} WordAddS
+
+\b Same as \R{wordadd}{WordAdd}, but case sensitive.
+
+\S1{wordinsert} WordInsert
 
 \b Insert word in string.
 
@@ -2320,7 +2372,11 @@ Call functions:
 \c 	end:
 \c SectionEnd
 
-\S1{} StrFilter
+\S1{wordinserts} WordInsertS
+
+\b Same as \R{wordinsert}{WordInsert}, but case sensitive.
+
+\S1{strfilter} StrFilter
 
 \b Convert string to uppercase or lowercase.
 
@@ -2354,8 +2410,8 @@ Call functions:
 \c $var             ;output (result)
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Error flag if syntax error
-\\<br\\>-Same symbol to include & to exclude = to exclude
+\\<br\\>- Error flag if syntax error
+\\<br\\>- Same symbol to include & to exclude = to exclude
 
 \\<b\\>Example (UpperCase):\\</b\\>
 
@@ -2464,7 +2520,11 @@ Call functions:
 \c 	Exch $R0
 \c FunctionEnd
 
-\S1{} VersionCompare
+\S1{strfilters} StrFilterS
+
+\b Same as \R{strfilter}{StrFilter}, but case sensitive.
+
+\S1{versioncompare} VersionCompare
 
 \b Compare version numbers.
 
@@ -2486,7 +2546,7 @@ Call functions:
 \c 	; $R0="1"
 \c SectionEnd
 
-\S1{} VersionConvert
+\S1{versionconvert} VersionConvert
 
 \b Convert version in the numerical format which can be compared.
 
@@ -2502,8 +2562,8 @@ Call functions:
 \c $var                ; Result: converted version
 
 \\<b\\>Note:\\</b\\>
-\\<br\\>-Converted letters are separated with dot
-\\<br\\>-If character is non-digit and not in list then it will be converted to dot
+\\<br\\>- Converted letters are separated with dot
+\\<br\\>- If character is non-digit and not in list then it will be converted to dot
 
 \\<b\\>Example1:\\</b\\>
 
