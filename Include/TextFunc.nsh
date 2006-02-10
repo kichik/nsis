@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       Text Functions Header v2.2
+                       Text Functions Header v2.3
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -914,15 +914,15 @@ TrimNewLines
 			FileSeek $3 0 END $6
 			IntOp $6 $6 - $5
 
-			System::Alloc $6
+			System::Alloc /NOUNLOAD $6
 			Pop $0
 			FileSeek $3 $5 SET
-			System::Call 'kernel32::ReadFile(i r3, i r0, i $6, t.,)'
+			System::Call /NOUNLOAD 'kernel32::ReadFile(i r3, i r0, i $6, t.,)'
 			FileSeek $3 $4 SET
 			StrCmp${_TEXTFUNC_S} $2 '' +2
 			FileWrite $3 '$1$2$\r$\n'
-			System::Call 'kernel32::WriteFile(i r3, i r0, i $6, t.,)'
-			System::Call 'kernel32::SetEndOfFile(i r3)'
+			System::Call /NOUNLOAD 'kernel32::WriteFile(i r3, i r0, i $6, t.,)'
+			System::Call /NOUNLOAD 'kernel32::SetEndOfFile(i r3)'
 			System::Free $0
 			StrCmp${_TEXTFUNC_S} $2 '' +3
 			StrCpy $0 CHANGED
@@ -986,15 +986,13 @@ TrimNewLines
 
 			FileOpen $2 $0 a
 			FileSeek $2 0 END $3
-			System::Alloc $3
+			System::Alloc /NOUNLOAD $3
 			Pop $4
-
 			FileSeek $2 0 SET
-			System::Call 'kernel32::ReadFile(i r2, i r4, i $3, t.,)'
-			System::Call 'user32::$1Buff(i r4, i r4, i $3)'
+			System::Call /NOUNLOAD 'kernel32::ReadFile(i r2, i r4, i $3, t.,)'
+			System::Call /NOUNLOAD 'user32::$1Buff(i r4, i r4, i $3)'
 			FileSeek $2 0 SET
-			System::Call 'kernel32::WriteFile(i r2, i r4, i $3, t.,)'
-
+			System::Call /NOUNLOAD 'kernel32::WriteFile(i r2, i r4, i $3, t.,)'
 			System::Free $4
 			FileClose $2
 			goto end
