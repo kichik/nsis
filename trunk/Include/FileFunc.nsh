@@ -1,7 +1,7 @@
 /*
 _____________________________________________________________________________
 
-                       File Functions Header v3.0
+                       File Functions Header v3.1
 _____________________________________________________________________________
 
  2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
@@ -722,7 +722,7 @@ RefreshShellIcons
 			StrCmp $6 '' +2
 			IntCmp $R6 $6 0 0 findnext
 			IntOp $R4 $R4 + 1
-			System::Int64Op $R3 + $R6
+			System::Int64Op /NOUNLOAD $R3 + $R6
 			Pop $R3
 
 			findnext:
@@ -732,7 +732,7 @@ RefreshShellIcons
 
 			show:
 			StrCmp $5$6 '' nosize
-			System::Int64Op $R3 / $1
+			System::Int64Op /NOUNLOAD $R3 / $1
 			Pop $9
 			DetailPrint 'Size:$9 $2  Files:$R4  Folders:$R5'
 			goto subdir
@@ -879,13 +879,13 @@ RefreshShellIcons
 			StrCpy $6 1073741824
 
 			getspace:
-			System::Call 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l)i(r0,.r2,.r3,.)'
+			System::Call /NOUNLOAD 'kernel32::GetDiskFreeSpaceExA(t, *l, *l, *l)i(r0,.r2,.r3,.)'
 
 			StrCmp $5 T 0 +3
 			StrCpy $0 $3
 			goto getsize
 			StrCmp $5 O 0 +4
-			System::Int64Op $3 - $2
+			System::Int64Op /NOUNLOAD $3 - $2
 			Pop $0
 			goto getsize
 			StrCmp $5 F 0 +2
@@ -933,9 +933,9 @@ RefreshShellIcons
 			Push $8
 			Push $9
 
-			System::Alloc 1024
+			System::Alloc /NOUNLOAD 1024
 			Pop $2
-			System::Call 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
+			System::Call /NOUNLOAD 'kernel32::GetLogicalDriveStringsA(i,i) i(1024, r2)'
 
 			StrCmp $0 ALL drivestring
 			StrCmp $0 '' 0 typeset
@@ -972,10 +972,10 @@ RefreshShellIcons
 			StrCpy $3 $2
 
 			enumok:
-			System::Call 'kernel32::lstrlenA(t) i(i r3) .r4'
+			System::Call /NOUNLOAD 'kernel32::lstrlenA(t) i(i r3) .r4'
 			StrCmp $4$0 '0ALL' enumex
 			StrCmp $4 0 typeset
-			System::Call 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
+			System::Call /NOUNLOAD 'kernel32::GetDriveTypeA(t) i(i r3) .r5'
 
 			StrCmp $0 ALL +2
 			StrCmp $5 $6 letter enumnext
@@ -995,7 +995,7 @@ RefreshShellIcons
 			StrCpy $8 RAM
 
 			letter:
-			System::Call '*$3(&t1024 .r9)'
+			System::Call /NOUNLOAD '*$3(&t1024 .r9)'
 
 			Push $0
 			Push $1
@@ -1071,23 +1071,23 @@ RefreshShellIcons
 
 			getfile:
 			IfFileExists $0 0 error
-			System::Call '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
-			System::Call 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
-			System::Call 'kernel32::FindClose(i)i(r2)'
+			System::Call /NOUNLOAD '*(i,l,l,l,i,i,i,i,&t260,&t14) i .r6'
+			System::Call /NOUNLOAD 'kernel32::FindFirstFileA(t,i)i(r0,r6) .r2'
+			System::Call /NOUNLOAD 'kernel32::FindClose(i)i(r2)'
 
 			gettime:
-			System::Call '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
+			System::Call /NOUNLOAD '*(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2) i .r7'
 			StrCmp $1 'L' 0 systemtime
-			System::Call 'kernel32::GetLocalTime(i)i(r7)'
+			System::Call /NOUNLOAD 'kernel32::GetLocalTime(i)i(r7)'
 			goto convert
 			systemtime:
 			StrCmp $1 'LS' 0 filetime
-			System::Call 'kernel32::GetSystemTime(i)i(r7)'
+			System::Call /NOUNLOAD 'kernel32::GetSystemTime(i)i(r7)'
 			goto convert
 
 			filetime:
-			System::Call '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
-			System::Free $6
+			System::Call /NOUNLOAD '*$6(i,l,l,l,i,i,i,i,&t260,&t14)i(,.r4,.r3,.r2)'
+			System::Free /NOUNLOAD $6
 			StrCmp $1 'A' 0 +3
 			StrCpy $2 $3
 			goto tolocal
@@ -1105,12 +1105,12 @@ RefreshShellIcons
 			goto tosystem
 
 			tolocal:
-			System::Call 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
+			System::Call /NOUNLOAD 'kernel32::FileTimeToLocalFileTime(*l,*l)i(r2,.r3)'
 			tosystem:
-			System::Call 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
+			System::Call /NOUNLOAD 'kernel32::FileTimeToSystemTime(*l,i)i(r3,r7)'
 
 			convert:
-			System::Call '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
+			System::Call /NOUNLOAD '*$7(&i2,&i2,&i2,&i2,&i2,&i2,&i2,&i2)i(.r5,.r6,.r4,.r0,.r3,.r2,.r1,)'
 			System::Free $7
 
 			IntCmp $0 9 0 0 +2
@@ -1375,7 +1375,7 @@ RefreshShellIcons
 			Push $0
 			Push $1
 			Push $2
-			System::Call 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
+			System::Call /NOUNLOAD 'kernel32::GetModuleFileNameA(i 0, t .r0, i 1024)'
 			System::Call 'kernel32::GetLongPathNameA(t r0, t .r1, i 1024)i .r2'
 			StrCmp $2 error +2
 			StrCpy $0 $1
