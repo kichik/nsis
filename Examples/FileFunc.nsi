@@ -3,7 +3,7 @@
 ;                          File Functions
 ;_____________________________________________________________________________
 ;
-; 2005 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
+; 2006 Shengalts Aleksander aka Instructor (Shengalts@mail.ru)
 
 Name "File Functions"
 OutFile "FileFunc.exe"
@@ -670,6 +670,7 @@ Function LeaveCustom
 
 	GetOptions:
 	${GetOptions} "$R1" "$R3" $0
+	IfErrors error
 	StrCpy $R0  '$0'
 	goto send
 
