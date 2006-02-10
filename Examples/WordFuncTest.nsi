@@ -343,6 +343,24 @@ Section WordReplace
 	${WordReplace} 'C:\io.sys C:\logo.sysSYSsys C:\WINDOWS' 'sys' 'bmp' '+*' $OUT
 	StrCmp $OUT 'C:\io.bmp C:\logo.bmp C:\WINDOWS' 0 error
 
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{' $OUT
+	StrCmp $OUT '||C:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '}' $OUT
+	StrCmp $OUT 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWS|||' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}' $OUT
+	StrCmp $OUT '||C:\io.sys C:\logo.sys C:\WINDOWS|||' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{*' $OUT
+	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '}*' $OUT
+	StrCmp $OUT 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
+
+	${WordReplace} 'SYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}*' $OUT
+	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
+
 	${WordReplace} 'sysSYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys' 'sys' '|' '{}*' $OUT
 	StrCmp $OUT '|C:\io.sys C:\logo.sys C:\WINDOWS|' 0 error
 
