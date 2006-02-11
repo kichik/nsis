@@ -52,6 +52,10 @@ Initializes the plug-ins dir (\R{varconstant}{$PLUGINSDIR}) if not already initi
 \c InitPluginsDir
 \c File /oname=$PLUGINSDIR\image.bmp image.bmp
 
+\S2{nop} Nop
+
+Does nothing.
+
 \S2{seterrorlevel} SetErrorLevel
 
 \c error_level
