@@ -2738,7 +2738,16 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         SCRIPT_MSG("!execute: \"%s\"\n",exec);
       }
     case TOK_P_ADDINCLUDEDIR:
+#ifdef _WIN32
       include_dirs.add(line.gettoken_str(1),0);
+#else
+      {
+        char *f = line.gettoken_str(1);
+        char *fc = my_convert(f);
+        include_dirs.add(fc,0);
+        my_convert_free(fc);
+      }
+#endif
     return PS_OK;
     case TOK_P_INCLUDE:
       {
