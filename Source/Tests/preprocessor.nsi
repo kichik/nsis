@@ -84,6 +84,46 @@ f
  !error "!if 'test' == 'test' is true!"
 !endif
 
+; testing of two math functions and a macro hack :)
+!define increase "!insertmacro increase"
+!macro increase DEFINE
+  !define /math ${DEFINE}_MACROTEMP ${${DEFINE}} + 1
+  !undef ${DEFINE}
+  !define ${DEFINE} ${${DEFINE}_MACROTEMP}
+  !undef ${DEFINE}_MACROTEMP
+!macroend
+
+!define number1 1 #  1
+!define /math number2 2 + 3
+!define /math number3 ${number2} - ${number1}
+${increase} number3
+!define /math number4 2 * ${number3}
+!define /math number5 ${number4} % 3
+
+!if ${number1} != 1
+  !error "number1 != 1"
+!endif
+
+!if ${number2} != 5
+  !error "number1 != 5"
+!endif
+
+!if ${number3} != 5
+  !error "number1 != 5"
+!endif
+
+!if ${number4} != 10
+  !error "number1 != 10"
+!endif
+
+!if ${number5} != 1
+  !error "number1 != 1"
+!endif
+
+!undef number1
+!undef number2
+!undef number3
+; end math functions
 
 # this should just give a warning, not an error
 !include /NONFATAL file_that_doesnt_exist.nsh
