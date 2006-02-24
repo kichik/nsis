@@ -405,7 +405,7 @@ parse_again:
     int istrue=0;
 
     int mod=0;
-	  
+  
     int p=0;
     
     if (tkid == TOK_P_IF) {
@@ -2698,7 +2698,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value=line.gettoken_str(3);
 
         time_t rawtime;
-		    time(&rawtime);
+        time(&rawtime);
 
         datebuf[0]=0;
         size_t s=strftime(datebuf,sizeof(datebuf),value,localtime(&rawtime));
@@ -2711,6 +2711,40 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value=datebuf;
 
         date=true;
+
+      } else if (!stricmp(define,"/math")) {
+      
+        int value1;
+        int value2;
+        char *mathop;
+        
+        if (line.getnumtokens()!=6) PRINTHELP()
+
+        define = line.gettoken_str(2);
+        value1 = line.gettoken_int(3));
+        mathop = line.gettoken_str(4);
+        value2 = line.gettoken_int(5);
+
+        if (!strcmp(mathop,"+")) {
+          sprintf(value,"%d",value1+value2);
+        } else if (!strcmp(mathop,"-")) {
+          sprintf(value,"%d",value1-value2);
+        } else if (!strcmp(mathop,"*")) {
+          sprintf(value,"%d",value1*value2);
+        } else if (!strcmp(mathop,"%")) {
+          if (value2==0) {
+            ERROR_MSG("!define /math: division by zero! (\"%i / %i\")\n",value1,value2);
+            return PS_ERROR;
+          }
+          sprintf(value,"%d",value1/value2);
+        } else if (!strcmp(mathop,"%")) {
+          if (value2==0) {
+            ERROR_MSG("!define /math: division by zero! (\"%i %% %i\")\n",value1,value2);
+            return PS_ERROR;
+          }
+          sprintf(value,"%d",value1%value2);
+        } else PRINTHELP()
+
       } else {
         if (line.getnumtokens()==4) PRINTHELP()
 
