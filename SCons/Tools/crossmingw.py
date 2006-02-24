@@ -45,6 +45,11 @@ import SCons.Util
 # This is what we search for to find mingw:
 prefixes = SCons.Util.Split("""
     mingw32-
+    mingw32msvc-
+    i386-mingw32-
+    i486-mingw32-
+    i586-mingw32-
+    i686-mingw32-
     i386-mingw32msvc-
     i486-mingw32msvc-
     i586-mingw32msvc-

@@ -145,7 +145,7 @@ int LZMACALL lzmaDecode(lzma_stream *s)
 #define last2 _s.last2
 #define last3 _s.last3
 
-#define p ((CProb *) _s.dynamicData)
+#define p (*(CProb **) &_s.dynamicData)
 #define dynamicDataSize _s.dynamicDataSize
 
 #define state _s.state
@@ -184,7 +184,7 @@ int LZMACALL lzmaDecode(lzma_stream *s)
 #define result _s.temp2
 #define numLevels _s.temp3
 #define posSlot _s.temp2
-#define newDictionarySize ((UInt32) _s.temp3)
+#define newDictionarySize (*(UInt32*) &_s.temp3)
 
 #define matchByte _s.matchByte
 #define mi _s.mi
