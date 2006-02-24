@@ -482,7 +482,7 @@ void CEXEBuild::initialize(const char *makensis_path)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
     nsis_dir = get_executable_dir(makensis_path);
 #else
-    nsis_dir = CONST_STR(PREFIX_DATA);
+    nsis_dir = PREFIX_DATA;
 #endif
   }
   definedlist.add("NSISDIR", nsis_dir.c_str());
