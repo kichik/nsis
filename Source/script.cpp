@@ -2721,7 +2721,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         if (line.getnumtokens()!=6) PRINTHELP()
 
         define = line.gettoken_str(2);
-        value1 = line.gettoken_int(3));
+        value1 = line.gettoken_int(3);
         mathop = line.gettoken_str(4);
         value2 = line.gettoken_int(5);
 
