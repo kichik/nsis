@@ -142,6 +142,11 @@ Help(opts.GenerateHelpText(defenv))
 # build configuration
 SConscript('SCons/config.py')
 
+# add prefixes defines
+if defenv['PLATFORM'] != 'win32':
+	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv['PREFIX_CONF'])])
+	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv['PREFIX_DATA'])])
+
 # write configuration into sconf.h
 f = open(File('#Source/exehead/sconf.h').abspath, 'w')
 for i in defenv['NSIS_CPPDEFINES']:
@@ -171,10 +176,6 @@ if defenv.has_key('CODESIGNER'):
 defenv.Execute(Delete('$ZIPDISTDIR'))
 defenv.Execute(Delete('$INSTDISTDIR'))
 defenv.Execute(Delete('$TESTDISTDIR'))
-
-if defenv['PLATFORM'] != 'win32':
-	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', defenv['PREFIX_CONF'])])
-	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', defenv['PREFIX_DATA'])])
 
 def Distribute(files, names, component, path, subpath, alias, install_alias=None):
 	if isinstance(files, (str, type(File('SConstruct')))):

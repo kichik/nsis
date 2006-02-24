@@ -398,7 +398,7 @@ int main(int argc, char **argv)
 #ifndef NSIS_CONFIG_CONST_DATA_PATH
           main_conf = get_executable_dir(argv[0]);
 #else
-          main_conf = CONST_STR(PREFIX_CONF);
+          main_conf = PREFIX_CONF;
 #endif
         else main_conf = env_var;
         main_conf += PLATFORM_PATH_SEPARATOR_STR;
