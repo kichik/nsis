@@ -255,6 +255,10 @@ enum {
   BLOCKS_NUM
 };
 
+// nsis strings
+
+typedef char NSIS_STRING[NSIS_MAX_STRLEN];
+
 // Settings common to both installers and uninstallers
 typedef struct
 {
