@@ -54,7 +54,7 @@
 
   !define MUI_TEXT_STARTMENU_TITLE "Scelta della cartella del menu Start" 
   !define MUI_TEXT_STARTMENU_SUBTITLE "Scegliere una cartella del menu Start per i collegamenti del programma." 
-  !define MUI_INNERTEXT_STARTMENU_TOP "Scegliere la cartella del menu Start in cui verranno creati i collegamenti del programma. É possibile inserire un nome per creare una nuova cartella."
+  !define MUI_INNERTEXT_STARTMENU_TOP "Scegliere la cartella del menu Start in cui verranno creati i collegamenti del programma. È possibile inserire un nome per creare una nuova cartella."
   !define MUI_INNERTEXT_STARTMENU_CHECKBOX "Non creare i collegamenti al programma."
 
   !define MUI_TEXT_ABORTWARNING "Sei sicuro di voler interrompere l'installazione di $(^Name) ?"
