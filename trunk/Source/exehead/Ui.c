@@ -1506,6 +1506,17 @@ static DWORD WINAPI install_thread(LPVOID p)
   }
 #endif
 
+  // workaround for bug #1400995
+  //
+  // for an unexplained reason, MessageBox with MB_TOPMOST
+  // will fail, if no other messages were sent from this
+  // thread to the GUI thread before it.
+  //
+  // the source of the problem couldn't be found, so a
+  // WM_NULL is sent to work around it.
+
+  NotifyCurWnd(WM_NULL);
+
   while (m_inst_sec--)
   {
 #ifdef NSIS_CONFIG_COMPONENTPAGE
