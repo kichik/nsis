@@ -3,6 +3,8 @@
 
 #ifndef APSTUDIO_INVOKED // keep msdev's resource editor from mangling the .rc file
 
+#include "sconf.h"
+
 #ifndef NSIS_CONFIG_VISIBLE_SUPPORT
   #ifdef NSIS_CONFIG_LICENSEPAGE
     #undef NSIS_CONFIG_LICENSEPAGE
