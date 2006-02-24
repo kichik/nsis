@@ -71,6 +71,7 @@ enum
   TOK_FILEBUFSIZE,
   
   // system "preprocessor"ish tokens
+  TOK_P_IF,
   TOK_P_IFDEF,
   TOK_P_IFNDEF,
   TOK_P_ELSE,  
