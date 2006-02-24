@@ -142,6 +142,20 @@ Help(opts.GenerateHelpText(defenv))
 # build configuration
 SConscript('SCons/config.py')
 
+# write configuration into sconf.h
+f = open(File('#Source/exehead/sconf.h').abspath, 'w')
+for i in defenv['NSIS_CPPDEFINES']:
+	if type(i) is not str:
+		f.write('#define %s %s\n' % (i[0], i[1]))
+	else:
+		f.write('#define %s\n' % (i))
+f.close()
+
+# write version into version.h
+f = open(File('#Source/version.h').abspath, 'w')
+f.write('#define NSIS_VERSION "%s"' % defenv['VERSION'])
+f.close()
+
 ######################################################################
 #######  Functions                                                 ###
 ######################################################################
