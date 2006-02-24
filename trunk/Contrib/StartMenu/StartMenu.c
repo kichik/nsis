@@ -24,7 +24,7 @@ int rtl = 0;
 void *lpWndProcOld;
 
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
 void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
