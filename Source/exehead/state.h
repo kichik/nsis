@@ -1,3 +1,5 @@
+#include "fileform.h"
+
 extern NSIS_STRING g_usrvars[1];
 
 #define state_command_line        g_usrvars[20]
