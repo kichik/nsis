@@ -2733,7 +2733,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
           sprintf(value,"%d",value1-value2);
         } else if (!strcmp(mathop,"*")) {
           sprintf(value,"%d",value1*value2);
-        } else if (!strcmp(mathop,"%")) {
+        } else if (!strcmp(mathop,"/")) {
           if (value2==0) {
             ERROR_MSG("!define /math: division by zero! (\"%i / %i\")\n",value1,value2);
             return PS_ERROR;
