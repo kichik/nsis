@@ -64,34 +64,15 @@ if env['PLATFORM'] == 'win32':
 
 AddAvailableLibs(env, libs)
 
-##### Configuration defines
+##### Defines
 
 env.Append(CPPDEFINES = ['_WIN32_IE=0x0500'])
-env.Append(CPPDEFINES = env['NSIS_CPPDEFINES'])
 
 ##### Set PCH
 
 # XXX doesn't work
 #env['PCH'] = env.PCH(pch)[0]
 #env['PCHSTOP'] = pch
-
-##### Version define
-
-version_env = env.Copy()
-version_env.Append(CPPDEFINES = ['NSIS_VERSION=v$VERSION'])
-
-# only pass -DNSIS_VERSION to files that use it to minimize rebuilds
-
-new_makensis_files = []
-
-for file in makensis_files:
-	f = File(file).srcnode().abspath
-	if open(f).read().find('NSIS_VERSION') >= 0:
-		new_makensis_files.append(version_env.Object(file))
-	else:
-		new_makensis_files.append(file)
-
-makensis_files = new_makensis_files
 
 ##### LZMA specific defines
 
