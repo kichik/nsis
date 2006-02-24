@@ -353,9 +353,15 @@ parse_again:
     if (cur_ifblock && cur_ifblock->inherited_ignore)
       return PS_OK;
 
-    if (!num_ifblock() || cur_ifblock->elseused)
+    if (!num_ifblock())
     {
-      ERROR_MSG("!else: stray !else\n");
+      ERROR_MSG("!else: no if block open (!if[macro][n][def])\n");
+      return PS_ERROR;
+    }
+    
+    if (cur_ifblock->elseused)
+    {
+      ERROR_MSG("!else: else already used in current if block\n");
       return PS_ERROR;
     }
 
@@ -376,16 +382,17 @@ parse_again:
 
     line.eattoken();
 
-    int v=line.gettoken_enum(0,"ifdef\0ifndef\0ifmacrodef\0ifmacrondef\0");
+    int v=line.gettoken_enum(0,"if\0ifdef\0ifndef\0ifmacrodef\0ifmacrondef\0");
     if (v < 0) PRINTHELP()
     if (line.getnumtokens() == 1) PRINTHELP()
-    int cmds[] = {TOK_P_IFDEF, TOK_P_IFNDEF, TOK_P_IFMACRODEF, TOK_P_IFMACRONDEF};
+    int cmds[] = {TOK_P_IF, TOK_P_IFDEF, TOK_P_IFNDEF, TOK_P_IFMACRODEF, TOK_P_IFMACRONDEF};
     tkid = cmds[v];
     if_from_else++;
   }
 
   if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF ||
-      tkid == TOK_P_IFMACRODEF || tkid == TOK_P_IFMACRONDEF)
+      tkid == TOK_P_IFMACRODEF || tkid == TOK_P_IFMACRONDEF ||
+      tkid == TOK_P_IF)
   {
     if (!if_from_else)
       start_ifblock();
@@ -398,29 +405,74 @@ parse_again:
     int istrue=0;
 
     int mod=0;
-    int p;
-
-    // pure left to right precedence. Not too powerful, but useful.
-    for (p = 1; p < line.getnumtokens(); p ++)
-    {
-      if (p & 1)
-      {
-        int new_s;
-        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
-          new_s=!!definedlist.find(line.gettoken_str(p));
-        else
-          new_s=MacroExists(line.gettoken_str(p));
-        if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFMACRONDEF)
-          new_s=!new_s;
-
-        if (mod == 0) istrue = istrue || new_s;
-        else istrue = istrue && new_s;
+	  
+    int p=0;
+    
+    if (tkid == TOK_P_IF) {
+      if(!strcmp(line.gettoken_str(1),"!")) {
+        p = 1;
+        line.eattoken();
       }
-      else
+      
+      if(line.getnumtokens() == 2)
+        istrue = line.gettoken_int(1);
+          
+      else if (line.getnumtokens() == 4) {
+        mod = line.gettoken_enum(2,"=\0==\0!=\0<=\0<\0>\0>=\0&\0&&\0|\0||\0");
+        
+        switch(mod) {
+          case 0:
+          case 1:
+            istrue = strcmp(line.gettoken_str(1),line.gettoken_str(3)) == 0; break;
+          case 2:
+            istrue = strcmp(line.gettoken_str(1),line.gettoken_str(3)) != 0; break;
+          case 3:
+            istrue = line.gettoken_float(1) <= line.gettoken_float(3); break;
+          case 4:
+            istrue = line.gettoken_float(1) <  line.gettoken_float(3); break;
+          case 5:
+            istrue = line.gettoken_float(1) >  line.gettoken_float(3); break;
+          case 6:
+            istrue = line.gettoken_float(1) >= line.gettoken_float(3); break;
+          case 7:
+          case 8:
+            istrue = line.gettoken_int(1) && line.gettoken_int(3); break;
+          case 9:
+          case 10:
+            istrue = line.gettoken_int(1) || line.gettoken_int(3); break;
+          default:
+            PRINTHELP()
+        }
+      }
+      else PRINTHELP()
+        
+      if(p) istrue = !istrue;
+    }
+
+    else {
+  
+      // pure left to right precedence. Not too powerful, but useful.
+      for (p = 1; p < line.getnumtokens(); p ++)
       {
-        mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
-        if (mod == -1) PRINTHELP()
-        mod &= 1;
+        if (p & 1)
+        {
+          int new_s;
+          if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFDEF)
+            new_s=!!definedlist.find(line.gettoken_str(p));
+          else
+            new_s=MacroExists(line.gettoken_str(p));
+          if (tkid == TOK_P_IFNDEF || tkid == TOK_P_IFMACRONDEF)
+            new_s=!new_s;
+  
+          if (mod == 0) istrue = istrue || new_s;
+          else istrue = istrue && new_s;
+        }
+        else
+        {
+          mod=line.gettoken_enum(p,"|\0&\0||\0&&\0");
+          if (mod == -1) PRINTHELP()
+          mod &= 1;
+        }
       }
     }
 
@@ -437,7 +489,7 @@ parse_again:
   if (tkid == TOK_P_ENDIF) {
     if (!num_ifblock())
     {
-      ERROR_MSG("!endif: no !ifdef open\n");
+      ERROR_MSG("!endif: no if block open (!if[macro][n][def])\n");
       return PS_ERROR;
     }
     end_ifblock();

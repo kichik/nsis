@@ -31,7 +31,7 @@ Removes an item from the global define list. Note that $\{SYMBOL\} where SYMBOL 
 
 \S1{ifdef} !ifdef
 
-\c gflag [bcheck [gflag [...]]]
+\c gflag [bcheck gflag [...]]]
 
 This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If gflag is globally defined (using !define or the /D switch), then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.
 
@@ -46,13 +46,29 @@ This command, when paired with an !endif command, will tell the compiler whether
 
 \S1{ifndef} !ifndef
 
-\c gflag [bcheck [gflag [...]]]
+\c gflag [bcheck gflag [...]]]
 
 The opposite of !ifdef. The lines will be compiled when the gflag has not been defined.
 
+\S1{if} !if
+
+\c [!] value [op value2]
+
+This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If value is non-zero, or the comparison of value and value2 depending on the operator results in true, the contained lines will be compiled. Otherwise, they will be skipped.
+op can be either == or != (string comparison), <=, < > or >= (float comparison), && or || (boolean comparison).
+If [!] is set, return value will be switched from true to false and vice versa.
+
+\c !if 1 < 2
+\c   !echo "1 is smaller than 2!!"
+\c !else if ! 3.1 > 1.99
+\c   !error "this line should never appear"
+\c !else
+\c   !error "neither should this"
+\c !endif
+
 \S1{ifmacrodef} !ifmacrodef
 
-\c gflag [bcheck [gflag [...]]]
+\c gflag [bcheck gflag [...]]]
 
 This command, when paired with an !endif command, will tell the compiler whether or not to compile the lines in between the two lines. If the macro gflag exists, then the contained lines will be compiled. Otherwise, they will be skipped. 'bcheck' can be specified as & (boolean and) or | (boolean or) along with more gflags -- precedence is simple, left to right.
 
@@ -64,13 +80,13 @@ This command, when paired with an !endif command, will tell the compiler whether
 
 \S1{ifmacrondef} !ifmacrondef
 
-\c gflag [bcheck [gflag [...]]]
+\c gflag [bcheck gflag [...]]]
 
 The opposite of !ifmacrodef. The lines will be compiled when the macro gflag does not exist.
 
 \S1{else} !else
 
-\c [ifdef|ifndef|ifmacrodef|ifmacrondef [...]]
+\c [if|ifdef|ifndef|ifmacrodef|ifmacrondef [...]]
 
 This command allows to easily insert different code when different defines or macros are set. You can create blocks like !ifdef/!else/!endif, !ifdef/!else ifdef/!else/!endif etc.
 
@@ -82,7 +98,7 @@ This command allows to easily insert different code when different defines or ma
 
 \S1{endif} !endif
 
-This command closes a block started with !ifdef, !ifndef, !ifmacrodef or !ifmacrondef.
+This command closes a block started with !if, !ifdef, !ifndef, !ifmacrodef or !ifmacrondef.
 
 \S1{insertmacro} !insertmacro
 
