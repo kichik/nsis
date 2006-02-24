@@ -51,6 +51,40 @@ d\
 i\
 f
 
+# tests for !if statement
+!if 'test' == 'test'
+ !if 1 <= 2
+  !if ! 100 < 99.99
+   !if 2.2 > 1.12
+    !if ! 23 >= 37
+     !if 1 && 1
+      !if ! 0 || 0
+
+        # this should be compiled
+
+      !else
+       !error "!if ! 0 || 0 is true!"
+      !endif
+     !else
+      !error "!if 1 && 1 is true!"
+     !endif
+    !else
+     !error "!if ! 23 >= 37 is true!"
+    !endif
+   !else
+    !error "!if 2.2 > 1.12 is true!"
+   !endif
+  !else
+   !error "!if ! 100 < 99.99 is true!"
+  !endif
+ !else
+  !error "!if 1 <= 2 is true!"
+ !endif
+!else
+ !error "!if 'test' == 'test' is true!"
+!endif
+
+
 # this should just give a warning, not an error
 !include /NONFATAL file_that_doesnt_exist.nsh
 
