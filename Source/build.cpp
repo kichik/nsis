@@ -3,6 +3,8 @@
 #include "exehead/config.h"
 #include "exehead/fileform.h"
 
+#include "version.h"
+
 #include "build.h"
 #include "util.h"
 
@@ -84,7 +86,7 @@ CEXEBuild::CEXEBuild() :
   ns_func.add("",0); // make sure offset 0 is special on these (i.e. never used by a label)
   ns_label.add("",0);
 
-  definedlist.add("NSIS_VERSION", CONST_STR(NSIS_VERSION));
+  definedlist.add("NSIS_VERSION", NSIS_VERSION);
 
 #define intdef2str_(x) #x
 #define intdef2str(x) intdef2str_(x)

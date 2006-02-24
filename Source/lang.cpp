@@ -5,6 +5,7 @@
 #include "util.h"
 #include "DialogTemplate.h"
 #include "exehead/resource.h"
+#include "version.h"
 
 using namespace std;
 
@@ -840,8 +841,8 @@ void CEXEBuild::FillLanguageTable(LanguageTable *table) {
           if (!dstr)
             continue;
           if (i == NLF_BRANDING) {
-            char temp[NSIS_MAX_STRLEN + sizeof(CONST_STR(NSIS_VERSION))];
-            sprintf(temp, dstr, CONST_STR(NSIS_VERSION));
+            char temp[NSIS_MAX_STRLEN + sizeof(NSIS_VERSION)];
+            sprintf(temp, dstr, NSIS_VERSION);
             table->lang_strings->set(sn, temp);
             continue;
           }
