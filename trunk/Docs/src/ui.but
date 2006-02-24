@@ -66,7 +66,7 @@ Hides the installer.
 If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).
 
 \c GetDlgItem $0 $HWNDPARENT 1
-\c IsWindow 0 +3
+\c IsWindow $0 0 +3
 \c   MessageBox MB_OK "found a window"
 \c   Goto +2
 \c   MessageBox MB_OK "no window"
