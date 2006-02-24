@@ -105,24 +105,21 @@ ${increase} number3
 !endif
 
 !if ${number2} != 5
-  !error "number1 != 5"
+  !error "number2 != 5"
 !endif
 
 !if ${number3} != 5
-  !error "number1 != 5"
+  !error "number3 != 5"
 !endif
 
 !if ${number4} != 10
-  !error "number1 != 10"
+  !error "number4 != 10"
 !endif
 
 !if ${number5} != 1
-  !error "number1 != 1"
+  !error "number5 != 1"
 !endif
 
-!undef number1
-!undef number2
-!undef number3
 ; end math functions
 
 # this should just give a warning, not an error
