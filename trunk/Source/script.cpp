@@ -2689,6 +2689,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
       char *define=line.gettoken_str(1);
       char *value;
       char datebuf[256];
+      char mathbuf[256];
       bool date=false;
 
       if (!stricmp(define,"/date")) {
@@ -2724,6 +2725,7 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
         value1 = line.gettoken_int(3);
         mathop = line.gettoken_str(4);
         value2 = line.gettoken_int(5);
+        value = mathbuf;
 
         if (!strcmp(mathop,"+")) {
           sprintf(value,"%d",value1+value2);
