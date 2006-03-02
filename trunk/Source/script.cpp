@@ -2923,6 +2923,9 @@ int CEXEBuild::doCommand(int which_token, LineParser &line)
             included++;
           }
 
+          if (included)
+            return PS_OK;
+
         }
 
         // nothing found
