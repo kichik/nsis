@@ -74,7 +74,7 @@ Replaces dialog (\e{IDD_LICENSE}, \e{IDD_DIR}, \e{IDD_SELCOM}, \e{IDD_INST}, \e{
 
 \b \e{IDD_SELCOM} must contain \e{IDC_TREE1} (SysTreeView32 control), and \e{IDC_COMBO1} (combo box).
 
-\b \e{IDD_INST} must contain \e{IDC_BACK} (button), \e{IDC_CHILDRECT} (static control the size of all other dialogs), \e{IDC_VERSTR} (static), \e{IDOK} (button), and \e{IDCANCEL} (button). If an image control (static with \e{SS_BITMAP} style) will be found in this dialog it will be used as the default for SetBrandingImage.
+\b \e{IDD_INST} must contain \e{IDC_BACK} (button), \e{IDC_CHILDRECT} (static control the size of all other dialogs), \e{IDC_VERSTR} (static), \e{IDOK} (button), and \e{IDCANCEL} (button). If an image control (static with \e{SS_BITMAP} style) will be found in this dialog it will be used as the default for \R{setbrandingimage}{SetBrandingImage}.
 
 \b \e{IDD_INSTFILES} must contain \e{IDC_LIST1} (SysListView32 control), \e{IDC_PROGRESS} (msctls_progress32 control), and \e{IDC_SHOWDETAILS} (button).
 
