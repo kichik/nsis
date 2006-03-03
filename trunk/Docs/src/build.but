@@ -79,6 +79,10 @@ This should only build makensis. Once you have makensis, you can drop it in a do
 
 Note that compiling on big-endian platforms is possible. However, makensis will not work on such platforms.
 
+Currently, the System plug-in \W{http://forums.winamp.com/showthread.php?s=&threadid=227304}{can't be built} using a cross-compiler, but only with MSVC. When building with a cross compiler, always use at least the following flags:
+
+\c scons SKIPPLUGINS=System
+
 \H{build_nightly}Nightly Builds
 
 If you don't want to build NSIS on your own but want to get the latest CVS version, you can use the \W{http://nsis.sourceforge.net/nightly/nsis.zip}{nightly build}. The nightly build is automatically generated every night from source code in CVS.
