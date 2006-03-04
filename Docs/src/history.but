@@ -1,5 +1,75 @@
 \A{history} Changelog and Release Notes
 
+\H{v2.15} 2.15
+
+Released on March 4th, 2006
+
+\S1{v2.15-cl} Changelog
+
+\S2{} New/Changed Commands
+
+\b Added \R{if}{!if} for more complex compile-time flow control (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1412982}{patch #1412982})
+
+\b Added /math switch to \R{define}{!define} for simple compile-time mathematical operations (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1372561}{patch #1372561})
+
+\S2{} Minor Changes
+
+\b Added more replacement options to \R{wordreplace}{WordReplace}
+
+\b Added NSIS_CONFIG_LOG_STDOUT configuration option for logging to stdout
+
+\b Added path translation for \R{addincludedir}{!addincludedir} (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1431958}{bug #1431958})
+
+\b \R{configread}{ConfigRead} now sets the error flag, if the entry wasn't found
+
+\b Documented \R{nop}{Nop}
+
+\b Edit box in the installation directory selection page is now always LTR, even for RTL languages
+
+\b Fixed improper iterator usage in dir_reader (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1431593}{bug #1431593})
+
+\b Fixed \c{\R{messagebox}{MessageBox} MB_TOPMOST} not showing up, if used as the first sections' instruction  (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1400995}{bug #1400995})
+
+\b Fixed \R{rmdir}{RMDir} skipping files with names starting with two dots (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1420657}{bug #1420657})
+
+\b \R{getoptions}{GetOptions} now sets the error flag, if the option wasn't found
+
+\b Made \R{include}{!include} stop searching the include directories after a match is found (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1441877}{bug #1441877})
+
+\b Made \R{headers}{header functions} use /NOUNLOAD for faster plug-in calls
+
+\b Minor documentation improvements and fixes (including \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1420352}{bug #1420352}, \W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1432423}{bug #1432423})
+
+\b More informative \R{aicon}{Icon} error messages (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1174742}{bug #1174742})
+
+\b New case sesnsitive functions in headers: \R{wordfinds}{WordFindS}, \R{wordfind2xs}{WordFind2XS}, \R{wordfind3xs}{WordFind3XS}, \R{wordreplaces}{WordReplaceS}, \R{wordadds}{WordAddS}, \R{wordinserts}{WordInsertS}, \R{strfilters}{StrFilterS}, \R{textcompares}{TextCompareS}, \R{configreads}{ConfigReadS}, \R{configwrites}{ConfigWriteS}, \R{getoptionss}{GetOptionsS}
+
+\S2{} Translations
+
+\b Added proper language identifier for Breton
+
+\b Breton translation improvements
+
+\b Bulgarian translation improvements
+
+\b Fixed Czech grammer mistakes (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1427189}{patch #1427189})
+
+\b Fixed Italian typo (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1416988}{patch #1416988})
+
+\b Updated Mongolian
+
+\S2{} Build System
+
+\b Fixed __BIG_ENDIAN__ definition
+
+\b Fixed improper handling of paths passed to the compiler (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373085&aid=1434215}{bug #1434215})
+
+\b Improved GCC 4.2 compatibility (\W{http://sourceforge.net/tracker/index.php?func=detail&group_id=22049&atid=373087&aid=1434174}{patch #1434174})
+
+\b Moved NSIS_VARS_SECTION from config.h to scons
+
+\b Write all configuration to sconf.h instead of passing it on the command line
+
 \H{v2.14} 2.14
 
 Released on January 24th, 2006
