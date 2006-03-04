@@ -534,7 +534,14 @@ int CEXEBuild::GenerateLangTables() {
             CDialogTemplate td(dlg,lt[i].nlf.m_uCodePage); \
             res_editor->FreeResource(dlg); \
             if (font) td.SetFont(font, lt[i].nlf.m_iFontSize); \
-            if (lt[i].nlf.m_bRTL) td.ConvertToRTL(); \
+            if (lt[i].nlf.m_bRTL) { \
+              td.ConvertToRTL(); \
+              DialogItemTemplate* dir = td.GetItem(IDC_DIR); \
+              if (id == IDD_DIR && dir) { \
+                if ((dir->dwStyle & ES_CENTER) == 0) dir->dwStyle ^= ES_RIGHT; \
+                dir->dwExtStyle &= ~(WS_EX_RTLREADING | WS_EX_LEFTSCROLLBAR); \
+              } \
+            } \
             DWORD dwSize; \
             dlg = td.Save(dwSize); \
             res_editor->UpdateResource(RT_DIALOG, MAKEINTRESOURCE(id+cur_offset), NSIS_DEFAULT_LANG, dlg, dwSize); \
