@@ -1,0 +1,24 @@
+target = 'AdvSplash'
+
+files = Split("""
+	advsplash.c
+""")
+
+libs = Split("""
+	kernel32
+	user32
+	gdi32
+	winmm
+""")
+
+examples = Split("""
+	Example.nsi
+""")
+
+docs = Split("""
+	advsplash.txt
+""")
+
+Import('BuildPlugin')
+
+BuildPlugin(target, files, libs, examples, docs)
