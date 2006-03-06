@@ -184,6 +184,7 @@ typedef struct NSISScriptData {
   HMENU editSubmenu;
   HMENU toolsSubmenu;
   HANDLE thread;
+  HANDLE sigint_event;
   HWND focused_hwnd;
   CHARRANGE textrange;
   NCOMPRESSOR default_compressor;

@@ -162,6 +162,7 @@ void ErrorMessage(HWND hwnd,const char *str) {
 // Altered by Darren Owen (DrO) on 1/10/2003
 void Items(HWND hwnd, int on){
   UINT mf = (!on ? MF_GRAYED : MF_ENABLED);
+  UINT nmf = (!on ? MF_ENABLED : MF_GRAYED);
 
   if(!on)
       g_sdata.focused_hwnd = GetFocus();
@@ -189,6 +190,7 @@ void Items(HWND hwnd, int on){
   EnableMenuItem(g_sdata.menu,IDM_BROWSESCR,mf);
   EnableMenuItem(g_sdata.menu,IDM_RECOMPILE_TEST,mf);
   EnableMenuItem(g_sdata.menu,IDM_COMPRESSOR,mf);
+  EnableMenuItem(g_sdata.menu,IDM_CANCEL,nmf);
 
   EnableToolBarButton(IDM_SAVE,on);
   // Altered by Darren Owen (DrO) on 6/10/2003
