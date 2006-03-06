@@ -79,6 +79,34 @@ static void sigint(int sig)
   quit();
 }
 
+#ifdef _WIN32
+static DWORD WINAPI sigint_event_msg_handler(LPVOID)
+{
+  HANDLE hEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, "makensis win32 signint event");
+
+  if (hEvent)
+  {
+    if (WaitForSingleObject(hEvent, INFINITE) == WAIT_OBJECT_0)
+      raise(SIGINT);
+    CloseHandle(hEvent);
+  }
+
+  return 0;
+}
+#endif
+
+static void init_signals()
+{
+  atexit(myatexit);
+  signal(SIGINT,sigint);
+
+#ifdef _WIN32
+  DWORD id;
+  HANDLE hThread = CreateThread(NULL, 0, sigint_event_msg_handler, NULL, 0, &id);
+  if (hThread) CloseHandle(hThread);
+#endif
+}
+
 static void print_logo()
 {
   fprintf(g_output,"MakeNSIS %s - Copyright 1999-2006 Nullsoft, Inc.\n"
@@ -284,8 +312,7 @@ int main(int argc, char **argv)
     print_logo();
   }
 
-  atexit(myatexit);
-  signal(SIGINT,sigint);
+  init_signals();
 
   if (!g_output) g_output=stdout;
   while (argpos < argc)
