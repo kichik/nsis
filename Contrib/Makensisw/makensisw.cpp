@@ -45,6 +45,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
   g_sdata.hInstance=GetModuleHandle(0);
   g_sdata.script_alloced=false;
   g_sdata.symbols = NULL;
+  g_sdata.sigint_event = CreateEvent(NULL, FALSE, FALSE, "makensis win32 signint event");
   RestoreSymbols();
 
   if (!InitBranding()) {
@@ -70,6 +71,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char *cmdParam, int cmd
     }
   }
   if (g_sdata.script_alloced) GlobalFree(g_sdata.script);
+  if (g_sdata.sigint_event) CloseHandle(g_sdata.sigint_event);
   FinalizeUpdate();
   ExitProcess(msg.wParam);
   return msg.wParam;
@@ -574,6 +576,11 @@ BOOL CALLBACK DialogProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
           if (!g_sdata.thread) {
             DestroyWindow(g_sdata.hwnd);
           }
+          return TRUE;
+        }
+        case IDM_CANCEL:
+        {
+          SetEvent(g_sdata.sigint_event);
           return TRUE;
         }
         case IDM_COPY:
