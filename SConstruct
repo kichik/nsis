@@ -158,7 +158,7 @@ f.close()
 
 # write version into version.h
 f = open(File('#Source/version.h').abspath, 'w')
-f.write('#define NSIS_VERSION "%s"' % defenv['VERSION'])
+f.write('#define NSIS_VERSION "v%s"' % defenv['VERSION'])
 f.close()
 
 ######################################################################
