@@ -95,13 +95,14 @@
 #define IDM_RECOMPILE_TEST              40033
 #define IDM_BEST                        40034
 #define IDM_SETTINGS                    40035
+#define IDM_CANCEL                      40036
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        133
-#define _APS_NEXT_COMMAND_VALUE         40036
+#define _APS_NEXT_COMMAND_VALUE         40037
 #define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -88,6 +88,7 @@ BEGIN
         MENUITEM "&Recompile\tCtrl+R",          IDM_RECOMPILE
         MENUITEM "Test &Installer\tCtrl+T",     IDM_TEST
         MENUITEM "Reco&mpile and Test\tCtrl+M", IDM_RECOMPILE_TEST
+        MENUITEM "C&ancel compilation",         IDM_CANCEL
         MENUITEM SEPARATOR
         POPUP "Set &Compressor"
         BEGIN
