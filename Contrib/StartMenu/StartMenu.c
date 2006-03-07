@@ -358,14 +358,16 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
         pushstring("cancel");
       else
       {
+        GetWindowText(hwLocation, buf + 1, MAX_PATH);
         if (IsDlgButtonChecked(hwndDlg, IDC_CHECK) == BST_CHECKED)
         {
-          short *sbuf = (short *) buf;
-          *sbuf = *(short *) ">";
+          buf[0] = '>';
+          pushstring(buf);
         }
-        else *buf = 0;
-        GetWindowText(hwLocation, buf + (*buf ? 1 : 0), MAX_PATH);
-        pushstring(buf);
+        else
+        {
+          pushstring(buf + 1);
+        }
         pushstring("success");
       }
     case WM_CTLCOLORSTATIC:
