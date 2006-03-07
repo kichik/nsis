@@ -75,6 +75,7 @@ typedef struct {
 typedef struct {
   exec_flags_type *exec_flags;
   int (__stdcall *ExecuteCodeSegment)(int, HWND);
+  void (__stdcall *validate_filename)(char *);
 } extra_parameters;
 
 // utility functions (not required but often useful)

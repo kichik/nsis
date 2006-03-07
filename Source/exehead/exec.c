@@ -30,9 +30,11 @@ exec_flags g_exec_flags;
 struct {
   exec_flags *flags;
   void *ExecuteCodeSegment;
+  void *validate_filename;
 } plugin_extra_parameters = {
   &g_exec_flags,
-  &ExecuteCodeSegment
+  &ExecuteCodeSegment,
+  &validate_filename
 };
 
 #if defined(NSIS_SUPPORT_ACTIVEXREG) || defined(NSIS_SUPPORT_CREATESHORTCUT)
