@@ -23,15 +23,19 @@ int rtl = 0;
 
 void *lpWndProcOld;
 
+void (__stdcall *validate_filename)(char *);
+
 BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 static BOOL CALLBACK ParentWndProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddFolderFromReg(int nFolder);
 
-void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) Init(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
   HWND hwStartMenuSelect;
 
   hwParent = hwndParent;
+
+  validate_filename = extra->validate_filename;
 
   EXDLL_INIT();
 
@@ -120,9 +124,9 @@ void __declspec(dllexport) Show(HWND hwndParent, int string_size, char *variable
   SetWindowLong(hwndParent, DWL_DLGPROC, (long) lpWndProcOld);
 }
 
-void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop)
+void __declspec(dllexport) Select(HWND hwndParent, int string_size, char *variables, stack_t **stacktop, extra_parameters *extra)
 {
-  Init(hwndParent, string_size, variables, stacktop);
+  Init(hwndParent, string_size, variables, stacktop, extra);
   if (g_hwStartMenuSelect)
   {
     popstring(buf);
@@ -359,6 +363,7 @@ BOOL CALLBACK dlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
       else
       {
         GetWindowText(hwLocation, buf + 1, MAX_PATH);
+        validate_filename(buf);
         if (IsDlgButtonChecked(hwndDlg, IDC_CHECK) == BST_CHECKED)
         {
           buf[0] = '>';
