@@ -500,7 +500,8 @@ void NSISCALL myRegGetStr(HKEY root, const char *sub, const char *name, char *ou
 
 void NSISCALL myitoa(char *s, int d)
 {
-  wsprintf(s,"%d",d);
+  static const char c[] = "%d";
+  wsprintf(s,c,d);
 }
 
 int NSISCALL myatoi(char *s)
