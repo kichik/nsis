@@ -133,15 +133,23 @@ CLZMA::CLZMA(): _encoder(NULL)
   hCompressionThread = 0;
   SetNextOut(NULL, 0);
   SetNextIn(NULL, 0);
+
+  AddRef(); // will be manually deleted, not released
 }
 
 CLZMA::~CLZMA()
 {
   End();
   if (hNeedIOEvent)
+  {
     CloseHandle(hNeedIOEvent);
+    hNeedIOEvent = NULL;
+  }
   if (hIOReadyEvent)
+  {
     CloseHandle(hIOReadyEvent);
+    hIOReadyEvent = NULL;
+  }
   if (_encoder)
   {
     delete _encoder;
