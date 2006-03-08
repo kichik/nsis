@@ -388,7 +388,7 @@ __declspec(dllexport) void download (HWND   parent,
           lstrcpyn(url, get->geterrorstr(), sizeof(url));
           error = url;
         } else if (st == 1) {
-          if (sofar < cl)
+          if (sofar < cl || get->get_status () != 2)
             error="download incomplete";
           else
           {
