@@ -144,8 +144,8 @@ SConscript('SCons/config.py')
 
 # add prefixes defines
 if defenv['PLATFORM'] != 'win32':
-	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv['PREFIX_CONF'])])
-	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv['PREFIX_DATA'])])
+	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_CONF', '"%s"' % defenv.subst('$PREFIX_CONF'))])
+	defenv.Append(NSIS_CPPDEFINES = [('PREFIX_DATA', '"%s"' % defenv.subst('$PREFIX_DATA'))])
 
 # write configuration into sconf.h
 f = open(File('#Source/exehead/sconf.h').abspath, 'w')
