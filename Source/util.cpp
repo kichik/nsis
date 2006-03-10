@@ -143,7 +143,7 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
   IconGroupHeader igh;
   if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw runtime_error("invalid icon file");
+  if (igh.wIsIcon != 1 || igh.wReserved != 0) throw runtime_error("invalid icon file");
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
@@ -211,7 +211,7 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
   IconGroupHeader igh;
   if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
 
-  if (igh.wIsIcon != 1 && igh.wReserved != 0) throw runtime_error("invalid icon file");
+  if (igh.wIsIcon != 1 || igh.wReserved != 0) throw runtime_error("invalid icon file");
 
   int iNewIconSize = 0;
   FileIconGroupEntry ige;
