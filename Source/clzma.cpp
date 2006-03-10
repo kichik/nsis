@@ -54,7 +54,7 @@ BOOL CloseHandle(HANDLE _event)
 {
   BOOL ret = TRUE;
   evnet_t *event = (evnet_t *) _event;
-  if (event)
+  if (!event)
     return FALSE;
   if (pthread_cond_destroy(&event->cond))
     ret = FALSE;
