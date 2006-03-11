@@ -73,18 +73,17 @@ BOOL CloseHandle(HANDLE _event)
 DWORD WaitForSingleObject(HANDLE _event, DWORD) {
   DWORD ret = WAIT_OBJECT_0;
   evnet_t *event = (evnet_t *) _event;
+  if (pthread_mutex_lock(&event->mutex))
+    return !WAIT_OBJECT_0;
   if (!event->signaled)
   {
-    pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
-    if (pthread_mutex_lock(&m) || pthread_cond_wait(&event->cond, &m))
+    if (pthread_cond_wait(&event->cond, &event->mutex))
     {
       ret = !WAIT_OBJECT_0;
     }
-    pthread_mutex_unlock(&m);
-    pthread_mutex_destroy(&m);
   }
-  if (!ResetEvent(_event))
-    return !WAIT_OBJECT_0;
+  event->signaled = false;
+  pthread_mutex_unlock(&event->mutex);
   return ret;
 }
 
