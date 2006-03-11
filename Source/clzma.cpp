@@ -46,7 +46,11 @@ BOOL SetEvent(HANDLE _event)
 BOOL ResetEvent(HANDLE _event)
 {
   evnet_t *event = (evnet_t *) _event;
+  if (pthread_mutex_lock(&event->mutex))
+    return FALSE;
   event->signaled = false;
+  if (pthread_mutex_unlock(&event->mutex))
+    return FALSE;
   return TRUE;
 }
 
@@ -79,10 +83,7 @@ DWORD WaitForSingleObject(HANDLE _event, DWORD) {
     pthread_mutex_unlock(&m);
     pthread_mutex_destroy(&m);
   }
-  if (pthread_mutex_lock(&event->mutex))
-    return !WAIT_OBJECT_0;
-  event->signaled = false;
-  if (pthread_mutex_unlock(&event->mutex))
+  if (!ResetEvent(_event))
     return !WAIT_OBJECT_0;
   return ret;
 }
