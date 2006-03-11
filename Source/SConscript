@@ -8,6 +8,7 @@ makensis_files = Split("""
 	crc32.c
 	DialogTemplate.cpp
 	dirreader.cpp
+	fileform.cpp
 	growbuf.cpp
 	lang.cpp
 	lineparse.cpp
@@ -21,6 +22,7 @@ makensis_files = Split("""
 	strlist.cpp
 	tokens.cpp
 	util.cpp
+	writer.cpp
 """)
 
 bzip2_files = Split("""
