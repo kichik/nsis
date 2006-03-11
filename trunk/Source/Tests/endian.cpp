@@ -1,5 +1,5 @@
 #include <cppunit/extensions/HelperMacros.h>
-#include "../util.h"
+#include "../Platform.h"
 
 class EndianTest : public CppUnit::TestFixture {
 
