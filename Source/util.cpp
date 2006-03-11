@@ -53,6 +53,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     LONG biWidth;
     fseek(f, 18, SEEK_SET); // Seek to the width member of the header
     fread(&biWidth, sizeof(LONG), 1, f);
+    FIX_ENDIAN_INT32_INPLACE(biWidth);
     if (width != biWidth) {
       fclose(f);
       return -3;
@@ -63,6 +64,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     LONG biHeight;
     fseek(f, 22, SEEK_SET); // Seek to the height member of the header
     fread(&biHeight, sizeof(LONG), 1, f);
+    FIX_ENDIAN_INT32_INPLACE(biHeight);
     // Bitmap height can be negative too...
     if (height != abs(biHeight)) {
       fclose(f);
@@ -74,6 +76,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
     WORD biBitCount;
     fseek(f, 28, SEEK_SET); // Seek to the height member of the header
     fread(&biBitCount, sizeof(WORD), 1, f);
+    FIX_ENDIAN_INT16_INPLACE(biBitCount);
     if (biBitCount > maxbpp) {
       fclose(f);
       return -4;
@@ -83,6 +86,7 @@ int update_bitmap(CResourceEditor* re, WORD id, const char* filename, int width/
   DWORD dwSize;
   fseek(f, 2, SEEK_SET);
   fread(&dwSize, sizeof(DWORD), 1, f);
+  FIX_ENDIAN_INT32_INPLACE(dwSize);
   dwSize -= 14;
 
   unsigned char* bitmap = (unsigned char*)malloc(dwSize);
@@ -134,16 +138,30 @@ typedef struct {
 
 #define SIZEOF_RSRC_ICON_GROUP_ENTRY 14
 
+static FILE * open_icon(const char* filename, IconGroupHeader *igh)
+{
+  FILE* f = FOPEN(filename, "rb");
+  if (!f)
+    throw runtime_error("can't open file");
+
+  if (!fread(igh, sizeof(IconGroupHeader), 1, f))
+    throw runtime_error("unable to read file");
+
+  FIX_ENDIAN_INT16_INPLACE(igh->wIsIcon);
+  FIX_ENDIAN_INT16_INPLACE(igh->wReserved);
+  FIX_ENDIAN_INT16_INPLACE(igh->wCount);
+
+  if (igh->wIsIcon != 1 || igh->wReserved != 0)
+    throw runtime_error("invalid icon file");
+
+  return f;
+}
+
 // replace_icon, must get an initialized resource editor
 void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 {
-  FILE* f = FOPEN(filename, "rb");
-  if (!f) throw runtime_error("can't open file");
-
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
-
-  if (igh.wIsIcon != 1 || igh.wReserved != 0) throw runtime_error("invalid icon file");
+  FILE *f = open_icon(filename, &igh);
 
   BYTE* rsrcIconGroup = (BYTE*)malloc(sizeof(IconGroupHeader) + igh.wCount*SIZEOF_RSRC_ICON_GROUP_ENTRY);
   if (!rsrcIconGroup) throw bad_alloc();
@@ -159,10 +177,16 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
 
   for (i = 0; i < igh.wCount; i++) {
     fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
+
+    FIX_ENDIAN_INT16_INPLACE(ige->wRsrcId);
+    FIX_ENDIAN_INT32_INPLACE(ige->dwRawSize);
+
     ige->wRsrcId = i+1;
 
     DWORD dwOffset;
     fread(&dwOffset, sizeof(DWORD), 1, f);
+
+    FIX_ENDIAN_INT32_INPLACE(dwOffset);
 
     fpos_t pos;
     fgetpos(f, &pos);
@@ -200,13 +224,8 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 {
   int i;
 
-  FILE* f = FOPEN(filename, "rb");
-  if (!f) throw runtime_error("can't open file");
-
   IconGroupHeader igh;
-  if (!fread(&igh, sizeof(IconGroupHeader), 1, f)) throw runtime_error("unable to read file");
-
-  if (igh.wIsIcon != 1 || igh.wReserved != 0) throw runtime_error("invalid icon file");
+  FILE *f = open_icon(filename, &igh);
 
   int iNewIconSize = 0;
   FileIconGroupEntry ige;
@@ -219,7 +238,7 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
     if (!fread(&ige, sizeof(FileIconGroupEntry), 1, f)) throw runtime_error("unable to read file");
     offsets[i] = ige.dwImageOffset;
     rawSizes[i] = ige.dwRawSize;
-    iNewIconSize += ige.dwRawSize;
+    iNewIconSize += FIX_ENDIAN_INT32(ige.dwRawSize);
   }
 
   // Before each icon come two DWORDs, one for size and the other for offset (set later)
@@ -236,9 +255,9 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
     seeker += sizeof(DWORD);
     *(DWORD*)seeker = 0;
     seeker += sizeof(DWORD);
-    fseek(f, offsets[i], SEEK_SET);
-    fread(seeker, 1, rawSizes[i], f);
-    seeker += rawSizes[i];
+    fseek(f, FIX_ENDIAN_INT32(offsets[i]), SEEK_SET);
+    fread(seeker, 1, FIX_ENDIAN_INT32(rawSizes[i]), f);
+    seeker += FIX_ENDIAN_INT32(rawSizes[i]);
   }
 
   // This is how we know there are no more icons (size = 0)
@@ -256,8 +275,11 @@ unsigned char* generate_uninstall_icon_data(const char* filename, size_t &size)
 #define MY_ASSERT(x, y) if (x) {if (g_display_errors) fprintf(g_output,"\nError finding icon resources: %s -- failing!\n", y);return 0;}
 
 int find_in_dir(PRESOURCE_DIRECTORY rd, WORD id) {
-  for (int i = rd->Header.NumberOfNamedEntries; i < rd->Header.NumberOfNamedEntries + rd->Header.NumberOfIdEntries; i++) {
-    if (rd->Entries[i].Id == id) {
+  WORD i = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries);
+  WORD l = FIX_ENDIAN_INT16(rd->Header.NumberOfNamedEntries + rd->Header.NumberOfIdEntries);
+
+  for (; i < l; i++) {
+    if (FIX_ENDIAN_INT16(rd->Entries[i].Id) == id) {
       return i;
     }
   }
