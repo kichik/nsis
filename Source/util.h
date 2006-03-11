@@ -38,14 +38,23 @@ size_t my_strftime(char *s, size_t max, const char  *fmt, const struct tm *tm);
 
 #ifndef __BIG_ENDIAN__
 # define FIX_ENDIAN_INT32_INPLACE(x) (x)
+# define FIX_ENDIAN_INT32(x) (x)
+# define FIX_ENDIAN_INT16_INPLACE(x) (x)
+# define FIX_ENDIAN_INT16(x) (x)
 #else
 # define FIX_ENDIAN_INT32_INPLACE(x) ((x) = SWAP_ENDIAN_INT32(x))
+# define FIX_ENDIAN_INT32(x) SWAP_ENDIAN_INT32(x)
+# define FIX_ENDIAN_INT16_INPLACE(x) ((x) = SWAP_ENDIAN_INT16(x))
+# define FIX_ENDIAN_INT16(x) SWAP_ENDIAN_INT16(x)
 #endif
 #define SWAP_ENDIAN_INT32(x) ( \
   (((x)&0xFF000000) >> 24) | \
   (((x)&0x00FF0000) >>  8) | \
   (((x)&0x0000FF00) <<  8) | \
   (((x)&0x000000FF) << 24) )
+#define SWAP_ENDIAN_INT16(x) ( \
+  (((x)&0xFF00) >> 8) | \
+  (((x)&0x00FF) << 8) )
 
 std::string get_full_path(const std::string& path);
 std::string get_dir_name(const std::string& path);
