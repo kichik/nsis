@@ -157,8 +157,6 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
   // Delete old icons
   while (re->UpdateResource(RT_ICON, MAKEINTRESOURCE(i++), NSIS_DEFAULT_LANG, 0, 0));
 
-  int iNewIconSize = 0;
-
   for (i = 0; i < igh.wCount; i++) {
     fread(ige, sizeof(FileIconGroupEntry)-sizeof(DWORD), 1, f);
     ige->wRsrcId = i+1;
@@ -183,9 +181,6 @@ void replace_icon(CResourceEditor* re, WORD wIconId, const char* filename)
     free(iconData);
 
     fsetpos(f, &pos);
-
-    // Every icon entry should be 8 aligned
-    iNewIconSize += ((ige->dwRawSize%8 == 0) ? ige->dwRawSize : ige->dwRawSize - (ige->dwRawSize%8) + 8);
 
     // Seems like the compiler refuses to increase the pointer by just 14.
     // If you'll replace this line by ige++ you will get unwanted results.
