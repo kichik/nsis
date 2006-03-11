@@ -1,12 +1,13 @@
 #include "Platform.h"
 #include <stdio.h>
 #include "exehead/config.h"
-#include "exehead/fileform.h"
 
 #include "version.h"
 
 #include "build.h"
 #include "util.h"
+#include "fileform.h"
+#include "writer.h"
 
 #include <stdexcept>
 
@@ -2192,31 +2193,46 @@ void CEXEBuild::PrepareInstTypes()
 
 void CEXEBuild::PrepareHeaders(IGrowBuf *hdrbuf)
 {
-  hdrbuf->add(cur_header,sizeof(header));
+  GrowBuf blocks_buf;
+  growbuf_writer_sink sink(&blocks_buf);
+
 #ifdef NSIS_CONFIG_VISIBLE_SUPPORT
-  cur_header->blocks[NB_PAGES].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_pages->get(),cur_pages->getlen());
+  cur_header->blocks[NB_PAGES].offset = sizeof(header) + blocks_buf.getlen();
+  page_writer::write_block(cur_pages, &sink);
 #endif
-  cur_header->blocks[NB_SECTIONS].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_sections->get(),cur_sections->getlen());
-  cur_header->blocks[NB_ENTRIES].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_entries->get(),cur_entries->getlen());
-  cur_header->blocks[NB_STRINGS].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_strlist->get(),cur_strlist->getlen());
-  cur_header->blocks[NB_LANGTABLES].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_langtables->get(),cur_langtables->getlen());
-  cur_header->blocks[NB_CTLCOLORS].offset = hdrbuf->getlen();
-  hdrbuf->add(cur_ctlcolors->get(),cur_ctlcolors->getlen());
+
+  cur_header->blocks[NB_SECTIONS].offset = sizeof(header) + blocks_buf.getlen();
+  section_writer::write_block(cur_sections, &sink);
+
+  cur_header->blocks[NB_ENTRIES].offset = sizeof(header) + blocks_buf.getlen();
+  entry_writer::write_block(cur_entries, &sink);
+
+  cur_header->blocks[NB_STRINGS].offset = sizeof(header) + blocks_buf.getlen();
+  blocks_buf.add(cur_strlist->get(), cur_strlist->getlen());
+
+  cur_header->blocks[NB_LANGTABLES].offset = sizeof(header) + blocks_buf.getlen();
+  lang_table_writer::write_block(cur_langtables, &sink, cur_header->langtable_size);
+
+  cur_header->blocks[NB_CTLCOLORS].offset = sizeof(header) + blocks_buf.getlen();
+  ctlcolors_writer::write_block(cur_ctlcolors, &sink);
+
 #ifdef NSIS_SUPPORT_BGBG
   if (cur_header->bg_color1 != -1)
   {
-    bg_font.lfFaceName[LF_FACESIZE-1]=0;
-    cur_header->blocks[NB_BGFONT].offset = hdrbuf->getlen();
-    hdrbuf->add(&bg_font,sizeof(LOGFONT));
+    bg_font.lfFaceName[LF_FACESIZE-1] = 0;
+
+    cur_header->blocks[NB_BGFONT].offset = sizeof(header) + blocks_buf.getlen();
+
+    LOGFONT_writer w(&sink);
+    w.write(&bg_font);
   }
 #endif
 
-  memcpy(hdrbuf->get(),cur_header,sizeof(header));
+  growbuf_writer_sink sink2(hdrbuf);
+  header_writer header(&sink2);
+  header.write(cur_header);
+
+  sink2.write_growbuf(&blocks_buf);
 }
 
 int CEXEBuild::check_write_output_errors() const
@@ -2483,7 +2499,13 @@ int CEXEBuild::write_output(void)
     else
       fd_start=ftell(fp);
 
-    if (fwrite(&fh,1,sizeof(fh),fp) != sizeof(fh))
+    try
+    {
+      file_writer_sink sink(fp);
+      firstheader_writer w(&sink);
+      w.write(&fh);
+    }
+    catch (...)
     {
       ERROR_MSG("Error: can't write %d bytes to output\n",sizeof(fh));
       fclose(fp);
@@ -2508,7 +2530,10 @@ int CEXEBuild::write_output(void)
         return PS_ERROR;
       }
 #ifdef NSIS_CONFIG_CRC_SUPPORT
-      crc=CRC32(crc,(unsigned char*)&fh,sizeof(fh));
+      crc_writer_sink crc_sink((unsigned long *) &crc);
+      firstheader_writer w(&crc_sink);
+      w.write(&fh);
+
       crc=CRC32(crc,(unsigned char*)ihd.get(),ihd.getlen());
 #endif
     }
@@ -2693,7 +2718,19 @@ int CEXEBuild::write_output(void)
     );
 
     fseek(fp,fd_start,SEEK_SET);
-    fwrite(&fh,sizeof(fh),1,fp);
+
+    try
+    {
+      file_writer_sink sink(fp);
+      firstheader_writer w(&sink);
+      w.write(&fh);
+    }
+    catch (...)
+    {
+      ERROR_MSG("Error: can't write %d bytes to output\n",sizeof(fh));
+      fclose(fp);
+      return PS_ERROR;
+    }
 
 #ifdef NSIS_CONFIG_CRC_SUPPORT
     if (build_crcchk)
