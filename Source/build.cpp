@@ -1728,22 +1728,29 @@ int CEXEBuild::AddVersionInfo()
       rVersionInfo.SetFileVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
       rVersionInfo.SetProductVersion(MAKELONG(iml, imm),MAKELONG(ill, ilm));
 
-      init_res_editor();
-      for ( int i = 0; i < rVersionInfo.GetStringTablesCount(); i++ )
+      try
       {
-        LANGID lang_id = rVersionInfo.GetLangID(i);
-        int code_page = rVersionInfo.GetCodePage(i);
-        LanguageTable *Table = GetLangTable(lang_id);
+        init_res_editor();
+        for ( int i = 0; i < rVersionInfo.GetStringTablesCount(); i++ )
+        {
+          LANGID lang_id = rVersionInfo.GetLangID(i);
+          int code_page = rVersionInfo.GetCodePage(i);
+          LanguageTable *Table = GetLangTable(lang_id);
 
-        if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
-        if ( !rVersionInfo.FindKey(lang_id, code_page, "FileDescription") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
-        if ( !rVersionInfo.FindKey(lang_id, code_page, "LegalCopyright") )
-          warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+          if ( !rVersionInfo.FindKey(lang_id, code_page, "FileVersion") )
+            warning("Generating version information for language \"%04d-%s\" without standard key \"FileVersion\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+          if ( !rVersionInfo.FindKey(lang_id, code_page, "FileDescription") )
+            warning("Generating version information for language \"%04d-%s\" without standard key \"FileDescription\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
+          if ( !rVersionInfo.FindKey(lang_id, code_page, "LegalCopyright") )
+            warning("Generating version information for language \"%04d-%s\" without standard key \"LegalCopyright\"", lang_id, Table->nlf.m_bLoaded ? Table->nlf.m_szName : lang_id == 1033 ? "English" : "???");
 
-        rVersionInfo.ExportToStream(VerInfoStream, i);
-        res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+          rVersionInfo.ExportToStream(VerInfoStream, i);
+          res_editor->UpdateResource(RT_VERSION, 1, lang_id, (BYTE*)VerInfoStream.get(), VerInfoStream.getlen());
+        }
+      }
+      catch (exception& err) {
+        ERROR_MSG("Error adding version information: %s\n", err.what());
+        return PS_ERROR;
       }
     }
   }
@@ -2393,18 +2400,19 @@ int CEXEBuild::write_output(void)
   // Generate language tables
   RET_UNLESS_OK( GenerateLangTables() );
 
-  init_res_editor();
-  VerifyDeclaredUserVarRefs(&m_UserVarNames);
-  int MaxUserVars = m_UserVarNames.getnum();
-  // -1 because the default size is 1
-  if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
-  {
-    ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", NSIS_VARS_SECTION);
-    return PS_ERROR;
-  }
-
-  // Save all changes to the exe header
   try {
+    init_res_editor();
+
+    VerifyDeclaredUserVarRefs(&m_UserVarNames);
+    int MaxUserVars = m_UserVarNames.getnum();
+    // -1 because the default size is 1
+    if (!res_editor->AddExtraVirtualSize2PESection(NSIS_VARS_SECTION, (MaxUserVars - 1) * sizeof(NSIS_STRING)))
+    {
+      ERROR_MSG("Internal compiler error #12346: invalid exehead cannot find section \"%s\"!\n", NSIS_VARS_SECTION);
+      return PS_ERROR;
+    }
+
+    // Save all changes to the exe header
     close_res_editor();
   }
   catch (exception& err) {
