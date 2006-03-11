@@ -618,7 +618,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
                 // So the line below must be commented !??
                 //m_UserVarNames.inc_reference(idxUserVar);
                 *out++ = (unsigned int) NS_VAR_CODE; // Named user variable;
-                *(WORD*)out = CODE_SHORT(idxUserVar);
+                *(WORD*)out = FIX_ENDIAN_INT16(CODE_SHORT(idxUserVar));
                 out += sizeof(WORD);
                 p += pUserVarName-p;
                 bProceced = true;
@@ -662,7 +662,7 @@ int CEXEBuild::preprocess_string(char *out, const char *in, WORD codepage/*=CP_A
               if (idx < 0)
               {
                 *out++ = (unsigned int)NS_LANG_CODE; // Next word is lang-string Identifier
-                *(WORD*)out= CODE_SHORT(-idx-1);
+                *(WORD*)out = FIX_ENDIAN_INT16(CODE_SHORT(-idx-1));
                 out += sizeof(WORD);
                 p += strlen(cp) + 2;
                 bProceced = true;
@@ -881,7 +881,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
         done=1;
         db->resize(st + used + sizeof(int));
 
-        *(int*)db->get(st, sizeof(int)) = used | 0x80000000;
+        *(int*)db->get(st, sizeof(int)) = FIX_ENDIAN_INT32(used | 0x80000000);
         db->release();
 
         int nst = datablock_optimize(st, used | 0x80000000);
@@ -898,7 +898,7 @@ int CEXEBuild::add_db_data(IMMap *mmap) // returns offset
   {
     db->resize(st + length + sizeof(int));
     int *plen = (int *) db->get(st, sizeof(int));
-    *plen = length;
+    *plen = FIX_ENDIAN_INT32(length);
     db->release();
 
     int left = length;
@@ -969,7 +969,7 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
       done=1;
       dblock->resize(st+used+sizeof(int));
 
-      *((int*)((char *)dblock->get()+st)) = used|0x80000000;
+      *((int*)((char *)dblock->get()+st)) = FIX_ENDIAN_INT32(used|0x80000000);
     }
     compressor->End();
   }
@@ -978,7 +978,8 @@ int CEXEBuild::add_data(const char *data, int length, IGrowBuf *dblock) // retur
   if (!done)
   {
     dblock->resize(st);
-    dblock->add(&length,sizeof(int));
+    int rl = FIX_ENDIAN_INT32(length);
+    dblock->add(&rl,sizeof(int));
     dblock->add(data,length);
   }
 
@@ -2753,7 +2754,8 @@ int CEXEBuild::write_output(void)
   if (build_crcchk)
   {
     total_usize+=sizeof(int);
-    if (fwrite(&crc,1,sizeof(int),fp) != sizeof(int))
+    int rcrc = FIX_ENDIAN_INT32(crc);
+    if (fwrite(&rcrc,1,sizeof(int),fp) != sizeof(int))
     {
       ERROR_MSG("Error: can't write %d bytes to output\n",sizeof(int));
       fclose(fp);
