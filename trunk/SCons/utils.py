@@ -25,7 +25,7 @@ def check_compile_flag(ctx, flag):
 		}
 	"""
 
-	result = not ctx.TryCompile(test, '.c')
+	result = ctx.TryCompile(test, '.c')
 	ctx.Result(result)
 
 	if not result:
@@ -48,7 +48,7 @@ def check_link_flag(ctx, flag):
 		}
 	"""
 
-	result = not ctx.TryLink(test, '.c')
+	result = ctx.TryLink(test, '.c')
 	ctx.Result(result)
 
 	if not result:
