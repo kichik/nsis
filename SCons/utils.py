@@ -20,7 +20,7 @@ def check_compile_flag(ctx, flag):
 	ctx.env.Append(CCFLAGS = flag)
 
 	test = """
-		int __main() {
+		int main() {
 			return 0;
 		}
 	"""
@@ -43,7 +43,7 @@ def check_link_flag(ctx, flag):
 	ctx.env.Append(LINKFLAGS = flag)
 
 	test = """
-		int __main() {
+		int main() {
 			return 0;
 		}
 	"""
