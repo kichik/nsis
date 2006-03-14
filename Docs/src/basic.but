@@ -121,7 +121,7 @@ Remove the specified directory (which should be a full path). Without /r, the di
 
 \c RMDir $INSTDIR
 \c RMDir $INSTDIR\data
-\c RMDir /r /REBOOTOK $INSTIDR
+\c RMDir /r /REBOOTOK $INSTDIR
 \c RMDir /REBOOTOK $INSTDIR\DLLs
 
 Note that the current working directory can not be deleted. The current working directory is set by \R{setoutpath}{SetOutPath}. For example, the following example will not delete the directory.
