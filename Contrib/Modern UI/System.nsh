@@ -184,15 +184,33 @@ Var /GLOBAL MUI_TEMP2
 
 !macroend
 
+!macro MUI_HEADER_TEXT_INTERNAL ID TEXT
+
+  GetDlgItem $MUI_TEMP1 $HWNDPARENT "${ID}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    ShowWindow $MUI_TEMP1 ${SW_HIDE}
+
+  !endif
+
+  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${TEXT}"
+
+  !ifdef MUI_HEADER_TRANSPARENT_TEXT
+
+    ShowWindow $MUI_TEMP1 ${SW_SHOWNA}
+
+  !endif
+
+!macroend
+
 !macro MUI_HEADER_TEXT TEXT SUBTEXT
 
   !verbose push
   !verbose ${MUI_VERBOSE}
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${TEXT}"
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-  SendMessage $MUI_TEMP1 ${WM_SETTEXT} 0 "STR:${SUBTEXT}"
+  !insertmacro MUI_HEADER_TEXT_INTERNAL 1037 "${TEXT}"
+  !insertmacro MUI_HEADER_TEXT_INTERNAL 1038 "${SUBTEXT}"
 
   !verbose pop
 
@@ -339,10 +357,22 @@ Var /GLOBAL MUI_TEMP2
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1037
   CreateFont $MUI_TEMP2 "$(^Font)" "$(^FontSize)" "700"
   SendMessage $MUI_TEMP1 ${WM_SETFONT} $MUI_TEMP2 0
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
 
-  GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
-  SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+  !ifndef MUI_HEADER_TRANSPARENT_TEXT
+
+    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
+
+  !else
+
+    SetCtlColors $MUI_TEMP1 "" "transparent"
+
+    GetDlgItem $MUI_TEMP1 $HWNDPARENT 1038
+    SetCtlColors $MUI_TEMP1 "" "transparent"
+
+  !endif
 
   GetDlgItem $MUI_TEMP1 $HWNDPARENT 1034
   SetCtlColors $MUI_TEMP1 "" "${MUI_BGCOLOR}"
