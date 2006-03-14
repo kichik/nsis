@@ -190,29 +190,10 @@ conf.Finish()
 # instead of -lpthread.
 #
 
-def check_pthread(ctx):
-	ctx.Message('Checking for -pthread... ')
+Import('FlagsConfigure')
 
-	last_flags = ctx.env['LINKFLAGS']
-
-	ctx.env.Append(LINKFLAGS = '-pthread')
-
-	test = """
-		int __main() {
-			return 0;
-		}
-	"""
-
-	result = not ctx.TryLink(test, '.c')
-	ctx.Result(result)
-
-	ctx.env.Replace(LINKFLAGS = last_flags)
-
-	return result
-
-conf = defenv.Configure(custom_tests = { 'CheckPThread' : check_pthread })
-if conf.CheckPThread():
-	makensis_env.Append(LINKFLAGS = '-pthread')
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('-pthread')
 conf.Finish()
 
 #
