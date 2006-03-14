@@ -6,6 +6,10 @@ Import('defenv')
 # http://sourceforge.net/tracker/?func=detail&aid=1313856&group_id=30337&atid=398973
 defenv['RCCOM'] = '$RC $_CPPDEFFLAGS $_CPPINCFLAGS ${INCPREFIX}${SOURCE.dir} $RCFLAGS -i $SOURCE -o $TARGET'
 
+### imports
+
+Import('FlagsConfigure')
+
 ### cross compiling
 
 def cross_env(env):
@@ -64,7 +68,10 @@ makensis_env.Append(CCFLAGS = '-Wall')            # all warnings
 
 if not defenv['DEBUG']:
 	makensis_env.Append(LINKFLAGS = '-s')           # strip
-makensis_env.Append(LINKFLAGS = '$MAP_FLAG')      # generate map file
+
+conf = FlagsConfigure(makensis_env)
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+conf.Finish()
 
 ### plugin environment
 
@@ -91,7 +98,10 @@ cp_util_env.Append(CCFLAGS = '-Wall')                # all warnings
 
 if not defenv['DEBUG']:
 	cp_util_env.Append(LINKFLAGS = '-s')               # strip
-cp_util_env.Append(LINKFLAGS = '$MAP_FLAG')          # generate map file
+
+conf = FlagsConfigure(cp_util_env)
+conf.CheckLinkFlag('$MAP_FLAG')                   # generate map file
+conf.Finish()
 
 ### util environment
 
@@ -189,8 +199,6 @@ conf.Finish()
 # Some platforms, like FreeBSD, require -pthread flag to be passed
 # instead of -lpthread.
 #
-
-Import('FlagsConfigure')
 
 conf = FlagsConfigure(makensis_env)
 conf.CheckLinkFlag('-pthread')
